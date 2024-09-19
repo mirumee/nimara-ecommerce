@@ -1,0 +1,16 @@
+mutation CheckoutDeliveryMethodUpdateMutation(
+  $checkoutId: ID!
+  $deliveryMethodId: ID!
+) {
+  checkoutDeliveryMethodUpdate(
+    id: $checkoutId
+    deliveryMethodId: $deliveryMethodId
+  ) {
+    errors {
+      ...CheckoutErrorFragment
+    }
+    checkout {
+      id
+    }
+  }
+}

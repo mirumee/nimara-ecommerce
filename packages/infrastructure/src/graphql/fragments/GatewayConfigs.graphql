@@ -1,0 +1,9 @@
+fragment PaymentGatewayConfigFragment on PaymentGatewayConfig {
+  id
+  data
+  errors {
+    field
+    message
+    code
+  }
+}

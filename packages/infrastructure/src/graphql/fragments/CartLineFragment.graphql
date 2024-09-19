@@ -1,0 +1,42 @@
+fragment CartLineFragment on CheckoutLine {
+  id
+  quantity
+  totalPrice {
+    net {
+      ...MoneyFragment
+    }
+    gross {
+      ...MoneyFragment
+    }
+  }
+  undiscountedTotalPrice {
+    amount
+    currency
+  }
+  variant {
+    id
+    quantityAvailable(countryCode: $countryCode)
+    quantityLimitPerCustomer
+    name
+    sku
+    translation(languageCode: $languageCode) {
+      name
+    }
+    media {
+      url(size: $thumbnailSize, format: $thumbnailFormat)
+      alt
+    }
+    product {
+      id
+      slug
+      thumbnail(size: $thumbnailSize, format: $thumbnailFormat) {
+        alt
+        url
+      }
+      name
+      translation(languageCode: $languageCode) {
+        name
+      }
+    }
+  }
+}

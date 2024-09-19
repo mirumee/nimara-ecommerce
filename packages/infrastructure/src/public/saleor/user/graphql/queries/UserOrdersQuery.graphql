@@ -1,0 +1,12 @@
+query UserOrdersQuery($languageCode: LanguageCodeEnum!) {
+  me {
+    id
+    orders(first: 100) {
+      edges {
+        node {
+          ...OrderFragment
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,13 @@
+fragment ProductVariantDetailsFragment on ProductVariant {
+  id
+  name
+  translation(languageCode: $languageCode) {
+    name
+  }
+  selectionAttributes: attributes(variantSelection: VARIANT_SELECTION) {
+    ...SelectionAttributeFragment
+  }
+  nonSelectionAttributes: attributes(variantSelection: NOT_VARIANT_SELECTION) {
+    ...SelectionAttributeFragment
+  }
+}

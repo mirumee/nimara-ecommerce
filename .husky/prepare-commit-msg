@@ -1,0 +1,3 @@
+if [ -z "$2" ]; then
+  exec < /dev/tty && pnpm cz --hook || true
+fi

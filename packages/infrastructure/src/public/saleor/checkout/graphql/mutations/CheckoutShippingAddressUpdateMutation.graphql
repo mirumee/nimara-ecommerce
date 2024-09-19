@@ -1,0 +1,13 @@
+mutation checkoutShippingAddressUpdate(
+  $checkoutId: ID!
+  $shippingAddress: AddressInput!
+) {
+  checkoutShippingAddressUpdate(
+    id: $checkoutId
+    shippingAddress: $shippingAddress
+  ) {
+    errors {
+      ...CheckoutErrorFragment
+    }
+  }
+}

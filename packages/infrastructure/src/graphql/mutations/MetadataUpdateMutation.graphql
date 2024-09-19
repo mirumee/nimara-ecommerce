@@ -1,0 +1,12 @@
+mutation MetadataUpdateMutation($id: ID!, $input: [MetadataInput!]!) {
+  updateMetadata(id: $id, input: $input) {
+    item {
+      metadata {
+        ...MetadataItemFragment
+      }
+    }
+    errors {
+      ...MetadataErrorFragment
+    }
+  }
+}

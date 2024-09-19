@@ -1,0 +1,19 @@
+fragment ProductAvailabilityDetailsFragment on Product {
+  pricing {
+    displayGrossPrices
+    priceRange {
+      start {
+        ...TaxedMoneyFragment
+      }
+    }
+  }
+  isAvailable(address: { country: $countryCode })
+  variantsAvailability: variants {
+    id
+    quantityLimitPerCustomer
+    quantityAvailable(countryCode: $countryCode)
+    pricing {
+      ...VariantPricingInfoFragment
+    }
+  }
+}

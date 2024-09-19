@@ -1,0 +1,65 @@
+fragment CheckoutFragment on Checkout {
+  id
+  email
+  displayGrossPrices
+  discount {
+    amount
+    currency
+  }
+  voucherCode
+  shippingMethods {
+    id
+    name
+    price {
+      amount
+      currency
+    }
+  }
+  shippingAddress {
+    ...AddressFragment
+  }
+  billingAddress {
+    ...AddressFragment
+  }
+  deliveryMethod {
+    __typename
+    ... on Warehouse {
+      id
+      name
+    }
+    ... on ShippingMethod {
+      id
+      name
+    }
+  }
+  availablePaymentGateways {
+    name
+    id
+    config {
+      field
+      value
+    }
+  }
+  lines {
+    ...CartLineFragment
+  }
+  totalPrice {
+    ...TaxedMoneyFragment
+  }
+  subtotalPrice {
+    ...TaxedMoneyFragment
+  }
+  shippingPrice {
+    ...TaxedMoneyFragment
+  }
+  authorizeStatus
+  chargeStatus
+  problems {
+    ... on CheckoutLineProblemInsufficientStock {
+      availableQuantity
+      line {
+        ...CartLineFragment
+      }
+    }
+  }
+}

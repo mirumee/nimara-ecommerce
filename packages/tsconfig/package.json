@@ -1,0 +1,8 @@
+{
+  "name": "tsconfig",
+  "private": true,
+  "version": "1.0.0",
+  "dependencies": {
+    "prettier": "3.3.3"
+  }
+}

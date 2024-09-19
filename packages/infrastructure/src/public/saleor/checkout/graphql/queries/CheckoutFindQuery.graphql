@@ -1,0 +1,11 @@
+query CheckoutFindQuery(
+  $checkoutId: ID!
+  $countryCode: CountryCode!
+  $languageCode: LanguageCodeEnum!
+  $thumbnailSize: Int!
+  $thumbnailFormat: ThumbnailFormatEnum!
+) {
+  checkout(id: $checkoutId) {
+    ...CheckoutFragment
+  }
+}

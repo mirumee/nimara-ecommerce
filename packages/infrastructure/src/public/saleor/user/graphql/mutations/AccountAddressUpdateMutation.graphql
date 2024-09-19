@@ -1,0 +1,7 @@
+mutation AccountAddressUpdateMutation($input: AddressInput!, $id: ID!) {
+  accountAddressUpdate(input: $input, id: $id) {
+    errors {
+      ...AccountErrorFragment
+    }
+  }
+}

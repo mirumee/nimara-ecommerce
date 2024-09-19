@@ -1,0 +1,10 @@
+mutation AccountRequestDeletionMutation(
+  $channel: String
+  $redirectUrl: String!
+) {
+  accountRequestDeletion(channel: $channel, redirectUrl: $redirectUrl) {
+    errors {
+      ...AccountErrorFragment
+    }
+  }
+}

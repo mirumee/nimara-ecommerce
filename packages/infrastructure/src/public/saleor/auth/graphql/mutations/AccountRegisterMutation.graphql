@@ -1,0 +1,7 @@
+mutation AccountRegisterMutation($accountRegisterInput: AccountRegisterInput!) {
+  accountRegister(input: $accountRegisterInput) {
+    errors {
+      ...AccountErrorFragment
+    }
+  }
+}

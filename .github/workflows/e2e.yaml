@@ -1,0 +1,51 @@
+name: E2E tests & Lighthouse
+
+on:
+  # Manual trigger of the workflow
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment URL to run e2e tests against"
+        type: string
+        required: true
+
+jobs:
+  e2e-tests:
+    name: "E2E Tests"
+    runs-on: ubuntu-latest
+    env:
+      BASE_URL: ${{ inputs.environment }}
+      CI: true
+
+    steps:
+      - run: |
+          echo "BASE_URL: $BASE_URL"
+
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Install Playwright browsers
+        run: pnpm dlx playwright install
+
+      - name: Run e2e tests
+        run: pnpm --filter ./apps/automated-tests test
+
+      - name: Install Lighthouse CI
+        run: pnpm add -D @lhci/cli -w
+
+      - name: Run Lighthouse CI
+        run: pnpm exec lhci autorun
+        continue-on-error: true

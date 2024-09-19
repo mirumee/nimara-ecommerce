@@ -1,0 +1,15 @@
+query MenuGet(
+  $slug: String
+  $id: ID
+  $channel: String!
+  $languageCode: LanguageCodeEnum!
+) {
+  menu(slug: $slug, id: $id, channel: $channel) {
+    items {
+      ...MenuItem
+      children {
+        ...MenuItem
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+fragment OrderFragment on Order {
+  id
+  created
+  lines {
+    ...OrderLineFragment
+  }
+  total {
+    ...TaxedMoneyFragment
+  }
+  number
+  displayGrossPrices
+}

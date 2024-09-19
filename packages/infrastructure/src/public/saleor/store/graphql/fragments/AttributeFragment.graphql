@@ -1,0 +1,8 @@
+fragment AttributeFragment on Attribute {
+  slug
+  inputType
+  name
+  translation(languageCode: $languageCode) {
+    name
+  }
+}

@@ -1,0 +1,11 @@
+query ProductDetailsQuery(
+  $slug: String!
+  $channel: String!
+  $languageCode: LanguageCodeEnum!
+  $mediaSize: Int!
+  $mediaFormat: ThumbnailFormatEnum!
+) {
+  product(slug: $slug, channel: $channel) {
+    ...ProductDetailsFragment
+  }
+}

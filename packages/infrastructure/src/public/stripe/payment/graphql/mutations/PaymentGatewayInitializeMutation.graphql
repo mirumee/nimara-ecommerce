@@ -1,0 +1,21 @@
+mutation PaymentGatewayInitializeMutation(
+  $id: ID!
+  $amount: PositiveDecimal
+  $gatewayAppId: String!
+  $gatewayData: JSON
+) {
+  paymentGatewayInitialize(
+    id: $id
+    amount: $amount
+    paymentGateways: [{ id: $gatewayAppId, data: $gatewayData }]
+  ) {
+    gatewayConfigs {
+      ...PaymentGatewayConfigFragment
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}

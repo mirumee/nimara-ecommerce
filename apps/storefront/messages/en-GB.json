@@ -1,0 +1,343 @@
+{
+  "home": {
+    "title": "Homepage",
+    "description": "Nimara's headless architecture, built on Saleor, provides a flexible, cost-effective solution for online businesses. It’s ready to deploy with minimal setup, supports seamless integration of new providers, and features an intuitive UI for easy storefront customization and management."
+  },
+  "locale": {
+    "region": "Region",
+    "language": "Language",
+    "region-settings": "Region and language settings"
+  },
+  "filters": {
+    "filters": "Filters",
+    "options": "Options",
+    "clear": "Clear",
+    "show-products": "Show products",
+    "artists": "Artists",
+    "in-stock": "In stock",
+    "is-exclusive": "Is exclusive",
+    "is-digital": "Is digital"
+  },
+  "search": {
+    "go-to-product": "Go to product {name}",
+    "name-asc": "Alphabetically",
+    "no-results": "No results found",
+    "no-results-for": "No results found for ‘{query}‘",
+    "price-asc": "Price (Ascending)",
+    "price-desc": "Price (Descending)",
+    "results-for": "Results for ‘{query}‘",
+    "loading-text": "Searching...",
+    "search-for": "Search ‘{query}‘",
+    "search": "Search {test}",
+    "search-placeholder": "Search for products...",
+    "search-results": "Search results",
+    "site-wide-search-form": "Site-wide search form",
+    "sort-by": "Sort by",
+    "all-products-link": "All products link",
+    "open-search": "Open search",
+    "search-label": "Search"
+  },
+  "common": {
+    "checkout": "Checkout",
+    "add-to-bag": "Add to bag",
+    "close": "Close",
+    "go-to-next-page": "Go to next page",
+    "go-to-previous-page": "Go to previous page",
+    "next": "Next",
+    "notify-me": "Notify me",
+    "previous": "Previous",
+    "save": "Save",
+    "submit": "Submit",
+    "continue": "Continue",
+    "saving": "Saving...",
+    "see-all": "See all products",
+    "go-to-checkout": "Go to checkout",
+    "go-to-bag": "Go to bag",
+    "product-added": "Product has been added to your bag.",
+    "edit": "Edit",
+    "go-to-homepage": "Go to home page",
+    "show-summary": "Show summary",
+    "email": "Email",
+    "password": "Password",
+    "please-wait": "Please wait",
+    "from-price": "From {price}",
+    "price": "Price",
+    "free": "Free",
+    "terms-of-use": "Terms of Use",
+    "privacy-policy": "Privacy Policy",
+    "first-name": "First Name",
+    "last-name": "Last Name",
+    "back-to-homepage": "Back to homepage",
+    "save-changes": "Save changes",
+    "change": "Change",
+    "contact-with-us": "contact with us",
+    "contact-us": "contact us",
+    "qty": "qty",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "or": "or",
+    "option-label": "Option {index}: {value}",
+    "logo": "Logo",
+    "pagination": "Pagination"
+  },
+  "cart": {
+    "empty": "Your bag is empty",
+    "discount": "Discount",
+    "add-discount": "Add discount code",
+    "type-code": "Type code",
+    "discount-code": "Discount code {code}",
+    "discount-removed": "Your discount code has been removed",
+    "redeem": "Redeem",
+    "your-bag": "Your bag",
+    "subtotal": "Subtotal",
+    "total": "Total",
+    "unavailable-products": "Unavailable products",
+    "items-in-cart": "Items in cart: {cartItems}",
+    "remove-button": "Remove button",
+    "max-quantity": "Sorry, the maximum quantity you can order is {maxQuantity}."
+  },
+  "checkout": {
+    "sign-in-to-finalize-order": "Sign in to finalize order",
+    "use-different-email": "Use different email",
+    "hello-again": "Hello again!"
+  },
+  "site": {
+    "explore-our-store": "Explore our store",
+    "checkout-out-store": "Check out our store and find something that suits you best."
+  },
+  "products": {
+    "variant-select-label": "Variant select label",
+    "variant-select": "Variant select",
+    "label-slug": "Label-{slug}"
+  },
+  "address": {
+    "companyName": "Company name",
+    "phone": "Phone",
+    "country": "Country",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "streetAddress1": "Street address",
+    "streetAddress2": "Street address (continue)",
+    "Postal": "Postal",
+    "City": "City",
+    "Province": "Province",
+    "District": "District",
+    "Pin": "Pin",
+    "Eircode": "Eircode",
+    "Post town": "Post town",
+    "State": "State",
+    "Zip": "Zip",
+    "sorry-you-dont-have-any-addresses": "Sorry, you don't have any addresses yet.",
+    "add-new-address": "Add new address",
+    "edit-address": "Edit address",
+    "delete-address": "Delete address",
+    "default-billing": "Default billing address",
+    "default-shipping": "Default shipping address",
+    "default-shipping-and-billing": "Default shipping and billing",
+    "save-new-address": "Save new address",
+    "optional": "Optional",
+    "new-address-has-been-added": "New address has been added.",
+    "delete-address-description": "Are you sure you want to delete this address? You won't be able to undo this action.",
+    "address-has-been-removed": "Address has been removed.",
+    "saved-addresses": "Saved addresses",
+    "new-address": "New address",
+    "save-address-for-future": "Save address for future use"
+  },
+  "shipping-address": {
+    "title": "Shipping address",
+    "loading-fields": "Changing country..."
+  },
+  "user-details": {
+    "title": "Email",
+    "email": "Email",
+    "signed-in-as": "Signed in as"
+  },
+  "delivery-method": {
+    "title": "Delivery",
+    "delivery-method": "Delivery method"
+  },
+  "payment": {
+    "credit-cards": "Credit cards",
+    "credit-card": "credit card",
+    "save-method": "Save method for future use",
+    "saved-methods": "Saved methods",
+    "new-method": "New method",
+    "add-new-method": "Add new method",
+    "paypal-accounts": "Paypal accounts",
+    "exp-date": "Exp. date",
+    "title": "Payment",
+    "placeOrder": "Place order",
+    "paymentProcessing": "Payment processing",
+    "payment-methods": "Payment methods",
+    "card": "Credit Cards",
+    "paypal": "Paypal",
+    "paypal-account": "Paypal account",
+    "default-method": "Default method",
+    "thisTakesLongerThanUsual": "This takes longer than usual.",
+    "billingAddress": "Billing address",
+    "same-as-shipping-address": "Same as shipping address",
+    "save-new-method": "Save new method",
+    "set-as-default": "Set as default payment method",
+    "no-payment-methods": "Sorry, you don’t have any payment methods yet."
+  },
+  "order-confirmation": {
+    "heading": "Your order has been successfully placed",
+    "paragraph": "We are glad to take care of your order! <br></br>Check your inbox to find the receipt and further instructions."
+  },
+  "form-validation": {
+    "required": "Required field",
+    "wrong-code-format": "Wrong code format",
+    "Invalid email": "Invalid email",
+    "Invalid value": "Invalid value",
+    "invalid-email": "Oops, wrong email address.",
+    "email-required": "Email is required to create an account.",
+    "min-length-password": "Password should contain at least {minimum} signs.",
+    "passwords-dont-match": "The entered passwords don't match.",
+    "reset-password-required-email": "Type the email to reset the password.",
+    "oldPassword": "Wrong password",
+    "typeTheDiscount": "Type the discount code first"
+  },
+  "server-errors": {
+    "Bad Request": "Bad Request",
+    "unknown": "Unknown error"
+  },
+  "checkout-errors": {
+    "INVALID": "Invalid value",
+    "REQUIRED": "Required",
+    "INSUFFICIENT_STOCK": "Product has insufficient stock.",
+    "QUANTITY_GREATER_THAN_LIMIT": "Sorry, the maximum quantity you can order has been reached."
+  },
+  "errors": {
+    "payment": {
+      "default": "Something went wrong with the payment. Please try again or <link>contact with us</link>."
+    },
+    "stripe": {
+      "card_declined": "Your card was declined",
+      "card_expired": "Your card is expired"
+    },
+    "transactionInitialize": {
+      "default": "Could not initialize the payment."
+    },
+    "auth": {
+      "email": "Sorry, this email already exists.",
+      "newEmail": "Email is used by other user.",
+      "password": "Password is invalid.",
+      "oldPassword": "Old password is invalid"
+    },
+    "account": {
+      "deleteAccount": "There was an error while sending the email."
+    },
+    "product": {
+      "NOT_AVAILABLE": "Not available",
+      "NOT_FOUND": "Product not found",
+      "VARIANT_NOT_AVAILABLE": "Variant is not available"
+    },
+    "server": {
+      "HTTP_ERROR": "An HTTP error occurred.",
+      "INPUT_ERROR": "Invalid data provided.",
+      "NOT_FOUND_ERROR": "Not found.",
+      "TOO_MANY_REQUESTS": "Too many requests.",
+      "UNEXPECTED_HTTP_ERROR": "Unexpected error occurred."
+    },
+    "checkout": {
+      "codeDoesNotExist": "Provided code doesn't exist {code}",
+      "codeNotApplicable": "Code is not applicable to this checkout.",
+      "couldNotProcess": "Sorry, we couldn’t process your discount code. Please try again.",
+      "couldNotRemove": "Sorry, we couldn’t remove your discount code. Please try again."
+    }
+  },
+  "stock-errors": {
+    "products-unavailable": "Sorry, the products you want to buy are unavailable",
+    "products-message": "Products you’ve wanted to buy are unavailable for your shipping location or they’re out of stock. Contact us for more info.",
+    "some-of-products-unavailable": "Sorry, some of the products are unavailable",
+    "some-of-products-message": "The product you’ve wanted to buy is unavailable for your shipping location or it’s out of stock. Contact us for more info.",
+    "back-to-cart": "Back to cart"
+  },
+  "auth": {
+    "first-time-on-nimara-store": "First time on Nimara Store?",
+    "create-account": "Create account",
+    "i-forgot-my-password": "I forgot my password",
+    "sign-in-error": "Sorry, wrong email or password. Please try again.",
+    "sign-in": "Log in",
+    "log-out": "Log out",
+    "already-have-an-account": "Already have an account?",
+    "create-account-agreement": "By clicking “Create account” you agree with <termsOfUse>{termsOfUse}</termsOfUse> and <privacyPolicy>{privacyPolicy}</privacyPolicy> of Nimara Store",
+    "password-placeholder": "At least {minPasswordLength} signs, digits allowed",
+    "repeat-password": "Repeat password",
+    "email-placeholder": "e.g. john.doe@mail.com",
+    "create-account-success": "Great news, you're almost there!",
+    "create-account-verify": "Your account needs to be verified first. Check your email and click activation link to activate your account.",
+    "confirm-missing-token": "Invalid or missing token.",
+    "confirm-missing-email": "Invalid or missing email.",
+    "confirm-account-fail": "An error occurred while confirming your account.",
+    "confirm-account-success": "Great! Your account is now active.",
+    "reset-password": "Password reset",
+    "password-reset": "Reset password",
+    "reset-password-description": "Please type the email address used to create the account you'd like to access.",
+    "reset-password-link-sent": "Password reset link is sent",
+    "reset-password-link-sent-description": "If the account with the email address you've provided exists, you'll receive the message with a password reset link.",
+    "set-up-new-password": "Set up new password",
+    "new-password": "New password",
+    "repeat-new-password": "Repeat new password",
+    "set-up-new-password-error": "Couldn't set up a new password.",
+    "set-up-new-password-success": "You can now log in using your new password.",
+    "sign-up": "Sign up in seconds",
+    "by-creating-account": "By creating an account, you can track your orders more effectively and save your addresses and payment methods.",
+    "or-continue-as-guest": "Or continue as a guest",
+    "continue-as-guest": "Continue as a guest",
+    "you-wont-have-access": "You won't have access to your order history or any special deals we've got for you.",
+    "too-much-time-has-passed": "Too much time has passed to change your email. Please try again or contact our support team for assistance."
+  },
+  "account": {
+    "hello": "Hello {username}",
+    "personal-data": "Personal data",
+    "greetings": "Hello {username}! We're glad you're here.",
+    "until-next-time": "Until next time!",
+    "first-and-last-name": "First and last name",
+    "change-your-name": "Change your name",
+    "change-email": "Change email",
+    "you-need-to-confirm-your-new-email": "You need to confirm your new email",
+    "confirm-new-email-description": "We've sent you the confirmation link to your new email. The link will be active for next {timeRemaining} hours.",
+    "confirm-new-email-button": "Ok, I'll confirm my new email",
+    "change-password": "Change password",
+    "name-updated": "Your name has been updated",
+    "new-email": "New email",
+    "current-password": "Current password",
+    "confirm-new-password": "Confirm new password",
+    "new-password-requirements": "New password requirements:",
+    "password-updated": "Password has been changed.",
+    "order-history": "Order history",
+    "privacy-settings": "Privacy Settings",
+    "delete-account": "Delete account",
+    "delete-account-and-all-your-data-permanently": "Delete account and all your data permanently",
+    "delete-account-description": "After deleting your account, all your data and other account details will no longer be stored in Nimara Store.",
+    "delete-account-modal-description": "Once you delete the account all your saved and personal data will be no longer stored in Nimara Store.",
+    "in-case-of-any-questions": "In case of any questions, <contactUs>{contactUs}</contactUs> or read our <privacyPolicy>{privacyPolicy}</privacyPolicy>.",
+    "i-want-permanently-delete-my-account-and-all-data-from-store": "I want to permanently delete my account and all data from Nimara Store",
+    "confirm-account-deletion": "Confirm account deletion",
+    "confirm-account-deletion-description": "You will receive an email message with a link confirming the deletion of your account.",
+    "ok-i-will-check-my-email": "Ok, I’ll check my email",
+    "your-account-has-been-permanently-deleted": "Your account has been permanently deleted",
+    "addresses": "Addresses",
+    "payment-method-delete-info": "Are you sure you want to delete this payment method? You won’t be able to undo this action.",
+    "profile-of": "Profile of {user}"
+  },
+  "order": {
+    "sorry-you-dont-have-any-orders": "Sorry, you don’t have any orders yet.",
+    "order-number": "Order number",
+    "total": "Total",
+    "date-ordered": "Date ordered",
+    "return-products": "Return products"
+  },
+  "footer": {
+    "made-with": "Made with ❤\uFE0F by Mirumee",
+    "rights-claim": "All rights reserved"
+  },
+  "static-pages": {
+    "contact": "Contact",
+    "about-us": "About us",
+    "faq": "FAQ",
+    "privacy-policy": "Privacy Policy",
+    "terms-of-use": "Terms of Use"
+  }
+}

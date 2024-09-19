@@ -1,0 +1,7 @@
+mutation CheckoutCustomerAttachMutation($id: ID!) {
+  checkoutCustomerAttach(id: $id) {
+    errors {
+      ...CheckoutErrorFragment
+    }
+  }
+}

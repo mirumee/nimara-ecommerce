@@ -1,0 +1,18 @@
+mutation TransactionProcessMutation($id: ID!) {
+  transactionProcess(id: $id) {
+    transaction {
+      id
+    }
+    transactionEvent {
+      id
+      type
+      message
+    }
+    data
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
