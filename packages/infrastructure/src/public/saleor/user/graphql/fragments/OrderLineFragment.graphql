@@ -1,0 +1,20 @@
+fragment OrderLineFragment on OrderLine {
+  id
+  productName
+  variantName
+  quantity
+  translatedProductName
+  translatedVariantName
+  totalPrice {
+    ...TaxedMoneyFragment
+  }
+  thumbnail(size: 512) {
+    url
+    alt
+  }
+  variant {
+    selectionAttributes: attributes(variantSelection: VARIANT_SELECTION) {
+      ...SelectionAttributeFragment
+    }
+  }
+}

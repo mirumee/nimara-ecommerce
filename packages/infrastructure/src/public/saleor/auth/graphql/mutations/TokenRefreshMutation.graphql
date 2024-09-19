@@ -1,0 +1,8 @@
+mutation TokenRefreshMutation($refreshToken: String!) {
+  tokenRefresh(refreshToken: $refreshToken) {
+    token
+    errors {
+      ...AccountErrorFragment
+    }
+  }
+}

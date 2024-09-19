@@ -1,0 +1,20 @@
+{
+  "name": "@nimara/domain",
+  "version": "1.0.0",
+  "scripts": {
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+  },
+  "exports": {
+    "./*": "./src/*.ts"
+  },
+  "devDependencies": {
+    "@nimara/config": "workspace:*",
+    "eslint": "^8.57.0",
+    "eslint-config-custom": "workspace:*",
+    "ts-toolbelt": "9.6.0",
+    "tsconfig": "workspace:*"
+  },
+  "dependencies": {
+    "prettier": "3.3.3"
+  }
+}

@@ -1,0 +1,10 @@
+mutation AccountUpdateMutation($accountInput: AccountInput!) {
+  accountUpdate(input: $accountInput) {
+    errors {
+      ...AccountErrorFragment
+    }
+    user {
+      ...UserFragment
+    }
+  }
+}

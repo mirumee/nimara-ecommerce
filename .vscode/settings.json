@@ -1,0 +1,21 @@
+{
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit"
+  },
+  "editor.formatOnPaste": false,
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  "files.trimTrailingWhitespace": true,
+  "prettier.enable": true,
+  "prettier.useEditorConfig": true,
+  "typescript.format.enable": true,
+  "typescript.suggest.autoImports": true,
+  "recommendations": [
+    "streetsidesoftware.code-spell-checker",
+    "Gruntfuggly.todo-tree",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "bradlc.vscode-tailwindcss"
+  ],
+  "cSpell.words": ["nimara", "saleor", "undiscounted"]
+}

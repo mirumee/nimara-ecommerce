@@ -1,0 +1,9 @@
+query ProductAvailabilityDetailsQuery(
+  $slug: String!
+  $channel: String!
+  $countryCode: CountryCode!
+) {
+  product(slug: $slug, channel: $channel) {
+    ...ProductAvailabilityDetailsFragment
+  }
+}

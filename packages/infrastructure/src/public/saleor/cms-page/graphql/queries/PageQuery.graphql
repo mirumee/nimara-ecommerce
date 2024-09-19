@@ -1,0 +1,14 @@
+query Page($slug: String!, $languageCode: LanguageCodeEnum!) {
+  page(slug: $slug) {
+    attributes {
+      attribute {
+        ...AttributeFragment
+      }
+      values {
+        ...AttributeValueFragment
+      }
+    }
+    title
+    content
+  }
+}

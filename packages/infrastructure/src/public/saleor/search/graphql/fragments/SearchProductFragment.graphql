@@ -1,0 +1,47 @@
+fragment SearchProductFragment on Product {
+  id
+  name
+  translation(languageCode: $languageCode) {
+    name
+  }
+  slug
+  thumbnail(format: WEBP, size: 512) {
+    url
+    alt
+  }
+  variants {
+    pricing {
+      price {
+        gross {
+          amount
+        }
+      }
+    }
+  }
+  media {
+    url
+    alt
+  }
+  pricing {
+    priceRange {
+      start {
+        currency
+        gross {
+          amount
+        }
+        net {
+          amount
+        }
+      }
+      stop {
+        currency
+        gross {
+          amount
+        }
+        net {
+          amount
+        }
+      }
+    }
+  }
+}

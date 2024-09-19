@@ -1,0 +1,5 @@
+fragment ProductMediaFragment on ProductMedia {
+  url(size: $mediaSize, format: $mediaFormat)
+  alt
+  type
+}

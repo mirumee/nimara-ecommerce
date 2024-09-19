@@ -1,0 +1,27 @@
+mutation TransactionInitializeMutation(
+  $id: ID!
+  $data: JSON
+  $amount: PositiveDecimal
+  $gatewayAppId: String!
+) {
+  transactionInitialize(
+    id: $id
+    amount: $amount
+    paymentGateway: { id: $gatewayAppId, data: $data }
+  ) {
+    transaction {
+      id
+    }
+    transactionEvent {
+      id
+      type
+      message
+    }
+    data
+    errors {
+      field
+      message
+      code
+    }
+  }
+}

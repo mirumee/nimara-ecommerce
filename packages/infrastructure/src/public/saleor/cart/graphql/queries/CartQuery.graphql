@@ -1,0 +1,11 @@
+query CartQuery(
+  $id: ID!
+  $countryCode: CountryCode!
+  $languageCode: LanguageCodeEnum!
+  $thumbnailSize: Int!
+  $thumbnailFormat: ThumbnailFormatEnum!
+) {
+  checkout(id: $id) {
+    ...CartFragment
+  }
+}

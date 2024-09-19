@@ -1,0 +1,7 @@
+mutation CartLinesDeleteMutation($id: ID!, $linesIds: [ID!]!) {
+  checkoutLinesDelete(id: $id, linesIds: $linesIds) {
+    errors {
+      ...CheckoutErrorFragment
+    }
+  }
+}

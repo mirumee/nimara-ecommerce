@@ -1,0 +1,4 @@
+fragment MetadataItemFragment on MetadataItem {
+  key
+  value
+}

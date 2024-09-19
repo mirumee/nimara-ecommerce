@@ -1,0 +1,15 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "test:e2e": {
+      "dependsOn": ["test"],
+      "inputs": [
+        "./tests/e2e/**/*.test.ts",
+        "./pages/*.ts",
+        "./utils/*.ts",
+        "playwright.config.json"
+      ],
+      "outputs": ["playwright-report", "test_results"]
+    }
+  }
+}

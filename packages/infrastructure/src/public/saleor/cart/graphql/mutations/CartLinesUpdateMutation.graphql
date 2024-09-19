@@ -1,0 +1,10 @@
+mutation CartLinesUpdateMutation(
+  $id: ID!
+  $lines: [CheckoutLineUpdateInput!]!
+) {
+  checkoutLinesUpdate(id: $id, lines: $lines) {
+    errors {
+      ...CheckoutErrorFragment
+    }
+  }
+}

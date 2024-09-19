@@ -1,0 +1,39 @@
+fragment MenuEventSubscriptionFragment on Event {
+  __typename
+  ... on MenuCreated {
+    menu {
+      slug
+    }
+  }
+  ... on MenuUpdated {
+    menu {
+      slug
+    }
+  }
+  ... on MenuDeleted {
+    menu {
+      slug
+    }
+  }
+  ... on MenuItemCreated {
+    menuItem {
+      menu {
+        slug
+      }
+    }
+  }
+  ... on MenuItemUpdated {
+    menuItem {
+      menu {
+        slug
+      }
+    }
+  }
+  ... on MenuItemDeleted {
+    menuItem {
+      menu {
+        slug
+      }
+    }
+  }
+}

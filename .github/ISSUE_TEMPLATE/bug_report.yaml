@@ -1,0 +1,142 @@
+name: Bug Report
+description: Create a report to help us improve.
+title: "[Bug]: "
+labels: ["bug"]
+
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for taking the time to fill out this bug report!
+
+  - type: dropdown
+    id: severity-level
+    attributes:
+      label: Severity level
+      description: Please specify the severity of the bug (e.g., Critical, High, Medium, Low). If you are not sure, then select "Not sure".
+      options:
+        - Low
+        - Medium
+        - High
+        - Critical
+        - Not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is.
+      placeholder: Tell us what you see
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to reproduce the behavior
+      description: Tell us how to reproduce this bug, so we could reproduce and fix it much quicker.
+      placeholder: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: device-type
+    attributes:
+      label: On which device the bug occurs
+      options:
+        - label: Mobile
+        - label: Desktop
+
+  - type: textarea
+    id: extra-attachments
+    attributes:
+      label: Add here any extra attachments
+      description: If applicable, add here things like screenshots/logs/error messages to help us better understanding the problem.
+    validations:
+      required: false
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: What did you expect to happen?
+      description: Describe why the behavior described earlier is incorrect.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: reproducibility
+    attributes:
+      label: Reproducibility
+      description: How often the bug occurs.
+      options:
+        - Every time
+        - Occasionally
+        - Only once
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact-on-user
+    attributes:
+      label: Impact on Users
+      description: How the bug impacts their use of the system (e.g., unable to complete a purchase, minor UI glitch).
+      placeholder: Write here a short description of how this bug impacts the user.
+    validations:
+      required: true
+
+  - type: input
+    id: date-of-occurrence
+    attributes:
+      label: Date and time of occurrence
+      description: Please mention when the issue was noticed
+    validations:
+      required: false
+
+  - type: textarea
+    id: device-browser-details
+    attributes:
+      label: Software used
+      description: Provide here basic info about the device and software you are using.
+      placeholder: ex. Device - iPhone 12, OS - iOS 16, Browser - Chrome 127.0.6533.100
+    validations:
+      required: false
+
+  - type: textarea
+    attributes:
+      label: Environment details
+      description: |
+        examples:
+          - **Device**: iPhone 12
+          - **OS**: iOS 16
+          - **Browser**: Google Chrome 127.0.6533.100
+          - **Node**: 20.14.0
+          - **pnpm**: 9.0.0
+      value: |
+        - Device:
+        - OS:
+        - Browser:
+        - Node:
+        - pnpm:
+      render: markdown
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Add any other context about the problem here.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/mirumee/nimara-storefront/blob/develop/CODE_OF_CONDUCT.md).
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true

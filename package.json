@@ -1,0 +1,66 @@
+{
+  "name": "nimara-ecommerce",
+  "license": "BSD-3-Clause",
+  "version": "1.0.0",
+  "author": {
+    "name": "Mirumee Labs",
+    "email": "hello@mirumee.com",
+    "url": "https://mirumee.com/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mirumee/nimara-ecommerce"
+  },
+  "private": true,
+  "packageManager": "pnpm@9.3.0",
+  "engines": {
+    "node": "^20"
+  },
+  "scripts": {
+    "build": "dotenv -- turbo run build",
+    "build:storefront": "pnpm run build --filter=storefront",
+    "build:storybook": "pnpm run build --filter=storybook",
+    "build:docs": "pnpm run build --filter=docs",
+    "start": "dotenv -- turbo run start",
+    "start:storefront": "pnpm run start --filter=storefront",
+    "start:storybook": "pnpm run start --filter=storybook",
+    "start:docs": "pnpm run start --filter=docs",
+    "codegen": "dotenv -- turbo run codegen",
+    "dev": "dotenv -- turbo run dev",
+    "dev:storefront": "pnpm run dev --filter=storefront",
+    "dev:storybook": "pnpm run dev --filter=storybook",
+    "dev:docs": "pnpm run dev --filter=docs",
+    "test": "dotenv -- turbo run test",
+    "test:e2e": "dotenv -- turbo run test:e2e",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@digitalroute/cz-conventional-changelog-for-jira": "8.0.1",
+    "commitizen": "4.3.0",
+    "dotenv-cli": "7.4.2",
+    "eslint": "^8.57.0",
+    "eslint-config-custom": "workspace:*",
+    "husky": "9.1.6",
+    "lint-staged": "^15.2.7",
+    "turbo": "2.1.2",
+    "vitest": "2.0.5"
+  },
+  "resolutions": {
+    "graphql": "16.9.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/@digitalroute/cz-conventional-changelog-for-jira",
+      "jiraPrefix": "MS",
+      "jiraOptional": false,
+      "jiraLocation": "pre-type",
+      "jiraPrepend": "[",
+      "jiraAppend": "]",
+      "disableScopeLowerCase": true,
+      "disableSubjectLowerCase": true,
+      "skipBreaking": true,
+      "skipDescription": true,
+      "maxHeaderWidth": 150
+    }
+  }
+}

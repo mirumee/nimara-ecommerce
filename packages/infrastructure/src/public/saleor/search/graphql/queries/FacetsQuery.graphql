@@ -1,0 +1,52 @@
+query FacetsQuery(
+  $choicesAfter: String
+  $choicesBefore: String
+  $channel: String
+  $choicesLast: Int
+  $attributesSortBy: AttributeSortingInput
+  $languageCode: LanguageCodeEnum!
+  $attributesPerPage: Int = 100
+  $choicesFirst: Int = 10
+) {
+  attributes(
+    first: $attributesPerPage
+    filter: { filterableInStorefront: true, type: PRODUCT_TYPE }
+    channel: $channel
+    sortBy: $attributesSortBy
+  ) {
+    edges {
+      node {
+        name
+        translation(languageCode: $languageCode) {
+          name
+        }
+        slug
+        inputType
+        withChoices
+        choices(
+          first: $choicesFirst
+          after: $choicesAfter
+          before: $choicesBefore
+          last: $choicesLast
+        ) {
+          edges {
+            node {
+              name
+              translation(languageCode: $languageCode) {
+                name
+              }
+              slug
+            }
+          }
+          totalCount
+          pageInfo {
+            startCursor
+            hasPreviousPage
+            hasNextPage
+            endCursor
+          }
+        }
+      }
+    }
+  }
+}

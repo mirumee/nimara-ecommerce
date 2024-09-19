@@ -1,0 +1,54 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalEnv": ["NEXT_PUBLIC_SALEOR_API_URL"],
+  "globalPassThroughEnv": [
+    "AUTH_SECRET",
+    "BASE_URL",
+    "SALEOR_APP_TOKEN",
+    "SENTRY_AUTH_TOKEN",
+    "SENTRY_ORG",
+    "SENTRY_PROJECT",
+    "STRIPE_SECRET_KEY",
+    "USER_EMAIL",
+    "USER_PASSWORD"
+  ],
+  "ui": "stream",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^codegen", "^build"],
+      "outputs": [".next/**", "!.next/cache/**"]
+    },
+    "codegen": {
+      "dependsOn": ["^codegen"],
+      "outputs": ["./schema.ts", "./graphql/**"],
+      "inputs": ["../../**/*.graphql"]
+    },
+    "lint": {
+      "dependsOn": ["^lint"]
+    },
+    "lint:staged": {
+      "dependsOn": ["^lint:staged"]
+    },
+    "start": {
+      "dependsOn": ["^codegen", "^start"]
+    },
+    "test": {},
+    "test:watch": {
+      "cache": false,
+      "persistent": true
+    },
+    "test:e2e": {
+      "dependsOn": ["^test:e2e"]
+    },
+    "test:all": {
+      "dependsOn": ["^test:e2e", "^test"]
+    },
+    "install": {
+      "dependsOn": ["^install"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    }
+  }
+}

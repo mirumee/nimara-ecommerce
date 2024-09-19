@@ -1,0 +1,44 @@
+name: Linters & Tests
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+  push:
+    tags:
+      - "*"
+    branches:
+      - develop
+      - staging
+
+jobs:
+  job:
+    name: Linters & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run ESLint
+        run: pnpm eslint --ext ".ts,.tsx" .
+
+      - name: Run Prettier Check
+        run: pnpm prettier --check --config packages/config/src/prettier.config.js .
+
+      - name: Run tests
+        run: pnpm test
