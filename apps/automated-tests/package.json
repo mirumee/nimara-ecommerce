@@ -7,8 +7,8 @@
     "lint:staged": "lint-staged"
   },
   "devDependencies": {
-    "@next/env": "14.2.5",
-    "@playwright/test": "^1.46.1",
+    "@next/env": "14.2.13",
+    "@playwright/test": "^1.47.1",
     "@types/node": "^20.14.12",
     "@nimara/config": "workspace:*",
     "eslint-config-custom": "workspace:*",
