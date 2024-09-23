@@ -43,7 +43,7 @@
     "husky": "9.1.6",
     "lint-staged": "^15.2.7",
     "turbo": "2.1.2",
-    "vitest": "2.0.5"
+    "vitest": "2.1.1"
   },
   "resolutions": {
     "graphql": "16.9.0"
