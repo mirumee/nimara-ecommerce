@@ -7,14 +7,14 @@
 </div>
 
 <div align="center">
-  <strong>Modern and performant e-commerce storefront</strong>
+  <strong>Modern and high-performance e-commerce storefront for multi-region, global brands</strong>
 </div>
 
 <br/>
 
 <div align="center">
 
-[![Nimara Demo](https://img.shields.io/badge/Nimara%20Demo-4CAF50?style=for-the-badge&logo=https://github.com/user-attachments/assets/1cef5626-94f3-4897-be6e-b5d73895b96b&logoWidth=30)](https://nimara-stage.vercel.app/gb)
+[![Nimara Demo](https://img.shields.io/badge/Nimara%20Demo-4CAF50?style=for-the-badge&logo=https://github.com/user-attachments/assets/1cef5626-94f3-4897-be6e-b5d73895b96b&logoWidth=30)](https://nimara.store)
 [![Join Discord](https://img.shields.io/badge/Join%20Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/w4V3PZxGDj)
 [![View Documentation](https://img.shields.io/badge/View%20Docs-24292e?style=for-the-badge&logo=github&logoColor=white)](https://nimara-docs.vercel.app/)
 
@@ -24,21 +24,27 @@
 
 <div align="center">
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fmirumee%2Fnimara-storefront&env=NEXT_PUBLIC_DEFAULT_CHANNEL,NEXT_PUBLIC_SALEOR_API_UR,SALEOR_APP_TOKEN,AUTH_SECRET,NEXT_PUBLIC_STRIPE_PUBLIC_KEY,STRIPE_SECRET_KEY,NEXT_PUBLIC_ENVIRONMENT,NEXT_PUBLIC_PAYMENT_APP_ID&envDescription=Read%20more&envLink=https%3A%2F%2Fnimara-docs.vercel.app%2Fquickstart%2Fstorefront&project-name=nimara&repository-name=nimara&demo-title=Nimara%20&demo-description=A%20modern%20and%20performant%20e-commerce%20storefront&demo-url=https%3A%2F%2Fnimara-stage.vercel.app%2F&demo-image=https%3A%2F%2Fgithub.com%2Fuser-attachments%2Fassets%2F6d2e8f83-ccfc-4f78-a773-fcaee16783d5)</div>
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fmirumee%2Fnimara-ecommerce&env=NEXT_PUBLIC_DEFAULT_CHANNEL,NEXT_PUBLIC_SALEOR_API_URL,SALEOR_APP_TOKEN,AUTH_SECRET,NEXT_PUBLIC_STRIPE_PUBLIC_KEY,STRIPE_SECRET_KEY,NEXT_PUBLIC_ENVIRONMENT,NEXT_PUBLIC_PAYMENT_APP_ID&project-name=my-nimara-storefront)
+
+</div>
 
 <https://github.com/user-attachments/assets/d493ad91-13a9-48e2-9653-eec1b10d5b97>
 
 ## 🚀 Features
 
-- **Headless Architecture:** Built on Saleor, Nimara's headless architecture provides a flexible, easy-to-maintain, and ready-to-deploy solution for online businesses.
+- **Headless Architecture:** Built on top of [Saleor](https://saleor.io/), Nimara's headless architecture provides a flexible, easy-to-maintain, and ready-to-deploy solution for online businesses.
 
-- **Extensibility:** Seamlessly integrate new providers as your business grows, whether it’s payment gateways, shipping services, or other third-party solutions.
+- **Next.js 14:** App router, React Server Components (RSC), Server Actions, Caching and Static Site Generation (SSG) support with Typescript setup.
 
-- **User-Friendly UI**: Intuitive and easy to configure, Nimara's interface simplifies storefront customization and maintenance, reducing ongoing management efforts.
+- **Shadcn UI/Tailwind CSS:** Nimara's UI uses [Shadcn UI](https://shadcn.com/ui) and [Tailwind CSS](https://tailwindcss.com/), providing a modern and customizable design system.
 
-- **Ready for Deployment:** Nimara is ready to deploy from day one, enabling quick launches with minimal setup.
+- **Turborepo:** Nimara's monorepo is powered by [Turborepo](https://turbo.build/repo/docs/getting-started/introduction), a fast and scalable build system for monorepos. Automated tests with [Playwright](https://playwright.dev/), [Storybook](https://storybook.js.org/) for UI development, and setup for [Docs](https://nextra.site/) are included.
 
-- **Cost-Effective Development:** Designed to minimize development costs while ensuring high performance, Nimara makes efficient use of modern tech stacks.
+- **Stripe Integration:** Nimara's storefront uses Stripe [Payment Element](https://docs.stripe.com/payments/payment-element) for secure payment processing.
+
+- **Customizable infrastructure:** Nimara's infrastructure is highly customizable, allowing you to tailor it to your specific needs and requirements. Extend it by providing the setup to any third-party service.
+
+- **Tooling included:** Comes with ESLint, Prettier, Husky, Lint Staged, and Codegen preconfigured.
 
 ## 🔧 Prerequisites
 
@@ -84,14 +90,14 @@ The app is now running at `http://localhost:3000`.
 
 ## ❤️ Community & Contribution
 
-Join Nimara community on [GitHub Discussions](https://github.com/mirumee/nimara-storefront/discussions) and [Discord server](https://discord.gg/w4V3PZxGDj). You can ask questions, report bugs, participate in discussions, share ideas or make feature requests.
+Join Nimara community on [GitHub Discussions](https://github.com/mirumee/nimara-ecommerce/discussions) and [Discord server](https://discord.gg/w4V3PZxGDj). You can ask questions, report bugs, participate in discussions, share ideas or make feature requests.
 
 You can also contribute to Nimara in various ways:
 
-- Report [issues](https://github.com/mirumee/nimara/issues/new?assignees=srinivaspendem%2Cpushya22&labels=%F0%9F%90%9Bbug&projects=&template=--bug-report.yaml&title=%5Bbug%5D%3A+) and suggest [new features](https://github.com/mirumee/nimara/issues/new?assignees=srinivaspendem%2Cpushya22&labels=%E2%9C%A8feature&projects=&template=--feature-request.yaml&title=%5Bfeature%5D%3A+).
-- Review [documentation](https://nimara-docs.vercel.app/) and submit [pull requests](https://github.com/mirumee/nimara-storefront)—whether it's fixing typos or adding new features.
+- Report [issues](https://github.com/mirumee/nimara-ecommerce/issues/new?assignees=srinivaspendem%2Cpushya22&labels=%F0%9F%90%9Bbug&projects=&template=--bug-report.yaml&title=%5Bbug%5D%3A+) and suggest [new features](https://github.com/mirumee/nimara-ecommerce/issues/new?assignees=srinivaspendem%2Cpushya22&labels=%E2%9C%A8feature&projects=&template=--feature-request.yaml&title=%5Bfeature%5D%3A+).
+- Review [documentation](https://nimara-docs.vercel.app/) and submit [pull requests](https://github.com/mirumee/nimara-ecommerce/pulls)—whether it's fixing typos or adding new features.
 - Share your experiences or projects related to Nimara with the broader community through talks or blog posts.
-- Support [popular feature requests](https://github.com/mirumee/nimara-storefront/issues?q=sort%3Aupdated-desc+is%3Aissue+is%3Aopen) by upvoting them.
+- Support [popular feature requests](https://github.com/mirumee/nimara-ecommerce/issues?q=sort%3Aupdated-desc+is%3Aissue+is%3Aopen) by upvoting them.
 
 ### This wouldn't have been possible without your support
 
