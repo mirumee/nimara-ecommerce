@@ -37,7 +37,7 @@
     "date-fns": "^2.30.0",
     "editorjs-html": "3.4.3",
     "embla-carousel-react": "8.0.0-rc22",
-    "eslint": "^8.57.0",
+    "eslint": "^9.11.1",
     "lint-staged": "latest",
     "lucide-react": "^0.368.0",
     "prettier": "3.3.3",
