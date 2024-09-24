@@ -36,7 +36,7 @@
     "react-error-boundary": "4.0.13",
     "react-hook-form": "7.51.5",
     "schema-dts": "1.1.2",
-    "tailwind-merge": "2.0.0",
+    "tailwind-merge": "2.5.2",
     "tailwindcss-animate": "1.0.7",
     "ts-import": "5.0.0-beta.0",
     "ts-invariant": "0.10.3",
