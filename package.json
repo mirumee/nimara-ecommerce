@@ -35,7 +35,6 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "@digitalroute/cz-conventional-changelog-for-jira": "8.0.1",
     "commitizen": "4.3.0",
     "dotenv-cli": "7.4.2",
     "eslint": "^8.57.0",
@@ -50,16 +49,9 @@
   },
   "config": {
     "commitizen": {
-      "path": "./node_modules/@digitalroute/cz-conventional-changelog-for-jira",
-      "jiraPrefix": "MS",
-      "jiraOptional": false,
-      "jiraLocation": "pre-type",
-      "jiraPrepend": "[",
-      "jiraAppend": "]",
+      "path": "cz-conventional-changelog",
       "disableScopeLowerCase": true,
       "disableSubjectLowerCase": true,
-      "skipBreaking": true,
-      "skipDescription": true,
       "maxHeaderWidth": 150
     }
   }

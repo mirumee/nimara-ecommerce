@@ -7,7 +7,7 @@ updates:
       day: "monday"
       time: "10:00"
     commit-message:
-      prefix: "[MS-317] chore(deps)"
+      prefix: "chore(deps)"
     groups:
       production-dependencies:
         dependency-type: "production"

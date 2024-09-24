@@ -1,7 +1,3 @@
-Resolves:
-
-- [MS-XXX](https://mirumee.atlassian.net/browse/MS-XXX)
-
 I want to merge this change because...
 
 <!-- Please mention all relevant issue numbers. -->
