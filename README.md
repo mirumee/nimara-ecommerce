@@ -95,8 +95,8 @@ You can also contribute to Nimara in various ways:
 
 ### This wouldn't have been possible without your support
 
-<a href="https://github.com/mirumee/nimara/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=mirumee/nimara" />
+<a href="https://github.com/mirumee/nimara-ecommerce/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=mirumee/nimara-ecommerce" />
 </a>
 
 <br/>
