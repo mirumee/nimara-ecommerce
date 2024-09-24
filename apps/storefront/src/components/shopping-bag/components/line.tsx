@@ -1,16 +1,26 @@
 "use client";
 
 import { useDebounce } from "@uidotdev/usehooks";
-import { AlertCircle, X } from "lucide-react";
+import { AlertCircle, CheckIcon, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
+import { useWindowSize } from "usehooks-ts";
 
 import type { Line as LineType } from "@nimara/domain/objects/common";
 import { Button } from "@nimara/ui/components/button";
 import { Input } from "@nimara/ui/components/input";
 import { Label } from "@nimara/ui/components/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@nimara/ui/components/select";
+import { Sheet, SheetContent } from "@nimara/ui/components/sheet";
+import { screenSizes } from "@nimara/ui/consts";
 import { cn } from "@nimara/ui/lib/utils";
 
 import { ProductImagePlaceholder } from "@/components/product-image-placeholder";
@@ -45,7 +55,10 @@ export const Line = ({
   isOutOfStock = false,
 }: LineProps) => {
   const [value, setValue] = useState(quantity.toString());
+  const [isOpen, setIsOpen] = useState(false);
   const [showMaxQuantityWarning, setShowMaxQuantityWarning] = useState(false);
+  const { width } = useWindowSize();
+  const isSmDown = width && width < screenSizes.sm;
 
   const t = useTranslations();
   const formatter = useLocalizedFormatter();
@@ -53,6 +66,16 @@ export const Line = ({
 
   const name = `${product.name} • ${variant.name}`;
   const href = paths.products.asPath({ slug: product.slug, hash: variant.id });
+
+  const handleLineDelete = async () => {
+    await onLineDelete?.(id);
+  };
+
+  const handleQuantityChange = (qty: number) => {
+    setValue(qty.toString());
+    void onLineQuantityChange?.(id, qty);
+    setIsOpen(false);
+  };
 
   useEffect(() => {
     if (value === quantity.toString()) {
@@ -81,9 +104,11 @@ export const Line = ({
     void onLineQuantityChange?.(id, qty);
   }, [inputValue]);
 
-  const handleLineDelete = async () => {
-    await onLineDelete?.(id);
-  };
+  useEffect(() => {
+    if (isOpen && !isSmDown) {
+      setIsOpen(false);
+    }
+  }, [width]);
 
   return (
     <div className="grid grid-cols-12 grid-rows-2 items-start gap-2 md:grid-rows-1 md:items-center [&>*]:transition-colors">
@@ -123,7 +148,7 @@ export const Line = ({
         </Link>
       </div>
 
-      <div className="col-span-5 row-span-2 flex items-center gap-2 md:col-span-2 md:row-span-1">
+      <div className="col-span-5 row-span-2 flex hidden items-center gap-2 md:col-span-2 md:row-span-1 md:flex">
         {isLineEditable ? (
           <>
             <Label
@@ -151,6 +176,80 @@ export const Line = ({
           <p className="text-sm text-stone-400">
             {t("common.qty")}: {value}
           </p>
+        )}
+      </div>
+
+      <div className="col-span-5 row-span-2 flex items-center gap-2 md:col-span-2 md:row-span-1 md:hidden">
+        {isLineEditable && (
+          <>
+            <Sheet open={isOpen} onOpenChange={setIsOpen}>
+              <SheetContent
+                side="bottom"
+                className="max-h-[60vh] overflow-y-auto"
+              >
+                <ul>
+                  {Array.from(
+                    { length: variant.maxQuantity },
+                    (_, i) => i + 1,
+                  ).map((qty) => (
+                    <li
+                      key={id}
+                      className="flex cursor-pointer"
+                      onClick={() => {
+                        handleQuantityChange(qty);
+                        setIsOpen(false);
+                      }}
+                    >
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start p-1.5"
+                      >
+                        <CheckIcon
+                          className={cn("invisible mr-2 h-auto w-[20px]", {
+                            visible: qty === quantity,
+                          })}
+                        />
+                        {qty}
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              </SheetContent>
+            </Sheet>
+
+            <Label
+              className={cn(isOutOfStock ? "text-stone-400" : "text-stone-900")}
+              htmlFor={`${id}:qty`}
+            >
+              {t("common.qty")}
+            </Label>
+            <Select
+              disabled={isDisabled}
+              open={isOpen}
+              onValueChange={(qty) => handleQuantityChange(Number(qty))}
+              onOpenChange={() => setIsOpen(true)}
+              value={value}
+              aria-expanded={isOpen}
+              aria-controls="qty-select-options"
+            >
+              <SelectTrigger
+                className="w-auto gap-1 px-2"
+                aria-labelledby={`${id}:qty`}
+              >
+                <SelectValue placeholder={t("common.qty")} />
+              </SelectTrigger>
+              <SelectContent className="overflow-y-auto">
+                {Array.from(
+                  { length: variant.maxQuantity },
+                  (_, i) => i + 1,
+                ).map((qty) => (
+                  <SelectItem key={id} value={qty.toString()}>
+                    {qty}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </>
         )}
       </div>
 
