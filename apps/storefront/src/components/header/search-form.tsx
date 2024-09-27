@@ -127,6 +127,14 @@ export const SearchForm = () => {
     }
   };
 
+  const handleSearchIconClick = () => {
+    if (isNoOptionHighlighted || isLastOptionHighlighted) {
+      router.push(paths.search.asPath({ query: { q: inputValue } }));
+
+      return;
+    }
+  };
+
   useClickAnyWhere(() =>
     setSearchState((prevState) => ({ ...prevState, showOptions: false })),
   );
@@ -173,7 +181,8 @@ export const SearchForm = () => {
               size="icon"
               type="submit"
               variant="outline"
-              onClick={() => resetSearchState()}
+              className="cursor-pointer"
+              onClick={handleSearchIconClick}
             >
               {isLoading ? (
                 <Spinner size={16} />
