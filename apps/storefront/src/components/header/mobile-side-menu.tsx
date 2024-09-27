@@ -13,6 +13,7 @@ import { Sheet, SheetContent } from "@nimara/ui/components/sheet";
 
 import { MobileNavigation } from "@/components/mobile-navigation";
 import { paths } from "@/lib/paths";
+import { cn } from "@/lib/utils";
 import { useCurrentRegion } from "@/regions/client";
 
 import { LocaleSwitch } from "../locale-switch";
@@ -58,9 +59,12 @@ export const MobileSideMenu = ({
           <div className="relative flex h-full flex-col justify-between gap-4 overflow-auto">
             <div className="flex h-full flex-col">
               <div
-                className={`flex w-full items-center justify-between gap-4 pb-4 sm:hidden ${
-                  checkoutLinesCount && "mt-2"
-                }`}
+                className={cn(
+                  "flex w-full items-center justify-between gap-4 pb-4 sm:hidden",
+                  {
+                    "mt-2": checkoutLinesCount,
+                  },
+                )}
               >
                 <Logo />
                 <div className="flex justify-end gap-1 align-middle">
