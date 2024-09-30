@@ -20,6 +20,16 @@ export async function generateMetadata(_params: {
   return {
     title: t("title"),
     description: t("description"),
+    openGraph: {
+      images: [
+        {
+          url: "/og-hp.png",
+          width: 1200,
+          height: 630,
+          alt: t("homepage-preview"),
+        },
+      ],
+    },
   };
 }
 
