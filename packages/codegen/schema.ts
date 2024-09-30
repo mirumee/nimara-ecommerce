@@ -14838,7 +14838,7 @@ export type MutationTransactionCreateArgs = {
 
 
 export type MutationTransactionEventReportArgs = {
-  amount: Scalars['PositiveDecimal']['input'];
+  amount?: InputMaybe<Scalars['PositiveDecimal']['input']>;
   availableActions?: InputMaybe<Array<TransactionActionEnum>>;
   externalUrl?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['ID']['input']>;
@@ -28600,7 +28600,8 @@ export type TransactionEventReportErrorCode =
   | 'GRAPHQL_ERROR'
   | 'INCORRECT_DETAILS'
   | 'INVALID'
-  | 'NOT_FOUND';
+  | 'NOT_FOUND'
+  | 'REQUIRED';
 
 /**
  * Represents possible event types.

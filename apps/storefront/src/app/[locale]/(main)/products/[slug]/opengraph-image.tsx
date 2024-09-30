@@ -1,5 +1,7 @@
+/* eslint-disable @next/next/no-img-element */
 import { ImageResponse } from "next/og";
 
+import { ReactComponent as NimaraLogo } from "@/assets/nimara-logo.svg";
 import { CACHE_TTL } from "@/config";
 import { clientEnvs } from "@/envs/client";
 import { getCurrentRegion } from "@/regions/server";
@@ -47,16 +49,39 @@ export default async function Image({
 
   return new ImageResponse(
     (
-      <div tw="flex w-full h-full items-center justify-center bg-neutral-100">
-        <div style={{ display: "flex" }}>
-          <div
+      <div
+        tw="flex w-full h-full"
+        style={{
+          display: "flex",
+          width: "100%",
+          height: "100%",
+        }}
+      >
+        <div
+          style={{
+            width: "50%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <NimaraLogo width={276} height={56} />
+        </div>
+        <div
+          style={{
+            width: "50%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <img
+            src={data?.product?.images[0]?.url}
+            alt={data?.product?.name}
             style={{
-              backgroundImage: `url(${data?.product?.images[0]?.url})`,
-              height: "630px",
-              width: "630px",
-              backgroundRepeat: "no-repeat",
-              backgroundPosition: "center",
-              backgroundSize: "contain",
+              maxWidth: "100%",
+              maxHeight: "100%",
+              objectFit: "contain",
             }}
           />
         </div>

@@ -31,6 +31,16 @@ export async function generateMetadata({ searchParams }: PageProps) {
     title: searchParams.q
       ? t("search-for", { query: searchParams.q })
       : t("search-results"),
+    openGraph: {
+      images: [
+        {
+          url: "/og-hp.png",
+          width: 1200,
+          height: 630,
+          alt: t("search-preview"),
+        },
+      ],
+    },
   };
 }
 
