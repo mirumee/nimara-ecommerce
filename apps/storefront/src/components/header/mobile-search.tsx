@@ -1,7 +1,7 @@
 "use client";
 
 import { Search } from "lucide-react";
-import { useParams, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
@@ -14,12 +14,15 @@ export const MobileSearch = () => {
   const t = useTranslations("search");
 
   const pathname = usePathname();
-  const params = useParams();
   const [isOpen, setIsOpen] = useState(false);
+
+  const handleCloseSheet = () => {
+    setIsOpen(false);
+  };
 
   useEffect(() => {
     setIsOpen(false);
-  }, [pathname, params]);
+  }, [pathname]);
 
   return (
     <>
@@ -38,8 +41,8 @@ export const MobileSearch = () => {
         aria-label={t("search-label")}
         modal={true}
       >
-        <SheetContent side="top">
-          <SearchForm />
+        <SheetContent side="top" closeClassName="right-2 top-2">
+          <SearchForm onSubmit={handleCloseSheet} />
         </SheetContent>
       </Sheet>
     </>

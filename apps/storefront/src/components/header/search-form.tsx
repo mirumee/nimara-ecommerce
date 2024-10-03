@@ -54,7 +54,7 @@ const initialSearchState: SearchState = {
   showOptions: false,
 };
 
-export const SearchForm = () => {
+export const SearchForm = ({ onSubmit }: { onSubmit?: () => void }) => {
   const ts = useTranslations("search");
   const tc = useTranslations("common");
 
@@ -85,6 +85,9 @@ export const SearchForm = () => {
     if (event.code === keyboardCodes.Enter) {
       event.preventDefault();
       resetSearchState();
+      if (onSubmit) {
+        onSubmit();
+      }
 
       // Handle query search
       if (isNoOptionHighlighted || isLastOptionHighlighted) {
@@ -124,6 +127,15 @@ export const SearchForm = () => {
         ...state,
         highlightedOptionIndex: nextIndex,
       }));
+    }
+  };
+
+  const handleSearchIconClick = () => {
+    if (isNoOptionHighlighted || isLastOptionHighlighted) {
+      router.push(paths.search.asPath({ query: { q: inputValue } }));
+      resetSearchState();
+
+      return;
     }
   };
 
@@ -173,7 +185,8 @@ export const SearchForm = () => {
               size="icon"
               type="submit"
               variant="outline"
-              onClick={() => resetSearchState()}
+              className="cursor-pointer"
+              onClick={handleSearchIconClick}
             >
               {isLoading ? (
                 <Spinner size={16} />
