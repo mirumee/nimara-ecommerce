@@ -1,11 +1,12 @@
-import { type Attribute } from "./Attribute";
-import { type Price } from "./common";
-
+import type { OrderStatus } from "../../../codegen/schema";
+import type { Attribute } from "./Attribute";
+import type { Price } from "./common";
 export interface Order {
   created: string;
   id: string;
   lines: OrderLine[];
   number: string;
+  status: OrderStatus;
   total: Price;
 }
 

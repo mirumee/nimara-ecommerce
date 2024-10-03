@@ -327,7 +327,10 @@
     "order-number": "Order number",
     "total": "Total",
     "date-ordered": "Date ordered",
-    "return-products": "Return products"
+    "return-products": "Return products",
+    "make-return": "Make return",
+    "order-status": "Order status",
+    "select-at-least-one-product": "Select-at-least-one-product."
   },
   "footer": {
     "made-with": "Made with ❤\uFE0F by Mirumee",
