@@ -16,6 +16,10 @@ export const MobileSearch = () => {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
+  const handleCloseSheet = () => {
+    setIsOpen(false);
+  };
+
   useEffect(() => {
     setIsOpen(false);
   }, [pathname]);
@@ -38,7 +42,7 @@ export const MobileSearch = () => {
         modal={true}
       >
         <SheetContent side="top" closeClassName="right-2 top-2">
-          <SearchForm />
+          <SearchForm onSubmit={handleCloseSheet} />
         </SheetContent>
       </Sheet>
     </>
