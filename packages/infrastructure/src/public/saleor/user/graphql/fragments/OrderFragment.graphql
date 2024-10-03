@@ -9,4 +9,5 @@ fragment OrderFragment on Order {
   }
   number
   displayGrossPrices
+  status
 }
