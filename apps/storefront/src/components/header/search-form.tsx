@@ -54,7 +54,7 @@ const initialSearchState: SearchState = {
   showOptions: false,
 };
 
-export const SearchForm = ({ onSubmit }: { onSubmit: () => void }) => {
+export const SearchForm = ({ onSubmit }: { onSubmit?: () => void }) => {
   const ts = useTranslations("search");
   const tc = useTranslations("common");
 
@@ -85,7 +85,9 @@ export const SearchForm = ({ onSubmit }: { onSubmit: () => void }) => {
     if (event.code === keyboardCodes.Enter) {
       event.preventDefault();
       resetSearchState();
-      onSubmit();
+      if (onSubmit) {
+        onSubmit();
+      }
 
       // Handle query search
       if (isNoOptionHighlighted || isLastOptionHighlighted) {
