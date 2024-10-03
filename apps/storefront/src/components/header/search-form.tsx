@@ -54,7 +54,7 @@ const initialSearchState: SearchState = {
   showOptions: false,
 };
 
-export const SearchForm = () => {
+export const SearchForm = ({ onSubmit }: { onSubmit: () => void }) => {
   const ts = useTranslations("search");
   const tc = useTranslations("common");
 
@@ -85,6 +85,7 @@ export const SearchForm = () => {
     if (event.code === keyboardCodes.Enter) {
       event.preventDefault();
       resetSearchState();
+      onSubmit();
 
       // Handle query search
       if (isNoOptionHighlighted || isLastOptionHighlighted) {
@@ -130,6 +131,7 @@ export const SearchForm = () => {
   const handleSearchIconClick = () => {
     if (isNoOptionHighlighted || isLastOptionHighlighted) {
       router.push(paths.search.asPath({ query: { q: inputValue } }));
+      resetSearchState();
 
       return;
     }
