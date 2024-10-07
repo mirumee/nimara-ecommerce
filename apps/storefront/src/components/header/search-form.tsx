@@ -130,13 +130,13 @@ export const SearchForm = ({ onSubmit }: { onSubmit?: () => void }) => {
     }
   };
 
-  const handleSearchIconClick = () => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
     if (isNoOptionHighlighted || isLastOptionHighlighted) {
       router.push(paths.search.asPath({ query: { q: inputValue } }));
-      resetSearchState();
-
-      return;
     }
+    resetSearchState();
   };
 
   useClickAnyWhere(() =>
@@ -176,6 +176,7 @@ export const SearchForm = ({ onSubmit }: { onSubmit?: () => void }) => {
       action={performSearch}
       aria-label={ts("site-wide-search-form")}
       role="search"
+      onSubmit={handleSubmit}
     >
       <Combobox className="z-50">
         <ComboboxInput
@@ -186,7 +187,6 @@ export const SearchForm = ({ onSubmit }: { onSubmit?: () => void }) => {
               type="submit"
               variant="outline"
               className="cursor-pointer"
-              onClick={handleSearchIconClick}
             >
               {isLoading ? (
                 <Spinner size={16} />
