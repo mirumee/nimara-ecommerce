@@ -195,22 +195,6 @@ export default async function Page({
           </div>
         ),
       )}
-      <AddNewAddressModal
-        addressFormRows={addressFormRows}
-        countries={countries}
-        countryCode={countryCode}
-      >
-        <Button
-          asChild
-          variant="outline"
-          className="mt-4 flex items-center gap-1 sm:hidden"
-        >
-          <Link href={paths.account.addresses.asPath()}>
-            <PlusIcon className="h-4 w-4" />
-            {t("address.add-new-address")}
-          </Link>
-        </Button>
-      </AddNewAddressModal>
     </div>
   );
 }
