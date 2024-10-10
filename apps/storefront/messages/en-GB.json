@@ -330,8 +330,11 @@
     "return-products": "Return products"
   },
   "footer": {
-    "made-with": "Made with ❤\uFE0F by Mirumee",
-    "rights-claim": "All rights reserved"
+    "made-with": "Made with ❤\uFE0F by <link>Mirumee</link>",
+    "open-source": "<link>An open-source storefront for everyone</link>",
+    "demo-version": "<link>This is the demo version of Nimara Store.</link>",
+    "our-products": "Our products",
+    "help": "Help"
   },
   "static-pages": {
     "contact": "Contact",
