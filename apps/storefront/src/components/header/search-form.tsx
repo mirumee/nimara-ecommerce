@@ -136,6 +136,10 @@ export const SearchForm = ({ onSubmit }: { onSubmit?: () => void }) => {
     if (isNoOptionHighlighted || isLastOptionHighlighted) {
       router.push(paths.search.asPath({ query: { q: inputValue } }));
     }
+
+    if (onSubmit) {
+      onSubmit();
+    }
     resetSearchState();
   };
 
