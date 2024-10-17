@@ -30,7 +30,7 @@
 
 <https://github.com/user-attachments/assets/d493ad91-13a9-48e2-9653-eec1b10d5b97>
 
-## 🚀 Features
+## 🚀 Featuress
 
 - **Headless Architecture:** Built on top of [Saleor](https://saleor.io/), Nimara's headless architecture provides a flexible, easy-to-maintain, and ready-to-deploy solution for online businesses.
 
