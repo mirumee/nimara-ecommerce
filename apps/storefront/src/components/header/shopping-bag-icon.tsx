@@ -1,12 +1,12 @@
 "use client";
 
 import { ShoppingBag } from "lucide-react";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import type { PropsWithChildren } from "react";
 
 import { Button } from "@nimara/ui/components/button";
 
+import { Link } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 
 interface ShoppingBagIconProps extends PropsWithChildren {

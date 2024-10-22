@@ -1,7 +1,8 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+
+import { useRouter } from "@/i18n/routing";
 
 export const useRouterWithState = () => {
   const router = useRouter();

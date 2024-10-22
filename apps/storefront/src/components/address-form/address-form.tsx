@@ -1,6 +1,5 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
@@ -11,6 +10,8 @@ import {
   type AddressFormRow,
   type FieldType,
 } from "@nimara/domain/objects/AddressForm";
+
+import { usePathname, useRouter } from "@/i18n/routing";
 
 import { AddressFormGenerator } from "./address-form-generator";
 

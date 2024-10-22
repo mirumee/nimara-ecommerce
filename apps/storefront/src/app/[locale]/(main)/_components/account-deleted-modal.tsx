@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
@@ -15,6 +14,7 @@ import {
 } from "@nimara/ui/components/dialog";
 
 import { clientEnvs } from "@/envs/client";
+import { Link } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 
 export function AccountDeletedModal({ open }: { open: boolean }) {

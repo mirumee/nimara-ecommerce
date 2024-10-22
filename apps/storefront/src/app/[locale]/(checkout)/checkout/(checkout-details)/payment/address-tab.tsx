@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useFormContext } from "react-hook-form";
 
@@ -17,6 +16,7 @@ import {
 import { AddressForm } from "@/components/address-form/address-form";
 import { CheckboxField } from "@/components/form/checkbox-field";
 import { RadioFormGroup } from "@/components/form/radio-form-group";
+import { useRouter } from "@/i18n/routing";
 import { addressToSchema, displayFormattedAddressLines } from "@/lib/address";
 import type { FormattedAddress } from "@/lib/checkout";
 import { paths } from "@/lib/paths";

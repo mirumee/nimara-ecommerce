@@ -1,5 +1,4 @@
 import { ArrowRight } from "lucide-react";
-import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
 import type { Attribute } from "@nimara/domain/objects/Attribute";
@@ -12,6 +11,7 @@ import {
 } from "@nimara/ui/components/carousel";
 
 import { SearchProductCard } from "@/components/search-product-card";
+import { Link } from "@/i18n/routing";
 import { getAttributes } from "@/lib/helpers";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
