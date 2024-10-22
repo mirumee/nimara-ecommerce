@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import { ImageResponse } from "next/og";
 
 import { ReactComponent as NimaraLogo } from "@/assets/nimara-logo.svg";
@@ -75,6 +74,7 @@ export default async function Image({
             justifyContent: "center",
           }}
         >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={data?.product?.images[0]?.url}
             alt={data?.product?.name}
