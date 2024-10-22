@@ -1,10 +1,10 @@
 import { ArrowRight } from "lucide-react";
-import Link from "next/link";
 
 import type { Attribute } from "@nimara/domain/objects/Attribute";
 import type { SearchContext } from "@nimara/infrastructure/use-cases/search/types";
 import { Button } from "@nimara/ui/components/button";
 
+import { Link } from "@/i18n/routing";
 import { getAttributes } from "@/lib/helpers";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";

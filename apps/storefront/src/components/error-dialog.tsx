@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 
 import { type Checkout } from "@nimara/domain/objects/Checkout";
@@ -16,6 +15,7 @@ import {
 } from "@nimara/ui/components/dialog";
 
 import { Line } from "@/components/shopping-bag/components/line";
+import { Link } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 
 type ErrorDialogProps = {

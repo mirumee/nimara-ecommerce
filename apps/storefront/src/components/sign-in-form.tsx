@@ -1,7 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect } from "react";
@@ -12,6 +11,7 @@ import { Form } from "@nimara/ui/components/form";
 import { useToast } from "@nimara/ui/hooks";
 
 import { TextFormField } from "@/components/form/text-form-field";
+import { Link } from "@/i18n/routing";
 import { login } from "@/lib/actions/login";
 import { useRouterWithState } from "@/lib/hooks";
 import { paths } from "@/lib/paths";

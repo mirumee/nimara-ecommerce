@@ -1,12 +1,12 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useInterval } from "usehooks-ts";
 
 import { Spinner } from "@nimara/ui/components/spinner";
 
+import { useRouter } from "@/i18n/routing";
 import type { TranslationMessage } from "@/types";
 
 export const ProcessingInfo = ({

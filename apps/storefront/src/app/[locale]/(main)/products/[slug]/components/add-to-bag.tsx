@@ -1,7 +1,6 @@
 "use client";
 
 import { PlusCircle } from "lucide-react";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useCallback, useRef, useState } from "react";
 
@@ -12,6 +11,7 @@ import { ToastAction } from "@nimara/ui/components/toast";
 import { useToast } from "@nimara/ui/hooks";
 
 import { clientEnvs } from "@/envs/client";
+import { Link } from "@/i18n/routing";
 import { revalidateCart, setCheckoutIdCookie } from "@/lib/actions/cart";
 import { paths } from "@/lib/paths";
 import { cn } from "@/lib/utils";

@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
@@ -15,6 +14,7 @@ import {
   TabsTrigger,
 } from "@nimara/ui/components/tabs";
 
+import { useRouter } from "@/i18n/routing";
 import type { FormattedAddress } from "@/lib/checkout";
 import { paths } from "@/lib/paths";
 

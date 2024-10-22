@@ -1,7 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 
@@ -11,6 +10,7 @@ import { Spinner } from "@nimara/ui/components/spinner";
 
 import { TextFormField } from "@/components/form/text-form-field";
 import { MIN_PASSWORD_LENGTH } from "@/config";
+import { Link } from "@/i18n/routing";
 import { useRouterWithState } from "@/lib/hooks";
 import { paths } from "@/lib/paths";
 import { type TranslationMessage } from "@/types";

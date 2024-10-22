@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
@@ -18,6 +17,7 @@ import {
 } from "@nimara/ui/components/dialog";
 import { Spinner } from "@nimara/ui/components/spinner";
 
+import { useRouter } from "@/i18n/routing";
 import { delay } from "@/lib/core";
 import { formatPaymentMethod } from "@/lib/payment";
 import { type TranslationMessage } from "@/types";

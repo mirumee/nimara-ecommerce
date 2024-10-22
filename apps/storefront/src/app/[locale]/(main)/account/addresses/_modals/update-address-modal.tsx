@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { type ReactNode, useState } from "react";
 
@@ -19,6 +19,8 @@ import {
 } from "@nimara/ui/components/dialog";
 import { Spinner } from "@nimara/ui/components/spinner";
 import { useToast } from "@nimara/ui/hooks";
+
+import { usePathname, useRouter } from "@/i18n/routing";
 
 import { deleteAddress } from "../_forms/actions";
 import { EditAddressForm } from "../_forms/update-address-form";
