@@ -1,8 +1,6 @@
 "use client";
 
 import { MenuIcon, ShoppingBagIcon, User as UserIcon } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Suspense, useEffect, useState } from "react";
 
@@ -12,6 +10,7 @@ import { Button } from "@nimara/ui/components/button";
 import { Sheet, SheetContent } from "@nimara/ui/components/sheet";
 
 import { MobileNavigation } from "@/components/mobile-navigation";
+import { Link, usePathname } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 import { cn } from "@/lib/utils";
 import { useCurrentRegion } from "@/regions/client";

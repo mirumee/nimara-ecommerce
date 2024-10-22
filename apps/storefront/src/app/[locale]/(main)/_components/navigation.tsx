@@ -1,8 +1,5 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-
 import { type Menu } from "@nimara/domain/objects/Menu";
 import {
   NavigationMenu,
@@ -13,6 +10,7 @@ import {
   NavigationMenuTrigger,
 } from "@nimara/ui/components/navigation-menu";
 
+import { Link, useRouter } from "@/i18n/routing";
 import { generateLinkUrl } from "@/lib/helpers";
 import { paths } from "@/lib/paths";
 import type { Maybe } from "@/lib/types";

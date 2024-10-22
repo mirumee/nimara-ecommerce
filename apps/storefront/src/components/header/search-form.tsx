@@ -2,8 +2,6 @@
 
 import { useDebounce } from "@uidotdev/usehooks";
 import { Search } from "lucide-react";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
   type KeyboardEventHandler,
@@ -25,6 +23,7 @@ import {
 import { Spinner } from "@nimara/ui/components/spinner";
 
 import { DEFAULT_DEBOUNCE_TIME_IN_MS } from "@/config";
+import { Link, usePathname, useRouter } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { searchService } from "@/services/search";

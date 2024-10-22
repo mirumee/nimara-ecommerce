@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 
 import { ReactComponent as NimaraLogo } from "@/assets/nimara-logo.svg";
+import { Link } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 
 export const Logo = () => {

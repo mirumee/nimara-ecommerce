@@ -1,5 +1,4 @@
 import { PlusIcon } from "lucide-react";
-import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
 import type { CountryCode } from "@nimara/codegen/schema";
@@ -7,6 +6,7 @@ import type { Address } from "@nimara/domain/objects/Address";
 import { Button } from "@nimara/ui/components/button";
 
 import { getAccessToken } from "@/auth";
+import { Link } from "@/i18n/routing";
 import { displayFormattedAddressLines } from "@/lib/address";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
