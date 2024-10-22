@@ -1,13 +1,13 @@
 "use client";
 
 import Image, { type ImageProps } from "next/image";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import type { PropsWithChildren } from "react";
 
 import type { SearchProduct } from "@nimara/domain/objects/SearchProduct";
 
 import productPlaceholder from "@/assets/product_placeholder.svg";
+import { Link } from "@/i18n/routing";
 import { useLocalizedFormatter } from "@/lib/formatters/use-localized-formatter";
 import { paths } from "@/lib/paths";
 

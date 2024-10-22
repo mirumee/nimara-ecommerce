@@ -1,6 +1,5 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { type ReactNode, useEffect, useState } from "react";
 
@@ -15,6 +14,7 @@ import {
 import { Label } from "@nimara/ui/components/label";
 import { Spinner } from "@nimara/ui/components/spinner";
 
+import { usePathname } from "@/i18n/routing";
 import { PAYMENT_ELEMENT_ID } from "@/lib/consts";
 import { translateApiErrors } from "@/lib/payment";
 import { cn } from "@/lib/utils";

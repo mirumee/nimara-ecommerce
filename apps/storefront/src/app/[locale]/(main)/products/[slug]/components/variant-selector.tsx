@@ -1,6 +1,5 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
@@ -20,6 +19,7 @@ import {
   ToggleGroupItem,
 } from "@nimara/ui/components/toggle-group";
 
+import { usePathname, useRouter } from "@/i18n/routing";
 import { useLocalizedFormatter } from "@/lib/formatters/use-localized-formatter";
 import { isVariantInStock } from "@/lib/product";
 

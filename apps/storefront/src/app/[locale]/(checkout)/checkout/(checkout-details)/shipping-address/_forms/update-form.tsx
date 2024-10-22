@@ -1,7 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -16,6 +15,7 @@ import { Form } from "@nimara/ui/components/form";
 
 import { AddressForm } from "@/components/address-form/address-form";
 import { addressSchema as formSchema } from "@/components/address-form/schema";
+import { useRouter } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 
 import { updateShippingAddress } from "./actions";

@@ -1,8 +1,8 @@
-import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
 import { ReactComponent as NimaraLogo } from "@/assets/nimara-logo.svg";
 import { CACHE_TTL } from "@/config";
+import { Link } from "@/i18n/routing";
 import { generateLinkUrl } from "@/lib/helpers";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";

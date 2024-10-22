@@ -1,6 +1,5 @@
 import { User } from "lucide-react";
 import { cookies } from "next/headers";
-import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 
@@ -10,6 +9,7 @@ import { getAccessToken } from "@/auth";
 import { LocaleSwitch } from "@/components/locale-switch";
 import { CACHE_TTL, COOKIE_KEY } from "@/config";
 import { clientEnvs } from "@/envs/client";
+import { Link } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { cartService, cmsMenuService, userService } from "@/services";

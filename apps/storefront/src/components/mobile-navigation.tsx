@@ -1,7 +1,6 @@
-import Link from "next/link";
-
 import type { Menu } from "@nimara/domain/objects/Menu";
 
+import { Link } from "@/i18n/routing";
 import { generateLinkUrl, isInternalUrl } from "@/lib/helpers";
 import { paths } from "@/lib/paths";
 import type { Maybe } from "@/lib/types";

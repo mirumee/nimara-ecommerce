@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 
 import { Button } from "@nimara/ui/components/button";
 
+import { Link } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 
 export const EmptyCart = () => {

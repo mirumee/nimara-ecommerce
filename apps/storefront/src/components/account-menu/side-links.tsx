@@ -1,11 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 
 import { cn } from "@nimara/ui/lib/utils";
 
+import { Link, usePathname } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 import { type TranslationMessage } from "@/types";
 

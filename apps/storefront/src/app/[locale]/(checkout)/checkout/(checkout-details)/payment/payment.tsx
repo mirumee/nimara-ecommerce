@@ -2,7 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LockIcon } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { type ReactNode, useEffect, useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
@@ -28,6 +27,7 @@ import { useToast } from "@nimara/ui/hooks";
 import { AddressForm } from "@/components/address-form/address-form";
 import { CheckboxField } from "@/components/form/checkbox-field";
 import { PaymentMethods } from "@/components/payment-methods";
+import { usePathname, useRouter } from "@/i18n/routing";
 import { addressToSchema } from "@/lib/address";
 import type { FormattedAddress } from "@/lib/checkout";
 import { PAYMENT_ELEMENT_ID } from "@/lib/consts";
