@@ -93,7 +93,7 @@ export class CheckoutPage {
   }
 
   async selectDeliveryOption() {
-    await this.page.getByLabel(this.product.deliveryMethod.name).check();
+    await this.page.getByText(this.product.deliveryMethod.name).check();
 
     await this.page.getByRole("button", { name: "Continue" }).click();
     await this.page.waitForURL(URLS().CHECKOUT_PAGE_PAYMENT);
@@ -187,9 +187,17 @@ export class CheckoutPage {
   }
 
   async payAndConfirmOrderAsUser() {
+    const newPaymentMethodTab = this.page.getByText("New method");
     const stripePaymentElement = this.page.frameLocator(
       "[title='Secure payment input frame']",
     );
+
+    if (newPaymentMethodTab) {
+      await newPaymentMethodTab.click();
+      await expect(
+        stripePaymentElement.getByRole("button", { name: "Card" }),
+      ).toBeVisible();
+    }
 
     await stripePaymentElement
       .getByText("Card number")
