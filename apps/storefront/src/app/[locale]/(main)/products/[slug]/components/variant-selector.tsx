@@ -58,7 +58,7 @@ const generateFullAttributeMap = (variants: ProductVariant[]) => {
         type: Attribute["type"];
         values: AttributeValue[];
       }) => {
-        if (slug && values && values.length > 0) {
+        if (slug && values?.length > 0) {
           const attributeMatch = selectionAttributesMap.find(
             (attribute) => attribute.slug === slug,
           );
