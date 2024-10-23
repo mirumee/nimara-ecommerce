@@ -58,7 +58,7 @@ const generateFullAttributeMap = (variants: ProductVariant[]) => {
         type: Attribute["type"];
         values: AttributeValue[];
       }) => {
-        if (slug && values) {
+        if (slug && values?.length > 0) {
           const attributeMatch = selectionAttributesMap.find(
             (attribute) => attribute.slug === slug,
           );
@@ -303,64 +303,62 @@ export const VariantSelector = ({
       <p className="pb-6 pt-2">{getPrice()}</p>
 
       <div className="[&>div]:pb-4" key={selectedVariantId}>
-        {selectionAttributesMap
-          .filter(({ values }) => values.length > 0)
-          .map(({ slug, name, values }, index) => {
-            const arePreviousAttributesSelected =
-              index < selectedAttributes.length + 1;
-            const hasValues = values.length > 0;
+        {selectionAttributesMap.map(({ slug, name, values }, index) => {
+          const arePreviousAttributesSelected =
+            index < selectedAttributes.length + 1;
+          const hasValues = values.length > 0;
 
-            if (!(arePreviousAttributesSelected && hasValues)) {
-              return null;
+          if (!(arePreviousAttributesSelected && hasValues)) {
+            return null;
+          }
+
+          const defaultValue = selectedAttributes.find((val) => {
+            if (val.slug === slug) {
+              return values.some((v) => v.slug === val.value);
             }
 
-            const defaultValue = selectedAttributes.find((val) => {
-              if (val.slug === slug) {
-                return values.some((v) => v.slug === val.value);
-              }
+            return false;
+          })?.value;
 
-              return false;
-            })?.value;
+          return (
+            <div key={slug} className="flex flex-col gap-1.5">
+              <Label id={`label-${slug}`}>{name}</Label>
+              <ToggleGroup
+                type="single"
+                defaultValue={defaultValue}
+                className="grid grid-cols-2 md:grid-cols-3"
+                aria-labelledby={t("products.label-slug", { slug })}
+                onValueChange={(valueSlug) => {
+                  setVariants([]);
+                  setSelectedVariantId("");
+                  setSelectedAttributes((values) => {
+                    if (index < values.length - 1) {
+                      // Undo if someone selects one of the previous attribute.
+                      values.splice(index, values.length - index, {
+                        slug,
+                        value: valueSlug,
+                      });
+                    } else if (valueSlug) {
+                      // Insert new attribute choice.
+                      values.splice(index, 1, { slug, value: valueSlug });
+                    } else {
+                      // Replace current attribute choice.
+                      values.splice(index, 1);
+                    }
 
-            return (
-              <div key={slug} className="flex flex-col gap-1.5">
-                <Label id={`label-${slug}`}>{name}</Label>
-                <ToggleGroup
-                  type="single"
-                  defaultValue={defaultValue}
-                  className="grid grid-cols-2 md:grid-cols-3"
-                  aria-labelledby={t("products.label-slug", { slug })}
-                  onValueChange={(valueSlug) => {
-                    setVariants([]);
-                    setSelectedVariantId("");
-                    setSelectedAttributes((values) => {
-                      if (index < values.length - 1) {
-                        // Undo if someone selects one of the previous attribute.
-                        values.splice(index, values.length - index, {
-                          slug,
-                          value: valueSlug,
-                        });
-                      } else if (valueSlug) {
-                        // Insert new attribute choice.
-                        values.splice(index, 1, { slug, value: valueSlug });
-                      } else {
-                        // Replace current attribute choice.
-                        values.splice(index, 1);
-                      }
-
-                      return [...values];
-                    });
-                  }}
-                >
-                  {values.map(({ slug, name }) => (
-                    <ToggleGroupItem variant="outline" key={slug} value={slug}>
-                      {name}
-                    </ToggleGroupItem>
-                  ))}
-                </ToggleGroup>
-              </div>
-            );
-          })}
+                    return [...values];
+                  });
+                }}
+              >
+                {values.map(({ slug, name }) => (
+                  <ToggleGroupItem variant="outline" key={slug} value={slug}>
+                    {name}
+                  </ToggleGroupItem>
+                ))}
+              </ToggleGroup>
+            </div>
+          );
+        })}
 
         <div className="flex flex-col gap-1.5">
           <VariantDropdown
