@@ -35,5 +35,6 @@ export const searchProductSerializer: SearchProductSerializer = (data) => {
           alt: mediaItem.alt,
         }))
       : null,
+    updatedAt: data.updatedAt,
   });
 };
