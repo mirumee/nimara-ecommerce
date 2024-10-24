@@ -31,7 +31,7 @@ export type SearchProductFragment_Product_pricing_ProductPricingInfo_priceRange_
 
 export type SearchProductFragment_Product_pricing_ProductPricingInfo = { priceRange: SearchProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange | null };
 
-export type SearchProductFragment = { id: string, name: string, slug: string, translation: SearchProductFragment_Product_translation_ProductTranslation | null, thumbnail: SearchProductFragment_Product_thumbnail_Image | null, variants: Array<SearchProductFragment_Product_variants_ProductVariant> | null, media: Array<SearchProductFragment_Product_media_ProductMedia> | null, pricing: SearchProductFragment_Product_pricing_ProductPricingInfo | null };
+export type SearchProductFragment = { id: string, name: string, slug: string, updatedAt: string, translation: SearchProductFragment_Product_translation_ProductTranslation | null, thumbnail: SearchProductFragment_Product_thumbnail_Image | null, variants: Array<SearchProductFragment_Product_variants_ProductVariant> | null, media: Array<SearchProductFragment_Product_media_ProductMedia> | null, pricing: SearchProductFragment_Product_pricing_ProductPricingInfo | null };
 
 export class TypedDocumentString<TResult, TVariables>
   extends String
@@ -94,5 +94,6 @@ export const SearchProductFragment = new TypedDocumentString(`
       }
     }
   }
+  updatedAt
 }
     `, {"fragmentName":"SearchProductFragment"}) as unknown as TypedDocumentString<SearchProductFragment, unknown>;
