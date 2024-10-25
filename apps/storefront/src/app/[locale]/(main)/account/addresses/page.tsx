@@ -6,9 +6,7 @@ import type { Address } from "@nimara/domain/objects/Address";
 import { Button } from "@nimara/ui/components/button";
 
 import { getAccessToken } from "@/auth";
-import { Link } from "@/i18n/routing";
 import { displayFormattedAddressLines } from "@/lib/address";
-import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { addressService, userService } from "@/services";
 
@@ -111,16 +109,13 @@ export default async function Page({
             countryCode={countryCode}
           >
             <Button
-              asChild
               variant="outline"
               className="flex items-center gap-1 rounded px-[11px] sm:rounded-md sm:px-4"
             >
-              <Link href={paths.account.addresses.asPath()}>
-                <PlusIcon className="h-4 w-4" />
-                <span className="hidden sm:block">
-                  {t("address.add-new-address")}
-                </span>
-              </Link>
+              <PlusIcon className="h-4 w-4" />
+              <span className="hidden sm:block">
+                {t("address.add-new-address")}
+              </span>
             </Button>
           </AddNewAddressModal>
         )}
