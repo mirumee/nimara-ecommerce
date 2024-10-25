@@ -104,7 +104,7 @@ export default async function Page({ searchParams }: PageProps) {
     <div className="w-full">
       <section className="mx-auto my-8 grid gap-8">
         <div className="flex items-center justify-between">
-          {getHeader() && <h1 className="text-2xl">{getHeader()}</h1>}
+          {getHeader() && <h2 className="text-2xl">{getHeader()}</h2>}
           <div className="flex gap-4">
             <div className="hidden md:block">
               <SearchSortBy options={options} searchParams={searchParams} />
