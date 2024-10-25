@@ -1,4 +1,4 @@
-import { type MetadataRoute } from "next";
+import type { MetadataRoute } from "next";
 
 import type { SearchContext } from "@nimara/infrastructure/use-cases/search/types";
 

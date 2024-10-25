@@ -10,14 +10,14 @@ export const Logo = () => {
   const t = useTranslations("common");
 
   return (
-    <h1
+    <h2
       className="flex justify-center align-middle md:justify-start"
       aria-label={t("logo")}
     >
       <Link href={paths.home.asPath()} title={t("go-to-homepage")}>
         <NimaraLogo height={36} />
       </Link>
-    </h1>
+    </h2>
   );
 };
 
