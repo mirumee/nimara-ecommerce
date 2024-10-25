@@ -28,7 +28,7 @@
     "@nimara/domain": "workspace:*",
     "@types/node": "20.14.12",
     "@nimara/config": "workspace:*",
-    "eslint": "^8.57.0",
+    "eslint": "^9.13.0",
     "eslint-config-custom": "workspace:*",
     "graphql": "16.9.0",
     "pino": "9.3.2",
