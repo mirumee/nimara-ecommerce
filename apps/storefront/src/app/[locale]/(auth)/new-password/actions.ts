@@ -9,7 +9,7 @@ import { authService } from "@/services";
 import { type FormSchema } from "./schema";
 
 export async function setPassword({ password }: FormSchema) {
-  const searchParams = new URL(headers().get("referer")!).searchParams;
+  const searchParams = new URL((await headers()).get("referer")!).searchParams;
   const email = searchParams.get("email") ?? "";
   const token = searchParams.get("token") ?? "";
 

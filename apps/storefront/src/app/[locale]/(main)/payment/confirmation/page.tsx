@@ -6,7 +6,10 @@ import { checkoutService, paymentService } from "@/services";
 
 import { ProcessingInfo } from "./components/processing-info";
 
-export default async function Page({ searchParams }: NextPageProps) {
+type SearchParams = Promise<Record<string, string>>;
+
+export default async function Page(props: { searchParams: SearchParams }) {
+  const searchParams = await props.searchParams;
   const checkout = await getCheckoutOrRedirect();
 
   let errors: { code: string; type: string }[] = [];

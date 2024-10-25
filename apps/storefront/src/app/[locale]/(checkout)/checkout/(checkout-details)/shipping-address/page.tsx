@@ -17,11 +17,12 @@ import { PaymentSection } from "../../_sections/payment-section";
 import { ShippingAddressForm } from "./_forms/guest-form";
 import { AddressTab } from "./_tabs/address-tab";
 
-export default async function Page({
-  searchParams,
-}: NextPageProps<{}, { country?: CountryCode }>) {
-  const checkoutId = cookies().get(COOKIE_KEY.checkoutId)?.value;
-  const accessToken = getAccessToken();
+type SearchParams = Promise<{ country?: CountryCode }>;
+
+export default async function Page(props: { searchParams: SearchParams }) {
+  const searchParams = await props.searchParams;
+  const checkoutId = (await cookies()).get(COOKIE_KEY.checkoutId)?.value;
+  const accessToken = await getAccessToken();
 
   const region = await getCurrentRegion();
 

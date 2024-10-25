@@ -14,12 +14,14 @@ import { checkoutService } from "@/services";
 import { Summary } from "./summary";
 
 const DynamicErrorDialog = dynamic(
-  () => import("../error-dialog").then((mod) => mod.ErrorDialog),
+  () => import("../error-dialog").then((mod) => ({
+    default: mod.ErrorDialog
+  })),
   { ssr: false },
 );
 
 export const SideSummary = async () => {
-  const checkoutId = cookies().get(COOKIE_KEY.checkoutId)?.value;
+  const checkoutId = (await cookies()).get(COOKIE_KEY.checkoutId)?.value;
   const [t, region] = await Promise.all([
     getTranslations("common"),
     getCurrentRegion(),

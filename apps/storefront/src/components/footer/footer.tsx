@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 
-import { ReactComponent as NimaraLogo } from "@/assets/nimara-logo.svg";
+import NimaraLogo from "@/assets/nimara-logo.svg";
 import { CACHE_TTL } from "@/config";
 import { Link } from "@/i18n/routing";
 import { generateLinkUrl } from "@/lib/helpers";

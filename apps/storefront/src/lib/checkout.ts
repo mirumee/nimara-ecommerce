@@ -14,7 +14,7 @@ type GetCheckout = Awaited<ReturnType<typeof checkoutService.checkoutGet>>;
 export const getCheckoutOrRedirect = async (): Promise<
   NonNullable<GetCheckout["checkout"]>
 > => {
-  const checkoutId = cookies().get(COOKIE_KEY.checkoutId)?.value;
+  const checkoutId = (await cookies()).get(COOKIE_KEY.checkoutId)?.value;
 
   const region = await getCurrentRegion();
 

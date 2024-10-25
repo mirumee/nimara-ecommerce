@@ -1,7 +1,9 @@
 import "@nimara/ui/styles/globals";
 
 import type { Metadata } from "next";
-import { NextIntlClientProvider, useMessages } from "next-intl";
+import { notFound } from "next/navigation";
+import { NextIntlClientProvider } from "next-intl";
+import { getMessages } from "next-intl/server";
 import type { ReactNode } from "react";
 
 import { Toaster } from "@nimara/ui/components/toaster";
@@ -9,6 +11,7 @@ import { Toaster } from "@nimara/ui/components/toaster";
 import { ErrorServiceServer } from "@/components/error-service";
 import { clientEnvs } from "@/envs/client";
 import { aspekta } from "@/fonts";
+import { routing } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -18,14 +21,20 @@ export const metadata: Metadata = {
   },
 };
 
-export default function LocaleLayout({
+export default async function LocaleLayout({
   children,
-  params: { locale },
+  params,
 }: {
   children: ReactNode;
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }) {
-  const messages = useMessages();
+  const { locale } = await params;
+
+  if (!routing.locales.includes(locale as any)) {
+    notFound();
+  }
+
+  const messages = await getMessages();
 
   return (
     <html lang={locale ?? "en"}>

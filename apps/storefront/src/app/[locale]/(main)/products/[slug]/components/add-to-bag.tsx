@@ -74,7 +74,7 @@ export const AddToBag = ({
     }
 
     if (cartId) {
-      setCheckoutIdCookie(cartId);
+      await setCheckoutIdCookie(cartId);
     }
 
     showSuccessMessage();

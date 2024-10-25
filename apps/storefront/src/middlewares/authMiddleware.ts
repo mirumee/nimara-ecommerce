@@ -19,7 +19,7 @@ export function authMiddleware(middleware: CustomMiddleware) {
     event: NextFetchEvent,
     response: NextResponse,
   ) => {
-    const accessToken = getAccessToken();
+    const accessToken = await getAccessToken();
     const redirectToLogin = NextResponse.redirect(
       new URL("/sign-in", request.url),
     );
@@ -43,7 +43,7 @@ export function authMiddleware(middleware: CustomMiddleware) {
       return middleware(request, event, modifiedResponse);
     }
 
-    const refreshToken = getRefreshToken();
+    const refreshToken = await getRefreshToken();
 
     if (!refreshToken) {
       modifiedResponse = redirectToLogin;

@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
     "dev:inspect": "NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "start": "next start",
@@ -27,12 +27,12 @@
     "js-cookie": "3.0.5",
     "lodash": "4.17.21",
     "lucide-react": "^0.368.0",
-    "next": "14.2.12",
+    "next": "15.0.1",
     "next-auth": "5.0.0-beta.17",
-    "next-intl": "3.19.3",
+    "next-intl": "3.23.5",
     "nextjs-routes": "2.1.0",
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
+    "react": "19.0.0-rc-69d4b800-20241021",
+    "react-dom": "19.0.0-rc-69d4b800-20241021",
     "react-error-boundary": "4.0.13",
     "react-hook-form": "7.51.5",
     "schema-dts": "1.1.2",
@@ -46,7 +46,7 @@
   },
   "devDependencies": {
     "@graphql-typed-document-node/core": "3.2.0",
-    "@next/env": "14.2.5",
+    "@next/env": "15.0.1",
     "@nimara/codegen": "workspace:*",
     "@nimara/config": "workspace:*",
     "@nimara/domain": "workspace:*",
@@ -57,8 +57,8 @@
     "@types/js-cookie": "3.0.6",
     "@types/lodash": "4.17.7",
     "@types/node": "20.14.12",
-    "@types/react": "18.3.3",
-    "@types/react-dom": "18.3.0",
+    "@types/react": "npm:types-react@19.0.0-rc.1",
+    "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1",
     "@typescript-eslint/eslint-plugin": "^6.12.0",
     "@typescript-eslint/parser": "^6.12.0",
     "autoprefixer": "10.4.20",
@@ -81,5 +81,11 @@
   },
   "engines": {
     "node": "^20"
+  },
+  "pnpm": {
+    "overrides": {
+      "@types/react": "npm:types-react@19.0.0-rc.1",
+      "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1"
+    }
   }
 }

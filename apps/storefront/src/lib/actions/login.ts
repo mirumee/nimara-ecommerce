@@ -33,14 +33,14 @@ export async function login({
       redirect: false,
     });
 
-    const accessToken = getAccessToken();
+    const accessToken = await getAccessToken();
     const user = await userService.userGet(accessToken);
-    const checkoutId = cookies().get(COOKIE_KEY.checkoutId)?.value;
+    const checkoutId = (await cookies()).get(COOKIE_KEY.checkoutId)?.value;
 
     if (user?.checkoutIds.length) {
       const userLatestCheckoutId = user.checkoutIds[0];
 
-      setCheckoutIdCookie(userLatestCheckoutId);
+      await setCheckoutIdCookie(userLatestCheckoutId);
 
       if (checkoutId) {
         const region = await getCurrentRegion();

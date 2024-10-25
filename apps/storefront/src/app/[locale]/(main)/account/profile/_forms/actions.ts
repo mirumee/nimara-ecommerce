@@ -20,7 +20,7 @@ export async function updateUserName({
 }: UpdateNameFormSchema) {
   const session = await auth();
 
-  const accessToken = getAccessToken();
+  const accessToken = await getAccessToken();
 
   const data = await userService.accountUpdate({
     accountInput: {
@@ -51,14 +51,18 @@ export async function updateUserEmail({
 }: UpdateEmailFormSchema) {
   const region = await getCurrentRegion();
 
-  const accessToken = getAccessToken()!;
+  const accessToken = await getAccessToken();
+
+  if (!accessToken) {
+    return;
+  }
 
   const data = await userService.requestEmailChange({
     accessToken,
     channel: region.market.channel,
     newEmail: email,
     password,
-    redirectUrl: `${getStoreUrl()}${paths.confirmNewEmail.asPath()}`,
+    redirectUrl: `${await getStoreUrl()}${paths.confirmNewEmail.asPath()}`,
   });
 
   revalidatePath(paths.account.profile.asPath());
@@ -70,7 +74,11 @@ export async function updateUserPassword({
   newPassword,
   oldPassword,
 }: UpdatePasswordFormSchema) {
-  const accessToken = getAccessToken()!;
+  const accessToken = await getAccessToken();
+
+  if (!accessToken) {
+    return;
+  }
 
   const data = await userService.passwordChange({
     accessToken,

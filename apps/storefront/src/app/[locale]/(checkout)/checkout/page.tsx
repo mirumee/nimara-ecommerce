@@ -9,8 +9,8 @@ import { getCurrentRegion } from "@/regions/server";
 import { checkoutService, userService } from "@/services";
 
 export default async function Page() {
-  const checkoutId = cookies().get(COOKIE_KEY.checkoutId)?.value;
-  const accessToken = getAccessToken();
+  const checkoutId = (await cookies()).get(COOKIE_KEY.checkoutId)?.value;
+  const accessToken = await getAccessToken();
 
   const [region, user] = await Promise.all([
     getCurrentRegion(),

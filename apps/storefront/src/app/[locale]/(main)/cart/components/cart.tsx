@@ -12,7 +12,7 @@ import { EmptyCart } from "./empty-cart";
 export const Cart = async ({ checkoutId }: { checkoutId: string }) => {
   unstable_noStore();
 
-  const accessToken = getAccessToken();
+  const accessToken = await getAccessToken();
 
   const [region, user] = await Promise.all([
     getCurrentRegion(),

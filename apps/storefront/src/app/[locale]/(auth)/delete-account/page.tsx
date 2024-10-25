@@ -1,16 +1,17 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, use } from "react";
 
 import { Spinner } from "@nimara/ui/components/spinner";
 
 import { deleteUserAccount } from "./actions";
 
-export default function ConfirmAccountDeletionPage({
-  searchParams,
-}: {
-  searchParams?: Record<string, string>;
-}) {
+export default function ConfirmAccountDeletionPage(
+  props: {
+    searchParams?: Promise<Record<string, string>>;
+  }
+) {
+  const searchParams = use(props.searchParams);
   const token = searchParams?.token ?? "";
 
   // INFO: Cookies cannot be set during the render because of

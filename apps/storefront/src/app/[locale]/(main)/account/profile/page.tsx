@@ -8,7 +8,7 @@ import { UpdateNameModal } from "./_modals/update-name-modal";
 import { UpdatePasswordModal } from "./_modals/update-password-modal";
 
 export default async function Page() {
-  const accessToken = getAccessToken();
+  const accessToken = await getAccessToken();
   const [t, user] = await Promise.all([
     getTranslations(),
     userService.userGet(accessToken),

@@ -19,11 +19,13 @@ import { cartService, storeService, userService } from "@/services";
 
 import { VariantSelector } from "./components/variant-selector";
 
-export async function generateMetadata({
-  params: { slug },
-}: {
-  params: { slug: string };
+export async function generateMetadata(props: {
+  params: Promise<{ slug: string }>;
 }) {
+  const params = await props.params;
+
+  const { slug } = params;
+
   const region = await getCurrentRegion();
 
   const serviceOpts = {
@@ -49,13 +51,15 @@ export async function generateMetadata({
   };
 }
 
-export default async function Page({
-  params: { slug },
-}: {
-  params: { slug: string };
+export default async function Page(props: {
+  params: Promise<{ slug: string }>;
 }) {
+  const params = await props.params;
+
+  const { slug } = params;
+
   const region = await getCurrentRegion();
-  const accessToken = getAccessToken();
+  const accessToken = await getAccessToken();
 
   const serviceOpts = {
     channel: region.market.channel,
@@ -63,7 +67,7 @@ export default async function Page({
     apiURI: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
     countryCode: region.market.countryCode,
   };
-  const checkoutId = cookies().get(COOKIE_KEY.checkoutId)?.value;
+  const checkoutId = (await cookies()).get(COOKIE_KEY.checkoutId)?.value;
 
   const [{ data }, cart, user] = await Promise.all([
     storeService(serviceOpts).getProductDetails({
