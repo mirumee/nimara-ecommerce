@@ -16,6 +16,7 @@ import { SearchSortBy } from "./_listing/search-sort-by";
 type SearchParams = {
   after?: string;
   before?: string;
+  category?: string;
   limit?: string;
   page?: string;
   q?: string;
@@ -85,11 +86,25 @@ export default async function Page({ searchParams }: PageProps) {
   );
   const { options } = searchService.getSortByOptions(searchContext);
 
+  const getHeader = () => {
+    if (query) {
+      return t("results-for", { query });
+    }
+
+    if (searchParams.category) {
+      return (
+        searchParams.category[0].toUpperCase() + searchParams.category.slice(1)
+      );
+    }
+
+    return null;
+  };
+
   return (
     <div className="w-full">
       <section className="mx-auto my-8 grid gap-8">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl">{query && t("results-for", { query })}</h2>
+          {getHeader() && <h2 className="text-2xl">{getHeader()}</h2>}
           <div className="flex gap-4">
             <div className="hidden md:block">
               <SearchSortBy options={options} searchParams={searchParams} />
