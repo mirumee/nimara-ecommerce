@@ -1,0 +1,27 @@
+{
+  "name": "nimara-infrastructure-private",
+  "version": "1.0.0",
+  "scripts": {
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "test": "vitest run",
+    "test:watch": "vitest --watch"
+  },
+  "exports": {
+    "./*": "./src/*.ts"
+  },
+  "dependencies": {
+    "algoliasearch": "4.22.1",
+    "instantsearch.js": "4.64.0",
+    "prettier": "3.3.3"
+  },
+  "devDependencies": {
+    "@nimara/domain": "workspace:*",
+    "@nimara/config": "workspace:*",
+    "@nimara/infrastructure": "workspace:*",
+    "eslint": "^8.57.0",
+    "eslint-config-custom": "workspace:*",
+    "graphql": "16.9.0",
+    "tsconfig": "workspace:*",
+    "typescript": "^5.5.4"
+  }
+}

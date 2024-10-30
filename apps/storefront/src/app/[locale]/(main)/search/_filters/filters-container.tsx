@@ -95,8 +95,8 @@ export const FiltersContainer = async ({
   sortByOptions,
 }: Props) => {
   const t = await getTranslations();
-  const genderFacet = facets.filter((facet) => facet.slug === "gender")[0];
-  const sizeFacet = facets.filter((facet) => facet.slug === "size")[0];
+  const genderFacet = facets.filter((facet) => facet.slug === "gender");
+  const sizeFacet = facets.filter((facet) => facet.slug === "size");
   const colorFacet = facets
     .filter((facet) => facet.slug === "color")
     .map((facet) => ({
@@ -105,7 +105,7 @@ export const FiltersContainer = async ({
         label: t(`colors.${color}`),
         value: color as string,
       })),
-    }))[0];
+    }));
 
   const updateFiltersWithSearchParams = handleFiltersFormSubmit.bind(
     null,
@@ -156,13 +156,19 @@ export const FiltersContainer = async ({
                 </RadioGroup>
 
                 <div className="grid items-center gap-4">
-                  {renderFilterComponent(genderFacet, searchParams)}
+                  {genderFacet.map((facet) =>
+                    renderFilterComponent(facet, searchParams),
+                  )}
                 </div>
                 <div className="grid items-center gap-4">
-                  {renderFilterComponent(sizeFacet, searchParams)}
+                  {sizeFacet.map((facet) =>
+                    renderFilterComponent(facet, searchParams),
+                  )}
                 </div>
                 <div className="grid items-center gap-4">
-                  {renderFilterComponent(colorFacet, searchParams)}
+                  {colorFacet.map((facet) =>
+                    renderFilterComponent(facet, searchParams),
+                  )}
                 </div>
               </div>
             </ScrollArea>

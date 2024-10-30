@@ -7,7 +7,8 @@ export const searchProductSerializer: RecordSerializer<SearchProduct> = (
 ) =>
   Object.freeze({
     currency: data.currency,
-    id: data.productId,
+    id: data.objectID,
+    productId: data.productId,
     name: data.productName,
     slug: data.slug,
     price: Number(data.grossPrice),
@@ -22,5 +23,4 @@ export const searchProductSerializer: RecordSerializer<SearchProduct> = (
           alt: mediaItem.alt,
         }))
       : null,
-    updatedAt: data.updatedAt,
   });
