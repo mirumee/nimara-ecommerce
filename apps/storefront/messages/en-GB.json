@@ -17,7 +17,9 @@
     "artists": "Artists",
     "in-stock": "In stock",
     "is-exclusive": "Is exclusive",
-    "is-digital": "Is digital"
+    "is-digital": "Is digital",
+    "size": "Size",
+    "color": "Color"
   },
   "search": {
     "go-to-product": "Go to product {name}",
@@ -344,5 +346,16 @@
     "faq": "FAQ",
     "privacy-policy": "Privacy Policy",
     "terms-of-use": "Terms of Use"
+  },
+  "colors": {
+    "yellow": "Yellow",
+    "black": "Black",
+    "white": "White",
+    "beige": "Beige",
+    "grey": "Grey",
+    "khaki": "Khaki",
+    "pink": "Pink",
+    "red": "Red",
+    "green": "Green"
   }
 }

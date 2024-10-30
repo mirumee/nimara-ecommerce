@@ -26,8 +26,8 @@ export const ProductPrice = ({ children }: PropsWithChildren) => {
 };
 
 export const ProductThumbnail = ({ alt, ...props }: ImageProps) => (
-  <div className="flex aspect-square justify-center">
-    <Image alt={alt} className="min-w-full object-cover" {...props} />
+  <div className="flex justify-center">
+    <Image alt={alt} className="min-w-full object-contain" {...props} />
   </div>
 );
 
@@ -61,7 +61,8 @@ export const SearchProductCard = ({
         src={thumbnail?.url ?? productPlaceholder}
         width={width ?? 256}
         sizes={
-          sizes ?? "(max-width: 720px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          sizes ??
+          "(max-width: 720px) 100vw, (max-width: 1024px) 50vw, (max-width: 1294px) 33vw, 25vw"
         }
       />
       <div>

@@ -10,14 +10,12 @@ import {
   NavigationMenuTrigger,
 } from "@nimara/ui/components/navigation-menu";
 
-import { Link, useRouter } from "@/i18n/routing";
+import { Link } from "@/i18n/routing";
 import { generateLinkUrl } from "@/lib/helpers";
 import { paths } from "@/lib/paths";
 import type { Maybe } from "@/lib/types";
 
 export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
-  const router = useRouter();
-
   if (!menu || menu?.items?.length === 0) {
     return null;
   }
@@ -27,21 +25,8 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
       <NavigationMenuList>
         {menu.items.map((item) => (
           <NavigationMenuItem key={item.id}>
-            <NavigationMenuTrigger
-              showIcon={!!item.children?.length}
-              onClick={() =>
-                item.category?.slug
-                  ? router.replace(
-                      paths.search.asPath({
-                        query: {
-                          category: item.category.slug,
-                        },
-                      }),
-                    )
-                  : undefined
-              }
-            >
-              {item.name}
+            <NavigationMenuTrigger showIcon={!!item.children?.length}>
+              {item?.url && <Link href={item.url}>{item.name}</Link>}
             </NavigationMenuTrigger>
             {item.children?.length ? (
               <NavigationMenuContent>

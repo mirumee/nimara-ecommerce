@@ -39,7 +39,7 @@ type SearchState = {
 };
 
 const minLetters = 3;
-const maxSearchSuggestions = 15;
+const maxSearchSuggestions = 10;
 const keyboardCodes = {
   ArrowDown: "ArrowDown",
   ArrowUp: "ArrowUp",

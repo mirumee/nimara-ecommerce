@@ -66,6 +66,7 @@ export default async function Page({ searchParams }: PageProps) {
     limit,
     ...rest
   } = searchParams;
+
   const { results, pageInfo } = await searchService.search(
     {
       query,
@@ -78,6 +79,7 @@ export default async function Page({ searchParams }: PageProps) {
     },
     searchContext,
   );
+
   const { facets } = await searchService.getFacets(
     {
       query,
@@ -94,7 +96,7 @@ export default async function Page({ searchParams }: PageProps) {
     if (searchParams.category) {
       return (
         searchParams.category[0].toUpperCase() + searchParams.category.slice(1)
-      );
+      ).replaceAll("-", " & ");
     }
 
     return null;

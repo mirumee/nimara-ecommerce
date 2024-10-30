@@ -4,6 +4,8 @@
   "globalPassThroughEnv": [
     "AUTH_SECRET",
     "BASE_URL",
+    "NEXT_PUBLIC_ALGOLIA_API_KEY",
+    "NEXT_PUBLIC_ALGOLIA_APP_ID",
     "SALEOR_APP_TOKEN",
     "SENTRY_AUTH_TOKEN",
     "SENTRY_ORG",

@@ -1,7 +1,7 @@
 import { Filter } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
-import { type SortByOption } from "@nimara/domain/objects/Search";
+import type { SortByOption } from "@nimara/domain/objects/Search";
 import type { Facet } from "@nimara/infrastructure/use-cases/search/types";
 import { Button } from "@nimara/ui/components/button";
 import { Label } from "@nimara/ui/components/label";
@@ -22,8 +22,10 @@ import { DEFAULT_SORT_BY } from "@/config";
 import { type TranslationMessage } from "@/types";
 
 import { handleFiltersFormSubmit } from "../actions";
+import { ColorSwatch } from "./color-swatch";
 import { FilterBoolean } from "./filter-boolean";
 import { FilterDropdown } from "./filter-dropdown";
+import { FilterText } from "./filter-text";
 
 type Props = {
   facets: Facet[];
@@ -36,8 +38,23 @@ const renderFilterComponent = (
   searchParams: Record<string, string>,
 ) => {
   // TODO: Extend this function for other, more adequate Filter components
-  switch (facet.type) {
+  switch (facet?.type) {
+    case "PLAIN_TEXT":
+      return (
+        <FilterText
+          key={facet.name}
+          facet={facet}
+          searchParams={searchParams}
+        />
+      );
     case "SWATCH":
+      return (
+        <ColorSwatch
+          key={facet.name}
+          facet={facet}
+          searchParams={searchParams}
+        />
+      );
     case "MULTISELECT":
     case "DROPDOWN":
       return (
@@ -58,12 +75,37 @@ const renderFilterComponent = (
   }
 };
 
+const colors = [
+  "yellow",
+  "black",
+  "white",
+  "beige",
+  "grey",
+  "khaki",
+  "pink",
+  "red",
+  "green",
+] as const;
+
+export type ColorValue = (typeof colors)[number];
+
 export const FiltersContainer = async ({
   facets,
   searchParams,
   sortByOptions,
 }: Props) => {
   const t = await getTranslations();
+  const genderFacet = facets.filter((facet) => facet.slug === "gender")[0];
+  const sizeFacet = facets.filter((facet) => facet.slug === "size")[0];
+  const colorFacet = facets
+    .filter((facet) => facet.slug === "color")
+    .map((facet) => ({
+      ...facet,
+      choices: colors.map((color) => ({
+        label: t(`colors.${color}`),
+        value: color as string,
+      })),
+    }))[0];
 
   const updateFiltersWithSearchParams = handleFiltersFormSubmit.bind(
     null,
@@ -86,14 +128,17 @@ export const FiltersContainer = async ({
         <form
           action={updateFiltersWithSearchParams}
           className="flex h-full flex-col"
+          id="filters-form"
         >
           <SheetHeader>
-            <SheetTitle>{t("filters.filters")}</SheetTitle>
+            <SheetTitle className="text-stone-700">
+              {t("filters.filters")}
+            </SheetTitle>
           </SheetHeader>
 
           <SheetDescription asChild>
             <ScrollArea>
-              <div className="grid h-full gap-6 py-4">
+              <div className="grid h-full gap-4 py-4">
                 <RadioGroup
                   name="sortBy"
                   className="grid gap-4 md:hidden"
@@ -111,22 +156,13 @@ export const FiltersContainer = async ({
                 </RadioGroup>
 
                 <div className="grid items-center gap-4">
-                  {facets
-                    .filter(({ type }) => type !== "BOOLEAN")
-                    .map((facet) => renderFilterComponent(facet, searchParams))}
+                  {renderFilterComponent(genderFacet, searchParams)}
                 </div>
-
-                <div>
-                  <p className="mb-4 text-base text-black">
-                    {t("filters.options")}
-                  </p>
-                  <div className="grid items-center gap-4">
-                    {facets
-                      .filter(({ type }) => type === "BOOLEAN")
-                      .map((facet) =>
-                        renderFilterComponent(facet, searchParams),
-                      )}
-                  </div>
+                <div className="grid items-center gap-4">
+                  {renderFilterComponent(sizeFacet, searchParams)}
+                </div>
+                <div className="grid items-center gap-4">
+                  {renderFilterComponent(colorFacet, searchParams)}
                 </div>
               </div>
             </ScrollArea>
