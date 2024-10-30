@@ -45,7 +45,7 @@ export const UserDetailsForm = ({ checkout }: { checkout: Checkout }) => {
   };
 
   return (
-    (<section className="space-y-4">
+    <section className="space-y-4">
       <h2 className="sr-only">{t("user-details.title")}</h2>
       {userAccountEmail ? (
         <div className="space-y-2">
@@ -81,6 +81,6 @@ export const UserDetailsForm = ({ checkout }: { checkout: Checkout }) => {
           setUserAccountEmail={setUserAccountEmail}
         />
       )}
-    </section>)
+    </section>
   );
 };

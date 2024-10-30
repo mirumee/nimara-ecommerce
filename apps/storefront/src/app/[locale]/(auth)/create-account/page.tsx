@@ -15,11 +15,9 @@ export async function generateMetadata() {
   };
 }
 
-export default async function SignUpPage(
-  props: {
-    searchParams?: Promise<Record<string, string>>;
-  }
-) {
+export default async function SignUpPage(props: {
+  searchParams?: Promise<Record<string, string>>;
+}) {
   const searchParams = await props.searchParams;
   const t = await getTranslations();
 

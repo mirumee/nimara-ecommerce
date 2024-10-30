@@ -77,7 +77,7 @@ export async function updateUserPassword({
   const accessToken = await getAccessToken();
 
   if (!accessToken) {
-    return;
+    return { success: false };
   }
 
   const data = await userService.passwordChange({

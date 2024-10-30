@@ -70,7 +70,7 @@ export const AddToBag = ({
     }
 
     if (cart) {
-      revalidateCart(cart.id);
+      await revalidateCart(cart.id);
     }
 
     if (cartId) {

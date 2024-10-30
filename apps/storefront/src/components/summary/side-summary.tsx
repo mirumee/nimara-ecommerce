@@ -1,4 +1,3 @@
-import dynamic from "next/dynamic";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
@@ -11,14 +10,8 @@ import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { checkoutService } from "@/services";
 
+import { ErrorDialog } from "../error-dialog";
 import { Summary } from "./summary";
-
-const DynamicErrorDialog = dynamic(
-  () => import("../error-dialog").then((mod) => ({
-    default: mod.ErrorDialog
-  })),
-  { ssr: false },
-);
 
 export const SideSummary = async () => {
   const checkoutId = (await cookies()).get(COOKIE_KEY.checkoutId)?.value;
@@ -44,7 +37,7 @@ export const SideSummary = async () => {
   return (
     <>
       {!!checkout.problems.insufficientStock.length && (
-        <DynamicErrorDialog checkout={checkout} />
+        <ErrorDialog checkout={checkout} />
       )}
       <aside className="col-span-5 hidden min-h-screen bg-gray-100 pl-12 pr-24 pt-24 md:block">
         <Summary checkout={checkout} />

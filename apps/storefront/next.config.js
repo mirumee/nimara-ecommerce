@@ -34,7 +34,6 @@ const nextConfig = withNextIntl({
     },
   },
   experimental: {
-    instrumentationHook: true,
     serverComponentsExternalPackages: ["pino"],
   },
   images: {
