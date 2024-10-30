@@ -38,7 +38,7 @@ const renderFilterComponent = (
   searchParams: Record<string, string>,
 ) => {
   // TODO: Extend this function for other, more adequate Filter components
-  switch (facet?.type) {
+  switch (facet.type) {
     case "PLAIN_TEXT":
       return (
         <FilterText

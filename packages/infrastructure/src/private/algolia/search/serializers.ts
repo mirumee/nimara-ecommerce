@@ -13,8 +13,7 @@ export const searchProductSerializer: RecordSerializer<SearchProduct> = (
     price: Number(data.grossPrice),
     thumbnail: data.thumbnail
       ? {
-          // INFO: just for demo purposes
-          url: data.thumbnail.replace("=/256/", "=/1024/"),
+          url: data.thumbnail,
         }
       : null,
     media: Array.isArray(data.media)
