@@ -73,7 +73,7 @@ export const ProductsGrid = async ({
 
   const { results: products } = await searchService.search(
     {
-      productIds: gridProductsIds.length ? [...gridProductsIds] : [],
+      productIds: gridProductsIds?.length ? [...gridProductsIds] : [],
       limit: 7,
     },
     searchContext,
