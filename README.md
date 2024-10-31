@@ -32,7 +32,7 @@
 
 ## 🚀 Features
 
-- **Headless Architecture:** Built on top of [Saleor](https://saleor.io/), Nimara's headless architecture provides a flexible, easy-to-maintain, and ready-to-deploy solution for online businesses.
+- **Headless Architecture:** Nimara's headless architecture provides a flexible, easy-to-maintain, and ready-to-deploy solution for online businesses.
 
 - **Next.js 14:** App router, React Server Components (RSC), Server Actions, Caching and Static Site Generation (SSG) support with Typescript setup.
 
