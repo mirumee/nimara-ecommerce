@@ -1,6 +1,9 @@
 import Butter from "buttercms/lib/butter";
 
-import type { ButterCMSPageFields } from "@nimara/domain/objects/CMSPage";
+import {
+  type ButterCMSPageFields,
+  PageType,
+} from "@nimara/domain/objects/CMSPage";
 
 import {
   convertLanguageCode,
@@ -12,8 +15,9 @@ import type { ButterCMSPageServiceConfig } from "../types";
 
 export const butterCMSPageGetInfra =
   ({ token }: ButterCMSPageServiceConfig): CMSPageGetInfra =>
-  async ({ pageType = "homepage", slug, languageCode }) => {
-    const page = await Butter(token).page.retrieve(pageType, slug, {
+  async ({ pageType, slug, languageCode }) => {
+    const resolvedPageType = pageType ?? PageType.STATIC_PAGE;
+    const page = await Butter(token).page.retrieve(resolvedPageType, slug, {
       locale: convertLanguageCode(languageCode),
     });
 
@@ -23,8 +27,12 @@ export const butterCMSPageGetInfra =
 
     const fields = page.data.data.fields as ButterCMSPageFields;
 
+    const content =
+      typeof fields["content"] === "string" ? fields["content"] : null;
+
     return {
       title: page.data.data.name,
+      content: content,
       fields: parseDataToCMSFields(fields, "butterCms"),
     };
   };

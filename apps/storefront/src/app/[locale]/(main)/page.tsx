@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
+import { PageType } from "@nimara/domain/objects/CMSPage";
+
 import { getAccessToken } from "@/auth";
 import { CACHE_TTL } from "@/config";
 import { JsonLd, websiteToJsonLd } from "@/lib/json-ld";
@@ -43,8 +45,9 @@ export default async function Page() {
   ]);
 
   const page = await cmsPageService.cmsPageGet({
-    languageCode: region.language.code,
+    pageType: PageType.HOMEPAGE,
     slug: "home",
+    languageCode: region.language.code,
     options: {
       next: {
         tags: ["CMS:home"],

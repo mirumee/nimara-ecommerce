@@ -1,5 +1,5 @@
 import type { LanguageCodeEnum } from "@nimara/codegen/schema";
-import type { CMSPage } from "@nimara/domain/objects/CMSPage";
+import type { CMSPage, PageType } from "@nimara/domain/objects/CMSPage";
 
 import type { FetchOptions } from "#root/graphql/client";
 
@@ -7,7 +7,7 @@ export type WithFetchOptions = { options?: FetchOptions };
 
 type CMSPageOptions = {
   languageCode: LanguageCodeEnum;
-  pageType?: string;
+  pageType?: PageType;
   slug: string;
 } & WithFetchOptions;
 

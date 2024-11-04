@@ -1,5 +1,5 @@
 export type CMSPage = {
-  content?: string | null;
+  content: string | null;
   fields: PageField[];
   title: string;
 };
@@ -19,3 +19,8 @@ type ButterCMSProduct = {
   id: string;
   product: string;
 };
+
+export enum PageType {
+  HOMEPAGE = "homepage",
+  STATIC_PAGE = "static_page",
+}

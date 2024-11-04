@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { PageType } from "@nimara/domain/objects/CMSPage";
+
 import { StaticPage } from "@/components/static-page";
 import { CACHE_TTL } from "@/config";
 import { getCurrentRegion } from "@/regions/server";
@@ -37,8 +39,9 @@ export default async function Page({
   const region = await getCurrentRegion();
 
   const page = await cmsPageService.cmsPageGet({
-    languageCode: region.language.code,
+    pageType: PageType.STATIC_PAGE,
     slug,
+    languageCode: region.language.code,
     options: {
       next: {
         tags: [`CMS:${slug}`],
