@@ -2,9 +2,11 @@ import edjsHTML from "editorjs-html";
 import React from "react";
 import xss from "xss";
 
+import type { Maybe } from "@/lib/types";
+
 const parser = edjsHTML();
 
-export const StaticPage = async ({ body }: { body: string | null }) => {
+export const StaticPage = async ({ body }: { body: Maybe<string> }) => {
   const contentHtml = body ? parser.parse(JSON.parse(body)) : null;
 
   return (

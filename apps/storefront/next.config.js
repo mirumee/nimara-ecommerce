@@ -47,6 +47,7 @@ const nextConfig = withNextIntl({
         hostname: "*.saleor.cloud",
       },
     ],
+    domains: ["cdn.buttercms.com"],
   },
   reactStrictMode: true,
   transpilePackages: ["@nimara/ui"],

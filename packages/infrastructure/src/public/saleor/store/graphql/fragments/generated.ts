@@ -7,7 +7,9 @@ export type AttributeFragment = { slug: string | null, inputType: Types.Attribut
 
 export type AttributeValueFragment_AttributeValue_translation_AttributeValueTranslation = { name: string, plainText: string | null, richText: string | null };
 
-export type AttributeValueFragment = { slug: string | null, name: string | null, plainText: string | null, richText: string | null, boolean: boolean | null, date: string | null, dateTime: string | null, reference: string | null, value: string | null, translation: AttributeValueFragment_AttributeValue_translation_AttributeValueTranslation | null };
+export type AttributeValueFragment_AttributeValue_file_File = { url: string };
+
+export type AttributeValueFragment = { slug: string | null, name: string | null, plainText: string | null, richText: string | null, boolean: boolean | null, date: string | null, dateTime: string | null, reference: string | null, value: string | null, translation: AttributeValueFragment_AttributeValue_translation_AttributeValueTranslation | null, file: AttributeValueFragment_AttributeValue_file_File | null };
 
 export type ProductAvailabilityDetailsFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_net_Money = { currency: string, amount: number };
 
@@ -39,7 +41,7 @@ export type ProductDetailsFragment_Product_variants_ProductVariant_translation_P
 
 export type ProductDetailsFragment_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute = { slug: string | null, inputType: Types.AttributeInputTypeEnum | null, name: string | null, translation: AttributeFragment_Attribute_translation_AttributeTranslation | null };
 
-export type ProductDetailsFragment_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue = { slug: string | null, name: string | null, plainText: string | null, richText: string | null, boolean: boolean | null, date: string | null, dateTime: string | null, reference: string | null, value: string | null, translation: AttributeValueFragment_AttributeValue_translation_AttributeValueTranslation | null };
+export type ProductDetailsFragment_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue = { slug: string | null, name: string | null, plainText: string | null, richText: string | null, boolean: boolean | null, date: string | null, dateTime: string | null, reference: string | null, value: string | null, translation: AttributeValueFragment_AttributeValue_translation_AttributeValueTranslation | null, file: AttributeValueFragment_AttributeValue_file_File | null };
 
 export type ProductDetailsFragment_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute = { attribute: ProductDetailsFragment_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute, values: Array<ProductDetailsFragment_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue> };
 
@@ -157,6 +159,9 @@ fragment AttributeValueFragment on AttributeValue {
     name
     plainText
     richText
+  }
+  file {
+    url
   }
 }
 fragment ProductMediaFragment on ProductMedia {

@@ -1,12 +1,13 @@
 import type { Menu, MenuItem } from "@nimara/domain/objects/Menu";
 
 import { graphqlClient } from "#root/graphql/client";
+import type { CMSMenuGetInfra } from "#root/use-cases/cms-menu/types";
 
 import {
   type MenuGet_menu_Menu_items_MenuItem,
   MenuGetDocument,
 } from "../graphql/queries/generated";
-import type { CMSMenuGetInfra, SaleorCMSMenuServiceConfig } from "../types";
+import type { SaleorCMSMenuServiceConfig } from "../types";
 
 const serializeMenuItem = ({
   id,

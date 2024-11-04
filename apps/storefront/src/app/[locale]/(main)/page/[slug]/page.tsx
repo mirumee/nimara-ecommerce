@@ -1,10 +1,10 @@
-import { type Metadata } from "next";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { StaticPage } from "@/components/static-page";
 import { CACHE_TTL } from "@/config";
 import { getCurrentRegion } from "@/regions/server";
-import { cmsPageService } from "@/services";
+import { cmsPageService } from "@/services/cms";
 
 export async function generateMetadata({
   params: { slug },
