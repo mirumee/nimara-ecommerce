@@ -8,7 +8,7 @@ import {
 import {
   convertLanguageCode,
   parseDataToCMSFields,
-} from "#root/lib/serializers/cmsData";
+} from "#root/lib/serializers/cms-page";
 import type { CMSPageGetInfra } from "#root/use-cases/cms-page/types";
 
 import type { ButterCMSPageServiceConfig } from "../types";

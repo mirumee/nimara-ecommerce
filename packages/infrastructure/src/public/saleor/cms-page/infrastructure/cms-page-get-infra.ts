@@ -1,5 +1,5 @@
 import { graphqlClient } from "#root/graphql/client";
-import { parseDataToCMSFields } from "#root/lib/serializers/cmsData";
+import { parseDataToCMSFields } from "#root/lib/serializers/cms-page";
 import type { CMSPageGetInfra } from "#root/use-cases/cms-page/types";
 
 import { PageDocument } from "../graphql/queries/generated";

@@ -1,3 +1,4 @@
+import { butterCMSMenuService } from "@nimara/infrastructure/public/butter-cms/cms-menu/providers";
 import { butterCMSPageService } from "@nimara/infrastructure/public/butter-cms/cms-page/providers";
 import { saleorCMSMenuService } from "@nimara/infrastructure/public/saleor/cms-menu/providers";
 import { saleorCMSPageService } from "@nimara/infrastructure/public/saleor/cms-page/providers";
@@ -15,6 +16,10 @@ export const cmsMenuServiceSaleor = saleorCMSMenuService({
 });
 
 export const cmsPageServiceButterCMS = butterCMSPageService({
+  token: clientEnvs.NEXT_PUBLIC_BUTTER_CMS_API_KEY,
+});
+
+export const cmsMenuServiceButterCMS = butterCMSMenuService({
   token: clientEnvs.NEXT_PUBLIC_BUTTER_CMS_API_KEY,
 });
 
