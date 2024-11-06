@@ -14,7 +14,8 @@ import type { CMSPageGetInfra } from "#root/use-cases/cms-page/types";
 
 import type { ButterCMSPageServiceConfig } from "../types";
 
-// Copied from ButterCMS types to enable `locale` typing until they export it directly.
+// Copied from buttercms types to enable `locale` typing until they export it directly.
+// TODO: remove when locale will be added in next buttercms version
 interface PageRetrieveParams {
   levels?: number;
   locale?: string;

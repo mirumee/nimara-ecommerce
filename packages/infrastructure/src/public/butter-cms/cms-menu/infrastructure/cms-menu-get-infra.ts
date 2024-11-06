@@ -13,8 +13,8 @@ export const butterCMSMenuGetInfra =
   async ({ languageCode, slug }) => {
     const locale = languageCode ? convertLanguageCode(languageCode) : undefined;
 
-    // Using `as any` to bypass TypeScript's deep type inference issues with ButterCMS types.
-    const menu = await (Butter(token).content as any).retrieve(
+    // @ts-expect-error due to deep type inference issues with ButterCMS types
+    const menu = await Butter(token).content.retrieve(
       ["navigation_menu"],
       locale ? { locale } : undefined,
     );
