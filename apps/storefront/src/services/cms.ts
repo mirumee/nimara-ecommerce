@@ -11,18 +11,18 @@ export const cmsPageServiceSaleor = saleorCMSPageService({
   apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
 });
 
-export const cmsMenuServiceSaleor = saleorCMSMenuService({
-  apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
-});
-
 export const cmsPageServiceButterCMS = butterCMSPageService({
   token: clientEnvs.NEXT_PUBLIC_BUTTER_CMS_API_KEY,
+});
+
+export const cmsMenuServiceSaleor = saleorCMSMenuService({
+  apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
 });
 
 export const cmsMenuServiceButterCMS = butterCMSMenuService({
   token: clientEnvs.NEXT_PUBLIC_BUTTER_CMS_API_KEY,
 });
 
-export const cmsPageService: CMSPageService = cmsPageServiceSaleor;
+export const cmsPageService: CMSPageService = cmsPageServiceButterCMS;
 
-export const cmsMenuService: CMSMenuService = cmsMenuServiceSaleor;
+export const cmsMenuService: CMSMenuService = cmsMenuServiceButterCMS;
