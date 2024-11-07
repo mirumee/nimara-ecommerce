@@ -2,8 +2,6 @@
 
 import { useDebounce } from "@uidotdev/usehooks";
 import { Search } from "lucide-react";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
   type KeyboardEventHandler,
@@ -25,6 +23,7 @@ import {
 import { Spinner } from "@nimara/ui/components/spinner";
 
 import { DEFAULT_DEBOUNCE_TIME_IN_MS } from "@/config";
+import { Link, usePathname, useRouter } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { searchService } from "@/services/search";
@@ -54,7 +53,7 @@ const initialSearchState: SearchState = {
   showOptions: false,
 };
 
-export const SearchForm = () => {
+export const SearchForm = ({ onSubmit }: { onSubmit?: () => void }) => {
   const ts = useTranslations("search");
   const tc = useTranslations("common");
 
@@ -85,6 +84,9 @@ export const SearchForm = () => {
     if (event.code === keyboardCodes.Enter) {
       event.preventDefault();
       resetSearchState();
+      if (onSubmit) {
+        onSubmit();
+      }
 
       // Handle query search
       if (isNoOptionHighlighted || isLastOptionHighlighted) {
@@ -127,6 +129,19 @@ export const SearchForm = () => {
     }
   };
 
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (isNoOptionHighlighted || isLastOptionHighlighted) {
+      router.push(paths.search.asPath({ query: { q: inputValue } }));
+    }
+
+    if (onSubmit) {
+      onSubmit();
+    }
+    resetSearchState();
+  };
+
   useClickAnyWhere(() =>
     setSearchState((prevState) => ({ ...prevState, showOptions: false })),
   );
@@ -164,6 +179,7 @@ export const SearchForm = () => {
       action={performSearch}
       aria-label={ts("site-wide-search-form")}
       role="search"
+      onSubmit={handleSubmit}
     >
       <Combobox className="z-50">
         <ComboboxInput
@@ -173,7 +189,7 @@ export const SearchForm = () => {
               size="icon"
               type="submit"
               variant="outline"
-              onClick={() => resetSearchState()}
+              className="cursor-pointer"
             >
               {isLoading ? (
                 <Spinner size={16} />

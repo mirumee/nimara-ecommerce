@@ -3,7 +3,6 @@
 import { useDebounce } from "@uidotdev/usehooks";
 import { AlertCircle, CheckIcon, X } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { useWindowSize } from "usehooks-ts";
@@ -24,6 +23,7 @@ import { screenSizes } from "@nimara/ui/consts";
 import { cn } from "@nimara/ui/lib/utils";
 
 import { ProductImagePlaceholder } from "@/components/product-image-placeholder";
+import { Link } from "@/i18n/routing";
 import { useLocalizedFormatter } from "@/lib/formatters/use-localized-formatter";
 import { paths } from "@/lib/paths";
 

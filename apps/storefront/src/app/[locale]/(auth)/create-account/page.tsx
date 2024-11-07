@@ -1,8 +1,8 @@
-import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
 import { Button } from "@nimara/ui/components/button";
 
+import { Link } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 
 import { SignUpForm } from "./form";

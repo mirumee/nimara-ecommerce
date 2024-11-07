@@ -1,6 +1,5 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 
 import type { SortByOption } from "@nimara/domain/objects/Search";
@@ -15,6 +14,7 @@ import {
 } from "@nimara/ui/components/select";
 
 import { DEFAULT_SORT_BY } from "@/config";
+import { usePathname, useRouter } from "@/i18n/routing";
 import type { TranslationMessage } from "@/types";
 
 export const SearchSortBy = ({

@@ -1,5 +1,4 @@
 import { PlusIcon } from "lucide-react";
-import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
 import type { CountryCode } from "@nimara/codegen/schema";
@@ -8,7 +7,6 @@ import { Button } from "@nimara/ui/components/button";
 
 import { getAccessToken } from "@/auth";
 import { displayFormattedAddressLines } from "@/lib/address";
-import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { addressService, userService } from "@/services";
 
@@ -111,16 +109,13 @@ export default async function Page({
             countryCode={countryCode}
           >
             <Button
-              asChild
               variant="outline"
               className="flex items-center gap-1 rounded px-[11px] sm:rounded-md sm:px-4"
             >
-              <Link href={paths.account.addresses.asPath()}>
-                <PlusIcon className="h-4 w-4" />
-                <span className="hidden sm:block">
-                  {t("address.add-new-address")}
-                </span>
-              </Link>
+              <PlusIcon className="h-4 w-4" />
+              <span className="hidden sm:block">
+                {t("address.add-new-address")}
+              </span>
             </Button>
           </AddNewAddressModal>
         )}
@@ -195,22 +190,6 @@ export default async function Page({
           </div>
         ),
       )}
-      <AddNewAddressModal
-        addressFormRows={addressFormRows}
-        countries={countries}
-        countryCode={countryCode}
-      >
-        <Button
-          asChild
-          variant="outline"
-          className="mt-4 flex items-center gap-1 sm:hidden"
-        >
-          <Link href={paths.account.addresses.asPath()}>
-            <PlusIcon className="h-4 w-4" />
-            {t("address.add-new-address")}
-          </Link>
-        </Button>
-      </AddNewAddressModal>
     </div>
   );
 }

@@ -14,4 +14,5 @@ export type SearchProduct = {
     alt?: string;
     url: string;
   } | null;
+  updatedAt: Date;
 };

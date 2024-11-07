@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { type ReactNode, useState } from "react";
@@ -21,6 +20,7 @@ import { Label } from "@nimara/ui/components/label";
 import { Spinner } from "@nimara/ui/components/spinner";
 
 import { clientEnvs } from "@/envs/client";
+import { Link } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 
 import { requestUserAccountDeletion } from "./actions";

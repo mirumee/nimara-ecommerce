@@ -1,10 +1,11 @@
 "use client";
 
 import Cookies from "js-cookie";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
 import { COOKIE_KEY } from "@/config";
+import { usePathname, useRouter } from "@/i18n/routing";
 import { QUERY_PARAMS } from "@/lib/paths";
 
 export const CheckoutRemover = () => {

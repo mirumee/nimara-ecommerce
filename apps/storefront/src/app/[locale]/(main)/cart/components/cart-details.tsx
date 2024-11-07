@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
@@ -11,6 +10,7 @@ import { useToast } from "@nimara/ui/hooks";
 
 import { ShoppingBag } from "@/components/shopping-bag";
 import { clientEnvs } from "@/envs/client";
+import { Link } from "@/i18n/routing";
 import { revalidateCart } from "@/lib/actions/cart";
 import { paths } from "@/lib/paths";
 import { type WithRegion } from "@/lib/types";

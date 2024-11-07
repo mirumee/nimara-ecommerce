@@ -1,5 +1,4 @@
 import groupBy from "lodash/groupBy";
-import Link from "next/link";
 import type { ReactNode } from "react";
 
 import type {
@@ -11,6 +10,7 @@ import type {
 import type { ApiError } from "@nimara/infrastructure/public/stripe/payment/types";
 
 import { clientEnvs } from "@/envs/client";
+import { Link } from "@/i18n/routing";
 import { translateOrFallback } from "@/lib/i18n/helpers";
 import type { GetTranslations } from "@/types";
 
