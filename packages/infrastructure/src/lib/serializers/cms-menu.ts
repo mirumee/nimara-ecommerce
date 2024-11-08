@@ -2,7 +2,6 @@ import type {
   ButterCMSMenuItem,
   Menu,
   MenuItem,
-  Page,
 } from "@nimara/domain/objects/Menu";
 
 import type { MenuGet_menu_Menu_items_MenuItem } from "#root/public/saleor/cms-menu/graphql/queries/generated";
@@ -65,7 +64,7 @@ const serializeButterCMSMenuItem = (items: ButterCMSMenuItem[]): MenuItem[] => {
       typeof item.page === "string"
         ? item.page.split("/").filter(Boolean).pop() || ""
         : "";
-    const page: Page | null = item.page
+    const page = item.page
       ? {
           id: item.meta.id.toString(),
           slug: pageSlug,
