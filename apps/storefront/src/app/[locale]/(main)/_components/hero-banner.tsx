@@ -20,7 +20,7 @@ export const HeroBanner = async ({
 
   const header = fieldsMap["homepage-banner-header"]?.text;
   const buttonText = fieldsMap["homepage-banner-button-text"]?.text;
-  const image = fieldsMap["homepage-banner-image-test"]?.imageUrl;
+  const image = fieldsMap["homepage-banner-image"]?.imageUrl;
 
   return (
     <div className="mb-14 flex flex-col items-center bg-stone-100 sm:h-[27rem] sm:flex-row">
