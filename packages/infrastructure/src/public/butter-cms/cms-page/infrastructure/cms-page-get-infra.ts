@@ -27,9 +27,18 @@ export const butterCMSPageGetInfra =
   async ({ pageType, slug, languageCode }) => {
     const resolvedPageType = pageType ?? PageType.STATIC_PAGE;
     const locale = convertLanguageCode(languageCode);
-    const page = await Butter(token).page.retrieve(resolvedPageType, slug, {
-      locale,
-    } as PageRetrieveParams);
+    let page;
+
+    try {
+      page = await Butter(token).page.retrieve(resolvedPageType, slug, {
+        locale,
+      } as PageRetrieveParams);
+    } catch (error) {
+      // Fallback to 'EN_US' if the initial request fails
+      page = await Butter(token).page.retrieve(resolvedPageType, slug, {
+        locale: "enus",
+      } as PageRetrieveParams);
+    }
 
     if (!page?.data?.data) {
       return null;
