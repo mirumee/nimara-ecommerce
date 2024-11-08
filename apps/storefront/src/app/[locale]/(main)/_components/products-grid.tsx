@@ -41,7 +41,7 @@ export const ProductsGrid = async ({
 
   const header = fieldsMap["homepage-grid-item-header"]?.text;
   const subheader = fieldsMap["homepage-grid-item-subheader"]?.text;
-  const image = fieldsMap["homepage-grid-item-image-test"]?.imageUrl;
+  const image = fieldsMap["homepage-grid-item-image"]?.imageUrl;
   const buttonText = fieldsMap["homepage-button-text"]?.text;
   const headerFontColor =
     fieldsMap["homepage-grid-item-header-font-color"]?.text;
