@@ -9,16 +9,16 @@ type Product = {
   id: string;
 };
 
-type Category = {
+export type Category = {
   id: string;
   name: string;
-  products: {
+  products?: {
     edges: {
       node: Product;
     }[];
   } | null;
   slug: string;
-  translation: { name: string | null } | null;
+  translation?: { name: string | null } | null;
 };
 
 type Collection = {
@@ -28,25 +28,35 @@ type Collection = {
   translation: { name: string | null } | null;
 };
 
-type Page = {
+export type Page = {
   id: string;
   slug: string;
   title: string;
-  translation: { title: string | null } | null;
+  translation?: { title: string | null } | null;
 };
 
 export type MenuItem = {
   category: Category | null;
   children?: MenuItem[] | null;
-  collection: Collection | null;
+  collection?: Collection | null;
   id: string;
-  level: number;
+  level?: number;
   name: string;
   page: Page | null;
-  translation: { name: string } | null;
+  translation?: { name: string } | null;
   url: string | null;
 };
 
 export type Menu = {
   items: MenuItem[];
+};
+
+export type ButterCMSMenuItem = {
+  category: string[];
+  meta: {
+    id: string;
+  };
+  name: string;
+  page: string;
+  url: string;
 };
