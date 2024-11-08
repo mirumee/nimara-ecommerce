@@ -1,6 +1,5 @@
 import type {
   ButterCMSMenuItem,
-  Category,
   Menu,
   MenuItem,
   Page,
@@ -53,7 +52,7 @@ const serializeButterCMSMenuItem = (items: ButterCMSMenuItem[]): MenuItem[] => {
       ? item.category[0].split("category[_id=")[1]?.split("]")[0] || ""
       : "";
 
-    const category: Category | null = categoryId
+    const category = categoryId
       ? {
           id: categoryId,
           name: item.name,
