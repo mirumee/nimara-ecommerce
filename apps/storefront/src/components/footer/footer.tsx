@@ -6,7 +6,7 @@ import { Link } from "@/i18n/routing";
 import { generateLinkUrl } from "@/lib/helpers";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
-import { cmsMenuService } from "@/services";
+import { cmsMenuService } from "@/services/cms";
 
 export const Footer = async () => {
   const [region, t] = await Promise.all([

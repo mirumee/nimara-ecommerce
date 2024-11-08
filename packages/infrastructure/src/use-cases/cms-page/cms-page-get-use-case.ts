@@ -1,7 +1,4 @@
-import type {
-  CMSPageGetInfra,
-  CMSPageGetUseCase,
-} from "#root/public/saleor/cms-page/types";
+import type { CMSPageGetInfra, CMSPageGetUseCase } from "./types";
 
 export const cmsPageGetUseCase = ({
   cmsPageGetInfra,

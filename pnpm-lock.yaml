@@ -511,7 +511,7 @@ importers:
     dependencies:
       '@saleor/auth-sdk':
         specifier: 1.0.1
-        version: 1.0.1(next@14.2.12(@opentelemetry/api@1.9.0)(@playwright/test@1.46.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 1.0.1(next@14.2.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@stripe/stripe-js':
         specifier: 3.5.0
         version: 3.5.0
@@ -524,6 +524,9 @@ importers:
       '@types/stripe':
         specifier: 8.0.417
         version: 8.0.417
+      buttercms:
+        specifier: 2.1.4
+        version: 2.1.4
       libphonenumber-js:
         specifier: 1.11.3
         version: 1.11.3
@@ -4819,6 +4822,10 @@ packages:
   busboy@1.6.0:
     resolution: {integrity: sha512-8SFQbg/0hQ9xy3UNTB0YEnsNBbWfhf7RtnzpL7TkBiTBRfrQ9Fxcnz7VJsleJpyp6rVLvXiuORqjlHi5q+PYuA==}
     engines: {node: '>=10.16.0'}
+
+  buttercms@2.1.4:
+    resolution: {integrity: sha512-TpnwTKSrG5aJGKwcObcFuFAdbVhV/y8OF+cZ3gVMz9/JE/tJbHupNRQ8nuil0JqbAg3ygZcWKaXYqVn6BX8puQ==}
+    engines: {node: '>=18.17.1'}
 
   bytes@3.0.0:
     resolution: {integrity: sha512-pMhOfFDPiv9t5jjIXkHosWmkSyQbvsgEVNkz0ERHbuLh2T/7j4Mqqpz523Fe8MVY89KC6Sh/QfS2sM+SjgFDcw==}
@@ -14199,7 +14206,7 @@ snapshots:
 
   '@rushstack/eslint-patch@1.7.2': {}
 
-  '@saleor/auth-sdk@1.0.1(next@14.2.12(@opentelemetry/api@1.9.0)(@playwright/test@1.46.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@saleor/auth-sdk@1.0.1(next@14.2.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.9.0)
       cookie: 0.6.0
@@ -16389,6 +16396,8 @@ snapshots:
   busboy@1.6.0:
     dependencies:
       streamsearch: 1.1.0
+
+  buttercms@2.1.4: {}
 
   bytes@3.0.0: {}
 
@@ -19144,7 +19153,7 @@ snapshots:
       temp: 0.8.4
       write-file-atomic: 2.4.3
     optionalDependencies:
-      '@babel/preset-env': 7.23.5(@babel/core@7.23.5)
+      '@babel/preset-env': 7.23.5(@babel/core@7.24.7)
     transitivePeerDependencies:
       - supports-color
 
