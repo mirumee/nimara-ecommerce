@@ -1,7 +1,4 @@
-import type {
-  CMSMenuGetInfra,
-  CMSMenuGetUseCase,
-} from "#root/public/saleor/cms-menu/types";
+import type { CMSMenuGetInfra, CMSMenuGetUseCase } from "./types";
 
 export const cmsMenuGetUseCase = ({
   cmsMenuGetInfra,

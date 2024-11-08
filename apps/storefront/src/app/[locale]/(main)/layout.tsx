@@ -3,7 +3,7 @@ import { type ReactNode } from "react";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { getCurrentRegion } from "@/regions/server";
-import { cmsMenuService } from "@/services";
+import { cmsMenuService } from "@/services/cms";
 
 import { Navigation } from "./_components/navigation";
 

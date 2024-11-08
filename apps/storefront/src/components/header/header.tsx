@@ -12,7 +12,8 @@ import { clientEnvs } from "@/envs/client";
 import { Link } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
-import { cartService, cmsMenuService, userService } from "@/services";
+import { cartService, userService } from "@/services";
+import { cmsMenuService } from "@/services/cms";
 
 import { Logo } from "./logo";
 import { MobileSearch } from "./mobile-search";
