@@ -7,7 +7,9 @@ export type Page_page_Page_attributes_SelectedAttribute_attribute_Attribute = { 
 
 export type Page_page_Page_attributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation = { name: string, plainText: string | null, richText: string | null };
 
-export type Page_page_Page_attributes_SelectedAttribute_values_AttributeValue = { slug: string | null, name: string | null, plainText: string | null, richText: string | null, boolean: boolean | null, date: string | null, dateTime: string | null, reference: string | null, value: string | null, translation: Page_page_Page_attributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation | null };
+export type Page_page_Page_attributes_SelectedAttribute_values_AttributeValue_file_File = { url: string };
+
+export type Page_page_Page_attributes_SelectedAttribute_values_AttributeValue = { slug: string | null, name: string | null, plainText: string | null, richText: string | null, boolean: boolean | null, date: string | null, dateTime: string | null, reference: string | null, value: string | null, translation: Page_page_Page_attributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation | null, file: Page_page_Page_attributes_SelectedAttribute_values_AttributeValue_file_File | null };
 
 export type Page_page_Page_attributes_SelectedAttribute = { attribute: Page_page_Page_attributes_SelectedAttribute_attribute_Attribute, values: Array<Page_page_Page_attributes_SelectedAttribute_values_AttributeValue> };
 
@@ -76,5 +78,8 @@ fragment AttributeValueFragment on AttributeValue {
     name
     plainText
     richText
+  }
+  file {
+    url
   }
 }`) as unknown as TypedDocumentString<Page, PageVariables>;

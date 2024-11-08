@@ -1,6 +1,6 @@
 import { graphqlClient } from "#root/graphql/client";
-import { parseAttributeData } from "#root/lib/serializers/attribute";
-import type { CMSPageGetInfra } from "#root/public/saleor/cms-page/types";
+import { parseDataToCMSFields } from "#root/lib/serializers/cms-page";
+import type { CMSPageGetInfra } from "#root/use-cases/cms-page/types";
 
 import { PageDocument } from "../graphql/queries/generated";
 import type { SaleorCMSPageServiceConfig } from "../types";
@@ -23,6 +23,6 @@ export const saleorCMSPageGetInfra =
     return {
       title: data.page.title,
       content: data.page.content,
-      attributes: data.page.attributes.map(parseAttributeData),
+      fields: parseDataToCMSFields(data.page.attributes, "saleor"),
     };
   };

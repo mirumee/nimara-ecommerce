@@ -1,57 +1,9 @@
-import type { Menu, MenuItem } from "@nimara/domain/objects/Menu";
-
 import { graphqlClient } from "#root/graphql/client";
+import { serializeMenu } from "#root/lib/serializers/cms-menu";
+import type { CMSMenuGetInfra } from "#root/use-cases/cms-menu/types";
 
-import {
-  type MenuGet_menu_Menu_items_MenuItem,
-  MenuGetDocument,
-} from "../graphql/queries/generated";
-import type { CMSMenuGetInfra, SaleorCMSMenuServiceConfig } from "../types";
-
-const serializeMenuItem = ({
-  id,
-  name,
-  translation,
-  level,
-  url,
-  category,
-  collection,
-  page,
-  children,
-}: MenuGet_menu_Menu_items_MenuItem): MenuItem => {
-  return {
-    id,
-    name: translation?.name || name,
-    translation,
-    level,
-    url,
-    category: category
-      ? {
-          ...category,
-          name: category.translation?.name || category.name,
-        }
-      : null,
-    collection: collection
-      ? {
-          ...collection,
-          name: collection.translation?.name || collection.name,
-        }
-      : null,
-    page: page
-      ? {
-          ...page,
-          title: page.translation?.title || page.title,
-        }
-      : null,
-    children,
-  };
-};
-
-const serializeMenu = (items: MenuGet_menu_Menu_items_MenuItem[]): Menu => {
-  return {
-    items: items.map(serializeMenuItem),
-  };
-};
+import { MenuGetDocument } from "../graphql/queries/generated";
+import type { SaleorCMSMenuServiceConfig } from "../types";
 
 export const saleorCMSMenuGetInfra =
   ({ apiURL }: SaleorCMSMenuServiceConfig): CMSMenuGetInfra =>
@@ -66,9 +18,9 @@ export const saleorCMSMenuGetInfra =
       },
     });
 
-    if (data?.menu) {
-      return { menu: serializeMenu(data.menu.items || []) };
+    if (!data?.menu) {
+      return null;
     }
 
-    return null;
+    return { menu: serializeMenu(data.menu.items || [], "saleor") };
   };

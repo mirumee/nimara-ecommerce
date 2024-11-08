@@ -1,11 +1,14 @@
-import { type Metadata } from "next";
+import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+
+import { PageType } from "@nimara/domain/objects/CMSPage";
 
 import { getAccessToken } from "@/auth";
 import { CACHE_TTL } from "@/config";
 import { JsonLd, websiteToJsonLd } from "@/lib/json-ld";
 import { getCurrentRegion } from "@/regions/server";
-import { cmsPageService, userService } from "@/services";
+import { userService } from "@/services";
+import { cmsPageService } from "@/services/cms";
 
 import { AccountNotifications } from "./_components/account-notifications";
 import { HeroBanner } from "./_components/hero-banner";
@@ -42,8 +45,9 @@ export default async function Page() {
   ]);
 
   const page = await cmsPageService.cmsPageGet({
-    languageCode: region.language.code,
+    pageType: PageType.HOMEPAGE,
     slug: "home",
+    languageCode: region.language.code,
     options: {
       next: {
         tags: ["CMS:home"],
@@ -54,8 +58,8 @@ export default async function Page() {
 
   return (
     <section className="grid w-full content-start">
-      <HeroBanner attributes={page?.attributes} />
-      <ProductsGrid attributes={page?.attributes} />
+      <HeroBanner fields={page?.fields} />
+      <ProductsGrid fields={page?.fields} />
       <div>
         <AccountNotifications user={user} />
       </div>
