@@ -1,12 +1,8 @@
-import type {
-  ButterCMSMenuItem,
-  Menu,
-  MenuItem,
-} from "@nimara/domain/objects/Menu";
+import type { ButterCMSMenuItem, MenuItem } from "@nimara/domain/objects/Menu";
 
 import type { MenuGet_menu_Menu_items_MenuItem } from "#root/public/saleor/cms-menu/graphql/queries/generated";
 
-const serializeSaleorMenuItem = ({
+export const serializeSaleorMenuItem = ({
   id,
   name,
   translation,
@@ -45,7 +41,9 @@ const serializeSaleorMenuItem = ({
   };
 };
 
-const serializeButterCMSMenuItem = (items: ButterCMSMenuItem[]): MenuItem[] => {
+export const serializeButterCMSMenuItem = (
+  items: ButterCMSMenuItem[],
+): MenuItem[] => {
   return items.map((item) => {
     const categoryId = item.category.length
       ? item.category[0].split("category[_id=")[1]?.split("]")[0] || ""
@@ -85,23 +83,4 @@ const serializeButterCMSMenuItem = (items: ButterCMSMenuItem[]): MenuItem[] => {
       children: null,
     };
   });
-};
-
-export const serializeMenu = (
-  items: MenuGet_menu_Menu_items_MenuItem[] | ButterCMSMenuItem[],
-  source: "saleor" | "butterCms",
-): Menu => {
-  if (source === "saleor") {
-    return {
-      items: (items as MenuGet_menu_Menu_items_MenuItem[]).map(
-        serializeSaleorMenuItem,
-      ),
-    };
-  } else if (source === "butterCms") {
-    return {
-      items: serializeButterCMSMenuItem(items as ButterCMSMenuItem[]),
-    };
-  }
-
-  return { items: [] };
 };

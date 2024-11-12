@@ -2,7 +2,7 @@ import Butter from "buttercms/lib/butter";
 
 import type { ButterCMSMenuItem } from "@nimara/domain/objects/Menu";
 
-import { serializeMenu } from "#root/lib/serializers/cms-menu";
+import { serializeButterCMSMenuItem } from "#root/lib/serializers/cms-menu";
 import { convertLanguageCode } from "#root/lib/serializers/cms-page";
 import type { CMSMenuGetInfra } from "#root/use-cases/cms-menu/types";
 
@@ -37,9 +37,10 @@ export const butterCMSMenuGetInfra =
     );
 
     return {
-      menu: serializeMenu(
-        selectedMenu.menu_items as ButterCMSMenuItem[],
-        "butterCms",
-      ),
+      menu: {
+        items: serializeButterCMSMenuItem(
+          selectedMenu.menu_items as ButterCMSMenuItem[],
+        ),
+      },
     };
   };
