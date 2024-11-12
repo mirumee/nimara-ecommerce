@@ -1,5 +1,5 @@
 import { graphqlClient } from "#root/graphql/client";
-import { parseDataToCMSFields } from "#root/lib/serializers/cms-page";
+import { parseSaleorDataToFields } from "#root/lib/serializers/cms-page";
 import type { CMSPageGetInfra } from "#root/use-cases/cms-page/types";
 
 import { PageDocument } from "../graphql/queries/generated";
@@ -23,6 +23,6 @@ export const saleorCMSPageGetInfra =
     return {
       title: data.page.title,
       content: data.page.content,
-      fields: parseDataToCMSFields(data.page.attributes, "saleor"),
+      fields: parseSaleorDataToFields(data.page.attributes),
     };
   };
