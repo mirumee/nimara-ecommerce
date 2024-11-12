@@ -8,7 +8,7 @@ import {
 
 import {
   convertLanguageCode,
-  parseDataToCMSFields,
+  parseButterCMSDataToFields,
 } from "#root/lib/serializers/cms-page";
 import type { CMSPageGetInfra } from "#root/use-cases/cms-page/types";
 
@@ -52,6 +52,6 @@ export const butterCMSPageGetInfra =
     return {
       title: page.data.data.name,
       content: content,
-      fields: parseDataToCMSFields(fields, "butterCms"),
+      fields: parseButterCMSDataToFields(fields),
     };
   };
