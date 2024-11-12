@@ -12,53 +12,52 @@ const convertToDashedString = (input: string): string => {
   return input.replace(/[\s_]+/g, "-").trim();
 };
 
-export const parseDataToCMSFields = (
-  fields: SelectionAttributeFragment[] | ButterCMSPageFields,
-  source: "saleor" | "butterCms",
+export const parseSaleorDataToFields = (
+  fields: SelectionAttributeFragment[],
 ): PageField[] => {
-  if (source === "saleor") {
-    return (fields as SelectionAttributeFragment[]).map((field) => {
-      const slug = field.attribute?.slug;
-      const text =
-        getTranslation("plainText", field.values?.[0]) ||
-        field.values?.[0]?.value ||
-        "";
-      const imageUrl = field.values[0].file?.url;
-      const references = field.values
-        ?.map((value) => value.reference)
-        .filter((ref) => ref !== null);
+  return fields.map((field) => {
+    const slug = field.attribute?.slug;
+    const text =
+      getTranslation("plainText", field.values?.[0]) ||
+      field.values?.[0]?.value ||
+      "";
+    const imageUrl = field.values[0].file?.url;
+    const references = field.values
+      ?.map((value) => value.reference)
+      .filter((ref) => ref !== null);
 
-      return {
-        slug,
-        text,
-        imageUrl,
-        reference: references.length > 0 ? references : undefined,
-      };
-    });
-  } else if (source === "butterCms") {
-    const pageFields = fields as ButterCMSPageFields;
+    return {
+      slug,
+      text,
+      imageUrl,
+      reference: references.length > 0 ? references : undefined,
+    };
+  });
+};
 
-    return Object.keys(pageFields).map((key) => {
-      const value = pageFields[key];
-      let reference: string[] | undefined;
+export const parseButterCMSDataToFields = (
+  fields: ButterCMSPageFields,
+): PageField[] => {
+  const pageFields = fields;
 
-      if (Array.isArray(value)) {
-        reference = value.map((item) => item.id).filter(Boolean);
-      }
+  return Object.keys(pageFields).map((key) => {
+    const value = pageFields[key];
+    let reference: string[] | undefined;
 
-      return {
-        slug: convertToDashedString(key),
-        text: typeof value === "string" ? value : "",
-        imageUrl:
-          typeof value === "string" && value.startsWith("http")
-            ? value
-            : undefined,
-        reference: reference?.length ? reference : undefined,
-      };
-    });
-  }
+    if (Array.isArray(value)) {
+      reference = value.map((item) => item.id).filter(Boolean);
+    }
 
-  return [];
+    return {
+      slug: convertToDashedString(key),
+      text: typeof value === "string" ? value : "",
+      imageUrl:
+        typeof value === "string" && value.startsWith("http")
+          ? value
+          : undefined,
+      reference: reference?.length ? reference : undefined,
+    };
+  });
 };
 
 export const convertLanguageCode = (languageCode: LanguageCodeEnum): string => {
