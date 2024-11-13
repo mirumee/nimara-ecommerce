@@ -3,7 +3,7 @@ import type * as Types from '@nimara/codegen/schema';
 import type { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
 export type MenuItem_MenuItem_translation_MenuItemTranslation = { name: string };
 
-export type MenuItem_MenuItem_category_Category_translation_CategoryTranslation = { name: string | null };
+export type MenuItem_MenuItem_category_Category_translation_CategoryTranslation = { name: string | null, description: string | null };
 
 export type MenuItem_MenuItem_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_attributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation = { name: string };
 
@@ -17,11 +17,13 @@ export type MenuItem_MenuItem_category_Category_products_ProductCountableConnect
 
 export type MenuItem_MenuItem_category_Category_products_ProductCountableConnection = { edges: Array<MenuItem_MenuItem_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge> };
 
-export type MenuItem_MenuItem_category_Category = { id: string, slug: string, name: string, translation: MenuItem_MenuItem_category_Category_translation_CategoryTranslation | null, products: MenuItem_MenuItem_category_Category_products_ProductCountableConnection | null };
+export type MenuItem_MenuItem_category_Category = { id: string, slug: string, name: string, description: string | null, translation: MenuItem_MenuItem_category_Category_translation_CategoryTranslation | null, products: MenuItem_MenuItem_category_Category_products_ProductCountableConnection | null };
 
-export type MenuItem_MenuItem_collection_Collection_translation_CollectionTranslation = { name: string | null };
+export type MenuItem_MenuItem_collection_Collection_translation_CollectionTranslation = { name: string | null, description: string | null };
 
-export type MenuItem_MenuItem_collection_Collection = { id: string, name: string, slug: string, translation: MenuItem_MenuItem_collection_Collection_translation_CollectionTranslation | null };
+export type MenuItem_MenuItem_collection_Collection_backgroundImage_Image = { url: string };
+
+export type MenuItem_MenuItem_collection_Collection = { id: string, name: string, slug: string, description: string | null, translation: MenuItem_MenuItem_collection_Collection_translation_CollectionTranslation | null, backgroundImage: MenuItem_MenuItem_collection_Collection_backgroundImage_Image | null };
 
 export type MenuItem_MenuItem_page_Page_translation_PageTranslation = { title: string | null };
 
@@ -57,7 +59,9 @@ export const MenuItem = new TypedDocumentString(`
     name
     translation(languageCode: $languageCode) {
       name
+      description
     }
+    description
     products(first: 10, channel: "default-channel") {
       edges {
         node {
@@ -80,8 +84,13 @@ export const MenuItem = new TypedDocumentString(`
     name
     translation(languageCode: $languageCode) {
       name
+      description
     }
     slug
+    description
+    backgroundImage {
+      url
+    }
   }
   page {
     id

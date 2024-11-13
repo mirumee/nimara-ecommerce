@@ -10,6 +10,7 @@ type Product = {
 };
 
 type Category = {
+  description: string | null;
   id: string;
   name: string;
   products: {
@@ -18,14 +19,16 @@ type Category = {
     }[];
   } | null;
   slug: string;
-  translation: { name: string | null } | null;
+  translation: { description: string | null; name: string | null } | null;
 };
 
 type Collection = {
+  backgroundImage: { url: string } | null;
+  description: string | null;
   id: string;
   name: string;
   slug: string;
-  translation: { name: string | null } | null;
+  translation: { description: string | null; name: string | null } | null;
 };
 
 type Page = {
