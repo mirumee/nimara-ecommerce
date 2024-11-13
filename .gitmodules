@@ -1,0 +1,3 @@
+[submodule "packages/infrastructure/src/private/nimara-infrastructure-private"]
+	path = packages/infrastructure/src/private/nimara-infrastructure-private
+	url = git@github.com:mirumee/nimara-infrastructure-private.git

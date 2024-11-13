@@ -1,192 +1,27 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useQueryStates } from "nuqs";
+import { useEffect, useMemo, useState } from "react";
 
-import type {
-  Attribute,
-  AttributeValue,
-} from "@nimara/domain/objects/Attribute";
-import type { Cart } from "@nimara/domain/objects/Cart";
-import type {
-  ProductAvailability,
-  ProductVariant,
-} from "@nimara/domain/objects/Product";
-import type { User } from "@nimara/domain/objects/User";
 import { Label } from "@nimara/ui/components/label";
 import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@nimara/ui/components/toggle-group";
 
-import { usePathname, useRouter } from "@/i18n/routing";
 import { useLocalizedFormatter } from "@/lib/formatters/use-localized-formatter";
 import { isVariantInStock } from "@/lib/product";
+import { cn } from "@/lib/utils";
 
 import { AddToBag } from "./add-to-bag";
 import { VariantDropdown } from "./variant-dropdown";
-
-type AttributeDetails = {
-  name: string;
-  slug: string;
-  type: Attribute["type"];
-  values: AttributeValue[];
-};
-type SelectionAttributeMap = AttributeDetails[];
-
-type SelectedAttribute = { slug: string; value: string };
-
-export const getIdFromHash = () => {
-  const isOnServer = typeof window === "undefined";
-
-  return isOnServer ? "" : location.hash.replace("#", "");
-};
-
-const generateFullAttributeMap = (variants: ProductVariant[]) => {
-  const selectionAttributesMap: SelectionAttributeMap = [];
-
-  variants.forEach(({ selectionAttributes }) => {
-    selectionAttributes.forEach(
-      ({
-        values,
-        type,
-        name,
-        slug,
-      }: {
-        name: string;
-        slug: string;
-        type: Attribute["type"];
-        values: AttributeValue[];
-      }) => {
-        if (slug && values?.length > 0) {
-          const attributeMatch = selectionAttributesMap.find(
-            (attribute) => attribute.slug === slug,
-          );
-
-          if (attributeMatch) {
-            const currentValuesSlug = attributeMatch.values.map(
-              ({ slug }) => slug,
-            );
-
-            const newValues = values.filter(
-              ({ slug }) => !currentValuesSlug.includes(slug),
-            );
-
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-            attributeMatch.values.push(...newValues);
-          } else {
-            selectionAttributesMap.push({
-              slug,
-              values: [...values],
-              name,
-              type,
-            });
-          }
-        }
-      },
-    );
-  });
-
-  return selectionAttributesMap;
-};
-
-const narrowAttributeMapToSelectedAttributes = (
-  variants: ProductVariant[],
-  selectionAttributesMap: SelectionAttributeMap,
-  selectedAttributes: SelectedAttribute[],
-) => {
-  selectedAttributes.forEach((_, i, array) => {
-    let newValues: AttributeValue[] = [];
-    const attributesRequirements = array.slice(0, i + 1);
-    const selectionToUpdate = selectionAttributesMap[i + 1];
-
-    if (!selectionToUpdate) {
-      return;
-    }
-
-    variants.forEach(({ selectionAttributes }) => {
-      const match = attributesRequirements.every((requirement) => {
-        return selectionAttributes.some(({ values, slug }) => {
-          const valuesSlug = values.map(({ slug }: { slug: string }) => slug);
-
-          return (
-            requirement.slug === slug && valuesSlug.includes(requirement.value)
-          );
-        });
-      });
-
-      if (match) {
-        const attributes = selectionAttributes.filter(
-          ({ slug, values }) =>
-            selectionToUpdate.slug === slug && values.length,
-        );
-
-        if (attributes.length) {
-          newValues.push(
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-            ...attributes
-              .map(({ values }: { values: AttributeValue[] }) => values)
-              .flat(),
-          );
-        }
-      }
-    });
-
-    const attributeMatch = selectionAttributesMap.find(
-      ({ slug }) => slug === selectionToUpdate.slug,
-    );
-
-    if (attributeMatch) {
-      attributeMatch.values = [...newValues];
-    }
-
-    newValues = [];
-  });
-};
-
-const generateSelectionAttributeMap = (
-  variants: ProductVariant[],
-  selectedAttributes: SelectedAttribute[],
-): SelectionAttributeMap => {
-  const selectionAttributesMap = generateFullAttributeMap(variants);
-
-  narrowAttributeMapToSelectedAttributes(
-    variants,
-    selectionAttributesMap,
-    selectedAttributes,
-  );
-
-  return selectionAttributesMap;
-};
-
-const generateSelectedMapForVariant = (
-  variantId: string,
-  variants: ProductVariant[],
-): SelectedAttribute[] => {
-  const variant = variants.find(({ id }) => id === variantId);
-
-  return (
-    variant?.selectionAttributes
-      .map(({ slug, values }) => {
-        if (values.length) {
-          return {
-            slug,
-            value: values[0].slug,
-          };
-        }
-
-        return null;
-      })
-      .filter(Boolean) ?? []
-  );
-};
-
-type AttributePickerProps = {
-  availability: ProductAvailability;
-  cart: Cart | null;
-  user: (User & { accessToken: string | undefined }) | null;
-  variants: ProductVariant[];
-};
+import {
+  type AttributePickerProps,
+  getAllSelectionAttributes,
+  getParserForAttributeType,
+  validateValue,
+} from "./variant-selector-utils";
 
 export const VariantSelector = ({
   variants: productVariants,
@@ -198,182 +33,274 @@ export const VariantSelector = ({
   cart,
   user,
 }: AttributePickerProps) => {
-  const router = useRouter();
-  const pathname = usePathname();
   const t = useTranslations();
   const formatter = useLocalizedFormatter();
+  // used to discriminate between variants when there are multiple variants with the same set of selection attributes
+  const [discriminatedVariantId, setDiscriminatedVariantId] = useState("");
 
-  const [selectedVariantId, setSelectedVariantId] = useState("");
-  const [variants, setVariants] = useState<ProductVariant[]>([]);
-  const [selectedAttributes, setSelectedAttributes] = useState<
-    SelectedAttribute[]
-  >(generateSelectedMapForVariant(selectedVariantId, productVariants));
-  const [selectionAttributesMap, setSelectionAttributesMap] =
-    useState<SelectionAttributeMap>(
-      generateSelectionAttributeMap(productVariants, selectedAttributes),
+  const allSelectionAttributes = useMemo(
+    () => getAllSelectionAttributes(productVariants),
+    [productVariants],
+  );
+
+  const [params, setParams] = useQueryStates(
+    Object.fromEntries(
+      allSelectionAttributes.map((attr) => [
+        attr.slug,
+        getParserForAttributeType(attr.type),
+      ]),
+    ),
+    {
+      history: "replace",
+    },
+  );
+
+  const chosenAttributes = useMemo(
+    () =>
+      Object.entries(params ?? {})
+        .map(([slug, value]) => {
+          return typeof value === "string" ? { slug, value } : null;
+        })
+        .filter(Boolean),
+    [params],
+  );
+
+  useEffect(() => {
+    if (!params) {
+      return;
+    }
+
+    const validatedParams = Object.fromEntries(
+      allSelectionAttributes.map((attr, index) => {
+        const currentValue = params[attr.slug];
+
+        if (!validateValue(attr.slug, currentValue, allSelectionAttributes)) {
+          return [attr.slug, attr.type === "MULTISELECT" ? [] : ""];
+        }
+
+        return [
+          attr.slug,
+          index > 0 && params[allSelectionAttributes?.[index - 1]?.slug] === ""
+            ? ""
+            : currentValue,
+        ];
+      }),
     );
 
-  const startingPrice = startPrice;
-  const selectedVariant = variantsAvailability
-    ? variantsAvailability.find(({ id }) => id === selectedVariantId)
+    if (JSON.stringify(params) !== JSON.stringify(validatedParams)) {
+      setParams(validatedParams).catch((e) => {
+        console.error(e);
+      });
+    }
+  }, [
+    params,
+    allSelectionAttributes,
+    setParams,
+    setDiscriminatedVariantId,
+    setParams,
+  ]);
+
+  const areAllRequiredSelectionAttributesChosen = allSelectionAttributes.every(
+    ({ slug }) => {
+      const value = params?.[slug];
+
+      return value && (Array.isArray(value) ? value.length > 0 : value !== "");
+    },
+  );
+
+  const matchingVariants = useMemo(() => {
+    if (!areAllRequiredSelectionAttributesChosen) {
+      return [];
+    }
+
+    return productVariants.filter((variant) =>
+      variant.selectionAttributes.every(({ slug, values, type }) => {
+        if (!values.length) {
+          return true;
+        }
+
+        const selectedValue = params?.[slug];
+
+        if (!selectedValue) {
+          return false;
+        }
+
+        return type === "MULTISELECT"
+          ? (selectedValue as string[]).every((v) =>
+              values.some((attr) => attr.slug === v),
+            )
+          : values.some((v) => v.slug === selectedValue);
+      }),
+    );
+  }, [params, productVariants, allSelectionAttributes]);
+
+  const chosenVariant = discriminatedVariantId
+    ? (productVariants.find(({ id }) => id === discriminatedVariantId) ?? null)
+    : matchingVariants?.length === 1
+      ? matchingVariants?.[0]
+      : null;
+
+  const chosenVariantAvailability = variantsAvailability
+    ? variantsAvailability.find(({ id }) => id === chosenVariant?.id)
     : undefined;
-  const isVariantAvailable = selectedVariant
-    ? isVariantInStock(selectedVariant, cart?.lines)
-    : isProductAvailable;
+
+  const isVariantAvailable =
+    chosenVariant && chosenVariantAvailability
+      ? isVariantInStock(chosenVariantAvailability, cart?.lines)
+      : isProductAvailable;
 
   const getPrice = () => {
-    if (selectedVariant) {
-      if (selectedVariant.price.amount === 0) {
+    if (chosenVariantAvailability) {
+      if (chosenVariantAvailability.price.amount === 0) {
         return t("common.free");
       }
 
-      return formatter.price({ amount: selectedVariant.price.amount });
+      return formatter.price({
+        amount: chosenVariantAvailability.price.amount,
+      });
     }
 
     const hasFreeVariant = variantsAvailability.some(
       (variant) => variant.price.amount === 0,
     );
 
-    if (hasFreeVariant || startingPrice.amount === 0) {
+    if (hasFreeVariant || startPrice.amount === 0) {
       return t("common.free");
     }
 
     return t("common.from-price", {
-      price: formatter.price({ amount: startingPrice.amount }),
+      price: formatter.price({ amount: startPrice.amount }),
     });
   };
-
-  useEffect(() => {
-    const regeneratedSelectionAttributesMap = generateSelectionAttributeMap(
-      productVariants,
-      selectedAttributes,
-    );
-
-    if (selectedAttributes.length) {
-      const variantWithSelectedAttributes = productVariants.filter((variant) =>
-        variant.selectionAttributes.every(({ slug, values }) => {
-          if (values.length) {
-            const attributeMatch = selectedAttributes.find(
-              (attribute) => slug === attribute.slug,
-            );
-
-            return attributeMatch?.value === values[0].slug;
-          }
-
-          return true;
-        }),
-      );
-
-      if (variantWithSelectedAttributes) {
-        setVariants(variantWithSelectedAttributes);
-      }
-    }
-
-    setSelectionAttributesMap(regeneratedSelectionAttributesMap);
-  }, [selectedAttributes]);
-
-  useEffect(() => {
-    if (selectedVariantId) {
-      router.push(`${pathname}#${selectedVariantId}`, { scroll: false });
-    } else if (getIdFromHash() && !selectedVariantId) {
-      router.push(pathname, { scroll: false });
-    }
-  }, [selectedVariantId]);
-
-  useEffect(() => {
-    /**
-     * Can't set this in initial useState due to hydration error
-     */
-    const variantId = getIdFromHash();
-
-    // Check if the variant id exists in the product variants.
-    const isVariantIdValid =
-      productVariants.findIndex((v) => v.id === variantId) !== -1;
-
-    if (variantId && isVariantIdValid) {
-      setSelectedVariantId(variantId);
-      setSelectedAttributes(
-        generateSelectedMapForVariant(variantId, productVariants),
-      );
-    }
-  }, []);
 
   return (
     <>
       <p className="pb-6 pt-2">{getPrice()}</p>
 
-      <div className="[&>div]:pb-4" key={selectedVariantId}>
-        {selectionAttributesMap.map(({ slug, name, values }, index) => {
-          const arePreviousAttributesSelected =
-            index < selectedAttributes.length + 1;
-          const hasValues = values.length > 0;
+      <div className="[&>div]:pb-4">
+        {allSelectionAttributes.map(({ slug, name, values, type }, index) => {
+          const isPreviousAttributeSelected =
+            index === 0 ? true : !!chosenAttributes[index - 1]?.value;
 
-          if (!(arePreviousAttributesSelected && hasValues)) {
-            return null;
-          }
-
-          const defaultValue = selectedAttributes.find((val) => {
+          const chosenAttribute = chosenAttributes.find((val) => {
             if (val.slug === slug) {
               return values.some((v) => v.slug === val.value);
             }
 
             return false;
-          })?.value;
+          });
 
           return (
             <div key={slug} className="flex flex-col gap-1.5">
-              <Label id={`label-${slug}`}>{name}</Label>
+              <Label id={`label-${slug}`}>
+                {name}
+                {type === "SWATCH" &&
+                  !!chosenAttribute?.value &&
+                  `: ${chosenAttribute.value}`}
+              </Label>
+
               <ToggleGroup
                 type="single"
-                defaultValue={defaultValue}
-                className="grid grid-cols-2 md:grid-cols-3"
+                disabled={!isPreviousAttributeSelected}
+                defaultValue={chosenAttribute?.value}
+                className={cn(
+                  type === "SWATCH"
+                    ? "flex justify-start"
+                    : "grid grid-cols-2 md:grid-cols-3",
+                )}
                 aria-labelledby={t("products.label-slug", { slug })}
                 onValueChange={(valueSlug) => {
-                  setVariants([]);
-                  setSelectedVariantId("");
-                  setSelectedAttributes((values) => {
-                    if (index < values.length - 1) {
-                      // Undo if someone selects one of the previous attribute.
-                      values.splice(index, values.length - index, {
-                        slug,
-                        value: valueSlug,
-                      });
-                    } else if (valueSlug) {
-                      // Insert new attribute choice.
-                      values.splice(index, 1, { slug, value: valueSlug });
-                    } else {
-                      // Replace current attribute choice.
-                      values.splice(index, 1);
-                    }
-
-                    return [...values];
+                  setDiscriminatedVariantId("");
+                  setParams({
+                    ...params,
+                    [slug]: valueSlug,
+                  }).catch((e) => {
+                    console.error(e);
                   });
                 }}
               >
-                {values.map(({ slug, name }) => (
-                  <ToggleGroupItem variant="outline" key={slug} value={slug}>
-                    {name}
-                  </ToggleGroupItem>
-                ))}
+                {values.map(({ slug: valueSlug, name: valueName, value }) => {
+                  const isSelected = chosenAttributes.some(
+                    (attr) => attr.slug === slug && attr.value === valueSlug,
+                  );
+
+                  return type === "SWATCH" ? (
+                    <ToggleGroupItem
+                      disabled={!isPreviousAttributeSelected}
+                      variant="default"
+                      key={valueSlug}
+                      value={valueSlug}
+                      className={cn(
+                        cn(
+                          "flex max-w-min flex-col hover:bg-transparent data-[state=on]:bg-transparent",
+                        ),
+                        !isPreviousAttributeSelected && "opacity-50",
+                      )}
+                      size="default"
+                    >
+                      <div
+                        className={cn("h-6 w-6 border border-stone-200")}
+                        style={{
+                          backgroundColor: value,
+                        }}
+                      />
+
+                      <div
+                        className={cn(
+                          "invisible mt-1 h-[2px] w-6 bg-black",
+                          isSelected && "visible",
+                        )}
+                      ></div>
+                    </ToggleGroupItem>
+                  ) : (
+                    <ToggleGroupItem
+                      disabled={!isPreviousAttributeSelected}
+                      variant="outline"
+                      key={valueSlug}
+                      value={valueSlug}
+                    >
+                      {valueName}
+                    </ToggleGroupItem>
+                  );
+                })}
               </ToggleGroup>
             </div>
           );
         })}
 
-        <div className="flex flex-col gap-1.5">
-          <VariantDropdown
-            key={selectedVariantId}
-            variants={variants}
-            onVariantSelect={setSelectedVariantId}
-            selectedVariantId={selectedVariantId}
-          />
-        </div>
+        {matchingVariants?.length > 1 && (
+          <div className="flex flex-col gap-1.5">
+            <VariantDropdown
+              variants={matchingVariants}
+              onVariantSelect={(variantId) => {
+                setDiscriminatedVariantId(variantId);
+              }}
+              selectedVariantId={discriminatedVariantId}
+            />
+          </div>
+        )}
       </div>
 
       <AddToBag
         cart={cart}
-        variantId={selectedVariantId}
-        isVariantAvailable={isVariantAvailable}
+        variantId={
+          matchingVariants?.length > 1
+            ? discriminatedVariantId
+            : chosenVariant
+              ? chosenVariant?.id
+              : areAllRequiredSelectionAttributesChosen
+                ? "NOTIFY_ME"
+                : ""
+        }
+        isVariantAvailable={
+          matchingVariants?.length > 1
+            ? true
+            : chosenVariant
+              ? isVariantAvailable
+              : areAllRequiredSelectionAttributesChosen
+                ? false
+                : true
+        }
         user={user}
       />
     </>
