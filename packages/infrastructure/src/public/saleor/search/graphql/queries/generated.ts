@@ -36,6 +36,8 @@ export type FacetsQueryVariables = Types.Exact<{
 
 export type FacetsQuery = FacetsQuery_Query;
 
+export type SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_translation_ProductTranslation = { name: string | null };
+
 export type SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_thumbnail_Image = { url: string, alt: string | null };
 
 export type SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney_gross_Money = { amount: number };
@@ -64,7 +66,7 @@ export type SearchProductQuery_products_ProductCountableConnection_edges_Product
 
 export type SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo = { priceRange: SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange | null };
 
-export type SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product = { id: string, name: string, slug: string, updatedAt: string, thumbnail: SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_thumbnail_Image | null, variants: Array<SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant> | null, media: Array<SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_media_ProductMedia> | null, pricing: SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo | null };
+export type SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product = { id: string, name: string, slug: string, updatedAt: string, translation: SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_translation_ProductTranslation | null, thumbnail: SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_thumbnail_Image | null, variants: Array<SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant> | null, media: Array<SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_media_ProductMedia> | null, pricing: SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo | null };
 
 export type SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge = { node: SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product };
 
@@ -78,11 +80,13 @@ export type SearchProductQuery_Query = { products: SearchProductQuery_products_P
 export type SearchProductQueryVariables = Types.Exact<{
   after?: Types.InputMaybe<Types.Scalars['String']['input']>;
   before?: Types.InputMaybe<Types.Scalars['String']['input']>;
+  channel: Types.Scalars['String']['input'];
   filter?: Types.InputMaybe<Types.ProductFilterInput>;
   first?: Types.InputMaybe<Types.Scalars['Int']['input']>;
   last?: Types.InputMaybe<Types.Scalars['Int']['input']>;
   search?: Types.InputMaybe<Types.Scalars['String']['input']>;
   sortBy?: Types.InputMaybe<Types.ProductOrder>;
+  languageCode: Types.LanguageCodeEnum;
   where?: Types.InputMaybe<Types.ProductWhereInput>;
 }>;
 
@@ -150,10 +154,11 @@ export const FacetsQueryDocument = new TypedDocumentString(`
 }
     `) as unknown as TypedDocumentString<FacetsQuery, FacetsQueryVariables>;
 export const SearchProductQueryDocument = new TypedDocumentString(`
-    query SearchProductQuery($after: String, $before: String, $filter: ProductFilterInput, $first: Int, $last: Int, $search: String, $sortBy: ProductOrder, $where: ProductWhereInput) {
+    query SearchProductQuery($after: String, $before: String, $channel: String!, $filter: ProductFilterInput, $first: Int, $last: Int, $search: String, $sortBy: ProductOrder, $languageCode: LanguageCodeEnum!, $where: ProductWhereInput) {
   products(
     after: $after
     before: $before
+    channel: $channel
     filter: $filter
     first: $first
     last: $last
@@ -178,6 +183,9 @@ export const SearchProductQueryDocument = new TypedDocumentString(`
     fragment SearchProductFragment on Product {
   id
   name
+  translation(languageCode: $languageCode) {
+    name
+  }
   slug
   thumbnail(format: WEBP, size: 512) {
     url

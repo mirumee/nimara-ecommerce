@@ -7,14 +7,14 @@ export const searchProductSerializer: RecordSerializer<SearchProduct> = (
 ) =>
   Object.freeze({
     currency: data.currency,
-    id: data.objectID,
-    productId: data.productId,
+    id: data.productId,
     name: data.productName,
     slug: data.slug,
     price: Number(data.grossPrice),
     thumbnail: data.thumbnail
       ? {
-          url: data.thumbnail,
+          // INFO: just for demo purposes
+          url: data.thumbnail.replace("=/256/", "=/1024/"),
         }
       : null,
     media: Array.isArray(data.media)
@@ -23,4 +23,5 @@ export const searchProductSerializer: RecordSerializer<SearchProduct> = (
           alt: mediaItem.alt,
         }))
       : null,
+    updatedAt: data.updatedAt,
   });
