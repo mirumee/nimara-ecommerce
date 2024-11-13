@@ -54,7 +54,7 @@ export const searchServiceAlgolia = algoliaSearchService({
       {
         availableFacets: facets,
         channel: "channel-us",
-        indexName: `channel-us`,
+        indexName: `channel-us.USD.products`,
         virtualReplicas: [
           {
             indexName: `channel-us.USD.products.name_asc`,
@@ -109,5 +109,4 @@ export const searchServiceSaleor = saleorSearchService({
   },
 });
 
-// export const searchService: SearchService = searchServiceSaleor;
 export const searchService: SearchService = searchServiceAlgolia;

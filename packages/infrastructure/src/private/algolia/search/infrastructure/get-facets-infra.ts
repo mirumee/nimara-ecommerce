@@ -50,11 +50,6 @@ export const algoliaGetFacetsInfra = ({
         const indexFacetConfig = index.availableFacets[facetName];
 
         if (!indexFacetConfig) {
-          loggingService.error("Missing facet configuration within index", {
-            facetName,
-            indexName: index.indexName,
-          });
-
           return acc;
         }
 

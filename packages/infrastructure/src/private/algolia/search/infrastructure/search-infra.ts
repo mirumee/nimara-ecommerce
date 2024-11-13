@@ -1,5 +1,4 @@
 import algoliasearch from "algoliasearch";
-import { join } from "path";
 
 import { loggingService } from "@nimara/infrastructure/logging/service";
 import type { SearchInfra } from "@nimara/infrastructure/use-cases/search/types";
@@ -34,7 +33,15 @@ export const algoliaSearchInfra = ({
 
     // Create a mapping between slugs and Algolia name
     const parsedFilters = Object.entries(filters ?? {})
-      .reduce<string[]>((acc, [name, value], index) => {
+      .reduce<string[]>((acc, [name, value]) => {
+        if (name === "category") {
+          const formattedValue = (
+            String(value).charAt(0).toUpperCase() + String(value).slice(1)
+          ).replaceAll("-", " & ");
+
+          acc.push(`categories.lvl0:'${formattedValue}'`);
+        }
+
         if (name in facetsMapping) {
           const values = value.split(".");
 

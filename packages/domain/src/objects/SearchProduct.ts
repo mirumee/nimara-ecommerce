@@ -9,7 +9,6 @@ export type SearchProduct = {
     | null;
   name: string;
   price: number;
-  productId: string;
   slug: string;
   thumbnail: {
     alt?: string;

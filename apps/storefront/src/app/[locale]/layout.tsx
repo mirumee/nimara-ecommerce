@@ -2,7 +2,6 @@ import "@nimara/ui/styles/globals";
 
 import type { Metadata } from "next";
 import { NextIntlClientProvider, useMessages } from "next-intl";
-import { NuqsAdapter } from "nuqs/adapters/next/app";
 import type { ReactNode } from "react";
 
 import { Toaster } from "@nimara/ui/components/toaster";
@@ -34,11 +33,9 @@ export default function LocaleLayout({
         className={cn("min-h-[100dvh]", "flex flex-col", aspekta.className)}
       >
         <NextIntlClientProvider messages={messages}>
-          <NuqsAdapter>
-            {children}
-            <Toaster />
-            <ErrorServiceServer />
-          </NuqsAdapter>
+          {children}
+          <Toaster />
+          <ErrorServiceServer />
         </NextIntlClientProvider>
       </body>
     </html>
