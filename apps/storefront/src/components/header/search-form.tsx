@@ -2,6 +2,7 @@
 
 import { useDebounce } from "@uidotdev/usehooks";
 import { Search } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
   type KeyboardEventHandler,
@@ -38,20 +39,20 @@ type SearchState = {
   status: "LOADING" | "IDLE";
 };
 
-const minLetters = 3;
+const minLetters = 1;
 const maxSearchSuggestions = 10;
 const keyboardCodes = {
   ArrowDown: "ArrowDown",
   ArrowUp: "ArrowUp",
   Enter: "Enter",
 };
-const initialSearchState: SearchState = {
+const initialSearchState = (searchQuery?: string | null): SearchState => ({
   highlightedOptionIndex: -1,
-  inputValue: "",
+  inputValue: searchQuery ?? "",
   options: [],
   status: "IDLE",
   showOptions: false,
-};
+});
 
 export const SearchForm = ({ onSubmit }: { onSubmit?: () => void }) => {
   const ts = useTranslations("search");
@@ -60,15 +61,21 @@ export const SearchForm = ({ onSubmit }: { onSubmit?: () => void }) => {
   const pathname = usePathname();
 
   const router = useRouter();
+
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams.get("q");
+
   const [
     { inputValue, options, highlightedOptionIndex, showOptions, status },
     setSearchState,
-  ] = useState<SearchState>(initialSearchState);
+  ] = useState<SearchState>(initialSearchState(searchQuery));
 
   const isLoading = status === "LOADING";
   const isIdle = status === "IDLE";
   const isNoOptionHighlighted = highlightedOptionIndex === -1;
   const isLastOptionHighlighted = highlightedOptionIndex === options.length;
+  const isSearchPage = pathname === paths.search.asPath();
+  const isHomePage = pathname === paths.home.asPath();
 
   const debouncedInputValue = useDebounce(
     inputValue,
@@ -76,14 +83,14 @@ export const SearchForm = ({ onSubmit }: { onSubmit?: () => void }) => {
   );
 
   const resetSearchState = useCallback(
-    () => setSearchState(initialSearchState),
+    () => setSearchState(initialSearchState()),
     [],
   );
 
   const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (event) => {
     if (event.code === keyboardCodes.Enter) {
       event.preventDefault();
-      resetSearchState();
+
       if (onSubmit) {
         onSubmit();
       }
@@ -153,6 +160,10 @@ export const SearchForm = ({ onSubmit }: { onSubmit?: () => void }) => {
       // Reset the search state when input is empty/cleared
       resetSearchState();
 
+      if (isSearchPage) {
+        router.push(paths.home.asPath());
+      }
+
       return;
     }
 
@@ -167,10 +178,23 @@ export const SearchForm = ({ onSubmit }: { onSubmit?: () => void }) => {
           showOptions: true,
         }));
       });
+
+      if (isHomePage) {
+        router.push(paths.search.asPath({ query: { q: debouncedInputValue } }));
+      }
+
+      if (isSearchPage) {
+        router.replace(
+          paths.search.asPath({ query: { q: debouncedInputValue } }),
+        );
+      }
     }
   }, [debouncedInputValue]);
 
   useEffect(() => {
+    if (isSearchPage) {
+      return;
+    }
     resetSearchState();
   }, [pathname]);
 
@@ -214,7 +238,7 @@ export const SearchForm = ({ onSubmit }: { onSubmit?: () => void }) => {
 
         <ComboboxGroup
           ariaLabel={ts("search-results")}
-          expanded={isIdle && showOptions}
+          expanded={!isHomePage && !isSearchPage && isIdle && showOptions}
         >
           {options.map((suggestion, index) => (
             <ComboboxItem
@@ -228,7 +252,6 @@ export const SearchForm = ({ onSubmit }: { onSubmit?: () => void }) => {
                     ? paths.products.asPath({ slug: suggestion.slug })
                     : "#"
                 }
-                onClick={() => resetSearchState()}
               >
                 <Search className="self-center" height={16} />
                 {suggestion.label}
@@ -240,7 +263,6 @@ export const SearchForm = ({ onSubmit }: { onSubmit?: () => void }) => {
             <Link
               className="flex gap-1 px-1.5 py-2 pl-8 hover:cursor-pointer"
               href={paths.search.asPath({ query: { q: inputValue } })}
-              onClick={() => resetSearchState()}
             >
               {ts("search-for", { query: inputValue })}
             </Link>
