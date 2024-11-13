@@ -12,6 +12,7 @@ import {
 
 import { useLocalizedFormatter } from "@/lib/formatters/use-localized-formatter";
 import { isVariantInStock } from "@/lib/product";
+import { cn } from "@/lib/utils";
 
 import { AddToBag } from "./add-to-bag";
 import { VariantDropdown } from "./variant-dropdown";
@@ -56,10 +57,11 @@ export const VariantSelector = ({
 
   const chosenAttributes = useMemo(
     () =>
-      Object.entries(params ?? {}).map(([slug, value]) => ({
-        slug,
-        value,
-      })),
+      Object.entries(params ?? {})
+        .map(([slug, value]) => {
+          return typeof value === "string" ? { slug, value } : null;
+        })
+        .filter(Boolean),
     [params],
   );
 
@@ -176,27 +178,36 @@ export const VariantSelector = ({
       <p className="pb-6 pt-2">{getPrice()}</p>
 
       <div className="[&>div]:pb-4">
-        {allSelectionAttributes.map(({ slug, name, values }, index) => {
+        {allSelectionAttributes.map(({ slug, name, values, type }, index) => {
           const isPreviousAttributeSelected =
             index === 0 ? true : !!chosenAttributes[index - 1]?.value;
 
-          const defaultValue = chosenAttributes.find((val) => {
+          const chosenAttribute = chosenAttributes.find((val) => {
             if (val.slug === slug) {
               return values.some((v) => v.slug === val.value);
             }
 
             return false;
-          })?.value;
+          });
 
           return (
             <div key={slug} className="flex flex-col gap-1.5">
-              <Label id={`label-${slug}`}>{name}</Label>
-              {/*  @ts-expect-error we do not handle multiselect yet */}
+              <Label id={`label-${slug}`}>
+                {name}
+                {type === "SWATCH" &&
+                  !!chosenAttribute?.value &&
+                  `: ${chosenAttribute.value}`}
+              </Label>
+
               <ToggleGroup
                 type="single"
                 disabled={!isPreviousAttributeSelected}
-                defaultValue={defaultValue}
-                className="grid grid-cols-2 md:grid-cols-3"
+                defaultValue={chosenAttribute?.value}
+                className={cn(
+                  type === "SWATCH"
+                    ? "flex justify-start"
+                    : "grid grid-cols-2 md:grid-cols-3",
+                )}
                 aria-labelledby={t("products.label-slug", { slug })}
                 onValueChange={(valueSlug) => {
                   setDiscriminatedVariantId("");
@@ -208,8 +219,40 @@ export const VariantSelector = ({
                   });
                 }}
               >
-                {values.map(({ slug: valueSlug, name: valueName }) => {
-                  return (
+                {values.map(({ slug: valueSlug, name: valueName, value }) => {
+                  const isSelected = chosenAttributes.some(
+                    (attr) => attr.slug === slug && attr.value === valueSlug,
+                  );
+
+                  return type === "SWATCH" ? (
+                    <ToggleGroupItem
+                      disabled={!isPreviousAttributeSelected}
+                      variant="default"
+                      key={valueSlug}
+                      value={valueSlug}
+                      className={cn(
+                        cn(
+                          "flex max-w-min flex-col hover:bg-transparent data-[state=on]:bg-transparent",
+                        ),
+                        !isPreviousAttributeSelected && "opacity-50",
+                      )}
+                      size="default"
+                    >
+                      <div
+                        className={cn("h-6 w-6 border border-stone-200")}
+                        style={{
+                          backgroundColor: value,
+                        }}
+                      />
+
+                      <div
+                        className={cn(
+                          "invisible mt-1 h-[2px] w-6 bg-black",
+                          isSelected && "visible",
+                        )}
+                      ></div>
+                    </ToggleGroupItem>
+                  ) : (
                     <ToggleGroupItem
                       disabled={!isPreviousAttributeSelected}
                       variant="outline"
