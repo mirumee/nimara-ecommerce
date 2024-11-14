@@ -43,7 +43,6 @@ export type SearchInfra = (
   context: SearchContext,
 ) => Promise<{
   error: unknown;
-  facets?: Facet[];
   pageInfo?: PageInfo;
   results: Array<Readonly<SearchProduct>>;
 }>;
