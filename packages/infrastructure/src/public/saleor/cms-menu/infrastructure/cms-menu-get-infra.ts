@@ -29,12 +29,16 @@ const serializeMenuItem = ({
       ? {
           ...category,
           name: category.translation?.name || category.name,
+          description:
+            category.translation?.description || category.description,
         }
       : null,
     collection: collection
       ? {
           ...collection,
           name: collection.translation?.name || collection.name,
+          description:
+            collection.translation?.description || collection.description,
         }
       : null,
     page: page

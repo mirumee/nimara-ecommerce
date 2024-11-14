@@ -20,6 +20,11 @@ const facets = {
     slug: "color",
     type: "SWATCH",
   },
+  collections: {
+    messageKey: "filters.collections",
+    slug: "collection",
+    type: "PLAIN_TEXT",
+  },
 } satisfies AvailableFacets;
 
 export const searchServiceAlgolia = algoliaSearchService({
