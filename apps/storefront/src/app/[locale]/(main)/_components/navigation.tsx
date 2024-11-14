@@ -13,7 +13,11 @@ import {
 import { RichText } from "@nimara/ui/components/rich-text";
 
 import { Link, useRouter } from "@/i18n/routing";
-import { generateLinkUrl, getQueryParams } from "@/lib/cms";
+import {
+  generateLinkUrl,
+  getCombinedQueryParams,
+  getQueryParams,
+} from "@/lib/cms";
 import { paths } from "@/lib/paths";
 import type { Maybe } from "@/lib/types";
 
@@ -21,7 +25,7 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
   const router = useRouter();
 
   // Close menu manually
-  const [value, setValue] = useState("");
+  const [currentMenuItem, setCurrentMenuItem] = useState("");
 
   if (!menu || menu?.items?.length === 0) {
     return null;
@@ -29,8 +33,8 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
 
   return (
     <NavigationMenu
-      onValueChange={setValue}
-      value={value}
+      onValueChange={setCurrentMenuItem}
+      value={currentMenuItem}
       className="mx-auto hidden max-w-screen-xl pb-6 pt-3 md:flex"
     >
       <NavigationMenuList className="gap-6">
@@ -66,7 +70,23 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
                               key={child.id}
                               href={generateLinkUrl(child, paths)}
                               className="group block space-y-1 rounded-md p-3 hover:bg-accent"
-                              onClick={() => setValue("")}
+                              onClick={(e) => {
+                                setCurrentMenuItem("");
+                                if (!child.page && !child.url) {
+                                  e.preventDefault();
+                                  // Combines query parameters from both menu item and its child for the final UR
+                                  const combinedParams = getCombinedQueryParams(
+                                    item,
+                                    child,
+                                  );
+
+                                  router.push(
+                                    paths.search.asPath({
+                                      query: combinedParams,
+                                    }),
+                                  );
+                                }
+                              }}
                             >
                               <div className="text-sm font-medium leading-none">
                                 {child.name || child.category?.name}
@@ -92,7 +112,7 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
                               key={child.id}
                               href={generateLinkUrl(child, paths)}
                               className="group relative min-h-[270px] overflow-hidden rounded-lg bg-accent"
-                              onClick={() => setValue("")}
+                              onClick={() => setCurrentMenuItem("")}
                             >
                               <div
                                 className="h-1/2 bg-cover bg-center"
