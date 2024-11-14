@@ -1,8 +1,7 @@
 "use server";
 
-import { redirect } from "next/navigation";
-
 import { DEFAULT_SORT_BY } from "@/config";
+import { redirect } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 
 const passThroughParams = ["sortBy", "limit", "q"] as const;

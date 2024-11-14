@@ -7,7 +7,6 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@nimara/ui/components/carousel";
-import { RichText } from "@nimara/ui/components/rich-text";
 
 import { getAccessToken } from "@/auth";
 import { ProductImagePlaceholder } from "@/components/product-image-placeholder";
@@ -17,6 +16,7 @@ import { JsonLd, productToJsonLd } from "@/lib/json-ld";
 import { getCurrentRegion } from "@/regions/server";
 import { cartService, storeService, userService } from "@/services";
 
+import { DetailsDropdown } from "./components/details-dropdown";
 import { VariantSelector } from "./components/variant-selector";
 
 export async function generateMetadata({
@@ -92,9 +92,9 @@ export default async function Page({
   const { images, name, description, variants } = product;
 
   return (
-    <div className="mx-auto">
-      <div className="my-6 grid gap-4 xs:mx-8 md:grid-cols-6 xl:grid-cols-12">
-        <div className="relative col-start-1 max-md:hidden md:col-end-4 xl:col-end-7 [&>*]:pb-2">
+    <div className="w-full">
+      <div className="my-6 grid gap-10 md:grid-cols-12 md:gap-4">
+        <div className="relative max-md:hidden md:col-span-6 [&>*]:pb-2">
           {images.length ? (
             <>
               {images.map(({ url, alt }, i) => (
@@ -132,18 +132,20 @@ export default async function Page({
           </CarouselContent>
         </Carousel>
 
-        <section className="xl py-8 md:col-start-4 md:col-end-7 md:p-8 xl:col-start-7 xl:col-end-13 xl:px-24">
-          <h1 className="text-2xl text-black">{name}</h1>
+        <div className="md:col-span-5 md:col-start-8">
+          <section className="sticky top-44 w-full">
+            <h1 className="text-2xl text-black">{name}</h1>
 
-          <VariantSelector
-            cart={cart}
-            availability={availability}
-            variants={variants}
-            user={user ? { ...user, accessToken } : null}
-          />
+            <VariantSelector
+              cart={cart}
+              availability={availability}
+              variants={variants}
+              user={user ? { ...user, accessToken } : null}
+            />
 
-          <RichText className="py-8" jsonStringData={description} />
-        </section>
+            {description && <DetailsDropdown description={description} />}
+          </section>
+        </div>
       </div>
       <JsonLd jsonLd={productToJsonLd(product, availability)} />
     </div>

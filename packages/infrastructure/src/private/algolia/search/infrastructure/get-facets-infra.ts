@@ -19,8 +19,40 @@ export const algoliaGetFacetsInfra = ({
     const indexName = getIndexName(settings.indices, context.channel);
     const searchIndex = algoliaClient.initIndex(indexName);
 
+    // Create a mapping between slugs and Algolia name
+    const parsedFilters = Object.entries(params?.filters ?? {})
+      .reduce<string[]>((acc, [name, value]) => {
+        if (name === "category") {
+          const formattedValue = (
+            String(value).charAt(0).toUpperCase() + String(value).slice(1)
+          ).replaceAll("-", " & ");
+
+          acc.push(`categories.lvl0:'${formattedValue}'`);
+        }
+
+        // if (name in facetsMapping) {
+        const values = value.split(".");
+
+        if (values.length > 1) {
+          const multipleValuesFacet: string[] = [];
+
+          values.forEach((v) => {
+            multipleValuesFacet.push(`${name}:${v}`);
+          });
+
+          acc.push(multipleValuesFacet.join(" OR "));
+        } else {
+          acc.push(`${name}:${value}`);
+        }
+        // }
+
+        return acc;
+      }, [])
+      .join(" AND ");
+
     const response = await searchIndex.search(params?.query ?? "", {
       facets: ["*"],
+      ...(!!Object.keys(parsedFilters).length && { filters: parsedFilters }),
       sortFacetValuesBy: "alpha",
       responseFields: ["facets"],
     });

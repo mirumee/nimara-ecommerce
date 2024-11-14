@@ -1,7 +1,10 @@
 import algoliasearch from "algoliasearch";
 
 import { loggingService } from "@nimara/infrastructure/logging/service";
-import type { SearchInfra } from "@nimara/infrastructure/use-cases/search/types";
+import type {
+  Facet,
+  SearchInfra,
+} from "@nimara/infrastructure/use-cases/search/types";
 
 import { getIndexName } from "../helpers";
 import { searchProductSerializer } from "../serializers";
@@ -67,12 +70,46 @@ export const algoliaSearchInfra = ({
         hits,
         page: currentPage,
         nbPages,
+        ...response
       } = await searchIndex.search(query as string, {
+        facets: ["*"],
+        sortFacetValuesBy: "alpha",
         page: page ? Number.parseInt(page) - 1 : 0,
         hitsPerPage: limit,
         filters: parsedFilters,
-        responseFields: ["hits", "page", "nbPages"],
+        responseFields: ["hits", "page", "nbPages", "facets"],
       });
+
+      let facets: Facet[] = [];
+
+      if (response.facets) {
+        const index = settings.indices.find(
+          (index) => index.channel === channel,
+        );
+
+        if (index) {
+          facets = Object.entries(response.facets).reduce<Facet[]>(
+            (acc, [facetName, facetChoices]) => {
+              const indexFacetConfig = index.availableFacets[facetName];
+
+              if (!indexFacetConfig) {
+                return acc;
+              }
+
+              acc.push({
+                ...indexFacetConfig,
+                choices: Object.entries(facetChoices).map(([name, _count]) => ({
+                  label: name,
+                  value: name,
+                })),
+              });
+
+              return acc;
+            },
+            [],
+          );
+        }
+      }
 
       const serializer = serializers?.search ?? searchProductSerializer;
 
@@ -84,6 +121,7 @@ export const algoliaSearchInfra = ({
           hasPreviousPage: currentPage > 0,
         },
         results: hits.map(serializer),
+        facets,
         error: null,
       };
     } catch (e) {
