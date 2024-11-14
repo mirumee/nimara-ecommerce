@@ -87,6 +87,15 @@ export const VariantSelector = ({
       }),
     );
 
+    // this selects only the first attribute's value if only one value is available
+    if (
+      allSelectionAttributes?.length > 0 &&
+      allSelectionAttributes?.[0]?.values?.length === 1
+    ) {
+      validatedParams[allSelectionAttributes?.[0]?.slug] =
+        allSelectionAttributes?.[0]?.values?.[0]?.slug;
+    }
+
     if (JSON.stringify(params) !== JSON.stringify(validatedParams)) {
       setParams(validatedParams).catch((e) => {
         console.error(e);

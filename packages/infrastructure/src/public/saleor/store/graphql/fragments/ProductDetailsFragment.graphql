@@ -15,4 +15,12 @@ fragment ProductDetailsFragment on Product {
   variants {
     ...ProductVariantDetailsFragment
   }
+  attributes {
+    attribute {
+      ...AttributeFragment
+    }
+    values {
+      ...AttributeValueFragment
+    }
+  }
 }

@@ -1,7 +1,13 @@
+import { Truck, Undo2 } from "lucide-react";
 import { cookies } from "next/headers";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@nimara/ui/components/alert";
 import {
   Carousel,
   CarouselContent,
@@ -16,7 +22,7 @@ import { JsonLd, productToJsonLd } from "@/lib/json-ld";
 import { getCurrentRegion } from "@/regions/server";
 import { cartService, storeService, userService } from "@/services";
 
-import { DetailsDropdown } from "./components/details-dropdown";
+import { AttributesDropdown } from "./components/attributes-dropdown";
 import { VariantSelector } from "./components/variant-selector";
 
 export async function generateMetadata({
@@ -91,6 +97,39 @@ export default async function Page({
   const { availability, product } = data;
   const { images, name, description, variants } = product;
 
+  const hasFreeShipping = !!product.attributes
+    .find(({ slug }) => slug === "free-shipping")
+    ?.values.find(({ boolean }) => boolean);
+
+  const hasFreeReturn = !!product.attributes
+    .find(({ slug }) => slug === "free-return")
+    ?.values.find(({ boolean }) => boolean);
+
+  const attributesToDisplay = product.attributes.filter(
+    ({ slug }) => slug !== "free-shipping" && slug !== "free-return",
+  );
+
+  if (description && description?.length > 0) {
+    attributesToDisplay.unshift({
+      name: "description",
+      slug: "description",
+      type: "RICH_TEXT",
+      values: [
+        {
+          name: "description",
+          slug: "description",
+          richText: product.description ?? "",
+          boolean: false,
+          value: "",
+          date: undefined,
+          dateTime: undefined,
+          reference: undefined,
+          plainText: "",
+        },
+      ],
+    });
+  }
+
   return (
     <div className="w-full">
       <div className="my-6 grid gap-10 md:grid-cols-12 md:gap-4">
@@ -133,9 +172,8 @@ export default async function Page({
         </Carousel>
 
         <div className="md:col-span-5 md:col-start-8">
-          <section className="sticky top-44 w-full">
+          <section className="sticky top-32 w-full overflow-y-auto overflow-x-hidden pt-10 md:max-h-[83vh]">
             <h1 className="text-2xl text-black">{name}</h1>
-
             <VariantSelector
               cart={cart}
               availability={availability}
@@ -143,7 +181,23 @@ export default async function Page({
               user={user ? { ...user, accessToken } : null}
             />
 
-            {description && <DetailsDropdown description={description} />}
+            {hasFreeShipping && (
+              <Alert>
+                <Truck className="size-4" />
+                <AlertTitle>Free shipping</AlertTitle>
+
+                <AlertDescription>Standard parcel</AlertDescription>
+              </Alert>
+            )}
+
+            {hasFreeReturn && (
+              <Alert className="mt-2">
+                <Undo2 className="size-4" />
+                <AlertTitle>Free 30 days return policy</AlertTitle>
+              </Alert>
+            )}
+
+            <AttributesDropdown attributes={attributesToDisplay} />
           </section>
         </div>
       </div>

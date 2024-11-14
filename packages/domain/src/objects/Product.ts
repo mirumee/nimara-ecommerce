@@ -16,6 +16,7 @@ export type ProductVariantAvailability = {
 };
 
 export type Product = {
+  attributes: Attribute[];
   description: string | null;
   id: string;
   images: Image[];

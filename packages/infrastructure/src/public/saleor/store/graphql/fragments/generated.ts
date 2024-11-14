@@ -47,7 +47,13 @@ export type ProductDetailsFragment_Product_variants_ProductVariant_nonSelectionA
 
 export type ProductDetailsFragment_Product_variants_ProductVariant = { id: string, name: string, translation: ProductDetailsFragment_Product_variants_ProductVariant_translation_ProductVariantTranslation | null, selectionAttributes: Array<ProductDetailsFragment_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute>, nonSelectionAttributes: Array<ProductDetailsFragment_Product_variants_ProductVariant_nonSelectionAttributes_SelectedAttribute> };
 
-export type ProductDetailsFragment = { id: string, name: string, description: string | null, translation: ProductDetailsFragment_Product_translation_ProductTranslation | null, media: Array<ProductDetailsFragment_Product_media_ProductMedia> | null, variants: Array<ProductDetailsFragment_Product_variants_ProductVariant> | null };
+export type ProductDetailsFragment_Product_attributes_SelectedAttribute_attribute_Attribute = { slug: string | null, inputType: Types.AttributeInputTypeEnum | null, name: string | null, translation: AttributeFragment_Attribute_translation_AttributeTranslation | null };
+
+export type ProductDetailsFragment_Product_attributes_SelectedAttribute_values_AttributeValue = { slug: string | null, name: string | null, plainText: string | null, richText: string | null, boolean: boolean | null, date: string | null, dateTime: string | null, reference: string | null, value: string | null, translation: AttributeValueFragment_AttributeValue_translation_AttributeValueTranslation | null };
+
+export type ProductDetailsFragment_Product_attributes_SelectedAttribute = { attribute: ProductDetailsFragment_Product_attributes_SelectedAttribute_attribute_Attribute, values: Array<ProductDetailsFragment_Product_attributes_SelectedAttribute_values_AttributeValue> };
+
+export type ProductDetailsFragment = { id: string, name: string, description: string | null, translation: ProductDetailsFragment_Product_translation_ProductTranslation | null, media: Array<ProductDetailsFragment_Product_media_ProductMedia> | null, variants: Array<ProductDetailsFragment_Product_variants_ProductVariant> | null, attributes: Array<ProductDetailsFragment_Product_attributes_SelectedAttribute> };
 
 export type ProductMediaFragment = { url: string, alt: string, type: Types.ProductMediaType };
 
@@ -133,6 +139,14 @@ export const ProductDetailsFragment = new TypedDocumentString(`
   }
   variants {
     ...ProductVariantDetailsFragment
+  }
+  attributes {
+    attribute {
+      ...AttributeFragment
+    }
+    values {
+      ...AttributeValueFragment
+    }
   }
 }
     fragment AttributeFragment on Attribute {

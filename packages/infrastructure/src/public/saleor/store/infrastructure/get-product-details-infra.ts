@@ -30,6 +30,7 @@ const parseData = (data: ProductDetailsFragment): Product => {
     name,
     description,
     images,
+    attributes: data.attributes.map(parseAttributeData),
     variants: variants.map(
       ({ nonSelectionAttributes, selectionAttributes, id, ...variant }) => {
         return {
