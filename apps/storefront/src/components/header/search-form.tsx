@@ -189,7 +189,7 @@ export const SearchForm = ({ onSubmit }: { onSubmit?: () => void }) => {
   }, [debouncedInputValue]);
 
   useEffect(() => {
-    if (isSearchPage) {
+    if (isSearchPage || isHomePage) {
       return;
     }
     resetSearchState();
