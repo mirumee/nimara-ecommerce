@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import type { Menu } from "@nimara/domain/objects/Menu";
 import {
   NavigationMenu,
@@ -18,12 +20,19 @@ import type { Maybe } from "@/lib/types";
 export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
   const router = useRouter();
 
+  // Close menu manually
+  const [value, setValue] = useState("");
+
   if (!menu || menu?.items?.length === 0) {
     return null;
   }
 
   return (
-    <NavigationMenu className="mx-auto hidden max-w-screen-xl pb-6 pt-3 md:flex">
+    <NavigationMenu
+      onValueChange={setValue}
+      value={value}
+      className="mx-auto hidden max-w-screen-xl pb-6 pt-3 md:flex"
+    >
       <NavigationMenuList className="gap-6">
         {menu.items.map((item) => (
           <NavigationMenuItem key={item.id}>
@@ -57,6 +66,7 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
                               key={child.id}
                               href={generateLinkUrl(child, paths)}
                               className="group block space-y-1 rounded-md p-3 hover:bg-accent"
+                              onClick={() => setValue("")}
                             >
                               <div className="text-sm font-medium leading-none">
                                 {child.name || child.category?.name}
@@ -82,6 +92,7 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
                               key={child.id}
                               href={generateLinkUrl(child, paths)}
                               className="group relative min-h-[270px] overflow-hidden rounded-lg bg-accent"
+                              onClick={() => setValue("")}
                             >
                               <div
                                 className="h-1/2 bg-cover bg-center"
