@@ -22,13 +22,13 @@ import { DEFAULT_SORT_BY } from "@/config";
 import { type TranslationMessage } from "@/types";
 
 import { handleFiltersFormSubmit } from "../actions";
-import { ColorSwatch } from "./color-swatch";
+import { colors, ColorSwatch } from "./color-swatch";
 import { FilterBoolean } from "./filter-boolean";
 import { FilterDropdown } from "./filter-dropdown";
 import { FilterText } from "./filter-text";
 
 type Props = {
-  facets: Facet[];
+  facets: Facet[] | undefined;
   searchParams: Record<string, string>;
   sortByOptions: SortByOption[];
 };
@@ -75,37 +75,24 @@ const renderFilterComponent = (
   }
 };
 
-const colors = [
-  "yellow",
-  "black",
-  "white",
-  "beige",
-  "grey",
-  "khaki",
-  "pink",
-  "red",
-  "green",
-] as const;
-
-export type ColorValue = (typeof colors)[number];
-
 export const FiltersContainer = async ({
   facets,
   searchParams,
   sortByOptions,
 }: Props) => {
   const t = await getTranslations();
-  const genderFacet = facets.filter((facet) => facet.slug === "gender")[0];
-  const sizeFacet = facets.filter((facet) => facet.slug === "size")[0];
-  const colorFacet = facets
-    .filter((facet) => facet.slug === "color")
-    .map((facet) => ({
-      ...facet,
-      choices: colors.map((color) => ({
-        label: t(`colors.${color}`),
-        value: color as string,
-      })),
-    }))[0];
+  const genderFacet =
+    facets?.filter((facet) => facet.slug === "gender")[0] ?? ({} as Facet);
+  const sizeFacet =
+    facets?.filter((facet) => facet.slug === "size")[0] ?? ({} as Facet);
+  const colorFacet =
+    facets?.filter((facet) => facet.slug === "color")[0] ?? ({} as Facet);
+
+  if (colorFacet?.choices) {
+    colorFacet.choices = colorFacet?.choices.filter((choice) =>
+      colors.includes(choice.value),
+    );
+  }
 
   const updateFiltersWithSearchParams = handleFiltersFormSubmit.bind(
     null,

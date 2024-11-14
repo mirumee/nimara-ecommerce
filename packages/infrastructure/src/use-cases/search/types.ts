@@ -45,12 +45,20 @@ export type SearchInfra = (
   error: unknown;
   pageInfo?: PageInfo;
   results: Array<Readonly<SearchProduct>>;
+  facets?: Facet[];
 }>;
 export type SearchUseCase = SearchInfra;
 
 export type GetFacetsInfra = (
   params: {
+    after?: string;
+    before?: string;
+    filters?: Record<string, string>;
+    limit?: number;
+    page?: string;
+    productIds?: string[];
     query?: string;
+    sortBy?: string;
   },
   context: SearchContext,
 ) => Promise<{ facets: Facet[] }>;

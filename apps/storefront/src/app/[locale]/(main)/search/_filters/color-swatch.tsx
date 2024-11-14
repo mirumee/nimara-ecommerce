@@ -6,18 +6,31 @@ import { Toggle } from "@nimara/ui/components/toggle";
 import { cn } from "@/lib/utils";
 import type { TranslationMessage } from "@/types";
 
-import type { ColorValue } from "./filters-container";
+export const colors = [
+  "yellow",
+  "black",
+  "white",
+  "beige",
+  "brown",
+  "grey",
+  "coffee",
+  "red",
+  "green",
+  "blue",
+] as const;
+export type ColorValue = (typeof colors)[number];
 
-const colors: Record<ColorValue, string> = {
+const colorsMap = {
   yellow: "bg-[#fffa4B]",
   black: "bg-black",
   white: "bg-white",
-  beige: "bg-[#dbc1a3]",
+  beige: "bg-[#f5f5dc]",
+  brown: "bg-[#8b4513]",
   grey: "bg-[#808080]",
-  khaki: "bg-[#c3b091]",
-  pink: "bg-[#ff9ac6]",
-  red: "bg-[#e50101]",
-  green: "bg-[#339f2b]",
+  coffee: "bg-[#7f540f]",
+  red: "bg-[#f62c2c]",
+  green: "bg-[#4dd273]",
+  blue: "bg-[#52a9f5]",
 };
 
 export const ColorSwatch = async ({
@@ -59,7 +72,7 @@ export const ColorSwatch = async ({
                 <div
                   className={cn(
                     "h-6 w-6 border border-stone-200",
-                    colors[choice.value as ColorValue],
+                    colorsMap[choice.value as ColorValue],
                   )}
                 />
                 {choice.label}

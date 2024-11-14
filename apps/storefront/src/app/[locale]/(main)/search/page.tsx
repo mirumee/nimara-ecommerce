@@ -67,7 +67,7 @@ export default async function Page({ searchParams }: PageProps) {
     ...rest
   } = searchParams;
 
-  const { results, pageInfo } = await searchService.search(
+  const { results, pageInfo, facets } = await searchService.search(
     {
       query,
       limit: limit ? Number.parseInt(limit) : DEFAULT_RESULTS_PER_PAGE,
@@ -80,12 +80,6 @@ export default async function Page({ searchParams }: PageProps) {
     searchContext,
   );
 
-  const { facets } = await searchService.getFacets(
-    {
-      query,
-    },
-    searchContext,
-  );
   const { options } = searchService.getSortByOptions(searchContext);
 
   const getHeader = () => {
