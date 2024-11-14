@@ -157,9 +157,6 @@ export const SearchForm = ({ onSubmit }: { onSubmit?: () => void }) => {
     const inputValueLength = debouncedInputValue.length;
 
     if (inputValueLength === 0) {
-      // Reset the search state when input is empty/cleared
-      resetSearchState();
-
       if (isSearchPage) {
         router.push(paths.home.asPath());
       }
@@ -269,11 +266,15 @@ export const SearchForm = ({ onSubmit }: { onSubmit?: () => void }) => {
           </ComboboxItem>
         </ComboboxGroup>
 
-        {isLoading && <ComboboxEmpty>{ts("loading-text")}</ComboboxEmpty>}
-
-        {isIdle && showOptions && !options.length && (
-          <ComboboxEmpty>{ts("no-results")}</ComboboxEmpty>
+        {!isHomePage && !isSearchPage && isLoading && (
+          <ComboboxEmpty>{ts("loading-text")}</ComboboxEmpty>
         )}
+
+        {!isHomePage &&
+          !isSearchPage &&
+          isIdle &&
+          showOptions &&
+          !options.length && <ComboboxEmpty>{ts("no-results")}</ComboboxEmpty>}
       </Combobox>
     </form>
   );
