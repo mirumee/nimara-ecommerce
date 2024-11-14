@@ -13,7 +13,7 @@ const DAY = HOUR * 24;
 export const CACHE_TTL = {
   pdp: DAY,
   cart: MINUTE * 5,
-  cms: MINUTE * 15,
+  cms: 10,
 };
 export const DEFAULT_DEBOUNCE_TIME_IN_MS = 500;
 export const DEFAULT_SORT_BY = "price-asc";
