@@ -1,7 +1,12 @@
-import type { Menu } from "@nimara/domain/objects/Menu";
+import type { Menu, MenuItem } from "@nimara/domain/objects/Menu";
 
-import { Link } from "@/i18n/routing";
-import { generateLinkUrl, isInternalUrl } from "@/lib/cms";
+import { Link, useRouter } from "@/i18n/routing";
+import {
+  generateLinkUrl,
+  getCombinedQueryParams,
+  getQueryParams,
+  isInternalUrl,
+} from "@/lib/cms";
 import { paths } from "@/lib/paths";
 import type { Maybe } from "@/lib/types";
 
@@ -12,8 +17,35 @@ export const MobileNavigation = ({
   menu: Maybe<Menu>;
   onMenuItemClick: (isMenuItemClicked: boolean) => void;
 }) => {
-  const handleClick = () => {
+  const router = useRouter();
+
+  const handleMenuItemClick = () => {
     onMenuItemClick(true);
+  };
+
+  const handleLinkClick = (
+    e: React.MouseEvent,
+    item: MenuItem,
+    parentItem?: MenuItem,
+  ) => {
+    handleMenuItemClick();
+    const combinedParams = parentItem
+      ? getCombinedQueryParams(parentItem, item)
+      : getQueryParams(item);
+
+    // Filter out any null values to ensure compatibility with router.push
+    const queryParams = Object.fromEntries(
+      Object.entries(combinedParams).filter(([_, value]) => value !== null),
+    ) as Record<string, string>;
+
+    if (Object.keys(queryParams).length > 0 && item.category) {
+      e.preventDefault();
+      router.push(
+        paths.search.asPath({
+          query: queryParams,
+        }),
+      );
+    }
   };
 
   if (!menu || menu?.items?.length === 0) {
@@ -25,7 +57,10 @@ export const MobileNavigation = ({
       {menu.items.map((item) => (
         <li key={item.id} className="p-2 text-stone-500">
           {isInternalUrl(item.url) ? (
-            <Link href={generateLinkUrl(item, paths)} onClick={handleClick}>
+            <Link
+              href={generateLinkUrl(item, paths)}
+              onClick={(e) => handleLinkClick(e, item)}
+            >
               {item.name || item.category?.name || item.collection?.name}
             </Link>
           ) : (
@@ -33,7 +68,7 @@ export const MobileNavigation = ({
               href={item.url as string}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={handleClick}
+              onClick={(e) => handleLinkClick(e, item)}
             >
               {item.name}
             </a>
@@ -45,7 +80,7 @@ export const MobileNavigation = ({
                   {isInternalUrl(child.url) ? (
                     <Link
                       href={generateLinkUrl(child, paths)}
-                      onClick={handleClick}
+                      onClick={(e) => handleLinkClick(e, child, item)}
                     >
                       {child.name ||
                         child.collection?.name ||
@@ -56,7 +91,7 @@ export const MobileNavigation = ({
                       href={child.url as string}
                       target="_blank"
                       rel="noopener noreferrer"
-                      onClick={handleClick}
+                      onClick={(e) => handleLinkClick(e, child, item)}
                     >
                       {child.name}
                     </a>

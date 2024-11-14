@@ -25,6 +25,23 @@ export const getQueryParams = (
   return { queryKey: null, queryValue: null };
 };
 
+export const getCombinedQueryParams = (
+  parentItem: MenuItem,
+  childItem: MenuItem,
+): { [key: string]: string } => {
+  const parentParams = getQueryParams(parentItem);
+  const childParams = getQueryParams(childItem);
+
+  return {
+    ...(parentParams.queryKey && parentParams.queryValue
+      ? { [parentParams.queryKey]: parentParams.queryValue }
+      : {}),
+    ...(childParams.queryKey && childParams.queryValue
+      ? { [childParams.queryKey]: childParams.queryValue }
+      : {}),
+  };
+};
+
 interface Paths {
   page: {
     asPath: (params: { slug: string }) => string;
