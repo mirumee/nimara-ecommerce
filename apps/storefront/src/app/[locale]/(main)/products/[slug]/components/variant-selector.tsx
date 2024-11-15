@@ -229,50 +229,52 @@ export const VariantSelector = ({
                   });
                 }}
               >
-                {values.map(({ slug: valueSlug, name: valueName, value }) => {
-                  const isSelected = chosenAttributes.some(
-                    (attr) => attr.slug === slug && attr.value === valueSlug,
-                  );
+                {values
+                  .sort((a, b) => a.name.localeCompare(b.name))
+                  .map(({ slug: valueSlug, name: valueName, value }) => {
+                    const isSelected = chosenAttributes.some(
+                      (attr) => attr.slug === slug && attr.value === valueSlug,
+                    );
 
-                  return type === "SWATCH" ? (
-                    <ToggleGroupItem
-                      disabled={!isPreviousAttributeSelected}
-                      variant="default"
-                      key={valueSlug}
-                      value={valueSlug}
-                      className={cn(
-                        cn(
-                          "flex max-w-min flex-col hover:bg-transparent data-[state=on]:bg-transparent",
-                        ),
-                        !isPreviousAttributeSelected && "opacity-50",
-                      )}
-                      size="default"
-                    >
-                      <div
-                        className={cn("h-6 w-6 border border-stone-200")}
-                        style={{
-                          backgroundColor: value,
-                        }}
-                      />
-
-                      <div
+                    return type === "SWATCH" ? (
+                      <ToggleGroupItem
+                        disabled={!isPreviousAttributeSelected}
+                        variant="default"
+                        key={valueSlug}
+                        value={valueSlug}
                         className={cn(
-                          "invisible mt-1 h-[2px] w-6 bg-black",
-                          isSelected && "visible",
+                          cn(
+                            "flex max-w-min flex-col hover:bg-transparent data-[state=on]:bg-transparent",
+                          ),
+                          !isPreviousAttributeSelected && "opacity-50",
                         )}
-                      ></div>
-                    </ToggleGroupItem>
-                  ) : (
-                    <ToggleGroupItem
-                      disabled={!isPreviousAttributeSelected}
-                      variant="outline"
-                      key={valueSlug}
-                      value={valueSlug}
-                    >
-                      {valueName}
-                    </ToggleGroupItem>
-                  );
-                })}
+                        size="default"
+                      >
+                        <div
+                          className={cn("h-6 w-6 border border-stone-200")}
+                          style={{
+                            backgroundColor: value,
+                          }}
+                        />
+
+                        <div
+                          className={cn(
+                            "invisible mt-1 h-[2px] w-6 bg-black",
+                            isSelected && "visible",
+                          )}
+                        ></div>
+                      </ToggleGroupItem>
+                    ) : (
+                      <ToggleGroupItem
+                        disabled={!isPreviousAttributeSelected}
+                        variant="outline"
+                        key={valueSlug}
+                        value={valueSlug}
+                      >
+                        {valueName}
+                      </ToggleGroupItem>
+                    );
+                  })}
               </ToggleGroup>
             </div>
           );
