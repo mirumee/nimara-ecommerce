@@ -35,7 +35,7 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
     <NavigationMenu
       onValueChange={setCurrentMenuItem}
       value={currentMenuItem}
-      className="mx-auto hidden max-w-screen-xl pb-6 pt-3 md:flex"
+      className="mx-auto hidden max-w-screen-xl pb-2 pt-2 md:flex"
     >
       <NavigationMenuList className="gap-6">
         {menu.items.map((item) => (
