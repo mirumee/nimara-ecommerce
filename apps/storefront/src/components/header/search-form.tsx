@@ -146,7 +146,6 @@ export const SearchForm = ({ onSubmit }: { onSubmit?: () => void }) => {
     if (onSubmit) {
       onSubmit();
     }
-    resetSearchState();
   };
 
   useClickAnyWhere(() =>
@@ -156,34 +155,30 @@ export const SearchForm = ({ onSubmit }: { onSubmit?: () => void }) => {
   useEffect(() => {
     const inputValueLength = debouncedInputValue.length;
 
-    if (inputValueLength === 0) {
-      if (isSearchPage) {
-        router.push(paths.home.asPath());
-      }
+    void searchProducts(debouncedInputValue).then(({ results }) => {
+      setSearchState((state) => ({
+        ...state,
+        status: "IDLE",
+        options: results,
+        showOptions: true,
+      }));
+    });
 
-      return;
+    if (isHomePage) {
+      router.push(paths.search.asPath({ query: { q: debouncedInputValue } }));
     }
 
-    const isQueryLengthSufficient = inputValueLength >= minLetters;
-
-    if (isQueryLengthSufficient) {
-      void searchProducts(debouncedInputValue).then(({ results }) => {
-        setSearchState((state) => ({
-          ...state,
-          status: "IDLE",
-          options: results,
-          showOptions: true,
-        }));
-      });
-
-      if (isHomePage) {
+    if (isSearchPage) {
+      if (isLoading) {
         router.push(paths.search.asPath({ query: { q: debouncedInputValue } }));
-      }
+      } else {
+        const params = new URLSearchParams(searchParams);
 
-      if (isSearchPage) {
-        router.replace(
-          paths.search.asPath({ query: { q: debouncedInputValue } }),
-        );
+        params.delete("q");
+        if (inputValueLength > 0) {
+          params.set("q", debouncedInputValue.toString());
+        }
+        router.push(`${paths.search.asPath()}?${params.toString()}`);
       }
     }
   }, [debouncedInputValue]);
