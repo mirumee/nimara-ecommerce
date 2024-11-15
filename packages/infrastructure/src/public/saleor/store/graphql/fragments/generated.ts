@@ -37,6 +37,8 @@ export type ProductDetailsFragment_Product_media_ProductMedia = { url: string, a
 
 export type ProductDetailsFragment_Product_variants_ProductVariant_translation_ProductVariantTranslation = { name: string };
 
+export type ProductDetailsFragment_Product_variants_ProductVariant_media_ProductMedia = { url: string, alt: string, type: Types.ProductMediaType };
+
 export type ProductDetailsFragment_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute = { slug: string | null, inputType: Types.AttributeInputTypeEnum | null, name: string | null, translation: AttributeFragment_Attribute_translation_AttributeTranslation | null };
 
 export type ProductDetailsFragment_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue = { slug: string | null, name: string | null, plainText: string | null, richText: string | null, boolean: boolean | null, date: string | null, dateTime: string | null, reference: string | null, value: string | null, translation: AttributeValueFragment_AttributeValue_translation_AttributeValueTranslation | null };
@@ -45,7 +47,7 @@ export type ProductDetailsFragment_Product_variants_ProductVariant_selectionAttr
 
 export type ProductDetailsFragment_Product_variants_ProductVariant_nonSelectionAttributes_SelectedAttribute = { attribute: ProductDetailsFragment_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute, values: Array<ProductDetailsFragment_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue> };
 
-export type ProductDetailsFragment_Product_variants_ProductVariant = { id: string, name: string, translation: ProductDetailsFragment_Product_variants_ProductVariant_translation_ProductVariantTranslation | null, selectionAttributes: Array<ProductDetailsFragment_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute>, nonSelectionAttributes: Array<ProductDetailsFragment_Product_variants_ProductVariant_nonSelectionAttributes_SelectedAttribute> };
+export type ProductDetailsFragment_Product_variants_ProductVariant = { id: string, name: string, translation: ProductDetailsFragment_Product_variants_ProductVariant_translation_ProductVariantTranslation | null, media: Array<ProductDetailsFragment_Product_variants_ProductVariant_media_ProductMedia> | null, selectionAttributes: Array<ProductDetailsFragment_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute>, nonSelectionAttributes: Array<ProductDetailsFragment_Product_variants_ProductVariant_nonSelectionAttributes_SelectedAttribute> };
 
 export type ProductDetailsFragment_Product_attributes_SelectedAttribute_attribute_Attribute = { slug: string | null, inputType: Types.AttributeInputTypeEnum | null, name: string | null, translation: AttributeFragment_Attribute_translation_AttributeTranslation | null };
 
@@ -75,7 +77,7 @@ export type ProductMediaFragment = { url: string, alt: string, type: Types.Produ
 
 export type ProductPricingInfoFragment = { priceRange: ProductDetailsFragment_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange | null };
 
-export type ProductVariantDetailsFragment = { id: string, name: string, translation: ProductDetailsFragment_Product_variants_ProductVariant_translation_ProductVariantTranslation | null, selectionAttributes: Array<ProductDetailsFragment_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute>, nonSelectionAttributes: Array<ProductDetailsFragment_Product_variants_ProductVariant_nonSelectionAttributes_SelectedAttribute> };
+export type ProductVariantDetailsFragment = { id: string, name: string, translation: ProductDetailsFragment_Product_variants_ProductVariant_translation_ProductVariantTranslation | null, media: Array<ProductDetailsFragment_Product_variants_ProductVariant_media_ProductMedia> | null, selectionAttributes: Array<ProductDetailsFragment_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute>, nonSelectionAttributes: Array<ProductDetailsFragment_Product_variants_ProductVariant_nonSelectionAttributes_SelectedAttribute> };
 
 export type SelectionAttributeFragment = { attribute: ProductDetailsFragment_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute, values: Array<ProductDetailsFragment_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue> };
 
@@ -226,6 +228,9 @@ fragment ProductVariantDetailsFragment on ProductVariant {
   name
   translation(languageCode: $languageCode) {
     name
+  }
+  media {
+    ...ProductMediaFragment
   }
   selectionAttributes: attributes(variantSelection: VARIANT_SELECTION) {
     ...SelectionAttributeFragment

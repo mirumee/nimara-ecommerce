@@ -41,6 +41,8 @@ export type ProductDetailsQuery_product_Product_media_ProductMedia = { url: stri
 
 export type ProductDetailsQuery_product_Product_variants_ProductVariant_translation_ProductVariantTranslation = { name: string };
 
+export type ProductDetailsQuery_product_Product_variants_ProductVariant_media_ProductMedia = { url: string, alt: string, type: Types.ProductMediaType };
+
 export type ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation = { name: string };
 
 export type ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute = { slug: string | null, inputType: Types.AttributeInputTypeEnum | null, name: string | null, translation: ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation | null };
@@ -53,7 +55,7 @@ export type ProductDetailsQuery_product_Product_variants_ProductVariant_selectio
 
 export type ProductDetailsQuery_product_Product_variants_ProductVariant_nonSelectionAttributes_SelectedAttribute = { attribute: ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute, values: Array<ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue> };
 
-export type ProductDetailsQuery_product_Product_variants_ProductVariant = { id: string, name: string, translation: ProductDetailsQuery_product_Product_variants_ProductVariant_translation_ProductVariantTranslation | null, selectionAttributes: Array<ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute>, nonSelectionAttributes: Array<ProductDetailsQuery_product_Product_variants_ProductVariant_nonSelectionAttributes_SelectedAttribute> };
+export type ProductDetailsQuery_product_Product_variants_ProductVariant = { id: string, name: string, translation: ProductDetailsQuery_product_Product_variants_ProductVariant_translation_ProductVariantTranslation | null, media: Array<ProductDetailsQuery_product_Product_variants_ProductVariant_media_ProductMedia> | null, selectionAttributes: Array<ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute>, nonSelectionAttributes: Array<ProductDetailsQuery_product_Product_variants_ProductVariant_nonSelectionAttributes_SelectedAttribute> };
 
 export type ProductDetailsQuery_product_Product_attributes_SelectedAttribute_attribute_Attribute = { slug: string | null, inputType: Types.AttributeInputTypeEnum | null, name: string | null, translation: ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation | null };
 
@@ -231,6 +233,9 @@ fragment ProductVariantDetailsFragment on ProductVariant {
   name
   translation(languageCode: $languageCode) {
     name
+  }
+  media {
+    ...ProductMediaFragment
   }
   selectionAttributes: attributes(variantSelection: VARIANT_SELECTION) {
     ...SelectionAttributeFragment

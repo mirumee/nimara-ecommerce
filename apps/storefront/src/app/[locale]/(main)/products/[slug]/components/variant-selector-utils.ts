@@ -7,12 +7,7 @@ import type {
   AttributeType,
   AttributeValue,
 } from "@nimara/domain/objects/Attribute";
-import type { Cart } from "@nimara/domain/objects/Cart";
-import type {
-  ProductAvailability,
-  ProductVariant,
-} from "@nimara/domain/objects/Product";
-import type { User } from "@nimara/domain/objects/User";
+import type { ProductVariant } from "@nimara/domain/objects/Product";
 
 export type AttributeDetails = {
   name: string;
@@ -22,13 +17,6 @@ export type AttributeDetails = {
 };
 
 export type ChosenAttribute = { slug: string; value: string };
-
-export type AttributePickerProps = {
-  availability: ProductAvailability;
-  cart: Cart | null;
-  user: (User & { accessToken: string | undefined }) | null;
-  variants: ProductVariant[];
-};
 
 export const getVariantSelectionAttributes = (
   variantId: string,

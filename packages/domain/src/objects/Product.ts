@@ -28,6 +28,7 @@ export type Product = {
 
 export type ProductVariant = {
   id: string;
+  images: Image[];
   name: string;
   nonSelectionAttributes: Attribute[];
   selectionAttributes: Attribute[];

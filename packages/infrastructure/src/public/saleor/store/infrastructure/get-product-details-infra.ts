@@ -52,14 +52,24 @@ const parseData = (data: ProductDetailsFragment): Product => {
           };
         }) ?? [],
     attributes: data.attributes.map(parseAttributeData),
+
     variants: variants.map(
-      ({ nonSelectionAttributes, selectionAttributes, id, ...variant }) => {
+      ({
+        nonSelectionAttributes,
+        selectionAttributes,
+        id,
+        media,
+        ...variant
+      }) => {
         return {
           id,
           name: getTranslation("name", variant),
           selectionAttributes: selectionAttributes.map(parseAttributeData),
           nonSelectionAttributes:
             nonSelectionAttributes.map(parseAttributeData),
+          images: media
+            .filter(({ type }) => type === "IMAGE")
+            .map(({ alt, url }) => ({ url, alt })),
         };
       },
     ),
