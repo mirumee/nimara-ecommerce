@@ -155,6 +155,10 @@ export const SearchForm = ({ onSubmit }: { onSubmit?: () => void }) => {
   useEffect(() => {
     const inputValueLength = debouncedInputValue.length;
 
+    if (!isSearchPage && inputValueLength === 0) {
+      return;
+    }
+
     void searchProducts(debouncedInputValue).then(({ results }) => {
       setSearchState((state) => ({
         ...state,
@@ -170,7 +174,13 @@ export const SearchForm = ({ onSubmit }: { onSubmit?: () => void }) => {
 
     if (isSearchPage) {
       if (isLoading) {
-        router.push(paths.search.asPath({ query: { q: debouncedInputValue } }));
+        if (inputValueLength > 0) {
+          router.push(
+            paths.search.asPath({ query: { q: debouncedInputValue } }),
+          );
+        } else {
+          router.push(paths.search.asPath());
+        }
       } else {
         const params = new URLSearchParams(searchParams);
 
@@ -184,7 +194,7 @@ export const SearchForm = ({ onSubmit }: { onSubmit?: () => void }) => {
   }, [debouncedInputValue]);
 
   useEffect(() => {
-    if (isSearchPage || isHomePage) {
+    if (isSearchPage) {
       return;
     }
     resetSearchState();
@@ -219,7 +229,9 @@ export const SearchForm = ({ onSubmit }: { onSubmit?: () => void }) => {
               setSearchState((state) => ({
                 ...state,
                 status:
-                  event.target.value.length >= minLetters ? "LOADING" : "IDLE",
+                  event.target.value.length < minLetters && !isSearchPage
+                    ? "IDLE"
+                    : "LOADING",
                 inputValue: event.target.value,
               })),
             onKeyDown: handleKeyDown,
