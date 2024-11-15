@@ -30,6 +30,18 @@ export const algoliaGetFacetsInfra = ({
           acc.push(`categories.lvl0:'${formattedValue}'`);
         }
 
+        if (name === "collection") {
+          const formattedValue = value
+            .split(".")
+            .map(
+              (v) =>
+                `'${v.charAt(0).toUpperCase() + v.slice(1).replaceAll("-", " & ")}'`,
+            )
+            .join(" OR ");
+
+          acc.push(`collections:${formattedValue}`);
+        }
+
         // if (name in facetsMapping) {
         const values = value.split(".");
 

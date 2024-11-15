@@ -44,8 +44,17 @@ export const algoliaSearchInfra = ({
 
           acc.push(`categories.lvl0:'${formattedValue}'`);
         }
+        if (name === "collection") {
+          const formattedValue = value
+            .split(".")
+            .map(
+              (v) =>
+                `'${v.charAt(0).toUpperCase() + v.slice(1).replaceAll("-", " & ")}'`,
+            )
+            .join(" OR ");
 
-        if (name in facetsMapping) {
+          acc.push(`collections:${formattedValue}`);
+        } else if (name in facetsMapping) {
           const values = value.split(".");
 
           if (values.length > 1) {
