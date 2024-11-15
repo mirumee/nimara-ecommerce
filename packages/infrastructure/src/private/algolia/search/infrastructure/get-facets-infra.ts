@@ -35,7 +35,7 @@ export const algoliaGetFacetsInfra = ({
             .split(".")
             .map(
               (v) =>
-                `'${v.charAt(0).toUpperCase() + v.slice(1).replaceAll("-", " ")}'`,
+                `'${v.charAt(0).toUpperCase() + v.slice(1).replaceAll("-", " & ")}'`,
             )
             .join(" OR ");
 

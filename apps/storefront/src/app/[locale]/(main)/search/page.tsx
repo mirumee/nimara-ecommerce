@@ -17,6 +17,7 @@ type SearchParams = {
   after?: string;
   before?: string;
   category?: string;
+  collection?: string;
   limit?: string;
   page?: string;
   q?: string;
@@ -87,10 +88,13 @@ export default async function Page({ searchParams }: PageProps) {
       return t("results-for", { query });
     }
 
-    if (searchParams.category) {
-      return (
-        searchParams.category[0].toUpperCase() + searchParams.category.slice(1)
-      ).replaceAll("-", " & ");
+    const headerKey = searchParams.category || searchParams.collection;
+
+    if (headerKey) {
+      return (headerKey[0].toUpperCase() + headerKey.slice(1)).replaceAll(
+        "-",
+        " & ",
+      );
     }
 
     return null;

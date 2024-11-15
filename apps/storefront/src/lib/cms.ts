@@ -73,6 +73,7 @@ export const generateLinkUrl = (item: MenuItem, paths: Paths): string => {
 };
 
 const internalUrls = [
+  "https://fashion.nimara.store",
   "https://nimara-dev.vercel.app",
   "https://nimara-stage.vercel.app",
   "https://nimara-prod.vercel.app",
