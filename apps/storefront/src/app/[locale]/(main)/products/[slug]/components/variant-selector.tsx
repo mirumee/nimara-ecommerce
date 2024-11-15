@@ -209,9 +209,10 @@ export const VariantSelector = ({
               </Label>
 
               <ToggleGroup
+                // @ts-expect-error we need null to reset the state
+                value={!chosenAttribute?.value ? null : chosenAttribute?.value}
                 type="single"
                 disabled={!isPreviousAttributeSelected}
-                defaultValue={chosenAttribute?.value}
                 className={cn(
                   type === "SWATCH"
                     ? "flex justify-start"
