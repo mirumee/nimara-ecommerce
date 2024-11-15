@@ -69,6 +69,7 @@ export default async function Page({
     apiURI: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
     countryCode: region.market.countryCode,
   };
+
   const checkoutId = cookies().get(COOKIE_KEY.checkoutId)?.value;
 
   const [{ data }, cart, user] = await Promise.all([
@@ -172,7 +173,7 @@ export default async function Page({
         </Carousel>
 
         <div className="md:col-span-5 md:col-start-8">
-          <section className="sticky top-32 w-full overflow-y-auto overflow-x-hidden pt-10 md:max-h-[83vh]">
+          <section className="sticky top-28 w-full overflow-y-auto overflow-x-hidden pt-10 md:max-h-[83vh]">
             <h1 className="text-2xl text-black">{name}</h1>
             <VariantSelector
               cart={cart}
