@@ -15,7 +15,7 @@ import { Link } from "@/i18n/routing";
 import { getAttributes } from "@/lib/helpers";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
-import { searchService } from "@/services/search";
+import { searchServiceSaleor } from "@/services/search";
 
 const attributeSlugs = [
   "homepage-grid-item-header",
@@ -63,7 +63,7 @@ export const ProductsGrid = async ({
     (product) => product?.reference,
   ) as string[];
 
-  const { results: gridImageProduct } = await searchService.search(
+  const { results: gridImageProduct } = await searchServiceSaleor.search(
     {
       productIds: imageProductId ? [imageProductId] : [],
       limit: 1,
@@ -71,7 +71,7 @@ export const ProductsGrid = async ({
     searchContext,
   );
 
-  const { results: products } = await searchService.search(
+  const { results: products } = await searchServiceSaleor.search(
     {
       productIds: gridProductsIds?.length ? [...gridProductsIds] : [],
       limit: 7,
