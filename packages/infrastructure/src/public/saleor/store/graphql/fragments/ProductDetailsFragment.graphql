@@ -23,4 +23,22 @@ fragment ProductDetailsFragment on Product {
       ...AttributeValueFragment
     }
   }
+  category {
+    products(first: 10, channel: $channel) {
+      edges {
+        node {
+          id
+          slug
+          name
+          thumbnail(size: 512) {
+            url
+            alt
+          }
+          pricing {
+            ...ProductPricingInfoFragment
+          }
+        }
+      }
+    }
+  }
 }

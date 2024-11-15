@@ -53,9 +53,27 @@ export type ProductDetailsFragment_Product_attributes_SelectedAttribute_values_A
 
 export type ProductDetailsFragment_Product_attributes_SelectedAttribute = { attribute: ProductDetailsFragment_Product_attributes_SelectedAttribute_attribute_Attribute, values: Array<ProductDetailsFragment_Product_attributes_SelectedAttribute_values_AttributeValue> };
 
-export type ProductDetailsFragment = { id: string, name: string, description: string | null, translation: ProductDetailsFragment_Product_translation_ProductTranslation | null, media: Array<ProductDetailsFragment_Product_media_ProductMedia> | null, variants: Array<ProductDetailsFragment_Product_variants_ProductVariant> | null, attributes: Array<ProductDetailsFragment_Product_attributes_SelectedAttribute> };
+export type ProductDetailsFragment_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_thumbnail_Image = { url: string, alt: string | null };
+
+export type ProductDetailsFragment_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney = { net: ProductAvailabilityDetailsFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_net_Money, gross: ProductAvailabilityDetailsFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_gross_Money, tax: ProductAvailabilityDetailsFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_tax_Money };
+
+export type ProductDetailsFragment_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange = { start: ProductDetailsFragment_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney | null };
+
+export type ProductDetailsFragment_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo = { priceRange: ProductDetailsFragment_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange | null };
+
+export type ProductDetailsFragment_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product = { id: string, slug: string, name: string, thumbnail: ProductDetailsFragment_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_thumbnail_Image | null, pricing: ProductDetailsFragment_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo | null };
+
+export type ProductDetailsFragment_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge = { node: ProductDetailsFragment_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product };
+
+export type ProductDetailsFragment_Product_category_Category_products_ProductCountableConnection = { edges: Array<ProductDetailsFragment_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge> };
+
+export type ProductDetailsFragment_Product_category_Category = { products: ProductDetailsFragment_Product_category_Category_products_ProductCountableConnection | null };
+
+export type ProductDetailsFragment = { id: string, name: string, description: string | null, translation: ProductDetailsFragment_Product_translation_ProductTranslation | null, media: Array<ProductDetailsFragment_Product_media_ProductMedia> | null, variants: Array<ProductDetailsFragment_Product_variants_ProductVariant> | null, attributes: Array<ProductDetailsFragment_Product_attributes_SelectedAttribute>, category: ProductDetailsFragment_Product_category_Category | null };
 
 export type ProductMediaFragment = { url: string, alt: string, type: Types.ProductMediaType };
+
+export type ProductPricingInfoFragment = { priceRange: ProductDetailsFragment_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange | null };
 
 export type ProductVariantDetailsFragment = { id: string, name: string, translation: ProductDetailsFragment_Product_variants_ProductVariant_translation_ProductVariantTranslation | null, selectionAttributes: Array<ProductDetailsFragment_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute>, nonSelectionAttributes: Array<ProductDetailsFragment_Product_variants_ProductVariant_nonSelectionAttributes_SelectedAttribute> };
 
@@ -148,6 +166,24 @@ export const ProductDetailsFragment = new TypedDocumentString(`
       ...AttributeValueFragment
     }
   }
+  category {
+    products(first: 10, channel: $channel) {
+      edges {
+        node {
+          id
+          slug
+          name
+          thumbnail(size: 512) {
+            url
+            alt
+          }
+          pricing {
+            ...ProductPricingInfoFragment
+          }
+        }
+      }
+    }
+  }
 }
     fragment AttributeFragment on Attribute {
   slug
@@ -178,6 +214,13 @@ fragment ProductMediaFragment on ProductMedia {
   alt
   type
 }
+fragment ProductPricingInfoFragment on ProductPricingInfo {
+  priceRange {
+    start {
+      ...TaxedMoneyFragment
+    }
+  }
+}
 fragment ProductVariantDetailsFragment on ProductVariant {
   id
   name
@@ -198,4 +241,19 @@ fragment SelectionAttributeFragment on SelectedAttribute {
   values {
     ...AttributeValueFragment
   }
+}
+fragment TaxedMoneyFragment on TaxedMoney {
+  net {
+    ...MoneyFragment
+  }
+  gross {
+    ...MoneyFragment
+  }
+  tax {
+    ...MoneyFragment
+  }
+}
+fragment MoneyFragment on Money {
+  currency
+  amount
 }`, {"fragmentName":"ProductDetailsFragment"}) as unknown as TypedDocumentString<ProductDetailsFragment, unknown>;

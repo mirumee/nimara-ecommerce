@@ -30,6 +30,27 @@ const parseData = (data: ProductDetailsFragment): Product => {
     name,
     description,
     images,
+    relatedProducts:
+      data.category?.products?.edges
+        ?.filter(({ node }) => node.id !== id)
+        .filter(Boolean)
+        .map(({ node }) => {
+          return {
+            currency: node?.pricing?.priceRange?.start?.gross?.currency ?? "",
+            id: node.slug,
+            media: null,
+            thumbnail: node.thumbnail
+              ? {
+                  alt: node.thumbnail.alt ?? undefined,
+                  url: node.thumbnail.url,
+                }
+              : null,
+            name: node.name,
+            price: node.pricing?.priceRange?.start?.gross?.amount ?? 0,
+            slug: node.slug,
+            updatedAt: new Date(),
+          };
+        }) ?? [],
     attributes: data.attributes.map(parseAttributeData),
     variants: variants.map(
       ({ nonSelectionAttributes, selectionAttributes, id, ...variant }) => {

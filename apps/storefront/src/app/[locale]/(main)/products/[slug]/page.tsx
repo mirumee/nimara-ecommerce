@@ -16,6 +16,7 @@ import {
 
 import { getAccessToken } from "@/auth";
 import { ProductImagePlaceholder } from "@/components/product-image-placeholder";
+import { SearchProductCard } from "@/components/search-product-card";
 import { CACHE_TTL, COOKIE_KEY } from "@/config";
 import { clientEnvs } from "@/envs/client";
 import { JsonLd, productToJsonLd } from "@/lib/json-ld";
@@ -202,6 +203,30 @@ export default async function Page({
           </section>
         </div>
       </div>
+
+      {product.relatedProducts.length > 0 && (
+        <div className="mb-7 mt-10 md:mb-14 md:mt-20">
+          <h2 className="mb-4 text-4xl text-black">You may also like</h2>
+          <Carousel>
+            <CarouselContent>
+              {product.relatedProducts.map((product) => (
+                <CarouselItem
+                  key={product.id}
+                  className="w-1/1 h-full flex-none md:w-1/5"
+                >
+                  <SearchProductCard
+                    product={product}
+                    sizes="(max-width: 360px) 195px, (max-width: 720px) 379px, 1vw"
+                    height={200}
+                    width={200}
+                  />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
+        </div>
+      )}
+
       <JsonLd jsonLd={productToJsonLd(product, availability)} />
     </div>
   );

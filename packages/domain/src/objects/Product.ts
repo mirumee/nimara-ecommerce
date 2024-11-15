@@ -1,5 +1,6 @@
 import type { Attribute } from "./Attribute";
 import type { Image, TaxedPrice } from "./common";
+import { type SearchProduct } from "./SearchProduct";
 
 export type ProductAvailability = {
   isAvailable: boolean;
@@ -21,6 +22,7 @@ export type Product = {
   id: string;
   images: Image[];
   name: string;
+  relatedProducts: SearchProduct[];
   variants: ProductVariant[];
 };
 
