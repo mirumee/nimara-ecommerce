@@ -81,7 +81,7 @@ export default async function Page({
   }
 
   return (
-    <div>
+    <>
       <ProductDisplay
         cart={cart}
         product={data.product}
@@ -90,6 +90,6 @@ export default async function Page({
       />
 
       <JsonLd jsonLd={productToJsonLd(data?.product, data?.availability)} />
-    </div>
+    </>
   );
 }
