@@ -22,6 +22,7 @@ import { DEFAULT_SORT_BY } from "@/config";
 import { type TranslationMessage } from "@/types";
 
 import { handleFiltersFormSubmit } from "../actions";
+import { ClearFiltersButton } from "./clear-filters-button";
 import { colors, ColorSwatch } from "./color-swatch";
 import { FilterBoolean } from "./filter-boolean";
 import { FilterDropdown } from "./filter-dropdown";
@@ -158,9 +159,7 @@ export const FiltersContainer = async ({
           <SheetFooter className="mt-auto">
             <SheetClose asChild>
               <div className="grid w-full grid-cols-2 justify-between gap-4">
-                <Button type="submit" variant="outline" name="clear">
-                  {t("filters.clear")}
-                </Button>
+                <ClearFiltersButton>{t("filters.clear")}</ClearFiltersButton>
                 <Button type="submit">{t("filters.show-products")}</Button>
               </div>
             </SheetClose>
