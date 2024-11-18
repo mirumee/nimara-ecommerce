@@ -1,7 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
-import type { Attribute } from "@nimara/domain/objects/Attribute";
+import type { PageField } from "@nimara/domain/objects/CMSPage";
 import type { SearchContext } from "@nimara/infrastructure/use-cases/search/types";
 import { Button } from "@nimara/ui/components/button";
 import {
@@ -12,25 +12,15 @@ import {
 
 import { SearchProductCard } from "@/components/search-product-card";
 import { Link } from "@/i18n/routing";
-import { getAttributes } from "@/lib/helpers";
+import { createFieldsMap, type FieldsMap } from "@/lib/cms";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { searchService } from "@/services/search";
 
-const attributeSlugs = [
-  "homepage-grid-item-header",
-  "homepage-grid-item-subheader",
-  "homepage-grid-item-image",
-  "homepage-button-text",
-  "homepage-grid-item-header-font-color",
-  "homepage-grid-item-subheader-font-color",
-  "carousel-products",
-];
-
 export const ProductsGrid = async ({
-  attributes,
+  fields,
 }: {
-  attributes: Attribute[] | undefined;
+  fields: PageField[] | undefined;
 }) => {
   const [region, t] = await Promise.all([
     getCurrentRegion(),
@@ -43,37 +33,27 @@ export const ProductsGrid = async ({
     languageCode: region.language.code,
   } satisfies SearchContext;
 
-  if (attributes?.length === 0) {
+  if (!fields || fields.length === 0) {
     return null;
   }
 
-  const attributesMap = getAttributes(attributes, attributeSlugs);
+  const fieldsMap: FieldsMap = createFieldsMap(fields);
 
-  const header = attributesMap["homepage-grid-item-header"];
-  const subheader = attributesMap["homepage-grid-item-subheader"];
-  const image = attributesMap["homepage-grid-item-image"];
-  const buttonText = attributesMap["homepage-button-text"];
-  const headerFontColor = attributesMap["homepage-grid-item-header-font-color"];
+  const header = fieldsMap["homepage-grid-item-header"]?.text;
+  const subheader = fieldsMap["homepage-grid-item-subheader"]?.text;
+  const image = fieldsMap["homepage-grid-item-image"]?.imageUrl;
+  const buttonText = fieldsMap["homepage-button-text"]?.text;
+  const headerFontColor =
+    fieldsMap["homepage-grid-item-header-font-color"]?.text;
   const subheaderFontColor =
-    attributesMap["homepage-grid-item-subheader-font-color"];
-  const gridProducts = attributesMap["carousel-products"];
+    fieldsMap["homepage-grid-item-subheader-font-color"]?.text;
+  const gridProducts = fieldsMap["carousel-products"];
 
-  const imageProductId = image?.values[0]?.reference as string;
-  const gridProductsIds = gridProducts?.values?.map(
-    (product) => product?.reference,
-  ) as string[];
-
-  const { results: gridImageProduct } = await searchService.search(
-    {
-      productIds: imageProductId ? [imageProductId] : [],
-      limit: 1,
-    },
-    searchContext,
-  );
+  const gridProductsIds = gridProducts?.reference;
 
   const { results: products } = await searchService.search(
     {
-      productIds: gridProductsIds.length ? [...gridProductsIds] : [],
+      productIds: gridProductsIds?.length ? [...gridProductsIds] : [],
       limit: 7,
     },
     searchContext,
@@ -85,24 +65,24 @@ export const ProductsGrid = async ({
         <div
           className="relative min-h-44 border-stone-200 bg-cover bg-center p-6"
           style={{
-            backgroundImage: `url(${gridImageProduct[0]?.thumbnail?.url})`,
+            backgroundImage: `url(${image})`,
           }}
         >
           <h2
             className="text-2xl opacity-100"
             style={{
-              color: `${headerFontColor?.values[0]?.value ?? "#44403c"}`,
+              color: `${headerFontColor ?? "#44403c"}`,
             }}
           >
-            {header?.values[0]?.plainText}
+            {header}
           </h2>
           <h3
             className="text-sm"
             style={{
-              color: `${subheaderFontColor?.values[0]?.value ?? "#78716c"}`,
+              color: `${subheaderFontColor ?? "#78716c"}`,
             }}
           >
-            {subheader?.values[0]?.plainText}
+            {subheader}
           </h3>
           <Button
             className="absolute bottom-4 right-4 p-3"
@@ -144,7 +124,7 @@ export const ProductsGrid = async ({
       <div className="mx-auto mb-14">
         <Button variant="outline" asChild>
           <Link href={paths.search.asPath()}>
-            {buttonText?.values[0]?.plainText}
+            {buttonText}
             <ArrowRight className="h-4 w-5 pl-1" />
           </Link>
         </Button>

@@ -5,8 +5,6 @@ import { saleorAddressService } from "@nimara/infrastructure/public/saleor/addre
 import { saleorAuthService } from "@nimara/infrastructure/public/saleor/auth/index";
 import { saleorCartService } from "@nimara/infrastructure/public/saleor/cart/index";
 import { saleorCheckoutService } from "@nimara/infrastructure/public/saleor/checkout/service";
-import { saleorCMSMenuService } from "@nimara/infrastructure/public/saleor/cms-menu/index";
-import { saleorCMSPageService } from "@nimara/infrastructure/public/saleor/cms-page/index";
 import { saleorStoreService } from "@nimara/infrastructure/public/saleor/store/index";
 import { saleorUserService } from "@nimara/infrastructure/public/saleor/user/index";
 import { stripePaymentService } from "@nimara/infrastructure/public/stripe/payment/index";
@@ -31,14 +29,6 @@ export const authService = saleorAuthService({
 });
 
 export const userService = saleorUserService({
-  apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
-});
-
-export const cmsPageService = saleorCMSPageService({
-  apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
-});
-
-export const cmsMenuService = saleorCMSMenuService({
   apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
 });
 

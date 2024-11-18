@@ -21,7 +21,9 @@ export type OrderFragment_Order_lines_OrderLine_variant_ProductVariant_selection
 
 export type OrderFragment_Order_lines_OrderLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation = { name: string, plainText: string | null, richText: string | null };
 
-export type OrderFragment_Order_lines_OrderLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue = { slug: string | null, name: string | null, plainText: string | null, richText: string | null, boolean: boolean | null, date: string | null, dateTime: string | null, reference: string | null, value: string | null, translation: OrderFragment_Order_lines_OrderLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation | null };
+export type OrderFragment_Order_lines_OrderLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_file_File = { url: string };
+
+export type OrderFragment_Order_lines_OrderLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue = { slug: string | null, name: string | null, plainText: string | null, richText: string | null, boolean: boolean | null, date: string | null, dateTime: string | null, reference: string | null, value: string | null, translation: OrderFragment_Order_lines_OrderLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation | null, file: OrderFragment_Order_lines_OrderLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_file_File | null };
 
 export type OrderFragment_Order_lines_OrderLine_variant_ProductVariant_selectionAttributes_SelectedAttribute = { attribute: OrderFragment_Order_lines_OrderLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute, values: Array<OrderFragment_Order_lines_OrderLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue> };
 
@@ -153,6 +155,9 @@ fragment AttributeValueFragment on AttributeValue {
     name
     plainText
     richText
+  }
+  file {
+    url
   }
 }`, {"fragmentName":"OrderFragment"}) as unknown as TypedDocumentString<OrderFragment, unknown>;
 export const UserFragment = new TypedDocumentString(`

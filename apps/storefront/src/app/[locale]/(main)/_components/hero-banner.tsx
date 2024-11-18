@@ -1,63 +1,34 @@
 import { ArrowRight } from "lucide-react";
 
-import type { Attribute } from "@nimara/domain/objects/Attribute";
-import type { SearchContext } from "@nimara/infrastructure/use-cases/search/types";
+import type { PageField } from "@nimara/domain/objects/CMSPage";
 import { Button } from "@nimara/ui/components/button";
 
 import { Link } from "@/i18n/routing";
-import { getAttributes } from "@/lib/helpers";
+import { createFieldsMap, type FieldsMap } from "@/lib/cms";
 import { paths } from "@/lib/paths";
-import { getCurrentRegion } from "@/regions/server";
-import { searchService } from "@/services/search";
-
-const attributeSlugs = [
-  "homepage-banner-header",
-  "homepage-banner-image",
-  "homepage-banner-button-text",
-];
 
 export const HeroBanner = async ({
-  attributes,
+  fields,
 }: {
-  attributes: Attribute[] | undefined;
+  fields: PageField[] | undefined;
 }) => {
-  const region = await getCurrentRegion();
-
-  const searchContext = {
-    currency: region.market.currency,
-    channel: region.market.channel,
-    languageCode: region.language.code,
-  } satisfies SearchContext;
-
-  if (attributes?.length === 0) {
+  if (!fields || fields.length === 0) {
     return null;
   }
 
-  const attributesMap = getAttributes(attributes, attributeSlugs);
+  const fieldsMap: FieldsMap = createFieldsMap(fields);
 
-  const header = attributesMap["homepage-banner-header"];
-  const buttonText = attributesMap["homepage-banner-button-text"];
-  const image = attributesMap["homepage-banner-image"];
-
-  const productId = image?.values[0]?.reference as string;
-
-  const { results: products } = await searchService.search(
-    {
-      productIds: [productId],
-      limit: 1,
-    },
-    searchContext,
-  );
+  const header = fieldsMap["homepage-banner-header"]?.text;
+  const buttonText = fieldsMap["homepage-banner-button-text"]?.text;
+  const image = fieldsMap["homepage-banner-image"]?.imageUrl;
 
   return (
     <div className="mb-14 flex flex-col items-center bg-stone-100 sm:h-[27rem] sm:flex-row">
       <div className="order-last p-8 sm:order-first sm:basis-1/2 lg:p-16">
-        <h2 className="pb-8 text-3xl font-medium lg:text-5xl">
-          {header?.values[0]?.plainText}
-        </h2>
+        <h2 className="pb-8 text-3xl font-medium lg:text-5xl">{header}</h2>
         <Button asChild>
           <Link href={paths.search.asPath()}>
-            {buttonText?.values[0]?.plainText}
+            {buttonText}
             <ArrowRight className="h-4 w-5 pl-1" />
           </Link>
         </Button>
@@ -65,7 +36,7 @@ export const HeroBanner = async ({
       <div className="sm-order-last order-first w-full sm:basis-1/2">
         <div
           className="h-[22rem] bg-cover bg-center sm:h-[27rem]"
-          style={{ backgroundImage: `url(${products[0]?.thumbnail?.url})` }}
+          style={{ backgroundImage: `url(${image})` }}
         />
       </div>
     </div>

@@ -13,4 +13,7 @@ fragment AttributeValueFragment on AttributeValue {
     plainText
     richText
   }
+  file {
+    url
+  }
 }

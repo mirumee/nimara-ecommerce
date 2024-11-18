@@ -1,26 +1,5 @@
-import type { Attribute } from "@nimara/domain/objects/Attribute";
 import type { MenuItem } from "@nimara/domain/objects/Menu";
 import { loggingService } from "@nimara/infrastructure/logging/service";
-
-export const getAttributes = (
-  attributes: Attribute[] | undefined,
-  slugs: string[],
-) => {
-  if (!attributes) {
-    return {};
-  }
-
-  return attributes.reduce(
-    (acc, attr) => {
-      if (attr?.slug && slugs.includes(attr.slug)) {
-        acc[attr.slug] = attr;
-      }
-
-      return acc;
-    },
-    {} as { [key: string]: Attribute },
-  );
-};
 
 interface Paths {
   page: {

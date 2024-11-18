@@ -47,7 +47,9 @@ export type ProductDetailsQuery_product_Product_variants_ProductVariant_selectio
 
 export type ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation = { name: string, plainText: string | null, richText: string | null };
 
-export type ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue = { slug: string | null, name: string | null, plainText: string | null, richText: string | null, boolean: boolean | null, date: string | null, dateTime: string | null, reference: string | null, value: string | null, translation: ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation | null };
+export type ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_file_File = { url: string };
+
+export type ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue = { slug: string | null, name: string | null, plainText: string | null, richText: string | null, boolean: boolean | null, date: string | null, dateTime: string | null, reference: string | null, value: string | null, translation: ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation | null, file: ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_file_File | null };
 
 export type ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute = { attribute: ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute, values: Array<ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue> };
 
@@ -206,5 +208,8 @@ fragment AttributeValueFragment on AttributeValue {
     name
     plainText
     richText
+  }
+  file {
+    url
   }
 }`) as unknown as TypedDocumentString<ProductDetailsQuery, ProductDetailsQueryVariables>;

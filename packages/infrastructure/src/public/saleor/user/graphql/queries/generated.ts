@@ -55,7 +55,9 @@ export type UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderC
 
 export type UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_lines_OrderLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation = { name: string, plainText: string | null, richText: string | null };
 
-export type UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_lines_OrderLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue = { slug: string | null, name: string | null, plainText: string | null, richText: string | null, boolean: boolean | null, date: string | null, dateTime: string | null, reference: string | null, value: string | null, translation: UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_lines_OrderLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation | null };
+export type UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_lines_OrderLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_file_File = { url: string };
+
+export type UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_lines_OrderLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue = { slug: string | null, name: string | null, plainText: string | null, richText: string | null, boolean: boolean | null, date: string | null, dateTime: string | null, reference: string | null, value: string | null, translation: UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_lines_OrderLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation | null, file: UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_lines_OrderLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_file_File | null };
 
 export type UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_lines_OrderLine_variant_ProductVariant_selectionAttributes_SelectedAttribute = { attribute: UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_lines_OrderLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute, values: Array<UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_lines_OrderLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue> };
 
@@ -244,5 +246,8 @@ fragment AttributeValueFragment on AttributeValue {
     name
     plainText
     richText
+  }
+  file {
+    url
   }
 }`) as unknown as TypedDocumentString<UserOrdersQuery, UserOrdersQueryVariables>;
