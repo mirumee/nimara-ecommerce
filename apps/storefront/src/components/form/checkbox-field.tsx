@@ -12,14 +12,16 @@ import {
 import { cn } from "@nimara/ui/lib/utils";
 
 export type CheckboxFieldProps = ComponentProps<typeof Checkbox> & {
+  ariaLabel?: string;
   isRequired?: boolean;
-  label: string;
+  label?: string;
   name: string;
 };
 
 export const CheckboxField = ({
   name,
   label,
+  ariaLabel,
   isRequired,
   className,
   ...props
@@ -41,7 +43,7 @@ export const CheckboxField = ({
                   checked={!!field.value}
                   onCheckedChange={field.onChange}
                   id={name}
-                  aria-label={label}
+                  aria-label={label || ariaLabel}
                 />
               </FormControl>
               <FormLabel htmlFor={name}>

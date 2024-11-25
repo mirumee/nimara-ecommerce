@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
+import type { ReactNode } from "react";
 import { useForm } from "react-hook-form";
 
 import type { Order } from "@nimara/domain/objects/Order";
@@ -10,18 +11,18 @@ import { Form } from "@nimara/ui/components/form";
 
 import { CheckboxField } from "@/components/form/checkbox-field";
 
-import { OrderLine } from "../_components/order-line";
-import { OrderSummary } from "../_components/order-summary";
 import { type FormSchema, formSchema } from "./schema";
 
 export const ReturnProductsForm = ({
-  order,
-  onSubmit,
+  children,
   onCancel,
+  order,
+  orderLines,
 }: {
+  children: ReactNode;
   onCancel: () => void;
-  onSubmit: (data: FormSchema) => void;
   order: Order;
+  orderLines: ReactNode[];
 }) => {
   const t = useTranslations();
 
@@ -41,22 +42,31 @@ export const ReturnProductsForm = ({
 
   const canSubmit = !form.formState.isSubmitting;
 
+  const handleSubmit = (data: FormSchema) => {
+    const selectedProducts = Object.entries(data.selectedLines)
+      .filter(([_, isSelected]) => isSelected)
+      .map(([lineId]) => order.lines.find((line) => line.id === lineId));
+
+    console.log("Selected products:", selectedProducts);
+    onCancel();
+  };
+
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(handleSubmit)}
         className="space-y-4"
         noValidate
       >
-        <OrderSummary order={order} />
+        {children}
         <div className="space-y-4">
-          {order?.lines.map((line) => (
+          {order?.lines.map((line, index) => (
             <div key={line.id} className="flex items-center gap-4">
               <CheckboxField
                 name={`selectedLines.${line.id}`}
-                label={`${line.productName} • ${line.variantName}`}
+                ariaLabel={`${line.productName} • ${line.variantName}`}
               />
-              <OrderLine line={line} />
+              {orderLines[index]}
             </div>
           ))}
         </div>
