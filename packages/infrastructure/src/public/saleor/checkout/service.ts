@@ -7,6 +7,7 @@ import { checkoutGetUseCase } from "#root/use-cases/checkout/checkout-get-use-ca
 import { checkoutRemovePromoCodeUseCase } from "#root/use-cases/checkout/checkout-remove-promo-code-use-case";
 import { checkoutShippingAddressUpdateUseCase } from "#root/use-cases/checkout/checkout-shipping-address-update-use-case";
 import { orderCreateUseCase } from "#root/use-cases/checkout/order-create-use-case";
+import { orderReturnProductsUseCase } from "#root/use-cases/checkout/order-return-products-use-case";
 
 import { saleorCheckoutAddPromoCodeInfra } from "./infrastructure/checkout-add-promo-code-infra";
 import { saleorCheckoutCustomerAttachInfra } from "./infrastructure/checkout-customer-attach-infrastructure";
@@ -16,6 +17,7 @@ import { saleorCheckoutRemovePromoCodeInfra } from "./infrastructure/checkout-re
 import { saleorCheckoutShippingAddressUpdateInfra } from "./infrastructure/checkout-shipping-address-update-infra";
 import { saleorCheckoutEmailUpdateInfra } from "./infrastructure/checkout-update-email-infra";
 import { orderCreateInfra } from "./infrastructure/order-create-infra";
+import { orderReturnProductsInfra } from "./infrastructure/order-return-products-infra";
 import { saleorCheckoutBillingAddressUpdateInfra } from "./infrastructure/update-checkout-billing-address-infra";
 import type { CheckoutService, SaleorCheckoutServiceConfig } from "./types";
 
@@ -45,6 +47,9 @@ export const saleorCheckoutService: CheckoutService<
   }),
   orderCreate: orderCreateUseCase({
     orderCreate: orderCreateInfra(serviceConfig),
+  }),
+  orderReturnProducts: orderReturnProductsUseCase({
+    orderReturnProducts: orderReturnProductsInfra(serviceConfig),
   }),
   checkoutAddPromoCode: checkoutAddPromoCodeUseCase({
     checkoutAddPromoCodeInfra: saleorCheckoutAddPromoCodeInfra(serviceConfig),

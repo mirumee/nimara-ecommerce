@@ -8,9 +8,11 @@ import { useForm } from "react-hook-form";
 import type { Order } from "@nimara/domain/objects/Order";
 import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
+import { useToast } from "@nimara/ui/hooks";
 
 import { CheckboxField } from "@/components/form/checkbox-field";
 
+import { returnProducts } from "./actions";
 import { type FormSchema, formSchema } from "./schema";
 
 export const ReturnProductsForm = ({
@@ -25,6 +27,7 @@ export const ReturnProductsForm = ({
   orderLines: ReactNode[];
 }) => {
   const t = useTranslations();
+  const { toast } = useToast();
 
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema({ t })),
@@ -40,14 +43,30 @@ export const ReturnProductsForm = ({
     },
   });
 
+  const watchSelectedLines = form.watch("selectedLines");
+  const isAnySelected = Object.values(watchSelectedLines).some(Boolean);
+
   const canSubmit = !form.formState.isSubmitting;
 
-  const handleSubmit = (data: FormSchema) => {
-    const selectedProducts = Object.entries(data.selectedLines)
-      .filter(([_, isSelected]) => isSelected)
-      .map(([lineId]) => order.lines.find((line) => line.id === lineId));
+  const handleSubmit = async (data: FormSchema) => {
+    const result = await returnProducts(data, order.id);
 
-    console.log("Selected products:", selectedProducts);
+    if (result.isSuccess) {
+      toast({
+        description: t("order.return-request-submitted"),
+        position: "center",
+      });
+    }
+
+    if ("serverError" in result) {
+      toast({
+        description: t("errors.checkout.couldNotReturn"),
+        variant: "destructive",
+        position: "center",
+      });
+
+      return;
+    }
     onCancel();
   };
 
@@ -61,12 +80,15 @@ export const ReturnProductsForm = ({
         {children}
         <div className="space-y-4">
           {order?.lines.map((line, index) => (
-            <div key={line.id} className="flex items-center gap-4">
+            <div key={line.id} className="flex items-start gap-4">
               <CheckboxField
                 name={`selectedLines.${line.id}`}
                 ariaLabel={`${line.productName} • ${line.variantName}`}
+                className="flex-shrink-0"
               />
-              {orderLines[index]}
+              <div className="grid flex-grow grid-cols-4 gap-2 sm:grid-cols-12 sm:items-center">
+                {orderLines[index]}
+              </div>
             </div>
           ))}
         </div>
@@ -74,7 +96,11 @@ export const ReturnProductsForm = ({
           <Button variant="secondary" onClick={onCancel}>
             {t("common.cancel")}
           </Button>
-          <Button type="submit" loading={!canSubmit} disabled={!canSubmit}>
+          <Button
+            type="submit"
+            loading={!canSubmit}
+            disabled={!canSubmit || !isAnySelected}
+          >
             {t("order.make-return")}
           </Button>
         </div>

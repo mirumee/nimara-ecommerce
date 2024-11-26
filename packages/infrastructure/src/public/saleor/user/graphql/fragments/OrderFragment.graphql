@@ -10,4 +10,14 @@ fragment OrderFragment on Order {
   number
   displayGrossPrices
   status
+  fulfillments {
+    status
+    lines {
+      orderLine {
+        id
+        productName
+        productVariantId
+      }
+    }
+  }
 }

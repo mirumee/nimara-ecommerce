@@ -38,18 +38,36 @@ export default async function Page() {
           <div className="space-y-4">
             <div className="grid grid-cols-4 gap-2 sm:grid-cols-12 sm:items-center">
               {order?.lines.map((line) => {
-                return <OrderLine key={line.id} line={line} />;
+                const isReturned = order.fulfillments?.some(
+                  (fulfillment) =>
+                    fulfillment.status === "RETURNED" &&
+                    fulfillment.lines?.some(
+                      (fulfillmentLine) =>
+                        fulfillmentLine.orderLine?.id === line.id,
+                    ),
+                );
+
+                return (
+                  <OrderLine
+                    key={line.id}
+                    line={line}
+                    returnStatus={isReturned ? "RETURNED" : ""}
+                  />
+                );
               })}
             </div>
           </div>
-          <ReturnProductsModal
-            order={order}
-            orderLines={order.lines.map((line) => (
-              <OrderLine key={line.id} line={line} />
-            ))}
-          >
-            <OrderSummary order={order} />
-          </ReturnProductsModal>
+
+          {order.status === "FULFILLED" && (
+            <ReturnProductsModal
+              order={order}
+              orderLines={order.lines.map((line) => (
+                <OrderLine key={line.id} line={line} />
+              ))}
+            >
+              <OrderSummary order={order} />
+            </ReturnProductsModal>
+          )}
         </div>
       ))}
     </div>

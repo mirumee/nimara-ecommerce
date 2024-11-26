@@ -6,7 +6,13 @@ import type { OrderLine as OrderLineType } from "@nimara/domain/objects/Order";
 import { ProductImagePlaceholder } from "@/components/product-image-placeholder";
 import { getLocalizedFormatter } from "@/lib/formatters/get-localized-formatter";
 
-export const OrderLine = async ({ line }: { line: OrderLineType }) => {
+export const OrderLine = async ({
+  line,
+  returnStatus,
+}: {
+  line: OrderLineType;
+  returnStatus?: string;
+}) => {
   const [t, formatter] = await Promise.all([
     getTranslations(),
     getLocalizedFormatter(),
@@ -31,10 +37,13 @@ export const OrderLine = async ({ line }: { line: OrderLineType }) => {
       <div className="col-span-3 block sm:hidden">
         <p>{[line?.productName, line?.variantName].join(" • ")}</p>
         <span className="flex gap-2">
-          <p className="w-1/2 text-stone-500">
+          <p className="w-1/3 text-stone-500">
             {t("common.qty")}: {line?.quantity}
           </p>
-          <p className="w-1/2 text-end text-stone-500">
+          <p className="w-1/3 text-center font-bold text-black">
+            {returnStatus || ""}
+          </p>
+          <p className="w-1/3 text-end text-stone-500">
             {isFree
               ? t("common.free")
               : formatter.price({
@@ -44,8 +53,11 @@ export const OrderLine = async ({ line }: { line: OrderLineType }) => {
           </p>
         </span>
       </div>
-      <p className="col-span-7 hidden sm:block">
+      <p className="col-span-5 hidden sm:block">
         {[line?.productName, line?.variantName].join(" • ")}
+      </p>
+      <p className="col-span-2 hidden text-center text-sm font-bold text-black sm:block">
+        {returnStatus || ""}
       </p>
       <p className="col-span-2 hidden text-end text-stone-500 sm:block">
         {t("common.qty")}: {line?.quantity}

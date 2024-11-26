@@ -33,7 +33,13 @@ export type OrderFragment_Order_lines_OrderLine = { id: string, productName: str
 
 export type OrderFragment_Order_total_TaxedMoney = { net: OrderFragment_Order_lines_OrderLine_totalPrice_TaxedMoney_net_Money, gross: OrderFragment_Order_lines_OrderLine_totalPrice_TaxedMoney_gross_Money, tax: OrderFragment_Order_lines_OrderLine_totalPrice_TaxedMoney_tax_Money };
 
-export type OrderFragment = { id: string, created: string, number: string, displayGrossPrices: boolean, status: Types.OrderStatus, lines: Array<OrderFragment_Order_lines_OrderLine>, total: OrderFragment_Order_total_TaxedMoney };
+export type OrderFragment_Order_fulfillments_Fulfillment_lines_FulfillmentLine_orderLine_OrderLine = { id: string, productName: string, productVariantId: string | null };
+
+export type OrderFragment_Order_fulfillments_Fulfillment_lines_FulfillmentLine = { orderLine: OrderFragment_Order_fulfillments_Fulfillment_lines_FulfillmentLine_orderLine_OrderLine | null };
+
+export type OrderFragment_Order_fulfillments_Fulfillment = { status: Types.FulfillmentStatus, lines: Array<OrderFragment_Order_fulfillments_Fulfillment_lines_FulfillmentLine> | null };
+
+export type OrderFragment = { id: string, created: string, number: string, displayGrossPrices: boolean, status: Types.OrderStatus, lines: Array<OrderFragment_Order_lines_OrderLine>, total: OrderFragment_Order_total_TaxedMoney, fulfillments: Array<OrderFragment_Order_fulfillments_Fulfillment> };
 
 export type OrderLineFragment = { id: string, productName: string, variantName: string, quantity: number, translatedProductName: string, translatedVariantName: string, totalPrice: OrderFragment_Order_lines_OrderLine_totalPrice_TaxedMoney, thumbnail: OrderFragment_Order_lines_OrderLine_thumbnail_Image | null, variant: OrderFragment_Order_lines_OrderLine_variant_ProductVariant | null };
 
@@ -89,6 +95,16 @@ export const OrderFragment = new TypedDocumentString(`
   number
   displayGrossPrices
   status
+  fulfillments {
+    status
+    lines {
+      orderLine {
+        id
+        productName
+        productVariantId
+      }
+    }
+  }
 }
     fragment OrderLineFragment on OrderLine {
   id

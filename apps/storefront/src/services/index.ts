@@ -14,6 +14,7 @@ import { serverEnvs } from "@/envs/server";
 
 export const checkoutService = saleorCheckoutService({
   apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
+  appToken: serverEnvs.SALEOR_APP_TOKEN,
 });
 
 export const storeService = saleorStoreService;
