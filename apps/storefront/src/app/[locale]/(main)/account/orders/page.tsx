@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 
 import { getAccessToken } from "@/auth";
+import { isOrderLineReturned } from "@/lib/order";
 import { getCurrentRegion } from "@/regions/server";
 import { userService } from "@/services";
 
@@ -38,14 +39,7 @@ export default async function Page() {
           <div className="space-y-4">
             <div className="grid grid-cols-4 gap-2 sm:grid-cols-12 sm:items-center">
               {order?.lines.map((line) => {
-                const isReturned = order.fulfillments?.some(
-                  (fulfillment) =>
-                    fulfillment.status === "RETURNED" &&
-                    fulfillment.lines?.some(
-                      (fulfillmentLine) =>
-                        fulfillmentLine.orderLine?.id === line.id,
-                    ),
-                );
+                const isReturned = isOrderLineReturned(order, line);
 
                 return (
                   <OrderLine
@@ -58,16 +52,20 @@ export default async function Page() {
             </div>
           </div>
 
-          {order.status === "FULFILLED" && (
-            <ReturnProductsModal
-              order={order}
-              orderLines={order.lines.map((line) => (
-                <OrderLine key={line.id} line={line} />
-              ))}
-            >
-              <OrderSummary order={order} />
-            </ReturnProductsModal>
-          )}
+          {order.status === "FULFILLED" &&
+            order.lines.filter((line) => !isOrderLineReturned(order, line))
+              .length > 0 && (
+              <ReturnProductsModal
+                order={order}
+                orderLines={order.lines
+                  .filter((line) => !isOrderLineReturned(order, line))
+                  .map((line) => (
+                    <OrderLine key={line.id} line={line} />
+                  ))}
+              >
+                <OrderSummary order={order} />
+              </ReturnProductsModal>
+            )}
         </div>
       ))}
     </div>

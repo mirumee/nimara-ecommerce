@@ -11,6 +11,7 @@ import { Form } from "@nimara/ui/components/form";
 import { useToast } from "@nimara/ui/hooks";
 
 import { CheckboxField } from "@/components/form/checkbox-field";
+import { isOrderLineReturned } from "@/lib/order";
 
 import { returnProducts } from "./actions";
 import { type FormSchema, formSchema } from "./schema";
@@ -42,6 +43,10 @@ export const ReturnProductsForm = ({
       ),
     },
   });
+
+  const returnableLines = order?.lines.filter(
+    (line) => !isOrderLineReturned(order, line), // Use the helper function here
+  );
 
   const watchSelectedLines = form.watch("selectedLines");
   const isAnySelected = Object.values(watchSelectedLines).some(Boolean);
@@ -79,7 +84,7 @@ export const ReturnProductsForm = ({
       >
         {children}
         <div className="space-y-4">
-          {order?.lines.map((line, index) => (
+          {returnableLines.map((line, index) => (
             <div key={line.id} className="flex items-start gap-4">
               <CheckboxField
                 name={`selectedLines.${line.id}`}
