@@ -12,7 +12,7 @@ export async function returnProducts(data: FormSchema, orderId: string) {
     .filter(([_, isSelected]) => isSelected)
     .map(([lineId]) => ({
       orderLineId: lineId,
-      quantity: 0, // TODO correct qty
+      quantity: 0, //  despite 0 correct qty from order is returned
     }));
 
   const response = await checkoutService.orderReturnProducts({

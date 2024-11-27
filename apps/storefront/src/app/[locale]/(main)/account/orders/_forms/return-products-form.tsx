@@ -45,7 +45,7 @@ export const ReturnProductsForm = ({
   });
 
   const returnableLines = order?.lines.filter(
-    (line) => !isOrderLineReturned(order, line), // Use the helper function here
+    (line) => !isOrderLineReturned(order, line),
   );
 
   const watchSelectedLines = form.watch("selectedLines");
