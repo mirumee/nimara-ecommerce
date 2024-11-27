@@ -23,7 +23,7 @@ export async function registerAccount(values: FormSchema) {
     languageCode: region?.language?.code,
     redirectUrl: new URL(
       paths.confirmAccountRegistration.asPath(),
-      getStoreUrl(),
+      await getStoreUrl(),
     ).toString(),
   });
 

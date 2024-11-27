@@ -13,7 +13,7 @@ import { ProductsList } from "./_listing/products-list";
 import { SearchPagination } from "./_listing/search-pagination";
 import { SearchSortBy } from "./_listing/search-sort-by";
 
-type SearchParams = {
+type SearchParams = Promise<{
   after?: string;
   before?: string;
   category?: string;
@@ -21,11 +21,10 @@ type SearchParams = {
   page?: string;
   q?: string;
   sortBy?: string;
-};
+}>;
 
-type PageProps = NextPageProps<{}, SearchParams>;
-
-export async function generateMetadata({ searchParams }: PageProps) {
+export async function generateMetadata(props: { searchParams: SearchParams }) {
+  const searchParams = await props.searchParams;
   const t = await getTranslations("search");
 
   return {
@@ -45,7 +44,8 @@ export async function generateMetadata({ searchParams }: PageProps) {
   };
 }
 
-export default async function Page({ searchParams }: PageProps) {
+export default async function Page(props: { searchParams: SearchParams }) {
+  const searchParams = await props.searchParams;
   const [t, region] = await Promise.all([
     getTranslations("search"),
     getCurrentRegion(),

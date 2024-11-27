@@ -8,19 +8,21 @@ import { COOKIE_KEY } from "@/config";
 
 export async function handleLogout() {
   saleorAuthClient().signOut();
-  cookies().delete(COOKIE_KEY.accessToken);
-  cookies().delete(COOKIE_KEY.refreshToken);
-  cookies().delete(COOKIE_KEY.checkoutId);
+  const cookieStore = await cookies();
+
+  cookieStore.delete(COOKIE_KEY.accessToken);
+  cookieStore.delete(COOKIE_KEY.refreshToken);
+  cookieStore.delete(COOKIE_KEY.checkoutId);
 }
 
 export async function setAccessToken(value: string) {
-  cookies().set(COOKIE_KEY.accessToken, value, {
+  (await cookies()).set(COOKIE_KEY.accessToken, value, {
     httpOnly: true,
   });
 }
 
 export async function setRefreshToken(value: string) {
-  cookies().set(COOKIE_KEY.refreshToken, value, {
+  (await cookies()).set(COOKIE_KEY.refreshToken, value, {
     httpOnly: true,
   });
 }
