@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { paths } from "@/lib/paths";
-import { checkoutService } from "@/services";
+import { fulfillmentService } from "@/services";
 
 import type { FormSchema } from "./schema";
 
@@ -15,7 +15,7 @@ export async function returnProducts(data: FormSchema, orderId: string) {
       quantity: 0, //  despite 0 correct qty from order is returned
     }));
 
-  const response = await checkoutService.orderReturnProducts({
+  const response = await fulfillmentService.fulfillmentReturnProducts({
     order: orderId,
     input: { orderLines: selectedOrderLines },
   });

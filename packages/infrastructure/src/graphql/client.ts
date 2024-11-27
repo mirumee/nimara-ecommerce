@@ -1,5 +1,4 @@
 import type { DocumentTypeDecoration } from "@graphql-typed-document-node/core";
-import { invariant } from "ts-invariant";
 
 import type { Err, Result } from "@nimara/domain/objects/Error";
 
@@ -25,35 +24,6 @@ type NextFetchOptions = { next?: { revalidate?: number; tags?: string[] } };
 
 export type FetchOptions = Omit<RequestInit, "method" | "body"> &
   NextFetchOptions;
-
-export const secureSaleorClient = ({
-  apiURL,
-  appToken,
-}: {
-  apiURL: string;
-  appToken: string;
-}) => {
-  const client = graphqlClient(apiURL);
-
-  invariant(
-    appToken,
-    "Please provide a valid appToken to use secureSaleorClient.",
-  );
-
-  const execute: (typeof client)["execute"] = (query, opts) =>
-    client.execute(query, {
-      ...opts,
-      options: {
-        ...opts?.options,
-        headers: {
-          authorization: `Bearer ${appToken}`,
-          ...opts?.options?.headers,
-        },
-      },
-    });
-
-  return { execute };
-};
 
 export const graphqlClient = (
   url: RequestInfo | URL,

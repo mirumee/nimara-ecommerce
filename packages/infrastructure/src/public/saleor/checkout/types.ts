@@ -97,32 +97,6 @@ export type OrderCreateInfra = (opts: { id: string }) => Promise<{
 }>;
 export type OrderCreateUseCase = OrderCreateInfra;
 
-export type OrderReturnProductsOptions = {
-  input: {
-    orderLines: {
-      orderLineId: string;
-      quantity: number;
-    }[];
-  };
-  order: string;
-};
-
-export type OrderReturnProductsInfra = (
-  opts: OrderReturnProductsOptions,
-) => Promise<
-  | { isSuccess: true }
-  | { isSuccess: false }
-  | {
-      isSuccess: false;
-      serverError: BaseError;
-    }
-  | {
-      isSuccess: false;
-      validationErrors: { code: string; field: string | null }[];
-    }
->;
-export type OrderReturnProductsUseCase = OrderReturnProductsInfra;
-
 export type CheckoutBillingAddressUpdateInfra = (opts: {
   address: Partial<Omit<Address, "id">>;
   checkoutId: string;
@@ -153,7 +127,6 @@ export type ValidationError =
 
 export type SaleorCheckoutServiceConfig = {
   apiURL: string;
-  appToken?: string;
 };
 
 export type CheckoutService<Config> = (config: Config) => {
@@ -166,5 +139,4 @@ export type CheckoutService<Config> = (config: Config) => {
   checkoutShippingAddressUpdate: CheckoutShippingAddressUpdateUseCase;
   deliveryMethodUpdate: CheckoutDeliveryMethodUpdateUseCase;
   orderCreate: OrderCreateUseCase;
-  orderReturnProducts: OrderReturnProductsInfra;
 };

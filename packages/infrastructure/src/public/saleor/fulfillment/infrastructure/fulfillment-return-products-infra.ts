@@ -1,26 +1,26 @@
 import type { BaseError } from "@nimara/domain/objects/Error";
 
-import { secureSaleorClient } from "#root/graphql/client";
+import { graphqlClient } from "#root/graphql/client";
 import { loggingService } from "#root/logging/service";
 
-import { FulfillmentReturnProductsDocument } from "../graphql/mutations/generated";
+import { FulfillmentReturnProductsDocument } from "../grapqhql/mutations/generated";
 import type {
-  OrderReturnProductsInfra,
-  SaleorCheckoutServiceConfig,
+  FulfillmentReturnProductsInfra,
+  SaleorFulfillmentServiceConfig,
 } from "../types";
 
-export const orderReturnProductsInfra =
+export const saleorFulfillmentReturnProductsInfra =
   ({
     apiURL,
     appToken = "",
-  }: SaleorCheckoutServiceConfig): OrderReturnProductsInfra =>
+  }: SaleorFulfillmentServiceConfig): FulfillmentReturnProductsInfra =>
   async ({ order, input }) => {
-    const { data, error } = await secureSaleorClient({
-      apiURL,
-      appToken,
-    }).execute(FulfillmentReturnProductsDocument, {
-      variables: { order, input },
-    });
+    const { data, error } = await graphqlClient(apiURL, appToken).execute(
+      FulfillmentReturnProductsDocument,
+      {
+        variables: { order, input },
+      },
+    );
 
     if (error) {
       loggingService.error("Failed to return products", error);
@@ -31,16 +31,16 @@ export const orderReturnProductsInfra =
       };
     }
 
-    const isReturned =
-      data?.orderFulfillmentReturnProducts?.returnFulfillment?.status ===
-      "RETURNED";
-
     if (data?.orderFulfillmentReturnProducts?.errors?.length) {
       return {
         isSuccess: false,
         validationErrors: data.orderFulfillmentReturnProducts.errors,
       };
     }
+
+    const isReturned =
+      data?.orderFulfillmentReturnProducts?.returnFulfillment?.status ===
+      "RETURNED";
 
     if (!isReturned) {
       return { isSuccess: false };
