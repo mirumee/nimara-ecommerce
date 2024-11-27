@@ -45,7 +45,7 @@ export default async function Page() {
                   <OrderLine
                     key={line.id}
                     line={line}
-                    returnStatus={isReturned ? "RETURNED" : ""}
+                    returnStatus={isReturned ? t("order.returned") : ""}
                   />
                 );
               })}
