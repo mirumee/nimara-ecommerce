@@ -37,7 +37,7 @@ const nextConfig = withNextIntl({
     serverComponentsExternalPackages: ["pino"],
   },
   images: {
-    // TODO: Required for the imagges to load on Chrome when deployed with Vercel.
+    // TODO: Required for the images to load on Chrome when deployed with Vercel.
     // Remove when the issue is fixed.
     loader: "custom",
     loaderFile: "./src/lib/sanityImageLoader.ts",
@@ -50,6 +50,24 @@ const nextConfig = withNextIntl({
   },
   reactStrictMode: true,
   transpilePackages: ["@nimara/ui"],
+  async headers() {
+    const headers = [];
+    if (
+      process.env.NEXT_PUBLIC_ENVIRONMENT === "DEVELOPMENT" ||
+      process.env.NEXT_PUBLIC_ENVIRONMENT === "STAGING"
+    ) {
+      headers.push({
+        headers: [
+          {
+            key: "X-Robots-Tag",
+            value: "noindex",
+          },
+        ],
+        source: "/:path*",
+      });
+    }
+    return headers;
+  },
 
   webpack: (config, { isServer }) => {
     if (isServer) {
