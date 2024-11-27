@@ -54,7 +54,7 @@ export const CartDetails = ({
         }),
       );
     } else {
-      revalidateCart(cart.id);
+      await revalidateCart(cart.id);
     }
   };
 
@@ -76,7 +76,7 @@ export const CartDetails = ({
         }),
       );
     } else {
-      revalidateCart(cart.id);
+      await revalidateCart(cart.id);
     }
   };
 

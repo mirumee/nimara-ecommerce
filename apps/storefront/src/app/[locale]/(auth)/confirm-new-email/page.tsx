@@ -6,13 +6,12 @@ import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { userService } from "@/services";
 
-export default async function ConfirmEmailChangePage({
-  searchParams,
-}: {
-  searchParams?: Record<string, string>;
+export default async function ConfirmEmailChangePage(props: {
+  searchParams?: Promise<Record<string, string>>;
 }) {
+  const searchParams = await props.searchParams;
   const token = searchParams?.token ?? "";
-  const accessToken = getAccessToken();
+  const accessToken = await getAccessToken();
 
   const [region, t] = await Promise.all([
     getCurrentRegion(),

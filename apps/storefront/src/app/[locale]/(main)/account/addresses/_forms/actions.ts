@@ -15,7 +15,7 @@ export async function createNewAddress({
   isDefaultBillingAddress,
   ...input
 }: FormSchema) {
-  const accessToken = getAccessToken();
+  const accessToken = await getAccessToken();
 
   const newAddress = await userService.accountAddressCreate({
     input: {
@@ -48,7 +48,7 @@ export async function updateAddress({
   id: string;
   input: FormSchema;
 }) {
-  const accessToken = getAccessToken();
+  const accessToken = await getAccessToken();
 
   const data = await userService.accountAddressUpdate({
     accessToken,
@@ -78,7 +78,7 @@ export async function updateAddress({
 }
 
 export async function deleteAddress(id: string) {
-  const accessToken = getAccessToken();
+  const accessToken = await getAccessToken();
 
   const data = await userService.accountAddressDelete({
     accessToken,

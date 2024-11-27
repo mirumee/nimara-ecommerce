@@ -19,9 +19,10 @@ import { Payment } from "./payment";
 
 export const runtime = "nodejs";
 
-export default async function Page({
-  searchParams,
-}: NextPageProps<{}, { country?: CountryCode; errorCode?: string }>) {
+type SearchParams = Promise<{ country?: CountryCode; errorCode?: string }>;
+
+export default async function Page(props: { searchParams: SearchParams }) {
+  const searchParams = await props.searchParams;
   const checkout = await getCheckoutOrRedirect();
 
   if (checkout?.problems.insufficientStock.length) {
@@ -32,7 +33,7 @@ export default async function Page({
 
   const marketCountryCode = region.market.countryCode;
 
-  const storeUrl = getStoreUrl();
+  const storeUrl = await getStoreUrl();
 
   const { countries } = await addressService.countriesGet({
     channelSlug: region.market.channel,
@@ -61,7 +62,7 @@ export default async function Page({
     return paramsCountryCode;
   })() as CountryCode;
 
-  const accessToken = getAccessToken();
+  const accessToken = await getAccessToken();
 
   const user = await userService.userGet(accessToken);
   const [addresses, { addressFormRows }] = await Promise.all([
