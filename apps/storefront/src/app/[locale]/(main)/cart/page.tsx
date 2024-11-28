@@ -17,7 +17,7 @@ export async function generateMetadata() {
 }
 
 export default async function Page() {
-  const checkoutId = cookies().get(COOKIE_KEY.checkoutId)?.value;
+  const checkoutId = (await cookies()).get(COOKIE_KEY.checkoutId)?.value;
 
   return (
     <div className="mx-auto flex justify-center">

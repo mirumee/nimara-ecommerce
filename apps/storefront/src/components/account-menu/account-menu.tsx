@@ -6,7 +6,7 @@ import { userService } from "@/services";
 import { SideLinks } from "./side-links";
 
 export async function AccountSideMenu() {
-  const accessToken = getAccessToken();
+  const accessToken = await getAccessToken();
   const user = await userService.userGet(accessToken);
   const t = await getTranslations();
 

@@ -10,7 +10,7 @@ import { OrderSummary } from "./_components/order-summary";
 import { ReturnProductsModal } from "./_components/return-products-modal";
 
 export default async function Page() {
-  const accessToken = getAccessToken();
+  const accessToken = await getAccessToken();
   const [t, region] = await Promise.all([
     getTranslations(),
     getCurrentRegion(),

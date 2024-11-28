@@ -11,11 +11,11 @@ import { userService } from "@/services";
 export async function requestUserAccountDeletion() {
   const region = await getCurrentRegion();
 
-  const accessToken = getAccessToken();
+  const accessToken = await getAccessToken();
 
   const data = await userService.accountRequestDeletion({
     channel: region.market.channel,
-    redirectUrl: `${getStoreUrl()}${paths.deleteAccount.asPath()}`,
+    redirectUrl: `${await getStoreUrl()}${paths.deleteAccount.asPath()}`,
     accessToken,
   });
 

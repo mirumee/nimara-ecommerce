@@ -13,12 +13,11 @@ import { addressService, userService } from "@/services";
 import { AddNewAddressModal } from "./_modals/create-address-modal";
 import { EditAddressModal } from "./_modals/update-address-modal";
 
-export default async function Page({
-  searchParams,
-}: {
-  searchParams: Record<string, string>;
+export default async function Page(props: {
+  searchParams: Promise<Record<string, string>>;
 }) {
-  const accessToken = getAccessToken();
+  const searchParams = await props.searchParams;
+  const accessToken = await getAccessToken();
   const [t, region, addresses] = await Promise.all([
     getTranslations(),
     getCurrentRegion(),

@@ -8,7 +8,7 @@ import { paths } from "@/lib/paths";
 import { userService } from "@/services";
 
 export async function deleteUserAccount(token: string) {
-  const accessToken = getAccessToken();
+  const accessToken = await getAccessToken();
 
   if (accessToken) {
     const data = await userService.accountDelete({ accessToken, token });

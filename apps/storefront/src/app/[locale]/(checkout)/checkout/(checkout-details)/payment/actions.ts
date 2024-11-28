@@ -23,7 +23,7 @@ export async function updateBillingAddress({
     "sameAsShippingAddress" | "billingAddress" | "saveAddressForFutureUse"
   >;
 }) {
-  const accessToken = getAccessToken();
+  const accessToken = await getAccessToken();
 
   const data = await updateCheckoutAddressAction({
     checkoutId: checkout.id,

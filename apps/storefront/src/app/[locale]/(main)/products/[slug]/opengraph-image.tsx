@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-import { ReactComponent as NimaraLogo } from "@/assets/nimara-logo.svg";
+import NimaraLogo from "@/assets/nimara-logo.svg";
 import { CACHE_TTL } from "@/config";
 import { clientEnvs } from "@/envs/client";
 import { getCurrentRegion } from "@/regions/server";

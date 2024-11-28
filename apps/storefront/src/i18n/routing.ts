@@ -1,4 +1,4 @@
-import { createSharedPathnamesNavigation } from "next-intl/navigation";
+import { createNavigation } from "next-intl/navigation";
 import { defineRouting } from "next-intl/routing";
 
 import { type Locale, SUPPORTED_LOCALES } from "@/regions/types";
@@ -17,10 +17,9 @@ export const routing = defineRouting({
   },
 });
 
-const { redirect: _redirect } = createSharedPathnamesNavigation(routing);
+const { redirect: _redirect } = createNavigation(routing);
 
 // Help TypeScript detect unreachable code
 export const redirect: typeof _redirect = _redirect;
 
-export const { Link, usePathname, useRouter } =
-  createSharedPathnamesNavigation(routing);
+export const { Link, usePathname, useRouter } = createNavigation(routing);

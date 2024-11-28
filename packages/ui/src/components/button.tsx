@@ -41,39 +41,33 @@ export interface ButtonProps
   loading?: boolean;
 }
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    {
-      className,
-      variant,
-      size,
-      asChild = false,
-      loading = false,
-      children,
-      ...props
-    },
-    ref,
-  ) => {
-    const Comp = asChild ? Slot : "button";
+const Button = ({
+  className,
+  variant,
+  size,
+  asChild = false,
+  loading = false,
+  children,
+  ...props
+}: ButtonProps) => {
+  const Comp = asChild ? Slot : "button";
 
-    return (
-      <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
-        ref={ref}
-        {...props}
-      >
-        {loading ? (
-          <span className="inline-flex items-center gap-2">
-            <Slottable>{children}</Slottable>
-            <Spinner className="h-4 w-4 text-white" />
-          </span>
-        ) : (
+  return (
+    <Comp
+      className={cn(buttonVariants({ variant, size, className }))}
+      {...props}
+    >
+      {loading ? (
+        <span className="inline-flex items-center gap-2">
           <Slottable>{children}</Slottable>
-        )}
-      </Comp>
-    );
-  },
-);
+          <Spinner className="h-4 w-4 text-white" />
+        </span>
+      ) : (
+        <Slottable>{children}</Slottable>
+      )}
+    </Comp>
+  );
+};
 
 Button.displayName = "Button";
 

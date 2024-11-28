@@ -34,11 +34,10 @@ const nextConfig = withNextIntl({
     },
   },
   experimental: {
-    instrumentationHook: true,
     serverComponentsExternalPackages: ["pino"],
   },
   images: {
-    // TODO: Required for the imagges to load on Chrome when deployed with Vercel.
+    // TODO: Required for the images to load on Chrome when deployed with Vercel.
     // Remove when the issue is fixed.
     loader: "custom",
     loaderFile: "./src/lib/sanityImageLoader.ts",
@@ -51,45 +50,63 @@ const nextConfig = withNextIntl({
   },
   reactStrictMode: true,
   transpilePackages: ["@nimara/ui"],
+  async headers() {
+    const headers = [];
+    if (
+      process.env.NEXT_PUBLIC_ENVIRONMENT === "DEVELOPMENT" ||
+      process.env.NEXT_PUBLIC_ENVIRONMENT === "STAGING"
+    ) {
+      headers.push({
+        headers: [
+          {
+            key: "X-Robots-Tag",
+            value: "noindex",
+          },
+        ],
+        source: "/:path*",
+      });
+    }
+    return headers;
+  },
 
   webpack: (config, { isServer }) => {
     if (isServer) {
       config.ignoreWarnings = [{ module: /opentelemetry/ }];
     }
-    config.module.rules.push({
-      test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-      use: [
-        {
-          loader: "@svgr/webpack",
-          options: {
-            prettier: true,
-            svgo: true,
-            svgoConfig: {
-              plugins: [
-                {
-                  name: "preset-default",
-                  cleanupIDs: false,
-                  convertShapeToPath: false,
-                  removeDimensions: true,
-                  removeViewBox: false,
-                  removeXMLNS: true,
-                },
-              ],
-            },
-          },
-        },
-        {
-          loader: "file-loader",
-          options: {
-            name: "[name].[ext]",
-            outputPath: "static/images/",
-            publicPath: "/_next/static/images/",
-          },
-        },
-      ],
-    });
+    const fileLoaderRule = config.module.rules.find((rule) =>
+      rule.test?.test?.(".svg"),
+    );
+
+    config.module.rules.push(
+      // Reapply the existing rule, but only for svg imports ending in ?url
+      {
+        ...fileLoaderRule,
+        test: /\.svg$/i,
+        resourceQuery: /url/, // *.svg?url
+      },
+      // Convert all other *.svg imports to React components
+      {
+        test: /\.svg$/i,
+        issuer: fileLoaderRule.issuer,
+        resourceQuery: { not: [...fileLoaderRule.resourceQuery.not, /url/] }, // exclude if *.svg?url
+        use: ["@svgr/webpack"],
+      },
+    );
+
+    // Modify the file loader rule to ignore *.svg, since we have it handled now.
+    fileLoaderRule.exclude = /\.svg$/i;
 
     return config;
+  },
+  experimental: {
+    turbo: {
+      rules: {
+        "*.svg": {
+          loaders: ["@svgr/webpack"],
+          as: "*.js",
+        },
+      },
+    },
   },
 });
 

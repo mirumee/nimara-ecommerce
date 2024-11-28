@@ -10,7 +10,9 @@ import { useToast } from "@nimara/ui/hooks";
 
 const DynamicAccountDeletedModal = dynamic(
   () =>
-    import("./account-deleted-modal").then((mod) => mod.AccountDeletedModal),
+    import("./account-deleted-modal").then((mod) => ({
+      default: mod.AccountDeletedModal,
+    })),
   { ssr: false },
 );
 
