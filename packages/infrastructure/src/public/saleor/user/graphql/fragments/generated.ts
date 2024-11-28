@@ -35,7 +35,7 @@ export type OrderFragment_Order_total_TaxedMoney = { net: OrderFragment_Order_li
 
 export type OrderFragment_Order_fulfillments_Fulfillment_lines_FulfillmentLine_orderLine_OrderLine = { id: string, productName: string, productVariantId: string | null };
 
-export type OrderFragment_Order_fulfillments_Fulfillment_lines_FulfillmentLine = { orderLine: OrderFragment_Order_fulfillments_Fulfillment_lines_FulfillmentLine_orderLine_OrderLine | null };
+export type OrderFragment_Order_fulfillments_Fulfillment_lines_FulfillmentLine = { id: string, quantity: number, orderLine: OrderFragment_Order_fulfillments_Fulfillment_lines_FulfillmentLine_orderLine_OrderLine | null };
 
 export type OrderFragment_Order_fulfillments_Fulfillment = { status: Types.FulfillmentStatus, lines: Array<OrderFragment_Order_fulfillments_Fulfillment_lines_FulfillmentLine> | null };
 
@@ -98,6 +98,8 @@ export const OrderFragment = new TypedDocumentString(`
   fulfillments {
     status
     lines {
+      id
+      quantity
       orderLine {
         id
         productName

@@ -2,22 +2,33 @@
 
 import { revalidatePath } from "next/cache";
 
+import type { Order } from "@nimara/domain/objects/Order";
+
 import { paths } from "@/lib/paths";
 import { fulfillmentService } from "@/services";
 
 import type { FormSchema } from "./schema";
 
-export async function returnProducts(data: FormSchema, orderId: string) {
-  const selectedOrderLines = Object.entries(data.selectedLines)
+export async function returnProducts(data: FormSchema, order: Order) {
+  const fulfillmentLines = Object.entries(data.selectedLines)
     .filter(([_, isSelected]) => isSelected)
-    .map(([lineId]) => ({
-      orderLineId: lineId,
-      quantity: 0, //  despite 0 correct qty from order is returned
-    }));
+    .map(([lineId]) => {
+      const fulfillmentLine = order.fulfillments
+        .flatMap((fulfillment) => fulfillment.lines || [])
+        .find((line) => line.orderLine?.id === lineId);
+
+      return fulfillmentLine
+        ? {
+            fulfillmentLineId: fulfillmentLine.id,
+            quantity: fulfillmentLine.quantity,
+          }
+        : null;
+    })
+    .filter(Boolean);
 
   const response = await fulfillmentService.fulfillmentReturnProducts({
-    order: orderId,
-    input: { orderLines: selectedOrderLines },
+    order: order.id,
+    input: { fulfillmentLines },
   });
 
   revalidatePath(paths.account.orders.asPath());

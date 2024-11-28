@@ -54,7 +54,7 @@ export const ReturnProductsForm = ({
   const canSubmit = !form.formState.isSubmitting;
 
   const handleSubmit = async (data: FormSchema) => {
-    const result = await returnProducts(data, order.id);
+    const result = await returnProducts(data, order);
 
     if (result.isSuccess) {
       toast({
@@ -63,9 +63,19 @@ export const ReturnProductsForm = ({
       });
     }
 
+    if ("validationErrors" in result) {
+      result.validationErrors.map(({ message }) => {
+        toast({
+          description: message,
+          variant: "destructive",
+          position: "center",
+        });
+      });
+    }
+
     if ("serverError" in result) {
       toast({
-        description: t("errors.checkout.couldNotReturn"),
+        description: result.serverError.message,
         variant: "destructive",
         position: "center",
       });

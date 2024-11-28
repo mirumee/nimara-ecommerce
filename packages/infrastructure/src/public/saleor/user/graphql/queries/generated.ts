@@ -69,7 +69,7 @@ export type UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderC
 
 export type UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_fulfillments_Fulfillment_lines_FulfillmentLine_orderLine_OrderLine = { id: string, productName: string, productVariantId: string | null };
 
-export type UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_fulfillments_Fulfillment_lines_FulfillmentLine = { orderLine: UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_fulfillments_Fulfillment_lines_FulfillmentLine_orderLine_OrderLine | null };
+export type UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_fulfillments_Fulfillment_lines_FulfillmentLine = { id: string, quantity: number, orderLine: UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_fulfillments_Fulfillment_lines_FulfillmentLine_orderLine_OrderLine | null };
 
 export type UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_fulfillments_Fulfillment = { status: Types.FulfillmentStatus, lines: Array<UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_fulfillments_Fulfillment_lines_FulfillmentLine> | null };
 
@@ -189,6 +189,8 @@ export const UserOrdersQueryDocument = new TypedDocumentString(`
   fulfillments {
     status
     lines {
+      id
+      quantity
       orderLine {
         id
         productName

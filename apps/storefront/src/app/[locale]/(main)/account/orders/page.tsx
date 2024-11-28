@@ -52,7 +52,8 @@ export default async function Page() {
             </div>
           </div>
 
-          {order.status === "FULFILLED" &&
+          {(order.status === "FULFILLED" ||
+            order.status === "PARTIALLY_RETURNED") &&
             order.lines.filter((line) => !isOrderLineReturned(order, line))
               .length > 0 && (
               <ReturnProductsModal

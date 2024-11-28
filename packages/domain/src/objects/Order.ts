@@ -6,11 +6,13 @@ export interface Order {
   fulfillments: {
     lines:
       | {
+          id: string;
           orderLine: {
             id: string;
             productName: string;
             productVariantId: string | null;
           } | null;
+          quantity: number;
         }[]
       | null;
     status: FulfillmentStatus;

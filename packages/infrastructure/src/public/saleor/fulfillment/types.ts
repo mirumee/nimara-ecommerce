@@ -2,8 +2,8 @@ import type { BaseError } from "@nimara/domain/objects/Error";
 
 export type FulfillmentReturnProductsOptions = {
   input: {
-    orderLines: {
-      orderLineId: string;
+    fulfillmentLines: {
+      fulfillmentLineId: string;
       quantity: number;
     }[];
   };
@@ -21,7 +21,7 @@ export type FulfillmentReturnProductsInfra = (
     }
   | {
       isSuccess: false;
-      validationErrors: { code: string; field: string | null }[];
+      validationErrors: BaseError[];
     }
 >;
 export type FulfillmentReturnProductsUseCase = FulfillmentReturnProductsInfra;

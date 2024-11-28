@@ -13,6 +13,8 @@ fragment OrderFragment on Order {
   fulfillments {
     status
     lines {
+      id
+      quantity
       orderLine {
         id
         productName
