@@ -245,7 +245,8 @@
       "codeDoesNotExist": "Provided code doesn't exist {code}",
       "codeNotApplicable": "Code is not applicable to this checkout.",
       "couldNotProcess": "Sorry, we couldn’t process your discount code. Please try again.",
-      "couldNotRemove": "Sorry, we couldn’t remove your discount code. Please try again."
+      "couldNotRemove": "Sorry, we couldn’t remove your discount code. Please try again.",
+      "couldNotReturn": "Sorry, we couldn't return your products. Please try again"
     }
   },
   "stock-errors": {
@@ -329,7 +330,12 @@
     "order-number": "Order number",
     "total": "Total",
     "date-ordered": "Date ordered",
-    "return-products": "Return products"
+    "return-products": "Return products",
+    "make-return": "Make return",
+    "order-status": "Order status",
+    "select-at-least-one-product": "Select at least one product.",
+    "return-request-submitted": "Thank you! Your return request has been successfully submitted",
+    "returned": "RETURNED"
   },
   "footer": {
     "made-with": "Made with ❤\uFE0F by <link>Mirumee</link>",

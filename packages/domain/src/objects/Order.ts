@@ -1,11 +1,26 @@
-import { type Attribute } from "./Attribute";
-import { type Price } from "./common";
-
+import type { FulfillmentStatus, OrderStatus } from "../../../codegen/schema";
+import type { Attribute } from "./Attribute";
+import type { Price } from "./common";
 export interface Order {
   created: string;
+  fulfillments: {
+    lines:
+      | {
+          id: string;
+          orderLine: {
+            id: string;
+            productName: string;
+            productVariantId: string | null;
+          } | null;
+          quantity: number;
+        }[]
+      | null;
+    status: FulfillmentStatus;
+  }[];
   id: string;
   lines: OrderLine[];
   number: string;
+  status: OrderStatus;
   total: Price;
 }
 
