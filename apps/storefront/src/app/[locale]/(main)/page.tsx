@@ -12,8 +12,8 @@ import { HeroBanner } from "./_components/hero-banner";
 import { ProductsGrid } from "./_components/products-grid";
 
 export async function generateMetadata(_params: {
-  params: {};
-  searchParams: {};
+  params: Promise<{}>;
+  searchParams: Promise<{}>;
 }): Promise<Metadata> {
   const t = await getTranslations("home");
 
@@ -34,7 +34,7 @@ export async function generateMetadata(_params: {
 }
 
 export default async function Page() {
-  const accessToken = getAccessToken();
+  const accessToken = await getAccessToken();
 
   const [region, user] = await Promise.all([
     getCurrentRegion(),

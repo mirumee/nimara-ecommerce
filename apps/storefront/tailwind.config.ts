@@ -1,1 +1,2 @@
-module.exports = require("@nimara/config/tailwind")("storefront");
+import config from "@nimara/config/tailwind";
+export default config("storefront");

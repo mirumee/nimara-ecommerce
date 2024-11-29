@@ -8,7 +8,7 @@ import { getCurrentRegion } from "@/regions/server";
 import { userService } from "@/services";
 
 export default async function Page() {
-  const accessToken = getAccessToken();
+  const accessToken = await getAccessToken();
   const [t, region, formatter] = await Promise.all([
     getTranslations(),
     getCurrentRegion(),

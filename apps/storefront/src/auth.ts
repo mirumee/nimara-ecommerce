@@ -11,11 +11,11 @@ import { userService } from "@/services";
 import { COOKIE_KEY } from "./config";
 import { setAccessToken, setRefreshToken } from "./lib/actions/auth";
 
-export const getAccessToken = () =>
-  cookies().get(COOKIE_KEY.accessToken)?.value;
+export const getAccessToken = async () =>
+  (await cookies()).get(COOKIE_KEY.accessToken)?.value;
 
-export const getRefreshToken = () =>
-  cookies().get(COOKIE_KEY.refreshToken)?.value;
+export const getRefreshToken = async () =>
+  (await cookies()).get(COOKIE_KEY.refreshToken)?.value;
 
 export const config = {
   pages: {

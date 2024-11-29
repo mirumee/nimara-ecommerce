@@ -15,7 +15,7 @@ import { ShippingAddressSection } from "../../_sections/shipping-address-section
 import { UserDetailsForm } from "./form";
 
 export default async function Page() {
-  const checkoutId = cookies().get(COOKIE_KEY.checkoutId)?.value;
+  const checkoutId = (await cookies()).get(COOKIE_KEY.checkoutId)?.value;
 
   const region = await getCurrentRegion();
 
@@ -23,7 +23,7 @@ export default async function Page() {
     redirect(paths.cart.asPath());
   }
 
-  const accessToken = getAccessToken();
+  const accessToken = await getAccessToken();
 
   const [{ checkout }, user] = await Promise.all([
     checkoutService.checkoutGet({

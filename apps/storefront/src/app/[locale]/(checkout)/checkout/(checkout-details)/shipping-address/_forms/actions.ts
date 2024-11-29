@@ -20,7 +20,7 @@ export async function updateShippingAddress({
   id: string;
   input: FormSchema;
 }) {
-  const accessToken = getAccessToken();
+  const accessToken = await getAccessToken();
 
   const data = await userService.accountAddressUpdate({
     accessToken,
@@ -40,7 +40,7 @@ export async function createCheckoutShippingAddress({
   checkoutId: Checkout["id"];
   input: FormSchema;
 }) {
-  const accessToken = getAccessToken();
+  const accessToken = await getAccessToken();
 
   const data = await updateCheckoutAddressAction({
     checkoutId,

@@ -1,6 +1,6 @@
 import { type ComponentProps } from "react";
 
-import { ReactComponent as ProductPlaceholder } from "@/assets/product_placeholder.svg";
+import ProductPlaceholder from "@/assets/product_placeholder.svg";
 import { cn } from "@/lib/utils";
 
 type ProductImagePlaceholderProps = ComponentProps<"svg">;

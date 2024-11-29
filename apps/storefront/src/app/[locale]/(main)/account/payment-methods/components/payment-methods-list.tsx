@@ -13,9 +13,9 @@ import { type TranslationMessage } from "@/types";
 
 const PaymentMethodDeleteModal = dynamic(
   () =>
-    import("./payment-method-delete-modal").then(
-      (mod) => mod.PaymentMethodDeleteModal,
-    ),
+    import("./payment-method-delete-modal").then((mod) => ({
+      default: mod.PaymentMethodDeleteModal,
+    })),
   {
     ssr: false,
   },

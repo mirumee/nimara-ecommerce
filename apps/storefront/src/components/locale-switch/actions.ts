@@ -15,9 +15,10 @@ const localeSchema = z.object({ locale: z.string() });
 
 export const handleLocaleFormSubmit = async (formData: FormData) => {
   const { locale } = localeSchema.parse(Object.fromEntries(formData));
+  const cookieStore = await cookies();
 
-  cookies().set(NEXT_LOCALE, locale);
-  cookies().delete(COOKIE_KEY.checkoutId);
+  cookieStore.set(NEXT_LOCALE, locale);
+  cookieStore.delete(COOKIE_KEY.checkoutId);
   revalidatePath("/");
 
   redirect(localePrefixes[locale as Locale]);
