@@ -1,0 +1,15 @@
+mutation FulfillmentReturnProducts(
+  $order: ID!
+  $input: OrderReturnProductsInput!
+) {
+  orderFulfillmentReturnProducts(order: $order, input: $input) {
+    returnFulfillment {
+      status
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}

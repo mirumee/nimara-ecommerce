@@ -539,6 +539,9 @@ importers:
       stripe:
         specifier: 15.10.0
         version: 15.10.0
+      ts-invariant:
+        specifier: 0.10.3
+        version: 0.10.3
     devDependencies:
       '@graphql-typed-document-node/core':
         specifier: 3.2.0

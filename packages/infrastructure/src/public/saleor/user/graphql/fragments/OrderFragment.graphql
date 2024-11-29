@@ -9,4 +9,17 @@ fragment OrderFragment on Order {
   }
   number
   displayGrossPrices
+  status
+  fulfillments {
+    status
+    lines {
+      id
+      quantity
+      orderLine {
+        id
+        productName
+        productVariantId
+      }
+    }
+  }
 }
