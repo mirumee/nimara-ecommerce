@@ -3,12 +3,12 @@
 import { Truck, Undo2 } from "lucide-react";
 import Image from "next/image";
 
-import { type Cart } from "@nimara/domain/objects/Cart";
-import {
-  type Product,
-  type ProductAvailability,
+import type { Cart } from "@nimara/domain/objects/Cart";
+import type {
+  Product,
+  ProductAvailability,
 } from "@nimara/domain/objects/Product";
-import { type User } from "@nimara/domain/objects/User";
+import type { User } from "@nimara/domain/objects/User";
 import {
   Alert,
   AlertDescription,
@@ -85,7 +85,7 @@ export const ProductDisplay = ({
   }
 
   return (
-    <div className="w-full">
+    <div className="relative w-full">
       <div className="my-6 grid gap-10 md:grid-cols-12 md:gap-4">
         <div className="relative max-md:hidden md:col-span-6 [&>*]:pb-2">
           {imagesToDisplay.length ? (
@@ -126,7 +126,7 @@ export const ProductDisplay = ({
         </Carousel>
 
         <div className="md:col-span-5 md:col-start-8">
-          <section className="sticky top-28 w-full overflow-y-auto overflow-x-hidden px-1 pt-10 md:max-h-[83vh]">
+          <section className="sticky top-28 px-1 pt-10">
             <h1 className="text-2xl text-black">{name}</h1>
             <VariantSelector
               cart={cart}
