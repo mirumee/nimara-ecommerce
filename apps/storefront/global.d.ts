@@ -42,10 +42,15 @@ interface Set<T> {
 }
 
 declare module "*.svg" {
-  const ReactComponent: React.FC<React.SVGProps<SVGSVGElement>>;
-  const content: string;
+  import { type FC, type SVGProps } from "react";
+  const content: FC<SVGProps<SVGElement>>;
 
-  export { ReactComponent };
+  export default content;
+}
+
+declare module "*.svg?url" {
+  const content: any;
+
   export default content;
 }
 
@@ -70,13 +75,3 @@ declare global {
 interface NextFetchRequestConfig {
   tags?: RevalidateTag[];
 }
-
-type NextPageProps<
-  TParams extends Record<string, string> = {},
-  TSearchParams extends Record<string, string> = {},
-> = {
-  params: {
-    locale: "en" | "de";
-  } & TParams;
-  searchParams: TSearchParams;
-};

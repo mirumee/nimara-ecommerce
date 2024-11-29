@@ -1,4 +1,4 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 
 import { getAccessToken } from "@/auth";
 import { clientEnvs } from "@/envs/client";
@@ -12,8 +12,12 @@ import { paymentService, userService } from "@/services";
 import { AddNewPaymentTrigger } from "./components/add-new-payment-trigger";
 import { PaymentMethodsList } from "./components/payment-methods-list";
 
-export default async function Page({ searchParams }: NextPageProps) {
-  const accessToken = getAccessToken();
+type SearchParams = Promise<Record<string, string>>;
+
+export default async function Page(props: { searchParams: SearchParams }) {
+  const searchParams = await props.searchParams;
+  const accessToken = await getAccessToken();
+  const locale = await getLocale();
 
   const [t, region, user] = await Promise.all([
     getTranslations(),
@@ -37,7 +41,7 @@ export default async function Page({ searchParams }: NextPageProps) {
     });
 
     if (isSuccess) {
-      redirect(paths.account.paymentMethods.asPath());
+      redirect({ href: paths.account.paymentMethods.asPath(), locale });
     } else {
       error = t.rich("errors.payment.default", {
         link: (chunks) => (
@@ -61,7 +65,7 @@ export default async function Page({ searchParams }: NextPageProps) {
     customerId,
   });
 
-  const storeUrl = getStoreUrl();
+  const storeUrl = await getStoreUrl();
   const hasPaymentMethods = paymentGatewayMethods.length > 0;
 
   return (

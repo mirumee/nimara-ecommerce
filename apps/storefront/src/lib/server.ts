@@ -1,6 +1,6 @@
 import { headers } from "next/headers";
 
-export const getStoreUrl = () =>
-  `${headers().get("x-forwarded-proto")}://${headers().get(
+export const getStoreUrl = async () =>
+  `${(await headers()).get("x-forwarded-proto")}://${(await headers()).get(
     "x-forwarded-host",
   )}`;

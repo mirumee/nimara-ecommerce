@@ -22,7 +22,7 @@ import { ShoppingBagIcon } from "./shopping-bag-icon";
 import { ShoppingBagIconWithCount } from "./shopping-bag-icon-with-count";
 
 export const Header = async () => {
-  const accessToken = getAccessToken();
+  const accessToken = await getAccessToken();
   const [user, region, t] = await Promise.all([
     userService.userGet(accessToken),
     getCurrentRegion(),
@@ -42,7 +42,7 @@ export const Header = async () => {
   });
 
   let checkoutLinesCount = 0;
-  const checkoutId = cookies().get(COOKIE_KEY.checkoutId)?.value;
+  const checkoutId = (await cookies()).get(COOKIE_KEY.checkoutId)?.value;
 
   if (checkoutId) {
     const cart = await cartService({

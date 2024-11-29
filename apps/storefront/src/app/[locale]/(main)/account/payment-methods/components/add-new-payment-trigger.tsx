@@ -12,9 +12,9 @@ import { generateSecretAction } from "../actions";
 
 const PaymentMethodAddModal = dynamic(
   () =>
-    import("./payment-method-add-modal").then(
-      (mod) => mod.PaymentMethodAddModal,
-    ),
+    import("./payment-method-add-modal").then((mod) => ({
+      default: mod.PaymentMethodAddModal,
+    })),
   {
     ssr: false,
   },
