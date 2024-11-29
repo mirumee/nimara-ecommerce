@@ -67,7 +67,13 @@ export type UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderC
 
 export type UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_total_TaxedMoney = { net: UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_lines_OrderLine_totalPrice_TaxedMoney_net_Money, gross: UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_lines_OrderLine_totalPrice_TaxedMoney_gross_Money, tax: UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_lines_OrderLine_totalPrice_TaxedMoney_tax_Money };
 
-export type UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order = { id: string, created: string, number: string, displayGrossPrices: boolean, lines: Array<UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_lines_OrderLine>, total: UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_total_TaxedMoney };
+export type UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_fulfillments_Fulfillment_lines_FulfillmentLine_orderLine_OrderLine = { id: string, productName: string, productVariantId: string | null };
+
+export type UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_fulfillments_Fulfillment_lines_FulfillmentLine = { id: string, quantity: number, orderLine: UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_fulfillments_Fulfillment_lines_FulfillmentLine_orderLine_OrderLine | null };
+
+export type UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_fulfillments_Fulfillment = { status: Types.FulfillmentStatus, lines: Array<UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_fulfillments_Fulfillment_lines_FulfillmentLine> | null };
+
+export type UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order = { id: string, created: string, number: string, displayGrossPrices: boolean, status: Types.OrderStatus, lines: Array<UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_lines_OrderLine>, total: UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_total_TaxedMoney, fulfillments: Array<UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_fulfillments_Fulfillment> };
 
 export type UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderCountableEdge = { node: UserOrdersQuery_me_User_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order };
 
@@ -179,6 +185,19 @@ export const UserOrdersQueryDocument = new TypedDocumentString(`
   }
   number
   displayGrossPrices
+  status
+  fulfillments {
+    status
+    lines {
+      id
+      quantity
+      orderLine {
+        id
+        productName
+        productVariantId
+      }
+    }
+  }
 }
 fragment OrderLineFragment on OrderLine {
   id
