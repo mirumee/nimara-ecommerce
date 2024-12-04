@@ -38,7 +38,7 @@
 
 - **Shadcn UI/Tailwind CSS:** Nimara's UI uses [Shadcn UI](https://shadcn.com/ui) and [Tailwind CSS](https://tailwindcss.com/), providing a modern and customizable design system.
 
-- **Turborepo:** Nimara's monorepo is powered by [Turborepo](https://turbo.build/repo/docs/getting-started/introduction), a fast and scalable build system for monorepos. Automated tests with [Playwright](https://playwright.dev/), [Storybook](https://storybook.js.org/) for UI development, and setup for [Docs](https://nextra.site/) are included.
+- **Turborepo:** Nimara's monorepo is powered by [Turborepo](https://turbo.build/repo/docs/getting-started/introduction), a fast and scalable build system for monorepos. Automated tests with [Playwright](https://playwright.dev/) and setup for [Docs](https://nextra.site/) are included.
 
 - **Stripe Integration:** Nimara's storefront uses Stripe [Payment Element](https://docs.stripe.com/payments/payment-element) for secure payment processing.
 
