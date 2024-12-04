@@ -4,14 +4,12 @@ import Logo from "./images/logo.svg";
 
 const config: DocsThemeConfig = {
   logo: <Logo />,
-  logoLink: "https://www.nimara.store.com/",
+  logoLink: "https://www.demo.nimara.store/",
   project: {
-    // TODO: replace with Nimara OSS repo github link
-    link: "https://github.com/mirumee/nimara-storefront/tree/main/apps/storybook/",
+    link: "https://github.com/mirumee/nimara-ecommerce/tree/main/apps/storefront/",
   },
-  // TODO: replace with Nimara OSS repo github link
   docsRepositoryBase:
-    "https://github.com/mirumee/nimara-storefront/tree/main/apps/docs/",
+    "https://github.com/mirumee/nimara-ecommerce/tree/main/apps/docs/",
   chat: {
     link: "https://discord.com/channels/1271065464407068702/",
   },
