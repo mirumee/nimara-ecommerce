@@ -45,7 +45,5 @@ const getCMSMenuService = async (): Promise<CMSMenuService> => {
   }
 };
 
-export const cmsPageServicePromise: Promise<CMSPageService> =
-  getCMSPageService();
-export const cmsMenuServicePromise: Promise<CMSMenuService> =
-  getCMSMenuService();
+export const cmsPageService: CMSPageService = await getCMSPageService();
+export const cmsMenuService: CMSMenuService = await getCMSMenuService();

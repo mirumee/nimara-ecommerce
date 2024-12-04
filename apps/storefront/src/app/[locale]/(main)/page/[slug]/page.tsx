@@ -6,7 +6,7 @@ import { PageType } from "@nimara/domain/objects/CMSPage";
 import { StaticPage } from "@/components/static-page";
 import { CACHE_TTL } from "@/config";
 import { getCurrentRegion } from "@/regions/server";
-import { cmsPageServicePromise } from "@/services/cms";
+import { cmsPageService } from "@/services/cms";
 
 export async function generateMetadata(props: {
   params: Promise<{ slug: string }>;
@@ -16,7 +16,6 @@ export async function generateMetadata(props: {
   const { slug } = params;
 
   const region = await getCurrentRegion();
-  const cmsPageService = await cmsPageServicePromise;
 
   const page = await cmsPageService.cmsPageGet({
     languageCode: region.language.code,
@@ -42,7 +41,6 @@ export default async function Page(props: {
   const { slug } = params;
 
   const region = await getCurrentRegion();
-  const cmsPageService = await cmsPageServicePromise;
 
   const page = await cmsPageService.cmsPageGet({
     pageType: PageType.STATIC_PAGE,

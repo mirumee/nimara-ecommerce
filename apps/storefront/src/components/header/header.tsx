@@ -13,7 +13,7 @@ import { Link } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { cartService, userService } from "@/services";
-import { cmsMenuServicePromise } from "@/services/cms";
+import { cmsMenuService } from "@/services/cms";
 
 import { Logo } from "./logo";
 import { MobileSearch } from "./mobile-search";
@@ -24,11 +24,10 @@ import { ShoppingBagIconWithCount } from "./shopping-bag-icon-with-count";
 
 export const Header = async () => {
   const accessToken = await getAccessToken();
-  const [user, region, t, cmsMenuService] = await Promise.all([
+  const [user, region, t] = await Promise.all([
     userService.userGet(accessToken),
     getCurrentRegion(),
     getTranslations(),
-    cmsMenuServicePromise,
   ]);
 
   const menu = await cmsMenuService.menuGet({
