@@ -19,6 +19,8 @@ const schema = z.object({
   PAYMENT_APP_ID: z.string().default("dev.marina-stripe-saleor-dev"),
 
   NEXT_PUBLIC_BUTTER_CMS_API_KEY: z.string(),
+
+  CMS_SERVICE: z.enum(["saleor", "butter"]).default("saleor"),
 });
 
 export const clientEnvs = schema.parse({
@@ -34,4 +36,6 @@ export const clientEnvs = schema.parse({
   PAYMENT_APP_ID: process.env.NEXT_PUBLIC_PAYMENT_APP_ID,
 
   NEXT_PUBLIC_BUTTER_CMS_API_KEY: process.env.NEXT_PUBLIC_BUTTER_CMS_API_KEY,
+
+  CMS_SERVICE: process.env.CMS_SERVICE,
 });

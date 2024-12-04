@@ -8,7 +8,7 @@ import { CACHE_TTL } from "@/config";
 import { JsonLd, websiteToJsonLd } from "@/lib/json-ld";
 import { getCurrentRegion } from "@/regions/server";
 import { userService } from "@/services";
-import { cmsPageService } from "@/services/cms";
+import { cmsPageServicePromise } from "@/services/cms";
 
 import { AccountNotifications } from "./_components/account-notifications";
 import { HeroBanner } from "./_components/hero-banner";
@@ -39,9 +39,10 @@ export async function generateMetadata(_params: {
 export default async function Page() {
   const accessToken = await getAccessToken();
 
-  const [region, user] = await Promise.all([
+  const [region, user, cmsPageService] = await Promise.all([
     getCurrentRegion(),
     userService.userGet(accessToken),
+    cmsPageServicePromise,
   ]);
 
   const page = await cmsPageService.cmsPageGet({

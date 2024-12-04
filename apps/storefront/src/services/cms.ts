@@ -1,28 +1,51 @@
-import { butterCMSMenuService } from "@nimara/infrastructure/public/butter-cms/cms-menu/providers";
-import { butterCMSPageService } from "@nimara/infrastructure/public/butter-cms/cms-page/providers";
-import { saleorCMSMenuService } from "@nimara/infrastructure/public/saleor/cms-menu/providers";
-import { saleorCMSPageService } from "@nimara/infrastructure/public/saleor/cms-page/providers";
 import type { CMSMenuService } from "@nimara/infrastructure/use-cases/cms-menu/types";
 import type { CMSPageService } from "@nimara/infrastructure/use-cases/cms-page/types";
 
 import { clientEnvs } from "@/envs/client";
 
-export const cmsPageServiceSaleor = saleorCMSPageService({
-  apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
-});
+const isSaleorCMS = clientEnvs.CMS_SERVICE === "saleor";
 
-export const cmsPageServiceButterCMS = butterCMSPageService({
-  token: clientEnvs.NEXT_PUBLIC_BUTTER_CMS_API_KEY,
-});
+const getCMSPageService = async (): Promise<CMSPageService> => {
+  if (isSaleorCMS) {
+    const { saleorCMSPageService } = await import(
+      "@nimara/infrastructure/public/saleor/cms-page/providers"
+    );
 
-export const cmsMenuServiceSaleor = saleorCMSMenuService({
-  apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
-});
+    return saleorCMSPageService({
+      apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
+    });
+  } else {
+    const { butterCMSPageService } = await import(
+      "@nimara/infrastructure/public/butter-cms/cms-page/providers"
+    );
 
-export const cmsMenuServiceButterCMS = butterCMSMenuService({
-  token: clientEnvs.NEXT_PUBLIC_BUTTER_CMS_API_KEY,
-});
+    return butterCMSPageService({
+      token: clientEnvs.NEXT_PUBLIC_BUTTER_CMS_API_KEY,
+    });
+  }
+};
 
-export const cmsPageService: CMSPageService = cmsPageServiceButterCMS;
+const getCMSMenuService = async (): Promise<CMSMenuService> => {
+  if (isSaleorCMS) {
+    const { saleorCMSMenuService } = await import(
+      "@nimara/infrastructure/public/saleor/cms-menu/providers"
+    );
 
-export const cmsMenuService: CMSMenuService = cmsMenuServiceButterCMS;
+    return saleorCMSMenuService({
+      apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
+    });
+  } else {
+    const { butterCMSMenuService } = await import(
+      "@nimara/infrastructure/public/butter-cms/cms-menu/providers"
+    );
+
+    return butterCMSMenuService({
+      token: clientEnvs.NEXT_PUBLIC_BUTTER_CMS_API_KEY,
+    });
+  }
+};
+
+export const cmsPageServicePromise: Promise<CMSPageService> =
+  getCMSPageService();
+export const cmsMenuServicePromise: Promise<CMSMenuService> =
+  getCMSMenuService();
