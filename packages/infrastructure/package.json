@@ -15,8 +15,8 @@
   "dependencies": {
     "@saleor/auth-sdk": "1.0.1",
     "@stripe/stripe-js": "3.5.0",
-    "@types/react": "18.3.3",
-    "@types/react-dom": "18.3.0",
+    "@types/react": "19.0.0",
+    "@types/react-dom": "19.0.0",
     "@types/stripe": "8.0.417",
     "buttercms": "2.1.4",
     "libphonenumber-js": "1.11.3",
