@@ -3,7 +3,7 @@ import type * as Types from '@nimara/codegen/schema';
 import type { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
 export type MenuGet_menu_Menu_items_MenuItem_children_MenuItem_translation_MenuItemTranslation = { name: string };
 
-export type MenuGet_menu_Menu_items_MenuItem_children_MenuItem_category_Category_translation_CategoryTranslation = { name: string | null };
+export type MenuGet_menu_Menu_items_MenuItem_children_MenuItem_category_Category_translation_CategoryTranslation = { name: string | null, description: string | null };
 
 export type MenuGet_menu_Menu_items_MenuItem_children_MenuItem_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_attributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation = { name: string };
 
@@ -17,11 +17,13 @@ export type MenuGet_menu_Menu_items_MenuItem_children_MenuItem_category_Category
 
 export type MenuGet_menu_Menu_items_MenuItem_children_MenuItem_category_Category_products_ProductCountableConnection = { edges: Array<MenuGet_menu_Menu_items_MenuItem_children_MenuItem_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge> };
 
-export type MenuGet_menu_Menu_items_MenuItem_children_MenuItem_category_Category = { id: string, slug: string, name: string, translation: MenuGet_menu_Menu_items_MenuItem_children_MenuItem_category_Category_translation_CategoryTranslation | null, products: MenuGet_menu_Menu_items_MenuItem_children_MenuItem_category_Category_products_ProductCountableConnection | null };
+export type MenuGet_menu_Menu_items_MenuItem_children_MenuItem_category_Category = { id: string, slug: string, name: string, description: string | null, translation: MenuGet_menu_Menu_items_MenuItem_children_MenuItem_category_Category_translation_CategoryTranslation | null, products: MenuGet_menu_Menu_items_MenuItem_children_MenuItem_category_Category_products_ProductCountableConnection | null };
 
-export type MenuGet_menu_Menu_items_MenuItem_children_MenuItem_collection_Collection_translation_CollectionTranslation = { name: string | null };
+export type MenuGet_menu_Menu_items_MenuItem_children_MenuItem_collection_Collection_translation_CollectionTranslation = { name: string | null, description: string | null };
 
-export type MenuGet_menu_Menu_items_MenuItem_children_MenuItem_collection_Collection = { id: string, name: string, slug: string, translation: MenuGet_menu_Menu_items_MenuItem_children_MenuItem_collection_Collection_translation_CollectionTranslation | null };
+export type MenuGet_menu_Menu_items_MenuItem_children_MenuItem_collection_Collection_backgroundImage_Image = { url: string };
+
+export type MenuGet_menu_Menu_items_MenuItem_children_MenuItem_collection_Collection = { id: string, name: string, slug: string, description: string | null, translation: MenuGet_menu_Menu_items_MenuItem_children_MenuItem_collection_Collection_translation_CollectionTranslation | null, backgroundImage: MenuGet_menu_Menu_items_MenuItem_children_MenuItem_collection_Collection_backgroundImage_Image | null };
 
 export type MenuGet_menu_Menu_items_MenuItem_children_MenuItem_page_Page_translation_PageTranslation = { title: string | null };
 
@@ -85,7 +87,9 @@ export const MenuGetDocument = new TypedDocumentString(`
     name
     translation(languageCode: $languageCode) {
       name
+      description
     }
+    description
     products(first: 10, channel: "default-channel") {
       edges {
         node {
@@ -108,8 +112,13 @@ export const MenuGetDocument = new TypedDocumentString(`
     name
     translation(languageCode: $languageCode) {
       name
+      description
     }
     slug
+    description
+    backgroundImage {
+      url
+    }
   }
   page {
     id
