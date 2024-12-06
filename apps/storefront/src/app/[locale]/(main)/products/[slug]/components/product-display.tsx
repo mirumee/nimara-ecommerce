@@ -38,18 +38,25 @@ export const ProductDisplay = ({
   product: Product;
   user: (User & { accessToken: string | undefined }) | null;
 }) => {
-  const { chosenVariant } = useVariantSelection({
+  const { chosenVariant, looselyMatchingVariants } = useVariantSelection({
     product,
     productAvailability: availability,
     cart,
   });
 
   const { images, name, description } = product;
-  const chosenVariantImages = chosenVariant?.images ?? [];
 
-  const imagesToDisplay = chosenVariantImages.length
-    ? chosenVariantImages
-    : images;
+  const imagesToDisplay = chosenVariant
+    ? chosenVariant.images
+    : looselyMatchingVariants.length > 0
+      ? looselyMatchingVariants
+          .map(({ images }) => images)
+          .flat()
+          .filter(
+            (image, index, self) =>
+              index === self.findIndex((i) => i.url === image.url),
+          )
+      : images;
 
   const hasFreeShipping = !!product.attributes
     .find(({ slug }) => slug === "free-shipping")
