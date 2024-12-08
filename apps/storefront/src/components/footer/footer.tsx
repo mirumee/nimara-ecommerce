@@ -3,7 +3,6 @@ import { getTranslations } from "next-intl/server";
 import NimaraLogo from "@/assets/nimara-logo.svg";
 import { CACHE_TTL } from "@/config";
 import { Link } from "@/i18n/routing";
-import { generateLinkUrl } from "@/lib/helpers";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { cmsMenuService } from "@/services/cms";
@@ -73,8 +72,8 @@ export const Footer = async () => {
               </span>
               <ul className="grid gap-4">
                 {categories?.menu.items.map((item) => (
-                  <li key={item.name}>
-                    <Link href={generateLinkUrl(item, paths)}>{item.name}</Link>
+                  <li key={item.id}>
+                    <Link href={item.url}>{item.label}</Link>
                   </li>
                 ))}
               </ul>
@@ -84,10 +83,8 @@ export const Footer = async () => {
               <span className="text-neutral-600"> {t("footer.help")}</span>
               <ul className="grid gap-4">
                 {pages?.menu.items.map((item) => (
-                  <li key={item.page?.title}>
-                    <Link href={generateLinkUrl(item, paths)}>
-                      {item?.name || item.page?.title}
-                    </Link>
+                  <li key={item.id}>
+                    <Link href={item.url}>{item.label}</Link>
                   </li>
                 ))}
               </ul>
