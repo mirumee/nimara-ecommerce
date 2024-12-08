@@ -1,8 +1,6 @@
 import type { Menu } from "@nimara/domain/objects/Menu";
 
 import { Link } from "@/i18n/routing";
-import { generateLinkUrl, isInternalUrl } from "@/lib/helpers";
-import { paths } from "@/lib/paths";
 import type { Maybe } from "@/lib/types";
 
 export const MobileNavigation = ({
@@ -12,7 +10,7 @@ export const MobileNavigation = ({
   menu: Maybe<Menu>;
   onMenuItemClick: (isMenuItemClicked: boolean) => void;
 }) => {
-  const handleClick = () => {
+  const handleMenuItemClick = () => {
     onMenuItemClick(true);
   };
 
@@ -23,33 +21,21 @@ export const MobileNavigation = ({
   return (
     <ul className="grid py-4">
       {menu.items.map((item) => (
-        <li key={item.id} className="p-2 text-stone-500" onClick={handleClick}>
-          {isInternalUrl(item.url) ? (
-            <Link href={generateLinkUrl(item, paths)}>
-              {item.name || item.category?.name || item.collection?.name}
-              {item.children?.length ? (
-                <ul>
-                  {item.children.map((child) => (
-                    <li
-                      key={child.id}
-                      className="py-2 text-stone-900"
-                      onClick={handleClick}
-                    >
-                      <Link href={generateLinkUrl(child, paths)}>
-                        {child.name ||
-                          child.collection?.name ||
-                          child.category?.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              ) : null}
-            </Link>
-          ) : (
-            <a href={item.url as string} target="_blank">
-              {item.name}
-            </a>
-          )}
+        <li key={item.id} className="p-2 text-stone-500">
+          <Link href={item.url} onClick={() => handleMenuItemClick()}>
+            {item.label}
+          </Link>
+          {item.children?.length ? (
+            <ul className="mt-2 pl-6">
+              {item.children.map((child) => (
+                <li key={child.id} className="py-1 pl-2 text-stone-700">
+                  <Link href={child.url} onClick={() => handleMenuItemClick()}>
+                    {child.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : null}
         </li>
       ))}
     </ul>

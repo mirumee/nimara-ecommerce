@@ -16873,17 +16873,17 @@ export type OrderLine = Node & ObjectWithMetadata & {
   translatedVariantName: Scalars['String']['output'];
   /** Price of the order line without discounts. */
   undiscountedTotalPrice: TaxedMoney;
-  /** Price of the single item in the order line without applied an order line discount. */
+  /** Price of the single item in the order line without any discount applied. */
   undiscountedUnitPrice: TaxedMoney;
-  /** The discount applied to the single order line. */
+  /** Sum of the line-level discounts applied to the order line. Order-level discounts which affect the line are not visible in this field. For order-level discount portion (if any), please query `order.discounts` field. */
   unitDiscount: Money;
-  /** Reason for any discounts applied on a product in the order. */
+  /** Reason for line-level discounts applied on the order line. Order-level discounts which affect the line are not visible in this field. For order-level discount reason (if any), please query `order.discounts` field. */
   unitDiscountReason: Maybe<Scalars['String']['output']>;
-  /** Type of the discount: fixed or percent */
+  /** Type of the discount: `fixed` or `percent`. This field shouldn't be used when multiple discounts affect the line. There is a limitation, that after running `checkoutComplete` mutation the field is always set to `fixed`. */
   unitDiscountType: Maybe<DiscountValueTypeEnum>;
-  /** Value of the discount. Can store fixed value or percent value */
+  /** Value of the discount. Can store fixed value or percent value. This field shouldn't be used when multiple discounts affect the line. There is a limitation, that after running `checkoutComplete` mutation the field always stores fixed value. */
   unitDiscountValue: Scalars['PositiveDecimal']['output'];
-  /** Price of the single item in the order line. */
+  /** Price of the single item in the order line with all the line-level discounts and order-level discount portions applied. */
   unitPrice: TaxedMoney;
   /** A purchased product variant. Note: this field may be null if the variant has been removed from stock at all. Requires one of the following permissions to include the unpublished items: MANAGE_ORDERS, MANAGE_DISCOUNTS, MANAGE_PRODUCTS. */
   variant: Maybe<ProductVariant>;

@@ -7,6 +7,7 @@ import { Suspense, useEffect, useState } from "react";
 import type { Menu } from "@nimara/domain/objects/Menu";
 import type { User } from "@nimara/domain/objects/User";
 import { Button } from "@nimara/ui/components/button";
+import { DialogTitle } from "@nimara/ui/components/dialog";
 import { Sheet, SheetContent } from "@nimara/ui/components/sheet";
 
 import { MobileNavigation } from "@/components/mobile-navigation";
@@ -55,6 +56,9 @@ export const MobileSideMenu = ({
 
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetContent side="left" className="w-screen sm:w-1/2">
+          <DialogTitle>
+            <span className="sr-only">Menu</span>
+          </DialogTitle>
           <div className="relative flex h-full flex-col justify-between gap-4 overflow-auto">
             <div className="flex h-full flex-col">
               <div

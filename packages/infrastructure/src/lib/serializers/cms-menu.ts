@@ -1,43 +1,77 @@
-import type { ButterCMSMenuItem, MenuItem } from "@nimara/domain/objects/Menu";
+import type {
+  ButterCMSMenuItem,
+  Menu,
+  MenuItem,
+  MenuItemChild,
+} from "@nimara/domain/objects/Menu";
 
-import type { MenuGet_menu_Menu_items_MenuItem } from "#root/public/saleor/cms-menu/graphql/queries/generated";
+import type {
+  MenuGet_menu_Menu_items_MenuItem,
+  MenuGet_menu_Menu_items_MenuItem_children_MenuItem,
+} from "#root/public/saleor/cms-menu/graphql/queries/generated";
 
-export const serializeSaleorMenuItem = ({
-  id,
-  name,
-  translation,
-  level,
-  url,
-  category,
-  collection,
-  page,
-  children,
-}: MenuGet_menu_Menu_items_MenuItem): MenuItem => {
+const createMenuItemUrl = (
+  category?: { slug: string } | null,
+  collection?: { slug: string } | null,
+  page?: { slug: string } | null,
+): string | null => {
+  if (page?.slug) {
+    return `${process.env.BASE_URL}/page/${page.slug}`;
+  }
+  const queryParams = new URLSearchParams();
+
+  if (category?.slug) {
+    queryParams.append("category", category.slug);
+  }
+
+  if (collection?.slug) {
+    queryParams.append("collection", collection.slug);
+  }
+
+  return queryParams.toString()
+    ? `${process.env.BASE_URL}/search?${queryParams.toString()}`
+    : null;
+};
+
+const serializeMenuItemChild = (
+  child: MenuGet_menu_Menu_items_MenuItem_children_MenuItem,
+): MenuItemChild => {
+  const { id, name, translation, url, collection, category, page } = child;
+
   return {
     id,
-    name: translation?.name || name,
-    translation,
-    level,
-    url,
-    category: category
-      ? {
-          ...category,
-          name: category.translation?.name || category.name,
-        }
-      : null,
-    collection: collection
-      ? {
-          ...collection,
-          name: collection.translation?.name || collection.name,
-        }
-      : null,
-    page: page
-      ? {
-          ...page,
-          title: page.translation?.title || page.title,
-        }
-      : null,
-    children,
+    label: translation?.name || name,
+    url: url || createMenuItemUrl(category, collection, page) || "#",
+    description:
+      collection?.translation?.description ||
+      collection?.description ||
+      category?.translation?.description ||
+      category?.description ||
+      null,
+
+    collectionImageUrl: collection?.backgroundImage?.url || null,
+  };
+};
+
+const serializeMenuItem = (
+  item: MenuGet_menu_Menu_items_MenuItem,
+): MenuItem => {
+  const { id, name, translation, url, children, category, collection, page } =
+    item;
+
+  return {
+    id,
+    label: translation?.name || name,
+    url: url || createMenuItemUrl(category, collection, page) || "#",
+    children: children?.map(serializeMenuItemChild) || [],
+  };
+};
+
+export const serializeMenu = (
+  items: MenuGet_menu_Menu_items_MenuItem[],
+): Menu => {
+  return {
+    items: items.map(serializeMenuItem),
   };
 };
 

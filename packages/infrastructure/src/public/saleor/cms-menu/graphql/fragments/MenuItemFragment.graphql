@@ -11,7 +11,9 @@ fragment MenuItem on MenuItem {
     name
     translation(languageCode: $languageCode) {
       name
+      description
     }
+    description
     products(first: 10, channel: "default-channel") {
       edges {
         node {
@@ -34,8 +36,13 @@ fragment MenuItem on MenuItem {
     name
     translation(languageCode: $languageCode) {
       name
+      description
     }
     slug
+    description
+    backgroundImage {
+      url
+    }
   }
   page {
     id
