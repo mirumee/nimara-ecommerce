@@ -1,9 +1,16 @@
-const withNextra = require("nextra")({
+import nextra from "nextra";
+
+const withNextra = nextra({
   theme: "nextra-theme-docs",
   themeConfig: "./theme.config.tsx",
+  latex: true,
+  search: {
+    codeblocks: false,
+  },
 });
 
-module.exports = withNextra({
+export default withNextra({
+  reactStrictMode: true,
   webpack(config) {
     // Grab the existing rule that handles SVG imports
     const fileLoaderRule = config.module.rules.find((rule) =>
