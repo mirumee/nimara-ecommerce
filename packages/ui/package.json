@@ -40,8 +40,8 @@
     "lint-staged": "latest",
     "lucide-react": "^0.368.0",
     "prettier": "3.3.3",
-    "react": "19.0.0-rc.1",
-    "react-dom": "19.0.0-rc.1",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
     "react-hook-form": "7.53.2",
     "string-strip-html": "13.4.8",
     "tailwind-merge": "^2.2.1",
@@ -51,7 +51,7 @@
   "devDependencies": {
     "@nimara/config": "workspace:*",
     "@types/node": "20.14.12",
-    "@types/react": "npm:types-react@19.0.0-rc.1",
+    "@types/react": "19.0.0",
     "eslint-config-custom": "workspace:*",
     "tsconfig": "workspace:*",
     "typescript": "^5.5.4"
@@ -59,11 +59,5 @@
   "lint-staged": {
     "*.{js,cjs,ts,tsx}": "eslint --fix",
     "*.*": "prettier --write --ignore-unknown"
-  },
-  "pnpm": {
-    "overrides": {
-      "@types/react": "npm:types-react@19.0.0-rc.1",
-      "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1"
-    }
   }
 }
