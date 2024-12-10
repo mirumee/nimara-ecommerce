@@ -85,9 +85,9 @@ const serializeButterCMSMenuItemChild = (
     url:
       child.url ||
       createMenuItemUrl(
-        child.categorySlug ? { slug: child.categorySlug } : null,
-        child.collectionSlug ? { slug: child.collectionSlug } : null,
-        child.pageSlug ? { slug: child.pageSlug } : null,
+        child.category_slug ? { slug: child.category_slug } : null,
+        child.collection_slug ? { slug: child.collection_slug } : null,
+        child.page_slug ? { slug: child.page_slug } : null,
       ) ||
       "#",
     description: child.description || null,
