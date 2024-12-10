@@ -23,6 +23,21 @@ export type ButterCMSMenuItem = {
     id: string;
   };
   name: string;
+  navigation_menu_second_level?: string[] | [];
   page: string;
+  translation: string | null;
+  url: string;
+};
+
+export type ButterCMSMenuItemChild = {
+  categorySlug: string | null;
+  collectionSlug: string | null;
+  description: string | null;
+  image: string | null;
+  meta: {
+    id: string;
+  };
+  name: string;
+  pageSlug: string | null;
   url: string;
 };

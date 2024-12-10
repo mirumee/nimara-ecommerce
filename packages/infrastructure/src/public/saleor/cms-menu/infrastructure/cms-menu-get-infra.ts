@@ -1,5 +1,5 @@
 import { graphqlClient } from "#root/graphql/client";
-import { serializeMenu } from "#root/lib/serializers/cms-menu";
+import { serializeSaleorMenu } from "#root/lib/serializers/cms-menu";
 import type { CMSMenuGetInfra } from "#root/use-cases/cms-menu/types";
 
 import { MenuGetDocument } from "../graphql/queries/generated";
@@ -19,7 +19,7 @@ export const saleorCMSMenuGetInfra =
     });
 
     if (data?.menu) {
-      return { menu: serializeMenu(data.menu.items || []) };
+      return { menu: serializeSaleorMenu(data.menu.items || []) };
     }
 
     return null;

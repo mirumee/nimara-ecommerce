@@ -3,7 +3,7 @@ import type { CMSPageService } from "@nimara/infrastructure/use-cases/cms-page/t
 
 import { clientEnvs } from "@/envs/client";
 
-const isSaleorCMS = clientEnvs.CMS_SERVICE === "saleor";
+const isSaleorCMS = clientEnvs.CMS_SERVICE !== "saleor";
 
 const getCMSPageService = async (): Promise<CMSPageService> => {
   if (isSaleorCMS) {

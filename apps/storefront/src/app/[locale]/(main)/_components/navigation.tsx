@@ -13,6 +13,7 @@ import {
 import { RichText } from "@nimara/ui/components/rich-text";
 
 import { Link } from "@/i18n/routing";
+import { isValidJson } from "@/lib/helpers";
 import type { Maybe } from "@/lib/types";
 
 export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
@@ -60,10 +61,15 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
                                 {child.label}
                               </div>
                               <div className="text-sm leading-snug text-muted-foreground">
-                                <RichText
-                                  className="py-1"
-                                  jsonStringData={child.description}
-                                />
+                                {child.description &&
+                                isValidJson(child.description) ? (
+                                  <RichText
+                                    className="py-1"
+                                    jsonStringData={child.description}
+                                  />
+                                ) : (
+                                  <p className="py-1">{child.description}</p>
+                                )}
                               </div>
                             </Link>
                           ))
@@ -94,10 +100,17 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
                                     {child.label}
                                   </div>
                                   <div className="text-sm leading-snug text-muted-foreground">
-                                    <RichText
-                                      className="py-1"
-                                      jsonStringData={child.description}
-                                    />
+                                    {child.description &&
+                                    isValidJson(child.description) ? (
+                                      <RichText
+                                        className="py-1"
+                                        jsonStringData={child.description}
+                                      />
+                                    ) : (
+                                      <p className="py-1">
+                                        {child.description}
+                                      </p>
+                                    )}
                                   </div>
                                 </div>
                               </div>
