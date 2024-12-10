@@ -10,10 +10,6 @@ export const MobileNavigation = ({
   menu: Maybe<Menu>;
   onMenuItemClick: (isMenuItemClicked: boolean) => void;
 }) => {
-  const handleMenuItemClick = () => {
-    onMenuItemClick(true);
-  };
-
   if (!menu || menu?.items?.length === 0) {
     return null;
   }
@@ -22,20 +18,20 @@ export const MobileNavigation = ({
     <ul className="grid py-4">
       {menu.items.map((item) => (
         <li key={item.id} className="p-2 text-stone-500">
-          <Link href={item.url} onClick={() => handleMenuItemClick()}>
+          <Link href={item.url} onClick={() => onMenuItemClick(true)}>
             {item.label}
           </Link>
-          {item.children?.length ? (
+          {!!item.children?.length && (
             <ul className="mt-2 pl-6">
               {item.children.map((child) => (
                 <li key={child.id} className="py-1 pl-2 text-stone-700">
-                  <Link href={child.url} onClick={() => handleMenuItemClick()}>
+                  <Link href={child.url} onClick={() => onMenuItemClick(true)}>
                     {child.label}
                   </Link>
                 </li>
               ))}
             </ul>
-          ) : null}
+          )}
         </li>
       ))}
     </ul>

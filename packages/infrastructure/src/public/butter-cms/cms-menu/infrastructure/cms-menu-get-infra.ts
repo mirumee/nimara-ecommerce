@@ -48,15 +48,6 @@ export const butterCMSMenuGetInfra =
       return null;
     }
 
-    console.log(
-      "<<<< SUBMENU",
-      JSON.stringify(
-        submenu?.data?.data?.navigation_menu_item_second_level,
-        null,
-        2,
-      ),
-    );
-
     const selectedMenu = menu.data.data.navigation_menu.find(
       (menu: ButterCMSMenuItem) =>
         menu.name.toLowerCase() === slug?.toLowerCase(),
