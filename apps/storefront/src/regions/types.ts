@@ -14,6 +14,7 @@ export type LanguageId = (typeof SUPPORTED_LANGUAGES)[number];
  */
 export const SUPPORTED_LOCALES = ["en-GB", "en-US"] as const;
 export type Locale = (typeof SUPPORTED_LOCALES)[number];
+export const DEFAULT_LOCALE = "en-US" as const;
 
 /**
  * Defines available markets in the App.
