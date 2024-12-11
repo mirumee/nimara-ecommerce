@@ -7,4 +7,12 @@ module.exports = {
     tsconfigRootDir: __dirname,
     sourceType: "module",
   },
+  overrides: [
+    {
+      files: ["**/*.{ts,tsx}"],
+      rules: {
+        "import/no-default-export": "off",
+      },
+    },
+  ],
 };
