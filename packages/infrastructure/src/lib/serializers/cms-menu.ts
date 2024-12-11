@@ -15,7 +15,7 @@ const createMenuItemUrl = (
   category?: { slug: string } | null,
   collection?: { slug: string } | null,
   page?: { slug: string } | null,
-): string | null => {
+): string => {
   if (page?.slug) {
     return `${process.env.BASE_URL}/page/${page.slug}`;
   }
@@ -29,9 +29,7 @@ const createMenuItemUrl = (
     queryParams.append("collection", collection.slug);
   }
 
-  return queryParams.toString()
-    ? `${process.env.BASE_URL}/search?${queryParams.toString()}`
-    : null;
+  return `${process.env.BASE_URL}/search?${queryParams.toString()}`;
 };
 
 const serializeSaleorMenuItemChild = (
@@ -42,7 +40,7 @@ const serializeSaleorMenuItemChild = (
   return {
     id,
     label: translation?.name || name,
-    url: url || createMenuItemUrl(category, collection, page) || "#",
+    url: url ?? createMenuItemUrl(category, collection, page),
     description:
       collection?.translation?.description ||
       collection?.description ||
@@ -54,7 +52,7 @@ const serializeSaleorMenuItemChild = (
   };
 };
 
-const serializeMenuItem = (
+const serializeSaleorMenuItem = (
   item: MenuGet_menu_Menu_items_MenuItem,
 ): MenuItem => {
   const { id, name, translation, url, children, category, collection, page } =
@@ -63,7 +61,7 @@ const serializeMenuItem = (
   return {
     id,
     label: translation?.name || name,
-    url: url || createMenuItemUrl(category, collection, page) || "#",
+    url: url || createMenuItemUrl(category, collection, page),
     children: children?.map(serializeSaleorMenuItemChild) || [],
   };
 };
@@ -72,7 +70,7 @@ export const serializeSaleorMenu = (
   items: MenuGet_menu_Menu_items_MenuItem[],
 ): Menu => {
   return {
-    items: items.map(serializeMenuItem),
+    items: items.map(serializeSaleorMenuItem),
   };
 };
 
@@ -88,8 +86,7 @@ const serializeButterCMSMenuItemChild = (
         child.category_slug ? { slug: child.category_slug } : null,
         child.collection_slug ? { slug: child.collection_slug } : null,
         child.page_slug ? { slug: child.page_slug } : null,
-      ) ||
-      "#",
+      ),
     description: child.description || null,
     collectionImageUrl: child.image || null,
   };
@@ -139,8 +136,7 @@ export const serializeButterCMSMenuItem = async (
                     : "",
               }
             : null,
-        ) ||
-        "#",
+        ),
       children,
     };
   });

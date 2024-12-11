@@ -53,7 +53,6 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
                             key={child.id}
                             href={child.url}
                             className="group block space-y-1 rounded-md p-3 hover:bg-accent"
-                            // onClick={() => setCurrentMenuItem("")}
                           >
                             <div className="text-sm font-medium leading-none">
                               {child.label}

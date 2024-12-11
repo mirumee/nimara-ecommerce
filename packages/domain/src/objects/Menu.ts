@@ -30,14 +30,14 @@ export type ButterCMSMenuItem = {
 };
 
 export type ButterCMSMenuItemChild = {
-  category_slug: string | null;
-  collection_slug: string | null;
-  description: string | null;
-  image: string | null;
+  category_slug: string;
+  collection_slug: string;
+  description: string;
+  image: string;
   meta: {
     id: string;
   };
   name: string;
-  page_slug: string | null;
+  page_slug: string;
   url: string;
 };
