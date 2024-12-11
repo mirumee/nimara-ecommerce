@@ -26,7 +26,6 @@ export const butterCMSMenuGetInfra =
         locale ? { locale } : undefined,
       );
     } catch (error) {
-      // Fallback to 'EN_US' if the initial request fails
       menu = await Butter(token).content.retrieve(["navigation_menu"], {
         locale: "enus",
       });
@@ -36,15 +35,39 @@ export const butterCMSMenuGetInfra =
       return null;
     }
 
+    let submenu;
+
+    try {
+      submenu = await Butter(token).content.retrieve(
+        ["navigation_menu_item_second_level"],
+        locale ? { locale } : undefined,
+      );
+    } catch (error) {
+      submenu = await Butter(token).content.retrieve(
+        ["navigation_menu_item_second_level"],
+        { locale: "enus" },
+      );
+    }
+
+    if (!submenu?.data?.data?.navigation_menu_item_second_level) {
+      return null;
+    }
+
     const selectedMenu = menu.data.data.navigation_menu.find(
       (menu: ButterCMSMenuItem) =>
         menu.name.toLowerCase() === slug?.toLowerCase(),
     );
 
+    if (!selectedMenu) {
+      return null;
+    }
+
     return {
       menu: {
-        items: serializeButterCMSMenuItem(
+        items: await serializeButterCMSMenuItem(
           selectedMenu.menu_items as ButterCMSMenuItem[],
+          async () =>
+            submenu?.data?.data?.navigation_menu_item_second_level || [],
         ),
       },
     };
