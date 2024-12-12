@@ -6,8 +6,6 @@ import type { UrlObject } from "url";
 
 import { loggingService } from "@nimara/infrastructure/logging/service";
 
-import { type DeepObjectKeys } from "./types";
-
 // UrlObject accepted by next `<Link />` component.
 export type UrlOpts = Omit<UrlObject, "query"> & {
   query?: Record<string, string | number>;
@@ -140,8 +138,6 @@ export const paths = {
     ...url<"slug">("/page/[slug]"),
   },
 };
-
-export type Paths = DeepObjectKeys<typeof paths>;
 
 export const QUERY_PARAMS = {
   orderPlace: "orderPlaced",
