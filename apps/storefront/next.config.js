@@ -21,6 +21,40 @@ const isSentryAvailable =
 
 /** @type {import('next').NextConfig} */
 const nextConfig = withNextIntl({
+  redirects: async () => {
+    return [
+      {
+        source: "/en",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/en/:path*",
+        destination: "/:path*",
+        permanent: true,
+      },
+      {
+        source: "/us/en",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/us/en/:path*",
+        destination: "/:path*",
+        permanent: true,
+      },
+      {
+        source: "/us",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/us/:path*",
+        destination: "/:path*",
+        permanent: true,
+      },
+    ];
+  },
   // TODO: add redirects to footer CMS pages (instead of /pages/slug => /slug)
 
   env: {
