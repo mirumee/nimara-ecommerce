@@ -7,7 +7,7 @@ import * as z from "zod";
 
 import { COOKIE_KEY } from "@/config";
 import { localePrefixes } from "@/i18n/routing";
-import type { Locale } from "@/regions/types";
+import { DEFAULT_LOCALE, type Locale } from "@/regions/types";
 
 const NEXT_LOCALE = "NEXT_LOCALE";
 
@@ -21,5 +21,9 @@ export const handleLocaleFormSubmit = async (formData: FormData) => {
   cookieStore.delete(COOKIE_KEY.checkoutId);
   revalidatePath("/");
 
-  redirect(localePrefixes[locale as Locale]);
+  redirect(
+    locale === DEFAULT_LOCALE
+      ? "/"
+      : localePrefixes[locale as Exclude<Locale, typeof DEFAULT_LOCALE>],
+  );
 };
