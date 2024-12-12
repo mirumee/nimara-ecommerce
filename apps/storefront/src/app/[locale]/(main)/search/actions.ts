@@ -1,8 +1,7 @@
 "use server";
 
-import { redirect } from "next/navigation";
-
 import { DEFAULT_SORT_BY } from "@/config";
+import { redirect } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 
 const passThroughParams = ["sortBy", "limit", "q"] as const;
@@ -15,7 +14,11 @@ export const handleFiltersFormSubmit = async (
   const params = new URLSearchParams();
 
   formData.forEach((value, key) => {
-    if (value && typeof value === "string" && !formClear) {
+    if (key.startsWith("group")) {
+      const [k, v] = key.replace("group", "").split("-");
+
+      params.set(k, params.getAll(k).concat(v).join("."));
+    } else if (value && typeof value === "string" && !formClear) {
       params.set(key, value);
     }
   });

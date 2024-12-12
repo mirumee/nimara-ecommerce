@@ -6,7 +6,7 @@ import type { PropsWithChildren } from "react";
 
 import type { SearchProduct } from "@nimara/domain/objects/SearchProduct";
 
-import productPlaceholder from "@/assets/product_placeholder.svg?url";
+import productPlaceholder from "@/assets/product_placeholder.svg";
 import { Link } from "@/i18n/routing";
 import { useLocalizedFormatter } from "@/lib/formatters/use-localized-formatter";
 import { paths } from "@/lib/paths";
@@ -26,8 +26,8 @@ export const ProductPrice = ({ children }: PropsWithChildren) => {
 };
 
 export const ProductThumbnail = ({ alt, ...props }: ImageProps) => (
-  <div className="flex aspect-square justify-center">
-    <Image alt={alt} className="min-w-full object-cover" {...props} />
+  <div className="flex justify-center">
+    <Image alt={alt} className="min-w-full object-contain" {...props} />
   </div>
 );
 
@@ -61,7 +61,8 @@ export const SearchProductCard = ({
         src={thumbnail?.url ?? productPlaceholder}
         width={width ?? 256}
         sizes={
-          sizes ?? "(max-width: 720px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          sizes ??
+          "(max-width: 720px) 100vw, (max-width: 1024px) 50vw, (max-width: 1294px) 33vw, 25vw"
         }
       />
       <div>

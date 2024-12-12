@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import type { ReactNode } from "react";
 
 import { Toaster } from "@nimara/ui/components/toaster";
@@ -33,7 +34,6 @@ export default async function LocaleLayout({
   if (!routing.locales.includes(locale as any)) {
     notFound();
   }
-
   const messages = await getMessages();
 
   return (
@@ -42,9 +42,11 @@ export default async function LocaleLayout({
         className={cn("min-h-[100dvh]", "flex flex-col", aspekta.className)}
       >
         <NextIntlClientProvider messages={messages}>
-          {children}
-          <Toaster />
-          <ErrorServiceServer />
+          <NuqsAdapter>
+            {children}
+            <Toaster />
+            <ErrorServiceServer />
+          </NuqsAdapter>
         </NextIntlClientProvider>
       </body>
     </html>

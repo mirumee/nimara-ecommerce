@@ -33,6 +33,7 @@ export type SearchInfra = (
   params: {
     after?: string;
     before?: string;
+    category?: string;
     filters?: Record<string, string>;
     limit: number;
     page?: string;

@@ -17,7 +17,7 @@ export const CACHE_TTL = {
 };
 export const DEFAULT_DEBOUNCE_TIME_IN_MS = 500;
 export const DEFAULT_SORT_BY = "price-asc";
-export const DEFAULT_RESULTS_PER_PAGE = 12;
+export const DEFAULT_RESULTS_PER_PAGE = 16;
 
 export const COOKIE_KEY = {
   checkoutId: "checkoutId",

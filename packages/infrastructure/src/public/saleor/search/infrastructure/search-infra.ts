@@ -14,7 +14,7 @@ import type { SaleorSearchServiceConfig } from "../types";
 export const saleorSearchInfra =
   ({ apiURL, serializers, settings }: SaleorSearchServiceConfig): SearchInfra =>
   async (
-    { query, after, before, sortBy, filters, limit, productIds },
+    { query, after, before, sortBy, filters, limit, productIds, category },
     context,
   ) => {
     const pageInfo = before
@@ -22,7 +22,6 @@ export const saleorSearchInfra =
       : after
         ? { after, first: limit }
         : { first: limit };
-
     // TODO: Find a better way how to handle filters between providers
     const attributesFilter: AttributeInput[] | undefined = filters
       ? Object.entries(filters).map(([slug, value]) => ({
@@ -31,6 +30,11 @@ export const saleorSearchInfra =
           values: value !== "true" ? [value] : undefined,
         }))
       : undefined;
+
+    const whereFilter = {
+      ...(productIds && { ids: productIds }),
+      ...(category && { category: { oneOf: [category] } }),
+    };
 
     try {
       loggingService.debug("Fetching the products from Saleor", {
@@ -42,10 +46,9 @@ export const saleorSearchInfra =
         SearchProductQueryDocument,
         {
           variables: {
-            where: productIds ? { ids: productIds } : undefined,
+            where: Object.keys(whereFilter).length ? whereFilter : undefined,
             search: query,
             channel: context.channel,
-            // a `languageCode` is only used for fetching translated names, not for searching - Saleor does not support searching in multiple languages
             languageCode: context.languageCode as LanguageCodeEnum,
             sortBy: settings.sorting.find(
               (conf) => conf.queryParamValue === sortBy,
