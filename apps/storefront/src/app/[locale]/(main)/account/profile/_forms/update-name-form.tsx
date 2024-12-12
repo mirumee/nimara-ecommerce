@@ -68,7 +68,7 @@ export function UpdateNameForm({
             className="mt-4"
             type="submit"
             form="update-user-name-form"
-            disabled={!form.formState.isDirty ?? form.formState.isSubmitting}
+            disabled={!form.formState.isDirty || form.formState.isSubmitting}
             loading={form.formState.isSubmitting}
           >
             {form.formState.isSubmitting

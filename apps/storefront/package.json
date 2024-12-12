@@ -24,15 +24,15 @@
     "@vercel/otel": "^1.9.1",
     "clsx": "2.0.0",
     "editorjs-html": "3.4.3",
-    "eslint-config-next": "15.0.3",
+    "eslint-config-next": "15.1.0",
     "jose": "^5.2.2",
     "js-cookie": "3.0.5",
     "lodash": "4.17.21",
-    "lucide-react": "^0.368.0",
+    "lucide-react": "^0.468.0",
     "negotiator": "1.0.0",
-    "next": "15.0.3",
-    "next-auth": "5.0.0-beta.17",
-    "next-intl": "3.23.5",
+    "next": "15.1.0",
+    "next-auth": "5.0.0-beta.25",
+    "next-intl": "3.26.1",
     "nextjs-routes": "2.1.0",
     "react": "19.0.0",
     "react-dom": "19.0.0",
@@ -43,13 +43,13 @@
     "tailwindcss-animate": "1.0.7",
     "ts-import": "5.0.0-beta.0",
     "ts-invariant": "0.10.3",
-    "usehooks-ts": "2.13.0",
+    "usehooks-ts": "3.1.0",
     "xss": "1.0.15",
     "zod": "^3.23.8"
   },
   "devDependencies": {
     "@graphql-typed-document-node/core": "3.2.0",
-    "@next/env": "15.0.3",
+    "@next/env": "15.1.0",
     "@nimara/codegen": "workspace:*",
     "@nimara/config": "workspace:*",
     "@nimara/domain": "workspace:*",
@@ -60,9 +60,8 @@
     "@types/js-cookie": "3.0.6",
     "@types/lodash": "4.17.7",
     "@types/negotiator": "0.6.3",
-    "@types/node": "20.14.12",
-    "@types/react": "19.0.0",
-    "@types/react-dom": "19.0.0",
+    "@types/react": "19.0.1",
+    "@types/react-dom": "19.0.2",
     "@typescript-eslint/eslint-plugin": "^6.12.0",
     "@typescript-eslint/parser": "^6.12.0",
     "autoprefixer": "10.4.20",
@@ -76,7 +75,7 @@
     "tailwindcss": "^3.4.4",
     "ts-toolbelt": "^9.6.0",
     "tsconfig": "workspace:*",
-    "typescript": "^5.5.4",
+    "typescript": "^5.7.2",
     "wonka": "6.3.4"
   },
   "lint-staged": {
@@ -85,5 +84,11 @@
   },
   "engines": {
     "node": ">=20"
+  },
+  "pnpm": {
+    "overrides": {
+      "@types/react": "19.0.1",
+      "@types/react-dom": "19.0.2"
+    }
   }
 }
