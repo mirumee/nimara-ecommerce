@@ -1,3 +1,3 @@
 export type ButterCMSPageServiceConfig = {
-  token: string;
+  token?: string;
 };
