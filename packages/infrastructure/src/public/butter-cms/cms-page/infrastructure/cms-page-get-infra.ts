@@ -25,6 +25,11 @@ interface PageRetrieveParams {
 export const butterCMSPageGetInfra =
   ({ token }: ButterCMSPageServiceConfig): CMSPageGetInfra =>
   async ({ pageType, slug, languageCode }) => {
+    if (!token) {
+      throw new Error(
+        "ButterCMS token is required but was not provided. Set NEXT_PUBLIC_BUTTER_CMS_API_KEY in the environment variables.",
+      );
+    }
     const resolvedPageType = pageType ?? PageType.STATIC_PAGE;
     const locale = convertLanguageCode(languageCode);
     let page;
