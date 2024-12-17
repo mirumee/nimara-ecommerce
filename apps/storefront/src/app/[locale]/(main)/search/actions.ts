@@ -3,6 +3,7 @@
 import { DEFAULT_SORT_BY } from "@/config";
 import { redirect } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
+import { getCurrentRegion } from "@/regions/server";
 
 const passThroughParams = ["sortBy", "limit", "q"] as const;
 
@@ -12,6 +13,8 @@ export const handleFiltersFormSubmit = async (
 ) => {
   const formClear = formData.has("clear");
   const params = new URLSearchParams();
+
+  const region = await getCurrentRegion();
 
   formData.forEach((value, key) => {
     if (key.startsWith("group")) {
@@ -45,9 +48,10 @@ export const handleFiltersFormSubmit = async (
     }
   });
 
-  return redirect(
-    paths.search.asPath({
+  return redirect({
+    href: paths.search.asPath({
       query: Object.fromEntries(params),
     }),
-  );
+    locale: region.language.locale,
+  });
 };
