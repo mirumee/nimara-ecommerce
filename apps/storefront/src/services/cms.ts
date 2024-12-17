@@ -15,6 +15,12 @@ const getCMSPageService = async (): Promise<CMSPageService> => {
       apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
     });
   } else {
+    if (!clientEnvs.NEXT_PUBLIC_BUTTER_CMS_API_KEY) {
+      throw new Error(
+        "ButterCMS API key is required but not provided. Please set NEXT_PUBLIC_BUTTER_CMS_API_KEY in the environment variables.",
+      );
+    }
+
     const { butterCMSPageService } = await import(
       "@nimara/infrastructure/public/butter-cms/cms-page/providers"
     );
@@ -35,6 +41,12 @@ const getCMSMenuService = async (): Promise<CMSMenuService> => {
       apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
     });
   } else {
+    if (!clientEnvs.NEXT_PUBLIC_BUTTER_CMS_API_KEY) {
+      throw new Error(
+        "ButterCMS API key is required but not provided. Please set NEXT_PUBLIC_BUTTER_CMS_API_KEY in the environment variables.",
+      );
+    }
+
     const { butterCMSMenuService } = await import(
       "@nimara/infrastructure/public/butter-cms/cms-menu/providers"
     );
