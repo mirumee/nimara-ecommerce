@@ -1,4 +1,5 @@
 import Butter from "buttercms/lib/butter";
+import { invariant } from "ts-invariant";
 
 import type { ButterCMSMenuItem } from "@nimara/domain/objects/Menu";
 
@@ -11,6 +12,10 @@ import type { ButterCMSMenuServiceConfig } from "../types";
 export const butterCMSMenuGetInfra =
   ({ token }: ButterCMSMenuServiceConfig): CMSMenuGetInfra =>
   async ({ languageCode, slug }) => {
+    invariant(
+      token,
+      "ButterCMS token is required but was not provided. Set NEXT_PUBLIC_BUTTER_CMS_API_KEY in the environment variables.",
+    );
     const locale = convertLanguageCode(languageCode);
     let menu;
 
