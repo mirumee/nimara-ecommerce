@@ -18,7 +18,7 @@ const schema = z.object({
 
   PAYMENT_APP_ID: z.string().default("dev.marina-stripe-saleor-dev"),
 
-  NEXT_PUBLIC_BUTTER_CMS_API_KEY: z.string().optional(),
+  NEXT_PUBLIC_BUTTER_CMS_API_KEY: z.string().default("saleor"),
 
   CMS_SERVICE: z.enum(["saleor", "butter"]).default("saleor"),
 });
