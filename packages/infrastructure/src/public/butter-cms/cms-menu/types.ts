@@ -1,3 +1,3 @@
 export type ButterCMSMenuServiceConfig = {
-  token?: string;
+  token: string;
 };
