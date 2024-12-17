@@ -17,7 +17,7 @@
     "@formatjs/intl-localematcher": "0.5.9",
     "@hookform/resolvers": "3.6.0",
     "@sentry/integrations": "^7.114.0",
-    "@sentry/nextjs": "^8.12.0",
+    "@sentry/nextjs": "^8.34.0",
     "@sentry/types": "^8.12.0",
     "@svgr/webpack": "8.1.0",
     "@uidotdev/usehooks": "2.4.1",
