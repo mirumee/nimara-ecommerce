@@ -84,25 +84,6 @@ const nextConfig = withNextIntl({
   },
   reactStrictMode: true,
   transpilePackages: ["@nimara/ui"],
-  async headers() {
-    const headers = [];
-    if (
-      process.env.NEXT_PUBLIC_ENVIRONMENT === "DEVELOPMENT" ||
-      process.env.NEXT_PUBLIC_ENVIRONMENT === "STAGING"
-    ) {
-      headers.push({
-        headers: [
-          {
-            key: "X-Robots-Tag",
-            value: "noindex",
-          },
-        ],
-        source: "/:path*",
-      });
-    }
-    return headers;
-  },
-
   webpack: (config, { isServer }) => {
     if (isServer) {
       config.ignoreWarnings = [{ module: /opentelemetry/ }];
