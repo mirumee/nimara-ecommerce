@@ -1,5 +1,6 @@
 import type PageRetrieveParams from "buttercms";
 import Butter from "buttercms/lib/butter";
+import { invariant } from "ts-invariant";
 
 import {
   type ButterCMSPageFields,
@@ -25,6 +26,10 @@ interface PageRetrieveParams {
 export const butterCMSPageGetInfra =
   ({ token }: ButterCMSPageServiceConfig): CMSPageGetInfra =>
   async ({ pageType, slug, languageCode }) => {
+    invariant(
+      token,
+      "ButterCMS token is required but was not provided. Set NEXT_PUBLIC_BUTTER_CMS_API_KEY in the environment variables.",
+    );
     const resolvedPageType = pageType ?? PageType.STATIC_PAGE;
     const locale = convertLanguageCode(languageCode);
     let page;
