@@ -41,7 +41,6 @@
     "schema-dts": "1.1.2",
     "tailwind-merge": "2.0.0",
     "tailwindcss-animate": "1.0.7",
-    "ts-import": "5.0.0-beta.0",
     "ts-invariant": "0.10.3",
     "usehooks-ts": "2.13.0",
     "xss": "1.0.15",
