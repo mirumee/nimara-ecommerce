@@ -76,10 +76,7 @@ const nextConfig = withNextIntl({
   transpilePackages: ["@nimara/ui"],
   async headers() {
     const headers = [];
-    if (
-      process.env.NEXT_PUBLIC_ENVIRONMENT === "DEVELOPMENT" ||
-      process.env.NEXT_PUBLIC_ENVIRONMENT === "STAGING"
-    ) {
+    if (process.env.VERCEL_ENV !== "production") {
       headers.push({
         headers: [
           {
@@ -92,7 +89,6 @@ const nextConfig = withNextIntl({
     }
     return headers;
   },
-
   webpack: (config, { isServer }) => {
     if (isServer) {
       config.ignoreWarnings = [{ module: /opentelemetry/ }];
