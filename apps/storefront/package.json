@@ -9,9 +9,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint --dir src --fix",
-    "lint:staged": "lint-staged",
-    "test": "vitest run",
-    "test:watch": "vitest --watch"
+    "lint:staged": "lint-staged"
   },
   "dependencies": {
     "@formatjs/intl-localematcher": "0.5.9",
@@ -42,7 +40,6 @@
     "schema-dts": "1.1.2",
     "tailwind-merge": "2.0.0",
     "tailwindcss-animate": "1.0.7",
-    "ts-import": "5.0.0-beta.0",
     "ts-invariant": "0.10.3",
     "usehooks-ts": "2.13.0",
     "xss": "1.0.15",

@@ -1,16 +1,6 @@
 import { withSentryConfig } from "@sentry/nextjs";
 import createNextIntlPlugin from "next-intl/plugin";
 
-/**
- * TODO: Temporary solution until 👇🏻 is merged & released.
- * https://github.com/vercel/next.js/pull/63051
- */
-import * as tsImport from "ts-import";
-
-const { TRANSLATED_PATHNAME_PREFIXES } = await tsImport.load(
-  "./src/regions/config.ts",
-);
-
 const withNextIntl = createNextIntlPlugin();
 
 const APP_SEMVER_NAME = `${process.env.npm_package_name}@${process.env.npm_package_version}`;
@@ -86,10 +76,7 @@ const nextConfig = withNextIntl({
   transpilePackages: ["@nimara/ui"],
   async headers() {
     const headers = [];
-    if (
-      process.env.NEXT_PUBLIC_ENVIRONMENT === "DEVELOPMENT" ||
-      process.env.NEXT_PUBLIC_ENVIRONMENT === "STAGING"
-    ) {
+    if (process.env.VERCEL_ENV !== "production") {
       headers.push({
         headers: [
           {
@@ -102,7 +89,6 @@ const nextConfig = withNextIntl({
     }
     return headers;
   },
-
   webpack: (config, { isServer }) => {
     if (isServer) {
       config.ignoreWarnings = [{ module: /opentelemetry/ }];
