@@ -158,28 +158,6 @@ export const getAllSelectionAttributes = (variants: ProductVariant[]) => {
   return allSelectionAttributes;
 };
 
-// ! currently unsued
-export const isAttributeCombinationPossible = (
-  allVariants: ProductVariant[],
-  chosenAttributes: ChosenAttribute[],
-) => {
-  if (chosenAttributes.length < 1) {
-    return true;
-  }
-
-  return allVariants.some((variant) =>
-    chosenAttributes.every(({ slug, value }) => {
-      const variantAttribute = variant.selectionAttributes.find(
-        (attr) => attr.slug === slug,
-      );
-
-      return variantAttribute?.values.some(
-        (attrValue) => attrValue.slug === value,
-      );
-    }),
-  );
-};
-
 export const validateValue = (
   slug: string,
   value: unknown,

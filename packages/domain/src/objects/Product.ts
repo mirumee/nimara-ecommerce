@@ -1,6 +1,6 @@
 import type { Attribute } from "./Attribute";
 import type { Image, TaxedPrice } from "./common";
-import { type SearchProduct } from "./SearchProduct";
+import type { SearchProduct } from "./SearchProduct";
 
 export type ProductAvailability = {
   isAvailable: boolean;

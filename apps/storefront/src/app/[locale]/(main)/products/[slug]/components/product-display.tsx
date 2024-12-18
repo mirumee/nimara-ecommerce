@@ -47,37 +47,11 @@ export const ProductDisplay = ({
 
   const { images, name, description } = product;
 
-  // const imagesToDisplay = chosenVariant
-  //   ? chosenVariant.images
-  //   : looselyMatchingVariants.length > 0
-  //     ? looselyMatchingVariants
-  //         .map(({ images }) => images)
-  //         .flat()
-  //         .filter(
-  //           (image, index, self) =>
-  //             index === self.findIndex((i) => i.url === image.url),
-  //         )
-  //     : images;
-
-  // const imagesToDisplay = chosenVariant?.images?.length
-  //   ? chosenVariant.images
-  //   : looselyMatchingVariants.length > 0
-  //     ? looselyMatchingVariants
-  //         .flatMap(({ images }) => images)
-  //         .filter(
-  //           (image, index, self) =>
-  //             index === self.findIndex((i) => i.url === image.url),
-  //         )
-  //     : product.images;
-
   const imagesToDisplay = getImagesToDisplay({
     chosenVariant,
     looselyMatchingVariants,
     productImages: images,
   });
-
-  console.log("imagesToDisplay", imagesToDisplay);
-  console.log("images", images);
 
   const hasFreeShipping = !!product.attributes
     .find(({ slug }) => slug === "free-shipping")

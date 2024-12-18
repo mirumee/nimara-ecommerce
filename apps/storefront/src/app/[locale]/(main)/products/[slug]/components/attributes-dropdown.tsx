@@ -34,15 +34,13 @@ export const AttributesDropdown = ({
               {attribute.name}
             </AccordionTrigger>
             <AccordionContent>
-              {attribute.values.map((val) => {
-                if (val.richText) {
-                  return (
-                    <RichText key={val.name} jsonStringData={val.richText} />
-                  );
-                }
-
-                return <p key={val.name}>{val.name}</p>;
-              })}
+              {attribute.values.map((val) =>
+                val.richText ? (
+                  <RichText key={val.name} jsonStringData={val.richText} />
+                ) : (
+                  <p key={val.name}>{val.name}</p>
+                ),
+              )}
             </AccordionContent>
           </AccordionItem>
         );
