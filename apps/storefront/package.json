@@ -9,9 +9,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint --dir src --fix",
-    "lint:staged": "lint-staged",
-    "test": "vitest run",
-    "test:watch": "vitest --watch"
+    "lint:staged": "lint-staged"
   },
   "dependencies": {
     "@formatjs/intl-localematcher": "0.5.9",

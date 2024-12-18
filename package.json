@@ -38,8 +38,7 @@
     "eslint-config-custom": "workspace:*",
     "husky": "9.1.6",
     "lint-staged": "^15.2.7",
-    "turbo": "2.1.2",
-    "vitest": "2.0.5"
+    "turbo": "2.1.2"
   },
   "resolutions": {
     "graphql": "16.9.0"
