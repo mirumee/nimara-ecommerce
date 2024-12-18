@@ -86,7 +86,7 @@ const nextConfig = withNextIntl({
   transpilePackages: ["@nimara/ui"],
   async headers() {
     const headers = [];
-    if (process.env.VERCEL_ENV === "preview") {
+    if (process.env.VERCEL_ENV !== "production") {
       headers.push({
         headers: [
           {
