@@ -2,6 +2,7 @@
 
 import { Truck, Undo2 } from "lucide-react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 import type { Cart } from "@nimara/domain/objects/Cart";
 import type {
@@ -39,6 +40,8 @@ export const ProductDisplay = ({
   product: Product;
   user: (User & { accessToken: string | undefined }) | null;
 }) => {
+  const t = useTranslations("products");
+
   const { chosenVariant, looselyMatchingVariants } = useVariantSelection({
     product,
     productAvailability: availability,
@@ -140,16 +143,15 @@ export const ProductDisplay = ({
             {hasFreeShipping && (
               <Alert>
                 <Truck className="size-4" />
-                <AlertTitle>Free shipping</AlertTitle>
-
-                <AlertDescription>Standard parcel</AlertDescription>
+                <AlertTitle>{t("free-shipping")}</AlertTitle>
+                <AlertDescription>{t("standard-parcel")}</AlertDescription>
               </Alert>
             )}
 
             {hasFreeReturn && (
               <Alert className="mt-2">
                 <Undo2 className="size-4" />
-                <AlertTitle>Free 30 days return policy</AlertTitle>
+                <AlertTitle>{t("free-30-days")}</AlertTitle>
               </Alert>
             )}
 
@@ -160,7 +162,7 @@ export const ProductDisplay = ({
 
       {product.relatedProducts.length > 0 && (
         <div className="mb-7 mt-10 md:mb-14 md:mt-20">
-          <h2 className="mb-4 text-4xl text-black">You may also like</h2>
+          <h2 className="mb-4 text-4xl text-black">{t("you-may-also-like")}</h2>
           <Carousel>
             <CarouselContent>
               {product.relatedProducts.map((product) => (
