@@ -17,7 +17,9 @@
     "artists": "Artists",
     "in-stock": "In stock",
     "is-exclusive": "Is exclusive",
-    "is-digital": "Is digital"
+    "is-digital": "Is digital",
+    "size": "Size",
+    "color": "Color"
   },
   "search": {
     "go-to-product": "Go to product {name}",
@@ -110,7 +112,12 @@
   "products": {
     "variant-select-label": "Variant select label",
     "variant-select": "Variant select",
-    "label-slug": "Label-{slug}"
+    "label-slug": "Label-{slug}",
+    "description": "Description",
+    "free-shipping": "Free shipping",
+    "standard-parcel": "Standard parcel",
+    "free-30-days": "Free 30 days return policy",
+    "you-may-also-like": "You may also like"
   },
   "address": {
     "companyName": "Company name",
@@ -350,5 +357,16 @@
     "faq": "FAQ",
     "privacy-policy": "Privacy Policy",
     "terms-of-use": "Terms of Use"
+  },
+  "colors": {
+    "yellow": "Yellow",
+    "black": "Black",
+    "white": "White",
+    "beige": "Beige",
+    "grey": "Grey",
+    "khaki": "Khaki",
+    "pink": "Pink",
+    "red": "Red",
+    "green": "Green"
   }
 }
