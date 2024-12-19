@@ -1,8 +1,9 @@
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { getLocale } from "next-intl/server";
 
 import { getAccessToken } from "@/auth";
 import { COOKIE_KEY } from "@/config";
+import { redirect } from "@/i18n/routing";
 import { deleteCheckoutIdCookie } from "@/lib/actions/checkout";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
@@ -11,6 +12,7 @@ import { checkoutService, userService } from "@/services";
 export default async function Page() {
   const checkoutId = (await cookies()).get(COOKIE_KEY.checkoutId)?.value;
   const accessToken = await getAccessToken();
+  const locale = await getLocale();
 
   const [region, user] = await Promise.all([
     getCurrentRegion(),
@@ -18,7 +20,7 @@ export default async function Page() {
   ]);
 
   if (!checkoutId) {
-    redirect(paths.cart.asPath());
+    redirect({ href: paths.cart.asPath(), locale });
   }
 
   const { checkout } = await checkoutService.checkoutGet({
@@ -27,27 +29,22 @@ export default async function Page() {
     countryCode: region.market.countryCode,
   });
 
-  // TODO handle different cases
-  // if checkout is empty? what than? how to check it?
-  // checkout?.order?.status === "complete"; // how to check it
-  // in case of gone or its an order? different redirect in this cases?
-
   if (!checkout) {
     await deleteCheckoutIdCookie();
-    redirect(paths.cart.asPath());
+    redirect({ href: paths.cart.asPath(), locale });
   }
 
   if (!checkout.email && !user?.email) {
-    redirect(paths.checkout.userDetails.asPath());
+    redirect({ href: paths.checkout.userDetails.asPath(), locale });
   }
 
   if (user?.email || !checkout.shippingAddress) {
-    redirect(paths.checkout.shippingAddress.asPath());
+    redirect({ href: paths.checkout.shippingAddress.asPath(), locale });
   }
 
   if (!checkout.deliveryMethod) {
-    redirect(paths.checkout.deliveryMethod.asPath());
+    redirect({ href: paths.checkout.deliveryMethod.asPath(), locale });
   }
 
-  redirect(paths.checkout.payment.asPath());
+  redirect({ href: paths.checkout.payment.asPath(), locale });
 }
