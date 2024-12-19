@@ -1,7 +1,7 @@
-import { redirect } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 
 import { getAccessToken } from "@/auth";
+import { redirect } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { userService } from "@/services";
@@ -12,6 +12,7 @@ export default async function ConfirmEmailChangePage(props: {
   const searchParams = await props.searchParams;
   const token = searchParams?.token ?? "";
   const accessToken = await getAccessToken();
+  const locale = await getLocale();
 
   const [region, t] = await Promise.all([
     getCurrentRegion(),
@@ -26,7 +27,7 @@ export default async function ConfirmEmailChangePage(props: {
     });
 
     if (data?.user?.id && !data?.errors.length) {
-      redirect(paths.signIn.asPath());
+      redirect({ href: paths.signIn.asPath(), locale });
     }
 
     if (data?.errors) {
