@@ -24,5 +24,9 @@ export const routing = defineRouting({
   },
 });
 
-export const { Link, redirect, usePathname, useRouter } =
-  createNavigation(routing);
+const { redirect: _redirect } = createNavigation(routing);
+
+// Help TypeScript detect unreachable code
+export const redirect: typeof _redirect = _redirect;
+
+export const { Link, usePathname, useRouter } = createNavigation(routing);

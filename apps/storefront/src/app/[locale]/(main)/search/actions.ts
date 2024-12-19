@@ -1,5 +1,7 @@
 "use server";
 
+import { getLocale } from "next-intl/server";
+
 import { DEFAULT_SORT_BY } from "@/config";
 import { redirect } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
@@ -13,6 +15,7 @@ export const handleFiltersFormSubmit = async (
 ) => {
   const formClear = formData.has("clear");
   const params = new URLSearchParams();
+  const locale = await getLocale();
 
   const region = await getCurrentRegion();
 
@@ -52,6 +55,6 @@ export const handleFiltersFormSubmit = async (
     href: paths.search.asPath({
       query: Object.fromEntries(params),
     }),
-    locale: region.language.locale,
+    locale,
   });
 };
