@@ -1,9 +1,10 @@
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { getLocale } from "next-intl/server";
 
 import { type Address } from "@nimara/domain/objects/Address";
 
 import { COOKIE_KEY } from "@/config";
+import { redirect } from "@/i18n/routing";
 import { deleteCheckoutIdCookie } from "@/lib/actions/checkout";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
@@ -15,11 +16,11 @@ export const getCheckoutOrRedirect = async (): Promise<
   NonNullable<GetCheckout["checkout"]>
 > => {
   const checkoutId = (await cookies()).get(COOKIE_KEY.checkoutId)?.value;
-
+  const locale = await getLocale();
   const region = await getCurrentRegion();
 
   if (!checkoutId) {
-    redirect(paths.cart.asPath());
+    redirect({ href: paths.cart.asPath(), locale });
   }
 
   const { checkout } = await checkoutService.checkoutGet({
@@ -30,7 +31,7 @@ export const getCheckoutOrRedirect = async (): Promise<
 
   if (!checkout) {
     await deleteCheckoutIdCookie();
-    redirect(paths.cart.asPath());
+    redirect({ href: paths.cart.asPath(), locale });
   }
 
   return checkout;

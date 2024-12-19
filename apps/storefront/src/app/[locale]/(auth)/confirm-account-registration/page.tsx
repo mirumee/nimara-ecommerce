@@ -1,6 +1,6 @@
-import { redirect } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 
+import { redirect } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 import { authService } from "@/services";
 
@@ -11,6 +11,7 @@ export default async function ConfirmAccountRegistrationPage(props: {
   const t = await getTranslations();
   const email = searchParams?.email;
   const token = searchParams?.token;
+  const locale = await getLocale();
 
   if (!email) {
     return t("auth.confirm-missing-email");
@@ -23,7 +24,10 @@ export default async function ConfirmAccountRegistrationPage(props: {
   const data = await authService.confirmAccount(searchParams);
 
   if (data.isSuccess) {
-    redirect(paths.signIn.asPath({ query: { confirmationSuccess: "true" } }));
+    redirect({
+      href: paths.signIn.asPath({ query: { confirmationSuccess: "true" } }),
+      locale,
+    });
   }
 
   if ("errors" in data) {
