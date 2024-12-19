@@ -1,5 +1,6 @@
-import { redirect } from "next/navigation";
+import { getLocale } from "next-intl/server";
 
+import { redirect } from "@/i18n/routing";
 import { getCheckoutOrRedirect } from "@/lib/checkout";
 import { paths, QUERY_PARAMS } from "@/lib/paths";
 import { checkoutService, paymentService } from "@/services";
@@ -10,6 +11,7 @@ type SearchParams = Promise<Record<string, string>>;
 
 export default async function Page(props: { searchParams: SearchParams }) {
   const searchParams = await props.searchParams;
+  const locale = await getLocale();
   const checkout = await getCheckoutOrRedirect();
 
   let errors: { code: string; type: string }[] = [];
@@ -25,12 +27,13 @@ export default async function Page(props: { searchParams: SearchParams }) {
     });
 
     if (orderCreateData.orderId) {
-      redirect(
-        paths.order.confirmation.asPath({
+      redirect({
+        href: paths.order.confirmation.asPath({
           id: orderCreateData.orderId,
           query: { [QUERY_PARAMS.orderPlace]: "true" },
         }),
-      );
+        locale,
+      });
     } else {
       errors = orderCreateData.errors;
     }
@@ -38,13 +41,14 @@ export default async function Page(props: { searchParams: SearchParams }) {
     const error = paymentResultData.errors?.[0];
     const errorCode = error ? `${error.type}.${error.code}` : "payment.default";
 
-    redirect(
-      paths.checkout.payment.asPath({
+    redirect({
+      href: paths.checkout.payment.asPath({
         query: {
           [QUERY_PARAMS.errorCode]: errorCode,
         },
       }),
-    );
+      locale,
+    });
   }
 
   return (
