@@ -35,8 +35,8 @@ export const productToJsonLd = (
     name: product.name,
     image: {
       "@type": "ImageObject",
-      url: product.images[0].url,
-      description: product.images[0].alt ?? undefined,
+      url: product.images[0]?.url ?? undefined,
+      description: product.images[0]?.alt ?? undefined,
     },
     description: product.description ?? undefined,
     offers: {

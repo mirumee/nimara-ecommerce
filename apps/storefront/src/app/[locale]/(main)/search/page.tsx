@@ -17,6 +17,7 @@ type SearchParams = Promise<{
   after?: string;
   before?: string;
   category?: string;
+  collection?: string;
   limit?: string;
   page?: string;
   q?: string;
@@ -25,6 +26,7 @@ type SearchParams = Promise<{
 
 export async function generateMetadata(props: { searchParams: SearchParams }) {
   const searchParams = await props.searchParams;
+
   const t = await getTranslations("search");
 
   return {
@@ -91,9 +93,12 @@ export default async function Page(props: { searchParams: SearchParams }) {
       return t("results-for", { query });
     }
 
-    if (searchParams.category) {
-      return (
-        searchParams.category[0].toUpperCase() + searchParams.category.slice(1)
+    const headerKey = searchParams.category || searchParams.collection;
+
+    if (headerKey) {
+      return (headerKey[0].toUpperCase() + headerKey.slice(1)).replaceAll(
+        "-",
+        " & ",
       );
     }
 

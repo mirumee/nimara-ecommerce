@@ -112,7 +112,7 @@ export const FiltersContainer = async ({
 
                 <div className="grid items-center gap-4">
                   {facets
-                    .filter(({ type }) => type !== "BOOLEAN")
+                    ?.filter(({ type }) => type !== "BOOLEAN")
                     .map((facet) => renderFilterComponent(facet, searchParams))}
                 </div>
 
@@ -122,7 +122,7 @@ export const FiltersContainer = async ({
                   </p>
                   <div className="grid items-center gap-4">
                     {facets
-                      .filter(({ type }) => type === "BOOLEAN")
+                      ?.filter(({ type }) => type === "BOOLEAN")
                       .map((facet) =>
                         renderFilterComponent(facet, searchParams),
                       )}
