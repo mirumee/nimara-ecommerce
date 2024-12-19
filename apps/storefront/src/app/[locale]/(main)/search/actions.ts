@@ -17,7 +17,11 @@ export const handleFiltersFormSubmit = async (
   const locale = await getLocale();
 
   formData.forEach((value, key) => {
-    if (value && typeof value === "string" && !formClear) {
+    if (key.startsWith("group")) {
+      const [k, v] = key.replace("group", "").split("-");
+
+      params.set(k, params.getAll(k).concat(v).join("."));
+    } else if (value && typeof value === "string" && !formClear) {
       params.set(key, value);
     }
   });
