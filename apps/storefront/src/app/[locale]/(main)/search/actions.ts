@@ -5,7 +5,6 @@ import { getLocale } from "next-intl/server";
 import { DEFAULT_SORT_BY } from "@/config";
 import { redirect } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
-import { getCurrentRegion } from "@/regions/server";
 
 const passThroughParams = ["sortBy", "limit", "q"] as const;
 
@@ -16,8 +15,6 @@ export const handleFiltersFormSubmit = async (
   const formClear = formData.has("clear");
   const params = new URLSearchParams();
   const locale = await getLocale();
-
-  const region = await getCurrentRegion();
 
   formData.forEach((value, key) => {
     if (key.startsWith("group")) {
