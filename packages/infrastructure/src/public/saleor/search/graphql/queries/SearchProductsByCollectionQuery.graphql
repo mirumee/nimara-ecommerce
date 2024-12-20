@@ -1,0 +1,37 @@
+query SearchProductByCollectionQuery(
+  $channel: String!
+  $after: String
+  $before: String
+  $filter: ProductFilterInput
+  $first: Int
+  $last: Int
+  $sortBy: ProductOrder
+  $languageCode: LanguageCodeEnum!
+  $where: ProductWhereInput
+  $slug: String
+) {
+  collection(slug: $slug, channel: $channel) {
+    products(
+      after: $after
+      before: $before
+      filter: $filter
+      first: $first
+      last: $last
+      sortBy: $sortBy
+      where: $where
+    ) {
+      edges {
+        node {
+          ...SearchProductFragment
+        }
+      }
+      pageInfo {
+        startCursor
+        endCursor
+        hasNextPage
+        hasPreviousPage
+      }
+      totalCount
+    }
+  }
+}
