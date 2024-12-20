@@ -66,6 +66,8 @@ export default async function Page(props: { searchParams: SearchParams }) {
     sortBy = DEFAULT_SORT_BY,
     q: query = "",
     limit,
+    category,
+    collection,
     ...rest
   } = searchParams;
   const { results, pageInfo } = await searchService.search(
@@ -77,6 +79,8 @@ export default async function Page(props: { searchParams: SearchParams }) {
       before,
       sortBy,
       filters: rest,
+      category,
+      collection,
     },
     searchContext,
   );
