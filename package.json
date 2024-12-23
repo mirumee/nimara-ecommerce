@@ -37,7 +37,7 @@
     "eslint": "^8.57.0",
     "eslint-config-custom": "workspace:*",
     "husky": "9.1.6",
-    "lint-staged": "^15.2.7",
+    "lint-staged": "^15.2.11",
     "turbo": "2.1.2"
   },
   "resolutions": {
