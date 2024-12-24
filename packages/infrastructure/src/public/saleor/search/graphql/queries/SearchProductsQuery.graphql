@@ -1,15 +1,104 @@
+# query SearchProductQuery(
+#   $after: String
+#   $before: String
+#   $channel: String!
+#   $filter: ProductFilterInput
+#   $first: Int
+#   $last: Int
+#   $search: String
+#   $sortBy: ProductOrder
+#   $languageCode: LanguageCodeEnum!
+#   $where: ProductWhereInput
+# ) {
+#   products(
+#     after: $after
+#     before: $before
+#     channel: $channel
+#     filter: $filter
+#     first: $first
+#     last: $last
+#     search: $search
+#     sortBy: $sortBy
+#     where: $where
+#   ) {
+#     edges {
+#       node {
+#         ...SearchProductFragment
+#       }
+#     }
+#     pageInfo {
+#       startCursor
+#       endCursor
+#       hasNextPage
+#       hasPreviousPage
+#     }
+#     totalCount
+#   }
+# }
+
 query SearchProductQuery(
   $after: String
   $before: String
+  $categorySlug: String
   $channel: String!
+  $collectionSlug: String
   $filter: ProductFilterInput
   $first: Int
+  $languageCode: LanguageCodeEnum!
   $last: Int
   $search: String
+  $searchByCategory: Boolean!
+  $searchByCollection: Boolean!
+  $searchByProducts: Boolean!
   $sortBy: ProductOrder
-  $languageCode: LanguageCodeEnum!
   $where: ProductWhereInput
 ) {
+  category(slug: $categorySlug) @include(if: $searchByCategory) {
+    products(
+      after: $after
+      before: $before
+      channel: $channel
+      filter: $filter
+      first: $first
+      last: $last
+      sortBy: $sortBy
+      where: $where
+    ) {
+      edges {
+        node {
+          ...SearchProductFragment
+        }
+      }
+      pageInfo {
+        ...PageInfoFragment
+      }
+      totalCount
+    }
+  }
+
+  collection(slug: $collectionSlug, channel: $channel)
+    @include(if: $searchByCollection) {
+    products(
+      after: $after
+      before: $before
+      filter: $filter
+      first: $first
+      last: $last
+      sortBy: $sortBy
+      where: $where
+    ) {
+      edges {
+        node {
+          ...SearchProductFragment
+        }
+      }
+      pageInfo {
+        ...PageInfoFragment
+      }
+      totalCount
+    }
+  }
+
   products(
     after: $after
     before: $before
@@ -20,17 +109,14 @@ query SearchProductQuery(
     search: $search
     sortBy: $sortBy
     where: $where
-  ) {
+  ) @include(if: $searchByProducts) {
     edges {
       node {
         ...SearchProductFragment
       }
     }
     pageInfo {
-      startCursor
-      endCursor
-      hasNextPage
-      hasPreviousPage
+      ...PageInfoFragment
     }
     totalCount
   }

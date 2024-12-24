@@ -7,11 +7,7 @@ import { graphqlClient } from "#root/graphql/client";
 import { loggingService } from "#root/logging/service";
 import type { SearchInfra } from "#root/use-cases/search/types";
 
-import {
-  SearchProductByCategoryQueryDocument,
-  SearchProductByCollectionQueryDocument,
-  SearchProductQueryDocument,
-} from "../graphql/queries/generated";
+import { SearchProductQueryDocument } from "../graphql/queries/generated";
 import { searchProductSerializer } from "../serializers";
 import type { SaleorSearchServiceConfig } from "../types";
 
@@ -50,194 +46,83 @@ export const saleorSearchInfra =
         query,
         channel: context.channel,
         category,
+        collection,
       });
 
-      if (category) {
-        const { data, error } = await graphqlClient(apiURL).execute(
-          SearchProductByCategoryQueryDocument,
-          {
-            variables: {
-              slug: category,
-              channel: context.channel,
-              languageCode: context.languageCode as LanguageCodeEnum,
-              sortBy: settings.sorting.find(
-                (conf) => conf.queryParamValue === sortBy,
-              )?.saleorValue,
-              filter: {
-                attributes: attributesFilter,
-              },
-              ...pageInfo,
+      const { data, error } = await graphqlClient(apiURL).execute(
+        SearchProductQueryDocument,
+        {
+          variables: {
+            after,
+            before,
+            categorySlug: category || null,
+            channel: context.channel,
+            collectionSlug: collection || null,
+            filter: {
+              attributes: attributesFilter,
             },
-            options: {
-              next: {
-                tags: [`SEARCH:${context.channel}`],
-                revalidate: 15 * 60,
-              },
+            first: limit,
+            languageCode: context.languageCode as LanguageCodeEnum,
+            last: null,
+            search: query,
+            searchByCategory: Boolean(category),
+            searchByCollection: Boolean(collection),
+            searchByProducts: !category && !collection,
+            sortBy: settings.sorting.find(
+              (conf) => conf.queryParamValue === sortBy,
+            )?.saleorValue,
+            where: productIds ? { ids: productIds } : undefined,
+            ...pageInfo,
+          },
+          options: {
+            // FIXME: Temporarily hardcoded, should be coming from outer layer
+            next: {
+              tags: [`SEARCH:${context.channel}`],
+              revalidate: 15 * 60,
             },
           },
-        );
+        },
+      );
 
-        if (error) {
-          loggingService.error(
-            "Failed to fetch category products from Saleor",
-            {
-              error,
-            },
-          );
-
-          return {
-            results: [],
-            error,
-          };
-        }
-
-        const products = data?.category?.products;
-
-        if (!data || !products) {
-          return {
-            results: [],
-            error: null,
-          };
-        }
-
-        const serializer = serializers?.search ?? searchProductSerializer;
+      if (error) {
+        loggingService.error("Failed to fetch products from Saleor", {
+          error,
+        });
 
         return {
-          results: products.edges.map(({ node }) => serializer(node)),
-          error: null,
-          pageInfo: {
-            type: "cursor",
-            after: products.pageInfo.endCursor,
-            before: products.pageInfo.startCursor,
-            hasNextPage: products.pageInfo.hasNextPage,
-            hasPreviousPage: products.pageInfo.hasPreviousPage,
-          },
-        };
-      } else if (collection) {
-        const { data, error } = await graphqlClient(apiURL).execute(
-          SearchProductByCollectionQueryDocument,
-          {
-            variables: {
-              slug: collection,
-              channel: context.channel,
-              languageCode: context.languageCode as LanguageCodeEnum,
-              sortBy: settings.sorting.find(
-                (conf) => conf.queryParamValue === sortBy,
-              )?.saleorValue,
-              filter: {
-                attributes: attributesFilter,
-              },
-              ...pageInfo,
-            },
-            options: {
-              next: {
-                tags: [`SEARCH:${context.channel}`],
-                revalidate: 15 * 60,
-              },
-            },
-          },
-        );
-
-        if (error) {
-          loggingService.error(
-            "Failed to fetch collection products from Saleor",
-            {
-              error,
-            },
-          );
-
-          return {
-            results: [],
-            error,
-          };
-        }
-
-        const products = data?.collection?.products;
-
-        if (!data || !products) {
-          return {
-            results: [],
-            error: null,
-          };
-        }
-
-        const serializer = serializers?.search ?? searchProductSerializer;
-
-        return {
-          results: products.edges.map(({ node }) => serializer(node)),
-          error: null,
-          pageInfo: {
-            type: "cursor",
-            after: products.pageInfo.endCursor,
-            before: products.pageInfo.startCursor,
-            hasNextPage: products.pageInfo.hasNextPage,
-            hasPreviousPage: products.pageInfo.hasPreviousPage,
-          },
-        };
-      } else {
-        const { data, error } = await graphqlClient(apiURL).execute(
-          SearchProductQueryDocument,
-          {
-            variables: {
-              search: query,
-              where: productIds ? { ids: productIds } : undefined,
-              channel: context.channel,
-              languageCode: context.languageCode as LanguageCodeEnum,
-              sortBy: settings.sorting.find(
-                (conf) => conf.queryParamValue === sortBy,
-              )?.saleorValue,
-              filter: {
-                attributes: attributesFilter,
-              },
-              ...pageInfo,
-            },
-            options: {
-              // FIXME: Temporarily hardcoded, should be coming from outer layer
-              next: {
-                tags: [`SEARCH:${context.channel}`],
-                revalidate: 15 * 60,
-              },
-            },
-          },
-        );
-
-        if (error) {
-          loggingService.error("Failed to fetch the products from Saleor", {
-            error,
-          });
-
-          return {
-            results: [],
-            error,
-          };
-        }
-
-        const products = data?.products;
-
-        if (!data || !products) {
-          return {
-            results: [],
-            error: null,
-          };
-        }
-
-        const serializer = serializers?.search ?? searchProductSerializer;
-
-        return {
-          results: products.edges.map(({ node }) => serializer(node)),
-          error: null,
-          pageInfo: {
-            type: "cursor",
-            after: products.pageInfo.endCursor,
-            before: products.pageInfo.startCursor,
-            hasNextPage: products.pageInfo.hasNextPage,
-            hasPreviousPage: products.pageInfo.hasPreviousPage,
-          },
+          results: [],
+          error,
         };
       }
+
+      const products =
+        data?.category?.products ??
+        data?.collection?.products ??
+        data?.products;
+
+      if (!products) {
+        return {
+          results: [],
+          error: null,
+        };
+      }
+
+      const serializer = serializers?.search ?? searchProductSerializer;
+
+      return {
+        results: products.edges.map(({ node }) => serializer(node)),
+        error: null,
+        pageInfo: {
+          type: "cursor",
+          after: products.pageInfo.endCursor,
+          before: products.pageInfo.startCursor,
+          hasNextPage: products.pageInfo.hasNextPage,
+          hasPreviousPage: products.pageInfo.hasPreviousPage,
+        },
+      };
     } catch (e) {
       loggingService.error(
-        "Unexpected error while fetching the products from Saleor",
+        "Unexpected error while fetching products from Saleor",
         {
           error: e,
         },
