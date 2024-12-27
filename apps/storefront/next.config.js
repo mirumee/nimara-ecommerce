@@ -58,7 +58,7 @@ const nextConfig = withNextIntl({
     },
   },
   experimental: {
-    serverComponentsExternalPackages: ["pino"],
+    serverExternalPackages: ["pino"],
   },
   images: {
     // TODO: Required for the images to load on Chrome when deployed with Vercel.

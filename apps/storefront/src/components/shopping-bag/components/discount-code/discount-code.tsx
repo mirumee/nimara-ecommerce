@@ -107,7 +107,7 @@ export const DiscountCode = ({ checkout }: { checkout: Checkout }) => {
               return;
             }
 
-            if ("serverError" || "validationErrors" in result) {
+            if ("serverError" in result || "validationErrors" in result) {
               toast({
                 description: t("errors.checkout.couldNotRemove"),
                 variant: "destructive",

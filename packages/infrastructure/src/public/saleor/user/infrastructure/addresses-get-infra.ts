@@ -19,7 +19,7 @@ export const saleorAddressesGetInfra =
       UserAddressesQueryDocument,
     );
 
-    if (!data?.me?.addresses ?? error) {
+    if (!data?.me?.addresses || error) {
       loggingService.error(
         "Failed to fetch user addresses",
         error as BaseError,
