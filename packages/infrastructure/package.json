@@ -13,12 +13,9 @@
   "dependencies": {
     "@saleor/auth-sdk": "1.0.1",
     "@stripe/stripe-js": "3.5.0",
-    "@types/react": "19.0.0",
-    "@types/react-dom": "19.0.0",
-    "@types/stripe": "8.0.417",
     "buttercms": "2.1.4",
     "libphonenumber-js": "1.11.3",
-    "prettier": "3.3.3",
+    "prettier": "3.4.2",
     "stripe": "15.10.0",
     "ts-invariant": "0.10.3"
   },
@@ -27,14 +24,13 @@
     "@nimara/codegen": "workspace:*",
     "@nimara/config": "workspace:*",
     "@nimara/domain": "workspace:*",
-    "@types/node": "20.14.12",
     "eslint": "^8.57.0",
     "eslint-config-custom": "workspace:*",
     "graphql": "16.9.0",
-    "pino": "9.3.2",
+    "pino": "9.6.0",
     "ts-essentials": "10.0.2",
     "ts-toolbelt": "9.6.0",
     "tsconfig": "workspace:*",
-    "typescript": "^5.5.4"
+    "typescript": "^5.7.2"
   }
 }
