@@ -1,8 +1,6 @@
 import type * as Types from '@nimara/codegen/schema';
 
 import type { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
-export type PageInfoFragment = { startCursor: string | null, endCursor: string | null, hasNextPage: boolean, hasPreviousPage: boolean };
-
 export type SearchProductFragment_Product_translation_ProductTranslation = { name: string | null };
 
 export type SearchProductFragment_Product_thumbnail_Image = { url: string, alt: string | null };
@@ -49,14 +47,6 @@ export class TypedDocumentString<TResult, TVariables>
     return this.value;
   }
 }
-export const PageInfoFragment = new TypedDocumentString(`
-    fragment PageInfoFragment on PageInfo {
-  startCursor
-  endCursor
-  hasNextPage
-  hasPreviousPage
-}
-    `, {"fragmentName":"PageInfoFragment"}) as unknown as TypedDocumentString<PageInfoFragment, unknown>;
 export const SearchProductFragment = new TypedDocumentString(`
     fragment SearchProductFragment on Product {
   id

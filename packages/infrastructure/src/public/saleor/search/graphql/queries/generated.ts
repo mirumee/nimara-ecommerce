@@ -197,7 +197,10 @@ export const SearchProductQueryDocument = new TypedDocumentString(`
         }
       }
       pageInfo {
-        ...PageInfoFragment
+        startCursor
+        endCursor
+        hasNextPage
+        hasPreviousPage
       }
       totalCount
     }
@@ -218,7 +221,10 @@ export const SearchProductQueryDocument = new TypedDocumentString(`
         }
       }
       pageInfo {
-        ...PageInfoFragment
+        startCursor
+        endCursor
+        hasNextPage
+        hasPreviousPage
       }
       totalCount
     }
@@ -240,7 +246,10 @@ export const SearchProductQueryDocument = new TypedDocumentString(`
       }
     }
     pageInfo {
-      ...PageInfoFragment
+      startCursor
+      endCursor
+      hasNextPage
+      hasPreviousPage
     }
     totalCount
   }
@@ -292,10 +301,4 @@ export const SearchProductQueryDocument = new TypedDocumentString(`
     }
   }
   updatedAt
-}
-fragment PageInfoFragment on PageInfo {
-  startCursor
-  endCursor
-  hasNextPage
-  hasPreviousPage
 }`) as unknown as TypedDocumentString<SearchProductQuery, SearchProductQueryVariables>;

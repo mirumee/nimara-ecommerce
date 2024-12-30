@@ -55,9 +55,9 @@ export const saleorSearchInfra =
           variables: {
             after,
             before,
-            categorySlug: category || null,
+            categorySlug: category ?? null,
             channel: context.channel,
-            collectionSlug: collection || null,
+            collectionSlug: collection ?? null,
             filter: {
               attributes: attributesFilter,
             },
