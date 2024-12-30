@@ -34,6 +34,7 @@ export type SearchInfra = (
     after?: string;
     before?: string;
     category?: string;
+    collection?: string;
     filters?: Record<string, string>;
     limit: number;
     page?: string;
