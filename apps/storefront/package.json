@@ -19,7 +19,7 @@
     "@svgr/webpack": "8.1.0",
     "@uidotdev/usehooks": "2.4.1",
     "@vercel/otel": "^1.9.1",
-    "clsx": "2.0.0",
+    "clsx": "2.1.1",
     "editorjs-html": "3.4.3",
     "eslint-config-next": "15.0.3",
     "jose": "^5.2.2",
