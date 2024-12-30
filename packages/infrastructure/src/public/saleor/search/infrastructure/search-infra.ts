@@ -14,7 +14,17 @@ import type { SaleorSearchServiceConfig } from "../types";
 export const saleorSearchInfra =
   ({ apiURL, serializers, settings }: SaleorSearchServiceConfig): SearchInfra =>
   async (
-    { query, after, before, sortBy, filters, limit, productIds, category },
+    {
+      query,
+      after,
+      before,
+      sortBy,
+      filters,
+      limit,
+      productIds,
+      category,
+      collection,
+    },
     context,
   ) => {
     const pageInfo = before
@@ -25,37 +35,43 @@ export const saleorSearchInfra =
     // TODO: Find a better way how to handle filters between providers
     const attributesFilter: AttributeInput[] | undefined = filters
       ? Object.entries(filters).map(([slug, value]) => ({
-          slug: slug,
+          slug,
           boolean: value === "true" ? true : undefined,
           values: value !== "true" ? [value] : undefined,
         }))
       : undefined;
 
-    const whereFilter = {
-      ...(productIds && { ids: productIds }),
-      ...(category && { category: { oneOf: [category] } }),
-    };
-
     try {
       loggingService.debug("Fetching the products from Saleor", {
         query,
         channel: context.channel,
+        category,
+        collection,
       });
 
       const { data, error } = await graphqlClient(apiURL).execute(
         SearchProductQueryDocument,
         {
           variables: {
-            where: Object.keys(whereFilter).length ? whereFilter : undefined,
-            search: query,
+            after,
+            before,
+            categorySlug: category ?? null,
             channel: context.channel,
-            languageCode: context.languageCode as LanguageCodeEnum,
-            sortBy: settings.sorting.find(
-              (conf) => conf.queryParamValue === sortBy,
-            )?.saleorValue,
+            collectionSlug: collection ?? null,
             filter: {
               attributes: attributesFilter,
             },
+            first: limit,
+            languageCode: context.languageCode as LanguageCodeEnum,
+            last: null,
+            search: query,
+            searchByCategory: Boolean(category),
+            searchByCollection: Boolean(collection),
+            searchByProducts: !category && !collection,
+            sortBy: settings.sorting.find(
+              (conf) => conf.queryParamValue === sortBy,
+            )?.saleorValue,
+            where: productIds ? { ids: productIds } : undefined,
             ...pageInfo,
           },
           options: {
@@ -69,7 +85,7 @@ export const saleorSearchInfra =
       );
 
       if (error) {
-        loggingService.error("Failed to fetch the products from Saleor", {
+        loggingService.error("Failed to fetch products from Saleor", {
           error,
         });
 
@@ -79,7 +95,12 @@ export const saleorSearchInfra =
         };
       }
 
-      if (!data || !data.products) {
+      const products =
+        data?.category?.products ??
+        data?.collection?.products ??
+        data?.products;
+
+      if (!products) {
         return {
           results: [],
           error: null,
@@ -89,19 +110,19 @@ export const saleorSearchInfra =
       const serializer = serializers?.search ?? searchProductSerializer;
 
       return {
-        results: data.products.edges.map(({ node }) => serializer(node)),
+        results: products.edges.map(({ node }) => serializer(node)),
         error: null,
         pageInfo: {
           type: "cursor",
-          after: data.products.pageInfo.endCursor,
-          before: data.products.pageInfo.startCursor,
-          hasNextPage: data.products.pageInfo.hasNextPage,
-          hasPreviousPage: data.products.pageInfo.hasPreviousPage,
+          after: products.pageInfo.endCursor,
+          before: products.pageInfo.startCursor,
+          hasNextPage: products.pageInfo.hasNextPage,
+          hasPreviousPage: products.pageInfo.hasPreviousPage,
         },
       };
     } catch (e) {
       loggingService.error(
-        "Unexpected error while fetching the products from Saleor",
+        "Unexpected error while fetching products from Saleor",
         {
           error: e,
         },
