@@ -27,24 +27,16 @@ export const handleFiltersFormSubmit = async (
   });
 
   passThroughParams.forEach((param) => {
-    const paramsValue = searchParams[param];
     const formValue = formData.get(param) as string;
+    const value = formValue ?? searchParams[param];
 
     // Sorting can be changed either independently (on desktop)
     // or together with filters (on mobile)
     // that is why it needs some custom logic
-    if (param === "sortBy") {
-      const value = formValue ?? paramsValue;
-
-      if (value !== DEFAULT_SORT_BY) {
-        params.set(param, value);
-      } else {
-        params.delete(param);
-      }
-    }
-
-    if (searchParams[param]) {
-      params.set(param, searchParams[param]);
+    if (param === "sortBy" && value === DEFAULT_SORT_BY) {
+      params.delete(param);
+    } else if (value) {
+      params.set(param, value);
     }
   });
 
