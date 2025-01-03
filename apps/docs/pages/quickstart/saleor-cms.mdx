@@ -2,19 +2,19 @@ import { Steps } from "nextra/components";
 
 # Saleor CMS
 
-This guide will help you set up Saleor CMS, which manages the **homepage**, **footer**, and **navigation** of your storefront.
+This guide will help you set up Saleor CMS, which manages your storefront's **homepage**, **footer**, and **navigation**.
 
 ## Configure homepage
 
-Saleor CMS relies on attributes to organize content, and specific attributes are required for setting up homepage. Refer to screenshots below to identify necessary attributes.
+Saleor CMS relies on attributes to organize content and specific attributes are required for setting up the homepage. Refer to the screenshots below to identify the necessary attributes.
 
 <Steps>
 ### Create required attributes
 
 Navigate to Saleor dashboard > **Configuration** > **Attributes and Product Types** and select **Attributes**.
-Create following attributes:
+Create the following attributes:
 
-**Carousel products** - used to display up to 8 products in a carousel on homepage:
+**Carousel products** - used to display up to 8 products in a carousel on the homepage:
 ![Carousel products attribute](../../images/cms/homepage/carousel-products.png)
 
 **Homepage banner button text** - used to display button text on banner section:
@@ -23,7 +23,7 @@ Create following attributes:
 **Homepage banner header** - used to display header on banner section:
 ![Banner header attribute](../../images/cms/homepage/banner-header.png)
 
-**Homepage banner image** - used to display background image of banner section:
+**Homepage banner image** - used to display the background image of the banner section:
 ![Banner image attribute](../../images/cms/homepage/banner-image.png)
 
 **Homepage button text** - used to display button text on page bottom:
@@ -32,21 +32,21 @@ Create following attributes:
 **Homepage grid item header** - used to display header on featured carousel's element:
 ![Grid item header attribute](../../images/cms/homepage/grid-item-header.png)
 
-**Homepage grid item header font color** - used to set font color of header on featured carousel's element:
+**Homepage grid item header font color** - used to set the font color of the header on featured carousel's element:
 ![Grid item header font color attribute](../../images/cms/homepage/grid-item-header-font-color.png)
 
-**Homepage grid item image** - used to display background image of featured carousel's element:
+**Homepage grid item image** - used to display the background image of the featured carousel's element:
 ![Grid item image attribute](../../images/cms/homepage/grid-item-image.png)
 
 **Homepage grid item subheader** - used to display subheader on featured carousel's element:
 ![Grid item subheader attribute](../../images/cms/homepage/grid-item-subheader.png)
 
-**Homepage grid item subheader font color** - used to set font color of subheader on featured carousel's element:
+**Homepage grid item subheader font color** - used to set the font color of subheader on featured carousel's element:
 ![Grid item subheader font color attribute](../../images/cms/homepage/grid-item-subheader-font-color.png)
 
 ### Create Homepage page type
 
-To set up homepage, you need to create **Page Type** and assign appropriate attributes. Follow these steps:
+To set up the homepage, you need to create **Page Type** and assign appropriate attributes. Follow these steps:
 
 <Steps>
 
@@ -57,7 +57,7 @@ Go to Saleor dashboard > **Configuration** > **Content Management** and select *
 #### Create new Page Type
 
 Click on **Create page type**.
-Enter name **Homepage** for Content Type Name and click **Save**.
+Enter the name **Homepage** for Content Type Name and click **Save**.
 
 #### Assign attributes
 
@@ -66,7 +66,7 @@ Assign all required attributes to **Homepage Page Type**:
 
 </Steps>
 
-### Create actual homepage
+### Create an actual homepage
 
 Once **Homepage Page Type** is set up, you can create the actual homepage content by following these steps:
 
@@ -77,7 +77,7 @@ Go to Saleor dashboard > **Content** and click **Create content**.
 
 #### Select Page Type
 
-In dropdown, select **Homepage**.
+In the dropdown, select **Homepage**.
 This ensures that attributes assigned to **Homepage Page Type** are available for editing.
 
 #### Fill in attributes
@@ -96,27 +96,27 @@ Go to Saleor dashboard > **Configuration** > **Miscellaneous** and select **Navi
 ### Create Menu for navigation and footer
 
 Click **Create menu** to open menu creation form.
-For main navigation, name menu **navbar**.
+For the main navigation, name menu **navbar**.
 This menu will manage links displayed in your website's header navigation.
-For footer, create another menu and name it **footer**.
-This menu will handle links displayed in footer section of your website.
+For the footer, create another menu and name it **footer**.
+This menu will handle links displayed in the footer section of your website.
 ![Navigation menus](../../images/cms/navigation/navigation.png)
 
 ### Create Menu items
 
-Select menu you want to edit and click **Create new item** to open menu item creation form.
+Select the menu you want to edit and click **Create new item** to open the menu item creation form.
 Menu items can link to various resources:
 
 - **Category**,
 - **Collection**,
 - **Static Page** - link to page created in **Content** section,
-- **URL** - URL to external website or link to internal page within your storefront.
+- **URL** - URL to an external website or link to an internal page within your storefront.
 
 </Steps>
 
 ## Configure Static Page
 
-Static page in Saleor is used for standalone content, such as "About Us" or "Contact" page. Unlike **Homepage** page type, **Static Page** does not require attributes. Follow these steps to create one:
+A static page in Saleor is used for standalone content, such as "About Us" or "Contact" page. Unlike **Homepage** page type, **Static Page** does not require attributes. Follow these steps to create one:
 
 <Steps>
 ### Navigate to Content Management
@@ -124,16 +124,16 @@ Go to Saleor dashboard > **Configuration** > **Content Management** and select *
 #### Create new Page Type
 
 Click on **Create page type**.
-Enter name **Static page** for Content Type Name and click **Save**.
+Enter the name **Static page** for Content Type Name and click **Save**.
 
 ### Enter page details
 
-- **Title** - provide title for page (e.g., "About Us").
-- **Slug** - specify slug for page, this will determine its URL (e.g., /about-us).
-- **Content** - use rich text editor to add your content (e.g., text paragraphs, headings, bullet points or numbered lists, images, hyperlinks)
+- **Title** - provide a title for the page (e.g., "About Us").
+- **Slug** - specify the slug for the page, this will determine its URL (e.g., /about-us).
+- **Content** - use a rich text editor to add your content (e.g., text paragraphs, headings, bullet points or numbered lists, images, hyperlinks)
 
-### Create actual static page
+### Create an actual static page
 
-Creating actual static page follows the same steps as creating homepage.
+Creating an actual static page follows the same steps as creating a homepage.
 
 </Steps>
