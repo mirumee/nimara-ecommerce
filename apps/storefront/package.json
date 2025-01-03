@@ -26,7 +26,7 @@
     "js-cookie": "3.0.5",
     "lodash": "4.17.21",
     "lucide-react": "^0.368.0",
-    "next": "15.0.3",
+    "next": "15.1.2",
     "next-auth": "5.0.0-beta.17",
     "next-intl": "3.23.5",
     "nextjs-routes": "2.1.0",
