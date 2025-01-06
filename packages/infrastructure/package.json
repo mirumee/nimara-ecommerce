@@ -30,9 +30,9 @@
     "@types/node": "20.14.12",
     "eslint": "^8.57.0",
     "eslint-config-custom": "workspace:*",
-    "graphql": "16.9.0",
-    "pino": "9.3.2",
-    "ts-essentials": "10.0.2",
+    "graphql": "16.10.0",
+    "pino": "9.6.0",
+    "ts-essentials": "10.0.4",
     "ts-toolbelt": "9.6.0",
     "tsconfig": "workspace:*",
     "typescript": "^5.5.4"
