@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 
 import { Button } from "@nimara/ui/components/button";
 
+import { Link } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 
 import { CheckoutRemover } from "./components/checkout-remover";
@@ -26,7 +27,7 @@ export default async function Page() {
         {t.rich("order-confirmation.paragraph", { br: () => <br /> })}
       </p>
       <Button className="justify-self-center" asChild>
-        <a href={paths.home.asPath()}>{t("common.back-to-homepage")}</a>
+        <Link href={paths.home.asPath()}>{t("common.back-to-homepage")}</Link>
       </Button>
       <CheckoutRemover />
     </div>
