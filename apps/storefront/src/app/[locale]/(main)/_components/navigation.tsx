@@ -1,6 +1,5 @@
 "use client";
 
-import { useLocale } from "next-intl";
 import { useState } from "react";
 
 import type { Menu } from "@nimara/domain/objects/Menu";
@@ -20,7 +19,6 @@ import type { Maybe } from "@/lib/types";
 export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
   // Close menu manually
   const [currentMenuItem, setCurrentMenuItem] = useState("");
-  const locale = useLocale();
 
   if (!menu || menu?.items?.length === 0) {
     return null;
@@ -38,7 +36,6 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
             <Link
               href={item.url}
               className="text-inherit no-underline hover:underline"
-              locale={locale}
             >
               <NavigationMenuTrigger showIcon={!!item.children?.length}>
                 {item.label}
@@ -56,7 +53,6 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
                             key={child.id}
                             href={child.url}
                             className="group block space-y-1 rounded-md p-3 hover:bg-accent"
-                            locale={locale}
                           >
                             <div className="text-sm font-medium leading-none">
                               {child.label}
@@ -87,7 +83,6 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
                             href={child.url}
                             className="group relative min-h-[270px] overflow-hidden rounded-lg bg-accent"
                             onClick={() => setCurrentMenuItem("")}
-                            locale={locale}
                           >
                             <div
                               className="h-1/2 bg-cover bg-center"

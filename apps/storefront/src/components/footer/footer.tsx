@@ -1,4 +1,4 @@
-import { getLocale, getTranslations } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 
 import NimaraLogo from "@/assets/nimara-logo.svg";
 import { CACHE_TTL } from "@/config";
@@ -8,8 +8,7 @@ import { getCurrentRegion } from "@/regions/server";
 import { cmsMenuService } from "@/services/cms";
 
 export const Footer = async () => {
-  const [locale, region, t] = await Promise.all([
-    getLocale(),
+  const [region, t] = await Promise.all([
     getCurrentRegion(),
     getTranslations(),
   ]);
@@ -48,7 +47,6 @@ export const Footer = async () => {
                 className="flex justify-start align-middle"
                 href={paths.home.asPath()}
                 title={t("common.go-to-homepage")}
-                locale={locale}
               >
                 <NimaraLogo height={36} />
               </Link>
@@ -75,9 +73,7 @@ export const Footer = async () => {
               <ul className="grid gap-4">
                 {categories?.menu.items.map((item) => (
                   <li key={item.id}>
-                    <Link href={item.url} locale={locale}>
-                      {item.label}
-                    </Link>
+                    <Link href={item.url}>{item.label}</Link>
                   </li>
                 ))}
               </ul>
@@ -88,9 +84,7 @@ export const Footer = async () => {
               <ul className="grid gap-4">
                 {pages?.menu.items.map((item) => (
                   <li key={item.id}>
-                    <Link href={item.url} locale={locale}>
-                      {item.label}
-                    </Link>
+                    <Link href={item.url}>{item.label}</Link>
                   </li>
                 ))}
               </ul>
