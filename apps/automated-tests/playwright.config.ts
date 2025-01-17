@@ -1,9 +1,9 @@
 import { defineConfig, devices } from "@playwright/test";
 
-if (process.env.BASE_URL === undefined) {
+if (process.env.TEST_ENV_URL === undefined) {
   process.stderr.write(
-    "Invalid or missing value for BASE_URL. Skipping.\n",
-    process.env.BASE_URL,
+    "Invalid or missing value for TEST_ENV_URL. Skipping.\n",
+    process.env.TEST_ENV_URL,
   );
   process.exit(1);
 }
@@ -25,7 +25,7 @@ const config = defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: process.env.CI ? "dot" : "list",
   use: {
-    baseURL: process.env.BASE_URL,
+    baseURL: process.env.TEST_ENV_URL,
     actionTimeout: 0,
     trace: "on-first-retry",
   },

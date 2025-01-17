@@ -37,10 +37,14 @@ const serializeSaleorMenuItemChild = (
 ): MenuItemChild => {
   const { id, name, translation, url, collection, category, page } = child;
 
+  // INFO: Links in Saleor CMS cannot be relative links, they must be absolute URLs,
+  // so to preserve locale prefixes we need to cut the domain to make them relatives
+  const formattedUrl = url?.replace(process.env.BASE_URL ?? "", "");
+
   return {
     id,
     label: translation?.name || name,
-    url: url ?? createMenuItemUrl(category, collection, page),
+    url: formattedUrl ?? createMenuItemUrl(category, collection, page),
     description:
       collection?.translation?.description ||
       collection?.description ||
@@ -58,10 +62,14 @@ const serializeSaleorMenuItem = (
   const { id, name, translation, url, children, category, collection, page } =
     item;
 
+  // INFO: Links in Saleor CMS cannot be relative links, they must be absolute URLs,
+  // so to preserve locale prefixes we need to cut the domain to make them relatives
+  const formattedUrl = url?.replace(process.env.BASE_URL ?? "", "");
+
   return {
     id,
     label: translation?.name || name,
-    url: url || createMenuItemUrl(category, collection, page),
+    url: formattedUrl ?? createMenuItemUrl(category, collection, page),
     children: children?.map(serializeSaleorMenuItemChild) || [],
   };
 };
