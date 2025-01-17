@@ -26,7 +26,7 @@ export class CheckoutPage {
     await this.page.waitForURL(URLS().CHECKOUT_PAGE_SHIPPING_ADDRESS);
 
     await expect(this.page).toHaveURL(
-      `${process.env.BASE_URL}/${URLS().CHECKOUT_PAGE_SHIPPING_ADDRESS}`,
+      `${process.env.TEST_ENV_URL}/${URLS().CHECKOUT_PAGE_SHIPPING_ADDRESS}`,
     );
   }
 
@@ -76,7 +76,7 @@ export class CheckoutPage {
     await this.page.waitForURL(URLS().CHECKOUT_PAGE_DELIVERY_METHOD);
 
     await expect(this.page).toHaveURL(
-      `${process.env.BASE_URL}/${URLS().CHECKOUT_PAGE_DELIVERY_METHOD}`,
+      `${process.env.TEST_ENV_URL}/${URLS().CHECKOUT_PAGE_DELIVERY_METHOD}`,
     );
   }
 
@@ -88,7 +88,7 @@ export class CheckoutPage {
     await this.page.waitForURL(URLS().CHECKOUT_PAGE_DELIVERY_METHOD);
 
     await expect(this.page).toHaveURL(
-      `${process.env.BASE_URL}/${URLS().CHECKOUT_PAGE_DELIVERY_METHOD}`,
+      `${process.env.TEST_ENV_URL}/${URLS().CHECKOUT_PAGE_DELIVERY_METHOD}`,
     );
   }
 
@@ -99,7 +99,7 @@ export class CheckoutPage {
     await this.page.waitForURL(URLS().CHECKOUT_PAGE_PAYMENT);
 
     await expect(this.page).toHaveURL(
-      `${process.env.BASE_URL}/${URLS().CHECKOUT_PAGE_PAYMENT}`,
+      `${process.env.TEST_ENV_URL}/${URLS().CHECKOUT_PAGE_PAYMENT}`,
     );
   }
 
