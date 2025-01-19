@@ -26,7 +26,7 @@ export const ProductPrice = ({ children }: PropsWithChildren) => {
 };
 
 export const ProductThumbnail = ({ alt, ...props }: ImageProps) => (
-  <div className="flex aspect-square justify-center">
+  <div className="flex aspect-square justify-center overflow-hidden">
     <Image alt={alt} className="min-w-full object-cover" {...props} />
   </div>
 );
