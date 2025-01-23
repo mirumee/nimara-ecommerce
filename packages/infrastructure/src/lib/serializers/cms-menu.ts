@@ -15,9 +15,14 @@ const createMenuItemUrl = (
   category?: { slug: string } | null,
   collection?: { slug: string } | null,
   page?: { slug: string } | null,
+  locale?: string,
 ): string => {
+  const baseUrl = locale
+    ? `${process.env.BASE_URL}/${locale}`
+    : process.env.BASE_URL;
+
   if (page?.slug) {
-    return `${process.env.BASE_URL}/page/${page.slug}`;
+    return `${baseUrl}/page/${page.slug}`;
   }
   const queryParams = new URLSearchParams();
 
@@ -29,11 +34,12 @@ const createMenuItemUrl = (
     queryParams.append("collection", collection.slug);
   }
 
-  return `${process.env.BASE_URL}/search?${queryParams.toString()}`;
+  return `${baseUrl}/search?${queryParams.toString()}`;
 };
 
 const serializeSaleorMenuItemChild = (
   child: MenuGet_menu_Menu_items_MenuItem_children_MenuItem,
+  locale?: string,
 ): MenuItemChild => {
   const { id, name, translation, url, collection, category, page } = child;
 
@@ -44,7 +50,7 @@ const serializeSaleorMenuItemChild = (
   return {
     id,
     label: translation?.name || name,
-    url: formattedUrl ?? createMenuItemUrl(category, collection, page),
+    url: formattedUrl ?? createMenuItemUrl(category, collection, page, locale),
     description:
       collection?.translation?.description ||
       collection?.description ||
@@ -58,6 +64,7 @@ const serializeSaleorMenuItemChild = (
 
 const serializeSaleorMenuItem = (
   item: MenuGet_menu_Menu_items_MenuItem,
+  locale?: string,
 ): MenuItem => {
   const { id, name, translation, url, children, category, collection, page } =
     item;
@@ -69,16 +76,19 @@ const serializeSaleorMenuItem = (
   return {
     id,
     label: translation?.name || name,
-    url: formattedUrl ?? createMenuItemUrl(category, collection, page),
-    children: children?.map(serializeSaleorMenuItemChild) || [],
+    url: formattedUrl ?? createMenuItemUrl(category, collection, page, locale),
+    children:
+      children?.map((child) => serializeSaleorMenuItemChild(child, locale)) ||
+      [],
   };
 };
 
 export const serializeSaleorMenu = (
   items: MenuGet_menu_Menu_items_MenuItem[],
+  locale?: string,
 ): Menu => {
   return {
-    items: items.map(serializeSaleorMenuItem),
+    items: items.map((item) => serializeSaleorMenuItem(item, locale)),
   };
 };
 

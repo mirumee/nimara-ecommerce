@@ -14,3 +14,13 @@ export const getStoreUrl = async () => {
     ? domain
     : `${domain}${localePrefixes[locale as Exclude<Locale, typeof DEFAULT_LOCALE>]}`;
 };
+
+export const getStoreLocale = async (): Promise<string> => {
+  const locale = await getLocale();
+
+  if (locale === DEFAULT_LOCALE) {
+    return "";
+  }
+
+  return localePrefixes[locale as Exclude<Locale, typeof DEFAULT_LOCALE>];
+};
