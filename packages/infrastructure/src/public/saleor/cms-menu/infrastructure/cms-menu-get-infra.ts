@@ -7,7 +7,7 @@ import type { SaleorCMSMenuServiceConfig } from "../types";
 
 export const saleorCMSMenuGetInfra =
   ({ apiURL }: SaleorCMSMenuServiceConfig): CMSMenuGetInfra =>
-  async ({ channel, languageCode, slug, id, options }) => {
+  async ({ channel, languageCode, slug, id, options, locale }) => {
     const { data } = await graphqlClient(apiURL).execute(MenuGetDocument, {
       options,
       variables: {
@@ -19,7 +19,7 @@ export const saleorCMSMenuGetInfra =
     });
 
     if (data?.menu) {
-      return { menu: serializeSaleorMenu(data.menu.items || []) };
+      return { menu: serializeSaleorMenu(data.menu.items || [], locale) };
     }
 
     return null;
