@@ -10,6 +10,7 @@ type CMSMenuOptions = {
   channel: string;
   id?: string;
   languageCode: LanguageCodeEnum;
+  locale?: string;
   slug?: CMSMenuSlug;
 } & WithFetchOptions;
 
