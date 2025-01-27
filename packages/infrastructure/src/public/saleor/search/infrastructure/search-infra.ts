@@ -27,11 +27,12 @@ export const saleorSearchInfra =
     },
     context,
   ) => {
+    // Last and first cannot be combined in the same query
     const pageInfo = before
-      ? { before, last: limit }
+      ? { before, last: limit, first: undefined }
       : after
-        ? { after, first: limit }
-        : { first: limit };
+        ? { after, first: limit, last: undefined }
+        : { first: limit, last: undefined };
     // TODO: Find a better way how to handle filters between providers
     const attributesFilter: AttributeInput[] | undefined = filters
       ? Object.entries(filters).map(([slug, value]) => ({
@@ -61,9 +62,7 @@ export const saleorSearchInfra =
             filter: {
               attributes: attributesFilter,
             },
-            first: limit,
             languageCode: context.languageCode as LanguageCodeEnum,
-            last: null,
             search: query,
             searchByCategory: Boolean(category),
             searchByCollection: Boolean(collection),
