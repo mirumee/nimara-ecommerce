@@ -18,7 +18,7 @@ const createMenuItemUrl = (
   locale?: string,
 ): string => {
   const baseUrl = locale
-    ? `${process.env.BASE_URL}/${locale}`
+    ? `${process.env.BASE_URL}${locale}`
     : process.env.BASE_URL;
 
   if (page?.slug) {
