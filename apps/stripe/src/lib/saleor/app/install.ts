@@ -1,0 +1,39 @@
+import { type JWSProvider } from "@/lib/jwks/types";
+
+import { type SaleorConfigProvider } from "../config/types";
+import { SaleorAppInstallationError } from "../error";
+import { type SaleorClient } from "../graphql/types";
+
+export const installApp = async ({
+  configProvider,
+  saleorClient,
+  saleorAuthToken,
+  saleorUrl,
+  saleorDomain,
+  jwksProvider,
+}: {
+  configProvider: SaleorConfigProvider;
+  jwksProvider: JWSProvider;
+  saleorAuthToken: string;
+  saleorClient: SaleorClient;
+  saleorDomain: string;
+  saleorUrl: string;
+}) => {
+  const saleorAppId = await saleorClient.getAppId();
+
+  if (!saleorAppId) {
+    throw new SaleorAppInstallationError();
+  }
+
+  await configProvider.createOrUpdate({
+    saleorDomain,
+    authToken: saleorAuthToken,
+    saleorAppId,
+    stripeConfig: {},
+  });
+
+  await jwksProvider.get({
+    issuer: saleorUrl,
+    forceRefresh: true,
+  });
+};

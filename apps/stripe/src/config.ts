@@ -7,9 +7,12 @@ const configSchema = z.object({
   VERSION: z.string(),
   ENVIRONMENT: z.string(),
   CONFIG_KEY: z.string().default("stripeConfig"),
+  SALEOR_URL: z.string().url(),
+  FETCH_TIMEOUT: z
+    .number()
+    .default(10000)
+    .describe("Fetch timeout in milliseconds."),
 });
-
-console.log(process.env);
 
 const parsed = prepareConfig({
   name: "App",
@@ -18,6 +21,7 @@ const parsed = prepareConfig({
     NAME: process.env.npm_package_name,
     VERSION: process.env.npm_package_version,
     ENVIRONMENT: process.env.NEXT_PUBLIC_ENVIRONMENT,
+    SALEOR_URL: new URL(process.env.NEXT_PUBLIC_SALEOR_URL ?? "").origin,
   },
   serverOnly: true,
 });
