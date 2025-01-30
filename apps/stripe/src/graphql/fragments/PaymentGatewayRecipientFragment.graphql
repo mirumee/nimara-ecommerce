@@ -1,0 +1,11 @@
+fragment PaymentGatewayRecipientFragment on App {
+  id
+  privateMetadata {
+    key
+    value
+  }
+  metadata {
+    key
+    value
+  }
+}

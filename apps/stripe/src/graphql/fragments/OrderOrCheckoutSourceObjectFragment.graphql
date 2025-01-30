@@ -1,0 +1,43 @@
+fragment OrderOrCheckoutSourceObjectFragment on OrderOrCheckout {
+  __typename
+  ... on Checkout {
+    id
+    languageCode
+    channel {
+      ...ChannelFragment
+    }
+    userEmail: email
+    billingAddress {
+      ...AddressFragment
+    }
+    shippingAddress {
+      ...AddressFragment
+    }
+    total: totalPrice {
+      gross {
+        ...MoneyFragment
+      }
+    }
+    ...OrderOrCheckoutLineFragment
+  }
+  ... on Order {
+    id
+    languageCodeEnum
+    userEmail
+    channel {
+      ...ChannelFragment
+    }
+    billingAddress {
+      ...AddressFragment
+    }
+    shippingAddress {
+      ...AddressFragment
+    }
+    total {
+      gross {
+        ...MoneyFragment
+      }
+    }
+    ...OrderOrCheckoutLineFragment
+  }
+}

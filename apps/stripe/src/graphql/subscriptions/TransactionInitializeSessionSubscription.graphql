@@ -1,0 +1,28 @@
+subscription TransactionInitializeSessionSubscription {
+  event {
+    ... on TransactionInitializeSession {
+      recipient {
+        ...PaymentGatewayRecipientFragment
+      }
+      data
+      merchantReference
+      action {
+        amount
+        currency
+        actionType
+      }
+      issuingPrincipal {
+        ... on Node {
+          id
+        }
+      }
+      transaction {
+        id
+        pspReference
+      }
+      sourceObject {
+        ...OrderOrCheckoutSourceObjectFragment
+      }
+    }
+  }
+}
