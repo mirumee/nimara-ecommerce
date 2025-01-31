@@ -6,7 +6,7 @@ export type SaleorAppConfigProviderFactoryMethods<Config = SaleorAppConfig> = {
   getBySaleorDomain: (opts: { saleorDomain: string }) => Promise<Config | null>;
 };
 
-export type SaleorConfigProviderFactory<
+export type SaleorAppConfigProviderFactory<
   Opts = unknown,
   Config = SaleorAppConfig,
 > = Opts extends unknown
@@ -15,4 +15,4 @@ export type SaleorConfigProviderFactory<
     ) => SaleorAppConfigProviderFactoryMethods<Config>
   : (opts?: Opts) => SaleorAppConfigProviderFactoryMethods<Config>;
 
-export type SaleorConfigProvider = SaleorAppConfigProviderFactoryMethods;
+export type SaleorAppConfigProvider = SaleorAppConfigProviderFactoryMethods;

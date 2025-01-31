@@ -1,6 +1,6 @@
 import { type JWSProvider } from "@/lib/jwks/types";
 
-import { type SaleorConfigProvider } from "../config/types";
+import { type SaleorAppConfigProvider } from "../config/types";
 import { SaleorAppInstallationError } from "../error";
 import { type SaleorClient } from "../graphql/types";
 
@@ -12,7 +12,7 @@ export const installApp = async ({
   saleorDomain,
   jwksProvider,
 }: {
-  configProvider: SaleorConfigProvider;
+  configProvider: SaleorAppConfigProvider;
   jwksProvider: JWSProvider;
   saleorAuthToken: string;
   saleorClient: SaleorClient;

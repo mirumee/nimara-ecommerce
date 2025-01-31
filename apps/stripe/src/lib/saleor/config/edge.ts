@@ -1,47 +1,80 @@
-import { type createClient } from "@vercel/kv";
-
-import { COMMON_CLIENT_CONFIG } from "#config/common/client";
-
-import { type SaleorBaseConfig, saleorBaseConfig } from "./schema";
+import { type SaleorAppConfig, saleorAppConfig } from "./schema";
 import type {
-  SaleorConfigProviderFactory,
-  SaleorConfigProviderFactoryMethods,
+  SaleorAppConfigProviderFactory,
+  SaleorAppConfigProviderFactoryMethods,
 } from "./types";
-import { validateDomain } from "./utils";
+import { validateDomain } from "./util";
 
-type Config = SaleorBaseConfig;
-type ConfigProviderMethods = SaleorConfigProviderFactoryMethods<Config>;
+const VERCEL_API_URL_BASE = `https://api.vercel.com/v1/edge-config`;
 
-// TODO: FIXME: Could we use KVConfigProvider here?
-export const SaleorKVConfigProvider: SaleorConfigProviderFactory<
+type Config = SaleorAppConfig;
+type ConfigProviderMethods = SaleorAppConfigProviderFactoryMethods<Config>;
+
+export const SaleorEdgeConfigProvider: SaleorAppConfigProviderFactory<
   {
-    client: ReturnType<typeof createClient>;
     configKey: string;
+    saleorDomain: string;
+    vercelAccessToken: string;
+    vercelEdgeDatabaseId: string;
+    vercelTeamId: string;
   },
   Config
-> = ({ client, configKey }) => {
-  const _extractData = async () => {
-    const data = await client.hgetall(configKey);
+> = ({
+  vercelEdgeDatabaseId,
+  vercelAccessToken,
+  configKey,
+  vercelTeamId,
+  saleorDomain,
+}) => {
+  const __extractData = async (): Promise<SaleorAppConfig | null> => {
+    const result = await fetch(
+      `${VERCEL_API_URL_BASE}/${vercelEdgeDatabaseId}/item/${configKey}?teamId=${vercelTeamId}`,
+      {
+        method: "GET",
+        headers: { Authorization: `Bearer ${vercelAccessToken}` },
+      },
+    );
 
-    if (data) {
-      return saleorBaseConfig.parse(data);
+    if (result.ok) {
+      if (result.status === 204) {
+        return null;
+      }
+
+      const data = (await result.json()).value;
+
+      if (data) {
+        return saleorAppConfig.parse(data);
+      }
+
+      return null;
+    }
+
+    throw new Error("Failed to fetch edge config.", {
+      cause: { status: result.status, text: result.statusText },
+    });
+  };
+
+  const getBySaleorAppId: ConfigProviderMethods["getBySaleorAppId"] = async ({
+    saleorAppId,
+  }) => {
+    const data = await __extractData();
+
+    if (data && data.saleorAppId === saleorAppId) {
+      return data;
     }
 
     return null;
   };
-
-  const getBySaleorAppId: ConfigProviderMethods["getBySaleorAppId"] =
-    async () => await _extractData();
 
   const getBySaleorDomain: ConfigProviderMethods["getBySaleorDomain"] = async ({
     saleorDomain,
   }) => {
     validateDomain({
       saleorDomain,
-      allowedSaleorDomain: COMMON_CLIENT_CONFIG.SALEOR_DOMAIN,
+      allowedSaleorDomain: saleorDomain,
     });
 
-    return await _extractData();
+    return __extractData();
   };
 
   const createOrUpdate: ConfigProviderMethods["createOrUpdate"] = async (
@@ -49,7 +82,7 @@ export const SaleorKVConfigProvider: SaleorConfigProviderFactory<
   ) => {
     validateDomain({
       saleorDomain: opts.saleorDomain,
-      allowedSaleorDomain: COMMON_CLIENT_CONFIG.SALEOR_DOMAIN,
+      allowedSaleorDomain: saleorDomain,
     });
 
     let config = await getBySaleorDomain({
@@ -60,13 +93,39 @@ export const SaleorKVConfigProvider: SaleorConfigProviderFactory<
       config.authToken = opts.authToken;
       config.saleorAppId = opts.saleorAppId;
       config.saleorDomain = opts.saleorDomain;
+      config.stripeConfig = opts.stripeConfig;
     } else {
-      config = saleorBaseConfig.parse(opts);
+      config = saleorAppConfig.parse(opts);
     }
 
-    await client.hset(configKey, config);
+    const result = await fetch(
+      `${VERCEL_API_URL_BASE}/${vercelEdgeDatabaseId}/items?teamId=${vercelTeamId}`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${vercelAccessToken}`,
+          "Content-Type": "application/json",
+        },
 
-    return saleorBaseConfig.parse(config);
+        body: JSON.stringify({
+          items: [
+            {
+              operation: "upsert",
+              key: configKey,
+              value: config,
+            },
+          ],
+        }),
+      },
+    );
+
+    if (!result.ok) {
+      throw new Error("Failed to update edge config.", {
+        cause: { status: result.status, text: result.statusText },
+      });
+    }
+
+    return saleorAppConfig.parse(config);
   };
 
   return {

@@ -1,4 +1,4 @@
-import { graphqlClient } from "#graphql/client";
+import { graphqlClient } from "@/lib/graphql/client";
 
 import { AppIdQueryDocument } from "./generated";
 import { type SaleorClientFactory } from "./types";
