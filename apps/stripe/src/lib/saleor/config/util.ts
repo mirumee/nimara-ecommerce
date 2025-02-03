@@ -7,7 +7,7 @@ export const validateDomain = ({
 }) => {
   if (saleorDomain !== allowedSaleorDomain) {
     throw new Error(
-      `This is a single tenant Saleor App and can only be used with  ${allowedSaleorDomain}.`,
+      `This is a single tenant Saleor App and can only be used with ${allowedSaleorDomain}.`,
     );
   }
 };

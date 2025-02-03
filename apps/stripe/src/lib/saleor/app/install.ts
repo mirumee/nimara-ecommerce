@@ -29,7 +29,7 @@ export const installApp = async ({
     saleorDomain,
     authToken: saleorAuthToken,
     saleorAppId,
-    stripeConfig: {},
+    paymentGatewayConfig: {},
   });
 
   await jwksProvider.get({

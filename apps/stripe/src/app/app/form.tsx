@@ -1,8 +1,8 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAppBridge } from "@saleor/app-sdk/app-bridge";
 import { type SubmitHandler, useForm } from "react-hook-form";
-import { z } from "zod";
 
 import { Button } from "@nimara/ui/components/button";
 import {
@@ -14,48 +14,42 @@ import {
 } from "@nimara/ui/components/card";
 import { Form, FormDescription } from "@nimara/ui/components/form";
 import { TextFormField } from "@nimara/ui/components/textFormField";
-const channels = [
-  {
-    name: "Channel UK",
-    slug: "channel-uk",
-    currency: "GBP",
-  },
-  {
-    name: "Channel US",
-    slug: "channel-us",
-    currency: "USD",
-  },
-];
+import { useToast } from "@nimara/ui/hooks";
 
-const schema = z.record(
-  z.string(),
-  z.object({
-    currency: z.string(),
-    apiKey: z.string(),
-    webhookId: z.string().optional(),
-  }),
-);
+import { Spinner } from "@/components/spinner";
+import { isEmptyObject } from "@/lib/misc";
 
-type Schema = z.infer<typeof schema>;
+import { fetchDataAction } from "./actions/fetch-data-action";
+import { saveDataAction } from "./actions/save-data-action";
+import { type Schema, schema } from "./schema";
 
 export const ConfigForm = () => {
+  const { appBridgeState } = useAppBridge();
+  const { toast } = useToast();
+
   const form = useForm({
     resolver: zodResolver(schema),
-    defaultValues: channels.reduce((acc, curr) => {
-      return {
-        ...acc,
-        [curr.slug]: {
-          currency: curr.currency,
-          apiKey: "",
-          webhookId: "",
-        },
-      };
-    }, {}),
+    defaultValues: fetchDefaultValues({
+      accessToken: appBridgeState!.token!,
+      domain: appBridgeState!.domain,
+    }),
   });
 
-  const handleSubmit: SubmitHandler<Schema> = async ({ data }) => {
-    console.log(data);
+  const handleSubmit: SubmitHandler<Schema> = async (data) => {
+    const error = await saveDataAction({
+      data,
+      accessToken: appBridgeState!.token!,
+      domain: appBridgeState!.domain,
+    });
+
+    if (error) {
+      toast({ description: error, variant: "destructive" });
+    } else {
+      toast({ description: "Configuration saved successfully." });
+    }
   };
+
+  const data = form.getValues();
 
   return (
     <Form {...form}>
@@ -63,46 +57,63 @@ export const ConfigForm = () => {
         onSubmit={form.handleSubmit(handleSubmit)}
         className="flex flex-col gap-y-[inherit]"
       >
-        {channels.map(({ slug, name }) => (
-          <Card key={slug}>
-            <CardHeader>
-              <CardTitle>{name}</CardTitle>
-              <CardDescription>{slug}</CardDescription>
-            </CardHeader>
+        {form.formState.isLoading ? (
+          <Spinner />
+        ) : (
+          Object.entries(data).map(([channelSlug, { name }]) => (
+            <Card key={channelSlug}>
+              <CardHeader>
+                <CardTitle>{name}</CardTitle>
+                <CardDescription>{channelSlug}</CardDescription>
+              </CardHeader>
 
-            <CardContent>
-              <div className="flex flex-col gap-4">
-                <TextFormField
-                  disabled
-                  name={`${slug}.currency`}
-                  label="Currency"
-                >
-                  <FormDescription>
-                    Currency from the current channel.
-                  </FormDescription>
-                </TextFormField>
+              <CardContent>
+                <div className="flex flex-col gap-4">
+                  <TextFormField
+                    disabled
+                    name={`${channelSlug}.currency`}
+                    label="Currency"
+                  >
+                    <FormDescription>
+                      Currency from the current channel.
+                    </FormDescription>
+                  </TextFormField>
 
-                <TextFormField name={`${slug}.apiKey`} label="API Key">
-                  <FormDescription>Stripe private API key.</FormDescription>
-                </TextFormField>
+                  <TextFormField
+                    name={`${channelSlug}.secretKey`}
+                    label="Private API Key"
+                  >
+                    <FormDescription>Stripe private API key.</FormDescription>
+                  </TextFormField>
 
-                <TextFormField
-                  name={`${slug}.webhookId`}
-                  label="Webhook Id"
-                  disabled
-                >
-                  <FormDescription>
-                    Unique identifier for the webhook endpoint object.
-                  </FormDescription>
-                </TextFormField>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+                  <TextFormField
+                    name={`${channelSlug}.publicKey`}
+                    label="Public API Key"
+                  >
+                    <FormDescription>
+                      Stripe publishable API key.
+                    </FormDescription>
+                  </TextFormField>
+
+                  <TextFormField
+                    name={`${channelSlug}.webhookId`}
+                    label="Webhook Id"
+                    disabled
+                  >
+                    <FormDescription>
+                      Unique identifier for the webhook endpoint object.
+                    </FormDescription>
+                  </TextFormField>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        )}
         <Button
+          loading={form.formState.isSubmitting}
+          disabled={isEmptyObject(data) || form.formState.isSubmitting}
           className="my-4 w-full"
           type="submit"
-          form="create-account-form"
         >
           Save
         </Button>
@@ -110,3 +121,26 @@ export const ConfigForm = () => {
     </Form>
   );
 };
+
+const fetchDefaultValues =
+  ({ accessToken, domain }: { accessToken: string; domain: string }) =>
+  async () => {
+    const data = await fetchDataAction({
+      accessToken,
+      domain,
+    });
+
+    const x = data.reduce<Schema>((acc, { channel, paymentGatewayConfig }) => {
+      acc[channel.slug] = {
+        currency: channel.currencyCode,
+        name: channel.name,
+        webhookId: paymentGatewayConfig.webhookId,
+        publicKey: paymentGatewayConfig.publicKey,
+        secretKey: paymentGatewayConfig.secretKey,
+      };
+
+      return acc;
+    }, {});
+
+    return x;
+  };

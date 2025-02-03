@@ -1,9 +1,13 @@
-import { type SaleorAppConfig } from "./schema";
+import { type PaymentGatewayConfig, type SaleorAppConfig } from "./schema";
 
 export type SaleorAppConfigProviderFactoryMethods<Config = SaleorAppConfig> = {
   createOrUpdate: (opts: Config) => Promise<Config>;
   getBySaleorAppId: (opts: { saleorAppId: string }) => Promise<Config | null>;
   getBySaleorDomain: (opts: { saleorDomain: string }) => Promise<Config | null>;
+  updatePaymentGatewayConfigBySaleorDomain: (opts: {
+    data: PaymentGatewayConfig;
+    saleorDomain: string;
+  }) => Promise<Config | null>;
 };
 
 export type SaleorAppConfigProviderFactory<

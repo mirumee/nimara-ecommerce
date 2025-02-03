@@ -31,14 +31,7 @@ const config = {
     "react-hooks/exhaustive-deps": "off",
     "react/jsx-curly-brace-presence": "error",
     // allow {} even though it's unsafe but comes handy
-    "@typescript-eslint/ban-types": [
-      "error",
-      {
-        types: {
-          "{}": false,
-        },
-      },
-    ],
+    "@typescript-eslint/no-empty-object-type": "off",
 
     "@typescript-eslint/no-unsafe-call": "off",
     "@typescript-eslint/no-unsafe-assignment": "off",

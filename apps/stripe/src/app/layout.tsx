@@ -1,5 +1,9 @@
 import "@nimara/ui/styles/globals";
 
+import { Toaster } from "@nimara/ui/components/toaster";
+
+import { SaleorAppBridgeInitializer } from "@/components/saleor-app-bridge-initializer";
+
 export default function RootLayout({
   children,
 }: {
@@ -8,7 +12,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <div className="container">{children}</div>
+        <div className="container">
+          <SaleorAppBridgeInitializer>{children}</SaleorAppBridgeInitializer>
+        </div>
+        <Toaster />
       </body>
     </html>
   );

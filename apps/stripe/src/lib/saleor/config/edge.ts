@@ -54,6 +54,35 @@ export const SaleorEdgeConfigProvider: SaleorAppConfigProviderFactory<
     });
   };
 
+  const __upsertData = async ({ config }: { config: SaleorAppConfig }) => {
+    const result = await fetch(
+      `${VERCEL_API_URL_BASE}/${vercelEdgeDatabaseId}/items?teamId=${vercelTeamId}`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${vercelAccessToken}`,
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify({
+          items: [
+            {
+              operation: "upsert",
+              key: configKey,
+              value: config,
+            },
+          ],
+        }),
+      },
+    );
+
+    if (!result.ok) {
+      throw new Error("Failed to update edge config.", {
+        cause: { status: result.status, text: result.statusText },
+      });
+    }
+  };
+
   const getBySaleorAppId: ConfigProviderMethods["getBySaleorAppId"] = async ({
     saleorAppId,
   }) => {
@@ -85,52 +114,48 @@ export const SaleorEdgeConfigProvider: SaleorAppConfigProviderFactory<
       allowedSaleorDomain: saleorDomain,
     });
 
-    let config = await getBySaleorDomain({
-      saleorDomain: opts.saleorDomain,
-    });
+    let config = await getBySaleorDomain({ saleorDomain: opts.saleorDomain });
 
     if (config) {
-      config.authToken = opts.authToken;
-      config.saleorAppId = opts.saleorAppId;
-      config.saleorDomain = opts.saleorDomain;
-      config.stripeConfig = opts.stripeConfig;
+      config = saleorAppConfig.parse({
+        authToken: opts.authToken,
+        saleorAppId: opts.saleorAppId,
+        saleorDomain: opts.saleorDomain,
+        paymentGatewayConfig: opts.paymentGatewayConfig,
+      });
     } else {
       config = saleorAppConfig.parse(opts);
     }
 
-    const result = await fetch(
-      `${VERCEL_API_URL_BASE}/${vercelEdgeDatabaseId}/items?teamId=${vercelTeamId}`,
-      {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${vercelAccessToken}`,
-          "Content-Type": "application/json",
-        },
+    await __upsertData({ config });
 
-        body: JSON.stringify({
-          items: [
-            {
-              operation: "upsert",
-              key: configKey,
-              value: config,
-            },
-          ],
-        }),
-      },
-    );
-
-    if (!result.ok) {
-      throw new Error("Failed to update edge config.", {
-        cause: { status: result.status, text: result.statusText },
-      });
-    }
-
-    return saleorAppConfig.parse(config);
+    return config;
   };
+
+  const updatePaymentGatewayConfigBySaleorDomain: ConfigProviderMethods["updatePaymentGatewayConfigBySaleorDomain"] =
+    async ({ saleorDomain, data }) => {
+      validateDomain({
+        saleorDomain: saleorDomain,
+        allowedSaleorDomain: saleorDomain,
+      });
+
+      const config = await getBySaleorDomain({ saleorDomain: saleorDomain });
+
+      if (!config) {
+        throw new Error(`Missing config for ${saleorDomain} domain.`);
+      }
+
+      config.paymentGatewayConfig = data;
+
+      await __upsertData({ config });
+
+      return config;
+    };
 
   return {
     getBySaleorAppId,
     getBySaleorDomain,
     createOrUpdate,
+    updatePaymentGatewayConfigBySaleorDomain,
   };
 };

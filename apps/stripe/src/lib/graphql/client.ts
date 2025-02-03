@@ -67,7 +67,7 @@ export const graphqlClient = <RevalidateTag extends string = string>(
       throw new GraphQLClientHttpError(message, {
         cause: {
           statusCode: response.status,
-          message: response.text,
+          message: response.statusText,
         },
       });
     }
@@ -98,7 +98,7 @@ export const graphqlClient = <RevalidateTag extends string = string>(
     logOperation(start);
 
     if (!isObject(responseJson) || !("data" in responseJson)) {
-      logger?.error(`Invalid json response: ${responseJson}`);
+      logger?.error("Invalid json response.", { ...responseJson });
       throw new GraphQLClientInvalidResponseError("Invalid json response.", {
         cause: { json: responseJson },
       });
@@ -114,6 +114,7 @@ export const graphqlClient = <RevalidateTag extends string = string>(
     );
 
     if (errors) {
+      console.log(errors);
       throw new GraphQLClientMultiGraphQLError(
         errors.map(
           (error) =>

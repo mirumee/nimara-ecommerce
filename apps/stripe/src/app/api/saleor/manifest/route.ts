@@ -11,6 +11,7 @@ export async function GET(request: Request) {
     name: CONFIG.APP_ID,
     permissions: [],
     tokenTargetUrl: `${host}/api/saleor/register`,
+    appUrl: `${host}/app`,
     webhooks: [],
   };
 
