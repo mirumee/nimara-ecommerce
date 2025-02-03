@@ -108,7 +108,7 @@ export const ReturnProductsForm = ({
           ))}
         </div>
         <div className="mt-6 flex justify-end gap-4">
-          <Button variant="secondary" onClick={onCancel}>
+          <Button type="button" variant="secondary" onClick={onCancel}>
             {t("common.cancel")}
           </Button>
           <Button
