@@ -8,5 +8,4 @@
   },
   "include": ["**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "**/*/*.d.ts"],
   "exclude": ["node_modules"]
-
 }

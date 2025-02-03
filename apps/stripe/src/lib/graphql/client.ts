@@ -45,6 +45,14 @@ export const graphqlClient = <RevalidateTag extends string = string>(
     };
     const { variables, options } = input ?? {};
     const stringQuery = query.toString();
+    const start = performance.now();
+
+    const logOperation = (start: DOMHighResTimeStamp) => {
+      logger?.info(`Executed ${getOperationName(stringQuery)} operation.`, {
+        took: (performance.now() - start).toFixed(2) + "ms",
+        variables,
+      });
+    };
 
     const response = await fetch(url, {
       ...options,
@@ -72,28 +80,7 @@ export const graphqlClient = <RevalidateTag extends string = string>(
       });
     }
 
-    const logOperation = (start: DOMHighResTimeStamp) => {
-      logger?.info(`Executed ${getOperationName(stringQuery)} operation.`, {
-        took: (performance.now() - start).toFixed(2) + "ms",
-        variables,
-      });
-    };
-
-    let responseJson: GraphQLResponse<TResult>;
-    const start = performance.now();
-
-    try {
-      responseJson = (await response.json()) as GraphQLResponse<TResult>;
-    } catch (err) {
-      logOperation(start);
-      logger?.error(`Invalid response: ${err}`);
-      throw new GraphQLClientInvalidResponseError(
-        `Error parsing response json: ${err}.`,
-        {
-          cause: { source: err },
-        },
-      );
-    }
+    const responseJson = (await response.json()) as GraphQLResponse<TResult>;
 
     logOperation(start);
 

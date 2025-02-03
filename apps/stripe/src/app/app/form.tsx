@@ -18,6 +18,7 @@ import { useToast } from "@nimara/ui/hooks";
 
 import { Spinner } from "@/components/spinner";
 import { isEmptyObject } from "@/lib/misc";
+import { type ParamsOf } from "@/lib/types";
 
 import { fetchDataAction } from "./actions/fetch-data-action";
 import { saveDataAction } from "./actions/save-data-action";
@@ -29,7 +30,7 @@ export const ConfigForm = () => {
 
   const form = useForm({
     resolver: zodResolver(schema),
-    defaultValues: fetchDefaultValues({
+    defaultValues: getDefaultValues({
       accessToken: appBridgeState!.token!,
       domain: appBridgeState!.domain,
     }),
@@ -46,6 +47,13 @@ export const ConfigForm = () => {
       toast({ description: error, variant: "destructive" });
     } else {
       toast({ description: "Configuration saved successfully." });
+
+      form.reset(
+        await getDefaultValues({
+          accessToken: appBridgeState!.token!,
+          domain: appBridgeState!.domain,
+        })(),
+      );
     }
   };
 
@@ -82,6 +90,7 @@ export const ConfigForm = () => {
                   <TextFormField
                     name={`${channelSlug}.secretKey`}
                     label="Private API Key"
+                    disabled={form.formState.isSubmitting}
                   >
                     <FormDescription>Stripe private API key.</FormDescription>
                   </TextFormField>
@@ -89,6 +98,7 @@ export const ConfigForm = () => {
                   <TextFormField
                     name={`${channelSlug}.publicKey`}
                     label="Public API Key"
+                    disabled={form.formState.isSubmitting}
                   >
                     <FormDescription>
                       Stripe publishable API key.
@@ -122,25 +132,6 @@ export const ConfigForm = () => {
   );
 };
 
-const fetchDefaultValues =
-  ({ accessToken, domain }: { accessToken: string; domain: string }) =>
-  async () => {
-    const data = await fetchDataAction({
-      accessToken,
-      domain,
-    });
-
-    const x = data.reduce<Schema>((acc, { channel, paymentGatewayConfig }) => {
-      acc[channel.slug] = {
-        currency: channel.currencyCode,
-        name: channel.name,
-        webhookId: paymentGatewayConfig.webhookId,
-        publicKey: paymentGatewayConfig.publicKey,
-        secretKey: paymentGatewayConfig.secretKey,
-      };
-
-      return acc;
-    }, {});
-
-    return x;
-  };
+// Server actions must be async thus a simple wrapper fn.
+const getDefaultValues = (opts: ParamsOf<typeof fetchDataAction>) => async () =>
+  fetchDataAction(opts);

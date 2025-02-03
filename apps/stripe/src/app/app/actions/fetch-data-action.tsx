@@ -5,6 +5,8 @@ import { type PaymentGatewayConfig } from "@/lib/saleor/config/schema";
 import { getConfigProvider } from "@/providers/config";
 import { getSaleorClient } from "@/providers/saleor";
 
+import { type Schema } from "../schema";
+
 export const fetchDataAction = async ({
   accessToken,
   domain,
@@ -17,21 +19,22 @@ export const fetchDataAction = async ({
   const data = await getSaleorClient({ authToken: accessToken }).execute(
     ChannelsQueryDocument,
   );
-
   const config = await configProvider.getBySaleorDomain({
     saleorDomain: domain,
   });
 
-  return (
-    data.channels?.map((channel) => {
-      const paymentGatewayConfig = (config?.paymentGatewayConfig?.[
-        channel.slug
-      ] ?? {}) as PaymentGatewayConfig[string];
+  return data.channels?.reduce<Schema>((acc, { currencyCode, name, slug }) => {
+    const paymentGatewayConfig = (config?.paymentGatewayConfig?.[slug] ??
+      {}) as PaymentGatewayConfig[string];
 
-      return {
-        channel,
-        paymentGatewayConfig,
-      };
-    }) ?? []
-  );
+    acc[slug] = {
+      currency: currencyCode,
+      name: name,
+      webhookId: paymentGatewayConfig.webhookId,
+      publicKey: paymentGatewayConfig.publicKey,
+      secretKey: paymentGatewayConfig.secretKey,
+    };
+
+    return acc;
+  }, {});
 };

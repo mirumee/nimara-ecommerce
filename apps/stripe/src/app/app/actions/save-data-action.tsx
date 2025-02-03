@@ -1,7 +1,10 @@
 "use server";
 
+import { headers } from "next/headers";
+
 import { verifyJWTSignature } from "@/lib/saleor/auth/jwt";
 import { type SaleorAppConfig } from "@/lib/saleor/config/schema";
+import { installWebhook, uninstallWebhook } from "@/lib/stripe/webhooks/util";
 import { getConfigProvider } from "@/providers/config";
 import { getJWKSProvider } from "@/providers/jwks";
 
@@ -24,14 +27,13 @@ export const saveDataAction = async ({
     return "Failed to verify JWT signature.";
   }
 
+  const appUrl = (await headers()).get("origin");
   const configProvider = getConfigProvider({ saleorDomain: domain });
-  const storedPaymentGatewayConfig =
-    (
-      await configProvider.getBySaleorDomain({
-        saleorDomain: domain,
-      })
-    )?.paymentGatewayConfig ?? {};
+  const appConfig = await configProvider.getBySaleorDomain({
+    saleorDomain: domain,
+  });
 
+  const storedPaymentGatewayConfig = appConfig?.paymentGatewayConfig ?? {};
   const updatedPaymentGatewayConfig = Object.entries(data).reduce<
     SaleorAppConfig["paymentGatewayConfig"]
   >((acc, [channelSlug, config]) => {
@@ -44,6 +46,27 @@ export const saveDataAction = async ({
 
     return acc;
   }, {});
+
+  if (appUrl) {
+    // Remove old webhooks in case of configuration change.
+    await Promise.all(
+      Object.values(updatedPaymentGatewayConfig).map(async (config) =>
+        uninstallWebhook({
+          configuration: config,
+          appUrl,
+        }),
+      ),
+    );
+    // Install new webhooks.
+    await Promise.all(
+      Object.values(updatedPaymentGatewayConfig).map(async (config) =>
+        installWebhook({
+          configuration: config,
+          appUrl,
+        }),
+      ),
+    );
+  }
 
   try {
     await configProvider.updatePaymentGatewayConfigBySaleorDomain({

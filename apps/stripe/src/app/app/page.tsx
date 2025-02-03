@@ -1,6 +1,3 @@
-import { AppBridgeProvider } from "@saleor/app-sdk/app-bridge";
-import { headers } from "next/headers";
-
 import {
   Card,
   CardDescription,
@@ -21,12 +18,8 @@ export default async function Page() {
           <CardDescription>
             App <strong>v{CONFIG.VERSION}</strong>
           </CardDescription>
-          <CardDescription>
-            Stripe API <strong>v{CONFIG.STRIPE_API_VERSION}</strong>
-          </CardDescription>
         </CardHeader>
       </Card>
-
       <ConfigForm />
     </div>
   );
