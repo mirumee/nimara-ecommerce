@@ -49,7 +49,7 @@ export const verifyWebhookSignature = async ({
   jwksProvider,
   forceRefresh = false,
 }: {
-  forceRefresh: boolean;
+  forceRefresh?: boolean;
   issuer: string;
   jwksProvider: JWSProvider;
   jws: string;

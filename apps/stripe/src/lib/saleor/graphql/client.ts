@@ -1,3 +1,5 @@
+import { loggingService } from "@nimara/infrastructure/logging/service";
+
 import { graphqlClient } from "@/lib/graphql/client";
 
 import { AppIdQueryDocument } from "./generated";
@@ -11,6 +13,7 @@ export const saleorClient: SaleorClientFactory = ({
   const client = graphqlClient(`${saleorUrl}/graphql/`, {
     authToken,
     timeout,
+    logger: loggingService,
   });
 
   const execute = client.execute;

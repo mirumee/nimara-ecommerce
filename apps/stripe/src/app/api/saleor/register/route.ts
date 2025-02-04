@@ -43,7 +43,10 @@ export async function POST(request: Request) {
   loggingService.info(`Installing app for ${saleorDomain}.`);
 
   const jwksProvider = getJWKSProvider();
-  const saleorClient = getSaleorClient({ authToken: saleorAuthToken });
+  const saleorClient = getSaleorClient({
+    saleorDomain,
+    authToken: saleorAuthToken,
+  });
   const configProvider = getConfigProvider({ saleorDomain });
 
   try {

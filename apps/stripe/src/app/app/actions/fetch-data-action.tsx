@@ -16,9 +16,10 @@ export const fetchDataAction = async ({
 }) => {
   const configProvider = getConfigProvider({ saleorDomain: domain });
 
-  const data = await getSaleorClient({ authToken: accessToken }).execute(
-    ChannelsQueryDocument,
-  );
+  const data = await getSaleorClient({
+    saleorDomain: domain,
+    authToken: accessToken,
+  }).execute(ChannelsQueryDocument);
   const config = await configProvider.getBySaleorDomain({
     saleorDomain: domain,
   });

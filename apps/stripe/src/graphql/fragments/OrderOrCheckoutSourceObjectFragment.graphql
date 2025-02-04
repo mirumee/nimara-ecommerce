@@ -7,18 +7,11 @@ fragment OrderOrCheckoutSourceObjectFragment on OrderOrCheckout {
       ...ChannelFragment
     }
     userEmail: email
-    billingAddress {
-      ...AddressFragment
-    }
-    shippingAddress {
-      ...AddressFragment
-    }
     total: totalPrice {
       gross {
         ...MoneyFragment
       }
     }
-    ...OrderOrCheckoutLineFragment
   }
   ... on Order {
     id
@@ -27,17 +20,10 @@ fragment OrderOrCheckoutSourceObjectFragment on OrderOrCheckout {
     channel {
       ...ChannelFragment
     }
-    billingAddress {
-      ...AddressFragment
-    }
-    shippingAddress {
-      ...AddressFragment
-    }
     total {
       gross {
         ...MoneyFragment
       }
     }
-    ...OrderOrCheckoutLineFragment
   }
 }

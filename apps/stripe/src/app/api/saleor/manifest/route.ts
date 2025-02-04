@@ -1,4 +1,5 @@
 import { CONFIG } from "@/config";
+import { PaymentGatewayInitializeSessionSubscriptionDocument } from "@/graphql/subscriptions/generated";
 import { getRequestOrigin } from "@/lib/http/request";
 import { type SaleorAppManifest } from "@/lib/saleor/types";
 
@@ -9,10 +10,18 @@ export async function GET(request: Request) {
     id: CONFIG.APP_ID,
     version: CONFIG.VERSION,
     name: CONFIG.APP_ID,
-    permissions: [],
+    permissions: ["HANDLE_PAYMENTS"],
     tokenTargetUrl: `${host}/api/saleor/register`,
     appUrl: `${host}/app`,
-    webhooks: [],
+    webhooks: [
+      {
+        query: PaymentGatewayInitializeSessionSubscriptionDocument.toString(),
+        name: "PaymentGatewayInitializeSession",
+        targetUrl: `${host}/api/saleor/webhooks/payment/gateway-initialize-session`,
+        syncEvents: ["PAYMENT_GATEWAY_INITIALIZE_SESSION"],
+        asyncEvents: [],
+      },
+    ],
   };
 
   return Response.json(manifest);

@@ -4,10 +4,14 @@ export type SaleorAppConfigProviderFactoryMethods<Config = SaleorAppConfig> = {
   createOrUpdate: (opts: Config) => Promise<Config>;
   getBySaleorAppId: (opts: { saleorAppId: string }) => Promise<Config | null>;
   getBySaleorDomain: (opts: { saleorDomain: string }) => Promise<Config | null>;
-  updatePaymentGatewayConfigBySaleorDomain: (opts: {
+  getPaymentGatewayConfigForChannel: (opts: {
+    channelSlug: string;
+    saleorDomain: string;
+  }) => Promise<PaymentGatewayConfig["string"]>;
+  updatePaymentGatewayConfig: (opts: {
     data: PaymentGatewayConfig;
     saleorDomain: string;
-  }) => Promise<Config | null>;
+  }) => Promise<PaymentGatewayConfig>;
 };
 
 export type SaleorAppConfigProviderFactory<

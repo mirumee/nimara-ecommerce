@@ -69,7 +69,7 @@ export const saveDataAction = async ({
   }
 
   try {
-    await configProvider.updatePaymentGatewayConfigBySaleorDomain({
+    await configProvider.updatePaymentGatewayConfig({
       saleorDomain: domain,
       data: updatedPaymentGatewayConfig,
     });

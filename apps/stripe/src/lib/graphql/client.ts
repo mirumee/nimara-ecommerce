@@ -1,4 +1,4 @@
-import { type LoggerService } from "@nimara/infrastructure/logging/types";
+import { type loggingService } from "@nimara/infrastructure/logging/service";
 
 import { isObject } from "@/lib/misc";
 
@@ -21,7 +21,7 @@ export type GraphqlClient<RevalidateTag extends string = string> = ReturnType<
 
 export type GraphqlClientOpts = {
   authToken?: string;
-  logger?: LoggerService;
+  logger?: typeof loggingService;
   timeout?: number;
 };
 
@@ -85,7 +85,7 @@ export const graphqlClient = <RevalidateTag extends string = string>(
     logOperation(start);
 
     if (!isObject(responseJson) || !("data" in responseJson)) {
-      logger?.error("Invalid json response.", { ...responseJson });
+      logger?.error("Invalid json response.", { responseJson, variables });
       throw new GraphQLClientInvalidResponseError("Invalid json response.", {
         cause: { json: responseJson },
       });
@@ -101,7 +101,7 @@ export const graphqlClient = <RevalidateTag extends string = string>(
     );
 
     if (errors) {
-      console.log(errors);
+      logger?.error("Graphql occurred error.", { data, errors, variables });
       throw new GraphQLClientMultiGraphQLError(
         errors.map(
           (error) =>

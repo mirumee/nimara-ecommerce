@@ -1,4 +1,8 @@
-import { type SaleorAppConfig, saleorAppConfig } from "./schema";
+import {
+  paymentGatewayConfig,
+  type SaleorAppConfig,
+  saleorAppConfig,
+} from "./schema";
 import type {
   SaleorAppConfigProviderFactory,
   SaleorAppConfigProviderFactoryMethods,
@@ -132,7 +136,7 @@ export const SaleorEdgeConfigProvider: SaleorAppConfigProviderFactory<
     return config;
   };
 
-  const updatePaymentGatewayConfigBySaleorDomain: ConfigProviderMethods["updatePaymentGatewayConfigBySaleorDomain"] =
+  const updatePaymentGatewayConfig: ConfigProviderMethods["updatePaymentGatewayConfig"] =
     async ({ saleorDomain, data }) => {
       validateDomain({
         saleorDomain: saleorDomain,
@@ -145,17 +149,40 @@ export const SaleorEdgeConfigProvider: SaleorAppConfigProviderFactory<
         throw new Error(`Missing config for ${saleorDomain} domain.`);
       }
 
-      config.paymentGatewayConfig = data;
+      config.paymentGatewayConfig = paymentGatewayConfig.parse(data);
 
       await __upsertData({ config });
 
-      return config;
+      return data;
+    };
+
+  const getPaymentGatewayConfigForChannel: ConfigProviderMethods["getPaymentGatewayConfigForChannel"] =
+    async ({ saleorDomain, channelSlug }) => {
+      validateDomain({
+        saleorDomain: saleorDomain,
+        allowedSaleorDomain: saleorDomain,
+      });
+
+      const config = await getBySaleorDomain({ saleorDomain: saleorDomain });
+
+      if (!config) {
+        throw new Error(`Missing config for ${saleorDomain} domain.`);
+      }
+
+      const paymentGatewayConfig = config["paymentGatewayConfig"][channelSlug];
+
+      if (!paymentGatewayConfig) {
+        throw new Error(`Missing config for ${saleorDomain} domain.`);
+      }
+
+      return paymentGatewayConfig;
     };
 
   return {
     getBySaleorAppId,
     getBySaleorDomain,
     createOrUpdate,
-    updatePaymentGatewayConfigBySaleorDomain,
+    updatePaymentGatewayConfig,
+    getPaymentGatewayConfigForChannel,
   };
 };
