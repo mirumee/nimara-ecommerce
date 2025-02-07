@@ -13,18 +13,30 @@ export const handleFiltersFormSubmit = async (
   formData: FormData,
 ) => {
   const formClear = formData.has("clear");
-  const params = new URLSearchParams();
+  const params = new URLSearchParams(searchParams);
   const locale = await getLocale();
 
-  formData.forEach((value, key) => {
-    if (key.startsWith("group")) {
-      const [k, v] = key.replace("group", "").split("-");
+  const filterKeys = new Set<string>();
 
-      params.set(k, params.getAll(k).concat(v).join("."));
-    } else if (value && typeof value === "string" && !formClear) {
-      params.set(key, value);
+  formData.forEach((_, key) => {
+    if (!passThroughParams.includes(key as any)) {
+      filterKeys.add(key);
     }
   });
+
+  if (formClear) {
+    filterKeys.forEach((key) => params.delete(key));
+  } else {
+    formData.forEach((value, key) => {
+      if (key.startsWith("group")) {
+        const [k, v] = key.replace("group", "").split("-");
+
+        params.set(k, params.getAll(k).concat(v).join("."));
+      } else if (value && typeof value === "string") {
+        params.set(key, value);
+      }
+    });
+  }
 
   passThroughParams.forEach((param) => {
     const formValue = formData.get(param) as string;
