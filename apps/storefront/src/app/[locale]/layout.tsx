@@ -1,5 +1,6 @@
 import "@nimara/ui/styles/globals";
 
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
@@ -44,6 +45,7 @@ export default async function LocaleLayout({
         <NextIntlClientProvider messages={messages}>
           <NuqsAdapter>
             {children}
+            <SpeedInsights />
             <Toaster />
             <ErrorServiceServer />
           </NuqsAdapter>
