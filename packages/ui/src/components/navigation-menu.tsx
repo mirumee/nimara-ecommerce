@@ -95,8 +95,10 @@ const NavigationMenuViewport = ({
 }: React.ComponentProps<typeof NavigationMenuPrimitive.Viewport>) => (
   <div className={cn("center absolute top-full flex w-full justify-center")}>
     <NavigationMenuPrimitive.Viewport
+      /* Removed `data-[state=open]:animate-in` and `data-[state=closed]:animate-out` to fix menu content jittering during animation transitions.
+      This is based on the GitHub issue: https://github.com/shadcn-ui/ui/issues/1351.*/
       className={cn(
-        "origin-top-center bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90 relative mt-1.5 h-[var(--radix-navigation-menu-viewport-height)] w-full max-w-screen-lg overflow-hidden rounded-md shadow-2xl",
+        "origin-top-center bg-popover text-popover-foreground data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90 relative mt-1.5 h-[var(--radix-navigation-menu-viewport-height)] w-full max-w-screen-lg overflow-hidden rounded-md shadow-2xl",
         className,
       )}
       {...props}
