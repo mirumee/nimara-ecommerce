@@ -18,7 +18,7 @@
     "@opentelemetry/instrumentation": "0.57.0",
     "@opentelemetry/sdk-logs": "0.57.0",
     "@sentry/integrations": "^7.114.0",
-    "@sentry/nextjs": "^8.47.0",
+    "@sentry/nextjs": "^8.49.0",
     "@sentry/types": "^8.47.0",
     "@svgr/webpack": "8.1.0",
     "@uidotdev/usehooks": "2.4.1",
