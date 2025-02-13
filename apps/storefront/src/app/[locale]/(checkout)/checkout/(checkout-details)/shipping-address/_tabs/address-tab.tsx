@@ -65,6 +65,7 @@ export function AddressTab({
             countryCode={countryCode}
             countries={countries}
             addressFormRows={addressFormRows}
+            addresses={addresses}
           />
         ) : (
           <Tabs
@@ -108,6 +109,7 @@ export function AddressTab({
                 countryCode={countryCode}
                 countries={countries}
                 addressFormRows={addressFormRows}
+                addresses={addresses}
               />
             </TabsContent>
           </Tabs>
