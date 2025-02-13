@@ -65,7 +65,7 @@ export function AddressTab({
             countryCode={countryCode}
             countries={countries}
             addressFormRows={addressFormRows}
-            addresses={addresses}
+            shouldSaveForFuture={!!addresses.length}
           />
         ) : (
           <Tabs
@@ -109,7 +109,7 @@ export function AddressTab({
                 countryCode={countryCode}
                 countries={countries}
                 addressFormRows={addressFormRows}
-                addresses={addresses}
+                shouldSaveForFuture={!!addresses.length}
               />
             </TabsContent>
           </Tabs>

@@ -15,7 +15,6 @@ import { useToast } from "@nimara/ui/hooks";
 
 import { AddressForm } from "@/components/address-form/address-form";
 import { CheckboxField } from "@/components/form/checkbox-field";
-import type { FormattedAddress } from "@/lib/checkout";
 import { isGlobalError } from "@/lib/errors";
 import { useRouterWithState } from "@/lib/hooks";
 import { paths } from "@/lib/paths";
@@ -25,16 +24,16 @@ import { type FormSchema, formSchema } from "./schema";
 
 export const CreateShippingAddressForm = ({
   addressFormRows,
-  addresses,
+  shouldSaveForFuture,
   checkout,
   countries,
   countryCode,
 }: {
   addressFormRows: readonly AddressFormRow[];
-  addresses: FormattedAddress[];
   checkout: Checkout;
   countries: Omit<CountryDisplay, "vat">[];
   countryCode: CountryCode;
+  shouldSaveForFuture: boolean;
 }) => {
   const t = useTranslations();
 
@@ -99,7 +98,7 @@ export const CreateShippingAddressForm = ({
             onCountryChange={setIsCountryChanging}
           />
         </div>
-        {addresses?.length && (
+        {shouldSaveForFuture && (
           <CheckboxField
             className="py-0"
             name="saveForFutureUse"
