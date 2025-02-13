@@ -59,6 +59,10 @@ export type PaymentGatewayRecipientFragment = { id: string, privateMetadata: Arr
 
 export type TaxedMoneyFragment = { net: OrderOrCheckoutLineFragment_Checkout_shippingPrice_TaxedMoney_net_Money, gross: OrderOrCheckoutLineFragment_Checkout_shippingPrice_TaxedMoney_gross_Money, tax: OrderOrCheckoutLineFragment_Checkout_shippingPrice_TaxedMoney_tax_Money };
 
+export type TransactionItemFragment = { id: string, pspReference: string };
+
+export type TransactionProcessActionFragment = { amount: number, currency: string, actionType: Types.TransactionFlowStrategyEnum };
+
 export class TypedDocumentString<TResult, TVariables>
   extends String
   implements DocumentTypeDecoration<TResult, TVariables>
@@ -179,3 +183,16 @@ export const PaymentGatewayRecipientFragment = new TypedDocumentString(`
   }
 }
     `, {"fragmentName":"PaymentGatewayRecipientFragment"}) as unknown as TypedDocumentString<PaymentGatewayRecipientFragment, unknown>;
+export const TransactionItemFragment = new TypedDocumentString(`
+    fragment TransactionItemFragment on TransactionItem {
+  id
+  pspReference
+}
+    `, {"fragmentName":"TransactionItemFragment"}) as unknown as TypedDocumentString<TransactionItemFragment, unknown>;
+export const TransactionProcessActionFragment = new TypedDocumentString(`
+    fragment TransactionProcessActionFragment on TransactionProcessAction {
+  amount
+  currency
+  actionType
+}
+    `, {"fragmentName":"TransactionProcessActionFragment"}) as unknown as TypedDocumentString<TransactionProcessActionFragment, unknown>;

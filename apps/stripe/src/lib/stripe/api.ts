@@ -3,13 +3,15 @@ import Stripe from "stripe";
 import { StripeWebhookEvent } from "./const";
 import { getGatewayMetadata } from "./util";
 
-const getStripeApi = (apiKey: string) => new Stripe(apiKey);
+export const getStripeApi = (apiKey: string) => new Stripe(apiKey);
 
 export const webhookSubscribe = async ({
   apiKey,
   url,
+  saleorDomain,
 }: {
   apiKey: string;
+  saleorDomain: string;
   url: string;
 }) => {
   const stripe = getStripeApi(apiKey);
@@ -17,7 +19,7 @@ export const webhookSubscribe = async ({
   return stripe.webhookEndpoints.create({
     url,
     enabled_events: Object.values(StripeWebhookEvent),
-    metadata: getGatewayMetadata(),
+    metadata: getGatewayMetadata({ saleorDomain }),
   });
 };
 

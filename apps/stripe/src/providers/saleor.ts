@@ -1,11 +1,10 @@
 import { CONFIG } from "@/config";
-import { saleorClient } from "@/lib/saleor/graphql/client";
-import { type SaleorClientFactoryOpts } from "@/lib/saleor/graphql/types";
+import { saleorClient, type SaleorClientOpts } from "@/lib/saleor/client";
 
 export const getSaleorClient = ({
   saleorDomain,
   ...opts
-}: Omit<SaleorClientFactoryOpts, "saleorUrl" | "timeout" | "logger"> & {
+}: Omit<SaleorClientOpts, "saleorUrl" | "timeout"> & {
   saleorDomain: string;
 }) => {
   if (saleorDomain !== CONFIG.SALEOR_DOMAIN) {

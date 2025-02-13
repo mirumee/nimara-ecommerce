@@ -1,8 +1,8 @@
 import { type JWSProvider } from "@/lib/jwks/types";
 
+import { type SaleorClient } from "../client";
 import { type SaleorAppConfigProvider } from "../config/types";
 import { SaleorAppInstallationError } from "../error";
-import { type SaleorClient } from "../graphql/types";
 
 export const installApp = async ({
   configProvider,

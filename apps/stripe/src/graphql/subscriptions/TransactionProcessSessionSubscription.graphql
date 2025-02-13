@@ -1,6 +1,6 @@
-subscription TransactionInitializeSessionSubscription {
+subscription TransactionProcessSessionSubscription {
   event {
-    ... on TransactionInitializeSession {
+    ... on TransactionProcessSession {
       recipient {
         ...PaymentGatewayRecipientFragment
       }

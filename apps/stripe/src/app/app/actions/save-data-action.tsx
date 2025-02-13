@@ -4,20 +4,21 @@ import { headers } from "next/headers";
 
 import { verifyJWTSignature } from "@/lib/saleor/auth/jwt";
 import { type SaleorAppConfig } from "@/lib/saleor/config/schema";
-import { installWebhook, uninstallWebhook } from "@/lib/stripe/webhooks/util";
+import { installWebhook, uninstallWebhooks } from "@/lib/stripe/webhooks/util";
 import { getConfigProvider } from "@/providers/config";
 import { getJWKSProvider } from "@/providers/jwks";
+import { getLoggingProvider } from "@/providers/logging";
 
 import { type Schema } from "../schema";
 
 export const saveDataAction = async ({
   data,
   accessToken,
-  domain,
+  saleorDomain,
 }: {
   accessToken: string;
   data: Schema;
-  domain: string;
+  saleorDomain: string;
 }) => {
   const jwksProvider = getJWKSProvider();
 
@@ -28,10 +29,11 @@ export const saveDataAction = async ({
   }
 
   const appUrl = (await headers()).get("origin");
-  const configProvider = getConfigProvider({ saleorDomain: domain });
+  const configProvider = getConfigProvider({ saleorDomain });
   const appConfig = await configProvider.getBySaleorDomain({
-    saleorDomain: domain,
+    saleorDomain,
   });
+  const logger = getLoggingProvider();
 
   const storedPaymentGatewayConfig = appConfig?.paymentGatewayConfig ?? {};
   const updatedPaymentGatewayConfig = Object.entries(data).reduce<
@@ -51,9 +53,10 @@ export const saveDataAction = async ({
     // Remove old webhooks in case of configuration change.
     await Promise.all(
       Object.values(updatedPaymentGatewayConfig).map(async (config) =>
-        uninstallWebhook({
+        uninstallWebhooks({
           configuration: config,
           appUrl,
+          logger,
         }),
       ),
     );
@@ -63,6 +66,7 @@ export const saveDataAction = async ({
         installWebhook({
           configuration: config,
           appUrl,
+          logger,
         }),
       ),
     );
@@ -70,7 +74,7 @@ export const saveDataAction = async ({
 
   try {
     await configProvider.updatePaymentGatewayConfig({
-      saleorDomain: domain,
+      saleorDomain,
       data: updatedPaymentGatewayConfig,
     });
   } catch (err) {

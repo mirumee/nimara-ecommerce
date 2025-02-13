@@ -1,6 +1,16 @@
 import type * as Types from '@nimara/codegen/schema';
 
 import type { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
+export type AppIdQuery_app_App = { id: string };
+
+export type AppIdQuery_Query = { app: AppIdQuery_app_App | null };
+
+
+export type AppIdQueryVariables = Types.Exact<{ [key: string]: never; }>;
+
+
+export type AppIdQuery = AppIdQuery_Query;
+
 export type ChannelsQuery_channels_Channel = { id: string, slug: string, name: string, currencyCode: string };
 
 export type ChannelsQuery_Query = { channels: Array<ChannelsQuery_channels_Channel> | null };
@@ -26,6 +36,13 @@ export class TypedDocumentString<TResult, TVariables>
   }
 }
 
+export const AppIdQueryDocument = new TypedDocumentString(`
+    query AppIdQuery {
+  app {
+    id
+  }
+}
+    `) as unknown as TypedDocumentString<AppIdQuery, AppIdQueryVariables>;
 export const ChannelsQueryDocument = new TypedDocumentString(`
     query ChannelsQuery {
   channels {

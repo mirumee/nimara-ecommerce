@@ -40,7 +40,7 @@ export const ConfigForm = () => {
     const error = await saveDataAction({
       data,
       accessToken: appBridgeState!.token!,
-      domain: appBridgeState!.domain,
+      saleorDomain: appBridgeState!.domain,
     });
 
     if (error) {
@@ -89,31 +89,27 @@ export const ConfigForm = () => {
 
                   <TextFormField
                     name={`${channelSlug}.secretKey`}
-                    label="Private API Key"
+                    label="Private API key"
                     disabled={form.formState.isSubmitting}
-                  >
-                    <FormDescription>Stripe private API key.</FormDescription>
-                  </TextFormField>
+                  ></TextFormField>
 
                   <TextFormField
                     name={`${channelSlug}.publicKey`}
-                    label="Public API Key"
+                    label="Public API key"
                     disabled={form.formState.isSubmitting}
-                  >
-                    <FormDescription>
-                      Stripe publishable API key.
-                    </FormDescription>
-                  </TextFormField>
+                  ></TextFormField>
 
                   <TextFormField
                     name={`${channelSlug}.webhookId`}
-                    label="Webhook Id"
+                    label="Webhook id"
                     disabled
-                  >
-                    <FormDescription>
-                      Unique identifier for the webhook endpoint object.
-                    </FormDescription>
-                  </TextFormField>
+                  ></TextFormField>
+
+                  <TextFormField
+                    name={`${channelSlug}.webhookSecretKey`}
+                    label="Webhook secret key"
+                    disabled
+                  ></TextFormField>
                 </div>
               </CardContent>
             </Card>

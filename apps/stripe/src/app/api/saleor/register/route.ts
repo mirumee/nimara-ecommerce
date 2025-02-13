@@ -1,12 +1,11 @@
 import { z } from "zod";
 
-import { loggingService } from "@nimara/infrastructure/logging/service";
-
 import { CONFIG } from "@/config";
 import { installApp } from "@/lib/saleor/app/install";
 import { saleorHeaders } from "@/lib/saleor/headers";
 import { getConfigProvider } from "@/providers/config";
 import { getJWKSProvider } from "@/providers/jwks";
+import { getLoggingProvider } from "@/providers/logging";
 import { getSaleorClient } from "@/providers/saleor";
 
 export async function POST(request: Request) {
@@ -40,14 +39,16 @@ export async function POST(request: Request) {
   const saleorAuthToken = body.data.auth_token;
   const saleorDomain = headers.data["saleor-domain"];
 
-  loggingService.info(`Installing app for ${saleorDomain}.`);
-
+  const logger = getLoggingProvider();
   const jwksProvider = getJWKSProvider();
   const saleorClient = getSaleorClient({
     saleorDomain,
     authToken: saleorAuthToken,
+    logger,
   });
   const configProvider = getConfigProvider({ saleorDomain });
+
+  logger.info(`Installing app for ${saleorDomain}.`);
 
   try {
     await installApp({
@@ -62,7 +63,7 @@ export async function POST(request: Request) {
     if (err instanceof Error) {
       console.error(err);
 
-      loggingService.error(`Failed to install for ${saleorDomain}.`, {
+      logger.error(`Failed to install for ${saleorDomain}.`, {
         error: err.message,
         cause: err.cause,
       });
@@ -85,7 +86,7 @@ export async function POST(request: Request) {
     );
   }
 
-  loggingService.info(`Installation successful for ${saleorDomain}.`);
+  logger.info(`Installation successful for ${saleorDomain}.`);
 
   return Response.json({ status: "ok" });
 }

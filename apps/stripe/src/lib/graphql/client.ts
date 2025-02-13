@@ -1,6 +1,5 @@
-import { type loggingService } from "@nimara/infrastructure/logging/service";
-
 import { isObject } from "@/lib/misc";
+import { type getLoggingProvider } from "@/providers/logging";
 
 import {
   GraphQLClientHttpError,
@@ -21,7 +20,7 @@ export type GraphqlClient<RevalidateTag extends string = string> = ReturnType<
 
 export type GraphqlClientOpts = {
   authToken?: string;
-  logger?: typeof loggingService;
+  logger?: ReturnType<typeof getLoggingProvider>;
   timeout?: number;
 };
 

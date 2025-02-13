@@ -1,51 +1,7 @@
 import { type PaymentGatewayInitializeSessionSubscription } from "@/graphql/subscriptions/generated";
-import { verifyWebhookSignature } from "@/lib/saleor/auth/jwt";
-import { saleorWebhookHeaders } from "@/lib/saleor/headers";
+import { type WebhookData } from "@/lib/saleor/webhooks/types";
+import { verifySaleorWebhookSignature } from "@/lib/saleor/webhooks/util";
 import { getConfigProvider } from "@/providers/config";
-import { getJWKSProvider } from "@/providers/jwks";
-
-const verifySaleorWebhookSignature = async ({
-  payload,
-  headers,
-}: {
-  headers: Request["headers"];
-  payload: string;
-}) => {
-  const { data, success, error } = saleorWebhookHeaders.safeParse(
-    Object.fromEntries(headers.entries()),
-  );
-
-  if (!success) {
-    return {
-      headers: null,
-      error: { context: "headers", errors: error.errors },
-    };
-  }
-
-  const jwksProvider = getJWKSProvider();
-
-  try {
-    await verifyWebhookSignature({
-      jws: data["saleor-signature"],
-      jwksProvider,
-      payload,
-      issuer: data["saleor-api-url"],
-    });
-  } catch (err) {
-    let message = "Signature verification failed";
-
-    if (err instanceof Error) {
-      message = err.message;
-    }
-
-    return {
-      headers: null,
-      error: { context: "signature", errors: { message } },
-    };
-  }
-
-  return { headers: data, error: null };
-};
 
 export async function POST(request: Request) {
   const { headers, error } = await verifySaleorWebhookSignature({
@@ -57,9 +13,8 @@ export async function POST(request: Request) {
     return Response.json(error, { status: 400 });
   }
 
-  const json = (await request.json()) as NonNullable<
-    PaymentGatewayInitializeSessionSubscription["event"]
-  >;
+  const json =
+    (await request.json()) as WebhookData<PaymentGatewayInitializeSessionSubscription>;
   const configProvider = getConfigProvider({
     saleorDomain: headers["saleor-domain"],
   });

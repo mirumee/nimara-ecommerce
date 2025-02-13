@@ -8,6 +8,7 @@ export const schema = z.record(
     secretKey: z.string().min(1),
     publicKey: z.string().min(1),
     webhookId: z.string().optional(),
+    webhookSecretKey: z.string().optional(),
   }),
 );
 

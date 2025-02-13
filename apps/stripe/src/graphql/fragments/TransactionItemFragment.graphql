@@ -1,0 +1,4 @@
+fragment TransactionItemFragment on TransactionItem {
+  id
+  pspReference
+}

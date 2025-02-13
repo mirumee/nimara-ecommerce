@@ -2,6 +2,7 @@
 
 import { ChannelsQueryDocument } from "@/graphql/queries/generated";
 import { type PaymentGatewayConfig } from "@/lib/saleor/config/schema";
+import { maskString } from "@/lib/security";
 import { getConfigProvider } from "@/providers/config";
 import { getSaleorClient } from "@/providers/saleor";
 
@@ -32,6 +33,9 @@ export const fetchDataAction = async ({
       currency: currencyCode,
       name: name,
       webhookId: paymentGatewayConfig.webhookId,
+      webhookSecretKey: paymentGatewayConfig.webhookSecretKey
+        ? maskString({ str: paymentGatewayConfig.webhookSecretKey })
+        : undefined,
       publicKey: paymentGatewayConfig.publicKey,
       secretKey: paymentGatewayConfig.secretKey,
     };

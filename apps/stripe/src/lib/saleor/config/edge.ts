@@ -1,3 +1,5 @@
+import merge from "lodash/merge";
+
 import {
   paymentGatewayConfig,
   type SaleorAppConfig,
@@ -125,7 +127,10 @@ export const SaleorEdgeConfigProvider: SaleorAppConfigProviderFactory<
         authToken: opts.authToken,
         saleorAppId: opts.saleorAppId,
         saleorDomain: opts.saleorDomain,
-        paymentGatewayConfig: opts.paymentGatewayConfig,
+        paymentGatewayConfig: merge(
+          config.paymentGatewayConfig,
+          opts.paymentGatewayConfig,
+        ),
       });
     } else {
       config = saleorAppConfig.parse(opts);
