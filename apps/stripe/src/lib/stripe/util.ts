@@ -7,6 +7,7 @@ import {
 } from "@nimara/codegen/schema";
 
 import { CONFIG } from "@/config";
+import { all } from "@/lib/misc";
 
 import {
   StripeMetaKey,
@@ -18,6 +19,16 @@ type OptionalKeys = Omit<
   typeof StripeMetaKey,
   "ENVIRONMENT" | "ISSUER"
 >[keyof Omit<typeof StripeMetaKey, "ENVIRONMENT" | "ISSUER">];
+
+export const isAppEvent = (event: SupportedStripeWebhookEvent) => {
+  const issuerMatch =
+    event.data.object.metadata?.[StripeMetaKey.ISSUER] === CONFIG.APP_ID;
+  const environmentMatch =
+    event.data.object.metadata?.[StripeMetaKey.ENVIRONMENT] ===
+    CONFIG.ENVIRONMENT;
+
+  return all([issuerMatch, environmentMatch]);
+};
 
 export const getGatewayMetadata = (
   metadata: Partial<Record<OptionalKeys, string>>,

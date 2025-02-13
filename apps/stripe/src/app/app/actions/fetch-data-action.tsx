@@ -34,7 +34,10 @@ export const fetchDataAction = async ({
       name: name,
       webhookId: paymentGatewayConfig.webhookId,
       webhookSecretKey: paymentGatewayConfig.webhookSecretKey
-        ? maskString({ str: paymentGatewayConfig.webhookSecretKey })
+        ? maskString({
+            visibleChars: 10,
+            str: paymentGatewayConfig.webhookSecretKey,
+          })
         : undefined,
       publicKey: paymentGatewayConfig.publicKey,
       secretKey: paymentGatewayConfig.secretKey,

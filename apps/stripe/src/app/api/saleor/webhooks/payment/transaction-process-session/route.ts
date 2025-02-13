@@ -27,10 +27,17 @@ export async function POST(request: Request) {
   const saleorDomain = headers["saleor-domain"];
 
   const configProvider = getConfigProvider({ saleorDomain });
-  const gatewayConfig = await configProvider.getPaymentGatewayConfigForChannel({
-    saleorDomain: headers["saleor-domain"],
-    channelSlug: json.sourceObject.channel.slug,
-  });
+  let gatewayConfig;
+
+  try {
+    gatewayConfig = await configProvider.getPaymentGatewayConfigForChannel({
+      saleorDomain: headers["saleor-domain"],
+      channelSlug: json.sourceObject.channel.slug,
+    });
+  } catch {
+    return Response.json({ errors: [""] }, { status: 42 });
+  }
+
   const stripe = getStripeApi(gatewayConfig.secretKey);
 
   let intent;

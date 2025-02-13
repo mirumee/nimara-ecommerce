@@ -62,12 +62,15 @@ export const saveDataAction = async ({
     );
     // Install new webhooks.
     await Promise.all(
-      Object.values(updatedPaymentGatewayConfig).map(async (config) =>
-        installWebhook({
-          configuration: config,
-          appUrl,
-          logger,
-        }),
+      Object.entries(updatedPaymentGatewayConfig).map(
+        async ([channel, config]) =>
+          installWebhook({
+            channel,
+            configuration: config,
+            appUrl,
+            saleorDomain,
+            logger,
+          }),
       ),
     );
   }

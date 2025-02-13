@@ -17,8 +17,10 @@ export const installWebhook = async ({
   appUrl,
   logger,
   saleorDomain,
+  channel,
 }: {
   appUrl: string;
+  channel: string;
   configuration: PaymentGatewayConfig[string];
   logger: Logger;
   saleorDomain: string;
@@ -35,7 +37,7 @@ export const installWebhook = async ({
     return;
   }
 
-  const url = `${appUrl}/api/stripe/webhooks`;
+  const url = `${appUrl}/api/stripe/${channel}/webhooks`;
   const result = await api.webhookSubscribe({
     apiKey: configuration.secretKey,
     url,
@@ -44,7 +46,7 @@ export const installWebhook = async ({
 
   if (result) {
     configuration.webhookId = result.id;
-    configuration.webhookSecretKey = result.id;
+    configuration.webhookSecretKey = result.secret;
   }
 };
 
