@@ -23,15 +23,17 @@ import { createCheckoutShippingAddress } from "./actions";
 import { type FormSchema, formSchema } from "./schema";
 
 export const CreateShippingAddressForm = ({
+  addressFormRows,
+  shouldSaveForFuture,
   checkout,
   countries,
-  addressFormRows,
   countryCode,
 }: {
   addressFormRows: readonly AddressFormRow[];
   checkout: Checkout;
   countries: Omit<CountryDisplay, "vat">[];
   countryCode: CountryCode;
+  shouldSaveForFuture: boolean;
 }) => {
   const t = useTranslations();
 
@@ -96,11 +98,13 @@ export const CreateShippingAddressForm = ({
             onCountryChange={setIsCountryChanging}
           />
         </div>
-        <CheckboxField
-          className="py-0"
-          name="saveForFutureUse"
-          label={t("address.save-address-for-future")}
-        />
+        {shouldSaveForFuture && (
+          <CheckboxField
+            className="py-0"
+            name="saveForFutureUse"
+            label={t("address.save-address-for-future")}
+          />
+        )}
         <Button
           className="ml-auto"
           type="submit"
