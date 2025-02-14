@@ -26,38 +26,6 @@ const nextConfig: NextConfig = {
     if (isServer) {
       config.ignoreWarnings = [{ module: /opentelemetry/ }];
     }
-    config.module.rules.push({
-      test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-      use: [
-        {
-          loader: "@svgr/webpack",
-          options: {
-            prettier: true,
-            svgo: true,
-            svgoConfig: {
-              plugins: [
-                {
-                  name: "preset-default",
-                  cleanupIDs: false,
-                  convertShapeToPath: false,
-                  removeDimensions: true,
-                  removeViewBox: false,
-                  removeXMLNS: true,
-                },
-              ],
-            },
-          },
-        },
-        {
-          loader: "file-loader",
-          options: {
-            name: "[name].[ext]",
-            outputPath: "static/images/",
-            publicPath: "/_next/static/images/",
-          },
-        },
-      ],
-    });
 
     return config;
   },

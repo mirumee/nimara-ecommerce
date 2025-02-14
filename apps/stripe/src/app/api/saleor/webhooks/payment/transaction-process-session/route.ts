@@ -29,17 +29,16 @@ export async function POST(request: Request) {
     } as ResponseSchema);
   }
 
-  const json =
+  const event =
     (await request.json()) as WebhookData<TransactionProcessSessionSubscription>;
   const saleorDomain = headers["saleor-domain"];
-
   const configProvider = getConfigProvider({ saleorDomain });
   let gatewayConfig;
 
   try {
     gatewayConfig = await configProvider.getPaymentGatewayConfigForChannel({
       saleorDomain: headers["saleor-domain"],
-      channelSlug: json.sourceObject.channel.slug,
+      channelSlug: event.sourceObject.channel.slug,
     });
   } catch (err) {
     const errors = isError(err) ? [{ message: err.message }] : [];
@@ -52,32 +51,35 @@ export async function POST(request: Request) {
   }
 
   const stripe = getStripeApi(gatewayConfig.secretKey);
-  const extraMetadata = (json.data as { metadata?: Record<string, string> })
+  const extraMetadata = (event.data as { metadata?: Record<string, string> })
     ?.metadata;
   let intent;
 
-  if (json.data) {
-    intent = await stripe.paymentIntents.update(json.transaction.pspReference, {
-      ...(json.data as {}),
-      amount: getCentsFromAmount(json.sourceObject.total.gross),
-      currency: json.sourceObject.total.gross.currency,
-      capture_method:
-        json.action.actionType === "CHARGE" ? "automatic" : "manual",
-      metadata: getGatewayMetadata({
-        saleorDomain,
-        transactionId: json.transaction.id,
-        channelSlug: json.sourceObject.channel.slug,
-        ...extraMetadata,
-      }),
-    });
+  if (event.data) {
+    intent = await stripe.paymentIntents.update(
+      event.transaction.pspReference,
+      {
+        ...(event.data as {}),
+        amount: getCentsFromAmount(event.sourceObject.total.gross),
+        currency: event.sourceObject.total.gross.currency,
+        capture_method:
+          event.action.actionType === "CHARGE" ? "automatic" : "manual",
+        metadata: getGatewayMetadata({
+          saleorDomain,
+          transactionId: event.transaction.id,
+          channelSlug: event.sourceObject.channel.slug,
+          ...extraMetadata,
+        }),
+      },
+    );
   } else {
     intent = await stripe.paymentIntents.retrieve(
-      json.transaction.pspReference,
+      event.transaction.pspReference,
     );
   }
 
   const result = mapStatusToActionType({
-    actionType: json.action.actionType,
+    actionType: event.action.actionType,
     status: intent.status,
   });
 

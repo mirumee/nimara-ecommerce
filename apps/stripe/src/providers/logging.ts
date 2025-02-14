@@ -1,6 +1,8 @@
-import { loggingService } from "@nimara/infrastructure/logging/service";
+import {
+  getLoggingService,
+  type loggingService,
+} from "@nimara/infrastructure/logging/service";
 
-// TODO: Add proper logging provider.
-export const getLoggingProvider = () => loggingService;
+export const getLoggingProvider = () => getLoggingService({ name: "stripe" });
 
 export type Logger = typeof loggingService;

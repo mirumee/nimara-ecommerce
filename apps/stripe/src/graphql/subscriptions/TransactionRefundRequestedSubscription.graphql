@@ -1,0 +1,15 @@
+subscription TransactionRefundRequestedSubscription {
+  event {
+    ... on TransactionRefundRequested {
+      recipient {
+        ...PaymentGatewayRecipientFragment
+      }
+      action {
+        ...TransactionActionFragment
+      }
+      # transaction {
+      #   ...OrderOrCheckoutFragment
+      # }
+    }
+  }
+}

@@ -94,7 +94,7 @@ const getAvailableActionsForType = (
 
 const getRefundUpdatedEventType = (
   intent: Stripe.Refund,
-): TransactionEventTypeEnum => {
+): TransactionEventTypeEnum | null => {
   switch (intent.status) {
     case "canceled":
       return "REFUND_FAILURE";
@@ -104,7 +104,7 @@ const getRefundUpdatedEventType = (
     case "succeeded":
       return "REFUND_SUCCESS";
     default:
-      throw new Error(`Unhandled refund status: ${intent.status}`);
+      return null;
   }
 };
 

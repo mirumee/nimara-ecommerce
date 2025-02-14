@@ -39,6 +39,10 @@ export async function POST(request: Request) {
   } catch (err) {
     const errors = isError(err) ? [{ message: err.message }] : [];
 
+    console.log("-----------------------------------------------------");
+    console.log(err);
+    console.log("-----------------------------------------------------");
+
     return ResponseError({
       description: "Missing gateway configuration for channel.",
       errors,
@@ -93,6 +97,10 @@ export async function POST(request: Request) {
       "Failed to construct TransactionInitializeSession event response.";
 
     logger.error(message, { errors: eventResult.error.issues });
+
+    console.log("-----------------------------------------------------");
+    console.log(eventResult);
+    console.log("-----------------------------------------------------");
 
     return ResponseError({
       description: message,

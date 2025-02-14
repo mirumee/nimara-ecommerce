@@ -1,7 +1,5 @@
-fragment TransactionItemFragment on TransactionItem {
-  id
-  pspReference
-  checkout {
+fragment OrderOrCheckoutFragment on OrderOrCheckout {
+  ... on Checkout {
     id
     languageCode
     channel {
@@ -14,7 +12,7 @@ fragment TransactionItemFragment on TransactionItem {
       }
     }
   }
-  order {
+  ... on Order {
     id
     languageCodeEnum
     userEmail

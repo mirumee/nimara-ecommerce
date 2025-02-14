@@ -45,7 +45,23 @@ export type TransactionInitializeSessionSubscription_event_TransactionInitialize
 
 export type TransactionInitializeSessionSubscription_event_TransactionInitializeSession_action_TransactionProcessAction = { amount: number, currency: string, actionType: Types.TransactionFlowStrategyEnum };
 
-export type TransactionInitializeSessionSubscription_event_TransactionInitializeSession_transaction_TransactionItem = { id: string, pspReference: string };
+export type TransactionInitializeSessionSubscription_event_TransactionInitializeSession_transaction_TransactionItem_checkout_Checkout_channel_Channel = { id: string, slug: string, name: string, currencyCode: string };
+
+export type TransactionInitializeSessionSubscription_event_TransactionInitializeSession_transaction_TransactionItem_checkout_Checkout_total_TaxedMoney_gross_Money = { currency: string, amount: number };
+
+export type TransactionInitializeSessionSubscription_event_TransactionInitializeSession_transaction_TransactionItem_checkout_Checkout_total_TaxedMoney = { gross: TransactionInitializeSessionSubscription_event_TransactionInitializeSession_transaction_TransactionItem_checkout_Checkout_total_TaxedMoney_gross_Money };
+
+export type TransactionInitializeSessionSubscription_event_TransactionInitializeSession_transaction_TransactionItem_checkout_Checkout = { id: string, languageCode: Types.LanguageCodeEnum, userEmail: string | null, channel: TransactionInitializeSessionSubscription_event_TransactionInitializeSession_transaction_TransactionItem_checkout_Checkout_channel_Channel, total: TransactionInitializeSessionSubscription_event_TransactionInitializeSession_transaction_TransactionItem_checkout_Checkout_total_TaxedMoney };
+
+export type TransactionInitializeSessionSubscription_event_TransactionInitializeSession_transaction_TransactionItem_order_Order_channel_Channel = { id: string, slug: string, name: string, currencyCode: string };
+
+export type TransactionInitializeSessionSubscription_event_TransactionInitializeSession_transaction_TransactionItem_order_Order_total_TaxedMoney_gross_Money = { currency: string, amount: number };
+
+export type TransactionInitializeSessionSubscription_event_TransactionInitializeSession_transaction_TransactionItem_order_Order_total_TaxedMoney = { gross: TransactionInitializeSessionSubscription_event_TransactionInitializeSession_transaction_TransactionItem_order_Order_total_TaxedMoney_gross_Money };
+
+export type TransactionInitializeSessionSubscription_event_TransactionInitializeSession_transaction_TransactionItem_order_Order = { id: string, languageCodeEnum: Types.LanguageCodeEnum, userEmail: string | null, channel: TransactionInitializeSessionSubscription_event_TransactionInitializeSession_transaction_TransactionItem_order_Order_channel_Channel, total: TransactionInitializeSessionSubscription_event_TransactionInitializeSession_transaction_TransactionItem_order_Order_total_TaxedMoney };
+
+export type TransactionInitializeSessionSubscription_event_TransactionInitializeSession_transaction_TransactionItem = { id: string, pspReference: string, checkout: TransactionInitializeSessionSubscription_event_TransactionInitializeSession_transaction_TransactionItem_checkout_Checkout | null, order: TransactionInitializeSessionSubscription_event_TransactionInitializeSession_transaction_TransactionItem_order_Order | null };
 
 export type TransactionInitializeSessionSubscription_event_TransactionInitializeSession_sourceObject_Checkout = (
   { id: string, languageCode: Types.LanguageCodeEnum, userEmail: string | null, channel: PaymentGatewayInitializeSessionSubscription_event_PaymentGatewayInitializeSession_sourceObject_Checkout_channel_Channel, total: PaymentGatewayInitializeSessionSubscription_event_PaymentGatewayInitializeSession_sourceObject_Checkout_total_TaxedMoney }
@@ -73,7 +89,7 @@ export type TransactionProcessSessionSubscription_event_TransactionProcessSessio
 
 export type TransactionProcessSessionSubscription_event_TransactionProcessSession_action_TransactionProcessAction = { amount: number, currency: string, actionType: Types.TransactionFlowStrategyEnum };
 
-export type TransactionProcessSessionSubscription_event_TransactionProcessSession_transaction_TransactionItem = { id: string, pspReference: string };
+export type TransactionProcessSessionSubscription_event_TransactionProcessSession_transaction_TransactionItem = { id: string, pspReference: string, checkout: TransactionInitializeSessionSubscription_event_TransactionInitializeSession_transaction_TransactionItem_checkout_Checkout | null, order: TransactionInitializeSessionSubscription_event_TransactionInitializeSession_transaction_TransactionItem_order_Order | null };
 
 export type TransactionProcessSessionSubscription_event_TransactionProcessSession_sourceObject_Checkout = (
   { id: string, languageCode: Types.LanguageCodeEnum, userEmail: string | null, channel: PaymentGatewayInitializeSessionSubscription_event_PaymentGatewayInitializeSession_sourceObject_Checkout_channel_Channel, total: PaymentGatewayInitializeSessionSubscription_event_PaymentGatewayInitializeSession_sourceObject_Checkout_total_TaxedMoney }
@@ -96,6 +112,20 @@ export type TransactionProcessSessionSubscriptionVariables = Types.Exact<{ [key:
 
 
 export type TransactionProcessSessionSubscription = TransactionProcessSessionSubscription_Subscription;
+
+export type TransactionRefundRequestedSubscription_event_TransactionRefundRequested_recipient_App = { id: string, privateMetadata: Array<PaymentGatewayInitializeSessionSubscription_event_PaymentGatewayInitializeSession_recipient_App_privateMetadata_MetadataItem>, metadata: Array<PaymentGatewayInitializeSessionSubscription_event_PaymentGatewayInitializeSession_recipient_App_metadata_MetadataItem> };
+
+export type TransactionRefundRequestedSubscription_event_TransactionRefundRequested_action_TransactionAction = { actionType: Types.TransactionActionEnum, amount: number | null };
+
+export type TransactionRefundRequestedSubscription_event_TransactionRefundRequested = { recipient: TransactionRefundRequestedSubscription_event_TransactionRefundRequested_recipient_App | null, action: TransactionRefundRequestedSubscription_event_TransactionRefundRequested_action_TransactionAction };
+
+export type TransactionRefundRequestedSubscription_Subscription = { event: TransactionRefundRequestedSubscription_event_TransactionRefundRequested | null };
+
+
+export type TransactionRefundRequestedSubscriptionVariables = Types.Exact<{ [key: string]: never; }>;
+
+
+export type TransactionRefundRequestedSubscription = TransactionRefundRequestedSubscription_Subscription;
 
 export class TypedDocumentString<TResult, TVariables>
   extends String
@@ -254,6 +284,32 @@ fragment TransactionProcessActionFragment on TransactionProcessAction {
 fragment TransactionItemFragment on TransactionItem {
   id
   pspReference
+  checkout {
+    id
+    languageCode
+    channel {
+      ...ChannelFragment
+    }
+    userEmail: email
+    total: totalPrice {
+      gross {
+        ...MoneyFragment
+      }
+    }
+  }
+  order {
+    id
+    languageCodeEnum
+    userEmail
+    channel {
+      ...ChannelFragment
+    }
+    total {
+      gross {
+        ...MoneyFragment
+      }
+    }
+  }
 }`) as unknown as TypedDocumentString<TransactionInitializeSessionSubscription, TransactionInitializeSessionSubscriptionVariables>;
 export const TransactionProcessSessionSubscriptionDocument = new TypedDocumentString(`
     subscription TransactionProcessSessionSubscription {
@@ -334,4 +390,58 @@ fragment TransactionProcessActionFragment on TransactionProcessAction {
 fragment TransactionItemFragment on TransactionItem {
   id
   pspReference
+  checkout {
+    id
+    languageCode
+    channel {
+      ...ChannelFragment
+    }
+    userEmail: email
+    total: totalPrice {
+      gross {
+        ...MoneyFragment
+      }
+    }
+  }
+  order {
+    id
+    languageCodeEnum
+    userEmail
+    channel {
+      ...ChannelFragment
+    }
+    total {
+      gross {
+        ...MoneyFragment
+      }
+    }
+  }
 }`) as unknown as TypedDocumentString<TransactionProcessSessionSubscription, TransactionProcessSessionSubscriptionVariables>;
+export const TransactionRefundRequestedSubscriptionDocument = new TypedDocumentString(`
+    subscription TransactionRefundRequestedSubscription {
+  event {
+    ... on TransactionRefundRequested {
+      recipient {
+        ...PaymentGatewayRecipientFragment
+      }
+      action {
+        ...TransactionActionFragment
+      }
+    }
+  }
+}
+    fragment PaymentGatewayRecipientFragment on App {
+  id
+  privateMetadata {
+    key
+    value
+  }
+  metadata {
+    key
+    value
+  }
+}
+fragment TransactionActionFragment on TransactionAction {
+  actionType
+  amount
+}`) as unknown as TypedDocumentString<TransactionRefundRequestedSubscription, TransactionRefundRequestedSubscriptionVariables>;

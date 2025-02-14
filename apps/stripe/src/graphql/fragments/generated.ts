@@ -3,6 +3,24 @@ import type * as Types from '@nimara/codegen/schema';
 import type { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
 export type ChannelFragment = { id: string, slug: string, name: string, currencyCode: string };
 
+export type OrderOrCheckoutFragment_Checkout_channel_Channel = { id: string, slug: string, name: string, currencyCode: string };
+
+export type OrderOrCheckoutFragment_Checkout_total_TaxedMoney_gross_Money = { currency: string, amount: number };
+
+export type OrderOrCheckoutFragment_Checkout_total_TaxedMoney = { gross: OrderOrCheckoutFragment_Checkout_total_TaxedMoney_gross_Money };
+
+export type OrderOrCheckoutFragment_Order_channel_Channel = { id: string, slug: string, name: string, currencyCode: string };
+
+export type OrderOrCheckoutFragment_Order_total_TaxedMoney_gross_Money = { currency: string, amount: number };
+
+export type OrderOrCheckoutFragment_Order_total_TaxedMoney = { gross: OrderOrCheckoutFragment_Order_total_TaxedMoney_gross_Money };
+
+export type OrderOrCheckoutFragment_Checkout = { id: string, languageCode: Types.LanguageCodeEnum, userEmail: string | null, channel: OrderOrCheckoutFragment_Checkout_channel_Channel, total: OrderOrCheckoutFragment_Checkout_total_TaxedMoney };
+
+export type OrderOrCheckoutFragment_Order = { id: string, languageCodeEnum: Types.LanguageCodeEnum, userEmail: string | null, channel: OrderOrCheckoutFragment_Order_channel_Channel, total: OrderOrCheckoutFragment_Order_total_TaxedMoney };
+
+export type OrderOrCheckoutFragment = OrderOrCheckoutFragment_Checkout | OrderOrCheckoutFragment_Order;
+
 export type OrderOrCheckoutLineFragment_Checkout_channel_Channel = { id: string, slug: string, name: string, currencyCode: string };
 
 export type OrderOrCheckoutLineFragment_Checkout_shippingPrice_TaxedMoney_net_Money = { currency: string, amount: number };
@@ -59,7 +77,25 @@ export type PaymentGatewayRecipientFragment = { id: string, privateMetadata: Arr
 
 export type TaxedMoneyFragment = { net: OrderOrCheckoutLineFragment_Checkout_shippingPrice_TaxedMoney_net_Money, gross: OrderOrCheckoutLineFragment_Checkout_shippingPrice_TaxedMoney_gross_Money, tax: OrderOrCheckoutLineFragment_Checkout_shippingPrice_TaxedMoney_tax_Money };
 
-export type TransactionItemFragment = { id: string, pspReference: string };
+export type TransactionActionFragment = { actionType: Types.TransactionActionEnum, amount: number | null };
+
+export type TransactionItemFragment_TransactionItem_checkout_Checkout_channel_Channel = { id: string, slug: string, name: string, currencyCode: string };
+
+export type TransactionItemFragment_TransactionItem_checkout_Checkout_total_TaxedMoney_gross_Money = { currency: string, amount: number };
+
+export type TransactionItemFragment_TransactionItem_checkout_Checkout_total_TaxedMoney = { gross: TransactionItemFragment_TransactionItem_checkout_Checkout_total_TaxedMoney_gross_Money };
+
+export type TransactionItemFragment_TransactionItem_checkout_Checkout = { id: string, languageCode: Types.LanguageCodeEnum, userEmail: string | null, channel: TransactionItemFragment_TransactionItem_checkout_Checkout_channel_Channel, total: TransactionItemFragment_TransactionItem_checkout_Checkout_total_TaxedMoney };
+
+export type TransactionItemFragment_TransactionItem_order_Order_channel_Channel = { id: string, slug: string, name: string, currencyCode: string };
+
+export type TransactionItemFragment_TransactionItem_order_Order_total_TaxedMoney_gross_Money = { currency: string, amount: number };
+
+export type TransactionItemFragment_TransactionItem_order_Order_total_TaxedMoney = { gross: TransactionItemFragment_TransactionItem_order_Order_total_TaxedMoney_gross_Money };
+
+export type TransactionItemFragment_TransactionItem_order_Order = { id: string, languageCodeEnum: Types.LanguageCodeEnum, userEmail: string | null, channel: TransactionItemFragment_TransactionItem_order_Order_channel_Channel, total: TransactionItemFragment_TransactionItem_order_Order_total_TaxedMoney };
+
+export type TransactionItemFragment = { id: string, pspReference: string, checkout: TransactionItemFragment_TransactionItem_checkout_Checkout | null, order: TransactionItemFragment_TransactionItem_order_Order | null };
 
 export type TransactionProcessActionFragment = { amount: number, currency: string, actionType: Types.TransactionFlowStrategyEnum };
 
@@ -77,6 +113,45 @@ export class TypedDocumentString<TResult, TVariables>
     return this.value;
   }
 }
+export const OrderOrCheckoutFragment = new TypedDocumentString(`
+    fragment OrderOrCheckoutFragment on OrderOrCheckout {
+  ... on Checkout {
+    id
+    languageCode
+    channel {
+      ...ChannelFragment
+    }
+    userEmail: email
+    total: totalPrice {
+      gross {
+        ...MoneyFragment
+      }
+    }
+  }
+  ... on Order {
+    id
+    languageCodeEnum
+    userEmail
+    channel {
+      ...ChannelFragment
+    }
+    total {
+      gross {
+        ...MoneyFragment
+      }
+    }
+  }
+}
+    fragment ChannelFragment on Channel {
+  id
+  slug
+  name
+  currencyCode
+}
+fragment MoneyFragment on Money {
+  currency
+  amount
+}`, {"fragmentName":"OrderOrCheckoutFragment"}) as unknown as TypedDocumentString<OrderOrCheckoutFragment, unknown>;
 export const OrderOrCheckoutLineFragment = new TypedDocumentString(`
     fragment OrderOrCheckoutLineFragment on OrderOrCheckout {
   ... on Checkout {
@@ -183,12 +258,53 @@ export const PaymentGatewayRecipientFragment = new TypedDocumentString(`
   }
 }
     `, {"fragmentName":"PaymentGatewayRecipientFragment"}) as unknown as TypedDocumentString<PaymentGatewayRecipientFragment, unknown>;
+export const TransactionActionFragment = new TypedDocumentString(`
+    fragment TransactionActionFragment on TransactionAction {
+  actionType
+  amount
+}
+    `, {"fragmentName":"TransactionActionFragment"}) as unknown as TypedDocumentString<TransactionActionFragment, unknown>;
 export const TransactionItemFragment = new TypedDocumentString(`
     fragment TransactionItemFragment on TransactionItem {
   id
   pspReference
+  checkout {
+    id
+    languageCode
+    channel {
+      ...ChannelFragment
+    }
+    userEmail: email
+    total: totalPrice {
+      gross {
+        ...MoneyFragment
+      }
+    }
+  }
+  order {
+    id
+    languageCodeEnum
+    userEmail
+    channel {
+      ...ChannelFragment
+    }
+    total {
+      gross {
+        ...MoneyFragment
+      }
+    }
+  }
 }
-    `, {"fragmentName":"TransactionItemFragment"}) as unknown as TypedDocumentString<TransactionItemFragment, unknown>;
+    fragment ChannelFragment on Channel {
+  id
+  slug
+  name
+  currencyCode
+}
+fragment MoneyFragment on Money {
+  currency
+  amount
+}`, {"fragmentName":"TransactionItemFragment"}) as unknown as TypedDocumentString<TransactionItemFragment, unknown>;
 export const TransactionProcessActionFragment = new TypedDocumentString(`
     fragment TransactionProcessActionFragment on TransactionProcessAction {
   amount

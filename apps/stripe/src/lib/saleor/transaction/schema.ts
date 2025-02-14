@@ -15,7 +15,7 @@ import { z } from "zod";
  * }
  */
 export const transactionEventSchema = z.object({
-  pspReference: z.string().optional(),
+  pspReference: z.string().nullable().optional(),
   result: z.enum([
     "CHARGE_SUCCESS",
     "CHARGE_FAILURE",
@@ -27,12 +27,15 @@ export const transactionEventSchema = z.object({
     "CHARGE_ACTION_REQUIRED",
   ]),
   amount: z.string(),
-  created: z.string(),
+  created: z.string().nullable().optional(),
   data: z.object({}).passthrough(),
-  time: z.string().optional(),
-  externalUrl: z.string().url().optional(),
-  message: z.string().optional(),
-  actions: z.array(z.enum(["CHARGE, REFUND, CANCEL"])).optional(),
+  time: z.string().nullable().optional(),
+  externalUrl: z.string().url().nullable().optional(),
+  message: z.string().nullable().optional(),
+  actions: z
+    .array(z.enum(["CHARGE, REFUND, CANCEL"]))
+    .nullable()
+    .optional(),
 });
 
 export type TransactionEventSchema = z.infer<typeof transactionEventSchema>;
