@@ -1,4 +1,8 @@
-import { type IntRange, type RequiredOnly } from "@/lib/types";
+import {
+  type IntRange,
+  type PartialOnly,
+  type RequiredOnly,
+} from "@/lib/types";
 
 import { type ResponseSchema, responseSchema } from "./schema";
 
@@ -15,5 +19,5 @@ export const ResponseError = ({
   ...response
 }: {
   status?: IntRange<400, 599>;
-} & ResponseSchema) =>
+} & PartialOnly<ResponseSchema, "context">) =>
   Response.json(responseSchema.parse(response), { status });

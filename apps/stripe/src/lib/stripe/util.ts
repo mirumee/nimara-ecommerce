@@ -8,6 +8,7 @@ import {
 
 import { CONFIG } from "@/config";
 import { all } from "@/lib/misc";
+import { type TransactionEventSchema } from "@/lib/saleor/transaction/schema";
 
 import {
   StripeMetaKey,
@@ -53,9 +54,15 @@ export const mapStatusToActionType = ({
     canceled: `${actionType}_FAILURE`,
     succeeded: `${actionType}_SUCCESS`,
     requires_capture: "AUTHORIZATION_SUCCESS",
-  };
+  } satisfies Record<string, TransactionEventSchema["result"]>;
 
-  return map[status] ?? "UNKNOWN";
+  const mappedStatus = map[status];
+
+  if (!mappedStatus) {
+    throw new Error(`Cannot map ${status} to actionType ${actionType}.`);
+  }
+
+  return mappedStatus;
 };
 
 export const getIntentDashboardUrl = ({
@@ -71,7 +78,7 @@ export const getIntentDashboardUrl = ({
 };
 
 const getAvailableActionsForType = (
-  eventType: TransactionEventTypeEnum | "UNKNOWN",
+  eventType: TransactionEventTypeEnum,
 ): TransactionActionEnum[] => {
   switch (eventType) {
     case "CHARGE_SUCCESS":
@@ -87,7 +94,7 @@ const getAvailableActionsForType = (
 
 const getRefundUpdatedEventType = (
   intent: Stripe.Refund,
-): TransactionEventTypeEnum | "UNKNOWN" => {
+): TransactionEventTypeEnum => {
   switch (intent.status) {
     case "canceled":
       return "REFUND_FAILURE";
@@ -97,7 +104,7 @@ const getRefundUpdatedEventType = (
     case "succeeded":
       return "REFUND_SUCCESS";
     default:
-      return "UNKNOWN";
+      throw new Error(`Unhandled refund status: ${intent.status}`);
   }
 };
 
@@ -105,7 +112,7 @@ export const mapStripeEventToSaleorEvent = (
   event: SupportedStripeWebhookEvent,
 ): {
   availableActions: TransactionActionEnum[];
-  type: TransactionEventTypeEnum | "UNKNOWN";
+  type: TransactionEventTypeEnum;
 } => {
   const stripeObject = event.data.object as
     | Stripe.PaymentIntent
@@ -114,10 +121,7 @@ export const mapStripeEventToSaleorEvent = (
   const isManualCapture = stripeObject?.capture_method === "manual";
 
   const eventTypeMapping: Partial<
-    Record<
-      SupportedStripeWebhookEventType,
-      TransactionEventTypeEnum | "UNKNOWN"
-    >
+    Record<SupportedStripeWebhookEventType, TransactionEventTypeEnum>
   > = {
     "payment_intent.succeeded": isManualCapture
       ? "AUTHORIZATION_SUCCESS"
@@ -146,8 +150,12 @@ export const mapStripeEventToSaleorEvent = (
   };
 
   const resolvedEventType =
-    eventTypeMapping[event.type as SupportedStripeWebhookEventType] ??
-    "UNKNOWN";
+    eventTypeMapping[event.type as SupportedStripeWebhookEventType];
+
+  if (!resolvedEventType) {
+    throw new Error(`Unhandled event type: ${event.type}`);
+  }
+
   const availableActions = getAvailableActionsForType(resolvedEventType);
 
   return {

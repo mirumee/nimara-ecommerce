@@ -1,7 +1,9 @@
-import { get } from "lodash";
-
 import { type TransactionProcessSessionSubscription } from "@/graphql/subscriptions/generated";
+import { type ResponseSchema } from "@/lib/api/schema";
+import { ResponseError } from "@/lib/api/util";
 import { getAmountFromCents, getCentsFromAmount } from "@/lib/currency";
+import { isError } from "@/lib/error";
+import { transactionEventSchema } from "@/lib/saleor/transaction/schema";
 import { type WebhookData } from "@/lib/saleor/webhooks/types";
 import { verifySaleorWebhookSignature } from "@/lib/saleor/webhooks/util";
 import { getStripeApi } from "@/lib/stripe/api";
@@ -11,15 +13,20 @@ import {
   mapStatusToActionType,
 } from "@/lib/stripe/util";
 import { getConfigProvider } from "@/providers/config";
+import { getLoggingProvider } from "@/providers/logging";
 
 export async function POST(request: Request) {
   const { headers, error } = await verifySaleorWebhookSignature({
     headers: request.headers,
     payload: await request.clone().text(),
   });
+  const logger = getLoggingProvider();
 
   if (error) {
-    return Response.json(error, { status: 400 });
+    return ResponseError({
+      description: "Saleor webhook verification failed",
+      ...error,
+    } as ResponseSchema);
   }
 
   const json =
@@ -34,15 +41,20 @@ export async function POST(request: Request) {
       saleorDomain: headers["saleor-domain"],
       channelSlug: json.sourceObject.channel.slug,
     });
-  } catch {
-    return Response.json({ errors: [""] }, { status: 42 });
+  } catch (err) {
+    const errors = isError(err) ? [{ message: err.message }] : [];
+
+    return ResponseError({
+      description: "Missing gateway configuration for channel.",
+      errors,
+      status: 422,
+    });
   }
 
   const stripe = getStripeApi(gatewayConfig.secretKey);
-
-  let intent;
   const extraMetadata = (json.data as { metadata?: Record<string, string> })
     ?.metadata;
+  let intent;
 
   if (json.data) {
     intent = await stripe.paymentIntents.update(json.transaction.pspReference, {
@@ -69,14 +81,14 @@ export async function POST(request: Request) {
     status: intent.status,
   });
 
-  return Response.json({
+  const eventResult = transactionEventSchema.safeParse({
     pspReference: intent.id,
-    result: result,
+    result,
     amount: getAmountFromCents({
       currency: intent.currency,
       amount: intent.amount,
     }),
-    message: intent.last_payment_error?.code ?? null,
+    message: intent.last_payment_error?.code,
     data: {
       paymentIntent: {
         clientSecret: intent.client_secret,
@@ -89,4 +101,19 @@ export async function POST(request: Request) {
       },
     },
   });
+
+  if (!eventResult.success) {
+    const message =
+      "Failed to construct TransactionProcessSession event response.";
+
+    logger.error(message, { errors: eventResult.error.issues });
+
+    return ResponseError({
+      description: message,
+      errors: eventResult.error.issues,
+      status: 422,
+    });
+  }
+
+  return Response.json(eventResult.data);
 }
