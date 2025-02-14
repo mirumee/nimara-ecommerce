@@ -28,7 +28,7 @@ export const transactionEventSchema = z.object({
   ]),
   amount: z.string(),
   created: z.string().nullable().optional(),
-  data: z.object({}).passthrough(),
+  data: z.object({}).passthrough().nullable().optional(),
   time: z.string().nullable().optional(),
   externalUrl: z.string().url().nullable().optional(),
   message: z.string().nullable().optional(),

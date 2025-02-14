@@ -1,14 +1,19 @@
-import { type TransactionProcessSessionSubscription } from "@/graphql/subscriptions/generated";
+import {
+  type TransactionChargeRequestedSubscription,
+  type TransactionProcessSessionSubscription,
+} from "@/graphql/subscriptions/generated";
 import { type ResponseSchema } from "@/lib/api/schema";
 import { ResponseError } from "@/lib/api/util";
 import { getAmountFromCents, getCentsFromAmount } from "@/lib/currency";
 import { isError } from "@/lib/error";
-import { transactionEventSchema } from "@/lib/saleor/transaction/schema";
+import {
+  type TransactionEventSchema,
+  transactionEventSchema,
+} from "@/lib/saleor/transaction/schema";
 import { type WebhookData } from "@/lib/saleor/webhooks/types";
 import { verifySaleorWebhookSignature } from "@/lib/saleor/webhooks/util";
 import { getStripeApi } from "@/lib/stripe/api";
 import {
-  getGatewayMetadata,
   getIntentDashboardUrl,
   mapStatusToActionType,
 } from "@/lib/stripe/util";
@@ -22,7 +27,7 @@ export async function POST(request: Request) {
   });
   const logger = getLoggingProvider();
 
-  logger.info("Received TransactionProcessSession webhook.");
+  logger.info("Received TransactionChargeRequested webhook.");
 
   if (error) {
     return ResponseError({
@@ -32,15 +37,25 @@ export async function POST(request: Request) {
   }
 
   const event =
-    (await request.json()) as WebhookData<TransactionProcessSessionSubscription>;
+    (await request.json()) as WebhookData<TransactionChargeRequestedSubscription>;
   const saleorDomain = headers["saleor-domain"];
   const configProvider = getConfigProvider({ saleorDomain });
   let gatewayConfig;
 
+  if (!event.transaction?.sourceObject) {
+    logger.error("Could not process transaction TransactionChargeRequested.");
+
+    return ResponseError({
+      description: "Missing source object information.",
+      errors: [],
+      status: 422,
+    });
+  }
+
   try {
     gatewayConfig = await configProvider.getPaymentGatewayConfigForChannel({
       saleorDomain: headers["saleor-domain"],
-      channelSlug: event.sourceObject.channel.slug,
+      channelSlug: event.transaction.sourceObject.channel.slug,
     });
   } catch (err) {
     const errors = isError(err) ? [{ message: err.message }] : [];
@@ -53,62 +68,48 @@ export async function POST(request: Request) {
   }
 
   const stripe = getStripeApi(gatewayConfig.secretKey);
-  const extraMetadata = (event.data as { metadata?: Record<string, string> })
-    ?.metadata;
-  let intent;
 
-  if (event.data) {
-    intent = await stripe.paymentIntents.update(
-      event.transaction.pspReference,
-      {
-        ...(event.data as {}),
-        amount: getCentsFromAmount(event.sourceObject.total.gross),
-        currency: event.sourceObject.total.gross.currency,
-        capture_method:
-          event.action.actionType === "CHARGE" ? "automatic" : "manual",
-        metadata: getGatewayMetadata({
-          saleorDomain,
-          transactionId: event.transaction.id,
-          channelSlug: event.sourceObject.channel.slug,
-          ...extraMetadata,
-        }),
-      },
-    );
-  } else {
-    intent = await stripe.paymentIntents.retrieve(
-      event.transaction.pspReference,
-    );
-  }
+  // TODO: Handle Stripe errors everywhere
+  const intent = await stripe.paymentIntents.capture(
+    event.transaction.pspReference,
+    {
+      amount_to_capture: getCentsFromAmount(
+        event.transaction.sourceObject.total.gross,
+      ),
+    },
+  );
 
   const result = mapStatusToActionType({
     actionType: event.action.actionType,
     status: intent.status,
   });
 
-  const eventResult = transactionEventSchema.safeParse({
+  let eventData: Partial<TransactionEventSchema> = {
     pspReference: intent.id,
-    result,
-    amount: getAmountFromCents({
-      currency: intent.currency,
-      amount: intent.amount,
-    }),
-    message: intent.last_payment_error?.code,
-    data: {
-      paymentIntent: {
-        clientSecret: intent.client_secret,
-        publishableKey: gatewayConfig.publicKey,
-        time: intent.created,
-        externalUrl: getIntentDashboardUrl({
-          paymentId: intent.id,
-          secretKey: gatewayConfig.secretKey,
-        }),
-      },
-    },
-  });
+  };
+
+  if (["CHARGE_SUCCESS", "CHARGE_FAILURE"].includes(result)) {
+    eventData = {
+      ...eventData,
+      result,
+      amount: getAmountFromCents({
+        currency: intent.currency,
+        amount: intent.amount,
+      }),
+      externalUrl: getIntentDashboardUrl({
+        paymentId: intent.id,
+        secretKey: gatewayConfig.secretKey,
+      }),
+    };
+  }
+  const eventResult = transactionEventSchema.safeParse(eventData);
+
+  console.log(JSON.stringify(eventResult.data));
+  console.log(JSON.stringify(eventResult.error));
 
   if (!eventResult.success) {
     const message =
-      "Failed to construct TransactionProcessSession event response.";
+      "Failed to construct TransactionChargeRequested event response.";
 
     logger.error(message, { errors: eventResult.error.issues });
 
@@ -119,7 +120,7 @@ export async function POST(request: Request) {
     });
   }
 
-  logger.debug("Constructed TransactionProcessSession event response.", {
+  logger.debug("Constructed TransactionChargeRequested event response.", {
     eventResult,
   });
 

@@ -21,11 +21,13 @@ export async function POST(request: Request) {
   });
   const logger = getLoggingProvider();
 
+  logger.info("Received TransactionInitializeSession webhook.");
+
   if (error) {
     return Response.json(error, { status: 400 });
   }
 
-  const json =
+  const event =
     (await request.json()) as WebhookData<TransactionInitializeSessionSubscription>;
   const saleorDomain = headers["saleor-domain"];
   const configProvider = getConfigProvider({ saleorDomain });
@@ -34,14 +36,10 @@ export async function POST(request: Request) {
   try {
     gatewayConfig = await configProvider.getPaymentGatewayConfigForChannel({
       saleorDomain,
-      channelSlug: json.sourceObject.channel.slug,
+      channelSlug: event.sourceObject.channel.slug,
     });
   } catch (err) {
     const errors = isError(err) ? [{ message: err.message }] : [];
-
-    console.log("-----------------------------------------------------");
-    console.log(err);
-    console.log("-----------------------------------------------------");
 
     return ResponseError({
       description: "Missing gateway configuration for channel.",
@@ -51,26 +49,27 @@ export async function POST(request: Request) {
   }
 
   const stripe = getStripeApi(gatewayConfig.secretKey);
-  const extraMetadata = (json.data as { metadata?: Record<string, string> })
+  const extraMetadata = (event.data as { metadata?: Record<string, string> })
     ?.metadata;
 
   const intent = await stripe.paymentIntents.create({
-    amount: getCentsFromAmount(json.sourceObject.total.gross),
-    currency: json.sourceObject.total.gross.currency,
+    amount: getCentsFromAmount(event.sourceObject.total.gross),
+    currency: event.sourceObject.total.gross.currency,
     capture_method:
-      json.action.actionType === "CHARGE" ? "automatic" : "manual",
+      event.action.actionType === "CHARGE" ? "automatic" : "manual",
     metadata: getGatewayMetadata({
       saleorDomain,
-      transactionId: json.transaction.id,
-      channelSlug: json.sourceObject.channel.slug,
+      transactionId: event.transaction.id,
+      channelSlug: event.sourceObject.channel.slug,
       ...extraMetadata,
     }),
   });
 
   const result = mapStatusToActionType({
-    actionType: json.action.actionType,
+    actionType: event.action.actionType,
     status: intent.status,
   });
+
   const eventResult = transactionEventSchema.safeParse({
     pspReference: intent.id,
     result,
@@ -98,16 +97,16 @@ export async function POST(request: Request) {
 
     logger.error(message, { errors: eventResult.error.issues });
 
-    console.log("-----------------------------------------------------");
-    console.log(eventResult);
-    console.log("-----------------------------------------------------");
-
     return ResponseError({
       description: message,
       errors: eventResult.error.issues,
       status: 422,
     });
   }
+
+  logger.debug("Constructed TransactionInitializeSession event response.", {
+    eventResult,
+  });
 
   return Response.json(eventResult.data);
 }

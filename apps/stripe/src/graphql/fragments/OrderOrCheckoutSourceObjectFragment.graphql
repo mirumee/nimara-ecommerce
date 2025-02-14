@@ -1,29 +1,8 @@
 fragment OrderOrCheckoutSourceObjectFragment on OrderOrCheckout {
-  __typename
   ... on Checkout {
-    id
-    languageCode
-    channel {
-      ...ChannelFragment
-    }
-    userEmail: email
-    total: totalPrice {
-      gross {
-        ...MoneyFragment
-      }
-    }
+    ...CheckoutSourceObjectFragment
   }
   ... on Order {
-    id
-    languageCodeEnum
-    userEmail
-    channel {
-      ...ChannelFragment
-    }
-    total {
-      gross {
-        ...MoneyFragment
-      }
-    }
+    ...OrderSourceObjectFragment
   }
 }

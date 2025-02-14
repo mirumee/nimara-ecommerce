@@ -1,6 +1,6 @@
-subscription TransactionRefundRequestedSubscription {
+subscription TransactionChargeRequestedSubscription {
   event {
-    ... on TransactionRefundRequested {
+    ... on TransactionChargeRequested {
       recipient {
         ...PaymentGatewayRecipientFragment
       }

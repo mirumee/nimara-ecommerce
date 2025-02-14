@@ -3,14 +3,17 @@ import { ResponseError } from "@/lib/api/util";
 import { isError } from "@/lib/error";
 import { type WebhookData } from "@/lib/saleor/webhooks/types";
 import { verifySaleorWebhookSignature } from "@/lib/saleor/webhooks/util";
-import { getStripeApi } from "@/lib/stripe/api";
 import { getConfigProvider } from "@/providers/config";
+import { getLoggingProvider } from "@/providers/logging";
 
 export async function POST(request: Request) {
   const { headers, error } = await verifySaleorWebhookSignature({
     headers: request.headers,
     payload: await request.clone().text(),
   });
+  const logger = getLoggingProvider();
+
+  logger.info("Received PaymentGatewayInitializeSession webhook.");
 
   if (error) {
     return Response.json(error, { status: 400 });
@@ -36,12 +39,6 @@ export async function POST(request: Request) {
       status: 422,
     });
   }
-
-  const stripe = getStripeApi(gatewayConfig.secretKey);
-
-  // stripe.refunds.create({
-  //   payment_intent: event.
-  // })
 
   return Response.json({ data: { publishableKey: gatewayConfig?.publicKey } });
 }

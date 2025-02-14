@@ -1,30 +1,4 @@
 fragment TransactionItemFragment on TransactionItem {
   id
   pspReference
-  checkout {
-    id
-    languageCode
-    channel {
-      ...ChannelFragment
-    }
-    userEmail: email
-    total: totalPrice {
-      gross {
-        ...MoneyFragment
-      }
-    }
-  }
-  order {
-    id
-    languageCodeEnum
-    userEmail
-    channel {
-      ...ChannelFragment
-    }
-    total {
-      gross {
-        ...MoneyFragment
-      }
-    }
-  }
 }

@@ -53,7 +53,7 @@ export async function POST(
       saleorDomain,
       channelSlug,
     })
-      .filter(Boolean)
+      .filter(([_, value]) => !value)
       .map(([key]) => ({ message: `${key} is required` }));
 
     return ResponseError({
@@ -142,7 +142,6 @@ export async function POST(
       paymentId: event.data.object.id,
       secretKey: gatewayConfig.secretKey,
     }),
-
     pspReference: event.data.object.id,
     time: new Date().toISOString(),
     ...eventData,

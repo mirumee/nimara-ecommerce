@@ -171,13 +171,15 @@ export const SaleorEdgeConfigProvider: SaleorAppConfigProviderFactory<
       const config = await getBySaleorDomain({ saleorDomain: saleorDomain });
 
       if (!config) {
-        throw new Error(`Missing config for ${saleorDomain} domain.`);
+        throw new Error(
+          `Missing config for ${saleorDomain} - ${channelSlug}..`,
+        );
       }
 
       const paymentGatewayConfig = config["paymentGatewayConfig"][channelSlug];
 
       if (!paymentGatewayConfig) {
-        throw new Error(`Missing config for ${saleorDomain} domain.`);
+        throw new Error(`Missing config for ${saleorDomain} - ${channelSlug}.`);
       }
 
       return paymentGatewayConfig;

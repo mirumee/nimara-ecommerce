@@ -43,7 +43,7 @@ export const mapStatusToActionType = ({
   actionType,
   status,
 }: {
-  actionType: TransactionFlowStrategyEnum;
+  actionType: TransactionActionEnum | TransactionFlowStrategyEnum;
   status: Stripe.PaymentIntent["status"];
 }) => {
   const map = {
@@ -54,7 +54,7 @@ export const mapStatusToActionType = ({
     canceled: `${actionType}_FAILURE`,
     succeeded: `${actionType}_SUCCESS`,
     requires_capture: "AUTHORIZATION_SUCCESS",
-  } satisfies Record<string, TransactionEventSchema["result"]>;
+  } as Record<string, TransactionEventSchema["result"]>;
 
   const mappedStatus = map[status];
 
@@ -84,9 +84,8 @@ const getAvailableActionsForType = (
     case "CHARGE_SUCCESS":
       return ["REFUND"];
     case "CHARGE_FAILURE":
-      return ["CHARGE", "CANCEL"];
     case "AUTHORIZATION_ADJUSTMENT":
-      return ["CANCEL"];
+      return ["CHARGE", "CANCEL"];
     default:
       return [];
   }
@@ -144,6 +143,7 @@ export const mapStripeEventToSaleorEvent = (
       ? "AUTHORIZATION_ACTION_REQUIRED"
       : "CHARGE_ACTION_REQUIRED",
     "charge.refunded": "REFUND_SUCCESS",
+    // TODO: Fix
     "charge.refund.updated": getRefundUpdatedEventType(
       stripeObject as Stripe.Refund,
     ),

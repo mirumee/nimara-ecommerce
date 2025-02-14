@@ -33,16 +33,21 @@ const getPinoLogger = (options: LoggerOptions) =>
       messageKey: "message",
       redact: { paths: ["hostname", "pid"], remove: true },
       ...options,
+      level: "debug",
     },
     isDevelopment ? devTransport : undefined,
   );
 
 const pinoLoggerService: LoggerService = (opts: LoggerOptions) => ({
-  debug: (message, context) => getPinoLogger(opts).debug(message, context),
-  info: (message, context) => getPinoLogger(opts).info(message, context),
-  warning: (message, context) => getPinoLogger(opts).warn(message, context),
-  error: (message, context) => getPinoLogger(opts).error(context, message),
-  critical: (message, context) => getPinoLogger(opts).fatal(message, context),
+  debug: (message, context) =>
+    getPinoLogger(opts).debug({ message, ...context }),
+  info: (message, context) => getPinoLogger(opts).info({ message, ...context }),
+  warning: (message, context) =>
+    getPinoLogger(opts).warn({ message, ...context }),
+  error: (message, context) =>
+    getPinoLogger(opts).error({ message, ...context }),
+  critical: (message, context) =>
+    getPinoLogger(opts).fatal({ message, ...context }),
 });
 
 // I put it here, not in storefront, as it's used a lot in the infrastructure package

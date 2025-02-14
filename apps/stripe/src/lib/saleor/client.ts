@@ -35,7 +35,7 @@ export const saleorClient = ({
       { variables: opts },
     );
 
-    console.log(transactionEventReport);
+    return transactionEventReport;
   };
 
   return {

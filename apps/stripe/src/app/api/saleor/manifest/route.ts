@@ -1,6 +1,7 @@
 import { CONFIG } from "@/config";
 import {
   PaymentGatewayInitializeSessionSubscriptionDocument,
+  TransactionChargeRequestedSubscriptionDocument,
   TransactionInitializeSessionSubscriptionDocument,
   TransactionProcessSessionSubscriptionDocument,
 } from "@/graphql/subscriptions/generated";
@@ -37,6 +38,13 @@ export async function GET(request: Request) {
         name: "TransactionProcessSession",
         targetUrl: `${host}/api/saleor/webhooks/payment/transaction-process-session`,
         syncEvents: ["TRANSACTION_PROCESS_SESSION"],
+        asyncEvents: [],
+      },
+      {
+        query: TransactionChargeRequestedSubscriptionDocument.toString(),
+        name: "TransactionChargeRequested",
+        targetUrl: `${host}/api/saleor/webhooks/payment/transaction-charge-requested`,
+        syncEvents: ["TRANSACTION_CHARGE_REQUESTED"],
         asyncEvents: [],
       },
     ],

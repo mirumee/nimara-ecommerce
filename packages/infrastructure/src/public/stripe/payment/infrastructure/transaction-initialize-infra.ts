@@ -48,10 +48,6 @@ export const transactionInitializeInfra =
 
     const errors = data?.transactionInitialize?.errors ?? [];
 
-    console.log("------------------------------------------------------");
-    console.log({ data });
-    console.log("------------------------------------------------------");
-
     if (errors.length) {
       return {
         errors: errors.map(parseApiError("transactionInitialize")),
