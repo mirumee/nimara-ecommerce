@@ -1,10 +1,7 @@
-import {
-  type TransactionChargeRequestedSubscription,
-  type TransactionProcessSessionSubscription,
-} from "@/graphql/subscriptions/generated";
+import { type TransactionCancelationRequestedSubscription } from "@/graphql/subscriptions/generated";
 import { type ResponseSchema } from "@/lib/api/schema";
 import { ResponseError } from "@/lib/api/util";
-import { getAmountFromCents, getCentsFromAmount } from "@/lib/currency";
+import { getAmountFromCents } from "@/lib/currency";
 import { isError } from "@/lib/error";
 import {
   type TransactionEventSchema,
@@ -13,10 +10,7 @@ import {
 import { type WebhookData } from "@/lib/saleor/webhooks/types";
 import { verifySaleorWebhookSignature } from "@/lib/saleor/webhooks/util";
 import { getStripeApi } from "@/lib/stripe/api";
-import {
-  getIntentDashboardUrl,
-  mapStatusToActionType,
-} from "@/lib/stripe/util";
+import { getIntentDashboardUrl } from "@/lib/stripe/util";
 import { getConfigProvider } from "@/providers/config";
 import { getLoggingProvider } from "@/providers/logging";
 
@@ -27,7 +21,7 @@ export async function POST(request: Request) {
   });
   const logger = getLoggingProvider();
 
-  logger.info("Received TransactionChargeRequested webhook.");
+  logger.info("Received TransactionCancelationRequested webhook.");
 
   if (error) {
     return ResponseError({
@@ -37,13 +31,15 @@ export async function POST(request: Request) {
   }
 
   const event =
-    (await request.json()) as WebhookData<TransactionChargeRequestedSubscription>;
+    (await request.json()) as WebhookData<TransactionCancelationRequestedSubscription>;
   const saleorDomain = headers["saleor-domain"];
   const configProvider = getConfigProvider({ saleorDomain });
   let gatewayConfig;
 
   if (!event.transaction?.sourceObject) {
-    logger.error("Could not process transaction TransactionChargeRequested.");
+    logger.error(
+      "Could not process transaction TransactionCancelationRequested.",
+    );
 
     return ResponseError({
       description: "Missing source object information.",
@@ -70,28 +66,17 @@ export async function POST(request: Request) {
   const stripe = getStripeApi(gatewayConfig.secretKey);
 
   // TODO: Handle Stripe errors everywhere
-  const intent = await stripe.paymentIntents.capture(
+  const intent = await stripe.paymentIntents.retrieve(
     event.transaction.pspReference,
-    {
-      amount_to_capture: getCentsFromAmount(
-        event.transaction.sourceObject.total.gross,
-      ),
-    },
   );
-
-  const result = mapStatusToActionType({
-    actionType: event.action.actionType,
-    status: intent.status,
-  });
 
   let eventData: Partial<TransactionEventSchema> = {
     pspReference: intent.id,
   };
 
-  if (["CHARGE_SUCCESS", "CHARGE_FAILURE"].includes(result)) {
+  if (intent.status === "canceled") {
     eventData = {
       ...eventData,
-      result,
       amount: getAmountFromCents({
         currency: intent.currency,
         amount: intent.amount,
@@ -102,6 +87,7 @@ export async function POST(request: Request) {
       }),
     };
   }
+
   const eventResult = transactionEventSchema.safeParse(eventData);
 
   if (!eventResult.success) {
@@ -117,7 +103,7 @@ export async function POST(request: Request) {
     });
   }
 
-  logger.debug("Constructed TransactionChargeRequested event response.", {
+  logger.debug("Constructed TransactionCancelationRequested event response.", {
     eventResult,
   });
 

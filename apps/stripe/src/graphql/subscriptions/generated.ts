@@ -35,6 +35,24 @@ export type PaymentGatewayInitializeSessionSubscriptionVariables = Types.Exact<{
 
 export type PaymentGatewayInitializeSessionSubscription = PaymentGatewayInitializeSessionSubscription_Subscription;
 
+export type TransactionCancelationRequestedSubscription_event_TransactionCancelationRequested_recipient_App = { id: string, privateMetadata: Array<PaymentGatewayInitializeSessionSubscription_event_PaymentGatewayInitializeSession_recipient_App_privateMetadata_MetadataItem>, metadata: Array<PaymentGatewayInitializeSessionSubscription_event_PaymentGatewayInitializeSession_recipient_App_metadata_MetadataItem> };
+
+export type TransactionCancelationRequestedSubscription_event_TransactionCancelationRequested_action_TransactionAction = { actionType: Types.TransactionActionEnum, amount: number | null };
+
+export type TransactionCancelationRequestedSubscription_event_TransactionCancelationRequested_transaction_TransactionItem_sourceObject_Order = { id: string, languageCodeEnum: Types.LanguageCodeEnum, userEmail: string | null, channel: PaymentGatewayInitializeSessionSubscription_event_PaymentGatewayInitializeSession_sourceObject_Order_channel_Channel, total: PaymentGatewayInitializeSessionSubscription_event_PaymentGatewayInitializeSession_sourceObject_Order_total_TaxedMoney };
+
+export type TransactionCancelationRequestedSubscription_event_TransactionCancelationRequested_transaction_TransactionItem = { id: string, pspReference: string, sourceObject: TransactionCancelationRequestedSubscription_event_TransactionCancelationRequested_transaction_TransactionItem_sourceObject_Order | null };
+
+export type TransactionCancelationRequestedSubscription_event_TransactionCancelationRequested = { recipient: TransactionCancelationRequestedSubscription_event_TransactionCancelationRequested_recipient_App | null, action: TransactionCancelationRequestedSubscription_event_TransactionCancelationRequested_action_TransactionAction, transaction: TransactionCancelationRequestedSubscription_event_TransactionCancelationRequested_transaction_TransactionItem | null };
+
+export type TransactionCancelationRequestedSubscription_Subscription = { event: TransactionCancelationRequestedSubscription_event_TransactionCancelationRequested | null };
+
+
+export type TransactionCancelationRequestedSubscriptionVariables = Types.Exact<{ [key: string]: never; }>;
+
+
+export type TransactionCancelationRequestedSubscription = TransactionCancelationRequestedSubscription_Subscription;
+
 export type TransactionChargeRequestedSubscription_event_TransactionChargeRequested_recipient_App = { id: string, privateMetadata: Array<PaymentGatewayInitializeSessionSubscription_event_PaymentGatewayInitializeSession_recipient_App_privateMetadata_MetadataItem>, metadata: Array<PaymentGatewayInitializeSessionSubscription_event_PaymentGatewayInitializeSession_recipient_App_metadata_MetadataItem> };
 
 export type TransactionChargeRequestedSubscription_event_TransactionChargeRequested_action_TransactionAction = { actionType: Types.TransactionActionEnum, amount: number | null };
@@ -198,6 +216,67 @@ fragment OrderSourceObjectFragment on Order {
     }
   }
 }`) as unknown as TypedDocumentString<PaymentGatewayInitializeSessionSubscription, PaymentGatewayInitializeSessionSubscriptionVariables>;
+export const TransactionCancelationRequestedSubscriptionDocument = new TypedDocumentString(`
+    subscription TransactionCancelationRequestedSubscription {
+  event {
+    ... on TransactionCancelationRequested {
+      recipient {
+        ...PaymentGatewayRecipientFragment
+      }
+      action {
+        ...TransactionActionFragment
+      }
+      transaction {
+        ...TransactionItemFragment
+        sourceObject: order {
+          ...OrderSourceObjectFragment
+        }
+      }
+    }
+  }
+}
+    fragment PaymentGatewayRecipientFragment on App {
+  id
+  privateMetadata {
+    key
+    value
+  }
+  metadata {
+    key
+    value
+  }
+}
+fragment ChannelFragment on Channel {
+  id
+  slug
+  name
+  currencyCode
+}
+fragment MoneyFragment on Money {
+  currency
+  amount
+}
+fragment OrderSourceObjectFragment on Order {
+  id
+  languageCodeEnum
+  userEmail
+  channel {
+    ...ChannelFragment
+  }
+  total {
+    gross {
+      ...MoneyFragment
+    }
+  }
+}
+fragment TransactionActionFragment on TransactionAction {
+  actionType
+  amount
+}
+fragment TransactionItemFragment on TransactionItem {
+  id
+  pspReference
+}`) as unknown as TypedDocumentString<TransactionCancelationRequestedSubscription, TransactionCancelationRequestedSubscriptionVariables>;
 export const TransactionChargeRequestedSubscriptionDocument = new TypedDocumentString(`
     subscription TransactionChargeRequestedSubscription {
   event {

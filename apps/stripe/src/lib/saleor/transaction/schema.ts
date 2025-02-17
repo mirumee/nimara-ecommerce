@@ -1,11 +1,13 @@
 import { z } from "zod";
 
+import { TRANSACTION_EVENT_TYPE } from "./const";
+
 /**
  * https://docs.saleor.io/developer/extending/webhooks/synchronous-events/transaction
  *
  * {
  *   "pspReference": "[Optional for some results, see details below] <psp reference recieved from payment provider>",
- *   "result": "CHARGE_SUCCESS or CHARGE_FAILURE or CHARGE_REQUEST or AUTHORIZATION_SUCCESS or AUTHORIZATION_FAILURE or AUTHORIZATION_REQUEST or AUTHORIZATION_ACTION_REQUIRED or CHARGE_ACTION_REQUIRED>",
+ *   "result": TransactionEventTypeEnum,
  *   "amount": "<Decimal amount of the processed action>",
  *   "data": "<[Optional] JSON data tha will be returned to storefront>",
  *   "time": "<[Optional] time of the action>",
@@ -14,18 +16,10 @@ import { z } from "zod";
  *   "actions": "<[Optional] list of actions available for the transaction. Possible items: CHARGE, REFUND, CANCEL>"
  * }
  */
+
 export const transactionEventSchema = z.object({
   pspReference: z.string().nullable().optional(),
-  result: z.enum([
-    "CHARGE_SUCCESS",
-    "CHARGE_FAILURE",
-    "CHARGE_REQUEST",
-    "AUTHORIZATION_SUCCESS",
-    "AUTHORIZATION_FAILURE",
-    "AUTHORIZATION_REQUEST",
-    "AUTHORIZATION_ACTION_REQUIRED",
-    "CHARGE_ACTION_REQUIRED",
-  ]),
+  result: z.enum(TRANSACTION_EVENT_TYPE),
   amount: z.string(),
   created: z.string().nullable().optional(),
   data: z.object({}).passthrough().nullable().optional(),
