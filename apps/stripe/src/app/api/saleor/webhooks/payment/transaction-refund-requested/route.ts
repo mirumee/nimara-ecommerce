@@ -1,4 +1,4 @@
-import { type TransactionCancelationRequestedSubscription } from "@/graphql/subscriptions/generated";
+import { type TransactionRefundRequestedSubscription } from "@/graphql/subscriptions/generated";
 import { type ResponseSchema } from "@/lib/api/schema";
 import { ResponseError } from "@/lib/api/util";
 import { getAmountFromCents } from "@/lib/currency";
@@ -21,7 +21,7 @@ export async function POST(request: Request) {
   });
   const logger = getLoggingProvider();
 
-  logger.info("Received TransactionCancelationRequested webhook.");
+  logger.info("Received TransactionRefundRequested webhook.");
 
   if (error) {
     return ResponseError({
@@ -31,15 +31,13 @@ export async function POST(request: Request) {
   }
 
   const event =
-    (await request.json()) as WebhookData<TransactionCancelationRequestedSubscription>;
+    (await request.json()) as WebhookData<TransactionRefundRequestedSubscription>;
   const saleorDomain = headers["saleor-domain"];
   const configProvider = getConfigProvider({ saleorDomain });
   let gatewayConfig;
 
   if (!event.transaction?.sourceObject) {
-    logger.error(
-      "Could not process transaction TransactionCancelationRequested.",
-    );
+    logger.error("Could not process transaction TransactionRefundRequested.");
 
     return ResponseError({
       description: "Missing source object information.",
@@ -74,13 +72,14 @@ export async function POST(request: Request) {
     pspReference: intent.id,
   };
 
-  if (intent.status === "canceled") {
+  if (intent.status === "succeeded") {
     eventData = {
       ...eventData,
       amount: getAmountFromCents({
         currency: intent.currency,
         amount: intent.amount,
       }),
+      result: "REFUND_SUCCESS",
       externalUrl: getIntentDashboardUrl({
         paymentId: intent.id,
         secretKey: gatewayConfig.secretKey,
@@ -92,7 +91,7 @@ export async function POST(request: Request) {
 
   if (!eventResult.success) {
     const message =
-      "Failed to construct TransactionChargeRequested event response.";
+      "Failed to construct TransactionRefundRequested event response.";
 
     logger.error(message, { errors: eventResult.error.issues });
 
@@ -103,7 +102,7 @@ export async function POST(request: Request) {
     });
   }
 
-  logger.debug("Constructed TransactionCancelationRequested event response.", {
+  logger.debug("Constructed TransactionRefundRequested event response.", {
     eventResult,
   });
 

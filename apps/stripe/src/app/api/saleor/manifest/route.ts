@@ -1,9 +1,11 @@
 import { CONFIG } from "@/config";
 import {
   PaymentGatewayInitializeSessionSubscriptionDocument,
+  TransactionCancelationRequestedSubscriptionDocument,
   TransactionChargeRequestedSubscriptionDocument,
   TransactionInitializeSessionSubscriptionDocument,
   TransactionProcessSessionSubscriptionDocument,
+  TransactionRefundRequestedSubscriptionDocument,
 } from "@/graphql/subscriptions/generated";
 import { getRequestOrigin } from "@/lib/http/request";
 import { type SaleorAppManifest } from "@/lib/saleor/types";
@@ -45,6 +47,20 @@ export async function GET(request: Request) {
         name: "TransactionChargeRequested",
         targetUrl: `${host}/api/saleor/webhooks/payment/transaction-charge-requested`,
         syncEvents: ["TRANSACTION_CHARGE_REQUESTED"],
+        asyncEvents: [],
+      },
+      {
+        query: TransactionCancelationRequestedSubscriptionDocument.toString(),
+        name: "TransactionCancelationRequested",
+        targetUrl: `${host}/api/saleor/webhooks/payment/transaction-cancelation-requested`,
+        syncEvents: ["TRANSACTION_CANCELATION_REQUESTED"],
+        asyncEvents: [],
+      },
+      {
+        query: TransactionRefundRequestedSubscriptionDocument.toString(),
+        name: "TransactionRefundRequested",
+        targetUrl: `${host}/api/saleor/webhooks/payment/transaction-refund-requested`,
+        syncEvents: ["TRANSACTION_REFUND_REQUESTED"],
         asyncEvents: [],
       },
     ],
