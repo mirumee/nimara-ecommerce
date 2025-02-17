@@ -7,12 +7,12 @@
     "lint:staged": "lint-staged"
   },
   "devDependencies": {
-    "@next/env": "15.1.2",
+    "@next/env": "15.1.7",
     "@nimara/config": "workspace:*",
-    "@playwright/test": "^1.49.1",
-    "@types/node": "22.10.2",
+    "@playwright/test": "^1.50.1",
+    "@types/node": "22.13.4",
     "eslint-config-custom": "workspace:*",
-    "eslint-plugin-playwright": "^2.1.0",
+    "eslint-plugin-playwright": "^2.2.0",
     "lint-staged": "latest",
     "prettier": "3.4.2",
     "tsconfig": "workspace:*"
