@@ -92,9 +92,9 @@ const getAvailableActionsForType = (
 };
 
 const getRefundUpdatedEventType = (
-  intent: Stripe.Refund,
-): TransactionEventTypeEnum | null => {
-  switch (intent.status) {
+  status: Stripe.Refund["status"],
+): TransactionEventTypeEnum | undefined => {
+  switch (status) {
     case "canceled":
       return "REFUND_FAILURE";
     case "processing":
@@ -102,8 +102,6 @@ const getRefundUpdatedEventType = (
       return "REFUND_REQUEST";
     case "succeeded":
       return "REFUND_SUCCESS";
-    default:
-      return null;
   }
 };
 
@@ -143,10 +141,7 @@ export const mapStripeEventToSaleorEvent = (
       ? "AUTHORIZATION_ACTION_REQUIRED"
       : "CHARGE_ACTION_REQUIRED",
     "charge.refunded": "REFUND_SUCCESS",
-    // TODO: Fix
-    "charge.refund.updated": getRefundUpdatedEventType(
-      stripeObject as Stripe.Refund,
-    ),
+    "charge.refund.updated": getRefundUpdatedEventType(stripeObject.status),
   };
 
   const resolvedEventType =
