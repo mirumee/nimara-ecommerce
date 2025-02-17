@@ -14,7 +14,7 @@
     "@saleor/auth-sdk": "1.0.1",
     "@stripe/stripe-js": "3.5.0",
     "buttercms": "2.1.4",
-    "libphonenumber-js": "1.11.3",
+    "libphonenumber-js": "1.11.20",
     "prettier": "3.4.2",
     "stripe": "15.10.0",
     "ts-invariant": "0.10.3"
