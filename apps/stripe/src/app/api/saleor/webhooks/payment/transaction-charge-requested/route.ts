@@ -1,17 +1,13 @@
-import {
-  type TransactionChargeRequestedSubscription,
-  type TransactionProcessSessionSubscription,
-} from "@/graphql/subscriptions/generated";
-import { type ResponseSchema } from "@/lib/api/schema";
-import { ResponseError } from "@/lib/api/util";
+import { type TransactionChargeRequestedSubscription } from "@/graphql/subscriptions/generated";
+import { responseError } from "@/lib/api/util";
 import { getAmountFromCents, getCentsFromAmount } from "@/lib/currency";
 import { isError } from "@/lib/error";
+import { transactionResponseSuccess } from "@/lib/saleor/transaction/api";
 import {
   type TransactionEventSchema,
   transactionEventSchema,
 } from "@/lib/saleor/transaction/schema";
-import { type WebhookData } from "@/lib/saleor/webhooks/types";
-import { verifySaleorWebhookSignature } from "@/lib/saleor/webhooks/util";
+import { verifySaleorWebhookRoute } from "@/lib/saleor/webhooks/util";
 import { getStripeApi } from "@/lib/stripe/api";
 import {
   getIntentDashboardUrl,
@@ -20,106 +16,96 @@ import {
 import { getConfigProvider } from "@/providers/config";
 import { getLoggingProvider } from "@/providers/logging";
 
-export async function POST(request: Request) {
-  const { headers, error } = await verifySaleorWebhookSignature({
-    headers: request.headers,
-    payload: await request.clone().text(),
-  });
-  const logger = getLoggingProvider();
+export const POST =
+  verifySaleorWebhookRoute<TransactionChargeRequestedSubscription>(
+    async ({ event, headers }) => {
+      const logger = getLoggingProvider();
 
-  logger.info("Received TransactionChargeRequested webhook.");
+      const saleorDomain = headers["saleor-domain"];
+      const configProvider = getConfigProvider({ saleorDomain });
+      let gatewayConfig;
 
-  if (error) {
-    return ResponseError({
-      description: "Saleor webhook verification failed",
-      ...error,
-    } as ResponseSchema);
-  }
+      if (!event.transaction?.sourceObject) {
+        logger.error(
+          "Could not process transaction TransactionChargeRequested.",
+        );
 
-  const event =
-    (await request.json()) as WebhookData<TransactionChargeRequestedSubscription>;
-  const saleorDomain = headers["saleor-domain"];
-  const configProvider = getConfigProvider({ saleorDomain });
-  let gatewayConfig;
+        return responseError({
+          description: "Missing source object information.",
+          errors: [],
+          status: 422,
+        });
+      }
 
-  if (!event.transaction?.sourceObject) {
-    logger.error("Could not process transaction TransactionChargeRequested.");
+      try {
+        gatewayConfig = await configProvider.getPaymentGatewayConfigForChannel({
+          saleorDomain: headers["saleor-domain"],
+          channelSlug: event.transaction.sourceObject.channel.slug,
+        });
+      } catch (err) {
+        const errors = isError(err) ? [{ message: err.message }] : [];
 
-    return ResponseError({
-      description: "Missing source object information.",
-      errors: [],
-      status: 422,
-    });
-  }
+        return responseError({
+          description: "Missing gateway configuration for channel.",
+          errors,
+          status: 422,
+        });
+      }
 
-  try {
-    gatewayConfig = await configProvider.getPaymentGatewayConfigForChannel({
-      saleorDomain: headers["saleor-domain"],
-      channelSlug: event.transaction.sourceObject.channel.slug,
-    });
-  } catch (err) {
-    const errors = isError(err) ? [{ message: err.message }] : [];
+      const stripe = getStripeApi(gatewayConfig.secretKey);
 
-    return ResponseError({
-      description: "Missing gateway configuration for channel.",
-      errors,
-      status: 422,
-    });
-  }
+      // TODO: Handle Stripe errors everywhere
+      const intent = await stripe.paymentIntents.capture(
+        event.transaction.pspReference,
+        {
+          amount_to_capture: getCentsFromAmount(
+            event.transaction.sourceObject.total.gross,
+          ),
+        },
+      );
 
-  const stripe = getStripeApi(gatewayConfig.secretKey);
+      const result = mapStatusToActionType({
+        actionType: event.action.actionType,
+        status: intent.status,
+      });
 
-  // TODO: Handle Stripe errors everywhere
-  const intent = await stripe.paymentIntents.capture(
-    event.transaction.pspReference,
-    {
-      amount_to_capture: getCentsFromAmount(
-        event.transaction.sourceObject.total.gross,
-      ),
+      let eventData: Partial<TransactionEventSchema> = {
+        pspReference: intent.id,
+      };
+
+      if (["CHARGE_SUCCESS", "CHARGE_FAILURE"].includes(result)) {
+        eventData = {
+          ...eventData,
+          result,
+          amount: getAmountFromCents({
+            currency: intent.currency,
+            amount: intent.amount,
+          }),
+          externalUrl: getIntentDashboardUrl({
+            paymentId: intent.id,
+            secretKey: gatewayConfig.secretKey,
+          }),
+        };
+      }
+      const eventResult = transactionEventSchema.safeParse(eventData);
+
+      if (!eventResult.success) {
+        const message =
+          "Failed to construct TransactionChargeRequested event response.";
+
+        logger.error(message, { errors: eventResult.error.issues });
+
+        return responseError({
+          description: message,
+          errors: eventResult.error.issues,
+          status: 422,
+        });
+      }
+
+      logger.debug("Constructed TransactionChargeRequested event response.", {
+        eventResult,
+      });
+
+      return transactionResponseSuccess(eventResult.data);
     },
   );
-
-  const result = mapStatusToActionType({
-    actionType: event.action.actionType,
-    status: intent.status,
-  });
-
-  let eventData: Partial<TransactionEventSchema> = {
-    pspReference: intent.id,
-  };
-
-  if (["CHARGE_SUCCESS", "CHARGE_FAILURE"].includes(result)) {
-    eventData = {
-      ...eventData,
-      result,
-      amount: getAmountFromCents({
-        currency: intent.currency,
-        amount: intent.amount,
-      }),
-      externalUrl: getIntentDashboardUrl({
-        paymentId: intent.id,
-        secretKey: gatewayConfig.secretKey,
-      }),
-    };
-  }
-  const eventResult = transactionEventSchema.safeParse(eventData);
-
-  if (!eventResult.success) {
-    const message =
-      "Failed to construct TransactionChargeRequested event response.";
-
-    logger.error(message, { errors: eventResult.error.issues });
-
-    return ResponseError({
-      description: message,
-      errors: eventResult.error.issues,
-      status: 422,
-    });
-  }
-
-  logger.debug("Constructed TransactionChargeRequested event response.", {
-    eventResult,
-  });
-
-  return Response.json(eventResult.data);
-}

@@ -6,7 +6,7 @@ import {
 
 import { type ResponseSchema, responseSchema } from "./schema";
 
-export const ResponseSuccess = ({
+export const responseSuccess = ({
   status = 200,
   ...response
 }: {
@@ -14,7 +14,7 @@ export const ResponseSuccess = ({
 } & RequiredOnly<ResponseSchema, "description">) =>
   Response.json(responseSchema.parse(response), { status });
 
-export const ResponseError = ({
+export const responseError = ({
   status = 400,
   ...response
 }: {

@@ -19,8 +19,8 @@ import { TRANSACTION_EVENT_TYPE } from "./const";
 
 export const transactionEventSchema = z.object({
   pspReference: z.string().nullable().optional(),
-  result: z.enum(TRANSACTION_EVENT_TYPE),
-  amount: z.string(),
+  result: z.enum(TRANSACTION_EVENT_TYPE).optional(),
+  amount: z.string().optional(),
   created: z.string().nullable().optional(),
   data: z.object({}).passthrough().nullable().optional(),
   time: z.string().nullable().optional(),

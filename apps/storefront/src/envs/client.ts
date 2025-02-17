@@ -16,7 +16,7 @@ const schema = z.object({
     .enum(["LOCAL", "DEVELOPMENT", "PRODUCTION", "STAGING"])
     .default("LOCAL"),
 
-  PAYMENT_APP_ID: z.string().default("stage.marina-stripe"),
+  PAYMENT_APP_ID: z.string().default("DEVELOPMENT.nimara-ts-stripe"),
 
   NEXT_PUBLIC_BUTTER_CMS_API_KEY: z.string().optional(),
 

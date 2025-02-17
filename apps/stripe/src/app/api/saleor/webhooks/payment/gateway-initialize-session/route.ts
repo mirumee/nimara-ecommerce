@@ -1,44 +1,34 @@
 import { type PaymentGatewayInitializeSessionSubscription } from "@/graphql/subscriptions/generated";
-import { ResponseError } from "@/lib/api/util";
+import { responseError } from "@/lib/api/util";
 import { isError } from "@/lib/error";
-import { type WebhookData } from "@/lib/saleor/webhooks/types";
-import { verifySaleorWebhookSignature } from "@/lib/saleor/webhooks/util";
+import { transactionResponseSuccess } from "@/lib/saleor/transaction/api";
+import { verifySaleorWebhookRoute } from "@/lib/saleor/webhooks/util";
 import { getConfigProvider } from "@/providers/config";
-import { getLoggingProvider } from "@/providers/logging";
 
-export async function POST(request: Request) {
-  const { headers, error } = await verifySaleorWebhookSignature({
-    headers: request.headers,
-    payload: await request.clone().text(),
-  });
-  const logger = getLoggingProvider();
+export const POST =
+  verifySaleorWebhookRoute<PaymentGatewayInitializeSessionSubscription>(
+    async ({ event, headers }) => {
+      const saleorDomain = headers["saleor-domain"];
+      const configProvider = getConfigProvider({ saleorDomain });
+      let gatewayConfig;
 
-  logger.info("Received PaymentGatewayInitializeSession webhook.");
+      try {
+        gatewayConfig = await configProvider.getPaymentGatewayConfigForChannel({
+          saleorDomain,
+          channelSlug: event.sourceObject.channel.slug,
+        });
+      } catch (err) {
+        const errors = isError(err) ? [{ message: err.message }] : [];
 
-  if (error) {
-    return Response.json(error, { status: 400 });
-  }
+        return responseError({
+          description: "Missing gateway configuration for channel.",
+          errors,
+          status: 422,
+        });
+      }
 
-  const event =
-    (await request.json()) as WebhookData<PaymentGatewayInitializeSessionSubscription>;
-  const saleorDomain = headers["saleor-domain"];
-  const configProvider = getConfigProvider({ saleorDomain });
-  let gatewayConfig;
-
-  try {
-    gatewayConfig = await configProvider.getPaymentGatewayConfigForChannel({
-      saleorDomain,
-      channelSlug: event.sourceObject.channel.slug,
-    });
-  } catch (err) {
-    const errors = isError(err) ? [{ message: err.message }] : [];
-
-    return ResponseError({
-      description: "Missing gateway configuration for channel.",
-      errors,
-      status: 422,
-    });
-  }
-
-  return Response.json({ data: { publishableKey: gatewayConfig?.publicKey } });
-}
+      return transactionResponseSuccess({
+        data: { publishableKey: gatewayConfig?.publicKey },
+      });
+    },
+  );

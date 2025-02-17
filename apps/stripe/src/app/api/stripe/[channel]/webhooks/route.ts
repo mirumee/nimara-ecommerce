@@ -1,4 +1,4 @@
-import { ResponseError, ResponseSuccess } from "@/lib/api/util";
+import { responseError, responseSuccess } from "@/lib/api/util";
 import { getAmountFromCents } from "@/lib/currency";
 import { isError } from "@/lib/error";
 import { all } from "@/lib/misc";
@@ -56,7 +56,7 @@ export async function POST(
       .filter(([_, value]) => !value)
       .map(([key]) => ({ message: `${key} is required` }));
 
-    return ResponseError({
+    return responseError({
       description: "Missing required metadata in Stripe event.",
       errors,
       status: 422,
@@ -72,7 +72,7 @@ export async function POST(
       metadata: stripeObject.metadata,
     });
 
-    return ResponseSuccess({ description: "Skipped." });
+    return responseSuccess({ description: "Skipped." });
   }
 
   /**
@@ -85,7 +85,7 @@ export async function POST(
       stripeObjectChannel: channelSlug,
     });
 
-    return ResponseSuccess({ description: "Skipped." });
+    return responseSuccess({ description: "Skipped." });
   }
 
   const configProvider = getConfigProvider({ saleorDomain });
@@ -118,7 +118,7 @@ export async function POST(
     });
     const message = isError(err) ? err.message : "Webhook verification failed.";
 
-    return ResponseError({
+    return responseError({
       description: "Failed to verify webhook.",
       errors: [{ message }],
     });
@@ -147,5 +147,5 @@ export async function POST(
     ...eventData,
   });
 
-  return ResponseSuccess({ description: "Processed." });
+  return responseSuccess({ description: "Processed." });
 }
