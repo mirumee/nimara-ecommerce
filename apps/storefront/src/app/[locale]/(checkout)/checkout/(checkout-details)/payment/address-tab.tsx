@@ -53,6 +53,10 @@ export function AddressTab({
   const form = useFormContext();
   const region = useCurrentRegion();
 
+  const hasDefaultBillingAddressSet = addresses?.some(
+    (item) => item.address?.isDefaultBillingAddress === true,
+  );
+
   function handleTabChange(value: string) {
     setActiveTab(value as TabName);
 
@@ -156,11 +160,13 @@ export function AddressTab({
               countries={countries}
               countryCode={countryCode}
             />
-            <CheckboxField
-              className="pt-6"
-              name="saveAddressForFutureUse"
-              label={t("address.save-address-for-future")}
-            />
+            {hasDefaultBillingAddressSet && (
+              <CheckboxField
+                className="pt-6"
+                name="saveAddressForFutureUse"
+                label={t("address.save-address-for-future")}
+              />
+            )}
           </TabsContent>
         </Tabs>
       )}
