@@ -9,11 +9,14 @@ import {
 } from "@/lib/saleor/transaction/schema";
 import { verifySaleorWebhookRoute } from "@/lib/saleor/webhooks/util";
 import { getStripeApi } from "@/lib/stripe/api";
-import { getIntentDashboardUrl } from "@/lib/stripe/util";
+import {
+  getIntentDashboardUrl,
+  stripeRouteErrorsHandler,
+} from "@/lib/stripe/util";
 import { getConfigProvider } from "@/providers/config";
 import { getLoggingProvider } from "@/providers/logging";
 
-export const POST =
+export const POST = stripeRouteErrorsHandler(
   verifySaleorWebhookRoute<TransactionCancelationRequestedSubscription>(
     async ({ event, headers }) => {
       const logger = getLoggingProvider();
@@ -98,4 +101,5 @@ export const POST =
 
       return transactionResponseSuccess(eventResult.data);
     },
-  );
+  ),
+);

@@ -9,11 +9,14 @@ import {
 } from "@/lib/saleor/transaction/schema";
 import { verifySaleorWebhookRoute } from "@/lib/saleor/webhooks/util";
 import { getStripeApi } from "@/lib/stripe/api";
-import { getIntentDashboardUrl } from "@/lib/stripe/util";
+import {
+  getIntentDashboardUrl,
+  stripeRouteErrorsHandler,
+} from "@/lib/stripe/util";
 import { getConfigProvider } from "@/providers/config";
 import { getLoggingProvider } from "@/providers/logging";
 
-export const POST =
+export const POST = stripeRouteErrorsHandler(
   verifySaleorWebhookRoute<TransactionRefundRequestedSubscription>(
     async ({ event, headers }) => {
       const logger = getLoggingProvider();
@@ -50,7 +53,6 @@ export const POST =
 
       const stripe = getStripeApi(gatewayConfig.secretKey);
 
-      // TODO: Handle Stripe errors everywhere
       const intent = await stripe.paymentIntents.retrieve(
         event.transaction.pspReference,
       );
@@ -95,4 +97,5 @@ export const POST =
 
       return transactionResponseSuccess(eventResult.data);
     },
-  );
+  ),
+);

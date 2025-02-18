@@ -12,11 +12,12 @@ import { getStripeApi } from "@/lib/stripe/api";
 import {
   getIntentDashboardUrl,
   mapStatusToActionType,
+  stripeRouteErrorsHandler,
 } from "@/lib/stripe/util";
 import { getConfigProvider } from "@/providers/config";
 import { getLoggingProvider } from "@/providers/logging";
 
-export const POST =
+export const POST = stripeRouteErrorsHandler(
   verifySaleorWebhookRoute<TransactionChargeRequestedSubscription>(
     async ({ event, headers }) => {
       const logger = getLoggingProvider();
@@ -108,4 +109,5 @@ export const POST =
 
       return transactionResponseSuccess(eventResult.data);
     },
-  );
+  ),
+);

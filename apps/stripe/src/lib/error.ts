@@ -1,9 +1,5 @@
-type ErrorWithType = Error & { type?: string };
+type ErrorWithType<T extends Error = Error> = T & { type?: string };
 
-export const isError = (err: unknown): err is ErrorWithType =>
-  err instanceof Error;
-
-export const isErrorOfType = <T extends ErrorWithType>(
+export const isError = <T extends Error>(
   err: unknown,
-  type: string,
-): err is T => isError(err) && err.type === type;
+): err is ErrorWithType<T> => err instanceof Error;

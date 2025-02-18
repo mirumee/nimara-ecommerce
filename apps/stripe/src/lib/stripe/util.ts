@@ -7,8 +7,11 @@ import {
 } from "@nimara/codegen/schema";
 
 import { CONFIG } from "@/config";
+import { responseError } from "@/lib/api/util";
+import { isError } from "@/lib/error";
 import { all } from "@/lib/misc";
 import { type TransactionEventSchema } from "@/lib/saleor/transaction/schema";
+import { getLoggingProvider } from "@/providers/logging";
 
 import {
   StripeMetaKey,
@@ -158,3 +161,40 @@ export const mapStripeEventToSaleorEvent = (
     availableActions: availableActions,
   };
 };
+
+export const stripeRouteErrorsHandler =
+  (handler: (request: Request, opts?: any) => Promise<Response>): any =>
+  async (request: Request, opts?: any): Promise<Response> => {
+    const logger = getLoggingProvider();
+    const json = await request.clone().json();
+
+    try {
+      return await handler(request, opts);
+    } catch (err) {
+      if (isError<Stripe.errors.StripeError>(err)) {
+        if (err.type === "StripeSignatureVerificationError") {
+          const event = json as SupportedStripeWebhookEvent;
+
+          logger.error("Failed to verify Stripe webhook.", {
+            id: event.id,
+            error: err,
+          });
+
+          return responseError({
+            description: "Failed to verify Stripe webhook.",
+            context: "headers > stripe-signature",
+            errors: [{ message: err.message }],
+          });
+        }
+
+        logger.error("Stripe error occurred.", { error: err });
+
+        return responseError({
+          description: "Stripe error occurred.",
+          errors: [{ message: err.message }],
+        });
+      }
+
+      throw err;
+    }
+  };

@@ -20,10 +20,11 @@ export const verifySaleorWebhookSignature = async ({
   );
 
   if (!success) {
-    return {
-      headers: null,
-      error: { context: "headers", errors: error.errors },
-    };
+    return responseError({
+      description: "Webhook validation failed.",
+      context: "headers",
+      errors: error.errors,
+    });
   }
 
   const jwksProvider = getJWKSProvider();
@@ -59,7 +60,7 @@ export const verifySaleorWebhookRoute =
       request: Request;
     }) => Promise<Response>,
   ) =>
-  async (request: Request) => {
+  async (request: Request): Promise<Response> => {
     const logger = getLoggingProvider();
 
     logger.info(`Received Saleor webhook at ${new URL(request.url).pathname}.`);
@@ -70,14 +71,16 @@ export const verifySaleorWebhookRoute =
     });
 
     if (error) {
-      return responseError({
-        description: "Saleor webhook verification failed",
-        ...error,
-      } as ResponseSchema);
+      if (error) {
+        return responseError({
+          description: "Saleor webhook verification failed",
+          ...error,
+        } as ResponseSchema);
+      }
+
+      const event =
+        (await request.json()) as WebhookData<PaymentGatewayInitializeSessionSubscription>;
+
+      return handler({ event, headers, request });
     }
-
-    const event =
-      (await request.json()) as WebhookData<PaymentGatewayInitializeSessionSubscription>;
-
-    return handler({ event, headers, request });
   };
