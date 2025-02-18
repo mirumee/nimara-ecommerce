@@ -4,7 +4,8 @@ import { type Logger } from "@/providers/logging";
 
 import * as api from "../api";
 import { getStripeApi } from "../api";
-import { StripeMetaKey } from "../const";
+import { StripeMetaKey, StripeWebhookEvent } from "../const";
+import { getGatewayMetadata } from "../util";
 
 const isLocalDomain = (url: string) => {
   const urlObject = new URL(url);
@@ -38,10 +39,11 @@ export const installWebhook = async ({
   }
 
   const url = `${appUrl}/api/stripe/${channel}/webhooks`;
-  const result = await api.webhookSubscribe({
-    apiKey: configuration.secretKey,
+  const stripe = getStripeApi(configuration.secretKey);
+  const result = await stripe.webhookEndpoints.create({
     url,
-    saleorDomain,
+    enabled_events: Object.values(StripeWebhookEvent),
+    metadata: getGatewayMetadata({ saleorDomain }),
   });
 
   if (result) {

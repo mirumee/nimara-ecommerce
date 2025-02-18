@@ -2,11 +2,8 @@ import { type TransactionRefundRequestedSubscription } from "@/graphql/subscript
 import { responseError } from "@/lib/api/util";
 import { getAmountFromCents } from "@/lib/currency";
 import { isError } from "@/lib/error";
-import { transactionResponseSuccess } from "@/lib/saleor/transaction/api";
-import {
-  type TransactionEventSchema,
-  transactionEventSchema,
-} from "@/lib/saleor/transaction/schema";
+import { type TransactionEventSchema } from "@/lib/saleor/transaction/schema";
+import { constructTransactionEventResponse } from "@/lib/saleor/transaction/util";
 import { verifySaleorWebhookRoute } from "@/lib/saleor/webhooks/util";
 import { getStripeApi } from "@/lib/stripe/api";
 import {
@@ -57,13 +54,13 @@ export const POST = stripeRouteErrorsHandler(
         event.transaction.pspReference,
       );
 
-      let eventData: Partial<TransactionEventSchema> = {
+      let data: TransactionEventSchema = {
         pspReference: intent.id,
       };
 
       if (intent.status === "succeeded") {
-        eventData = {
-          ...eventData,
+        data = {
+          ...data,
           amount: getAmountFromCents({
             currency: intent.currency,
             amount: intent.amount,
@@ -76,26 +73,11 @@ export const POST = stripeRouteErrorsHandler(
         };
       }
 
-      const eventResult = transactionEventSchema.safeParse(eventData);
-
-      if (!eventResult.success) {
-        const message =
-          "Failed to construct TransactionRefundRequested event response.";
-
-        logger.error(message, { errors: eventResult.error.issues });
-
-        return responseError({
-          description: message,
-          errors: eventResult.error.issues,
-          status: 422,
-        });
-      }
-
-      logger.debug("Constructed TransactionRefundRequested event response.", {
-        eventResult,
+      return constructTransactionEventResponse({
+        data,
+        logger,
+        type: "TransactionRefundRequested",
       });
-
-      return transactionResponseSuccess(eventResult.data);
     },
   ),
 );

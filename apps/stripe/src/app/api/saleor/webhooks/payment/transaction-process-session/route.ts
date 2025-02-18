@@ -2,8 +2,8 @@ import { type TransactionProcessSessionSubscription } from "@/graphql/subscripti
 import { responseError } from "@/lib/api/util";
 import { getAmountFromCents, getCentsFromAmount } from "@/lib/currency";
 import { isError } from "@/lib/error";
-import { transactionResponseSuccess } from "@/lib/saleor/transaction/api";
-import { transactionEventSchema } from "@/lib/saleor/transaction/schema";
+import { type TransactionEventSchema } from "@/lib/saleor/transaction/schema";
+import { constructTransactionEventResponse } from "@/lib/saleor/transaction/util";
 import { verifySaleorWebhookRoute } from "@/lib/saleor/webhooks/util";
 import { getStripeApi } from "@/lib/stripe/api";
 import {
@@ -72,7 +72,7 @@ export const POST = stripeRouteErrorsHandler(
         status: intent.status,
       });
 
-      const eventResult = transactionEventSchema.safeParse({
+      const data: TransactionEventSchema = {
         pspReference: intent.id,
         result,
         amount: getAmountFromCents({
@@ -91,26 +91,13 @@ export const POST = stripeRouteErrorsHandler(
             }),
           },
         },
+      };
+
+      return constructTransactionEventResponse({
+        data,
+        logger,
+        type: "TransactionProcessSession",
       });
-
-      if (!eventResult.success) {
-        const message =
-          "Failed to construct TransactionProcessSession event response.";
-
-        logger.error(message, { errors: eventResult.error.issues });
-
-        return responseError({
-          description: message,
-          errors: eventResult.error.issues,
-          status: 422,
-        });
-      }
-
-      logger.debug("Constructed TransactionProcessSession event response.", {
-        eventResult,
-      });
-
-      return transactionResponseSuccess(eventResult.data);
     },
   ),
 );

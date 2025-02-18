@@ -2,11 +2,8 @@ import { type TransactionCancelationRequestedSubscription } from "@/graphql/subs
 import { responseError } from "@/lib/api/util";
 import { getAmountFromCents } from "@/lib/currency";
 import { isError } from "@/lib/error";
-import { transactionResponseSuccess } from "@/lib/saleor/transaction/api";
-import {
-  type TransactionEventSchema,
-  transactionEventSchema,
-} from "@/lib/saleor/transaction/schema";
+import { type TransactionEventSchema } from "@/lib/saleor/transaction/schema";
+import { constructTransactionEventResponse } from "@/lib/saleor/transaction/util";
 import { verifySaleorWebhookRoute } from "@/lib/saleor/webhooks/util";
 import { getStripeApi } from "@/lib/stripe/api";
 import {
@@ -53,18 +50,17 @@ export const POST = stripeRouteErrorsHandler(
 
       const stripe = getStripeApi(gatewayConfig.secretKey);
 
-      // TODO: Handle Stripe errors everywhere
       const intent = await stripe.paymentIntents.retrieve(
         event.transaction.pspReference,
       );
 
-      let eventData: Partial<TransactionEventSchema> = {
+      let data: TransactionEventSchema = {
         pspReference: intent.id,
       };
 
       if (intent.status === "canceled") {
-        eventData = {
-          ...eventData,
+        data = {
+          ...data,
           result: "CANCEL_SUCCESS",
           amount: getAmountFromCents({
             currency: intent.currency,
@@ -77,29 +73,11 @@ export const POST = stripeRouteErrorsHandler(
         };
       }
 
-      const eventResult = transactionEventSchema.safeParse(eventData);
-
-      if (!eventResult.success) {
-        const message =
-          "Failed to construct TransactionCancelationRequested event response.";
-
-        logger.error(message, { errors: eventResult.error.issues });
-
-        return responseError({
-          description: message,
-          errors: eventResult.error.issues,
-          status: 422,
-        });
-      }
-
-      logger.debug(
-        "Constructed TransactionCancelationRequested event response.",
-        {
-          eventResult,
-        },
-      );
-
-      return transactionResponseSuccess(eventResult.data);
+      return constructTransactionEventResponse({
+        data,
+        logger,
+        type: "TransactionCancelationRequested",
+      });
     },
   ),
 );

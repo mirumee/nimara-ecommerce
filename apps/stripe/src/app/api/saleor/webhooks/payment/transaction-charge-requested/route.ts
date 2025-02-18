@@ -2,11 +2,8 @@ import { type TransactionChargeRequestedSubscription } from "@/graphql/subscript
 import { responseError } from "@/lib/api/util";
 import { getAmountFromCents, getCentsFromAmount } from "@/lib/currency";
 import { isError } from "@/lib/error";
-import { transactionResponseSuccess } from "@/lib/saleor/transaction/api";
-import {
-  type TransactionEventSchema,
-  transactionEventSchema,
-} from "@/lib/saleor/transaction/schema";
+import { type TransactionEventSchema } from "@/lib/saleor/transaction/schema";
+import { constructTransactionEventResponse } from "@/lib/saleor/transaction/util";
 import { verifySaleorWebhookRoute } from "@/lib/saleor/webhooks/util";
 import { getStripeApi } from "@/lib/stripe/api";
 import {
@@ -55,7 +52,6 @@ export const POST = stripeRouteErrorsHandler(
 
       const stripe = getStripeApi(gatewayConfig.secretKey);
 
-      // TODO: Handle Stripe errors everywhere
       const intent = await stripe.paymentIntents.capture(
         event.transaction.pspReference,
         {
@@ -70,13 +66,13 @@ export const POST = stripeRouteErrorsHandler(
         status: intent.status,
       });
 
-      let eventData: Partial<TransactionEventSchema> = {
+      let data: TransactionEventSchema = {
         pspReference: intent.id,
       };
 
       if (["CHARGE_SUCCESS", "CHARGE_FAILURE"].includes(result)) {
-        eventData = {
-          ...eventData,
+        data = {
+          ...data,
           result,
           amount: getAmountFromCents({
             currency: intent.currency,
@@ -88,26 +84,12 @@ export const POST = stripeRouteErrorsHandler(
           }),
         };
       }
-      const eventResult = transactionEventSchema.safeParse(eventData);
 
-      if (!eventResult.success) {
-        const message =
-          "Failed to construct TransactionChargeRequested event response.";
-
-        logger.error(message, { errors: eventResult.error.issues });
-
-        return responseError({
-          description: message,
-          errors: eventResult.error.issues,
-          status: 422,
-        });
-      }
-
-      logger.debug("Constructed TransactionChargeRequested event response.", {
-        eventResult,
+      return constructTransactionEventResponse({
+        data,
+        logger,
+        type: "TransactionChargeRequested",
       });
-
-      return transactionResponseSuccess(eventResult.data);
     },
   ),
 );
