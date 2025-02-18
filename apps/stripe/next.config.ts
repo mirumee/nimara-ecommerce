@@ -9,7 +9,7 @@ const isSentryAvailable =
 
 const nextConfig: NextConfig = {
   env: {
-    // Need to export this env, as the process is no t available in the browser
+    // Need to export this env, as the process is not available in the browser
     APP_SEMVER_NAME,
   },
   logging: {

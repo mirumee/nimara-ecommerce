@@ -15,7 +15,10 @@ const configSchema = z.object({
   VERCEL_ACCESS_TOKEN: z.string().describe("Vercel access token."),
   VERCEL_TEAM_ID: z.string().describe("Your Vercel Team ID."),
   VERCEL_EDGE_CONFIG_ID: z.string().describe("Edge config database ID."),
-  CONFIG_KEY: z.string().describe("Config provider key."),
+  CONFIG_KEY: z
+    .string()
+    .describe("Config provider key.")
+    .default("nimara-config"),
 });
 
 const parsed = prepareConfig({
