@@ -103,11 +103,13 @@ export function AddressTab({
             countries={countries}
             countryCode={countryCode}
           />
-          <CheckboxField
-            className="pt-6"
-            name="saveAddressForFutureUse"
-            label={t("address.save-address-for-future")}
-          />
+          {hasDefaultBillingAddressSet && (
+            <CheckboxField
+              className="pt-6"
+              name="saveAddressForFutureUse"
+              label={t("address.save-address-for-future")}
+            />
+          )}
         </>
       ) : (
         <Tabs
