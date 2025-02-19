@@ -4,13 +4,12 @@ import { getAmountFromCents, getCentsFromAmount } from "@/lib/currency";
 import { isError } from "@/lib/error";
 import { type TransactionEventSchema } from "@/lib/saleor/transaction/schema";
 import { constructTransactionEventResponse } from "@/lib/saleor/transaction/util";
-import { verifySaleorWebhookRoute } from "@/lib/saleor/webhooks/util";
-import { getStripeApi } from "@/lib/stripe/api";
+import { verifySaleorWebhookRoute } from "@/lib/saleor/webhooks/api";
+import { getStripeApi, stripeRouteErrorsHandler } from "@/lib/stripe/api";
 import {
   getGatewayMetadata,
   getIntentDashboardUrl,
   mapStatusToActionType,
-  stripeRouteErrorsHandler,
 } from "@/lib/stripe/util";
 import { getConfigProvider } from "@/providers/config";
 import { getLoggingProvider } from "@/providers/logging";

@@ -1,12 +1,8 @@
-import { type PaymentGatewayInitializeSessionSubscription } from "@/graphql/subscriptions/generated";
-import { type ResponseSchema } from "@/lib/api/schema";
-import { responseError } from "@/lib/api/util";
+import { isError } from "@/lib/error";
 import { getJWKSProvider } from "@/providers/jwks";
-import { getLoggingProvider } from "@/providers/logging";
 
 import { verifyWebhookSignature } from "../auth/jwt";
-import { type SaleorWebhookHeaders, saleorWebhookHeaders } from "../headers";
-import { type WebhookData } from "./types";
+import { saleorWebhookHeaders } from "../headers";
 
 export const verifySaleorWebhookSignature = async ({
   payload,
@@ -20,11 +16,7 @@ export const verifySaleorWebhookSignature = async ({
   );
 
   if (!success) {
-    return responseError({
-      description: "Webhook validation failed.",
-      context: "headers",
-      errors: error.errors,
-    });
+    return { headers: null, errors: error.errors, context: "signature" };
   }
 
   const jwksProvider = getJWKSProvider();
@@ -37,50 +29,16 @@ export const verifySaleorWebhookSignature = async ({
       issuer: data["saleor-api-url"],
     });
   } catch (err) {
-    let message = "Signature verification failed";
-
-    if (err instanceof Error) {
-      message = err.message;
-    }
-
     return {
       headers: null,
-      error: { context: "signature", errors: { message } },
+      context: "signature",
+      errors: [
+        {
+          message: isError(err) ? err.message : "Signature verification failed",
+        },
+      ],
     };
   }
 
-  return { headers: data, error: null };
+  return { headers: data, errors: null, context: null };
 };
-
-export const verifySaleorWebhookRoute =
-  <T extends { event: unknown }>(
-    handler: (opts: {
-      event: WebhookData<T>;
-      headers: SaleorWebhookHeaders;
-      request: Request;
-    }) => Promise<Response>,
-  ) =>
-  async (request: Request): Promise<Response> => {
-    const logger = getLoggingProvider();
-
-    logger.info(`Received Saleor webhook at ${new URL(request.url).pathname}.`);
-
-    const { headers, error } = await verifySaleorWebhookSignature({
-      headers: request.headers,
-      payload: await request.clone().text(),
-    });
-
-    if (error) {
-      if (error) {
-        return responseError({
-          description: "Saleor webhook verification failed",
-          ...error,
-        } as ResponseSchema);
-      }
-
-      const event =
-        (await request.json()) as WebhookData<PaymentGatewayInitializeSessionSubscription>;
-
-      return handler({ event, headers, request });
-    }
-  };

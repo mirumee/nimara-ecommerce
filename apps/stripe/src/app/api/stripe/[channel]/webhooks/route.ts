@@ -1,7 +1,7 @@
 import { responseError, responseSuccess } from "@/lib/api/util";
 import { getAmountFromCents } from "@/lib/currency";
 import { all } from "@/lib/misc";
-import { getStripeApi } from "@/lib/stripe/api";
+import { getStripeApi, stripeRouteErrorsHandler } from "@/lib/stripe/api";
 import {
   StripeMetaKey,
   type SupportedStripeWebhookEvent,
@@ -10,7 +10,6 @@ import {
   getIntentDashboardUrl,
   isAppEvent,
   mapStripeEventToSaleorEvent,
-  stripeRouteErrorsHandler,
 } from "@/lib/stripe/util";
 import { getConfigProvider } from "@/providers/config";
 import { getLoggingProvider } from "@/providers/logging";

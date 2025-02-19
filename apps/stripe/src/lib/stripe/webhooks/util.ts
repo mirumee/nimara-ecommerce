@@ -1,17 +1,11 @@
 import { CONFIG } from "@/config";
 import { type PaymentGatewayConfig } from "@/lib/saleor/config/schema";
+import { isLocalDomain } from "@/lib/util";
 import { type Logger } from "@/providers/logging";
 
-import * as api from "../api";
 import { getStripeApi } from "../api";
 import { StripeMetaKey, StripeWebhookEvent } from "../const";
 import { getGatewayMetadata } from "../util";
-
-const isLocalDomain = (url: string) => {
-  const urlObject = new URL(url);
-
-  return ["localhost", "127.0.0.1"].includes(urlObject.hostname);
-};
 
 export const installWebhook = async ({
   configuration,
@@ -40,6 +34,7 @@ export const installWebhook = async ({
 
   const url = `${appUrl}/api/stripe/${channel}/webhooks`;
   const stripe = getStripeApi(configuration.secretKey);
+
   const result = await stripe.webhookEndpoints.create({
     url,
     enabled_events: Object.values(StripeWebhookEvent),
@@ -61,9 +56,9 @@ export const uninstallWebhooks = async ({
   configuration: PaymentGatewayConfig[string];
   logger: Logger;
 }) => {
-  const stripe = getStripeApi(configuration.secretKey);
-
   if (!isLocalDomain(appUrl)) {
+    const stripe = getStripeApi(configuration.secretKey);
+
     try {
       const webhooks = await stripe.webhookEndpoints.list({ limit: 100 });
 

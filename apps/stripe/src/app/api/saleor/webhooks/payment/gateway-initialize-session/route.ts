@@ -2,7 +2,7 @@ import { type PaymentGatewayInitializeSessionSubscription } from "@/graphql/subs
 import { responseError } from "@/lib/api/util";
 import { isError } from "@/lib/error";
 import { transactionResponseSuccess } from "@/lib/saleor/transaction/api";
-import { verifySaleorWebhookRoute } from "@/lib/saleor/webhooks/util";
+import { verifySaleorWebhookRoute } from "@/lib/saleor/webhooks/api";
 import { getConfigProvider } from "@/providers/config";
 
 export const POST =

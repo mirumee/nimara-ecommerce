@@ -7,7 +7,7 @@ import { TRANSACTION_EVENT_TYPE } from "./const";
  *
  * {
  *   "pspReference": "[Optional for some results, see details below] <psp reference recieved from payment provider>",
- *   "result": TransactionEventTypeEnum,
+ *   "result": <[Optional] TransactionEventTypeEnum>,
  *   "amount": "<Decimal amount of the processed action>",
  *   "data": "<[Optional] JSON data tha will be returned to storefront>",
  *   "time": "<[Optional] time of the action>",

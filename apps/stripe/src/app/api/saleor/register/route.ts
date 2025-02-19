@@ -1,6 +1,8 @@
+import { isError } from "lodash";
 import { z } from "zod";
 
 import { CONFIG } from "@/config";
+import { responseError } from "@/lib/api/util";
 import { installApp } from "@/lib/saleor/app/install";
 import { saleorHeaders } from "@/lib/saleor/headers";
 import { getConfigProvider } from "@/providers/config";
@@ -14,13 +16,11 @@ export async function POST(request: Request) {
   );
 
   if (!headers.success) {
-    return Response.json(
-      {
-        context: "headers",
-        errors: headers.error.errors,
-      },
-      { status: 400 },
-    );
+    return responseError({
+      description: "Invalid saleor headers.",
+      context: "headers",
+      errors: headers.error.errors,
+    });
   }
 
   const body = z
@@ -28,13 +28,11 @@ export async function POST(request: Request) {
     .safeParse(await request.json());
 
   if (!body.success) {
-    return Response.json(
-      {
-        context: "body",
-        errors: body.error.errors,
-      },
-      { status: 400 },
-    );
+    return responseError({
+      description: "Invalid body.",
+      context: "body",
+      errors: body.error.errors,
+    });
   }
   const saleorAuthToken = body.data.auth_token;
   const saleorDomain = headers.data["saleor-domain"];
@@ -60,30 +58,20 @@ export async function POST(request: Request) {
       configProvider,
     });
   } catch (err) {
-    if (err instanceof Error) {
-      console.error(err);
+    const context = isError(err)
+      ? {
+          error: err.message,
+          cause: err.cause,
+        }
+      : undefined;
 
-      logger.error(`Failed to install for ${saleorDomain}.`, {
-        error: err.message,
-        cause: err.cause,
-      });
+    logger.error(`Failed to install for ${saleorDomain}.`, context);
 
-      return Response.json(
-        {
-          context: "install",
-          errors: [{ message: err?.message }],
-        },
-        { status: 500 },
-      );
-    }
-
-    return Response.json(
-      {
-        context: "install",
-        errors: [{ message: "Failed to install app." }],
-      },
-      { status: 500 },
-    );
+    return responseError({
+      description: "Failed to install the app.",
+      context: "install",
+      errors: context ? [{ message: context.error }] : [],
+    });
   }
 
   logger.info(`Installation successful for ${saleorDomain}.`);
