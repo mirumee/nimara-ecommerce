@@ -16,7 +16,7 @@ export const URLS = (channel: Channel = "gb") =>
   }) as const;
 
 export const product = {
-  url: "automated-test-product-ocean-waves#UHJvZHVjdFZhcmlhbnQ6ODM0",
+  url: "automated-test-product-ocean-waves?format-album=vinyl",
   quantity: 1,
   deliveryMethod: {
     amount: 4,
@@ -24,7 +24,7 @@ export const product = {
     name: "DHL Fast",
   },
   price: {
-    amount: 9.99,
+    amount: 21.99,
     currency: "GBP",
   },
 };
@@ -52,3 +52,5 @@ export const paymentDetails = {
   expiryDate: `12/${new Date().getFullYear() + 1}`,
   cvc: "123",
 };
+
+export type PaymentDetails = typeof paymentDetails;
