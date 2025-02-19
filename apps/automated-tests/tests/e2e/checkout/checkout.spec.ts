@@ -1,51 +1,30 @@
-import { type Page, test } from "@playwright/test";
-import { CartPage } from "pages/CartPage";
-import { CheckoutLoginPage } from "pages/CheckoutLoginPage";
-import { CheckoutPage } from "pages/CheckoutPage";
-import { ProductPage } from "pages/ProductPage";
-import { product } from "utils/constants";
-
-let page: Page;
+import { test } from "fixtures/fixtures";
+import { product, user, userEmail, userPassword } from "utils/constants";
 
 test.describe("Logged-in user checkout", () => {
   // Prepare checkout; Add product to the cart and navigate to checkout.
-  test.beforeAll(async ({ browser }) => {
-    page = await browser.newPage();
-
-    const productPage = new ProductPage(page);
-
+  test.beforeEach(async ({ productPage, cartPage, checkoutLoginPage }) => {
     await productPage.goto(product.url);
 
     // Add to bag mutation must finished and set checkoutId cookie, thus
     // navigation to cart page is required - the cookie will be set by the time the page loads
     await productPage.addProductToBagAndGoToCart();
 
-    const cartPage = new CartPage(page);
+    await cartPage.goToCheckout();
 
-    // Set test product quantity to 1, if there are more than 1 items in the cart in current user's checkout
-    if (Number(await cartPage.quatityInput.inputValue()) > 1) {
-      await cartPage.quatityInput.fill("1");
-    }
-
-    await cartPage.gotToCheckout();
-
-    const checkoutLoginPage = new CheckoutLoginPage(page);
-
-    await checkoutLoginPage.continueAsLoggedInUser();
+    await checkoutLoginPage.continueAsLoggedInUser(userEmail, userPassword);
   });
 
-  test("C11619: Logged in user is able to purchase single item using Credit Card as payment (creating new data)", async () => {
-    const checkoutPage = new CheckoutPage({
-      page,
-      product,
-      checkoutType: "registered",
-    });
-
-    await checkoutPage.checkUserDetails();
-    await checkoutPage.checkPageSections();
+  test("CHE-02001: Logged-in user completes checkout using saved shipping address and saved payment method", async ({
+    checkoutPage,
+  }) => {
+    await checkoutPage.assertUserDetails(user, userEmail);
+    await checkoutPage.assertPageSections("registered");
     await checkoutPage.useSavedShippingAddress();
-    await checkoutPage.selectDeliveryOption();
-    await checkoutPage.checkOrderSummary();
-    await checkoutPage.payAndConfirmOrderAsUser();
+    await checkoutPage.selectDeliveryOption(product.deliveryMethod.name);
+    await checkoutPage.providePaymentMethod("savedMethod");
+    await checkoutPage.provideBillingAddress("sameAsShipping");
+    await checkoutPage.assertOrderSummary(product);
+    await checkoutPage.placeOrder();
   });
 });

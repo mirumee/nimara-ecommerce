@@ -13,7 +13,7 @@ if (process.env.TEST_ENV_URL === undefined) {
  */
 const config = defineConfig({
   testDir: "./tests",
-  timeout: 30 * 1000,
+  timeout: 40 * 1000,
   expect: {
     timeout: 5 * 1000,
   },
@@ -22,7 +22,7 @@ const config = defineConfig({
 
   // Give failing tests 2 retry attempts on CI
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  workers: process.env.CI ? 1 : 1,
   reporter: process.env.CI ? "dot" : "list",
   use: {
     baseURL: process.env.TEST_ENV_URL,

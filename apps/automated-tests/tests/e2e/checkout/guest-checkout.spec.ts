@@ -1,46 +1,30 @@
-import { type Page, test } from "@playwright/test";
-import { CartPage } from "pages/CartPage";
-import { CheckoutLoginPage } from "pages/CheckoutLoginPage";
-import { CheckoutPage } from "pages/CheckoutPage";
-import { ProductPage } from "pages/ProductPage";
-import { product } from "utils/constants";
-
-let page: Page;
+import { test } from "fixtures/fixtures";
+import { paymentDetails, product, user } from "utils/constants";
 
 test.describe("Guest checkout", () => {
   // Prepare checkout; Add product to the cart and navigate to checkout.
-  test.beforeAll(async ({ browser }) => {
-    page = await browser.newPage();
-
-    const productPage = new ProductPage(page);
-
+  test.beforeEach(async ({ productPage, cartPage, checkoutLoginPage }) => {
     await productPage.goto(product.url);
 
     // Add to bag mutation must finished and set checkoutId cookie, thus
     // navigation to cart page is required - the cookie will be set by the time the page loads
     await productPage.addProductToBagAndGoToCart();
 
-    const cartPage = new CartPage(page);
-
-    await cartPage.gotToCheckout();
-
-    const checkoutLoginPage = new CheckoutLoginPage(page);
+    await cartPage.goToCheckout();
 
     await checkoutLoginPage.continueAsGuest();
   });
 
-  test("C11615: Guest user is able to purchase single item using credit card as payment", async () => {
-    const checkoutPage = new CheckoutPage({
-      page,
-      product,
-      checkoutType: "guest",
-    });
-
-    await checkoutPage.provideUserDetails();
-    await checkoutPage.checkPageSections();
-    await checkoutPage.provideShippingAddress();
-    await checkoutPage.selectDeliveryOption();
-    await checkoutPage.checkOrderSummary();
-    await checkoutPage.payAndConfirmOrderAsGuest();
+  test("CHE-01001: Guest user completes checkout with credit card payment and same shipping/billing address", async ({
+    checkoutPage,
+  }) => {
+    await checkoutPage.provideUserDetails(user.email);
+    await checkoutPage.assertPageSections("guest");
+    await checkoutPage.provideShippingAddress(user);
+    await checkoutPage.selectDeliveryOption(product.deliveryMethod.name);
+    await checkoutPage.providePaymentMethod("guestPayment", paymentDetails);
+    await checkoutPage.provideBillingAddress("sameAsShipping");
+    await checkoutPage.assertOrderSummary(product);
+    await checkoutPage.placeOrder();
   });
 });
