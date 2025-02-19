@@ -54,7 +54,7 @@ export function AddressTab({
   const region = useCurrentRegion();
 
   const hasDefaultBillingAddressSet = addresses?.some(
-    (item) => item.address?.isDefaultBillingAddress === true,
+    (item) => item.address?.isDefaultBillingAddress,
   );
 
   function handleTabChange(value: string) {
