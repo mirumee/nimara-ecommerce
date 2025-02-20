@@ -21,11 +21,11 @@ export function chain(
     return current(next);
   }
 
-  return (
+  return async (
     request: NextRequest,
     event: NextFetchEvent,
     response: NextResponse,
   ) => {
-    return response;
+    return Promise.resolve(response);
   };
 }
