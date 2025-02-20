@@ -11,7 +11,7 @@ const HOUR = MINUTE * 60;
 const DAY = HOUR * 24;
 
 export const CACHE_TTL = {
-  pdp: DAY,
+  pdp: MINUTE,
   cart: MINUTE * 5,
   cms: MINUTE * 15,
 };
