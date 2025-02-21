@@ -22,13 +22,23 @@ function getLocale(request: NextRequest) {
     },
   }).languages();
 
+  console.log("[i18nMiddleware] Detected languages:", languages);
+
   return match(languages, SUPPORTED_LOCALES, DEFAULT_LOCALE);
 }
 
 export function i18nMiddleware(middleware: CustomMiddleware) {
   return async (request: NextRequest, event: NextFetchEvent) => {
+    console.log("[i18nMiddleware] Incoming request:", request.nextUrl.pathname);
+
     const prefferedLocale = getLocale(request);
+
+    console.log("[i18nMiddleware] Preferred locale:", prefferedLocale);
+
     const nextLocaleCookie = request.cookies.get(NEXT_LOCALE)?.value;
+
+    console.log("[i18nMiddleware] NEXT_LOCALE cookie:", nextLocaleCookie);
+
     const pathname = request.nextUrl.pathname;
     const localePrefix = Object.values(localePrefixes).find(
       (localePrefix) =>
@@ -36,14 +46,17 @@ export function i18nMiddleware(middleware: CustomMiddleware) {
     );
     const isLocalePrefixedPathname = !!localePrefix;
 
+    console.log("[i18nMiddleware] Locale prefix found:", localePrefix);
+    console.log(
+      "[i18nMiddleware] Is locale-prefixed path:",
+      isLocalePrefixedPathname,
+    );
+
     let locale = prefferedLocale;
 
     const handleI18nRouting = createIntlMiddleware(routing);
     const response = handleI18nRouting(request);
 
-    // INFO: All routes have locale prefixes except for default locale/domain - "/".
-    // If the user types only domain name it should be navigated to preffered region of the store,
-    // otherwise navigate to the requested locale prefixed pathname
     if (isLocalePrefixedPathname) {
       locale =
         Object.keys(localePrefixes).find(
@@ -53,13 +66,19 @@ export function i18nMiddleware(middleware: CustomMiddleware) {
         ) ?? DEFAULT_LOCALE;
     }
 
-    // INFO: Store the locale in the cookie to know if the locale has changed between requests
+    console.log("[i18nMiddleware] Determined locale:", locale);
+
     response.cookies.set(NEXT_LOCALE, locale);
 
     if (locale !== nextLocaleCookie) {
+      console.log(
+        "[i18nMiddleware] Locale changed. Deleting checkoutId cookie.",
+      );
       request.cookies.delete(COOKIE_KEY.checkoutId);
       response.cookies.delete(COOKIE_KEY.checkoutId);
     }
+
+    console.log("[i18nMiddleware] Middleware execution completed.");
 
     return middleware(request, event, response);
   };
