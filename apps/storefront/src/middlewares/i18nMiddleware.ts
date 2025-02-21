@@ -1,10 +1,6 @@
 import { match } from "@formatjs/intl-localematcher";
 import Negotiator from "negotiator";
-import {
-  type NextFetchEvent,
-  type NextRequest,
-  NextResponse,
-} from "next/server";
+import { type NextFetchEvent, type NextRequest } from "next/server";
 import createIntlMiddleware from "next-intl/middleware";
 
 import { COOKIE_KEY } from "@/config";
@@ -26,91 +22,45 @@ function getLocale(request: NextRequest) {
     },
   }).languages();
 
-  console.log("[i18nMiddleware] Detected languages:", languages);
-
   return match(languages, SUPPORTED_LOCALES, DEFAULT_LOCALE);
 }
 
-export function i18nMiddleware(middleware: CustomMiddleware): CustomMiddleware {
+export function i18nMiddleware(middleware: CustomMiddleware) {
   return async (request: NextRequest, event: NextFetchEvent) => {
-    try {
-      console.log(
-        "[i18nMiddleware] Incoming request:",
-        request.nextUrl.pathname,
-      );
+    const prefferedLocale = getLocale(request);
+    const nextLocaleCookie = request.cookies.get(NEXT_LOCALE)?.value;
+    const pathname = request.nextUrl.pathname;
+    const localePrefix = Object.values(localePrefixes).find(
+      (localePrefix) =>
+        pathname.startsWith(localePrefix) || pathname === localePrefix,
+    );
+    const isLocalePrefixedPathname = !!localePrefix;
 
-      const preferredLocale = getLocale(request);
+    let locale = prefferedLocale;
 
-      console.log("[i18nMiddleware] Preferred locale:", preferredLocale);
+    const handleI18nRouting = createIntlMiddleware(routing);
+    const response = handleI18nRouting(request);
 
-      const nextLocaleCookie = request.cookies.get(NEXT_LOCALE)?.value;
-
-      console.log("[i18nMiddleware] NEXT_LOCALE cookie:", nextLocaleCookie);
-
-      const pathname = request.nextUrl.pathname;
-      const localePrefix = Object.values(localePrefixes).find(
-        (localePrefix) =>
-          pathname.startsWith(localePrefix) || pathname === localePrefix,
-      );
-      const isLocalePrefixedPathname = !!localePrefix;
-
-      console.log("[i18nMiddleware] Locale prefix found:", localePrefix);
-      console.log(
-        "[i18nMiddleware] Is locale-prefixed path:",
-        isLocalePrefixedPathname,
-      );
-
-      let locale = preferredLocale;
-
-      const handleI18nRouting = createIntlMiddleware(routing);
-      let response = handleI18nRouting(request);
-
-      if (!response) {
-        console.warn(
-          "[i18nMiddleware] No response from createIntlMiddleware. Using NextResponse.next().",
-        );
-        response = NextResponse.next();
-      }
-
-      if (isLocalePrefixedPathname) {
-        locale =
-          Object.keys(localePrefixes).find(
-            (key) =>
-              localePrefixes[key as Exclude<Locale, typeof DEFAULT_LOCALE>] ===
-              localePrefix,
-          ) ?? DEFAULT_LOCALE;
-      }
-
-      console.log("[i18nMiddleware] Determined locale:", locale);
-
-      if (!SUPPORTED_LOCALES.includes(locale)) {
-        console.warn(
-          "[i18nMiddleware] Locale not supported. Using default locale:",
-          DEFAULT_LOCALE,
-        );
-        locale = DEFAULT_LOCALE;
-      }
-
-      response.cookies.set(NEXT_LOCALE, locale);
-
-      if (locale !== nextLocaleCookie) {
-        console.log(
-          "[i18nMiddleware] Locale changed. Deleting checkoutId cookie.",
-        );
-
-        // Correct way to delete a cookie in Next.js middleware
-        response.cookies.set(COOKIE_KEY.checkoutId, "", { maxAge: -1 });
-      }
-
-      console.log("[i18nMiddleware] Middleware execution completed.");
-
-      const middlewareResponse = await middleware(request, event, response);
-
-      return middlewareResponse ?? response;
-    } catch (error) {
-      console.error("[i18nMiddleware] Middleware error:", error);
-
-      return NextResponse.next(); // Ensure failure does not break requests
+    // INFO: All routes have locale prefixes except for default locale/domain - "/".
+    // If the user types only domain name it should be navigated to preffered region of the store,
+    // otherwise navigate to the requested locale prefixed pathname
+    if (isLocalePrefixedPathname) {
+      locale =
+        Object.keys(localePrefixes).find(
+          (key) =>
+            localePrefixes[key as Exclude<Locale, typeof DEFAULT_LOCALE>] ===
+            localePrefix,
+        ) ?? DEFAULT_LOCALE;
     }
+
+    // INFO: Store the locale in the cookie to know if the locale has changed between requests
+    response.cookies.set(NEXT_LOCALE, locale);
+
+    if (locale !== nextLocaleCookie) {
+      // Correct way to delete a cookie in Next.js middleware
+      response.cookies.set(COOKIE_KEY.checkoutId, "", { maxAge: -1 });
+    }
+
+    return middleware(request, event, response);
   };
 }
