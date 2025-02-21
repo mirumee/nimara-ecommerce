@@ -69,7 +69,7 @@ export function i18nMiddleware(middleware: CustomMiddleware): CustomMiddleware {
         console.warn(
           "[i18nMiddleware] No response from createIntlMiddleware. Using NextResponse.next().",
         );
-        response = NextResponse.next(); // Ensure a valid response is always returned
+        response = NextResponse.next();
       }
 
       if (isLocalePrefixedPathname) {
@@ -97,17 +97,18 @@ export function i18nMiddleware(middleware: CustomMiddleware): CustomMiddleware {
         console.log(
           "[i18nMiddleware] Locale changed. Deleting checkoutId cookie.",
         );
-        request.cookies.delete(COOKIE_KEY.checkoutId);
-        response.cookies.delete(COOKIE_KEY.checkoutId);
+
+        // Correct way to delete a cookie in Next.js middleware
+        response.cookies.set(COOKIE_KEY.checkoutId, "", { maxAge: -1 });
       }
 
       console.log("[i18nMiddleware] Middleware execution completed.");
 
       const middlewareResponse = await middleware(request, event, response);
 
-      return middlewareResponse ?? response; // Always return a NextResponse
+      return middlewareResponse ?? response;
     } catch (error) {
-      console.error("[i18nMiddleware] Error:", error);
+      console.error("[i18nMiddleware] Middleware error:", error);
 
       return NextResponse.next(); // Ensure failure does not break requests
     }
