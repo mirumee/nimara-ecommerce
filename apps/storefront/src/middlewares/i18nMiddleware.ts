@@ -1,6 +1,10 @@
 import { match } from "@formatjs/intl-localematcher";
 import Negotiator from "negotiator";
-import type { NextFetchEvent, NextRequest } from "next/server";
+import {
+  type NextFetchEvent,
+  type NextRequest,
+  NextResponse,
+} from "next/server";
 import createIntlMiddleware from "next-intl/middleware";
 
 import { COOKIE_KEY } from "@/config";
@@ -27,59 +31,85 @@ function getLocale(request: NextRequest) {
   return match(languages, SUPPORTED_LOCALES, DEFAULT_LOCALE);
 }
 
-export function i18nMiddleware(middleware: CustomMiddleware) {
+export function i18nMiddleware(middleware: CustomMiddleware): CustomMiddleware {
   return async (request: NextRequest, event: NextFetchEvent) => {
-    console.log("[i18nMiddleware] Incoming request:", request.nextUrl.pathname);
-
-    const prefferedLocale = getLocale(request);
-
-    console.log("[i18nMiddleware] Preferred locale:", prefferedLocale);
-
-    const nextLocaleCookie = request.cookies.get(NEXT_LOCALE)?.value;
-
-    console.log("[i18nMiddleware] NEXT_LOCALE cookie:", nextLocaleCookie);
-
-    const pathname = request.nextUrl.pathname;
-    const localePrefix = Object.values(localePrefixes).find(
-      (localePrefix) =>
-        pathname.startsWith(localePrefix) || pathname === localePrefix,
-    );
-    const isLocalePrefixedPathname = !!localePrefix;
-
-    console.log("[i18nMiddleware] Locale prefix found:", localePrefix);
-    console.log(
-      "[i18nMiddleware] Is locale-prefixed path:",
-      isLocalePrefixedPathname,
-    );
-
-    let locale = prefferedLocale;
-
-    const handleI18nRouting = createIntlMiddleware(routing);
-    const response = handleI18nRouting(request);
-
-    if (isLocalePrefixedPathname) {
-      locale =
-        Object.keys(localePrefixes).find(
-          (key) =>
-            localePrefixes[key as Exclude<Locale, typeof DEFAULT_LOCALE>] ===
-            localePrefix,
-        ) ?? DEFAULT_LOCALE;
-    }
-
-    console.log("[i18nMiddleware] Determined locale:", locale);
-
-    response.cookies.set(NEXT_LOCALE, locale);
-
-    if (locale !== nextLocaleCookie) {
+    try {
       console.log(
-        "[i18nMiddleware] Locale changed. Deleting checkoutId cookie.",
+        "[i18nMiddleware] Incoming request:",
+        request.nextUrl.pathname,
       );
-      request.cookies.delete(COOKIE_KEY.checkoutId);
-      response.cookies.delete(COOKIE_KEY.checkoutId);
+
+      const preferredLocale = getLocale(request);
+
+      console.log("[i18nMiddleware] Preferred locale:", preferredLocale);
+
+      const nextLocaleCookie = request.cookies.get(NEXT_LOCALE)?.value;
+
+      console.log("[i18nMiddleware] NEXT_LOCALE cookie:", nextLocaleCookie);
+
+      const pathname = request.nextUrl.pathname;
+      const localePrefix = Object.values(localePrefixes).find(
+        (localePrefix) =>
+          pathname.startsWith(localePrefix) || pathname === localePrefix,
+      );
+      const isLocalePrefixedPathname = !!localePrefix;
+
+      console.log("[i18nMiddleware] Locale prefix found:", localePrefix);
+      console.log(
+        "[i18nMiddleware] Is locale-prefixed path:",
+        isLocalePrefixedPathname,
+      );
+
+      let locale = preferredLocale;
+
+      const handleI18nRouting = createIntlMiddleware(routing);
+      let response = handleI18nRouting(request);
+
+      if (!response) {
+        console.warn(
+          "[i18nMiddleware] No response from createIntlMiddleware. Using NextResponse.next().",
+        );
+        response = NextResponse.next(); // Ensure a valid response is always returned
+      }
+
+      if (isLocalePrefixedPathname) {
+        locale =
+          Object.keys(localePrefixes).find(
+            (key) =>
+              localePrefixes[key as Exclude<Locale, typeof DEFAULT_LOCALE>] ===
+              localePrefix,
+          ) ?? DEFAULT_LOCALE;
+      }
+
+      console.log("[i18nMiddleware] Determined locale:", locale);
+
+      if (!SUPPORTED_LOCALES.includes(locale)) {
+        console.warn(
+          "[i18nMiddleware] Locale not supported. Using default locale:",
+          DEFAULT_LOCALE,
+        );
+        locale = DEFAULT_LOCALE;
+      }
+
+      response.cookies.set(NEXT_LOCALE, locale);
+
+      if (locale !== nextLocaleCookie) {
+        console.log(
+          "[i18nMiddleware] Locale changed. Deleting checkoutId cookie.",
+        );
+        request.cookies.delete(COOKIE_KEY.checkoutId);
+        response.cookies.delete(COOKIE_KEY.checkoutId);
+      }
+
+      console.log("[i18nMiddleware] Middleware execution completed.");
+
+      const middlewareResponse = await middleware(request, event, response);
+
+      return middlewareResponse ?? response; // Always return a NextResponse
+    } catch (error) {
+      console.error("[i18nMiddleware] Error:", error);
+
+      return NextResponse.next(); // Ensure failure does not break requests
     }
-
-    console.log("[i18nMiddleware] Middleware execution completed.");
-
-    return middleware(request, event, response);
   };
 }
