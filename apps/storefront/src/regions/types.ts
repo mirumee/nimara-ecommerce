@@ -30,6 +30,7 @@ export type CurrencyId = (typeof SUPPORTED_CURRENCIES)[number];
 
 export type Market = {
   channel: string;
+  continent: Continent;
   countryCode: CountryCode;
   currency: CurrencyId;
   defaultLanguage: Language;
@@ -49,3 +50,5 @@ export type Region = {
   language: Language;
   market: Market;
 };
+
+export type Continent = "Asia Pacific" | "Europe" | "North America";
