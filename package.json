@@ -26,7 +26,6 @@
     "codegen": "dotenv -- turbo run codegen",
     "dev": "dotenv -- turbo run dev",
     "dev:storefront": "pnpm run dev --filter=storefront",
-    "dev:stripe": "pnpm run dev --filter=nimara-ts-stripe",
     "dev:docs": "pnpm run dev --filter=docs",
     "test": "dotenv -- turbo run test",
     "test:e2e": "dotenv -- turbo run test:e2e",

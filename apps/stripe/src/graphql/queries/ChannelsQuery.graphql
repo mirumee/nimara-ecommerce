@@ -1,5 +1,0 @@
-query ChannelsQuery {
-  channels {
-    ...ChannelFragment
-  }
-}

@@ -13,10 +13,10 @@ const schema = z.object({
 
   STRIPE_PUBLIC_KEY: z.string(),
   ENVIRONMENT: z
-    .enum(["TEST", "LOCAL", "DEVELOPMENT", "PRODUCTION", "STAGING"])
+    .enum(["LOCAL", "DEVELOPMENT", "PRODUCTION", "STAGING"])
     .default("LOCAL"),
 
-  PAYMENT_APP_ID: z.string().default("DEVELOPMENT.nimara-ts-stripe"),
+  PAYMENT_APP_ID: z.string().default("dev.marina-stripe-saleor-dev"),
 
   NEXT_PUBLIC_BUTTER_CMS_API_KEY: z.string().optional(),
 

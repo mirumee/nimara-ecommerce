@@ -16,7 +16,6 @@
     "buttercms": "2.1.4",
     "libphonenumber-js": "1.11.3",
     "prettier": "3.4.2",
-    "pino": "9.6.0",
     "stripe": "15.10.0",
     "ts-invariant": "0.10.3"
   },
@@ -28,6 +27,7 @@
     "eslint": "^8.57.0",
     "eslint-config-custom": "workspace:*",
     "graphql": "16.9.0",
+    "pino": "9.6.0",
     "ts-essentials": "10.0.2",
     "ts-toolbelt": "9.6.0",
     "tsconfig": "workspace:*",

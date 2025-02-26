@@ -1,4 +1,0 @@
-fragment TransactionActionFragment on TransactionAction {
-  actionType
-  amount
-}

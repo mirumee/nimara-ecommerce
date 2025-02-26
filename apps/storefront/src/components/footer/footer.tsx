@@ -82,8 +82,8 @@ export const Footer = async () => {
             <div className="grid flex-grow basis-1 gap-8">
               <span className="text-neutral-600"> {t("footer.help")}</span>
               <ul className="grid gap-4">
-                {pages?.menu.items.map((item, i) => (
-                  <li key={`${item.id}-${i}`}>
+                {pages?.menu.items.map((item) => (
+                  <li key={item.id}>
                     <Link href={item.url}>{item.label}</Link>
                   </li>
                 ))}
