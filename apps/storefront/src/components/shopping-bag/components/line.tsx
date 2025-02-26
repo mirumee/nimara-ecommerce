@@ -243,7 +243,7 @@ export const Line = ({
                   { length: variant.maxQuantity },
                   (_, i) => i + 1,
                 ).map((qty) => (
-                  <SelectItem key={id} value={qty.toString()}>
+                  <SelectItem key={qty} value={qty.toString()}>
                     {qty}
                   </SelectItem>
                 ))}

@@ -1,0 +1,12 @@
+subscription PaymentGatewayInitializeSessionSubscription {
+  event {
+    ... on PaymentGatewayInitializeSession {
+      recipient {
+        ...PaymentGatewayRecipientFragment
+      }
+      sourceObject {
+        ...OrderOrCheckoutSourceObjectFragment
+      }
+    }
+  }
+}

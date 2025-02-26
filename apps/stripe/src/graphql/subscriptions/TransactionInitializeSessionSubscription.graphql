@@ -1,0 +1,20 @@
+subscription TransactionInitializeSessionSubscription {
+  event {
+    ... on TransactionInitializeSession {
+      recipient {
+        ...PaymentGatewayRecipientFragment
+      }
+      data
+      merchantReference
+      action {
+        ...TransactionProcessActionFragment
+      }
+      transaction {
+        ...TransactionItemFragment
+      }
+      sourceObject {
+        ...OrderOrCheckoutSourceObjectFragment
+      }
+    }
+  }
+}

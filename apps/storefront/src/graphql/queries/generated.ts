@@ -1,35 +1,29 @@
-import type * as Types from "@nimara/codegen/schema";
+import type * as Types from '@nimara/codegen/schema';
 
-import type { DocumentTypeDecoration } from "@graphql-typed-document-node/core";
+import type { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
 export type ProductSlugQuery_product_Product = { slug: string };
 
-export type ProductSlugQuery_Query = {
-  product: ProductSlugQuery_product_Product | null;
-};
+export type ProductSlugQuery_Query = { product: ProductSlugQuery_product_Product | null };
+
 
 export type ProductSlugQueryVariables = Types.Exact<{
-  id: Types.Scalars["ID"]["input"];
+  id: Types.Scalars['ID']['input'];
 }>;
+
 
 export type ProductSlugQuery = ProductSlugQuery_Query;
 
-export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product =
-  { name: string };
+export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product = { name: string };
 
-export type Products_products_ProductCountableConnection_edges_ProductCountableEdge =
-  {
-    node: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product;
-  };
+export type Products_products_ProductCountableConnection_edges_ProductCountableEdge = { node: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product };
 
-export type Products_products_ProductCountableConnection = {
-  edges: Array<Products_products_ProductCountableConnection_edges_ProductCountableEdge>;
-};
+export type Products_products_ProductCountableConnection = { edges: Array<Products_products_ProductCountableConnection_edges_ProductCountableEdge> };
 
-export type Products_Query = {
-  products: Products_products_ProductCountableConnection | null;
-};
+export type Products_Query = { products: Products_products_ProductCountableConnection | null };
 
-export type ProductsVariables = Types.Exact<{ [key: string]: never }>;
+
+export type ProductsVariables = Types.Exact<{ [key: string]: never; }>;
+
 
 export type Products = Products_Query;
 
@@ -37,12 +31,9 @@ export class TypedDocumentString<TResult, TVariables>
   extends String
   implements DocumentTypeDecoration<TResult, TVariables>
 {
-  __apiType?: DocumentTypeDecoration<TResult, TVariables>["__apiType"];
+  __apiType?: DocumentTypeDecoration<TResult, TVariables>['__apiType'];
 
-  constructor(
-    private value: string,
-    public __meta__?: Record<string, any>,
-  ) {
+  constructor(private value: string, public __meta__?: Record<string, any>) {
     super(value);
   }
 
@@ -57,10 +48,7 @@ export const ProductSlugQueryDocument = new TypedDocumentString(`
     slug
   }
 }
-    `) as unknown as TypedDocumentString<
-  ProductSlugQuery,
-  ProductSlugQueryVariables
->;
+    `) as unknown as TypedDocumentString<ProductSlugQuery, ProductSlugQueryVariables>;
 export const ProductsDocument = new TypedDocumentString(`
     query Products {
   products(first: 10) {
