@@ -1,7 +1,7 @@
 import type { Config as TwConfig } from "tailwindcss";
 const plugin = require("tailwindcss/plugin");
 
-export default function config(app?: "storefront") {
+export default function config(app?: "storefront" | "stripe") {
   const config = {
     content: [
       `../../apps/${app}/src/index.html`,

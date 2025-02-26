@@ -1,0 +1,13 @@
+fragment OrderSourceObjectFragment on Order {
+  id
+  languageCodeEnum
+  userEmail
+  channel {
+    ...ChannelFragment
+  }
+  total {
+    gross {
+      ...MoneyFragment
+    }
+  }
+}

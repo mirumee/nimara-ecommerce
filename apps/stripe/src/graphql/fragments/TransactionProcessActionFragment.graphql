@@ -1,0 +1,5 @@
+fragment TransactionProcessActionFragment on TransactionProcessAction {
+  amount
+  currency
+  actionType
+}

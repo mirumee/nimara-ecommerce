@@ -1,0 +1,8 @@
+fragment OrderOrCheckoutSourceObjectFragment on OrderOrCheckout {
+  ... on Checkout {
+    ...CheckoutSourceObjectFragment
+  }
+  ... on Order {
+    ...OrderSourceObjectFragment
+  }
+}
