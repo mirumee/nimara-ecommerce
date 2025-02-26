@@ -5,7 +5,7 @@
   "scripts": {
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:staged": "lint-staged",
-    "ui:add": "pnpm dlx shadcn-ui@latest add",
+    "ui:add": "pnpm dlx shadcn@latest add",
     "postui:add": "prettier --list-different --ignore-unknown --write . && eslint --quiet --fix ."
   },
   "exports": {

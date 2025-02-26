@@ -1,0 +1,18 @@
+subscription TransactionCancelationRequestedSubscription {
+  event {
+    ... on TransactionCancelationRequested {
+      recipient {
+        ...PaymentGatewayRecipientFragment
+      }
+      action {
+        ...TransactionActionFragment
+      }
+      transaction {
+        ...TransactionItemFragment
+        sourceObject: order {
+          ...OrderSourceObjectFragment
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,13 @@
+fragment CheckoutSourceObjectFragment on Checkout {
+  id
+  languageCode
+  channel {
+    ...ChannelFragment
+  }
+  userEmail: email
+  total: totalPrice {
+    gross {
+      ...MoneyFragment
+    }
+  }
+}
