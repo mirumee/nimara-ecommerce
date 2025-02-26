@@ -9,8 +9,6 @@ export type LoggerService = ({
   level: LoggerLevel;
 }) => Record<LoggerLevel, LogFn>;
 
-pino;
-
 const devTransport: pino.DestinationStream = {
   write(msg) {
     console.log(JSON.parse(msg));
