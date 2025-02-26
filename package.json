@@ -20,6 +20,7 @@
     "build": "dotenv -- turbo run build",
     "build:storefront": "pnpm run build --filter=storefront",
     "build:docs": "pnpm run build --filter=docs",
+    "build:stripe": "pnpm run build --filter=stripe",
     "start": "dotenv -- turbo run start",
     "start:storefront": "pnpm run start --filter=storefront",
     "start:docs": "pnpm run start --filter=docs",
