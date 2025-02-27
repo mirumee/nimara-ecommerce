@@ -1,97 +1,76 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { createPortal } from "react-dom";
 
-import { Button } from "@nimara/ui/components/button";
-import {
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@nimara/ui/components/dialog";
 import { Label } from "@nimara/ui/components/label";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@nimara/ui/components/select";
 
 import { MARKETS } from "@/regions/config";
-import type { MarketId, Region } from "@/regions/types";
+import { type MarketId, type Region } from "@/regions/types";
 
-import { handleLocaleFormSubmit } from "./actions";
+import { ContinentRow } from "./continent-row";
 
-export function LocaleSwitchModal({ region }: { region: Region }) {
+export function LocaleSwitchModal({
+  onClose,
+  region,
+}: {
+  onClose: () => void;
+  region: Region;
+}) {
   const t = useTranslations();
   const markets = Object.values(MARKETS);
   const defaultMarket = region.market.id.toUpperCase() as Uppercase<MarketId>;
-  const [currentRegion, setCurrentRegion] = useState<(typeof markets)[number]>(
-    MARKETS[defaultMarket],
-  );
-  const currentLocale = currentRegion.defaultLanguage.locale;
+  const currentLocale = MARKETS[defaultMarket].defaultLanguage.locale;
 
-  return (
-    <DialogContent className="bg-white sm:max-w-[425px]">
-      <form action={handleLocaleFormSubmit}>
-        <DialogHeader>
-          <DialogTitle>{t("locale.region-settings")}</DialogTitle>
-        </DialogHeader>
+  const marketsByContinent = {
+    asia_pacific: [], // currently there are no supported countries within that continent.
+    europe: markets.filter((market) => market.continent === "Europe"),
+    north_america: markets.filter(
+      (market) => market.continent === "North America",
+    ),
+  };
 
-        <div className="grid gap-4 py-4">
-          <Label>{t("locale.region")}</Label>
-          <Select
-            defaultValue={defaultMarket.toUpperCase()}
-            onValueChange={(value: Uppercase<MarketId>) =>
-              setCurrentRegion(MARKETS[value])
-            }
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="market" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {markets.map((market) => (
-                  <SelectItem key={market.id} value={market.id.toUpperCase()}>
-                    {market.name} ({market.currency})
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-
-          <Label>{t("locale.language")}</Label>
-          <Select name="locale" value={currentLocale}>
-            <SelectTrigger>
-              <SelectValue placeholder="lang" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {currentRegion.supportedLanguages.map((language) => (
-                  <SelectItem key={language.id} value={language.locale}>
-                    {language.name}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+  return createPortal(
+    <div
+      style={{
+        zIndex: 51, // 50 is max in Tailwind and it's used in topbar. I didn't wanted to changed it there to not introduce any regressions
+      }}
+      className="absolute inset-0 z-50 flex justify-center bg-white py-24"
+    >
+      {/* no idea how to represent 998px max-width in tailwind and I cannot retrieve padding values from figma, so I've moved it to styles */}
+      {/* as a result I don't really know how to apply mediaquery breakpoints as it's not class-based sizing */}
+      <div className="grow" style={{ maxWidth: "998px" }}>
+        <div className="mb-4 flex justify-between">
+          <Label className="text-lg font-semibold leading-7">
+            {t("locale.region-settings")}
+          </Label>
+          {/* I don't know how to add a new icon  */}
+          <span onClick={onClose}>X</span>
         </div>
-        <DialogFooter>
-          <div className="flex w-full items-center justify-between">
-            <DialogClose asChild>
-              <Button variant="ghost">{t("common.close")}</Button>
-            </DialogClose>
-            <DialogClose asChild>
-              <Button type="submit">{t("common.save")}</Button>
-            </DialogClose>
-          </div>
-        </DialogFooter>
-      </form>
-    </DialogContent>
+        {!!marketsByContinent.asia_pacific.length && (
+          <ContinentRow
+            currentLocale={currentLocale}
+            name={t("locale.continents.asia-pacific")}
+            markets={marketsByContinent.asia_pacific}
+          />
+        )}
+        {!!marketsByContinent.europe.length && (
+          <ContinentRow
+            currentLocale={currentLocale}
+            name={t("locale.continents.europe")}
+            markets={marketsByContinent.europe}
+          />
+        )}
+        {!!marketsByContinent.north_america.length && (
+          <ContinentRow
+            currentLocale={currentLocale}
+            name={t("locale.continents.north-america")}
+            markets={marketsByContinent.north_america}
+          />
+        )}
+      </div>
+    </div>,
+    document.body,
   );
 }
 
