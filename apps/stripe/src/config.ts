@@ -2,9 +2,11 @@ import { z } from "zod";
 
 import { prepareConfig } from "@/lib/zod/util";
 
+import packageJson from "../package.json";
+
 const configSchema = z.object({
-  NAME: z.string(),
-  VERSION: z.string(),
+  NAME: z.string().default(packageJson.name),
+  VERSION: z.string().default(packageJson.version),
   ENVIRONMENT: z.string(),
   SALEOR_URL: z.string().url(),
   SALEOR_DOMAIN: z.string(),
@@ -25,8 +27,6 @@ const parsed = prepareConfig({
   name: "App",
   schema: configSchema,
   input: {
-    NAME: process.env.npm_package_name,
-    VERSION: process.env.npm_package_version,
     ENVIRONMENT: process.env.NEXT_PUBLIC_ENVIRONMENT,
     SALEOR_URL: new URL(process.env.NEXT_PUBLIC_SALEOR_API_URL ?? "").origin,
     SALEOR_DOMAIN: new URL(process.env.NEXT_PUBLIC_SALEOR_API_URL ?? "").host,
