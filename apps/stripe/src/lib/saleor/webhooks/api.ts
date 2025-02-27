@@ -32,7 +32,7 @@ export const verifySaleorWebhookRoute =
       } as ResponseSchema);
     }
 
-    const event = (await request.json()) as WebhookData<T>;
+    const event = (await request.clone().json()) as WebhookData<T>;
 
     return handler({ event, headers, request });
   };
