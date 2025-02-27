@@ -16,7 +16,7 @@ const schema = z.object({
     .enum(["TEST", "LOCAL", "DEVELOPMENT", "PRODUCTION", "STAGING"])
     .default("LOCAL"),
 
-  PAYMENT_APP_ID: z.string().default("DEVELOPMENT.nimara-ts-stripe"),
+  PAYMENT_APP_ID: z.string().default("DEVELOPMENT.stripe"),
 
   NEXT_PUBLIC_BUTTER_CMS_API_KEY: z.string().optional(),
 
