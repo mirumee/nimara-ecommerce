@@ -1,0 +1,18 @@
+subscription TransactionChargeRequestedSubscription {
+  event {
+    ... on TransactionChargeRequested {
+      recipient {
+        ...PaymentGatewayRecipientFragment
+      }
+      action {
+        ...TransactionActionFragment
+      }
+      transaction {
+        ...TransactionItemFragment
+        sourceObject: order {
+          ...OrderSourceObjectFragment
+        }
+      }
+    }
+  }
+}

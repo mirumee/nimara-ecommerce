@@ -19,6 +19,7 @@
   "scripts": {
     "build": "dotenv -- turbo run build",
     "build:storefront": "pnpm run build --filter=storefront",
+    "build:stripe": "pnpm run build --filter=stripe",
     "build:docs": "pnpm run build --filter=docs",
     "start": "dotenv -- turbo run start",
     "start:storefront": "pnpm run start --filter=storefront",
@@ -26,6 +27,7 @@
     "codegen": "dotenv -- turbo run codegen",
     "dev": "dotenv -- turbo run dev",
     "dev:storefront": "pnpm run dev --filter=storefront",
+    "dev:stripe": "pnpm run dev --filter=stripe",
     "dev:docs": "pnpm run dev --filter=docs",
     "test": "dotenv -- turbo run test",
     "test:e2e": "dotenv -- turbo run test:e2e",

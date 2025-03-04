@@ -26,9 +26,9 @@ export const StaticPage = async ({ body }: { body: Maybe<string> }) => {
   }
 
   return (
-    <div className="container">
+    <div className="container pb-6">
       {contentHtml ? (
-        <div className="prose min-w-full prose-h1:my-4 prose-h1:text-center prose-h1:text-4xl prose-h2:text-center prose-h2:text-4xl">
+        <div className="prose min-w-full prose-h1:my-6 prose-h1:text-center prose-h1:text-4xl prose-h2:text-center prose-h2:text-4xl prose-p:my-0">
           {contentHtml.map((content) => (
             <div
               key={content}

@@ -1,0 +1,72 @@
+{
+  "name": "stripe",
+  "version": "1.0.0",
+  "private": false,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev -p 4000",
+    "dev:inspect": "NODE_OPTIONS='--inspect' next dev -p 4000",
+    "build": "next build",
+    "start": "next start -p 4000",
+    "lint": "next lint --dir src --fix",
+    "lint:staged": "lint-staged",
+    "test": "vitest run",
+    "test:watch": "vitest --watch"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "3.6.0",
+    "@nimara/infrastructure": "workspace:*",
+    "@saleor/app-sdk": "0.52.0",
+    "@sentry/integrations": "^7.114.0",
+    "@sentry/nextjs": "^8.52.0",
+    "@sentry/types": "^8.52.0",
+    "@vercel/otel": "^1.10.1",
+    "clsx": "2.1.1",
+    "eslint-config-next": "15.1.6",
+    "jose": "^5.2.2",
+    "lodash": "4.17.21",
+    "lucide-react": "^0.474.0",
+    "next": "15.1.6",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "react-error-boundary": "5.0.0",
+    "react-hook-form": "7.54.2",
+    "stripe": "17.6.0",
+    "tailwind-merge": "2.6.0",
+    "ts-invariant": "0.10.3",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@graphql-typed-document-node/core": "3.2.0",
+    "@nimara/codegen": "workspace:*",
+    "@nimara/config": "workspace:*",
+    "@nimara/ui": "workspace:*",
+    "@tailwindcss/typography": "0.5.13",
+    "@types/lodash": "4.17.7",
+    "@types/node": "22.12.0",
+    "@types/react": "19.0.8",
+    "@types/react-dom": "19.0.3",
+    "@types/stripe": "8.0.417",
+    "@typescript-eslint/eslint-plugin": "^6.12.0",
+    "@typescript-eslint/parser": "^6.12.0",
+    "autoprefixer": "10.4.20",
+    "dotenv": "16.4.7",
+    "eslint": "^8.57.0",
+    "eslint-config-custom": "workspace:*",
+    "postcss": "^8.5.1",
+    "prettier": "3.4.2",
+    "tailwindcss": "^3.4.4",
+    "ts-essentials": "10.0.2",
+    "tsconfig": "workspace:*",
+    "typescript": "^5.7.3",
+    "vite-tsconfig-paths": "5.1.4",
+    "vitest": "3.0.4"
+  },
+  "lint-staged": {
+    "*.{js,cjs,ts,tsx}": "eslint --fix",
+    "*.*": "prettier --write --ignore-unknown"
+  },
+  "engines": {
+    "node": "20"
+  }
+}
