@@ -1,12 +1,14 @@
 "use client";
 
+import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { createPortal } from "react-dom";
 
+import { Button } from "@nimara/ui/components/button";
 import { Label } from "@nimara/ui/components/label";
 
 import { MARKETS } from "@/regions/config";
-import { type MarketId, type Region } from "@/regions/types";
+import type { MarketId, Region } from "@/regions/types";
 
 import { ContinentRow } from "./continent-row";
 
@@ -31,21 +33,15 @@ export function LocaleSwitchModal({
   };
 
   return createPortal(
-    <div
-      style={{
-        zIndex: 51, // 50 is max in Tailwind and it's used in topbar. I didn't wanted to changed it there to not introduce any regressions
-      }}
-      className="absolute inset-0 z-50 flex justify-center bg-white py-24"
-    >
-      {/* no idea how to represent 998px max-width in tailwind and I cannot retrieve padding values from figma, so I've moved it to styles */}
-      {/* as a result I don't really know how to apply mediaquery breakpoints as it's not class-based sizing */}
-      <div className="grow" style={{ maxWidth: "998px" }}>
+    <div className="absolute inset-0 z-51 flex justify-center bg-white p-4 md:py-24">
+      <div className="2xl:max-w-[1536px] lg-max-w-[1024px] grow sm:max-w-[640px] md:max-w-[768px] xl:max-w-[1280px]">
         <div className="mb-4 flex justify-between">
           <Label className="text-lg font-semibold leading-7">
             {t("locale.region-settings")}
           </Label>
-          {/* I don't know how to add a new icon  */}
-          <span onClick={onClose}>X</span>
+          <Button variant="ghost" className="px-3 py-4" onClick={onClose}>
+            <X className="size-4" />
+          </Button>
         </div>
         {!!marketsByContinent.asia_pacific.length && (
           <ContinentRow
