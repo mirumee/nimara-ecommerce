@@ -18,6 +18,8 @@ export const POST = stripeRouteErrorsHandler(
       const configProvider = getConfigProvider({ saleorDomain });
       let gatewayConfig;
 
+      logger.debug("TransactionCancelationRequestedSubscription", { event });
+
       if (!event.transaction?.sourceObject) {
         logger.error(
           "Could not process transaction TransactionCancelationRequested.",
