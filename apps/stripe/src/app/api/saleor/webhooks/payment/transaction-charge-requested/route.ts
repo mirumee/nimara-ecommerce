@@ -17,10 +17,11 @@ export const POST = stripeRouteErrorsHandler(
   verifySaleorWebhookRoute<TransactionChargeRequestedSubscription>(
     async ({ event, headers }) => {
       const logger = getLoggingProvider();
-
       const saleorDomain = headers["saleor-domain"];
       const configProvider = getConfigProvider({ saleorDomain });
       let gatewayConfig;
+
+      logger.debug("TransactionChargeRequestedSubscription", { event });
 
       if (!event.transaction?.sourceObject) {
         logger.error(

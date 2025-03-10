@@ -1,5 +1,5 @@
 import pino, { type LoggerOptions } from "pino";
-
+import { inspect } from "util";
 export type LoggerLevel = "debug" | "info" | "warning" | "error" | "critical";
 
 export type LogFn = (message: string, context?: object) => void;
@@ -11,7 +11,13 @@ export type LoggerService = ({
 
 const devTransport: pino.DestinationStream = {
   write(msg) {
-    console.log(JSON.parse(msg));
+    console.log(
+      inspect(JSON.parse(msg), {
+        colors: true,
+        depth: Infinity,
+        showHidden: true,
+      }),
+    );
   },
 };
 const isDevelopment =
