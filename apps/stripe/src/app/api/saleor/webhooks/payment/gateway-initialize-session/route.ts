@@ -4,13 +4,17 @@ import { isError } from "@/lib/error";
 import { transactionResponseSuccess } from "@/lib/saleor/transaction/api";
 import { verifySaleorWebhookRoute } from "@/lib/saleor/webhooks/api";
 import { getConfigProvider } from "@/providers/config";
+import { getLoggingProvider } from "@/providers/logging";
 
 export const POST =
   verifySaleorWebhookRoute<PaymentGatewayInitializeSessionSubscription>(
     async ({ event, headers }) => {
+      const logger = getLoggingProvider();
       const saleorDomain = headers["saleor-domain"];
       const configProvider = getConfigProvider({ saleorDomain });
       let gatewayConfig;
+
+      logger.debug("PaymentGatewayInitializeSessionSubscription", { event });
 
       try {
         gatewayConfig = await configProvider.getPaymentGatewayConfigForChannel({
