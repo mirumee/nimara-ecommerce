@@ -18,6 +18,8 @@ export const POST = stripeRouteErrorsHandler(
       const configProvider = getConfigProvider({ saleorDomain });
       let gatewayConfig;
 
+      logger.debug("TransactionRefundRequestedSubscription", { event });
+
       if (!event.transaction?.sourceObject) {
         logger.error(
           "Could not process transaction TransactionRefundRequested.",

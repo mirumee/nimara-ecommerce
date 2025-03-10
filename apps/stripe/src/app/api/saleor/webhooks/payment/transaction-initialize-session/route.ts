@@ -19,6 +19,8 @@ export const POST = stripeRouteErrorsHandler(
     async ({ event, headers }) => {
       const logger = getLoggingProvider();
 
+      logger.debug("TransactionInitializeSessionSubscription", { event });
+
       const saleorDomain = headers["saleor-domain"];
       const configProvider = getConfigProvider({ saleorDomain });
       let gatewayConfig;
@@ -44,6 +46,7 @@ export const POST = stripeRouteErrorsHandler(
       )?.metadata;
 
       const intent = await stripe.paymentIntents.create({
+        ...(event.data as {}),
         amount: getCentsFromAmount(event.sourceObject.total.gross),
         currency: event.sourceObject.total.gross.currency,
         capture_method:
