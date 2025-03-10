@@ -49,10 +49,10 @@
   },
   "devDependencies": {
     "@nimara/config": "workspace:*",
-    "@types/react": "19.0.2",
+    "@types/react": "19.0.10",
     "eslint-config-custom": "workspace:*",
     "tsconfig": "workspace:*",
-    "typescript": "^5.7.2"
+    "typescript": "^5.8.2"
   },
   "lint-staged": {
     "*.{js,cjs,ts,tsx}": "eslint --fix",
