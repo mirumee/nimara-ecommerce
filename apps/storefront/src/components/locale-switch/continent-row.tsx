@@ -24,11 +24,10 @@ export function ContinentRow({
       <div className="grid grid-cols-2 gap-8 py-4 md:grid-cols-4">
         {markets.map((market) => (
           <Link
-            className={cn(
-              "flex gap-1 px-1.5 py-2 hover:cursor-pointer",
-              market.defaultLanguage.locale === currentLocale &&
-                "pointer-events-none opacity-50",
-            )}
+            className={cn("flex gap-1 px-1.5 py-2 hover:cursor-pointer", {
+              "pointer-events-none opacity-50":
+                market.defaultLanguage.locale === currentLocale,
+            })}
             key={market.id}
             href={
               market.defaultLanguage.locale === DEFAULT_LOCALE
