@@ -7,7 +7,12 @@
   "locale": {
     "region": "Region",
     "language": "Language",
-    "region-settings": "Region and language settings"
+    "region-settings": "Region and language settings",
+    "continents": {
+      "asia-pacific": "Asia Pacific",
+      "europe": "Europe",
+      "north-america": "North America"
+    }
   },
   "filters": {
     "filters": "Filters",
