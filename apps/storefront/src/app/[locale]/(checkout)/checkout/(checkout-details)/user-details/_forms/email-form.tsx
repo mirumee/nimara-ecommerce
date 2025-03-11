@@ -1,6 +1,5 @@
 "use client";
 
-import clsx from "clsx";
 import { useTranslations } from "next-intl";
 import type { UseFormReturn } from "react-hook-form";
 
@@ -11,6 +10,7 @@ import { Form } from "@nimara/ui/components/form";
 
 import { TextFormField } from "@/components/form/text-form-field";
 import { useRouterWithState } from "@/lib/hooks";
+import { cn } from "@/lib/utils";
 import type { TranslationMessage } from "@/types";
 
 import { checkIfUserHasAnAccount, updateUserDetails } from "./actions";
@@ -88,7 +88,7 @@ export const UserEmailForm = ({
               />
             </div>
             <Button
-              className={clsx(
+              className={cn(
                 form.formState.errors.email && "mb-[1.813rem]",
                 "ml-2",
               )}
