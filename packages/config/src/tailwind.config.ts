@@ -90,6 +90,9 @@ export default function config(app?: "storefront" | "stripe") {
           md: "calc(var(--radius) + 2px)",
           sm: "calc(var(--radius) - 2px)",
         },
+        zIndex: {
+          51: "51",
+        },
         keyframes: {
           "accordion-down": {
             from: { height: "0" },
