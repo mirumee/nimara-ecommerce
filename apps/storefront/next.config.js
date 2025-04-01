@@ -91,7 +91,14 @@ const nextConfig = withNextIntl({
   },
   webpack: (config, { isServer }) => {
     if (isServer) {
-      config.ignoreWarnings = [{ module: /opentelemetry/ }];
+      config.ignoreWarnings = [
+        { module: /opentelemetry/ },
+        {
+          // https://github.com/getsentry/sentry-javascript/issues/15209#issuecomment-2706299540
+          message:
+            /Critical dependency: require function is used in a way in which dependencies cannot be statically extracted/,
+        },
+      ];
     }
     const fileLoaderRule = config.module.rules.find((rule) =>
       rule.test?.test?.(".svg"),
