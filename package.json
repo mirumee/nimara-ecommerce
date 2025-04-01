@@ -34,16 +34,16 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "commitizen": "4.3.0",
+    "commitizen": "4.3.1",
     "dotenv-cli": "7.4.2",
     "eslint": "^8.57.0",
     "eslint-config-custom": "workspace:*",
-    "husky": "9.1.6",
-    "lint-staged": "^15.2.11",
-    "turbo": "2.1.2"
+    "husky": "9.1.7",
+    "lint-staged": "^15.5.0",
+    "turbo": "2.4.4"
   },
   "resolutions": {
-    "graphql": "16.9.0"
+    "graphql": "16.10.0"
   },
   "config": {
     "commitizen": {
@@ -55,8 +55,8 @@
   },
   "pnpm": {
     "overrides": {
-      "@types/react": "19.0.2",
-      "@types/react-dom": "19.0.2"
+      "@types/react": "19.0.12",
+      "@types/react-dom": "19.0.4"
     }
   }
 }
