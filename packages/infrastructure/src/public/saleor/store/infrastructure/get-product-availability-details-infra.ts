@@ -8,7 +8,7 @@ import type { ProductAvailabilityDetailsFragment } from "../graphql/fragments/ge
 import { ProductAvailabilityDetailsQueryDocument } from "../graphql/queries/generated";
 import type {
   GetProductAvailabilityDetailsInfra,
-  SaleorStoreServiceConfig,
+  SaleorProductServiceConfig,
 } from "../types";
 
 const parseData = (
@@ -51,7 +51,7 @@ export const getProductAvailabilityDetailsInfra =
     apiURI,
     channel,
     countryCode,
-  }: SaleorStoreServiceConfig): GetProductAvailabilityDetailsInfra =>
+  }: SaleorProductServiceConfig): GetProductAvailabilityDetailsInfra =>
   async ({ productSlug, options }) => {
     const { cache: _, ...fetchOptions }: FetchOptions = { ...options };
 

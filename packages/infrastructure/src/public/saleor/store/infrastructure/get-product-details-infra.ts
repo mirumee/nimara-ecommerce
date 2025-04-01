@@ -12,7 +12,7 @@ import type { ProductDetailsFragment } from "../graphql/fragments/generated";
 import { ProductDetailsQueryDocument } from "../graphql/queries/generated";
 import type {
   GetProductDetailsInfra,
-  SaleorStoreServiceConfig,
+  SaleorProductServiceConfig,
 } from "../types";
 
 const parseData = (data: ProductDetailsFragment): Product => {
@@ -81,7 +81,7 @@ export const getProductDetailsInfra =
     apiURI,
     channel,
     languageCode,
-  }: SaleorStoreServiceConfig): GetProductDetailsInfra =>
+  }: SaleorProductServiceConfig): GetProductDetailsInfra =>
   async ({ productSlug, customMediaFormat, options }) => {
     const { data, error } = await graphqlClient(apiURI).execute(
       ProductDetailsQueryDocument,

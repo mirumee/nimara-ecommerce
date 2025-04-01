@@ -35,7 +35,21 @@ export type ProductAvailabilityDetailsQueryVariables = Types.Exact<{
 
 export type ProductAvailabilityDetailsQuery = ProductAvailabilityDetailsQuery_Query;
 
-export type ProductDetailsQuery_product_Product_translation_ProductTranslation = { name: string | null, description: string | null };
+export type ProductBasicDetailsQuery_product_Product_translation_ProductTranslation = { name: string | null, description: string | null };
+
+export type ProductBasicDetailsQuery_product_Product = { id: string, name: string, description: string | null, translation: ProductBasicDetailsQuery_product_Product_translation_ProductTranslation | null };
+
+export type ProductBasicDetailsQuery_Query = { product: ProductBasicDetailsQuery_product_Product | null };
+
+
+export type ProductBasicDetailsQueryVariables = Types.Exact<{
+  slug: Types.Scalars['String']['input'];
+  channel: Types.Scalars['String']['input'];
+  languageCode: Types.LanguageCodeEnum;
+}>;
+
+
+export type ProductBasicDetailsQuery = ProductBasicDetailsQuery_Query;
 
 export type ProductDetailsQuery_product_Product_media_ProductMedia = { url: string, alt: string, type: Types.ProductMediaType };
 
@@ -81,7 +95,7 @@ export type ProductDetailsQuery_product_Product_category_Category_products_Produ
 
 export type ProductDetailsQuery_product_Product_category_Category = { products: ProductDetailsQuery_product_Product_category_Category_products_ProductCountableConnection | null };
 
-export type ProductDetailsQuery_product_Product = { id: string, name: string, description: string | null, translation: ProductDetailsQuery_product_Product_translation_ProductTranslation | null, media: Array<ProductDetailsQuery_product_Product_media_ProductMedia> | null, variants: Array<ProductDetailsQuery_product_Product_variants_ProductVariant> | null, attributes: Array<ProductDetailsQuery_product_Product_attributes_SelectedAttribute>, category: ProductDetailsQuery_product_Product_category_Category | null };
+export type ProductDetailsQuery_product_Product = { id: string, name: string, description: string | null, translation: ProductBasicDetailsQuery_product_Product_translation_ProductTranslation | null, media: Array<ProductDetailsQuery_product_Product_media_ProductMedia> | null, variants: Array<ProductDetailsQuery_product_Product_variants_ProductVariant> | null, attributes: Array<ProductDetailsQuery_product_Product_attributes_SelectedAttribute>, category: ProductDetailsQuery_product_Product_category_Category | null };
 
 export type ProductDetailsQuery_Query = { product: ProductDetailsQuery_product_Product | null };
 
@@ -160,6 +174,24 @@ fragment VariantPricingInfoFragment on VariantPricingInfo {
     ...TaxedMoneyFragment
   }
 }`) as unknown as TypedDocumentString<ProductAvailabilityDetailsQuery, ProductAvailabilityDetailsQueryVariables>;
+export const ProductBasicDetailsQueryDocument = new TypedDocumentString(`
+    query ProductBasicDetailsQuery($slug: String!, $channel: String!, $languageCode: LanguageCodeEnum!) {
+  product(slug: $slug, channel: $channel) {
+    ...ProductBasicDetailsFragment
+  }
+}
+    fragment ProductBasicDetailsFragment on Product {
+  id
+  name
+  translation(languageCode: $languageCode) {
+    name
+  }
+  description
+  translation(languageCode: $languageCode) {
+    name
+    description
+  }
+}`) as unknown as TypedDocumentString<ProductBasicDetailsQuery, ProductBasicDetailsQueryVariables>;
 export const ProductDetailsQueryDocument = new TypedDocumentString(`
     query ProductDetailsQuery($slug: String!, $channel: String!, $languageCode: LanguageCodeEnum!, $mediaSize: Int!, $mediaFormat: ThumbnailFormatEnum!) {
   product(slug: $slug, channel: $channel) {

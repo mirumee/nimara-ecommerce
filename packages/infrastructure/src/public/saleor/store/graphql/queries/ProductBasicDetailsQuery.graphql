@@ -1,0 +1,9 @@
+query ProductBasicDetailsQuery(
+  $slug: String!
+  $channel: String!
+  $languageCode: LanguageCodeEnum!
+) {
+  product(slug: $slug, channel: $channel) {
+    ...ProductBasicDetailsFragment
+  }
+}

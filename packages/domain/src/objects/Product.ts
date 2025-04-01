@@ -16,12 +16,9 @@ export type ProductVariantAvailability = {
   quantityLimitPerCustomer: number | null;
 };
 
-export type Product = {
+export type Product = ProductBasicDetails & {
   attributes: Attribute[];
-  description: string | null;
-  id: string;
   images: Image[];
-  name: string;
   relatedProducts: SearchProduct[];
   variants: ProductVariant[];
 };
@@ -32,4 +29,10 @@ export type ProductVariant = {
   name: string;
   nonSelectionAttributes: Attribute[];
   selectionAttributes: Attribute[];
+};
+
+export type ProductBasicDetails = {
+  description: string | null;
+  id: string;
+  name: string;
 };
