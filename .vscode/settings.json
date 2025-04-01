@@ -17,5 +17,10 @@
     "dbaeumer.vscode-eslint",
     "bradlc.vscode-tailwindcss"
   ],
-  "cSpell.words": ["nimara", "saleor", "undiscounted"]
+  "cSpell.words": [
+    "nimara",
+    "saleor",
+    "undiscounted"
+  ],
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
 }

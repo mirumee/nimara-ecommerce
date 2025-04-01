@@ -8,11 +8,11 @@
     "start": "next start"
   },
   "dependencies": {
-    "next": "15.1.2",
+    "next": "15.2.4",
     "nextra": "3.3.0",
     "nextra-theme-docs": "3.3.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
   },
   "devDependencies": {
     "@nimara/config": "workspace:*",
@@ -20,7 +20,7 @@
     "@svgr/webpack": "8.1.0",
     "eslint": "^8.57.0",
     "eslint-config-custom": "workspace:*",
-    "prettier": "3.4.2",
-    "typescript": "^5.7.2"
+    "prettier": "3.5.3",
+    "typescript": "^5.8.2"
   }
 }
