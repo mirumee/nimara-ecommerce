@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 
 import { getAccessToken } from "@/auth";
-import { COOKIE_KEY } from "@/config";
+import { CACHE_TTL, COOKIE_KEY } from "@/config";
 import { clientEnvs } from "@/envs/client";
 import { JsonLd, productToJsonLd } from "@/lib/json-ld";
 import { getCurrentRegion } from "@/regions/server";
@@ -34,7 +34,12 @@ export const ProductDetailsContainer = async ({ slug }: { slug: string }) => {
     checkoutId
       ? cartService(serviceOpts).cartGet({
           cartId: checkoutId,
-          options: { next: { tags: [`CHECKOUT:${checkoutId}`] } },
+          options: {
+            next: {
+              revalidate: CACHE_TTL.cart,
+              tags: [`CHECKOUT:${checkoutId}`],
+            },
+          },
         })
       : null,
     userService.userGet(accessToken),
