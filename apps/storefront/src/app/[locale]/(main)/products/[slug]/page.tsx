@@ -74,7 +74,12 @@ export default async function Page(props: {
     checkoutId
       ? cartService(serviceOpts).cartGet({
           cartId: checkoutId,
-          options: { next: { tags: [`CHECKOUT:${checkoutId}`] } },
+          options: {
+            next: {
+              revalidate: CACHE_TTL.cart,
+              tags: [`CHECKOUT:${checkoutId}`],
+            },
+          },
         })
       : null,
     userService.userGet(accessToken),

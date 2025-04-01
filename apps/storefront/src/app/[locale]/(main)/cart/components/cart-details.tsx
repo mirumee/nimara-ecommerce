@@ -9,6 +9,7 @@ import { Button } from "@nimara/ui/components/button";
 import { useToast } from "@nimara/ui/hooks";
 
 import { ShoppingBag } from "@/components/shopping-bag";
+import { CACHE_TTL } from "@/config";
 import { clientEnvs } from "@/envs/client";
 import { Link } from "@/i18n/routing";
 import { revalidateCart } from "@/lib/actions/cart";
@@ -41,7 +42,9 @@ export const CartDetails = ({
     const errors = await service.linesUpdate({
       cartId: cart.id,
       lines: [{ lineId, quantity }],
-      options: { next: { tags: [`CHECKOUT:${cart.id}`] } },
+      options: {
+        next: { tags: [`CHECKOUT:${cart.id}`], revalidate: CACHE_TTL.cart },
+      },
     });
 
     setIsProcessing(false);

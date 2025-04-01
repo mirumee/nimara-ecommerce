@@ -51,7 +51,15 @@ export const Header = async () => {
       languageCode: region.language.code,
       countryCode: region.market.countryCode,
       channel: region.market.channel,
-    }).cartGet({ cartId: checkoutId });
+    }).cartGet({
+      cartId: checkoutId,
+      options: {
+        next: {
+          tags: [`CHECKOUT:${checkoutId}`],
+          revalidate: CACHE_TTL.cart,
+        },
+      },
+    });
 
     checkoutLinesCount = cart?.linesQuantityCount ?? 0;
   }
