@@ -10,6 +10,7 @@ import { Button } from "@nimara/ui/components/button";
 import { ToastAction } from "@nimara/ui/components/toast";
 import { useToast } from "@nimara/ui/hooks";
 
+import { CACHE_TTL } from "@/config";
 import { clientEnvs } from "@/envs/client";
 import { Link } from "@/i18n/routing";
 import { revalidateCart, setCheckoutIdCookie } from "@/lib/actions/cart";
@@ -50,13 +51,20 @@ export const AddToBag = ({
 
   const handleProductAdd = async () => {
     setIsProcessing(true);
+
     const { cartId, errors } = await service.linesAdd({
       email: user?.email,
       cartId: cart?.id ?? null,
       lines: [{ variantId, quantity: 1 }],
+      options: cart
+        ? {
+            next: {
+              tags: [`CHECKOUT:${cart.id}`],
+              revalidate: CACHE_TTL.cart,
+            },
+          }
+        : undefined,
     });
-
-    setIsProcessing(false);
 
     if (errors.length) {
       errors.forEach(({ code }) =>
@@ -69,15 +77,20 @@ export const AddToBag = ({
       succeededRef.current = true;
     }
 
+    const promises: Promise<void>[] = [];
+
     if (cart) {
-      await revalidateCart(cart.id);
+      promises.push(revalidateCart(cart.id));
     }
 
     if (cartId) {
-      await setCheckoutIdCookie(cartId);
+      promises.push(setCheckoutIdCookie(cartId), revalidateCart(cartId));
     }
 
+    await Promise.all(promises);
+
     showSuccessMessage();
+    setIsProcessing(false);
   };
 
   const handleNotifyMe = useCallback(async () => {

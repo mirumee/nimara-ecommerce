@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 import { AuthError } from "next-auth";
 
 import { getAccessToken, signIn } from "@/auth";
-import { COOKIE_KEY } from "@/config";
+import { CACHE_TTL, COOKIE_KEY } from "@/config";
 import { clientEnvs } from "@/envs/client";
 import { setCheckoutIdCookie } from "@/lib/actions/cart";
 import { paths } from "@/lib/paths";
@@ -74,6 +74,12 @@ export async function login({
               quantity,
               variantId: variant.id,
             })),
+            options: {
+              next: {
+                revalidate: CACHE_TTL.cart,
+                tags: [`CHECKOUT:${userCheckout.id}`],
+              },
+            },
           });
         }
       }
