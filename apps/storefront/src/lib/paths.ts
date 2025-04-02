@@ -140,6 +140,6 @@ export const paths = {
 };
 
 export const QUERY_PARAMS = {
-  orderPlace: "orderPlaced",
+  orderPlaced: "orderPlaced",
   errorCode: "errorCode",
 } as const;

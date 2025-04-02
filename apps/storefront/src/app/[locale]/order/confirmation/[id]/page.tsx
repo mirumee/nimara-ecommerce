@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { Button } from "@nimara/ui/components/button";
 
 import { Link } from "@/i18n/routing";
-import { paths } from "@/lib/paths";
+import { paths, type QUERY_PARAMS } from "@/lib/paths";
 
 import { CheckoutRemover } from "./components/checkout-remover";
 
@@ -15,7 +15,13 @@ export async function generateMetadata() {
   };
 }
 
-export default async function Page() {
+export default async function Page({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ [QUERY_PARAMS.orderPlaced]: string }>;
+}) {
   const t = await getTranslations();
 
   return (
@@ -29,7 +35,7 @@ export default async function Page() {
       <Button className="justify-self-center" asChild>
         <Link href={paths.home.asPath()}>{t("common.back-to-homepage")}</Link>
       </Button>
-      <CheckoutRemover />
+      <CheckoutRemover params={params} searchParams={searchParams} />
     </div>
   );
 }
