@@ -17,20 +17,20 @@ export const parseSaleorDataToFields = (
 ): PageField[] => {
   return fields.map((field) => {
     const slug = field.attribute?.slug;
+    const firstValue = field.values?.[0];
+
     const text =
-      getTranslation("plainText", field.values?.[0]) ||
-      field.values?.[0]?.value ||
-      "";
-    const imageUrl = field.values[0].file?.url;
+      getTranslation("plainText", firstValue) || firstValue?.value || "";
+    const imageUrl = firstValue?.file?.url;
     const references = field.values
       ?.map((value) => value.reference)
-      .filter((ref) => ref !== null);
+      .filter((ref): ref is string => ref !== null);
 
     return {
       slug,
       text,
       imageUrl,
-      reference: references.length > 0 ? references : undefined,
+      reference: references?.length ? references : undefined,
     };
   });
 };
