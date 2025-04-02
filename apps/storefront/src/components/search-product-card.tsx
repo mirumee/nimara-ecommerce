@@ -12,7 +12,7 @@ import { useLocalizedFormatter } from "@/lib/formatters/use-localized-formatter"
 import { paths } from "@/lib/paths";
 
 export const ProductName = ({ children }: PropsWithChildren) => (
-  <h2 className="line-clamp-2 overflow-hidden text-ellipsis text-left">
+  <h2 className="line-clamp-1 overflow-hidden text-ellipsis text-left">
     {children}
   </h2>
 );
@@ -29,7 +29,7 @@ export const ProductPrice = ({ children }: PropsWithChildren) => {
 
 export const ProductThumbnail = ({ alt, ...props }: ImageProps) => (
   <div className="flex aspect-square justify-center overflow-hidden">
-    <Image alt={alt} className="min-w-full object-contain" {...props} />
+    <Image alt={alt} className="min-w-full object-cover" {...props} />
   </div>
 );
 
@@ -49,7 +49,7 @@ export const SearchProductCard = ({
 
   return (
     <Link
-      className="grid gap-4 rounded-lg bg-white"
+      className="row-span-3 grid grid-rows-subgrid gap-2"
       title={t(`search.go-to-product`, { name })}
       href={paths.products.asPath({
         slug: slug,
