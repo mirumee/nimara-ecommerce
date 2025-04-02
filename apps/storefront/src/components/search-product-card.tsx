@@ -12,7 +12,9 @@ import { useLocalizedFormatter } from "@/lib/formatters/use-localized-formatter"
 import { paths } from "@/lib/paths";
 
 export const ProductName = ({ children }: PropsWithChildren) => (
-  <h2 className="text-left">{children}</h2>
+  <h2 className="line-clamp-2 overflow-hidden text-ellipsis text-left">
+    {children}
+  </h2>
 );
 
 export const ProductPrice = ({ children }: PropsWithChildren) => {
@@ -26,7 +28,7 @@ export const ProductPrice = ({ children }: PropsWithChildren) => {
 };
 
 export const ProductThumbnail = ({ alt, ...props }: ImageProps) => (
-  <div className="flex justify-center">
+  <div className="flex aspect-square justify-center overflow-hidden">
     <Image alt={alt} className="min-w-full object-contain" {...props} />
   </div>
 );
