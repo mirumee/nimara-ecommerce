@@ -1,25 +1,26 @@
 "use client";
 
-import Cookies from "js-cookie";
-import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
-import { COOKIE_KEY } from "@/config";
-import { usePathname, useRouter } from "@/i18n/routing";
 import { QUERY_PARAMS } from "@/lib/paths";
 
-export const CheckoutRemover = () => {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const pathname = usePathname();
+import { clearCheckoutCookieAction } from "../actions";
 
+export const CheckoutRemover = ({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ [QUERY_PARAMS.orderPlaced]: string }>;
+}) => {
   useEffect(() => {
-    const isOrderCreated = searchParams.get(QUERY_PARAMS.orderPlace) === "true";
+    void (async () => {
+      if (QUERY_PARAMS.orderPlaced in (await searchParams)) {
+        const { id } = await params;
 
-    if (isOrderCreated) {
-      Cookies.remove(COOKIE_KEY.checkoutId);
-      router.replace(pathname, { scroll: false });
-    }
+        await clearCheckoutCookieAction({ id });
+      }
+    })();
   }, []);
 
   return null;
