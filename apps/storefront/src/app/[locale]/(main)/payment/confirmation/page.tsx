@@ -30,7 +30,7 @@ export default async function Page(props: { searchParams: SearchParams }) {
       redirect({
         href: paths.order.confirmation.asPath({
           id: orderCreateData.orderId,
-          query: { [QUERY_PARAMS.orderPlace]: "true" },
+          query: { [QUERY_PARAMS.orderPlaced]: "true" },
         }),
         locale,
       });
