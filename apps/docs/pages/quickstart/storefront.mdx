@@ -17,7 +17,7 @@ pnpm install
 
 ### Copy variables
 
-Copy environment variables from .env.example to .env:
+Copy environment variables from **.env.example** to **.env**:
 
 ```bash
 cp .env.example .env
@@ -34,6 +34,23 @@ NEXT_PUBLIC_SALEOR_API_URL=https://{your_domain}.saleor.cloud/graphql/
 
 # Local example
 # NEXT_PUBLIC_SALEOR_API_URL=http://localhost:8000/graphql/
+```
+
+### Set Saleor App Token
+
+To authenticate the storefront with the Saleor backend, you need to generate an **App Token**.
+
+1. Go to the Saleor dashboard: **Configuration** → **Webhooks & Events**.
+
+2. Click **Create App**.
+
+3. Assign the necessary permissions for your app - **Handle checkouts** and **Manage Customers**:
+![Saleor Dashboard](../../images/saleor_dashboard.png)
+
+4. Copy the generated token and add it to your **.env** file:
+
+```properties
+SALEOR_APP_TOKEN={your_generated_token}
 ```
 
 ### Run project
