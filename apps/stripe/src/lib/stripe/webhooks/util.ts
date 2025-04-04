@@ -1,7 +1,8 @@
+import { type LoggingService } from "@nimara/infrastructure/logging/types";
+
 import { CONFIG } from "@/config";
 import { type PaymentGatewayConfig } from "@/lib/saleor/config/schema";
 import { isLocalDomain } from "@/lib/util";
-import { type Logger } from "@/providers/logging";
 
 import { getStripeApi } from "../api";
 import { StripeMetaKey, StripeWebhookEvent } from "../const";
@@ -17,7 +18,7 @@ export const installWebhook = async ({
   appUrl: string;
   channel: string;
   configuration: PaymentGatewayConfig[string];
-  logger: Logger;
+  logger: LoggingService;
   saleorDomain: string;
 }) => {
   if (!configuration.secretKey) {
@@ -54,7 +55,7 @@ export const uninstallWebhooks = async ({
 }: {
   appUrl: string;
   configuration: PaymentGatewayConfig[string];
-  logger: Logger;
+  logger: LoggingService;
 }) => {
   if (!isLocalDomain(appUrl)) {
     const stripe = getStripeApi(configuration.secretKey);

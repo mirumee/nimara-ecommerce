@@ -2,9 +2,10 @@ import type { DocumentTypeDecoration } from "@graphql-typed-document-node/core";
 
 import type { Err, Result } from "@nimara/domain/objects/Error";
 
+import { type Exact } from "#root/lib/types";
 import { loggingService } from "#root/logging/service";
 
-type AnyVariables = Record<string, any> | undefined;
+type AnyVariables = Record<string, unknown>;
 type GraphqlError = {
   extensions: { exception: { code: string } };
   locations: Array<{ column: number; line: number }>;
@@ -25,6 +26,10 @@ type NextFetchOptions = { next?: { revalidate?: number; tags?: string[] } };
 export type FetchOptions = Omit<RequestInit, "method" | "body"> &
   NextFetchOptions;
 
+/**
+ * @deprecated This client will be deprecated in the future. Once the new client is stable, this will be removed.
+ * Use `graphqlClientV2` instead.
+ */
 export const graphqlClient = (
   url: RequestInfo | URL,
   accessToken?: string | null,
@@ -36,7 +41,7 @@ export const graphqlClient = (
     query: DocumentTypeDecoration<TResult, TVariables> & { toString(): string },
     input?: {
       options?: FetchOptions;
-      variables?: TVariables;
+      variables?: Exact<TVariables>;
     },
   ) => {
     const { variables, options } = input ?? {};

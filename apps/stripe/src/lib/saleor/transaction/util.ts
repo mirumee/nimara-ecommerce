@@ -1,5 +1,6 @@
+import { type LoggingService } from "@nimara/infrastructure/logging/types";
+
 import { responseError } from "@/lib/api/util";
-import { type Logger } from "@/providers/logging";
 
 import { type TransactionEventSchema, transactionEventSchema } from "./schema";
 
@@ -9,7 +10,7 @@ export const constructTransactionEventResponse = ({
   type,
 }: {
   data: TransactionEventSchema;
-  logger: Logger;
+  logger: LoggingService;
   type: string;
 }): Response => {
   const eventResult = transactionEventSchema.safeParse(data);
