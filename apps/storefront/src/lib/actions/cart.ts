@@ -13,5 +13,7 @@ export const setCheckoutIdCookie = async (id: string) => {
   (await cookies()).set(COOKIE_KEY.checkoutId, id, {
     maxAge: COOKIE_MAX_AGE.checkout,
     httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
   });
 };
