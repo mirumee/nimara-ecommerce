@@ -1,11 +1,7 @@
 import pino, { type LoggerOptions } from "pino";
 import { inspect } from "util";
 
-import {
-  type LoggerService,
-  type LoggingService,
-  type LogLevel,
-} from "./types";
+import { type Logger, type LogLevel } from "./types";
 
 const IS_DEVELOPMENT =
   process.env.NODE_ENV === "development" && typeof window === "undefined";
@@ -22,10 +18,10 @@ const devStream: pino.DestinationStream = {
   },
 };
 
-export const pinoLoggerService: LoggerService = (
+export const pinoLogger = (
   opts: LoggerOptions<LogLevel>,
   stream?: pino.DestinationStream,
-): LoggingService => {
+): Logger => {
   const logger = pino<LogLevel>(
     {
       browser: {

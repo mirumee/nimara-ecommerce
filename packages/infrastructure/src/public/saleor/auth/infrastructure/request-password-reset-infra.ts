@@ -1,5 +1,5 @@
 import { graphqlClient } from "#root/graphql/client";
-import { loggingService } from "#root/logging/service";
+import { logger } from "#root/logging/service";
 
 import { RequestPasswordResetMutationDocument } from "../graphql/mutations/generated";
 import type {
@@ -18,7 +18,7 @@ export const saleorRequestPasswordResetInfra =
     );
 
     if (data?.requestPasswordReset?.errors.length) {
-      loggingService.error("Request password error", {
+      logger.error("Request password error", {
         email,
         redirectUrl,
         error: data.requestPasswordReset.errors,

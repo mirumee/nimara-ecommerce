@@ -1,17 +1,17 @@
 import { type LoggerOptions } from "pino";
 
-import { pinoLoggerService } from "./pino";
-import { type LoggingService, type LogLevel } from "./types";
+import { pinoLogger } from "./pino";
+import { type Logger, type LogLevel } from "./types";
 
 const LOG_LEVEL: LogLevel = (process.env.LOG_LEVEL as LogLevel) || "info";
 
-export const getLoggingService = (
+export const getLogger = (
   opts?: Partial<Omit<LoggerOptions<LogLevel, true>, "level">>,
-): LoggingService =>
-  pinoLoggerService({
+): Logger =>
+  pinoLogger({
     level: LOG_LEVEL,
     name: "storefront",
     ...opts,
   });
 
-export const loggingService: LoggingService = getLoggingService();
+export const logger: Logger = getLogger();

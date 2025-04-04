@@ -1,4 +1,4 @@
-import { loggingService } from "@nimara/infrastructure/logging/service";
+import { logger } from "@nimara/infrastructure/logging/service";
 
 import type {
   MenuEventSubscriptionFragment,
@@ -27,7 +27,7 @@ export const handleWebhookPostRequest = async (
     const tag = `${prefix}:${slug}` as RevalidateTag;
 
     revalidateTag(tag);
-    loggingService.debug(
+    logger.debug(
       `Revalidated '${tag}' via '${json.__typename}' saleor webhook/`,
       { slug, name: json.__typename },
     );

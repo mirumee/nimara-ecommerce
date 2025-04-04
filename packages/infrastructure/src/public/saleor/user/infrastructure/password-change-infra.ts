@@ -1,5 +1,5 @@
 import { graphqlClientV2 } from "#root/graphql/client";
-import { loggingService } from "#root/logging/service";
+import { logger } from "#root/logging/service";
 
 import { PasswordChangeMutationDocument } from "../graphql/mutations/generated";
 import type { PasswordChangeInfra, SaleorUserServiceConfig } from "../types";
@@ -20,10 +20,7 @@ export const saleorPasswordChangeInfra =
     }
 
     if (data.passwordChange?.errors.length) {
-      loggingService.error(
-        "Password change failed",
-        data.passwordChange.errors,
-      );
+      logger.error("Password change failed", data.passwordChange.errors);
 
       return {
         success: false,

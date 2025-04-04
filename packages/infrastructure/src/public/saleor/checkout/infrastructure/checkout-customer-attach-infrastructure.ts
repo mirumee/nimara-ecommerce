@@ -1,5 +1,5 @@
 import { graphqlClient } from "#root/graphql/client";
-import { loggingService } from "#root/logging/service";
+import { logger } from "#root/logging/service";
 
 import { CheckoutCustomerAttachMutationDocument } from "../graphql/mutations/generated";
 import type {
@@ -20,7 +20,7 @@ export const saleorCheckoutCustomerAttachInfra =
     );
 
     if (data?.checkoutCustomerAttach?.errors.length) {
-      loggingService.error(
+      logger.error(
         `Couldn't attach the checkout with the ID: ${id} to the customer`,
         {
           error: data?.checkoutCustomerAttach?.errors[0],

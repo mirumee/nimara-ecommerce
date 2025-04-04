@@ -9,7 +9,7 @@ import type { CountryCode, CountryDisplay } from "@nimara/codegen/schema";
 import type { Address } from "@nimara/domain/objects/Address";
 import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import { ADDRESS_CORE_FIELDS } from "@nimara/infrastructure/consts";
-import { loggingService } from "@nimara/infrastructure/logging/service";
+import { logger } from "@nimara/infrastructure/logging/service";
 import { Button } from "@nimara/ui/components/button";
 import { DialogClose } from "@nimara/ui/components/dialog";
 import { Form } from "@nimara/ui/components/form";
@@ -68,7 +68,7 @@ export const AddNewAddressForm = ({
     const data = await createNewAddress(address);
 
     if (data?.errors.length) {
-      loggingService.error("Address create failed", data.errors);
+      logger.error("Address create failed", data.errors);
 
       return;
     }

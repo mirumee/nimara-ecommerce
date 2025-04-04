@@ -2,7 +2,7 @@ import type { CountryCode } from "@nimara/codegen/schema";
 import type { BaseError } from "@nimara/domain/objects/Error";
 
 import { graphqlClient } from "#root/graphql/client";
-import { loggingService } from "#root/logging/service";
+import { logger } from "#root/logging/service";
 import type {
   AddressFormatInfra,
   SaleorAddressServiceConfig,
@@ -32,10 +32,7 @@ export const saleorAddressFormatInfra = ({
     );
 
     if (error) {
-      loggingService.error(
-        "Failed to validate addresses format",
-        error as BaseError,
-      );
+      logger.error("Failed to validate addresses format", error as BaseError);
 
       return {
         isSuccess: false,

@@ -8,11 +8,7 @@
  */
 export type LogLevel = "debug" | "info" | "warning" | "error" | "critical";
 
-export type LoggingService = Record<LogLevel, LogFn>;
-
 export type LogFn = (message: string, context?: object) => void;
-export type LoggerService = ({
-  level,
-}: {
-  level: LogLevel;
-}) => Record<LogLevel, LogFn>;
+export type Logger = Record<LogLevel, LogFn>;
+
+export type LoggerService = ({ level }: { level: LogLevel }) => Logger;

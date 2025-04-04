@@ -1,7 +1,7 @@
 import type { BaseError } from "@nimara/domain/objects/Error";
 
 import { graphqlClient } from "#root/graphql/client";
-import { loggingService } from "#root/logging/service";
+import { logger } from "#root/logging/service";
 
 import { CheckoutRemovePromoCodeMutationDocument } from "../graphql/mutations/generated";
 import type {
@@ -24,7 +24,7 @@ export const saleorCheckoutRemovePromoCodeInfra = ({
     );
 
     if (error) {
-      loggingService.error("Failed to remove promo code", error);
+      logger.error("Failed to remove promo code", error);
 
       return {
         isSuccess: false,

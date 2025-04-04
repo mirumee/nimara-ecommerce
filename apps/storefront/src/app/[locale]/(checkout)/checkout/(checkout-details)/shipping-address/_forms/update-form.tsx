@@ -9,7 +9,7 @@ import { type CountryCode, type CountryDisplay } from "@nimara/codegen/schema";
 import { type Address } from "@nimara/domain/objects/Address";
 import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import { ADDRESS_CORE_FIELDS } from "@nimara/infrastructure/consts";
-import { loggingService } from "@nimara/infrastructure/logging/service";
+import { logger } from "@nimara/infrastructure/logging/service";
 import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
 
@@ -62,7 +62,7 @@ export const UpdateShippingAddressForm = ({
     });
 
     if (data?.errors.length) {
-      loggingService.error("Shipping address update failed", {
+      logger.error("Shipping address update failed", {
         error: data.errors[0],
       });
     }

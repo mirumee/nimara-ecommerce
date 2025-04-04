@@ -1,3 +1,3 @@
-import { getLoggingService } from "@nimara/infrastructure/logging/service";
+import { getLogger } from "@nimara/infrastructure/logging/service";
 
-export const getLoggingProvider = () => getLoggingService({ name: "stripe" });
+export const getLoggingProvider = () => getLogger({ name: "stripe" });

@@ -1,7 +1,7 @@
 import type { BaseError } from "@nimara/domain/objects/Error";
 
 import { graphqlClient } from "#root/graphql/client";
-import { loggingService } from "#root/logging/service";
+import { logger } from "#root/logging/service";
 import type {
   SaleorUserServiceConfig,
   UserFindInfra,
@@ -23,7 +23,7 @@ export const saleorUserFindInfra = ({
     );
 
     if (error) {
-      loggingService.error(
+      logger.error(
         `Fetching user by email: ${email} failed`,
         error as BaseError,
       );

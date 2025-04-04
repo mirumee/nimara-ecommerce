@@ -1,7 +1,7 @@
 import type { BaseError } from "@nimara/domain/objects/Error";
 
 import { graphqlClient } from "#root/graphql/client";
-import { loggingService } from "#root/logging/service";
+import { logger } from "#root/logging/service";
 
 import { CheckoutAddPromoCodeMutationDocument } from "../graphql/mutations/generated";
 import type {
@@ -24,7 +24,7 @@ export const saleorCheckoutAddPromoCodeInfra = ({
     );
 
     if (error) {
-      loggingService.error("Failed to apply promo code", error);
+      logger.error("Failed to apply promo code", error);
 
       return {
         isSuccess: false,

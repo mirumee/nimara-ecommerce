@@ -2,7 +2,7 @@ import { getTranslations } from "next-intl/server";
 
 import type { Checkout } from "@nimara/domain/objects/Checkout";
 import type { User } from "@nimara/domain/objects/User";
-import { loggingService } from "@nimara/infrastructure/logging/service";
+import { logger } from "@nimara/infrastructure/logging/service";
 import { Button } from "@nimara/ui/components/button";
 
 import { Link } from "@/i18n/routing";
@@ -29,10 +29,7 @@ export const EmailSection = async ({
       });
 
     if (!isSuccess) {
-      loggingService.error(
-        "Failed to update email",
-        validationErrors || serverError,
-      );
+      logger.error("Failed to update email", validationErrors || serverError);
     }
   }
 

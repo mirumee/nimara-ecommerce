@@ -6,7 +6,7 @@ import type {
   Paypal,
 } from "@nimara/domain/objects/Payment";
 
-import { loggingService } from "#root/logging/service";
+import { logger } from "#root/logging/service";
 
 import { API_VERSION } from "../consts";
 import type { PaymentMethodsListInfra, PaymentServiceConfig } from "../types";
@@ -57,7 +57,7 @@ export const paymentMethodsListInfra =
           };
         }
 
-        loggingService.error("Unsupported payment method", { type });
+        logger.error("Unsupported payment method", { type });
 
         return null;
       })

@@ -1,5 +1,5 @@
 import { graphqlClient } from "#root/graphql/client";
-import { loggingService } from "#root/logging/service";
+import { logger } from "#root/logging/service";
 
 import { AccountAddressCreateMutationDocument } from "../graphql/mutations/generated";
 import type {
@@ -21,13 +21,13 @@ export const saleorAccountAddressCreateInfra =
     );
 
     if (error) {
-      loggingService.error("Error while creating a new address", { error });
+      logger.error("Error while creating a new address", { error });
 
       return null;
     }
 
     if (data?.accountAddressCreate?.errors.length) {
-      loggingService.error("Error while creating a new address", {
+      logger.error("Error while creating a new address", {
         error: data.accountAddressCreate.errors,
       });
 
