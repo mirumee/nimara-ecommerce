@@ -49,7 +49,7 @@ export const SearchProductCard = ({
 
   return (
     <Link
-      className="row-span-3 grid grid-rows-subgrid gap-2"
+      className="row-span-3 grid gap-2"
       title={t(`search.go-to-product`, { name })}
       href={paths.products.asPath({
         slug: slug,
