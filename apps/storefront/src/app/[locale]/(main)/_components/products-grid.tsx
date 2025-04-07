@@ -98,7 +98,7 @@ export const ProductsGrid = async ({
           </Button>
         </div>
         {products.map((product) => (
-          <div className="hidden sm:grid" key={product.id}>
+          <div className="hidden sm:block" key={product.id}>
             <SearchProductCard
               product={product}
               sizes="(max-width: 720px) 1vw, (max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
