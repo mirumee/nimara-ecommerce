@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 
-import NimaraLogo from "@/assets/nimara-logo.svg";
+import BrandLogo from "@/assets/brand-logo-dark.svg";
 import { Link } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 
@@ -15,7 +15,7 @@ export const Logo = () => {
       aria-label={t("logo")}
     >
       <Link href={paths.home.asPath()} title={t("go-to-homepage")}>
-        <NimaraLogo height={36} />
+        <BrandLogo height={36} className="fill-primary" />
       </Link>
     </h1>
   );
