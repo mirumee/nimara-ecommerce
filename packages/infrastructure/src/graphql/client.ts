@@ -2,9 +2,10 @@ import type { DocumentTypeDecoration } from "@graphql-typed-document-node/core";
 
 import type { Err, Result } from "@nimara/domain/objects/Error";
 
-import { loggingService } from "#root/logging/service";
+import { type Exact } from "#root/lib/types";
+import { logger } from "#root/logging/service";
 
-type AnyVariables = Record<string, any> | undefined;
+type AnyVariables = Record<string, unknown>;
 type GraphqlError = {
   extensions: { exception: { code: string } };
   locations: Array<{ column: number; line: number }>;
@@ -25,6 +26,10 @@ type NextFetchOptions = { next?: { revalidate?: number; tags?: string[] } };
 export type FetchOptions = Omit<RequestInit, "method" | "body"> &
   NextFetchOptions;
 
+/**
+ * @deprecated This client will be deprecated in the future. Once the new client is stable, this will be removed.
+ * Use `graphqlClientV2` instead.
+ */
 export const graphqlClient = (
   url: RequestInfo | URL,
   accessToken?: string | null,
@@ -36,7 +41,7 @@ export const graphqlClient = (
     query: DocumentTypeDecoration<TResult, TVariables> & { toString(): string },
     input?: {
       options?: FetchOptions;
-      variables?: TVariables;
+      variables?: Exact<TVariables>;
     },
   ) => {
     const { variables, options } = input ?? {};
@@ -58,7 +63,7 @@ export const graphqlClient = (
       const response = await fetch(url, requestInit);
 
       if (!response.ok) {
-        loggingService.error("Calling GraphQL API failed", {
+        logger.error("Calling GraphQL API failed", {
           error: response.statusText,
         });
 
@@ -70,14 +75,14 @@ export const graphqlClient = (
       const body = (await response.json()) as GraphQLResponse<TResult>;
 
       if ("errors" in body) {
-        loggingService.error("GraphQL error", { error: body["errors"] });
+        logger.error("GraphQL error", { error: body["errors"] });
 
         return { error: body["errors"] };
       }
 
       return { data: body.data };
     } catch (e) {
-      loggingService.error("Unexpected network error", {
+      logger.error("Unexpected network error", {
         error: e,
         url,
       });
@@ -147,7 +152,7 @@ export const graphqlClientV2 = (
       if ("errors" in body) {
         const exceptionCode = body?.errors?.[0].extensions.exception.code;
 
-        loggingService.error("GraphQL error", {
+        logger.error("GraphQL error", {
           error: body["errors"],
           operationName,
           exceptionCode,
@@ -164,7 +169,7 @@ export const graphqlClientV2 = (
 
       return { data: body.data as TResult, error: null };
     } catch (e) {
-      loggingService.error("Unexpected HTTP error", {
+      logger.error("Unexpected HTTP error", {
         error: e,
         operationName,
       });
@@ -187,7 +192,7 @@ const handleInvalidResponse = (
   // Add more cases for response.status if needed.
   switch (response.status) {
     case 404:
-      loggingService.error("Not found", {
+      logger.error("Not found", {
         message: response.statusText,
         status: response.status,
         operationName,
@@ -203,7 +208,7 @@ const handleInvalidResponse = (
       };
 
     case 429:
-      loggingService.error("Too many requests", {
+      logger.error("Too many requests", {
         message: response.statusText,
         status: response.status,
         operationName,
@@ -219,7 +224,7 @@ const handleInvalidResponse = (
       };
 
     default:
-      loggingService.error("API request failed", {
+      logger.error("API request failed", {
         message: response.statusText,
         status: response.status,
         operationName,

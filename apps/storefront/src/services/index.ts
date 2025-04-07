@@ -12,14 +12,17 @@ import { stripePaymentService } from "@nimara/infrastructure/public/stripe/payme
 
 import { clientEnvs } from "@/envs/client";
 import { serverEnvs } from "@/envs/server";
+import { storefrontLogger } from "@/services/logging";
 
 export const checkoutService = saleorCheckoutService({
   apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
+  logger: storefrontLogger,
 });
 
 export const fulfillmentService = saleorFulfillmentService({
   apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
   appToken: serverEnvs.SALEOR_APP_TOKEN,
+  logger: storefrontLogger,
 });
 
 export const storeService = saleorStoreService;
@@ -28,14 +31,17 @@ export const cartService = saleorCartService;
 
 export const addressService = saleorAddressService({
   apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
+  logger: storefrontLogger,
 });
 
 export const authService = saleorAuthService({
   apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
+  logger: storefrontLogger,
 });
 
 export const userService = saleorUserService({
   apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
+  logger: storefrontLogger,
 });
 
 type Context = Parameters<typeof Sentry.captureException>[1];
@@ -51,4 +57,5 @@ export const paymentService = stripePaymentService({
   publicKey: clientEnvs.STRIPE_PUBLIC_KEY,
   environment: clientEnvs.ENVIRONMENT,
   gatewayAppId: clientEnvs.PAYMENT_APP_ID,
+  logger: storefrontLogger,
 });

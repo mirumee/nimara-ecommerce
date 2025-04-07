@@ -10,6 +10,7 @@ import { ChannelQueryDocument } from "../graphql/queries/generated";
 
 export const saleorCountriesGetInfra = ({
   apiURL,
+  logger,
 }: SaleorAddressServiceConfig): CountriesGetInfra => {
   return async (opts: { channelSlug: string }) => {
     const { data, error } = await graphqlClient(apiURL).execute(
@@ -29,11 +30,18 @@ export const saleorCountriesGetInfra = ({
     }
 
     if (!data) {
+      logger.error("No countries data returned from Saleor", {
+        channel: opts.channelSlug,
+      });
       // TODO: how to handle
-      throw new Error("No data returned from Saleor");
+      throw new Error("No countries data returned from Saleor");
     }
 
     if (!data.channel?.countries) {
+      logger.error("No countries returned from Saleor", {
+        channel: opts.channelSlug,
+      });
+
       // TODO: how to handle
       throw new Error("No countries returned from Saleor");
     }

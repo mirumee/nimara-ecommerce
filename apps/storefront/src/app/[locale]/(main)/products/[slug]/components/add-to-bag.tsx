@@ -18,6 +18,7 @@ import { paths } from "@/lib/paths";
 import { cn } from "@/lib/utils";
 import { useCurrentRegion } from "@/regions/client";
 import { cartService } from "@/services";
+import { storefrontLogger } from "@/services/logging";
 import type { TranslationMessage } from "@/types";
 
 type AddToBagProps = {
@@ -47,6 +48,7 @@ export const AddToBag = ({
     countryCode: region.market.countryCode,
     channel: region.market.channel,
     languageCode: region.language.code,
+    logger: storefrontLogger,
   });
 
   const handleProductAdd = async () => {

@@ -7,9 +7,9 @@ import type {
 } from "../types";
 
 export const saleorAccountAddressDeleteInfra =
-  ({ apiURL }: SaleorUserServiceConfig): AccountAddressDeleteInfra =>
+  ({ apiURL, logger }: SaleorUserServiceConfig): AccountAddressDeleteInfra =>
   async ({ accessToken, id }) => {
-    const { data } = await graphqlClient(apiURL, accessToken).execute(
+    const { data, error } = await graphqlClient(apiURL, accessToken).execute(
       AccountAddressDeleteMutationDocument,
       {
         variables: {
@@ -17,6 +17,20 @@ export const saleorAccountAddressDeleteInfra =
         },
       },
     );
+
+    if (error) {
+      logger.error("Error while deleting an address", { error });
+
+      return null;
+    }
+
+    if (data?.accountAddressDelete?.errors.length) {
+      logger.error("Error while deleting an address", {
+        error: data.accountAddressDelete.errors,
+      });
+
+      return null;
+    }
 
     return data?.accountAddressDelete ?? null;
   };

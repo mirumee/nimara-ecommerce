@@ -4,7 +4,7 @@ import { route } from "nextjs-routes";
 import type { ParsedUrlQuery } from "querystring";
 import type { UrlObject } from "url";
 
-import { loggingService } from "@nimara/infrastructure/logging/service";
+import { storefrontLogger } from "@/services/logging";
 
 // UrlObject accepted by next `<Link />` component.
 export type UrlOpts = Omit<UrlObject, "query"> & {
@@ -38,10 +38,12 @@ function urlWithParam<PathKey extends string | string[]>(
 function urlWithParam<PathKey extends string>(path: string) {
   if (path !== "/") {
     if (path.endsWith("/")) {
-      loggingService.warning("Path should not have trailing slash.", { path });
+      storefrontLogger.warning("Path should not have trailing slash.", {
+        path,
+      });
     }
     if (!path.startsWith("/")) {
-      loggingService.warning("Path  should have leading slash.", { path });
+      storefrontLogger.warning("Path  should have leading slash.", { path });
     }
   }
 

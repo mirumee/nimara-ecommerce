@@ -9,6 +9,7 @@ import type { PaymentMethod } from "@nimara/domain/objects/Payment";
 import type { User } from "@nimara/domain/objects/User";
 
 import type { Maybe } from "#root/lib/types";
+import { type Logger } from "#root/logging/types";
 
 export type StripeServiceState = PaymentServiceState<{
   amount: number;
@@ -24,6 +25,7 @@ export type PaymentServiceConfig = {
   apiURI: string;
   environment: string;
   gatewayAppId: string;
+  logger: Logger;
   publicKey: string;
   secretKey: string;
 };

@@ -1,5 +1,4 @@
 import { graphqlClient } from "#root/graphql/client";
-import { loggingService } from "#root/logging/service";
 
 import { RequestPasswordResetMutationDocument } from "../graphql/mutations/generated";
 import type {
@@ -8,7 +7,7 @@ import type {
 } from "../types";
 
 export const saleorRequestPasswordResetInfra =
-  ({ apiURL }: SaleorAuthServiceConfig): RequestPasswordResetInfra =>
+  ({ apiURL, logger }: SaleorAuthServiceConfig): RequestPasswordResetInfra =>
   async ({ channel, email, redirectUrl }) => {
     const { data } = await graphqlClient(apiURL).execute(
       RequestPasswordResetMutationDocument,
@@ -18,7 +17,7 @@ export const saleorRequestPasswordResetInfra =
     );
 
     if (data?.requestPasswordReset?.errors.length) {
-      loggingService.error("Request password error", {
+      logger.error("Request password error", {
         email,
         redirectUrl,
         error: data.requestPasswordReset.errors,

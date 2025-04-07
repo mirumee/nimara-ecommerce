@@ -4,6 +4,7 @@ import type { AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import type { BaseError } from "@nimara/domain/objects/Error";
 
 import type { QueryOptions } from "#root/lib/types";
+import { type Logger } from "#root/logging/types";
 
 export type AddressService<Config> = (config: Config) => {
   addressFormGetRows: AddressFormGetRowsUseCase;
@@ -13,6 +14,7 @@ export type AddressService<Config> = (config: Config) => {
 
 export interface SaleorAddressServiceConfig {
   apiURL: string;
+  logger: Logger;
 }
 
 export type AddressFormGetRowsInfra = ({

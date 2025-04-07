@@ -1,7 +1,6 @@
 import type { BaseError } from "@nimara/domain/objects/Error";
 
 import { graphqlClient } from "#root/graphql/client";
-import { loggingService } from "#root/logging/service";
 
 import { CheckoutAddPromoCodeMutationDocument } from "../graphql/mutations/generated";
 import type {
@@ -11,20 +10,21 @@ import type {
 
 export const saleorCheckoutAddPromoCodeInfra = ({
   apiURL,
+  logger,
 }: SaleorCheckoutServiceConfig): CheckoutAddPromoCodeInfra => {
   return async ({ checkoutId, promoCode }) => {
     const { data, error } = await graphqlClient(apiURL).execute(
       CheckoutAddPromoCodeMutationDocument,
       {
         variables: {
-          checkoutId: checkoutId,
+          checkoutId,
           promoCode,
         },
       },
     );
 
     if (error) {
-      loggingService.error("Failed to apply promo code", error);
+      logger.error("Failed to apply promo code", { error, checkoutId });
 
       return {
         isSuccess: false,
@@ -33,6 +33,11 @@ export const saleorCheckoutAddPromoCodeInfra = ({
     }
 
     if (data?.checkoutAddPromoCode?.errors?.length) {
+      logger.error("Failed to apply promo code", {
+        errors: data?.checkoutAddPromoCode?.errors,
+        checkoutId,
+      });
+
       return {
         isSuccess: false,
         validationErrors: data.checkoutAddPromoCode.errors,

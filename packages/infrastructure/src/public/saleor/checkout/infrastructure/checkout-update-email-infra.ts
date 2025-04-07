@@ -10,6 +10,7 @@ import type {
 
 export const saleorCheckoutEmailUpdateInfra = ({
   apiURL,
+  logger,
 }: SaleorCheckoutServiceConfig): CheckoutEmailUpdateInfra => {
   return async ({ checkout, email }) => {
     const { data, error } = await graphqlClient(apiURL).execute(
@@ -23,6 +24,11 @@ export const saleorCheckoutEmailUpdateInfra = ({
     );
 
     if (error) {
+      logger.error("Failed to update checkout email", {
+        error,
+        checkoutId: checkout.id,
+      });
+
       return {
         isSuccess: false,
         serverError: error as BaseError,
@@ -30,6 +36,11 @@ export const saleorCheckoutEmailUpdateInfra = ({
     }
 
     if (data?.checkoutEmailUpdate?.errors?.length) {
+      logger.error("Failed to update checkout email", {
+        errors: data?.checkoutEmailUpdate?.errors,
+        checkoutId: checkout.id,
+      });
+
       return {
         isSuccess: false,
         validationErrors: data?.checkoutEmailUpdate?.errors,

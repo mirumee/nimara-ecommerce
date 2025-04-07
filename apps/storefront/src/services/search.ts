@@ -2,6 +2,7 @@ import { saleorSearchService } from "@nimara/infrastructure/public/saleor/search
 import type { SearchService } from "@nimara/infrastructure/use-cases/search/types";
 
 import { clientEnvs } from "@/envs/client";
+import { storefrontLogger } from "@/services/logging";
 
 export const searchServiceSaleor = saleorSearchService({
   apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
@@ -33,6 +34,7 @@ export const searchServiceSaleor = saleorSearchService({
       },
     ],
   },
+  logger: storefrontLogger,
 });
 
 export const searchService: SearchService = searchServiceSaleor;

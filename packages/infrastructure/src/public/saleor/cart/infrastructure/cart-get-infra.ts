@@ -48,6 +48,7 @@ export const saleorCartGetInfra =
     apiURI,
     languageCode,
     countryCode,
+    logger,
   }: SaleorCartServiceConfig): CartGetInfra =>
   async ({ cartId, options }) => {
     const { data } = await graphqlClient(apiURI).execute(CartQueryDocument, {
@@ -61,9 +62,14 @@ export const saleorCartGetInfra =
       options,
     });
 
-    if (data?.checkout) {
-      return serializeCart(data.checkout);
+    if (!data?.checkout) {
+      logger.error("Error while fetching cart", {
+        error: data?.checkout,
+        cartId,
+      });
+
+      return null;
     }
 
-    return null;
+    return serializeCart(data.checkout);
   };

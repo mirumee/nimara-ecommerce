@@ -12,6 +12,7 @@ import { AddressValidationRulesQueryDocument } from "../graphql/queries/generate
 
 export const saleorAddressFormGetRowsInfra = ({
   apiURL,
+  logger,
 }: SaleorAddressServiceConfig): AddressFormGetRowsInfra => {
   return async ({ countryCode }: { countryCode: CountryCode }) => {
     const { data, error } = await graphqlClient(apiURL).execute(
@@ -31,10 +32,12 @@ export const saleorAddressFormGetRowsInfra = ({
     }
 
     if (!data) {
+      logger.error("No data returned from Saleor");
       throw new Error("No data returned from Saleor");
     }
 
     if (!data.addressValidationRules) {
+      logger.error("No address validation rules returned from Saleor");
       throw new Error("No data returned from Saleor");
     }
 

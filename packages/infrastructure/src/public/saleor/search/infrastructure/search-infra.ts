@@ -4,7 +4,6 @@ import {
 } from "@nimara/codegen/schema";
 
 import { graphqlClient } from "#root/graphql/client";
-import { loggingService } from "#root/logging/service";
 import type { SearchInfra } from "#root/use-cases/search/types";
 
 import { SearchProductQueryDocument } from "../graphql/queries/generated";
@@ -12,7 +11,12 @@ import { searchProductSerializer } from "../serializers";
 import type { SaleorSearchServiceConfig } from "../types";
 
 export const saleorSearchInfra =
-  ({ apiURL, serializers, settings }: SaleorSearchServiceConfig): SearchInfra =>
+  ({
+    apiURL,
+    serializers,
+    settings,
+    logger,
+  }: SaleorSearchServiceConfig): SearchInfra =>
   async (
     {
       query,
@@ -43,7 +47,7 @@ export const saleorSearchInfra =
       : undefined;
 
     try {
-      loggingService.debug("Fetching the products from Saleor", {
+      logger.debug("Fetching the products from Saleor", {
         query,
         channel: context.channel,
         category,
@@ -84,7 +88,7 @@ export const saleorSearchInfra =
       );
 
       if (error) {
-        loggingService.error("Failed to fetch products from Saleor", {
+        logger.error("Failed to fetch products from Saleor", {
           error,
         });
 
@@ -120,12 +124,9 @@ export const saleorSearchInfra =
         },
       };
     } catch (e) {
-      loggingService.error(
-        "Unexpected error while fetching products from Saleor",
-        {
-          error: e,
-        },
-      );
+      logger.error("Unexpected error while fetching products from Saleor", {
+        error: e,
+      });
 
       return {
         results: [],

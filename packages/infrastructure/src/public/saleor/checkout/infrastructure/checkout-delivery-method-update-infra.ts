@@ -11,6 +11,7 @@ import type {
 
 export const saleorDeliveryMethodUpdateInfra = ({
   apiURL,
+  logger,
 }: SaleorCheckoutServiceConfig): CheckoutDeliveryMethodUpdateInfra => {
   return async ({
     checkout,
@@ -27,6 +28,11 @@ export const saleorDeliveryMethodUpdateInfra = ({
     );
 
     if (error) {
+      logger.error("Failed to update delivery method", {
+        error,
+        checkoutId: checkout.id,
+      });
+
       return {
         isSuccess: false,
         serverError: error as BaseError,
@@ -34,6 +40,11 @@ export const saleorDeliveryMethodUpdateInfra = ({
     }
 
     if (data?.checkoutDeliveryMethodUpdate?.errors?.length) {
+      logger.error("Failed to update delivery method", {
+        errors: data?.checkoutDeliveryMethodUpdate?.errors,
+        checkoutId: checkout.id,
+      });
+
       return {
         isSuccess: false,
         validationErrors: data?.checkoutDeliveryMethodUpdate?.errors,

@@ -6,7 +6,7 @@ import { CheckoutCompleteMutationDocument } from "../graphql/mutations/generated
 import type { OrderCreateInfra, SaleorCheckoutServiceConfig } from "../types";
 
 export const orderCreateInfra =
-  ({ apiURL }: SaleorCheckoutServiceConfig): OrderCreateInfra =>
+  ({ apiURL, logger }: SaleorCheckoutServiceConfig): OrderCreateInfra =>
   async ({ id }) => {
     const { data } = await graphqlClient(apiURL).execute(
       CheckoutCompleteMutationDocument,
@@ -19,6 +19,11 @@ export const orderCreateInfra =
     const orderId = data?.checkoutComplete?.order?.id;
 
     if (errors.length) {
+      logger.error("Failed to complete checkout", {
+        errors,
+        checkoutId: id,
+      });
+
       return {
         errors: errors.map(({ code }) => ({ code, type: "checkout" })),
         orderId: null,

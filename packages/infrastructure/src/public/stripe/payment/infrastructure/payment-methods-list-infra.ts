@@ -6,8 +6,6 @@ import type {
   Paypal,
 } from "@nimara/domain/objects/Payment";
 
-import { loggingService } from "#root/logging/service";
-
 import { API_VERSION } from "../consts";
 import type { PaymentMethodsListInfra, PaymentServiceConfig } from "../types";
 
@@ -30,7 +28,7 @@ const SERIALIZERS = {
 const FETCH_LIMIT = 20;
 
 export const paymentMethodsListInfra =
-  ({ secretKey }: PaymentServiceConfig): PaymentMethodsListInfra =>
+  ({ secretKey, logger }: PaymentServiceConfig): PaymentMethodsListInfra =>
   async ({ customerId }) => {
     const stripe = new Stripe(secretKey, { apiVersion: API_VERSION });
 
@@ -57,7 +55,7 @@ export const paymentMethodsListInfra =
           };
         }
 
-        loggingService.error("Unsupported payment method", { type });
+        logger.error("Unsupported payment method", { type });
 
         return null;
       })
