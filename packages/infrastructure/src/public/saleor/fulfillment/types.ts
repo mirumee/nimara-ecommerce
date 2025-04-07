@@ -1,5 +1,7 @@
 import type { BaseError } from "@nimara/domain/objects/Error";
 
+import { type Logger } from "#root/logging/types";
+
 export type FulfillmentReturnProductsOptions = {
   input: {
     fulfillmentLines: {
@@ -29,6 +31,7 @@ export type FulfillmentReturnProductsUseCase = FulfillmentReturnProductsInfra;
 export type SaleorFulfillmentServiceConfig = {
   apiURL: string;
   appToken: string;
+  logger: Logger;
 };
 
 export type FulfillmentService<Config> = (config: Config) => {

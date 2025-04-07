@@ -8,6 +8,7 @@ const LOG_LEVEL: LogLevel = (process.env.LOG_LEVEL as LogLevel) || "info";
 /**
  * Use this function to create a logger instance.
  * It uses a default logger config, but you can override it by passing a config object.
+ * A `name` property is required in the config object.
  *
  * @see {@link Logger} for the logger type.
  * @see {@link LogLevel} for available log levels.
@@ -20,11 +21,10 @@ const LOG_LEVEL: LogLevel = (process.env.LOG_LEVEL as LogLevel) || "info";
  * logger.error("Something went wrong");
  */
 export const getLogger = (
-  opts?: Partial<Omit<LoggerOptions<LogLevel>, "level">>,
+  opts: Omit<LoggerOptions<LogLevel>, "level">,
 ): Logger =>
   pinoLogger({
     level: LOG_LEVEL,
-    name: "storefront",
     ...opts,
   });
 
@@ -42,4 +42,4 @@ export const getLogger = (
  * logger.info("Hello world");
  * logger.error("Something went wrong");
  */
-export const logger: Logger = getLogger();
+export const logger: Logger = getLogger({ name: "storefront" });

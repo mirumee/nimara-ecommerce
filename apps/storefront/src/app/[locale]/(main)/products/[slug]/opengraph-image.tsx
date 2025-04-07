@@ -5,6 +5,7 @@ import { CACHE_TTL } from "@/config";
 import { clientEnvs } from "@/envs/client";
 import { getCurrentRegion } from "@/regions/server";
 import { storeService } from "@/services";
+import { storefrontLogger } from "@/services/logging";
 
 export const size = {
   width: 1200,
@@ -29,6 +30,7 @@ export default async function Image({
     languageCode: region.language.code,
     apiURI: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
     countryCode: region.market.countryCode,
+    logger: storefrontLogger,
   };
 
   const { data } = await storeService(serviceOpts).getProductDetails({

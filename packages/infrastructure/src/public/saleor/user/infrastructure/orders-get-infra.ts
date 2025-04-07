@@ -6,12 +6,18 @@ import { UserOrdersQueryDocument } from "../graphql/queries/generated";
 import type { OrdersGetInfra, SaleorUserServiceConfig } from "../types";
 
 export const saleorOrdersGetInfra =
-  ({ apiURL }: SaleorUserServiceConfig): OrdersGetInfra =>
+  ({ apiURL, logger }: SaleorUserServiceConfig): OrdersGetInfra =>
   async ({ accessToken, languageCode }) => {
-    const { data } = await graphqlClient(apiURL, accessToken).execute(
+    const { data, error } = await graphqlClient(apiURL, accessToken).execute(
       UserOrdersQueryDocument,
       { variables: { languageCode } },
     );
+
+    if (error) {
+      logger.error("Error while fetching orders", { error });
+
+      return null;
+    }
 
     return (
       data?.me?.orders?.edges.map(({ node }) => serializeOrder(node)) ?? null

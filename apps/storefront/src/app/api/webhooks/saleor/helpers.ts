@@ -1,5 +1,3 @@
-import { logger } from "@nimara/infrastructure/logging/service";
-
 import type {
   MenuEventSubscriptionFragment,
   PageEventSubscriptionFragment,
@@ -7,6 +5,7 @@ import type {
 } from "@/graphql/fragments/generated";
 import { revalidateTag } from "@/lib/cache";
 import { verifySaleorWebhookSignature } from "@/lib/webhooks";
+import { storefrontLogger } from "@/services/logging";
 
 type EventSubscriptionFragment =
   | MenuEventSubscriptionFragment
@@ -27,7 +26,7 @@ export const handleWebhookPostRequest = async (
     const tag = `${prefix}:${slug}` as RevalidateTag;
 
     revalidateTag(tag);
-    logger.debug(
+    storefrontLogger.debug(
       `Revalidated '${tag}' via '${json.__typename}' saleor webhook/`,
       { slug, name: json.__typename },
     );

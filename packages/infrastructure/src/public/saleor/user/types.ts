@@ -10,6 +10,7 @@ import type { Order } from "@nimara/domain/objects/Order";
 import { type User } from "@nimara/domain/objects/User";
 
 import { type QueryOptions } from "#root/lib/types";
+import { type Logger } from "#root/logging/types";
 
 export type UserService<Config> = (config: Config) => {
   accountAddressCreate: AccountAddressCreateUseCase;
@@ -30,6 +31,7 @@ export type UserService<Config> = (config: Config) => {
 
 export interface SaleorUserServiceConfig {
   apiURL: string;
+  logger: Logger;
 }
 
 export type UserGetInfra = (accessToken?: string) => Promise<User | null>;

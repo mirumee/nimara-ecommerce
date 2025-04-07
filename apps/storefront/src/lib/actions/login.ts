@@ -16,6 +16,7 @@ import {
   errorService,
   userService,
 } from "@/services";
+import { storefrontLogger } from "@/services/logging";
 
 export async function login({
   email,
@@ -44,30 +45,37 @@ export async function login({
 
       if (checkoutId) {
         const region = await getCurrentRegion();
-        const { checkout: guestCheckout } = await checkoutService.checkoutGet({
-          checkoutId,
+        const regionSettings = {
           countryCode: region.market.countryCode,
           languageCode: region.language.code,
-        });
-        const { checkout: userCheckout } = await checkoutService.checkoutGet({
-          checkoutId: userLatestCheckoutId,
-          countryCode: region.market.countryCode,
-          languageCode: region.language.code,
-        });
-        const lineItemsFromGuestCheckout =
-          guestCheckout?.lines.filter((line) =>
-            userCheckout?.lines.some(
-              (userLine) => userLine.variant.id !== line?.variant.id,
-            ),
-          ) ?? [];
-        const cartService = saleorCartService({
-          channel: region.market.channel,
-          languageCode: region.language.code,
-          countryCode: region.market.countryCode,
-          apiURI: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
-        });
+        };
+        const [{ checkout: guestCheckout }, { checkout: userCheckout }] =
+          await Promise.all([
+            checkoutService.checkoutGet({
+              checkoutId,
+              ...regionSettings,
+            }),
+            checkoutService.checkoutGet({
+              checkoutId: userLatestCheckoutId,
+              ...regionSettings,
+            }),
+          ]);
 
         if (userCheckout?.id) {
+          const cartService = saleorCartService({
+            ...regionSettings,
+            channel: region.market.channel,
+            apiURI: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
+            logger: storefrontLogger,
+          });
+
+          const lineItemsFromGuestCheckout =
+            guestCheckout?.lines.filter((line) =>
+              userCheckout?.lines.some(
+                (userLine) => userLine.variant.id !== line?.variant.id,
+              ),
+            ) ?? [];
+
           await cartService.linesAdd({
             cartId: userCheckout.id,
             lines: lineItemsFromGuestCheckout.map(({ quantity, variant }) => ({

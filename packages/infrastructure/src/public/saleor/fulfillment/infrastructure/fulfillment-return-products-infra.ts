@@ -1,7 +1,6 @@
 import type { BaseError } from "@nimara/domain/objects/Error";
 
 import { graphqlClient } from "#root/graphql/client";
-import { logger } from "#root/logging/service";
 
 import { FulfillmentReturnProductsDocument } from "../grapqhql/mutations/generated";
 import type {
@@ -13,6 +12,7 @@ export const saleorFulfillmentReturnProductsInfra =
   ({
     apiURL,
     appToken = "",
+    logger,
   }: SaleorFulfillmentServiceConfig): FulfillmentReturnProductsInfra =>
   async ({ order, input }) => {
     const { data, error } = await graphqlClient(apiURL, appToken).execute(

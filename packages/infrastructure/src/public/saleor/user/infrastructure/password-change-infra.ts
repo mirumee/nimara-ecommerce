@@ -1,11 +1,10 @@
 import { graphqlClientV2 } from "#root/graphql/client";
-import { logger } from "#root/logging/service";
 
 import { PasswordChangeMutationDocument } from "../graphql/mutations/generated";
 import type { PasswordChangeInfra, SaleorUserServiceConfig } from "../types";
 
 export const saleorPasswordChangeInfra =
-  ({ apiURL }: SaleorUserServiceConfig): PasswordChangeInfra =>
+  ({ apiURL, logger }: SaleorUserServiceConfig): PasswordChangeInfra =>
   async ({ accessToken, oldPassword, newPassword }) => {
     const { data, error } = await graphqlClientV2(apiURL, accessToken).execute(
       PasswordChangeMutationDocument,
@@ -16,6 +15,8 @@ export const saleorPasswordChangeInfra =
     );
 
     if (error) {
+      logger.error("Error while changing password", { error });
+
       return { success: false, serverError: error };
     }
 

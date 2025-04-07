@@ -2,7 +2,6 @@ import type { CountryCode } from "@nimara/codegen/schema";
 import type { BaseError } from "@nimara/domain/objects/Error";
 
 import { graphqlClient } from "#root/graphql/client";
-import { logger } from "#root/logging/service";
 import type {
   AddressFormatInfra,
   SaleorAddressServiceConfig,
@@ -13,6 +12,7 @@ import { AddressValidationRulesQueryDocument } from "../graphql/queries/generate
 
 export const saleorAddressFormatInfra = ({
   apiURL,
+  logger,
 }: SaleorAddressServiceConfig): AddressFormatInfra => {
   return async ({ variables: { address }, skip = false }) => {
     if (skip) {

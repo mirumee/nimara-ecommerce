@@ -1,5 +1,4 @@
 import { graphqlClient } from "#root/graphql/client";
-import { logger } from "#root/logging/service";
 
 import { AccountAddressCreateMutationDocument } from "../graphql/mutations/generated";
 import type {
@@ -8,7 +7,7 @@ import type {
 } from "../types";
 
 export const saleorAccountAddressCreateInfra =
-  ({ apiURL }: SaleorUserServiceConfig): AccountAddressCreateInfra =>
+  ({ apiURL, logger }: SaleorUserServiceConfig): AccountAddressCreateInfra =>
   async ({ accessToken, input, type }) => {
     const { data, error } = await graphqlClient(apiURL, accessToken).execute(
       AccountAddressCreateMutationDocument,

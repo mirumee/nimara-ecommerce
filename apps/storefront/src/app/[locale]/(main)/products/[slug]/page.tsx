@@ -7,6 +7,7 @@ import { clientEnvs } from "@/envs/client";
 import { JsonLd, productToJsonLd } from "@/lib/json-ld";
 import { getCurrentRegion } from "@/regions/server";
 import { cartService, storeService, userService } from "@/services";
+import { storefrontLogger } from "@/services/logging";
 
 import { ProductDisplay } from "./components/product-display";
 
@@ -24,6 +25,7 @@ export async function generateMetadata(props: {
     languageCode: region.language.code,
     apiURI: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
     countryCode: region.market.countryCode,
+    logger: storefrontLogger,
   };
 
   const { data } = await storeService(serviceOpts).getProductDetails({
@@ -57,6 +59,7 @@ export default async function Page(props: {
     languageCode: region.language.code,
     apiURI: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
     countryCode: region.market.countryCode,
+    logger: storefrontLogger,
   };
 
   const checkoutId = (await cookies()).get(COOKIE_KEY.checkoutId)?.value;

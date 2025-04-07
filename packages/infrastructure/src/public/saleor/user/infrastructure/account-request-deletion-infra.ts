@@ -7,12 +7,26 @@ import type {
 } from "../types";
 
 export const saleorAccountRequestDeletionInfra =
-  ({ apiURL }: SaleorUserServiceConfig): AccountRequestDeletionInfra =>
+  ({ apiURL, logger }: SaleorUserServiceConfig): AccountRequestDeletionInfra =>
   async ({ accessToken, channel, redirectUrl }) => {
-    const { data } = await graphqlClient(apiURL, accessToken).execute(
+    const { data, error } = await graphqlClient(apiURL, accessToken).execute(
       AccountRequestDeletionMutationDocument,
       { variables: { channel, redirectUrl } },
     );
+
+    if (error) {
+      logger.error("Error while requesting account deletion", { error });
+
+      return null;
+    }
+
+    if (data?.accountRequestDeletion?.errors.length) {
+      logger.error("Error while requesting account deletion", {
+        error: data.accountRequestDeletion.errors,
+      });
+
+      return null;
+    }
 
     return data?.accountRequestDeletion ?? null;
   };

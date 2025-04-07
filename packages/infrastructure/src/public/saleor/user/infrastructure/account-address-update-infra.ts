@@ -7,9 +7,9 @@ import type {
 } from "../types";
 
 export const saleorAccountAddressUpdateInfra =
-  ({ apiURL }: SaleorUserServiceConfig): AccountAddressUpdateInfra =>
+  ({ apiURL, logger }: SaleorUserServiceConfig): AccountAddressUpdateInfra =>
   async ({ accessToken, input, id }) => {
-    const { data } = await graphqlClient(apiURL, accessToken).execute(
+    const { data, error } = await graphqlClient(apiURL, accessToken).execute(
       AccountAddressUpdateMutationDocument,
       {
         variables: {
@@ -18,6 +18,20 @@ export const saleorAccountAddressUpdateInfra =
         },
       },
     );
+
+    if (error) {
+      logger.error("Error while updating an address", { error });
+
+      return null;
+    }
+
+    if (data?.accountAddressUpdate?.errors.length) {
+      logger.error("Error while updating an address", {
+        error: data.accountAddressUpdate.errors,
+      });
+
+      return null;
+    }
 
     return data?.accountAddressUpdate ?? null;
   };

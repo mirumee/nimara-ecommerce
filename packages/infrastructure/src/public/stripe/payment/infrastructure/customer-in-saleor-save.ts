@@ -1,12 +1,11 @@
 import { graphqlClient } from "#root/graphql/client";
 import { MetadataUpdateMutationDocument } from "#root/graphql/mutations/generated";
-import { logger } from "#root/logging/service";
 
 import { getGatewayCustomerMetaKey } from "../helpers";
 import type { CustomerInSaleorSaveInfra, PaymentServiceConfig } from "../types";
 
 export const customerInSaleorSave =
-  ({ apiURI }: PaymentServiceConfig): CustomerInSaleorSaveInfra =>
+  ({ apiURI, logger }: PaymentServiceConfig): CustomerInSaleorSaveInfra =>
   async ({ gatewayCustomerId, channel, saleorCustomerId, accessToken }) => {
     const { data, error } = await graphqlClient(apiURI, accessToken).execute(
       MetadataUpdateMutationDocument,

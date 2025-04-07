@@ -4,7 +4,6 @@ import {
 } from "@nimara/codegen/schema";
 
 import { graphqlClient } from "#root/graphql/client";
-import { logger } from "#root/logging/service";
 import type { SearchInfra } from "#root/use-cases/search/types";
 
 import { SearchProductQueryDocument } from "../graphql/queries/generated";
@@ -12,7 +11,12 @@ import { searchProductSerializer } from "../serializers";
 import type { SaleorSearchServiceConfig } from "../types";
 
 export const saleorSearchInfra =
-  ({ apiURL, serializers, settings }: SaleorSearchServiceConfig): SearchInfra =>
+  ({
+    apiURL,
+    serializers,
+    settings,
+    logger,
+  }: SaleorSearchServiceConfig): SearchInfra =>
   async (
     {
       query,
