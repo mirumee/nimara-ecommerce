@@ -5,6 +5,7 @@ import { saleorAddressService } from "@nimara/infrastructure/public/saleor/addre
 import { saleorAuthService } from "@nimara/infrastructure/public/saleor/auth/index";
 import { saleorCartService } from "@nimara/infrastructure/public/saleor/cart/index";
 import { saleorCheckoutService } from "@nimara/infrastructure/public/saleor/checkout/service";
+import { saleorCollectionService } from "@nimara/infrastructure/public/saleor/collection/index";
 import { saleorFulfillmentService } from "@nimara/infrastructure/public/saleor/fulfillment/service";
 import { saleorStoreService } from "@nimara/infrastructure/public/saleor/store/index";
 import { saleorUserService } from "@nimara/infrastructure/public/saleor/user/index";
@@ -58,4 +59,8 @@ export const paymentService = stripePaymentService({
   environment: clientEnvs.ENVIRONMENT,
   gatewayAppId: clientEnvs.PAYMENT_APP_ID,
   logger: storefrontLogger,
+});
+
+export const collectionService = saleorCollectionService({
+  apiURI: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
 });

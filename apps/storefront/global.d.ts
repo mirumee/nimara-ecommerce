@@ -61,7 +61,9 @@ type Slug = string;
 type Id = string;
 type RevalidateTag =
   | "DETAIL-PAGE:PRODUCT"
+  | "DETAIL-PAGE:COLLECTION"
   | `PRODUCT:${Slug}`
+  | `COLLECTION:${Slug}`
   | `CMS:${Slug}`
   | "SEARCH"
   | "SEARCH:FACETS"

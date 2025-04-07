@@ -1,0 +1,13 @@
+query CollectionDetailsQuery(
+  $slug: String
+  $channel: String!
+  $languageCode: LanguageCodeEnum!
+  $after: String
+  $before: String
+  $first: Int
+  $last: Int
+) {
+  collection(slug: $slug, channel: $channel) {
+    ...CollectionFragment
+  }
+}

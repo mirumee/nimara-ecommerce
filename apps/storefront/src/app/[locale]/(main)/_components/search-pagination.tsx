@@ -12,16 +12,20 @@ import {
 } from "@nimara/ui/components/pagination";
 
 import { localePrefixes } from "@/i18n/routing";
-import { paths } from "@/lib/paths";
 import { cn } from "@/lib/utils";
 import { DEFAULT_LOCALE, type Locale } from "@/regions/types";
 
 type Props = {
+  baseUrl: string;
   pageInfo: PageInfo;
   searchParams: Record<string, string>;
 };
 
-export const SearchPagination = ({ pageInfo, searchParams }: Props) => {
+export const SearchPagination = ({
+  pageInfo,
+  searchParams,
+  baseUrl,
+}: Props) => {
   const t = useTranslations("common");
   const locale = useLocale();
 
@@ -49,7 +53,7 @@ export const SearchPagination = ({ pageInfo, searchParams }: Props) => {
     }
 
     // Shadcn use simple <a> tag instead of next-intl <Link> so we need to pass locale explicitly
-    return `${locale !== DEFAULT_LOCALE ? localePrefixes[locale as Exclude<Locale, typeof DEFAULT_LOCALE>] : ""}${paths.search.asPath()}?${params.toString()}`;
+    return `${locale !== DEFAULT_LOCALE ? localePrefixes[locale as Exclude<Locale, typeof DEFAULT_LOCALE>] : ""}${baseUrl}?${params.toString()}`;
   };
 
   return (
