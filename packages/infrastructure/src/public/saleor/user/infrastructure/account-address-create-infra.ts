@@ -1,5 +1,4 @@
 import { graphqlClient } from "#root/graphql/client";
-import { loggingService } from "#root/logging/service";
 
 import { AccountAddressCreateMutationDocument } from "../graphql/mutations/generated";
 import type {
@@ -8,7 +7,7 @@ import type {
 } from "../types";
 
 export const saleorAccountAddressCreateInfra =
-  ({ apiURL }: SaleorUserServiceConfig): AccountAddressCreateInfra =>
+  ({ apiURL, logger }: SaleorUserServiceConfig): AccountAddressCreateInfra =>
   async ({ accessToken, input, type }) => {
     const { data, error } = await graphqlClient(apiURL, accessToken).execute(
       AccountAddressCreateMutationDocument,
@@ -21,13 +20,13 @@ export const saleorAccountAddressCreateInfra =
     );
 
     if (error) {
-      loggingService.error("Error while creating a new address", { error });
+      logger.error("Error while creating a new address", { error });
 
       return null;
     }
 
     if (data?.accountAddressCreate?.errors.length) {
-      loggingService.error("Error while creating a new address", {
+      logger.error("Error while creating a new address", {
         error: data.accountAddressCreate.errors,
       });
 

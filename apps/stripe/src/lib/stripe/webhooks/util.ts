@@ -1,7 +1,8 @@
+import { type Logger } from "@nimara/infrastructure/logging/types";
+
 import { CONFIG } from "@/config";
 import { type PaymentGatewayConfig } from "@/lib/saleor/config/schema";
 import { isLocalDomain } from "@/lib/util";
-import { type Logger } from "@/providers/logging";
 
 import { getStripeApi } from "../api";
 import { StripeMetaKey, StripeWebhookEvent } from "../const";

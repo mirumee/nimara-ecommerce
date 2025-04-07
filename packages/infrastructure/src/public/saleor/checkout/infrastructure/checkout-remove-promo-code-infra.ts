@@ -1,7 +1,6 @@
 import type { BaseError } from "@nimara/domain/objects/Error";
 
 import { graphqlClient } from "#root/graphql/client";
-import { loggingService } from "#root/logging/service";
 
 import { CheckoutRemovePromoCodeMutationDocument } from "../graphql/mutations/generated";
 import type {
@@ -11,20 +10,21 @@ import type {
 
 export const saleorCheckoutRemovePromoCodeInfra = ({
   apiURL,
+  logger,
 }: SaleorCheckoutServiceConfig): CheckoutRemovePromoCodeInfra => {
   return async ({ checkoutId, promoCode }) => {
     const { data, error } = await graphqlClient(apiURL).execute(
       CheckoutRemovePromoCodeMutationDocument,
       {
         variables: {
-          checkoutId: checkoutId,
+          checkoutId,
           promoCode,
         },
       },
     );
 
     if (error) {
-      loggingService.error("Failed to remove promo code", error);
+      logger.error("Failed to remove promo code", { error, checkoutId });
 
       return {
         isSuccess: false,
@@ -33,6 +33,11 @@ export const saleorCheckoutRemovePromoCodeInfra = ({
     }
 
     if (data?.checkoutRemovePromoCode?.errors?.length) {
+      logger.error("Failed to remove promo code", {
+        errors: data?.checkoutRemovePromoCode?.errors,
+        checkoutId,
+      });
+
       return {
         isSuccess: false,
         validationErrors: data.checkoutRemovePromoCode.errors,

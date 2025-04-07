@@ -12,6 +12,7 @@ import type {
 export const saleorCheckoutBillingAddressUpdateInfra =
   ({
     apiURL,
+    logger,
   }: SaleorCheckoutServiceConfig): CheckoutBillingAddressUpdateInfra =>
   async ({ checkoutId, address }) => {
     const { data, error } = await graphqlClient(apiURL).execute(
@@ -25,6 +26,11 @@ export const saleorCheckoutBillingAddressUpdateInfra =
     );
 
     if (error) {
+      logger.error("Failed to update checkout billing address", {
+        error,
+        checkoutId,
+      });
+
       return {
         isSuccess: false,
         serverError: error as BaseError,
@@ -32,6 +38,11 @@ export const saleorCheckoutBillingAddressUpdateInfra =
     }
 
     if (data?.checkoutBillingAddressUpdate?.errors?.length) {
+      logger.error("Failed to update checkout billing address", {
+        errors: data?.checkoutBillingAddressUpdate?.errors,
+        checkoutId,
+      });
+
       return {
         isSuccess: false,
         validationErrors: data?.checkoutBillingAddressUpdate?.errors,

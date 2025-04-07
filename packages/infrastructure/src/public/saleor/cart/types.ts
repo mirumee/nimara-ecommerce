@@ -5,6 +5,7 @@ import {
 import type { Cart } from "@nimara/domain/objects/Cart";
 
 import type { FetchOptions } from "#root/graphql/client";
+import { type Logger } from "#root/logging/types";
 
 import type { CheckoutErrorFragment } from "./graphql/fragments/generated";
 
@@ -13,6 +14,7 @@ export type SaleorCartServiceConfig = {
   channel: string;
   countryCode: CountryCode;
   languageCode: LanguageCodeEnum;
+  logger: Logger;
 };
 
 export type WithFetchOptions = { options?: FetchOptions };

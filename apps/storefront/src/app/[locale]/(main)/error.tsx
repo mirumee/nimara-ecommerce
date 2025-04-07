@@ -2,9 +2,8 @@
 
 import { useEffect, useState } from "react";
 
-import { loggingService } from "@nimara/infrastructure/logging/service";
-
 import { errorService } from "@/services";
+import { storefrontLogger } from "@/services/logging";
 
 export default function Error({
   error,
@@ -16,7 +15,8 @@ export default function Error({
   const [traceId, setTraceId] = useState<string | null>(null);
 
   useEffect(() => {
-    loggingService.error("Unexpected error", { error });
+    storefrontLogger.error("Unexpected error", { error });
+
     setTraceId(errorService.logError(error));
   }, [error]);
 

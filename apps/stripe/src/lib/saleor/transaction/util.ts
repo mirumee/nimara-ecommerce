@@ -1,5 +1,6 @@
+import { type Logger } from "@nimara/infrastructure/logging/types";
+
 import { responseError } from "@/lib/api/util";
-import { type Logger } from "@/providers/logging";
 
 import { type TransactionEventSchema, transactionEventSchema } from "./schema";
 

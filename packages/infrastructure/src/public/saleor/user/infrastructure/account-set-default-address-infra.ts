@@ -7,9 +7,12 @@ import type {
 } from "../types";
 
 export const saleorAccountSetDefaultAddressInfra =
-  ({ apiURL }: SaleorUserServiceConfig): AccountSetDefaultAddressInfra =>
+  ({
+    apiURL,
+    logger,
+  }: SaleorUserServiceConfig): AccountSetDefaultAddressInfra =>
   async ({ accessToken, id, type }) => {
-    const { data } = await graphqlClient(apiURL, accessToken).execute(
+    const { data, error } = await graphqlClient(apiURL, accessToken).execute(
       AccountSetDefaultAddressMutationDocument,
       {
         variables: {
@@ -18,6 +21,20 @@ export const saleorAccountSetDefaultAddressInfra =
         },
       },
     );
+
+    if (error) {
+      logger.error("Error while setting default address", { error });
+
+      return null;
+    }
+
+    if (data?.accountSetDefaultAddress?.errors.length) {
+      logger.error("Error while setting default address", {
+        error: data.accountSetDefaultAddress.errors,
+      });
+
+      return null;
+    }
 
     return data?.accountSetDefaultAddress ?? null;
   };

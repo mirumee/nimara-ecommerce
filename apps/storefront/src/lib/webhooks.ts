@@ -1,6 +1,7 @@
 import { createRemoteJWKSet, flattenedVerify } from "jose";
 
 import { clientEnvs } from "@/envs/client";
+import { storefrontLogger } from "@/services/logging";
 
 const JWKS = createRemoteJWKSet(
   new URL(
@@ -26,6 +27,8 @@ export const verifySaleorWebhookSignature = async (request: Request) => {
       JWKS,
     );
   } catch (e) {
+    storefrontLogger.error("Saleor webhook signature verification failed.");
+
     throw new Error("Saleor webhook signature verification failed, skipping.");
   }
 };
