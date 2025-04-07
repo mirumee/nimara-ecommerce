@@ -103,7 +103,7 @@ export const websiteToJsonLd = (): WithContext<WebSite> => {
       url: "https://www.nimara.store.com",
       image: {
         "@type": "ImageObject",
-        url: "/nimara-logo.svg",
+        url: "/brand-logo.svg",
       },
     },
   };

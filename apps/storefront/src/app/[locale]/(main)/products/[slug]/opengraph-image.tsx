@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-import NimaraLogo from "@/assets/nimara-logo.svg";
+import BrandLogo from "@/assets/brand-logo-dark.svg";
 import { CACHE_TTL } from "@/config";
 import { clientEnvs } from "@/envs/client";
 import { getCurrentRegion } from "@/regions/server";
@@ -64,7 +64,7 @@ export default async function Image({
             justifyContent: "center",
           }}
         >
-          <NimaraLogo width={276} height={56} />
+          <BrandLogo width={276} height={56} className="fill-primary" />
         </div>
         <div
           style={{

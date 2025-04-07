@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 
-import NimaraLogo from "@/assets/nimara-logo.svg";
+import BrandLogo from "@/assets/brand-logo-dark.svg";
 import { CACHE_TTL } from "@/config";
 import { Link } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
@@ -38,19 +38,19 @@ export const Footer = async () => {
   });
 
   return (
-    <footer className="bg-gray-100 text-sm">
+    <footer className="bg-muted text-sm text-primary">
       <div className="container">
-        <div className="grid">
-          <div className="flex flex-wrap justify-between gap-8 py-8">
-            <div className="grid flex-grow basis-full content-start gap-4 md:basis-1">
+        <div className="flex flex-wrap justify-between gap-8 py-8">
+          <div className="grid w-full grid-cols-2 grid-rows-[max-content,max-content] place-items-start justify-start gap-6 md:grid-cols-3">
+            <div className="col-span-2 row-span-2 grid grid-cols-subgrid grid-rows-subgrid md:col-span-1">
               <Link
-                className="flex justify-start align-middle"
+                className="col-span-2 flex justify-center md:col-span-1 md:justify-start"
                 href={paths.home.asPath()}
                 title={t("common.go-to-homepage")}
               >
-                <NimaraLogo height={36} />
+                <BrandLogo height={36} className="fill-primary" />
               </Link>
-              <p className="text-neutral-600">
+              <p className="col-span-2 flex justify-center md:col-span-1 md:justify-start">
                 {t.rich("footer.demo-version", {
                   link: (chunks) => (
                     <Link
@@ -66,64 +66,76 @@ export const Footer = async () => {
               </p>
             </div>
 
-            <div className="grid flex-grow basis-1 gap-8">
-              <span className="text-neutral-600">
+            <div className="row-span-2 grid grid-cols-subgrid grid-rows-subgrid md:col-span-1">
+              <span className="flex items-center text-primary">
                 {t("footer.our-products")}
               </span>
-              <ul className="grid gap-4">
+              <div className="flex flex-col gap-4">
                 {categories?.menu.items.map((item) => (
-                  <li key={item.id}>
-                    <Link href={item.url}>{item.label}</Link>
-                  </li>
+                  <Link
+                    key={item.id}
+                    href={item.url}
+                    className="hover:underline"
+                  >
+                    {item.label}
+                  </Link>
                 ))}
-              </ul>
+              </div>
             </div>
 
-            <div className="grid flex-grow basis-1 gap-8">
-              <span className="text-neutral-600"> {t("footer.help")}</span>
-              <ul className="grid gap-4">
-                {pages?.menu.items.map((item, i) => (
-                  <li key={`${item.id}-${i}`}>
-                    <Link href={item.url}>{item.label}</Link>
-                  </li>
+            <div className="row-span-2 grid grid-cols-subgrid grid-rows-subgrid md:col-span-1">
+              <span className="flex items-center text-primary">
+                {t("footer.help")}
+              </span>
+              <div className="flex flex-col gap-4">
+                {pages?.menu.items.map((item) => (
+                  <Link
+                    key={item.id}
+                    href={item.url}
+                    className="hover:underline"
+                  >
+                    {item.label}
+                  </Link>
                 ))}
-              </ul>
+              </div>
             </div>
           </div>
+        </div>
+      </div>
 
-          <div className="flex flex-wrap justify-between gap-4 border-t border-t-gray-300 py-8 text-neutral-600">
-            <span className="flex-grow basis-full text-center sm:basis-1 sm:text-left">
-              &#xa9; Mirumee {new Date().getFullYear()}
-            </span>
-            <span className="flex-grow basis-full text-center sm:basis-1">
-              {t.rich("footer.made-with", {
-                link: (chunks) => (
-                  <Link
-                    href="https://mirumee.com"
-                    className="hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {chunks}
-                  </Link>
-                ),
-              })}
-            </span>
-            <span className="flex-grow basis-full text-center sm:basis-1 sm:text-right">
-              {t.rich("footer.open-source", {
-                link: (chunks) => (
-                  <Link
-                    href="https://github.com/mirumee/nimara-ecommerce"
-                    className="hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {chunks}
-                  </Link>
-                ),
-              })}
-            </span>
-          </div>
+      <div className="container">
+        <div className="flex flex-wrap justify-between gap-4 border-t border-muted-foreground/50 py-8 text-muted-foreground">
+          <span className="flex-grow basis-full text-center sm:basis-1 sm:text-left">
+            &#xa9; Mirumee {new Date().getFullYear()}
+          </span>
+          <span className="flex-grow basis-full text-center sm:basis-1">
+            {t.rich("footer.made-with", {
+              link: (chunks) => (
+                <Link
+                  href="https://mirumee.com"
+                  className="hover:underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {chunks}
+                </Link>
+              ),
+            })}
+          </span>
+          <span className="flex-grow basis-full text-center sm:basis-1 sm:text-right">
+            {t.rich("footer.open-source", {
+              link: (chunks) => (
+                <Link
+                  href="https://github.com/mirumee/nimara-ecommerce"
+                  className="hover:underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {chunks}
+                </Link>
+              ),
+            })}
+          </span>
         </div>
       </div>
     </footer>
