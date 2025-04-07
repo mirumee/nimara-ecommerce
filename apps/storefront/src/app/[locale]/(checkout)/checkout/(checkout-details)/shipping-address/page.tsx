@@ -1,55 +1,44 @@
-import { cookies } from "next/headers";
 import { getLocale } from "next-intl/server";
 
 import type { CountryCode } from "@nimara/codegen/schema";
 
 import { getAccessToken } from "@/auth";
-import { COOKIE_KEY } from "@/config";
-import { redirect } from "@/i18n/routing";
-import { deleteCheckoutIdCookie } from "@/lib/actions/checkout";
-import { paths } from "@/lib/paths";
+import { getCheckoutOrRedirect } from "@/lib/checkout";
 import { getCurrentRegion } from "@/regions/server";
-import { addressService, checkoutService, userService } from "@/services";
+import { addressService, userService } from "@/services";
 
 import { CheckoutSkeleton } from "../../_components/checkout-skeleton";
 import { DeliveryMethodSection } from "../../_sections/delivery-method-section";
 import { EmailSection } from "../../_sections/email-section";
 import { PaymentSection } from "../../_sections/payment-section";
+import { validateCheckoutStepAction } from "../../actions";
 import { ShippingAddressForm } from "./_forms/guest-form";
 import { AddressTab } from "./_tabs/address-tab";
 
 type SearchParams = Promise<{ country?: CountryCode }>;
 
 export default async function Page(props: { searchParams: SearchParams }) {
-  const searchParams = await props.searchParams;
-  const checkoutId = (await cookies()).get(COOKIE_KEY.checkoutId)?.value;
-  const accessToken = await getAccessToken();
-  const locale = await getLocale();
-
-  const region = await getCurrentRegion();
-
-  const marketCountryCode = region.market.countryCode;
-
-  if (!checkoutId) {
-    redirect({ href: paths.cart.asPath(), locale });
-  }
-
-  const { checkout } = await checkoutService.checkoutGet({
-    checkoutId,
-    languageCode: region.language.code,
-    countryCode: marketCountryCode,
-  });
-
-  if (!checkout) {
-    await deleteCheckoutIdCookie();
-    redirect({ href: paths.cart.asPath(), locale });
-  }
+  const checkout = await getCheckoutOrRedirect();
 
   if (checkout.problems.insufficientStock.length) {
     return <CheckoutSkeleton />;
   }
 
-  const user = await userService.userGet(accessToken);
+  const accessToken = await getAccessToken();
+  const [searchParams, region, locale, user] = await Promise.all([
+    props.searchParams,
+    getCurrentRegion(),
+    getLocale(),
+    userService.userGet(accessToken),
+  ]);
+
+  await validateCheckoutStepAction({
+    checkout,
+    user,
+    locale,
+    step: "shipping-address",
+  });
+
   const addresses = await userService.addressesGet({
     variables: { accessToken },
     skip: !user,
@@ -68,6 +57,7 @@ export default async function Page(props: { searchParams: SearchParams }) {
     })) ?? [],
   );
 
+  const marketCountryCode = region.market.countryCode;
   const supportedCountryCodesInChannel = countries?.map(({ code }) => code);
   const sortedAddresses = formattedAddresses
     .filter(({ address: { country } }) =>

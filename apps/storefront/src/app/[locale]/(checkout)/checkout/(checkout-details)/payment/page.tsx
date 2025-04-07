@@ -1,3 +1,5 @@
+import { getLocale } from "next-intl/server";
+
 import { type CountryCode } from "@nimara/codegen/schema";
 import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import { type PaymentMethod } from "@nimara/domain/objects/Payment";
@@ -15,25 +17,31 @@ import { DeliveryMethodSection } from "../../_sections/delivery-method-section";
 import { EmailSection } from "../../_sections/email-section";
 import { PaymentSection } from "../../_sections/payment-section";
 import { ShippingAddressSection } from "../../_sections/shipping-address-section";
+import { validateCheckoutStepAction } from "../../actions";
 import { Payment } from "./payment";
-
-export const runtime = "nodejs";
 
 type SearchParams = Promise<{ country?: CountryCode; errorCode?: string }>;
 
 export default async function Page(props: { searchParams: SearchParams }) {
-  const searchParams = await props.searchParams;
   const checkout = await getCheckoutOrRedirect();
 
   if (checkout?.problems.insufficientStock.length) {
     return <CheckoutSkeleton />;
   }
 
-  const region = await getCurrentRegion();
+  const accessToken = await getAccessToken();
+
+  const [user, region, locale, storeUrl, searchParams] = await Promise.all([
+    userService.userGet(accessToken),
+    getCurrentRegion(),
+    getLocale(),
+    getStoreUrl(),
+    props.searchParams,
+  ]);
+
+  await validateCheckoutStepAction({ checkout, user, locale, step: "payment" });
 
   const marketCountryCode = region.market.countryCode;
-
-  const storeUrl = await getStoreUrl();
 
   const { countries } = await addressService.countriesGet({
     channelSlug: region.market.channel,
@@ -62,9 +70,6 @@ export default async function Page(props: { searchParams: SearchParams }) {
     return paramsCountryCode;
   })() as CountryCode;
 
-  const accessToken = await getAccessToken();
-
-  const user = await userService.userGet(accessToken);
   const [addresses, { addressFormRows }] = await Promise.all([
     userService.addressesGet({ variables: { accessToken }, skip: !user }),
     addressService.addressFormGetRows({
