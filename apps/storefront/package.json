@@ -32,7 +32,7 @@
     "lodash": "4.17.21",
     "lucide-react": "^0.468.0",
     "negotiator": "1.0.0",
-    "next": "15.1.2",
+    "next": "15.2.4",
     "next-auth": "5.0.0-beta.25",
     "next-intl": "3.26.1",
     "nextjs-routes": "2.1.0",
