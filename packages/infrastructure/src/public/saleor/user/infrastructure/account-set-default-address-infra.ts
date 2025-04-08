@@ -1,4 +1,6 @@
-import { graphqlClient } from "#root/graphql/client";
+import { err, ok } from "@nimara/domain/objects/Result";
+
+import { graphqlClientV2 } from "#root/graphql/client";
 
 import { AccountSetDefaultAddressMutationDocument } from "../graphql/mutations/generated";
 import type {
@@ -12,29 +14,30 @@ export const saleorAccountSetDefaultAddressInfra =
     logger,
   }: SaleorUserServiceConfig): AccountSetDefaultAddressInfra =>
   async ({ accessToken, id, type }) => {
-    const { data, error } = await graphqlClient(apiURL, accessToken).execute(
+    const result = await graphqlClientV2(apiURL, accessToken).execute(
       AccountSetDefaultAddressMutationDocument,
       {
         variables: {
           id,
           type,
         },
+        operationName: "AccountSetDefaultAddressMutation",
       },
     );
 
-    if (error) {
-      logger.error("Error while setting default address", { error });
+    if (!result.ok) {
+      logger.error("Error while setting default address", { result });
 
-      return null;
+      return result;
     }
 
-    if (data?.accountSetDefaultAddress?.errors.length) {
-      logger.error("Error while setting default address", {
-        error: data.accountSetDefaultAddress.errors,
+    if (result.data.accountSetDefaultAddress?.errors.length) {
+      logger.error("Error while setting default address", { result });
+
+      return err({
+        code: "ADDRESS_SET_DEFAULT_ERROR",
       });
-
-      return null;
     }
 
-    return data?.accountSetDefaultAddress ?? null;
+    return ok({ success: true });
   };

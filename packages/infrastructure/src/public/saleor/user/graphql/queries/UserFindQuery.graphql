@@ -1,5 +1,6 @@
 query UserFindQuery($email: String) {
   user(email: $email) {
+    id
     email
   }
 }

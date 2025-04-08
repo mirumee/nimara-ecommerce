@@ -14,13 +14,13 @@ export async function requestUserAccountDeletion() {
   const locale = await getLocale();
   const accessToken = await getAccessToken();
 
-  const data = await userService.accountRequestDeletion({
+  const result = await userService.accountRequestDeletion({
     channel: region.market.channel,
     redirectUrl: `${await getStoreUrl()}${paths.deleteAccount.asPath()}`,
     accessToken,
   });
 
-  if (data?.errors.length) {
+  if (!result.ok) {
     redirect({
       href: paths.account.privacySettings.asPath({ query: { error: "true" } }),
       locale,

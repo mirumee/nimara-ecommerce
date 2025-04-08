@@ -53,10 +53,10 @@ export function EditAddressModal({
 
   async function handleAddressDelete() {
     setIsDeleting(true);
-    const data = await deleteAddress(address.id);
+    const result = await deleteAddress(address.id);
 
-    if (data?.errors.length) {
-      storefrontLogger.error("Failed to delete address", data.errors);
+    if (!result.ok) {
+      storefrontLogger.error("Failed to delete address", { result });
 
       return;
     }

@@ -64,11 +64,11 @@ export const EditAddressForm = ({
   const canProceed = !form.formState.isSubmitting && !isCountryChanging;
 
   const handleSubmit = async (values: FormSchema) => {
-    const data = await updateAddress({ id: address.id, input: values });
+    const result = await updateAddress({ id: address.id, input: values });
 
-    if (data?.errors.length) {
+    if (!result.ok) {
       // TODO: Handle in UI
-      storefrontLogger.error("Address update failed", data.errors);
+      storefrontLogger.error("Address update failed", { result });
 
       return;
     }

@@ -222,6 +222,23 @@
     "QUANTITY_GREATER_THAN_LIMIT": "Sorry, the maximum quantity you can order has been reached."
   },
   "errors": {
+    "ACCESS_TOKEN_NOT_FOUND_ERROR": "Access token not found.",
+    "ACCOUNT_CREATE_ERROR": "Account creation failed.",
+    "ACCOUNT_DELETE_ERROR": "Account deletion failed.",
+    "ACCOUNT_REQUEST_DELETION_ERROR": "Account deletion request failed.",
+    "ACCOUNT_UPDATE_ERROR": "Account update failed.",
+    "ADDRESS_CREATE_ERROR": "Address creation failed.",
+    "ADDRESS_DELETE_ERROR": "Address deletion failed.",
+    "ADDRESS_SET_DEFAULT_ERROR": "Cannot set address as default.",
+    "ADDRESS_UPDATE_ERROR": "Address update failed.",
+    "EMAIL_CHANGE_CONFIRMATION_ERROR": "Email change confirmation failed.",
+    "EMAIL_CHANGE_REQUEST_ERROR": "Email change request failed.",
+    "HTTP_ERROR": "HTTP error occurred.",
+    "INPUT_ERROR": "Input error.",
+    "NOT_FOUND_ERROR": "Not found",
+    "PASSWORD_CHANGE_ERROR": "Password change failed.",
+    "TOO_MANY_REQUESTS_ERROR": "Too many requests. Please try again later.",
+    "UNEXPECTED_HTTP_ERROR": "Unexpected error occurred.",
     "payment": {
       "default": "Something went wrong with the payment. Please try again or <link>contact with us</link>."
     },
@@ -245,13 +262,6 @@
       "NOT_AVAILABLE": "Not available",
       "NOT_FOUND": "Product not found",
       "VARIANT_NOT_AVAILABLE": "Variant is not available"
-    },
-    "server": {
-      "HTTP_ERROR": "An HTTP error occurred.",
-      "INPUT_ERROR": "Invalid data provided.",
-      "NOT_FOUND_ERROR": "Not found.",
-      "TOO_MANY_REQUESTS": "Too many requests.",
-      "UNEXPECTED_HTTP_ERROR": "Unexpected error occurred."
     },
     "checkout": {
       "codeDoesNotExist": "Provided code doesn't exist {code}",

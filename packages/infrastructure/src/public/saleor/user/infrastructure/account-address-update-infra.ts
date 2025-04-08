@@ -1,4 +1,6 @@
-import { graphqlClient } from "#root/graphql/client";
+import { err, ok } from "@nimara/domain/objects/Result";
+
+import { graphqlClientV2 } from "#root/graphql/client";
 
 import { AccountAddressUpdateMutationDocument } from "../graphql/mutations/generated";
 import type {
@@ -9,29 +11,33 @@ import type {
 export const saleorAccountAddressUpdateInfra =
   ({ apiURL, logger }: SaleorUserServiceConfig): AccountAddressUpdateInfra =>
   async ({ accessToken, input, id }) => {
-    const { data, error } = await graphqlClient(apiURL, accessToken).execute(
+    const result = await graphqlClientV2(apiURL, accessToken).execute(
       AccountAddressUpdateMutationDocument,
       {
         variables: {
           input,
           id,
         },
+        operationName: "AccountAddressUpdateMutation",
       },
     );
 
-    if (error) {
-      logger.error("Error while updating an address", { error });
+    if (!result.ok) {
+      logger.error("Error while updating an address", { result, id });
 
-      return null;
+      return result;
     }
 
-    if (data?.accountAddressUpdate?.errors.length) {
+    if (result.data.accountAddressUpdate?.errors.length) {
       logger.error("Error while updating an address", {
-        error: data.accountAddressUpdate.errors,
+        id,
+        result,
       });
 
-      return null;
+      return err({
+        code: "ADDRESS_UPDATE_ERROR",
+      });
     }
 
-    return data?.accountAddressUpdate ?? null;
+    return ok({ success: true });
   };

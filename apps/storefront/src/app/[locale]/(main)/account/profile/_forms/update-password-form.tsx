@@ -11,7 +11,6 @@ import { useToast } from "@nimara/ui/hooks";
 
 import { TextFormField } from "@/components/form/text-form-field";
 import { MIN_PASSWORD_LENGTH } from "@/config";
-import { type TranslationMessage } from "@/types";
 
 import { updateUserPassword } from "./actions";
 import {
@@ -37,45 +36,22 @@ export function UpdatePasswordForm({
   const formError = form.formState.errors?.root;
 
   async function handleSubmit(values: UpdatePasswordFormSchema) {
-    const data = await updateUserPassword(values);
+    const result = await updateUserPassword(values);
 
-    if (data.success) {
-      onModalClose();
-      toast({
-        description: t("account.password-updated"),
-        position: "center",
-      });
-
-      return;
-    }
-
-    // Handle server errors
-    if ("serverError" in data) {
+    if (result && !result.ok) {
       form.setError("root", {
-        message: t(
-          `errors.server.${data.serverError.code}` as TranslationMessage,
-        ),
+        message: t(`errors.${result.error.code}`),
       });
 
       return;
     }
 
-    // Handle validation errors
-    if ("errors" in data) {
-      data.errors.forEach((error) => {
-        const field = error.field;
+    onModalClose();
 
-        if (field) {
-          form.setError(field as keyof UpdatePasswordFormSchema, {
-            message: t(
-              `errors.auth.${field as TranslationMessage<"errors.auth">}`,
-            ),
-          });
-        }
-      });
-
-      return;
-    }
+    toast({
+      description: t("account.password-updated"),
+      position: "center",
+    });
   }
 
   return (

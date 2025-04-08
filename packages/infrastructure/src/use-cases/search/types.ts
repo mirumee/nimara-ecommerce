@@ -1,3 +1,4 @@
+import { type AsyncResult, type Result } from "@nimara/domain/objects/Result";
 import { type SortByOption } from "@nimara/domain/objects/Search";
 import { type SearchProduct } from "@nimara/domain/objects/SearchProduct";
 
@@ -43,10 +44,9 @@ export type SearchInfra = (
     sortBy?: string;
   },
   context: SearchContext,
-) => Promise<{
-  error: unknown;
-  pageInfo?: PageInfo;
-  results: Array<Readonly<SearchProduct>>;
+) => AsyncResult<{
+  pageInfo: PageInfo;
+  results: SearchProduct[];
 }>;
 export type SearchUseCase = SearchInfra;
 
@@ -55,12 +55,12 @@ export type GetFacetsInfra = (
     query?: string;
   },
   context: SearchContext,
-) => Promise<{ facets: Facet[] }>;
+) => AsyncResult<Facet[]>;
 export type GetFacetsUseCase = GetFacetsInfra;
 
-export type GetSortByOptionsInfra = (context: SearchContext) => {
-  options: Array<Readonly<SortByOption>>;
-};
+export type GetSortByOptionsInfra = (
+  context: SearchContext,
+) => Result<SortByOption[]>;
 export type GetSortByOptionsUseCase = GetSortByOptionsInfra;
 
 export type FacetType =

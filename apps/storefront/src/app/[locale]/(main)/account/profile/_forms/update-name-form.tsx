@@ -34,9 +34,9 @@ export function UpdateNameForm({
   });
 
   async function handleSubmit(values: UpdateNameFormSchema) {
-    const data = await updateUserName(values);
+    const result = await updateUserName(values);
 
-    if (data?.errors.length) {
+    if (result && !result.ok) {
       form.setError("firstName", { message: "" });
       form.setError("lastName", { message: "" });
     }
@@ -45,6 +45,7 @@ export function UpdateNameForm({
       description: t("account.name-updated"),
       position: "center",
     });
+
     onModalClose();
   }
 
