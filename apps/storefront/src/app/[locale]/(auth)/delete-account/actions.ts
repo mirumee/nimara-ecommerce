@@ -11,9 +11,9 @@ export async function deleteUserAccount(token: string) {
   const accessToken = await getAccessToken();
 
   if (accessToken) {
-    const data = await userService.accountDelete({ accessToken, token });
+    const result = await userService.accountDelete({ accessToken, token });
 
-    if (data?.errors.length === 0) {
+    if (result.ok) {
       if (accessToken) {
         await handleLogout();
       }

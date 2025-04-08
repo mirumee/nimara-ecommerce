@@ -70,7 +70,7 @@ export default async function Page(props: { searchParams: SearchParams }) {
     collection,
     ...rest
   } = searchParams;
-  const { results, pageInfo } = await searchService.search(
+  const result = await searchService.search(
     {
       query,
       limit: limit ? Number.parseInt(limit) : DEFAULT_RESULTS_PER_PAGE,
@@ -84,13 +84,14 @@ export default async function Page(props: { searchParams: SearchParams }) {
     },
     searchContext,
   );
-  const { facets } = await searchService.getFacets(
+  const getFacetsResult = await searchService.getFacets(
     {
       query,
     },
     searchContext,
   );
-  const { options } = searchService.getSortByOptions(searchContext);
+  const optionsResult = searchService.getSortByOptions(searchContext);
+  const options = optionsResult.ok ? optionsResult.data : [];
 
   const getHeader = () => {
     if (query) {
@@ -109,6 +110,9 @@ export default async function Page(props: { searchParams: SearchParams }) {
     return null;
   };
 
+  const products = result.ok ? result.data.results : [];
+  const pageInfo = result.ok ? result.data.pageInfo : null;
+
   return (
     <div className="w-full">
       <section className="mx-auto my-8 grid gap-8">
@@ -119,20 +123,21 @@ export default async function Page(props: { searchParams: SearchParams }) {
               <SearchSortBy options={options} searchParams={searchParams} />
             </div>
             <FiltersContainer
-              facets={facets}
+              facets={getFacetsResult.ok ? getFacetsResult.data : []}
               searchParams={searchParams}
               sortByOptions={options}
             />
           </div>
         </div>
 
-        {!!results.length ? <ProductsList products={results} /> : <NoResults />}
+        {products.length ? <ProductsList products={products} /> : <NoResults />}
 
         {pageInfo && (
           <SearchPagination pageInfo={pageInfo} searchParams={searchParams} />
         )}
       </section>
-      <JsonLd jsonLd={mappedSearchProductsToJsonLd(results)} />
+
+      <JsonLd jsonLd={mappedSearchProductsToJsonLd(products)} />
     </div>
   );
 }

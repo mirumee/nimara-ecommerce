@@ -1,4 +1,6 @@
-import { graphqlClient } from "#root/graphql/client";
+import { err, ok } from "@nimara/domain/objects/Result";
+
+import { graphqlClientV2 } from "#root/graphql/client";
 
 import { ConfirmEmailChangeMutationDocument } from "../graphql/mutations/generated";
 import type {
@@ -9,35 +11,35 @@ import type {
 export const saleorConfirmEmailChangeInfra =
   ({ apiURL, logger }: SaleorUserServiceConfig): ConfirmEmailChangeInfra =>
   async ({ accessToken, channel, token }) => {
-    const { data, error } = await graphqlClient(apiURL, accessToken).execute(
+    const result = await graphqlClientV2(apiURL, accessToken).execute(
       ConfirmEmailChangeMutationDocument,
       {
         variables: { channel, token },
+        operationName: "ConfirmEmailChangeMutation",
       },
     );
 
-    if (error) {
-      logger.error("Error while confirming email change", { error });
+    if (!result.ok) {
+      logger.error("Error while confirming email change", { result });
 
-      return {
-        user: null,
-        errors: [],
-      };
+      return result;
     }
 
-    if (data?.confirmEmailChange?.errors.length) {
+    if (result.data.confirmEmailChange?.errors.length) {
+      logger.error("Error while confirming email change", { result });
+
+      return err({
+        code: "EMAIL_CHANGE_CONFIRMATION_FAILED",
+      });
+    }
+
+    if (!result.data.confirmEmailChange?.user) {
       logger.error("Error while confirming email change", {
-        error: data.confirmEmailChange.errors,
+        error: "No user returned",
       });
 
-      return {
-        user: null,
-        errors: data.confirmEmailChange.errors,
-      };
+      return err({ code: "EMAIL_CHANGE_CONFIRMATION_FAILED" });
     }
 
-    return {
-      user: data?.confirmEmailChange?.user ?? null,
-      errors: data?.confirmEmailChange?.errors ?? [],
-    };
+    return ok(result.data.confirmEmailChange);
   };

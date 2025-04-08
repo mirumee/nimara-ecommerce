@@ -1,29 +1,44 @@
-import { graphqlClient } from "#root/graphql/client";
+import { err, ok } from "@nimara/domain/objects/Result";
+
+import { graphqlClientV2 } from "#root/graphql/client";
 import { serializeMetadata } from "#root/lib/serializers/metadata";
 
 import { AccountUpdateMutationDocument } from "../graphql/mutations/generated";
 import type { AccountUpdateInfra, SaleorUserServiceConfig } from "../types";
 
 export const saleorAccountUpdateInfra =
-  ({ apiURL }: SaleorUserServiceConfig): AccountUpdateInfra =>
+  ({ apiURL, logger }: SaleorUserServiceConfig): AccountUpdateInfra =>
   async ({ accountInput, accessToken }) => {
-    const { data } = await graphqlClient(apiURL, accessToken).execute(
+    const result = await graphqlClientV2(apiURL, accessToken).execute(
       AccountUpdateMutationDocument,
-      { variables: { accountInput } },
+      { variables: { accountInput }, operationName: "AccountUpdateMutation" },
     );
 
-    const user = data?.accountUpdate?.user;
-
-    if (user) {
-      return {
-        errors: [],
-        user: {
-          ...user,
-          metadata: serializeMetadata(user.metadata),
-          checkoutIds: user.checkoutIds ?? [],
-        },
-      };
+    if (!result.ok) {
+      return result;
     }
 
-    return { errors: data?.accountUpdate?.errors ?? [], user: null };
+    if (!!result.data.accountUpdate?.errors.length) {
+      logger.error("Error while updating account", { result });
+
+      return err({
+        code: "ACCOUNT_UPDATE_FAILED",
+      });
+    }
+
+    if (!result.data.accountUpdate?.user) {
+      logger.error("Error while updating account. No user found.", { result });
+
+      return err({
+        code: "ACCOUNT_UPDATE_FAILED",
+      });
+    }
+
+    const user = result.data.accountUpdate.user;
+
+    return ok({
+      ...user,
+      metadata: serializeMetadata(user.metadata),
+      checkoutIds: user.checkoutIds ?? [],
+    });
   };

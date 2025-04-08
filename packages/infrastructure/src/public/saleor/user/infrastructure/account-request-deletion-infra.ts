@@ -1,4 +1,6 @@
-import { graphqlClient } from "#root/graphql/client";
+import { err, ok } from "@nimara/domain/objects/Result";
+
+import { graphqlClientV2 } from "#root/graphql/client";
 
 import { AccountRequestDeletionMutationDocument } from "../graphql/mutations/generated";
 import type {
@@ -9,24 +11,27 @@ import type {
 export const saleorAccountRequestDeletionInfra =
   ({ apiURL, logger }: SaleorUserServiceConfig): AccountRequestDeletionInfra =>
   async ({ accessToken, channel, redirectUrl }) => {
-    const { data, error } = await graphqlClient(apiURL, accessToken).execute(
+    const result = await graphqlClientV2(apiURL, accessToken).execute(
       AccountRequestDeletionMutationDocument,
-      { variables: { channel, redirectUrl } },
+      {
+        variables: { channel, redirectUrl },
+        operationName: "AccountRequestDeletionMutation",
+      },
     );
 
-    if (error) {
-      logger.error("Error while requesting account deletion", { error });
+    if (!result.ok) {
+      logger.error("Error while requesting account deletion", { result });
 
-      return null;
+      return result;
     }
 
-    if (data?.accountRequestDeletion?.errors.length) {
-      logger.error("Error while requesting account deletion", {
-        error: data.accountRequestDeletion.errors,
+    if (result.data.accountRequestDeletion?.errors.length) {
+      logger.error("Error while requesting account deletion", { result });
+
+      return err({
+        code: "ACCOUNT_REQUEST_DELETION_FAILED",
       });
-
-      return null;
     }
 
-    return data?.accountRequestDeletion ?? null;
+    return ok({ success: true });
   };

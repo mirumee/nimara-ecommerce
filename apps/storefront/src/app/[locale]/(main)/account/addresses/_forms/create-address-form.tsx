@@ -65,10 +65,10 @@ export const AddNewAddressForm = ({
   const canProceed = !form.formState.isSubmitting && !isCountryChanging;
 
   const handleSubmit = async (address: FormSchema) => {
-    const data = await createNewAddress(address);
+    const result = await createNewAddress(address);
 
-    if (data?.errors.length) {
-      storefrontLogger.error("Address create failed", data.errors);
+    if (!result.ok) {
+      storefrontLogger.error("Address create failed", { result });
 
       return;
     }

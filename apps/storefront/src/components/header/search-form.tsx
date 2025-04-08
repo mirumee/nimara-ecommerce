@@ -262,7 +262,7 @@ const searchProducts = async (
 ): Promise<{ results: ComboboxOption[] }> => {
   const region = await getCurrentRegion();
 
-  const { results } = await searchService.search(
+  const result = await searchService.search(
     {
       query: value,
       limit: maxSearchSuggestions,
@@ -273,9 +273,11 @@ const searchProducts = async (
     },
   );
 
+  const products = result.ok ? result.data.results : [];
+
   return {
     results:
-      results.map((result) => ({
+      products.map((result) => ({
         id: result.id,
         label: result.name,
         slug: result.slug,

@@ -1,6 +1,11 @@
 import type { DocumentTypeDecoration } from "@graphql-typed-document-node/core";
 
-import type { Err, Result } from "@nimara/domain/objects/Error";
+import {
+  type AsyncResult,
+  type Err,
+  err,
+  ok,
+} from "@nimara/domain/objects/Result";
 
 import { type Exact } from "#root/lib/types";
 import { logger } from "#root/logging/service";
@@ -98,18 +103,15 @@ export const graphqlClient = (
  * It accepts a required `operationName` property in `input` object, for logging purposes it is required as it cannot be derived from query.
  *
  * @example
- * ```typescript
- * const { data, error } = await graphqlClientV2.execute(OrdersGetQuery);
+ * const result = await graphqlClientV2.execute(OrdersGetQuery);
  *
- * if (error) {
- *    // handle server errors
+ * if (!result.ok) {
+ *    // Handle server errors
  *    return
  * }
  *
- * const data = data.ordersGet
- * // Handle data, check for errors etc.
- *
- * ```
+ * // At this point we know that result is ok and we can safely access data
+ * const { data } = result
  **/
 export const graphqlClientV2 = (
   url: RequestInfo | URL,
@@ -121,11 +123,11 @@ export const graphqlClientV2 = (
   >(
     query: DocumentTypeDecoration<TResult, TVariables> & { toString(): string },
     input: {
-      operationName: string;
+      operationName: `${string}${"Mutation" | "Query"}`;
       options?: FetchOptions;
       variables?: TVariables;
     },
-  ): Promise<Result<TResult>> => {
+  ): AsyncResult<TResult> => {
     const { variables, options, operationName } = input;
 
     try {
@@ -158,29 +160,30 @@ export const graphqlClientV2 = (
           exceptionCode,
         });
 
-        return {
-          data: null,
-          error: {
-            code: "INPUT_ERROR",
-            message: "GraphQL Error",
-          },
-        };
+        return err({
+          code: "HTTP_ERROR",
+          message: "GraphQL Error",
+        });
       }
 
-      return { data: body.data as TResult, error: null };
+      if (!body.data) {
+        return err({
+          code: "HTTP_ERROR",
+          message: "No data returned from GraphQL",
+        });
+      }
+
+      return ok(body.data);
     } catch (e) {
       logger.error("Unexpected HTTP error", {
         error: e,
         operationName,
       });
 
-      return {
-        data: null,
-        error: {
-          code: "UNEXPECTED_HTTP_ERROR",
-          message: "Unexpected HTTP error",
-        },
-      };
+      return err({
+        code: "UNEXPECTED_HTTP_ERROR",
+        message: "Unexpected HTTP error",
+      });
     }
   },
 });
@@ -198,14 +201,11 @@ const handleInvalidResponse = (
         operationName,
       });
 
-      return {
-        data: null,
-        error: {
-          code: "NOT_FOUND_ERROR",
-          status: response.status,
-          message: response.statusText,
-        },
-      };
+      return err({
+        code: "NOT_FOUND_ERROR",
+        status: response.status,
+        message: response.statusText,
+      });
 
     case 429:
       logger.error("Too many requests", {
@@ -214,14 +214,11 @@ const handleInvalidResponse = (
         operationName,
       });
 
-      return {
-        data: null,
-        error: {
-          code: "TOO_MANY_REQUESTS",
-          status: response.status,
-          message: response.statusText,
-        },
-      };
+      return err({
+        code: "TOO_MANY_REQUESTS",
+        status: response.status,
+        message: response.statusText,
+      });
 
     default:
       logger.error("API request failed", {
@@ -230,13 +227,10 @@ const handleInvalidResponse = (
         operationName,
       });
 
-      return {
-        data: null,
-        error: {
-          code: "HTTP_ERROR",
-          status: response.status,
-          message: response.statusText,
-        },
-      };
+      return err({
+        code: "HTTP_ERROR",
+        status: response.status,
+        message: response.statusText,
+      });
   }
 };
