@@ -20,17 +20,17 @@ export default async function ConfirmEmailChangePage(props: {
   ]);
 
   if (accessToken) {
-    const data = await userService.confirmEmailChange({
+    const result = await userService.confirmEmailChange({
       accessToken,
       channel: region.market.channel,
       token,
     });
 
-    if (data?.user?.id && !data?.errors.length) {
+    if (result.ok) {
       redirect({ href: paths.signIn.asPath(), locale });
     }
 
-    if (data?.errors) {
+    if (result.error) {
       return t("auth.too-much-time-has-passed");
     }
   }

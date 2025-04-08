@@ -56,15 +56,13 @@ export const UpdateShippingAddressForm = ({
   const canProceed = !form.formState.isSubmitting && !isCountryChanging;
 
   const handleSubmit = async (shippingAddress: FormSchema) => {
-    const data = await updateShippingAddress({
+    const result = await updateShippingAddress({
       id: address.id,
       input: shippingAddress,
     });
 
-    if (data?.errors.length) {
-      storefrontLogger.error("Shipping address update failed", {
-        error: data.errors[0],
-      });
+    if (!result.ok) {
+      storefrontLogger.error("Shipping address update failed", { result });
     }
 
     setEditedAddress(null);

@@ -1,6 +1,6 @@
-import { type AccountError } from "./Error";
+import { type BaseError } from "./Error";
 
 export interface RefreshToken {
-  errors: AccountError[];
+  errors: BaseError[];
   token: string | null;
 }

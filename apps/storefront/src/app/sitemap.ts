@@ -6,14 +6,18 @@ import { searchService } from "@/services/search";
 
 type Item = MetadataRoute.Sitemap[number];
 
+const PUBLIC_URL = process.env.BASE_URL ?? "https://www.nimara.store";
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  // TODO: Make this contextual
   const searchContext = {
     currency: "USD",
     channel: "channel-us",
     languageCode: "EN_US",
   } satisfies SearchContext;
 
-  const { results } = await searchService.search(
+  // TODO: Create an exhaustive list of all the routes
+  const result = await searchService.search(
     {
       query: "",
       limit: 100,
@@ -21,11 +25,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     searchContext,
   );
 
-  const publicUrl = process.env.BASE_URL;
-  const productUrls = results.map(
+  const products = result.ok ? result.data.results : [];
+  const productUrls = products.map(
     (product) =>
       ({
-        url: `${publicUrl}/products/${product.slug}`,
+        url: `${PUBLIC_URL}/products/${product.slug}`,
         lastModified: product.updatedAt,
         changeFrequency: "daily",
         priority: 0.8,
@@ -34,7 +38,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     {
-      url: publicUrl ?? "https://www.nimara.store",
+      url: PUBLIC_URL,
       lastModified: new Date(),
       changeFrequency: "always",
       priority: 1,

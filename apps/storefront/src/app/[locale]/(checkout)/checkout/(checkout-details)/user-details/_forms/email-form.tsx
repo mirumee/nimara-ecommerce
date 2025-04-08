@@ -31,10 +31,10 @@ export const UserEmailForm = ({
   const isDisabled = isRedirecting || form.formState?.isSubmitting;
 
   const handleSubmit = async ({ email }: EmailFormSchema) => {
-    const data = await checkIfUserHasAnAccount(email);
+    const checkResult = await checkIfUserHasAnAccount(email);
 
-    if (data?.email) {
-      setUserAccountEmail(data.email);
+    if (checkResult.ok && checkResult.data.user) {
+      setUserAccountEmail(checkResult.data.user.email);
 
       return;
     }
@@ -102,7 +102,7 @@ export const UserEmailForm = ({
           </div>
         </div>
         {serverErrorCode && (
-          <p className="text-red-600">
+          <p className="text-destructive">
             {t(serverErrorCode as TranslationMessage)}
           </p>
         )}

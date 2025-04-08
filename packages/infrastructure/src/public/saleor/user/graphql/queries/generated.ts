@@ -27,7 +27,7 @@ export type UserAddressesQueryVariables = Types.Exact<{ [key: string]: never; }>
 
 export type UserAddressesQuery = UserAddressesQuery_Query;
 
-export type UserFindQuery_user_User = { email: string };
+export type UserFindQuery_user_User = { id: string, email: string };
 
 export type UserFindQuery_Query = { user: UserFindQuery_user_User | null };
 
@@ -161,6 +161,7 @@ export const UserAddressesQueryDocument = new TypedDocumentString(`
 export const UserFindQueryDocument = new TypedDocumentString(`
     query UserFindQuery($email: String) {
   user(email: $email) {
+    id
     email
   }
 }

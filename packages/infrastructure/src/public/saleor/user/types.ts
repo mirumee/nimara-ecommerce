@@ -5,8 +5,8 @@ import type {
   LanguageCodeEnum,
 } from "@nimara/codegen/schema";
 import type { Address } from "@nimara/domain/objects/Address";
-import type { AccountError, BaseError } from "@nimara/domain/objects/Error";
 import type { Order } from "@nimara/domain/objects/Order";
+import { type AsyncResult } from "@nimara/domain/objects/Result";
 import { type User } from "@nimara/domain/objects/User";
 
 import { type QueryOptions } from "#root/lib/types";
@@ -51,7 +51,7 @@ export type OrdersGetUseCase = OrdersGetInfra;
 export type AccountDeleteInfra = (opts: {
   accessToken: string;
   token: string;
-}) => Promise<{ errors: AccountError[] } | null>;
+}) => AsyncResult<{ success: true }>;
 
 export type AccountDeleteUseCase = AccountDeleteInfra;
 
@@ -63,7 +63,7 @@ export type AccountRequestDeletionInfra = ({
   accessToken: string | undefined;
   channel: string;
   redirectUrl: string;
-}) => Promise<{ errors: AccountError[] } | null>;
+}) => AsyncResult<{ success: true }>;
 
 export type AccountRequestDeletionUseCase = AccountRequestDeletionInfra;
 
@@ -79,19 +79,14 @@ export type AccountAddressCreateInfra = (opts: {
   accessToken: string | undefined;
   input: AddressInput;
   type?: AddressTypeEnum;
-}) => Promise<{
-  address: Pick<Address, "id"> | null;
-  errors: AccountError[];
-} | null>;
+}) => AsyncResult<{ id: string }>;
 
 export type AccountAddressCreateUseCase = AccountAddressCreateInfra;
 
 export type AccountAddressDeleteInfra = (opts: {
   accessToken: string | undefined;
   id: string;
-}) => Promise<{
-  errors: AccountError[];
-} | null>;
+}) => AsyncResult<{ success: true }>;
 
 export type AccountAddressDeleteUseCase = AccountAddressDeleteInfra;
 
@@ -99,9 +94,7 @@ export type AccountAddressUpdateInfra = (opts: {
   accessToken: string | undefined;
   id: string;
   input: AddressInput;
-}) => Promise<{
-  errors: AccountError[];
-} | null>;
+}) => AsyncResult<{ success: true }>;
 
 export type AccountAddressUpdateUseCase = AccountAddressUpdateInfra;
 
@@ -109,7 +102,7 @@ export type AccountSetDefaultAddressInfra = (opts: {
   accessToken: string | undefined;
   id: string;
   type: AddressTypeEnum;
-}) => Promise<{ errors: AccountError[] } | null>;
+}) => AsyncResult<{ success: true }>;
 
 export type AccountSetDefaultAddressUseCase = AccountSetDefaultAddressInfra;
 
@@ -119,7 +112,7 @@ export type AccountUpdateInfra = ({
 }: {
   accessToken?: string;
   accountInput: AccountInput;
-}) => Promise<{ errors: AccountError[]; user: User | null } | null>;
+}) => AsyncResult<User>;
 
 export type AccountUpdateUseCase = AccountUpdateInfra;
 
@@ -135,7 +128,7 @@ export type RequestEmailChangeInfra = ({
   newEmail: string;
   password: string;
   redirectUrl: string;
-}) => Promise<{ errors: AccountError[] } | null>;
+}) => AsyncResult<{ success: true }>;
 
 export type RequestEmailChangeUseCase = RequestEmailChangeInfra;
 
@@ -147,10 +140,9 @@ export type ConfirmEmailChangeInfra = ({
   accessToken: string;
   channel: string;
   token: string;
-}) => Promise<{
-  errors: AccountError[];
+}) => AsyncResult<{
   user: Pick<User, "id" | "email"> | null;
-} | null>;
+}>;
 
 export type ConfirmEmailChangeUseCase = ConfirmEmailChangeInfra;
 
@@ -162,20 +154,15 @@ export type PasswordChangeInfra = ({
   accessToken: string;
   newPassword: string;
   oldPassword?: string;
-}) => Promise<
-  | {
-      errors: AccountError[];
-      success: false;
-    }
-  | { serverError: BaseError; success: false }
-  | { success: true }
->;
+}) => AsyncResult<true>;
 
 export type PasswordChangeUseCase = PasswordChangeInfra;
 
 export type UserFindInfra = (opts: {
   email: string;
   saleorAppToken: string;
-}) => Promise<{ email: string } | null>;
+}) => AsyncResult<{
+  user: Pick<User, "id" | "email"> | null;
+}>;
 
 export type UserFindUseCase = UserFindInfra;

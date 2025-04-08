@@ -2,8 +2,9 @@ import {
   type AttributeInput,
   type LanguageCodeEnum,
 } from "@nimara/codegen/schema";
+import { err, ok } from "@nimara/domain/objects/Result";
 
-import { graphqlClient } from "#root/graphql/client";
+import { graphqlClientV2 } from "#root/graphql/client";
 import type { SearchInfra } from "#root/use-cases/search/types";
 
 import { SearchProductQueryDocument } from "../graphql/queries/generated";
@@ -54,7 +55,7 @@ export const saleorSearchInfra =
         collection,
       });
 
-      const { data, error } = await graphqlClient(apiURL).execute(
+      const result = await graphqlClientV2(apiURL).execute(
         SearchProductQueryDocument,
         {
           variables: {
@@ -84,53 +85,53 @@ export const saleorSearchInfra =
               revalidate: 15 * 60,
             },
           },
+          operationName: "SearchProductQuery",
         },
       );
 
-      if (error) {
+      if (!result.ok) {
         logger.error("Failed to fetch products from Saleor", {
-          error,
+          result,
         });
 
-        return {
-          results: [],
-          error,
-        };
+        return result;
       }
 
       const products =
-        data?.category?.products ??
-        data?.collection?.products ??
-        data?.products;
+        result.data?.category?.products ??
+        result.data?.collection?.products ??
+        result.data?.products;
 
       if (!products) {
-        return {
+        return ok({
           results: [],
-          error: null,
-        };
+          pageInfo: {
+            type: "cursor",
+            after: null,
+            before: null,
+            hasNextPage: false,
+            hasPreviousPage: false,
+          },
+        });
       }
 
       const serializer = serializers?.search ?? searchProductSerializer;
 
-      return {
+      return ok({
         results: products.edges.map(({ node }) => serializer(node)),
-        error: null,
         pageInfo: {
           type: "cursor",
-          after: products.pageInfo.endCursor,
-          before: products.pageInfo.startCursor,
-          hasNextPage: products.pageInfo.hasNextPage,
-          hasPreviousPage: products.pageInfo.hasPreviousPage,
+          ...products.pageInfo,
         },
-      };
+      });
     } catch (e) {
       logger.error("Unexpected error while fetching products from Saleor", {
         error: e,
       });
 
-      return {
-        results: [],
-        error: e,
-      };
+      return err({
+        code: "UNEXPECTED_HTTP_ERROR",
+        message: "Unexpected error while fetching products from Saleor",
+      });
     }
   };
