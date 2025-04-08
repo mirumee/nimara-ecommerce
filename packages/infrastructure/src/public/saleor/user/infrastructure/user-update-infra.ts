@@ -22,7 +22,7 @@ export const saleorAccountUpdateInfra =
       logger.error("Error while updating account", { result });
 
       return err({
-        code: "ACCOUNT_UPDATE_FAILED",
+        code: "ACCOUNT_UPDATE_ERROR",
       });
     }
 
@@ -30,7 +30,7 @@ export const saleorAccountUpdateInfra =
       logger.error("Error while updating account. No user found.", { result });
 
       return err({
-        code: "ACCOUNT_UPDATE_FAILED",
+        code: "ACCOUNT_UPDATE_ERROR",
       });
     }
 

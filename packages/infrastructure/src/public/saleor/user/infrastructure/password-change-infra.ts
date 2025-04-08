@@ -28,7 +28,7 @@ export const saleorPasswordChangeInfra =
       });
 
       return err({
-        code: "PASSWORD_CHANGE_FAILED",
+        code: "PASSWORD_CHANGE_ERROR",
       });
     }
 

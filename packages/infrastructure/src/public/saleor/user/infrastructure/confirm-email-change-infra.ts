@@ -29,7 +29,7 @@ export const saleorConfirmEmailChangeInfra =
       logger.error("Error while confirming email change", { result });
 
       return err({
-        code: "EMAIL_CHANGE_CONFIRMATION_FAILED",
+        code: "EMAIL_CHANGE_CONFIRMATION_ERROR",
       });
     }
 
@@ -38,7 +38,7 @@ export const saleorConfirmEmailChangeInfra =
         error: "No user returned",
       });
 
-      return err({ code: "EMAIL_CHANGE_CONFIRMATION_FAILED" });
+      return err({ code: "EMAIL_CHANGE_CONFIRMATION_ERROR" });
     }
 
     return ok(result.data.confirmEmailChange);

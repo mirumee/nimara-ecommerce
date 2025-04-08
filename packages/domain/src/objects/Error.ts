@@ -5,39 +5,47 @@ export type AccountError = {
   message: string | null;
 };
 
+/*
+ * @type Code
+ * @description Error codes are used to represent different types of errors in the system.
+ */
+type ErrorCodeFormat = `${string}_ERROR`;
+
 /**
  * @description Error codes related to HTTP errors.
  */
 export const HTTP_ERROR_CODES = [
   "HTTP_ERROR",
   "NOT_FOUND_ERROR",
-  "TOO_MANY_REQUESTS",
+  "TOO_MANY_REQUESTS_ERROR",
   "UNEXPECTED_HTTP_ERROR",
-] as const;
+] as const satisfies ErrorCodeFormat[];
 export type HTTPErrorCode = (typeof HTTP_ERROR_CODES)[number];
 
 /**
  * @description Error codes related to authentication and authorization.
  */
-export const AUTH_ERROR_CODES = ["PASSWORD_CHANGE_FAILED"] as const;
+export const AUTH_ERROR_CODES = [
+  "PASSWORD_CHANGE_ERROR",
+] as const satisfies ErrorCodeFormat[];
 export type AuthErrorCode = (typeof AUTH_ERROR_CODES)[number];
 
 /**
  * @description Error codes related to customer account and its actions.
  */
 export const ACCOUNT_ERROR_CODES = [
-  "ACCESS_TOKEN_NOT_FOUND",
-  "ACCOUNT_CREATE_FAILED",
-  "ACCOUNT_DELETE_FAILED",
-  "ACCOUNT_UPDATE_FAILED",
-  "ADDRESS_CREATE_FAILED",
-  "ADDRESS_DELETE_FAILED",
-  "ADDRESS_UPDATE_FAILED",
-  "ACCOUNT_REQUEST_DELETION_FAILED",
-  "ADDRESS_SET_DEFAULT_FAILED",
-  "EMAIL_CHANGE_CONFIRMATION_FAILED",
-  "EMAIL_CHANGE_REQUEST_FAILED",
-] as const;
+  "ACCESS_TOKEN_NOT_FOUND_ERROR",
+  "ACCOUNT_CREATE_ERROR",
+  "ACCOUNT_DELETE_ERROR",
+  "ACCOUNT_UPDATE_ERROR",
+  "ADDRESS_CREATE_ERROR",
+  "ADDRESS_DELETE_ERROR",
+  "ADDRESS_UPDATE_ERROR",
+  "ACCOUNT_REQUEST_DELETION_ERROR",
+  "ADDRESS_SET_DEFAULT_ERROR",
+  "EMAIL_CHANGE_CONFIRMATION_ERROR",
+  "EMAIL_CHANGE_REQUEST_ERROR",
+] as const satisfies ErrorCodeFormat[];
 export type AccountErrorCode = (typeof ACCOUNT_ERROR_CODES)[number];
 
 /**
@@ -57,15 +65,28 @@ export type ErrorCode =
  * The message is optional and can be used as a fallback message on the frontend.
  * Always prefer translating using the code.
  * @property {ErrorCode} code - Error code. This code must be used as a key in translation.
- * @property {string} [message] - This message is just for developers, eventually can be used as a fallback message on the frontend. Always prefer translating using the code.
  * @property {number} [status] - HTTP status code. This is optional and can be used to represent the HTTP status of the error.
  * @property {string} [field] - This field is optional and can be used to represent the form field that errored.
+ * @property {string} [message] - This message is just for developers, eventually can be used as a fallback message on the frontend. Always prefer translating using the code.
+ * @property {unknown} [context] - This field is optional and can be used to represent the context of the error.
+ * @example
+ * const error = {
+ *   code: "INPUT_ERROR",
+ *   message: "Invalid input",
+ *   field: "email",
+ *   status: 400,
+ *   context: { email: "Invalid email format" },
+ * } satisfies BaseError<"INPUT_ERROR">
  **/
-export type BaseError = {
+export type BaseError<C extends ErrorCodeFormat = ErrorCode> = {
   /*
    * Error code. This code must be used as a key in translation.
    */
-  code: ErrorCode;
+  code: C;
+  /*
+   * This field is optional and can be used to represent the context of the error.
+   */
+  context?: unknown;
   /*
    * This field is optional and can be used to represent the form field that errored.
    */

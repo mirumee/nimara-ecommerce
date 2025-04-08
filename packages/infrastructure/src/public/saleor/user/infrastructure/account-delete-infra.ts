@@ -23,7 +23,7 @@ export const saleorAccountDeleteInfra =
       logger.error("Error while deleting an account", { result });
 
       return err({
-        code: "ACCOUNT_DELETE_FAILED",
+        code: "ACCOUNT_DELETE_ERROR",
       });
     }
 

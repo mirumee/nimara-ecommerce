@@ -215,7 +215,7 @@ const handleInvalidResponse = (
       });
 
       return err({
-        code: "TOO_MANY_REQUESTS",
+        code: "TOO_MANY_REQUESTS_ERROR",
         status: response.status,
         message: response.statusText,
       });

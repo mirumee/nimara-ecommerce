@@ -1,7 +1,15 @@
 import { type BaseError } from "./Error";
 
-export type Ok<T> = { data: T; ok: true };
+/**
+ * Ok - Type representing a successful result.
+ */
+export type Ok<T> = { data: T; error?: never; ok: true };
+
+/**
+ * Err - Type representing an error result.
+ */
 export type Err<E extends BaseError = BaseError> = {
+  data?: never;
   error: E;
   ok: false;
 };
@@ -32,11 +40,22 @@ export type AsyncResult<T, E extends BaseError = BaseError> = Promise<
 /**
  * Creates an Ok result.
  * @param data - The data to be returned in the Result.
+ * @example
+ * const result = ok("Success");
+ * // result: { data: "Success", ok: true }
  */
 export const ok = <T>(data: T): Ok<T> => ({ ok: true, data });
 
 /**
  * Creates an Err result.
+ * @example
+ * const result = err<BaseError<"INPUT_ERROR">>({
+ *  code: "INPUT_ERROR",
+ *  message: "Invalid input",
+ *  field: "email",
+ *  status: 400,
+ *  context: { email: "Invalid email format" },
+ * });
  */
 export const err = <E extends BaseError = BaseError>(error: E): Err<E> => ({
   ok: false,

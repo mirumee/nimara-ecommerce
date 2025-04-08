@@ -29,7 +29,7 @@ export const saleorRequestEmailChangeInfra =
       logger.error("Error while requesting email change", { result });
 
       return err({
-        code: "EMAIL_CHANGE_REQUEST_FAILED",
+        code: "EMAIL_CHANGE_REQUEST_ERROR",
       });
     }
 

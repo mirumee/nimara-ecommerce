@@ -83,7 +83,7 @@ export async function updateUserPassword({
   const accessToken = await getAccessToken();
 
   if (!accessToken) {
-    return err({ code: "ACCESS_TOKEN_NOT_FOUND" });
+    return err({ code: "ACCESS_TOKEN_NOT_FOUND_ERROR" });
   }
 
   const result = await userService.passwordChange({

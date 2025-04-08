@@ -34,5 +34,5 @@ export default async function ConfirmAccountRegistrationPage(props: {
     return t("auth.confirm-account-fail");
   }
 
-  return t("errors.server.UNEXPECTED_HTTP_ERROR");
+  return t("errors.UNEXPECTED_HTTP_ERROR");
 }
