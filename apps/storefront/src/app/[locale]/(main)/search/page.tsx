@@ -70,7 +70,7 @@ export default async function Page(props: { searchParams: SearchParams }) {
     collection,
     ...rest
   } = searchParams;
-  const result = await searchService.search(
+  const resultSearch = await searchService.search(
     {
       query,
       limit: limit ? Number.parseInt(limit) : DEFAULT_RESULTS_PER_PAGE,
@@ -90,8 +90,8 @@ export default async function Page(props: { searchParams: SearchParams }) {
     },
     searchContext,
   );
-  const optionsResult = searchService.getSortByOptions(searchContext);
-  const options = optionsResult.ok ? optionsResult.data : [];
+  const resultOptions = searchService.getSortByOptions(searchContext);
+  const options = resultOptions.ok ? resultOptions.data : [];
 
   const getHeader = () => {
     if (query) {
@@ -110,8 +110,8 @@ export default async function Page(props: { searchParams: SearchParams }) {
     return null;
   };
 
-  const products = result.ok ? result.data.results : [];
-  const pageInfo = result.ok ? result.data.pageInfo : null;
+  const products = resultSearch.ok ? resultSearch.data.results : [];
+  const pageInfo = resultSearch.ok ? resultSearch.data.pageInfo : null;
 
   return (
     <div className="w-full">
