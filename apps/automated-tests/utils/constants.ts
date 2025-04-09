@@ -16,7 +16,7 @@ export const URLS = (channel: Channel = "gb") =>
   }) as const;
 
 export const product = {
-  url: "automated-test-product-ocean-waves#UHJvZHVjdFZhcmlhbnQ6ODM0",
+  url: "automated-test-product-ocean-waves?format-album=vinyl",
   quantity: 1,
   deliveryMethod: {
     amount: 4,
@@ -24,7 +24,7 @@ export const product = {
     name: "DHL Fast",
   },
   price: {
-    amount: 9.99,
+    amount: 21.99,
     currency: "GBP",
   },
 };
@@ -49,6 +49,8 @@ export const userPassword = process.env.USER_PASSWORD ?? "";
 
 export const paymentDetails = {
   cardNumber: "4242424242424242",
-  expiryDate: `12/${new Date().getFullYear() + 1}`,
+  expiryDate: `12/${(new Date().getFullYear() + 1).toString().substring(2)}`,
   cvc: "123",
 };
+
+export type PaymentDetails = typeof paymentDetails;

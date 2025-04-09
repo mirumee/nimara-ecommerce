@@ -1,6 +1,11 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalEnv": ["NEXT_PUBLIC_SALEOR_API_URL", "NEXT_PUBLIC_ENVIRONMENT"],
+  "globalEnv": [
+    "NEXT_PUBLIC_SALEOR_API_URL",
+    "TEST_ENV_URL",
+    "USER_EMAIL",
+    "USER_PASSWORD"
+  ],
   "globalPassThroughEnv": [
     "AUTH_SECRET",
     "BASE_URL",
@@ -8,9 +13,7 @@
     "SENTRY_AUTH_TOKEN",
     "SENTRY_ORG",
     "SENTRY_PROJECT",
-    "STRIPE_SECRET_KEY",
-    "USER_EMAIL",
-    "USER_PASSWORD"
+    "STRIPE_SECRET_KEY"
   ],
   "ui": "stream",
   "tasks": {
@@ -38,7 +41,9 @@
       "persistent": true
     },
     "test:e2e": {
-      "dependsOn": ["^test:e2e"]
+      "dependsOn": ["^test:e2e"],
+      "env": ["TEST_ENV_URL", "USER_EMAIL", "USER_PASSWORD"],
+      "cache": false
     },
     "test:all": {
       "dependsOn": ["^test:e2e", "^test"]

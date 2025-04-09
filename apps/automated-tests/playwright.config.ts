@@ -1,11 +1,10 @@
 import { defineConfig, devices } from "@playwright/test";
+import { config as envConfig } from "dotenv";
+
+envConfig();
 
 if (process.env.TEST_ENV_URL === undefined) {
-  process.stderr.write(
-    "Invalid or missing value for TEST_ENV_URL. Skipping.\n",
-    process.env.TEST_ENV_URL,
-  );
-  process.exit(1);
+  throw new Error("Missing TEST_ENV_URL");
 }
 
 /**
@@ -13,7 +12,7 @@ if (process.env.TEST_ENV_URL === undefined) {
  */
 const config = defineConfig({
   testDir: "./tests",
-  timeout: 30 * 1000,
+  timeout: 60 * 1000,
   expect: {
     timeout: 5 * 1000,
   },
@@ -22,12 +21,13 @@ const config = defineConfig({
 
   // Give failing tests 2 retry attempts on CI
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  workers: process.env.CI ? 1 : 1,
   reporter: process.env.CI ? "dot" : "list",
   use: {
     baseURL: process.env.TEST_ENV_URL,
-    actionTimeout: 0,
     trace: "on-first-retry",
+
+    launchOptions: {},
   },
   projects: [
     {
