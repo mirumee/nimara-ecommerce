@@ -1,0 +1,28 @@
+fragment CollectionFragment on Collection {
+  id
+  name
+  description
+  seoTitle
+  seoDescription
+  backgroundImage {
+    url
+    alt
+  }
+  slug
+  products(after: $after, before: $before, first: $first, last: $last) {
+    edges {
+      node {
+        ...SearchProductFragment
+      }
+    }
+    pageInfo {
+      startCursor
+      endCursor
+      hasNextPage
+      hasPreviousPage
+    }
+  }
+  metadata {
+    ...MetadataItemFragment
+  }
+}

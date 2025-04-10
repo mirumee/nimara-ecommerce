@@ -4,13 +4,14 @@ import type { SearchContext } from "@nimara/infrastructure/use-cases/search/type
 
 import { DEFAULT_RESULTS_PER_PAGE, DEFAULT_SORT_BY } from "@/config";
 import { JsonLd, mappedSearchProductsToJsonLd } from "@/lib/json-ld";
+import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { searchService } from "@/services/search";
 
+import { ProductsList } from "../_components/products-list";
+import { SearchPagination } from "../_components/search-pagination";
 import { FiltersContainer } from "./_filters/filters-container";
 import { NoResults } from "./_listing/no-results";
-import { ProductsList } from "./_listing/products-list";
-import { SearchPagination } from "./_listing/search-pagination";
 import { SearchSortBy } from "./_listing/search-sort-by";
 
 type SearchParams = Promise<{
@@ -133,7 +134,11 @@ export default async function Page(props: { searchParams: SearchParams }) {
         {products.length ? <ProductsList products={products} /> : <NoResults />}
 
         {pageInfo && (
-          <SearchPagination pageInfo={pageInfo} searchParams={searchParams} />
+          <SearchPagination
+            pageInfo={pageInfo}
+            searchParams={searchParams}
+            baseUrl={paths.search.asPath()}
+          />
         )}
       </section>
 
