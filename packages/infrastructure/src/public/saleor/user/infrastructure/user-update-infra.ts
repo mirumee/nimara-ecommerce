@@ -18,8 +18,10 @@ export const saleorAccountUpdateInfra =
       return result;
     }
 
-    if (!!result.data.accountUpdate?.errors.length) {
-      logger.error("Error while updating account", { result });
+    if (result.data.accountUpdate?.errors.length) {
+      logger.error("Error while updating account", {
+        error: result.data.accountUpdate.errors,
+      });
 
       return err({
         code: "ACCOUNT_UPDATE_ERROR",
@@ -27,7 +29,9 @@ export const saleorAccountUpdateInfra =
     }
 
     if (!result.data.accountUpdate?.user) {
-      logger.error("Error while updating account. No user found.", { result });
+      logger.error("Error while updating account. No user found.", {
+        error: "User not found",
+      });
 
       return err({
         code: "ACCOUNT_UPDATE_ERROR",

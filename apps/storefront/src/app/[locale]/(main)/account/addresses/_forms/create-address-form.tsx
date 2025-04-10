@@ -77,6 +77,7 @@ export const AddNewAddressForm = ({
       description: t("address.new-address-has-been-added"),
       position: "center",
     });
+
     onModalClose();
   };
 

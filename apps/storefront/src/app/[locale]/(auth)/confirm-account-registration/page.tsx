@@ -23,16 +23,12 @@ export default async function ConfirmAccountRegistrationPage(props: {
 
   const result = await authService.confirmAccount(searchParams);
 
-  if (result.ok) {
-    redirect({
-      href: paths.signIn.asPath({ query: { confirmationSuccess: "true" } }),
-      locale,
-    });
-  }
-
-  if (result.error) {
+  if (!result.ok) {
     return t("auth.confirm-account-fail");
   }
 
-  return t("errors.UNEXPECTED_HTTP_ERROR");
+  redirect({
+    href: paths.signIn.asPath({ query: { confirmationSuccess: "true" } }),
+    locale,
+  });
 }
