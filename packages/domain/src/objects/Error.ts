@@ -57,6 +57,7 @@ export const CHECKOUT_ERROR_CODES = [
 ] as const satisfies ErrorCodeFormat[];
 export type CheckoutErrorCode = (typeof CHECKOUT_ERROR_CODES)[number];
 
+/**
  * @description Error codes related to address actions.
  */
 export const ADDRESS_ERROR_CODES = [
