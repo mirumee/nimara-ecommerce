@@ -9,9 +9,10 @@ import type {
   ProductBase,
   RelatedProduct,
 } from "@nimara/domain/objects/Product";
+import { type AsyncResult } from "@nimara/domain/objects/Result";
 
 import type { FetchOptions } from "#root/graphql/client";
-import { type Logger } from "#root/logging/types";
+import type { Logger } from "#root/logging/types";
 
 export type SaleorStoreServiceConfig = {
   apiURI: string;
@@ -31,29 +32,25 @@ type ProductDetailOptions = {
   productSlug: string;
 } & WithFetchOptions;
 
-export type GetProductDetailsUseCase = (opts: ProductDetailOptions) => Promise<
-  | {
-      data: { availability: ProductAvailability; product: Product };
-      errors: unknown[];
-    }
-  | { data: null; errors: unknown[] }
->;
+export type GetProductDetailsUseCase = (
+  opts: ProductDetailOptions,
+) => AsyncResult<{ availability: ProductAvailability; product: Product }>;
 
 export type GetProductAvailabilityDetailsInfra = (
   opts: ProductDetailOptions,
-) => Promise<{ availability: ProductAvailability | null; errors: unknown[] }>;
+) => AsyncResult<{ availability: ProductAvailability | null }>;
 
 export type GetProductDetailsInfra = (
   opts: ProductDetailOptions,
-) => Promise<{ errors: unknown[]; product: Product | null }>;
+) => AsyncResult<{ product: Product | null }>;
 
 export type GetProductBaseInfra = (
   opts: ProductDetailOptions,
-) => Promise<{ errors: unknown[]; product: ProductBase | null }>;
+) => AsyncResult<{ product: ProductBase | null }>;
 
 export type GetProductRelatedProductsInfra = (
   opts: ProductDetailOptions,
-) => Promise<{ errors: unknown[]; products: RelatedProduct[] | null }>;
+) => AsyncResult<{ products: RelatedProduct[] | null }>;
 
 export type GetProductBaseUseCase = GetProductBaseInfra;
 

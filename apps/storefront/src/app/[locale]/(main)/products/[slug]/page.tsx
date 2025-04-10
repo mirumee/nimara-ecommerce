@@ -14,7 +14,7 @@ import { RelatedProductsSkeleton } from "./components/related-products-skeleton"
 export const experimental_ppr = true;
 
 export async function generateMetadata(props: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 }) {
   const params = await props.params;
   const { slug } = params;
@@ -28,7 +28,7 @@ export async function generateMetadata(props: {
     logger: storefrontLogger,
   };
 
-  const { product } = await storeService(serviceOpts).getProductBase({
+  const result = await storeService(serviceOpts).getProductBase({
     productSlug: slug,
     options: {
       next: {
@@ -39,12 +39,14 @@ export async function generateMetadata(props: {
   });
 
   return {
-    title: product?.name,
-    description: product?.description,
+    title: result?.data?.product?.name,
+    description: result?.data?.product?.description,
   };
 }
 
-export default function Page(props: { params: Promise<{ slug: string }> }) {
+export default function Page(props: {
+  params: Promise<{ locale: string; slug: string }>;
+}) {
   return (
     <div className="relative w-full">
       <Suspense fallback={<ProductDetailsSkeleton />}>

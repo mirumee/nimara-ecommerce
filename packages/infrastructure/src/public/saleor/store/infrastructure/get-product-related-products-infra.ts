@@ -1,9 +1,10 @@
 import type { RelatedProduct } from "@nimara/domain/objects/Product";
+import { ok } from "@nimara/domain/objects/Result";
 
-import { graphqlClient } from "#root/graphql/client";
+import { graphqlClientV2 } from "#root/graphql/client";
 
 import type { ProductRelatedProductsFragment } from "../graphql/fragments/generated";
-import { ProductRelatedProductsDocument } from "../graphql/queries/generated";
+import { ProductRelatedProductsQueryDocument } from "../graphql/queries/generated";
 import type {
   GetProductRelatedProductsInfra,
   SaleorProductServiceConfig,
@@ -38,35 +39,37 @@ export const getProductRelatedProductsInfra =
     logger,
   }: SaleorProductServiceConfig): GetProductRelatedProductsInfra =>
   async ({ productSlug, options }) => {
-    const { data, error } = await graphqlClient(apiURI).execute(
-      ProductRelatedProductsDocument,
+    const result = await graphqlClientV2(apiURI).execute(
+      ProductRelatedProductsQueryDocument,
       {
         options,
         variables: {
           slug: productSlug,
           channel,
         },
+        operationName: "ProductRelatedProductsQuery",
       },
     );
 
-    if (error) {
-      logger.error("Failed to fetch product related products", {
+    if (!result.ok) {
+      logger.error("Error while fetching product related products", {
         productSlug,
         channel,
-        error,
+        result,
       });
 
-      return { errors: [error], products: null };
+      return result;
     }
 
     const nodes =
-      data?.product?.category?.products?.edges
+      result.data?.product?.category?.products?.edges
         ?.map((edge) => edge?.node)
         ?.filter((node): node is ProductRelatedProductsFragment => !!node)
         ?.filter((node) => node.slug !== productSlug) ?? [];
 
-    return {
-      products: parseRelatedProducts(nodes),
-      errors: [],
-    };
+    if (!nodes) {
+      return ok({ products: null });
+    }
+
+    return ok({ products: parseRelatedProducts(nodes) });
   };

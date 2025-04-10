@@ -1,7 +1,11 @@
-query ProductRelatedProducts($slug: String!, $channel: String!) {
+query ProductRelatedProductsQuery(
+  $slug: String!
+  $channel: String!
+  $relatedProducts: Int = 8
+) {
   product(slug: $slug, channel: $channel) {
     category {
-      products(first: 8, channel: $channel) {
+      products(first: $relatedProducts, channel: $channel) {
         edges {
           node {
             ...ProductRelatedProductsFragment

@@ -1,8 +1,9 @@
 import type { DeepNonNullable, DeepRequired } from "ts-essentials";
 
 import type { ProductAvailability } from "@nimara/domain/objects/Product";
+import { ok } from "@nimara/domain/objects/Result";
 
-import { type FetchOptions, graphqlClient } from "#root/graphql/client";
+import { type FetchOptions, graphqlClientV2 } from "#root/graphql/client";
 
 import type { ProductAvailabilityDetailsFragment } from "../graphql/fragments/generated";
 import { ProductAvailabilityDetailsQueryDocument } from "../graphql/queries/generated";
@@ -59,7 +60,7 @@ export const getProductAvailabilityDetailsInfra =
     // Infra is does not know anything about next.js specific overloads.
     delete (fetchOptions as any)?.next?.revalidate;
 
-    const { data, error } = await graphqlClient(apiURI).execute(
+    const result = await graphqlClientV2(apiURI).execute(
       ProductAvailabilityDetailsQueryDocument,
       {
         options: {
@@ -72,22 +73,25 @@ export const getProductAvailabilityDetailsInfra =
           channel,
           countryCode,
         },
+        operationName: "ProductAvailabilityDetailsQuery",
       },
     );
 
-    if (error) {
+    if (!result.ok) {
       logger.error("Error while fetching product availability", {
-        error,
         productSlug,
         channel,
         countryCode,
+        result,
       });
 
-      return { errors: [error], availability: null };
+      return result;
+    }
+    if (!result.data.product) {
+      return ok({ availability: null });
     }
 
-    return {
-      availability: data?.product ? parseData(data.product) : null,
-      errors: [],
-    };
+    return ok({
+      availability: parseData(result.data.product),
+    });
   };

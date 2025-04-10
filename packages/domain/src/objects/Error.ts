@@ -49,6 +49,14 @@ export const ACCOUNT_ERROR_CODES = [
 export type AccountErrorCode = (typeof ACCOUNT_ERROR_CODES)[number];
 
 /**
+ * @description Error codes related to checkout.
+ */
+export const CHECKOUT_ERROR_CODES = [
+  "NOT_AVAILABLE_ERROR",
+] as const satisfies ErrorCodeFormat[];
+export type CheckoutErrorCode = (typeof CHECKOUT_ERROR_CODES)[number];
+
+/**
  * ErrorCode
  * @description Union type of all error codes.
  */
@@ -56,6 +64,7 @@ export type ErrorCode =
   | AuthErrorCode
   | HTTPErrorCode
   | AccountErrorCode
+  | CheckoutErrorCode
   | "INPUT_ERROR";
 
 /**

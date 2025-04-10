@@ -8,7 +8,7 @@ import { RelatedProducts } from "./related-products";
 export const RelatedProductsContainer = async ({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 }) => {
   const { slug } = await params;
 
@@ -22,9 +22,7 @@ export const RelatedProductsContainer = async ({
     logger: storefrontLogger,
   };
 
-  const { products } = await storeService(
-    serviceOpts,
-  ).getProductRelatedProducts({
+  const result = await storeService(serviceOpts).getProductRelatedProducts({
     productSlug: slug,
     options: {
       next: {
@@ -33,9 +31,9 @@ export const RelatedProductsContainer = async ({
     },
   });
 
-  if (!products?.length) {
+  if (!result?.data?.products?.length) {
     return null;
   }
 
-  return <RelatedProducts products={products} />;
+  return <RelatedProducts products={result.data.products} />;
 };

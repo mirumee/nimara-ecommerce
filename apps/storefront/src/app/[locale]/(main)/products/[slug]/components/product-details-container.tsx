@@ -14,7 +14,7 @@ import { ProductDetails } from "./product-details";
 export const ProductDetailsContainer = async ({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 }) => {
   const { slug } = await params;
 

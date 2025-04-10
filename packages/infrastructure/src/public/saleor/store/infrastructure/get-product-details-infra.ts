@@ -1,8 +1,9 @@
 import type { DeepNonNullable, DeepRequired } from "ts-essentials";
 
 import type { Product } from "@nimara/domain/objects/Product";
+import { ok } from "@nimara/domain/objects/Result";
 
-import { graphqlClient } from "#root/graphql/client";
+import { graphqlClientV2 } from "#root/graphql/client";
 import { getTranslation } from "#root/lib/saleor";
 import { parseAttributeData } from "#root/lib/serializers/attribute";
 
@@ -62,7 +63,7 @@ export const getProductDetailsInfra =
     logger,
   }: SaleorProductServiceConfig): GetProductDetailsInfra =>
   async ({ productSlug, customMediaFormat, options }) => {
-    const { data, error } = await graphqlClient(apiURI).execute(
+    const result = await graphqlClientV2(apiURI).execute(
       ProductDetailsQueryDocument,
       {
         options,
@@ -73,21 +74,24 @@ export const getProductDetailsInfra =
           mediaFormat: customMediaFormat ?? IMAGE_FORMAT,
           mediaSize: IMAGE_SIZES.productDetail,
         },
+        operationName: "ProductDetailsQuery",
       },
     );
 
-    if (error) {
-      logger.error("Failed to fetch the product details", {
+    if (!result.ok) {
+      logger.error("Error while fetching the product details", {
         productSlug,
         channel,
-        error,
+        result,
       });
 
-      return { errors: [error], product: null };
+      return result;
+    }
+    if (!result.data.product) {
+      return ok({ product: null });
     }
 
-    return {
-      product: data?.product ? parseData(data.product) : null,
-      errors: [],
-    };
+    return ok({
+      product: parseData(result.data.product),
+    });
   };

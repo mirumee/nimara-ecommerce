@@ -236,6 +236,7 @@
     "HTTP_ERROR": "HTTP error occurred.",
     "INPUT_ERROR": "Input error.",
     "NOT_FOUND_ERROR": "Not found",
+    "NOT_AVAILABLE_ERROR": "Product not available",
     "PASSWORD_CHANGE_ERROR": "Password change failed.",
     "TOO_MANY_REQUESTS_ERROR": "Too many requests. Please try again later.",
     "UNEXPECTED_HTTP_ERROR": "Unexpected error occurred.",

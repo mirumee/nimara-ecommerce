@@ -1,8 +1,9 @@
 import type { DeepNonNullable, DeepRequired } from "ts-essentials";
 
 import type { ProductBase } from "@nimara/domain/objects/Product";
+import { ok } from "@nimara/domain/objects/Result";
 
-import { graphqlClient } from "#root/graphql/client";
+import { graphqlClientV2 } from "#root/graphql/client";
 import { getTranslation } from "#root/lib/saleor";
 
 import type { ProductBaseFragment } from "../graphql/fragments/generated";
@@ -29,7 +30,7 @@ export const getProductBaseInfra =
     logger,
   }: SaleorStoreServiceConfig): GetProductBaseInfra =>
   async ({ productSlug, options }) => {
-    const { data, error } = await graphqlClient(apiURI).execute(
+    const result = await graphqlClientV2(apiURI).execute(
       ProductBaseQueryDocument,
       {
         options,
@@ -38,21 +39,23 @@ export const getProductBaseInfra =
           channel,
           languageCode,
         },
+        operationName: "ProductBaseQuery",
       },
     );
 
-    if (error) {
-      logger.error("Failed to fetch the basic product details", {
+    if (!result.ok) {
+      logger.error("Error while fetching the basic product details", {
         productSlug,
         channel,
-        error,
+        result,
       });
 
-      return { errors: [error], product: null };
+      return result;
     }
 
-    return {
-      product: data?.product ? parseData(data.product) : null,
-      errors: [],
-    };
+    if (!result.data.product) {
+      return ok({ product: null });
+    }
+
+    return ok({ product: parseData(result.data.product) });
   };

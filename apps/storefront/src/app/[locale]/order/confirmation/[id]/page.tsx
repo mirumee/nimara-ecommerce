@@ -19,7 +19,7 @@ export default async function Page({
   params,
   searchParams,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: string; locale: string }>;
   searchParams: Promise<{ [QUERY_PARAMS.orderPlaced]: string }>;
 }) {
   const t = await getTranslations();

@@ -9,7 +9,7 @@ import { getCurrentRegion } from "@/regions/server";
 import { cmsPageService } from "@/services/cms";
 
 export async function generateMetadata(props: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 }): Promise<Metadata> {
   const params = await props.params;
 
@@ -34,7 +34,7 @@ export async function generateMetadata(props: {
 }
 
 export default async function Page(props: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 }) {
   const params = await props.params;
 
