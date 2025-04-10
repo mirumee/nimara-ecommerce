@@ -1,4 +1,3 @@
-import { type AccountError } from "./Error";
 import { type Metadata } from "./Metadata";
 
 export interface User {
@@ -11,6 +10,5 @@ export interface User {
 }
 
 export interface RefreshToken {
-  errors: AccountError[];
-  token: string | null;
+  refreshToken: string;
 }

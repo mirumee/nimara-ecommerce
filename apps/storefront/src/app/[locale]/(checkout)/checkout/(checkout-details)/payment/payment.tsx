@@ -51,7 +51,7 @@ import {
 export type TabName = "new" | "saved";
 
 type PaymentProps = {
-  addressFormRows: AddressFormRow[];
+  addressFormRows: readonly AddressFormRow[];
   checkout: Checkout;
   countries: Omit<CountryDisplay, "vat">[];
   countryCode: CountryCode;

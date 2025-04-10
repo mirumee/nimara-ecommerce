@@ -26,13 +26,17 @@ export const saleorAccountSetDefaultAddressInfra =
     );
 
     if (!result.ok) {
-      logger.error("Error while setting default address", { result });
+      logger.error("Error while setting default address", {
+        error: result.error,
+      });
 
       return result;
     }
 
     if (result.data.accountSetDefaultAddress?.errors.length) {
-      logger.error("Error while setting default address", { result });
+      logger.error("Error while setting default address", {
+        error: result.data.accountSetDefaultAddress.errors,
+      });
 
       return err({
         code: "ADDRESS_SET_DEFAULT_ERROR",

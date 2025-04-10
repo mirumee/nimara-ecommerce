@@ -1,1 +1,4 @@
-turbo run lint:staged
+# Limit the maximum concurrency for lint:staged task execution.
+# Must be an integer greater than or equal to 1 or a percentage value like 50%.
+# docs: https://turbo.build/docs/reference/run#--concurrency-number--percentage
+turbo run lint:staged --concurrency 1

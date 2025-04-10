@@ -1,6 +1,6 @@
-import { type BaseError } from "@nimara/domain/objects/Error";
+import { ok } from "@nimara/domain/objects/Result";
 
-import { graphqlClient } from "#root/graphql/client";
+import { graphqlClientV2 } from "#root/graphql/client";
 
 import { UserAddressesQueryDocument } from "../graphql/queries/generated";
 import type { AddressesGetInfra, SaleorUserServiceConfig } from "../types";
@@ -11,18 +11,21 @@ export const saleorAddressesGetInfra =
     if (skip || !accessToken) {
       logger.debug("Fetch of user addresses skipped.");
 
-      return [];
+      return ok([]);
     }
 
-    const { data, error } = await graphqlClient(apiURL, accessToken).execute(
+    const result = await graphqlClientV2(apiURL, accessToken).execute(
       UserAddressesQueryDocument,
+      {
+        operationName: "UserAddressesQuery",
+      },
     );
 
-    if (!data?.me?.addresses || error) {
-      logger.error("Failed to fetch user addresses", error as BaseError);
+    if (!result.ok) {
+      logger.error("Failed to fetch user addresses", { error: result.error });
 
-      return null;
+      return result;
     }
 
-    return data.me.addresses;
+    return ok(result.data.me?.addresses ?? []);
   };

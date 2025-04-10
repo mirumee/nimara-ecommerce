@@ -116,11 +116,11 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
                               <div className="text-lg font-medium leading-none group-hover:underline">
                                 {child.label}
                               </div>
-                              <div className="text-sm leading-snug text-muted-foreground">
+                              <div className="overflow-hidden text-sm leading-snug text-muted-foreground">
                                 {child.description &&
                                 isValidJson(child.description) ? (
                                   <RichText
-                                    className="py-1"
+                                    className="line-clamp-3 max-h-[4.5em] overflow-hidden py-1"
                                     jsonStringData={child.description}
                                   />
                                 ) : (

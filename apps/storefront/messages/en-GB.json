@@ -124,6 +124,9 @@
     "free-30-days": "Free 30 days return policy",
     "you-may-also-like": "You may also like"
   },
+  "collections": {
+    "associated-products": "Associated products"
+  },
   "address": {
     "companyName": "Company name",
     "phone": "Phone",
@@ -222,6 +225,8 @@
     "QUANTITY_GREATER_THAN_LIMIT": "Sorry, the maximum quantity you can order has been reached."
   },
   "errors": {
+    "ACCOUNT_REGISTER_ERROR": "Account registration failed.",
+    "ACCOUNT_CONFIRM_ERROR": "Account confirmation failed.",
     "ACCESS_TOKEN_NOT_FOUND_ERROR": "Access token not found.",
     "ACCOUNT_CREATE_ERROR": "Account creation failed.",
     "ACCOUNT_DELETE_ERROR": "Account deletion failed.",
@@ -231,14 +236,19 @@
     "ADDRESS_DELETE_ERROR": "Address deletion failed.",
     "ADDRESS_SET_DEFAULT_ERROR": "Cannot set address as default.",
     "ADDRESS_UPDATE_ERROR": "Address update failed.",
+    "COUNTRIES_NOT_FOUND_ERROR": "Countries not found.",
     "EMAIL_CHANGE_CONFIRMATION_ERROR": "Email change confirmation failed.",
     "EMAIL_CHANGE_REQUEST_ERROR": "Email change request failed.",
     "HTTP_ERROR": "HTTP error occurred.",
     "INPUT_ERROR": "Input error.",
+    "MISSING_ADDRESS_DATA_ERROR": "No address data returned.",
     "NOT_FOUND_ERROR": "Not found",
     "NOT_AVAILABLE_ERROR": "Product not available",
     "PASSWORD_CHANGE_ERROR": "Password change failed.",
+    "PASSWORD_CHANGE_REQUEST_ERROR": "An error occurred while sending the email.",
+    "PASSWORD_SET_ERROR": "Failed to set password.",
     "TOO_MANY_REQUESTS_ERROR": "Too many requests. Please try again later.",
+    "TOKEN_REFRESH_ERROR": "Failed to refresh token.",
     "UNEXPECTED_HTTP_ERROR": "Unexpected error occurred.",
     "payment": {
       "default": "Something went wrong with the payment. Please try again or <link>contact with us</link>."

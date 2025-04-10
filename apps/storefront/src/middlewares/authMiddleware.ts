@@ -52,23 +52,26 @@ export function authMiddleware(middleware: CustomMiddleware) {
       return middleware(request, event, modifiedResponse);
     }
 
-    const { token: refreshedAccessToken } = await authService.tokenRefresh({
+    const resultTokenRefresh = await authService.tokenRefresh({
       refreshToken,
     });
 
-    if (!refreshedAccessToken) {
+    if (!resultTokenRefresh.ok || !resultTokenRefresh.data.refreshToken) {
       modifiedResponse = redirectToLogin;
-
       modifiedResponse.cookies.delete(COOKIE_KEY.accessToken);
       modifiedResponse.cookies.delete(COOKIE_KEY.refreshToken);
 
       return middleware(request, event, modifiedResponse);
     }
 
-    modifiedResponse.cookies.set(COOKIE_KEY.accessToken, refreshedAccessToken, {
-      httpOnly: true,
-      sameSite: "strict",
-    });
+    modifiedResponse.cookies.set(
+      COOKIE_KEY.accessToken,
+      resultTokenRefresh.data.refreshToken,
+      {
+        httpOnly: true,
+        sameSite: "strict",
+      },
+    );
 
     return middleware(request, event, response);
   };

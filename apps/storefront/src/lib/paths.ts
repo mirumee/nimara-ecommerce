@@ -98,6 +98,9 @@ export const paths = {
   products: {
     ...url<"slug">("/products/[slug]"),
   },
+  collections: {
+    ...url<"slug">("/collections/[slug]"),
+  },
   checkout: {
     ...url("/checkout"),
     signIn: url("/checkout/sign-in"),

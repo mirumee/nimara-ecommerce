@@ -39,44 +39,57 @@ export default async function Page(props: { searchParams: SearchParams }) {
     step: "shipping-address",
   });
 
-  const addresses = await userService.addressesGet({
-    variables: { accessToken },
-    skip: !user,
-  });
+  const [resultUserAddresses, resultCountries] = await Promise.all([
+    userService.addressesGet({
+      variables: { accessToken },
+      skip: !user,
+    }),
+    addressService.countriesGet({
+      channelSlug: region.market.channel,
+    }),
+  ]);
 
-  const { countries } = await addressService.countriesGet({
-    channelSlug: region.market.channel,
-  });
-  const formattedAddresses = await Promise.all(
-    addresses?.map(async (address) => ({
-      ...(await addressService.addressFormat({
-        variables: { address },
-        skip: addresses?.length === 0,
-      })),
-      address,
-    })) ?? [],
+  if (!resultCountries.ok) {
+    throw new Error("No countries.");
+  }
+
+  const savedAddresses = resultUserAddresses.data ?? [];
+  const formattedAddresses =
+    (await Promise.all(
+      savedAddresses.map(async (address) => {
+        const resultFormatAddress = await addressService.addressFormat({
+          variables: { address },
+        });
+
+        if (!resultFormatAddress.ok) {
+          throw new Error("No address format.");
+        }
+
+        return {
+          ...resultFormatAddress.data,
+          address,
+        };
+      }),
+    )) ?? [];
+
+  const supportedCountryCodesInChannel = resultCountries.data.map(
+    ({ code }) => code,
   );
-
-  const marketCountryCode = region.market.countryCode;
-  const supportedCountryCodesInChannel = countries?.map(({ code }) => code);
   const sortedAddresses = formattedAddresses
     .filter(({ address: { country } }) =>
       supportedCountryCodesInChannel?.includes(country.code),
     )
     .sort((a, _) => (a.address.isDefaultShippingAddress ? -1 : 0));
 
-  if (!countries) {
-    throw new Error("No countries.");
-  }
-
+  const { countryCode: defaultCountryCode } = region.market;
   const countryCode = (() => {
-    const defaultCountryCode = marketCountryCode;
     const paramsCountryCode = searchParams.country;
 
     if (!paramsCountryCode) {
       return defaultCountryCode;
     }
-    const isValidCountryCode = countries.some(
+
+    const isValidCountryCode = resultCountries.data.some(
       (country) => country.code === paramsCountryCode,
     );
 
@@ -87,11 +100,11 @@ export default async function Page(props: { searchParams: SearchParams }) {
     return paramsCountryCode;
   })() as CountryCode;
 
-  const { addressFormRows } = await addressService.addressFormGetRows({
+  const resultAddressRows = await addressService.addressFormGetRows({
     countryCode,
   });
 
-  if (!addressFormRows) {
+  if (!resultAddressRows.ok) {
     throw new Error("No address form rows.");
   }
 
@@ -102,16 +115,16 @@ export default async function Page(props: { searchParams: SearchParams }) {
         <AddressTab
           checkout={checkout}
           countryCode={countryCode}
-          countries={countries}
-          addressFormRows={addressFormRows}
+          countries={resultCountries.data}
+          addressFormRows={resultAddressRows.data}
           addresses={sortedAddresses}
         />
       ) : (
         <ShippingAddressForm
           checkout={checkout}
           countryCode={countryCode}
-          countries={countries}
-          addressFormRows={addressFormRows}
+          countries={resultCountries.data}
+          addressFormRows={resultAddressRows.data}
         />
       )}
       <DeliveryMethodSection checkout={checkout} />

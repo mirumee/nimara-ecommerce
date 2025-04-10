@@ -31,7 +31,7 @@ const createMenuItemUrl = (
   }
 
   if (collection?.slug) {
-    queryParams.append("collection", collection.slug);
+    return `${baseUrl}/collections/${collection.slug}`;
   }
 
   return `${baseUrl}/search?${queryParams.toString()}`;

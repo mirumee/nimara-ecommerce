@@ -20,13 +20,17 @@ export const saleorAccountRequestDeletionInfra =
     );
 
     if (!result.ok) {
-      logger.error("Error while requesting account deletion", { result });
+      logger.error("Error while requesting account deletion", {
+        error: result.error,
+      });
 
       return result;
     }
 
     if (result.data.accountRequestDeletion?.errors.length) {
-      logger.error("Error while requesting account deletion", { result });
+      logger.error("Error while requesting account deletion", {
+        error: result.data.accountRequestDeletion.errors,
+      });
 
       return err({
         code: "ACCOUNT_REQUEST_DELETION_ERROR",

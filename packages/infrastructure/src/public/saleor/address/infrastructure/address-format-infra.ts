@@ -1,7 +1,7 @@
 import type { CountryCode } from "@nimara/codegen/schema";
-import type { BaseError } from "@nimara/domain/objects/Error";
+import { err, ok } from "@nimara/domain/objects/Result";
 
-import { graphqlClient } from "#root/graphql/client";
+import { graphqlClientV2 } from "#root/graphql/client";
 import type {
   AddressFormatInfra,
   SaleorAddressServiceConfig,
@@ -10,50 +10,45 @@ import type {
 import { formatAddress } from "../address-form/format-address";
 import { AddressValidationRulesQueryDocument } from "../graphql/queries/generated";
 
-export const saleorAddressFormatInfra = ({
-  apiURL,
-  logger,
-}: SaleorAddressServiceConfig): AddressFormatInfra => {
-  return async ({ variables: { address }, skip = false }) => {
+export const saleorAddressFormatInfra =
+  ({ apiURL, logger }: SaleorAddressServiceConfig): AddressFormatInfra =>
+  async ({ variables: { address }, skip = false }) => {
     if (skip) {
-      return {
-        isSuccess: true,
-        formattedAddress: [],
-      };
+      logger.debug("Skipping the address format.");
+
+      return ok({ formattedAddress: [] });
     }
 
-    const { data, error } = await graphqlClient(apiURL).execute(
+    const result = await graphqlClientV2(apiURL).execute(
       AddressValidationRulesQueryDocument,
       {
         variables: {
           countryCode: address.country.code as CountryCode,
         },
+        operationName: "AddressValidationRulesQuery",
       },
     );
 
-    if (error) {
-      logger.error("Failed to validate addresses format", error as BaseError);
+    if (!result.ok) {
+      logger.error("Failed to validate addresses format", {
+        error: result.error,
+      });
 
-      return {
-        isSuccess: false,
-        errors: [error as BaseError],
-      };
+      return result;
     }
 
-    if (!data) {
-      throw new Error("No data returned from Saleor");
+    if (!result.data.addressValidationRules) {
+      logger.error("No data returned from Saleor.", { error: result.data });
+
+      return err({
+        code: "MISSING_ADDRESS_DATA_ERROR",
+      });
     }
 
-    if (!data.addressValidationRules) {
-      throw new Error("No data returned from Saleor");
-    }
+    const formattedAddress = formatAddress({
+      addressValidationRules: result.data.addressValidationRules,
+      address,
+    });
 
-    return {
-      isSuccess: true,
-      formattedAddress: formatAddress({
-        addressValidationRules: data.addressValidationRules,
-        address,
-      }),
-    };
+    return ok({ formattedAddress });
   };
-};
