@@ -47,7 +47,7 @@ export const getCollectionDetailsInfra =
 
       if (!result.ok) {
         logger.error("Failed to fetch collection from Saleor", {
-          result,
+          error: result.error,
         });
 
         return result;

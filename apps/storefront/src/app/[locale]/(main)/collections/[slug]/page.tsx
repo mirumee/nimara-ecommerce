@@ -19,6 +19,7 @@ type SearchParams = Promise<{
 }>;
 
 type Params = Promise<{
+  locale: string;
   slug: string;
 }>;
 
