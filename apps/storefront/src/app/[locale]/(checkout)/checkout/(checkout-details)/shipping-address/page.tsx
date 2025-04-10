@@ -39,7 +39,7 @@ export default async function Page(props: { searchParams: SearchParams }) {
     step: "shipping-address",
   });
 
-  const [resultAddresses, resultCountries] = await Promise.all([
+  const [resultUserAddresses, resultCountries] = await Promise.all([
     userService.addressesGet({
       variables: { accessToken },
       skip: !user,
@@ -53,7 +53,7 @@ export default async function Page(props: { searchParams: SearchParams }) {
     throw new Error("No countries.");
   }
 
-  const savedAddresses = resultAddresses.data ?? [];
+  const savedAddresses = resultUserAddresses.data ?? [];
   const formattedAddresses =
     (await Promise.all(
       savedAddresses.map(async (address) => {

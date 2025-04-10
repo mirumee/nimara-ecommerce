@@ -69,7 +69,7 @@ export default async function Page(props: { searchParams: SearchParams }) {
     return paramsCountryCode;
   })() as CountryCode;
 
-  const [resultAddress, resultAddressRows] = await Promise.all([
+  const [resultUserAddresses, resultAddressRows] = await Promise.all([
     userService.addressesGet({ variables: { accessToken }, skip: !user }),
     addressService.addressFormGetRows({
       countryCode,
@@ -80,7 +80,7 @@ export default async function Page(props: { searchParams: SearchParams }) {
     throw new Error("No address form rows.");
   }
 
-  const savedAddresses = resultAddress.data ?? [];
+  const savedAddresses = resultUserAddresses.data ?? [];
   const formattedAddresses =
     (await Promise.all(
       savedAddresses.map(async (address) => {

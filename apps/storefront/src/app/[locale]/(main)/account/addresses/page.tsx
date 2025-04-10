@@ -18,13 +18,13 @@ export default async function Page(props: {
 }) {
   const searchParams = await props.searchParams;
   const accessToken = await getAccessToken();
-  const [t, region, resultAddresses] = await Promise.all([
+  const [t, region, resultUserAddresses] = await Promise.all([
     getTranslations(),
     getCurrentRegion(),
     userService.addressesGet({ variables: { accessToken } }),
   ]);
 
-  const savedAddresses = resultAddresses.data ?? [];
+  const savedAddresses = resultUserAddresses.data ?? [];
   const formattedAddresses =
     (await Promise.all(
       savedAddresses.map(async (address) => {
@@ -59,7 +59,7 @@ export default async function Page(props: {
   });
 
   const sortedAddresses = [...defaultAddresses, ...rest];
-  const noAddresses = !resultAddresses.data?.length;
+  const noAddresses = !resultUserAddresses.data?.length;
 
   function getDefaultAddressLabel({
     isDefaultBillingAddress,
