@@ -21,18 +21,14 @@ export default async function ConfirmAccountRegistrationPage(props: {
     return t("auth.confirm-missing-token");
   }
 
-  const data = await authService.confirmAccount(searchParams);
+  const result = await authService.confirmAccount(searchParams);
 
-  if (data.isSuccess) {
-    redirect({
-      href: paths.signIn.asPath({ query: { confirmationSuccess: "true" } }),
-      locale,
-    });
-  }
-
-  if ("errors" in data) {
+  if (!result.ok) {
     return t("auth.confirm-account-fail");
   }
 
-  return t("errors.UNEXPECTED_HTTP_ERROR");
+  redirect({
+    href: paths.signIn.asPath({ query: { confirmationSuccess: "true" } }),
+    locale,
+  });
 }

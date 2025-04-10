@@ -1,6 +1,6 @@
-import { type BaseError } from "@nimara/domain/objects/Error";
+import { err, ok } from "@nimara/domain/objects/Result";
 
-import { graphqlClient } from "#root/graphql/client";
+import { graphqlClientV2 } from "#root/graphql/client";
 
 import { ConfirmAccountMutationDocument } from "../graphql/mutations/generated";
 import type { ConfirmAccountInfra, SaleorAuthServiceConfig } from "../types";
@@ -8,38 +8,26 @@ import type { ConfirmAccountInfra, SaleorAuthServiceConfig } from "../types";
 export const saleorConfirmAccountInfra =
   ({ apiURL, logger }: SaleorAuthServiceConfig): ConfirmAccountInfra =>
   async ({ email, token }) => {
-    const { data, error } = await graphqlClient(apiURL).execute(
+    const result = await graphqlClientV2(apiURL).execute(
       ConfirmAccountMutationDocument,
-      { variables: { email, token } },
+      { variables: { email, token }, operationName: "ConfirmAccountMutation" },
     );
 
-    if (error) {
-      // TODO: Move the logging service from infra to use-case after refactor
-      logger.error("Server error: failed to confirm the account", {
-        email,
-        error,
-      });
+    if (!result.ok) {
+      logger.error("Failed to confirm account.", { error: result.error });
 
-      return {
-        isSuccess: false,
-        serverError: error as BaseError,
-      };
+      return result;
     }
 
-    if (data?.confirmAccount?.errors.length) {
-      // TODO: Move the logging service from infra to use-case after refactor
-      logger.error("Graphql error: failed to confirm the account", {
-        email,
-        errors: data.confirmAccount.errors,
+    if (result.data.confirmAccount?.errors.length) {
+      logger.error("Confirm account mutation returned errors.", {
+        error: result.data.confirmAccount.errors,
       });
 
-      return {
-        isSuccess: false,
-        errors: data.confirmAccount.errors,
-      };
+      return err({
+        code: "ACCOUNT_CONFIRM_ERROR",
+      });
     }
 
-    return {
-      isSuccess: true,
-    };
+    return ok({ success: true });
   };

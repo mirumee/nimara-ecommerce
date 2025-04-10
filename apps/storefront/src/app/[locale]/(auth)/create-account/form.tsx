@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 
+import { type Maybe } from "@nimara/codegen/schema";
 import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
 import { Spinner } from "@nimara/ui/components/spinner";
@@ -37,17 +38,29 @@ export function SignUpForm() {
   const isDisabled = isRedirecting || form.formState?.isSubmitting;
 
   async function handleSubmit(values: FormSchema) {
-    const data = await registerAccount(values);
+    const result = await registerAccount(values);
 
-    if (data?.errors?.length) {
-      const field = data?.errors?.[0]
-        ?.field as TranslationMessage<"errors.auth">;
-
-      form.setError("email", { message: t(`errors.auth.${field}`) });
+    if (result.ok) {
+      push(paths.createAccount.asPath({ query: { success: "true" } }));
 
       return;
     }
-    push(paths.createAccount.asPath({ query: { success: "true" } }));
+
+    if (result.error.field) {
+      const field = result.error.field as Maybe<
+        TranslationMessage<"errors.auth">
+      >;
+
+      if (field) {
+        form.setError("email", { message: t(`errors.auth.${field}`) });
+      } else {
+        form.setError("email", {
+          message: t(`errors.${result.error.code}`),
+        });
+      }
+    }
+
+    return;
   }
 
   return (

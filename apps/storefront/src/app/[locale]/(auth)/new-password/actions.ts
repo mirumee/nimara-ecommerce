@@ -13,11 +13,13 @@ export async function setPassword({ password }: FormSchema) {
   const email = searchParams.get("email") ?? "";
   const token = searchParams.get("token") ?? "";
 
-  const data = await authService.passwordSet({ email, password, token });
+  const result = await authService.passwordSet({ email, password, token });
 
-  revalidatePath(paths.newPassword.asPath());
+  if (result.ok) {
+    revalidatePath(paths.newPassword.asPath());
+  }
 
-  const redirectUrl = data?.errors.length
+  const redirectUrl = !result.ok
     ? paths.newPassword.asPath({ query: { error: "true" } })
     : paths.signIn.asPath({ query: { hasPasswordChanged: "true" } });
 

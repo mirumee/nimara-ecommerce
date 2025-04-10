@@ -1,7 +1,7 @@
 import type { CountryCode } from "@nimara/codegen/schema";
 import type { Address } from "@nimara/domain/objects/Address";
 import type { AddressFormRow } from "@nimara/domain/objects/AddressForm";
-import type { BaseError } from "@nimara/domain/objects/Error";
+import { type AsyncResult } from "@nimara/domain/objects/Result";
 
 import type { QueryOptions } from "#root/lib/types";
 import { type Logger } from "#root/logging/types";
@@ -17,32 +17,20 @@ export interface SaleorAddressServiceConfig {
   logger: Logger;
 }
 
-export type AddressFormGetRowsInfra = ({
-  countryCode,
-}: {
+export type AddressFormGetRowsInfra = (opts: {
   countryCode: CountryCode;
-}) => Promise<{
-  addressFormRows?: readonly AddressFormRow[] | null;
-  errors?: BaseError[];
-  isSuccess?: boolean;
-}>;
+}) => AsyncResult<readonly AddressFormRow[]>;
 
 export type AddressFormGetRowsUseCase = AddressFormGetRowsInfra;
 
 export type AddressFormatInfra = (
   opts: { variables: { address: Address } } & QueryOptions,
-) => Promise<{
-  errors?: BaseError[];
-  formattedAddress?: string[] | null;
-  isSuccess?: boolean;
-}>;
+) => AsyncResult<{ formattedAddress: string[] }>;
 
 export type AddressFormatUseCase = AddressFormatInfra;
 
-export type CountriesGetInfra = (opts: { channelSlug: string }) => Promise<{
-  countries?: { code: string; country: string }[];
-  errors?: BaseError[];
-  isSuccess?: boolean;
-}>;
+export type CountriesGetInfra = (opts: {
+  channelSlug: string;
+}) => AsyncResult<{ code: string; country: string }[]>;
 
 export type CountriesGetUseCase = CountriesGetInfra;

@@ -14,13 +14,15 @@ export const saleorAccountDeleteInfra =
     );
 
     if (!result.ok) {
-      logger.error("Error while deleting an account", { result });
+      logger.error("Error while deleting an account", { error: result.error });
 
       return result;
     }
 
-    if (!!result.data.accountDelete?.errors.length) {
-      logger.error("Error while deleting an account", { result });
+    if (result.data.accountDelete?.errors.length) {
+      logger.error("Error while deleting an account", {
+        error: result.data.accountDelete.errors,
+      });
 
       return err({
         code: "ACCOUNT_DELETE_ERROR",

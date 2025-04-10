@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { getLocale } from "next-intl/server";
 
 import { type Address } from "@nimara/domain/objects/Address";
+import { type OkResult } from "@nimara/domain/objects/Result";
 
 import { COOKIE_KEY } from "@/config";
 import { redirect } from "@/i18n/routing";
@@ -36,6 +37,6 @@ export const getCheckoutOrRedirect = async (): Promise<
   return checkout;
 };
 
-export type FormattedAddress = Awaited<
-  ReturnType<typeof addressService.addressFormat>
+export type FormattedAddress = OkResult<
+  Awaited<ReturnType<typeof addressService.addressFormat>>
 > & { address: Address };

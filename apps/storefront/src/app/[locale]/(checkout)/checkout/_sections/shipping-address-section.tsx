@@ -28,11 +28,13 @@ export async function ShippingAddressSection({
     );
   }
 
-  const { formattedAddress } = await addressService.addressFormat({
-    variables: { address: checkout.shippingAddress },
+  const { shippingAddress } = checkout;
+
+  const result = await addressService.addressFormat({
+    variables: { address: shippingAddress },
   });
 
-  if (!formattedAddress) {
+  if (!result.ok) {
     throw new Error("No address form rows.");
   }
 
@@ -42,12 +44,12 @@ export async function ShippingAddressSection({
         <h3 className="scroll-m-20 text-2xl tracking-tight">{t("title")}</h3>
         <div className="text-sm leading-5 text-stone-900">
           {displayFormattedAddressLines({
-            addressId: checkout?.shippingAddress.id,
-            formattedAddress,
+            addressId: shippingAddress.id,
+            formattedAddress: result.data.formattedAddress,
           })}
         </div>
       </div>
-      {checkout.shippingAddress && (
+      {shippingAddress && (
         <Link href={paths.checkout.shippingAddress.asPath()}>
           <Button variant="outline">{tc("edit")}</Button>
         </Link>

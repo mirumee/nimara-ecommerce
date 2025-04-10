@@ -1,4 +1,4 @@
-import { type CountryCode, parsePhoneNumber } from "libphonenumber-js";
+import { type CountryCode, parsePhoneNumberWithError } from "libphonenumber-js";
 
 import type { Address } from "@nimara/domain/objects/Address";
 
@@ -13,16 +13,12 @@ export const formatAddress = ({
   address: Address;
   addressValidationRules: AddressValidationRulesQuery_addressValidationRules_AddressValidationData;
 }) => {
-  if (!addressValidationRules) {
-    return null;
-  }
-
   const name = address.firstName
     ? `${address.firstName} ${address.lastName}`
     : address.lastName;
   const hasName = address.firstName || address.lastName;
   const formattedPhone = address?.phone
-    ? (parsePhoneNumber(
+    ? (parsePhoneNumberWithError(
         address.phone,
         address.country.code as CountryCode,
       )?.formatInternational() ?? "")
