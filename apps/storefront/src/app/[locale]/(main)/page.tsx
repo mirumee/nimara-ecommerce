@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { Suspense } from "react";
 
 import { PageType } from "@nimara/domain/objects/CMSPage";
 
@@ -12,7 +13,10 @@ import { cmsPageService } from "@/services/cms";
 
 import { AccountNotifications } from "./_components/account-notifications";
 import { HeroBanner } from "./_components/hero-banner";
-import { ProductsGrid } from "./_components/products-grid";
+import {
+  ProductsGrid,
+  ProductsGridSkeleton,
+} from "./_components/products-grid";
 
 export async function generateMetadata(_params: {
   params: Promise<{}>;
@@ -59,7 +63,9 @@ export default async function Page() {
   return (
     <section className="grid w-full content-start">
       <HeroBanner fields={page?.fields} />
-      <ProductsGrid fields={page?.fields} />
+      <Suspense fallback={<ProductsGridSkeleton />}>
+        <ProductsGrid fields={page?.fields} />
+      </Suspense>
       <div>
         <AccountNotifications user={user} />
       </div>
