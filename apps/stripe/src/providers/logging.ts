@@ -1,8 +1,3 @@
-import {
-  getLoggingService,
-  type loggingService,
-} from "@nimara/infrastructure/logging/service";
+import { getLogger } from "@nimara/infrastructure/logging/service";
 
-export const getLoggingProvider = () => getLoggingService({ name: "stripe" });
-
-export type Logger = typeof loggingService;
+export const getLoggingProvider = () => getLogger({ name: "stripe" });

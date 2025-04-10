@@ -11,11 +11,13 @@ import type {
 } from "@nimara/domain/objects/Product";
 
 import type { FetchOptions } from "#root/graphql/client";
+import { type Logger } from "#root/logging/types";
 
 export type SaleorStoreServiceConfig = {
   apiURI: string;
   channel: string;
   languageCode: LanguageCodeEnum;
+  logger: Logger;
 };
 
 export type SaleorProductServiceConfig = SaleorStoreServiceConfig & {

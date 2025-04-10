@@ -1,5 +1,7 @@
 import { describe, expect, it, type Mock, vi } from "vitest";
 
+import { type Logger } from "@nimara/infrastructure/logging/types";
+
 import { responseError } from "@/lib/api/util";
 import { MagicMock } from "@/lib/test/mock";
 import * as logging from "@/providers/logging";
@@ -28,7 +30,7 @@ describe("api", () => {
       const loggerSpy = MagicMock<{ info: Mock }>();
 
       vi.spyOn(logging, "getLoggingProvider").mockImplementation(
-        () => loggerSpy as unknown as logging.Logger,
+        () => loggerSpy as unknown as Logger,
       );
 
       (verifySaleorWebhookSignature as Mock).mockResolvedValue({
@@ -59,7 +61,7 @@ describe("api", () => {
       const loggerSpy = MagicMock<{ info: Mock }>();
 
       vi.spyOn(logging, "getLoggingProvider").mockImplementation(
-        () => loggerSpy as unknown as logging.Logger,
+        () => loggerSpy as unknown as Logger,
       );
       (verifySaleorWebhookSignature as Mock).mockResolvedValue({
         headers: null,

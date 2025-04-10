@@ -27,7 +27,7 @@ export type UserAddressesQueryVariables = Types.Exact<{ [key: string]: never; }>
 
 export type UserAddressesQuery = UserAddressesQuery_Query;
 
-export type UserFindQuery_user_User = { email: string };
+export type UserFindQuery_user_User = { id: string, email: string };
 
 export type UserFindQuery_Query = { user: UserFindQuery_user_User | null };
 
@@ -96,9 +96,13 @@ export class TypedDocumentString<TResult, TVariables>
   implements DocumentTypeDecoration<TResult, TVariables>
 {
   __apiType?: DocumentTypeDecoration<TResult, TVariables>['__apiType'];
+  private value: string;
+  public __meta__?: Record<string, any> | undefined;
 
-  constructor(private value: string, public __meta__?: Record<string, any>) {
+  constructor(value: string, __meta__?: Record<string, any> | undefined) {
     super(value);
+    this.value = value;
+    this.__meta__ = __meta__;
   }
 
   toString(): string & DocumentTypeDecoration<TResult, TVariables> {
@@ -157,6 +161,7 @@ export const UserAddressesQueryDocument = new TypedDocumentString(`
 export const UserFindQueryDocument = new TypedDocumentString(`
     query UserFindQuery($email: String) {
   user(email: $email) {
+    id
     email
   }
 }

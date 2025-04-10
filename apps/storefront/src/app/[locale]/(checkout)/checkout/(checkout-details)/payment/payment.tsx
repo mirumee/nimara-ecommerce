@@ -149,8 +149,6 @@ export const Payment = ({
     !isLoading &&
     (isAddingNewPaymentMethod ? isMounted : hasSelectedPaymentMethod);
 
-  const redirectUrl = `${storeUrl}${paths.payment.confirmation.asPath()}`;
-
   const handlePlaceOrder: SubmitHandler<Schema> = async ({
     paymentMethod,
     sameAsShippingAddress,
@@ -193,6 +191,7 @@ export const Payment = ({
     }
 
     let paymentSecret: Maybe<string> = undefined;
+    const redirectUrl = `${storeUrl}${paths.payment.confirmation.asPath()}`;
 
     /**
      * Using existing payment method requires passing it to the stripe app to

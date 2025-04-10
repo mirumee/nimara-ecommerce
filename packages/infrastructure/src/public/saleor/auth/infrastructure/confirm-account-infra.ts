@@ -1,13 +1,12 @@
 import { type BaseError } from "@nimara/domain/objects/Error";
 
 import { graphqlClient } from "#root/graphql/client";
-import { loggingService } from "#root/logging/service";
 
 import { ConfirmAccountMutationDocument } from "../graphql/mutations/generated";
 import type { ConfirmAccountInfra, SaleorAuthServiceConfig } from "../types";
 
 export const saleorConfirmAccountInfra =
-  ({ apiURL }: SaleorAuthServiceConfig): ConfirmAccountInfra =>
+  ({ apiURL, logger }: SaleorAuthServiceConfig): ConfirmAccountInfra =>
   async ({ email, token }) => {
     const { data, error } = await graphqlClient(apiURL).execute(
       ConfirmAccountMutationDocument,
@@ -16,7 +15,7 @@ export const saleorConfirmAccountInfra =
 
     if (error) {
       // TODO: Move the logging service from infra to use-case after refactor
-      loggingService.error("Server error: failed to confirm the account", {
+      logger.error("Server error: failed to confirm the account", {
         email,
         error,
       });
@@ -29,7 +28,7 @@ export const saleorConfirmAccountInfra =
 
     if (data?.confirmAccount?.errors.length) {
       // TODO: Move the logging service from infra to use-case after refactor
-      loggingService.error("Graphql error: failed to confirm the account", {
+      logger.error("Graphql error: failed to confirm the account", {
         email,
         errors: data.confirmAccount.errors,
       });

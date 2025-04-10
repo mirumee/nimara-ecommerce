@@ -16,8 +16,7 @@ export const getCheckoutOrRedirect = async (): Promise<
   NonNullable<GetCheckout["checkout"]>
 > => {
   const checkoutId = (await cookies()).get(COOKIE_KEY.checkoutId)?.value;
-  const locale = await getLocale();
-  const region = await getCurrentRegion();
+  const [locale, region] = await Promise.all([getLocale(), getCurrentRegion()]);
 
   if (!checkoutId) {
     redirect({ href: paths.cart.asPath(), locale });

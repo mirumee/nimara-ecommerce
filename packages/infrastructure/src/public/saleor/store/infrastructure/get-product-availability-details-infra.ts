@@ -51,6 +51,7 @@ export const getProductAvailabilityDetailsInfra =
     apiURI,
     channel,
     countryCode,
+    logger,
   }: SaleorProductServiceConfig): GetProductAvailabilityDetailsInfra =>
   async ({ productSlug, options }) => {
     const { cache: _, ...fetchOptions }: FetchOptions = { ...options };
@@ -75,6 +76,13 @@ export const getProductAvailabilityDetailsInfra =
     );
 
     if (error) {
+      logger.error("Error while fetching product availability", {
+        error,
+        productSlug,
+        channel,
+        countryCode,
+      });
+
       return { errors: [error], availability: null };
     }
 

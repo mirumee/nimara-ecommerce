@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 
+import { err, ok } from "@nimara/domain/objects/Result";
+
 import { auth, getAccessToken, update } from "@/auth";
 import { paths } from "@/lib/paths";
 import { getStoreUrl } from "@/lib/server";
@@ -22,7 +24,7 @@ export async function updateUserName({
 
   const accessToken = await getAccessToken();
 
-  const data = await userService.accountUpdate({
+  const result = await userService.accountUpdate({
     accountInput: {
       firstName,
       lastName,
@@ -30,19 +32,23 @@ export async function updateUserName({
     accessToken,
   });
 
+  if (!result.ok) {
+    return;
+  }
+
   // TODO: In current version of next-auth v5 this doesn't work yet
   await update({
     ...session,
     user: {
       ...session?.user,
-      firstName: data?.user?.firstName,
-      lastName: data?.user?.lastName,
+      firstName: result.data.firstName,
+      lastName: result.data.lastName,
     },
   });
 
   revalidatePath(paths.account.profile.asPath());
 
-  return data;
+  return result;
 }
 
 export async function updateUserEmail({
@@ -77,18 +83,20 @@ export async function updateUserPassword({
   const accessToken = await getAccessToken();
 
   if (!accessToken) {
-    return { success: false };
+    return err({ code: "ACCESS_TOKEN_NOT_FOUND_ERROR" });
   }
 
-  const data = await userService.passwordChange({
+  const result = await userService.passwordChange({
     accessToken,
     newPassword,
     oldPassword,
   });
 
-  if (data.success) {
-    revalidatePath(paths.account.profile.asPath());
+  if (!result.ok) {
+    return result;
   }
 
-  return data;
+  revalidatePath(paths.account.profile.asPath());
+
+  return ok(true);
 }

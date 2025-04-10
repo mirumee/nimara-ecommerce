@@ -4,7 +4,6 @@ import type { ProductBase } from "@nimara/domain/objects/Product";
 
 import { graphqlClient } from "#root/graphql/client";
 import { getTranslation } from "#root/lib/saleor";
-import { loggingService } from "#root/logging/service";
 
 import type { ProductBaseFragment } from "../graphql/fragments/generated";
 import { ProductBaseQueryDocument } from "../graphql/queries/generated";
@@ -27,6 +26,7 @@ export const getProductBaseInfra =
     apiURI,
     channel,
     languageCode,
+    logger,
   }: SaleorStoreServiceConfig): GetProductBaseInfra =>
   async ({ productSlug, options }) => {
     const { data, error } = await graphqlClient(apiURI).execute(
@@ -42,7 +42,7 @@ export const getProductBaseInfra =
     );
 
     if (error) {
-      loggingService.error("Failed to fetch the basic product details", {
+      logger.error("Failed to fetch the basic product details", {
         productSlug,
         channel,
         error,

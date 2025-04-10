@@ -1,6 +1,7 @@
 import { clientEnvs } from "@/envs/client";
 import { getCurrentRegion } from "@/regions/server";
 import { storeService } from "@/services";
+import { storefrontLogger } from "@/services/logging";
 
 import { RelatedProducts } from "./related-products";
 
@@ -18,6 +19,7 @@ export const RelatedProductsContainer = async ({
     languageCode: region.language.code,
     apiURI: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
     countryCode: region.market.countryCode,
+    logger: storefrontLogger,
   };
 
   const { products } = await storeService(

@@ -5,7 +5,6 @@ import type { Product } from "@nimara/domain/objects/Product";
 import { graphqlClient } from "#root/graphql/client";
 import { getTranslation } from "#root/lib/saleor";
 import { parseAttributeData } from "#root/lib/serializers/attribute";
-import { loggingService } from "#root/logging/service";
 
 import { IMAGE_FORMAT, IMAGE_SIZES } from "../config";
 import type { ProductDetailsFragment } from "../graphql/fragments/generated";
@@ -32,7 +31,6 @@ const parseData = (data: ProductDetailsFragment): Product => {
     images,
 
     attributes: data.attributes.map(parseAttributeData),
-
     variants: variants.map(
       ({
         nonSelectionAttributes,
@@ -61,6 +59,7 @@ export const getProductDetailsInfra =
     apiURI,
     channel,
     languageCode,
+    logger,
   }: SaleorProductServiceConfig): GetProductDetailsInfra =>
   async ({ productSlug, customMediaFormat, options }) => {
     const { data, error } = await graphqlClient(apiURI).execute(
@@ -78,7 +77,7 @@ export const getProductDetailsInfra =
     );
 
     if (error) {
-      loggingService.error("Failed to fetch the product details", {
+      logger.error("Failed to fetch the product details", {
         productSlug,
         channel,
         error,

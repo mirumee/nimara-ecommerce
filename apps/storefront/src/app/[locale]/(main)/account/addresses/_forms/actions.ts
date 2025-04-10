@@ -17,7 +17,7 @@ export async function createNewAddress({
 }: FormSchema) {
   const accessToken = await getAccessToken();
 
-  const newAddress = await userService.accountAddressCreate({
+  const result = await userService.accountAddressCreate({
     input: {
       ...input,
       country: input.country as CountryCode,
@@ -26,11 +26,11 @@ export async function createNewAddress({
     accessToken,
   });
 
-  if (isDefaultShippingAddress && newAddress?.address?.id) {
+  if (isDefaultShippingAddress && result.ok) {
     if (isDefaultShippingAddress) {
       await userService.accountSetDefaultAddress({
         accessToken,
-        id: newAddress.address.id,
+        id: result.data.id,
         type: "SHIPPING",
       });
     }
@@ -38,7 +38,7 @@ export async function createNewAddress({
 
   revalidatePath(paths.account.addresses.asPath());
 
-  return newAddress;
+  return result;
 }
 
 export async function updateAddress({

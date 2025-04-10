@@ -14,6 +14,7 @@ import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { cartService, userService } from "@/services";
 import { cmsMenuService } from "@/services/cms";
+import { storefrontLogger } from "@/services/logging";
 
 import { Logo } from "./logo";
 import { MobileSearch } from "./mobile-search";
@@ -51,6 +52,7 @@ export const Header = async () => {
       languageCode: region.language.code,
       countryCode: region.market.countryCode,
       channel: region.market.channel,
+      logger: storefrontLogger,
     }).cartGet({
       cartId: checkoutId,
       options: {

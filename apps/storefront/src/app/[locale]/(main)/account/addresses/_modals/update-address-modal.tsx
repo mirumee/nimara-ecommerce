@@ -7,7 +7,6 @@ import { type ReactNode, useState } from "react";
 import type { CountryCode, CountryDisplay } from "@nimara/codegen/schema";
 import type { Address } from "@nimara/domain/objects/Address";
 import type { AddressFormRow } from "@nimara/domain/objects/AddressForm";
-import { loggingService } from "@nimara/infrastructure/logging/service";
 import { Button } from "@nimara/ui/components/button";
 import {
   Dialog,
@@ -21,6 +20,7 @@ import { Spinner } from "@nimara/ui/components/spinner";
 import { useToast } from "@nimara/ui/hooks";
 
 import { usePathname, useRouter } from "@/i18n/routing";
+import { storefrontLogger } from "@/services/logging";
 
 import { deleteAddress } from "../_forms/actions";
 import { EditAddressForm } from "../_forms/update-address-form";
@@ -53,10 +53,10 @@ export function EditAddressModal({
 
   async function handleAddressDelete() {
     setIsDeleting(true);
-    const data = await deleteAddress(address.id);
+    const result = await deleteAddress(address.id);
 
-    if (data?.errors.length) {
-      loggingService.error("Failed to delete address", data.errors);
+    if (!result.ok) {
+      storefrontLogger.error("Failed to delete address", { result });
 
       return;
     }

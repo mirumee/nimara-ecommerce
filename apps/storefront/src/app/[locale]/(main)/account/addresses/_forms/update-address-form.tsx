@@ -9,12 +9,12 @@ import type { CountryCode, CountryDisplay } from "@nimara/codegen/schema";
 import type { Address } from "@nimara/domain/objects/Address";
 import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import { ADDRESS_CORE_FIELDS } from "@nimara/infrastructure/consts";
-import { loggingService } from "@nimara/infrastructure/logging/service";
 import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
 
 import { AddressForm } from "@/components/address-form/address-form";
 import { CheckboxField } from "@/components/form/checkbox-field";
+import { storefrontLogger } from "@/services/logging";
 
 import { updateAddress } from "./actions";
 import { type FormSchema, formSchema } from "./schema";
@@ -64,11 +64,11 @@ export const EditAddressForm = ({
   const canProceed = !form.formState.isSubmitting && !isCountryChanging;
 
   const handleSubmit = async (values: FormSchema) => {
-    const data = await updateAddress({ id: address.id, input: values });
+    const result = await updateAddress({ id: address.id, input: values });
 
-    if (data?.errors.length) {
+    if (!result.ok) {
       // TODO: Handle in UI
-      loggingService.error("Address update failed", data.errors);
+      storefrontLogger.error("Address update failed", { result });
 
       return;
     }

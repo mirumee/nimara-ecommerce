@@ -57,6 +57,7 @@ const serializeCheckout = (checkout: CheckoutFragment): Checkout => {
 
 export const saleorCheckoutGetInfra = ({
   apiURL,
+  logger,
 }: SaleorCheckoutServiceConfig): CheckoutGetInfra => {
   return async ({ checkoutId, languageCode, countryCode }) => {
     const { data, error } = await graphqlClient(apiURL).execute(
@@ -73,13 +74,17 @@ export const saleorCheckoutGetInfra = ({
     );
 
     if (error) {
+      logger.error("Failed to get checkout", { error, checkoutId });
+
       return {
         checkout: null,
         isSuccess: false,
         errors: [error as BaseError],
       };
     }
+
     if (!data) {
+      logger.error("No checkout data returned from Saleor", { checkoutId });
       // TODO: how to handle
       throw new Error("No data returned from Saleor");
     }

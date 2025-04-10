@@ -1,4 +1,6 @@
-import { graphqlClient } from "#root/graphql/client";
+import { err, ok } from "@nimara/domain/objects/Result";
+
+import { graphqlClientV2 } from "#root/graphql/client";
 
 import { AccountAddressDeleteMutationDocument } from "../graphql/mutations/generated";
 import type {
@@ -7,16 +9,34 @@ import type {
 } from "../types";
 
 export const saleorAccountAddressDeleteInfra =
-  ({ apiURL }: SaleorUserServiceConfig): AccountAddressDeleteInfra =>
+  ({ apiURL, logger }: SaleorUserServiceConfig): AccountAddressDeleteInfra =>
   async ({ accessToken, id }) => {
-    const { data } = await graphqlClient(apiURL, accessToken).execute(
+    const result = await graphqlClientV2(apiURL, accessToken).execute(
       AccountAddressDeleteMutationDocument,
       {
         variables: {
           id,
         },
+        operationName: "AccountAddressDeleteMutation",
       },
     );
 
-    return data?.accountAddressDelete ?? null;
+    if (!result.ok) {
+      logger.error("Error while deleting an address", { result, id });
+
+      return result;
+    }
+
+    if (!!result.data.accountAddressDelete?.errors.length) {
+      logger.error("Error while deleting an address", {
+        id,
+        result,
+      });
+
+      return err({
+        code: "ADDRESS_DELETE_ERROR",
+      });
+    }
+
+    return ok({ success: true });
   };

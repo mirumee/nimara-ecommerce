@@ -4,9 +4,9 @@ import { CartLinesAddMutationDocument } from "../graphql/mutations/generated";
 import type { LinesAddInfra, SaleorCartServiceConfig } from "../types";
 
 export const saleorLinesAddInfra =
-  ({ apiURI }: SaleorCartServiceConfig): LinesAddInfra =>
+  ({ apiURI, logger }: SaleorCartServiceConfig): LinesAddInfra =>
   async ({ cartId, lines, options }) => {
-    const { data } = await graphqlClient(apiURI).execute(
+    const { data, error } = await graphqlClient(apiURI).execute(
       CartLinesAddMutationDocument,
       {
         variables: {
@@ -16,6 +16,21 @@ export const saleorLinesAddInfra =
         options,
       },
     );
+
+    if (error) {
+      logger.error("Error while adding lines to cart", { error, cartId });
+
+      return [];
+    }
+
+    if (data?.checkoutLinesAdd?.errors.length) {
+      logger.error("Error while adding lines to cart", {
+        error: data.checkoutLinesAdd.errors,
+        cartId,
+      });
+
+      return data?.checkoutLinesAdd?.errors ?? [];
+    }
 
     return data?.checkoutLinesAdd?.errors ?? [];
   };

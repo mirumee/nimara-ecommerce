@@ -10,11 +10,11 @@ import * as z from "zod";
 import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
 
+import { requestPasswordResetAction } from "@/app/[locale]/(auth)/reset-password/action";
 import { TextFormField } from "@/components/form/text-form-field";
 import { Link } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 import { useCurrentRegion } from "@/regions/client";
-import { authService } from "@/services";
 import { type GetTranslations } from "@/types";
 
 const formSchema = ({ t }: { t: GetTranslations }) =>
@@ -22,7 +22,7 @@ const formSchema = ({ t }: { t: GetTranslations }) =>
     email: z
       .string()
       .min(1, { message: t("form-validation.reset-password-required-email") })
-      .email({ message: "invalid-email" })
+      .email({ message: t("form-validation.invalid-email") })
       .trim(),
   });
 
@@ -43,10 +43,9 @@ export function ResetPasswordForm() {
   async function handleSubmit({ email }: FormSchema) {
     setIsSuccess(true);
 
-    await authService.requestPasswordReset({
+    await requestPasswordResetAction({
       channel: region.market.channel,
       email,
-      redirectUrl: `${window.origin}${paths.newPassword.asPath()}`,
     });
   }
 

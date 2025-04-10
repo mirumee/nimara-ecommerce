@@ -1,7 +1,6 @@
-import type { BaseError } from "@nimara/domain/objects/Error";
+import { ok } from "@nimara/domain/objects/Result";
 
-import { graphqlClient } from "#root/graphql/client";
-import { loggingService } from "#root/logging/service";
+import { graphqlClientV2 } from "#root/graphql/client";
 import type {
   SaleorUserServiceConfig,
   UserFindInfra,
@@ -11,24 +10,29 @@ import { UserFindQueryDocument } from "../graphql/queries/generated";
 
 export const saleorUserFindInfra = ({
   apiURL,
+  logger,
 }: SaleorUserServiceConfig): UserFindInfra => {
   return async ({ email, saleorAppToken }) => {
-    const { data, error } = await graphqlClient(apiURL, saleorAppToken).execute(
+    const result = await graphqlClientV2(apiURL, saleorAppToken).execute(
       UserFindQueryDocument,
       {
         variables: {
           email,
         },
+        operationName: "UserFindQuery",
       },
     );
 
-    if (error) {
-      loggingService.error(
-        `Fetching user by email: ${email} failed`,
-        error as BaseError,
-      );
+    if (!result.ok) {
+      logger.error("Error while fetching user by email", { result });
+
+      return result;
     }
 
-    return data?.user ?? null;
+    if (!result.data.user) {
+      return ok({ user: null });
+    }
+
+    return ok({ user: result.data.user });
   };
 };

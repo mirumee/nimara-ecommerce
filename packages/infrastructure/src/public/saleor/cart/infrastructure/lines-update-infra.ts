@@ -4,9 +4,9 @@ import { CartLinesUpdateMutationDocument } from "../graphql/mutations/generated"
 import type { LinesUpdateInfra, SaleorCartServiceConfig } from "../types";
 
 export const saleorLinesUpdateInfra =
-  ({ apiURI }: SaleorCartServiceConfig): LinesUpdateInfra =>
+  ({ apiURI, logger }: SaleorCartServiceConfig): LinesUpdateInfra =>
   async ({ cartId, lines, options }) => {
-    const { data } = await graphqlClient(apiURI).execute(
+    const { data, error } = await graphqlClient(apiURI).execute(
       CartLinesUpdateMutationDocument,
       {
         variables: {
@@ -17,6 +17,12 @@ export const saleorLinesUpdateInfra =
         options,
       },
     );
+
+    if (error) {
+      logger.error("Error while updating lines in cart", { error, cartId });
+
+      return [];
+    }
 
     return data?.checkoutLinesUpdate?.errors ?? [];
   };

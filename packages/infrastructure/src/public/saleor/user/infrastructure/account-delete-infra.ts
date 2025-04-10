@@ -1,15 +1,31 @@
-import { graphqlClient } from "#root/graphql/client";
+import { err, ok } from "@nimara/domain/objects/Result";
+
+import { graphqlClientV2 } from "#root/graphql/client";
 
 import { AccountDeleteMutationDocument } from "../graphql/mutations/generated";
 import type { AccountDeleteInfra, SaleorUserServiceConfig } from "../types";
 
 export const saleorAccountDeleteInfra =
-  ({ apiURL }: SaleorUserServiceConfig): AccountDeleteInfra =>
+  ({ apiURL, logger }: SaleorUserServiceConfig): AccountDeleteInfra =>
   async ({ accessToken, token }) => {
-    const { data } = await graphqlClient(apiURL, accessToken).execute(
+    const result = await graphqlClientV2(apiURL, accessToken).execute(
       AccountDeleteMutationDocument,
-      { variables: { token } },
+      { variables: { token }, operationName: "AccountDeleteMutation" },
     );
 
-    return data?.accountDelete ?? null;
+    if (!result.ok) {
+      logger.error("Error while deleting an account", { result });
+
+      return result;
+    }
+
+    if (!!result.data.accountDelete?.errors.length) {
+      logger.error("Error while deleting an account", { result });
+
+      return err({
+        code: "ACCOUNT_DELETE_ERROR",
+      });
+    }
+
+    return ok({ success: true });
   };

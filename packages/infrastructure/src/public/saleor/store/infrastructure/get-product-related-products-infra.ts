@@ -1,7 +1,6 @@
 import type { RelatedProduct } from "@nimara/domain/objects/Product";
 
 import { graphqlClient } from "#root/graphql/client";
-import { loggingService } from "#root/logging/service";
 
 import type { ProductRelatedProductsFragment } from "../graphql/fragments/generated";
 import { ProductRelatedProductsDocument } from "../graphql/queries/generated";
@@ -36,7 +35,7 @@ export const getProductRelatedProductsInfra =
   ({
     apiURI,
     channel,
-    languageCode,
+    logger,
   }: SaleorProductServiceConfig): GetProductRelatedProductsInfra =>
   async ({ productSlug, options }) => {
     const { data, error } = await graphqlClient(apiURI).execute(
@@ -46,13 +45,12 @@ export const getProductRelatedProductsInfra =
         variables: {
           slug: productSlug,
           channel,
-          languageCode,
         },
       },
     );
 
     if (error) {
-      loggingService.error("Failed to fetch product related products", {
+      logger.error("Failed to fetch product related products", {
         productSlug,
         channel,
         error,

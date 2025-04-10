@@ -4,6 +4,7 @@ import type { Checkout } from "@nimara/domain/objects/Checkout";
 import type { BaseError } from "@nimara/domain/objects/Error";
 
 import type { FetchOptions } from "#root/graphql/client";
+import { type Logger } from "#root/logging/types";
 
 import type { CheckoutShippingAddressUpdate_checkoutShippingAddressUpdate_CheckoutShippingAddressUpdate } from "./graphql/mutations/generated";
 
@@ -127,6 +128,7 @@ export type ValidationError =
 
 export type SaleorCheckoutServiceConfig = {
   apiURL: string;
+  logger: Logger;
 };
 
 export type CheckoutService<Config> = (config: Config) => {

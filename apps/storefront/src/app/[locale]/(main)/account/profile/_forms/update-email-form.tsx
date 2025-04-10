@@ -16,7 +16,6 @@ import { Form } from "@nimara/ui/components/form";
 
 import { TextFormField } from "@/components/form/text-form-field";
 import { CHANGE_EMAIL_TOKEN_VALIDITY_IN_HOURS } from "@/config";
-import type { TranslationMessage } from "@/types";
 
 import { updateUserEmail } from "./actions";
 import { type UpdateEmailFormSchema, updateEmailFormSchema } from "./schema";
@@ -34,10 +33,10 @@ export function UpdateEmailForm() {
   });
 
   async function handleSubmit(values: UpdateEmailFormSchema) {
-    const data = await updateUserEmail(values);
+    const result = await updateUserEmail(values);
 
-    if (data?.errors?.length) {
-      const field = data.errors[0]?.field as TranslationMessage<"errors.auth">;
+    if (result && !result.ok) {
+      const { field } = result.error;
 
       if (field === "newEmail") {
         form.setError("email", { message: t(`errors.auth.${field}`) });

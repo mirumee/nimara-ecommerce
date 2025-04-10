@@ -1,5 +1,6 @@
-import { graphqlClient } from "#root/graphql/client";
-import { loggingService } from "#root/logging/service";
+import { err, ok } from "@nimara/domain/objects/Result";
+
+import { graphqlClientV2 } from "#root/graphql/client";
 
 import { AccountAddressCreateMutationDocument } from "../graphql/mutations/generated";
 import type {
@@ -8,31 +9,38 @@ import type {
 } from "../types";
 
 export const saleorAccountAddressCreateInfra =
-  ({ apiURL }: SaleorUserServiceConfig): AccountAddressCreateInfra =>
+  ({ apiURL, logger }: SaleorUserServiceConfig): AccountAddressCreateInfra =>
   async ({ accessToken, input, type }) => {
-    const { data, error } = await graphqlClient(apiURL, accessToken).execute(
+    const result = await graphqlClientV2(apiURL, accessToken).execute(
       AccountAddressCreateMutationDocument,
       {
         variables: {
           input,
           type,
         },
+        operationName: "AccountAddressCreateMutation",
       },
     );
 
-    if (error) {
-      loggingService.error("Error while creating a new address", { error });
+    if (!result.ok) {
+      logger.error("Error while creating a new address", { result });
 
-      return null;
+      return result;
     }
 
-    if (data?.accountAddressCreate?.errors.length) {
-      loggingService.error("Error while creating a new address", {
-        error: data.accountAddressCreate.errors,
+    if (result.data.accountAddressCreate?.errors.length) {
+      logger.error("Error while creating a new address", { result });
+
+      return err({ code: "ADDRESS_CREATE_ERROR" });
+    }
+
+    if (!result.data.accountAddressCreate?.address) {
+      logger.error("Error while creating a new address", {
+        error: "No address returned",
       });
 
-      return null;
+      return err({ code: "ADDRESS_CREATE_ERROR" });
     }
 
-    return data?.accountAddressCreate ?? null;
+    return ok({ id: result.data.accountAddressCreate.address.id });
   };

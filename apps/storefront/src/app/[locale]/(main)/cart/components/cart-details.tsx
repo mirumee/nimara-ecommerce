@@ -17,6 +17,7 @@ import { paths } from "@/lib/paths";
 import { type WithRegion } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { cartService } from "@/services";
+import { storefrontLogger } from "@/services/logging";
 import type { TranslationMessage } from "@/types";
 
 export const CartDetails = ({
@@ -34,6 +35,7 @@ export const CartDetails = ({
     languageCode: region.language.code,
     countryCode: region.market.countryCode,
     apiURI: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
+    logger: storefrontLogger,
   });
 
   const handleLineQuantityChange = async (lineId: string, quantity: number) => {

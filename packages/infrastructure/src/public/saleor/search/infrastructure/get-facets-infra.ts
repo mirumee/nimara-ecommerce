@@ -1,6 +1,7 @@
 import type { LanguageCodeEnum } from "@nimara/codegen/schema";
+import { ok } from "@nimara/domain/objects/Result";
 
-import { graphqlClient } from "#root/graphql/client";
+import { graphqlClientV2 } from "#root/graphql/client";
 import type { FacetType, GetFacetsInfra } from "#root/use-cases/search/types";
 
 import { FacetsQueryDocument } from "../graphql/queries/generated";
@@ -9,7 +10,7 @@ import type { SaleorSearchServiceConfig } from "../types";
 export const saleorGetFacetsInfra =
   ({ apiURL }: SaleorSearchServiceConfig): GetFacetsInfra =>
   async (_params, context) => {
-    const { data } = await graphqlClient(apiURL).execute(FacetsQueryDocument, {
+    const result = await graphqlClientV2(apiURL).execute(FacetsQueryDocument, {
       variables: {
         channel: context.channel,
         languageCode: context.languageCode as LanguageCodeEnum,
@@ -21,14 +22,19 @@ export const saleorGetFacetsInfra =
           tags: ["SEARCH", "SEARCH:FACETS"],
         },
       },
+      operationName: "FacetsQuery",
     });
 
-    if (!data?.attributes?.edges.length) {
-      return { facets: [] };
+    if (!result.ok) {
+      return result;
     }
 
-    return {
-      facets: data.attributes.edges.map(({ node: attribute }) => ({
+    if (!result.data?.attributes?.edges) {
+      return ok([]);
+    }
+
+    return ok(
+      result.data.attributes?.edges.map(({ node: attribute }) => ({
         name: attribute.translation?.name ?? attribute.name ?? "",
         slug: attribute.slug!,
         choices:
@@ -38,5 +44,5 @@ export const saleorGetFacetsInfra =
           })) ?? [],
         type: String(attribute.inputType) as FacetType,
       })),
-    };
+    );
   };

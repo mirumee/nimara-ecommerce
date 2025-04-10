@@ -2,6 +2,8 @@ import type { AccountRegisterInput } from "@nimara/codegen/schema";
 import type { AccountError, BaseError } from "@nimara/domain/objects/Error";
 import type { RefreshToken } from "@nimara/domain/objects/User";
 
+import { type Logger } from "#root/logging/types";
+
 export type AuthService<Config> = (config: Config) => {
   accountRegister: AccountRegisterUseCase;
   confirmAccount: ConfirmAccountUseCase;
@@ -12,6 +14,7 @@ export type AuthService<Config> = (config: Config) => {
 
 export interface SaleorAuthServiceConfig {
   apiURL: string;
+  logger: Logger;
 }
 
 export type TokenRefreshInfra = ({

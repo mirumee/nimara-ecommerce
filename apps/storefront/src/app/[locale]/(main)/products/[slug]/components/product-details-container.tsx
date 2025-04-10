@@ -7,6 +7,7 @@ import { clientEnvs } from "@/envs/client";
 import { JsonLd, productToJsonLd } from "@/lib/json-ld";
 import { getCurrentRegion } from "@/regions/server";
 import { cartService, storeService, userService } from "@/services";
+import { storefrontLogger } from "@/services/logging";
 
 import { ProductDetails } from "./product-details";
 
@@ -28,6 +29,7 @@ export const ProductDetailsContainer = async ({
     languageCode: region.language.code,
     apiURI: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
     countryCode: region.market.countryCode,
+    logger: storefrontLogger,
   };
 
   const [{ data }, cart, user] = await Promise.all([

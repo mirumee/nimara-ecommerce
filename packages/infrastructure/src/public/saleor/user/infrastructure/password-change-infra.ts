@@ -1,13 +1,14 @@
+import { err, ok } from "@nimara/domain/objects/Result";
+
 import { graphqlClientV2 } from "#root/graphql/client";
-import { loggingService } from "#root/logging/service";
 
 import { PasswordChangeMutationDocument } from "../graphql/mutations/generated";
 import type { PasswordChangeInfra, SaleorUserServiceConfig } from "../types";
 
 export const saleorPasswordChangeInfra =
-  ({ apiURL }: SaleorUserServiceConfig): PasswordChangeInfra =>
+  ({ apiURL, logger }: SaleorUserServiceConfig): PasswordChangeInfra =>
   async ({ accessToken, oldPassword, newPassword }) => {
-    const { data, error } = await graphqlClientV2(apiURL, accessToken).execute(
+    const result = await graphqlClientV2(apiURL, accessToken).execute(
       PasswordChangeMutationDocument,
       {
         operationName: "PasswordChangeMutation",
@@ -15,21 +16,21 @@ export const saleorPasswordChangeInfra =
       },
     );
 
-    if (error) {
-      return { success: false, serverError: error };
+    if (!result.ok) {
+      logger.error("Error while changing password", { result });
+
+      return result;
     }
 
-    if (data.passwordChange?.errors.length) {
-      loggingService.error(
-        "Password change failed",
-        data.passwordChange.errors,
-      );
+    if (!!result.data.passwordChange?.errors.length) {
+      logger.error("Password change failed", {
+        error: result.data.passwordChange.errors,
+      });
 
-      return {
-        success: false,
-        errors: data.passwordChange.errors,
-      };
+      return err({
+        code: "PASSWORD_CHANGE_ERROR",
+      });
     }
 
-    return { success: true };
+    return ok(true);
   };
