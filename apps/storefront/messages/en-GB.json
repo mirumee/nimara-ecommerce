@@ -124,6 +124,9 @@
     "free-30-days": "Free 30 days return policy",
     "you-may-also-like": "You may also like"
   },
+  "collections": {
+    "associated-products": "Associated products"
+  },
   "address": {
     "companyName": "Company name",
     "phone": "Phone",

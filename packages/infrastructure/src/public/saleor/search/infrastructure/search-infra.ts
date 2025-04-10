@@ -121,7 +121,11 @@ export const saleorSearchInfra =
         results: products.edges.map(({ node }) => serializer(node)),
         pageInfo: {
           type: "cursor",
-          ...products.pageInfo,
+          after: result.data.products?.pageInfo.endCursor,
+          before: result.data.products?.pageInfo.startCursor,
+          hasNextPage: result.data.products?.pageInfo.hasNextPage ?? false,
+          hasPreviousPage:
+            result.data.products?.pageInfo.hasPreviousPage ?? false,
         },
       });
     } catch (e) {
