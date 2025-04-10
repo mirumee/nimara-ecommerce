@@ -1,4 +1,6 @@
-import { graphqlClient } from "#root/graphql/client";
+import { err, ok } from "@nimara/domain/objects/Result";
+
+import { graphqlClientV2 } from "#root/graphql/client";
 
 import { RequestPasswordResetMutationDocument } from "../graphql/mutations/generated";
 import type {
@@ -9,24 +11,31 @@ import type {
 export const saleorRequestPasswordResetInfra =
   ({ apiURL, logger }: SaleorAuthServiceConfig): RequestPasswordResetInfra =>
   async ({ channel, email, redirectUrl }) => {
-    const { data } = await graphqlClient(apiURL).execute(
+    const result = await graphqlClientV2(apiURL).execute(
       RequestPasswordResetMutationDocument,
       {
         variables: { channel, email, redirectUrl },
+        operationName: "RequestPasswordResetMutation",
       },
     );
 
-    if (data?.requestPasswordReset?.errors.length) {
-      logger.error("Request password error", {
-        email,
-        redirectUrl,
-        error: data.requestPasswordReset.errors,
+    if (!result.ok) {
+      logger.error("Failed to request password reset.", {
+        error: result.error,
       });
 
-      return { errors: data.requestPasswordReset.errors };
+      return result;
     }
 
-    return {
-      errors: data?.requestPasswordReset?.errors ?? [],
-    };
+    if (result.data.requestPasswordReset?.errors.length) {
+      logger.error("Request password reset mutation returned errors.", {
+        error: result.data.requestPasswordReset.errors,
+      });
+
+      return err({
+        code: "PASSWORD_CHANGE_REQUEST_ERROR",
+      });
+    }
+
+    return ok({ success: true });
   };

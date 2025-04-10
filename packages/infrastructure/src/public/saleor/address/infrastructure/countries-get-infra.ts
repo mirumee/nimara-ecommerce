@@ -1,6 +1,6 @@
-import type { BaseError } from "@nimara/domain/objects/Error";
+import { err, ok } from "@nimara/domain/objects/Result";
 
-import { graphqlClient } from "#root/graphql/client";
+import { graphqlClientV2 } from "#root/graphql/client";
 import type {
   CountriesGetInfra,
   SaleorAddressServiceConfig,
@@ -8,47 +8,46 @@ import type {
 
 import { ChannelQueryDocument } from "../graphql/queries/generated";
 
-export const saleorCountriesGetInfra = ({
-  apiURL,
-  logger,
-}: SaleorAddressServiceConfig): CountriesGetInfra => {
-  return async (opts: { channelSlug: string }) => {
-    const { data, error } = await graphqlClient(apiURL).execute(
-      ChannelQueryDocument,
-      {
-        variables: {
-          channelSlug: opts.channelSlug,
-        },
+export const saleorCountriesGetInfra =
+  ({ apiURL, logger }: SaleorAddressServiceConfig): CountriesGetInfra =>
+  async (opts: { channelSlug: string }) => {
+    const result = await graphqlClientV2(apiURL).execute(ChannelQueryDocument, {
+      variables: {
+        channelSlug: opts.channelSlug,
       },
-    );
+      operationName: "ChannelQuery",
+    });
 
-    if (error) {
-      return {
-        isSuccess: false,
-        errors: [error as BaseError],
-      };
-    }
-
-    if (!data) {
-      logger.error("No countries data returned from Saleor", {
+    if (!result.ok) {
+      logger.error("Error fetching countries from Saleor.", {
         channel: opts.channelSlug,
-      });
-      // TODO: how to handle
-      throw new Error("No countries data returned from Saleor");
-    }
-
-    if (!data.channel?.countries) {
-      logger.error("No countries returned from Saleor", {
-        channel: opts.channelSlug,
+        result,
       });
 
-      // TODO: how to handle
-      throw new Error("No countries returned from Saleor");
+      return result;
     }
 
-    return {
-      isSuccess: true,
-      countries: data.channel.countries,
-    };
+    if (!result.data.channel) {
+      logger.critical("No channel found in Saleor.", {
+        channel: opts.channelSlug,
+        result,
+      });
+
+      return err({
+        code: "COUNTRIES_NOT_FOUND_ERROR",
+      });
+    }
+
+    if (!result.data.channel.countries) {
+      logger.error("No countries found in Saleor for this channel.", {
+        channel: opts.channelSlug,
+        result,
+      });
+
+      return err({
+        code: "COUNTRIES_NOT_FOUND_ERROR",
+      });
+    }
+
+    return ok(result.data.channel.countries);
   };
-};

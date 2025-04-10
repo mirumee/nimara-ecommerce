@@ -26,7 +26,12 @@ export type HTTPErrorCode = (typeof HTTP_ERROR_CODES)[number];
  * @description Error codes related to authentication and authorization.
  */
 export const AUTH_ERROR_CODES = [
+  "ACCOUNT_REGISTER_ERROR",
+  "ACCOUNT_CONFIRM_ERROR",
+  "TOKEN_REFRESH_ERROR",
+  "PASSWORD_SET_ERROR",
   "PASSWORD_CHANGE_ERROR",
+  "PASSWORD_CHANGE_REQUEST_ERROR",
 ] as const satisfies ErrorCodeFormat[];
 export type AuthErrorCode = (typeof AUTH_ERROR_CODES)[number];
 
@@ -38,21 +43,31 @@ export const ACCOUNT_ERROR_CODES = [
   "ACCOUNT_CREATE_ERROR",
   "ACCOUNT_DELETE_ERROR",
   "ACCOUNT_UPDATE_ERROR",
-  "ADDRESS_CREATE_ERROR",
-  "ADDRESS_DELETE_ERROR",
-  "ADDRESS_UPDATE_ERROR",
   "ACCOUNT_REQUEST_DELETION_ERROR",
-  "ADDRESS_SET_DEFAULT_ERROR",
   "EMAIL_CHANGE_CONFIRMATION_ERROR",
   "EMAIL_CHANGE_REQUEST_ERROR",
 ] as const satisfies ErrorCodeFormat[];
 export type AccountErrorCode = (typeof ACCOUNT_ERROR_CODES)[number];
 
 /**
+ * @description Error codes related to address actions.
+ */
+export const ADDRESS_ERROR_CODES = [
+  "ADDRESS_CREATE_ERROR",
+  "ADDRESS_DELETE_ERROR",
+  "ADDRESS_UPDATE_ERROR",
+  "ADDRESS_SET_DEFAULT_ERROR",
+  "MISSING_ADDRESS_DATA_ERROR",
+  "COUNTRIES_NOT_FOUND_ERROR",
+] as const;
+export type AddressErrorCode = (typeof ADDRESS_ERROR_CODES)[number];
+
+/**
  * ErrorCode
  * @description Union type of all error codes.
  */
 export type ErrorCode =
+  | AddressErrorCode
   | AuthErrorCode
   | HTTPErrorCode
   | AccountErrorCode

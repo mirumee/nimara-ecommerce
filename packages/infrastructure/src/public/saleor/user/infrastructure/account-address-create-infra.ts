@@ -23,13 +23,17 @@ export const saleorAccountAddressCreateInfra =
     );
 
     if (!result.ok) {
-      logger.error("Error while creating a new address", { result });
+      logger.error("Error while creating a new address", {
+        error: result.error,
+      });
 
       return result;
     }
 
     if (result.data.accountAddressCreate?.errors.length) {
-      logger.error("Error while creating a new address", { result });
+      logger.error("Error while creating a new address", {
+        error: result.data,
+      });
 
       return err({ code: "ADDRESS_CREATE_ERROR" });
     }

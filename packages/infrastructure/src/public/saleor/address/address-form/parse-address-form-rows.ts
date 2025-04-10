@@ -7,7 +7,13 @@ import { getCountryAreaField } from "./fields/get-country-area-field";
 import { getPostalCodeField } from "./fields/get-postal-code-field";
 import { getStreetAddressFields } from "./fields/get-street-address-fields";
 
-const COUNTRY_CODES_WITH_COUNTRY_AREA_VALIDATION = ["US", "CA", "CN", "AU"];
+const COUNTRY_CODES_WITH_COUNTRY_AREA_VALIDATION = [
+  "US",
+  "CA",
+  "CN",
+  "AU",
+  "JP",
+];
 
 export const parseAddressFormRows = ({
   addressValidationRules,
@@ -16,10 +22,6 @@ export const parseAddressFormRows = ({
   addressValidationRules: AddressValidationRulesQuery_addressValidationRules_AddressValidationData;
   countryCode: CountryCode;
 }) => {
-  if (!addressValidationRules) {
-    return null;
-  }
-
   const addressFormRows = addressValidationRules.addressFormat
     .split("%")
     .reduce<AddressFormRow[]>((acc, field) => {

@@ -9,7 +9,7 @@
     "build": "next build",
     "start": "next start -p 4000",
     "lint": "next lint --dir src --fix",
-    "lint:staged": "lint-staged",
+    "lint:staged": "lint-staged --concurrent false",
     "test": "vitest run",
     "test:watch": "vitest --watch"
   },

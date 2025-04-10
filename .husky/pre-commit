@@ -1,1 +1,1 @@
-turbo run lint:staged
+pnpm -r --workspace-concurrency=1 lint-staged

@@ -1,7 +1,6 @@
 import { getLocale } from "next-intl/server";
 
 import { type CountryCode } from "@nimara/codegen/schema";
-import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import { type PaymentMethod } from "@nimara/domain/objects/Payment";
 
 import { getAccessToken } from "@/auth";
@@ -41,25 +40,25 @@ export default async function Page(props: { searchParams: SearchParams }) {
 
   await validateCheckoutStepAction({ checkout, user, locale, step: "payment" });
 
-  const marketCountryCode = region.market.countryCode;
-
-  const { countries } = await addressService.countriesGet({
+  const resultCountries = await addressService.countriesGet({
     channelSlug: region.market.channel,
   });
 
-  if (!countries) {
-    throw new Error("No countries.");
+  if (!resultCountries.ok) {
+    throw new Error("No countries found for this channel.");
   }
 
+  const { countryCode: defaultCountryCode } = region.market;
+
   const countryCode = (() => {
-    const defaultCountryCode = marketCountryCode;
     const paramsCountryCode =
       searchParams.country ?? checkout.shippingAddress?.country.code;
 
     if (!paramsCountryCode) {
       return defaultCountryCode;
     }
-    const isValidCountryCode = countries.some(
+
+    const isValidCountryCode = resultCountries.data.some(
       (country) => country.code === paramsCountryCode,
     );
 
@@ -70,33 +69,45 @@ export default async function Page(props: { searchParams: SearchParams }) {
     return paramsCountryCode;
   })() as CountryCode;
 
-  const [addresses, { addressFormRows }] = await Promise.all([
+  const [resultAddress, resultAddressRows] = await Promise.all([
     userService.addressesGet({ variables: { accessToken }, skip: !user }),
     addressService.addressFormGetRows({
       countryCode,
     }),
   ]);
 
-  const formattedAddresses = await Promise.all(
-    addresses?.map(async (address) => ({
-      ...(await addressService.addressFormat({
-        variables: { address },
-        skip: !addresses.length,
-      })),
-      address,
-    })) ?? [],
-  );
+  if (!resultAddressRows.ok) {
+    throw new Error("No address form rows.");
+  }
 
-  const supportedCountryCodesInChannel = countries?.map(({ code }) => code);
+  const savedAddresses = resultAddress.data ?? [];
+  const formattedAddresses =
+    (await Promise.all(
+      savedAddresses.map(async (address) => {
+        const resultFormatAddress = await addressService.addressFormat({
+          variables: { address },
+        });
+
+        if (!resultFormatAddress.ok) {
+          throw new Error("No address format.");
+        }
+
+        return {
+          ...resultFormatAddress.data,
+          address,
+        };
+      }),
+    )) ?? [];
+
+  const supportedCountryCodesInChannel = resultCountries.data.map(
+    ({ code }) => code,
+  );
   const sortedAddresses = formattedAddresses
     .filter(({ address: { country } }) =>
       supportedCountryCodesInChannel.includes(country.code),
     )
     .sort((a, _) => (a.address.isDefaultBillingAddress ? -1 : 0));
 
-  if (!addressFormRows) {
-    throw new Error("No address form rows.");
-  }
   let paymentGatewayCustomer = null;
   let paymentGatewayMethods: PaymentMethod[] = [];
 
@@ -127,8 +138,8 @@ export default async function Page(props: { searchParams: SearchParams }) {
           errorCode={searchParams?.errorCode}
           storeUrl={storeUrl}
           checkout={checkout}
-          addressFormRows={addressFormRows as AddressFormRow[]}
-          countries={countries}
+          addressFormRows={resultAddressRows.data}
+          countries={resultCountries.data}
           countryCode={countryCode}
           formattedAddresses={sortedAddresses}
           user={user}

@@ -37,17 +37,21 @@ export function SignUpForm() {
   const isDisabled = isRedirecting || form.formState?.isSubmitting;
 
   async function handleSubmit(values: FormSchema) {
-    const data = await registerAccount(values);
+    const result = await registerAccount(values);
 
-    if (data?.errors?.length) {
-      const field = data?.errors?.[0]
-        ?.field as TranslationMessage<"errors.auth">;
-
-      form.setError("email", { message: t(`errors.auth.${field}`) });
+    if (result.ok) {
+      push(paths.createAccount.asPath({ query: { success: "true" } }));
 
       return;
     }
-    push(paths.createAccount.asPath({ query: { success: "true" } }));
+
+    if (result.error.field) {
+      const field = result.error.field as TranslationMessage<"errors.auth">;
+
+      form.setError("email", { message: t(`errors.auth.${field}`) });
+    }
+
+    return;
   }
 
   return (

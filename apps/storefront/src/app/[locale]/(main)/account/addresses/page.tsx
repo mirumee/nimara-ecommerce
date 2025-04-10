@@ -18,24 +18,33 @@ export default async function Page(props: {
 }) {
   const searchParams = await props.searchParams;
   const accessToken = await getAccessToken();
-  const [t, region, addresses] = await Promise.all([
+  const [t, region, resultAddresses] = await Promise.all([
     getTranslations(),
     getCurrentRegion(),
     userService.addressesGet({ variables: { accessToken } }),
   ]);
 
-  const formattedAddresses = await Promise.all(
-    addresses?.map(async (address) => ({
-      ...(await addressService.addressFormat({ variables: { address } })),
-      id: address.id,
-      isDefaultBillingAddress: address.isDefaultBillingAddress,
-      isDefaultShippingAddress: address.isDefaultShippingAddress,
-      address,
-    })) ?? [],
-  );
+  const savedAddresses = resultAddresses.data ?? [];
+  const formattedAddresses =
+    (await Promise.all(
+      savedAddresses.map(async (address) => {
+        const resultFormatAddress = await addressService.addressFormat({
+          variables: { address },
+        });
 
-  const defaultAddresses: Awaited<typeof formattedAddresses> = [];
-  const rest: Awaited<typeof formattedAddresses> = [];
+        if (!resultFormatAddress.ok) {
+          throw new Error("No address format.");
+        }
+
+        return {
+          ...resultFormatAddress.data,
+          ...address,
+        };
+      }),
+    )) ?? [];
+
+  const defaultAddresses: typeof formattedAddresses = [];
+  const rest: typeof defaultAddresses = [];
 
   formattedAddresses.forEach((a) => {
     if (
@@ -50,7 +59,7 @@ export default async function Page(props: {
   });
 
   const sortedAddresses = [...defaultAddresses, ...rest];
-  const noAddresses = !addresses?.length;
+  const noAddresses = !resultAddresses.data?.length;
 
   function getDefaultAddressLabel({
     isDefaultBillingAddress,
@@ -63,11 +72,11 @@ export default async function Page(props: {
         : "address.default-billing";
   }
 
-  const { countries } = await addressService.countriesGet({
+  const resultCountries = await addressService.countriesGet({
     channelSlug: region.market.channel,
   });
 
-  if (!countries) {
+  if (!resultCountries.ok) {
     throw new Error("No countries.");
   }
 
@@ -78,7 +87,7 @@ export default async function Page(props: {
     if (!paramsCountryCode) {
       return defaultCountryCode;
     }
-    const isValidCountryCode = countries.some(
+    const isValidCountryCode = resultCountries.data.some(
       (country) => country.code === paramsCountryCode,
     );
 
@@ -89,11 +98,11 @@ export default async function Page(props: {
     return paramsCountryCode;
   })() as CountryCode;
 
-  const { addressFormRows } = await addressService.addressFormGetRows({
+  const resultAddressRows = await addressService.addressFormGetRows({
     countryCode: countryCode,
   });
 
-  if (!addressFormRows) {
+  if (!resultAddressRows.ok) {
     throw new Error("No address form rows.");
   }
 
@@ -103,8 +112,8 @@ export default async function Page(props: {
         <h2 className="text-2xl">{t("account.addresses")}</h2>
         {!noAddresses && (
           <AddNewAddressModal
-            addressFormRows={addressFormRows}
-            countries={countries}
+            addressFormRows={resultAddressRows.data}
+            countries={resultCountries.data}
             countryCode={countryCode}
           >
             <Button
@@ -126,8 +135,8 @@ export default async function Page(props: {
             {t("address.sorry-you-dont-have-any-addresses")}
           </p>
           <AddNewAddressModal
-            addressFormRows={addressFormRows}
-            countries={countries}
+            addressFormRows={resultAddressRows.data}
+            countries={resultCountries.data}
             countryCode={countryCode}
           >
             <Button className="mt-6 flex items-center gap-1">
@@ -137,21 +146,15 @@ export default async function Page(props: {
           </AddNewAddressModal>
         </div>
       )}
-      {sortedAddresses?.map(
-        ({
-          isDefaultBillingAddress,
-          isDefaultShippingAddress,
-          formattedAddress,
-          id,
-          address,
-        }) => (
-          <div key={id} className="space-y-8">
+      {sortedAddresses.map(
+        ({ isDefaultBillingAddress, isDefaultShippingAddress, ...address }) => (
+          <div key={address.id} className="space-y-8">
             <hr />
             <div className="grid grid-cols-12 gap-2">
               <div className="col-span-5 md:col-span-7 lg:col-span-5">
                 {displayFormattedAddressLines({
-                  addressId: id,
-                  formattedAddress,
+                  addressId: address.id,
+                  formattedAddress: address.formattedAddress,
                 })}
               </div>
               <div className="col-span-7 flex h-max items-center justify-end gap-6 md:col-span-5 lg:col-span-7">
@@ -166,9 +169,13 @@ export default async function Page(props: {
                   </p>
                 )}
                 <EditAddressModal
-                  address={address}
-                  addressFormRows={addressFormRows}
-                  countries={countries}
+                  address={{
+                    isDefaultBillingAddress,
+                    isDefaultShippingAddress,
+                    ...address,
+                  }}
+                  addressFormRows={resultAddressRows.data}
+                  countries={resultCountries.data}
                   countryCode={countryCode}
                 />
               </div>
