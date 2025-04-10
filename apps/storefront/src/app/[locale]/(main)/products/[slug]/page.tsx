@@ -64,7 +64,7 @@ export default async function Page(props: {
 
   const checkoutId = (await cookies()).get(COOKIE_KEY.checkoutId)?.value;
 
-  const [{ data }, cart, user] = await Promise.all([
+  const [{ data }, resultCartGet, user] = await Promise.all([
     storeService(serviceOpts).getProductDetails({
       productSlug: slug,
       options: {
@@ -95,7 +95,7 @@ export default async function Page(props: {
   return (
     <>
       <ProductDisplay
-        cart={cart}
+        cart={resultCartGet?.ok ? resultCartGet.data : null}
         product={data.product}
         availability={data.availability}
         user={user ? { ...user, accessToken } : null}

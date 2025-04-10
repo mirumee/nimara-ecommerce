@@ -18,7 +18,6 @@ import { type WithRegion } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { cartService } from "@/services";
 import { storefrontLogger } from "@/services/logging";
-import type { TranslationMessage } from "@/types";
 
 export const CartDetails = ({
   cart,
@@ -41,7 +40,7 @@ export const CartDetails = ({
   const handleLineQuantityChange = async (lineId: string, quantity: number) => {
     setIsProcessing(true);
 
-    const errors = await service.linesUpdate({
+    const resultLinesUpdate = await service.linesUpdate({
       cartId: cart.id,
       lines: [{ lineId, quantity }],
       options: {
@@ -51,13 +50,11 @@ export const CartDetails = ({
 
     setIsProcessing(false);
 
-    if (errors.length) {
-      errors.forEach(({ code }) =>
-        toast({
-          description: t(`checkout-errors.${code}` as TranslationMessage),
-          variant: "destructive",
-        }),
-      );
+    if (!resultLinesUpdate.ok) {
+      toast({
+        description: t(`errors.${resultLinesUpdate.error.code}`),
+        variant: "destructive",
+      });
     } else {
       await revalidateCart(cart.id);
     }
@@ -65,7 +62,7 @@ export const CartDetails = ({
 
   const handleLineDelete = async (lineId: string) => {
     setIsProcessing(true);
-    const errors = await service.linesDelete({
+    const resultLinesDelete = await service.linesDelete({
       cartId: cart.id,
       linesIds: [lineId],
       options: { next: { tags: [`CHECKOUT:${cart.id}`] } },
@@ -73,13 +70,11 @@ export const CartDetails = ({
 
     setIsProcessing(false);
 
-    if (errors.length) {
-      errors.forEach(({ code }) =>
-        toast({
-          description: t(`checkout-errors.${code}` as TranslationMessage),
-          variant: "destructive",
-        }),
-      );
+    if (!resultLinesDelete.ok) {
+      toast({
+        description: t(`errors.${resultLinesDelete.error.code}`),
+        variant: "destructive",
+      });
     } else {
       await revalidateCart(cart.id);
     }

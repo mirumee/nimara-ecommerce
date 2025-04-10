@@ -47,7 +47,7 @@ export const Header = async () => {
   const checkoutId = (await cookies()).get(COOKIE_KEY.checkoutId)?.value;
 
   if (checkoutId) {
-    const cart = await cartService({
+    const resultCartGet = await cartService({
       apiURI: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
       languageCode: region.language.code,
       countryCode: region.market.countryCode,
@@ -63,7 +63,7 @@ export const Header = async () => {
       },
     });
 
-    checkoutLinesCount = cart?.linesQuantityCount ?? 0;
+    checkoutLinesCount = resultCartGet.data?.lines.length ?? 0;
   }
 
   return (

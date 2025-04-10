@@ -1,4 +1,6 @@
-import { graphqlClient } from "#root/graphql/client";
+import { err, ok } from "@nimara/domain/objects/Result";
+
+import { graphqlClientV2 } from "#root/graphql/client";
 
 import { CartCreateMutationDocument } from "../graphql/generated";
 import type { CartCreateInfra, SaleorCartServiceConfig } from "../types";
@@ -11,7 +13,7 @@ export const saleorCartCreateInfra =
     logger,
   }: SaleorCartServiceConfig): CartCreateInfra =>
   async ({ lines, email, options }) => {
-    const { data } = await graphqlClient(apiURI).execute(
+    const result = await graphqlClientV2(apiURI).execute(
       CartCreateMutationDocument,
       {
         variables: {
@@ -23,21 +25,43 @@ export const saleorCartCreateInfra =
           },
         },
         options,
+        operationName: "CartCreateMutation",
       },
     );
-    const errors = data?.checkoutCreate?.errors ?? [];
 
-    if (errors?.length) {
-      logger.error("Error while creating a cart", { error: errors, channel });
+    if (!result.ok) {
+      logger.error("Unexpected error while creating a checkout", {
+        error: result.error,
+        channel,
+        languageCode,
+      });
+
+      return result;
     }
 
-    const checkout = data?.checkoutCreate?.checkout;
+    if (result.data.checkoutCreate?.errors.length) {
+      logger.error("Checkout create mutation returned errors.", {
+        error: result.data.checkoutCreate.errors,
+        channel,
+        languageCode,
+      });
 
-    if (errors?.length || !checkout) {
-      logger.error("Error while creating a cart", { error: errors, channel });
-
-      return { errors, cartId: null };
+      return err({
+        code: "CART_CREATE_ERROR",
+      });
     }
 
-    return { errors: [], cartId: checkout.id };
+    if (!result.data.checkoutCreate?.checkout) {
+      logger.error("No checkout was returned from Saleor", {
+        error: result.data.checkoutCreate,
+        channel,
+        languageCode,
+      });
+
+      return err({
+        code: "CART_CREATE_ERROR",
+      });
+    }
+
+    return ok({ cartId: result.data.checkoutCreate.checkout.id });
   };
