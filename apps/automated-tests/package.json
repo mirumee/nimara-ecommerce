@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "test:e2e": "playwright test",
-    "lint:staged": "lint-staged --concurrent false"
+    "lint:staged": "lint-staged"
   },
   "devDependencies": {
     "@next/env": "15.2.4",

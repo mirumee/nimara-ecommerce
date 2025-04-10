@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "lint:staged": "lint-staged --concurrent false"
+    "lint:staged": "lint-staged"
   },
   "exports": {
     "./prettier": "./src/prettier.config.js",
