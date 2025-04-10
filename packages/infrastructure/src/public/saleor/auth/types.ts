@@ -1,6 +1,5 @@
 import type { AccountRegisterInput } from "@nimara/codegen/schema";
-import type { AccountError, BaseError } from "@nimara/domain/objects/Error";
-import type { RefreshToken } from "@nimara/domain/objects/User";
+import { type AsyncResult } from "@nimara/domain/objects/Result";
 
 import { type Logger } from "#root/logging/types";
 
@@ -17,56 +16,37 @@ export interface SaleorAuthServiceConfig {
   logger: Logger;
 }
 
-export type TokenRefreshInfra = ({
-  refreshToken,
-  accessToken,
-}: {
-  accessToken?: string;
+export type TokenRefreshInfra = (opts: {
   refreshToken: string;
-}) => Promise<RefreshToken>;
+}) => AsyncResult<{ refreshToken: string | null }>;
 
 export type TokenRefreshUseCase = TokenRefreshInfra;
 
 export type AccountRegisterInfra = (
   accountRegisterInput: AccountRegisterInput,
-) => Promise<{ errors: AccountError[] } | null>;
+) => AsyncResult<{ success: true }>;
 
 export type AccountRegisterUseCase = AccountRegisterInfra;
 
-export type PasswordSetInfra = ({
-  email,
-  password,
-  token,
-}: {
+export type PasswordSetInfra = (opts: {
   email: string;
   password: string;
   token: string;
-}) => Promise<{ errors: AccountError[] } | null>;
+}) => AsyncResult<{ success: true }>;
 
 export type PasswordSetUseCase = PasswordSetInfra;
 
-export type RequestPasswordResetInfra = ({
-  email,
-  channel,
-  redirectUrl,
-}: {
+export type RequestPasswordResetInfra = (opts: {
   channel: string;
   email: string;
   redirectUrl: string;
-}) => Promise<{ errors: AccountError[] } | null>;
+}) => AsyncResult<{ success: true }>;
 
 export type RequestPasswordResetUseCase = RequestPasswordResetInfra;
 
-export type ConfirmAccountInfra = ({
-  email,
-  token,
-}: {
+export type ConfirmAccountInfra = (opts: {
   email: string;
   token: string;
-}) => Promise<
-  | { errors: AccountError[]; isSuccess: false }
-  | { isSuccess: false; serverError: BaseError }
-  | { isSuccess: true }
->;
+}) => AsyncResult<{ success: true }>;
 
 export type ConfirmAccountUseCase = ConfirmAccountInfra;

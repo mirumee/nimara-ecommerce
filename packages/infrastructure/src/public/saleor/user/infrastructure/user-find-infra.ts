@@ -24,7 +24,9 @@ export const saleorUserFindInfra = ({
     );
 
     if (!result.ok) {
-      logger.error("Error while fetching user by email", { result });
+      logger.error("Error while fetching user by email", {
+        error: result.error,
+      });
 
       return result;
     }

@@ -27,7 +27,7 @@ export const saleorAccountAddressDeleteInfra =
       return result;
     }
 
-    if (!!result.data.accountAddressDelete?.errors.length) {
+    if (result.data.accountAddressDelete?.errors.length) {
       logger.error("Error while deleting an address", {
         id,
         result,

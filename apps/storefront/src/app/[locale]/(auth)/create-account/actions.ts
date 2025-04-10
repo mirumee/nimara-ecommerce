@@ -14,7 +14,7 @@ export async function registerAccount(values: FormSchema) {
 
   const { firstName, lastName, email, password } = values;
 
-  const data = await authService.accountRegister({
+  const result = await authService.accountRegister({
     firstName,
     lastName,
     email,
@@ -27,7 +27,9 @@ export async function registerAccount(values: FormSchema) {
     ).toString(),
   });
 
-  revalidatePath(paths.createAccount.asPath());
+  if (result.ok) {
+    revalidatePath(paths.createAccount.asPath());
+  }
 
-  return data;
+  return result;
 }

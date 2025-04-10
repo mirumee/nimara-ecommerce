@@ -20,13 +20,17 @@ export const saleorConfirmEmailChangeInfra =
     );
 
     if (!result.ok) {
-      logger.error("Error while confirming email change", { result });
+      logger.error("Error while confirming email change", {
+        error: result.error,
+      });
 
       return result;
     }
 
     if (result.data.confirmEmailChange?.errors.length) {
-      logger.error("Error while confirming email change", { result });
+      logger.error("Error while confirming email change", {
+        error: result.data.confirmEmailChange.errors,
+      });
 
       return err({
         code: "EMAIL_CHANGE_CONFIRMATION_ERROR",

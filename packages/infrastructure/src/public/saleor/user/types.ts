@@ -71,7 +71,7 @@ export type AddressesGetInfra = (
   opts: {
     variables: { accessToken: string | undefined };
   } & QueryOptions,
-) => Promise<Address[] | null>;
+) => AsyncResult<Address[] | null>;
 
 export type AddressesGetUseCase = AddressesGetInfra;
 

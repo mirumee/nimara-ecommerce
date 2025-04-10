@@ -17,12 +17,12 @@ export const saleorPasswordChangeInfra =
     );
 
     if (!result.ok) {
-      logger.error("Error while changing password", { result });
+      logger.error("Error while changing password", { error: result.error });
 
       return result;
     }
 
-    if (!!result.data.passwordChange?.errors.length) {
+    if (result.data.passwordChange?.errors.length) {
       logger.error("Password change failed", {
         error: result.data.passwordChange.errors,
       });
