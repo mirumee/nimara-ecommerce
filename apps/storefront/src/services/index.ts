@@ -63,4 +63,5 @@ export const paymentService = stripePaymentService({
 
 export const collectionService = saleorCollectionService({
   apiURI: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
+  logger: storefrontLogger,
 });

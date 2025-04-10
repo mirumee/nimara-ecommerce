@@ -2,7 +2,6 @@ import { type LanguageCodeEnum } from "@nimara/codegen/schema";
 import { err, ok } from "@nimara/domain/objects/Result";
 
 import { graphqlClientV2 } from "#root/graphql/client";
-import { logger } from "#root/logging/service";
 
 import { CollectionDetailsQueryDocument } from "../graphql/queries/generated";
 import {
@@ -12,7 +11,10 @@ import {
 import { collectionSerializer } from "./serialziers";
 
 export const getCollectionDetailsInfra =
-  ({ apiURI }: SaleorCollectionServiceConfig): GetCollectionDetailsInfra =>
+  ({
+    apiURI,
+    logger,
+  }: SaleorCollectionServiceConfig): GetCollectionDetailsInfra =>
   async ({ slug, options, channel, languageCode, after, before, limit }) => {
     const pageInfo = before
       ? { before, last: limit, first: undefined }
@@ -80,13 +82,13 @@ export const getCollectionDetailsInfra =
         },
       });
     } catch (e) {
-      logger.error("Unexpected error while fetching products from Saleor", {
+      logger.error("Unexpected error while fetching collection from Saleor", {
         error: e,
       });
 
       return err({
         code: "UNEXPECTED_HTTP_ERROR",
-        message: "Unexpected error while fetching products from Saleor",
+        message: "Unexpected error while fetching collection from Saleor",
       });
     }
   };

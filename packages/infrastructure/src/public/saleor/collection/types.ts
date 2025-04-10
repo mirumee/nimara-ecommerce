@@ -2,9 +2,11 @@ import { type Collection } from "@nimara/domain/objects/Collection";
 import { type AsyncResult } from "@nimara/domain/objects/Result";
 
 import { type FetchOptions } from "#root/graphql/client";
+import { type Logger } from "#root/logging/types";
 
 export type SaleorCollectionServiceConfig = {
   apiURI: string;
+  logger: Logger;
 };
 
 export type PageInfo =
@@ -30,7 +32,7 @@ type CollectionDetailsOptions = {
   channel: string;
   languageCode?: string;
   limit: number;
-  slug?: string;
+  slug: string;
 } & WithFetchOptions;
 
 export type GetCollectionDetailsInfra = (

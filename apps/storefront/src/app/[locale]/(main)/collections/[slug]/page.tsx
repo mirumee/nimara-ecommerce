@@ -52,7 +52,7 @@ export async function generateMetadata(props: {
 
   return {
     title: collection?.seoTitle || collection?.name,
-    description: collection?.description,
+    description: collection?.seoDescription || collection?.description,
   };
 }
 
@@ -100,7 +100,7 @@ export default async function Page(props: {
         </h1>
       </div>
       <div className="relative mx-auto w-full max-w-md overflow-hidden">
-        {collection?.thumbnail && (
+        {collection?.thumbnail ? (
           <Image
             src={collection.thumbnail.url}
             alt={collection.thumbnail.alt || collection.name}
@@ -109,7 +109,7 @@ export default async function Page(props: {
             sizes="(max-width: 960px) 100vw, 50vw"
             className="h-auto w-full object-cover"
           />
-        )}
+        ) : null}
       </div>
 
       <div className="grid min-w-full items-start gap-8 md:flex">
