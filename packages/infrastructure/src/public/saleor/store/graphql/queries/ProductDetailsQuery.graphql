@@ -7,5 +7,6 @@ query ProductDetailsQuery(
 ) {
   product(slug: $slug, channel: $channel) {
     ...ProductDetailsFragment
+    ...ProductBaseFragment
   }
 }

@@ -6,7 +6,8 @@ import type {
 import type {
   Product,
   ProductAvailability,
-  ProductBasicDetails,
+  ProductBase,
+  RelatedProduct,
 } from "@nimara/domain/objects/Product";
 
 import type { FetchOptions } from "#root/graphql/client";
@@ -44,13 +45,20 @@ export type GetProductDetailsInfra = (
   opts: ProductDetailOptions,
 ) => Promise<{ errors: unknown[]; product: Product | null }>;
 
-export type GetProductBasicDetailsInfra = (
+export type GetProductBaseInfra = (
   opts: ProductDetailOptions,
-) => Promise<{ errors: unknown[]; product: ProductBasicDetails | null }>;
+) => Promise<{ errors: unknown[]; product: ProductBase | null }>;
 
-export type GetProductBasicDetailsUseCase = GetProductBasicDetailsInfra;
+export type GetProductRelatedProductsInfra = (
+  opts: ProductDetailOptions,
+) => Promise<{ errors: unknown[]; products: RelatedProduct[] | null }>;
+
+export type GetProductBaseUseCase = GetProductBaseInfra;
+
+export type GetProductRelatedProductsUseCase = GetProductRelatedProductsInfra;
 
 export type StoreService<Config> = (config: Config) => {
-  getProductBasicDetails: GetProductBasicDetailsUseCase;
+  getProductBase: GetProductBaseUseCase;
   getProductDetails: GetProductDetailsUseCase;
+  getProductRelatedProducts: GetProductRelatedProductsUseCase;
 };

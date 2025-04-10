@@ -1,0 +1,13 @@
+query ProductRelatedProducts($slug: String!, $channel: String!) {
+  product(slug: $slug, channel: $channel) {
+    category {
+      products(first: 8, channel: $channel) {
+        edges {
+          node {
+            ...ProductRelatedProductsFragment
+          }
+        }
+      }
+    }
+  }
+}

@@ -21,7 +21,7 @@ export const parseSaleorDataToFields = (
       getTranslation("plainText", field.values?.[0]) ||
       field.values?.[0]?.value ||
       "";
-    const imageUrl = field.values[0].file?.url;
+    const imageUrl = field.values[0]?.file?.url;
     const references = field.values
       ?.map((value) => value.reference)
       .filter((ref) => ref !== null);

@@ -1,10 +1,10 @@
 import type {
-  GetProductBasicDetailsInfra,
-  GetProductBasicDetailsUseCase,
+  GetProductBaseInfra,
+  GetProductBaseUseCase,
 } from "#root/public/saleor/store/types";
 
-export const getProductBasicDetailsUseCase = ({
-  getProductBasicDetailsInfra,
+export const getProductBaseUseCase = ({
+  getProductBaseInfra,
 }: {
-  getProductBasicDetailsInfra: GetProductBasicDetailsInfra;
-}): GetProductBasicDetailsUseCase => getProductBasicDetailsInfra;
+  getProductBaseInfra: GetProductBaseInfra;
+}): GetProductBaseUseCase => getProductBaseInfra;

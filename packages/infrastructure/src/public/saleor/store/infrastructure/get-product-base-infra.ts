@@ -1,22 +1,17 @@
 import type { DeepNonNullable, DeepRequired } from "ts-essentials";
 
-import type { ProductBasicDetails } from "@nimara/domain/objects/Product";
+import type { ProductBase } from "@nimara/domain/objects/Product";
 
 import { graphqlClient } from "#root/graphql/client";
 import { getTranslation } from "#root/lib/saleor";
 import { loggingService } from "#root/logging/service";
 
-import type { ProductBasicDetailsFragment } from "../graphql/fragments/generated";
-import { ProductBasicDetailsQueryDocument } from "../graphql/queries/generated";
-import type {
-  GetProductBasicDetailsInfra,
-  SaleorStoreServiceConfig,
-} from "../types";
+import type { ProductBaseFragment } from "../graphql/fragments/generated";
+import { ProductBaseQueryDocument } from "../graphql/queries/generated";
+import type { GetProductBaseInfra, SaleorStoreServiceConfig } from "../types";
 
-const parseData = (data: ProductBasicDetailsFragment): ProductBasicDetails => {
-  const { id } = data as DeepRequired<
-    DeepNonNullable<ProductBasicDetailsFragment>
-  >;
+const parseData = (data: ProductBaseFragment): ProductBase => {
+  const { id } = data as DeepRequired<DeepNonNullable<ProductBaseFragment>>;
   const name = getTranslation("name", data);
   const description = getTranslation("description", data);
 
@@ -27,15 +22,15 @@ const parseData = (data: ProductBasicDetailsFragment): ProductBasicDetails => {
   };
 };
 
-export const getProductBasicDetailsInfra =
+export const getProductBaseInfra =
   ({
     apiURI,
     channel,
     languageCode,
-  }: SaleorStoreServiceConfig): GetProductBasicDetailsInfra =>
+  }: SaleorStoreServiceConfig): GetProductBaseInfra =>
   async ({ productSlug, options }) => {
     const { data, error } = await graphqlClient(apiURI).execute(
-      ProductBasicDetailsQueryDocument,
+      ProductBaseQueryDocument,
       {
         options,
         variables: {

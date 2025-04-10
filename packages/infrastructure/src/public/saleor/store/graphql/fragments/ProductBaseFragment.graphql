@@ -1,0 +1,9 @@
+fragment ProductBaseFragment on Product {
+  id
+  name
+  description
+  translation(languageCode: $languageCode) {
+    name
+    description
+  }
+}

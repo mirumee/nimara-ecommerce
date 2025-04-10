@@ -33,9 +33,9 @@ export type ProductAvailabilityDetailsFragment_Product_variantsAvailability_Prod
 
 export type ProductAvailabilityDetailsFragment = { isAvailable: boolean | null, pricing: ProductAvailabilityDetailsFragment_Product_pricing_ProductPricingInfo | null, variantsAvailability: Array<ProductAvailabilityDetailsFragment_Product_variantsAvailability_ProductVariant> | null };
 
-export type ProductBasicDetailsFragment_Product_translation_ProductTranslation = { name: string | null, description: string | null };
+export type ProductBaseFragment_Product_translation_ProductTranslation = { name: string | null, description: string | null };
 
-export type ProductBasicDetailsFragment = { id: string, name: string, description: string | null, translation: ProductBasicDetailsFragment_Product_translation_ProductTranslation | null };
+export type ProductBaseFragment = { id: string, name: string, description: string | null, translation: ProductBaseFragment_Product_translation_ProductTranslation | null };
 
 export type ProductDetailsFragment_Product_media_ProductMedia = { url: string, alt: string, type: Types.ProductMediaType };
 
@@ -59,27 +59,21 @@ export type ProductDetailsFragment_Product_attributes_SelectedAttribute_values_A
 
 export type ProductDetailsFragment_Product_attributes_SelectedAttribute = { attribute: ProductDetailsFragment_Product_attributes_SelectedAttribute_attribute_Attribute, values: Array<ProductDetailsFragment_Product_attributes_SelectedAttribute_values_AttributeValue> };
 
-export type ProductDetailsFragment_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_thumbnail_Image = { url: string, alt: string | null };
-
-export type ProductDetailsFragment_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney = { net: ProductAvailabilityDetailsFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_net_Money, gross: ProductAvailabilityDetailsFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_gross_Money, tax: ProductAvailabilityDetailsFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_tax_Money };
-
-export type ProductDetailsFragment_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange = { start: ProductDetailsFragment_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney | null };
-
-export type ProductDetailsFragment_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo = { priceRange: ProductDetailsFragment_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange | null };
-
-export type ProductDetailsFragment_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product = { id: string, slug: string, name: string, thumbnail: ProductDetailsFragment_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_thumbnail_Image | null, pricing: ProductDetailsFragment_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo | null };
-
-export type ProductDetailsFragment_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge = { node: ProductDetailsFragment_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product };
-
-export type ProductDetailsFragment_Product_category_Category_products_ProductCountableConnection = { edges: Array<ProductDetailsFragment_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge> };
-
-export type ProductDetailsFragment_Product_category_Category = { products: ProductDetailsFragment_Product_category_Category_products_ProductCountableConnection | null };
-
-export type ProductDetailsFragment = { id: string, name: string, description: string | null, translation: ProductBasicDetailsFragment_Product_translation_ProductTranslation | null, media: Array<ProductDetailsFragment_Product_media_ProductMedia> | null, variants: Array<ProductDetailsFragment_Product_variants_ProductVariant> | null, attributes: Array<ProductDetailsFragment_Product_attributes_SelectedAttribute>, category: ProductDetailsFragment_Product_category_Category | null };
+export type ProductDetailsFragment = { id: string, name: string, description: string | null, media: Array<ProductDetailsFragment_Product_media_ProductMedia> | null, variants: Array<ProductDetailsFragment_Product_variants_ProductVariant> | null, attributes: Array<ProductDetailsFragment_Product_attributes_SelectedAttribute>, translation: ProductBaseFragment_Product_translation_ProductTranslation | null };
 
 export type ProductMediaFragment = { url: string, alt: string, type: Types.ProductMediaType };
 
-export type ProductPricingInfoFragment = { priceRange: ProductDetailsFragment_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange | null };
+export type ProductPricingInfoFragment_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney = { net: ProductAvailabilityDetailsFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_net_Money, gross: ProductAvailabilityDetailsFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_gross_Money, tax: ProductAvailabilityDetailsFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_tax_Money };
+
+export type ProductPricingInfoFragment_ProductPricingInfo_priceRange_TaxedMoneyRange = { start: ProductPricingInfoFragment_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney | null };
+
+export type ProductPricingInfoFragment = { priceRange: ProductPricingInfoFragment_ProductPricingInfo_priceRange_TaxedMoneyRange | null };
+
+export type ProductRelatedProductsFragment_Product_thumbnail_Image = { url: string, alt: string | null };
+
+export type ProductRelatedProductsFragment_Product_pricing_ProductPricingInfo = { priceRange: ProductPricingInfoFragment_ProductPricingInfo_priceRange_TaxedMoneyRange | null };
+
+export type ProductRelatedProductsFragment = { id: string, slug: string, name: string, thumbnail: ProductRelatedProductsFragment_Product_thumbnail_Image | null, pricing: ProductRelatedProductsFragment_Product_pricing_ProductPricingInfo | null };
 
 export type ProductVariantDetailsFragment = { id: string, name: string, translation: ProductDetailsFragment_Product_variants_ProductVariant_translation_ProductVariantTranslation | null, media: Array<ProductDetailsFragment_Product_variants_ProductVariant_media_ProductMedia> | null, selectionAttributes: Array<ProductDetailsFragment_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute>, nonSelectionAttributes: Array<ProductDetailsFragment_Product_variants_ProductVariant_nonSelectionAttributes_SelectedAttribute> };
 
@@ -146,32 +140,9 @@ fragment MoneyFragment on Money {
   currency
   amount
 }`, {"fragmentName":"ProductAvailabilityDetailsFragment"}) as unknown as TypedDocumentString<ProductAvailabilityDetailsFragment, unknown>;
-export const ProductBasicDetailsFragment = new TypedDocumentString(`
-    fragment ProductBasicDetailsFragment on Product {
-  id
-  name
-  translation(languageCode: $languageCode) {
-    name
-  }
-  description
-  translation(languageCode: $languageCode) {
-    name
-    description
-  }
-}
-    `, {"fragmentName":"ProductBasicDetailsFragment"}) as unknown as TypedDocumentString<ProductBasicDetailsFragment, unknown>;
 export const ProductDetailsFragment = new TypedDocumentString(`
     fragment ProductDetailsFragment on Product {
-  id
-  name
-  translation(languageCode: $languageCode) {
-    name
-  }
-  description
-  translation(languageCode: $languageCode) {
-    name
-    description
-  }
+  ...ProductBaseFragment
   media {
     ...ProductMediaFragment
   }
@@ -184,24 +155,6 @@ export const ProductDetailsFragment = new TypedDocumentString(`
     }
     values {
       ...AttributeValueFragment
-    }
-  }
-  category {
-    products(first: 10, channel: $channel) {
-      edges {
-        node {
-          id
-          slug
-          name
-          thumbnail(size: 512) {
-            url
-            alt
-          }
-          pricing {
-            ...ProductPricingInfoFragment
-          }
-        }
-      }
     }
   }
 }
@@ -232,17 +185,19 @@ fragment AttributeValueFragment on AttributeValue {
     url
   }
 }
+fragment ProductBaseFragment on Product {
+  id
+  name
+  description
+  translation(languageCode: $languageCode) {
+    name
+    description
+  }
+}
 fragment ProductMediaFragment on ProductMedia {
   url(size: $mediaSize, format: $mediaFormat)
   alt
   type
-}
-fragment ProductPricingInfoFragment on ProductPricingInfo {
-  priceRange {
-    start {
-      ...TaxedMoneyFragment
-    }
-  }
 }
 fragment ProductVariantDetailsFragment on ProductVariant {
   id
@@ -267,6 +222,26 @@ fragment SelectionAttributeFragment on SelectedAttribute {
   values {
     ...AttributeValueFragment
   }
+}`, {"fragmentName":"ProductDetailsFragment"}) as unknown as TypedDocumentString<ProductDetailsFragment, unknown>;
+export const ProductRelatedProductsFragment = new TypedDocumentString(`
+    fragment ProductRelatedProductsFragment on Product {
+  id
+  slug
+  name
+  thumbnail(size: 512) {
+    url
+    alt
+  }
+  pricing {
+    ...ProductPricingInfoFragment
+  }
+}
+    fragment ProductPricingInfoFragment on ProductPricingInfo {
+  priceRange {
+    start {
+      ...TaxedMoneyFragment
+    }
+  }
 }
 fragment TaxedMoneyFragment on TaxedMoney {
   net {
@@ -282,4 +257,4 @@ fragment TaxedMoneyFragment on TaxedMoney {
 fragment MoneyFragment on Money {
   currency
   amount
-}`, {"fragmentName":"ProductDetailsFragment"}) as unknown as TypedDocumentString<ProductDetailsFragment, unknown>;
+}`, {"fragmentName":"ProductRelatedProductsFragment"}) as unknown as TypedDocumentString<ProductRelatedProductsFragment, unknown>;
