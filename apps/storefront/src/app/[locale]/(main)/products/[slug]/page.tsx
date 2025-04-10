@@ -26,7 +26,7 @@ export async function generateMetadata(props: {
     countryCode: region.market.countryCode,
   };
 
-  const { product } = await storeService(serviceOpts).getProductBasicDetails({
+  const { product } = await storeService(serviceOpts).getProductBase({
     productSlug: slug,
     options: {
       next: {
@@ -42,19 +42,14 @@ export async function generateMetadata(props: {
   };
 }
 
-export default async function Page(props: {
-  params: Promise<{ slug: string }>;
-}) {
-  const params = await props.params;
-  const { slug } = params;
-
+export default function Page(props: { params: Promise<{ slug: string }> }) {
   return (
     <div className="relative w-full">
       <Suspense fallback={<ProductDetailsSkeleton />}>
-        <ProductDetailsContainer slug={slug} />
+        <ProductDetailsContainer params={props.params} />
       </Suspense>
       <Suspense fallback={<RelatedProductsSkeleton />}>
-        <RelatedProductsContainer slug={slug} />
+        <RelatedProductsContainer params={props.params} />
       </Suspense>
     </div>
   );

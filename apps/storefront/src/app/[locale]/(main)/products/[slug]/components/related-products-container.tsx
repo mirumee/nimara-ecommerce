@@ -4,7 +4,13 @@ import { storeService } from "@/services";
 
 import { RelatedProducts } from "./related-products";
 
-export async function RelatedProductsContainer({ slug }: { slug: string }) {
+export const RelatedProductsContainer = async ({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) => {
+  const { slug } = await params;
+
   const region = await getCurrentRegion();
 
   const serviceOpts = {
@@ -14,7 +20,9 @@ export async function RelatedProductsContainer({ slug }: { slug: string }) {
     countryCode: region.market.countryCode,
   };
 
-  const { data } = await storeService(serviceOpts).getProductDetails({
+  const { products } = await storeService(
+    serviceOpts,
+  ).getProductRelatedProducts({
     productSlug: slug,
     options: {
       next: {
@@ -23,9 +31,9 @@ export async function RelatedProductsContainer({ slug }: { slug: string }) {
     },
   });
 
-  if (!data?.product?.relatedProducts?.length) {
+  if (!products?.length) {
     return null;
   }
 
-  return <RelatedProducts products={data.product.relatedProducts} />;
-}
+  return <RelatedProducts products={products} />;
+};

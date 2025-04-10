@@ -10,10 +10,18 @@ import { cartService, storeService, userService } from "@/services";
 
 import { ProductDetails } from "./product-details";
 
-export const ProductDetailsContainer = async ({ slug }: { slug: string }) => {
-  const region = await getCurrentRegion();
-  const accessToken = await getAccessToken();
-  const checkoutId = (await cookies()).get(COOKIE_KEY.checkoutId)?.value;
+export const ProductDetailsContainer = async ({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) => {
+  const { slug } = await params;
+
+  const [region, accessToken, checkoutId] = await Promise.all([
+    getCurrentRegion(),
+    getAccessToken(),
+    (async () => (await cookies()).get(COOKIE_KEY.checkoutId)?.value)(),
+  ]);
 
   const serviceOpts = {
     channel: region.market.channel,
