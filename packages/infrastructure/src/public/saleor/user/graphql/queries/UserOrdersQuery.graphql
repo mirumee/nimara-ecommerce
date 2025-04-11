@@ -1,4 +1,8 @@
-query UserOrdersQuery($languageCode: LanguageCodeEnum!) {
+query UserOrdersQuery(
+  $languageCode: LanguageCodeEnum!
+  $thumbnailSize: Int!
+  $thumbnailFormat: ThumbnailFormatEnum!
+) {
   me {
     id
     orders(first: 100) {

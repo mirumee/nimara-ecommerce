@@ -4,6 +4,7 @@ import {
 } from "@nimara/codegen/schema";
 import { err, ok } from "@nimara/domain/objects/Result";
 
+import { THUMBNAIL_FORMAT, THUMBNAIL_SIZE_LARGE } from "#root/config";
 import { graphqlClientV2 } from "#root/graphql/client";
 import type { SearchInfra } from "#root/use-cases/search/types";
 
@@ -76,6 +77,8 @@ export const saleorSearchInfra =
               (conf) => conf.queryParamValue === sortBy,
             )?.saleorValue,
             where: productIds ? { ids: productIds } : undefined,
+            thumbnailFormat: THUMBNAIL_FORMAT,
+            thumbnailSize: THUMBNAIL_SIZE_LARGE,
             ...pageInfo,
           },
           options: {

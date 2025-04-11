@@ -86,6 +86,8 @@ export type UserOrdersQuery_Query = { me: UserOrdersQuery_me_User | null };
 
 export type UserOrdersQueryVariables = Types.Exact<{
   languageCode: Types.LanguageCodeEnum;
+  thumbnailSize: Types.Scalars['Int']['input'];
+  thumbnailFormat: Types.ThumbnailFormatEnum;
 }>;
 
 
@@ -167,7 +169,7 @@ export const UserFindQueryDocument = new TypedDocumentString(`
 }
     `) as unknown as TypedDocumentString<UserFindQuery, UserFindQueryVariables>;
 export const UserOrdersQueryDocument = new TypedDocumentString(`
-    query UserOrdersQuery($languageCode: LanguageCodeEnum!) {
+    query UserOrdersQuery($languageCode: LanguageCodeEnum!, $thumbnailSize: Int!, $thumbnailFormat: ThumbnailFormatEnum!) {
   me {
     id
     orders(first: 100) {
@@ -214,7 +216,7 @@ fragment OrderLineFragment on OrderLine {
   totalPrice {
     ...TaxedMoneyFragment
   }
-  thumbnail(size: 512) {
+  thumbnail(size: $thumbnailSize, format: $thumbnailFormat) {
     url
     alt
   }

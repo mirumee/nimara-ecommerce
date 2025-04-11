@@ -6,6 +6,8 @@ query CollectionDetailsQuery(
   $before: String
   $first: Int
   $last: Int
+  $thumbnailSize: Int!
+  $thumbnailFormat: ThumbnailFormatEnum!
 ) {
   collection(slug: $slug, channel: $channel) {
     ...CollectionFragment
