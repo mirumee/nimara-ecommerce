@@ -92,10 +92,12 @@ export default async function Page(props: {
     notFound();
   }
 
+  const cart = resultCartGet?.ok ? resultCartGet.data : null;
+
   return (
     <>
       <ProductDisplay
-        cart={resultCartGet?.ok ? resultCartGet.data : null}
+        cart={cart}
         product={data.product}
         availability={data.availability}
         user={user ? { ...user, accessToken } : null}
