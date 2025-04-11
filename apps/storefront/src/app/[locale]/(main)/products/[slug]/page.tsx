@@ -1,23 +1,23 @@
-import { cookies } from "next/headers";
-import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
-import { getAccessToken } from "@/auth";
-import { CACHE_TTL, COOKIE_KEY } from "@/config";
+import { CACHE_TTL } from "@/config";
 import { clientEnvs } from "@/envs/client";
-import { JsonLd, productToJsonLd } from "@/lib/json-ld";
 import { getCurrentRegion } from "@/regions/server";
-import { cartService, storeService, userService } from "@/services";
+import { storeService } from "@/services";
 import { storefrontLogger } from "@/services/logging";
 
-import { ProductDisplay } from "./components/product-display";
+import { ProductDetailsContainer } from "./components/product-details-container";
+import { ProductDetailsSkeleton } from "./components/product-details-skeleton";
+import { RelatedProductsContainer } from "./components/related-products-container";
+import { RelatedProductsSkeleton } from "./components/related-products-skeleton";
+
+export const experimental_ppr = true;
 
 export async function generateMetadata(props: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 }) {
   const params = await props.params;
-
   const { slug } = params;
-
   const region = await getCurrentRegion();
 
   const serviceOpts = {
@@ -28,7 +28,7 @@ export async function generateMetadata(props: {
     logger: storefrontLogger,
   };
 
-  const { data } = await storeService(serviceOpts).getProductDetails({
+  const result = await storeService(serviceOpts).getProductBase({
     productSlug: slug,
     options: {
       next: {
@@ -39,71 +39,22 @@ export async function generateMetadata(props: {
   });
 
   return {
-    title: data?.product?.name,
-    description: data?.product?.description,
+    title: result?.data?.product?.name,
+    description: result?.data?.product?.description,
   };
 }
 
-export default async function Page(props: {
-  params: Promise<{ slug: string }>;
+export default function Page(props: {
+  params: Promise<{ locale: string; slug: string }>;
 }) {
-  const params = await props.params;
-
-  const { slug } = params;
-
-  const region = await getCurrentRegion();
-  const accessToken = await getAccessToken();
-
-  const serviceOpts = {
-    channel: region.market.channel,
-    languageCode: region.language.code,
-    apiURI: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
-    countryCode: region.market.countryCode,
-    logger: storefrontLogger,
-  };
-
-  const checkoutId = (await cookies()).get(COOKIE_KEY.checkoutId)?.value;
-
-  const [{ data }, resultCartGet, user] = await Promise.all([
-    storeService(serviceOpts).getProductDetails({
-      productSlug: slug,
-      options: {
-        next: {
-          revalidate: CACHE_TTL.pdp,
-          tags: [`PRODUCT:${slug}`, "DETAIL-PAGE:PRODUCT"],
-        },
-      },
-    }),
-    checkoutId
-      ? cartService(serviceOpts).cartGet({
-          cartId: checkoutId,
-          options: {
-            next: {
-              revalidate: CACHE_TTL.cart,
-              tags: [`CHECKOUT:${checkoutId}`],
-            },
-          },
-        })
-      : null,
-    userService.userGet(accessToken),
-  ]);
-
-  if (!data) {
-    notFound();
-  }
-
-  const cart = resultCartGet?.ok ? resultCartGet.data : null;
-
   return (
-    <>
-      <ProductDisplay
-        cart={cart}
-        product={data.product}
-        availability={data.availability}
-        user={user ? { ...user, accessToken } : null}
-      />
-
-      <JsonLd jsonLd={productToJsonLd(data?.product, data?.availability)} />
-    </>
+    <div className="relative w-full">
+      <Suspense fallback={<ProductDetailsSkeleton />}>
+        <ProductDetailsContainer params={props.params} />
+      </Suspense>
+      <Suspense fallback={<RelatedProductsSkeleton />}>
+        <RelatedProductsContainer params={props.params} />
+      </Suspense>
+    </div>
   );
 }

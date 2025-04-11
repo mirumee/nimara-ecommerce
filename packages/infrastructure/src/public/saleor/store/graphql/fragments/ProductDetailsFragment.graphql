@@ -1,14 +1,5 @@
 fragment ProductDetailsFragment on Product {
-  id
-  name
-  translation(languageCode: $languageCode) {
-    name
-  }
-  description
-  translation(languageCode: $languageCode) {
-    name
-    description
-  }
+  ...ProductBaseFragment
   media {
     ...ProductMediaFragment
   }
@@ -21,24 +12,6 @@ fragment ProductDetailsFragment on Product {
     }
     values {
       ...AttributeValueFragment
-    }
-  }
-  category {
-    products(first: 10, channel: $channel) {
-      edges {
-        node {
-          id
-          slug
-          name
-          thumbnail(size: 512) {
-            url
-            alt
-          }
-          pricing {
-            ...ProductPricingInfoFragment
-          }
-        }
-      }
     }
   }
 }

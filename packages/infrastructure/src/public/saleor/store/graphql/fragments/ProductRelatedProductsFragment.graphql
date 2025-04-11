@@ -1,0 +1,12 @@
+fragment ProductRelatedProductsFragment on Product {
+  id
+  slug
+  name
+  thumbnail(size: 512) {
+    url
+    alt
+  }
+  pricing {
+    ...ProductPricingInfoFragment
+  }
+}

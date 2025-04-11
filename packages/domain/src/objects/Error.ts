@@ -71,6 +71,7 @@ export const CHECKOUT_ERROR_CODES = [
   "CART_LINES_ADD_ERROR",
   "CART_LINES_UPDATE_ERROR",
   "CART_LINES_DELETE_ERROR",
+  "NOT_AVAILABLE_ERROR",
 ] as const;
 export type CheckoutErrorCode = (typeof CHECKOUT_ERROR_CODES)[number];
 

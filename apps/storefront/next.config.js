@@ -1,7 +1,12 @@
 import { withSentryConfig } from "@sentry/nextjs";
 import createNextIntlPlugin from "next-intl/plugin";
+import withBundleAnalyzer from "@next/bundle-analyzer";
 
 const withNextIntl = createNextIntlPlugin();
+
+const withAnalyzer = withBundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+});
 
 const APP_SEMVER_NAME = `${process.env.npm_package_name}@${process.env.npm_package_version}`;
 const isSentryAvailable =
@@ -10,133 +15,135 @@ const isSentryAvailable =
   process.env.SENTRY_ORG;
 
 /** @type {import('next').NextConfig} */
-const nextConfig = withNextIntl({
-  redirects: async () => {
-    return [
-      {
-        source: "/en",
-        destination: "/",
-        permanent: true,
-      },
-      {
-        source: "/en/:path*",
-        destination: "/:path*",
-        permanent: true,
-      },
-      {
-        source: "/us/en",
-        destination: "/",
-        permanent: true,
-      },
-      {
-        source: "/us/en/:path*",
-        destination: "/:path*",
-        permanent: true,
-      },
-      {
-        source: "/us",
-        destination: "/",
-        permanent: true,
-      },
-      {
-        source: "/us/:path*",
-        destination: "/:path*",
-        permanent: true,
-      },
-    ];
-  },
-  // TODO: add redirects to footer CMS pages (instead of /pages/slug => /slug)
-
-  env: {
-    // Need to export this env, as the process is not available in the browser
-    APP_SEMVER_NAME,
-  },
-  logging: {
-    fetches: {
-      // Set this to true, to see more what's cached and what's not
-      fullUrl: false,
-    },
-  },
-  experimental: {
-    serverExternalPackages: ["pino"],
-  },
-  images: {
-    // TODO: Required for the images to load on Chrome when deployed with Vercel.
-    // Remove when the issue is fixed.
-    loader: "custom",
-    loaderFile: "./src/lib/sanityImageLoader.ts",
-    remotePatterns: [
-      {
-        hostname: "*.saleor.cloud",
-      },
-    ],
-    domains: ["cdn.buttercms.com"],
-  },
-  reactStrictMode: true,
-  transpilePackages: ["@nimara/ui"],
-  async headers() {
-    const headers = [];
-    if (process.env.NEXT_PUBLIC_VERCEL_ENV !== "production") {
-      headers.push({
-        headers: [
-          {
-            key: "X-Robots-Tag",
-            value: "noindex",
-          },
-        ],
-        source: "/:path*",
-      });
-    }
-    return headers;
-  },
-  webpack: (config, { isServer }) => {
-    if (isServer) {
-      config.ignoreWarnings = [
-        { module: /opentelemetry/ },
+const nextConfig = withAnalyzer(
+  withNextIntl({
+    redirects: async () => {
+      return [
         {
-          // https://github.com/getsentry/sentry-javascript/issues/15209#issuecomment-2706299540
-          message:
-            /Critical dependency: require function is used in a way in which dependencies cannot be statically extracted/,
+          source: "/en",
+          destination: "/",
+          permanent: true,
+        },
+        {
+          source: "/en/:path*",
+          destination: "/:path*",
+          permanent: true,
+        },
+        {
+          source: "/us/en",
+          destination: "/",
+          permanent: true,
+        },
+        {
+          source: "/us/en/:path*",
+          destination: "/:path*",
+          permanent: true,
+        },
+        {
+          source: "/us",
+          destination: "/",
+          permanent: true,
+        },
+        {
+          source: "/us/:path*",
+          destination: "/:path*",
+          permanent: true,
         },
       ];
-    }
-    const fileLoaderRule = config.module.rules.find((rule) =>
-      rule.test?.test?.(".svg"),
-    );
+    },
+    // TODO: add redirects to footer CMS pages (instead of /pages/slug => /slug)
 
-    config.module.rules.push(
-      // Reapply the existing rule, but only for svg imports ending in ?url
-      {
-        ...fileLoaderRule,
-        test: /\.svg$/i,
-        resourceQuery: /url/, // *.svg?url
+    env: {
+      // Need to export this env, as the process is not available in the browser
+      APP_SEMVER_NAME,
+    },
+    logging: {
+      fetches: {
+        // Set this to true, to see more what's cached and what's not
+        fullUrl: false,
       },
-      // Convert all other *.svg imports to React components
-      {
-        test: /\.svg$/i,
-        issuer: fileLoaderRule.issuer,
-        resourceQuery: { not: [...fileLoaderRule.resourceQuery.not, /url/] }, // exclude if *.svg?url
-        use: ["@svgr/webpack"],
-      },
-    );
+    },
+    experimental: {
+      serverExternalPackages: ["pino"],
+      ppr: "incremental",
+    },
+    images: {
+      // TODO: Required for the images to load on Chrome when deployed with Vercel.
+      // Remove when the issue is fixed.
+      loader: "custom",
+      loaderFile: "./src/lib/sanityImageLoader.ts",
+      remotePatterns: [
+        {
+          hostname: "*.saleor.cloud",
+        },
+      ],
+      domains: ["cdn.buttercms.com"],
+    },
+    reactStrictMode: true,
+    transpilePackages: ["@nimara/ui"],
+    async headers() {
+      const headers = [];
+      if (process.env.NEXT_PUBLIC_VERCEL_ENV !== "production") {
+        headers.push({
+          headers: [
+            {
+              key: "X-Robots-Tag",
+              value: "noindex",
+            },
+          ],
+          source: "/:path*",
+        });
+      }
+      return headers;
+    },
+    webpack: (config, { isServer }) => {
+      if (isServer) {
+        config.ignoreWarnings = [
+          { module: /opentelemetry/ },
+          {
+            // https://github.com/getsentry/sentry-javascript/issues/15209#issuecomment-2706299540
+            message:
+              /Critical dependency: require function is used in a way in which dependencies cannot be statically extracted/,
+          },
+        ];
+      }
+      const fileLoaderRule = config.module.rules.find((rule) =>
+        rule.test?.test?.(".svg"),
+      );
 
-    // Modify the file loader rule to ignore *.svg, since we have it handled now.
-    fileLoaderRule.exclude = /\.svg$/i;
+      config.module.rules.push(
+        // Reapply the existing rule, but only for svg imports ending in ?url
+        {
+          ...fileLoaderRule,
+          test: /\.svg$/i,
+          resourceQuery: /url/, // *.svg?url
+        },
+        // Convert all other *.svg imports to React components
+        {
+          test: /\.svg$/i,
+          issuer: fileLoaderRule.issuer,
+          resourceQuery: { not: [...fileLoaderRule.resourceQuery.not, /url/] }, // exclude if *.svg?url
+          use: ["@svgr/webpack"],
+        },
+      );
 
-    return config;
-  },
-  experimental: {
-    turbo: {
-      rules: {
-        "*.svg": {
-          loaders: ["@svgr/webpack"],
-          as: "*.js",
+      // Modify the file loader rule to ignore *.svg, since we have it handled now.
+      fileLoaderRule.exclude = /\.svg$/i;
+
+      return config;
+    },
+    experimental: {
+      turbo: {
+        rules: {
+          "*.svg": {
+            loaders: ["@svgr/webpack"],
+            as: "*.js",
+          },
         },
       },
     },
-  },
-});
-
+  }),
+);
 const configWithSentry = withSentryConfig(nextConfig, {
   // For all available options, see:
   // https://github.com/getsentry/sentry-webpack-plugin#options
