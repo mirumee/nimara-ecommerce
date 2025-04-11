@@ -1,4 +1,6 @@
-import { graphqlClient } from "#root/graphql/client";
+import { err, ok } from "@nimara/domain/objects/Result";
+
+import { graphqlClientV2 } from "#root/graphql/client";
 
 import { CartLinesDeleteMutationDocument } from "../graphql/mutations/generated";
 import type { LinesDeleteInfra, SaleorCartServiceConfig } from "../types";
@@ -6,26 +8,35 @@ import type { LinesDeleteInfra, SaleorCartServiceConfig } from "../types";
 export const saleorLinesDeleteInfra =
   ({ apiURI, logger }: SaleorCartServiceConfig): LinesDeleteInfra =>
   async ({ cartId, linesIds, options }) => {
-    const { data } = await graphqlClient(apiURI).execute(
+    const result = await graphqlClientV2(apiURI).execute(
       CartLinesDeleteMutationDocument,
       {
         variables: {
           id: cartId,
           linesIds,
         },
-
+        operationName: "CartLinesDeleteMutation",
         options,
       },
     );
 
-    if (data?.checkoutLinesDelete?.errors.length) {
+    if (!result.ok) {
       logger.error("Error while deleting lines from cart", {
-        error: data.checkoutLinesDelete.errors,
-        cartId,
+        error: result.error,
       });
 
-      return data.checkoutLinesDelete.errors;
+      return result;
     }
 
-    return [];
+    if (result.data.checkoutLinesDelete?.errors.length) {
+      logger.error("Checkout lines delete mutation returned errors.", {
+        error: result.data.checkoutLinesDelete.errors,
+      });
+
+      return err({
+        code: "CART_LINES_DELETE_ERROR",
+      });
+    }
+
+    return ok({ success: true });
   };
