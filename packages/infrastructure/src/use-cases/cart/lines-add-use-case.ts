@@ -1,3 +1,5 @@
+import { ok } from "@nimara/domain/objects/Result";
+
 import type {
   CartCreateInfra,
   LinesAddInfra,
@@ -13,13 +15,17 @@ export const linesAddUseCase = ({
 }): LinesAddUseCase => {
   return async ({ email, lines, options, cartId }) => {
     if (cartId) {
-      const errors = await linesAddInfra({
+      const resultLinesAdd = await linesAddInfra({
         cartId,
         options,
         lines,
       });
 
-      return { errors, cartId: null };
+      if (!resultLinesAdd.ok) {
+        return resultLinesAdd;
+      }
+
+      return ok({ cartId });
     }
 
     return cartCreateInfra({ email, options, lines });

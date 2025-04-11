@@ -3,11 +3,10 @@ import {
   type LanguageCodeEnum,
 } from "@nimara/codegen/schema";
 import type { Cart } from "@nimara/domain/objects/Cart";
+import { type AsyncResult } from "@nimara/domain/objects/Result";
 
 import type { FetchOptions } from "#root/graphql/client";
 import { type Logger } from "#root/logging/types";
-
-import type { CheckoutErrorFragment } from "./graphql/fragments/generated";
 
 export type SaleorCartServiceConfig = {
   apiURI: string;
@@ -21,53 +20,51 @@ export type WithFetchOptions = { options?: FetchOptions };
 
 export type CartGetInfra = (
   opts: { cartId: string } & WithFetchOptions,
-) => Promise<Cart | null>;
+) => AsyncResult<Cart>;
 
-export type CartGetUseCase = (
-  opts: { cartId: string } & WithFetchOptions,
-) => Promise<Cart | null>;
+export type CartGetUseCase = CartGetInfra;
 
 export type CartCreateInfra = (
   opts: {
     email?: string;
     lines: { quantity: number; variantId: string }[];
   } & WithFetchOptions,
-) => Promise<{ cartId: string | null; errors: CheckoutErrorFragment[] }>;
+) => AsyncResult<{ cartId: string }>;
 
 export type LinesUpdateInfra = (
   opts: {
     cartId: string;
     lines: { lineId: string; quantity: number }[];
   } & WithFetchOptions,
-) => Promise<CheckoutErrorFragment[]>;
+) => AsyncResult<{ success: true }>;
 
 export type LinesUpdateUseCase = (
   opts: {
     cartId: string;
     lines: { lineId: string; quantity: number }[];
   } & WithFetchOptions,
-) => Promise<CheckoutErrorFragment[]>;
+) => AsyncResult<{ success: true }>;
 
 export type LinesDeleteInfra = (
   opts: {
     cartId: string;
     linesIds: string[];
   } & WithFetchOptions,
-) => Promise<CheckoutErrorFragment[]>;
+) => AsyncResult<{ success: true }>;
 
 export type LinesDeleteUseCase = (
   opts: {
     cartId: string;
     linesIds: string[];
   } & WithFetchOptions,
-) => Promise<CheckoutErrorFragment[]>;
+) => AsyncResult<{ success: true }>;
 
 export type LinesAddInfra = (
   opts: {
     cartId: string;
     lines: { quantity: number; variantId: string }[];
   } & WithFetchOptions,
-) => Promise<CheckoutErrorFragment[]>;
+) => AsyncResult<{ success: true }>;
 
 export type LinesAddUseCase = (
   opts: {
@@ -75,9 +72,8 @@ export type LinesAddUseCase = (
     email?: string;
     lines: { quantity: number; variantId: string }[];
   } & WithFetchOptions,
-) => Promise<{
-  cartId: string | null;
-  errors: CheckoutErrorFragment[];
+) => AsyncResult<{
+  cartId: string;
 }>;
 
 export type CartService<Config> = (config: Config) => {

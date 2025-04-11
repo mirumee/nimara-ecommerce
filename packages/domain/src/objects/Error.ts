@@ -50,14 +50,6 @@ export const ACCOUNT_ERROR_CODES = [
 export type AccountErrorCode = (typeof ACCOUNT_ERROR_CODES)[number];
 
 /**
- * @description Error codes related to checkout.
- */
-export const CHECKOUT_ERROR_CODES = [
-  "NOT_AVAILABLE_ERROR",
-] as const satisfies ErrorCodeFormat[];
-export type CheckoutErrorCode = (typeof CHECKOUT_ERROR_CODES)[number];
-
-/**
  * @description Error codes related to address actions.
  */
 export const ADDRESS_ERROR_CODES = [
@@ -71,15 +63,28 @@ export const ADDRESS_ERROR_CODES = [
 export type AddressErrorCode = (typeof ADDRESS_ERROR_CODES)[number];
 
 /**
+ * @description Error codes related to checkout actions.
+ */
+export const CHECKOUT_ERROR_CODES = [
+  "CART_NOT_FOUND_ERROR",
+  "CART_CREATE_ERROR",
+  "CART_LINES_ADD_ERROR",
+  "CART_LINES_UPDATE_ERROR",
+  "CART_LINES_DELETE_ERROR",
+  "NOT_AVAILABLE_ERROR",
+] as const;
+export type CheckoutErrorCode = (typeof CHECKOUT_ERROR_CODES)[number];
+
+/**
  * ErrorCode
  * @description Union type of all error codes.
  */
 export type ErrorCode =
   | AddressErrorCode
   | AuthErrorCode
+  | CheckoutErrorCode
   | HTTPErrorCode
   | AccountErrorCode
-  | CheckoutErrorCode
   | "INPUT_ERROR";
 
 /**

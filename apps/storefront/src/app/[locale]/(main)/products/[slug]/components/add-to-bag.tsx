@@ -54,7 +54,7 @@ export const AddToBag = ({
   const handleProductAdd = async () => {
     setIsProcessing(true);
 
-    const { cartId, errors } = await service.linesAdd({
+    const resultLinesAdd = await service.linesAdd({
       email: user?.email,
       cartId: cart?.id ?? null,
       lines: [{ variantId, quantity: 1 }],
@@ -68,13 +68,15 @@ export const AddToBag = ({
         : undefined,
     });
 
-    if (errors.length) {
-      errors.forEach(({ code }) =>
+    if (!resultLinesAdd.ok) {
+      if (resultLinesAdd.error.field) {
         toast({
-          description: t(`checkout-errors.${code}` as TranslationMessage),
+          description: t(
+            `checkout-errors.${resultLinesAdd.error.field}` as TranslationMessage,
+          ),
           variant: "destructive",
-        }),
-      );
+        });
+      }
     } else {
       succeededRef.current = true;
     }
@@ -85,8 +87,11 @@ export const AddToBag = ({
       promises.push(revalidateCart(cart.id));
     }
 
-    if (cartId) {
-      promises.push(setCheckoutIdCookie(cartId), revalidateCart(cartId));
+    if (resultLinesAdd.ok) {
+      promises.push(
+        setCheckoutIdCookie(resultLinesAdd.data.cartId),
+        revalidateCart(resultLinesAdd.data.cartId),
+      );
     }
 
     await Promise.all(promises);

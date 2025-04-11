@@ -1,6 +1,7 @@
 import type { Cart } from "@nimara/domain/objects/Cart";
+import { err, ok } from "@nimara/domain/objects/Result";
 
-import { graphqlClient } from "#root/graphql/client";
+import { graphqlClientV2 } from "#root/graphql/client";
 import { serializeLine } from "#root/utils";
 
 import { THUMBNAIL_FORMAT, THUMBNAIL_SIZE } from "../config";
@@ -51,7 +52,7 @@ export const saleorCartGetInfra =
     logger,
   }: SaleorCartServiceConfig): CartGetInfra =>
   async ({ cartId, options }) => {
-    const { data } = await graphqlClient(apiURI).execute(CartQueryDocument, {
+    const result = await graphqlClientV2(apiURI).execute(CartQueryDocument, {
       variables: {
         id: cartId,
         languageCode,
@@ -60,16 +61,29 @@ export const saleorCartGetInfra =
         thumbnailSize: THUMBNAIL_SIZE,
       },
       options,
+      operationName: "CartQuery",
     });
 
-    if (!data?.checkout) {
-      logger.error("Error while fetching cart", {
-        error: data?.checkout,
+    if (!result.ok) {
+      logger.error("Unexpecteed error while fetching cart", {
+        error: result.error,
         cartId,
+        languageCode,
+        countryCode,
       });
 
-      return null;
+      return result;
     }
 
-    return serializeCart(data.checkout);
+    if (!result.data.checkout) {
+      logger.error("Cart not found", {
+        cartId,
+        languageCode,
+        countryCode,
+      });
+
+      return err({ code: "CART_NOT_FOUND_ERROR" });
+    }
+
+    return ok(serializeCart(result.data.checkout));
   };

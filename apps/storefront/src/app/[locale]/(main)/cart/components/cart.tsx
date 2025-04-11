@@ -28,15 +28,25 @@ export const Cart = async ({ checkoutId }: { checkoutId: string }) => {
     logger: storefrontLogger,
   });
 
-  const cart = await service.cartGet({
+  const resultCartGet = await service.cartGet({
     cartId: checkoutId,
     options: {
       next: { revalidate: CACHE_TTL.cart, tags: [`CHECKOUT:${checkoutId}`] },
     },
   });
 
-  if (cart?.lines.length) {
-    return <CartDetails region={region} cart={cart} user={user} />;
+  if (!resultCartGet.ok) {
+    storefrontLogger.error("Failed to fetch cart", {
+      error: resultCartGet.error,
+    });
+
+    return <EmptyCart />;
+  }
+
+  if (!!resultCartGet.data.lines.length) {
+    return (
+      <CartDetails region={region} cart={resultCartGet.data} user={user} />
+    );
   }
 
   return <EmptyCart />;

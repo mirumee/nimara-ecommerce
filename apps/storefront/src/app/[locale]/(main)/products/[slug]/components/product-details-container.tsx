@@ -32,11 +32,12 @@ export const ProductDetailsContainer = async ({
     logger: storefrontLogger,
   };
 
-  const [{ data }, cart, user] = await Promise.all([
+  const [{ data }, resultCartGet, user] = await Promise.all([
     storeService(serviceOpts).getProductDetails({
       productSlug: slug,
       options: {
         next: {
+          revalidate: CACHE_TTL.pdp,
           tags: [`PRODUCT:${slug}`, "DETAIL-PAGE:PRODUCT"],
         },
       },
@@ -59,6 +60,7 @@ export const ProductDetailsContainer = async ({
     notFound();
   }
 
+  const cart = resultCartGet?.ok ? resultCartGet.data : null;
   const { product, availability } = data;
 
   return (
