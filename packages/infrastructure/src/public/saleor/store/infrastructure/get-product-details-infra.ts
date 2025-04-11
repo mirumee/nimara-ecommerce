@@ -1,8 +1,9 @@
 import type { DeepNonNullable, DeepRequired } from "ts-essentials";
 
 import type { Product } from "@nimara/domain/objects/Product";
+import { ok } from "@nimara/domain/objects/Result";
 
-import { graphqlClient } from "#root/graphql/client";
+import { graphqlClientV2 } from "#root/graphql/client";
 import { getTranslation } from "#root/lib/saleor";
 import { parseAttributeData } from "#root/lib/serializers/attribute";
 
@@ -11,7 +12,7 @@ import type { ProductDetailsFragment } from "../graphql/fragments/generated";
 import { ProductDetailsQueryDocument } from "../graphql/queries/generated";
 import type {
   GetProductDetailsInfra,
-  SaleorStoreServiceConfig,
+  SaleorProductServiceConfig,
 } from "../types";
 
 const parseData = (data: ProductDetailsFragment): Product => {
@@ -29,27 +30,7 @@ const parseData = (data: ProductDetailsFragment): Product => {
     name,
     description,
     images,
-    relatedProducts:
-      data.category?.products?.edges
-        ?.filter(({ node }) => node.id !== id)
-        .filter(Boolean)
-        .map(({ node }) => {
-          return {
-            currency: node?.pricing?.priceRange?.start?.gross?.currency ?? "",
-            id: node.slug,
-            media: null,
-            thumbnail: node.thumbnail
-              ? {
-                  alt: node.thumbnail.alt ?? undefined,
-                  url: node.thumbnail.url,
-                }
-              : null,
-            name: node.name,
-            price: node.pricing?.priceRange?.start?.gross?.amount ?? 0,
-            slug: node.slug,
-            updatedAt: new Date(),
-          };
-        }) ?? [],
+
     attributes: data.attributes.map(parseAttributeData),
     variants: variants.map(
       ({
@@ -80,9 +61,9 @@ export const getProductDetailsInfra =
     channel,
     languageCode,
     logger,
-  }: SaleorStoreServiceConfig): GetProductDetailsInfra =>
+  }: SaleorProductServiceConfig): GetProductDetailsInfra =>
   async ({ productSlug, customMediaFormat, options }) => {
-    const { data, error } = await graphqlClient(apiURI).execute(
+    const result = await graphqlClientV2(apiURI).execute(
       ProductDetailsQueryDocument,
       {
         options,
@@ -93,21 +74,24 @@ export const getProductDetailsInfra =
           mediaFormat: customMediaFormat ?? IMAGE_FORMAT,
           mediaSize: IMAGE_SIZES.productDetail,
         },
+        operationName: "ProductDetailsQuery",
       },
     );
 
-    if (error) {
-      logger.error("Failed to fetch the product details", {
+    if (!result.ok) {
+      logger.error("Error while fetching the product details", {
         productSlug,
         channel,
-        error,
+        result,
       });
 
-      return { errors: [error], product: null };
+      return result;
+    }
+    if (!result.data.product) {
+      return ok({ product: null });
     }
 
-    return {
-      product: data?.product ? parseData(data.product) : null,
-      errors: [],
-    };
+    return ok({
+      product: parseData(result.data.product),
+    });
   };

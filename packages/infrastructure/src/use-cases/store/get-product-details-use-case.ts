@@ -1,3 +1,5 @@
+import { err, ok } from "@nimara/domain/objects/Result";
+
 import type { FetchOptions } from "#root/graphql/client";
 import type {
   GetProductAvailabilityDetailsInfra,
@@ -14,35 +16,31 @@ export const getProductDetailsUseCase =
     getProductDetailsInfra: GetProductDetailsInfra;
   }): GetProductDetailsUseCase =>
   async ({ productSlug, customMediaFormat, options }) => {
-    const [availabilityData, productData] = await Promise.all([
-      getProductAvailabilityDetailsInfra({
-        productSlug,
-        customMediaFormat,
-        options: JSON.parse(
-          JSON.stringify({ ...options, cache: "no-store" }),
-        ) as FetchOptions,
-      }),
-      getProductDetailsInfra({
-        productSlug,
-        customMediaFormat,
-        options,
-      }),
-    ]);
+    const [resultGetProductAvailability, resultGetProductDetails] =
+      await Promise.all([
+        getProductAvailabilityDetailsInfra({
+          productSlug,
+          customMediaFormat,
+          options: JSON.parse(
+            JSON.stringify({ ...options, cache: "no-store" }),
+          ) as FetchOptions,
+        }),
+        getProductDetailsInfra({
+          productSlug,
+          customMediaFormat,
+          options,
+        }),
+      ]);
 
-    if (!availabilityData.availability || !productData.product) {
-      const errors = [
-        ...(availabilityData.errors ?? []),
-        ...(productData?.errors ?? []),
-      ];
-
-      return { errors, data: null };
+    if (
+      !resultGetProductAvailability.data?.availability ||
+      !resultGetProductDetails.data?.product
+    ) {
+      return err({ code: "NOT_AVAILABLE_ERROR" });
     }
 
-    return {
-      data: {
-        product: productData.product,
-        availability: availabilityData.availability,
-      },
-      errors: [],
-    };
+    return ok({
+      product: resultGetProductDetails.data.product,
+      availability: resultGetProductAvailability.data.availability,
+    });
   };

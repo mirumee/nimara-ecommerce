@@ -16,13 +16,9 @@ export type ProductVariantAvailability = {
   quantityLimitPerCustomer: number | null;
 };
 
-export type Product = {
+export type Product = ProductBase & {
   attributes: Attribute[];
-  description: string | null;
-  id: string;
   images: Image[];
-  name: string;
-  relatedProducts: SearchProduct[];
   variants: ProductVariant[];
 };
 
@@ -33,3 +29,11 @@ export type ProductVariant = {
   nonSelectionAttributes: Attribute[];
   selectionAttributes: Attribute[];
 };
+
+export type ProductBase = {
+  description: string | null;
+  id: string;
+  name: string;
+};
+
+export type RelatedProduct = SearchProduct;

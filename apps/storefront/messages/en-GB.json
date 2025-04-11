@@ -248,6 +248,7 @@
     "INPUT_ERROR": "Input error.",
     "MISSING_ADDRESS_DATA_ERROR": "No address data returned.",
     "NOT_FOUND_ERROR": "Not found",
+    "NOT_AVAILABLE_ERROR": "Product not available",
     "PASSWORD_CHANGE_ERROR": "Password change failed.",
     "PASSWORD_CHANGE_REQUEST_ERROR": "An error occurred while sending the email.",
     "PASSWORD_SET_ERROR": "Failed to set password.",

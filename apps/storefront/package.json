@@ -50,6 +50,7 @@
   },
   "devDependencies": {
     "@graphql-typed-document-node/core": "3.2.0",
+    "@next/bundle-analyzer": "15.2.5",
     "@next/env": "15.2.4",
     "@nimara/codegen": "workspace:*",
     "@nimara/config": "workspace:*",
