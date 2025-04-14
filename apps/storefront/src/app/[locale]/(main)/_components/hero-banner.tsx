@@ -1,4 +1,5 @@
 import { ArrowRight } from "lucide-react";
+import Image from "next/image";
 
 import type { PageField } from "@nimara/domain/objects/CMSPage";
 import { Button } from "@nimara/ui/components/button";
@@ -33,10 +34,13 @@ export const HeroBanner = async ({
           </Link>
         </Button>
       </div>
-      <div className="sm-order-last order-first w-full sm:basis-1/2">
-        <div
-          className="h-[22rem] bg-cover bg-center sm:h-[27rem]"
-          style={{ backgroundImage: `url(${image})` }}
+      <div className="sm-order-last relative order-first h-[22rem] w-full sm:h-[27rem] sm:basis-1/2">
+        <Image
+          src={image ?? ""}
+          alt="Hero Banner"
+          priority
+          fill={true}
+          className="object-cover"
         />
       </div>
     </div>
