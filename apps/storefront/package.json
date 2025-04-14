@@ -67,7 +67,7 @@
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "autoprefixer": "10.4.20",
-    "eslint": "^8.57.0",
+    "eslint": "^9.24.0",
     "eslint-config-custom": "workspace:*",
     "file-loader": "6.2.0",
     "pino": "9.6.0",

@@ -25,7 +25,7 @@
     "@nimara/codegen": "workspace:*",
     "@nimara/config": "workspace:*",
     "@nimara/domain": "workspace:*",
-    "eslint": "^8.57.0",
+    "eslint": "^9.24.0",
     "eslint-config-custom": "workspace:*",
     "graphql": "16.9.0",
     "ts-essentials": "10.0.2",
