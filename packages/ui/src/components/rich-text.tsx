@@ -6,11 +6,13 @@ import { type Maybe } from "../lib/types";
 import { cn } from "../lib/utils";
 
 export interface RichTextProps extends ComponentProps<"article"> {
+  disableProse?: boolean;
   jsonStringData: Maybe<string>;
 }
 
 export function RichText({
   jsonStringData,
+  disableProse = false,
   className,
   ...props
 }: RichTextProps) {
@@ -23,7 +25,11 @@ export function RichText({
 
   return (
     <article
-      className={cn("[&>*]:mt-0", className)}
+      className={cn(
+        disableProse ? "" : "prose",
+        "max-w-none [&>*]:mt-0",
+        className,
+      )}
       {...props}
       dangerouslySetInnerHTML={{
         __html: editorHtml.parse(data).join(""),

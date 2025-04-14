@@ -77,17 +77,19 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
                           <div className="text-sm font-medium leading-none">
                             {child.label}
                           </div>
-                          <div className="text-sm leading-snug text-muted-foreground">
-                            {child.description &&
-                            isValidJson(child.description) ? (
-                              <RichText
-                                className="py-1"
-                                jsonStringData={child.description}
-                              />
-                            ) : (
-                              <p className="py-1">{child.description}</p>
-                            )}
-                          </div>
+                          {child.description && (
+                            <div className="text-sm leading-snug text-muted-foreground">
+                              {isValidJson(child.description) ? (
+                                <RichText
+                                  className="line-clamp-3 py-1"
+                                  jsonStringData={child.description}
+                                  disableProse
+                                />
+                              ) : (
+                                <p className="py-1">{child.description}</p>
+                              )}
+                            </div>
+                          )}
                         </Link>
                       ))}
                   </div>
@@ -120,6 +122,7 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
                                 {child.description &&
                                 isValidJson(child.description) ? (
                                   <RichText
+                                    disableProse
                                     className="line-clamp-3 max-h-[4.5em] overflow-hidden py-1"
                                     jsonStringData={child.description}
                                   />
