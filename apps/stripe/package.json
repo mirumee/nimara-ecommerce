@@ -51,7 +51,7 @@
     "@typescript-eslint/parser": "^6.12.0",
     "autoprefixer": "10.4.20",
     "dotenv": "16.4.7",
-    "eslint": "^8.57.0",
+    "eslint": "^9.24.0",
     "eslint-config-custom": "workspace:*",
     "postcss": "^8.5.1",
     "prettier": "3.4.2",

@@ -18,7 +18,7 @@
     "@nimara/config": "workspace:*",
     "@nimara/ui": "workspace:*",
     "@svgr/webpack": "8.1.0",
-    "eslint": "^8.57.0",
+    "eslint": "^9.24.0",
     "eslint-config-custom": "workspace:*",
     "prettier": "3.4.2",
     "typescript": "^5.7.2"
