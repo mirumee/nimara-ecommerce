@@ -1,6 +1,7 @@
 import { type LanguageCodeEnum } from "@nimara/codegen/schema";
 import { err, ok } from "@nimara/domain/objects/Result";
 
+import { THUMBNAIL_FORMAT, THUMBNAIL_SIZE_LARGE } from "#root/config";
 import { graphqlClientV2 } from "#root/graphql/client";
 
 import { CollectionDetailsQueryDocument } from "../graphql/queries/generated";
@@ -38,6 +39,8 @@ export const getCollectionDetailsInfra =
             slug,
             after,
             before,
+            thumbnailFormat: THUMBNAIL_FORMAT,
+            thumbnailSize: THUMBNAIL_SIZE_LARGE,
             ...pageInfo,
           },
           operationName: "CollectionDetailsQuery",

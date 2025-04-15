@@ -1,10 +1,10 @@
 import type { Cart } from "@nimara/domain/objects/Cart";
 import { err, ok } from "@nimara/domain/objects/Result";
 
+import { THUMBNAIL_FORMAT, THUMBNAIL_SIZE_SMALL } from "#root/config";
 import { graphqlClientV2 } from "#root/graphql/client";
 import { serializeLine } from "#root/utils";
 
-import { THUMBNAIL_FORMAT, THUMBNAIL_SIZE } from "../config";
 import type { CartFragment } from "../graphql/fragments/generated";
 import { CartQueryDocument } from "../graphql/queries/generated";
 import type { CartGetInfra, SaleorCartServiceConfig } from "../types";
@@ -58,7 +58,7 @@ export const saleorCartGetInfra =
         languageCode,
         countryCode,
         thumbnailFormat: THUMBNAIL_FORMAT,
-        thumbnailSize: THUMBNAIL_SIZE,
+        thumbnailSize: THUMBNAIL_SIZE_SMALL,
       },
       options,
       operationName: "CartQuery",

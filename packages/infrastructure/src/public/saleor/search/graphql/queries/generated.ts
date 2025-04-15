@@ -113,6 +113,8 @@ export type SearchProductQueryVariables = Types.Exact<{
   searchByProducts: Types.Scalars['Boolean']['input'];
   sortBy?: Types.InputMaybe<Types.ProductOrder>;
   where?: Types.InputMaybe<Types.ProductWhereInput>;
+  thumbnailSize: Types.Scalars['Int']['input'];
+  thumbnailFormat: Types.ThumbnailFormatEnum;
 }>;
 
 
@@ -183,7 +185,7 @@ export const FacetsQueryDocument = new TypedDocumentString(`
 }
     `) as unknown as TypedDocumentString<FacetsQuery, FacetsQueryVariables>;
 export const SearchProductQueryDocument = new TypedDocumentString(`
-    query SearchProductQuery($after: String, $before: String, $categorySlug: String, $channel: String!, $collectionSlug: String, $filter: ProductFilterInput, $first: Int, $languageCode: LanguageCodeEnum!, $last: Int, $search: String, $searchByCategory: Boolean!, $searchByCollection: Boolean!, $searchByProducts: Boolean!, $sortBy: ProductOrder, $where: ProductWhereInput) {
+    query SearchProductQuery($after: String, $before: String, $categorySlug: String, $channel: String!, $collectionSlug: String, $filter: ProductFilterInput, $first: Int, $languageCode: LanguageCodeEnum!, $last: Int, $search: String, $searchByCategory: Boolean!, $searchByCollection: Boolean!, $searchByProducts: Boolean!, $sortBy: ProductOrder, $where: ProductWhereInput, $thumbnailSize: Int!, $thumbnailFormat: ThumbnailFormatEnum!) {
   category(slug: $categorySlug) @include(if: $searchByCategory) {
     products(
       after: $after
@@ -265,7 +267,7 @@ export const SearchProductQueryDocument = new TypedDocumentString(`
     name
   }
   slug
-  thumbnail(format: WEBP, size: 512) {
+  thumbnail(size: $thumbnailSize, format: $thumbnailFormat) {
     url
     alt
   }

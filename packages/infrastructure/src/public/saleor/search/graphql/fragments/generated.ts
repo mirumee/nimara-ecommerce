@@ -59,7 +59,7 @@ export const SearchProductFragment = new TypedDocumentString(`
     name
   }
   slug
-  thumbnail(format: WEBP, size: 512) {
+  thumbnail(size: $thumbnailSize, format: $thumbnailFormat) {
     url
     alt
   }

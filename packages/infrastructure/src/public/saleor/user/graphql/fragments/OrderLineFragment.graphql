@@ -8,7 +8,7 @@ fragment OrderLineFragment on OrderLine {
   totalPrice {
     ...TaxedMoneyFragment
   }
-  thumbnail(size: 512) {
+  thumbnail(size: $thumbnailSize, format: $thumbnailFormat) {
     url
     alt
   }

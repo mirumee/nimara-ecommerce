@@ -56,6 +56,8 @@ export type CollectionDetailsQueryVariables = Types.Exact<{
   before?: Types.InputMaybe<Types.Scalars['String']['input']>;
   first?: Types.InputMaybe<Types.Scalars['Int']['input']>;
   last?: Types.InputMaybe<Types.Scalars['Int']['input']>;
+  thumbnailSize: Types.Scalars['Int']['input'];
+  thumbnailFormat: Types.ThumbnailFormatEnum;
 }>;
 
 
@@ -81,7 +83,7 @@ export class TypedDocumentString<TResult, TVariables>
 }
 
 export const CollectionDetailsQueryDocument = new TypedDocumentString(`
-    query CollectionDetailsQuery($slug: String, $channel: String!, $languageCode: LanguageCodeEnum!, $after: String, $before: String, $first: Int, $last: Int) {
+    query CollectionDetailsQuery($slug: String, $channel: String!, $languageCode: LanguageCodeEnum!, $after: String, $before: String, $first: Int, $last: Int, $thumbnailSize: Int!, $thumbnailFormat: ThumbnailFormatEnum!) {
   collection(slug: $slug, channel: $channel) {
     ...CollectionFragment
   }
@@ -121,7 +123,7 @@ fragment SearchProductFragment on Product {
     name
   }
   slug
-  thumbnail(format: WEBP, size: 512) {
+  thumbnail(size: $thumbnailSize, format: $thumbnailFormat) {
     url
     alt
   }
