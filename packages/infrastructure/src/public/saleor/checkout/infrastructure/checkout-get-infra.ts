@@ -3,11 +3,8 @@ import type { Checkout } from "@nimara/domain/objects/Checkout";
 import type { TaxedMoney } from "@nimara/domain/objects/common";
 import type { BaseError } from "@nimara/domain/objects/Error";
 
+import { THUMBNAIL_FORMAT, THUMBNAIL_SIZE_SMALL } from "#root/config";
 import { graphqlClient } from "#root/graphql/client";
-import {
-  THUMBNAIL_FORMAT,
-  THUMBNAIL_SIZE,
-} from "#root/public/saleor/cart/config";
 import { serializeLine } from "#root/utils";
 
 import type { CheckoutFragment } from "../graphql/fragments/generated";
@@ -68,7 +65,7 @@ export const saleorCheckoutGetInfra = ({
           languageCode: languageCode as LanguageCodeEnum,
           countryCode: countryCode as CountryCode,
           thumbnailFormat: THUMBNAIL_FORMAT,
-          thumbnailSize: THUMBNAIL_SIZE,
+          thumbnailSize: THUMBNAIL_SIZE_SMALL,
         },
       },
     );

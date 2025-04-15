@@ -122,7 +122,7 @@ export const OrderFragment = new TypedDocumentString(`
   totalPrice {
     ...TaxedMoneyFragment
   }
-  thumbnail(size: 512) {
+  thumbnail(size: $thumbnailSize, format: $thumbnailFormat) {
     url
     alt
   }

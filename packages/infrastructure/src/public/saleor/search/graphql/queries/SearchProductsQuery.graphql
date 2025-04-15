@@ -14,6 +14,8 @@ query SearchProductQuery(
   $searchByProducts: Boolean!
   $sortBy: ProductOrder
   $where: ProductWhereInput
+  $thumbnailSize: Int!
+  $thumbnailFormat: ThumbnailFormatEnum!
 ) {
   category(slug: $categorySlug) @include(if: $searchByCategory) {
     products(

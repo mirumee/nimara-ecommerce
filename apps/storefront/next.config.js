@@ -68,16 +68,14 @@ const nextConfig = withAnalyzer(
       ppr: "incremental",
     },
     images: {
-      // TODO: Required for the images to load on Chrome when deployed with Vercel.
-      // Remove when the issue is fixed.
-      loader: "custom",
-      loaderFile: "./src/lib/sanityImageLoader.ts",
       remotePatterns: [
         {
           hostname: "*.saleor.cloud",
         },
       ],
       domains: ["cdn.buttercms.com"],
+      deviceSizes: [360, 480, 640, 768, 1024],
+      imageSizes: [256, 512, 768, 1024],
     },
     reactStrictMode: true,
     transpilePackages: ["@nimara/ui"],

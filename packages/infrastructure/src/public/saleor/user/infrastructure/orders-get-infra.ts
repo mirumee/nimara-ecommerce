@@ -1,3 +1,4 @@
+import { THUMBNAIL_FORMAT, THUMBNAIL_SIZE_MEDIUM } from "#root/config";
 import { graphqlClient } from "#root/graphql/client";
 import { parseAttributeData } from "#root/lib/serializers/attribute";
 
@@ -10,7 +11,13 @@ export const saleorOrdersGetInfra =
   async ({ accessToken, languageCode }) => {
     const { data, error } = await graphqlClient(apiURL, accessToken).execute(
       UserOrdersQueryDocument,
-      { variables: { languageCode } },
+      {
+        variables: {
+          languageCode,
+          thumbnailFormat: THUMBNAIL_FORMAT,
+          thumbnailSize: THUMBNAIL_SIZE_MEDIUM,
+        },
+      },
     );
 
     if (error) {

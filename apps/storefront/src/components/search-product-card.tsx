@@ -11,6 +11,8 @@ import { Link } from "@/i18n/routing";
 import { useLocalizedFormatter } from "@/lib/formatters/use-localized-formatter";
 import { paths } from "@/lib/paths";
 
+import { ProductImagePlaceholder } from "./product-image-placeholder";
+
 export const ProductName = ({ children }: PropsWithChildren) => (
   <h2 className="line-clamp-1 overflow-hidden text-ellipsis text-left">
     {children}
@@ -29,7 +31,11 @@ export const ProductPrice = ({ children }: PropsWithChildren) => {
 
 export const ProductThumbnail = ({ alt, ...props }: ImageProps) => (
   <div className="flex aspect-square justify-center overflow-hidden">
-    <Image alt={alt} className="min-w-full object-cover" {...props} />
+    <Image
+      alt={alt}
+      className="min-w-full object-cover object-top"
+      {...props}
+    />
   </div>
 );
 
@@ -55,18 +61,25 @@ export const SearchProductCard = ({
         slug: slug,
       })}
     >
-      <ProductThumbnail
-        alt={`Image of ${name}`}
-        aria-hidden={true}
-        aria-label={name}
-        height={height ?? 256}
-        src={thumbnail?.url ?? productPlaceholder}
-        width={width ?? 256}
-        sizes={
-          sizes ??
-          "(max-width: 720px) 100vw, (max-width: 1024px) 50vw, (max-width: 1294px) 33vw, 25vw"
-        }
-      />
+      {thumbnail ? (
+        <ProductThumbnail
+          alt={`Image of ${name}`}
+          aria-hidden={true}
+          aria-label={name}
+          height={height ?? 256}
+          src={thumbnail?.url ?? productPlaceholder}
+          width={width ?? 256}
+          sizes={
+            sizes ??
+            "(max-width: 720px) 100vw, (max-width: 1024px) 50vw, (max-width: 1294px) 33vw, 25vw"
+          }
+        />
+      ) : (
+        <div className="flex aspect-square justify-center overflow-hidden bg-accent">
+          <ProductImagePlaceholder className="min-w-full object-cover object-top" />
+        </div>
+      )}
+
       <div>
         <ProductName>{name}</ProductName>
         <ProductPrice>
