@@ -2,7 +2,8 @@
   "home": {
     "title": "Homepage",
     "description": "Nimara's headless architecture, built on Saleor, provides a flexible, cost-effective solution for online businesses. It’s ready to deploy with minimal setup, supports seamless integration of new providers, and features an intuitive UI for easy storefront customization and management.",
-    "homepage-preview": "Homepage preview"
+    "homepage-preview": "Homepage preview",
+    "hero-banner-alt": "Nimara's hero banner"
   },
   "locale": {
     "region": "Region",
