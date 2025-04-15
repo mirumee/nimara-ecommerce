@@ -9,8 +9,8 @@ import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { collectionService } from "@/services";
 
-import { ProductsList } from "../../_components/products-list";
-import { SearchPagination } from "../../_components/search-pagination";
+import { ProductsList } from "../../../(main)/_components/products-list";
+import { SearchPagination } from "../../../(main)/_components/search-pagination";
 
 type SearchParams = Promise<{
   after?: string;
