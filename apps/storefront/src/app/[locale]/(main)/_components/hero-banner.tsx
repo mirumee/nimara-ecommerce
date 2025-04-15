@@ -40,7 +40,7 @@ export const HeroBanner = async ({
       <div className="sm-order-last relative order-first h-[22rem] w-full sm:h-[27rem] sm:basis-1/2">
         <Image
           src={image ?? ""}
-          alt={t("hero-banner")}
+          alt={t("hero-banner-alt")}
           sizes="(max-width: 720px) 100vw, 50vw"
           priority
           fill
