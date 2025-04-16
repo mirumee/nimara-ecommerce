@@ -13,7 +13,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@nimara/ui/components/navigation-menu";
-import { RichText } from "@nimara/ui/components/rich-text";
+import { RichText } from "@nimara/ui/components/rich-text/rich-text";
 
 import { Link } from "@/i18n/routing";
 import { isValidJson } from "@/lib/helpers";
@@ -82,7 +82,7 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
                               {isValidJson(child.description) ? (
                                 <RichText
                                   className="line-clamp-3 py-1"
-                                  jsonStringData={child.description}
+                                  contentData={child.description}
                                   disableProse
                                 />
                               ) : (
@@ -124,7 +124,7 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
                                   <RichText
                                     disableProse
                                     className="line-clamp-3 max-h-[4.5em] overflow-hidden py-1"
-                                    jsonStringData={child.description}
+                                    contentData={child.description}
                                   />
                                 ) : (
                                   <p className="py-1">{child.description}</p>

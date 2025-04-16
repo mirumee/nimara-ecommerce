@@ -2,7 +2,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
-import { RichText } from "@nimara/ui/components/rich-text";
+import { RichText } from "@nimara/ui/components/rich-text/rich-text";
 
 import { CACHE_TTL, DEFAULT_RESULTS_PER_PAGE } from "@/config";
 import { paths } from "@/lib/paths";
@@ -113,7 +113,7 @@ export default async function Page(props: {
       </div>
 
       <div className="grid min-w-full items-start gap-8 md:flex">
-        <RichText jsonStringData={collection?.description} />
+        <RichText contentData={collection?.description} />
       </div>
 
       <hr />

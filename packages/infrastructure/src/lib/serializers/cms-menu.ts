@@ -69,8 +69,8 @@ const serializeSaleorMenuItem = (
   const { id, name, translation, url, children, category, collection, page } =
     item;
 
-  //   // INFO: Links in Saleor CMS cannot be relative links, they must be absolute URLs,
-  //   // so to preserve locale prefixes we need to cut the domain to make them relatives
+  // INFO: Links in Saleor CMS cannot be relative links, they must be absolute URLs,
+  // so to preserve locale prefixes we need to cut the domain to make them relatives
   const formattedUrl = url?.replace(process.env.BASE_URL ?? "", "");
 
   return {

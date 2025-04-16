@@ -5,7 +5,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@nimara/ui/components/accordion";
-import { RichText } from "@nimara/ui/components/rich-text";
+import { RichText } from "@nimara/ui/components/rich-text/rich-text";
 import { parseEditorJSData } from "@nimara/ui/lib/richText";
 
 export const AttributesDropdown = ({
@@ -36,7 +36,7 @@ export const AttributesDropdown = ({
             <AccordionContent>
               {attribute.values.map((val) =>
                 val.richText ? (
-                  <RichText key={val.name} jsonStringData={val.richText} />
+                  <RichText key={val.name} contentData={val.richText} />
                 ) : (
                   <p key={val.name}>{val.name}</p>
                 ),
