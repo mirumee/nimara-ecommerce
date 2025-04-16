@@ -24,7 +24,7 @@ export const saleorAccountAddressCreateInfra =
 
     if (!result.ok) {
       logger.error("Error while creating a new address", {
-        error: result.error,
+        error: result.errors,
       });
 
       return result;
@@ -35,7 +35,7 @@ export const saleorAccountAddressCreateInfra =
         error: result.data,
       });
 
-      return err({ code: "ADDRESS_CREATE_ERROR" });
+      return err([{ code: "ADDRESS_CREATE_ERROR" }]);
     }
 
     if (!result.data.accountAddressCreate?.address) {
@@ -43,7 +43,7 @@ export const saleorAccountAddressCreateInfra =
         error: "No address returned",
       });
 
-      return err({ code: "ADDRESS_CREATE_ERROR" });
+      return err([{ code: "ADDRESS_CREATE_ERROR" }]);
     }
 
     return ok({ id: result.data.accountAddressCreate.address.id });

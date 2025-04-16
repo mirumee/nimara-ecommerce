@@ -22,7 +22,7 @@ export const saleorLinesUpdateInfra =
 
     if (!result.ok) {
       logger.error("Error while updating lines in cart", {
-        error: result.error,
+        errors: result.errors,
       });
 
       return result;
@@ -33,9 +33,11 @@ export const saleorLinesUpdateInfra =
         error: result.data.checkoutLinesUpdate.errors,
       });
 
-      return err({
-        code: "CART_LINES_UPDATE_ERROR",
-      });
+      return err([
+        {
+          code: "CART_LINES_UPDATE_ERROR",
+        },
+      ]);
     }
 
     return ok({ success: true });

@@ -1,6 +1,7 @@
 import { getLocale } from "next-intl/server";
 
 import { type CountryCode } from "@nimara/codegen/schema";
+import { type AppErrorCode } from "@nimara/domain/objects/Error";
 import { type PaymentMethod } from "@nimara/domain/objects/Payment";
 
 import { getAccessToken } from "@/auth";
@@ -19,7 +20,10 @@ import { ShippingAddressSection } from "../../_sections/shipping-address-section
 import { validateCheckoutStepAction } from "../../actions";
 import { Payment } from "./payment";
 
-type SearchParams = Promise<{ country?: CountryCode; errorCode?: string }>;
+type SearchParams = Promise<{
+  country?: CountryCode;
+  errorCode?: AppErrorCode;
+}>;
 
 export default async function Page(props: { searchParams: SearchParams }) {
   const checkout = await getCheckoutOrRedirect();
@@ -112,17 +116,26 @@ export default async function Page(props: { searchParams: SearchParams }) {
   let paymentGatewayMethods: PaymentMethod[] = [];
 
   if (user) {
-    paymentGatewayCustomer = await paymentService.customerGet({
+    const resultPaymentGatewayCustomer = await paymentService.customerGet({
       user,
       channel: region.market.channel,
       environment: clientEnvs.ENVIRONMENT,
       accessToken: serverEnvs.SALEOR_APP_TOKEN,
     });
 
+    if (resultPaymentGatewayCustomer.ok) {
+      paymentGatewayCustomer = resultPaymentGatewayCustomer.data;
+    }
+
     if (paymentGatewayCustomer) {
-      paymentGatewayMethods = await paymentService.customerPaymentMethodsList({
-        customerId: paymentGatewayCustomer,
-      });
+      const resultPaymentGatewayMethods =
+        await paymentService.customerPaymentMethodsList({
+          customerId: paymentGatewayCustomer.customerId,
+        });
+
+      if (resultPaymentGatewayMethods.ok) {
+        paymentGatewayMethods = resultPaymentGatewayMethods.data;
+      }
     }
   }
 
@@ -133,7 +146,7 @@ export default async function Page(props: { searchParams: SearchParams }) {
       <DeliveryMethodSection checkout={checkout} />
       <PaymentSection>
         <Payment
-          paymentGatewayCustomer={paymentGatewayCustomer}
+          paymentGatewayCustomer={paymentGatewayCustomer?.customerId}
           paymentGatewayMethods={paymentGatewayMethods}
           errorCode={searchParams?.errorCode}
           storeUrl={storeUrl}

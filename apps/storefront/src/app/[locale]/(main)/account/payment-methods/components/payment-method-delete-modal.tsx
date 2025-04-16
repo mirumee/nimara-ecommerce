@@ -58,12 +58,12 @@ export const PaymentMethodDeleteModal = ({
 
     setIsProcessing(true);
 
-    const { isSuccess } = await paymentMethodDeleteAction({
+    const result = await paymentMethodDeleteAction({
       customerId,
       paymentMethodId: id,
     });
 
-    if (!isSuccess) {
+    if (!result.ok) {
       alert("Could not delete method");
     } else {
       router.refresh();

@@ -18,7 +18,7 @@ export const saleorTokenRefreshInfra =
     );
 
     if (!result.ok) {
-      logger.error("Failed to refresh the token.", { error: result.error });
+      logger.error("Failed to refresh the token.", { errors: result.errors });
 
       return result;
     }
@@ -28,9 +28,11 @@ export const saleorTokenRefreshInfra =
         error: result.data.tokenRefresh.errors,
       });
 
-      return err({
-        code: "TOKEN_REFRESH_ERROR",
-      });
+      return err([
+        {
+          code: "TOKEN_REFRESH_ERROR",
+        },
+      ]);
     }
 
     if (!result.data.tokenRefresh?.token) {

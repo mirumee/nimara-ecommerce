@@ -46,13 +46,13 @@ export const PaymentMethodAddModal = ({
   const handlePaymentSave = async () => {
     setIsProcessing(true);
 
-    const { errors } = await paymentService.paymentMethodSaveExecute({
+    const result = await paymentService.paymentMethodSaveExecute({
       redirectUrl,
       saveForFutureUse: isDefault,
     });
 
-    if (errors.length) {
-      setErrors(translateApiErrors({ t, errors }));
+    if (!result.ok) {
+      setErrors(translateApiErrors({ t, errors: result.errors }));
     }
 
     setIsProcessing(false);

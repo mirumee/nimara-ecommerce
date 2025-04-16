@@ -1,7 +1,10 @@
 import type { TransactionEventTypeEnum } from "@nimara/codegen/schema";
 import type { Checkout } from "@nimara/domain/objects/Checkout";
-
-import type { ApiError, ApiErrorType } from "./types";
+import {
+  type AppErrorCode,
+  type PaymentError,
+  type PaymentErrorType,
+} from "@nimara/domain/objects/Error";
 
 type EventType = `${TransactionEventTypeEnum}`;
 
@@ -22,8 +25,8 @@ export const isTransactionFailed = (eventType: EventType | null | undefined) =>
   !!eventType?.endsWith("FAILURE");
 
 export const parseApiError =
-  (type: ApiErrorType) =>
-  (error: { code: string }): ApiError => ({
+  (type: PaymentErrorType) =>
+  (error: { code: AppErrorCode }): PaymentError => ({
     type,
     code: error.code,
   });

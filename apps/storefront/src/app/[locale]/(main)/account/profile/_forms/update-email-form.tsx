@@ -32,23 +32,33 @@ export function UpdateEmailForm() {
     },
   });
 
+  const isDisabled = form.formState.isSubmitting;
+
   async function handleSubmit(values: UpdateEmailFormSchema) {
     const result = await updateUserEmail(values);
 
-    if (result && !result.ok) {
-      const { field } = result.error;
-
-      if (field === "newEmail") {
-        form.setError("email", { message: t(`errors.auth.${field}`) });
-      }
-      if (field === "password") {
-        form.setError(field, { message: t(`errors.auth.${field}`) });
-      }
+    if (result.ok) {
+      setIsEmailSent(true);
 
       return;
     }
 
-    setIsEmailSent(true);
+    result.errors.forEach((error) => {
+      if (error.field) {
+        if (error.field === "newEmail") {
+          form.setError("email", { message: t(`errors.auth.${error.field}`) });
+        }
+        if (error.field === "password") {
+          form.setError(error.field, {
+            message: t(`errors.auth.${error.field}`),
+          });
+        }
+      } else {
+        form.setError("email", {
+          message: t(`errors.${error.code}`),
+        });
+      }
+    });
   }
 
   return (
@@ -102,10 +112,10 @@ export function UpdateEmailForm() {
                 className="mt-4"
                 type="submit"
                 form="update-user-email-form"
-                disabled={form.formState.isSubmitting}
-                loading={form.formState.isSubmitting}
+                disabled={isDisabled}
+                loading={isDisabled}
               >
-                {form.formState.isSubmitting
+                {isDisabled
                   ? t("common.please-wait")
                   : t("common.save-changes")}
               </Button>

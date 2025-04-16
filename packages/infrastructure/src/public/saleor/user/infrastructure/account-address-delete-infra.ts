@@ -33,9 +33,11 @@ export const saleorAccountAddressDeleteInfra =
         result,
       });
 
-      return err({
-        code: "ADDRESS_DELETE_ERROR",
-      });
+      return err([
+        {
+          code: "ADDRESS_DELETE_ERROR",
+        },
+      ]);
     }
 
     return ok({ success: true });

@@ -39,8 +39,8 @@ export const UserDetailsForm = ({ checkout }: { checkout: Checkout }) => {
       email: userAccountEmail,
     });
 
-    if (result.redirectUrl) {
-      push(result.redirectUrl);
+    if (result.ok) {
+      push(result.data.redirectUrl);
     }
   };
 

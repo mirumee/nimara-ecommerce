@@ -21,7 +21,7 @@ export const saleorRequestEmailChangeInfra =
 
     if (!result.ok) {
       logger.error("Error while requesting email change", {
-        error: result.error,
+        error: result.errors,
       });
 
       return result;
@@ -32,9 +32,11 @@ export const saleorRequestEmailChangeInfra =
         error: result.data.requestEmailChange.errors,
       });
 
-      return err({
-        code: "EMAIL_CHANGE_REQUEST_ERROR",
-      });
+      return err([
+        {
+          code: "EMAIL_CHANGE_REQUEST_ERROR",
+        },
+      ]);
     }
 
     return ok({ success: true });

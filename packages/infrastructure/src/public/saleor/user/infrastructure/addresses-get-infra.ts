@@ -22,7 +22,7 @@ export const saleorAddressesGetInfra =
     );
 
     if (!result.ok) {
-      logger.error("Failed to fetch user addresses", { error: result.error });
+      logger.error("Failed to fetch user addresses", { error: result.errors });
 
       return result;
     }

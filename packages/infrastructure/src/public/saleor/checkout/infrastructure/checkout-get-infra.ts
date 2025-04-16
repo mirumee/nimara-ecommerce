@@ -1,10 +1,10 @@
 import type { CountryCode, LanguageCodeEnum } from "@nimara/codegen/schema";
 import type { Checkout } from "@nimara/domain/objects/Checkout";
 import type { TaxedMoney } from "@nimara/domain/objects/common";
-import type { BaseError } from "@nimara/domain/objects/Error";
+import { err, ok } from "@nimara/domain/objects/Result";
 
 import { THUMBNAIL_FORMAT, THUMBNAIL_SIZE_SMALL } from "#root/config";
-import { graphqlClient } from "#root/graphql/client";
+import { graphqlClientV2 } from "#root/graphql/client";
 import { serializeLine } from "#root/utils";
 
 import type { CheckoutFragment } from "../graphql/fragments/generated";
@@ -52,12 +52,10 @@ const serializeCheckout = (checkout: CheckoutFragment): Checkout => {
   };
 };
 
-export const saleorCheckoutGetInfra = ({
-  apiURL,
-  logger,
-}: SaleorCheckoutServiceConfig): CheckoutGetInfra => {
-  return async ({ checkoutId, languageCode, countryCode }) => {
-    const { data, error } = await graphqlClient(apiURL).execute(
+export const saleorCheckoutGetInfra =
+  ({ apiURL, logger }: SaleorCheckoutServiceConfig): CheckoutGetInfra =>
+  async ({ checkoutId, languageCode, countryCode }) => {
+    const result = await graphqlClientV2(apiURL).execute(
       CheckoutFindQueryDocument,
       {
         variables: {
@@ -67,28 +65,32 @@ export const saleorCheckoutGetInfra = ({
           thumbnailFormat: THUMBNAIL_FORMAT,
           thumbnailSize: THUMBNAIL_SIZE_SMALL,
         },
+        operationName: "CheckoutFindQuery",
       },
     );
 
-    if (error) {
-      logger.error("Failed to get checkout", { error, checkoutId });
+    if (!result.ok) {
+      logger.error("Failed to get checkout", {
+        error: result.errors,
+        checkoutId,
+      });
 
-      return {
-        checkout: null,
-        isSuccess: false,
-        errors: [error as BaseError],
-      };
+      return result;
     }
 
-    if (!data) {
-      logger.error("No checkout data returned from Saleor", { checkoutId });
-      // TODO: how to handle
-      throw new Error("No data returned from Saleor");
+    if (!result.data.checkout) {
+      logger.error("Checkout not found", {
+        checkoutId,
+      });
+
+      return err([
+        {
+          code: "CHECKOUT_NOT_FOUND_ERROR",
+        },
+      ]);
     }
 
-    return {
-      isSuccess: true,
-      checkout: serializeCheckout(data.checkout!),
-    };
+    return ok({
+      checkout: serializeCheckout(result.data.checkout),
+    });
   };
-};

@@ -36,7 +36,6 @@ export function ShippingAddressForm({
   countryCode: CountryCode;
 }) {
   const t = useTranslations();
-
   const { toast } = useToast();
   const [isCountryChanging, setIsCountryChanging] = useState(false);
   const { isRedirecting, push } = useRouterWithState();
@@ -59,22 +58,28 @@ export function ShippingAddressForm({
     !form.formState.isSubmitting && !isCountryChanging && !isRedirecting;
 
   const handleSubmit = async (input: AddressSchema) => {
-    const { errors } = await updateCheckoutAddressAction({
+    const result = await updateCheckoutAddressAction({
       checkoutId: checkout.id,
       address: schemaToAddress(input),
       type: "shipping",
     });
 
-    if (!errors.length) {
+    if (result.ok) {
       push(paths.checkout.deliveryMethod.asPath());
+
+      return;
     }
 
-    errors.map(({ field, message }) => {
+    result.errors.map(({ field, code }) => {
       if (isGlobalError(field)) {
-        toast({ variant: "destructive", description: t(message) });
+        toast({
+          variant: "destructive",
+          description: t(`errors.${code}`),
+          title: "Error",
+        });
       } else {
         form.setError(field as keyof AddressSchema, {
-          message: t(message),
+          message: t(`errors.${code}`),
         });
       }
     });

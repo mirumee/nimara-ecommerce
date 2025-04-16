@@ -7,7 +7,7 @@ import type {
 } from "../types";
 
 export const customerFromGatewayGetInfra =
-  ({ secretKey }: PaymentServiceConfig): CustomerFromGatewayGetInfra =>
+  ({ secretKey, }: PaymentServiceConfig): CustomerFromGatewayGetInfra =>
   async (opts) => {
     let customer;
 

@@ -33,9 +33,11 @@ export const saleorCountriesGetInfra =
         result,
       });
 
-      return err({
-        code: "COUNTRIES_NOT_FOUND_ERROR",
-      });
+      return err([
+        {
+          code: "COUNTRIES_NOT_FOUND_ERROR",
+        },
+      ]);
     }
 
     if (!result.data.channel.countries) {
@@ -44,9 +46,11 @@ export const saleorCountriesGetInfra =
         result,
       });
 
-      return err({
-        code: "COUNTRIES_NOT_FOUND_ERROR",
-      });
+      return err([
+        {
+          code: "COUNTRIES_NOT_FOUND_ERROR",
+        },
+      ]);
     }
 
     return ok(result.data.channel.countries);

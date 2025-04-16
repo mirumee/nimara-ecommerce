@@ -1,16 +1,17 @@
 import { type BaseError } from "./Error";
+import { type NonEmptyArray } from "./types";
 
 /**
  * Ok - Type representing a successful result.
  */
-export type Ok<T> = { data: T; error?: never; ok: true };
+export type Ok<T> = { data: T; errors?: never; ok: true };
 
 /**
  * Err - Type representing an error result.
  */
 export type Err<E extends BaseError = BaseError> = {
   data?: never;
-  error: E;
+  errors: NonEmptyArray<E>;
   ok: false;
 };
 
@@ -57,19 +58,14 @@ export const ok = <T>(data: T): Ok<T> => ({ ok: true, data });
  *  context: { email: "Invalid email format" },
  * });
  */
-export const err = <E extends BaseError = BaseError>(error: E): Err<E> => ({
-  ok: false,
-  error,
-});
+export function err<E extends BaseError = BaseError>(
+  errors: NonEmptyArray<E>,
+): Err<E> {
+  return { ok: false, errors };
+}
 
 /**
  * ResultType - A utility type to extract the data type from a Result.
  * This is useful for getting the type of the data when you know the result is an Ok.
  */
 export type OkResult<T> = T extends Ok<infer U> ? Ok<U>["data"] : never;
-
-/**
- * ErrResult - A utility type to extract the error type from a Result.
- * This is useful for getting the type of the error when you know the result is an Err.
- */
-export type ErrResult<T> = T extends Err<infer U> ? Err<U>["error"] : never;
