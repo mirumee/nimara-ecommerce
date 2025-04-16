@@ -34,9 +34,11 @@ export const saleorAccountAddressUpdateInfra =
         result,
       });
 
-      return err({
-        code: "ADDRESS_UPDATE_ERROR",
-      });
+      return err([
+        {
+          code: "ADDRESS_UPDATE_ERROR",
+        },
+      ]);
     }
 
     return ok({ success: true });

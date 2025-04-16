@@ -38,9 +38,17 @@ export function UpdatePasswordForm({
   async function handleSubmit(values: UpdatePasswordFormSchema) {
     const result = await updateUserPassword(values);
 
-    if (result && !result.ok) {
-      form.setError("root", {
-        message: t(`errors.${result.error.code}`),
+    if (!result.ok) {
+      result.errors.forEach((error) => {
+        if (error.field) {
+          form.setError(error.field as keyof UpdatePasswordFormSchema, {
+            message: t(`errors.${error.code}`),
+          });
+        } else {
+          form.setError("root", {
+            message: t(`errors.${error.code}`),
+          });
+        }
       });
 
       return;

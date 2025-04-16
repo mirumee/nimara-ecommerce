@@ -1,6 +1,7 @@
 import { err, ok } from "@nimara/domain/objects/Result";
 
 import { graphqlClientV2 } from "#root/graphql/client";
+import { handleMutationErrors } from "#root/public/saleor/error";
 
 import { PasswordChangeMutationDocument } from "../graphql/mutations/generated";
 import type { PasswordChangeInfra, SaleorUserServiceConfig } from "../types";
@@ -17,7 +18,7 @@ export const saleorPasswordChangeInfra =
     );
 
     if (!result.ok) {
-      logger.error("Error while changing password", { error: result.error });
+      logger.error("Error while changing password", { error: result.errors });
 
       return result;
     }
@@ -27,9 +28,7 @@ export const saleorPasswordChangeInfra =
         error: result.data.passwordChange.errors,
       });
 
-      return err({
-        code: "PASSWORD_CHANGE_ERROR",
-      });
+      return err(handleMutationErrors(result.data.passwordChange.errors));
     }
 
     return ok(true);

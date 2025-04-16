@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 
-import { type Maybe } from "@nimara/codegen/schema";
 import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
 import { Spinner } from "@nimara/ui/components/spinner";
@@ -14,7 +13,6 @@ import { MIN_PASSWORD_LENGTH } from "@/config";
 import { Link } from "@/i18n/routing";
 import { useRouterWithState } from "@/lib/hooks";
 import { paths } from "@/lib/paths";
-import { type TranslationMessage } from "@/types";
 
 import { registerAccount } from "./actions";
 import { type FormSchema, formSchema } from "./schema";
@@ -46,19 +44,17 @@ export function SignUpForm() {
       return;
     }
 
-    if (result.error.field) {
-      const field = result.error.field as Maybe<
-        TranslationMessage<"errors.auth">
-      >;
-
-      if (field) {
-        form.setError("email", { message: t(`errors.auth.${field}`) });
+    result.errors.forEach((error) => {
+      if (error.field) {
+        form.setError(error.field as keyof FormSchema, {
+          message: t(`errors.${error.code}`),
+        });
       } else {
         form.setError("email", {
-          message: t(`errors.${result.error.code}`),
+          message: t(`errors.${error.code}`),
         });
       }
-    }
+    });
 
     return;
   }

@@ -60,23 +60,23 @@ export const CreateShippingAddressForm = ({
     !form.formState.isSubmitting && !isCountryChanging && !isRedirecting;
 
   const handleSubmit = async (input: FormSchema) => {
-    const { errors } = await createCheckoutShippingAddress({
+    const result = await createCheckoutShippingAddress({
       checkoutId: checkout.id,
       input,
     });
 
-    if (!errors.length) {
+    if (result.ok) {
       push(paths.checkout.deliveryMethod.asPath());
 
       return;
     }
 
-    errors.map(({ field, message }) => {
+    result.errors.map(({ field, code }) => {
       if (isGlobalError(field)) {
-        toast({ variant: "destructive", description: t(message) });
+        toast({ variant: "destructive", description: t(`errors.${code}`) });
       } else {
         form.setError(field as keyof FormSchema, {
-          message: t(message),
+          message: t(`errors.${code}`),
         });
       }
     });

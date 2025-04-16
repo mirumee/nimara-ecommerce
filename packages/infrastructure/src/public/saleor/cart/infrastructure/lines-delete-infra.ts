@@ -22,7 +22,7 @@ export const saleorLinesDeleteInfra =
 
     if (!result.ok) {
       logger.error("Error while deleting lines from cart", {
-        error: result.error,
+        errors: result.errors,
       });
 
       return result;
@@ -33,9 +33,11 @@ export const saleorLinesDeleteInfra =
         error: result.data.checkoutLinesDelete.errors,
       });
 
-      return err({
-        code: "CART_LINES_DELETE_ERROR",
-      });
+      return err([
+        {
+          code: "CART_LINES_DELETE_ERROR",
+        },
+      ]);
     }
 
     return ok({ success: true });

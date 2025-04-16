@@ -2,7 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 
-import { err, ok } from "@nimara/domain/objects/Result";
+import { type BaseError } from "@nimara/domain/objects/Error";
+import { err } from "@nimara/domain/objects/Result";
 
 import { auth, getAccessToken, update } from "@/auth";
 import { paths } from "@/lib/paths";
@@ -24,6 +25,15 @@ export async function updateUserName({
 
   const accessToken = await getAccessToken();
 
+  if (!accessToken) {
+    return err([
+      {
+        code: "ACCESS_TOKEN_NOT_FOUND_ERROR",
+        field: undefined,
+      } satisfies BaseError,
+    ]);
+  }
+
   const result = await userService.accountUpdate({
     accountInput: {
       firstName,
@@ -33,7 +43,7 @@ export async function updateUserName({
   });
 
   if (!result.ok) {
-    return;
+    return result;
   }
 
   // TODO: In current version of next-auth v5 this doesn't work yet
@@ -60,10 +70,15 @@ export async function updateUserEmail({
   const accessToken = await getAccessToken();
 
   if (!accessToken) {
-    return;
+    return err([
+      {
+        code: "ACCESS_TOKEN_NOT_FOUND_ERROR",
+        field: undefined,
+      } satisfies BaseError,
+    ]);
   }
 
-  const data = await userService.requestEmailChange({
+  const result = await userService.requestEmailChange({
     accessToken,
     channel: region.market.channel,
     newEmail: email,
@@ -71,9 +86,11 @@ export async function updateUserEmail({
     redirectUrl: `${await getStoreUrl()}${paths.confirmNewEmail.asPath()}`,
   });
 
-  revalidatePath(paths.account.profile.asPath());
+  if (result.ok) {
+    revalidatePath(paths.account.profile.asPath());
+  }
 
-  return data;
+  return result;
 }
 
 export async function updateUserPassword({
@@ -83,7 +100,12 @@ export async function updateUserPassword({
   const accessToken = await getAccessToken();
 
   if (!accessToken) {
-    return err({ code: "ACCESS_TOKEN_NOT_FOUND_ERROR" });
+    return err([
+      {
+        code: "ACCESS_TOKEN_NOT_FOUND_ERROR",
+        field: undefined,
+      } satisfies BaseError,
+    ]);
   }
 
   const result = await userService.passwordChange({
@@ -92,11 +114,9 @@ export async function updateUserPassword({
     oldPassword,
   });
 
-  if (!result.ok) {
-    return result;
+  if (result.ok) {
+    revalidatePath(paths.account.profile.asPath());
   }
 
-  revalidatePath(paths.account.profile.asPath());
-
-  return ok(true);
+  return result;
 }

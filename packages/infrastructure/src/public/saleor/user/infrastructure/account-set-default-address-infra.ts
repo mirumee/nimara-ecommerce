@@ -27,7 +27,7 @@ export const saleorAccountSetDefaultAddressInfra =
 
     if (!result.ok) {
       logger.error("Error while setting default address", {
-        error: result.error,
+        error: result.errors,
       });
 
       return result;
@@ -38,9 +38,11 @@ export const saleorAccountSetDefaultAddressInfra =
         error: result.data.accountSetDefaultAddress.errors,
       });
 
-      return err({
-        code: "ADDRESS_SET_DEFAULT_ERROR",
-      });
+      return err([
+        {
+          code: "ADDRESS_SET_DEFAULT_ERROR",
+        },
+      ]);
     }
 
     return ok({ success: true });

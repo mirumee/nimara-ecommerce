@@ -18,6 +18,7 @@ import { type WithRegion } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { cartService } from "@/services";
 import { storefrontLogger } from "@/services/logging";
+import { type TranslationMessage } from "@/types";
 
 export const CartDetails = ({
   cart,
@@ -50,14 +51,18 @@ export const CartDetails = ({
 
     setIsProcessing(false);
 
-    if (!resultLinesUpdate.ok) {
+    if (resultLinesUpdate.ok) {
+      await revalidateCart(cart.id);
+
+      return;
+    }
+
+    resultLinesUpdate.errors.forEach((error) => {
       toast({
-        description: t(`errors.${resultLinesUpdate.error.code}`),
+        description: t(`errors.${error.code}` as TranslationMessage),
         variant: "destructive",
       });
-    } else {
-      await revalidateCart(cart.id);
-    }
+    });
   };
 
   const handleLineDelete = async (lineId: string) => {
@@ -70,14 +75,18 @@ export const CartDetails = ({
 
     setIsProcessing(false);
 
-    if (!resultLinesDelete.ok) {
+    if (resultLinesDelete.ok) {
+      await revalidateCart(cart.id);
+
+      return;
+    }
+
+    resultLinesDelete.errors.forEach((error) => {
       toast({
-        description: t(`errors.${resultLinesDelete.error.code}`),
+        description: t(`errors.${error.code}` as TranslationMessage),
         variant: "destructive",
       });
-    } else {
-      await revalidateCart(cart.id);
-    }
+    });
   };
 
   return (

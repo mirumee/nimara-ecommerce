@@ -50,24 +50,24 @@ export function SavedAddresses({
       ({ address }) => address.id === shippingAddressId,
     )!.address;
 
-    const { errors } = await updateCheckoutAddressAction({
+    const result = await updateCheckoutAddressAction({
       checkoutId: checkout.id,
       address: shippingAddress,
       type: "shipping",
     });
 
-    if (!errors.length) {
+    if (result.ok) {
       push(paths.checkout.deliveryMethod.asPath());
 
       return;
     }
 
-    errors.map(({ field, message }) => {
+    result.errors.map(({ field, code }) => {
       if (isGlobalError(field)) {
-        toast({ variant: "destructive", description: t(message) });
+        toast({ variant: "destructive", description: t(`errors.${code}`) });
       } else {
         form.setError("shippingAddressId", {
-          message: t(message),
+          message: t(`errors.${code}`),
         });
       }
     });

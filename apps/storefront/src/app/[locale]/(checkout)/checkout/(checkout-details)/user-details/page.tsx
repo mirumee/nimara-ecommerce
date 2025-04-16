@@ -26,7 +26,7 @@ export default async function Page() {
 
   const accessToken = await getAccessToken();
 
-  const [{ checkout }, user] = await Promise.all([
+  const [resultCheckout, user] = await Promise.all([
     checkoutService.checkoutGet({
       checkoutId,
       languageCode: region.language.code,
@@ -42,10 +42,12 @@ export default async function Page() {
     });
   }
 
-  if (!checkout) {
+  if (!resultCheckout.ok) {
     await deleteCheckoutIdCookie();
     redirect({ href: paths.cart.asPath(), locale });
   }
+
+  const { checkout } = resultCheckout.data;
 
   if (checkout.problems.insufficientStock.length) {
     return <CheckoutSkeleton />;

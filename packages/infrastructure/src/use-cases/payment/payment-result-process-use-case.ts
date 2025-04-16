@@ -13,10 +13,10 @@ export const paymentResultProcessUseCase =
     transactionProcess: TransactionProcessInfra;
   }): PaymentProcessUseCase =>
   async ({ checkout, searchParams }) => {
-    const { isSuccess, errors } = await paymentResultProcess({ checkout });
+    const resultPaymentProcess = await paymentResultProcess({ checkout });
 
-    if (isSuccess) {
-      return { isSuccess, errors };
+    if (resultPaymentProcess.ok) {
+      return resultPaymentProcess;
     }
 
     return transactionProcess({ searchParams });

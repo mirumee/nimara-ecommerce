@@ -50,7 +50,7 @@ export const getCollectionDetailsInfra =
 
       if (!result.ok) {
         logger.error("Failed to fetch collection from Saleor", {
-          error: result.error,
+          error: result.errors,
         });
 
         return result;
@@ -89,9 +89,11 @@ export const getCollectionDetailsInfra =
         error: e,
       });
 
-      return err({
-        code: "UNEXPECTED_HTTP_ERROR",
-        message: "Unexpected error while fetching collection from Saleor",
-      });
+      return err([
+        {
+          code: "UNEXPECTED_HTTP_ERROR",
+          message: "Unexpected error while fetching collection from Saleor",
+        },
+      ]);
     }
   };

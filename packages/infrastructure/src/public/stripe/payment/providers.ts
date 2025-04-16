@@ -68,6 +68,7 @@ export const stripePaymentService = (config: PaymentServiceConfig) => {
       paymentMethodSetDefault: paymentMethodSetDefaultInfra(config),
     }),
     customerGet: customerGetUseCase({
+      logger: config.logger,
       customerFromGatewayGetInfra: customerFromGatewayGetInfra(config),
       customerInGatewayCreateInfra: customerInGatewayCreateInfra(config),
       customerInSaleorSave: customerInSaleorSave(config),

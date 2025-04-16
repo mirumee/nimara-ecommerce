@@ -1,30 +1,25 @@
+import { ok } from "@nimara/domain/objects/Result";
+
 import type {
   CheckoutEmailUpdateInfra,
   CheckoutEmailUpdateUseCase,
 } from "#root/public/saleor/checkout/types";
 
-export const checkoutEmailUpdateUseCase = ({
-  checkoutEmailUpdateInfra,
-}: {
-  checkoutEmailUpdateInfra: CheckoutEmailUpdateInfra;
-}): CheckoutEmailUpdateUseCase => {
-  return async ({ checkout, email }) => {
+export const checkoutEmailUpdateUseCase =
+  ({
+    checkoutEmailUpdateInfra,
+  }: {
+    checkoutEmailUpdateInfra: CheckoutEmailUpdateInfra;
+  }): CheckoutEmailUpdateUseCase =>
+  async ({ checkout, email }) => {
     if (checkout.email === email) {
-      return {
-        isSuccess: true,
-      };
+      return ok({
+        success: true,
+      });
     }
 
-    const { isSuccess, validationErrors, serverError } =
-      await checkoutEmailUpdateInfra({
-        checkout,
-        email,
-      });
-
-    return {
-      isSuccess,
-      validationErrors,
-      serverError,
-    };
+    return checkoutEmailUpdateInfra({
+      checkout,
+      email,
+    });
   };
-};

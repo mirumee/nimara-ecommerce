@@ -25,7 +25,7 @@ export async function updateBillingAddress({
 }) {
   const accessToken = await getAccessToken();
 
-  const data = await updateCheckoutAddressAction({
+  const result = await updateCheckoutAddressAction({
     checkoutId: checkout.id,
     address: sameAsShippingAddress
       ? checkout.shippingAddress!
@@ -44,7 +44,9 @@ export async function updateBillingAddress({
     });
   }
 
-  revalidatePath(paths.checkout.payment.asPath());
+  if (result.ok) {
+    revalidatePath(paths.checkout.payment.asPath());
+  }
 
-  return data;
+  return result;
 }

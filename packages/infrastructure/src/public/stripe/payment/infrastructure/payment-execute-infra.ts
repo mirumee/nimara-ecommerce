@@ -1,5 +1,7 @@
 import { invariant } from "graphql/jsutils/invariant";
 
+import { ok } from "@nimara/domain/objects/Result";
+
 import { PAYMENT_REDIRECT, QUERY_PARAMS } from "../consts";
 import type { PaymentExecuteInfra, StripeServiceState } from "../types";
 
@@ -73,18 +75,15 @@ export const paymentExecuteInfra =
       if (error.type === "validation_error" || !error.code) {
         return {
           errors: [],
-          isSuccess: false,
+          success: false,
         };
       }
 
       return {
         errors: [{ type: "stripe", code: error.code || error.type }],
-        isSuccess: false,
+        success: false,
       };
     }
 
-    return {
-      errors: [],
-      isSuccess: true,
-    };
+    return ok({ success: true });
   };

@@ -1,7 +1,8 @@
-import { type BaseError } from "@nimara/domain/objects/Error";
+import { err, ok } from "@nimara/domain/objects/Result";
 
-import { graphqlClient } from "#root/graphql/client";
+import { graphqlClientV2 } from "#root/graphql/client";
 import { addressToInput } from "#root/public/saleor/address/helpers";
+import { handleMutationErrors } from "#root/public/saleor/error";
 
 import { CheckoutBillingAddressUpdateMutationDocument } from "../graphql/mutations/generated";
 import type {
@@ -15,41 +16,36 @@ export const saleorCheckoutBillingAddressUpdateInfra =
     logger,
   }: SaleorCheckoutServiceConfig): CheckoutBillingAddressUpdateInfra =>
   async ({ checkoutId, address }) => {
-    const { data, error } = await graphqlClient(apiURL).execute(
+    const result = await graphqlClientV2(apiURL).execute(
       CheckoutBillingAddressUpdateMutationDocument,
       {
         variables: {
           checkoutId,
           address: addressToInput(address),
         },
+        operationName: "CheckoutBillingAddressUpdateMutation",
       },
     );
 
-    if (error) {
-      logger.error("Failed to update checkout billing address", {
-        error,
+    if (!result.ok) {
+      logger.error("Failed to update billing address", {
+        errors: result.errors,
         checkoutId,
       });
 
-      return {
-        isSuccess: false,
-        serverError: error as BaseError,
-      };
+      return result;
     }
 
-    if (data?.checkoutBillingAddressUpdate?.errors?.length) {
-      logger.error("Failed to update checkout billing address", {
-        errors: data?.checkoutBillingAddressUpdate?.errors,
+    if (result.data?.checkoutBillingAddressUpdate?.errors?.length) {
+      logger.error("Failed to update billing address", {
+        errors: result.data?.checkoutBillingAddressUpdate.errors,
         checkoutId,
       });
 
-      return {
-        isSuccess: false,
-        validationErrors: data?.checkoutBillingAddressUpdate?.errors,
-      };
+      return err(
+        handleMutationErrors(result.data?.checkoutBillingAddressUpdate.errors),
+      );
     }
 
-    return {
-      isSuccess: true,
-    };
+    return ok({ success: true });
   };

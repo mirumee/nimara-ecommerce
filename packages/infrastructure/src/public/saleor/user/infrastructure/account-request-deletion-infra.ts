@@ -21,7 +21,7 @@ export const saleorAccountRequestDeletionInfra =
 
     if (!result.ok) {
       logger.error("Error while requesting account deletion", {
-        error: result.error,
+        error: result.errors,
       });
 
       return result;
@@ -32,9 +32,11 @@ export const saleorAccountRequestDeletionInfra =
         error: result.data.accountRequestDeletion.errors,
       });
 
-      return err({
-        code: "ACCOUNT_REQUEST_DELETION_ERROR",
-      });
+      return err([
+        {
+          code: "ACCOUNT_REQUEST_DELETION_ERROR",
+        },
+      ]);
     }
 
     return ok({ success: true });

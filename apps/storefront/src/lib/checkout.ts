@@ -11,11 +11,11 @@ import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { type addressService, checkoutService } from "@/services";
 
-type GetCheckout = Awaited<ReturnType<typeof checkoutService.checkoutGet>>;
+type GetCheckout = OkResult<
+  Awaited<ReturnType<typeof checkoutService.checkoutGet>>
+>["checkout"];
 
-export const getCheckoutOrRedirect = async (): Promise<
-  NonNullable<GetCheckout["checkout"]>
-> => {
+export const getCheckoutOrRedirect = async (): Promise<GetCheckout> => {
   const checkoutId = (await cookies()).get(COOKIE_KEY.checkoutId)?.value;
   const [locale, region] = await Promise.all([getLocale(), getCurrentRegion()]);
 
@@ -23,18 +23,18 @@ export const getCheckoutOrRedirect = async (): Promise<
     redirect({ href: paths.cart.asPath(), locale });
   }
 
-  const { checkout } = await checkoutService.checkoutGet({
+  const resultCheckout = await checkoutService.checkoutGet({
     checkoutId,
     languageCode: region.language.code,
     countryCode: region.market.countryCode,
   });
 
-  if (!checkout) {
+  if (!resultCheckout.ok) {
     await deleteCheckoutIdCookie();
     redirect({ href: paths.cart.asPath(), locale });
   }
 
-  return checkout;
+  return resultCheckout.data.checkout;
 };
 
 export type FormattedAddress = OkResult<

@@ -25,7 +25,7 @@ export const saleorAddressFormGetRowsInfra =
 
     if (!result.ok) {
       logger.error("Error while getting address validation rules", {
-        error: result.error,
+        errors: result.errors,
         countryCode,
       });
 
@@ -37,17 +37,21 @@ export const saleorAddressFormGetRowsInfra =
         countryCode,
       });
 
-      return err({
-        code: "MISSING_ADDRESS_DATA_ERROR",
-      });
+      return err([
+        {
+          code: "MISSING_ADDRESS_DATA_ERROR",
+        },
+      ]);
     }
 
     if (!result.data.addressValidationRules) {
       logger.error("No address validation rules returned from Saleor");
 
-      return err({
-        code: "MISSING_ADDRESS_DATA_ERROR",
-      });
+      return err([
+        {
+          code: "MISSING_ADDRESS_DATA_ERROR",
+        },
+      ]);
     }
 
     const parsedAddressFormRows = parseAddressFormRows({

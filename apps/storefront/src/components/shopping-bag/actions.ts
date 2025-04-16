@@ -12,14 +12,14 @@ export async function addPromoCode({
   checkoutId: string;
   promoCode: string;
 }) {
-  const data = await checkoutService.checkoutAddPromoCode({
+  const result = await checkoutService.checkoutAddPromoCode({
     checkoutId,
     promoCode,
   });
 
   revalidatePath(paths.checkout.asPath());
 
-  return data;
+  return result;
 }
 
 export async function removePromoCode({
@@ -29,12 +29,12 @@ export async function removePromoCode({
   checkoutId: string;
   promoCode: string;
 }) {
-  const data = await checkoutService.checkoutRemovePromoCode({
+  const result = await checkoutService.checkoutRemovePromoCode({
     checkoutId,
     promoCode,
   });
 
   revalidatePath(paths.checkout.asPath());
 
-  return data;
+  return result;
 }

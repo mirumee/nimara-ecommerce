@@ -1,6 +1,7 @@
-import type { BaseError } from "@nimara/domain/objects/Error";
+import { err, ok } from "@nimara/domain/objects/Result";
 
-import { graphqlClient } from "#root/graphql/client";
+import { graphqlClientV2 } from "#root/graphql/client";
+import { handleMutationErrors } from "#root/public/saleor/error";
 
 import { CheckoutRemovePromoCodeMutationDocument } from "../graphql/mutations/generated";
 import type {
@@ -8,44 +9,56 @@ import type {
   SaleorCheckoutServiceConfig,
 } from "../types";
 
-export const saleorCheckoutRemovePromoCodeInfra = ({
-  apiURL,
-  logger,
-}: SaleorCheckoutServiceConfig): CheckoutRemovePromoCodeInfra => {
-  return async ({ checkoutId, promoCode }) => {
-    const { data, error } = await graphqlClient(apiURL).execute(
+export const saleorCheckoutRemovePromoCodeInfra =
+  ({
+    apiURL,
+    logger,
+  }: SaleorCheckoutServiceConfig): CheckoutRemovePromoCodeInfra =>
+  async ({ checkoutId, promoCode }) => {
+    const result = await graphqlClientV2(apiURL).execute(
       CheckoutRemovePromoCodeMutationDocument,
       {
         variables: {
           checkoutId,
           promoCode,
         },
+        operationName: "CheckoutRemovePromoCodeMutation",
       },
     );
 
-    if (error) {
-      logger.error("Failed to remove promo code", { error, checkoutId });
-
-      return {
-        isSuccess: false,
-        serverError: error as BaseError,
-      };
-    }
-
-    if (data?.checkoutRemovePromoCode?.errors?.length) {
+    if (!result.ok) {
       logger.error("Failed to remove promo code", {
-        errors: data?.checkoutRemovePromoCode?.errors,
+        errors: result.errors,
         checkoutId,
       });
 
-      return {
-        isSuccess: false,
-        validationErrors: data.checkoutRemovePromoCode.errors,
-      };
+      return result;
     }
 
-    return {
-      isSuccess: true,
-    };
+    if (!result.data?.checkoutRemovePromoCode) {
+      logger.error("Failed to remove promo code", {
+        errors: "No data returned",
+        checkoutId,
+      });
+
+      return err([
+        {
+          code: "DISCOUNT_CODE_REMOVE_ERROR",
+          message: "No data returned",
+        },
+      ]);
+    }
+
+    if (result.data.checkoutRemovePromoCode.errors.length) {
+      logger.error("Mutation checkoutRemovePromoCode returned errors", {
+        errors: result.data.checkoutRemovePromoCode.errors,
+        checkoutId,
+      });
+
+      return err(
+        handleMutationErrors(result.data.checkoutRemovePromoCode.errors),
+      );
+    }
+
+    return ok({ success: true });
   };
-};

@@ -136,9 +136,11 @@ export const saleorSearchInfra =
         error: e,
       });
 
-      return err({
-        code: "UNEXPECTED_HTTP_ERROR",
-        message: "Unexpected error while fetching products from Saleor",
-      });
+      return err([
+        {
+          code: "UNEXPECTED_HTTP_ERROR",
+          message: "Unexpected error while fetching products from Saleor",
+        },
+      ]);
     }
   };
