@@ -3,28 +3,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Mail } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { type SubmitHandler, useForm } from "react-hook-form";
-import * as z from "zod";
 
 import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
 import { useToast } from "@nimara/ui/hooks";
 
 import { TextFormField } from "@/components/form/text-form-field";
-import { type GetTranslations } from "@/types";
 
 import { newsletterSubscribeAction } from "./action";
-
-const formSchema = ({ t }: { t: GetTranslations }) =>
-  z.object({
-    name: z.string().min(1, { message: t("form-validation.required") }),
-    email: z
-      .string()
-      .min(1, { message: t("form-validation.email-required") })
-      .email({ message: t("form-validation.invalid-email") })
-      .trim(),
-  });
-
-export type FormSchema = z.infer<ReturnType<typeof formSchema>>;
+import { type FormSchema, formSchema } from "./schema";
 
 export const Newsletter = () => {
   const t = useTranslations();
