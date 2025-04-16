@@ -23,7 +23,7 @@ import { SearchForm } from "./search-form";
 import { ShoppingBagIcon } from "./shopping-bag-icon";
 import { ShoppingBagIconWithCount } from "./shopping-bag-icon-with-count";
 
-export const Header = async ({ asH1 = true }: { asH1?: boolean }) => {
+export const Header = async () => {
   const accessToken = await getAccessToken();
   const [user, region, t] = await Promise.all([
     userService.userGet(accessToken),
@@ -78,7 +78,7 @@ export const Header = async ({ asH1 = true }: { asH1?: boolean }) => {
             />
           </div>
 
-          <Logo asH1={asH1} />
+          <Logo />
 
           <div className="hidden md:block">
             <SearchForm />

@@ -3,30 +3,26 @@
 import { useTranslations } from "next-intl";
 
 import BrandLogo from "@/assets/brand-logo-dark.svg";
-import { Link } from "@/i18n/routing";
+import { Link, usePathname } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 
-export const Logo = ({ asH1 = true }: { asH1?: boolean }) => {
+export const Logo = () => {
   const t = useTranslations("common");
-
-  const logoContent = (
-    <Link href={paths.home.asPath()} title={t("go-to-homepage")}>
-      <BrandLogo height={36} className="fill-primary" aria-label={t("logo")} />
-    </Link>
-  );
-
-  if (asH1) {
-    return (
-      <h1 className="flex justify-center align-middle md:justify-start">
-        {logoContent}
-      </h1>
-    );
-  }
+  const pathname = usePathname();
+  const asH1 =
+    !pathname.includes("products") && !pathname.includes("collection");
+  const Wrapper = asH1 ? "h1" : "span";
 
   return (
-    <span className="flex justify-center align-middle md:justify-start">
-      {logoContent}
-    </span>
+    <Wrapper className="flex justify-center align-middle md:justify-start">
+      <Link href={paths.home.asPath()} title={t("go-to-homepage")}>
+        <BrandLogo
+          height={36}
+          className="fill-primary"
+          aria-label={t("logo")}
+        />
+      </Link>
+    </Wrapper>
   );
 };
 
