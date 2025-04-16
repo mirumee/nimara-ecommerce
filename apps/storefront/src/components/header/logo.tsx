@@ -14,7 +14,7 @@ export const Logo = () => {
   const Wrapper = asH1 ? "h1" : "span";
 
   return (
-    <Wrapper className="flex justify-center align-middle md:justify-start">
+    <Wrapper className="flex justify-center md:justify-start">
       <Link href={paths.home.asPath()} title={t("go-to-homepage")}>
         <BrandLogo
           height={36}
