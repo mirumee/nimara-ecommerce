@@ -13,6 +13,7 @@ import { cmsPageService } from "@/services/cms";
 
 import { AccountNotifications } from "./_components/account-notifications";
 import { HeroBanner } from "./_components/hero-banner";
+import { Newsletter } from "./_components/newsletter-form";
 import {
   ProductsGrid,
   ProductsGridSkeleton,
@@ -68,6 +69,9 @@ export default async function Page() {
       </Suspense>
       <div>
         <AccountNotifications user={user} />
+      </div>
+      <div className="mb-8">
+        <Newsletter />
       </div>
       <JsonLd jsonLd={websiteToJsonLd()} />
     </section>

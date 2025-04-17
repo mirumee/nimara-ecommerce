@@ -400,5 +400,16 @@
     "pink": "Pink",
     "red": "Red",
     "green": "Green"
+  },
+  "newsletter": {
+    "subscribe-title": "Subscribe to Newsletter",
+    "subscribe-description": "Subscribe to our newsletter and be the first to get updates on new products and promotions.",
+    "subscribe-name-field-label": "Name",
+    "subscribe-name-field-placeholder": "John Doe",
+    "subscribe-email-field-label": "Email Address",
+    "subscribe-email-field-placeholder": "john.doe@example.com",
+    "subscribe-cta": "Subscribe",
+    "subscribe-error": "An error occurred while subscribing to the newsletter. Please try again.",
+    "subscribe-success": "You have successfully subscribed to the newsletter."
   }
 }
