@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { type Cart } from "@nimara/domain/objects/Cart";
 import { type User } from "@nimara/domain/objects/User";
@@ -11,7 +11,7 @@ import { useToast } from "@nimara/ui/hooks";
 import { ShoppingBag } from "@/components/shopping-bag";
 import { CACHE_TTL } from "@/config";
 import { clientEnvs } from "@/envs/client";
-import { Link } from "@/i18n/routing";
+import { Link, useRouter } from "@/i18n/routing";
 import { revalidateCart } from "@/lib/actions/cart";
 import { paths } from "@/lib/paths";
 import { type WithRegion } from "@/lib/types";
@@ -25,9 +25,11 @@ export const CartDetails = ({
   user,
 }: { cart: Cart; user: User | null } & WithRegion) => {
   const t = useTranslations();
-
+  const router = useRouter();
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
+
+  const prevCartVersion = useRef(cart.lines.length);
 
   const service = cartService({
     channel: region.market.channel,
@@ -68,17 +70,27 @@ export const CartDetails = ({
       options: { next: { tags: [`CHECKOUT:${cart.id}`] } },
     });
 
-    setIsProcessing(false);
-
     if (!resultLinesDelete.ok) {
       toast({
         description: t(`errors.${resultLinesDelete.error.code}`),
         variant: "destructive",
       });
+      setIsProcessing(false);
     } else {
       await revalidateCart(cart.id);
+      router.refresh();
     }
   };
+
+  // Unblock UI when cart updates
+  useEffect(() => {
+    const cartVersion = cart.lines.length;
+
+    if (isProcessing && prevCartVersion.current !== cartVersion) {
+      setIsProcessing(false);
+      prevCartVersion.current = cartVersion;
+    }
+  }, [cart, isProcessing]);
 
   return (
     <>
