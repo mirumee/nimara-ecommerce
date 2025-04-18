@@ -30,12 +30,8 @@ export const ProductPrice = ({ children }: PropsWithChildren) => {
 };
 
 export const ProductThumbnail = ({ alt, ...props }: ImageProps) => (
-  <div className="flex aspect-square justify-center overflow-hidden">
-    <Image
-      alt={alt}
-      className="min-w-full object-cover object-top"
-      {...props}
-    />
+  <div className="relative aspect-square overflow-hidden">
+    <Image alt={alt} fill className="object-cover object-top" {...props} />
   </div>
 );
 
@@ -46,8 +42,6 @@ type Props = {
 export const SearchProductCard = ({
   product: { slug, thumbnail, name, price },
   sizes,
-  height,
-  width,
 }: Props) => {
   const t = useTranslations();
 
@@ -66,9 +60,7 @@ export const SearchProductCard = ({
           alt={`Image of ${name}`}
           aria-hidden={true}
           aria-label={name}
-          height={height ?? 256}
           src={thumbnail?.url ?? productPlaceholder}
-          width={width ?? 256}
           sizes={
             sizes ??
             "(max-width: 720px) 100vw, (max-width: 1024px) 50vw, (max-width: 1294px) 33vw, 25vw"
