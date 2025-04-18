@@ -5,6 +5,6 @@ export const THUMBNAIL_FORMAT = (process.env.NEXT_PUBLIC_DEFAULT_IMAGE_FORMAT ||
 
 export const THUMBNAIL_SIZE_SMALL = 256;
 export const THUMBNAIL_SIZE_MEDIUM = 512;
-export const THUMBNAIL_SIZE_LARGE = 768;
+export const THUMBNAIL_SIZE_LARGE = 1024;
 
 export const isSsr = typeof window === "undefined";
