@@ -78,8 +78,9 @@ const serializeSaleorMenuItem = (
     label: translation?.name || name,
     url: formattedUrl ?? createMenuItemUrl(category, collection, page, locale),
     children:
-      children?.map((child) => serializeSaleorMenuItemChild(child, locale)) ||
-      [],
+      children
+        ?.filter((child) => child.collection || child.category || child.page)
+        .map((child) => serializeSaleorMenuItemChild(child, locale)) || [],
   };
 };
 
