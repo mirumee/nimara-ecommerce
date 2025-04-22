@@ -2,7 +2,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
-import { RichText } from "@nimara/ui/components/rich-text";
+import { RichText } from "@nimara/ui/components/rich-text/rich-text";
 
 import { CACHE_TTL, DEFAULT_RESULTS_PER_PAGE } from "@/config";
 import { paths } from "@/lib/paths";
@@ -100,23 +100,20 @@ export default async function Page(props: {
           {collection?.name}
         </h1>
       </div>
-      <div className="relative mx-auto w-full max-w-md overflow-hidden">
+      <div className="relative mx-auto aspect-[4/3] w-full max-w-2xl">
         {collection?.thumbnail ? (
           <Image
             src={collection.thumbnail.url}
             alt={collection.thumbnail.alt || collection.name}
-            height={500}
-            width={500}
+            fill
             sizes="(max-width: 960px) 100vw, 50vw"
-            className="h-auto w-full object-cover"
+            className="object-cover"
           />
         ) : null}
       </div>
 
       <div className="grid min-w-full items-start gap-8 md:flex">
-        <div className="basis-10/12">
-          <RichText jsonStringData={collection?.description} />
-        </div>
+        <RichText contentData={collection?.description} />
       </div>
 
       <hr />
