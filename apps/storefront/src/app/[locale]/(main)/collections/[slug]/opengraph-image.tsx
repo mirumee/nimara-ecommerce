@@ -1,10 +1,9 @@
 import { ImageResponse } from "next/og";
 
-import { CACHE_TTL } from "@/config";
+import { CACHE_TTL, DEFAULT_RESULTS_PER_PAGE } from "@/config";
 import { clientEnvs } from "@/envs/client";
 import { getCurrentRegion } from "@/regions/server";
-import { storeService } from "@/services";
-import { storefrontLogger } from "@/services/logging";
+import { collectionService } from "@/services";
 
 export const size = {
   width: 1200,
@@ -24,30 +23,26 @@ export default async function Image({
 }) {
   const region = await getCurrentRegion();
 
-  const serviceOpts = {
+  const getCollectionResult = await collectionService.getCollectionDetails({
     channel: region.market.channel,
     languageCode: region.language.code,
-    apiURI: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
-    countryCode: region.market.countryCode,
-    logger: storefrontLogger,
-  };
-
-  const { data } = await storeService(serviceOpts).getProductDetails({
-    productSlug: slug,
-    customMediaFormat: "ORIGINAL",
+    slug,
+    limit: DEFAULT_RESULTS_PER_PAGE,
     options: {
       next: {
         revalidate: CACHE_TTL.pdp,
-        tags: [`PRODUCT:${slug}`, "DETAIL-PAGE:PRODUCT"],
+        tags: [`COLLECTION:${slug}`, "DETAIL-PAGE:COLLECTION"],
       },
     },
   });
 
-  if (!data?.product) {
+  const collection = getCollectionResult.data?.results;
+
+  if (!collection) {
     return null;
   }
 
-  if (!data?.product?.images[0]?.url) {
+  if (!collection?.thumbnail?.url) {
     return new ImageResponse(
       (
         <div
@@ -112,8 +107,8 @@ export default async function Image({
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={data?.product?.images[0]?.url}
-            alt={data?.product?.name}
+            src={collection.thumbnail.url}
+            alt={collection.thumbnail.alt}
             style={{
               width: "100%",
               height: "100%",
