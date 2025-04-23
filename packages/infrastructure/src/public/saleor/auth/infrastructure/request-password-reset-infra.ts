@@ -21,7 +21,7 @@ export const saleorRequestPasswordResetInfra =
 
     if (!result.ok) {
       logger.error("Failed to request password reset.", {
-        error: result.error,
+        errors: result.errors,
       });
 
       return result;
@@ -32,9 +32,11 @@ export const saleorRequestPasswordResetInfra =
         error: result.data.requestPasswordReset.errors,
       });
 
-      return err({
-        code: "PASSWORD_CHANGE_REQUEST_ERROR",
-      });
+      return err([
+        {
+          code: "PASSWORD_CHANGE_REQUEST_ERROR",
+        },
+      ]);
     }
 
     return ok({ success: true });

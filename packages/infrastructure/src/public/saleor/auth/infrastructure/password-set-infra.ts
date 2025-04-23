@@ -17,7 +17,7 @@ export const saleorPasswordSetInfra =
     );
 
     if (!result.ok) {
-      logger.error("Failed to set password.", { error: result.error });
+      logger.error("Failed to set password.", { errors: result.errors });
 
       return result;
     }
@@ -27,9 +27,11 @@ export const saleorPasswordSetInfra =
         error: result.data.setPassword.errors,
       });
 
-      return err({
-        code: "PASSWORD_SET_ERROR",
-      });
+      return err([
+        {
+          code: "PASSWORD_SET_ERROR",
+        },
+      ]);
     }
 
     return ok({ success: true });

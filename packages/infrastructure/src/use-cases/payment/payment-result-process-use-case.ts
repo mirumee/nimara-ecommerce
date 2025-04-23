@@ -1,3 +1,5 @@
+import { err, ok } from "@nimara/domain/objects/Result";
+
 import type {
   PaymentProcessUseCase,
   PaymentResultProcessInfra,
@@ -13,10 +15,18 @@ export const paymentResultProcessUseCase =
     transactionProcess: TransactionProcessInfra;
   }): PaymentProcessUseCase =>
   async ({ checkout, searchParams }) => {
-    const { isSuccess, errors } = await paymentResultProcess({ checkout });
+    const resultPaymentProcess = await paymentResultProcess({ checkout });
 
-    if (isSuccess) {
-      return { isSuccess, errors };
+    if (resultPaymentProcess.ok) {
+      if (resultPaymentProcess.data.isCheckoutPaid) {
+        return ok({ success: true });
+      }
+
+      return err([
+        {
+          code: "CHECKOUT_NOT_PAID_ERROR",
+        },
+      ]);
     }
 
     return transactionProcess({ searchParams });

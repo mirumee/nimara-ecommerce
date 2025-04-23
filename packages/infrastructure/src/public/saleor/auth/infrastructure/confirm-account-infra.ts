@@ -14,7 +14,7 @@ export const saleorConfirmAccountInfra =
     );
 
     if (!result.ok) {
-      logger.error("Failed to confirm account.", { error: result.error });
+      logger.error("Failed to confirm account.", { errors: result.errors });
 
       return result;
     }
@@ -24,9 +24,11 @@ export const saleorConfirmAccountInfra =
         error: result.data.confirmAccount.errors,
       });
 
-      return err({
-        code: "ACCOUNT_CONFIRM_ERROR",
-      });
+      return err([
+        {
+          code: "ACCOUNT_CONFIRM_ERROR",
+        },
+      ]);
     }
 
     return ok({ success: true });

@@ -12,26 +12,23 @@ export const paymentMethodDeleteAction = async ({
   customerId: string;
   paymentMethodId: string;
 }) => {
-  const { isSuccess } = await paymentService.customerPaymentMethodDelete({
+  const result = await paymentService.customerPaymentMethodDelete({
     customerId,
     paymentMethodId,
   });
 
-  if (isSuccess) {
+  if (result.ok) {
     revalidatePath(paths.account.paymentMethods.asPath());
   }
 
-  return { isSuccess };
+  return result;
 };
 
 export const generateSecretAction = async ({
   customerId,
 }: {
   customerId: string;
-}) => {
-  const { secret } = await paymentService.paymentMethodSaveInitialize({
+}) =>
+  paymentService.paymentMethodSaveInitialize({
     customerId,
   });
-
-  return secret;
-};

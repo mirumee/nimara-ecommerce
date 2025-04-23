@@ -36,7 +36,7 @@ export const getProductDetailsUseCase =
       !resultGetProductAvailability.data?.availability ||
       !resultGetProductDetails.data?.product
     ) {
-      return err({ code: "NOT_AVAILABLE_ERROR" });
+      return err([{ code: "NOT_AVAILABLE_ERROR" }]);
     }
 
     return ok({

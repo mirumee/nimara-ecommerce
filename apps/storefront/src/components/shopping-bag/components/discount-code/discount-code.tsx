@@ -50,36 +50,34 @@ export const DiscountCode = ({ checkout }: { checkout: Checkout }) => {
             promoCode: values.code,
           });
 
-          if (result.isSuccess) {
+          if (result.ok) {
             setIsOpen(false);
+
+            return;
           }
 
-          if ("serverError" in result) {
+          const isPromoCodeInvalid = result.errors.find(
+            (error) => error.code === "INVALID_VALUE_ERROR",
+          );
+
+          if (isPromoCodeInvalid) {
+            form.setError("code", {
+              message: isPromoCodeInvalid
+                ? t("errors.DISCOUNT_CODE_NOT_EXIST_ERROR", {
+                    code: `(${values.code})`,
+                  })
+                : t("errors.DISCOUNT_CODE_NOT_APPLICABLE_ERROR"),
+            });
+            setShouldClearInput(true);
+          } else {
             toast({
-              description: t("errors.checkout.couldNotProcess"),
+              description: t("errors.UNKNOWN_ERROR"),
               variant: "destructive",
               position: "center",
             });
-
-            return;
           }
 
-          if ("validationErrors" in result) {
-            const isPromoCodeInvalid = result.validationErrors.find(
-              (error) => error.code === "INVALID",
-            );
-
-            form.setError("code", {
-              message: isPromoCodeInvalid
-                ? t("errors.checkout.codeDoesNotExist", {
-                    code: `(${values.code})`,
-                  })
-                : t("errors.checkout.codeNotApplicable"),
-            });
-            setShouldClearInput(true);
-
-            return;
-          }
+          return;
         })(),
     );
   };
@@ -96,7 +94,7 @@ export const DiscountCode = ({ checkout }: { checkout: Checkout }) => {
               promoCode,
             });
 
-            if (result.isSuccess) {
+            if (result.ok) {
               toast({
                 description: t("cart.discount-removed"),
                 position: "center",
@@ -107,15 +105,11 @@ export const DiscountCode = ({ checkout }: { checkout: Checkout }) => {
               return;
             }
 
-            if ("serverError" in result || "validationErrors" in result) {
-              toast({
-                description: t("errors.checkout.couldNotRemove"),
-                variant: "destructive",
-                position: "center",
-              });
-
-              return;
-            }
+            toast({
+              description: t("errors.DISCOUNT_CODE_REMOVE_ERROR"),
+              variant: "destructive",
+              position: "center",
+            });
           }
 
           return;

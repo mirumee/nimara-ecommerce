@@ -1,10 +1,11 @@
 import { invariant } from "graphql/jsutils/invariant";
 
-import { graphqlClient } from "#root/graphql/client";
+import { err, ok } from "@nimara/domain/objects/Result";
+
+import { graphqlClientV2 } from "#root/graphql/client";
 
 import { PAYMENT_USAGE } from "../consts";
 import { TransactionInitializeMutationDocument } from "../graphql/mutations/generated";
-import { parseApiError } from "../helpers";
 import type {
   PaymentServiceConfig,
   StripeServiceState,
@@ -20,11 +21,11 @@ type PaymentInitializeData = {
 
 export const transactionInitializeInfra =
   (
-    { apiURI, gatewayAppId }: PaymentServiceConfig,
+    { apiURI, gatewayAppId, logger }: PaymentServiceConfig,
     state: StripeServiceState,
   ): TransactionInitializeInfra =>
   async ({ paymentMethod, customerId, saveForFutureUse, id, amount }) => {
-    const { data } = await graphqlClient(apiURI).execute(
+    const result = await graphqlClientV2(apiURI).execute(
       TransactionInitializeMutationDocument,
       {
         variables: {
@@ -43,32 +44,48 @@ export const transactionInitializeInfra =
         options: {
           cache: "no-store",
         },
+        operationName: "TransactionInitializeMutation",
       },
     );
 
-    const errors = data?.transactionInitialize?.errors ?? [];
+    if (!result.ok) {
+      logger.error("Failed to initialize transaction.", {
+        errors: result.errors,
+        id,
+        amount,
+      });
 
-    if (errors.length) {
-      return {
-        errors: errors.map(parseApiError("transactionInitialize")),
-        data: null,
-      };
+      return err([{ code: "TRANSACTION_INITIALIZE_ERROR" }]);
+    }
+
+    if (result.data.transactionInitialize?.errors.length) {
+      logger.error("Transaction initialization returned errors", {
+        errors: result.data.transactionInitialize.errors,
+        id,
+        amount,
+      });
+
+      return err([
+        {
+          code: "TRANSACTION_INITIALIZE_ERROR",
+        },
+      ]);
     }
 
     invariant(
-      data?.transactionInitialize?.transaction?.id,
+      result.data.transactionInitialize?.transaction?.id,
       "Unexpected state. Mutation successful but transaction id not returned.",
     );
     invariant(
-      data?.transactionInitialize.data,
+      result.data.transactionInitialize.data,
       "Unexpected state. Mutation successful but transaction data not returned.",
     );
 
-    state.transactionId = data.transactionInitialize.transaction.id;
+    state.transactionId = result.data.transactionInitialize.transaction.id;
 
-    return {
-      errors: [],
-      data: (data?.transactionInitialize?.data as PaymentInitializeData)
-        ?.paymentIntent?.clientSecret,
-    };
+    return ok({
+      clientSecret: (
+        result.data.transactionInitialize.data as PaymentInitializeData
+      ).paymentIntent.clientSecret,
+    });
   };

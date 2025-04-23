@@ -17,7 +17,7 @@ export const saleorAccountRegisterInfra =
     );
 
     if (!result.ok) {
-      logger.error("Failed to register account.", { error: result.error });
+      logger.error("Failed to register account.", { errors: result.errors });
 
       return result;
     }
@@ -27,9 +27,11 @@ export const saleorAccountRegisterInfra =
         error: result.data.accountRegister.errors,
       });
 
-      return err({
-        code: "ACCOUNT_REGISTER_ERROR",
-      });
+      return err([
+        {
+          code: "ACCOUNT_REGISTER_ERROR",
+        },
+      ]);
     }
 
     return ok({ success: true });

@@ -1,5 +1,7 @@
 import Stripe from "stripe";
 
+import { ok } from "@nimara/domain/objects/Result";
+
 import { API_VERSION, META_KEY } from "../consts";
 import type {
   CustomerInGatewayCreateInfra,
@@ -20,8 +22,8 @@ export const customerInGatewayCreateInfra =
       },
     });
 
-    return {
+    return ok({
       id: customer.id,
       defaultPaymentMethodId: null,
-    };
+    });
   };

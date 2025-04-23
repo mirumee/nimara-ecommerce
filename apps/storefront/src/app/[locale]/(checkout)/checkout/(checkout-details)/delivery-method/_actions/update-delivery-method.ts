@@ -3,15 +3,10 @@
 import { revalidatePath } from "next/cache";
 
 import { type Checkout } from "@nimara/domain/objects/Checkout";
+import { type AsyncResult, ok } from "@nimara/domain/objects/Result";
 
 import { paths } from "@/lib/paths";
 import { checkoutService } from "@/services";
-import { type ServerError, type TranslationMessage } from "@/types";
-
-type ValidationErrorsMap = Record<
-  string,
-  TranslationMessage<"checkout-errors">
->;
 
 export const updateDeliveryMethod = async ({
   deliveryMethodId,
@@ -19,38 +14,17 @@ export const updateDeliveryMethod = async ({
 }: {
   checkout: Checkout;
   deliveryMethodId: string;
-}): Promise<{
-  errorsMap?: ValidationErrorsMap;
-  redirectUrl?: string;
-  serverError?: ServerError;
-}> => {
-  const { isSuccess, validationErrors, serverError } =
-    await checkoutService.deliveryMethodUpdate({
-      checkout,
-      deliveryMethodId,
-    });
+}): AsyncResult<{ redirectUrl: string }> => {
+  const result = await checkoutService.deliveryMethodUpdate({
+    checkout,
+    deliveryMethodId,
+  });
 
-  if (!isSuccess) {
-    if (serverError || !validationErrors) {
-      return {
-        serverError: { code: serverError?.message ?? "unknown" },
-      };
-    }
+  if (result.ok) {
+    revalidatePath(paths.checkout.asPath());
 
-    const errorsMap = validationErrors.reduce(
-      (acc, error) => ({
-        ...acc,
-        [error.field as string]: error.code,
-      }),
-      {},
-    );
-
-    return {
-      errorsMap,
-    };
+    return ok({ redirectUrl: paths.checkout.payment.asPath() });
   }
 
-  revalidatePath(paths.checkout.asPath());
-
-  return { redirectUrl: paths.checkout.payment.asPath() };
+  return result;
 };

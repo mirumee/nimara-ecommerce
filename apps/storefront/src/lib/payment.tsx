@@ -1,13 +1,13 @@
 import groupBy from "lodash/groupBy";
 import type { ReactNode } from "react";
 
+import { type BaseError } from "@nimara/domain/objects/Error";
 import type {
   CardPaymentMethod,
   PaymentMethod,
   PaymentMethodType,
   PaypalPaymentMethod,
 } from "@nimara/domain/objects/Payment";
-import type { ApiError } from "@nimara/infrastructure/public/stripe/payment/types";
 
 import { clientEnvs } from "@/envs/client";
 import { Link } from "@/i18n/routing";
@@ -56,10 +56,10 @@ export const translateApiErrors = ({
   errors,
   t,
 }: {
-  errors: ApiError[];
+  errors: BaseError[];
   t: GetTranslations;
 }) => {
-  const defaultErrorMessage = t.rich("errors.payment.default", {
+  const defaultErrorMessage = t.rich("errors.GENERIC_PAYMENT_ERROR", {
     link: (chunks) => (
       <Link
         href={`mailto:${clientEnvs.NEXT_PUBLIC_DEFAULT_EMAIL}`}
@@ -71,8 +71,8 @@ export const translateApiErrors = ({
     ),
   }) as ReactNode;
 
-  return errors.map(({ code, type }) => {
-    const path = ["errors", type, code].filter(Boolean).join(".");
+  return errors.map(({ code }) => {
+    const path = ["errors", code].filter(Boolean).join(".");
 
     /**
      * Some messages should be presented as a default error. To avoid missing message errors

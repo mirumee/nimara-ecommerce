@@ -10,6 +10,7 @@ import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
 
 import { RadioFormGroup } from "@/components/form/radio-form-group";
+import { isGlobalError } from "@/lib/errors";
 import { useLocalizedFormatter } from "@/lib/formatters/use-localized-formatter";
 import { useRouterWithState } from "@/lib/hooks";
 import type { TranslationMessage } from "@/types";
@@ -39,31 +40,24 @@ export const DeliveryMethodForm = ({ checkout }: { checkout: Checkout }) => {
       checkout,
       deliveryMethodId: deliveryMethod.deliveryMethodId,
     });
-    const { errorsMap, serverError, redirectUrl } = result ?? {};
 
-    if (redirectUrl) {
-      push(redirectUrl);
+    if (result.ok) {
+      push(result.data.redirectUrl);
 
       return;
     }
 
-    if (serverError) {
-      // maybe to remove and show in toast
-      form.setError("root.serverError", {
-        message: t(`server-errors.${serverError.code}` as TranslationMessage),
-        type: serverError.code,
-      });
-      form.setError("deliveryMethodId", { message: "" });
-    }
-    if (errorsMap) {
-      Object.entries(errorsMap).forEach(([fieldName, code]) => {
-        form.setError(fieldName as keyof FormSchema, {
-          message: t(`checkout-errors.${code}` as TranslationMessage),
-          type: code,
+    result.errors.forEach(({ field, code }) => {
+      if (field) {
+        form.setError(field as keyof FormSchema, {
+          message: t(`errors.${code}`),
         });
-      });
-      form.setError("deliveryMethodId", { message: "" });
-    }
+      } else if (isGlobalError(field)) {
+        form.setError("root.serverError", {
+          message: t(`errors.${code}`),
+        });
+      }
+    });
   };
 
   const deliveryMethodFormField = {

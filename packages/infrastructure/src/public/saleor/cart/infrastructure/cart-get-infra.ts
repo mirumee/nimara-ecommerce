@@ -66,7 +66,7 @@ export const saleorCartGetInfra =
 
     if (!result.ok) {
       logger.error("Unexpecteed error while fetching cart", {
-        error: result.error,
+        errors: result.errors,
         cartId,
         languageCode,
         countryCode,
@@ -82,7 +82,7 @@ export const saleorCartGetInfra =
         countryCode,
       });
 
-      return err({ code: "CART_NOT_FOUND_ERROR" });
+      return err([{ code: "CART_NOT_FOUND_ERROR" }]);
     }
 
     return ok(serializeCart(result.data.checkout));

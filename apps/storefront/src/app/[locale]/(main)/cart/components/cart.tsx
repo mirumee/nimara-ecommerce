@@ -37,7 +37,7 @@ export const Cart = async ({ checkoutId }: { checkoutId: string }) => {
 
   if (!resultCartGet.ok) {
     storefrontLogger.error("Failed to fetch cart", {
-      error: resultCartGet.error,
+      error: resultCartGet.errors,
     });
 
     return <EmptyCart />;

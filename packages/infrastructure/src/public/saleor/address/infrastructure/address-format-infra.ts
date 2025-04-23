@@ -31,7 +31,7 @@ export const saleorAddressFormatInfra =
 
     if (!result.ok) {
       logger.error("Failed to validate addresses format", {
-        error: result.error,
+        errors: result.errors,
       });
 
       return result;
@@ -40,9 +40,11 @@ export const saleorAddressFormatInfra =
     if (!result.data.addressValidationRules) {
       logger.error("No data returned from Saleor.", { error: result.data });
 
-      return err({
-        code: "MISSING_ADDRESS_DATA_ERROR",
-      });
+      return err([
+        {
+          code: "MISSING_ADDRESS_DATA_ERROR",
+        },
+      ]);
     }
 
     const formattedAddress = formatAddress({

@@ -8,6 +8,8 @@ import { useState } from "react";
 import { Button } from "@nimara/ui/components/button";
 import { Spinner } from "@nimara/ui/components/spinner";
 
+import { storefrontLogger } from "@/services/logging";
+
 import { generateSecretAction } from "../actions";
 
 const PaymentMethodAddModal = dynamic(
@@ -33,9 +35,17 @@ export const AddNewPaymentTrigger = ({
   const [secret, setSecret] = useState<string | null>(null);
 
   const handleGenerateSecret = async () => {
-    const secret = await generateSecretAction({ customerId });
+    const resultGenerateSecret = await generateSecretAction({ customerId });
 
-    setSecret(secret);
+    if (!resultGenerateSecret.ok) {
+      storefrontLogger.error("Error generating payment method secret", {
+        errors: resultGenerateSecret.errors,
+      });
+
+      return;
+    }
+
+    setSecret(resultGenerateSecret.data.secret);
   };
 
   const handleClose = () => setSecret(null);

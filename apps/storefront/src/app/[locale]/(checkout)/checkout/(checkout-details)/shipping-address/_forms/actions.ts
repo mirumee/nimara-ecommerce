@@ -42,7 +42,7 @@ export async function createCheckoutShippingAddress({
 }) {
   const accessToken = await getAccessToken();
 
-  const data = await updateCheckoutAddressAction({
+  const result = await updateCheckoutAddressAction({
     checkoutId,
     address: schemaToAddress(input),
     type: "shipping",
@@ -58,5 +58,5 @@ export async function createCheckoutShippingAddress({
 
   revalidatePath(paths.checkout.shippingAddress.asPath());
 
-  return data;
+  return result;
 }

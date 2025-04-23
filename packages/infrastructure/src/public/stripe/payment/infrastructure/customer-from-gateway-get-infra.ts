@@ -1,5 +1,7 @@
 import Stripe from "stripe";
 
+import { err, ok } from "@nimara/domain/objects/Result";
+
 import { API_VERSION, META_KEY } from "../consts";
 import type {
   CustomerFromGatewayGetInfra,
@@ -7,7 +9,7 @@ import type {
 } from "../types";
 
 export const customerFromGatewayGetInfra =
-  ({ secretKey }: PaymentServiceConfig): CustomerFromGatewayGetInfra =>
+  ({ secretKey, logger }: PaymentServiceConfig): CustomerFromGatewayGetInfra =>
   async (opts) => {
     let customer;
 
@@ -40,12 +42,18 @@ export const customerFromGatewayGetInfra =
       }
     }
 
-    if (customer) {
-      return {
-        id: customer.id,
-        defaultPaymentMethodId: null,
-      };
+    if (!customer) {
+      logger.error("Customer not found", {
+        userId: opts.user?.id,
+        email: opts.user?.email,
+        environment: opts.environment,
+      });
+
+      return err([{ code: "CUSTOMER_NOT_FOUND_ERROR" }]);
     }
 
-    return null;
+    return ok({
+      id: customer.id,
+      defaultPaymentMethodId: null,
+    });
   };
