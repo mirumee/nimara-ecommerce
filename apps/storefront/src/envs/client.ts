@@ -7,6 +7,7 @@ const schema = z.object({
   // Saleor envs
   NEXT_PUBLIC_SALEOR_API_URL: z.string(),
   NEXT_PUBLIC_DEFAULT_CHANNEL: z.string(),
+
   NEXT_PUBLIC_DEFAULT_LOCALE: z.enum(SUPPORTED_LOCALES),
   NEXT_PUBLIC_DEFAULT_PAGE_TITLE: z.string().default(DEFAULT_PAGE_TITLE),
   NEXT_PUBLIC_DEFAULT_EMAIL: z.string().email().default("contact@mirumee.com"),
@@ -21,6 +22,7 @@ const schema = z.object({
   NEXT_PUBLIC_BUTTER_CMS_API_KEY: z.string().optional(),
 
   CMS_SERVICE: z.enum(["saleor", "butter"]).default("saleor"),
+  BASE_URL: z.string().default(""),
 });
 
 export const clientEnvs = schema.parse({
@@ -38,4 +40,5 @@ export const clientEnvs = schema.parse({
   NEXT_PUBLIC_BUTTER_CMS_API_KEY: process.env.NEXT_PUBLIC_BUTTER_CMS_API_KEY,
 
   CMS_SERVICE: process.env.CMS_SERVICE,
+  BASE_URL: process.env.BASE_URL,
 });

@@ -123,7 +123,9 @@
     "free-shipping": "Free shipping",
     "standard-parcel": "Standard parcel",
     "free-30-days": "Free 30 days return policy",
-    "you-may-also-like": "You may also like"
+    "you-may-also-like": "You may also like",
+    "check-out-the-product": "Check out the {productName} in our offer.",
+    "discover-our-product": "Discover our product."
   },
   "collections": {
     "associated-products": "Associated products"

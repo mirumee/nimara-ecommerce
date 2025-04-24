@@ -1,4 +1,7 @@
+import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
+
+import { editorJSDataToString } from "@nimara/ui/lib/richText";
 
 import { CACHE_TTL } from "@/config";
 import { clientEnvs } from "@/envs/client";
@@ -19,6 +22,7 @@ export async function generateMetadata(props: {
   const params = await props.params;
   const { slug } = params;
   const region = await getCurrentRegion();
+  const t = await getTranslations("products");
 
   const serviceOpts = {
     channel: region.market.channel,
@@ -38,9 +42,18 @@ export async function generateMetadata(props: {
     },
   });
 
+  const rawDescription = result?.data?.product?.description;
+  const parsedDescription = editorJSDataToString(rawDescription)?.trim();
+
+  const fallbackDescription = result?.data?.product?.name
+    ? t("check-out-the-product", { productName: result?.data?.product?.name })
+    : t("discover-our-product");
+
   return {
     title: result?.data?.product?.name,
-    description: result?.data?.product?.description,
+    description: parsedDescription?.length
+      ? parsedDescription.slice(0, 200)
+      : fallbackDescription,
   };
 }
 
