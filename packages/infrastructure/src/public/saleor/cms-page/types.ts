@@ -1,6 +1,6 @@
-import { Logger } from "#root/logging/types";
+import { type Logger } from "#root/logging/types";
 
 export type SaleorCMSPageServiceConfig = {
-  logger: Logger;
   apiURL: string;
+  logger: Logger;
 };

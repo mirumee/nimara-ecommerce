@@ -1,8 +1,8 @@
 import type { LanguageCodeEnum } from "@nimara/codegen/schema";
 import type { CMSPage, PageType } from "@nimara/domain/objects/CMSPage";
+import { type AsyncResult } from "@nimara/domain/objects/Result";
 
 import type { FetchOptions } from "#root/graphql/client";
-import { AsyncResult } from "@nimara/domain/objects/Result";
 
 export type WithFetchOptions = { options?: FetchOptions };
 

@@ -6,6 +6,7 @@ import {
   type ButterCMSPageFields,
   PageType,
 } from "@nimara/domain/objects/CMSPage";
+import { ok } from "@nimara/domain/objects/Result";
 
 import {
   convertLanguageCode,
@@ -14,7 +15,6 @@ import {
 import type { CMSPageGetInfra } from "#root/use-cases/cms-page/types";
 
 import type { ButterCMSPageServiceConfig } from "../types";
-import { ok } from "@nimara/domain/objects/Result";
 
 // Copied from buttercms types to enable `locale` typing until they export it directly.
 // TODO: remove when locale will be added in next buttercms version

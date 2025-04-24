@@ -1,7 +1,8 @@
+import { ok } from "@nimara/domain/objects/Result";
+
 import { THUMBNAIL_FORMAT, THUMBNAIL_SIZE_MEDIUM } from "#root/config";
 import { graphqlClient } from "#root/graphql/client";
 import { parseAttributeData } from "#root/lib/serializers/attribute";
-import { ok } from "@nimara/domain/objects/Result";
 
 import type { OrderFragment } from "../graphql/fragments/generated";
 import { UserOrdersQueryDocument } from "../graphql/queries/generated";

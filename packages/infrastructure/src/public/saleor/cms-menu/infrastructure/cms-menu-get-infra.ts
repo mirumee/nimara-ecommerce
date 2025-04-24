@@ -1,7 +1,8 @@
+import { ok } from "@nimara/domain/objects/Result";
+
 import { graphqlClient } from "#root/graphql/client";
 import { serializeSaleorMenu } from "#root/lib/serializers/cms-menu";
 import type { CMSMenuGetInfra } from "#root/use-cases/cms-menu/types";
-import { ok } from "@nimara/domain/objects/Result";
 
 import { MenuGetDocument } from "../graphql/queries/generated";
 import type { SaleorCMSMenuServiceConfig } from "../types";

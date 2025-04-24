@@ -1,7 +1,8 @@
-import { graphqlClient } from "#root/graphql/client";
-
-import { handleMutationErrors } from "#root/public/saleor/error";
 import { err, ok } from "@nimara/domain/objects/Result";
+
+import { graphqlClient } from "#root/graphql/client";
+import { handleMutationErrors } from "#root/public/saleor/error";
+
 import { FulfillmentReturnProductsDocument } from "../grapqhql/mutations/generated";
 import type {
   FulfillmentReturnProductsInfra,

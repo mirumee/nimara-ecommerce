@@ -1,6 +1,7 @@
+import { ok } from "@nimara/domain/objects/Result";
+
 import { graphqlClient } from "#root/graphql/client";
 import { serializeMetadata } from "#root/lib/serializers/metadata";
-import { ok } from "@nimara/domain/objects/Result";
 
 import { CurrentUserDocument } from "../graphql/queries/generated";
 import type { SaleorUserServiceConfig, UserGetInfra } from "../types";
@@ -34,7 +35,8 @@ export const saleorUserGetInfra =
         apiURL,
         accessToken,
       });
-      return ok(null);
+      
+return ok(null);
     }
 
     const user = result.data.me;

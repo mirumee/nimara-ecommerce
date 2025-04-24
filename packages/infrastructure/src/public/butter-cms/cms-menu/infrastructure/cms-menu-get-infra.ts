@@ -2,13 +2,13 @@ import Butter from "buttercms/lib/butter";
 import { invariant } from "ts-invariant";
 
 import type { ButterCMSMenuItem } from "@nimara/domain/objects/Menu";
+import { ok } from "@nimara/domain/objects/Result";
 
 import { serializeButterCMSMenuItem } from "#root/lib/serializers/cms-menu";
 import { convertLanguageCode } from "#root/lib/serializers/cms-page";
 import type { CMSMenuGetInfra } from "#root/use-cases/cms-menu/types";
 
 import type { ButterCMSMenuServiceConfig } from "../types";
-import { ok } from "@nimara/domain/objects/Result";
 
 export const butterCMSMenuGetInfra =
   ({ token, logger }: ButterCMSMenuServiceConfig): CMSMenuGetInfra =>

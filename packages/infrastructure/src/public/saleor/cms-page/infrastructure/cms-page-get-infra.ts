@@ -1,7 +1,8 @@
+import { ok } from "@nimara/domain/objects/Result";
+
 import { graphqlClient } from "#root/graphql/client";
 import { parseSaleorDataToFields } from "#root/lib/serializers/cms-page";
 import type { CMSPageGetInfra } from "#root/use-cases/cms-page/types";
-import { ok } from "@nimara/domain/objects/Result";
 
 import { PageDocument } from "../graphql/queries/generated";
 import type { SaleorCMSPageServiceConfig } from "../types";

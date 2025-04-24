@@ -1,7 +1,6 @@
-import type { BaseError } from "@nimara/domain/objects/Error";
+import { type AsyncResult } from "@nimara/domain/objects/Result";
 
 import { type Logger } from "#root/logging/types";
-import { AsyncResult } from "@nimara/domain/objects/Result";
 
 export type FulfillmentReturnProductsOptions = {
   input: {

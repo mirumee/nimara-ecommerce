@@ -1,4 +1,4 @@
-import { Logger } from "#root/logging/types";
+import { type Logger } from "#root/logging/types";
 
 export type ButterCMSMenuServiceConfig = {
   logger: Logger;
