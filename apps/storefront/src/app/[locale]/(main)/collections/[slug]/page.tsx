@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
 import { RichText } from "@nimara/ui/components/rich-text/rich-text";
+import { editorJSDataToString } from "@nimara/ui/lib/richText";
 
 import { CACHE_TTL, DEFAULT_RESULTS_PER_PAGE } from "@/config";
 import { paths } from "@/lib/paths";
@@ -23,14 +24,9 @@ type Params = Promise<{
   slug: string;
 }>;
 
-export async function generateMetadata(props: {
-  params: Params;
-  searchParams: SearchParams;
-}) {
-  const searchParams = await props.searchParams;
+export async function generateMetadata(props: { params: Params }) {
   const params = props.params;
 
-  const { after, before, limit } = searchParams;
   const { slug } = await params;
   const region = await getCurrentRegion();
 
@@ -38,9 +34,7 @@ export async function generateMetadata(props: {
     channel: region.market.channel,
     languageCode: region.language.code,
     slug,
-    limit: limit ? Number.parseInt(limit) : DEFAULT_RESULTS_PER_PAGE,
-    after,
-    before,
+    limit: DEFAULT_RESULTS_PER_PAGE,
     options: {
       next: {
         revalidate: CACHE_TTL.pdp,
@@ -50,10 +44,15 @@ export async function generateMetadata(props: {
   });
 
   const collection = getCollectionResult.data?.results;
+  const rawDescription = collection?.description;
+  const parsedDescription = editorJSDataToString(rawDescription)?.trim();
 
   return {
     title: collection?.seoTitle || collection?.name,
-    description: collection?.seoDescription || collection?.description,
+    description:
+      collection?.seoDescription || parsedDescription.length
+        ? parsedDescription.slice(0, 200)
+        : collection?.name,
   };
 }
 
