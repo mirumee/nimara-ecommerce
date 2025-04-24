@@ -25,25 +25,25 @@ export default async function Page(props: { searchParams: SearchParams }) {
     userService.userGet(accessToken),
   ]);
 
-  const customerId = await paymentService.customerGet({
+  const resultCustomerGet = await paymentService.customerGet({
     user: user!,
     channel: region.market.channel,
     environment: clientEnvs.ENVIRONMENT,
     accessToken: serverEnvs.SALEOR_APP_TOKEN,
   });
 
-  let paymentGatewayMethods = [];
   let error = null;
 
   if (Object.keys(searchParams).length) {
-    const { isSuccess } = await paymentService.paymentMethodSaveProcess({
-      searchParams,
-    });
+    const resultPaymentMethodSave =
+      await paymentService.paymentMethodSaveProcess({
+        searchParams,
+      });
 
-    if (isSuccess) {
+    if (resultPaymentMethodSave.ok) {
       redirect({ href: paths.account.paymentMethods.asPath(), locale });
     } else {
-      error = t.rich("errors.payment.default", {
+      error = t.rich("errors.GENERIC_PAYMENT_ERROR", {
         link: (chunks) => (
           <Link
             href={`mailto:${clientEnvs.NEXT_PUBLIC_DEFAULT_EMAIL}`}
@@ -57,16 +57,21 @@ export default async function Page(props: { searchParams: SearchParams }) {
     }
   }
 
-  if (!customerId) {
+  if (!resultCustomerGet.ok) {
     throw new Error("Could not create gateway customer.");
   }
 
-  paymentGatewayMethods = await paymentService.customerPaymentMethodsList({
-    customerId,
-  });
+  const { customerId } = resultCustomerGet.data;
+  const resultCustomerPaymentMethods =
+    await paymentService.customerPaymentMethodsList({
+      customerId,
+    });
 
   const storeUrl = await getStoreUrl();
-  const hasPaymentMethods = paymentGatewayMethods.length > 0;
+  const paymentMethods = resultCustomerPaymentMethods.ok
+    ? resultCustomerPaymentMethods.data
+    : [];
+  const hasPaymentMethods = paymentMethods.length > 0;
 
   return (
     <div className="flex flex-col gap-8 text-sm">
@@ -88,7 +93,7 @@ export default async function Page(props: { searchParams: SearchParams }) {
         {hasPaymentMethods ? (
           <PaymentMethodsList
             customerId={customerId}
-            methods={paymentGatewayMethods}
+            methods={paymentMethods}
           />
         ) : (
           <div className="grid gap-6">

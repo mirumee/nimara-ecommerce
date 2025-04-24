@@ -1,6 +1,7 @@
-import type { BaseError } from "@nimara/domain/objects/Error";
+import { err, ok } from "@nimara/domain/objects/Result";
 
-import { graphqlClient } from "#root/graphql/client";
+import { graphqlClientV2 } from "#root/graphql/client";
+import { handleMutationErrors } from "#root/public/saleor/error";
 
 import { CheckoutAddPromoCodeMutationDocument } from "../graphql/mutations/generated";
 import type {
@@ -8,44 +9,50 @@ import type {
   SaleorCheckoutServiceConfig,
 } from "../types";
 
-export const saleorCheckoutAddPromoCodeInfra = ({
-  apiURL,
-  logger,
-}: SaleorCheckoutServiceConfig): CheckoutAddPromoCodeInfra => {
-  return async ({ checkoutId, promoCode }) => {
-    const { data, error } = await graphqlClient(apiURL).execute(
+export const saleorCheckoutAddPromoCodeInfra =
+  ({
+    apiURL,
+    logger,
+  }: SaleorCheckoutServiceConfig): CheckoutAddPromoCodeInfra =>
+  async ({ checkoutId, promoCode }) => {
+    const result = await graphqlClientV2(apiURL).execute(
       CheckoutAddPromoCodeMutationDocument,
       {
         variables: {
           checkoutId,
           promoCode,
         },
+        operationName: "CheckoutAddPromoCodeMutation",
       },
     );
 
-    if (error) {
-      logger.error("Failed to apply promo code", { error, checkoutId });
-
-      return {
-        isSuccess: false,
-        serverError: error as BaseError,
-      };
-    }
-
-    if (data?.checkoutAddPromoCode?.errors?.length) {
+    if (!result.ok) {
       logger.error("Failed to apply promo code", {
-        errors: data?.checkoutAddPromoCode?.errors,
+        errors: result.errors,
         checkoutId,
       });
 
-      return {
-        isSuccess: false,
-        validationErrors: data.checkoutAddPromoCode.errors,
-      };
+      return result;
     }
 
-    return {
-      isSuccess: true,
-    };
+    if (!result.data?.checkoutAddPromoCode) {
+      logger.error("Add promo code to checkout mutation returned no data", {
+        checkoutId,
+      });
+
+      return err([{ code: "DISCOUNT_CODE_ADD_ERROR" }]);
+    }
+
+    if (result.data.checkoutAddPromoCode.errors.length) {
+      logger.error("Add promo code to checkout mutation returned errors", {
+        errors: result.data.checkoutAddPromoCode.errors,
+        checkoutId,
+      });
+
+      return err(handleMutationErrors(result.data.checkoutAddPromoCode.errors));
+    }
+
+    return ok({
+      success: true,
+    });
   };
-};

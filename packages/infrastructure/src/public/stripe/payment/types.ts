@@ -6,6 +6,7 @@ import type {
 
 import type { Checkout } from "@nimara/domain/objects/Checkout";
 import type { PaymentMethod } from "@nimara/domain/objects/Payment";
+import { type AsyncResult, type Result } from "@nimara/domain/objects/Result";
 import type { User } from "@nimara/domain/objects/User";
 
 import type { Maybe } from "#root/lib/types";
@@ -39,9 +40,7 @@ export type PaymentInitializeUseCase = () => Promise<void>;
 export type PaymentGatewayInitializeInfra = (opts: {
   amount: number;
   id: string;
-}) => Promise<{
-  errors: ApiError[];
-}>;
+}) => AsyncResult<{ success: true }>;
 
 export type PaymentGatewayInitializeUseCase = PaymentGatewayInitializeInfra;
 
@@ -51,18 +50,13 @@ export type TransactionInitializeInfra = (opts: {
   id: string;
   paymentMethod?: Maybe<string>;
   saveForFutureUse?: Maybe<boolean>;
-}) => Promise<
-  { data: string; errors: never[] } | { data: null; errors: ApiError[] }
->;
+}) => AsyncResult<{ clientSecret: string }>;
 
 export type PaymentExecuteInfra = (opts: {
   billingDetails: BillingDetails;
   paymentSecret?: Maybe<string>;
   redirectUrl: string;
-}) => Promise<{
-  errors: ApiError[];
-  isSuccess: boolean;
-}>;
+}) => AsyncResult<{ success: true }>;
 
 export type PaymentExecuteUseCase = PaymentExecuteInfra;
 
@@ -81,18 +75,15 @@ export type ClientInitializeInfra = () => Promise<void>;
 export type PaymentProcessUseCase = (opts: {
   checkout: Checkout;
   searchParams: Record<string, string>;
-}) => Promise<{
-  errors: ApiError[];
-  isSuccess: boolean;
-}>;
+}) => AsyncResult<{ success: true }>;
 
 export type PaymentResultProcessInfra = (opts: {
   checkout: Checkout;
-}) => Promise<{ errors: ApiError[]; isSuccess: boolean }>;
+}) => AsyncResult<{ isCheckoutPaid: boolean }>;
 
 export type TransactionProcessInfra = (opts: {
   searchParams: Record<string, string>;
-}) => Promise<{ errors: ApiError[]; isSuccess: boolean }>;
+}) => AsyncResult<{ success: true }>;
 
 export type BillingDetails = Partial<{
   country: string;
@@ -103,18 +94,6 @@ export type BillingDetails = Partial<{
   streetAddress1: string;
   streetAddress2: string;
 }>;
-
-export type ApiErrorType =
-  | "paymentInitialize"
-  | "transactionInitialize"
-  | "transactionProcess"
-  | "stripe"
-  | "adyen";
-
-export type ApiError = {
-  code: string;
-  type: ApiErrorType;
-};
 
 export type GatewayUser = {
   defaultPaymentMethodId: string | null;
@@ -133,55 +112,55 @@ export type CustomerFromGatewayGetInfra = (
         gatewayId: string;
         user?: never;
       },
-) => Promise<GatewayUser | null>;
+) => AsyncResult<GatewayUser>;
 
 export type CustomerFromSaleorGetInfra = (opts: {
   channel: string;
   user: User;
-}) => string | null;
+}) => Result<string | null>;
 
 export type CustomerInGatewayCreateInfra = (opts: {
   environment: string;
   user: User;
-}) => Promise<GatewayUser>;
+}) => AsyncResult<GatewayUser>;
 
 export type CustomerInSaleorSaveInfra = (opts: {
   accessToken: string;
   channel: string;
   gatewayCustomerId: string;
   saleorCustomerId: string;
-}) => Promise<void>;
+}) => AsyncResult<{ success: true }>;
 
 export type CustomerGetUseCase = (opts: {
   accessToken: string;
   channel: string;
   environment: string;
   user: User;
-}) => Promise<null | string>;
+}) => AsyncResult<{ customerId: string }>;
 
 export type PaymentMethodsListInfra = (opts: {
   customerId: string;
-}) => Promise<PaymentMethod[]>;
+}) => AsyncResult<PaymentMethod[]>;
 
 export type CustomerPaymentMethodsListUseCase = PaymentMethodsListInfra;
 
 export type PaymentMethodDetachInfra = (opts: {
   paymentMethodId: string;
-}) => Promise<void>;
+}) => AsyncResult<{ success: true }>;
 
 export type CustomerPaymentMethodValidate = (opts: {
   customerId: string;
   paymentMethodId: string;
-}) => Promise<{ isCustomerPaymentMethod: boolean }>;
+}) => AsyncResult<{ isCustomerPaymentMethod: boolean }>;
 
 export type CustomerPaymentMethodDeleteUseCase = (opts: {
   customerId: string;
   paymentMethodId: string;
-}) => Promise<{ isSuccess: boolean }>;
+}) => AsyncResult<{ success: true }>;
 
 export type PaymentSaveInitializeInfra = (opts: {
   customerId: string;
-}) => Promise<{ secret: string }>;
+}) => AsyncResult<{ secret: string }>;
 
 export type PaymentSaveInitializeUseCase = PaymentSaveInitializeInfra;
 
@@ -189,25 +168,22 @@ export type PaymentMethodSaveProcessInfra = ({
   searchParams,
 }: {
   searchParams: Record<string, string>;
-}) => Promise<{ customerId: string; paymentMethodId: string } | void>;
+}) => AsyncResult<{ customerId: string; paymentMethodId: string }>;
 
 export type PaymentMethodSaveProcessUseCase = ({
   searchParams,
 }: {
   searchParams: Record<string, string>;
-}) => Promise<{ isSuccess: boolean }>;
+}) => AsyncResult<{ success: true }>;
 
 export type PaymentMethodSetDefaultInfra = (opts: {
   customerId: string;
   paymentMethodId: string;
-}) => Promise<void>;
+}) => AsyncResult<{ success: true }>;
 
 export type PaymentMethodSaveExecuteInfra = (opts: {
   redirectUrl: string;
   saveForFutureUse?: boolean;
-}) => Promise<{
-  errors: ApiError[];
-  isSuccess: boolean;
-}>;
+}) => AsyncResult<{ success: true }>;
 
 export type PaymentMethodSaveExecuteUseCase = PaymentMethodSaveExecuteInfra;

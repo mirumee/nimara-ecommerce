@@ -31,7 +31,7 @@ export const saleorCartCreateInfra =
 
     if (!result.ok) {
       logger.error("Unexpected error while creating a checkout", {
-        error: result.error,
+        errors: result.errors,
         channel,
         languageCode,
       });
@@ -46,9 +46,11 @@ export const saleorCartCreateInfra =
         languageCode,
       });
 
-      return err({
-        code: "CART_CREATE_ERROR",
-      });
+      return err([
+        {
+          code: "CART_CREATE_ERROR",
+        },
+      ]);
     }
 
     if (!result.data.checkoutCreate?.checkout) {
@@ -58,9 +60,11 @@ export const saleorCartCreateInfra =
         languageCode,
       });
 
-      return err({
-        code: "CART_CREATE_ERROR",
-      });
+      return err([
+        {
+          code: "CART_CREATE_ERROR",
+        },
+      ]);
     }
 
     return ok({ cartId: result.data.checkoutCreate.checkout.id });

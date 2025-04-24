@@ -16,23 +16,16 @@ export const EmailSection = async ({
   checkout: Checkout;
   user: User | null;
 }) => {
-  const [t, tc] = await Promise.all([
-    getTranslations("user-details"),
-    getTranslations("common"),
-  ]);
+  const t = await getTranslations();
 
   if (!checkout?.email && user) {
-    const { isSuccess, validationErrors, serverError } =
-      await checkoutService.checkoutEmailUpdate({
-        checkout,
-        email: user.email,
-      });
+    const result = await checkoutService.checkoutEmailUpdate({
+      checkout,
+      email: user.email,
+    });
 
-    if (!isSuccess) {
-      storefrontLogger.error(
-        "Failed to update email",
-        validationErrors || serverError,
-      );
+    if (!result.ok) {
+      storefrontLogger.error("Failed to update email", result);
     }
   }
 
@@ -45,7 +38,7 @@ export const EmailSection = async ({
       {!!user ? (
         <section className="flex flex-wrap gap-2">
           <h2 className="w-full scroll-m-20 text-2xl tracking-tight">
-            {t("signed-in-as")}
+            {t("user-details.signed-in-as")}
           </h2>
           <p className="break-all text-sm text-stone-900">
             {userFullName} {user.email}
@@ -55,14 +48,14 @@ export const EmailSection = async ({
         <section className="flex justify-between">
           <div className="max-w-[70%] space-y-2">
             <h2 className="scroll-m-20 text-2xl tracking-tight">
-              {t("title")}
+              {t("user-details.title")}
             </h2>
             <p className="break-all text-sm font-normal leading-5 text-stone-900">
               {checkout.email}
             </p>
           </div>
           <Link href={paths.checkout.userDetails.asPath()}>
-            <Button variant="outline">{tc("edit")}</Button>
+            <Button variant="outline">{t("common.edit")}</Button>
           </Link>
         </section>
       )}

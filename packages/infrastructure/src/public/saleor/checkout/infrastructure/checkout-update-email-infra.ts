@@ -1,6 +1,7 @@
-import type { BaseError } from "@nimara/domain/objects/Error";
+import { err, ok } from "@nimara/domain/objects/Result";
 
-import { graphqlClient } from "#root/graphql/client";
+import { graphqlClientV2 } from "#root/graphql/client";
+import { handleMutationErrors } from "#root/public/saleor/error";
 
 import { CheckoutEmailUpdateMutationDocument } from "../graphql/mutations/generated";
 import type {
@@ -8,47 +9,56 @@ import type {
   SaleorCheckoutServiceConfig,
 } from "../types";
 
-export const saleorCheckoutEmailUpdateInfra = ({
-  apiURL,
-  logger,
-}: SaleorCheckoutServiceConfig): CheckoutEmailUpdateInfra => {
-  return async ({ checkout, email }) => {
-    const { data, error } = await graphqlClient(apiURL).execute(
+export const saleorCheckoutEmailUpdateInfra =
+  ({ apiURL, logger }: SaleorCheckoutServiceConfig): CheckoutEmailUpdateInfra =>
+  async ({ checkout, email }) => {
+    const result = await graphqlClientV2(apiURL).execute(
       CheckoutEmailUpdateMutationDocument,
       {
         variables: {
           checkoutId: checkout.id,
           email,
         },
+        operationName: "CheckoutEmailUpdateMutation",
       },
     );
 
-    if (error) {
-      logger.error("Failed to update checkout email", {
-        error,
-        checkoutId: checkout.id,
+    if (!result.ok) {
+      logger.error("Failed to update email on checkout. Unexpected error.", {
+        errors: result.errors,
+        checkout: {
+          id: checkout.id,
+        },
       });
 
-      return {
-        isSuccess: false,
-        serverError: error as BaseError,
-      };
+      return result;
     }
 
-    if (data?.checkoutEmailUpdate?.errors?.length) {
-      logger.error("Failed to update checkout email", {
-        errors: data?.checkoutEmailUpdate?.errors,
-        checkoutId: checkout.id,
+    if (!result.data?.checkoutEmailUpdate) {
+      logger.error("Failed to update email on checkout. No data returned.", {
+        checkout: {
+          id: checkout.id,
+        },
       });
 
-      return {
-        isSuccess: false,
-        validationErrors: data?.checkoutEmailUpdate?.errors,
-      };
+      return err([
+        {
+          code: "CHECKOUT_EMAIL_UPDATE_ERROR",
+          message: "No data returned",
+        },
+      ]);
     }
 
-    return {
-      isSuccess: true,
-    };
+    if (result.data.checkoutEmailUpdate.errors.length) {
+      logger.error("Failed to update email on checkout. Errors returned.", {
+        errors: result.data.checkoutEmailUpdate.errors,
+        checkout: {
+          id: checkout.id,
+        },
+      });
+
+      return err(handleMutationErrors(result.data.checkoutEmailUpdate.errors));
+    }
+
+    return ok({ success: true });
   };
-};

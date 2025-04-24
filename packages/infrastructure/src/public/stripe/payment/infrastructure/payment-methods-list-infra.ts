@@ -5,6 +5,7 @@ import type {
   PaymentMethod,
   Paypal,
 } from "@nimara/domain/objects/Payment";
+import { ok } from "@nimara/domain/objects/Result";
 
 import { API_VERSION } from "../consts";
 import type { PaymentMethodsListInfra, PaymentServiceConfig } from "../types";
@@ -41,23 +42,25 @@ export const paymentMethodsListInfra =
       (data?.[0]?.customer as Stripe.Customer)?.invoice_settings
         .default_payment_method ?? null;
 
-    return data
-      .map(({ type, id, ...data }) => {
-        if (type in SERIALIZERS && type in data) {
-          return {
-            id,
-            type,
-            isDefault: id === defaultPaymentMethod,
-            paymentMethod: SERIALIZERS[type as keyof typeof SERIALIZERS](
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-              (data as any)[type],
-            ),
-          };
-        }
+    return ok(
+      data
+        .map(({ type, id, ...data }) => {
+          if (type in SERIALIZERS && type in data) {
+            return {
+              id,
+              type,
+              isDefault: id === defaultPaymentMethod,
+              paymentMethod: SERIALIZERS[type as keyof typeof SERIALIZERS](
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+                (data as any)[type],
+              ),
+            };
+          }
 
-        logger.error("Unsupported payment method", { type });
+          logger.error("Unsupported payment method", { type });
 
-        return null;
-      })
-      .filter(Boolean) as PaymentMethod[];
+          return null;
+        })
+        .filter(Boolean) as PaymentMethod[],
+    );
   };

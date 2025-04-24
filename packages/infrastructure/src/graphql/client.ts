@@ -146,7 +146,7 @@ export const graphqlClientV2 = (
       });
 
       if (!response.ok) {
-        return handleInvalidResponse(response, { operationName });
+        return handleInvalidResponse({ response, operationName, url });
       }
 
       const body = (await response.json()) as GraphQLResponse<TResult>;
@@ -154,23 +154,36 @@ export const graphqlClientV2 = (
       if ("errors" in body) {
         const exceptionCode = body?.errors?.[0].extensions.exception.code;
 
-        logger.error("GraphQL error", {
+        logger.error("GraphQL Error", {
           error: body["errors"],
           operationName,
           exceptionCode,
+          variables,
+          url,
         });
 
-        return err({
-          code: "HTTP_ERROR",
-          message: "GraphQL Error",
-        });
+        return err([
+          {
+            code: "HTTP_ERROR",
+            message: "GraphQL Error",
+          },
+        ]);
       }
 
       if (!body.data) {
-        return err({
-          code: "HTTP_ERROR",
-          message: "No data returned from GraphQL",
+        logger.error("HTTP Error", {
+          error: body["errors"],
+          operationName,
+          variables,
+          url,
         });
+
+        return err([
+          {
+            code: "HTTP_ERROR",
+            message: "No data returned from GraphQL",
+          },
+        ]);
       }
 
       return ok(body.data);
@@ -178,20 +191,29 @@ export const graphqlClientV2 = (
       logger.error("Unexpected HTTP error", {
         error: e,
         operationName,
+        url,
+        variables,
       });
 
-      return err({
-        code: "UNEXPECTED_HTTP_ERROR",
-        message: "Unexpected HTTP error",
-      });
+      return err([
+        {
+          code: "UNEXPECTED_HTTP_ERROR",
+          message: "Unexpected HTTP error",
+        },
+      ]);
     }
   },
 });
 
-const handleInvalidResponse = (
-  response: Response,
-  { operationName }: { operationName: string },
-): Err => {
+const handleInvalidResponse = ({
+  operationName,
+  response,
+  url,
+}: {
+  operationName: string;
+  response: Response;
+  url: RequestInfo | URL;
+}): Err => {
   // Add more cases for response.status if needed.
   switch (response.status) {
     case 404:
@@ -199,38 +221,59 @@ const handleInvalidResponse = (
         message: response.statusText,
         status: response.status,
         operationName,
+        url,
       });
 
-      return err({
-        code: "NOT_FOUND_ERROR",
-        status: response.status,
-        message: response.statusText,
-      });
+      return err([
+        {
+          code: "NOT_FOUND_ERROR",
+          status: response.status,
+          message: response.statusText,
+          context: {
+            operationName,
+            url,
+          },
+        },
+      ]);
 
     case 429:
       logger.error("Too many requests", {
         message: response.statusText,
         status: response.status,
         operationName,
+        url,
       });
 
-      return err({
-        code: "TOO_MANY_REQUESTS_ERROR",
-        status: response.status,
-        message: response.statusText,
-      });
+      return err([
+        {
+          code: "TOO_MANY_REQUESTS_ERROR",
+          status: response.status,
+          message: response.statusText,
+          context: {
+            operationName,
+            url,
+          },
+        },
+      ]);
 
     default:
       logger.error("API request failed", {
         message: response.statusText,
         status: response.status,
         operationName,
+        url,
       });
 
-      return err({
-        code: "HTTP_ERROR",
-        status: response.status,
-        message: response.statusText,
-      });
+      return err([
+        {
+          code: "HTTP_ERROR",
+          status: response.status,
+          message: response.statusText,
+          context: {
+            operationName,
+            url,
+          },
+        },
+      ]);
   }
 };

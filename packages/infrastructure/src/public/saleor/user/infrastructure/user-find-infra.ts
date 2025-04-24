@@ -25,7 +25,7 @@ export const saleorUserFindInfra = ({
 
     if (!result.ok) {
       logger.error("Error while fetching user by email", {
-        error: result.error,
+        error: result.errors,
       });
 
       return result;

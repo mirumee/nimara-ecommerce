@@ -69,14 +69,16 @@ export const AddToBag = ({
     });
 
     if (!resultLinesAdd.ok) {
-      if (resultLinesAdd.error.field) {
-        toast({
-          description: t(
-            `checkout-errors.${resultLinesAdd.error.field}` as TranslationMessage,
-          ),
-          variant: "destructive",
-        });
-      }
+      resultLinesAdd.errors.forEach((error) => {
+        if (error.field) {
+          toast({
+            description: t(
+              `checkout-errors.${error.field}` as TranslationMessage,
+            ),
+            variant: "destructive",
+          });
+        }
+      });
     } else {
       succeededRef.current = true;
     }

@@ -49,19 +49,21 @@ export async function login({
           countryCode: region.market.countryCode,
           languageCode: region.language.code,
         };
-        const [{ checkout: guestCheckout }, { checkout: userCheckout }] =
-          await Promise.all([
-            checkoutService.checkoutGet({
-              checkoutId,
-              ...regionSettings,
-            }),
-            checkoutService.checkoutGet({
-              checkoutId: userLatestCheckoutId,
-              ...regionSettings,
-            }),
-          ]);
+        const [resultGuestCheckout, resultUserCheckout] = await Promise.all([
+          checkoutService.checkoutGet({
+            checkoutId,
+            ...regionSettings,
+          }),
+          checkoutService.checkoutGet({
+            checkoutId: userLatestCheckoutId,
+            ...regionSettings,
+          }),
+        ]);
 
-        if (userCheckout?.id) {
+        const userCheckout = resultUserCheckout.data?.checkout;
+        const guestCheckout = resultGuestCheckout.data?.checkout;
+
+        if (userCheckout) {
           const cartService = saleorCartService({
             ...regionSettings,
             channel: region.market.channel,

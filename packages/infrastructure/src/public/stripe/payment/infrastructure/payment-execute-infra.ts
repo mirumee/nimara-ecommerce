@@ -1,5 +1,10 @@
 import { invariant } from "graphql/jsutils/invariant";
 
+import { err, ok } from "@nimara/domain/objects/Result";
+
+import { logger } from "#root/logging/service";
+import { handleStripeErrors } from "#root/public/stripe/payment/helpers";
+
 import { PAYMENT_REDIRECT, QUERY_PARAMS } from "../consts";
 import type { PaymentExecuteInfra, StripeServiceState } from "../types";
 
@@ -67,24 +72,19 @@ export const paymentExecuteInfra =
     }
 
     if (error) {
-      /**
-       * Stripe will inject errors directly into payment element form.
-       */
-      if (error.type === "validation_error" || !error.code) {
-        return {
-          errors: [],
-          isSuccess: false,
-        };
-      }
+      logger.error("Payment execution failed.", {
+        transactionId: serviceState.transactionId,
+        paymentSecret,
+        redirectUrl,
+        originalError: {
+          code: error.code,
+          message: error.message,
+          type: error.type,
+        },
+      });
 
-      return {
-        errors: [{ type: "stripe", code: error.code || error.type }],
-        isSuccess: false,
-      };
+      return err(handleStripeErrors(error));
     }
 
-    return {
-      errors: [],
-      isSuccess: true,
-    };
+    return ok({ success: true });
   };

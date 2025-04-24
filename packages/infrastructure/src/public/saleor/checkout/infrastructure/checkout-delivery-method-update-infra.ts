@@ -1,6 +1,7 @@
-import type { BaseError } from "@nimara/domain/objects/Error";
+import { err, ok } from "@nimara/domain/objects/Result";
 
-import { graphqlClient } from "#root/graphql/client";
+import { graphqlClientV2 } from "#root/graphql/client";
+import { handleMutationErrors } from "#root/public/saleor/error";
 
 import { CheckoutDeliveryMethodUpdateMutationDocument } from "../graphql/mutations/generated";
 import type {
@@ -9,50 +10,42 @@ import type {
   SaleorCheckoutServiceConfig,
 } from "../types";
 
-export const saleorDeliveryMethodUpdateInfra = ({
-  apiURL,
-  logger,
-}: SaleorCheckoutServiceConfig): CheckoutDeliveryMethodUpdateInfra => {
-  return async ({
-    checkout,
-    deliveryMethodId,
-  }: CheckoutDeliveryMethodOptions) => {
-    const { data, error } = await graphqlClient(apiURL).execute(
+export const saleorDeliveryMethodUpdateInfra =
+  ({
+    apiURL,
+    logger,
+  }: SaleorCheckoutServiceConfig): CheckoutDeliveryMethodUpdateInfra =>
+  async ({ checkout, deliveryMethodId }: CheckoutDeliveryMethodOptions) => {
+    const result = await graphqlClientV2(apiURL).execute(
       CheckoutDeliveryMethodUpdateMutationDocument,
       {
         variables: {
           checkoutId: checkout.id,
           deliveryMethodId,
         },
+        operationName: "CheckoutDeliveryMethodUpdateMutation",
       },
     );
 
-    if (error) {
+    if (!result.ok) {
       logger.error("Failed to update delivery method", {
-        error,
+        error: result.errors,
         checkoutId: checkout.id,
       });
 
-      return {
-        isSuccess: false,
-        serverError: error as BaseError,
-      };
+      return result;
     }
 
-    if (data?.checkoutDeliveryMethodUpdate?.errors?.length) {
+    if (result.data?.checkoutDeliveryMethodUpdate?.errors?.length) {
       logger.error("Failed to update delivery method", {
-        errors: data?.checkoutDeliveryMethodUpdate?.errors,
+        error: result.data?.checkoutDeliveryMethodUpdate?.errors,
         checkoutId: checkout.id,
       });
 
-      return {
-        isSuccess: false,
-        validationErrors: data?.checkoutDeliveryMethodUpdate?.errors,
-      };
+      return err(
+        handleMutationErrors(result.data.checkoutDeliveryMethodUpdate.errors),
+      );
     }
 
-    return {
-      isSuccess: true,
-    };
+    return ok({ success: true });
   };
-};

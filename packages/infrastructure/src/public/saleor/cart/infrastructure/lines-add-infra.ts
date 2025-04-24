@@ -21,7 +21,9 @@ export const saleorLinesAddInfra =
     );
 
     if (!result.ok) {
-      logger.error("Error while adding lines to cart", { error: result.error });
+      logger.error("Error while adding lines to cart", {
+        errors: result.errors,
+      });
 
       return result;
     }
@@ -31,9 +33,11 @@ export const saleorLinesAddInfra =
         error: result.data.checkoutLinesAdd.errors,
       });
 
-      return err({
-        code: "CART_LINES_ADD_ERROR",
-      });
+      return err([
+        {
+          code: "CART_LINES_ADD_ERROR",
+        },
+      ]);
     }
 
     return ok({ success: true });
