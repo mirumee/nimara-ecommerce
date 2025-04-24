@@ -35,8 +35,8 @@ export const saleorUserGetInfra =
         apiURL,
         accessToken,
       });
-      
-return ok(null);
+
+      return ok(null);
     }
 
     const user = result.data.me;

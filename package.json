@@ -40,7 +40,7 @@
     "eslint-config-custom": "workspace:*",
     "husky": "9.1.7",
     "lint-staged": "^15.5.0",
-    "turbo": "2.4.4"
+    "turbo": "2.5.1"
   },
   "resolutions": {
     "graphql": "16.10.0"
