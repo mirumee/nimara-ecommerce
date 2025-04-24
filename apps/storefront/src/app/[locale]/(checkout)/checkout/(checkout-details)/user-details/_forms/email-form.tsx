@@ -65,8 +65,6 @@ export const UserEmailForm = ({
 
   const serverErrorCode = form.formState.errors.root?.message;
 
-  console.log(form.formState.errors);
-
   return (
     <Form {...form}>
       <form
