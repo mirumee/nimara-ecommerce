@@ -1,6 +1,7 @@
 import type { BaseError } from "@nimara/domain/objects/Error";
 
 import { type Logger } from "#root/logging/types";
+import { AsyncResult } from "@nimara/domain/objects/Result";
 
 export type FulfillmentReturnProductsOptions = {
   input: {
@@ -14,18 +15,7 @@ export type FulfillmentReturnProductsOptions = {
 
 export type FulfillmentReturnProductsInfra = (
   opts: FulfillmentReturnProductsOptions,
-) => Promise<
-  | { isSuccess: true }
-  | { isSuccess: false }
-  | {
-      isSuccess: false;
-      serverError: BaseError;
-    }
-  | {
-      isSuccess: false;
-      validationErrors: BaseError[];
-    }
->;
+) => AsyncResult<{ success: boolean }>;
 export type FulfillmentReturnProductsUseCase = FulfillmentReturnProductsInfra;
 
 export type SaleorFulfillmentServiceConfig = {

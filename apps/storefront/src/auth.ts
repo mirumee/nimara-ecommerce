@@ -46,14 +46,14 @@ export const config = {
         await setAccessToken(data.tokenCreate.token!);
         await setRefreshToken(data.tokenCreate.refreshToken!);
 
-        const userData = await userService.userGet(data.tokenCreate.token);
+        const resultUserGet = await userService.userGet(data.tokenCreate.token);
 
-        if (!userData) {
+        if (!resultUserGet.ok) {
           return null;
         }
 
         return {
-          ...userData,
+          ...resultUserGet.data,
         };
       },
     }),

@@ -1,7 +1,7 @@
 import type { CountryCode } from "@nimara/codegen/schema";
 import { err, ok } from "@nimara/domain/objects/Result";
 
-import { graphqlClientV2 } from "#root/graphql/client";
+import { graphqlClient } from "#root/graphql/client";
 import type {
   AddressFormatInfra,
   SaleorAddressServiceConfig,
@@ -19,7 +19,7 @@ export const saleorAddressFormatInfra =
       return ok({ formattedAddress: [] });
     }
 
-    const result = await graphqlClientV2(apiURL).execute(
+    const result = await graphqlClient(apiURL).execute(
       AddressValidationRulesQueryDocument,
       {
         variables: {

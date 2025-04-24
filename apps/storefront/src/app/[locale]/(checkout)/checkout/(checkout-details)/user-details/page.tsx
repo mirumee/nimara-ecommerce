@@ -26,7 +26,7 @@ export default async function Page() {
 
   const accessToken = await getAccessToken();
 
-  const [resultCheckout, user] = await Promise.all([
+  const [resultCheckout, userResult] = await Promise.all([
     checkoutService.checkoutGet({
       checkoutId,
       languageCode: region.language.code,
@@ -35,7 +35,7 @@ export default async function Page() {
     userService.userGet(accessToken),
   ]);
 
-  if (user) {
+  if (userResult?.data) {
     await checkoutService.checkoutCustomerAttach({
       accessToken: accessToken,
       id: checkoutId,

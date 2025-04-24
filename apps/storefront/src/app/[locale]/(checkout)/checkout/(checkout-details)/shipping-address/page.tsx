@@ -25,12 +25,14 @@ export default async function Page(props: { searchParams: SearchParams }) {
   }
 
   const accessToken = await getAccessToken();
-  const [searchParams, region, locale, user] = await Promise.all([
+  const [searchParams, region, locale, userResult] = await Promise.all([
     props.searchParams,
     getCurrentRegion(),
     getLocale(),
     userService.userGet(accessToken),
   ]);
+
+  const user = userResult.ok ? userResult.data : null;
 
   await validateCheckoutStepAction({
     checkout,

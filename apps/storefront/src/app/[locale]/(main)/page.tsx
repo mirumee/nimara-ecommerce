@@ -44,12 +44,14 @@ export async function generateMetadata(_params: {
 export default async function Page() {
   const accessToken = await getAccessToken();
 
-  const [region, user] = await Promise.all([
+  const [region, userResult] = await Promise.all([
     getCurrentRegion(),
     userService.userGet(accessToken),
   ]);
 
-  const page = await cmsPageService.cmsPageGet({
+  const user = userResult.ok ? userResult.data : null;
+
+  const resultPage = await cmsPageService.cmsPageGet({
     pageType: PageType.HOMEPAGE,
     slug: "home",
     languageCode: region.language.code,
@@ -63,9 +65,9 @@ export default async function Page() {
 
   return (
     <section className="grid w-full content-start">
-      <HeroBanner fields={page?.fields} />
+      <HeroBanner fields={resultPage?.data?.fields} />
       <Suspense fallback={<ProductsGridSkeleton />}>
-        <ProductsGrid fields={page?.fields} />
+        <ProductsGrid fields={resultPage?.data?.fields} />
       </Suspense>
       <div>
         <AccountNotifications user={user} />

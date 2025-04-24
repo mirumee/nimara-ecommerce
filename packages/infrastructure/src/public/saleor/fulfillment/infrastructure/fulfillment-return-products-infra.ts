@@ -1,7 +1,7 @@
-import type { BaseError } from "@nimara/domain/objects/Error";
-
 import { graphqlClient } from "#root/graphql/client";
 
+import { handleMutationErrors } from "#root/public/saleor/error";
+import { err, ok } from "@nimara/domain/objects/Result";
 import { FulfillmentReturnProductsDocument } from "../grapqhql/mutations/generated";
 import type {
   FulfillmentReturnProductsInfra,
@@ -15,36 +15,41 @@ export const saleorFulfillmentReturnProductsInfra =
     logger,
   }: SaleorFulfillmentServiceConfig): FulfillmentReturnProductsInfra =>
   async ({ order, input }) => {
-    const { data, error } = await graphqlClient(apiURL, appToken).execute(
+    const result = await graphqlClient(apiURL, appToken).execute(
       FulfillmentReturnProductsDocument,
       {
         variables: { order, input },
+        operationName: "OrderFulfillmentReturnProductsMutation",
       },
     );
 
-    if (error) {
-      logger.error("Failed to return products", error);
+    if (!result.ok) {
+      logger.error("Failed to return products", {
+        errors: result.errors,
+        orderId: order,
+      });
 
-      return {
-        isSuccess: false,
-        serverError: error as BaseError,
-      };
+      return result;
     }
 
-    if (data?.orderFulfillmentReturnProducts?.errors?.length) {
-      return {
-        isSuccess: false,
-        validationErrors: data.orderFulfillmentReturnProducts.errors,
-      };
+    if (result.data.orderFulfillmentReturnProducts?.errors.length) {
+      logger.error("Order fulfillment mutation returned errors.", {
+        errors: result.data.orderFulfillmentReturnProducts?.errors,
+        orderId: order,
+      });
+
+      return err(
+        handleMutationErrors(result.data.orderFulfillmentReturnProducts.errors),
+      );
     }
 
     const isReturned =
-      data?.orderFulfillmentReturnProducts?.returnFulfillment?.status ===
+      result.data.orderFulfillmentReturnProducts?.returnFulfillment?.status ===
       "RETURNED";
 
     if (!isReturned) {
-      return { isSuccess: false };
+      return ok({ success: false });
     }
 
-    return { isSuccess: true };
+    return ok({ success: true });
   };

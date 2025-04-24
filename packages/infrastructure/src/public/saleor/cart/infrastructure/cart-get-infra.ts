@@ -2,7 +2,7 @@ import type { Cart } from "@nimara/domain/objects/Cart";
 import { err, ok } from "@nimara/domain/objects/Result";
 
 import { THUMBNAIL_FORMAT, THUMBNAIL_SIZE_SMALL } from "#root/config";
-import { graphqlClientV2 } from "#root/graphql/client";
+import { graphqlClient } from "#root/graphql/client";
 import { serializeLine } from "#root/utils";
 
 import type { CartFragment } from "../graphql/fragments/generated";
@@ -52,7 +52,7 @@ export const saleorCartGetInfra =
     logger,
   }: SaleorCartServiceConfig): CartGetInfra =>
   async ({ cartId, options }) => {
-    const result = await graphqlClientV2(apiURI).execute(CartQueryDocument, {
+    const result = await graphqlClient(apiURI).execute(CartQueryDocument, {
       variables: {
         id: cartId,
         languageCode,

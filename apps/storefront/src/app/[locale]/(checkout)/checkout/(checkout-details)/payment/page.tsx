@@ -34,13 +34,16 @@ export default async function Page(props: { searchParams: SearchParams }) {
 
   const accessToken = await getAccessToken();
 
-  const [user, region, locale, storeUrl, searchParams] = await Promise.all([
-    userService.userGet(accessToken),
-    getCurrentRegion(),
-    getLocale(),
-    getStoreUrl(),
-    props.searchParams,
-  ]);
+  const [userResult, region, locale, storeUrl, searchParams] =
+    await Promise.all([
+      userService.userGet(accessToken),
+      getCurrentRegion(),
+      getLocale(),
+      getStoreUrl(),
+      props.searchParams,
+    ]);
+
+  const user = userResult.ok ? userResult.data : null;
 
   await validateCheckoutStepAction({ checkout, user, locale, step: "payment" });
 
@@ -74,7 +77,7 @@ export default async function Page(props: { searchParams: SearchParams }) {
   })() as CountryCode;
 
   const [resultUserAddresses, resultAddressRows] = await Promise.all([
-    userService.addressesGet({ variables: { accessToken }, skip: !user }),
+    userService.addressesGet({ variables: { accessToken }, skip: !userResult }),
     addressService.addressFormGetRows({
       countryCode,
     }),

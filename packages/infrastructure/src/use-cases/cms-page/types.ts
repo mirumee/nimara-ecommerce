@@ -2,6 +2,7 @@ import type { LanguageCodeEnum } from "@nimara/codegen/schema";
 import type { CMSPage, PageType } from "@nimara/domain/objects/CMSPage";
 
 import type { FetchOptions } from "#root/graphql/client";
+import { AsyncResult } from "@nimara/domain/objects/Result";
 
 export type WithFetchOptions = { options?: FetchOptions };
 
@@ -11,7 +12,9 @@ type CMSPageOptions = {
   slug: string;
 } & WithFetchOptions;
 
-export type CMSPageGetInfra = (opts: CMSPageOptions) => Promise<CMSPage | null>;
+export type CMSPageGetInfra = (
+  opts: CMSPageOptions,
+) => AsyncResult<CMSPage | null>;
 
 export type CMSPageGetUseCase = CMSPageGetInfra;
 

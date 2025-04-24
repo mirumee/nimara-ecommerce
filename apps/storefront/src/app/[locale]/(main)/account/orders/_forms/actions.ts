@@ -26,12 +26,12 @@ export async function returnProducts(data: FormSchema, order: Order) {
     })
     .filter(Boolean);
 
-  const response = await fulfillmentService.fulfillmentReturnProducts({
+  const resultFulfillment = await fulfillmentService.fulfillmentReturnProducts({
     order: order.id,
     input: { fulfillmentLines },
   });
 
   revalidatePath(paths.account.orders.asPath());
 
-  return response;
+  return resultFulfillment;
 }

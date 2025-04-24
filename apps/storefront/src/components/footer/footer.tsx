@@ -13,7 +13,7 @@ export const Footer = async () => {
     getTranslations(),
   ]);
 
-  const pages = await cmsMenuService.menuGet({
+  const resultMenu = await cmsMenuService.menuGet({
     channel: region.market.channel,
     languageCode: region.language.code,
     slug: "footer",
@@ -25,7 +25,7 @@ export const Footer = async () => {
     },
   });
 
-  const categories = await cmsMenuService.menuGet({
+  const resultCategories = await cmsMenuService.menuGet({
     channel: region.market.channel,
     languageCode: region.language.code,
     slug: "navbar",
@@ -71,7 +71,7 @@ export const Footer = async () => {
                 {t("footer.our-products")}
               </span>
               <div className="flex flex-col gap-4">
-                {categories?.menu.items.map((item) => (
+                {resultCategories.data?.menu.items.map((item) => (
                   <Link
                     key={item.id}
                     href={item.url}
@@ -88,7 +88,7 @@ export const Footer = async () => {
                 {t("footer.help")}
               </span>
               <div className="flex flex-col gap-4">
-                {pages?.menu.items.map((item) => (
+                {resultMenu.data?.menu?.items.map((item) => (
                   <Link
                     key={item.id}
                     href={item.url}

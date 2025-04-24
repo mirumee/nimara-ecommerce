@@ -1,29 +1,47 @@
 import { graphqlClient } from "#root/graphql/client";
 import { serializeMetadata } from "#root/lib/serializers/metadata";
+import { ok } from "@nimara/domain/objects/Result";
 
 import { CurrentUserDocument } from "../graphql/queries/generated";
 import type { SaleorUserServiceConfig, UserGetInfra } from "../types";
 
 export const saleorUserGetInfra =
-  ({ apiURL }: SaleorUserServiceConfig): UserGetInfra =>
+  ({ apiURL, logger }: SaleorUserServiceConfig): UserGetInfra =>
   async (accessToken) => {
     if (!accessToken) {
-      return null;
+      return ok(null);
     }
 
-    const { data } = await graphqlClient(apiURL, accessToken).execute(
+    const result = await graphqlClient(apiURL, accessToken).execute(
       CurrentUserDocument,
+      {
+        operationName: "MeQuery",
+      },
     );
 
-    const user = data?.me;
+    if (!result.ok) {
+      logger.error(`Error fetching user data`, {
+        errors: result.errors,
+        apiURL,
+      });
 
-    if (user) {
-      return {
-        ...user,
-        metadata: serializeMetadata(user.metadata),
-        checkoutIds: user.checkoutIds ?? [],
-      };
+      return result;
     }
 
-    return null;
+    if (!result.data?.me) {
+      logger.error(`User not found`, {
+        errors: result.errors,
+        apiURL,
+        accessToken,
+      });
+      return ok(null);
+    }
+
+    const user = result.data.me;
+
+    return ok({
+      ...user,
+      metadata: serializeMetadata(user.metadata),
+      checkoutIds: user.checkoutIds ?? [],
+    });
   };

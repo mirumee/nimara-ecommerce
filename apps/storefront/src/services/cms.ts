@@ -4,6 +4,7 @@ import type { CMSMenuService } from "@nimara/infrastructure/use-cases/cms-menu/t
 import type { CMSPageService } from "@nimara/infrastructure/use-cases/cms-page/types";
 
 import { clientEnvs } from "@/envs/client";
+import { storefrontLogger } from "@/services/logging";
 
 const isSaleorCMS = clientEnvs.CMS_SERVICE === "saleor";
 
@@ -14,6 +15,7 @@ const getCMSPageService = async (): Promise<CMSPageService> => {
     );
 
     return saleorCMSPageService({
+      logger: storefrontLogger,
       apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
     });
   } else {
@@ -27,6 +29,7 @@ const getCMSPageService = async (): Promise<CMSPageService> => {
     );
 
     return butterCMSPageService({
+      logger: storefrontLogger,
       token: clientEnvs.NEXT_PUBLIC_BUTTER_CMS_API_KEY,
     });
   }
@@ -39,6 +42,7 @@ const getCMSMenuService = async (): Promise<CMSMenuService> => {
     );
 
     return saleorCMSMenuService({
+      logger: storefrontLogger,
       apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
     });
   } else {
@@ -52,6 +56,7 @@ const getCMSMenuService = async (): Promise<CMSMenuService> => {
     );
 
     return butterCMSMenuService({
+      logger: storefrontLogger,
       token: clientEnvs.NEXT_PUBLIC_BUTTER_CMS_API_KEY,
     });
   }

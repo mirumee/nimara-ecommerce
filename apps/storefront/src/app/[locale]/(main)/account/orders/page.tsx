@@ -16,15 +16,17 @@ export default async function Page() {
     getCurrentRegion(),
   ]);
   const languageCode = region.language.code;
-  const orders = await userService.ordersGet({
+  const resultOrders = await userService.ordersGet({
     accessToken,
     languageCode,
   });
 
+  const orders = resultOrders.ok ? resultOrders.data : [];
+
   return (
     <div className="flex flex-col gap-6 text-sm">
       <h2 className="text-2xl">{t("account.order-history")}</h2>
-      {orders?.length === 0 && (
+      {orders.length === 0 && (
         <div className="space-y-8">
           <hr />
           <p className="text-stone-500">
@@ -32,7 +34,8 @@ export default async function Page() {
           </p>
         </div>
       )}
-      {orders?.map((order) => (
+
+      {orders.map((order) => (
         <div className="space-y-8" key={order?.id}>
           <hr />
           <OrderSummary order={order} withStatus />

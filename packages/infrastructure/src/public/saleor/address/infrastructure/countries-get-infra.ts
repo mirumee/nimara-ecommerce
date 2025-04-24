@@ -1,6 +1,6 @@
 import { err, ok } from "@nimara/domain/objects/Result";
 
-import { graphqlClientV2 } from "#root/graphql/client";
+import { graphqlClient } from "#root/graphql/client";
 import type {
   CountriesGetInfra,
   SaleorAddressServiceConfig,
@@ -11,7 +11,7 @@ import { ChannelQueryDocument } from "../graphql/queries/generated";
 export const saleorCountriesGetInfra =
   ({ apiURL, logger }: SaleorAddressServiceConfig): CountriesGetInfra =>
   async (opts: { channelSlug: string }) => {
-    const result = await graphqlClientV2(apiURL).execute(ChannelQueryDocument, {
+    const result = await graphqlClient(apiURL).execute(ChannelQueryDocument, {
       variables: {
         channelSlug: opts.channelSlug,
       },

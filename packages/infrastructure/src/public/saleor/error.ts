@@ -9,6 +9,7 @@ import {
 // Feel free to add more error codes here as needed
 type SaleorErrorCode =
   | saleor.AccountErrorCode
+  | saleor.OrderErrorCode
   | saleor.CheckoutErrorCode
   | saleor.MetadataErrorCode;
 

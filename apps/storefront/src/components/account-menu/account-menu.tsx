@@ -7,8 +7,10 @@ import { SideLinks } from "./side-links";
 
 export async function AccountSideMenu() {
   const accessToken = await getAccessToken();
-  const user = await userService.userGet(accessToken);
+  const userResult = await userService.userGet(accessToken);
   const t = await getTranslations();
+
+  const user = userResult.ok ? userResult.data : null;
 
   return (
     <aside className="flex flex-col gap-8">

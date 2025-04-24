@@ -35,8 +35,9 @@ export async function login({
     });
 
     const accessToken = await getAccessToken();
-    const user = await userService.userGet(accessToken);
     const checkoutId = (await cookies()).get(COOKIE_KEY.checkoutId)?.value;
+    const userResult = await userService.userGet(accessToken);
+    const user = userResult.ok ? userResult.data : null;
 
     if (user?.checkoutIds.length) {
       const userLatestCheckoutId = user.checkoutIds[0];

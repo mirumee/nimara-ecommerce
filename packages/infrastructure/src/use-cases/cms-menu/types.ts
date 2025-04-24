@@ -2,6 +2,7 @@ import type { LanguageCodeEnum } from "@nimara/codegen/schema";
 import type { Menu } from "@nimara/domain/objects/Menu";
 
 import type { FetchOptions } from "#root/graphql/client";
+import { type AsyncResult } from "@nimara/domain/objects/Result";
 export type WithFetchOptions = { options?: FetchOptions };
 
 type CMSMenuSlug = "navbar" | "footer";
@@ -16,7 +17,7 @@ type CMSMenuOptions = {
 
 export type CMSMenuGetInfra = (
   opts: CMSMenuOptions,
-) => Promise<{ menu: Menu } | null>;
+) => AsyncResult<{ menu: Menu } | null>;
 
 export type CMSMenuGetUseCase = CMSMenuGetInfra;
 

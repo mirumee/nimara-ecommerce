@@ -1,6 +1,6 @@
 import { err, ok } from "@nimara/domain/objects/Result";
 
-import { graphqlClientV2 } from "#root/graphql/client";
+import { graphqlClient } from "#root/graphql/client";
 import { MetadataUpdateMutationDocument } from "#root/graphql/mutations/generated";
 import { handleMutationErrors } from "#root/public/saleor/error";
 
@@ -15,7 +15,7 @@ export const customerInSaleorSave =
       channel,
     });
 
-    const result = await graphqlClientV2(apiURI, accessToken).execute(
+    const result = await graphqlClient(apiURI, accessToken).execute(
       MetadataUpdateMutationDocument,
       {
         variables: {
