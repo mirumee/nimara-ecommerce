@@ -1,51 +1,86 @@
-import { graphqlClient } from "#root/graphql/client";
+import { err, ok } from "@nimara/domain/objects/Result";
+
+import { graphqlClientV2 } from "#root/graphql/client";
 
 import { QUERY_PARAMS } from "../consts";
 import { TransactionProcessMutationDocument } from "../graphql/mutations/generated";
-import {
-  isTransactionFailed,
-  isTransactionSuccessful,
-  parseApiError,
-} from "../helpers";
+import { isTransactionFailed, isTransactionSuccessful } from "../helpers";
 import type { PaymentServiceConfig, TransactionProcessInfra } from "../types";
 
 export const transactionProcessInfra =
-  ({ apiURI }: PaymentServiceConfig): TransactionProcessInfra =>
+  ({ apiURI, logger }: PaymentServiceConfig): TransactionProcessInfra =>
   async ({ searchParams }) => {
     if (searchParams[QUERY_PARAMS.TRANSACTION_ID]) {
-      const { data } = await graphqlClient(apiURI).execute(
+      const transactionId = searchParams[QUERY_PARAMS.TRANSACTION_ID];
+
+      const result = await graphqlClientV2(apiURI).execute(
         TransactionProcessMutationDocument,
         {
-          variables: { id: searchParams[QUERY_PARAMS.TRANSACTION_ID] },
+          variables: { id: transactionId },
+          operationName: "TransactionProcessMutation",
         },
       );
-      const errors = data?.transactionProcess?.errors ?? [];
 
-      if (errors.length) {
-        return {
-          isSuccess: false,
-          errors: errors.map(parseApiError("transactionProcess")),
-        };
+      if (!result.ok) {
+        logger.error("Failed to process transaction.", {
+          errors: result.errors,
+          transactionId,
+        });
+
+        return err([
+          {
+            code: "TRANSACTION_PROCESS_ERROR",
+          },
+        ]);
       }
 
-      const transactionEvent = data?.transactionProcess?.transactionEvent;
+      if (result.data?.transactionProcess?.errors.length) {
+        logger.error("Transaction process returned errors", {
+          errors: result.data.transactionProcess.errors,
+          transactionId,
+        });
 
-      if (transactionEvent) {
-        if (isTransactionFailed(transactionEvent.type)) {
-          return {
-            isSuccess: false,
-            errors: [{ code: transactionEvent.message, type: "stripe" }],
-          };
+        return err([
+          {
+            code: "TRANSACTION_PROCESS_ERROR",
+          },
+        ]);
+      }
+
+      const transactionEvent =
+        result.data?.transactionProcess?.transactionEvent;
+
+      const eventType = transactionEvent?.type;
+
+      if (eventType) {
+        if (isTransactionFailed(eventType)) {
+          logger.error("Transaction process failed", {
+            eventType: eventType,
+          });
+
+          return err([
+            {
+              code: "TRANSACTION_PROCESS_ERROR",
+            },
+          ]);
         }
 
-        return {
-          errors: [],
-          isSuccess: isTransactionSuccessful(
-            data?.transactionProcess?.transactionEvent?.type,
-          ),
-        };
+        if (isTransactionSuccessful(eventType)) {
+          return ok({ success: true });
+        }
+
+        logger.error("Transaction process returned unknown event", {
+          eventType: eventType,
+          transactionId,
+        });
+
+        return err([
+          {
+            code: "TRANSACTION_PROCESS_ERROR",
+          },
+        ]);
       }
     }
 
-    return { isSuccess: false, errors: [] };
+    return ok({ success: true });
   };

@@ -52,14 +52,18 @@ export const CartDetails = ({
 
     setIsProcessing(false);
 
-    if (!resultLinesUpdate.ok) {
+    if (resultLinesUpdate.ok) {
+      await revalidateCart(cart.id);
+
+      return;
+    }
+
+    resultLinesUpdate.errors.forEach((error) => {
       toast({
-        description: t(`errors.${resultLinesUpdate.error.code}`),
+        description: t(`errors.${error.code}`),
         variant: "destructive",
       });
-    } else {
-      await revalidateCart(cart.id);
-    }
+    });
   };
 
   const handleLineDelete = async (lineId: string) => {
@@ -70,15 +74,18 @@ export const CartDetails = ({
       options: { next: { tags: [`CHECKOUT:${cart.id}`] } },
     });
 
-    if (!resultLinesDelete.ok) {
-      toast({
-        description: t(`errors.${resultLinesDelete.error.code}`),
-        variant: "destructive",
-      });
-      setIsProcessing(false);
-    } else {
+    setIsProcessing(false);
+
+    if (resultLinesDelete.ok) {
       await revalidateCart(cart.id);
       router.refresh();
+    } else {
+      resultLinesDelete.errors.forEach((error) => {
+        toast({
+          description: t(`errors.${error.code}`),
+          variant: "destructive",
+        });
+      });
     }
   };
 

@@ -14,7 +14,7 @@ export const saleorAccountDeleteInfra =
     );
 
     if (!result.ok) {
-      logger.error("Error while deleting an account", { error: result.error });
+      logger.error("Error while deleting an account", { error: result.errors });
 
       return result;
     }
@@ -24,9 +24,11 @@ export const saleorAccountDeleteInfra =
         error: result.data.accountDelete.errors,
       });
 
-      return err({
-        code: "ACCOUNT_DELETE_ERROR",
-      });
+      return err([
+        {
+          code: "ACCOUNT_DELETE_ERROR",
+        },
+      ]);
     }
 
     return ok({ success: true });

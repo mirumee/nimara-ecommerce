@@ -1,5 +1,7 @@
 import { getLocale } from "next-intl/server";
 
+import { type AppErrorCode } from "@nimara/domain/objects/Error";
+
 import { redirect } from "@/i18n/routing";
 import { getCheckoutOrRedirect } from "@/lib/checkout";
 import { paths, QUERY_PARAMS } from "@/lib/paths";
@@ -14,32 +16,32 @@ export default async function Page(props: { searchParams: SearchParams }) {
   const locale = await getLocale();
   const checkout = await getCheckoutOrRedirect();
 
-  let errors: { code: string; type: string }[] = [];
+  let errors: { code: AppErrorCode }[] = [];
 
-  const paymentResultData = await paymentService.paymentResultProcess({
+  const resultPaymentProcess = await paymentService.paymentResultProcess({
     checkout,
     searchParams,
   });
 
-  if (paymentResultData.isSuccess) {
-    const orderCreateData = await checkoutService.orderCreate({
+  if (resultPaymentProcess.data?.success) {
+    const resultOrderCreate = await checkoutService.orderCreate({
       id: checkout.id,
     });
 
-    if (orderCreateData.orderId) {
+    if (resultOrderCreate.ok) {
       redirect({
         href: paths.order.confirmation.asPath({
-          id: orderCreateData.orderId,
+          id: resultOrderCreate.data.orderId,
           query: { [QUERY_PARAMS.orderPlaced]: "true" },
         }),
         locale,
       });
     } else {
-      errors = orderCreateData.errors;
+      errors = resultOrderCreate.errors;
     }
   } else {
-    const error = paymentResultData.errors?.[0];
-    const errorCode = error ? `${error.type}.${error.code}` : "payment.default";
+    const firstError = resultPaymentProcess.errors?.[0];
+    const errorCode = firstError ? firstError.code : "payment.default";
 
     redirect({
       href: paths.checkout.payment.asPath({

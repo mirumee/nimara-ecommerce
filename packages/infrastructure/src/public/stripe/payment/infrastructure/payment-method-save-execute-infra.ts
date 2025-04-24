@@ -1,5 +1,7 @@
 import { invariant } from "graphql/jsutils/invariant";
 
+import { err, ok } from "@nimara/domain/objects/Result";
+
 import { PAYMENT_REDIRECT } from "../consts";
 import type {
   PaymentMethodSaveExecuteInfra,
@@ -37,20 +39,15 @@ export const paymentMethodSaveExecuteInfra =
        * Stripe will inject errors directly into payment element form.
        */
       if (error.type === "validation_error" || !error.code) {
-        return {
-          errors: [],
-          isSuccess: false,
-        };
+        return ok({ success: true });
       }
 
-      return {
-        errors: [{ type: "stripe", code: error.code || error.type }],
-        isSuccess: false,
-      };
+      return err([
+        {
+          code: "PAYMENT_METHOD_SAVE_ERROR",
+        },
+      ]);
     }
 
-    return {
-      errors: [],
-      isSuccess: true,
-    };
+    return ok({ success: true });
   };

@@ -53,7 +53,7 @@ export const pinoLogger = (
     debug: (message, context) => logger.debug({ message, ...context }),
     info: (message, context) => logger.info({ message, ...context }),
     warning: (message, context) => logger.warn({ message, ...context }),
-    error: (message, context) => console.error({ message, ...context }),
+    error: (message, context) => logger.error({ message, ...context }),
     critical: (message, context) => logger.fatal({ message, ...context }),
   };
 };

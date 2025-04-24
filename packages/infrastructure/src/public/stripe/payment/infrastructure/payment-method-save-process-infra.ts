@@ -1,5 +1,7 @@
 import Stripe from "stripe";
 
+import { err, ok } from "@nimara/domain/objects/Result";
+
 import { API_VERSION, QUERY_PARAMS } from "../consts";
 import type {
   PaymentMethodSaveProcessInfra,
@@ -20,10 +22,12 @@ export const paymentMethodSaveProcessInfra =
       );
 
       if (setupIntent.payment_method && setupIntent.customer) {
-        return {
+        return ok({
           paymentMethodId: setupIntent.payment_method as string,
           customerId: setupIntent.customer as string,
-        };
+        });
       }
     }
+
+    return err([{ code: "PAYMENT_METHOD_NOT_FOUND_ERROR" }]);
   };

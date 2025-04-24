@@ -21,7 +21,7 @@ export const saleorConfirmEmailChangeInfra =
 
     if (!result.ok) {
       logger.error("Error while confirming email change", {
-        error: result.error,
+        error: result.errors,
       });
 
       return result;
@@ -32,9 +32,11 @@ export const saleorConfirmEmailChangeInfra =
         error: result.data.confirmEmailChange.errors,
       });
 
-      return err({
-        code: "EMAIL_CHANGE_CONFIRMATION_ERROR",
-      });
+      return err([
+        {
+          code: "EMAIL_CHANGE_CONFIRMATION_ERROR",
+        },
+      ]);
     }
 
     if (!result.data.confirmEmailChange?.user) {
@@ -42,7 +44,7 @@ export const saleorConfirmEmailChangeInfra =
         error: "No user returned",
       });
 
-      return err({ code: "EMAIL_CHANGE_CONFIRMATION_ERROR" });
+      return err([{ code: "EMAIL_CHANGE_CONFIRMATION_ERROR" }]);
     }
 
     return ok(result.data.confirmEmailChange);

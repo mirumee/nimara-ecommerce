@@ -1,3 +1,5 @@
+import { err, ok } from "@nimara/domain/objects/Result";
+
 import type {
   PaymentMethodSaveProcessInfra,
   PaymentMethodSaveProcessUseCase,
@@ -14,14 +16,18 @@ export const paymentMethodSaveProcessUseCase =
   }): PaymentMethodSaveProcessUseCase =>
   async (opts) => {
     if (opts.searchParams?.redirect_status === "failed") {
-      return { isSuccess: false };
+      return err([
+        {
+          code: "PAYMENT_METHOD_SAVE_ERROR",
+        },
+      ]);
     }
 
-    const data = await paymentMethodSaveProcess(opts);
+    const resultPaymentMethodSave = await paymentMethodSaveProcess(opts);
 
-    if (data) {
-      await paymentMethodSetDefault(data);
+    if (resultPaymentMethodSave.ok) {
+      await paymentMethodSetDefault(resultPaymentMethodSave.data);
     }
 
-    return { isSuccess: true };
+    return ok({ success: true });
   };

@@ -1,3 +1,5 @@
+import { ok } from "@nimara/domain/objects/Result";
+
 import type {
   CustomerPaymentMethodDeleteUseCase,
   CustomerPaymentMethodValidate,
@@ -13,16 +15,16 @@ export const customerPaymentMethodDeleteUseCase =
     paymentMethodDetach: PaymentMethodDetachInfra;
   }): CustomerPaymentMethodDeleteUseCase =>
   async ({ customerId, paymentMethodId }) => {
-    const { isCustomerPaymentMethod } = await customerPaymentMethodValidate({
+    const result = await customerPaymentMethodValidate({
       customerId,
       paymentMethodId,
     });
 
-    if (!isCustomerPaymentMethod) {
-      return { isSuccess: false };
+    if (!result.ok) {
+      return result;
     }
 
     await paymentMethodDetach({ paymentMethodId });
 
-    return { isSuccess: true };
+    return ok({ success: true });
   };

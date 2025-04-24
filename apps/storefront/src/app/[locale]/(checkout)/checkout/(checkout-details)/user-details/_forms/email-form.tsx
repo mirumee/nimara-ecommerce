@@ -44,30 +44,26 @@ export const UserEmailForm = ({
       email,
     });
 
-    const { errorsMap, serverError, redirectUrl } = result ?? {};
+    if (result.ok) {
+      push(result.data.redirectUrl);
 
-    if (redirectUrl) {
-      push(redirectUrl);
+      return;
     }
 
-    if (serverError) {
-      // maybe to remove and show in toast
-      form.setError("root.server-error", {
-        message: t(`server-errors.${serverError.code}` as TranslationMessage),
-        type: serverError.code,
-      });
-    }
-    if (errorsMap) {
-      Object.entries(errorsMap).forEach(([fieldName, code]) => {
-        form.setError(fieldName as keyof EmailFormSchema, {
-          message: t(`checkout-errors.${code}` as TranslationMessage),
-          type: code,
+    result.errors.map((error) => {
+      if (error.field) {
+        form.setError(error.field as keyof EmailFormSchema, {
+          message: t(`errors.${error.code}`),
         });
-      });
-    }
+      } else {
+        form.setError("root", {
+          message: t(`errors.${error.code}`),
+        });
+      }
+    });
   };
 
-  const serverErrorCode = form.formState.errors.root?.serverError?.message;
+  const serverErrorCode = form.formState.errors.root?.message;
 
   return (
     <Form {...form}>

@@ -1,5 +1,8 @@
-import { graphqlClient } from "#root/graphql/client";
+import { err, ok } from "@nimara/domain/objects/Result";
+
+import { graphqlClientV2 } from "#root/graphql/client";
 import { MetadataUpdateMutationDocument } from "#root/graphql/mutations/generated";
+import { handleMutationErrors } from "#root/public/saleor/error";
 
 import { getGatewayCustomerMetaKey } from "../helpers";
 import type { CustomerInSaleorSaveInfra, PaymentServiceConfig } from "../types";
@@ -7,27 +10,49 @@ import type { CustomerInSaleorSaveInfra, PaymentServiceConfig } from "../types";
 export const customerInSaleorSave =
   ({ apiURI, logger }: PaymentServiceConfig): CustomerInSaleorSaveInfra =>
   async ({ gatewayCustomerId, channel, saleorCustomerId, accessToken }) => {
-    const { data, error } = await graphqlClient(apiURI, accessToken).execute(
+    const metadataKey = getGatewayCustomerMetaKey({
+      gateway: "stripe",
+      channel,
+    });
+
+    const result = await graphqlClientV2(apiURI, accessToken).execute(
       MetadataUpdateMutationDocument,
       {
         variables: {
           id: saleorCustomerId,
           input: [
             {
-              key: getGatewayCustomerMetaKey({ gateway: "stripe", channel }),
+              key: metadataKey,
               value: gatewayCustomerId,
             },
           ],
         },
+        operationName: "MetadataUpdateMutation",
       },
     );
 
-    // TODO: Handle errors
-    const errors = error ? [error] : (data?.updateMetadata?.errors ?? []);
-
-    if (errors.length) {
-      logger.error("Customer save in Saleor failed", {
-        metadataSaveErrors: JSON.stringify(errors),
+    if (!result.ok) {
+      logger.error("Failed to update customer metadata in Saleor", {
+        key: metadataKey,
+        errors: result.errors,
+        saleorCustomerId,
+        channel,
+        gatewayCustomerId,
       });
+
+      return result;
     }
+
+    if (result.data.updateMetadata?.errors.length) {
+      logger.error("Update customer metadata mutation returned errors", {
+        errors: result.data.updateMetadata.errors,
+        saleorCustomerId,
+        channel,
+        gatewayCustomerId,
+      });
+
+      return err(handleMutationErrors(result.data.updateMetadata.errors));
+    }
+
+    return ok({ success: true });
   };

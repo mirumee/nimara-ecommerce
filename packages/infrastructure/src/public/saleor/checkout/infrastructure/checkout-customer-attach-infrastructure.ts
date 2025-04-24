@@ -1,4 +1,7 @@
-import { graphqlClient } from "#root/graphql/client";
+import { err, ok } from "@nimara/domain/objects/Result";
+
+import { graphqlClientV2 } from "#root/graphql/client";
+import { handleMutationErrors } from "#root/public/saleor/error";
 
 import { CheckoutCustomerAttachMutationDocument } from "../graphql/mutations/generated";
 import type {
@@ -12,23 +15,55 @@ export const saleorCheckoutCustomerAttachInfra =
     logger,
   }: SaleorCheckoutServiceConfig): CheckoutCustomerAttachInfra =>
   async ({ id, accessToken }) => {
-    const { data } = await graphqlClient(apiURL, accessToken).execute(
+    const result = await graphqlClientV2(apiURL, accessToken).execute(
       CheckoutCustomerAttachMutationDocument,
       {
         variables: {
           id,
         },
+        operationName: "CheckoutCustomerAttachMutation",
       },
     );
 
-    if (data?.checkoutCustomerAttach?.errors.length) {
+    if (!result.ok) {
       logger.error(
         `Couldn't attach the checkout with the ID: ${id} to the customer`,
         {
-          error: data?.checkoutCustomerAttach?.errors[0],
+          error: result.errors,
         },
+      );
+
+      return result;
+    }
+
+    if (!result.data?.checkoutCustomerAttach) {
+      logger.error(
+        `Couldn't attach the checkout with the ID: ${id} to the customer`,
+        {
+          error: "No data returned",
+        },
+      );
+
+      return err([
+        {
+          code: "CHECKOUT_CUSTOMER_ATTACH_ERROR",
+          message: "No data returned",
+        },
+      ]);
+    }
+
+    if (result.data.checkoutCustomerAttach.errors.length) {
+      logger.error(
+        `Couldn't attach the checkout with the ID: ${id} to the customer`,
+        {
+          error: result.data.checkoutCustomerAttach.errors,
+        },
+      );
+
+      return err(
+        handleMutationErrors(result.data.checkoutCustomerAttach.errors),
       );
     }
 
-    return data?.checkoutCustomerAttach ?? null;
+    return ok({ success: true });
   };

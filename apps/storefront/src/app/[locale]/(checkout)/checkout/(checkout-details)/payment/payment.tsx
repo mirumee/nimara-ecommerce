@@ -9,10 +9,10 @@ import { type SubmitHandler, useForm } from "react-hook-form";
 import type { CountryCode, CountryDisplay } from "@nimara/codegen/schema";
 import type { AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import type { Checkout } from "@nimara/domain/objects/Checkout";
+import { type AppErrorCode } from "@nimara/domain/objects/Error";
 import type { PaymentMethod } from "@nimara/domain/objects/Payment";
 import type { User } from "@nimara/domain/objects/User";
 import { ADDRESS_CORE_FIELDS } from "@nimara/infrastructure/consts";
-import type { ApiError } from "@nimara/infrastructure/public/stripe/payment/types";
 import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
 import { Spinner } from "@nimara/ui/components/spinner";
@@ -55,7 +55,7 @@ type PaymentProps = {
   checkout: Checkout;
   countries: Omit<CountryDisplay, "vat">[];
   countryCode: CountryCode;
-  errorCode?: string;
+  errorCode?: AppErrorCode;
   formattedAddresses: FormattedAddress[];
   paymentGatewayCustomer: Maybe<string>;
   paymentGatewayMethods: PaymentMethod[];
@@ -95,7 +95,12 @@ export const Payment = ({
   );
   const [errors, setErrors] = useState<(string | ReactNode)[]>(
     errorCode
-      ? [translateApiErrors({ t, errors: [{ code: errorCode } as ApiError] })]
+      ? [
+          translateApiErrors({
+            t,
+            errors: [{ code: errorCode }],
+          }),
+        ]
       : [],
   );
 
@@ -166,7 +171,7 @@ export const Payment = ({
     delete billingAddress?.id;
 
     {
-      const { errors } = await updateBillingAddress({
+      const result = await updateBillingAddress({
         checkout,
         input: {
           sameAsShippingAddress,
@@ -175,13 +180,13 @@ export const Payment = ({
         },
       });
 
-      if (errors.length) {
-        errors.map(({ field, message }) => {
+      if (!result.ok) {
+        result.errors.map(({ field, code }) => {
           if (isGlobalError(field)) {
-            toast({ variant: "destructive", description: t(message) });
+            toast({ variant: "destructive", description: t(`errors.${code}`) });
           } else {
             form.setError(`billingAddress.${field}` as BillingAddressPath, {
-              message: t(message),
+              message: t(`errors.${code}`),
             });
           }
         });
@@ -199,26 +204,25 @@ export const Payment = ({
      * paymentExecute.
      */
     if (paymentMethod) {
-      const { errors, data } =
-        await paymentService.paymentGatewayTransactionInitialize({
-          id: checkout.id,
-          amount: checkout.totalPrice.gross.amount,
-          paymentMethod,
-          customerId: paymentGatewayCustomer,
-          saveForFutureUse,
-        });
+      const result = await paymentService.paymentGatewayTransactionInitialize({
+        id: checkout.id,
+        amount: checkout.totalPrice.gross.amount,
+        paymentMethod,
+        customerId: paymentGatewayCustomer,
+        saveForFutureUse,
+      });
 
-      if (errors.length) {
-        setErrors(translateApiErrors({ t, errors }));
+      if (!result.ok) {
+        setErrors(translateApiErrors({ t, errors: result.errors }));
         setIsProcessing(true);
 
         return;
       }
 
-      paymentSecret = data;
+      paymentSecret = result.data.clientSecret;
     }
 
-    const { errors, isSuccess } = await paymentService.paymentExecute({
+    const result = await paymentService.paymentExecute({
       billingDetails: {
         ...checkout.billingAddress,
         country: checkout.billingAddress?.country.code,
@@ -227,18 +231,15 @@ export const Payment = ({
       redirectUrl,
     });
 
-    if (errors.length) {
-      setErrors(translateApiErrors({ t, errors }));
-    }
-
-    if (!isSuccess) {
+    if (!result.ok) {
+      setErrors(translateApiErrors({ t, errors: result.errors }));
       setIsProcessing(false);
     }
   };
 
   useEffect(() => {
     void (async () => {
-      const [{ errors }] = await Promise.all([
+      const [result] = await Promise.all([
         paymentService.paymentGatewayInitialize({
           id: checkout.id,
           amount: checkout.totalPrice.gross.amount,
@@ -246,8 +247,8 @@ export const Payment = ({
         await paymentService.paymentInitialize(),
       ]);
 
-      if (errors.length) {
-        setErrors(translateApiErrors({ t, errors }));
+      if (!result.ok) {
+        setErrors(translateApiErrors({ t, errors: result.errors }));
       } else {
         setIsInitialized(true);
       }
@@ -268,19 +269,18 @@ export const Payment = ({
         let secret: string;
 
         {
-          const data = await paymentService.paymentGatewayTransactionInitialize(
-            {
+          const result =
+            await paymentService.paymentGatewayTransactionInitialize({
               id: checkout.id,
               amount: checkout.totalPrice.gross.amount,
               customerId: paymentGatewayCustomer,
               saveForFutureUse,
-            },
-          );
+            });
 
-          if (data?.errors.length) {
-            return setErrors(translateApiErrors({ t, errors: data.errors }));
+          if (!result.ok) {
+            return setErrors(translateApiErrors({ t, errors: result.errors }));
           } else {
-            secret = data.data!;
+            secret = result.data.clientSecret;
           }
         }
 

@@ -30,7 +30,7 @@ export default async function ConfirmEmailChangePage(props: {
       redirect({ href: paths.signIn.asPath(), locale });
     }
 
-    if (result.error) {
+    if (result.errors) {
       return t("auth.too-much-time-has-passed");
     }
   }

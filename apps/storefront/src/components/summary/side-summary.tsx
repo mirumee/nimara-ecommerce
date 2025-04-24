@@ -25,15 +25,17 @@ export const SideSummary = async () => {
     redirect({ href: paths.cart.asPath(), locale });
   }
 
-  const { checkout } = await checkoutService.checkoutGet({
+  const resultCheckout = await checkoutService.checkoutGet({
     checkoutId,
     languageCode: region.language.code,
     countryCode: region.market.countryCode,
   });
 
-  if (!checkout) {
+  if (!resultCheckout.ok) {
     redirect({ href: paths.cart.asPath(), locale });
   }
+
+  const { checkout } = resultCheckout.data;
 
   return (
     <>

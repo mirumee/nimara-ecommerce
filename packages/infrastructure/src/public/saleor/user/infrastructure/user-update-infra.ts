@@ -23,9 +23,11 @@ export const saleorAccountUpdateInfra =
         error: result.data.accountUpdate.errors,
       });
 
-      return err({
-        code: "ACCOUNT_UPDATE_ERROR",
-      });
+      return err([
+        {
+          code: "ACCOUNT_UPDATE_ERROR",
+        },
+      ]);
     }
 
     if (!result.data.accountUpdate?.user) {
@@ -33,9 +35,11 @@ export const saleorAccountUpdateInfra =
         error: "User not found",
       });
 
-      return err({
-        code: "ACCOUNT_UPDATE_ERROR",
-      });
+      return err([
+        {
+          code: "ACCOUNT_UPDATE_ERROR",
+        },
+      ]);
     }
 
     const user = result.data.accountUpdate.user;
