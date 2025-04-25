@@ -1,6 +1,6 @@
 import { err, ok } from "@nimara/domain/objects/Result";
 
-import { graphqlClientV2 } from "#root/graphql/client";
+import { graphqlClient } from "#root/graphql/client";
 import { handleMutationErrors } from "#root/public/saleor/error";
 
 import { CheckoutCustomerAttachMutationDocument } from "../graphql/mutations/generated";
@@ -15,7 +15,7 @@ export const saleorCheckoutCustomerAttachInfra =
     logger,
   }: SaleorCheckoutServiceConfig): CheckoutCustomerAttachInfra =>
   async ({ id, accessToken }) => {
-    const result = await graphqlClientV2(apiURL, accessToken).execute(
+    const result = await graphqlClient(apiURL, accessToken).execute(
       CheckoutCustomerAttachMutationDocument,
       {
         variables: {

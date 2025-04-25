@@ -32,78 +32,10 @@ export type FetchOptions = Omit<RequestInit, "method" | "body"> &
   NextFetchOptions;
 
 /**
- * @deprecated This client will be deprecated in the future. Once the new client is stable, this will be removed.
- * Use `graphqlClientV2` instead.
- */
-export const graphqlClient = (
-  url: RequestInfo | URL,
-  accessToken?: string | null,
-) => ({
-  execute: async <
-    TResult = any,
-    TVariables extends AnyVariables = AnyVariables,
-  >(
-    query: DocumentTypeDecoration<TResult, TVariables> & { toString(): string },
-    input?: {
-      options?: FetchOptions;
-      variables?: Exact<TVariables>;
-    },
-  ) => {
-    const { variables, options } = input ?? {};
-    const requestInit: RequestInit = {
-      ...options,
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...options?.headers,
-        ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
-      },
-      body: JSON.stringify({
-        query: query.toString(),
-        ...(variables && { variables }),
-      }),
-    };
-
-    try {
-      const response = await fetch(url, requestInit);
-
-      if (!response.ok) {
-        logger.error("Calling GraphQL API failed", {
-          error: response.statusText,
-        });
-
-        return {
-          error: { status: response.status, message: response.statusText },
-        };
-      }
-
-      const body = (await response.json()) as GraphQLResponse<TResult>;
-
-      if ("errors" in body) {
-        logger.error("GraphQL error", { error: body["errors"] });
-
-        return { error: body["errors"] };
-      }
-
-      return { data: body.data };
-    } catch (e) {
-      logger.error("Unexpected network error", {
-        error: e,
-        url,
-      });
-
-      return { error: e };
-    }
-  },
-});
-
-/**
- * A V2 of the graphqlClient. The main difference is how it is typed and what it returns.
- *
  * It accepts a required `operationName` property in `input` object, for logging purposes it is required as it cannot be derived from query.
  *
  * @example
- * const result = await graphqlClientV2.execute(OrdersGetQuery);
+ * const result = await graphqlClient.execute(OrdersGetQuery);
  *
  * if (!result.ok) {
  *    // Handle server errors
@@ -113,7 +45,7 @@ export const graphqlClient = (
  * // At this point we know that result is ok and we can safely access data
  * const { data } = result
  **/
-export const graphqlClientV2 = (
+export const graphqlClient = (
   url: RequestInfo | URL,
   accessToken?: string | null,
 ) => ({
@@ -125,7 +57,7 @@ export const graphqlClientV2 = (
     input: {
       operationName: `${string}${"Mutation" | "Query"}`;
       options?: FetchOptions;
-      variables?: TVariables;
+      variables?: Exact<TVariables>;
     },
   ): AsyncResult<TResult> => {
     const { variables, options, operationName } = input;

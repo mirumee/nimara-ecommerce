@@ -1,6 +1,26 @@
-import type { FulfillmentStatus, OrderStatus } from "../../../codegen/schema";
 import type { Attribute } from "./Attribute";
 import type { Price } from "./common";
+
+export type OrderStatus =
+  | "CANCELED"
+  | "DRAFT"
+  | "EXPIRED"
+  | "FULFILLED"
+  | "PARTIALLY_FULFILLED"
+  | "PARTIALLY_RETURNED"
+  | "RETURNED"
+  | "UNCONFIRMED"
+  | "UNFULFILLED";
+
+export type FulfillmentStatus =
+  | "CANCELED"
+  | "FULFILLED"
+  | "REFUNDED"
+  | "REFUNDED_AND_RETURNED"
+  | "REPLACED"
+  | "RETURNED"
+  | "WAITING_FOR_APPROVAL";
+
 export interface Order {
   created: string;
   fulfillments: {

@@ -19,14 +19,20 @@ export default async function Page(props: { searchParams: SearchParams }) {
   const accessToken = await getAccessToken();
   const locale = await getLocale();
 
-  const [t, region, user] = await Promise.all([
+  const [t, region, resultUserGet] = await Promise.all([
     getTranslations(),
     getCurrentRegion(),
     userService.userGet(accessToken),
   ]);
 
+  const user = resultUserGet.ok ? resultUserGet.data : null;
+
+  if (!user) {
+    redirect({ href: paths.signIn.asPath(), locale });
+  }
+
   const resultCustomerGet = await paymentService.customerGet({
-    user: user!,
+    user: user,
     channel: region.market.channel,
     environment: clientEnvs.ENVIRONMENT,
     accessToken: serverEnvs.SALEOR_APP_TOKEN,

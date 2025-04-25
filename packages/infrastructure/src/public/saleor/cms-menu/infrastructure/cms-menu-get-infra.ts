@@ -1,3 +1,5 @@
+import { ok } from "@nimara/domain/objects/Result";
+
 import { graphqlClient } from "#root/graphql/client";
 import { serializeSaleorMenu } from "#root/lib/serializers/cms-menu";
 import type { CMSMenuGetInfra } from "#root/use-cases/cms-menu/types";
@@ -6,9 +8,9 @@ import { MenuGetDocument } from "../graphql/queries/generated";
 import type { SaleorCMSMenuServiceConfig } from "../types";
 
 export const saleorCMSMenuGetInfra =
-  ({ apiURL }: SaleorCMSMenuServiceConfig): CMSMenuGetInfra =>
+  ({ apiURL, logger }: SaleorCMSMenuServiceConfig): CMSMenuGetInfra =>
   async ({ channel, languageCode, slug, id, options, locale }) => {
-    const { data } = await graphqlClient(apiURL).execute(MenuGetDocument, {
+    const result = await graphqlClient(apiURL).execute(MenuGetDocument, {
       options,
       variables: {
         channel,
@@ -16,11 +18,44 @@ export const saleorCMSMenuGetInfra =
         slug,
         id,
       },
+      operationName: "MenuGetQuery",
     });
 
-    if (data?.menu) {
-      return { menu: serializeSaleorMenu(data.menu.items || [], locale) };
+    if (!result.ok) {
+      logger.error("Unexpected error while fetching CMS data from Saleor", {
+        errors: result.errors,
+        channel,
+        languageCode,
+        slug,
+        id,
+      });
+
+      return result;
     }
 
-    return null;
+    if (!result.data) {
+      logger.warning("No data returned from Saleor CMS", {
+        channel,
+        languageCode,
+        slug,
+        id,
+      });
+
+      return ok(null);
+    }
+
+    if (!result.data.menu || !result.data.menu.items) {
+      logger.warning("No menu data returned from Saleor CMS", {
+        channel,
+        languageCode,
+        slug,
+        id,
+      });
+
+      return ok(null);
+    }
+
+    return ok({
+      menu: serializeSaleorMenu(result.data.menu.items ?? [], locale),
+    });
   };

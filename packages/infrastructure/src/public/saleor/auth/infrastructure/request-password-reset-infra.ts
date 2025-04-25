@@ -1,6 +1,6 @@
 import { err, ok } from "@nimara/domain/objects/Result";
 
-import { graphqlClientV2 } from "#root/graphql/client";
+import { graphqlClient } from "#root/graphql/client";
 
 import { RequestPasswordResetMutationDocument } from "../graphql/mutations/generated";
 import type {
@@ -11,7 +11,7 @@ import type {
 export const saleorRequestPasswordResetInfra =
   ({ apiURL, logger }: SaleorAuthServiceConfig): RequestPasswordResetInfra =>
   async ({ channel, email, redirectUrl }) => {
-    const result = await graphqlClientV2(apiURL).execute(
+    const result = await graphqlClient(apiURL).execute(
       RequestPasswordResetMutationDocument,
       {
         variables: { channel, email, redirectUrl },

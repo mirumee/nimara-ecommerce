@@ -15,10 +15,12 @@ export const Cart = async ({ checkoutId }: { checkoutId: string }) => {
 
   const accessToken = await getAccessToken();
 
-  const [region, user] = await Promise.all([
+  const [region, resultUserGet] = await Promise.all([
     getCurrentRegion(),
     userService.userGet(accessToken),
   ]);
+
+  const user = resultUserGet.ok ? resultUserGet.data : null;
 
   const service = cartService({
     channel: region.market.channel,

@@ -4,7 +4,7 @@ import type { TaxedMoney } from "@nimara/domain/objects/common";
 import { err, ok } from "@nimara/domain/objects/Result";
 
 import { THUMBNAIL_FORMAT, THUMBNAIL_SIZE_SMALL } from "#root/config";
-import { graphqlClientV2 } from "#root/graphql/client";
+import { graphqlClient } from "#root/graphql/client";
 import { serializeLine } from "#root/utils";
 
 import type { CheckoutFragment } from "../graphql/fragments/generated";
@@ -55,7 +55,7 @@ const serializeCheckout = (checkout: CheckoutFragment): Checkout => {
 export const saleorCheckoutGetInfra =
   ({ apiURL, logger }: SaleorCheckoutServiceConfig): CheckoutGetInfra =>
   async ({ checkoutId, languageCode, countryCode }) => {
-    const result = await graphqlClientV2(apiURL).execute(
+    const result = await graphqlClient(apiURL).execute(
       CheckoutFindQueryDocument,
       {
         variables: {

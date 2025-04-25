@@ -34,7 +34,7 @@ export interface SaleorUserServiceConfig {
   logger: Logger;
 }
 
-export type UserGetInfra = (accessToken?: string) => Promise<User | null>;
+export type UserGetInfra = (accessToken?: string) => AsyncResult<User | null>;
 
 export type UserGetUseCase = UserGetInfra;
 
@@ -44,7 +44,7 @@ export type OrdersGetInfra = ({
 }: {
   accessToken: string | undefined;
   languageCode: LanguageCodeEnum;
-}) => Promise<Order[] | null>;
+}) => AsyncResult<Order[]>;
 
 export type OrdersGetUseCase = OrdersGetInfra;
 

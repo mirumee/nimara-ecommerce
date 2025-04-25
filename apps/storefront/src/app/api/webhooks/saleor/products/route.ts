@@ -1,8 +1,11 @@
 import { secureSaleorClient } from "@/graphql/client";
 import { type ProductEventSubscriptionFragment } from "@/graphql/fragments/generated";
 import { ProductSlugQueryDocument } from "@/graphql/queries/generated";
+import { storefrontLogger } from "@/services/logging";
 
 import { handleWebhookPostRequest } from "../helpers";
+
+const logger = storefrontLogger;
 
 const extractSlugFromPayload = async (
   json: ProductEventSubscriptionFragment,
@@ -16,14 +19,21 @@ const extractSlugFromPayload = async (
     case "ProductMediaCreated":
     case "ProductMediaUpdated":
     case "ProductMediaDeleted":
-      const { data } = await secureSaleorClient().execute(
+      const result = await secureSaleorClient().execute(
         ProductSlugQueryDocument,
         {
           variables: { id: json.productMedia!.productId! },
+          operationName: "ProductSlugQuery",
         },
       );
 
-      return data?.product?.slug;
+      if (!result.ok) {
+        logger.error("[Saleor webhook handler] Failed to fetch product slug", {
+          productId: json.productMedia?.productId,
+        });
+      }
+
+      return result.data?.product?.slug;
 
     case "ProductVariantUpdated":
     case "ProductVariantCreated":

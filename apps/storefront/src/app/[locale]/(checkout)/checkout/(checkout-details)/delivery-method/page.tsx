@@ -20,10 +20,12 @@ export default async function Page() {
 
   const accessToken = await getAccessToken();
 
-  const [user, locale] = await Promise.all([
+  const [resultUserGet, locale] = await Promise.all([
     userService.userGet(accessToken),
     getLocale(),
   ]);
+
+  const user = resultUserGet.ok ? resultUserGet.data : null;
 
   await validateCheckoutStepAction({
     checkout,

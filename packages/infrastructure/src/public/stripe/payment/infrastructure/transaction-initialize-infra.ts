@@ -2,7 +2,7 @@ import { invariant } from "graphql/jsutils/invariant";
 
 import { err, ok } from "@nimara/domain/objects/Result";
 
-import { graphqlClientV2 } from "#root/graphql/client";
+import { graphqlClient } from "#root/graphql/client";
 
 import { PAYMENT_USAGE } from "../consts";
 import { TransactionInitializeMutationDocument } from "../graphql/mutations/generated";
@@ -25,7 +25,7 @@ export const transactionInitializeInfra =
     state: StripeServiceState,
   ): TransactionInitializeInfra =>
   async ({ paymentMethod, customerId, saveForFutureUse, id, amount }) => {
-    const result = await graphqlClientV2(apiURI).execute(
+    const result = await graphqlClient(apiURI).execute(
       TransactionInitializeMutationDocument,
       {
         variables: {

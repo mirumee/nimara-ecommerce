@@ -2,7 +2,7 @@ import { invariant } from "graphql/jsutils/invariant";
 
 import { err, ok } from "@nimara/domain/objects/Result";
 
-import { graphqlClientV2 } from "#root/graphql/client";
+import { graphqlClient } from "#root/graphql/client";
 
 import { PaymentGatewayInitializeMutationDocument } from "../graphql/mutations/generated";
 import type {
@@ -17,7 +17,7 @@ export const paymentGatewayInitializeInfra =
     logger,
   }: PaymentServiceConfig): PaymentGatewayInitializeInfra =>
   async ({ id, amount }) => {
-    const result = await graphqlClientV2(apiURI).execute(
+    const result = await graphqlClient(apiURI).execute(
       PaymentGatewayInitializeMutationDocument,
       {
         variables: { id, amount, gatewayAppId },

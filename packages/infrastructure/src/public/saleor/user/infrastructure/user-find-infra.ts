@@ -1,6 +1,6 @@
 import { ok } from "@nimara/domain/objects/Result";
 
-import { graphqlClientV2 } from "#root/graphql/client";
+import { graphqlClient } from "#root/graphql/client";
 import type {
   SaleorUserServiceConfig,
   UserFindInfra,
@@ -13,7 +13,7 @@ export const saleorUserFindInfra = ({
   logger,
 }: SaleorUserServiceConfig): UserFindInfra => {
   return async ({ email, saleorAppToken }) => {
-    const result = await graphqlClientV2(apiURL, saleorAppToken).execute(
+    const result = await graphqlClient(apiURL, saleorAppToken).execute(
       UserFindQueryDocument,
       {
         variables: {
