@@ -1,8 +1,5 @@
-import {
-  type CountryCode,
-  type LanguageCodeEnum,
-} from "@nimara/codegen/schema";
-
+import { type LanguageCodeEnum } from "@nimara/codegen/schema";
+import type { CountryCode } from "@nimara/domain/consts";
 /**
  * Defines available languages in the App.
  */

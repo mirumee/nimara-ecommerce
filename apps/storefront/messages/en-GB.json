@@ -146,6 +146,7 @@
     "Eircode": "Eircode",
     "Post town": "Post town",
     "State": "State",
+    "Prefecture": "Prefecture",
     "Zip": "Zip",
     "sorry-you-dont-have-any-addresses": "Sorry, you don't have any addresses yet.",
     "add-new-address": "Add new address",

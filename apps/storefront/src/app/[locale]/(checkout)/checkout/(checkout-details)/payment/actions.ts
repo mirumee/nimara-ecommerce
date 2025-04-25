@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import type { CountryCode } from "@nimara/codegen/schema";
+import type { CountryCode } from "@nimara/domain/consts";
 import type { Checkout } from "@nimara/domain/objects/Checkout";
 
 import { getAccessToken } from "@/auth";
