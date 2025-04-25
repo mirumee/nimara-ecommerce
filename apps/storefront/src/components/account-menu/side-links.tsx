@@ -33,7 +33,7 @@ export function SideLinks() {
   ];
 
   return (
-    <ul className="flex gap-x-1 overflow-auto whitespace-nowrap py-3 no-scrollbar md:flex-col md:gap-x-0 md:gap-y-0.5 md:whitespace-normal md:py-0">
+    <ul className="no-scrollbar flex gap-x-1 overflow-auto whitespace-nowrap py-3 md:flex-col md:gap-x-0 md:gap-y-0.5 md:whitespace-normal md:py-0">
       {navLinks.map((link) => (
         <li key={link.title}>
           <Link

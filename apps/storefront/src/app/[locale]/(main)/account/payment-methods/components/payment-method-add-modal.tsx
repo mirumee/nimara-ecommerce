@@ -102,7 +102,7 @@ export const PaymentMethodAddModal = ({
         </Label>
 
         {errors.map((message, i) => (
-          <p key={i} className="text-sm font-medium text-destructive">
+          <p key={i} className="text-destructive text-sm font-medium">
             {message}
           </p>
         ))}

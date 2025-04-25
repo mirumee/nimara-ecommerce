@@ -97,7 +97,7 @@ export const DeliveryMethodForm = ({ checkout }: { checkout: Checkout }) => {
                   {deliveryMethodFormField.options.map((option) => (
                     <Fragment key={option.value}>
                       <p className="w-1/2">{option.label}</p>
-                      <p className="w-1/2 text-end text-muted-foreground">
+                      <p className="text-muted-foreground w-1/2 text-end">
                         {option.description}
                       </p>
                     </Fragment>

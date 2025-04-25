@@ -24,7 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function Layout({ children }: { children: ReactNode }) {
   return (
     <section className="mx-auto grid w-full max-w-7xl grid-cols-12">
-      <main className="col-span-12 w-full space-y-4 justify-self-center px-0 pt-4 xs:px-6 md:col-span-7 md:max-w-md">
+      <main className="xs:px-6 col-span-12 w-full space-y-4 justify-self-center px-0 pt-4 md:col-span-7 md:max-w-md">
         <div className="flex w-full">
           <Logo />
         </div>

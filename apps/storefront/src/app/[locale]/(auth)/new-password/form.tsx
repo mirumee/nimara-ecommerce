@@ -56,7 +56,7 @@ export function NewPasswordForm() {
       </h1>
 
       {error === "true" && (
-        <p className="pb-2 text-sm text-destructive">
+        <p className="text-destructive pb-2 text-sm">
           {t("auth.set-up-new-password-error")}
         </p>
       )}

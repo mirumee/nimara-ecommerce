@@ -32,8 +32,8 @@
     "test": "dotenv -- turbo run test",
     "test:e2e": "dotenv -- turbo run test:e2e",
     "prepare": "husky",
-    "format": "pnpm prettier --write '**/*.{js,ts,json,md}'",
-    "format:check": "pnpm prettier --check '**/*.{js,ts,json,md}'"
+    "format": "pnpm prettier --write '**/*.{js,ts,tsx,json,md}'",
+    "format:check": "pnpm prettier --check '**/*.{js,ts,tsx,json,md}'"
   },
   "devDependencies": {
     "commitizen": "4.3.1",
