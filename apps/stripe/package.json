@@ -54,7 +54,6 @@
     "eslint": "^8.57.0",
     "eslint-config-custom": "workspace:*",
     "postcss": "^8.5.3",
-    "prettier": "3.5.3",
     "tailwindcss": "^3.4.4",
     "ts-essentials": "10.0.4",
     "tsconfig": "workspace:*",

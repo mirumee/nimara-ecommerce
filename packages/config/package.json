@@ -6,7 +6,6 @@
     "lint:staged": "lint-staged"
   },
   "exports": {
-    "./prettier": "./src/prettier.config.js",
     "./postcss": "./src/postcss.config.js",
     "./tailwind": "./src/tailwind.config.ts"
   },
@@ -16,9 +15,7 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
-    "lint-staged": "^15.5.0",
-    "prettier": "3.5.3",
-    "prettier-plugin-tailwindcss": "^0.6.5"
+    "lint-staged": "^15.5.0"
   },
   "lint-staged": {
     "*.{js,cjs,mjs,jsx,ts,cts,mts,tsx}": "eslint --fix",
