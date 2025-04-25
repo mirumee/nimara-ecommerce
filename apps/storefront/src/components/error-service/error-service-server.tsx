@@ -7,8 +7,8 @@ import { ErrorServiceClient } from "./error-service-client";
 
 export const ErrorServiceServer = async () => {
   const accessToken = await getAccessToken();
-  const userResult = await userService.userGet(accessToken);
-  const user = userResult.ok ? userResult.data : null;
+  const resultUserGet = await userService.userGet(accessToken);
+  const user = resultUserGet.ok ? resultUserGet.data : null;
 
   const contextUser: Sentry.User | null = user
     ? { email: user.email, id: user.id }

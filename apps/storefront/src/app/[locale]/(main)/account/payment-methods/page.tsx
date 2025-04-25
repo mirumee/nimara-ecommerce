@@ -19,13 +19,13 @@ export default async function Page(props: { searchParams: SearchParams }) {
   const accessToken = await getAccessToken();
   const locale = await getLocale();
 
-  const [t, region, userResult] = await Promise.all([
+  const [t, region, resultUserGet] = await Promise.all([
     getTranslations(),
     getCurrentRegion(),
     userService.userGet(accessToken),
   ]);
 
-  const user = userResult.ok ? userResult.data : null;
+  const user = resultUserGet.ok ? resultUserGet.data : null;
 
   if (!user) {
     redirect({ href: paths.signIn.asPath(), locale });

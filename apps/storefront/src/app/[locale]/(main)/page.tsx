@@ -44,12 +44,12 @@ export async function generateMetadata(_params: {
 export default async function Page() {
   const accessToken = await getAccessToken();
 
-  const [region, userResult] = await Promise.all([
+  const [region, resultUserGet] = await Promise.all([
     getCurrentRegion(),
     userService.userGet(accessToken),
   ]);
 
-  const user = userResult.ok ? userResult.data : null;
+  const user = resultUserGet.ok ? resultUserGet.data : null;
 
   const resultPage = await cmsPageService.cmsPageGet({
     pageType: PageType.HOMEPAGE,

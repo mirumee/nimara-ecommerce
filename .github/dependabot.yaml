@@ -15,8 +15,15 @@ updates:
         dependency-type: "production"
         update-types:
           - "patch"
+          - "minor"
+
       development-dependencies:
         dependency-type: "development"
         update-types:
           - "patch"
           - "minor"
+
+    # Major versions should be updated manually, to avoid breaking changes.
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
