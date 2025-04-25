@@ -61,7 +61,7 @@ export const Newsletter = () => {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            className="mt-8 items-end gap-4 sm:flex"
+            className="mt-8 items-start gap-4 sm:flex"
             noValidate
           >
             <TextFormField
@@ -78,7 +78,7 @@ export const Newsletter = () => {
               type="email"
               disabled={isPending}
             />
-            <div className="mt-3 rounded-md sm:mt-0 sm:flex-shrink-0">
+            <div className="mt-3 sm:mt-8">
               <Button type="submit" disabled={isPending} loading={isPending}>
                 {t("newsletter.subscribe-cta")}
               </Button>
