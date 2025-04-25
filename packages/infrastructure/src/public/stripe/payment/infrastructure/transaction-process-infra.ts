@@ -1,6 +1,6 @@
 import { err, ok } from "@nimara/domain/objects/Result";
 
-import { graphqlClientV2 } from "#root/graphql/client";
+import { graphqlClient } from "#root/graphql/client";
 
 import { QUERY_PARAMS } from "../consts";
 import { TransactionProcessMutationDocument } from "../graphql/mutations/generated";
@@ -13,7 +13,7 @@ export const transactionProcessInfra =
     if (searchParams[QUERY_PARAMS.TRANSACTION_ID]) {
       const transactionId = searchParams[QUERY_PARAMS.TRANSACTION_ID];
 
-      const result = await graphqlClientV2(apiURI).execute(
+      const result = await graphqlClient(apiURI).execute(
         TransactionProcessMutationDocument,
         {
           variables: { id: transactionId },

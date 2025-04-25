@@ -3,7 +3,7 @@ import type { DeepNonNullable, DeepRequired } from "ts-essentials";
 import type { ProductBase } from "@nimara/domain/objects/Product";
 import { ok } from "@nimara/domain/objects/Result";
 
-import { graphqlClientV2 } from "#root/graphql/client";
+import { graphqlClient } from "#root/graphql/client";
 import { getTranslation } from "#root/lib/saleor";
 
 import type { ProductBaseFragment } from "../graphql/fragments/generated";
@@ -30,7 +30,7 @@ export const getProductBaseInfra =
     logger,
   }: SaleorStoreServiceConfig): GetProductBaseInfra =>
   async ({ productSlug, options }) => {
-    const result = await graphqlClientV2(apiURI).execute(
+    const result = await graphqlClient(apiURI).execute(
       ProductBaseQueryDocument,
       {
         options,

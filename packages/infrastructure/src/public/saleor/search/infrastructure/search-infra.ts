@@ -5,7 +5,7 @@ import {
 import { err, ok } from "@nimara/domain/objects/Result";
 
 import { THUMBNAIL_FORMAT, THUMBNAIL_SIZE_LARGE } from "#root/config";
-import { graphqlClientV2 } from "#root/graphql/client";
+import { graphqlClient } from "#root/graphql/client";
 import type { SearchInfra } from "#root/use-cases/search/types";
 
 import { SearchProductQueryDocument } from "../graphql/queries/generated";
@@ -56,7 +56,7 @@ export const saleorSearchInfra =
         collection,
       });
 
-      const result = await graphqlClientV2(apiURL).execute(
+      const result = await graphqlClient(apiURL).execute(
         SearchProductQueryDocument,
         {
           variables: {

@@ -9,10 +9,12 @@ import { UpdatePasswordModal } from "./_modals/update-password-modal";
 
 export default async function Page() {
   const accessToken = await getAccessToken();
-  const [t, user] = await Promise.all([
+  const [t, resultUserGet] = await Promise.all([
     getTranslations(),
     userService.userGet(accessToken),
   ]);
+
+  const user = resultUserGet.ok ? resultUserGet.data : null;
 
   return (
     <div className="flex flex-col gap-8 text-sm">

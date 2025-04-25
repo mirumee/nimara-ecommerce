@@ -1,3 +1,5 @@
+import { ok } from "@nimara/domain/objects/Result";
+
 import { THUMBNAIL_FORMAT, THUMBNAIL_SIZE_MEDIUM } from "#root/config";
 import { graphqlClient } from "#root/graphql/client";
 import { parseAttributeData } from "#root/lib/serializers/attribute";
@@ -9,7 +11,7 @@ import type { OrdersGetInfra, SaleorUserServiceConfig } from "../types";
 export const saleorOrdersGetInfra =
   ({ apiURL, logger }: SaleorUserServiceConfig): OrdersGetInfra =>
   async ({ accessToken, languageCode }) => {
-    const { data, error } = await graphqlClient(apiURL, accessToken).execute(
+    const result = await graphqlClient(apiURL, accessToken).execute(
       UserOrdersQueryDocument,
       {
         variables: {
@@ -17,17 +19,19 @@ export const saleorOrdersGetInfra =
           thumbnailFormat: THUMBNAIL_FORMAT,
           thumbnailSize: THUMBNAIL_SIZE_MEDIUM,
         },
+        operationName: "UserOrdersQuery",
       },
     );
 
-    if (error) {
-      logger.error("Error while fetching orders", { error });
+    if (!result.ok) {
+      logger.error("Error while fetching orders", { errors: result.errors });
 
-      return null;
+      return result;
     }
 
-    return (
-      data?.me?.orders?.edges.map(({ node }) => serializeOrder(node)) ?? null
+    return ok(
+      result.data?.me?.orders?.edges.map(({ node }) => serializeOrder(node)) ??
+        [],
     );
   };
 

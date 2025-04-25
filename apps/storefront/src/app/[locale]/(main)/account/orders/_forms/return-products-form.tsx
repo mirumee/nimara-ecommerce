@@ -56,33 +56,24 @@ export const ReturnProductsForm = ({
   const handleSubmit = async (data: FormSchema) => {
     const result = await returnProducts(data, order);
 
-    if (result.isSuccess) {
+    if (result.ok) {
       toast({
         description: t("order.return-request-submitted"),
         position: "center",
       });
-    }
-
-    if ("validationErrors" in result) {
-      result.validationErrors.map(({ message }) => {
+    } else {
+      result.errors.map((error) => {
         toast({
-          description: message,
+          title: t(`errors.${error.code}`),
+          description: error.message,
           variant: "destructive",
-          position: "center",
         });
       });
     }
 
-    if ("serverError" in result) {
-      toast({
-        description: result.serverError.message,
-        variant: "destructive",
-        position: "center",
-      });
-
-      return;
-    }
     onCancel();
+
+    return;
   };
 
   return (

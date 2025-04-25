@@ -12,7 +12,7 @@ export default async function Layout({ children }: { children: ReactNode }) {
   const region = await getCurrentRegion();
   const locale = await getStoreLocale();
 
-  const menu = await cmsMenuService.menuGet({
+  const resultMenu = await cmsMenuService.menuGet({
     channel: region.market.channel,
     languageCode: region.language.code,
     locale,
@@ -23,7 +23,7 @@ export default async function Layout({ children }: { children: ReactNode }) {
     <>
       <div className="sticky top-0 isolate z-50 bg-background py-4 md:pb-0">
         <Header />
-        <Navigation menu={menu?.menu} />
+        <Navigation menu={resultMenu.data?.menu} />
       </div>
       <main className="container flex h-screen flex-1 items-stretch">
         {children}

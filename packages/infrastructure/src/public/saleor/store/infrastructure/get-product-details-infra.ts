@@ -3,7 +3,7 @@ import type { DeepNonNullable, DeepRequired } from "ts-essentials";
 import type { Product } from "@nimara/domain/objects/Product";
 import { ok } from "@nimara/domain/objects/Result";
 
-import { graphqlClientV2 } from "#root/graphql/client";
+import { graphqlClient } from "#root/graphql/client";
 import { getTranslation } from "#root/lib/saleor";
 import { parseAttributeData } from "#root/lib/serializers/attribute";
 
@@ -63,7 +63,7 @@ export const getProductDetailsInfra =
     logger,
   }: SaleorProductServiceConfig): GetProductDetailsInfra =>
   async ({ productSlug, customMediaFormat, options }) => {
-    const result = await graphqlClientV2(apiURI).execute(
+    const result = await graphqlClient(apiURI).execute(
       ProductDetailsQueryDocument,
       {
         options,

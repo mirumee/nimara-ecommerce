@@ -1,5 +1,6 @@
 import type { LanguageCodeEnum } from "@nimara/codegen/schema";
 import type { Menu } from "@nimara/domain/objects/Menu";
+import { type AsyncResult } from "@nimara/domain/objects/Result";
 
 import type { FetchOptions } from "#root/graphql/client";
 export type WithFetchOptions = { options?: FetchOptions };
@@ -16,7 +17,7 @@ type CMSMenuOptions = {
 
 export type CMSMenuGetInfra = (
   opts: CMSMenuOptions,
-) => Promise<{ menu: Menu } | null>;
+) => AsyncResult<{ menu: Menu } | null>;
 
 export type CMSMenuGetUseCase = CMSMenuGetInfra;
 

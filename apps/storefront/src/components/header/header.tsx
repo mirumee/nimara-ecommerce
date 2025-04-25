@@ -25,13 +25,13 @@ import { ShoppingBagIconWithCount } from "./shopping-bag-icon-with-count";
 
 export const Header = async () => {
   const accessToken = await getAccessToken();
-  const [user, region, t] = await Promise.all([
+  const [resultUserGet, region, t] = await Promise.all([
     userService.userGet(accessToken),
     getCurrentRegion(),
     getTranslations(),
   ]);
 
-  const menu = await cmsMenuService.menuGet({
+  const resultMenu = await cmsMenuService.menuGet({
     channel: region.market.channel,
     languageCode: region.language.code,
     slug: "navbar",
@@ -42,6 +42,8 @@ export const Header = async () => {
       },
     },
   });
+
+  const user = resultUserGet.ok ? resultUserGet.data : null;
 
   let checkoutLinesCount = 0;
   const checkoutId = (await cookies()).get(COOKIE_KEY.checkoutId)?.value;
@@ -73,7 +75,7 @@ export const Header = async () => {
           <div className="md:hidden">
             <MobileSideMenu
               user={user}
-              menu={menu?.menu}
+              menu={resultMenu?.data?.menu}
               checkoutLinesCount={checkoutLinesCount}
             />
           </div>

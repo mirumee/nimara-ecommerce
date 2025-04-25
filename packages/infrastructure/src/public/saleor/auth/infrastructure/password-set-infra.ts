@@ -1,6 +1,6 @@
 import { err, ok } from "@nimara/domain/objects/Result";
 
-import { graphqlClientV2 } from "#root/graphql/client";
+import { graphqlClient } from "#root/graphql/client";
 
 import { PasswordSetMutationDocument } from "../graphql/mutations/generated";
 import type { PasswordSetInfra, SaleorAuthServiceConfig } from "../types";
@@ -8,7 +8,7 @@ import type { PasswordSetInfra, SaleorAuthServiceConfig } from "../types";
 export const saleorPasswordSetInfra =
   ({ apiURL, logger }: SaleorAuthServiceConfig): PasswordSetInfra =>
   async ({ password, email, token }) => {
-    const result = await graphqlClientV2(apiURL).execute(
+    const result = await graphqlClient(apiURL).execute(
       PasswordSetMutationDocument,
       {
         variables: { password, email, token },

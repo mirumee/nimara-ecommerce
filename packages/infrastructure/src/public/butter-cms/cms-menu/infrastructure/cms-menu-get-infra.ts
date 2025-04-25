@@ -2,6 +2,7 @@ import Butter from "buttercms/lib/butter";
 import { invariant } from "ts-invariant";
 
 import type { ButterCMSMenuItem } from "@nimara/domain/objects/Menu";
+import { ok } from "@nimara/domain/objects/Result";
 
 import { serializeButterCMSMenuItem } from "#root/lib/serializers/cms-menu";
 import { convertLanguageCode } from "#root/lib/serializers/cms-page";
@@ -10,7 +11,7 @@ import type { CMSMenuGetInfra } from "#root/use-cases/cms-menu/types";
 import type { ButterCMSMenuServiceConfig } from "../types";
 
 export const butterCMSMenuGetInfra =
-  ({ token }: ButterCMSMenuServiceConfig): CMSMenuGetInfra =>
+  ({ token, logger }: ButterCMSMenuServiceConfig): CMSMenuGetInfra =>
   async ({ languageCode, slug }) => {
     invariant(
       token,
@@ -26,13 +27,24 @@ export const butterCMSMenuGetInfra =
         locale ? { locale } : undefined,
       );
     } catch (error) {
+      logger.error("Unexpected error while fetching CMS data from ButterCMS", {
+        errors: error,
+        locale,
+        slug,
+      });
+
       menu = await Butter(token).content.retrieve(["navigation_menu"], {
         locale: "enus",
       });
     }
 
     if (!menu?.data?.data?.navigation_menu) {
-      return null;
+      logger.warning("No data returned from ButterCMS", {
+        locale,
+        slug,
+      });
+
+      return ok(null);
     }
 
     let submenu;
@@ -43,6 +55,12 @@ export const butterCMSMenuGetInfra =
         locale ? { locale } : undefined,
       );
     } catch (error) {
+      logger.error("Unexpected error while fetching CMS data from ButterCMS", {
+        errors: error,
+        locale,
+        slug,
+      });
+
       submenu = await Butter(token).content.retrieve(
         ["navigation_menu_item_second_level"],
         { locale: "enus" },
@@ -50,7 +68,12 @@ export const butterCMSMenuGetInfra =
     }
 
     if (!submenu?.data?.data?.navigation_menu_item_second_level) {
-      return null;
+      logger.warning("No data returned from ButterCMS", {
+        locale,
+        slug,
+      });
+
+      return ok(null);
     }
 
     const selectedMenu = menu.data.data.navigation_menu.find(
@@ -59,10 +82,15 @@ export const butterCMSMenuGetInfra =
     );
 
     if (!selectedMenu) {
-      return null;
+      logger.warning("No menu data returned from ButterCMS", {
+        locale,
+        slug,
+      });
+
+      return ok(null);
     }
 
-    return {
+    return ok({
       menu: {
         items: await serializeButterCMSMenuItem(
           selectedMenu.menu_items as ButterCMSMenuItem[],
@@ -70,5 +98,5 @@ export const butterCMSMenuGetInfra =
             submenu?.data?.data?.navigation_menu_item_second_level || [],
         ),
       },
-    };
+    });
   };

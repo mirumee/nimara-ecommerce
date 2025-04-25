@@ -17,7 +17,7 @@ export async function generateMetadata(props: {
 
   const region = await getCurrentRegion();
 
-  const page = await cmsPageService.cmsPageGet({
+  const resultPage = await cmsPageService.cmsPageGet({
     languageCode: region.language.code,
     slug,
     options: {
@@ -29,7 +29,7 @@ export async function generateMetadata(props: {
   });
 
   return {
-    title: page?.title,
+    title: resultPage?.data?.title,
   };
 }
 
@@ -42,7 +42,7 @@ export default async function Page(props: {
 
   const region = await getCurrentRegion();
 
-  const page = await cmsPageService.cmsPageGet({
+  const resultPage = await cmsPageService.cmsPageGet({
     pageType: PageType.STATIC_PAGE,
     slug,
     languageCode: region.language.code,
@@ -54,9 +54,9 @@ export default async function Page(props: {
     },
   });
 
-  if (!page) {
+  if (!resultPage.ok) {
     notFound();
   }
 
-  return <StaticPage body={page.content} />;
+  return <StaticPage body={resultPage.data?.content} />;
 }

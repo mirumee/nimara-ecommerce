@@ -3,7 +3,7 @@ import type { DeepNonNullable, DeepRequired } from "ts-essentials";
 import type { ProductAvailability } from "@nimara/domain/objects/Product";
 import { ok } from "@nimara/domain/objects/Result";
 
-import { type FetchOptions, graphqlClientV2 } from "#root/graphql/client";
+import { type FetchOptions, graphqlClient } from "#root/graphql/client";
 
 import type { ProductAvailabilityDetailsFragment } from "../graphql/fragments/generated";
 import { ProductAvailabilityDetailsQueryDocument } from "../graphql/queries/generated";
@@ -60,7 +60,7 @@ export const getProductAvailabilityDetailsInfra =
     // Infra is does not know anything about next.js specific overloads.
     delete (fetchOptions as any)?.next?.revalidate;
 
-    const result = await graphqlClientV2(apiURI).execute(
+    const result = await graphqlClient(apiURI).execute(
       ProductAvailabilityDetailsQueryDocument,
       {
         options: {

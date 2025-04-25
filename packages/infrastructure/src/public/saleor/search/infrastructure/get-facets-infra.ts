@@ -1,7 +1,7 @@
 import type { LanguageCodeEnum } from "@nimara/codegen/schema";
 import { ok } from "@nimara/domain/objects/Result";
 
-import { graphqlClientV2 } from "#root/graphql/client";
+import { graphqlClient } from "#root/graphql/client";
 import type { FacetType, GetFacetsInfra } from "#root/use-cases/search/types";
 
 import { FacetsQueryDocument } from "../graphql/queries/generated";
@@ -10,7 +10,7 @@ import type { SaleorSearchServiceConfig } from "../types";
 export const saleorGetFacetsInfra =
   ({ apiURL }: SaleorSearchServiceConfig): GetFacetsInfra =>
   async (_params, context) => {
-    const result = await graphqlClientV2(apiURL).execute(FacetsQueryDocument, {
+    const result = await graphqlClient(apiURL).execute(FacetsQueryDocument, {
       variables: {
         channel: context.channel,
         languageCode: context.languageCode as LanguageCodeEnum,

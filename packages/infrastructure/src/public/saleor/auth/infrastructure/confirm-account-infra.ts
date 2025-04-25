@@ -1,6 +1,6 @@
 import { err, ok } from "@nimara/domain/objects/Result";
 
-import { graphqlClientV2 } from "#root/graphql/client";
+import { graphqlClient } from "#root/graphql/client";
 
 import { ConfirmAccountMutationDocument } from "../graphql/mutations/generated";
 import type { ConfirmAccountInfra, SaleorAuthServiceConfig } from "../types";
@@ -8,7 +8,7 @@ import type { ConfirmAccountInfra, SaleorAuthServiceConfig } from "../types";
 export const saleorConfirmAccountInfra =
   ({ apiURL, logger }: SaleorAuthServiceConfig): ConfirmAccountInfra =>
   async ({ email, token }) => {
-    const result = await graphqlClientV2(apiURL).execute(
+    const result = await graphqlClient(apiURL).execute(
       ConfirmAccountMutationDocument,
       { variables: { email, token }, operationName: "ConfirmAccountMutation" },
     );
