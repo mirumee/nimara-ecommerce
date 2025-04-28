@@ -22,7 +22,7 @@
     "@sentry/types": "^8.47.0",
     "@svgr/webpack": "8.1.0",
     "@uidotdev/usehooks": "2.4.1",
-    "@vercel/otel": "^1.10.4",
+    "@vercel/otel": "^1.11.0",
     "@vercel/speed-insights": "1.1.0",
     "clsx": "^2.1.1",
     "editorjs-html": "3.4.3",
