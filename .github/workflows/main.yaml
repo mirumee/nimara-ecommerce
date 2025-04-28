@@ -38,7 +38,7 @@ jobs:
         run: pnpm eslint --ext ".ts,.tsx" .
 
       - name: Run Prettier Check
-        run: pnpm prettier --check --config packages/config/src/prettier.config.js .
+        run: pnpm format:check
 
       - name: Run tests
         run: pnpm test

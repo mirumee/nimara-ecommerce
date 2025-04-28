@@ -90,7 +90,7 @@ export function SignInForm({ redirectUrl }: { redirectUrl?: string }) {
         >
           {(form?.formState?.errors?.email ||
             form?.formState?.errors?.password) && (
-            <p className="pb-2 text-sm text-destructive">
+            <p className="text-destructive pb-2 text-sm">
               {t("auth.sign-in-error")}
             </p>
           )}

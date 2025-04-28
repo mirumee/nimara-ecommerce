@@ -72,13 +72,13 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
                         <Link
                           key={child.id}
                           href={child.url}
-                          className="group block space-y-1 rounded-md p-3 hover:bg-accent"
+                          className="hover:bg-accent group block space-y-1 rounded-md p-3"
                         >
                           <div className="text-sm font-medium leading-none">
                             {child.label}
                           </div>
                           {child.description && (
-                            <div className="text-sm leading-snug text-muted-foreground">
+                            <div className="text-muted-foreground text-sm leading-snug">
                               {isValidJson(child.description) ? (
                                 <RichText
                                   className="line-clamp-3 py-1"
@@ -100,7 +100,7 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
                         <Link
                           key={child.id}
                           href={child.url}
-                          className="group relative min-h-[270px] overflow-hidden rounded-lg bg-accent"
+                          className="bg-accent group relative min-h-[270px] overflow-hidden rounded-lg"
                           onClick={() => setCurrentMenuItem("")}
                         >
                           <div className="relative h-1/2">
@@ -113,12 +113,12 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
                               />
                             )}
                           </div>
-                          <div className="flex h-1/2 flex-col justify-start bg-muted/50 p-6">
+                          <div className="bg-muted/50 flex h-1/2 flex-col justify-start p-6">
                             <div className="relative z-20 space-y-2">
                               <div className="text-lg font-medium leading-none group-hover:underline">
                                 {child.label}
                               </div>
-                              <div className="overflow-hidden text-sm leading-snug text-muted-foreground">
+                              <div className="text-muted-foreground overflow-hidden text-sm leading-snug">
                                 {child.description &&
                                 isValidJson(child.description) ? (
                                   <RichText

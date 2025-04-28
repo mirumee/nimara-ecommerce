@@ -21,7 +21,7 @@ export default async function Layout({ children }: { children: ReactNode }) {
 
   return (
     <>
-      <div className="sticky top-0 isolate z-50 bg-background py-4 md:pb-0">
+      <div className="bg-background sticky top-0 isolate z-50 py-4 md:pb-0">
         <Header />
         <Navigation menu={resultMenu.data?.menu} />
       </div>

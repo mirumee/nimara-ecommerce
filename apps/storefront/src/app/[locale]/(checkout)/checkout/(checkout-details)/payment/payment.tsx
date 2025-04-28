@@ -400,11 +400,11 @@ export const Payment = ({
           </Tabs>
 
           <div className="space-y-6">
-            <h3 className="text-base font-normal leading-7 text-muted-foreground">
+            <h3 className="text-muted-foreground text-base font-normal leading-7">
               {t("payment.billingAddress")}
             </h3>
 
-            <div className="flex w-full items-center gap-2 rounded-md border border-input bg-background px-4">
+            <div className="border-input bg-background flex w-full items-center gap-2 rounded-md border px-4">
               <CheckboxField
                 label={t("payment.same-as-shipping-address")}
                 name="sameAsShippingAddress"
@@ -454,7 +454,7 @@ export const Payment = ({
             </Button>
 
             {errors.map((message, i) => (
-              <p key={i} className="text-sm font-medium text-destructive">
+              <p key={i} className="text-destructive text-sm font-medium">
                 {message}
               </p>
             ))}
