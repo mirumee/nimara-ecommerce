@@ -22,6 +22,8 @@ export const validateCheckoutStepAction = async ({
     | null;
   user: User | null;
 }) => {
+  // Step 1: Make sure we have an email
+  // If missing, redirect to user details step
   if (!checkout.email && !user?.email) {
     if (step !== "user-details") {
       redirect({ href: paths.checkout.userDetails.asPath(), locale });
@@ -30,7 +32,9 @@ export const validateCheckoutStepAction = async ({
     return;
   }
 
-  if (user?.email || !checkout.shippingAddress) {
+  // Step 2: Make sure we have a shipping address
+  // If missing, redirect to shipping address step
+  if (!checkout.shippingAddress) {
     if (step !== "shipping-address") {
       redirect({ href: paths.checkout.shippingAddress.asPath(), locale });
     }
@@ -38,6 +42,13 @@ export const validateCheckoutStepAction = async ({
     return;
   }
 
+  // Allow user to stay on shipping-address step (e.g. to edit it)
+  if (step === "shipping-address") {
+    return;
+  }
+
+  // Step 3: Make sure delivery method is selected
+  // If missing, redirect to delivery-method step
   if (!checkout.deliveryMethod) {
     if (step !== "delivery-method") {
       redirect({ href: paths.checkout.deliveryMethod.asPath(), locale });
@@ -46,6 +57,12 @@ export const validateCheckoutStepAction = async ({
     return;
   }
 
+  // Allow user to stay on delivery-method step
+  if (step === "delivery-method") {
+    return;
+  }
+
+  // Final Step: if user is on any other step than payment, redirect to it
   if (step !== "payment") {
     redirect({ href: paths.checkout.payment.asPath(), locale });
   }
