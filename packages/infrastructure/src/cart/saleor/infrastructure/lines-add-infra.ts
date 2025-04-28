@@ -2,8 +2,8 @@ import { err, ok } from "@nimara/domain/objects/Result";
 
 import { graphqlClient } from "#root/graphql/client";
 
+import type { LinesAddInfra, SaleorCartServiceConfig } from "../../types";
 import { CartLinesAddMutationDocument } from "../graphql/mutations/generated";
-import type { LinesAddInfra, SaleorCartServiceConfig } from "../types";
 
 export const saleorLinesAddInfra =
   ({ apiURI, logger }: SaleorCartServiceConfig): LinesAddInfra =>

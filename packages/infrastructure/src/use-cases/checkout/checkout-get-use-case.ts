@@ -1,7 +1,7 @@
 import type {
   CheckoutGetInfra,
   CheckoutGetUseCase,
-} from "#root/public/saleor/checkout/types";
+} from "#root/checkout/types";
 
 export const checkoutGetUseCase = ({
   checkoutGetInfra,

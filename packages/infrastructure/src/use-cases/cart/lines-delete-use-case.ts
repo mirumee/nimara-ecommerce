@@ -1,7 +1,4 @@
-import type {
-  LinesDeleteInfra,
-  LinesDeleteUseCase,
-} from "#root/public/saleor/cart/types";
+import type { LinesDeleteInfra, LinesDeleteUseCase } from "#root/cart/types";
 
 export const linesDeleteUseCase = ({
   linesDeleteInfra,

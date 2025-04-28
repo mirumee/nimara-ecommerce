@@ -3,11 +3,11 @@ import { err, ok } from "@nimara/domain/objects/Result";
 import { graphqlClient } from "#root/graphql/client";
 import { handleMutationErrors } from "#root/public/saleor/error";
 
-import { CheckoutCustomerAttachMutationDocument } from "../graphql/mutations/generated";
 import type {
   CheckoutCustomerAttachInfra,
   SaleorCheckoutServiceConfig,
-} from "../types";
+} from "../../types";
+import { CheckoutCustomerAttachMutationDocument } from "../graphql/mutations/generated";
 
 export const saleorCheckoutCustomerAttachInfra =
   ({

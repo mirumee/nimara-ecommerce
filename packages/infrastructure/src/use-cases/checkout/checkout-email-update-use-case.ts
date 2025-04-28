@@ -3,7 +3,7 @@ import { ok } from "@nimara/domain/objects/Result";
 import type {
   CheckoutEmailUpdateInfra,
   CheckoutEmailUpdateUseCase,
-} from "#root/public/saleor/checkout/types";
+} from "#root/checkout/types";
 
 export const checkoutEmailUpdateUseCase =
   ({

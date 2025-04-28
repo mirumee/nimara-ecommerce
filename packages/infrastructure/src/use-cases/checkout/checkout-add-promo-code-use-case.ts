@@ -1,7 +1,7 @@
 import type {
   CheckoutAddPromoCodeInfra,
   CheckoutAddPromoCodeUseCase,
-} from "#root/public/saleor/checkout/types";
+} from "#root/checkout/types";
 
 export const checkoutAddPromoCodeUseCase = ({
   checkoutAddPromoCodeInfra,

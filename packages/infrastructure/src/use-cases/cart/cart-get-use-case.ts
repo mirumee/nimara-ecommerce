@@ -1,7 +1,4 @@
-import type {
-  CartGetInfra,
-  CartGetUseCase,
-} from "#root/public/saleor/cart/types";
+import type { CartGetInfra, CartGetUseCase } from "#root/cart/types";
 
 export const cartGetUseCase = ({
   cartGetInfra,

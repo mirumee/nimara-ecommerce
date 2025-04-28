@@ -1,7 +1,7 @@
 import type {
   OrderCreateInfra,
   OrderCreateUseCase,
-} from "#root/public/saleor/checkout/types";
+} from "#root/checkout/types";
 
 export const orderCreateUseCase =
   ({ orderCreate }: { orderCreate: OrderCreateInfra }): OrderCreateUseCase =>
