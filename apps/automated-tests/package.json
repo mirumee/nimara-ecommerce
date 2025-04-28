@@ -7,10 +7,10 @@
     "lint:staged": "lint-staged"
   },
   "devDependencies": {
-    "@next/env": "15.1.2",
+    "@next/env": "15.3.1",
     "@nimara/config": "workspace:*",
-    "@playwright/test": "^1.49.1",
-    "@types/node": "22.10.2",
+    "@playwright/test": "^1.52.0",
+    "@types/node": "22.15.3",
     "eslint-config-custom": "workspace:*",
     "eslint-plugin-playwright": "^2.1.0",
     "lint-staged": "latest",
