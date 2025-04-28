@@ -117,7 +117,7 @@ export default async function Page(props: { searchParams: SearchParams }) {
         )}
 
         {error && (
-          <p className="text-sm font-medium text-destructive">{error}</p>
+          <p className="text-destructive text-sm font-medium">{error}</p>
         )}
       </div>
     </div>

@@ -67,7 +67,7 @@ export const ColorSwatch = async ({
             >
               <label
                 htmlFor={`group${slug}-${choice.value}`}
-                className="cursor-pointer peer-checked:bg-accent"
+                className="peer-checked:bg-accent cursor-pointer"
               >
                 <div
                   className={cn(

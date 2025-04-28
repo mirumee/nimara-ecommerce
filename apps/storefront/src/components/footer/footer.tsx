@@ -38,7 +38,7 @@ export const Footer = async () => {
   });
 
   return (
-    <footer className="bg-muted text-sm text-primary">
+    <footer className="bg-muted text-primary text-sm">
       <div className="container">
         <div className="flex flex-wrap justify-between gap-8 py-8">
           <div className="grid w-full grid-cols-2 grid-rows-[max-content,max-content] place-items-start justify-start gap-6 md:grid-cols-3">
@@ -67,7 +67,7 @@ export const Footer = async () => {
             </div>
 
             <div className="row-span-2 grid grid-cols-subgrid grid-rows-subgrid md:col-span-1">
-              <span className="flex items-center text-primary">
+              <span className="text-primary flex items-center">
                 {t("footer.our-products")}
               </span>
               <div className="flex flex-col gap-4">
@@ -84,7 +84,7 @@ export const Footer = async () => {
             </div>
 
             <div className="row-span-2 grid grid-cols-subgrid grid-rows-subgrid md:col-span-1">
-              <span className="flex items-center text-primary">
+              <span className="text-primary flex items-center">
                 {t("footer.help")}
               </span>
               <div className="flex flex-col gap-4">
@@ -104,7 +104,7 @@ export const Footer = async () => {
       </div>
 
       <div className="container">
-        <div className="flex flex-wrap justify-between gap-4 border-t border-muted-foreground/50 py-8 text-muted-foreground">
+        <div className="border-muted-foreground/50 text-muted-foreground flex flex-wrap justify-between gap-4 border-t py-8">
           <span className="flex-grow basis-full text-center sm:basis-1 sm:text-left">
             &#xa9; Mirumee {new Date().getFullYear()}
           </span>

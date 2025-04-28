@@ -33,8 +33,8 @@ export function LocaleSwitchModal({
   };
 
   return createPortal(
-    <div className="pointer-events-auto absolute inset-0 z-51 flex justify-center bg-white p-4 md:py-24">
-      <div className="2xl:max-w-[1536px] lg-max-w-[1024px] grow sm:max-w-[640px] md:max-w-[768px] xl:max-w-[1280px]">
+    <div className="z-51 pointer-events-auto absolute inset-0 flex justify-center bg-white p-4 md:py-24">
+      <div className="lg-max-w-[1024px] grow sm:max-w-[640px] md:max-w-[768px] xl:max-w-[1280px] 2xl:max-w-[1536px]">
         <div className="mb-4 flex justify-between">
           <Label className="text-lg font-semibold leading-7">
             {t("locale.region-settings")}

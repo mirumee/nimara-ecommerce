@@ -67,7 +67,7 @@ export const SearchProductCard = ({
           }
         />
       ) : (
-        <div className="flex aspect-square justify-center overflow-hidden bg-accent">
+        <div className="bg-accent flex aspect-square justify-center overflow-hidden">
           <ProductImagePlaceholder className="min-w-full object-cover object-top" />
         </div>
       )}
