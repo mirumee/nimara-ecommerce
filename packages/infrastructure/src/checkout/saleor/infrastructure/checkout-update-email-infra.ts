@@ -3,11 +3,11 @@ import { err, ok } from "@nimara/domain/objects/Result";
 import { graphqlClient } from "#root/graphql/client";
 import { handleMutationErrors } from "#root/public/saleor/error";
 
-import { CheckoutEmailUpdateMutationDocument } from "../graphql/mutations/generated";
 import type {
   CheckoutEmailUpdateInfra,
   SaleorCheckoutServiceConfig,
-} from "../types";
+} from "../../types";
+import { CheckoutEmailUpdateMutationDocument } from "../graphql/mutations/generated";
 
 export const saleorCheckoutEmailUpdateInfra =
   ({ apiURL, logger }: SaleorCheckoutServiceConfig): CheckoutEmailUpdateInfra =>

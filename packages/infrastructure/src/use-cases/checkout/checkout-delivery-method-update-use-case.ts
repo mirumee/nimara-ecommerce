@@ -4,7 +4,7 @@ import { ok } from "@nimara/domain/objects/Result";
 import type {
   CheckoutDeliveryMethodUpdateInfra,
   CheckoutDeliveryMethodUpdateUseCase,
-} from "#root/public/saleor/checkout/types";
+} from "#root/checkout/types";
 
 export const deliveryMethodUpdateUseCase = ({
   deliveryMethodUpdateInfra,
