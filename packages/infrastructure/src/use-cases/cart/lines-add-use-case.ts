@@ -4,7 +4,7 @@ import type {
   CartCreateInfra,
   LinesAddInfra,
   LinesAddUseCase,
-} from "#root/public/saleor/cart/types";
+} from "#root/cart/types";
 
 export const linesAddUseCase = ({
   linesAddInfra,

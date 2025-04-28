@@ -1,7 +1,7 @@
 import type {
   CheckoutCustomerAttachInfra,
   CheckoutCustomerAttachUseCase,
-} from "#root/public/saleor/checkout/types";
+} from "#root/checkout/types";
 
 export const checkoutCustomerAttachUseCase = ({
   checkoutCustomerAttachInfra,

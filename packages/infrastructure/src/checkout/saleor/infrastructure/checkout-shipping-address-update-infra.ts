@@ -4,11 +4,11 @@ import { graphqlClient } from "#root/graphql/client";
 import { addressToInput } from "#root/public/saleor/address/helpers";
 import { handleMutationErrors } from "#root/public/saleor/error";
 
-import { CheckoutShippingAddressUpdateDocument } from "../graphql/mutations/generated";
 import type {
   CheckoutShippingAddressUpdateInfra,
   SaleorCheckoutServiceConfig,
-} from "../types";
+} from "../../types";
+import { CheckoutShippingAddressUpdateDocument } from "../graphql/mutations/generated";
 
 export const saleorCheckoutShippingAddressUpdateInfra =
   ({

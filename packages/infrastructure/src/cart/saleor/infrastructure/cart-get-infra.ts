@@ -5,9 +5,9 @@ import { THUMBNAIL_FORMAT, THUMBNAIL_SIZE_SMALL } from "#root/config";
 import { graphqlClient } from "#root/graphql/client";
 import { serializeLine } from "#root/utils";
 
+import type { CartGetInfra, SaleorCartServiceConfig } from "../../types";
 import type { CartFragment } from "../graphql/fragments/generated";
 import { CartQueryDocument } from "../graphql/queries/generated";
-import type { CartGetInfra, SaleorCartServiceConfig } from "../types";
 
 const serializeCart = ({
   id,

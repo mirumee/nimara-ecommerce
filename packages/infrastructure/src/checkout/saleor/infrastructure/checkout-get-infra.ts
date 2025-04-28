@@ -7,9 +7,12 @@ import { THUMBNAIL_FORMAT, THUMBNAIL_SIZE_SMALL } from "#root/config";
 import { graphqlClient } from "#root/graphql/client";
 import { serializeLine } from "#root/utils";
 
+import type {
+  CheckoutGetInfra,
+  SaleorCheckoutServiceConfig,
+} from "../../types";
 import type { CheckoutFragment } from "../graphql/fragments/generated";
 import { CheckoutFindQueryDocument } from "../graphql/queries/generated";
-import type { CheckoutGetInfra, SaleorCheckoutServiceConfig } from "../types";
 
 // Saleor returns discount amount included in subtotal price
 const calculateSubtotalPrice = (checkout: CheckoutFragment): TaxedMoney => {

@@ -1,7 +1,4 @@
-import type {
-  LinesUpdateInfra,
-  LinesUpdateUseCase,
-} from "#root/public/saleor/cart/types";
+import type { LinesUpdateInfra, LinesUpdateUseCase } from "#root/cart/types";
 
 export const linesUpdateUseCase = ({
   linesUpdateInfra,

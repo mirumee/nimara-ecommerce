@@ -1,7 +1,7 @@
 import type {
   CheckoutShippingAddressUpdateInfra,
   CheckoutShippingAddressUpdateUseCase,
-} from "#root/public/saleor/checkout/types";
+} from "#root/checkout/types";
 
 export const checkoutShippingAddressUpdateUseCase = ({
   checkoutShippingAddressUpdateInfra,
