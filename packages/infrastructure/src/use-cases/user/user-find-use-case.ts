@@ -1,7 +1,4 @@
-import type {
-  UserFindInfra,
-  UserFindUseCase,
-} from "#root/public/saleor/user/types";
+import type { UserFindInfra, UserFindUseCase } from "#root/user/types";
 
 export const userFindUseCase = ({
   userFindInfra,

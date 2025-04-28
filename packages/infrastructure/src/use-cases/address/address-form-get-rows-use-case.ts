@@ -1,7 +1,7 @@
 import type {
   AddressFormGetRowsInfra,
   AddressFormGetRowsUseCase,
-} from "#root/public/saleor/address/types";
+} from "#root/address/types";
 
 export const addressFormGetRowsUseCase = ({
   addressFormGetRowsInfra,

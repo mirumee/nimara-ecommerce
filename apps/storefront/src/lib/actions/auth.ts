@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 
-import { saleorAuthClient } from "@nimara/infrastructure/public/saleor/auth/client";
+import { saleorAuthClient } from "@nimara/infrastructure/auth/client";
 
 import { COOKIE_KEY } from "@/config";
 

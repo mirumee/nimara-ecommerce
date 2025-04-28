@@ -1,7 +1,7 @@
 import type {
   AccountSetDefaultAddressInfra,
   AccountSetDefaultAddressUseCase,
-} from "#root/public/saleor/user/types";
+} from "#root/user/types";
 
 export const accountSetDefaultAddressUseCase = ({
   accountSetDefaultAddressInfra,

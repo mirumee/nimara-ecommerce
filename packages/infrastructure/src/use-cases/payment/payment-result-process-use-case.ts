@@ -4,7 +4,7 @@ import type {
   PaymentProcessUseCase,
   PaymentResultProcessInfra,
   TransactionProcessInfra,
-} from "#root/public/stripe/payment/types";
+} from "../../payment/types.ts";
 
 export const paymentResultProcessUseCase =
   ({

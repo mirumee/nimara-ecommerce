@@ -1,9 +1,9 @@
 import { err, ok } from "@nimara/domain/objects/Result";
 
+import { addressToInput } from "#root/address/helpers";
 import { graphqlClient } from "#root/graphql/client";
-import { addressToInput } from "#root/public/saleor/address/helpers";
-import { handleMutationErrors } from "#root/public/saleor/error";
 
+import { handleMutationErrors } from "../../../error";
 import type {
   CheckoutBillingAddressUpdateInfra,
   SaleorCheckoutServiceConfig,

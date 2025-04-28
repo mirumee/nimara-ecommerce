@@ -1,4 +1,4 @@
-import { saleorSearchService } from "@nimara/infrastructure/public/saleor/search/providers";
+import { saleorSearchService } from "@nimara/infrastructure/search/providers";
 import type { SearchService } from "@nimara/infrastructure/use-cases/search/types";
 
 import { clientEnvs } from "@/envs/client";

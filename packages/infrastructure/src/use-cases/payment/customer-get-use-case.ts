@@ -1,13 +1,14 @@
 import { err, ok } from "@nimara/domain/objects/Result";
 
 import { type Logger } from "#root/logging/types";
+
 import type {
   CustomerFromGatewayGetInfra,
   CustomerFromSaleorGetInfra,
   CustomerGetUseCase,
   CustomerInGatewayCreateInfra,
   CustomerInSaleorSaveInfra,
-} from "#root/public/stripe/payment/types";
+} from "../../payment/types.ts";
 
 export const customerGetUseCase =
   ({

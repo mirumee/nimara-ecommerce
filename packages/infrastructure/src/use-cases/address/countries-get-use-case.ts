@@ -1,7 +1,7 @@
 import type {
   CountriesGetInfra,
   CountriesGetUseCase,
-} from "#root/public/saleor/address/types";
+} from "#root/address/types";
 
 export const countriesGetUseCase = ({
   countriesGetInfra,
