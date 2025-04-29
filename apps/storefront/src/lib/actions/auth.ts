@@ -7,7 +7,7 @@ import { saleorAuthClient } from "@nimara/infrastructure/public/saleor/auth/clie
 import { COOKIE_KEY } from "@/config";
 
 export async function handleLogout() {
-  saleorAuthClient().signOut();
+  (await saleorAuthClient()).signOut();
   const cookieStore = await cookies();
 
   cookieStore.delete(COOKIE_KEY.accessToken);

@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { paths } from "@/lib/paths";
-import { getStoreUrl } from "@/lib/server";
+import { getStoreUrl, getStoreUrlWithPath } from "@/lib/server";
 import { authService } from "@/services";
 
 export const requestPasswordResetAction = async ({
@@ -13,14 +13,13 @@ export const requestPasswordResetAction = async ({
   channel: string;
   email: string;
 }) => {
-  const storeUrl = await getStoreUrl();
   const response = await authService.requestPasswordReset({
     channel,
     email,
-    redirectUrl: new URL(
+    redirectUrl: getStoreUrlWithPath(
+      await getStoreUrl(),
       paths.confirmAccountRegistration.asPath(),
-      storeUrl,
-    ).toString(),
+    ),
   });
 
   revalidatePath(paths.resetPassword.asPath());

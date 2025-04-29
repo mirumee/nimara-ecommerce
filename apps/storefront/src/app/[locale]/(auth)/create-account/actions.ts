@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { paths } from "@/lib/paths";
-import { getStoreUrl } from "@/lib/server";
+import { getStoreUrl, getStoreUrlWithPath } from "@/lib/server";
 import { getCurrentRegion } from "@/regions/server";
 import { authService } from "@/services";
 
@@ -21,10 +21,10 @@ export async function registerAccount(values: FormSchema) {
     password,
     channel: region?.market?.channel,
     languageCode: region?.language?.code,
-    redirectUrl: new URL(
-      paths.confirmAccountRegistration.asPath(),
+    redirectUrl: getStoreUrlWithPath(
       await getStoreUrl(),
-    ).toString(),
+      paths.confirmAccountRegistration.asPath(),
+    ),
   });
 
   if (result.ok) {
