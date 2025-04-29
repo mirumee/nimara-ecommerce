@@ -17,16 +17,16 @@ export const paymentResultProcessUseCase =
   async ({ checkout, searchParams }) => {
     const resultPaymentProcess = await paymentResultProcess({ checkout });
 
-    if (resultPaymentProcess.ok) {
-      if (resultPaymentProcess.data.isCheckoutPaid) {
-        return ok({ success: true });
-      }
-
+    if (!resultPaymentProcess.ok) {
       return err([
         {
           code: "CHECKOUT_NOT_PAID_ERROR",
         },
       ]);
+    }
+
+    if (resultPaymentProcess.data.isCheckoutPaid) {
+      return ok({ success: true });
     }
 
     return transactionProcess({ searchParams });

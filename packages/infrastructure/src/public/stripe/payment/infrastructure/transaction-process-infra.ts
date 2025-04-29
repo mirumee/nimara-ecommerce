@@ -52,7 +52,7 @@ export const transactionProcessInfra =
 
       const eventType = transactionEvent?.type;
 
-      if (eventType) {
+      if (transactionEvent) {
         if (isTransactionFailed(eventType)) {
           logger.error("Transaction process failed", {
             eventType: eventType,
@@ -65,20 +65,9 @@ export const transactionProcessInfra =
           ]);
         }
 
-        if (isTransactionSuccessful(eventType)) {
-          return ok({ success: true });
-        }
-
-        logger.error("Transaction process returned unknown event", {
-          eventType: eventType,
-          transactionId,
+        return ok({
+          success: isTransactionSuccessful(eventType),
         });
-
-        return err([
-          {
-            code: "TRANSACTION_PROCESS_ERROR",
-          },
-        ]);
       }
     }
 
