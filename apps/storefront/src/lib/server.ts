@@ -24,3 +24,11 @@ export const getStoreLocale = async (): Promise<string> => {
 
   return localePrefixes[locale as Exclude<Locale, typeof DEFAULT_LOCALE>];
 };
+
+// builds a full URL by joining a relative path to the store base URL avoiding incorrect slash handling.
+export const getStoreUrlWithPath = (base: string, path: string): string => {
+  const normalizedBase = base.replace(/\/$/, "") + "/";
+  const normalizedPath = path.replace(/^\//, "");
+
+  return new URL(normalizedPath, normalizedBase).toString();
+};

@@ -7,7 +7,7 @@ import { err } from "@nimara/domain/objects/Result";
 
 import { auth, getAccessToken, update } from "@/auth";
 import { paths } from "@/lib/paths";
-import { getStoreUrl } from "@/lib/server";
+import { getStoreUrl, getStoreUrlWithPath } from "@/lib/server";
 import { getCurrentRegion } from "@/regions/server";
 import { userService } from "@/services";
 
@@ -83,7 +83,10 @@ export async function updateUserEmail({
     channel: region.market.channel,
     newEmail: email,
     password,
-    redirectUrl: `${await getStoreUrl()}${paths.confirmNewEmail.asPath()}`,
+    redirectUrl: getStoreUrlWithPath(
+      await getStoreUrl(),
+      paths.confirmNewEmail.asPath(),
+    ),
   });
 
   if (result.ok) {
