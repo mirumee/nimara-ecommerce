@@ -75,7 +75,7 @@ export type ClientInitializeInfra = () => Promise<void>;
 export type PaymentProcessUseCase = (opts: {
   checkout: Checkout;
   searchParams: Record<string, string>;
-}) => AsyncResult<{ success: true }>;
+}) => AsyncResult<{ success: boolean }>;
 
 export type PaymentResultProcessInfra = (opts: {
   checkout: Checkout;
@@ -83,7 +83,7 @@ export type PaymentResultProcessInfra = (opts: {
 
 export type TransactionProcessInfra = (opts: {
   searchParams: Record<string, string>;
-}) => AsyncResult<{ success: true }>;
+}) => AsyncResult<{ success: boolean }>;
 
 export type BillingDetails = Partial<{
   country: string;
