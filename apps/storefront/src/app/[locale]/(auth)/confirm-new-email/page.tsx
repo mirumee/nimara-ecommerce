@@ -31,11 +31,11 @@ export default async function ConfirmEmailChangePage(props: {
     }
 
     if (result.errors) {
-      if (
-        result.errors.some(
-          (error) => error.code === "EMAIL_CHANGE_CONFIRMATION_ERROR",
-        )
-      ) {
+      const isEmailChangeConfirmationError = result.errors.some(
+        (error) => error.code === "EMAIL_CHANGE_CONFIRMATION_ERROR",
+      );
+
+      if (isEmailChangeConfirmationError) {
         return t("errors.EMAIL_CHANGE_CONFIRMATION_ERROR");
       }
 
