@@ -34,17 +34,23 @@ export const config = {
           credentials,
         );
 
-        const { data } = await saleorAuthClient().signIn({
-          email,
-          password,
-        });
+        const { data } = await (
+          await saleorAuthClient()
+        ).signIn({ email, password });
 
         if (data?.tokenCreate?.errors.length) {
           return null;
         }
 
-        await setAccessToken(data.tokenCreate.token!);
-        await setRefreshToken(data.tokenCreate.refreshToken!);
+        const token = data.tokenCreate.token;
+        const refreshToken = data.tokenCreate.refreshToken;
+
+        if (!token || !refreshToken) {
+          return null;
+        }
+
+        await setAccessToken(token);
+        await setRefreshToken(refreshToken);
 
         const resultUserGet = await userService.userGet(data.tokenCreate.token);
 

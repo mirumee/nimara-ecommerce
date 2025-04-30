@@ -1,9 +1,9 @@
 import { createSaleorAuthClient } from "@saleor/auth-sdk";
-import { getNextServerCookiesStorage } from "@saleor/auth-sdk/next/server";
+import { getNextServerCookiesStorageAsync } from "@saleor/auth-sdk/next/server";
 import { invariant } from "graphql/jsutils/invariant";
 
-export const saleorAuthClient = () => {
-  const nextServerCookiesStorage = getNextServerCookiesStorage();
+export const saleorAuthClient = async () => {
+  const nextServerCookiesStorage = await getNextServerCookiesStorageAsync();
   const saleorApiUrl = process.env.NEXT_PUBLIC_SALEOR_API_URL || "";
 
   invariant(
