@@ -1,7 +1,7 @@
 import {
   type GetCollectionDetailsInfra,
   type GetCollectionDetailsUseCase,
-} from "#root/public/saleor/collection/types";
+} from "#root/collection/types";
 
 export const getCollectionDetailsUseCase = ({
   getCollectionDetailsInfra,

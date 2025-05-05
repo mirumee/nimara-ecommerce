@@ -1,8 +1,8 @@
 import { err, ok } from "@nimara/domain/objects/Result";
 
 import { graphqlClient } from "#root/graphql/client";
-import { handleMutationErrors } from "#root/public/saleor/error";
 
+import { handleMutationErrors } from "../../../error";
 import type {
   CheckoutAddPromoCodeInfra,
   SaleorCheckoutServiceConfig,

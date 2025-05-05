@@ -1,7 +1,7 @@
 import type {
   TokenRefreshInfra,
   TokenRefreshUseCase,
-} from "#root/public/saleor/auth/types";
+} from "../../auth/types.ts";
 
 export const tokenRefreshUseCase = ({
   tokenRefreshInfra,

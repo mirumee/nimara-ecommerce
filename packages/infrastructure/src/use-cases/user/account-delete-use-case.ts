@@ -1,7 +1,7 @@
 import type {
   AccountDeleteInfra,
   AccountDeleteUseCase,
-} from "#root/public/saleor/user/types";
+} from "#root/user/types";
 
 export const accountDeleteUseCase = ({
   accountDeleteInfra,

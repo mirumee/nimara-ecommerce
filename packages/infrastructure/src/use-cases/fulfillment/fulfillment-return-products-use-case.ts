@@ -2,7 +2,7 @@ import type {
   FulfillmentReturnProductsInfra,
   FulfillmentReturnProductsOptions,
   FulfillmentReturnProductsUseCase,
-} from "#root/public/saleor/fulfillment/types";
+} from "#root/fulfillment/types";
 
 export const fulfillmentReturnProductsUseCase =
   ({

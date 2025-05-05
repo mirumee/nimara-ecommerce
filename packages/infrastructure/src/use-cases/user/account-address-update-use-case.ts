@@ -1,7 +1,7 @@
 import type {
   AccountAddressUpdateInfra,
   AccountAddressUpdateUseCase,
-} from "#root/public/saleor/user/types";
+} from "#root/user/types";
 
 export const accountAddressUpdateUseCase = ({
   accountAddressUpdateInfra,

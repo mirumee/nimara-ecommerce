@@ -1,7 +1,4 @@
-import type {
-  UserGetInfra,
-  UserGetUseCase,
-} from "#root/public/saleor/user/types";
+import type { UserGetInfra, UserGetUseCase } from "#root/user/types";
 
 export const userGetUseCase = ({
   userGetInfra,

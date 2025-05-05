@@ -1,7 +1,7 @@
 import type {
   RequestPasswordResetInfra,
   RequestPasswordResetUseCase,
-} from "#root/public/saleor/auth/types";
+} from "../../auth/types.ts";
 
 export const requestPasswordResetUseCase = ({
   requestPasswordResetInfra,

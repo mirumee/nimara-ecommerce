@@ -1,7 +1,7 @@
 import type {
   PaymentExecuteInfra,
   PaymentExecuteUseCase,
-} from "#root/public/stripe/payment/types";
+} from "../../payment/types.ts";
 
 export const paymentExecuteUseCase =
   ({

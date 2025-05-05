@@ -1,7 +1,7 @@
 import type {
   ConfirmEmailChangeInfra,
   ConfirmEmailChangeUseCase,
-} from "#root/public/saleor/user/types";
+} from "#root/user/types";
 
 export const confirmEmailChangeUseCase = ({
   confirmEmailChangeInfra,

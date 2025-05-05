@@ -1,15 +1,15 @@
 import * as Sentry from "@sentry/nextjs";
 
+import { saleorAddressService } from "@nimara/infrastructure/address/index";
+import { saleorAuthService } from "@nimara/infrastructure/auth/index";
 import { saleorCartService } from "@nimara/infrastructure/cart/index";
 import { saleorCheckoutService } from "@nimara/infrastructure/checkout/service";
+import { saleorCollectionService } from "@nimara/infrastructure/collection/index";
 import type { ErrorService } from "@nimara/infrastructure/error/service";
-import { saleorAddressService } from "@nimara/infrastructure/public/saleor/address/index";
-import { saleorAuthService } from "@nimara/infrastructure/public/saleor/auth/index";
-import { saleorCollectionService } from "@nimara/infrastructure/public/saleor/collection/index";
-import { saleorFulfillmentService } from "@nimara/infrastructure/public/saleor/fulfillment/service";
-import { saleorStoreService } from "@nimara/infrastructure/public/saleor/store/index";
-import { saleorUserService } from "@nimara/infrastructure/public/saleor/user/index";
-import { stripePaymentService } from "@nimara/infrastructure/public/stripe/payment/index";
+import { saleorFulfillmentService } from "@nimara/infrastructure/fulfillment/service";
+import { stripePaymentService } from "@nimara/infrastructure/payment/providers";
+import { saleorStoreService } from "@nimara/infrastructure/store/index";
+import { saleorUserService } from "@nimara/infrastructure/user/index";
 
 import { clientEnvs } from "@/envs/client";
 import { serverEnvs } from "@/envs/server";

@@ -9,7 +9,7 @@ import type {
 import type {
   MenuGet_menu_Menu_items_MenuItem,
   MenuGet_menu_Menu_items_MenuItem_children_MenuItem,
-} from "#root/public/saleor/cms-menu/graphql/queries/generated";
+} from "../../cms-menu/saleor/graphql/queries/generated.ts";
 
 const createMenuItemUrl = (
   category?: { slug: string } | null,

@@ -1,7 +1,7 @@
 import type {
   PasswordChangeInfra,
   PasswordChangeUseCase,
-} from "#root/public/saleor/user/types";
+} from "#root/user/types";
 
 export const passwordChangeUseCase = ({
   passwordChangeInfra,

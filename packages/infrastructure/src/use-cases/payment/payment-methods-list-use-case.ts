@@ -1,7 +1,7 @@
 import type {
   CustomerPaymentMethodsListUseCase,
   PaymentMethodsListInfra,
-} from "#root/public/stripe/payment/types";
+} from "../../payment/types.ts";
 
 export const customerPaymentMethodsListUseCase =
   ({

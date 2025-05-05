@@ -11,7 +11,7 @@ const isSaleorCMS = clientEnvs.CMS_SERVICE === "saleor";
 const getCMSPageService = async (): Promise<CMSPageService> => {
   if (isSaleorCMS) {
     const { saleorCMSPageService } = await import(
-      "@nimara/infrastructure/public/saleor/cms-page/providers"
+      "@nimara/infrastructure/cms-page/providers"
     );
 
     return saleorCMSPageService({
@@ -25,7 +25,7 @@ const getCMSPageService = async (): Promise<CMSPageService> => {
     );
 
     const { butterCMSPageService } = await import(
-      "@nimara/infrastructure/public/butter-cms/cms-page/providers"
+      "@nimara/infrastructure/cms-page/providers"
     );
 
     return butterCMSPageService({
@@ -38,7 +38,7 @@ const getCMSPageService = async (): Promise<CMSPageService> => {
 const getCMSMenuService = async (): Promise<CMSMenuService> => {
   if (isSaleorCMS) {
     const { saleorCMSMenuService } = await import(
-      "@nimara/infrastructure/public/saleor/cms-menu/providers"
+      "@nimara/infrastructure/cms-menu/providers"
     );
 
     return saleorCMSMenuService({
@@ -52,7 +52,7 @@ const getCMSMenuService = async (): Promise<CMSMenuService> => {
     );
 
     const { butterCMSMenuService } = await import(
-      "@nimara/infrastructure/public/butter-cms/cms-menu/providers"
+      "@nimara/infrastructure/cms-menu/providers"
     );
 
     return butterCMSMenuService({
