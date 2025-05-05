@@ -31,6 +31,14 @@ export default async function ConfirmEmailChangePage(props: {
     }
 
     if (result.errors) {
+      const isEmailChangeConfirmationError = result.errors.some(
+        (error) => error.code === "EMAIL_CHANGE_CONFIRMATION_ERROR",
+      );
+
+      if (isEmailChangeConfirmationError) {
+        return t("errors.EMAIL_CHANGE_CONFIRMATION_ERROR");
+      }
+
       return t("auth.too-much-time-has-passed");
     }
   }
