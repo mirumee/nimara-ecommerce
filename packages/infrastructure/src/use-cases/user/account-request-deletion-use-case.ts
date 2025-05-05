@@ -1,7 +1,7 @@
 import type {
   AccountRequestDeletionInfra,
   AccountRequestDeletionUseCase,
-} from "#root/public/saleor/user/types";
+} from "#root/user/types";
 
 export const accountRequestDeletionUseCase = ({
   accountRequestDeletionInfra,

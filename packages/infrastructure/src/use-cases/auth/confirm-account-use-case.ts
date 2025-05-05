@@ -1,7 +1,7 @@
 import type {
   ConfirmAccountInfra,
   ConfirmAccountUseCase,
-} from "#root/public/saleor/auth/types";
+} from "../../auth/types.ts";
 
 export const confirmAccountUseCase = ({
   confirmAccountInfra,

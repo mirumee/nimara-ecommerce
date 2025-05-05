@@ -1,7 +1,7 @@
 import type {
   AccountRegisterInfra,
   AccountRegisterUseCase,
-} from "#root/public/saleor/auth/types";
+} from "../../auth/types.ts";
 
 export const accountRegisterUseCase = ({
   accountRegisterInfra,

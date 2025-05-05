@@ -1,7 +1,7 @@
 import type {
   PaymentGatewayInitializeInfra,
   PaymentGatewayInitializeUseCase,
-} from "#root/public/stripe/payment/types";
+} from "../../payment/types.ts";
 
 export const paymentGatewayInitializeUseCase =
   ({

@@ -4,8 +4,7 @@ import type {
   PageField,
 } from "@nimara/domain/objects/CMSPage";
 
-import type { SelectionAttributeFragment } from "#root/public/saleor/store/graphql/fragments/generated";
-
+import type { SelectionAttributeFragment } from "../../store/saleor/graphql/fragments/generated.ts";
 import { getTranslation } from "../saleor";
 
 const convertToDashedString = (input: string): string => {

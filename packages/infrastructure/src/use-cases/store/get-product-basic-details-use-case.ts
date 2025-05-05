@@ -1,7 +1,7 @@
 import type {
   GetProductBaseInfra,
   GetProductBaseUseCase,
-} from "#root/public/saleor/store/types";
+} from "#root/store/types";
 
 export const getProductBaseUseCase = ({
   getProductBaseInfra,

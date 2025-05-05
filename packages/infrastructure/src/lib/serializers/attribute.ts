@@ -2,8 +2,7 @@ import type { DeepNonNullable, DeepRequired } from "ts-essentials";
 
 import type { Attribute } from "@nimara/domain/objects/Attribute";
 
-import type { SelectionAttributeFragment } from "#root/public/saleor/store/graphql/fragments/generated";
-
+import type { SelectionAttributeFragment } from "../../store/saleor/graphql/fragments/generated.ts";
 import { getTranslation } from "../saleor";
 
 export const parseAttributeData = (

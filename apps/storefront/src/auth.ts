@@ -3,7 +3,7 @@ import NextAuth, { type NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { getTranslations } from "next-intl/server";
 
-import { saleorAuthClient } from "@nimara/infrastructure/public/saleor/auth/client";
+import { saleorAuthClient } from "@nimara/infrastructure/auth/client";
 
 import { formSchema } from "@/app/[locale]/(auth)/sign-in/schema";
 import { userService } from "@/services";

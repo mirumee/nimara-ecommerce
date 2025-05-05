@@ -1,7 +1,7 @@
 import type {
   AccountAddressCreateInfra,
   AccountAddressCreateUseCase,
-} from "#root/public/saleor/user/types";
+} from "#root/user/types";
 
 export const accountAddressCreateUseCase = ({
   accountAddressCreateInfra,
