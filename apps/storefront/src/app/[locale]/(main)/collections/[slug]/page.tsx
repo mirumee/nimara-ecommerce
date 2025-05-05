@@ -6,6 +6,7 @@ import { RichText } from "@nimara/ui/components/rich-text/rich-text";
 import { editorJSDataToString } from "@nimara/ui/lib/richText";
 
 import { CACHE_TTL, DEFAULT_RESULTS_PER_PAGE } from "@/config";
+import { clientEnvs } from "@/envs/client";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { collectionService } from "@/services";
@@ -28,6 +29,8 @@ export async function generateMetadata(props: { params: Params }) {
   const params = props.params;
 
   const { slug } = await params;
+  const url = new URL(paths.collections.asPath({ slug }), clientEnvs.BASE_URL);
+  const canonicalUrl = url.toString();
   const region = await getCurrentRegion();
 
   const getCollectionResult = await collectionService.getCollectionDetails({
@@ -53,6 +56,9 @@ export async function generateMetadata(props: { params: Params }) {
       collection?.seoDescription || parsedDescription.length
         ? parsedDescription.slice(0, 200)
         : collection?.name,
+    alternates: {
+      canonical: canonicalUrl,
+    },
   };
 }
 

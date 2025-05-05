@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import type { SearchContext } from "@nimara/infrastructure/use-cases/search/types";
 
 import { DEFAULT_RESULTS_PER_PAGE, DEFAULT_SORT_BY } from "@/config";
+import { clientEnvs } from "@/envs/client";
 import { JsonLd, mappedSearchProductsToJsonLd } from "@/lib/json-ld";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
@@ -27,6 +28,8 @@ type SearchParams = Promise<{
 
 export async function generateMetadata(props: { searchParams: SearchParams }) {
   const searchParams = await props.searchParams;
+  const url = new URL(paths.search.asPath(), clientEnvs.BASE_URL);
+  const canonicalUrl = url.toString();
 
   const t = await getTranslations("search");
 
@@ -43,6 +46,9 @@ export async function generateMetadata(props: { searchParams: SearchParams }) {
           alt: t("search-preview"),
         },
       ],
+    },
+    alternates: {
+      canonical: canonicalUrl,
     },
   };
 }
@@ -104,11 +110,11 @@ export default async function Page(props: { searchParams: SearchParams }) {
     if (headerKey) {
       return (headerKey[0].toUpperCase() + headerKey.slice(1)).replaceAll(
         "-",
-        " & ",
+        " ",
       );
     }
 
-    return null;
+    return t("search-results");
   };
 
   const products = resultSearch.ok ? resultSearch.data.results : [];
