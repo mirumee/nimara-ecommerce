@@ -29,6 +29,8 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
 
   return (
     <NavigationMenu
+      role="navigation"
+      aria-label="Main navigation"
       onValueChange={setCurrentMenuItem}
       value={currentMenuItem}
       className="mx-auto hidden max-w-screen-xl pb-2 pt-2 md:flex"

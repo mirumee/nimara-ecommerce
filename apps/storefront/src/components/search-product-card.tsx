@@ -48,36 +48,40 @@ export const SearchProductCard = ({
   const formatter = useLocalizedFormatter();
 
   return (
-    <Link
-      className="row-span-3 grid gap-2"
-      title={t(`search.go-to-product`, { name })}
-      href={paths.products.asPath({
-        slug: slug,
-      })}
-    >
-      {thumbnail ? (
-        <ProductThumbnail
-          alt={`Image of ${name}`}
-          aria-hidden={true}
-          aria-label={name}
-          src={thumbnail?.url ?? productPlaceholder}
-          sizes={
-            sizes ??
-            "(max-width: 720px) 100vw, (max-width: 1024px) 50vw, (max-width: 1294px) 33vw, 25vw"
-          }
-        />
-      ) : (
-        <div className="bg-accent flex aspect-square justify-center overflow-hidden">
-          <ProductImagePlaceholder className="min-w-full object-cover object-top" />
-        </div>
-      )}
+    <article className="row-span-3">
+      <Link
+        className="grid gap-2"
+        title={t(`search.go-to-product`, { name })}
+        href={paths.products.asPath({
+          slug: slug,
+        })}
+      >
+        {thumbnail ? (
+          <ProductThumbnail
+            alt={`Image of ${name}`}
+            aria-hidden={true}
+            aria-label={name}
+            src={thumbnail?.url ?? productPlaceholder}
+            sizes={
+              sizes ??
+              "(max-width: 720px) 100vw, (max-width: 1024px) 50vw, (max-width: 1294px) 33vw, 25vw"
+            }
+          />
+        ) : (
+          <div className="bg-accent flex aspect-square justify-center overflow-hidden">
+            <ProductImagePlaceholder className="min-w-full object-cover object-top" />
+          </div>
+        )}
 
-      <div>
-        <ProductName>{name}</ProductName>
-        <ProductPrice>
-          {price === 0 ? t("common.free") : formatter.price({ amount: price })}
-        </ProductPrice>
-      </div>
-    </Link>
+        <div>
+          <ProductName>{name}</ProductName>
+          <ProductPrice>
+            {price === 0
+              ? t("common.free")
+              : formatter.price({ amount: price })}
+          </ProductPrice>
+        </div>
+      </Link>
+    </article>
   );
 };
