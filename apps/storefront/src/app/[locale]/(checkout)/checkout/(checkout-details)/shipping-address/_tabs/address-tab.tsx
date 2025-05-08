@@ -53,7 +53,6 @@ export function AddressTab({
     setActiveTab(value as TabName);
 
     if (value === "new") {
-      console.log("new");
       router.replace(paths.checkout.shippingAddress.asPath(), {
         scroll: false,
       });
