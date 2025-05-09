@@ -269,7 +269,7 @@
     "INPUT_ERROR": "Input error.",
     "INSUFFICIENT_STOCK_ERROR": "Insufficient stock.",
     "INVALID_VALUE_ERROR": "Invalid value.",
-    "JWT_INVALID_TOKEN_ERROR": "Invalid token value",
+    "JWT_INVALID_TOKEN_ERROR": "Your session has expired or is invalid. Please log in again.",
     "JWT_SIGNATURE_EXPIRED_ERROR": "Too much time has passed to change your email. Please try again or contact our support team for assistance.",
     "MISSING_ADDRESS_DATA_ERROR": "No address data returned.",
     "NOT_AVAILABLE_ERROR": "Product not available",

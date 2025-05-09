@@ -1,33 +1,11 @@
-import { getLocale } from "next-intl/server";
-
-import { getAccessToken } from "@/auth";
-import { redirect } from "@/i18n/routing";
-import { paths } from "@/lib/paths";
-import { getCurrentRegion } from "@/regions/server";
-import { userService } from "@/services";
+import { confirmEmailChangeAction } from "./actions";
 
 export default async function ConfirmEmailChangePage(props: {
   searchParams?: Promise<Record<string, string>>;
 }) {
-  const [searchParams, region, accessToken, locale] = await Promise.all([
-    props.searchParams,
-    getCurrentRegion(),
-    getAccessToken(),
-    getLocale(),
-  ]);
-  const token = searchParams?.token ?? "";
+  const searchParams = await props.searchParams;
 
-  if (!accessToken) {
-    redirect({ href: paths.signIn.asPath(), locale });
-  }
+  await confirmEmailChangeAction(searchParams ?? {});
 
-  const result = await userService.confirmEmailChange({
-    accessToken,
-    channel: region.market.channel,
-    token,
-  });
-
-  if (result.ok) {
-    redirect({ href: "/api/logout", locale });
-  }
+  return null;
 }

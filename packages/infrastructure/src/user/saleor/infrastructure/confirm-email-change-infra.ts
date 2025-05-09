@@ -33,7 +33,7 @@ export const saleorConfirmEmailChangeInfra =
         error: result.data.confirmEmailChange.errors,
       });
 
-      handleMutationErrors(result.data?.confirmEmailChange?.errors);
+      return err(handleMutationErrors(result.data.confirmEmailChange.errors));
     }
 
     if (!result.data.confirmEmailChange?.user) {
