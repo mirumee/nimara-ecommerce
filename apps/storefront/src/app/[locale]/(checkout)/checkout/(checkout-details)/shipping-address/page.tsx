@@ -1,6 +1,6 @@
 import { getLocale } from "next-intl/server";
 
-import type { CountryCode } from "@nimara/codegen/schema";
+import type { CountryCode } from "@nimara/domain/consts";
 
 import { getAccessToken } from "@/auth";
 import { getCheckoutOrRedirect } from "@/lib/checkout";

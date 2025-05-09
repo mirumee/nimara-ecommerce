@@ -4,7 +4,8 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
-import { type CountryCode, type CountryDisplay } from "@nimara/codegen/schema";
+import type { CountryDisplay } from "@nimara/codegen/schema";
+import type { CountryCode } from "@nimara/domain/consts";
 import { type Address } from "@nimara/domain/objects/Address";
 import {
   type AddressFormRow,

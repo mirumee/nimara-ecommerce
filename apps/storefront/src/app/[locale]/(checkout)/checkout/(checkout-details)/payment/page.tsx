@@ -1,6 +1,6 @@
 import { getLocale } from "next-intl/server";
 
-import { type CountryCode } from "@nimara/codegen/schema";
+import type { CountryCode } from "@nimara/domain/consts";
 import { type AppErrorCode } from "@nimara/domain/objects/Error";
 import { type PaymentMethod } from "@nimara/domain/objects/Payment";
 

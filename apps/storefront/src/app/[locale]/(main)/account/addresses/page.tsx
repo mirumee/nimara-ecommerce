@@ -1,7 +1,7 @@
 import { PlusIcon } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
-import type { CountryCode } from "@nimara/codegen/schema";
+import type { CountryCode } from "@nimara/domain/consts";
 import type { Address } from "@nimara/domain/objects/Address";
 import { Button } from "@nimara/ui/components/button";
 
