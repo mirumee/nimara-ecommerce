@@ -1,4 +1,4 @@
-import { getLocale, getTranslations } from "next-intl/server";
+import { getLocale } from "next-intl/server";
 
 import { getAccessToken } from "@/auth";
 import { redirect } from "@/i18n/routing";
@@ -9,39 +9,25 @@ import { userService } from "@/services";
 export default async function ConfirmEmailChangePage(props: {
   searchParams?: Promise<Record<string, string>>;
 }) {
-  const searchParams = await props.searchParams;
-  const token = searchParams?.token ?? "";
-  const accessToken = await getAccessToken();
-  const locale = await getLocale();
-
-  const [region, t] = await Promise.all([
+  const [searchParams, region, accessToken, locale] = await Promise.all([
+    props.searchParams,
     getCurrentRegion(),
-    getTranslations(),
+    getAccessToken(),
+    getLocale(),
   ]);
+  const token = searchParams?.token ?? "";
 
-  if (accessToken) {
-    const result = await userService.confirmEmailChange({
-      accessToken,
-      channel: region.market.channel,
-      token,
-    });
-
-    if (result.ok) {
-      redirect({ href: paths.signIn.asPath(), locale });
-    }
-
-    if (result.errors) {
-      const isEmailChangeConfirmationError = result.errors.some(
-        (error) => error.code === "EMAIL_CHANGE_CONFIRMATION_ERROR",
-      );
-
-      if (isEmailChangeConfirmationError) {
-        return t("errors.EMAIL_CHANGE_CONFIRMATION_ERROR");
-      }
-
-      return t("auth.too-much-time-has-passed");
-    }
+  if (!accessToken) {
+    redirect({ href: paths.signIn.asPath(), locale });
   }
 
-  return null;
+  const result = await userService.confirmEmailChange({
+    accessToken,
+    channel: region.market.channel,
+    token,
+  });
+
+  if (result.ok) {
+    redirect({ href: "/api/logout", locale });
+  }
 }

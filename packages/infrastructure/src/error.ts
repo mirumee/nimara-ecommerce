@@ -24,6 +24,10 @@ export const mapSaleorErrorCode = (code: SaleorErrorCode): AppErrorCode => {
       return "HTTP_ERROR";
     case "INVALID":
       return "INVALID_VALUE_ERROR";
+    case "JWT_INVALID_TOKEN":
+      return "JWT_INVALID_TOKEN_ERROR";
+    case "JWT_SIGNATURE_EXPIRED":
+      return "JWT_SIGNATURE_EXPIRED_ERROR";
     case "NOT_FOUND":
       return "NOT_FOUND_ERROR";
     case "REQUIRED":

@@ -1,5 +1,6 @@
 import { err, ok } from "@nimara/domain/objects/Result";
 
+import { handleMutationErrors } from "#root/error";
 import { graphqlClient } from "#root/graphql/client";
 
 import type {
@@ -32,11 +33,7 @@ export const saleorConfirmEmailChangeInfra =
         error: result.data.confirmEmailChange.errors,
       });
 
-      return err([
-        {
-          code: "EMAIL_CHANGE_CONFIRMATION_ERROR",
-        },
-      ]);
+      handleMutationErrors(result.data?.confirmEmailChange?.errors);
     }
 
     if (!result.data.confirmEmailChange?.user) {
