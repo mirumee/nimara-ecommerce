@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import type { Menu } from "@nimara/domain/objects/Menu";
@@ -22,6 +23,7 @@ import type { Maybe } from "@/lib/types";
 export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
   // Close menu manually
   const [currentMenuItem, setCurrentMenuItem] = useState("");
+  const t = useTranslations("site");
 
   if (!menu || menu?.items?.length === 0) {
     return null;
@@ -29,8 +31,7 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
 
   return (
     <NavigationMenu
-      role="navigation"
-      aria-label="Main navigation"
+      aria-label={t("main-navigation")}
       onValueChange={setCurrentMenuItem}
       value={currentMenuItem}
       className="mx-auto hidden max-w-screen-xl pb-2 pt-2 md:flex"

@@ -58,7 +58,7 @@ export const SearchProductCard = ({
       >
         {thumbnail ? (
           <ProductThumbnail
-            alt={`Image of ${name}`}
+            alt={t("products.image-alt", { productName: name })}
             aria-hidden={true}
             aria-label={name}
             src={thumbnail?.url ?? productPlaceholder}
