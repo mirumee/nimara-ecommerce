@@ -3,7 +3,8 @@
     "title": "Homepage",
     "description": "Nimara is a flexible headless storefront built on Saleor. Quick to deploy, easy to integrate, with an intuitive UI for management and customization.",
     "homepage-preview": "Homepage preview",
-    "hero-banner-alt": "Nimara's hero banner"
+    "hero-banner-alt": "Nimara's hero banner",
+    "home": "Home"
   },
   "locale": {
     "region": "Region",
@@ -128,7 +129,8 @@
     "you-may-also-like": "You may also like",
     "check-out-the-product": "Check out the {productName} in our offer.",
     "discover-our-product": "Discover our product.",
-    "image-alt": "Image of {productName}"
+    "image-alt": "Image of {productName}",
+    "all-products": "All products"
   },
   "collections": {
     "associated-products": "Associated products"

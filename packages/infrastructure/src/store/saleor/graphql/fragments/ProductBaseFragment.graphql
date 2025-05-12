@@ -2,6 +2,9 @@ fragment ProductBaseFragment on Product {
   id
   name
   description
+  category {
+    slug
+  }
   translation(languageCode: $languageCode) {
     name
     description

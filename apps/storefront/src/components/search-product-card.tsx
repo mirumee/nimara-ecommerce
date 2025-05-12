@@ -10,6 +10,7 @@ import productPlaceholder from "@/assets/product_placeholder.svg?url";
 import { Link } from "@/i18n/routing";
 import { useLocalizedFormatter } from "@/lib/formatters/use-localized-formatter";
 import { paths } from "@/lib/paths";
+import { type PreviousPage } from "@/types";
 
 import { ProductImagePlaceholder } from "./product-image-placeholder";
 
@@ -36,14 +37,24 @@ export const ProductThumbnail = ({ alt, ...props }: ImageProps) => (
 );
 
 type Props = {
+  previousPage: PreviousPage;
   product: SearchProduct;
+  sourceSlug?: string;
 } & Pick<ImageProps, "height" | "width" | "sizes">;
 
 export const SearchProductCard = ({
   product: { slug, thumbnail, name, price },
+  previousPage,
+  sourceSlug,
   sizes,
 }: Props) => {
   const t = useTranslations();
+  const fromQuery =
+    previousPage === "search"
+      ? "search"
+      : sourceSlug
+        ? `${previousPage}:${sourceSlug}`
+        : undefined;
 
   const formatter = useLocalizedFormatter();
 
@@ -54,6 +65,7 @@ export const SearchProductCard = ({
         title={t(`search.go-to-product`, { name })}
         href={paths.products.asPath({
           slug: slug,
+          query: fromQuery ? { from: fromQuery } : undefined,
         })}
       >
         {thumbnail ? (
@@ -72,7 +84,6 @@ export const SearchProductCard = ({
             <ProductImagePlaceholder className="min-w-full object-cover object-top" />
           </div>
         )}
-
         <div>
           <ProductName>{name}</ProductName>
           <ProductPrice>
