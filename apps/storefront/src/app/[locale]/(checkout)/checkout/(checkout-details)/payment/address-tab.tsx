@@ -3,7 +3,8 @@
 import { useTranslations } from "next-intl";
 import { useFormContext } from "react-hook-form";
 
-import type { CountryCode, CountryDisplay } from "@nimara/codegen/schema";
+import type { CountryDisplay } from "@nimara/codegen/schema";
+import type { CountryCode } from "@nimara/domain/consts";
 import type { AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import { ADDRESS_CORE_FIELDS } from "@nimara/infrastructure/consts";
 import {

@@ -3,7 +3,8 @@
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
-import type { CountryCode, CountryDisplay } from "@nimara/codegen/schema";
+import type { CountryDisplay } from "@nimara/codegen/schema";
+import type { CountryCode } from "@nimara/domain/consts";
 import type { Address } from "@nimara/domain/objects/Address";
 import type { AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import type { Checkout } from "@nimara/domain/objects/Checkout";

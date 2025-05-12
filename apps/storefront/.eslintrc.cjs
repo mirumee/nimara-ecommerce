@@ -25,5 +25,22 @@ module.exports = {
         ],
       },
     },
+    {
+      files: ["src/**/*.{ts,tsx}"],
+      rules: {
+        "no-restricted-imports": [
+          "warn",
+          {
+            patterns: [
+              {
+                group: ["@nimara/codegen"],
+                message:
+                  "Importing from Saleor schema directly is forbidden. Use the domain layer instead. To avoid coupling.",
+              },
+            ],
+          },
+        ],
+      },
+    },
   ],
 };

@@ -6,7 +6,8 @@ import { useTranslations } from "next-intl";
 import { type ReactNode, useEffect, useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 
-import type { CountryCode, CountryDisplay } from "@nimara/codegen/schema";
+import type { CountryDisplay } from "@nimara/codegen/schema";
+import type { CountryCode } from "@nimara/domain/consts";
 import type { AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import type { Checkout } from "@nimara/domain/objects/Checkout";
 import { type AppErrorCode } from "@nimara/domain/objects/Error";
