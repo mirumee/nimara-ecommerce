@@ -57,7 +57,7 @@ export function AddressTab({
     (item) => item.address?.isDefaultBillingAddress,
   );
 
-  function handleTabChange(value: string) {
+  const handleTabChange = (value: string) => {
     setActiveTab(value as TabName);
 
     if (value === "new") {
@@ -82,7 +82,7 @@ export function AddressTab({
 
     setIsCountryChanging?.(true);
     router.push(paths.checkout.payment.asPath(), { scroll: false });
-  }
+  };
 
   function handleCountryChange(value: string) {
     const address = JSON.parse(value) as Schema["billingAddress"];
