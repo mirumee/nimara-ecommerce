@@ -17,6 +17,7 @@ import {
 import { useRouter } from "@/i18n/routing";
 import type { FormattedAddress } from "@/lib/checkout";
 import { paths } from "@/lib/paths";
+import { useCurrentRegion } from "@/regions/client";
 
 import { CreateShippingAddressForm } from "../_forms/create-form";
 import { UpdateShippingAddressForm } from "../_forms/update-form";
@@ -46,11 +47,30 @@ export function AddressTab({
   const [activeTab, setActiveTab] = useState<TabName>(
     addresses.length ? "saved" : "new",
   );
+  const region = useCurrentRegion();
 
-  function handleTabChange(value: string) {
+  const handleTabChange = (value: string) => {
     setActiveTab(value as TabName);
-    router.replace(paths.checkout.shippingAddress.asPath());
-  }
+
+    if (value === "new") {
+      router.replace(paths.checkout.shippingAddress.asPath(), {
+        scroll: false,
+      });
+    }
+
+    if (value === "saved") {
+      const country = addresses[0]?.address.country.code;
+
+      if (country) {
+        router.replace(
+          paths.checkout.shippingAddress.asPath({
+            query: { country },
+          }),
+          { scroll: false },
+        );
+      }
+    }
+  };
 
   return (
     <section className="space-y-8 pt-8">
@@ -106,7 +126,7 @@ export function AddressTab({
             <TabsContent value="new">
               <CreateShippingAddressForm
                 checkout={checkout}
-                countryCode={countryCode}
+                countryCode={region.market.countryCode}
                 countries={countries}
                 addressFormRows={addressFormRows}
                 shouldSaveForFuture={!!addresses.length}
