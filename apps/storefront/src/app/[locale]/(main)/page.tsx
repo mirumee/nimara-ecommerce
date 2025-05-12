@@ -67,7 +67,7 @@ export default async function Page() {
     <section className="grid w-full content-start">
       <HeroBanner fields={resultPage?.data?.fields} />
       <Suspense fallback={<ProductsGridSkeleton />}>
-        <ProductsGrid fields={resultPage?.data?.fields} />
+        <ProductsGrid fields={resultPage?.data?.fields} previousPage="home" />
       </Suspense>
       <div>
         <AccountNotifications user={user} />

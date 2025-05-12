@@ -2,13 +2,16 @@ import { clientEnvs } from "@/envs/client";
 import { getCurrentRegion } from "@/regions/server";
 import { storeService } from "@/services";
 import { storefrontLogger } from "@/services/logging";
+import { type PreviousPage } from "@/types";
 
 import { RelatedProducts } from "./related-products";
 
 export const RelatedProductsContainer = async ({
   params,
+  previousPage,
 }: {
   params: Promise<{ locale: string; slug: string }>;
+  previousPage: PreviousPage;
 }) => {
   const { slug } = await params;
 
@@ -35,5 +38,10 @@ export const RelatedProductsContainer = async ({
     return null;
   }
 
-  return <RelatedProducts products={result.data.products} />;
+  return (
+    <RelatedProducts
+      products={result.data.products}
+      previousPage={previousPage}
+    />
+  );
 };

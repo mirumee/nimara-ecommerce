@@ -9,6 +9,7 @@ import { getCurrentRegion } from "@/regions/server";
 import { cartService, storeService, userService } from "@/services";
 import { storefrontLogger } from "@/services/logging";
 
+import { ProductBreadcrumbs } from "./product-breadcrumbs";
 import { ProductDetails } from "./product-details";
 
 export const ProductDetailsContainer = async ({
@@ -66,6 +67,10 @@ export const ProductDetailsContainer = async ({
 
   return (
     <>
+      <ProductBreadcrumbs
+        productName={product.name}
+        categorySlug={product.categorySlug ? product.categorySlug : ""}
+      />
       <ProductDetails
         product={product}
         availability={availability}

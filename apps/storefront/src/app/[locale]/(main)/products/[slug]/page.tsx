@@ -66,7 +66,7 @@ export default function Page(props: {
         <ProductDetailsContainer params={props.params} />
       </Suspense>
       <Suspense fallback={<RelatedProductsSkeleton />}>
-        <RelatedProductsContainer params={props.params} />
+        <RelatedProductsContainer params={props.params} previousPage="search" />
       </Suspense>
     </div>
   );
