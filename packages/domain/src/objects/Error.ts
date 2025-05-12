@@ -111,6 +111,8 @@ const VALIDATION_ERROR_CODES = [
   "INVALID_VALUE_ERROR",
   "REQUIRED_ERROR",
   "INSUFFICIENT_STOCK_ERROR",
+  "JWT_INVALID_TOKEN_ERROR",
+  "JWT_SIGNATURE_EXPIRED_ERROR",
 ] as const satisfies ErrorCodeFormat[];
 
 export type ValidationErrorCode = (typeof VALIDATION_ERROR_CODES)[number];
