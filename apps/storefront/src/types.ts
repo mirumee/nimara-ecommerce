@@ -13,3 +13,5 @@ export type TranslationMessage<Namespace extends TranslationNamespace = never> =
   Parameters<GetTranslations<Namespace>>[0];
 
 export type ServerError = { code: string };
+
+export type PreviousPage = "search" | "category" | "collection" | "home";
