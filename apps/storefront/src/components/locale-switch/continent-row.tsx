@@ -3,9 +3,9 @@
 import { Button } from "@nimara/ui/components/button";
 import { Label } from "@nimara/ui/components/label";
 
-import { Link, localePrefixes } from "@/i18n/routing";
+import { Link, usePathname } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
-import { DEFAULT_LOCALE, type Locale, type Market } from "@/regions/types";
+import type { Locale, Market } from "@/regions/types";
 
 export function ContinentRow({
   currentLocale,
@@ -16,6 +16,8 @@ export function ContinentRow({
   markets: Market[];
   name: string;
 }) {
+  const pathname = usePathname();
+
   return (
     <>
       <Label className="border-bottom block border-b border-stone-200 py-6 text-2xl font-normal leading-8 md:py-10">
@@ -29,11 +31,8 @@ export function ContinentRow({
                 market.defaultLanguage.locale === currentLocale,
             })}
             key={market.id}
-            href={
-              market.defaultLanguage.locale === DEFAULT_LOCALE
-                ? "."
-                : localePrefixes[market.defaultLanguage.locale]
-            }
+            href={pathname}
+            locale={market.defaultLanguage.locale}
           >
             <Button
               variant="ghost"
