@@ -269,6 +269,8 @@
     "INPUT_ERROR": "Input error.",
     "INSUFFICIENT_STOCK_ERROR": "Insufficient stock.",
     "INVALID_VALUE_ERROR": "Invalid value.",
+    "JWT_INVALID_TOKEN_ERROR": "Your session has expired or is invalid. Please log in again.",
+    "JWT_SIGNATURE_EXPIRED_ERROR": "Too much time has passed to change your email. Please try again or contact our support team for assistance.",
     "MISSING_ADDRESS_DATA_ERROR": "No address data returned.",
     "NOT_AVAILABLE_ERROR": "Product not available",
     "NOT_FOUND_ERROR": "Not found",
@@ -341,8 +343,7 @@
     "by-creating-account": "By creating an account, you can track your orders more effectively and save your addresses and payment methods.",
     "or-continue-as-guest": "Or continue as a guest",
     "continue-as-guest": "Continue as a guest",
-    "you-wont-have-access": "You won't have access to your order history or any special deals we've got for you.",
-    "too-much-time-has-passed": "Too much time has passed to change your email. Please try again or contact our support team for assistance."
+    "you-wont-have-access": "You won't have access to your order history or any special deals we've got for you."
   },
   "account": {
     "hello": "Hello {username}",
