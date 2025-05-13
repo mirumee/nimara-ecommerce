@@ -74,8 +74,6 @@ export const CartDetails = ({
       options: { next: { tags: [`CHECKOUT:${cart.id}`] } },
     });
 
-    setIsProcessing(false);
-
     if (resultLinesDelete.ok) {
       await revalidateCart(cart.id);
       router.refresh();
@@ -86,6 +84,7 @@ export const CartDetails = ({
           variant: "destructive",
         });
       });
+      setIsProcessing(false);
     }
   };
 
