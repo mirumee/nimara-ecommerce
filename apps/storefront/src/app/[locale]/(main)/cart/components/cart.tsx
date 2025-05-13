@@ -1,4 +1,4 @@
-import { unstable_noStore } from "next/cache";
+import { connection } from "next/server";
 
 import { getAccessToken } from "@/auth";
 import { CACHE_TTL } from "@/config";
@@ -11,7 +11,7 @@ import { CartDetails } from "./cart-details";
 import { EmptyCart } from "./empty-cart";
 
 export const Cart = async ({ checkoutId }: { checkoutId: string }) => {
-  unstable_noStore();
+  await connection();
 
   const accessToken = await getAccessToken();
 
