@@ -65,7 +65,7 @@ export const Header = async () => {
       },
     });
 
-    checkoutLinesCount = resultCartGet.data?.lines.length ?? 0;
+    checkoutLinesCount = resultCartGet.data?.linesQuantityCount ?? 0;
   }
 
   return (
