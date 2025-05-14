@@ -58,6 +58,9 @@ export const ADDRESS_ERROR_CODES = [
   "ADDRESS_UPDATE_ERROR",
   "COUNTRIES_NOT_FOUND_ERROR",
   "MISSING_ADDRESS_DATA_ERROR",
+  "JWT_INVALID_TOKEN_ERROR",
+  "JWT_SIGNATURE_EXPIRED_ERROR",
+  "UNIQUE_ERROR",
 ] as const satisfies ErrorCodeFormat[];
 export type AddressErrorCode = (typeof ADDRESS_ERROR_CODES)[number];
 
@@ -111,8 +114,6 @@ const VALIDATION_ERROR_CODES = [
   "INVALID_VALUE_ERROR",
   "REQUIRED_ERROR",
   "INSUFFICIENT_STOCK_ERROR",
-  "JWT_INVALID_TOKEN_ERROR",
-  "JWT_SIGNATURE_EXPIRED_ERROR",
 ] as const satisfies ErrorCodeFormat[];
 
 export type ValidationErrorCode = (typeof VALIDATION_ERROR_CODES)[number];

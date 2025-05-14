@@ -290,6 +290,7 @@
     "TRANSACTION_INITIALIZE_ERROR": "Failed to initialize transaction.",
     "TRANSACTION_PROCESS_ERROR": "Transaction process failed.",
     "UNEXPECTED_HTTP_ERROR": "Unexpected error occurred.",
+    "UNIQUE_ERROR": "Email is used by other user.",
     "UNKNOWN_ERROR": "Unknown error occurred.",
     "auth": {
       "email": "Sorry, this email already exists.",
