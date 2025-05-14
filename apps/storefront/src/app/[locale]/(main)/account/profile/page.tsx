@@ -38,7 +38,7 @@ export default async function Page() {
           <p>{user?.email}</p>
         </div>
         <div className="col-span-4 flex justify-end sm:col-span-1">
-          <UpdateEmailModal />
+          <UpdateEmailModal user={user} />
         </div>
       </div>
       <hr />
