@@ -18,6 +18,7 @@ test.describe("Logged-in user checkout", () => {
   test("CHE-02001: Logged-in user completes checkout using saved shipping address and saved payment method", async ({
     checkoutPage,
   }) => {
+    console.log("inside checkout test"); // test commented to save time during investigation of the before each
     await checkoutPage.assertUserDetails(user, userEmail);
     await checkoutPage.assertPageSections("registered");
     await checkoutPage.useSavedShippingAddress();

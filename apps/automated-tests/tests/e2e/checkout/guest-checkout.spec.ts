@@ -18,6 +18,7 @@ test.describe("Guest checkout", () => {
   test("CHE-01001: Guest user completes checkout with credit card payment and same shipping/billing address", async ({
     checkoutPage,
   }) => {
+    console.log("inside guest checkout test"); // test commented to save time during investigation of the before each
     await checkoutPage.provideUserDetails(user.email);
     await checkoutPage.assertPageSections("guest");
     await checkoutPage.provideShippingAddress(user);

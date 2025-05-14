@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "test:e2e": "playwright test",
+    "test:e2e.run_many_times": "playwright test --repeat-each 15",
     "lint:staged": "lint-staged"
   },
   "devDependencies": {
