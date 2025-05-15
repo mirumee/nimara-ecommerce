@@ -56,7 +56,7 @@ const PasswordInput = ({ className, error, ...props }: InputProps) => {
       {!props.disabled && (
         <Button
           variant="ghost"
-          size="default"
+          size="icon"
           aria-label="Show/hide password"
           onClick={() => setType(type === "password" ? "text" : "password")}
           type="button"

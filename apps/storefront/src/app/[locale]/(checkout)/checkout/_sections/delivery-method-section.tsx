@@ -23,9 +23,11 @@ export const DeliveryMethodSection = async ({
         </p>
       </div>
       {checkout.deliveryMethod && (
-        <Link href={paths.checkout.deliveryMethod.asPath()}>
-          <Button variant="outline">{tc("edit")}</Button>
-        </Link>
+        <Button variant="outline" asChild>
+          <Link href={paths.checkout.deliveryMethod.asPath()}>
+            {tc("edit")}
+          </Link>
+        </Button>
       )}
     </section>
   );

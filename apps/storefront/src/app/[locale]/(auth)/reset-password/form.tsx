@@ -70,7 +70,7 @@ export function ResetPasswordForm() {
       ) : (
         <>
           <div className="flex items-center gap-4">
-            <Button asChild variant="outline" className="w-10 p-0">
+            <Button asChild variant="outline" className="w-10 p-0" size="icon">
               <Link href={paths.signIn.asPath()}>
                 <ArrowLeft className="h-4 w-4" />
               </Link>

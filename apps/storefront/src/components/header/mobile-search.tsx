@@ -28,7 +28,7 @@ export const MobileSearch = () => {
     <>
       <Button
         variant="ghost"
-        size="default"
+        size="icon"
         className="gap-1 md:hidden"
         aria-label={t("open-search")}
         onClick={() => setIsOpen(true)}

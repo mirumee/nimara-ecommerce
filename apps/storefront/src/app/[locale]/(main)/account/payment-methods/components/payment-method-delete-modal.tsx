@@ -15,7 +15,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@nimara/ui/components/dialog";
-import { Spinner } from "@nimara/ui/components/spinner";
 
 import { useRouter } from "@/i18n/routing";
 import { delay } from "@/lib/core";
@@ -95,14 +94,12 @@ export const PaymentMethodDeleteModal = ({
         />
 
         <div className="flex w-full justify-end gap-4">
-          <Button onClick={handleDelete} disabled={isProcessing}>
-            {isProcessing ? (
-              <span className="px-3">
-                <Spinner size={30} className="text-white" />
-              </span>
-            ) : (
-              t("common.delete")
-            )}
+          <Button
+            onClick={handleDelete}
+            disabled={isProcessing}
+            loading={isProcessing}
+          >
+            {t("common.delete")}
           </Button>
           <Button
             disabled={isProcessing}

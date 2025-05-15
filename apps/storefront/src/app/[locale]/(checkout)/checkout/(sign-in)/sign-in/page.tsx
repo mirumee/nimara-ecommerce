@@ -27,8 +27,15 @@ export default async function Page() {
           <p className="pb-2 pt-2 text-sm font-normal leading-5 text-stone-500">
             {t("by-creating-account")}
           </p>
-          <Button className="my-4 w-full" disabled={true} variant="outline">
-            {t("create-account")}
+          <Button
+            className="my-4 w-full"
+            disabled={true}
+            variant="outline"
+            asChild
+          >
+            <Link href={paths.createAccount.asPath()}>
+              {t("create-account")}
+            </Link>
           </Button>
         </div>
         <div>
@@ -38,11 +45,9 @@ export default async function Page() {
           <p className="pb-2 pt-2 text-sm font-normal leading-5 text-stone-500">
             {t("you-wont-have-access")}
           </p>
-          <Link href={paths.checkout.asPath()}>
-            <Button className="my-4 w-full" variant="outline">
-              {t("continue-as-guest")}
-            </Button>
-          </Link>
+          <Button className="my-4 w-full" variant="outline" asChild>
+            <Link href={paths.checkout.asPath()}>{t("continue-as-guest")}</Link>
+          </Button>
         </div>
       </div>
     </div>

@@ -112,9 +112,7 @@ export function UpdatePasswordForm({
             disabled={form.formState.isSubmitting}
             loading={form.formState.isSubmitting}
           >
-            {form.formState.isSubmitting
-              ? t("common.please-wait")
-              : t("common.save-changes")}
+            {t("common.save-changes")}
           </Button>
         </DialogFooter>
       </form>

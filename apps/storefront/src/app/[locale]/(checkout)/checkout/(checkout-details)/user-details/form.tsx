@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import type { Checkout } from "@nimara/domain/objects/Checkout";
+import { Button } from "@nimara/ui/components/button";
 
 import { useRouterWithState } from "@/lib/hooks";
 
@@ -61,17 +62,17 @@ export const UserDetailsForm = ({ checkout }: { checkout: Checkout }) => {
           <p>{t("checkout.sign-in-to-finalize-order")}</p>
           <UserPasswordForm userAccountEmail={userAccountEmail} />
           <div className="flex flex-col items-center">
-            <button
-              className="hover:underline"
+            <Button
+              variant="link"
               onClick={handleUpdateUserDetails}
               disabled={isRedirecting}
             >
               {t("auth.continue-as-guest")}
-            </button>
+            </Button>
             <span className="cursor-default">{t("common.or")}</span>
-            <button className="hover:underline" onClick={handleDifferentEmail}>
+            <Button variant="link" onClick={handleDifferentEmail}>
               {t("checkout.use-different-email")}
-            </button>
+            </Button>
           </div>
         </div>
       ) : (

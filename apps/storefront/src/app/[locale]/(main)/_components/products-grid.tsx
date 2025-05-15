@@ -95,12 +95,13 @@ export const ProductsGrid = async ({
             className="absolute bottom-4 right-4 p-3"
             variant="outline"
             asChild
+            size="icon"
           >
             <Link
               href={paths.search.asPath()}
               aria-label={t("search.all-products-link")}
             >
-              <ArrowRight className="h-4 w-5 pl-1" />
+              <ArrowRight />
             </Link>
           </Button>
         </div>
