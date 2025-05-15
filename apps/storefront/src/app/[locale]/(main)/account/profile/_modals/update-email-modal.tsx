@@ -19,7 +19,7 @@ export async function UpdateEmailModal({ user }: { user: User }) {
         <Button variant="outline">{t("common.edit")}</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
-        <UpdateEmailForm oldEmail={user?.email} />
+        <UpdateEmailForm oldEmail={user.email} />
       </DialogContent>
     </Dialog>
   );
