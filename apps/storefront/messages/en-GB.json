@@ -290,12 +290,14 @@
     "TRANSACTION_INITIALIZE_ERROR": "Failed to initialize transaction.",
     "TRANSACTION_PROCESS_ERROR": "Transaction process failed.",
     "UNEXPECTED_HTTP_ERROR": "Unexpected error occurred.",
+    "UNIQUE_ERROR": "Email is used by other user.",
     "UNKNOWN_ERROR": "Unknown error occurred.",
     "auth": {
       "email": "Sorry, this email already exists.",
       "newEmail": "Email is used by other user.",
       "password": "Password is invalid.",
-      "oldPassword": "Old password is invalid"
+      "oldPassword": "Old password is invalid",
+      "newEmailAddressMustBeDifferent": "The new email address must be different from your current one."
     },
     "account": {
       "deleteAccount": "There was an error while sending the email."
