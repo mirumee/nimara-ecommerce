@@ -10,21 +10,17 @@ import {
 
 import { UpdateEmailForm } from "../_forms/update-email-form";
 
-export async function UpdateEmailModal({ user }: { user: User | null }) {
+export async function UpdateEmailModal({ user }: { user: User }) {
   const t = await getTranslations();
 
   return (
-    <>
-      {user && (
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button variant="outline">{t("common.edit")}</Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <UpdateEmailForm oldEmail={user?.email} />
-          </DialogContent>
-        </Dialog>
-      )}
-    </>
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline">{t("common.edit")}</Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <UpdateEmailForm oldEmail={user?.email} />
+      </DialogContent>
+    </Dialog>
   );
 }
