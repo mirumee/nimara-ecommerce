@@ -1,5 +1,6 @@
 "use server";
 
+import { redirect as appRedirect } from "next/navigation";
 import { getLocale } from "next-intl/server";
 
 import { getAccessToken } from "@/auth";
@@ -29,7 +30,7 @@ export async function confirmEmailChangeAction(
   });
 
   if (result.ok) {
-    redirect({ href: "/api/logout", locale });
+    appRedirect("/api/logout");
   }
 
   return result;
