@@ -37,9 +37,11 @@ export default async function Page() {
           <h3 className="text-stone-500">{t("common.email")}</h3>
           <p>{user?.email}</p>
         </div>
-        <div className="col-span-4 flex justify-end sm:col-span-1">
-          <UpdateEmailModal />
-        </div>
+        {user && (
+          <div className="col-span-4 flex justify-end sm:col-span-1">
+            <UpdateEmailModal user={user} />
+          </div>
+        )}
       </div>
       <hr />
       <div className="grid grid-cols-12">

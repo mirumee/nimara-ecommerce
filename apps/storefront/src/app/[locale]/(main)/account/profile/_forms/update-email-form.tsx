@@ -20,7 +20,7 @@ import { CHANGE_EMAIL_TOKEN_VALIDITY_IN_HOURS } from "@/config";
 import { updateUserEmail } from "./actions";
 import { type UpdateEmailFormSchema, updateEmailFormSchema } from "./schema";
 
-export function UpdateEmailForm() {
+export function UpdateEmailForm({ oldEmail }: { oldEmail: string }) {
   const t = useTranslations();
   const [isEmailSent, setIsEmailSent] = useState(false);
 
@@ -35,6 +35,13 @@ export function UpdateEmailForm() {
   const isDisabled = form.formState.isSubmitting;
 
   async function handleSubmit(values: UpdateEmailFormSchema) {
+    if (oldEmail === values.email) {
+      form.setError("email", {
+        message: t("errors.auth.newEmailAddressMustBeDifferent"),
+      });
+
+      return;
+    }
     const result = await updateUserEmail(values);
 
     if (result.ok) {
