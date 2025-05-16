@@ -36,7 +36,7 @@ export async function generateMetadata(props: { searchParams: SearchParams }) {
   return {
     title: searchParams.q
       ? t("search-for", { query: searchParams.q })
-      : t("search-results"),
+      : t("all-products"),
     openGraph: {
       images: [
         {
@@ -114,7 +114,7 @@ export default async function Page(props: { searchParams: SearchParams }) {
       );
     }
 
-    return t("search-results");
+    return t("all-products");
   };
 
   const products = resultSearch.ok ? resultSearch.data.results : [];
