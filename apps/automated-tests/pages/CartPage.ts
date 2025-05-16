@@ -19,6 +19,13 @@ export class CartPage {
   }
 
   async goToCheckout() {
+    const isButtonVisible = await this.goToCheckoutButton.isVisible();
+
+    if (!isButtonVisible) {
+      await this.page.reload();
+      await this.page.waitForURL(URLS().CART_PAGE);
+    }
+
     await this.goToCheckoutButton.click();
     await this.page.waitForURL(URLS().CHECKOUT_PAGE_SIGN_IN);
   }
