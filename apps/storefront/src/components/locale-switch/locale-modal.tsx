@@ -39,7 +39,7 @@ export function LocaleSwitchModal({
           <Label className="text-lg font-semibold leading-7">
             {t("locale.region-settings")}
           </Label>
-          <Button variant="ghost" className="px-3 py-4" onClick={onClose}>
+          <Button variant="ghost" onClick={onClose} size="icon">
             <X className="size-4" />
           </Button>
         </div>

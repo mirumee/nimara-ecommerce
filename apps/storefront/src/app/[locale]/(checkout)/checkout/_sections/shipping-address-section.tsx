@@ -50,13 +50,15 @@ export async function ShippingAddressSection({
         </div>
       </div>
       {shippingAddress && (
-        <Link
-          href={paths.checkout.shippingAddress.asPath({
-            query: { country: shippingAddress.country.code },
-          })}
-        >
-          <Button variant="outline">{tc("edit")}</Button>
-        </Link>
+        <Button variant="outline" asChild>
+          <Link
+            href={paths.checkout.shippingAddress.asPath({
+              query: { country: shippingAddress.country.code },
+            })}
+          >
+            {tc("edit")}
+          </Link>
+        </Button>
       )}
     </section>
   );

@@ -15,7 +15,6 @@ import { clientEnvs } from "@/envs/client";
 import { Link } from "@/i18n/routing";
 import { revalidateCart, setCheckoutIdCookie } from "@/lib/actions/cart";
 import { paths } from "@/lib/paths";
-import { cn } from "@/lib/utils";
 import { useCurrentRegion } from "@/regions/client";
 import { cartService } from "@/services";
 import { storefrontLogger } from "@/services/logging";
@@ -130,20 +129,14 @@ export const AddToBag = ({
       onClick={isVariantAvailable ? handleProductAdd : handleNotifyMe}
       loading={isProcessing}
     >
-      <div
-        className={cn("inline-flex items-center", {
-          hidden: isProcessing,
-        })}
-      >
-        {isVariantAvailable ? (
-          <>
-            <PlusCircle className="mr-2 h-4" />
-            {t("common.add-to-bag")}
-          </>
-        ) : (
-          t("common.notify-me")
-        )}
-      </div>
+      {isVariantAvailable ? (
+        <>
+          <PlusCircle className="mr-2 h-4" />
+          {t("common.add-to-bag")}
+        </>
+      ) : (
+        t("common.notify-me")
+      )}
     </Button>
   );
 };

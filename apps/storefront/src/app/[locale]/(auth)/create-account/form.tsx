@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 
 import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
-import { Spinner } from "@nimara/ui/components/spinner";
 
 import { TextFormField } from "@/components/form/text-form-field";
 import { MIN_PASSWORD_LENGTH } from "@/config";
@@ -135,15 +134,9 @@ export function SignUpForm() {
           type="submit"
           form="create-account-form"
           disabled={isDisabled}
+          loading={isDisabled}
         >
-          {isDisabled ? (
-            <span className="inline-flex items-center">
-              <Spinner className="mr-2 h-4 w-4 text-white" />
-              {t("common.please-wait")}
-            </span>
-          ) : (
-            t("auth.create-account")
-          )}
+          {t("auth.create-account")}
         </Button>
       </form>
     </Form>

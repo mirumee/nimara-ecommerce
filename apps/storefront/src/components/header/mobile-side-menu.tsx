@@ -46,7 +46,7 @@ export const MobileSideMenu = ({
     <>
       <Button
         variant="ghost"
-        size="default"
+        size="icon"
         className="gap-1"
         onClick={() => setIsOpen(true)}
         title="menu"

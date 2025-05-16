@@ -16,7 +16,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@nimara/ui/components/dialog";
-import { Spinner } from "@nimara/ui/components/spinner";
 import { useToast } from "@nimara/ui/hooks";
 
 import { usePathname, useRouter } from "@/i18n/routing";
@@ -95,15 +94,12 @@ export function EditAddressModal({
           {t("address.delete-address-description")}
         </p>
         <div className="flex justify-end gap-4">
-          <Button disabled={isDeleting} onClick={handleAddressDelete}>
-            {isDeleting ? (
-              <span className="inline-flex items-center">
-                <Spinner className="mr-2 h-4 w-4 text-white" />
-                {t("common.please-wait")}
-              </span>
-            ) : (
-              t("common.delete")
-            )}
+          <Button
+            loading={isDeleting}
+            disabled={isDeleting}
+            onClick={handleAddressDelete}
+          >
+            {isDeleting ? t("common.please-wait") : t("common.delete")}
           </Button>
           <DialogClose asChild>
             <Button variant="outline" onClick={() => setMode("UPDATE")}>

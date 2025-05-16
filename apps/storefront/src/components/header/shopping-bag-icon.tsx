@@ -17,7 +17,7 @@ export const ShoppingBagIcon = ({ children, count }: ShoppingBagIconProps) => {
   const t = useTranslations("cart");
 
   return (
-    <Button variant="ghost" size="default" className="relative gap-1" asChild>
+    <Button variant="ghost" size="icon" className="relative gap-1" asChild>
       <Link
         href={paths.cart.asPath()}
         aria-label={t("items-in-cart", { cartItems: count })}
