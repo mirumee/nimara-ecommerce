@@ -20,7 +20,7 @@ export async function ShippingAddressSection({
 
   if (!checkout?.shippingAddress) {
     return (
-      <section className="flex justify-between pt-4">
+      <section className="flex justify-between pt-8">
         <div>
           <h3 className="scroll-m-20 text-2xl tracking-tight">{t("title")}</h3>
         </div>

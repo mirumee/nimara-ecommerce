@@ -10,7 +10,7 @@ export default async function Page() {
   const t = await getTranslations("auth");
 
   return (
-    <div className="flex flex-wrap pt-2 sm:flex-nowrap sm:pt-16">
+    <div className="flex flex-wrap pb-8 pt-2 sm:flex-nowrap sm:pt-16">
       <div className="w-full pb-10 sm:w-1/2 sm:pr-12 md:pr-16">
         <SignInForm
           redirectUrl={paths.checkout.asPath({
