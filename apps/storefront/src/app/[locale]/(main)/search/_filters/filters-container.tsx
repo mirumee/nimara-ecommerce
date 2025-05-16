@@ -24,6 +24,7 @@ import { type TranslationMessage } from "@/types";
 import { handleFiltersFormSubmit } from "../actions";
 import { FilterBoolean } from "./filter-boolean";
 import { FilterDropdown } from "./filter-dropdown";
+import { FilterMultiSelect } from "./filter-multi-select";
 
 type Props = {
   facets: Facet[];
@@ -38,10 +39,17 @@ const renderFilterComponent = (
   // TODO: Extend this function for other, more adequate Filter components
   switch (facet.type) {
     case "SWATCH":
-    case "MULTISELECT":
     case "DROPDOWN":
       return (
         <FilterDropdown
+          key={facet.name}
+          facet={facet}
+          searchParams={searchParams}
+        />
+      );
+    case "MULTISELECT":
+      return (
+        <FilterMultiSelect
           key={facet.name}
           facet={facet}
           searchParams={searchParams}
