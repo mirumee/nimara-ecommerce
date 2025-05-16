@@ -4,24 +4,18 @@ import { PlusCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useRef, useState } from "react";
 
-import type { Cart } from "@nimara/domain/objects/Cart";
 import type { User } from "@nimara/domain/objects/User";
 import { Button } from "@nimara/ui/components/button";
 import { ToastAction } from "@nimara/ui/components/toast";
 import { useToast } from "@nimara/ui/hooks";
 
-import { CACHE_TTL } from "@/config";
-import { clientEnvs } from "@/envs/client";
 import { Link } from "@/i18n/routing";
-import { revalidateCart, setCheckoutIdCookie } from "@/lib/actions/cart";
 import { paths } from "@/lib/paths";
-import { useCurrentRegion } from "@/regions/client";
-import { cartService } from "@/services";
-import { storefrontLogger } from "@/services/logging";
 import type { TranslationMessage } from "@/types";
 
+import { addToBagAction } from "../_actions/add-to-bag";
+
 type AddToBagProps = {
-  cart: Cart | null;
   isVariantAvailable: boolean;
   user: (User & { accessToken: string | undefined }) | null;
   variantId: string;
@@ -29,7 +23,6 @@ type AddToBagProps = {
 
 export const AddToBag = ({
   variantId,
-  cart,
   isVariantAvailable,
   user,
 }: AddToBagProps) => {
@@ -40,32 +33,16 @@ export const AddToBag = ({
   const succeededRef = useRef(false);
 
   const cartHref = paths.cart.asPath();
-  const region = useCurrentRegion();
-
-  const service = cartService({
-    apiURI: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
-    countryCode: region.market.countryCode,
-    channel: region.market.channel,
-    languageCode: region.language.code,
-    logger: storefrontLogger,
-  });
 
   const handleProductAdd = async () => {
     setIsProcessing(true);
 
-    const resultLinesAdd = await service.linesAdd({
-      email: user?.email,
-      cartId: cart?.id ?? null,
-      lines: [{ variantId, quantity: 1 }],
-      options: cart
-        ? {
-            next: {
-              tags: [`CHECKOUT:${cart.id}`],
-              revalidate: CACHE_TTL.cart,
-            },
-          }
-        : undefined,
+    const resultLinesAdd = await addToBagAction({
+      user,
+      variantId,
     });
+
+    setIsProcessing(false);
 
     if (!resultLinesAdd.ok) {
       resultLinesAdd.errors.forEach((error) => {
@@ -82,23 +59,7 @@ export const AddToBag = ({
       succeededRef.current = true;
     }
 
-    const promises: Promise<void>[] = [];
-
-    if (cart) {
-      promises.push(revalidateCart(cart.id));
-    }
-
-    if (resultLinesAdd.ok) {
-      promises.push(
-        setCheckoutIdCookie(resultLinesAdd.data.cartId),
-        revalidateCart(resultLinesAdd.data.cartId),
-      );
-    }
-
-    await Promise.all(promises);
-
     showSuccessMessage();
-    setIsProcessing(false);
   };
 
   const handleNotifyMe = useCallback(async () => {
