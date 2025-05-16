@@ -27,13 +27,24 @@ export const handleFiltersFormSubmit = async (
   if (formClear) {
     filterKeys.forEach((key) => params.delete(key));
   } else {
-    formData.forEach((value, key) => {
+    formData.forEach((_, key) => {
       if (key.startsWith("group")) {
         const [k, v] = key.replace("group", "").split("-");
+        const existing = params.get(k);
 
-        params.set(k, params.getAll(k).concat(v).join("."));
-      } else if (value && typeof value === "string") {
-        params.set(key, value);
+        params.set(k, existing ? `${existing}.${v}` : v);
+      } else {
+        const allValues = formData.getAll(key);
+
+        const nonEmpty = allValues.filter(
+          (v) => typeof v === "string" && v !== "",
+        );
+
+        if (nonEmpty.length > 0) {
+          params.set(key, nonEmpty.join(","));
+        } else {
+          params.delete(key);
+        }
       }
     });
   }
