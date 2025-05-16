@@ -142,7 +142,11 @@ export const Line = ({
         })}
       >
         <Link title={name} href={href} className="grow">
-          <p className={cn(isOutOfStock ? "text-stone-400" : "text-stone-900")}>
+          <p
+            className={cn("text-sm text-stone-900", {
+              "text-stone-400": isOutOfStock,
+            })}
+          >
             {name}
           </p>
         </Link>
@@ -152,7 +156,7 @@ export const Line = ({
         {isLineEditable ? (
           <>
             <Label
-              className={cn(isOutOfStock ? "text-stone-400" : "text-stone-900")}
+              className={cn(isOutOfStock ? "text-stone-500" : "text-stone-900")}
               htmlFor={`${id}:qty`}
             >
               {t("common.qty")}
@@ -173,7 +177,7 @@ export const Line = ({
             />
           </>
         ) : (
-          <p className="text-sm text-stone-400">
+          <p className="text-sm text-stone-500">
             {t("common.qty")}: {value}
           </p>
         )}
@@ -218,7 +222,7 @@ export const Line = ({
             </Sheet>
 
             <Label
-              className={cn(isOutOfStock ? "text-stone-400" : "text-stone-900")}
+              className={cn(isOutOfStock ? "text-stone-500" : "text-stone-900")}
               htmlFor={`${id}:qty`}
             >
               {t("common.qty")}
@@ -256,7 +260,7 @@ export const Line = ({
       <div className="col-span-5 row-span-1 md:col-span-2">
         <p
           className={cn("flex justify-end", {
-            "text-sm text-stone-400": !isLineEditable,
+            "text-sm text-stone-500": !isLineEditable,
             "text-stone-400": isOutOfStock,
           })}
           data-testid="shopping-bag-product-line-price"

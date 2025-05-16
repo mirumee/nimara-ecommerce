@@ -32,9 +32,12 @@ export const ShoppingBagPrice = ({
       {isPrimary && <hr className="border-stone-200" />}
 
       <div
-        className={cn("text-content flex justify-between text-stone-700", {
-          "[&>*]:font-[650]": isPrimary,
-        })}
+        className={cn(
+          "text-content flex justify-between text-sm text-stone-700",
+          {
+            "[&>*]:font-[650]": isPrimary,
+          },
+        )}
         data-testid={`shopping-bag-price-${dataTestId}`}
       >
         <p>{heading}</p>
