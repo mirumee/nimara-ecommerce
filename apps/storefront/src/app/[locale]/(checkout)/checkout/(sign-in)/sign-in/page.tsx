@@ -27,12 +27,7 @@ export default async function Page() {
           <p className="pb-2 pt-2 text-sm font-normal leading-5 text-stone-500">
             {t("by-creating-account")}
           </p>
-          <Button
-            className="my-4 w-full"
-            disabled={true}
-            variant="outline"
-            asChild
-          >
+          <Button className="my-4 w-full" variant="outline" asChild>
             <Link href={paths.createAccount.asPath()}>
               {t("create-account")}
             </Link>
