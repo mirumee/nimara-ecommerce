@@ -1,7 +1,6 @@
 name: E2E tests & Lighthouse
 
 on:
-  # Manual trigger of the workflow
   workflow_dispatch:
     inputs:
       environment:
@@ -14,12 +13,12 @@ jobs:
     name: "E2E Tests"
     runs-on: ubuntu-latest
     env:
-      BASE_URL: ${{ inputs.environment }}
+      TEST_ENV_URL: ${{ inputs.environment }}
       CI: true
 
     steps:
       - run: |
-          echo "BASE_URL: $BASE_URL"
+          echo "TEST_ENV_URL: $TEST_ENV_URL"
 
       - uses: actions/checkout@v4
 
@@ -41,7 +40,7 @@ jobs:
         run: pnpm dlx playwright install
 
       - name: Run e2e tests
-        run: pnpm --filter ./apps/automated-tests test
+        run: pnpm run test:e2e
 
       - name: Install Lighthouse CI
         run: pnpm add -D @lhci/cli -w
