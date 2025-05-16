@@ -122,9 +122,7 @@ export function UpdateEmailForm({ oldEmail }: { oldEmail: string }) {
                 disabled={isDisabled}
                 loading={isDisabled}
               >
-                {isDisabled
-                  ? t("common.please-wait")
-                  : t("common.save-changes")}
+                {t("common.save-changes")}
               </Button>
             </DialogFooter>
           </form>

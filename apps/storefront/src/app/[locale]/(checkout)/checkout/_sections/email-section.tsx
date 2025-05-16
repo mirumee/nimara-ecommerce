@@ -54,9 +54,11 @@ export const EmailSection = async ({
               {checkout.email}
             </p>
           </div>
-          <Link href={paths.checkout.userDetails.asPath()}>
-            <Button variant="outline">{t("common.edit")}</Button>
-          </Link>
+          <Button variant="outline" asChild>
+            <Link href={paths.checkout.userDetails.asPath()}>
+              {t("common.edit")}
+            </Link>
+          </Button>
         </section>
       )}
     </>

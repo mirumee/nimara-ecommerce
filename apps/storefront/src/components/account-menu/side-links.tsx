@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 
+import { Button } from "@nimara/ui/components/button";
 import { cn } from "@nimara/ui/lib/utils";
 
 import { Link, usePathname } from "@/i18n/routing";
@@ -36,24 +37,26 @@ export function SideLinks() {
     <ul className="no-scrollbar flex gap-x-1 overflow-auto whitespace-nowrap py-3 md:flex-col md:gap-x-0 md:gap-y-0.5 md:whitespace-normal md:py-0">
       {navLinks.map((link) => (
         <li key={link.title}>
-          <Link
-            href={link.href}
+          <Button
+            asChild
+            variant="ghost"
             className={cn(
               pathname === link.href && "rounded-md bg-stone-100",
-              "block border border-transparent px-4 py-2 text-sm font-medium hover:rounded-md hover:bg-stone-100 md:px-2 md:py-1.5 md:font-normal",
+              "w-full justify-start px-4 py-2 text-sm font-medium md:px-2 md:py-1.5 md:font-normal",
             )}
           >
-            {t(link.title)}
-          </Link>
+            <Link href={link.href}>{t(link.title)}</Link>
+          </Button>
         </li>
       ))}
       <li>
-        <button
-          className="flex w-full border border-transparent px-4 py-2 text-sm font-medium hover:rounded-md hover:bg-stone-100 md:my-4 md:px-2 md:py-1.5 md:font-normal"
+        <Button
           onClick={async () => logout()}
+          className="w-full justify-start px-4 py-2 text-sm font-medium md:my-4 md:px-2 md:py-1.5 md:font-normal"
+          variant="ghost"
         >
           {t("auth.log-out")}
-        </button>
+        </Button>
       </li>
     </ul>
   );

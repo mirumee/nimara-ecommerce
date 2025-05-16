@@ -273,7 +273,7 @@ export const Line = ({
         <div className="col-start-12 col-end-12 row-start-1 row-end-1 flex items-center justify-center md:row-span-1">
           <Button
             variant="ghost"
-            className="px-3 py-4"
+            size="icon"
             disabled={isDisabled}
             onClick={handleLineDelete}
             aria-label={t("cart.remove-button")}

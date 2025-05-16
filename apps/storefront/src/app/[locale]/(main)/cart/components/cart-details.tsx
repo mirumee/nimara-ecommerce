@@ -15,7 +15,6 @@ import { Link, useRouter } from "@/i18n/routing";
 import { revalidateCart } from "@/lib/actions/cart";
 import { paths } from "@/lib/paths";
 import { type WithRegion } from "@/lib/types";
-import { cn } from "@/lib/utils";
 import { cartService } from "@/services";
 import { storefrontLogger } from "@/services/logging";
 
@@ -99,7 +98,7 @@ export const CartDetails = ({
   }, [cart, isProcessing]);
 
   return (
-    <>
+    <div className="space-y-12">
       <ShoppingBag>
         <ShoppingBag.Header />
         <ShoppingBag.Lines
@@ -117,7 +116,6 @@ export const CartDetails = ({
         <Button
           asChild
           size="lg"
-          className="my-8 px-12"
           disabled={isProcessing || !!cart.problems.insufficientStock.length}
           loading={isProcessing}
         >
@@ -125,14 +123,11 @@ export const CartDetails = ({
             href={
               !!user ? paths.checkout.asPath() : paths.checkout.signIn.asPath()
             }
-            className={cn({ "pointer-events-none": isProcessing })}
           >
-            <span className={cn({ hidden: isProcessing })}>
-              {t("common.go-to-checkout")}
-            </span>
+            {t("common.go-to-checkout")}
           </Link>
         </Button>
       </div>
-    </>
+    </div>
   );
 };
