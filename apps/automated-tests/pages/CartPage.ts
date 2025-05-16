@@ -20,6 +20,7 @@ export class CartPage {
 
   async goToCheckout() {
     await this.goToCheckoutButton.click();
+    //console.log("waiting for checkout"); -> used for logs
     await this.page.waitForURL(URLS().CHECKOUT_PAGE_SIGN_IN);
   }
 }

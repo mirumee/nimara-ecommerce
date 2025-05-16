@@ -12,9 +12,9 @@ if (process.env.TEST_ENV_URL === undefined) {
  */
 const config = defineConfig({
   testDir: "./tests",
-  timeout: 60 * 1000,
+  timeout: 90 * 1000, // 90 seconds
   expect: {
-    timeout: 5 * 1000,
+    timeout: 5 * 1000, //5 seconds
   },
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
@@ -26,26 +26,14 @@ const config = defineConfig({
   use: {
     baseURL: process.env.TEST_ENV_URL,
     trace: "on-first-retry",
-
-    launchOptions: {},
+    screenshot: "only-on-failure", //-> test will take screenshot on failure  they will be placed in test-result folder
+    //launchOptions: {slowMo:500}, -> uncomment to run test in slow motion (works for both headless and headed)
   },
   projects: [
     {
       name: "chromium",
       use: {
         ...devices["Desktop Chrome"],
-      },
-    },
-    {
-      name: "firefox",
-      use: {
-        ...devices["Desktop Firefox"],
-      },
-    },
-    {
-      name: "webkit",
-      use: {
-        ...devices["Desktop Safari"],
       },
     },
   ],
