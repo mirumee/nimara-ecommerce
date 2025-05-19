@@ -12,7 +12,7 @@
     "nextra": "3.3.0",
     "nextra-theme-docs": "3.3.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.1.0"
   },
   "devDependencies": {
     "@nimara/config": "workspace:*",
