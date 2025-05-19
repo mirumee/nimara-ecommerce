@@ -21,14 +21,14 @@ const config = defineConfig({
 
   // Give failing tests 2 retry attempts on CI
   retries: process.env.CI ? 2 : 2,
-  workers: process.env.CI ? 1 : 1,
+  workers: process.env.CI ? 1 : undefined,
 
   reporter: process.env.CI ? "dot" : "list",
   use: {
     baseURL: process.env.TEST_ENV_URL,
     trace: "on-first-retry",
-    video: "retain-on-failure", // Highly recommended for debugging
-    screenshot: "only-on-failure",
+    video: "on", // Highly recommended for debugging
+    screenshot: "on",
     navigationTimeout: 30 * 1000, // Good general timeout for navigation
     launchOptions: {},
   },

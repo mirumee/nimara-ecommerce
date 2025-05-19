@@ -5,6 +5,8 @@ import { getStoreUrl } from "@/lib/server";
  * It's not an server action, but it can be used to delete the cookie by using Route handlers.
  */
 export const deleteCheckoutIdCookie = async () => {
+  console.debug("Deleting checkout ID cookie. `deleteCheckoutIdCookie`");
+
   const storeUrl = await getStoreUrl();
   const url = new URL("/api/cookies/delete", storeUrl);
 

@@ -10,6 +10,8 @@ export async function handleLogout() {
   (await saleorAuthClient()).signOut();
   const cookieStore = await cookies();
 
+  console.debug("Clearing auth and checkout cookies. `handleLogout`");
+
   cookieStore.delete(COOKIE_KEY.accessToken);
   cookieStore.delete(COOKIE_KEY.refreshToken);
   cookieStore.delete(COOKIE_KEY.checkoutId);

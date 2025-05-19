@@ -57,6 +57,8 @@ export function i18nMiddleware(middleware: CustomMiddleware) {
     response.cookies.set(NEXT_LOCALE, locale);
 
     if (locale !== nextLocaleCookie) {
+      console.debug("Clearing checkout ID cookie from i18n middleware.");
+
       request.cookies.delete(COOKIE_KEY.checkoutId);
       response.cookies.delete(COOKIE_KEY.checkoutId);
     }

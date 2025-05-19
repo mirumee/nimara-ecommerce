@@ -23,6 +23,11 @@ export class ProductPage {
     this.goToCheckoutButton = page.getByRole("link", {
       name: "Go to checkout",
     });
+
+    page.on("load", async () => {
+      // Wait for the cart page to load
+      console.log(page.url());
+    });
   }
 
   async goto(url: string) {
