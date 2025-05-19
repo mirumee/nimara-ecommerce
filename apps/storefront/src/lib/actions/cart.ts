@@ -9,6 +9,7 @@ import { storefrontLogger } from "@/services/logging";
 /**
  * Revalidates the checkout cache.
  * @param id - The checkout ID
+ * @returns void
  */
 export const revalidateCheckout = async (id: string) => {
   storefrontLogger.debug("Revalidating checkout cache.", { id });
@@ -16,6 +17,11 @@ export const revalidateCheckout = async (id: string) => {
   revalidateTag(`CHECKOUT:${id}`);
 };
 
+/**
+ * Saves the checkout ID to a cookie.
+ * @param id - The checkout ID
+ * @returns void
+ */
 export const setCheckoutIdCookie = async (id: string) => {
   storefrontLogger.debug("Setting checkout ID cookie.", { id });
 
@@ -27,10 +33,11 @@ export const setCheckoutIdCookie = async (id: string) => {
   });
 };
 
+/**
+ * Gets the checkout ID from the cookie.
+ * @returns The checkout ID from the cookie, or null if not found.
+ */
 export const getCheckoutId = async () => {
-  storefrontLogger.debug("Getting checkout ID cookie.");
-
-  // Get the checkout ID from the cookie
   const checkoutId = (await cookies()).get(COOKIE_KEY.checkoutId)?.value;
 
   // If the checkout ID is not found, return null
@@ -39,6 +46,8 @@ export const getCheckoutId = async () => {
 
     return null;
   }
+
+  storefrontLogger.debug("Checkout ID cookie found.", { checkoutId });
 
   return checkoutId;
 };

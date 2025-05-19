@@ -22,6 +22,8 @@ export const addToBagAction = async ({
   user: User | null;
   variantId: string;
 }) => {
+  storefrontLogger.debug("Adding item to bag", { variantId, quantity });
+
   const [region, cartId] = await Promise.all([
     getCurrentRegion(),
     getCheckoutId(),
@@ -50,10 +52,8 @@ export const addToBagAction = async ({
   });
 
   if (result.ok) {
-    await Promise.all([
-      revalidateCheckout(cartId ?? result.data.cartId),
-      setCheckoutIdCookie(result.data.cartId),
-    ]);
+    await setCheckoutIdCookie(result.data.cartId);
+    await revalidateCheckout(cartId ?? result.data.cartId);
   }
 
   return result;

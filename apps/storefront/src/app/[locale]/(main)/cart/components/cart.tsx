@@ -1,7 +1,6 @@
 import { connection } from "next/server";
 
 import { getAccessToken } from "@/auth";
-import { CACHE_TTL } from "@/config";
 import { clientEnvs } from "@/envs/client";
 import { getCurrentRegion } from "@/regions/server";
 import { cartService, userService } from "@/services";
@@ -10,8 +9,14 @@ import { storefrontLogger } from "@/services/logging";
 import { CartDetails } from "./cart-details";
 import { EmptyCart } from "./empty-cart";
 
-export const Cart = async ({ checkoutId }: { checkoutId: string }) => {
+export const Cart = async ({ checkoutId }: { checkoutId: string | null }) => {
   await connection();
+
+  if (!checkoutId) {
+    storefrontLogger.error("No checkoutId provided. Rendering empty cart.");
+
+    return <EmptyCart />;
+  }
 
   const accessToken = await getAccessToken();
 
@@ -19,8 +24,6 @@ export const Cart = async ({ checkoutId }: { checkoutId: string }) => {
     getCurrentRegion(),
     userService.userGet(accessToken),
   ]);
-
-  const user = resultUserGet.ok ? resultUserGet.data : null;
 
   const service = cartService({
     channel: region.market.channel,
@@ -33,7 +36,7 @@ export const Cart = async ({ checkoutId }: { checkoutId: string }) => {
   const resultCartGet = await service.cartGet({
     cartId: checkoutId,
     options: {
-      next: { revalidate: CACHE_TTL.cart, tags: [`CHECKOUT:${checkoutId}`] },
+      next: { revalidate: 0 },
     },
   });
 
@@ -46,12 +49,19 @@ export const Cart = async ({ checkoutId }: { checkoutId: string }) => {
   }
 
   if (!!resultCartGet.data.lines.length) {
+    const user = resultUserGet.ok ? resultUserGet.data : null;
+
+    storefrontLogger.info("Rendering cart.", { checkoutId });
+
     return (
       <CartDetails region={region} cart={resultCartGet.data} user={user} />
     );
   }
 
-  storefrontLogger.error("Cart is empty", { error: resultCartGet.errors });
+  storefrontLogger.error("Rendering empty Cart due to errors.", {
+    error: resultCartGet.errors,
+    checkoutId,
+  });
 
   return <EmptyCart />;
 };

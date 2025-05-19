@@ -5,7 +5,6 @@ import { ShoppingBagSkeleton } from "@/components/shopping-bag";
 import { getCheckoutId } from "@/lib/actions/cart";
 
 import { Cart } from "./components/cart";
-import { EmptyCart } from "./components/empty-cart";
 
 export async function generateMetadata() {
   const t = await getTranslations();
@@ -22,7 +21,7 @@ export default async function Page() {
     <div className="mx-auto flex justify-center">
       <div className="max-w-[616px] flex-1 basis-full py-8">
         <Suspense fallback={<ShoppingBagSkeleton hasHeader />}>
-          {checkoutId ? <Cart checkoutId={checkoutId} /> : <EmptyCart />}
+          <Cart checkoutId={checkoutId} />
         </Suspense>
       </div>
     </div>
