@@ -21,7 +21,7 @@ const config = defineConfig({
 
   // Give failing tests 2 retry attempts on CI
   retries: process.env.CI ? 2 : 2,
-  workers: process.env.CI ? 1 : 1,
+  workers: process.env.CI ? 1 : undefined,
 
   reporter: process.env.CI ? "dot" : "list",
   use: {
