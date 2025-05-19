@@ -21,13 +21,9 @@ export default async function Page() {
   return (
     <div className="mx-auto flex justify-center">
       <div className="max-w-[616px] flex-1 basis-full py-8">
-        {checkoutId ? (
-          <Suspense fallback={<ShoppingBagSkeleton hasHeader />}>
-            <Cart checkoutId={checkoutId} />
-          </Suspense>
-        ) : (
-          <EmptyCart />
-        )}
+        <Suspense fallback={<ShoppingBagSkeleton hasHeader />}>
+          {checkoutId ? <Cart checkoutId={checkoutId} /> : <EmptyCart />}
+        </Suspense>
       </div>
     </div>
   );

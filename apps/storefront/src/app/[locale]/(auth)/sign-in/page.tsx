@@ -6,8 +6,6 @@ import { SignInForm } from "@/components/sign-in-form";
 import { Link } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 
-export const experimental_ppr = true;
-
 export async function generateMetadata() {
   const t = await getTranslations("auth");
 

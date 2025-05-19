@@ -51,5 +51,7 @@ export const Cart = async ({ checkoutId }: { checkoutId: string }) => {
     );
   }
 
+  storefrontLogger.error("Cart is empty", { error: resultCartGet.errors });
+
   return <EmptyCart />;
 };
