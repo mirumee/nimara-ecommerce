@@ -13,7 +13,8 @@
     "SENTRY_AUTH_TOKEN",
     "SENTRY_ORG",
     "SENTRY_PROJECT",
-    "STRIPE_SECRET_KEY"
+    "STRIPE_SECRET_KEY",
+    "LOG_LEVEL"
   ],
   "ui": "stream",
   "tasks": {
