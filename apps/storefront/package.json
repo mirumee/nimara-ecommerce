@@ -64,7 +64,7 @@
     "@types/negotiator": "0.6.3",
     "@types/react": "19.0.2",
     "@types/react-dom": "19.0.2",
-    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/eslint-plugin": "^8.32.1",
     "@typescript-eslint/parser": "^6.21.0",
     "autoprefixer": "10.4.20",
     "eslint": "^8.57.0",
