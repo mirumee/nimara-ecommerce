@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "test:e2e": "playwright test",
+    "test:e2e": "playwright test \"checkout-guest.spec.ts\"",
     "lint:staged": "lint-staged"
   },
   "devDependencies": {

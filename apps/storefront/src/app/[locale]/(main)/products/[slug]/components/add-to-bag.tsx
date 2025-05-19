@@ -2,7 +2,7 @@
 
 import { PlusCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 
 import type { User } from "@nimara/domain/objects/User";
 import { Button } from "@nimara/ui/components/button";
@@ -30,10 +30,6 @@ export const AddToBag = ({
   const { toast } = useToast();
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const succeededRef = useRef(false);
-
-  const cartHref = paths.cart.asPath();
-
   const handleProductAdd = async () => {
     setIsProcessing(true);
 
@@ -56,10 +52,17 @@ export const AddToBag = ({
         }
       });
     } else {
-      succeededRef.current = true;
+      toast({
+        description: t("common.product-added"),
+        action: (
+          <ToastAction altText={t("common.go-to-bag")} asChild>
+            <Link href={paths.cart.asPath()} className="whitespace-nowrap">
+              {t("common.go-to-bag")}
+            </Link>
+          </ToastAction>
+        ),
+      });
     }
-
-    showSuccessMessage();
   };
 
   const handleNotifyMe = useCallback(async () => {
@@ -69,19 +72,6 @@ export const AddToBag = ({
       variant: "destructive",
     });
   }, []);
-
-  const showSuccessMessage = () => {
-    toast({
-      description: t("common.product-added"),
-      action: (
-        <ToastAction altText={t("common.go-to-bag")} asChild>
-          <Link href={cartHref} className="whitespace-nowrap">
-            {t("common.go-to-bag")}
-          </Link>
-        </ToastAction>
-      ),
-    });
-  };
 
   return (
     <Button
