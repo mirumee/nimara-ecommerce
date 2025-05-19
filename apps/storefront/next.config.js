@@ -64,14 +64,14 @@ const nextConfig = withAnalyzer(
       },
     },
     experimental: {
-      serverExternalPackages: ["pino"],
+      // Requires canary build
       ppr: "incremental",
-      turbo: {
-        rules: {
-          "*.svg": {
-            loaders: ["@svgr/webpack"],
-            as: "*.js",
-          },
+    },
+    turbopack: {
+      rules: {
+        "*.svg": {
+          loaders: ["@svgr/webpack"],
+          as: "*.js",
         },
       },
     },
