@@ -1,9 +1,8 @@
-import { cookies } from "next/headers";
 import { getLocale } from "next-intl/server";
 
 import { getAccessToken } from "@/auth";
-import { COOKIE_KEY } from "@/config";
 import { redirect } from "@/i18n/routing";
+import { getCheckoutId } from "@/lib/actions/cart";
 import { deleteCheckoutIdCookie } from "@/lib/actions/checkout";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
@@ -16,7 +15,7 @@ import { ShippingAddressSection } from "../../_sections/shipping-address-section
 import { UserDetailsForm } from "./form";
 
 export default async function Page() {
-  const checkoutId = (await cookies()).get(COOKIE_KEY.checkoutId)?.value;
+  const checkoutId = await getCheckoutId();
   const locale = await getLocale();
   const region = await getCurrentRegion();
 

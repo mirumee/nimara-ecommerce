@@ -1,6 +1,8 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "globalEnv": [
+    "CMS_SERVICE",
+    "EDGE_CONFIG",
     "NEXT_PUBLIC_SALEOR_API_URL",
     "TEST_ENV_URL",
     "USER_EMAIL",
@@ -9,12 +11,15 @@
   "globalPassThroughEnv": [
     "AUTH_SECRET",
     "BASE_URL",
+    "LOG_LEVEL",
     "SALEOR_APP_TOKEN",
     "SENTRY_AUTH_TOKEN",
+    "SENTRY_DEBUG",
+    "SENTRY_DSN",
+    "SENTRY_ENVIRONMENT",
     "SENTRY_ORG",
     "SENTRY_PROJECT",
-    "STRIPE_SECRET_KEY",
-    "LOG_LEVEL"
+    "STRIPE_SECRET_KEY"
   ],
   "ui": "stream",
   "tasks": {

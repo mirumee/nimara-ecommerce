@@ -1,13 +1,12 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { cookies } from "next/headers";
 import { AuthError } from "next-auth";
 
 import { getAccessToken, signIn } from "@/auth";
-import { CACHE_TTL, COOKIE_KEY } from "@/config";
+import { CACHE_TTL } from "@/config";
 import { clientEnvs } from "@/envs/client";
-import { setCheckoutIdCookie } from "@/lib/actions/cart";
+import { getCheckoutId, setCheckoutIdCookie } from "@/lib/actions/cart";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import {
@@ -35,7 +34,7 @@ export async function login({
     });
 
     const accessToken = await getAccessToken();
-    const checkoutId = (await cookies()).get(COOKIE_KEY.checkoutId)?.value;
+    const checkoutId = await getCheckoutId();
     const resultUserGet = await userService.userGet(accessToken);
     const user = resultUserGet.ok ? resultUserGet.data : null;
 

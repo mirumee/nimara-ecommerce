@@ -5,7 +5,7 @@ import { type User } from "@nimara/domain/objects/User";
 import { CACHE_TTL } from "@/config";
 import { clientEnvs } from "@/envs/client";
 import {
-  getCheckoutIdCookie,
+  getCheckoutId,
   revalidateCheckout,
   setCheckoutIdCookie,
 } from "@/lib/actions/cart";
@@ -24,7 +24,7 @@ export const addToBagAction = async ({
 }) => {
   const [region, cartId] = await Promise.all([
     getCurrentRegion(),
-    getCheckoutIdCookie(),
+    getCheckoutId(),
   ]);
 
   const service = cartService({

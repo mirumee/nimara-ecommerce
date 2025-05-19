@@ -19,11 +19,10 @@ export class CartPage {
   }
 
   async goToCheckout() {
-    const isButtonVisible = await this.goToCheckoutButton.isVisible();
-
-    if (!isButtonVisible) {
-      await this.page.reload();
-      await this.page.waitForURL(URLS().CART_PAGE);
+    // Check if the cart is not empty, otherwise reload
+    if (await this.page.getByText("Your bag is empty").isVisible()) {
+      console.log("Cart is empty, reloading...");
+      await this.goto();
     }
 
     await this.goToCheckoutButton.click();

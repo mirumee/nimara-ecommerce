@@ -1,9 +1,8 @@
-import { cookies } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 
 import { ShoppingBagSkeleton } from "@/components/shopping-bag";
-import { COOKIE_KEY } from "@/config";
+import { getCheckoutId } from "@/lib/actions/cart";
 
 import { Cart } from "./components/cart";
 import { EmptyCart } from "./components/empty-cart";
@@ -17,7 +16,7 @@ export async function generateMetadata() {
 }
 
 export default async function Page() {
-  const checkoutId = (await cookies()).get(COOKIE_KEY.checkoutId)?.value;
+  const checkoutId = await getCheckoutId();
 
   return (
     <div className="mx-auto flex justify-center">
