@@ -29,6 +29,19 @@ export const product = {
   },
 };
 
+export const storeHeaders = {
+  heroBanner: "Power your store with Nimara",
+  productsCarousel: "Nimara's products",
+  productsCarouselDescription:
+    "See what Nimara Store has to offer in the storefront demo version.",
+  newsletter: "Subscribe to Newsletter",
+  productListingPage: "All Nimara’s best products",
+};
+
+export const storeParagraphs = {
+  newsletter:
+    "Subscribe to our newsletter and be the first to get updates on new products and promotions.",
+};
 export type Product = typeof product;
 
 export const user = {
