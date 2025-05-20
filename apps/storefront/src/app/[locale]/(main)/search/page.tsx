@@ -9,6 +9,7 @@ import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { searchService } from "@/services/search";
 
+import { Breadcrumbs } from "../_components/breadcrumbs";
 import { ProductsList } from "../_components/products-list";
 import { SearchPagination } from "../_components/search-pagination";
 import { FiltersContainer } from "./_filters/filters-container";
@@ -122,6 +123,7 @@ export default async function Page(props: { searchParams: SearchParams }) {
 
   return (
     <div className="w-full">
+      <Breadcrumbs pageName={getHeader()} />
       <section className="mx-auto my-8 grid gap-8">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl">{getHeader()}</h2>

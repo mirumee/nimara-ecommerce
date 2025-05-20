@@ -5,10 +5,12 @@ import { getAccessToken } from "@/auth";
 import { CACHE_TTL, COOKIE_KEY } from "@/config";
 import { clientEnvs } from "@/envs/client";
 import { JsonLd, productToJsonLd } from "@/lib/json-ld";
+import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { cartService, storeService, userService } from "@/services";
 import { storefrontLogger } from "@/services/logging";
 
+import { Breadcrumbs } from "../../../_components/breadcrumbs";
 import { ProductDetails } from "./product-details";
 
 export const ProductDetailsContainer = async ({
@@ -64,8 +66,22 @@ export const ProductDetailsContainer = async ({
   const cart = resultCartGet?.ok ? resultCartGet.data : null;
   const { product, availability } = data;
 
+  const productCrumbs = product.category
+    ? [
+        {
+          label: product.category.name,
+          href: paths.search.asPath({
+            query: {
+              category: product.category.slug,
+            },
+          }),
+        },
+      ]
+    : undefined;
+
   return (
     <>
+      <Breadcrumbs crumbs={productCrumbs} pageName={product.name} />
       <ProductDetails
         product={product}
         availability={availability}
