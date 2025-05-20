@@ -6,7 +6,7 @@ import { CACHE_TTL } from "@/config";
 import { clientEnvs } from "@/envs/client";
 import {
   getCheckoutId,
-  revalidateCheckout,
+  revalidateCart,
   setCheckoutIdCookie,
 } from "@/lib/actions/cart";
 import { getCurrentRegion } from "@/regions/server";
@@ -24,7 +24,7 @@ export const addToBagAction = async ({
 }) => {
   storefrontLogger.debug("Adding item to bag", { variantId, quantity });
 
-  const [region, cartId] = await Promise.all([
+  const [region, cookieCartId] = await Promise.all([
     getCurrentRegion(),
     getCheckoutId(),
   ]);
@@ -39,12 +39,12 @@ export const addToBagAction = async ({
 
   const result = await service.linesAdd({
     email: user?.email,
-    cartId,
+    cartId: cookieCartId,
     lines: [{ variantId, quantity }],
-    options: cartId
+    options: cookieCartId
       ? {
           next: {
-            tags: [`CHECKOUT:${cartId}`],
+            tags: [`CHECKOUT:${cookieCartId}`],
             revalidate: CACHE_TTL.cart,
           },
         }
@@ -52,8 +52,12 @@ export const addToBagAction = async ({
   });
 
   if (result.ok) {
-    await setCheckoutIdCookie(result.data.cartId);
-    await revalidateCheckout(cartId ?? result.data.cartId);
+    if (!cookieCartId) {
+      // Save the cartId in the cookie for future requests
+      await setCheckoutIdCookie(result.data.cartId);
+    }
+
+    await revalidateCart(cookieCartId ?? result.data.cartId);
   }
 
   return result;

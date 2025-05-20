@@ -35,15 +35,3 @@ export const MIN_PASSWORD_LENGTH = 8;
 export const DEFAULT_PAGE_TITLE = "Nimara Storefront";
 
 export const CHANGE_EMAIL_TOKEN_VALIDITY_IN_HOURS = 72;
-
-export const DATA_TEST_ID = {
-  bag: {
-    addToBag: "add-to-bag",
-    goToBag: "go-to-bag",
-  },
-  checkout: {
-    goToCheckout: "go-to-checkout",
-    continueAsGuest: "continue-as-guest",
-    continueAsLoggedInUser: "continue-as-logged-in-user",
-  },
-};

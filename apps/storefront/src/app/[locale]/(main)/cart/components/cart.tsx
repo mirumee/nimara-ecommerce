@@ -1,7 +1,7 @@
-import { connection } from "next/server";
-
 import { getAccessToken } from "@/auth";
+import { CACHE_TTL } from "@/config";
 import { clientEnvs } from "@/envs/client";
+import { getCheckoutId } from "@/lib/actions/cart";
 import { getCurrentRegion } from "@/regions/server";
 import { cartService, userService } from "@/services";
 import { storefrontLogger } from "@/services/logging";
@@ -9,11 +9,11 @@ import { storefrontLogger } from "@/services/logging";
 import { CartDetails } from "./cart-details";
 import { EmptyCart } from "./empty-cart";
 
-export const Cart = async ({ checkoutId }: { checkoutId: string | null }) => {
-  await connection();
+export const Cart = async () => {
+  const checkoutId = await getCheckoutId();
 
   if (!checkoutId) {
-    storefrontLogger.error("No checkoutId provided. Rendering empty cart.");
+    storefrontLogger.debug("No checkoutId cookie. Rendering empty cart.");
 
     return <EmptyCart />;
   }
@@ -36,7 +36,7 @@ export const Cart = async ({ checkoutId }: { checkoutId: string | null }) => {
   const resultCartGet = await service.cartGet({
     cartId: checkoutId,
     options: {
-      next: { revalidate: 0 },
+      next: { revalidate: CACHE_TTL.cart, tags: [`CHECKOUT:${checkoutId}`] },
     },
   });
 
@@ -50,8 +50,6 @@ export const Cart = async ({ checkoutId }: { checkoutId: string | null }) => {
 
   if (!!resultCartGet.data.lines.length) {
     const user = resultUserGet.ok ? resultUserGet.data : null;
-
-    storefrontLogger.info("Rendering cart.", { checkoutId });
 
     return (
       <CartDetails region={region} cart={resultCartGet.data} user={user} />

@@ -63,10 +63,6 @@ const nextConfig = withAnalyzer(
         fullUrl: false,
       },
     },
-    experimental: {
-      // Requires canary build
-      ppr: "incremental",
-    },
     turbopack: {
       rules: {
         "*.svg": {

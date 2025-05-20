@@ -9,10 +9,10 @@ import { Button } from "@nimara/ui/components/button";
 import { useToast } from "@nimara/ui/hooks";
 
 import { ShoppingBag } from "@/components/shopping-bag";
-import { CACHE_TTL, DATA_TEST_ID } from "@/config";
+import { CACHE_TTL } from "@/config";
 import { clientEnvs } from "@/envs/client";
 import { Link, useRouter } from "@/i18n/routing";
-import { revalidateCheckout } from "@/lib/actions/cart";
+import { revalidateCart } from "@/lib/actions/cart";
 import { paths } from "@/lib/paths";
 import { type WithRegion } from "@/lib/types";
 import { cartService } from "@/services";
@@ -52,7 +52,7 @@ export const CartDetails = ({
     setIsProcessing(false);
 
     if (resultLinesUpdate.ok) {
-      await revalidateCheckout(cart.id);
+      await revalidateCart(cart.id);
 
       return;
     }
@@ -74,7 +74,7 @@ export const CartDetails = ({
     });
 
     if (resultLinesDelete.ok) {
-      await revalidateCheckout(cart.id);
+      await revalidateCart(cart.id);
       router.refresh();
     } else {
       resultLinesDelete.errors.forEach((error) => {
@@ -118,7 +118,6 @@ export const CartDetails = ({
           size="lg"
           disabled={isProcessing || !!cart.problems.insufficientStock.length}
           loading={isProcessing}
-          data-testid={DATA_TEST_ID.checkout.goToCheckout}
         >
           <Link
             href={

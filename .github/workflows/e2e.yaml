@@ -1,6 +1,7 @@
 name: E2E tests & Lighthouse
 
 on:
+  # Manual trigger of the workflow
   workflow_dispatch:
     inputs:
       environment:

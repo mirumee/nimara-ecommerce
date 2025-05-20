@@ -7,7 +7,7 @@ import { COOKIE_KEY } from "@/config";
 export const clearCheckoutCookieAction = async () => {
   const nextCookies = await cookies();
 
-  console.debug("Clearing checkout ID cookie. `clearCheckoutCookieAction`");
+  console.debug("Clearing checkout ID cookie on confirmation page.");
 
   nextCookies.delete(COOKIE_KEY.checkoutId);
 };

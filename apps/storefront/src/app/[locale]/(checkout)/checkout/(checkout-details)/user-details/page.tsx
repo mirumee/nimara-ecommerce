@@ -7,6 +7,7 @@ import { deleteCheckoutIdCookie } from "@/lib/actions/checkout";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { checkoutService, userService } from "@/services";
+import { storefrontLogger } from "@/services/logging";
 
 import { CheckoutSkeleton } from "../../_components/checkout-skeleton";
 import { DeliveryMethodSection } from "../../_sections/delivery-method-section";
@@ -15,11 +16,15 @@ import { ShippingAddressSection } from "../../_sections/shipping-address-section
 import { UserDetailsForm } from "./form";
 
 export default async function Page() {
-  const checkoutId = await getCheckoutId();
-  const locale = await getLocale();
-  const region = await getCurrentRegion();
+  const [checkoutId, locale, region] = await Promise.all([
+    getCheckoutId(),
+    getLocale(),
+    getCurrentRegion(),
+  ]);
 
   if (!checkoutId) {
+    storefrontLogger.debug("No checkoutId cookie. Redirecting to cart.");
+
     redirect({ href: paths.cart.asPath(), locale });
   }
 

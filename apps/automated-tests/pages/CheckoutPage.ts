@@ -67,11 +67,6 @@ export class CheckoutPage {
     this.placeOrderButton = this.page.getByRole("button", {
       name: "Place order",
     });
-
-    page.on("load", async () => {
-      // Wait for the cart page to load
-      console.log(page.url());
-    });
   }
 
   async provideUserDetails(email: string) {

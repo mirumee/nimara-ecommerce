@@ -58,7 +58,6 @@ export const Footer = async () => {
                       className="hover:underline"
                       target="_blank"
                       rel="noopener noreferrer"
-                      prefetch={false}
                     >
                       {chunks}
                     </Link>
@@ -77,7 +76,6 @@ export const Footer = async () => {
                     key={item.id}
                     href={item.url}
                     className="hover:underline"
-                    prefetch={false}
                   >
                     {item.label}
                   </Link>
@@ -95,7 +93,6 @@ export const Footer = async () => {
                     key={item.id}
                     href={item.url}
                     className="hover:underline"
-                    prefetch={false}
                   >
                     {item.label}
                   </Link>
