@@ -17,11 +17,14 @@ import { createFieldsMap, type FieldsMap } from "@/lib/cms";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { searchService } from "@/services/search";
+import { type PreviousPage } from "@/types";
 
 export const ProductsGrid = async ({
   fields,
+  previousPage,
 }: {
   fields: PageField[] | undefined;
+  previousPage: PreviousPage;
 }) => {
   const [region, t] = await Promise.all([
     getCurrentRegion(),
@@ -108,6 +111,7 @@ export const ProductsGrid = async ({
         {products.map((product) => (
           <div className="hidden sm:block" key={product.id}>
             <SearchProductCard
+              previousPage={previousPage}
               product={product}
               sizes="(max-width: 720px) 1vw, (max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
             />
@@ -120,6 +124,7 @@ export const ProductsGrid = async ({
               <CarouselItem key={product.id} className="w-2/3 flex-none">
                 <SearchProductCard
                   product={product}
+                  previousPage={previousPage}
                   sizes="(max-width: 360px) 195px, (max-width: 720px) 379px, 1vw"
                   height={200}
                   width={200}

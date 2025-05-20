@@ -137,7 +137,15 @@ export default async function Page(props: { searchParams: SearchParams }) {
           </div>
         </div>
 
-        {products.length ? <ProductsList products={products} /> : <NoResults />}
+        {products.length ? (
+          <ProductsList
+            products={products}
+            previousPage={category ? "category" : "search"}
+            sourceSlug={category}
+          />
+        ) : (
+          <NoResults />
+        )}
 
         {pageInfo && (
           <SearchPagination

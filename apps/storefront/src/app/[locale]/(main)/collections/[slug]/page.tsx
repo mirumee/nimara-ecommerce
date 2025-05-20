@@ -13,6 +13,7 @@ import { collectionService } from "@/services";
 
 import { ProductsList } from "../../_components/products-list";
 import { SearchPagination } from "../../_components/search-pagination";
+import { CollectionBreadcrumbs } from "./components/collection-breadcrumbs";
 
 type SearchParams = Promise<{
   after?: string;
@@ -100,6 +101,7 @@ export default async function Page(props: {
 
   return (
     <div className="mb-8 grid w-full gap-8">
+      <CollectionBreadcrumbs collectionSlug={collection.slug} />
       <div className="grid basis-full items-center justify-center gap-4 md:flex">
         <h1 className="text-primary text-center text-2xl">
           {collection?.name}
@@ -124,8 +126,11 @@ export default async function Page(props: {
       <hr />
 
       <h2 className="text-2xl">{t("associated-products")}</h2>
-
-      <ProductsList products={collection.products} />
+      <ProductsList
+        products={collection.products}
+        previousPage="collection"
+        sourceSlug={collection.slug}
+      />
       {pageInfo && (
         <SearchPagination
           pageInfo={pageInfo}

@@ -35,9 +35,11 @@ export type ProductAvailabilityDetailsQueryVariables = Types.Exact<{
 
 export type ProductAvailabilityDetailsQuery = ProductAvailabilityDetailsQuery_Query;
 
+export type ProductBaseQuery_product_Product_category_Category = { slug: string };
+
 export type ProductBaseQuery_product_Product_translation_ProductTranslation = { name: string | null, description: string | null };
 
-export type ProductBaseQuery_product_Product = { id: string, name: string, description: string | null, translation: ProductBaseQuery_product_Product_translation_ProductTranslation | null };
+export type ProductBaseQuery_product_Product = { id: string, name: string, description: string | null, category: ProductBaseQuery_product_Product_category_Category | null, translation: ProductBaseQuery_product_Product_translation_ProductTranslation | null };
 
 export type ProductBaseQuery_Query = { product: ProductBaseQuery_product_Product | null };
 
@@ -79,9 +81,11 @@ export type ProductDetailsQuery_product_Product_attributes_SelectedAttribute_val
 
 export type ProductDetailsQuery_product_Product_attributes_SelectedAttribute = { attribute: ProductDetailsQuery_product_Product_attributes_SelectedAttribute_attribute_Attribute, values: Array<ProductDetailsQuery_product_Product_attributes_SelectedAttribute_values_AttributeValue> };
 
+export type ProductDetailsQuery_product_Product_category_Category = { slug: string };
+
 export type ProductDetailsQuery_product_Product_translation_ProductTranslation = { name: string | null, description: string | null };
 
-export type ProductDetailsQuery_product_Product = { id: string, name: string, description: string | null, media: Array<ProductDetailsQuery_product_Product_media_ProductMedia> | null, variants: Array<ProductDetailsQuery_product_Product_variants_ProductVariant> | null, attributes: Array<ProductDetailsQuery_product_Product_attributes_SelectedAttribute>, translation: ProductDetailsQuery_product_Product_translation_ProductTranslation | null };
+export type ProductDetailsQuery_product_Product = { id: string, name: string, description: string | null, media: Array<ProductDetailsQuery_product_Product_media_ProductMedia> | null, variants: Array<ProductDetailsQuery_product_Product_variants_ProductVariant> | null, attributes: Array<ProductDetailsQuery_product_Product_attributes_SelectedAttribute>, category: ProductDetailsQuery_product_Product_category_Category | null, translation: ProductDetailsQuery_product_Product_translation_ProductTranslation | null };
 
 export type ProductDetailsQuery_Query = { product: ProductDetailsQuery_product_Product | null };
 
@@ -204,6 +208,9 @@ export const ProductBaseQueryDocument = new TypedDocumentString(`
   id
   name
   description
+  category {
+    slug
+  }
   translation(languageCode: $languageCode) {
     name
     description
@@ -220,6 +227,9 @@ export const ProductDetailsQueryDocument = new TypedDocumentString(`
   id
   name
   description
+  category {
+    slug
+  }
   translation(languageCode: $languageCode) {
     name
     description

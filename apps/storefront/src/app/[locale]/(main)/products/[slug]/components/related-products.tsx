@@ -10,10 +10,13 @@ import {
 } from "@nimara/ui/components/carousel";
 
 import { SearchProductCard } from "@/components/search-product-card";
+import { type PreviousPage } from "@/types";
 
 export const RelatedProducts = ({
   products,
+  previousPage,
 }: {
+  previousPage: PreviousPage;
   products: SearchProduct[];
 }) => {
   const t = useTranslations("products");
@@ -29,6 +32,7 @@ export const RelatedProducts = ({
               className="w-1/1 h-full flex-none md:w-1/5"
             >
               <SearchProductCard
+                previousPage={previousPage}
                 product={product}
                 sizes="(max-width: 360px) 195px, (max-width: 720px) 379px, 1vw"
                 height={200}

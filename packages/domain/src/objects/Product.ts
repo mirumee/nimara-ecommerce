@@ -31,6 +31,7 @@ export type ProductVariant = {
 };
 
 export type ProductBase = {
+  categorySlug?: string;
   description: string | null;
   id: string;
   name: string;
