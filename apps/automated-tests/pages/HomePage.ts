@@ -1,5 +1,5 @@
-import { expect,type Locator, type Page } from "@playwright/test";
-import { storeHeaders, storeParagraphs,URLS } from "utils/constants";
+import { expect, type Locator, type Page } from "@playwright/test";
+import { storeHeaders, storeParagraphs, URLS } from "utils/constants";
 
 import { BasePage } from "./BasePage";
 
