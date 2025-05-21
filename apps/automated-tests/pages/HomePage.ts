@@ -63,12 +63,14 @@ export class HomePage extends BasePage {
     await this.allProductsCarouselButton.click();
   }
 
-  async assertNewsletterPresence() {
-    await expect(this.newsletter).toBeVisible();
-    await expect(this.newsletterDescription).toBeVisible();
-    await expect(this.newsletterEmail).toBeVisible();
-    await expect(this.newsletterName).toBeVisible();
-    await expect(this.newsletterButton).toBeVisible();
+  async assertNewsletterPresence(enabledHomepageElements: boolean) {
+    if (enabledHomepageElements) {
+      await expect(this.newsletter).toBeVisible();
+      await expect(this.newsletterDescription).toBeVisible();
+      await expect(this.newsletterEmail).toBeVisible();
+      await expect(this.newsletterName).toBeVisible();
+      await expect(this.newsletterButton).toBeVisible();
+    }
   }
 
   async assertProductCarouselPresence(productsCarouselList: boolean) {

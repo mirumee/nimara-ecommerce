@@ -30,7 +30,7 @@ export const product = {
 };
 
 export const storeHeaders = {
-  heroBanner: "Power your store with Nimara",
+  heroBanner: "Welcome to Nimara Store",
   productsCarousel: "Nimara's products",
   productsCarouselDescription:
     "See what Nimara Store has to offer in the storefront demo version.",

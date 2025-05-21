@@ -58,7 +58,9 @@ test.describe(
     });
 
     test("Newsletter elements are present", async ({ homePage }) => {
-      await homePage.assertNewsletterPresence();
+      await homePage.assertNewsletterPresence(
+        enabledHomepageElements.newsletter,
+      );
     });
   },
 );

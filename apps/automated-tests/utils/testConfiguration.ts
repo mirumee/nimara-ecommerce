@@ -1,4 +1,5 @@
 export const enabledHomepageElements = {
-  heroBannerImage: true,
-  productsCarouselList: true,
+  heroBannerImage: false,
+  productsCarouselList: false,
+  newsletter: false,
 };
