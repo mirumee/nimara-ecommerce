@@ -20,33 +20,32 @@ const config = defineConfig({
   forbidOnly: !!process.env.CI,
 
   // Give failing tests 2 retry attempts on CI
-  retries: process.env.CI ? 2 : 1,
-  workers: process.env.CI ? 1 : undefined,
+  retries: process.env.CI ? 1 : 0,
+  workers: process.env.CI ? 1 : 1,
 
   reporter: process.env.CI ? "dot" : "list",
   use: {
     baseURL: process.env.TEST_ENV_URL,
     trace: "on-first-retry",
-    video: "retain-on-failure", // Highly recommended for debugging
+    video: "retain-on-failure",
     screenshot: "only-on-failure",
-    navigationTimeout: 30 * 1000, // Good general timeout for navigation
     launchOptions: {},
   },
   projects: [
     {
-      name: "chromium",
+      name: "Chrome",
       use: {
         ...devices["Desktop Chrome"],
       },
     },
     {
-      name: "firefox",
+      name: "Firefox",
       use: {
         ...devices["Desktop Firefox"],
       },
     },
     {
-      name: "webkit",
+      name: "Safari",
       use: {
         ...devices["Desktop Safari"],
       },

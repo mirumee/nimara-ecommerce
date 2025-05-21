@@ -38,8 +38,6 @@ export const AddToBag = ({
       variantId,
     });
 
-    setIsProcessing(false);
-
     if (!resultLinesAdd.ok) {
       resultLinesAdd.errors.forEach((error) => {
         if (error.field) {
@@ -63,6 +61,8 @@ export const AddToBag = ({
         ),
       });
     }
+
+    setIsProcessing(false);
   };
 
   const handleNotifyMe = useCallback(async () => {

@@ -14,7 +14,7 @@ import { storefrontLogger } from "@/services/logging";
 
 import type { CustomMiddleware } from "./chain";
 
-const NEXT_LOCALE = "NEXT_LOCALE";
+const LOCALE_COOKIE_NAME = "NEXT_LOCALE";
 
 function getLocale(request: NextRequest) {
   const languages = new Negotiator({
@@ -28,8 +28,8 @@ function getLocale(request: NextRequest) {
 
 export function i18nMiddleware(middleware: CustomMiddleware) {
   return async (request: NextRequest, event: NextFetchEvent) => {
-    const prefferedLocale = getLocale(request);
-    const nextLocaleCookie = request.cookies.get(NEXT_LOCALE)?.value;
+    const preferredLocale = getLocale(request);
+    const localeCookieValue = request.cookies.get(LOCALE_COOKIE_NAME)?.value;
     const pathname = request.nextUrl.pathname;
     const localePrefix = Object.values(localePrefixes).find(
       (localePrefix) =>
@@ -37,13 +37,13 @@ export function i18nMiddleware(middleware: CustomMiddleware) {
     );
     const isLocalePrefixedPathname = !!localePrefix;
 
-    let locale = prefferedLocale;
+    let locale = preferredLocale;
 
     const handleI18nRouting = createIntlMiddleware(routing);
     const response = handleI18nRouting(request);
 
     // INFO: All routes have locale prefixes except for default locale/domain - "/".
-    // If the user types only domain name it should be navigated to preffered region of the store,
+    // If the user types only domain name it should be navigated to preferred region of the store,
     // otherwise navigate to the requested locale prefixed pathname
     if (isLocalePrefixedPathname) {
       locale =
@@ -55,9 +55,9 @@ export function i18nMiddleware(middleware: CustomMiddleware) {
     }
 
     // INFO: Store the locale in the cookie to know if the locale has changed between requests
-    response.cookies.set(NEXT_LOCALE, locale);
+    response.cookies.set(LOCALE_COOKIE_NAME, locale);
 
-    if (locale !== nextLocaleCookie) {
+    if (locale !== localeCookieValue) {
       storefrontLogger.debug(
         "Clearing checkout ID cookie from i18n middleware.",
       );

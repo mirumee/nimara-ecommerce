@@ -1,4 +1,4 @@
-name: E2E tests & Lighthouse
+name: E2E tests
 
 on:
   # Manual trigger of the workflow
@@ -31,7 +31,7 @@ jobs:
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: "pnpm"
 
       - name: Install dependencies
@@ -42,10 +42,3 @@ jobs:
 
       - name: Run e2e tests
         run: pnpm run test:e2e
-
-      - name: Install Lighthouse CI
-        run: pnpm add -D @lhci/cli -w
-
-      - name: Run Lighthouse CI
-        run: pnpm exec lhci autorun
-        continue-on-error: true

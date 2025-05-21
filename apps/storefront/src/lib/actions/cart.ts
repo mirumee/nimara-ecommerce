@@ -23,25 +23,27 @@ export const revalidateCart = async (id: string) => {
  * @returns void
  */
 export const setCheckoutIdCookie = async (id: string) => {
-  storefrontLogger.debug("Setting checkout ID cookie.", { id });
-
   const cookieStorage = await cookies();
 
   cookieStorage.set(COOKIE_KEY.checkoutId, id, {
+    path: "/",
     maxAge: COOKIE_MAX_AGE.checkout,
     httpOnly: true,
-    secure: false,
+    secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
   });
 
-  // Log all the cookies
-  const allCookies = cookieStorage.getAll();
-
-  storefrontLogger.debug("All cookies", { allCookies });
-  // Log the checkout ID cookie
   const checkoutIdCookie = cookieStorage.get(COOKIE_KEY.checkoutId);
 
-  storefrontLogger.debug("Checkout ID cookie", { checkoutIdCookie });
+  if (checkoutIdCookie) {
+    storefrontLogger.debug("Checkout ID cookie set successfully.", {
+      checkoutId: checkoutIdCookie.value,
+    });
+  } else {
+    storefrontLogger.error("Failed to set checkout ID cookie.", {
+      checkoutId: id,
+    });
+  }
 };
 
 /**
