@@ -1,4 +1,4 @@
-name: E2E tests
+name: E2E tests & Lighthouse
 
 on:
   # Manual trigger of the workflow
@@ -11,7 +11,7 @@ on:
 
 jobs:
   e2e-tests:
-    name: "E2E Tests"
+    name: "E2E tests & Lighthouse"
     runs-on: ubuntu-latest
     env:
       TEST_ENV_URL: ${{ inputs.environment }}
@@ -28,17 +28,37 @@ jobs:
         with:
           run_install: false
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: "lts/jod"
           cache: "pnpm"
+          cache-dependency-path: |
+            pnpm-lock.yaml
+            apps/automated-tests/pnpm-lock.yaml
+            apps/docs/pnpm-lock.yaml
 
       - name: Install dependencies
         run: pnpm install
 
       - name: Install Playwright browsers
-        run: pnpm dlx playwright install
+        working-directory: apps/automated-tests
+        run: pnpm exec playwright install --with-deps
 
       - name: Run e2e tests
         run: pnpm run test:e2e
+
+      - name: Upload Playwright Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: apps/automated-tests/test-results
+          retention-days: 7
+
+      - name: Install Lighthouse CI
+        run: pnpm add -D @lhci/cli -w
+
+      - name: Run Lighthouse CI
+        run: pnpm exec lhci autorun
+        continue-on-error: true

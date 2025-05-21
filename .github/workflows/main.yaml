@@ -25,11 +25,15 @@ jobs:
         with:
           run_install: false
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: "lts/jod"
           cache: "pnpm"
+          cache-dependency-path: |
+            pnpm-lock.yaml
+            apps/automated-tests/pnpm-lock.yaml
+            apps/docs/pnpm-lock.yaml
 
       - name: Install dependencies
         run: pnpm install
