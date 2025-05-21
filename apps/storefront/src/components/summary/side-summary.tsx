@@ -1,11 +1,10 @@
-import { cookies } from "next/headers";
 import { getLocale, getTranslations } from "next-intl/server";
 
 import { Button } from "@nimara/ui/components/button";
 import { Sheet, SheetContent, SheetTrigger } from "@nimara/ui/components/sheet";
 
-import { COOKIE_KEY } from "@/config";
 import { redirect } from "@/i18n/routing";
+import { getCheckoutId } from "@/lib/actions/cart";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { checkoutService } from "@/services";
@@ -14,11 +13,11 @@ import { ErrorDialog } from "../error-dialog";
 import { Summary } from "./summary";
 
 export const SideSummary = async () => {
-  const checkoutId = (await cookies()).get(COOKIE_KEY.checkoutId)?.value;
-  const [t, region, locale] = await Promise.all([
+  const [t, region, locale, checkoutId] = await Promise.all([
     getTranslations("common"),
     getCurrentRegion(),
     getLocale(),
+    getCheckoutId(),
   ]);
 
   if (!checkoutId) {

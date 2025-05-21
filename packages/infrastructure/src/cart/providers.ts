@@ -19,6 +19,7 @@ export const saleorCartService: CartService<SaleorCartServiceConfig> = (
   linesAdd: linesAddUseCase({
     linesAddInfra: saleorLinesAddInfra(config),
     cartCreateInfra: saleorCartCreateInfra(config),
+    logger: config.logger,
   }),
   linesDelete: linesDeleteUseCase({
     linesDeleteInfra: saleorLinesDeleteInfra(config),

@@ -8,8 +8,14 @@ import { UserAddressesQueryDocument } from "../graphql/queries/generated";
 export const saleorAddressesGetInfra =
   ({ apiURL, logger }: SaleorUserServiceConfig): AddressesGetInfra =>
   async ({ variables: { accessToken }, skip = false }) => {
-    if (skip || !accessToken) {
-      logger.debug("Fetch of user addresses skipped.");
+    if (!accessToken) {
+      logger.debug("Guest user. Skipping user addresses fetch.");
+
+      return ok([]);
+    }
+
+    if (skip) {
+      logger.debug("Manual skip. Skipping user addresses fetch.");
 
       return ok([]);
     }

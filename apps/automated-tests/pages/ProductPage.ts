@@ -25,17 +25,35 @@ export class ProductPage {
     });
   }
 
+  async validateCheckoutIdCookie() {
+    const cookies = await this.context.cookies();
+    const checkoutIdCookie = cookies.find(
+      (cookie) => cookie.name === "checkoutId",
+    );
+
+    if (!checkoutIdCookie) {
+      console.error(
+        "CheckoutId cookie was not set. Available cookies:",
+        cookies.map((cookie) => cookie.name),
+      );
+    }
+
+    expect(checkoutIdCookie).toBeDefined();
+  }
+
   async goto(url: string) {
     await this.page.goto(`${URLS().PRODUCT_PAGE}/${url}`);
   }
 
   async clickAddToBag() {
     await this.addToBagButton.click();
+
     await expect(this.addToBagButton).toBeEnabled();
     await expect(this.goToBagButton).toBeVisible();
   }
 
   async checkCart() {
+    await this.validateCheckoutIdCookie();
     await expect(this.bagIcon).not.toHaveText("");
   }
 
