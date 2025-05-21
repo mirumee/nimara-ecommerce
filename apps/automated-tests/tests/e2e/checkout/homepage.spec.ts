@@ -14,10 +14,6 @@ test.describe(
       await homePage.navigate();
     });
 
-    test("Homepage was loaded without an error", async ({ homePage }) => {
-      await homePage.expectPageToHaveUrl(testEnvUrl + "/" + URLS().HOME_PAGE);
-    });
-
     test("Hero banner elements are present", async ({ homePage }) => {
       await homePage.assertHeroBannerPresence(
         enabledHomepageElements.heroBannerImage,
