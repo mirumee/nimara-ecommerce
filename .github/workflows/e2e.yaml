@@ -39,7 +39,7 @@ jobs:
             apps/docs/pnpm-lock.yaml
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Install Playwright browsers
         working-directory: apps/automated-tests
