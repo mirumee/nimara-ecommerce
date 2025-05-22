@@ -3,12 +3,15 @@ import { inspect } from "util";
 
 import { type Logger, type LogLevel } from "./types";
 
-const IS_DEVELOPMENT =
-  process.env.NODE_ENV === "development" && typeof window === "undefined";
+// const IS_DEVELOPMENT =
+//   process.env.NODE_ENV === "development" && typeof window === "undefined";
 
 const devStream: pino.DestinationStream = {
-  write(msg) {
-    const body = JSON.parse(msg);
+  write(msg: string): void {
+    const body = JSON.parse(msg) as {
+      level: Uppercase<LogLevel>;
+      message: string;
+    };
     const { level } = body;
 
     if (level === "ERROR") {
@@ -41,7 +44,7 @@ const devStream: pino.DestinationStream = {
 
 export const pinoLogger = (
   opts: LoggerOptions<LogLevel>,
-  stream?: pino.DestinationStream,
+  // stream?: pino.DestinationStream,
 ): Logger => {
   const logger = pino<LogLevel>(
     {
@@ -67,7 +70,7 @@ export const pinoLogger = (
       redact: { paths: ["hostname", "pid"], remove: true },
       ...opts,
     },
-    IS_DEVELOPMENT ? devStream : stream,
+    devStream,
   );
 
   return {
