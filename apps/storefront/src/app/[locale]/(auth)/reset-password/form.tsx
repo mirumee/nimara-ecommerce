@@ -4,11 +4,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { type SubmitHandler, useForm } from "react-hook-form";
 import * as z from "zod";
 
 import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
+import { useToast } from "@nimara/ui/hooks";
 
 import { requestPasswordResetAction } from "@/app/[locale]/(auth)/reset-password/action";
 import { TextFormField } from "@/components/form/text-form-field";
@@ -17,7 +18,7 @@ import { paths } from "@/lib/paths";
 import { useCurrentRegion } from "@/regions/client";
 import { type GetTranslations } from "@/types";
 
-const formSchema = ({ t }: { t: GetTranslations }) =>
+const resetPasswordSchema = ({ t }: { t: GetTranslations }) =>
   z.object({
     email: z
       .string()
@@ -26,28 +27,51 @@ const formSchema = ({ t }: { t: GetTranslations }) =>
       .trim(),
   });
 
-type FormSchema = z.infer<ReturnType<typeof formSchema>>;
+type ResetPasswordSchema = z.infer<ReturnType<typeof resetPasswordSchema>>;
 
 export function ResetPasswordForm() {
   const t = useTranslations();
   const [isSuccess, setIsSuccess] = useState(false);
   const region = useCurrentRegion();
+  const { toast } = useToast();
 
-  const form = useForm<FormSchema>({
-    resolver: zodResolver(formSchema({ t })),
+  const form = useForm<ResetPasswordSchema>({
+    resolver: zodResolver(resetPasswordSchema({ t })),
     defaultValues: {
       email: "",
     },
   });
 
-  async function handleSubmit({ email }: FormSchema) {
-    setIsSuccess(true);
-
-    await requestPasswordResetAction({
+  const handleSubmit: SubmitHandler<ResetPasswordSchema> = async ({
+    email,
+  }) => {
+    const result = await requestPasswordResetAction({
       channel: region.market.channel,
       email,
     });
-  }
+
+    if (!result.ok) {
+      setIsSuccess(false);
+
+      for (const error of result.errors) {
+        if (error.field) {
+          form.setError(error.field as keyof ResetPasswordSchema, {
+            type: "manual",
+            message: t(`errors.${error.code}`),
+          });
+        } else {
+          toast({
+            variant: "destructive",
+            description: t(`errors.${error.code}`),
+          });
+        }
+      }
+
+      return;
+    }
+
+    setIsSuccess(true);
+  };
 
   return (
     <div className="flex flex-col gap-8">

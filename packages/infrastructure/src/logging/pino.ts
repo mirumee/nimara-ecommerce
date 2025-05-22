@@ -8,8 +8,29 @@ const IS_DEVELOPMENT =
 
 const devStream: pino.DestinationStream = {
   write(msg) {
-    console.log(
-      inspect(JSON.parse(msg), {
+    const body = JSON.parse(msg);
+    const { level } = body;
+
+    if (level === "ERROR") {
+      process.stderr.write(msg);
+
+      return;
+    }
+
+    if (level === "INFO") {
+      process.stdout.write(msg);
+
+      return;
+    }
+
+    if (level === "DEBUG") {
+      process.stdout.write(msg);
+
+      return;
+    }
+
+    console.error(
+      inspect(body, {
         colors: true,
         depth: Infinity,
         showHidden: true,

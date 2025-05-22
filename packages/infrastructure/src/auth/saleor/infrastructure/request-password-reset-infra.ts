@@ -1,5 +1,6 @@
 import { err, ok } from "@nimara/domain/objects/Result";
 
+import { handleMutationErrors } from "#root/error";
 import { graphqlClient } from "#root/graphql/client";
 
 import type {
@@ -32,11 +33,7 @@ export const saleorRequestPasswordResetInfra =
         error: result.data.requestPasswordReset.errors,
       });
 
-      return err([
-        {
-          code: "PASSWORD_CHANGE_REQUEST_ERROR",
-        },
-      ]);
+      return err(handleMutationErrors(result.data.requestPasswordReset.errors));
     }
 
     return ok({ success: true });

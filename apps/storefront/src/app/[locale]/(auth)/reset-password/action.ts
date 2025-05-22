@@ -22,7 +22,9 @@ export const requestPasswordResetAction = async ({
     ),
   });
 
-  revalidatePath(paths.resetPassword.asPath());
+  if (response.ok) {
+    revalidatePath(paths.resetPassword.asPath());
+  }
 
   return response;
 };

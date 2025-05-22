@@ -279,6 +279,7 @@
     "NOT_FOUND_ERROR": "Not found",
     "PASSWORD_CHANGE_ERROR": "Password change failed.",
     "PASSWORD_CHANGE_REQUEST_ERROR": "An error occurred while sending the email.",
+    "PASSWORD_RESET_ALREADY_REQUESTED_ERROR": "Reset password link has already been sent. Please check your inbox.",
     "PASSWORD_SET_ERROR": "Failed to set password.",
     "PAYMENT_EXECUTE_ERROR": "There was an error while executing the payment.",
     "PAYMENT_GATEWAY_INITIALIZE_ERROR": "Failed to initialize payment gateway.",

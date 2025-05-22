@@ -45,6 +45,7 @@ export const ACCOUNT_ERROR_CODES = [
   "ACCOUNT_UPDATE_ERROR",
   "EMAIL_CHANGE_CONFIRMATION_ERROR",
   "EMAIL_CHANGE_REQUEST_ERROR",
+  "PASSWORD_RESET_ALREADY_REQUESTED_ERROR",
 ] as const satisfies ErrorCodeFormat[];
 export type AccountErrorCode = (typeof ACCOUNT_ERROR_CODES)[number];
 

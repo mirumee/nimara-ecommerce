@@ -32,6 +32,8 @@ export const mapSaleorErrorCode = (code: SaleorErrorCode): AppErrorCode => {
       return "NOT_FOUND_ERROR";
     case "REQUIRED":
       return "REQUIRED_ERROR";
+    case "PASSWORD_RESET_ALREADY_REQUESTED":
+      return "PASSWORD_RESET_ALREADY_REQUESTED_ERROR";
     case "UNIQUE":
       return "UNIQUE_ERROR";
 
