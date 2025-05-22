@@ -7,7 +7,7 @@ import { getAccessToken } from "@/auth";
 import { redirect } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
-import { userService } from "@/services";
+import { userService } from "@/services/user";
 
 export async function confirmEmailChangeAction(
   searchParams: Record<string, string>,

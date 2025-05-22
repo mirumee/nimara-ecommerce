@@ -9,7 +9,7 @@ import { getAccessToken } from "@/auth";
 import { updateCheckoutAddressAction } from "@/lib/actions/update-checkout-address-action";
 import { schemaToAddress } from "@/lib/address";
 import { paths } from "@/lib/paths";
-import { userService } from "@/services";
+import { userService } from "@/services/user";
 
 import { type Schema } from "./schema";
 

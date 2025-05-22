@@ -5,7 +5,8 @@ import { type AppErrorCode } from "@nimara/domain/objects/Error";
 import { redirect } from "@/i18n/routing";
 import { getCheckoutOrRedirect } from "@/lib/checkout";
 import { paths, QUERY_PARAMS } from "@/lib/paths";
-import { checkoutService, paymentService } from "@/services";
+import { checkoutService } from "@/services/checkout";
+import { paymentService } from "@/services/payment";
 
 import { ProcessingInfo } from "./components/processing-info";
 

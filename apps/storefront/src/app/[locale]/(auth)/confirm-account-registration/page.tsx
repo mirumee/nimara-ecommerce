@@ -2,7 +2,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 
 import { redirect } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
-import { authService } from "@/services";
+import { authService } from "@/services/auth";
 
 export default async function ConfirmAccountRegistrationPage(props: {
   searchParams?: Promise<Record<"email" | "token", string>>;
