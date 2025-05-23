@@ -28,12 +28,14 @@ export const RelatedProducts = ({
               key={product.id}
               className="w-1/1 h-full flex-none md:w-1/5"
             >
-              <SearchProductCard
-                product={product}
-                sizes="(max-width: 360px) 195px, (max-width: 720px) 379px, 1vw"
-                height={200}
-                width={200}
-              />
+              <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-4 md:grid-cols-1">
+                <SearchProductCard
+                  product={product}
+                  sizes="(max-width: 360px) 195px, (max-width: 720px) 379px, 1vw"
+                  height={200}
+                  width={200}
+                />
+              </div>
             </CarouselItem>
           ))}
         </CarouselContent>
