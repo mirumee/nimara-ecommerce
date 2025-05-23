@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { type GetTranslations } from "@/types";
 
-export const formSchema = ({ t }: { t: GetTranslations }) =>
+export const signInSchema = ({ t }: { t: GetTranslations }) =>
   z.object({
     email: z
       .string()
@@ -14,4 +14,4 @@ export const formSchema = ({ t }: { t: GetTranslations }) =>
       .trim(),
   });
 
-export type FormSchema = z.infer<ReturnType<typeof formSchema>>;
+export type SignInSchema = z.infer<ReturnType<typeof signInSchema>>;

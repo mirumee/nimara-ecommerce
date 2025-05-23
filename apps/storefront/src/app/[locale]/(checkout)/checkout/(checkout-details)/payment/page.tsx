@@ -10,7 +10,9 @@ import { serverEnvs } from "@/envs/server";
 import { getCheckoutOrRedirect } from "@/lib/checkout";
 import { getStoreUrl } from "@/lib/server";
 import { getCurrentRegion } from "@/regions/server";
-import { addressService, paymentService, userService } from "@/services";
+import { addressService } from "@/services/address";
+import { paymentService } from "@/services/payment";
+import { userService } from "@/services/user";
 
 import { CheckoutSkeleton } from "../../_components/checkout-skeleton";
 import { DeliveryMethodSection } from "../../_sections/delivery-method-section";

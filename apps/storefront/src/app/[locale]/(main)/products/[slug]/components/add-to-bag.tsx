@@ -16,7 +16,7 @@ import { Link } from "@/i18n/routing";
 import { revalidateCart, setCheckoutIdCookie } from "@/lib/actions/cart";
 import { paths } from "@/lib/paths";
 import { useCurrentRegion } from "@/regions/client";
-import { cartService } from "@/services";
+import { cartService } from "@/services/cart";
 import { storefrontLogger } from "@/services/logging";
 import type { TranslationMessage } from "@/types";
 

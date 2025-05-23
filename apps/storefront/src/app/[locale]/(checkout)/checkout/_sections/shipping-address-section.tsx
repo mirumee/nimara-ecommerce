@@ -6,7 +6,7 @@ import { Button } from "@nimara/ui/components/button";
 import { Link } from "@/i18n/routing";
 import { displayFormattedAddressLines } from "@/lib/address";
 import { paths } from "@/lib/paths";
-import { addressService } from "@/services";
+import { addressService } from "@/services/address";
 
 export async function ShippingAddressSection({
   checkout,

@@ -7,7 +7,7 @@ import {
 
 import { getAccessToken, getRefreshToken } from "@/auth";
 import { COOKIE_KEY } from "@/config";
-import { authService } from "@/services";
+import { authService } from "@/services/auth";
 
 import { type CustomMiddleware } from "./chain";
 

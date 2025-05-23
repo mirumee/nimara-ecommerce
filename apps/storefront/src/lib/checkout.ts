@@ -9,7 +9,8 @@ import { redirect } from "@/i18n/routing";
 import { deleteCheckoutIdCookie } from "@/lib/actions/checkout";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
-import { type addressService, checkoutService } from "@/services";
+import { type addressService } from "@/services/address";
+import { checkoutService } from "@/services/checkout";
 
 type GetCheckout = OkResult<
   Awaited<ReturnType<typeof checkoutService.checkoutGet>>

@@ -1,7 +1,7 @@
 import { clientEnvs } from "@/envs/client";
 import { getCurrentRegion } from "@/regions/server";
-import { storeService } from "@/services";
 import { storefrontLogger } from "@/services/logging";
+import { storeService } from "@/services/store";
 
 import { RelatedProducts } from "./related-products";
 

@@ -1,7 +1,7 @@
 import * as Sentry from "@sentry/nextjs";
 
 import { getAccessToken } from "@/auth";
-import { userService } from "@/services";
+import { userService } from "@/services/user";
 
 import { ErrorServiceClient } from "./error-service-client";
 

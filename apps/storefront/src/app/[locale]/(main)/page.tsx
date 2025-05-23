@@ -8,8 +8,8 @@ import { getAccessToken } from "@/auth";
 import { CACHE_TTL } from "@/config";
 import { JsonLd, websiteToJsonLd } from "@/lib/json-ld";
 import { getCurrentRegion } from "@/regions/server";
-import { userService } from "@/services";
 import { cmsPageService } from "@/services/cms";
+import { userService } from "@/services/user";
 
 import { AccountNotifications } from "./_components/account-notifications";
 import { HeroBanner } from "./_components/hero-banner";

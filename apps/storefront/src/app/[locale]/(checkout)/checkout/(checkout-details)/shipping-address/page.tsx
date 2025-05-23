@@ -5,7 +5,8 @@ import type { CountryCode } from "@nimara/codegen/schema";
 import { getAccessToken } from "@/auth";
 import { getCheckoutOrRedirect } from "@/lib/checkout";
 import { getCurrentRegion } from "@/regions/server";
-import { addressService, userService } from "@/services";
+import { addressService } from "@/services/address";
+import { userService } from "@/services/user";
 
 import { CheckoutSkeleton } from "../../_components/checkout-skeleton";
 import { DeliveryMethodSection } from "../../_sections/delivery-method-section";

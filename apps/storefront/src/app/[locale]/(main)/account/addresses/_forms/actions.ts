@@ -6,7 +6,7 @@ import { type CountryCode } from "@nimara/codegen/schema";
 
 import { getAccessToken } from "@/auth";
 import { paths } from "@/lib/paths";
-import { userService } from "@/services";
+import { userService } from "@/services/user";
 
 import type { FormSchema } from "./schema";
 

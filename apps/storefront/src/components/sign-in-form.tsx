@@ -17,8 +17,8 @@ import { useRouterWithState } from "@/lib/hooks";
 import { paths } from "@/lib/paths";
 
 import {
-  type FormSchema,
-  formSchema,
+  type SignInSchema,
+  signInSchema,
 } from "../app/[locale]/(auth)/sign-in/schema";
 
 export function SignInForm({ redirectUrl }: { redirectUrl?: string }) {
@@ -30,8 +30,8 @@ export function SignInForm({ redirectUrl }: { redirectUrl?: string }) {
   const { toast } = useToast();
   const { isRedirecting, push } = useRouterWithState();
 
-  const form = useForm<FormSchema>({
-    resolver: zodResolver(formSchema({ t })),
+  const form = useForm<SignInSchema>({
+    resolver: zodResolver(signInSchema({ t })),
     defaultValues: {
       email: "",
       password: "",
@@ -40,7 +40,7 @@ export function SignInForm({ redirectUrl }: { redirectUrl?: string }) {
 
   const isDisabled = isRedirecting || form.formState?.isSubmitting;
 
-  async function handleSubmit(values: FormSchema) {
+  async function handleSubmit(values: SignInSchema) {
     const data = await login({ ...values, redirectUrl });
 
     if (data.redirectUrl) {

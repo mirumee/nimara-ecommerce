@@ -6,8 +6,10 @@ import { CACHE_TTL, COOKIE_KEY } from "@/config";
 import { clientEnvs } from "@/envs/client";
 import { JsonLd, productToJsonLd } from "@/lib/json-ld";
 import { getCurrentRegion } from "@/regions/server";
-import { cartService, storeService, userService } from "@/services";
+import { cartService } from "@/services/cart";
 import { storefrontLogger } from "@/services/logging";
+import { storeService } from "@/services/store";
+import { userService } from "@/services/user";
 
 import { ProductDetails } from "./product-details";
 

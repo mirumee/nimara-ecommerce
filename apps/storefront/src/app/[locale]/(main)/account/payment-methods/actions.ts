@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { paths } from "@/lib/paths";
-import { paymentService } from "@/services";
+import { paymentService } from "@/services/payment";
 
 export const paymentMethodDeleteAction = async ({
   customerId,

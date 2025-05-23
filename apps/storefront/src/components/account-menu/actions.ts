@@ -7,7 +7,7 @@ import { signOut } from "@/auth";
 import { redirect } from "@/i18n/routing";
 import { handleLogout } from "@/lib/actions/auth";
 import { paths } from "@/lib/paths";
-import { errorService } from "@/services";
+import { errorService } from "@/services/error";
 
 export async function logout() {
   await handleLogout();

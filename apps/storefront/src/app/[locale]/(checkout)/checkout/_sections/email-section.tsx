@@ -6,7 +6,7 @@ import { Button } from "@nimara/ui/components/button";
 
 import { Link } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
-import { checkoutService } from "@/services";
+import { checkoutService } from "@/services/checkout";
 import { storefrontLogger } from "@/services/logging";
 
 export const EmailSection = async ({

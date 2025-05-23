@@ -8,7 +8,8 @@ import { Button } from "@nimara/ui/components/button";
 import { getAccessToken } from "@/auth";
 import { displayFormattedAddressLines } from "@/lib/address";
 import { getCurrentRegion } from "@/regions/server";
-import { addressService, userService } from "@/services";
+import { addressService } from "@/services/address";
+import { userService } from "@/services/user";
 
 import { AddNewAddressModal } from "./_modals/create-address-modal";
 import { EditAddressModal } from "./_modals/update-address-modal";

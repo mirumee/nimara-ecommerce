@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { errorService } from "@/services";
+import { errorService } from "@/services/error";
 import { storefrontLogger } from "@/services/logging";
 
 export default function Error({

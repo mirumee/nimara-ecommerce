@@ -7,7 +7,7 @@ import { redirect } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 import { getStoreUrl, getStoreUrlWithPath } from "@/lib/server";
 import { getCurrentRegion } from "@/regions/server";
-import { userService } from "@/services";
+import { userService } from "@/services/user";
 
 export async function requestUserAccountDeletion() {
   const region = await getCurrentRegion();

@@ -72,8 +72,10 @@ const nextConfig = withAnalyzer(
         {
           hostname: "*.saleor.cloud",
         },
+        {
+          hostname: "cdn.buttercms.com",
+        },
       ],
-      domains: ["cdn.buttercms.com"],
       deviceSizes: [360, 480, 640, 768, 1024],
       imageSizes: [256, 512, 768, 1024],
     },
@@ -142,6 +144,7 @@ const nextConfig = withAnalyzer(
     },
   }),
 );
+
 const configWithSentry = withSentryConfig(nextConfig, {
   // For all available options, see:
   // https://github.com/getsentry/sentry-webpack-plugin#options

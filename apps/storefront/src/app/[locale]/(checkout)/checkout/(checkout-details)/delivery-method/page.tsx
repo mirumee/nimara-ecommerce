@@ -2,7 +2,7 @@ import { getLocale } from "next-intl/server";
 
 import { getAccessToken } from "@/auth";
 import { getCheckoutOrRedirect } from "@/lib/checkout";
-import { userService } from "@/services";
+import { userService } from "@/services/user";
 
 import { CheckoutSkeleton } from "../../_components/checkout-skeleton";
 import { EmailSection } from "../../_sections/email-section";
