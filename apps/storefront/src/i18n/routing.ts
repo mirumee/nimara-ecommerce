@@ -17,7 +17,7 @@ export const localePrefixes: Record<
 export const routing = defineRouting({
   locales: SUPPORTED_LOCALES,
   defaultLocale: DEFAULT_LOCALE,
-  localeDetection: false,
+  localeDetection: true,
   localePrefix: {
     mode: "as-needed",
     prefixes: localePrefixes,

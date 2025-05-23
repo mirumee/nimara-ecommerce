@@ -41,7 +41,7 @@ export default async function Page(props: { searchParams: SearchParams }) {
     }
   } else {
     const firstError = resultPaymentProcess.errors?.[0];
-    const errorCode = firstError ? firstError.code : "payment.default";
+    const errorCode = firstError ? firstError.code : "DEFAULT_PAYMENT_ERROR";
 
     redirect({
       href: paths.checkout.payment.asPath({

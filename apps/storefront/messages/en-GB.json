@@ -260,6 +260,7 @@
     "COUNTRIES_NOT_FOUND_ERROR": "Countries not found.",
     "CREATE_SETUP_INTENT_ERROR": "Failed to create setup intent.",
     "CUSTOMER_NOT_FOUND_ERROR": "Customer not found.",
+    "DEFAULT_PAYMENT_ERROR": "Failed to collect the payment. Please try again.",
     "DISCOUNT_CODE_ADD_ERROR": "Failed to add discount code.",
     "DISCOUNT_CODE_NOT_APPLICABLE_ERROR": "Discount code is not applicable to this checkout.",
     "DISCOUNT_CODE_NOT_EXIST_ERROR": "Provided discount code doesn't exist {code}",
