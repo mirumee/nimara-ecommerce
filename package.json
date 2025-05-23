@@ -30,6 +30,7 @@
     "dev:stripe": "pnpm run dev --filter=stripe",
     "dev:docs": "pnpm run dev --filter=docs",
     "test": "dotenv -- turbo run test",
+    "test:watch": "dotenv -- turbo run test:watch",
     "test:e2e": "dotenv -- turbo run test:e2e",
     "prepare": "husky",
     "format": "pnpm prettier --write '**/*.{js,ts,tsx,json,md}'",

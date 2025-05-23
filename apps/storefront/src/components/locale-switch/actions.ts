@@ -8,12 +8,10 @@ import { COOKIE_KEY } from "@/config";
 import { localePrefixes } from "@/i18n/routing";
 import { DEFAULT_LOCALE, type Locale } from "@/regions/types";
 
-const NEXT_LOCALE = "NEXT_LOCALE";
-
 export const handleLocaleChange = async (locale: Locale) => {
   const cookieStore = await cookies();
 
-  cookieStore.set(NEXT_LOCALE, locale);
+  cookieStore.set(COOKIE_KEY.locale, locale);
   cookieStore.delete(COOKIE_KEY.checkoutId);
   revalidatePath("/");
 
