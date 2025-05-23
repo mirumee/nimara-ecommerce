@@ -84,10 +84,7 @@ export const UserEmailForm = ({
               />
             </div>
             <Button
-              className={cn(
-                form.formState.errors.email && "mb-[1.813rem]",
-                "ml-2",
-              )}
+              className={cn({ "mb-[1.813rem]": form.formState.errors.email })}
               type="submit"
               form="user-details-email-form"
               disabled={isDisabled}
