@@ -23,19 +23,21 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
-    <section className="relative mx-auto grid min-h-screen w-full max-w-7xl grid-cols-12">
-      <main className="xs:px-6 col-span-12 w-full space-y-4 justify-self-center px-0 pt-4 md:col-span-7 md:max-w-md">
-        <div className="flex w-full">
-          <Logo />
-        </div>
-        <div className="flex flex-col gap-8 divide-y pt-6">{children}</div>
-      </main>
-      <div className="relative col-span-5 hidden md:block">
-        <div className="absolute inset-y-0 left-0 right-[-100vw] bg-gray-100" />
-        <div className="relative z-10">
-          <SideSummary />
-        </div>
+    <section className="grid min-h-screen grid-cols-1 md:grid-cols-3">
+      <div className="col-span-2 flex justify-center">
+        <main className="w-full max-w-md space-y-4 p-4">
+          <div className="flex w-full">
+            <Logo />
+          </div>
+          <div className="flex flex-col gap-8 divide-y pt-8">{children}</div>
+        </main>
       </div>
+      <aside className="absolute right-0 pt-4 md:hidden">
+        <SideSummary />
+      </aside>
+      <aside className="hidden bg-gray-100 md:block">
+        <SideSummary />
+      </aside>
     </section>
   );
 }

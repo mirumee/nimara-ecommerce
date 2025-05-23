@@ -4,14 +4,16 @@ import { CheckoutSkeleton } from "./_components/checkout-skeleton";
 
 export default function Loading() {
   return (
-    <section className="mx-auto grid w-full max-w-7xl grid-cols-12">
-      <main className="xs:px-6 col-span-12 w-full space-y-4 justify-self-center px-0 pt-4 md:col-span-7 md:max-w-md">
-        <div className="flex w-full">
-          <Logo />
-        </div>
-        <div className="flex flex-col gap-8 divide-y pt-6"></div>
-      </main>
-      <aside className="col-span-5 hidden min-h-screen bg-gray-100 pl-12 pr-24 pt-24 md:block">
+    <section className="grid min-h-screen grid-cols-3">
+      <div className="col-span-2 flex justify-center">
+        <main className="w-full max-w-md space-y-4 px-4">
+          <div className="flex w-full">
+            <Logo />
+          </div>
+          <div className="flex flex-col gap-8 divide-y pt-8"></div>
+        </main>
+      </div>
+      <aside className="hidden bg-gray-100 md:block">
         <CheckoutSkeleton />
       </aside>
     </section>
