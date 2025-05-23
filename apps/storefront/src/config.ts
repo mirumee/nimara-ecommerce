@@ -24,10 +24,12 @@ export const COOKIE_KEY = {
   accessToken: "accessToken",
   refreshToken: "refreshToken",
   searchProvider: "searchProvider",
+  locale: "NEXT_LOCALE",
 };
 
 export const COOKIE_MAX_AGE = {
   checkout: 30 * DAY,
+  locale: 360 * DAY,
 };
 
 export const MIN_PASSWORD_LENGTH = 8;
