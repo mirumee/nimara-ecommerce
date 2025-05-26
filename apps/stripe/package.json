@@ -19,7 +19,7 @@
     "@saleor/app-sdk": "0.52.0",
     "@sentry/integrations": "^7.114.0",
     "@sentry/nextjs": "^8.52.0",
-    "@sentry/types": "^8.52.0",
+    "@sentry/types": "^9.22.0",
     "@vercel/otel": "^1.10.4",
     "clsx": "2.1.1",
     "eslint-config-next": "15.1.6",
