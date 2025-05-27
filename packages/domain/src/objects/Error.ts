@@ -96,6 +96,7 @@ export const CHECKOUT_ERROR_CODES = [
   "PAYMENT_PROCESSING_ERROR",
   "TRANSACTION_INITIALIZE_ERROR",
   "TRANSACTION_PROCESS_ERROR",
+  "VOUCHER_NOT_APPLICABLE_ERROR",
 ] as const satisfies ErrorCodeFormat[];
 export type CheckoutErrorCode = (typeof CHECKOUT_ERROR_CODES)[number];
 
