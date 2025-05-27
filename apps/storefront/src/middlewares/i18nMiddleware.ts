@@ -1,6 +1,6 @@
 import { match } from "@formatjs/intl-localematcher";
 import Negotiator from "negotiator";
-import type { NextFetchEvent, NextRequest } from "next/server";
+import type { NextFetchEvent, NextRequest, NextResponse } from "next/server";
 import createIntlMiddleware from "next-intl/middleware";
 
 import { COOKIE_KEY, COOKIE_MAX_AGE } from "@/config";
@@ -35,7 +35,18 @@ function getLocale(request: NextRequest): Locale {
 }
 
 export function i18nMiddleware(next: CustomMiddleware): CustomMiddleware {
-  return async (request: NextRequest, event: NextFetchEvent) => {
+  return async (
+    request: NextRequest,
+    event: NextFetchEvent,
+    prevResponse: NextResponse,
+  ) => {
+    if (request.method === "OPTIONS") {
+      // If the request is an OPTIONS request, we can skip the i18n middleware
+      // and return the previous response or a new response.
+      // This is useful for CORS preflight requests.
+      return next(request, event, prevResponse);
+    }
+
     const pathname = request.nextUrl.pathname;
     const localePrefix = Object.values(localePrefixes).find(
       (localePrefix) =>
