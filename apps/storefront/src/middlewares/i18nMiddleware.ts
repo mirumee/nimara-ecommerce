@@ -1,6 +1,6 @@
 import { match } from "@formatjs/intl-localematcher";
 import Negotiator from "negotiator";
-import type { NextFetchEvent, NextRequest } from "next/server";
+import type { NextFetchEvent, NextRequest, NextResponse } from "next/server";
 import createIntlMiddleware from "next-intl/middleware";
 
 import { COOKIE_KEY, COOKIE_MAX_AGE } from "@/config";
@@ -14,19 +14,39 @@ import { storefrontLogger } from "@/services/logging";
 
 import type { CustomMiddleware } from "./chain";
 
-function getLocale(request: NextRequest) {
+function getLocale(request: NextRequest): Locale {
   const languages = new Negotiator({
     headers: {
-      "accept-language":
-        request.headers.get("accept-language") ?? DEFAULT_LOCALE,
+      "accept-language": request.headers.get("accept-language") || "",
     },
   }).languages();
 
-  return match(languages, SUPPORTED_LOCALES, DEFAULT_LOCALE);
+  const matchedLanguage = match(languages, SUPPORTED_LOCALES, DEFAULT_LOCALE);
+
+  if (SUPPORTED_LOCALES.includes(matchedLanguage)) {
+    return matchedLanguage as Locale;
+  }
+
+  storefrontLogger.warning(
+    `Locale "${matchedLanguage}" is not supported. Falling back to default locale "${DEFAULT_LOCALE}".`,
+  );
+
+  return DEFAULT_LOCALE;
 }
 
-export function i18nMiddleware(middleware: CustomMiddleware) {
-  return async (request: NextRequest, event: NextFetchEvent) => {
+export function i18nMiddleware(next: CustomMiddleware): CustomMiddleware {
+  return async (
+    request: NextRequest,
+    event: NextFetchEvent,
+    prevResponse: NextResponse,
+  ) => {
+    if (request.method === "OPTIONS") {
+      // If the request is an OPTIONS request, we can skip the i18n middleware
+      // and return the previous response or a new response.
+      // This is useful for CORS preflight requests.
+      return next(request, event, prevResponse);
+    }
+
     const pathname = request.nextUrl.pathname;
     const localePrefix = Object.values(localePrefixes).find(
       (localePrefix) =>
@@ -41,15 +61,15 @@ export function i18nMiddleware(middleware: CustomMiddleware) {
     const response = handleI18nRouting(request);
 
     // INFO: All routes have locale prefixes except for default locale/domain - "/".
-    // If the user types only domain name it should be navigated to preffered region of the store,
+    // If the user types only domain name it should be navigated to preferred region of the store,
     // otherwise navigate to the requested locale prefixed pathname
     if (isLocalePrefixedPathname) {
       localeFromRequest =
-        Object.keys(localePrefixes).find(
+        (Object.keys(localePrefixes).find(
           (key) =>
             localePrefixes[key as Exclude<Locale, typeof DEFAULT_LOCALE>] ===
             localePrefix,
-        ) ?? DEFAULT_LOCALE;
+        ) as Locale) ?? DEFAULT_LOCALE;
     }
 
     // INFO: Store the locale in the cookie to know if the locale has changed between requests
@@ -64,10 +84,9 @@ export function i18nMiddleware(middleware: CustomMiddleware) {
         `Locale changed from ${localeFromCookie} to ${localeFromRequest}. Removing the checkoutId cookie.`,
       );
 
-      request.cookies.delete(COOKIE_KEY.checkoutId);
       response.cookies.delete(COOKIE_KEY.checkoutId);
     }
 
-    return middleware(request, event, response);
+    return next(request, event, response);
   };
 }
