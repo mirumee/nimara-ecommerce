@@ -1,0 +1,8 @@
+query CountriesQuery {
+  shop {
+    countries {
+      code
+      country
+    }
+  }
+}
