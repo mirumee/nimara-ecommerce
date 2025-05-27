@@ -9,6 +9,7 @@ import { type Logger } from "#root/logging/types";
 export type AddressService<Config> = (config: Config) => {
   addressFormGetRows: AddressFormGetRowsUseCase;
   addressFormat: AddressFormatUseCase;
+  countriesAllGet: CountriesAllGetInfra;
   countriesGet: CountriesGetInfra;
 };
 
@@ -34,3 +35,9 @@ export type CountriesGetInfra = (opts: {
 }) => AsyncResult<{ code: string; country: string }[]>;
 
 export type CountriesGetUseCase = CountriesGetInfra;
+
+export type CountriesAllGetInfra = () => AsyncResult<
+  { code: string; country: string }[]
+>;
+
+export type CountriesAllGetUseCase = CountriesAllGetInfra;

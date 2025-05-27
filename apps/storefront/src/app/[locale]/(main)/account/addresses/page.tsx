@@ -72,9 +72,7 @@ export default async function Page(props: {
         : "address.default-billing";
   }
 
-  const resultCountries = await addressService.countriesGet({
-    channelSlug: region.market.channel,
-  });
+  const resultCountries = await addressService.countriesAllGet();
 
   if (!resultCountries.ok) {
     throw new Error("No countries.");

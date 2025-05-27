@@ -29,6 +29,18 @@ export type ChannelQueryVariables = Types.Exact<{
 
 export type ChannelQuery = ChannelQuery_Query;
 
+export type CountriesQuery_shop_Shop_countries_CountryDisplay = { code: string, country: string };
+
+export type CountriesQuery_shop_Shop = { countries: Array<CountriesQuery_shop_Shop_countries_CountryDisplay> };
+
+export type CountriesQuery_Query = { shop: CountriesQuery_shop_Shop };
+
+
+export type CountriesQueryVariables = Types.Exact<{ [key: string]: never; }>;
+
+
+export type CountriesQuery = CountriesQuery_Query;
+
 export class TypedDocumentString<TResult, TVariables>
   extends String
   implements DocumentTypeDecoration<TResult, TVariables>
@@ -76,3 +88,13 @@ export const ChannelQueryDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<ChannelQuery, ChannelQueryVariables>;
+export const CountriesQueryDocument = new TypedDocumentString(`
+    query CountriesQuery {
+  shop {
+    countries {
+      code
+      country
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<CountriesQuery, CountriesQueryVariables>;
