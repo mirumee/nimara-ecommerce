@@ -176,7 +176,6 @@ export default async function Page(props: {
                   }}
                   addressFormRows={resultAddressRows.data}
                   countries={resultCountries.data}
-                  countryCode={countryCode}
                 />
               </div>
 

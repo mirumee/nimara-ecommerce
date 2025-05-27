@@ -57,7 +57,6 @@ const companyNameRow = [
 interface AddressFormProps {
   addressFormRows: readonly AddressFormRow[];
   countries: Omit<CountryDisplay, "vat">[];
-  countryCode: CountryCode;
   isDisabled?: boolean;
   onCountryChange?: (isChanging: boolean) => void;
   schemaPrefix?: string;
@@ -66,7 +65,6 @@ interface AddressFormProps {
 export const AddressForm = ({
   countries,
   addressFormRows,
-  countryCode,
   schemaPrefix,
   isDisabled,
   onCountryChange,
@@ -78,9 +76,11 @@ export const AddressForm = ({
   const [isChangingCountry, setIsChangingCountry] = useState(false);
 
   useEffect(() => {
-    setIsChangingCountry(false);
-    onCountryChange?.(false);
-  }, [countryCode]);
+    if (isChangingCountry && addressFormRows.length > 0) {
+      setIsChangingCountry(false);
+      onCountryChange?.(false);
+    }
+  }, [addressFormRows]);
 
   const handleChangeCountry = (countryCode: CountryCode) => {
     setIsChangingCountry(true);

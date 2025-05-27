@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-import type { CountryCode, CountryDisplay } from "@nimara/codegen/schema";
+import type { CountryDisplay } from "@nimara/codegen/schema";
 import type { Address } from "@nimara/domain/objects/Address";
 import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import { ADDRESS_CORE_FIELDS } from "@nimara/infrastructure/consts";
@@ -32,14 +32,13 @@ export const EditAddressForm = ({
   address,
   countries,
   addressFormRows,
-  countryCode,
   onModalClose,
   onModeChange,
 }: {
   address: Address;
   addressFormRows: readonly AddressFormRow[];
   countries: Omit<CountryDisplay, "vat">[];
-  countryCode: CountryCode;
+
   onModalClose: () => void;
   onModeChange: () => void;
 }) => {
@@ -87,7 +86,6 @@ export const EditAddressForm = ({
         <AddressForm
           addressFormRows={addressFormRows}
           countries={countries}
-          countryCode={countryCode}
           onCountryChange={setIsCountryChanging}
         />
         <div className="space-y-3">

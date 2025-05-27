@@ -94,7 +94,6 @@ export const CreateShippingAddressForm = ({
           <AddressForm
             addressFormRows={addressFormRows}
             countries={countries}
-            countryCode={countryCode}
             onCountryChange={setIsCountryChanging}
           />
         </div>
