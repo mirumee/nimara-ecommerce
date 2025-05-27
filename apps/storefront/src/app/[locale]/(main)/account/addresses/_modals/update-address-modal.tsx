@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { type ReactNode, useState } from "react";
 
-import type { CountryCode, CountryDisplay } from "@nimara/codegen/schema";
+import type { CountryDisplay } from "@nimara/codegen/schema";
 import type { Address } from "@nimara/domain/objects/Address";
 import type { AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import { Button } from "@nimara/ui/components/button";
@@ -28,14 +28,12 @@ interface AddNewAddressModalProps {
   address: Address;
   addressFormRows: readonly AddressFormRow[];
   countries: Omit<CountryDisplay, "vat">[];
-  countryCode: CountryCode;
 }
 
 export function EditAddressModal({
   address,
   addressFormRows,
   countries,
-  countryCode,
 }: AddNewAddressModalProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -78,7 +76,6 @@ export function EditAddressModal({
           address={address}
           addressFormRows={addressFormRows}
           countries={countries}
-          countryCode={countryCode}
           onModalClose={() => setIsOpen(false)}
           onModeChange={() => setMode("DELETE")}
         />

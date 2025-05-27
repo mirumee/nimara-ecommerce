@@ -92,7 +92,6 @@ export const AddNewAddressForm = ({
         <AddressForm
           addressFormRows={addressFormRows}
           countries={countries}
-          countryCode={countryCode}
           onCountryChange={setIsCountryChanging}
         />
         <div className="space-y-3">
