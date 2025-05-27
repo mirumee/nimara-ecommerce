@@ -109,7 +109,6 @@ export function AddressTab({
               {editedAddress ? (
                 <UpdateShippingAddressForm
                   address={editedAddress}
-                  countryCode={countryCode}
                   countries={countries}
                   addressFormRows={addressFormRows}
                   setEditedAddress={setEditedAddress}
