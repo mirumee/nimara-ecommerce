@@ -51,6 +51,7 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
               <Link
                 href={item.url}
                 className="text-inherit no-underline hover:underline"
+                prefetch={false}
                 legacyBehavior
                 passHref
               >
@@ -76,6 +77,7 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
                           key={child.id}
                           href={child.url}
                           className="hover:bg-accent group block space-y-1 rounded-md p-3"
+                          prefetch={false}
                         >
                           <div className="text-sm font-medium leading-none">
                             {child.label}
@@ -105,6 +107,7 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
                           href={child.url}
                           className="bg-accent group relative min-h-[270px] overflow-hidden rounded-lg"
                           onClick={() => setCurrentMenuItem("")}
+                          prefetch={false}
                         >
                           <div className="relative h-1/2">
                             {child.collectionImageUrl && (
