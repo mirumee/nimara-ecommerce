@@ -40,10 +40,26 @@ export function i18nMiddleware(next: CustomMiddleware): CustomMiddleware {
     event: NextFetchEvent,
     prevResponse: NextResponse,
   ) => {
-    if (request.method === "OPTIONS") {
-      // If the request is an OPTIONS request, we can skip the i18n middleware
-      // and return the previous response or a new response.
-      // This is useful for CORS preflight requests.
+    const isRequestPrefetch = request.headers.get("x-nextjs-prefetch") === "1";
+    const isRequestFromBot = request.headers
+      .get("user-agent")
+      ?.toLowerCase()
+      .includes("bot");
+    const isOptionsRequest =
+      request.method === "OPTIONS" ||
+      request.headers.get("x-middleware-preflight") === "1";
+
+    if (isRequestPrefetch || isRequestFromBot || isOptionsRequest) {
+      // INFO: Skip i18n middleware for prefetch requests, bot requests, and OPTIONS requests
+      storefrontLogger.debug(
+        `Skipping i18n middleware for request: ${request.method} ${request.url}`,
+        {
+          isRequestPrefetch,
+          isRequestFromBot,
+          isOptionsRequest,
+        },
+      );
+
       return next(request, event, prevResponse);
     }
 
@@ -78,17 +94,13 @@ export function i18nMiddleware(next: CustomMiddleware): CustomMiddleware {
     });
 
     const localeFromCookie = request.cookies.get(COOKIE_KEY.locale)?.value;
-    const isPrefetch = request.headers.get("x-nextjs-prefetch") === "1";
 
-    if (
-      !isPrefetch &&
-      localeFromCookie &&
-      localeFromRequest !== localeFromCookie
-    ) {
+    if (localeFromCookie && localeFromRequest !== localeFromCookie) {
       storefrontLogger.debug(
         `Locale changed from ${localeFromCookie} to ${localeFromRequest}. Removing the checkoutId cookie.`,
         {
-          url: request.url,
+          requestUrl: request.url,
+          nextUrl: request.nextUrl.toString(),
         },
       );
 
