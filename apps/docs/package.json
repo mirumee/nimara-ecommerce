@@ -20,6 +20,6 @@
     "@svgr/webpack": "8.1.0",
     "eslint": "^8.57.0",
     "eslint-config-custom": "workspace:*",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.3"
   }
 }
