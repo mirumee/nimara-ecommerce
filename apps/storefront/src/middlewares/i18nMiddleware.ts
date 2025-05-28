@@ -78,10 +78,18 @@ export function i18nMiddleware(next: CustomMiddleware): CustomMiddleware {
     });
 
     const localeFromCookie = request.cookies.get(COOKIE_KEY.locale)?.value;
+    const isPrefetch = request.headers.get("x-nextjs-prefetch") === "1";
 
-    if (localeFromCookie && localeFromRequest !== localeFromCookie) {
+    if (
+      !isPrefetch &&
+      localeFromCookie &&
+      localeFromRequest !== localeFromCookie
+    ) {
       storefrontLogger.debug(
         `Locale changed from ${localeFromCookie} to ${localeFromRequest}. Removing the checkoutId cookie.`,
+        {
+          url: request.url,
+        },
       );
 
       response.cookies.delete(COOKIE_KEY.checkoutId);
