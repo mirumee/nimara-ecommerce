@@ -38,11 +38,11 @@
   },
   "devDependencies": {
     "commitizen": "4.3.1",
-    "dotenv-cli": "7.4.2",
+    "dotenv-cli": "7.4.4",
     "eslint": "^8.57.0",
     "eslint-config-custom": "workspace:*",
     "husky": "9.1.7",
-    "lint-staged": "^15.5.0",
+    "lint-staged": "^15.5.2",
     "prettier": "3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "turbo": "2.5.3"
