@@ -34,6 +34,8 @@ export const mapSaleorErrorCode = (code: SaleorErrorCode): AppErrorCode => {
       return "REQUIRED_ERROR";
     case "UNIQUE":
       return "UNIQUE_ERROR";
+    case "VOUCHER_NOT_APPLICABLE":
+      return "VOUCHER_NOT_APPLICABLE_ERROR";
 
     default:
       console.warn(

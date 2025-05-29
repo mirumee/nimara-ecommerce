@@ -433,7 +433,6 @@ export const Payment = ({
                     addressFormRows={addressFormRows}
                     schemaPrefix="billingAddress"
                     countries={countries}
-                    countryCode={countryCode}
                     onCountryChange={setIsProcessing}
                   />
                 )}

@@ -9,7 +9,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint --dir src --fix",
-    "lint:staged": "lint-staged"
+    "lint:staged": "lint-staged",
+    "test": "vitest run",
+    "test:watch": "vitest --watch"
   },
   "dependencies": {
     "@formatjs/intl-localematcher": "0.5.9",
@@ -66,6 +68,7 @@
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "autoprefixer": "10.4.21",
+    "dotenv": "16.4.7",
     "eslint": "^8.57.0",
     "eslint-config-custom": "workspace:*",
     "file-loader": "6.2.0",
@@ -75,7 +78,9 @@
     "tailwindcss": "^3.4.17",
     "ts-toolbelt": "^9.6.0",
     "tsconfig": "workspace:*",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.2",
+    "vite-tsconfig-paths": "5.1.4",
+    "vitest": "3.0.4"
   },
   "lint-staged": {
     "*.{js,cjs,ts,tsx}": "eslint --fix",

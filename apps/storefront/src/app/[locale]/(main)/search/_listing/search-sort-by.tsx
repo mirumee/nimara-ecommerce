@@ -59,11 +59,7 @@ export const SearchSortBy = ({
           <SelectTrigger className="min-w-40" aria-label={t("search.sort-by")}>
             <SelectValue placeholder={t("search.sort-by")} />
           </SelectTrigger>
-          <SelectContent
-            ref={(ref) =>
-              ref?.addEventListener("touchend", (e) => e.preventDefault())
-            }
-          >
+          <SelectContent>
             <SelectGroup>
               {options.map(({ value, messageKey }) => (
                 <SelectItem value={value} key={value}>

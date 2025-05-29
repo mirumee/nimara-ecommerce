@@ -7,12 +7,9 @@ import {
   SUPPORTED_LOCALES,
 } from "@/regions/types";
 
-export const localePrefixes: Record<
-  Exclude<Locale, typeof DEFAULT_LOCALE>,
-  string
-> = {
+export const localePrefixes = {
   "en-GB": "/gb",
-};
+} as const satisfies Record<Exclude<Locale, typeof DEFAULT_LOCALE>, string>;
 
 export const routing = defineRouting({
   locales: SUPPORTED_LOCALES,

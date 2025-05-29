@@ -18,7 +18,7 @@ export const requestPasswordResetAction = async ({
     email,
     redirectUrl: getStoreUrlWithPath(
       await getStoreUrl(),
-      paths.confirmAccountRegistration.asPath(),
+      paths.newPassword.asPath(),
     ),
   });
 

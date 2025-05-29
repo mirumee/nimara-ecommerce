@@ -101,7 +101,6 @@ export function AddressTab({
             addressFormRows={addressFormRows}
             schemaPrefix="billingAddress"
             countries={countries}
-            countryCode={countryCode}
           />
           {hasDefaultBillingAddressSet && (
             <CheckboxField
@@ -160,7 +159,6 @@ export function AddressTab({
               addressFormRows={addressFormRows}
               schemaPrefix="billingAddress"
               countries={countries}
-              countryCode={countryCode}
             />
             {hasDefaultBillingAddressSet && (
               <CheckboxField

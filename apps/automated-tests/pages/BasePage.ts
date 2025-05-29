@@ -1,4 +1,4 @@
-import { type Page } from "@playwright/test";
+import { expect, type Page } from "@playwright/test";
 
 export class BasePage {
   protected page: Page;
@@ -9,5 +9,9 @@ export class BasePage {
 
   async navigate(url: string) {
     await this.page.goto(url);
+  }
+
+  async expectPageToHaveUrl(url: string) {
+    await expect(this.page).toHaveURL(url);
   }
 }

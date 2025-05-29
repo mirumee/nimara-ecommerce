@@ -60,15 +60,29 @@ export const DiscountCode = ({ checkout }: { checkout: Checkout }) => {
             (error) => error.code === "INVALID_VALUE_ERROR",
           );
 
+          const notApplicableError = result.errors.find(
+            (error) => error.code === "VOUCHER_NOT_APPLICABLE_ERROR",
+          );
+
           if (isPromoCodeInvalid) {
             form.setError("code", {
-              message: isPromoCodeInvalid
-                ? t("errors.DISCOUNT_CODE_NOT_EXIST_ERROR", {
-                    code: `(${values.code})`,
-                  })
-                : t("errors.DISCOUNT_CODE_NOT_APPLICABLE_ERROR"),
+              message: t("errors.DISCOUNT_CODE_NOT_EXIST_ERROR", {
+                code: `(${values.code})`,
+              }),
             });
             setShouldClearInput(true);
+
+            return;
+          }
+          if (notApplicableError) {
+            form.setError("code", {
+              message: t("errors.VOUCHER_NOT_APPLICABLE_ERROR", {
+                code: `(${values.code})`,
+              }),
+            });
+            setShouldClearInput(true);
+
+            return;
           } else {
             toast({
               description: t("errors.UNKNOWN_ERROR"),
@@ -76,8 +90,6 @@ export const DiscountCode = ({ checkout }: { checkout: Checkout }) => {
               position: "center",
             });
           }
-
-          return;
         })(),
     );
   };

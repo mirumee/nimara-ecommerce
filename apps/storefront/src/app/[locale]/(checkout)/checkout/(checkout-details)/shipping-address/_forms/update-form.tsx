@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-import { type CountryCode, type CountryDisplay } from "@nimara/codegen/schema";
+import { type CountryDisplay } from "@nimara/codegen/schema";
 import { type Address } from "@nimara/domain/objects/Address";
 import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import { ADDRESS_CORE_FIELDS } from "@nimara/infrastructure/consts";
@@ -25,13 +25,11 @@ export const UpdateShippingAddressForm = ({
   address,
   countries,
   addressFormRows,
-  countryCode,
   setEditedAddress,
 }: {
   address: Address;
   addressFormRows: readonly AddressFormRow[];
   countries: Omit<CountryDisplay, "vat">[];
-  countryCode: CountryCode;
   setEditedAddress: (value: Address | null) => void;
 }) => {
   const t = useTranslations();
@@ -86,7 +84,6 @@ export const UpdateShippingAddressForm = ({
           <AddressForm
             addressFormRows={addressFormRows}
             countries={countries}
-            countryCode={countryCode}
             onCountryChange={setIsCountryChanging}
           />
         </div>

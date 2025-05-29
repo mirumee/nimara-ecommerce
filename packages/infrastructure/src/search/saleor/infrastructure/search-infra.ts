@@ -48,12 +48,23 @@ export const saleorSearchInfra =
         }))
       : undefined;
 
+    const hasQuery = query?.trim() !== "";
+    const hasCategory = Boolean(category);
+    const hasCollection = Boolean(collection);
+
+    const searchByProducts = hasQuery || (!hasCategory && !hasCollection);
+    const searchByCategory = !hasQuery && hasCategory;
+    const searchByCollection = !hasQuery && hasCollection;
+
     try {
       logger.debug("Fetching the products from Saleor", {
         query,
         channel: context.channel,
         category,
         collection,
+        searchByProducts,
+        searchByCategory,
+        searchByCollection,
       });
 
       const result = await graphqlClient(apiURL).execute(
@@ -70,9 +81,9 @@ export const saleorSearchInfra =
             },
             languageCode: context.languageCode as LanguageCodeEnum,
             search: query,
-            searchByCategory: Boolean(category),
-            searchByCollection: Boolean(collection),
-            searchByProducts: !category && !collection,
+            searchByCategory,
+            searchByCollection,
+            searchByProducts,
             sortBy: settings.sorting.find(
               (conf) => conf.queryParamValue === sortBy,
             )?.saleorValue,
@@ -100,10 +111,15 @@ export const saleorSearchInfra =
         return result;
       }
 
-      const products =
-        result.data?.category?.products ??
-        result.data?.collection?.products ??
-        result.data?.products;
+      let products;
+
+      if (searchByProducts) {
+        products = result.data?.products;
+      } else if (searchByCategory) {
+        products = result.data?.category?.products;
+      } else if (searchByCollection) {
+        products = result.data?.collection?.products;
+      }
 
       if (!products) {
         return ok({
@@ -124,11 +140,10 @@ export const saleorSearchInfra =
         results: products.edges.map(({ node }) => serializer(node)),
         pageInfo: {
           type: "cursor",
-          after: result.data.products?.pageInfo.endCursor,
-          before: result.data.products?.pageInfo.startCursor,
-          hasNextPage: result.data.products?.pageInfo.hasNextPage ?? false,
-          hasPreviousPage:
-            result.data.products?.pageInfo.hasPreviousPage ?? false,
+          after: products.pageInfo.endCursor,
+          before: products.pageInfo.startCursor,
+          hasNextPage: products.pageInfo.hasNextPage ?? false,
+          hasPreviousPage: products.pageInfo.hasPreviousPage ?? false,
         },
       });
     } catch (e) {

@@ -26,7 +26,7 @@ export const RelatedProducts = ({
           {products.map((product) => (
             <CarouselItem
               key={product.id}
-              className="w-1/1 h-full flex-none md:w-1/5"
+              className="flex h-auto w-4/5 flex-none flex-col md:w-1/5"
             >
               <SearchProductCard
                 product={product}

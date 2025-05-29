@@ -1,9 +1,9 @@
 import { match } from "@formatjs/intl-localematcher";
 import Negotiator from "negotiator";
-import type { NextFetchEvent, NextRequest } from "next/server";
+import type { NextFetchEvent, NextRequest, NextResponse } from "next/server";
 import createIntlMiddleware from "next-intl/middleware";
 
-import { COOKIE_KEY } from "@/config";
+import { COOKIE_KEY, COOKIE_MAX_AGE } from "@/config";
 import { localePrefixes, routing } from "@/i18n/routing";
 import {
   DEFAULT_LOCALE,
@@ -14,30 +14,64 @@ import { storefrontLogger } from "@/services/logging";
 
 import type { CustomMiddleware } from "./chain";
 
-const LOCALE_COOKIE_NAME = "NEXT_LOCALE";
-
-function getLocale(request: NextRequest) {
+function getLocale(request: NextRequest): Locale {
   const languages = new Negotiator({
     headers: {
-      "accept-language": request.headers.get("accept-language") ?? undefined,
+      "accept-language": request.headers.get("accept-language") || "",
     },
   }).languages();
 
-  return match(languages, SUPPORTED_LOCALES, DEFAULT_LOCALE);
+  const matchedLanguage = match(languages, SUPPORTED_LOCALES, DEFAULT_LOCALE);
+
+  if (SUPPORTED_LOCALES.includes(matchedLanguage)) {
+    return matchedLanguage as Locale;
+  }
+
+  storefrontLogger.warning(
+    `Locale "${matchedLanguage}" is not supported. Falling back to default locale "${DEFAULT_LOCALE}".`,
+  );
+
+  return DEFAULT_LOCALE;
 }
 
-export function i18nMiddleware(middleware: CustomMiddleware) {
-  return async (request: NextRequest, event: NextFetchEvent) => {
-    const preferredLocale = getLocale(request);
-    const localeCookieValue = request.cookies.get(LOCALE_COOKIE_NAME)?.value;
+export function i18nMiddleware(next: CustomMiddleware): CustomMiddleware {
+  return async (
+    request: NextRequest,
+    event: NextFetchEvent,
+    prevResponse: NextResponse,
+  ) => {
+    const isRequestPrefetch = request.headers.get("x-nextjs-prefetch") === "1";
+    const isRequestFromBot = request.headers
+      .get("user-agent")
+      ?.toLowerCase()
+      .includes("bot");
+    const isOptionsRequest =
+      request.method === "OPTIONS" ||
+      request.headers.get("x-middleware-preflight") === "1";
+
+    if (isRequestPrefetch || isRequestFromBot || isOptionsRequest) {
+      // INFO: Skip i18n middleware for prefetch requests, bot requests, and OPTIONS requests
+      storefrontLogger.debug(
+        `Skipping i18n middleware for request: ${request.method} ${request.url}`,
+        {
+          isRequestPrefetch,
+          isRequestFromBot,
+          isOptionsRequest,
+        },
+      );
+
+      return next(request, event, prevResponse);
+    }
+
     const pathname = request.nextUrl.pathname;
     const localePrefix = Object.values(localePrefixes).find(
       (localePrefix) =>
         pathname.startsWith(localePrefix) || pathname === localePrefix,
     );
+
     const isLocalePrefixedPathname = !!localePrefix;
 
-    let locale = preferredLocale;
+    let localeFromRequest = getLocale(request);
 
     const handleI18nRouting = createIntlMiddleware(routing);
     const response = handleI18nRouting(request);
@@ -46,26 +80,33 @@ export function i18nMiddleware(middleware: CustomMiddleware) {
     // If the user types only domain name it should be navigated to preferred region of the store,
     // otherwise navigate to the requested locale prefixed pathname
     if (isLocalePrefixedPathname) {
-      locale =
-        Object.keys(localePrefixes).find(
+      localeFromRequest =
+        (Object.keys(localePrefixes).find(
           (key) =>
             localePrefixes[key as Exclude<Locale, typeof DEFAULT_LOCALE>] ===
             localePrefix,
-        ) ?? DEFAULT_LOCALE;
+        ) as Locale) ?? DEFAULT_LOCALE;
     }
 
     // INFO: Store the locale in the cookie to know if the locale has changed between requests
-    response.cookies.set(LOCALE_COOKIE_NAME, locale);
+    response.cookies.set(COOKIE_KEY.locale, localeFromRequest, {
+      maxAge: COOKIE_MAX_AGE.locale,
+    });
 
-    if (locale !== localeCookieValue) {
+    const localeFromCookie = request.cookies.get(COOKIE_KEY.locale)?.value;
+
+    if (localeFromCookie && localeFromRequest !== localeFromCookie) {
       storefrontLogger.debug(
-        "Clearing checkout ID cookie from i18n middleware.",
+        `Locale changed from ${localeFromCookie} to ${localeFromRequest}. Removing the checkoutId cookie.`,
+        {
+          requestUrl: request.url,
+          nextUrl: request.nextUrl.toString(),
+        },
       );
 
-      request.cookies.delete(COOKIE_KEY.checkoutId);
       response.cookies.delete(COOKIE_KEY.checkoutId);
     }
 
-    return middleware(request, event, response);
+    return next(request, event, response);
   };
 }
