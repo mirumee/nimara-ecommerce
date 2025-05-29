@@ -14,8 +14,6 @@ import { ProductDetailsSkeleton } from "./components/product-details-skeleton";
 import { RelatedProductsContainer } from "./components/related-products-container";
 import { RelatedProductsSkeleton } from "./components/related-products-skeleton";
 
-export const experimental_ppr = true;
-
 export async function generateMetadata(props: {
   params: Promise<{ locale: string; slug: string }>;
 }) {

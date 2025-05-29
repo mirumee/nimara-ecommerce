@@ -63,9 +63,13 @@ const nextConfig = withAnalyzer(
         fullUrl: false,
       },
     },
-    experimental: {
-      serverExternalPackages: ["pino"],
-      ppr: "incremental",
+    turbopack: {
+      rules: {
+        "*.svg": {
+          loaders: ["@svgr/webpack"],
+          as: "*.js",
+        },
+      },
     },
     images: {
       remotePatterns: [
@@ -131,16 +135,6 @@ const nextConfig = withAnalyzer(
       fileLoaderRule.exclude = /\.svg$/i;
 
       return config;
-    },
-    experimental: {
-      turbo: {
-        rules: {
-          "*.svg": {
-            loaders: ["@svgr/webpack"],
-            as: "*.js",
-          },
-        },
-      },
     },
   }),
 );

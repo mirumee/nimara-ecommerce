@@ -31,6 +31,7 @@ export class ProductPage {
 
   async clickAddToBag() {
     await this.addToBagButton.click();
+
     await expect(this.addToBagButton).toBeEnabled();
     await expect(this.goToBagButton).toBeVisible();
   }

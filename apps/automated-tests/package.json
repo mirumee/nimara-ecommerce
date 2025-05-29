@@ -11,6 +11,7 @@
     "@nimara/config": "workspace:*",
     "@playwright/test": "^1.51.1",
     "@types/node": "22.13.16",
+    "eslint": "^8.57.0",
     "eslint-config-custom": "workspace:*",
     "eslint-plugin-playwright": "^2.1.0",
     "lint-staged": "^15.5.0",

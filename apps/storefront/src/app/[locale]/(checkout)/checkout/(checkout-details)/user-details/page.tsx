@@ -1,13 +1,13 @@
-import { cookies } from "next/headers";
 import { getLocale } from "next-intl/server";
 
 import { getAccessToken } from "@/auth";
-import { COOKIE_KEY } from "@/config";
 import { redirect } from "@/i18n/routing";
+import { getCheckoutId } from "@/lib/actions/cart";
 import { deleteCheckoutIdCookie } from "@/lib/actions/checkout";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { checkoutService } from "@/services/checkout";
+import { storefrontLogger } from "@/services/logging";
 import { userService } from "@/services/user";
 
 import { CheckoutSkeleton } from "../../_components/checkout-skeleton";
@@ -17,11 +17,15 @@ import { ShippingAddressSection } from "../../_sections/shipping-address-section
 import { UserDetailsForm } from "./form";
 
 export default async function Page() {
-  const checkoutId = (await cookies()).get(COOKIE_KEY.checkoutId)?.value;
-  const locale = await getLocale();
-  const region = await getCurrentRegion();
+  const [checkoutId, locale, region] = await Promise.all([
+    getCheckoutId(),
+    getLocale(),
+    getCurrentRegion(),
+  ]);
 
   if (!checkoutId) {
+    storefrontLogger.debug("No checkoutId cookie. Redirecting to cart.");
+
     redirect({ href: paths.cart.asPath(), locale });
   }
 
