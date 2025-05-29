@@ -7,7 +7,7 @@ import { redirect } from "@/i18n/routing";
 import { getCheckoutId } from "@/lib/actions/cart";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
-import { checkoutService } from "@/services";
+import { checkoutService } from "@/services/checkout";
 
 import { ErrorDialog } from "../error-dialog";
 import { Summary } from "./summary";

@@ -7,7 +7,8 @@ import { Link, redirect } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 import { getStoreUrl } from "@/lib/server";
 import { getCurrentRegion } from "@/regions/server";
-import { paymentService, userService } from "@/services";
+import { paymentService } from "@/services/payment";
+import { userService } from "@/services/user";
 
 import { AddNewPaymentTrigger } from "./components/add-new-payment-trigger";
 import { PaymentMethodsList } from "./components/payment-methods-list";

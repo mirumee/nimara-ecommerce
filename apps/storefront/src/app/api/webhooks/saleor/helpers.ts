@@ -27,7 +27,7 @@ export const handleWebhookPostRequest = async (
 
     revalidateTag(tag);
     storefrontLogger.debug(
-      `Revalidated '${tag}' via '${json.__typename}' saleor webhook/`,
+      `Revalidated '${tag}' via '${json.__typename}' saleor webhook.`,
       { slug, name: json.__typename },
     );
   }

@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { paths } from "@/lib/paths";
 import { getStoreUrl, getStoreUrlWithPath } from "@/lib/server";
 import { getCurrentRegion } from "@/regions/server";
-import { authService } from "@/services";
+import { authService } from "@/services/auth";
 
 import { type FormSchema } from "./schema";
 

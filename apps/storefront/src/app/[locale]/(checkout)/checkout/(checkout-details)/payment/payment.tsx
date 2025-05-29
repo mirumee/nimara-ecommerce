@@ -37,7 +37,7 @@ import { translateApiErrors } from "@/lib/payment";
 import type { Maybe } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { useCurrentRegion } from "@/regions/client";
-import { paymentService } from "@/services";
+import { paymentService } from "@/services/payment";
 
 import { updateBillingAddress } from "./actions";
 import { AddressTab } from "./address-tab";

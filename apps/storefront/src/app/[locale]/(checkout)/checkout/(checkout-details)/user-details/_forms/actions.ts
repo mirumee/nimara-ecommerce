@@ -5,7 +5,8 @@ import { type AsyncResult, ok } from "@nimara/domain/objects/Result";
 
 import { serverEnvs } from "@/envs/server";
 import { paths } from "@/lib/paths";
-import { checkoutService, userService } from "@/services";
+import { checkoutService } from "@/services/checkout";
+import { userService } from "@/services/user";
 
 import type { EmailFormSchema } from "./schema";
 

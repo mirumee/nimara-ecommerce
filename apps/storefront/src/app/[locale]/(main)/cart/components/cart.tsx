@@ -3,8 +3,9 @@ import { CACHE_TTL } from "@/config";
 import { clientEnvs } from "@/envs/client";
 import { getCheckoutId } from "@/lib/actions/cart";
 import { getCurrentRegion } from "@/regions/server";
-import { cartService, userService } from "@/services";
+import { cartService } from "@/services/cart";
 import { storefrontLogger } from "@/services/logging";
+import { userService } from "@/services/user";
 
 import { CartDetails } from "./cart-details";
 import { EmptyCart } from "./empty-cart";

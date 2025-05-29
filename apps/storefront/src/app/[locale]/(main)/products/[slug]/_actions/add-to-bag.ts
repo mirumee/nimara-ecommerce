@@ -10,7 +10,7 @@ import {
   setCheckoutIdCookie,
 } from "@/lib/actions/cart";
 import { getCurrentRegion } from "@/regions/server";
-import { cartService } from "@/services";
+import { cartService } from "@/services/cart";
 import { storefrontLogger } from "@/services/logging";
 
 export const addToBagAction = async ({

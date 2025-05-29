@@ -12,9 +12,10 @@ import { Link } from "@/i18n/routing";
 import { getCheckoutId } from "@/lib/actions/cart";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
-import { cartService, userService } from "@/services";
+import { cartService } from "@/services/cart";
 import { cmsMenuService } from "@/services/cms";
 import { storefrontLogger } from "@/services/logging";
+import { userService } from "@/services/user";
 
 import { Logo } from "./logo";
 import { MobileSearch } from "./mobile-search";

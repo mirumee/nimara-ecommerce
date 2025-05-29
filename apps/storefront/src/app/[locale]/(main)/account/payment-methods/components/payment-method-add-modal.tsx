@@ -19,7 +19,7 @@ import { PAYMENT_ELEMENT_ID } from "@/lib/consts";
 import { translateApiErrors } from "@/lib/payment";
 import { cn } from "@/lib/utils";
 import { useCurrentRegion } from "@/regions/client";
-import { paymentService } from "@/services";
+import { paymentService } from "@/services/payment";
 
 export const PaymentMethodAddModal = ({
   secret,

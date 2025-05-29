@@ -9,13 +9,11 @@ import { clientEnvs } from "@/envs/client";
 import { getCheckoutId, setCheckoutIdCookie } from "@/lib/actions/cart";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
-import {
-  cartService as saleorCartService,
-  checkoutService,
-  errorService,
-  userService,
-} from "@/services";
+import { cartService as saleorCartService } from "@/services/cart";
+import { checkoutService } from "@/services/checkout";
+import { errorService } from "@/services/error";
 import { storefrontLogger } from "@/services/logging";
+import { userService } from "@/services/user";
 
 export async function login({
   email,
