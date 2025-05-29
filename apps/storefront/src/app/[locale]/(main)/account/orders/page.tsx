@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { getAccessToken } from "@/auth";
 import { isOrderLineReturned } from "@/lib/order";
 import { getCurrentRegion } from "@/regions/server";
-import { userService } from "@/services";
+import { userService } from "@/services/user";
 
 import { OrderLine } from "./_components/order-line";
 import { OrderSummary } from "./_components/order-summary";

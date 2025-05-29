@@ -5,8 +5,8 @@ import { getTranslations } from "next-intl/server";
 
 import { saleorAuthClient } from "@nimara/infrastructure/auth/client";
 
-import { formSchema } from "@/app/[locale]/(auth)/sign-in/schema";
-import { userService } from "@/services";
+import { signInSchema } from "@/app/[locale]/(auth)/sign-in/schema";
+import { userService } from "@/services/user";
 
 import { COOKIE_KEY } from "./config";
 import { setAccessToken, setRefreshToken } from "./lib/actions/auth";
@@ -30,7 +30,7 @@ export const config = {
       async authorize(credentials) {
         const t = await getTranslations();
 
-        const { email, password } = await formSchema({ t }).parseAsync(
+        const { email, password } = await signInSchema({ t }).parseAsync(
           credentials,
         );
 

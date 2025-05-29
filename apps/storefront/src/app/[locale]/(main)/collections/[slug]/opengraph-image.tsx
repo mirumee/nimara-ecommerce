@@ -3,7 +3,7 @@ import { ImageResponse } from "next/og";
 import { CACHE_TTL, DEFAULT_RESULTS_PER_PAGE } from "@/config";
 import { clientEnvs } from "@/envs/client";
 import { getCurrentRegion } from "@/regions/server";
-import { collectionService } from "@/services";
+import { collectionService } from "@/services/collection";
 
 export const size = {
   width: 1200,

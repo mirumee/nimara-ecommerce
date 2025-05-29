@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 
 import { paths } from "@/lib/paths";
-import { authService } from "@/services";
+import { authService } from "@/services/auth";
 
 import { type FormSchema } from "./schema";
 

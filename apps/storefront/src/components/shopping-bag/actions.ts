@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { paths } from "@/lib/paths";
-import { checkoutService } from "@/services";
+import { checkoutService } from "@/services/checkout";
 
 export async function addPromoCode({
   checkoutId,

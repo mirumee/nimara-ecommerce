@@ -15,7 +15,7 @@ import { Link, useRouter } from "@/i18n/routing";
 import { revalidateCart } from "@/lib/actions/cart";
 import { paths } from "@/lib/paths";
 import { type WithRegion } from "@/lib/types";
-import { cartService } from "@/services";
+import { cartService } from "@/services/cart";
 import { storefrontLogger } from "@/services/logging";
 
 export const CartDetails = ({
