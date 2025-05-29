@@ -24,6 +24,8 @@ import { type TranslationMessage } from "@/types";
 import { handleFiltersFormSubmit } from "../actions";
 import { FilterBoolean } from "./filter-boolean";
 import { FilterDropdown } from "./filter-dropdown";
+import { FilterMultiSelect } from "./filter-multi-select";
+import { FiltersCounter } from "./filters-counter";
 
 type Props = {
   facets: Facet[];
@@ -38,10 +40,17 @@ const renderFilterComponent = (
   // TODO: Extend this function for other, more adequate Filter components
   switch (facet.type) {
     case "SWATCH":
-    case "MULTISELECT":
     case "DROPDOWN":
       return (
         <FilterDropdown
+          key={facet.name}
+          facet={facet}
+          searchParams={searchParams}
+        />
+      );
+    case "MULTISELECT":
+      return (
+        <FilterMultiSelect
           key={facet.name}
           facet={facet}
           searchParams={searchParams}
@@ -80,6 +89,7 @@ export const FiltersContainer = async ({
         >
           <Filter className="h-4 w-4" />
           <label className="hidden md:block">{t("filters.filters")}</label>
+          <FiltersCounter searchParams={searchParams} facets={facets} />
         </Button>
       </SheetTrigger>
       <SheetContent side="right-full">
@@ -93,7 +103,7 @@ export const FiltersContainer = async ({
 
           <SheetDescription asChild>
             <ScrollArea>
-              <div className="grid h-full gap-6 py-4">
+              <div className="grid h-full gap-6 px-1 py-4">
                 <RadioGroup
                   name="sortBy"
                   className="grid gap-4 md:hidden"
