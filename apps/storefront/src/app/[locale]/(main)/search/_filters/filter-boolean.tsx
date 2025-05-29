@@ -22,11 +22,7 @@ export const FilterBoolean = ({
   return (
     <div className="flex items-center space-x-2">
       {/* Hidden input to ensure checkbox value is included in FormData */}
-      {isChecked ? (
-        <input type="hidden" name={slug} value="true" />
-      ) : (
-        <input type="hidden" name={slug} value="" />
-      )}
+      <input type="hidden" name={slug} value={isChecked ? "true" : ""} />
 
       <Checkbox
         id={checkboxId}
