@@ -1,5 +1,4 @@
 import { User } from "lucide-react";
-import { cookies } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 
@@ -7,9 +6,10 @@ import { Button } from "@nimara/ui/components/button";
 
 import { getAccessToken } from "@/auth";
 import { LocaleSwitch } from "@/components/locale-switch";
-import { CACHE_TTL, COOKIE_KEY } from "@/config";
+import { CACHE_TTL } from "@/config";
 import { clientEnvs } from "@/envs/client";
 import { Link } from "@/i18n/routing";
+import { getCheckoutId } from "@/lib/actions/cart";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { cartService } from "@/services/cart";
@@ -47,7 +47,7 @@ export const Header = async () => {
   const user = resultUserGet.ok ? resultUserGet.data : null;
 
   let checkoutLinesCount = 0;
-  const checkoutId = (await cookies()).get(COOKIE_KEY.checkoutId)?.value;
+  const checkoutId = await getCheckoutId();
 
   if (checkoutId) {
     const resultCartGet = await cartService({

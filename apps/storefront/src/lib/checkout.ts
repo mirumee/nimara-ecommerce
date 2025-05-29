@@ -1,11 +1,10 @@
-import { cookies } from "next/headers";
 import { getLocale } from "next-intl/server";
 
 import { type Address } from "@nimara/domain/objects/Address";
 import { type OkResult } from "@nimara/domain/objects/Result";
 
-import { COOKIE_KEY } from "@/config";
 import { redirect } from "@/i18n/routing";
+import { getCheckoutId } from "@/lib/actions/cart";
 import { deleteCheckoutIdCookie } from "@/lib/actions/checkout";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
@@ -17,7 +16,7 @@ type GetCheckout = OkResult<
 >["checkout"];
 
 export const getCheckoutOrRedirect = async (): Promise<GetCheckout> => {
-  const checkoutId = (await cookies()).get(COOKIE_KEY.checkoutId)?.value;
+  const checkoutId = await getCheckoutId();
   const [locale, region] = await Promise.all([getLocale(), getCurrentRegion()]);
 
   if (!checkoutId) {

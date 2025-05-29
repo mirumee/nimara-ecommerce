@@ -1,9 +1,9 @@
-import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 
 import { getAccessToken } from "@/auth";
-import { CACHE_TTL, COOKIE_KEY } from "@/config";
+import { CACHE_TTL } from "@/config";
 import { clientEnvs } from "@/envs/client";
+import { getCheckoutId } from "@/lib/actions/cart";
 import { JsonLd, productToJsonLd } from "@/lib/json-ld";
 import { getCurrentRegion } from "@/regions/server";
 import { cartService } from "@/services/cart";
@@ -23,7 +23,7 @@ export const ProductDetailsContainer = async ({
   const [region, accessToken, checkoutId] = await Promise.all([
     getCurrentRegion(),
     getAccessToken(),
-    (async () => (await cookies()).get(COOKIE_KEY.checkoutId)?.value)(),
+    getCheckoutId(),
   ]);
 
   const serviceOpts = {

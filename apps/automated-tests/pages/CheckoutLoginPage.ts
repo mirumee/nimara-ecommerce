@@ -10,7 +10,7 @@ export class CheckoutLoginPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.continueAsGuestButton = page.getByRole("button", {
+    this.continueAsGuestButton = page.getByRole("link", {
       name: "Continue as a guest",
     });
     this.logInButton = page.getByRole("button", { name: "Log in" });

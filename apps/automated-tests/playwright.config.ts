@@ -26,24 +26,25 @@ const config = defineConfig({
   use: {
     baseURL: process.env.TEST_ENV_URL,
     trace: "on-first-retry",
-
+    video: "retain-on-failure",
+    screenshot: "only-on-failure",
     launchOptions: {},
   },
   projects: [
     {
-      name: "chromium",
+      name: "Chrome",
       use: {
         ...devices["Desktop Chrome"],
       },
     },
     {
-      name: "firefox",
+      name: "Firefox",
       use: {
         ...devices["Desktop Firefox"],
       },
     },
     {
-      name: "webkit",
+      name: "Safari",
       use: {
         ...devices["Desktop Safari"],
       },

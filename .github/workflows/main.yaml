@@ -14,28 +14,71 @@ on:
 
 jobs:
   job:
-    name: Linters & Test
+    name: Linters & Tests
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # Fetch all history for all branches and tags.
+          # Required for tj-actions/changed-files to correctly diff on PRs.
+          fetch-depth: 0
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
           run_install: false
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: "lts/jod"
           cache: "pnpm"
+          cache-dependency-path: |
+            pnpm-lock.yaml
+            apps/automated-tests/pnpm-lock.yaml
+            apps/docs/pnpm-lock.yaml
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
+
+      - name: Get changed files (for PRs)
+        id: changed-files
+        if: github.event_name == 'pull_request'
+        uses: tj-actions/changed-files@v44
+        with:
+          files_yaml: |
+            ts:
+              - '**/*.ts'
+            tsx:
+              - '**/*.tsx'
+
+      - name: Restore ESLint cache
+        uses: actions/cache@v4
+        id: eslint-cache
+        with:
+          path: .eslintcache # Path to the ESLint cache file/directory
+          # Key includes ESLint config, lockfile, and OS.
+          # Changes to these will invalidate the cache.
+          key: ${{ runner.os }}-eslint-${{ hashFiles('**/pnpm-lock.yaml', '.eslintrc.js', '.eslintignore') }}
+          restore-keys: |
+            ${{ runner.os }}-eslint-
 
       - name: Run ESLint
-        run: pnpm eslint --ext ".ts,.tsx" .
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" && "${{ steps.changed-files.outputs.any_changed }}" == "true" ]]; then
+            echo "Linting changed files for PR:"
+            echo "${{ steps.changed-files.outputs.all_changed_files }}"
+            # Ensure the files are passed correctly to ESLint.
+            # If the list is very long, xargs might be needed, but for typical PRs this should work.
+            pnpm eslint --ext ".ts,.tsx" --cache --cache-location .eslintcache ${{ steps.changed-files.outputs.all_changed_files }}
+          elif [[ "${{ github.event_name }}" == "pull_request" && "${{ steps.changed-files.outputs.any_changed }}" != "true" ]]; then
+            echo "No relevant files changed in this PR for ESLint."
+          else
+            echo "Linting all files for push event (develop, staging, tags)."
+            pnpm eslint --ext ".ts,.tsx" --cache --cache-location .eslintcache .
+          fi
 
       - name: Run Prettier Check
         run: pnpm format:check
