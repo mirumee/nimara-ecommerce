@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { getAccessToken } from "@/auth";
 import { handleLogout } from "@/lib/actions/auth";
 import { paths } from "@/lib/paths";
-import { userService } from "@/services";
+import { userService } from "@/services/user";
 
 export async function deleteUserAccount(token: string) {
   const accessToken = await getAccessToken();

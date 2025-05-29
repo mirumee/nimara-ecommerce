@@ -3,7 +3,7 @@
 import { type Address } from "@nimara/domain/objects/Address";
 import { type AsyncResult } from "@nimara/domain/objects/Result";
 
-import { checkoutService } from "@/services";
+import { checkoutService } from "@/services/checkout";
 
 export const updateCheckoutAddressAction = async ({
   type,

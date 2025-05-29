@@ -6,8 +6,8 @@ import { editorJSDataToString } from "@nimara/ui/lib/richText";
 import { CACHE_TTL } from "@/config";
 import { clientEnvs } from "@/envs/client";
 import { getCurrentRegion } from "@/regions/server";
-import { storeService } from "@/services";
 import { storefrontLogger } from "@/services/logging";
+import { storeService } from "@/services/store";
 
 import { ProductDetailsContainer } from "./components/product-details-container";
 import { ProductDetailsSkeleton } from "./components/product-details-skeleton";

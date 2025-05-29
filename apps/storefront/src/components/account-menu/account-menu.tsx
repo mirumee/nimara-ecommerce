@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
 
 import { getAccessToken } from "@/auth";
-import { userService } from "@/services";
+import { userService } from "@/services/user";
 
 import { SideLinks } from "./side-links";
 
