@@ -14,7 +14,7 @@
   "private": true,
   "packageManager": "pnpm@9.3.0",
   "engines": {
-    "node": ">=20"
+    "node": "22.x"
   },
   "scripts": {
     "build": "dotenv -- turbo run build",
@@ -38,11 +38,11 @@
   },
   "devDependencies": {
     "commitizen": "4.3.1",
-    "dotenv-cli": "7.4.2",
+    "dotenv-cli": "8.0.0",
     "eslint": "^8.57.0",
     "eslint-config-custom": "workspace:*",
     "husky": "9.1.7",
-    "lint-staged": "^15.5.0",
+    "lint-staged": "^16.1.0",
     "prettier": "3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "turbo": "2.5.3"
@@ -56,12 +56,6 @@
       "disableScopeLowerCase": true,
       "disableSubjectLowerCase": true,
       "maxHeaderWidth": 150
-    }
-  },
-  "pnpm": {
-    "overrides": {
-      "@types/react": "19.0.12",
-      "@types/react-dom": "19.0.4"
     }
   }
 }

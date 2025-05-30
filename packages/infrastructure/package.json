@@ -14,8 +14,8 @@
     "@saleor/auth-sdk": "1.0.2",
     "@stripe/stripe-js": "3.5.0",
     "buttercms": "2.1.4",
-    "libphonenumber-js": "1.12.6",
-    "pino": "9.6.0",
+    "libphonenumber-js": "1.12.8",
+    "pino": "9.7.0",
     "stripe": "15.10.0",
     "ts-invariant": "0.10.3"
   },
@@ -26,10 +26,10 @@
     "@nimara/domain": "workspace:*",
     "eslint": "^8.57.0",
     "eslint-config-custom": "workspace:*",
-    "graphql": "16.9.0",
+    "graphql": "16.11.0",
     "ts-essentials": "10.0.4",
     "ts-toolbelt": "9.6.0",
     "tsconfig": "workspace:*",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.3"
   }
 }
