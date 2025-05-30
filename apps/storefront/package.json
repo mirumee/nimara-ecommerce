@@ -60,7 +60,7 @@
     "@nimara/ui": "workspace:*",
     "@parcel/watcher": "2.5.1",
     "@tailwindcss/typography": "0.5.16",
-    "@types/lodash": "4.17.16",
+    "@types/lodash": "4.17.17",
     "@types/negotiator": "0.6.3",
     "@types/react": "19.1.6",
     "@types/react-dom": "19.1.5",
