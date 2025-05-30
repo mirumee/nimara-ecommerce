@@ -24,9 +24,9 @@ export const collectionSerializer = (data: CollectionFragment): Collection => {
         media: null,
         price: node.pricing?.priceRange?.start?.gross.amount ?? 0,
         slug: node.slug,
-        thumbnail: data.backgroundImage?.url
+        thumbnail: node.thumbnail?.url
           ? {
-              url: node.thumbnail?.url ?? "",
+              url: node.thumbnail?.url,
               alt: node.thumbnail?.alt ?? "",
             }
           : null,
