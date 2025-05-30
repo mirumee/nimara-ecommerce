@@ -22,6 +22,7 @@ const parseData = (data: ProductBaseFragment): ProductBase => {
     id,
     name,
     description,
+    category: data.category,
   };
 };
 
