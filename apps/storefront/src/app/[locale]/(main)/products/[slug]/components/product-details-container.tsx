@@ -5,12 +5,14 @@ import { CACHE_TTL } from "@/config";
 import { clientEnvs } from "@/envs/client";
 import { getCheckoutId } from "@/lib/actions/cart";
 import { JsonLd, productToJsonLd } from "@/lib/json-ld";
+import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { cartService } from "@/services/cart";
 import { storefrontLogger } from "@/services/logging";
 import { storeService } from "@/services/store";
 import { userService } from "@/services/user";
 
+import { Breadcrumbs } from "../../../_components/breadcrumbs";
 import { ProductDetails } from "./product-details";
 
 export const ProductDetailsContainer = async ({
@@ -66,8 +68,22 @@ export const ProductDetailsContainer = async ({
   const cart = resultCartGet?.ok ? resultCartGet.data : null;
   const { product, availability } = data;
 
+  const productCrumbs = product.category
+    ? [
+        {
+          label: product.category.name,
+          href: paths.search.asPath({
+            query: {
+              category: product.category.slug,
+            },
+          }),
+        },
+      ]
+    : undefined;
+
   return (
     <>
+      <Breadcrumbs crumbs={productCrumbs} pageName={product.name} />
       <ProductDetails
         product={product}
         availability={availability}

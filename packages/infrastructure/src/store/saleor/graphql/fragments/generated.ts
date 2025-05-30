@@ -33,9 +33,11 @@ export type ProductAvailabilityDetailsFragment_Product_variantsAvailability_Prod
 
 export type ProductAvailabilityDetailsFragment = { isAvailable: boolean | null, pricing: ProductAvailabilityDetailsFragment_Product_pricing_ProductPricingInfo | null, variantsAvailability: Array<ProductAvailabilityDetailsFragment_Product_variantsAvailability_ProductVariant> | null };
 
+export type ProductBaseFragment_Product_category_Category = { name: string, slug: string };
+
 export type ProductBaseFragment_Product_translation_ProductTranslation = { name: string | null, description: string | null };
 
-export type ProductBaseFragment = { id: string, name: string, description: string | null, translation: ProductBaseFragment_Product_translation_ProductTranslation | null };
+export type ProductBaseFragment = { id: string, name: string, description: string | null, category: ProductBaseFragment_Product_category_Category | null, translation: ProductBaseFragment_Product_translation_ProductTranslation | null };
 
 export type ProductDetailsFragment_Product_media_ProductMedia = { url: string, alt: string, type: Types.ProductMediaType };
 
@@ -59,7 +61,7 @@ export type ProductDetailsFragment_Product_attributes_SelectedAttribute_values_A
 
 export type ProductDetailsFragment_Product_attributes_SelectedAttribute = { attribute: ProductDetailsFragment_Product_attributes_SelectedAttribute_attribute_Attribute, values: Array<ProductDetailsFragment_Product_attributes_SelectedAttribute_values_AttributeValue> };
 
-export type ProductDetailsFragment = { id: string, name: string, description: string | null, media: Array<ProductDetailsFragment_Product_media_ProductMedia> | null, variants: Array<ProductDetailsFragment_Product_variants_ProductVariant> | null, attributes: Array<ProductDetailsFragment_Product_attributes_SelectedAttribute>, translation: ProductBaseFragment_Product_translation_ProductTranslation | null };
+export type ProductDetailsFragment = { id: string, name: string, description: string | null, media: Array<ProductDetailsFragment_Product_media_ProductMedia> | null, variants: Array<ProductDetailsFragment_Product_variants_ProductVariant> | null, attributes: Array<ProductDetailsFragment_Product_attributes_SelectedAttribute>, category: ProductBaseFragment_Product_category_Category | null, translation: ProductBaseFragment_Product_translation_ProductTranslation | null };
 
 export type ProductMediaFragment = { url: string, alt: string, type: Types.ProductMediaType };
 
@@ -193,6 +195,10 @@ fragment ProductBaseFragment on Product {
   id
   name
   description
+  category {
+    name
+    slug
+  }
   translation(languageCode: $languageCode) {
     name
     description
