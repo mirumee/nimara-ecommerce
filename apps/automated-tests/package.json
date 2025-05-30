@@ -7,14 +7,14 @@
     "lint:staged": "lint-staged"
   },
   "devDependencies": {
-    "@next/env": "15.2.4",
     "@nimara/config": "workspace:*",
-    "@playwright/test": "^1.51.1",
-    "@types/node": "22.13.16",
+    "@playwright/test": "^1.52.0",
+    "@types/node": "^22.15.27",
+    "dotenv": "16.5.0",
     "eslint": "^8.57.0",
     "eslint-config-custom": "workspace:*",
     "eslint-plugin-playwright": "^2.1.0",
-    "lint-staged": "^15.5.0",
+    "lint-staged": "^16.1.0",
     "tsconfig": "workspace:*"
   },
   "lint-staged": {
@@ -22,10 +22,7 @@
     "*.*": "prettier --write --ignore-unknown"
   },
   "engines": {
-    "node": ">=20"
+    "node": "22.x"
   },
-  "type": "module",
-  "dependencies": {
-    "dotenv": "16.4.7"
-  }
+  "type": "module"
 }
