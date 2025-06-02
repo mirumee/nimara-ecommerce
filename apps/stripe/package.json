@@ -58,7 +58,7 @@
     "tsconfig": "workspace:*",
     "typescript": "^5.8.3",
     "vite-tsconfig-paths": "5.1.4",
-    "vitest": "3.1.4"
+    "vitest": "3.2.0"
   },
   "lint-staged": {
     "*.{js,cjs,ts,tsx}": "eslint --fix",
