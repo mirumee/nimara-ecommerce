@@ -1,0 +1,9 @@
+query CategoriesIDsBySlugs($first: Int = 10, $slugs: [String!]) {
+  categories(first: $first, filter: { slugs: $slugs }) {
+    edges {
+      node {
+        id
+      }
+    }
+  }
+}

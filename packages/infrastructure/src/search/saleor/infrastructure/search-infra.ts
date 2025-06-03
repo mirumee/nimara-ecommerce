@@ -4,6 +4,8 @@ import {
 } from "@nimara/codegen/schema";
 import { err, ok } from "@nimara/domain/objects/Result";
 
+import { saleorCategoryService } from "#root/category/providers";
+import { saleorCollectionService } from "#root/collection/providers";
 import { THUMBNAIL_FORMAT, THUMBNAIL_SIZE_LARGE } from "#root/config";
 import { graphqlClient } from "#root/graphql/client";
 import type { SearchInfra } from "#root/use-cases/search/types";
@@ -20,17 +22,7 @@ export const saleorSearchInfra =
     logger,
   }: SaleorSearchServiceConfig): SearchInfra =>
   async (
-    {
-      query,
-      after,
-      before,
-      sortBy,
-      filters,
-      limit,
-      productIds,
-      category,
-      collection,
-    },
+    { query, after, before, sortBy, filters, limit, productIds },
     context,
   ) => {
     // Last and first cannot be combined in the same query
@@ -39,32 +31,41 @@ export const saleorSearchInfra =
       : after
         ? { after, first: limit, last: undefined }
         : { first: limit, last: undefined };
+
+    const rawFilters = { ...filters };
+
+    const collectionSlugs = rawFilters.collection?.split(",") ?? [];
+    const categorySlugs = rawFilters.category?.split(",") ?? [];
+
+    delete rawFilters.collection;
+    delete rawFilters.category;
+
     // TODO: Find a better way how to handle filters between providers
-    const attributesFilter: AttributeInput[] | undefined = filters
-      ? Object.entries(filters).map(([slug, value]) => ({
+    const attributesFilter: AttributeInput[] | undefined = rawFilters
+      ? Object.entries(rawFilters).map(([slug, value]) => ({
           slug,
           boolean: value === "true" ? true : undefined,
           values: value !== "true" ? [value] : undefined,
         }))
       : undefined;
 
-    const hasQuery = query?.trim() !== "";
-    const hasCategory = Boolean(category);
-    const hasCollection = Boolean(collection);
+    const collectionsResult = await saleorCollectionService({
+      apiURI: apiURL,
+      logger,
+    }).getCollectionsIDsBySlugs({
+      channel: context.channel,
+      slugs: collectionSlugs,
+    });
 
-    const searchByProducts = hasQuery || (!hasCategory && !hasCollection);
-    const searchByCategory = !hasQuery && hasCategory;
-    const searchByCollection = !hasQuery && hasCollection;
+    const categoriesResult = await saleorCategoryService({
+      apiURI: apiURL,
+      logger,
+    }).getCategoriesIDsBySlugs({ slugs: categorySlugs });
 
     try {
       logger.debug("Fetching the products from Saleor", {
         query,
         channel: context.channel,
-        category,
-        collection,
-        searchByProducts,
-        searchByCategory,
-        searchByCollection,
       });
 
       const result = await graphqlClient(apiURL).execute(
@@ -73,17 +74,14 @@ export const saleorSearchInfra =
           variables: {
             after,
             before,
-            categorySlug: category ?? null,
             channel: context.channel,
-            collectionSlug: collection ?? null,
             filter: {
               attributes: attributesFilter,
+              collections: collectionsResult.data?.results,
+              categories: categoriesResult.data?.results,
             },
             languageCode: context.languageCode as LanguageCodeEnum,
             search: query,
-            searchByCategory,
-            searchByCollection,
-            searchByProducts,
             sortBy: settings.sorting.find(
               (conf) => conf.queryParamValue === sortBy,
             )?.saleorValue,
@@ -111,15 +109,7 @@ export const saleorSearchInfra =
         return result;
       }
 
-      let products;
-
-      if (searchByProducts) {
-        products = result.data?.products;
-      } else if (searchByCategory) {
-        products = result.data?.category?.products;
-      } else if (searchByCollection) {
-        products = result.data?.collection?.products;
-      }
+      const products = result.data.products;
 
       if (!products) {
         return ok({

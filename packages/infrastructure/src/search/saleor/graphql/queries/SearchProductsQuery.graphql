@@ -1,72 +1,17 @@
 query SearchProductQuery(
   $after: String
   $before: String
-  $categorySlug: String
   $channel: String!
-  $collectionSlug: String
   $filter: ProductFilterInput
   $first: Int
   $languageCode: LanguageCodeEnum!
   $last: Int
   $search: String
-  $searchByCategory: Boolean!
-  $searchByCollection: Boolean!
-  $searchByProducts: Boolean!
   $sortBy: ProductOrder
   $where: ProductWhereInput
   $thumbnailSize: Int!
   $thumbnailFormat: ThumbnailFormatEnum!
 ) {
-  category(slug: $categorySlug) @include(if: $searchByCategory) {
-    products(
-      after: $after
-      before: $before
-      channel: $channel
-      filter: $filter
-      first: $first
-      last: $last
-      sortBy: $sortBy
-      where: $where
-    ) {
-      edges {
-        node {
-          ...SearchProductFragment
-        }
-      }
-      pageInfo {
-        startCursor
-        endCursor
-        hasNextPage
-        hasPreviousPage
-      }
-      totalCount
-    }
-  }
-  collection(slug: $collectionSlug, channel: $channel)
-    @include(if: $searchByCollection) {
-    products(
-      after: $after
-      before: $before
-      filter: $filter
-      first: $first
-      last: $last
-      sortBy: $sortBy
-      where: $where
-    ) {
-      edges {
-        node {
-          ...SearchProductFragment
-        }
-      }
-      pageInfo {
-        startCursor
-        endCursor
-        hasNextPage
-        hasPreviousPage
-      }
-      totalCount
-    }
-  }
   products(
     after: $after
     before: $before
@@ -77,7 +22,7 @@ query SearchProductQuery(
     search: $search
     sortBy: $sortBy
     where: $where
-  ) @include(if: $searchByProducts) {
+  ) {
     edges {
       node {
         ...SearchProductFragment

@@ -56,6 +56,7 @@ export async function generateMetadata(props: { searchParams: SearchParams }) {
 
 export default async function Page(props: { searchParams: SearchParams }) {
   const searchParams = await props.searchParams;
+
   const [t, region] = await Promise.all([
     getTranslations("search"),
     getCurrentRegion(),
@@ -74,8 +75,6 @@ export default async function Page(props: { searchParams: SearchParams }) {
     sortBy = DEFAULT_SORT_BY,
     q: query = "",
     limit,
-    category,
-    collection,
     ...rest
   } = searchParams;
   const resultSearch = await searchService.search(
@@ -87,8 +86,6 @@ export default async function Page(props: { searchParams: SearchParams }) {
       before,
       sortBy,
       filters: rest,
-      category,
-      collection,
     },
     searchContext,
   );

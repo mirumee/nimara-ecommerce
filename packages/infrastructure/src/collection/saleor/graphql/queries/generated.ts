@@ -63,6 +63,24 @@ export type CollectionDetailsQueryVariables = Types.Exact<{
 
 export type CollectionDetailsQuery = CollectionDetailsQuery_Query;
 
+export type CollectionsIDsBySlugs_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection = { id: string };
+
+export type CollectionsIDsBySlugs_collections_CollectionCountableConnection_edges_CollectionCountableEdge = { node: CollectionsIDsBySlugs_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection };
+
+export type CollectionsIDsBySlugs_collections_CollectionCountableConnection = { edges: Array<CollectionsIDsBySlugs_collections_CollectionCountableConnection_edges_CollectionCountableEdge> };
+
+export type CollectionsIDsBySlugs_Query = { collections: CollectionsIDsBySlugs_collections_CollectionCountableConnection | null };
+
+
+export type CollectionsIDsBySlugsVariables = Types.Exact<{
+  channel: Types.Scalars['String']['input'];
+  first?: Types.InputMaybe<Types.Scalars['Int']['input']>;
+  slugs?: Types.InputMaybe<Array<Types.Scalars['String']['input']> | Types.Scalars['String']['input']>;
+}>;
+
+
+export type CollectionsIDsBySlugs = CollectionsIDsBySlugs_Query;
+
 export class TypedDocumentString<TResult, TVariables>
   extends String
   implements DocumentTypeDecoration<TResult, TVariables>
@@ -168,3 +186,14 @@ fragment MetadataItemFragment on MetadataItem {
   key
   value
 }`) as unknown as TypedDocumentString<CollectionDetailsQuery, CollectionDetailsQueryVariables>;
+export const CollectionsIDsBySlugsDocument = new TypedDocumentString(`
+    query CollectionsIDsBySlugs($channel: String!, $first: Int = 10, $slugs: [String!]) {
+  collections(channel: $channel, first: $first, filter: {slugs: $slugs}) {
+    edges {
+      node {
+        id
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<CollectionsIDsBySlugs, CollectionsIDsBySlugsVariables>;
