@@ -11,6 +11,9 @@ export const URLS = (channel: Channel = "gb") =>
     CHECKOUT_PAGE_SIGN_IN: `${channel}/checkout/sign-in`,
     HOME_PAGE: `${channel}`,
     SIGN_IN_PAGE: `${channel}/sign-in`,
+    SIGN_IN_PAGE_RESULT: `${channel}?loggedIn=`,
+    RESET_PASSWORD: `${channel}/reset-password`,
+    CREATE_ACCOUNT: `${channel}/create-account`,
     PRODUCTS_PAGE: `${channel}/search`,
     PRODUCT_PAGE: `${channel}/products`,
   }) as const;
