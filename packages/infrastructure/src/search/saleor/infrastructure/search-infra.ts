@@ -77,8 +77,8 @@ export const saleorSearchInfra =
             channel: context.channel,
             filter: {
               attributes: attributesFilter,
-              collections: collectionsResult.data?.results,
-              categories: categoriesResult.data?.results,
+              collections: collectionsResult.data,
+              categories: categoriesResult.data,
             },
             languageCode: context.languageCode as LanguageCodeEnum,
             search: query,

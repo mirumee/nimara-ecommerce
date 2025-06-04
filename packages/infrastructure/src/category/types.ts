@@ -17,9 +17,7 @@ type CollectionsIDsBySlugsOptions = {
 
 export type GetCategoriesIDsBySlugsInfra = (
   opts: CollectionsIDsBySlugsOptions,
-) => AsyncResult<{
-  results: Array<Category["id"]> | null;
-}>;
+) => AsyncResult<Category["id"][] | null>;
 
 export type CategoryService = {
   getCategoriesIDsBySlugs: GetCategoriesIDsBySlugsInfra;

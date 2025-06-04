@@ -51,9 +51,7 @@ type CollectionsIDsBySlugsOptions = {
 
 export type GetCollectionsIDsBySlugsInfra = (
   opts: CollectionsIDsBySlugsOptions,
-) => AsyncResult<{
-  results: Array<Collection["id"]> | null;
-}>;
+) => AsyncResult<Collection["id"][] | null>;
 
 export type CollectionService = {
   getCollectionDetails: GetCollectionDetailsUseCase;
