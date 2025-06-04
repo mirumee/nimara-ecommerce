@@ -11,6 +11,7 @@ import {
 } from "@nimara/ui/components/carousel";
 import { Skeleton } from "@nimara/ui/components/skeleton";
 
+import { ProductImagePlaceholder } from "@/components/product-image-placeholder";
 import { SearchProductCard } from "@/components/search-product-card";
 import { Link } from "@/i18n/routing";
 import { createFieldsMap, type FieldsMap } from "@/lib/cms";
@@ -108,8 +109,11 @@ export const ProductsGrid = async ({
         {products.map((product) => (
           <div className="hidden sm:block" key={product.id}>
             <SearchProductCard
-              product={product}
               sizes="(max-width: 720px) 1vw, (max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              name={product.name}
+              price={product.price}
+              productHref={paths.products.asPath({ slug: product.slug })}
+              fallback={<ProductImagePlaceholder />}
             />
           </div>
         ))}
@@ -119,7 +123,10 @@ export const ProductsGrid = async ({
             {products.map((product) => (
               <CarouselItem key={product.id} className="w-2/3 flex-none">
                 <SearchProductCard
-                  product={product}
+                  name={product.name}
+                  price={product.price}
+                  productHref={paths.products.asPath({ slug: product.slug })}
+                  fallback={<ProductImagePlaceholder />}
                   sizes="(max-width: 360px) 195px, (max-width: 720px) 379px, 1vw"
                   height={200}
                   width={200}

@@ -9,7 +9,9 @@ import {
   CarouselItem,
 } from "@nimara/ui/components/carousel";
 
+import { ProductImagePlaceholder } from "@/components/product-image-placeholder";
 import { SearchProductCard } from "@/components/search-product-card";
+import { paths } from "@/lib/paths";
 
 export const RelatedProducts = ({
   products,
@@ -29,10 +31,12 @@ export const RelatedProducts = ({
               className="flex h-auto w-4/5 flex-none flex-col md:w-1/5"
             >
               <SearchProductCard
-                product={product}
                 sizes="(max-width: 360px) 195px, (max-width: 720px) 379px, 1vw"
-                height={200}
-                width={200}
+                name={product.name}
+                price={product.price}
+                thumbnailUrl={product.thumbnail?.url}
+                productHref={paths.products.asPath({ slug: product.slug })}
+                fallback={<ProductImagePlaceholder />}
               />
             </CarouselItem>
           ))}

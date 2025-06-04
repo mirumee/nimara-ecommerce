@@ -1,17 +1,5 @@
-"use client";
-
-import Image, { type ImageProps } from "next/image";
-import { useTranslations } from "next-intl";
+import Image from "next/image";
 import type { PropsWithChildren } from "react";
-
-import type { SearchProduct } from "@nimara/domain/objects/SearchProduct";
-
-import productPlaceholder from "@/assets/product_placeholder.svg?url";
-import { Link } from "@/i18n/routing";
-import { useLocalizedFormatter } from "@/lib/formatters/use-localized-formatter";
-import { paths } from "@/lib/paths";
-
-import { ProductImagePlaceholder } from "./product-image-placeholder";
 
 export const ProductName = ({ children }: PropsWithChildren) => (
   <h2 className="line-clamp-1 overflow-hidden text-ellipsis text-left">
@@ -19,69 +7,80 @@ export const ProductName = ({ children }: PropsWithChildren) => (
   </h2>
 );
 
-export const ProductPrice = ({ children }: PropsWithChildren) => {
-  const t = useTranslations();
+export const ProductPrice = ({ children }: PropsWithChildren) => (
+  <h3 className="text-left text-gray-400">{children}</h3>
+);
 
-  return (
-    <h3 aria-label={t("common.price")} className="text-left text-gray-400">
-      {children}
-    </h3>
-  );
+type ProductThumbnailProps = {
+  alt: string;
+  sizes?: string;
+  src: string;
 };
 
-export const ProductThumbnail = ({ alt, ...props }: ImageProps) => (
+export const ProductThumbnail = ({ alt, ...props }: ProductThumbnailProps) => (
   <div className="relative aspect-square overflow-hidden">
     <Image alt={alt} fill className="object-cover object-top" {...props} />
   </div>
 );
 
 type Props = {
-  product: SearchProduct;
-} & Pick<ImageProps, "height" | "width" | "sizes">;
+  fallback?: React.ReactNode;
+  formatter?: (price: number) => string;
+  freeLabel?: string;
+  goToLabel?: string;
+  imageAltLabel?: string;
+  name: string;
+  placeholderUrl?: string;
+  price: number;
+  productHref: string;
+  sizes?: string;
+  thumbnailUrl?: string;
+};
 
 export const SearchProductCard = ({
-  product: { slug, thumbnail, name, price },
+  name,
+  price,
+  thumbnailUrl,
+  productHref,
+  formatter,
+  freeLabel = "Free",
+  goToLabel = "Go to product",
+  imageAltLabel = "Product image",
+  placeholderUrl,
+  fallback,
   sizes,
 }: Props) => {
-  const t = useTranslations();
-
-  const formatter = useLocalizedFormatter();
-
   return (
     <article className="row-span-3">
-      <Link
+      <a
         className="grid gap-2"
-        title={t(`search.go-to-product`, { name })}
-        href={paths.products.asPath({
-          slug: slug,
-        })}
+        title={`${goToLabel} ${name}`}
+        href={productHref}
       >
-        {thumbnail ? (
+        {thumbnailUrl ? (
           <ProductThumbnail
-            alt={t("products.image-alt", { productName: name })}
+            alt={`${imageAltLabel} ${name}`}
             aria-hidden={true}
             aria-label={name}
-            src={thumbnail?.url ?? productPlaceholder}
+            src={thumbnailUrl ?? placeholderUrl}
             sizes={
               sizes ??
               "(max-width: 720px) 100vw, (max-width: 1024px) 50vw, (max-width: 1294px) 33vw, 25vw"
             }
           />
         ) : (
-          <div className="bg-accent flex aspect-square justify-center overflow-hidden">
-            <ProductImagePlaceholder className="min-w-full object-cover object-top" />
-          </div>
+          (fallback ?? (
+            <div className="bg-accent flex aspect-square justify-center overflow-hidden" />
+          ))
         )}
 
         <div>
           <ProductName>{name}</ProductName>
           <ProductPrice>
-            {price === 0
-              ? t("common.free")
-              : formatter.price({ amount: price })}
+            {price === 0 ? freeLabel : (formatter?.(price) ?? `${price} USD`)}
           </ProductPrice>
         </div>
-      </Link>
+      </a>
     </article>
   );
 };
