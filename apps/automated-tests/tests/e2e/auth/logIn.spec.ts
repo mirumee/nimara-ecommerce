@@ -2,12 +2,12 @@ import { test } from "fixtures/fixtures";
 import { URLS, userEmail, userPassword } from "utils/constants";
 
 test.describe(
-  "LogIn",
+  "Auth - Log in",
   {
     tag: "@CI",
   },
   () => {
-    const testEnvUrl = process.env.TEST_ENV_URL ?? ""; //get testEnvUrl from .env
+    const testEnvUrl = process.env.TEST_ENV_URL ?? "";
 
     test.beforeEach(async ({ logInPage }) => {
       await logInPage.navigate(testEnvUrl + "/" + URLS().SIGN_IN_PAGE);
@@ -28,13 +28,12 @@ test.describe(
 
     test("User is able to log in using email and password", async ({
       logInPage,
-      headerPage,
     }) => {
       await logInPage.logIn(userPassword, userEmail);
       await logInPage.expectPageToHaveUrl(
         testEnvUrl + "/" + URLS().SIGN_IN_PAGE_RESULT + true,
       );
-      await headerPage.assertUserNameVisibility();
+      await logInPage.assertUserNameVisibility();
     });
 
     test("User will be redirected to sing in page after clicking on the button", async ({
