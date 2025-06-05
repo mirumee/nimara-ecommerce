@@ -44,6 +44,16 @@ export type GetCollectionDetailsInfra = (
 
 export type GetCollectionDetailsUseCase = GetCollectionDetailsInfra;
 
+type CollectionsIDsBySlugsOptions = {
+  channel: string;
+  slugs: string[];
+} & WithFetchOptions;
+
+export type GetCollectionsIDsBySlugsInfra = (
+  opts: CollectionsIDsBySlugsOptions,
+) => AsyncResult<Collection["id"][] | null>;
+
 export type CollectionService = {
   getCollectionDetails: GetCollectionDetailsUseCase;
+  getCollectionsIDsBySlugs: GetCollectionsIDsBySlugsInfra;
 };

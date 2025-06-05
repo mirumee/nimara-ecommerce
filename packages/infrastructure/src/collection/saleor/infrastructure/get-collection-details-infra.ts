@@ -9,7 +9,7 @@ import {
   type SaleorCollectionServiceConfig,
 } from "../../types";
 import { CollectionDetailsQueryDocument } from "../graphql/queries/generated";
-import { collectionSerializer } from "./serialziers";
+import { collectionSerializer } from "./serializers";
 
 export const getCollectionDetailsInfra =
   ({

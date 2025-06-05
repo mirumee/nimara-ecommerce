@@ -1,0 +1,13 @@
+query CollectionsIDsBySlugs(
+  $channel: String!
+  $first: Int = 10
+  $slugs: [String!]
+) {
+  collections(channel: $channel, first: $first, filter: { slugs: $slugs }) {
+    edges {
+      node {
+        id
+      }
+    }
+  }
+}
