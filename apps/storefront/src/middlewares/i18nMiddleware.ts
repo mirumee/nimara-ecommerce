@@ -85,8 +85,8 @@ export function i18nMiddleware(next: CustomMiddleware): CustomMiddleware {
         storefrontLogger.debug(
           `Redirecting root "/" to locale from cookie: ${localeFromCookie} (${localePrefix})`,
         );
-        
-return NextResponse.redirect(new URL(localePrefix, request.url));
+
+        return NextResponse.redirect(new URL(localePrefix, request.url));
       }
     }
 
