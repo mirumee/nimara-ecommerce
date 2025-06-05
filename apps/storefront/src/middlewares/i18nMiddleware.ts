@@ -119,11 +119,16 @@ export function i18nMiddleware(next: CustomMiddleware): CustomMiddleware {
       maxAge: COOKIE_MAX_AGE.locale,
     });
 
-    const localeFromCookieAgain = request.cookies.get(COOKIE_KEY.locale)?.value;
+    const currentLocaleFromCookie = request.cookies.get(
+      COOKIE_KEY.locale,
+    )?.value;
 
-    if (localeFromCookieAgain && localeFromRequest !== localeFromCookieAgain) {
+    if (
+      currentLocaleFromCookie &&
+      localeFromRequest !== currentLocaleFromCookie
+    ) {
       storefrontLogger.debug(
-        `Locale changed from ${localeFromCookieAgain} to ${localeFromRequest}. Removing the checkoutId cookie.`,
+        `Locale changed from ${currentLocaleFromCookie} to ${localeFromRequest}. Removing the checkoutId cookie.`,
         {
           requestUrl: request.url,
           nextUrl: request.nextUrl.toString(),
