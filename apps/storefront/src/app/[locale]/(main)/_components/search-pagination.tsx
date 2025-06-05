@@ -29,34 +29,6 @@ export const SearchPagination = ({
   const t = useTranslations("common");
   const locale = useLocale();
 
-  // const getPathName = (direction: "next" | "previous") => {
-  //   const params = new URLSearchParams(searchParams);
-
-  //   // Delete all the pagination-related params
-  //   params.delete("before");
-  //   params.delete("after");
-  //   params.delete("page");
-
-  //   if (pageInfo.type === "cursor") {
-  //     console.log(pageInfo.after);
-  //     if (direction === "next") {
-  //       params.set("after", pageInfo.after ?? "");
-  //     } else {
-  //       params.set("before", pageInfo.before ?? "");
-  //     }
-  //   } else {
-  //     const page =
-  //       direction === "next"
-  //         ? pageInfo.currentPage + 1
-  //         : pageInfo.currentPage - 1;
-
-  //     params.set("page", page.toString());
-  //   }
-
-  //   // Shadcn use simple <a> tag instead of next-intl <Link> so we need to pass locale explicitly
-  //   return `${locale !== DEFAULT_LOCALE ? localePrefixes[locale as Exclude<Locale, typeof DEFAULT_LOCALE>] : ""}${baseUrl}?${params.toString()}`;
-  // };
-
   const getPathName = (direction: "next" | "previous") => {
     const params = new URLSearchParams(searchParams);
 
