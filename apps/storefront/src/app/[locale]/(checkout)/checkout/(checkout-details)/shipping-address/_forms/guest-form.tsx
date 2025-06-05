@@ -7,8 +7,8 @@ import { useForm } from "react-hook-form";
 
 import { type AllCountryCode } from "@nimara/domain/consts";
 import { type CountryOption } from "@nimara/domain/objects/Address";
-import type { AddressFormRow } from "@nimara/domain/objects/AddressForm";
-import type { Checkout } from "@nimara/domain/objects/Checkout";
+import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
+import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { ADDRESS_CORE_FIELDS } from "@nimara/infrastructure/consts";
 import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";

@@ -16,16 +16,15 @@ export async function ShippingAddressSection({
   checkout?: Checkout;
   locale: SupportedLocale;
 }) {
-  const [t, tc] = await Promise.all([
-    getTranslations("shipping-address"),
-    getTranslations("common"),
-  ]);
+  const t = await getTranslations();
 
   if (!checkout?.shippingAddress) {
     return (
       <section className="flex justify-between pt-4">
         <div>
-          <h3 className="scroll-m-20 text-2xl tracking-tight">{t("title")}</h3>
+          <h3 className="scroll-m-20 text-2xl tracking-tight">
+            {t("shipping-address.title")}
+          </h3>
         </div>
       </section>
     );
@@ -45,7 +44,9 @@ export async function ShippingAddressSection({
   return (
     <section className="flex justify-between pt-4">
       <div className="space-y-2">
-        <h3 className="scroll-m-20 text-2xl tracking-tight">{t("title")}</h3>
+        <h3 className="scroll-m-20 text-2xl tracking-tight">
+          {t("shipping-address.title")}
+        </h3>
         <div className="text-sm leading-5 text-stone-900">
           {displayFormattedAddressLines({
             addressId: shippingAddress.id,
@@ -60,7 +61,7 @@ export async function ShippingAddressSection({
               query: { country: shippingAddress.country },
             })}
           >
-            {tc("edit")}
+            {t("common.edit")}
           </Link>
         </Button>
       )}

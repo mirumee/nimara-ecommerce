@@ -1,6 +1,6 @@
 import { type DateTimeFormatOptions } from "next-intl";
 
-import type { AllCountryCode } from "@nimara/domain/consts";
+import { type AllCountryCode } from "@nimara/domain/consts";
 
 import { type WithRegion } from "@/lib/types";
 import { type SupportedCurrency, type SupportedLocale } from "@/regions/types";

@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-import type { AllCountryCode } from "@nimara/domain/consts";
+import { type AllCountryCode } from "@nimara/domain/consts";
 import {
   type Address,
   type CountryOption,

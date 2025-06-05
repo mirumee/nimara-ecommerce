@@ -2,7 +2,7 @@ import { PlusIcon } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
 import { type AllCountryCode } from "@nimara/domain/consts";
-import type { Address } from "@nimara/domain/objects/Address";
+import { type Address } from "@nimara/domain/objects/Address";
 import { Button } from "@nimara/ui/components/button";
 
 import { getAccessToken } from "@/auth";
@@ -15,10 +15,12 @@ import { userService } from "@/services/user";
 import { AddNewAddressModal } from "./_modals/create-address-modal";
 import { EditAddressModal } from "./_modals/update-address-modal";
 
-export default async function Page(props: {
+type PageProps = {
   params: Promise<{ locale: SupportedLocale }>;
   searchParams: Promise<Record<string, string>>;
-}) {
+};
+
+export default async function Page(props: PageProps) {
   const { locale } = await props.params;
   const searchParams = await props.searchParams;
   const accessToken = await getAccessToken();
@@ -34,7 +36,7 @@ export default async function Page(props: {
       savedAddresses.map(async (address) => {
         const resultFormatAddress = await addressService.addressFormat({
           variables: { address },
-          locale: region.language.locale,
+          locale,
         });
 
         if (!resultFormatAddress.ok) {

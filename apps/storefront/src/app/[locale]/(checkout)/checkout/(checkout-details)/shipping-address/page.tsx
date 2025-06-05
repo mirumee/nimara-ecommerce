@@ -1,4 +1,4 @@
-import type { AllCountryCode } from "@nimara/domain/consts";
+import { type AllCountryCode } from "@nimara/domain/consts";
 
 import { getAccessToken } from "@/auth";
 import { getCheckoutOrRedirect } from "@/lib/checkout";
@@ -51,7 +51,7 @@ export default async function Page(props: PageProps) {
     }),
     addressService.countriesGet({
       channelSlug: region.market.channel,
-      locale: region.language.locale,
+      locale,
     }),
   ]);
 
@@ -65,7 +65,7 @@ export default async function Page(props: PageProps) {
       savedAddresses.map(async (address) => {
         const resultFormatAddress = await addressService.addressFormat({
           variables: { address },
-          locale: region.language.locale,
+          locale,
         });
 
         if (!resultFormatAddress.ok) {

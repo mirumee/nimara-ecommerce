@@ -4,9 +4,9 @@ import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { type ReactNode, useEffect, useState } from "react";
 
-import type { AllCountryCode } from "@nimara/domain/consts";
-import type { CountryOption } from "@nimara/domain/objects/Address";
-import type { AddressFormRow } from "@nimara/domain/objects/AddressForm";
+import { type AllCountryCode } from "@nimara/domain/consts";
+import { type CountryOption } from "@nimara/domain/objects/Address";
+import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import {
   Dialog,
   DialogContent,

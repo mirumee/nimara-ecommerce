@@ -4,8 +4,11 @@ import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { type ReactNode, useState } from "react";
 
-import type { Address, CountryOption } from "@nimara/domain/objects/Address";
-import type { AddressFormRow } from "@nimara/domain/objects/AddressForm";
+import {
+  type Address,
+  type CountryOption,
+} from "@nimara/domain/objects/Address";
+import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import { Button } from "@nimara/ui/components/button";
 import {
   Dialog,

@@ -4,9 +4,12 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { type AllCountryCode } from "@nimara/domain/consts";
-import type { Address, CountryOption } from "@nimara/domain/objects/Address";
-import type { AddressFormRow } from "@nimara/domain/objects/AddressForm";
-import type { Checkout } from "@nimara/domain/objects/Checkout";
+import {
+  type Address,
+  type CountryOption,
+} from "@nimara/domain/objects/Address";
+import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
+import { type Checkout } from "@nimara/domain/objects/Checkout";
 import {
   Tabs,
   TabsContent,
@@ -15,7 +18,7 @@ import {
 } from "@nimara/ui/components/tabs";
 
 import { useRouter } from "@/i18n/routing";
-import type { FormattedAddress } from "@/lib/checkout";
+import { type FormattedAddress } from "@/lib/checkout";
 import { paths } from "@/lib/paths";
 import { useCurrentRegion } from "@/regions/client";
 

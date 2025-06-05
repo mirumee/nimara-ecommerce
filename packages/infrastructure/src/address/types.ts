@@ -1,6 +1,9 @@
 import { type AllCountryCode, type AllLocale } from "@nimara/domain/consts";
-import type { Address, CountryOption } from "@nimara/domain/objects/Address";
-import type { AddressFormRow } from "@nimara/domain/objects/AddressForm";
+import {
+  type Address,
+  type CountryOption,
+} from "@nimara/domain/objects/Address";
+import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import { type AsyncResult } from "@nimara/domain/objects/Result";
 
 import type { QueryOptions } from "#root/lib/types";

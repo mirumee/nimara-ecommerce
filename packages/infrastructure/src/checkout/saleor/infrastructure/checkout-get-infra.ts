@@ -1,9 +1,12 @@
-import type { CountryCode, LanguageCodeEnum } from "@nimara/codegen/schema";
-import type { Checkout } from "@nimara/domain/objects/Checkout";
-import type { TaxedMoney } from "@nimara/domain/objects/common";
+import {
+  type CountryCode,
+  type LanguageCodeEnum,
+} from "@nimara/codegen/schema";
+import { type Checkout } from "@nimara/domain/objects/Checkout";
+import { type TaxedMoney } from "@nimara/domain/objects/common";
 import { err, ok } from "@nimara/domain/objects/Result";
 
-import { serializeAddress } from "#root/address/helpers";
+import { serializeAddress } from "#root/address/saleor/serializers";
 import { THUMBNAIL_FORMAT, THUMBNAIL_SIZE_SMALL } from "#root/config";
 import { graphqlClient } from "#root/graphql/client";
 import {
@@ -12,11 +15,11 @@ import {
 } from "#root/store/saleor/serializers";
 import { serializeLine } from "#root/utils";
 
-import type {
-  CheckoutGetInfra,
-  SaleorCheckoutServiceConfig,
+import {
+  type CheckoutGetInfra,
+  type SaleorCheckoutServiceConfig,
 } from "../../types";
-import type { CheckoutFragment } from "../graphql/fragments/generated";
+import { type CheckoutFragment } from "../graphql/fragments/generated";
 import { CheckoutFindQueryDocument } from "../graphql/queries/generated";
 
 // Saleor returns discount amount included in subtotal price

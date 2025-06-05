@@ -3,9 +3,9 @@
 import { useTranslations } from "next-intl";
 import { useFormContext } from "react-hook-form";
 
-import type { AllCountryCode } from "@nimara/domain/consts";
+import { type AllCountryCode } from "@nimara/domain/consts";
 import { type CountryOption } from "@nimara/domain/objects/Address";
-import type { AddressFormRow } from "@nimara/domain/objects/AddressForm";
+import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import { ADDRESS_CORE_FIELDS } from "@nimara/infrastructure/consts";
 import {
   Tabs,
@@ -19,12 +19,12 @@ import { CheckboxField } from "@/components/form/checkbox-field";
 import { RadioFormGroup } from "@/components/form/radio-form-group";
 import { useRouter } from "@/i18n/routing";
 import { addressToSchema, displayFormattedAddressLines } from "@/lib/address";
-import type { FormattedAddress } from "@/lib/checkout";
+import { type FormattedAddress } from "@/lib/checkout";
 import { paths } from "@/lib/paths";
 import { cn } from "@/lib/utils";
 import { useCurrentRegion } from "@/regions/client";
 
-import type { TabName } from "./payment";
+import { type TabName } from "./payment";
 import { type Schema } from "./schema";
 
 interface AddressTabProps {

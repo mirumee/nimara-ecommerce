@@ -24,8 +24,7 @@ export default async function Page(props: PageProps) {
   }
 
   const accessToken = await getAccessToken();
-
-  const [resultUserGet] = await Promise.all([userService.userGet(accessToken)]);
+  const resultUserGet = await userService.userGet(accessToken);
 
   const user = resultUserGet.ok ? resultUserGet.data : null;
 

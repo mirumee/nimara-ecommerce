@@ -1,8 +1,10 @@
+// FIXME: Move the LanguageCodeEnum values to a domain file and import it from there
+// eslint-disable-next-line no-restricted-imports
 import { type LanguageCodeEnum } from "@nimara/codegen/schema";
-import type {
-  AllCountryCode,
-  AllCurrency,
-  AllLocale,
+import {
+  type AllCountryCode,
+  type AllCurrency,
+  type AllLocale,
 } from "@nimara/domain/consts";
 
 /**

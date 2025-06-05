@@ -2,8 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 
-import type { AllCountryCode } from "@nimara/domain/consts";
-import type { Checkout } from "@nimara/domain/objects/Checkout";
+import { type AllCountryCode } from "@nimara/domain/consts";
+import { type Checkout } from "@nimara/domain/objects/Checkout";
 
 import { getAccessToken } from "@/auth";
 import { updateCheckoutAddressAction } from "@/lib/actions/update-checkout-address-action";

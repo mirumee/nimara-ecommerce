@@ -1,4 +1,4 @@
-import type { AllCountryCode } from "@nimara/domain/consts";
+import { type AllCountryCode } from "@nimara/domain/consts";
 import { type AppErrorCode } from "@nimara/domain/objects/Error";
 import { type PaymentMethod } from "@nimara/domain/objects/Payment";
 
@@ -52,7 +52,7 @@ export default async function Page(props: PageProps) {
 
   const resultCountries = await addressService.countriesGet({
     channelSlug: region.market.channel,
-    locale: region.language.locale,
+    locale,
   });
 
   if (!resultCountries.ok) {
@@ -100,7 +100,7 @@ export default async function Page(props: PageProps) {
       savedAddresses.map(async (address) => {
         const resultFormatAddress = await addressService.addressFormat({
           variables: { address },
-          locale: region.language.locale,
+          locale,
         });
 
         if (!resultFormatAddress.ok) {
@@ -153,10 +153,7 @@ export default async function Page(props: PageProps) {
   return (
     <>
       <EmailSection checkout={checkout} user={user} />
-      <ShippingAddressSection
-        checkout={checkout}
-        locale={region.language.locale}
-      />
+      <ShippingAddressSection checkout={checkout} locale={locale} />
       <DeliveryMethodSection checkout={checkout} />
       <PaymentSection>
         <Payment
