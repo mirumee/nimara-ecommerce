@@ -3,7 +3,8 @@
 import { useTranslations } from "next-intl";
 import { useFormContext } from "react-hook-form";
 
-import type { CountryCode, CountryDisplay } from "@nimara/codegen/schema";
+import type { AllCountryCode } from "@nimara/domain/consts";
+import { type CountryOption } from "@nimara/domain/objects/Address";
 import type { AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import { ADDRESS_CORE_FIELDS } from "@nimara/infrastructure/consts";
 import {
@@ -30,8 +31,8 @@ interface AddressTabProps {
   activeTab: TabName;
   addressFormRows: readonly AddressFormRow[];
   addresses: FormattedAddress[];
-  countries: Omit<CountryDisplay, "vat">[];
-  countryCode: CountryCode;
+  countries: CountryOption[];
+  countryCode: AllCountryCode;
   isDisabled?: boolean;
   setActiveTab: (value: TabName) => void;
   setIsCountryChanging?: (value: boolean) => void;

@@ -1,5 +1,7 @@
+import { type AllCountryCode } from "@nimara/domain/consts";
 import { err, ok } from "@nimara/domain/objects/Result";
 
+import { translateAndSortCountries } from "#root/address/helpers";
 import type {
   CountriesAllGetInfra,
   SaleorAddressServiceConfig,
@@ -10,7 +12,7 @@ import { CountriesQueryDocument } from "../graphql/queries/generated";
 
 export const saleorCountriesAllGetInfra =
   ({ apiURL, logger }: SaleorAddressServiceConfig): CountriesAllGetInfra =>
-  async () => {
+  async ({ locale }) => {
     const result = await graphqlClient(apiURL).execute(CountriesQueryDocument, {
       operationName: "CountriesQuery",
     });
@@ -23,7 +25,10 @@ export const saleorCountriesAllGetInfra =
       return result;
     }
 
-    const countries = result.data.shop?.countries;
+    const countryCodes = result.data.shop?.countries.map(
+      (country) => country.code,
+    ) as AllCountryCode[];
+    const countries = translateAndSortCountries(countryCodes, locale);
 
     if (!countries || countries.length === 0) {
       logger.error("No countries found in Saleor shop data.", {

@@ -9,24 +9,26 @@ import { CACHE_TTL, DEFAULT_RESULTS_PER_PAGE } from "@/config";
 import { clientEnvs } from "@/envs/client";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
+import { type SupportedLocale } from "@/regions/types";
 import { collectionService } from "@/services/collection";
 
 import { Breadcrumbs } from "../../_components/breadcrumbs";
 import { ProductsList } from "../../_components/products-list";
 import { SearchPagination } from "../../_components/search-pagination";
 
-type SearchParams = Promise<{
-  after?: string;
-  before?: string;
-  limit?: string;
-}>;
+type PageProps = {
+  params: Promise<{
+    locale: SupportedLocale;
+    slug: string;
+  }>;
+  searchParams: Promise<{
+    after?: string;
+    before?: string;
+    limit?: string;
+  }>;
+};
 
-type Params = Promise<{
-  locale: string;
-  slug: string;
-}>;
-
-export async function generateMetadata(props: { params: Params }) {
+export async function generateMetadata(props: PageProps) {
   const params = props.params;
 
   const { slug } = await params;
@@ -63,10 +65,7 @@ export async function generateMetadata(props: { params: Params }) {
   };
 }
 
-export default async function Page(props: {
-  params: Params;
-  searchParams: SearchParams;
-}) {
+export default async function Page(props: PageProps) {
   const searchParams = await props.searchParams;
   const params = props.params;
 

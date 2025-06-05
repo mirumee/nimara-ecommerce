@@ -1,7 +1,9 @@
-import {
-  type CountryCode,
-  type LanguageCodeEnum,
-} from "@nimara/codegen/schema";
+import { type LanguageCodeEnum } from "@nimara/codegen/schema";
+import type {
+  AllCountryCode,
+  AllCurrency,
+  AllLocale,
+} from "@nimara/domain/consts";
 
 /**
  * Defines available languages in the App.
@@ -12,9 +14,12 @@ export type LanguageId = (typeof SUPPORTED_LANGUAGES)[number];
 /**
  * Defines supported locales in the App.
  */
-export const SUPPORTED_LOCALES = ["en-GB", "en-US"] as const;
-export type Locale = (typeof SUPPORTED_LOCALES)[number];
-export const DEFAULT_LOCALE = "en-US" as const;
+export const SUPPORTED_LOCALES = [
+  "en-GB",
+  "en-US",
+] as const satisfies AllLocale[];
+export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
+export const DEFAULT_LOCALE = "en-US" as const satisfies AllLocale;
 
 /**
  * Defines available markets in the App.
@@ -25,14 +30,17 @@ export type MarketId = (typeof SUPPORTED_MARKETS)[number];
 /**
  * Defines supported currencies in the App.
  */
-export const SUPPORTED_CURRENCIES = ["USD", "GBP"] as const;
-export type CurrencyId = (typeof SUPPORTED_CURRENCIES)[number];
+export const SUPPORTED_CURRENCIES = [
+  "USD",
+  "GBP",
+] as const satisfies AllCurrency[];
+export type SupportedCurrency = (typeof SUPPORTED_CURRENCIES)[number];
 
 export type Market = {
   channel: string;
   continent: Continent;
-  countryCode: CountryCode;
-  currency: CurrencyId;
+  countryCode: AllCountryCode;
+  currency: SupportedCurrency;
   defaultLanguage: Language;
   id: MarketId;
   name: string;
@@ -42,7 +50,7 @@ export type Market = {
 export type Language = {
   code: LanguageCodeEnum;
   id: LanguageId;
-  locale: Locale;
+  locale: SupportedLocale;
   name: string;
 };
 

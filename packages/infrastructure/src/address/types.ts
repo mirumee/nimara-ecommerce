@@ -1,5 +1,5 @@
-import type { CountryCode } from "@nimara/codegen/schema";
-import type { Address } from "@nimara/domain/objects/Address";
+import { type AllCountryCode, type AllLocale } from "@nimara/domain/consts";
+import type { Address, CountryOption } from "@nimara/domain/objects/Address";
 import type { AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import { type AsyncResult } from "@nimara/domain/objects/Result";
 
@@ -19,25 +19,31 @@ export interface SaleorAddressServiceConfig {
 }
 
 export type AddressFormGetRowsInfra = (opts: {
-  countryCode: CountryCode;
+  countryCode: AllCountryCode;
 }) => AsyncResult<readonly AddressFormRow[]>;
 
 export type AddressFormGetRowsUseCase = AddressFormGetRowsInfra;
 
 export type AddressFormatInfra = (
-  opts: { variables: { address: Address } } & QueryOptions,
+  opts: {
+    locale: AllLocale;
+    variables: {
+      address: Address;
+    };
+  } & QueryOptions,
 ) => AsyncResult<{ formattedAddress: string[] }>;
 
 export type AddressFormatUseCase = AddressFormatInfra;
 
 export type CountriesGetInfra = (opts: {
   channelSlug: string;
-}) => AsyncResult<{ code: string; country: string }[]>;
+  locale: AllLocale;
+}) => AsyncResult<CountryOption[]>;
 
 export type CountriesGetUseCase = CountriesGetInfra;
 
-export type CountriesAllGetInfra = () => AsyncResult<
-  { code: string; country: string }[]
->;
+export type CountriesAllGetInfra = (opts: {
+  locale: AllLocale;
+}) => AsyncResult<CountryOption[]>;
 
 export type CountriesAllGetUseCase = CountriesAllGetInfra;

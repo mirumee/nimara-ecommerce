@@ -7,13 +7,9 @@ import { type AddressSchema } from "@/components/address-form/schema";
 import { type FormattedAddress } from "@/lib/checkout";
 import { cleanObject } from "@/lib/core";
 
-export const schemaToAddress = ({
-  country,
-  ...schema
-}: AddressSchema): Partial<Omit<Address, "id">> => ({
-  country: { code: country },
-  ...schema,
-});
+export const schemaToAddress = (
+  schema: AddressSchema,
+): Partial<Omit<Address, "id">> => schema;
 
 export const addressToSchema = (
   address: Address,
@@ -21,7 +17,7 @@ export const addressToSchema = (
 ): AddressSchema => {
   const schema = {
     ...pick(address, ADDRESS_CORE_FIELDS),
-    country: address?.country?.code ?? "",
+    country: address?.country ?? "",
   };
 
   return (cleanFields ? cleanObject(schema) : schema) as AddressSchema;

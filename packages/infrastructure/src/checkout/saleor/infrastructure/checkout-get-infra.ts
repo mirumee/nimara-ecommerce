@@ -3,8 +3,13 @@ import type { Checkout } from "@nimara/domain/objects/Checkout";
 import type { TaxedMoney } from "@nimara/domain/objects/common";
 import { err, ok } from "@nimara/domain/objects/Result";
 
+import { serializeAddress } from "#root/address/helpers";
 import { THUMBNAIL_FORMAT, THUMBNAIL_SIZE_SMALL } from "#root/config";
 import { graphqlClient } from "#root/graphql/client";
+import {
+  serializeMoney,
+  serializeTaxedMoney,
+} from "#root/store/saleor/serializers";
 import { serializeLine } from "#root/utils";
 
 import type {
@@ -18,22 +23,22 @@ import { CheckoutFindQueryDocument } from "../graphql/queries/generated";
 const calculateSubtotalPrice = (checkout: CheckoutFragment): TaxedMoney => {
   if (checkout?.discount) {
     return {
-      gross: {
+      gross: serializeMoney({
         currency: checkout.subtotalPrice.gross.currency,
         amount: checkout.subtotalPrice.gross.amount + checkout.discount.amount,
-      },
-      net: {
+      }),
+      net: serializeMoney({
         currency: checkout.subtotalPrice.net.currency,
         amount: checkout.subtotalPrice.net.amount + checkout.discount.amount,
-      },
-      tax: {
+      }),
+      tax: serializeMoney({
         currency: checkout.subtotalPrice.tax.currency,
         amount: checkout.subtotalPrice.tax.amount,
-      },
+      }),
     };
   }
 
-  return checkout.subtotalPrice;
+  return serializeTaxedMoney(checkout.subtotalPrice);
 };
 
 const serializeCheckout = (checkout: CheckoutFragment): Checkout => {
@@ -41,6 +46,19 @@ const serializeCheckout = (checkout: CheckoutFragment): Checkout => {
 
   return {
     ...checkout,
+    billingAddress: checkout.billingAddress
+      ? serializeAddress(checkout.billingAddress)
+      : null,
+    shippingAddress: checkout.shippingAddress
+      ? serializeAddress(checkout.shippingAddress)
+      : null,
+    discount: checkout.discount ? serializeMoney(checkout.discount) : null,
+    shippingPrice: serializeTaxedMoney(checkout.shippingPrice),
+    shippingMethods: checkout.shippingMethods.map((method) => ({
+      ...method,
+      price: serializeMoney(method.price),
+    })),
+    totalPrice: serializeTaxedMoney(checkout.totalPrice),
     problems: {
       insufficientStock:
         checkout.problems

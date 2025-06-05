@@ -5,6 +5,7 @@ import { type User } from "@nimara/domain/objects/User";
 
 import { redirect } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
+import { type SupportedLocale } from "@/regions/types";
 
 export const validateCheckoutStepAction = async ({
   checkout,
@@ -13,7 +14,7 @@ export const validateCheckoutStepAction = async ({
   step,
 }: {
   checkout: Checkout;
-  locale: string;
+  locale: SupportedLocale;
   step:
     | "payment"
     | "delivery-method"

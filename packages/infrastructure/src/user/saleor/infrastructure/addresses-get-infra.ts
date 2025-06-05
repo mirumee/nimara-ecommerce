@@ -1,5 +1,6 @@
 import { ok } from "@nimara/domain/objects/Result";
 
+import { serializeAddress } from "#root/address/helpers";
 import { graphqlClient } from "#root/graphql/client";
 
 import type { AddressesGetInfra, SaleorUserServiceConfig } from "../../types";
@@ -33,5 +34,9 @@ export const saleorAddressesGetInfra =
       return result;
     }
 
-    return ok(result.data.me?.addresses ?? []);
+    const serializedAddresses = result.data.me?.addresses
+      ? result.data.me.addresses.map(serializeAddress)
+      : [];
+
+    return ok(serializedAddresses);
   };

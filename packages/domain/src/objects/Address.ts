@@ -1,8 +1,10 @@
+import { type AllCountryCode } from "../consts";
+
 export type Address = {
   city: string;
   cityArea: string;
   companyName: string;
-  country: CountryDisplay;
+  country: AllCountryCode;
   countryArea: string;
   firstName: string;
   id: string;
@@ -15,4 +17,4 @@ export type Address = {
   streetAddress2: string;
 };
 
-type CountryDisplay = { code: string; country?: string };
+export type CountryOption = { label: string; value: AllCountryCode };

@@ -77,7 +77,7 @@ export function SavedAddresses({
     setEditedAddress(address);
     push(
       paths.checkout.shippingAddress.asPath({
-        query: { country: address.country.code },
+        query: { country: address.country },
       }),
     );
   }

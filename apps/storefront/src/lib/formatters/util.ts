@@ -1,13 +1,14 @@
 import { type DateTimeFormatOptions } from "next-intl";
 
-import { type CountryCode } from "@nimara/codegen/schema";
+import type { AllCountryCode } from "@nimara/domain/consts";
 
 import { type WithRegion } from "@/lib/types";
+import { type SupportedCurrency, type SupportedLocale } from "@/regions/types";
 
 export const localizedFormatter = ({ region }: WithRegion) => ({
   price: (
     opts: Omit<Parameters<typeof formatAsPrice>[0], "locale" | "currency"> & {
-      currency?: string;
+      currency?: SupportedCurrency;
     },
   ) =>
     formatAsPrice({
@@ -28,8 +29,8 @@ export const formatAsPrice = ({
   minimumFractionDigits = 0,
 }: {
   amount: number;
-  currency: string;
-  locale: string;
+  currency: SupportedCurrency;
+  locale: SupportedLocale;
   minimumFractionDigits?: number;
 }) =>
   new Intl.NumberFormat(locale, {
@@ -43,8 +44,8 @@ export const formatAsCountry = ({
   locale,
   country,
 }: {
-  country: CountryCode;
-  locale: string;
+  country: AllCountryCode;
+  locale: SupportedLocale;
 }) => new Intl.DisplayNames(locale, { type: "region" }).of(country) as string;
 
 export const formatAsDate = ({
@@ -53,6 +54,6 @@ export const formatAsDate = ({
   options = { month: "long", year: "numeric", day: "2-digit" },
 }: {
   date: string;
-  locale: string;
+  locale: SupportedLocale;
   options?: DateTimeFormatOptions;
 }) => new Intl.DateTimeFormat(locale, options).format(new Date(date));

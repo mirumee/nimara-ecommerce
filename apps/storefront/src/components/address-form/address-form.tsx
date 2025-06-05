@@ -4,8 +4,11 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
-import { type CountryCode, type CountryDisplay } from "@nimara/codegen/schema";
-import { type Address } from "@nimara/domain/objects/Address";
+import { type AllCountryCode } from "@nimara/domain/consts";
+import {
+  type Address,
+  type CountryOption,
+} from "@nimara/domain/objects/Address";
 import {
   type AddressFormRow,
   type FieldType,
@@ -56,7 +59,7 @@ const companyNameRow = [
 
 interface AddressFormProps {
   addressFormRows: readonly AddressFormRow[];
-  countries: Omit<CountryDisplay, "vat">[];
+  countries: CountryOption[];
   isDisabled?: boolean;
   onCountryChange?: (isChanging: boolean) => void;
   schemaPrefix?: string;
@@ -82,7 +85,7 @@ export const AddressForm = ({
     }
   }, [addressFormRows]);
 
-  const handleChangeCountry = (countryCode: CountryCode) => {
+  const handleChangeCountry = (countryCode: AllCountryCode) => {
     setIsChangingCountry(true);
     onCountryChange?.(true);
     dynamicFields.forEach((fieldName) =>
@@ -98,8 +101,8 @@ export const AddressForm = ({
       isRequired: true,
       onChange: handleChangeCountry,
       options: countries.map((country) => ({
-        value: country.code,
-        label: country.country,
+        value: country.value,
+        label: country.label ?? country.value,
       })),
     },
   ];

@@ -4,8 +4,14 @@ import { Button } from "@nimara/ui/components/button";
 
 import { Link } from "@/i18n/routing";
 import { paths, type QUERY_PARAMS } from "@/lib/paths";
+import { type SupportedLocale } from "@/regions/types";
 
 import { CheckoutRemover } from "./components/checkout-remover";
+
+type PageProps = {
+  params: Promise<{ id: string; locale: SupportedLocale }>;
+  searchParams: Promise<{ [QUERY_PARAMS.orderPlaced]: string }>;
+};
 
 export async function generateMetadata() {
   const t = await getTranslations("order-confirmation");
@@ -15,13 +21,7 @@ export async function generateMetadata() {
   };
 }
 
-export default async function Page({
-  params,
-  searchParams,
-}: {
-  params: Promise<{ id: string; locale: string }>;
-  searchParams: Promise<{ [QUERY_PARAMS.orderPlaced]: string }>;
-}) {
+export default async function Page({ params, searchParams }: PageProps) {
   const t = await getTranslations();
 
   return (

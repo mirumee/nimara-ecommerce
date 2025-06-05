@@ -1,10 +1,9 @@
-import { getLocale } from "next-intl/server";
-
-import type { CountryCode } from "@nimara/codegen/schema";
+import type { AllCountryCode } from "@nimara/domain/consts";
 
 import { getAccessToken } from "@/auth";
 import { getCheckoutOrRedirect } from "@/lib/checkout";
 import { getCurrentRegion } from "@/regions/server";
+import { type SupportedLocale } from "@/regions/types";
 import { addressService } from "@/services/address";
 import { userService } from "@/services/user";
 
@@ -16,9 +15,12 @@ import { validateCheckoutStepAction } from "../../actions";
 import { ShippingAddressForm } from "./_forms/guest-form";
 import { AddressTab } from "./_tabs/address-tab";
 
-type SearchParams = Promise<{ country?: CountryCode }>;
+type PageProps = {
+  params: Promise<{ locale: SupportedLocale }>;
+  searchParams: Promise<{ country?: AllCountryCode }>;
+};
 
-export default async function Page(props: { searchParams: SearchParams }) {
+export default async function Page(props: PageProps) {
   const checkout = await getCheckoutOrRedirect();
 
   if (checkout.problems.insufficientStock.length) {
@@ -26,10 +28,10 @@ export default async function Page(props: { searchParams: SearchParams }) {
   }
 
   const accessToken = await getAccessToken();
-  const [searchParams, region, locale, resultUserGet] = await Promise.all([
+  const { locale } = await props.params;
+  const [searchParams, region, resultUserGet] = await Promise.all([
     props.searchParams,
     getCurrentRegion(),
-    getLocale(),
     userService.userGet(accessToken),
   ]);
 
@@ -49,6 +51,7 @@ export default async function Page(props: { searchParams: SearchParams }) {
     }),
     addressService.countriesGet({
       channelSlug: region.market.channel,
+      locale: region.language.locale,
     }),
   ]);
 
@@ -62,6 +65,7 @@ export default async function Page(props: { searchParams: SearchParams }) {
       savedAddresses.map(async (address) => {
         const resultFormatAddress = await addressService.addressFormat({
           variables: { address },
+          locale: region.language.locale,
         });
 
         if (!resultFormatAddress.ok) {
@@ -76,11 +80,11 @@ export default async function Page(props: { searchParams: SearchParams }) {
     )) ?? [];
 
   const supportedCountryCodesInChannel = resultCountries.data.map(
-    ({ code }) => code,
+    (countryCode) => countryCode,
   );
   const sortedAddresses = formattedAddresses
     .filter(({ address: { country } }) =>
-      supportedCountryCodesInChannel?.includes(country.code),
+      supportedCountryCodesInChannel?.includes(country),
     )
     .sort((a, _) => (a.address.isDefaultShippingAddress ? -1 : 0));
 
@@ -93,7 +97,7 @@ export default async function Page(props: { searchParams: SearchParams }) {
     }
 
     const isValidCountryCode = resultCountries.data.some(
-      (country) => country.code === paramsCountryCode,
+      (country) => country.value === paramsCountryCode,
     );
 
     if (!isValidCountryCode) {
@@ -101,7 +105,7 @@ export default async function Page(props: { searchParams: SearchParams }) {
     }
 
     return paramsCountryCode;
-  })() as CountryCode;
+  })() as AllCountryCode;
 
   const resultAddressRows = await addressService.addressFormGetRows({
     countryCode,

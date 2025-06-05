@@ -16,9 +16,6 @@
   "dependencies": {
     "@formatjs/intl-localematcher": "0.6.1",
     "@hookform/resolvers": "3.6.0",
-    "@opentelemetry/api-logs": "0.201.1",
-    "@opentelemetry/instrumentation": "0.201.1",
-    "@opentelemetry/sdk-logs": "0.201.1",
     "@sentry/integrations": "^7.114.0",
     "@sentry/nextjs": "^8.47.0",
     "@sentry/types": "^8.47.0",

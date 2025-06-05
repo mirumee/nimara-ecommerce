@@ -13,7 +13,7 @@ import {
 
 import { localePrefixes } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
-import { DEFAULT_LOCALE, type Locale } from "@/regions/types";
+import { DEFAULT_LOCALE, type SupportedLocale } from "@/regions/types";
 
 type Props = {
   baseUrl: string;
@@ -83,7 +83,9 @@ export const SearchPagination = ({
     // Shadcn use simple <a> tag instead of next-intl <Link> so we need to pass locale explicitly
     const isLocaleDifferent = locale !== DEFAULT_LOCALE;
     const localePrefix = isLocaleDifferent
-      ? localePrefixes[locale as Exclude<Locale, typeof DEFAULT_LOCALE>]
+      ? localePrefixes[
+          locale as Exclude<SupportedLocale, typeof DEFAULT_LOCALE>
+        ]
       : "";
     const baseUrlWithParams = `${baseUrl}?${params.toString()}`;
 

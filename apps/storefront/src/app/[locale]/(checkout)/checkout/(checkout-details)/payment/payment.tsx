@@ -6,7 +6,8 @@ import { useTranslations } from "next-intl";
 import { type ReactNode, useEffect, useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 
-import type { CountryCode, CountryDisplay } from "@nimara/codegen/schema";
+import type { AllCountryCode } from "@nimara/domain/consts";
+import { type CountryOption } from "@nimara/domain/objects/Address";
 import type { AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import type { Checkout } from "@nimara/domain/objects/Checkout";
 import { type AppErrorCode } from "@nimara/domain/objects/Error";
@@ -53,8 +54,8 @@ export type TabName = "new" | "saved";
 type PaymentProps = {
   addressFormRows: readonly AddressFormRow[];
   checkout: Checkout;
-  countries: Omit<CountryDisplay, "vat">[];
-  countryCode: CountryCode;
+  countries: CountryOption[];
+  countryCode: AllCountryCode;
   errorCode?: AppErrorCode;
   formattedAddresses: FormattedAddress[];
   paymentGatewayCustomer: Maybe<string>;
@@ -118,11 +119,9 @@ export const Payment = ({
   ) as Schema["billingAddress"];
   const hasDefaultBillingAddress =
     formattedAddresses[0]?.address.isDefaultBillingAddress;
-  const supportedCountryCodesInChannel = countries?.map(({ code }) => code);
+  const supportedCountryCodesInChannel = countries?.map(({ value }) => value);
   const hasDefaultBillingAddressInCurrentChannel =
-    supportedCountryCodesInChannel.includes(
-      defaultBillingAddress?.country.code,
-    );
+    supportedCountryCodesInChannel.includes(defaultBillingAddress?.country);
   const saveAddressForFutureUse = !!(user && addressActiveTab === "new");
 
   const form = useForm<Schema>({
@@ -225,7 +224,7 @@ export const Payment = ({
     const result = await paymentService.paymentExecute({
       billingDetails: {
         ...checkout.billingAddress,
-        country: checkout.billingAddress?.country.code,
+        country: checkout.billingAddress?.country,
       },
       paymentSecret,
       redirectUrl,

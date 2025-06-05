@@ -3,8 +3,8 @@
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
-import type { CountryCode, CountryDisplay } from "@nimara/codegen/schema";
-import type { Address } from "@nimara/domain/objects/Address";
+import { type AllCountryCode } from "@nimara/domain/consts";
+import type { Address, CountryOption } from "@nimara/domain/objects/Address";
 import type { AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import type { Checkout } from "@nimara/domain/objects/Checkout";
 import {
@@ -27,8 +27,8 @@ interface AddressTabProps {
   addressFormRows: readonly AddressFormRow[];
   addresses: FormattedAddress[];
   checkout: Checkout;
-  countries: Omit<CountryDisplay, "vat">[];
-  countryCode: CountryCode;
+  countries: CountryOption[];
+  countryCode: AllCountryCode;
 }
 
 type TabName = "new" | "saved";
@@ -59,7 +59,7 @@ export function AddressTab({
     }
 
     if (value === "saved") {
-      const country = addresses[0]?.address.country.code;
+      const country = addresses[0]?.address.country;
 
       if (country) {
         router.replace(

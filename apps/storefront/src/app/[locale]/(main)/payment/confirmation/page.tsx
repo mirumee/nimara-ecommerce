@@ -1,20 +1,22 @@
-import { getLocale } from "next-intl/server";
-
 import { type AppErrorCode } from "@nimara/domain/objects/Error";
 
 import { redirect } from "@/i18n/routing";
 import { getCheckoutOrRedirect } from "@/lib/checkout";
 import { paths, QUERY_PARAMS } from "@/lib/paths";
+import { type SupportedLocale } from "@/regions/types";
 import { checkoutService } from "@/services/checkout";
 import { paymentService } from "@/services/payment";
 
 import { ProcessingInfo } from "./components/processing-info";
 
-type SearchParams = Promise<Record<string, string>>;
+type PageProps = {
+  params: Promise<{ locale: SupportedLocale }>;
+  searchParams: Promise<Record<string, string>>;
+};
 
-export default async function Page(props: { searchParams: SearchParams }) {
+export default async function Page(props: PageProps) {
   const searchParams = await props.searchParams;
-  const locale = await getLocale();
+  const { locale } = await props.params;
   const checkout = await getCheckoutOrRedirect();
 
   let errors: { code: AppErrorCode }[] = [];

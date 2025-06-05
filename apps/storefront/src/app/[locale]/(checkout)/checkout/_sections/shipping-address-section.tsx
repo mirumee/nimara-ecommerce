@@ -6,12 +6,15 @@ import { Button } from "@nimara/ui/components/button";
 import { Link } from "@/i18n/routing";
 import { displayFormattedAddressLines } from "@/lib/address";
 import { paths } from "@/lib/paths";
+import { type SupportedLocale } from "@/regions/types";
 import { addressService } from "@/services/address";
 
 export async function ShippingAddressSection({
   checkout,
+  locale,
 }: {
   checkout?: Checkout;
+  locale: SupportedLocale;
 }) {
   const [t, tc] = await Promise.all([
     getTranslations("shipping-address"),
@@ -32,6 +35,7 @@ export async function ShippingAddressSection({
 
   const result = await addressService.addressFormat({
     variables: { address: shippingAddress },
+    locale,
   });
 
   if (!result.ok) {
@@ -53,7 +57,7 @@ export async function ShippingAddressSection({
         <Button variant="outline" asChild>
           <Link
             href={paths.checkout.shippingAddress.asPath({
-              query: { country: shippingAddress.country.code },
+              query: { country: shippingAddress.country },
             })}
           >
             {tc("edit")}
