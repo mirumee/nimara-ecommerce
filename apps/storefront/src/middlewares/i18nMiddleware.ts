@@ -1,6 +1,10 @@
 import { match } from "@formatjs/intl-localematcher";
 import Negotiator from "negotiator";
-import type { NextFetchEvent, NextRequest, NextResponse } from "next/server";
+import {
+  type NextFetchEvent,
+  type NextRequest,
+  NextResponse,
+} from "next/server";
 import createIntlMiddleware from "next-intl/middleware";
 
 import { COOKIE_KEY, COOKIE_MAX_AGE } from "@/config";
@@ -64,6 +68,28 @@ export function i18nMiddleware(next: CustomMiddleware): CustomMiddleware {
     }
 
     const pathname = request.nextUrl.pathname;
+    const localeFromCookie = request.cookies.get(COOKIE_KEY.locale)?.value as
+      | Locale
+      | undefined;
+
+    // Redirect to locale from cookie if visiting root
+    if (
+      pathname === "/" &&
+      localeFromCookie &&
+      SUPPORTED_LOCALES.includes(localeFromCookie) &&
+      localeFromCookie !== DEFAULT_LOCALE
+    ) {
+      const localePrefix = localePrefixes[localeFromCookie];
+
+      if (localePrefix) {
+        storefrontLogger.debug(
+          `Redirecting root "/" to locale from cookie: ${localeFromCookie} (${localePrefix})`,
+        );
+
+        return NextResponse.redirect(new URL(localePrefix, request.url));
+      }
+    }
+
     const localePrefix = Object.values(localePrefixes).find(
       (localePrefix) =>
         pathname.startsWith(localePrefix) || pathname === localePrefix,
@@ -93,11 +119,16 @@ export function i18nMiddleware(next: CustomMiddleware): CustomMiddleware {
       maxAge: COOKIE_MAX_AGE.locale,
     });
 
-    const localeFromCookie = request.cookies.get(COOKIE_KEY.locale)?.value;
+    const currentLocaleFromCookie = request.cookies.get(
+      COOKIE_KEY.locale,
+    )?.value;
 
-    if (localeFromCookie && localeFromRequest !== localeFromCookie) {
+    if (
+      currentLocaleFromCookie &&
+      localeFromRequest !== currentLocaleFromCookie
+    ) {
       storefrontLogger.debug(
-        `Locale changed from ${localeFromCookie} to ${localeFromRequest}. Removing the checkoutId cookie.`,
+        `Locale changed from ${currentLocaleFromCookie} to ${localeFromRequest}. Removing the checkoutId cookie.`,
         {
           requestUrl: request.url,
           nextUrl: request.nextUrl.toString(),
