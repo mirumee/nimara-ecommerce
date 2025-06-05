@@ -16,6 +16,9 @@ export const handleFiltersFormSubmit = async (
   const params = new URLSearchParams(searchParams);
   const locale = await getLocale();
 
+  params.delete("before");
+  params.delete("after");
+
   const filterKeys = new Set<string>();
 
   formData.forEach((_, key) => {
