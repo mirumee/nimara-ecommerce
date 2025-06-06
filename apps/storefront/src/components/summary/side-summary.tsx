@@ -41,10 +41,11 @@ export const SideSummary = async () => {
       {!!checkout.problems.insufficientStock.length && (
         <ErrorDialog checkout={checkout} />
       )}
-      <aside className="col-span-5 hidden min-h-screen bg-gray-100 pl-12 pr-24 pt-24 md:block">
+      <div className="col-span-5 hidden min-h-screen max-w-xl px-8 py-12 md:block">
         <Summary checkout={checkout} />
-      </aside>
-      <aside className="span-col-1 absolute right-0 pt-4 md:hidden">
+      </div>
+
+      <div className="md:hidden">
         <Sheet>
           <SheetTrigger asChild>
             <Button variant="ghost">{t("show-summary")}</Button>
@@ -53,7 +54,7 @@ export const SideSummary = async () => {
             <Summary checkout={checkout} />
           </SheetContent>
         </Sheet>
-      </aside>
+      </div>
     </>
   );
 };

@@ -144,7 +144,7 @@ export const DiscountCode = ({ checkout }: { checkout: Checkout }) => {
   return (
     <>
       <div className="py-4">
-        <div className="flex items-center justify-between text-stone-700">
+        <div className="flex items-center justify-between text-sm text-stone-700">
           <span>
             {t("cart.discount-code", {
               code: isCodeApplied && !isTransitioning ? `(${promoCode})` : null,
@@ -152,7 +152,7 @@ export const DiscountCode = ({ checkout }: { checkout: Checkout }) => {
           </span>
           {isTransitioning ? null : !isCodeApplied && !isOpen ? (
             <span
-              className="cursor-pointer text-stone-900 hover:underline"
+              className="cursor-pointer text-stone-700 hover:underline"
               onClick={toggleOpen}
             >
               {t("cart.add-discount")}
