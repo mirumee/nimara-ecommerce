@@ -25,6 +25,12 @@ export const saleorAddressFormatInfra =
           countryCode: address.country,
         },
         operationName: "AddressValidationRulesQuery",
+        options: {
+          next: {
+            tags: ["ADDRESS_VALIDATION_RULES"],
+            revalidate: 24 * 60 * 60, // 1 day
+          },
+        },
       },
     );
 
