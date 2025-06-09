@@ -68,9 +68,7 @@ export function i18nMiddleware(next: CustomMiddleware): CustomMiddleware {
     }
 
     const pathname = request.nextUrl.pathname;
-    const localeFromCookie = request.cookies.get(COOKIE_KEY.locale)?.value as
-      | Locale
-      | undefined;
+    const localeFromCookie = request.cookies.get(COOKIE_KEY.locale)?.value;
 
     // Redirect to locale from cookie if visiting root
     if (
