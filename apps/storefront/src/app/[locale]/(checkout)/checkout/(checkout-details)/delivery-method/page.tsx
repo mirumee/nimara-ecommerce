@@ -1,7 +1,6 @@
-import { getLocale } from "next-intl/server";
-
 import { getAccessToken } from "@/auth";
 import { getCheckoutOrRedirect } from "@/lib/checkout";
+import { type SupportedLocale } from "@/regions/types";
 import { userService } from "@/services/user";
 
 import { CheckoutSkeleton } from "../../_components/checkout-skeleton";
@@ -11,7 +10,13 @@ import { ShippingAddressSection } from "../../_sections/shipping-address-section
 import { validateCheckoutStepAction } from "../../actions";
 import { DeliveryMethodForm } from "./form";
 
-export default async function Page() {
+type PageProps = {
+  params: Promise<{ locale: SupportedLocale }>;
+};
+
+export default async function Page(props: PageProps) {
+  const { locale } = await props.params;
+
   const checkout = await getCheckoutOrRedirect();
 
   if (checkout.problems.insufficientStock.length) {
@@ -19,11 +24,7 @@ export default async function Page() {
   }
 
   const accessToken = await getAccessToken();
-
-  const [resultUserGet, locale] = await Promise.all([
-    userService.userGet(accessToken),
-    getLocale(),
-  ]);
+  const resultUserGet = await userService.userGet(accessToken);
 
   const user = resultUserGet.ok ? resultUserGet.data : null;
 
@@ -37,7 +38,7 @@ export default async function Page() {
   return (
     <>
       <EmailSection checkout={checkout} user={user} />
-      <ShippingAddressSection checkout={checkout} />
+      <ShippingAddressSection checkout={checkout} locale={locale} />
       <DeliveryMethodForm checkout={checkout} />
       <PaymentSection />
     </>

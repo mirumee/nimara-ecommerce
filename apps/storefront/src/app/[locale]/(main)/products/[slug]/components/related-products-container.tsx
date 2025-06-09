@@ -1,15 +1,16 @@
 import { clientEnvs } from "@/envs/client";
 import { getCurrentRegion } from "@/regions/server";
+import { type SupportedLocale } from "@/regions/types";
 import { storefrontLogger } from "@/services/logging";
 import { storeService } from "@/services/store";
 
 import { RelatedProducts } from "./related-products";
 
-export const RelatedProductsContainer = async ({
-  params,
-}: {
-  params: Promise<{ locale: string; slug: string }>;
-}) => {
+type PageProps = {
+  params: Promise<{ locale: SupportedLocale; slug: string }>;
+};
+
+export const RelatedProductsContainer = async ({ params }: PageProps) => {
   const { slug } = await params;
 
   const region = await getCurrentRegion();

@@ -6,12 +6,13 @@ import { useTranslations } from "next-intl";
 import { type ReactNode, useEffect, useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 
-import type { CountryCode, CountryDisplay } from "@nimara/codegen/schema";
-import type { AddressFormRow } from "@nimara/domain/objects/AddressForm";
-import type { Checkout } from "@nimara/domain/objects/Checkout";
+import { type AllCountryCode } from "@nimara/domain/consts";
+import { type CountryOption } from "@nimara/domain/objects/Address";
+import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
+import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { type AppErrorCode } from "@nimara/domain/objects/Error";
-import type { PaymentMethod } from "@nimara/domain/objects/Payment";
-import type { User } from "@nimara/domain/objects/User";
+import { type PaymentMethod } from "@nimara/domain/objects/Payment";
+import { type User } from "@nimara/domain/objects/User";
 import { ADDRESS_CORE_FIELDS } from "@nimara/infrastructure/consts";
 import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
@@ -29,12 +30,12 @@ import { CheckboxField } from "@/components/form/checkbox-field";
 import { PaymentMethods } from "@/components/payment-methods";
 import { usePathname, useRouter } from "@/i18n/routing";
 import { addressToSchema } from "@/lib/address";
-import type { FormattedAddress } from "@/lib/checkout";
+import { type FormattedAddress } from "@/lib/checkout";
 import { PAYMENT_ELEMENT_ID } from "@/lib/consts";
 import { isGlobalError } from "@/lib/errors";
 import { paths } from "@/lib/paths";
 import { translateApiErrors } from "@/lib/payment";
-import type { Maybe } from "@/lib/types";
+import { type Maybe } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { useCurrentRegion } from "@/regions/client";
 import { paymentService } from "@/services/payment";
@@ -53,8 +54,8 @@ export type TabName = "new" | "saved";
 type PaymentProps = {
   addressFormRows: readonly AddressFormRow[];
   checkout: Checkout;
-  countries: Omit<CountryDisplay, "vat">[];
-  countryCode: CountryCode;
+  countries: CountryOption[];
+  countryCode: AllCountryCode;
   errorCode?: AppErrorCode;
   formattedAddresses: FormattedAddress[];
   paymentGatewayCustomer: Maybe<string>;
@@ -118,11 +119,9 @@ export const Payment = ({
   ) as Schema["billingAddress"];
   const hasDefaultBillingAddress =
     formattedAddresses[0]?.address.isDefaultBillingAddress;
-  const supportedCountryCodesInChannel = countries?.map(({ code }) => code);
+  const supportedCountryCodesInChannel = countries?.map(({ value }) => value);
   const hasDefaultBillingAddressInCurrentChannel =
-    supportedCountryCodesInChannel.includes(
-      defaultBillingAddress?.country.code,
-    );
+    supportedCountryCodesInChannel.includes(defaultBillingAddress?.country);
   const saveAddressForFutureUse = !!(user && addressActiveTab === "new");
 
   const form = useForm<Schema>({
@@ -225,7 +224,7 @@ export const Payment = ({
     const result = await paymentService.paymentExecute({
       billingDetails: {
         ...checkout.billingAddress,
-        country: checkout.billingAddress?.country.code,
+        country: checkout.billingAddress?.country,
       },
       paymentSecret,
       redirectUrl,

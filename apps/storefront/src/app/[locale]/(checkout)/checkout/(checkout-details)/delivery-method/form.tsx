@@ -29,7 +29,7 @@ export const DeliveryMethodForm = ({ checkout }: { checkout: Checkout }) => {
     resolver: zodResolver(formSchema({ t })),
     defaultValues: {
       deliveryMethodId:
-        checkout.deliveryMethod?.id ?? checkout.shippingMethods[0].id,
+        checkout.deliveryMethod?.id ?? checkout.shippingMethods?.[0].id,
     },
   });
 

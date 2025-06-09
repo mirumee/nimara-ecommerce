@@ -1,4 +1,4 @@
-import { getLocale, getTranslations } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 
 import { getAccessToken } from "@/auth";
 import { clientEnvs } from "@/envs/client";
@@ -7,18 +7,22 @@ import { Link, redirect } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 import { getStoreUrl } from "@/lib/server";
 import { getCurrentRegion } from "@/regions/server";
+import { type SupportedLocale } from "@/regions/types";
 import { paymentService } from "@/services/payment";
 import { userService } from "@/services/user";
 
 import { AddNewPaymentTrigger } from "./components/add-new-payment-trigger";
 import { PaymentMethodsList } from "./components/payment-methods-list";
 
-type SearchParams = Promise<Record<string, string>>;
+type PageProps = {
+  params: Promise<{ locale: SupportedLocale }>;
+  searchParams: Promise<Record<string, string>>;
+};
 
-export default async function Page(props: { searchParams: SearchParams }) {
+export default async function Page(props: PageProps) {
+  const { locale } = await props.params;
   const searchParams = await props.searchParams;
   const accessToken = await getAccessToken();
-  const locale = await getLocale();
 
   const [t, region, resultUserGet] = await Promise.all([
     getTranslations(),

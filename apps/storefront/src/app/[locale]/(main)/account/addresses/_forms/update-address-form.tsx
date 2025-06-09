@@ -5,8 +5,10 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-import type { CountryDisplay } from "@nimara/codegen/schema";
-import type { Address } from "@nimara/domain/objects/Address";
+import {
+  type Address,
+  type CountryOption,
+} from "@nimara/domain/objects/Address";
 import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import { ADDRESS_CORE_FIELDS } from "@nimara/infrastructure/consts";
 import { Button } from "@nimara/ui/components/button";
@@ -37,7 +39,7 @@ export const EditAddressForm = ({
 }: {
   address: Address;
   addressFormRows: readonly AddressFormRow[];
-  countries: Omit<CountryDisplay, "vat">[];
+  countries: CountryOption[];
 
   onModalClose: () => void;
   onModeChange: () => void;
@@ -53,7 +55,7 @@ export const EditAddressForm = ({
         ...acc,
         [fieldName]:
           fieldName === "country"
-            ? address.country.code
+            ? address.country
             : (address[fieldName] ?? ""),
       }),
       {},

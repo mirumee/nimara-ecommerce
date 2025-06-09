@@ -1,22 +1,27 @@
 import { PlusIcon } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
-import type { CountryCode } from "@nimara/codegen/schema";
-import type { Address } from "@nimara/domain/objects/Address";
+import { type AllCountryCode } from "@nimara/domain/consts";
+import { type Address } from "@nimara/domain/objects/Address";
 import { Button } from "@nimara/ui/components/button";
 
 import { getAccessToken } from "@/auth";
 import { displayFormattedAddressLines } from "@/lib/address";
 import { getCurrentRegion } from "@/regions/server";
+import { type SupportedLocale } from "@/regions/types";
 import { addressService } from "@/services/address";
 import { userService } from "@/services/user";
 
 import { AddNewAddressModal } from "./_modals/create-address-modal";
 import { EditAddressModal } from "./_modals/update-address-modal";
 
-export default async function Page(props: {
+type PageProps = {
+  params: Promise<{ locale: SupportedLocale }>;
   searchParams: Promise<Record<string, string>>;
-}) {
+};
+
+export default async function Page(props: PageProps) {
+  const { locale } = await props.params;
   const searchParams = await props.searchParams;
   const accessToken = await getAccessToken();
   const [t, region, resultUserAddresses] = await Promise.all([
@@ -31,6 +36,7 @@ export default async function Page(props: {
       savedAddresses.map(async (address) => {
         const resultFormatAddress = await addressService.addressFormat({
           variables: { address },
+          locale,
         });
 
         if (!resultFormatAddress.ok) {
@@ -73,7 +79,7 @@ export default async function Page(props: {
         : "address.default-billing";
   }
 
-  const resultCountries = await addressService.countriesAllGet();
+  const resultCountries = await addressService.countriesAllGet({ locale });
 
   if (!resultCountries.ok) {
     throw new Error("No countries.");
@@ -87,7 +93,7 @@ export default async function Page(props: {
       return defaultCountryCode;
     }
     const isValidCountryCode = resultCountries.data.some(
-      (country) => country.code === paramsCountryCode,
+      (countryCode) => countryCode.value === paramsCountryCode,
     );
 
     if (!isValidCountryCode) {
@@ -95,7 +101,7 @@ export default async function Page(props: {
     }
 
     return paramsCountryCode;
-  })() as CountryCode;
+  })() as AllCountryCode;
 
   const resultAddressRows = await addressService.addressFormGetRows({
     countryCode: countryCode,

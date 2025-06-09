@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import { type CountryCode } from "@nimara/codegen/schema";
+import { type AllCountryCode } from "@nimara/domain/consts";
 
 import { getAccessToken } from "@/auth";
 import { paths } from "@/lib/paths";
@@ -20,7 +20,7 @@ export async function createNewAddress({
   const result = await userService.accountAddressCreate({
     input: {
       ...input,
-      country: input.country as CountryCode,
+      country: input.country as AllCountryCode,
     },
     ...(isDefaultBillingAddress && { type: "BILLING" }),
     accessToken,
@@ -53,7 +53,7 @@ export async function updateAddress({
   const data = await userService.accountAddressUpdate({
     accessToken,
     id,
-    input: { ...input, country: input.country as CountryCode },
+    input: { ...input, country: input.country as AllCountryCode },
   });
 
   if (isDefaultShippingAddress) {

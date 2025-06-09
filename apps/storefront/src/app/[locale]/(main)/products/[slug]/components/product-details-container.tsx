@@ -7,6 +7,7 @@ import { getCheckoutId } from "@/lib/actions/cart";
 import { JsonLd, productToJsonLd } from "@/lib/json-ld";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
+import { type SupportedLocale } from "@/regions/types";
 import { cartService } from "@/services/cart";
 import { storefrontLogger } from "@/services/logging";
 import { storeService } from "@/services/store";
@@ -15,12 +16,12 @@ import { userService } from "@/services/user";
 import { Breadcrumbs } from "../../../_components/breadcrumbs";
 import { ProductDetails } from "./product-details";
 
-export const ProductDetailsContainer = async ({
-  params,
-}: {
-  params: Promise<{ locale: string; slug: string }>;
-}) => {
-  const { slug } = await params;
+type PageProps = {
+  params: Promise<{ locale: SupportedLocale; slug: string }>;
+};
+
+export const ProductDetailsContainer = async (props: PageProps) => {
+  const { slug } = await props.params;
 
   const [region, accessToken, checkoutId] = await Promise.all([
     getCurrentRegion(),

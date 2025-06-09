@@ -1,5 +1,6 @@
 import { type CountryCode, parsePhoneNumberWithError } from "libphonenumber-js";
 
+import { type AllLocale } from "@nimara/domain/consts";
 import type { Address } from "@nimara/domain/objects/Address";
 
 import type { AddressValidationRulesQuery_addressValidationRules_AddressValidationData } from "../../saleor/graphql/queries/generated";
@@ -9,9 +10,11 @@ const LINE_BREAK = "\n";
 export const formatAddress = ({
   addressValidationRules,
   address,
+  locale,
 }: {
   address: Address;
   addressValidationRules: AddressValidationRulesQuery_addressValidationRules_AddressValidationData;
+  locale: AllLocale;
 }) => {
   const name = address.firstName
     ? `${address.firstName} ${address.lastName}`
@@ -20,7 +23,7 @@ export const formatAddress = ({
   const formattedPhone = address?.phone
     ? (parsePhoneNumberWithError(
         address.phone,
-        address.country.code as CountryCode,
+        address.country as CountryCode,
       )?.formatInternational() ?? "")
     : "";
   const fullName =
@@ -78,8 +81,10 @@ export const formatAddress = ({
   const fullAddress = [
     ...formattedAddress,
     LINE_BREAK,
-    address.country.country,
+    new Intl.DisplayNames(locale, { type: "region" }).of(
+      address.country,
+    ) as string,
   ];
 
-  return fullAddress as string[];
+  return fullAddress;
 };

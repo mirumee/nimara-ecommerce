@@ -1,6 +1,8 @@
+import { type AllCurrency } from "../consts";
+
 export type Price = {
   amount: number;
-  currency: string;
+  currency: AllCurrency;
 };
 
 export type PriceType = "gross" | "net";

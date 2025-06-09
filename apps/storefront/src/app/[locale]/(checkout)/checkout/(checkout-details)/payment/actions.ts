@@ -2,8 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 
-import type { CountryCode } from "@nimara/codegen/schema";
-import type { Checkout } from "@nimara/domain/objects/Checkout";
+import { type AllCountryCode } from "@nimara/domain/consts";
+import { type Checkout } from "@nimara/domain/objects/Checkout";
 
 import { getAccessToken } from "@/auth";
 import { updateCheckoutAddressAction } from "@/lib/actions/update-checkout-address-action";
@@ -38,7 +38,7 @@ export async function updateBillingAddress({
       accessToken,
       input: {
         ...billingAddress,
-        country: billingAddress?.country as CountryCode,
+        country: billingAddress?.country as AllCountryCode,
       },
       type: "BILLING",
     });

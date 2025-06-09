@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import type { CountryCode } from "@nimara/codegen/schema";
+import { type AllCountryCode } from "@nimara/domain/consts";
 import type { Checkout } from "@nimara/domain/objects/Checkout";
 
 import { getAccessToken } from "@/auth";
@@ -25,7 +25,7 @@ export async function updateShippingAddress({
   const data = await userService.accountAddressUpdate({
     accessToken,
     id,
-    input: { ...input, country: input.country as CountryCode },
+    input: { ...input, country: input.country as AllCountryCode },
   });
 
   revalidatePath(paths.checkout.shippingAddress.asPath());
@@ -51,7 +51,7 @@ export async function createCheckoutShippingAddress({
   if (saveForFutureUse) {
     await userService.accountAddressCreate({
       accessToken,
-      input: { ...input, country: input.country as CountryCode },
+      input: { ...input, country: input.country as AllCountryCode },
       type: "SHIPPING",
     });
   }

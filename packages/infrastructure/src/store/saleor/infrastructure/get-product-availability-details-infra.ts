@@ -4,6 +4,7 @@ import type { ProductAvailability } from "@nimara/domain/objects/Product";
 import { ok } from "@nimara/domain/objects/Result";
 
 import { type FetchOptions, graphqlClient } from "#root/graphql/client";
+import { serializeMoney } from "#root/store/saleor/serializers";
 
 import type {
   GetProductAvailabilityDetailsInfra,
@@ -23,8 +24,8 @@ const parseData = (
   return {
     isAvailable,
     startPrice: {
+      ...serializeMoney(pricing.priceRange?.start[taxType]),
       type: taxType,
-      ...(pricing.priceRange?.start[taxType] ?? 0),
     },
     variants:
       variantsAvailability.map(
@@ -33,14 +34,12 @@ const parseData = (
           id,
           quantityLimitPerCustomer,
           price: {
-            amount: pricing.price[taxType].amount,
-            currency: pricing.price[taxType].currency,
+            ...serializeMoney(pricing.price[taxType]),
             type: taxType,
           },
           priceUndiscounted: {
+            ...serializeMoney(pricing.priceUndiscounted[taxType]),
             type: taxType,
-            amount: pricing.priceUndiscounted[taxType].amount,
-            currency: pricing.priceUndiscounted[taxType].currency,
           },
         }),
       ) ?? [],

@@ -41,7 +41,7 @@ export default async function Page() {
           <OrderSummary order={order} withStatus />
           <div className="space-y-4">
             <div className="grid grid-cols-4 gap-2 sm:grid-cols-12 sm:items-center">
-              {order?.lines.map((line) => {
+              {order.lines.map((line) => {
                 const isReturned = isOrderLineReturned(order, line);
 
                 return (

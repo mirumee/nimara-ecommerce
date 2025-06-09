@@ -1,4 +1,3 @@
-import type { CountryCode } from "@nimara/codegen/schema";
 import { err, ok } from "@nimara/domain/objects/Result";
 
 import type {
@@ -12,7 +11,7 @@ import { AddressValidationRulesQueryDocument } from "../graphql/queries/generate
 
 export const saleorAddressFormatInfra =
   ({ apiURL, logger }: SaleorAddressServiceConfig): AddressFormatInfra =>
-  async ({ variables: { address }, skip = false }) => {
+  async ({ locale, variables: { address }, skip = false }) => {
     if (skip) {
       logger.debug("Skipping the address format.");
 
@@ -23,7 +22,7 @@ export const saleorAddressFormatInfra =
       AddressValidationRulesQueryDocument,
       {
         variables: {
-          countryCode: address.country.code as CountryCode,
+          countryCode: address.country,
         },
         operationName: "AddressValidationRulesQuery",
       },
@@ -50,6 +49,7 @@ export const saleorAddressFormatInfra =
     const formattedAddress = formatAddress({
       addressValidationRules: result.data.addressValidationRules,
       address,
+      locale,
     });
 
     return ok({ formattedAddress });

@@ -11,14 +11,14 @@ import { COOKIE_KEY, COOKIE_MAX_AGE } from "@/config";
 import { localePrefixes, routing } from "@/i18n/routing";
 import {
   DEFAULT_LOCALE,
-  type Locale,
   SUPPORTED_LOCALES,
+  type SupportedLocale,
 } from "@/regions/types";
 import { storefrontLogger } from "@/services/logging";
 
 import type { CustomMiddleware } from "./chain";
 
-function getLocale(request: NextRequest): Locale {
+function getLocale(request: NextRequest): SupportedLocale {
   const languages = new Negotiator({
     headers: {
       "accept-language": request.headers.get("accept-language") || "",
@@ -28,7 +28,7 @@ function getLocale(request: NextRequest): Locale {
   const matchedLanguage = match(languages, SUPPORTED_LOCALES, DEFAULT_LOCALE);
 
   if (SUPPORTED_LOCALES.includes(matchedLanguage)) {
-    return matchedLanguage as Locale;
+    return matchedLanguage as SupportedLocale;
   }
 
   storefrontLogger.warning(
@@ -109,9 +109,10 @@ export function i18nMiddleware(next: CustomMiddleware): CustomMiddleware {
       localeFromRequest =
         (Object.keys(localePrefixes).find(
           (key) =>
-            localePrefixes[key as Exclude<Locale, typeof DEFAULT_LOCALE>] ===
-            localePrefix,
-        ) as Locale) ?? DEFAULT_LOCALE;
+            localePrefixes[
+              key as Exclude<SupportedLocale, typeof DEFAULT_LOCALE>
+            ] === localePrefix,
+        ) as SupportedLocale) ?? DEFAULT_LOCALE;
     }
 
     // INFO: Store the locale in the cookie to know if the locale has changed between requests
