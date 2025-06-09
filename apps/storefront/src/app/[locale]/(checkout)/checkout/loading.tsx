@@ -6,7 +6,7 @@ export default function Loading() {
   return (
     <section className="grid min-h-screen grid-cols-[3fr_2fr]">
       <div className="flex justify-center xl:mr-48 xl:justify-end">
-        <main className="w-full max-w-md space-y-4 px-4">
+        <main className="w-full max-w-md space-y-4 p-4">
           <div className="flex w-full">
             <Logo />
           </div>

@@ -20,6 +20,12 @@ export const saleorAddressFormGetRowsInfra =
           countryCode,
         },
         operationName: "AddressValidationRulesQuery",
+        options: {
+          next: {
+            tags: [`ADDRESS_VALIDATION_RULES:${countryCode}`],
+            revalidate: 24 * 60 * 60, // 1 day
+          },
+        },
       },
     );
 
