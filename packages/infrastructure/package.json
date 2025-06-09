@@ -27,7 +27,7 @@
     "eslint": "^8.57.0",
     "eslint-config-custom": "workspace:*",
     "graphql": "16.11.0",
-    "ts-essentials": "10.0.4",
+    "ts-essentials": "10.1.0",
     "ts-toolbelt": "9.6.0",
     "tsconfig": "workspace:*",
     "typescript": "^5.8.3"
