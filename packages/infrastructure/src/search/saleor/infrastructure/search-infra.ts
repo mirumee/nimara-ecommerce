@@ -75,17 +75,20 @@ export const saleorSearchInfra =
             after,
             before,
             channel: context.channel,
-            filter: {
-              attributes: attributesFilter,
-              collections: collectionsResult.data,
-              categories: categoriesResult.data,
-            },
+            ...(productIds?.length
+              ? { where: { ids: productIds } }
+              : {
+                  filter: {
+                    attributes: attributesFilter,
+                    collections: collectionsResult.data,
+                    categories: categoriesResult.data,
+                  },
+                }),
             languageCode: context.languageCode as LanguageCodeEnum,
             search: query,
             sortBy: settings.sorting.find(
               (conf) => conf.queryParamValue === sortBy,
             )?.saleorValue,
-            where: productIds ? { ids: productIds } : undefined,
             thumbnailFormat: THUMBNAIL_FORMAT,
             thumbnailSize: THUMBNAIL_SIZE_LARGE,
             ...pageInfo,
