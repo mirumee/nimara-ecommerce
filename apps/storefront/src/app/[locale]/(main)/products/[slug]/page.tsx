@@ -6,6 +6,7 @@ import { editorJSDataToString } from "@nimara/ui/lib/richText";
 import { CACHE_TTL } from "@/config";
 import { clientEnvs } from "@/envs/client";
 import { getCurrentRegion } from "@/regions/server";
+import { type SupportedLocale } from "@/regions/types";
 import { storefrontLogger } from "@/services/logging";
 import { storeService } from "@/services/store";
 
@@ -14,9 +15,11 @@ import { ProductDetailsSkeleton } from "./components/product-details-skeleton";
 import { RelatedProductsContainer } from "./components/related-products-container";
 import { RelatedProductsSkeleton } from "./components/related-products-skeleton";
 
-export async function generateMetadata(props: {
-  params: Promise<{ locale: string; slug: string }>;
-}) {
+type PageProps = {
+  params: Promise<{ locale: SupportedLocale; slug: string }>;
+};
+
+export async function generateMetadata(props: PageProps) {
   const params = await props.params;
   const { slug } = params;
   const region = await getCurrentRegion();
@@ -55,9 +58,7 @@ export async function generateMetadata(props: {
   };
 }
 
-export default function Page(props: {
-  params: Promise<{ locale: string; slug: string }>;
-}) {
+export default function Page(props: PageProps) {
   return (
     <div className="relative w-full">
       <Suspense fallback={<ProductDetailsSkeleton />}>

@@ -5,9 +5,10 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-import type { CountryCode, CountryDisplay } from "@nimara/codegen/schema";
-import type { AddressFormRow } from "@nimara/domain/objects/AddressForm";
-import type { Checkout } from "@nimara/domain/objects/Checkout";
+import { type AllCountryCode } from "@nimara/domain/consts";
+import { type CountryOption } from "@nimara/domain/objects/Address";
+import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
+import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { ADDRESS_CORE_FIELDS } from "@nimara/infrastructure/consts";
 import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
@@ -31,8 +32,8 @@ export const CreateShippingAddressForm = ({
 }: {
   addressFormRows: readonly AddressFormRow[];
   checkout: Checkout;
-  countries: Omit<CountryDisplay, "vat">[];
-  countryCode: CountryCode;
+  countries: CountryOption[];
+  countryCode: AllCountryCode;
   shouldSaveForFuture: boolean;
 }) => {
   const t = useTranslations();

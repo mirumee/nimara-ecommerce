@@ -1,6 +1,4 @@
-import { getLocale } from "next-intl/server";
-
-import { type CountryCode } from "@nimara/codegen/schema";
+import { type AllCountryCode } from "@nimara/domain/consts";
 import { type AppErrorCode } from "@nimara/domain/objects/Error";
 import { type PaymentMethod } from "@nimara/domain/objects/Payment";
 
@@ -10,6 +8,7 @@ import { serverEnvs } from "@/envs/server";
 import { getCheckoutOrRedirect } from "@/lib/checkout";
 import { getStoreUrl } from "@/lib/server";
 import { getCurrentRegion } from "@/regions/server";
+import { type SupportedLocale } from "@/regions/types";
 import { addressService } from "@/services/address";
 import { paymentService } from "@/services/payment";
 import { userService } from "@/services/user";
@@ -22,13 +21,17 @@ import { ShippingAddressSection } from "../../_sections/shipping-address-section
 import { validateCheckoutStepAction } from "../../actions";
 import { Payment } from "./payment";
 
-type SearchParams = Promise<{
-  country?: CountryCode;
-  errorCode?: AppErrorCode;
-}>;
+type PageProps = {
+  params: Promise<{ locale: SupportedLocale }>;
+  searchParams: Promise<{
+    country?: AllCountryCode;
+    errorCode?: AppErrorCode;
+  }>;
+};
 
-export default async function Page(props: { searchParams: SearchParams }) {
+export default async function Page(props: PageProps) {
   const checkout = await getCheckoutOrRedirect();
+  const { locale } = await props.params;
 
   if (checkout?.problems.insufficientStock.length) {
     return <CheckoutSkeleton />;
@@ -36,14 +39,12 @@ export default async function Page(props: { searchParams: SearchParams }) {
 
   const accessToken = await getAccessToken();
 
-  const [resultUserGet, region, locale, storeUrl, searchParams] =
-    await Promise.all([
-      userService.userGet(accessToken),
-      getCurrentRegion(),
-      getLocale(),
-      getStoreUrl(),
-      props.searchParams,
-    ]);
+  const [resultUserGet, region, storeUrl, searchParams] = await Promise.all([
+    userService.userGet(accessToken),
+    getCurrentRegion(),
+    getStoreUrl(),
+    props.searchParams,
+  ]);
 
   const user = resultUserGet.ok ? resultUserGet.data : null;
 
@@ -51,6 +52,7 @@ export default async function Page(props: { searchParams: SearchParams }) {
 
   const resultCountries = await addressService.countriesGet({
     channelSlug: region.market.channel,
+    locale,
   });
 
   if (!resultCountries.ok) {
@@ -61,14 +63,14 @@ export default async function Page(props: { searchParams: SearchParams }) {
 
   const countryCode = (() => {
     const paramsCountryCode =
-      searchParams.country ?? checkout.shippingAddress?.country.code;
+      searchParams.country ?? checkout.shippingAddress?.country;
 
     if (!paramsCountryCode) {
       return defaultCountryCode;
     }
 
     const isValidCountryCode = resultCountries.data.some(
-      (country) => country.code === paramsCountryCode,
+      (country) => country.value === paramsCountryCode,
     );
 
     if (!isValidCountryCode) {
@@ -76,7 +78,7 @@ export default async function Page(props: { searchParams: SearchParams }) {
     }
 
     return paramsCountryCode;
-  })() as CountryCode;
+  })() as AllCountryCode;
 
   const [resultUserAddresses, resultAddressRows] = await Promise.all([
     userService.addressesGet({
@@ -98,6 +100,7 @@ export default async function Page(props: { searchParams: SearchParams }) {
       savedAddresses.map(async (address) => {
         const resultFormatAddress = await addressService.addressFormat({
           variables: { address },
+          locale,
         });
 
         if (!resultFormatAddress.ok) {
@@ -112,11 +115,11 @@ export default async function Page(props: { searchParams: SearchParams }) {
     )) ?? [];
 
   const supportedCountryCodesInChannel = resultCountries.data.map(
-    ({ code }) => code,
+    ({ value }) => value,
   );
   const sortedAddresses = formattedAddresses
     .filter(({ address: { country } }) =>
-      supportedCountryCodesInChannel.includes(country.code),
+      supportedCountryCodesInChannel.includes(country),
     )
     .sort((a, _) => (a.address.isDefaultBillingAddress ? -1 : 0));
 
@@ -150,7 +153,7 @@ export default async function Page(props: { searchParams: SearchParams }) {
   return (
     <>
       <EmailSection checkout={checkout} user={user} />
-      <ShippingAddressSection checkout={checkout} />
+      <ShippingAddressSection checkout={checkout} locale={locale} />
       <DeliveryMethodSection checkout={checkout} />
       <PaymentSection>
         <Payment

@@ -1,39 +1,47 @@
-import type { CountryCode, LanguageCodeEnum } from "@nimara/codegen/schema";
-import type { Checkout } from "@nimara/domain/objects/Checkout";
-import type { TaxedMoney } from "@nimara/domain/objects/common";
+import {
+  type CountryCode,
+  type LanguageCodeEnum,
+} from "@nimara/codegen/schema";
+import { type Checkout } from "@nimara/domain/objects/Checkout";
+import { type TaxedMoney } from "@nimara/domain/objects/common";
 import { err, ok } from "@nimara/domain/objects/Result";
 
+import { serializeAddress } from "#root/address/saleor/serializers";
 import { THUMBNAIL_FORMAT, THUMBNAIL_SIZE_SMALL } from "#root/config";
 import { graphqlClient } from "#root/graphql/client";
+import {
+  serializeMoney,
+  serializeTaxedMoney,
+} from "#root/store/saleor/serializers";
 import { serializeLine } from "#root/utils";
 
-import type {
-  CheckoutGetInfra,
-  SaleorCheckoutServiceConfig,
+import {
+  type CheckoutGetInfra,
+  type SaleorCheckoutServiceConfig,
 } from "../../types";
-import type { CheckoutFragment } from "../graphql/fragments/generated";
+import { type CheckoutFragment } from "../graphql/fragments/generated";
 import { CheckoutFindQueryDocument } from "../graphql/queries/generated";
 
 // Saleor returns discount amount included in subtotal price
 const calculateSubtotalPrice = (checkout: CheckoutFragment): TaxedMoney => {
   if (checkout?.discount) {
     return {
-      gross: {
+      gross: serializeMoney({
         currency: checkout.subtotalPrice.gross.currency,
         amount: checkout.subtotalPrice.gross.amount + checkout.discount.amount,
-      },
-      net: {
+      }),
+      net: serializeMoney({
         currency: checkout.subtotalPrice.net.currency,
         amount: checkout.subtotalPrice.net.amount + checkout.discount.amount,
-      },
-      tax: {
+      }),
+      tax: serializeMoney({
         currency: checkout.subtotalPrice.tax.currency,
         amount: checkout.subtotalPrice.tax.amount,
-      },
+      }),
     };
   }
 
-  return checkout.subtotalPrice;
+  return serializeTaxedMoney(checkout.subtotalPrice);
 };
 
 const serializeCheckout = (checkout: CheckoutFragment): Checkout => {
@@ -41,6 +49,19 @@ const serializeCheckout = (checkout: CheckoutFragment): Checkout => {
 
   return {
     ...checkout,
+    billingAddress: checkout.billingAddress
+      ? serializeAddress(checkout.billingAddress)
+      : null,
+    shippingAddress: checkout.shippingAddress
+      ? serializeAddress(checkout.shippingAddress)
+      : null,
+    discount: checkout.discount ? serializeMoney(checkout.discount) : null,
+    shippingPrice: serializeTaxedMoney(checkout.shippingPrice),
+    shippingMethods: checkout.shippingMethods.map((method) => ({
+      ...method,
+      price: serializeMoney(method.price),
+    })),
+    totalPrice: serializeTaxedMoney(checkout.totalPrice),
     problems: {
       insufficientStock:
         checkout.problems

@@ -18,14 +18,21 @@ export const OrderLine = async ({
     getLocalizedFormatter(),
   ]);
 
-  const isFree = line?.totalPrice?.amount === 0;
+  const isFree = line.totalPrice?.amount === 0;
+  const priceLabel = isFree
+    ? t("common.free")
+    : formatter.price({
+        amount: line.totalPrice.amount,
+      });
+  const lineName = [line?.productName, line?.variantName].join(" • ");
+  const quantityLabel = `${t("common.qty")}: ${line.quantity}`;
 
   return (
     <>
-      {line?.thumbnail?.url ? (
+      {line.thumbnail?.url ? (
         <Image
-          alt={line?.thumbnail?.alt ?? ""}
-          src={line?.thumbnail.url}
+          alt={line.thumbnail.alt ?? ""}
+          src={line.thumbnail.url}
           sizes="56px"
           width={42}
           height={56}
@@ -35,40 +42,24 @@ export const OrderLine = async ({
         <ProductImagePlaceholder height={56} width={42} />
       )}
       <div className="col-span-3 block sm:hidden">
-        <p>{[line?.productName, line?.variantName].join(" • ")}</p>
+        <p>{lineName}</p>
         <span className="flex gap-2">
-          <p className="w-1/3 text-stone-500">
-            {t("common.qty")}: {line?.quantity}
-          </p>
+          <p className="w-1/3 text-stone-500">{quantityLabel}</p>
           <p className="w-1/3 text-center font-bold text-black">
             {returnStatus || ""}
           </p>
-          <p className="w-1/3 text-end text-stone-500">
-            {isFree
-              ? t("common.free")
-              : formatter.price({
-                  amount: line?.totalPrice?.amount,
-                  currency: line?.totalPrice?.currency,
-                })}
-          </p>
+          <p className="w-1/3 text-end text-stone-500">{priceLabel}</p>
         </span>
       </div>
-      <p className="col-span-5 hidden sm:block">
-        {[line?.productName, line?.variantName].join(" • ")}
-      </p>
+      <p className="col-span-5 hidden sm:block">{lineName}</p>
       <p className="col-span-2 hidden text-center text-sm font-bold text-black sm:block">
         {returnStatus || ""}
       </p>
       <p className="col-span-2 hidden text-end text-stone-500 sm:block">
-        {t("common.qty")}: {line?.quantity}
+        {quantityLabel}
       </p>
       <p className="col-span-2 hidden text-end text-stone-500 sm:block">
-        {isFree
-          ? t("common.free")
-          : formatter.price({
-              amount: line?.totalPrice?.amount,
-              currency: line?.totalPrice?.currency,
-            })}
+        {priceLabel}
       </p>
     </>
   );

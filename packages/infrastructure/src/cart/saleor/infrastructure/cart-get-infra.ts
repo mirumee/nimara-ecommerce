@@ -1,3 +1,4 @@
+import { type AllCurrency } from "@nimara/domain/consts";
 import type { Cart } from "@nimara/domain/objects/Cart";
 import { err, ok } from "@nimara/domain/objects/Result";
 
@@ -23,13 +24,16 @@ const serializeCart = ({
     linesCount: lines.length,
     linesQuantityCount:
       lines.reduce((sum, line) => sum + line.quantity, 0) ?? 0,
-    total: totalPrice.gross,
+    total: {
+      ...totalPrice.gross,
+      currency: totalPrice.gross.currency as AllCurrency,
+    },
     subtotal: {
       amount: lines.reduce(
         (sum, line) => sum + line.undiscountedTotalPrice.amount,
         0,
       ),
-      currency: lines[0]?.undiscountedTotalPrice.currency,
+      currency: lines[0]?.undiscountedTotalPrice.currency as AllCurrency,
     },
     lines: lines.map((line) => serializeLine(line, priceType)),
     problems: {

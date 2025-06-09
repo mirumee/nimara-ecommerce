@@ -6,7 +6,7 @@ import { Button } from "@nimara/ui/components/button";
 import { Label } from "@nimara/ui/components/label";
 
 import { cn } from "@/lib/utils";
-import type { Locale, Market } from "@/regions/types";
+import type { Market, SupportedLocale } from "@/regions/types";
 
 import { handleLocaleChange } from "./actions";
 
@@ -15,13 +15,13 @@ export function ContinentRow({
   markets,
   name,
 }: {
-  currentLocale: Locale;
+  currentLocale: SupportedLocale;
   markets: Market[];
   name: string;
 }) {
   const [isPending, startTransition] = useTransition();
 
-  const onLocaleClick = (locale: Locale) => {
+  const onLocaleClick = (locale: SupportedLocale) => {
     startTransition(() => {
       void handleLocaleChange(locale);
     });

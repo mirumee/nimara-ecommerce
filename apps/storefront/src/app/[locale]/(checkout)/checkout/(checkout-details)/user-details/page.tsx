@@ -1,11 +1,10 @@
-import { getLocale } from "next-intl/server";
-
 import { getAccessToken } from "@/auth";
 import { redirect } from "@/i18n/routing";
 import { getCheckoutId } from "@/lib/actions/cart";
 import { deleteCheckoutIdCookie } from "@/lib/actions/checkout";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
+import { type SupportedLocale } from "@/regions/types";
 import { checkoutService } from "@/services/checkout";
 import { storefrontLogger } from "@/services/logging";
 import { userService } from "@/services/user";
@@ -16,10 +15,15 @@ import { PaymentSection } from "../../_sections/payment-section";
 import { ShippingAddressSection } from "../../_sections/shipping-address-section";
 import { UserDetailsForm } from "./form";
 
-export default async function Page() {
-  const [checkoutId, locale, region] = await Promise.all([
+type PageProps = {
+  params: Promise<{ locale: SupportedLocale }>;
+};
+
+export default async function Page(props: PageProps) {
+  const { locale } = await props.params;
+
+  const [checkoutId, region] = await Promise.all([
     getCheckoutId(),
-    getLocale(),
     getCurrentRegion(),
   ]);
 
@@ -61,7 +65,10 @@ export default async function Page() {
   return (
     <>
       <UserDetailsForm checkout={checkout} />
-      <ShippingAddressSection checkout={checkout} />
+      <ShippingAddressSection
+        checkout={checkout}
+        locale={region.language.locale}
+      />
       <DeliveryMethodSection checkout={checkout} />
       <PaymentSection />
     </>

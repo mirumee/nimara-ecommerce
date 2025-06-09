@@ -1,5 +1,6 @@
 import * as z from "zod";
 
+import { ALLOWED_COUNTRY_CODES } from "@nimara/domain/consts";
 import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
 
 import { type GetTranslations } from "@/types";
@@ -12,7 +13,7 @@ export const addressSchema = ({
   t: GetTranslations;
 }) =>
   z.object({
-    country: z.string().trim(),
+    country: z.enum(ALLOWED_COUNTRY_CODES),
     firstName: z
       .string()
       .trim()

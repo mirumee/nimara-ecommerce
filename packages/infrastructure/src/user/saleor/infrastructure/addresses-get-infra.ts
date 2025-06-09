@@ -1,8 +1,12 @@
 import { ok } from "@nimara/domain/objects/Result";
 
+import { serializeAddress } from "#root/address/saleor/serializers";
 import { graphqlClient } from "#root/graphql/client";
 
-import type { AddressesGetInfra, SaleorUserServiceConfig } from "../../types";
+import {
+  type AddressesGetInfra,
+  type SaleorUserServiceConfig,
+} from "../../types";
 import { UserAddressesQueryDocument } from "../graphql/queries/generated";
 
 export const saleorAddressesGetInfra =
@@ -33,5 +37,9 @@ export const saleorAddressesGetInfra =
       return result;
     }
 
-    return ok(result.data.me?.addresses ?? []);
+    const serializedAddresses = result.data.me?.addresses
+      ? result.data.me.addresses.map(serializeAddress)
+      : [];
+
+    return ok(serializedAddresses);
   };

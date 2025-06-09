@@ -1,3 +1,4 @@
+import { type AllCurrency } from "@nimara/domain/consts";
 import { ok } from "@nimara/domain/objects/Result";
 
 import { THUMBNAIL_FORMAT, THUMBNAIL_SIZE_MEDIUM } from "#root/config";
@@ -44,7 +45,11 @@ function serializeOrder({
 
   return {
     ...order,
-    total: { ...total[priceType], type: priceType },
+    total: {
+      ...total[priceType],
+      currency: total[priceType].currency as AllCurrency,
+      type: priceType,
+    },
     lines: order?.lines.map(
       ({
         productName,
@@ -58,7 +63,11 @@ function serializeOrder({
         ...orderLine,
         productName: translatedProductName || productName,
         variantName: translatedVariantName || variantName,
-        totalPrice: { ...totalPrice[priceType], type: priceType },
+        totalPrice: {
+          ...totalPrice[priceType],
+          currency: total[priceType].currency as AllCurrency,
+          type: priceType,
+        },
         variant: {
           ...variant,
           selectionAttributes:

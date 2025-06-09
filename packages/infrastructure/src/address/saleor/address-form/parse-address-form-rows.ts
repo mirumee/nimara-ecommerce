@@ -1,7 +1,7 @@
-import type { CountryCode } from "@nimara/codegen/schema";
-import type { AddressFormRow } from "@nimara/domain/objects/AddressForm";
+import { type CountryCode } from "@nimara/codegen/schema";
+import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
 
-import type { AddressValidationRulesQuery_addressValidationRules_AddressValidationData } from "../../saleor/graphql/queries/generated";
+import { type AddressValidationRulesQuery_addressValidationRules_AddressValidationData } from "../../saleor/graphql/queries/generated";
 import { getCityField } from "./fields/get-city-field";
 import { getCountryAreaField } from "./fields/get-country-area-field";
 import { getPostalCodeField } from "./fields/get-postal-code-field";

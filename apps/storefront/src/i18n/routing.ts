@@ -3,13 +3,16 @@ import { defineRouting } from "next-intl/routing";
 
 import {
   DEFAULT_LOCALE,
-  type Locale,
   SUPPORTED_LOCALES,
+  type SupportedLocale,
 } from "@/regions/types";
 
 export const localePrefixes = {
   "en-GB": "/gb",
-} as const satisfies Record<Exclude<Locale, typeof DEFAULT_LOCALE>, string>;
+} as const satisfies Record<
+  Exclude<SupportedLocale, typeof DEFAULT_LOCALE>,
+  string
+>;
 
 export const routing = defineRouting({
   locales: SUPPORTED_LOCALES,

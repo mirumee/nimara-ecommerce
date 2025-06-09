@@ -1,14 +1,14 @@
 import type {
   Language,
   LanguageId,
-  Locale,
   Market,
   MarketId,
   SUPPORTED_MARKETS,
+  SupportedLocale,
 } from "@/regions/types";
 
 export const LOCALE_CHANNEL_MAP: Record<
-  Locale,
+  SupportedLocale,
   (typeof SUPPORTED_MARKETS)[number]
 > = {
   "en-GB": "gb",

@@ -4,8 +4,9 @@ import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { type ReactNode, useEffect, useState } from "react";
 
-import type { CountryCode, CountryDisplay } from "@nimara/codegen/schema";
-import type { AddressFormRow } from "@nimara/domain/objects/AddressForm";
+import { type AllCountryCode } from "@nimara/domain/consts";
+import { type CountryOption } from "@nimara/domain/objects/Address";
+import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import {
   Dialog,
   DialogContent,
@@ -22,8 +23,8 @@ import { AddNewAddressForm } from "../_forms/create-address-form";
 interface AddNewAddressModalProps {
   addressFormRows: readonly AddressFormRow[];
   children: ReactNode;
-  countries: Omit<CountryDisplay, "vat">[];
-  countryCode: CountryCode;
+  countries: CountryOption[];
+  countryCode: AllCountryCode;
 }
 
 export function AddNewAddressModal({
