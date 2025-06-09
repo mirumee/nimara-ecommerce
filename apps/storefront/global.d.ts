@@ -60,6 +60,8 @@ declare interface IntlMessages extends Messages {}
 type Slug = string;
 type Id = string;
 type RevalidateTag =
+  | "ADDRESS_VALIDATION_RULES"
+  | `ADDRESS_VALIDATION_RULES:${string}`
   | "DETAIL-PAGE:PRODUCT"
   | "DETAIL-PAGE:COLLECTION"
   | `PRODUCT:${Slug}`

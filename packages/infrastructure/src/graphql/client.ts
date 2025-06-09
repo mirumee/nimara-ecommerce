@@ -26,6 +26,13 @@ type GraphQLResponse<TData = any> = {
   };
 };
 
+/**
+ * Options for Next.js fetch, allowing to specify revalidation and tags for caching.
+ * @see https://nextjs.org/docs/app/building-your-application/data-fetching/fetching#nextfetchoptions
+ * @param next - Next.js specific options for fetch.
+ * @param revalidate - Time in seconds after which the data should be revalidated.
+ * @param tags - Array of tags for cache invalidation.
+ */
 type NextFetchOptions = { next?: { revalidate?: number; tags?: string[] } };
 
 export type FetchOptions = Omit<RequestInit, "method" | "body"> &

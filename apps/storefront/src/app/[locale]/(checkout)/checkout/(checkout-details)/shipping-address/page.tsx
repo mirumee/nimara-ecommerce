@@ -80,11 +80,12 @@ export default async function Page(props: PageProps) {
     )) ?? [];
 
   const supportedCountryCodesInChannel = resultCountries.data.map(
-    (countryCode) => countryCode,
-  );
+    ({ value }) => value,
+  ) satisfies AllCountryCode[];
+
   const sortedAddresses = formattedAddresses
     .filter(({ address: { country } }) =>
-      supportedCountryCodesInChannel?.includes(country),
+      supportedCountryCodesInChannel.includes(country),
     )
     .sort((a, _) => (a.address.isDefaultShippingAddress ? -1 : 0));
 
