@@ -21,7 +21,7 @@ import { useRouterWithState } from "@/lib/hooks";
 import { paths } from "@/lib/paths";
 
 import { createCheckoutShippingAddress } from "./actions";
-import { type FormSchema, formSchema } from "./schema";
+import { type ShippingAddressSchema, shippingAddressSchema } from "./schema";
 
 export const CreateShippingAddressForm = ({
   addressFormRows,
@@ -42,8 +42,8 @@ export const CreateShippingAddressForm = ({
   const { isRedirecting, push } = useRouterWithState();
   const [isCountryChanging, setIsCountryChanging] = useState(false);
 
-  const form = useForm<FormSchema>({
-    resolver: zodResolver(formSchema({ addressFormRows, t })),
+  const form = useForm<ShippingAddressSchema>({
+    resolver: zodResolver(shippingAddressSchema({ addressFormRows, t })),
     defaultValues: {
       ...[...ADDRESS_CORE_FIELDS].reduce(
         (acc, fieldName) => ({
@@ -60,7 +60,7 @@ export const CreateShippingAddressForm = ({
   const canProceed =
     !form.formState.isSubmitting && !isCountryChanging && !isRedirecting;
 
-  const handleSubmit = async (input: FormSchema) => {
+  const handleSubmit = async (input: ShippingAddressSchema) => {
     const result = await createCheckoutShippingAddress({
       checkoutId: checkout.id,
       input,
@@ -76,7 +76,7 @@ export const CreateShippingAddressForm = ({
       if (isGlobalError(field)) {
         toast({ variant: "destructive", description: t(`errors.${code}`) });
       } else {
-        form.setError(field as keyof FormSchema, {
+        form.setError(field as keyof ShippingAddressSchema, {
           message: t(`errors.${code}`),
         });
       }

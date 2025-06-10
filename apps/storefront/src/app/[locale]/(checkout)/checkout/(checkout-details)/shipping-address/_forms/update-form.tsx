@@ -15,13 +15,12 @@ import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
 
 import { AddressForm } from "@/components/address-form/address-form";
-import { addressSchema as formSchema } from "@/components/address-form/schema";
 import { useRouter } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 import { storefrontLogger } from "@/services/logging";
 
 import { updateShippingAddress } from "./actions";
-import { type FormSchema } from "./schema";
+import { type ShippingAddressSchema, shippingAddressSchema } from "./schema";
 
 export const UpdateShippingAddressForm = ({
   address,
@@ -39,8 +38,8 @@ export const UpdateShippingAddressForm = ({
 
   const [isCountryChanging, setIsCountryChanging] = useState(false);
 
-  const form = useForm<FormSchema>({
-    resolver: zodResolver(formSchema({ addressFormRows, t })),
+  const form = useForm<ShippingAddressSchema>({
+    resolver: zodResolver(shippingAddressSchema({ addressFormRows, t })),
     defaultValues: [...ADDRESS_CORE_FIELDS].reduce(
       (acc, fieldName) => ({
         ...acc,
@@ -55,7 +54,7 @@ export const UpdateShippingAddressForm = ({
 
   const canProceed = !form.formState.isSubmitting && !isCountryChanging;
 
-  const handleSubmit = async (shippingAddress: FormSchema) => {
+  const handleSubmit = async (shippingAddress: ShippingAddressSchema) => {
     const result = await updateShippingAddress({
       id: address.id,
       input: shippingAddress,

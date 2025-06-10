@@ -8,9 +8,9 @@
   "dependencies": {
     "eslint-config-next": "15.3.3",
     "eslint-config-prettier": "^9.0.0",
-    "eslint-config-turbo": "^2.5.3",
+    "eslint-config-turbo": "^2.5.4",
     "eslint-import-resolver-node": "^0.3.6",
-    "eslint-import-resolver-typescript": "^3.10.0",
+    "eslint-import-resolver-typescript": "^4.4.3",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-react": "^7.37.5",
     "prettier": "3.5.3"
