@@ -32,7 +32,7 @@ const ScrollBar = ({
   <ScrollAreaPrimitive.ScrollAreaScrollbar
     orientation={orientation}
     className={cn(
-      "flex touch-none select-none transition-colors",
+      "pointer-events-none flex touch-none select-none opacity-0 transition-colors md:pointer-events-auto md:opacity-100",
       orientation === "vertical" &&
         "h-full w-2.5 border-l border-l-transparent p-[1px]",
       orientation === "horizontal" &&
