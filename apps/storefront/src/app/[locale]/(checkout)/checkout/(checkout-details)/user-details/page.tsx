@@ -46,7 +46,7 @@ export default async function Page(props: PageProps) {
 
   if (resultUserGet?.data) {
     await checkoutService.checkoutCustomerAttach({
-      accessToken: accessToken,
+      accessToken,
       id: checkoutId,
     });
   }

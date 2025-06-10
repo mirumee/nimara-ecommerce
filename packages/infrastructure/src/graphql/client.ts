@@ -45,8 +45,8 @@ export type FetchOptions = Omit<RequestInit, "method" | "body"> &
  * const result = await graphqlClient.execute(OrdersGetQuery);
  *
  * if (!result.ok) {
- *    // Handle server errors
- *    return
+ *   // Handle server errors
+ *   return
  * }
  *
  * // At this point we know that result is ok and we can safely access data
@@ -68,6 +68,15 @@ export const graphqlClient = (
     },
   ): AsyncResult<TResult> => {
     const { variables, options, operationName } = input;
+    const startTime = performance.now();
+    const isCached = !!options?.next?.tags;
+
+    if (!isCached && options?.cache !== "no-store") {
+      logger.warning("GraphQL request without caching", {
+        operationName,
+        variables,
+      });
+    }
 
     try {
       const response = await fetch(url, {
@@ -85,15 +94,24 @@ export const graphqlClient = (
       });
 
       if (!response.ok) {
-        return handleInvalidResponse({ response, operationName, url });
+        const duration = Math.round(performance.now() - startTime);
+
+        return handleInvalidResponse({
+          response,
+          operationName,
+          url,
+          duration,
+        });
       }
 
       const body = (await response.json()) as GraphQLResponse<TResult>;
+      const duration = Math.round(performance.now() - startTime);
 
-      if ("errors" in body) {
+      if ("errors" in body && body.errors) {
         const exceptionCode = body?.errors?.[0].extensions.exception.code;
 
         logger.error("GraphQL Error", {
+          durationMs: duration,
           error: body["errors"],
           operationName,
           exceptionCode,
@@ -110,8 +128,9 @@ export const graphqlClient = (
       }
 
       if (!body.data) {
-        logger.error("HTTP Error", {
-          error: body["errors"],
+        logger.error("HTTP Error: No data returned", {
+          durationMs: duration,
+          error: "No data field in GraphQL response",
           operationName,
           variables,
           url,
@@ -125,9 +144,18 @@ export const graphqlClient = (
         ]);
       }
 
+      logger.debug("GraphQL request successful", {
+        durationMs: duration,
+        operationName,
+        cached: !!options?.next?.tags,
+      });
+
       return ok(body.data);
     } catch (e) {
+      const duration = Math.round(performance.now() - startTime);
+
       logger.error("Unexpected HTTP error", {
+        durationMs: duration,
         error: e,
         operationName,
         url,
@@ -148,7 +176,9 @@ const handleInvalidResponse = ({
   operationName,
   response,
   url,
+  duration,
 }: {
+  duration: number;
   operationName: string;
   response: Response;
   url: RequestInfo | URL;
@@ -157,6 +187,7 @@ const handleInvalidResponse = ({
   switch (response.status) {
     case 404:
       logger.error("Not found", {
+        durationMs: duration,
         message: response.statusText,
         status: response.status,
         operationName,
@@ -177,6 +208,7 @@ const handleInvalidResponse = ({
 
     case 429:
       logger.error("Too many requests", {
+        durationMs: duration,
         message: response.statusText,
         status: response.status,
         operationName,
@@ -197,6 +229,7 @@ const handleInvalidResponse = ({
 
     default:
       logger.error("API request failed", {
+        durationMs: duration,
         message: response.statusText,
         status: response.status,
         operationName,
