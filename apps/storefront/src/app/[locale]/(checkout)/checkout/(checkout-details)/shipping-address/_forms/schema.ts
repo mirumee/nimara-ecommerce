@@ -7,7 +7,7 @@ import { type GetTranslations } from "@/types";
 
 export const savedAddressSchema = z.object({ shippingAddressId: z.string() });
 
-export const formSchema = ({
+export const shippingAddressSchema = ({
   addressFormRows,
   t,
 }: {
@@ -20,5 +20,7 @@ export const formSchema = ({
     }),
   );
 
-export type FormSchema = z.infer<ReturnType<typeof formSchema>>;
+export type ShippingAddressSchema = z.infer<
+  ReturnType<typeof shippingAddressSchema>
+>;
 export type SavedAddressFormSchema = z.infer<typeof savedAddressSchema>;
