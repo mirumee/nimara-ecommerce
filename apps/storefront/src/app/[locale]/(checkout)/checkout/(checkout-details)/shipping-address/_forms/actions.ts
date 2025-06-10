@@ -11,14 +11,14 @@ import { schemaToAddress } from "@/lib/address";
 import { paths } from "@/lib/paths";
 import { userService } from "@/services/user";
 
-import { type FormSchema } from "./schema";
+import { type ShippingAddressSchema } from "./schema";
 
 export async function updateShippingAddress({
   id,
   input,
 }: {
   id: string;
-  input: FormSchema;
+  input: ShippingAddressSchema;
 }) {
   const accessToken = await getAccessToken();
 
@@ -38,7 +38,7 @@ export async function createCheckoutShippingAddress({
   input: { saveForFutureUse, ...input },
 }: {
   checkoutId: Checkout["id"];
-  input: FormSchema;
+  input: ShippingAddressSchema;
 }) {
   const accessToken = await getAccessToken();
 

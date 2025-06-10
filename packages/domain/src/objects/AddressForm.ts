@@ -1,7 +1,6 @@
 export type FieldType = "select" | "text" | "email";
 
 export type SelectOptions = {
-  description?: string;
   label: string;
   value: string;
 }[];
