@@ -6,9 +6,9 @@ import { headers } from "next/headers";
 import { paths } from "@/lib/paths";
 import { authService } from "@/services/auth";
 
-import { type FormSchema } from "./schema";
+import { type NewPasswordFormSchema } from "./schema";
 
-export async function setPassword({ password }: FormSchema) {
+export async function setPassword({ password }: NewPasswordFormSchema) {
   const searchParams = new URL((await headers()).get("referer")!).searchParams;
   const email = searchParams.get("email") ?? "";
   const token = searchParams.get("token") ?? "";
