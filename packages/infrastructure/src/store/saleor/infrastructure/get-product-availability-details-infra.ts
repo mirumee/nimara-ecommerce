@@ -63,8 +63,10 @@ export const getProductAvailabilityDetailsInfra =
       ProductAvailabilityDetailsQueryDocument,
       {
         options: {
-          ...fetchOptions,
-          // Availability should be never cached!
+          next: {
+            tags: [],
+            revalidate: 0, // Disable caching for this query
+          },
           cache: "no-store",
         },
         variables: {

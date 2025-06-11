@@ -1,3 +1,4 @@
+import { CACHE_TTL } from "@/config";
 import { clientEnvs } from "@/envs/client";
 import { getCurrentRegion } from "@/regions/server";
 import { type SupportedLocale } from "@/regions/types";
@@ -28,6 +29,7 @@ export const RelatedProductsContainer = async ({ params }: PageProps) => {
     options: {
       next: {
         tags: [`PRODUCT:${slug}`, "DETAIL-PAGE:PRODUCT"],
+        revalidate: CACHE_TTL.pdp,
       },
     },
   });
