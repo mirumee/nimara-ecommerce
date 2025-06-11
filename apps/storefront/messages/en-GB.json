@@ -90,7 +90,8 @@
     "or": "or",
     "option-label": "Option {index}: {value}",
     "logo": "Nimara's logo",
-    "pagination": "Pagination"
+    "pagination": "Pagination",
+    "and": "and"
   },
   "cart": {
     "empty": "Your bag is empty",

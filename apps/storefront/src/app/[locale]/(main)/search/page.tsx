@@ -58,7 +58,7 @@ export default async function Page(props: { searchParams: SearchParams }) {
   const searchParams = await props.searchParams;
 
   const [t, region] = await Promise.all([
-    getTranslations("search"),
+    getTranslations(),
     getCurrentRegion(),
   ]);
 
@@ -98,21 +98,44 @@ export default async function Page(props: { searchParams: SearchParams }) {
   const resultOptions = searchService.getSortByOptions(searchContext);
   const options = resultOptions.ok ? resultOptions.data : [];
 
+  const formatFilterHeader = (filterValue?: string) => {
+    if (!filterValue) {
+      return null;
+    }
+
+    const items = filterValue.split(",").map((item) =>
+      item
+        .trim()
+        .replace(/-/g, " ")
+        .replace(/^\w/, (c) => c.toUpperCase()),
+    );
+
+    if (items.length === 1) {
+      return items[0];
+    }
+    if (items.length === 2) {
+      return `${items[0]} ${t("common.and")} ${items[1]}`;
+    }
+
+    return `${items.slice(0, -1).join(", ")} ${t("common.and")} ${items[items.length - 1]}`;
+  };
+
   const getHeader = () => {
     if (query) {
-      return t("results-for", { query });
+      return t("search.results-for", { query });
     }
 
-    const headerKey = searchParams.category || searchParams.collection;
+    const categoryHeader = formatFilterHeader(searchParams.category);
+    const collectionHeader = formatFilterHeader(searchParams.collection);
 
-    if (headerKey) {
-      return (headerKey[0].toUpperCase() + headerKey.slice(1)).replaceAll(
-        "-",
-        " ",
-      );
+    if (categoryHeader) {
+      return categoryHeader;
+    }
+    if (collectionHeader) {
+      return collectionHeader;
     }
 
-    return t("all-products");
+    return t("search.all-products");
   };
 
   const products = resultSearch.ok ? resultSearch.data.results : [];
