@@ -103,7 +103,7 @@ export function SignUpForm() {
         <div className="w-full">
           <TextFormField
             name="confirm"
-            label={t("auth.repeat-password")}
+            label={t("auth.confirm-password")}
             type="password"
           />
         </div>

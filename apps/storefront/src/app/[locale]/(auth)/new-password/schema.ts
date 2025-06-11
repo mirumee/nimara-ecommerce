@@ -3,7 +3,7 @@ import { z } from "zod";
 import { MIN_PASSWORD_LENGTH } from "@/config";
 import { type GetTranslations } from "@/types";
 
-export const formSchema = ({ t }: { t: GetTranslations }) =>
+export const newPasswordFormSchema = ({ t }: { t: GetTranslations }) =>
   z
     .object({
       password: z
@@ -23,4 +23,6 @@ export const formSchema = ({ t }: { t: GetTranslations }) =>
       path: ["confirm"],
     });
 
-export type FormSchema = z.infer<ReturnType<typeof formSchema>>;
+export type NewPasswordFormSchema = z.infer<
+  ReturnType<typeof newPasswordFormSchema>
+>;
