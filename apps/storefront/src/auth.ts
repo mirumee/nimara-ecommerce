@@ -5,7 +5,7 @@ import { getTranslations } from "next-intl/server";
 
 import { saleorAuthClient } from "@nimara/infrastructure/auth/client";
 
-import { signInSchema } from "@/app/[locale]/(auth)/sign-in/schema";
+import { signInSchema } from "@/components/schema";
 import { userService } from "@/services/user";
 
 import { COOKIE_KEY } from "./config";

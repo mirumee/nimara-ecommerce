@@ -8,7 +8,7 @@ import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
 
 import { TextFormField } from "@/components/form/text-form-field";
-import { Link } from "@/i18n/routing";
+import { ResetPasswordLink } from "@/components/reset-password-link";
 import { login } from "@/lib/actions/login";
 import { useRouterWithState } from "@/lib/hooks";
 import { paths } from "@/lib/paths";
@@ -63,12 +63,7 @@ export const UserPasswordForm = ({
           type="password"
         />
         <div>
-          <Link
-            className="float-right px-3 hover:underline"
-            href={paths.resetPassword.asPath()}
-          >
-            {t("auth.i-forgot-my-password")}
-          </Link>
+          <ResetPasswordLink />
         </div>
 
         <Button

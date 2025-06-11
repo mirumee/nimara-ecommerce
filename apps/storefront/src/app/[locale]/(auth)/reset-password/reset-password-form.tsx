@@ -10,12 +10,13 @@ import * as z from "zod";
 import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
 
-import { requestPasswordResetAction } from "@/app/[locale]/(auth)/reset-password/action";
 import { TextFormField } from "@/components/form/text-form-field";
 import { Link } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 import { useCurrentRegion } from "@/regions/client";
 import { type GetTranslations } from "@/types";
+
+import { requestPasswordResetAction } from "./action";
 
 const formSchema = ({ t }: { t: GetTranslations }) =>
   z.object({

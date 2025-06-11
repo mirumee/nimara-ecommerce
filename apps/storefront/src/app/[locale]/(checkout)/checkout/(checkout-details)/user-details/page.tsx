@@ -13,7 +13,7 @@ import { CheckoutSkeleton } from "../../_components/checkout-skeleton";
 import { DeliveryMethodSection } from "../../_sections/delivery-method-section";
 import { PaymentSection } from "../../_sections/payment-section";
 import { ShippingAddressSection } from "../../_sections/shipping-address-section";
-import { UserDetailsForm } from "./form";
+import { UserDetailsForm } from "./user-details-form";
 
 type PageProps = {
   params: Promise<{ locale: SupportedLocale }>;
