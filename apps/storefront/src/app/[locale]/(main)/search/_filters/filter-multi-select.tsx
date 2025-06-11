@@ -25,7 +25,6 @@ export const FilterMultiSelect = async ({
       placeholder={filterName}
       options={choices}
       defaultValue={selectedFromParams}
-      modalPopover={true}
     />
   );
 };
