@@ -84,11 +84,11 @@ export function AddressTab({
       <div className="space-y-6">
         {!addresses.length ? (
           <CreateShippingAddressForm
+            shouldSaveForFuture
             checkout={checkout}
             countryCode={countryCode}
             countries={countries}
             addressFormRows={addressFormRows}
-            shouldSaveForFuture={!!addresses.length}
           />
         ) : (
           <Tabs

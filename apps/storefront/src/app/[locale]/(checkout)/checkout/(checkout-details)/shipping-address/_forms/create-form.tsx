@@ -45,14 +45,16 @@ export const CreateShippingAddressForm = ({
   const form = useForm<ShippingAddressSchema>({
     resolver: zodResolver(shippingAddressSchema({ addressFormRows, t })),
     defaultValues: {
-      ...[...ADDRESS_CORE_FIELDS].reduce(
+      ...ADDRESS_CORE_FIELDS.reduce(
         (acc, fieldName) => ({
           ...acc,
-          [fieldName]: "",
+          [fieldName]:
+            fieldName === "country"
+              ? (checkout.shippingAddress?.country ?? countryCode)
+              : (checkout.shippingAddress?.[fieldName] ?? ""),
         }),
         {},
       ),
-      country: countryCode,
       saveForFutureUse: false,
     },
   });
