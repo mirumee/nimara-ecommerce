@@ -14,7 +14,7 @@ import { MIN_PASSWORD_LENGTH } from "@/config";
 import { useRouterWithState } from "@/lib/hooks";
 
 import { setPassword } from "./actions";
-import { type FormSchema, formSchema } from "./schema";
+import { type NewPasswordFormSchema, newPasswordFormSchema } from "./schema";
 
 export function NewPasswordForm() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -23,9 +23,9 @@ export function NewPasswordForm() {
   const error = searchParams.get("error");
   const { isRedirecting, push } = useRouterWithState();
 
-  const form = useForm<FormSchema>({
+  const form = useForm<NewPasswordFormSchema>({
     mode: "onChange",
-    resolver: zodResolver(formSchema({ t })),
+    resolver: zodResolver(newPasswordFormSchema({ t })),
     defaultValues: {
       password: "",
       confirm: "",
@@ -34,7 +34,7 @@ export function NewPasswordForm() {
 
   const isDisabled = isRedirecting || form.formState?.isSubmitting;
 
-  async function handleSubmit(values: FormSchema) {
+  async function handleSubmit(values: NewPasswordFormSchema) {
     const data = await setPassword(values);
 
     push(data.redirectUrl);
@@ -82,7 +82,7 @@ export function NewPasswordForm() {
           <div className="w-full">
             <TextFormField
               name="confirm"
-              label={t("auth.repeat-new-password")}
+              label={t("auth.confirm-new-password")}
               type="password"
             />
           </div>
