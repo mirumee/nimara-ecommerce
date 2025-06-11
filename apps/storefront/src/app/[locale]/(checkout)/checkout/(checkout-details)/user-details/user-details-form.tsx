@@ -12,8 +12,8 @@ import { useRouterWithState } from "@/lib/hooks";
 
 import { updateUserDetails } from "./_forms/actions";
 import { UserEmailForm } from "./_forms/email-form";
-import { UserPasswordForm } from "./_forms/password-form";
 import { type EmailFormSchema, emailFormSchema } from "./_forms/schema";
+import { UserPasswordForm } from "./_forms/user-password-form";
 
 export const UserDetailsForm = ({ checkout }: { checkout: Checkout }) => {
   const t = useTranslations();

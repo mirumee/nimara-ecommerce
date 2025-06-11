@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 
-import { ResetPasswordForm } from "./form";
+import { ResetPasswordForm } from "./reset-password-form";
 
 export async function generateMetadata() {
   const t = await getTranslations("auth");

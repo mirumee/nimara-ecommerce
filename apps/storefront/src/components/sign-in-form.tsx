@@ -11,15 +11,11 @@ import { Form } from "@nimara/ui/components/form";
 import { useToast } from "@nimara/ui/hooks";
 
 import { TextFormField } from "@/components/form/text-form-field";
-import { Link } from "@/i18n/routing";
 import { login } from "@/lib/actions/login";
 import { useRouterWithState } from "@/lib/hooks";
-import { paths } from "@/lib/paths";
 
-import {
-  type SignInSchema,
-  signInSchema,
-} from "../app/[locale]/(auth)/sign-in/schema";
+import { ResetPasswordLink } from "./reset-password-link";
+import { type SignInSchema, signInSchema } from "./schema";
 
 export function SignInForm({ redirectUrl }: { redirectUrl?: string }) {
   const t = useTranslations();
@@ -109,12 +105,7 @@ export function SignInForm({ redirectUrl }: { redirectUrl?: string }) {
             />
           </div>
           <div>
-            <Link
-              className="float-right px-3 hover:underline"
-              href={paths.resetPassword.asPath()}
-            >
-              {t("auth.i-forgot-my-password")}
-            </Link>
+            <ResetPasswordLink />
           </div>
 
           <Button
