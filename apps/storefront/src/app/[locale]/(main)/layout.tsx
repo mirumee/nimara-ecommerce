@@ -2,6 +2,7 @@ import { type ReactNode } from "react";
 
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
+import { CACHE_TTL } from "@/config";
 import { getStoreLocale } from "@/lib/server";
 import { getCurrentRegion } from "@/regions/server";
 import { cmsMenuService } from "@/services/cms";
@@ -17,6 +18,12 @@ export default async function Layout({ children }: { children: ReactNode }) {
     languageCode: region.language.code,
     locale,
     slug: "navbar",
+    options: {
+      next: {
+        tags: ["CMS:navbar"],
+        revalidate: CACHE_TTL.cms,
+      },
+    },
   });
 
   return (
