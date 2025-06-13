@@ -1,4 +1,5 @@
 import type {
+  CollectionEventSubscriptionFragment,
   MenuEventSubscriptionFragment,
   PageEventSubscriptionFragment,
   ProductEventSubscriptionFragment,
@@ -10,12 +11,13 @@ import { storefrontLogger } from "@/services/logging";
 type EventSubscriptionFragment =
   | MenuEventSubscriptionFragment
   | ProductEventSubscriptionFragment
-  | PageEventSubscriptionFragment;
+  | PageEventSubscriptionFragment
+  | CollectionEventSubscriptionFragment;
 
 export const handleWebhookPostRequest = async (
   request: Request,
   extractSlugFromPayload: (json: any) => Promise<string | undefined>,
-  prefix: "CMS" | "PRODUCT",
+  prefix: "CMS" | "PRODUCT" | "COLLECTION",
 ) => {
   await verifySaleorWebhookSignature(request);
 
