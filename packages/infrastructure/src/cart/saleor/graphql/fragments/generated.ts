@@ -35,9 +35,21 @@ export type CartFragment_Checkout_lines_CheckoutLine = { id: string, quantity: n
 
 export type CartFragment_Checkout_problems_CheckoutLineProblemInsufficientStock_line_CheckoutLine = { id: string, quantity: number, totalPrice: CartFragment_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney, undiscountedTotalPrice: CartFragment_Checkout_lines_CheckoutLine_undiscountedTotalPrice_Money, variant: CartFragment_Checkout_lines_CheckoutLine_variant_ProductVariant };
 
-export type CartFragment_Checkout_problems_CheckoutLineProblemInsufficientStock = { availableQuantity: number | null, line: CartFragment_Checkout_problems_CheckoutLineProblemInsufficientStock_line_CheckoutLine };
+export type CartFragment_Checkout_problems_CheckoutLineProblemVariantNotAvailable_line_CheckoutLine = { id: string, quantity: number, totalPrice: CartFragment_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney, undiscountedTotalPrice: CartFragment_Checkout_lines_CheckoutLine_undiscountedTotalPrice_Money, variant: CartFragment_Checkout_lines_CheckoutLine_variant_ProductVariant };
 
-export type CartFragment = { id: string, displayGrossPrices: boolean, subtotalPrice: CartFragment_Checkout_subtotalPrice_TaxedMoney, totalPrice: CartFragment_Checkout_totalPrice_TaxedMoney, lines: Array<CartFragment_Checkout_lines_CheckoutLine>, problems: Array<CartFragment_Checkout_problems_CheckoutLineProblemInsufficientStock> | null };
+export type CartFragment_Checkout_problems_CheckoutLineProblemInsufficientStock = (
+  { availableQuantity: number | null, line: CartFragment_Checkout_problems_CheckoutLineProblemInsufficientStock_line_CheckoutLine }
+  & { __typename: 'CheckoutLineProblemInsufficientStock' }
+);
+
+export type CartFragment_Checkout_problems_CheckoutLineProblemVariantNotAvailable = (
+  { line: CartFragment_Checkout_problems_CheckoutLineProblemVariantNotAvailable_line_CheckoutLine }
+  & { __typename: 'CheckoutLineProblemVariantNotAvailable' }
+);
+
+export type CartFragment_Checkout_problems = CartFragment_Checkout_problems_CheckoutLineProblemInsufficientStock | CartFragment_Checkout_problems_CheckoutLineProblemVariantNotAvailable;
+
+export type CartFragment = { id: string, displayGrossPrices: boolean, subtotalPrice: CartFragment_Checkout_subtotalPrice_TaxedMoney, totalPrice: CartFragment_Checkout_totalPrice_TaxedMoney, lines: Array<CartFragment_Checkout_lines_CheckoutLine>, problems: Array<CartFragment_Checkout_problems> | null };
 
 export type CheckoutErrorFragment = { addressType: Types.AddressTypeEnum | null, code: Types.CheckoutErrorCode, field: string | null, lines: Array<string> | null, message: string | null, variants: Array<string> | null };
 
@@ -73,12 +85,7 @@ export const CartFragment = new TypedDocumentString(`
     ...CartLineFragment
   }
   problems {
-    ... on CheckoutLineProblemInsufficientStock {
-      availableQuantity
-      line {
-        ...CartLineFragment
-      }
-    }
+    ...CheckoutProblemsFragment
   }
 }
     fragment TaxedMoneyFragment on TaxedMoney {
@@ -135,6 +142,21 @@ fragment CartLineFragment on CheckoutLine {
       translation(languageCode: $languageCode) {
         name
       }
+    }
+  }
+}
+fragment CheckoutProblemsFragment on CheckoutProblem {
+  ... on CheckoutLineProblemInsufficientStock {
+    __typename
+    availableQuantity
+    line {
+      ...CartLineFragment
+    }
+  }
+  ... on CheckoutLineProblemVariantNotAvailable {
+    __typename
+    line {
+      ...CartLineFragment
     }
   }
 }`, {"fragmentName":"CartFragment"}) as unknown as TypedDocumentString<CartFragment, unknown>;

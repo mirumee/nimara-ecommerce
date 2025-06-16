@@ -1,4 +1,4 @@
-import type { CheckoutLineProblemInsufficientStock } from "./Checkout";
+import type { CheckoutProblems } from "./Checkout";
 import type { Line, Price } from "./common";
 
 export type Cart = {
@@ -6,9 +6,7 @@ export type Cart = {
   lines: Line[];
   linesCount: number;
   linesQuantityCount: number;
-  problems: {
-    insufficientStock: CheckoutLineProblemInsufficientStock[];
-  };
+  problems: CheckoutProblems;
   subtotal: Price;
   total: Price;
 };

@@ -57,7 +57,7 @@ export const addToBagAction = async ({
       await setCheckoutIdCookie(result.data.cartId);
     }
 
-    await revalidateCart(cookieCartId ?? result.data.cartId);
+    void revalidateCart(cookieCartId ?? result.data.cartId);
   }
 
   return result;

@@ -107,7 +107,11 @@
     "unavailable-products": "Unavailable products",
     "items-in-cart": "Items in cart: {cartItems}",
     "remove-button": "Remove button",
-    "max-quantity": "Sorry, the maximum quantity you can order is {maxQuantity}."
+    "max-quantity": "Sorry, the maximum quantity you can order is {maxQuantity}.",
+    "errors": {
+      "INSUFFICIENT_STOCK": "One or more products in your bag are currently out of stock. Please reduce the quantity or remove them from your bag.",
+      "VARIANT_NOT_AVAILABLE": "One or more products in your bag are not available anymore. Please remove them from your bag."
+    }
   },
   "checkout": {
     "sign-in-to-finalize-order": "Sign in to finalize order",

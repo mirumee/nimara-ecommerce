@@ -11,7 +11,7 @@ import { storefrontLogger } from "@/services/logging";
  * @param id - The checkout ID
  * @returns void
  */
-export const revalidateCart = async (id: string) => {
+export const revalidateCart = async (id: string): Promise<void> => {
   storefrontLogger.debug("Revalidating checkout cache.", { id });
 
   revalidateTag(`CHECKOUT:${id}`);

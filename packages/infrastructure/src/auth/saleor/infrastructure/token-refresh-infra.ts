@@ -12,7 +12,10 @@ export const saleorTokenRefreshInfra =
       TokenRefreshMutationDocument,
       {
         variables: { refreshToken },
-        options: { headers: { Cookie: `refreshToken=${refreshToken}` } },
+        options: {
+          headers: { Cookie: `refreshToken=${refreshToken}` },
+          cache: "no-store",
+        },
         operationName: "TokenRefreshMutation",
       },
     );

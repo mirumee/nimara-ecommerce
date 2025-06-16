@@ -1,5 +1,6 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 
@@ -15,6 +16,7 @@ import { Link, useRouter } from "@/i18n/routing";
 import { revalidateCart } from "@/lib/actions/cart";
 import { paths } from "@/lib/paths";
 import { type WithRegion } from "@/lib/types";
+import { cn } from "@/lib/utils";
 import { cartService } from "@/services/cart";
 import { storefrontLogger } from "@/services/logging";
 
@@ -27,8 +29,17 @@ export const CartDetails = ({
   const router = useRouter();
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
+  const params = useSearchParams();
+  const redirectReason = params.get("redirectReason") as
+    | "INSUFFICIENT_STOCK"
+    | "VARIANT_NOT_AVAILABLE"
+    | null;
 
   const prevCartVersion = useRef(cart.lines.length);
+  const isCartValid = ![
+    ...cart.problems.insufficientStock,
+    ...cart.problems.variantNotAvailable,
+  ].length;
 
   const service = cartService({
     channel: region.market.channel,
@@ -52,7 +63,7 @@ export const CartDetails = ({
     setIsProcessing(false);
 
     if (resultLinesUpdate.ok) {
-      await revalidateCart(cart.id);
+      void revalidateCart(cart.id);
 
       return;
     }
@@ -74,7 +85,7 @@ export const CartDetails = ({
     });
 
     if (resultLinesDelete.ok) {
-      await revalidateCart(cart.id);
+      void revalidateCart(cart.id);
       router.refresh();
     } else {
       resultLinesDelete.errors.forEach((error) => {
@@ -97,6 +108,17 @@ export const CartDetails = ({
     }
   }, [cart, isProcessing]);
 
+  useEffect(() => {
+    if (redirectReason) {
+      void revalidateCart(cart.id);
+
+      toast({
+        description: t(`cart.errors.${redirectReason}`),
+        variant: "destructive",
+      });
+    }
+  }, [redirectReason]);
+
   return (
     <div className="space-y-12">
       <ShoppingBag>
@@ -104,9 +126,9 @@ export const CartDetails = ({
         <ShoppingBag.Lines
           onLineQuantityChange={handleLineQuantityChange}
           onLineDelete={handleLineDelete}
+          problems={cart.problems}
           lines={cart.lines}
           isDisabled={isProcessing}
-          unavailableLines={cart.problems.insufficientStock}
         />
         <ShoppingBag.Pricing>
           <ShoppingBag.Subtotal price={cart.subtotal} />
@@ -116,13 +138,16 @@ export const CartDetails = ({
         <Button
           asChild
           size="lg"
-          disabled={isProcessing || !!cart.problems.insufficientStock.length}
+          disabled={isProcessing || !isCartValid}
           loading={isProcessing}
         >
           <Link
             href={
               !!user ? paths.checkout.asPath() : paths.checkout.signIn.asPath()
             }
+            className={cn({
+              "pointer-events-none opacity-50": !isCartValid,
+            })}
           >
             {t("common.go-to-checkout")}
           </Link>

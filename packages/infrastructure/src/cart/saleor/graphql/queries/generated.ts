@@ -35,9 +35,21 @@ export type CartQuery_checkout_Checkout_lines_CheckoutLine = { id: string, quant
 
 export type CartQuery_checkout_Checkout_problems_CheckoutLineProblemInsufficientStock_line_CheckoutLine = { id: string, quantity: number, totalPrice: CartQuery_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney, undiscountedTotalPrice: CartQuery_checkout_Checkout_lines_CheckoutLine_undiscountedTotalPrice_Money, variant: CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant };
 
-export type CartQuery_checkout_Checkout_problems_CheckoutLineProblemInsufficientStock = { availableQuantity: number | null, line: CartQuery_checkout_Checkout_problems_CheckoutLineProblemInsufficientStock_line_CheckoutLine };
+export type CartQuery_checkout_Checkout_problems_CheckoutLineProblemVariantNotAvailable_line_CheckoutLine = { id: string, quantity: number, totalPrice: CartQuery_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney, undiscountedTotalPrice: CartQuery_checkout_Checkout_lines_CheckoutLine_undiscountedTotalPrice_Money, variant: CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant };
 
-export type CartQuery_checkout_Checkout = { id: string, displayGrossPrices: boolean, subtotalPrice: CartQuery_checkout_Checkout_subtotalPrice_TaxedMoney, totalPrice: CartQuery_checkout_Checkout_totalPrice_TaxedMoney, lines: Array<CartQuery_checkout_Checkout_lines_CheckoutLine>, problems: Array<CartQuery_checkout_Checkout_problems_CheckoutLineProblemInsufficientStock> | null };
+export type CartQuery_checkout_Checkout_problems_CheckoutLineProblemInsufficientStock = (
+  { availableQuantity: number | null, line: CartQuery_checkout_Checkout_problems_CheckoutLineProblemInsufficientStock_line_CheckoutLine }
+  & { __typename: 'CheckoutLineProblemInsufficientStock' }
+);
+
+export type CartQuery_checkout_Checkout_problems_CheckoutLineProblemVariantNotAvailable = (
+  { line: CartQuery_checkout_Checkout_problems_CheckoutLineProblemVariantNotAvailable_line_CheckoutLine }
+  & { __typename: 'CheckoutLineProblemVariantNotAvailable' }
+);
+
+export type CartQuery_checkout_Checkout_problems = CartQuery_checkout_Checkout_problems_CheckoutLineProblemInsufficientStock | CartQuery_checkout_Checkout_problems_CheckoutLineProblemVariantNotAvailable;
+
+export type CartQuery_checkout_Checkout = { id: string, displayGrossPrices: boolean, subtotalPrice: CartQuery_checkout_Checkout_subtotalPrice_TaxedMoney, totalPrice: CartQuery_checkout_Checkout_totalPrice_TaxedMoney, lines: Array<CartQuery_checkout_Checkout_lines_CheckoutLine>, problems: Array<CartQuery_checkout_Checkout_problems> | null };
 
 export type CartQuery_Query = { checkout: CartQuery_checkout_Checkout | null };
 
@@ -91,12 +103,7 @@ export const CartQueryDocument = new TypedDocumentString(`
     ...CartLineFragment
   }
   problems {
-    ... on CheckoutLineProblemInsufficientStock {
-      availableQuantity
-      line {
-        ...CartLineFragment
-      }
-    }
+    ...CheckoutProblemsFragment
   }
 }
 fragment TaxedMoneyFragment on TaxedMoney {
@@ -153,6 +160,21 @@ fragment CartLineFragment on CheckoutLine {
       translation(languageCode: $languageCode) {
         name
       }
+    }
+  }
+}
+fragment CheckoutProblemsFragment on CheckoutProblem {
+  ... on CheckoutLineProblemInsufficientStock {
+    __typename
+    availableQuantity
+    line {
+      ...CartLineFragment
+    }
+  }
+  ... on CheckoutLineProblemVariantNotAvailable {
+    __typename
+    line {
+      ...CartLineFragment
     }
   }
 }`) as unknown as TypedDocumentString<CartQuery, CartQueryVariables>;

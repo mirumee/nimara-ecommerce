@@ -3,7 +3,6 @@ import { getCheckoutOrRedirect } from "@/lib/checkout";
 import { type SupportedLocale } from "@/regions/types";
 import { userService } from "@/services/user";
 
-import { CheckoutSkeleton } from "../../_components/checkout-skeleton";
 import { EmailSection } from "../../_sections/email-section";
 import { PaymentSection } from "../../_sections/payment-section";
 import { ShippingAddressSection } from "../../_sections/shipping-address-section";
@@ -15,15 +14,12 @@ type PageProps = {
 };
 
 export default async function Page(props: PageProps) {
-  const { locale } = await props.params;
+  const [{ locale }, checkout, accessToken] = await Promise.all([
+    props.params,
+    getCheckoutOrRedirect(),
+    getAccessToken(),
+  ]);
 
-  const checkout = await getCheckoutOrRedirect();
-
-  if (checkout.problems.insufficientStock.length) {
-    return <CheckoutSkeleton />;
-  }
-
-  const accessToken = await getAccessToken();
   const resultUserGet = await userService.userGet(accessToken);
 
   const user = resultUserGet.ok ? resultUserGet.data : null;
