@@ -427,6 +427,7 @@
     "green": "Green"
   },
   "newsletter": {
+    "email-required-newsletter": "Email is required to subscribe to the newsletter.",
     "subscribe-title": "Subscribe to Newsletter",
     "subscribe-description": "Subscribe to our newsletter and be the first to get updates on new products and promotions.",
     "subscribe-name-field-label": "Name",

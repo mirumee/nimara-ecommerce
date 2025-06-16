@@ -10,7 +10,7 @@ export const formSchema = ({ t }: { t: GetTranslations }) =>
       .min(1, { message: t("form-validation.required") }),
     email: z
       .string()
-      .min(1, { message: t("form-validation.email-required") })
+      .min(1, { message: t("newsletter.email-required-newsletter") })
       .email({ message: t("form-validation.invalid-email") })
       .trim(),
   });

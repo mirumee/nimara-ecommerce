@@ -65,6 +65,7 @@ export const MultiSelect = ({
         onClick={() => setIsOpen((prev) => !prev)}
         className={cn(
           "flex h-auto min-h-10 w-full items-center justify-between rounded-md border bg-inherit p-1 hover:bg-inherit [&_svg]:pointer-events-auto",
+          isOpen && "cursor-default",
           className,
         )}
         type="button"
