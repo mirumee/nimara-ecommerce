@@ -15,11 +15,16 @@ const SelectValue = SelectPrimitive.Value;
 const SelectTrigger = ({
   className,
   children,
+  error = false,
   ...props
-}: React.ComponentProps<typeof SelectPrimitive.Trigger>) => (
+}: React.ComponentProps<typeof SelectPrimitive.Trigger> & {
+  error?: boolean;
+}) => (
   <SelectPrimitive.Trigger
     className={cn(
       "border-input bg-background ring-offset-background placeholder:text-muted-foreground focus:ring-ring flex h-10 w-full items-center justify-between rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
+      error &&
+        "border-red-300 bg-red-50 autofill:!bg-red-50 focus-visible:ring-red-300",
       className,
     )}
     {...props}
