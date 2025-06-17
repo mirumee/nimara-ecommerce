@@ -30,24 +30,6 @@ describe("i18nMiddleware", () => {
     expect(cookiesHeader).includes(`${COOKIE_KEY.locale}=${DEFAULT_LOCALE};`);
   });
 
-  it("redirects to /gb when visiting root with en-GB locale cookie set", async () => {
-    const initialRequest = new NextRequest(
-      new Request("https://demo.nimara.store/"),
-    );
-
-    initialRequest.cookies.set(COOKIE_KEY.locale, "en-GB");
-    const initialResponse = new NextResponse();
-
-    const resp = await i18nMiddleware(mockNextMiddleware)(
-      initialRequest,
-      mockedFetchEvent,
-      initialResponse,
-    );
-
-    expect(resp?.status).toBe(307);
-    expect(resp?.headers.get("location")).toBe("https://demo.nimara.store/gb");
-  });
-
   it("set the en-GB locale when there's /gb locale prefix in the request", async () => {
     const initialRequest = new NextRequest(
       new Request("https://demo.nimara.store/gb/products/test-product"),

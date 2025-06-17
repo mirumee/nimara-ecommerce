@@ -19,5 +19,8 @@
     "bradlc.vscode-tailwindcss"
   ],
   "cSpell.words": ["nimara", "saleor", "undiscounted"],
-  "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "debug.javascript.defaultRuntimeExecutable": {
+    "pwa-node": "/Users/soniaklimas/.local/share/mise/shims/node"
+  }
 }
