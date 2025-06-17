@@ -7,6 +7,7 @@ import { type TaxedMoney } from "@nimara/domain/objects/common";
 import { err, ok } from "@nimara/domain/objects/Result";
 
 import { serializeAddress } from "#root/address/saleor/serializers";
+import { serializeCheckoutProblems } from "#root/checkout/saleor/serializers";
 import { THUMBNAIL_FORMAT, THUMBNAIL_SIZE_SMALL } from "#root/config";
 import { graphqlClient } from "#root/graphql/client";
 import {
@@ -62,15 +63,7 @@ const serializeCheckout = (checkout: CheckoutFragment): Checkout => {
       price: serializeMoney(method.price),
     })),
     totalPrice: serializeTaxedMoney(checkout.totalPrice),
-    problems: {
-      insufficientStock:
-        checkout.problems
-          ?.filter((p) => "availableQuantity" in p && p)
-          ?.map((p) => ({
-            ...p,
-            line: serializeLine(p.line, priceType),
-          })) ?? [],
-    },
+    problems: serializeCheckoutProblems(checkout.problems, priceType),
     subtotalPrice: calculateSubtotalPrice(checkout),
     lines: checkout.lines.map((line) => serializeLine(line, priceType)),
   };

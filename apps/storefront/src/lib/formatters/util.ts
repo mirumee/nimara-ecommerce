@@ -26,7 +26,7 @@ export const formatAsPrice = ({
   locale,
   amount,
   currency,
-  minimumFractionDigits = 0,
+  minimumFractionDigits = 2,
 }: {
   amount: number;
   currency: SupportedCurrency;
