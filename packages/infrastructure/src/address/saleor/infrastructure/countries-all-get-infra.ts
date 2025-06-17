@@ -10,6 +10,13 @@ import { graphqlClient } from "#root/graphql/client";
 
 import { CountriesQueryDocument } from "../graphql/queries/generated";
 
+// This list contains country codes that should be excluded from the results.
+// For example, "EU" is used to represent the European Union as a whole,
+// which is not a specific country and should not be included in the list of countries.
+// Once the Saleor API drops support for the EU country code,
+// this exclusion can be removed.
+const EXCLUDED_COUNTRY_CODES: string[] = ["EU"];
+
 export const saleorCountriesAllGetInfra =
   ({ apiURL, logger }: SaleorAddressServiceConfig): CountriesAllGetInfra =>
   async ({ locale }) => {
@@ -25,9 +32,19 @@ export const saleorCountriesAllGetInfra =
       return result;
     }
 
-    const countryCodes = result.data.shop?.countries.map(
-      (country) => country.code,
-    ) as AllCountryCode[];
+    const countryCodes = result.data.shop?.countries.reduce<AllCountryCode[]>(
+      (acc, country) => {
+        if (EXCLUDED_COUNTRY_CODES.includes(country.code)) {
+          return acc;
+        }
+
+        acc.push(country.code as AllCountryCode);
+
+        return acc;
+      },
+      [],
+    );
+
     const countries = translateAndSortCountries(countryCodes, locale);
 
     if (!countries || countries.length === 0) {
