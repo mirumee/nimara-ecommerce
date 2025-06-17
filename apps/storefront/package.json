@@ -59,7 +59,7 @@
     "@tailwindcss/typography": "0.5.16",
     "@types/lodash": "4.17.17",
     "@types/negotiator": "0.6.4",
-    "@types/react": "19.1.6",
+    "@types/react": "19.1.8",
     "@types/react-dom": "19.1.6",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
@@ -69,14 +69,14 @@
     "eslint-config-custom": "workspace:*",
     "file-loader": "6.2.0",
     "pino": "9.7.0",
-    "postcss": "^8.5.4",
+    "postcss": "^8.5.5",
     "semantic-release": "24.2.5",
     "tailwindcss": "^3.4.17",
     "ts-toolbelt": "^9.6.0",
     "tsconfig": "workspace:*",
     "typescript": "^5.8.3",
     "vite-tsconfig-paths": "5.1.4",
-    "vitest": "3.2.2"
+    "vitest": "3.2.3"
   },
   "lint-staged": {
     "*.{js,cjs,ts,tsx}": "eslint --fix",
