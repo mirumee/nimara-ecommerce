@@ -7,7 +7,6 @@ import { type SupportedLocale } from "@/regions/types";
 import { addressService } from "@/services/address";
 import { userService } from "@/services/user";
 
-import { CheckoutSkeleton } from "../../_components/checkout-skeleton";
 import { DeliveryMethodSection } from "../../_sections/delivery-method-section";
 import { EmailSection } from "../../_sections/email-section";
 import { PaymentSection } from "../../_sections/payment-section";
@@ -21,19 +20,16 @@ type PageProps = {
 };
 
 export default async function Page(props: PageProps) {
-  const checkout = await getCheckoutOrRedirect();
+  const [{ locale }, searchParams, region, checkout, accessToken] =
+    await Promise.all([
+      props.params,
+      props.searchParams,
+      getCurrentRegion(),
+      getCheckoutOrRedirect(),
+      getAccessToken(),
+    ]);
 
-  if (checkout.problems.insufficientStock.length) {
-    return <CheckoutSkeleton />;
-  }
-
-  const accessToken = await getAccessToken();
-  const { locale } = await props.params;
-  const [searchParams, region, resultUserGet] = await Promise.all([
-    props.searchParams,
-    getCurrentRegion(),
-    userService.userGet(accessToken),
-  ]);
+  const resultUserGet = await userService.userGet(accessToken);
 
   const user = resultUserGet.ok ? resultUserGet.data : null;
 

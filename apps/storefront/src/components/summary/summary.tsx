@@ -6,7 +6,11 @@ export const Summary = ({ checkout }: { checkout: Checkout }) => {
   return (
     <ShoppingBag>
       <ShoppingBag.Header totalPrice={checkout.totalPrice.gross} />
-      <ShoppingBag.Lines lines={checkout.lines} isLinesEditable={false} />
+      <ShoppingBag.Lines
+        lines={checkout.lines}
+        isLinesEditable={false}
+        problems={checkout.problems}
+      />
       <ShoppingBag.DiscountCode checkout={checkout} />
       <ShoppingBag.Pricing>
         <ShoppingBag.Subtotal price={checkout.subtotalPrice.gross} />

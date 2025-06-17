@@ -1,0 +1,15 @@
+fragment CheckoutProblemsFragment on CheckoutProblem {
+  ... on CheckoutLineProblemInsufficientStock {
+    __typename
+    availableQuantity
+    line {
+      ...CartLineFragment
+    }
+  }
+  ... on CheckoutLineProblemVariantNotAvailable {
+    __typename
+    line {
+      ...CartLineFragment
+    }
+  }
+}

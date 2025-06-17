@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 
-import { type CheckoutLineProblemInsufficientStock } from "@nimara/domain/objects/Checkout";
+import { type CheckoutProblems } from "@nimara/domain/objects/Checkout";
 import type { Line as LineType } from "@nimara/domain/objects/common";
 
 import { Line, type LineProps } from "./line";
@@ -14,17 +14,21 @@ export type LinesProps = Pick<
   isDisabled?: boolean;
   isLinesEditable?: boolean;
   lines: LineType[];
-  unavailableLines?: CheckoutLineProblemInsufficientStock[];
+  problems: CheckoutProblems;
 };
 
 export const Lines = ({
   isLinesEditable = true,
-  unavailableLines,
+  problems,
   ...props
 }: LinesProps) => {
   const t = useTranslations();
+  const linesWithProblems = [
+    ...problems.insufficientStock,
+    ...problems.variantNotAvailable,
+  ];
   const lines = props.lines.filter(
-    ({ id }) => !unavailableLines?.some(({ line }) => line.id === id),
+    ({ id }) => !linesWithProblems.some(({ line }) => line.id === id),
   );
 
   return (
@@ -38,20 +42,19 @@ export const Lines = ({
             isLineEditable={isLinesEditable}
           />
         ))}
-        {!!unavailableLines?.length && (
+
+        {linesWithProblems.map(({ line }) => (
           <>
             <h2 className="text-stone-500">{t("cart.unavailable-products")}</h2>
-            {unavailableLines?.map(({ line }) => (
-              <Line
-                key={line.id}
-                line={line}
-                {...props}
-                isLineEditable={true}
-                isOutOfStock
-              />
-            ))}
+            <Line
+              key={line.id}
+              line={line}
+              {...props}
+              isLineEditable={true}
+              isOutOfStock
+            />
           </>
-        )}
+        ))}
       </div>
       <hr className="border-stone-200" />
     </>

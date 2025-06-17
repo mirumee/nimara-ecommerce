@@ -60,9 +60,33 @@ export type CheckoutFragment_Checkout_shippingPrice_TaxedMoney = { net: Checkout
 
 export type CheckoutFragment_Checkout_problems_CheckoutLineProblemInsufficientStock_line_CheckoutLine = { id: string, quantity: number, totalPrice: CheckoutFragment_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney, undiscountedTotalPrice: CheckoutFragment_Checkout_lines_CheckoutLine_undiscountedTotalPrice_Money, variant: CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant };
 
-export type CheckoutFragment_Checkout_problems_CheckoutLineProblemInsufficientStock = { availableQuantity: number | null, line: CheckoutFragment_Checkout_problems_CheckoutLineProblemInsufficientStock_line_CheckoutLine };
+export type CheckoutFragment_Checkout_problems_CheckoutLineProblemVariantNotAvailable_line_CheckoutLine = { id: string, quantity: number, totalPrice: CheckoutFragment_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney, undiscountedTotalPrice: CheckoutFragment_Checkout_lines_CheckoutLine_undiscountedTotalPrice_Money, variant: CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant };
 
-export type CheckoutFragment = { id: string, email: string | null, displayGrossPrices: boolean, voucherCode: string | null, authorizeStatus: Types.CheckoutAuthorizeStatusEnum, chargeStatus: Types.CheckoutChargeStatusEnum, discount: CheckoutFragment_Checkout_discount_Money | null, shippingMethods: Array<CheckoutFragment_Checkout_shippingMethods_ShippingMethod>, shippingAddress: CheckoutFragment_Checkout_shippingAddress_Address | null, billingAddress: CheckoutFragment_Checkout_billingAddress_Address | null, deliveryMethod: CheckoutFragment_Checkout_deliveryMethod_ShippingMethod_Warehouse | null, availablePaymentGateways: Array<CheckoutFragment_Checkout_availablePaymentGateways_PaymentGateway>, lines: Array<CheckoutFragment_Checkout_lines_CheckoutLine>, totalPrice: CheckoutFragment_Checkout_totalPrice_TaxedMoney, subtotalPrice: CheckoutFragment_Checkout_subtotalPrice_TaxedMoney, shippingPrice: CheckoutFragment_Checkout_shippingPrice_TaxedMoney, problems: Array<CheckoutFragment_Checkout_problems_CheckoutLineProblemInsufficientStock> | null };
+export type CheckoutFragment_Checkout_problems_CheckoutLineProblemInsufficientStock = (
+  { availableQuantity: number | null, line: CheckoutFragment_Checkout_problems_CheckoutLineProblemInsufficientStock_line_CheckoutLine }
+  & { __typename: 'CheckoutLineProblemInsufficientStock' }
+);
+
+export type CheckoutFragment_Checkout_problems_CheckoutLineProblemVariantNotAvailable = (
+  { line: CheckoutFragment_Checkout_problems_CheckoutLineProblemVariantNotAvailable_line_CheckoutLine }
+  & { __typename: 'CheckoutLineProblemVariantNotAvailable' }
+);
+
+export type CheckoutFragment_Checkout_problems = CheckoutFragment_Checkout_problems_CheckoutLineProblemInsufficientStock | CheckoutFragment_Checkout_problems_CheckoutLineProblemVariantNotAvailable;
+
+export type CheckoutFragment = { id: string, email: string | null, displayGrossPrices: boolean, voucherCode: string | null, authorizeStatus: Types.CheckoutAuthorizeStatusEnum, chargeStatus: Types.CheckoutChargeStatusEnum, discount: CheckoutFragment_Checkout_discount_Money | null, shippingMethods: Array<CheckoutFragment_Checkout_shippingMethods_ShippingMethod>, shippingAddress: CheckoutFragment_Checkout_shippingAddress_Address | null, billingAddress: CheckoutFragment_Checkout_billingAddress_Address | null, deliveryMethod: CheckoutFragment_Checkout_deliveryMethod_ShippingMethod_Warehouse | null, availablePaymentGateways: Array<CheckoutFragment_Checkout_availablePaymentGateways_PaymentGateway>, lines: Array<CheckoutFragment_Checkout_lines_CheckoutLine>, totalPrice: CheckoutFragment_Checkout_totalPrice_TaxedMoney, subtotalPrice: CheckoutFragment_Checkout_subtotalPrice_TaxedMoney, shippingPrice: CheckoutFragment_Checkout_shippingPrice_TaxedMoney, problems: Array<CheckoutFragment_Checkout_problems> | null };
+
+export type CheckoutProblemsFragment_CheckoutLineProblemInsufficientStock = (
+  { availableQuantity: number | null, line: CheckoutFragment_Checkout_problems_CheckoutLineProblemInsufficientStock_line_CheckoutLine }
+  & { __typename: 'CheckoutLineProblemInsufficientStock' }
+);
+
+export type CheckoutProblemsFragment_CheckoutLineProblemVariantNotAvailable = (
+  { line: CheckoutFragment_Checkout_problems_CheckoutLineProblemVariantNotAvailable_line_CheckoutLine }
+  & { __typename: 'CheckoutLineProblemVariantNotAvailable' }
+);
+
+export type CheckoutProblemsFragment = CheckoutProblemsFragment_CheckoutLineProblemInsufficientStock | CheckoutProblemsFragment_CheckoutLineProblemVariantNotAvailable;
 
 export class TypedDocumentString<TResult, TVariables>
   extends String
@@ -150,15 +174,25 @@ export const CheckoutFragment = new TypedDocumentString(`
   authorizeStatus
   chargeStatus
   problems {
-    ... on CheckoutLineProblemInsufficientStock {
-      availableQuantity
-      line {
-        ...CartLineFragment
-      }
+    ...CheckoutProblemsFragment
+  }
+}
+    fragment CheckoutProblemsFragment on CheckoutProblem {
+  ... on CheckoutLineProblemInsufficientStock {
+    __typename
+    availableQuantity
+    line {
+      ...CartLineFragment
+    }
+  }
+  ... on CheckoutLineProblemVariantNotAvailable {
+    __typename
+    line {
+      ...CartLineFragment
     }
   }
 }
-    fragment AddressFragment on Address {
+fragment AddressFragment on Address {
   id
   city
   phone

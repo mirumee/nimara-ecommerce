@@ -58,9 +58,21 @@ export type CheckoutFindQuery_checkout_Checkout_shippingPrice_TaxedMoney = { net
 
 export type CheckoutFindQuery_checkout_Checkout_problems_CheckoutLineProblemInsufficientStock_line_CheckoutLine = { id: string, quantity: number, totalPrice: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney, undiscountedTotalPrice: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_undiscountedTotalPrice_Money, variant: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant };
 
-export type CheckoutFindQuery_checkout_Checkout_problems_CheckoutLineProblemInsufficientStock = { availableQuantity: number | null, line: CheckoutFindQuery_checkout_Checkout_problems_CheckoutLineProblemInsufficientStock_line_CheckoutLine };
+export type CheckoutFindQuery_checkout_Checkout_problems_CheckoutLineProblemVariantNotAvailable_line_CheckoutLine = { id: string, quantity: number, totalPrice: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney, undiscountedTotalPrice: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_undiscountedTotalPrice_Money, variant: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant };
 
-export type CheckoutFindQuery_checkout_Checkout = { id: string, email: string | null, displayGrossPrices: boolean, voucherCode: string | null, authorizeStatus: Types.CheckoutAuthorizeStatusEnum, chargeStatus: Types.CheckoutChargeStatusEnum, discount: CheckoutFindQuery_checkout_Checkout_discount_Money | null, shippingMethods: Array<CheckoutFindQuery_checkout_Checkout_shippingMethods_ShippingMethod>, shippingAddress: CheckoutFindQuery_checkout_Checkout_shippingAddress_Address | null, billingAddress: CheckoutFindQuery_checkout_Checkout_billingAddress_Address | null, deliveryMethod: CheckoutFindQuery_checkout_Checkout_deliveryMethod_ShippingMethod_Warehouse | null, availablePaymentGateways: Array<CheckoutFindQuery_checkout_Checkout_availablePaymentGateways_PaymentGateway>, lines: Array<CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine>, totalPrice: CheckoutFindQuery_checkout_Checkout_totalPrice_TaxedMoney, subtotalPrice: CheckoutFindQuery_checkout_Checkout_subtotalPrice_TaxedMoney, shippingPrice: CheckoutFindQuery_checkout_Checkout_shippingPrice_TaxedMoney, problems: Array<CheckoutFindQuery_checkout_Checkout_problems_CheckoutLineProblemInsufficientStock> | null };
+export type CheckoutFindQuery_checkout_Checkout_problems_CheckoutLineProblemInsufficientStock = (
+  { availableQuantity: number | null, line: CheckoutFindQuery_checkout_Checkout_problems_CheckoutLineProblemInsufficientStock_line_CheckoutLine }
+  & { __typename: 'CheckoutLineProblemInsufficientStock' }
+);
+
+export type CheckoutFindQuery_checkout_Checkout_problems_CheckoutLineProblemVariantNotAvailable = (
+  { line: CheckoutFindQuery_checkout_Checkout_problems_CheckoutLineProblemVariantNotAvailable_line_CheckoutLine }
+  & { __typename: 'CheckoutLineProblemVariantNotAvailable' }
+);
+
+export type CheckoutFindQuery_checkout_Checkout_problems = CheckoutFindQuery_checkout_Checkout_problems_CheckoutLineProblemInsufficientStock | CheckoutFindQuery_checkout_Checkout_problems_CheckoutLineProblemVariantNotAvailable;
+
+export type CheckoutFindQuery_checkout_Checkout = { id: string, email: string | null, displayGrossPrices: boolean, voucherCode: string | null, authorizeStatus: Types.CheckoutAuthorizeStatusEnum, chargeStatus: Types.CheckoutChargeStatusEnum, discount: CheckoutFindQuery_checkout_Checkout_discount_Money | null, shippingMethods: Array<CheckoutFindQuery_checkout_Checkout_shippingMethods_ShippingMethod>, shippingAddress: CheckoutFindQuery_checkout_Checkout_shippingAddress_Address | null, billingAddress: CheckoutFindQuery_checkout_Checkout_billingAddress_Address | null, deliveryMethod: CheckoutFindQuery_checkout_Checkout_deliveryMethod_ShippingMethod_Warehouse | null, availablePaymentGateways: Array<CheckoutFindQuery_checkout_Checkout_availablePaymentGateways_PaymentGateway>, lines: Array<CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine>, totalPrice: CheckoutFindQuery_checkout_Checkout_totalPrice_TaxedMoney, subtotalPrice: CheckoutFindQuery_checkout_Checkout_subtotalPrice_TaxedMoney, shippingPrice: CheckoutFindQuery_checkout_Checkout_shippingPrice_TaxedMoney, problems: Array<CheckoutFindQuery_checkout_Checkout_problems> | null };
 
 export type CheckoutFindQuery_Query = { checkout: CheckoutFindQuery_checkout_Checkout | null };
 
@@ -158,12 +170,7 @@ export const CheckoutFindQueryDocument = new TypedDocumentString(`
   authorizeStatus
   chargeStatus
   problems {
-    ... on CheckoutLineProblemInsufficientStock {
-      availableQuantity
-      line {
-        ...CartLineFragment
-      }
-    }
+    ...CheckoutProblemsFragment
   }
 }
 fragment AddressFragment on Address {
@@ -240,5 +247,20 @@ fragment TaxedMoneyFragment on TaxedMoney {
   }
   tax {
     ...MoneyFragment
+  }
+}
+fragment CheckoutProblemsFragment on CheckoutProblem {
+  ... on CheckoutLineProblemInsufficientStock {
+    __typename
+    availableQuantity
+    line {
+      ...CartLineFragment
+    }
+  }
+  ... on CheckoutLineProblemVariantNotAvailable {
+    __typename
+    line {
+      ...CartLineFragment
+    }
   }
 }`) as unknown as TypedDocumentString<CheckoutFindQuery, CheckoutFindQueryVariables>;

@@ -55,11 +55,6 @@ fragment CheckoutFragment on Checkout {
   authorizeStatus
   chargeStatus
   problems {
-    ... on CheckoutLineProblemInsufficientStock {
-      availableQuantity
-      line {
-        ...CartLineFragment
-      }
-    }
+    ...CheckoutProblemsFragment
   }
 }

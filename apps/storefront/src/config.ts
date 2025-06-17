@@ -1,7 +1,5 @@
-import { type ThumbnailFormatEnum } from "@nimara/codegen/schema";
-
 // Saleor config
-export const IMAGE_FORMAT: ThumbnailFormatEnum = "AVIF";
+export const IMAGE_FORMAT: "AVIF" | "ORIGINAL" | "WEBP" = "AVIF";
 export const IMAGE_SIZES = {
   pdp: 1024,
 };
@@ -14,7 +12,7 @@ export const CACHE_TTL = {
   pdp: DAY,
   cart: MINUTE * 5,
   cms: MINUTE * 15,
-};
+} as const;
 export const DEFAULT_DEBOUNCE_TIME_IN_MS = 500;
 export const DEFAULT_SORT_BY = "price-asc";
 export const DEFAULT_RESULTS_PER_PAGE = 16;

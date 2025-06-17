@@ -13,7 +13,6 @@ import { addressService } from "@/services/address";
 import { paymentService } from "@/services/payment";
 import { userService } from "@/services/user";
 
-import { CheckoutSkeleton } from "../../_components/checkout-skeleton";
 import { DeliveryMethodSection } from "../../_sections/delivery-method-section";
 import { EmailSection } from "../../_sections/email-section";
 import { PaymentSection } from "../../_sections/payment-section";
@@ -30,21 +29,17 @@ type PageProps = {
 };
 
 export default async function Page(props: PageProps) {
-  const checkout = await getCheckoutOrRedirect();
-  const { locale } = await props.params;
+  const [{ locale }, searchParams, region, checkout, accessToken, storeUrl] =
+    await Promise.all([
+      props.params,
+      props.searchParams,
+      getCurrentRegion(),
+      getCheckoutOrRedirect(),
+      getAccessToken(),
+      getStoreUrl(),
+    ]);
 
-  if (checkout?.problems.insufficientStock.length) {
-    return <CheckoutSkeleton />;
-  }
-
-  const accessToken = await getAccessToken();
-
-  const [resultUserGet, region, storeUrl, searchParams] = await Promise.all([
-    userService.userGet(accessToken),
-    getCurrentRegion(),
-    getStoreUrl(),
-    props.searchParams,
-  ]);
+  const resultUserGet = await userService.userGet(accessToken);
 
   const user = resultUserGet.ok ? resultUserGet.data : null;
 

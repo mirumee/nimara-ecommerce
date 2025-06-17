@@ -12,9 +12,7 @@ export type Checkout = {
   email: string | null;
   id: string;
   lines: Line[];
-  problems: {
-    insufficientStock: CheckoutLineProblemInsufficientStock[];
-  };
+  problems: CheckoutProblems;
   shippingAddress: Address | null;
   shippingMethods: ShippingMethod[];
   shippingPrice: TaxedMoney;
@@ -52,7 +50,16 @@ export type CheckoutChargeStatusEnum =
   | "OVERCHARGED"
   | "PARTIAL";
 
-export type CheckoutLineProblemInsufficientStock = {
+export type CheckoutProblems = {
+  insufficientStock: InsufficientStockLineProblem[];
+  variantNotAvailable: VariantNotAvailableProblem[];
+};
+
+export type InsufficientStockLineProblem = {
   availableQuantity: number | null;
+  line: Line;
+};
+
+export type VariantNotAvailableProblem = {
   line: Line;
 };
