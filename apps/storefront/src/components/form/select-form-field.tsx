@@ -42,7 +42,7 @@ export const SelectFormField = ({
       key={name}
       control={control}
       name={name}
-      render={({ field }) => (
+      render={({ field, fieldState }) => (
         <FormItem className="flex-1">
           <FormLabel>
             {label}
@@ -57,7 +57,7 @@ export const SelectFormField = ({
             defaultValue={field.value}
           >
             <FormControl>
-              <SelectTrigger aria-label={label}>
+              <SelectTrigger aria-label={label} error={fieldState.invalid}>
                 <SelectValue placeholder={placeholder} />
               </SelectTrigger>
             </FormControl>
