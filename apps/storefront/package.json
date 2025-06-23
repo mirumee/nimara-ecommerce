@@ -48,8 +48,8 @@
   },
   "devDependencies": {
     "@graphql-typed-document-node/core": "3.2.0",
-    "@next/bundle-analyzer": "15.3.3",
-    "@next/env": "15.3.3",
+    "@next/bundle-analyzer": "15.3.4",
+    "@next/env": "15.3.4",
     "@nimara/codegen": "workspace:*",
     "@nimara/config": "workspace:*",
     "@nimara/domain": "workspace:*",
@@ -57,7 +57,7 @@
     "@nimara/ui": "workspace:*",
     "@parcel/watcher": "2.5.1",
     "@tailwindcss/typography": "0.5.16",
-    "@types/lodash": "4.17.17",
+    "@types/lodash": "4.17.18",
     "@types/negotiator": "0.6.4",
     "@types/react": "19.1.8",
     "@types/react-dom": "19.1.6",
@@ -69,14 +69,14 @@
     "eslint-config-custom": "workspace:*",
     "file-loader": "6.2.0",
     "pino": "9.7.0",
-    "postcss": "^8.5.5",
+    "postcss": "^8.5.6",
     "semantic-release": "24.2.5",
     "tailwindcss": "^3.4.17",
     "ts-toolbelt": "^9.6.0",
     "tsconfig": "workspace:*",
     "typescript": "^5.8.3",
     "vite-tsconfig-paths": "5.1.4",
-    "vitest": "3.2.3"
+    "vitest": "3.2.4"
   },
   "lint-staged": {
     "*.{js,cjs,ts,tsx}": "eslint --fix",
