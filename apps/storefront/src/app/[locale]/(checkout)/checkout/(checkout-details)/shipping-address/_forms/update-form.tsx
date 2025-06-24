@@ -40,7 +40,7 @@ export const UpdateShippingAddressForm = ({
 
   const form = useForm<ShippingAddressSchema>({
     resolver: zodResolver(shippingAddressSchema({ addressFormRows, t })),
-    defaultValues: [...ADDRESS_CORE_FIELDS].reduce(
+    defaultValues: ADDRESS_CORE_FIELDS.reduce(
       (acc, fieldName) => ({
         ...acc,
         [fieldName]:
@@ -86,6 +86,7 @@ export const UpdateShippingAddressForm = ({
             addressFormRows={addressFormRows}
             countries={countries}
             onCountryChange={setIsCountryChanging}
+            isDisabled={form.formState.isSubmitting}
           />
         </div>
         <div className="flex justify-end gap-4">

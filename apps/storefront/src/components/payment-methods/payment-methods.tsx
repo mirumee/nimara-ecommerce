@@ -17,7 +17,8 @@ const COMPONENTS_MAP: Record<PaymentMethodType, any> = {
 };
 
 export const PaymentMethods = ({ methods }: { methods: TPaymentMethods[] }) => {
-  const { control } = useFormContext();
+  const { control, formState } = useFormContext();
+  const { isSubmitting } = formState;
 
   const groupedMethods = groupPaymentMethods(methods);
 
@@ -32,6 +33,7 @@ export const PaymentMethods = ({ methods }: { methods: TPaymentMethods[] }) => {
               className="gap-6"
               onValueChange={field.onChange}
               defaultValue={field.value}
+              disabled={isSubmitting}
             >
               {Object.entries(groupedMethods).map(([type, items]) => {
                 if (type in COMPONENTS_MAP) {

@@ -1,14 +1,11 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-
 import { type AllCountryCode } from "@nimara/domain/consts";
 import { type Checkout } from "@nimara/domain/objects/Checkout";
 
 import { getAccessToken } from "@/auth";
 import { updateCheckoutAddressAction } from "@/lib/actions/update-checkout-address-action";
 import { schemaToAddress } from "@/lib/address";
-import { paths } from "@/lib/paths";
 import { userService } from "@/services/user";
 
 import { type Schema } from "./schema";
@@ -23,8 +20,6 @@ export async function updateBillingAddress({
     "sameAsShippingAddress" | "billingAddress" | "saveAddressForFutureUse"
   >;
 }) {
-  const accessToken = await getAccessToken();
-
   const result = await updateCheckoutAddressAction({
     checkoutId: checkout.id,
     address: sameAsShippingAddress
@@ -33,7 +28,9 @@ export async function updateBillingAddress({
     type: "billing",
   });
 
-  if (saveAddressForFutureUse && accessToken) {
+  if (saveAddressForFutureUse) {
+    const accessToken = await getAccessToken();
+
     await userService.accountAddressCreate({
       accessToken,
       input: {
@@ -42,10 +39,6 @@ export async function updateBillingAddress({
       },
       type: "BILLING",
     });
-  }
-
-  if (result.ok) {
-    revalidatePath(paths.checkout.payment.asPath());
   }
 
   return result;

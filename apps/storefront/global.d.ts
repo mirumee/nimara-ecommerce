@@ -61,16 +61,17 @@ type Slug = string;
 type Id = string;
 type RevalidateTag =
   | "ADDRESS_VALIDATION_RULES"
-  | `ADDRESS_VALIDATION_RULES:${string}`
-  | "DETAIL-PAGE:PRODUCT"
   | "DETAIL-PAGE:COLLECTION"
-  | `PRODUCT:${Slug}`
-  | `COLLECTION:${Slug}`
-  | `CMS:${Slug}`
-  | "SEARCH"
+  | "DETAIL-PAGE:PRODUCT"
   | "SEARCH:FACETS"
+  | "SEARCH"
+  | `ADDRESS_VALIDATION_RULES:${string}`
+  | `CHECKOUT:${Id}`
+  | `CMS:${Slug}`
+  | `COLLECTION:${Slug}`
+  | `PRODUCT:${Slug}`
   | `SEARCH:${Slug}`
-  | `CHECKOUT:${Id}`;
+  | `USER_ADDRESSES:${Id}`;
 
 declare global {
   type RevalidateTag = RevalidateTag;

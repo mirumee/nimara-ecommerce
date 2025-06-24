@@ -60,7 +60,7 @@ const nextConfig = withAnalyzer(
     logging: {
       fetches: {
         // Set this to true, to see more what's cached and what's not
-        fullUrl: false,
+        fullUrl: true,
       },
     },
     turbopack: {

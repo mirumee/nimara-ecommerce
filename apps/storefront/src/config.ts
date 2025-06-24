@@ -12,6 +12,7 @@ export const CACHE_TTL = {
   pdp: DAY,
   cart: MINUTE * 5,
   cms: MINUTE * 15,
+  userData: HOUR,
 } as const;
 export const DEFAULT_DEBOUNCE_TIME_IN_MS = 500;
 export const DEFAULT_SORT_BY = "price-asc";

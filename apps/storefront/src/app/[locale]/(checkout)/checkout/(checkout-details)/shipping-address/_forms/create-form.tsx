@@ -98,6 +98,7 @@ export const CreateShippingAddressForm = ({
             addressFormRows={addressFormRows}
             countries={countries}
             onCountryChange={setIsCountryChanging}
+            isDisabled={form.formState.isSubmitting}
           />
         </div>
         {shouldSaveForFuture && (

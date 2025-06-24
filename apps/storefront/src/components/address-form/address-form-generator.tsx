@@ -16,14 +16,18 @@ const renderInput = ({
   field,
   t,
   schemaPrefix,
+  isDisabled = false,
 }: {
   field: AddressFormField;
+  isDisabled?: boolean;
   schemaPrefix?: string;
   t: Awaited<ReturnType<typeof getTranslations<"address">>>;
 }) => {
   const withSchemaPrefix = generateFieldPrefix(schemaPrefix);
+
   const localField = {
     ...field,
+    disabled: isDisabled,
     name: withSchemaPrefix(field.name),
     label: t((field.label ?? field.name) as TranslationMessage<"address">),
   };
@@ -62,7 +66,7 @@ export const AddressFormGenerator = ({
         <div key={formRow[0].name} className="flex gap-2">
           {formRow.map((field) => (
             <div className="w-full" key={field.name}>
-              {renderInput({ field, t, schemaPrefix })}
+              {renderInput({ field, t, schemaPrefix, isDisabled })}
             </div>
           ))}
         </div>

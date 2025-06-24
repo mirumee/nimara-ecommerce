@@ -64,7 +64,7 @@ export function AddressTab({
     if (value === "new") {
       form.setValue("saveAddressForFutureUse", true);
       form.setValue("billingAddress", {
-        ...[...ADDRESS_CORE_FIELDS].reduce(
+        ...ADDRESS_CORE_FIELDS.reduce(
           (acc, fieldName) => ({
             ...acc,
             [fieldName]: "",
@@ -108,6 +108,7 @@ export function AddressTab({
               className="pt-6"
               name="saveAddressForFutureUse"
               label={t("address.save-address-for-future")}
+              disabled={isDisabled}
             />
           )}
         </>
@@ -118,10 +119,12 @@ export function AddressTab({
           className="grid gap-5"
         >
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="saved">
+            <TabsTrigger value="saved" disabled={isDisabled}>
               {t("address.saved-addresses")}
             </TabsTrigger>
-            <TabsTrigger value="new">{t("address.new-address")}</TabsTrigger>
+            <TabsTrigger value="new" disabled={isDisabled}>
+              {t("address.new-address")}
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="saved">
@@ -160,12 +163,14 @@ export function AddressTab({
               addressFormRows={addressFormRows}
               schemaPrefix="billingAddress"
               countries={countries}
+              isDisabled={isDisabled}
             />
             {hasDefaultBillingAddressSet && (
               <CheckboxField
                 className="pt-6"
                 name="saveAddressForFutureUse"
                 label={t("address.save-address-for-future")}
+                disabled={isDisabled}
               />
             )}
           </TabsContent>
