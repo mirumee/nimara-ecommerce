@@ -29,7 +29,6 @@ type PageProps = {
 };
 
 export default async function Page(props: PageProps) {
-  console.log("Payment page rendered");
   const [{ locale }, searchParams, region, checkout, accessToken, storeUrl] =
     await Promise.all([
       props.params,

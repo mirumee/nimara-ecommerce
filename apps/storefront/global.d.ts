@@ -70,8 +70,7 @@ type RevalidateTag =
   | `CMS:${Slug}`
   | `COLLECTION:${Slug}`
   | `PRODUCT:${Slug}`
-  | `SEARCH:${Slug}`
-  | `USER_ADDRESSES:${Id}`;
+  | `SEARCH:${Slug}`;
 
 declare global {
   type RevalidateTag = RevalidateTag;
