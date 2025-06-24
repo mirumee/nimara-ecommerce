@@ -15,9 +15,11 @@ type PageProps = {
 };
 
 export default async function Page(props: PageProps) {
-  const searchParams = await props.searchParams;
-  const { locale } = await props.params;
-  const checkout = await getCheckoutOrRedirect();
+  const [{ locale }, searchParams, checkout] = await Promise.all([
+    props.params,
+    props.searchParams,
+    getCheckoutOrRedirect(),
+  ]);
 
   let errors: { code: AppErrorCode }[] = [];
 

@@ -9,6 +9,7 @@ import type { Order } from "@nimara/domain/objects/Order";
 import { type AsyncResult } from "@nimara/domain/objects/Result";
 import { type User } from "@nimara/domain/objects/User";
 
+import { type FetchOptions } from "#root/graphql/client";
 import { type QueryOptions } from "#root/lib/types";
 import { type Logger } from "#root/logging/types";
 
@@ -69,6 +70,7 @@ export type AccountRequestDeletionUseCase = AccountRequestDeletionInfra;
 
 export type AddressesGetInfra = (
   opts: {
+    options?: FetchOptions;
     variables: { accessToken: string | undefined };
   } & QueryOptions,
 ) => AsyncResult<Address[] | null>;
