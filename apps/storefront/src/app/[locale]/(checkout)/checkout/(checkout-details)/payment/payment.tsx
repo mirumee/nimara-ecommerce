@@ -13,7 +13,7 @@ import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { type AppErrorCode } from "@nimara/domain/objects/Error";
 import { type PaymentMethod } from "@nimara/domain/objects/Payment";
 import { type User } from "@nimara/domain/objects/User";
-import { ADDRESS_CORE_FIELDS } from "@nimara/infrastructure/consts";
+import { ADDRESS_DEFAULT_VALUES } from "@nimara/infrastructure/consts";
 import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
 import { Spinner } from "@nimara/ui/components/spinner";
@@ -110,13 +110,10 @@ export const Payment = ({
     ...addressToSchema(defaultBillingAddress),
     id: defaultBillingAddress?.id,
   };
-  const defaultEmptyBillingAddress = [...ADDRESS_CORE_FIELDS].reduce(
-    (acc, fieldName) => ({
-      ...acc,
-      [fieldName]: fieldName === "country" ? countryCode : "",
-    }),
-    {},
-  ) as Schema["billingAddress"];
+  const defaultEmptyBillingAddress = {
+    ...ADDRESS_DEFAULT_VALUES,
+    country: countryCode,
+  } as Schema["billingAddress"];
   const hasDefaultBillingAddress =
     formattedAddresses[0]?.address.isDefaultBillingAddress;
   const supportedCountryCodesInChannel = countries?.map(({ value }) => value);
@@ -191,8 +188,20 @@ export const Payment = ({
         });
 
         return setIsProcessing(true);
+      } else {
+        toast({
+          description: t("order.billing-address-updated"),
+        });
+
+        if (saveAddressForFutureUse) {
+          toast({
+            description: t("address.new-address-has-been-added"),
+          });
+        }
       }
     }
+
+    setIsProcessing(false);
 
     let paymentSecret: Maybe<string> = undefined;
     const redirectUrl = `${storeUrl}${paths.payment.confirmation.asPath()}`;
@@ -390,7 +399,7 @@ export const Payment = ({
                   <CheckboxField
                     className="mt-6"
                     name="saveForFutureUse"
-                    disabled={!isMounted}
+                    disabled={!isMounted || isProcessing}
                     label={t("payment.save-method")}
                   />
                 )}
@@ -400,13 +409,14 @@ export const Payment = ({
 
           <div className="space-y-6">
             <h3 className="text-muted-foreground text-base font-normal leading-7">
-              {t("payment.billingAddress")}
+              {t("payment.billing-address")}
             </h3>
 
             <div className="border-input bg-background flex w-full items-center gap-2 rounded-md border px-4">
               <CheckboxField
                 label={t("payment.same-as-shipping-address")}
                 name="sameAsShippingAddress"
+                disabled={isProcessing}
               />
             </div>
 
@@ -433,6 +443,7 @@ export const Payment = ({
                     schemaPrefix="billingAddress"
                     countries={countries}
                     onCountryChange={setIsProcessing}
+                    isDisabled={isProcessing}
                   />
                 )}
               </>

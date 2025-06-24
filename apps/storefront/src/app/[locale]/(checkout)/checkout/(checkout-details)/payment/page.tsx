@@ -40,7 +40,6 @@ export default async function Page(props: PageProps) {
     ]);
 
   const resultUserGet = await userService.userGet(accessToken);
-
   const user = resultUserGet.ok ? resultUserGet.data : null;
 
   await validateCheckoutStepAction({ checkout, user, locale, step: "payment" });
