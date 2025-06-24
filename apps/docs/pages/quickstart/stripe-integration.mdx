@@ -1,0 +1,50 @@
+import { Steps } from "nextra/components";
+
+# Stripe Integration in Nimara
+
+Nimara supports Stripe integration via a Saleor App. You can choose between a **Python**-based app or a **TypeScript**-based app, depending on your preference and deployment setup.
+
+## Option 1: Use the Python Stripe App
+
+This option uses the official [Nimara Stripe Python app](https://github.com/mirumee/nimara-stripe).
+
+<Steps>
+### Set environment variables
+Add the following to your root **.env** file:
+
+`STRIPE_SECRET_KEY`
+
+- **Description**: Secret API key for Stripe server-side operations.
+- **How to get it**: Stripe Dashboard → **Developers** → **API keys**.
+
+`NEXT_PUBLIC_STRIPE_PUBLIC_KEY`
+
+- **Description**: Public Stripe key used on the client side.
+- **How to get it**: Stripe Dashboard → **Developers** → **API keys**.
+
+`NEXT_PUBLIC_PAYMENT_APP_ID`
+
+- **Description**: ID of the Saleor Payment App integration.
+
+### Get the manifest URL
+
+The manifest is available at:
+
+`https://your-stripe-app-url/saleor/manifest`
+
+### Install app in Saleor
+
+Go to your Saleor dashboard → **Extensions** → click **Add Extension** → select **Install From Manifest**.
+
+Paste the manifest URL and click **Install**.
+
+</Steps>
+
+**Note**: For detailed setup instructions, see the official docs: 👉[Nimara Python Stripe App documentation](https://github.com/mirumee/nimara-stripe#)
+
+## Option 2: Use the TypeScript Stripe App
+
+Stripe integration is also available via a TypeScript app included in the Nimara monorepo. This version is designed to be deployed on Vercel and integrated seamlessly with your Saleor instance.
+
+**Note**: For detailed setup instructions, see the official docs:
+👉 [Nimara TypeScript Stripe App documentation](https://github.com/mirumee/nimara-ecommerce/blob/main/apps/stripe/README.md)
