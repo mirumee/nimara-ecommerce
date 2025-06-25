@@ -73,7 +73,8 @@ export const MultiSelect = ({
             type="button"
             variant="outline"
             className={cn(
-              "ring-offset-background focus:ring-ring h-auto justify-between bg-inherit px-3 py-2 font-thin hover:bg-inherit focus:outline-none focus:ring-2 focus:ring-offset-2",
+              "ring-offset-background focus:ring-ring h-auto min-h-10 justify-between bg-inherit px-3 py-2 font-thin hover:bg-inherit hover:text-current focus:outline-none focus:ring-2 focus:ring-offset-2",
+              { "py-1.5": hasSelectedValues },
             )}
             aria-haspopup="listbox"
             aria-controls="multi-select-dropdown"
@@ -106,7 +107,7 @@ export const MultiSelect = ({
             e.stopPropagation();
           }}
         >
-          <Command className="rounded-lg border shadow-md">
+          <Command>
             <CommandList>
               <CommandGroup>
                 {options.map(({ label, value }) => {
