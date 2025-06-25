@@ -1,0 +1,124 @@
+# Environment Variables
+
+This page lists and explains all environment variables used by the Nimara storefront. Use this to correctly set up your `.env` file.
+
+---
+
+## 🔒 Required Variables
+
+### 🛍️ Saleor
+
+#### `NEXT_PUBLIC_SALEOR_API_URL`
+
+- **Description**: URL of the Saleor GraphQL API endpoint.
+- **How to get it**: Saleor Cloud -> **Projects** -> select the relevant project -> **Environment Details**.
+- **Note**: Must end with a trailing slash `/graphql/`.
+- **Example**: `https://your-domain.saleor.cloud/graphql/`
+
+#### `NEXT_PUBLIC_DEFAULT_CHANNEL`
+
+- **Description**: Default Saleor channel used by the storefront.
+- **How to get it**: Saleor Dashboard -> **Configuration** -> **Channels** -> copy the slug of the channel to be used as the default.
+- **Example**: `default-channel`
+
+#### `SALEOR_APP_TOKEN`
+
+- **Description**: Token to authenticate requests to Saleor.
+- **How to get it**: Saleor Dashboard → **Extensions** → click **Add extension** -> select **Provide details manually** -> add name and assign the necessary permissions for your app - **Handle checkouts** and **Manage Customers** -> click **Save**.
+
+---
+
+### 🌐 General
+
+#### `BASE_URL`
+
+- **Description**: Public base URL of your storefront (used for sitemap.xml, OpenGraph, etc.).
+- **Example**: `https://localhost:3000`
+
+---
+
+### 🔐 Auth
+
+#### `AUTH_SECRET`
+
+- **Description**: Secret for session encryption (used by Auth.js).
+- **How to get it**: Generate a random secure string.
+
+#### `AUTH_URL`
+
+- **Description**: Auth.js base URL for callback handling.
+- **Notes**: Required when **not** deploying on Vercel.
+- **Example**: `http://localhost:3000`
+
+---
+
+### ⚙️ Environment
+
+#### `NEXT_PUBLIC_ENVIRONMENT`
+
+- **Description**: Environment type for error reporting and logging.
+- **Example**: `LOCAL`, `STAGING`, `PRODUCTION`, etc.
+
+---
+
+### 💳 Stripe
+
+**Note**: See the [Nimara Stripe integration section](./stripe-integration) for detailed instructions on setting up these variables
+
+---
+
+## ❔ Optional Variables
+
+### 🧪 Testing (Playwright)
+
+#### `TEST_ENV_URL`
+
+- **Description**: URL used for end-to-end tests.
+- **Example**: `https://localhost:3000`
+
+#### `USER_EMAIL`, `USER_PASSWORD`
+
+- **Description**: Credentials for testing login during E2E tests.
+
+---
+
+### 📊 Logging
+
+#### `LOG_LEVEL`
+
+- **Description**: Logging level for application output.
+- **Options**: `debug`, `info`, `warning`, `error`, `critical`
+- **Default**: `info`
+
+---
+
+### 🧯 Sentry (Error Monitoring)
+
+#### `SENTRY_DSN`
+
+- **Description**: Sentry project DSN.
+
+#### `SENTRY_AUTH_TOKEN`
+
+- **Description**: Auth token for uploading source maps.
+
+#### `SENTRY_ORG`
+
+- **Description**: Your Sentry organization name.
+
+#### `SENTRY_PROJECT`
+
+- **Description**: Your Sentry project name.
+
+#### `SENTRY_DEBUG`
+
+- **Description**: Enable Sentry debug logging (set to `true` or `false`).
+
+---
+
+### 🖼️ Images
+
+#### `NEXT_PUBLIC_DEFAULT_IMAGE_FORMAT`
+
+- **Description**: Preferred image format served from Saleor.
+- **Example**: `AVIF`, `WEBP`
