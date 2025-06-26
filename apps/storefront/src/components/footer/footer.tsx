@@ -43,13 +43,14 @@ export const Footer = async () => {
         <div className="flex flex-wrap justify-between gap-8 py-8">
           <div className="grid w-full grid-cols-2 grid-rows-[max-content,max-content] place-items-start justify-start gap-6 md:grid-cols-3">
             <div className="col-span-2 row-span-2 grid grid-cols-subgrid grid-rows-subgrid md:col-span-1">
-              <Link
-                className="col-span-2 flex justify-center md:col-span-1 md:justify-start"
-                href={paths.home.asPath()}
-                title={t("common.go-to-homepage")}
-              >
-                <BrandLogo height={36} className="fill-primary" />
-              </Link>
+              <div className="col-span-2 flex justify-center md:col-span-1 md:justify-start">
+                <Link
+                  href={paths.home.asPath()}
+                  title={t("common.go-to-homepage")}
+                >
+                  <BrandLogo height={36} className="fill-primary" />
+                </Link>
+              </div>
               <p className="col-span-2 flex justify-center md:col-span-1 md:justify-start">
                 {t.rich("footer.demo-version", {
                   link: (chunks) => (
@@ -73,14 +74,15 @@ export const Footer = async () => {
               </span>
               <div className="flex flex-col gap-4">
                 {resultCategories.data?.menu.items.map((item) => (
-                  <Link
-                    key={item.id}
-                    href={item.url}
-                    className="hover:underline"
-                    prefetch={false}
-                  >
-                    {item.label}
-                  </Link>
+                  <span key={item.id} className="inline">
+                    <Link
+                      href={item.url}
+                      className="hover:underline"
+                      prefetch={false}
+                    >
+                      {item.label}
+                    </Link>
+                  </span>
                 ))}
               </div>
             </div>
@@ -91,14 +93,15 @@ export const Footer = async () => {
               </span>
               <div className="flex flex-col gap-4">
                 {resultMenu.data?.menu?.items.map((item) => (
-                  <Link
-                    key={item.id}
-                    href={item.url}
-                    className="hover:underline"
-                    prefetch={false}
-                  >
-                    {item.label}
-                  </Link>
+                  <span key={item.id} className="inline">
+                    <Link
+                      href={item.url}
+                      className="inline hover:underline"
+                      prefetch={false}
+                    >
+                      {item.label}
+                    </Link>
+                  </span>
                 ))}
               </div>
             </div>
