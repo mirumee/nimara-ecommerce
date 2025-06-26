@@ -3,7 +3,6 @@
 import { useTranslations } from "next-intl";
 
 import type { SortByOption } from "@nimara/domain/objects/Search";
-import { Label } from "@nimara/ui/components/label";
 import {
   Select,
   SelectContent,
@@ -52,7 +51,7 @@ export const SearchSortBy = ({
 
   return (
     <div className="flex items-center gap-2">
-      <Label>{t("search.sort-by")}</Label>
+      <span className="text-sm font-medium">{t("search.sort-by")}</span>
 
       <div>
         <Select defaultValue={defaultValue} onValueChange={handleValueChange}>
