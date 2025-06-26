@@ -187,21 +187,11 @@ export const Payment = ({
           }
         });
 
-        return setIsProcessing(true);
-      } else {
-        toast({
-          description: t("order.billing-address-updated"),
-        });
+        setIsProcessing(false);
 
-        if (saveAddressForFutureUse) {
-          toast({
-            description: t("address.new-address-has-been-added"),
-          });
-        }
+        return;
       }
     }
-
-    setIsProcessing(false);
 
     let paymentSecret: Maybe<string> = undefined;
     const redirectUrl = `${storeUrl}${paths.payment.confirmation.asPath()}`;
@@ -222,7 +212,7 @@ export const Payment = ({
 
       if (!result.ok) {
         setErrors(translateApiErrors({ t, errors: result.errors }));
-        setIsProcessing(true);
+        setIsProcessing(false);
 
         return;
       }
@@ -452,7 +442,7 @@ export const Payment = ({
           <div className="flex flex-col gap-3">
             <Button
               type="submit"
-              disabled={isCountryChanging || !canProceed}
+              disabled={isCountryChanging || !canProceed || isProcessing}
               className="!mt-8 flex w-full items-center gap-1.5"
               loading={isLoading}
             >
