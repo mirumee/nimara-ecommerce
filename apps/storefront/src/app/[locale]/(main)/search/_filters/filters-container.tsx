@@ -88,7 +88,7 @@ export const FiltersContainer = async ({
           aria-label={t("filters.filters")}
         >
           <Filter className="h-4 w-4" />
-          <label className="hidden md:block">{t("filters.filters")}</label>
+          <span className="hidden md:block">{t("filters.filters")}</span>
           <FiltersCounter searchParams={searchParams} facets={facets} />
         </Button>
       </SheetTrigger>

@@ -11,5 +11,5 @@ export const FiltersCounter = ({
 }) => {
   const activeFiltersCount = getActiveFiltersCount(searchParams, facets);
 
-  return <label>({activeFiltersCount})</label>;
+  return <span>({activeFiltersCount})</span>;
 };
