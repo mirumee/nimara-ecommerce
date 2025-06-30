@@ -11,14 +11,21 @@ import { schemaToAddress } from "@/lib/address";
 import { paths } from "@/lib/paths";
 import { userService } from "@/services/user";
 
-import { type ShippingAddressSchema } from "./schema";
+import {
+  type CreateShippingAddressSchema,
+  type UpdateShippingAddressSchema,
+} from "./schema";
 
-export async function updateShippingAddress({
+/**
+ * Updates the saved address in the user's account. After updating,
+ * it revalidates the shipping address path to ensure the latest data is fetched.
+ */
+export async function accountAddressUpdateAction({
   id,
   input,
 }: {
   id: string;
-  input: ShippingAddressSchema;
+  input: UpdateShippingAddressSchema;
 }) {
   const accessToken = await getAccessToken();
 
@@ -28,7 +35,9 @@ export async function updateShippingAddress({
     input: { ...input, country: input.country as AllCountryCode },
   });
 
-  revalidatePath(paths.checkout.shippingAddress.asPath());
+  if (data.ok) {
+    revalidatePath(paths.checkout.shippingAddress.asPath());
+  }
 
   return data;
 }
@@ -38,7 +47,7 @@ export async function createCheckoutShippingAddress({
   input: { saveForFutureUse, ...input },
 }: {
   checkoutId: Checkout["id"];
-  input: ShippingAddressSchema;
+  input: CreateShippingAddressSchema;
 }) {
   const accessToken = await getAccessToken();
 
