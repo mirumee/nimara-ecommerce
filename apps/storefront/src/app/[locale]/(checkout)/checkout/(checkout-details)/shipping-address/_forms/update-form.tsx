@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { type SubmitHandler, useForm } from "react-hook-form";
 
 import {
   type Address,
@@ -19,8 +19,11 @@ import { useRouter } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 import { storefrontLogger } from "@/services/logging";
 
-import { updateShippingAddress } from "./actions";
-import { type ShippingAddressSchema, shippingAddressSchema } from "./schema";
+import { accountAddressUpdateAction } from "./actions";
+import {
+  type UpdateShippingAddressSchema,
+  updateShippingAddressSchema,
+} from "./schema";
 
 export const UpdateShippingAddressForm = ({
   address,
@@ -38,26 +41,28 @@ export const UpdateShippingAddressForm = ({
 
   const [isCountryChanging, setIsCountryChanging] = useState(false);
 
-  const form = useForm<ShippingAddressSchema>({
-    resolver: zodResolver(shippingAddressSchema({ addressFormRows, t })),
-    defaultValues: ADDRESS_CORE_FIELDS.reduce(
-      (acc, fieldName) => ({
-        ...acc,
-        [fieldName]:
-          fieldName === "country"
-            ? address.country
-            : (address[fieldName] ?? ""),
-      }),
-      {},
-    ),
+  const addressFormValues = ADDRESS_CORE_FIELDS.reduce(
+    (acc, fieldName) => ({
+      ...acc,
+      [fieldName]:
+        fieldName === "country" ? address.country : (address[fieldName] ?? ""),
+    }),
+    {},
+  );
+
+  const form = useForm<UpdateShippingAddressSchema>({
+    resolver: zodResolver(updateShippingAddressSchema({ addressFormRows, t })),
+    defaultValues: addressFormValues,
   });
 
   const canProceed = !form.formState.isSubmitting && !isCountryChanging;
 
-  const handleSubmit = async (shippingAddress: ShippingAddressSchema) => {
-    const result = await updateShippingAddress({
+  const handleSubmit: SubmitHandler<UpdateShippingAddressSchema> = async (
+    data,
+  ) => {
+    const result = await accountAddressUpdateAction({
       id: address.id,
-      input: shippingAddress,
+      input: data,
     });
 
     if (!result.ok) {
