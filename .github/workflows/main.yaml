@@ -46,7 +46,7 @@ jobs:
       - name: Get changed files (for PRs)
         id: changed-files
         if: github.event_name == 'pull_request'
-        uses: tj-actions/changed-files@v44
+        uses: tj-actions/changed-files@v46
         with:
           files_yaml: |
             ts:
