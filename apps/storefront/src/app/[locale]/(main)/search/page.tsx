@@ -29,8 +29,10 @@ type SearchParams = Promise<{
 
 export async function generateMetadata(props: { searchParams: SearchParams }) {
   const searchParams = await props.searchParams;
-  const url = new URL(paths.search.asPath(), clientEnvs.BASE_URL);
-  const canonicalUrl = url.toString();
+  const canonicalUrl = new URL(
+    paths.search.asPath(),
+    clientEnvs.BASE_URL,
+  ).toString();
 
   const t = await getTranslations("search");
 

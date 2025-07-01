@@ -3,7 +3,7 @@ import { type LoggerOptions } from "pino";
 import { pinoLogger } from "./pino";
 import { type Logger, type LogLevel } from "./types";
 
-const LOG_LEVEL: LogLevel = (process.env.LOG_LEVEL as LogLevel) || "info";
+const LOG_LEVEL: LogLevel = (process.env.LOG_LEVEL as LogLevel) || "debug";
 
 /**
  * Use this function to create a logger instance.

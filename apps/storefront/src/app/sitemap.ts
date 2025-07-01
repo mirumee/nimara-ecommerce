@@ -2,11 +2,10 @@ import type { MetadataRoute } from "next";
 
 import type { SearchContext } from "@nimara/infrastructure/use-cases/search/types";
 
+import { clientEnvs } from "@/envs/client";
 import { searchService } from "@/services/search";
 
 type Item = MetadataRoute.Sitemap[number];
-
-const PUBLIC_URL = process.env.BASE_URL ?? "https://www.nimara.store";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // TODO: Make this contextual
@@ -29,7 +28,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const productUrls = products.map(
     (product) =>
       ({
-        url: `${PUBLIC_URL}/products/${product.slug}`,
+        url: new URL(
+          `/products/${product.slug}`,
+          clientEnvs.BASE_URL,
+        ).toString(),
         lastModified: product.updatedAt,
         changeFrequency: "daily",
         priority: 0.8,
@@ -38,7 +40,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     {
-      url: PUBLIC_URL,
+      url: clientEnvs.BASE_URL,
       lastModified: new Date(),
       changeFrequency: "always",
       priority: 1,
