@@ -10,16 +10,27 @@ export default getRequestConfig(async ({ requestLocale }) => {
     locale = routing.defaultLocale;
   }
 
-  const availableLocale = "en-GB";
+  try {
+    const messages = (await import(`../../messages/${locale}.json`)).default;
 
-  return {
-    locale,
-    messages: (await import(`../../messages/${availableLocale}.json`)).default,
-    onError: (error) => {
-      Sentry.captureMessage(error.code, {
-        extra: { messages: error.message },
-        level: "warning",
-      });
-    },
-  };
+    return {
+      locale,
+      messages,
+      onError: (error) => {
+        Sentry.captureMessage(error.code, {
+          extra: { messages: error.message },
+          level: "warning",
+        });
+      },
+    };
+  } catch (error) {
+    // Fallback in case messages file doesn't exist
+    Sentry.captureException(error);
+
+    return {
+      locale: routing.defaultLocale,
+      messages: (await import(`../../messages/${routing.defaultLocale}.json`))
+        .default,
+    };
+  }
 });
