@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { type SubmitHandler, useForm } from "react-hook-form";
 
 import { type AllCountryCode } from "@nimara/domain/consts";
 import { type CountryOption } from "@nimara/domain/objects/Address";
@@ -21,7 +21,11 @@ import { useRouterWithState } from "@/lib/hooks";
 import { paths } from "@/lib/paths";
 
 import { createCheckoutShippingAddress } from "./actions";
-import { type ShippingAddressSchema, shippingAddressSchema } from "./schema";
+import {
+  type CreateShippingAddressSchema,
+  createShippingAddressSchema,
+  type UpdateShippingAddressSchema,
+} from "./schema";
 
 export const CreateShippingAddressForm = ({
   addressFormRows,
@@ -42,8 +46,8 @@ export const CreateShippingAddressForm = ({
   const { isRedirecting, push } = useRouterWithState();
   const [isCountryChanging, setIsCountryChanging] = useState(false);
 
-  const form = useForm<ShippingAddressSchema>({
-    resolver: zodResolver(shippingAddressSchema({ addressFormRows, t })),
+  const form = useForm<CreateShippingAddressSchema>({
+    resolver: zodResolver(createShippingAddressSchema({ addressFormRows, t })),
     defaultValues: {
       ...ADDRESS_CORE_FIELDS.reduce(
         (acc, fieldName) => ({
@@ -62,10 +66,12 @@ export const CreateShippingAddressForm = ({
   const canProceed =
     !form.formState.isSubmitting && !isCountryChanging && !isRedirecting;
 
-  const handleSubmit = async (input: ShippingAddressSchema) => {
+  const handleSubmit: SubmitHandler<CreateShippingAddressSchema> = async (
+    data,
+  ) => {
     const result = await createCheckoutShippingAddress({
       checkoutId: checkout.id,
-      input,
+      input: data,
     });
 
     if (result.ok) {
@@ -78,7 +84,7 @@ export const CreateShippingAddressForm = ({
       if (isGlobalError(field)) {
         toast({ variant: "destructive", description: t(`errors.${code}`) });
       } else {
-        form.setError(field as keyof ShippingAddressSchema, {
+        form.setError(field as keyof UpdateShippingAddressSchema, {
           message: t(`errors.${code}`),
         });
       }
