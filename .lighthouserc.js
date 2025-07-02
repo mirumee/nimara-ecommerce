@@ -4,7 +4,7 @@ const pathsToTest = ["/gb", "/gb/search", "/us", "/us/search"];
 
 // A list of full URLs used to test against
 const urls = pathsToTest.map((path) =>
-  new URL(path, process.env.BASE_URL).toString(),
+  new URL(path, process.env.NEXT_PUBLIC_STOREFRONT_URL).toString(),
 );
 
 module.exports = {

@@ -1,32 +1,46 @@
-import type * as Types from '@nimara/codegen/schema';
+import type * as Types from "@nimara/codegen/schema";
 
-import type { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
-export type TransactionEventReportMutation_transactionEventReport_TransactionEventReport_errors_TransactionEventReportError = { field: string | null, message: string | null, code: Types.TransactionEventReportErrorCode };
+import type { DocumentTypeDecoration } from "@graphql-typed-document-node/core";
+export type TransactionEventReportMutation_transactionEventReport_TransactionEventReport_errors_TransactionEventReportError =
+  {
+    field: string | null;
+    message: string | null;
+    code: Types.TransactionEventReportErrorCode;
+  };
 
-export type TransactionEventReportMutation_transactionEventReport_TransactionEventReport = { alreadyProcessed: boolean | null, errors: Array<TransactionEventReportMutation_transactionEventReport_TransactionEventReport_errors_TransactionEventReportError> };
+export type TransactionEventReportMutation_transactionEventReport_TransactionEventReport =
+  {
+    alreadyProcessed: boolean | null;
+    errors: Array<TransactionEventReportMutation_transactionEventReport_TransactionEventReport_errors_TransactionEventReportError>;
+  };
 
-export type TransactionEventReportMutation_Mutation = { transactionEventReport: TransactionEventReportMutation_transactionEventReport_TransactionEventReport | null };
-
+export type TransactionEventReportMutation_Mutation = {
+  transactionEventReport: TransactionEventReportMutation_transactionEventReport_TransactionEventReport | null;
+};
 
 export type TransactionEventReportMutationVariables = Types.Exact<{
-  transactionId: Types.Scalars['ID']['input'];
-  amount: Types.Scalars['PositiveDecimal']['input'];
-  availableActions: Array<Types.TransactionActionEnum> | Types.TransactionActionEnum;
-  externalUrl: Types.Scalars['String']['input'];
-  message?: Types.InputMaybe<Types.Scalars['String']['input']>;
-  pspReference: Types.Scalars['String']['input'];
-  time: Types.Scalars['DateTime']['input'];
+  transactionId: Types.Scalars["ID"]["input"];
+  amount: Types.Scalars["PositiveDecimal"]["input"];
+  availableActions:
+    | Array<Types.TransactionActionEnum>
+    | Types.TransactionActionEnum;
+  externalUrl: Types.Scalars["String"]["input"];
+  message?: Types.InputMaybe<Types.Scalars["String"]["input"]>;
+  pspReference: Types.Scalars["String"]["input"];
+  time: Types.Scalars["DateTime"]["input"];
   type: Types.TransactionEventTypeEnum;
 }>;
 
-
-export type TransactionEventReportMutation = TransactionEventReportMutation_Mutation;
+export type TransactionEventReportMutation =
+  TransactionEventReportMutation_Mutation;
 
 export class TypedDocumentString<TResult, TVariables>
   extends String
   implements DocumentTypeDecoration<TResult, TVariables>
 {
-  __apiType?: DocumentTypeDecoration<TResult, TVariables>['__apiType'];
+  __apiType?: NonNullable<
+    DocumentTypeDecoration<TResult, TVariables>["__apiType"]
+  >;
   private value: string;
   public __meta__?: Record<string, any> | undefined;
 
@@ -36,7 +50,7 @@ export class TypedDocumentString<TResult, TVariables>
     this.__meta__ = __meta__;
   }
 
-  toString(): string & DocumentTypeDecoration<TResult, TVariables> {
+  override toString(): string & DocumentTypeDecoration<TResult, TVariables> {
     return this.value;
   }
 }
@@ -61,4 +75,7 @@ export const TransactionEventReportMutationDocument = new TypedDocumentString(`
     }
   }
 }
-    `) as unknown as TypedDocumentString<TransactionEventReportMutation, TransactionEventReportMutationVariables>;
+    `) as unknown as TypedDocumentString<
+  TransactionEventReportMutation,
+  TransactionEventReportMutationVariables
+>;

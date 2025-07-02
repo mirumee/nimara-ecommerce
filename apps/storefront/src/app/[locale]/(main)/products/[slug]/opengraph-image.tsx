@@ -60,7 +60,10 @@ export default async function Image({
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={new URL("og-hp.png", clientEnvs.BASE_URL).toString()}
+            src={new URL(
+              "og-hp.png",
+              clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
+            ).toString()}
             alt="Nimara's logo"
             style={{
               maxWidth: "100%",
@@ -93,7 +96,10 @@ export default async function Image({
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={new URL("brand-logo-dark.svg", clientEnvs.BASE_URL).toString()}
+            src={new URL(
+              "brand-logo-dark.svg",
+              clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
+            ).toString()}
             alt="Nimara's logo"
             style={{
               maxWidth: "100%",

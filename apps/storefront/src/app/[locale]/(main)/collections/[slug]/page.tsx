@@ -32,7 +32,10 @@ export async function generateMetadata(props: PageProps) {
   const params = props.params;
 
   const { slug } = await params;
-  const url = new URL(paths.collections.asPath({ slug }), clientEnvs.BASE_URL);
+  const url = new URL(
+    paths.collections.asPath({ slug }),
+    clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
+  );
   const canonicalUrl = url.toString();
   const region = await getCurrentRegion();
 

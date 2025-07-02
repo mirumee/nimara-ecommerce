@@ -11,6 +11,9 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/api/", "/_next/", "/_vercel/"],
       },
     ],
-    sitemap: new URL("sitemap.xml", clientEnvs.BASE_URL).toString(),
+    sitemap: new URL(
+      "sitemap.xml",
+      clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
+    ).toString(),
   };
 }
