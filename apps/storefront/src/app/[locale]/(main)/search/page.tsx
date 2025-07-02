@@ -31,7 +31,7 @@ export async function generateMetadata(props: { searchParams: SearchParams }) {
   const searchParams = await props.searchParams;
   const canonicalUrl = new URL(
     paths.search.asPath(),
-    clientEnvs.BASE_URL,
+    clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
   ).toString();
 
   const t = await getTranslations("search");

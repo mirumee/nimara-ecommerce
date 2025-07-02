@@ -18,8 +18,8 @@ const createMenuItemUrl = (
   locale?: string,
 ): string => {
   const baseUrl = locale
-    ? `${process.env.BASE_URL}${locale}`
-    : process.env.BASE_URL;
+    ? `${process.env.NEXT_PUBLIC_STOREFRONT_URL}${locale}`
+    : process.env.NEXT_PUBLIC_STOREFRONT_URL;
 
   if (page?.slug) {
     return `${baseUrl}/page/${page.slug}`;
@@ -45,7 +45,10 @@ const serializeSaleorMenuItemChild = (
 
   // INFO: Links in Saleor CMS cannot be relative links, they must be absolute URLs,
   // so to preserve locale prefixes we need to cut the domain to make them relatives
-  const formattedUrl = url?.replace(process.env.BASE_URL ?? "", "");
+  const formattedUrl = url?.replace(
+    process.env.NEXT_PUBLIC_STOREFRONT_URL ?? "",
+    "",
+  );
 
   return {
     id,
@@ -71,7 +74,10 @@ const serializeSaleorMenuItem = (
 
   // INFO: Links in Saleor CMS cannot be relative links, they must be absolute URLs,
   // so to preserve locale prefixes we need to cut the domain to make them relatives
-  const formattedUrl = url?.replace(process.env.BASE_URL ?? "", "");
+  const formattedUrl = url?.replace(
+    process.env.NEXT_PUBLIC_STOREFRONT_URL ?? "",
+    "",
+  );
 
   return {
     id,
