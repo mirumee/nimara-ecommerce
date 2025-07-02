@@ -5976,6 +5976,7 @@ export type CountryCode =
   | 'VU'
   | 'WF'
   | 'WS'
+  | 'XK'
   | 'YE'
   | 'YT'
   | 'ZA'
