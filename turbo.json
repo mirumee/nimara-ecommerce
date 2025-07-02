@@ -1,6 +1,7 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "globalEnv": [
+    "BASE_URL",
     "CMS_SERVICE",
     "EDGE_CONFIG",
     "NEXT_PUBLIC_SALEOR_API_URL",
@@ -10,7 +11,6 @@
   ],
   "globalPassThroughEnv": [
     "AUTH_SECRET",
-    "BASE_URL",
     "LOG_LEVEL",
     "SALEOR_APP_TOKEN",
     "SENTRY_AUTH_TOKEN",

@@ -8,11 +8,12 @@ import { getPostalCodeField } from "./fields/get-postal-code-field";
 import { getStreetAddressFields } from "./fields/get-street-address-fields";
 
 const COUNTRY_CODES_WITH_COUNTRY_AREA_VALIDATION = [
-  "US",
+  "AU",
   "CA",
   "CN",
-  "AU",
+  "ES",
   "JP",
+  "US",
 ];
 
 export const parseAddressFormRows = ({
