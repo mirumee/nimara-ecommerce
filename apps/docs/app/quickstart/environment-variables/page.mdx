@@ -17,7 +17,7 @@ This page lists and explains all environment variables used by the Nimara storef
 
 #### `NEXT_PUBLIC_DEFAULT_CHANNEL`
 
-- **Description**: Default Saleor channel used by the storefront.
+- **Description**: A Saleor channel slug that will be used as a default channel on the storefront.
 - **How to get it**: Saleor Dashboard -> **Configuration** -> **Channels** -> copy the slug of the channel to be used as the default.
 - **Example**: `default-channel`
 
@@ -32,8 +32,8 @@ This page lists and explains all environment variables used by the Nimara storef
 
 #### `BASE_URL`
 
-- **Description**: Public base URL of your storefront (used for sitemap.xml, OpenGraph, etc.).
-- **Example**: `https://localhost:3000`
+- **Description**: Public base URL of your storefront, used for generating an absolute URLs in sitemap.xml, OpenGraph, etc.
+- **Example**: `https://my-new-store.com`
 
 ---
 
@@ -48,7 +48,7 @@ This page lists and explains all environment variables used by the Nimara storef
 
 - **Description**: Auth.js base URL for callback handling.
 - **Notes**: Required when **not** deploying on Vercel.
-- **Example**: `http://localhost:3000`
+- **Example**: `https://my-new-store.com`
 
 ---
 
@@ -88,7 +88,7 @@ This page lists and explains all environment variables used by the Nimara storef
 
 - **Description**: Logging level for application output.
 - **Options**: `debug`, `info`, `warning`, `error`, `critical`
-- **Default**: `info`
+- **Default**: `debug`
 
 ---
 

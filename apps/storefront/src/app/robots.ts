@@ -1,5 +1,7 @@
 import { type MetadataRoute } from "next";
 
+import { clientEnvs } from "@/envs/client";
+
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
@@ -9,6 +11,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/api/", "/_next/", "/_vercel/"],
       },
     ],
-    sitemap: `${process.env.BASE_URL}/sitemap.xml`,
+    sitemap: new URL("sitemap.xml", clientEnvs.BASE_URL).toString(),
   };
 }

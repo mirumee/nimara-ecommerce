@@ -14,14 +14,22 @@ export const getCollectionsIDsBySlugsInfra =
     logger,
   }: SaleorCollectionServiceConfig): GetCollectionsIDsBySlugsInfra =>
   async ({ channel, slugs, options }) => {
+    if (!slugs || slugs.length === 0) {
+      logger.debug(
+        "No collection slugs provided, skipping fetching collections ID's from Saleor",
+        {
+          channel,
+          slugs,
+        },
+      );
+
+      return ok(null);
+    }
+
     logger.debug("Fetching the collections ID's from Saleor", {
       slugs,
       channel,
     });
-
-    if (!slugs || slugs.length === 0) {
-      return ok(null);
-    }
 
     const result = await graphqlClient(apiURI).execute(
       CollectionsIDsBySlugsDocument,
