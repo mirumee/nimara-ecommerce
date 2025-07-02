@@ -1,4 +1,5 @@
 import { Steps } from "nextra/components";
+import Image from "next/image";
 
 # Storefront
 
@@ -34,6 +35,7 @@ NEXT_PUBLIC_SALEOR_API_URL=https://{your_domain}.saleor.cloud/graphql/
 # Local example
 # NEXT_PUBLIC_SALEOR_API_URL=http://localhost:8000/graphql/
 ```
+
 For a full list of required and optional variables, see the [Environment Variables Guide](./environment-variables).
 
 ### Run project
@@ -43,5 +45,41 @@ Run the development server.
 ```bash
 pnpm run dev:storefront
 ```
+
+</Steps>
+
+## Deployment
+
+<Steps>
+### Connect GitHub Repository
+Go to your projects on [Vercel](https://vercel.com/) -> click **Add New** and select **Project**.
+
+Choose your Nimara GitHub repository and click **Import**.
+
+### Set up New Project
+
+Select your **Vercel Team**, add **Project Name**, set **Root Directory** to `apps/storefront`:
+
+<div style={{ maxWidth: "400px", width: "100%", margin: "auto" }}>
+  ![New Project on Vercel](../../../images/storefront/vercel_new_project.png)
+</div>
+
+Set **Build Command** to `turbo run build --filter=storefront` and **Install Command** to `pnpm install`:
+
+<div style={{ maxWidth: "400px", width: "100%", margin: "auto" }}>
+  ![Build and Install commands on
+  Vercel](../../../images/storefront/vercel_commands.png)
+</div>
+
+Vercel does not use your local **.env** file so you must define all required variables:
+
+<div style={{ maxWidth: "400px", width: "100%", margin: "auto" }}>
+  ![Environment variables on
+  Vercel](../../../images/storefront/vercel_env_vars.png)
+</div>
+**Note**: See the [Environment Variables section](./environment-variables) for
+detailed instructions on setting up these variables.
+
+Deploy your new project: click **Deploy**
 
 </Steps>
