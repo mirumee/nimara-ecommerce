@@ -30,7 +30,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ({
         url: new URL(
           `/products/${product.slug}`,
-          clientEnvs.BASE_URL,
+          clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
         ).toString(),
         lastModified: product.updatedAt,
         changeFrequency: "daily",
@@ -40,7 +40,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     {
-      url: clientEnvs.BASE_URL,
+      url: clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
       lastModified: new Date(),
       changeFrequency: "always",
       priority: 1,
