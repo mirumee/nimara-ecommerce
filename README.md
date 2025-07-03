@@ -90,7 +90,7 @@ The app is now running at `http://localhost:3000`.
 
 ## Deploying the app to Vercel using a Terraform
 
-A guide how to deploy the app to Vercel using a Terraform can be found here: [Using Terraform - Nimara Docs](https://docs.nimara.store).
+A guide how to deploy the app to Vercel using a Terraform can be found here: [Using Terraform - Nimara Docs](https://docs.nimara.store/quickstart/using-terraform).
 
 ## ❤️ Community & Contribution
 
@@ -116,4 +116,3 @@ You can also contribute to Nimara in various ways:
 [hello@mirumee.com](mailto:hello@mirumee.com)
 
 </div>
-```

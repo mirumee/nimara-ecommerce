@@ -41,8 +41,6 @@ yarn-error.log*
 # vercel
 .vercel
 
-
-
 # Infra files
 # Local .terraform directories
 .terraform/
