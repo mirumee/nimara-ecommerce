@@ -13,7 +13,10 @@ interface ShoppingBagIconProps extends PropsWithChildren {
   count?: number;
 }
 
-export const ShoppingBagIcon = ({ children, count }: ShoppingBagIconProps) => {
+export const ShoppingBagIcon = ({
+  children,
+  count = 0,
+}: ShoppingBagIconProps) => {
   const t = useTranslations("cart");
 
   return (
