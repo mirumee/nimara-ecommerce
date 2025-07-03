@@ -1,5 +1,4 @@
 import { useTranslations } from "next-intl";
-import { type getTranslations } from "next-intl/server";
 
 import {
   type AddressFormField,
@@ -10,7 +9,7 @@ import { SelectFormField } from "@/components/form/select-form-field";
 import { TextFormField } from "@/components/form/text-form-field";
 import { generateFieldPrefix } from "@/lib/form/utils";
 import { cn } from "@/lib/utils";
-import { type TranslationMessage } from "@/types";
+import { type GetTranslations, type TranslationMessage } from "@/types";
 
 const renderInput = ({
   field,
@@ -21,7 +20,7 @@ const renderInput = ({
   field: AddressFormField;
   isDisabled?: boolean;
   schemaPrefix?: string;
-  t: Awaited<ReturnType<typeof getTranslations<"address">>>;
+  t: GetTranslations<"address">;
 }) => {
   const withSchemaPrefix = generateFieldPrefix(schemaPrefix);
 

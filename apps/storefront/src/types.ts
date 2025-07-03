@@ -1,8 +1,7 @@
-import type { NamespaceKeys, NestedKeyOf } from "next-intl";
-import type { getTranslations } from "next-intl/server";
+import type { NamespaceKeys, NestedKeyOf, useTranslations } from "next-intl";
 
 export type GetTranslations<Namespace extends TranslationNamespace = never> =
-  Awaited<ReturnType<typeof getTranslations<Namespace>>>;
+  Awaited<ReturnType<typeof useTranslations<Namespace>>>;
 
 export type TranslationNamespace = NamespaceKeys<
   IntlMessages,
@@ -11,5 +10,3 @@ export type TranslationNamespace = NamespaceKeys<
 
 export type TranslationMessage<Namespace extends TranslationNamespace = never> =
   Parameters<GetTranslations<Namespace>>[0];
-
-export type ServerError = { code: string };

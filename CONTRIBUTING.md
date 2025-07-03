@@ -7,7 +7,6 @@ We welcome all contributions, whether they be code, documentation, bug reports, 
 ## Getting Started
 
 1. **Fork the Repository**:
-
    - Click the "Fork" button at the top of this repository and clone your fork locally:
 
      ```bash
@@ -21,7 +20,6 @@ We welcome all contributions, whether they be code, documentation, bug reports, 
      ```
 
 2. **Set Upstream**:
-
    - Add the original repository as a remote to keep your fork in sync:
 
      ```bash
@@ -30,7 +28,6 @@ We welcome all contributions, whether they be code, documentation, bug reports, 
      ```
 
 3. **Create a Branch**:
-
    - Always create a new branch for your work:
 
      ```bash
@@ -40,7 +37,6 @@ We welcome all contributions, whether they be code, documentation, bug reports, 
 ## Making Changes
 
 1. **Code Standards**:
-
    - Ensure your code adheres to the project's coding standards.
    - Write clear, concise commit messages following the [Conventional Commits](https://www.conventionalcommits.org/) standard. Example:
 
@@ -49,7 +45,6 @@ We welcome all contributions, whether they be code, documentation, bug reports, 
      ```
 
 2. **Testing**:
-
    - Before submitting your code, ensure all tests pass:
 
      ```bash
@@ -65,7 +60,6 @@ We welcome all contributions, whether they be code, documentation, bug reports, 
 ## Submitting Changes
 
 1. **Push to Your Fork**:
-
    - Push your branch to your forked repository:
 
      ```bash
@@ -73,7 +67,6 @@ We welcome all contributions, whether they be code, documentation, bug reports, 
      ```
 
 2. **Create a Pull Request (PR)**:
-
    - Go to the [Pull Requests](https://github.com/mirumee/nimara-storefront/pulls) section of the original repository.
    - Click "New Pull Request".
    - Select your branch and provide a clear, descriptive title and a summary of your changes.
