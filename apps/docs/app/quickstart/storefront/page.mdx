@@ -37,6 +37,8 @@ NEXT_PUBLIC_SALEOR_API_URL=https://{your_domain}.saleor.cloud/graphql/
 
 For a full list of required and optional variables, see the [Environment Variables Guide](./environment-variables).
 
+### Set up webhooks in Saleor (see Webhooks section)
+
 ### Run project
 
 Run the development server.
@@ -47,7 +49,47 @@ pnpm run dev:storefront
 
 </Steps>
 
-## Deployment
+## 🪝 Webhooks
+
+Webhooks in Saleor let you receive real-time notifications for events like product or page updates, allowing you to instantly reflect changes in your frontend. This keeps your Nimara storefront in sync with Saleor, enabling instant cache updates and smooth integration.
+
+### How to set up webhooks in Saleor dashboard
+
+<Steps>
+
+### Create an App in Saleor
+
+Go to your Saleor dashboard → **Extensions** → click **Add Extension** → select **Provides details manually** -> add name and assign the necessary permissions for your app - **Manage navigation**, **Manage pages**, **Manage products** -> click **Save**.
+
+### Create Webhooks
+
+In section **Webhooks & Events** click **Create Webhook**
+
+You will need to create four webhooks, one for each of the following:
+
+`Product Webhook`
+
+- Target URL: `https://<your-domain-url>/api/webhooks/saleor/products`
+- Events: select all events related to the `Product` object, except `Export completed`.
+
+`Menu Webhook`
+
+- Target URL: `https://<your-domain-url>/api/webhooks/saleor/menu`
+- Events: select all events related to the `Menu` object.
+
+`Page Webhook`
+
+- Target URL: `https://<your-domain-url>/api/webhooks/saleor/page`
+- Events: select all events related to the `Page` object.
+
+`Collection Webhook`
+
+- Target URL: `https://<your-domain-url>/api/webhooks/saleor/collections`
+- Events: select `Deleted` and `Updated` events related to `Collection` object.
+
+</Steps>
+
+## 🚀 Deployment
 
 <Steps>
 ### Connect GitHub Repository
@@ -84,6 +126,10 @@ Deploy your new project: click **Deploy**
 #### Verify Deployment & Configure Settings
 
 After successful deployment, click **Continue to Dashboard** to manage deployed Nimara project.
+
+To ensure your storefront builds and runs correctly, set the **Node.js**web version in your Vercel project settings.
+
+⚠️ Required: Node.js version 22 or higher
 
 From the **Vercel dashboard**, you can manage and customize your storefront project:
 
