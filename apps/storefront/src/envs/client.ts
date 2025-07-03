@@ -7,14 +7,18 @@ const schema = z.object({
   ENVIRONMENT: z
     .enum(["TEST", "LOCAL", "DEVELOPMENT", "PRODUCTION", "STAGING"])
     .default("LOCAL"),
-  NEXT_PUBLIC_BUTTER_CMS_API_KEY: z.string().optional(),
-  NEXT_PUBLIC_DEFAULT_CHANNEL: z.string(),
-  NEXT_PUBLIC_DEFAULT_EMAIL: z.string().email().default("contact@mirumee.com"),
-  NEXT_PUBLIC_DEFAULT_PAGE_TITLE: z.string().default(DEFAULT_PAGE_TITLE),
-  NEXT_PUBLIC_SALEOR_API_URL: z.string().url(),
-  NEXT_PUBLIC_STOREFRONT_URL: z.string().url(),
-  PAYMENT_APP_ID: z.string(),
-  STRIPE_PUBLIC_KEY: z.string(),
+  NEXT_PUBLIC_BUTTER_CMS_API_KEY: z.string().trim().optional(),
+  NEXT_PUBLIC_DEFAULT_CHANNEL: z.string().trim(),
+  NEXT_PUBLIC_DEFAULT_EMAIL: z
+    .string()
+    .trim()
+    .email()
+    .default("contact@mirumee.com"),
+  NEXT_PUBLIC_DEFAULT_PAGE_TITLE: z.string().trim().default(DEFAULT_PAGE_TITLE),
+  NEXT_PUBLIC_SALEOR_API_URL: z.string().url().trim(),
+  NEXT_PUBLIC_STOREFRONT_URL: z.string().url().trim(),
+  PAYMENT_APP_ID: z.string().trim(),
+  STRIPE_PUBLIC_KEY: z.string().trim(),
 });
 
 export const clientEnvs = schema.parse({
