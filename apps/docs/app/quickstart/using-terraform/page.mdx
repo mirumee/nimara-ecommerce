@@ -1,28 +1,16 @@
 import { Steps } from "nextra/components";
 
-# Stripe Integration in Nimara
+# Deploying Nimara to Vercel using Terraform
 
-Nimara supports Stripe integration via a Saleor App. You can choose between a **Python**-based app or a **TypeScript**-based app, depending on your preference and deployment setup.
-
-Both of apps support:
-
-- 💳 Stripe Payment Intents
-- 🌍 Multi-channel Stripe configuration
-- 🧾 Stripe Tax calculation
-- 🔁 Webhook setup via Stripe keys
-
-## Option 1: Use the Python Stripe App
-
-The Nimara Stripe app is a standalone Python service that can be installed in Saleor via a manifest URL and connects with Saleor via webhooks.
-This option uses the official [Nimara Stripe Python app](https://github.com/mirumee/nimara-stripe).
+Nimara can be deployed to Vercel using Terraform, which allows you to manage your infrastructure as code. This guide will walk you through the steps to deploy Nimara to Vercel using Terraform.
 
 ### ⚙️ Prerequisites
 
 Before proceeding, ensure you have:
 
-- Access to your **Stripe account** (with API keys)
+- Installed [Terraform](https://developer.hashicorp.com/terraform/install)
+- Access to your **Vercel account**
 - Access to your **Saleor Dashboard**
-- A **deployed instance** of the Nimara Stripe Python App
 
 <Steps>
 #### Set environment variables
