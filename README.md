@@ -99,6 +99,8 @@ You can also contribute to Nimara in various ways:
 - Share your experiences or projects related to Nimara with the broader community through talks or blog posts.
 - Support [popular feature requests](https://github.com/mirumee/nimara-ecommerce/issues?q=sort%3Aupdated-desc+is%3Aissue+is%3Aopen) by upvoting them.
 
+For detailed contributing guidelines, please see [How to contribute to Nimara Storefron guide](./CONTRIBUTING.md)
+
 ### This wouldn't have been possible without your support
 
 <a href="https://github.com/mirumee/nimara-ecommerce/graphs/contributors">

@@ -5,13 +5,23 @@ import { Steps } from "nextra/components";
 This guide will help you set up a [Nimara storefront](https://www.demo.nimara.store) in your local environment.
 
 <Steps>
-### Install project
+### Fork and clone project
+First, **fork** the Nimara repository to your own GitHub account. This allows you to make changes independently and submit pull requests later.
 
-Clone repo and install dependencies.
+Go to the Nimara GitHub repo.
+
+Click the **Fork** button in the top-right corner.
+
+Once the fork is created, clone your fork locally:
 
 ```bash
-git clone https://github.com/mirumee/nimara-ecommerce.git nimara-ecommerce
+git clone https://github.com/{your_github_username}/nimara-ecommerce.git nimara-ecommerce
 cd nimara-ecommerce
+```
+
+### Install project's dependencies
+
+```bash
 pnpm install
 ```
 
@@ -57,7 +67,7 @@ Webhooks in Saleor let you receive real-time notifications for events like produ
 
 <Steps>
 
-### Create an App in Saleor
+### Create a new extension for webhooks
 
 Go to your Saleor dashboard → **Extensions** → click **Add Extension** → select **Provides details manually** -> add name and assign the necessary permissions for your app - **Manage navigation**, **Manage pages**, **Manage products** -> click **Save**.
 
