@@ -13,7 +13,7 @@ Both of apps suport:
 
 ## Option 1: Use the Python Stripe App
 
-The Nimara Stripe app is a standalone Python service that connects to Saleor via a manifest URL.
+The Nimara Stripe app is a standalone Python service that can be installed in Saleor via a manifest URL and connects with Saleor via webhooks.
 This option uses the official [Nimara Stripe Python app](https://github.com/mirumee/nimara-stripe).
 
 ### ⚙️ Prerequisites
@@ -76,7 +76,7 @@ Paste the manifest URL and click **Install**
 
 ### 🚀 Deployment Guide
 
-The Nimara Stripe Python App can be deployed using Docker or AWS (Lambda + Terraform).
+The Nimara Stripe Python App can be run in Docker or be deployed to AWS Lambda using provided Terraform.
 
 #### Option 1: Docker (Quick Start)
 
@@ -190,7 +190,7 @@ You can install the app via the manifest URL in two ways:
 
 - Replace the values and open this link:
 
-`https://YOUR-SALEOR-CLOUD-DOMAIN/dashboard/apps/install?manifestUrl=https://YOUR-APP-DOMAIN/api/saleor/manifest`
+`https://<YOUR-SALEOR-CLOUD-DOMAIN>/dashboard/apps/install?manifestUrl=https://<YOUR-APP-DOMAIN>/api/saleor/manifest`
 
 - From the Saleor Dashboard → **Extensions** → click **Add Extension** → select **Install From Manifest**.
 
