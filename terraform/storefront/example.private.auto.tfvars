@@ -8,7 +8,7 @@ vercel_team_id = ""
 vercel_api_token = ""
 
 # Map of private environment variables to be set in the Vercel project. Put sensitive information here.
-public_environment_variables = {
+private_environment_variables = {
   "SALEOR_APP_TOKEN": {
     comment = "Required. Saleor app token for the storefront."
     envs_values = [
