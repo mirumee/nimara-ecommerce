@@ -1,15 +1,19 @@
 name: QA Deploy
 
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
 on:
-  pull_request:
   workflow_dispatch:
     inputs:
       commit_ref:
         description: "Branch, tag, or commit SHA to deploy"
         required: true
         default: "develop"
-      instance:
-        description: "Instance to deploy"
+      environment_name:
+        description: "Environment to deploy"
         type: choice
         required: true
         options:
@@ -39,7 +43,7 @@ on:
 
 jobs:
   deploy:
-    name: "Deploy to QA Instance"
+    name: "Deploy to QA environment"
     runs-on: ubuntu-latest
 
     steps:
@@ -48,21 +52,30 @@ jobs:
         with:
           ref: ${{ github.event.inputs.commit_ref }}
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: "Install Vercel CLI"
+        run: pnpm install --global vercel@latest
+
+      - name: Pull Vercel Environment Information
+        id: vercel_pull_step
+        run: vercel pull --yes --environment=${{ github.event.inputs.environment }} --token=${{ secrets.VERCEL_TOKEN }}
+
       - name: "Deploy to Vercel Preview"
-        uses: vercel/vercel-action@v3
+        uses: amondnet/vercel-action@v25
         id: vercel_deploy
         with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
           production: false
           build-env: |
             CMS_SERVICE=${{ github.event.inputs.cms_service }}
             SEARCH_ENGINE=${{ github.event.inputs.search_engine }}
             PAYMENT_APP=${{ github.event.inputs.payment_app }}
-
-      - name: "Install Vercel CLI"
-        run: npm install --global vercel@latest
 
       - name: "Assign domain alias based on instance"
         run: |
@@ -77,7 +90,7 @@ jobs:
 
             Deployment for commit `${{ github.event.inputs.commit_ref }}` is complete.
 
-            **Instance URL:** https://${{ github.event.inputs.instance }}.your-project.vercel.app
+            **Instance URL:** ${{ steps.vercel_pull_step.outputs.preview-url }}
 
             **Settings used:**
             - **Instance:** `${{ github.event.inputs.instance }}`
