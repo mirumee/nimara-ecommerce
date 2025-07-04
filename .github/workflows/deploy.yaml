@@ -1,0 +1,86 @@
+name: QA Deploy
+
+on:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      commit_ref:
+        description: "Branch, tag, or commit SHA to deploy"
+        required: true
+        default: "develop"
+      instance:
+        description: "Instance to deploy"
+        type: choice
+        required: true
+        options:
+          - "qa-1"
+          - "qa-2"
+      search_engine:
+        description: "Search engine to use"
+        type: choice
+        required: true
+        options:
+          - "Algolia"
+          - "Saleor"
+      payment_app:
+        description: "Which payment app to use"
+        type: choice
+        required: true
+        options:
+          - "global.nimara-stripe"
+          - "Stripe - Node.js"
+      cms_service:
+        description: "CMS service to use"
+        type: choice
+        required: true
+        options:
+          - "saleor"
+          - "butter"
+
+jobs:
+  deploy:
+    name: "Deploy to QA Instance"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.commit_ref }}
+
+      - name: "Deploy to Vercel Preview"
+        uses: vercel/vercel-action@v3
+        id: vercel_deploy
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          production: false
+          build-env: |
+            CMS_SERVICE=${{ github.event.inputs.cms_service }}
+            SEARCH_ENGINE=${{ github.event.inputs.search_engine }}
+            PAYMENT_APP=${{ github.event.inputs.payment_app }}
+
+      - name: "Install Vercel CLI"
+        run: npm install --global vercel@latest
+
+      - name: "Assign domain alias based on instance"
+        run: |
+          vercel alias set ${{ steps.vercel_deploy.outputs.preview-url }} ${{ github.event.inputs.instance }}-nimara.vercel.app --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: "Comment on commit with deployment URL"
+        uses: peter-evans/commit-comment@v3
+        with:
+          sha: ${{ github.event.inputs.commit_ref }}
+          body: |
+            🔬 **QA Build Ready!**
+
+            Deployment for commit `${{ github.event.inputs.commit_ref }}` is complete.
+
+            **Instance URL:** https://${{ github.event.inputs.instance }}.your-project.vercel.app
+
+            **Settings used:**
+            - **Instance:** `${{ github.event.inputs.instance }}`
+            - **CMS:** `${{ github.event.inputs.cms_service }}`
+            - **Search:** `${{ github.event.inputs.search_engine }}`
+            - **Payment:** `${{ github.event.inputs.payment_app }}`
