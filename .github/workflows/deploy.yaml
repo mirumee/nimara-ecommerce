@@ -1,34 +1,37 @@
 name: QA Deploy
 
 on:
-  pull_request:
   workflow_dispatch:
     inputs:
-      commit_ref:
-        description: "Branch, tag, or commit SHA to deploy"
-        required: true
-        default: "develop"
-      instance:
+      instance_name:
         description: "Instance to deploy"
         type: choice
         required: true
         options:
           - "qa-1"
           - "qa-2"
+        default: "qa-1"
+      commit_ref:
+        description: "Branch, tag, or commit SHA to deploy"
+        required: true
+        type: string
+        default: "develop"
       search_engine:
         description: "Search engine to use"
         type: choice
         required: true
         options:
-          - "Algolia"
-          - "Saleor"
+          - "algolia"
+          - "saleor"
+        default: "saleor"
       payment_app:
-        description: "Which payment app to use"
+        description: "Payment app to use"
         type: choice
         required: true
         options:
           - "global.nimara-stripe"
           - "Stripe - Node.js"
+        default: "global.nimara-stripe"
       cms_service:
         description: "CMS service to use"
         type: choice
@@ -36,11 +39,19 @@ on:
         options:
           - "saleor"
           - "butter"
+        default: "saleor"
 
 jobs:
   deploy:
-    name: "Deploy to QA Instance"
+    name: "Deploy to QA environment"
     runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.instance_name != '' && github.event.inputs.commit_ref != '' }}
+    env:
+      INSTANCE_NAME: ${{ github.event.inputs.instance_name }}
+      # Environment domain alias to assign, without the protocol. Must be configured in Vercel.
+      ALIAS_DOMAINS: |
+        "${{ github.event.inputs.instance_name }}-nimara.vercel.app"
+      STOREFRONT_URL: "https://${{ github.event.inputs.instance_name }}-nimara.vercel.app"
 
     steps:
       - name: "Checkout code"
@@ -48,39 +59,27 @@ jobs:
         with:
           ref: ${{ github.event.inputs.commit_ref }}
 
-      - name: "Deploy to Vercel Preview"
-        uses: vercel/vercel-action@v3
-        id: vercel_deploy
+      - name: "Build and deploy the environment"
+        uses: amondnet/vercel-action@v25
         with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          alias-domains: $ALIAS_DOMAINS
+          scope: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-args: |
+            -b NEXT_PUBLIC_STOREFRONT_URL=$STOREFRONT_URL
+            -b CMS_SERVICE=${{ github.event.inputs.cms_service }}
+            -b SEARCH_ENGINE=${{ github.event.inputs.search_engine }}
+            -b NEXT_PUBLIC_PAYMENT_APP_ID=${{ github.event.inputs.payment_app }}
+            -b ENVIRONMENT=$INSTANCE_NAME
+            --target=$INSTANCE_NAME
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          production: false
-          build-env: |
-            CMS_SERVICE=${{ github.event.inputs.cms_service }}
-            SEARCH_ENGINE=${{ github.event.inputs.search_engine }}
-            PAYMENT_APP=${{ github.event.inputs.payment_app }}
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
 
-      - name: "Install Vercel CLI"
-        run: npm install --global vercel@latest
-
-      - name: "Assign domain alias based on instance"
+      - name: "Summary"
         run: |
-          vercel alias set ${{ steps.vercel_deploy.outputs.preview-url }} ${{ github.event.inputs.instance }}-nimara.vercel.app --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: "Comment on commit with deployment URL"
-        uses: peter-evans/commit-comment@v3
-        with:
-          sha: ${{ github.event.inputs.commit_ref }}
-          body: |
-            🔬 **QA Build Ready!**
-
-            Deployment for commit `${{ github.event.inputs.commit_ref }}` is complete.
-
-            **Instance URL:** https://${{ github.event.inputs.instance }}.your-project.vercel.app
-
-            **Settings used:**
-            - **Instance:** `${{ github.event.inputs.instance }}`
-            - **CMS:** `${{ github.event.inputs.cms_service }}`
-            - **Search:** `${{ github.event.inputs.search_engine }}`
-            - **Payment:** `${{ github.event.inputs.payment_app }}`
+          echo "Deployment URL: $STOREFRONT_URL"
+          echo "Instance Name: $INSTANCE_NAME"
+          echo "Commit Ref: ${{ github.event.inputs.commit_ref }}"
+          echo "Search Engine: ${{ github.event.inputs.search_engine }}"
+          echo "Payment App: ${{ github.event.inputs.payment_app }}"
+          echo "CMS Service: ${{ github.event.inputs.cms_service }}"
