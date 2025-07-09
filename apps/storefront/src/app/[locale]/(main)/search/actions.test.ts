@@ -1,4 +1,3 @@
-// Import the functions that will be mocked
 import { getLocale } from "next-intl/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 

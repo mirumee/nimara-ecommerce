@@ -6,66 +6,29 @@ import type {
   GetFacetsInfra,
 } from "@nimara/infrastructure/use-cases/search/types";
 
-import { getIndexName } from "../helpers";
+import { buildFilters, getIndexName } from "../helpers";
 import type { AlgoliaSearchServiceConfig } from "../types";
 
-export const algoliaGetFacetsInfra = ({
-  credentials,
-  settings,
-  logger,
-}: AlgoliaSearchServiceConfig): GetFacetsInfra => {
-  const algoliaClient = algoliasearch(credentials.appId, credentials.apiKey);
+export const algoliaGetFacetsInfra =
+  ({
+    credentials,
+    settings,
+    logger,
+  }: AlgoliaSearchServiceConfig): GetFacetsInfra =>
+  async ({ query, filters }, { channel }) => {
+    const algoliaClient = algoliasearch(credentials.appId, credentials.apiKey);
+    const indexName = getIndexName(settings.indices, channel, logger);
 
-  return async (params, context) => {
-    const indexName = getIndexName(settings.indices, context.channel);
-
-    // Create a mapping between slugs and Algolia name
-    const parsedFilters = Object.entries(params?.filters ?? {})
-      .reduce<string[]>((acc, [name, value]) => {
-        if (name === "category") {
-          const formattedValue = (
-            String(value).charAt(0).toUpperCase() + String(value).slice(1)
-          ).replaceAll("-", " & ");
-
-          acc.push(`categories.lvl0:'${formattedValue}'`);
-        }
-
-        if (name === "collection") {
-          const formattedValue = value
-            .split(".")
-            .map(
-              (v) =>
-                `'${v.charAt(0).toUpperCase() + v.slice(1).replaceAll("-", " & ")}'`,
-            )
-            .join(" OR ");
-
-          acc.push(`collections:${formattedValue}`);
-        }
-
-        // if (name in facetsMapping) {
-        const values = value.split(".");
-
-        if (values.length > 1) {
-          const multipleValuesFacet: string[] = [];
-
-          values.forEach((v) => {
-            multipleValuesFacet.push(`${name}:${v}`);
-          });
-
-          acc.push(multipleValuesFacet.join(" OR "));
-        } else {
-          acc.push(`${name}:${value}`);
-        }
-        // }
-
-        return acc;
-      }, [])
-      .join(" AND ");
+    const parsedFilters = buildFilters({
+      indices: settings.indices,
+      channel,
+      filters,
+    });
 
     const response = await algoliaClient.searchSingleIndex({
       indexName,
       searchParams: {
-        query: params?.query ?? "",
+        query: query ?? "",
         facets: ["*"],
         responseFields: ["facets"],
         sortFacetValuesBy: "alpha",
@@ -75,13 +38,11 @@ export const algoliaGetFacetsInfra = ({
       },
     });
 
-    const index = settings.indices.find(
-      (index) => index.channel === context.channel,
-    );
+    const index = settings.indices.find((index) => index.channel === channel);
 
     if (!index) {
       logger.info("Index not found for channel", {
-        channel: context.channel,
+        channel,
       });
 
       return ok([]);
@@ -90,7 +51,7 @@ export const algoliaGetFacetsInfra = ({
     if (!response?.facets) {
       logger.info("No facets found in Algolia results", {
         indexName,
-        channel: context.channel,
+        channel,
       });
 
       return ok([]);
@@ -119,4 +80,3 @@ export const algoliaGetFacetsInfra = ({
 
     return ok(facets);
   };
-};

@@ -6,7 +6,7 @@ import type {
   SearchInfra,
 } from "@nimara/infrastructure/use-cases/search/types";
 
-import { getIndexName } from "../helpers";
+import { buildFilters, getIndexName } from "../helpers";
 import { searchProductSerializer } from "../serializers";
 import type { AlgoliaSearchServiceConfig, ProductHit } from "../types";
 
@@ -19,58 +19,13 @@ export const algoliaSearchInfra =
   }: AlgoliaSearchServiceConfig): SearchInfra =>
   async ({ page, filters, sortBy, query, limit }, { channel }) => {
     const client = algoliasearch(credentials.appId, credentials.apiKey);
-    const indexName = getIndexName(settings.indices, channel, sortBy);
+    const indexName = getIndexName(settings.indices, channel, logger, sortBy);
 
-    const mainIndex = settings.indices.find(
-      (index) => index.channel === channel,
-    );
-
-    const facetsMapping = Object.entries(
-      mainIndex?.availableFacets ?? {},
-    ).reduce<Record<string, string>>((acc, [key, value]) => {
-      acc[value.slug] = key;
-
-      return acc;
-    }, {});
-
-    const parsedFilters = Object.entries(filters ?? {})
-      .reduce<string[]>((acc, [name, value]) => {
-        if (name === "category") {
-          const formattedValue = (
-            String(value).charAt(0).toUpperCase() + String(value).slice(1)
-          ).replaceAll("-", " & ");
-
-          acc.push(`categories.lvl0:'${formattedValue}'`);
-        }
-        if (name === "collection") {
-          const formattedValue = value
-            .split(".")
-            .map(
-              (v) =>
-                `'${v.charAt(0).toUpperCase() + v.slice(1).replaceAll("-", " & ")}'`,
-            )
-            .join(" OR ");
-
-          acc.push(`collections:${formattedValue}`);
-        } else if (name in facetsMapping) {
-          const values = value.split(".");
-
-          if (values.length > 1) {
-            const multipleValuesFacet: string[] = [];
-
-            values.forEach((v) => {
-              multipleValuesFacet.push(`${facetsMapping[name]}:${v}`);
-            });
-
-            acc.push(multipleValuesFacet.join(" OR "));
-          } else {
-            acc.push(`${facetsMapping[name]}:${value}`);
-          }
-        }
-
-        return acc;
-      }, [])
-      .join(" AND ");
+    const parsedFilters = buildFilters({
+      indices: settings.indices,
+      channel,
+      filters,
+    });
 
     try {
       const response = await client.searchSingleIndex<ProductHit>({
@@ -93,7 +48,7 @@ export const algoliaSearchInfra =
         );
 
         if (index) {
-          facets = Object.entries(response.facets ?? {}).reduce<Facet[]>(
+          facets = Object.entries(response.facets).reduce<Facet[]>(
             (acc, [facetName, facetChoices]) => {
               const indexFacetConfig = index.availableFacets[facetName];
 

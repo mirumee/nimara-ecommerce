@@ -12,6 +12,7 @@
   ],
   "globalPassThroughEnv": [
     "AUTH_SECRET",
+    "ENVIRONMENT",
     "LOG_LEVEL",
     "SALEOR_APP_TOKEN",
     "SENTRY_AUTH_TOKEN",
