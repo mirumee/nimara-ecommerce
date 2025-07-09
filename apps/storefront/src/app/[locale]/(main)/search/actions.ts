@@ -6,69 +6,120 @@ import { DEFAULT_SORT_BY } from "@/config";
 import { redirect } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 
-const passThroughParams = ["sortBy", "limit", "q"] as const;
+const PASS_THROUGH_PARAMS = ["sortBy", "limit", "q"] as const;
+const GROUP_PREFIX = "group";
 
+/**
+ * Processes FormData into a structured object in a single pass.
+ */
+function processFormData(formData: FormData) {
+  const result = {
+    filters: {} as Record<string, string>,
+    passThrough: {} as Record<string, string>,
+    shouldClear: formData.has("clear"),
+  };
+
+  formData.forEach((value, key) => {
+    // Skip the 'clear' flag itself
+    if (key === "clear") {
+      return;
+    }
+
+    if (PASS_THROUGH_PARAMS.includes(key)) {
+      if (typeof value === "string" && value !== "") {
+        result.passThrough[key] = value;
+      }
+
+      return;
+    }
+
+    // Handle special 'group' keys (e.g., 'groupcolor-red')
+    if (key.startsWith(GROUP_PREFIX)) {
+      const [k, v] = key.replace(GROUP_PREFIX, "").split("-");
+      const existing = result.filters[k] || "";
+
+      result.filters[k] = existing ? `${existing}.${v}` : v;
+
+      return;
+    }
+
+    // Handle standard multi-value keys
+    const allValues = formData
+      .getAll(key)
+      .filter((v): v is string => typeof v === "string" && v !== "");
+
+    if (allValues.length > 0) {
+      result.filters[key] = allValues.join(",");
+    }
+  });
+
+  return result;
+}
+
+/**
+ * Handles the form submission for filters, updating the search parameters accordingly.
+ *
+ * @param searchParams - The current search parameters from the URL.
+ * @param formData - The FormData object containing the submitted filter values.
+ * @returns A redirect response with updated search parameters.
+ */
 export const handleFiltersFormSubmit = async (
   searchParams: Record<string, string>,
   formData: FormData,
 ) => {
-  const formClear = formData.has("clear");
-  const params = new URLSearchParams(searchParams);
+  const { filters, passThrough, shouldClear } = processFormData(formData);
   const locale = await getLocale();
 
-  params.delete("before");
-  params.delete("after");
+  // Create a "snapshot" of the initial filters (without pagination params)
+  const initialParams = new URLSearchParams(searchParams);
 
-  const filterKeys = new Set<string>();
+  initialParams.delete("page");
+  initialParams.delete("before");
+  initialParams.delete("after");
+  const initialFiltersString = initialParams.toString();
 
-  formData.forEach((_, key) => {
-    if (!passThroughParams.includes(key as any)) {
-      filterKeys.add(key);
+  // Build the new params from the original searchParams
+  const finalParams = new URLSearchParams(searchParams);
+
+  // Reset all old filter keys first for a clean state
+  Object.keys(filters).forEach((key) => finalParams.delete(key));
+
+  if (!shouldClear) {
+    for (const [key, value] of Object.entries(filters)) {
+      finalParams.set(key, value);
     }
-  });
-
-  if (formClear) {
-    filterKeys.forEach((key) => params.delete(key));
-  } else {
-    formData.forEach((_, key) => {
-      if (key.startsWith("group")) {
-        const [k, v] = key.replace("group", "").split("-");
-        const existing = params.get(k);
-
-        params.set(k, existing ? `${existing}.${v}` : v);
-      } else {
-        const allValues = formData.getAll(key);
-
-        const nonEmpty = allValues.filter(
-          (v) => typeof v === "string" && v !== "",
-        );
-
-        if (nonEmpty.length > 0) {
-          params.set(key, nonEmpty.join(","));
-        } else {
-          params.delete(key);
-        }
-      }
-    });
   }
 
-  passThroughParams.forEach((param) => {
-    const formValue = formData.get(param) as string;
-    const value = formValue ?? searchParams[param];
+  // Handle pass-through params like sortBy etc.
+  for (const param of PASS_THROUGH_PARAMS) {
+    const value = passThrough[param] ?? searchParams[param];
 
-    // Sorting can be changed either independently (on desktop)
-    // or together with filters (on mobile)
-    // that is why it needs some custom logic
     if (param === "sortBy" && value === DEFAULT_SORT_BY) {
-      params.delete(param);
+      finalParams.delete(param);
     } else if (value) {
-      params.set(param, value);
+      finalParams.set(param, value);
+    } else {
+      finalParams.delete(param);
     }
-  });
+  }
+
+  const finalParamsForComparison = new URLSearchParams(finalParams);
+
+  finalParamsForComparison.delete("page");
+  finalParamsForComparison.delete("before");
+  finalParamsForComparison.delete("after");
+  const finalFiltersString = finalParamsForComparison.toString();
+
+  // If filters have changed, clear pagination params
+  if (initialFiltersString !== finalFiltersString) {
+    finalParams.delete("page");
+    finalParams.delete("before");
+    finalParams.delete("after");
+  }
 
   return redirect({
     href: paths.search.asPath({
-      query: Object.fromEntries(params),
+      query: Object.fromEntries(finalParams),
     }),
     locale,
   });

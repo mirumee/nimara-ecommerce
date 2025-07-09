@@ -22,9 +22,11 @@ import { DEFAULT_SORT_BY } from "@/config";
 import { type TranslationMessage } from "@/types";
 
 import { handleFiltersFormSubmit } from "../actions";
+import { ColorSwatch } from "./color-swatch";
 import { FilterBoolean } from "./filter-boolean";
 import { FilterDropdown } from "./filter-dropdown";
 import { FilterMultiSelect } from "./filter-multi-select";
+import { FilterText } from "./filter-text";
 import { FiltersCounter } from "./filters-counter";
 
 type Props = {
@@ -37,9 +39,15 @@ const renderFilterComponent = (
   facet: Facet,
   searchParams: Record<string, string>,
 ) => {
-  // TODO: Extend this function for other, more adequate Filter components
   switch (facet.type) {
-    case "SWATCH":
+    case "BOOLEAN":
+      return (
+        <FilterBoolean
+          key={facet.name}
+          facet={facet}
+          searchParams={searchParams}
+        />
+      );
     case "DROPDOWN":
       return (
         <FilterDropdown
@@ -56,10 +64,18 @@ const renderFilterComponent = (
           searchParams={searchParams}
         />
       );
-    case "BOOLEAN":
+    case "PLAIN_TEXT":
       return (
-        <FilterBoolean
-          key={facet.name}
+        <FilterText
+          key={facet.name ?? facet.slug}
+          facet={facet}
+          searchParams={searchParams}
+        />
+      );
+    case "SWATCH":
+      return (
+        <ColorSwatch
+          key={facet.name ?? facet.slug}
           facet={facet}
           searchParams={searchParams}
         />
@@ -78,6 +94,8 @@ export const FiltersContainer = async ({
     null,
     searchParams,
   );
+
+  const booleanFacets = facets.filter((facet) => facet.type === "BOOLEAN");
 
   return (
     <Sheet>
@@ -126,18 +144,18 @@ export const FiltersContainer = async ({
                     .map((facet) => renderFilterComponent(facet, searchParams))}
                 </div>
 
-                <div>
-                  <p className="mb-4 text-base text-black">
-                    {t("filters.options")}
-                  </p>
-                  <div className="grid items-center gap-4">
-                    {facets
-                      ?.filter(({ type }) => type === "BOOLEAN")
-                      .map((facet) =>
+                {!!booleanFacets.length && (
+                  <div>
+                    <p className="mb-4 text-base text-black">
+                      {t("filters.options")}
+                    </p>
+                    <div className="grid items-center gap-4">
+                      {booleanFacets.map((facet) =>
                         renderFilterComponent(facet, searchParams),
                       )}
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </ScrollArea>
           </SheetDescription>

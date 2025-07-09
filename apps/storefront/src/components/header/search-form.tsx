@@ -261,7 +261,6 @@ const searchProducts = async (
   value: string,
 ): Promise<{ results: ComboboxOption[] }> => {
   const region = await getCurrentRegion();
-
   const result = await searchService.search(
     {
       query: value,

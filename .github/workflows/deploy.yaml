@@ -21,36 +21,34 @@ on:
         type: choice
         required: true
         options:
-          - "algolia"
-          - "saleor"
-        default: "saleor"
+          - "ALGOLIA"
+          - "SALEOR"
+        default: "SALEOR"
       payment_app:
         description: "Payment app to use"
         type: choice
         required: true
         options:
           - "global.nimara-stripe"
-          - "Stripe - Node.js"
+          - "DEMO.stripe"
         default: "global.nimara-stripe"
       cms_service:
         description: "CMS service to use"
         type: choice
         required: true
         options:
-          - "saleor"
-          - "butter"
+          - "SALEOR"
+          - "BUTTER_CMS"
         default: "saleor"
 
 jobs:
   deploy:
     name: "Deploy to QA environment"
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.instance_name != '' && github.event.inputs.commit_ref != '' }}
     env:
       INSTANCE_NAME: ${{ github.event.inputs.instance_name }}
       # Environment domain alias to assign, without the protocol. Must be configured in Vercel.
-      ALIAS_DOMAINS: |
-        "${{ github.event.inputs.instance_name }}-nimara.vercel.app"
+      ALIAS_DOMAINS: "${{ github.event.inputs.instance_name }}-nimara.vercel.app"
       STOREFRONT_URL: "https://${{ github.event.inputs.instance_name }}-nimara.vercel.app"
 
     steps:
@@ -60,25 +58,26 @@ jobs:
           ref: ${{ github.event.inputs.commit_ref }}
 
       - name: "Build and deploy the environment"
-        uses: amondnet/vercel-action@v25
+        uses: amondnet/vercel-action@v25.2.0
         with:
-          alias-domains: $ALIAS_DOMAINS
+          alias-domains: ${{ env.ALIAS_DOMAINS }}
           scope: ${{ secrets.VERCEL_ORG_ID }}
           vercel-args: |
-            -b NEXT_PUBLIC_STOREFRONT_URL=$STOREFRONT_URL
-            -b CMS_SERVICE=${{ github.event.inputs.cms_service }}
-            -b SEARCH_ENGINE=${{ github.event.inputs.search_engine }}
+            -b NEXT_PUBLIC_CMS_SERVICE=${{ github.event.inputs.cms_service }}
             -b NEXT_PUBLIC_PAYMENT_APP_ID=${{ github.event.inputs.payment_app }}
-            -b ENVIRONMENT=$INSTANCE_NAME
-            --target=$INSTANCE_NAME
+            -b NEXT_PUBLIC_SEARCH_SERVICE=${{ github.event.inputs.search_engine }}
+            -b NEXT_PUBLIC_STOREFRONT_URL=${{ env.STOREFRONT_URL }}
+            -b ENVIRONMENT=${{ env.INSTANCE_NAME }}
+            --target=${{ env.INSTANCE_NAME }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-version: "44.2.13"
 
       - name: "Summary"
         run: |
-          echo "Deployment URL: $STOREFRONT_URL"
-          echo "Instance Name: $INSTANCE_NAME"
+          echo "Deployment URL: ${{ env.STOREFRONT_URL }}"
+          echo "Instance Name: ${{ env.INSTANCE_NAME }}"
           echo "Commit Ref: ${{ github.event.inputs.commit_ref }}"
           echo "Search Engine: ${{ github.event.inputs.search_engine }}"
           echo "Payment App: ${{ github.event.inputs.payment_app }}"

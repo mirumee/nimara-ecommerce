@@ -2,7 +2,7 @@ import type { TaxedPrice } from "@nimara/domain/objects/common";
 
 import { getTranslation } from "#root/lib/saleor";
 
-import type { SearchProductSerializer } from "./types";
+import type { SearchProductSerializer } from "../types";
 
 interface Variant {
   pricing: {
