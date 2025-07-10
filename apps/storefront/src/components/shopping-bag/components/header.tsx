@@ -17,7 +17,7 @@ export const Header = ({
   const t = useTranslations();
   const formatter = useLocalizedFormatter();
 
-  const headerTextClass = "text-2xl text-stone-700";
+  const headerTextClass = "text-2xl text-primary";
 
   return (
     <div

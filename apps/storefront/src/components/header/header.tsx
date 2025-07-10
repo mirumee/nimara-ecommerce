@@ -23,6 +23,7 @@ import { MobileSideMenu } from "./mobile-side-menu";
 import { SearchForm } from "./search-form";
 import { ShoppingBagIcon } from "./shopping-bag-icon";
 import { ShoppingBagIconWithCount } from "./shopping-bag-icon-with-count";
+import { ThemeToggle } from "./theme-toggle";
 
 export const Header = async () => {
   const accessToken = await getAccessToken();
@@ -93,6 +94,10 @@ export const Header = async () => {
 
             <div className="hidden md:block">
               <LocaleSwitch region={region} />
+            </div>
+
+            <div className="hidden md:block">
+              <ThemeToggle />
             </div>
 
             <Button

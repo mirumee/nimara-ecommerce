@@ -13,7 +13,7 @@ export default function Loading() {
           <div className="flex flex-col gap-8 divide-y pt-8"></div>
         </main>
       </div>
-      <aside className="hidden bg-gray-100 md:block">
+      <aside className="hidden bg-gray-100 md:block dark:bg-stone-900">
         <CheckoutSkeleton />
       </aside>
     </section>

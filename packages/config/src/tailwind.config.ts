@@ -9,7 +9,7 @@ export default function config(app?: "storefront" | "stripe") {
       "../../packages/ui/src/**/*.{ts,tsx,html,stories.tsx}",
       "../../interface/**/*.{ts,tsx,html,stories.tsx}",
     ],
-    darkMode: ["class"],
+    darkMode: "class",
     theme: {
       screens: {
         xs: "360px",

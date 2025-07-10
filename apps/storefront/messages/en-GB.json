@@ -91,7 +91,9 @@
     "option-label": "Option {index}: {value}",
     "logo": "Nimara's logo",
     "pagination": "Pagination",
-    "and": "and"
+    "and": "and",
+    "switch-to-light": "Switch to light",
+    "switch-to-dark": "Switch to dark"
   },
   "cart": {
     "empty": "Your bag is empty",

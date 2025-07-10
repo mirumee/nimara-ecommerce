@@ -32,7 +32,7 @@ export default function Layout({ children }: { children: ReactNode }) {
           <div className="flex flex-col gap-8 divide-y pt-8">{children}</div>
         </main>
       </div>
-      <aside className="hidden bg-gray-100 md:block">
+      <aside className="hidden bg-gray-100 md:block dark:bg-stone-900">
         <SideSummary />
       </aside>
       <aside className="absolute right-0 pt-4 md:hidden">

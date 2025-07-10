@@ -7,14 +7,14 @@ export default async function Page() {
 
   return (
     <div className="flex flex-col gap-8 text-sm">
-      <h2 className="text-2xl">{t("account.privacy-settings")}</h2>
+      <h2 className="text-primary text-2xl">{t("account.privacy-settings")}</h2>
       <hr />
       <div className="grid grid-cols-12 gap-x-4 gap-y-6">
         <div className="col-span-12 space-y-1 sm:col-span-9 md:col-span-8 lg:col-span-9">
-          <h3 className="font-medium text-stone-900">
+          <h3 className="text-primary font-medium">
             {t("account.delete-account-and-all-your-data-permanently")}
           </h3>
-          <p className="text-stone-500">
+          <p className="text-stone-500 dark:text-stone-400">
             {t("account.delete-account-description")}
           </p>
         </div>

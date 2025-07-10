@@ -14,8 +14,8 @@ export const EmptyCart = () => {
     <div className="flex flex-col items-center justify-center gap-8 py-8">
       <p className="text-2xl">{t("cart.empty")}</p>
 
-      <p className="text-pri font-[400] text-stone-500">
-        {t("site.checkout-out-store")}
+      <p className="text-pri font-[400] text-stone-500 dark:text-stone-400">
+        {t("site.check-out-our-store")}
       </p>
 
       <Link href={paths.home.asPath()}>

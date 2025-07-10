@@ -127,7 +127,7 @@ export const FiltersContainer = async ({
                 </div>
 
                 <div>
-                  <p className="mb-4 text-base text-black">
+                  <p className="text-foreground mb-4 text-base">
                     {t("filters.options")}
                   </p>
                   <div className="grid items-center gap-4">
