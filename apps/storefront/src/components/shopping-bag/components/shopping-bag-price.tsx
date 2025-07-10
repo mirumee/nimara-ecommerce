@@ -33,7 +33,7 @@ export const ShoppingBagPrice = ({
 
       <div
         className={cn(
-          "text-content flex justify-between text-sm text-stone-700",
+          "text-content text-foreground flex justify-between text-sm",
           {
             "[&>*]:font-[650]": isPrimary,
           },
@@ -49,7 +49,9 @@ export const ShoppingBagPrice = ({
           </p>
         )}
         {discount?.amount && (
-          <p>-{formatter.price({ amount: discount.amount })}</p>
+          <p className="text-primary">
+            -{formatter.price({ amount: discount.amount })}
+          </p>
         )}
       </div>
     </>

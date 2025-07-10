@@ -21,7 +21,11 @@ export function UpdatePasswordModal() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" onClick={() => setOpen(true)}>
+        <Button
+          variant="outline"
+          className="text-primary"
+          onClick={() => setOpen(true)}
+        >
           {t("common.edit")}
         </Button>
       </DialogTrigger>

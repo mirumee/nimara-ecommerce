@@ -95,7 +95,7 @@ export const VariantSelector = ({
 
           return (
             <div key={slug} className="flex flex-col gap-1.5">
-              <Label id={`label-${slug}`}>
+              <Label id={`label-${slug}`} className="text-foreground">
                 {name}
                 {type === "SWATCH" &&
                   !!chosenAttribute?.value &&
@@ -154,7 +154,7 @@ export const VariantSelector = ({
 
                         <div
                           className={cn(
-                            "invisible mt-1 h-[2px] w-6 bg-black",
+                            "bg-foreground invisible mt-1 h-[2px] w-6",
                             isSelected && "visible",
                           )}
                         ></div>

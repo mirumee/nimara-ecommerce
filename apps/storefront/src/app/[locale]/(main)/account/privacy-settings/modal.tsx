@@ -43,7 +43,7 @@ export function DeleteAccountModal() {
           <DialogTitle>{t("account.confirm-account-deletion")}</DialogTitle>
         </DialogHeader>
         <div className="space-y-6">
-          <p className="text-sm text-stone-500">
+          <p className="text-sm text-stone-500 dark:text-stone-400">
             {t("account.confirm-account-deletion-description")}
           </p>
           <DialogFooter>
@@ -71,13 +71,13 @@ export function DeleteAccountModal() {
             </p>
           ) : (
             <>
-              <p className="text-sm text-stone-500">
+              <p className="text-sm text-stone-500 dark:text-stone-400">
                 {t("account.delete-account-modal-description")}{" "}
                 {t.rich("account.in-case-of-any-questions", {
                   contactUs: () => (
                     <Link
                       href={`mailto:${clientEnvs.NEXT_PUBLIC_DEFAULT_EMAIL}`}
-                      className="underline decoration-gray-400 underline-offset-2"
+                      className="underline decoration-gray-400 underline-offset-2 dark:decoration-gray-300"
                       target="_blank"
                     >
                       {t("common.contact-us")}
@@ -86,7 +86,7 @@ export function DeleteAccountModal() {
                   privacyPolicy: () => (
                     <Link
                       href={paths.privacyPolicy.asPath()}
-                      className="underline decoration-gray-400 underline-offset-2"
+                      className="underline decoration-gray-400 underline-offset-2 dark:decoration-gray-300"
                     >
                       {t("common.privacy-policy")}
                     </Link>

@@ -27,10 +27,10 @@ export const HeroBanner = async ({
   const image = fieldsMap["homepage-banner-image"]?.imageUrl;
 
   return (
-    <div className="mb-14 flex flex-col items-center bg-stone-100 sm:h-[27rem] sm:flex-row">
+    <div className="bg-muted mb-14 flex flex-col items-center sm:h-[27rem] sm:flex-row">
       <div className="order-last p-8 sm:order-first sm:basis-1/2 lg:p-16">
         <h1 className="pb-8 text-3xl font-medium lg:text-5xl">{header}</h1>
-        <Button asChild>
+        <Button asChild className="dark:hover:bg-stone-100">
           <Link href={paths.search.asPath()}>
             {buttonText}
             <ArrowRight className="h-4 w-5 pl-1" />

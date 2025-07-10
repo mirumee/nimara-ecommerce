@@ -15,6 +15,7 @@ import { clientEnvs } from "@/envs/client";
 import { aspekta } from "@/fonts";
 import { routing } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
+import { ClientThemeProvider } from "@/providers/theme-provider";
 import { type SupportedLocale } from "@/regions/types";
 
 export const metadata: Metadata = {
@@ -41,16 +42,23 @@ export default async function LocaleLayout({
   return (
     <html lang={locale ?? "en"}>
       <body
-        className={cn("min-h-[100dvh]", "flex flex-col", aspekta.className)}
+        className={cn(
+          "min-h-[100dvh]",
+          "flex flex-col",
+          "bg-background",
+          aspekta.className,
+        )}
       >
-        <NextIntlClientProvider messages={messages}>
-          <NuqsAdapter>
-            {children}
-            <SpeedInsights />
-            <Toaster />
-            <ErrorServiceServer />
-          </NuqsAdapter>
-        </NextIntlClientProvider>
+        <ClientThemeProvider>
+          <NextIntlClientProvider messages={messages}>
+            <NuqsAdapter>
+              {children}
+              <SpeedInsights />
+              <Toaster />
+              <ErrorServiceServer />
+            </NuqsAdapter>
+          </NextIntlClientProvider>
+        </ClientThemeProvider>
       </body>
     </html>
   );

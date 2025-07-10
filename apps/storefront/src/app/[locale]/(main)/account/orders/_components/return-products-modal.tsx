@@ -30,7 +30,9 @@ export const ReturnProductsModal = ({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">{t("order.return-products")}</Button>
+        <Button variant="outline" className="text-primary">
+          {t("order.return-products")}
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

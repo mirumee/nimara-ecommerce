@@ -27,7 +27,7 @@ const RadioGroupItem = ({
   return (
     <RadioGroupPrimitive.Item
       className={cn(
-        "border-primary text-primary ring-offset-background focus-visible:ring-ring aspect-square h-4 w-4 rounded-full border bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+        "ring-offset-background focus-visible:ring-primary relative aspect-square h-4 w-4 rounded-full border border-stone-300 bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-stone-600 dark:bg-stone-900",
         className,
       )}
       {...props}
