@@ -1,8 +1,8 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "globalEnv": [
-    "NEXT_PUBLIC_CMS_SERVICE",
     "EDGE_CONFIG",
+    "NEXT_PUBLIC_CMS_SERVICE",
     "NEXT_PUBLIC_SALEOR_API_URL",
     "NEXT_PUBLIC_SEARCH_SERVICE",
     "NEXT_PUBLIC_STOREFRONT_URL",
