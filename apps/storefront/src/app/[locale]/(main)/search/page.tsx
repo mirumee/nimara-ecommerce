@@ -7,7 +7,7 @@ import { clientEnvs } from "@/envs/client";
 import { JsonLd, mappedSearchProductsToJsonLd } from "@/lib/json-ld";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
-import { searchService } from "@/services/search";
+import { getSearchService } from "@/services/search";
 
 import { Breadcrumbs } from "../_components/breadcrumbs";
 import { ProductsList } from "../_components/products-list";
@@ -59,9 +59,10 @@ export async function generateMetadata(props: { searchParams: SearchParams }) {
 export default async function Page(props: { searchParams: SearchParams }) {
   const searchParams = await props.searchParams;
 
-  const [t, region] = await Promise.all([
+  const [t, region, searchService] = await Promise.all([
     getTranslations(),
     getCurrentRegion(),
+    getSearchService(),
   ]);
 
   const searchContext = {
@@ -94,6 +95,7 @@ export default async function Page(props: { searchParams: SearchParams }) {
   const getFacetsResult = await searchService.getFacets(
     {
       query,
+      filters: rest,
     },
     searchContext,
   );
