@@ -1,8 +1,8 @@
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
-import { RichText } from "@nimara/ui/components/rich-text/rich-text";
 import { editorJSDataToString } from "@nimara/ui/lib/richText";
 
 import { CACHE_TTL, DEFAULT_RESULTS_PER_PAGE } from "@/config";
@@ -27,6 +27,12 @@ type PageProps = {
     limit?: string;
   }>;
 };
+
+const RichText = dynamic(() =>
+  import("@nimara/ui/components/rich-text/rich-text").then(
+    (mod) => mod.RichText,
+  ),
+);
 
 export async function generateMetadata(props: PageProps) {
   const params = props.params;

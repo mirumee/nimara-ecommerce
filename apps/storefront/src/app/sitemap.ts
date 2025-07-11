@@ -3,7 +3,7 @@ import type { MetadataRoute } from "next";
 import type { SearchContext } from "@nimara/infrastructure/use-cases/search/types";
 
 import { clientEnvs } from "@/envs/client";
-import { getSearchService } from "@/services/search";
+import { lazyLoadService } from "@/services/import";
 
 type Item = MetadataRoute.Sitemap[number];
 
@@ -15,7 +15,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     languageCode: "EN_US",
   } satisfies SearchContext;
 
-  const searchService = await getSearchService();
+  const searchService = await lazyLoadService("SEARCH");
   // TODO: Create an exhaustive list of all the routes
   const result = await searchService.search(
     {

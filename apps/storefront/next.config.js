@@ -6,6 +6,7 @@ const withNextIntl = createNextIntlPlugin();
 
 const withAnalyzer = withBundleAnalyzer({
   enabled: process.env.ANALYZE === "true",
+  openAnalyzer: false,
 });
 
 const APP_SEMVER_NAME = `${process.env.npm_package_name}@${process.env.npm_package_version}`;
@@ -111,6 +112,7 @@ const nextConfig = withAnalyzer(
           },
         ];
       }
+
       const fileLoaderRule = config.module.rules.find((rule) =>
         rule.test?.test?.(".svg"),
       );

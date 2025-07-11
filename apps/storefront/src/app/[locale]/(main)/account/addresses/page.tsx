@@ -10,7 +10,7 @@ import { displayFormattedAddressLines } from "@/lib/address";
 import { getCurrentRegion } from "@/regions/server";
 import { type SupportedLocale } from "@/regions/types";
 import { addressService } from "@/services/address";
-import { userService } from "@/services/user";
+import { lazyLoadService } from "@/services/import";
 
 import { AddNewAddressModal } from "./_modals/create-address-modal";
 import { EditAddressModal } from "./_modals/update-address-modal";
@@ -23,7 +23,10 @@ type PageProps = {
 export default async function Page(props: PageProps) {
   const { locale } = await props.params;
   const searchParams = await props.searchParams;
-  const accessToken = await getAccessToken();
+  const [accessToken, userService] = await Promise.all([
+    getAccessToken(),
+    lazyLoadService("USER"),
+  ]);
   const [t, region, resultUserAddresses] = await Promise.all([
     getTranslations(),
     getCurrentRegion(),

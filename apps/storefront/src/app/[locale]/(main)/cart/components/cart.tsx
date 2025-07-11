@@ -4,8 +4,8 @@ import { clientEnvs } from "@/envs/client";
 import { getCheckoutId } from "@/lib/actions/cart";
 import { getCurrentRegion } from "@/regions/server";
 import { cartService } from "@/services/cart";
+import { lazyLoadService } from "@/services/import";
 import { storefrontLogger } from "@/services/logging";
-import { userService } from "@/services/user";
 
 import { CartDetails } from "./cart-details";
 import { EmptyCart } from "./empty-cart";
@@ -19,12 +19,7 @@ export const Cart = async () => {
     return <EmptyCart />;
   }
 
-  const accessToken = await getAccessToken();
-
-  const [region, resultUserGet] = await Promise.all([
-    getCurrentRegion(),
-    userService.userGet(accessToken),
-  ]);
+  const region = await getCurrentRegion();
 
   const service = cartService({
     channel: region.market.channel,
@@ -50,6 +45,11 @@ export const Cart = async () => {
   }
 
   if (!!resultCartGet.data.lines.length) {
+    const [accessToken, userService] = await Promise.all([
+      getAccessToken(),
+      lazyLoadService("USER"),
+    ]);
+    const resultUserGet = await userService.userGet(accessToken);
     const user = resultUserGet.ok ? resultUserGet.data : null;
 
     return (

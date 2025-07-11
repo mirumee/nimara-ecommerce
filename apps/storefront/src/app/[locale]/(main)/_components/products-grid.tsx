@@ -16,7 +16,7 @@ import { Link } from "@/i18n/routing";
 import { createFieldsMap, type FieldsMap } from "@/lib/cms";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
-import { getSearchService } from "@/services/search";
+import { lazyLoadService } from "@/services/import";
 
 export const ProductsGrid = async ({
   fields,
@@ -26,7 +26,7 @@ export const ProductsGrid = async ({
   const [region, t, searchService] = await Promise.all([
     getCurrentRegion(),
     getTranslations(),
-    getSearchService(),
+    lazyLoadService("SEARCH"),
   ]);
 
   const searchContext = {

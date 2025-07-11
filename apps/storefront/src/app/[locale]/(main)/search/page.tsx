@@ -7,7 +7,7 @@ import { clientEnvs } from "@/envs/client";
 import { JsonLd, mappedSearchProductsToJsonLd } from "@/lib/json-ld";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
-import { getSearchService } from "@/services/search";
+import { lazyLoadService } from "@/services/import";
 
 import { Breadcrumbs } from "../_components/breadcrumbs";
 import { ProductsList } from "../_components/products-list";
@@ -62,7 +62,7 @@ export default async function Page(props: { searchParams: SearchParams }) {
   const [t, region, searchService] = await Promise.all([
     getTranslations(),
     getCurrentRegion(),
-    getSearchService(),
+    lazyLoadService("SEARCH"),
   ]);
 
   const searchContext = {

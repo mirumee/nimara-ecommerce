@@ -15,19 +15,18 @@ export const getProductDetailsUseCase =
     getProductAvailabilityDetailsInfra: GetProductAvailabilityDetailsInfra;
     getProductDetailsInfra: GetProductDetailsInfra;
   }): GetProductDetailsUseCase =>
-  async ({ productSlug, customMediaFormat, options }) => {
+  async ({ languageCode, options, ...commonOpts }) => {
     const [resultGetProductAvailability, resultGetProductDetails] =
       await Promise.all([
         getProductAvailabilityDetailsInfra({
-          productSlug,
-          customMediaFormat,
+          ...commonOpts,
           options: JSON.parse(
             JSON.stringify({ ...options, cache: "no-store" }),
           ) as FetchOptions,
         }),
         getProductDetailsInfra({
-          productSlug,
-          customMediaFormat,
+          ...commonOpts,
+          languageCode,
           options,
         }),
       ]);

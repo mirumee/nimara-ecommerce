@@ -10,8 +10,7 @@ import { getStoreUrl } from "@/lib/server";
 import { getCurrentRegion } from "@/regions/server";
 import { type SupportedLocale } from "@/regions/types";
 import { addressService } from "@/services/address";
-import { paymentService } from "@/services/payment";
-import { userService } from "@/services/user";
+import { lazyLoadService } from "@/services/import";
 
 import { DeliveryMethodSection } from "../../_sections/delivery-method-section";
 import { EmailSection } from "../../_sections/email-section";
@@ -29,15 +28,23 @@ type PageProps = {
 };
 
 export default async function Page(props: PageProps) {
-  const [{ locale }, searchParams, region, checkout, accessToken, storeUrl] =
-    await Promise.all([
-      props.params,
-      props.searchParams,
-      getCurrentRegion(),
-      getCheckoutOrRedirect(),
-      getAccessToken(),
-      getStoreUrl(),
-    ]);
+  const [
+    { locale },
+    searchParams,
+    region,
+    checkout,
+    accessToken,
+    storeUrl,
+    userService,
+  ] = await Promise.all([
+    props.params,
+    props.searchParams,
+    getCurrentRegion(),
+    getCheckoutOrRedirect(),
+    getAccessToken(),
+    getStoreUrl(),
+    lazyLoadService("USER"),
+  ]);
 
   const resultUserGet = await userService.userGet(accessToken);
   const user = resultUserGet.ok ? resultUserGet.data : null;
@@ -121,6 +128,7 @@ export default async function Page(props: PageProps) {
   let paymentGatewayMethods: PaymentMethod[] = [];
 
   if (user) {
+    const paymentService = await lazyLoadService("PAYMENT");
     const resultPaymentGatewayCustomer = await paymentService.customerGet({
       user,
       channel: region.market.channel,

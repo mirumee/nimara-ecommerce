@@ -14,8 +14,8 @@ import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { cartService } from "@/services/cart";
 import { cmsMenuService } from "@/services/cms";
+import { lazyLoadService } from "@/services/import";
 import { storefrontLogger } from "@/services/logging";
-import { userService } from "@/services/user";
 
 import { Logo } from "./logo";
 import { MobileSearch } from "./mobile-search";
@@ -25,13 +25,14 @@ import { ShoppingBagIcon } from "./shopping-bag-icon";
 import { ShoppingBagIconWithCount } from "./shopping-bag-icon-with-count";
 
 export const Header = async () => {
-  const accessToken = await getAccessToken();
-  const [resultUserGet, region, t] = await Promise.all([
-    userService.userGet(accessToken),
+  const [accessToken, userService, region, t] = await Promise.all([
+    getAccessToken(),
+    lazyLoadService("USER"),
     getCurrentRegion(),
     getTranslations(),
   ]);
 
+  const resultUserGet = await userService.userGet(accessToken);
   const resultMenu = await cmsMenuService.menuGet({
     channel: region.market.channel,
     languageCode: region.language.code,

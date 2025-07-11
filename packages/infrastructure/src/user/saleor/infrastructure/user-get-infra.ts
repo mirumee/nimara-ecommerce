@@ -3,11 +3,11 @@ import { ok } from "@nimara/domain/objects/Result";
 import { graphqlClient } from "#root/graphql/client";
 import { serializeMetadata } from "#root/lib/serializers/metadata";
 
-import type { SaleorUserServiceConfig, UserGetInfra } from "../../types";
+import type { UserGetInfra, UserServiceConfig } from "../../types";
 import { CurrentUserDocument } from "../graphql/queries/generated";
 
 export const saleorUserGetInfra =
-  ({ apiURL, logger }: SaleorUserServiceConfig): UserGetInfra =>
+  ({ apiURL, logger }: UserServiceConfig): UserGetInfra =>
   async (accessToken) => {
     if (!accessToken) {
       return ok(null);

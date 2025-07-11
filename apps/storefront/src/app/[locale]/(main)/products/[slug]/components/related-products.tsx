@@ -19,7 +19,7 @@ export const RelatedProducts = ({
   const t = useTranslations("products");
 
   return (
-    <div className="mb-7 mt-10 md:mb-14 md:mt-20">
+    <div className="mb-7 mt-10 bg-red-700 md:mb-14 md:mt-20">
       <h2 className="mb-4 text-4xl text-black">{t("you-may-also-like")}</h2>
       <Carousel>
         <CarouselContent>

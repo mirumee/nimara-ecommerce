@@ -30,6 +30,27 @@ import { transactionInitializeInfra } from "./stripe/infrastructure/transaction-
 import { transactionProcessInfra } from "./stripe/infrastructure/transaction-process-infra";
 import { type PaymentServiceConfig } from "./types";
 
+export type StripePaymentService = {
+  customerGet: ReturnType<typeof customerGetUseCase>;
+  customerPaymentMethodDelete: ReturnType<
+    typeof customerPaymentMethodDeleteUseCase
+  >;
+  customerPaymentMethodsList: ReturnType<
+    typeof customerPaymentMethodsListUseCase
+  >;
+  paymentElementCreate: ReturnType<typeof createPaymentElementUseCase>;
+  paymentExecute: ReturnType<typeof paymentExecuteUseCase>;
+  paymentGatewayInitialize: ReturnType<typeof paymentGatewayInitializeUseCase>;
+  paymentGatewayTransactionInitialize: ReturnType<
+    typeof transactionInitializeInfra
+  >;
+  paymentInitialize: ReturnType<typeof paymentInitializeUseCase>;
+  paymentMethodSaveExecute: ReturnType<typeof paymentMethodSaveExecuteUseCase>;
+  paymentMethodSaveInitialize: ReturnType<typeof paymentSaveInitializeUseCase>;
+  paymentMethodSaveProcess: ReturnType<typeof paymentMethodSaveProcessUseCase>;
+  paymentResultProcess: ReturnType<typeof paymentResultProcessUseCase>;
+};
+
 /**
  * To use different Stripe account per channel, provide different keys for each channel.
  */
@@ -81,5 +102,5 @@ export const stripePaymentService = (config: PaymentServiceConfig) => {
       paymentMethodDetach: paymentMethodDetachInfra(config),
       customerPaymentMethodValidate: customerPaymentMethodValidateInfra(config),
     }),
-  };
+  } satisfies StripePaymentService;
 };

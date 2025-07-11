@@ -3,11 +3,11 @@ import { err, ok } from "@nimara/domain/objects/Result";
 import { graphqlClient } from "#root/graphql/client";
 import { serializeMetadata } from "#root/lib/serializers/metadata";
 
-import type { AccountUpdateInfra, SaleorUserServiceConfig } from "../../types";
+import type { AccountUpdateInfra, UserServiceConfig } from "../../types";
 import { AccountUpdateMutationDocument } from "../graphql/mutations/generated";
 
 export const saleorAccountUpdateInfra =
-  ({ apiURL, logger }: SaleorUserServiceConfig): AccountUpdateInfra =>
+  ({ apiURL, logger }: UserServiceConfig): AccountUpdateInfra =>
   async ({ accountInput, accessToken }) => {
     const result = await graphqlClient(apiURL, accessToken).execute(
       AccountUpdateMutationDocument,

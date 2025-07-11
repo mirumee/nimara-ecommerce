@@ -4,14 +4,14 @@ import type { ProductAvailability } from "@nimara/domain/objects/Product";
 import { ok } from "@nimara/domain/objects/Result";
 
 import { type FetchOptions, graphqlClient } from "#root/graphql/client";
-import { serializeMoney } from "#root/store/saleor/serializers";
 
 import type {
   GetProductAvailabilityDetailsInfra,
-  SaleorProductServiceConfig,
+  StoreServiceConfig,
 } from "../../types";
 import type { ProductAvailabilityDetailsFragment } from "../graphql/fragments/generated";
 import { ProductAvailabilityDetailsQueryDocument } from "../graphql/queries/generated";
+import { serializeMoney } from "../serializers";
 
 const parseData = (
   data: ProductAvailabilityDetailsFragment,
@@ -49,11 +49,9 @@ const parseData = (
 export const getProductAvailabilityDetailsInfra =
   ({
     apiURI,
-    channel,
-    countryCode,
     logger,
-  }: SaleorProductServiceConfig): GetProductAvailabilityDetailsInfra =>
-  async ({ productSlug, options }) => {
+  }: StoreServiceConfig): GetProductAvailabilityDetailsInfra =>
+  async ({ productSlug, channel, countryCode, options }) => {
     const { cache: _, ...fetchOptions }: FetchOptions = { ...options };
 
     // Infra is does not know anything about next.js specific overloads.

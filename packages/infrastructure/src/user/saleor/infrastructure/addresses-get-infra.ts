@@ -3,14 +3,11 @@ import { ok } from "@nimara/domain/objects/Result";
 import { serializeAddress } from "#root/address/saleor/serializers";
 import { graphqlClient } from "#root/graphql/client";
 
-import {
-  type AddressesGetInfra,
-  type SaleorUserServiceConfig,
-} from "../../types";
+import { type AddressesGetInfra, type UserServiceConfig } from "../../types";
 import { UserAddressesQueryDocument } from "../graphql/queries/generated";
 
 export const saleorAddressesGetInfra =
-  ({ apiURL, logger }: SaleorUserServiceConfig): AddressesGetInfra =>
+  ({ apiURL, logger }: UserServiceConfig): AddressesGetInfra =>
   async ({ variables: { accessToken }, skip = false }) => {
     if (!accessToken) {
       logger.debug("Guest user. Skipping user addresses fetch.");

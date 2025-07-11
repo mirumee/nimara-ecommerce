@@ -12,8 +12,8 @@ import { getCurrentRegion } from "@/regions/server";
 import { cartService as saleorCartService } from "@/services/cart";
 import { checkoutService } from "@/services/checkout";
 import { errorService } from "@/services/error";
+import { lazyLoadService } from "@/services/import";
 import { storefrontLogger } from "@/services/logging";
-import { userService } from "@/services/user";
 
 export async function login({
   email,
@@ -31,8 +31,12 @@ export async function login({
       redirect: false,
     });
 
-    const accessToken = await getAccessToken();
-    const checkoutId = await getCheckoutId();
+    const [accessToken, checkoutId, userService] = await Promise.all([
+      getAccessToken(),
+      getCheckoutId(),
+      lazyLoadService("USER"),
+    ]);
+
     const resultUserGet = await userService.userGet(accessToken);
     const user = resultUserGet.ok ? resultUserGet.data : null;
 

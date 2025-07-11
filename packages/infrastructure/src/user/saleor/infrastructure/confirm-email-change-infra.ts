@@ -3,14 +3,11 @@ import { err, ok } from "@nimara/domain/objects/Result";
 import { handleMutationErrors } from "#root/error";
 import { graphqlClient } from "#root/graphql/client";
 
-import type {
-  ConfirmEmailChangeInfra,
-  SaleorUserServiceConfig,
-} from "../../types";
+import type { ConfirmEmailChangeInfra, UserServiceConfig } from "../../types";
 import { ConfirmEmailChangeMutationDocument } from "../graphql/mutations/generated";
 
 export const saleorConfirmEmailChangeInfra =
-  ({ apiURL, logger }: SaleorUserServiceConfig): ConfirmEmailChangeInfra =>
+  ({ apiURL, logger }: UserServiceConfig): ConfirmEmailChangeInfra =>
   async ({ accessToken, channel, token }) => {
     const result = await graphqlClient(apiURL, accessToken).execute(
       ConfirmEmailChangeMutationDocument,

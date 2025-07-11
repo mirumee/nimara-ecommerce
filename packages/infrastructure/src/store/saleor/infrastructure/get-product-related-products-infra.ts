@@ -5,7 +5,7 @@ import { graphqlClient } from "#root/graphql/client";
 
 import type {
   GetProductRelatedProductsInfra,
-  SaleorProductServiceConfig,
+  StoreServiceConfig,
 } from "../../types";
 import type { ProductRelatedProductsFragment } from "../graphql/fragments/generated";
 import { ProductRelatedProductsQueryDocument } from "../graphql/queries/generated";
@@ -33,12 +33,8 @@ const parseRelatedProducts = (
 };
 
 export const getProductRelatedProductsInfra =
-  ({
-    apiURI,
-    channel,
-    logger,
-  }: SaleorProductServiceConfig): GetProductRelatedProductsInfra =>
-  async ({ productSlug, options }) => {
+  ({ apiURI, logger }: StoreServiceConfig): GetProductRelatedProductsInfra =>
+  async ({ productSlug, channel, options }) => {
     const result = await graphqlClient(apiURI).execute(
       ProductRelatedProductsQueryDocument,
       {

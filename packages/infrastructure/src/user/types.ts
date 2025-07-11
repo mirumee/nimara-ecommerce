@@ -13,7 +13,7 @@ import { type FetchOptions } from "#root/graphql/client";
 import { type QueryOptions } from "#root/lib/types";
 import { type Logger } from "#root/logging/types";
 
-export type UserService<Config> = (config: Config) => {
+export type UserService = {
   accountAddressCreate: AccountAddressCreateUseCase;
   accountAddressDelete: AccountAddressDeleteUseCase;
   accountAddressUpdate: AccountAddressUpdateUseCase;
@@ -30,7 +30,7 @@ export type UserService<Config> = (config: Config) => {
   userGet: UserGetUseCase;
 };
 
-export interface SaleorUserServiceConfig {
+export interface UserServiceConfig {
   apiURL: string;
   logger: Logger;
 }
