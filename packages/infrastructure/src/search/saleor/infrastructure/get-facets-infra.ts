@@ -4,8 +4,8 @@ import { ok } from "@nimara/domain/objects/Result";
 import { graphqlClient } from "#root/graphql/client";
 import type { FacetType, GetFacetsInfra } from "#root/use-cases/search/types";
 
-import type { SaleorSearchServiceConfig } from "../../types";
 import { FacetsQueryDocument } from "../graphql/queries/generated";
+import type { SaleorSearchServiceConfig } from "../types";
 
 export const saleorGetFacetsInfra =
   ({ apiURL }: SaleorSearchServiceConfig): GetFacetsInfra =>

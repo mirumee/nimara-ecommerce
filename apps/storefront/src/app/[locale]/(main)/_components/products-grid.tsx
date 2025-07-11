@@ -16,16 +16,17 @@ import { Link } from "@/i18n/routing";
 import { createFieldsMap, type FieldsMap } from "@/lib/cms";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
-import { searchService } from "@/services/search";
+import { getSearchService } from "@/services/search";
 
 export const ProductsGrid = async ({
   fields,
 }: {
   fields: PageField[] | undefined;
 }) => {
-  const [region, t] = await Promise.all([
+  const [region, t, searchService] = await Promise.all([
     getCurrentRegion(),
     getTranslations(),
+    getSearchService(),
   ]);
 
   const searchContext = {

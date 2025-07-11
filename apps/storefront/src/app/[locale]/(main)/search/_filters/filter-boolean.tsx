@@ -1,10 +1,13 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import type { Facet } from "@nimara/infrastructure/use-cases/search/types";
 import { Checkbox } from "@nimara/ui/components/checkbox";
 import { Label } from "@nimara/ui/components/label";
+
+import { type TranslationMessage } from "@/types";
 
 export const FilterBoolean = ({
   facet: { name, slug, messageKey },
@@ -13,10 +16,11 @@ export const FilterBoolean = ({
   facet: Facet;
   searchParams: Record<string, string>;
 }) => {
+  const t = useTranslations();
   const isCheckedInitial = searchParams[slug] === "true";
   const [isChecked, setIsChecked] = useState(isCheckedInitial);
 
-  const labelText = name ?? messageKey;
+  const labelText = name ?? t(messageKey as TranslationMessage) ?? slug;
   const checkboxId = `boolean-${slug}`;
 
   return (

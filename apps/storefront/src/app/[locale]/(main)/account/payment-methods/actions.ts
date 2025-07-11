@@ -28,7 +28,8 @@ export const generateSecretAction = async ({
   customerId,
 }: {
   customerId: string;
-}) =>
-  paymentService.paymentMethodSaveInitialize({
+}) => {
+  return paymentService.paymentMethodSaveInitialize({
     customerId,
   });
+};

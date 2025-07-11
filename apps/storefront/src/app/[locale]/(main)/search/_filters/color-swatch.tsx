@@ -20,17 +20,19 @@ export const colors = [
 ] as const;
 export type ColorValue = (typeof colors)[number];
 
-const colorsMap = {
-  yellow: "bg-[#fffa4B]",
-  black: "bg-black",
-  white: "bg-white",
+const COLORS_MAPPING = {
   beige: "bg-[#f5f5dc]",
-  brown: "bg-[#8b4513]",
-  grey: "bg-[#808080]",
-  coffee: "bg-[#7f540f]",
-  red: "bg-[#f62c2c]",
-  green: "bg-[#4dd273]",
+  black: "bg-black",
   blue: "bg-[#52a9f5]",
+  brown: "bg-[#8b4513]",
+  coffee: "bg-[#7f540f]",
+  green: "bg-[#4dd273]",
+  grey: "bg-[#808080]",
+  purple: "bg-[#a45ee5]",
+  red: "bg-[#f62c2c]",
+  silver: "bg-[#c0c0c0]",
+  white: "bg-white",
+  yellow: "bg-[#fffa4B]",
 };
 
 export const ColorSwatch = async ({
@@ -72,7 +74,7 @@ export const ColorSwatch = async ({
                 <div
                   className={cn(
                     "h-6 w-6 border border-stone-200",
-                    colorsMap[choice.value as ColorValue],
+                    COLORS_MAPPING[choice.value.toLowerCase() as ColorValue],
                   )}
                 />
                 {choice.label}
