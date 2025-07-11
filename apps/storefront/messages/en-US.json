@@ -17,18 +17,22 @@
     }
   },
   "filters": {
-    "filters": "Filters",
-    "options": "Options",
-    "clear": "Clear",
-    "gender": "Gender",
-    "collections": "Collections",
-    "show-products": "Show products",
     "artists": "Artists",
+    "category": "Category",
+    "clear": "Clear",
+    "collections": "Collections",
+    "color": "Color",
+    "filters": "Filters",
+    "format-album": "Format",
+    "genre": "Genre",
     "in-stock": "In stock",
-    "is-exclusive": "Is exclusive",
     "is-digital": "Is digital",
-    "size": "Size",
-    "color": "Color"
+    "is-exclusive": "Exclusive",
+    "limited-edition": "Limited edition",
+    "options": "Options",
+    "record-label": "Record label",
+    "show-products": "Show products",
+    "size": "Size"
   },
   "search": {
     "go-to-product": "Go to product {name}",

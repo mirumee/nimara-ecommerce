@@ -70,4 +70,26 @@ describe("PLP - Filters", () => {
       locale: currentLocale,
     });
   });
+
+  it("should replace boolean filters correctly", async () => {
+    const currentLocale = "en-GB";
+
+    vi.mocked(getLocale).mockResolvedValue(currentLocale);
+
+    const formData = new FormData();
+
+    formData.append("is-exclusive", "true");
+    formData.append("is-digital", "");
+    formData.append("sortBy", "price-desc");
+
+    const searchParams = { sortBy: "price-asc", "is-digital": "true" };
+
+    await actions.handleFiltersFormSubmit(searchParams, formData);
+
+    expect(redirect).toHaveBeenCalledOnce();
+    expect(redirect).toHaveBeenCalledWith({
+      href: "/search?sortBy=price-desc&is-exclusive=true",
+      locale: currentLocale,
+    });
+  });
 });

@@ -43,7 +43,7 @@ const renderFilterComponent = (
     case "BOOLEAN":
       return (
         <FilterBoolean
-          key={facet.name}
+          key={facet.slug}
           facet={facet}
           searchParams={searchParams}
         />
@@ -51,7 +51,7 @@ const renderFilterComponent = (
     case "DROPDOWN":
       return (
         <FilterDropdown
-          key={facet.name}
+          key={facet.slug}
           facet={facet}
           searchParams={searchParams}
         />
@@ -59,7 +59,7 @@ const renderFilterComponent = (
     case "MULTISELECT":
       return (
         <FilterMultiSelect
-          key={facet.name}
+          key={facet.slug}
           facet={facet}
           searchParams={searchParams}
         />
@@ -67,7 +67,7 @@ const renderFilterComponent = (
     case "PLAIN_TEXT":
       return (
         <FilterText
-          key={facet.name ?? facet.slug}
+          key={facet.slug}
           facet={facet}
           searchParams={searchParams}
         />
@@ -75,7 +75,7 @@ const renderFilterComponent = (
     case "SWATCH":
       return (
         <ColorSwatch
-          key={facet.name ?? facet.slug}
+          key={facet.slug}
           facet={facet}
           searchParams={searchParams}
         />
@@ -96,6 +96,7 @@ export const FiltersContainer = async ({
   );
 
   const booleanFacets = facets.filter((facet) => facet.type === "BOOLEAN");
+  const swatchFacets = facets.filter((facet) => facet.type === "SWATCH");
 
   return (
     <Sheet>
@@ -141,8 +142,19 @@ export const FiltersContainer = async ({
                 <div className="grid items-center gap-4">
                   {facets
                     ?.filter(({ type }) => type !== "BOOLEAN")
+                    ?.filter(({ type }) => type !== "SWATCH")
                     .map((facet) => renderFilterComponent(facet, searchParams))}
                 </div>
+
+                {!!swatchFacets.length && (
+                  <div>
+                    <div className="grid items-center gap-4">
+                      {swatchFacets.map((facet) =>
+                        renderFilterComponent(facet, searchParams),
+                      )}
+                    </div>
+                  </div>
+                )}
 
                 {!!booleanFacets.length && (
                   <div>

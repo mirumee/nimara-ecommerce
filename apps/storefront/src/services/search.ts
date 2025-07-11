@@ -42,25 +42,50 @@ const saleorSettings = {
 } as const satisfies SaleorSearchServiceConfig;
 
 const commonFacets = {
-  "attributes.Gender": {
-    messageKey: "filters.gender",
-    slug: "gender",
-    type: "PLAIN_TEXT",
-  },
-  "attributes.Size": {
-    messageKey: "filters.size",
-    slug: "size",
-    type: "PLAIN_TEXT",
+  "attributes.Category": {
+    messageKey: "filters.category",
+    slug: "category",
+    type: "DROPDOWN",
   },
   "attributes.Color": {
     messageKey: "filters.color",
     slug: "color",
     type: "SWATCH",
   },
+  "attributes.Format album": {
+    messageKey: "filters.format-album",
+    slug: "format-album",
+    type: "DROPDOWN",
+  },
+  "attributes.Genres": {
+    messageKey: "filters.genre",
+    slug: "genre",
+    type: "DROPDOWN",
+  },
+  "attributes.Is exclusive": {
+    messageKey: "filters.is-exclusive",
+    slug: "is-exclusive",
+    type: "BOOLEAN",
+  },
+  "attributes.Limited edition": {
+    messageKey: "filters.limited-edition",
+    slug: "limited-edition",
+    type: "BOOLEAN",
+  },
+  "attributes.Record label": {
+    messageKey: "filters.record-label",
+    slug: "record-label",
+    type: "DROPDOWN",
+  },
+  "attributes.Size": {
+    messageKey: "filters.size",
+    slug: "size",
+    type: "PLAIN_TEXT",
+  },
   collections: {
     messageKey: "filters.collections",
     slug: "collection",
-    type: "PLAIN_TEXT",
+    type: "DROPDOWN",
   },
 } satisfies AvailableFacets;
 
@@ -75,20 +100,20 @@ const algoliaSettings = {
       {
         availableFacets: commonFacets,
         channel: "channel-uk",
-        indexName: `channel-uk.GBP.products`,
+        indexName: "channel-uk.GBP.products",
         virtualReplicas: [
           {
-            indexName: `channel-uk.GBP.products.name_asc`,
+            indexName: "channel-uk.GBP.products.name_asc",
             messageKey: "search.name-asc",
             queryParamValue: "alpha-asc",
           },
           {
-            indexName: `channel-uk.GBP.products.grossPrice_asc`,
+            indexName: "channel-uk.GBP.products.grossPrice_asc",
             messageKey: "search.price-asc",
             queryParamValue: "price-asc",
           },
           {
-            indexName: `channel-uk.GBP.products.grossPrice_desc`,
+            indexName: "channel-uk.GBP.products.grossPrice_desc",
             messageKey: "search.price-desc",
             queryParamValue: "price-desc",
           },
@@ -97,20 +122,20 @@ const algoliaSettings = {
       {
         availableFacets: commonFacets,
         channel: "channel-us",
-        indexName: `channel-us.USD.products`,
+        indexName: "channel-us.USD.products",
         virtualReplicas: [
           {
-            indexName: `channel-us.USD.products.name_asc`,
+            indexName: "channel-us.USD.products.name_asc",
             messageKey: "search.name-asc",
             queryParamValue: "alpha-asc",
           },
           {
-            indexName: `channel-us.USD.products.grossPrice_asc`,
+            indexName: "channel-us.USD.products.grossPrice_asc",
             messageKey: "search.price-asc",
             queryParamValue: "price-asc",
           },
           {
-            indexName: `channel-us.USD.products.grossPrice_desc`,
+            indexName: "channel-us.USD.products.grossPrice_desc",
             messageKey: "search.price-desc",
             queryParamValue: "price-desc",
           },

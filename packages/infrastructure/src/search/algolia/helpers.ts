@@ -57,13 +57,6 @@ export const buildFilters = ({
 
   return Object.entries(filters ?? {})
     .reduce<string[]>((acc, [name, value]) => {
-      if (name === "category") {
-        const formattedValue = (
-          String(value).charAt(0).toUpperCase() + String(value).slice(1)
-        ).replaceAll("-", " & ");
-
-        acc.push(`categories.lvl0:'${formattedValue}'`);
-      }
       if (name === "collection") {
         const formattedValue = value
           .split(".")
@@ -81,12 +74,12 @@ export const buildFilters = ({
           const multipleValuesFacet: string[] = [];
 
           values.forEach((v) => {
-            multipleValuesFacet.push(`${facetsMapping[name]}:${v}`);
+            multipleValuesFacet.push(`'${facetsMapping[name]}':'${v}'`);
           });
 
           acc.push(multipleValuesFacet.join(" OR "));
         } else {
-          acc.push(`${facetsMapping[name]}:${value}`);
+          acc.push(`'${facetsMapping[name]}':'${value}'`);
         }
       }
 
