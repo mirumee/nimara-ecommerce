@@ -4,15 +4,12 @@ import { graphqlClient } from "#root/graphql/client";
 
 import type {
   AccountSetDefaultAddressInfra,
-  SaleorUserServiceConfig,
+  UserServiceConfig,
 } from "../../types";
 import { AccountSetDefaultAddressMutationDocument } from "../graphql/mutations/generated";
 
 export const saleorAccountSetDefaultAddressInfra =
-  ({
-    apiURL,
-    logger,
-  }: SaleorUserServiceConfig): AccountSetDefaultAddressInfra =>
+  ({ apiURL, logger }: UserServiceConfig): AccountSetDefaultAddressInfra =>
   async ({ accessToken, id, type }) => {
     const result = await graphqlClient(apiURL, accessToken).execute(
       AccountSetDefaultAddressMutationDocument,

@@ -11,11 +11,13 @@ type PageProps = {
 };
 
 export default async function ConfirmAccountRegistrationPage(props: PageProps) {
-  const searchParams = await props.searchParams;
-  const t = await getTranslations();
+  const [{ locale }, searchParams, t] = await Promise.all([
+    props.params,
+    props.searchParams,
+    getTranslations(),
+  ]);
   const email = searchParams?.email;
   const token = searchParams?.token;
-  const { locale } = await props.params;
 
   if (!email) {
     return t("auth.confirm-missing-email");

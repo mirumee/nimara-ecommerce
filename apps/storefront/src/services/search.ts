@@ -3,12 +3,11 @@ import {
   type AvailableFacets,
 } from "@nimara/infrastructure/search/algolia/types";
 import { type SaleorSearchServiceConfig } from "@nimara/infrastructure/search/saleor/types";
-import { type SearchService } from "@nimara/infrastructure/use-cases/search/types";
 
 import { clientEnvs } from "@/envs/client";
 import { storefrontLogger } from "@/services/logging";
 
-const saleorSettings = {
+export const SALEOR_SEARCH_SERVICE_CONFIG = {
   apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
   settings: {
     sorting: [
@@ -89,7 +88,7 @@ const commonFacets = {
   },
 } satisfies AvailableFacets;
 
-const algoliaSettings = {
+export const ALGOLIA_SEARCH_SERVICE_CONFIG = {
   credentials: {
     apiKey: clientEnvs.NEXT_PUBLIC_ALGOLIA_API_KEY,
     appId: clientEnvs.NEXT_PUBLIC_ALGOLIA_APP_ID,
@@ -144,38 +143,3 @@ const algoliaSettings = {
     ],
   },
 } as const satisfies AlgoliaSearchServiceConfig;
-
-let searchServiceInstance: SearchService | null = null;
-
-/**
- * Retrieves the singleton instance of the SearchService.
- * If the instance does not exist, it initializes it based on the configured search service.
- * @returns A singleton instance of the SearchService.
- * @throws Error if the search service is not supported.
- */
-export const getSearchService = async (): Promise<SearchService> => {
-  // If the search service instance already exists, return it.
-  if (searchServiceInstance) {
-    return searchServiceInstance;
-  }
-
-  if (clientEnvs.NEXT_PUBLIC_SEARCH_SERVICE === "SALEOR") {
-    const { saleorSearchService } = await import(
-      "@nimara/infrastructure/search/saleor/provider"
-    );
-
-    searchServiceInstance = saleorSearchService(saleorSettings);
-  } else if (clientEnvs.NEXT_PUBLIC_SEARCH_SERVICE === "ALGOLIA") {
-    const { algoliaSearchService } = await import(
-      "@nimara/infrastructure/search/algolia/provider"
-    );
-
-    searchServiceInstance = algoliaSearchService(algoliaSettings);
-  } else {
-    throw new Error(
-      `Unsupported search service. Supported services are SALEOR and ALGOLIA.`,
-    );
-  }
-
-  return searchServiceInstance;
-};

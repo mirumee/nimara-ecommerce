@@ -2,14 +2,11 @@ import { err, ok } from "@nimara/domain/objects/Result";
 
 import { graphqlClient } from "#root/graphql/client";
 
-import type {
-  RequestEmailChangeInfra,
-  SaleorUserServiceConfig,
-} from "../../types";
+import type { RequestEmailChangeInfra, UserServiceConfig } from "../../types";
 import { RequestEmailChangeMutationDocument } from "../graphql/mutations/generated";
 
 export const saleorRequestEmailChangeInfra =
-  ({ apiURL, logger }: SaleorUserServiceConfig): RequestEmailChangeInfra =>
+  ({ apiURL, logger }: UserServiceConfig): RequestEmailChangeInfra =>
   async ({ accessToken, channel, newEmail, password, redirectUrl }) => {
     const result = await graphqlClient(apiURL, accessToken).execute(
       RequestEmailChangeMutationDocument,

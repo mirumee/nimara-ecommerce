@@ -5,7 +5,7 @@ import { getCheckoutOrRedirect } from "@/lib/checkout";
 import { paths, QUERY_PARAMS } from "@/lib/paths";
 import { type SupportedLocale } from "@/regions/types";
 import { checkoutService } from "@/services/checkout";
-import { paymentService } from "@/services/payment";
+import { lazyLoadService } from "@/services/import";
 
 import { ProcessingInfo } from "./components/processing-info";
 
@@ -15,11 +15,13 @@ type PageProps = {
 };
 
 export default async function Page(props: PageProps) {
-  const [{ locale }, searchParams, checkout] = await Promise.all([
-    props.params,
-    props.searchParams,
-    getCheckoutOrRedirect(),
-  ]);
+  const [{ locale }, searchParams, checkout, paymentService] =
+    await Promise.all([
+      props.params,
+      props.searchParams,
+      getCheckoutOrRedirect(),
+      lazyLoadService("PAYMENT"),
+    ]);
 
   let errors: { code: AppErrorCode }[] = [];
 

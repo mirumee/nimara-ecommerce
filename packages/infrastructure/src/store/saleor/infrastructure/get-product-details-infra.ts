@@ -8,10 +8,7 @@ import { getTranslation } from "#root/lib/saleor";
 import { parseAttributeData } from "#root/lib/serializers/attribute";
 
 import { IMAGE_FORMAT, IMAGE_SIZES } from "../../config";
-import type {
-  GetProductDetailsInfra,
-  SaleorProductServiceConfig,
-} from "../../types";
+import type { GetProductDetailsInfra, StoreServiceConfig } from "../../types";
 import type { ProductDetailsFragment } from "../graphql/fragments/generated";
 import { ProductDetailsQueryDocument } from "../graphql/queries/generated";
 
@@ -57,13 +54,14 @@ const parseData = (data: ProductDetailsFragment): Product => {
 };
 
 export const getProductDetailsInfra =
-  ({
-    apiURI,
+  ({ apiURI, logger }: StoreServiceConfig): GetProductDetailsInfra =>
+  async ({
+    productSlug,
+    customMediaFormat,
     channel,
     languageCode,
-    logger,
-  }: SaleorProductServiceConfig): GetProductDetailsInfra =>
-  async ({ productSlug, customMediaFormat, options }) => {
+    options,
+  }) => {
     const result = await graphqlClient(apiURI).execute(
       ProductDetailsQueryDocument,
       {

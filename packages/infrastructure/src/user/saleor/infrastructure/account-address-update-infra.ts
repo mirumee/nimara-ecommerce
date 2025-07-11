@@ -2,14 +2,11 @@ import { err, ok } from "@nimara/domain/objects/Result";
 
 import { graphqlClient } from "#root/graphql/client";
 
-import type {
-  AccountAddressUpdateInfra,
-  SaleorUserServiceConfig,
-} from "../../types";
+import type { AccountAddressUpdateInfra, UserServiceConfig } from "../../types";
 import { AccountAddressUpdateMutationDocument } from "../graphql/mutations/generated";
 
 export const saleorAccountAddressUpdateInfra =
-  ({ apiURL, logger }: SaleorUserServiceConfig): AccountAddressUpdateInfra =>
+  ({ apiURL, logger }: UserServiceConfig): AccountAddressUpdateInfra =>
   async ({ accessToken, input, id }) => {
     const result = await graphqlClient(apiURL, accessToken).execute(
       AccountAddressUpdateMutationDocument,

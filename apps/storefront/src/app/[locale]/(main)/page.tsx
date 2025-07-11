@@ -5,11 +5,12 @@ import { Suspense } from "react";
 import { PageType } from "@nimara/domain/objects/CMSPage";
 
 import { getAccessToken } from "@/auth";
+import { InViewAnimator } from "@/components/in-view";
 import { CACHE_TTL } from "@/config";
 import { JsonLd, websiteToJsonLd } from "@/lib/json-ld";
 import { getCurrentRegion } from "@/regions/server";
 import { cmsPageService } from "@/services/cms";
-import { userService } from "@/services/user";
+import { lazyLoadService } from "@/services/import";
 
 import { AccountNotifications } from "./_components/account-notifications";
 import { HeroBanner } from "./_components/hero-banner";
@@ -42,12 +43,13 @@ export async function generateMetadata(_params: {
 }
 
 export default async function Page() {
-  const accessToken = await getAccessToken();
-
-  const [region, resultUserGet] = await Promise.all([
+  const [accessToken, userService, region] = await Promise.all([
+    getAccessToken(),
+    lazyLoadService("USER"),
     getCurrentRegion(),
-    userService.userGet(accessToken),
   ]);
+
+  const resultUserGet = await userService.userGet(accessToken);
 
   const user = resultUserGet.ok ? resultUserGet.data : null;
 
@@ -72,9 +74,11 @@ export default async function Page() {
       <div>
         <AccountNotifications user={user} />
       </div>
-      <div className="mb-8">
-        <Newsletter />
-      </div>
+      <InViewAnimator>
+        <div className="mb-8">
+          <Newsletter />
+        </div>
+      </InViewAnimator>
       <JsonLd jsonLd={websiteToJsonLd()} />
     </section>
   );

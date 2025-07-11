@@ -27,11 +27,9 @@ import { saleorRequestEmailChangeInfra } from "./saleor/infrastructure/request-e
 import { saleorUserFindInfra } from "./saleor/infrastructure/user-find-infra";
 import { saleorUserGetInfra } from "./saleor/infrastructure/user-get-infra";
 import { saleorAccountUpdateInfra } from "./saleor/infrastructure/user-update-infra";
-import type { SaleorUserServiceConfig, UserService } from "./types";
+import type { UserService, UserServiceConfig } from "./types";
 
-export const saleorUserService: UserService<SaleorUserServiceConfig> = (
-  config,
-) => ({
+export const saleorUserService = (config: UserServiceConfig): UserService => ({
   accountAddressCreate: accountAddressCreateUseCase({
     accountAddressCreateInfra: saleorAccountAddressCreateInfra(config),
   }),

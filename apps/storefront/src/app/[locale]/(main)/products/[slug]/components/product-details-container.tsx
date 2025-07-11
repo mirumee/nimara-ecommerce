@@ -9,9 +9,8 @@ import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { type SupportedLocale } from "@/regions/types";
 import { cartService } from "@/services/cart";
+import { lazyLoadService } from "@/services/import";
 import { storefrontLogger } from "@/services/logging";
-import { storeService } from "@/services/store";
-import { userService } from "@/services/user";
 
 import { Breadcrumbs } from "../../../_components/breadcrumbs";
 import { ProductDetails } from "./product-details";
@@ -21,13 +20,15 @@ type PageProps = {
 };
 
 export const ProductDetailsContainer = async (props: PageProps) => {
-  const { slug } = await props.params;
-
-  const [region, accessToken, checkoutId] = await Promise.all([
-    getCurrentRegion(),
-    getAccessToken(),
-    getCheckoutId(),
-  ]);
+  const [{ slug }, region, accessToken, checkoutId, storeService, userService] =
+    await Promise.all([
+      props.params,
+      getCurrentRegion(),
+      getAccessToken(),
+      getCheckoutId(),
+      lazyLoadService("STORE"),
+      lazyLoadService("USER"),
+    ]);
 
   const serviceOpts = {
     channel: region.market.channel,
@@ -38,8 +39,11 @@ export const ProductDetailsContainer = async (props: PageProps) => {
   };
 
   const [{ data }, resultCartGet, resultUserGet] = await Promise.all([
-    storeService(serviceOpts).getProductDetails({
+    storeService.getProductDetails({
       productSlug: slug,
+      countryCode: region.market.countryCode,
+      channel: region.market.channel,
+      languageCode: region.language.code,
       options: {
         next: {
           revalidate: CACHE_TTL.pdp,

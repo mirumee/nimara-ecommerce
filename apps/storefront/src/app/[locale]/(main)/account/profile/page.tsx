@@ -1,18 +1,20 @@
 import { getTranslations } from "next-intl/server";
 
 import { getAccessToken } from "@/auth";
-import { userService } from "@/services/user";
+import { lazyLoadService } from "@/services/import";
 
 import { UpdateEmailModal } from "./_modals/update-email-modal";
 import { UpdateNameModal } from "./_modals/update-name-modal";
 import { UpdatePasswordModal } from "./_modals/update-password-modal";
 
 export default async function Page() {
-  const accessToken = await getAccessToken();
-  const [t, resultUserGet] = await Promise.all([
+  const [accessToken, t, userService] = await Promise.all([
+    getAccessToken(),
     getTranslations(),
-    userService.userGet(accessToken),
+    lazyLoadService("USER"),
   ]);
+
+  const resultUserGet = await userService.userGet(accessToken);
 
   const user = resultUserGet.ok ? resultUserGet.data : null;
 

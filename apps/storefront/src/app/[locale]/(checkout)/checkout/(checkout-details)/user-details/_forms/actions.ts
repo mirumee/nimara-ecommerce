@@ -6,11 +6,12 @@ import { type AsyncResult, ok } from "@nimara/domain/objects/Result";
 import { serverEnvs } from "@/envs/server";
 import { paths } from "@/lib/paths";
 import { checkoutService } from "@/services/checkout";
-import { userService } from "@/services/user";
+import { lazyLoadService } from "@/services/import";
 
 import type { EmailFormSchema } from "./schema";
 
 export const checkIfUserHasAnAccount = async (email: string) => {
+  const userService = await lazyLoadService("USER");
   const data = await userService.userFind({
     email,
     saleorAppToken: serverEnvs.SALEOR_APP_TOKEN,

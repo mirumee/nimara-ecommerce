@@ -6,7 +6,7 @@ import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { getAccessToken } from "@/auth";
 import { updateCheckoutAddressAction } from "@/lib/actions/update-checkout-address-action";
 import { schemaToAddress } from "@/lib/address";
-import { userService } from "@/services/user";
+import { lazyLoadService } from "@/services/import";
 
 import { type Schema } from "./schema";
 
@@ -29,7 +29,10 @@ export async function updateBillingAddress({
   });
 
   if (saveAddressForFutureUse) {
-    const accessToken = await getAccessToken();
+    const [accessToken, userService] = await Promise.all([
+      getAccessToken(),
+      lazyLoadService("USER"),
+    ]);
 
     await userService.accountAddressCreate({
       accessToken,

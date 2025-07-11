@@ -26,7 +26,7 @@ import { DEFAULT_DEBOUNCE_TIME_IN_MS } from "@/config";
 import { Link, usePathname, useRouter } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
-import { getSearchService } from "@/services/search";
+import { lazyLoadService } from "@/services/import";
 
 import { performSearch } from "./actions";
 
@@ -262,7 +262,7 @@ const searchProducts = async (
 ): Promise<{ results: ComboboxOption[] }> => {
   const [region, searchService] = await Promise.all([
     getCurrentRegion(),
-    getSearchService(),
+    lazyLoadService("SEARCH"),
   ]);
   const result = await searchService.search(
     {
