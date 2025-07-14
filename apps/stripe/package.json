@@ -42,7 +42,7 @@
     "@nimara/ui": "workspace:*",
     "@tailwindcss/typography": "0.5.16",
     "@types/lodash": "4.17.20",
-    "@types/node": "^22.16.0",
+    "@types/node": "^22.16.3",
     "@types/react": "19.1.8",
     "@types/react-dom": "19.1.6",
     "@types/stripe": "8.0.417",
