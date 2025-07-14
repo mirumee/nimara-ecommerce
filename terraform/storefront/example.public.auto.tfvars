@@ -25,7 +25,7 @@ additional_environments = []
 # Map of public environment variables to be set in the Vercel project.
 public_environment_variables = {
   "NEXT_PUBLIC_SALEOR_API_URL" = {
-    comment = "Required. Public Saleor API URL for the storefront."
+    comment = "Public Saleor API URL for the storefront"
     envs_values = [
       {
         value = "https://{YOUR_SALEOR_DOMAIN}/graphql/"
@@ -34,7 +34,7 @@ public_environment_variables = {
     ]
   },
   "NEXT_PUBLIC_DEFAULT_CHANNEL" = {
-    comment = "Required. Default channel slug for the storefront."
+    comment = "Default channel slug for the storefront"
     envs_values = [
       {
         value = "CHANGE_ME"
@@ -42,7 +42,7 @@ public_environment_variables = {
       }]
   },
   "NEXT_PUBLIC_STOREFRONT_URL" = {
-    comment = "Required. Public URL of the storefront"
+    comment = "Public URL of the storefront. If not set, it will default to the Vercel project domain."
     envs_values = [
       {
         value = "https://{YOUR_STOREFRONT_DOMAIN}"
@@ -51,7 +51,7 @@ public_environment_variables = {
     ]
   }
   "NEXT_PUBLIC_STRIPE_PUBLIC_KEY" = {
-    comment = "Required. Public Stripe key for the storefront"
+    comment = "Public Stripe key for the storefront"
     envs_values = [
       {
         value = "CHANGE_ME"
@@ -59,4 +59,13 @@ public_environment_variables = {
       }
     ]
   },
+  "NEXT_PUBLIC_PAYMENT_APP_ID": {
+    comment = "Public ID of the payment app for the storefront"
+    envs_values = [
+      {
+        value = "CHANGE_ME"
+        target = ["production", "preview", "development"]
+      }
+    ]
+  }
 }
