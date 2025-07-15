@@ -22,9 +22,11 @@ import { DEFAULT_SORT_BY } from "@/config";
 import { type TranslationMessage } from "@/types";
 
 import { handleFiltersFormSubmit } from "../actions";
+import { ColorSwatch } from "./color-swatch";
 import { FilterBoolean } from "./filter-boolean";
 import { FilterDropdown } from "./filter-dropdown";
 import { FilterMultiSelect } from "./filter-multi-select";
+import { FilterText } from "./filter-text";
 import { FiltersCounter } from "./filters-counter";
 
 type Props = {
@@ -37,13 +39,19 @@ const renderFilterComponent = (
   facet: Facet,
   searchParams: Record<string, string>,
 ) => {
-  // TODO: Extend this function for other, more adequate Filter components
   switch (facet.type) {
-    case "SWATCH":
+    case "BOOLEAN":
+      return (
+        <FilterBoolean
+          key={facet.slug}
+          facet={facet}
+          searchParams={searchParams}
+        />
+      );
     case "DROPDOWN":
       return (
         <FilterDropdown
-          key={facet.name}
+          key={facet.slug}
           facet={facet}
           searchParams={searchParams}
         />
@@ -51,15 +59,23 @@ const renderFilterComponent = (
     case "MULTISELECT":
       return (
         <FilterMultiSelect
-          key={facet.name}
+          key={facet.slug}
           facet={facet}
           searchParams={searchParams}
         />
       );
-    case "BOOLEAN":
+    case "PLAIN_TEXT":
       return (
-        <FilterBoolean
-          key={facet.name}
+        <FilterText
+          key={facet.slug}
+          facet={facet}
+          searchParams={searchParams}
+        />
+      );
+    case "SWATCH":
+      return (
+        <ColorSwatch
+          key={facet.slug}
           facet={facet}
           searchParams={searchParams}
         />
@@ -78,6 +94,9 @@ export const FiltersContainer = async ({
     null,
     searchParams,
   );
+
+  const booleanFacets = facets.filter((facet) => facet.type === "BOOLEAN");
+  const swatchFacets = facets.filter((facet) => facet.type === "SWATCH");
 
   return (
     <Sheet>
@@ -109,7 +128,9 @@ export const FiltersContainer = async ({
                   className="grid gap-4 md:hidden"
                   defaultValue={searchParams["sortBy"] ?? DEFAULT_SORT_BY}
                 >
-                  <p className="text-base text-black">{t("search.sort-by")}</p>
+                  <p className="text-primary text-base">
+                    {t("search.sort-by")}
+                  </p>
                   {sortByOptions.map((option) => (
                     <div key={option.value} className="flex gap-2">
                       <RadioGroupItem value={option.value} id={option.value} />
@@ -123,21 +144,32 @@ export const FiltersContainer = async ({
                 <div className="grid items-center gap-4">
                   {facets
                     ?.filter(({ type }) => type !== "BOOLEAN")
+                    ?.filter(({ type }) => type !== "SWATCH")
                     .map((facet) => renderFilterComponent(facet, searchParams))}
                 </div>
 
-                <div>
-                  <p className="text-foreground mb-4 text-base">
-                    {t("filters.options")}
-                  </p>
-                  <div className="grid items-center gap-4">
-                    {facets
-                      ?.filter(({ type }) => type === "BOOLEAN")
-                      .map((facet) =>
+                {!!swatchFacets.length && (
+                  <div>
+                    <div className="grid items-center gap-4">
+                      {swatchFacets.map((facet) =>
                         renderFilterComponent(facet, searchParams),
                       )}
+                    </div>
                   </div>
-                </div>
+                )}
+
+                {!!booleanFacets.length && (
+                  <div>
+                    <p className="text-primary mb-4 text-base">
+                      {t("filters.options")}
+                    </p>
+                    <div className="grid items-center gap-4">
+                      {booleanFacets.map((facet) =>
+                        renderFilterComponent(facet, searchParams),
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             </ScrollArea>
           </SheetDescription>

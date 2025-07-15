@@ -6,7 +6,7 @@ import type { CMSPageService } from "@nimara/infrastructure/use-cases/cms-page/t
 import { clientEnvs } from "@/envs/client";
 import { storefrontLogger } from "@/services/logging";
 
-const isSaleorCMS = clientEnvs.CMS_SERVICE === "saleor";
+const isSaleorCMS = clientEnvs.NEXT_PUBLIC_CMS_SERVICE === "SALEOR";
 
 const getCMSPageService = async (): Promise<CMSPageService> => {
   if (isSaleorCMS) {

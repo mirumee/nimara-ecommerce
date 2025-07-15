@@ -10,11 +10,14 @@
   "exports": {
     "./*": "./src/*.ts"
   },
+  "optionalDependencies": {
+    "algoliasearch": "5",
+    "buttercms": "2.1.4"
+  },
   "dependencies": {
     "@saleor/auth-sdk": "1.0.2",
     "@stripe/stripe-js": "3.5.0",
-    "buttercms": "2.1.4",
-    "libphonenumber-js": "1.12.9",
+    "libphonenumber-js": "1.12.10",
     "pino": "9.7.0",
     "stripe": "15.10.0",
     "ts-invariant": "0.10.3"
