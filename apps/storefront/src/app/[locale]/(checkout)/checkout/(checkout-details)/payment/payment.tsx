@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LockIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useTheme } from "next-themes";
 import { type ReactNode, useEffect, useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 
@@ -82,6 +83,7 @@ export const Payment = ({
   const pathname = usePathname();
   const { toast } = useToast();
   const region = useCurrentRegion();
+  const { resolvedTheme } = useTheme();
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
@@ -149,6 +151,14 @@ export const Payment = ({
   const canProceed =
     !isLoading &&
     (isAddingNewPaymentMethod ? isMounted : hasSelectedPaymentMethod);
+
+  const isDark = resolvedTheme === "dark";
+  const appearance = {
+    theme: (isDark ? "night" : "stripe") as "night" | "stripe",
+    variables: {
+      colorBackground: isDark ? "#1C1917" : "#fff",
+    },
+  };
 
   const handlePlaceOrder: SubmitHandler<Schema> = async ({
     paymentMethod,
@@ -285,6 +295,7 @@ export const Payment = ({
         const data = await paymentService.paymentElementCreate({
           locale: region.language.locale,
           secret: secret!,
+          appearance,
         });
 
         if (document.getElementById(PAYMENT_ELEMENT_ID)) {

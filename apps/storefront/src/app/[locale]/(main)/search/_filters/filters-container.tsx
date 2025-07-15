@@ -128,7 +128,9 @@ export const FiltersContainer = async ({
                   className="grid gap-4 md:hidden"
                   defaultValue={searchParams["sortBy"] ?? DEFAULT_SORT_BY}
                 >
-                  <p className="text-base text-black">{t("search.sort-by")}</p>
+                  <p className="text-primary text-base">
+                    {t("search.sort-by")}
+                  </p>
                   {sortByOptions.map((option) => (
                     <div key={option.value} className="flex gap-2">
                       <RadioGroupItem value={option.value} id={option.value} />
@@ -158,7 +160,7 @@ export const FiltersContainer = async ({
 
                 {!!booleanFacets.length && (
                   <div>
-                    <p className="mb-4 text-base text-black">
+                    <p className="text-primary mb-4 text-base">
                       {t("filters.options")}
                     </p>
                     <div className="grid items-center gap-4">

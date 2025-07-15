@@ -20,6 +20,7 @@ import { LocaleSwitch } from "../locale-switch";
 import { Logo } from "./logo";
 import { MobileSearch } from "./mobile-search";
 import { ShoppingBagIconWithCount } from "./shopping-bag-icon-with-count";
+import { ThemeToggle } from "./theme-toggle";
 
 export const MobileSideMenu = ({
   checkoutLinesCount,
@@ -72,6 +73,7 @@ export const MobileSideMenu = ({
                 <Logo />
                 <div className="flex justify-end gap-1 align-middle">
                   <MobileSearch />
+                  <ThemeToggle />
                   <Suspense fallback={<ShoppingBagIcon />}>
                     <ShoppingBagIconWithCount count={checkoutLinesCount} />
                   </Suspense>
@@ -81,7 +83,7 @@ export const MobileSideMenu = ({
                 menu={menu}
                 onMenuItemClick={handleMenuItemClick}
               />
-              <div className="mt-auto flex w-full items-center justify-between bg-white">
+              <div className="bg-background mt-auto flex w-full items-center justify-between">
                 <LocaleSwitch region={region} />
                 <Button asChild variant="ghost" className="inline-flex gap-1.5">
                   <Link

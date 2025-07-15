@@ -73,7 +73,7 @@ export function SignInForm({ redirectUrl }: { redirectUrl?: string }) {
 
   return (
     <>
-      <h1 className="pb-8 text-2xl font-normal leading-8 text-stone-900">
+      <h1 className="text-primary pb-8 text-2xl font-normal leading-8">
         {t("auth.sign-in")}
       </h1>
 
@@ -90,14 +90,14 @@ export function SignInForm({ redirectUrl }: { redirectUrl?: string }) {
               {t("auth.sign-in-error")}
             </p>
           )}
-          <div className="w-full">
+          <div className="text-foreground w-full">
             <TextFormField
               name="email"
               label={t("common.email")}
               type="email"
             />
           </div>
-          <div className="w-full">
+          <div className="text-foreground w-full">
             <TextFormField
               name="password"
               label={t("common.password")}
