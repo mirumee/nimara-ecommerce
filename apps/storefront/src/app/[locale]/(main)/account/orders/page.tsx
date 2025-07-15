@@ -29,7 +29,7 @@ export default async function Page() {
       {orders.length === 0 && (
         <div className="space-y-8">
           <hr />
-          <p className="text-stone-500 dark:text-stone-400">
+          <p className="dark:text-muted-foreground text-stone-500">
             {t("order.sorry-you-dont-have-any-orders")}
           </p>
         </div>

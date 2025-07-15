@@ -25,13 +25,15 @@ export const OrderSummary = async ({
       })}
     >
       <div className="col-span-2">
-        <p className="text-stone-500 dark:text-stone-400">
+        <p className="dark:text-muted-foreground text-stone-500">
           {t("order.order-number")}
         </p>
         <p className="text-primary">{order.number}</p>
       </div>
       <div className="col-span-2">
-        <p className="text-stone-500 dark:text-stone-400">{t("order.total")}</p>
+        <p className="dark:text-muted-foreground text-stone-500">
+          {t("order.total")}
+        </p>
         <p className="text-primary">
           {formatter.price({
             amount: order.total.amount,
@@ -39,7 +41,7 @@ export const OrderSummary = async ({
         </p>
       </div>
       <div className="col-span-2">
-        <p className="text-stone-500 dark:text-stone-400">
+        <p className="dark:text-muted-foreground text-stone-500">
           {t("order.date-ordered")}
         </p>
         <p className="text-primary">
@@ -56,7 +58,7 @@ export const OrderSummary = async ({
       </div>
       {withStatus && (
         <div className="col-span-2">
-          <p className="text-stone-500 dark:text-stone-400">
+          <p className="dark:text-muted-foreground text-stone-500">
             {t("order.order-status")}
           </p>
           <p className="text-primary">{order.status}</p>

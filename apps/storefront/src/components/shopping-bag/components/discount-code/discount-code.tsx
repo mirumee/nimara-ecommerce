@@ -152,7 +152,7 @@ export const DiscountCode = ({ checkout }: { checkout: Checkout }) => {
           </span>
           {isTransitioning ? null : !isCodeApplied && !isOpen ? (
             <span
-              className="cursor-pointer text-stone-700 hover:underline dark:text-stone-400"
+              className="dark:text-muted-foreground cursor-pointer text-stone-700 hover:underline"
               onClick={toggleOpen}
             >
               {t("cart.add-discount")}

@@ -22,7 +22,7 @@ export default async function Page() {
       <hr />
       <div className="grid grid-cols-12">
         <div className="col-span-8 sm:col-span-11">
-          <h3 className="text-stone-500 dark:text-stone-400">
+          <h3 className="dark:text-muted-foreground text-stone-500">
             {t("account.first-and-last-name")}
           </h3>
           <p className="text-primary">
@@ -36,7 +36,7 @@ export default async function Page() {
       <hr />
       <div className="grid grid-cols-12">
         <div className="col-span-8 sm:col-span-11">
-          <h3 className="text-stone-500 dark:text-stone-400">
+          <h3 className="dark:text-muted-foreground text-stone-500">
             {t("common.email")}
           </h3>
           <p className="text-primary">{user?.email}</p>
@@ -50,7 +50,7 @@ export default async function Page() {
       <hr />
       <div className="grid grid-cols-12">
         <div className="col-span-8 sm:col-span-11">
-          <h3 className="text-stone-500 dark:text-stone-400">
+          <h3 className="dark:text-muted-foreground text-stone-500">
             {t("common.password")}
           </h3>
           <p className="text-primary">•••••••••••••</p>

@@ -31,7 +31,7 @@ export default async function SignUpPage(props: {
             {t("auth.create-account-success")}
           </h2>
           <div className="mt-7">
-            <p className="text-sm text-stone-700 dark:text-stone-400">
+            <p className="dark:text-muted-foreground text-sm text-stone-700">
               {t("auth.create-account-verify")}
             </p>
           </div>

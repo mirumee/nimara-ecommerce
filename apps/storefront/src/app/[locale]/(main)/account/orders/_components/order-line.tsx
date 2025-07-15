@@ -59,10 +59,10 @@ export const OrderLine = async ({
       <p className="text-primary col-span-2 hidden text-center text-sm font-bold sm:block">
         {returnStatus || ""}
       </p>
-      <p className="col-span-2 hidden text-end text-stone-500 sm:block dark:text-stone-400">
+      <p className="dark:text-muted-foreground col-span-2 hidden text-end text-stone-500 sm:block">
         {quantityLabel}
       </p>
-      <p className="col-span-2 hidden text-end text-stone-500 sm:block dark:text-stone-400">
+      <p className="dark:text-muted-foreground col-span-2 hidden text-end text-stone-500 sm:block">
         {priceLabel}
       </p>
     </>
