@@ -50,7 +50,7 @@ export const EmailSection = async ({
             <h2 className="scroll-m-20 text-2xl tracking-tight">
               {t("user-details.title")}
             </h2>
-            <p className="break-all text-sm font-normal leading-5 text-stone-900">
+            <p className="text-foreground break-all text-sm font-normal leading-5">
               {checkout.email}
             </p>
           </div>
