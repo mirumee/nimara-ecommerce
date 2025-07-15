@@ -82,7 +82,7 @@ export const Header = async () => {
             />
           </div>
 
-          <div className="flex items-center justify-start">
+          <div className="flex items-center justify-center md:justify-start">
             <Logo />
           </div>
           <div className="hidden md:block">
