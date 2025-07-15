@@ -131,7 +131,7 @@ export const ProductDetails = ({
 
       <div className="md:col-span-5 md:col-start-8">
         <section className="sticky top-28 px-1 pt-10">
-          <h1 className="text-2xl text-black">{name}</h1>
+          <h1 className="text-primary text-2xl">{name}</h1>
           <VariantSelector
             cart={cart}
             product={product}
@@ -140,7 +140,7 @@ export const ProductDetails = ({
           />
 
           {hasFreeShipping && (
-            <Alert>
+            <Alert className="text-primary">
               <Truck className="size-4" />
               <AlertTitle>{t("free-shipping")}</AlertTitle>
               <AlertDescription>{t("standard-parcel")}</AlertDescription>

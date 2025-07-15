@@ -17,14 +17,20 @@ export const MobileNavigation = ({
   return (
     <ul className="grid py-4">
       {menu.items.map((item) => (
-        <li key={item.id} className="p-2 text-stone-500">
+        <li
+          key={item.id}
+          className="dark:text-muted-foreground p-2 text-stone-500"
+        >
           <Link href={item.url} onClick={() => onMenuItemClick(true)}>
             {item.label}
           </Link>
           {!!item.children?.length && (
             <ul className="mt-2 pl-6">
               {item.children.map((child) => (
-                <li key={child.id} className="py-1 pl-2 text-stone-700">
+                <li
+                  key={child.id}
+                  className="dark:text-muted-foreground/50 py-1 pl-2 text-stone-700"
+                >
                   <Link href={child.url} onClick={() => onMenuItemClick(true)}>
                     {child.label}
                   </Link>

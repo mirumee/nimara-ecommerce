@@ -108,12 +108,12 @@ export function SignUpForm() {
           />
         </div>
         <div className="mt-7">
-          <p className="text-sm text-stone-700">
+          <p className="dark:text-muted-foreground text-sm text-stone-700">
             {t.rich("auth.create-account-agreement", {
               termsOfUse: () => (
                 <Link
                   href={paths.termsOfUse.asPath()}
-                  className="underline decoration-gray-400 underline-offset-2"
+                  className="underline decoration-gray-400 underline-offset-2 dark:decoration-gray-300"
                 >
                   {t("common.terms-of-use")}
                 </Link>
@@ -121,7 +121,7 @@ export function SignUpForm() {
               privacyPolicy: () => (
                 <Link
                   href={paths.privacyPolicy.asPath()}
-                  className="underline decoration-gray-400 underline-offset-2"
+                  className="underline decoration-gray-400 underline-offset-2 dark:decoration-gray-300"
                 >
                   {t("common.privacy-policy")}
                 </Link>

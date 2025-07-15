@@ -56,7 +56,7 @@ export const AddNewPaymentTrigger = ({
         onClick={handleGenerateSecret}
         variant={variant}
         disabled={!!secret}
-        className="flex gap-1.5"
+        className="text-primary flex gap-1.5"
       >
         {secret ? (
           <Spinner className="size-4" />
