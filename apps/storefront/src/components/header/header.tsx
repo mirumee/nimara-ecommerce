@@ -7,15 +7,13 @@ import { Button } from "@nimara/ui/components/button";
 import { getAccessToken } from "@/auth";
 import { LocaleSwitch } from "@/components/locale-switch";
 import { CACHE_TTL } from "@/config";
-import { clientEnvs } from "@/envs/client";
 import { Link } from "@/i18n/routing";
 import { getCheckoutId } from "@/lib/actions/cart";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
-import { cartService } from "@/services/cart";
+import { getCartService } from "@/services/cart";
 import { cmsMenuService } from "@/services/cms";
-import { storefrontLogger } from "@/services/logging";
-import { userService } from "@/services/user";
+import { getUserService } from "@/services/user";
 
 import { Logo } from "./logo";
 import { MobileSearch } from "./mobile-search";
@@ -25,9 +23,9 @@ import { ShoppingBagIcon } from "./shopping-bag-icon";
 import { ShoppingBagIconWithCount } from "./shopping-bag-icon-with-count";
 
 export const Header = async () => {
-  const accessToken = await getAccessToken();
-  const [resultUserGet, region, t] = await Promise.all([
-    userService.userGet(accessToken),
+  const [accessToken, userService, region, t] = await Promise.all([
+    getAccessToken(),
+    getUserService(),
     getCurrentRegion(),
     getTranslations(),
   ]);
@@ -44,20 +42,18 @@ export const Header = async () => {
     },
   });
 
+  const resultUserGet = await userService.userGet(accessToken);
   const user = resultUserGet.ok ? resultUserGet.data : null;
 
   let checkoutLinesCount = 0;
   const checkoutId = await getCheckoutId();
 
   if (checkoutId) {
-    const resultCartGet = await cartService({
-      apiURI: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
+    const cartService = await getCartService();
+    const resultCartGet = await cartService.cartGet({
+      cartId: checkoutId,
       languageCode: region.language.code,
       countryCode: region.market.countryCode,
-      channel: region.market.channel,
-      logger: storefrontLogger,
-    }).cartGet({
-      cartId: checkoutId,
       options: {
         next: {
           tags: [`CHECKOUT:${checkoutId}`],

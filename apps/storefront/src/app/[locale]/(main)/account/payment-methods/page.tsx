@@ -8,8 +8,8 @@ import { paths } from "@/lib/paths";
 import { getStoreUrl } from "@/lib/server";
 import { getCurrentRegion } from "@/regions/server";
 import { type SupportedLocale } from "@/regions/types";
-import { paymentService } from "@/services/payment";
-import { userService } from "@/services/user";
+import { getPaymentService } from "@/services/payment";
+import { getUserService } from "@/services/user";
 
 import { AddNewPaymentTrigger } from "./components/add-new-payment-trigger";
 import { PaymentMethodsList } from "./components/payment-methods-list";
@@ -20,15 +20,16 @@ type PageProps = {
 };
 
 export default async function Page(props: PageProps) {
-  const { locale } = await props.params;
-  const searchParams = await props.searchParams;
-  const accessToken = await getAccessToken();
+  const [t, { locale }, searchParams, accessToken, userService] =
+    await Promise.all([
+      getTranslations(),
+      props.params,
+      props.searchParams,
+      getAccessToken(),
+      getUserService(),
+    ]);
 
-  const [t, region, resultUserGet] = await Promise.all([
-    getTranslations(),
-    getCurrentRegion(),
-    userService.userGet(accessToken),
-  ]);
+  const resultUserGet = await userService.userGet(accessToken);
 
   const user = resultUserGet.ok ? resultUserGet.data : null;
 
@@ -36,6 +37,10 @@ export default async function Page(props: PageProps) {
     redirect({ href: paths.signIn.asPath(), locale });
   }
 
+  const [paymentService, region] = await Promise.all([
+    getPaymentService(),
+    getCurrentRegion(),
+  ]);
   const resultCustomerGet = await paymentService.customerGet({
     user: user,
     channel: region.market.channel,

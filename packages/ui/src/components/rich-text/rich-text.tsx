@@ -1,34 +1,54 @@
-import { type ComponentProps } from "react";
+import { type ComponentProps, lazy, type ReactNode, Suspense } from "react";
 
 import { type Maybe } from "../../lib/types";
-import { EditorjsRenderer } from "./editorjs-renderer";
-import { HTMLRenderer } from "./html-renderer";
-import { MarkdownRenderer } from "./markdown-renderer";
+
+const RENDERERS = {
+  editorjs: lazy(() =>
+    import("./editorjs-renderer").then((module) => ({
+      default: module.EditorjsRenderer,
+    })),
+  ),
+  markdown: lazy(() =>
+    import("./markdown-renderer").then((module) => ({
+      default: module.MarkdownRenderer,
+    })),
+  ),
+  html: lazy(() =>
+    import("./html-renderer").then((module) => ({
+      default: module.HTMLRenderer,
+    })),
+  ),
+};
+
 export interface RichTextProps extends ComponentProps<"article"> {
   contentData: Maybe<string>;
   contentType?: "editorjs" | "markdown" | "html";
   disableProse?: boolean;
+  /** A fallback UI to show while the component is loading */
+  suspenseFallback?: ReactNode;
 }
 
 export const RichText = ({
   contentData,
   contentType = "editorjs",
+  suspenseFallback = null, // Provide a default fallback
   ...props
 }: RichTextProps) => {
   if (!contentData) {
     return null;
   }
 
+  const Renderer = RENDERERS[contentType];
+
+  if (!Renderer) {
+    return null;
+  }
+
   const rendererProps = { contentData, ...props };
 
-  switch (contentType) {
-    case "editorjs":
-      return <EditorjsRenderer {...rendererProps} />;
-    case "markdown":
-      return <MarkdownRenderer {...rendererProps} />;
-    case "html":
-      return <HTMLRenderer {...rendererProps} />;
-    default:
-      return null;
-  }
+  return (
+    <Suspense fallback={suspenseFallback}>
+      <Renderer {...rendererProps} />
+    </Suspense>
+  );
 };

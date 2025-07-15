@@ -38,7 +38,7 @@ import { translateApiErrors } from "@/lib/payment";
 import { type Maybe } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { useCurrentRegion } from "@/regions/client";
-import { paymentService } from "@/services/payment";
+import { getPaymentService } from "@/services/payment";
 
 import { updateBillingAddress } from "./actions";
 import { AddressTab } from "./address-tab";
@@ -195,12 +195,14 @@ export const Payment = ({
 
     let paymentSecret: Maybe<string> = undefined;
     const redirectUrl = `${storeUrl}${paths.payment.confirmation.asPath()}`;
+    const paymentService = await getPaymentService();
 
     /**
      * Using existing payment method requires passing it to the stripe app to
      * tokenize it and obtain a secret, which needs to be passed to
      * paymentExecute.
      */
+
     if (paymentMethod) {
       const result = await paymentService.paymentGatewayTransactionInitialize({
         id: checkout.id,
@@ -237,6 +239,7 @@ export const Payment = ({
 
   useEffect(() => {
     void (async () => {
+      const paymentService = await getPaymentService();
       const [result] = await Promise.all([
         paymentService.paymentGatewayInitialize({
           id: checkout.id,
@@ -259,6 +262,8 @@ export const Payment = ({
     }
 
     void (async () => {
+      const paymentService = await getPaymentService();
+
       /**
        * Using new payment method requires an new intent secret which is then passed
        * to paymentElementCreate.

@@ -7,7 +7,7 @@ import { Link } from "@/i18n/routing";
 import { displayFormattedAddressLines } from "@/lib/address";
 import { paths } from "@/lib/paths";
 import { type SupportedLocale } from "@/regions/types";
-import { addressService } from "@/services/address";
+import { getAddressService } from "@/services/address";
 
 export async function ShippingAddressSection({
   checkout,
@@ -32,6 +32,7 @@ export async function ShippingAddressSection({
 
   const { shippingAddress } = checkout;
 
+  const addressService = await getAddressService();
   const result = await addressService.addressFormat({
     variables: { address: shippingAddress },
     locale,

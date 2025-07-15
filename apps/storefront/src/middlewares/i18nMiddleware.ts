@@ -10,7 +10,7 @@ import {
   SUPPORTED_LOCALES,
   type SupportedLocale,
 } from "@/regions/types";
-import { storefrontLogger } from "@/services/logging";
+import { getStorefrontLogger } from "@/services/lazy-logging";
 
 import type { CustomMiddleware } from "./chain";
 
@@ -27,9 +27,12 @@ function getLocale(request: NextRequest): SupportedLocale {
     return matchedLanguage as SupportedLocale;
   }
 
-  storefrontLogger.warning(
-    `Locale "${matchedLanguage}" is not supported. Falling back to default locale "${DEFAULT_LOCALE}".`,
-  );
+  // Log a warning if the matched language is not supported
+  void getStorefrontLogger().then((logger) => {
+    logger.warning(
+      `Locale "${matchedLanguage}" is not supported. Falling back to default locale "${DEFAULT_LOCALE}".`,
+    );
+  });
 
   return DEFAULT_LOCALE;
 }
@@ -49,16 +52,18 @@ export function i18nMiddleware(next: CustomMiddleware): CustomMiddleware {
       request.method === "OPTIONS" ||
       request.headers.get("x-middleware-preflight") === "1";
 
+    // INFO: Skip i18n middleware for prefetch requests, bot requests, and OPTIONS requests
     if (isRequestPrefetch || isRequestFromBot || isOptionsRequest) {
-      // INFO: Skip i18n middleware for prefetch requests, bot requests, and OPTIONS requests
-      storefrontLogger.debug(
-        `Skipping i18n middleware for request: ${request.method} ${request.url}`,
-        {
-          isRequestPrefetch,
-          isRequestFromBot,
-          isOptionsRequest,
-        },
-      );
+      void getStorefrontLogger().then((storefrontLogger) => {
+        storefrontLogger.debug(
+          `Skipping i18n middleware for request: ${request.method} ${request.url}`,
+          {
+            isRequestPrefetch,
+            isRequestFromBot,
+            isOptionsRequest,
+          },
+        );
+      });
 
       return next(request, event, prevResponse);
     }
@@ -98,13 +103,15 @@ export function i18nMiddleware(next: CustomMiddleware): CustomMiddleware {
     const localeFromCookie = request.cookies.get(COOKIE_KEY.locale)?.value;
 
     if (localeFromCookie && localeFromRequest !== localeFromCookie) {
-      storefrontLogger.debug(
-        `Locale changed from ${localeFromCookie} to ${localeFromRequest}. Removing the checkoutId cookie.`,
-        {
-          requestUrl: request.url,
-          nextUrl: request.nextUrl.toString(),
-        },
-      );
+      void getStorefrontLogger().then((storefrontLogger) => {
+        storefrontLogger.debug(
+          `Locale changed from ${localeFromCookie} to ${localeFromRequest}. Removing the checkoutId cookie.`,
+          {
+            requestUrl: request.url,
+            nextUrl: request.nextUrl.toString(),
+          },
+        );
+      });
 
       response.cookies.delete(COOKIE_KEY.checkoutId);
     }

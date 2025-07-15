@@ -1,7 +1,5 @@
 import { z } from "zod";
 
-import { DEFAULT_PAGE_TITLE } from "@/config";
-
 const schema = z.object({
   NEXT_PUBLIC_CMS_SERVICE: z.enum(["SALEOR", "BUTTER_CMS"]).default("SALEOR"),
   NEXT_PUBLIC_SEARCH_SERVICE: z.enum(["SALEOR", "ALGOLIA"]).default("SALEOR"),
@@ -15,7 +13,10 @@ const schema = z.object({
     .trim()
     .email()
     .default("contact@mirumee.com"),
-  NEXT_PUBLIC_DEFAULT_PAGE_TITLE: z.string().trim().default(DEFAULT_PAGE_TITLE),
+  NEXT_PUBLIC_DEFAULT_PAGE_TITLE: z
+    .string()
+    .trim()
+    .default("Nimara Storefront"),
   NEXT_PUBLIC_SALEOR_API_URL: z.string().url().trim(),
   NEXT_PUBLIC_STOREFRONT_URL: z.string().url().trim(),
   PAYMENT_APP_ID: z.string().trim(),

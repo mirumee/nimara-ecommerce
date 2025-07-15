@@ -2,14 +2,11 @@ import { err, ok } from "@nimara/domain/objects/Result";
 
 import { graphqlClient } from "#root/graphql/client";
 
-import type {
-  AccountAddressDeleteInfra,
-  SaleorUserServiceConfig,
-} from "../../types";
+import type { AccountAddressDeleteInfra, UserServiceConfig } from "../../types";
 import { AccountAddressDeleteMutationDocument } from "../graphql/mutations/generated";
 
 export const saleorAccountAddressDeleteInfra =
-  ({ apiURL, logger }: SaleorUserServiceConfig): AccountAddressDeleteInfra =>
+  ({ apiURL, logger }: UserServiceConfig): AccountAddressDeleteInfra =>
   async ({ accessToken, id }) => {
     const result = await graphqlClient(apiURL, accessToken).execute(
       AccountAddressDeleteMutationDocument,
