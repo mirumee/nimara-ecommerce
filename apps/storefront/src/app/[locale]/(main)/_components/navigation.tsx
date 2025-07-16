@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronDown } from "lucide-react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
@@ -29,7 +30,6 @@ const RichText = dynamic(
 );
 
 export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
-  // Close menu manually
   const [currentMenuItem, setCurrentMenuItem] = useState("");
   const t = useTranslations("site");
 
@@ -56,26 +56,38 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
 
           return (
             <NavigationMenuItem key={item.id}>
-              <Link
-                href={item.url}
-                className="text-inherit no-underline hover:underline"
-                prefetch={false}
-                legacyBehavior
-                passHref
-              >
-                {!!item.children?.length ? (
-                  <NavigationMenuTrigger
-                    showIcon={!!item.children?.length}
-                    onClick={() => setCurrentMenuItem("")}
+              {!!item.children?.length ? (
+                <NavigationMenuTrigger
+                  asChild
+                  onClick={() => setCurrentMenuItem("")}
+                >
+                  <Link
+                    href={item.url}
+                    className="text-inherit no-underline hover:underline"
+                    prefetch={false}
                   >
-                    {item.label}
-                  </NavigationMenuTrigger>
-                ) : (
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    {item.label}
-                  </NavigationMenuLink>
-                )}
-              </Link>
+                    <span>{item.label}</span>
+                    <ChevronDown
+                      className="relative top-[1px] h-3 w-3 transition duration-200 group-data-[state=open]:rotate-180"
+                      aria-hidden="true"
+                    />
+                  </Link>
+                </NavigationMenuTrigger>
+              ) : (
+                <NavigationMenuLink
+                  asChild
+                  className={navigationMenuTriggerStyle()}
+                >
+                  <Link
+                    href={item.url}
+                    className="text-inherit no-underline hover:underline"
+                    prefetch={false}
+                  >
+                    <span>{item.label}</span>
+                  </Link>
+                </NavigationMenuLink>
+              )}
+
               <NavigationMenuContent>
                 <div className="bg-background grid w-full grid-cols-6 p-6">
                   <div className="col-span-2 flex flex-col gap-3 pr-6">
