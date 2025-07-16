@@ -8,11 +8,9 @@ import { saleorCartGetInfra } from "./saleor/infrastructure/cart-get-infra";
 import { saleorLinesAddInfra } from "./saleor/infrastructure/lines-add-infra";
 import { saleorLinesDeleteInfra } from "./saleor/infrastructure/lines-delete-infra";
 import { saleorLinesUpdateInfra } from "./saleor/infrastructure/lines-update-infra";
-import type { CartService, SaleorCartServiceConfig } from "./types";
+import type { CartService, CartServiceConfig } from "./types";
 
-export const saleorCartService: CartService<SaleorCartServiceConfig> = (
-  config,
-) => ({
+export const saleorCartService = (config: CartServiceConfig): CartService => ({
   cartGet: cartGetUseCase({
     cartGetInfra: saleorCartGetInfra(config),
   }),

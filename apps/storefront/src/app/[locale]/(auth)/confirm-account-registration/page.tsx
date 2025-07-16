@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { redirect } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 import { type SupportedLocale } from "@/regions/types";
-import { authService } from "@/services/auth";
+import { getAuthService } from "@/services/auth";
 
 type PageProps = {
   params: Promise<{ locale: SupportedLocale }>;
@@ -11,11 +11,13 @@ type PageProps = {
 };
 
 export default async function ConfirmAccountRegistrationPage(props: PageProps) {
-  const searchParams = await props.searchParams;
-  const t = await getTranslations();
+  const [{ locale }, searchParams, t] = await Promise.all([
+    props.params,
+    props.searchParams,
+    getTranslations(),
+  ]);
   const email = searchParams?.email;
   const token = searchParams?.token;
-  const { locale } = await props.params;
 
   if (!email) {
     return t("auth.confirm-missing-email");
@@ -25,6 +27,7 @@ export default async function ConfirmAccountRegistrationPage(props: PageProps) {
     return t("auth.confirm-missing-token");
   }
 
+  const authService = await getAuthService();
   const result = await authService.confirmAccount(searchParams);
 
   if (!result.ok) {

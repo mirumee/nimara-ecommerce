@@ -10,8 +10,10 @@ import { cmsMenuService } from "@/services/cms";
 import { Navigation } from "./_components/navigation";
 
 export default async function Layout({ children }: { children: ReactNode }) {
-  const region = await getCurrentRegion();
-  const locale = await getStoreLocale();
+  const [region, locale] = await Promise.all([
+    getCurrentRegion(),
+    getStoreLocale(),
+  ]);
 
   const resultMenu = await cmsMenuService.menuGet({
     channel: region.market.channel,

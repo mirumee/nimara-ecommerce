@@ -19,9 +19,9 @@ import { orderCreateInfra } from "./saleor/infrastructure/order-create-infra";
 import { saleorCheckoutBillingAddressUpdateInfra } from "./saleor/infrastructure/update-checkout-billing-address-infra";
 import type { CheckoutService, SaleorCheckoutServiceConfig } from "./types";
 
-export const saleorCheckoutService: CheckoutService<
-  SaleorCheckoutServiceConfig
-> = (serviceConfig) => ({
+export const saleorCheckoutService = (
+  serviceConfig: SaleorCheckoutServiceConfig,
+): CheckoutService => ({
   checkoutGet: checkoutGetUseCase({
     checkoutGetInfra: saleorCheckoutGetInfra(serviceConfig),
   }),

@@ -38,12 +38,18 @@ function urlWithParam<PathKey extends string | string[]>(
 function urlWithParam<PathKey extends string>(path: string) {
   if (path !== "/") {
     if (path.endsWith("/")) {
-      storefrontLogger.warning("Path should not have trailing slash.", {
-        path,
-      });
+      storefrontLogger.warning(
+        "Path should not have trailing slash. This can cause issues with routing.",
+        {
+          path,
+        },
+      );
     }
     if (!path.startsWith("/")) {
-      storefrontLogger.warning("Path  should have leading slash.", { path });
+      storefrontLogger.warning(
+        "Path should have leading slash. This can cause issues with routing.",
+        { path },
+      );
     }
   }
 
@@ -118,8 +124,8 @@ export const paths = {
   notFound: url("/404"),
   signIn: url("/sign-in"),
   createAccount: url("/create-account"),
-  termsOfUse: url("/terms-of-use"),
-  privacyPolicy: url("/privacy-policy"),
+  termsOfUse: url("/page/terms-of-use"),
+  privacyPolicy: url("/page/privacy-policy"),
   resetPassword: url("/reset-password"),
   newPassword: url("/new-password"),
   account: {

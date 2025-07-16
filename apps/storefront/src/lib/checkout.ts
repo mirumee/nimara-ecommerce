@@ -2,7 +2,6 @@ import { getLocale } from "next-intl/server";
 
 import { type Address } from "@nimara/domain/objects/Address";
 import { type Checkout } from "@nimara/domain/objects/Checkout";
-import { type OkResult } from "@nimara/domain/objects/Result";
 
 import { redirect } from "@/i18n/routing";
 import { getCheckoutId } from "@/lib/actions/cart";
@@ -10,8 +9,7 @@ import { deleteCheckoutIdCookie } from "@/lib/actions/checkout";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { type SupportedLocale } from "@/regions/types";
-import { type addressService } from "@/services/address";
-import { checkoutService } from "@/services/checkout";
+import { getCheckoutService } from "@/services/checkout";
 
 export const getCheckoutOrRedirect = async (): Promise<Checkout> | never => {
   const checkoutId = await getCheckoutId();
@@ -21,6 +19,7 @@ export const getCheckoutOrRedirect = async (): Promise<Checkout> | never => {
     redirect({ href: paths.cart.asPath(), locale });
   }
 
+  const checkoutService = await getCheckoutService();
   const resultCheckout = await checkoutService.checkoutGet({
     checkoutId,
     languageCode: region.language.code,
@@ -40,9 +39,11 @@ export const getCheckoutOrRedirect = async (): Promise<Checkout> | never => {
   return resultCheckout.data.checkout;
 };
 
-export type FormattedAddress = OkResult<
-  Awaited<ReturnType<typeof addressService.addressFormat>>
-> & { address: Address };
+export type FormattedAddress = {
+  formattedAddress: string[];
+} & {
+  address: Address;
+};
 
 /**
  * Validates checkout lines and redirects to the cart page if there are issues.

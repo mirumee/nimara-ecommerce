@@ -6,7 +6,7 @@ import { Button } from "@nimara/ui/components/button";
 
 import { Link } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
-import { checkoutService } from "@/services/checkout";
+import { getCheckoutService } from "@/services/checkout";
 import { storefrontLogger } from "@/services/logging";
 
 export const EmailSection = async ({
@@ -19,6 +19,7 @@ export const EmailSection = async ({
   const t = await getTranslations();
 
   if (!checkout?.email && user) {
+    const checkoutService = await getCheckoutService();
     const result = await checkoutService.checkoutEmailUpdate({
       checkout,
       email: user.email,

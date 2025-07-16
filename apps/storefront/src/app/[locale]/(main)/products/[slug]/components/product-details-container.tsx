@@ -2,16 +2,14 @@ import { notFound } from "next/navigation";
 
 import { getAccessToken } from "@/auth";
 import { CACHE_TTL } from "@/config";
-import { clientEnvs } from "@/envs/client";
 import { getCheckoutId } from "@/lib/actions/cart";
 import { JsonLd, productToJsonLd } from "@/lib/json-ld";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { type SupportedLocale } from "@/regions/types";
-import { cartService } from "@/services/cart";
-import { storefrontLogger } from "@/services/logging";
-import { storeService } from "@/services/store";
-import { userService } from "@/services/user";
+import { getCartService } from "@/services/cart";
+import { getStoreService } from "@/services/store";
+import { getUserService } from "@/services/user";
 
 import { Breadcrumbs } from "../../../_components/breadcrumbs";
 import { ProductDetails } from "./product-details";
@@ -21,25 +19,22 @@ type PageProps = {
 };
 
 export const ProductDetailsContainer = async (props: PageProps) => {
-  const { slug } = await props.params;
+  const [{ slug }, region, accessToken, checkoutId, storeService, userService] =
+    await Promise.all([
+      props.params,
+      getCurrentRegion(),
+      getAccessToken(),
+      getCheckoutId(),
+      getStoreService(),
+      getUserService(),
+    ]);
 
-  const [region, accessToken, checkoutId] = await Promise.all([
-    getCurrentRegion(),
-    getAccessToken(),
-    getCheckoutId(),
-  ]);
-
-  const serviceOpts = {
-    channel: region.market.channel,
-    languageCode: region.language.code,
-    apiURI: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
-    countryCode: region.market.countryCode,
-    logger: storefrontLogger,
-  };
-
-  const [{ data }, resultCartGet, resultUserGet] = await Promise.all([
-    storeService(serviceOpts).getProductDetails({
+  const [{ data }, resultUserGet, cartService] = await Promise.all([
+    storeService.getProductDetails({
       productSlug: slug,
+      countryCode: region.market.countryCode,
+      channel: region.market.channel,
+      languageCode: region.language.code,
       options: {
         next: {
           revalidate: CACHE_TTL.pdp,
@@ -47,19 +42,23 @@ export const ProductDetailsContainer = async (props: PageProps) => {
         },
       },
     }),
-    checkoutId
-      ? cartService(serviceOpts).cartGet({
-          cartId: checkoutId,
-          options: {
-            next: {
-              revalidate: CACHE_TTL.cart,
-              tags: [`CHECKOUT:${checkoutId}`],
-            },
-          },
-        })
-      : null,
     userService.userGet(accessToken),
+    getCartService(),
   ]);
+
+  const resultCartGet = checkoutId
+    ? await cartService.cartGet({
+        cartId: checkoutId,
+        languageCode: region.language.code,
+        countryCode: region.market.countryCode,
+        options: {
+          next: {
+            revalidate: CACHE_TTL.cart,
+            tags: [`CHECKOUT:${checkoutId}`],
+          },
+        },
+      })
+    : null;
 
   if (!data || !data.product) {
     notFound();

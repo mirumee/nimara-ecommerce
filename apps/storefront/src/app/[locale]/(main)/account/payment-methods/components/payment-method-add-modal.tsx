@@ -20,7 +20,7 @@ import { PAYMENT_ELEMENT_ID } from "@/lib/consts";
 import { translateApiErrors } from "@/lib/payment";
 import { cn } from "@/lib/utils";
 import { useCurrentRegion } from "@/regions/client";
-import { paymentService } from "@/services/payment";
+import { getPaymentService } from "@/services/payment";
 
 export const PaymentMethodAddModal = ({
   secret,
@@ -56,6 +56,7 @@ export const PaymentMethodAddModal = ({
   const handlePaymentSave = async () => {
     setIsProcessing(true);
 
+    const paymentService = await getPaymentService();
     const result = await paymentService.paymentMethodSaveExecute({
       redirectUrl,
       saveForFutureUse: isDefault,
@@ -70,6 +71,8 @@ export const PaymentMethodAddModal = ({
 
   useEffect(() => {
     void (async () => {
+      const paymentService = await getPaymentService();
+
       await paymentService.paymentInitialize();
 
       const { mount } = await paymentService.paymentElementCreate({

@@ -16,14 +16,14 @@ export const linesAddUseCase = ({
   linesAddInfra: LinesAddInfra;
   logger: Logger;
 }): LinesAddUseCase => {
-  return async ({ email, lines, options, cartId }) => {
+  return async ({ cartId, email, lines, ...restOpts }) => {
     if (cartId) {
-      logger.debug("Adding lines to existing cart", { cartId, lines });
+      logger.debug("Adding lines to existing cart", { cartId });
 
       const resultLinesAdd = await linesAddInfra({
         cartId,
-        options,
         lines,
+        ...restOpts,
       });
 
       if (!resultLinesAdd.ok) {
@@ -35,6 +35,6 @@ export const linesAddUseCase = ({
 
     logger.debug("Creating cart and adding lines", { email, lines });
 
-    return cartCreateInfra({ email, options, lines });
+    return cartCreateInfra({ ...restOpts, lines, email });
   };
 };

@@ -3,7 +3,8 @@ import { Skeleton } from "@nimara/ui/components/skeleton";
 export const ProductDetailsSkeleton = () => {
   return (
     <div className="my-6 grid gap-10 md:grid-cols-12 md:gap-4">
-      <div className="relative max-md:hidden md:col-span-6 [&>*]:pb-2">
+      <div className="relative grid gap-4 max-md:hidden md:col-span-6 [&>*]:pb-2">
+        <Skeleton className="h-[500px] w-full" />
         <Skeleton className="h-[500px] w-full" />
       </div>
 
