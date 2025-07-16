@@ -4,8 +4,8 @@ import { getAccessToken } from "@/auth";
 import { getCheckoutOrRedirect } from "@/lib/checkout";
 import { getCurrentRegion } from "@/regions/server";
 import { type SupportedLocale } from "@/regions/types";
-import { addressService } from "@/services/address";
-import { userService } from "@/services/user";
+import { getAddressService } from "@/services/address";
+import { getUserService } from "@/services/user";
 
 import { DeliveryMethodSection } from "../../_sections/delivery-method-section";
 import { EmailSection } from "../../_sections/email-section";
@@ -20,14 +20,23 @@ type PageProps = {
 };
 
 export default async function Page(props: PageProps) {
-  const [{ locale }, searchParams, region, checkout, accessToken] =
-    await Promise.all([
-      props.params,
-      props.searchParams,
-      getCurrentRegion(),
-      getCheckoutOrRedirect(),
-      getAccessToken(),
-    ]);
+  const [
+    { locale },
+    searchParams,
+    region,
+    checkout,
+    accessToken,
+    userService,
+    addressService,
+  ] = await Promise.all([
+    props.params,
+    props.searchParams,
+    getCurrentRegion(),
+    getCheckoutOrRedirect(),
+    getAccessToken(),
+    getUserService(),
+    getAddressService(),
+  ]);
 
   const resultUserGet = await userService.userGet(accessToken);
 

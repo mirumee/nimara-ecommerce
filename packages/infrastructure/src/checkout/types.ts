@@ -87,7 +87,7 @@ export type SaleorCheckoutServiceConfig = {
   logger: Logger;
 };
 
-export type CheckoutService<Config> = (config: Config) => {
+export type CheckoutService = {
   checkoutAddPromoCode: CheckoutAddPromoCodeUseCase;
   checkoutBillingAddressUpdate: CheckoutBillingAddressUpdateUseCase;
   checkoutCustomerAttach: CheckoutCustomerAttachUseCase;

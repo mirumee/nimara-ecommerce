@@ -3,7 +3,7 @@ import { type AsyncResult } from "@nimara/domain/objects/Result";
 
 import { type Logger } from "#root/logging/types";
 
-export type AuthService<Config> = (config: Config) => {
+export type AuthService = {
   accountRegister: AccountRegisterUseCase;
   confirmAccount: ConfirmAccountUseCase;
   passwordSet: PasswordSetUseCase;

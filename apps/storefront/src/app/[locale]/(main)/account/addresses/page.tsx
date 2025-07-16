@@ -9,8 +9,8 @@ import { getAccessToken } from "@/auth";
 import { displayFormattedAddressLines } from "@/lib/address";
 import { getCurrentRegion } from "@/regions/server";
 import { type SupportedLocale } from "@/regions/types";
-import { addressService } from "@/services/address";
-import { userService } from "@/services/user";
+import { getAddressService } from "@/services/address";
+import { getUserService } from "@/services/user";
 
 import { AddNewAddressModal } from "./_modals/create-address-modal";
 import { EditAddressModal } from "./_modals/update-address-modal";
@@ -23,7 +23,11 @@ type PageProps = {
 export default async function Page(props: PageProps) {
   const { locale } = await props.params;
   const searchParams = await props.searchParams;
-  const accessToken = await getAccessToken();
+  const [accessToken, userService, addressService] = await Promise.all([
+    getAccessToken(),
+    getUserService(),
+    getAddressService(),
+  ]);
   const [t, region, resultUserAddresses] = await Promise.all([
     getTranslations(),
     getCurrentRegion(),
@@ -114,7 +118,7 @@ export default async function Page(props: PageProps) {
   return (
     <div className="flex flex-col gap-8 text-sm">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl">{t("account.addresses")}</h2>
+        <h2 className="text-primary text-2xl">{t("account.addresses")}</h2>
         {!noAddresses && (
           <AddNewAddressModal
             addressFormRows={resultAddressRows.data}
@@ -123,7 +127,7 @@ export default async function Page(props: PageProps) {
           >
             <Button
               variant="outline"
-              className="flex items-center gap-1 rounded px-[11px] sm:rounded-md sm:px-4"
+              className="text-primary flex items-center gap-1 rounded px-[11px] sm:rounded-md sm:px-4"
             >
               <PlusIcon className="h-4 w-4" />
               <span className="hidden sm:block">
@@ -136,7 +140,7 @@ export default async function Page(props: PageProps) {
       {noAddresses && (
         <div className="space-y-8">
           <hr />
-          <p className="text-stone-500">
+          <p className="dark:text-muted-foreground text-stone-500">
             {t("address.sorry-you-dont-have-any-addresses")}
           </p>
           <AddNewAddressModal
@@ -153,7 +157,7 @@ export default async function Page(props: PageProps) {
       )}
       {sortedAddresses.map(
         ({ isDefaultBillingAddress, isDefaultShippingAddress, ...address }) => (
-          <div key={address.id} className="space-y-8">
+          <div key={address.id} className="text-primary space-y-8">
             <hr />
             <div className="grid grid-cols-12 gap-2">
               <div className="col-span-5 md:col-span-7 lg:col-span-5">

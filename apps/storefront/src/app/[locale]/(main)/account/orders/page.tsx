@@ -3,17 +3,18 @@ import { getTranslations } from "next-intl/server";
 import { getAccessToken } from "@/auth";
 import { isOrderLineReturned } from "@/lib/order";
 import { getCurrentRegion } from "@/regions/server";
-import { userService } from "@/services/user";
+import { getUserService } from "@/services/user";
 
 import { OrderLine } from "./_components/order-line";
 import { OrderSummary } from "./_components/order-summary";
 import { ReturnProductsModal } from "./_components/return-products-modal";
 
 export default async function Page() {
-  const accessToken = await getAccessToken();
-  const [t, region] = await Promise.all([
+  const [accessToken, t, region, userService] = await Promise.all([
+    getAccessToken(),
     getTranslations(),
     getCurrentRegion(),
+    getUserService(),
   ]);
   const languageCode = region.language.code;
   const resultOrders = await userService.ordersGet({
@@ -25,11 +26,11 @@ export default async function Page() {
 
   return (
     <div className="flex flex-col gap-6 text-sm">
-      <h2 className="text-2xl">{t("account.order-history")}</h2>
+      <h2 className="text-primary text-2xl">{t("account.order-history")}</h2>
       {orders.length === 0 && (
         <div className="space-y-8">
           <hr />
-          <p className="text-stone-500">
+          <p className="dark:text-muted-foreground text-stone-500">
             {t("order.sorry-you-dont-have-any-orders")}
           </p>
         </div>

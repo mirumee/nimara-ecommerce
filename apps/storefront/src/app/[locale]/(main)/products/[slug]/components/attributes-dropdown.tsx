@@ -1,3 +1,5 @@
+import dynamic from "next/dynamic";
+
 import type { Attribute } from "@nimara/domain/objects/Attribute";
 import {
   Accordion,
@@ -5,8 +7,15 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@nimara/ui/components/accordion";
-import { RichText } from "@nimara/ui/components/rich-text/rich-text";
 import { parseEditorJSData } from "@nimara/ui/lib/richText";
+
+const RichText = dynamic(
+  () =>
+    import("@nimara/ui/components/rich-text/rich-text").then(
+      (mod) => mod.RichText,
+    ),
+  { ssr: false },
+);
 
 export const AttributesDropdown = ({
   attributes,
@@ -36,9 +45,15 @@ export const AttributesDropdown = ({
             <AccordionContent>
               {attribute.values.map((val) =>
                 val.richText ? (
-                  <RichText key={val.name} contentData={val.richText} />
+                  <RichText
+                    className="text-foreground"
+                    key={val.name}
+                    contentData={val.richText}
+                  />
                 ) : (
-                  <p key={val.name}>{val.name}</p>
+                  <p className="text-foreground" key={val.name}>
+                    {val.name}
+                  </p>
                 ),
               )}
             </AccordionContent>

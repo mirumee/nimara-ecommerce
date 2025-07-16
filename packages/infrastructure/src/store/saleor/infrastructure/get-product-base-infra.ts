@@ -6,10 +6,7 @@ import { ok } from "@nimara/domain/objects/Result";
 import { graphqlClient } from "#root/graphql/client";
 import { getTranslation } from "#root/lib/saleor";
 
-import type {
-  GetProductBaseInfra,
-  SaleorStoreServiceConfig,
-} from "../../types";
+import type { GetProductBaseInfra, StoreServiceConfig } from "../../types";
 import type { ProductBaseFragment } from "../graphql/fragments/generated";
 import { ProductBaseQueryDocument } from "../graphql/queries/generated";
 
@@ -23,17 +20,16 @@ const parseData = (data: ProductBaseFragment): ProductBase => {
     name,
     description,
     category: data.category,
+    seo: {
+      title: data.seoTitle ?? null,
+      description: data.seoDescription ?? null,
+    },
   };
 };
 
 export const getProductBaseInfra =
-  ({
-    apiURI,
-    channel,
-    languageCode,
-    logger,
-  }: SaleorStoreServiceConfig): GetProductBaseInfra =>
-  async ({ productSlug, options }) => {
+  ({ apiURI, logger }: StoreServiceConfig): GetProductBaseInfra =>
+  async ({ productSlug, channel, languageCode, options }) => {
     const result = await graphqlClient(apiURI).execute(
       ProductBaseQueryDocument,
       {

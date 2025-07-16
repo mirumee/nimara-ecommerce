@@ -3,8 +3,7 @@ import { ImageResponse } from "next/og";
 import { CACHE_TTL } from "@/config";
 import { clientEnvs } from "@/envs/client";
 import { getCurrentRegion } from "@/regions/server";
-import { storefrontLogger } from "@/services/logging";
-import { storeService } from "@/services/store";
+import { getStoreService } from "@/services/store";
 
 export const size = {
   width: 1200,
@@ -22,19 +21,17 @@ export default async function Image({
 }: {
   params: { slug: string };
 }) {
-  const region = await getCurrentRegion();
+  const [region, storeService] = await Promise.all([
+    getCurrentRegion(),
+    getStoreService(),
+  ]);
 
-  const serviceOpts = {
-    channel: region.market.channel,
-    languageCode: region.language.code,
-    apiURI: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
-    countryCode: region.market.countryCode,
-    logger: storefrontLogger,
-  };
-
-  const { data } = await storeService(serviceOpts).getProductDetails({
+  const { data } = await storeService.getProductDetails({
     productSlug: slug,
     customMediaFormat: "ORIGINAL",
+    channel: region.market.channel,
+    languageCode: region.language.code,
+    countryCode: region.market.countryCode,
     options: {
       next: {
         revalidate: CACHE_TTL.pdp,

@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
@@ -14,11 +15,18 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@nimara/ui/components/navigation-menu";
-import { RichText } from "@nimara/ui/components/rich-text/rich-text";
 
 import { Link } from "@/i18n/routing";
 import { isValidJson } from "@/lib/helpers";
 import type { Maybe } from "@/lib/types";
+
+const RichText = dynamic(
+  () =>
+    import("@nimara/ui/components/rich-text/rich-text").then(
+      (mod) => mod.RichText,
+    ),
+  { ssr: false },
+);
 
 export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
   // Close menu manually
@@ -69,7 +77,7 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
                 )}
               </Link>
               <NavigationMenuContent>
-                <div className="grid w-full grid-cols-6 p-6">
+                <div className="bg-background grid w-full grid-cols-6 p-6">
                   <div className="col-span-2 flex flex-col gap-3 pr-6">
                     {!!item.children?.length &&
                       childrenWithoutImage?.map((child) => (

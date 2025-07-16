@@ -9,7 +9,7 @@ import { type AsyncResult } from "@nimara/domain/objects/Result";
 import type { QueryOptions } from "#root/lib/types";
 import { type Logger } from "#root/logging/types";
 
-export type AddressService<Config> = (config: Config) => {
+export type AddressService = {
   addressFormGetRows: AddressFormGetRowsUseCase;
   addressFormat: AddressFormatUseCase;
   countriesAllGet: CountriesAllGetInfra;

@@ -38,6 +38,10 @@ export type ProductBase = {
   description: string | null;
   id: string;
   name: string;
+  seo: {
+    description?: string | null;
+    title?: string | null;
+  };
 };
 
 export type RelatedProduct = SearchProduct;

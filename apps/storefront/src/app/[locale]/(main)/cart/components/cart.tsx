@@ -1,11 +1,10 @@
 import { getAccessToken } from "@/auth";
 import { CACHE_TTL } from "@/config";
-import { clientEnvs } from "@/envs/client";
 import { getCheckoutId } from "@/lib/actions/cart";
 import { getCurrentRegion } from "@/regions/server";
-import { cartService } from "@/services/cart";
+import { getCartService } from "@/services/cart";
 import { storefrontLogger } from "@/services/logging";
-import { userService } from "@/services/user";
+import { getUserService } from "@/services/user";
 
 import { CartDetails } from "./cart-details";
 import { EmptyCart } from "./empty-cart";
@@ -19,23 +18,15 @@ export const Cart = async () => {
     return <EmptyCart />;
   }
 
-  const accessToken = await getAccessToken();
-
-  const [region, resultUserGet] = await Promise.all([
+  const [region, cartService] = await Promise.all([
     getCurrentRegion(),
-    userService.userGet(accessToken),
+    getCartService(),
   ]);
 
-  const service = cartService({
-    channel: region.market.channel,
+  const resultCartGet = await cartService.cartGet({
+    cartId: checkoutId,
     languageCode: region.language.code,
     countryCode: region.market.countryCode,
-    apiURI: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
-    logger: storefrontLogger,
-  });
-
-  const resultCartGet = await service.cartGet({
-    cartId: checkoutId,
     options: {
       next: { revalidate: CACHE_TTL.cart, tags: [`CHECKOUT:${checkoutId}`] },
     },
@@ -50,6 +41,11 @@ export const Cart = async () => {
   }
 
   if (!!resultCartGet.data.lines.length) {
+    const [accessToken, userService] = await Promise.all([
+      getAccessToken(),
+      getUserService(),
+    ]);
+    const resultUserGet = await userService.userGet(accessToken);
     const user = resultUserGet.ok ? resultUserGet.data : null;
 
     return (

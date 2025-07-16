@@ -8,8 +8,9 @@ import { getAccessToken } from "@/auth";
 import { CACHE_TTL } from "@/config";
 import { JsonLd, websiteToJsonLd } from "@/lib/json-ld";
 import { getCurrentRegion } from "@/regions/server";
+import { type SupportedLocale } from "@/regions/types";
 import { cmsPageService } from "@/services/cms";
-import { userService } from "@/services/user";
+import { getUserService } from "@/services/user";
 
 import { AccountNotifications } from "./_components/account-notifications";
 import { HeroBanner } from "./_components/hero-banner";
@@ -19,10 +20,12 @@ import {
   ProductsGridSkeleton,
 } from "./_components/products-grid";
 
-export async function generateMetadata(_params: {
-  params: Promise<{}>;
-  searchParams: Promise<{}>;
-}): Promise<Metadata> {
+type PageProps = {
+  params: Promise<{ locale: SupportedLocale }>;
+  searchParams: Promise<Record<string, string>>;
+};
+
+export async function generateMetadata(_params: PageProps): Promise<Metadata> {
   const t = await getTranslations("home");
 
   return {
@@ -42,12 +45,13 @@ export async function generateMetadata(_params: {
 }
 
 export default async function Page() {
-  const accessToken = await getAccessToken();
-
-  const [region, resultUserGet] = await Promise.all([
+  const [accessToken, region, userService] = await Promise.all([
+    getAccessToken(),
     getCurrentRegion(),
-    userService.userGet(accessToken),
+    getUserService(),
   ]);
+
+  const resultUserGet = await userService.userGet(accessToken);
 
   const user = resultUserGet.ok ? resultUserGet.data : null;
 

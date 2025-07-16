@@ -3,7 +3,7 @@
 import { type Address } from "@nimara/domain/objects/Address";
 import { type AsyncResult } from "@nimara/domain/objects/Result";
 
-import { checkoutService } from "@/services/checkout";
+import { getCheckoutService } from "@/services/checkout";
 
 export const updateCheckoutAddressAction = async ({
   type,
@@ -15,6 +15,7 @@ export const updateCheckoutAddressAction = async ({
 }): AsyncResult<{
   success: true;
 }> => {
+  const checkoutService = await getCheckoutService();
   const updateFn =
     type === "shipping"
       ? checkoutService.checkoutShippingAddressUpdate

@@ -1,14 +1,10 @@
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 
-import { editorJSDataToString } from "@nimara/ui/lib/richText";
-
 import { CACHE_TTL } from "@/config";
-import { clientEnvs } from "@/envs/client";
 import { getCurrentRegion } from "@/regions/server";
 import { type SupportedLocale } from "@/regions/types";
-import { storefrontLogger } from "@/services/logging";
-import { storeService } from "@/services/store";
+import { getStoreService } from "@/services/store";
 
 import { ProductDetailsContainer } from "./components/product-details-container";
 import { ProductDetailsSkeleton } from "./components/product-details-skeleton";
@@ -20,21 +16,18 @@ type PageProps = {
 };
 
 export async function generateMetadata(props: PageProps) {
-  const params = await props.params;
-  const { slug } = params;
-  const region = await getCurrentRegion();
-  const t = await getTranslations("products");
+  const [{ slug }, region, t, storeService] = await Promise.all([
+    props.params,
+    getCurrentRegion(),
+    getTranslations("products"),
+    getStoreService(),
+  ]);
 
-  const serviceOpts = {
+  const result = await storeService.getProductBase({
+    productSlug: slug,
     channel: region.market.channel,
     languageCode: region.language.code,
-    apiURI: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
     countryCode: region.market.countryCode,
-    logger: storefrontLogger,
-  };
-
-  const result = await storeService(serviceOpts).getProductBase({
-    productSlug: slug,
     options: {
       next: {
         revalidate: CACHE_TTL.pdp,
@@ -43,18 +36,17 @@ export async function generateMetadata(props: PageProps) {
     },
   });
 
-  const rawDescription = result?.data?.product?.description;
-  const parsedDescription = editorJSDataToString(rawDescription)?.trim();
+  if (!result.data?.product) {
+    return;
+  }
 
   const fallbackDescription = result?.data?.product?.name
     ? t("check-out-the-product", { productName: result?.data?.product?.name })
     : t("discover-our-product");
 
   return {
-    title: result?.data?.product?.name,
-    description: parsedDescription?.length
-      ? parsedDescription.slice(0, 200)
-      : fallbackDescription,
+    title: result.data.product.seo.title || result.data.product.name,
+    description: result.data?.product?.seo.description ?? fallbackDescription,
   };
 }
 

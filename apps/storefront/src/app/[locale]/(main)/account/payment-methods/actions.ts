@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { paths } from "@/lib/paths";
-import { paymentService } from "@/services/payment";
+import { getPaymentService } from "@/services/payment";
 
 export const paymentMethodDeleteAction = async ({
   customerId,
@@ -12,6 +12,7 @@ export const paymentMethodDeleteAction = async ({
   customerId: string;
   paymentMethodId: string;
 }) => {
+  const paymentService = await getPaymentService();
   const result = await paymentService.customerPaymentMethodDelete({
     customerId,
     paymentMethodId,
@@ -29,6 +30,8 @@ export const generateSecretAction = async ({
 }: {
   customerId: string;
 }) => {
+  const paymentService = await getPaymentService();
+
   return paymentService.paymentMethodSaveInitialize({
     customerId,
   });
