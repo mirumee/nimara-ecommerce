@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useTheme } from "next-themes";
 import { type ReactNode, useEffect, useState } from "react";
 
 import { Button } from "@nimara/ui/components/button";
@@ -40,8 +41,17 @@ export const PaymentMethodAddModal = ({
   const [isMounted, setIsMounted] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [errors, setErrors] = useState<(string | ReactNode)[]>([]);
+  const { resolvedTheme } = useTheme();
 
   const isLoading = !isMounted || isProcessing;
+
+  const isDark = resolvedTheme === "dark";
+  const appearance = {
+    theme: (isDark ? "night" : "stripe") as "night" | "stripe",
+    variables: {
+      colorBackground: isDark ? "#1C1917" : "#fff",
+    },
+  };
 
   const handlePaymentSave = async () => {
     setIsProcessing(true);
@@ -68,6 +78,7 @@ export const PaymentMethodAddModal = ({
       const { mount } = await paymentService.paymentElementCreate({
         locale: region.language.locale,
         secret,
+        appearance,
       });
 
       mount(`#${PAYMENT_ELEMENT_ID}`);
@@ -82,7 +93,7 @@ export const PaymentMethodAddModal = ({
         className={cn("gap-6", { "pointer-events-none": !isMounted })}
       >
         <DialogHeader>
-          <DialogTitle className="mb-2 text-stone-700">
+          <DialogTitle className="mb-2 text-stone-700 dark:text-stone-200">
             {t("payment.add-new-method")}
           </DialogTitle>
         </DialogHeader>

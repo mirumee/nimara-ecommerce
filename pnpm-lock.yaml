@@ -13,7 +13,7 @@ importers:
     devDependencies:
       commitizen:
         specifier: 4.3.1
-        version: 4.3.1(@types/node@24.0.13)(typescript@5.8.3)
+        version: 4.3.1(@types/node@24.0.10)(typescript@5.8.3)
       dotenv-cli:
         specifier: 8.0.0
         version: 8.0.0
@@ -49,7 +49,7 @@ importers:
         version: 1.54.1
       '@types/node':
         specifier: ^22.16.3
-        version: 22.16.3
+        version: 22.16.4
       dotenv:
         specifier: 16.6.1
         version: 16.6.1
@@ -168,6 +168,9 @@ importers:
       next-intl:
         specifier: 3.26.5
         version: 3.26.5(next@15.3.5(@babel/core@7.27.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.54.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)
+      next-themes:
+        specifier: 0.4.6
+        version: 0.4.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       nextjs-routes:
         specifier: 2.2.5
         version: 2.2.5(next@15.3.5(@babel/core@7.27.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.54.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))
@@ -291,10 +294,10 @@ importers:
         version: 5.8.3
       vite-tsconfig-paths:
         specifier: 5.1.4
-        version: 5.1.4(typescript@5.8.3)(vite@6.3.5(@types/node@24.0.13)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0))
+        version: 5.1.4(typescript@5.8.3)(vite@6.3.5(@types/node@24.0.10)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0))
       vitest:
         specifier: 3.2.4
-        version: 3.2.4(@types/debug@4.1.12)(@types/node@24.0.13)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0)
+        version: 3.2.4(@types/debug@4.1.12)(@types/node@24.0.10)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0)
 
   apps/stripe:
     dependencies:
@@ -379,7 +382,7 @@ importers:
         version: 4.17.20
       '@types/node':
         specifier: ^22.16.3
-        version: 22.16.3
+        version: 22.16.4
       '@types/react':
         specifier: 19.1.8
         version: 19.1.8
@@ -424,23 +427,23 @@ importers:
         version: 5.8.3
       vite-tsconfig-paths:
         specifier: 5.1.4
-        version: 5.1.4(typescript@5.8.3)(vite@6.3.5(@types/node@22.16.3)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0))
+        version: 5.1.4(typescript@5.8.3)(vite@6.3.5(@types/node@22.16.4)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0))
       vitest:
         specifier: 3.2.4
-        version: 3.2.4(@types/debug@4.1.12)(@types/node@22.16.3)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0)
+        version: 3.2.4(@types/debug@4.1.12)(@types/node@22.16.4)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0)
 
   packages/codegen:
     dependencies:
       graphql-config:
         specifier: 5.1.5
-        version: 5.1.5(@types/node@24.0.13)(graphql@16.11.0)(typescript@5.8.3)
+        version: 5.1.5(@types/node@24.0.10)(graphql@16.11.0)(typescript@5.8.3)
       ts-invariant:
         specifier: 0.10.3
         version: 0.10.3
     devDependencies:
       '@graphql-codegen/cli':
         specifier: 5.0.7
-        version: 5.0.7(@parcel/watcher@2.5.1)(@types/node@24.0.13)(graphql-sock@1.0.1(graphql@16.11.0))(graphql@16.11.0)(typescript@5.8.3)
+        version: 5.0.7(@parcel/watcher@2.5.1)(@types/node@24.0.10)(graphql-sock@1.0.1(graphql@16.11.0))(graphql@16.11.0)(typescript@5.8.3)
       '@graphql-codegen/near-operation-file-preset':
         specifier: 3.1.0
         version: 3.1.0(graphql@16.11.0)
@@ -572,7 +575,7 @@ importers:
     optionalDependencies:
       algoliasearch:
         specifier: '5'
-        version: 5.32.0
+        version: 5.33.0
       buttercms:
         specifier: 2.1.4
         version: 2.1.4
@@ -734,56 +737,56 @@ importers:
 
 packages:
 
-  '@algolia/client-abtesting@5.32.0':
-    resolution: {integrity: sha512-HG/6Eib6DnJYm/B2ijWFXr4txca/YOuA4K7AsEU0JBrOZSB+RU7oeDyNBPi3c0v0UDDqlkBqM3vBU/auwZlglA==}
+  '@algolia/client-abtesting@5.33.0':
+    resolution: {integrity: sha512-Pyv+iHkkq7BJWFKzdrXm/JSbcTGvrGqJnIMwHYYlKDjuEBWhYt/z4WDLP9MbFZ9cTKb4qe8OvzEmS/0ERW3ibg==}
     engines: {node: '>= 14.0.0'}
 
-  '@algolia/client-analytics@5.32.0':
-    resolution: {integrity: sha512-8Y9MLU72WFQOW3HArYv16+Wvm6eGmsqbxxM1qxtm0hvSASJbxCm+zQAZe5stqysTlcWo4BJ82KEH1PfgHbJAmQ==}
+  '@algolia/client-analytics@5.33.0':
+    resolution: {integrity: sha512-qkRc7ovjWQQJng6U1yM5esLPNDB0leGCaOh3FEfeWRyLB0xnjLsBEUkKanYq9GrewPvi17l78nDhkqB2SYzTCw==}
     engines: {node: '>= 14.0.0'}
 
-  '@algolia/client-common@5.32.0':
-    resolution: {integrity: sha512-w8L+rgyXMCPBKmEdOT+RfgMrF0mT6HK60vPYWLz8DBs/P7yFdGo7urn99XCJvVLMSKXrIbZ2FMZ/i50nZTXnuQ==}
+  '@algolia/client-common@5.33.0':
+    resolution: {integrity: sha512-Gq8Z4Fv0DkqDkf/bZl7ZwIF7PSCnRFwpyQoNDnUg+s4SwerXx6VwZJlIx/t5b9+l7vwWsjnKVivCfM4Ab5gw+g==}
     engines: {node: '>= 14.0.0'}
 
-  '@algolia/client-insights@5.32.0':
-    resolution: {integrity: sha512-AdWfynhUeX7jz/LTiFU3wwzJembTbdLkQIOLs4n7PyBuxZ3jz4azV1CWbIP8AjUOFmul6uXbmYza+KqyS5CzOA==}
+  '@algolia/client-insights@5.33.0':
+    resolution: {integrity: sha512-/tp1oWD3lpSXhAC4n8j0GMDbmN6pd+pATeO1GeURAFP5TVF+2Jz+NbQ1et0uCTzdazOfjEjSIv0fQSLo7bqSgA==}
     engines: {node: '>= 14.0.0'}
 
-  '@algolia/client-personalization@5.32.0':
-    resolution: {integrity: sha512-bTupJY4xzGZYI4cEQcPlSjjIEzMvv80h7zXGrXY1Y0KC/n/SLiMv84v7Uy+B6AG1Kiy9FQm2ADChBLo1uEhGtQ==}
+  '@algolia/client-personalization@5.33.0':
+    resolution: {integrity: sha512-hZNSqe2BXkrBQ04t5NSlqsNl4u0QrFfhXHbjO5iZ14TWt5jyOdtFMBxF3Qc0o0sqTVYnFIp0xtUbEi+/HkGeyQ==}
     engines: {node: '>= 14.0.0'}
 
-  '@algolia/client-query-suggestions@5.32.0':
-    resolution: {integrity: sha512-if+YTJw1G3nDKL2omSBjQltCHUQzbaHADkcPQrGFnIGhVyHU3Dzq4g46uEv8mrL5sxL8FjiS9LvekeUlL2NRqw==}
+  '@algolia/client-query-suggestions@5.33.0':
+    resolution: {integrity: sha512-kpu2hCIR+848T0lcf3W1GCMe+HQp/LcHceIglA6Dyw6i+y9wH3w8kmXqIV2Svv6JQ9ojEqIL8Knk7NEvD3xIBg==}
     engines: {node: '>= 14.0.0'}
 
-  '@algolia/client-search@5.32.0':
-    resolution: {integrity: sha512-kmK5nVkKb4DSUgwbveMKe4X3xHdMsPsOVJeEzBvFJ+oS7CkBPmpfHAEq+CcmiPJs20YMv6yVtUT9yPWL5WgAhg==}
+  '@algolia/client-search@5.33.0':
+    resolution: {integrity: sha512-Z5SAqPLxF8KyE9YPO4tAdHrXyb87DUJ0lXhFrcrG+dl/AQT9nqycQhtqDqdcQnfZrj02PImSWZQpxQj34nGZKw==}
     engines: {node: '>= 14.0.0'}
 
-  '@algolia/ingestion@1.32.0':
-    resolution: {integrity: sha512-PZTqjJbx+fmPuT2ud1n4vYDSF1yrT//vOGI9HNYKNA0PM0xGUBWigf5gRivHsXa3oBnUlTyHV9j7Kqx5BHbVHQ==}
+  '@algolia/ingestion@1.33.0':
+    resolution: {integrity: sha512-KNJI60N+twnDLiIY+oGO2Q+syS+yBNOmNdhsB5vCzzrhi3CYs+bufnJ67/BUUfnt+T5+3VlnkvUgDkGBmmZXmA==}
     engines: {node: '>= 14.0.0'}
 
-  '@algolia/monitoring@1.32.0':
-    resolution: {integrity: sha512-kYYoOGjvNQAmHDS1v5sBj+0uEL9RzYqH/TAdq8wmcV+/22weKt/fjh+6LfiqkS1SCZFYYrwGnirrUhUM36lBIQ==}
+  '@algolia/monitoring@1.33.0':
+    resolution: {integrity: sha512-47R0kMDTSj8Q7rCUgIRv5Xc518tCBBS0KIZ5oRKg+hspQaJmEO+fxwGLrIIwp5JiaK6y+5sbS7bhtaajelJhpg==}
     engines: {node: '>= 14.0.0'}
 
-  '@algolia/recommend@5.32.0':
-    resolution: {integrity: sha512-jyIBLdskjPAL7T1g57UMfUNx+PzvYbxKslwRUKBrBA6sNEsYCFdxJAtZSLUMmw6MC98RDt4ksmEl5zVMT5bsuw==}
+  '@algolia/recommend@5.33.0':
+    resolution: {integrity: sha512-HpeLoVQuv5kW9xL0RSq1exa8ueNwyx+9B02dzFonlQzKTaSedM0jiWo6m3nWpi1hChAKqjzkL40FkxrgyrWTSg==}
     engines: {node: '>= 14.0.0'}
 
-  '@algolia/requester-browser-xhr@5.32.0':
-    resolution: {integrity: sha512-eDp14z92Gt6JlFgiexImcWWH+Lk07s/FtxcoDaGrE4UVBgpwqOO6AfQM6dXh1pvHxlDFbMJihHc/vj3gBhPjqQ==}
+  '@algolia/requester-browser-xhr@5.33.0':
+    resolution: {integrity: sha512-uOqDkvY7s9c9rkaZ4+n69LkTmZ5ax3el+8u6ipvODfj1P3HzrGvMUVFy/nGSXxw+XITKcIRphPQcyqn15b02dA==}
     engines: {node: '>= 14.0.0'}
 
-  '@algolia/requester-fetch@5.32.0':
-    resolution: {integrity: sha512-rnWVglh/K75hnaLbwSc2t7gCkbq1ldbPgeIKDUiEJxZ4mlguFgcltWjzpDQ/t1LQgxk9HdIFcQfM17Hid3aQ6Q==}
+  '@algolia/requester-fetch@5.33.0':
+    resolution: {integrity: sha512-NzTEGjwjPhUXPsrjj9nXM43+jtBVeL6UgGNBTQKsxjpqJ3EEAQ2Kq5g7DRK6mVDTQiTBWvBLKChJpn4qxwtLsg==}
     engines: {node: '>= 14.0.0'}
 
-  '@algolia/requester-node-http@5.32.0':
-    resolution: {integrity: sha512-LbzQ04+VLkzXY4LuOzgyjqEv/46Gwrk55PldaglMJ4i4eDXSRXGKkwJpXFwsoU+c1HMQlHIyjJBhrfsfdyRmyQ==}
+  '@algolia/requester-node-http@5.33.0':
+    resolution: {integrity: sha512-FhEE19ScAYuXL3VLj2I3KhL7683gZwZoa+BQZUEnA05vSbVBhCAqUBQgiVu7j2RF3VceqLX3+GEeY0bHs4y7eA==}
     engines: {node: '>= 14.0.0'}
 
   '@alloc/quick-lru@5.2.0':
@@ -1766,14 +1769,14 @@ packages:
     resolution: {integrity: sha512-dBVuXR082gk3jsFp7Rd/JI4kytwGHecnCoTtXFb7DB6CNHp4rg5k1bhg0nWdLGLnOV71lmDzGQaLMy8iPLY0pw==}
     engines: {node: '>=10.0.0'}
 
-  '@emnapi/core@1.4.3':
-    resolution: {integrity: sha512-4m62DuCE07lw01soJwPiBGC0nAww0Q+RY70VZ+n49yDIO13yyinhbWCeNnaob0lakDtWQzSdtNWzJeOJt2ma+g==}
+  '@emnapi/core@1.4.4':
+    resolution: {integrity: sha512-A9CnAbC6ARNMKcIcrQwq6HeHCjpcBZ5wSx4U01WXCqEKlrzB9F9315WDNHkrs2xbx7YjjSxbUYxuN6EQzpcY2g==}
 
-  '@emnapi/runtime@1.4.4':
-    resolution: {integrity: sha512-hHyapA4A3gPaDCNfiqyZUStTMqIkKRshqPIuDOXv1hcBnD4U3l8cP0T1HMCfGRxQ6V64TGCcoswChANyOAwbQg==}
+  '@emnapi/runtime@1.4.3':
+    resolution: {integrity: sha512-pBPWdu6MLKROBX05wSNKcNb++m5Er+KQ9QkB+WVM+pW2Kx9hoSrVTnu3BdkI5eBLZoKu/J6mW/B6i6bJB2ytXQ==}
 
-  '@emnapi/wasi-threads@1.0.2':
-    resolution: {integrity: sha512-5n3nTJblwRi8LlXkJ9eBzu+kZR8Yxcc7ubakyQTFzPMtIhFpUBRbsnc2Dv88IZDIbCDlBiWrknhB4Lsz7mg6BA==}
+  '@emnapi/wasi-threads@1.0.3':
+    resolution: {integrity: sha512-8K5IFFsQqF9wQNJptGbS6FNKgUTsSRYnTqNCG1vPP8jFdjSv18n2mQfJpkt2Oibo9iBEzcDnDxNwKTzC7svlJw==}
 
   '@envelop/core@5.2.3':
     resolution: {integrity: sha512-KfoGlYD/XXQSc3BkM1/k15+JQbkQ4ateHazeZoWl9P71FsLTDXSjGy6j7QqfhpIDSbxNISqhPMfZHYSbDFOofQ==}
@@ -2565,8 +2568,8 @@ packages:
     resolution: {integrity: sha512-jMxvwzkKzd3cXo2EB9GM2ic0eYo2rP/BS6gJt6HnWbsDO1O8GSD4k7o2Cpr2YERtMpGF/MGcDfsfj2EbQPtrXw==}
     engines: {node: '>= 10'}
 
-  '@napi-rs/wasm-runtime@0.2.11':
-    resolution: {integrity: sha512-9DPkXtvHydrcOsopiYpUgPHpmj0HWZKMUnL2dZqpvC42lsratuBG06V5ipyno0fUek5VlFsNQ+AcFATSrJXgMA==}
+  '@napi-rs/wasm-runtime@0.2.12':
+    resolution: {integrity: sha512-ZVWUcfwY4E/yPitQJl481FjFo3K22D6qF0DuFH6Y/nbnE11GY5uguDxZMGXPQ8WQ0128MXQD7TnfHyK4oWoIJQ==}
 
   '@next/bundle-analyzer@15.3.5':
     resolution: {integrity: sha512-r1tlg7N4IUWpdqdy8/6bf7pvo2yeN9Oc6OHEiMsMfIooJ5k37Odi9HC1qBS4soULNE7FiQ18JP/TdmQKiaIkoA==}
@@ -2645,8 +2648,8 @@ packages:
     resolution: {integrity: sha512-P4YJBPdPSpWTQ1NU4XYdvHvXJJDxM6YwpS0FZHRgP7YFkdVxsWcpWGy/NVqlAA7PcPCnMacXlRm1y2PFZRWL/w==}
     engines: {node: '>= 20'}
 
-  '@octokit/core@7.0.3':
-    resolution: {integrity: sha512-oNXsh2ywth5aowwIa7RKtawnkdH6LgU1ztfP9AIUCQCvzysB+WeU8o2kyyosDPwBZutPpjZDKPQGIzzrfTWweQ==}
+  '@octokit/core@7.0.2':
+    resolution: {integrity: sha512-ODsoD39Lq6vR6aBgvjTnA3nZGliknKboc9Gtxr7E4WDNqY24MxANKcuDQSF0jzapvGb3KWOEDrKfve4HoWGK+g==}
     engines: {node: '>= 20'}
 
   '@octokit/endpoint@11.0.0':
@@ -2929,10 +2932,6 @@ packages:
 
   '@opentelemetry/semantic-conventions@1.34.0':
     resolution: {integrity: sha512-aKcOkyrorBGlajjRdVoJWHTxfxO1vCNHLJVlSDaRHDIdjU+pX8IYQPvPDkYiujKLbRnWU+1TBwEt0QRgSm4SGA==}
-    engines: {node: '>=14'}
-
-  '@opentelemetry/semantic-conventions@1.36.0':
-    resolution: {integrity: sha512-TtxJSRD8Ohxp6bKkhrm27JRHAxPczQA7idtcTOMYI+wQRRrfgqxHv1cFbCApcSnNjtXkmzFozn6jQtFrOmbjPQ==}
     engines: {node: '>=14'}
 
   '@opentelemetry/sql-common@0.40.1':
@@ -4111,8 +4110,8 @@ packages:
     resolution: {integrity: sha512-L7z9BgrNEcYyUYtF+HaEfiS5ebkh9jXqbszz7pC0hRBPaatV0XjSD3+eHrpqFemQfgwiFF0QPIarnIihIDn7OA==}
     engines: {node: '>=10.13.0'}
 
-  '@tybys/wasm-util@0.9.0':
-    resolution: {integrity: sha512-6+7nlbMVX/PVDCwaIQ8nTOPveOcFLSt8GcXdx8hD0bt39uWxYT88uXzqTd4fTvqta7oeUJqudepapKNt2DYJFw==}
+  '@tybys/wasm-util@0.10.0':
+    resolution: {integrity: sha512-VyyPYFlOMNylG45GoAe0xDoLwWuowvf92F9kySqzYh8vmYm7D2u4iUJKa1tOUpS70Ku13ASrOkS4ScXFsTaCNQ==}
 
   '@types/chai@5.2.2':
     resolution: {integrity: sha512-8kB30R7Hwqf40JPiKhVzodJs2Qc1ZJ5zuT3uzw5Hq/dhNCl3G3l83jfpdI1e20BP348+fV7VIL/+FxaXkqBmWg==}
@@ -4282,11 +4281,11 @@ packages:
   '@types/nlcst@2.0.3':
     resolution: {integrity: sha512-vSYNSDe6Ix3q+6Z7ri9lyWqgGhJTmzRjZRqyq15N0Z/1/UnVsno9G/N40NBijoYx2seFDIl0+B2mgAb9mezUCA==}
 
-  '@types/node@22.16.3':
-    resolution: {integrity: sha512-sr4Xz74KOUeYadexo1r8imhRtlVXcs+j3XK3TcoiYk7B1t3YRVJgtaD3cwX73NYb71pmVuMLNRhJ9XKdoDB74g==}
+  '@types/node@22.16.4':
+    resolution: {integrity: sha512-PYRhNtZdm2wH/NT2k/oAJ6/f2VD2N2Dag0lGlx2vWgMSJXGNmlce5MiTQzoWAiIJtso30mjnfQCOKVH+kAQC/g==}
 
-  '@types/node@24.0.13':
-    resolution: {integrity: sha512-Qm9OYVOFHFYg3wJoTSrz80hoec5Lia/dPp84do3X7dZvLikQvM1YpmvTBEdIr/e+U8HTkFjLHLnl78K/qjf+jQ==}
+  '@types/node@24.0.10':
+    resolution: {integrity: sha512-ENHwaH+JIRTDIEEbDK6QSQntAYGtbvdDXnMXnZaZ6k13Du1dPMmprkEHIL7ok2Wl2aZevetwTAb5S+7yIF+enA==}
 
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
@@ -4800,8 +4799,8 @@ packages:
     resolution: {integrity: sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==}
     engines: {node: '>= 6.0.0'}
 
-  agent-base@7.1.4:
-    resolution: {integrity: sha512-MnA+YT8fwfJPgBx3m60MNqakm30XOkyIoH1y6huTQvC0PwZG7ki8NacLBcrPbNoo8vEZy7Jpuk7+jMO+CUovTQ==}
+  agent-base@7.1.3:
+    resolution: {integrity: sha512-jRR5wdylq8CkOe6hei19GGZnxM6rBGwFl3Bg0YItGDimvjGtAvdZk4Pu6Cl4u4Igsws4a1fd1Vq3ezrhn4KmFw==}
     engines: {node: '>= 14'}
 
   aggregate-error@3.1.0:
@@ -4836,8 +4835,8 @@ packages:
   ajv@8.17.1:
     resolution: {integrity: sha512-B/gBuNg5SiMTrPkC+A2+cW0RszwxYmn6VYxB/inlBStS5nx6xHIt/ehKRhIMhqusl7a8LjQoZnjCs5vhwxOQ1g==}
 
-  algoliasearch@5.32.0:
-    resolution: {integrity: sha512-84xBncKNPBK8Ae89F65+SyVcOihrIbm/3N7to+GpRBHEUXGjA3ydWTMpcRW6jmFzkBQ/eqYy/y+J+NBpJWYjBg==}
+  algoliasearch@5.33.0:
+    resolution: {integrity: sha512-WdgSkmyTec5n2W2FA2/7Q7TCSajCV0X6w57u3H5GHnw0UCp/G5xb33/Jx1FX3uMtz17P3wGEzMCP82d0LJqMow==}
     engines: {node: '>= 14.0.0'}
 
   ansi-escapes@4.3.2:
@@ -5384,8 +5383,8 @@ packages:
     resolution: {integrity: sha512-CLf+zr6St0wIxos4bmaKHRXWAcsCXrJU6F4VdNDrGRK3B8LDLKoX3zuMV5GhtbGkVR/LohZ6MT6im43vZLSjmA==}
     engines: {node: '>=18'}
 
-  conventional-changelog-writer@8.2.0:
-    resolution: {integrity: sha512-Y2aW4596l9AEvFJRwFGJGiQjt2sBYTjPD18DdvxX9Vpz0Z7HQ+g1Z+6iYDAm1vR3QOJrDBkRHixHK/+FhkR6Pw==}
+  conventional-changelog-writer@8.1.0:
+    resolution: {integrity: sha512-dpC440QnORNCO81XYuRRFOLCsjKj4W7tMkUIn3lR6F/FAaJcWLi7iCj6IcEvSQY2zw6VUgwUKd5DEHKEWrpmEQ==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -5885,8 +5884,8 @@ packages:
   electron-to-chromium@1.5.166:
     resolution: {integrity: sha512-QPWqHL0BglzPYyJJ1zSSmwFFL6MFXhbACOCcsCdUMCkzPdS9/OIBVxg516X/Ado2qwAq8k0nJJ7phQPCqiaFAw==}
 
-  electron-to-chromium@1.5.182:
-    resolution: {integrity: sha512-Lv65Btwv9W4J9pyODI6EWpdnhfvrve/us5h1WspW8B2Fb0366REPtY3hX7ounk1CkV/TBjWCEvCBBbYbmV0qCA==}
+  electron-to-chromium@1.5.180:
+    resolution: {integrity: sha512-ED+GEyEh3kYMwt2faNmgMB0b8O5qtATGgR4RmRsIp4T6p7B8vdMbIedYndnvZfsaXvSzegtpfqRMDNCjjiSduA==}
 
   embla-carousel-react@8.6.0:
     resolution: {integrity: sha512-0/PjqU7geVmo6F734pmPqpyHqiM99olvyecY7zdweCw+6tKEXnrE90pBiBbMMU8s5tICemzpQ3hi5EpxzGW+JA==}
@@ -8008,8 +8007,8 @@ packages:
       react-router-dom:
         optional: true
 
-  oauth4webapi@3.5.5:
-    resolution: {integrity: sha512-1K88D2GiAydGblHo39NBro5TebGXa+7tYoyIbxvqv3+haDDry7CBE1eSYuNbOSsYCCU6y0gdynVZAkm4YPw4hg==}
+  oauth4webapi@3.5.1:
+    resolution: {integrity: sha512-txg/jZQwcbaF7PMJgY7aoxc9QuCxHVFMiEkDIJ60DwDz3PbtXPQnrzo+3X4IRYGChIwWLabRBRpf1k9hO9+xrQ==}
 
   object-assign@4.1.1:
     resolution: {integrity: sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3P6F7Fu+JNDoXfklElbLJSnc3FUQHVe4cU5hj+BcUg==}
@@ -10189,94 +10188,94 @@ packages:
 
 snapshots:
 
-  '@algolia/client-abtesting@5.32.0':
+  '@algolia/client-abtesting@5.33.0':
     dependencies:
-      '@algolia/client-common': 5.32.0
-      '@algolia/requester-browser-xhr': 5.32.0
-      '@algolia/requester-fetch': 5.32.0
-      '@algolia/requester-node-http': 5.32.0
+      '@algolia/client-common': 5.33.0
+      '@algolia/requester-browser-xhr': 5.33.0
+      '@algolia/requester-fetch': 5.33.0
+      '@algolia/requester-node-http': 5.33.0
     optional: true
 
-  '@algolia/client-analytics@5.32.0':
+  '@algolia/client-analytics@5.33.0':
     dependencies:
-      '@algolia/client-common': 5.32.0
-      '@algolia/requester-browser-xhr': 5.32.0
-      '@algolia/requester-fetch': 5.32.0
-      '@algolia/requester-node-http': 5.32.0
+      '@algolia/client-common': 5.33.0
+      '@algolia/requester-browser-xhr': 5.33.0
+      '@algolia/requester-fetch': 5.33.0
+      '@algolia/requester-node-http': 5.33.0
     optional: true
 
-  '@algolia/client-common@5.32.0':
+  '@algolia/client-common@5.33.0':
     optional: true
 
-  '@algolia/client-insights@5.32.0':
+  '@algolia/client-insights@5.33.0':
     dependencies:
-      '@algolia/client-common': 5.32.0
-      '@algolia/requester-browser-xhr': 5.32.0
-      '@algolia/requester-fetch': 5.32.0
-      '@algolia/requester-node-http': 5.32.0
+      '@algolia/client-common': 5.33.0
+      '@algolia/requester-browser-xhr': 5.33.0
+      '@algolia/requester-fetch': 5.33.0
+      '@algolia/requester-node-http': 5.33.0
     optional: true
 
-  '@algolia/client-personalization@5.32.0':
+  '@algolia/client-personalization@5.33.0':
     dependencies:
-      '@algolia/client-common': 5.32.0
-      '@algolia/requester-browser-xhr': 5.32.0
-      '@algolia/requester-fetch': 5.32.0
-      '@algolia/requester-node-http': 5.32.0
+      '@algolia/client-common': 5.33.0
+      '@algolia/requester-browser-xhr': 5.33.0
+      '@algolia/requester-fetch': 5.33.0
+      '@algolia/requester-node-http': 5.33.0
     optional: true
 
-  '@algolia/client-query-suggestions@5.32.0':
+  '@algolia/client-query-suggestions@5.33.0':
     dependencies:
-      '@algolia/client-common': 5.32.0
-      '@algolia/requester-browser-xhr': 5.32.0
-      '@algolia/requester-fetch': 5.32.0
-      '@algolia/requester-node-http': 5.32.0
+      '@algolia/client-common': 5.33.0
+      '@algolia/requester-browser-xhr': 5.33.0
+      '@algolia/requester-fetch': 5.33.0
+      '@algolia/requester-node-http': 5.33.0
     optional: true
 
-  '@algolia/client-search@5.32.0':
+  '@algolia/client-search@5.33.0':
     dependencies:
-      '@algolia/client-common': 5.32.0
-      '@algolia/requester-browser-xhr': 5.32.0
-      '@algolia/requester-fetch': 5.32.0
-      '@algolia/requester-node-http': 5.32.0
+      '@algolia/client-common': 5.33.0
+      '@algolia/requester-browser-xhr': 5.33.0
+      '@algolia/requester-fetch': 5.33.0
+      '@algolia/requester-node-http': 5.33.0
     optional: true
 
-  '@algolia/ingestion@1.32.0':
+  '@algolia/ingestion@1.33.0':
     dependencies:
-      '@algolia/client-common': 5.32.0
-      '@algolia/requester-browser-xhr': 5.32.0
-      '@algolia/requester-fetch': 5.32.0
-      '@algolia/requester-node-http': 5.32.0
+      '@algolia/client-common': 5.33.0
+      '@algolia/requester-browser-xhr': 5.33.0
+      '@algolia/requester-fetch': 5.33.0
+      '@algolia/requester-node-http': 5.33.0
     optional: true
 
-  '@algolia/monitoring@1.32.0':
+  '@algolia/monitoring@1.33.0':
     dependencies:
-      '@algolia/client-common': 5.32.0
-      '@algolia/requester-browser-xhr': 5.32.0
-      '@algolia/requester-fetch': 5.32.0
-      '@algolia/requester-node-http': 5.32.0
+      '@algolia/client-common': 5.33.0
+      '@algolia/requester-browser-xhr': 5.33.0
+      '@algolia/requester-fetch': 5.33.0
+      '@algolia/requester-node-http': 5.33.0
     optional: true
 
-  '@algolia/recommend@5.32.0':
+  '@algolia/recommend@5.33.0':
     dependencies:
-      '@algolia/client-common': 5.32.0
-      '@algolia/requester-browser-xhr': 5.32.0
-      '@algolia/requester-fetch': 5.32.0
-      '@algolia/requester-node-http': 5.32.0
+      '@algolia/client-common': 5.33.0
+      '@algolia/requester-browser-xhr': 5.33.0
+      '@algolia/requester-fetch': 5.33.0
+      '@algolia/requester-node-http': 5.33.0
     optional: true
 
-  '@algolia/requester-browser-xhr@5.32.0':
+  '@algolia/requester-browser-xhr@5.33.0':
     dependencies:
-      '@algolia/client-common': 5.32.0
+      '@algolia/client-common': 5.33.0
     optional: true
 
-  '@algolia/requester-fetch@5.32.0':
+  '@algolia/requester-fetch@5.33.0':
     dependencies:
-      '@algolia/client-common': 5.32.0
+      '@algolia/client-common': 5.33.0
     optional: true
 
-  '@algolia/requester-node-http@5.32.0':
+  '@algolia/requester-node-http@5.33.0':
     dependencies:
-      '@algolia/client-common': 5.32.0
+      '@algolia/client-common': 5.33.0
     optional: true
 
   '@alloc/quick-lru@5.2.0': {}
@@ -10337,7 +10336,7 @@ snapshots:
     dependencies:
       '@panva/hkdf': 1.2.1
       jose: 6.0.11
-      oauth4webapi: 3.5.5
+      oauth4webapi: 3.5.1
       preact: 10.24.3
       preact-render-to-string: 6.5.11(preact@10.24.3)
 
@@ -11497,7 +11496,7 @@ snapshots:
   '@commitlint/execute-rule@19.8.0':
     optional: true
 
-  '@commitlint/load@19.8.0(@types/node@24.0.13)(typescript@5.8.3)':
+  '@commitlint/load@19.8.0(@types/node@24.0.10)(typescript@5.8.3)':
     dependencies:
       '@commitlint/config-validator': 19.8.0
       '@commitlint/execute-rule': 19.8.0
@@ -11505,7 +11504,7 @@ snapshots:
       '@commitlint/types': 19.8.0
       chalk: 5.4.1
       cosmiconfig: 9.0.0(typescript@5.8.3)
-      cosmiconfig-typescript-loader: 6.1.0(@types/node@24.0.13)(cosmiconfig@9.0.0(typescript@5.8.3))(typescript@5.8.3)
+      cosmiconfig-typescript-loader: 6.1.0(@types/node@24.0.10)(cosmiconfig@9.0.0(typescript@5.8.3))(typescript@5.8.3)
       lodash.isplainobject: 4.0.6
       lodash.merge: 4.6.2
       lodash.uniq: 4.5.0
@@ -11532,18 +11531,18 @@ snapshots:
 
   '@discoveryjs/json-ext@0.5.7': {}
 
-  '@emnapi/core@1.4.3':
+  '@emnapi/core@1.4.4':
     dependencies:
-      '@emnapi/wasi-threads': 1.0.2
+      '@emnapi/wasi-threads': 1.0.3
       tslib: 2.8.1
     optional: true
 
-  '@emnapi/runtime@1.4.4':
+  '@emnapi/runtime@1.4.3':
     dependencies:
       tslib: 2.8.1
     optional: true
 
-  '@emnapi/wasi-threads@1.0.2':
+  '@emnapi/wasi-threads@1.0.3':
     dependencies:
       tslib: 2.8.1
     optional: true
@@ -11752,7 +11751,7 @@ snapshots:
       graphql: 16.11.0
       tslib: 2.6.3
 
-  '@graphql-codegen/cli@5.0.7(@parcel/watcher@2.5.1)(@types/node@24.0.13)(graphql-sock@1.0.1(graphql@16.11.0))(graphql@16.11.0)(typescript@5.8.3)':
+  '@graphql-codegen/cli@5.0.7(@parcel/watcher@2.5.1)(@types/node@24.0.10)(graphql-sock@1.0.1(graphql@16.11.0))(graphql@16.11.0)(typescript@5.8.3)':
     dependencies:
       '@babel/generator': 7.27.5
       '@babel/template': 7.27.2
@@ -11763,12 +11762,12 @@ snapshots:
       '@graphql-tools/apollo-engine-loader': 8.0.20(graphql@16.11.0)
       '@graphql-tools/code-file-loader': 8.1.20(graphql@16.11.0)
       '@graphql-tools/git-loader': 8.0.24(graphql@16.11.0)
-      '@graphql-tools/github-loader': 8.0.20(@types/node@24.0.13)(graphql@16.11.0)
+      '@graphql-tools/github-loader': 8.0.20(@types/node@24.0.10)(graphql@16.11.0)
       '@graphql-tools/graphql-file-loader': 8.0.20(graphql@16.11.0)
       '@graphql-tools/json-file-loader': 8.0.18(graphql@16.11.0)
       '@graphql-tools/load': 8.1.0(graphql@16.11.0)
-      '@graphql-tools/prisma-loader': 8.0.17(@types/node@24.0.13)(graphql@16.11.0)
-      '@graphql-tools/url-loader': 8.0.31(@types/node@24.0.13)(graphql@16.11.0)
+      '@graphql-tools/prisma-loader': 8.0.17(@types/node@24.0.10)(graphql@16.11.0)
+      '@graphql-tools/url-loader': 8.0.31(@types/node@24.0.10)(graphql@16.11.0)
       '@graphql-tools/utils': 10.8.6(graphql@16.11.0)
       '@whatwg-node/fetch': 0.10.8
       chalk: 4.1.2
@@ -11776,7 +11775,7 @@ snapshots:
       debounce: 1.2.1
       detect-indent: 6.1.0
       graphql: 16.11.0
-      graphql-config: 5.1.5(@types/node@24.0.13)(graphql@16.11.0)(typescript@5.8.3)
+      graphql-config: 5.1.5(@types/node@24.0.10)(graphql@16.11.0)(typescript@5.8.3)
       inquirer: 8.2.6
       is-glob: 4.0.3
       jiti: 1.21.7
@@ -12025,7 +12024,7 @@ snapshots:
       - uWebSockets.js
       - utf-8-validate
 
-  '@graphql-tools/executor-http@1.3.3(@types/node@24.0.13)(graphql@16.11.0)':
+  '@graphql-tools/executor-http@1.3.3(@types/node@24.0.10)(graphql@16.11.0)':
     dependencies:
       '@graphql-hive/signal': 1.0.0
       '@graphql-tools/executor-common': 0.0.4(graphql@16.11.0)
@@ -12035,7 +12034,7 @@ snapshots:
       '@whatwg-node/fetch': 0.10.8
       '@whatwg-node/promise-helpers': 1.3.2
       graphql: 16.11.0
-      meros: 1.3.0(@types/node@24.0.13)
+      meros: 1.3.0(@types/node@24.0.10)
       tslib: 2.8.1
     transitivePeerDependencies:
       - '@types/node'
@@ -12074,9 +12073,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@graphql-tools/github-loader@8.0.20(@types/node@24.0.13)(graphql@16.11.0)':
+  '@graphql-tools/github-loader@8.0.20(@types/node@24.0.10)(graphql@16.11.0)':
     dependencies:
-      '@graphql-tools/executor-http': 1.3.3(@types/node@24.0.13)(graphql@16.11.0)
+      '@graphql-tools/executor-http': 1.3.3(@types/node@24.0.10)(graphql@16.11.0)
       '@graphql-tools/graphql-tag-pluck': 8.3.19(graphql@16.11.0)
       '@graphql-tools/utils': 10.8.6(graphql@16.11.0)
       '@whatwg-node/fetch': 0.10.8
@@ -12149,9 +12148,9 @@ snapshots:
       graphql: 16.11.0
       tslib: 2.8.1
 
-  '@graphql-tools/prisma-loader@8.0.17(@types/node@24.0.13)(graphql@16.11.0)':
+  '@graphql-tools/prisma-loader@8.0.17(@types/node@24.0.10)(graphql@16.11.0)':
     dependencies:
-      '@graphql-tools/url-loader': 8.0.31(@types/node@24.0.13)(graphql@16.11.0)
+      '@graphql-tools/url-loader': 8.0.31(@types/node@24.0.10)(graphql@16.11.0)
       '@graphql-tools/utils': 10.8.6(graphql@16.11.0)
       '@types/js-yaml': 4.0.9
       '@whatwg-node/fetch': 0.10.8
@@ -12204,10 +12203,10 @@ snapshots:
       graphql: 16.11.0
       tslib: 2.8.1
 
-  '@graphql-tools/url-loader@8.0.31(@types/node@24.0.13)(graphql@16.11.0)':
+  '@graphql-tools/url-loader@8.0.31(@types/node@24.0.10)(graphql@16.11.0)':
     dependencies:
       '@graphql-tools/executor-graphql-ws': 2.0.5(graphql@16.11.0)
-      '@graphql-tools/executor-http': 1.3.3(@types/node@24.0.13)(graphql@16.11.0)
+      '@graphql-tools/executor-http': 1.3.3(@types/node@24.0.10)(graphql@16.11.0)
       '@graphql-tools/executor-legacy-ws': 1.1.17(graphql@16.11.0)
       '@graphql-tools/utils': 10.8.6(graphql@16.11.0)
       '@graphql-tools/wrap': 10.1.0(graphql@16.11.0)
@@ -12370,7 +12369,7 @@ snapshots:
 
   '@img/sharp-wasm32@0.34.2':
     dependencies:
-      '@emnapi/runtime': 1.4.4
+      '@emnapi/runtime': 1.4.3
     optional: true
 
   '@img/sharp-win32-arm64@0.34.2':
@@ -12524,11 +12523,11 @@ snapshots:
       '@napi-rs/simple-git-win32-arm64-msvc': 0.1.19
       '@napi-rs/simple-git-win32-x64-msvc': 0.1.19
 
-  '@napi-rs/wasm-runtime@0.2.11':
+  '@napi-rs/wasm-runtime@0.2.12':
     dependencies:
-      '@emnapi/core': 1.4.3
-      '@emnapi/runtime': 1.4.4
-      '@tybys/wasm-util': 0.9.0
+      '@emnapi/core': 1.4.4
+      '@emnapi/runtime': 1.4.3
+      '@tybys/wasm-util': 0.10.0
     optional: true
 
   '@next/bundle-analyzer@15.3.5':
@@ -12584,7 +12583,7 @@ snapshots:
 
   '@octokit/auth-token@6.0.0': {}
 
-  '@octokit/core@7.0.3':
+  '@octokit/core@7.0.2':
     dependencies:
       '@octokit/auth-token': 6.0.0
       '@octokit/graphql': 9.0.1
@@ -12607,21 +12606,21 @@ snapshots:
 
   '@octokit/openapi-types@25.1.0': {}
 
-  '@octokit/plugin-paginate-rest@13.1.1(@octokit/core@7.0.3)':
+  '@octokit/plugin-paginate-rest@13.1.1(@octokit/core@7.0.2)':
     dependencies:
-      '@octokit/core': 7.0.3
+      '@octokit/core': 7.0.2
       '@octokit/types': 14.1.0
 
-  '@octokit/plugin-retry@8.0.1(@octokit/core@7.0.3)':
+  '@octokit/plugin-retry@8.0.1(@octokit/core@7.0.2)':
     dependencies:
-      '@octokit/core': 7.0.3
+      '@octokit/core': 7.0.2
       '@octokit/request-error': 7.0.0
       '@octokit/types': 14.1.0
       bottleneck: 2.19.5
 
-  '@octokit/plugin-throttling@11.0.1(@octokit/core@7.0.3)':
+  '@octokit/plugin-throttling@11.0.1(@octokit/core@7.0.2)':
     dependencies:
-      '@octokit/core': 7.0.3
+      '@octokit/core': 7.0.2
       '@octokit/types': 14.1.0
       bottleneck: 2.19.5
 
@@ -12667,7 +12666,7 @@ snapshots:
   '@opentelemetry/core@2.0.1(@opentelemetry/api@1.9.0)':
     dependencies:
       '@opentelemetry/api': 1.9.0
-      '@opentelemetry/semantic-conventions': 1.36.0
+      '@opentelemetry/semantic-conventions': 1.34.0
 
   '@opentelemetry/instrumentation-amqplib@0.46.1(@opentelemetry/api@1.9.0)':
     dependencies:
@@ -12925,7 +12924,7 @@ snapshots:
     dependencies:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/core': 2.0.1(@opentelemetry/api@1.9.0)
-      '@opentelemetry/semantic-conventions': 1.36.0
+      '@opentelemetry/semantic-conventions': 1.34.0
 
   '@opentelemetry/sdk-logs@0.57.2(@opentelemetry/api@1.9.0)':
     dependencies:
@@ -12952,8 +12951,6 @@ snapshots:
   '@opentelemetry/semantic-conventions@1.28.0': {}
 
   '@opentelemetry/semantic-conventions@1.34.0': {}
-
-  '@opentelemetry/semantic-conventions@1.36.0': {}
 
   '@opentelemetry/sql-common@0.40.1(@opentelemetry/api@1.9.0)':
     dependencies:
@@ -13743,7 +13740,7 @@ snapshots:
   '@semantic-release/commit-analyzer@13.0.1(semantic-release@24.2.7(typescript@5.8.3))':
     dependencies:
       conventional-changelog-angular: 8.0.0
-      conventional-changelog-writer: 8.2.0
+      conventional-changelog-writer: 8.1.0
       conventional-commits-filter: 5.0.0
       conventional-commits-parser: 6.2.0
       debug: 4.4.1
@@ -13758,10 +13755,10 @@ snapshots:
 
   '@semantic-release/github@11.0.3(semantic-release@24.2.7(typescript@5.8.3))':
     dependencies:
-      '@octokit/core': 7.0.3
-      '@octokit/plugin-paginate-rest': 13.1.1(@octokit/core@7.0.3)
-      '@octokit/plugin-retry': 8.0.1(@octokit/core@7.0.3)
-      '@octokit/plugin-throttling': 11.0.1(@octokit/core@7.0.3)
+      '@octokit/core': 7.0.2
+      '@octokit/plugin-paginate-rest': 13.1.1(@octokit/core@7.0.2)
+      '@octokit/plugin-retry': 8.0.1(@octokit/core@7.0.2)
+      '@octokit/plugin-throttling': 11.0.1(@octokit/core@7.0.2)
       '@semantic-release/error': 4.0.0
       aggregate-error: 5.0.0
       debug: 4.4.1
@@ -13798,7 +13795,7 @@ snapshots:
   '@semantic-release/release-notes-generator@14.0.3(semantic-release@24.2.7(typescript@5.8.3))':
     dependencies:
       conventional-changelog-angular: 8.0.0
-      conventional-changelog-writer: 8.2.0
+      conventional-changelog-writer: 8.1.0
       conventional-commits-filter: 5.0.0
       conventional-commits-parser: 6.2.0
       debug: 4.4.1
@@ -14246,7 +14243,7 @@ snapshots:
 
   '@trysound/sax@0.2.0': {}
 
-  '@tybys/wasm-util@0.9.0':
+  '@tybys/wasm-util@0.10.0':
     dependencies:
       tslib: 2.8.1
     optional: true
@@ -14257,11 +14254,11 @@ snapshots:
 
   '@types/connect@3.4.36':
     dependencies:
-      '@types/node': 22.16.3
+      '@types/node': 22.16.4
 
   '@types/conventional-commits-parser@5.0.1':
     dependencies:
-      '@types/node': 22.16.3
+      '@types/node': 22.16.4
     optional: true
 
   '@types/d3-array@3.2.1': {}
@@ -14437,7 +14434,7 @@ snapshots:
 
   '@types/mysql@2.15.26':
     dependencies:
-      '@types/node': 22.16.3
+      '@types/node': 22.16.4
 
   '@types/negotiator@0.6.4': {}
 
@@ -14445,11 +14442,11 @@ snapshots:
     dependencies:
       '@types/unist': 3.0.3
 
-  '@types/node@22.16.3':
+  '@types/node@22.16.4':
     dependencies:
       undici-types: 6.21.0
 
-  '@types/node@24.0.13':
+  '@types/node@24.0.10':
     dependencies:
       undici-types: 7.8.0
     optional: true
@@ -14462,7 +14459,7 @@ snapshots:
 
   '@types/pg@8.6.1':
     dependencies:
-      '@types/node': 22.16.3
+      '@types/node': 22.16.4
       pg-protocol: 1.10.0
       pg-types: 2.2.0
 
@@ -14486,7 +14483,7 @@ snapshots:
 
   '@types/tedious@4.0.14':
     dependencies:
-      '@types/node': 22.16.3
+      '@types/node': 22.16.4
 
   '@types/trusted-types@2.0.7':
     optional: true
@@ -14497,7 +14494,7 @@ snapshots:
 
   '@types/ws@8.18.1':
     dependencies:
-      '@types/node': 22.16.3
+      '@types/node': 22.16.4
 
   '@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.8.3))(eslint@8.57.1)(typescript@5.8.3)':
     dependencies:
@@ -14584,7 +14581,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 6.21.0
       '@typescript-eslint/visitor-keys': 6.21.0
-      debug: 4.4.1
+      debug: 4.4.0
       globby: 11.1.0
       is-glob: 4.0.3
       minimatch: 9.0.3
@@ -14742,12 +14739,12 @@ snapshots:
 
   '@unrs/resolver-binding-wasm32-wasi@1.10.1':
     dependencies:
-      '@napi-rs/wasm-runtime': 0.2.11
+      '@napi-rs/wasm-runtime': 0.2.12
     optional: true
 
   '@unrs/resolver-binding-wasm32-wasi@1.11.0':
     dependencies:
-      '@napi-rs/wasm-runtime': 0.2.11
+      '@napi-rs/wasm-runtime': 0.2.12
     optional: true
 
   '@unrs/resolver-binding-win32-arm64-msvc@1.10.1':
@@ -14791,21 +14788,21 @@ snapshots:
       chai: 5.2.0
       tinyrainbow: 2.0.0
 
-  '@vitest/mocker@3.2.4(vite@6.3.5(@types/node@22.16.3)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0))':
+  '@vitest/mocker@3.2.4(vite@6.3.5(@types/node@22.16.4)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0))':
     dependencies:
       '@vitest/spy': 3.2.4
       estree-walker: 3.0.3
       magic-string: 0.30.17
     optionalDependencies:
-      vite: 6.3.5(@types/node@22.16.3)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0)
+      vite: 6.3.5(@types/node@22.16.4)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0)
 
-  '@vitest/mocker@3.2.4(vite@6.3.5(@types/node@24.0.13)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0))':
+  '@vitest/mocker@3.2.4(vite@6.3.5(@types/node@24.0.10)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0))':
     dependencies:
       '@vitest/spy': 3.2.4
       estree-walker: 3.0.3
       magic-string: 0.30.17
     optionalDependencies:
-      vite: 6.3.5(@types/node@24.0.13)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0)
+      vite: 6.3.5(@types/node@24.0.10)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0)
 
   '@vitest/pretty-format@3.2.4':
     dependencies:
@@ -14968,7 +14965,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  agent-base@7.1.4: {}
+  agent-base@7.1.3: {}
 
   aggregate-error@3.1.0:
     dependencies:
@@ -15007,21 +15004,21 @@ snapshots:
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
 
-  algoliasearch@5.32.0:
+  algoliasearch@5.33.0:
     dependencies:
-      '@algolia/client-abtesting': 5.32.0
-      '@algolia/client-analytics': 5.32.0
-      '@algolia/client-common': 5.32.0
-      '@algolia/client-insights': 5.32.0
-      '@algolia/client-personalization': 5.32.0
-      '@algolia/client-query-suggestions': 5.32.0
-      '@algolia/client-search': 5.32.0
-      '@algolia/ingestion': 1.32.0
-      '@algolia/monitoring': 1.32.0
-      '@algolia/recommend': 5.32.0
-      '@algolia/requester-browser-xhr': 5.32.0
-      '@algolia/requester-fetch': 5.32.0
-      '@algolia/requester-node-http': 5.32.0
+      '@algolia/client-abtesting': 5.33.0
+      '@algolia/client-analytics': 5.33.0
+      '@algolia/client-common': 5.33.0
+      '@algolia/client-insights': 5.33.0
+      '@algolia/client-personalization': 5.33.0
+      '@algolia/client-query-suggestions': 5.33.0
+      '@algolia/client-search': 5.33.0
+      '@algolia/ingestion': 1.33.0
+      '@algolia/monitoring': 1.33.0
+      '@algolia/recommend': 5.33.0
+      '@algolia/requester-browser-xhr': 5.33.0
+      '@algolia/requester-fetch': 5.33.0
+      '@algolia/requester-node-http': 5.33.0
     optional: true
 
   ansi-escapes@4.3.2:
@@ -15299,7 +15296,7 @@ snapshots:
   browserslist@4.25.1:
     dependencies:
       caniuse-lite: 1.0.30001727
-      electron-to-chromium: 1.5.182
+      electron-to-chromium: 1.5.180
       node-releases: 2.0.19
       update-browserslist-db: 1.1.3(browserslist@4.25.1)
 
@@ -15606,10 +15603,10 @@ snapshots:
 
   commander@8.3.0: {}
 
-  commitizen@4.3.1(@types/node@24.0.13)(typescript@5.8.3):
+  commitizen@4.3.1(@types/node@24.0.10)(typescript@5.8.3):
     dependencies:
       cachedir: 2.3.0
-      cz-conventional-changelog: 3.3.0(@types/node@24.0.13)(typescript@5.8.3)
+      cz-conventional-changelog: 3.3.0(@types/node@24.0.10)(typescript@5.8.3)
       dedent: 0.7.0
       detect-indent: 6.1.0
       find-node-modules: 2.1.3
@@ -15658,7 +15655,7 @@ snapshots:
     dependencies:
       compare-func: 2.0.0
 
-  conventional-changelog-writer@8.2.0:
+  conventional-changelog-writer@8.1.0:
     dependencies:
       conventional-commits-filter: 5.0.0
       handlebars: 4.7.8
@@ -15693,9 +15690,9 @@ snapshots:
     dependencies:
       layout-base: 2.0.1
 
-  cosmiconfig-typescript-loader@6.1.0(@types/node@24.0.13)(cosmiconfig@9.0.0(typescript@5.8.3))(typescript@5.8.3):
+  cosmiconfig-typescript-loader@6.1.0(@types/node@24.0.10)(cosmiconfig@9.0.0(typescript@5.8.3))(typescript@5.8.3):
     dependencies:
-      '@types/node': 24.0.13
+      '@types/node': 24.0.10
       cosmiconfig: 9.0.0(typescript@5.8.3)
       jiti: 2.4.2
       typescript: 5.8.3
@@ -15781,16 +15778,16 @@ snapshots:
 
   cytoscape@3.32.0: {}
 
-  cz-conventional-changelog@3.3.0(@types/node@24.0.13)(typescript@5.8.3):
+  cz-conventional-changelog@3.3.0(@types/node@24.0.10)(typescript@5.8.3):
     dependencies:
       chalk: 2.4.2
-      commitizen: 4.3.1(@types/node@24.0.13)(typescript@5.8.3)
+      commitizen: 4.3.1(@types/node@24.0.10)(typescript@5.8.3)
       conventional-commit-types: 3.0.0
       lodash.map: 4.6.0
       longest: 2.0.1
       word-wrap: 1.2.5
     optionalDependencies:
-      '@commitlint/load': 19.8.0(@types/node@24.0.13)(typescript@5.8.3)
+      '@commitlint/load': 19.8.0(@types/node@24.0.10)(typescript@5.8.3)
     transitivePeerDependencies:
       - '@types/node'
       - typescript
@@ -16160,7 +16157,7 @@ snapshots:
 
   electron-to-chromium@1.5.166: {}
 
-  electron-to-chromium@1.5.182: {}
+  electron-to-chromium@1.5.180: {}
 
   embla-carousel-react@8.6.0(react@19.1.0):
     dependencies:
@@ -17116,13 +17113,13 @@ snapshots:
 
   graphemer@1.4.0: {}
 
-  graphql-config@5.1.5(@types/node@24.0.13)(graphql@16.11.0)(typescript@5.8.3):
+  graphql-config@5.1.5(@types/node@24.0.10)(graphql@16.11.0)(typescript@5.8.3):
     dependencies:
       '@graphql-tools/graphql-file-loader': 8.0.20(graphql@16.11.0)
       '@graphql-tools/json-file-loader': 8.0.18(graphql@16.11.0)
       '@graphql-tools/load': 8.1.0(graphql@16.11.0)
       '@graphql-tools/merge': 9.0.24(graphql@16.11.0)
-      '@graphql-tools/url-loader': 8.0.31(@types/node@24.0.13)(graphql@16.11.0)
+      '@graphql-tools/url-loader': 8.0.31(@types/node@24.0.10)(graphql@16.11.0)
       '@graphql-tools/utils': 10.8.6(graphql@16.11.0)
       cosmiconfig: 8.3.6(typescript@5.8.3)
       graphql: 16.11.0
@@ -17414,7 +17411,7 @@ snapshots:
 
   http-proxy-agent@7.0.2:
     dependencies:
-      agent-base: 7.1.4
+      agent-base: 7.1.3
       debug: 4.4.1
     transitivePeerDependencies:
       - supports-color
@@ -17428,7 +17425,7 @@ snapshots:
 
   https-proxy-agent@7.0.6:
     dependencies:
-      agent-base: 7.1.4
+      agent-base: 7.1.3
       debug: 4.4.1
     transitivePeerDependencies:
       - supports-color
@@ -17806,7 +17803,7 @@ snapshots:
 
   jest-worker@27.5.1:
     dependencies:
-      '@types/node': 22.16.3
+      '@types/node': 22.16.4
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
@@ -18344,9 +18341,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  meros@1.3.0(@types/node@24.0.13):
+  meros@1.3.0(@types/node@24.0.10):
     optionalDependencies:
-      '@types/node': 24.0.13
+      '@types/node': 24.0.10
 
   mhchemparser@4.2.1: {}
 
@@ -18969,7 +18966,7 @@ snapshots:
     optionalDependencies:
       next: 15.3.5(@babel/core@7.27.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.54.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
 
-  oauth4webapi@3.5.5: {}
+  oauth4webapi@3.5.1: {}
 
   object-assign@4.1.1: {}
 
@@ -20438,12 +20435,12 @@ snapshots:
 
   stripe@15.10.0:
     dependencies:
-      '@types/node': 22.16.3
+      '@types/node': 22.16.4
       qs: 6.11.2
 
   stripe@17.6.0:
     dependencies:
-      '@types/node': 22.16.3
+      '@types/node': 22.16.4
       qs: 6.11.2
 
   style-to-js@1.1.16:
@@ -21076,13 +21073,13 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.2
 
-  vite-node@3.2.4(@types/node@22.16.3)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0):
+  vite-node@3.2.4(@types/node@22.16.4)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0):
     dependencies:
       cac: 6.7.14
       debug: 4.4.1
       es-module-lexer: 1.7.0
       pathe: 2.0.3
-      vite: 6.3.5(@types/node@22.16.3)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0)
+      vite: 6.3.5(@types/node@22.16.4)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0)
     transitivePeerDependencies:
       - '@types/node'
       - jiti
@@ -21097,13 +21094,13 @@ snapshots:
       - tsx
       - yaml
 
-  vite-node@3.2.4(@types/node@24.0.13)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0):
+  vite-node@3.2.4(@types/node@24.0.10)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0):
     dependencies:
       cac: 6.7.14
       debug: 4.4.1
       es-module-lexer: 1.7.0
       pathe: 2.0.3
-      vite: 6.3.5(@types/node@24.0.13)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0)
+      vite: 6.3.5(@types/node@24.0.10)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0)
     transitivePeerDependencies:
       - '@types/node'
       - jiti
@@ -21118,29 +21115,29 @@ snapshots:
       - tsx
       - yaml
 
-  vite-tsconfig-paths@5.1.4(typescript@5.8.3)(vite@6.3.5(@types/node@22.16.3)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0)):
+  vite-tsconfig-paths@5.1.4(typescript@5.8.3)(vite@6.3.5(@types/node@22.16.4)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0)):
     dependencies:
       debug: 4.4.0
       globrex: 0.1.2
       tsconfck: 3.1.4(typescript@5.8.3)
     optionalDependencies:
-      vite: 6.3.5(@types/node@22.16.3)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0)
+      vite: 6.3.5(@types/node@22.16.4)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0)
     transitivePeerDependencies:
       - supports-color
       - typescript
 
-  vite-tsconfig-paths@5.1.4(typescript@5.8.3)(vite@6.3.5(@types/node@24.0.13)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0)):
+  vite-tsconfig-paths@5.1.4(typescript@5.8.3)(vite@6.3.5(@types/node@24.0.10)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0)):
     dependencies:
       debug: 4.4.0
       globrex: 0.1.2
       tsconfck: 3.1.4(typescript@5.8.3)
     optionalDependencies:
-      vite: 6.3.5(@types/node@24.0.13)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0)
+      vite: 6.3.5(@types/node@24.0.10)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0)
     transitivePeerDependencies:
       - supports-color
       - typescript
 
-  vite@6.3.5(@types/node@22.16.3)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0):
+  vite@6.3.5(@types/node@22.16.4)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0):
     dependencies:
       esbuild: 0.25.5
       fdir: 6.4.6(picomatch@4.0.2)
@@ -21149,13 +21146,13 @@ snapshots:
       rollup: 4.44.0
       tinyglobby: 0.2.14
     optionalDependencies:
-      '@types/node': 22.16.3
+      '@types/node': 22.16.4
       fsevents: 2.3.3
       jiti: 2.4.2
       terser: 5.43.1
       yaml: 2.8.0
 
-  vite@6.3.5(@types/node@24.0.13)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0):
+  vite@6.3.5(@types/node@24.0.10)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0):
     dependencies:
       esbuild: 0.25.5
       fdir: 6.4.6(picomatch@4.0.2)
@@ -21164,17 +21161,17 @@ snapshots:
       rollup: 4.44.0
       tinyglobby: 0.2.14
     optionalDependencies:
-      '@types/node': 24.0.13
+      '@types/node': 24.0.10
       fsevents: 2.3.3
       jiti: 2.4.2
       terser: 5.43.1
       yaml: 2.8.0
 
-  vitest@3.2.4(@types/debug@4.1.12)(@types/node@22.16.3)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0):
+  vitest@3.2.4(@types/debug@4.1.12)(@types/node@22.16.4)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0):
     dependencies:
       '@types/chai': 5.2.2
       '@vitest/expect': 3.2.4
-      '@vitest/mocker': 3.2.4(vite@6.3.5(@types/node@22.16.3)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0))
+      '@vitest/mocker': 3.2.4(vite@6.3.5(@types/node@22.16.4)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0))
       '@vitest/pretty-format': 3.2.4
       '@vitest/runner': 3.2.4
       '@vitest/snapshot': 3.2.4
@@ -21192,12 +21189,12 @@ snapshots:
       tinyglobby: 0.2.14
       tinypool: 1.1.1
       tinyrainbow: 2.0.0
-      vite: 6.3.5(@types/node@22.16.3)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0)
-      vite-node: 3.2.4(@types/node@22.16.3)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0)
+      vite: 6.3.5(@types/node@22.16.4)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0)
+      vite-node: 3.2.4(@types/node@22.16.4)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0)
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/debug': 4.1.12
-      '@types/node': 22.16.3
+      '@types/node': 22.16.4
     transitivePeerDependencies:
       - jiti
       - less
@@ -21212,11 +21209,11 @@ snapshots:
       - tsx
       - yaml
 
-  vitest@3.2.4(@types/debug@4.1.12)(@types/node@24.0.13)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0):
+  vitest@3.2.4(@types/debug@4.1.12)(@types/node@24.0.10)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0):
     dependencies:
       '@types/chai': 5.2.2
       '@vitest/expect': 3.2.4
-      '@vitest/mocker': 3.2.4(vite@6.3.5(@types/node@24.0.13)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0))
+      '@vitest/mocker': 3.2.4(vite@6.3.5(@types/node@24.0.10)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0))
       '@vitest/pretty-format': 3.2.4
       '@vitest/runner': 3.2.4
       '@vitest/snapshot': 3.2.4
@@ -21234,12 +21231,12 @@ snapshots:
       tinyglobby: 0.2.14
       tinypool: 1.1.1
       tinyrainbow: 2.0.0
-      vite: 6.3.5(@types/node@24.0.13)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0)
-      vite-node: 3.2.4(@types/node@24.0.13)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0)
+      vite: 6.3.5(@types/node@24.0.10)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0)
+      vite-node: 3.2.4(@types/node@24.0.10)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0)
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/debug': 4.1.12
-      '@types/node': 24.0.13
+      '@types/node': 24.0.10
     transitivePeerDependencies:
       - jiti
       - less

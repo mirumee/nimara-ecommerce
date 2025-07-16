@@ -77,7 +77,7 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
                 )}
               </Link>
               <NavigationMenuContent>
-                <div className="grid w-full grid-cols-6 p-6">
+                <div className="bg-background grid w-full grid-cols-6 p-6">
                   <div className="col-span-2 flex flex-col gap-3 pr-6">
                     {!!item.children?.length &&
                       childrenWithoutImage?.map((child) => (

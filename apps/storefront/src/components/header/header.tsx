@@ -21,6 +21,7 @@ import { MobileSideMenu } from "./mobile-side-menu";
 import { SearchForm } from "./search-form";
 import { ShoppingBagIcon } from "./shopping-bag-icon";
 import { ShoppingBagIconWithCount } from "./shopping-bag-icon-with-count";
+import { ThemeToggle } from "./theme-toggle";
 
 export const Header = async () => {
   const [accessToken, userService, region, t] = await Promise.all([
@@ -77,7 +78,7 @@ export const Header = async () => {
             />
           </div>
 
-          <div className="flex items-center justify-start">
+          <div className="flex items-center justify-center md:justify-start">
             <Logo />
           </div>
           <div className="hidden md:block">
@@ -89,6 +90,10 @@ export const Header = async () => {
 
             <div className="hidden md:block">
               <LocaleSwitch region={region} />
+            </div>
+
+            <div className="hidden md:block">
+              <ThemeToggle />
             </div>
 
             <Button

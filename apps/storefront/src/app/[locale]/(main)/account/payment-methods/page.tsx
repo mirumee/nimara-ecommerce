@@ -92,7 +92,9 @@ export default async function Page(props: PageProps) {
   return (
     <div className="flex flex-col gap-8 text-sm">
       <div className="flex justify-between">
-        <h2 className="text-2xl">{t("payment.payment-methods")}</h2>
+        <h2 className="text-primary text-2xl">
+          {t("payment.payment-methods")}
+        </h2>
 
         {hasPaymentMethods && (
           <AddNewPaymentTrigger

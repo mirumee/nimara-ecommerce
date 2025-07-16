@@ -48,7 +48,7 @@ export async function ShippingAddressSection({
         <h3 className="scroll-m-20 text-2xl tracking-tight">
           {t("shipping-address.title")}
         </h3>
-        <div className="text-sm leading-5 text-stone-900">
+        <div className="text-foreground text-sm leading-5">
           {displayFormattedAddressLines({
             addressId: shippingAddress.id,
             formattedAddress: result.data.formattedAddress,
