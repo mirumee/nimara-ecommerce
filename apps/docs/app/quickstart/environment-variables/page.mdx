@@ -28,15 +28,6 @@ This page lists and explains all environment variables used by the Nimara storef
 
 ---
 
-### 🌐 General
-
-#### `NEXT_PUBLIC_STOREFRONT_URL`
-
-- **Description**: Public URL of your storefront, used for generating an absolute URLs in sitemap.xml, OpenGraph, etc.
-- **Example**: `https://my-new-store.com`
-
----
-
 ### 🔐 Auth
 
 #### `AUTH_SECRET`
@@ -68,6 +59,15 @@ This page lists and explains all environment variables used by the Nimara storef
 ---
 
 ## ❔ Optional Variables
+
+### 🌐 General
+
+#### `NEXT_PUBLIC_STOREFRONT_URL`
+
+- **Description**: Public URL of your storefront, used for generating an absolute URLs in sitemap.xml, OpenGraph, etc. If not set, it defaults to the Vercel build URL, or localhost.
+- **Example**: `https://my-new-store.com`
+
+---
 
 ### 🧪 Testing (Playwright)
 
@@ -122,3 +122,25 @@ This page lists and explains all environment variables used by the Nimara storef
 
 - **Description**: Preferred image format served from Saleor.
 - **Example**: `AVIF`, `WEBP`
+
+---
+
+### 🔎 Search
+
+#### `NEXT_PUBLIC_SEARCH_SERVICE`
+
+- **Description**: Search service to use for the storefront.
+- **Options**: `SALEOR`, `ALGOLIA`
+- **Default**: `SALEOR`
+
+#### `NEXT_PUBLIC_ALGOLIA_APP_ID`
+
+- **Description**: Algolia application ID. Required if `NEXT_PUBLIC_SEARCH_SERVICE` is set to `ALGOLIA`.
+- **How to get it**: Algolia dashboard -> **API Keys** -> copy the `Application ID`.
+- **Example**: `your-algolia-app-id`
+
+#### `NEXT_PUBLIC_ALGOLIA_API_KEY`
+
+- **Description**: Algolia search API key. Required if `NEXT_PUBLIC_SEARCH_SERVICE` is set to `ALGOLIA`.
+- **How to get it**: Algolia dashboard -> **API Keys** -> copy the `Search API key`.
+- **Example**: `your-algolia-search-api-key`

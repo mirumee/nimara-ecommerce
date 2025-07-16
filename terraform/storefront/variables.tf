@@ -66,7 +66,7 @@ variable "private_environment_variables" {
   description = "Map of private environment variables to be set in the Vercel project. Each key is the variable name, and the value is an object containing comments and environment-specific values."
   type = map(object({
     comment   = optional(string)
-    sensitive = optional(bool, true)
+    sensitive = optional(bool, false)
     envs_values = list(object({
       value      = string
       target     = optional(list(string), ["production", "preview", "development"])
