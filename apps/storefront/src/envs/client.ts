@@ -22,8 +22,8 @@ const schema = z.object({
   PAYMENT_APP_ID: z.string().trim(),
   STRIPE_PUBLIC_KEY: z.string().trim(),
   // Algolia specific
-  NEXT_PUBLIC_ALGOLIA_APP_ID: z.string().trim().min(1).default(""),
-  NEXT_PUBLIC_ALGOLIA_API_KEY: z.string().trim().min(1).default(""),
+  NEXT_PUBLIC_ALGOLIA_APP_ID: z.string().trim().min(1).default("YOUR_APP_ID"),
+  NEXT_PUBLIC_ALGOLIA_API_KEY: z.string().trim().min(1).default("YOUR_API_KEY"),
 });
 
 export const clientEnvs = schema.parse({
