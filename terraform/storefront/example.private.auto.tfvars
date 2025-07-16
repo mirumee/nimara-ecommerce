@@ -15,28 +15,31 @@ vercel_api_token = "CHANGE_ME"
 private_environment_variables = {
   "SALEOR_APP_TOKEN": {
     comment = "Required. Saleor app token for the storefront."
+    sensitive = true
     envs_values = [
       {
         value = "CHANGE_ME"
-        target = ["production", "preview", "development"]
+        target = ["production", "preview"]
       }
     ]
   },
   "AUTH_SECRET": {
     comment = "Required. Secret key for authentication."
+    sensitive = true
     envs_values = [
       {
         value = "CHANGE_ME"
-        target = ["production", "preview", "development"]
+        target = ["production", "preview"]
       }
     ]
   },
   "STRIPE_SECRET_KEY": {
     comment = "Required. Secret key for Stripe payments."
+    sensitive = true
     envs_values = [
       {
         value = "CHANGE_ME"
-        target = ["production", "preview", "development"]
+        target = ["production", "preview"]
       }
     ]
   }

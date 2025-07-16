@@ -59,6 +59,7 @@ What they are and how to get them is described in the [Environment Variables](ht
 Vercel variables can be obtained from your Vercel account settings.
 
 ```hcl filename="terraform/storefront/private.auto.tfvars"
+# Rename this file to `private.auto.tfvars` and fill in the values.
 # This file cannot be committed to version control as it contains sensitive information.
 
 # Can be found in your Vercel team settings - https://vercel.com/YOUR_TEAM_NAME/~/settings.
@@ -75,33 +76,35 @@ vercel_api_token = "CHANGE_ME"
 private_environment_variables = {
   "SALEOR_APP_TOKEN": {
     comment = "Required. Saleor app token for the storefront."
+    sensitive = true
     envs_values = [
       {
         value = "CHANGE_ME"
-        target = ["production", "preview", "development"]
+        target = ["production", "preview"]
       }
     ]
   },
   "AUTH_SECRET": {
     comment = "Required. Secret key for authentication."
+    sensitive = true
     envs_values = [
       {
         value = "CHANGE_ME"
-        target = ["production", "preview", "development"]
+        target = ["production", "preview"]
       }
     ]
   },
   "STRIPE_SECRET_KEY": {
     comment = "Required. Secret key for Stripe payments."
+    sensitive = true
     envs_values = [
       {
         value = "CHANGE_ME"
-        target = ["production", "preview", "development"]
+        target = ["production", "preview"]
       }
     ]
   }
 }
-
 ```
 
 Next step is to configure **public** environment variables in the similar way.
@@ -185,8 +188,6 @@ public_environment_variables = {
     ]
   }
 }
-
-
 ```
 
 ### Deploy the Storefront
@@ -207,5 +208,13 @@ terraform apply
 ```
 
 If you have configured everything correctly, Terraform will create the necessary resources in Vercel and deploy your storefront.
+
+Now you can push your changes to the Github repository to trigger the deployment on Vercel:
+
+```bash
+git add .
+git commit -m "Configure Terraform for storefront deployment"
+git push origin main
+```
 
 </Steps>
