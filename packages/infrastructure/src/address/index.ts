@@ -9,9 +9,9 @@ import { saleorCountriesAllGetInfra } from "./saleor/infrastructure/countries-al
 import { saleorCountriesGetInfra } from "./saleor/infrastructure/countries-get-infra";
 import type { AddressService, SaleorAddressServiceConfig } from "./types";
 
-export const saleorAddressService: AddressService<
-  SaleorAddressServiceConfig
-> = (config) => ({
+export const saleorAddressService = (
+  config: SaleorAddressServiceConfig,
+): AddressService => ({
   addressFormGetRows: addressFormGetRowsUseCase({
     addressFormGetRowsInfra: saleorAddressFormGetRowsInfra(config),
   }),

@@ -6,7 +6,7 @@ import { getTranslations } from "next-intl/server";
 import { saleorAuthClient } from "@nimara/infrastructure/auth/client";
 
 import { signInSchema } from "@/components/schema";
-import { userService } from "@/services/user";
+import { getUserService } from "@/services/user";
 
 import { COOKIE_KEY } from "./config";
 import { setAccessToken, setRefreshToken } from "./lib/actions/auth";
@@ -49,8 +49,11 @@ export const config = {
           return null;
         }
 
-        await setAccessToken(token);
-        await setRefreshToken(refreshToken);
+        const [userService] = await Promise.all([
+          getUserService(),
+          setAccessToken(token),
+          setRefreshToken(refreshToken),
+        ]);
 
         const resultUserGet = await userService.userGet(data.tokenCreate.token);
 

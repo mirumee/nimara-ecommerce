@@ -11,9 +11,9 @@ import { saleorRequestPasswordResetInfra } from "./saleor/infrastructure/request
 import { saleorTokenRefreshInfra } from "./saleor/infrastructure/token-refresh-infra";
 import type { AuthService, SaleorAuthServiceConfig } from "./types";
 
-export const saleorAuthService: AuthService<SaleorAuthServiceConfig> = (
-  config,
-) => ({
+export const saleorAuthService = (
+  config: SaleorAuthServiceConfig,
+): AuthService => ({
   tokenRefresh: tokenRefreshUseCase({
     tokenRefreshInfra: saleorTokenRefreshInfra(config),
   }),

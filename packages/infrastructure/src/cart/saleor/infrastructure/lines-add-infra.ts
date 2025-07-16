@@ -2,11 +2,11 @@ import { err, ok } from "@nimara/domain/objects/Result";
 
 import { graphqlClient } from "#root/graphql/client";
 
-import type { LinesAddInfra, SaleorCartServiceConfig } from "../../types";
+import type { CartServiceConfig, LinesAddInfra } from "../../types";
 import { CartLinesAddMutationDocument } from "../graphql/mutations/generated";
 
 export const saleorLinesAddInfra =
-  ({ apiURI, logger }: SaleorCartServiceConfig): LinesAddInfra =>
+  ({ apiURI, logger }: CartServiceConfig): LinesAddInfra =>
   async ({ cartId, lines, options }) => {
     const result = await graphqlClient(apiURI).execute(
       CartLinesAddMutationDocument,

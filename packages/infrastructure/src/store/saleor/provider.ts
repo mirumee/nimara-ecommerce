@@ -2,15 +2,15 @@ import { getProductBaseUseCase } from "#root/use-cases/store/get-product-basic-d
 import { getProductDetailsUseCase } from "#root/use-cases/store/get-product-details-use-case";
 import { getProductRelatedProductsUseCase } from "#root/use-cases/store/get-product-related-products-use-case";
 
-import { getProductAvailabilityDetailsInfra } from "./saleor/infrastructure/get-product-availability-details-infra";
-import { getProductBaseInfra } from "./saleor/infrastructure/get-product-base-infra";
-import { getProductDetailsInfra } from "./saleor/infrastructure/get-product-details-infra";
-import { getProductRelatedProductsInfra } from "./saleor/infrastructure/get-product-related-products-infra";
-import type { SaleorProductServiceConfig, StoreService } from "./types";
+import type { StoreService, StoreServiceConfig } from "../types";
+import { getProductAvailabilityDetailsInfra } from "./infrastructure/get-product-availability-details-infra";
+import { getProductBaseInfra } from "./infrastructure/get-product-base-infra";
+import { getProductDetailsInfra } from "./infrastructure/get-product-details-infra";
+import { getProductRelatedProductsInfra } from "./infrastructure/get-product-related-products-infra";
 
-export const saleorStoreService: StoreService<SaleorProductServiceConfig> = (
-  config,
-) => ({
+export const saleorStoreService = (
+  config: StoreServiceConfig,
+): StoreService => ({
   getProductDetails: getProductDetailsUseCase({
     getProductDetailsInfra: getProductDetailsInfra(config),
     getProductAvailabilityDetailsInfra:

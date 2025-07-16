@@ -1,13 +1,13 @@
 import { decodeJwt } from "jose";
+import { cookies } from "next/headers";
 import {
   type NextFetchEvent,
   type NextRequest,
   NextResponse,
 } from "next/server";
 
-import { getAccessToken, getRefreshToken } from "@/auth";
 import { COOKIE_KEY } from "@/config";
-import { authService } from "@/services/auth";
+import { getAuthService } from "@/services/auth";
 
 import { type CustomMiddleware } from "./chain";
 
@@ -19,7 +19,7 @@ export function authMiddleware(middleware: CustomMiddleware) {
     event: NextFetchEvent,
     response: NextResponse,
   ) => {
-    const accessToken = await getAccessToken();
+    const accessToken = (await cookies()).get(COOKIE_KEY.accessToken)?.value;
     const redirectToLogin = NextResponse.redirect(
       new URL("/sign-in", request.url),
     );
@@ -43,7 +43,7 @@ export function authMiddleware(middleware: CustomMiddleware) {
       return middleware(request, event, modifiedResponse);
     }
 
-    const refreshToken = await getRefreshToken();
+    const refreshToken = (await cookies()).get(COOKIE_KEY.refreshToken)?.value;
 
     if (!refreshToken) {
       modifiedResponse = redirectToLogin;
@@ -52,6 +52,7 @@ export function authMiddleware(middleware: CustomMiddleware) {
       return middleware(request, event, modifiedResponse);
     }
 
+    const authService = await getAuthService();
     const resultTokenRefresh = await authService.tokenRefresh({
       refreshToken,
     });

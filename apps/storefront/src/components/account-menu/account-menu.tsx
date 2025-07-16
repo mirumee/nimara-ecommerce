@@ -1,12 +1,15 @@
 import { getTranslations } from "next-intl/server";
 
 import { getAccessToken } from "@/auth";
-import { userService } from "@/services/user";
+import { getUserService } from "@/services/user";
 
 import { SideLinks } from "./side-links";
 
 export async function AccountSideMenu() {
-  const accessToken = await getAccessToken();
+  const [accessToken, userService] = await Promise.all([
+    getAccessToken(),
+    getUserService(),
+  ]);
   const resultUserGet = await userService.userGet(accessToken);
   const t = await getTranslations();
 

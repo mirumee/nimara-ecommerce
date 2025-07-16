@@ -1,7 +1,9 @@
 fragment ProductBaseFragment on Product {
   id
   name
+  seoTitle
   description
+  seoDescription
   category {
     name
     slug

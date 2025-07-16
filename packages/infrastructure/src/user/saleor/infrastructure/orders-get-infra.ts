@@ -5,12 +5,12 @@ import { THUMBNAIL_FORMAT, THUMBNAIL_SIZE_MEDIUM } from "#root/config";
 import { graphqlClient } from "#root/graphql/client";
 import { parseAttributeData } from "#root/lib/serializers/attribute";
 
-import type { OrdersGetInfra, SaleorUserServiceConfig } from "../../types";
+import type { OrdersGetInfra, UserServiceConfig } from "../../types";
 import type { OrderFragment } from "../graphql/fragments/generated";
 import { UserOrdersQueryDocument } from "../graphql/queries/generated";
 
 export const saleorOrdersGetInfra =
-  ({ apiURL, logger }: SaleorUserServiceConfig): OrdersGetInfra =>
+  ({ apiURL, logger }: UserServiceConfig): OrdersGetInfra =>
   async ({ accessToken, languageCode }) => {
     const result = await graphqlClient(apiURL, accessToken).execute(
       UserOrdersQueryDocument,

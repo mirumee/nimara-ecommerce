@@ -3,7 +3,7 @@ import { ImageResponse } from "next/og";
 import { CACHE_TTL, DEFAULT_RESULTS_PER_PAGE } from "@/config";
 import { clientEnvs } from "@/envs/client";
 import { getCurrentRegion } from "@/regions/server";
-import { collectionService } from "@/services/collection";
+import { getCollectionService } from "@/services/collection";
 
 export const size = {
   width: 1200,
@@ -21,7 +21,10 @@ export default async function Image({
 }: {
   params: { slug: string };
 }) {
-  const region = await getCurrentRegion();
+  const [region, collectionService] = await Promise.all([
+    getCurrentRegion(),
+    getCollectionService(),
+  ]);
 
   const getCollectionResult = await collectionService.getCollectionDetails({
     channel: region.market.channel,

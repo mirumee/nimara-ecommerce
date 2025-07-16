@@ -1,12 +1,15 @@
 import * as Sentry from "@sentry/nextjs";
 
 import { getAccessToken } from "@/auth";
-import { userService } from "@/services/user";
+import { getUserService } from "@/services/user";
 
 import { ErrorServiceClient } from "./error-service-client";
 
 export const ErrorServiceServer = async () => {
-  const accessToken = await getAccessToken();
+  const [accessToken, userService] = await Promise.all([
+    getAccessToken(),
+    getUserService(),
+  ]);
   const resultUserGet = await userService.userGet(accessToken);
   const user = resultUserGet.ok ? resultUserGet.data : null;
 
