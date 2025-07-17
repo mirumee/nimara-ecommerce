@@ -33,7 +33,7 @@
       ]
     },
     "stripe#build": {
-      "env": ["EDGE_CONFIG"]
+      "env": ["VERCEL_EDGE_CONFIG_ID"]
     },
     "codegen": {
       "dependsOn": ["^codegen"],

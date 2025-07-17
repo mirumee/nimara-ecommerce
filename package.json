@@ -12,7 +12,7 @@
     "url": "https://github.com/mirumee/nimara-ecommerce"
   },
   "private": true,
-  "packageManager": "pnpm@10.13.1",
+  "packageManager": "pnpm@9.15.9",
   "engines": {
     "node": "22.x"
   },
