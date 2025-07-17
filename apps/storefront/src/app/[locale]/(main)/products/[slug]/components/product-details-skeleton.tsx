@@ -27,7 +27,9 @@ export const ProductDetailsSkeleton = () => {
           </div>
 
           <Skeleton className="mb-6 h-12 w-full" />
+
           <Skeleton className="mb-4 h-20 w-full" />
+
           <Skeleton className="h-16 w-full" />
         </section>
       </div>
