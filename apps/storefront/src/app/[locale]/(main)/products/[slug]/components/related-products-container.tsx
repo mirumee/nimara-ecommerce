@@ -1,17 +1,15 @@
 import { CACHE_TTL } from "@/config";
 import { getCurrentRegion } from "@/regions/server";
-import { type SupportedLocale } from "@/regions/types";
 import { getStoreService } from "@/services/store";
 
 import { RelatedProducts } from "./related-products";
 
-type PageProps = {
-  params: Promise<{ locale: SupportedLocale; slug: string }>;
+type Props = {
+  slug: string;
 };
 
-export const RelatedProductsContainer = async ({ params }: PageProps) => {
-  const [{ slug }, region, storeService] = await Promise.all([
-    params,
+export const RelatedProductsContainer = async ({ slug }: Props) => {
+  const [region, storeService] = await Promise.all([
     getCurrentRegion(),
     getStoreService(),
   ]);

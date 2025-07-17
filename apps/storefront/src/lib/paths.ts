@@ -124,8 +124,8 @@ export const paths = {
   notFound: url("/404"),
   signIn: url("/sign-in"),
   createAccount: url("/create-account"),
-  termsOfUse: url("/page/terms-of-use"),
-  privacyPolicy: url("/page/privacy-policy"),
+  termsOfUse: url("/terms-of-use"),
+  privacyPolicy: url("/privacy-policy"),
   resetPassword: url("/reset-password"),
   newPassword: url("/new-password"),
   account: {

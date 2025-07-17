@@ -6,7 +6,6 @@ import { getCheckoutId } from "@/lib/actions/cart";
 import { JsonLd, productToJsonLd } from "@/lib/json-ld";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
-import { type SupportedLocale } from "@/regions/types";
 import { getCartService } from "@/services/cart";
 import { getStoreService } from "@/services/store";
 import { getUserService } from "@/services/user";
@@ -14,14 +13,13 @@ import { getUserService } from "@/services/user";
 import { Breadcrumbs } from "../../../_components/breadcrumbs";
 import { ProductDetails } from "./product-details";
 
-type PageProps = {
-  params: Promise<{ locale: SupportedLocale; slug: string }>;
+type Props = {
+  slug: string;
 };
 
-export const ProductDetailsContainer = async (props: PageProps) => {
-  const [{ slug }, region, accessToken, checkoutId, storeService, userService] =
+export const ProductDetailsContainer = async ({ slug }: Props) => {
+  const [region, accessToken, checkoutId, storeService, userService] =
     await Promise.all([
-      props.params,
       getCurrentRegion(),
       getAccessToken(),
       getCheckoutId(),
