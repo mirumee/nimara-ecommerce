@@ -30,7 +30,8 @@
         "NEXT_PUBLIC_SALEOR_API_URL",
         "NEXT_PUBLIC_SEARCH_SERVICE",
         "NEXT_PUBLIC_STOREFRONT_URL"
-      ]
+      ],
+      "inputs": ["$TURBO_DEFAULT$", "!.next/**"]
     },
     "stripe#build": {
       "env": ["CONFIG_KEY", "VERCEL_EDGE_CONFIG_ID"]
