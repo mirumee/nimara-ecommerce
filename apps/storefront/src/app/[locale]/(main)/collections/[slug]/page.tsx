@@ -126,8 +126,7 @@ export default async function Page(props: PageProps) {
           />
         ) : null}
       </div>
-
-      <div className="dark:prose-p:text-stone-200 dark:prose-h1:text-stone-200 dark:prose-h2:text-stone-200 grid min-w-full items-start gap-8 md:flex">
+      <div className="prose dark:prose-headings:text-stone-200 dark:tw-prose-body:text-stone-200 dark:prose-p:text-stone-200 dark:prose-li:text-stone-200 dark:prose-blockquote:text-stone-200 dark:prose-li:marker:text-stone-200 max-w-none">
         <RichText contentData={collection?.description} />
       </div>
 
