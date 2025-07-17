@@ -1,3 +1,4 @@
+test
 <div align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="apps/docs/images/logo-light.svg">
