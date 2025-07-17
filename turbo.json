@@ -23,15 +23,18 @@
       "outputs": [".next/**", "!.next/cache/**"],
       "env": [
         "ANALYZE",
-        "EDGE_CONFIG",
         "NEXT_PUBLIC_CMS_SERVICE",
         "NEXT_PUBLIC_SALEOR_API_URL",
         "NEXT_PUBLIC_SEARCH_SERVICE",
         "NEXT_PUBLIC_STOREFRONT_URL"
       ]
     },
+    "stripe#build": {
+      "env": ["EDGE_CONFIG"]
+    },
     "codegen": {
       "dependsOn": ["^codegen"],
+      "env": ["NEXT_PUBLIC_SALEOR_API_URL"],
       "outputs": ["./schema.ts", "./graphql/**"],
       "inputs": ["../../**/*.graphql"]
     },
