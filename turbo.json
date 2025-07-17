@@ -24,6 +24,9 @@
     "SENTRY_PROJECT",
     "STRIPE_SECRET_KEY"
   ],
+  "remoteCache": {
+    "enabled": true
+  },
   "ui": "stream",
   "tasks": {
     "build": {
