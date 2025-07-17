@@ -15,7 +15,6 @@ export const ProductDetailsSkeleton = () => {
       <div className="md:col-span-5 md:col-start-8">
         <section className="sticky top-28 px-1 pt-10">
           <Skeleton className="mb-4 h-8 w-3/4" />
-
           <Skeleton className="mb-6 h-6 w-1/4" />
 
           <div className="mb-6 space-y-4">
@@ -28,9 +27,7 @@ export const ProductDetailsSkeleton = () => {
           </div>
 
           <Skeleton className="mb-6 h-12 w-full" />
-
           <Skeleton className="mb-4 h-20 w-full" />
-
           <Skeleton className="h-16 w-full" />
         </section>
       </div>
