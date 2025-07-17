@@ -3,6 +3,7 @@ import "@nimara/ui/styles/globals";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import Script from "next/script";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
@@ -49,6 +50,24 @@ export default async function LocaleLayout({
           aspekta.className,
         )}
       >
+        <Script
+          id="theme-preload"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+        try {
+          const theme = localStorage.getItem("theme");
+          const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          const isDark = theme === "dark" || (!theme && systemPrefersDark);
+          if (isDark) {
+            document.documentElement.classList.add("dark");
+          } else {
+            document.documentElement.classList.remove("dark");
+          }
+        } catch(e) {}
+      `,
+          }}
+        />
         <ClientThemeProvider>
           <NextIntlClientProvider messages={messages}>
             <NuqsAdapter>
