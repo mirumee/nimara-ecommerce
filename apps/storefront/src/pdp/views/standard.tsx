@@ -1,11 +1,11 @@
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 
-import { ProductDetailsContainer } from "@/app/[locale]/(main)/products/[slug]/components/product-details-container";
-import { ProductDetailsSkeleton } from "@/app/[locale]/(main)/products/[slug]/components/product-details-skeleton";
-import { RelatedProductsContainer } from "@/app/[locale]/(main)/products/[slug]/components/related-products-container";
-import { RelatedProductsSkeleton } from "@/app/[locale]/(main)/products/[slug]/components/related-products-skeleton";
 import { CACHE_TTL } from "@/config";
+import { ProductDetailsContainer } from "@/pdp/components/product-details-container";
+import { ProductDetailsSkeleton } from "@/pdp/components/product-details-skeleton";
+import { RelatedProductsContainer } from "@/pdp/components/related-products-container";
+import { RelatedProductsSkeleton } from "@/pdp/components/related-products-skeleton";
 import { type PDPViewProps } from "@/pdp/types";
 import { getCurrentRegion } from "@/regions/server";
 import { getStoreService } from "@/services/store";

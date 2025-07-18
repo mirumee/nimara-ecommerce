@@ -1,8 +1,7 @@
 import { CACHE_TTL } from "@/config";
+import { RelatedProducts } from "@/pdp/components/related-products";
 import { getCurrentRegion } from "@/regions/server";
 import { getStoreService } from "@/services/store";
-
-import { RelatedProducts } from "./related-products";
 
 type Props = {
   slug: string;

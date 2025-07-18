@@ -1,17 +1,16 @@
 import { notFound } from "next/navigation";
 
 import { getAccessToken } from "@/auth";
+import { Breadcrumbs } from "@/components/breadcrumbs";
 import { CACHE_TTL } from "@/config";
 import { getCheckoutId } from "@/lib/actions/cart";
 import { JsonLd, productToJsonLd } from "@/lib/json-ld";
 import { paths } from "@/lib/paths";
+import { ProductDetails } from "@/pdp/components/product-details";
 import { getCurrentRegion } from "@/regions/server";
 import { getCartService } from "@/services/cart";
 import { getStoreService } from "@/services/store";
 import { getUserService } from "@/services/user";
-
-import { Breadcrumbs } from "../../../_components/breadcrumbs";
-import { ProductDetails } from "./product-details";
 
 type Props = {
   slug: string;
