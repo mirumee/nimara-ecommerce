@@ -42,6 +42,15 @@ export interface ButtonProps
   loading?: boolean;
 }
 
+const spinnerColors: Record<NonNullable<ButtonProps["variant"]>, string> = {
+  default: "text-primary-foreground",
+  destructive: "text-destructive-foreground",
+  outline: "hover:text-accent-foreground",
+  secondary: "text-secondary-foreground",
+  ghost: "hover:text-accent-foreground",
+  link: "text-primary",
+};
+
 const Button = ({
   className,
   variant,
@@ -61,7 +70,9 @@ const Button = ({
       {loading ? (
         <span className="inline-flex items-center gap-2">
           <Slottable>{children}</Slottable>
-          <Spinner className="text-primary h-4 w-4" />
+          <Spinner
+            className={cn("h-4 w-4", spinnerColors[variant ?? "default"])}
+          />
         </span>
       ) : (
         <Slottable>{children}</Slottable>
