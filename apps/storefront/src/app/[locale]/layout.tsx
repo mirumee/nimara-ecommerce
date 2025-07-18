@@ -15,6 +15,7 @@ import { ErrorServiceServer } from "@/components/error-service";
 import { clientEnvs } from "@/envs/client";
 import { aspekta } from "@/fonts";
 import { routing } from "@/i18n/routing";
+import { themePreloadScript } from "@/lib/scripts/theme-preload-script";
 import { cn } from "@/lib/utils";
 import { ClientThemeProvider } from "@/providers/theme-provider";
 import { type SupportedLocale } from "@/regions/types";
@@ -41,7 +42,7 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale ?? "en"}>
+    <html lang={locale ?? "en"} suppressHydrationWarning>
       <body
         className={cn(
           "min-h-[100dvh]",
@@ -53,20 +54,7 @@ export default async function LocaleLayout({
         <Script
           id="theme-preload"
           strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-        try {
-          const theme = localStorage.getItem("theme");
-          const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-          const isDark = theme === "dark" || (!theme && systemPrefersDark);
-          if (isDark) {
-            document.documentElement.classList.add("dark");
-          } else {
-            document.documentElement.classList.remove("dark");
-          }
-        } catch(e) {}
-      `,
-          }}
+          dangerouslySetInnerHTML={{ __html: themePreloadScript }}
         />
         <ClientThemeProvider>
           <NextIntlClientProvider messages={messages}>

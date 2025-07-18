@@ -17,7 +17,7 @@ export const MarkdownRenderer = ({
     <article
       className={cn(
         { prose: !disableProse },
-        "max-w-none [&>*]:mt-0",
+        "prose dark:prose-headings:text-stone-200 dark:tw-prose-body:text-stone-200 dark:prose-p:text-stone-200 dark:prose-li:text-stone-200 dark:prose-blockquote:text-stone-200 dark:prose-li:marker:text-stone-200 max-w-none [&>*]:mt-0",
         className,
       )}
       {...props}
