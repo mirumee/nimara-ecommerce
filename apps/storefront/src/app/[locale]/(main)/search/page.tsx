@@ -9,7 +9,7 @@ import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { getSearchService } from "@/services/search";
 
-import { Breadcrumbs } from "../_components/breadcrumbs";
+import { Breadcrumbs } from "../../../../components/breadcrumbs";
 import { ProductsList } from "../_components/products-list";
 import { SearchPagination } from "../_components/search-pagination";
 import { FiltersContainer } from "./_filters/filters-container";
