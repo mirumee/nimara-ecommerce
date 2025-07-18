@@ -66,6 +66,8 @@ export const Header = async () => {
     checkoutLinesCount = resultCartGet.data?.linesQuantityCount ?? 0;
   }
 
+  const shoppingBag = <ShoppingBagIconWithCount count={checkoutLinesCount} />;
+
   return (
     <header>
       <div className="container">
@@ -75,7 +77,9 @@ export const Header = async () => {
               user={user}
               menu={resultMenu?.data?.menu}
               checkoutLinesCount={checkoutLinesCount}
-            />
+            >
+              {shoppingBag}
+            </MobileSideMenu>
           </div>
 
           <div className="flex items-center justify-center md:justify-start">
