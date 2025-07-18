@@ -160,7 +160,7 @@ export const FiltersContainer = async ({
 
                 {!!booleanFacets.length && (
                   <div>
-                    <p className="text-primary mb-4 text-base">
+                    <p className="dark:text-muted-foreground mb-4 text-base font-medium text-stone-700">
                       {t("filters.options")}
                     </p>
                     <div className="grid items-center gap-4">

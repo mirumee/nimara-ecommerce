@@ -3,6 +3,7 @@ import "@nimara/ui/styles/globals";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import Script from "next/script";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
@@ -14,6 +15,7 @@ import { ErrorServiceServer } from "@/components/error-service";
 import { clientEnvs } from "@/envs/client";
 import { aspekta } from "@/fonts";
 import { routing } from "@/i18n/routing";
+import { themePreloadScript } from "@/lib/scripts/theme-preload-script";
 import { cn } from "@/lib/utils";
 import { ClientThemeProvider } from "@/providers/theme-provider";
 import { type SupportedLocale } from "@/regions/types";
@@ -40,7 +42,7 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale ?? "en"}>
+    <html lang={locale ?? "en"} suppressHydrationWarning>
       <body
         className={cn(
           "min-h-[100dvh]",
@@ -49,6 +51,11 @@ export default async function LocaleLayout({
           aspekta.className,
         )}
       >
+        <Script
+          id="theme-preload"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: themePreloadScript }}
+        />
         <ClientThemeProvider>
           <NextIntlClientProvider messages={messages}>
             <NuqsAdapter>

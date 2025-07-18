@@ -9,16 +9,34 @@ export function ClientThemeProvider({
   children: React.ReactNode;
 }) {
   const [mounted, setMounted] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    setMounted(true);
 
-  // This ensures ThemeProvider only renders on the client after mount, so SSR doesn't guess the theme and cause hydration mismatch
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    setPrefersReducedMotion(mediaQuery.matches);
+
+    const handleChange = () => setPrefersReducedMotion(mediaQuery.matches);
+
+    mediaQuery.addEventListener("change", handleChange);
+
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
+
+  // Ensure ThemeProvider only renders on the client after mount to avoid hydration mismatch
   if (!mounted) {
     return null;
   }
 
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange={prefersReducedMotion}
+    >
       {children}
     </ThemeProvider>
   );

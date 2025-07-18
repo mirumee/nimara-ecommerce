@@ -37,7 +37,7 @@ export const PaymentMethodsList = ({
   const handleDeleteModalClose = () => setSelectedMethod(null);
 
   const defaultMethodMessage = (
-    <p className="whitespace-nowrap text-sm font-[650] leading-5 text-stone-900">
+    <p className="text-primary whitespace-nowrap text-sm font-[650] leading-5">
       {t("payment.default-method")}
     </p>
   );
