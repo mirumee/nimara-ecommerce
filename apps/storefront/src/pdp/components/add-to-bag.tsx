@@ -13,7 +13,7 @@ import { Link } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 import type { TranslationMessage } from "@/types";
 
-import { addToBagAction } from "../_actions/add-to-bag";
+import { addToBagAction } from "../actions/add-to-bag";
 
 type AddToBagProps = {
   isVariantAvailable: boolean;

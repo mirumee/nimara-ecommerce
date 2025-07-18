@@ -12,7 +12,7 @@ import { getCurrentRegion } from "@/regions/server";
 import { type SupportedLocale } from "@/regions/types";
 import { getCollectionService } from "@/services/collection";
 
-import { Breadcrumbs } from "../../_components/breadcrumbs";
+import { Breadcrumbs } from "../../../../../components/breadcrumbs";
 import { ProductsList } from "../../_components/products-list";
 import { SearchPagination } from "../../_components/search-pagination";
 
