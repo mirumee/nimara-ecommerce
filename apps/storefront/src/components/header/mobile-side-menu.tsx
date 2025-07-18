@@ -1,8 +1,8 @@
 "use client";
 
-import { MenuIcon, ShoppingBagIcon, User as UserIcon } from "lucide-react";
+import { MenuIcon, User as UserIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Suspense, useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 
 import type { Menu } from "@nimara/domain/objects/Menu";
 import type { User } from "@nimara/domain/objects/User";
@@ -19,15 +19,16 @@ import { useCurrentRegion } from "@/regions/client";
 import { LocaleSwitch } from "../locale-switch";
 import { Logo } from "./logo";
 import { MobileSearch } from "./mobile-search";
-import { ShoppingBagIconWithCount } from "./shopping-bag-icon-with-count";
 import { ThemeToggle } from "./theme-toggle";
 
 export const MobileSideMenu = ({
   checkoutLinesCount,
   menu,
   user,
+  children,
 }: {
   checkoutLinesCount: number;
+  children: ReactNode;
   menu: Menu | null | undefined;
   user: User | null;
 }) => {
@@ -74,9 +75,7 @@ export const MobileSideMenu = ({
                 <div className="flex justify-end gap-1 align-middle">
                   <MobileSearch />
                   <ThemeToggle />
-                  <Suspense fallback={<ShoppingBagIcon />}>
-                    <ShoppingBagIconWithCount count={checkoutLinesCount} />
-                  </Suspense>
+                  {children}
                 </div>
               </div>
               <MobileNavigation
