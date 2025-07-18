@@ -38,9 +38,9 @@ const PasswordInput = ({ className, error, ...props }: InputProps) => {
   return (
     <div
       className={cn(
-        "border-input has-[input:focus-visible]:ring-ring has-[input:focus]:ring-offset-background flex w-full rounded-md border has-[input:focus-visible]:ring-2 has-[input:focus]:ring-2 has-[input:focus-visible]:ring-offset-2",
+        "border-input ring-offset-background has-[input:focus-visible]:ring-ring flex w-full rounded-md border has-[input:focus-visible]:ring-2 has-[input:focus-visible]:ring-offset-2",
         error &&
-          "border-red-300 bg-red-50 has-[input:focus-visible]:ring-red-300",
+          "border-red-300 bg-red-50 has-[input:focus-visible]:ring-red-300 dark:border-red-600 dark:bg-red-900/30 dark:has-[input:focus-visible]:ring-red-500",
       )}
     >
       <input
@@ -48,7 +48,8 @@ const PasswordInput = ({ className, error, ...props }: InputProps) => {
         type={type}
         className={cn(
           "bg-background placeholder:text-muted-foreground flex h-10 w-full rounded-md px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
-          error && "bg-red-50",
+          error &&
+            "bg-red-50 autofill:!bg-red-50 dark:bg-red-900/30 dark:autofill:!bg-red-900/30",
           className,
         )}
         autoComplete="on"
@@ -60,7 +61,10 @@ const PasswordInput = ({ className, error, ...props }: InputProps) => {
           aria-label="Show/hide password"
           onClick={() => setType(type === "password" ? "text" : "password")}
           type="button"
-          className={cn(error && "hover:bg-red-100")}
+          className={cn(
+            "hover:bg-muted",
+            error && "hover:bg-red-100 dark:hover:bg-red-800",
+          )}
           tabIndex={-1}
         >
           {type === "password" && <Eye className="h-5 w-5" />}

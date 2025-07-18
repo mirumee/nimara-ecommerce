@@ -37,7 +37,7 @@ export const FilterBoolean = ({
       />
 
       <Label
-        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+        className="text-primary text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
         htmlFor={checkboxId}
       >
         {labelText}

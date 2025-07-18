@@ -23,7 +23,10 @@ export const ProductPrice = ({ children }: PropsWithChildren) => {
   const t = useTranslations();
 
   return (
-    <h3 aria-label={t("common.price")} className="text-left text-gray-400">
+    <h3
+      aria-label={t("common.price")}
+      className="text-left text-gray-700 dark:text-gray-300"
+    >
       {children}
     </h3>
   );

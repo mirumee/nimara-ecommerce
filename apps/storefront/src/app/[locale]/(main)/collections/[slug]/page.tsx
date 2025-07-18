@@ -126,8 +126,7 @@ export default async function Page(props: PageProps) {
           />
         ) : null}
       </div>
-
-      <div className="grid min-w-full items-start gap-8 md:flex">
+      <div>
         <RichText contentData={collection?.description} />
       </div>
 
