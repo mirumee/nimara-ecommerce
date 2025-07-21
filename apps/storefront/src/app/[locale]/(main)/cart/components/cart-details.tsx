@@ -38,6 +38,8 @@ export const CartDetails = ({
     ...cart.problems.variantNotAvailable,
   ].length;
 
+  const isDisabled = isProcessing || !isCartValid;
+
   const handleLineQuantityChange = async (lineId: string, quantity: number) => {
     setIsProcessing(true);
 
@@ -50,10 +52,9 @@ export const CartDetails = ({
       },
     });
 
-    setIsProcessing(false);
-
     if (resultLinesUpdate.ok) {
       void revalidateCart(cart.id);
+      setIsProcessing(false);
 
       return;
     }
@@ -127,18 +128,13 @@ export const CartDetails = ({
         </ShoppingBag.Pricing>
       </ShoppingBag>
       <div className="w-full text-center">
-        <Button
-          asChild
-          size="lg"
-          disabled={isProcessing || !isCartValid}
-          loading={isProcessing}
-        >
+        <Button asChild size="lg" disabled={isDisabled} loading={isProcessing}>
           <Link
             href={
               !!user ? paths.checkout.asPath() : paths.checkout.signIn.asPath()
             }
             className={cn({
-              "pointer-events-none opacity-50": !isCartValid,
+              "pointer-events-none opacity-50": isDisabled,
             })}
           >
             {t("common.go-to-checkout")}
