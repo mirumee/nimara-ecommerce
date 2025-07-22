@@ -99,7 +99,8 @@
     "pagination": "Pagination",
     "and": "and",
     "switch-to-light": "Switch to light",
-    "switch-to-dark": "Switch to dark"
+    "switch-to-dark": "Switch to dark",
+    "toggle-theme": "Toggle theme"
   },
   "cart": {
     "empty": "Your bag is empty",
