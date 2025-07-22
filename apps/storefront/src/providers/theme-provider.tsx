@@ -8,12 +8,9 @@ export function ClientThemeProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [mounted, setMounted] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
 
     setPrefersReducedMotion(mediaQuery.matches);
@@ -24,11 +21,6 @@ export function ClientThemeProvider({
 
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
-
-  // Ensure ThemeProvider only renders on the client after mount to avoid hydration mismatch
-  if (!mounted) {
-    return null;
-  }
 
   return (
     <ThemeProvider
