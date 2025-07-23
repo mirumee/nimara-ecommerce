@@ -18,34 +18,26 @@ Go to `apps/storefront/src/regions/types.ts`.
 
 Extend `SUPPORTED_LANGUAGES` by adding your new language code (e.g., "es" for Spanish):
 
-```bash
+```ts
 export const SUPPORTED_LANGUAGES = ["us", "gb", "es"] as const;
 ```
 
 Extend `SUPPORTED_LOCALES`:
 
-```bash
-export const SUPPORTED_LOCALES = [
-"en-GB",
-"en-US",
-"es-ES",
-] as const;
+```ts
+export const SUPPORTED_LOCALES = ["en-GB", "en-US", "es-ES"] as const;
 ```
 
 If you want to add a brand new sales channel (not just a new language for an existing channel), also extend `SUPPORTED_MARKETS`:
 
-```bash
+```ts
 export const SUPPORTED_MARKETS = ["gb", "us", "es"] as const;
 ```
 
 Add the currency for the new market to `SUPPORTED_CURRENCIES`:
 
-```bash
-export const SUPPORTED_CURRENCIES = [
-"USD",
-"GBP",
-"EUR",
-] as const;
+```ts
+export const SUPPORTED_CURRENCIES = ["USD", "GBP", "EUR"] as const;
 ```
 
 ### Update routing for the new locale
@@ -54,10 +46,10 @@ Edit `apps/storefront/src/i18n/routing.ts`.
 
 Add a locale prefix for your new locale:
 
-```bash
+```ts
 export const localePrefixes = {
-"en-GB": "/gb",
-"es-ES": "/es",
+  "en-GB": "/gb",
+  "es-ES": "/es",
 };
 ```
 
@@ -65,14 +57,14 @@ export const localePrefixes = {
 
 Edit `packages/domain/src/consts.ts` and add the new locale to `ALL_LOCALES`:
 
-```bash
+```ts
 export const ALL_LOCALES = [
-"en",
-"en-US",
-"en-GB",
-"ja-JP",
-"pl-PL",
-"es-ES",
+  "en",
+  "en-US",
+  "en-GB",
+  "ja-JP",
+  "pl-PL",
+  "es-ES",
 ] as const;
 ```
 
@@ -82,73 +74,73 @@ Go to `apps/storefront/src/regions/config.ts`.
 
 Map the locale to the channel:
 
-```bash
+```ts
 export const LOCALE_CHANNEL_MAP = {
-"en-GB": "gb",
-"en-US": "us",
-"es-ES": "es",
+  "en-GB": "gb",
+  "en-US": "us",
+  "es-ES": "es",
 };
 ```
 
 Add language entry:
 
-```bash
+```ts
 export const LANGUAGES = {
-US: {
-id: "us",
-name: "English (US)",
-code: "EN_US",
-locale: "en-US",
-},
-GB: {
-id: "gb",
-name: "English (UK)",
-code: "EN_GB",
-locale: "en-GB",
-},
-ES: {
-id: "es",
-name: "Español (España)",
-code: "ES_ES",
-locale: "es-ES",
-},
+  US: {
+    id: "us",
+    name: "English (US)",
+    code: "EN_US",
+    locale: "en-US",
+  },
+  GB: {
+    id: "gb",
+    name: "English (UK)",
+    code: "EN_GB",
+    locale: "en-GB",
+  },
+  ES: {
+    id: "es",
+    name: "Español (España)",
+    code: "ES_ES",
+    locale: "es-ES",
+  },
 };
 ```
 
 Define the market:
 
-```bash
+```ts
 export const MARKETS = {
-GB: {
-id: "gb",
-name: "United Kingdom",
-channel: "channel-gb",
-currency: "GBP",
-continent: "Europe",
-countryCode: "GB",
-defaultLanguage: LANGUAGES.GB,
-supportedLanguages: [LANGUAGES.GB],
-},
-US: {
-id: "us",
-name: "United States",
-channel: "channel-us",
-currency: "USD",
-continent: "North America",
-countryCode: "US",
-defaultLanguage: LANGUAGES.US,
-supportedLanguages: [LANGUAGES.US],
-},
-ES: {
-id: "es",
-name: "España",
-channel: "channel-es",
-currency: "EUR",
-continent: "Europe",
-countryCode: "ES",
-defaultLanguage: LANGUAGES.ES,
-supportedLanguages: [LANGUAGES.ES],
-},
+  GB: {
+    id: "gb",
+    name: "United Kingdom",
+    channel: "channel-gb",
+    currency: "GBP",
+    continent: "Europe",
+    countryCode: "GB",
+    defaultLanguage: LANGUAGES.GB,
+    supportedLanguages: [LANGUAGES.GB],
+  },
+  US: {
+    id: "us",
+    name: "United States",
+    channel: "channel-us",
+    currency: "USD",
+    continent: "North America",
+    countryCode: "US",
+    defaultLanguage: LANGUAGES.US,
+    supportedLanguages: [LANGUAGES.US],
+  },
+  ES: {
+    id: "es",
+    name: "España",
+    channel: "channel-es",
+    currency: "EUR",
+    continent: "Europe",
+    countryCode: "ES",
+    defaultLanguage: LANGUAGES.ES,
+    supportedLanguages: [LANGUAGES.ES],
+  },
 };
 ```
 
