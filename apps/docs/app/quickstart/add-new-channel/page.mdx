@@ -14,107 +14,114 @@ After creating the channel, assign the products you want to offer in this channe
 
 ### Update types Locales, Languages, and Currencies
 
-Go to `apps/storefront/src/regions/types.ts`.
+Edit `types.ts`:
 
-Extend `SUPPORTED_LANGUAGES` by adding your new language code (e.g., "es" for Spanish):
+```hcl filename="apps/storefront/src/regions/types.ts"
 
-```ts
+/**
+ * Defines available languages in the App.
+ */
+ // Extend SUPPORTED_LANGUAGES by adding your new language code (e.g., "es" for Spanish)
 export const SUPPORTED_LANGUAGES = ["us", "gb", "es"] as const;
-```
+export type LanguageId = (typeof SUPPORTED_LANGUAGES)[number];
 
-Extend `SUPPORTED_LOCALES`:
+/**
+ * Defines supported locales in the App.
+ */
+ // Extend SUPPORTED_LOCALES (e.g., "es-ES" for Spanish)
+export const SUPPORTED_LOCALES = [
+  "en-GB",
+  "en-US",
+  "es-ES"
+] as const satisfies AllLocale[];
+export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
+export const DEFAULT_LOCALE = "en-US" as const satisfies AllLocale;
 
-```ts
-export const SUPPORTED_LOCALES = ["en-GB", "en-US", "es-ES"] as const;
-```
-
-If you want to add a brand new sales channel (not just a new language for an existing channel), also extend `SUPPORTED_MARKETS`:
-
-```ts
+/**
+ * Defines available markets in the App.
+ */
+ // If you want to add a brand new sales channel (not just a new language for an existing channel), also extend SUPPORTED_MARKETS
 export const SUPPORTED_MARKETS = ["gb", "us", "es"] as const;
-```
+export type MarketId = (typeof SUPPORTED_MARKETS)[number];
 
-Add the currency for the new market to `SUPPORTED_CURRENCIES`:
-
-```ts
-export const SUPPORTED_CURRENCIES = ["USD", "GBP", "EUR"] as const;
+/**
+ * Defines supported currencies in the App.
+ */
+ // Add the currency for the new market
+export const SUPPORTED_CURRENCIES = [
+  "USD",
+  "GBP",
+  "EUR"
+] as const satisfies AllCurrency[];
+export type SupportedCurrency = (typeof SUPPORTED_CURRENCIES)[number];
 ```
 
 ### Update routing for the new locale
 
-Edit `apps/storefront/src/i18n/routing.ts`.
+Edit `routing.ts`:
 
-Add a locale prefix for your new locale:
-
-```ts
+```hcl filename="apps/storefront/src/i18n/routing.ts"
+// Add a locale prefix for your new locale:
 export const localePrefixes = {
   "en-GB": "/gb",
   "es-ES": "/es",
-};
+} as const satisfies Record<
+  Exclude<SupportedLocale, typeof DEFAULT_LOCALE>,
+  string
+>;
 ```
 
 ### Register the locale globally
 
-Edit `packages/domain/src/consts.ts` and add the new locale to `ALL_LOCALES`:
+Edit `consts.ts`:
 
-```ts
-export const ALL_LOCALES = [
-  "en",
-  "en-US",
-  "en-GB",
-  "ja-JP",
-  "pl-PL",
-  "es-ES",
-] as const;
+```hcl filename="packages/domain/src/consts.ts":
+// Add the new locale
+export const ALL_LOCALES = ["en", "en-US", "en-GB", "ja-JP", "pl-PL", "es-ES"] as const;
 ```
 
 ### Configure locale, language and market
 
-Go to `apps/storefront/src/regions/config.ts`.
+Edit `config.ts`:
 
-Map the locale to the channel:
+```hcl filename="apps/storefront/src/regions/config.ts":
 
-```ts
-export const LOCALE_CHANNEL_MAP = {
+export const LOCALE_CHANNEL_MAP: Record<
+  SupportedLocale,
+  (typeof SUPPORTED_MARKETS)[number]
+> = {
   "en-GB": "gb",
   "en-US": "us",
-  "es-ES": "es",
+  "es-ES": "es", // Map the locale to the channel
 };
-```
 
-Add language entry:
-
-```ts
 export const LANGUAGES = {
-  US: {
-    id: "us",
-    name: "English (US)",
-    code: "EN_US",
-    locale: "en-US",
-  },
   GB: {
     id: "gb",
-    name: "English (UK)",
+    name: "English (United Kingdom)",
     code: "EN_GB",
     locale: "en-GB",
   },
-  ES: {
+  US: {
+    id: "us",
+    name: "English (United States)",
+    code: "EN_US",
+    locale: "en-US",
+  },
+  // Add language entry
+    ES: {
     id: "es",
     name: "Español (España)",
     code: "ES_ES",
     locale: "es-ES",
   },
-};
-```
+} satisfies Record<Uppercase<LanguageId>, Language>;
 
-Define the market:
-
-```ts
 export const MARKETS = {
   GB: {
     id: "gb",
     name: "United Kingdom",
-    channel: "channel-gb",
+    channel: "channel-uk",
     currency: "GBP",
     continent: "Europe",
     countryCode: "GB",
@@ -123,7 +130,7 @@ export const MARKETS = {
   },
   US: {
     id: "us",
-    name: "United States",
+    name: "United States of America",
     channel: "channel-us",
     currency: "USD",
     continent: "North America",
@@ -131,7 +138,8 @@ export const MARKETS = {
     defaultLanguage: LANGUAGES.US,
     supportedLanguages: [LANGUAGES.US],
   },
-  ES: {
+  // Define the market
+   ES: {
     id: "es",
     name: "España",
     channel: "channel-es",
@@ -141,7 +149,8 @@ export const MARKETS = {
     defaultLanguage: LANGUAGES.ES,
     supportedLanguages: [LANGUAGES.ES],
   },
-};
+} satisfies Record<Uppercase<MarketId>, Market>;
+
 ```
 
 ### Add Translation Files
