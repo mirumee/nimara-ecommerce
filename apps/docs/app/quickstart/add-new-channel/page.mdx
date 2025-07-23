@@ -1,0 +1,160 @@
+import { Steps } from "nextra/components";
+
+# Adding a new channel, language and market in Nimara
+
+Nimara storefront currently supports two sales channels: **gb** (Great Britain) and **us** (United States). This guide will walk you through adding a new channel, language, and market (for example, Spanish/Spain) to your Nimara storefront.
+
+<Steps>
+### Add a new sales channel in Saleor
+Go to your Saleor dashboard -> **Configuration** → **Channels** → click **Create Channel**.
+
+Enter the channel details. Assign appropriate shipping zones (e.g., “Europe” for Spain).
+
+After creating the channel, assign the products you want to offer in this channel.
+
+### Update types Locales, Languages, and Currencies
+
+Go to `apps/storefront/src/regions/types.ts`.
+
+Extend `SUPPORTED_LANGUAGES` by adding your new language code (e.g., "es" for Spanish):
+
+```bash
+export const SUPPORTED_LANGUAGES = ["us", "gb", "es"] as const;
+```
+
+Extend `SUPPORTED_LOCALES`:
+
+```bash
+export const SUPPORTED_LOCALES = [
+"en-GB",
+"en-US",
+"es-ES",
+] as const;
+```
+
+If you want to add a brand new sales channel (not just a new language for an existing channel), also extend `SUPPORTED_MARKETS`:
+
+```bash
+export const SUPPORTED_MARKETS = ["gb", "us", "es"] as const;
+```
+
+Add the currency for the new market to `SUPPORTED_CURRENCIES`:
+
+```bash
+export const SUPPORTED_CURRENCIES = [
+"USD",
+"GBP",
+"EUR",
+] as const;
+```
+
+### Update routing for the new locale
+
+Edit `apps/storefront/src/i18n/routing.ts`.
+
+Add a locale prefix for your new locale:
+
+```bash
+export const localePrefixes = {
+"en-GB": "/gb",
+"es-ES": "/es",
+};
+```
+
+### Register the locale globally
+
+Edit `packages/domain/src/consts.ts` and add the new locale to `ALL_LOCALES`:
+
+```bash
+export const ALL_LOCALES = [
+"en",
+"en-US",
+"en-GB",
+"ja-JP",
+"pl-PL",
+"es-ES",
+] as const;
+```
+
+### Configure locale, language and market
+
+Go to `apps/storefront/src/regions/config.ts`.
+
+Map the locale to the channel:
+
+```bash
+export const LOCALE_CHANNEL_MAP = {
+"en-GB": "gb",
+"en-US": "us",
+"es-ES": "es",
+};
+```
+
+Add language entry:
+
+```bash
+export const LANGUAGES = {
+US: {
+id: "us",
+name: "English (US)",
+code: "EN_US",
+locale: "en-US",
+},
+GB: {
+id: "gb",
+name: "English (UK)",
+code: "EN_GB",
+locale: "en-GB",
+},
+ES: {
+id: "es",
+name: "Español (España)",
+code: "ES_ES",
+locale: "es-ES",
+},
+};
+```
+
+Define the market:
+
+```bash
+export const MARKETS = {
+GB: {
+id: "gb",
+name: "United Kingdom",
+channel: "channel-gb",
+currency: "GBP",
+continent: "Europe",
+countryCode: "GB",
+defaultLanguage: LANGUAGES.GB,
+supportedLanguages: [LANGUAGES.GB],
+},
+US: {
+id: "us",
+name: "United States",
+channel: "channel-us",
+currency: "USD",
+continent: "North America",
+countryCode: "US",
+defaultLanguage: LANGUAGES.US,
+supportedLanguages: [LANGUAGES.US],
+},
+ES: {
+id: "es",
+name: "España",
+channel: "channel-es",
+currency: "EUR",
+continent: "Europe",
+countryCode: "ES",
+defaultLanguage: LANGUAGES.ES,
+supportedLanguages: [LANGUAGES.ES],
+},
+};
+```
+
+### Add Translation Files
+
+Copy the existing translation file (`apps/storefront/messages/en-GB.json`) as a stub for your new language, naming it `es-ES.json`.
+
+</Steps>
+Tip: All changes are repeatable for any locale, language, or market you wish to add. This modular system keeps Nimara scalable and international-ready.
