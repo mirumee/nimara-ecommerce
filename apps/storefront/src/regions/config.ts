@@ -1,3 +1,4 @@
+import { clientEnvs } from "@/envs/client";
 import type {
   Language,
   LanguageId,
@@ -6,6 +7,8 @@ import type {
   SUPPORTED_MARKETS,
   SupportedLocale,
 } from "@/regions/types";
+
+export const CHANNEL = clientEnvs.NEXT_PUBLIC_DEFAULT_CHANNEL;
 
 export const LOCALE_CHANNEL_MAP: Record<
   SupportedLocale,
