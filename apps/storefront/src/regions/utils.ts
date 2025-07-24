@@ -1,5 +1,6 @@
 import { CHANNEL, LANGUAGES, LOCALE_CHANNEL_MAP, MARKETS } from "./config";
 import {
+  type ChannelId,
   type LanguageId,
   type MarketId,
   SUPPORTED_LOCALES,
@@ -26,7 +27,7 @@ export const parseRegion = (locale: string) => {
   const language = LANGUAGES[languageId.toUpperCase() as Uppercase<LanguageId>];
 
   // For US market, override channel to "default-channel" if env says so (for fresh Saleor setups).
-  const channel =
+  const channel: ChannelId =
     marketId === "us" && CHANNEL === "default-channel"
       ? "default-channel"
       : baseMarket.channel;
