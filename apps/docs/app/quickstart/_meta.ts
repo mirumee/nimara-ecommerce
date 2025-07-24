@@ -4,5 +4,6 @@ export default {
   "environment-variables": "Environment variables",
   "stripe-integration": "Stripe integration",
   "add-content-with-saleor-cms": "Saleor CMS",
+  "add-new-channel": "Add new Saleor channel",
   "using-terraform": "Using Terraform",
 };
