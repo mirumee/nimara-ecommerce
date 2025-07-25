@@ -1,13 +1,13 @@
 import type {
   ItemList,
-  Product,
+  Product as ProductSchema,
   Thing,
   WebSite,
   WithContext,
 } from "schema-dts";
 
 import type {
-  Product as ProductVariant,
+  Product,
   ProductAvailability,
 } from "@nimara/domain/objects/Product";
 import type { SearchProduct } from "@nimara/domain/objects/SearchProduct";
@@ -26,19 +26,21 @@ export const JsonLd = <T extends Thing>({
 };
 
 export const productToJsonLd = (
-  product: ProductVariant,
+  product: Product,
   availability: ProductAvailability,
-): WithContext<Product> => {
+): WithContext<ProductSchema> => {
   return {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
-    image: {
+    image: product.images.map((image) => ({
       "@type": "ImageObject",
-      url: product.images[0]?.url ?? undefined,
-      description: product.images[0]?.alt ?? undefined,
-    },
-    description: product.description ?? undefined,
+      url: image.url ?? undefined,
+      description: image.alt ?? undefined,
+    })),
+    description: product.seo.description ?? undefined,
+    itemCondition: "https://schema.org/NewCondition",
+    category: product.category?.name ?? undefined,
     offers: {
       "@type": "Offer",
       price: availability.startPrice.amount,
@@ -52,7 +54,7 @@ export const productToJsonLd = (
 
 export const searchProductToJsonLd = (
   product: SearchProduct,
-): WithContext<Product> => {
+): WithContext<ProductSchema> => {
   return {
     "@context": "https://schema.org",
     "@type": "Product",

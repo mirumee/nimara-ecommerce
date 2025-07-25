@@ -2,6 +2,7 @@
 
 import { type User } from "@nimara/domain/objects/User";
 
+import { getAccessToken } from "@/auth";
 import { CACHE_TTL } from "@/config";
 import {
   getCheckoutId,
@@ -11,14 +12,13 @@ import {
 import { getCurrentRegion } from "@/regions/server";
 import { getCartService } from "@/services/cart";
 import { storefrontLogger } from "@/services/logging";
+import { getUserService } from "@/services/user";
 
 export const addToBagAction = async ({
-  user,
   variantId,
   quantity = 1,
 }: {
   quantity?: number;
-  user: User | null;
   variantId: string;
 }) => {
   storefrontLogger.debug("Adding item to bag", { variantId, quantity });
@@ -28,6 +28,18 @@ export const addToBagAction = async ({
     getCheckoutId(),
     getCartService(),
   ]);
+
+  let user: User | null = null;
+  const token = await getAccessToken();
+
+  if (token) {
+    const userService = await getUserService();
+    const userGetResult = await userService.userGet(token);
+
+    if (userGetResult.ok) {
+      user = userGetResult.data;
+    }
+  }
 
   const result = await cartService.linesAdd({
     email: user?.email,
