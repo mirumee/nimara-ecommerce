@@ -129,10 +129,12 @@ export default async function Page(props: PageProps) {
               variant="outline"
               className="text-primary flex items-center gap-1 rounded px-[11px] sm:rounded-md sm:px-4"
             >
-              <PlusIcon className="h-4 w-4" />
-              <span className="hidden sm:block">
-                {t("address.add-new-address")}
-              </span>
+              <>
+                <PlusIcon className="h-4 w-4" />
+                <span className="hidden sm:block">
+                  {t("address.add-new-address")}
+                </span>
+              </>
             </Button>
           </AddNewAddressModal>
         )}
