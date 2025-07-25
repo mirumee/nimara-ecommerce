@@ -2,11 +2,12 @@
 
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { type ReactNode, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { type AllCountryCode } from "@nimara/domain/consts";
 import { type CountryOption } from "@nimara/domain/objects/Address";
 import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
+import { Button, type ButtonProps } from "@nimara/ui/components/button";
 import {
   Dialog,
   DialogContent,
@@ -22,14 +23,16 @@ import { AddNewAddressForm } from "../_forms/create-address-form";
 
 interface AddNewAddressModalProps {
   addressFormRows: readonly AddressFormRow[];
-  children: ReactNode;
+  buttonContent: React.ReactNode;
+  buttonProps?: ButtonProps;
   countries: CountryOption[];
   countryCode: AllCountryCode;
 }
 
 export function AddNewAddressModal({
   addressFormRows,
-  children,
+  buttonContent,
+  buttonProps,
   countries,
   countryCode,
 }: AddNewAddressModalProps) {
@@ -46,7 +49,9 @@ export function AddNewAddressModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogTrigger asChild>
+        <Button {...buttonProps}>{buttonContent}</Button>
+      </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>{t("address.add-new-address")}</DialogTitle>

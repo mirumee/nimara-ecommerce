@@ -3,7 +3,6 @@ import { getTranslations } from "next-intl/server";
 
 import { type AllCountryCode } from "@nimara/domain/consts";
 import { type Address } from "@nimara/domain/objects/Address";
-import { Button } from "@nimara/ui/components/button";
 
 import { getAccessToken } from "@/auth";
 import { displayFormattedAddressLines } from "@/lib/address";
@@ -124,19 +123,20 @@ export default async function Page(props: PageProps) {
             addressFormRows={resultAddressRows.data}
             countries={resultCountries.data}
             countryCode={countryCode}
-          >
-            <Button
-              variant="outline"
-              className="text-primary flex items-center gap-1 rounded px-[11px] sm:rounded-md sm:px-4"
-            >
+            buttonContent={
               <>
                 <PlusIcon className="h-4 w-4" />
                 <span className="hidden sm:block">
                   {t("address.add-new-address")}
                 </span>
               </>
-            </Button>
-          </AddNewAddressModal>
+            }
+            buttonProps={{
+              variant: "outline",
+              className:
+                "text-primary flex items-center gap-1 rounded px-[11px] sm:rounded-md sm:px-4",
+            }}
+          />
         )}
       </div>
       {noAddresses && (
@@ -149,12 +149,16 @@ export default async function Page(props: PageProps) {
             addressFormRows={resultAddressRows.data}
             countries={resultCountries.data}
             countryCode={countryCode}
-          >
-            <Button className="mt-6 flex items-center gap-1">
-              <PlusIcon className="h-4 w-4" />
-              {t("address.add-new-address")}
-            </Button>
-          </AddNewAddressModal>
+            buttonContent={
+              <>
+                <PlusIcon className="h-4 w-4" />
+                {t("address.add-new-address")}
+              </>
+            }
+            buttonProps={{
+              className: "mt-6 flex items-center gap-1",
+            }}
+          />
         </div>
       )}
       {sortedAddresses.map(
