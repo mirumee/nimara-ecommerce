@@ -13,7 +13,7 @@
     "dotenv": "16.6.1",
     "eslint": "^8.57.0",
     "eslint-config-custom": "workspace:*",
-    "eslint-plugin-playwright": "^2.2.0",
+    "eslint-plugin-playwright": "^2.2.1",
     "lint-staged": "^16.1.2",
     "tsconfig": "workspace:*"
   },
