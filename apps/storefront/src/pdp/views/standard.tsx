@@ -2,6 +2,8 @@ import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 
 import { CACHE_TTL } from "@/config";
+import { clientEnvs } from "@/envs/client";
+import { paths } from "@/lib/paths";
 import { ProductDetailsContainer } from "@/pdp/components/product-details-container";
 import { ProductDetailsSkeleton } from "@/pdp/components/product-details-skeleton";
 import { RelatedProductsContainer } from "@/pdp/components/related-products-container";
@@ -49,6 +51,12 @@ export async function generateStandardPDPMetadata(props: PDPViewProps) {
     getStoreService(),
   ]);
 
+  const url = new URL(
+    paths.products.asPath({ slug }),
+    clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
+  );
+  const canonicalUrl = url.toString();
+
   const result = await storeService.getProductBase({
     productSlug: slug,
     channel: region.market.channel,
@@ -73,5 +81,12 @@ export async function generateStandardPDPMetadata(props: PDPViewProps) {
   return {
     title: result.data.product.seo.title || result.data.product.name,
     description: result.data?.product?.seo.description ?? fallbackDescription,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGrapch: {
+      url: canonicalUrl,
+      siteName: "Nimara Store",
+    },
   };
 }

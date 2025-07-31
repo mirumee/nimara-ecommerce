@@ -28,7 +28,7 @@ export default async function Image({
 
   const { data } = await storeService.getProductDetails({
     productSlug: slug,
-    customMediaFormat: "ORIGINAL",
+    customMediaFormat: "WEBP",
     channel: region.market.channel,
     languageCode: region.language.code,
     countryCode: region.market.countryCode,
