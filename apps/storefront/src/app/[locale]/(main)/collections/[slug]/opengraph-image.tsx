@@ -13,7 +13,7 @@ export const size = {
 export const runtime = "edge";
 
 export const contentType = "image/png";
-export const alt = "Product preview";
+export const alt = "Collection preview";
 
 // eslint-disable-next-line import/no-default-export
 export default async function Image({
@@ -28,6 +28,7 @@ export default async function Image({
 
   const getCollectionResult = await collectionService.getCollectionDetails({
     channel: region.market.channel,
+    customMediaFormat: "WEBP",
     languageCode: region.language.code,
     slug,
     limit: DEFAULT_RESULTS_PER_PAGE,

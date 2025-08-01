@@ -53,7 +53,8 @@
     "open-search": "Open search",
     "search-label": "Search",
     "search-preview": "Search preview",
-    "all-products": "All Nimara’s best products"
+    "all-products": "All Nimara’s best products",
+    "description": "Find products fast on Nimara — a headless storefront powered by Saleor with smart search and filtering."
   },
   "common": {
     "checkout": "Checkout",

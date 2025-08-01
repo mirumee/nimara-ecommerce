@@ -16,7 +16,16 @@ export const getCollectionDetailsInfra =
     apiURI,
     logger,
   }: SaleorCollectionServiceConfig): GetCollectionDetailsInfra =>
-  async ({ slug, options, channel, languageCode, after, before, limit }) => {
+  async ({
+    slug,
+    options,
+    channel,
+    languageCode,
+    after,
+    before,
+    customMediaFormat,
+    limit,
+  }) => {
     const pageInfo = before
       ? { before, last: limit, first: undefined }
       : after
@@ -39,7 +48,7 @@ export const getCollectionDetailsInfra =
             slug,
             after,
             before,
-            thumbnailFormat: THUMBNAIL_FORMAT,
+            thumbnailFormat: customMediaFormat ?? THUMBNAIL_FORMAT,
             thumbnailSize: THUMBNAIL_SIZE_LARGE,
             ...pageInfo,
           },
