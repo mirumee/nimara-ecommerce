@@ -6,6 +6,7 @@ import { PageType } from "@nimara/domain/objects/CMSPage";
 
 import { getAccessToken } from "@/auth";
 import { CACHE_TTL } from "@/config";
+import { clientEnvs } from "@/envs/client";
 import { JsonLd, websiteToJsonLd } from "@/lib/json-ld";
 import { getCurrentRegion } from "@/regions/server";
 import { type SupportedLocale } from "@/regions/types";
@@ -28,6 +29,9 @@ type PageProps = {
 export async function generateMetadata(_params: PageProps): Promise<Metadata> {
   const t = await getTranslations("home");
 
+  const url = new URL(clientEnvs.NEXT_PUBLIC_STOREFRONT_URL);
+  const canonicalUrl = url.toString();
+
   return {
     title: t("title"),
     description: t("description"),
@@ -40,6 +44,8 @@ export async function generateMetadata(_params: PageProps): Promise<Metadata> {
           alt: t("homepage-preview"),
         },
       ],
+      url: canonicalUrl,
+      siteName: "Nimara Store",
     },
   };
 }

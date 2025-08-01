@@ -40,6 +40,7 @@ export async function generateMetadata(props: { searchParams: SearchParams }) {
     title: searchParams.q
       ? t("search-for", { query: searchParams.q })
       : t("all-products"),
+    description: t("description"),
     openGraph: {
       images: [
         {
@@ -49,6 +50,8 @@ export async function generateMetadata(props: { searchParams: SearchParams }) {
           alt: t("search-preview"),
         },
       ],
+      url: canonicalUrl,
+      siteName: "Nimara Store",
     },
     alternates: {
       canonical: canonicalUrl,

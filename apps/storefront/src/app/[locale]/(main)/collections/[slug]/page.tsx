@@ -67,6 +67,10 @@ export async function generateMetadata(props: PageProps) {
     alternates: {
       canonical: canonicalUrl,
     },
+    openGrapch: {
+      url: canonicalUrl,
+      siteName: "Nimara Store",
+    },
   };
 }
 
