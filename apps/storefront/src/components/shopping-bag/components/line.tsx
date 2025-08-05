@@ -64,7 +64,13 @@ export const Line = ({
   const formatter = useLocalizedFormatter();
   const inputValue = useDebounce(value, 1000);
 
-  const name = `${product.name} • ${variant.name}`;
+  const attributeNames = variant.selectionAttributes
+    ?.map((attr) => attr.values?.[0]?.name)
+    .filter(Boolean)
+    .join(" • ");
+
+  const name = `${product.name}${attributeNames ? ` • ${attributeNames}` : ""}`;
+
   const href = paths.products.asPath({ slug: product.slug, hash: variant.id });
 
   const handleLineDelete = async () => {

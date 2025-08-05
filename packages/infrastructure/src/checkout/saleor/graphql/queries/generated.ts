@@ -34,13 +34,25 @@ export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_Produ
 
 export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_media_ProductMedia = { url: string, alt: string };
 
+export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation = { name: string };
+
+export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute = { slug: string | null, inputType: Types.AttributeInputTypeEnum | null, name: string | null, translation: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation | null };
+
+export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation = { name: string, plainText: string | null, richText: string | null };
+
+export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_file_File = { url: string };
+
+export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue = { slug: string | null, name: string | null, plainText: string | null, richText: string | null, boolean: boolean | null, date: string | null, dateTime: string | null, reference: string | null, value: string | null, translation: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation | null, file: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_file_File | null };
+
+export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute = { attribute: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute, values: Array<CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue> };
+
 export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_thumbnail_Image = { alt: string | null, url: string };
 
 export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation = { name: string | null };
 
 export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product = { id: string, slug: string, name: string, thumbnail: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_thumbnail_Image | null, translation: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation | null };
 
-export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant = { id: string, quantityAvailable: number | null, quantityLimitPerCustomer: number | null, name: string, sku: string | null, translation: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_translation_ProductVariantTranslation | null, media: Array<CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_media_ProductMedia> | null, product: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product };
+export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant = { id: string, quantityAvailable: number | null, quantityLimitPerCustomer: number | null, name: string, sku: string | null, translation: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_translation_ProductVariantTranslation | null, media: Array<CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_media_ProductMedia> | null, selectionAttributes: Array<CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute>, product: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product };
 
 export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine = { id: string, quantity: number, totalPrice: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney, undiscountedTotalPrice: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_undiscountedTotalPrice_Money, variant: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant };
 
@@ -220,6 +232,9 @@ fragment CartLineFragment on CheckoutLine {
       url(size: $thumbnailSize, format: $thumbnailFormat)
       alt
     }
+    selectionAttributes: attributes(variantSelection: VARIANT_SELECTION) {
+      ...SelectionAttributeFragment
+    }
     product {
       id
       slug
@@ -237,6 +252,41 @@ fragment CartLineFragment on CheckoutLine {
 fragment MoneyFragment on Money {
   currency
   amount
+}
+fragment SelectionAttributeFragment on SelectedAttribute {
+  attribute {
+    ...AttributeFragment
+  }
+  values {
+    ...AttributeValueFragment
+  }
+}
+fragment AttributeFragment on Attribute {
+  slug
+  inputType
+  name
+  translation(languageCode: $languageCode) {
+    name
+  }
+}
+fragment AttributeValueFragment on AttributeValue {
+  slug
+  name
+  plainText
+  richText
+  boolean
+  date
+  dateTime
+  reference
+  value
+  translation(languageCode: $languageCode) {
+    name
+    plainText
+    richText
+  }
+  file {
+    url
+  }
 }
 fragment TaxedMoneyFragment on TaxedMoney {
   net {
