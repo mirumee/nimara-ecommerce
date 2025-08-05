@@ -134,8 +134,8 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
                               <Image
                                 src={child.collectionImageUrl}
                                 alt={child.label}
-                                layout="fill"
-                                objectFit="cover"
+                                fill
+                                className="object-cover"
                               />
                             )}
                           </div>
