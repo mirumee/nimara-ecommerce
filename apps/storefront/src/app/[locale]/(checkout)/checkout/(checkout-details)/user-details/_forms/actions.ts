@@ -34,7 +34,11 @@ export const updateUserDetails = async ({
   });
 
   if (result.ok) {
-    return ok({ redirectUrl: paths.checkout.shippingAddress.asPath() });
+    return ok({
+      redirectUrl: checkout.isShippingRequired
+        ? paths.checkout.shippingAddress.asPath()
+        : paths.checkout.payment.asPath(),
+    });
   }
 
   return result;
