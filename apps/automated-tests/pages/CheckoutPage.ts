@@ -155,9 +155,12 @@ export class CheckoutPage {
   }
 
   async assertOrderSummary(product: Product) {
-    await expect(this.page.getByText(`qty: ${product.quantity}`)).toBeVisible();
+    await expect(this.page.getByTestId("product-qty")).toHaveText(
+      `qty: ${product.quantity}`,
+    );
+
     await expect(
-      this.productPriceText.getByText(
+      this.productPriceText.first().getByText(
         formatAsPrice({
           amount: product.price.amount,
           currency: product.price.currency,
