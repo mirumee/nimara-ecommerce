@@ -53,9 +53,9 @@
     "@types/react": "19.1.9",
     "eslint": "^8.57.0",
     "eslint-config-custom": "workspace:*",
-    "lint-staged": "^16.1.2",
+    "lint-staged": "^16.1.5",
     "tsconfig": "workspace:*",
-    "typescript": "^5.8.3"
+    "typescript": "^5.9.2"
   },
   "lint-staged": {
     "*.{js,cjs,ts,tsx}": "eslint --fix",

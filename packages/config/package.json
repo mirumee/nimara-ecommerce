@@ -15,7 +15,7 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
-    "lint-staged": "^16.1.2"
+    "lint-staged": "^16.1.5"
   },
   "lint-staged": {
     "*.{js,cjs,mjs,jsx,ts,cts,mts,tsx}": "eslint --fix",
