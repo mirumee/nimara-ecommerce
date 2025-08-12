@@ -16,12 +16,23 @@ export type ProductVariantAvailability = {
   quantityLimitPerCustomer: number | null;
 };
 
+/**
+ * Represents a product in the e-commerce system.
+ * @see {@link ProductBase} for the base structure of a product.
+ * @see {@link ProductVariant} for the structure of product variants.
+ * @see {@link RelatedProduct} for the structure of related products.
+ */
 export type Product = ProductBase & {
   attributes: Attribute[];
   images: Image[];
   variants: ProductVariant[];
 };
 
+/**
+ * Represents a product variant in the e-commerce system.
+ * @see {@link Product} for the complete structure of a product.
+ * @see {@link ProductBase} for the base structure of a product.
+ */
 export type ProductVariant = {
   id: string;
   images: Image[];
@@ -30,6 +41,11 @@ export type ProductVariant = {
   selectionAttributes: Attribute[];
 };
 
+/**
+ * Base structure for a product in the e-commerce system.
+ * @see {@link Product} for the complete structure of a product.
+ * @see {@link RelatedProduct} for the structure of related products.
+ */
 export type ProductBase = {
   category: {
     name: string;

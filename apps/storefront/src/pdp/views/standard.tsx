@@ -1,16 +1,24 @@
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 
+import { Skeleton } from "@nimara/ui/components/skeleton";
+
 import { CACHE_TTL } from "@/config";
 import { clientEnvs } from "@/envs/client";
 import { paths } from "@/lib/paths";
-import { ProductDetailsContainer } from "@/pdp/components/product-details-container";
-import { ProductDetailsSkeleton } from "@/pdp/components/product-details-skeleton";
 import { RelatedProductsContainer } from "@/pdp/components/related-products-container";
 import { RelatedProductsSkeleton } from "@/pdp/components/related-products-skeleton";
 import { type PDPViewProps } from "@/pdp/types";
 import { getCurrentRegion } from "@/regions/server";
 import { getStoreService } from "@/services/store";
+
+import { AttributesDropdown } from "../components/attributes-dropdown";
+import { ProductBreadcrumbs } from "../components/product-breadcrumbs";
+import { ProductHighlights } from "../components/product-highlights";
+import { ProductMedia } from "../components/product-media";
+import { ProductTitle } from "../components/product-title";
+import { VariantSelectorWrapper } from "../components/variant-selector-wrapper";
+import { ProductProvider } from "../providers/product-provider";
 
 /**
  * Standard view for the product details page.
@@ -23,14 +31,45 @@ export const StandardPDPView = async ({ params }: PDPViewProps) => {
   const { slug } = await params;
 
   return (
-    <div className="relative w-full">
-      <Suspense fallback={<ProductDetailsSkeleton />}>
-        <ProductDetailsContainer slug={slug} />
-      </Suspense>
-      <Suspense fallback={<RelatedProductsSkeleton />}>
-        <RelatedProductsContainer slug={slug} />
-      </Suspense>
-    </div>
+    <ProductProvider
+      slug={slug}
+      render={(product, availability) => (
+        <div className="relative grid w-full gap-4">
+          <ProductBreadcrumbs
+            category={product.category}
+            productName={product.name}
+          />
+
+          <div className="grid gap-8 md:grid-cols-2 md:gap-28">
+            <div className="md:col-span-1">
+              <ProductMedia
+                media={product.images}
+                variants={product.variants}
+                showAs="vertical"
+              />
+            </div>
+
+            <div className="md:col-span-1">
+              <section className="sticky top-28">
+                <ProductTitle title={product.name} />
+
+                <VariantSelectorWrapper
+                  availability={availability}
+                  product={product}
+                />
+
+                <ProductHighlights product={product} />
+                <AttributesDropdown product={product} />
+              </section>
+            </div>
+          </div>
+
+          <Suspense fallback={<RelatedProductsSkeleton />}>
+            <RelatedProductsContainer slug={slug} />
+          </Suspense>
+        </div>
+      )}
+    />
   );
 };
 
@@ -90,3 +129,38 @@ export async function generateStandardPDPMetadata(props: PDPViewProps) {
     },
   };
 }
+
+/**
+ * Skeleton component for the standard PDP view.
+ * This component is used to display a loading state while the product data is being fetched.
+ * @returns A skeleton component for the standard PDP view.
+ */
+export const StandardPDPViewSkeleton = () => (
+  <div className="relative grid w-full gap-4">
+    <Skeleton className="h-8 w-1/4" />
+
+    <div className="grid gap-8 md:grid-cols-2 md:gap-28">
+      <div className="md:col-span-1">
+        <Skeleton className="h-48 w-full md:h-96" />
+      </div>
+
+      <div className="grid gap-2 md:col-span-1">
+        <section className="sticky top-28 flex flex-col items-start gap-4">
+          <Skeleton className="h-8 w-1/2" />
+          <Skeleton className="h-8 w-1/4" />
+          <Skeleton className="h-8 w-1/2" />
+          <Skeleton className="bg-primary h-10 w-full" />
+        </section>
+      </div>
+    </div>
+
+    <Skeleton className="h-8 w-1/4" />
+    <div className="flex gap-4 overflow-hidden">
+      <Skeleton className="aspect-square w-1/5" />
+      <Skeleton className="aspect-square w-1/5" />
+      <Skeleton className="aspect-square w-1/5" />
+      <Skeleton className="aspect-square w-1/5" />
+      <Skeleton className="aspect-square w-1/5" />
+    </div>
+  </div>
+);
