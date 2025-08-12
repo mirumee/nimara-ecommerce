@@ -4,7 +4,6 @@ import { PlusCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useState } from "react";
 
-import type { User } from "@nimara/domain/objects/User";
 import { Button } from "@nimara/ui/components/button";
 import { ToastAction } from "@nimara/ui/components/toast";
 import { useToast } from "@nimara/ui/hooks";
@@ -17,15 +16,10 @@ import { addToBagAction } from "../actions/add-to-bag";
 
 type AddToBagProps = {
   isVariantAvailable: boolean;
-  user: (User & { accessToken: string | undefined }) | null;
   variantId: string;
 };
 
-export const AddToBag = ({
-  variantId,
-  isVariantAvailable,
-  user,
-}: AddToBagProps) => {
+export const AddToBag = ({ variantId, isVariantAvailable }: AddToBagProps) => {
   const t = useTranslations();
   const { toast } = useToast();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -34,7 +28,6 @@ export const AddToBag = ({
     setIsProcessing(true);
 
     const resultLinesAdd = await addToBagAction({
-      user,
       variantId,
     });
 
@@ -75,7 +68,7 @@ export const AddToBag = ({
 
   return (
     <Button
-      className="my-4 w-full"
+      className="w-full"
       disabled={!variantId || isProcessing}
       onClick={isVariantAvailable ? handleProductAdd : handleNotifyMe}
       loading={isProcessing}

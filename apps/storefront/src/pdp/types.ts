@@ -5,6 +5,6 @@ import { type SupportedLocale } from "@/regions/types";
  * Every PDP view should use this type to ensure consistency.
  * @property params - A promise that resolves to an object containing the locale and slug of the product.
  */
-export type PDPViewProps = {
+export interface PDPViewProps {
   params: Promise<{ locale: SupportedLocale; slug: string }>;
-};
+}
