@@ -5,6 +5,7 @@ import { getTranslations } from "next-intl/server";
 import { RichText } from "@nimara/ui/components/rich-text/rich-text";
 import { editorJSDataToString } from "@nimara/ui/lib/richText";
 
+import { Breadcrumbs } from "@/components/breadcrumbs";
 import { CACHE_TTL, DEFAULT_RESULTS_PER_PAGE } from "@/config";
 import { clientEnvs } from "@/envs/client";
 import { paths } from "@/lib/paths";
@@ -12,7 +13,6 @@ import { getCurrentRegion } from "@/regions/server";
 import { type SupportedLocale } from "@/regions/types";
 import { getCollectionService } from "@/services/collection";
 
-import { Breadcrumbs } from "../../../../../components/breadcrumbs";
 import { ProductsList } from "../../_components/products-list";
 import { SearchPagination } from "../../_components/search-pagination";
 

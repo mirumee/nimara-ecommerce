@@ -7,6 +7,7 @@ import type { PropsWithChildren } from "react";
 import type { SearchProduct } from "@nimara/domain/objects/SearchProduct";
 
 import productPlaceholder from "@/assets/product_placeholder.svg?url";
+import { DiscountBadge } from "@/components/discount-badge";
 import { Link } from "@/i18n/routing";
 import { useLocalizedFormatter } from "@/lib/formatters/use-localized-formatter";
 import { paths } from "@/lib/paths";
@@ -19,15 +20,50 @@ export const ProductName = ({ children }: PropsWithChildren) => (
   </h2>
 );
 
-export const ProductPrice = ({ children }: PropsWithChildren) => {
+type ProductPriceProps = {
+  discount: number | null;
+  price: number;
+};
+
+const calculateDiscount = ({ price, discount }: ProductPriceProps) => {
+  if (!discount || discount <= 0) {
+    return { hasDiscount: false, oldPrice: null, discountPercent: 0 };
+  }
+
+  const oldPrice = price + discount;
+  const discountPercent = Math.round((discount / oldPrice) * 100);
+
+  return { hasDiscount: true, oldPrice, discountPercent };
+};
+
+export const ProductPrice = ({ price, discount }: ProductPriceProps) => {
   const t = useTranslations();
+  const formatter = useLocalizedFormatter();
+
+  const { hasDiscount, oldPrice } = calculateDiscount({ price, discount });
+
+  if (price === 0) {
+    return (
+      <h3
+        aria-label={t("common.price")}
+        className="text-left text-gray-700 dark:text-gray-300"
+      >
+        {t("common.free")}
+      </h3>
+    );
+  }
 
   return (
     <h3
       aria-label={t("common.price")}
       className="text-left text-gray-700 dark:text-gray-300"
     >
-      {children}
+      <span className="mr-2">{formatter.price({ amount: price })}</span>
+      {hasDiscount && !!oldPrice && (
+        <span className="mr-2 text-gray-500 line-through dark:text-gray-400">
+          {formatter.price({ amount: oldPrice })}
+        </span>
+      )}
     </h3>
   );
 };
@@ -43,12 +79,15 @@ type Props = {
 } & Pick<ImageProps, "height" | "width" | "sizes">;
 
 export const SearchProductCard = ({
-  product: { slug, thumbnail, name, price },
+  product: { slug, thumbnail, name, price, discount },
   sizes,
 }: Props) => {
   const t = useTranslations();
 
-  const formatter = useLocalizedFormatter();
+  const { discountPercent } = calculateDiscount({
+    price,
+    discount,
+  });
 
   return (
     <article className="row-span-3">
@@ -59,30 +98,29 @@ export const SearchProductCard = ({
           slug: slug,
         })}
       >
-        {thumbnail ? (
-          <ProductThumbnail
-            alt={t("products.image-alt", { productName: name })}
-            aria-hidden={true}
-            aria-label={name}
-            src={thumbnail?.url ?? productPlaceholder}
-            sizes={
-              sizes ??
-              "(max-width: 720px) 100vw, (max-width: 1024px) 50vw, (max-width: 1294px) 33vw, 25vw"
-            }
-          />
-        ) : (
-          <div className="bg-accent flex aspect-square justify-center overflow-hidden">
-            <ProductImagePlaceholder className="min-w-full object-cover object-top" />
-          </div>
-        )}
+        <div className="relative">
+          {thumbnail ? (
+            <ProductThumbnail
+              alt={t("products.image-alt", { productName: name })}
+              aria-hidden={true}
+              aria-label={name}
+              src={thumbnail?.url ?? productPlaceholder}
+              sizes={
+                sizes ??
+                "(max-width: 720px) 100vw, (max-width: 1024px) 50vw, (max-width: 1294px) 33vw, 25vw"
+              }
+            />
+          ) : (
+            <div className="bg-accent flex aspect-square justify-center overflow-hidden">
+              <ProductImagePlaceholder className="min-w-full object-cover object-top" />
+            </div>
+          )}
+          <DiscountBadge discount={discountPercent} />
+        </div>
 
         <div>
           <ProductName>{name}</ProductName>
-          <ProductPrice>
-            {price === 0
-              ? t("common.free")
-              : formatter.price({ amount: price })}
-          </ProductPrice>
+          <ProductPrice price={price} discount={discount} />
         </div>
       </Link>
     </article>

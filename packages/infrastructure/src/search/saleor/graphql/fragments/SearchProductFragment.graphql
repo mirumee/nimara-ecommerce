@@ -43,6 +43,9 @@ fragment SearchProductFragment on Product {
         }
       }
     }
+    discount {
+      ...TaxedMoneyFragment
+    }
   }
   updatedAt
 }

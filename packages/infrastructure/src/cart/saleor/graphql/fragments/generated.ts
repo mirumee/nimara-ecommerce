@@ -29,7 +29,11 @@ export type CartFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_prod
 
 export type CartFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product = { id: string, slug: string, name: string, thumbnail: CartFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_thumbnail_Image | null, translation: CartFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation | null };
 
-export type CartFragment_Checkout_lines_CheckoutLine_variant_ProductVariant = { id: string, quantityAvailable: number | null, quantityLimitPerCustomer: number | null, name: string, sku: string | null, translation: CartFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_translation_ProductVariantTranslation | null, media: Array<CartFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_media_ProductMedia> | null, product: CartFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product };
+export type CartFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney = { net: CartFragment_Checkout_subtotalPrice_TaxedMoney_net_Money, gross: CartFragment_Checkout_subtotalPrice_TaxedMoney_gross_Money, tax: CartFragment_Checkout_subtotalPrice_TaxedMoney_tax_Money };
+
+export type CartFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo = { discount: CartFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney | null };
+
+export type CartFragment_Checkout_lines_CheckoutLine_variant_ProductVariant = { id: string, quantityAvailable: number | null, quantityLimitPerCustomer: number | null, name: string, sku: string | null, translation: CartFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_translation_ProductVariantTranslation | null, media: Array<CartFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_media_ProductMedia> | null, product: CartFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product, pricing: CartFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo | null };
 
 export type CartFragment_Checkout_lines_CheckoutLine = { id: string, quantity: number, totalPrice: CartFragment_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney, undiscountedTotalPrice: CartFragment_Checkout_lines_CheckoutLine_undiscountedTotalPrice_Money, variant: CartFragment_Checkout_lines_CheckoutLine_variant_ProductVariant };
 
@@ -141,6 +145,11 @@ fragment CartLineFragment on CheckoutLine {
       name
       translation(languageCode: $languageCode) {
         name
+      }
+    }
+    pricing {
+      discount {
+        ...TaxedMoneyFragment
       }
     }
   }

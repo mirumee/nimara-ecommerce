@@ -29,7 +29,11 @@ export type CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVarian
 
 export type CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product = { id: string, slug: string, name: string, thumbnail: CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_thumbnail_Image | null, translation: CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation | null };
 
-export type CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant = { id: string, quantityAvailable: number | null, quantityLimitPerCustomer: number | null, name: string, sku: string | null, translation: CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_translation_ProductVariantTranslation | null, media: Array<CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_media_ProductMedia> | null, product: CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product };
+export type CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney = { net: CartQuery_checkout_Checkout_subtotalPrice_TaxedMoney_net_Money, gross: CartQuery_checkout_Checkout_subtotalPrice_TaxedMoney_gross_Money, tax: CartQuery_checkout_Checkout_subtotalPrice_TaxedMoney_tax_Money };
+
+export type CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo = { discount: CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney | null };
+
+export type CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant = { id: string, quantityAvailable: number | null, quantityLimitPerCustomer: number | null, name: string, sku: string | null, translation: CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_translation_ProductVariantTranslation | null, media: Array<CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_media_ProductMedia> | null, product: CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product, pricing: CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo | null };
 
 export type CartQuery_checkout_Checkout_lines_CheckoutLine = { id: string, quantity: number, totalPrice: CartQuery_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney, undiscountedTotalPrice: CartQuery_checkout_Checkout_lines_CheckoutLine_undiscountedTotalPrice_Money, variant: CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant };
 
@@ -159,6 +163,11 @@ fragment CartLineFragment on CheckoutLine {
       name
       translation(languageCode: $languageCode) {
         name
+      }
+    }
+    pricing {
+      discount {
+        ...TaxedMoneyFragment
       }
     }
   }

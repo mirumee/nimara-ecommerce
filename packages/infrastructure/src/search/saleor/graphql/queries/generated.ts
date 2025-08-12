@@ -64,7 +64,15 @@ export type SearchProductQuery_products_ProductCountableConnection_edges_Product
 
 export type SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange = { start: SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney | null, stop: SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_stop_TaxedMoney | null };
 
-export type SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo = { priceRange: SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange | null };
+export type SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_discount_TaxedMoney_net_Money = { currency: string, amount: number };
+
+export type SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_discount_TaxedMoney_gross_Money = { currency: string, amount: number };
+
+export type SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_discount_TaxedMoney_tax_Money = { currency: string, amount: number };
+
+export type SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_discount_TaxedMoney = { net: SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_discount_TaxedMoney_net_Money, gross: SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_discount_TaxedMoney_gross_Money, tax: SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_discount_TaxedMoney_tax_Money };
+
+export type SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo = { priceRange: SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange | null, discount: SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_discount_TaxedMoney | null };
 
 export type SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product = { id: string, name: string, slug: string, updatedAt: string, translation: SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_translation_ProductTranslation | null, thumbnail: SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_thumbnail_Image | null, variants: Array<SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant> | null, media: Array<SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_media_ProductMedia> | null, pricing: SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo | null };
 
@@ -231,6 +239,24 @@ export const SearchProductQueryDocument = new TypedDocumentString(`
         }
       }
     }
+    discount {
+      ...TaxedMoneyFragment
+    }
   }
   updatedAt
+}
+fragment TaxedMoneyFragment on TaxedMoney {
+  net {
+    ...MoneyFragment
+  }
+  gross {
+    ...MoneyFragment
+  }
+  tax {
+    ...MoneyFragment
+  }
+}
+fragment MoneyFragment on Money {
+  currency
+  amount
 }`) as unknown as TypedDocumentString<SearchProductQuery, SearchProductQueryVariables>;

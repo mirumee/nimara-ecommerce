@@ -1,5 +1,6 @@
 export type SearchProduct = {
   currency: string;
+  discount: number | null;
   id: string;
   media:
     | {

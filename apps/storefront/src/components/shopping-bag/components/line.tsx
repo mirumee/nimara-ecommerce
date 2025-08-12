@@ -272,11 +272,24 @@ export const Line = ({
           })}
           data-testid="shopping-bag-product-line-price"
         >
-          {undiscountedTotalPrice.amount === 0 || total.amount === 0
-            ? t("common.free")
-            : formatter.price({
-                amount: undiscountedTotalPrice.amount ?? total.amount,
-              })}
+          {undiscountedTotalPrice.amount === 0 || total.amount === 0 ? (
+            t("common.free")
+          ) : (
+            <>
+              {variant.discount && variant.discount.amount !== 0 && (
+                <span className="mr-2 text-stone-400 line-through dark:text-stone-500">
+                  {formatter.price({ amount: undiscountedTotalPrice.amount })}
+                </span>
+              )}
+              <span>
+                {formatter.price({
+                  amount:
+                    undiscountedTotalPrice.amount -
+                    (variant.discount?.amount ?? 0),
+                })}
+              </span>
+            </>
+          )}
         </p>
       </div>
 

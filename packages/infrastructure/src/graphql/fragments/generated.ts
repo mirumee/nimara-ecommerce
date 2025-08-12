@@ -19,7 +19,17 @@ export type CartLineFragment_CheckoutLine_variant_ProductVariant_product_Product
 
 export type CartLineFragment_CheckoutLine_variant_ProductVariant_product_Product = { id: string, slug: string, name: string, thumbnail: CartLineFragment_CheckoutLine_variant_ProductVariant_product_Product_thumbnail_Image | null, translation: CartLineFragment_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation | null };
 
-export type CartLineFragment_CheckoutLine_variant_ProductVariant = { id: string, quantityAvailable: number | null, quantityLimitPerCustomer: number | null, name: string, sku: string | null, translation: CartLineFragment_CheckoutLine_variant_ProductVariant_translation_ProductVariantTranslation | null, media: Array<CartLineFragment_CheckoutLine_variant_ProductVariant_media_ProductMedia> | null, product: CartLineFragment_CheckoutLine_variant_ProductVariant_product_Product };
+export type CartLineFragment_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money = { currency: string, amount: number };
+
+export type CartLineFragment_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_gross_Money = { currency: string, amount: number };
+
+export type CartLineFragment_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_tax_Money = { currency: string, amount: number };
+
+export type CartLineFragment_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney = { net: CartLineFragment_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money, gross: CartLineFragment_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_gross_Money, tax: CartLineFragment_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_tax_Money };
+
+export type CartLineFragment_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo = { discount: CartLineFragment_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney | null };
+
+export type CartLineFragment_CheckoutLine_variant_ProductVariant = { id: string, quantityAvailable: number | null, quantityLimitPerCustomer: number | null, name: string, sku: string | null, translation: CartLineFragment_CheckoutLine_variant_ProductVariant_translation_ProductVariantTranslation | null, media: Array<CartLineFragment_CheckoutLine_variant_ProductVariant_media_ProductMedia> | null, product: CartLineFragment_CheckoutLine_variant_ProductVariant_product_Product, pricing: CartLineFragment_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo | null };
 
 export type CartLineFragment = { id: string, quantity: number, totalPrice: CartLineFragment_CheckoutLine_totalPrice_TaxedMoney, undiscountedTotalPrice: CartLineFragment_CheckoutLine_undiscountedTotalPrice_Money, variant: CartLineFragment_CheckoutLine_variant_ProductVariant };
 
@@ -92,11 +102,27 @@ export const CartLineFragment = new TypedDocumentString(`
         name
       }
     }
+    pricing {
+      discount {
+        ...TaxedMoneyFragment
+      }
+    }
   }
 }
     fragment MoneyFragment on Money {
   currency
   amount
+}
+fragment TaxedMoneyFragment on TaxedMoney {
+  net {
+    ...MoneyFragment
+  }
+  gross {
+    ...MoneyFragment
+  }
+  tax {
+    ...MoneyFragment
+  }
 }`, {"fragmentName":"CartLineFragment"}) as unknown as TypedDocumentString<CartLineFragment, unknown>;
 export const PaymentGatewayConfigFragment = new TypedDocumentString(`
     fragment PaymentGatewayConfigFragment on PaymentGatewayConfig {

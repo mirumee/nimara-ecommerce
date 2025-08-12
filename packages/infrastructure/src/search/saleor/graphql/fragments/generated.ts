@@ -29,7 +29,15 @@ export type SearchProductFragment_Product_pricing_ProductPricingInfo_priceRange_
 
 export type SearchProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange = { start: SearchProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney | null, stop: SearchProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_stop_TaxedMoney | null };
 
-export type SearchProductFragment_Product_pricing_ProductPricingInfo = { priceRange: SearchProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange | null };
+export type SearchProductFragment_Product_pricing_ProductPricingInfo_discount_TaxedMoney_net_Money = { currency: string, amount: number };
+
+export type SearchProductFragment_Product_pricing_ProductPricingInfo_discount_TaxedMoney_gross_Money = { currency: string, amount: number };
+
+export type SearchProductFragment_Product_pricing_ProductPricingInfo_discount_TaxedMoney_tax_Money = { currency: string, amount: number };
+
+export type SearchProductFragment_Product_pricing_ProductPricingInfo_discount_TaxedMoney = { net: SearchProductFragment_Product_pricing_ProductPricingInfo_discount_TaxedMoney_net_Money, gross: SearchProductFragment_Product_pricing_ProductPricingInfo_discount_TaxedMoney_gross_Money, tax: SearchProductFragment_Product_pricing_ProductPricingInfo_discount_TaxedMoney_tax_Money };
+
+export type SearchProductFragment_Product_pricing_ProductPricingInfo = { priceRange: SearchProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange | null, discount: SearchProductFragment_Product_pricing_ProductPricingInfo_discount_TaxedMoney | null };
 
 export type SearchProductFragment = { id: string, name: string, slug: string, updatedAt: string, translation: SearchProductFragment_Product_translation_ProductTranslation | null, thumbnail: SearchProductFragment_Product_thumbnail_Image | null, variants: Array<SearchProductFragment_Product_variants_ProductVariant> | null, media: Array<SearchProductFragment_Product_media_ProductMedia> | null, pricing: SearchProductFragment_Product_pricing_ProductPricingInfo | null };
 
@@ -97,7 +105,24 @@ export const SearchProductFragment = new TypedDocumentString(`
         }
       }
     }
+    discount {
+      ...TaxedMoneyFragment
+    }
   }
   updatedAt
 }
-    `, {"fragmentName":"SearchProductFragment"}) as unknown as TypedDocumentString<SearchProductFragment, unknown>;
+    fragment TaxedMoneyFragment on TaxedMoney {
+  net {
+    ...MoneyFragment
+  }
+  gross {
+    ...MoneyFragment
+  }
+  tax {
+    ...MoneyFragment
+  }
+}
+fragment MoneyFragment on Money {
+  currency
+  amount
+}`, {"fragmentName":"SearchProductFragment"}) as unknown as TypedDocumentString<SearchProductFragment, unknown>;

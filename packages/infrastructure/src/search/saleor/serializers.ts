@@ -23,6 +23,7 @@ export const searchProductSerializer: SearchProductSerializer = (data) => {
       ? 0
       : Number(data.pricing?.priceRange?.start?.gross.amount),
     currency: data.pricing?.priceRange?.start?.currency,
+    discount: Number(data.pricing?.discount?.gross.amount),
     thumbnail: data.thumbnail
       ? {
           url: data.thumbnail.url,

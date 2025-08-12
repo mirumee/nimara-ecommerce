@@ -20,6 +20,7 @@ import {
   CarouselItem,
 } from "@nimara/ui/components/carousel";
 
+import { DiscountBadge } from "@/components/discount-badge";
 import { ProductImagePlaceholder } from "@/components/product-image-placeholder";
 
 import { useVariantSelection } from "../hooks/useVariantSelection";
@@ -40,11 +41,12 @@ export const ProductDetails = ({
 }) => {
   const t = useTranslations("products");
 
-  const { chosenVariant, looselyMatchingVariants } = useVariantSelection({
-    product,
-    productAvailability: availability,
-    cart,
-  });
+  const { chosenVariant, looselyMatchingVariants, discountPercent } =
+    useVariantSelection({
+      product,
+      productAvailability: availability,
+      cart,
+    });
 
   const { images, name, description } = product;
 
@@ -88,75 +90,81 @@ export const ProductDetails = ({
   }
 
   return (
-    <div className="my-6 grid gap-10 md:grid-cols-12 md:gap-4">
-      <div className="relative max-md:hidden md:col-span-6 [&>*]:pb-2">
-        {imagesToDisplay.length ? (
-          <>
+    <>
+      <div className="relative md:hidden">
+        <DiscountBadge discount={discountPercent} className="top-8" />
+      </div>
+      <div className="my-6 grid gap-10 md:grid-cols-12 md:gap-4">
+        <div className="relative max-md:hidden md:col-span-6">
+          <DiscountBadge discount={discountPercent} />
+          {imagesToDisplay.length ? (
+            <>
+              {imagesToDisplay.map(({ url, alt }, i) => (
+                <Image
+                  src={url}
+                  key={url}
+                  alt={alt || name}
+                  height={500}
+                  width={500}
+                  priority={i === 0}
+                  sizes="(max-width: 960px) 100vw, 50vw"
+                  className="h-auto w-full pb-2"
+                />
+              ))}
+            </>
+          ) : (
+            <ProductImagePlaceholder />
+          )}
+        </div>
+
+        <Carousel className="md:hidden">
+          <CarouselContent>
             {imagesToDisplay.map(({ url, alt }, i) => (
-              <Image
-                src={url}
-                key={url}
-                alt={alt || name}
-                height={500}
-                width={500}
-                priority={i === 0}
-                sizes="(max-width: 960px) 100vw, 50vw"
-                className="h-auto w-full"
-              />
+              <CarouselItem key={url}>
+                <Image
+                  src={url}
+                  alt={alt || name}
+                  width={250}
+                  height={250}
+                  priority={i === 0}
+                  loading={i === 0 ? "eager" : "lazy"}
+                  sizes="(max-width: 960px) 100vw, 1vw"
+                  className="h-full w-full object-cover"
+                />
+              </CarouselItem>
             ))}
-          </>
-        ) : (
-          <ProductImagePlaceholder />
-        )}
+          </CarouselContent>
+        </Carousel>
+
+        <div className="md:col-span-5 md:col-start-8">
+          <section className="sticky top-28 px-1 pt-10">
+            <h1 className="text-primary text-2xl">{name}</h1>
+            <VariantSelector
+              cart={cart}
+              product={product}
+              productAvailability={availability}
+              user={user}
+            />
+
+            {hasFreeShipping && (
+              <Alert className="text-primary">
+                <Truck className="size-4" />
+                <AlertTitle>{t("free-shipping")}</AlertTitle>
+                <AlertDescription>{t("standard-parcel")}</AlertDescription>
+              </Alert>
+            )}
+
+            {hasFreeReturn && (
+              <Alert className="mt-2">
+                <Undo2 className="size-4" />
+                <AlertTitle>{t("free-30-days")}</AlertTitle>
+              </Alert>
+            )}
+
+            <AttributesDropdown attributes={attributesToDisplay} />
+          </section>
+        </div>
       </div>
-
-      <Carousel className="md:hidden">
-        <CarouselContent>
-          {imagesToDisplay.map(({ url, alt }, i) => (
-            <CarouselItem key={url}>
-              <Image
-                src={url}
-                alt={alt || name}
-                width={250}
-                height={250}
-                priority={i === 0}
-                loading={i === 0 ? "eager" : "lazy"}
-                sizes="(max-width: 960px) 100vw, 1vw"
-                className="h-full w-full object-cover"
-              />
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-      </Carousel>
-
-      <div className="md:col-span-5 md:col-start-8">
-        <section className="sticky top-28 px-1 pt-10">
-          <h1 className="text-primary text-2xl">{name}</h1>
-          <VariantSelector
-            cart={cart}
-            product={product}
-            productAvailability={availability}
-            user={user}
-          />
-
-          {hasFreeShipping && (
-            <Alert className="text-primary">
-              <Truck className="size-4" />
-              <AlertTitle>{t("free-shipping")}</AlertTitle>
-              <AlertDescription>{t("standard-parcel")}</AlertDescription>
-            </Alert>
-          )}
-
-          {hasFreeReturn && (
-            <Alert className="mt-2">
-              <Undo2 className="size-4" />
-              <AlertTitle>{t("free-30-days")}</AlertTitle>
-            </Alert>
-          )}
-
-          <AttributesDropdown attributes={attributesToDisplay} />
-        </section>
-      </div>
-    </div>
+    </>
   );
 };
