@@ -1,60 +1,11 @@
-import type { DeepNonNullable, DeepRequired } from "ts-essentials";
-
-import type { Product } from "@nimara/domain/objects/Product";
 import { ok } from "@nimara/domain/objects/Result";
 
 import { graphqlClient } from "#root/graphql/client";
-import { getTranslation } from "#root/lib/saleor";
-import { parseAttributeData } from "#root/lib/serializers/attribute";
+import { serializeProduct } from "#root/store/saleor/serializers";
 
 import { IMAGE_FORMAT, IMAGE_SIZES } from "../../config";
 import type { GetProductDetailsInfra, StoreServiceConfig } from "../../types";
-import type { ProductDetailsFragment } from "../graphql/fragments/generated";
 import { ProductDetailsQueryDocument } from "../graphql/queries/generated";
-
-const parseData = (data: ProductDetailsFragment): Product => {
-  const { id, media, variants } = data as DeepRequired<
-    DeepNonNullable<ProductDetailsFragment>
-  >;
-  const name = getTranslation("name", data);
-  const description = getTranslation("description", data);
-  const images = media
-    .filter(({ type }) => type === "IMAGE")
-    .map(({ alt, url }) => ({ url, alt }));
-
-  return {
-    id,
-    name,
-    description,
-    images,
-    category: data.category,
-    seo: {
-      title: data.seoTitle ?? null,
-      description: data.seoDescription ?? null,
-    },
-    attributes: data.attributes.map(parseAttributeData),
-    variants: variants.map(
-      ({
-        nonSelectionAttributes,
-        selectionAttributes,
-        id,
-        media,
-        ...variant
-      }) => {
-        return {
-          id,
-          name: getTranslation("name", variant),
-          selectionAttributes: selectionAttributes.map(parseAttributeData),
-          nonSelectionAttributes:
-            nonSelectionAttributes.map(parseAttributeData),
-          images: media
-            .filter(({ type }) => type === "IMAGE")
-            .map(({ alt, url }) => ({ url, alt })),
-        };
-      },
-    ),
-  };
-};
 
 export const getProductDetailsInfra =
   ({ apiURI, logger }: StoreServiceConfig): GetProductDetailsInfra =>
@@ -94,6 +45,6 @@ export const getProductDetailsInfra =
     }
 
     return ok({
-      product: parseData(result.data.product),
+      product: serializeProduct(result.data.product),
     });
   };

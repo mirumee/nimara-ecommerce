@@ -1,6 +1,6 @@
 import dynamic from "next/dynamic";
 
-import type { Attribute } from "@nimara/domain/objects/Attribute";
+import { type Product } from "@nimara/domain/objects/Product";
 import {
   Accordion,
   AccordionContent,
@@ -14,21 +14,42 @@ const RichText = dynamic(
     import("@nimara/ui/components/rich-text/rich-text").then(
       (mod) => mod.RichText,
     ),
-  { ssr: false },
+  { ssr: true },
 );
 
-export const AttributesDropdown = ({
-  attributes,
-}: {
-  attributes: Attribute[];
-}) => {
-  if (!attributes.length) {
+export const AttributesDropdown = ({ product }: { product: Product }) => {
+  if (!product.attributes.length) {
     return null;
+  }
+
+  const attributesToDisplay = product.attributes.filter(
+    ({ slug }) => slug !== "free-shipping" && slug !== "free-return",
+  );
+
+  if (product.description && product.description?.length > 0) {
+    attributesToDisplay.unshift({
+      name: "description",
+      slug: "description",
+      type: "RICH_TEXT",
+      values: [
+        {
+          name: "description",
+          slug: "description",
+          richText: product.description ?? "",
+          boolean: false,
+          value: "",
+          date: undefined,
+          dateTime: undefined,
+          reference: undefined,
+          plainText: "",
+        },
+      ],
+    });
   }
 
   return (
     <Accordion className="mt-4" type="single" collapsible>
-      {attributes.map((attribute) => {
+      {attributesToDisplay.map((attribute) => {
         if (
           !attribute.values.some(
             (val) => val.richText && parseEditorJSData(val.richText),

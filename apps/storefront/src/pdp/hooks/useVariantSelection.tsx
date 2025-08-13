@@ -137,32 +137,6 @@ export const useVariantSelection = ({
     );
   }, [params, productVariants, allSelectionAttributes]);
 
-  const looselyMatchingVariants = useMemo(() => {
-    return productVariants.filter(
-      ({ selectionAttributes: productVariantSelectionAttributes }) => {
-        return chosenAttributes.every(
-          ({ slug: chosenAttributeSlug, value: chosenAttributeValue }) => {
-            if (chosenAttributeValue === "") {
-              return true;
-            }
-
-            return productVariantSelectionAttributes.some(
-              (productVariantSelectionAttribute) => {
-                return (
-                  productVariantSelectionAttribute.slug ===
-                    chosenAttributeSlug &&
-                  productVariantSelectionAttribute.values.some((value) => {
-                    return value.slug === chosenAttributeValue;
-                  })
-                );
-              },
-            );
-          },
-        );
-      },
-    );
-  }, [chosenAttributes, productVariants]);
-
   const chosenVariant = discriminatedVariantId
     ? (productVariants?.find(({ id }) => id === discriminatedVariantId) ?? null)
     : matchingVariants?.length === 1
@@ -204,7 +178,6 @@ export const useVariantSelection = ({
     chosenVariant,
     chosenVariantAvailability,
     discriminatedVariantId,
-    looselyMatchingVariants,
     isChosenVariantAvailable,
     matchingVariants,
     params,

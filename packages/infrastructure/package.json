@@ -18,7 +18,7 @@
     "@saleor/auth-sdk": "1.0.2",
     "@stripe/stripe-js": "3.5.0",
     "libphonenumber-js": "1.12.10",
-    "pino": "9.7.0",
+    "pino": "9.8.0",
     "stripe": "15.10.0",
     "ts-invariant": "0.10.3"
   },
@@ -33,6 +33,6 @@
     "ts-essentials": "10.1.1",
     "ts-toolbelt": "9.6.0",
     "tsconfig": "workspace:*",
-    "typescript": "^5.8.3"
+    "typescript": "^5.9.2"
   }
 }

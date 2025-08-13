@@ -7,7 +7,6 @@ import {
   type Product,
   type ProductAvailability,
 } from "@nimara/domain/objects/Product";
-import { type User } from "@nimara/domain/objects/User";
 import { Label } from "@nimara/ui/components/label";
 import {
   ToggleGroup,
@@ -25,14 +24,12 @@ type VariantSelectorProps = {
   cart: Cart | null;
   product: Product;
   productAvailability: ProductAvailability;
-  user: (User & { accessToken: string | undefined }) | null;
 };
 
 export const VariantSelector = ({
   product,
   productAvailability,
   cart,
-  user,
 }: VariantSelectorProps) => {
   const t = useTranslations();
   const formatter = useLocalizedFormatter();
@@ -78,7 +75,7 @@ export const VariantSelector = ({
 
   return (
     <>
-      <p className="pb-6 pt-2">{getPrice()}</p>
+      <p className="py-4 text-center text-lg md:text-left">{getPrice()}</p>
 
       <div className="[&>div]:pb-4">
         {allSelectionAttributes.map(({ slug, name, values, type }, index) => {
@@ -207,7 +204,6 @@ export const VariantSelector = ({
                 ? false
                 : true
         }
-        user={user}
       />
     </>
   );
