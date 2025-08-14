@@ -1,4 +1,5 @@
 import { type AllCurrency } from "../consts";
+import type { Attribute } from "./Attribute";
 
 export type Price = {
   amount: number;
@@ -29,6 +30,7 @@ export type Line = {
     id: string;
     maxQuantity: number;
     name: string;
+    selectionAttributes: Pick<Attribute, "values">[];
     sku: string;
   };
 };
