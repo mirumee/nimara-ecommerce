@@ -129,7 +129,9 @@ export const Payment = ({
       billingAddress: hasDefaultBillingAddress
         ? formattedToSchemaDefaultBillingAddress
         : defaultEmptyBillingAddress,
-      sameAsShippingAddress: !hasDefaultBillingAddressInCurrentChannel,
+      sameAsShippingAddress: checkout.isShippingRequired
+        ? !hasDefaultBillingAddressInCurrentChannel
+        : false,
       saveAddressForFutureUse,
       saveForFutureUse: !!user,
       paymentMethod:
@@ -418,13 +420,14 @@ export const Payment = ({
               {t("payment.billing-address")}
             </h3>
 
-            <div className="border-input bg-background flex w-full items-center gap-2 rounded-md border px-4">
-              <CheckboxField
-                label={t("payment.same-as-shipping-address")}
-                name="sameAsShippingAddress"
-                disabled={isProcessing}
-              />
-            </div>
+            {checkout.isShippingRequired && (
+              <div className="border-input bg-background flex w-full items-center gap-2 rounded-md border px-4">
+                <CheckboxField
+                  label={t("payment.same-as-shipping-address")}
+                  name="sameAsShippingAddress"
+                />
+              </div>
+            )}
 
             {user ? (
               <>
