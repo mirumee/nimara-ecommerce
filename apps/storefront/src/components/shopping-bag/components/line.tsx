@@ -189,7 +189,10 @@ export const Line = ({
             />
           </>
         ) : (
-          <p className="text-sm text-stone-700 dark:text-stone-300">
+          <p
+            className="text-sm text-stone-700 dark:text-stone-300"
+            data-testid="product-qty"
+          >
             {t("common.qty")}: {value}
           </p>
         )}
