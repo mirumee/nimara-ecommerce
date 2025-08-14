@@ -23,6 +23,10 @@ export const ProductsGrid = async ({
 }: {
   fields: PageField[] | undefined;
 }) => {
+  if (!fields || fields.length === 0) {
+    return null;
+  }
+
   const [region, t, searchService] = await Promise.all([
     getCurrentRegion(),
     getTranslations(),
@@ -34,10 +38,6 @@ export const ProductsGrid = async ({
     channel: region.market.channel,
     languageCode: region.language.code,
   } satisfies SearchContext;
-
-  if (!fields || fields.length === 0) {
-    return null;
-  }
 
   const fieldsMap: FieldsMap = createFieldsMap(fields);
 

@@ -25,18 +25,20 @@ export function AccountNotifications({ user }: { user: User | null }) {
   const isAccountDeleted = searchParams.get("accountDeleted") === "true";
 
   useEffect(() => {
-    if (isLoginSuccessful && user?.id) {
-      toast({
-        description: t("account.greetings", { username: user?.firstName }),
-        position: "center",
-      });
-    }
-    if (isLogoutSuccessful) {
-      toast({
-        description: t("account.until-next-time"),
-        position: "center",
-      });
-    }
+    setTimeout(() => {
+      if (isLoginSuccessful && user?.id) {
+        toast({
+          description: t("account.greetings", { username: user?.firstName }),
+          position: "center",
+        });
+      }
+      if (isLogoutSuccessful) {
+        toast({
+          description: t("account.until-next-time"),
+          position: "center",
+        });
+      }
+    }, 0);
   }, [isLoginSuccessful, isLogoutSuccessful, user]);
 
   return <DynamicAccountDeletedModal open={isAccountDeleted} />;

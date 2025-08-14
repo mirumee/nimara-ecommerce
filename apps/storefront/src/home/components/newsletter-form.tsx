@@ -9,16 +9,18 @@ import { Form } from "@nimara/ui/components/form";
 import { useToast } from "@nimara/ui/hooks";
 
 import { TextFormField } from "@/components/form/text-form-field";
-
-import { newsletterSubscribeAction } from "./action";
-import { type FormSchema, formSchema } from "./schema";
+import { newsletterSubscribeAction } from "@/home/actions/newsletter-subscribe";
+import {
+  type NewsletterFormSchema,
+  newsletterFormSchema,
+} from "@/home/forms/schema";
 
 export const Newsletter = () => {
   const t = useTranslations();
   const { toast } = useToast();
 
-  const form = useForm<FormSchema>({
-    resolver: zodResolver(formSchema({ t })),
+  const form = useForm<NewsletterFormSchema>({
+    resolver: zodResolver(newsletterFormSchema({ t })),
     defaultValues: {
       name: "",
       email: "",
@@ -27,7 +29,7 @@ export const Newsletter = () => {
 
   const isPending = form.formState.isSubmitting;
 
-  const handleSubmit: SubmitHandler<FormSchema> = async (values) => {
+  const handleSubmit: SubmitHandler<NewsletterFormSchema> = async (values) => {
     const result = await newsletterSubscribeAction(values);
 
     if (result.ok) {
@@ -50,7 +52,7 @@ export const Newsletter = () => {
     <section className="bg-muted px-4 py-12 sm:px-6 lg:px-8 dark:bg-stone-900">
       <div className="mx-auto max-w-3xl">
         <div className="text-center">
-          <Mail className="mx-auto h-12 w-12 text-gray-400" />
+          <Mail className="text-muted-foreground mx-auto h-12 w-12" />
           <h2 className="text-foreground mt-2 text-3xl font-semibold sm:text-4xl">
             {t("newsletter.subscribe-title")}
           </h2>
