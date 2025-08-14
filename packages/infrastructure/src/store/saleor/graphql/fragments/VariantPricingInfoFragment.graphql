@@ -5,7 +5,4 @@ fragment VariantPricingInfoFragment on VariantPricingInfo {
   priceUndiscounted {
     ...TaxedMoneyFragment
   }
-  discount {
-    ...TaxedMoneyFragment
-  }
 }

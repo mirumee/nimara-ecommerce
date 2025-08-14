@@ -15,7 +15,7 @@ import { getStoreService } from "@/services/store";
 import { AttributesDropdown } from "../components/attributes-dropdown";
 import { ProductBreadcrumbs } from "../components/product-breadcrumbs";
 import { ProductHighlights } from "../components/product-highlights";
-import { ProductMedia } from "../components/product-media";
+import { ProductMediaWrapper } from "../components/product-media-wrapper";
 import { ProductTitle } from "../components/product-title";
 import { VariantSelectorWrapper } from "../components/variant-selector-wrapper";
 import { ProductProvider } from "../providers/product-provider";
@@ -42,9 +42,9 @@ export const StandardPDPView = async ({ params }: PDPViewProps) => {
 
           <div className="grid gap-8 md:grid-cols-2 md:gap-28">
             <div className="md:col-span-1">
-              <ProductMedia
-                media={product.images}
-                variants={product.variants}
+              <ProductMediaWrapper
+                product={product}
+                availability={availability}
                 showAs="vertical"
               />
             </div>

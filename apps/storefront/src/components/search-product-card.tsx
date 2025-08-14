@@ -8,8 +8,8 @@ import type { SearchProduct } from "@nimara/domain/objects/SearchProduct";
 
 import productPlaceholder from "@/assets/product_placeholder.svg?url";
 import { DiscountBadge } from "@/components/discount-badge";
+import { getDiscountInfo, Price } from "@/components/price";
 import { Link } from "@/i18n/routing";
-import { useLocalizedFormatter } from "@/lib/formatters/use-localized-formatter";
 import { paths } from "@/lib/paths";
 
 import { ProductImagePlaceholder } from "./product-image-placeholder";
@@ -19,54 +19,6 @@ export const ProductName = ({ children }: PropsWithChildren) => (
     {children}
   </h2>
 );
-
-type ProductPriceProps = {
-  discount: number | null;
-  price: number;
-};
-
-const calculateDiscount = ({ price, discount }: ProductPriceProps) => {
-  if (!discount || discount <= 0) {
-    return { hasDiscount: false, oldPrice: null, discountPercent: 0 };
-  }
-
-  const oldPrice = price + discount;
-  const discountPercent = Math.round((discount / oldPrice) * 100);
-
-  return { hasDiscount: true, oldPrice, discountPercent };
-};
-
-export const ProductPrice = ({ price, discount }: ProductPriceProps) => {
-  const t = useTranslations();
-  const formatter = useLocalizedFormatter();
-
-  const { hasDiscount, oldPrice } = calculateDiscount({ price, discount });
-
-  if (price === 0) {
-    return (
-      <h3
-        aria-label={t("common.price")}
-        className="text-left text-gray-700 dark:text-gray-300"
-      >
-        {t("common.free")}
-      </h3>
-    );
-  }
-
-  return (
-    <h3
-      aria-label={t("common.price")}
-      className="text-left text-gray-700 dark:text-gray-300"
-    >
-      <span className="mr-2">{formatter.price({ amount: price })}</span>
-      {hasDiscount && !!oldPrice && (
-        <span className="mr-2 text-gray-500 line-through dark:text-gray-400">
-          {formatter.price({ amount: oldPrice })}
-        </span>
-      )}
-    </h3>
-  );
-};
 
 export const ProductThumbnail = ({ alt, ...props }: ImageProps) => (
   <div className="relative aspect-square overflow-hidden">
@@ -79,15 +31,12 @@ type Props = {
 } & Pick<ImageProps, "height" | "width" | "sizes">;
 
 export const SearchProductCard = ({
-  product: { slug, thumbnail, name, price, discount },
+  product: { slug, thumbnail, name, price, undiscountedPrice },
   sizes,
 }: Props) => {
   const t = useTranslations();
 
-  const { discountPercent } = calculateDiscount({
-    price,
-    discount,
-  });
+  const { discountPercent } = getDiscountInfo(price, undiscountedPrice);
 
   return (
     <article className="row-span-3">
@@ -120,7 +69,7 @@ export const SearchProductCard = ({
 
         <div>
           <ProductName>{name}</ProductName>
-          <ProductPrice price={price} discount={discount} />
+          <Price price={price} undiscountedPrice={undiscountedPrice} />
         </div>
       </Link>
     </article>

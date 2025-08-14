@@ -1,7 +1,8 @@
-import type { TaxedPrice } from "@nimara/domain/objects/common";
+import type { PriceType, TaxedPrice } from "@nimara/domain/objects/common";
 
 import { getTranslation } from "#root/lib/saleor";
 
+import { serializeMoney } from "../../store/saleor/serializers";
 import type { SearchProductSerializer } from "../types";
 
 interface Variant {
@@ -14,16 +15,39 @@ export const searchProductSerializer: SearchProductSerializer = (data) => {
   const hasFreeVariants = data.variants.some(
     (variant: Variant) => variant.pricing.price.gross.amount === 0,
   );
+  const taxType: PriceType = data.pricing.displayGrossPrices ? "gross" : "net";
 
   return Object.freeze({
     id: data.id,
     name: getTranslation("name", data),
     slug: data.slug,
     price: hasFreeVariants
-      ? 0
-      : Number(data.pricing?.priceRange?.start?.gross.amount),
+      ? {
+          amount: 0,
+          currency: data.pricing?.priceRange?.start?.currency,
+          type: taxType,
+        }
+      : {
+          ...serializeMoney(
+            data.pricing.priceRange?.start[taxType] as TaxedPrice,
+          ),
+          type: taxType,
+        },
+
     currency: data.pricing?.priceRange?.start?.currency,
-    discount: Number(data.pricing?.discount?.gross.amount),
+    undiscountedPrice: hasFreeVariants
+      ? {
+          amount: 0,
+          currency: data.pricing?.priceRange?.start?.currency,
+          type: taxType,
+        }
+      : {
+          ...serializeMoney(
+            data.pricing?.priceRangeUndiscounted?.start[taxType] as TaxedPrice,
+          ),
+          type: taxType,
+        },
+
     thumbnail: data.thumbnail
       ? {
           url: data.thumbnail.url,

@@ -1,11 +1,7 @@
 import { type DeepNonNullable } from "ts-essentials";
 
 import { type Maybe } from "@nimara/codegen/schema";
-import {
-  type Line,
-  type PriceType,
-  type TaxedPrice,
-} from "@nimara/domain/objects/common";
+import type { Line, PriceType } from "@nimara/domain/objects/common";
 
 import { type CartLineFragment } from "#root/graphql/fragments/generated";
 import { getTranslation } from "#root/lib/saleor";
@@ -61,9 +57,7 @@ export const serializeLine = (
       sku: variant.sku,
       discount: variant.pricing?.discount
         ? {
-            ...serializeMoney(
-              variant.pricing.discount[priceType] as TaxedPrice,
-            ),
+            ...serializeMoney(variant.pricing.discount[priceType]),
             type: priceType,
           }
         : null,

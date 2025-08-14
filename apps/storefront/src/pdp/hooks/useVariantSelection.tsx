@@ -31,7 +31,7 @@ export const useVariantSelection = ({
   const variantsAvailability = productAvailability?.variants;
 
   const allSelectionAttributes = useMemo(
-    () => getAllSelectionAttributes(productVariants),
+    () => getAllSelectionAttributes(productVariants ?? []),
     [productVariants],
   );
 

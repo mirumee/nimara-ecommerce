@@ -1,6 +1,5 @@
 import type { DeepNonNullable, DeepRequired } from "ts-essentials";
 
-import type { TaxedPrice } from "@nimara/domain/objects/common";
 import type { ProductAvailability } from "@nimara/domain/objects/Product";
 import { ok } from "@nimara/domain/objects/Result";
 
@@ -42,12 +41,6 @@ const parseData = (
             ...serializeMoney(pricing.priceUndiscounted[taxType]),
             type: taxType,
           },
-          discount: pricing.discount
-            ? {
-                ...serializeMoney(pricing.discount[taxType] as TaxedPrice),
-                type: taxType,
-              }
-            : null,
         }),
       ) ?? [],
   };

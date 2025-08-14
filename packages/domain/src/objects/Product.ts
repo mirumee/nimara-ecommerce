@@ -9,7 +9,6 @@ export type ProductAvailability = {
 };
 
 export type ProductVariantAvailability = {
-  discount: TaxedPrice | null;
   id: string;
   price: TaxedPrice;
   priceUndiscounted: TaxedPrice;

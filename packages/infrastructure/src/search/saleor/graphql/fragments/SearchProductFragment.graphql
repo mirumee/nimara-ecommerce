@@ -23,28 +23,16 @@ fragment SearchProductFragment on Product {
     alt
   }
   pricing {
+    displayGrossPrices
     priceRange {
       start {
-        currency
-        gross {
-          amount
-        }
-        net {
-          amount
-        }
-      }
-      stop {
-        currency
-        gross {
-          amount
-        }
-        net {
-          amount
-        }
+        ...TaxedMoneyFragment
       }
     }
-    discount {
-      ...TaxedMoneyFragment
+    priceRangeUndiscounted {
+      start {
+        ...TaxedMoneyFragment
+      }
     }
   }
   updatedAt

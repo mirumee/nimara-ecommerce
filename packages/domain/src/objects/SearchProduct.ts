@@ -1,6 +1,7 @@
+import { type TaxedPrice } from "./common";
+
 export type SearchProduct = {
   currency: string;
-  discount: number | null;
   id: string;
   media:
     | {
@@ -9,11 +10,12 @@ export type SearchProduct = {
       }[]
     | null;
   name: string;
-  price: number;
+  price: TaxedPrice;
   slug: string;
   thumbnail: {
     alt?: string;
     url: string;
   } | null;
+  undiscountedPrice?: TaxedPrice;
   updatedAt: Date;
 };

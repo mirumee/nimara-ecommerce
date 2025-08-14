@@ -31,7 +31,7 @@ const serializeCart = ({
     },
     subtotal: {
       amount: lines.reduce(
-        (sum, line) => sum + line.undiscountedTotalPrice.amount,
+        (sum, line) => sum + line.totalPrice.gross.amount,
         0,
       ),
       currency: lines[0]?.undiscountedTotalPrice.currency as AllCurrency,
