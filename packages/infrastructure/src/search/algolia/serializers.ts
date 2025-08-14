@@ -1,6 +1,4 @@
-import type {
-  TaxedPrice,
-} from "@nimara/domain/objects/common";
+import type { TaxedPrice } from "@nimara/domain/objects/common";
 import { type SearchProduct } from "@nimara/domain/objects/SearchProduct";
 
 import { type ProductHit, type RecordSerializer } from "./types";
@@ -14,7 +12,7 @@ export const searchProductSerializer: RecordSerializer<
     id: data.productId,
     name: data.productName,
     slug: data.slug,
-      price: {
+    price: {
       amount: Number(data.grossPrice),
       currency: data.currency,
     } as TaxedPrice,
