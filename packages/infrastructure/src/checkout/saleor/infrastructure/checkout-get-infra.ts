@@ -50,7 +50,7 @@ const serializeCheckout = (checkout: CheckoutFragment): Checkout => {
 
   return {
     ...checkout,
-    isShippingRequired: !!checkout.isShippingRequired,
+    isShippingRequired: checkout.isShippingRequired,
     billingAddress: checkout.billingAddress
       ? serializeAddress(checkout.billingAddress)
       : null,
