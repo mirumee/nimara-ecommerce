@@ -5,6 +5,7 @@ import { type Line, type PriceType } from "@nimara/domain/objects/common";
 
 import { type CartLineFragment } from "#root/graphql/fragments/generated";
 import { getTranslation } from "#root/lib/saleor";
+import { parseAttributeData } from "#root/lib/serializers/attribute";
 import { serializeMoney } from "#root/store/saleor/serializers";
 
 export const getVariantMaxQuantity = ({
@@ -55,6 +56,8 @@ export const serializeLine = (
       id: variant.id,
       name: getTranslation("name", variant),
       sku: variant.sku,
+      selectionAttributes:
+        variant?.selectionAttributes.map(parseAttributeData) ?? [],
     },
     product: {
       id: product.id,

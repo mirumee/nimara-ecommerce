@@ -26,6 +26,9 @@ fragment CartLineFragment on CheckoutLine {
       url(size: $thumbnailSize, format: $thumbnailFormat)
       alt
     }
+    selectionAttributes: attributes(variantSelection: VARIANT_SELECTION) {
+      ...SelectionAttributeFragment
+    }
     product {
       id
       slug
