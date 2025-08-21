@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 
 import type { SearchContext } from "@nimara/infrastructure/use-cases/search/types";
 
+import { Breadcrumbs } from "@/components/breadcrumbs";
 import { DEFAULT_RESULTS_PER_PAGE, DEFAULT_SORT_BY } from "@/config";
 import { clientEnvs } from "@/envs/client";
 import { JsonLd, mappedSearchProductsToJsonLd } from "@/lib/json-ld";
@@ -9,7 +10,6 @@ import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { getSearchService } from "@/services/search";
 
-import { Breadcrumbs } from "../../../../components/breadcrumbs";
 import { ProductsList } from "../_components/products-list";
 import { SearchPagination } from "../_components/search-pagination";
 import { FiltersContainer } from "./_filters/filters-container";

@@ -18,7 +18,7 @@ import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { getSearchService } from "@/services/search";
 
-export const ProductsGrid = async ({
+export const ProductsGridStatic = async ({
   fields,
 }: {
   fields: PageField[] | undefined;

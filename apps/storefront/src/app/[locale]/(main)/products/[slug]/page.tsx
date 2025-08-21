@@ -15,6 +15,7 @@ export const generateMetadata = generateStandardPDPMetadata;
 
 export default async function ProductPage(props: any) {
   // This is just a temporary solution to determine the layout.
+  // In the real implementation a selected layout should be persisted
   const pdpLayout = (await cookies()).get("PDP_LAYOUT")?.value;
 
   if (pdpLayout === "CUSTOM") {

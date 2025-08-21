@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { getTranslations } from "next-intl/server";
 
 import { clientEnvs } from "@/envs/client";
+import { CustomHomeView } from "@/home/views/custom";
 import { StandardHomeView } from "@/home/views/standard";
 import { type SupportedLocale } from "@/regions/types";
 
@@ -34,4 +36,15 @@ export async function generateMetadata(_params: PageProps): Promise<Metadata> {
   };
 }
 
-export default StandardHomeView;
+export default async function Page() {
+  // This is just a temporary solution to determine the layout.
+  // In the real implementation a selected layout should be persisted
+  const hpLayout = (await cookies()).get("HP_LAYOUT")?.value;
+
+  if (hpLayout === "CUSTOM") {
+    return <CustomHomeView />;
+  }
+
+  // Fallback to standard layout
+  return <StandardHomeView />;
+}
