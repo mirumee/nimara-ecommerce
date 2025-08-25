@@ -9,9 +9,9 @@
     "postbuild": "pagefind --site .next/server/app --output-path public/_pagefind"
   },
   "dependencies": {
-    "next": "15.4.6",
-    "nextra": "4.3.0",
-    "nextra-theme-docs": "4.3.0",
+    "next": "15.5.0",
+    "nextra": "4.4.0",
+    "nextra-theme-docs": "4.4.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
