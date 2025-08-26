@@ -66,7 +66,13 @@ export const Line = ({
   const t = useTranslations();
   const inputValue = useDebounce(value, 1000);
 
-  const name = `${product.name} • ${variant.name}`;
+  const attributeNames = variant.selectionAttributes
+    ?.map((attr) => attr.values?.[0]?.name)
+    .filter(Boolean)
+    .join(" • ");
+
+  const name = `${product.name}${attributeNames ? ` • ${attributeNames}` : ""}`;
+
   const href = paths.products.asPath({ slug: product.slug, hash: variant.id });
 
   const undiscountedLineTotal: TaxedPrice = {
@@ -196,7 +202,10 @@ export const Line = ({
             />
           </>
         ) : (
-          <p className="text-sm text-stone-700 dark:text-stone-300">
+          <p
+            className="text-sm text-stone-700 dark:text-stone-300"
+            data-testid="product-qty"
+          >
             {t("common.qty")}: {value}
           </p>
         )}

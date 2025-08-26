@@ -33,34 +33,45 @@ export const validateCheckoutStepAction = async ({
     return;
   }
 
-  // Step 2: Make sure we have a shipping address
-  // If missing, redirect to shipping address step
-  if (!checkout.shippingAddress) {
-    if (step !== "shipping-address") {
-      redirect({ href: paths.checkout.shippingAddress.asPath(), locale });
+  // Prevent users from accessing shipping/delivery steps when not needed
+  if (
+    !checkout.isShippingRequired &&
+    (step === "shipping-address" || step === "delivery-method")
+  ) {
+    redirect({ href: paths.checkout.asPath(), locale });
+  }
+
+  // Only enforce shipping steps if shipping is required
+  if (checkout.isShippingRequired) {
+    // Step 2: Make sure we have a shipping address
+    // If missing, redirect to shipping address step
+    if (!checkout.shippingAddress) {
+      if (step !== "shipping-address") {
+        redirect({ href: paths.checkout.shippingAddress.asPath(), locale });
+      }
+
+      return;
     }
 
-    return;
-  }
-
-  // Allow user to stay on shipping-address step (e.g. to edit it)
-  if (step === "shipping-address") {
-    return;
-  }
-
-  // Step 3: Make sure delivery method is selected
-  // If missing, redirect to delivery-method step
-  if (!checkout.deliveryMethod) {
-    if (step !== "delivery-method") {
-      redirect({ href: paths.checkout.deliveryMethod.asPath(), locale });
+    // Allow user to stay on shipping-address step (e.g. to edit it)
+    if (step === "shipping-address") {
+      return;
     }
 
-    return;
-  }
+    // Step 3: Make sure delivery method is selected
+    // If missing, redirect to delivery-method step
+    if (!checkout.deliveryMethod) {
+      if (step !== "delivery-method") {
+        redirect({ href: paths.checkout.deliveryMethod.asPath(), locale });
+      }
 
-  // Allow user to stay on delivery-method step
-  if (step === "delivery-method") {
-    return;
+      return;
+    }
+
+    // Allow user to stay on delivery-method step
+    if (step === "delivery-method") {
+      return;
+    }
   }
 
   // Final Step: if user is on any other step than payment, redirect to it

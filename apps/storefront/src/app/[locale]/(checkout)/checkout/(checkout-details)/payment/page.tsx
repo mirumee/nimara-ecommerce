@@ -158,8 +158,12 @@ export default async function Page(props: PageProps) {
   return (
     <>
       <EmailSection checkout={checkout} user={user} />
-      <ShippingAddressSection checkout={checkout} locale={locale} />
-      <DeliveryMethodSection checkout={checkout} />
+      {checkout.isShippingRequired && (
+        <>
+          <ShippingAddressSection checkout={checkout} locale={locale} />
+          <DeliveryMethodSection checkout={checkout} />
+        </>
+      )}
       <PaymentSection>
         <Payment
           paymentGatewayCustomer={paymentGatewayCustomer?.customerId}

@@ -52,6 +52,7 @@ fragment CheckoutFragment on Checkout {
   shippingPrice {
     ...TaxedMoneyFragment
   }
+  isShippingRequired
   authorizeStatus
   chargeStatus
   problems {
