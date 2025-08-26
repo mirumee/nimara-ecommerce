@@ -123,7 +123,7 @@ export async function generateStandardPDPMetadata(props: PDPViewProps) {
     alternates: {
       canonical: canonicalUrl,
     },
-    openGrapch: {
+    openGraph: {
       url: canonicalUrl,
       siteName: "Nimara Store",
     },
