@@ -117,6 +117,8 @@ export async function generateStandardPDPMetadata(props: PDPViewProps) {
     ? t("check-out-the-product", { productName: result?.data?.product?.name })
     : t("discover-our-product");
 
+  const ogImageUrl = `${clientEnvs.NEXT_PUBLIC_STOREFRONT_URL}/products/${slug}/opengraph-image`;
+
   return {
     title: result.data.product.seo.title || result.data.product.name,
     description: result.data?.product?.seo.description ?? fallbackDescription,
@@ -124,6 +126,14 @@ export async function generateStandardPDPMetadata(props: PDPViewProps) {
       canonical: canonicalUrl,
     },
     openGraph: {
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: result.data.product.name,
+        },
+      ],
       url: canonicalUrl,
       siteName: "Nimara Store",
     },

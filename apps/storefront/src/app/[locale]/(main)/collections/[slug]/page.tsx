@@ -57,9 +57,7 @@ export async function generateMetadata(props: PageProps) {
   const collection = getCollectionResult.data?.results;
   const rawDescription = collection?.description;
   const parsedDescription = editorJSDataToString(rawDescription)?.trim();
-  const ogImageUrl = collection
-    ? `${clientEnvs.NEXT_PUBLIC_STOREFRONT_URL}/collections/${slug}/opengraph-image?title=${encodeURIComponent(collection?.seoTitle || collection?.name)}`
-    : null;
+  const ogImageUrl = `${clientEnvs.NEXT_PUBLIC_STOREFRONT_URL}/collections/${slug}/opengraph-image`;
 
   return {
     title: collection?.seoTitle || collection?.name,

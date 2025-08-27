@@ -5,22 +5,19 @@ import { clientEnvs } from "@/envs/client";
 import { getCurrentRegion } from "@/regions/server";
 import { getStoreService } from "@/services/store";
 
-export const size = {
+const size = {
   width: 1200,
   height: 630,
 };
 
 export const runtime = "edge";
 
-export const contentType = "image/png";
-export const alt = "Product preview";
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ slug: string }> },
+) {
+  const slug = (await params).slug;
 
-// eslint-disable-next-line import/no-default-export
-export default async function Image({
-  params: { slug },
-}: {
-  params: { slug: string };
-}) {
   const [region, storeService] = await Promise.all([
     getCurrentRegion(),
     getStoreService(),
@@ -41,18 +38,19 @@ export default async function Image({
   });
 
   if (!data?.product) {
-    return null;
+    return new Response(null, { status: 404 });
   }
 
-  if (!data?.product?.images[0]?.url) {
+  if (!data.product.images?.[0]?.url) {
     return new ImageResponse(
       (
         <div
-          tw="flex w-full h-full"
           style={{
             display: "flex",
             width: "100%",
             height: "100%",
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -70,25 +68,19 @@ export default async function Image({
           />
         </div>
       ),
+      { ...size },
     );
   }
 
   return new ImageResponse(
     (
-      <div
-        tw="flex w-full h-full"
-        style={{
-          display: "flex",
-          width: "100%",
-          height: "100%",
-        }}
-      >
+      <div style={{ display: "flex", width: "100%", height: "100%" }}>
         <div
           style={{
             width: "50%",
             display: "flex",
-            alignItems: "center",
             justifyContent: "center",
+            alignItems: "center",
           }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -109,25 +101,19 @@ export default async function Image({
           style={{
             width: "50%",
             display: "flex",
-            alignItems: "center",
             justifyContent: "center",
+            alignItems: "center",
           }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={data?.product?.images[0]?.url}
-            alt={data?.product?.name}
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-            }}
+            src={data.product.images[0].url}
+            alt={data.product.name}
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
           />
         </div>
       </div>
     ),
-    {
-      ...size,
-    },
+    { ...size },
   );
 }
