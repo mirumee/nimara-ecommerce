@@ -14,9 +14,9 @@ export const runtime = "edge";
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ slug: string }> },
+  context: { params: Promise<{ slug: string }> },
 ) {
-  const slug = (await params).slug;
+  const { slug } = await context.params;
 
   const [region, collectionService] = await Promise.all([
     getCurrentRegion(),
@@ -25,7 +25,7 @@ export async function GET(
 
   const getCollectionResult = await collectionService.getCollectionDetails({
     channel: region.market.channel,
-    customMediaFormat: "WEBP",
+    customMediaFormat: "ORIGINAL",
     languageCode: region.language.code,
     slug,
     limit: DEFAULT_RESULTS_PER_PAGE,
