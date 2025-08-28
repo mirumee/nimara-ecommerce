@@ -14,6 +14,6 @@ export const config = {
      * - monitoring (Sentry "tunnelRoute")
      * - favicon.ico, sitemap.xml, robots.txt (metadata files)
      */
-    "/((?!api|_next|_vercel|monitoring|favicon.ico|sitemap.xml|robots.txt|.*\\..*).*)",
+    "/((?!api|_next|_vercel|monitoring|favicon.ico|sitemap.xml|robots.txt|.*opengraph-image|.*\\..*).*)",
   ],
 };

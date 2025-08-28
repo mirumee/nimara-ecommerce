@@ -39,11 +39,11 @@ export async function GET(
 
   const collection = getCollectionResult.data?.results;
 
-  // if (!collection) {
-  //   return new Response(null, { status: 404 });
-  // }
+  if (!collection) {
+    return new Response(null, { status: 404 });
+  }
 
-  if (!collection?.thumbnail?.url) {
+  if (!collection.thumbnail?.url) {
     return new ImageResponse(
       (
         <div

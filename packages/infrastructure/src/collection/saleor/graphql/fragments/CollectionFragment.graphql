@@ -4,7 +4,7 @@ fragment CollectionFragment on Collection {
   description
   seoTitle
   seoDescription
-  backgroundImage(size: 256) {
+  backgroundImage {
     url
     alt
   }
