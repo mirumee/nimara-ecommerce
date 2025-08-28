@@ -37,11 +37,11 @@ export async function GET(
     },
   });
 
-  if (!data?.product) {
-    return new Response(null, { status: 404 });
-  }
+  // if (!data?.product) {
+  //   return new Response(null, { status: 404 });
+  // }
 
-  if (!data.product.images?.[0]?.url) {
+  if (!data?.product?.images?.[0]?.url) {
     return new ImageResponse(
       (
         <div
