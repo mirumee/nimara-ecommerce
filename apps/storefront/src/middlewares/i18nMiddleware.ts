@@ -70,6 +70,10 @@ export function i18nMiddleware(next: CustomMiddleware): CustomMiddleware {
 
     const pathname = request.nextUrl.pathname;
 
+    if (pathname.includes("/opengraph-image")) {
+      return next(request, event, prevResponse);
+    }
+
     const localePrefix = Object.values(localePrefixes).find(
       (localePrefix) =>
         pathname.startsWith(localePrefix) || pathname === localePrefix,
