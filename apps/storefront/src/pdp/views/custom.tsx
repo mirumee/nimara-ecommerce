@@ -4,7 +4,7 @@ import { Skeleton } from "@nimara/ui/components/skeleton";
 
 import { ProductBreadcrumbs } from "../components/product-breadcrumbs";
 import { ProductDescription } from "../components/product-description";
-import { ProductMedia } from "../components/product-media";
+import { ProductMediaWrapper } from "../components/product-media-wrapper";
 import {
   ProductReviews,
   ProductReviewsSkeleton,
@@ -38,10 +38,10 @@ export const CustomPDPView = async (props: PDPViewProps) => {
 
           <div className="flex flex-wrap justify-center gap-8 md:flex-nowrap md:justify-between">
             <div className="w-full lg:w-1/2">
-              <ProductMedia
-                media={product.images}
-                variants={product.variants}
-                showAs="carousel"
+              <ProductMediaWrapper
+                product={product}
+                availability={availability}
+                showAs="vertical"
               />
             </div>
 

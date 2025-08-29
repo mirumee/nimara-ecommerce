@@ -68,7 +68,7 @@ export const searchProductToJsonLd = (
       : undefined,
     offers: {
       "@type": "Offer",
-      price: product.price,
+      price: product.price.amount,
       priceCurrency: product.currency,
       availability: "https://schema.org/InStock",
     },

@@ -27,6 +27,7 @@ export type Line = {
   total: TaxedPrice;
   undiscountedTotalPrice: Price;
   variant: {
+    discount: TaxedPrice | null;
     id: string;
     maxQuantity: number;
     name: string;
