@@ -7,8 +7,9 @@ import type { PropsWithChildren } from "react";
 import type { SearchProduct } from "@nimara/domain/objects/SearchProduct";
 
 import productPlaceholder from "@/assets/product_placeholder.svg?url";
+import { DiscountBadge } from "@/components/discount-badge";
+import { getDiscountInfo, Price } from "@/components/price";
 import { Link } from "@/i18n/routing";
-import { useLocalizedFormatter } from "@/lib/formatters/use-localized-formatter";
 import { paths } from "@/lib/paths";
 
 import { ProductImagePlaceholder } from "./product-image-placeholder";
@@ -18,19 +19,6 @@ export const ProductName = ({ children }: PropsWithChildren) => (
     {children}
   </h2>
 );
-
-export const ProductPrice = ({ children }: PropsWithChildren) => {
-  const t = useTranslations();
-
-  return (
-    <h3
-      aria-label={t("common.price")}
-      className="text-left text-gray-700 dark:text-gray-300"
-    >
-      {children}
-    </h3>
-  );
-};
 
 export const ProductThumbnail = ({ alt, ...props }: ImageProps) => (
   <div className="relative aspect-square overflow-hidden">
@@ -43,12 +31,12 @@ type Props = {
 } & Pick<ImageProps, "height" | "width" | "sizes">;
 
 export const SearchProductCard = ({
-  product: { slug, thumbnail, name, price },
+  product: { slug, thumbnail, name, price, undiscountedPrice },
   sizes,
 }: Props) => {
   const t = useTranslations();
 
-  const formatter = useLocalizedFormatter();
+  const { discountPercent } = getDiscountInfo(price, undiscountedPrice);
 
   return (
     <article className="row-span-3">
@@ -59,30 +47,29 @@ export const SearchProductCard = ({
           slug: slug,
         })}
       >
-        {thumbnail ? (
-          <ProductThumbnail
-            alt={t("products.image-alt", { productName: name })}
-            aria-hidden={true}
-            aria-label={name}
-            src={thumbnail?.url ?? productPlaceholder}
-            sizes={
-              sizes ??
-              "(max-width: 720px) 100vw, (max-width: 1024px) 50vw, (max-width: 1294px) 33vw, 25vw"
-            }
-          />
-        ) : (
-          <div className="bg-accent flex aspect-square justify-center overflow-hidden">
-            <ProductImagePlaceholder className="min-w-full object-cover object-top" />
-          </div>
-        )}
+        <div className="relative">
+          {thumbnail ? (
+            <ProductThumbnail
+              alt={t("products.image-alt", { productName: name })}
+              aria-hidden={true}
+              aria-label={name}
+              src={thumbnail?.url ?? productPlaceholder}
+              sizes={
+                sizes ??
+                "(max-width: 720px) 100vw, (max-width: 1024px) 50vw, (max-width: 1294px) 33vw, 25vw"
+              }
+            />
+          ) : (
+            <div className="bg-accent flex aspect-square justify-center overflow-hidden">
+              <ProductImagePlaceholder className="min-w-full object-cover object-top" />
+            </div>
+          )}
+          <DiscountBadge discount={discountPercent} />
+        </div>
 
         <div>
           <ProductName>{name}</ProductName>
-          <ProductPrice>
-            {price === 0
-              ? t("common.free")
-              : formatter.price({ amount: price })}
-          </ProductPrice>
+          <Price price={price} undiscountedPrice={undiscountedPrice} />
         </div>
       </Link>
     </article>

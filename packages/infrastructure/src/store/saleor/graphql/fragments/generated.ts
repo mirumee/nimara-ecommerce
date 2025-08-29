@@ -73,9 +73,21 @@ export type ProductPricingInfoFragment = { priceRange: ProductPricingInfoFragmen
 
 export type ProductRelatedProductsFragment_Product_thumbnail_Image = { url: string, alt: string | null };
 
-export type ProductRelatedProductsFragment_Product_pricing_ProductPricingInfo = { priceRange: ProductPricingInfoFragment_ProductPricingInfo_priceRange_TaxedMoneyRange | null };
+export type ProductRelatedProductsFragment_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney_gross_Money = { amount: number };
 
-export type ProductRelatedProductsFragment = { id: string, slug: string, name: string, thumbnail: ProductRelatedProductsFragment_Product_thumbnail_Image | null, pricing: ProductRelatedProductsFragment_Product_pricing_ProductPricingInfo | null };
+export type ProductRelatedProductsFragment_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney = { gross: ProductRelatedProductsFragment_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney_gross_Money };
+
+export type ProductRelatedProductsFragment_Product_variants_ProductVariant_pricing_VariantPricingInfo = { price: ProductRelatedProductsFragment_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney | null };
+
+export type ProductRelatedProductsFragment_Product_variants_ProductVariant = { pricing: ProductRelatedProductsFragment_Product_variants_ProductVariant_pricing_VariantPricingInfo | null };
+
+export type ProductRelatedProductsFragment_Product_pricing_ProductPricingInfo_priceRangeUndiscounted_TaxedMoneyRange_start_TaxedMoney = { net: ProductAvailabilityDetailsFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_net_Money, gross: ProductAvailabilityDetailsFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_gross_Money, tax: ProductAvailabilityDetailsFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_tax_Money };
+
+export type ProductRelatedProductsFragment_Product_pricing_ProductPricingInfo_priceRangeUndiscounted_TaxedMoneyRange = { start: ProductRelatedProductsFragment_Product_pricing_ProductPricingInfo_priceRangeUndiscounted_TaxedMoneyRange_start_TaxedMoney | null };
+
+export type ProductRelatedProductsFragment_Product_pricing_ProductPricingInfo = { priceRangeUndiscounted: ProductRelatedProductsFragment_Product_pricing_ProductPricingInfo_priceRangeUndiscounted_TaxedMoneyRange | null, priceRange: ProductPricingInfoFragment_ProductPricingInfo_priceRange_TaxedMoneyRange | null };
+
+export type ProductRelatedProductsFragment = { id: string, slug: string, name: string, thumbnail: ProductRelatedProductsFragment_Product_thumbnail_Image | null, variants: Array<ProductRelatedProductsFragment_Product_variants_ProductVariant> | null, pricing: ProductRelatedProductsFragment_Product_pricing_ProductPricingInfo | null };
 
 export type ProductVariantDetailsFragment = { id: string, name: string, translation: ProductDetailsFragment_Product_variants_ProductVariant_translation_ProductVariantTranslation | null, media: Array<ProductDetailsFragment_Product_variants_ProductVariant_media_ProductMedia> | null, selectionAttributes: Array<ProductDetailsFragment_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute>, nonSelectionAttributes: Array<ProductDetailsFragment_Product_variants_ProductVariant_nonSelectionAttributes_SelectedAttribute> };
 
@@ -244,8 +256,22 @@ export const ProductRelatedProductsFragment = new TypedDocumentString(`
     url
     alt
   }
+  variants {
+    pricing {
+      price {
+        gross {
+          amount
+        }
+      }
+    }
+  }
   pricing {
     ...ProductPricingInfoFragment
+    priceRangeUndiscounted {
+      start {
+        ...TaxedMoneyFragment
+      }
+    }
   }
 }
     fragment ProductPricingInfoFragment on ProductPricingInfo {

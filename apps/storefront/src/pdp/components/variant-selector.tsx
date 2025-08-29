@@ -13,7 +13,7 @@ import {
   ToggleGroupItem,
 } from "@nimara/ui/components/toggle-group";
 
-import { useLocalizedFormatter } from "@/lib/formatters/use-localized-formatter";
+import { Price } from "@/components/price";
 import { cn } from "@/lib/utils";
 
 import { useVariantSelection } from "../hooks/useVariantSelection";
@@ -32,7 +32,6 @@ export const VariantSelector = ({
   cart,
 }: VariantSelectorProps) => {
   const t = useTranslations();
-  const formatter = useLocalizedFormatter();
   const {
     allSelectionAttributes,
     areAllRequiredSelectionAttributesChosen,
@@ -49,33 +48,20 @@ export const VariantSelector = ({
     variantsAvailability,
   } = useVariantSelection({ cart, product, productAvailability });
 
-  const getPrice = () => {
-    if (chosenVariantAvailability?.price) {
-      if (chosenVariantAvailability.price.amount === 0) {
-        return t("common.free");
-      }
-
-      return formatter.price({
-        amount: chosenVariantAvailability.price.amount,
-      });
-    }
-
-    const hasFreeVariant = variantsAvailability?.some(
-      (variant) => variant.price.amount === 0,
-    );
-
-    if (hasFreeVariant || startPrice?.amount === 0) {
-      return t("common.free");
-    }
-
-    return t("common.from-price", {
-      price: formatter.price({ amount: startPrice?.amount ?? 0 }),
-    });
-  };
+  const hasFreeVariant = variantsAvailability?.some(
+    (variant) => variant.price.amount === 0,
+  );
 
   return (
     <>
-      <p className="py-4 text-center text-lg md:text-left">{getPrice()}</p>
+      <p className="py-4 text-center text-lg md:text-left">
+        <Price
+          price={chosenVariantAvailability?.price}
+          startPrice={startPrice}
+          hasFreeVariants={hasFreeVariant}
+          undiscountedPrice={chosenVariantAvailability?.priceUndiscounted}
+        />
+      </p>
 
       <div className="[&>div]:pb-4">
         {allSelectionAttributes.map(({ slug, name, values, type }, index) => {

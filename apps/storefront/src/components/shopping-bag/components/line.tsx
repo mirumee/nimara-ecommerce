@@ -7,7 +7,10 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { useWindowSize } from "usehooks-ts";
 
-import type { Line as LineType } from "@nimara/domain/objects/common";
+import type {
+  Line as LineType,
+  TaxedPrice,
+} from "@nimara/domain/objects/common";
 import { Button } from "@nimara/ui/components/button";
 import { Input } from "@nimara/ui/components/input";
 import { Label } from "@nimara/ui/components/label";
@@ -22,9 +25,9 @@ import { Sheet, SheetContent } from "@nimara/ui/components/sheet";
 import { screenSizes } from "@nimara/ui/consts";
 import { cn } from "@nimara/ui/lib/utils";
 
+import { Price } from "@/components/price"; // Adjust the path as needed
 import { ProductImagePlaceholder } from "@/components/product-image-placeholder";
 import { Link } from "@/i18n/routing";
-import { useLocalizedFormatter } from "@/lib/formatters/use-localized-formatter";
 import { paths } from "@/lib/paths";
 
 type LineQuantityChange = (lineId: string, quantity: number) => Promise<void>;
@@ -61,7 +64,6 @@ export const Line = ({
   const isSmDown = width && width < screenSizes.sm;
 
   const t = useTranslations();
-  const formatter = useLocalizedFormatter();
   const inputValue = useDebounce(value, 1000);
 
   const attributeNames = variant.selectionAttributes
@@ -73,6 +75,17 @@ export const Line = ({
 
   const href = paths.products.asPath({ slug: product.slug, hash: variant.id });
 
+  const undiscountedLineTotal: TaxedPrice = {
+    amount: undiscountedTotalPrice.amount,
+    currency: undiscountedTotalPrice.currency,
+    type: "gross",
+  };
+
+  const finalLineTotal: TaxedPrice = {
+    amount: total.amount,
+    currency: total.currency,
+    type: "gross",
+  };
   const handleLineDelete = async () => {
     await onLineDelete?.(id);
   };
@@ -281,11 +294,10 @@ export const Line = ({
           })}
           data-testid="shopping-bag-product-line-price"
         >
-          {undiscountedTotalPrice.amount === 0 || total.amount === 0
-            ? t("common.free")
-            : formatter.price({
-                amount: undiscountedTotalPrice.amount ?? total.amount,
-              })}
+          <Price
+            price={finalLineTotal}
+            undiscountedPrice={undiscountedLineTotal}
+          />
         </p>
       </div>
 

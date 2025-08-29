@@ -1,3 +1,4 @@
+import type { TaxedPrice } from "@nimara/domain/objects/common";
 import type { RelatedProduct } from "@nimara/domain/objects/Product";
 import { ok } from "@nimara/domain/objects/Result";
 
@@ -14,21 +15,43 @@ const parseRelatedProducts = (
   data: ProductRelatedProductsFragment[],
 ): RelatedProduct[] => {
   return (
-    data.map((node) => ({
-      currency: node.pricing?.priceRange?.start?.gross?.currency ?? "",
-      id: node.slug,
-      media: null,
-      thumbnail: node.thumbnail
-        ? {
-            alt: node.thumbnail.alt ?? undefined,
-            url: node.thumbnail.url,
-          }
-        : null,
-      name: node.name,
-      price: node.pricing?.priceRange?.start?.gross?.amount ?? 0,
-      slug: node.slug,
-      updatedAt: new Date(),
-    })) ?? []
+    data.map((node) => {
+      const hasFreeVariants =
+        node.variants?.some(
+          (variant) => variant?.pricing?.price?.gross?.amount === 0,
+        ) ?? false;
+
+      return {
+        currency: node.pricing?.priceRange?.start?.gross?.currency ?? "",
+        id: node.slug,
+        media: null,
+        thumbnail: node.thumbnail
+          ? {
+              alt: node.thumbnail.alt ?? undefined,
+              url: node.thumbnail.url,
+            }
+          : null,
+        name: node.name,
+        slug: node.slug,
+        updatedAt: new Date(),
+        price: hasFreeVariants
+          ? ({
+              amount: 0,
+              currency: node.pricing?.priceRange?.start?.gross?.currency,
+            } as TaxedPrice)
+          : ({
+              ...node.pricing?.priceRange?.start?.gross,
+            } as TaxedPrice),
+        undiscountedPrice: hasFreeVariants
+          ? ({
+              amount: 0,
+              currency: node.pricing?.priceRange?.start?.gross?.currency,
+            } as TaxedPrice)
+          : ({
+              ...node.pricing?.priceRangeUndiscounted?.start?.gross,
+            } as TaxedPrice),
+      };
+    }) ?? []
   );
 };
 

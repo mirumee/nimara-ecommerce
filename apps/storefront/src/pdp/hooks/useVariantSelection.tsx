@@ -31,7 +31,7 @@ export const useVariantSelection = ({
   const variantsAvailability = productAvailability?.variants;
 
   const allSelectionAttributes = useMemo(
-    () => getAllSelectionAttributes(productVariants),
+    () => getAllSelectionAttributes(productVariants ?? []),
     [productVariants],
   );
 
@@ -152,6 +152,25 @@ export const useVariantSelection = ({
       ? isVariantInStock(chosenVariantAvailability, cart?.lines)
       : !!productAvailability?.isAvailable;
 
+  const calculateDiscountPercent = (
+    price: number,
+    priceUndiscounted: number,
+  ) => {
+    if (!priceUndiscounted || priceUndiscounted <= price) {
+      return 0;
+    }
+
+    return Math.round(((priceUndiscounted - price) / priceUndiscounted) * 100);
+  };
+
+  const discountPercent =
+    chosenVariantAvailability && chosenVariantAvailability.priceUndiscounted
+      ? calculateDiscountPercent(
+          chosenVariantAvailability.price.amount,
+          chosenVariantAvailability.priceUndiscounted.amount,
+        )
+      : 0;
+
   return {
     allSelectionAttributes,
     areAllRequiredSelectionAttributesChosen,
@@ -166,5 +185,6 @@ export const useVariantSelection = ({
     setParams,
     startPrice: productAvailability?.startPrice,
     variantsAvailability,
+    discountPercent,
   };
 };

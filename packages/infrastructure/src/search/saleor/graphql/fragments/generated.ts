@@ -15,21 +15,21 @@ export type SearchProductFragment_Product_variants_ProductVariant = { pricing: S
 
 export type SearchProductFragment_Product_media_ProductMedia = { url: string, alt: string };
 
-export type SearchProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_gross_Money = { amount: number };
+export type SearchProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_net_Money = { currency: string, amount: number };
 
-export type SearchProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_net_Money = { amount: number };
+export type SearchProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_gross_Money = { currency: string, amount: number };
 
-export type SearchProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney = { currency: string, gross: SearchProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_gross_Money, net: SearchProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_net_Money };
+export type SearchProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_tax_Money = { currency: string, amount: number };
 
-export type SearchProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_stop_TaxedMoney_gross_Money = { amount: number };
+export type SearchProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney = { net: SearchProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_net_Money, gross: SearchProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_gross_Money, tax: SearchProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_tax_Money };
 
-export type SearchProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_stop_TaxedMoney_net_Money = { amount: number };
+export type SearchProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange = { start: SearchProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney | null };
 
-export type SearchProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_stop_TaxedMoney = { currency: string, gross: SearchProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_stop_TaxedMoney_gross_Money, net: SearchProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_stop_TaxedMoney_net_Money };
+export type SearchProductFragment_Product_pricing_ProductPricingInfo_priceRangeUndiscounted_TaxedMoneyRange_start_TaxedMoney = { net: SearchProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_net_Money, gross: SearchProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_gross_Money, tax: SearchProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_tax_Money };
 
-export type SearchProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange = { start: SearchProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney | null, stop: SearchProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_stop_TaxedMoney | null };
+export type SearchProductFragment_Product_pricing_ProductPricingInfo_priceRangeUndiscounted_TaxedMoneyRange = { start: SearchProductFragment_Product_pricing_ProductPricingInfo_priceRangeUndiscounted_TaxedMoneyRange_start_TaxedMoney | null };
 
-export type SearchProductFragment_Product_pricing_ProductPricingInfo = { priceRange: SearchProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange | null };
+export type SearchProductFragment_Product_pricing_ProductPricingInfo = { displayGrossPrices: boolean, priceRange: SearchProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange | null, priceRangeUndiscounted: SearchProductFragment_Product_pricing_ProductPricingInfo_priceRangeUndiscounted_TaxedMoneyRange | null };
 
 export type SearchProductFragment = { id: string, name: string, slug: string, updatedAt: string, translation: SearchProductFragment_Product_translation_ProductTranslation | null, thumbnail: SearchProductFragment_Product_thumbnail_Image | null, variants: Array<SearchProductFragment_Product_variants_ProductVariant> | null, media: Array<SearchProductFragment_Product_media_ProductMedia> | null, pricing: SearchProductFragment_Product_pricing_ProductPricingInfo | null };
 
@@ -77,27 +77,32 @@ export const SearchProductFragment = new TypedDocumentString(`
     alt
   }
   pricing {
+    displayGrossPrices
     priceRange {
       start {
-        currency
-        gross {
-          amount
-        }
-        net {
-          amount
-        }
+        ...TaxedMoneyFragment
       }
-      stop {
-        currency
-        gross {
-          amount
-        }
-        net {
-          amount
-        }
+    }
+    priceRangeUndiscounted {
+      start {
+        ...TaxedMoneyFragment
       }
     }
   }
   updatedAt
 }
-    `, {"fragmentName":"SearchProductFragment"}) as unknown as TypedDocumentString<SearchProductFragment, unknown>;
+    fragment TaxedMoneyFragment on TaxedMoney {
+  net {
+    ...MoneyFragment
+  }
+  gross {
+    ...MoneyFragment
+  }
+  tax {
+    ...MoneyFragment
+  }
+}
+fragment MoneyFragment on Money {
+  currency
+  amount
+}`, {"fragmentName":"SearchProductFragment"}) as unknown as TypedDocumentString<SearchProductFragment, unknown>;
