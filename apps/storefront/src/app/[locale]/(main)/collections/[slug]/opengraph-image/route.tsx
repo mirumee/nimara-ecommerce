@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { getTranslations } from "next-intl/server";
 
 import { CACHE_TTL, DEFAULT_RESULTS_PER_PAGE } from "@/config";
 import { clientEnvs } from "@/envs/client";
@@ -18,9 +19,10 @@ export async function GET(
 ) {
   const { slug } = await context.params;
 
-  const [region, collectionService] = await Promise.all([
+  const [region, collectionService, t] = await Promise.all([
     getCurrentRegion(),
     getCollectionService(),
+    getTranslations(),
   ]);
 
   const getCollectionResult = await collectionService.getCollectionDetails({
@@ -40,10 +42,10 @@ export async function GET(
   const collection = getCollectionResult.data?.results;
 
   if (!collection) {
-    return new Response(null, { status: 404 });
+    return null;
   }
 
-  if (!collection.thumbnail?.url) {
+  if (!collection?.thumbnail?.url) {
     return new ImageResponse(
       (
         <div
@@ -51,8 +53,6 @@ export async function GET(
             display: "flex",
             width: "100%",
             height: "100%",
-            justifyContent: "center",
-            alignItems: "center",
           }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -61,7 +61,7 @@ export async function GET(
               "og-hp.png",
               clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
             ).toString()}
-            alt="Nimara's logo"
+            alt={t("common.logo")}
             style={{
               maxWidth: "100%",
               maxHeight: "100%",
@@ -91,7 +91,7 @@ export async function GET(
               "brand-logo-dark.svg",
               clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
             ).toString()}
-            alt="Nimara's logo"
+            alt={t("common.logo")}
             style={{
               maxWidth: "100%",
               maxHeight: "100%",
@@ -110,7 +110,7 @@ export async function GET(
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={collection.thumbnail.url}
-            alt={collection.thumbnail.alt || "Collection image"}
+            alt={collection.thumbnail.alt || t("collections.collection-image")}
             style={{ width: "100%", height: "100%", objectFit: "cover" }}
           />
         </div>

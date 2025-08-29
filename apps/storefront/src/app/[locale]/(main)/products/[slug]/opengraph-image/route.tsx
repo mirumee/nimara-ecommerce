@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { getTranslations } from "next-intl/server";
 
 import { CACHE_TTL } from "@/config";
 import { clientEnvs } from "@/envs/client";
@@ -18,14 +19,15 @@ export async function GET(
 ) {
   const { slug } = await context.params;
 
-  const [region, storeService] = await Promise.all([
+  const [region, storeService, t] = await Promise.all([
     getCurrentRegion(),
     getStoreService(),
+    getTranslations(),
   ]);
 
   const { data } = await storeService.getProductDetails({
     productSlug: slug,
-    customMediaFormat: "ORIGINAL",
+    customMediaFormat: "WEBP",
     channel: region.market.channel,
     languageCode: region.language.code,
     countryCode: region.market.countryCode,
@@ -38,7 +40,7 @@ export async function GET(
   });
 
   if (!data?.product) {
-    return new Response(null, { status: 404 });
+    return null;
   }
 
   if (!data.product?.images?.[0]?.url) {
@@ -49,8 +51,6 @@ export async function GET(
             display: "flex",
             width: "100%",
             height: "100%",
-            justifyContent: "center",
-            alignItems: "center",
           }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -59,7 +59,7 @@ export async function GET(
               "og-hp.png",
               clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
             ).toString()}
-            alt="Nimara's logo"
+            alt={t("common.logo")}
             style={{
               maxWidth: "100%",
               maxHeight: "100%",
@@ -89,7 +89,7 @@ export async function GET(
               "brand-logo-dark.svg",
               clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
             ).toString()}
-            alt="Nimara's logo"
+            alt={t("common.logo")}
             style={{
               maxWidth: "100%",
               maxHeight: "100%",
