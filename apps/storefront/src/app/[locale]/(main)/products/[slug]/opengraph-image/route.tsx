@@ -40,7 +40,7 @@ export async function GET(
   });
 
   if (!data?.product) {
-    return null;
+    return new Response("Not found", { status: 404 });
   }
 
   if (!data.product?.images?.[0]?.url) {

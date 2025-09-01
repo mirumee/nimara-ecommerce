@@ -42,7 +42,7 @@ export async function GET(
   const collection = getCollectionResult.data?.results;
 
   if (!collection) {
-    return null;
+    return new Response("Not found", { status: 404 });
   }
 
   if (!collection?.thumbnail?.url) {
