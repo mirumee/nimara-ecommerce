@@ -57,6 +57,7 @@ export async function generateMetadata(props: PageProps) {
   const collection = getCollectionResult.data?.results;
   const rawDescription = collection?.description;
   const parsedDescription = editorJSDataToString(rawDescription)?.trim();
+  const ogImageUrl = `${clientEnvs.NEXT_PUBLIC_STOREFRONT_URL}/collections/${slug}/opengraph-image`;
 
   return {
     title: collection?.seoTitle || collection?.name,
@@ -67,7 +68,15 @@ export async function generateMetadata(props: PageProps) {
     alternates: {
       canonical: canonicalUrl,
     },
-    openGrapch: {
+    openGraph: {
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: collection?.name,
+        },
+      ],
       url: canonicalUrl,
       siteName: "Nimara Store",
     },

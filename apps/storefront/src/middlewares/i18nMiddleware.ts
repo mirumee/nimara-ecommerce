@@ -1,6 +1,10 @@
 import { match } from "@formatjs/intl-localematcher";
 import Negotiator from "negotiator";
-import type { NextFetchEvent, NextRequest, NextResponse } from "next/server";
+import {
+  type NextFetchEvent,
+  type NextRequest,
+  NextResponse,
+} from "next/server";
 import createIntlMiddleware from "next-intl/middleware";
 
 import { COOKIE_KEY, COOKIE_MAX_AGE } from "@/config";
@@ -69,6 +73,31 @@ export function i18nMiddleware(next: CustomMiddleware): CustomMiddleware {
     }
 
     const pathname = request.nextUrl.pathname;
+    const isOpenGraphPath = pathname.includes("/opengraph-image");
+
+    // Custom: For 'opengraph-image' paths without locale prefix, rewrite the path
+    // internally to include the default locale, avoiding a redirect.
+    const hasLocalePrefix = Object.values(localePrefixes).some((prefix) =>
+      pathname.startsWith(prefix),
+    );
+    const isDefaultLocalePath = !hasLocalePrefix; // no prefix means default locale path
+
+    if (isOpenGraphPath && isDefaultLocalePath) {
+      // Rewrite the URL internally to the default locale's path
+      const url = request.nextUrl.clone();
+
+      url.pathname = `/us${pathname}`;
+
+      const response = NextResponse.rewrite(url);
+
+      return next(request, event, response);
+    }
+
+    // INFO: Special handling for opengraph-image paths:
+    //       If already locale-prefixed, serve directly and skip next-intl
+    if (isOpenGraphPath) {
+      return next(request, event, prevResponse);
+    }
 
     const localePrefix = Object.values(localePrefixes).find(
       (localePrefix) =>

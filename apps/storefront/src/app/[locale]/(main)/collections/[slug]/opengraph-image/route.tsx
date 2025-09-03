@@ -1,54 +1,54 @@
 import { ImageResponse } from "next/og";
+import { getTranslations } from "next-intl/server";
 
-import { CACHE_TTL } from "@/config";
+import { CACHE_TTL, DEFAULT_RESULTS_PER_PAGE } from "@/config";
 import { clientEnvs } from "@/envs/client";
 import { getCurrentRegion } from "@/regions/server";
-import { getStoreService } from "@/services/store";
+import { getCollectionService } from "@/services/collection";
 
-export const size = {
+const size = {
   width: 1200,
   height: 630,
 };
 
 export const runtime = "edge";
 
-export const contentType = "image/png";
-export const alt = "Product preview";
+export async function GET(
+  request: Request,
+  context: { params: Promise<{ slug: string }> },
+) {
+  const { slug } = await context.params;
 
-// eslint-disable-next-line import/no-default-export
-export default async function Image({
-  params: { slug },
-}: {
-  params: { slug: string };
-}) {
-  const [region, storeService] = await Promise.all([
+  const [region, collectionService, t] = await Promise.all([
     getCurrentRegion(),
-    getStoreService(),
+    getCollectionService(),
+    getTranslations(),
   ]);
 
-  const { data } = await storeService.getProductDetails({
-    productSlug: slug,
-    customMediaFormat: "WEBP",
+  const getCollectionResult = await collectionService.getCollectionDetails({
     channel: region.market.channel,
+    customMediaFormat: "ORIGINAL",
     languageCode: region.language.code,
-    countryCode: region.market.countryCode,
+    slug,
+    limit: DEFAULT_RESULTS_PER_PAGE,
     options: {
       next: {
         revalidate: CACHE_TTL.pdp,
-        tags: [`PRODUCT:${slug}`, "DETAIL-PAGE:PRODUCT"],
+        tags: [`COLLECTION:${slug}`, "DETAIL-PAGE:COLLECTION"],
       },
     },
   });
 
-  if (!data?.product) {
-    return null;
+  const collection = getCollectionResult.data?.results;
+
+  if (!collection) {
+    return new Response("Not found", { status: 404 });
   }
 
-  if (!data?.product?.images[0]?.url) {
+  if (!collection?.thumbnail?.url) {
     return new ImageResponse(
       (
         <div
-          tw="flex w-full h-full"
           style={{
             display: "flex",
             width: "100%",
@@ -61,7 +61,7 @@ export default async function Image({
               "og-hp.png",
               clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
             ).toString()}
-            alt="Nimara's logo"
+            alt={t("common.logo")}
             style={{
               maxWidth: "100%",
               maxHeight: "100%",
@@ -70,25 +70,19 @@ export default async function Image({
           />
         </div>
       ),
+      { ...size },
     );
   }
 
   return new ImageResponse(
     (
-      <div
-        tw="flex w-full h-full"
-        style={{
-          display: "flex",
-          width: "100%",
-          height: "100%",
-        }}
-      >
+      <div style={{ display: "flex", width: "100%", height: "100%" }}>
         <div
           style={{
             width: "50%",
             display: "flex",
-            alignItems: "center",
             justifyContent: "center",
+            alignItems: "center",
           }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -97,7 +91,7 @@ export default async function Image({
               "brand-logo-dark.svg",
               clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
             ).toString()}
-            alt="Nimara's logo"
+            alt={t("common.logo")}
             style={{
               maxWidth: "100%",
               maxHeight: "100%",
@@ -109,25 +103,19 @@ export default async function Image({
           style={{
             width: "50%",
             display: "flex",
-            alignItems: "center",
             justifyContent: "center",
+            alignItems: "center",
           }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={data?.product?.images[0]?.url}
-            alt={data?.product?.name}
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-            }}
+            src={collection.thumbnail.url}
+            alt={collection.thumbnail.alt || t("collections.collection-image")}
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
           />
         </div>
       </div>
     ),
-    {
-      ...size,
-    },
+    { ...size },
   );
 }

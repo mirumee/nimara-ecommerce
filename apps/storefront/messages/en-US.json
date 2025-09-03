@@ -147,7 +147,8 @@
     "image-alt": "Image of {productName}"
   },
   "collections": {
-    "associated-products": "Associated products"
+    "associated-products": "Associated products",
+    "collection-image": "Collection image"
   },
   "address": {
     "companyName": "Company name",
