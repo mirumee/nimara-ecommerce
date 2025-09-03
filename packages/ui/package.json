@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "@nimara/config": "workspace:*",
-    "@types/react": "19.1.10",
+    "@types/react": "19.1.11",
     "eslint": "^8.57.0",
     "eslint-config-custom": "workspace:*",
     "lint-staged": "^16.1.5",
