@@ -70,7 +70,7 @@ export const CollectionFragment = new TypedDocumentString(`
   description
   seoTitle
   seoDescription
-  backgroundImage {
+  backgroundImage(size: 256) {
     url
     alt
   }
