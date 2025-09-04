@@ -162,6 +162,11 @@ fragment CartLineFragment on CheckoutLine {
         name
       }
     }
+    pricing {
+      discount {
+        ...TaxedMoneyFragment
+      }
+    }
   }
 }
 fragment SelectionAttributeFragment on SelectedAttribute {

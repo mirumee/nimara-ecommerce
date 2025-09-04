@@ -27,7 +27,7 @@ export async function GET(
 
   const { data } = await storeService.getProductDetails({
     productSlug: slug,
-    customMediaFormat: "WEBP",
+    customMediaFormat: "ORIGINAL",
     channel: region.market.channel,
     languageCode: region.language.code,
     countryCode: region.market.countryCode,
