@@ -1,6 +1,5 @@
 import { type Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { type ReactNode } from "react";
 
 import { Logo } from "@/components/header/logo";
 import { SideSummary } from "@/components/summary/side-summary";
@@ -21,7 +20,9 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function Layout({ children }: { children: ReactNode }) {
+export default function Layout({
+  children,
+}: LayoutProps<"/[locale]/checkout">) {
   return (
     <section className="grid min-h-screen grid-cols-1 md:grid-cols-[3fr_2fr]">
       <div className="flex justify-center xl:mr-48 xl:justify-end">
