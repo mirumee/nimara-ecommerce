@@ -1,6 +1,5 @@
 import { type Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { type ReactNode } from "react";
 
 import { Footer } from "@/components/footer";
 import { Logo } from "@/components/header/logo";
@@ -21,7 +20,9 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function Layout({ children }: { children: ReactNode }) {
+export default function Layout({
+  children,
+}: LayoutProps<"/[locale]/checkout">) {
   return (
     <div className="flex h-screen flex-col">
       <div className="container flex-grow sm:max-w-3xl md:max-w-4xl xl:max-w-5xl">

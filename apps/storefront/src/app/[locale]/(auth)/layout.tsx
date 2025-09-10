@@ -1,9 +1,7 @@
-import { type ReactNode } from "react";
-
 import { Footer } from "@/components/footer";
 import { Logo } from "@/components/header/logo";
 
-export default function Layout({ children }: { children: ReactNode }) {
+export default function Layout({ children }: LayoutProps<"/[locale]">) {
   return (
     <div className="flex h-screen flex-col">
       <div className="container flex-1 sm:max-w-[21rem] md:max-w-[24.5rem] xl:max-w-[25.375rem]">

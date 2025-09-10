@@ -7,7 +7,6 @@ import Script from "next/script";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
-import type { ReactNode } from "react";
 
 import { Toaster } from "@nimara/ui/components/toaster";
 
@@ -18,7 +17,6 @@ import { routing } from "@/i18n/routing";
 import { themePreloadScript } from "@/lib/scripts/theme-preload-script";
 import { cn } from "@/lib/utils";
 import { ClientThemeProvider } from "@/providers/theme-provider";
-import { type SupportedLocale } from "@/regions/types";
 
 export const metadata: Metadata = {
   title: {
@@ -30,10 +28,7 @@ export const metadata: Metadata = {
 export default async function LocaleLayout({
   children,
   params,
-}: {
-  children: ReactNode;
-  params: Promise<{ locale: SupportedLocale }>;
-}) {
+}: LayoutProps<"/[locale]">) {
   const { locale } = await params;
 
   if (!routing.locales.includes(locale as any)) {
