@@ -17,8 +17,8 @@
   "dependencies": {
     "@saleor/auth-sdk": "1.0.2",
     "@stripe/stripe-js": "3.5.0",
-    "libphonenumber-js": "1.12.12",
-    "pino": "9.9.0",
+    "libphonenumber-js": "1.12.15",
+    "pino": "9.9.4",
     "stripe": "15.10.0",
     "ts-invariant": "0.10.3"
   },
