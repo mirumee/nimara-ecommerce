@@ -6,10 +6,12 @@ import { PageType } from "@nimara/domain/objects/CMSPage";
 
 import { getAccessToken } from "@/auth";
 import { CACHE_TTL } from "@/config";
+import { clientEnvs } from "@/envs/client";
 import { JsonLd, websiteToJsonLd } from "@/lib/json-ld";
 import { getCurrentRegion } from "@/regions/server";
+import { type SupportedLocale } from "@/regions/types";
 import { cmsPageService } from "@/services/cms";
-import { userService } from "@/services/user";
+import { getUserService } from "@/services/user";
 
 import { AccountNotifications } from "./_components/account-notifications";
 import { HeroBanner } from "./_components/hero-banner";
@@ -19,11 +21,16 @@ import {
   ProductsGridSkeleton,
 } from "./_components/products-grid";
 
-export async function generateMetadata(_params: {
-  params: Promise<{}>;
-  searchParams: Promise<{}>;
-}): Promise<Metadata> {
+type PageProps = {
+  params: Promise<{ locale: SupportedLocale }>;
+  searchParams: Promise<Record<string, string>>;
+};
+
+export async function generateMetadata(_params: PageProps): Promise<Metadata> {
   const t = await getTranslations("home");
+
+  const url = new URL(clientEnvs.NEXT_PUBLIC_STOREFRONT_URL);
+  const canonicalUrl = url.toString();
 
   return {
     title: t("title"),
@@ -37,17 +44,20 @@ export async function generateMetadata(_params: {
           alt: t("homepage-preview"),
         },
       ],
+      url: canonicalUrl,
+      siteName: "Nimara Store",
     },
   };
 }
 
 export default async function Page() {
-  const accessToken = await getAccessToken();
-
-  const [region, resultUserGet] = await Promise.all([
+  const [accessToken, region, userService] = await Promise.all([
+    getAccessToken(),
     getCurrentRegion(),
-    userService.userGet(accessToken),
+    getUserService(),
   ]);
+
+  const resultUserGet = await userService.userGet(accessToken);
 
   const user = resultUserGet.ok ? resultUserGet.data : null;
 

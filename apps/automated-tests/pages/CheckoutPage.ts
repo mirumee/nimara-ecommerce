@@ -55,11 +55,13 @@ export class CheckoutPage {
     this.productPriceText = this.page.getByTestId(
       "shopping-bag-product-line-price",
     );
-    this.subtotalText = this.page.getByTestId("shopping-bag-price-subtotal");
-    this.totalText = this.page.getByTestId("shopping-bag-price-total");
-    this.deliveryPriceText = this.page.getByTestId(
-      "shopping-bag-price-delivery-method",
-    );
+    this.subtotalText = this.page
+      .getByTestId("shopping-bag-price-subtotal")
+      .first();
+    this.totalText = this.page.getByTestId("shopping-bag-price-total").first();
+    this.deliveryPriceText = this.page
+      .getByTestId("shopping-bag-price-delivery-method")
+      .first();
     this.billingAddressSameAsShippingCheckbox = this.page.getByRole(
       "checkbox",
       { name: "Same as shipping address" },
@@ -155,9 +157,12 @@ export class CheckoutPage {
   }
 
   async assertOrderSummary(product: Product) {
-    await expect(this.page.getByText(`qty: ${product.quantity}`)).toBeVisible();
+    await expect(this.page.getByTestId("product-qty").first()).toHaveText(
+      `qty: ${product.quantity}`,
+    );
+
     await expect(
-      this.productPriceText.getByText(
+      this.productPriceText.first().getByText(
         formatAsPrice({
           amount: product.price.amount,
           currency: product.price.currency,

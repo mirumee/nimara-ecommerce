@@ -5,15 +5,13 @@ import { AuthError } from "next-auth";
 
 import { getAccessToken, signIn } from "@/auth";
 import { CACHE_TTL } from "@/config";
-import { clientEnvs } from "@/envs/client";
 import { getCheckoutId, setCheckoutIdCookie } from "@/lib/actions/cart";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
-import { cartService as saleorCartService } from "@/services/cart";
-import { checkoutService } from "@/services/checkout";
+import { getCartService } from "@/services/cart";
+import { getCheckoutService } from "@/services/checkout";
 import { errorService } from "@/services/error";
-import { storefrontLogger } from "@/services/logging";
-import { userService } from "@/services/user";
+import { getUserService } from "@/services/user";
 
 export async function login({
   email,
@@ -31,8 +29,14 @@ export async function login({
       redirect: false,
     });
 
-    const accessToken = await getAccessToken();
-    const checkoutId = await getCheckoutId();
+    const [accessToken, checkoutId, userService, checkoutService] =
+      await Promise.all([
+        getAccessToken(),
+        getCheckoutId(),
+        getUserService(),
+        getCheckoutService(),
+      ]);
+
     const resultUserGet = await userService.userGet(accessToken);
     const user = resultUserGet.ok ? resultUserGet.data : null;
 
@@ -62,12 +66,7 @@ export async function login({
         const guestCheckout = resultGuestCheckout.data?.checkout;
 
         if (userCheckout) {
-          const cartService = saleorCartService({
-            ...regionSettings,
-            channel: region.market.channel,
-            apiURI: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
-            logger: storefrontLogger,
-          });
+          const cartService = await getCartService();
 
           const lineItemsFromGuestCheckout =
             guestCheckout?.lines.filter((line) =>
@@ -82,6 +81,9 @@ export async function login({
               quantity,
               variantId: variant.id,
             })),
+            channel: region.market.channel,
+            email: user.email,
+            languageCode: region.language.code,
             options: {
               next: {
                 revalidate: CACHE_TTL.cart,

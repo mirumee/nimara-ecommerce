@@ -1,5 +1,3 @@
-import { type ReactNode } from "react";
-
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { CACHE_TTL } from "@/config";
@@ -9,9 +7,11 @@ import { cmsMenuService } from "@/services/cms";
 
 import { Navigation } from "./_components/navigation";
 
-export default async function Layout({ children }: { children: ReactNode }) {
-  const region = await getCurrentRegion();
-  const locale = await getStoreLocale();
+export default async function Layout({ children }: LayoutProps<"/[locale]">) {
+  const [region, locale] = await Promise.all([
+    getCurrentRegion(),
+    getStoreLocale(),
+  ]);
 
   const resultMenu = await cmsMenuService.menuGet({
     channel: region.market.channel,

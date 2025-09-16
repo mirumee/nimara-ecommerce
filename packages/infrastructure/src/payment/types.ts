@@ -1,4 +1,5 @@
 import type {
+  Appearance,
   Stripe as StripeClient,
   StripeElements,
   StripePaymentElement,
@@ -61,6 +62,7 @@ export type PaymentExecuteInfra = (opts: {
 export type PaymentExecuteUseCase = PaymentExecuteInfra;
 
 export type PaymentElementCreateInfra = (opts: {
+  appearance?: Pick<Appearance, "theme" | "variables">;
   locale?: string;
   secret: string;
 }) => Promise<{

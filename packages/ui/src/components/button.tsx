@@ -10,7 +10,8 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        default:
+          "bg-primary text-primary-foreground hover:bg-primary/90 dark:hover:bg-stone-100",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:
@@ -41,6 +42,15 @@ export interface ButtonProps
   loading?: boolean;
 }
 
+const spinnerColors: Record<NonNullable<ButtonProps["variant"]>, string> = {
+  default: "text-primary-foreground",
+  destructive: "text-destructive-foreground",
+  outline: "hover:text-accent-foreground",
+  secondary: "text-secondary-foreground",
+  ghost: "hover:text-accent-foreground",
+  link: "text-primary",
+};
+
 const Button = ({
   className,
   variant,
@@ -60,7 +70,9 @@ const Button = ({
       {loading ? (
         <span className="inline-flex items-center gap-2">
           <Slottable>{children}</Slottable>
-          <Spinner className="h-4 w-4 text-white" />
+          <Spinner
+            className={cn("h-4 w-4", spinnerColors[variant ?? "default"])}
+          />
         </span>
       ) : (
         <Slottable>{children}</Slottable>

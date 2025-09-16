@@ -1,32 +1,33 @@
-import {
-  type CountryCode,
-  type LanguageCodeEnum,
-} from "@nimara/codegen/schema";
+import { type LanguageCodeEnum } from "@nimara/codegen/schema";
+import { type AllCountryCode } from "@nimara/domain/consts";
 import type { Cart } from "@nimara/domain/objects/Cart";
 import { type AsyncResult } from "@nimara/domain/objects/Result";
 
 import type { FetchOptions } from "#root/graphql/client";
 import { type Logger } from "#root/logging/types";
 
-export type SaleorCartServiceConfig = {
+export type CartServiceConfig = {
   apiURI: string;
-  channel: string;
-  countryCode: CountryCode;
-  languageCode: LanguageCodeEnum;
   logger: Logger;
 };
 
 export type WithFetchOptions = { options?: FetchOptions };
 
 export type CartGetInfra = (
-  opts: { cartId: string } & WithFetchOptions,
+  opts: {
+    cartId: string;
+    countryCode: AllCountryCode;
+    languageCode: LanguageCodeEnum;
+  } & WithFetchOptions,
 ) => AsyncResult<Cart>;
 
 export type CartGetUseCase = CartGetInfra;
 
 export type CartCreateInfra = (
   opts: {
+    channel: string;
     email?: string;
+    languageCode: LanguageCodeEnum;
     lines: { quantity: number; variantId: string }[];
   } & WithFetchOptions,
 ) => AsyncResult<{ cartId: string }>;
@@ -69,14 +70,16 @@ export type LinesAddInfra = (
 export type LinesAddUseCase = (
   opts: {
     cartId: string | null;
+    channel: string;
     email?: string;
+    languageCode: LanguageCodeEnum;
     lines: { quantity: number; variantId: string }[];
   } & WithFetchOptions,
 ) => AsyncResult<{
   cartId: string;
 }>;
 
-export type CartService<Config> = (config: Config) => {
+export type CartService = {
   cartGet: CartGetUseCase;
   linesAdd: LinesAddUseCase;
   linesDelete: LinesDeleteUseCase;

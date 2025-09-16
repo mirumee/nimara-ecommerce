@@ -17,6 +17,7 @@ export type Scalars = {
   Day: { input: number; output: number; }
   Decimal: { input: number; output: number; }
   GenericScalar: { input: unknown; output: unknown; }
+  Hour: { input: number; output: number; }
   JSON: { input: unknown; output: unknown; }
   JSONString: { input: string; output: string; }
   Metadata: { input: Record<string, string>; output: Record<string, string>; }
@@ -19026,6 +19027,18 @@ export type PaymentRefundEvent = Event & {
 /** Represents the channel-specific payment settings. */
 export type PaymentSettings = {
   /**
+   * Specifies the earliest date on which funds for expired checkouts can begin to be released. Expired checkouts dated before this cut-off will not have their funds released. Additionally, no funds will be released for checkouts that are more than one year old, regardless of the cut-off date.
+   *
+   * Added in Saleor 3.20.
+   */
+  checkoutReleaseFundsCutOffDate: Maybe<Scalars['DateTime']['output']>;
+  /**
+   * The time in hours after which funds for expired checkouts will be released.
+   *
+   * Added in Saleor 3.20.
+   */
+  checkoutTtlBeforeReleasingFunds: Maybe<Scalars['Hour']['output']>;
+  /**
    * Determine the transaction flow strategy to be used. Include the selected option in the payload sent to the payment app, as a requested action for the transaction.
    *
    * Added in Saleor 3.16.
@@ -19033,9 +19046,27 @@ export type PaymentSettings = {
    * Note: this API is currently in Feature Preview and can be subject to changes at later point.
    */
   defaultTransactionFlowStrategy: TransactionFlowStrategyEnum;
+  /**
+   * Determine if the funds for expired checkouts should be released automatically.
+   *
+   * Added in Saleor 3.20.
+   */
+  releaseFundsForExpiredCheckouts: Maybe<Scalars['Boolean']['output']>;
 };
 
 export type PaymentSettingsInput = {
+  /**
+   * Specifies the earliest date on which funds for expired checkouts can begin to be released. Expired checkouts dated before this cut-off will not have their funds released. Additionally, no funds will be released for checkouts that are more than one year old, regardless of the cut-off date.
+   *
+   * Added in Saleor 3.20.
+   */
+  checkoutReleaseFundsCutOffDate?: InputMaybe<Scalars['DateTime']['input']>;
+  /**
+   * The time in hours after which funds for expired checkouts will be released.
+   *
+   * Added in Saleor 3.20.
+   */
+  checkoutTtlBeforeReleasingFunds?: InputMaybe<Scalars['Hour']['input']>;
   /**
    * Determine the transaction flow strategy to be used. Include the selected option in the payload sent to the payment app, as a requested action for the transaction.
    *
@@ -19044,6 +19075,12 @@ export type PaymentSettingsInput = {
    * Note: this API is currently in Feature Preview and can be subject to changes at later point.
    */
   defaultTransactionFlowStrategy?: InputMaybe<TransactionFlowStrategyEnum>;
+  /**
+   * Determine if the funds for expired checkouts should be released automatically.
+   *
+   * Added in Saleor 3.20.
+   */
+  releaseFundsForExpiredCheckouts?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 /** Represents a payment source stored for user in payment gateway, such as credit card. */

@@ -9,7 +9,7 @@ import { getAccessToken } from "@/auth";
 import { updateCheckoutAddressAction } from "@/lib/actions/update-checkout-address-action";
 import { schemaToAddress } from "@/lib/address";
 import { paths } from "@/lib/paths";
-import { userService } from "@/services/user";
+import { getUserService } from "@/services/user";
 
 import {
   type CreateShippingAddressSchema,
@@ -27,7 +27,10 @@ export async function accountAddressUpdateAction({
   id: string;
   input: UpdateShippingAddressSchema;
 }) {
-  const accessToken = await getAccessToken();
+  const [accessToken, userService] = await Promise.all([
+    getAccessToken(),
+    getUserService(),
+  ]);
 
   const data = await userService.accountAddressUpdate({
     accessToken,
@@ -49,8 +52,6 @@ export async function createCheckoutShippingAddress({
   checkoutId: Checkout["id"];
   input: CreateShippingAddressSchema;
 }) {
-  const accessToken = await getAccessToken();
-
   const result = await updateCheckoutAddressAction({
     checkoutId,
     address: schemaToAddress(input),
@@ -58,6 +59,11 @@ export async function createCheckoutShippingAddress({
   });
 
   if (saveForFutureUse) {
+    const [accessToken, userService] = await Promise.all([
+      getAccessToken(),
+      getUserService(),
+    ]);
+
     await userService.accountAddressCreate({
       accessToken,
       input: { ...input, country: input.country as AllCountryCode },

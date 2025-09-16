@@ -4,12 +4,12 @@ import { graphqlClient } from "#root/graphql/client";
 
 import type {
   AccountRequestDeletionInfra,
-  SaleorUserServiceConfig,
+  UserServiceConfig,
 } from "../../types";
 import { AccountRequestDeletionMutationDocument } from "../graphql/mutations/generated";
 
 export const saleorAccountRequestDeletionInfra =
-  ({ apiURL, logger }: SaleorUserServiceConfig): AccountRequestDeletionInfra =>
+  ({ apiURL, logger }: UserServiceConfig): AccountRequestDeletionInfra =>
   async ({ accessToken, channel, redirectUrl }) => {
     const result = await graphqlClient(apiURL, accessToken).execute(
       AccountRequestDeletionMutationDocument,

@@ -5,14 +5,14 @@ import { getTranslations } from "next-intl/server";
 import { RichText } from "@nimara/ui/components/rich-text/rich-text";
 import { editorJSDataToString } from "@nimara/ui/lib/richText";
 
+import { Breadcrumbs } from "@/components/breadcrumbs";
 import { CACHE_TTL, DEFAULT_RESULTS_PER_PAGE } from "@/config";
 import { clientEnvs } from "@/envs/client";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { type SupportedLocale } from "@/regions/types";
-import { collectionService } from "@/services/collection";
+import { getCollectionService } from "@/services/collection";
 
-import { Breadcrumbs } from "../../_components/breadcrumbs";
 import { ProductsList } from "../../_components/products-list";
 import { SearchPagination } from "../../_components/search-pagination";
 
@@ -29,15 +29,17 @@ type PageProps = {
 };
 
 export async function generateMetadata(props: PageProps) {
-  const params = props.params;
+  const [{ slug }, region, collectionService] = await Promise.all([
+    props.params,
+    getCurrentRegion(),
+    getCollectionService(),
+  ]);
 
-  const { slug } = await params;
   const url = new URL(
     paths.collections.asPath({ slug }),
     clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
   );
   const canonicalUrl = url.toString();
-  const region = await getCurrentRegion();
 
   const getCollectionResult = await collectionService.getCollectionDetails({
     channel: region.market.channel,
@@ -55,6 +57,7 @@ export async function generateMetadata(props: PageProps) {
   const collection = getCollectionResult.data?.results;
   const rawDescription = collection?.description;
   const parsedDescription = editorJSDataToString(rawDescription)?.trim();
+  const ogImageUrl = `${clientEnvs.NEXT_PUBLIC_STOREFRONT_URL}/collections/${slug}/opengraph-image`;
 
   return {
     title: collection?.seoTitle || collection?.name,
@@ -65,16 +68,32 @@ export async function generateMetadata(props: PageProps) {
     alternates: {
       canonical: canonicalUrl,
     },
+    openGraph: {
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: collection?.name,
+        },
+      ],
+      url: canonicalUrl,
+      siteName: "Nimara Store",
+    },
   };
 }
 
 export default async function Page(props: PageProps) {
-  const searchParams = await props.searchParams;
-  const params = props.params;
+  const [searchParams, { slug }, region, collectionService] = await Promise.all(
+    [
+      props.searchParams,
+      props.params,
+      getCurrentRegion(),
+      getCollectionService(),
+    ],
+  );
 
   const { after, before, limit } = searchParams;
-  const { slug } = await params;
-  const region = await getCurrentRegion();
 
   const [getCollectionResult, t] = await Promise.all([
     collectionService.getCollectionDetails({
@@ -120,8 +139,7 @@ export default async function Page(props: PageProps) {
           />
         ) : null}
       </div>
-
-      <div className="grid min-w-full items-start gap-8 md:flex">
+      <div>
         <RichText contentData={collection?.description} />
       </div>
 

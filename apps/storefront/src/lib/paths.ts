@@ -38,12 +38,18 @@ function urlWithParam<PathKey extends string | string[]>(
 function urlWithParam<PathKey extends string>(path: string) {
   if (path !== "/") {
     if (path.endsWith("/")) {
-      storefrontLogger.warning("Path should not have trailing slash.", {
-        path,
-      });
+      storefrontLogger.warning(
+        "Path should not have trailing slash. This can cause issues with routing.",
+        {
+          path,
+        },
+      );
     }
     if (!path.startsWith("/")) {
-      storefrontLogger.warning("Path  should have leading slash.", { path });
+      storefrontLogger.warning(
+        "Path should have leading slash. This can cause issues with routing.",
+        { path },
+      );
     }
   }
 

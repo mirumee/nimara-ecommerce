@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { paths } from "@/lib/paths";
-import { checkoutService } from "@/services/checkout";
+import { getCheckoutService } from "@/services/checkout";
 
 export async function addPromoCode({
   checkoutId,
@@ -12,6 +12,7 @@ export async function addPromoCode({
   checkoutId: string;
   promoCode: string;
 }) {
+  const checkoutService = await getCheckoutService();
   const result = await checkoutService.checkoutAddPromoCode({
     checkoutId,
     promoCode,
@@ -29,6 +30,7 @@ export async function removePromoCode({
   checkoutId: string;
   promoCode: string;
 }) {
+  const checkoutService = await getCheckoutService();
   const result = await checkoutService.checkoutRemovePromoCode({
     checkoutId,
     promoCode,

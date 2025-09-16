@@ -8,6 +8,7 @@ import { useState } from "react";
 import { Button } from "@nimara/ui/components/button";
 import { Spinner } from "@nimara/ui/components/spinner";
 
+import { cn } from "@/lib/utils";
 import { storefrontLogger } from "@/services/logging";
 
 import { generateSecretAction } from "../actions";
@@ -56,7 +57,9 @@ export const AddNewPaymentTrigger = ({
         onClick={handleGenerateSecret}
         variant={variant}
         disabled={!!secret}
-        className="flex gap-1.5"
+        className={cn("flex gap-1.5", {
+          "text-primary": variant === "outline",
+        })}
       >
         {secret ? (
           <Spinner className="size-4" />

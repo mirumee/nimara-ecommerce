@@ -11,6 +11,7 @@ export type Checkout = {
   displayGrossPrices: boolean;
   email: string | null;
   id: string;
+  isShippingRequired: boolean;
   lines: Line[];
   problems: CheckoutProblems;
   shippingAddress: Address | null;

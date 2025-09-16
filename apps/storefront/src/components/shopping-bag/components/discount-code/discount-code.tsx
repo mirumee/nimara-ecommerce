@@ -144,7 +144,7 @@ export const DiscountCode = ({ checkout }: { checkout: Checkout }) => {
   return (
     <>
       <div className="py-4">
-        <div className="flex items-center justify-between text-sm text-stone-700">
+        <div className="text-foreground flex items-center justify-between text-sm">
           <span>
             {t("cart.discount-code", {
               code: isCodeApplied && !isTransitioning ? `(${promoCode})` : null,
@@ -152,7 +152,7 @@ export const DiscountCode = ({ checkout }: { checkout: Checkout }) => {
           </span>
           {isTransitioning ? null : !isCodeApplied && !isOpen ? (
             <span
-              className="cursor-pointer text-stone-700 hover:underline"
+              className="dark:text-muted-foreground cursor-pointer text-stone-700 hover:underline"
               onClick={toggleOpen}
             >
               {t("cart.add-discount")}
@@ -183,7 +183,7 @@ export const DiscountCode = ({ checkout }: { checkout: Checkout }) => {
                 />
               </div>
               <Button
-                className="mt-2 rounded-sm text-stone-900"
+                className="text-primary mt-2 rounded-sm"
                 variant="outline"
                 type="submit"
                 disabled={form.formState.isSubmitting}

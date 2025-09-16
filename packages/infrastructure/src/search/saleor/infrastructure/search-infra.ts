@@ -10,9 +10,9 @@ import { THUMBNAIL_FORMAT, THUMBNAIL_SIZE_LARGE } from "#root/config";
 import { graphqlClient } from "#root/graphql/client";
 import type { SearchInfra } from "#root/use-cases/search/types";
 
-import { searchProductSerializer } from "../../serializers";
-import type { SaleorSearchServiceConfig } from "../../types";
 import { SearchProductQueryDocument } from "../graphql/queries/generated";
+import { searchProductSerializer } from "../serializers";
+import type { SaleorSearchServiceConfig } from "../types";
 
 export const saleorSearchInfra =
   ({

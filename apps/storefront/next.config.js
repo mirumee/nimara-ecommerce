@@ -103,11 +103,9 @@ const nextConfig = withAnalyzer(
     webpack: (config, { isServer }) => {
       if (isServer) {
         config.ignoreWarnings = [
-          { module: /opentelemetry/ },
           {
-            // https://github.com/getsentry/sentry-javascript/issues/15209#issuecomment-2706299540
             message:
-              /Critical dependency: require function is used in a way in which dependencies cannot be statically extracted/,
+              /Critical dependency: the request of a dependency is an expression/,
           },
         ];
       }

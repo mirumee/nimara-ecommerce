@@ -38,8 +38,18 @@ export const SUPPORTED_CURRENCIES = [
 ] as const satisfies AllCurrency[];
 export type SupportedCurrency = (typeof SUPPORTED_CURRENCIES)[number];
 
+/**
+ * Defines available channels in your Saleor instance.
+ */
+export const SUPPORTED_CHANNELS = [
+  "default-channel",
+  "channel-us",
+  "channel-uk",
+] as const;
+export type ChannelId = (typeof SUPPORTED_CHANNELS)[number];
+
 export type Market = {
-  channel: string;
+  channel: ChannelId;
   continent: Continent;
   countryCode: AllCountryCode;
   currency: SupportedCurrency;

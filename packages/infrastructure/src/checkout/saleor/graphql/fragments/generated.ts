@@ -36,27 +36,43 @@ export type CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_
 
 export type CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_media_ProductMedia = { url: string, alt: string };
 
+export type CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation = { name: string };
+
+export type CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute = { slug: string | null, inputType: Types.AttributeInputTypeEnum | null, name: string | null, translation: CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation | null };
+
+export type CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation = { name: string, plainText: string | null, richText: string | null };
+
+export type CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_file_File = { url: string };
+
+export type CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue = { slug: string | null, name: string | null, plainText: string | null, richText: string | null, boolean: boolean | null, date: string | null, dateTime: string | null, reference: string | null, value: string | null, translation: CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation | null, file: CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_file_File | null };
+
+export type CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute = { attribute: CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute, values: Array<CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue> };
+
 export type CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_thumbnail_Image = { alt: string | null, url: string };
 
 export type CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation = { name: string | null };
 
 export type CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product = { id: string, slug: string, name: string, thumbnail: CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_thumbnail_Image | null, translation: CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation | null };
 
-export type CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant = { id: string, quantityAvailable: number | null, quantityLimitPerCustomer: number | null, name: string, sku: string | null, translation: CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_translation_ProductVariantTranslation | null, media: Array<CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_media_ProductMedia> | null, product: CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product };
+export type CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money = { currency: string, amount: number };
+
+export type CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_gross_Money = { currency: string, amount: number };
+
+export type CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_tax_Money = { currency: string, amount: number };
+
+export type CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney = { net: CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money, gross: CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_gross_Money, tax: CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_tax_Money };
+
+export type CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo = { discount: CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney | null };
+
+export type CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant = { id: string, quantityAvailable: number | null, quantityLimitPerCustomer: number | null, name: string, sku: string | null, translation: CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_translation_ProductVariantTranslation | null, media: Array<CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_media_ProductMedia> | null, selectionAttributes: Array<CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute>, product: CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product, pricing: CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo | null };
 
 export type CheckoutFragment_Checkout_lines_CheckoutLine = { id: string, quantity: number, totalPrice: CheckoutFragment_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney, undiscountedTotalPrice: CheckoutFragment_Checkout_lines_CheckoutLine_undiscountedTotalPrice_Money, variant: CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant };
 
-export type CheckoutFragment_Checkout_totalPrice_TaxedMoney_net_Money = { currency: string, amount: number };
+export type CheckoutFragment_Checkout_totalPrice_TaxedMoney = { net: CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money, gross: CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_gross_Money, tax: CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_tax_Money };
 
-export type CheckoutFragment_Checkout_totalPrice_TaxedMoney_gross_Money = { currency: string, amount: number };
+export type CheckoutFragment_Checkout_subtotalPrice_TaxedMoney = { net: CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money, gross: CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_gross_Money, tax: CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_tax_Money };
 
-export type CheckoutFragment_Checkout_totalPrice_TaxedMoney_tax_Money = { currency: string, amount: number };
-
-export type CheckoutFragment_Checkout_totalPrice_TaxedMoney = { net: CheckoutFragment_Checkout_totalPrice_TaxedMoney_net_Money, gross: CheckoutFragment_Checkout_totalPrice_TaxedMoney_gross_Money, tax: CheckoutFragment_Checkout_totalPrice_TaxedMoney_tax_Money };
-
-export type CheckoutFragment_Checkout_subtotalPrice_TaxedMoney = { net: CheckoutFragment_Checkout_totalPrice_TaxedMoney_net_Money, gross: CheckoutFragment_Checkout_totalPrice_TaxedMoney_gross_Money, tax: CheckoutFragment_Checkout_totalPrice_TaxedMoney_tax_Money };
-
-export type CheckoutFragment_Checkout_shippingPrice_TaxedMoney = { net: CheckoutFragment_Checkout_totalPrice_TaxedMoney_net_Money, gross: CheckoutFragment_Checkout_totalPrice_TaxedMoney_gross_Money, tax: CheckoutFragment_Checkout_totalPrice_TaxedMoney_tax_Money };
+export type CheckoutFragment_Checkout_shippingPrice_TaxedMoney = { net: CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money, gross: CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_gross_Money, tax: CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_tax_Money };
 
 export type CheckoutFragment_Checkout_problems_CheckoutLineProblemInsufficientStock_line_CheckoutLine = { id: string, quantity: number, totalPrice: CheckoutFragment_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney, undiscountedTotalPrice: CheckoutFragment_Checkout_lines_CheckoutLine_undiscountedTotalPrice_Money, variant: CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant };
 
@@ -74,7 +90,7 @@ export type CheckoutFragment_Checkout_problems_CheckoutLineProblemVariantNotAvai
 
 export type CheckoutFragment_Checkout_problems = CheckoutFragment_Checkout_problems_CheckoutLineProblemInsufficientStock | CheckoutFragment_Checkout_problems_CheckoutLineProblemVariantNotAvailable;
 
-export type CheckoutFragment = { id: string, email: string | null, displayGrossPrices: boolean, voucherCode: string | null, authorizeStatus: Types.CheckoutAuthorizeStatusEnum, chargeStatus: Types.CheckoutChargeStatusEnum, discount: CheckoutFragment_Checkout_discount_Money | null, shippingMethods: Array<CheckoutFragment_Checkout_shippingMethods_ShippingMethod>, shippingAddress: CheckoutFragment_Checkout_shippingAddress_Address | null, billingAddress: CheckoutFragment_Checkout_billingAddress_Address | null, deliveryMethod: CheckoutFragment_Checkout_deliveryMethod_ShippingMethod_Warehouse | null, availablePaymentGateways: Array<CheckoutFragment_Checkout_availablePaymentGateways_PaymentGateway>, lines: Array<CheckoutFragment_Checkout_lines_CheckoutLine>, totalPrice: CheckoutFragment_Checkout_totalPrice_TaxedMoney, subtotalPrice: CheckoutFragment_Checkout_subtotalPrice_TaxedMoney, shippingPrice: CheckoutFragment_Checkout_shippingPrice_TaxedMoney, problems: Array<CheckoutFragment_Checkout_problems> | null };
+export type CheckoutFragment = { id: string, email: string | null, displayGrossPrices: boolean, voucherCode: string | null, isShippingRequired: boolean, authorizeStatus: Types.CheckoutAuthorizeStatusEnum, chargeStatus: Types.CheckoutChargeStatusEnum, discount: CheckoutFragment_Checkout_discount_Money | null, shippingMethods: Array<CheckoutFragment_Checkout_shippingMethods_ShippingMethod>, shippingAddress: CheckoutFragment_Checkout_shippingAddress_Address | null, billingAddress: CheckoutFragment_Checkout_billingAddress_Address | null, deliveryMethod: CheckoutFragment_Checkout_deliveryMethod_ShippingMethod_Warehouse | null, availablePaymentGateways: Array<CheckoutFragment_Checkout_availablePaymentGateways_PaymentGateway>, lines: Array<CheckoutFragment_Checkout_lines_CheckoutLine>, totalPrice: CheckoutFragment_Checkout_totalPrice_TaxedMoney, subtotalPrice: CheckoutFragment_Checkout_subtotalPrice_TaxedMoney, shippingPrice: CheckoutFragment_Checkout_shippingPrice_TaxedMoney, problems: Array<CheckoutFragment_Checkout_problems> | null };
 
 export type CheckoutProblemsFragment_CheckoutLineProblemInsufficientStock = (
   { availableQuantity: number | null, line: CheckoutFragment_Checkout_problems_CheckoutLineProblemInsufficientStock_line_CheckoutLine }
@@ -171,6 +187,7 @@ export const CheckoutFragment = new TypedDocumentString(`
   shippingPrice {
     ...TaxedMoneyFragment
   }
+  isShippingRequired
   authorizeStatus
   chargeStatus
   problems {
@@ -239,6 +256,9 @@ fragment CartLineFragment on CheckoutLine {
       url(size: $thumbnailSize, format: $thumbnailFormat)
       alt
     }
+    selectionAttributes: attributes(variantSelection: VARIANT_SELECTION) {
+      ...SelectionAttributeFragment
+    }
     product {
       id
       slug
@@ -251,11 +271,51 @@ fragment CartLineFragment on CheckoutLine {
         name
       }
     }
+    pricing {
+      discount {
+        ...TaxedMoneyFragment
+      }
+    }
   }
 }
 fragment MoneyFragment on Money {
   currency
   amount
+}
+fragment SelectionAttributeFragment on SelectedAttribute {
+  attribute {
+    ...AttributeFragment
+  }
+  values {
+    ...AttributeValueFragment
+  }
+}
+fragment AttributeFragment on Attribute {
+  slug
+  inputType
+  name
+  translation(languageCode: $languageCode) {
+    name
+  }
+}
+fragment AttributeValueFragment on AttributeValue {
+  slug
+  name
+  plainText
+  richText
+  boolean
+  date
+  dateTime
+  reference
+  value
+  translation(languageCode: $languageCode) {
+    name
+    plainText
+    richText
+  }
+  file {
+    url
+  }
 }
 fragment TaxedMoneyFragment on TaxedMoney {
   net {

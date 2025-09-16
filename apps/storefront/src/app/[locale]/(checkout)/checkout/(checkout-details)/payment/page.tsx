@@ -9,9 +9,9 @@ import { getCheckoutOrRedirect } from "@/lib/checkout";
 import { getStoreUrl } from "@/lib/server";
 import { getCurrentRegion } from "@/regions/server";
 import { type SupportedLocale } from "@/regions/types";
-import { addressService } from "@/services/address";
-import { paymentService } from "@/services/payment";
-import { userService } from "@/services/user";
+import { getAddressService } from "@/services/address";
+import { getPaymentService } from "@/services/payment";
+import { getUserService } from "@/services/user";
 
 import { DeliveryMethodSection } from "../../_sections/delivery-method-section";
 import { EmailSection } from "../../_sections/email-section";
@@ -29,15 +29,25 @@ type PageProps = {
 };
 
 export default async function Page(props: PageProps) {
-  const [{ locale }, searchParams, region, checkout, accessToken, storeUrl] =
-    await Promise.all([
-      props.params,
-      props.searchParams,
-      getCurrentRegion(),
-      getCheckoutOrRedirect(),
-      getAccessToken(),
-      getStoreUrl(),
-    ]);
+  const [
+    { locale },
+    searchParams,
+    region,
+    checkout,
+    accessToken,
+    storeUrl,
+    userService,
+    addressService,
+  ] = await Promise.all([
+    props.params,
+    props.searchParams,
+    getCurrentRegion(),
+    getCheckoutOrRedirect(),
+    getAccessToken(),
+    getStoreUrl(),
+    getUserService(),
+    getAddressService(),
+  ]);
 
   const resultUserGet = await userService.userGet(accessToken);
   const user = resultUserGet.ok ? resultUserGet.data : null;
@@ -121,6 +131,7 @@ export default async function Page(props: PageProps) {
   let paymentGatewayMethods: PaymentMethod[] = [];
 
   if (user) {
+    const paymentService = await getPaymentService();
     const resultPaymentGatewayCustomer = await paymentService.customerGet({
       user,
       channel: region.market.channel,
@@ -147,8 +158,12 @@ export default async function Page(props: PageProps) {
   return (
     <>
       <EmailSection checkout={checkout} user={user} />
-      <ShippingAddressSection checkout={checkout} locale={locale} />
-      <DeliveryMethodSection checkout={checkout} />
+      {checkout.isShippingRequired && (
+        <>
+          <ShippingAddressSection checkout={checkout} locale={locale} />
+          <DeliveryMethodSection checkout={checkout} />
+        </>
+      )}
       <PaymentSection>
         <Payment
           paymentGatewayCustomer={paymentGatewayCustomer?.customerId}

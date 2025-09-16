@@ -1,16 +1,8 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalEnv": [
-    "NEXT_PUBLIC_STOREFRONT_URL",
-    "CMS_SERVICE",
-    "EDGE_CONFIG",
-    "NEXT_PUBLIC_SALEOR_API_URL",
-    "TEST_ENV_URL",
-    "USER_EMAIL",
-    "USER_PASSWORD"
-  ],
   "globalPassThroughEnv": [
     "AUTH_SECRET",
+    "ENVIRONMENT",
     "LOG_LEVEL",
     "SALEOR_APP_TOKEN",
     "SENTRY_AUTH_TOKEN",
@@ -19,16 +11,34 @@
     "SENTRY_ENVIRONMENT",
     "SENTRY_ORG",
     "SENTRY_PROJECT",
-    "STRIPE_SECRET_KEY"
+    "STRIPE_SECRET_KEY",
+    "TEST_ENV_URL",
+    "USER_EMAIL",
+    "USER_PASSWORD"
   ],
+  "remoteCache": {
+    "enabled": true
+  },
   "ui": "stream",
   "tasks": {
     "build": {
       "dependsOn": ["^codegen", "^build"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "outputs": [".next/**", "!.next/cache/**"],
+      "env": [
+        "ANALYZE",
+        "NEXT_PUBLIC_CMS_SERVICE",
+        "NEXT_PUBLIC_SALEOR_API_URL",
+        "NEXT_PUBLIC_SEARCH_SERVICE",
+        "NEXT_PUBLIC_STOREFRONT_URL"
+      ],
+      "inputs": ["$TURBO_DEFAULT$", "!.next/**"]
+    },
+    "stripe#build": {
+      "env": ["CONFIG_KEY", "VERCEL_EDGE_CONFIG_ID"]
     },
     "codegen": {
       "dependsOn": ["^codegen"],
+      "env": ["NEXT_PUBLIC_SALEOR_API_URL"],
       "outputs": ["./schema.ts", "./graphql/**"],
       "inputs": ["../../**/*.graphql"]
     },
@@ -48,7 +58,6 @@
     },
     "test:e2e": {
       "dependsOn": ["^test:e2e"],
-      "env": ["TEST_ENV_URL", "USER_EMAIL", "USER_PASSWORD"],
       "cache": false
     },
     "test:all": {
