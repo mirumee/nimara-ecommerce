@@ -9,7 +9,7 @@ import { Form } from "@nimara/ui/components/form";
 
 import { TextFormField } from "@/components/form/text-form-field";
 import { MIN_PASSWORD_LENGTH } from "@/config";
-import { Link } from "@/i18n/routing";
+import { LocalizedLink } from "@/i18n/routing";
 import { useRouterWithState } from "@/lib/hooks";
 import { paths } from "@/lib/paths";
 
@@ -111,20 +111,20 @@ export function SignUpForm() {
           <p className="dark:text-muted-foreground text-sm text-stone-700">
             {t.rich("auth.create-account-agreement", {
               termsOfUse: () => (
-                <Link
+                <LocalizedLink
                   href={paths.termsOfUse.asPath()}
                   className="underline decoration-gray-400 underline-offset-2 dark:decoration-gray-300"
                 >
                   {t("common.terms-of-use")}
-                </Link>
+                </LocalizedLink>
               ),
               privacyPolicy: () => (
-                <Link
+                <LocalizedLink
                   href={paths.privacyPolicy.asPath()}
                   className="underline decoration-gray-400 underline-offset-2 dark:decoration-gray-300"
                 >
                   {t("common.privacy-policy")}
-                </Link>
+                </LocalizedLink>
               ),
             })}
           </p>

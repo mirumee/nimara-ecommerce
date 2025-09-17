@@ -9,7 +9,7 @@ import type { SearchProduct } from "@nimara/domain/objects/SearchProduct";
 import productPlaceholder from "@/assets/product_placeholder.svg?url";
 import { DiscountBadge } from "@/components/discount-badge";
 import { getDiscountInfo, Price } from "@/components/price";
-import { Link } from "@/i18n/routing";
+import { LocalizedLink } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 
 import { ProductImagePlaceholder } from "./product-image-placeholder";
@@ -40,7 +40,7 @@ export const SearchProductCard = ({
 
   return (
     <article className="row-span-3">
-      <Link
+      <LocalizedLink
         className="grid gap-2"
         title={t(`search.go-to-product`, { name })}
         href={paths.products.asPath({
@@ -71,7 +71,7 @@ export const SearchProductCard = ({
           <ProductName>{name}</ProductName>
           <Price price={price} undiscountedPrice={undiscountedPrice} />
         </div>
-      </Link>
+      </LocalizedLink>
     </article>
   );
 };

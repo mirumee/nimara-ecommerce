@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { Button } from "@nimara/ui/components/button";
 import { cn } from "@nimara/ui/lib/utils";
 
-import { Link, usePathname } from "@/i18n/routing";
+import { LocalizedLink, usePathname } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 import { type TranslationMessage } from "@/types";
 
@@ -45,7 +45,7 @@ export function SideLinks() {
               "text-primary w-full justify-start px-4 py-2 text-sm font-medium md:px-2 md:py-1.5 md:font-normal",
             )}
           >
-            <Link href={link.href}>{t(link.title)}</Link>
+            <LocalizedLink href={link.href}>{t(link.title)}</LocalizedLink>
           </Button>
         </li>
       ))}

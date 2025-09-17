@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { getAccessToken } from "@/auth";
 import { clientEnvs } from "@/envs/client";
 import { serverEnvs } from "@/envs/server";
-import { Link, redirect } from "@/i18n/routing";
+import { LocalizedLink, redirect } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 import { getStoreUrl } from "@/lib/server";
 import { getCurrentRegion } from "@/regions/server";
@@ -61,13 +61,13 @@ export default async function Page(props: PageProps) {
     } else {
       error = t.rich("errors.GENERIC_PAYMENT_ERROR", {
         link: (chunks) => (
-          <Link
+          <LocalizedLink
             href={`mailto:${clientEnvs.NEXT_PUBLIC_DEFAULT_EMAIL}`}
             className="underline"
             target="_blank"
           >
             {chunks}
-          </Link>
+          </LocalizedLink>
         ),
       });
     }

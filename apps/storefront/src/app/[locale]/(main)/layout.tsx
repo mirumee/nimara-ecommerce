@@ -1,7 +1,7 @@
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { CACHE_TTL } from "@/config";
-import { getStoreLocale } from "@/lib/server";
+import { getLocalePrefix } from "@/lib/server";
 import { getCurrentRegion } from "@/regions/server";
 import { cmsMenuService } from "@/services/cms";
 
@@ -10,7 +10,7 @@ import { Navigation } from "./_components/navigation";
 export default async function Layout({ children }: LayoutProps<"/[locale]">) {
   const [region, locale] = await Promise.all([
     getCurrentRegion(),
-    getStoreLocale(),
+    getLocalePrefix(),
   ]);
 
   const resultMenu = await cmsMenuService.menuGet({

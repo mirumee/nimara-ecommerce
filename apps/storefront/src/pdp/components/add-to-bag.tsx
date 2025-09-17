@@ -8,7 +8,7 @@ import { Button } from "@nimara/ui/components/button";
 import { ToastAction } from "@nimara/ui/components/toast";
 import { useToast } from "@nimara/ui/hooks";
 
-import { Link } from "@/i18n/routing";
+import { LocalizedLink } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 import type { TranslationMessage } from "@/types";
 
@@ -47,9 +47,12 @@ export const AddToBag = ({ variantId, isVariantAvailable }: AddToBagProps) => {
         description: t("common.product-added"),
         action: (
           <ToastAction altText={t("common.go-to-bag")} asChild>
-            <Link href={paths.cart.asPath()} className="whitespace-nowrap">
+            <LocalizedLink
+              href={paths.cart.asPath()}
+              className="whitespace-nowrap"
+            >
               {t("common.go-to-bag")}
-            </Link>
+            </LocalizedLink>
           </ToastAction>
         ),
       });

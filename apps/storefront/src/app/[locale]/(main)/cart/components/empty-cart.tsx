@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 
 import { Button } from "@nimara/ui/components/button";
 
-import { Link } from "@/i18n/routing";
+import { LocalizedLink } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 
 export const EmptyCart = () => {
@@ -18,9 +18,9 @@ export const EmptyCart = () => {
         {t("site.check-out-our-store")}
       </p>
 
-      <Link href={paths.home.asPath()}>
+      <LocalizedLink href={paths.home.asPath()}>
         <Button>{t("site.explore-our-store")}</Button>
-      </Link>
+      </LocalizedLink>
     </div>
   );
 };

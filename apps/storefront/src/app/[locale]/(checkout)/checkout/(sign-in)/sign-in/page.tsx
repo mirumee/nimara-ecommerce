@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { Button } from "@nimara/ui/components/button";
 
 import { SignInForm } from "@/components/sign-in-form";
-import { Link } from "@/i18n/routing";
+import { LocalizedLink } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 
 export default async function Page() {
@@ -28,9 +28,9 @@ export default async function Page() {
             {t("by-creating-account")}
           </p>
           <Button className="my-4 w-full" variant="outline" asChild>
-            <Link href={paths.createAccount.asPath()}>
+            <LocalizedLink href={paths.createAccount.asPath()}>
               {t("create-account")}
-            </Link>
+            </LocalizedLink>
           </Button>
         </div>
         <div>
@@ -41,7 +41,9 @@ export default async function Page() {
             {t("you-wont-have-access")}
           </p>
           <Button className="my-4 w-full" variant="outline" asChild>
-            <Link href={paths.checkout.asPath()}>{t("continue-as-guest")}</Link>
+            <LocalizedLink href={paths.checkout.asPath()}>
+              {t("continue-as-guest")}
+            </LocalizedLink>
           </Button>
         </div>
       </div>
