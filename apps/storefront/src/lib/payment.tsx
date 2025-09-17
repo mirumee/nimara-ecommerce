@@ -10,7 +10,7 @@ import type {
 } from "@nimara/domain/objects/Payment";
 
 import { clientEnvs } from "@/envs/client";
-import { Link } from "@/i18n/routing";
+import { LocalizedLink } from "@/i18n/routing";
 import { translateOrFallback } from "@/lib/i18n/helpers";
 import type { GetTranslations } from "@/types";
 
@@ -61,13 +61,13 @@ export const translateApiErrors = ({
 }) => {
   const defaultErrorMessage = t.rich("errors.GENERIC_PAYMENT_ERROR", {
     link: (chunks) => (
-      <Link
+      <LocalizedLink
         href={`mailto:${clientEnvs.NEXT_PUBLIC_DEFAULT_EMAIL}`}
         className="underline"
         target="_blank"
       >
         {chunks}
-      </Link>
+      </LocalizedLink>
     ),
   }) as ReactNode;
 

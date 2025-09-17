@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { Button } from "@nimara/ui/components/button";
 
 import { SignInForm } from "@/components/sign-in-form";
-import { Link } from "@/i18n/routing";
+import { LocalizedLink } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 
 export async function generateMetadata() {
@@ -28,9 +28,9 @@ export default async function LoginPage() {
           {t("auth.first-time-on-nimara-store")}
         </h2>
         <Button asChild className="w-full" variant="outline">
-          <Link href={paths.createAccount.asPath()}>
+          <LocalizedLink href={paths.createAccount.asPath()}>
             {t("auth.create-account")}
-          </Link>
+          </LocalizedLink>
         </Button>
       </div>
     </div>

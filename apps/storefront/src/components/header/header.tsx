@@ -7,7 +7,7 @@ import { Button } from "@nimara/ui/components/button";
 import { getAccessToken } from "@/auth";
 import { LocaleSwitch } from "@/components/locale-switch";
 import { CACHE_TTL } from "@/config";
-import { Link } from "@/i18n/routing";
+import { LocalizedLink } from "@/i18n/routing";
 import { getCheckoutId } from "@/lib/actions/cart";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
@@ -110,14 +110,14 @@ export const Header = async () => {
                   : t("account.profile-of", { user: user?.firstName })
               }
             >
-              <Link
+              <LocalizedLink
                 href={
                   !user ? paths.signIn.asPath() : paths.account.profile.asPath()
                 }
               >
                 <User className="h-4 w-4" />
                 {user?.firstName && user.firstName}
-              </Link>
+              </LocalizedLink>
             </Button>
 
             <Suspense fallback={<ShoppingBagIcon />}>

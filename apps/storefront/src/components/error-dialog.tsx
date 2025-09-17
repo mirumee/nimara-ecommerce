@@ -15,7 +15,7 @@ import {
 } from "@nimara/ui/components/dialog";
 
 import { Line } from "@/components/shopping-bag/components/line";
-import { Link } from "@/i18n/routing";
+import { LocalizedLink } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 
 type ErrorDialogProps = {
@@ -60,9 +60,9 @@ export const ErrorDialog = ({ checkout }: ErrorDialogProps) => {
           <div className="grid w-full gap-4">
             <DialogClose asChild>
               <Button asChild>
-                <Link href={paths.cart.asPath()}>
+                <LocalizedLink href={paths.cart.asPath()}>
                   {t("stock-errors.back-to-cart")}
-                </Link>
+                </LocalizedLink>
               </Button>
             </DialogClose>
           </div>

@@ -2,7 +2,7 @@ import { getTranslations } from "next-intl/server";
 
 import { Button } from "@nimara/ui/components/button";
 
-import { Link } from "@/i18n/routing";
+import { LocalizedLink } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 
 import { SignUpForm } from "./form";
@@ -36,9 +36,9 @@ export default async function SignUpPage(props: {
             </p>
           </div>
           <Button asChild className="w-full">
-            <Link href={paths.home.asPath()}>
+            <LocalizedLink href={paths.home.asPath()}>
               {t("common.back-to-homepage")}
-            </Link>
+            </LocalizedLink>
           </Button>
         </>
       ) : (
@@ -56,7 +56,9 @@ export default async function SignUpPage(props: {
               {t("auth.already-have-an-account")}
             </h2>
             <Button asChild className="w-full" variant="outline">
-              <Link href={paths.signIn.asPath()}>{t("auth.sign-in")}</Link>
+              <LocalizedLink href={paths.signIn.asPath()}>
+                {t("auth.sign-in")}
+              </LocalizedLink>
             </Button>
           </div>
         </>

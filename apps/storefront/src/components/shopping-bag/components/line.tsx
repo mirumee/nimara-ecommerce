@@ -27,7 +27,7 @@ import { cn } from "@nimara/ui/lib/utils";
 
 import { Price } from "@/components/price"; // Adjust the path as needed
 import { ProductImagePlaceholder } from "@/components/product-image-placeholder";
-import { Link } from "@/i18n/routing";
+import { LocalizedLink } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 
 type LineQuantityChange = (lineId: string, quantity: number) => Promise<void>;
@@ -132,7 +132,7 @@ export const Line = ({
   return (
     <div className="grid grid-cols-12 grid-rows-2 items-start gap-2 md:grid-rows-1 md:items-center [&>*]:transition-colors">
       <div className="col-span-2 row-span-2 h-full p-[5px] md:row-span-1">
-        <Link title={name} href={href}>
+        <LocalizedLink title={name} href={href}>
           {thumbnail ? (
             <Image
               src={thumbnail.url}
@@ -152,7 +152,7 @@ export const Line = ({
               className={cn(isOutOfStock && "grayscale")}
             />
           )}
-        </Link>
+        </LocalizedLink>
       </div>
 
       <div
@@ -160,7 +160,7 @@ export const Line = ({
           "md:col-span-6": !isLineEditable,
         })}
       >
-        <Link title={name} href={href} className="grow">
+        <LocalizedLink title={name} href={href} className="grow">
           <p
             className={cn("text-foreground text-sm", {
               "text-stone-400": isOutOfStock,
@@ -168,7 +168,7 @@ export const Line = ({
           >
             {name}
           </p>
-        </Link>
+        </LocalizedLink>
       </div>
 
       <div className="col-span-5 row-span-2 flex hidden items-center gap-2 md:col-span-2 md:row-span-1 md:flex">

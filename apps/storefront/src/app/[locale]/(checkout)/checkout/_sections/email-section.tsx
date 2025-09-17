@@ -4,7 +4,7 @@ import type { Checkout } from "@nimara/domain/objects/Checkout";
 import type { User } from "@nimara/domain/objects/User";
 import { Button } from "@nimara/ui/components/button";
 
-import { Link } from "@/i18n/routing";
+import { LocalizedLink } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 import { getCheckoutService } from "@/services/checkout";
 import { storefrontLogger } from "@/services/logging";
@@ -56,9 +56,9 @@ export const EmailSection = async ({
             </p>
           </div>
           <Button variant="outline" asChild>
-            <Link href={paths.checkout.userDetails.asPath()}>
+            <LocalizedLink href={paths.checkout.userDetails.asPath()}>
               {t("common.edit")}
-            </Link>
+            </LocalizedLink>
           </Button>
         </section>
       )}
