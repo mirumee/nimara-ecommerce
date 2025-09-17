@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 
 import { paths } from "@/lib/paths";
-import { authService } from "@/services/auth";
+import { getAuthService } from "@/services/auth";
 
 import { type NewPasswordFormSchema } from "./schema";
 
@@ -13,6 +13,7 @@ export async function setPassword({ password }: NewPasswordFormSchema) {
   const email = searchParams.get("email") ?? "";
   const token = searchParams.get("token") ?? "";
 
+  const authService = await getAuthService();
   const result = await authService.passwordSet({ email, password, token });
 
   if (result.ok) {

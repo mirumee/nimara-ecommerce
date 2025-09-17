@@ -15,7 +15,7 @@ export const getStoreUrl = async () => {
     : `${domain}${localePrefixes[locale as Exclude<SupportedLocale, typeof DEFAULT_LOCALE>]}`;
 };
 
-export const getStoreLocale = async (): Promise<string> => {
+export const getLocalePrefix = async (): Promise<string> => {
   const locale = await getLocale();
 
   if (locale === DEFAULT_LOCALE) {

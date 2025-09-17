@@ -20,7 +20,7 @@ import { Label } from "@nimara/ui/components/label";
 import { Spinner } from "@nimara/ui/components/spinner";
 
 import { clientEnvs } from "@/envs/client";
-import { Link } from "@/i18n/routing";
+import { LocalizedLink } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 
 import { requestUserAccountDeletion } from "./actions";
@@ -43,15 +43,15 @@ export function DeleteAccountModal() {
           <DialogTitle>{t("account.confirm-account-deletion")}</DialogTitle>
         </DialogHeader>
         <div className="space-y-6">
-          <p className="text-sm text-stone-500">
+          <p className="dark:text-muted-foreground text-sm text-stone-500">
             {t("account.confirm-account-deletion-description")}
           </p>
           <DialogFooter>
             <DialogClose asChild className="mt-4 w-full">
               <Button asChild>
-                <Link href={paths.account.privacySettings.asPath()}>
+                <LocalizedLink href={paths.account.privacySettings.asPath()}>
                   {t("account.ok-i-will-check-my-email")}
-                </Link>
+                </LocalizedLink>
               </Button>
             </DialogClose>
           </DialogFooter>
@@ -71,25 +71,25 @@ export function DeleteAccountModal() {
             </p>
           ) : (
             <>
-              <p className="text-sm text-stone-500">
+              <p className="dark:text-muted-foreground text-sm text-stone-500">
                 {t("account.delete-account-modal-description")}{" "}
                 {t.rich("account.in-case-of-any-questions", {
                   contactUs: () => (
-                    <Link
+                    <LocalizedLink
                       href={`mailto:${clientEnvs.NEXT_PUBLIC_DEFAULT_EMAIL}`}
-                      className="underline decoration-gray-400 underline-offset-2"
+                      className="underline decoration-gray-400 underline-offset-2 dark:decoration-gray-300"
                       target="_blank"
                     >
                       {t("common.contact-us")}
-                    </Link>
+                    </LocalizedLink>
                   ),
                   privacyPolicy: () => (
-                    <Link
+                    <LocalizedLink
                       href={paths.privacyPolicy.asPath()}
-                      className="underline decoration-gray-400 underline-offset-2"
+                      className="underline decoration-gray-400 underline-offset-2 dark:decoration-gray-300"
                     >
                       {t("common.privacy-policy")}
-                    </Link>
+                    </LocalizedLink>
                   ),
                 })}
               </p>

@@ -1,8 +1,8 @@
 "use client";
 
-import { MenuIcon, ShoppingBagIcon, User as UserIcon } from "lucide-react";
+import { MenuIcon, User as UserIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Suspense, useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 
 import type { Menu } from "@nimara/domain/objects/Menu";
 import type { User } from "@nimara/domain/objects/User";
@@ -11,7 +11,7 @@ import { DialogTitle } from "@nimara/ui/components/dialog";
 import { Sheet, SheetContent } from "@nimara/ui/components/sheet";
 
 import { MobileNavigation } from "@/components/mobile-navigation";
-import { Link, usePathname } from "@/i18n/routing";
+import { LocalizedLink, usePathname } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 import { cn } from "@/lib/utils";
 import { useCurrentRegion } from "@/regions/client";
@@ -19,14 +19,16 @@ import { useCurrentRegion } from "@/regions/client";
 import { LocaleSwitch } from "../locale-switch";
 import { Logo } from "./logo";
 import { MobileSearch } from "./mobile-search";
-import { ShoppingBagIconWithCount } from "./shopping-bag-icon-with-count";
+import { ThemeToggle } from "./theme-toggle";
 
 export const MobileSideMenu = ({
   checkoutLinesCount,
   menu,
   user,
+  children,
 }: {
   checkoutLinesCount: number;
+  children: ReactNode;
   menu: Menu | null | undefined;
   user: User | null;
 }) => {
@@ -72,19 +74,18 @@ export const MobileSideMenu = ({
                 <Logo />
                 <div className="flex justify-end gap-1 align-middle">
                   <MobileSearch />
-                  <Suspense fallback={<ShoppingBagIcon />}>
-                    <ShoppingBagIconWithCount count={checkoutLinesCount} />
-                  </Suspense>
+                  <ThemeToggle />
+                  {children}
                 </div>
               </div>
               <MobileNavigation
                 menu={menu}
                 onMenuItemClick={handleMenuItemClick}
               />
-              <div className="mt-auto flex w-full items-center justify-between bg-white">
+              <div className="bg-background mt-auto flex w-full items-center justify-between">
                 <LocaleSwitch region={region} />
                 <Button asChild variant="ghost" className="inline-flex gap-1.5">
-                  <Link
+                  <LocalizedLink
                     href={
                       !user
                         ? paths.signIn.asPath()
@@ -93,7 +94,7 @@ export const MobileSideMenu = ({
                   >
                     <UserIcon className="h-4 w-4" />
                     {user?.firstName ?? t("auth.sign-in")}
-                  </Link>
+                  </LocalizedLink>
                 </Button>
               </div>
             </div>

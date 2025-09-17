@@ -34,27 +34,43 @@ export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_Produ
 
 export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_media_ProductMedia = { url: string, alt: string };
 
+export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation = { name: string };
+
+export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute = { slug: string | null, inputType: Types.AttributeInputTypeEnum | null, name: string | null, translation: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation | null };
+
+export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation = { name: string, plainText: string | null, richText: string | null };
+
+export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_file_File = { url: string };
+
+export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue = { slug: string | null, name: string | null, plainText: string | null, richText: string | null, boolean: boolean | null, date: string | null, dateTime: string | null, reference: string | null, value: string | null, translation: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation | null, file: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_file_File | null };
+
+export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute = { attribute: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute, values: Array<CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue> };
+
 export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_thumbnail_Image = { alt: string | null, url: string };
 
 export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation = { name: string | null };
 
 export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product = { id: string, slug: string, name: string, thumbnail: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_thumbnail_Image | null, translation: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation | null };
 
-export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant = { id: string, quantityAvailable: number | null, quantityLimitPerCustomer: number | null, name: string, sku: string | null, translation: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_translation_ProductVariantTranslation | null, media: Array<CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_media_ProductMedia> | null, product: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product };
+export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money = { currency: string, amount: number };
+
+export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_gross_Money = { currency: string, amount: number };
+
+export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_tax_Money = { currency: string, amount: number };
+
+export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney = { net: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money, gross: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_gross_Money, tax: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_tax_Money };
+
+export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo = { discount: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney | null };
+
+export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant = { id: string, quantityAvailable: number | null, quantityLimitPerCustomer: number | null, name: string, sku: string | null, translation: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_translation_ProductVariantTranslation | null, media: Array<CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_media_ProductMedia> | null, selectionAttributes: Array<CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute>, product: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product, pricing: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo | null };
 
 export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine = { id: string, quantity: number, totalPrice: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney, undiscountedTotalPrice: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_undiscountedTotalPrice_Money, variant: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant };
 
-export type CheckoutFindQuery_checkout_Checkout_totalPrice_TaxedMoney_net_Money = { currency: string, amount: number };
+export type CheckoutFindQuery_checkout_Checkout_totalPrice_TaxedMoney = { net: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money, gross: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_gross_Money, tax: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_tax_Money };
 
-export type CheckoutFindQuery_checkout_Checkout_totalPrice_TaxedMoney_gross_Money = { currency: string, amount: number };
+export type CheckoutFindQuery_checkout_Checkout_subtotalPrice_TaxedMoney = { net: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money, gross: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_gross_Money, tax: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_tax_Money };
 
-export type CheckoutFindQuery_checkout_Checkout_totalPrice_TaxedMoney_tax_Money = { currency: string, amount: number };
-
-export type CheckoutFindQuery_checkout_Checkout_totalPrice_TaxedMoney = { net: CheckoutFindQuery_checkout_Checkout_totalPrice_TaxedMoney_net_Money, gross: CheckoutFindQuery_checkout_Checkout_totalPrice_TaxedMoney_gross_Money, tax: CheckoutFindQuery_checkout_Checkout_totalPrice_TaxedMoney_tax_Money };
-
-export type CheckoutFindQuery_checkout_Checkout_subtotalPrice_TaxedMoney = { net: CheckoutFindQuery_checkout_Checkout_totalPrice_TaxedMoney_net_Money, gross: CheckoutFindQuery_checkout_Checkout_totalPrice_TaxedMoney_gross_Money, tax: CheckoutFindQuery_checkout_Checkout_totalPrice_TaxedMoney_tax_Money };
-
-export type CheckoutFindQuery_checkout_Checkout_shippingPrice_TaxedMoney = { net: CheckoutFindQuery_checkout_Checkout_totalPrice_TaxedMoney_net_Money, gross: CheckoutFindQuery_checkout_Checkout_totalPrice_TaxedMoney_gross_Money, tax: CheckoutFindQuery_checkout_Checkout_totalPrice_TaxedMoney_tax_Money };
+export type CheckoutFindQuery_checkout_Checkout_shippingPrice_TaxedMoney = { net: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money, gross: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_gross_Money, tax: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_tax_Money };
 
 export type CheckoutFindQuery_checkout_Checkout_problems_CheckoutLineProblemInsufficientStock_line_CheckoutLine = { id: string, quantity: number, totalPrice: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney, undiscountedTotalPrice: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_undiscountedTotalPrice_Money, variant: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant };
 
@@ -72,7 +88,7 @@ export type CheckoutFindQuery_checkout_Checkout_problems_CheckoutLineProblemVari
 
 export type CheckoutFindQuery_checkout_Checkout_problems = CheckoutFindQuery_checkout_Checkout_problems_CheckoutLineProblemInsufficientStock | CheckoutFindQuery_checkout_Checkout_problems_CheckoutLineProblemVariantNotAvailable;
 
-export type CheckoutFindQuery_checkout_Checkout = { id: string, email: string | null, displayGrossPrices: boolean, voucherCode: string | null, authorizeStatus: Types.CheckoutAuthorizeStatusEnum, chargeStatus: Types.CheckoutChargeStatusEnum, discount: CheckoutFindQuery_checkout_Checkout_discount_Money | null, shippingMethods: Array<CheckoutFindQuery_checkout_Checkout_shippingMethods_ShippingMethod>, shippingAddress: CheckoutFindQuery_checkout_Checkout_shippingAddress_Address | null, billingAddress: CheckoutFindQuery_checkout_Checkout_billingAddress_Address | null, deliveryMethod: CheckoutFindQuery_checkout_Checkout_deliveryMethod_ShippingMethod_Warehouse | null, availablePaymentGateways: Array<CheckoutFindQuery_checkout_Checkout_availablePaymentGateways_PaymentGateway>, lines: Array<CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine>, totalPrice: CheckoutFindQuery_checkout_Checkout_totalPrice_TaxedMoney, subtotalPrice: CheckoutFindQuery_checkout_Checkout_subtotalPrice_TaxedMoney, shippingPrice: CheckoutFindQuery_checkout_Checkout_shippingPrice_TaxedMoney, problems: Array<CheckoutFindQuery_checkout_Checkout_problems> | null };
+export type CheckoutFindQuery_checkout_Checkout = { id: string, email: string | null, displayGrossPrices: boolean, voucherCode: string | null, isShippingRequired: boolean, authorizeStatus: Types.CheckoutAuthorizeStatusEnum, chargeStatus: Types.CheckoutChargeStatusEnum, discount: CheckoutFindQuery_checkout_Checkout_discount_Money | null, shippingMethods: Array<CheckoutFindQuery_checkout_Checkout_shippingMethods_ShippingMethod>, shippingAddress: CheckoutFindQuery_checkout_Checkout_shippingAddress_Address | null, billingAddress: CheckoutFindQuery_checkout_Checkout_billingAddress_Address | null, deliveryMethod: CheckoutFindQuery_checkout_Checkout_deliveryMethod_ShippingMethod_Warehouse | null, availablePaymentGateways: Array<CheckoutFindQuery_checkout_Checkout_availablePaymentGateways_PaymentGateway>, lines: Array<CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine>, totalPrice: CheckoutFindQuery_checkout_Checkout_totalPrice_TaxedMoney, subtotalPrice: CheckoutFindQuery_checkout_Checkout_subtotalPrice_TaxedMoney, shippingPrice: CheckoutFindQuery_checkout_Checkout_shippingPrice_TaxedMoney, problems: Array<CheckoutFindQuery_checkout_Checkout_problems> | null };
 
 export type CheckoutFindQuery_Query = { checkout: CheckoutFindQuery_checkout_Checkout | null };
 
@@ -167,6 +183,7 @@ export const CheckoutFindQueryDocument = new TypedDocumentString(`
   shippingPrice {
     ...TaxedMoneyFragment
   }
+  isShippingRequired
   authorizeStatus
   chargeStatus
   problems {
@@ -220,6 +237,9 @@ fragment CartLineFragment on CheckoutLine {
       url(size: $thumbnailSize, format: $thumbnailFormat)
       alt
     }
+    selectionAttributes: attributes(variantSelection: VARIANT_SELECTION) {
+      ...SelectionAttributeFragment
+    }
     product {
       id
       slug
@@ -232,11 +252,51 @@ fragment CartLineFragment on CheckoutLine {
         name
       }
     }
+    pricing {
+      discount {
+        ...TaxedMoneyFragment
+      }
+    }
   }
 }
 fragment MoneyFragment on Money {
   currency
   amount
+}
+fragment SelectionAttributeFragment on SelectedAttribute {
+  attribute {
+    ...AttributeFragment
+  }
+  values {
+    ...AttributeValueFragment
+  }
+}
+fragment AttributeFragment on Attribute {
+  slug
+  inputType
+  name
+  translation(languageCode: $languageCode) {
+    name
+  }
+}
+fragment AttributeValueFragment on AttributeValue {
+  slug
+  name
+  plainText
+  richText
+  boolean
+  date
+  dateTime
+  reference
+  value
+  translation(languageCode: $languageCode) {
+    name
+    plainText
+    richText
+  }
+  file {
+    url
+  }
 }
 fragment TaxedMoneyFragment on TaxedMoney {
   net {

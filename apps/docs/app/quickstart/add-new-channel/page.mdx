@@ -1,0 +1,187 @@
+import { Steps } from "nextra/components";
+
+# Adding a new channel, language and market in Nimara
+
+Nimara storefront currently supports two sales channels: **gb** (Great Britain) and **us** (United States). This guide will walk you through adding a new channel, language, and market (for example, Spanish/Spain) to your Nimara storefront.
+
+<Steps>
+### Add a new sales channel in Saleor
+Go to your Saleor dashboard -> **Configuration** → **Channels** → click **Create Channel**.
+
+Enter the channel details. Assign appropriate shipping zones (e.g., “Europe” for Spain).
+
+After creating the channel, assign the products you want to offer in this channel.
+
+### Update types Locales, Languages, and Currencies
+
+Edit `types.ts`:
+
+- extend `SUPPORTED_LANGUAGES` by adding your new language code (e.g., "es" for Spanish):
+
+```ts filename="apps/storefront/src/regions/types.ts"
+/**
+ * Defines available languages in the App.
+ */
+
+export const SUPPORTED_LANGUAGES = ["us", "gb", "es"] as const;
+export type LanguageId = (typeof SUPPORTED_LANGUAGES)[number];
+```
+
+- extend `SUPPORTED_LOCALES` (e.g., "es-ES" for Spanish):
+
+```ts filename="apps/storefront/src/regions/types.ts"
+export const SUPPORTED_LOCALES = [
+  "en-GB",
+  "en-US",
+  "es-ES",
+] as const satisfies AllLocale[];
+export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
+export const DEFAULT_LOCALE = "en-US" as const satisfies AllLocale;
+```
+
+- if you want to add a brand new sales channel (not just a new language for an existing channel), also extend `SUPPORTED_MARKETS`:
+
+```ts filename="apps/storefront/src/regions/types.ts"
+/**
+ * Defines available markets in the App.
+ */
+
+export const SUPPORTED_MARKETS = ["gb", "us", "es"] as const;
+export type MarketId = (typeof SUPPORTED_MARKETS)[number];
+```
+
+- add the currency for the new market:
+
+```ts filename="apps/storefront/src/regions/types.ts"
+/**
+ * Defines supported currencies in the App.
+ */
+
+export const SUPPORTED_CURRENCIES = [
+  "USD",
+  "GBP",
+  "EUR",
+] as const satisfies AllCurrency[];
+export type SupportedCurrency = (typeof SUPPORTED_CURRENCIES)[number];
+```
+
+### Update routing for the new locale
+
+Edit `routing.ts`:
+
+- add a locale prefix for your new locale:
+
+```ts filename="apps/storefront/src/i18n/routing.ts"
+export const localePrefixes = {
+  "en-GB": "/gb",
+  "es-ES": "/es",
+} as const satisfies Record<
+  Exclude<SupportedLocale, typeof DEFAULT_LOCALE>,
+  string
+>;
+```
+
+### Register the locale globally
+
+Edit `consts.ts`:
+
+- add the new locale:
+
+```ts filename="packages/domain/src/consts.ts":
+export const ALL_LOCALES = [
+  "en",
+  "en-US",
+  "en-GB",
+  "ja-JP",
+  "pl-PL",
+  "es-ES",
+] as const;
+```
+
+### Configure locale, language and market
+
+Edit `config.ts`:
+
+- map the locale to the channel:
+
+```ts filename="apps/storefront/src/regions/config.ts":
+export const LOCALE_CHANNEL_MAP: Record<
+  SupportedLocale,
+  (typeof SUPPORTED_MARKETS)[number]
+> = {
+  "en-GB": "gb",
+  "en-US": "us",
+  "es-ES": "es",
+};
+```
+
+- add language entry:
+
+```ts filename="apps/storefront/src/regions/config.ts":
+export const LANGUAGES = {
+  GB: {
+    id: "gb",
+    name: "English (United Kingdom)",
+    code: "EN_GB",
+    locale: "en-GB",
+  },
+  US: {
+    id: "us",
+    name: "English (United States)",
+    code: "EN_US",
+    locale: "en-US",
+  },
+
+  ES: {
+    id: "es",
+    name: "Español (España)",
+    code: "ES_ES",
+    locale: "es-ES",
+  },
+} satisfies Record<Uppercase<LanguageId>, Language>;
+```
+
+- define the market:
+
+```ts filename="apps/storefront/src/regions/config.ts":
+export const MARKETS = {
+  GB: {
+    id: "gb",
+    name: "United Kingdom",
+    channel: "channel-uk",
+    currency: "GBP",
+    continent: "Europe",
+    countryCode: "GB",
+    defaultLanguage: LANGUAGES.GB,
+    supportedLanguages: [LANGUAGES.GB],
+  },
+  US: {
+    id: "us",
+    name: "United States of America",
+    channel: "channel-us",
+    currency: "USD",
+    continent: "North America",
+    countryCode: "US",
+    defaultLanguage: LANGUAGES.US,
+    supportedLanguages: [LANGUAGES.US],
+  },
+
+  ES: {
+    id: "es",
+    name: "España",
+    channel: "channel-es",
+    currency: "EUR",
+    continent: "Europe",
+    countryCode: "ES",
+    defaultLanguage: LANGUAGES.ES,
+    supportedLanguages: [LANGUAGES.ES],
+  },
+} satisfies Record<Uppercase<MarketId>, Market>;
+```
+
+### Add Translation Files
+
+Copy the existing translation file (`apps/storefront/messages/en-GB.json`) as a stub for your new language, naming it `es-ES.json`.
+
+</Steps>
+Tip: All changes are repeatable for any locale, language, or market you wish to add. This modular system keeps Nimara scalable and international-ready.

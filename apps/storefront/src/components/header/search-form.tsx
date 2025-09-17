@@ -23,10 +23,10 @@ import {
 import { Spinner } from "@nimara/ui/components/spinner";
 
 import { DEFAULT_DEBOUNCE_TIME_IN_MS } from "@/config";
-import { Link, usePathname, useRouter } from "@/i18n/routing";
+import { LocalizedLink, usePathname, useRouter } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
-import { searchService } from "@/services/search";
+import { getSearchService } from "@/services/search";
 
 import { performSearch } from "./actions";
 
@@ -221,7 +221,7 @@ export const SearchForm = ({ onSubmit }: { onSubmit?: () => void }) => {
               key={suggestion.id}
               isSelected={index === highlightedOptionIndex}
             >
-              <Link
+              <LocalizedLink
                 className="flex gap-1 px-1.5 py-2 hover:cursor-pointer"
                 href={
                   suggestion.slug
@@ -232,18 +232,18 @@ export const SearchForm = ({ onSubmit }: { onSubmit?: () => void }) => {
               >
                 <Search className="self-center" height={16} />
                 {suggestion.label}
-              </Link>
+              </LocalizedLink>
             </ComboboxItem>
           ))}
 
           <ComboboxItem isSelected={isLastOptionHighlighted}>
-            <Link
+            <LocalizedLink
               className="flex gap-1 px-1.5 py-2 pl-8 hover:cursor-pointer"
               href={paths.search.asPath({ query: { q: inputValue } })}
               onClick={() => resetSearchState()}
             >
               {ts("search-for", { query: inputValue })}
-            </Link>
+            </LocalizedLink>
           </ComboboxItem>
         </ComboboxGroup>
 
@@ -260,8 +260,10 @@ export const SearchForm = ({ onSubmit }: { onSubmit?: () => void }) => {
 const searchProducts = async (
   value: string,
 ): Promise<{ results: ComboboxOption[] }> => {
-  const region = await getCurrentRegion();
-
+  const [region, searchService] = await Promise.all([
+    getCurrentRegion(),
+    getSearchService(),
+  ]);
   const result = await searchService.search(
     {
       query: value,

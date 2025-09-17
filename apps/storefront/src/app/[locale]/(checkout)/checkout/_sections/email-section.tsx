@@ -4,9 +4,9 @@ import type { Checkout } from "@nimara/domain/objects/Checkout";
 import type { User } from "@nimara/domain/objects/User";
 import { Button } from "@nimara/ui/components/button";
 
-import { Link } from "@/i18n/routing";
+import { LocalizedLink } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
-import { checkoutService } from "@/services/checkout";
+import { getCheckoutService } from "@/services/checkout";
 import { storefrontLogger } from "@/services/logging";
 
 export const EmailSection = async ({
@@ -19,6 +19,7 @@ export const EmailSection = async ({
   const t = await getTranslations();
 
   if (!checkout?.email && user) {
+    const checkoutService = await getCheckoutService();
     const result = await checkoutService.checkoutEmailUpdate({
       checkout,
       email: user.email,
@@ -40,7 +41,7 @@ export const EmailSection = async ({
           <h2 className="w-full scroll-m-20 text-2xl tracking-tight">
             {t("user-details.signed-in-as")}
           </h2>
-          <p className="break-all text-sm text-stone-900">
+          <p className="text-foreground break-all text-sm">
             {userFullName} {user.email}
           </p>
         </section>
@@ -50,14 +51,14 @@ export const EmailSection = async ({
             <h2 className="scroll-m-20 text-2xl tracking-tight">
               {t("user-details.title")}
             </h2>
-            <p className="break-all text-sm font-normal leading-5 text-stone-900">
+            <p className="text-foreground break-all text-sm font-normal leading-5">
               {checkout.email}
             </p>
           </div>
           <Button variant="outline" asChild>
-            <Link href={paths.checkout.userDetails.asPath()}>
+            <LocalizedLink href={paths.checkout.userDetails.asPath()}>
               {t("common.edit")}
-            </Link>
+            </LocalizedLink>
           </Button>
         </section>
       )}

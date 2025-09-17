@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { Button } from "@nimara/ui/components/button";
 import { cn } from "@nimara/ui/lib/utils";
 
-import { Link, usePathname } from "@/i18n/routing";
+import { LocalizedLink, usePathname } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 import { type TranslationMessage } from "@/types";
 
@@ -41,18 +41,18 @@ export function SideLinks() {
             asChild
             variant="ghost"
             className={cn(
-              pathname === link.href && "rounded-md bg-stone-100",
-              "w-full justify-start px-4 py-2 text-sm font-medium md:px-2 md:py-1.5 md:font-normal",
+              pathname === link.href && "bg-accent rounded-md",
+              "text-primary w-full justify-start px-4 py-2 text-sm font-medium md:px-2 md:py-1.5 md:font-normal",
             )}
           >
-            <Link href={link.href}>{t(link.title)}</Link>
+            <LocalizedLink href={link.href}>{t(link.title)}</LocalizedLink>
           </Button>
         </li>
       ))}
       <li>
         <Button
           onClick={async () => logout()}
-          className="w-full justify-start px-4 py-2 text-sm font-medium md:my-4 md:px-2 md:py-1.5 md:font-normal"
+          className="text-primary w-full justify-start px-4 py-2 text-sm font-medium md:my-4 md:px-2 md:py-1.5 md:font-normal"
           variant="ghost"
         >
           {t("auth.log-out")}

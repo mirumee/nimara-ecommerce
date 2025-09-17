@@ -6,7 +6,7 @@ import type { PropsWithChildren } from "react";
 
 import { Button } from "@nimara/ui/components/button";
 
-import { Link } from "@/i18n/routing";
+import { LocalizedLink } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 
 interface ShoppingBagIconProps extends PropsWithChildren {
@@ -21,13 +21,13 @@ export const ShoppingBagIcon = ({
 
   return (
     <Button variant="ghost" size="icon" className="relative gap-1" asChild>
-      <Link
+      <LocalizedLink
         href={paths.cart.asPath()}
         aria-label={t("items-in-cart", { cartItems: count })}
       >
         <ShoppingBag className="h-4 w-4" />
         {children}
-      </Link>
+      </LocalizedLink>
     </Button>
   );
 };

@@ -9,7 +9,7 @@ import { auth, getAccessToken, update } from "@/auth";
 import { paths } from "@/lib/paths";
 import { getStoreUrl, getStoreUrlWithPath } from "@/lib/server";
 import { getCurrentRegion } from "@/regions/server";
-import { userService } from "@/services/user";
+import { getUserService } from "@/services/user";
 
 import type {
   UpdateEmailFormSchema,
@@ -21,8 +21,6 @@ export async function updateUserName({
   firstName,
   lastName,
 }: UpdateNameFormSchema) {
-  const session = await auth();
-
   const accessToken = await getAccessToken();
 
   if (!accessToken) {
@@ -34,6 +32,7 @@ export async function updateUserName({
     ]);
   }
 
+  const userService = await getUserService();
   const result = await userService.accountUpdate({
     accountInput: {
       firstName,
@@ -47,6 +46,8 @@ export async function updateUserName({
   }
 
   // TODO: In current version of next-auth v5 this doesn't work yet
+  const session = await auth();
+
   await update({
     ...session,
     user: {
@@ -65,8 +66,6 @@ export async function updateUserEmail({
   email,
   password,
 }: UpdateEmailFormSchema) {
-  const region = await getCurrentRegion();
-
   const accessToken = await getAccessToken();
 
   if (!accessToken) {
@@ -77,6 +76,11 @@ export async function updateUserEmail({
       } satisfies BaseError,
     ]);
   }
+
+  const [region, userService] = await Promise.all([
+    getCurrentRegion(),
+    getUserService(),
+  ]);
 
   const result = await userService.requestEmailChange({
     accessToken,
@@ -111,6 +115,7 @@ export async function updateUserPassword({
     ]);
   }
 
+  const userService = await getUserService();
   const result = await userService.passwordChange({
     accessToken,
     newPassword,

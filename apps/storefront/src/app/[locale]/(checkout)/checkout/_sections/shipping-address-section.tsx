@@ -3,11 +3,11 @@ import { getTranslations } from "next-intl/server";
 import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { Button } from "@nimara/ui/components/button";
 
-import { Link } from "@/i18n/routing";
+import { LocalizedLink } from "@/i18n/routing";
 import { displayFormattedAddressLines } from "@/lib/address";
 import { paths } from "@/lib/paths";
 import { type SupportedLocale } from "@/regions/types";
-import { addressService } from "@/services/address";
+import { getAddressService } from "@/services/address";
 
 export async function ShippingAddressSection({
   checkout,
@@ -32,6 +32,7 @@ export async function ShippingAddressSection({
 
   const { shippingAddress } = checkout;
 
+  const addressService = await getAddressService();
   const result = await addressService.addressFormat({
     variables: { address: shippingAddress },
     locale,
@@ -47,7 +48,7 @@ export async function ShippingAddressSection({
         <h3 className="scroll-m-20 text-2xl tracking-tight">
           {t("shipping-address.title")}
         </h3>
-        <div className="text-sm leading-5 text-stone-900">
+        <div className="text-foreground text-sm leading-5">
           {displayFormattedAddressLines({
             addressId: shippingAddress.id,
             formattedAddress: result.data.formattedAddress,
@@ -56,13 +57,13 @@ export async function ShippingAddressSection({
       </div>
       {shippingAddress && (
         <Button variant="outline" asChild>
-          <Link
+          <LocalizedLink
             href={paths.checkout.shippingAddress.asPath({
               query: { country: shippingAddress.country },
             })}
           >
             {t("common.edit")}
-          </Link>
+          </LocalizedLink>
         </Button>
       )}
     </section>

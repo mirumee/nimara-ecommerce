@@ -11,18 +11,15 @@ import { useToast } from "@nimara/ui/hooks";
 
 import { ShoppingBag } from "@/components/shopping-bag";
 import { CACHE_TTL } from "@/config";
-import { clientEnvs } from "@/envs/client";
-import { Link, useRouter } from "@/i18n/routing";
+import { LocalizedLink, useRouter } from "@/i18n/routing";
 import { revalidateCart } from "@/lib/actions/cart";
 import { paths } from "@/lib/paths";
 import { type WithRegion } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { cartService } from "@/services/cart";
-import { storefrontLogger } from "@/services/logging";
+import { getCartService } from "@/services/cart";
 
 export const CartDetails = ({
   cart,
-  region,
   user,
 }: { cart: Cart; user: User | null } & WithRegion) => {
   const t = useTranslations();
@@ -41,18 +38,13 @@ export const CartDetails = ({
     ...cart.problems.variantNotAvailable,
   ].length;
 
-  const service = cartService({
-    channel: region.market.channel,
-    languageCode: region.language.code,
-    countryCode: region.market.countryCode,
-    apiURI: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
-    logger: storefrontLogger,
-  });
+  const isDisabled = isProcessing || !isCartValid;
 
   const handleLineQuantityChange = async (lineId: string, quantity: number) => {
     setIsProcessing(true);
 
-    const resultLinesUpdate = await service.linesUpdate({
+    const cartService = await getCartService();
+    const resultLinesUpdate = await cartService.linesUpdate({
       cartId: cart.id,
       lines: [{ lineId, quantity }],
       options: {
@@ -60,10 +52,9 @@ export const CartDetails = ({
       },
     });
 
-    setIsProcessing(false);
-
     if (resultLinesUpdate.ok) {
       void revalidateCart(cart.id);
+      setIsProcessing(false);
 
       return;
     }
@@ -78,7 +69,9 @@ export const CartDetails = ({
 
   const handleLineDelete = async (lineId: string) => {
     setIsProcessing(true);
-    const resultLinesDelete = await service.linesDelete({
+
+    const cartService = await getCartService();
+    const resultLinesDelete = await cartService.linesDelete({
       cartId: cart.id,
       linesIds: [lineId],
       options: { next: { tags: [`CHECKOUT:${cart.id}`] } },
@@ -135,22 +128,17 @@ export const CartDetails = ({
         </ShoppingBag.Pricing>
       </ShoppingBag>
       <div className="w-full text-center">
-        <Button
-          asChild
-          size="lg"
-          disabled={isProcessing || !isCartValid}
-          loading={isProcessing}
-        >
-          <Link
+        <Button asChild size="lg" disabled={isDisabled} loading={isProcessing}>
+          <LocalizedLink
             href={
               !!user ? paths.checkout.asPath() : paths.checkout.signIn.asPath()
             }
             className={cn({
-              "pointer-events-none opacity-50": !isCartValid,
+              "pointer-events-none opacity-50": isDisabled,
             })}
           >
             {t("common.go-to-checkout")}
-          </Link>
+          </LocalizedLink>
         </Button>
       </div>
     </div>

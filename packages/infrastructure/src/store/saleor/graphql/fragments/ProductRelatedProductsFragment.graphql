@@ -6,7 +6,22 @@ fragment ProductRelatedProductsFragment on Product {
     url
     alt
   }
+  variants {
+    pricing {
+      price {
+        gross {
+          amount
+        }
+      }
+    }
+  }
   pricing {
     ...ProductPricingInfoFragment
+
+    priceRangeUndiscounted {
+      start {
+        ...TaxedMoneyFragment
+      }
+    }
   }
 }

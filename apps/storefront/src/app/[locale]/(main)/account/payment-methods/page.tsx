@@ -3,13 +3,13 @@ import { getTranslations } from "next-intl/server";
 import { getAccessToken } from "@/auth";
 import { clientEnvs } from "@/envs/client";
 import { serverEnvs } from "@/envs/server";
-import { Link, redirect } from "@/i18n/routing";
+import { LocalizedLink, redirect } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 import { getStoreUrl } from "@/lib/server";
 import { getCurrentRegion } from "@/regions/server";
 import { type SupportedLocale } from "@/regions/types";
-import { paymentService } from "@/services/payment";
-import { userService } from "@/services/user";
+import { getPaymentService } from "@/services/payment";
+import { getUserService } from "@/services/user";
 
 import { AddNewPaymentTrigger } from "./components/add-new-payment-trigger";
 import { PaymentMethodsList } from "./components/payment-methods-list";
@@ -20,15 +20,16 @@ type PageProps = {
 };
 
 export default async function Page(props: PageProps) {
-  const { locale } = await props.params;
-  const searchParams = await props.searchParams;
-  const accessToken = await getAccessToken();
+  const [t, { locale }, searchParams, accessToken, userService] =
+    await Promise.all([
+      getTranslations(),
+      props.params,
+      props.searchParams,
+      getAccessToken(),
+      getUserService(),
+    ]);
 
-  const [t, region, resultUserGet] = await Promise.all([
-    getTranslations(),
-    getCurrentRegion(),
-    userService.userGet(accessToken),
-  ]);
+  const resultUserGet = await userService.userGet(accessToken);
 
   const user = resultUserGet.ok ? resultUserGet.data : null;
 
@@ -36,6 +37,10 @@ export default async function Page(props: PageProps) {
     redirect({ href: paths.signIn.asPath(), locale });
   }
 
+  const [paymentService, region] = await Promise.all([
+    getPaymentService(),
+    getCurrentRegion(),
+  ]);
   const resultCustomerGet = await paymentService.customerGet({
     user: user,
     channel: region.market.channel,
@@ -56,13 +61,13 @@ export default async function Page(props: PageProps) {
     } else {
       error = t.rich("errors.GENERIC_PAYMENT_ERROR", {
         link: (chunks) => (
-          <Link
+          <LocalizedLink
             href={`mailto:${clientEnvs.NEXT_PUBLIC_DEFAULT_EMAIL}`}
             className="underline"
             target="_blank"
           >
             {chunks}
-          </Link>
+          </LocalizedLink>
         ),
       });
     }
@@ -87,7 +92,9 @@ export default async function Page(props: PageProps) {
   return (
     <div className="flex flex-col gap-8 text-sm">
       <div className="flex justify-between">
-        <h2 className="text-2xl">{t("payment.payment-methods")}</h2>
+        <h2 className="text-primary text-2xl">
+          {t("payment.payment-methods")}
+        </h2>
 
         {hasPaymentMethods && (
           <AddNewPaymentTrigger
@@ -108,7 +115,7 @@ export default async function Page(props: PageProps) {
           />
         ) : (
           <div className="grid gap-6">
-            <p className="text-sm text-stone-500">
+            <p className="dark:text-muted-foreground text-sm text-stone-500">
               {t("payment.no-payment-methods")}
             </p>
             <div>

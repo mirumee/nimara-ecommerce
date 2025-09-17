@@ -6,7 +6,7 @@ import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { type AsyncResult, ok } from "@nimara/domain/objects/Result";
 
 import { paths } from "@/lib/paths";
-import { checkoutService } from "@/services/checkout";
+import { getCheckoutService } from "@/services/checkout";
 
 export const updateDeliveryMethod = async ({
   deliveryMethodId,
@@ -15,6 +15,7 @@ export const updateDeliveryMethod = async ({
   checkout: Checkout;
   deliveryMethodId: string;
 }): AsyncResult<{ redirectUrl: string }> => {
+  const checkoutService = await getCheckoutService();
   const result = await checkoutService.deliveryMethodUpdate({
     checkout,
     deliveryMethodId,

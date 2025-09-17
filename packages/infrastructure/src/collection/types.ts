@@ -1,3 +1,4 @@
+import { type ThumbnailFormatEnum } from "@nimara/codegen/schema";
 import { type Collection } from "@nimara/domain/objects/Collection";
 import { type AsyncResult } from "@nimara/domain/objects/Result";
 
@@ -30,6 +31,7 @@ type CollectionDetailsOptions = {
   after?: string;
   before?: string;
   channel: string;
+  customMediaFormat?: ThumbnailFormatEnum;
   languageCode?: string;
   limit: number;
   slug: string;

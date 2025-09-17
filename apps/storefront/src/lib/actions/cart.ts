@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 
 import { COOKIE_KEY, COOKIE_MAX_AGE } from "@/config";
 import { revalidateTag } from "@/lib/cache";
-import { storefrontLogger } from "@/services/logging";
+import { getStorefrontLogger } from "@/services/lazy-logging";
 
 /**
  * Revalidates the cart/checkout cache.
@@ -12,6 +12,8 @@ import { storefrontLogger } from "@/services/logging";
  * @returns void
  */
 export const revalidateCart = async (id: string): Promise<void> => {
+  const storefrontLogger = await getStorefrontLogger();
+
   storefrontLogger.debug("Revalidating checkout cache.", { id });
 
   revalidateTag(`CHECKOUT:${id}`);
@@ -35,6 +37,8 @@ export const setCheckoutIdCookie = async (id: string) => {
 
   const checkoutIdCookie = cookieStorage.get(COOKIE_KEY.checkoutId);
 
+  const storefrontLogger = await getStorefrontLogger();
+
   if (checkoutIdCookie) {
     storefrontLogger.debug("Checkout ID cookie set successfully.", {
       checkoutId: checkoutIdCookie.value,
@@ -55,6 +59,8 @@ export const getCheckoutId = async (): Promise<string | null> => {
 
   // If the checkout ID is not found, return null
   if (!checkoutId) {
+    const storefrontLogger = await getStorefrontLogger();
+
     storefrontLogger.debug("Checkout ID cookie not found.");
 
     return null;

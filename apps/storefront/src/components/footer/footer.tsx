@@ -2,7 +2,7 @@ import { getTranslations } from "next-intl/server";
 
 import BrandLogo from "@/assets/brand-logo-dark.svg";
 import { CACHE_TTL } from "@/config";
-import { Link } from "@/i18n/routing";
+import { LocalizedLink } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { cmsMenuService } from "@/services/cms";
@@ -38,23 +38,23 @@ export const Footer = async () => {
   });
 
   return (
-    <footer className="bg-muted text-primary mt-8 text-sm">
+    <footer className="bg-muted text-primary mt-8 text-sm dark:bg-stone-900">
       <div className="container">
         <div className="flex flex-wrap justify-between gap-8 py-8">
           <div className="grid w-full grid-cols-2 grid-rows-[max-content,max-content] place-items-start justify-start gap-6 md:grid-cols-3">
             <div className="col-span-2 row-span-2 grid grid-cols-subgrid grid-rows-subgrid md:col-span-1">
               <div className="col-span-2 flex justify-center md:col-span-1 md:justify-start">
-                <Link
+                <LocalizedLink
                   href={paths.home.asPath()}
                   title={t("common.go-to-homepage")}
                 >
                   <BrandLogo height={36} className="fill-primary" />
-                </Link>
+                </LocalizedLink>
               </div>
               <p className="col-span-2 flex justify-center md:col-span-1 md:justify-start">
                 {t.rich("footer.demo-version", {
                   link: (chunks) => (
-                    <Link
+                    <LocalizedLink
                       href="https://github.com/mirumee/nimara-ecommerce"
                       className="hover:underline"
                       target="_blank"
@@ -62,7 +62,7 @@ export const Footer = async () => {
                       prefetch={false}
                     >
                       {chunks}
-                    </Link>
+                    </LocalizedLink>
                   ),
                 })}
               </p>
@@ -75,13 +75,13 @@ export const Footer = async () => {
               <div className="flex flex-col gap-4">
                 {resultCategories.data?.menu.items.map((item) => (
                   <span key={item.id} className="inline">
-                    <Link
+                    <LocalizedLink
                       href={item.url}
                       className="hover:underline"
                       prefetch={false}
                     >
                       {item.label}
-                    </Link>
+                    </LocalizedLink>
                   </span>
                 ))}
               </div>
@@ -94,13 +94,13 @@ export const Footer = async () => {
               <div className="flex flex-col gap-4">
                 {resultMenu.data?.menu?.items.map((item) => (
                   <span key={item.id} className="inline">
-                    <Link
+                    <LocalizedLink
                       href={item.url}
                       className="inline hover:underline"
                       prefetch={false}
                     >
                       {item.label}
-                    </Link>
+                    </LocalizedLink>
                   </span>
                 ))}
               </div>
@@ -117,7 +117,7 @@ export const Footer = async () => {
           <span className="flex-grow basis-full text-center sm:basis-1">
             {t.rich("footer.made-with", {
               link: (chunks) => (
-                <Link
+                <LocalizedLink
                   href="https://mirumee.com"
                   className="hover:underline"
                   target="_blank"
@@ -125,14 +125,14 @@ export const Footer = async () => {
                   prefetch={false}
                 >
                   {chunks}
-                </Link>
+                </LocalizedLink>
               ),
             })}
           </span>
           <span className="flex-grow basis-full text-center sm:basis-1 sm:text-right">
             {t.rich("footer.open-source", {
               link: (chunks) => (
-                <Link
+                <LocalizedLink
                   href="https://github.com/mirumee/nimara-ecommerce"
                   className="hover:underline"
                   target="_blank"
@@ -140,7 +140,7 @@ export const Footer = async () => {
                   prefetch={false}
                 >
                   {chunks}
-                </Link>
+                </LocalizedLink>
               ),
             })}
           </span>

@@ -39,7 +39,7 @@ export type ProductBaseQuery_product_Product_category_Category = { name: string,
 
 export type ProductBaseQuery_product_Product_translation_ProductTranslation = { name: string | null, description: string | null };
 
-export type ProductBaseQuery_product_Product = { id: string, name: string, description: string | null, category: ProductBaseQuery_product_Product_category_Category | null, translation: ProductBaseQuery_product_Product_translation_ProductTranslation | null };
+export type ProductBaseQuery_product_Product = { id: string, name: string, seoTitle: string | null, description: string | null, seoDescription: string | null, category: ProductBaseQuery_product_Product_category_Category | null, translation: ProductBaseQuery_product_Product_translation_ProductTranslation | null };
 
 export type ProductBaseQuery_Query = { product: ProductBaseQuery_product_Product | null };
 
@@ -85,7 +85,7 @@ export type ProductDetailsQuery_product_Product_category_Category = { name: stri
 
 export type ProductDetailsQuery_product_Product_translation_ProductTranslation = { name: string | null, description: string | null };
 
-export type ProductDetailsQuery_product_Product = { id: string, name: string, description: string | null, media: Array<ProductDetailsQuery_product_Product_media_ProductMedia> | null, variants: Array<ProductDetailsQuery_product_Product_variants_ProductVariant> | null, attributes: Array<ProductDetailsQuery_product_Product_attributes_SelectedAttribute>, category: ProductDetailsQuery_product_Product_category_Category | null, translation: ProductDetailsQuery_product_Product_translation_ProductTranslation | null };
+export type ProductDetailsQuery_product_Product = { id: string, name: string, seoTitle: string | null, description: string | null, seoDescription: string | null, media: Array<ProductDetailsQuery_product_Product_media_ProductMedia> | null, variants: Array<ProductDetailsQuery_product_Product_variants_ProductVariant> | null, attributes: Array<ProductDetailsQuery_product_Product_attributes_SelectedAttribute>, category: ProductDetailsQuery_product_Product_category_Category | null, translation: ProductDetailsQuery_product_Product_translation_ProductTranslation | null };
 
 export type ProductDetailsQuery_Query = { product: ProductDetailsQuery_product_Product | null };
 
@@ -103,13 +103,25 @@ export type ProductDetailsQuery = ProductDetailsQuery_Query;
 
 export type ProductRelatedProductsQuery_product_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_thumbnail_Image = { url: string, alt: string | null };
 
+export type ProductRelatedProductsQuery_product_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney_gross_Money = { amount: number };
+
+export type ProductRelatedProductsQuery_product_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney = { gross: ProductRelatedProductsQuery_product_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney_gross_Money };
+
+export type ProductRelatedProductsQuery_product_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_pricing_VariantPricingInfo = { price: ProductRelatedProductsQuery_product_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney | null };
+
+export type ProductRelatedProductsQuery_product_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant = { pricing: ProductRelatedProductsQuery_product_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_pricing_VariantPricingInfo | null };
+
+export type ProductRelatedProductsQuery_product_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRangeUndiscounted_TaxedMoneyRange_start_TaxedMoney = { net: ProductAvailabilityDetailsQuery_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_net_Money, gross: ProductAvailabilityDetailsQuery_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_gross_Money, tax: ProductAvailabilityDetailsQuery_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_tax_Money };
+
+export type ProductRelatedProductsQuery_product_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRangeUndiscounted_TaxedMoneyRange = { start: ProductRelatedProductsQuery_product_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRangeUndiscounted_TaxedMoneyRange_start_TaxedMoney | null };
+
 export type ProductRelatedProductsQuery_product_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney = { net: ProductAvailabilityDetailsQuery_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_net_Money, gross: ProductAvailabilityDetailsQuery_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_gross_Money, tax: ProductAvailabilityDetailsQuery_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_tax_Money };
 
 export type ProductRelatedProductsQuery_product_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange = { start: ProductRelatedProductsQuery_product_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney | null };
 
-export type ProductRelatedProductsQuery_product_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo = { priceRange: ProductRelatedProductsQuery_product_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange | null };
+export type ProductRelatedProductsQuery_product_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo = { priceRangeUndiscounted: ProductRelatedProductsQuery_product_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRangeUndiscounted_TaxedMoneyRange | null, priceRange: ProductRelatedProductsQuery_product_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange | null };
 
-export type ProductRelatedProductsQuery_product_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product = { id: string, slug: string, name: string, thumbnail: ProductRelatedProductsQuery_product_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_thumbnail_Image | null, pricing: ProductRelatedProductsQuery_product_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo | null };
+export type ProductRelatedProductsQuery_product_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product = { id: string, slug: string, name: string, thumbnail: ProductRelatedProductsQuery_product_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_thumbnail_Image | null, variants: Array<ProductRelatedProductsQuery_product_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant> | null, pricing: ProductRelatedProductsQuery_product_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo | null };
 
 export type ProductRelatedProductsQuery_product_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge = { node: ProductRelatedProductsQuery_product_Product_category_Category_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product };
 
@@ -207,7 +219,9 @@ export const ProductBaseQueryDocument = new TypedDocumentString(`
     fragment ProductBaseFragment on Product {
   id
   name
+  seoTitle
   description
+  seoDescription
   category {
     name
     slug
@@ -227,7 +241,9 @@ export const ProductDetailsQueryDocument = new TypedDocumentString(`
     fragment ProductBaseFragment on Product {
   id
   name
+  seoTitle
   description
+  seoDescription
   category {
     name
     slug
@@ -347,8 +363,22 @@ fragment ProductRelatedProductsFragment on Product {
     url
     alt
   }
+  variants {
+    pricing {
+      price {
+        gross {
+          amount
+        }
+      }
+    }
+  }
   pricing {
     ...ProductPricingInfoFragment
+    priceRangeUndiscounted {
+      start {
+        ...TaxedMoneyFragment
+      }
+    }
   }
 }
 fragment ProductPricingInfoFragment on ProductPricingInfo {

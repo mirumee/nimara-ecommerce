@@ -1,10 +1,11 @@
 import { type DeepNonNullable } from "ts-essentials";
 
 import { type Maybe } from "@nimara/codegen/schema";
-import { type Line, type PriceType } from "@nimara/domain/objects/common";
+import type { Line, PriceType } from "@nimara/domain/objects/common";
 
 import { type CartLineFragment } from "#root/graphql/fragments/generated";
 import { getTranslation } from "#root/lib/saleor";
+import { parseAttributeData } from "#root/lib/serializers/attribute";
 import { serializeMoney } from "#root/store/saleor/serializers";
 
 export const getVariantMaxQuantity = ({
@@ -55,6 +56,14 @@ export const serializeLine = (
       id: variant.id,
       name: getTranslation("name", variant),
       sku: variant.sku,
+      discount: variant.pricing?.discount
+        ? {
+            ...serializeMoney(variant.pricing.discount[priceType]),
+            type: priceType,
+          }
+        : null,
+      selectionAttributes:
+        variant?.selectionAttributes.map(parseAttributeData) ?? [],
     },
     product: {
       id: product.id,

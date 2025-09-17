@@ -7,7 +7,10 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { useWindowSize } from "usehooks-ts";
 
-import type { Line as LineType } from "@nimara/domain/objects/common";
+import type {
+  Line as LineType,
+  TaxedPrice,
+} from "@nimara/domain/objects/common";
 import { Button } from "@nimara/ui/components/button";
 import { Input } from "@nimara/ui/components/input";
 import { Label } from "@nimara/ui/components/label";
@@ -22,9 +25,9 @@ import { Sheet, SheetContent } from "@nimara/ui/components/sheet";
 import { screenSizes } from "@nimara/ui/consts";
 import { cn } from "@nimara/ui/lib/utils";
 
+import { Price } from "@/components/price"; // Adjust the path as needed
 import { ProductImagePlaceholder } from "@/components/product-image-placeholder";
-import { Link } from "@/i18n/routing";
-import { useLocalizedFormatter } from "@/lib/formatters/use-localized-formatter";
+import { LocalizedLink } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 
 type LineQuantityChange = (lineId: string, quantity: number) => Promise<void>;
@@ -61,12 +64,28 @@ export const Line = ({
   const isSmDown = width && width < screenSizes.sm;
 
   const t = useTranslations();
-  const formatter = useLocalizedFormatter();
   const inputValue = useDebounce(value, 1000);
 
-  const name = `${product.name} • ${variant.name}`;
+  const attributeNames = variant.selectionAttributes
+    ?.map((attr) => attr.values?.[0]?.name)
+    .filter(Boolean)
+    .join(" • ");
+
+  const name = `${product.name}${attributeNames ? ` • ${attributeNames}` : ""}`;
+
   const href = paths.products.asPath({ slug: product.slug, hash: variant.id });
 
+  const undiscountedLineTotal: TaxedPrice = {
+    amount: undiscountedTotalPrice.amount,
+    currency: undiscountedTotalPrice.currency,
+    type: "gross",
+  };
+
+  const finalLineTotal: TaxedPrice = {
+    amount: total.amount,
+    currency: total.currency,
+    type: "gross",
+  };
   const handleLineDelete = async () => {
     await onLineDelete?.(id);
   };
@@ -113,7 +132,7 @@ export const Line = ({
   return (
     <div className="grid grid-cols-12 grid-rows-2 items-start gap-2 md:grid-rows-1 md:items-center [&>*]:transition-colors">
       <div className="col-span-2 row-span-2 h-full p-[5px] md:row-span-1">
-        <Link title={name} href={href}>
+        <LocalizedLink title={name} href={href}>
           {thumbnail ? (
             <Image
               src={thumbnail.url}
@@ -133,7 +152,7 @@ export const Line = ({
               className={cn(isOutOfStock && "grayscale")}
             />
           )}
-        </Link>
+        </LocalizedLink>
       </div>
 
       <div
@@ -141,22 +160,26 @@ export const Line = ({
           "md:col-span-6": !isLineEditable,
         })}
       >
-        <Link title={name} href={href} className="grow">
+        <LocalizedLink title={name} href={href} className="grow">
           <p
-            className={cn("text-sm text-stone-900", {
+            className={cn("text-foreground text-sm", {
               "text-stone-400": isOutOfStock,
             })}
           >
             {name}
           </p>
-        </Link>
+        </LocalizedLink>
       </div>
 
       <div className="col-span-5 row-span-2 flex hidden items-center gap-2 md:col-span-2 md:row-span-1 md:flex">
         {isLineEditable ? (
           <>
             <Label
-              className={cn(isOutOfStock ? "text-stone-500" : "text-stone-900")}
+              className={cn(
+                isOutOfStock
+                  ? "text-stone-500"
+                  : "text-stone-700 dark:text-stone-300",
+              )}
               htmlFor={`${id}:qty`}
             >
               {t("common.qty")}
@@ -164,7 +187,9 @@ export const Line = ({
             <Input
               name={`${id}:qty`}
               className={cn(
-                isOutOfStock ? "text-stone-400" : "text-stone-900",
+                isOutOfStock
+                  ? "text-stone-400"
+                  : "text-stone-700 dark:text-stone-300",
                 "w-14",
               )}
               type="number appearance-none"
@@ -177,7 +202,10 @@ export const Line = ({
             />
           </>
         ) : (
-          <p className="text-sm text-stone-500">
+          <p
+            className="text-sm text-stone-700 dark:text-stone-300"
+            data-testid="product-qty"
+          >
             {t("common.qty")}: {value}
           </p>
         )}
@@ -222,7 +250,9 @@ export const Line = ({
             </Sheet>
 
             <Label
-              className={cn(isOutOfStock ? "text-stone-500" : "text-stone-900")}
+              className={cn(
+                isOutOfStock ? "text-stone-500" : "text-foreground",
+              )}
               htmlFor={`${id}:qty`}
             >
               {t("common.qty")}
@@ -259,17 +289,15 @@ export const Line = ({
 
       <div className="col-span-5 row-span-1 md:col-span-2">
         <p
-          className={cn("flex justify-end", {
-            "text-sm text-stone-500": !isLineEditable,
+          className={cn("flex justify-end text-stone-700 dark:text-stone-300", {
             "text-stone-400": isOutOfStock,
           })}
           data-testid="shopping-bag-product-line-price"
         >
-          {undiscountedTotalPrice.amount === 0 || total.amount === 0
-            ? t("common.free")
-            : formatter.price({
-                amount: undiscountedTotalPrice.amount ?? total.amount,
-              })}
+          <Price
+            price={finalLineTotal}
+            undiscountedPrice={undiscountedLineTotal}
+          />
         </p>
       </div>
 

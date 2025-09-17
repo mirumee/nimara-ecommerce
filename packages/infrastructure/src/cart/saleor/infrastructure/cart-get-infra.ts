@@ -7,7 +7,7 @@ import { THUMBNAIL_FORMAT, THUMBNAIL_SIZE_SMALL } from "#root/config";
 import { graphqlClient } from "#root/graphql/client";
 import { serializeLine } from "#root/utils";
 
-import type { CartGetInfra, SaleorCartServiceConfig } from "../../types";
+import type { CartGetInfra, CartServiceConfig } from "../../types";
 import type { CartFragment } from "../graphql/fragments/generated";
 import { CartQueryDocument } from "../graphql/queries/generated";
 
@@ -31,7 +31,7 @@ const serializeCart = ({
     },
     subtotal: {
       amount: lines.reduce(
-        (sum, line) => sum + line.undiscountedTotalPrice.amount,
+        (sum, line) => sum + line.totalPrice.gross.amount,
         0,
       ),
       currency: lines[0]?.undiscountedTotalPrice.currency as AllCurrency,
@@ -42,13 +42,8 @@ const serializeCart = ({
 };
 
 export const saleorCartGetInfra =
-  ({
-    apiURI,
-    languageCode,
-    countryCode,
-    logger,
-  }: SaleorCartServiceConfig): CartGetInfra =>
-  async ({ cartId, options }) => {
+  ({ apiURI, logger }: CartServiceConfig): CartGetInfra =>
+  async ({ cartId, languageCode, countryCode, options }) => {
     const result = await graphqlClient(apiURI).execute(CartQueryDocument, {
       variables: {
         id: cartId,

@@ -24,7 +24,7 @@ const SelectTrigger = ({
     className={cn(
       "border-input bg-background ring-offset-background focus:ring-ring flex h-10 w-full items-center justify-between rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
       error &&
-        "border-red-300 bg-red-50 autofill:!bg-red-50 focus-visible:ring-red-300",
+        "border-red-300 bg-red-50 has-[input:focus-visible]:ring-red-300 dark:border-red-600 dark:bg-red-900/30 dark:has-[input:focus-visible]:ring-red-500",
       className,
     )}
     {...props}

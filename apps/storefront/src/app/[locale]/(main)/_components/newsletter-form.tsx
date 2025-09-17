@@ -47,14 +47,14 @@ export const Newsletter = () => {
   };
 
   return (
-    <section className="bg-muted rounded-md px-4 py-12 sm:px-6 lg:px-8 dark:bg-gray-800">
+    <section className="bg-muted px-4 py-12 sm:px-6 lg:px-8 dark:bg-stone-900">
       <div className="mx-auto max-w-3xl">
         <div className="text-center">
           <Mail className="mx-auto h-12 w-12 text-gray-400" />
-          <h2 className="dark:text-muted mt-2 text-3xl font-extrabold text-gray-900 sm:text-4xl">
+          <h2 className="text-foreground mt-2 text-3xl font-semibold sm:text-4xl">
             {t("newsletter.subscribe-title")}
           </h2>
-          <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
+          <p className="mt-4 text-lg text-gray-600 dark:text-gray-400">
             {t("newsletter.subscribe-description")}
           </p>
         </div>

@@ -3,14 +3,13 @@ import { getTranslations } from "next-intl/server";
 
 import { type AllCountryCode } from "@nimara/domain/consts";
 import { type Address } from "@nimara/domain/objects/Address";
-import { Button } from "@nimara/ui/components/button";
 
 import { getAccessToken } from "@/auth";
 import { displayFormattedAddressLines } from "@/lib/address";
 import { getCurrentRegion } from "@/regions/server";
 import { type SupportedLocale } from "@/regions/types";
-import { addressService } from "@/services/address";
-import { userService } from "@/services/user";
+import { getAddressService } from "@/services/address";
+import { getUserService } from "@/services/user";
 
 import { AddNewAddressModal } from "./_modals/create-address-modal";
 import { EditAddressModal } from "./_modals/update-address-modal";
@@ -23,7 +22,11 @@ type PageProps = {
 export default async function Page(props: PageProps) {
   const { locale } = await props.params;
   const searchParams = await props.searchParams;
-  const accessToken = await getAccessToken();
+  const [accessToken, userService, addressService] = await Promise.all([
+    getAccessToken(),
+    getUserService(),
+    getAddressService(),
+  ]);
   const [t, region, resultUserAddresses] = await Promise.all([
     getTranslations(),
     getCurrentRegion(),
@@ -114,46 +117,53 @@ export default async function Page(props: PageProps) {
   return (
     <div className="flex flex-col gap-8 text-sm">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl">{t("account.addresses")}</h2>
+        <h2 className="text-primary text-2xl">{t("account.addresses")}</h2>
         {!noAddresses && (
           <AddNewAddressModal
             addressFormRows={resultAddressRows.data}
             countries={resultCountries.data}
             countryCode={countryCode}
-          >
-            <Button
-              variant="outline"
-              className="flex items-center gap-1 rounded px-[11px] sm:rounded-md sm:px-4"
-            >
-              <PlusIcon className="h-4 w-4" />
-              <span className="hidden sm:block">
-                {t("address.add-new-address")}
-              </span>
-            </Button>
-          </AddNewAddressModal>
+            buttonContent={
+              <>
+                <PlusIcon className="h-4 w-4" />
+                <span className="hidden sm:block">
+                  {t("address.add-new-address")}
+                </span>
+              </>
+            }
+            buttonProps={{
+              variant: "outline",
+              className:
+                "text-primary flex items-center gap-1 rounded px-[11px] sm:rounded-md sm:px-4",
+            }}
+          />
         )}
       </div>
       {noAddresses && (
         <div className="space-y-8">
           <hr />
-          <p className="text-stone-500">
+          <p className="dark:text-muted-foreground text-stone-500">
             {t("address.sorry-you-dont-have-any-addresses")}
           </p>
           <AddNewAddressModal
             addressFormRows={resultAddressRows.data}
             countries={resultCountries.data}
             countryCode={countryCode}
-          >
-            <Button className="mt-6 flex items-center gap-1">
-              <PlusIcon className="h-4 w-4" />
-              {t("address.add-new-address")}
-            </Button>
-          </AddNewAddressModal>
+            buttonContent={
+              <>
+                <PlusIcon className="h-4 w-4" />
+                {t("address.add-new-address")}
+              </>
+            }
+            buttonProps={{
+              className: "mt-6 flex items-center gap-1",
+            }}
+          />
         </div>
       )}
       {sortedAddresses.map(
         ({ isDefaultBillingAddress, isDefaultShippingAddress, ...address }) => (
-          <div key={address.id} className="space-y-8">
+          <div key={address.id} className="text-primary space-y-8">
             <hr />
             <div className="grid grid-cols-12 gap-2">
               <div className="col-span-5 md:col-span-7 lg:col-span-5">

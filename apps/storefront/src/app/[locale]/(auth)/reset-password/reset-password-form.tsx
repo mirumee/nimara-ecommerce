@@ -11,7 +11,7 @@ import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
 
 import { TextFormField } from "@/components/form/text-form-field";
-import { Link } from "@/i18n/routing";
+import { LocalizedLink } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 import { useCurrentRegion } from "@/regions/client";
 import { type GetTranslations } from "@/types";
@@ -54,17 +54,17 @@ export function ResetPasswordForm() {
     <div className="flex flex-col gap-8">
       {isSuccess ? (
         <>
-          <h1 className="text-2xl font-normal leading-8 text-stone-900">
+          <h1 className="text-primary text-2xl font-normal leading-8">
             {t("auth.reset-password-link-sent")}
           </h1>
           <div>
-            <p className="text-sm text-stone-700">
+            <p className="text-sm text-stone-700 dark:text-stone-300">
               {t("auth.reset-password-link-sent-description")}
             </p>
             <Button className="my-6 w-full" asChild>
-              <Link href={paths.home.asPath()}>
+              <LocalizedLink href={paths.home.asPath()}>
                 {t("common.back-to-homepage")}
-              </Link>
+              </LocalizedLink>
             </Button>
           </div>
         </>
@@ -72,11 +72,11 @@ export function ResetPasswordForm() {
         <>
           <div className="flex items-center gap-4">
             <Button asChild variant="outline" className="w-10 p-0" size="icon">
-              <Link href={paths.signIn.asPath()}>
+              <LocalizedLink href={paths.signIn.asPath()}>
                 <ArrowLeft className="h-4 w-4" />
-              </Link>
+              </LocalizedLink>
             </Button>
-            <h1 className="text-2xl font-normal leading-8 text-stone-900">
+            <h1 className="text-primary text-2xl font-normal leading-8">
               {t("auth.reset-password")}
             </h1>
           </div>
@@ -97,7 +97,7 @@ export function ResetPasswordForm() {
                 />
               </div>
 
-              <p className="text-sm text-stone-700">
+              <p className="text-sm text-stone-700 dark:text-stone-300">
                 {t("auth.reset-password-description")}
               </p>
               <Button className="my-4 w-full" type="submit" form="sign-in-form">

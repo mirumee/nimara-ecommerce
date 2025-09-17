@@ -6,8 +6,13 @@ import type { CMSPageService } from "@nimara/infrastructure/use-cases/cms-page/t
 import { clientEnvs } from "@/envs/client";
 import { storefrontLogger } from "@/services/logging";
 
-const isSaleorCMS = clientEnvs.CMS_SERVICE === "saleor";
+const isSaleorCMS = clientEnvs.NEXT_PUBLIC_CMS_SERVICE === "SALEOR";
 
+/**
+ * Lazy loads the CMS service responsible for fetching CMS pages.
+ * @returns A promise that resolves to the CMSPageService instance.
+ * This service is used to fetch CMS pages from either Saleor or ButterCMS based on the
+ */
 const getCMSPageService = async (): Promise<CMSPageService> => {
   if (isSaleorCMS) {
     const { saleorCMSPageService } = await import(
@@ -35,6 +40,11 @@ const getCMSPageService = async (): Promise<CMSPageService> => {
   }
 };
 
+/**
+ * Lazy loads the CMS service responsible for fetching CMS menus.
+ * @returns A promise that resolves to the CMSMenuService instance.
+ * This service is used to fetch CMS menus from either Saleor or ButterCMS based on the
+ */
 const getCMSMenuService = async (): Promise<CMSMenuService> => {
   if (isSaleorCMS) {
     const { saleorCMSMenuService } = await import(

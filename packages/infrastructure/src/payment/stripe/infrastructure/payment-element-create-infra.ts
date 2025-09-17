@@ -12,12 +12,13 @@ const mapToStripeLocale: Record<string, StripeElementLocale> = {
 
 export const paymentElementCreateInfra =
   (state: StripeServiceState): PaymentElementCreateInfra =>
-  async ({ secret, locale = "auto" }) => {
+  async ({ secret, locale = "auto", appearance }) => {
     invariant(state.clientSDK, "Stripe client not initialized.");
 
     state.elements = state.clientSDK.elements({
       clientSecret: secret,
       locale: mapToStripeLocale[locale] ?? locale,
+      appearance,
     });
 
     const paymentElement = state.elements.create("payment", {

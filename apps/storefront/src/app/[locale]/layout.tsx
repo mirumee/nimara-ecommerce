@@ -3,10 +3,10 @@ import "@nimara/ui/styles/globals";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import Script from "next/script";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
-import type { ReactNode } from "react";
 
 import { Toaster } from "@nimara/ui/components/toaster";
 
@@ -14,8 +14,9 @@ import { ErrorServiceServer } from "@/components/error-service";
 import { clientEnvs } from "@/envs/client";
 import { aspekta } from "@/fonts";
 import { routing } from "@/i18n/routing";
+import { themePreloadScript } from "@/lib/scripts/theme-preload-script";
 import { cn } from "@/lib/utils";
-import { type SupportedLocale } from "@/regions/types";
+import { ClientThemeProvider } from "@/providers/theme-provider";
 
 export const metadata: Metadata = {
   title: {
@@ -27,10 +28,7 @@ export const metadata: Metadata = {
 export default async function LocaleLayout({
   children,
   params,
-}: {
-  children: ReactNode;
-  params: Promise<{ locale: SupportedLocale }>;
-}) {
+}: LayoutProps<"/[locale]">) {
   const { locale } = await params;
 
   if (!routing.locales.includes(locale as any)) {
@@ -39,18 +37,30 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale ?? "en"}>
+    <html lang={locale ?? "en"} suppressHydrationWarning>
       <body
-        className={cn("min-h-[100dvh]", "flex flex-col", aspekta.className)}
+        className={cn(
+          "min-h-[100dvh]",
+          "flex flex-col",
+          "bg-background",
+          aspekta.className,
+        )}
       >
-        <NextIntlClientProvider messages={messages}>
-          <NuqsAdapter>
-            {children}
-            <SpeedInsights />
-            <Toaster />
-            <ErrorServiceServer />
-          </NuqsAdapter>
-        </NextIntlClientProvider>
+        <Script
+          id="theme-preload"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: themePreloadScript }}
+        />
+        <ClientThemeProvider>
+          <NextIntlClientProvider messages={messages}>
+            <NuqsAdapter>
+              {children}
+              <SpeedInsights />
+              <Toaster />
+              <ErrorServiceServer />
+            </NuqsAdapter>
+          </NextIntlClientProvider>
+        </ClientThemeProvider>
       </body>
     </html>
   );
