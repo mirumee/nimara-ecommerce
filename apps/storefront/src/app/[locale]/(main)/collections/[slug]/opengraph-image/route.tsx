@@ -45,33 +45,22 @@ export async function GET(
     return new Response("Not found", { status: 404 });
   }
 
-  if (!collection?.thumbnail?.url) {
-    return new ImageResponse(
-      (
-        <div
-          style={{
-            display: "flex",
-            width: "100%",
-            height: "100%",
-          }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={new URL(
-              "og-hp.png",
-              clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
-            ).toString()}
-            alt={t("common.logo")}
-            style={{
-              maxWidth: "100%",
-              maxHeight: "100%",
-              objectFit: "contain",
-            }}
-          />
-        </div>
-      ),
-      { ...size },
-    );
+  let finalImageUrl;
+
+  if (collection?.thumbnail?.url) {
+    // Construct the Vercel-optimized URL
+    const optimizedUrl = new URL("/_next/image", new URL(request.url).origin);
+
+    optimizedUrl.searchParams.set("url", collection.thumbnail.url);
+    optimizedUrl.searchParams.set("w", String(size.width));
+    optimizedUrl.searchParams.set("q", "75");
+    finalImageUrl = optimizedUrl.toString();
+  } else {
+    // Fallback if no thumbnail is available
+    finalImageUrl = new URL(
+      "og-hp.png",
+      clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
+    ).toString();
   }
 
   return new ImageResponse(
@@ -109,8 +98,10 @@ export async function GET(
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={collection.thumbnail.url}
-            alt={collection.thumbnail.alt || t("collections.collection-image")}
+            src={finalImageUrl}
+            alt={
+              collection?.thumbnail?.alt || t("collections.collection-image")
+            }
             style={{ width: "100%", height: "100%", objectFit: "cover" }}
           />
         </div>
