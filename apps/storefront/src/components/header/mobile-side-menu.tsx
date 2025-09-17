@@ -11,7 +11,7 @@ import { DialogTitle } from "@nimara/ui/components/dialog";
 import { Sheet, SheetContent } from "@nimara/ui/components/sheet";
 
 import { MobileNavigation } from "@/components/mobile-navigation";
-import { Link, usePathname } from "@/i18n/routing";
+import { LocalizedLink, usePathname } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 import { cn } from "@/lib/utils";
 import { useCurrentRegion } from "@/regions/client";
@@ -85,7 +85,7 @@ export const MobileSideMenu = ({
               <div className="bg-background mt-auto flex w-full items-center justify-between">
                 <LocaleSwitch region={region} />
                 <Button asChild variant="ghost" className="inline-flex gap-1.5">
-                  <Link
+                  <LocalizedLink
                     href={
                       !user
                         ? paths.signIn.asPath()
@@ -94,7 +94,7 @@ export const MobileSideMenu = ({
                   >
                     <UserIcon className="h-4 w-4" />
                     {user?.firstName ?? t("auth.sign-in")}
-                  </Link>
+                  </LocalizedLink>
                 </Button>
               </div>
             </div>

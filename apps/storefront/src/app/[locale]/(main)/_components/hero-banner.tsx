@@ -5,7 +5,7 @@ import { getTranslations } from "next-intl/server";
 import type { PageField } from "@nimara/domain/objects/CMSPage";
 import { Button } from "@nimara/ui/components/button";
 
-import { Link } from "@/i18n/routing";
+import { LocalizedLink } from "@/i18n/routing";
 import { createFieldsMap, type FieldsMap } from "@/lib/cms";
 import { paths } from "@/lib/paths";
 
@@ -31,10 +31,10 @@ export const HeroBanner = async ({
       <div className="order-last p-8 sm:order-first sm:basis-1/2 lg:p-16">
         <h1 className="pb-8 text-3xl font-medium lg:text-5xl">{header}</h1>
         <Button asChild className="dark:hover:bg-stone-100">
-          <Link href={paths.search.asPath()}>
+          <LocalizedLink href={paths.search.asPath()}>
             {buttonText}
             <ArrowRight className="h-4 w-5 pl-1" />
-          </Link>
+          </LocalizedLink>
         </Button>
       </div>
       <div className="sm-order-last relative order-first h-[22rem] w-full sm:h-[27rem] sm:basis-1/2">

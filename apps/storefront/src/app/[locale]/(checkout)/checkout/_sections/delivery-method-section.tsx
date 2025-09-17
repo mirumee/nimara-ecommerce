@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { Button } from "@nimara/ui/components/button";
 
-import { Link } from "@/i18n/routing";
+import { LocalizedLink } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 
 export const DeliveryMethodSection = async ({
@@ -24,9 +24,9 @@ export const DeliveryMethodSection = async ({
       </div>
       {checkout.deliveryMethod && (
         <Button variant="outline" asChild>
-          <Link href={paths.checkout.deliveryMethod.asPath()}>
+          <LocalizedLink href={paths.checkout.deliveryMethod.asPath()}>
             {tc("edit")}
-          </Link>
+          </LocalizedLink>
         </Button>
       )}
     </section>

@@ -11,7 +11,7 @@ import { useToast } from "@nimara/ui/hooks";
 
 import { ShoppingBag } from "@/components/shopping-bag";
 import { CACHE_TTL } from "@/config";
-import { Link, useRouter } from "@/i18n/routing";
+import { LocalizedLink, useRouter } from "@/i18n/routing";
 import { revalidateCart } from "@/lib/actions/cart";
 import { paths } from "@/lib/paths";
 import { type WithRegion } from "@/lib/types";
@@ -129,7 +129,7 @@ export const CartDetails = ({
       </ShoppingBag>
       <div className="w-full text-center">
         <Button asChild size="lg" disabled={isDisabled} loading={isProcessing}>
-          <Link
+          <LocalizedLink
             href={
               !!user ? paths.checkout.asPath() : paths.checkout.signIn.asPath()
             }
@@ -138,7 +138,7 @@ export const CartDetails = ({
             })}
           >
             {t("common.go-to-checkout")}
-          </Link>
+          </LocalizedLink>
         </Button>
       </div>
     </div>

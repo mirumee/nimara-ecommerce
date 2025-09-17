@@ -10,6 +10,7 @@ import {
   BreadcrumbSeparator,
 } from "@nimara/ui/components/breadcrumb";
 
+import { LocalizedLink } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 
 export const Breadcrumbs = async ({
@@ -26,8 +27,10 @@ export const Breadcrumbs = async ({
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbLink href={paths.home.asPath()}>
-              {t("home")}
+            <BreadcrumbLink asChild>
+              <LocalizedLink href={paths.home.asPath()}>
+                {t("home")}
+              </LocalizedLink>
             </BreadcrumbLink>
           </BreadcrumbItem>
           {(pageName || crumbs) && <BreadcrumbSeparator />}
@@ -36,8 +39,10 @@ export const Breadcrumbs = async ({
             crumbs.map((crumb) => (
               <React.Fragment key={crumb.href}>
                 <BreadcrumbItem>
-                  <BreadcrumbLink href={crumb.href}>
-                    {crumb.label}
+                  <BreadcrumbLink asChild>
+                    <LocalizedLink href={crumb.href}>
+                      {crumb.label}
+                    </LocalizedLink>
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />

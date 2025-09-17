@@ -12,7 +12,7 @@ import {
 import { Skeleton } from "@nimara/ui/components/skeleton";
 
 import { SearchProductCard } from "@/components/search-product-card";
-import { Link } from "@/i18n/routing";
+import { LocalizedLink } from "@/i18n/routing";
 import { createFieldsMap, type FieldsMap } from "@/lib/cms";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
@@ -98,12 +98,12 @@ export const ProductsGrid = async ({
             asChild
             size="icon"
           >
-            <Link
+            <LocalizedLink
               href={paths.search.asPath()}
               aria-label={t("search.all-products-link")}
             >
               <ArrowRight />
-            </Link>
+            </LocalizedLink>
           </Button>
         </div>
         {products.map((product) => (
@@ -132,10 +132,10 @@ export const ProductsGrid = async ({
       </div>
       <div className="mx-auto mb-14">
         <Button variant="outline" asChild>
-          <Link href={paths.search.asPath()}>
+          <LocalizedLink href={paths.search.asPath()}>
             {buttonText}
             <ArrowRight className="h-4 w-5 pl-1" />
-          </Link>
+          </LocalizedLink>
         </Button>
       </div>
     </>

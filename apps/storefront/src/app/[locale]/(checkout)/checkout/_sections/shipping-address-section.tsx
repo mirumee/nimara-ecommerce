@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { Button } from "@nimara/ui/components/button";
 
-import { Link } from "@/i18n/routing";
+import { LocalizedLink } from "@/i18n/routing";
 import { displayFormattedAddressLines } from "@/lib/address";
 import { paths } from "@/lib/paths";
 import { type SupportedLocale } from "@/regions/types";
@@ -57,13 +57,13 @@ export async function ShippingAddressSection({
       </div>
       {shippingAddress && (
         <Button variant="outline" asChild>
-          <Link
+          <LocalizedLink
             href={paths.checkout.shippingAddress.asPath({
               query: { country: shippingAddress.country },
             })}
           >
             {t("common.edit")}
-          </Link>
+          </LocalizedLink>
         </Button>
       )}
     </section>

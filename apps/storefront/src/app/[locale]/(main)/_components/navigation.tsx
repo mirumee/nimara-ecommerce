@@ -17,7 +17,7 @@ import {
   navigationMenuTriggerStyle,
 } from "@nimara/ui/components/navigation-menu";
 
-import { Link } from "@/i18n/routing";
+import { LocalizedLink } from "@/i18n/routing";
 import { isValidJson } from "@/lib/helpers";
 import type { Maybe } from "@/lib/types";
 
@@ -61,7 +61,7 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
                   asChild
                   onClick={() => setCurrentMenuItem("")}
                 >
-                  <Link
+                  <LocalizedLink
                     href={item.url}
                     className="text-inherit no-underline hover:underline"
                     prefetch={false}
@@ -71,20 +71,20 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
                       className="relative top-[1px] h-3 w-3 transition duration-200 group-data-[state=open]:rotate-180"
                       aria-hidden="true"
                     />
-                  </Link>
+                  </LocalizedLink>
                 </NavigationMenuTrigger>
               ) : (
                 <NavigationMenuLink
                   asChild
                   className={navigationMenuTriggerStyle()}
                 >
-                  <Link
+                  <LocalizedLink
                     href={item.url}
                     className="text-inherit no-underline hover:underline"
                     prefetch={false}
                   >
                     <span>{item.label}</span>
-                  </Link>
+                  </LocalizedLink>
                 </NavigationMenuLink>
               )}
 
@@ -93,7 +93,7 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
                   <div className="col-span-2 flex flex-col gap-3 pr-6">
                     {!!item.children?.length &&
                       childrenWithoutImage?.map((child) => (
-                        <Link
+                        <LocalizedLink
                           key={child.id}
                           href={child.url}
                           className="hover:bg-accent group block space-y-1 rounded-md p-3"
@@ -115,14 +115,14 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
                               )}
                             </div>
                           )}
-                        </Link>
+                        </LocalizedLink>
                       ))}
                   </div>
 
                   <div className="col-span-4 grid grid-cols-3 gap-3">
                     {!!item.children?.length &&
                       childrenWithImage?.slice(0, 3).map((child) => (
-                        <Link
+                        <LocalizedLink
                           key={child.id}
                           href={child.url}
                           className="bg-accent group relative min-h-[270px] overflow-hidden rounded-lg"
@@ -158,7 +158,7 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
                               </div>
                             </div>
                           </div>
-                        </Link>
+                        </LocalizedLink>
                       ))}
                   </div>
                 </div>
