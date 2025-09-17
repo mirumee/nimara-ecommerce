@@ -14,12 +14,11 @@ export const HeroBanner = async ({
 }: {
   fields: PageField[] | undefined;
 }) => {
-  const t = await getTranslations("home");
-
   if (!fields || fields.length === 0) {
     return null;
   }
 
+  const t = await getTranslations("home");
   const fieldsMap: FieldsMap = createFieldsMap(fields);
 
   const header = fieldsMap["homepage-banner-header"]?.text;

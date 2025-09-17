@@ -18,11 +18,15 @@ import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { getSearchService } from "@/services/search";
 
-export const ProductsGrid = async ({
+export const ProductsGridStatic = async ({
   fields,
 }: {
   fields: PageField[] | undefined;
 }) => {
+  if (!fields || fields.length === 0) {
+    return null;
+  }
+
   const [region, t, searchService] = await Promise.all([
     getCurrentRegion(),
     getTranslations(),
@@ -34,10 +38,6 @@ export const ProductsGrid = async ({
     channel: region.market.channel,
     languageCode: region.language.code,
   } satisfies SearchContext;
-
-  if (!fields || fields.length === 0) {
-    return null;
-  }
 
   const fieldsMap: FieldsMap = createFieldsMap(fields);
 
