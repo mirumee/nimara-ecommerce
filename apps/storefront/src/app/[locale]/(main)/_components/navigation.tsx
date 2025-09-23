@@ -26,7 +26,7 @@ const RichText = dynamic(
     import("@nimara/ui/components/rich-text/rich-text").then(
       (mod) => mod.RichText,
     ),
-  { ssr: false },
+  { ssr: true },
 );
 
 export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
@@ -109,6 +109,11 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
                                   className="line-clamp-3 py-1"
                                   contentData={child.description}
                                   disableProse
+                                  suspenseFallback={
+                                    <p className="invisible line-clamp-3">
+                                      {child.description}
+                                    </p>
+                                  }
                                 />
                               ) : (
                                 <p className="py-1">{child.description}</p>
@@ -151,6 +156,11 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
                                     disableProse
                                     className="line-clamp-3 max-h-[4.5em] overflow-hidden py-1"
                                     contentData={child.description}
+                                    suspenseFallback={
+                                      <p className="invisible line-clamp-3">
+                                        {child.description}
+                                      </p>
+                                    }
                                   />
                                 ) : (
                                   <p className="py-1">{child.description}</p>
