@@ -13,6 +13,7 @@ const extractSlugFromPayload = async (
   switch (json?.__typename) {
     case "CollectionUpdated":
     case "CollectionDeleted":
+    case "CollectionCreated":
       return json.collection?.slug;
     default:
       logger.debug(

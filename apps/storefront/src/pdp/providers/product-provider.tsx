@@ -30,7 +30,7 @@ export const ProductProvider = async ({
     options: {
       next: {
         revalidate: CACHE_TTL.pdp,
-        tags: [`PRODUCT:${slug}`, "DETAIL-PAGE:PRODUCT"],
+        tags: [`PRODUCT:${slug}`, "DETAIL-PAGE:PRODUCT", "PRODUCT"],
       },
     },
   });

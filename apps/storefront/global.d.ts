@@ -69,7 +69,9 @@ type RevalidateTag =
   | `CHECKOUT:${Id}`
   | `CMS:${Slug}`
   | `COLLECTION:${Slug}`
+  | "COLLECTION"
   | `PRODUCT:${Slug}`
+  | "PRODUCT"
   | `SEARCH:${Slug}`;
 
 declare global {

@@ -20,7 +20,7 @@ export const RelatedProductsContainer = async ({ slug }: Props) => {
     countryCode: region.market.countryCode,
     options: {
       next: {
-        tags: [`PRODUCT:${slug}`, "DETAIL-PAGE:PRODUCT"],
+        tags: [`PRODUCT:${slug}`, "DETAIL-PAGE:PRODUCT", "PRODUCT"],
         revalidate: CACHE_TTL.pdp,
       },
     },
