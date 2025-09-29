@@ -21,11 +21,15 @@ const extractGroupTagFromPromotionEvent = async (
       for (const rule of rules) {
         const predicate = rule.cataloguePredicate as CataloguePredicate;
 
-        if (predicate?.collectionPredicate?.ids?.length) {return "COLLECTION";}
+        if (predicate?.collectionPredicate?.ids?.length) {
+          return "COLLECTION";
+        }
         if (
           predicate?.productPredicate?.ids?.length ||
           predicate?.variantPredicate?.ids?.length
-        ) {return "PRODUCT";}
+        ) {
+          return "PRODUCT";
+        }
       }
       break;
     }
@@ -35,12 +39,18 @@ const extractGroupTagFromPromotionEvent = async (
       const predicate = (json.promotionRule?.cataloguePredicate ||
         {}) as CataloguePredicate;
 
-      if (!predicate) {return undefined;}
-      if (predicate.collectionPredicate?.ids?.length) {return "COLLECTION";}
+      if (!predicate) {
+        return undefined;
+      }
+      if (predicate.collectionPredicate?.ids?.length) {
+        return "COLLECTION";
+      }
       if (
         predicate.productPredicate?.ids?.length ||
         predicate?.variantPredicate?.ids?.length
-      ) {return "PRODUCT";}
+      ) {
+        return "PRODUCT";
+      }
       break;
     }
   }
