@@ -1,4 +1,6 @@
+import { ok } from "@nimara/domain/objects/Result";
 import { type MCPService } from "../types";
+import { getProductFeedInfra } from "./infrastructure/get-product-feed";
 
 export const saleorMcpService = () =>
   ({
@@ -14,4 +16,7 @@ export const saleorMcpService = () =>
     updateCheckoutSession: async ({ checkoutSessionId }) => {
       return { checkoutSessionId };
     },
+    getProductFeed: async (args) => {
+      return getProductFeedInfra(args);
+    }
   }) satisfies MCPService;
