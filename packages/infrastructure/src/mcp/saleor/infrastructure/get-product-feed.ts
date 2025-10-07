@@ -1,7 +1,7 @@
 import { GetProductFeedArgs } from "#root/mcp/types";
 import { BaseError } from "@nimara/domain/objects/Error";
 import { err, ok } from "@nimara/domain/objects/Result";
-import { ProductsFeedQueryDocument } from "#root/search/saleor/graphql/queries/generated";
+import { ProductsFeedQueryDocument } from "#root/mcp/saleor/graphql/queries/generated";
 import { GraphqlClient } from "#root/graphql/client";
 import { Logger } from "#root/logging/types";
 
