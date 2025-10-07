@@ -48,7 +48,7 @@ export function serializeSaleorProductsToFeedItems(
       offer_id: variant?.id ?? "",
       brand: getAttr(node.attributes, "brand"),
       material: getAttr(node.attributes, "material"),
-      seller_name: "Your Shop Name",
+      seller_name: "Nimara Store",
       seller_url: storefrontUrl,
     })),
   );
