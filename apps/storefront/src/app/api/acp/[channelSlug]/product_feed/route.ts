@@ -39,9 +39,7 @@ export async function GET(
 
   if (!productFeedResult.ok) {
     storefrontLogger.error(
-      `Failed to fetch product feed for channel ${channelSlug}: ${productFeedResult.errors.join(
-        ", ",
-      )}`,
+      `Failed to fetch product feed for channel ${channelSlug}`,
     );
 
     return NextResponse.json(
