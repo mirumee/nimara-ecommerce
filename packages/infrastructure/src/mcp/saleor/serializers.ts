@@ -30,7 +30,7 @@ export function serializeSaleorProductsToFeedItems(
               .join(", ")
           : ""
       }`,
-      description: node.description ?? "",
+      description: node.description ?? "", // TODO: This should be a plain text not rich text from saleor
       link: `${storefrontUrl}/${channel}/products/${node.slug}`,
       price: variant?.pricing?.price?.gross?.amount ?? 0,
       currency: variant?.pricing?.price?.gross?.currency ?? "",
