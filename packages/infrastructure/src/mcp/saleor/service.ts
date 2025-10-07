@@ -1,22 +1,50 @@
-import { ok } from "@nimara/domain/objects/Result";
-import { type MCPService } from "../types";
+import { graphqlClient } from "#root/graphql/client";
+import { Logger } from "#root/logging/types";
+import { ACPService } from "#root/mcp/types";
+import { checkoutSessionCompleteInfra } from "./infrastructure/checkout-session-complete-infra";
+import { checkoutSessionCreateInfra } from "./infrastructure/checkout-session-create-infra";
+import { checkoutSessionGetInfra } from "./infrastructure/checkout-session-get-infra";
+import { checkoutSessionUpdateInfra } from "./infrastructure/checkout-session-update-infra";
 import { getProductFeedInfra } from "./infrastructure/get-product-feed";
 
-export const saleorMcpService = () =>
+export const saleorAcPService = (config: { apiUrl: string; logger: Logger }) =>
   ({
-    completeCheckoutSession: async ({ checkoutSessionId }) => {
-      return { orderId: checkoutSessionId };
+    completeCheckoutSession: async (input) => {
+      const saleorGraphqlClient = graphqlClient(config.apiUrl);
+
+      return checkoutSessionCompleteInfra({
+        deps: {
+          graphqlClient: saleorGraphqlClient,
+          logger: config.logger,
+        },
+        input,
+      });
     },
-    createCheckoutSession: async () => {
-      return { checkoutSessionId: "checkout-session-id" };
+    createCheckoutSession: async ({ input }) => {
+      const saleorGraphqlClient = graphqlClient(config.apiUrl);
+
+      return checkoutSessionCreateInfra({
+        deps: { graphqlClient: saleorGraphqlClient, logger: config.logger },
+        input,
+      });
     },
-    getCheckoutSession: async ({ checkoutSessionId }) => {
-      return { checkoutSessionId };
+    getCheckoutSession: async (input) => {
+      const saleorGraphqlClient = graphqlClient(config.apiUrl);
+
+      return checkoutSessionGetInfra({
+        deps: { graphqlClient: saleorGraphqlClient, logger: config.logger },
+        input,
+      });
     },
-    updateCheckoutSession: async ({ checkoutSessionId }) => {
-      return { checkoutSessionId };
+    updateCheckoutSession: async (input) => {
+      const saleorGraphqlClient = graphqlClient(config.apiUrl);
+
+      return checkoutSessionUpdateInfra({
+        deps: { graphqlClient: saleorGraphqlClient, logger: config.logger },
+        input,
+      });
     },
     getProductFeed: async (args) => {
       return getProductFeedInfra(args);
     },
-  }) satisfies MCPService;
+  }) satisfies ACPService;

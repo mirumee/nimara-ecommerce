@@ -249,3 +249,5 @@ const handleInvalidResponse = ({
       ]);
   }
 };
+
+export type GraphqlClient = ReturnType<typeof graphqlClient>;
