@@ -1,3 +1,6 @@
+import { type PageInfo } from "#root/use-cases/search/types";
+import { type AsyncResult, ok } from "@nimara/domain/objects/Result";
+
 export type ProductFeedItem = {};
 
 export type ProductFeed = Array<ProductFeedItem>;
@@ -11,6 +14,14 @@ export type CheckoutSession = {
     quantity: number;
   }>;
   totalAmount: number;
+};
+
+export type GetProductFeedArgs = {
+  channel: string;
+  limit: number;
+  page?: string;
+  after?: string;
+  before?: string;
 };
 
 /**
@@ -36,4 +47,8 @@ export type MCPService = {
   }) => Promise<{
     checkoutSessionId: CheckoutSessionId;
   } | null>;
+  getProductFeed: (args: GetProductFeedArgs) => AsyncResult<{
+    pageInfo: PageInfo;
+    products: ProductFeed;
+  }>;
 };
