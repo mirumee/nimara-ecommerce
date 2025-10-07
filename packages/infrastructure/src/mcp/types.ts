@@ -24,31 +24,34 @@ export type GetProductFeedArgs = {
   before?: string;
 };
 
+export type CheckoutSessionCreateInput = {
+  items: Array<{
+    id: string;
+    quantity: number;
+  }>;
+};
+
 /**
- * @description MCPService defines the interface for interacting with a Multi-Channel Platform (MCP).
+ * @description ACPService defines the interface for interacting with a Agentic Commerce Protocol (ACP).
  * @link https://www.agenticcommerce.dev/
  * @link https://developers.openai.com/commerce/specs/checkout
  */
-export type MCPService = {
+export interface ACPService {
   completeCheckoutSession: (args: {
     checkoutSessionId: CheckoutSessionId;
-  }) => Promise<{ orderId: string } | null>;
-  createCheckoutSession: (
-    args: unknown,
-  ) => Promise<{ checkoutSessionId: CheckoutSessionId } | null>;
+  }) => AsyncResult<{ orderId: string }>;
+  createCheckoutSession: (args: {
+    input: CheckoutSessionCreateInput;
+  }) => AsyncResult<{ checkoutSession: CheckoutSession }>;
   getCheckoutSession: (args: {
     checkoutSessionId: CheckoutSessionId;
-  }) => Promise<{
-    checkoutSessionId: CheckoutSessionId;
-  } | null>;
+  }) => AsyncResult<{ checkoutSession: CheckoutSession }>;
   updateCheckoutSession: (args: {
     checkoutSessionId: CheckoutSessionId;
     data: unknown;
-  }) => Promise<{
-    checkoutSessionId: CheckoutSessionId;
-  } | null>;
+  }) => AsyncResult<{ checkoutSession: CheckoutSession }>;
   getProductFeed: (args: GetProductFeedArgs) => AsyncResult<{
     pageInfo: PageInfo;
     products: ProductFeed;
   }>;
-};
+}
