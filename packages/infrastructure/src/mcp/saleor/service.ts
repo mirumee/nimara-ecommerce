@@ -18,5 +18,5 @@ export const saleorMcpService = () =>
     },
     getProductFeed: async (args) => {
       return getProductFeedInfra(args);
-    }
+    },
   }) satisfies MCPService;
