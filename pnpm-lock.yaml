@@ -572,6 +572,9 @@ importers:
       ts-invariant:
         specifier: 0.10.3
         version: 0.10.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
     optionalDependencies:
       algoliasearch:
         specifier: '5'

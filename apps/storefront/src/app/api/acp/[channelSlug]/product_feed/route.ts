@@ -28,9 +28,11 @@ export async function GET(
   const acpService = saleorAcPService({
     apiUrl: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
     logger: storefrontLogger,
+    storefrontUrl: clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
   });
 
   const productFeedResult = await acpService.getProductFeed({
+    channelPrefix: marketData.id,
     channel: channelSlug,
     limit: 100,
   });

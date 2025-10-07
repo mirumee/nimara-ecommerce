@@ -1,9 +1,6 @@
 import { type PageInfo } from "#root/use-cases/search/types";
 import { type AsyncResult, ok } from "@nimara/domain/objects/Result";
-
-export type ProductFeedItem = {};
-
-export type ProductFeed = Array<ProductFeedItem>;
+import { ProductFeed } from "./schema";
 
 export type CheckoutSessionId = string;
 
@@ -17,6 +14,7 @@ export type CheckoutSession = {
 };
 
 export type GetProductFeedArgs = {
+  channelPrefix: string;
   channel: string;
   limit: number;
   page?: string;
