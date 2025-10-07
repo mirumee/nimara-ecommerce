@@ -1,10 +1,10 @@
 import { ProductFeedItem } from "../schema";
-import { ProductsFeedQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product } from "./graphql/queries/generated";
+import { ProductFeedFragment } from "./graphql/fragments/generated";
 
 export function serializeSaleorProductsToFeedItems(
   channel: string,
   storefrontUrl: string,
-  products: ProductsFeedQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product[],
+  products: ProductFeedFragment[],
 ): Array<ProductFeedItem> {
   const getAttr = (
     attrs:
