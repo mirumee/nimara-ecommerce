@@ -1,19 +1,35 @@
 import type * as Types from '@nimara/codegen/schema';
 
 import type { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
-export type CheckoutQuery_checkout_Checkout_lines_CheckoutLine = { id: string, quantity: number };
+export type CheckoutSessionGet_checkout_Checkout_user_User_addresses_Address = { phone: string | null };
 
-export type CheckoutQuery_checkout_Checkout = { id: string, lines: Array<CheckoutQuery_checkout_Checkout_lines_CheckoutLine> };
+export type CheckoutSessionGet_checkout_Checkout_user_User = { firstName: string, lastName: string, email: string, addresses: Array<CheckoutSessionGet_checkout_Checkout_user_User_addresses_Address> };
 
-export type CheckoutQuery_Query = { checkout: CheckoutQuery_checkout_Checkout | null };
+export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant = { id: string };
+
+export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine = { id: string, quantity: number, variant: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant };
+
+export type CheckoutSessionGet_checkout_Checkout_shippingMethods_ShippingMethod = { id: string, name: string };
+
+export type CheckoutSessionGet_checkout_Checkout_totalPrice_TaxedMoney_gross_Money = { amount: number };
+
+export type CheckoutSessionGet_checkout_Checkout_totalPrice_TaxedMoney_net_Money = { amount: number };
+
+export type CheckoutSessionGet_checkout_Checkout_totalPrice_TaxedMoney_tax_Money = { amount: number };
+
+export type CheckoutSessionGet_checkout_Checkout_totalPrice_TaxedMoney = { currency: string, gross: CheckoutSessionGet_checkout_Checkout_totalPrice_TaxedMoney_gross_Money, net: CheckoutSessionGet_checkout_Checkout_totalPrice_TaxedMoney_net_Money, tax: CheckoutSessionGet_checkout_Checkout_totalPrice_TaxedMoney_tax_Money };
+
+export type CheckoutSessionGet_checkout_Checkout = { id: string, chargeStatus: Types.CheckoutChargeStatusEnum, user: CheckoutSessionGet_checkout_Checkout_user_User | null, lines: Array<CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine>, shippingMethods: Array<CheckoutSessionGet_checkout_Checkout_shippingMethods_ShippingMethod>, totalPrice: CheckoutSessionGet_checkout_Checkout_totalPrice_TaxedMoney };
+
+export type CheckoutSessionGet_Query = { checkout: CheckoutSessionGet_checkout_Checkout | null };
 
 
-export type CheckoutQueryVariables = Types.Exact<{
+export type CheckoutSessionGetVariables = Types.Exact<{
   id: Types.Scalars['ID']['input'];
 }>;
 
 
-export type CheckoutQuery = CheckoutQuery_Query;
+export type CheckoutSessionGet = CheckoutSessionGet_Query;
 
 export type ProductsFeedQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_media_ProductMedia = { url: string };
 
@@ -77,19 +93,47 @@ export class TypedDocumentString<TResult, TVariables>
   }
 }
 
-export const CheckoutQueryDocument = new TypedDocumentString(`
-    query CheckoutQuery($id: ID!) {
+export const CheckoutSessionGetDocument = new TypedDocumentString(`
+    query CheckoutSessionGet($id: ID!) {
   checkout(id: $id) {
-    ...CheckoutSession
+    ...CheckoutSessionFragment
   }
 }
-    fragment CheckoutSession on Checkout {
+    fragment CheckoutSessionFragment on Checkout {
   id
+  chargeStatus
+  user {
+    firstName
+    lastName
+    email
+    addresses {
+      phone
+    }
+  }
   lines {
     id
     quantity
+    variant {
+      id
+    }
   }
-}`) as unknown as TypedDocumentString<CheckoutQuery, CheckoutQueryVariables>;
+  shippingMethods {
+    id
+    name
+  }
+  totalPrice {
+    currency
+    gross {
+      amount
+    }
+    net {
+      amount
+    }
+    tax {
+      amount
+    }
+  }
+}`) as unknown as TypedDocumentString<CheckoutSessionGet, CheckoutSessionGetVariables>;
 export const ProductsFeedQueryDocument = new TypedDocumentString(`
     query ProductsFeedQuery($after: String, $before: String, $channel: String!, $first: Int) {
   products(after: $after, before: $before, channel: $channel, first: $first) {

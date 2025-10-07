@@ -1,5 +1,5 @@
-query CheckoutQuery($id: ID!) {
+query CheckoutSessionGet($id: ID!) {
   checkout(id: $id) {
-    ...CheckoutSession
+    ...CheckoutSessionFragment
   }
 }

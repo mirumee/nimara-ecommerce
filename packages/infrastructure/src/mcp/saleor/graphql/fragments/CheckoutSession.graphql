@@ -1,7 +1,0 @@
-fragment CheckoutSession on Checkout {
-  id
-  lines {
-    id
-    quantity
-  }
-}

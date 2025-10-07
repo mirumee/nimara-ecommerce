@@ -7,7 +7,11 @@ import { checkoutSessionGetInfra } from "./infrastructure/checkout-session-get-i
 import { checkoutSessionUpdateInfra } from "./infrastructure/checkout-session-update-infra";
 import { getProductFeedInfra } from "./infrastructure/get-product-feed";
 
-export const saleorAcPService = (config: { apiUrl: string; logger: Logger }) =>
+export const saleorAcPService = (config: {
+  apiUrl: string;
+  logger: Logger;
+  channel: string;
+}) =>
   ({
     completeCheckoutSession: async (input) => {
       const saleorGraphqlClient = graphqlClient(config.apiUrl);
@@ -24,7 +28,11 @@ export const saleorAcPService = (config: { apiUrl: string; logger: Logger }) =>
       const saleorGraphqlClient = graphqlClient(config.apiUrl);
 
       return checkoutSessionCreateInfra({
-        deps: { graphqlClient: saleorGraphqlClient, logger: config.logger },
+        deps: {
+          graphqlClient: saleorGraphqlClient,
+          logger: config.logger,
+          channel: config.channel,
+        },
         input,
       });
     },

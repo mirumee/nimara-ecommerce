@@ -1,0 +1,35 @@
+fragment CheckoutSessionFragment on Checkout {
+  id
+  chargeStatus
+  user {
+    firstName
+    lastName
+    email
+    addresses {
+      phone
+    }
+  }
+  lines {
+    id
+    quantity
+    variant {
+      id
+    }
+  }
+  shippingMethods {
+    id
+    name
+  }
+  totalPrice {
+    currency
+    gross {
+      amount
+    }
+    net {
+      amount
+    }
+    tax {
+      amount
+    }
+  }
+}

@@ -1,7 +1,12 @@
 import { GraphqlClient } from "#root/graphql/client";
 import { Logger } from "#root/logging/types";
-import { CheckoutCreateDocument } from "#root/mcp/saleor/graphql/mutations/generated";
-import { CheckoutSession, CheckoutSessionCreateInput } from "#root/mcp/types";
+import { CheckoutSessionCreateDocument } from "#root/mcp/saleor/graphql/mutations/generated";
+import { validateAndSerializeCheckout } from "#root/mcp/saleor/serializers";
+import {
+  CheckoutSession,
+  checkoutSessionSchema,
+  CheckoutSessionCreateSchema,
+} from "#root/mcp/schema";
 import { AsyncResult, err, ok } from "@nimara/domain/objects/Result";
 
 export const checkoutSessionCreateInfra = async ({
@@ -11,20 +16,25 @@ export const checkoutSessionCreateInfra = async ({
   deps: {
     graphqlClient: GraphqlClient;
     logger: Logger;
+    channel: string;
   };
-  input: CheckoutSessionCreateInput;
+  input: CheckoutSessionCreateSchema;
 }): AsyncResult<{ checkoutSession: CheckoutSession }> => {
-  const result = await deps.graphqlClient.execute(CheckoutCreateDocument, {
-    variables: {
-      input: {
-        lines: input.items.map((item) => ({
-          quantity: item.quantity,
-          variantId: item.id,
-        })),
+  const result = await deps.graphqlClient.execute(
+    CheckoutSessionCreateDocument,
+    {
+      variables: {
+        input: {
+          channel: deps.channel,
+          lines: input.items.map((item) => ({
+            quantity: item.quantity,
+            variantId: item.id,
+          })),
+        },
       },
+      operationName: "ACP:CheckoutCreateMutation",
     },
-    operationName: "ACP:CheckoutCreateMutation",
-  });
+  );
 
   if (!result.ok) {
     console.error(result.errors.join("\n"));
@@ -44,11 +54,21 @@ export const checkoutSessionCreateInfra = async ({
     ]);
   }
 
-  return ok({
-    checkoutSession: {
-      id: result.data.checkoutCreate.checkout.id,
-      lineItems: [],
-      totalAmount: 0,
-    },
-  });
+  const checkout = validateAndSerializeCheckout(
+    result.data.checkoutCreate.checkout,
+  );
+
+  if (!checkout) {
+    console.error("Failed to parse created checkout", {
+      checkout: result.data.checkoutCreate.checkout,
+    });
+
+    return err([
+      {
+        code: "BAD_REQUEST_ERROR",
+      },
+    ]);
+  }
+
+  return ok({ checkoutSession: checkout });
 };

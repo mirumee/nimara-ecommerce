@@ -28,6 +28,7 @@ export async function GET(
   const acpService = saleorAcPService({
     apiUrl: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
     logger: storefrontLogger,
+    channel: channelSlug,
   });
 
   const productFeedResult = await acpService.getProductFeed({

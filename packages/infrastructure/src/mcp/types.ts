@@ -1,20 +1,10 @@
+import { CheckoutSession, CheckoutSessionCreateSchema } from "#root/mcp/schema";
 import { type PageInfo } from "#root/use-cases/search/types";
-import { type AsyncResult, ok } from "@nimara/domain/objects/Result";
+import { type AsyncResult } from "@nimara/domain/objects/Result";
 
 export type ProductFeedItem = {};
 
 export type ProductFeed = Array<ProductFeedItem>;
-
-export type CheckoutSessionId = string;
-
-export type CheckoutSession = {
-  id: CheckoutSessionId;
-  lineItems: Array<{
-    productId: string;
-    quantity: number;
-  }>;
-  totalAmount: number;
-};
 
 export type GetProductFeedArgs = {
   channel: string;
@@ -24,13 +14,6 @@ export type GetProductFeedArgs = {
   before?: string;
 };
 
-export type CheckoutSessionCreateInput = {
-  items: Array<{
-    id: string;
-    quantity: number;
-  }>;
-};
-
 /**
  * @description ACPService defines the interface for interacting with a Agentic Commerce Protocol (ACP).
  * @link https://www.agenticcommerce.dev/
@@ -38,16 +21,16 @@ export type CheckoutSessionCreateInput = {
  */
 export interface ACPService {
   completeCheckoutSession: (args: {
-    checkoutSessionId: CheckoutSessionId;
+    checkoutSessionId: string;
   }) => AsyncResult<{ orderId: string }>;
   createCheckoutSession: (args: {
-    input: CheckoutSessionCreateInput;
+    input: CheckoutSessionCreateSchema;
   }) => AsyncResult<{ checkoutSession: CheckoutSession }>;
   getCheckoutSession: (args: {
-    checkoutSessionId: CheckoutSessionId;
+    checkoutSessionId: string;
   }) => AsyncResult<{ checkoutSession: CheckoutSession }>;
   updateCheckoutSession: (args: {
-    checkoutSessionId: CheckoutSessionId;
+    checkoutSessionId: string;
     data: unknown;
   }) => AsyncResult<{ checkoutSession: CheckoutSession }>;
   getProductFeed: (args: GetProductFeedArgs) => AsyncResult<{

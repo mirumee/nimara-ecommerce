@@ -20,7 +20,8 @@
     "libphonenumber-js": "1.12.15",
     "pino": "9.9.4",
     "stripe": "15.10.0",
-    "ts-invariant": "0.10.3"
+    "ts-invariant": "0.10.3",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@graphql-typed-document-node/core": "3.2.0",
