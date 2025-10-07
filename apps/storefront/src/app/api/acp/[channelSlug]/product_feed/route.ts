@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 
-import { saleorMcpService } from "@nimara/infrastructure/mcp/saleor/service";
+import { saleorAcPService } from "@nimara/infrastructure/mcp/saleor/service";
 
+import { clientEnvs } from "@/envs/client";
 import { MARKETS } from "@/regions/config";
 import { storefrontLogger } from "@/services/logging";
 // TODO: Extend the ProductFeedItem type based on required fields from MCP docs
@@ -24,7 +25,10 @@ export async function GET(
       { status: 400 },
     );
   }
-  const acpService = saleorMcpService();
+  const acpService = saleorAcPService({
+    apiUrl: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
+    logger: storefrontLogger,
+  });
 
   const productFeedResult = await acpService.getProductFeed({
     channel: channelSlug,

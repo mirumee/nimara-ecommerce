@@ -45,6 +45,11 @@ export const saleorAcPService = (config: { apiUrl: string; logger: Logger }) =>
       });
     },
     getProductFeed: async (args) => {
-      return getProductFeedInfra(args);
+      const saleorGraphqlClient = graphqlClient(config.apiUrl);
+
+      return getProductFeedInfra({
+        deps: { graphqlClient: saleorGraphqlClient, logger: config.logger },
+        input: args,
+      });
     },
   }) satisfies ACPService;
