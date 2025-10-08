@@ -15,10 +15,10 @@
     "buttercms": "2.1.4"
   },
   "dependencies": {
-    "@saleor/auth-sdk": "1.0.2",
+    "@saleor/auth-sdk": "1.0.3",
     "@stripe/stripe-js": "3.5.0",
-    "libphonenumber-js": "1.12.15",
-    "pino": "9.9.4",
+    "libphonenumber-js": "1.12.18",
+    "pino": "9.11.0",
     "stripe": "15.10.0",
     "ts-invariant": "0.10.3",
     "zod": "^3.25.76"
