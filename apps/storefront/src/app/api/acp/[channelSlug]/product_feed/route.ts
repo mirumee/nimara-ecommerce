@@ -28,18 +28,18 @@ export async function GET(
   const acpService = saleorAcPService({
     apiUrl: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
     logger: storefrontLogger,
+    storefrontUrl: clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
   });
 
   const productFeedResult = await acpService.getProductFeed({
+    channelPrefix: marketData.id,
     channel: channelSlug,
     limit: 100,
   });
 
   if (!productFeedResult.ok) {
     storefrontLogger.error(
-      `Failed to fetch product feed for channel ${channelSlug}: ${productFeedResult.errors.join(
-        ", ",
-      )}`,
+      "Failed to fetch product feed for channel ${channelSlug}",
     );
 
     return NextResponse.json(
