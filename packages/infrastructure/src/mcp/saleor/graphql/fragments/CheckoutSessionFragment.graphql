@@ -1,0 +1,61 @@
+fragment CheckoutSessionFragment on Checkout {
+  id
+  chargeStatus
+  authorizeStatus
+  user {
+    firstName
+    lastName
+    email
+  }
+  deliveryMethod {
+    __typename
+    ... on ShippingMethod {
+      id
+      name
+    }
+    ... on Warehouse {
+      id
+      name
+    }
+  }
+  lines {
+    id
+    quantity
+    variant {
+      id
+    }
+    unitPrice {
+      ...TaxedMoneyFragment
+    }
+    totalPrice {
+      ...TaxedMoneyFragment
+    }
+  }
+  billingAddress {
+    ...AddressFragment
+  }
+  shippingAddress {
+    ...AddressFragment
+  }
+  shippingMethods {
+    id
+    name
+  }
+  totalPrice {
+    currency
+    ...TaxedMoneyFragment
+  }
+  subtotalPrice {
+    currency
+    ...TaxedMoneyFragment
+  }
+  shippingPrice {
+    ...TaxedMoneyFragment
+  }
+  discount {
+    ...MoneyFragment
+  }
+  totalPrice {
+    ...TaxedMoneyFragment
+  }
+}

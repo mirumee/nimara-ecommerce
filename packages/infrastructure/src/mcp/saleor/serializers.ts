@@ -1,24 +1,81 @@
 import { type CheckoutSessionFragment } from "#root/mcp/saleor/graphql/fragments/generated";
-import { type CheckoutSession, checkoutSessionSchema } from "#root/mcp/schema";
+import {
+  type CheckoutSession,
+  checkoutSessionSchema,
+  type CheckoutSessionStatus,
+  type Totals,
+} from "#root/mcp/schema";
 
 import { type ProductFeedItem } from "../schema";
 import { type ProductFeedFragment } from "./graphql/fragments/generated";
 
 export const validateAndSerializeCheckout = (
   checkout: CheckoutSessionFragment,
+  extraContext: {
+    storefrontUrl: string;
+  },
 ): CheckoutSession | null => {
+  const calculateTotals = () =>
+    [
+      {
+        type: "items_base_amount",
+        display_text: "Item(s) base amount",
+        amount: checkout.subtotalPrice.gross.amount,
+      },
+      {
+        type: "items_discount",
+        display_text: "Item(s) discount",
+        amount: checkout.discount?.amount ?? 0,
+      },
+      {
+        type: "discount",
+        display_text: "Discount",
+        amount: checkout.discount?.amount ?? 0,
+      },
+      {
+        type: "subtotal",
+        display_text: "Subtotal",
+        amount:
+          checkout.subtotalPrice.gross.amount -
+          (checkout.discount?.amount ?? 0),
+      },
+      {
+        type: "tax",
+        display_text: "Tax",
+        amount:
+          checkout.totalPrice.gross.amount -
+          checkout.subtotalPrice.gross.amount,
+      },
+      {
+        type: "total",
+        display_text: "Total",
+        amount: checkout.totalPrice.gross.amount,
+      },
+    ] satisfies Totals[];
+
+  const determineCheckoutStatus = (): CheckoutSessionStatus => {
+    if (checkout.authorizeStatus === "FULL") {
+      return "completed";
+    }
+
+    const buyerIsSet = checkout.user !== null;
+    const bothAddressesAreSet =
+      checkout.shippingAddress && checkout.billingAddress;
+    const shippingMethodIsSet = checkout.deliveryMethod !== null;
+
+    const isCheckoutReadyForPayment =
+      buyerIsSet && bothAddressesAreSet && shippingMethodIsSet;
+
+    if (isCheckoutReadyForPayment) {
+      return "ready_for_payment";
+    }
+
+    return "not_ready_for_payment";
+  };
+
   try {
     const parsedCheckout = checkoutSessionSchema.safeParse({
       id: checkout.id,
-      currency: checkout.totalPrice.currency.toLowerCase(),
-      fulfillment_options: [],
-      line_items: checkout.lines.map((line) => ({
-        id: line.id,
-        quantity: line.quantity,
-      })),
-      messages: [],
-      status: "not_ready_for_payment",
-      totals: [],
       buyer: checkout.user
         ? {
             email: checkout.user.email,
@@ -27,6 +84,43 @@ export const validateAndSerializeCheckout = (
             phone_number: "MISSING_PHONE",
           }
         : null,
+      payment_provider: {
+        provider: "stripe",
+        supported_payment_methods: ["card"],
+      },
+      fulfillment_address: {},
+      currency: checkout.totalPrice.currency.toLowerCase(),
+      fulfillment_options: [],
+      fulfillment_option_id: null,
+      line_items: checkout.lines.map((line) => ({
+        id: line.id,
+        item: {
+          id: line.variant.id,
+          quantity: line.quantity,
+        },
+        base_amount: line.totalPrice.net.amount,
+        discount: 0,
+        subtotal: line.totalPrice.net.amount,
+        tax: line.totalPrice.gross.amount - line.totalPrice.net.amount,
+        total: line.totalPrice.gross.amount,
+      })),
+      messages: [],
+      status: determineCheckoutStatus(),
+      totals: calculateTotals(),
+      link: [
+        {
+          type: "terms_of_use",
+          url: `${extraContext.storefrontUrl}/terms-of-service`,
+        },
+        {
+          type: "privacy_policy",
+          url: `${extraContext.storefrontUrl}/privacy-policy`,
+        },
+        {
+          type: "seller_shop_policies",
+          url: `${extraContext.storefrontUrl}/return-policy`,
+        },
+      ],
     } satisfies CheckoutSession);
 
     if (!parsedCheckout.success) {

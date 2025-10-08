@@ -1,9 +1,10 @@
-import { GraphqlClient } from "#root/graphql/client";
-import { Logger } from "#root/logging/types";
+import { type AsyncResult, err, ok } from "@nimara/domain/objects/Result";
+
+import { type GraphqlClient } from "#root/graphql/client";
+import { type Logger } from "#root/logging/types";
 import { CheckoutSessionGetDocument } from "#root/mcp/saleor/graphql/queries/generated";
 import { validateAndSerializeCheckout } from "#root/mcp/saleor/serializers";
-import { CheckoutSession } from "#root/mcp/schema";
-import { AsyncResult, err, ok } from "@nimara/domain/objects/Result";
+import { type CheckoutSession } from "#root/mcp/schema";
 
 const DEFAULT_CACHE_TIME = 60 * 60; // 1 hour
 
@@ -14,6 +15,7 @@ export const checkoutSessionGetInfra = async ({
   deps: {
     graphqlClient: GraphqlClient;
     logger: Logger;
+    storefrontUrl: string;
   };
   input: { checkoutSessionId: string };
 }): AsyncResult<{ checkoutSession: CheckoutSession }> => {
@@ -54,7 +56,9 @@ export const checkoutSessionGetInfra = async ({
     ]);
   }
 
-  const checkoutSession = validateAndSerializeCheckout(result.data.checkout);
+  const checkoutSession = validateAndSerializeCheckout(result.data.checkout, {
+    storefrontUrl: deps.storefrontUrl,
+  });
 
   if (!checkoutSession) {
     deps.logger.error("Failed to parse checkout session from Saleor", {
