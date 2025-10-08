@@ -28,6 +28,7 @@ export async function GET(
     apiUrl: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
     logger: storefrontLogger,
     channel: channelSlug,
+    storefrontUrl: clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
   });
 
   const result = await acpService.getCheckoutSession({
