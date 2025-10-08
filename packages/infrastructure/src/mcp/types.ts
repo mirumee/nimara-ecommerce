@@ -1,32 +1,20 @@
+import { type AsyncResult } from "@nimara/domain/objects/Result";
+
+import {
+  type CheckoutSession,
+  type CheckoutSessionCreateSchema,
+} from "#root/mcp/schema";
 import { type PageInfo } from "#root/use-cases/search/types";
-import { type AsyncResult, ok } from "@nimara/domain/objects/Result";
-import { ProductFeed } from "./schema";
 
-export type CheckoutSessionId = string;
-
-export type CheckoutSession = {
-  id: CheckoutSessionId;
-  lineItems: Array<{
-    productId: string;
-    quantity: number;
-  }>;
-  totalAmount: number;
-};
+import { type ProductFeed } from "./schema";
 
 export type GetProductFeedArgs = {
-  channelPrefix: string;
-  channel: string;
-  limit: number;
-  page?: string;
   after?: string;
   before?: string;
-};
-
-export type CheckoutSessionCreateInput = {
-  items: Array<{
-    id: string;
-    quantity: number;
-  }>;
+  channel: string;
+  channelPrefix: string;
+  limit: number;
+  page?: string;
 };
 
 /**
@@ -36,20 +24,20 @@ export type CheckoutSessionCreateInput = {
  */
 export interface ACPService {
   completeCheckoutSession: (args: {
-    checkoutSessionId: CheckoutSessionId;
+    checkoutSessionId: string;
   }) => AsyncResult<{ orderId: string }>;
   createCheckoutSession: (args: {
-    input: CheckoutSessionCreateInput;
+    input: CheckoutSessionCreateSchema;
   }) => AsyncResult<{ checkoutSession: CheckoutSession }>;
   getCheckoutSession: (args: {
-    checkoutSessionId: CheckoutSessionId;
-  }) => AsyncResult<{ checkoutSession: CheckoutSession }>;
-  updateCheckoutSession: (args: {
-    checkoutSessionId: CheckoutSessionId;
-    data: unknown;
+    checkoutSessionId: string;
   }) => AsyncResult<{ checkoutSession: CheckoutSession }>;
   getProductFeed: (args: GetProductFeedArgs) => AsyncResult<{
     pageInfo: PageInfo;
     products: ProductFeed;
   }>;
+  updateCheckoutSession: (args: {
+    checkoutSessionId: string;
+    data: unknown;
+  }) => AsyncResult<{ checkoutSession: CheckoutSession }>;
 }

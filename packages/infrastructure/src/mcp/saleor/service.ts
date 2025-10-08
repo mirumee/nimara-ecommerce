@@ -1,6 +1,7 @@
 import { graphqlClient } from "#root/graphql/client";
-import { Logger } from "#root/logging/types";
-import { ACPService } from "#root/mcp/types";
+import { type Logger } from "#root/logging/types";
+import { type ACPService } from "#root/mcp/types";
+
 import { checkoutSessionCompleteInfra } from "./infrastructure/checkout-session-complete-infra";
 import { checkoutSessionCreateInfra } from "./infrastructure/checkout-session-create-infra";
 import { checkoutSessionGetInfra } from "./infrastructure/checkout-session-get-infra";
@@ -9,6 +10,7 @@ import { getProductFeedInfra } from "./infrastructure/get-product-feed";
 
 export const saleorAcPService = (config: {
   apiUrl: string;
+  channel: string;
   logger: Logger;
   storefrontUrl: string;
 }) =>
@@ -28,7 +30,11 @@ export const saleorAcPService = (config: {
       const saleorGraphqlClient = graphqlClient(config.apiUrl);
 
       return checkoutSessionCreateInfra({
-        deps: { graphqlClient: saleorGraphqlClient, logger: config.logger },
+        deps: {
+          graphqlClient: saleorGraphqlClient,
+          logger: config.logger,
+          channel: config.channel,
+        },
         input,
       });
     },

@@ -1,11 +1,15 @@
-mutation CheckoutCreate($input: CheckoutCreateInput!) {
+mutation CheckoutSessionCreate($input: CheckoutCreateInput!) {
   checkoutCreate(input: $input) {
     checkout {
-      ...CheckoutSession
+      ...CheckoutSessionFragment
     }
     errors {
       field
       message
+      code
+      variants
+      lines
+      addressType
     }
   }
 }
