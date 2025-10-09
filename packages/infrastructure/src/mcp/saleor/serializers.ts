@@ -1,4 +1,4 @@
-import { type CheckoutSessionFragment } from "#root/mcp/saleor/graphql/fragments/generated";
+import { type CheckoutFragment } from "#root/checkout/saleor/graphql/fragments/generated";
 import {
   type CheckoutSession,
   checkoutSessionSchema,
@@ -10,7 +10,7 @@ import { type ProductFeedItem } from "../schema";
 import { type ProductFeedFragment } from "./graphql/fragments/generated";
 
 export const validateAndSerializeCheckout = (
-  checkout: CheckoutSessionFragment,
+  checkout: CheckoutFragment,
   extraContext: {
     storefrontUrl: string;
   },
@@ -58,13 +58,12 @@ export const validateAndSerializeCheckout = (
       return "completed";
     }
 
-    const buyerIsSet = checkout.user !== null;
     const bothAddressesAreSet =
       checkout.shippingAddress && checkout.billingAddress;
     const shippingMethodIsSet = checkout.deliveryMethod !== null;
 
     const isCheckoutReadyForPayment =
-      buyerIsSet && bothAddressesAreSet && shippingMethodIsSet;
+      bothAddressesAreSet && shippingMethodIsSet;
 
     if (isCheckoutReadyForPayment) {
       return "ready_for_payment";
@@ -76,22 +75,44 @@ export const validateAndSerializeCheckout = (
   try {
     const parsedCheckout = checkoutSessionSchema.safeParse({
       id: checkout.id,
-      buyer: checkout.user
-        ? {
-            email: checkout.user.email,
-            first_name: checkout.user.firstName ?? "MISSING_FIRST_NAME",
-            last_name: checkout.user.lastName ?? "MISSING_LAST_NAME",
-            phone_number: "MISSING_PHONE",
-          }
-        : null,
+      buyer:
+        checkout.email && checkout.billingAddress
+          ? {
+              email: checkout.email,
+              first_name: checkout.billingAddress.firstName,
+              last_name: checkout.billingAddress.lastName,
+              phone_number: checkout.billingAddress.phone || "",
+            }
+          : null,
       payment_provider: {
         provider: "stripe",
         supported_payment_methods: ["card"],
       },
-      fulfillment_address: {},
-      currency: checkout.totalPrice.currency.toLowerCase(),
-      fulfillment_options: [],
-      fulfillment_option_id: null,
+      fulfillment_address: checkout.shippingAddress
+        ? {
+            city: checkout.shippingAddress.city,
+            country: checkout.shippingAddress.country.code,
+            line_one: checkout.shippingAddress.streetAddress1,
+            line_two: checkout.shippingAddress.streetAddress2 || undefined,
+            postal_code: checkout.shippingAddress.postalCode,
+            state: checkout.shippingAddress.countryArea || undefined,
+          }
+        : null,
+      currency: checkout.totalPrice.gross.currency.toLowerCase(),
+      fulfillment_options: checkout.shippingMethods.map((method) => ({
+        type: "shipping",
+        id: method.id,
+        title: method.name,
+        name:
+          method.maximumDeliveryDays && method.minimumDeliveryDays
+            ? `${method.name} (${method.minimumDeliveryDays}-${method.maximumDeliveryDays} days)`
+            : method.name,
+        carrier: method.name,
+        subtotal: 0,
+        tax: 0,
+        total: method.price.amount,
+      })),
+      fulfillment_option_id: checkout.deliveryMethod?.id || null,
       line_items: checkout.lines.map((line) => ({
         id: line.id,
         item: {

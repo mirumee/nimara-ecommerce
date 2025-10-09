@@ -37,9 +37,7 @@ export async function GET(
 
   if (!result.ok) {
     storefrontLogger.error(
-      `Failed to fetch checkout session for channel ${channelSlug} and id ${id}: ${result.errors.join(
-        ", ",
-      )}`,
+      `Failed to fetch checkout session for channel ${channelSlug} and id ${id}`,
     );
 
     return NextResponse.json(

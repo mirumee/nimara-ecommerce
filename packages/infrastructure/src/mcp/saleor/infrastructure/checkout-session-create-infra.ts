@@ -9,6 +9,8 @@ import {
   type CheckoutSessionCreateSchema,
 } from "#root/mcp/schema";
 
+const DEFAULT_LANGUAGE = "EN";
+
 export const checkoutSessionCreateInfra = async ({
   deps,
   input,
@@ -32,13 +34,16 @@ export const checkoutSessionCreateInfra = async ({
             variantId: item.id,
           })),
         },
+        languageCode: DEFAULT_LANGUAGE,
       },
       operationName: "ACP:CheckoutCreateMutation",
     },
   );
 
   if (!result.ok) {
-    console.error(result.errors.join("\n"));
+    deps.logger.error("Failed to create checkout session in Saleor", {
+      errors: result.errors,
+    });
 
     return err([
       {
@@ -48,7 +53,7 @@ export const checkoutSessionCreateInfra = async ({
   }
 
   if (!result.data.checkoutCreate?.checkout) {
-    console.error("No checkout created");
+    deps.logger.error("No checkout created");
 
     return err([
       {
@@ -65,7 +70,7 @@ export const checkoutSessionCreateInfra = async ({
   );
 
   if (!checkout) {
-    console.error("Failed to parse created checkout", {
+    deps.logger.error("Failed to parse created checkout", {
       checkout: result.data.checkoutCreate.checkout,
     });
 

@@ -7,6 +7,7 @@ import { validateAndSerializeCheckout } from "#root/mcp/saleor/serializers";
 import { type CheckoutSession } from "#root/mcp/schema";
 
 const DEFAULT_CACHE_TIME = 60 * 60; // 1 hour
+const DEFAULT_LANGUAGE = "EN";
 
 export const checkoutSessionGetInfra = async ({
   deps,
@@ -22,6 +23,7 @@ export const checkoutSessionGetInfra = async ({
   const result = await deps.graphqlClient.execute(CheckoutSessionGetDocument, {
     variables: {
       id: input.checkoutSessionId,
+      languageCode: DEFAULT_LANGUAGE,
     },
     options: {
       next: {
