@@ -1,32 +1,147 @@
-import { type CheckoutSessionFragment } from "#root/mcp/saleor/graphql/fragments/generated";
-import { type CheckoutSession, checkoutSessionSchema } from "#root/mcp/schema";
+import { type CheckoutFragment } from "#root/checkout/saleor/graphql/fragments/generated";
+import {
+  type CheckoutSession,
+  checkoutSessionSchema,
+  type CheckoutSessionStatus,
+  type Totals,
+} from "#root/mcp/schema";
 
 import { type ProductFeedItem } from "../schema";
 import { type ProductFeedFragment } from "./graphql/fragments/generated";
 
 export const validateAndSerializeCheckout = (
-  checkout: CheckoutSessionFragment,
+  checkout: CheckoutFragment,
+  extraContext: {
+    storefrontUrl: string;
+  },
 ): CheckoutSession | null => {
+  const calculateTotals = () =>
+    [
+      {
+        type: "items_base_amount",
+        display_text: "Item(s) base amount",
+        amount: checkout.subtotalPrice.gross.amount,
+      },
+      {
+        type: "items_discount",
+        display_text: "Item(s) discount",
+        amount: checkout.discount?.amount ?? 0,
+      },
+      {
+        type: "discount",
+        display_text: "Discount",
+        amount: checkout.discount?.amount ?? 0,
+      },
+      {
+        type: "subtotal",
+        display_text: "Subtotal",
+        amount:
+          checkout.subtotalPrice.gross.amount -
+          (checkout.discount?.amount ?? 0),
+      },
+      {
+        type: "tax",
+        display_text: "Tax",
+        amount:
+          checkout.totalPrice.gross.amount -
+          checkout.subtotalPrice.gross.amount,
+      },
+      {
+        type: "total",
+        display_text: "Total",
+        amount: checkout.totalPrice.gross.amount,
+      },
+    ] satisfies Totals[];
+
+  const determineCheckoutStatus = (): CheckoutSessionStatus => {
+    if (checkout.authorizeStatus === "FULL") {
+      return "completed";
+    }
+
+    const bothAddressesAreSet =
+      checkout.shippingAddress && checkout.billingAddress;
+    const shippingMethodIsSet = checkout.deliveryMethod !== null;
+
+    const isCheckoutReadyForPayment =
+      bothAddressesAreSet && shippingMethodIsSet;
+
+    if (isCheckoutReadyForPayment) {
+      return "ready_for_payment";
+    }
+
+    return "not_ready_for_payment";
+  };
+
   try {
     const parsedCheckout = checkoutSessionSchema.safeParse({
       id: checkout.id,
-      currency: checkout.totalPrice.currency.toLowerCase(),
-      fulfillment_options: [],
-      line_items: checkout.lines.map((line) => ({
-        id: line.id,
-        quantity: line.quantity,
-      })),
-      messages: [],
-      status: "not_ready_for_payment",
-      totals: [],
-      buyer: checkout.user
+      buyer:
+        checkout.email && checkout.billingAddress
+          ? {
+              email: checkout.email,
+              first_name: checkout.billingAddress.firstName,
+              last_name: checkout.billingAddress.lastName,
+              phone_number: checkout.billingAddress.phone || "",
+            }
+          : null,
+      payment_provider: {
+        provider: "stripe",
+        supported_payment_methods: ["card"],
+      },
+      fulfillment_address: checkout.shippingAddress
         ? {
-            email: checkout.user.email,
-            first_name: checkout.user.firstName ?? "MISSING_FIRST_NAME",
-            last_name: checkout.user.lastName ?? "MISSING_LAST_NAME",
-            phone_number: "MISSING_PHONE",
+            city: checkout.shippingAddress.city,
+            country: checkout.shippingAddress.country.code,
+            line_one: checkout.shippingAddress.streetAddress1,
+            line_two: checkout.shippingAddress.streetAddress2 || undefined,
+            postal_code: checkout.shippingAddress.postalCode,
+            state: checkout.shippingAddress.countryArea || undefined,
           }
         : null,
+      currency: checkout.totalPrice.gross.currency.toLowerCase(),
+      fulfillment_options: checkout.shippingMethods.map((method) => ({
+        type: "shipping",
+        id: method.id,
+        title: method.name,
+        name:
+          method.maximumDeliveryDays && method.minimumDeliveryDays
+            ? `${method.name} (${method.minimumDeliveryDays}-${method.maximumDeliveryDays} days)`
+            : method.name,
+        carrier: method.name,
+        subtotal: 0,
+        tax: 0,
+        total: method.price.amount,
+      })),
+      fulfillment_option_id: checkout.deliveryMethod?.id || null,
+      line_items: checkout.lines.map((line) => ({
+        id: line.id,
+        item: {
+          id: line.variant.id,
+          quantity: line.quantity,
+        },
+        base_amount: line.totalPrice.net.amount,
+        discount: 0,
+        subtotal: line.totalPrice.net.amount,
+        tax: line.totalPrice.gross.amount - line.totalPrice.net.amount,
+        total: line.totalPrice.gross.amount,
+      })),
+      messages: [],
+      status: determineCheckoutStatus(),
+      totals: calculateTotals(),
+      link: [
+        {
+          type: "terms_of_use",
+          url: `${extraContext.storefrontUrl}/terms-of-service`,
+        },
+        {
+          type: "privacy_policy",
+          url: `${extraContext.storefrontUrl}/privacy-policy`,
+        },
+        {
+          type: "seller_shop_policies",
+          url: `${extraContext.storefrontUrl}/return-policy`,
+        },
+      ],
     } satisfies CheckoutSession);
 
     if (!parsedCheckout.success) {

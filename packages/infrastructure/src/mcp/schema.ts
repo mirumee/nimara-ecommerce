@@ -38,7 +38,7 @@ const messageSchema = z.object({
   content: z.string().min(1, "Content cannot be empty"),
 });
 
-const itemCreateSchema = z.object({
+const itemSchema = z.object({
   id: z.string().min(1, "Id cannot be empty"),
   quantity: z.number().min(1, "Quantity must be at least 1"),
 });
@@ -46,7 +46,84 @@ const itemCreateSchema = z.object({
 export const checkoutSessionCreateSchema = z.object({
   buyer: buyerSchema.optional(),
   fulfillment_address: fulfillmentAddressSchema.optional(),
-  items: z.array(itemCreateSchema).min(1, "At least one item is required"),
+  items: z.array(itemSchema).min(1, "At least one item is required"),
+});
+
+export type CheckoutSessionCreateSchema = z.infer<
+  typeof checkoutSessionCreateSchema
+>;
+
+export const checkoutSessionUpdateSchema = z.object({
+  buyer: buyerSchema.optional(),
+  fulfillment_address: fulfillmentAddressSchema.optional(),
+  fulfillment_option_id: z
+    .string()
+    .min(1, "Fulfillment option ID cannot be empty")
+    .optional(),
+  items: z.array(itemSchema).min(1, "At least one item is required").optional(),
+});
+
+const lineItemSchema = z.object({
+  id: z.string().min(1, "Id cannot be empty"),
+  item: itemSchema,
+  base_amount: z.number().min(0, "Base amount cannot be negative"),
+  discount: z.number().min(0, "Discount cannot be negative"),
+  subtotal: z.number().min(0, "Subtotal cannot be negative"),
+  tax: z.number().min(0, "Tax cannot be negative"),
+  total: z.number().min(0, "Total cannot be negative"),
+});
+
+export type CheckoutSessionUpdateSchema = z.infer<
+  typeof checkoutSessionUpdateSchema
+>;
+
+const TOTAL_TYPES = [
+  "discount",
+  "fee",
+  "fulfillment",
+  "items_base_amount",
+  "items_discount",
+  "subtotal",
+  "tax",
+  "total",
+] as const;
+
+/**
+ * Schema representing a total line in the checkout session.
+ * @see TOTAL_TYPES for valid types.
+ * @link https://developers.openai.com/commerce/specs/checkout#total
+ */
+const totalSchema = z.object({
+  type: z.enum(TOTAL_TYPES),
+  display_text: z.string().min(1, "Display text cannot be empty"),
+  amount: z.number().min(0, "Amount cannot be negative"),
+});
+
+export type Totals = z.infer<typeof totalSchema>;
+
+export const CHECKOUT_SESSION_STATUSES = [
+  "not_ready_for_payment",
+  "ready_for_payment",
+  "completed",
+  "canceled",
+] as const;
+
+export type CheckoutSessionStatus = (typeof CHECKOUT_SESSION_STATUSES)[number];
+
+/**
+ * Schema representing a payment provider and its supported payment methods.
+ * @link https://developers.openai.com/commerce/specs/checkout#paymentprovider
+ */
+export const paymentProviderSchema = z.object({
+  provider: z.enum(["stripe"]),
+  supported_payment_methods: z.array(z.enum(["card"])),
+});
+
+export type PaymentProvider = z.infer<typeof paymentProviderSchema>;
+
+export const linkSchema = z.object({
+  type: z.enum(["terms_of_use", "privacy_policy", "seller_shop_policies"]),
+  url: z.string().url(),
 });
 
 export const checkoutSessionSchema = z.object({
@@ -57,43 +134,18 @@ export const checkoutSessionSchema = z.object({
     "completed",
     "canceled",
   ]),
-  line_items: z
-    .array(
-      itemCreateSchema.extend({
-        id: z.string().min(1, "Id cannot be empty"),
-      }),
-    )
-    .min(1, "At least one item is required"),
+  line_items: z.array(lineItemSchema),
   buyer: buyerSchema.nullable(),
+  fulfillment_address: fulfillmentAddressSchema.nullable(),
   fulfillment_options: z.array(fulfillmentOptionSchema),
+  fulfillment_option_id: z.string().nullable(),
   currency: z.string(),
-  totals: z.array(z.object({})).nullable(),
+  totals: z.array(totalSchema).nullable(),
   messages: z.array(messageSchema),
+  payment_provider: paymentProviderSchema,
+  link: z.array(linkSchema),
 });
 
-export const checkoutSession = {
-  id: "cs_12345",
-  status: "not_ready_for_payment",
-  line_items: [
-    {
-      id: "item_1",
-      quantity: 2,
-    },
-  ],
-  currency: "usd",
-  buyer: {
-    first_name: "John",
-    last_name: "Doe",
-    email: "john.doe@example.com",
-  },
-  messages: [],
-  fulfillment_options: [],
-  totals: null,
-} satisfies CheckoutSession;
-
-export type CheckoutSessionCreateSchema = z.infer<
-  typeof checkoutSessionCreateSchema
->;
 export type CheckoutSession = z.infer<typeof checkoutSessionSchema>;
 
 export const productFeedItemSchema = z.object({

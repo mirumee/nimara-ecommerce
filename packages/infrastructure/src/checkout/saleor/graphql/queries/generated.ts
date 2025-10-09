@@ -5,7 +5,10 @@ export type CheckoutFindQuery_checkout_Checkout_discount_Money = { amount: numbe
 
 export type CheckoutFindQuery_checkout_Checkout_shippingMethods_ShippingMethod_price_Money = { amount: number, currency: string };
 
-export type CheckoutFindQuery_checkout_Checkout_shippingMethods_ShippingMethod = { id: string, name: string, price: CheckoutFindQuery_checkout_Checkout_shippingMethods_ShippingMethod_price_Money };
+export type CheckoutFindQuery_checkout_Checkout_shippingMethods_ShippingMethod = (
+  { id: string, name: string, maximumDeliveryDays: number | null, minimumDeliveryDays: number | null, message: string | null, price: CheckoutFindQuery_checkout_Checkout_shippingMethods_ShippingMethod_price_Money }
+  & { __typename: 'ShippingMethod' }
+);
 
 export type CheckoutFindQuery_checkout_Checkout_shippingAddress_Address_country_CountryDisplay = { country: string, code: string };
 
@@ -139,8 +142,12 @@ export const CheckoutFindQueryDocument = new TypedDocumentString(`
   }
   voucherCode
   shippingMethods {
+    __typename
     id
     name
+    maximumDeliveryDays
+    minimumDeliveryDays
+    message
     price {
       amount
       currency

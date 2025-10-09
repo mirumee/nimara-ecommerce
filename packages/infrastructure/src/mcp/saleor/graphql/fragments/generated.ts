@@ -1,26 +1,6 @@
 import type * as Types from '@nimara/codegen/schema';
 
 import type { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
-export type CheckoutSessionFragment_Checkout_user_User_addresses_Address = { phone: string | null };
-
-export type CheckoutSessionFragment_Checkout_user_User = { firstName: string, lastName: string, email: string, addresses: Array<CheckoutSessionFragment_Checkout_user_User_addresses_Address> };
-
-export type CheckoutSessionFragment_Checkout_lines_CheckoutLine_variant_ProductVariant = { id: string };
-
-export type CheckoutSessionFragment_Checkout_lines_CheckoutLine = { id: string, quantity: number, variant: CheckoutSessionFragment_Checkout_lines_CheckoutLine_variant_ProductVariant };
-
-export type CheckoutSessionFragment_Checkout_shippingMethods_ShippingMethod = { id: string, name: string };
-
-export type CheckoutSessionFragment_Checkout_totalPrice_TaxedMoney_gross_Money = { amount: number };
-
-export type CheckoutSessionFragment_Checkout_totalPrice_TaxedMoney_net_Money = { amount: number };
-
-export type CheckoutSessionFragment_Checkout_totalPrice_TaxedMoney_tax_Money = { amount: number };
-
-export type CheckoutSessionFragment_Checkout_totalPrice_TaxedMoney = { currency: string, gross: CheckoutSessionFragment_Checkout_totalPrice_TaxedMoney_gross_Money, net: CheckoutSessionFragment_Checkout_totalPrice_TaxedMoney_net_Money, tax: CheckoutSessionFragment_Checkout_totalPrice_TaxedMoney_tax_Money };
-
-export type CheckoutSessionFragment = { id: string, chargeStatus: Types.CheckoutChargeStatusEnum, user: CheckoutSessionFragment_Checkout_user_User | null, lines: Array<CheckoutSessionFragment_Checkout_lines_CheckoutLine>, shippingMethods: Array<CheckoutSessionFragment_Checkout_shippingMethods_ShippingMethod>, totalPrice: CheckoutSessionFragment_Checkout_totalPrice_TaxedMoney };
-
 export type ProductFeedFragment_Product_media_ProductMedia = { url: string };
 
 export type ProductFeedFragment_Product_attributes_SelectedAttribute_attribute_Attribute = { id: string, name: string | null };
@@ -63,43 +43,6 @@ export class TypedDocumentString<TResult, TVariables>
     return this.value;
   }
 }
-export const CheckoutSessionFragment = new TypedDocumentString(`
-    fragment CheckoutSessionFragment on Checkout {
-  id
-  chargeStatus
-  user {
-    firstName
-    lastName
-    email
-    addresses {
-      phone
-    }
-  }
-  lines {
-    id
-    quantity
-    variant {
-      id
-    }
-  }
-  shippingMethods {
-    id
-    name
-  }
-  totalPrice {
-    currency
-    gross {
-      amount
-    }
-    net {
-      amount
-    }
-    tax {
-      amount
-    }
-  }
-}
-    `, {"fragmentName":"CheckoutSessionFragment"}) as unknown as TypedDocumentString<CheckoutSessionFragment, unknown>;
 export const ProductFeedFragment = new TypedDocumentString(`
     fragment ProductFeedFragment on Product {
   id
