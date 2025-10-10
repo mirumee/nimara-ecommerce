@@ -1,5 +1,11 @@
-query CheckoutSessionGet($id: ID!) {
+query CheckoutSessionGet(
+  $id: ID!
+  $languageCode: LanguageCodeEnum!
+  $countryCode: CountryCode = US
+  $thumbnailSize: Int = 128
+  $thumbnailFormat: ThumbnailFormatEnum = WEBP
+) {
   checkout(id: $id) {
-    ...CheckoutSessionFragment
+    ...CheckoutFragment
   }
 }

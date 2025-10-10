@@ -32,6 +32,7 @@ export const saleorAcPService = (config: {
       return checkoutSessionCreateInfra({
         deps: {
           graphqlClient: saleorGraphqlClient,
+          storefrontUrl: config.storefrontUrl,
           logger: config.logger,
           channel: config.channel,
         },
@@ -42,7 +43,11 @@ export const saleorAcPService = (config: {
       const saleorGraphqlClient = graphqlClient(config.apiUrl);
 
       return checkoutSessionGetInfra({
-        deps: { graphqlClient: saleorGraphqlClient, logger: config.logger },
+        deps: {
+          graphqlClient: saleorGraphqlClient,
+          logger: config.logger,
+          storefrontUrl: config.storefrontUrl,
+        },
         input,
       });
     },

@@ -1,7 +1,8 @@
-import { GraphqlClient } from "#root/graphql/client";
-import { Logger } from "#root/logging/types";
-import { CheckoutSession } from "#root/mcp/schema";
-import { AsyncResult, err, ok } from "@nimara/domain/objects/Result";
+import { type AsyncResult, err } from "@nimara/domain/objects/Result";
+
+import { type GraphqlClient } from "#root/graphql/client";
+import { type Logger } from "#root/logging/types";
+import { type CheckoutSession } from "#root/mcp/schema";
 
 export const checkoutSessionUpdateInfra = async (_params: {
   deps: {

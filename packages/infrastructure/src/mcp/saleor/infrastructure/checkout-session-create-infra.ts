@@ -1,22 +1,25 @@
-import { GraphqlClient } from "#root/graphql/client";
-import { Logger } from "#root/logging/types";
+import { type AsyncResult, err, ok } from "@nimara/domain/objects/Result";
+
+import { type GraphqlClient } from "#root/graphql/client";
+import { type Logger } from "#root/logging/types";
 import { CheckoutSessionCreateDocument } from "#root/mcp/saleor/graphql/mutations/generated";
 import { validateAndSerializeCheckout } from "#root/mcp/saleor/serializers";
 import {
-  CheckoutSession,
-  checkoutSessionSchema,
-  CheckoutSessionCreateSchema,
+  type CheckoutSession,
+  type CheckoutSessionCreateSchema,
 } from "#root/mcp/schema";
-import { AsyncResult, err, ok } from "@nimara/domain/objects/Result";
+
+const DEFAULT_LANGUAGE = "EN";
 
 export const checkoutSessionCreateInfra = async ({
   deps,
   input,
 }: {
   deps: {
+    channel: string;
     graphqlClient: GraphqlClient;
     logger: Logger;
-    channel: string;
+    storefrontUrl: string;
   };
   input: CheckoutSessionCreateSchema;
 }): AsyncResult<{ checkoutSession: CheckoutSession }> => {
@@ -31,13 +34,17 @@ export const checkoutSessionCreateInfra = async ({
             variantId: item.id,
           })),
         },
+        languageCode: DEFAULT_LANGUAGE,
       },
       operationName: "ACP:CheckoutCreateMutation",
     },
   );
 
   if (!result.ok) {
-    console.error(result.errors.join("\n"));
+    deps.logger.error("Failed to create checkout session in Saleor", {
+      errors: result.errors,
+    });
+
     return err([
       {
         code: "BAD_REQUEST_ERROR",
@@ -46,7 +53,8 @@ export const checkoutSessionCreateInfra = async ({
   }
 
   if (!result.data.checkoutCreate?.checkout) {
-    console.error("No checkout created");
+    deps.logger.error("No checkout created");
+
     return err([
       {
         code: "BAD_REQUEST_ERROR",
@@ -56,10 +64,13 @@ export const checkoutSessionCreateInfra = async ({
 
   const checkout = validateAndSerializeCheckout(
     result.data.checkoutCreate.checkout,
+    {
+      storefrontUrl: deps.storefrontUrl,
+    },
   );
 
   if (!checkout) {
-    console.error("Failed to parse created checkout", {
+    deps.logger.error("Failed to parse created checkout", {
       checkout: result.data.checkoutCreate.checkout,
     });
 

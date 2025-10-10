@@ -3,6 +3,7 @@ import { type AsyncResult } from "@nimara/domain/objects/Result";
 import {
   type CheckoutSession,
   type CheckoutSessionCreateSchema,
+  type CheckoutSessionUpdateSchema,
 } from "#root/mcp/schema";
 import { type PageInfo } from "#root/use-cases/search/types";
 
@@ -38,6 +39,6 @@ export interface ACPService {
   }>;
   updateCheckoutSession: (args: {
     checkoutSessionId: string;
-    data: unknown;
+    data: CheckoutSessionUpdateSchema;
   }) => AsyncResult<{ checkoutSession: CheckoutSession }>;
 }
