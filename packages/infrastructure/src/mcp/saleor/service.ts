@@ -14,11 +14,18 @@ export const saleorAcPService = (config: {
   channel: string;
   logger: Logger;
   storefrontUrl: string;
+  paymentService?: () => Promise<StripePaymentService>;
 }) =>
   ({
     completeCheckoutSession: async (input) => {
+      if (!config.paymentService) {
+        throw new Error(
+          "Payment service is required to complete the checkout session",
+        );
+      }
+
       const saleorGraphqlClient = graphqlClient(config.apiUrl);
-      const paymentService = await input.paymentService();
+      const paymentService = await config.paymentService();
 
       return checkoutSessionCompleteInfra({
         deps: {

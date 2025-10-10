@@ -27,7 +27,6 @@ export type GetProductFeedArgs = {
  */
 export interface ACPService {
   completeCheckoutSession: (args: {
-    paymentService: () => Promise<StripePaymentService>;
     checkoutSessionComplete: CheckoutSessionCompleteSchema;
     checkoutSessionId: string;
   }) => AsyncResult<{ checkoutSession: CheckoutSession }>;

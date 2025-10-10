@@ -1,10 +1,12 @@
 import { revalidateTag } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
-import { getPaymentService } from "@/services/payment";
+
 import { saleorAcPService } from "@nimara/infrastructure/mcp/saleor/service";
+import { checkoutSessionCompleteSchema } from "@nimara/infrastructure/mcp/schema";
+
 import { clientEnvs } from "@/envs/client";
 import { storefrontLogger } from "@/services/logging";
-import { checkoutSessionCompleteSchema } from "@nimara/infrastructure/mcp/schema";
+import { getPaymentService } from "@/services/payment";
 
 export async function POST(
   request: NextRequest,
@@ -17,6 +19,7 @@ export async function POST(
     logger: storefrontLogger,
     channel: channelSlug,
     storefrontUrl: clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
+    paymentService: getPaymentService,
   });
 
   const body = (await request.json()) as Record<string, unknown>;
@@ -41,7 +44,6 @@ export async function POST(
   }
 
   const result = await acpService.completeCheckoutSession({
-    paymentService: getPaymentService,
     checkoutSessionId: id,
     checkoutSessionComplete: parsedBody.data,
   });
