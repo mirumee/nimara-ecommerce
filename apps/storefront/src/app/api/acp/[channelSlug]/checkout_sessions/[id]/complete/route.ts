@@ -4,9 +4,10 @@ import { getPaymentService } from "@/services/payment";
 import { saleorAcPService } from "@nimara/infrastructure/mcp/saleor/service";
 import { clientEnvs } from "@/envs/client";
 import { storefrontLogger } from "@/services/logging";
+import { checkoutSessionCompleteSchema } from "@nimara/infrastructure/mcp/schema";
 
 export async function POST(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ channelSlug: string; id: string }> },
 ) {
   const { channelSlug, id } = await params;
@@ -18,52 +19,42 @@ export async function POST(
     storefrontUrl: clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
   });
 
-  // get checkout session by id and channelSlug from request params
-  const paymentService = await getPaymentService();
-  // secretTToken from payment gateway
-  const checkout_session = await acpService.getCheckoutSession({
+  const body = (await request.json()) as Record<string, unknown>;
+
+  const parsedBody = checkoutSessionCompleteSchema.safeParse(body);
+
+  if (!parsedBody.success) {
+    storefrontLogger.error("Invalid request body", {
+      errors: parsedBody.error.issues,
+    });
+
+    return NextResponse.json(
+      {
+        status: "Invalid request body",
+        errors: parsedBody.error.issues.map((i) => ({
+          message: i.message,
+          path: i.path.join("."),
+        })),
+      },
+      { status: 400 },
+    );
+  }
+
+  const result = await acpService.completeCheckoutSession({
+    paymentService: getPaymentService,
     checkoutSessionId: id,
+    checkoutSessionComplete: parsedBody.data,
   });
-  const checkout = checkout_session.data?.checkoutSession;
 
-  if (!checkout) {
-    storefrontLogger.error(
-      "Failed to fetch checkout session for channel ${channelSlug} and id ${id}.",
-    );
-
+  if (!result.ok) {
     return NextResponse.json(
-      { status: "Error fetching checkout session" },
-      { status: 500 },
+      { errors: result.errors },
+      { status: 400, statusText: "Failed to complete checkout session" },
     );
   }
 
-  const transaction = await paymentService.paymentGatewayTransactionInitialize({
-    id: checkout.id,
-    amount: checkout.totalPrice.gross.amount,
-    sharedPaymentToken: checkout.sharedPaymentToken, // TODO
-  });
+  // Revalidate the cart page to reflect the updated checkout session state
+  revalidateTag(`cart-${channelSlug}`);
 
-  if (!transaction) {
-    storefrontLogger.error(
-      "Failed to initialize payment transaction for checkout session ${id}.",
-    );
-    return NextResponse.json(
-      { status: "Error initializing payment transaction" },
-      { status: 500 },
-    );
-  }
-
-  const transactionId = transaction.data?.transactionId;
-  const result = await paymentService.paymentResultProcess({
-    checkout: {},
-    searchParams: { transactionId: transactionId! },
-  });
-  // TODO tutaj zrobic chcekout comple
-
-  // TODO: Add logic here to complete the checkout session with the given ID
-
-  // Revalidate cache for this particular checkout session ID on update on success
-  revalidateTag(`MCP_CHECKOUT_SESSION:${id}`);
-
-  return NextResponse.json({ status: "Not implemented" }, { status: 501 });
+  return NextResponse.json({ checkoutSession: result.data.checkoutSession });
 }
