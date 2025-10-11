@@ -4,18 +4,62 @@ const buyerSchema = z.object({
   first_name: z.string().min(1, "First name cannot be empty"),
   last_name: z.string().min(1, "Last name cannot be empty"),
   email: z.string().email("Invalid email address"),
+  phone_number: z.string().optional(),
+});
+
+export type Buyer = z.infer<typeof buyerSchema>;
+
+/**
+ * Schema representing a postal address.
+ * @link https://developers.openai.com/commerce/specs/checkout#address
+ */
+const addressSchema = z.object({
+  /**
+   * Name of the person to whom the items are shipped.
+   */
+  name: z.string().min(1, "Name cannot be empty").max(256, "Name is too long"),
+  /**
+   * First line of address
+   */
+  line_one: z
+    .string()
+    .min(1, "Line one cannot be empty")
+    .max(60, "Line one is too long"),
+  /**
+   * Optional second line of address
+   */
+  line_two: z
+    .string()
+    .min(1, "Line two cannot be empty")
+    .max(60, "Line two is too long")
+    .optional(),
+  /**
+   * Address city/district/suburb/town/village.
+   */
+  city: z.string().min(1, "City cannot be empty").max(60, "City is too long"),
+  /**
+   * State, province, or region. Optional depending on the country.
+   * Should follow the ISO 3166-1 standard.
+   */
+  state: z.string().min(1, "State cannot be empty").max(3, "State is too long"),
+  /**
+   * Address country. Should follow the ISO 3166-1 standard
+   */
+  country: z.string().min(1, "Country cannot be empty"),
+  /**
+   * Address postal code or zip code
+   */
+  postal_code: z
+    .string()
+    .min(1, "Postal code cannot be empty")
+    .max(20, "Postal code is too long"),
+  /**
+   * Optional phone number. Follows the E.164 standard
+   */
   phone_number: z.string().min(1, "Phone number cannot be empty").optional(),
 });
 
-const fulfillmentAddressSchema = z.object({
-  name: z.string().min(1, "Name cannot be empty").optional(),
-  line_one: z.string().min(1, "Line one cannot be empty").optional(),
-  line_two: z.string().min(1, "Line two cannot be empty").optional(),
-  city: z.string().min(1, "City cannot be empty").optional(),
-  state: z.string().min(1, "State cannot be empty").optional(),
-  country: z.string().min(1, "Country cannot be empty").optional(),
-  postal_code: z.string().min(1, "Postal code cannot be empty").optional(),
-});
+export type FulfillmentAddress = z.infer<typeof addressSchema>;
 
 const fulfillmentOptionSchema = z.object({
   type: z.enum(["shipping", "pickup"]),
@@ -45,7 +89,7 @@ const itemSchema = z.object({
 
 export const checkoutSessionCreateSchema = z.object({
   buyer: buyerSchema.optional(),
-  fulfillment_address: fulfillmentAddressSchema.optional(),
+  fulfillment_address: addressSchema.optional(),
   items: z.array(itemSchema).min(1, "At least one item is required"),
 });
 
@@ -55,12 +99,12 @@ export type CheckoutSessionCreateSchema = z.infer<
 
 export const checkoutSessionUpdateSchema = z.object({
   buyer: buyerSchema.optional(),
-  fulfillment_address: fulfillmentAddressSchema.optional(),
+  fulfillment_address: addressSchema.optional(),
   fulfillment_option_id: z
     .string()
     .min(1, "Fulfillment option ID cannot be empty")
     .optional(),
-  items: z.array(itemSchema).min(1, "At least one item is required").optional(),
+  items: z.array(itemSchema).optional(),
 });
 
 const lineItemSchema = z.object({
@@ -73,7 +117,7 @@ const lineItemSchema = z.object({
   total: z.number().min(0, "Total cannot be negative"),
 });
 
-export type CheckoutSessionUpdateSchema = z.infer<
+export type CheckoutSessionUpdateInput = z.infer<
   typeof checkoutSessionUpdateSchema
 >;
 
@@ -136,7 +180,7 @@ export const checkoutSessionSchema = z.object({
   ]),
   line_items: z.array(lineItemSchema),
   buyer: buyerSchema.nullable(),
-  fulfillment_address: fulfillmentAddressSchema.nullable(),
+  fulfillment_address: addressSchema.nullable(),
   fulfillment_options: z.array(fulfillmentOptionSchema),
   fulfillment_option_id: z.string().nullable(),
   currency: z.string(),

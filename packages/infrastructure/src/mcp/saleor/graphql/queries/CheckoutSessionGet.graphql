@@ -6,6 +6,6 @@ query CheckoutSessionGet(
   $thumbnailFormat: ThumbnailFormatEnum = WEBP
 ) {
   checkout(id: $id) {
-    ...CheckoutFragment
+    ...CheckoutSessionFragment
   }
 }

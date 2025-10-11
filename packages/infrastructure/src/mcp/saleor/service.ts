@@ -55,7 +55,11 @@ export const saleorAcPService = (config: {
       const saleorGraphqlClient = graphqlClient(config.apiUrl);
 
       return checkoutSessionUpdateInfra({
-        deps: { graphqlClient: saleorGraphqlClient, logger: config.logger },
+        deps: {
+          graphqlClient: saleorGraphqlClient,
+          logger: config.logger,
+          storefrontUrl: config.storefrontUrl,
+        },
         input,
       });
     },

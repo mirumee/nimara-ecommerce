@@ -1,0 +1,68 @@
+mutation CheckoutSessionUpdate(
+  $checkoutId: ID!
+  # Shipping address
+  $shippingAddress: AddressInput!
+  $shouldUpdateShipping: Boolean!
+  # Buyer
+  $buyerEmail: String!
+  $buyerJSON: String!
+  $shouldUpdateEmail: Boolean!
+  # Fulfillment
+  $fulfillmentAddressJSON: String!
+  $fulfillmentOptionID: ID!
+  $shouldUpdateFulfillmentOption: Boolean!
+) {
+  checkoutEmailUpdate(checkoutId: $checkoutId, email: $buyerEmail)
+    @include(if: $shouldUpdateEmail) {
+    checkout {
+      email
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+
+  checkoutShippingAddressUpdate(
+    checkoutId: $checkoutId
+    shippingAddress: $shippingAddress
+  ) @include(if: $shouldUpdateShipping) {
+    checkout {
+      shippingAddress {
+        ...AddressFragment
+      }
+    }
+    errors {
+      field
+      message
+      code
+      addressType
+    }
+  }
+
+  checkoutDeliveryMethodUpdate(
+    deliveryMethodId: $fulfillmentOptionID
+    id: $checkoutId
+  ) @include(if: $shouldUpdateFulfillmentOption) {
+    errors {
+      field
+      message
+      code
+    }
+  }
+
+  updateMetadata(
+    id: $checkoutId
+    input: [
+      { key: "acp.fulfillmentAddress.json", value: $fulfillmentAddressJSON }
+      { key: "acp.buyer.json", value: $buyerJSON }
+    ]
+  ) {
+    errors {
+      field
+      message
+      code
+    }
+  }
+}

@@ -93,8 +93,19 @@ export const graphqlClient = (
         }),
       });
 
+      const duration = Math.round(performance.now() - startTime);
+      const body = (await response.json()) as GraphQLResponse<TResult>;
+
       if (!response.ok) {
-        const duration = Math.round(performance.now() - startTime);
+        if (body.errors?.length) {
+          logger.error("GraphQL Error", {
+            durationMs: duration,
+            error: body["errors"],
+            operationName,
+            variables,
+            url,
+          });
+        }
 
         return handleInvalidResponse({
           response,
@@ -103,9 +114,6 @@ export const graphqlClient = (
           duration,
         });
       }
-
-      const body = (await response.json()) as GraphQLResponse<TResult>;
-      const duration = Math.round(performance.now() - startTime);
 
       if ("errors" in body && body.errors) {
         const exceptionCode = body?.errors?.[0].extensions.exception.code;

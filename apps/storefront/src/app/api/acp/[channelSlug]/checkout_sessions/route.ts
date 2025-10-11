@@ -2,17 +2,11 @@ import { type NextRequest, NextResponse } from "next/server";
 
 import { saleorAcPService } from "@nimara/infrastructure/mcp/saleor/service";
 import { checkoutSessionCreateSchema } from "@nimara/infrastructure/mcp/schema";
+import { type ACPError } from "@nimara/infrastructure/mcp/types";
 
 import { clientEnvs } from "@/envs/client";
 import { MARKETS } from "@/regions/config";
 import { storefrontLogger } from "@/services/logging";
-
-export async function GET(
-  _request: NextRequest,
-  _props: { params: Promise<{ channelSlug: string }> },
-) {
-  return NextResponse.json({ status: "Not implemented" }, { status: 501 });
-}
 
 export async function POST(
   request: NextRequest,
@@ -25,8 +19,14 @@ export async function POST(
   );
 
   if (!marketData) {
-    return NextResponse.json(
-      { status: "Invalid channel slug" },
+    return NextResponse.json<ACPError>(
+      {
+        type: "invalid_request",
+        code: "request_not_idempotent",
+        message:
+          "Invalid channel slug provided. This channel is not supported.",
+        param: "channelSlug",
+      },
       { status: 400 },
     );
   }
@@ -40,13 +40,12 @@ export async function POST(
       errors: parsedBody.error.issues,
     });
 
-    return NextResponse.json(
+    return NextResponse.json<ACPError>(
       {
-        status: "Invalid request body",
-        errors: parsedBody.error.issues.map((i) => ({
-          message: i.message,
-          path: i.path.join("."),
-        })),
+        type: "invalid_request",
+        code: "request_not_idempotent",
+        message: "Invalid request body.",
+        param: "body",
       },
       { status: 400 },
     );
@@ -65,14 +64,11 @@ export async function POST(
 
   if (!result.ok) {
     storefrontLogger.error("Error creating checkout session", {
-      errors: result.errors,
+      errors: result.error,
     });
 
-    return NextResponse.json(
-      { status: "Error creating checkout session" },
-      { status: 500 },
-    );
+    return NextResponse.json<ACPError>(result.error, { status: 500 });
   }
 
-  return NextResponse.json(result.data.checkoutSession, { status: 201 });
+  return NextResponse.json(result.data, { status: 201 });
 }

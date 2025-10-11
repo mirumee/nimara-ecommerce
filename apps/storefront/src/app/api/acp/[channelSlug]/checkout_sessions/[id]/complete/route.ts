@@ -10,7 +10,7 @@ export async function POST(
   // TODO: Add logic here to complete the checkout session with the given ID
 
   // Revalidate cache for this particular checkout session ID on update on success
-  revalidateTag(`MCP_CHECKOUT_SESSION:${id}`);
+  revalidateTag(`ACP:CHECKOUT_SESSION:${id}`);
 
   return NextResponse.json({ status: "Not implemented" }, { status: 501 });
 }
