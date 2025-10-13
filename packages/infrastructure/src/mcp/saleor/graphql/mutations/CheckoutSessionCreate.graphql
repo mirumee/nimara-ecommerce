@@ -7,7 +7,7 @@ mutation CheckoutSessionCreate(
 ) {
   checkoutCreate(input: $input) {
     checkout {
-      ...CheckoutFragment
+      ...CheckoutSessionFragment
     }
     errors {
       field

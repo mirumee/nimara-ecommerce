@@ -1,13 +1,9 @@
-import { type AsyncResult, err, ok } from "@nimara/domain/objects/Result";
-
 import { type GraphqlClient } from "#root/graphql/client";
 import { type Logger } from "#root/logging/types";
 import { CheckoutSessionCreateDocument } from "#root/mcp/saleor/graphql/mutations/generated";
 import { validateAndSerializeCheckout } from "#root/mcp/saleor/serializers";
-import {
-  type CheckoutSession,
-  type CheckoutSessionCreateSchema,
-} from "#root/mcp/schema";
+import { type CheckoutSessionCreateSchema } from "#root/mcp/schema";
+import { type ACPResponse } from "#root/mcp/types";
 
 const DEFAULT_LANGUAGE = "EN";
 
@@ -22,7 +18,7 @@ export const checkoutSessionCreateInfra = async ({
     storefrontUrl: string;
   };
   input: CheckoutSessionCreateSchema;
-}): AsyncResult<{ checkoutSession: CheckoutSession }> => {
+}): ACPResponse => {
   const result = await deps.graphqlClient.execute(
     CheckoutSessionCreateDocument,
     {
@@ -45,21 +41,31 @@ export const checkoutSessionCreateInfra = async ({
       errors: result.errors,
     });
 
-    return err([
-      {
-        code: "BAD_REQUEST_ERROR",
+    return {
+      ok: false,
+      error: {
+        type: "invalid_request",
+        code: "request_not_idempotent",
+        message: "Failed to create checkout session.",
+        param: "items",
       },
-    ]);
+    };
   }
 
   if (!result.data.checkoutCreate?.checkout) {
     deps.logger.error("No checkout created");
 
-    return err([
-      {
-        code: "BAD_REQUEST_ERROR",
+    return {
+      ok: false,
+      error: {
+        type: "invalid_request",
+        code: "request_not_idempotent",
+        message:
+          result.data.checkoutCreate?.errors.map((e) => e.message).join(", ") ||
+          "Failed to create checkout session.",
+        param: "items",
       },
-    ]);
+    };
   }
 
   const checkout = validateAndSerializeCheckout(
@@ -74,12 +80,16 @@ export const checkoutSessionCreateInfra = async ({
       checkout: result.data.checkoutCreate.checkout,
     });
 
-    return err([
-      {
-        code: "BAD_REQUEST_ERROR",
+    return {
+      ok: false,
+      error: {
+        type: "invalid_request",
+        code: "request_not_idempotent",
+        message: "Failed to parse created checkout.",
+        param: "items",
       },
-    ]);
+    };
   }
 
-  return ok({ checkoutSession: checkout });
+  return { ok: true, data: checkout };
 };

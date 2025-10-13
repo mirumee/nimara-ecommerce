@@ -107,7 +107,7 @@ export type CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkou
 
 export type CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_problems = CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_problems_CheckoutLineProblemInsufficientStock | CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_problems_CheckoutLineProblemVariantNotAvailable;
 
-export type CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout = { id: string, email: string | null, displayGrossPrices: boolean, voucherCode: string | null, isShippingRequired: boolean, authorizeStatus: Types.CheckoutAuthorizeStatusEnum, chargeStatus: Types.CheckoutChargeStatusEnum, discount: CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_discount_Money | null, shippingMethods: Array<CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingMethods_ShippingMethod>, shippingAddress: CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingAddress_Address | null, billingAddress: CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_billingAddress_Address | null, deliveryMethod: CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_deliveryMethod_ShippingMethod_Warehouse | null, availablePaymentGateways: Array<CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_availablePaymentGateways_PaymentGateway>, lines: Array<CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine>, totalPrice: CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_totalPrice_TaxedMoney, subtotalPrice: CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_subtotalPrice_TaxedMoney, shippingPrice: CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingPrice_TaxedMoney, problems: Array<CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_problems> | null };
+export type CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout = { id: string, email: string | null, displayGrossPrices: boolean, voucherCode: string | null, isShippingRequired: boolean, authorizeStatus: Types.CheckoutAuthorizeStatusEnum, chargeStatus: Types.CheckoutChargeStatusEnum, fulfillmentAddress: string | null, buyer: string | null, discount: CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_discount_Money | null, shippingMethods: Array<CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingMethods_ShippingMethod>, shippingAddress: CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingAddress_Address | null, billingAddress: CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_billingAddress_Address | null, deliveryMethod: CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_deliveryMethod_ShippingMethod_Warehouse | null, availablePaymentGateways: Array<CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_availablePaymentGateways_PaymentGateway>, lines: Array<CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine>, totalPrice: CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_totalPrice_TaxedMoney, subtotalPrice: CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_subtotalPrice_TaxedMoney, shippingPrice: CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingPrice_TaxedMoney, problems: Array<CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_problems> | null };
 
 export type CheckoutSessionCreate_checkoutCreate_CheckoutCreate_errors_CheckoutError = { field: string | null, message: string | null, code: Types.CheckoutErrorCode, variants: Array<string> | null, lines: Array<string> | null, addressType: Types.AddressTypeEnum | null };
 
@@ -126,6 +126,46 @@ export type CheckoutSessionCreateVariables = Types.Exact<{
 
 
 export type CheckoutSessionCreate = CheckoutSessionCreate_Mutation;
+
+export type CheckoutSessionUpdate_checkoutEmailUpdate_CheckoutEmailUpdate_checkout_Checkout = { email: string | null };
+
+export type CheckoutSessionUpdate_checkoutEmailUpdate_CheckoutEmailUpdate_errors_CheckoutError = { field: string | null, message: string | null, code: Types.CheckoutErrorCode };
+
+export type CheckoutSessionUpdate_checkoutEmailUpdate_CheckoutEmailUpdate = { checkout: CheckoutSessionUpdate_checkoutEmailUpdate_CheckoutEmailUpdate_checkout_Checkout | null, errors: Array<CheckoutSessionUpdate_checkoutEmailUpdate_CheckoutEmailUpdate_errors_CheckoutError> };
+
+export type CheckoutSessionUpdate_checkoutShippingAddressUpdate_CheckoutShippingAddressUpdate_checkout_Checkout_shippingAddress_Address = { id: string, city: string, phone: string | null, postalCode: string, companyName: string, cityArea: string, streetAddress1: string, streetAddress2: string, countryArea: string, firstName: string, lastName: string, isDefaultShippingAddress: boolean | null, isDefaultBillingAddress: boolean | null, country: CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingAddress_Address_country_CountryDisplay };
+
+export type CheckoutSessionUpdate_checkoutShippingAddressUpdate_CheckoutShippingAddressUpdate_checkout_Checkout = { shippingAddress: CheckoutSessionUpdate_checkoutShippingAddressUpdate_CheckoutShippingAddressUpdate_checkout_Checkout_shippingAddress_Address | null };
+
+export type CheckoutSessionUpdate_checkoutShippingAddressUpdate_CheckoutShippingAddressUpdate_errors_CheckoutError = { field: string | null, message: string | null, code: Types.CheckoutErrorCode, addressType: Types.AddressTypeEnum | null };
+
+export type CheckoutSessionUpdate_checkoutShippingAddressUpdate_CheckoutShippingAddressUpdate = { checkout: CheckoutSessionUpdate_checkoutShippingAddressUpdate_CheckoutShippingAddressUpdate_checkout_Checkout | null, errors: Array<CheckoutSessionUpdate_checkoutShippingAddressUpdate_CheckoutShippingAddressUpdate_errors_CheckoutError> };
+
+export type CheckoutSessionUpdate_checkoutDeliveryMethodUpdate_CheckoutDeliveryMethodUpdate_errors_CheckoutError = { field: string | null, message: string | null, code: Types.CheckoutErrorCode };
+
+export type CheckoutSessionUpdate_checkoutDeliveryMethodUpdate_CheckoutDeliveryMethodUpdate = { errors: Array<CheckoutSessionUpdate_checkoutDeliveryMethodUpdate_CheckoutDeliveryMethodUpdate_errors_CheckoutError> };
+
+export type CheckoutSessionUpdate_updateMetadata_UpdateMetadata_errors_MetadataError = { field: string | null, message: string | null, code: Types.MetadataErrorCode };
+
+export type CheckoutSessionUpdate_updateMetadata_UpdateMetadata = { errors: Array<CheckoutSessionUpdate_updateMetadata_UpdateMetadata_errors_MetadataError> };
+
+export type CheckoutSessionUpdate_Mutation = { checkoutEmailUpdate?: CheckoutSessionUpdate_checkoutEmailUpdate_CheckoutEmailUpdate | null, checkoutShippingAddressUpdate?: CheckoutSessionUpdate_checkoutShippingAddressUpdate_CheckoutShippingAddressUpdate | null, checkoutDeliveryMethodUpdate?: CheckoutSessionUpdate_checkoutDeliveryMethodUpdate_CheckoutDeliveryMethodUpdate | null, updateMetadata: CheckoutSessionUpdate_updateMetadata_UpdateMetadata | null };
+
+
+export type CheckoutSessionUpdateVariables = Types.Exact<{
+  checkoutId: Types.Scalars['ID']['input'];
+  shippingAddress: Types.AddressInput;
+  shouldUpdateShipping: Types.Scalars['Boolean']['input'];
+  buyerEmail: Types.Scalars['String']['input'];
+  buyerJSON: Types.Scalars['String']['input'];
+  shouldUpdateEmail: Types.Scalars['Boolean']['input'];
+  fulfillmentAddressJSON: Types.Scalars['String']['input'];
+  fulfillmentOptionID: Types.Scalars['ID']['input'];
+  shouldUpdateFulfillmentOption: Types.Scalars['Boolean']['input'];
+}>;
+
+
+export type CheckoutSessionUpdate = CheckoutSessionUpdate_Mutation;
 
 export class TypedDocumentString<TResult, TVariables>
   extends String
@@ -164,7 +204,7 @@ export const CheckoutSessionCreateDocument = new TypedDocumentString(`
     mutation CheckoutSessionCreate($input: CheckoutCreateInput!, $languageCode: LanguageCodeEnum!, $countryCode: CountryCode = US, $thumbnailSize: Int = 128, $thumbnailFormat: ThumbnailFormatEnum = WEBP) {
   checkoutCreate(input: $input) {
     checkout {
-      ...CheckoutFragment
+      ...CheckoutSessionFragment
     }
     errors {
       field
@@ -176,7 +216,12 @@ export const CheckoutSessionCreateDocument = new TypedDocumentString(`
     }
   }
 }
-    fragment CheckoutFragment on Checkout {
+    fragment CheckoutSessionFragment on Checkout {
+  ...CheckoutFragment
+  fulfillmentAddress: metafield(key: "acp.fulfillmentAddress.json")
+  buyer: metafield(key: "acp.buyer.json")
+}
+fragment CheckoutFragment on Checkout {
   id
   email
   displayGrossPrices
@@ -375,3 +420,71 @@ fragment CheckoutProblemsFragment on CheckoutProblem {
     }
   }
 }`) as unknown as TypedDocumentString<CheckoutSessionCreate, CheckoutSessionCreateVariables>;
+export const CheckoutSessionUpdateDocument = new TypedDocumentString(`
+    mutation CheckoutSessionUpdate($checkoutId: ID!, $shippingAddress: AddressInput!, $shouldUpdateShipping: Boolean!, $buyerEmail: String!, $buyerJSON: String!, $shouldUpdateEmail: Boolean!, $fulfillmentAddressJSON: String!, $fulfillmentOptionID: ID!, $shouldUpdateFulfillmentOption: Boolean!) {
+  checkoutEmailUpdate(checkoutId: $checkoutId, email: $buyerEmail) @include(if: $shouldUpdateEmail) {
+    checkout {
+      email
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+  checkoutShippingAddressUpdate(
+    checkoutId: $checkoutId
+    shippingAddress: $shippingAddress
+  ) @include(if: $shouldUpdateShipping) {
+    checkout {
+      shippingAddress {
+        ...AddressFragment
+      }
+    }
+    errors {
+      field
+      message
+      code
+      addressType
+    }
+  }
+  checkoutDeliveryMethodUpdate(
+    deliveryMethodId: $fulfillmentOptionID
+    id: $checkoutId
+  ) @include(if: $shouldUpdateFulfillmentOption) {
+    errors {
+      field
+      message
+      code
+    }
+  }
+  updateMetadata(
+    id: $checkoutId
+    input: [{key: "acp.fulfillmentAddress.json", value: $fulfillmentAddressJSON}, {key: "acp.buyer.json", value: $buyerJSON}]
+  ) {
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+    fragment AddressFragment on Address {
+  id
+  city
+  phone
+  postalCode
+  companyName
+  cityArea
+  streetAddress1
+  streetAddress2
+  countryArea
+  country {
+    country
+    code
+  }
+  firstName
+  lastName
+  isDefaultShippingAddress
+  isDefaultBillingAddress
+}`) as unknown as TypedDocumentString<CheckoutSessionUpdate, CheckoutSessionUpdateVariables>;

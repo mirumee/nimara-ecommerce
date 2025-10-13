@@ -1,20 +1,65 @@
-import { type CheckoutFragment } from "#root/checkout/saleor/graphql/fragments/generated";
+import { Logger } from "#root/logging/types";
 import {
+  Buyer,
   type CheckoutSession,
   checkoutSessionSchema,
   type CheckoutSessionStatus,
+  FulfillmentAddress,
   type Totals,
 } from "#root/mcp/schema";
 
 import { type ProductFeedItem } from "../schema";
-import { type ProductFeedFragment } from "./graphql/fragments/generated";
+import {
+  type CheckoutSessionFragment,
+  type ProductFeedFragment,
+} from "./graphql/fragments/generated";
 
 export const validateAndSerializeCheckout = (
-  checkout: CheckoutFragment,
+  checkout: CheckoutSessionFragment,
   extraContext: {
     storefrontUrl: string;
+    logger?: Logger;
   },
 ): CheckoutSession | null => {
+  const { fulfillmentAddress } = checkout;
+  const { storefrontUrl, logger } = extraContext;
+
+  const getBuyerData = () => {
+    const { buyer } = checkout;
+
+    if (!buyer || buyer === "" || typeof buyer !== "string") {
+      return null;
+    }
+
+    try {
+      return JSON.parse(buyer) as Buyer;
+    } catch {
+      logger?.error("Failed to parse buyer", {
+        buyer,
+        checkoutId: checkout.id,
+      });
+
+      return null;
+    }
+  };
+
+  const getFulfillmentAddress = () => {
+    if (fulfillmentAddress && fulfillmentAddress !== "") {
+      try {
+        return JSON.parse(fulfillmentAddress) as FulfillmentAddress;
+      } catch {
+        logger?.error("Failed to parse fulfillment address", {
+          fulfillmentAddress,
+          checkoutId: checkout.id,
+        });
+
+        return null;
+      }
+    }
+
+    return null;
+  };
+
   const calculateTotals = () =>
     [
       {
@@ -75,29 +120,12 @@ export const validateAndSerializeCheckout = (
   try {
     const parsedCheckout = checkoutSessionSchema.safeParse({
       id: checkout.id,
-      buyer:
-        checkout.email && checkout.billingAddress
-          ? {
-              email: checkout.email,
-              first_name: checkout.billingAddress.firstName,
-              last_name: checkout.billingAddress.lastName,
-              phone_number: checkout.billingAddress.phone || "",
-            }
-          : null,
+      buyer: getBuyerData(),
       payment_provider: {
         provider: "stripe",
         supported_payment_methods: ["card"],
       },
-      fulfillment_address: checkout.shippingAddress
-        ? {
-            city: checkout.shippingAddress.city,
-            country: checkout.shippingAddress.country.code,
-            line_one: checkout.shippingAddress.streetAddress1,
-            line_two: checkout.shippingAddress.streetAddress2 || undefined,
-            postal_code: checkout.shippingAddress.postalCode,
-            state: checkout.shippingAddress.countryArea || undefined,
-          }
-        : null,
+      fulfillment_address: getFulfillmentAddress(),
       currency: checkout.totalPrice.gross.currency.toLowerCase(),
       fulfillment_options: checkout.shippingMethods.map((method) => ({
         type: "shipping",
@@ -131,23 +159,26 @@ export const validateAndSerializeCheckout = (
       link: [
         {
           type: "terms_of_use",
-          url: `${extraContext.storefrontUrl}/terms-of-service`,
+          url: `${storefrontUrl}/terms-of-service`,
         },
         {
           type: "privacy_policy",
-          url: `${extraContext.storefrontUrl}/privacy-policy`,
+          url: `${storefrontUrl}/privacy-policy`,
         },
         {
           type: "seller_shop_policies",
-          url: `${extraContext.storefrontUrl}/return-policy`,
+          url: `${storefrontUrl}/return-policy`,
         },
       ],
     } satisfies CheckoutSession);
 
     if (!parsedCheckout.success) {
-      console.error("Failed to parse checkout", {
-        errors: parsedCheckout.error.errors,
-        checkout,
+      logger?.error("Failed to parse checkout", {
+        errors: parsedCheckout.error.errors.map(({ message, path }) => ({
+          message,
+          path: path.join("."),
+        })),
+        checkoutId: checkout.id,
       });
 
       return null;
@@ -155,7 +186,7 @@ export const validateAndSerializeCheckout = (
 
     return parsedCheckout.data;
   } catch (e) {
-    console.error("Failed to parse checkout", { error: e });
+    logger?.error("Failed to parse checkout", { error: e });
 
     return null;
   }

@@ -1,10 +1,8 @@
-import { type AsyncResult, err, ok } from "@nimara/domain/objects/Result";
-
 import { type GraphqlClient } from "#root/graphql/client";
 import { type Logger } from "#root/logging/types";
 import { CheckoutSessionGetDocument } from "#root/mcp/saleor/graphql/queries/generated";
 import { validateAndSerializeCheckout } from "#root/mcp/saleor/serializers";
-import { type CheckoutSession } from "#root/mcp/schema";
+import { type ACPResponse } from "#root/mcp/types";
 
 const DEFAULT_CACHE_TIME = 60 * 60; // 1 hour
 const DEFAULT_LANGUAGE = "EN";
@@ -19,7 +17,7 @@ export const checkoutSessionGetInfra = async ({
     storefrontUrl: string;
   };
   input: { checkoutSessionId: string };
-}): AsyncResult<{ checkoutSession: CheckoutSession }> => {
+}): ACPResponse => {
   const result = await deps.graphqlClient.execute(CheckoutSessionGetDocument, {
     variables: {
       id: input.checkoutSessionId,
@@ -28,10 +26,10 @@ export const checkoutSessionGetInfra = async ({
     options: {
       next: {
         revalidate: DEFAULT_CACHE_TIME,
-        tags: [`MCP_CHECKOUT_SESSION:${input.checkoutSessionId}`],
+        tags: [`ACP:CHECKOUT_SESSION:${input.checkoutSessionId}`],
       },
     },
-    operationName: "ACP:CheckoutSessionQuery",
+    operationName: "ACP:CheckoutSessionGetDocumentMutation",
   });
 
   if (!result.ok) {
@@ -39,11 +37,15 @@ export const checkoutSessionGetInfra = async ({
       errors: result.errors,
     });
 
-    return err([
-      {
-        code: "BAD_REQUEST_ERROR",
+    return {
+      ok: false,
+      error: {
+        type: "invalid_request",
+        code: "request_not_idempotent",
+        message: "Failed to fetch checkout session.",
+        param: "checkoutSessionId",
       },
-    ]);
+    };
   }
 
   if (!result.data.checkout) {
@@ -51,11 +53,15 @@ export const checkoutSessionGetInfra = async ({
       checkoutId: input.checkoutSessionId,
     });
 
-    return err([
-      {
-        code: "BAD_REQUEST_ERROR",
+    return {
+      ok: false,
+      error: {
+        type: "invalid_request",
+        code: "request_not_idempotent",
+        message: "No checkout found.",
+        param: "checkoutSessionId",
       },
-    ]);
+    };
   }
 
   const checkoutSession = validateAndSerializeCheckout(result.data.checkout, {
@@ -63,18 +69,16 @@ export const checkoutSessionGetInfra = async ({
   });
 
   if (!checkoutSession) {
-    deps.logger.error("Failed to parse checkout session from Saleor", {
-      checkout: result.data.checkout,
-    });
-
-    return err([
-      {
-        code: "BAD_REQUEST_ERROR",
+    return {
+      ok: false,
+      error: {
+        type: "invalid_request",
+        code: "request_not_idempotent",
+        message: "Failed to serialize checkout session.",
+        param: "checkoutSessionId",
       },
-    ]);
+    };
   }
 
-  return ok({
-    checkoutSession,
-  });
+  return { ok: true, data: checkoutSession };
 };
