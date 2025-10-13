@@ -1,16 +1,16 @@
-import { GraphqlClient } from "#root/graphql/client";
-import { Logger } from "#root/logging/types";
-import { ok, err, AsyncResult } from "@nimara/domain/objects/Result";
-import { CheckoutSessionGetDocument } from "#root/mcp/saleor/graphql/queries/generated";
-import { AcpCheckoutCompleteMutationDocument } from "#root/mcp/saleor/graphql/mutations/generated";
-import {
-  CheckoutSessionCompleteSchema,
-  type CheckoutSession,
-} from "#root/mcp/schema";
-import { validateAndSerializeCheckout } from "#root/mcp/saleor/serializers";
+import { type Checkout } from "@nimara/domain/objects/Checkout";
+import { type AsyncResult, err, ok } from "@nimara/domain/objects/Result";
 
-import { StripePaymentService } from "#root/payment/providers";
-import { Checkout } from "@nimara/domain/objects/Checkout";
+import { type GraphqlClient } from "#root/graphql/client";
+import { type Logger } from "#root/logging/types";
+import { AcpCheckoutCompleteMutationDocument } from "#root/mcp/saleor/graphql/mutations/generated";
+import { CheckoutSessionGetDocument } from "#root/mcp/saleor/graphql/queries/generated";
+import { validateAndSerializeCheckout } from "#root/mcp/saleor/serializers";
+import {
+  type CheckoutSession,
+  type CheckoutSessionCompleteSchema,
+} from "#root/mcp/schema";
+import { type StripePaymentService } from "#root/payment/providers";
 
 const DEFAULT_CACHE_TIME = 60 * 60; // 1 hour
 
@@ -18,15 +18,15 @@ export const checkoutSessionCompleteInfra = async ({
   deps,
   input,
 }: {
+  deps: {
+    graphqlClient: GraphqlClient;
+    logger: Logger;
+    paymentService: StripePaymentService;
+    storefrontUrl: string;
+  };
   input: {
     checkoutSessionComplete: CheckoutSessionCompleteSchema;
     checkoutSessionId: string;
-  };
-  deps: {
-    paymentService: StripePaymentService;
-    graphqlClient: GraphqlClient;
-    logger: Logger;
-    storefrontUrl: string;
   };
 }): AsyncResult<{ checkoutSession: CheckoutSession }> => {
   const result = await deps.graphqlClient.execute(CheckoutSessionGetDocument, {
@@ -37,7 +37,7 @@ export const checkoutSessionCompleteInfra = async ({
     options: {
       next: {
         revalidate: DEFAULT_CACHE_TIME,
-        tags: [`MCP_CHECKOUT_SESSION:${input.checkoutSessionId}`],
+        tags: [`ACP:CHECKOUT_SESSION:${input.checkoutSessionId}`],
       },
     },
     operationName: "ACP:CheckoutSessionQuery",
@@ -78,6 +78,7 @@ export const checkoutSessionCompleteInfra = async ({
     deps.logger.error(
       "Failed to initialize payment transaction for checkout session ${input.checkoutSessionId}.",
     );
+
     return err([
       {
         code: "BAD_REQUEST_ERROR",
@@ -116,6 +117,7 @@ export const checkoutSessionCompleteInfra = async ({
       "Failed to process payment result for checkout session ${input.checkoutSessionId}.",
       { errors: paymentResult.errors },
     );
+
     return err([
       {
         code: "BAD_REQUEST_ERROR",
@@ -127,6 +129,7 @@ export const checkoutSessionCompleteInfra = async ({
     deps.logger.error(
       "Payment not completed for checkout session ${input.checkoutSessionId}.",
     );
+
     return err([
       {
         code: "PAYMENT_EXECUTE_ERROR",
@@ -157,6 +160,18 @@ export const checkoutSessionCompleteInfra = async ({
     ]);
   }
 
+  if (!completeResult.data.checkoutComplete?.order) {
+    deps.logger.error("No order found after completing checkout in Saleor", {
+      checkoutId: input.checkoutSessionId,
+    });
+
+    return err([
+      {
+        code: "BAD_REQUEST_ERROR",
+      },
+    ]);
+  }
+
   const checkoutSession = validateAndSerializeCheckout(result.data.checkout, {
     storefrontUrl: deps.storefrontUrl,
   });
@@ -172,7 +187,8 @@ export const checkoutSessionCompleteInfra = async ({
       },
     ]);
   }
-  checkoutSession.id = completeResult.data.checkoutComplete?.order?.id!; // from now we need to return order id to avability to fetch order details or cancel order
+
+  checkoutSession.id = completeResult.data.checkoutComplete?.order?.id; // from now we need to return order id to avability to fetch order details or cancel order
 
   return ok({
     checkoutSession,

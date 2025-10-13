@@ -90,7 +90,7 @@ const itemSchema = z.object({
 const paymentDataSchema = z.object({
   token: z.string().min(1, "Payment token cannot be empty"),
   provider: z.enum(["stripe"]), // Extendable for other providers
-  billing_address: fulfillmentAddressSchema.required(),
+  billing_address: addressSchema.required(),
 });
 
 export const checkoutSessionCompleteSchema = z.object({
