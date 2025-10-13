@@ -12,13 +12,12 @@ import {
 } from "#root/mcp/schema";
 import { type StripePaymentService } from "#root/payment/providers";
 
-const DEFAULT_CACHE_TIME = 60 * 60; // 1 hour
-
 export const checkoutSessionCompleteInfra = async ({
   deps,
   input,
 }: {
   deps: {
+    cacheTime: number;
     graphqlClient: GraphqlClient;
     logger: Logger;
     paymentService: StripePaymentService;
@@ -36,7 +35,7 @@ export const checkoutSessionCompleteInfra = async ({
     },
     options: {
       next: {
-        revalidate: DEFAULT_CACHE_TIME,
+        revalidate: deps.cacheTime,
         tags: [`ACP:CHECKOUT_SESSION:${input.checkoutSessionId}`],
       },
     },

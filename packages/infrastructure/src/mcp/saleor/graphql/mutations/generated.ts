@@ -127,6 +127,28 @@ export type CheckoutSessionCreateVariables = Types.Exact<{
 
 export type CheckoutSessionCreate = CheckoutSessionCreate_Mutation;
 
+export type CheckoutSessionItemUpdate_checkoutLinesAdd_CheckoutLinesAdd_errors_CheckoutError = { field: string | null, message: string | null, code: Types.CheckoutErrorCode, variants: Array<string> | null };
+
+export type CheckoutSessionItemUpdate_checkoutLinesAdd_CheckoutLinesAdd = { errors: Array<CheckoutSessionItemUpdate_checkoutLinesAdd_CheckoutLinesAdd_errors_CheckoutError> };
+
+export type CheckoutSessionItemUpdate_checkoutLinesUpdate_CheckoutLinesUpdate_errors_CheckoutError = { field: string | null, message: string | null, code: Types.CheckoutErrorCode, variants: Array<string> | null };
+
+export type CheckoutSessionItemUpdate_checkoutLinesUpdate_CheckoutLinesUpdate = { errors: Array<CheckoutSessionItemUpdate_checkoutLinesUpdate_CheckoutLinesUpdate_errors_CheckoutError> };
+
+export type CheckoutSessionItemUpdate_Mutation = { checkoutLinesAdd?: CheckoutSessionItemUpdate_checkoutLinesAdd_CheckoutLinesAdd | null, checkoutLinesUpdate?: CheckoutSessionItemUpdate_checkoutLinesUpdate_CheckoutLinesUpdate | null };
+
+
+export type CheckoutSessionItemUpdateVariables = Types.Exact<{
+  checkoutId: Types.Scalars['ID']['input'];
+  linesToAdd: Array<Types.CheckoutLineInput> | Types.CheckoutLineInput;
+  shouldAddLines: Types.Scalars['Boolean']['input'];
+  linesToUpdate: Array<Types.CheckoutLineUpdateInput> | Types.CheckoutLineUpdateInput;
+  shouldUpdateLines: Types.Scalars['Boolean']['input'];
+}>;
+
+
+export type CheckoutSessionItemUpdate = CheckoutSessionItemUpdate_Mutation;
+
 export type CheckoutSessionUpdate_checkoutEmailUpdate_CheckoutEmailUpdate_checkout_Checkout = { email: string | null };
 
 export type CheckoutSessionUpdate_checkoutEmailUpdate_CheckoutEmailUpdate_errors_CheckoutError = { field: string | null, message: string | null, code: Types.CheckoutErrorCode };
@@ -420,6 +442,26 @@ fragment CheckoutProblemsFragment on CheckoutProblem {
     }
   }
 }`) as unknown as TypedDocumentString<CheckoutSessionCreate, CheckoutSessionCreateVariables>;
+export const CheckoutSessionItemUpdateDocument = new TypedDocumentString(`
+    mutation CheckoutSessionItemUpdate($checkoutId: ID!, $linesToAdd: [CheckoutLineInput!]!, $shouldAddLines: Boolean!, $linesToUpdate: [CheckoutLineUpdateInput!]!, $shouldUpdateLines: Boolean!) {
+  checkoutLinesAdd(checkoutId: $checkoutId, lines: $linesToAdd) @include(if: $shouldAddLines) {
+    errors {
+      field
+      message
+      code
+      variants
+    }
+  }
+  checkoutLinesUpdate(id: $checkoutId, lines: $linesToUpdate) @include(if: $shouldUpdateLines) {
+    errors {
+      field
+      message
+      code
+      variants
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<CheckoutSessionItemUpdate, CheckoutSessionItemUpdateVariables>;
 export const CheckoutSessionUpdateDocument = new TypedDocumentString(`
     mutation CheckoutSessionUpdate($checkoutId: ID!, $shippingAddress: AddressInput!, $shouldUpdateShipping: Boolean!, $buyerEmail: String!, $buyerJSON: String!, $shouldUpdateEmail: Boolean!, $fulfillmentAddressJSON: String!, $fulfillmentOptionID: ID!, $shouldUpdateFulfillmentOption: Boolean!) {
   checkoutEmailUpdate(checkoutId: $checkoutId, email: $buyerEmail) @include(if: $shouldUpdateEmail) {

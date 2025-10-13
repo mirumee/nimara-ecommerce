@@ -1,10 +1,11 @@
-import { GetProductFeedArgs } from "#root/mcp/types";
-import { BaseError } from "@nimara/domain/objects/Error";
-import { err, ok } from "@nimara/domain/objects/Result";
+import { ok } from "@nimara/domain/objects/Result";
+
+import { type GraphqlClient } from "#root/graphql/client";
+import { type Logger } from "#root/logging/types";
 import { ProductsFeedQueryDocument } from "#root/mcp/saleor/graphql/queries/generated";
+import { type GetProductFeedArgs } from "#root/mcp/types";
+
 import { serializeSaleorProductsToFeedItems } from "../serializers";
-import { GraphqlClient } from "#root/graphql/client";
-import { Logger } from "#root/logging/types";
 
 export const getProductFeedInfra = async ({
   deps,

@@ -1,7 +1,9 @@
+import { type LanguageCodeEnum } from "@nimara/codegen/schema";
+
 import { graphqlClient } from "#root/graphql/client";
 import { type Logger } from "#root/logging/types";
 import { type ACPService } from "#root/mcp/types";
-import { StripePaymentService } from "#root/payment/providers";
+import { type StripePaymentService } from "#root/payment/providers";
 
 import { checkoutSessionCompleteInfra } from "./infrastructure/checkout-session-complete-infra";
 import { checkoutSessionCreateInfra } from "./infrastructure/checkout-session-create-infra";
@@ -9,79 +11,99 @@ import { checkoutSessionGetInfra } from "./infrastructure/checkout-session-get-i
 import { checkoutSessionUpdateInfra } from "./infrastructure/checkout-session-update-infra";
 import { getProductFeedInfra } from "./infrastructure/get-product-feed";
 
-export const saleorAcPService = (config: {
+const DEFAULT_CHECKOUT_SESSION_CACHE_TIME = 5 * 60; // 5 minutes
+const DEFAULT_CHECKOUT_SESSION_LANGUAGE = "EN" satisfies LanguageCodeEnum;
+
+type Config = {
   apiUrl: string;
+  cacheTime?: number;
   channel: string;
+  languageCode?: LanguageCodeEnum;
   logger: Logger;
-  storefrontUrl: string;
   paymentService?: () => Promise<StripePaymentService>;
-}) =>
+  storefrontUrl: string;
+};
+
+export const saleorAPCService = ({
+  apiUrl,
+  cacheTime = DEFAULT_CHECKOUT_SESSION_CACHE_TIME,
+  channel,
+  languageCode = DEFAULT_CHECKOUT_SESSION_LANGUAGE,
+  logger,
+  paymentService,
+  storefrontUrl,
+}: Config) =>
   ({
     completeCheckoutSession: async (input) => {
-      if (!config.paymentService) {
+      if (!paymentService) {
         throw new Error(
           "Payment service is required to complete the checkout session",
         );
       }
 
-      const saleorGraphqlClient = graphqlClient(config.apiUrl);
-      const paymentService = await config.paymentService();
+      const saleorGraphqlClient = graphqlClient(apiUrl);
+      const service = await paymentService();
 
       return checkoutSessionCompleteInfra({
         deps: {
           graphqlClient: saleorGraphqlClient,
-          logger: config.logger,
-          storefrontUrl: config.storefrontUrl,
-          paymentService: paymentService,
+          logger,
+          storefrontUrl,
+          paymentService: service,
+          cacheTime,
         },
         input,
       });
     },
     createCheckoutSession: async ({ input }) => {
-      const saleorGraphqlClient = graphqlClient(config.apiUrl);
+      const saleorGraphqlClient = graphqlClient(apiUrl);
 
       return checkoutSessionCreateInfra({
         deps: {
           graphqlClient: saleorGraphqlClient,
-          storefrontUrl: config.storefrontUrl,
-          logger: config.logger,
-          channel: config.channel,
+          storefrontUrl,
+          logger,
+          channel,
         },
         input,
       });
     },
     getCheckoutSession: async (input) => {
-      const saleorGraphqlClient = graphqlClient(config.apiUrl);
+      const saleorGraphqlClient = graphqlClient(apiUrl);
 
       return checkoutSessionGetInfra({
         deps: {
           graphqlClient: saleorGraphqlClient,
-          logger: config.logger,
-          storefrontUrl: config.storefrontUrl,
+          logger,
+          storefrontUrl,
+          languageCode: languageCode,
+          cacheTime,
         },
         input,
       });
     },
     updateCheckoutSession: async (input) => {
-      const saleorGraphqlClient = graphqlClient(config.apiUrl);
+      const saleorGraphqlClient = graphqlClient(apiUrl);
 
       return checkoutSessionUpdateInfra({
         deps: {
           graphqlClient: saleorGraphqlClient,
-          logger: config.logger,
-          storefrontUrl: config.storefrontUrl,
+          logger,
+          storefrontUrl,
+          languageCode: languageCode,
+          cacheTime,
         },
         input,
       });
     },
     getProductFeed: async (args) => {
-      const saleorGraphqlClient = graphqlClient(config.apiUrl);
+      const saleorGraphqlClient = graphqlClient(apiUrl);
 
       return getProductFeedInfra({
         deps: {
           graphqlClient: saleorGraphqlClient,
-          logger: config.logger,
-          storefrontUrl: config.storefrontUrl,
+          logger,
+          storefrontUrl,
         },
         input: args,
       });

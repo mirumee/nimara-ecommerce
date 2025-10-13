@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 
-import { saleorAcPService } from "@nimara/infrastructure/mcp/saleor/service";
+import { saleorAPCService } from "@nimara/infrastructure/mcp/saleor/service";
 import { checkoutSessionCreateSchema } from "@nimara/infrastructure/mcp/schema";
 import { type ACPError } from "@nimara/infrastructure/mcp/types";
 
@@ -51,7 +51,7 @@ export async function POST(
     );
   }
 
-  const acpService = saleorAcPService({
+  const acpService = saleorAPCService({
     apiUrl: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
     logger: storefrontLogger,
     channel: channelSlug,
