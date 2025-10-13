@@ -39,6 +39,7 @@ export async function GET(
     storefrontUrl: clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
   });
 
+  // TODO: Validate if ID is checkout type or order type after checkout is completed.
   const result = await acpService.getCheckoutSession({
     checkoutSessionId: id,
   });

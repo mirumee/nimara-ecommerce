@@ -1,16 +1,62 @@
 import { revalidateTag } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
 
+import { saleorAcPService } from "@nimara/infrastructure/mcp/saleor/service";
+import { checkoutSessionCompleteSchema } from "@nimara/infrastructure/mcp/schema";
+
+import { clientEnvs } from "@/envs/client";
+import { storefrontLogger } from "@/services/logging";
+import { getPaymentService } from "@/services/payment";
+
 export async function POST(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ channelSlug: string; id: string }> },
 ) {
-  const { id } = await params;
+  const { channelSlug, id } = await params;
 
-  // TODO: Add logic here to complete the checkout session with the given ID
+  const acpService = saleorAcPService({
+    apiUrl: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
+    logger: storefrontLogger,
+    channel: channelSlug,
+    storefrontUrl: clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
+    paymentService: getPaymentService,
+  });
 
-  // Revalidate cache for this particular checkout session ID on update on success
-  revalidateTag(`ACP:CHECKOUT_SESSION:${id}`);
+  const body = (await request.json()) as Record<string, unknown>;
 
-  return NextResponse.json({ status: "Not implemented" }, { status: 501 });
+  const parsedBody = checkoutSessionCompleteSchema.safeParse(body);
+
+  if (!parsedBody.success) {
+    storefrontLogger.error("Invalid request body", {
+      errors: parsedBody.error.issues,
+    });
+
+    return NextResponse.json(
+      {
+        status: "Invalid request body",
+        errors: parsedBody.error.issues.map((i) => ({
+          message: i.message,
+          path: i.path.join("."),
+        })),
+      },
+      { status: 400 },
+    );
+  }
+
+  const result = await acpService.completeCheckoutSession({
+    checkoutSessionId: id,
+    checkoutSessionComplete: parsedBody.data,
+  });
+
+  if (!result.ok) {
+    return NextResponse.json(
+      { errors: result.errors },
+      { status: 400, statusText: "Failed to complete checkout session" },
+    );
+  }
+
+  // Revalidate the cart page to reflect the updated checkout session state
+  revalidateTag(`cart-${channelSlug}`);
+
+  return NextResponse.json({ checkoutSession: result.data.checkoutSession });
 }

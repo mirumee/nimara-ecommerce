@@ -1,15 +1,180 @@
 import { GraphqlClient } from "#root/graphql/client";
 import { Logger } from "#root/logging/types";
-import { ok } from "@nimara/domain/objects/Result";
+import { ok, err, AsyncResult } from "@nimara/domain/objects/Result";
+import { CheckoutSessionGetDocument } from "#root/mcp/saleor/graphql/queries/generated";
+import { AcpCheckoutCompleteMutationDocument } from "#root/mcp/saleor/graphql/mutations/generated";
+import {
+  CheckoutSessionCompleteSchema,
+  type CheckoutSession,
+} from "#root/mcp/schema";
+import { validateAndSerializeCheckout } from "#root/mcp/saleor/serializers";
+
+import { StripePaymentService } from "#root/payment/providers";
+import { Checkout } from "@nimara/domain/objects/Checkout";
+
+const DEFAULT_CACHE_TIME = 60 * 60; // 1 hour
 
 export const checkoutSessionCompleteInfra = async ({
+  deps,
   input,
 }: {
-  input: { checkoutSessionId: string };
+  input: {
+    checkoutSessionComplete: CheckoutSessionCompleteSchema;
+    checkoutSessionId: string;
+  };
   deps: {
+    paymentService: StripePaymentService;
     graphqlClient: GraphqlClient;
     logger: Logger;
+    storefrontUrl: string;
   };
-}) => {
-  return ok({ orderId: input.checkoutSessionId });
+}): AsyncResult<{ checkoutSession: CheckoutSession }> => {
+  const result = await deps.graphqlClient.execute(CheckoutSessionGetDocument, {
+    variables: {
+      languageCode: "EN",
+      id: input.checkoutSessionId,
+    },
+    options: {
+      next: {
+        revalidate: DEFAULT_CACHE_TIME,
+        tags: [`MCP_CHECKOUT_SESSION:${input.checkoutSessionId}`],
+      },
+    },
+    operationName: "ACP:CheckoutSessionQuery",
+  });
+
+  if (!result.ok) {
+    deps.logger.error("Failed to fetch checkout session from Saleor", {
+      errors: result.errors,
+    });
+
+    return err([
+      {
+        code: "BAD_REQUEST_ERROR",
+      },
+    ]);
+  }
+
+  if (!result.data.checkout) {
+    deps.logger.error("No checkout found in Saleor", {
+      checkoutId: input.checkoutSessionId,
+    });
+
+    return err([
+      {
+        code: "BAD_REQUEST_ERROR",
+      },
+    ]);
+  }
+
+  const transaction =
+    await deps.paymentService.paymentGatewayTransactionInitialize({
+      id: result.data.checkout.id,
+      amount: result.data.checkout.totalPrice.gross.amount,
+      sharedPaymentToken: input.checkoutSessionComplete.payment_data.token,
+    });
+
+  if (!transaction) {
+    deps.logger.error(
+      "Failed to initialize payment transaction for checkout session ${input.checkoutSessionId}.",
+    );
+    return err([
+      {
+        code: "BAD_REQUEST_ERROR",
+      },
+    ]);
+  }
+
+  const transactionId = transaction.data?.transactionId;
+
+  // Map Saleor checkout to domain Checkout type
+  const mapSaleorCheckoutToDomain = (saleorCheckout: any): Checkout => ({
+    ...saleorCheckout,
+    billingAddress: saleorCheckout.billingAddress
+      ? {
+          ...saleorCheckout.billingAddress,
+          country: saleorCheckout.billingAddress.country.code, // Ensure country is a string code
+        }
+      : null,
+    shippingAddress: saleorCheckout.shippingAddress
+      ? {
+          ...saleorCheckout.shippingAddress,
+          country: saleorCheckout.shippingAddress.country.code,
+        }
+      : null,
+  });
+
+  const domainCheckout = mapSaleorCheckoutToDomain(result.data.checkout);
+
+  const paymentResult = await deps.paymentService.paymentResultProcess({
+    checkout: domainCheckout,
+    searchParams: { transactionId: transactionId! },
+  });
+
+  if (!paymentResult.ok) {
+    deps.logger.error(
+      "Failed to process payment result for checkout session ${input.checkoutSessionId}.",
+      { errors: paymentResult.errors },
+    );
+    return err([
+      {
+        code: "BAD_REQUEST_ERROR",
+      },
+    ]);
+  }
+
+  if (!paymentResult.data.success) {
+    deps.logger.error(
+      "Payment not completed for checkout session ${input.checkoutSessionId}.",
+    );
+    return err([
+      {
+        code: "PAYMENT_EXECUTE_ERROR",
+      },
+    ]);
+  }
+
+  const completeResult = await deps.graphqlClient.execute(
+    AcpCheckoutCompleteMutationDocument,
+    {
+      variables: {
+        id: input.checkoutSessionId,
+      },
+      operationName: "ACP:CheckoutCompleteMutation",
+    },
+  );
+
+  // Here you can add logic to complete the checkout in Saleor if needed
+  if (!completeResult.ok) {
+    deps.logger.error("Failed to complete checkout in Saleor", {
+      errors: completeResult.errors,
+    });
+
+    return err([
+      {
+        code: "BAD_REQUEST_ERROR",
+      },
+    ]);
+  }
+
+  const checkoutSession = validateAndSerializeCheckout(result.data.checkout, {
+    storefrontUrl: deps.storefrontUrl,
+  });
+
+  if (!checkoutSession) {
+    deps.logger.error("Failed to parse checkout session from Saleor", {
+      checkout: result.data.checkout,
+    });
+
+    return err([
+      {
+        code: "BAD_REQUEST_ERROR",
+      },
+    ]);
+  }
+  checkoutSession.id = completeResult.data.checkoutComplete?.order?.id!; // from now we need to return order id to avability to fetch order details or cancel order
+
+  return ok({
+    checkoutSession,
+  });
 };

@@ -1,6 +1,22 @@
 import type * as Types from '@nimara/codegen/schema';
 
 import type { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
+export type AcpCheckoutCompleteMutation_checkoutComplete_CheckoutComplete_order_Order = { id: string };
+
+export type AcpCheckoutCompleteMutation_checkoutComplete_CheckoutComplete_errors_CheckoutError = { field: string | null, message: string | null, code: Types.CheckoutErrorCode };
+
+export type AcpCheckoutCompleteMutation_checkoutComplete_CheckoutComplete = { order: AcpCheckoutCompleteMutation_checkoutComplete_CheckoutComplete_order_Order | null, errors: Array<AcpCheckoutCompleteMutation_checkoutComplete_CheckoutComplete_errors_CheckoutError> };
+
+export type AcpCheckoutCompleteMutation_Mutation = { checkoutComplete: AcpCheckoutCompleteMutation_checkoutComplete_CheckoutComplete | null };
+
+
+export type AcpCheckoutCompleteMutationVariables = Types.Exact<{
+  id: Types.Scalars['ID']['input'];
+}>;
+
+
+export type AcpCheckoutCompleteMutation = AcpCheckoutCompleteMutation_Mutation;
+
 export type CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_discount_Money = { amount: number, currency: string };
 
 export type CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingMethods_ShippingMethod_price_Money = { amount: number, currency: string };
@@ -170,6 +186,20 @@ export class TypedDocumentString<TResult, TVariables>
   }
 }
 
+export const AcpCheckoutCompleteMutationDocument = new TypedDocumentString(`
+    mutation ACPCheckoutCompleteMutation($id: ID!) {
+  checkoutComplete(id: $id) {
+    order {
+      id
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<AcpCheckoutCompleteMutation, AcpCheckoutCompleteMutationVariables>;
 export const CheckoutSessionCreateDocument = new TypedDocumentString(`
     mutation CheckoutSessionCreate($input: CheckoutCreateInput!, $languageCode: LanguageCodeEnum!, $countryCode: CountryCode = US, $thumbnailSize: Int = 128, $thumbnailFormat: ThumbnailFormatEnum = WEBP) {
   checkoutCreate(input: $input) {
