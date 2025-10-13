@@ -43,6 +43,24 @@ const itemSchema = z.object({
   quantity: z.number().min(1, "Quantity must be at least 1"),
 });
 
+const paymentDataSchema = z.object({
+  token: z.string().min(1, "Payment token cannot be empty"),
+  provider: z.enum(["stripe"]), // Extendable for other providers
+  billing_address: fulfillmentAddressSchema.required(),
+});
+
+export const checkoutSessionCompleteSchema = z.object({
+  buyer: buyerSchema.optional(),
+  payment_data: paymentDataSchema.required(),
+});
+
+export type CheckoutSessionCompleteSchema = z.infer<
+  typeof checkoutSessionCompleteSchema
+>;
+export type CheckoutSessionCompleteInput = z.infer<
+  typeof checkoutSessionCompleteSchema
+>;
+
 export const checkoutSessionCreateSchema = z.object({
   buyer: buyerSchema.optional(),
   fulfillment_address: fulfillmentAddressSchema.optional(),

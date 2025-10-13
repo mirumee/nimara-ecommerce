@@ -1,11 +1,13 @@
 import { type AsyncResult } from "@nimara/domain/objects/Result";
 
 import {
+  CheckoutSessionCompleteSchema,
   type CheckoutSession,
   type CheckoutSessionCreateSchema,
   type CheckoutSessionUpdateSchema,
 } from "#root/mcp/schema";
 import { type PageInfo } from "#root/use-cases/search/types";
+import { type StripePaymentService } from "@nimara/infrastructure/payment/providers";
 
 import { type ProductFeed } from "./schema";
 
@@ -25,8 +27,9 @@ export type GetProductFeedArgs = {
  */
 export interface ACPService {
   completeCheckoutSession: (args: {
+    checkoutSessionComplete: CheckoutSessionCompleteSchema;
     checkoutSessionId: string;
-  }) => AsyncResult<{ orderId: string }>;
+  }) => AsyncResult<{ checkoutSession: CheckoutSession }>;
   createCheckoutSession: (args: {
     input: CheckoutSessionCreateSchema;
   }) => AsyncResult<{ checkoutSession: CheckoutSession }>;

@@ -24,7 +24,14 @@ export const transactionInitializeInfra =
     { apiURI, gatewayAppId, logger }: PaymentServiceConfig,
     state: StripeServiceState,
   ): TransactionInitializeInfra =>
-  async ({ paymentMethod, customerId, saveForFutureUse, id, amount }) => {
+  async ({
+    paymentMethod,
+    customerId,
+    saveForFutureUse,
+    id,
+    amount,
+    sharedPaymentToken,
+  }) => {
     const result = await graphqlClient(apiURI).execute(
       TransactionInitializeMutationDocument,
       {
@@ -39,6 +46,9 @@ export const transactionInitializeInfra =
             ...(customerId && { customer: customerId }),
             ...(paymentMethod && { payment_method: paymentMethod }),
             ...(saveForFutureUse && { setup_future_usage: PAYMENT_USAGE }),
+            ...(sharedPaymentToken && {
+              shared_payment_token: sharedPaymentToken,
+            }),
           },
         },
         options: {
@@ -84,6 +94,7 @@ export const transactionInitializeInfra =
     state.transactionId = result.data.transactionInitialize.transaction.id;
 
     return ok({
+      transactionId: result.data.transactionInitialize.transaction.id,
       clientSecret: (
         result.data.transactionInitialize.data as PaymentInitializeData
       ).paymentIntent.clientSecret,

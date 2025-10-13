@@ -1,6 +1,7 @@
 import { graphqlClient } from "#root/graphql/client";
 import { type Logger } from "#root/logging/types";
 import { type ACPService } from "#root/mcp/types";
+import { StripePaymentService } from "#root/payment/providers";
 
 import { checkoutSessionCompleteInfra } from "./infrastructure/checkout-session-complete-infra";
 import { checkoutSessionCreateInfra } from "./infrastructure/checkout-session-create-infra";
@@ -13,15 +14,25 @@ export const saleorAcPService = (config: {
   channel: string;
   logger: Logger;
   storefrontUrl: string;
+  paymentService?: () => Promise<StripePaymentService>;
 }) =>
   ({
     completeCheckoutSession: async (input) => {
+      if (!config.paymentService) {
+        throw new Error(
+          "Payment service is required to complete the checkout session",
+        );
+      }
+
       const saleorGraphqlClient = graphqlClient(config.apiUrl);
+      const paymentService = await config.paymentService();
 
       return checkoutSessionCompleteInfra({
         deps: {
           graphqlClient: saleorGraphqlClient,
           logger: config.logger,
+          storefrontUrl: config.storefrontUrl,
+          paymentService: paymentService,
         },
         input,
       });

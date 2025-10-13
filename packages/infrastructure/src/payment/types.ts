@@ -51,7 +51,8 @@ export type TransactionInitializeInfra = (opts: {
   id: string;
   paymentMethod?: Maybe<string>;
   saveForFutureUse?: Maybe<boolean>;
-}) => AsyncResult<{ clientSecret: string }>;
+  sharedPaymentToken?: Maybe<string>;
+}) => AsyncResult<{ clientSecret: string; transactionId: string }>;
 
 export type PaymentExecuteInfra = (opts: {
   billingDetails: BillingDetails;
