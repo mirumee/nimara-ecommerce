@@ -211,6 +211,8 @@ export const checkoutSessionSchema = z.object({
 export type CheckoutSession = z.infer<typeof checkoutSessionSchema>;
 
 export const productFeedItemSchema = z.object({
+  enable_search: z.boolean().optional().default(true),
+  enable_checkout: z.boolean().optional().default(true),
   id: z.string(),
   title: z.string(),
   description: z.string(),
@@ -219,7 +221,7 @@ export const productFeedItemSchema = z.object({
   currency: z.string(),
   availability: z.enum(["in_stock", "out_of_stock"]),
   inventory_quantity: z.number(),
-  image_link: z.string().url(),
+  image_link: z.string().url().optional(),
   additional_image_link: z.array(z.string().url()).optional(),
   item_group_id: z.string(),
   item_group_title: z.string(),
@@ -230,12 +232,10 @@ export const productFeedItemSchema = z.object({
   offer_id: z.string(),
   brand: z.string().optional(),
   material: z.string().optional(),
-  seller_name: z.string(),
+  seller_name: z.string().default("Nimara Storefront"),
   seller_url: z.string().url(),
 });
 
 export type ProductFeedItem = z.infer<typeof productFeedItemSchema>;
 
-export const productFeedSchema = z.array(productFeedItemSchema);
-
-export type ProductFeed = z.infer<typeof productFeedSchema>;
+export type ProductFeed = ProductFeedItem[];

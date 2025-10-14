@@ -1,0 +1,26 @@
+mutation CheckoutSessionItemUpdate(
+  $checkoutId: ID!
+  $linesToAdd: [CheckoutLineInput!]!
+  $shouldAddLines: Boolean!
+  $linesToUpdate: [CheckoutLineUpdateInput!]!
+  $shouldUpdateLines: Boolean!
+) {
+  checkoutLinesAdd(checkoutId: $checkoutId, lines: $linesToAdd)
+    @include(if: $shouldAddLines) {
+    errors {
+      field
+      message
+      code
+      variants
+    }
+  }
+  checkoutLinesUpdate(id: $checkoutId, lines: $linesToUpdate)
+    @include(if: $shouldUpdateLines) {
+    errors {
+      field
+      message
+      code
+      variants
+    }
+  }
+}

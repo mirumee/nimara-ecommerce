@@ -1,24 +1,23 @@
 import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { type AsyncResult, err, ok } from "@nimara/domain/objects/Result";
 
-import { type GraphqlClient } from "#root/graphql/client";
-import { type Logger } from "#root/logging/types";
-import { AcpCheckoutCompleteMutationDocument } from "#root/mcp/saleor/graphql/mutations/generated";
-import { CheckoutSessionGetDocument } from "#root/mcp/saleor/graphql/queries/generated";
-import { validateAndSerializeCheckout } from "#root/mcp/saleor/serializers";
+import { AcpCheckoutCompleteMutationDocument } from "#root/acp/saleor/graphql/mutations/generated";
+import { CheckoutSessionGetDocument } from "#root/acp/saleor/graphql/queries/generated";
+import { validateAndSerializeCheckout } from "#root/acp/saleor/serializers";
 import {
   type CheckoutSession,
   type CheckoutSessionCompleteSchema,
-} from "#root/mcp/schema";
+} from "#root/acp/schema";
+import { type GraphqlClient } from "#root/graphql/client";
+import { type Logger } from "#root/logging/types";
 import { type StripePaymentService } from "#root/payment/providers";
-
-const DEFAULT_CACHE_TIME = 60 * 60; // 1 hour
 
 export const checkoutSessionCompleteInfra = async ({
   deps,
   input,
 }: {
   deps: {
+    cacheTime: number;
     graphqlClient: GraphqlClient;
     logger: Logger;
     paymentService: StripePaymentService;
@@ -36,7 +35,7 @@ export const checkoutSessionCompleteInfra = async ({
     },
     options: {
       next: {
-        revalidate: DEFAULT_CACHE_TIME,
+        revalidate: deps.cacheTime,
         tags: [`ACP:CHECKOUT_SESSION:${input.checkoutSessionId}`],
       },
     },

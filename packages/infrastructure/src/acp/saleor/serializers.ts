@@ -1,12 +1,17 @@
-import { Logger } from "#root/logging/types";
+import EditorJSHTML from "editorjs-html";
+import { stripHtml } from "string-strip-html";
+
 import {
-  Buyer,
+  type Buyer,
   type CheckoutSession,
   checkoutSessionSchema,
   type CheckoutSessionStatus,
-  FulfillmentAddress,
+  type FulfillmentAddress,
+  type ProductFeed,
+  productFeedItemSchema,
   type Totals,
-} from "#root/mcp/schema";
+} from "#root/acp/schema";
+import { type Logger } from "#root/logging/types";
 
 import { type ProductFeedItem } from "../schema";
 import {
@@ -17,8 +22,8 @@ import {
 export const validateAndSerializeCheckout = (
   checkout: CheckoutSessionFragment,
   extraContext: {
-    storefrontUrl: string;
     logger?: Logger;
+    storefrontUrl: string;
   },
 ): CheckoutSession | null => {
   const { fulfillmentAddress } = checkout;
@@ -192,55 +197,105 @@ export const validateAndSerializeCheckout = (
   }
 };
 
-export function serializeSaleorProductsToFeedItems(
-  channel: string,
-  storefrontUrl: string,
+export function validateAndSerializeProducts(
   products: ProductFeedFragment[],
-): Array<ProductFeedItem> {
+  extraContext: {
+    channelPrefix: string;
+    logger?: Logger;
+    storefrontUrl: string;
+  },
+): ProductFeed {
+  const { channelPrefix, logger, storefrontUrl } = extraContext;
+
   const getAttr = (
-    attrs:
-      | {
-          attribute: { name: string | null };
-          values: { name: string | null }[];
-        }[]
-      | undefined,
+    attrs: ProductFeedFragment["attributes"],
     key: string,
   ): string | undefined =>
-    attrs?.find((a) => a.attribute?.name?.toLowerCase() === key)?.values?.[0]
+    attrs.find((a) => a.attribute.name?.toLowerCase() === key)?.values?.[0]
       ?.name ?? undefined;
 
-  return products.flatMap((node) =>
-    (node.variants ?? []).map((variant) => ({
-      id: variant?.sku ?? variant?.id,
-      title: `${node.name}${
-        variant?.attributes?.length
-          ? " - " +
-            variant.attributes
-              .map((a) => a.values?.[0]?.name)
-              .filter(Boolean)
-              .join(", ")
-          : ""
-      }`,
-      description: node.description ?? "", // TODO: This should be a plain text not rich text from saleor
-      link: `${storefrontUrl}/${channel}/products/${node.slug}`,
-      price: variant?.pricing?.price?.gross?.amount ?? 0,
-      currency: variant?.pricing?.price?.gross?.currency ?? "",
-      availability:
-        (variant?.quantityAvailable ?? 0) > 0 ? "in_stock" : "out_of_stock",
-      inventory_quantity: variant?.quantityAvailable ?? 0,
-      image_link: node.media?.[0]?.url ?? "",
-      additional_image_link: node.media?.slice(1).map((m) => m.url) ?? [],
-      item_group_id: node.id ?? "",
-      item_group_title: node.name ?? "",
-      color: getAttr(variant?.attributes, "color"),
-      size: getAttr(variant?.attributes, "size"),
-      size_system: getAttr(variant?.attributes, "size_system"),
-      gender: getAttr(variant?.attributes, "gender"),
-      offer_id: variant?.id ?? "",
-      brand: getAttr(node.attributes, "brand"),
-      material: getAttr(node.attributes, "material"),
-      seller_name: "Nimara Store",
-      seller_url: storefrontUrl,
-    })),
-  );
+  const productsFeedItems: ProductFeedItem[] = [];
+
+  for (const product of products) {
+    if (!product.variants || product.variants.length === 0) {
+      continue;
+    }
+
+    const variantLink = new URL(
+      `${channelPrefix}/products/${product.slug}`,
+      storefrontUrl,
+    ).toString();
+
+    for (const variant of product.variants) {
+      const parsedItem = productFeedItemSchema.safeParse({
+        enable_search: true,
+        enable_checkout: true,
+        id: variant.sku ?? variant?.id,
+        title: `${product.name}${
+          variant.attributes?.length
+            ? " - " +
+              variant.attributes
+                .map((a) => a.values?.[0]?.name)
+                .filter(Boolean)
+                .join(", ")
+            : ""
+        }`,
+        description: parseDescription(product.description),
+        link: variantLink,
+        price: variant.pricing?.price?.gross?.amount ?? 0,
+        currency: variant.pricing?.price?.gross?.currency ?? "",
+        availability:
+          (variant.quantityAvailable ?? 0) > 0 ? "in_stock" : "out_of_stock",
+        inventory_quantity: variant.quantityAvailable ?? 0,
+        image_link: product.media?.[0]?.url,
+        additional_image_link: product.media?.slice(1).map((m) => m.url) ?? [],
+        item_group_id: product.id,
+        item_group_title: product.name,
+        color: getAttr(variant.attributes, "color"),
+        size: getAttr(variant.attributes, "size"),
+        size_system: getAttr(variant.attributes, "size_system"),
+        gender: getAttr(variant.attributes, "gender"),
+        offer_id: variant.id,
+        brand: getAttr(product.attributes, "brand"),
+        material: getAttr(product.attributes, "material"),
+        seller_name: "Nimara Storefront",
+        seller_url: storefrontUrl,
+      } satisfies ProductFeedItem);
+
+      if (!parsedItem.success) {
+        logger?.error("Failed to parse product feed item", {
+          variantId: variant.id,
+          errors: parsedItem.error.errors,
+        });
+
+        continue;
+      }
+
+      productsFeedItems.push(parsedItem.data);
+    }
+  }
+
+  return productsFeedItems;
 }
+
+/**
+ * Parses the description from Saleor and returns a plain text version.
+ * @param description - description in JSON string format from Saleor
+ * @returns plain text description
+ */
+export const parseDescription = (description: string | null | undefined) => {
+  if (!description) {
+    return "";
+  }
+
+  try {
+    const desc = JSON.parse(description);
+
+    const parsedHTML = EditorJSHTML().parse(desc).join(". ");
+    const strippedHTML = stripHtml(parsedHTML);
+
+    return strippedHTML.result;
+  } catch {
+    return "";
+  }
+};

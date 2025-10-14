@@ -1,13 +1,12 @@
-import { Ok, type AsyncResult } from "@nimara/domain/objects/Result";
+import { type AsyncResult } from "@nimara/domain/objects/Result";
 
 import {
-  CheckoutSessionCompleteSchema,
   type CheckoutSession,
+  type CheckoutSessionCompleteSchema,
   type CheckoutSessionCreateSchema,
   type CheckoutSessionUpdateInput,
-} from "#root/mcp/schema";
+} from "#root/acp/schema";
 import { type PageInfo } from "#root/use-cases/search/types";
-import { type StripePaymentService } from "@nimara/infrastructure/payment/providers";
 
 import { type ProductFeed } from "./schema";
 
@@ -26,10 +25,6 @@ export type GetProductFeedArgs = {
  */
 export type ACPError = {
   /**
-   * Error type. Possible values are: `invalid_request`
-   */
-  type: "invalid_request";
-  /**
    * Error code. Possible values are: `request_not_idempotent`
    */
   code: "request_not_idempotent";
@@ -41,13 +36,17 @@ export type ACPError = {
    * JSONPath referring to the offending request body field, if applicable.
    */
   param?: string;
+  /**
+   * Error type. Possible values are: `invalid_request`
+   */
+  type: "invalid_request";
 };
 
 /**
  * Custom type for ACP responses, it can be either a success or an error.
  */
 export type ACPResponse = Promise<
-  { ok: false; error: ACPError } | { ok: true; data: CheckoutSession }
+  { error: ACPError; ok: false } | { data: CheckoutSession; ok: true }
 >;
 
 /**

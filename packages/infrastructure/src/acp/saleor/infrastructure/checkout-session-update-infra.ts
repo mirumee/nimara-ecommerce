@@ -1,26 +1,27 @@
+import { type LanguageCodeEnum } from "@nimara/codegen/schema";
 import { type AllCountryCode } from "@nimara/domain/consts";
 
-import { type GraphqlClient } from "#root/graphql/client";
-import { logger } from "#root/logging/service";
-import { type Logger } from "#root/logging/types";
 import {
+  CheckoutSessionItemUpdateDocument,
+  type CheckoutSessionItemUpdateVariables,
   CheckoutSessionUpdateDocument,
-  CheckoutSessionUpdateVariables,
-} from "#root/mcp/saleor/graphql/mutations/generated";
-import { CheckoutSessionGetDocument } from "#root/mcp/saleor/graphql/queries/generated";
-import { validateAndSerializeCheckout } from "#root/mcp/saleor/serializers";
-import { type CheckoutSessionUpdateInput } from "#root/mcp/schema";
-import { ACPResponse } from "#root/mcp/types";
-
-const DEFAULT_CACHE_TIME = 60 * 60; // 1 hour
-const DEFAULT_LANGUAGE = "EN";
+  type CheckoutSessionUpdateVariables,
+} from "#root/acp/saleor/graphql/mutations/generated";
+import { CheckoutSessionGetDocument } from "#root/acp/saleor/graphql/queries/generated";
+import { validateAndSerializeCheckout } from "#root/acp/saleor/serializers";
+import { type CheckoutSessionUpdateInput } from "#root/acp/schema";
+import { type ACPResponse } from "#root/acp/types";
+import { type GraphqlClient } from "#root/graphql/client";
+import { type Logger } from "#root/logging/types";
 
 export const checkoutSessionUpdateInfra = async ({
   deps,
   input,
 }: {
   deps: {
+    cacheTTL: number;
     graphqlClient: GraphqlClient;
+    languageCode: LanguageCodeEnum;
     logger: Logger;
     storefrontUrl: string;
   };
@@ -34,11 +35,11 @@ export const checkoutSessionUpdateInfra = async ({
     {
       variables: {
         id: checkoutSessionId,
-        languageCode: DEFAULT_LANGUAGE,
+        languageCode: deps.languageCode,
       },
       options: {
         next: {
-          revalidate: DEFAULT_CACHE_TIME,
+          revalidate: deps.cacheTTL,
           tags: [`ACP:CHECKOUT_SESSION:${checkoutSessionId}`],
         },
       },
@@ -46,7 +47,7 @@ export const checkoutSessionUpdateInfra = async ({
     },
   );
 
-  if (!resultCheckoutSessionGet.ok) {
+  if (!resultCheckoutSessionGet.ok || !resultCheckoutSessionGet.data.checkout) {
     return {
       ok: false,
       error: {
@@ -61,7 +62,7 @@ export const checkoutSessionUpdateInfra = async ({
   const variables = {
     // Common
     checkoutId: checkoutSessionId,
-    languageCode: DEFAULT_LANGUAGE,
+    languageCode: deps.languageCode,
     // Buyer
     buyerEmail: "",
     buyerJSON: "",
@@ -76,7 +77,7 @@ export const checkoutSessionUpdateInfra = async ({
   } as CheckoutSessionUpdateVariables;
 
   if (buyer) {
-    logger.info("Updating buyer email for checkout session", {
+    deps.logger.info("Updating buyer email for checkout session", {
       checkoutSessionId,
       buyerEmail: buyer.email,
     });
@@ -87,7 +88,7 @@ export const checkoutSessionUpdateInfra = async ({
   }
 
   if (fulfillment_option_id) {
-    logger.info("Updating fulfillment option for checkout session", {
+    deps.logger.info("Updating fulfillment option for checkout session", {
       checkoutSessionId,
       fulfillment_option_id,
     });
@@ -97,7 +98,7 @@ export const checkoutSessionUpdateInfra = async ({
   }
 
   if (fulfillment_address) {
-    logger.info("Updating shipping address for checkout session", {
+    deps.logger.info("Updating shipping address for checkout session", {
       checkoutSessionId,
       fulfillment_address,
     });
@@ -119,7 +120,134 @@ export const checkoutSessionUpdateInfra = async ({
   }
 
   if (items) {
-    // Handle items update
+    deps.logger.info("Updating items for checkout session", {
+      checkoutSessionId,
+      items,
+    });
+
+    const itemsVariables: CheckoutSessionItemUpdateVariables = {
+      checkoutId: checkoutSessionId,
+      linesToAdd: [],
+      linesToUpdate: [],
+      shouldAddLines: false,
+      shouldUpdateLines: false,
+    };
+
+    const currentCheckoutItems =
+      resultCheckoutSessionGet.data.checkout.lines.reduce<
+        Record<string, number>
+      >((acc, line) => {
+        acc[line.variant.id] = line.quantity;
+
+        return acc;
+      }, {});
+
+    const incomingItems = items.reduce<Record<string, number>>((acc, item) => {
+      acc[item.id] = item.quantity;
+
+      return acc;
+    }, {});
+
+    const itemsToAdd: Array<{ quantity: number; variantId: string }> = [];
+    const itemsToUpdate: Array<{ quantity: number; variantId: string }> = [];
+
+    const allVariantIds = new Set([
+      ...Object.keys(incomingItems),
+      ...Object.keys(currentCheckoutItems),
+    ]);
+
+    for (const variantId of allVariantIds) {
+      const incomingQty = incomingItems[variantId];
+      const currentQty = currentCheckoutItems[variantId];
+
+      if (incomingQty === undefined) {
+        // Item was in the checkout but is not in the incoming data -> remove it
+        itemsToUpdate.push({ variantId, quantity: 0 });
+      } else if (currentQty === undefined) {
+        // Item is new and should be added
+        itemsToAdd.push({ variantId, quantity: incomingQty });
+      } else if (incomingQty !== currentQty) {
+        // Quantity has changed -> update it
+        itemsToUpdate.push({ variantId, quantity: incomingQty });
+      }
+    }
+
+    if (itemsToAdd.length) {
+      deps.logger.info("Adding items to checkout session", {
+        checkoutSessionId,
+        items: itemsToAdd,
+      });
+
+      itemsVariables.shouldAddLines = true;
+      itemsVariables.linesToAdd = itemsToAdd;
+    }
+
+    if (itemsToUpdate.length) {
+      deps.logger.info("Updating items in checkout session", {
+        checkoutSessionId,
+        items: itemsToUpdate,
+      });
+
+      itemsVariables.shouldUpdateLines = true;
+      itemsVariables.linesToUpdate = itemsToUpdate;
+    }
+
+    if (itemsVariables.shouldAddLines || itemsVariables.shouldUpdateLines) {
+      const resultCheckoutSessionItemUpdate = await deps.graphqlClient.execute(
+        CheckoutSessionItemUpdateDocument,
+        {
+          variables: itemsVariables,
+          operationName: "ACP:CheckoutSessionItemUpdateMutation",
+          options: {
+            cache: "no-store",
+          },
+        },
+      );
+
+      if (!resultCheckoutSessionItemUpdate.ok) {
+        deps.logger.error("Failed to update checkout session items in Saleor", {
+          errors: resultCheckoutSessionItemUpdate.errors,
+        });
+
+        return {
+          ok: false,
+          error: {
+            type: "invalid_request",
+            code: "request_not_idempotent",
+            message:
+              resultCheckoutSessionItemUpdate.errors
+                ?.map((e) => e.message)
+                .join(", ") || "Failed to update checkout session items.",
+            param: "items",
+          },
+        };
+      }
+
+      const itemsErrors =
+        resultCheckoutSessionItemUpdate.data.checkoutLinesUpdate?.errors ||
+        resultCheckoutSessionItemUpdate.data.checkoutLinesAdd?.errors;
+
+      if (itemsErrors?.length) {
+        deps.logger.error(
+          "Errors returned from Saleor during checkout items update",
+          {
+            itemsErrors,
+          },
+        );
+
+        return {
+          ok: false,
+          error: {
+            type: "invalid_request",
+            code: "request_not_idempotent",
+            message:
+              itemsErrors[0]?.message ||
+              "Failed to update checkout session items.",
+            param: "items",
+          },
+        };
+      }
+    }
   }
 
   const resultCheckoutSessionUpdate = await deps.graphqlClient.execute(
@@ -127,6 +255,9 @@ export const checkoutSessionUpdateInfra = async ({
     {
       variables,
       operationName: "ACP:CheckoutSessionUpdateMutation",
+      options: {
+        cache: "no-store",
+      },
     },
   );
 
@@ -179,7 +310,7 @@ export const checkoutSessionUpdateInfra = async ({
     {
       variables: {
         id: checkoutSessionId,
-        languageCode: DEFAULT_LANGUAGE,
+        languageCode: deps.languageCode,
       },
       options: {
         // Do not cache the result of this query to ensure we get the latest data
