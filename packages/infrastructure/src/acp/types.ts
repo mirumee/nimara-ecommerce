@@ -5,7 +5,7 @@ import {
   type CheckoutSessionCompleteSchema,
   type CheckoutSessionCreateSchema,
   type CheckoutSessionUpdateInput,
-} from "#root/mcp/schema";
+} from "#root/acp/schema";
 import { type PageInfo } from "#root/use-cases/search/types";
 
 import { type ProductFeed } from "./schema";

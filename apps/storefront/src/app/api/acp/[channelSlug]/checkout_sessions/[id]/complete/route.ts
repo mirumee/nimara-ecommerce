@@ -1,26 +1,46 @@
 import { revalidateTag } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
 
-import { saleorAPCService } from "@nimara/infrastructure/mcp/saleor/service";
-import { checkoutSessionCompleteSchema } from "@nimara/infrastructure/mcp/schema";
+import { checkoutSessionCompleteSchema } from "@nimara/infrastructure/acp/schema";
 
-import { clientEnvs } from "@/envs/client";
+import { idempotencyStorage } from "@/lib/acp";
+import { validateChannelParam } from "@/lib/channel";
+import { getACPService } from "@/services/acp";
 import { storefrontLogger } from "@/services/logging";
-import { getPaymentService } from "@/services/payment";
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ channelSlug: string; id: string }> },
 ) {
+  const idempotencyKey = request.headers.get("Idempotency-Key");
+  const requestId = request.headers.get("Request-Id") || "";
+
+  if (idempotencyKey) {
+    if (idempotencyKey) {
+      const cached = idempotencyStorage.get(idempotencyKey);
+
+      if (cached) {
+        storefrontLogger.debug(
+          "Idempotent request - returning cached response",
+          {
+            idempotencyKey,
+          },
+        );
+
+        return idempotencyStorage.createResponse(cached);
+      }
+    }
+  }
+
   const { channelSlug, id } = await params;
 
-  const acpService = saleorAPCService({
-    apiUrl: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
-    logger: storefrontLogger,
-    channel: channelSlug,
-    storefrontUrl: clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
-    paymentService: getPaymentService,
-  });
+  const channelValidationResult = validateChannelParam(channelSlug);
+
+  if (!channelValidationResult.ok) {
+    return channelValidationResult.errorResponse;
+  }
+
+  const acpService = await getACPService({ channelSlug });
 
   const body = (await request.json()) as Record<string, unknown>;
 
@@ -58,5 +78,29 @@ export async function POST(
   // Revalidate the cart page to reflect the updated checkout session state
   revalidateTag(`cart-${channelSlug}`);
 
-  return NextResponse.json({ checkoutSession: result.data.checkoutSession });
+  const responseData = result.data;
+  const responseStatus = 201;
+  const responseHeaders = {
+    "Request-Id": requestId,
+    "Idempotency-Key": idempotencyKey || "",
+  };
+
+  if (idempotencyKey) {
+    storefrontLogger.debug("Storing response for idempotency", {
+      idempotencyKey,
+      requestId,
+    });
+
+    idempotencyStorage.set(
+      idempotencyKey,
+      responseData,
+      responseStatus,
+      responseHeaders,
+    );
+  }
+
+  return NextResponse.json(responseData, {
+    status: responseStatus,
+    headers: responseHeaders,
+  });
 }

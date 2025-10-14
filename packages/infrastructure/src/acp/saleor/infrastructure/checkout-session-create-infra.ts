@@ -1,9 +1,9 @@
+import { CheckoutSessionCreateDocument } from "#root/acp/saleor/graphql/mutations/generated";
+import { validateAndSerializeCheckout } from "#root/acp/saleor/serializers";
+import { type CheckoutSessionCreateSchema } from "#root/acp/schema";
+import { type ACPResponse } from "#root/acp/types";
 import { type GraphqlClient } from "#root/graphql/client";
 import { type Logger } from "#root/logging/types";
-import { CheckoutSessionCreateDocument } from "#root/mcp/saleor/graphql/mutations/generated";
-import { validateAndSerializeCheckout } from "#root/mcp/saleor/serializers";
-import { type CheckoutSessionCreateSchema } from "#root/mcp/schema";
-import { type ACPResponse } from "#root/mcp/types";
 
 const DEFAULT_LANGUAGE = "EN";
 
@@ -33,6 +33,9 @@ export const checkoutSessionCreateInfra = async ({
         languageCode: DEFAULT_LANGUAGE,
       },
       operationName: "ACP:CheckoutCreateMutation",
+      options: {
+        cache: "no-store",
+      },
     },
   );
 

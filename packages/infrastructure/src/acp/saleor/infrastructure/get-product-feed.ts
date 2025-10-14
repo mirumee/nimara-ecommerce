@@ -1,35 +1,75 @@
-import { ok } from "@nimara/domain/objects/Result";
+import { err, ok } from "@nimara/domain/objects/Result";
 
+import { ProductsFeedQueryDocument } from "#root/acp/saleor/graphql/queries/generated";
+import { type GetProductFeedArgs } from "#root/acp/types";
 import { type GraphqlClient } from "#root/graphql/client";
 import { type Logger } from "#root/logging/types";
-import { ProductsFeedQueryDocument } from "#root/mcp/saleor/graphql/queries/generated";
-import { type GetProductFeedArgs } from "#root/mcp/types";
 
-import { serializeSaleorProductsToFeedItems } from "../serializers";
+import { validateAndSerializeProducts } from "../serializers";
 
 export const getProductFeedInfra = async ({
   deps,
   input,
 }: {
-  deps: { graphqlClient: GraphqlClient; logger: Logger; storefrontUrl: string };
+  deps: {
+    cacheTTL: number;
+    graphqlClient: GraphqlClient;
+    logger: Logger;
+    storefrontUrl: string;
+  };
   input: GetProductFeedArgs;
 }) => {
   const result = await deps.graphqlClient.execute(ProductsFeedQueryDocument, {
-    operationName: "ProductsFeedQuery",
+    operationName: "ACP:ProductsFeedQuery",
     variables: {
       channel: input.channel,
       first: input.limit,
     },
+    options: {
+      next: {
+        revalidate: deps.cacheTTL,
+        tags: [`ACP:PRODUCT_FEED:${input.channel}`],
+      },
+    },
   });
 
-  const products = serializeSaleorProductsToFeedItems(
-    input.channelPrefix,
-    deps.storefrontUrl,
-    (result.data?.products?.edges || []).map(({ node }) => node),
-  );
+  if (!result.ok) {
+    deps.logger.error("Failed to fetch product feed from Saleor", {
+      errors: result.errors,
+    });
+
+    return err(result.errors);
+  }
+
+  const saleorProducts =
+    result.data.products?.edges.map(({ node }) => node) ?? [];
+
+  if (saleorProducts.length === 0) {
+    deps.logger.warning("No products found in product feed", {
+      channel: input.channel,
+      first: input.limit,
+    });
+
+    return ok({
+      products: [],
+      pageInfo: {
+        type: "cursor",
+        after: null,
+        before: null,
+        hasNextPage: false,
+        hasPreviousPage: false,
+      } as const,
+    });
+  }
+
+  const feedItems = validateAndSerializeProducts(saleorProducts, {
+    logger: deps.logger,
+    channelPrefix: input.channelPrefix,
+    storefrontUrl: deps.storefrontUrl,
+  });
 
   return ok({
-    products,
+    products: feedItems,
     pageInfo: {
       type: "cursor",
       after: null,

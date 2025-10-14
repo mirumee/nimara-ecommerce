@@ -1,8 +1,8 @@
 import { type LanguageCodeEnum } from "@nimara/codegen/schema";
 
+import { type ACPService } from "#root/acp/types";
 import { graphqlClient } from "#root/graphql/client";
 import { type Logger } from "#root/logging/types";
-import { type ACPService } from "#root/mcp/types";
 import { type StripePaymentService } from "#root/payment/providers";
 
 import { checkoutSessionCompleteInfra } from "./infrastructure/checkout-session-complete-infra";
@@ -16,7 +16,10 @@ const DEFAULT_CHECKOUT_SESSION_LANGUAGE = "EN" satisfies LanguageCodeEnum;
 
 type Config = {
   apiUrl: string;
-  cacheTime?: number;
+  cacheTTL?: {
+    checkoutSession: number;
+    productFeed: number;
+  };
   channel: string;
   languageCode?: LanguageCodeEnum;
   logger: Logger;
@@ -24,9 +27,12 @@ type Config = {
   storefrontUrl: string;
 };
 
-export const saleorAPCService = ({
+export const saleorACPService = ({
   apiUrl,
-  cacheTime = DEFAULT_CHECKOUT_SESSION_CACHE_TIME,
+  cacheTTL = {
+    checkoutSession: DEFAULT_CHECKOUT_SESSION_CACHE_TIME,
+    productFeed: DEFAULT_CHECKOUT_SESSION_CACHE_TIME,
+  },
   channel,
   languageCode = DEFAULT_CHECKOUT_SESSION_LANGUAGE,
   logger,
@@ -50,7 +56,7 @@ export const saleorAPCService = ({
           logger,
           storefrontUrl,
           paymentService: service,
-          cacheTime,
+          cacheTime: cacheTTL.checkoutSession,
         },
         input,
       });
@@ -77,7 +83,7 @@ export const saleorAPCService = ({
           logger,
           storefrontUrl,
           languageCode: languageCode,
-          cacheTime,
+          cacheTTL: cacheTTL.checkoutSession,
         },
         input,
       });
@@ -91,7 +97,7 @@ export const saleorAPCService = ({
           logger,
           storefrontUrl,
           languageCode: languageCode,
-          cacheTime,
+          cacheTTL: cacheTTL.checkoutSession,
         },
         input,
       });
@@ -104,6 +110,7 @@ export const saleorAPCService = ({
           graphqlClient: saleorGraphqlClient,
           logger,
           storefrontUrl,
+          cacheTTL: cacheTTL.productFeed,
         },
         input: args,
       });

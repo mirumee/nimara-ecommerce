@@ -1,28 +1,27 @@
 import { type LanguageCodeEnum } from "@nimara/codegen/schema";
 import { type AllCountryCode } from "@nimara/domain/consts";
 
-import { type GraphqlClient } from "#root/graphql/client";
-import { logger } from "#root/logging/service";
-import { type Logger } from "#root/logging/types";
 import {
   CheckoutSessionItemUpdateDocument,
   type CheckoutSessionItemUpdateVariables,
   CheckoutSessionUpdateDocument,
   type CheckoutSessionUpdateVariables,
-} from "#root/mcp/saleor/graphql/mutations/generated";
-import { CheckoutSessionGetDocument } from "#root/mcp/saleor/graphql/queries/generated";
-import { validateAndSerializeCheckout } from "#root/mcp/saleor/serializers";
-import { type CheckoutSessionUpdateInput } from "#root/mcp/schema";
-import { type ACPResponse } from "#root/mcp/types";
+} from "#root/acp/saleor/graphql/mutations/generated";
+import { CheckoutSessionGetDocument } from "#root/acp/saleor/graphql/queries/generated";
+import { validateAndSerializeCheckout } from "#root/acp/saleor/serializers";
+import { type CheckoutSessionUpdateInput } from "#root/acp/schema";
+import { type ACPResponse } from "#root/acp/types";
+import { type GraphqlClient } from "#root/graphql/client";
+import { type Logger } from "#root/logging/types";
 
 export const checkoutSessionUpdateInfra = async ({
   deps,
   input,
 }: {
   deps: {
-    cacheTime: number;
-    languageCode: LanguageCodeEnum;
+    cacheTTL: number;
     graphqlClient: GraphqlClient;
+    languageCode: LanguageCodeEnum;
     logger: Logger;
     storefrontUrl: string;
   };
@@ -40,7 +39,7 @@ export const checkoutSessionUpdateInfra = async ({
       },
       options: {
         next: {
-          revalidate: deps.cacheTime,
+          revalidate: deps.cacheTTL,
           tags: [`ACP:CHECKOUT_SESSION:${checkoutSessionId}`],
         },
       },
@@ -78,7 +77,7 @@ export const checkoutSessionUpdateInfra = async ({
   } as CheckoutSessionUpdateVariables;
 
   if (buyer) {
-    logger.info("Updating buyer email for checkout session", {
+    deps.logger.info("Updating buyer email for checkout session", {
       checkoutSessionId,
       buyerEmail: buyer.email,
     });
@@ -89,7 +88,7 @@ export const checkoutSessionUpdateInfra = async ({
   }
 
   if (fulfillment_option_id) {
-    logger.info("Updating fulfillment option for checkout session", {
+    deps.logger.info("Updating fulfillment option for checkout session", {
       checkoutSessionId,
       fulfillment_option_id,
     });
@@ -99,7 +98,7 @@ export const checkoutSessionUpdateInfra = async ({
   }
 
   if (fulfillment_address) {
-    logger.info("Updating shipping address for checkout session", {
+    deps.logger.info("Updating shipping address for checkout session", {
       checkoutSessionId,
       fulfillment_address,
     });
@@ -121,7 +120,7 @@ export const checkoutSessionUpdateInfra = async ({
   }
 
   if (items) {
-    logger.info("Updating items for checkout session", {
+    deps.logger.info("Updating items for checkout session", {
       checkoutSessionId,
       items,
     });
@@ -152,24 +151,29 @@ export const checkoutSessionUpdateInfra = async ({
     const itemsToAdd: Array<{ quantity: number; variantId: string }> = [];
     const itemsToUpdate: Array<{ quantity: number; variantId: string }> = [];
 
-    for (const [variantId, quantity] of Object.entries(incomingItems)) {
-      if (currentCheckoutItems[variantId] !== undefined) {
-        if (currentCheckoutItems[variantId] !== quantity) {
-          itemsToUpdate.push({ variantId, quantity });
-        }
-      } else {
-        itemsToAdd.push({ variantId, quantity });
-      }
-    }
+    const allVariantIds = new Set([
+      ...Object.keys(incomingItems),
+      ...Object.keys(currentCheckoutItems),
+    ]);
 
-    for (const [variantId, quantity] of Object.entries(currentCheckoutItems)) {
-      if (incomingItems[variantId] === undefined) {
+    for (const variantId of allVariantIds) {
+      const incomingQty = incomingItems[variantId];
+      const currentQty = currentCheckoutItems[variantId];
+
+      if (incomingQty === undefined) {
+        // Item was in the checkout but is not in the incoming data -> remove it
         itemsToUpdate.push({ variantId, quantity: 0 });
+      } else if (currentQty === undefined) {
+        // Item is new and should be added
+        itemsToAdd.push({ variantId, quantity: incomingQty });
+      } else if (incomingQty !== currentQty) {
+        // Quantity has changed -> update it
+        itemsToUpdate.push({ variantId, quantity: incomingQty });
       }
     }
 
     if (itemsToAdd.length) {
-      logger.info("Adding items to checkout session", {
+      deps.logger.info("Adding items to checkout session", {
         checkoutSessionId,
         items: itemsToAdd,
       });
@@ -179,7 +183,7 @@ export const checkoutSessionUpdateInfra = async ({
     }
 
     if (itemsToUpdate.length) {
-      logger.info("Updating items in checkout session", {
+      deps.logger.info("Updating items in checkout session", {
         checkoutSessionId,
         items: itemsToUpdate,
       });

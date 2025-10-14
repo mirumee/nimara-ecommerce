@@ -1,43 +1,46 @@
 import { revalidateTag } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
 
-import { saleorAPCService } from "@nimara/infrastructure/mcp/saleor/service";
-import { checkoutSessionUpdateSchema } from "@nimara/infrastructure/mcp/schema";
-import { type ACPError } from "@nimara/infrastructure/mcp/types";
+import { checkoutSessionUpdateSchema } from "@nimara/infrastructure/acp/schema";
+import { type ACPError } from "@nimara/infrastructure/acp/types";
 
-import { clientEnvs } from "@/envs/client";
-import { MARKETS } from "@/regions/config";
+import { idempotencyStorage } from "@/lib/acp";
+import { validateChannelParam } from "@/lib/channel";
+import { getACPService } from "@/services/acp";
 import { storefrontLogger } from "@/services/logging";
 
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ channelSlug: string; id: string }> },
 ) {
-  const { channelSlug, id } = await params;
+  const idempotencyKey = request.headers.get("Idempotency-Key");
+  const requestId = request.headers.get("Request-Id") || "";
 
-  const marketData = Object.values(MARKETS).find(
-    (market) => market.channel === channelSlug,
-  );
+  if (idempotencyKey) {
+    if (idempotencyKey) {
+      const cached = idempotencyStorage.get(idempotencyKey);
 
-  if (!marketData) {
-    return NextResponse.json<ACPError>(
-      {
-        type: "invalid_request",
-        code: "request_not_idempotent",
-        message:
-          "Invalid channel slug provided. This channel is not supported.",
-        param: "channelSlug",
-      },
-      { status: 400 },
-    );
+      if (cached) {
+        storefrontLogger.debug(
+          "Idempotent request - returning cached response",
+          {
+            idempotencyKey,
+          },
+        );
+
+        return idempotencyStorage.createResponse(cached);
+      }
+    }
   }
 
-  const acpService = saleorAPCService({
-    apiUrl: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
-    logger: storefrontLogger,
-    channel: channelSlug,
-    storefrontUrl: clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
-  });
+  const { channelSlug, id } = await params;
+  const channelValidationResult = validateChannelParam(channelSlug);
+
+  if (!channelValidationResult.ok) {
+    return channelValidationResult.errorResponse;
+  }
+
+  const acpService = await getACPService({ channelSlug });
 
   // TODO: Validate if ID is checkout type or order type after checkout is completed.
   const result = await acpService.getCheckoutSession({
@@ -60,41 +63,61 @@ export async function GET(
     );
   }
 
-  return NextResponse.json(result.data);
+  const responseData = result.data;
+  const responseStatus = 201;
+  const responseHeaders = {
+    "Request-Id": requestId,
+    "Idempotency-Key": idempotencyKey || "",
+  };
+
+  if (idempotencyKey) {
+    storefrontLogger.debug("Storing response for idempotency", {
+      idempotencyKey,
+      requestId,
+    });
+
+    idempotencyStorage.set(
+      idempotencyKey,
+      responseData,
+      responseStatus,
+      responseHeaders,
+    );
+  }
+
+  return NextResponse.json(responseData, {
+    status: responseStatus,
+    headers: responseHeaders,
+  });
 }
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ channelSlug: string; id: string }> },
 ) {
-  const { channelSlug, id } = await params;
+  const idempotencyKey = request.headers.get("Idempotency-Key");
+  const requestId = request.headers.get("Request-Id") || "";
 
-  const marketData = Object.values(MARKETS).find(
-    (market) => market.channel === channelSlug,
-  );
+  if (idempotencyKey) {
+    if (idempotencyKey) {
+      const cached = idempotencyStorage.get(idempotencyKey);
 
-  if (!marketData) {
-    return NextResponse.json<ACPError>(
-      {
-        type: "invalid_request",
-        code: "request_not_idempotent",
-        message:
-          "Invalid channel slug provided. This channel is not supported.",
-        param: "channelSlug",
-      },
-      { status: 400 },
-    );
+      if (cached) {
+        storefrontLogger.debug(
+          "Idempotent request - returning cached response",
+          {
+            idempotencyKey,
+          },
+        );
+
+        return idempotencyStorage.createResponse(cached);
+      }
+    }
   }
 
-  const acpService = saleorAPCService({
-    apiUrl: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
-    logger: storefrontLogger,
-    channel: channelSlug,
-    storefrontUrl: clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
-  });
+  const { channelSlug, id } = await params;
+  const acpService = await getACPService({ channelSlug });
 
   const body = (await request.json()) as Record<string, unknown>;
-
   const parsedBody = checkoutSessionUpdateSchema.safeParse(body);
 
   if (!parsedBody.success) {
@@ -133,5 +156,29 @@ export async function POST(
   // Revalidate cache for this particular checkout session ID on update on success
   revalidateTag(`ACP:CHECKOUT_SESSION:${id}`);
 
-  return NextResponse.json(result.data);
+  const responseData = result.data;
+  const responseStatus = 201;
+  const responseHeaders = {
+    "Request-Id": requestId,
+    "Idempotency-Key": idempotencyKey || "",
+  };
+
+  if (idempotencyKey) {
+    storefrontLogger.debug("Storing response for idempotency", {
+      idempotencyKey,
+      requestId,
+    });
+
+    idempotencyStorage.set(
+      idempotencyKey,
+      responseData,
+      responseStatus,
+      responseHeaders,
+    );
+  }
+
+  return NextResponse.json(responseData, {
+    status: responseStatus,
+    headers: responseHeaders,
+  });
 }

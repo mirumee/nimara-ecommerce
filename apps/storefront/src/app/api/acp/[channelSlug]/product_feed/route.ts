@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 
-import { saleorAPCService } from "@nimara/infrastructure/mcp/saleor/service";
-
-import { clientEnvs } from "@/envs/client";
-import { MARKETS } from "@/regions/config";
+import { localePrefixes } from "@/i18n/routing";
+import { validateChannelParam } from "@/lib/channel";
+import { getACPService } from "@/services/acp";
 import { storefrontLogger } from "@/services/logging";
 
 export async function GET(
@@ -12,34 +11,27 @@ export async function GET(
 ) {
   const { channelSlug } = await params;
 
-  const marketData = Object.values(MARKETS).find(
-    (market) => market.channel === channelSlug,
-  );
+  const channelValidationResult = validateChannelParam(channelSlug);
 
-  if (!marketData) {
-    storefrontLogger.error(`Invalid channel slug: ${channelSlug}`);
-
-    return NextResponse.json(
-      { status: "Invalid channel slug" },
-      { status: 400 },
-    );
+  if (!channelValidationResult.ok) {
+    return channelValidationResult.errorResponse;
   }
-  const acpService = saleorAPCService({
-    apiUrl: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
-    logger: storefrontLogger,
-    channel: channelSlug,
-    storefrontUrl: clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
-  });
+
+  const acpService = await getACPService({ channelSlug });
+
+  const marketLanguage = channelValidationResult.market.defaultLanguage.locale;
+  const marketPrefix =
+    marketLanguage === "en-US" ? "" : localePrefixes[marketLanguage];
 
   const productFeedResult = await acpService.getProductFeed({
-    channelPrefix: marketData.id,
+    channelPrefix: marketPrefix,
     channel: channelSlug,
     limit: 100,
   });
 
   if (!productFeedResult.ok) {
     storefrontLogger.error(
-      "Failed to fetch product feed for channel ${channelSlug}",
+      `Failed to fetch product feed for channel ${channelSlug}`,
     );
 
     return NextResponse.json(
@@ -48,7 +40,7 @@ export async function GET(
     );
   }
 
-  if (productFeedResult.data.products.length > 0) {
-    return NextResponse.json({ products: productFeedResult.data.products });
-  }
+  return NextResponse.json(productFeedResult.data.products, {
+    status: 200,
+  });
 }

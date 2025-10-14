@@ -1,15 +1,15 @@
 import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { type AsyncResult, err, ok } from "@nimara/domain/objects/Result";
 
-import { type GraphqlClient } from "#root/graphql/client";
-import { type Logger } from "#root/logging/types";
-import { AcpCheckoutCompleteMutationDocument } from "#root/mcp/saleor/graphql/mutations/generated";
-import { CheckoutSessionGetDocument } from "#root/mcp/saleor/graphql/queries/generated";
-import { validateAndSerializeCheckout } from "#root/mcp/saleor/serializers";
+import { AcpCheckoutCompleteMutationDocument } from "#root/acp/saleor/graphql/mutations/generated";
+import { CheckoutSessionGetDocument } from "#root/acp/saleor/graphql/queries/generated";
+import { validateAndSerializeCheckout } from "#root/acp/saleor/serializers";
 import {
   type CheckoutSession,
   type CheckoutSessionCompleteSchema,
-} from "#root/mcp/schema";
+} from "#root/acp/schema";
+import { type GraphqlClient } from "#root/graphql/client";
+import { type Logger } from "#root/logging/types";
 import { type StripePaymentService } from "#root/payment/providers";
 
 export const checkoutSessionCompleteInfra = async ({

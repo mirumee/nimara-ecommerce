@@ -1,19 +1,19 @@
 import { type LanguageCodeEnum } from "@nimara/codegen/schema";
 
+import { CheckoutSessionGetDocument } from "#root/acp/saleor/graphql/queries/generated";
+import { validateAndSerializeCheckout } from "#root/acp/saleor/serializers";
+import { type ACPResponse } from "#root/acp/types";
 import { type GraphqlClient } from "#root/graphql/client";
 import { type Logger } from "#root/logging/types";
-import { CheckoutSessionGetDocument } from "#root/mcp/saleor/graphql/queries/generated";
-import { validateAndSerializeCheckout } from "#root/mcp/saleor/serializers";
-import { type ACPResponse } from "#root/mcp/types";
 
 export const checkoutSessionGetInfra = async ({
   deps,
   input,
 }: {
   deps: {
-    cacheTime: number;
-    languageCode: LanguageCodeEnum;
+    cacheTTL: number;
     graphqlClient: GraphqlClient;
+    languageCode: LanguageCodeEnum;
     logger: Logger;
     storefrontUrl: string;
   };
@@ -26,7 +26,7 @@ export const checkoutSessionGetInfra = async ({
     },
     options: {
       next: {
-        revalidate: deps.cacheTime,
+        revalidate: deps.cacheTTL,
         tags: [`ACP:CHECKOUT_SESSION:${input.checkoutSessionId}`],
       },
     },
