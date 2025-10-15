@@ -1,0 +1,44 @@
+fragment ProductFeedFragment on Product {
+  id
+  name
+  slug
+  description
+  media {
+    url
+  }
+  attributes {
+    attribute {
+      id
+      name
+    }
+    values {
+      id
+      name
+      value: name
+    }
+  }
+  variants {
+    id
+    sku
+    pricing {
+      price {
+        gross {
+          amount
+          currency
+        }
+      }
+    }
+    quantityAvailable
+    attributes {
+      attribute {
+        id
+        name
+      }
+      values {
+        id
+        name
+        value: name
+      }
+    }
+  }
+}
