@@ -1,9 +1,10 @@
-import { revalidateTag } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
 
 import { checkoutSessionCompleteSchema } from "@nimara/infrastructure/acp/schema";
+import { type ACPError } from "@nimara/infrastructure/acp/types";
 
 import { idempotencyStorage } from "@/lib/acp";
+import { revalidateTag } from "@/lib/cache";
 import { validateChannelParam } from "@/lib/channel";
 import { getACPService } from "@/services/acp";
 import { storefrontLogger } from "@/services/logging";
@@ -33,7 +34,6 @@ export async function POST(
   }
 
   const { channelSlug, id } = await params;
-
   const channelValidationResult = validateChannelParam(channelSlug);
 
   if (!channelValidationResult.ok) {
@@ -43,7 +43,6 @@ export async function POST(
   const acpService = await getACPService({ channelSlug });
 
   const body = (await request.json()) as Record<string, unknown>;
-
   const parsedBody = checkoutSessionCompleteSchema.safeParse(body);
 
   if (!parsedBody.success) {
@@ -51,13 +50,12 @@ export async function POST(
       errors: parsedBody.error.issues,
     });
 
-    return NextResponse.json(
+    return NextResponse.json<ACPError>(
       {
-        status: "Invalid request body",
-        errors: parsedBody.error.issues.map((i) => ({
-          message: i.message,
-          path: i.path.join("."),
-        })),
+        type: "invalid_request",
+        message: "Invalid request body",
+        param: "body",
+        code: "request_not_idempotent",
       },
       { status: 400 },
     );
@@ -69,14 +67,13 @@ export async function POST(
   });
 
   if (!result.ok) {
-    return NextResponse.json(
-      { errors: result.errors },
-      { status: 400, statusText: "Failed to complete checkout session" },
-    );
+    return NextResponse.json<ACPError>(result.error, {
+      status: 400,
+      statusText: "Failed to complete checkout session",
+    });
   }
 
-  // Revalidate the cart page to reflect the updated checkout session state
-  revalidateTag(`cart-${channelSlug}`);
+  revalidateTag(`ACP:CHECKOUT_SESSION:${id}`);
 
   const responseData = result.data;
   const responseStatus = 201;

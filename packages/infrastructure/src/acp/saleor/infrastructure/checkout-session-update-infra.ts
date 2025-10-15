@@ -1,5 +1,6 @@
 import { type LanguageCodeEnum } from "@nimara/codegen/schema";
 import { type AllCountryCode } from "@nimara/domain/consts";
+import { ok } from "@nimara/domain/objects/Result";
 
 import {
   CheckoutSessionItemUpdateDocument,
@@ -9,7 +10,10 @@ import {
 } from "#root/acp/saleor/graphql/mutations/generated";
 import { CheckoutSessionGetDocument } from "#root/acp/saleor/graphql/queries/generated";
 import { validateAndSerializeCheckout } from "#root/acp/saleor/serializers";
-import { type CheckoutSessionUpdateInput } from "#root/acp/schema";
+import {
+  type CheckoutSession,
+  type CheckoutSessionUpdateInput,
+} from "#root/acp/schema";
 import { type ACPResponse } from "#root/acp/types";
 import { type GraphqlClient } from "#root/graphql/client";
 import { type Logger } from "#root/logging/types";
@@ -26,7 +30,7 @@ export const checkoutSessionUpdateInfra = async ({
     storefrontUrl: string;
   };
   input: { checkoutSessionId: string; data: CheckoutSessionUpdateInput };
-}): ACPResponse => {
+}): ACPResponse<CheckoutSession> => {
   const { checkoutSessionId, data } = input;
   const { buyer, fulfillment_address, items, fulfillment_option_id } = data;
 
@@ -354,11 +358,10 @@ export const checkoutSessionUpdateInfra = async ({
     };
   }
 
-  return {
-    ok: true,
-    data: validateAndSerializeCheckout(resultCheckoutGet.data.checkout, {
+  return ok(
+    validateAndSerializeCheckout(resultCheckoutGet.data.checkout, {
       storefrontUrl: deps.storefrontUrl,
       logger: deps.logger,
     })!,
-  };
+  );
 };

@@ -1,7 +1,9 @@
 import { type LanguageCodeEnum } from "@nimara/codegen/schema";
+import { ok } from "@nimara/domain/objects/Result";
 
 import { CheckoutSessionGetDocument } from "#root/acp/saleor/graphql/queries/generated";
 import { validateAndSerializeCheckout } from "#root/acp/saleor/serializers";
+import { type CheckoutSession } from "#root/acp/schema";
 import { type ACPResponse } from "#root/acp/types";
 import { type GraphqlClient } from "#root/graphql/client";
 import { type Logger } from "#root/logging/types";
@@ -18,7 +20,7 @@ export const checkoutSessionGetInfra = async ({
     storefrontUrl: string;
   };
   input: { checkoutSessionId: string };
-}): ACPResponse => {
+}): ACPResponse<CheckoutSession> => {
   const result = await deps.graphqlClient.execute(CheckoutSessionGetDocument, {
     variables: {
       id: input.checkoutSessionId,
@@ -81,5 +83,5 @@ export const checkoutSessionGetInfra = async ({
     };
   }
 
-  return { ok: true, data: checkoutSession };
+  return ok(checkoutSession);
 };
