@@ -1,5 +1,6 @@
+import { type LanguageCodeEnum } from "@nimara/codegen/schema";
 import { type Checkout } from "@nimara/domain/objects/Checkout";
-import { type AsyncResult, err, ok } from "@nimara/domain/objects/Result";
+import { ok } from "@nimara/domain/objects/Result";
 
 import { AcpCheckoutCompleteMutationDocument } from "#root/acp/saleor/graphql/mutations/generated";
 import { CheckoutSessionGetDocument } from "#root/acp/saleor/graphql/queries/generated";
@@ -8,6 +9,7 @@ import {
   type CheckoutSession,
   type CheckoutSessionCompleteSchema,
 } from "#root/acp/schema";
+import { type ACPResponse } from "#root/acp/types";
 import { type GraphqlClient } from "#root/graphql/client";
 import { type Logger } from "#root/logging/types";
 import { type StripePaymentService } from "#root/payment/providers";
@@ -17,8 +19,9 @@ export const checkoutSessionCompleteInfra = async ({
   input,
 }: {
   deps: {
-    cacheTime: number;
+    cacheTTL: number;
     graphqlClient: GraphqlClient;
+    languageCode: LanguageCodeEnum;
     logger: Logger;
     paymentService: StripePaymentService;
     storefrontUrl: string;
@@ -27,15 +30,15 @@ export const checkoutSessionCompleteInfra = async ({
     checkoutSessionComplete: CheckoutSessionCompleteSchema;
     checkoutSessionId: string;
   };
-}): AsyncResult<{ checkoutSession: CheckoutSession }> => {
+}): ACPResponse<CheckoutSession> => {
   const result = await deps.graphqlClient.execute(CheckoutSessionGetDocument, {
     variables: {
-      languageCode: "EN",
+      languageCode: deps.languageCode,
       id: input.checkoutSessionId,
     },
     options: {
       next: {
-        revalidate: deps.cacheTime,
+        revalidate: deps.cacheTTL,
         tags: [`ACP:CHECKOUT_SESSION:${input.checkoutSessionId}`],
       },
     },
@@ -47,11 +50,15 @@ export const checkoutSessionCompleteInfra = async ({
       errors: result.errors,
     });
 
-    return err([
-      {
-        code: "BAD_REQUEST_ERROR",
+    return {
+      ok: false,
+      error: {
+        code: "request_not_idempotent",
+        message: "Failed to fetch checkout session from database",
+        type: "invalid_request",
+        param: "",
       },
-    ]);
+    };
   }
 
   if (!result.data.checkout) {
@@ -59,11 +66,15 @@ export const checkoutSessionCompleteInfra = async ({
       checkoutId: input.checkoutSessionId,
     });
 
-    return err([
-      {
-        code: "BAD_REQUEST_ERROR",
+    return {
+      ok: false,
+      error: {
+        code: "request_not_idempotent",
+        message: "No checkout found in database",
+        type: "invalid_request",
+        param: "",
       },
-    ]);
+    };
   }
 
   const transaction =
@@ -78,11 +89,15 @@ export const checkoutSessionCompleteInfra = async ({
       "Failed to initialize payment transaction for checkout session ${input.checkoutSessionId}.",
     );
 
-    return err([
-      {
-        code: "BAD_REQUEST_ERROR",
+    return {
+      ok: false,
+      error: {
+        code: "request_not_idempotent",
+        message: "Failed to initialize payment transaction",
+        type: "invalid_request",
+        param: "",
       },
-    ]);
+    };
   }
 
   const transactionId = transaction.data?.transactionId;
@@ -112,28 +127,39 @@ export const checkoutSessionCompleteInfra = async ({
   });
 
   if (!paymentResult.ok) {
-    deps.logger.error(
-      "Failed to process payment result for checkout session ${input.checkoutSessionId}.",
-      { errors: paymentResult.errors },
+    deps.logger.critical(
+      "Unexpected error occurred while processing payment.",
+      {
+        checkoutSessionId: input.checkoutSessionId,
+        errors: paymentResult.errors,
+      },
     );
 
-    return err([
-      {
-        code: "BAD_REQUEST_ERROR",
+    return {
+      ok: false,
+      error: {
+        code: "request_not_idempotent",
+        message: "Failed to complete payment. Payment processing error.",
+        type: "invalid_request",
+        param: "",
       },
-    ]);
+    };
   }
 
   if (!paymentResult.data.success) {
-    deps.logger.error(
-      "Payment not completed for checkout session ${input.checkoutSessionId}.",
-    );
+    deps.logger.critical("Failed to complete payment for checkout session.", {
+      checkoutSessionId: input.checkoutSessionId,
+    });
 
-    return err([
-      {
-        code: "PAYMENT_EXECUTE_ERROR",
+    return {
+      ok: false,
+      error: {
+        code: "request_not_idempotent",
+        message: "Failed to complete payment. Payment was not successful.",
+        type: "invalid_request",
+        param: "",
       },
-    ]);
+    };
   }
 
   const completeResult = await deps.graphqlClient.execute(
@@ -146,17 +172,20 @@ export const checkoutSessionCompleteInfra = async ({
     },
   );
 
-  // Here you can add logic to complete the checkout in Saleor if needed
   if (!completeResult.ok) {
     deps.logger.error("Failed to complete checkout in Saleor", {
       errors: completeResult.errors,
     });
 
-    return err([
-      {
-        code: "BAD_REQUEST_ERROR",
+    return {
+      ok: false,
+      error: {
+        code: "request_not_idempotent",
+        message: "Failed to complete checkout in database",
+        type: "invalid_request",
+        param: "",
       },
-    ]);
+    };
   }
 
   if (!completeResult.data.checkoutComplete?.order) {
@@ -164,11 +193,15 @@ export const checkoutSessionCompleteInfra = async ({
       checkoutId: input.checkoutSessionId,
     });
 
-    return err([
-      {
-        code: "BAD_REQUEST_ERROR",
+    return {
+      ok: false,
+      error: {
+        code: "request_not_idempotent",
+        message: "No order found after completing checkout in database",
+        type: "invalid_request",
+        param: "",
       },
-    ]);
+    };
   }
 
   const checkoutSession = validateAndSerializeCheckout(result.data.checkout, {
@@ -180,16 +213,18 @@ export const checkoutSessionCompleteInfra = async ({
       checkout: result.data.checkout,
     });
 
-    return err([
-      {
-        code: "BAD_REQUEST_ERROR",
+    return {
+      ok: false,
+      error: {
+        code: "request_not_idempotent",
+        message: "Failed to parse checkout session from database",
+        type: "invalid_request",
+        param: "",
       },
-    ]);
+    };
   }
 
-  checkoutSession.id = completeResult.data.checkoutComplete?.order?.id; // from now we need to return order id to avability to fetch order details or cancel order
+  checkoutSession.id = completeResult.data.checkoutComplete?.order?.id; // from now we need to return order id to availability to fetch order details or cancel order
 
-  return ok({
-    checkoutSession,
-  });
+  return ok(checkoutSession);
 };

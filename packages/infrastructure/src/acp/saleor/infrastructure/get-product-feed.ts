@@ -1,7 +1,9 @@
-import { err, ok } from "@nimara/domain/objects/Result";
+import { ok } from "@nimara/domain/objects/Result";
 
 import { ProductsFeedQueryDocument } from "#root/acp/saleor/graphql/queries/generated";
-import { type GetProductFeedArgs } from "#root/acp/types";
+import { type ProductFeed } from "#root/acp/schema";
+import { type ACPResponse, type GetProductFeedArgs } from "#root/acp/types";
+import { type PageInfo } from "#root/collection/types";
 import { type GraphqlClient } from "#root/graphql/client";
 import { type Logger } from "#root/logging/types";
 
@@ -18,7 +20,7 @@ export const getProductFeedInfra = async ({
     storefrontUrl: string;
   };
   input: GetProductFeedArgs;
-}) => {
+}): ACPResponse<{ pageInfo: PageInfo; products: ProductFeed }> => {
   const result = await deps.graphqlClient.execute(ProductsFeedQueryDocument, {
     operationName: "ACP:ProductsFeedQuery",
     variables: {
@@ -38,7 +40,15 @@ export const getProductFeedInfra = async ({
       errors: result.errors,
     });
 
-    return err(result.errors);
+    return {
+      ok: false,
+      error: {
+        type: "invalid_request",
+        code: "request_not_idempotent",
+        message: "Failed to fetch product feed.",
+        param: "channel",
+      },
+    };
   }
 
   const saleorProducts =

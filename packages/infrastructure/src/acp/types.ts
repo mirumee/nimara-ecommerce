@@ -1,5 +1,3 @@
-import { type AsyncResult } from "@nimara/domain/objects/Result";
-
 import {
   type CheckoutSession,
   type CheckoutSessionCompleteSchema,
@@ -45,8 +43,8 @@ export type ACPError = {
 /**
  * Custom type for ACP responses, it can be either a success or an error.
  */
-export type ACPResponse = Promise<
-  { error: ACPError; ok: false } | { data: CheckoutSession; ok: true }
+export type ACPResponse<TRes> = Promise<
+  { error: ACPError; ok: false } | { data: TRes; ok: true }
 >;
 
 /**
@@ -58,17 +56,19 @@ export interface ACPService {
   completeCheckoutSession: (args: {
     checkoutSessionComplete: CheckoutSessionCompleteSchema;
     checkoutSessionId: string;
-  }) => AsyncResult<{ checkoutSession: CheckoutSession }>;
+  }) => ACPResponse<CheckoutSession>;
   createCheckoutSession: (args: {
     input: CheckoutSessionCreateSchema;
-  }) => ACPResponse;
-  getCheckoutSession: (args: { checkoutSessionId: string }) => ACPResponse;
-  getProductFeed: (args: GetProductFeedArgs) => AsyncResult<{
+  }) => ACPResponse<CheckoutSession>;
+  getCheckoutSession: (args: {
+    checkoutSessionId: string;
+  }) => ACPResponse<CheckoutSession>;
+  getProductFeed: (args: GetProductFeedArgs) => ACPResponse<{
     pageInfo: PageInfo;
     products: ProductFeed;
   }>;
   updateCheckoutSession: (args: {
     checkoutSessionId: string;
     data: CheckoutSessionUpdateInput;
-  }) => ACPResponse;
+  }) => ACPResponse<CheckoutSession>;
 }

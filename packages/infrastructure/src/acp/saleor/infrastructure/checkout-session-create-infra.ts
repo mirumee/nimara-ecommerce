@@ -1,11 +1,15 @@
+import { type LanguageCodeEnum } from "@nimara/codegen/schema";
+import { ok } from "@nimara/domain/objects/Result";
+
 import { CheckoutSessionCreateDocument } from "#root/acp/saleor/graphql/mutations/generated";
 import { validateAndSerializeCheckout } from "#root/acp/saleor/serializers";
-import { type CheckoutSessionCreateSchema } from "#root/acp/schema";
+import {
+  type CheckoutSession,
+  type CheckoutSessionCreateSchema,
+} from "#root/acp/schema";
 import { type ACPResponse } from "#root/acp/types";
 import { type GraphqlClient } from "#root/graphql/client";
 import { type Logger } from "#root/logging/types";
-
-const DEFAULT_LANGUAGE = "EN";
 
 export const checkoutSessionCreateInfra = async ({
   deps,
@@ -14,11 +18,12 @@ export const checkoutSessionCreateInfra = async ({
   deps: {
     channel: string;
     graphqlClient: GraphqlClient;
+    languageCode: LanguageCodeEnum;
     logger: Logger;
     storefrontUrl: string;
   };
   input: CheckoutSessionCreateSchema;
-}): ACPResponse => {
+}): ACPResponse<CheckoutSession> => {
   const result = await deps.graphqlClient.execute(
     CheckoutSessionCreateDocument,
     {
@@ -30,7 +35,7 @@ export const checkoutSessionCreateInfra = async ({
             variantId: item.id,
           })),
         },
-        languageCode: DEFAULT_LANGUAGE,
+        languageCode: deps.languageCode,
       },
       operationName: "ACP:CheckoutCreateMutation",
       options: {
@@ -94,5 +99,5 @@ export const checkoutSessionCreateInfra = async ({
     };
   }
 
-  return { ok: true, data: checkout };
+  return ok(checkout);
 };
