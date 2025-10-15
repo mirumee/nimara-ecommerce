@@ -1,0 +1,21 @@
+query ProductsFeedQuery(
+  $after: String
+  $before: String
+  $channel: String!
+  $first: Int
+) {
+  products(after: $after, before: $before, channel: $channel, first: $first) {
+    edges {
+      node {
+        ...ProductFeedFragment
+      }
+    }
+    pageInfo {
+      startCursor
+      endCursor
+      hasNextPage
+      hasPreviousPage
+    }
+    totalCount
+  }
+}

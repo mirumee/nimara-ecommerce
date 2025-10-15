@@ -560,18 +560,27 @@ importers:
       '@stripe/stripe-js':
         specifier: 3.5.0
         version: 3.5.0
+      editorjs-html:
+        specifier: 3.4.3
+        version: 3.4.3
       libphonenumber-js:
         specifier: 1.12.18
         version: 1.12.18
       pino:
         specifier: 9.11.0
         version: 9.11.0
+      string-strip-html:
+        specifier: 13.4.24
+        version: 13.4.24
       stripe:
         specifier: 15.10.0
         version: 15.10.0
       ts-invariant:
         specifier: 0.10.3
         version: 0.10.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
     optionalDependencies:
       algoliasearch:
         specifier: '5'
@@ -4849,6 +4858,10 @@ packages:
   code-block-writer@13.0.3:
     resolution: {integrity: sha512-Oofo0pq3IKnsFtuHqSF7TqBfr71aeyZDVJ0HpmqB7FBM2qEigL0iPONSCZSO9pE9dZTAxANe5XHG9Uy0YMv8cg==}
 
+  codsen-utils@1.6.19:
+    resolution: {integrity: sha512-HwpbFE4zTNgVxJai42yGWvvV9VUPXcVQ9U72sE9eezluiUFeIKpni0uSsvqSx0mZ2c1NqKR8RZMQPx3XqixVaw==}
+    engines: {node: '>=14.18.0'}
+
   codsen-utils@1.6.8:
     resolution: {integrity: sha512-8GESpsIuEsprHKuTWen1KO221gxyA+PDUXSZq0ywo5G5IcqmPtqTOw5BAljQUz2GdOe8TcWcH896qYb8gdxHFA==}
     engines: {node: '>=14.18.0'}
@@ -8076,16 +8089,32 @@ packages:
     resolution: {integrity: sha512-AaJ+RbX+w/qw7LUA2NbMMwUnpJico4aJ22zVl5hxQDlmfEXSv/TjjL96u1u0cmlNBY38aQ0kPHH0bHN5o68l9A==}
     engines: {node: '>=14.18.0'}
 
+  ranges-apply@7.0.31:
+    resolution: {integrity: sha512-J/METHTxhQTRpLS3hzkvipyRyheAYmAa6BeZaJaTTutIU4spGfU8vKBnhSgKa+WAVAqpZKzqcX29+HHR2lcKLg==}
+    engines: {node: '>=14.18.0'}
+
   ranges-merge@9.0.19:
     resolution: {integrity: sha512-8RA9LXv6n+2bZcfcIQSYkETerJZXE3hPo0LSCmq5BBFTkw2WT8CxM4Tu9QaCD0fT4Yb7DM45gzl3tOksFrXLsA==}
+    engines: {node: '>=14.18.0'}
+
+  ranges-merge@9.0.30:
+    resolution: {integrity: sha512-JZhIFH6UO7A0XIJdSONFqlDHjwVmNZ0SPXJ3Q+Xjux1RiTDyUV4SA1tvjPOO0tKO2Fp7joU0/RUF92zCCjQvag==}
     engines: {node: '>=14.18.0'}
 
   ranges-push@7.0.19:
     resolution: {integrity: sha512-WJZHju2Unc9FXWFUAE6t+MWdY02Rtxuj/FZf4Q+JEQs60ygbo+4BYwgE29ldEkPwmKBItHqwqPNnif7KxMS80g==}
     engines: {node: '>=14.18.0'}
 
+  ranges-push@7.0.30:
+    resolution: {integrity: sha512-W5KYKPjXQY39DlPa4/ADb7wCWVIr3jurkjRzDtrhXJ6qCIHvG5oA8DIKLN0Ry2mNmnoQGHB95MMPSniSaiwmWA==}
+    engines: {node: '>=14.18.0'}
+
   ranges-sort@6.0.14:
     resolution: {integrity: sha512-ztTG7KAMZ72FAbKLG2GpLavnD+89c6KqeCl1C5lTyvKRFjFd5CbnM1wf3fe/o+7hV2PNiDx2mZ9EtCtPIfk7gw==}
+    engines: {node: '>=14.18.0'}
+
+  ranges-sort@6.0.25:
+    resolution: {integrity: sha512-SKIziziX7dYobzh7N+AFgUJedsuQzD/NtZRjKJwaugNMr/G1CYZ/2yEna/UG/qQIKDnnK7Y1shiHiuYvT/7JyQ==}
     engines: {node: '>=14.18.0'}
 
   raw-body@2.5.2:
@@ -8689,6 +8718,10 @@ packages:
     resolution: {integrity: sha512-aqD2Q0144Z+/RqG52NeHEkZauTAUWJO8c6yTftGJKO3Tja5tUgIfmIl6kExvhtxSDP7fXB6DvzkfMpCd/F3G+Q==}
     engines: {node: '>=0.6.19'}
 
+  string-collapse-leading-whitespace@7.0.20:
+    resolution: {integrity: sha512-DdYqlFPp7BJKIQle8VvcyRNmJY3SPdhZgKyLMw86uFD4eomtNtgGYu0rXBrPiBGzS1yBSnDXtNt4cqmJNmCNwg==}
+    engines: {node: '>=14.18.0'}
+
   string-collapse-leading-whitespace@7.0.9:
     resolution: {integrity: sha512-lEuTHlogBT9PWipfk0FOyvoMKX8syiE03QoFk5MDh8oS0AJ2C07IlstR5cGkxz48nKkOIuvkC28w9Rx/cVRNDg==}
     engines: {node: '>=14.18.0'}
@@ -8700,12 +8733,24 @@ packages:
     resolution: {integrity: sha512-XmtL81F4iSCkKHzUz6KyqSTnh2ef3kccQtyAtqyHYv22Q6qOKS6CvOwEFY5nBTXc3WskfZCTM6ArOGJgFh3tDA==}
     engines: {node: '>=14.18.0'}
 
+  string-left-right@6.0.32:
+    resolution: {integrity: sha512-hq1gRikdFqhFV3QJHsVjqLkpyulNUNngvHJIaQPNeohrLJuscfAC7mkK2ooirIrAkwYCzGOiNd8bxceqBb3UbA==}
+    engines: {node: '>=14.18.0'}
+
   string-strip-html@13.4.13:
     resolution: {integrity: sha512-bth9qxlu/ZEJsy0MMlnrHYxtgW8VOvmhLMpcLh1oV5U0I3h4wBvHBTnZpB4o/V4/UepGNlaazdXS47C0WqyxFA==}
     engines: {node: '>=14.18.0'}
 
+  string-strip-html@13.4.24:
+    resolution: {integrity: sha512-/75YBvkZ8zc3uyuLKVhdpqI6DzP0YUcghyTpAuk1fs0LWuG4BCD0kE2Zjk3SRo1/FUMZ7KQfFQ3AN8Ee/2/VSQ==}
+    engines: {node: '>=14.18.0'}
+
   string-trim-spaces-only@5.0.13:
     resolution: {integrity: sha512-NGYfr+ZPkE8OKvrkEysuHPhgPifpe6fd0NfdXUlLVykaZxBDuNW+Ln2ja9dvaWlC69vqh6ZbEbOLbfiEDgomCQ==}
+    engines: {node: '>=14.18.0'}
+
+  string-trim-spaces-only@5.0.24:
+    resolution: {integrity: sha512-RWrhY2QUOzjtyGzY4z9V3Olfcnfu+IPpoTqBCVkEZfPtVpPPph3foP9AuNdQMcZX5r+LtGA8+tz+kMlyttaTfg==}
     engines: {node: '>=14.18.0'}
 
   string-width@4.2.3:
@@ -14569,6 +14614,10 @@ snapshots:
 
   code-block-writer@13.0.3: {}
 
+  codsen-utils@1.6.19:
+    dependencies:
+      rfdc: 1.4.1
+
   codsen-utils@1.6.8:
     dependencies:
       rfdc: 1.4.1
@@ -15426,7 +15475,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.12.1(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.9.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1)(eslint@8.57.1):
+  eslint-module-utils@2.12.1(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.9.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0)(eslint@8.57.1))(eslint@8.57.1):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
@@ -15437,7 +15486,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.12.1(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.9.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@4.4.4)(eslint@8.57.1):
+  eslint-module-utils@2.12.1(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.9.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@4.4.4(eslint-plugin-import@2.32.0)(eslint@8.57.1))(eslint@8.57.1):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
@@ -15459,7 +15508,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 8.57.1
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.1(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.9.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1)(eslint@8.57.1)
+      eslint-module-utils: 2.12.1(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.9.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0)(eslint@8.57.1))(eslint@8.57.1)
       hasown: 2.0.2
       is-core-module: 2.16.1
       is-glob: 4.0.3
@@ -15488,7 +15537,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 8.57.1
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.1(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.9.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@4.4.4)(eslint@8.57.1)
+      eslint-module-utils: 2.12.1(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.9.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@4.4.4(eslint-plugin-import@2.32.0)(eslint@8.57.1))(eslint@8.57.1)
       hasown: 2.0.2
       is-core-module: 2.16.1
       is-glob: 4.0.3
@@ -18325,10 +18374,20 @@ snapshots:
       ranges-merge: 9.0.19
       tiny-invariant: 1.3.3
 
+  ranges-apply@7.0.31:
+    dependencies:
+      ranges-merge: 9.0.30
+      tiny-invariant: 1.3.3
+
   ranges-merge@9.0.19:
     dependencies:
       ranges-push: 7.0.19
       ranges-sort: 6.0.14
+
+  ranges-merge@9.0.30:
+    dependencies:
+      ranges-push: 7.0.30
+      ranges-sort: 6.0.25
 
   ranges-push@7.0.19:
     dependencies:
@@ -18337,7 +18396,16 @@ snapshots:
       string-collapse-leading-whitespace: 7.0.9
       string-trim-spaces-only: 5.0.13
 
+  ranges-push@7.0.30:
+    dependencies:
+      codsen-utils: 1.6.19
+      ranges-sort: 6.0.25
+      string-collapse-leading-whitespace: 7.0.20
+      string-trim-spaces-only: 5.0.24
+
   ranges-sort@6.0.14: {}
+
+  ranges-sort@6.0.25: {}
 
   raw-body@2.5.2:
     dependencies:
@@ -19165,6 +19233,8 @@ snapshots:
 
   string-argv@0.3.2: {}
 
+  string-collapse-leading-whitespace@7.0.20: {}
+
   string-collapse-leading-whitespace@7.0.9: {}
 
   string-env-interpolation@1.0.1: {}
@@ -19172,6 +19242,11 @@ snapshots:
   string-left-right@6.0.21:
     dependencies:
       codsen-utils: 1.6.8
+      rfdc: 1.4.1
+
+  string-left-right@6.0.32:
+    dependencies:
+      codsen-utils: 1.6.19
       rfdc: 1.4.1
 
   string-strip-html@13.4.13:
@@ -19184,7 +19259,19 @@ snapshots:
       ranges-push: 7.0.19
       string-left-right: 6.0.21
 
+  string-strip-html@13.4.24:
+    dependencies:
+      '@types/lodash-es': 4.17.12
+      codsen-utils: 1.6.19
+      html-entities: 2.6.0
+      lodash-es: 4.17.21
+      ranges-apply: 7.0.31
+      ranges-push: 7.0.30
+      string-left-right: 6.0.32
+
   string-trim-spaces-only@5.0.13: {}
+
+  string-trim-spaces-only@5.0.24: {}
 
   string-width@4.2.3:
     dependencies:

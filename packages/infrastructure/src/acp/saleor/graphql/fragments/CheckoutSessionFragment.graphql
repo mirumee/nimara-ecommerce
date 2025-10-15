@@ -1,0 +1,7 @@
+fragment CheckoutSessionFragment on Checkout {
+  ...CheckoutFragment
+
+  # Custom metadata fields
+  fulfillmentAddress: metafield(key: "acp.fulfillmentAddress.json")
+  buyer: metafield(key: "acp.buyer.json")
+}
