@@ -87,7 +87,7 @@ export default async function NotFound() {
               <span className="-translate-y-6 text-[7.5rem] font-medium leading-[404px] text-[#1C1917] lg:translate-x-[4.5rem] xl:text-[11.5rem] dark:text-white">
                 404
               </span>
-              <span className="absolute bottom-24 block text-2xl sm:hidden">
+              <span className="absolute bottom-28 block text-2xl sm:hidden">
                 {" "}
                 Oops! Page Not Found
               </span>
