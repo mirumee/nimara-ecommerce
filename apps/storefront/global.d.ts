@@ -61,7 +61,6 @@ type Slug = string;
 type Id = string;
 type RevalidateTag =
   | "ADDRESS_VALIDATION_RULES"
-  | "DETAIL-PAGE:COLLECTION"
   | "DETAIL-PAGE:PRODUCT"
   | "SEARCH:FACETS"
   | "SEARCH"
@@ -69,7 +68,9 @@ type RevalidateTag =
   | `CHECKOUT:${Id}`
   | `CMS:${Slug}`
   | `COLLECTION:${Slug}`
+  | "COLLECTIONS"
   | `PRODUCT:${Slug}`
+  | "PRODUCTS"
   | `SEARCH:${Slug}`
   | `ACP:CHECKOUT_SESSION:${Id}`
   | `ACP:PRODUCT_FEED:${Id}`;

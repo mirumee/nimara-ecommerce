@@ -49,7 +49,7 @@ export async function generateMetadata(props: PageProps) {
     options: {
       next: {
         revalidate: CACHE_TTL.pdp,
-        tags: [`COLLECTION:${slug}`, "DETAIL-PAGE:COLLECTION"],
+        tags: [`COLLECTION:${slug}`, "COLLECTIONS"],
       },
     },
   });
@@ -106,7 +106,7 @@ export default async function Page(props: PageProps) {
       options: {
         next: {
           revalidate: CACHE_TTL.pdp,
-          tags: [`COLLECTION:${slug}`, "DETAIL-PAGE:COLLECTION"],
+          tags: [`COLLECTION:${slug}`, "COLLECTIONS"],
         },
       },
     }),

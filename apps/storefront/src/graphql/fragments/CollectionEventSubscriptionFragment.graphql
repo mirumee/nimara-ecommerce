@@ -10,4 +10,10 @@ fragment CollectionEventSubscriptionFragment on Event {
       slug
     }
   }
+  ... on CollectionCreated {
+    __typename
+    collection {
+      slug
+    }
+  }
 }
