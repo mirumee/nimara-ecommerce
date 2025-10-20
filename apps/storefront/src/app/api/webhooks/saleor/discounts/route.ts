@@ -22,13 +22,13 @@ const extractGroupTagFromPromotionEvent = async (
         const predicate = rule.cataloguePredicate as CataloguePredicate;
 
         if (predicate?.collectionPredicate?.ids?.length) {
-          return "COLLECTION";
+          return "COLLECTIONS";
         }
         if (
           predicate?.productPredicate?.ids?.length ||
           predicate?.variantPredicate?.ids?.length
         ) {
-          return "PRODUCT";
+          return "PRODUCTS";
         }
       }
       break;
@@ -43,7 +43,7 @@ const extractGroupTagFromPromotionEvent = async (
         return undefined;
       }
       if (predicate.collectionPredicate?.ids?.length) {
-        return "COLLECTION";
+        return "COLLECTIONS";
       }
       if (
         predicate.productPredicate?.ids?.length ||

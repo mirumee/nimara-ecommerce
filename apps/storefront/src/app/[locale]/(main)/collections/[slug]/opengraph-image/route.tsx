@@ -34,7 +34,7 @@ export async function GET(
     options: {
       next: {
         revalidate: CACHE_TTL.pdp,
-        tags: [`COLLECTION:${slug}`, "DETAIL-PAGE:COLLECTION"],
+        tags: [`COLLECTION:${slug}`, "COLLECTIONS"],
       },
     },
   });

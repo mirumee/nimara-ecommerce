@@ -96,7 +96,7 @@ export const saleorSearchInfra =
           options: {
             // FIXME: Temporarily hardcoded, should be coming from outer layer
             next: {
-              tags: [`SEARCH:${context.channel}`, "PRODUCT", "COLLECTION"],
+              tags: [`SEARCH:${context.channel}`, "PRODUCTS", "COLLECTIONS"],
               revalidate: 15 * 60,
             },
           },
