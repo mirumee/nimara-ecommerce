@@ -72,7 +72,9 @@ type RevalidateTag =
   | "COLLECTION"
   | `PRODUCT:${Slug}`
   | "PRODUCT"
-  | `SEARCH:${Slug}`;
+  | `SEARCH:${Slug}`
+  | `ACP:CHECKOUT_SESSION:${Id}`
+  | `ACP:PRODUCT_FEED:${Id}`;
 
 declare global {
   type RevalidateTag = RevalidateTag;

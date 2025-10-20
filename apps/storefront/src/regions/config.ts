@@ -10,13 +10,13 @@ import type {
 
 export const CHANNEL = clientEnvs.NEXT_PUBLIC_DEFAULT_CHANNEL;
 
-export const LOCALE_CHANNEL_MAP: Record<
-  SupportedLocale,
-  (typeof SUPPORTED_MARKETS)[number]
-> = {
+export const LOCALE_CHANNEL_MAP = {
   "en-GB": "gb",
   "en-US": "us",
-};
+} as const satisfies Record<
+  SupportedLocale,
+  (typeof SUPPORTED_MARKETS)[number]
+>;
 
 export const LANGUAGES = {
   GB: {
@@ -31,7 +31,7 @@ export const LANGUAGES = {
     code: "EN_US",
     locale: "en-US",
   },
-} satisfies Record<Uppercase<LanguageId>, Language>;
+} as const satisfies Record<Uppercase<LanguageId>, Language>;
 
 export const MARKETS = {
   GB: {
@@ -54,4 +54,4 @@ export const MARKETS = {
     defaultLanguage: LANGUAGES.US,
     supportedLanguages: [LANGUAGES.US],
   },
-} satisfies Record<Uppercase<MarketId>, Market>;
+} as const satisfies Record<Uppercase<MarketId>, Market>;

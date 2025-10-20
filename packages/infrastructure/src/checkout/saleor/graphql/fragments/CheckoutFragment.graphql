@@ -8,8 +8,12 @@ fragment CheckoutFragment on Checkout {
   }
   voucherCode
   shippingMethods {
+    __typename
     id
     name
+    maximumDeliveryDays
+    minimumDeliveryDays
+    message
     price {
       amount
       currency
