@@ -1,9 +1,11 @@
 import Image from "next/image";
-import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
+import nimaraCubeLogo from "@/assets/ nimara-storefront-cube.png";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { CACHE_TTL } from "@/config";
+import { LocalizedLink } from "@/i18n/routing";
 import { getLocalePrefix } from "@/lib/server";
 import { getCurrentRegion } from "@/regions/server";
 import { cmsMenuService } from "@/services/cms";
@@ -11,9 +13,10 @@ import { cmsMenuService } from "@/services/cms";
 import { Navigation } from "./(main)/_components/navigation";
 
 export default async function NotFound() {
-  const [region, locale] = await Promise.all([
+  const [region, locale, t] = await Promise.all([
     getCurrentRegion(),
     getLocalePrefix(),
+    getTranslations("notFound"),
   ]);
 
   const resultMenu = await cmsMenuService.menuGet({
@@ -45,51 +48,47 @@ export default async function NotFound() {
               id="not-found-heading"
               className="mb-8 hidden text-2xl font-medium leading-none sm:block sm:text-3xl md:text-3xl xl:text-5xl"
             >
-              Oops! Page Not Found
+              {t("heading")}
             </h1>
             <p className="mb-6 text-base leading-7 tracking-normal">
-              Looks like you’ve hit a dead end, but don’t worry, we’ve got a
-              <Link
+              {t("message")}
+              <LocalizedLink
                 href="/"
                 className="font-semibold underline underline-offset-2"
               >
                 {" "}
-                map!
-              </Link>
+                {t("messageLink")}
+              </LocalizedLink>
             </p>
-            <p className="mb-2 text-base">
-              Or, if you’re feeling adventurous...
-            </p>
+            <p className="mb-2 text-base">{t("adventurous")}</p>
             <p className="max-w-[467px] text-base">
-              <Link
+              <LocalizedLink
                 href="/"
                 className="font-medium underline underline-offset-2"
               >
-                Click here
-              </Link>
-              <span>
-                {" "}
-                to discover a random page – who knows where you’ll end up?
-              </span>
+                {t("redirectLink")}
+              </LocalizedLink>
+              <span> {t("redirectMessage")}</span>
             </p>
           </section>
 
           <div className="relative aspect-square w-full sm:ml-auto sm:aspect-[4/3] sm:max-w-[740px]">
             <Image
-              src="/cube.png"
-              alt="Cube Logo"
+              src={nimaraCubeLogo}
+              alt="Nimara Storefront logo"
               fill
               className="select-none object-contain sm:object-right"
               priority={true}
               draggable={false}
+              sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 740px"
             />
             <span className="pointer-events-none absolute inset-0 flex select-none items-center justify-center">
-              <span className="-translate-y-6 text-[7.5rem] font-medium leading-[404px] text-[#1C1917] lg:translate-x-[4.5rem] xl:text-[11.5rem] dark:text-white">
+              <span className="text-foreground -translate-y-6 text-[7.5rem] font-medium leading-[404px] lg:translate-x-[4.5rem] xl:text-[11.5rem] dark:text-white">
                 404
               </span>
               <span className="absolute bottom-28 block text-2xl sm:hidden">
                 {" "}
-                Oops! Page Not Found
+                {t("heading")}
               </span>
             </span>
           </div>
