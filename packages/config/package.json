@@ -10,8 +10,8 @@
     "./tailwind": "./src/tailwind.config.ts"
   },
   "dependencies": {
-    "@tailwindcss/typography": "0.5.18",
-    "tailwindcss": "^3.4.17",
+    "@tailwindcss/typography": "0.5.19",
+    "tailwindcss": "^3.4.18",
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
