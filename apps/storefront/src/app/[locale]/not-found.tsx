@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 
-import nimaraCubeLogo from "@/assets/ nimara-storefront-cube.png";
+import nimaraCubeLogo from "@/assets/nimara-storefront-cube.png";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { CACHE_TTL } from "@/config";
