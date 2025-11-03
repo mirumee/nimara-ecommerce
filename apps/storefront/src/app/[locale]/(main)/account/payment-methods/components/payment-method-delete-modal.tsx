@@ -77,17 +77,17 @@ export const PaymentMethodDeleteModal = ({
     <Dialog open onOpenChange={handleClose}>
       <DialogContent className="gap-6" withCloseButton={!isProcessing}>
         <DialogHeader>
-          <DialogTitle className="text-primary mb-2">
+          <DialogTitle className="mb-2 text-primary">
             {t("common.delete")} {t(TYPE_MESSAGE_MAPPING[type])}
           </DialogTitle>
 
-          <DialogDescription className="dark:text-muted-foreground text-stone-700">
+          <DialogDescription className="text-stone-700 dark:text-muted-foreground">
             {t("account.payment-method-delete-info")}
           </DialogDescription>
         </DialogHeader>
 
         <p
-          className="text-primary whitespace-pre-wrap text-sm leading-5"
+          className="whitespace-pre-wrap text-sm leading-5 text-primary"
           dangerouslySetInnerHTML={{
             __html: formatPaymentMethod({ t, method }),
           }}

@@ -98,7 +98,7 @@ export const CustomPDPViewSkeleton = () => (
           <Skeleton className="h-8 w-1/2" />
           <Skeleton className="h-8 w-1/4" />
           <Skeleton className="h-8 w-1/2" />
-          <Skeleton className="bg-primary h-10 w-full" />
+          <Skeleton className="h-10 w-full bg-primary" />
         </section>
       </div>
     </div>

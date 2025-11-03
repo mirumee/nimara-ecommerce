@@ -41,7 +41,7 @@ export const EmailSection = async ({
           <h2 className="w-full scroll-m-20 text-2xl tracking-tight">
             {t("user-details.signed-in-as")}
           </h2>
-          <p className="text-foreground break-all text-sm">
+          <p className="break-all text-sm text-foreground">
             {userFullName} {user.email}
           </p>
         </section>
@@ -51,7 +51,7 @@ export const EmailSection = async ({
             <h2 className="scroll-m-20 text-2xl tracking-tight">
               {t("user-details.title")}
             </h2>
-            <p className="text-foreground break-all text-sm font-normal leading-5">
+            <p className="break-all text-sm font-normal leading-5 text-foreground">
               {checkout.email}
             </p>
           </div>

@@ -111,7 +111,7 @@ const ProductMediaCarousel = ({
 
   return (
     <div className="hidden flex-col items-center gap-4 md:flex">
-      <div className="bg-background dark:bg-primary relative flex aspect-square items-center justify-center rounded-lg">
+      <div className="relative flex aspect-square items-center justify-center rounded-lg bg-background dark:bg-primary">
         {discountPercent > 0 && <DiscountBadge discount={discountPercent} />}
         {previewImage ? (
           <NextImage
@@ -132,7 +132,7 @@ const ProductMediaCarousel = ({
           <div
             key={image.url}
             className={cn(
-              "square bg-background border-muted flex w-1/6 min-w-20 items-center justify-center rounded-lg border",
+              "square flex w-1/6 min-w-20 items-center justify-center rounded-lg border border-muted bg-background",
               {
                 "border-foreground": previewImage?.url === image.url,
               },

@@ -27,11 +27,11 @@ export default async function SignUpPage(props: {
     <div className="flex flex-col gap-8">
       {isSuccess ? (
         <>
-          <h2 className="text-foreground text-2xl font-normal leading-8">
+          <h2 className="text-2xl font-normal leading-8 text-foreground">
             {t("auth.create-account-success")}
           </h2>
           <div className="mt-7">
-            <p className="dark:text-muted-foreground text-sm text-stone-700">
+            <p className="text-sm text-stone-700 dark:text-muted-foreground">
               {t("auth.create-account-verify")}
             </p>
           </div>
@@ -43,7 +43,7 @@ export default async function SignUpPage(props: {
         </>
       ) : (
         <>
-          <h2 className="text-primary text-2xl font-normal leading-8">
+          <h2 className="text-2xl font-normal leading-8 text-primary">
             {t("auth.create-account")}
           </h2>
 
@@ -52,7 +52,7 @@ export default async function SignUpPage(props: {
           <hr />
 
           <div className="mb-4">
-            <h2 className="text-primary mb-12 text-2xl font-normal leading-8">
+            <h2 className="mb-12 text-2xl font-normal leading-8 text-primary">
               {t("auth.already-have-an-account")}
             </h2>
             <Button asChild className="w-full" variant="outline">

@@ -162,7 +162,7 @@ export const Line = ({
       >
         <LocalizedLink title={name} href={href} className="grow">
           <p
-            className={cn("text-foreground text-sm", {
+            className={cn("text-sm text-foreground", {
               "text-stone-400": isOutOfStock,
             })}
           >

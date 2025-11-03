@@ -137,7 +137,7 @@ export const VariantSelector = ({
 
                         <div
                           className={cn(
-                            "bg-foreground invisible mt-1 h-[2px] w-6",
+                            "invisible mt-1 h-[2px] w-6 bg-foreground",
                             isSelected && "visible",
                           )}
                         ></div>

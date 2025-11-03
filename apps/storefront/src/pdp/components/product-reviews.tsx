@@ -77,8 +77,8 @@ export const ProductReviews = async () => {
   return (
     <div className="bg-background">
       <div className="flex justify-between">
-        <h2 className="text-primary mb-4 text-xl">Reviews</h2>
-        <p className="text-muted-foreground mb-6">{REVIEWS.length} reviews</p>
+        <h2 className="mb-4 text-xl text-primary">Reviews</h2>
+        <p className="mb-6 text-muted-foreground">{REVIEWS.length} reviews</p>
       </div>
       <ul className="space-y-4">
         {REVIEWS.map((review) => (
@@ -95,7 +95,7 @@ export const ProductReviews = async () => {
                   />
                 ))}
               </span>
-              <span className="text-foreground text-sm">
+              <span className="text-sm text-foreground">
                 by {review.author} on{" "}
                 {new Date(review.date).toLocaleDateString()}
               </span>
@@ -109,8 +109,8 @@ export const ProductReviews = async () => {
 
 export const ProductReviewsSkeleton = () => {
   return (
-    <div className="bg-background mt-8">
-      <h2 className="text-primary mb-4 text-xl">Reviews</h2>
+    <div className="mt-8 bg-background">
+      <h2 className="mb-4 text-xl text-primary">Reviews</h2>
       <ul className="space-y-4">
         {[...Array(4)].map((_, index) => (
           <li key={index} className="rounded-lg border p-4">
@@ -118,7 +118,7 @@ export const ProductReviewsSkeleton = () => {
               <Skeleton className="h-16 w-full" />
             </div>
             <div className="mt-2 flex items-center gap-2">
-              <span className="text-muted-foreground flex items-center">
+              <span className="flex items-center text-muted-foreground">
                 {[...Array(5)].map((_, starIndex) => (
                   <Star
                     key={starIndex}

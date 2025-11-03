@@ -7,7 +7,7 @@ export const ProductDescription = ({
 }) => {
   return (
     <div>
-      <h2 className="text-primary mb-4 text-xl">Description</h2>
+      <h2 className="mb-4 text-xl text-primary">Description</h2>
       <RichText className="text-foreground" contentData={description} />
     </div>
   );

@@ -124,7 +124,7 @@ export default async function Page(props: PageProps) {
     <div className="mb-8 grid w-full gap-8">
       <Breadcrumbs pageName={collection.name} />
       <div className="grid basis-full items-center justify-center gap-4 md:flex">
-        <h1 className="text-primary text-center text-2xl">
+        <h1 className="text-center text-2xl text-primary">
           {collection?.name}
         </h1>
       </div>

@@ -51,12 +51,12 @@ export function NewPasswordForm() {
 
   return (
     <div className="flex flex-col gap-8">
-      <h1 className="text-primary text-2xl font-normal leading-8">
+      <h1 className="text-2xl font-normal leading-8 text-primary">
         {t("auth.set-up-new-password")}
       </h1>
 
       {error === "true" && (
-        <p className="text-destructive pb-2 text-sm">
+        <p className="pb-2 text-sm text-destructive">
           {t("auth.set-up-new-password-error")}
         </p>
       )}
