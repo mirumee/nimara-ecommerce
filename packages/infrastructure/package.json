@@ -32,10 +32,10 @@
     "@nimara/domain": "workspace:*",
     "eslint": "^8.57.0",
     "eslint-config-custom": "workspace:*",
-    "graphql": "16.11.0",
+    "graphql": "16.12.0",
     "ts-essentials": "10.1.1",
     "ts-toolbelt": "9.6.0",
     "tsconfig": "workspace:*",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.3"
   }
 }
