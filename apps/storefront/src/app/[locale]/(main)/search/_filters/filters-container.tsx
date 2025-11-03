@@ -128,7 +128,7 @@ export const FiltersContainer = async ({
                   className="grid gap-4 md:hidden"
                   defaultValue={searchParams["sortBy"] ?? DEFAULT_SORT_BY}
                 >
-                  <p className="text-primary text-base">
+                  <p className="text-base text-primary">
                     {t("search.sort-by")}
                   </p>
                   {sortByOptions.map((option) => (
@@ -160,7 +160,7 @@ export const FiltersContainer = async ({
 
                 {!!booleanFacets.length && (
                   <div>
-                    <p className="dark:text-muted-foreground mb-4 text-base font-medium text-stone-700">
+                    <p className="mb-4 text-base font-medium text-stone-700 dark:text-muted-foreground">
                       {t("filters.options")}
                     </p>
                     <div className="grid items-center gap-4">

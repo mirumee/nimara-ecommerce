@@ -13,7 +13,7 @@ export const Shipping = (props: Pick<ShoppingBagPriceProps, "price">) => {
 
   return (
     <div
-      className="text-content text-foreground flex justify-between text-sm"
+      className="text-content flex justify-between text-sm text-foreground"
       data-testid="shopping-bag-price-delivery-method"
     >
       <p>{t("delivery-method.title")}</p>

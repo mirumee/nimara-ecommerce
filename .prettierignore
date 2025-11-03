@@ -8,5 +8,7 @@ packages/codegen/schema.ts
 
 .cache
 .turbo
+.next
 
 apps/docs/pages/quickstart/storefront.mdx
+apps/docs/public/_pagefind/

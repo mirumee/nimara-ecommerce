@@ -19,7 +19,7 @@ export const MobileNavigation = ({
       {menu.items.map((item) => (
         <li
           key={item.id}
-          className="dark:text-muted-foreground p-2 text-stone-700"
+          className="p-2 text-stone-700 dark:text-muted-foreground"
         >
           <LocalizedLink href={item.url} onClick={() => onMenuItemClick(true)}>
             {item.label}
@@ -27,7 +27,7 @@ export const MobileNavigation = ({
           {!!item.children?.length && (
             <ul className="mt-2 pl-6">
               {item.children.map((child) => (
-                <li key={child.id} className="text-primary py-1 pl-2">
+                <li key={child.id} className="py-1 pl-2 text-primary">
                   <LocalizedLink
                     href={child.url}
                     onClick={() => onMenuItemClick(true)}

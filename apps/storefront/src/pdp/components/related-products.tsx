@@ -20,7 +20,7 @@ export const RelatedProducts = ({
 
   return (
     <div className="relative overflow-hidden">
-      <h2 className="text-primary mb-4 text-4xl">{t("you-may-also-like")}</h2>
+      <h2 className="mb-4 text-4xl text-primary">{t("you-may-also-like")}</h2>
       <Carousel>
         <CarouselContent>
           {products.map((product) => (

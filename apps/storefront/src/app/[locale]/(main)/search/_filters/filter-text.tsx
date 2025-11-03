@@ -19,7 +19,7 @@ export const FilterText = async ({
   return (
     <div className="flex flex-col space-y-4 py-2">
       {label && (
-        <h3 className="dark:text-muted-foreground text-base font-medium text-stone-700">
+        <h3 className="text-base font-medium text-stone-700 dark:text-muted-foreground">
           {label}
         </h3>
       )}
@@ -36,12 +36,12 @@ export const FilterText = async ({
             <Toggle
               asChild
               defaultPressed={defaultValue.includes(choice.value)}
-              className="text-primary flex items-center justify-center gap-2 rounded-sm"
+              className="flex items-center justify-center gap-2 rounded-sm text-primary"
               variant="outline"
             >
               <label
                 htmlFor={`group${slug}-${choice.value}`}
-                className="peer-checked:bg-accent cursor-pointer"
+                className="cursor-pointer peer-checked:bg-accent"
               >
                 {choice.label}
               </label>

@@ -54,7 +54,7 @@ export function ResetPasswordForm() {
     <div className="flex flex-col gap-8">
       {isSuccess ? (
         <>
-          <h1 className="text-primary text-2xl font-normal leading-8">
+          <h1 className="text-2xl font-normal leading-8 text-primary">
             {t("auth.reset-password-link-sent")}
           </h1>
           <div>
@@ -76,7 +76,7 @@ export function ResetPasswordForm() {
                 <ArrowLeft className="h-4 w-4" />
               </LocalizedLink>
             </Button>
-            <h1 className="text-primary text-2xl font-normal leading-8">
+            <h1 className="text-2xl font-normal leading-8 text-primary">
               {t("auth.reset-password")}
             </h1>
           </div>

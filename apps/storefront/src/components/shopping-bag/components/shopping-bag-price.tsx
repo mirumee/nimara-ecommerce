@@ -33,7 +33,7 @@ export const ShoppingBagPrice = ({
 
       <div
         className={cn(
-          "text-content text-foreground flex justify-between text-sm",
+          "text-content flex justify-between text-sm text-foreground",
           {
             "[&>*]:font-[650]": isPrimary,
           },

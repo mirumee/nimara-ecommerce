@@ -20,11 +20,11 @@ export default async function Page() {
 
   return (
     <div className="flex flex-col gap-8 text-sm">
-      <h2 className="text-primary text-2xl">{t("account.personal-data")}</h2>
+      <h2 className="text-2xl text-primary">{t("account.personal-data")}</h2>
       <hr />
       <div className="grid grid-cols-12">
         <div className="col-span-8 sm:col-span-11">
-          <h3 className="dark:text-muted-foreground text-stone-500">
+          <h3 className="text-stone-500 dark:text-muted-foreground">
             {t("account.first-and-last-name")}
           </h3>
           <p className="text-primary">
@@ -38,7 +38,7 @@ export default async function Page() {
       <hr />
       <div className="grid grid-cols-12">
         <div className="col-span-8 sm:col-span-11">
-          <h3 className="dark:text-muted-foreground text-stone-500">
+          <h3 className="text-stone-500 dark:text-muted-foreground">
             {t("common.email")}
           </h3>
           <p className="text-primary">{user?.email}</p>
@@ -52,7 +52,7 @@ export default async function Page() {
       <hr />
       <div className="grid grid-cols-12">
         <div className="col-span-8 sm:col-span-11">
-          <h3 className="dark:text-muted-foreground text-stone-500">
+          <h3 className="text-stone-500 dark:text-muted-foreground">
             {t("common.password")}
           </h3>
           <p className="text-primary">•••••••••••••</p>

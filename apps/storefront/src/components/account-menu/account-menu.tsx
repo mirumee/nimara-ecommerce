@@ -18,7 +18,7 @@ export async function AccountSideMenu() {
   return (
     <aside className="flex flex-col gap-8">
       {user && (
-        <h1 className="text-primary hidden text-2xl md:block">
+        <h1 className="hidden text-2xl text-primary md:block">
           {t("account.hello", { username: user.firstName })}
         </h1>
       )}

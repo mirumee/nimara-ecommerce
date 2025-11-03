@@ -82,7 +82,7 @@ export const MobileSideMenu = ({
                 menu={menu}
                 onMenuItemClick={handleMenuItemClick}
               />
-              <div className="bg-background mt-auto flex w-full items-center justify-between">
+              <div className="mt-auto flex w-full items-center justify-between bg-background">
                 <LocaleSwitch region={region} />
                 <Button asChild variant="ghost" className="inline-flex gap-1.5">
                   <LocalizedLink

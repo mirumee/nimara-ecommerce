@@ -34,14 +34,14 @@ export default async function NotFound() {
 
   return (
     <>
-      <div className="bg-background sticky top-0 isolate z-50 py-4 md:pb-0">
+      <div className="sticky top-0 isolate z-50 bg-background py-4 md:pb-0">
         <Header />
         <Navigation menu={resultMenu.data?.menu} />
       </div>
-      <main className="bg-background container sm:mb-16 sm:mt-20">
-        <div className="xs:items-center flex w-full flex-wrap-reverse justify-between bg-transparent pl-2 shadow-none sm:flex-nowrap">
+      <main className="container bg-background sm:mb-16 sm:mt-20">
+        <div className="flex w-full flex-wrap-reverse justify-between bg-transparent pl-2 shadow-none xs:items-center sm:flex-nowrap">
           <section
-            className="text-black xl:max-w-[492px] dark:text-white"
+            className="text-black dark:text-white xl:max-w-[492px]"
             aria-labelledby="not-found-heading"
           >
             <h1
@@ -83,7 +83,7 @@ export default async function NotFound() {
               sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 740px"
             />
             <span className="pointer-events-none absolute inset-0 flex select-none items-center justify-center">
-              <span className="text-foreground -translate-y-6 text-[7.5rem] font-medium leading-[404px] lg:translate-x-[4.5rem] xl:text-[11.5rem] dark:text-white">
+              <span className="-translate-y-6 text-[7.5rem] font-medium leading-[404px] text-foreground dark:text-white lg:translate-x-[4.5rem] xl:text-[11.5rem]">
                 404
               </span>
               <span className="absolute bottom-28 block text-2xl sm:hidden">
