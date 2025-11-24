@@ -13,6 +13,9 @@ export class ProductPage {
   readonly goToBagButton: Locator;
   readonly bagIcon: Locator;
   readonly goToCheckoutButton: Locator;
+  readonly variantSelect: Locator;
+  readonly productTitle: Locator;
+  readonly addedToBagNotification: Locator;
 
   constructor(page: Page, context: BrowserContext) {
     this.context = context;
@@ -23,6 +26,12 @@ export class ProductPage {
     this.goToCheckoutButton = page.getByRole("link", {
       name: "Go to checkout",
     });
+    this.variantSelect = page.getByRole("combobox", { name: "Variant select" });
+    this.productTitle = page.getByRole("heading", { level: 1 });
+    this.addedToBagNotification = page.getByText(
+      "Product has been added to your bag.",
+      { exact: true },
+    );
   }
 
   async goto(url: string) {
@@ -42,7 +51,7 @@ export class ProductPage {
 
   async goToCartPage() {
     await this.bagIcon.click();
-    await this.page.waitForURL(URLS().CART_PAGE);
+    await this.page.waitForURL(/\/cart$/);
     await expect(this.goToCheckoutButton).toBeVisible();
   }
 
@@ -50,5 +59,27 @@ export class ProductPage {
     await this.clickAddToBag();
     await this.checkCart();
     await this.goToCartPage();
+  }
+
+  async selectSize(size: string) {
+    await this.page.getByRole("radio", { name: size, exact: true }).click();
+  }
+
+  async selectVariant(variant: string) {
+    await expect(this.variantSelect).toBeVisible();
+    await this.variantSelect.click();
+    await this.page.getByRole("option", { name: variant }).click();
+  }
+
+  async assertProductTitle(title: string) {
+    await expect(this.productTitle).toHaveText(title);
+  }
+
+  async addToBagWithOptions(size: string, variant: string) {
+    await this.selectSize(size);
+    await this.selectVariant(variant);
+    await expect(this.addToBagButton).toBeEnabled();
+    await this.addToBagButton.click();
+    await expect(this.addedToBagNotification).toBeVisible();
   }
 }
