@@ -7,6 +7,8 @@ export class CartPage {
   readonly goToCheckoutButton: Locator;
   readonly productLinePrice: Locator;
   readonly cartHeading: Locator;
+  readonly removeButton: Locator;
+  readonly emptyCartMessage: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -16,6 +18,8 @@ export class CartPage {
     });
     this.productLinePrice = page.getByTestId("shopping-bag-product-line-price");
     this.cartHeading = page.getByRole("heading", { name: "Your bag" });
+    this.removeButton = page.getByRole("button", { name: "Remove button" });
+    this.emptyCartMessage = page.getByText("Your bag is empty");
   }
 
   async goto() {
@@ -40,5 +44,32 @@ export class CartPage {
   async assertCartPageLoaded() {
     await expect(this.page).toHaveURL(/\/cart$/);
     await expect(this.cartHeading).toBeVisible();
+  }
+
+  async updateQuantity(quantity: string) {
+    await this.quantityInput.clear();
+    await this.quantityInput.fill(quantity);
+    await this.quantityInput.blur();
+  }
+
+  async removeProduct() {
+    await this.removeButton.click();
+  }
+
+  async assertCartIsEmpty() {
+    await expect(this.emptyCartMessage).toBeVisible();
+    await expect(this.goToCheckoutButton).toBeHidden();
+  }
+
+  async assertQuantityValue(expectedValue: string) {
+    await expect(this.quantityInput).toHaveValue(expectedValue);
+  }
+
+  async assertCheckoutButtonState(shouldBeVisible: boolean) {
+    if (shouldBeVisible) {
+      await expect(this.goToCheckoutButton).toBeVisible();
+    } else {
+      await expect(this.goToCheckoutButton).toBeHidden();
+    }
   }
 }
