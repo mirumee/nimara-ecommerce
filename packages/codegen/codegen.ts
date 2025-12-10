@@ -32,6 +32,7 @@ export const baseCodegenConfig: CodegenConfig["config"] = {
     Hour: "number",
     Minute: "number",
     PositiveDecimal: "number",
+    PositiveInt: "number",
     UUID: "string",
     Upload: "unknown",
     WeightScalar: "unknown",

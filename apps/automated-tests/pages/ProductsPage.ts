@@ -9,8 +9,20 @@ export class ProductsPage {
     this.productsSection = page.locator("//html/body/main/div/section/div[2]");
   }
 
+  async goto(category?: string) {
+    const url = category ? `/search?category=${category}` : "/search";
+
+    await this.page.goto(url);
+  }
+
   async clickSeeAllProducts() {
     await this.page.click("text=See all products");
+  }
+
+  async clickProduct(productName: string) {
+    await this.page
+      .getByRole("link", { name: new RegExp(`${productName}.*\\$`) })
+      .click();
   }
 
   async clickRandomProduct() {
