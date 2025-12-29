@@ -7,6 +7,7 @@ export type AttributeType =
   | "MULTISELECT"
   | "NUMERIC"
   | "PLAIN_TEXT"
+  | "SINGLE_REFERENCE"
   | "REFERENCE"
   | "RICH_TEXT"
   | "SWATCH";
