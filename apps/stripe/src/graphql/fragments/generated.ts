@@ -39,7 +39,7 @@ export type TaxedMoneyFragment_TaxedMoney_tax_Money = { currency: string, amount
 
 export type TaxedMoneyFragment = { net: TaxedMoneyFragment_TaxedMoney_net_Money, gross: TaxedMoneyFragment_TaxedMoney_gross_Money, tax: TaxedMoneyFragment_TaxedMoney_tax_Money };
 
-export type TransactionActionFragment = { actionType: Types.TransactionActionEnum, amount: number | null };
+export type TransactionActionFragment = { actionType: Types.TransactionActionEnum, amount: number };
 
 export type TransactionItemFragment = { id: string, pspReference: string };
 
