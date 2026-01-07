@@ -6,9 +6,9 @@ import { type AllCountryCode } from "@nimara/domain/consts";
 import type { Checkout } from "@nimara/domain/objects/Checkout";
 
 import { getAccessToken } from "@/auth";
-import { updateCheckoutAddressAction } from "@/lib/actions/update-checkout-address-action";
-import { schemaToAddress } from "@/lib/address";
-import { paths } from "@/lib/paths";
+import { paths } from "@/foundation/routing/paths";
+import { schemaToAddress } from "@nimara/foundation/address/address";
+import { updateCheckoutAddressAction } from "@/foundation/address/update-checkout-address-action";
 import { getUserService } from "@/services/user";
 
 import {

@@ -14,16 +14,16 @@ import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
 import { useToast } from "@nimara/ui/hooks";
 
-import { AddressForm } from "@/components/address-form/address-form";
+import { AddressForm } from "@nimara/foundation/address/address-form/address-form";
 import {
   type AddressSchema,
   addressSchema,
-} from "@/components/address-form/schema";
-import { updateCheckoutAddressAction } from "@/lib/actions/update-checkout-address-action";
-import { schemaToAddress } from "@/lib/address";
-import { isGlobalError } from "@/lib/errors";
-import { useRouterWithState } from "@/lib/hooks";
-import { paths } from "@/lib/paths";
+} from "@nimara/foundation/address/address-form/schema";
+import { isGlobalError } from "@nimara/foundation/errors/errors";
+import { paths } from "@/foundation/routing/paths";
+import { schemaToAddress } from "@nimara/foundation/address/address";
+import { updateCheckoutAddressAction } from "@/foundation/address/update-checkout-address-action";
+import { useRouterWithState } from "@/foundation/use-router-with-state";
 
 export function ShippingAddressForm({
   checkout,

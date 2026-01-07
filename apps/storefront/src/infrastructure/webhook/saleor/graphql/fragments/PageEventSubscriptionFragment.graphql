@@ -1,0 +1,33 @@
+fragment PageEventSubscriptionFragment on Event {
+  __typename
+  ... on PageCreated {
+    page {
+      slug
+    }
+  }
+  ... on PageDeleted {
+    page {
+      slug
+    }
+  }
+  ... on PageUpdated {
+    page {
+      slug
+    }
+  }
+  ... on PageTypeCreated {
+    pageType {
+      slug
+    }
+  }
+  ... on PageTypeDeleted {
+    pageType {
+      slug
+    }
+  }
+  ... on PageTypeUpdated {
+    pageType {
+      slug
+    }
+  }
+}

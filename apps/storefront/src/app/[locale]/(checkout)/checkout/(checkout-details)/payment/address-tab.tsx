@@ -14,15 +14,15 @@ import {
   TabsTrigger,
 } from "@nimara/ui/components/tabs";
 
-import { AddressForm } from "@/components/address-form/address-form";
-import { CheckboxField } from "@/components/form/checkbox-field";
-import { RadioFormGroup } from "@/components/form/radio-form-group";
+import { AddressForm } from "@nimara/foundation/address/address-form/address-form";
+import { CheckboxField } from "@nimara/foundation/form-components/checkbox-field";
+import { RadioFormGroup } from "@nimara/foundation/form-components/radio-form-group";
 import { useRouter } from "@/i18n/routing";
-import { addressToSchema, displayFormattedAddressLines } from "@/lib/address";
-import { type FormattedAddress } from "@/lib/checkout";
-import { paths } from "@/lib/paths";
-import { cn } from "@/lib/utils";
-import { useCurrentRegion } from "@/regions/client";
+import { useCurrentRegion } from "@/foundation/regions";
+import { paths } from "@/foundation/routing/paths";
+import { addressToSchema, displayFormattedAddressLines } from "@nimara/foundation/address/address";
+import type { FormattedAddress } from "@nimara/foundation/address/types";
+import { cn } from "@nimara/foundation/lib/cn";
 
 import { type TabName } from "./payment";
 import { type Schema } from "./schema";

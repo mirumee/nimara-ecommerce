@@ -1,8 +1,8 @@
 import { getTranslations } from "next-intl/server";
 
+import { isOrderLineReturned } from "@/app/[locale]/(main)/account/orders/helpers/is-order-line-returned";
 import { getAccessToken } from "@/auth";
-import { isOrderLineReturned } from "@/lib/order";
-import { getCurrentRegion } from "@/regions/server";
+import { getCurrentRegion } from "@/foundation/regions";
 import { getUserService } from "@/services/user";
 
 import { OrderLine } from "./_components/order-line";
@@ -26,11 +26,11 @@ export default async function Page() {
 
   return (
     <div className="flex flex-col gap-6 text-sm">
-      <h2 className="text-2xl text-primary">{t("account.order-history")}</h2>
+      <h2 className="text-primary text-2xl">{t("account.order-history")}</h2>
       {orders.length === 0 && (
         <div className="space-y-8">
           <hr />
-          <p className="text-stone-500 dark:text-muted-foreground">
+          <p className="dark:text-muted-foreground text-stone-500">
             {t("order.sorry-you-dont-have-any-orders")}
           </p>
         </div>

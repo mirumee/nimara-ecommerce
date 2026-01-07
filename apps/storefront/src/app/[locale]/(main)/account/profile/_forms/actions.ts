@@ -6,9 +6,9 @@ import { type BaseError } from "@nimara/domain/objects/Error";
 import { err } from "@nimara/domain/objects/Result";
 
 import { auth, getAccessToken, update } from "@/auth";
-import { paths } from "@/lib/paths";
-import { getStoreUrl, getStoreUrlWithPath } from "@/lib/server";
-import { getCurrentRegion } from "@/regions/server";
+import { getCurrentRegion } from "@/foundation/regions";
+import { paths } from "@/foundation/routing/paths";
+import { getStoreUrl, getStoreUrlWithPath } from "@/foundation/server";
 import { getUserService } from "@/services/user";
 
 import type {

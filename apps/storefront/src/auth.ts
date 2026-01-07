@@ -5,11 +5,11 @@ import { getTranslations } from "next-intl/server";
 
 import { saleorAuthClient } from "@nimara/infrastructure/auth/client";
 
-import { signInSchema } from "@/components/schema";
+import { signInSchema } from "@/foundation/auth/sign-in/schema";
 import { getUserService } from "@/services/user";
 
 import { COOKIE_KEY } from "./config";
-import { setAccessToken, setRefreshToken } from "./lib/actions/auth";
+import { setAccessToken, setRefreshToken } from "./foundation/auth/auth";
 
 export const getAccessToken = async () =>
   (await cookies()).get(COOKIE_KEY.accessToken)?.value;

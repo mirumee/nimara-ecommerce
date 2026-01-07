@@ -10,13 +10,16 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 import { Toaster } from "@nimara/ui/components/toaster";
 
-import { ErrorServiceServer } from "@/components/error-service";
+import { ErrorServiceServer } from "@nimara/foundation/errors/error-service/error-service-server";
+import { getServiceRegistry } from "@/services/registry";
 import { clientEnvs } from "@/envs/client";
-import { aspekta } from "@/fonts";
 import { routing } from "@/i18n/routing";
-import { themePreloadScript } from "@/lib/scripts/theme-preload-script";
-import { cn } from "@/lib/utils";
-import { ClientThemeProvider } from "@/providers/theme-provider";
+import { LocalizedLinkProviderWrapper } from "@/i18n/localized-link-provider-wrapper";
+import { FormatterProviderWrapper } from "@/foundation/formatters/formatter-provider-wrapper";
+import { cn } from "@nimara/foundation/lib/cn";
+import { aspekta } from "@nimara/foundation/fonts";
+import { themePreloadScript } from "@nimara/foundation/theme/theme-preload-script";
+import { ClientThemeProvider } from "@nimara/foundation/theme/theme-provider";
 
 export const metadata: Metadata = {
   title: {
@@ -31,10 +34,13 @@ export default async function LocaleLayout({
 }: LayoutProps<"/[locale]">) {
   const { locale } = await params;
 
-  if (!routing.locales.includes(locale as any)) {
+  if (!routing.locales.includes(locale as (typeof routing.locales)[number])) {
     notFound();
   }
-  const messages = await getMessages();
+  const [messages, services] = await Promise.all([
+    getMessages(),
+    getServiceRegistry(),
+  ]);
 
   return (
     <html lang={locale ?? "en"} suppressHydrationWarning>
@@ -53,12 +59,16 @@ export default async function LocaleLayout({
         />
         <ClientThemeProvider>
           <NextIntlClientProvider messages={messages}>
-            <NuqsAdapter>
-              {children}
-              <SpeedInsights />
-              <Toaster />
-              <ErrorServiceServer />
-            </NuqsAdapter>
+            <LocalizedLinkProviderWrapper>
+              <FormatterProviderWrapper>
+                <NuqsAdapter>
+                  {children}
+                  <SpeedInsights />
+                  <Toaster />
+                  <ErrorServiceServer services={services} />
+                </NuqsAdapter>
+              </FormatterProviderWrapper>
+            </LocalizedLinkProviderWrapper>
           </NextIntlClientProvider>
         </ClientThemeProvider>
       </body>

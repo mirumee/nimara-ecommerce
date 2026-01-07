@@ -1,5 +1,38 @@
 {
   "extends": "tsconfig/react-library.json",
-  "include": ["./**/*.ts", "./**/*.tsx", "./**/*/*.d.ts"],
-  "exclude": ["dist", "build", "node_modules"]
+  "include": [
+    "./**/*.ts",
+    "./**/*.tsx",
+    "./**/*/*.d.ts"
+  ],
+  "exclude": [
+    "dist",
+    "build",
+    "node_modules"
+  ],
+  "compilerOptions": {
+    "paths": {
+      "@nimara/infrastructure/*": [
+        "./src/*"
+      ],
+      "@nimara/foundation/*": [
+        "../foundation/src/*"
+      ],
+      "@nimara/domain/*": [
+        "../domain/src/*"
+      ],
+      "@nimara/features/*": [
+        "../features/src/*"
+      ],
+      "@nimara/translations/*": [
+        "../translations/src/*"
+      ],
+      "@nimara/ui/*": [
+        "../ui/src/*"
+      ],
+      "@nimara/codegen/*": [
+        "../codegen/*"
+      ]
+    }
+  }
 }

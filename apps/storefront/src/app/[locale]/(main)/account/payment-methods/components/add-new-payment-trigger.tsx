@@ -8,7 +8,7 @@ import { useState } from "react";
 import { Button } from "@nimara/ui/components/button";
 import { Spinner } from "@nimara/ui/components/spinner";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@nimara/foundation/lib/cn";
 import { storefrontLogger } from "@/services/logging";
 
 import { generateSecretAction } from "../actions";

@@ -1,9 +1,9 @@
 import { type AllCountryCode } from "@nimara/domain/consts";
 
 import { getAccessToken } from "@/auth";
-import { getCheckoutOrRedirect } from "@/lib/checkout";
-import { getCurrentRegion } from "@/regions/server";
-import { type SupportedLocale } from "@/regions/types";
+import { getCurrentRegion } from "@/foundation/regions";
+import type { SupportedLocale } from "@/foundation/regions/types";
+import { getCheckoutOrRedirect } from "@/others/checkout/checkout-actions";
 import { getAddressService } from "@/services/address";
 import { getUserService } from "@/services/user";
 

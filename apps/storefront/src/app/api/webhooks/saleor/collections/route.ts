@@ -1,5 +1,5 @@
-import { type CollectionEventSubscriptionFragment } from "@/graphql/fragments/generated";
 import { storefrontLogger } from "@/services/logging";
+import { type CollectionEventSubscriptionFragment } from "@/infrastructure/webhook/saleor/graphql/fragments/generated";
 
 import { handleWebhookPostRequest } from "../helpers";
 
@@ -13,7 +13,6 @@ const extractSlugFromPayload = async (
   switch (json?.__typename) {
     case "CollectionUpdated":
     case "CollectionDeleted":
-    case "CollectionCreated":
       return json.collection?.slug;
     default:
       logger.debug(

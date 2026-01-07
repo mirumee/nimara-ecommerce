@@ -1,0 +1,31 @@
+{
+    "extends": "../tsconfig/react-library.json",
+    "include": [
+        "src/**/*",
+        "src/**/*.d.ts"
+    ],
+    "exclude": [
+        "dist",
+        "build",
+        "node_modules"
+    ],
+    "compilerOptions": {
+        "declaration": true,
+        "outDir": "./dist",
+        "jsx": "react-jsx",
+        "paths": {
+            "@nimara/features/*": [
+                "./src/*"
+            ],
+            "@nimara/foundation/*": [
+                "../foundation/src/*"
+            ],
+            "@nimara/domain/*": [
+                "../domain/src/*"
+            ],
+            "@nimara/infrastructure/*": [
+                "../infrastructure/src/*"
+            ]
+        }
+    },
+}

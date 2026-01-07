@@ -123,7 +123,6 @@ const config = {
     "src/checkout/graphql/*",
     "generated.ts",
     "tailwind.config.*",
-    "next-env.d.ts",
   ],
 };
 

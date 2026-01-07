@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 
 import { CACHE_TTL } from "@/config";
 import { clientEnvs } from "@/envs/client";
-import { getCurrentRegion } from "@/regions/server";
+import { getCurrentRegion } from "@/foundation/regions";
 import { getStoreService } from "@/services/store";
 
 const size = {

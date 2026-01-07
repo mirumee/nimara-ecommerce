@@ -7,6 +7,8 @@ export default function config(app?: "storefront" | "stripe") {
       `../../apps/${app}/src/index.html`,
       `../../apps/${app}/src/**/*.{ts,tsx,html,stories.tsx}`,
       "../../packages/ui/src/**/*.{ts,tsx,html,stories.tsx}",
+      "../../packages/features/src/**/*.{ts,tsx,html,stories.tsx}",
+      "../../packages/foundation/src/**/*.{ts,tsx,html,stories.tsx}",
       "../../interface/**/*.{ts,tsx,html,stories.tsx}",
     ],
     darkMode: "class",

@@ -14,9 +14,9 @@ import { ADDRESS_CORE_FIELDS } from "@nimara/infrastructure/consts";
 import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
 
-import { AddressForm } from "@/components/address-form/address-form";
+import { AddressForm } from "@nimara/foundation/address/address-form/address-form";
 import { useRouter } from "@/i18n/routing";
-import { paths } from "@/lib/paths";
+import { paths } from "@/foundation/routing/paths";
 import { storefrontLogger } from "@/services/logging";
 
 import { accountAddressUpdateAction } from "./actions";

@@ -1,53 +1,36 @@
+import { revalidateTag } from "@/foundation/cache/cache";
+import { verifySaleorWebhookSignature } from "@/foundation/webhooks";
+import { storefrontLogger } from "@/services/logging";
 import type {
   CollectionEventSubscriptionFragment,
   MenuEventSubscriptionFragment,
   PageEventSubscriptionFragment,
   ProductEventSubscriptionFragment,
-  PromotionEventSubscriptionFragment,
-} from "@/graphql/fragments/generated";
-import { revalidateTag } from "@/lib/cache";
-import { verifySaleorWebhookSignature } from "@/lib/webhooks";
-import { storefrontLogger } from "@/services/logging";
+} from "@/infrastructure/webhook/saleor/graphql/fragments/generated";
 
 type EventSubscriptionFragment =
   | MenuEventSubscriptionFragment
   | ProductEventSubscriptionFragment
   | PageEventSubscriptionFragment
-  | CollectionEventSubscriptionFragment
-  | PromotionEventSubscriptionFragment;
+  | CollectionEventSubscriptionFragment;
 
-/**
- * Handles Saleor webhook POST requests to revalidate tags, supporting
- * both slug-based and direct tag revalidation.
- *
- * @param request The incoming Request object.
- * @param extractValueFromPayload A function that extracts a string (either a slug or a tag) from the webhook payload.
- * @param prefix An optional prefix. If provided, the extracted value is treated as a slug
- * and a tag is formed as `${prefix}:${slug}`. If omitted, the extracted value is used directly as the tag.
- */
 export const handleWebhookPostRequest = async (
   request: Request,
-  extractValueFromPayload: (json: any) => Promise<string | undefined>,
-  prefix?: "CMS" | "PRODUCT" | "COLLECTION",
-): Promise<Response> => {
+  extractSlugFromPayload: (json: EventSubscriptionFragment) => Promise<string | undefined>,
+  prefix: "CMS" | "PRODUCT" | "COLLECTION",
+) => {
   await verifySaleorWebhookSignature(request);
 
   const json = (await request.json()) as EventSubscriptionFragment;
-  const extractedValue = (await extractValueFromPayload(json)) as RevalidateTag;
+  const slug = await extractSlugFromPayload(json);
 
-  let fullTag: RevalidateTag;
+  if (slug) {
+    const tag = `${prefix}:${slug}` as RevalidateTag;
 
-  if (extractedValue) {
-    if (prefix) {
-      fullTag = `${prefix}:${extractedValue}`;
-    } else {
-      fullTag = extractedValue;
-    }
-
-    revalidateTag(fullTag);
+    revalidateTag(tag);
     storefrontLogger.debug(
-      `Revalidated '${fullTag}' via '${json.__typename}' saleor webhook.`,
-      { tag: extractedValue, name: json.__typename },
+      `Revalidated '${tag}' via '${json.__typename}' saleor webhook.`,
+      { slug, name: json.__typename },
     );
   }
 

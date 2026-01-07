@@ -7,11 +7,11 @@ import { useForm } from "react-hook-form";
 import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
 
-import { TextFormField } from "@/components/form/text-form-field";
-import { ResetPasswordLink } from "@/components/reset-password-link";
-import { login } from "@/lib/actions/login";
-import { useRouterWithState } from "@/lib/hooks";
-import { paths } from "@/lib/paths";
+import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
+import { ResetPasswordLink } from "@/foundation/auth/reset-password-link";
+import { login } from "@/foundation/auth/login";
+import { paths } from "@/foundation/routing/paths";
+import { useRouterWithState } from "@/foundation/use-router-with-state";
 
 import { type PasswordFormSchema, passwordFormSchema } from "./schema";
 
