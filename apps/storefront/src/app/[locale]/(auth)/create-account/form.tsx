@@ -7,11 +7,11 @@ import { useForm } from "react-hook-form";
 import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
 
-import { TextFormField } from "@/components/form/text-form-field";
+import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
 import { MIN_PASSWORD_LENGTH } from "@/config";
 import { LocalizedLink } from "@/i18n/routing";
-import { useRouterWithState } from "@/lib/hooks";
-import { paths } from "@/lib/paths";
+import { paths } from "@/foundation/routing/paths";
+import { useRouterWithState } from "@/foundation/use-router-with-state";
 
 import { registerAccount } from "./actions";
 import { type FormSchema, formSchema } from "./schema";
@@ -108,7 +108,7 @@ export function SignUpForm() {
           />
         </div>
         <div className="mt-7">
-          <p className="text-sm text-stone-700 dark:text-muted-foreground">
+          <p className="dark:text-muted-foreground text-sm text-stone-700">
             {t.rich("auth.create-account-agreement", {
               termsOfUse: () => (
                 <LocalizedLink

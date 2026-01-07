@@ -14,7 +14,7 @@ import {
 } from "@nimara/ui/components/dialog";
 import { Form } from "@nimara/ui/components/form";
 
-import { TextFormField } from "@/components/form/text-form-field";
+import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
 import { CHANGE_EMAIL_TOKEN_VALIDITY_IN_HOURS } from "@/config";
 
 import { updateUserEmail } from "./actions";

@@ -3,8 +3,8 @@
 import { redirect } from "next/navigation";
 
 import { getAccessToken } from "@/auth";
-import { handleLogout } from "@/lib/actions/auth";
-import { paths } from "@/lib/paths";
+import { handleLogout } from "@/foundation/auth/auth";
+import { paths } from "@/foundation/routing/paths";
 import { getUserService } from "@/services/user";
 
 export async function deleteUserAccount(token: string) {

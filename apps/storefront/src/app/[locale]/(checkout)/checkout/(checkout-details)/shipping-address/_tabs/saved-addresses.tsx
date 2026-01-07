@@ -9,13 +9,13 @@ import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
 import { useToast } from "@nimara/ui/hooks";
 
-import { RadioFormGroup } from "@/components/form/radio-form-group";
-import { updateCheckoutAddressAction } from "@/lib/actions/update-checkout-address-action";
-import { displayFormattedAddressLines } from "@/lib/address";
-import type { FormattedAddress } from "@/lib/checkout";
-import { isGlobalError } from "@/lib/errors";
-import { useRouterWithState } from "@/lib/hooks";
-import { paths } from "@/lib/paths";
+import { RadioFormGroup } from "@nimara/foundation/form-components/radio-form-group";
+import { isGlobalError } from "@nimara/foundation/errors/errors";
+import { paths } from "@/foundation/routing/paths";
+import { displayFormattedAddressLines } from "@nimara/foundation/address/address";
+import type { FormattedAddress } from "@nimara/foundation/address/types";
+import { updateCheckoutAddressAction } from "@/foundation/address/update-checkout-address-action";
+import { useRouterWithState } from "@/foundation/use-router-with-state";
 
 import type { SavedAddressFormSchema } from "../_forms/schema";
 

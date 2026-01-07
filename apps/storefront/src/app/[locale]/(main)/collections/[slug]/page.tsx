@@ -1,160 +1,43 @@
-import Image from "next/image";
-import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
-
-import { RichText } from "@nimara/ui/components/rich-text/rich-text";
-import { editorJSDataToString } from "@nimara/ui/lib/richText";
-
-import { Breadcrumbs } from "@/components/breadcrumbs";
-import { CACHE_TTL, DEFAULT_RESULTS_PER_PAGE } from "@/config";
+import { DEFAULT_RESULTS_PER_PAGE } from "@/config";
 import { clientEnvs } from "@/envs/client";
-import { paths } from "@/lib/paths";
-import { getCurrentRegion } from "@/regions/server";
-import { type SupportedLocale } from "@/regions/types";
-import { getCollectionService } from "@/services/collection";
+import { localePrefixes } from "@/i18n/routing";
+import { DEFAULT_LOCALE } from "@/foundation/regions/config";
+import { paths } from "@/foundation/routing/paths";
+import { getServiceRegistry } from "@/services/registry";
+import { StandardCollectionView } from "@nimara/features/collection/shop-basic-collection/standard";
+import { generateStandardCollectionMetadata } from "@nimara/features/collection/shared/metadata/standard-metadata";
 
-import { ProductsList } from "../../_components/products-list";
-import { SearchPagination } from "../../_components/search-pagination";
+export async function generateMetadata(props: any) {
+  const services = await getServiceRegistry();
+  const { slug } = await props.params;
+  const storefrontUrl = clientEnvs.NEXT_PUBLIC_STOREFRONT_URL;
+  const collectionPath = paths.collections.asPath({ slug });
 
-type PageProps = {
-  params: Promise<{
-    locale: SupportedLocale;
-    slug: string;
-  }>;
-  searchParams: Promise<{
-    after?: string;
-    before?: string;
-    limit?: string;
-  }>;
-};
-
-export async function generateMetadata(props: PageProps) {
-  const [{ slug }, region, collectionService] = await Promise.all([
-    props.params,
-    getCurrentRegion(),
-    getCollectionService(),
-  ]);
-
-  const url = new URL(
-    paths.collections.asPath({ slug }),
-    clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
-  );
-  const canonicalUrl = url.toString();
-
-  const getCollectionResult = await collectionService.getCollectionDetails({
-    channel: region.market.channel,
-    languageCode: region.language.code,
-    slug,
-    limit: DEFAULT_RESULTS_PER_PAGE,
-    options: {
-      next: {
-        revalidate: CACHE_TTL.pdp,
-        tags: [`COLLECTION:${slug}`, "COLLECTIONS"],
-      },
-    },
+  return generateStandardCollectionMetadata({
+    ...props,
+    services,
+    storefrontUrl,
+    collectionPath,
+    defaultResultsPerPage: DEFAULT_RESULTS_PER_PAGE,
   });
-
-  const collection = getCollectionResult.data?.results;
-  const rawDescription = collection?.description;
-  const parsedDescription = editorJSDataToString(rawDescription)?.trim();
-  const ogImageUrl = `${clientEnvs.NEXT_PUBLIC_STOREFRONT_URL}/collections/${slug}/opengraph-image`;
-
-  return {
-    title: collection?.seoTitle || collection?.name,
-    description:
-      collection?.seoDescription || parsedDescription.length
-        ? parsedDescription.slice(0, 200)
-        : collection?.name,
-    alternates: {
-      canonical: canonicalUrl,
-    },
-    openGraph: {
-      images: [
-        {
-          url: ogImageUrl,
-          width: 1200,
-          height: 630,
-          alt: collection?.name,
-        },
-      ],
-      url: canonicalUrl,
-      siteName: "Nimara Store",
-    },
-  };
 }
 
-export default async function Page(props: PageProps) {
-  const [searchParams, { slug }, region, collectionService] = await Promise.all(
-    [
-      props.searchParams,
-      props.params,
-      getCurrentRegion(),
-      getCollectionService(),
-    ],
-  );
-
-  const { after, before, limit } = searchParams;
-
-  const [getCollectionResult, t] = await Promise.all([
-    collectionService.getCollectionDetails({
-      channel: region.market.channel,
-      languageCode: region.language.code,
-      slug,
-      limit: limit ? Number.parseInt(limit) : DEFAULT_RESULTS_PER_PAGE,
-      after,
-      before,
-      options: {
-        next: {
-          revalidate: CACHE_TTL.pdp,
-          tags: [`COLLECTION:${slug}`, "COLLECTIONS"],
-        },
-      },
-    }),
-    getTranslations("collections"),
-  ]);
-
-  if (!getCollectionResult.ok || !getCollectionResult.data.results) {
-    notFound();
-  }
-
-  const collection = getCollectionResult.data.results;
-  const pageInfo = getCollectionResult.data.pageInfo;
+export default async function Page(props: any) {
+  const services = await getServiceRegistry();
+  // const { slug } = await props.params;
 
   return (
-    <div className="mb-8 grid w-full gap-8">
-      <Breadcrumbs pageName={collection.name} />
-      <div className="grid basis-full items-center justify-center gap-4 md:flex">
-        <h1 className="text-center text-2xl text-primary">
-          {collection?.name}
-        </h1>
-      </div>
-      <div className="relative mx-auto aspect-[4/3] w-full max-w-2xl">
-        {collection?.thumbnail ? (
-          <Image
-            src={collection.thumbnail.url}
-            alt={collection.thumbnail.alt || collection.name}
-            fill
-            sizes="(max-width: 960px) 100vw, 50vw"
-            className="object-cover"
-          />
-        ) : null}
-      </div>
-      <div>
-        <RichText contentData={collection?.description} />
-      </div>
-
-      <hr />
-
-      <h2 className="text-2xl">{t("associated-products")}</h2>
-
-      <ProductsList products={collection.products} />
-      {pageInfo && (
-        <SearchPagination
-          pageInfo={pageInfo}
-          searchParams={searchParams}
-          baseUrl={paths.collections.asPath({ slug })}
-        />
-      )}
-    </div>
+    <StandardCollectionView
+      {...props}
+      services={services}
+      paths={{
+        home: paths.home.asPath(),
+        collection: (slug) => paths.collections.asPath({ slug }),
+        product: (slug) => paths.products.asPath({ slug }),
+      }}
+      localePrefixes={localePrefixes}
+      defaultLocale={DEFAULT_LOCALE}
+      defaultResultsPerPage={DEFAULT_RESULTS_PER_PAGE}
+    />
   );
 }

@@ -26,20 +26,20 @@ import {
 } from "@nimara/ui/components/tabs";
 import { useToast } from "@nimara/ui/hooks";
 
-import { AddressForm } from "@/components/address-form/address-form";
-import { CheckboxField } from "@/components/form/checkbox-field";
-import { PaymentMethods } from "@/components/payment-methods";
+import { AddressForm } from "@nimara/foundation/address/address-form/address-form";
+import { CheckboxField } from "@nimara/foundation/form-components/checkbox-field";
+import { PaymentMethods } from "@/features/checkout/payment-methods";
 import { usePathname, useRouter } from "@/i18n/routing";
-import { addressToSchema } from "@/lib/address";
-import { type FormattedAddress } from "@/lib/checkout";
-import { PAYMENT_ELEMENT_ID } from "@/lib/consts";
-import { isGlobalError } from "@/lib/errors";
-import { paths } from "@/lib/paths";
-import { translateApiErrors } from "@/lib/payment";
-import { type Maybe } from "@/lib/types";
-import { cn } from "@/lib/utils";
-import { useCurrentRegion } from "@/regions/client";
+import { isGlobalError } from "@nimara/foundation/errors/errors";
+import { useCurrentRegion } from "@/foundation/regions";
+import { paths } from "@/foundation/routing/paths";
+import { addressToSchema } from "@nimara/foundation/address/address";
+import type { FormattedAddress } from "@nimara/foundation/address/types";
+import { PAYMENT_ELEMENT_ID } from "@/others/checkout/consts";
+import { translateApiErrors } from "@/features/checkout/payment";
+import { cn } from "@nimara/foundation/lib/cn";
 import { getPaymentService } from "@/services/payment";
+import { Maybe } from "@nimara/domain/objects/Maybe";
 
 import { updateBillingAddress } from "./actions";
 import { AddressTab } from "./address-tab";
@@ -99,11 +99,11 @@ export const Payment = ({
   const [errors, setErrors] = useState<(string | ReactNode)[]>(
     errorCode
       ? [
-          translateApiErrors({
-            t,
-            errors: [{ code: errorCode }],
-          }),
-        ]
+        translateApiErrors({
+          t,
+          errors: [{ code: errorCode }],
+        }),
+      ]
       : [],
   );
 
@@ -416,12 +416,12 @@ export const Payment = ({
           </Tabs>
 
           <div className="space-y-6">
-            <h3 className="text-base font-normal leading-7 text-muted-foreground">
+            <h3 className="text-muted-foreground text-base font-normal leading-7">
               {t("payment.billing-address")}
             </h3>
 
             {checkout.isShippingRequired && (
-              <div className="flex w-full items-center gap-2 rounded-md border border-input bg-background px-4">
+              <div className="border-input bg-background flex w-full items-center gap-2 rounded-md border px-4">
                 <CheckboxField
                   label={t("payment.same-as-shipping-address")}
                   name="sameAsShippingAddress"
@@ -472,7 +472,7 @@ export const Payment = ({
             </Button>
 
             {errors.map((message, i) => (
-              <p key={i} className="text-sm font-medium text-destructive">
+              <p key={i} className="text-destructive text-sm font-medium">
                 {message}
               </p>
             ))}

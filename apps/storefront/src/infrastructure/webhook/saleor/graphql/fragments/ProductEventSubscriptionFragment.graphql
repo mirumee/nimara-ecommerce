@@ -1,0 +1,82 @@
+fragment ProductEventSubscriptionFragment on Event {
+  __typename
+  ... on ProductUpdated {
+    product {
+      slug
+    }
+  }
+  ... on ProductDeleted {
+    product {
+      slug
+    }
+  }
+  ... on ProductMetadataUpdated {
+    product {
+      slug
+    }
+  }
+  ... on ProductMediaDeleted {
+    productMedia {
+      productId
+    }
+  }
+  ... on ProductMediaUpdated {
+    productMedia {
+      productId
+    }
+  }
+  ... on ProductMediaCreated {
+    productMedia {
+      productId
+    }
+  }
+  ... on ProductVariantUpdated {
+    productVariant {
+      product {
+        slug
+      }
+    }
+  }
+  ... on ProductVariantCreated {
+    productVariant {
+      product {
+        slug
+      }
+    }
+  }
+  ... on ProductVariantDeleted {
+    productVariant {
+      product {
+        slug
+      }
+    }
+  }
+  ... on ProductVariantBackInStock {
+    productVariant {
+      product {
+        slug
+      }
+    }
+  }
+  ... on ProductVariantOutOfStock {
+    productVariant {
+      product {
+        slug
+      }
+    }
+  }
+  ... on ProductVariantMetadataUpdated {
+    productVariant {
+      product {
+        slug
+      }
+    }
+  }
+  ... on ProductVariantStockUpdated {
+    productVariant {
+      product {
+        slug
+      }
+    }
+  }
+}

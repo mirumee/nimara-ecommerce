@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import type { Order } from "@nimara/domain/objects/Order";
 
-import { paths } from "@/lib/paths";
+import { paths } from "@/foundation/routing/paths";
 import { fulfillmentService } from "@/services/fulfillment";
 
 import type { FormSchema } from "./schema";
@@ -19,9 +19,9 @@ export async function returnProducts(data: FormSchema, order: Order) {
 
       return fulfillmentLine
         ? {
-            fulfillmentLineId: fulfillmentLine.id,
-            quantity: fulfillmentLine.quantity,
-          }
+          fulfillmentLineId: fulfillmentLine.id,
+          quantity: fulfillmentLine.quantity,
+        }
         : null;
     })
     .filter(Boolean);

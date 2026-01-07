@@ -4,10 +4,10 @@ import { getAccessToken } from "@/auth";
 import { clientEnvs } from "@/envs/client";
 import { serverEnvs } from "@/envs/server";
 import { LocalizedLink, redirect } from "@/i18n/routing";
-import { paths } from "@/lib/paths";
-import { getStoreUrl } from "@/lib/server";
-import { getCurrentRegion } from "@/regions/server";
-import { type SupportedLocale } from "@/regions/types";
+import { getCurrentRegion } from "@/foundation/regions";
+import type { SupportedLocale } from "@/foundation/regions/types";
+import { paths } from "@/foundation/routing/paths";
+import { getStoreUrl } from "@/foundation/server";
 import { getPaymentService } from "@/services/payment";
 import { getUserService } from "@/services/user";
 
@@ -92,7 +92,7 @@ export default async function Page(props: PageProps) {
   return (
     <div className="flex flex-col gap-8 text-sm">
       <div className="flex justify-between">
-        <h2 className="text-2xl text-primary">
+        <h2 className="text-primary text-2xl">
           {t("payment.payment-methods")}
         </h2>
 
@@ -115,7 +115,7 @@ export default async function Page(props: PageProps) {
           />
         ) : (
           <div className="grid gap-6">
-            <p className="text-sm text-stone-500 dark:text-muted-foreground">
+            <p className="dark:text-muted-foreground text-sm text-stone-500">
               {t("payment.no-payment-methods")}
             </p>
             <div>
@@ -129,7 +129,7 @@ export default async function Page(props: PageProps) {
         )}
 
         {error && (
-          <p className="text-sm font-medium text-destructive">{error}</p>
+          <p className="text-destructive text-sm font-medium">{error}</p>
         )}
       </div>
     </div>

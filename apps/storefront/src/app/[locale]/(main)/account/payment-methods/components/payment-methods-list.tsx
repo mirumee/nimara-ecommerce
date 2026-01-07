@@ -8,8 +8,8 @@ import { useState } from "react";
 import { type PaymentMethod } from "@nimara/domain/objects/Payment";
 import { Button } from "@nimara/ui/components/button";
 
-import { formatPaymentMethod, groupPaymentMethods } from "@/lib/payment";
-import { type TranslationMessage } from "@/types";
+import { formatPaymentMethod, groupPaymentMethods } from "@/features/checkout/payment";
+import { type TranslationMessage } from "@nimara/foundation/i18n/types";
 
 const PaymentMethodDeleteModal = dynamic(
   () =>
@@ -37,7 +37,7 @@ export const PaymentMethodsList = ({
   const handleDeleteModalClose = () => setSelectedMethod(null);
 
   const defaultMethodMessage = (
-    <p className="whitespace-nowrap text-sm font-[650] leading-5 text-primary">
+    <p className="text-primary whitespace-nowrap text-sm font-[650] leading-5">
       {t("payment.default-method")}
     </p>
   );
@@ -46,12 +46,12 @@ export const PaymentMethodsList = ({
     <div className="grid gap-8">
       {Object.entries(groupedMethods).map(([type, methods]) => (
         <div key={type} className="w-full">
-          <p className="text-lg font-semibold leading-7 text-primary">
+          <p className="text-primary text-lg font-semibold leading-7">
             {t(`payment.${type}` as TranslationMessage)}
           </p>
           {methods.map((method) => (
             <div key={method.id} className="py-4">
-              <div className="flex items-center gap-4 text-primary">
+              <div className="text-primary flex items-center gap-4">
                 <p
                   className="basis-full whitespace-pre-wrap"
                   dangerouslySetInnerHTML={{

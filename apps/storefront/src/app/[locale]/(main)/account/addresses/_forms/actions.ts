@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { type AllCountryCode } from "@nimara/domain/consts";
 
 import { getAccessToken } from "@/auth";
-import { paths } from "@/lib/paths";
+import { paths } from "@/foundation/routing/paths";
 import { getUserService } from "@/services/user";
 
 import type { FormSchema } from "./schema";

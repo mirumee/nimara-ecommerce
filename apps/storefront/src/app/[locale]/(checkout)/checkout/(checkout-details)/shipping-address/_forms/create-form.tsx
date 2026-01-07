@@ -14,11 +14,11 @@ import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
 import { useToast } from "@nimara/ui/hooks";
 
-import { AddressForm } from "@/components/address-form/address-form";
-import { CheckboxField } from "@/components/form/checkbox-field";
-import { isGlobalError } from "@/lib/errors";
-import { useRouterWithState } from "@/lib/hooks";
-import { paths } from "@/lib/paths";
+import { AddressForm } from "@nimara/foundation/address/address-form/address-form";
+import { CheckboxField } from "@nimara/foundation/form-components/checkbox-field";
+import { isGlobalError } from "@nimara/foundation/errors/errors";
+import { paths } from "@/foundation/routing/paths";
+import { useRouterWithState } from "@/foundation/use-router-with-state";
 
 import { createCheckoutShippingAddress } from "./actions";
 import {

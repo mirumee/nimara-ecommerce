@@ -4,7 +4,7 @@ import type { Checkout } from "@nimara/domain/objects/Checkout";
 import { type AsyncResult, ok } from "@nimara/domain/objects/Result";
 
 import { serverEnvs } from "@/envs/server";
-import { paths } from "@/lib/paths";
+import { paths } from "@/foundation/routing/paths";
 import { getCheckoutService } from "@/services/checkout";
 import { getUserService } from "@/services/user";
 

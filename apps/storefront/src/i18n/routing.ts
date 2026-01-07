@@ -1,12 +1,10 @@
 import { createNavigation } from "next-intl/navigation";
 import { defineRouting } from "next-intl/routing";
 
-import {
-  DEFAULT_LOCALE,
-  SUPPORTED_LOCALES,
-  type SupportedLocale,
-} from "@/regions/types";
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from "@/foundation/regions/config";
+import type { SupportedLocale } from "@/foundation/regions/types";
 
+// TODO why magic language code?
 export const localePrefixes = {
   "en-GB": "/gb",
 } as const satisfies Record<

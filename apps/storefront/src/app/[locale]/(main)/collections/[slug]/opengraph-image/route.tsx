@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 
 import { CACHE_TTL, DEFAULT_RESULTS_PER_PAGE } from "@/config";
 import { clientEnvs } from "@/envs/client";
-import { getCurrentRegion } from "@/regions/server";
+import { getCurrentRegion } from "@/foundation/regions";
 import { getCollectionService } from "@/services/collection";
 
 const size = {
@@ -34,7 +34,7 @@ export async function GET(
     options: {
       next: {
         revalidate: CACHE_TTL.pdp,
-        tags: [`COLLECTION:${slug}`, "COLLECTIONS"],
+        tags: [`COLLECTION:${slug}`, "DETAIL-PAGE:COLLECTION"],
       },
     },
   });

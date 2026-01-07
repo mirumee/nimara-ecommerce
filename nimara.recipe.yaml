@@ -1,0 +1,40 @@
+meta:
+  name: "My Platform"
+  environments: ["dev", "prod"]
+
+apps:
+  - name: storefront
+    path: "apps/storefront"
+    recipe: 
+      meta:
+        name: "My Store"
+        type: storefront
+      pages:
+        - home: {provider: "shop-basic-home"}
+        - plp: {provider: "shop-basic-plp"}
+        - pdp: {provider: "shop-basic-pdp"}
+        - cart: {provider: "shop-basic-cart"}
+        - collections: {provider: "shop-basic-collection"}
+        - cms-page: {provider: "shop-basic-cms-page"}
+      infra: 
+        - search: {provider: "search-saleor"}
+        - payments: {provider: "payments-dummy"}
+        - content: {provider: "content-saleor"}
+      saleor:           
+        apps: []
+    generate: true
+
+services: []
+
+saleor:
+  defaults:
+    url: "${SALEOR_API}"
+    channel: "default-channel"
+  apps: []    # keep shared empty unless an app is truly global
+
+infra:
+  modules: []
+  vercel:
+    projects:
+      - name: "${VERCEL_PROJECT_STORE}"
+        path: "frontend/storefront"

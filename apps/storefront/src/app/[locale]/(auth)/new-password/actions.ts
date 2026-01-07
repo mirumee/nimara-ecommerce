@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 
-import { paths } from "@/lib/paths";
+import { paths } from "@/foundation/routing/paths";
 import { getAuthService } from "@/services/auth";
 
 import { type NewPasswordFormSchema } from "./schema";

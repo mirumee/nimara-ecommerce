@@ -17,7 +17,7 @@ import {
 } from "@nimara/ui/components/dialog";
 
 import { useRouter } from "@/i18n/routing";
-import { paths } from "@/lib/paths";
+import { paths } from "@/foundation/routing/paths";
 
 import { AddNewAddressForm } from "../_forms/create-address-form";
 

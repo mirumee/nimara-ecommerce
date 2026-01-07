@@ -10,11 +10,11 @@ import * as z from "zod";
 import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
 
-import { TextFormField } from "@/components/form/text-form-field";
+import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
 import { LocalizedLink } from "@/i18n/routing";
-import { paths } from "@/lib/paths";
-import { useCurrentRegion } from "@/regions/client";
-import { type GetTranslations } from "@/types";
+import { useCurrentRegion } from "@/foundation/regions";
+import { paths } from "@/foundation/routing/paths";
+import { type GetTranslations } from "@nimara/foundation/i18n/types";
 
 import { requestPasswordResetAction } from "./action";
 
@@ -54,7 +54,7 @@ export function ResetPasswordForm() {
     <div className="flex flex-col gap-8">
       {isSuccess ? (
         <>
-          <h1 className="text-2xl font-normal leading-8 text-primary">
+          <h1 className="text-primary text-2xl font-normal leading-8">
             {t("auth.reset-password-link-sent")}
           </h1>
           <div>
@@ -76,7 +76,7 @@ export function ResetPasswordForm() {
                 <ArrowLeft className="h-4 w-4" />
               </LocalizedLink>
             </Button>
-            <h1 className="text-2xl font-normal leading-8 text-primary">
+            <h1 className="text-primary text-2xl font-normal leading-8">
               {t("auth.reset-password")}
             </h1>
           </div>

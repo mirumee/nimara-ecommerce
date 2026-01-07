@@ -453,14 +453,5 @@
     "subscribe-cta": "Subscribe",
     "subscribe-error": "An error occurred while subscribing to the newsletter. Please try again.",
     "subscribe-success": "You have successfully subscribed to the newsletter."
-  },
-  "notFound": {
-    "title": "Page Not Found",
-    "heading": "Oops! Page Not Found",
-    "message": "Looks like you've hit a dead end, but don't worry, we've got a",
-    "messageLink": "map!",
-    "adventurous": "Or, if you're feeling adventurous...",
-    "redirectLink": "Click here",
-    "redirectMessage": "to discover a random page – who knows where you'll end up?"
   }
 }

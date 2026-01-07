@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import { paths } from "@/lib/paths";
+import { paths } from "@/foundation/routing/paths";
 import { getPaymentService } from "@/services/payment";
 
 export const paymentMethodDeleteAction = async ({

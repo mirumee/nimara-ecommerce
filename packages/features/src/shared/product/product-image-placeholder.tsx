@@ -1,0 +1,13 @@
+import { type ComponentProps } from "react";
+
+import ProductPlaceholder from "./assets/product_placeholder.svg";
+import { cn } from "@nimara/ui/lib/utils";
+
+type ProductImagePlaceholderProps = ComponentProps<"svg">;
+
+export const ProductImagePlaceholder = ({
+  className,
+  ...props
+}: ProductImagePlaceholderProps) => (
+  <ProductPlaceholder className={cn("h-auto w-full", className)} {...props} />
+);

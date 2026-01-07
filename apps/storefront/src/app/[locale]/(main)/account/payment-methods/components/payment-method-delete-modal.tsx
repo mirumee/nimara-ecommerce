@@ -17,9 +17,9 @@ import {
 } from "@nimara/ui/components/dialog";
 
 import { useRouter } from "@/i18n/routing";
-import { delay } from "@/lib/core";
-import { formatPaymentMethod } from "@/lib/payment";
-import { type TranslationMessage } from "@/types";
+import { delay } from "@/others/checkout/delay";
+import { formatPaymentMethod } from "@/features/checkout/payment";
+import { type TranslationMessage } from "@nimara/foundation/i18n/types";
 
 import { paymentMethodDeleteAction } from "../actions";
 
@@ -77,17 +77,17 @@ export const PaymentMethodDeleteModal = ({
     <Dialog open onOpenChange={handleClose}>
       <DialogContent className="gap-6" withCloseButton={!isProcessing}>
         <DialogHeader>
-          <DialogTitle className="mb-2 text-primary">
+          <DialogTitle className="text-primary mb-2">
             {t("common.delete")} {t(TYPE_MESSAGE_MAPPING[type])}
           </DialogTitle>
 
-          <DialogDescription className="text-stone-700 dark:text-muted-foreground">
+          <DialogDescription className="dark:text-muted-foreground text-stone-700">
             {t("account.payment-method-delete-info")}
           </DialogDescription>
         </DialogHeader>
 
         <p
-          className="whitespace-pre-wrap text-sm leading-5 text-primary"
+          className="text-primary whitespace-pre-wrap text-sm leading-5"
           dangerouslySetInnerHTML={{
             __html: formatPaymentMethod({ t, method }),
           }}

@@ -16,10 +16,10 @@ import { Label } from "@nimara/ui/components/label";
 import { Spinner } from "@nimara/ui/components/spinner";
 
 import { usePathname } from "@/i18n/routing";
-import { PAYMENT_ELEMENT_ID } from "@/lib/consts";
-import { translateApiErrors } from "@/lib/payment";
-import { cn } from "@/lib/utils";
-import { useCurrentRegion } from "@/regions/client";
+import { useCurrentRegion } from "@/foundation/regions";
+import { PAYMENT_ELEMENT_ID } from "@/others/checkout/consts";
+import { translateApiErrors } from "@/features/checkout/payment";
+import { cn } from "@nimara/foundation/lib/cn";
 import { getPaymentService } from "@/services/payment";
 
 export const PaymentMethodAddModal = ({
@@ -116,7 +116,7 @@ export const PaymentMethodAddModal = ({
         </Label>
 
         {errors.map((message, i) => (
-          <p key={i} className="text-sm font-medium text-destructive">
+          <p key={i} className="text-destructive text-sm font-medium">
             {message}
           </p>
         ))}

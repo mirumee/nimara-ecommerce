@@ -9,9 +9,9 @@ import { useForm } from "react-hook-form";
 import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
 
-import { TextFormField } from "@/components/form/text-form-field";
+import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
 import { MIN_PASSWORD_LENGTH } from "@/config";
-import { useRouterWithState } from "@/lib/hooks";
+import { useRouterWithState } from "@/foundation/use-router-with-state";
 
 import { setPassword } from "./actions";
 import { type NewPasswordFormSchema, newPasswordFormSchema } from "./schema";
@@ -51,12 +51,12 @@ export function NewPasswordForm() {
 
   return (
     <div className="flex flex-col gap-8">
-      <h1 className="text-2xl font-normal leading-8 text-primary">
+      <h1 className="text-primary text-2xl font-normal leading-8">
         {t("auth.set-up-new-password")}
       </h1>
 
       {error === "true" && (
-        <p className="pb-2 text-sm text-destructive">
+        <p className="text-destructive pb-2 text-sm">
           {t("auth.set-up-new-password-error")}
         </p>
       )}

@@ -10,8 +10,8 @@ import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
 import { useToast } from "@nimara/ui/hooks";
 
-import { CheckboxField } from "@/components/form/checkbox-field";
-import { isOrderLineReturned } from "@/lib/order";
+import { isOrderLineReturned } from "@/app/[locale]/(main)/account/orders/helpers/is-order-line-returned";
+import { CheckboxField } from "@nimara/foundation/form-components/checkbox-field";
 
 import { returnProducts } from "./actions";
 import { type FormSchema, formSchema } from "./schema";

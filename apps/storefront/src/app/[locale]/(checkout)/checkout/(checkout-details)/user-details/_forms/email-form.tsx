@@ -8,10 +8,10 @@ import type { Checkout } from "@nimara/domain/objects/Checkout";
 import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
 
-import { TextFormField } from "@/components/form/text-form-field";
-import { useRouterWithState } from "@/lib/hooks";
-import { cn } from "@/lib/utils";
-import type { TranslationMessage } from "@/types";
+import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
+import { useRouterWithState } from "@/foundation/use-router-with-state";
+import { cn } from "@nimara/foundation/lib/cn";
+import type { TranslationMessage } from "@nimara/foundation/i18n/types";
 
 import { checkIfUserHasAnAccount, updateUserDetails } from "./actions";
 import { type EmailFormSchema } from "./schema";

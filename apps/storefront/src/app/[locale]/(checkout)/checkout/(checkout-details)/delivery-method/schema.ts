@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-import { type GetTranslations } from "@/types";
+import { type GetTranslations } from "@nimara/foundation/i18n/types";
 
 export const formSchema = ({ t }: { t: GetTranslations }) =>
   z.object({

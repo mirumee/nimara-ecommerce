@@ -18,9 +18,9 @@ import {
 } from "@nimara/ui/components/tabs";
 
 import { useRouter } from "@/i18n/routing";
-import { type FormattedAddress } from "@/lib/checkout";
-import { paths } from "@/lib/paths";
-import { useCurrentRegion } from "@/regions/client";
+import { useCurrentRegion } from "@/foundation/regions";
+import { paths } from "@/foundation/routing/paths";
+import type { FormattedAddress } from "@nimara/foundation/address/types";
 
 import { CreateShippingAddressForm } from "../_forms/create-form";
 import { UpdateShippingAddressForm } from "../_forms/update-form";

@@ -17,8 +17,8 @@ import { DialogClose } from "@nimara/ui/components/dialog";
 import { Form } from "@nimara/ui/components/form";
 import { useToast } from "@nimara/ui/hooks";
 
-import { AddressForm } from "@/components/address-form/address-form";
-import { CheckboxField } from "@/components/form/checkbox-field";
+import { AddressForm } from "@nimara/foundation/address/address-form/address-form";
+import { CheckboxField } from "@nimara/foundation/form-components/checkbox-field";
 import { storefrontLogger } from "@/services/logging";
 
 import { createNewAddress } from "./actions";
