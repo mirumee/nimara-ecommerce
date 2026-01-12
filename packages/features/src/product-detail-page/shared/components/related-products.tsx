@@ -27,7 +27,9 @@ export const RelatedProducts = ({
           {products.map((product) => {
             const path = productPaths[product.slug];
 
-            if (!path) {return null;}
+            if (!path) {
+              return null;
+            }
 
             return (
               <CarouselItem
