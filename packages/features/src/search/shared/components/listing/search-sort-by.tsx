@@ -4,6 +4,11 @@ import { useTranslations } from "next-intl";
 
 import type { SortByOption } from "@nimara/domain/objects/Search";
 import {
+  useLocalizedPathname,
+  useLocalizedRouter,
+} from "@nimara/foundation/i18n/hooks/use-localized-link";
+import type { TranslationMessage } from "@nimara/foundation/i18n/types";
+import {
   Select,
   SelectContent,
   SelectGroup,
@@ -11,28 +16,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@nimara/ui/components/select";
-import {
-  useLocalizedPathname,
-  useLocalizedRouter,
-} from "@nimara/foundation/i18n/hooks/use-localized-link";
-import type { TranslationMessage } from "@nimara/foundation/i18n/types";
 
 export const SearchSortBy = ({
   options,
   searchParams,
   defaultSortBy,
 }: {
+  defaultSortBy: string;
   options: Array<SortByOption>;
   searchParams: Record<string, string>;
-  defaultSortBy: string;
 }) => {
   const t = useTranslations();
   const router = useLocalizedRouter();
   const pathname = useLocalizedPathname();
   const defaultValue = options.find(
     (option) =>
-      option.value === searchParams["sortBy"] ||
-      option.value === defaultSortBy,
+      option.value === searchParams["sortBy"] || option.value === defaultSortBy,
   )?.value;
 
   const handleValueChange = (value: string) => {

@@ -1,5 +1,6 @@
-import { authMiddleware } from "@/foundation/auth/authMiddleware";
 import { chain } from "@nimara/foundation/middleware/chain";
+
+import { authMiddleware } from "@/foundation/auth/authMiddleware";
 import { i18nMiddleware } from "@/i18n/middleware/i18nMiddleware";
 
 export default chain([i18nMiddleware, authMiddleware]);

@@ -11,34 +11,34 @@
 This document outlines key architectural patterns, challenges, and improvement opportunities in the Nimara codebase that need team review and feedback. The goal is to validate these patterns and address identified issues before proceeding with larger refactoring efforts.
 
 **Review Focus:**
+
 1. Service Registry Pattern nimara-ecommerce/apps/storefront/src/services/registry.ts
-   - I thought it can be easier to exchange infras and change providers through one file like this. I remeber that we dont want to load all of them when on is needed, but this is improvemnt based on our analysis. 
+   - I thought it can be easier to exchange infras and change providers through one file like this. I remeber that we dont want to load all of them when on is needed, but this is improvemnt based on our analysis.
 2. Actions Pattern
 3. Page Extraction Pattern
 4. i18n & Regions Architecture
-   - moving mesages make type script  stop working. maybe some stitching of translations? 
-   - now messages also in nimara-ecommerce/packages/foundation/messages but i dont know how to strcuture this. maybe just have it in storefornt and thats it. 
+   - moving mesages make type script stop working. maybe some stitching of translations?
+   - now messages also in nimara-ecommerce/packages/foundation/messages but i dont know how to strcuture this. maybe just have it in storefornt and thats it.
    - I thought about having nimara-ecommerce/packages/translations/src/messages but this is mabye for removal if we cannot make it work (types deosnt work)
-   - I think the end game is to have it just in one place nicelly organized even if this is storefront. 
+   - I think the end game is to have it just in one place nicelly organized even if this is storefront.
 5. Use Case Migration Opportunities
 
-6. nimara.recipe.yaml - so CLI config 
-7. imports are they good enough. as goal all elements in packages should have imports in a structure that allow them to be copied to storefront as they are. 
-8. how to remove saleor webhooks logic to foundation or domain? why it is here? 
+6. nimara.recipe.yaml - so CLI config
+7. imports are they good enough. as goal all elements in packages should have imports in a structure that allow them to be copied to storefront as they are.
+8. how to remove saleor webhooks logic to foundation or domain? why it is here?
 9. how to move ACP to features as this is dead code and should be optional.
-10. i didnt know how to check if acp works after this changes. 
-
+10. i didnt know how to check if acp works after this changes.
 
 **NEXT STEPS:**
 
-- move all actions logic that is really infra (interact with browser) from actions and to proper services 
+- move all actions logic that is really infra (interact with browser) from actions and to proper services
 - make perfect services architecture
 - what to do with i18n and regions? Maybe some easier way to extend it
-- Move checkout 
+- Move checkout
 - move account and sign in
 - move footer and header
 - clear api routes including acp
-- make cli to install only what needed and to override what should be overriden 
+- make cli to install only what needed and to override what should be overriden
 - make dummy infra for all things requiering accounts in some other portals (Stripe) to make eaasier adoption
 - I dont like this conditional logic in many places that uses app storefront / stripe. Maybe think how to make it usefull also for more apps i.e. marketplace that doesnt require adding magic string in many places
 - a lot of magic strings
@@ -48,7 +48,7 @@ This document outlines key architectural patterns, challenges, and improvement o
 - createRequestConfig not needed nimara-ecommerce/packages/foundation/src/i18n/config/create-request-config.ts
 - maybe move to ui nimara-ecommerce/packages/foundation/src/form-components
 - nimara-ecommerce/packages/foundation/src/errors maybe move to services and infra?
-- something with codegen wrong, I didnt touch it and seems like someting blocks the build. 
+- something with codegen wrong, I didnt touch it and seems like someting blocks the build.
 - maybe nimara-ecommerce/packages/features/src/json-ld/json-ld.tsx should be in foundation
 - what to do with nimara-ecommerce/packages/features/src/shared ? maybe put in proper modules?
 
@@ -61,6 +61,7 @@ This document outlines key architectural patterns, challenges, and improvement o
 #### Core Architectural Patterns
 
 **1. Service Registry Pattern**
+
 - **Location:** `apps/storefront/src/services/registry.ts`
 - **Rationale:**
   - Centralized provider management through a single file makes it easier to exchange infrastructure implementations
@@ -68,12 +69,15 @@ This document outlines key architectural patterns, challenges, and improvement o
   - **Note:** We remember not wanting to load all services when only one is needed, but this is an improvement based on our analysis
 
 **2. Actions Pattern**
+
 - Core/server action separation for reusability and testability
 
 **3. Page Extraction Pattern**
+
 - Extracting pages from storefront to features package for reusability
 
 **4. i18n & Regions Architecture**
+
 - **Current Challenges:**
   - Moving messages breaks TypeScript types — need solution for translation stitching
   - Messages exist in multiple locations:
@@ -83,26 +87,32 @@ This document outlines key architectural patterns, challenges, and improvement o
   - **Goal:** Consolidate messages in one place, nicely organized (even if that's storefront)
 
 **5. Use Case Migration Opportunities**
+
 - Moving business logic from actions to use cases following DDD patterns
 
 #### Configuration & Tooling
 
 **6. CLI Configuration (`nimara.recipe.yaml`)**
+
 - Recipe-based configuration system for application setup and code generation
 
 #### Code Organization & Structure
 
 **7. Import Structure & Package Portability**
+
 - **Goal:** All elements in packages should have imports structured to allow them to be copied to storefront as-is, without modification.
 
 **8. Saleor Webhooks Architecture**
+
 - **Question:** How to move Saleor webhooks logic to foundation or domain? Why is it currently in storefront?
 
 **9. ACP (Agentic Commerce Protocol) Architecture**
+
 - **Current State:** ACP is considered dead code and should be optional
 - **Action:** Move ACP to features package as an optional feature
 
 **10. ACP Testing & Verification**
+
 - **Challenge:** After making changes, how do we verify that ACP still works correctly?
 
 ### Next Steps
@@ -180,11 +190,7 @@ This document outlines key architectural patterns, challenges, and improvement o
   - Investigate and resolve codegen build blockers
   - Something seems to be blocking the build even though codegen wasn't modified
 
-
-
-
-
---- AI GENERATED REPORT AROUND THIS THINGS TO DO  ---- 
+--- AI GENERATED REPORT AROUND THIS THINGS TO DO ----
 
 ## 1. Service Registry Pattern
 
@@ -195,12 +201,14 @@ The service registry is a singleton pattern that provides centralized access to 
 **Location:** `apps/storefront/src/services/registry.ts`
 
 **Key Characteristics:**
+
 - Singleton instance cached after first initialization
 - Initialized with region, access token, logger, and config
 - Provides access to: store, cart, user, search, cms, collection services
 - Services are provider-specific implementations (e.g., `saleorCartService`, `saleorUserService`)
 
 **Example Usage:**
+
 ```typescript
 const services = await getServiceRegistry();
 const product = await services.cart.cartGet({ cartId });
@@ -243,15 +251,18 @@ const product = await services.cart.cartGet({ cartId });
 ### Current Implementation
 
 Server actions are split into two layers:
+
 - **Core actions** (`.core.ts`): Pure, framework-agnostic business logic
 - **Server actions** (`actions.ts`): Next.js "use server" wrappers that handle cookies, revalidation, etc.
 
 **Current State:**
+
 - ✅ Pattern defined in checkout migration plan
 - ❌ Not yet fully implemented across codebase
 - ❌ Many actions still contain business logic directly
 
 **Example Pattern (from checkout migration plan):**
+
 ```typescript
 // packages/features/src/checkout/shared/actions/update-delivery-method.core.ts
 export const updateDeliveryMethodCore = async ({
@@ -271,20 +282,20 @@ export const updateDeliveryMethodCore = async ({
 };
 
 // apps/storefront/src/app/.../actions.ts
-"use server";
+("use server");
 import { updateDeliveryMethodCore } from "@nimara/features/checkout/...";
 import { revalidatePath } from "next/cache";
 
 export async function updateDeliveryMethod(data: FormSchema) {
   const services = await getServiceRegistry();
   const checkoutId = await getCheckoutId();
-  
+
   const result = await updateDeliveryMethodCore({
     services,
     checkoutId,
     deliveryMethodId: data.deliveryMethodId,
   });
-  
+
   revalidatePath(paths.checkout.asPath());
   return result;
 }
@@ -329,6 +340,7 @@ export async function updateDeliveryMethod(data: FormSchema) {
 Pages are extracted from storefront to features package following this pattern:
 
 **Structure:**
+
 ```
 packages/features/src/{feature}/
 ├── shared/
@@ -341,6 +353,7 @@ packages/features/src/{feature}/
 ```
 
 **Storefront pages become thin wrappers:**
+
 ```typescript
 // apps/storefront/src/app/.../page.tsx
 export default async function Page(props: PageProps) {
@@ -358,6 +371,7 @@ export default async function Page(props: PageProps) {
 ```
 
 **Already Extracted:**
+
 - ✅ Product Detail Page (PDP)
 - ✅ Product List Page (PLP)
 - ✅ Cart
@@ -402,18 +416,21 @@ export default async function Page(props: PageProps) {
 ### Current Implementation
 
 **i18n (Internationalization):**
+
 - Uses `next-intl` for routing and translations
 - Locale routing configured in `apps/storefront/src/i18n/routing.ts`
 - Translations in `apps/storefront/messages/` and `packages/foundation/messages/`
 - Locale switching in header component
 
 **Regions:**
+
 - Region configuration in `apps/storefront/src/foundation/regions/config.ts`
 - Uses `@nimara/foundation/regions/create-regions` for region creation
 - Regions include: market, language, locale, channel
 - Current region accessed via `getCurrentRegion()`
 
 **Key Files:**
+
 - `apps/storefront/src/i18n/routing.ts` - Routing configuration
 - `apps/storefront/src/i18n/request.ts` - Request-level i18n
 - `apps/storefront/src/foundation/regions/config.ts` - Region config
@@ -461,12 +478,14 @@ export default async function Page(props: PageProps) {
 ### Current State
 
 **Use Cases Exist:**
+
 - ✅ Auth use cases (`packages/infrastructure/src/use-cases/auth/`)
 - ✅ Cart use cases (`packages/infrastructure/src/use-cases/cart/`)
 - ✅ Search use cases (`packages/infrastructure/src/use-cases/search/`)
 - ✅ User use cases (via `UserService` interface)
 
 **Actions with Business Logic:**
+
 - ❌ Many actions in `src/app/**/_actions/` contain business logic
 - ❌ Logic should be moved to use cases (DDD pattern)
 
@@ -475,6 +494,7 @@ export default async function Page(props: PageProps) {
 **Principle:** Business logic belongs in use cases, not in actions or components.
 
 **Current Pattern:**
+
 ```typescript
 // packages/infrastructure/src/use-cases/cart/lines-add-use-case.ts
 export const linesAddUseCase = ({
@@ -499,22 +519,20 @@ export const linesAddUseCase = ({
 ### Migration Opportunities
 
 **Actions to Convert:**
+
 1. **Product actions** (`add-to-bag`, etc.)
    - Move logic to `use-cases/cart/` or `use-cases/product/`
-   
 2. **Cart actions** (if not already in use cases)
    - Verify all cart logic is in use cases
-   
 3. **Search actions**
    - Move to `use-cases/search/`
-   
 4. **Collection actions**
    - Move to `use-cases/collection/`
-   
 5. **CMS actions**
    - Move to `use-cases/cms/`
 
 **Excluded (per constraints):**
+
 - ❌ Checkout actions
 - ❌ Account actions
 - ❌ Auth actions (already in use cases)
@@ -565,6 +583,7 @@ The `nimara.recipe.yaml` file serves as a configuration file for a CLI tool that
 **Location:** `nimara.recipe.yaml`
 
 **Key Characteristics:**
+
 - Defines app configurations (storefront, stripe, etc.)
 - Specifies page providers (shop-basic-pdp, shop-basic-plp, etc.)
 - Configures infrastructure providers (search, payments, content)
@@ -572,22 +591,23 @@ The `nimara.recipe.yaml` file serves as a configuration file for a CLI tool that
 - Includes Vercel deployment configuration
 
 **Current Structure:**
+
 ```yaml
 apps:
   - name: storefront
     path: "apps/storefront"
-    recipe: 
+    recipe:
       meta:
         name: "My Store"
         type: storefront
       pages:
-        - home: {provider: "shop-basic-home"}
-        - plp: {provider: "shop-basic-plp"}
+        - home: { provider: "shop-basic-home" }
+        - plp: { provider: "shop-basic-plp" }
         # ...
-      infra: 
-        - search: {provider: "search-saleor"}
-        - payments: {provider: "payments-dummy"}
-        - content: {provider: "content-saleor"}
+      infra:
+        - search: { provider: "search-saleor" }
+        - payments: { provider: "payments-dummy" }
+        - content: { provider: "content-saleor" }
 ```
 
 ### Questions for Review
@@ -635,12 +655,14 @@ apps:
 Packages use various import patterns, with the goal that all elements in packages should have imports structured to allow them to be copied to storefront as-is.
 
 **Current Patterns:**
+
 - `@nimara/*` package imports (e.g., `@nimara/features`, `@nimara/infrastructure`)
 - Relative imports within packages
 - Path aliases in some packages (`#root/*` in infrastructure)
 - Wildcard exports (`"./*": "./src/*.ts"`)
 
 **Key Files:**
+
 - `packages/infrastructure/package.json` - exports configuration
 - `packages/foundation/package.json` - exports configuration
 - `packages/features/package.json` - exports configuration
@@ -690,12 +712,14 @@ Packages use various import patterns, with the goal that all elements in package
 Saleor webhook logic is currently located in the storefront app, but there's a question about whether it should be moved to foundation or domain.
 
 **Current Locations:**
+
 - `apps/storefront/src/app/api/webhooks/saleor/` - Webhook route handlers
 - `apps/storefront/src/app/api/webhooks/saleor/helpers.ts` - Shared webhook utilities
 - `packages/infrastructure/src/webhooks/` - GraphQL queries/fragments for webhooks
 - `apps/stripe/src/lib/saleor/webhooks/` - Stripe-specific webhook verification
 
 **Key Functionality:**
+
 - Product webhook handlers (revalidation)
 - Collection webhook handlers (revalidation)
 - CMS page webhook handlers (revalidation)
@@ -747,12 +771,14 @@ Saleor webhook logic is currently located in the storefront app, but there's a q
 ACP is currently implemented in infrastructure and used in storefront, but it's considered "dead code" and should be optional/moved to features.
 
 **Current Locations:**
+
 - `packages/infrastructure/src/acp/` - ACP service implementation
 - `apps/storefront/src/app/api/acp/` - ACP API routes
 - `apps/storefront/src/features/acp/` - ACP feature logic
 - `apps/storefront/src/services/acp.ts` - ACP service registry integration
 
 **Key Functionality:**
+
 - Checkout session management (create, update, complete, get)
 - Product feed generation
 - Idempotency handling
@@ -848,6 +874,7 @@ After moving ACP or making changes, there's uncertainty about how to verify that
 Actions contain logic that interacts with the browser (infrastructure concerns) that should be moved to proper services.
 
 **Current State:**
+
 - ❌ Actions contain browser-specific logic (cookies, headers, etc.)
 - ❌ Actions contain infrastructure concerns mixed with business logic
 - ❌ Services should handle all infrastructure interactions
@@ -892,6 +919,7 @@ Actions contain logic that interacts with the browser (infrastructure concerns) 
 The services architecture needs refinement to be "perfect" - clear, consistent, and well-organized.
 
 **Current State:**
+
 - ✅ Service registry pattern exists
 - ❓ Service interfaces may need improvement
 - ❓ Service organization may need refinement
@@ -937,12 +965,14 @@ The services architecture needs refinement to be "perfect" - clear, consistent, 
 i18n and regions need an easier way to extend them, and there are questions about message organization and TypeScript type support.
 
 **Current Issues:**
+
 - Moving messages breaks TypeScript types
 - Messages exist in multiple locations (storefront, foundation, translations)
 - TypeScript types don't work with message stitching
 - Goal: have messages in one place, nicely organized
 
 **Current Locations:**
+
 - `apps/storefront/messages/` - Storefront messages
 - `packages/foundation/messages/` - Foundation messages
 - `packages/translations/src/messages/` - Translation package (maybe for removal)
@@ -987,6 +1017,7 @@ i18n and regions need an easier way to extend them, and there are questions abou
 Several features need to be migrated from storefront to features package following the page extraction pattern.
 
 **Features to Migrate:**
+
 - Checkout
 - Account
 - Sign In
@@ -994,6 +1025,7 @@ Several features need to be migrated from storefront to features package followi
 - Header
 
 **Already Migrated:**
+
 - ✅ Product Detail Page (PDP)
 - ✅ Product List Page (PLP)
 - ✅ Cart
@@ -1041,6 +1073,7 @@ Several features need to be migrated from storefront to features package followi
 API routes need to be cleaned up, including ACP routes, to ensure they're well-organized and follow consistent patterns.
 
 **Current State:**
+
 - API routes in `apps/storefront/src/app/api/`
 - ACP routes in `apps/storefront/src/app/api/acp/`
 - Webhook routes in `apps/storefront/src/app/api/webhooks/`
@@ -1086,6 +1119,7 @@ API routes need to be cleaned up, including ACP routes, to ensure they're well-o
 There's conditional logic in many places that uses magic strings like "storefront" or "stripe" to determine app behavior. This makes it hard to add new apps (e.g., marketplace) without adding magic strings everywhere.
 
 **Current Issues:**
+
 - Magic strings for app identification
 - Conditional logic based on app type
 - Hard to extend to new app types
@@ -1131,6 +1165,7 @@ There's conditional logic in many places that uses magic strings like "storefron
 The domain layer should have not only types but also basic actions for object manipulation, not just type definitions.
 
 **Current State:**
+
 - Domain has types (e.g., `CMSPage`, `Product`, etc.)
 - Domain may lack manipulation functions
 - Business logic may be scattered
@@ -1175,6 +1210,7 @@ The domain layer should have not only types but also basic actions for object ma
 CMS-related logic is spread across multiple places (e.g., `packages/infrastructure/src/lib`) and should be contained/organized better.
 
 **Current Locations:**
+
 - `packages/infrastructure/src/lib/` - Various CMS utilities
 - `packages/infrastructure/src/cms-page/` - CMS page infrastructure
 - `packages/domain/src/objects/CMSPage.ts` - CMS domain types
@@ -1220,6 +1256,7 @@ CMS-related logic is spread across multiple places (e.g., `packages/infrastructu
 The infrastructure package is beautifully organized by function, with a use-cases folder that's also organized similarly, but then there's a graphql folder for "random functionalities" that breaks the pattern.
 
 **Current Structure:**
+
 - `packages/infrastructure/src/{feature}/` - Organized by feature
 - `packages/infrastructure/src/use-cases/{feature}/` - Organized by feature
 - `packages/infrastructure/src/graphql/` - Random functionalities (breaks pattern)
@@ -1264,6 +1301,7 @@ The infrastructure package is beautifully organized by function, with a use-case
 Several items in the foundation package may be unused, unnecessary, or misplaced and need review.
 
 **Items to Review:**
+
 - `createRequestConfig` - May not be needed
 - `form-components` - Maybe should be in UI package
 - `errors` - Maybe should be in services/infrastructure
@@ -1309,6 +1347,7 @@ Several items in the foundation package may be unused, unnecessary, or misplaced
 The `packages/features/src/shared/` folder contains shared components that may belong in proper feature modules instead.
 
 **Current Contents:**
+
 - `shared/product/` - Product-related shared components
 - `shared/product-list/` - Product list shared components
 - `shared/shopping-bag/` - Shopping bag shared components
@@ -1388,24 +1427,28 @@ Something is wrong with codegen - it wasn't touched but seems like something is 
 ## Review Questions Summary
 
 ### Service Registry
+
 - [ ] Is singleton pattern appropriate?
 - [ ] Should we support multiple registries?
 - [ ] Should services be lazy-loaded?
 - [ ] How should errors be handled?
 
 ### Actions Pattern
+
 - [ ] Is core/server split clear?
 - [ ] Should logic be in actions or use cases?
 - [ ] How should actions be tested?
 - [ ] Should we standardize error handling?
 
 ### Page Extraction
+
 - [ ] Is dependency injection via props appropriate?
 - [ ] Should we use React Context?
 - [ ] How should views be tested?
 - [ ] How do we handle customizations?
 
 ### i18n & Regions
+
 - [ ] Is i18n/regions split clear?
 - [ ] Should regions be more dynamic?
 - [ ] How should locale/region be validated?
@@ -1414,82 +1457,98 @@ Something is wrong with codegen - it wasn't touched but seems like something is 
 - [ ] How do we fix TypeScript types?
 
 ### Use Cases
+
 - [ ] What belongs in use cases vs. actions?
 - [ ] Should we have use case interfaces?
 - [ ] How should use cases be tested?
 - [ ] What's the migration strategy?
 
 ### CLI Configuration
+
 - [ ] What should CLI configure?
 - [ ] How should selective installation work?
 - [ ] How should overrides work?
 
 ### Import Structure
+
 - [ ] Are imports consistent?
 - [ ] Can packages be copied as-is?
 - [ ] Should we standardize patterns?
 
 ### Webhooks Architecture
+
 - [ ] Why are webhooks in storefront?
 - [ ] Should webhooks be in foundation/infrastructure?
 - [ ] How do we abstract webhook providers?
 
 ### ACP Architecture
+
 - [ ] How do we make ACP optional?
 - [ ] Should ACP be in features?
 - [ ] How do we verify ACP works?
 
 ### Infrastructure Logic Separation
+
 - [ ] What logic belongs in services?
 - [ ] How do we identify infrastructure logic?
 - [ ] How do we migrate actions?
 
 ### Services Architecture
+
 - [ ] What makes perfect services?
 - [ ] How should services be organized?
 - [ ] How do we enforce consistency?
 
 ### Feature Migration
+
 - [ ] What's the migration priority?
 - [ ] How do we handle dependencies?
 - [ ] How do we test during migration?
 
 ### API Routes
+
 - [ ] How should routes be organized?
 - [ ] What routes need cleanup?
 - [ ] Should routes follow patterns?
 
 ### Magic Strings & App Logic
+
 - [ ] How do we abstract app-specific logic?
 - [ ] Should we use capability system?
 - [ ] How do we support new apps?
 
 ### Domain Layer
+
 - [ ] What actions belong in domain?
 - [ ] How do we organize domain?
 - [ ] How do we test domain?
 
 ### CMS Consolidation
+
 - [ ] Where should CMS logic live?
 - [ ] How do we organize CMS?
 - [ ] Should CMS be a module?
 
 ### Infrastructure Organization
+
 - [ ] Should GraphQL be by feature?
 - [ ] How do we maintain consistency?
 - [ ] What's the right pattern?
 
 ### Foundation Package
+
 - [ ] What's unused in foundation?
 - [ ] Where should components live?
 - [ ] How do we organize errors?
 
 ### Features Shared
+
 - [ ] Should shared be in modules?
 - [ ] Where should shared live?
 - [ ] How do we avoid duplication?
 
 ### Codegen
+
 - [ ] What's blocking the build?
 - [ ] How do we fix it?
 - [ ] How do we prevent issues?
@@ -1499,12 +1558,14 @@ Something is wrong with codegen - it wasn't touched but seems like something is 
 ## Next Steps
 
 ### Immediate Actions
+
 1. **Team Review:** Schedule review session to discuss each pattern and challenge
 2. **Prioritize Issues:** Rank items by impact and effort (high/medium/low)
 3. **Investigate Blockers:** Address codegen build issues and critical problems
 4. **Document Decisions:** Create ADRs (Architecture Decision Records) for key patterns
 
 ### Short-term (1-2 sprints)
+
 1. **Fix Critical Issues:**
    - Resolve codegen build blockers
    - Fix i18n TypeScript type issues
@@ -1521,6 +1582,7 @@ Something is wrong with codegen - it wasn't touched but seems like something is 
    - Consolidate CMS logic
 
 ### Medium-term (3-6 sprints)
+
 1. **Complete Migrations:**
    - Finish all feature migrations
    - Complete use case migrations
@@ -1537,6 +1599,7 @@ Something is wrong with codegen - it wasn't touched but seems like something is 
    - Create testing utilities
 
 ### Long-term (6+ sprints)
+
 1. **Polish & Optimization:**
    - Optimize package portability
    - Enhance i18n/regions extensibility
@@ -1561,23 +1624,21 @@ Please provide feedback using this template:
 ### Topic: [Service Registry / Actions / Page Extraction / i18n-Regions / Use Cases / CLI Config / Imports / Webhooks / ACP / etc.]
 
 **What works well:**
-- 
 
-**What needs improvement:**
-- 
+- **What needs improvement:**
 
-**Questions:**
-- 
+- **Questions:**
 
-**Suggestions:**
-- 
+- **Suggestions:**
 
-**Priority:**
+- **Priority:**
+
 - [ ] High - Blocking
 - [ ] Medium - Should fix soon
 - [ ] Low - Nice to have
 
 **Estimated Effort:**
+
 - [ ] Small (< 1 week)
 - [ ] Medium (1-2 weeks)
 - [ ] Large (2+ weeks)
@@ -1586,4 +1647,3 @@ Please provide feedback using this template:
 
 **Report Status:** Ready for Review  
 **Action Required:** Team review and feedback
-

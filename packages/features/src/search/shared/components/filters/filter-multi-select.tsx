@@ -1,9 +1,8 @@
 import { getTranslations } from "next-intl/server";
 
+import type { TranslationMessage } from "@nimara/foundation/i18n/types";
 import type { Facet } from "@nimara/infrastructure/use-cases/search/types";
 import { MultiSelect } from "@nimara/ui/components/multi-select";
-
-import type { TranslationMessage } from "@nimara/foundation/i18n/types";
 
 export const FilterMultiSelect = async ({
   facet: { name, choices, slug, messageKey },

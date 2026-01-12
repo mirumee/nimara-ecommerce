@@ -1,10 +1,9 @@
 "use server";
 
-export const newsletterSubscribeAction = async ({ }: {
-    email: string;
-    name: string;
+export const newsletterSubscribeAction = async ({}: {
+  email: string;
+  name: string;
 }) => {
-    // TODO: Implement the newsletter subscription logic
-    return { ok: true };
+  // TODO: Implement the newsletter subscription logic
+  return { ok: true };
 };
-

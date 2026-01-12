@@ -5,15 +5,15 @@ import type { ServiceRegistry } from "@nimara/infrastructure/types";
  * Type definition for the search parameters accepted by the search view.
  */
 export type SearchParams = {
-    [key: string]: string | undefined;
-    after?: string;
-    before?: string;
-    category?: string;
-    collection?: string;
-    limit?: string;
-    page?: string;
-    q?: string;
-    sortBy?: string;
+  [key: string]: string | undefined;
+  after?: string;
+  before?: string;
+  category?: string;
+  collection?: string;
+  limit?: string;
+  page?: string;
+  q?: string;
+  sortBy?: string;
 };
 
 /**
@@ -23,22 +23,22 @@ export type SearchParams = {
  * @property searchParams - A promise that resolves to an object containing search parameters.
  */
 export interface SearchViewProps {
-    params: Promise<{ locale: SupportedLocale }>;
-    searchParams: Promise<SearchParams>;
-    services: ServiceRegistry;
-    paths: {
-        home: string;
-        search: string;
-        product: (slug: string) => string;
-    };
-    localePrefixes: Record<Exclude<SupportedLocale, "en-US">, string>;
-    defaultLocale: SupportedLocale;
-    defaultResultsPerPage: number;
-    defaultSortBy: string;
-    handleFiltersFormSubmit: (
-        searchParams: Record<string, string>,
-        formData: FormData,
-    ) => Promise<never>;
+  defaultLocale: SupportedLocale;
+  defaultResultsPerPage: number;
+  defaultSortBy: string;
+  handleFiltersFormSubmit: (
+    searchParams: Record<string, string>,
+    formData: FormData,
+  ) => Promise<never>;
+  localePrefixes: Record<Exclude<SupportedLocale, "en-US">, string>;
+  params: Promise<{ locale: SupportedLocale }>;
+  paths: {
+    home: string;
+    product: (slug: string) => string;
+    search: string;
+  };
+  searchParams: Promise<SearchParams>;
+  services: ServiceRegistry;
 }
 
 /**
@@ -50,10 +50,9 @@ export interface SearchViewProps {
  * @property searchPath - The path to the search page.
  */
 export interface GenerateStandardSearchMetadataProps {
-    params: Promise<{ locale: SupportedLocale }>;
-    searchParams: Promise<SearchParams>;
-    services: ServiceRegistry;
-    storefrontUrl: string;
-    searchPath: string;
+  params: Promise<{ locale: SupportedLocale }>;
+  searchParams: Promise<SearchParams>;
+  searchPath: string;
+  services: ServiceRegistry;
+  storefrontUrl: string;
 }
-

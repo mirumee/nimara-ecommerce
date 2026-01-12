@@ -4,4 +4,3 @@ export type Messages = typeof import("./messages/en-US.json");
 
 // Export IntlMessages type for use in global declarations
 export type IntlMessages = Messages;
-

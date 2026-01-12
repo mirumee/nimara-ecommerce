@@ -6,7 +6,9 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
+import { type Maybe } from "@nimara/domain/objects/Maybe";
 import type { Menu } from "@nimara/domain/objects/Menu";
+import { isValidJson } from "@nimara/foundation/lib/is-valid-json";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -18,8 +20,6 @@ import {
 } from "@nimara/ui/components/navigation-menu";
 
 import { LocalizedLink } from "@/i18n/routing";
-import { Maybe } from "@nimara/domain/objects/Maybe";
-import { isValidJson } from "@nimara/foundation/lib/is-valid-json";
 
 const RichText = dynamic(
   () =>
@@ -151,7 +151,7 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
                               </div>
                               <div className="text-muted-foreground overflow-hidden text-sm leading-snug">
                                 {child.description &&
-                                  isValidJson(child.description) ? (
+                                isValidJson(child.description) ? (
                                   <RichText
                                     disableProse
                                     className="line-clamp-3 max-h-[4.5em] overflow-hidden py-1"

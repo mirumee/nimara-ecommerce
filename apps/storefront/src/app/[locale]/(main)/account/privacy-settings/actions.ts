@@ -3,10 +3,10 @@
 import { getLocale } from "next-intl/server";
 
 import { getAccessToken } from "@/auth";
-import { redirect } from "@/i18n/routing";
 import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
 import { getStoreUrl, getStoreUrlWithPath } from "@/foundation/server";
+import { redirect } from "@/i18n/routing";
 import { getUserService } from "@/services/user";
 
 export async function requestUserAccountDeletion() {

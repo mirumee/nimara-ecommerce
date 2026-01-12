@@ -2,6 +2,7 @@ import { Filter } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
 import { type SortByOption } from "@nimara/domain/objects/Search";
+import { type TranslationMessage } from "@nimara/foundation/i18n/types";
 import type { Facet } from "@nimara/infrastructure/use-cases/search/types";
 import { Button } from "@nimara/ui/components/button";
 import { Label } from "@nimara/ui/components/label";
@@ -18,8 +19,6 @@ import {
   SheetTrigger,
 } from "@nimara/ui/components/sheet";
 
-import { type TranslationMessage } from "@nimara/foundation/i18n/types";
-
 import { ColorSwatch } from "./color-swatch";
 import { FilterBoolean } from "./filter-boolean";
 import { FilterDropdown } from "./filter-dropdown";
@@ -28,14 +27,14 @@ import { FilterText } from "./filter-text";
 import { FiltersCounter } from "./filters-counter";
 
 type Props = {
-  facets: Facet[];
-  searchParams: Record<string, string>;
-  sortByOptions: SortByOption[];
   defaultSortBy: string;
+  facets: Facet[];
   handleFiltersFormSubmit: (
     searchParams: Record<string, string>,
     formData: FormData,
   ) => Promise<never>;
+  searchParams: Record<string, string>;
+  sortByOptions: SortByOption[];
 };
 
 const renderFilterComponent = (

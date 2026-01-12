@@ -2,7 +2,6 @@
 import { useTranslations } from "next-intl";
 
 import type { TaxedPrice } from "@nimara/domain/objects/common";
-
 import { useLocalizedFormatter } from "@nimara/foundation/formatters/use-localized-formatter";
 
 type Props = {
@@ -24,9 +23,9 @@ export const getDiscountInfo = (
 
   const discountPercent = hasDiscount
     ? Math.round(
-      ((undiscountedPrice.amount - price.amount) / undiscountedPrice.amount) *
-      100,
-    )
+        ((undiscountedPrice.amount - price.amount) / undiscountedPrice.amount) *
+          100,
+      )
     : 0;
 
   return {

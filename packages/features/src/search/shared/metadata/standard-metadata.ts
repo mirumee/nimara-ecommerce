@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
-import { GenerateStandardSearchMetadataProps } from "../types";
+import { type GenerateStandardSearchMetadataProps } from "../types";
 
 /**
  * Generates metadata for the search page.
@@ -9,35 +9,34 @@ import { GenerateStandardSearchMetadataProps } from "../types";
  * @returns Metadata object containing title and description for the search page.
  */
 export async function generateStandardSearchMetadata({
-    searchParams: searchParamsPromise,
-    searchPath,
-    storefrontUrl,
+  searchParams: searchParamsPromise,
+  searchPath,
+  storefrontUrl,
 }: GenerateStandardSearchMetadataProps): Promise<Metadata> {
-    const searchParams = await searchParamsPromise;
-    const canonicalUrl = new URL(searchPath, storefrontUrl).toString();
+  const searchParams = await searchParamsPromise;
+  const canonicalUrl = new URL(searchPath, storefrontUrl).toString();
 
-    const t = await getTranslations("search");
+  const t = await getTranslations("search");
 
-    return {
-        title: searchParams.q
-            ? t("search-for", { query: searchParams.q })
-            : t("all-products"),
-        description: t("description"),
-        openGraph: {
-            images: [
-                {
-                    url: "/og-hp.png",
-                    width: 1200,
-                    height: 630,
-                    alt: t("search-preview"),
-                },
-            ],
-            url: canonicalUrl,
-            siteName: "Nimara Store",
+  return {
+    title: searchParams.q
+      ? t("search-for", { query: searchParams.q })
+      : t("all-products"),
+    description: t("description"),
+    openGraph: {
+      images: [
+        {
+          url: "/og-hp.png",
+          width: 1200,
+          height: 630,
+          alt: t("search-preview"),
         },
-        alternates: {
-            canonical: canonicalUrl,
-        },
-    };
+      ],
+      url: canonicalUrl,
+      siteName: "Nimara Store",
+    },
+    alternates: {
+      canonical: canonicalUrl,
+    },
+  };
 }
-

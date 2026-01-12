@@ -1,9 +1,10 @@
 import { type NextFetchEvent, NextRequest, NextResponse } from "next/server";
 import { describe, expect, it } from "vitest";
 
+import { type CustomMiddleware } from "@nimara/foundation/middleware/chain";
+
 import { COOKIE_KEY } from "@/config";
 import { DEFAULT_LOCALE } from "@/foundation/regions/config";
-import { type CustomMiddleware } from "@nimara/foundation/middleware/chain";
 
 import { i18nMiddleware } from "./i18nMiddleware";
 

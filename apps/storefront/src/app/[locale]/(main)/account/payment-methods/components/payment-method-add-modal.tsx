@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { type ReactNode, useEffect, useState } from "react";
 
+import { cn } from "@nimara/foundation/lib/cn";
 import { Button } from "@nimara/ui/components/button";
 import { Checkbox } from "@nimara/ui/components/checkbox";
 import {
@@ -15,11 +16,10 @@ import {
 import { Label } from "@nimara/ui/components/label";
 import { Spinner } from "@nimara/ui/components/spinner";
 
-import { usePathname } from "@/i18n/routing";
-import { useCurrentRegion } from "@/foundation/regions";
-import { PAYMENT_ELEMENT_ID } from "@/others/checkout/consts";
+import { PAYMENT_ELEMENT_ID } from "@/features/checkout/consts";
 import { translateApiErrors } from "@/features/checkout/payment";
-import { cn } from "@nimara/foundation/lib/cn";
+import { useCurrentRegion } from "@/foundation/regions";
+import { usePathname } from "@/i18n/routing";
 import { getPaymentService } from "@/services/payment";
 
 export const PaymentMethodAddModal = ({

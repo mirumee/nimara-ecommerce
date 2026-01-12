@@ -61,6 +61,7 @@ type Slug = string;
 type Id = string;
 type RevalidateTag =
   | "ADDRESS_VALIDATION_RULES"
+  | "DETAIL-PAGE:COLLECTION"
   | "DETAIL-PAGE:PRODUCT"
   | "SEARCH:FACETS"
   | "SEARCH"

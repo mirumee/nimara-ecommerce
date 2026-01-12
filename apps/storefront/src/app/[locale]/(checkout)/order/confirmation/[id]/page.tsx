@@ -2,9 +2,9 @@ import { getTranslations } from "next-intl/server";
 
 import { Button } from "@nimara/ui/components/button";
 
-import { LocalizedLink } from "@/i18n/routing";
 import { type SupportedLocale } from "@/foundation/regions/types";
 import { paths, type QUERY_PARAMS } from "@/foundation/routing/paths";
+import { LocalizedLink } from "@/i18n/routing";
 
 import { CheckoutRemover } from "./components/checkout-remover";
 

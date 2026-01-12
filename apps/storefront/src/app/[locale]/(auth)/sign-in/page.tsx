@@ -3,8 +3,8 @@ import { getTranslations } from "next-intl/server";
 import { Button } from "@nimara/ui/components/button";
 
 import { SignInForm } from "@/foundation/auth/sign-in/sign-in-form";
-import { LocalizedLink } from "@/i18n/routing";
 import { paths } from "@/foundation/routing/paths";
+import { LocalizedLink } from "@/i18n/routing";
 
 export async function generateMetadata() {
   const t = await getTranslations("auth");

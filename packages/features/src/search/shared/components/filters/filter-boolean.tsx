@@ -3,11 +3,10 @@
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
+import { type TranslationMessage } from "@nimara/foundation/i18n/types";
 import type { Facet } from "@nimara/infrastructure/use-cases/search/types";
 import { Checkbox } from "@nimara/ui/components/checkbox";
 import { Label } from "@nimara/ui/components/label";
-
-import { type TranslationMessage } from "@nimara/foundation/i18n/types";
 
 export const FilterBoolean = ({
   facet: { name, slug, messageKey },

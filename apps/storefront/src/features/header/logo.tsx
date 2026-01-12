@@ -1,8 +1,8 @@
 import { getTranslations } from "next-intl/server";
 
 import BrandLogo from "@/assets/brand-logo-dark.svg";
-import { LocalizedLink } from "@/i18n/routing";
 import { paths } from "@/foundation/routing/paths";
+import { LocalizedLink } from "@/i18n/routing";
 
 export const Logo = async () => {
   const t = await getTranslations("common");

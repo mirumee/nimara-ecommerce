@@ -7,24 +7,23 @@ import { useLocalizedFormatter } from "@nimara/foundation/formatters/use-localiz
 import { type ShoppingBagPriceProps } from "./shopping-bag-price";
 
 export const Shipping = (props: Pick<ShoppingBagPriceProps, "price">) => {
-    const t = useTranslations();
+  const t = useTranslations();
 
-    const formatter = useLocalizedFormatter();
+  const formatter = useLocalizedFormatter();
 
-    return (
-        <div
-            className="text-content text-foreground flex justify-between text-sm"
-            data-testid="shopping-bag-price-delivery-method"
-        >
-            <p>{t("delivery-method.title")}</p>
-            <p>
-                {props?.price && props.price.amount > 0
-                    ? formatter.price({ amount: props.price.amount })
-                    : t("common.free")}
-            </p>
-        </div>
-    );
+  return (
+    <div
+      className="text-content text-foreground flex justify-between text-sm"
+      data-testid="shopping-bag-price-delivery-method"
+    >
+      <p>{t("delivery-method.title")}</p>
+      <p>
+        {props?.price && props.price.amount > 0
+          ? formatter.price({ amount: props.price.amount })
+          : t("common.free")}
+      </p>
+    </div>
+  );
 };
 
 Shipping.displayName = "Shipping";
-

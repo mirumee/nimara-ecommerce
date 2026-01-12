@@ -39,4 +39,3 @@ export type Logger = Record<LogLevel, LogFn>;
  * @see {@link LogFn} for the log function type.
  */
 export type LoggerService = (params: { level: LogLevel }) => Logger;
-

@@ -32,7 +32,7 @@ export type CollectionEventSubscriptionFragment_Uchm3Qz7YjEsQhTMfPIk01DEzLiWluHM
       | "AttributeValueUpdated";
   };
 
-export type CollectionEventSubscriptionFragment_Zc7QzgEzM0jhGq2Ojw7dKiGiC6SAdFfulvmGiGvDbGk =
+export type CollectionEventSubscriptionFragment_RrvYhheqNjg9coPa7MxzKvNbxTiUdNyksBoKzspcyo =
   {
     __typename:
       | "CalculateTaxes"
@@ -46,6 +46,7 @@ export type CollectionEventSubscriptionFragment_Zc7QzgEzM0jhGq2Ojw7dKiGiC6SAdFfu
       | "ChannelUpdated"
       | "CheckoutCreated"
       | "CheckoutFilterShippingMethods"
+      | "CheckoutFullyAuthorized"
       | "CheckoutFullyPaid"
       | "CheckoutMetadataUpdated"
       | "CheckoutUpdated"
@@ -53,13 +54,13 @@ export type CollectionEventSubscriptionFragment_Zc7QzgEzM0jhGq2Ojw7dKiGiC6SAdFfu
       | "CollectionMetadataUpdated"
       | "CustomerCreated"
       | "CustomerMetadataUpdated"
-      | "CustomerUpdated"
-      | "DraftOrderCreated";
+      | "CustomerUpdated";
   };
 
-export type CollectionEventSubscriptionFragment_Ip1SjPiZq1LzLiTdONri3wgNngr1YqQzJ3kumOd5iDu =
+export type CollectionEventSubscriptionFragment_IOmIHgezj4BqSe0qBa27Ry4w4In3hD62xLNv1Dlw =
   {
     __typename:
+      | "DraftOrderCreated"
       | "DraftOrderDeleted"
       | "DraftOrderUpdated"
       | "FulfillmentApproved"
@@ -78,13 +79,13 @@ export type CollectionEventSubscriptionFragment_Ip1SjPiZq1LzLiTdONri3wgNngr1YqQz
       | "InvoiceRequested"
       | "InvoiceSent"
       | "ListStoredPaymentMethods"
-      | "MenuCreated"
-      | "MenuDeleted";
+      | "MenuCreated";
   };
 
-export type CollectionEventSubscriptionFragment_BoMAxh6xlBeUhut2N9UOrYh2snKnXwHumt5TgGbWvc =
+export type CollectionEventSubscriptionFragment_NzAgx5ipNwNrprvvHc2qLsxAIqOZxfb0Ab5nlcQwU =
   {
     __typename:
+      | "MenuDeleted"
       | "MenuItemCreated"
       | "MenuItemDeleted"
       | "MenuItemUpdated"
@@ -103,13 +104,13 @@ export type CollectionEventSubscriptionFragment_BoMAxh6xlBeUhut2N9UOrYh2snKnXwHu
       | "OrderRefunded"
       | "OrderUpdated"
       | "PageCreated"
-      | "PageDeleted"
-      | "PageTypeCreated";
+      | "PageDeleted";
   };
 
-export type CollectionEventSubscriptionFragment_DOrUsyaEljxCw7Zq2xJQhD6nLxmrnkw3sGlUtkLrgQw =
+export type CollectionEventSubscriptionFragment_1E3eTt7xP6B7Mkgmqq5X7sVIf5QtQseWfIxUecQwhV0 =
   {
     __typename:
+      | "PageTypeCreated"
       | "PageTypeDeleted"
       | "PageTypeUpdated"
       | "PageUpdated"
@@ -128,13 +129,13 @@ export type CollectionEventSubscriptionFragment_DOrUsyaEljxCw7Zq2xJQhD6nLxmrnkw3
       | "PermissionGroupDeleted"
       | "PermissionGroupUpdated"
       | "ProductCreated"
-      | "ProductDeleted"
-      | "ProductExportCompleted";
+      | "ProductDeleted";
   };
 
-export type CollectionEventSubscriptionFragment_Pc8oHVkPboqsVoTBj3inslFReGbc5kRu6Nqq7cSjfg =
+export type CollectionEventSubscriptionFragment_Z7rwgw8zu01Bnc5SgQqNwv0Lyp1jQ30oJz3Z8uvrhEw =
   {
     __typename:
+      | "ProductExportCompleted"
       | "ProductMediaCreated"
       | "ProductMediaDeleted"
       | "ProductMediaUpdated"
@@ -153,13 +154,13 @@ export type CollectionEventSubscriptionFragment_Pc8oHVkPboqsVoTBj3inslFReGbc5kRu
       | "PromotionRuleCreated"
       | "PromotionRuleDeleted"
       | "PromotionRuleUpdated"
-      | "PromotionStarted"
-      | "PromotionUpdated";
+      | "PromotionStarted";
   };
 
-export type CollectionEventSubscriptionFragment_WLtunINkOglSzB7SeHPjmCj8yAmsLfkKh1A03ln2bk =
+export type CollectionEventSubscriptionFragment_FsCnoBef8jWxBeWLo55z4FkYvj19c9pK9ySq77aoQq =
   {
     __typename:
+      | "PromotionUpdated"
       | "SaleCreated"
       | "SaleDeleted"
       | "SaleToggle"
@@ -178,13 +179,13 @@ export type CollectionEventSubscriptionFragment_WLtunINkOglSzB7SeHPjmCj8yAmsLfkK
       | "StaffSetPasswordRequested"
       | "StaffUpdated"
       | "StoredPaymentMethodDeleteRequested"
-      | "ThumbnailCreated"
-      | "TransactionCancelationRequested";
+      | "ThumbnailCreated";
   };
 
-export type CollectionEventSubscriptionFragment_SmvZ7Plz5Unt3Wq5Or55xVlWuJiti6Hu1SoIggYza =
+export type CollectionEventSubscriptionFragment_V8I7ofYZlQ6mRbyZppdZBtAVuVhCxrv4cl7r3Nc1xQ =
   {
     __typename:
+      | "TransactionCancelationRequested"
       | "TransactionChargeRequested"
       | "TransactionInitializeSession"
       | "TransactionItemMetadataUpdated"
@@ -215,13 +216,13 @@ export type CollectionEventSubscriptionFragment_CollectionUpdated = {
 
 export type CollectionEventSubscriptionFragment =
   | CollectionEventSubscriptionFragment_Uchm3Qz7YjEsQhTMfPIk01DEzLiWluHMnX4k1L6Dt0s
-  | CollectionEventSubscriptionFragment_Zc7QzgEzM0jhGq2Ojw7dKiGiC6SAdFfulvmGiGvDbGk
-  | CollectionEventSubscriptionFragment_Ip1SjPiZq1LzLiTdONri3wgNngr1YqQzJ3kumOd5iDu
-  | CollectionEventSubscriptionFragment_BoMAxh6xlBeUhut2N9UOrYh2snKnXwHumt5TgGbWvc
-  | CollectionEventSubscriptionFragment_DOrUsyaEljxCw7Zq2xJQhD6nLxmrnkw3sGlUtkLrgQw
-  | CollectionEventSubscriptionFragment_Pc8oHVkPboqsVoTBj3inslFReGbc5kRu6Nqq7cSjfg
-  | CollectionEventSubscriptionFragment_WLtunINkOglSzB7SeHPjmCj8yAmsLfkKh1A03ln2bk
-  | CollectionEventSubscriptionFragment_SmvZ7Plz5Unt3Wq5Or55xVlWuJiti6Hu1SoIggYza
+  | CollectionEventSubscriptionFragment_RrvYhheqNjg9coPa7MxzKvNbxTiUdNyksBoKzspcyo
+  | CollectionEventSubscriptionFragment_IOmIHgezj4BqSe0qBa27Ry4w4In3hD62xLNv1Dlw
+  | CollectionEventSubscriptionFragment_NzAgx5ipNwNrprvvHc2qLsxAIqOZxfb0Ab5nlcQwU
+  | CollectionEventSubscriptionFragment_1E3eTt7xP6B7Mkgmqq5X7sVIf5QtQseWfIxUecQwhV0
+  | CollectionEventSubscriptionFragment_Z7rwgw8zu01Bnc5SgQqNwv0Lyp1jQ30oJz3Z8uvrhEw
+  | CollectionEventSubscriptionFragment_FsCnoBef8jWxBeWLo55z4FkYvj19c9pK9ySq77aoQq
+  | CollectionEventSubscriptionFragment_V8I7ofYZlQ6mRbyZppdZBtAVuVhCxrv4cl7r3Nc1xQ
   | CollectionEventSubscriptionFragment_CollectionDeleted
   | CollectionEventSubscriptionFragment_CollectionUpdated;
 
@@ -283,7 +284,7 @@ export type MenuEventSubscriptionFragment_Uchm3Qz7YjEsQhTMfPIk01DEzLiWluHMnX4k1L
       | "AttributeValueUpdated";
   };
 
-export type MenuEventSubscriptionFragment_QJpVopnj9tAw174uVjo0KxVhwcLOzKKnfYk3kiIjlRi =
+export type MenuEventSubscriptionFragment_GwYHqJDwvrv2QyEq0Kya5B6RfhCy85iuAlJzAq6AdU =
   {
     __typename:
       | "CalculateTaxes"
@@ -297,6 +298,7 @@ export type MenuEventSubscriptionFragment_QJpVopnj9tAw174uVjo0KxVhwcLOzKKnfYk3ki
       | "ChannelUpdated"
       | "CheckoutCreated"
       | "CheckoutFilterShippingMethods"
+      | "CheckoutFullyAuthorized"
       | "CheckoutFullyPaid"
       | "CheckoutMetadataUpdated"
       | "CheckoutUpdated"
@@ -304,13 +306,13 @@ export type MenuEventSubscriptionFragment_QJpVopnj9tAw174uVjo0KxVhwcLOzKKnfYk3ki
       | "CollectionDeleted"
       | "CollectionMetadataUpdated"
       | "CollectionUpdated"
-      | "CustomerCreated"
-      | "CustomerMetadataUpdated";
+      | "CustomerCreated";
   };
 
-export type MenuEventSubscriptionFragment_JmEtZQo0d9WfwXdErwExR3cyw1iBd2N3dSKfWlpIxc =
+export type MenuEventSubscriptionFragment_XWulXk1GqeHNvK2Zjg39D81UqhO8ZykBvc7wuJEvA =
   {
     __typename:
+      | "CustomerMetadataUpdated"
       | "CustomerUpdated"
       | "DraftOrderCreated"
       | "DraftOrderDeleted"
@@ -329,13 +331,13 @@ export type MenuEventSubscriptionFragment_JmEtZQo0d9WfwXdErwExR3cyw1iBd2N3dSKfWl
       | "GiftCardUpdated"
       | "InvoiceDeleted"
       | "InvoiceRequested"
-      | "InvoiceSent"
-      | "ListStoredPaymentMethods";
+      | "InvoiceSent";
   };
 
-export type MenuEventSubscriptionFragment_YPBc8Fb7zCwJHzmQq3eEe6vg8QVjucSZas0RkBvRw =
+export type MenuEventSubscriptionFragment_6SZv9znezpLhGpS69dQ1GbY5yDKa5XUxykJztqqTg6U =
   {
     __typename:
+      | "ListStoredPaymentMethods"
       | "OrderBulkCreated"
       | "OrderCancelled"
       | "OrderConfirmed"
@@ -354,13 +356,13 @@ export type MenuEventSubscriptionFragment_YPBc8Fb7zCwJHzmQq3eEe6vg8QVjucSZas0RkB
       | "PageTypeCreated"
       | "PageTypeDeleted"
       | "PageTypeUpdated"
-      | "PageUpdated"
-      | "PaymentAuthorize";
+      | "PageUpdated";
   };
 
-export type MenuEventSubscriptionFragment_HezzdL7zxss93HwVi8tlZ0cHDsAaHlrfWxRRlz93Zzk =
+export type MenuEventSubscriptionFragment_6kRlk3To6sPpW0QQr52mUNjVn2CzSdpyN0o8Cy5kQ70 =
   {
     __typename:
+      | "PaymentAuthorize"
       | "PaymentCaptureEvent"
       | "PaymentConfirmEvent"
       | "PaymentGatewayInitializeSession"
@@ -379,13 +381,13 @@ export type MenuEventSubscriptionFragment_HezzdL7zxss93HwVi8tlZ0cHDsAaHlrfWxRRlz
       | "ProductExportCompleted"
       | "ProductMediaCreated"
       | "ProductMediaDeleted"
-      | "ProductMediaUpdated"
-      | "ProductMetadataUpdated";
+      | "ProductMediaUpdated";
   };
 
-export type MenuEventSubscriptionFragment_3wM2nJglZysZqyXe2PXv7dgg5ra3r2CqLh0G03sc =
+export type MenuEventSubscriptionFragment_Rhl3UnNk6nEi747MfPtEghacMvrlEq0zkU4BVjs =
   {
     __typename:
+      | "ProductMetadataUpdated"
       | "ProductUpdated"
       | "ProductVariantBackInStock"
       | "ProductVariantCreated"
@@ -404,13 +406,13 @@ export type MenuEventSubscriptionFragment_3wM2nJglZysZqyXe2PXv7dgg5ra3r2CqLh0G03
       | "PromotionUpdated"
       | "SaleCreated"
       | "SaleDeleted"
-      | "SaleToggle"
-      | "SaleUpdated";
+      | "SaleToggle";
   };
 
-export type MenuEventSubscriptionFragment_C3zANrKmQj4BCk0zTQanbiWn8nIAzXKzJqHd4o3iO4 =
+export type MenuEventSubscriptionFragment_W5T9u8Ze80BUkN79Oq6SmIzz96pnf5x7CafMXoKzjye =
   {
     __typename:
+      | "SaleUpdated"
       | "ShippingListMethodsForCheckout"
       | "ShippingPriceCreated"
       | "ShippingPriceDeleted"
@@ -429,13 +431,13 @@ export type MenuEventSubscriptionFragment_C3zANrKmQj4BCk0zTQanbiWn8nIAzXKzJqHd4o
       | "TransactionCancelationRequested"
       | "TransactionChargeRequested"
       | "TransactionInitializeSession"
-      | "TransactionItemMetadataUpdated"
-      | "TransactionProcessSession";
+      | "TransactionItemMetadataUpdated";
   };
 
-export type MenuEventSubscriptionFragment_6nSTrout1sXuRsQxm391yzMyp6EmS8Np4Fh4jhvgns =
+export type MenuEventSubscriptionFragment_YvQxrNkoOvnbjiQk7JSzAwJglAbMml79KptInbPmJ50 =
   {
     __typename:
+      | "TransactionProcessSession"
       | "TransactionRefundRequested"
       | "TranslationCreated"
       | "TranslationUpdated"
@@ -478,13 +480,13 @@ export type MenuEventSubscriptionFragment_MenuUpdated = {
 
 export type MenuEventSubscriptionFragment =
   | MenuEventSubscriptionFragment_Uchm3Qz7YjEsQhTMfPIk01DEzLiWluHMnX4k1L6Dt0s
-  | MenuEventSubscriptionFragment_QJpVopnj9tAw174uVjo0KxVhwcLOzKKnfYk3kiIjlRi
-  | MenuEventSubscriptionFragment_JmEtZQo0d9WfwXdErwExR3cyw1iBd2N3dSKfWlpIxc
-  | MenuEventSubscriptionFragment_YPBc8Fb7zCwJHzmQq3eEe6vg8QVjucSZas0RkBvRw
-  | MenuEventSubscriptionFragment_HezzdL7zxss93HwVi8tlZ0cHDsAaHlrfWxRRlz93Zzk
-  | MenuEventSubscriptionFragment_3wM2nJglZysZqyXe2PXv7dgg5ra3r2CqLh0G03sc
-  | MenuEventSubscriptionFragment_C3zANrKmQj4BCk0zTQanbiWn8nIAzXKzJqHd4o3iO4
-  | MenuEventSubscriptionFragment_6nSTrout1sXuRsQxm391yzMyp6EmS8Np4Fh4jhvgns
+  | MenuEventSubscriptionFragment_GwYHqJDwvrv2QyEq0Kya5B6RfhCy85iuAlJzAq6AdU
+  | MenuEventSubscriptionFragment_XWulXk1GqeHNvK2Zjg39D81UqhO8ZykBvc7wuJEvA
+  | MenuEventSubscriptionFragment_6SZv9znezpLhGpS69dQ1GbY5yDKa5XUxykJztqqTg6U
+  | MenuEventSubscriptionFragment_6kRlk3To6sPpW0QQr52mUNjVn2CzSdpyN0o8Cy5kQ70
+  | MenuEventSubscriptionFragment_Rhl3UnNk6nEi747MfPtEghacMvrlEq0zkU4BVjs
+  | MenuEventSubscriptionFragment_W5T9u8Ze80BUkN79Oq6SmIzz96pnf5x7CafMXoKzjye
+  | MenuEventSubscriptionFragment_YvQxrNkoOvnbjiQk7JSzAwJglAbMml79KptInbPmJ50
   | MenuEventSubscriptionFragment_MenuCreated
   | MenuEventSubscriptionFragment_MenuDeleted
   | MenuEventSubscriptionFragment_MenuItemCreated
@@ -543,7 +545,7 @@ export type PageEventSubscriptionFragment_Uchm3Qz7YjEsQhTMfPIk01DEzLiWluHMnX4k1L
       | "AttributeValueUpdated";
   };
 
-export type PageEventSubscriptionFragment_QJpVopnj9tAw174uVjo0KxVhwcLOzKKnfYk3kiIjlRi =
+export type PageEventSubscriptionFragment_GwYHqJDwvrv2QyEq0Kya5B6RfhCy85iuAlJzAq6AdU =
   {
     __typename:
       | "CalculateTaxes"
@@ -557,6 +559,7 @@ export type PageEventSubscriptionFragment_QJpVopnj9tAw174uVjo0KxVhwcLOzKKnfYk3ki
       | "ChannelUpdated"
       | "CheckoutCreated"
       | "CheckoutFilterShippingMethods"
+      | "CheckoutFullyAuthorized"
       | "CheckoutFullyPaid"
       | "CheckoutMetadataUpdated"
       | "CheckoutUpdated"
@@ -564,13 +567,13 @@ export type PageEventSubscriptionFragment_QJpVopnj9tAw174uVjo0KxVhwcLOzKKnfYk3ki
       | "CollectionDeleted"
       | "CollectionMetadataUpdated"
       | "CollectionUpdated"
-      | "CustomerCreated"
-      | "CustomerMetadataUpdated";
+      | "CustomerCreated";
   };
 
-export type PageEventSubscriptionFragment_JmEtZQo0d9WfwXdErwExR3cyw1iBd2N3dSKfWlpIxc =
+export type PageEventSubscriptionFragment_XWulXk1GqeHNvK2Zjg39D81UqhO8ZykBvc7wuJEvA =
   {
     __typename:
+      | "CustomerMetadataUpdated"
       | "CustomerUpdated"
       | "DraftOrderCreated"
       | "DraftOrderDeleted"
@@ -589,13 +592,13 @@ export type PageEventSubscriptionFragment_JmEtZQo0d9WfwXdErwExR3cyw1iBd2N3dSKfWl
       | "GiftCardUpdated"
       | "InvoiceDeleted"
       | "InvoiceRequested"
-      | "InvoiceSent"
-      | "ListStoredPaymentMethods";
+      | "InvoiceSent";
   };
 
-export type PageEventSubscriptionFragment_ScBspfyBrxPcHRwpBe5ZtJu4sXvFlHuN0Vv5mTMah4 =
+export type PageEventSubscriptionFragment_Qo3grqPrpe4HInn1EwEhNaiRstQso5tTjYam1lLlKa =
   {
     __typename:
+      | "ListStoredPaymentMethods"
       | "MenuCreated"
       | "MenuDeleted"
       | "MenuItemCreated"
@@ -614,13 +617,13 @@ export type PageEventSubscriptionFragment_ScBspfyBrxPcHRwpBe5ZtJu4sXvFlHuN0Vv5mT
       | "OrderMetadataUpdated"
       | "OrderPaid"
       | "OrderRefunded"
-      | "OrderUpdated"
-      | "PaymentAuthorize";
+      | "OrderUpdated";
   };
 
-export type PageEventSubscriptionFragment_HezzdL7zxss93HwVi8tlZ0cHDsAaHlrfWxRRlz93Zzk =
+export type PageEventSubscriptionFragment_6kRlk3To6sPpW0QQr52mUNjVn2CzSdpyN0o8Cy5kQ70 =
   {
     __typename:
+      | "PaymentAuthorize"
       | "PaymentCaptureEvent"
       | "PaymentConfirmEvent"
       | "PaymentGatewayInitializeSession"
@@ -639,13 +642,13 @@ export type PageEventSubscriptionFragment_HezzdL7zxss93HwVi8tlZ0cHDsAaHlrfWxRRlz
       | "ProductExportCompleted"
       | "ProductMediaCreated"
       | "ProductMediaDeleted"
-      | "ProductMediaUpdated"
-      | "ProductMetadataUpdated";
+      | "ProductMediaUpdated";
   };
 
-export type PageEventSubscriptionFragment_3wM2nJglZysZqyXe2PXv7dgg5ra3r2CqLh0G03sc =
+export type PageEventSubscriptionFragment_Rhl3UnNk6nEi747MfPtEghacMvrlEq0zkU4BVjs =
   {
     __typename:
+      | "ProductMetadataUpdated"
       | "ProductUpdated"
       | "ProductVariantBackInStock"
       | "ProductVariantCreated"
@@ -664,13 +667,13 @@ export type PageEventSubscriptionFragment_3wM2nJglZysZqyXe2PXv7dgg5ra3r2CqLh0G03
       | "PromotionUpdated"
       | "SaleCreated"
       | "SaleDeleted"
-      | "SaleToggle"
-      | "SaleUpdated";
+      | "SaleToggle";
   };
 
-export type PageEventSubscriptionFragment_C3zANrKmQj4BCk0zTQanbiWn8nIAzXKzJqHd4o3iO4 =
+export type PageEventSubscriptionFragment_W5T9u8Ze80BUkN79Oq6SmIzz96pnf5x7CafMXoKzjye =
   {
     __typename:
+      | "SaleUpdated"
       | "ShippingListMethodsForCheckout"
       | "ShippingPriceCreated"
       | "ShippingPriceDeleted"
@@ -689,13 +692,13 @@ export type PageEventSubscriptionFragment_C3zANrKmQj4BCk0zTQanbiWn8nIAzXKzJqHd4o
       | "TransactionCancelationRequested"
       | "TransactionChargeRequested"
       | "TransactionInitializeSession"
-      | "TransactionItemMetadataUpdated"
-      | "TransactionProcessSession";
+      | "TransactionItemMetadataUpdated";
   };
 
-export type PageEventSubscriptionFragment_6nSTrout1sXuRsQxm391yzMyp6EmS8Np4Fh4jhvgns =
+export type PageEventSubscriptionFragment_YvQxrNkoOvnbjiQk7JSzAwJglAbMml79KptInbPmJ50 =
   {
     __typename:
+      | "TransactionProcessSession"
       | "TransactionRefundRequested"
       | "TranslationCreated"
       | "TranslationUpdated"
@@ -738,13 +741,13 @@ export type PageEventSubscriptionFragment_PageUpdated = {
 
 export type PageEventSubscriptionFragment =
   | PageEventSubscriptionFragment_Uchm3Qz7YjEsQhTMfPIk01DEzLiWluHMnX4k1L6Dt0s
-  | PageEventSubscriptionFragment_QJpVopnj9tAw174uVjo0KxVhwcLOzKKnfYk3kiIjlRi
-  | PageEventSubscriptionFragment_JmEtZQo0d9WfwXdErwExR3cyw1iBd2N3dSKfWlpIxc
-  | PageEventSubscriptionFragment_ScBspfyBrxPcHRwpBe5ZtJu4sXvFlHuN0Vv5mTMah4
-  | PageEventSubscriptionFragment_HezzdL7zxss93HwVi8tlZ0cHDsAaHlrfWxRRlz93Zzk
-  | PageEventSubscriptionFragment_3wM2nJglZysZqyXe2PXv7dgg5ra3r2CqLh0G03sc
-  | PageEventSubscriptionFragment_C3zANrKmQj4BCk0zTQanbiWn8nIAzXKzJqHd4o3iO4
-  | PageEventSubscriptionFragment_6nSTrout1sXuRsQxm391yzMyp6EmS8Np4Fh4jhvgns
+  | PageEventSubscriptionFragment_GwYHqJDwvrv2QyEq0Kya5B6RfhCy85iuAlJzAq6AdU
+  | PageEventSubscriptionFragment_XWulXk1GqeHNvK2Zjg39D81UqhO8ZykBvc7wuJEvA
+  | PageEventSubscriptionFragment_Qo3grqPrpe4HInn1EwEhNaiRstQso5tTjYam1lLlKa
+  | PageEventSubscriptionFragment_6kRlk3To6sPpW0QQr52mUNjVn2CzSdpyN0o8Cy5kQ70
+  | PageEventSubscriptionFragment_Rhl3UnNk6nEi747MfPtEghacMvrlEq0zkU4BVjs
+  | PageEventSubscriptionFragment_W5T9u8Ze80BUkN79Oq6SmIzz96pnf5x7CafMXoKzjye
+  | PageEventSubscriptionFragment_YvQxrNkoOvnbjiQk7JSzAwJglAbMml79KptInbPmJ50
   | PageEventSubscriptionFragment_PageCreated
   | PageEventSubscriptionFragment_PageDeleted
   | PageEventSubscriptionFragment_PageTypeCreated
@@ -853,7 +856,7 @@ export type ProductEventSubscriptionFragment_Uchm3Qz7YjEsQhTMfPIk01DEzLiWluHMnX4
       | "AttributeValueUpdated";
   };
 
-export type ProductEventSubscriptionFragment_QJpVopnj9tAw174uVjo0KxVhwcLOzKKnfYk3kiIjlRi =
+export type ProductEventSubscriptionFragment_GwYHqJDwvrv2QyEq0Kya5B6RfhCy85iuAlJzAq6AdU =
   {
     __typename:
       | "CalculateTaxes"
@@ -867,6 +870,7 @@ export type ProductEventSubscriptionFragment_QJpVopnj9tAw174uVjo0KxVhwcLOzKKnfYk
       | "ChannelUpdated"
       | "CheckoutCreated"
       | "CheckoutFilterShippingMethods"
+      | "CheckoutFullyAuthorized"
       | "CheckoutFullyPaid"
       | "CheckoutMetadataUpdated"
       | "CheckoutUpdated"
@@ -874,13 +878,13 @@ export type ProductEventSubscriptionFragment_QJpVopnj9tAw174uVjo0KxVhwcLOzKKnfYk
       | "CollectionDeleted"
       | "CollectionMetadataUpdated"
       | "CollectionUpdated"
-      | "CustomerCreated"
-      | "CustomerMetadataUpdated";
+      | "CustomerCreated";
   };
 
-export type ProductEventSubscriptionFragment_JmEtZQo0d9WfwXdErwExR3cyw1iBd2N3dSKfWlpIxc =
+export type ProductEventSubscriptionFragment_XWulXk1GqeHNvK2Zjg39D81UqhO8ZykBvc7wuJEvA =
   {
     __typename:
+      | "CustomerMetadataUpdated"
       | "CustomerUpdated"
       | "DraftOrderCreated"
       | "DraftOrderDeleted"
@@ -899,13 +903,13 @@ export type ProductEventSubscriptionFragment_JmEtZQo0d9WfwXdErwExR3cyw1iBd2N3dSK
       | "GiftCardUpdated"
       | "InvoiceDeleted"
       | "InvoiceRequested"
-      | "InvoiceSent"
-      | "ListStoredPaymentMethods";
+      | "InvoiceSent";
   };
 
-export type ProductEventSubscriptionFragment_IIttyh9obOk2HiNzq9wRoe2KykonejXScLlZcpen38 =
+export type ProductEventSubscriptionFragment_Qo3grqPrpe4HInn1EwEhNaiRstQso5tTjYam1lLlKa =
   {
     __typename:
+      | "ListStoredPaymentMethods"
       | "MenuCreated"
       | "MenuDeleted"
       | "MenuItemCreated"
@@ -924,13 +928,13 @@ export type ProductEventSubscriptionFragment_IIttyh9obOk2HiNzq9wRoe2KykonejXScLl
       | "OrderMetadataUpdated"
       | "OrderPaid"
       | "OrderRefunded"
-      | "OrderUpdated"
-      | "PageCreated";
+      | "OrderUpdated";
   };
 
-export type ProductEventSubscriptionFragment_AH3BZpCszuOvBtBprYx65eaRIx5Joylb7Ve3GdBzgk =
+export type ProductEventSubscriptionFragment_0Hg7UwAf5qDqrfrBkEq72AxaObrB0w2l4xizB32wmho =
   {
     __typename:
+      | "PageCreated"
       | "PageDeleted"
       | "PageTypeCreated"
       | "PageTypeDeleted"
@@ -949,13 +953,13 @@ export type ProductEventSubscriptionFragment_AH3BZpCszuOvBtBprYx65eaRIx5Joylb7Ve
       | "PaymentVoidEvent"
       | "PermissionGroupCreated"
       | "PermissionGroupDeleted"
-      | "PermissionGroupUpdated"
-      | "ProductCreated";
+      | "PermissionGroupUpdated";
   };
 
-export type ProductEventSubscriptionFragment_EvFnHgkX6P7pzjiB5OWndOnCyOuSi5d6jGRaXUcoA =
+export type ProductEventSubscriptionFragment_GaRpV5WgLmyYwzvOncnidjvA9BqsuLaqkK8MskS5QAk =
   {
     __typename:
+      | "ProductCreated"
       | "ProductExportCompleted"
       | "PromotionCreated"
       | "PromotionDeleted"
@@ -974,13 +978,13 @@ export type ProductEventSubscriptionFragment_EvFnHgkX6P7pzjiB5OWndOnCyOuSi5d6jGR
       | "ShippingPriceDeleted"
       | "ShippingPriceUpdated"
       | "ShippingZoneCreated"
-      | "ShippingZoneDeleted"
-      | "ShippingZoneMetadataUpdated";
+      | "ShippingZoneDeleted";
   };
 
-export type ProductEventSubscriptionFragment_JHf7mHimOuDizDnHjb1xQ3HwEmj1W8kXDpiYpPrD2Fy =
+export type ProductEventSubscriptionFragment_HwOxxNnVYeYl4jbk7puxZvo4KTvQJnkcex833Wfg =
   {
     __typename:
+      | "ShippingZoneMetadataUpdated"
       | "ShippingZoneUpdated"
       | "ShopMetadataUpdated"
       | "StaffCreated"
@@ -999,13 +1003,13 @@ export type ProductEventSubscriptionFragment_JHf7mHimOuDizDnHjb1xQ3HwEmj1W8kXDpi
       | "TranslationUpdated"
       | "VoucherCodeExportCompleted"
       | "VoucherCodesCreated"
-      | "VoucherCodesDeleted"
-      | "VoucherCreated";
+      | "VoucherCodesDeleted";
   };
 
-export type ProductEventSubscriptionFragment_31FaXgouTQcpsEbEj1GRkTibOhoDnUtWAnhJoBn6k =
+export type ProductEventSubscriptionFragment_90suajkXt8hiTAxfKMvbNnr0Zjq2loXudhjMa1vc =
   {
     __typename:
+      | "VoucherCreated"
       | "VoucherDeleted"
       | "VoucherMetadataUpdated"
       | "VoucherUpdated"
@@ -1069,13 +1073,13 @@ export type ProductEventSubscriptionFragment_ProductVariantUpdated = {
 
 export type ProductEventSubscriptionFragment =
   | ProductEventSubscriptionFragment_Uchm3Qz7YjEsQhTMfPIk01DEzLiWluHMnX4k1L6Dt0s
-  | ProductEventSubscriptionFragment_QJpVopnj9tAw174uVjo0KxVhwcLOzKKnfYk3kiIjlRi
-  | ProductEventSubscriptionFragment_JmEtZQo0d9WfwXdErwExR3cyw1iBd2N3dSKfWlpIxc
-  | ProductEventSubscriptionFragment_IIttyh9obOk2HiNzq9wRoe2KykonejXScLlZcpen38
-  | ProductEventSubscriptionFragment_AH3BZpCszuOvBtBprYx65eaRIx5Joylb7Ve3GdBzgk
-  | ProductEventSubscriptionFragment_EvFnHgkX6P7pzjiB5OWndOnCyOuSi5d6jGRaXUcoA
-  | ProductEventSubscriptionFragment_JHf7mHimOuDizDnHjb1xQ3HwEmj1W8kXDpiYpPrD2Fy
-  | ProductEventSubscriptionFragment_31FaXgouTQcpsEbEj1GRkTibOhoDnUtWAnhJoBn6k
+  | ProductEventSubscriptionFragment_GwYHqJDwvrv2QyEq0Kya5B6RfhCy85iuAlJzAq6AdU
+  | ProductEventSubscriptionFragment_XWulXk1GqeHNvK2Zjg39D81UqhO8ZykBvc7wuJEvA
+  | ProductEventSubscriptionFragment_Qo3grqPrpe4HInn1EwEhNaiRstQso5tTjYam1lLlKa
+  | ProductEventSubscriptionFragment_0Hg7UwAf5qDqrfrBkEq72AxaObrB0w2l4xizB32wmho
+  | ProductEventSubscriptionFragment_GaRpV5WgLmyYwzvOncnidjvA9BqsuLaqkK8MskS5QAk
+  | ProductEventSubscriptionFragment_HwOxxNnVYeYl4jbk7puxZvo4KTvQJnkcex833Wfg
+  | ProductEventSubscriptionFragment_90suajkXt8hiTAxfKMvbNnr0Zjq2loXudhjMa1vc
   | ProductEventSubscriptionFragment_ProductDeleted
   | ProductEventSubscriptionFragment_ProductMediaCreated
   | ProductEventSubscriptionFragment_ProductMediaDeleted

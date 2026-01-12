@@ -1,6 +1,6 @@
+import { CACHE_TTL } from "@/config";
 import { Footer } from "@/features/footer";
 import { Header } from "@/features/header";
-import { CACHE_TTL } from "@/config";
 import { getCurrentRegion } from "@/foundation/regions";
 import { getLocalePrefix } from "@/foundation/server";
 import { cmsMenuService } from "@/services/cms";

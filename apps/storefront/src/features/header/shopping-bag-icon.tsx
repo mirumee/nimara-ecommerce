@@ -6,8 +6,8 @@ import type { PropsWithChildren } from "react";
 
 import { Button } from "@nimara/ui/components/button";
 
-import { LocalizedLink } from "@/i18n/routing";
 import { paths } from "@/foundation/routing/paths";
+import { LocalizedLink } from "@/i18n/routing";
 
 interface ShoppingBagIconProps extends PropsWithChildren {
   count?: number;

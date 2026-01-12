@@ -1,9 +1,9 @@
 import { getTranslations } from "next-intl/server";
 
 import type { Order } from "@nimara/domain/objects/Order";
+import { cn } from "@nimara/foundation/lib/cn";
 
 import { getLocalizedFormatter } from "@/foundation/formatters/get-localized-formatter";
-import { cn } from "@nimara/foundation/lib/cn";
 
 export const OrderSummary = async ({
   order,

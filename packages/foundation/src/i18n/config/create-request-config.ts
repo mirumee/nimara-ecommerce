@@ -1,18 +1,17 @@
 import * as Sentry from "@sentry/nextjs";
 import { type IntlError } from "next-intl";
+
 import type { Logger } from "../../logging/types";
 
-export const createRequestConfig = <T extends { locales: readonly string[]; defaultLocale: string }>({
-  routing,
-  storefrontLogger
-}: {
-  routing: T
-  storefrontLogger: Logger
-}) => async ({
-  requestLocale
-}: {
-  requestLocale: Promise<string | undefined>
-}) => {
+export const createRequestConfig =
+  <T extends { defaultLocale: string; locales: readonly string[] }>({
+    routing,
+    storefrontLogger,
+  }: {
+    routing: T;
+    storefrontLogger: Logger;
+  }) =>
+  async ({ requestLocale }: { requestLocale: Promise<string | undefined> }) => {
     let locale = await requestLocale;
 
     if (!locale || !routing.locales.includes(locale)) {
@@ -62,7 +61,8 @@ async function getMessages(
 ): Promise<Record<string, string> | null> {
   try {
     // If this specific file doesn't exist at runtime, the import will reject.
-    return (await import(`@nimara/translations/messages/${locale}.json`)).default;
+    return (await import(`@nimara/translations/messages/${locale}.json`))
+      .default;
   } catch (error) {
     // The import failed, so we return null to signal a fallback is needed.
     return null;

@@ -6,7 +6,7 @@ import { storefrontLogger } from "@/services/logging";
 const JWKS = createRemoteJWKSet(
   new URL(
     new URL(clientEnvs.NEXT_PUBLIC_SALEOR_API_URL).origin +
-    "/.well-known/jwks.json",
+      "/.well-known/jwks.json",
   ),
 );
 

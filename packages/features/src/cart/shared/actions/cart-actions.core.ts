@@ -2,15 +2,15 @@ import type { AsyncResult } from "@nimara/domain/objects/Result";
 import type { ServiceRegistry } from "@nimara/infrastructure/types";
 
 export type UpdateLineQuantityCtx = {
-    cacheTTL: {
-        cart: number;
-    };
+  cacheTTL: {
+    cart: number;
+  };
 };
 
 export type UpdateLineQuantityInput = {
-    cartId: string;
-    lineId: string;
-    quantity: number;
+  cartId: string;
+  lineId: string;
+  quantity: number;
 };
 
 export type UpdateLineQuantityResult = AsyncResult<{ success: true }>;
@@ -25,36 +25,36 @@ export type UpdateLineQuantityResult = AsyncResult<{ success: true }>;
  * @returns A promise that resolves to the result of updating the line quantity
  */
 export async function updateLineQuantity(
-    services: ServiceRegistry,
-    input: UpdateLineQuantityInput,
-    ctx: UpdateLineQuantityCtx,
+  services: ServiceRegistry,
+  input: UpdateLineQuantityInput,
+  ctx: UpdateLineQuantityCtx,
 ): Promise<UpdateLineQuantityResult> {
-    const { cartId, lineId, quantity } = input;
-    const { cacheTTL } = ctx;
+  const { cartId, lineId, quantity } = input;
+  const { cacheTTL } = ctx;
 
-    services.logger.debug("Updating line quantity", { cartId, lineId, quantity });
+  services.logger.debug("Updating line quantity", { cartId, lineId, quantity });
 
-    const result = await services.cart.linesUpdate({
-        cartId,
-        lines: [{ lineId, quantity }],
-        options: {
-            next: {
-                tags: [`CHECKOUT:${cartId}`],
-                revalidate: cacheTTL.cart,
-            },
-        },
-    });
+  const result = await services.cart.linesUpdate({
+    cartId,
+    lines: [{ lineId, quantity }],
+    options: {
+      next: {
+        tags: [`CHECKOUT:${cartId}`],
+        revalidate: cacheTTL.cart,
+      },
+    },
+  });
 
-    return result;
+  return result;
 }
 
 export type DeleteLineCtx = {
-    // No context needed for delete, but keeping the pattern consistent
+  // No context needed for delete, but keeping the pattern consistent
 };
 
 export type DeleteLineInput = {
-    cartId: string;
-    lineId: string;
+  cartId: string;
+  lineId: string;
 };
 
 export type DeleteLineResult = AsyncResult<{ success: true }>;
@@ -69,22 +69,21 @@ export type DeleteLineResult = AsyncResult<{ success: true }>;
  * @returns A promise that resolves to the result of deleting the line
  */
 export async function deleteLine(
-    services: ServiceRegistry,
-    input: DeleteLineInput,
-    ctx: DeleteLineCtx,
+  services: ServiceRegistry,
+  input: DeleteLineInput,
+  _ctx: DeleteLineCtx,
 ): Promise<DeleteLineResult> {
-    const { cartId, lineId } = input;
+  const { cartId, lineId } = input;
 
-    services.logger.debug("Deleting line from cart", { cartId, lineId });
+  services.logger.debug("Deleting line from cart", { cartId, lineId });
 
-    const result = await services.cart.linesDelete({
-        cartId,
-        linesIds: [lineId],
-        options: {
-            next: { tags: [`CHECKOUT:${cartId}`] },
-        },
-    });
+  const result = await services.cart.linesDelete({
+    cartId,
+    linesIds: [lineId],
+    options: {
+      next: { tags: [`CHECKOUT:${cartId}`] },
+    },
+  });
 
-    return result;
+  return result;
 }
-

@@ -1,36 +1,16 @@
 {
-    "extends": "tsconfig/react-library.json",
-    "include": [
-        "./**/*.ts",
-        "./**/*.tsx",
-        "./**/*/*.d.ts"
-    ],
-    "exclude": [
-        "dist",
-        "build",
-        "node_modules"
-    ],
-    "compilerOptions": {
-        "declaration": true,
-        "paths": {
-            "@nimara/foundation/*": [
-                "./src/*"
-            ],
-            "@nimara/domain/*": [
-                "../domain/src/*"
-            ],
-            "@nimara/infrastructure/*": [
-                "../infrastructure/src/*"
-            ],
-            "@nimara/translations/*": [
-                "../translations/src/*"
-            ],
-            "@nimara/ui/*": [
-                "../ui/src/*"
-            ],
-            "@nimara/codegen/*": [
-                "../codegen/*"
-            ]
-        }
+  "extends": "tsconfig/react-library.json",
+  "include": ["./**/*.ts", "./**/*.tsx", "./**/*/*.d.ts"],
+  "exclude": ["dist", "build", "node_modules"],
+  "compilerOptions": {
+    "declaration": true,
+    "paths": {
+      "@nimara/foundation/*": ["./src/*"],
+      "@nimara/domain/*": ["../domain/src/*"],
+      "@nimara/infrastructure/*": ["../infrastructure/src/*"],
+      "@nimara/translations/*": ["../translations/src/*"],
+      "@nimara/ui/*": ["../ui/src/*"],
+      "@nimara/codegen/*": ["../codegen/*"]
     }
+  }
 }

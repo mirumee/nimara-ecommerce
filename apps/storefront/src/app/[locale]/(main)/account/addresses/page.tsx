@@ -3,11 +3,11 @@ import { getTranslations } from "next-intl/server";
 
 import { type AllCountryCode } from "@nimara/domain/consts";
 import { type Address } from "@nimara/domain/objects/Address";
+import { displayFormattedAddressLines } from "@nimara/foundation/address/address";
 
 import { getAccessToken } from "@/auth";
 import { getCurrentRegion } from "@/foundation/regions";
 import type { SupportedLocale } from "@/foundation/regions/types";
-import { displayFormattedAddressLines } from "@nimara/foundation/address/address";
 import { getAddressService } from "@/services/address";
 import { getUserService } from "@/services/user";
 

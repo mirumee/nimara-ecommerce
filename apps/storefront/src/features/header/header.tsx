@@ -5,12 +5,12 @@ import { Suspense } from "react";
 import { Button } from "@nimara/ui/components/button";
 
 import { getAccessToken } from "@/auth";
-import { LocaleSwitch } from "@/features/header/locale-switch";
 import { CACHE_TTL } from "@/config";
-import { LocalizedLink } from "@/i18n/routing";
+import { getCheckoutId } from "@/features/checkout/cart";
+import { LocaleSwitch } from "@/features/header/locale-switch";
 import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
-import { getCheckoutId } from "@/features/checkout/cart";
+import { LocalizedLink } from "@/i18n/routing";
 import { getCartService } from "@/services/cart";
 import { cmsMenuService } from "@/services/cms";
 import { getUserService } from "@/services/user";

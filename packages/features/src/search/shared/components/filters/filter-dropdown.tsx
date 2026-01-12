@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 
+import type { TranslationMessage } from "@nimara/foundation/i18n/types";
 import type { Facet } from "@nimara/infrastructure/use-cases/search/types";
 import {
   Select,
@@ -9,8 +10,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@nimara/ui/components/select";
-
-import type { TranslationMessage } from "@nimara/foundation/i18n/types";
 
 export const FilterDropdown = async ({
   facet: { name, choices, slug, messageKey },

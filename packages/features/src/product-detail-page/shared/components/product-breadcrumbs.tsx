@@ -5,8 +5,8 @@ type ProductBreadcrumbsProps = {
     name: string;
     slug: string;
   } | null;
-  productName: string;
   homePath: string;
+  productName: string;
   searchPath: (query: { category: string }) => string;
 };
 
@@ -18,14 +18,20 @@ export const ProductBreadcrumbs = ({
 }: ProductBreadcrumbsProps) => {
   const productCrumbs = category
     ? [
-      {
-        label: category.name,
-        href: searchPath({
-          category: category.slug,
-        }),
-      },
-    ]
+        {
+          label: category.name,
+          href: searchPath({
+            category: category.slug,
+          }),
+        },
+      ]
     : undefined;
 
-  return <Breadcrumbs crumbs={productCrumbs} pageName={productName} homePath={homePath} />;
+  return (
+    <Breadcrumbs
+      crumbs={productCrumbs}
+      pageName={productName}
+      homePath={homePath}
+    />
+  );
 };

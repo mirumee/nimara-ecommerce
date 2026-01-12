@@ -5,9 +5,9 @@ import { AuthError } from "next-auth";
 
 import { getAccessToken, signIn } from "@/auth";
 import { CACHE_TTL } from "@/config";
+import { getCheckoutId, setCheckoutIdCookie } from "@/features/checkout/cart";
 import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
-import { getCheckoutId, setCheckoutIdCookie } from "@/features/checkout/cart";
 import { getCartService } from "@/services/cart";
 import { getCheckoutService } from "@/services/checkout";
 import { errorService } from "@/services/error";

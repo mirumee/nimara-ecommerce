@@ -7,8 +7,8 @@ import type { ServiceRegistry } from "@nimara/infrastructure/types";
  * @property params - A promise that resolves to an object containing the locale and slug.
  */
 export interface CMSPageViewProps {
-    params: Promise<{ locale: SupportedLocale; slug: string }>;
-    services: ServiceRegistry;
+  params: Promise<{ locale: SupportedLocale; slug: string }>;
+  services: ServiceRegistry;
 }
 
 /**
@@ -17,7 +17,6 @@ export interface CMSPageViewProps {
  * @property services - The service registry.
  */
 export interface GenerateStandardCMSPageMetadataProps {
-    params: Promise<{ locale: SupportedLocale; slug: string }>;
-    services: ServiceRegistry;
+  params: Promise<{ locale: SupportedLocale; slug: string }>;
+  services: ServiceRegistry;
 }
-

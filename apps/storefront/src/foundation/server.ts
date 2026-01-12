@@ -1,9 +1,9 @@
 import { headers } from "next/headers";
 import { getLocale } from "next-intl/server";
 
-import { localePrefixes } from "@/i18n/routing";
 import { DEFAULT_LOCALE } from "@/foundation/regions/config";
 import type { SupportedLocale } from "@/foundation/regions/types";
+import { localePrefixes } from "@/i18n/routing";
 
 export const getStoreUrl = async () => {
   const locale = await getLocale();

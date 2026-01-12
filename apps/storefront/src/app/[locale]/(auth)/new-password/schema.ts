@@ -1,7 +1,8 @@
 import { z } from "zod";
 
-import { MIN_PASSWORD_LENGTH } from "@/config";
 import { type GetTranslations } from "@nimara/foundation/i18n/types";
+
+import { MIN_PASSWORD_LENGTH } from "@/config";
 
 export const newPasswordFormSchema = ({ t }: { t: GetTranslations }) =>
   z

@@ -23,8 +23,8 @@ import {
 import { Spinner } from "@nimara/ui/components/spinner";
 
 import { DEFAULT_DEBOUNCE_TIME_IN_MS } from "@/config";
-import { LocalizedLink, usePathname, useRouter } from "@/i18n/routing";
 import { paths } from "@/foundation/routing/paths";
+import { LocalizedLink, usePathname, useRouter } from "@/i18n/routing";
 
 import { performSearch, searchProducts } from "./actions";
 
@@ -256,4 +256,3 @@ export const SearchForm = ({ onSubmit }: { onSubmit?: () => void }) => {
     </form>
   );
 };
-

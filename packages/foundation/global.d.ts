@@ -10,13 +10,9 @@
 //   }
 // }
 
-
 // OLD ONE
 type Messages = typeof import("./messages/en-US.json");
-declare interface IntlMessages extends Messages { }
-
-
-
+declare interface IntlMessages extends Messages {}
 
 type NonFalsy<T> = T extends false | 0 | "" | null | undefined | 0n ? never : T;
 
@@ -65,16 +61,16 @@ declare module "*.svg" {
   import { type FC, type SVGProps } from "react";
   const content: FC<SVGProps<SVGElement>>;
 
+  // eslint-disable-next-line import/no-default-export
   export default content;
 }
 
 declare module "*.svg?url" {
   const content: any;
 
+  // eslint-disable-next-line import/no-default-export
   export default content;
 }
-
-
 
 type Slug = string;
 type Id = string;
@@ -100,4 +96,3 @@ declare global {
 interface NextFetchRequestConfig {
   tags?: RevalidateTag[];
 }
-

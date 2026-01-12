@@ -4,9 +4,9 @@ import { revalidatePath } from "next/cache";
 import { getLocale } from "next-intl/server";
 
 import { signOut } from "@/auth";
-import { redirect } from "@/i18n/routing";
 import { handleLogout } from "@/foundation/auth/auth";
 import { paths } from "@/foundation/routing/paths";
+import { redirect } from "@/i18n/routing";
 import { errorService } from "@/services/error";
 
 export async function logout() {

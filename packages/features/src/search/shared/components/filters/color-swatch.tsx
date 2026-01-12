@@ -1,9 +1,8 @@
 import { getTranslations } from "next-intl/server";
 
+import type { TranslationMessage } from "@nimara/foundation/i18n/types";
 import type { Facet } from "@nimara/infrastructure/use-cases/search/types";
 import { Toggle } from "@nimara/ui/components/toggle";
-
-import type { TranslationMessage } from "@nimara/foundation/i18n/types";
 import { cn } from "@nimara/ui/lib/utils";
 
 export const colors = [

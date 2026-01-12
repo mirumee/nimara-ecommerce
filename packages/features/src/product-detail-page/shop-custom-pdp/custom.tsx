@@ -23,7 +23,12 @@ import { type PDPViewProps } from "../shared/types";
  * Custom view for the product details page. To demonstrate a different layout or additional features.
  * @returns A React component rendering the custom view of the product details page.
  */
-export const CustomPDPView = async ({ params, services, paths, checkoutId }: PDPViewProps) => {
+export const CustomPDPView = async ({
+  params,
+  services,
+  paths,
+  checkoutId,
+}: PDPViewProps) => {
   const { slug } = await params;
 
   return (
@@ -74,7 +79,11 @@ export const CustomPDPView = async ({ params, services, paths, checkoutId }: PDP
           </Suspense>
 
           <Suspense fallback={<RelatedProductsSkeleton />}>
-            <RelatedProductsContainer slug={slug} services={services} productPath={paths.product} />
+            <RelatedProductsContainer
+              slug={slug}
+              services={services}
+              productPath={paths.product}
+            />
           </Suspense>
         </div>
       )}

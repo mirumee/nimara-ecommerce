@@ -19,9 +19,9 @@ export async function returnProducts(data: FormSchema, order: Order) {
 
       return fulfillmentLine
         ? {
-          fulfillmentLineId: fulfillmentLine.id,
-          quantity: fulfillmentLine.quantity,
-        }
+            fulfillmentLineId: fulfillmentLine.id,
+            quantity: fulfillmentLine.quantity,
+          }
         : null;
     })
     .filter(Boolean);

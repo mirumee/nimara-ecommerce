@@ -1,6 +1,5 @@
 import { Skeleton } from "@nimara/ui/components/skeleton";
 
-
 const range = (i: number): number[] => [...Array(i).keys()];
 
 export const RelatedProductsSkeleton = () => {

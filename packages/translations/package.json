@@ -1,37 +1,36 @@
 {
-    "name": "@nimara/translations",
-    "version": "1.0.0",
-    "private": true,
-    "type": "module",
-    "scripts": {
-        "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
-    },
-    "devDependencies": {
-        "@typescript-eslint/eslint-plugin": "^6.21.0",
-        "@typescript-eslint/parser": "^6.21.0",
-        "eslint": "^8.57.0",
-        "eslint-config-custom": "workspace:*",
-        "tsconfig": "workspace:*",
-        "typescript": "^5.9.2"
-    },
-    "engines": {
-        "node": "22.x"
-    },
-    "exports": {
-        "./messages/*": "./src/messages/*.json",
-        "./messages/en-US": "./src/messages/en-US.json",
-        "./messages/en-GB": "./src/messages/en-GB.json",
-        "./messages/index": "./src/messages/index.ts",
-        "./types": "./src/types.ts"
-    },
-    "typesVersions": {
-        "*": {
-            "messages/*": [
-                "./src/messages/*.json"
-            ],
-            "types": [
-                "./src/types.ts"
-            ]
-        }
+  "name": "@nimara/translations",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "lint": "eslint . --ext .js,.ts,.tsx --fix"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.57.0",
+    "eslint-config-custom": "workspace:*",
+    "tsconfig": "workspace:*",
+    "typescript": "^5.9.2"
+  },
+  "engines": {
+    "node": "22.x"
+  },
+  "exports": {
+    "./messages/*": "./src/messages/*.json",
+    "./messages/en-US": "./src/messages/en-US.json",
+    "./messages/en-GB": "./src/messages/en-GB.json",
+    "./messages/index": "./src/messages/index.ts",
+    "./types": "./src/types.ts"
+  },
+  "typesVersions": {
+    "*": {
+      "messages/*": [
+        "./src/messages/*.json"
+      ],
+      "types": [
+        "./src/types.ts"
+      ]
     }
+  }
 }

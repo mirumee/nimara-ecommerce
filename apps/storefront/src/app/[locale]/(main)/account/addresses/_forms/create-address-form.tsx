@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 
 import { type AllCountryCode } from "@nimara/domain/consts";
 import {
@@ -11,14 +11,13 @@ import {
   type CountryOption,
 } from "@nimara/domain/objects/Address";
 import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
+import { AddressForm } from "@nimara/foundation/address/address-form/address-form";
+import { CheckboxField } from "@nimara/foundation/form-components/checkbox-field";
 import { ADDRESS_CORE_FIELDS } from "@nimara/infrastructure/consts";
 import { Button } from "@nimara/ui/components/button";
 import { DialogClose } from "@nimara/ui/components/dialog";
-import { Form } from "@nimara/ui/components/form";
 import { useToast } from "@nimara/ui/hooks";
 
-import { AddressForm } from "@nimara/foundation/address/address-form/address-form";
-import { CheckboxField } from "@nimara/foundation/form-components/checkbox-field";
 import { storefrontLogger } from "@/services/logging";
 
 import { createNewAddress } from "./actions";
@@ -85,7 +84,7 @@ export const AddNewAddressForm = ({
   };
 
   return (
-    <Form {...form}>
+    <FormProvider {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
         className="flex flex-col gap-y-6 pt-2"
@@ -123,6 +122,6 @@ export const AddNewAddressForm = ({
           </Button>
         </div>
       </form>
-    </Form>
+    </FormProvider>
   );
 };

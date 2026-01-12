@@ -3,9 +3,9 @@
 import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { type User } from "@nimara/domain/objects/User";
 
-import { redirect } from "@/i18n/routing";
 import type { SupportedLocale } from "@/foundation/regions/types";
 import { paths } from "@/foundation/routing/paths";
+import { redirect } from "@/i18n/routing";
 
 export const validateCheckoutStepAction = async ({
   checkout,
@@ -16,11 +16,11 @@ export const validateCheckoutStepAction = async ({
   checkout: Checkout;
   locale: SupportedLocale;
   step:
-  | "payment"
-  | "delivery-method"
-  | "shipping-address"
-  | "user-details"
-  | null;
+    | "payment"
+    | "delivery-method"
+    | "shipping-address"
+    | "user-details"
+    | null;
   user: User | null;
 }) => {
   // Step 1: Make sure we have an email

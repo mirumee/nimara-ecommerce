@@ -13,11 +13,11 @@ export type UrlOpts = Omit<UrlObject, "query"> & {
 type ParametrizedUrlOpts<PathKey extends string | string[]> = UrlOpts &
   (PathKey extends string
     ? {
-      [key in PathKey]: string | number;
-    }
+        [key in PathKey]: string | number;
+      }
     : {
-      [key in keyof PathKey]: string | number;
-    });
+        [key in keyof PathKey]: string | number;
+      });
 
 // Pre-populated url string - what u see in the browser.
 type GeneratedStringUrl = string;

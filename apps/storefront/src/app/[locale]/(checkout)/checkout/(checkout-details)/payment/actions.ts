@@ -2,9 +2,9 @@
 
 import { type AllCountryCode } from "@nimara/domain/consts";
 import { type Checkout } from "@nimara/domain/objects/Checkout";
+import { schemaToAddress } from "@nimara/foundation/address/address";
 
 import { getAccessToken } from "@/auth";
-import { schemaToAddress } from "@nimara/foundation/address/address";
 import { updateCheckoutAddressAction } from "@/foundation/address/update-checkout-address-action";
 import { getUserService } from "@/services/user";
 

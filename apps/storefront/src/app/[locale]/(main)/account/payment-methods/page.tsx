@@ -3,11 +3,11 @@ import { getTranslations } from "next-intl/server";
 import { getAccessToken } from "@/auth";
 import { clientEnvs } from "@/envs/client";
 import { serverEnvs } from "@/envs/server";
-import { LocalizedLink, redirect } from "@/i18n/routing";
 import { getCurrentRegion } from "@/foundation/regions";
 import type { SupportedLocale } from "@/foundation/regions/types";
 import { paths } from "@/foundation/routing/paths";
 import { getStoreUrl } from "@/foundation/server";
+import { LocalizedLink, redirect } from "@/i18n/routing";
 import { getPaymentService } from "@/services/payment";
 import { getUserService } from "@/services/user";
 

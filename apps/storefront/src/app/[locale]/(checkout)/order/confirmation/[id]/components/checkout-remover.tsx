@@ -2,8 +2,8 @@
 
 import { useEffect } from "react";
 
-import { useRouter } from "@/i18n/routing";
 import { paths, QUERY_PARAMS } from "@/foundation/routing/paths";
+import { useRouter } from "@/i18n/routing";
 
 import { clearCheckoutCookieAction } from "../actions";
 
