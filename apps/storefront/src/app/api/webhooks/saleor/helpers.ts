@@ -1,12 +1,12 @@
 import { revalidateTag } from "@/foundation/cache/cache";
 import { verifySaleorWebhookSignature } from "@/foundation/webhooks";
-import { storefrontLogger } from "@/services/logging";
 import type {
   CollectionEventSubscriptionFragment,
   MenuEventSubscriptionFragment,
   PageEventSubscriptionFragment,
   ProductEventSubscriptionFragment,
 } from "@/infrastructure/webhook/saleor/graphql/fragments/generated";
+import { storefrontLogger } from "@/services/logging";
 
 type EventSubscriptionFragment =
   | MenuEventSubscriptionFragment
@@ -14,14 +14,16 @@ type EventSubscriptionFragment =
   | PageEventSubscriptionFragment
   | CollectionEventSubscriptionFragment;
 
-export const handleWebhookPostRequest = async (
+export const handleWebhookPostRequest = async <
+  T extends EventSubscriptionFragment,
+>(
   request: Request,
-  extractSlugFromPayload: (json: EventSubscriptionFragment) => Promise<string | undefined>,
+  extractSlugFromPayload: (json: T) => Promise<string | undefined>,
   prefix: "CMS" | "PRODUCT" | "COLLECTION",
 ) => {
   await verifySaleorWebhookSignature(request);
 
-  const json = (await request.json()) as EventSubscriptionFragment;
+  const json = (await request.json()) as T;
   const slug = await extractSlugFromPayload(json);
 
   if (slug) {

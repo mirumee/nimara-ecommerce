@@ -6,10 +6,10 @@ import { useTranslations } from "next-intl";
 import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 
+import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
 import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
 
-import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
 import { MIN_PASSWORD_LENGTH } from "@/config";
 import { useRouterWithState } from "@/foundation/use-router-with-state";
 

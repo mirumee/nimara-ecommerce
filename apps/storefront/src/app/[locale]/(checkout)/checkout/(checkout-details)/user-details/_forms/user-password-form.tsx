@@ -4,12 +4,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 
+import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
 import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
 
-import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
-import { ResetPasswordLink } from "@/foundation/auth/reset-password-link";
 import { login } from "@/foundation/auth/login";
+import { ResetPasswordLink } from "@/foundation/auth/reset-password-link";
 import { paths } from "@/foundation/routing/paths";
 import { useRouterWithState } from "@/foundation/use-router-with-state";
 

@@ -15,45 +15,43 @@ import { type CartViewProps } from "../shared/types";
  * @returns A React component rendering the standard cart page.
  */
 export const StandardCartView = async (props: CartViewProps) => {
-    const {
-        services,
-        checkoutId,
-        accessToken,
-        paths,
-        onCartUpdate,
-        onLineQuantityChange,
-        onLineDelete,
-    } = props;
+  const {
+    services,
+    checkoutId,
+    accessToken,
+    paths,
+    onCartUpdate,
+    onLineQuantityChange,
+    onLineDelete,
+  } = props;
 
-    return (
-        <div className="mx-auto flex justify-center">
-            <div className="max-w-[616px] flex-1 basis-full py-8">
-                <Suspense fallback={<ShoppingBagSkeleton hasHeader />}>
-                    <CartProvider
-                        services={services}
-                        checkoutId={checkoutId}
-                        accessToken={accessToken}
-                        emptyCartRender={() => (
-                            <EmptyCart paths={{ home: paths.home }} />
-                        )}
-                        render={({ cart, user }) => (
-                            <CartDetails
-                                cart={cart}
-                                user={user}
-                                onLineQuantityChange={onLineQuantityChange}
-                                onLineDelete={onLineDelete}
-                                onCartUpdate={onCartUpdate}
-                                paths={{
-                                    checkout: paths.checkout,
-                                    checkoutSignIn: paths.checkoutSignIn,
-                                }}
-                            />
-                        )}
-                    />
-                </Suspense>
-            </div>
-        </div>
-    );
+  return (
+    <div className="mx-auto flex justify-center">
+      <div className="max-w-[616px] flex-1 basis-full py-8">
+        <Suspense fallback={<ShoppingBagSkeleton hasHeader />}>
+          <CartProvider
+            services={services}
+            checkoutId={checkoutId}
+            accessToken={accessToken}
+            emptyCartRender={() => <EmptyCart paths={{ home: paths.home }} />}
+            render={({ cart, user }) => (
+              <CartDetails
+                cart={cart}
+                user={user}
+                onLineQuantityChange={onLineQuantityChange}
+                onLineDelete={onLineDelete}
+                onCartUpdate={onCartUpdate}
+                paths={{
+                  checkout: paths.checkout,
+                  checkoutSignIn: paths.checkoutSignIn,
+                }}
+              />
+            )}
+          />
+        </Suspense>
+      </div>
+    </div>
+  );
 };
 
 /**
@@ -62,12 +60,11 @@ export const StandardCartView = async (props: CartViewProps) => {
  * @returns Metadata object containing title for the cart page.
  */
 export async function generateStandardCartMetadata(
-    _props: CartViewProps,
+  _props: Pick<CartViewProps, "params" | "searchParams">,
 ): Promise<Metadata> {
-    const t = await getTranslations();
+  const t = await getTranslations();
 
-    return {
-        title: t("cart.your-bag"),
-    };
+  return {
+    title: t("cart.your-bag"),
+  };
 }
-

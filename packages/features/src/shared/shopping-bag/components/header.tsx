@@ -3,37 +3,36 @@
 import { useTranslations } from "next-intl";
 
 import { type Price } from "@nimara/domain/objects/common";
-import { cn } from "@nimara/ui/lib/utils";
 import { useLocalizedFormatter } from "@nimara/foundation/formatters/use-localized-formatter";
+import { cn } from "@nimara/ui/lib/utils";
 
 export const Header = ({
-    header,
-    totalPrice,
+  header,
+  totalPrice,
 }: {
-    header?: string;
-    totalPrice?: Price;
+  header?: string;
+  totalPrice?: Price;
 }) => {
-    const t = useTranslations();
-    const formatter = useLocalizedFormatter();
+  const t = useTranslations();
+  const formatter = useLocalizedFormatter();
 
-    const headerTextClass = "text-2xl text-primary";
+  const headerTextClass = "text-2xl text-primary";
 
-    return (
-        <div
-            className={cn("flex justify-between", {
-                "justify-start gap-2 md:justify-between": totalPrice,
-            })}
-        >
-            <h1 className={headerTextClass}>{header || t("cart.your-bag")}</h1>
-            {totalPrice && (
-                <p className={cn(headerTextClass, "block md:hidden")}>•</p>
-            )}
-            {totalPrice && (
-                <p className={headerTextClass}>
-                    {formatter.price({ amount: totalPrice.amount })}
-                </p>
-            )}
-        </div>
-    );
+  return (
+    <div
+      className={cn("flex justify-between", {
+        "justify-start gap-2 md:justify-between": totalPrice,
+      })}
+    >
+      <h1 className={headerTextClass}>{header || t("cart.your-bag")}</h1>
+      {totalPrice && (
+        <p className={cn(headerTextClass, "block md:hidden")}>•</p>
+      )}
+      {totalPrice && (
+        <p className={headerTextClass}>
+          {formatter.price({ amount: totalPrice.amount })}
+        </p>
+      )}
+    </div>
+  );
 };
-

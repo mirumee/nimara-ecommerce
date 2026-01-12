@@ -6,14 +6,14 @@ import { Fragment } from "react";
 import { useForm } from "react-hook-form";
 
 import type { Checkout } from "@nimara/domain/objects/Checkout";
+import { isGlobalError } from "@nimara/foundation/errors/errors";
+import { RadioFormGroup } from "@nimara/foundation/form-components/radio-form-group";
+import { useLocalizedFormatter } from "@nimara/foundation/formatters/use-localized-formatter";
+import type { TranslationMessage } from "@nimara/foundation/i18n/types";
 import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
 
-import { RadioFormGroup } from "@nimara/foundation/form-components/radio-form-group";
-import { isGlobalError } from "@nimara/foundation/errors/errors";
-import { useLocalizedFormatter } from "@nimara/foundation/formatters/use-localized-formatter";
 import { useRouterWithState } from "@/foundation/use-router-with-state";
-import type { TranslationMessage } from "@nimara/foundation/i18n/types";
 
 import { updateDeliveryMethod } from "./_actions/update-delivery-method";
 import { type FormSchema, formSchema } from "./schema";

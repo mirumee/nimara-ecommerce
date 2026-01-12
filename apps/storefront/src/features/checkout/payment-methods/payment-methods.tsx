@@ -7,11 +7,8 @@ import {
 import { FormControl, FormField, FormItem } from "@nimara/ui/components/form";
 import { RadioGroup } from "@nimara/ui/components/radio-group";
 
-
-import type { ComponentType } from "react";
-
 import { groupPaymentMethods } from "@/features/checkout/payment";
-import type { CardPaymentMethod, PaypalPaymentMethod } from "@nimara/domain/objects/Payment";
+
 import { CreditCardList } from "./credit-card-list";
 import { PaypalList } from "./paypal-list";
 

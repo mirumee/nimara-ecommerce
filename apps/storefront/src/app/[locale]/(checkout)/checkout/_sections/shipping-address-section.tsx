@@ -1,12 +1,12 @@
 import { getTranslations } from "next-intl/server";
 
 import { type Checkout } from "@nimara/domain/objects/Checkout";
+import { displayFormattedAddressLines } from "@nimara/foundation/address/address";
 import { Button } from "@nimara/ui/components/button";
 
-import { LocalizedLink } from "@/i18n/routing";
 import type { SupportedLocale } from "@/foundation/regions/types";
 import { paths } from "@/foundation/routing/paths";
-import { displayFormattedAddressLines } from "@nimara/foundation/address/address";
+import { LocalizedLink } from "@/i18n/routing";
 import { getAddressService } from "@/services/address";
 
 export async function ShippingAddressSection({

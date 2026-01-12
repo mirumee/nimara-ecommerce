@@ -1,7 +1,8 @@
 import { type ComponentProps } from "react";
 
-import ProductPlaceholder from "./assets/product_placeholder.svg";
 import { cn } from "@nimara/ui/lib/utils";
+
+import ProductPlaceholder from "./assets/product_placeholder.svg";
 
 type ProductImagePlaceholderProps = ComponentProps<"svg">;
 

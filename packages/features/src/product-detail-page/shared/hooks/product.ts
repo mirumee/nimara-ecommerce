@@ -1,7 +1,6 @@
 import { type Line } from "@nimara/domain/objects/common";
+import { type Maybe } from "@nimara/domain/objects/Maybe";
 import type { ProductVariantAvailability } from "@nimara/domain/objects/Product";
-
-import { Maybe } from "@nimara/domain/objects/Maybe";
 
 export const isVariantInStock = (
   variant: ProductVariantAvailability,

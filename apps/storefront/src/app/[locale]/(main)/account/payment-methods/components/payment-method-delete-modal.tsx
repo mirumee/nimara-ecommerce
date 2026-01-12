@@ -7,6 +7,7 @@ import {
   type PaymentMethod,
   type PaymentMethodType,
 } from "@nimara/domain/objects/Payment";
+import { type TranslationMessage } from "@nimara/foundation/i18n/types";
 import { Button } from "@nimara/ui/components/button";
 import {
   Dialog,
@@ -16,10 +17,9 @@ import {
   DialogTitle,
 } from "@nimara/ui/components/dialog";
 
-import { useRouter } from "@/i18n/routing";
-import { delay } from "@/others/checkout/delay";
+import { delay } from "@/features/checkout/delay";
 import { formatPaymentMethod } from "@/features/checkout/payment";
-import { type TranslationMessage } from "@nimara/foundation/i18n/types";
+import { useRouter } from "@/i18n/routing";
 
 import { paymentMethodDeleteAction } from "../actions";
 

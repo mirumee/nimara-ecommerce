@@ -11,14 +11,14 @@ import {
   type CountryOption,
 } from "@nimara/domain/objects/Address";
 import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
+import { AddressForm } from "@nimara/foundation/address/address-form/address-form";
+import { CheckboxField } from "@nimara/foundation/form-components/checkbox-field";
 import { ADDRESS_CORE_FIELDS } from "@nimara/infrastructure/consts";
 import { Button } from "@nimara/ui/components/button";
 import { DialogClose } from "@nimara/ui/components/dialog";
 import { Form } from "@nimara/ui/components/form";
 import { useToast } from "@nimara/ui/hooks";
 
-import { AddressForm } from "@nimara/foundation/address/address-form/address-form";
-import { CheckboxField } from "@nimara/foundation/form-components/checkbox-field";
 import { storefrontLogger } from "@/services/logging";
 
 import { createNewAddress } from "./actions";

@@ -5,4 +5,3 @@ import { REGIONS_CONFIG } from "./config";
 export const { getCurrentRegion } = createRegions(REGIONS_CONFIG);
 
 export { useCurrentRegion } from "./use-current-region";
-

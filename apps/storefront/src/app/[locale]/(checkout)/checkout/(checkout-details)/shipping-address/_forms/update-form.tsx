@@ -10,13 +10,13 @@ import {
   type CountryOption,
 } from "@nimara/domain/objects/Address";
 import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
+import { AddressForm } from "@nimara/foundation/address/address-form/address-form";
 import { ADDRESS_CORE_FIELDS } from "@nimara/infrastructure/consts";
 import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
 
-import { AddressForm } from "@nimara/foundation/address/address-form/address-form";
-import { useRouter } from "@/i18n/routing";
 import { paths } from "@/foundation/routing/paths";
+import { useRouter } from "@/i18n/routing";
 import { storefrontLogger } from "@/services/logging";
 
 import { accountAddressUpdateAction } from "./actions";

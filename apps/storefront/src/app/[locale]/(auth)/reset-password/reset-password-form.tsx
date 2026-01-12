@@ -7,14 +7,14 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
+import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
+import { type GetTranslations } from "@nimara/foundation/i18n/types";
 import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
 
-import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
-import { LocalizedLink } from "@/i18n/routing";
 import { useCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
-import { type GetTranslations } from "@nimara/foundation/i18n/types";
+import { LocalizedLink } from "@/i18n/routing";
 
 import { requestPasswordResetAction } from "./action";
 

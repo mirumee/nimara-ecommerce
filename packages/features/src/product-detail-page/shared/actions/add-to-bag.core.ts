@@ -1,20 +1,20 @@
-import { type User } from "@nimara/domain/objects/User";
 import { type AsyncResult } from "@nimara/domain/objects/Result";
-import type { ServiceRegistry } from "@nimara/infrastructure/types";
+import { type User } from "@nimara/domain/objects/User";
 import type { Region } from "@nimara/foundation/regions/types";
+import type { ServiceRegistry } from "@nimara/infrastructure/types";
 
 export type AddToBagCtx = {
-    region: Region;
-    cartId: string | null;
-    accessToken: string | null;
-    cacheTTL: {
-        cart: number;
-    };
+  accessToken: string | null;
+  cacheTTL: {
+    cart: number;
+  };
+  cartId: string | null;
+  region: Region;
 };
 
 export type AddToBagInput = {
-    variantId: string;
-    quantity?: number;
+  quantity?: number;
+  variantId: string;
 };
 
 export type AddToBagResult = AsyncResult<{ cartId: string }>;
@@ -29,42 +29,42 @@ export type AddToBagResult = AsyncResult<{ cartId: string }>;
  * @returns A promise that resolves to the result of adding items to the cart
  */
 export async function addToBag(
-    services: ServiceRegistry,
-    input: AddToBagInput,
-    ctx: AddToBagCtx,
+  services: ServiceRegistry,
+  input: AddToBagInput,
+  ctx: AddToBagCtx,
 ): Promise<AddToBagResult> {
-    const { variantId, quantity = 1 } = input;
-    const { region, cartId, accessToken, cacheTTL } = ctx;
+  const { variantId, quantity = 1 } = input;
+  const { region, cartId, accessToken, cacheTTL } = ctx;
 
-    services.logger.debug("Adding item to bag", { variantId, quantity });
+  services.logger.debug("Adding item to bag", { variantId, quantity });
 
-    // Get user if access token is available
-    let userData: User | null = null;
-    if (accessToken) {
-        const userGetResult = await services.user.userGet(accessToken);
+  // Get user if access token is available
+  let userData: User | null = null;
 
-        if (userGetResult.ok) {
-            userData = userGetResult.data;
-        }
+  if (accessToken) {
+    const userGetResult = await services.user.userGet(accessToken);
+
+    if (userGetResult.ok) {
+      userData = userGetResult.data;
     }
+  }
 
-    // Add item to cart
-    const result = await services.cart.linesAdd({
-        email: userData?.email,
-        channel: region.market.channel,
-        languageCode: region.language.code,
-        cartId,
-        lines: [{ variantId, quantity }],
-        options: cartId
-            ? {
-                next: {
-                    tags: [`CHECKOUT:${cartId}`],
-                    revalidate: cacheTTL.cart,
-                },
-            }
-            : undefined,
-    });
+  // Add item to cart
+  const result = await services.cart.linesAdd({
+    email: userData?.email,
+    channel: region.market.channel,
+    languageCode: region.language.code,
+    cartId,
+    lines: [{ variantId, quantity }],
+    options: cartId
+      ? {
+          next: {
+            tags: [`CHECKOUT:${cartId}`],
+            revalidate: cacheTTL.cart,
+          },
+        }
+      : undefined,
+  });
 
-    return result;
+  return result;
 }
-

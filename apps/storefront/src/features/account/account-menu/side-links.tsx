@@ -2,12 +2,12 @@
 
 import { useTranslations } from "next-intl";
 
+import { type TranslationMessage } from "@nimara/foundation/i18n/types";
 import { Button } from "@nimara/ui/components/button";
 import { cn } from "@nimara/ui/lib/utils";
 
-import { LocalizedLink, usePathname } from "@/i18n/routing";
 import { paths } from "@/foundation/routing/paths";
-import { type TranslationMessage } from "@nimara/foundation/i18n/types";
+import { LocalizedLink, usePathname } from "@/i18n/routing";
 
 import { logout } from "./actions";
 
@@ -20,18 +20,18 @@ export function SideLinks() {
     href: string;
     title: TranslationMessage;
   }[] = [
-      { title: "account.order-history", href: paths.account.orders.asPath() },
-      { title: "account.addresses", href: paths.account.addresses.asPath() },
-      { title: "account.personal-data", href: paths.account.profile.asPath() },
-      {
-        title: "account.privacy-settings",
-        href: paths.account.privacySettings.asPath(),
-      },
-      {
-        title: "payment.payment-methods",
-        href: paths.account.paymentMethods.asPath(),
-      },
-    ];
+    { title: "account.order-history", href: paths.account.orders.asPath() },
+    { title: "account.addresses", href: paths.account.addresses.asPath() },
+    { title: "account.personal-data", href: paths.account.profile.asPath() },
+    {
+      title: "account.privacy-settings",
+      href: paths.account.privacySettings.asPath(),
+    },
+    {
+      title: "payment.payment-methods",
+      href: paths.account.paymentMethods.asPath(),
+    },
+  ];
 
   return (
     <ul className="no-scrollbar flex gap-x-1 overflow-auto whitespace-nowrap py-3 md:flex-col md:gap-x-0 md:gap-y-0.5 md:whitespace-normal md:py-0">

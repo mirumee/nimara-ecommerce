@@ -1,20 +1,19 @@
+import { generateStandardHomeMetadata } from "@nimara/features/home-page/shared/metadata/standard-metadata";
+import { type HomeViewProps } from "@nimara/features/home-page/shared/types";
+import { StandardHomeView } from "@nimara/features/home-page/shop-basic-home/standard";
+
 import { getAccessToken } from "@/auth";
 import { clientEnvs } from "@/envs/client";
 import { paths } from "@/foundation/routing/paths";
 import { getServiceRegistry } from "@/services/registry";
-import { StandardHomeView } from "@nimara/features/home-page/shop-basic-home/standard";
-import { generateStandardHomeMetadata } from "@nimara/features/home-page/shared/metadata/standard-metadata";
 
-export async function generateMetadata(props: any) {
+export async function generateMetadata() {
   const storefrontUrl = clientEnvs.NEXT_PUBLIC_STOREFRONT_URL;
 
-  return generateStandardHomeMetadata({
-    ...props,
-    storefrontUrl,
-  });
+  return generateStandardHomeMetadata({ storefrontUrl });
 }
 
-export default async function Page(props: any) {
+export default async function Page(props: HomeViewProps) {
   const services = await getServiceRegistry();
   const accessToken = await getAccessToken();
 
@@ -22,7 +21,7 @@ export default async function Page(props: any) {
     <StandardHomeView
       {...props}
       services={services}
-      accessToken={accessToken}
+      accessToken={accessToken || null}
       paths={{
         search: paths.search.asPath(),
         product: (slug) => paths.products.asPath({ slug }),

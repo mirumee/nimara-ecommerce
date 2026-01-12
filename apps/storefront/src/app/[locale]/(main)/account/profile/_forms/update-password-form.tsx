@@ -4,12 +4,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 
+import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
 import { Button } from "@nimara/ui/components/button";
 import { DialogFooter } from "@nimara/ui/components/dialog";
 import { Form } from "@nimara/ui/components/form";
 import { useToast } from "@nimara/ui/hooks";
 
-import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
 import { MIN_PASSWORD_LENGTH } from "@/config";
 
 import { updateUserPassword } from "./actions";

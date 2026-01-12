@@ -2,17 +2,16 @@ import { Suspense } from "react";
 
 import { Skeleton } from "@nimara/ui/components/skeleton";
 
-import { RelatedProductsContainer } from "../shared/components/related-products-container";
-import { RelatedProductsSkeleton } from "../shared/components/related-products-skeleton";
-import { type PDPViewProps } from "../shared/types";
-
 import { AttributesDropdown } from "../shared/components/attributes-dropdown";
 import { ProductBreadcrumbs } from "../shared/components/product-breadcrumbs";
 import { ProductHighlights } from "../shared/components/product-highlights";
 import { ProductMediaWrapper } from "../shared/components/product-media-wrapper";
 import { ProductTitle } from "../shared/components/product-title";
+import { RelatedProductsContainer } from "../shared/components/related-products-container";
+import { RelatedProductsSkeleton } from "../shared/components/related-products-skeleton";
 import { VariantSelectorWrapper } from "../shared/components/variant-selector-wrapper";
 import { ProductProvider } from "../shared/providers/product-provider";
+import { type PDPViewProps } from "../shared/types";
 
 /**
  * Standard view for the product details page.
@@ -74,7 +73,11 @@ export const StandardPDPView = async ({
           </div>
 
           <Suspense fallback={<RelatedProductsSkeleton />}>
-            <RelatedProductsContainer slug={slug} services={services} productPath={paths.product} />
+            <RelatedProductsContainer
+              slug={slug}
+              services={services}
+              productPath={paths.product}
+            />
           </Suspense>
         </div>
       )}

@@ -5,12 +5,11 @@ import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 
 import { type User } from "@nimara/domain/objects/User";
+import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
 import { Button } from "@nimara/ui/components/button";
 import { DialogFooter } from "@nimara/ui/components/dialog";
 import { Form } from "@nimara/ui/components/form";
 import { useToast } from "@nimara/ui/hooks";
-
-import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
 
 import { updateUserName } from "./actions";
 import { type UpdateNameFormSchema, updateNameFormSchema } from "./schema";

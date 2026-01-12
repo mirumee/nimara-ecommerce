@@ -5,19 +5,19 @@ import { useTranslations } from "next-intl";
 import { useCallback, useState } from "react";
 
 import { type BaseError } from "@nimara/domain/objects/Error";
+import { useLocalizedLink } from "@nimara/foundation/i18n/hooks/use-localized-link";
+import { type TranslationMessage } from "@nimara/foundation/i18n/types.js";
 import { Button } from "@nimara/ui/components/button";
 import { ToastAction } from "@nimara/ui/components/toast";
 import { useToast } from "@nimara/ui/hooks";
 
-import { TranslationMessage } from "@nimara/foundation/i18n/types.js";
-import { useLocalizedLink } from "@nimara/foundation/i18n/hooks/use-localized-link";
 import { type AddToBagAction } from "../types";
 
 type AddToBagProps = {
+  addToBagAction: AddToBagAction;
+  cartPath: string;
   isVariantAvailable: boolean;
   variantId: string;
-  cartPath: string;
-  addToBagAction: AddToBagAction;
 };
 
 export const AddToBag = ({
@@ -54,10 +54,7 @@ export const AddToBag = ({
         description: t("common.product-added"),
         action: (
           <ToastAction altText={t("common.go-to-bag")} asChild>
-            <LocalizedLink
-              href={cartPath}
-              className="whitespace-nowrap"
-            >
+            <LocalizedLink href={cartPath} className="whitespace-nowrap">
               {t("common.go-to-bag")}
             </LocalizedLink>
           </ToastAction>

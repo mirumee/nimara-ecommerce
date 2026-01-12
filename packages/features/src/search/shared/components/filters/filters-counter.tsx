@@ -11,8 +11,6 @@ export const getActiveFiltersCount = (
   }).length;
 };
 
-
-
 export const FiltersCounter = ({
   facets,
   searchParams,

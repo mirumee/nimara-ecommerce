@@ -1,4 +1,11 @@
-import { type LanguageIdOf, type MarketIdOf, type MarketOf, type RegionOf, type SupportedCurrencyOf, type SupportedLocaleOf } from "@nimara/foundation/regions/types";
+import {
+  type LanguageIdOf,
+  type MarketIdOf,
+  type MarketOf,
+  type RegionOf,
+  type SupportedCurrencyOf,
+  type SupportedLocaleOf,
+} from "@nimara/foundation/regions/types";
 
 import { type REGIONS_CONFIG } from "./config";
 

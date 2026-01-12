@@ -8,7 +8,7 @@
     "dev:inspect": "NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint --dir src --fix",
+    "lint": "eslint . --ext .js,.ts,.tsx --fix",
     "lint:staged": "lint-staged",
     "test": "vitest run",
     "test:watch": "vitest --watch"

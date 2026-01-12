@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
-import { GenerateStandardPDPMetadataProps } from "../types";
-
+import { type GenerateStandardPDPMetadataProps } from "../types";
 
 /**
  * Generates metadata for the product details page.
@@ -15,65 +14,62 @@ import { GenerateStandardPDPMetadataProps } from "../types";
  */
 
 export async function generateStandardPDPMetadata({
-    params,
-    services,
-    storefrontUrl,
-    productPath,
+  params,
+  services,
+  storefrontUrl,
+  productPath,
 }: GenerateStandardPDPMetadataProps): Promise<Metadata> {
-    const [{ slug }, t] = await Promise.all([
-        params,
-        getTranslations("products"),
-    ]);
+  const [{ slug }, t] = await Promise.all([
+    params,
+    getTranslations("products"),
+  ]);
 
-    const url = new URL(
-        productPath,
-        storefrontUrl,
-    );
-    const canonicalUrl = url.toString();
+  const url = new URL(productPath, storefrontUrl);
+  const canonicalUrl = url.toString();
 
-    const result = await services.store.getProductBase({
-        productSlug: slug,
-        channel: services.region.market.channel,
-        languageCode: services.region.language.code,
-        countryCode: services.region.market.countryCode,
-        options: {
-            next: {
-                revalidate: services.config.cacheTTL.pdp,
-                tags: [`PRODUCT:${slug}`, "DETAIL-PAGE:PRODUCT"],
-            },
-        },
-    });
+  const result = await services.store.getProductBase({
+    productSlug: slug,
+    channel: services.region.market.channel,
+    languageCode: services.region.language.code,
+    countryCode: services.region.market.countryCode,
+    options: {
+      next: {
+        revalidate: services.config.cacheTTL.pdp,
+        tags: [`PRODUCT:${slug}`, "DETAIL-PAGE:PRODUCT"],
+      },
+    },
+  });
 
-    if (!result.data?.product) {
-        return {
-            title: "Product",
-            description: "Product details",
-        };
-    }
-
-    const fallbackDescription = result?.data?.product?.name
-        ? t("check-out-the-product", { productName: result?.data?.product?.name })
-        : t("discover-our-product");
-
-    const ogImageUrl = `${storefrontUrl}/products/${slug}/opengraph-image`;
-
+  if (!result.data?.product) {
     return {
-        title: result.data.product.seo.title || result.data.product.name,
-        description: result.data?.product?.seo.description ?? fallbackDescription,
-        alternates: {
-            canonical: canonicalUrl,
-        },
-        openGraph: {
-            images: [
-                {
-                    url: ogImageUrl,
-                    width: 1200,
-                    height: 630,
-                    alt: result.data.product.name,
-                },
-            ],
-            url: canonicalUrl,
-            siteName: "Nimara Store",
-        },
+      title: "Product",
+      description: "Product details",
     };
+  }
+
+  const fallbackDescription = result?.data?.product?.name
+    ? t("check-out-the-product", { productName: result?.data?.product?.name })
+    : t("discover-our-product");
+
+  const ogImageUrl = `${storefrontUrl}/products/${slug}/opengraph-image`;
+
+  return {
+    title: result.data.product.seo.title || result.data.product.name,
+    description: result.data?.product?.seo.description ?? fallbackDescription,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: result.data.product.name,
+        },
+      ],
+      url: canonicalUrl,
+      siteName: "Nimara Store",
+    },
+  };
 }

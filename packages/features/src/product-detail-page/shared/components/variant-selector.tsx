@@ -7,26 +7,25 @@ import {
   type Product,
   type ProductAvailability,
 } from "@nimara/domain/objects/Product";
+import { Price } from "@nimara/features/shared/product/price";
 import { Label } from "@nimara/ui/components/label";
 import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@nimara/ui/components/toggle-group";
-
-import { Price } from "@nimara/features/shared/product/price";
 import { cn } from "@nimara/ui/lib/utils";
 
 import { useVariantSelection } from "../hooks/useVariantSelection";
+import { type AddToBagAction } from "../types";
 import { AddToBag } from "./add-to-bag";
 import { VariantDropdown } from "./variant-dropdown";
-import { type AddToBagAction } from "../types";
 
 type VariantSelectorProps = {
+  addToBagAction: AddToBagAction;
   cart: Cart | null;
+  cartPath: string;
   product: Product;
   productAvailability: ProductAvailability;
-  cartPath: string;
-  addToBagAction: AddToBagAction;
 };
 
 export const VariantSelector = ({
@@ -116,7 +115,8 @@ export const VariantSelector = ({
                   .sort((a, b) => a.name.localeCompare(b.name))
                   .map(({ slug: valueSlug, name: valueName, value }) => {
                     const isSelected = chosenAttributes.some(
-                      (attr) => attr?.slug === slug && attr?.value === valueSlug,
+                      (attr) =>
+                        attr?.slug === slug && attr?.value === valueSlug,
                     );
 
                     return type === "SWATCH" ? (

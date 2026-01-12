@@ -4,8 +4,8 @@ import type { Checkout } from "@nimara/domain/objects/Checkout";
 import type { User } from "@nimara/domain/objects/User";
 import { Button } from "@nimara/ui/components/button";
 
-import { LocalizedLink } from "@/i18n/routing";
 import { paths } from "@/foundation/routing/paths";
+import { LocalizedLink } from "@/i18n/routing";
 import { getCheckoutService } from "@/services/checkout";
 import { storefrontLogger } from "@/services/logging";
 

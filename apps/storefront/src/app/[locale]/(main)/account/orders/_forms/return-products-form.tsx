@@ -6,12 +6,12 @@ import type { ReactNode } from "react";
 import { useForm } from "react-hook-form";
 
 import type { Order } from "@nimara/domain/objects/Order";
+import { CheckboxField } from "@nimara/foundation/form-components/checkbox-field";
 import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
 import { useToast } from "@nimara/ui/hooks";
 
 import { isOrderLineReturned } from "@/app/[locale]/(main)/account/orders/helpers/is-order-line-returned";
-import { CheckboxField } from "@nimara/foundation/form-components/checkbox-field";
 
 import { returnProducts } from "./actions";
 import { type FormSchema, formSchema } from "./schema";

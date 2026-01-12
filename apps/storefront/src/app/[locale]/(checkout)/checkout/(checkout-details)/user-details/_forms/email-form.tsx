@@ -5,13 +5,13 @@ import type { UseFormReturn } from "react-hook-form";
 
 import type { FieldType } from "@nimara/domain/objects/AddressForm";
 import type { Checkout } from "@nimara/domain/objects/Checkout";
+import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
+import type { TranslationMessage } from "@nimara/foundation/i18n/types";
+import { cn } from "@nimara/foundation/lib/cn";
 import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
 
-import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
 import { useRouterWithState } from "@/foundation/use-router-with-state";
-import { cn } from "@nimara/foundation/lib/cn";
-import type { TranslationMessage } from "@nimara/foundation/i18n/types";
 
 import { checkIfUserHasAnAccount, updateUserDetails } from "./actions";
 import { type EmailFormSchema } from "./schema";

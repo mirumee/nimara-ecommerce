@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
+import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
 import { Button } from "@nimara/ui/components/button";
 import {
   DialogClose,
@@ -14,7 +15,6 @@ import {
 } from "@nimara/ui/components/dialog";
 import { Form } from "@nimara/ui/components/form";
 
-import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
 import { CHANGE_EMAIL_TOKEN_VALIDITY_IN_HOURS } from "@/config";
 
 import { updateUserEmail } from "./actions";

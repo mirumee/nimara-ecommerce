@@ -10,16 +10,15 @@ import type {
   Product,
   ProductAvailability,
 } from "@nimara/domain/objects/Product";
+import { useSelectedVariantImages } from "@nimara/features/product-detail-page/shared/hooks/useSelectedVariantImage";
+import { useVariantSelection } from "@nimara/features/product-detail-page/shared/hooks/useVariantSelection";
+import { DiscountBadge } from "@nimara/features/shared/product/discount-badge";
+import { ProductImagePlaceholder } from "@nimara/features/shared/product/product-image-placeholder";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
 } from "@nimara/ui/components/carousel";
-
-import { DiscountBadge } from "@nimara/features/shared/product/discount-badge";
-import { ProductImagePlaceholder } from "@nimara/features/shared/product/product-image-placeholder";
-import { useSelectedVariantImages } from "@nimara/features/product-detail-page/shared/hooks/useSelectedVariantImage";
-import { useVariantSelection } from "@nimara/features/product-detail-page/shared/hooks/useVariantSelection";
 import { cn } from "@nimara/ui/lib/utils";
 
 type ProductMediaProps = {

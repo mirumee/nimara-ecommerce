@@ -6,15 +6,15 @@ import { type ReactNode, useEffect, useState } from "react";
 
 import type { Menu } from "@nimara/domain/objects/Menu";
 import type { User } from "@nimara/domain/objects/User";
+import { cn } from "@nimara/foundation/lib/cn";
+import { MobileNavigation } from "@nimara/foundation/navigation/mobile-navigation";
 import { Button } from "@nimara/ui/components/button";
 import { DialogTitle } from "@nimara/ui/components/dialog";
 import { Sheet, SheetContent } from "@nimara/ui/components/sheet";
 
-import { MobileNavigation } from "@nimara/foundation/navigation/mobile-navigation";
-import { LocalizedLink, usePathname } from "@/i18n/routing";
 import { useCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
-import { cn } from "@nimara/foundation/lib/cn";
+import { LocalizedLink, usePathname } from "@/i18n/routing";
 
 import { LocaleSwitch } from "./locale-switch";
 import { Logo } from "./logo";

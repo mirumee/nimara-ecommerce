@@ -4,12 +4,12 @@ import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { createPortal } from "react-dom";
 
+import type { Region } from "@nimara/foundation/regions/types";
 import { Button } from "@nimara/ui/components/button";
 import { Label } from "@nimara/ui/components/label";
 
 import { MARKETS } from "@/foundation/regions/config";
 import { type MarketId } from "@/foundation/regions/types";
-import type { Region } from "@nimara/foundation/regions/types";
 
 import { ContinentRow } from "./continent-row";
 

@@ -6,16 +6,16 @@ import { useTranslations } from "next-intl";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
+import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
 import { Button } from "@nimara/ui/components/button";
 import { Form } from "@nimara/ui/components/form";
 import { useToast } from "@nimara/ui/hooks";
 
-import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
 import { login } from "@/foundation/auth/login";
 import { useRouterWithState } from "@/foundation/use-router-with-state";
 
-import { type SignInSchema, signInSchema } from "./schema";
 import { ResetPasswordLink } from "../reset-password-link";
+import { type SignInSchema, signInSchema } from "./schema";
 
 export function SignInForm({ redirectUrl }: { redirectUrl?: string }) {
   const t = useTranslations();
@@ -86,10 +86,10 @@ export function SignInForm({ redirectUrl }: { redirectUrl?: string }) {
         >
           {(form?.formState?.errors?.email ||
             form?.formState?.errors?.password) && (
-              <p className="text-destructive pb-2 text-sm">
-                {t("auth.sign-in-error")}
-              </p>
-            )}
+            <p className="text-destructive pb-2 text-sm">
+              {t("auth.sign-in-error")}
+            </p>
+          )}
           <div className="text-foreground w-full">
             <TextFormField
               name="email"

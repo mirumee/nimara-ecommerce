@@ -9,9 +9,7 @@ import { REGIONS_CONFIG } from "./config";
 const { parseRegion } = createRegions(REGIONS_CONFIG);
 
 export const useCurrentRegion = () => {
-    const locale = useLocale();
+  const locale = useLocale();
 
-    return Object.freeze(parseRegion(locale));
+  return Object.freeze(parseRegion(locale));
 };
-
-

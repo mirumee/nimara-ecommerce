@@ -1,6 +1,6 @@
 import { getAccessToken } from "@/auth";
+import { getCheckoutOrRedirect } from "@/features/checkout/checkout-actions";
 import type { SupportedLocale } from "@/foundation/regions/types";
-import { getCheckoutOrRedirect } from "@/others/checkout/checkout-actions";
 import { getUserService } from "@/services/user";
 
 import { validateCheckoutStepAction } from "./actions";

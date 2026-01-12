@@ -1,8 +1,8 @@
 import { useTranslations } from "next-intl";
 
 import { type PaypalPaymentMethod } from "@nimara/domain/objects/Payment";
-import { MethodFormItem } from "./method-form-item";
 
+import { MethodFormItem } from "./method-form-item";
 
 export const PaypalList = ({ items }: { items: PaypalPaymentMethod[] }) => {
   const t = useTranslations();

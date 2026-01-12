@@ -2,9 +2,9 @@ import { getTranslations } from "next-intl/server";
 
 import BrandLogo from "@/assets/brand-logo-dark.svg";
 import { CACHE_TTL } from "@/config";
-import { LocalizedLink } from "@/i18n/routing";
 import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
+import { LocalizedLink } from "@/i18n/routing";
 import { cmsMenuService } from "@/services/cms";
 
 export const Footer = async () => {

@@ -3,6 +3,7 @@
 ## Problem
 
 The `add-to-bag.ts` action is in the `packages/features` package but depends on storefront-specific imports:
+
 - `@/auth` - `getAccessToken()`
 - `@/config` - `CACHE_TTL`
 - `@/nimara/foundation/regions` - `getCurrentRegion()`
@@ -79,11 +80,11 @@ export const createAddToBagAction = (deps: AddToBagDependencies) => {
       lines: [{ variantId, quantity }],
       options: cookieCartId
         ? {
-          next: {
-            tags: [`CHECKOUT:${cookieCartId}`],
-            revalidate: deps.cacheTTL.cart,
-          },
-        }
+            next: {
+              tags: [`CHECKOUT:${cookieCartId}`],
+              revalidate: deps.cacheTTL.cart,
+            },
+          }
         : undefined,
     });
 
@@ -152,7 +153,9 @@ import { useLocalizedLink } from "@nimara/foundation/i18n/hooks/use-localized-li
 type AddToBagAction = (params: {
   variantId: string;
   quantity?: number;
-}) => Promise<import("@nimara/domain/objects/Result").Result<{ cartId: string }>>;
+}) => Promise<
+  import("@nimara/domain/objects/Result").Result<{ cartId: string }>
+>;
 
 type AddToBagProps = {
   isVariantAvailable: boolean;
@@ -161,9 +164,9 @@ type AddToBagProps = {
   addToBagAction: AddToBagAction;
 };
 
-export const AddToBag = ({ 
-  variantId, 
-  isVariantAvailable, 
+export const AddToBag = ({
+  variantId,
+  isVariantAvailable,
   cartPath,
   addToBagAction,
 }: AddToBagProps) => {
@@ -183,12 +186,14 @@ import { AddToBag } from "./add-to-bag";
 ```
 
 **Pros:**
+
 - ✅ Features package is decoupled from storefront
 - ✅ Testable with mock dependencies
 - ✅ Reusable across different apps
 - ✅ Type-safe
 
 **Cons:**
+
 - ⚠️ Requires passing action through component tree
 - ⚠️ More boilerplate
 
@@ -207,7 +212,10 @@ import { AddToBag } from "./add-to-bag";
 export interface ServiceRegistry {
   // ... existing services
   actions: {
-    addToBag: (params: { variantId: string; quantity?: number }) => Promise<Result<{ cartId: string }>>;
+    addToBag: (params: {
+      variantId: string;
+      quantity?: number;
+    }) => Promise<Result<{ cartId: string }>>;
   };
 }
 ```
@@ -240,11 +248,13 @@ const { actions } = services;
 ```
 
 **Pros:**
+
 - ✅ Consistent with existing ServiceRegistry pattern
 - ✅ Centralized service management
 - ✅ Easy to extend
 
 **Cons:**
+
 - ⚠️ Actions mixed with services in registry
 - ⚠️ Server components need to pass actions to client components
 
@@ -285,16 +295,20 @@ type AddToBagProps = {
   isVariantAvailable: boolean;
   variantId: string;
   cartPath: string;
-  addToBagAction: (params: AddToBagActionParams) => Promise<AddToBagActionResult>;
+  addToBagAction: (
+    params: AddToBagActionParams,
+  ) => Promise<AddToBagActionResult>;
 };
 ```
 
 **Pros:**
+
 - ✅ Simplest solution
 - ✅ No abstraction needed
 - ✅ Storefront-specific logic stays in storefront
 
 **Cons:**
+
 - ⚠️ Less reusable (action not in features package)
 - ⚠️ Each app needs its own action implementation
 
@@ -325,15 +339,14 @@ type AddToBagProps = {
 import { addToBagAction } from "@/nimara/features/product-detail-page/actions/add-to-bag";
 
 // In VariantSelectorWrapper (server component)
-<VariantSelector 
+<VariantSelector
   addToBagAction={addToBagAction}
   // ... other props
 />
 
 // In VariantSelector (client component)
-<AddToBag 
+<AddToBag
   addToBagAction={addToBagAction}
   // ... other props
 />
 ```
-

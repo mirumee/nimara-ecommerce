@@ -4,15 +4,15 @@ import {
   type Product,
   type ProductAvailability,
 } from "@nimara/domain/objects/Product";
+import { JsonLd, productToJsonLd } from "@nimara/features/json-ld/json-ld";
 import type { ServiceRegistry } from "@nimara/infrastructure/types";
 
-import { JsonLd, productToJsonLd } from "@nimara/features/json-ld/json-ld";
 import { NuqsWrapper } from "./nuqs-wrapper";
 
 export interface ProductProviderProps {
   render: (data: Product, availability: ProductAvailability) => React.ReactNode;
-  slug: string;
   services: ServiceRegistry;
+  slug: string;
 }
 
 export const ProductProvider = async ({

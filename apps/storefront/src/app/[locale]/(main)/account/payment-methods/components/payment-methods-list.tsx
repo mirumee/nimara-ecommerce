@@ -6,10 +6,13 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { type PaymentMethod } from "@nimara/domain/objects/Payment";
+import { type TranslationMessage } from "@nimara/foundation/i18n/types";
 import { Button } from "@nimara/ui/components/button";
 
-import { formatPaymentMethod, groupPaymentMethods } from "@/features/checkout/payment";
-import { type TranslationMessage } from "@nimara/foundation/i18n/types";
+import {
+  formatPaymentMethod,
+  groupPaymentMethods,
+} from "@/features/checkout/payment";
 
 const PaymentMethodDeleteModal = dynamic(
   () =>

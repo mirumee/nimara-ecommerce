@@ -5,24 +5,23 @@ import { type ServiceRegistry } from "@nimara/infrastructure/types";
 import { ErrorServiceClient } from "./error-service-client";
 
 export interface ErrorServiceServerProps {
-    services: ServiceRegistry;
+  services: ServiceRegistry;
 }
 
 export const ErrorServiceServer = async ({
-    services,
+  services,
 }: ErrorServiceServerProps) => {
-    const accessToken = services.accessToken;
-    const userService = services.user;
+  const accessToken = services.accessToken;
+  const userService = services.user;
 
-    const resultUserGet = await userService.userGet(accessToken);
-    const user = resultUserGet.ok ? resultUserGet.data : null;
+  const resultUserGet = await userService.userGet(accessToken);
+  const user = resultUserGet.ok ? resultUserGet.data : null;
 
-    const contextUser: Sentry.User | null = user
-        ? { email: user.email, id: user.id }
-        : null;
+  const contextUser: Sentry.User | null = user
+    ? { email: user.email, id: user.id }
+    : null;
 
-    Sentry.setUser(contextUser);
+  Sentry.setUser(contextUser);
 
-    return <ErrorServiceClient user={user} />;
+  return <ErrorServiceClient user={user} />;
 };
-

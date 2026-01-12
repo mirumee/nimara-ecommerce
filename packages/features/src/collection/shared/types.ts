@@ -8,21 +8,33 @@ import type { ServiceRegistry } from "@nimara/infrastructure/types";
  * @property searchParams - A promise that resolves to an object containing search parameters.
  */
 export interface CollectionViewProps {
-    params: Promise<{ locale: SupportedLocale; slug: string }>;
-    searchParams: Promise<{
-        after?: string;
-        before?: string;
-        limit?: string;
-    }>;
-    services: ServiceRegistry;
-    paths: {
-        home: string;
-        collection: (slug: string) => string;
-        product: (slug: string) => string;
-    };
-    localePrefixes: Record<Exclude<SupportedLocale, "en-US">, string>;
-    defaultLocale: SupportedLocale;
-    defaultResultsPerPage: number;
+  params: Promise<{ locale: SupportedLocale; slug: string }>;
+  searchParams: Promise<{
+    after?: string;
+    before?: string;
+    limit?: string;
+  }>;
+}
+
+/**
+ * Enhanced type definition for the properties of the standard collection view.
+ * Extends the base CollectionViewProps with additional properties specific to the standard view.
+ * @property defaultLocale - The default locale for the collection view.
+ * @property defaultResultsPerPage - The default number of results to display per page.
+ * @property paths - An object containing functions to generate paths for collection, home, and product pages.
+ * @property localePrefixes - A record mapping supported locales (excluding "en-US") to their respective URL prefixes.
+ * @property services - The service registry containing all necessary services for the collection view.
+ */
+export interface StandardCollectionViewProps extends CollectionViewProps {
+  defaultLocale: SupportedLocale;
+  defaultResultsPerPage: number;
+  paths: {
+    collection: (slug: string) => string;
+    home: string;
+    product: (slug: string) => string;
+  };
+  localePrefixes: Record<Exclude<SupportedLocale, "en-US">, string>;
+  services: ServiceRegistry;
 }
 
 /**
@@ -33,11 +45,10 @@ export interface CollectionViewProps {
  * @property collectionPath - The path to the collection page.
  * @property defaultResultsPerPage - The default number of results per page.
  */
-export interface GenerateStandardCollectionMetadataProps {
-    params: Promise<{ locale: SupportedLocale; slug: string }>;
-    services: ServiceRegistry;
-    storefrontUrl: string;
-    collectionPath: string;
-    defaultResultsPerPage: number;
+export interface StandardCollectionViewMetadataProps
+  extends CollectionViewProps {
+  collectionPath: string;
+  defaultResultsPerPage: number;
+  services: ServiceRegistry;
+  storefrontUrl: string;
 }
-

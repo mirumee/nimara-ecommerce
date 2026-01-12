@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import React from "react";
 
+import { useLocalizedLink } from "@nimara/foundation/i18n/hooks/use-localized-link";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,7 +12,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@nimara/ui/components/breadcrumb";
-import { useLocalizedLink } from "@nimara/foundation/i18n/hooks/use-localized-link";
 
 export const Breadcrumbs = ({
   crumbs,
@@ -19,8 +19,8 @@ export const Breadcrumbs = ({
   homePath,
 }: {
   crumbs?: { href: string; label: string }[];
-  pageName?: string;
   homePath: string;
+  pageName?: string;
 }) => {
   const t = useTranslations("home");
   const LocalizedLink = useLocalizedLink();
@@ -31,9 +31,7 @@ export const Breadcrumbs = ({
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <LocalizedLink href={homePath}>
-                {t("home")}
-              </LocalizedLink>
+              <LocalizedLink href={homePath}>{t("home")}</LocalizedLink>
             </BreadcrumbLink>
           </BreadcrumbItem>
           {(pageName || crumbs) && <BreadcrumbSeparator />}

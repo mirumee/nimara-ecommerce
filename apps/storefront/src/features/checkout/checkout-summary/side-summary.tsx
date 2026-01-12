@@ -3,13 +3,13 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { Button } from "@nimara/ui/components/button";
 import { Sheet, SheetContent, SheetTrigger } from "@nimara/ui/components/sheet";
 
-import { redirect } from "@/i18n/routing";
+import { getCheckoutId } from "@/features/checkout/cart";
+import { ErrorDialog } from "@/foundation/errors/components/error-dialog";
 import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
-import { getCheckoutId } from "@/features/checkout/cart";
+import { redirect } from "@/i18n/routing";
 import { getCheckoutService } from "@/services/checkout";
 
-import { ErrorDialog } from "@/foundation/errors/components/error-dialog";
 import { Summary } from "./summary";
 
 export const SideSummary = async () => {
