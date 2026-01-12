@@ -5,7 +5,7 @@ import { LockIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { type ReactNode, useEffect, useState } from "react";
-import { type SubmitHandler, useForm } from "react-hook-form";
+import { FormProvider, type SubmitHandler, useForm } from "react-hook-form";
 
 import { type AllCountryCode } from "@nimara/domain/consts";
 import { type CountryOption } from "@nimara/domain/objects/Address";
@@ -23,7 +23,6 @@ import { CheckboxField } from "@nimara/foundation/form-components/checkbox-field
 import { cn } from "@nimara/foundation/lib/cn";
 import { ADDRESS_DEFAULT_VALUES } from "@nimara/infrastructure/consts";
 import { Button } from "@nimara/ui/components/button";
-import { Form } from "@nimara/ui/components/form";
 import { Spinner } from "@nimara/ui/components/spinner";
 import {
   Tabs,
@@ -366,7 +365,7 @@ export const Payment = ({
   }, [countryCode, addressActiveTab]);
 
   return (
-    <Form {...form}>
+    <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(handlePlaceOrder)} noValidate>
         <div className="mb-8 space-y-6">
           <Tabs
@@ -479,6 +478,6 @@ export const Payment = ({
           </div>
         </div>
       </form>
-    </Form>
+    </FormProvider>
   );
 };

@@ -2,11 +2,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Mail } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { type SubmitHandler, useForm } from "react-hook-form";
+import { FormProvider, type SubmitHandler, useForm } from "react-hook-form";
 
 import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
 import { Button } from "@nimara/ui/components/button";
-import { Form } from "@nimara/ui/components/form";
 import { useToast } from "@nimara/ui/hooks";
 
 import { newsletterSubscribeAction } from "../actions/newsletter-subscribe";
@@ -57,7 +56,7 @@ export const Newsletter = () => {
             {t("newsletter.subscribe-description")}
           </p>
         </div>
-        <Form {...form}>
+        <FormProvider {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
             className="mt-8 items-start gap-4 sm:flex"
@@ -83,7 +82,7 @@ export const Newsletter = () => {
               </Button>
             </div>
           </form>
-        </Form>
+        </FormProvider>
       </div>
     </section>
   );

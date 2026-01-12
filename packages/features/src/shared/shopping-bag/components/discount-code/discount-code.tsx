@@ -4,13 +4,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 
 import type { Checkout } from "@nimara/domain/objects/Checkout";
 import type { BaseError } from "@nimara/domain/objects/Error";
 import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
 import { Button } from "@nimara/ui/components/button";
-import { Form } from "@nimara/ui/components/form";
 import { useToast } from "@nimara/ui/hooks";
 
 import { useDiscountCodeActions } from "../../hooks";
@@ -192,7 +191,7 @@ export const DiscountCode = ({
         </div>
 
         {!isCodeApplied && isOpen && actions && (
-          <Form {...form}>
+          <FormProvider {...form}>
             <form
               onSubmit={form.handleSubmit(handleSubmit)}
               className="mt-1 flex space-x-2"
@@ -214,7 +213,7 @@ export const DiscountCode = ({
                 {t("cart.redeem")}
               </Button>
             </form>
-          </Form>
+          </FormProvider>
         )}
       </div>
       <hr className="border-stone-200" />

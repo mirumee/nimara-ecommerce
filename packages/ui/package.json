@@ -42,7 +42,7 @@
     "lucide-react": "^0.544.0",
     "react": "19.1.1",
     "react-dom": "19.1.1",
-    "react-hook-form": "7.63.0",
+    "react-hook-form": "catalog:",
     "react-markdown": "10.1.0",
     "string-strip-html": "13.4.13",
     "tailwind-merge": "^2.6.0",

@@ -2,11 +2,10 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 
 import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
 import { Button } from "@nimara/ui/components/button";
-import { Form } from "@nimara/ui/components/form";
 
 import { MIN_PASSWORD_LENGTH } from "@/config";
 import { paths } from "@/foundation/routing/paths";
@@ -59,7 +58,7 @@ export function SignUpForm() {
   }
 
   return (
-    <Form {...form}>
+    <FormProvider {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
         className="flex flex-col gap-y-2"
@@ -139,6 +138,6 @@ export function SignUpForm() {
           {t("auth.create-account")}
         </Button>
       </form>
-    </Form>
+    </FormProvider>
   );
 }

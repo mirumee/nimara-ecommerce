@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 
 import { type AllCountryCode } from "@nimara/domain/consts";
 import { type CountryOption } from "@nimara/domain/objects/Address";
@@ -18,7 +18,6 @@ import {
 import { isGlobalError } from "@nimara/foundation/errors/errors";
 import { ADDRESS_CORE_FIELDS } from "@nimara/infrastructure/consts";
 import { Button } from "@nimara/ui/components/button";
-import { Form } from "@nimara/ui/components/form";
 import { useToast } from "@nimara/ui/hooks";
 
 import { updateCheckoutAddressAction } from "@/foundation/address/update-checkout-address-action";
@@ -91,7 +90,7 @@ export function ShippingAddressForm({
       <h3 className="scroll-m-20 text-2xl tracking-tight">
         {t("shipping-address.title")}
       </h3>
-      <Form {...form}>
+      <FormProvider {...form}>
         <form
           onSubmit={form.handleSubmit(handleSubmit)}
           className="flex flex-col gap-y-6"
@@ -115,7 +114,7 @@ export function ShippingAddressForm({
             {canProceed ? t("common.continue") : t("common.please-wait")}
           </Button>
         </form>
-      </Form>
+      </FormProvider>
     </section>
   );
 }

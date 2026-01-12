@@ -1,15 +1,18 @@
 "use client";
 
 import {
-  type ComponentProps,
+  type ComponentType,
   createContext,
   type ReactNode,
   useContext,
 } from "react";
 
-type LinkComponent = React.ComponentType<
-  ComponentProps<"a"> & { href: string }
->;
+type LinkComponent = ComponentType<{
+  [key: string]: any;
+  children?: React.ReactNode;
+  href: string;
+}>;
+
 type RouterHook = () => {
   back: () => void;
   forward: () => void;

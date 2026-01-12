@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 
 import type { Address } from "@nimara/domain/objects/Address";
 import type { Checkout } from "@nimara/domain/objects/Checkout";
@@ -10,7 +10,6 @@ import type { FormattedAddress } from "@nimara/foundation/address/types";
 import { isGlobalError } from "@nimara/foundation/errors/errors";
 import { RadioFormGroup } from "@nimara/foundation/form-components/radio-form-group";
 import { Button } from "@nimara/ui/components/button";
-import { Form } from "@nimara/ui/components/form";
 import { useToast } from "@nimara/ui/hooks";
 
 import { updateCheckoutAddressAction } from "@/foundation/address/update-checkout-address-action";
@@ -83,7 +82,7 @@ export function SavedAddresses({
   }
 
   return (
-    <Form {...form}>
+    <FormProvider {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
         className="space-y-8"
@@ -132,6 +131,6 @@ export function SavedAddresses({
           {isDisabled ? t("common.please-wait") : t("common.continue")}
         </Button>
       </form>
-    </Form>
+    </FormProvider>
   );
 }

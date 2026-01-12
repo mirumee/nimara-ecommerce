@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 
 import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
 import { Button } from "@nimara/ui/components/button";
@@ -13,7 +13,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@nimara/ui/components/dialog";
-import { Form } from "@nimara/ui/components/form";
 
 import { CHANGE_EMAIL_TOKEN_VALIDITY_IN_HOURS } from "@/config";
 
@@ -92,7 +91,7 @@ export function UpdateEmailForm({ oldEmail }: { oldEmail: string }) {
           </DialogClose>
         </div>
       ) : (
-        <Form {...form}>
+        <FormProvider {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
             className="flex flex-col gap-y-3 py-2"
@@ -126,7 +125,7 @@ export function UpdateEmailForm({ oldEmail }: { oldEmail: string }) {
               </Button>
             </DialogFooter>
           </form>
-        </Form>
+        </FormProvider>
       )}
     </>
   );

@@ -4,11 +4,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 
 import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
 import { Button } from "@nimara/ui/components/button";
-import { Form } from "@nimara/ui/components/form";
 import { useToast } from "@nimara/ui/hooks";
 
 import { login } from "@/foundation/auth/login";
@@ -77,7 +76,7 @@ export function SignInForm({ redirectUrl }: { redirectUrl?: string }) {
         {t("auth.sign-in")}
       </h1>
 
-      <Form {...form}>
+      <FormProvider {...form}>
         <form
           onSubmit={form.handleSubmit(handleSubmit)}
           className="flex flex-col gap-y-2"
@@ -118,7 +117,7 @@ export function SignInForm({ redirectUrl }: { redirectUrl?: string }) {
             {isDisabled ? t("common.please-wait") : t("auth.sign-in")}
           </Button>
         </form>
-      </Form>
+      </FormProvider>
     </>
   );
 }

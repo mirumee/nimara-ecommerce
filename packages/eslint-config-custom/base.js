@@ -120,6 +120,7 @@ const config = {
     "*.js",
     "*.jsx",
     "*.cjs",
+    "svg.d.ts",
     "src/checkout/graphql/*",
     "generated.ts",
     "tailwind.config.*",

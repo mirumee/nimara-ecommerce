@@ -4,7 +4,7 @@ import { cn } from "@nimara/ui/lib/utils";
 
 import ProductPlaceholder from "./assets/product_placeholder.svg";
 
-type ProductImagePlaceholderProps = ComponentProps<"svg">;
+type ProductImagePlaceholderProps = ComponentProps<typeof ProductPlaceholder>;
 
 export const ProductImagePlaceholder = ({
   className,

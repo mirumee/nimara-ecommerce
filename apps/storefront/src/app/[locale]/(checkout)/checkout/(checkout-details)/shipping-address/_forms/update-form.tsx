@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { type SubmitHandler, useForm } from "react-hook-form";
+import { FormProvider, type SubmitHandler, useForm } from "react-hook-form";
 
 import {
   type Address,
@@ -13,7 +13,6 @@ import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import { AddressForm } from "@nimara/foundation/address/address-form/address-form";
 import { ADDRESS_CORE_FIELDS } from "@nimara/infrastructure/consts";
 import { Button } from "@nimara/ui/components/button";
-import { Form } from "@nimara/ui/components/form";
 
 import { paths } from "@/foundation/routing/paths";
 import { useRouter } from "@/i18n/routing";
@@ -79,7 +78,7 @@ export const UpdateShippingAddressForm = ({
   }
 
   return (
-    <Form {...form}>
+    <FormProvider {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
         className="flex flex-col gap-y-6"
@@ -108,6 +107,6 @@ export const UpdateShippingAddressForm = ({
           </Button>
         </div>
       </form>
-    </Form>
+    </FormProvider>
   );
 };

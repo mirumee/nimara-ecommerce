@@ -1,10 +1,13 @@
-import { useFormContext } from "react-hook-form";
-
 import {
   type PaymentMethod as TPaymentMethods,
   type PaymentMethodType,
 } from "@nimara/domain/objects/Payment";
-import { FormControl, FormField, FormItem } from "@nimara/ui/components/form";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  useFormContext,
+} from "@nimara/ui/components/form";
 import { RadioGroup } from "@nimara/ui/components/radio-group";
 
 import { groupPaymentMethods } from "@/features/checkout/payment";

@@ -3,12 +3,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 
 import type { Order } from "@nimara/domain/objects/Order";
 import { CheckboxField } from "@nimara/foundation/form-components/checkbox-field";
 import { Button } from "@nimara/ui/components/button";
-import { Form } from "@nimara/ui/components/form";
 import { useToast } from "@nimara/ui/hooks";
 
 import { isOrderLineReturned } from "@/app/[locale]/(main)/account/orders/helpers/is-order-line-returned";
@@ -77,7 +76,7 @@ export const ReturnProductsForm = ({
   };
 
   return (
-    <Form {...form}>
+    <FormProvider {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
         className="space-y-4"
@@ -111,6 +110,6 @@ export const ReturnProductsForm = ({
           </Button>
         </div>
       </form>
-    </Form>
+    </FormProvider>
   );
 };

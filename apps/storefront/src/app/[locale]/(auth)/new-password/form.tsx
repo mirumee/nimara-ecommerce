@@ -4,11 +4,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef } from "react";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 
 import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
 import { Button } from "@nimara/ui/components/button";
-import { Form } from "@nimara/ui/components/form";
 
 import { MIN_PASSWORD_LENGTH } from "@/config";
 import { useRouterWithState } from "@/foundation/use-router-with-state";
@@ -61,7 +60,7 @@ export function NewPasswordForm() {
         </p>
       )}
 
-      <Form {...form}>
+      <FormProvider {...form}>
         <form
           onSubmit={form.handleSubmit(handleSubmit)}
           className="flex flex-col gap-y-2"
@@ -97,7 +96,7 @@ export function NewPasswordForm() {
             {isDisabled ? t("common.please-wait") : t("auth.password-reset")}
           </Button>
         </form>
-      </Form>
+      </FormProvider>
     </div>
   );
 }
