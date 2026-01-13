@@ -1,14 +1,6 @@
-import { connection } from "next/server";
-
 import { ShoppingBagIcon } from "./shopping-bag-icon";
 
-export const ShoppingBagIconWithCount = async ({
-  count,
-}: {
-  count: number;
-}) => {
-  await connection();
-
+export const ShoppingBagIconWithCount = ({ count }: { count: number }) => {
   return (
     <ShoppingBagIcon count={count}>
       {count > 0 && (
