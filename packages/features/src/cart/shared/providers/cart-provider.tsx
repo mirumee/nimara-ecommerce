@@ -29,7 +29,8 @@ export const CartProvider = async ({
     return <>{emptyCartRender()}</>;
   }
 
-  const resultCartGet = await services.cart.cartGet({
+  const cartService = await services.getCartService();
+  const resultCartGet = await cartService.cartGet({
     cartId: checkoutId,
     languageCode: services.region.language.code,
     countryCode: services.region.market.countryCode,
@@ -58,8 +59,9 @@ export const CartProvider = async ({
     return <>{emptyCartRender()}</>;
   }
 
+  const userService = await services.getUserService();
   const resultUserGet = accessToken
-    ? await services.user.userGet(accessToken)
+    ? await userService.userGet(accessToken)
     : { ok: false as const, errors: [], data: null };
 
   const user = resultUserGet.ok ? resultUserGet.data : null;

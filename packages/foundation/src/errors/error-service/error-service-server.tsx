@@ -12,7 +12,7 @@ export const ErrorServiceServer = async ({
   services,
 }: ErrorServiceServerProps) => {
   const accessToken = services.accessToken;
-  const userService = services.user;
+  const userService = await services.getUserService();
 
   const resultUserGet = await userService.userGet(accessToken);
   const user = resultUserGet.ok ? resultUserGet.data : null;

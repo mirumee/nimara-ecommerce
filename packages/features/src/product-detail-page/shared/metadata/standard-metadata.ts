@@ -27,7 +27,8 @@ export async function generateStandardPDPMetadata({
   const url = new URL(productPath, storefrontUrl);
   const canonicalUrl = url.toString();
 
-  const result = await services.store.getProductBase({
+  const storeService = await services.getStoreService();
+  const result = await storeService.getProductBase({
     productSlug: slug,
     channel: services.region.market.channel,
     languageCode: services.region.language.code,

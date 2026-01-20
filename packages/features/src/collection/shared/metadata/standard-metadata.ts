@@ -17,19 +17,19 @@ export async function generateStandardCollectionMetadata(
   const url = new URL(props.collectionPath, props.storefrontUrl);
   const canonicalUrl = url.toString();
 
-  const getCollectionResult =
-    await props.services.collection.getCollectionDetails({
-      channel: props.services.region.market.channel,
-      languageCode: props.services.region.language.code,
-      slug,
-      limit: props.defaultResultsPerPage,
-      options: {
-        next: {
-          revalidate: props.services.config.cacheTTL.pdp,
-          tags: [`COLLECTION:${slug}`, "DETAIL-PAGE:COLLECTION"],
-        },
+  const collectionService = await props.services.getCollectionService();
+  const getCollectionResult = await collectionService.getCollectionDetails({
+    channel: props.services.region.market.channel,
+    languageCode: props.services.region.language.code,
+    slug,
+    limit: props.defaultResultsPerPage,
+    options: {
+      next: {
+        revalidate: props.services.config.cacheTTL.pdp,
+        tags: [`COLLECTION:${slug}`, "DETAIL-PAGE:COLLECTION"],
       },
-    });
+    },
+  });
 
   const collection = getCollectionResult.data?.results;
 

@@ -2,7 +2,6 @@ import { type AllCountryCode } from "@nimara/domain/consts";
 import { type AppErrorCode } from "@nimara/domain/objects/Error";
 import { type PaymentMethod } from "@nimara/domain/objects/Payment";
 
-import { getAccessToken } from "@/auth";
 import { clientEnvs } from "@/envs/client";
 import { serverEnvs } from "@/envs/server";
 import { getCheckoutOrRedirect } from "@/features/checkout/checkout-actions";
@@ -11,7 +10,8 @@ import type { SupportedLocale } from "@/foundation/regions/types";
 import { getStoreUrl } from "@/foundation/server";
 import { getAddressService } from "@/services/address";
 import { getPaymentService } from "@/services/payment";
-import { getUserService } from "@/services/user";
+import { getServiceRegistry } from "@/services/registry";
+import { getAccessToken } from "@/services/tokens";
 
 import { DeliveryMethodSection } from "../../_sections/delivery-method-section";
 import { EmailSection } from "../../_sections/email-section";
@@ -36,7 +36,7 @@ export default async function Page(props: PageProps) {
     checkout,
     accessToken,
     storeUrl,
-    userService,
+    services,
     addressService,
   ] = await Promise.all([
     props.params,
@@ -45,9 +45,10 @@ export default async function Page(props: PageProps) {
     getCheckoutOrRedirect(),
     getAccessToken(),
     getStoreUrl(),
-    getUserService(),
+    getServiceRegistry(),
     getAddressService(),
   ]);
+  const userService = await services.getUserService();
 
   const resultUserGet = await userService.userGet(accessToken);
   const user = resultUserGet.ok ? resultUserGet.data : null;

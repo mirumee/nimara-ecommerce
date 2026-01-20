@@ -35,7 +35,8 @@ export const CollectionProvider = async ({
 }: CollectionProviderProps) => {
   const { after, before, limit } = searchParams;
 
-  const getCollectionResult = await services.collection.getCollectionDetails({
+  const collectionService = await services.getCollectionService();
+  const getCollectionResult = await collectionService.getCollectionDetails({
     channel: services.region.market.channel,
     languageCode: services.region.language.code,
     slug,

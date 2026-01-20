@@ -15,7 +15,8 @@ export const RelatedProductsContainer = async ({
 }: Props) => {
   const region = services.region;
 
-  const result = await services.store.getProductRelatedProducts({
+  const storeService = await services.getStoreService();
+  const result = await storeService.getProductRelatedProducts({
     productSlug: slug,
     channel: region.market.channel,
     languageCode: region.language.code,

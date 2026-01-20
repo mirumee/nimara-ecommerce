@@ -48,7 +48,8 @@ export const ProductsGrid = async ({
 
   const gridProductsIds = gridProducts?.reference;
 
-  const result = await services.search.search(
+  const searchService = await services.getSearchService();
+  const result = await searchService.search(
     {
       productIds: gridProductsIds?.length ? [...gridProductsIds] : [],
       limit: 7,

@@ -12,7 +12,8 @@ export async function generateStandardCMSPageMetadata(
 ): Promise<Metadata> {
   const { slug } = await props.params;
 
-  const resultPage = await props.services.cms.cmsPageGet({
+  const cmsService = await props.services.getCMSPageService();
+  const resultPage = await cmsService.cmsPageGet({
     languageCode: props.services.region.language.code,
     slug,
     options: {

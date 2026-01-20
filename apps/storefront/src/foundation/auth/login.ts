@@ -3,15 +3,15 @@
 import { revalidatePath } from "next/cache";
 import { AuthError } from "next-auth";
 
-import { getAccessToken, signIn } from "@/auth";
+import { signIn } from "@/auth";
 import { CACHE_TTL } from "@/config";
 import { getCheckoutId, setCheckoutIdCookie } from "@/features/checkout/cart";
 import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
-import { getCartService } from "@/services/cart";
 import { getCheckoutService } from "@/services/checkout";
 import { errorService } from "@/services/error";
-import { getUserService } from "@/services/user";
+import { getServiceRegistry } from "@/services/registry";
+import { getAccessToken } from "@/services/tokens";
 
 export async function login({
   email,
@@ -29,13 +29,14 @@ export async function login({
       redirect: false,
     });
 
-    const [accessToken, checkoutId, userService, checkoutService] =
+    const [accessToken, checkoutId, services, checkoutService] =
       await Promise.all([
         getAccessToken(),
         getCheckoutId(),
-        getUserService(),
+        getServiceRegistry(),
         getCheckoutService(),
       ]);
+    const userService = await services.getUserService();
 
     const resultUserGet = await userService.userGet(accessToken);
     const user = resultUserGet.ok ? resultUserGet.data : null;
@@ -66,7 +67,7 @@ export async function login({
         const guestCheckout = resultGuestCheckout.data?.checkout;
 
         if (userCheckout) {
-          const cartService = await getCartService();
+          const cartService = await services.getCartService();
 
           const lineItemsFromGuestCheckout =
             guestCheckout?.lines.filter((line) =>

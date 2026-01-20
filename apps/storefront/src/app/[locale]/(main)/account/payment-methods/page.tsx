@@ -1,6 +1,5 @@
 import { getTranslations } from "next-intl/server";
 
-import { getAccessToken } from "@/auth";
 import { clientEnvs } from "@/envs/client";
 import { serverEnvs } from "@/envs/server";
 import { getCurrentRegion } from "@/foundation/regions";
@@ -9,7 +8,8 @@ import { paths } from "@/foundation/routing/paths";
 import { getStoreUrl } from "@/foundation/server";
 import { LocalizedLink, redirect } from "@/i18n/routing";
 import { getPaymentService } from "@/services/payment";
-import { getUserService } from "@/services/user";
+import { getServiceRegistry } from "@/services/registry";
+import { getAccessToken } from "@/services/tokens";
 
 import { AddNewPaymentTrigger } from "./components/add-new-payment-trigger";
 import { PaymentMethodsList } from "./components/payment-methods-list";
@@ -20,14 +20,15 @@ type PageProps = {
 };
 
 export default async function Page(props: PageProps) {
-  const [t, { locale }, searchParams, accessToken, userService] =
+  const [t, { locale }, searchParams, accessToken, services] =
     await Promise.all([
       getTranslations(),
       props.params,
       props.searchParams,
       getAccessToken(),
-      getUserService(),
+      getServiceRegistry(),
     ]);
+  const userService = await services.getUserService();
 
   const resultUserGet = await userService.userGet(accessToken);
 

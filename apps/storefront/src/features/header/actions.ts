@@ -26,7 +26,8 @@ export const searchProducts = async (
   results: Array<{ id: string; label: string; slug: string | null }>;
 }> => {
   const services = await getServiceRegistry();
-  const result = await services.search.search(
+  const searchService = await services.getSearchService();
+  const result = await searchService.search(
     {
       query: value,
       limit: maxSearchSuggestions,

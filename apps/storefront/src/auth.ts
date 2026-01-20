@@ -1,4 +1,3 @@
-import { cookies } from "next/headers";
 import NextAuth, { type NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { getTranslations } from "next-intl/server";
@@ -6,16 +5,9 @@ import { getTranslations } from "next-intl/server";
 import { saleorAuthClient } from "@nimara/infrastructure/auth/client";
 
 import { signInSchema } from "@/foundation/auth/sign-in/schema";
-import { getUserService } from "@/services/user";
+import { getServiceRegistry } from "@/services/registry";
 
-import { COOKIE_KEY } from "./config";
 import { setAccessToken, setRefreshToken } from "./foundation/auth/auth";
-
-export const getAccessToken = async () =>
-  (await cookies()).get(COOKIE_KEY.accessToken)?.value;
-
-export const getRefreshToken = async () =>
-  (await cookies()).get(COOKIE_KEY.refreshToken)?.value;
 
 export const config = {
   pages: {
@@ -49,11 +41,12 @@ export const config = {
           return null;
         }
 
-        const [userService] = await Promise.all([
-          getUserService(),
+        const [services] = await Promise.all([
+          getServiceRegistry(),
           setAccessToken(token),
           setRefreshToken(refreshToken),
         ]);
+        const userService = await services.getUserService();
 
         const resultUserGet = await userService.userGet(data.tokenCreate.token);
 

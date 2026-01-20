@@ -3,10 +3,10 @@ import {
   StandardCartView,
 } from "@nimara/features/cart/shop-basic-cart/standard";
 
-import { getAccessToken } from "@/auth";
 import { getCheckoutId, revalidateCart } from "@/features/checkout/cart";
 import { paths } from "@/foundation/routing/paths";
 import { getServiceRegistry } from "@/services/registry";
+import { getAccessToken } from "@/services/tokens";
 
 import {
   deleteLineAction,

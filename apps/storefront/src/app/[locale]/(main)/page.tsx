@@ -2,10 +2,10 @@ import { generateStandardHomeMetadata } from "@nimara/features/home-page/shared/
 import { type HomeViewProps } from "@nimara/features/home-page/shared/types";
 import { StandardHomeView } from "@nimara/features/home-page/shop-basic-home/standard";
 
-import { getAccessToken } from "@/auth";
 import { clientEnvs } from "@/envs/client";
 import { paths } from "@/foundation/routing/paths";
 import { getServiceRegistry } from "@/services/registry";
+import { getAccessToken } from "@/services/tokens";
 
 export async function generateMetadata() {
   const storefrontUrl = clientEnvs.NEXT_PUBLIC_STOREFRONT_URL;

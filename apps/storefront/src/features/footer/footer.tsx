@@ -5,14 +5,16 @@ import { CACHE_TTL } from "@/config";
 import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
 import { LocalizedLink } from "@/i18n/routing";
-import { cmsMenuService } from "@/services/cms";
+import { getServiceRegistry } from "@/services/registry";
 
 export const Footer = async () => {
-  const [region, t] = await Promise.all([
+  const [region, services, t] = await Promise.all([
     getCurrentRegion(),
+    getServiceRegistry(),
     getTranslations(),
   ]);
 
+  const cmsMenuService = await services.getCMSMenuService();
   const resultMenu = await cmsMenuService.menuGet({
     channel: region.market.channel,
     languageCode: region.language.code,

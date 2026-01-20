@@ -57,8 +57,9 @@ export const SearchProvider = async ({
     Object.entries(rest).filter(([_, value]) => value !== undefined),
   ) as Record<string, string>;
 
+  const searchService = await services.getSearchService();
   const [resultSearch, getFacetsResult, resultOptions] = await Promise.all([
-    services.search.search(
+    searchService.search(
       {
         query,
         limit: limit ? Number.parseInt(limit) : defaultResultsPerPage,
@@ -70,14 +71,14 @@ export const SearchProvider = async ({
       },
       searchContext,
     ),
-    services.search.getFacets(
+    searchService.getFacets(
       {
         query,
         filters,
       },
       searchContext,
     ),
-    services.search.getSortByOptions(searchContext),
+    searchService.getSortByOptions(searchContext),
   ]);
 
   const products = resultSearch.ok ? resultSearch.data.results : [];

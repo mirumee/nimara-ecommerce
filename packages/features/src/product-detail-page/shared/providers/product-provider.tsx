@@ -22,7 +22,8 @@ export const ProductProvider = async ({
 }: ProductProviderProps) => {
   const region = services.region;
 
-  const { data } = await services.store.getProductDetails({
+  const storeService = await services.getStoreService();
+  const { data } = await storeService.getProductDetails({
     productSlug: slug,
     countryCode: region.market.countryCode,
     channel: region.market.channel,

@@ -42,7 +42,8 @@ export async function addToBag(
   let userData: User | null = null;
 
   if (accessToken) {
-    const userGetResult = await services.user.userGet(accessToken);
+    const userService = await services.getUserService();
+    const userGetResult = await userService.userGet(accessToken);
 
     if (userGetResult.ok) {
       userData = userGetResult.data;
@@ -50,7 +51,8 @@ export async function addToBag(
   }
 
   // Add item to cart
-  const result = await services.cart.linesAdd({
+  const cartService = await services.getCartService();
+  const result = await cartService.linesAdd({
     email: userData?.email,
     channel: region.market.channel,
     languageCode: region.language.code,
@@ -58,11 +60,11 @@ export async function addToBag(
     lines: [{ variantId, quantity }],
     options: cartId
       ? {
-          next: {
-            tags: [`CHECKOUT:${cartId}`],
-            revalidate: cacheTTL.cart,
-          },
-        }
+        next: {
+          tags: [`CHECKOUT:${cartId}`],
+          revalidate: cacheTTL.cart,
+        },
+      }
       : undefined,
   });
 

@@ -19,11 +19,15 @@ export const HomeProvider = async ({
   services,
   accessToken,
 }: HomeProviderProps) => {
+  const [userService, cmsService] = await Promise.all([
+    services.getUserService(),
+    services.getCMSPageService(),
+  ]);
   const [resultUserGet, resultPage] = await Promise.all([
     accessToken
-      ? services.user.userGet(accessToken)
+      ? userService.userGet(accessToken)
       : { ok: false as const, errors: [], data: null },
-    services.cms.cmsPageGet({
+    cmsService.cmsPageGet({
       pageType: PageType.HOMEPAGE,
       slug: "home",
       languageCode: services.region.language.code,

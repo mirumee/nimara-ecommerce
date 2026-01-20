@@ -1,18 +1,19 @@
 import { getTranslations } from "next-intl/server";
 
-import { getAccessToken } from "@/auth";
-import { getUserService } from "@/services/user";
+import { getServiceRegistry } from "@/services/registry";
+import { getAccessToken } from "@/services/tokens";
 
 import { UpdateEmailModal } from "./_modals/update-email-modal";
 import { UpdateNameModal } from "./_modals/update-name-modal";
 import { UpdatePasswordModal } from "./_modals/update-password-modal";
 
 export default async function Page() {
-  const [accessToken, t, userService] = await Promise.all([
+  const [accessToken, t, services] = await Promise.all([
     getAccessToken(),
     getTranslations(),
-    getUserService(),
+    getServiceRegistry(),
   ]);
+  const userService = await services.getUserService();
 
   const resultUserGet = await userService.userGet(accessToken);
 

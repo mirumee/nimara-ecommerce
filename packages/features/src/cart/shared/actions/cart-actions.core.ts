@@ -34,7 +34,8 @@ export async function updateLineQuantity(
 
   services.logger.debug("Updating line quantity", { cartId, lineId, quantity });
 
-  const result = await services.cart.linesUpdate({
+  const cartService = await services.getCartService();
+  const result = await cartService.linesUpdate({
     cartId,
     lines: [{ lineId, quantity }],
     options: {
@@ -77,7 +78,8 @@ export async function deleteLine(
 
   services.logger.debug("Deleting line from cart", { cartId, lineId });
 
-  const result = await services.cart.linesDelete({
+  const cartService = await services.getCartService();
+  const result = await cartService.linesDelete({
     cartId,
     linesIds: [lineId],
     options: {

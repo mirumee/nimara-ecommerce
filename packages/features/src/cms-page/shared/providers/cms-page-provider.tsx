@@ -19,7 +19,8 @@ export const CMSPageProvider = async ({
   slug,
   services,
 }: CMSPageProviderProps) => {
-  const resultPage = await services.cms.cmsPageGet({
+  const cmsService = await services.getCMSPageService();
+  const resultPage = await cmsService.cmsPageGet({
     pageType: PageType.STATIC_PAGE,
     slug,
     languageCode: services.region.language.code,

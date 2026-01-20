@@ -21,18 +21,19 @@ export const ProductMediaWrapper = async ({
   checkoutId,
   showAs,
 }: ProductMediaWrapperProps) => {
+  const cartService = await services.getCartService();
   const resultCartGet = checkoutId
-    ? await services.cart.cartGet({
-        cartId: checkoutId,
-        languageCode: services.region.language.code,
-        countryCode: services.region.market.countryCode,
-        options: {
-          next: {
-            revalidate: services.config.cacheTTL.cart,
-            tags: [`CHECKOUT:${checkoutId}`],
-          },
+    ? await cartService.cartGet({
+      cartId: checkoutId,
+      languageCode: services.region.language.code,
+      countryCode: services.region.market.countryCode,
+      options: {
+        next: {
+          revalidate: services.config.cacheTTL.cart,
+          tags: [`CHECKOUT:${checkoutId}`],
         },
-      })
+      },
+    })
     : null;
 
   const cart = resultCartGet?.ok ? resultCartGet.data : null;

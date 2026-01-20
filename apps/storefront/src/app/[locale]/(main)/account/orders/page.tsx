@@ -1,21 +1,22 @@
 import { getTranslations } from "next-intl/server";
 
 import { isOrderLineReturned } from "@/app/[locale]/(main)/account/orders/helpers/is-order-line-returned";
-import { getAccessToken } from "@/auth";
 import { getCurrentRegion } from "@/foundation/regions";
-import { getUserService } from "@/services/user";
+import { getServiceRegistry } from "@/services/registry";
+import { getAccessToken } from "@/services/tokens";
 
 import { OrderLine } from "./_components/order-line";
 import { OrderSummary } from "./_components/order-summary";
 import { ReturnProductsModal } from "./_components/return-products-modal";
 
 export default async function Page() {
-  const [accessToken, t, region, userService] = await Promise.all([
+  const [accessToken, t, region, services] = await Promise.all([
     getAccessToken(),
     getTranslations(),
     getCurrentRegion(),
-    getUserService(),
+    getServiceRegistry(),
   ]);
+  const userService = await services.getUserService();
   const languageCode = region.language.code;
   const resultOrders = await userService.ordersGet({
     accessToken,

@@ -2,13 +2,13 @@
 
 import { addToBag } from "@nimara/features/product-detail-page/shared/actions/add-to-bag.core";
 
-import { getAccessToken } from "@/auth";
 import {
   getCheckoutId,
   revalidateCart,
   setCheckoutIdCookie,
 } from "@/features/checkout/cart";
 import { getServiceRegistry } from "@/services/registry";
+import { getAccessToken } from "@/services/tokens";
 
 /**
  * Server action wrapper for adding items to the cart.
