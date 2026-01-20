@@ -16,8 +16,8 @@ import {
   DialogTrigger,
 } from "@nimara/ui/components/dialog";
 
+import { paths } from "@/foundation/routing/paths";
 import { useRouter } from "@/i18n/routing";
-import { paths } from "@/lib/paths";
 
 import { AddNewAddressForm } from "../_forms/create-address-form";
 

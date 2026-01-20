@@ -3,8 +3,8 @@ import { getTranslations } from "next-intl/server";
 
 import { CACHE_TTL } from "@/config";
 import { clientEnvs } from "@/envs/client";
-import { getCurrentRegion } from "@/regions/server";
-import { getStoreService } from "@/services/store";
+import { getCurrentRegion } from "@/foundation/regions";
+import { getServiceRegistry } from "@/services/registry";
 
 const size = {
   width: 1200,
@@ -19,11 +19,12 @@ export async function GET(
 ) {
   const { slug } = await context.params;
 
-  const [region, storeService, t] = await Promise.all([
+  const [region, services, t] = await Promise.all([
     getCurrentRegion(),
-    getStoreService(),
+    getServiceRegistry(),
     getTranslations(),
   ]);
+  const storeService = await services.getStoreService();
 
   const { data } = await storeService.getProductDetails({
     productSlug: slug,

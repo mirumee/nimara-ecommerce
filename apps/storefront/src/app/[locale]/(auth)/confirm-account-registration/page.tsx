@@ -1,8 +1,8 @@
 import { getTranslations } from "next-intl/server";
 
+import type { SupportedLocale } from "@/foundation/regions/types";
+import { paths } from "@/foundation/routing/paths";
 import { redirect } from "@/i18n/routing";
-import { paths } from "@/lib/paths";
-import { type SupportedLocale } from "@/regions/types";
 import { getAuthService } from "@/services/auth";
 
 type PageProps = {

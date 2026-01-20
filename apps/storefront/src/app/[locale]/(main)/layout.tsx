@@ -1,18 +1,20 @@
-import { Footer } from "@/components/footer";
-import { Header } from "@/components/header";
 import { CACHE_TTL } from "@/config";
-import { getLocalePrefix } from "@/lib/server";
-import { getCurrentRegion } from "@/regions/server";
-import { cmsMenuService } from "@/services/cms";
+import { Footer } from "@/features/footer";
+import { Header } from "@/features/header";
+import { getCurrentRegion } from "@/foundation/regions";
+import { getLocalePrefix } from "@/foundation/server";
+import { getServiceRegistry } from "@/services/registry";
 
 import { Navigation } from "./_components/navigation";
 
 export default async function Layout({ children }: LayoutProps<"/[locale]">) {
-  const [region, locale] = await Promise.all([
+  const [region, locale, services] = await Promise.all([
     getCurrentRegion(),
     getLocalePrefix(),
+    getServiceRegistry(),
   ]);
 
+  const cmsMenuService = await services.getCMSMenuService();
   const resultMenu = await cmsMenuService.menuGet({
     channel: region.market.channel,
     languageCode: region.language.code,
@@ -28,7 +30,7 @@ export default async function Layout({ children }: LayoutProps<"/[locale]">) {
 
   return (
     <>
-      <div className="sticky top-0 isolate z-50 bg-background py-4 md:pb-0">
+      <div className="bg-background sticky top-0 isolate z-50 py-4 md:pb-0">
         <Header />
         <Navigation menu={resultMenu.data?.menu} />
       </div>

@@ -1,9 +1,20 @@
 {
   "extends": "tsconfig/nextjs.json",
   "compilerOptions": {
-    "plugins": [{ "name": "next" }],
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@nimara/foundation/*": ["../../packages/foundation/src/*"],
+      "@nimara/infrastructure/*": ["../../packages/infrastructure/src/*"],
+      "@nimara/domain/*": ["../../packages/domain/src/*"],
+      "@nimara/features/*": ["../../packages/features/src/*"],
+      "@nimara/translations/*": ["../../packages/translations/src/*"],
+      "@nimara/ui/*": ["../../packages/ui/src/*"],
+      "@nimara/codegen/*": ["../../packages/codegen/*"]
     }
   },
   "include": ["**/*/*.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

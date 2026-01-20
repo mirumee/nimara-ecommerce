@@ -1,5 +1,5 @@
-import { Footer } from "@/components/footer";
-import { Logo } from "@/components/header/logo";
+import { Footer } from "@/features/footer";
+import { Logo } from "@/features/header/logo";
 
 export default function Layout({ children }: LayoutProps<"/[locale]">) {
   return (

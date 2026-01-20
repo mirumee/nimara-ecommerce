@@ -3,17 +3,16 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { Fragment } from "react";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 
 import type { Checkout } from "@nimara/domain/objects/Checkout";
+import { isGlobalError } from "@nimara/foundation/errors/errors";
+import { RadioFormGroup } from "@nimara/foundation/form-components/radio-form-group";
+import { useLocalizedFormatter } from "@nimara/foundation/formatters/use-localized-formatter";
+import type { TranslationMessage } from "@nimara/foundation/i18n/types";
 import { Button } from "@nimara/ui/components/button";
-import { Form } from "@nimara/ui/components/form";
 
-import { RadioFormGroup } from "@/components/form/radio-form-group";
-import { isGlobalError } from "@/lib/errors";
-import { useLocalizedFormatter } from "@/lib/formatters/use-localized-formatter";
-import { useRouterWithState } from "@/lib/hooks";
-import type { TranslationMessage } from "@/types";
+import { useRouterWithState } from "@/foundation/use-router-with-state";
 
 import { updateDeliveryMethod } from "./_actions/update-delivery-method";
 import { type FormSchema, formSchema } from "./schema";
@@ -83,7 +82,7 @@ export const DeliveryMethodForm = ({ checkout }: { checkout: Checkout }) => {
       <h2 className="scroll-m-20 text-2xl tracking-tight">
         {t("delivery-method.title")}
       </h2>
-      <Form {...form}>
+      <FormProvider {...form}>
         <form
           onSubmit={form.handleSubmit(handleSubmit)}
           className="flex flex-col gap-y-2"
@@ -97,7 +96,7 @@ export const DeliveryMethodForm = ({ checkout }: { checkout: Checkout }) => {
                   {deliveryMethodFormField.options.map((option) => (
                     <Fragment key={option.value}>
                       <p className="w-1/2">{option.label}</p>
-                      <p className="w-1/2 text-end text-muted-foreground">
+                      <p className="text-muted-foreground w-1/2 text-end">
                         {option.description}
                       </p>
                     </Fragment>
@@ -122,7 +121,7 @@ export const DeliveryMethodForm = ({ checkout }: { checkout: Checkout }) => {
             {isDisabled ? t("common.saving") : t("common.continue")}
           </Button>
         </form>
-      </Form>
+      </FormProvider>
     </section>
   );
 };

@@ -1,8 +1,8 @@
 import { type Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
-import { Logo } from "@/components/header/logo";
-import { SideSummary } from "@/components/summary/side-summary";
+import { SideSummary } from "@/features/checkout/checkout-summary/side-summary";
+import { Logo } from "@/features/header/logo";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations();
@@ -33,7 +33,7 @@ export default function Layout({
           <div className="flex flex-col gap-8 divide-y pt-8">{children}</div>
         </main>
       </div>
-      <aside className="hidden bg-gray-100 dark:bg-stone-900 md:block">
+      <aside className="hidden bg-gray-100 md:block dark:bg-stone-900">
         <SideSummary />
       </aside>
       <aside className="absolute right-0 pt-4 md:hidden">

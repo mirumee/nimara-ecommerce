@@ -3,8 +3,8 @@ import { getTranslations } from "next-intl/server";
 
 import { CACHE_TTL, DEFAULT_RESULTS_PER_PAGE } from "@/config";
 import { clientEnvs } from "@/envs/client";
-import { getCurrentRegion } from "@/regions/server";
-import { getCollectionService } from "@/services/collection";
+import { getCurrentRegion } from "@/foundation/regions";
+import { getServiceRegistry } from "@/services/registry";
 
 const size = {
   width: 1200,
@@ -19,11 +19,12 @@ export async function GET(
 ) {
   const { slug } = await context.params;
 
-  const [region, collectionService, t] = await Promise.all([
+  const [region, services, t] = await Promise.all([
     getCurrentRegion(),
-    getCollectionService(),
+    getServiceRegistry(),
     getTranslations(),
   ]);
+  const collectionService = await services.getCollectionService();
 
   const getCollectionResult = await collectionService.getCollectionDetails({
     channel: region.market.channel,
@@ -34,7 +35,7 @@ export async function GET(
     options: {
       next: {
         revalidate: CACHE_TTL.pdp,
-        tags: [`COLLECTION:${slug}`, "COLLECTIONS"],
+        tags: [`COLLECTION:${slug}`, "DETAIL-PAGE:COLLECTION"],
       },
     },
   });

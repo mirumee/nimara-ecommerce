@@ -6,6 +6,15 @@ import { useFormContext } from "react-hook-form";
 import { type AllCountryCode } from "@nimara/domain/consts";
 import { type CountryOption } from "@nimara/domain/objects/Address";
 import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
+import {
+  addressToSchema,
+  displayFormattedAddressLines,
+} from "@nimara/foundation/address/address";
+import { AddressForm } from "@nimara/foundation/address/address-form/address-form";
+import type { FormattedAddress } from "@nimara/foundation/address/types";
+import { CheckboxField } from "@nimara/foundation/form-components/checkbox-field";
+import { RadioFormGroup } from "@nimara/foundation/form-components/radio-form-group";
+import { cn } from "@nimara/foundation/lib/cn";
 import { ADDRESS_CORE_FIELDS } from "@nimara/infrastructure/consts";
 import {
   Tabs,
@@ -14,15 +23,9 @@ import {
   TabsTrigger,
 } from "@nimara/ui/components/tabs";
 
-import { AddressForm } from "@/components/address-form/address-form";
-import { CheckboxField } from "@/components/form/checkbox-field";
-import { RadioFormGroup } from "@/components/form/radio-form-group";
+import { useCurrentRegion } from "@/foundation/regions";
+import { paths } from "@/foundation/routing/paths";
 import { useRouter } from "@/i18n/routing";
-import { addressToSchema, displayFormattedAddressLines } from "@/lib/address";
-import { type FormattedAddress } from "@/lib/checkout";
-import { paths } from "@/lib/paths";
-import { cn } from "@/lib/utils";
-import { useCurrentRegion } from "@/regions/client";
 
 import { type TabName } from "./payment";
 import { type Schema } from "./schema";

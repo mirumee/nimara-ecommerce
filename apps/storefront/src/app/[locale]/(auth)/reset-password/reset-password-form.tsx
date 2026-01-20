@@ -4,17 +4,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import * as z from "zod";
 
+import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
+import { type GetTranslations } from "@nimara/foundation/i18n/types";
 import { Button } from "@nimara/ui/components/button";
-import { Form } from "@nimara/ui/components/form";
 
-import { TextFormField } from "@/components/form/text-form-field";
+import { useCurrentRegion } from "@/foundation/regions";
+import { paths } from "@/foundation/routing/paths";
 import { LocalizedLink } from "@/i18n/routing";
-import { paths } from "@/lib/paths";
-import { useCurrentRegion } from "@/regions/client";
-import { type GetTranslations } from "@/types";
 
 import { requestPasswordResetAction } from "./action";
 
@@ -54,7 +53,7 @@ export function ResetPasswordForm() {
     <div className="flex flex-col gap-8">
       {isSuccess ? (
         <>
-          <h1 className="text-2xl font-normal leading-8 text-primary">
+          <h1 className="text-primary text-2xl font-normal leading-8">
             {t("auth.reset-password-link-sent")}
           </h1>
           <div>
@@ -76,12 +75,12 @@ export function ResetPasswordForm() {
                 <ArrowLeft className="h-4 w-4" />
               </LocalizedLink>
             </Button>
-            <h1 className="text-2xl font-normal leading-8 text-primary">
+            <h1 className="text-primary text-2xl font-normal leading-8">
               {t("auth.reset-password")}
             </h1>
           </div>
 
-          <Form {...form}>
+          <FormProvider {...form}>
             <form
               onSubmit={form.handleSubmit(handleSubmit)}
               className="flex flex-col gap-y-2"
@@ -104,7 +103,7 @@ export function ResetPasswordForm() {
                 {t("auth.password-reset")}
               </Button>
             </form>
-          </Form>
+          </FormProvider>
         </>
       )}
     </div>

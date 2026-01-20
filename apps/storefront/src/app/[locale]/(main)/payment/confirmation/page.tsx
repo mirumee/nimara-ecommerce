@@ -1,9 +1,9 @@
 import { type AppErrorCode } from "@nimara/domain/objects/Error";
 
+import { getCheckoutOrRedirect } from "@/features/checkout/checkout-actions";
+import { type SupportedLocale } from "@/foundation/regions/types";
+import { paths, QUERY_PARAMS } from "@/foundation/routing/paths";
 import { redirect } from "@/i18n/routing";
-import { getCheckoutOrRedirect } from "@/lib/checkout";
-import { paths, QUERY_PARAMS } from "@/lib/paths";
-import { type SupportedLocale } from "@/regions/types";
 import { getCheckoutService } from "@/services/checkout";
 import { getPaymentService } from "@/services/payment";
 

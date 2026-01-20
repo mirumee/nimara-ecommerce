@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import type { Order } from "@nimara/domain/objects/Order";
 
-import { paths } from "@/lib/paths";
+import { paths } from "@/foundation/routing/paths";
 import { fulfillmentService } from "@/services/fulfillment";
 
 import type { FormSchema } from "./schema";

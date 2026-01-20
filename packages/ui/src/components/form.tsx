@@ -9,15 +9,13 @@ import {
   type ControllerProps,
   type FieldPath,
   type FieldValues,
-  FormProvider,
+  Form,
   useFormContext,
 } from "react-hook-form";
 
 import { cn } from "../lib/utils";
 import { Input } from "./input";
 import { Label } from "./label";
-
-const Form = FormProvider;
 
 type FormFieldContextValue<
   TFieldValues extends FieldValues = FieldValues,
@@ -220,14 +218,14 @@ const FormFileField = ({
 FormFileField.displayName = "FormFileField";
 
 export {
-  useFormContext,
-  useFormField,
   Form,
-  FormItem,
-  FormLabel,
   FormControl,
   FormDescription,
-  FormMessage,
   FormField,
   FormFileField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  useFormContext,
+  useFormField,
 };

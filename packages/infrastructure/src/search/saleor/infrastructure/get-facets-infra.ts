@@ -19,7 +19,7 @@ export const saleorGetFacetsInfra =
         next: {
           // FIXME: Temp value for now
           revalidate: 5 * 60,
-          tags: ["SEARCH", "SEARCH:FACETS", "PRODUCTS", "COLLECTIONS"],
+          tags: ["SEARCH", "SEARCH:FACETS"],
         },
       },
       operationName: "FacetsQuery",

@@ -2,16 +2,15 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 
+import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
 import { Button } from "@nimara/ui/components/button";
-import { Form } from "@nimara/ui/components/form";
 
-import { TextFormField } from "@/components/form/text-form-field";
 import { MIN_PASSWORD_LENGTH } from "@/config";
+import { paths } from "@/foundation/routing/paths";
+import { useRouterWithState } from "@/foundation/use-router-with-state";
 import { LocalizedLink } from "@/i18n/routing";
-import { useRouterWithState } from "@/lib/hooks";
-import { paths } from "@/lib/paths";
 
 import { registerAccount } from "./actions";
 import { type FormSchema, formSchema } from "./schema";
@@ -59,7 +58,7 @@ export function SignUpForm() {
   }
 
   return (
-    <Form {...form}>
+    <FormProvider {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
         className="flex flex-col gap-y-2"
@@ -108,7 +107,7 @@ export function SignUpForm() {
           />
         </div>
         <div className="mt-7">
-          <p className="text-sm text-stone-700 dark:text-muted-foreground">
+          <p className="dark:text-muted-foreground text-sm text-stone-700">
             {t.rich("auth.create-account-agreement", {
               termsOfUse: () => (
                 <LocalizedLink
@@ -139,6 +138,6 @@ export function SignUpForm() {
           {t("auth.create-account")}
         </Button>
       </form>
-    </Form>
+    </FormProvider>
   );
 }

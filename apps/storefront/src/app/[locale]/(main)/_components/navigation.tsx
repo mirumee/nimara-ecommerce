@@ -6,7 +6,9 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
+import { type Maybe } from "@nimara/domain/objects/Maybe";
 import type { Menu } from "@nimara/domain/objects/Menu";
+import { isValidJson } from "@nimara/foundation/lib/is-valid-json";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -18,8 +20,6 @@ import {
 } from "@nimara/ui/components/navigation-menu";
 
 import { LocalizedLink } from "@/i18n/routing";
-import { isValidJson } from "@/lib/helpers";
-import type { Maybe } from "@/lib/types";
 
 const RichText = dynamic(
   () =>
@@ -89,21 +89,21 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
               )}
 
               <NavigationMenuContent>
-                <div className="grid w-full grid-cols-6 bg-background p-6">
+                <div className="bg-background grid w-full grid-cols-6 p-6">
                   <div className="col-span-2 flex flex-col gap-3 pr-6">
                     {!!item.children?.length &&
                       childrenWithoutImage?.map((child) => (
                         <LocalizedLink
                           key={child.id}
                           href={child.url}
-                          className="group block space-y-1 rounded-md p-3 hover:bg-accent"
+                          className="hover:bg-accent group block space-y-1 rounded-md p-3"
                           prefetch={false}
                         >
                           <div className="text-sm font-medium leading-none">
                             {child.label}
                           </div>
                           {child.description && (
-                            <div className="text-sm leading-snug text-muted-foreground">
+                            <div className="text-muted-foreground text-sm leading-snug">
                               {isValidJson(child.description) ? (
                                 <RichText
                                   className="line-clamp-3 py-1"
@@ -130,7 +130,7 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
                         <LocalizedLink
                           key={child.id}
                           href={child.url}
-                          className="group relative min-h-[270px] overflow-hidden rounded-lg bg-accent"
+                          className="bg-accent group relative min-h-[270px] overflow-hidden rounded-lg"
                           onClick={() => setCurrentMenuItem("")}
                           prefetch={false}
                         >
@@ -144,12 +144,12 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
                               />
                             )}
                           </div>
-                          <div className="flex h-1/2 flex-col justify-start bg-muted/50 p-6">
+                          <div className="bg-muted/50 flex h-1/2 flex-col justify-start p-6">
                             <div className="relative z-20 space-y-2">
                               <div className="text-lg font-medium leading-none group-hover:underline">
                                 {child.label}
                               </div>
-                              <div className="overflow-hidden text-sm leading-snug text-muted-foreground">
+                              <div className="text-muted-foreground overflow-hidden text-sm leading-snug">
                                 {child.description &&
                                 isValidJson(child.description) ? (
                                   <RichText

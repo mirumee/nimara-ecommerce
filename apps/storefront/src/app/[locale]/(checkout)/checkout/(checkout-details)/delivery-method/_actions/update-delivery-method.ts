@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { type AsyncResult, ok } from "@nimara/domain/objects/Result";
 
-import { paths } from "@/lib/paths";
+import { paths } from "@/foundation/routing/paths";
 import { getCheckoutService } from "@/services/checkout";
 
 export const updateDeliveryMethod = async ({

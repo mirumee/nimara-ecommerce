@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAppBridge } from "@saleor/app-sdk/app-bridge";
-import { type SubmitHandler, useForm } from "react-hook-form";
+import { FormProvider, type SubmitHandler, useForm } from "react-hook-form";
 
 import { Button } from "@nimara/ui/components/button";
 import {
@@ -12,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@nimara/ui/components/card";
-import { Form, FormDescription } from "@nimara/ui/components/form";
+import { FormDescription } from "@nimara/ui/components/form";
 import { TextFormField } from "@nimara/ui/components/textFormField";
 import { useToast } from "@nimara/ui/hooks";
 
@@ -60,7 +60,7 @@ export const ConfigForm = () => {
   const data = form.getValues();
 
   return (
-    <Form {...form}>
+    <FormProvider {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
         className="flex flex-col gap-y-[inherit]"
@@ -124,7 +124,7 @@ export const ConfigForm = () => {
           Save
         </Button>
       </form>
-    </Form>
+    </FormProvider>
   );
 };
 

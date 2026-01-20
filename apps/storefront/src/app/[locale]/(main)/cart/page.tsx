@@ -1,26 +1,39 @@
-import { getTranslations } from "next-intl/server";
-import { Suspense } from "react";
+import {
+  generateStandardCartMetadata,
+  StandardCartView,
+} from "@nimara/features/cart/shop-basic-cart/standard";
 
-import { ShoppingBagSkeleton } from "@/components/shopping-bag";
+import { getCheckoutId, revalidateCart } from "@/features/checkout/cart";
+import { paths } from "@/foundation/routing/paths";
+import { getServiceRegistry } from "@/services/registry";
+import { getAccessToken } from "@/services/tokens";
 
-import { Cart } from "./components/cart";
+import {
+  deleteLineAction,
+  updateLineQuantityAction,
+} from "./_actions/cart-actions";
 
-export async function generateMetadata() {
-  const t = await getTranslations();
+export const generateMetadata = generateStandardCartMetadata;
 
-  return {
-    title: t("cart.your-bag"),
-  };
-}
+export default async function Page(props: any) {
+  const services = await getServiceRegistry();
+  const checkoutId = await getCheckoutId();
+  const accessToken = await getAccessToken();
 
-export default async function Page() {
   return (
-    <div className="mx-auto flex justify-center">
-      <div className="max-w-[616px] flex-1 basis-full py-8">
-        <Suspense fallback={<ShoppingBagSkeleton hasHeader />}>
-          <Cart />
-        </Suspense>
-      </div>
-    </div>
+    <StandardCartView
+      {...props}
+      services={services}
+      checkoutId={checkoutId}
+      accessToken={accessToken}
+      onCartUpdate={revalidateCart}
+      onLineQuantityChange={updateLineQuantityAction}
+      onLineDelete={deleteLineAction}
+      paths={{
+        home: paths.home.asPath(),
+        checkout: paths.checkout.asPath(),
+        checkoutSignIn: paths.checkout.signIn.asPath(),
+      }}
+    />
   );
 }

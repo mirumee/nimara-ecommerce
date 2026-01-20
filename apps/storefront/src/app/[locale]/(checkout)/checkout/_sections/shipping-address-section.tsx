@@ -1,12 +1,12 @@
 import { getTranslations } from "next-intl/server";
 
 import { type Checkout } from "@nimara/domain/objects/Checkout";
+import { displayFormattedAddressLines } from "@nimara/foundation/address/address";
 import { Button } from "@nimara/ui/components/button";
 
+import type { SupportedLocale } from "@/foundation/regions/types";
+import { paths } from "@/foundation/routing/paths";
 import { LocalizedLink } from "@/i18n/routing";
-import { displayFormattedAddressLines } from "@/lib/address";
-import { paths } from "@/lib/paths";
-import { type SupportedLocale } from "@/regions/types";
 import { getAddressService } from "@/services/address";
 
 export async function ShippingAddressSection({
@@ -48,7 +48,7 @@ export async function ShippingAddressSection({
         <h3 className="scroll-m-20 text-2xl tracking-tight">
           {t("shipping-address.title")}
         </h3>
-        <div className="text-sm leading-5 text-foreground">
+        <div className="text-foreground text-sm leading-5">
           {displayFormattedAddressLines({
             addressId: shippingAddress.id,
             formattedAddress: result.data.formattedAddress,

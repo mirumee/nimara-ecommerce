@@ -20,8 +20,8 @@ import { Label } from "@nimara/ui/components/label";
 import { Spinner } from "@nimara/ui/components/spinner";
 
 import { clientEnvs } from "@/envs/client";
+import { paths } from "@/foundation/routing/paths";
 import { LocalizedLink } from "@/i18n/routing";
-import { paths } from "@/lib/paths";
 
 import { requestUserAccountDeletion } from "./actions";
 
@@ -43,7 +43,7 @@ export function DeleteAccountModal() {
           <DialogTitle>{t("account.confirm-account-deletion")}</DialogTitle>
         </DialogHeader>
         <div className="space-y-6">
-          <p className="text-sm text-stone-500 dark:text-muted-foreground">
+          <p className="dark:text-muted-foreground text-sm text-stone-500">
             {t("account.confirm-account-deletion-description")}
           </p>
           <DialogFooter>
@@ -71,7 +71,7 @@ export function DeleteAccountModal() {
             </p>
           ) : (
             <>
-              <p className="text-sm text-stone-500 dark:text-muted-foreground">
+              <p className="dark:text-muted-foreground text-sm text-stone-500">
                 {t("account.delete-account-modal-description")}{" "}
                 {t.rich("account.in-case-of-any-questions", {
                   contactUs: () => (

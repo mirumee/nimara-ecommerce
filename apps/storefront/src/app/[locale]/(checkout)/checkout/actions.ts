@@ -3,9 +3,9 @@
 import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { type User } from "@nimara/domain/objects/User";
 
+import type { SupportedLocale } from "@/foundation/regions/types";
+import { paths } from "@/foundation/routing/paths";
 import { redirect } from "@/i18n/routing";
-import { paths } from "@/lib/paths";
-import { type SupportedLocale } from "@/regions/types";
 
 export const validateCheckoutStepAction = async ({
   checkout,
