@@ -60,11 +60,11 @@ export async function addToBag(
     lines: [{ variantId, quantity }],
     options: cartId
       ? {
-        next: {
-          tags: [`CHECKOUT:${cartId}`],
-          revalidate: cacheTTL.cart,
-        },
-      }
+          next: {
+            tags: [`CHECKOUT:${cartId}`],
+            revalidate: cacheTTL.cart,
+          },
+        }
       : undefined,
   });
 

@@ -36,16 +36,16 @@ export const VariantSelectorWrapper = async ({
   const cartService = await services.getCartService();
   const resultCartGet = checkoutId
     ? await cartService.cartGet({
-      cartId: checkoutId,
-      languageCode: services.region.language.code,
-      countryCode: services.region.market.countryCode,
-      options: {
-        next: {
-          revalidate: services.config.cacheTTL.cart,
-          tags: [`CHECKOUT:${checkoutId}`],
+        cartId: checkoutId,
+        languageCode: services.region.language.code,
+        countryCode: services.region.market.countryCode,
+        options: {
+          next: {
+            revalidate: services.config.cacheTTL.cart,
+            tags: [`CHECKOUT:${checkoutId}`],
+          },
         },
-      },
-    })
+      })
     : null;
 
   return (

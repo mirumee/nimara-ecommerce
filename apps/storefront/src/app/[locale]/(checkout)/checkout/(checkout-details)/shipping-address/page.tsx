@@ -1,5 +1,8 @@
 import { type AllCountryCode } from "@nimara/domain/consts";
-import { type Address ,type  CountryOption } from "@nimara/domain/objects/Address";
+import {
+  type Address,
+  type CountryOption,
+} from "@nimara/domain/objects/Address";
 
 import { getCheckoutOrRedirect } from "@/features/checkout/checkout-actions";
 import { getCurrentRegion } from "@/foundation/regions";
