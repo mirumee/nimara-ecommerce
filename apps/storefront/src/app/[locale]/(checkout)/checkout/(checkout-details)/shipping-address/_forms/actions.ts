@@ -4,12 +4,12 @@ import { revalidatePath } from "next/cache";
 
 import { type AllCountryCode } from "@nimara/domain/consts";
 import type { Checkout } from "@nimara/domain/objects/Checkout";
+import { schemaToAddress } from "@nimara/foundation/address/address";
 
-import { getAccessToken } from "@/auth";
-import { updateCheckoutAddressAction } from "@/lib/actions/update-checkout-address-action";
-import { schemaToAddress } from "@/lib/address";
-import { paths } from "@/lib/paths";
-import { getUserService } from "@/services/user";
+import { updateCheckoutAddressAction } from "@/foundation/address/update-checkout-address-action";
+import { paths } from "@/foundation/routing/paths";
+import { getServiceRegistry } from "@/services/registry";
+import { getAccessToken } from "@/services/tokens";
 
 import {
   type CreateShippingAddressSchema,
@@ -27,10 +27,11 @@ export async function accountAddressUpdateAction({
   id: string;
   input: UpdateShippingAddressSchema;
 }) {
-  const [accessToken, userService] = await Promise.all([
+  const [accessToken, services] = await Promise.all([
     getAccessToken(),
-    getUserService(),
+    getServiceRegistry(),
   ]);
+  const userService = await services.getUserService();
 
   const data = await userService.accountAddressUpdate({
     accessToken,
@@ -59,10 +60,11 @@ export async function createCheckoutShippingAddress({
   });
 
   if (saveForFutureUse) {
-    const [accessToken, userService] = await Promise.all([
+    const [accessToken, services] = await Promise.all([
       getAccessToken(),
-      getUserService(),
+      getServiceRegistry(),
     ]);
+    const userService = await services.getUserService();
 
     await userService.accountAddressCreate({
       accessToken,

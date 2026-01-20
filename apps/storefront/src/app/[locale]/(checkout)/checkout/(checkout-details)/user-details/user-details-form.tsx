@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 import type { Checkout } from "@nimara/domain/objects/Checkout";
 import { Button } from "@nimara/ui/components/button";
 
-import { useRouterWithState } from "@/lib/hooks";
+import { useRouterWithState } from "@/foundation/use-router-with-state";
 
 import { updateUserDetails } from "./_forms/actions";
 import { UserEmailForm } from "./_forms/email-form";

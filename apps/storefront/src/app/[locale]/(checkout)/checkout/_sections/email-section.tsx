@@ -4,8 +4,8 @@ import type { Checkout } from "@nimara/domain/objects/Checkout";
 import type { User } from "@nimara/domain/objects/User";
 import { Button } from "@nimara/ui/components/button";
 
+import { paths } from "@/foundation/routing/paths";
 import { LocalizedLink } from "@/i18n/routing";
-import { paths } from "@/lib/paths";
 import { getCheckoutService } from "@/services/checkout";
 import { storefrontLogger } from "@/services/logging";
 
@@ -41,7 +41,7 @@ export const EmailSection = async ({
           <h2 className="w-full scroll-m-20 text-2xl tracking-tight">
             {t("user-details.signed-in-as")}
           </h2>
-          <p className="break-all text-sm text-foreground">
+          <p className="text-foreground break-all text-sm">
             {userFullName} {user.email}
           </p>
         </section>
@@ -51,7 +51,7 @@ export const EmailSection = async ({
             <h2 className="scroll-m-20 text-2xl tracking-tight">
               {t("user-details.title")}
             </h2>
-            <p className="break-all text-sm font-normal leading-5 text-foreground">
+            <p className="text-foreground break-all text-sm font-normal leading-5">
               {checkout.email}
             </p>
           </div>

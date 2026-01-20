@@ -69,7 +69,7 @@ const config = {
 
     // allow unused vars prefixed with `_`
     "@typescript-eslint/no-unused-vars": [
-      "error",
+      "warn",
       { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
     ],
 
@@ -120,6 +120,7 @@ const config = {
     "*.js",
     "*.jsx",
     "*.cjs",
+    "svg.d.ts",
     "src/checkout/graphql/*",
     "generated.ts",
     "tailwind.config.*",

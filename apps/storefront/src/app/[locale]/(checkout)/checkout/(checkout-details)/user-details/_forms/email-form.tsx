@@ -1,17 +1,16 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import type { UseFormReturn } from "react-hook-form";
+import { FormProvider, type UseFormReturn } from "react-hook-form";
 
 import type { FieldType } from "@nimara/domain/objects/AddressForm";
 import type { Checkout } from "@nimara/domain/objects/Checkout";
+import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
+import type { TranslationMessage } from "@nimara/foundation/i18n/types";
+import { cn } from "@nimara/foundation/lib/cn";
 import { Button } from "@nimara/ui/components/button";
-import { Form } from "@nimara/ui/components/form";
 
-import { TextFormField } from "@/components/form/text-form-field";
-import { useRouterWithState } from "@/lib/hooks";
-import { cn } from "@/lib/utils";
-import type { TranslationMessage } from "@/types";
+import { useRouterWithState } from "@/foundation/use-router-with-state";
 
 import { checkIfUserHasAnAccount, updateUserDetails } from "./actions";
 import { type EmailFormSchema } from "./schema";
@@ -66,7 +65,7 @@ export const UserEmailForm = ({
   const serverErrorCode = form.formState.errors.root?.message;
 
   return (
-    <Form {...form}>
+    <FormProvider {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
         className="flex flex-col gap-y-2"
@@ -100,6 +99,6 @@ export const UserEmailForm = ({
           </p>
         )}
       </form>
-    </Form>
+    </FormProvider>
   );
 };

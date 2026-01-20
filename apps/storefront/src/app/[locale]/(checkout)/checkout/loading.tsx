@@ -1,4 +1,4 @@
-import { Logo } from "@/components/header/logo";
+import { Logo } from "@/features/header/logo";
 
 import { CheckoutSkeleton } from "./_components/checkout-skeleton";
 
@@ -13,7 +13,7 @@ export default function Loading() {
           <div className="flex flex-col gap-8 divide-y pt-8"></div>
         </main>
       </div>
-      <aside className="hidden bg-gray-100 dark:bg-stone-900 md:block">
+      <aside className="hidden bg-gray-100 md:block dark:bg-stone-900">
         <CheckoutSkeleton />
       </aside>
     </section>

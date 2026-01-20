@@ -4,9 +4,9 @@ import { revalidatePath } from "next/cache";
 
 import { type AllCountryCode } from "@nimara/domain/consts";
 
-import { getAccessToken } from "@/auth";
-import { paths } from "@/lib/paths";
-import { getUserService } from "@/services/user";
+import { paths } from "@/foundation/routing/paths";
+import { getServiceRegistry } from "@/services/registry";
+import { getAccessToken } from "@/services/tokens";
 
 import type { FormSchema } from "./schema";
 
@@ -15,10 +15,11 @@ export async function createNewAddress({
   isDefaultBillingAddress,
   ...input
 }: FormSchema) {
-  const [accessToken, userService] = await Promise.all([
+  const [accessToken, services] = await Promise.all([
     getAccessToken(),
-    getUserService(),
+    getServiceRegistry(),
   ]);
+  const userService = await services.getUserService();
 
   const result = await userService.accountAddressCreate({
     input: {
@@ -51,10 +52,11 @@ export async function updateAddress({
   id: string;
   input: FormSchema;
 }) {
-  const [accessToken, userService] = await Promise.all([
+  const [accessToken, services] = await Promise.all([
     getAccessToken(),
-    getUserService(),
+    getServiceRegistry(),
   ]);
+  const userService = await services.getUserService();
 
   const data = await userService.accountAddressUpdate({
     accessToken,
@@ -84,10 +86,11 @@ export async function updateAddress({
 }
 
 export async function deleteAddress(id: string) {
-  const [accessToken, userService] = await Promise.all([
+  const [accessToken, services] = await Promise.all([
     getAccessToken(),
-    getUserService(),
+    getServiceRegistry(),
   ]);
+  const userService = await services.getUserService();
 
   const data = await userService.accountAddressDelete({
     accessToken,

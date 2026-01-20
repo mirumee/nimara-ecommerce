@@ -2,9 +2,9 @@ import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 
 import type { OrderLine as OrderLineType } from "@nimara/domain/objects/Order";
+import { ProductImagePlaceholder } from "@nimara/features/shared/product/product-image-placeholder";
 
-import { ProductImagePlaceholder } from "@/components/product-image-placeholder";
-import { getLocalizedFormatter } from "@/lib/formatters/get-localized-formatter";
+import { getLocalizedFormatter } from "@/foundation/formatters/get-localized-formatter";
 
 export const OrderLine = async ({
   line,
@@ -47,7 +47,7 @@ export const OrderLine = async ({
           <p className="w-1/3 text-stone-500 dark:text-stone-400">
             {quantityLabel}
           </p>
-          <p className="w-1/3 text-center font-bold text-primary">
+          <p className="text-primary w-1/3 text-center font-bold">
             {returnStatus || ""}
           </p>
           <p className="w-1/3 text-end text-stone-500 dark:text-stone-400">
@@ -55,14 +55,14 @@ export const OrderLine = async ({
           </p>
         </span>
       </div>
-      <p className="col-span-5 hidden text-primary sm:block">{lineName}</p>
-      <p className="col-span-2 hidden text-center text-sm font-bold text-primary sm:block">
+      <p className="text-primary col-span-5 hidden sm:block">{lineName}</p>
+      <p className="text-primary col-span-2 hidden text-center text-sm font-bold sm:block">
         {returnStatus || ""}
       </p>
-      <p className="col-span-2 hidden text-end text-stone-500 dark:text-muted-foreground sm:block">
+      <p className="dark:text-muted-foreground col-span-2 hidden text-end text-stone-500 sm:block">
         {quantityLabel}
       </p>
-      <p className="col-span-2 hidden text-end text-stone-500 dark:text-muted-foreground sm:block">
+      <p className="dark:text-muted-foreground col-span-2 hidden text-end text-stone-500 sm:block">
         {priceLabel}
       </p>
     </>

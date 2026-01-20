@@ -4,14 +4,15 @@ import type { Checkout } from "@nimara/domain/objects/Checkout";
 import { type AsyncResult, ok } from "@nimara/domain/objects/Result";
 
 import { serverEnvs } from "@/envs/server";
-import { paths } from "@/lib/paths";
+import { paths } from "@/foundation/routing/paths";
 import { getCheckoutService } from "@/services/checkout";
-import { getUserService } from "@/services/user";
+import { getServiceRegistry } from "@/services/registry";
 
 import type { EmailFormSchema } from "./schema";
 
 export const checkIfUserHasAnAccount = async (email: string) => {
-  const userService = await getUserService();
+  const services = await getServiceRegistry();
+  const userService = await services.getUserService();
   const data = await userService.userFind({
     email,
     saleorAppToken: serverEnvs.SALEOR_APP_TOKEN,

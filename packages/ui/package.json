@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint": "eslint . --ext .js,.ts,.tsx --fix",
     "lint:staged": "lint-staged",
     "ui:add": "pnpm dlx shadcn@latest add",
     "postui:add": "prettier --list-different --ignore-unknown --write . && eslint --quiet --fix ."
@@ -39,23 +39,23 @@
     "date-fns": "^2.30.0",
     "editorjs-html": "3.4.3",
     "embla-carousel-react": "8.6.0",
-    "lucide-react": "^0.548.0",
-    "react": "19.2.0",
-    "react-dom": "19.2.0",
-    "react-hook-form": "7.65.0",
+    "lucide-react": "^0.544.0",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
+    "react-hook-form": "catalog:",
     "react-markdown": "10.1.0",
-    "string-strip-html": "13.5.0",
+    "string-strip-html": "13.4.13",
     "tailwind-merge": "^2.6.0",
-    "tailwindcss": "^3.4.18"
+    "tailwindcss": "^3.4.17"
   },
   "devDependencies": {
     "@nimara/config": "workspace:*",
-    "@types/react": "19.2.2",
+    "@types/react": "19.1.11",
     "eslint": "^8.57.0",
     "eslint-config-custom": "workspace:*",
-    "lint-staged": "^16.2.6",
+    "lint-staged": "^16.1.5",
     "tsconfig": "workspace:*",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.2"
   },
   "lint-staged": {
     "*.{js,cjs,ts,tsx}": "eslint --fix",

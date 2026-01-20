@@ -2,9 +2,9 @@ import { getTranslations } from "next-intl/server";
 
 import { Button } from "@nimara/ui/components/button";
 
-import { SignInForm } from "@/components/sign-in-form";
+import { SignInForm } from "@/foundation/auth/sign-in/sign-in-form";
+import { paths } from "@/foundation/routing/paths";
 import { LocalizedLink } from "@/i18n/routing";
-import { paths } from "@/lib/paths";
 
 export async function generateMetadata() {
   const t = await getTranslations("auth");
@@ -24,7 +24,7 @@ export default async function LoginPage() {
       <hr />
 
       <div className="mb-4">
-        <h2 className="mb-12 text-2xl font-normal leading-8 text-primary">
+        <h2 className="text-primary mb-12 text-2xl font-normal leading-8">
           {t("auth.first-time-on-nimara-store")}
         </h2>
         <Button asChild className="w-full" variant="outline">

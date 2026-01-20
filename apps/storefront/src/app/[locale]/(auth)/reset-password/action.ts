@@ -2,8 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 
-import { paths } from "@/lib/paths";
-import { getStoreUrl, getStoreUrlWithPath } from "@/lib/server";
+import { paths } from "@/foundation/routing/paths";
+import { getStoreUrl, getStoreUrlWithPath } from "@/foundation/server";
 import { getAuthService } from "@/services/auth";
 
 export const requestPasswordResetAction = async ({

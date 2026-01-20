@@ -4,8 +4,8 @@ import { type NextRequest, NextResponse } from "next/server";
 import { checkoutSessionUpdateSchema } from "@nimara/infrastructure/acp/schema";
 import { type ACPError } from "@nimara/infrastructure/acp/types";
 
-import { idempotencyStorage } from "@/lib/acp";
-import { validateChannelParam } from "@/lib/channel";
+import { idempotencyStorage } from "@/features/acp/acp";
+import { validateChannelParam } from "@/foundation/validate-channel-param";
 import { getACPService } from "@/services/acp";
 import { storefrontLogger } from "@/services/logging";
 

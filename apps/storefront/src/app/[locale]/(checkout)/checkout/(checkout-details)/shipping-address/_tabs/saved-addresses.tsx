@@ -1,21 +1,20 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 
 import type { Address } from "@nimara/domain/objects/Address";
 import type { Checkout } from "@nimara/domain/objects/Checkout";
+import { displayFormattedAddressLines } from "@nimara/foundation/address/address";
+import type { FormattedAddress } from "@nimara/foundation/address/types";
+import { isGlobalError } from "@nimara/foundation/errors/errors";
+import { RadioFormGroup } from "@nimara/foundation/form-components/radio-form-group";
 import { Button } from "@nimara/ui/components/button";
-import { Form } from "@nimara/ui/components/form";
 import { useToast } from "@nimara/ui/hooks";
 
-import { RadioFormGroup } from "@/components/form/radio-form-group";
-import { updateCheckoutAddressAction } from "@/lib/actions/update-checkout-address-action";
-import { displayFormattedAddressLines } from "@/lib/address";
-import type { FormattedAddress } from "@/lib/checkout";
-import { isGlobalError } from "@/lib/errors";
-import { useRouterWithState } from "@/lib/hooks";
-import { paths } from "@/lib/paths";
+import { updateCheckoutAddressAction } from "@/foundation/address/update-checkout-address-action";
+import { paths } from "@/foundation/routing/paths";
+import { useRouterWithState } from "@/foundation/use-router-with-state";
 
 import type { SavedAddressFormSchema } from "../_forms/schema";
 
@@ -83,7 +82,7 @@ export function SavedAddresses({
   }
 
   return (
-    <Form {...form}>
+    <FormProvider {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
         className="space-y-8"
@@ -132,6 +131,6 @@ export function SavedAddresses({
           {isDisabled ? t("common.please-wait") : t("common.continue")}
         </Button>
       </form>
-    </Form>
+    </FormProvider>
   );
 }

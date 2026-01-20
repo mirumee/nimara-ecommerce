@@ -1,4 +1,4 @@
-import { type PageEventSubscriptionFragment } from "@/graphql/fragments/generated";
+import { type PageEventSubscriptionFragment } from "@/infrastructure/webhook/saleor/graphql/fragments/generated";
 
 import { handleWebhookPostRequest } from "../helpers";
 

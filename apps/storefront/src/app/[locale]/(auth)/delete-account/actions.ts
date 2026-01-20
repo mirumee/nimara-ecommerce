@@ -2,16 +2,17 @@
 
 import { redirect } from "next/navigation";
 
-import { getAccessToken } from "@/auth";
-import { handleLogout } from "@/lib/actions/auth";
-import { paths } from "@/lib/paths";
-import { getUserService } from "@/services/user";
+import { handleLogout } from "@/foundation/auth/auth";
+import { paths } from "@/foundation/routing/paths";
+import { getServiceRegistry } from "@/services/registry";
+import { getAccessToken } from "@/services/tokens";
 
 export async function deleteUserAccount(token: string) {
   const accessToken = await getAccessToken();
 
   if (accessToken) {
-    const userService = await getUserService();
+    const services = await getServiceRegistry();
+    const userService = await services.getUserService();
     const result = await userService.accountDelete({ accessToken, token });
 
     if (result.ok) {

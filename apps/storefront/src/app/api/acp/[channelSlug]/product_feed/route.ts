@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 
+import { idempotencyStorage } from "@/features/acp/acp";
+import { validateChannelParam } from "@/foundation/validate-channel-param";
 import { localePrefixes } from "@/i18n/routing";
-import { idempotencyStorage } from "@/lib/acp";
-import { validateChannelParam } from "@/lib/channel";
 import { getACPService } from "@/services/acp";
 import { storefrontLogger } from "@/services/logging";
 
