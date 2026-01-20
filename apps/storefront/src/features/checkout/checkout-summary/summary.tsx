@@ -1,7 +1,6 @@
 "use client";
 
 import { type Checkout } from "@nimara/domain/objects/Checkout";
-
 import { ShoppingBag } from "@nimara/features/shared/shopping-bag/shopping-bag";
 
 export const Summary = ({ checkout }: { checkout: Checkout }) => {

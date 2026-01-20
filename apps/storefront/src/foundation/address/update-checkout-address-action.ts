@@ -6,23 +6,22 @@ import { type AsyncResult } from "@nimara/domain/objects/Result";
 import { getCheckoutService } from "@/services/checkout";
 
 export const updateCheckoutAddressAction = async ({
-    type,
-    ...values
+  type,
+  ...values
 }: {
-    address: Partial<Omit<Address, "id">>;
-    checkoutId: string;
-    type: "shipping" | "billing";
+  address: Partial<Omit<Address, "id">>;
+  checkoutId: string;
+  type: "shipping" | "billing";
 }): AsyncResult<{
-    success: true;
+  success: true;
 }> => {
-    const checkoutService = await getCheckoutService();
-    const updateFn =
-        type === "shipping"
-            ? checkoutService.checkoutShippingAddressUpdate
-            : checkoutService.checkoutBillingAddressUpdate;
+  const checkoutService = await getCheckoutService();
+  const updateFn =
+    type === "shipping"
+      ? checkoutService.checkoutShippingAddressUpdate
+      : checkoutService.checkoutBillingAddressUpdate;
 
-    const result = await updateFn(values);
+  const result = await updateFn(values);
 
-    return result;
+  return result;
 };
-

@@ -3,13 +3,13 @@ import { getTranslations } from "next-intl/server";
 
 import { type AllCountryCode } from "@nimara/domain/consts";
 import { type Address } from "@nimara/domain/objects/Address";
+import { displayFormattedAddressLines } from "@nimara/foundation/address/address";
 
-import { getAccessToken } from "@/auth";
 import { getCurrentRegion } from "@/foundation/regions";
 import type { SupportedLocale } from "@/foundation/regions/types";
-import { displayFormattedAddressLines } from "@nimara/foundation/address/address";
 import { getAddressService } from "@/services/address";
-import { getUserService } from "@/services/user";
+import { getServiceRegistry } from "@/services/registry";
+import { getAccessToken } from "@/services/tokens";
 
 import { AddNewAddressModal } from "./_modals/create-address-modal";
 import { EditAddressModal } from "./_modals/update-address-modal";
@@ -22,11 +22,12 @@ type PageProps = {
 export default async function Page(props: PageProps) {
   const { locale } = await props.params;
   const searchParams = await props.searchParams;
-  const [accessToken, userService, addressService] = await Promise.all([
+  const [accessToken, services, addressService] = await Promise.all([
     getAccessToken(),
-    getUserService(),
+    getServiceRegistry(),
     getAddressService(),
   ]);
+  const userService = await services.getUserService();
   const [t, region, resultUserAddresses] = await Promise.all([
     getTranslations(),
     getCurrentRegion(),

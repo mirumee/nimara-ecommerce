@@ -8,18 +8,18 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 
-import { Toaster } from "@nimara/ui/components/toaster";
-
 import { ErrorServiceServer } from "@nimara/foundation/errors/error-service/error-service-server";
-import { getServiceRegistry } from "@/services/registry";
-import { clientEnvs } from "@/envs/client";
-import { routing } from "@/i18n/routing";
-import { LocalizedLinkProviderWrapper } from "@/i18n/localized-link-provider-wrapper";
-import { FormatterProviderWrapper } from "@/foundation/formatters/formatter-provider-wrapper";
-import { cn } from "@nimara/foundation/lib/cn";
 import { aspekta } from "@nimara/foundation/fonts";
+import { cn } from "@nimara/foundation/lib/cn";
 import { themePreloadScript } from "@nimara/foundation/theme/theme-preload-script";
 import { ClientThemeProvider } from "@nimara/foundation/theme/theme-provider";
+import { Toaster } from "@nimara/ui/components/toaster";
+
+import { clientEnvs } from "@/envs/client";
+import { FormatterProviderWrapper } from "@/foundation/formatters/formatter-provider-wrapper";
+import { LocalizedLinkProviderWrapper } from "@/i18n/localized-link-provider-wrapper";
+import { routing } from "@/i18n/routing";
+import { getServiceRegistry } from "@/services/registry";
 
 export const metadata: Metadata = {
   title: {

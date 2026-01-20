@@ -5,18 +5,24 @@ import { LockIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { type ReactNode, useEffect, useState } from "react";
-import { type SubmitHandler, useForm } from "react-hook-form";
+import { FormProvider, type SubmitHandler, useForm } from "react-hook-form";
 
 import { type AllCountryCode } from "@nimara/domain/consts";
 import { type CountryOption } from "@nimara/domain/objects/Address";
 import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { type AppErrorCode } from "@nimara/domain/objects/Error";
+import { type Maybe } from "@nimara/domain/objects/Maybe";
 import { type PaymentMethod } from "@nimara/domain/objects/Payment";
 import { type User } from "@nimara/domain/objects/User";
+import { addressToSchema } from "@nimara/foundation/address/address";
+import { AddressForm } from "@nimara/foundation/address/address-form/address-form";
+import type { FormattedAddress } from "@nimara/foundation/address/types";
+import { isGlobalError } from "@nimara/foundation/errors/errors";
+import { CheckboxField } from "@nimara/foundation/form-components/checkbox-field";
+import { cn } from "@nimara/foundation/lib/cn";
 import { ADDRESS_DEFAULT_VALUES } from "@nimara/infrastructure/consts";
 import { Button } from "@nimara/ui/components/button";
-import { Form } from "@nimara/ui/components/form";
 import { Spinner } from "@nimara/ui/components/spinner";
 import {
   Tabs,
@@ -26,20 +32,13 @@ import {
 } from "@nimara/ui/components/tabs";
 import { useToast } from "@nimara/ui/hooks";
 
-import { AddressForm } from "@nimara/foundation/address/address-form/address-form";
-import { CheckboxField } from "@nimara/foundation/form-components/checkbox-field";
+import { PAYMENT_ELEMENT_ID } from "@/features/checkout/consts";
+import { translateApiErrors } from "@/features/checkout/payment";
 import { PaymentMethods } from "@/features/checkout/payment-methods";
-import { usePathname, useRouter } from "@/i18n/routing";
-import { isGlobalError } from "@nimara/foundation/errors/errors";
 import { useCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
-import { addressToSchema } from "@nimara/foundation/address/address";
-import type { FormattedAddress } from "@nimara/foundation/address/types";
-import { PAYMENT_ELEMENT_ID } from "@/others/checkout/consts";
-import { translateApiErrors } from "@/features/checkout/payment";
-import { cn } from "@nimara/foundation/lib/cn";
+import { usePathname, useRouter } from "@/i18n/routing";
 import { getPaymentService } from "@/services/payment";
-import { Maybe } from "@nimara/domain/objects/Maybe";
 
 import { updateBillingAddress } from "./actions";
 import { AddressTab } from "./address-tab";
@@ -99,11 +98,11 @@ export const Payment = ({
   const [errors, setErrors] = useState<(string | ReactNode)[]>(
     errorCode
       ? [
-        translateApiErrors({
-          t,
-          errors: [{ code: errorCode }],
-        }),
-      ]
+          translateApiErrors({
+            t,
+            errors: [{ code: errorCode }],
+          }),
+        ]
       : [],
   );
 
@@ -366,7 +365,7 @@ export const Payment = ({
   }, [countryCode, addressActiveTab]);
 
   return (
-    <Form {...form}>
+    <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(handlePlaceOrder)} noValidate>
         <div className="mb-8 space-y-6">
           <Tabs
@@ -479,6 +478,6 @@ export const Payment = ({
           </div>
         </div>
       </form>
-    </Form>
+    </FormProvider>
   );
 };

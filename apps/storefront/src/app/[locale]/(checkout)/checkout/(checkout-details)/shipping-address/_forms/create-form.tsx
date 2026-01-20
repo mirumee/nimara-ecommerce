@@ -3,20 +3,19 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { type SubmitHandler, useForm } from "react-hook-form";
+import { FormProvider, type SubmitHandler, useForm } from "react-hook-form";
 
 import { type AllCountryCode } from "@nimara/domain/consts";
 import { type CountryOption } from "@nimara/domain/objects/Address";
 import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import { type Checkout } from "@nimara/domain/objects/Checkout";
+import { AddressForm } from "@nimara/foundation/address/address-form/address-form";
+import { isGlobalError } from "@nimara/foundation/errors/errors";
+import { CheckboxField } from "@nimara/foundation/form-components/checkbox-field";
 import { ADDRESS_CORE_FIELDS } from "@nimara/infrastructure/consts";
 import { Button } from "@nimara/ui/components/button";
-import { Form } from "@nimara/ui/components/form";
 import { useToast } from "@nimara/ui/hooks";
 
-import { AddressForm } from "@nimara/foundation/address/address-form/address-form";
-import { CheckboxField } from "@nimara/foundation/form-components/checkbox-field";
-import { isGlobalError } from "@nimara/foundation/errors/errors";
 import { paths } from "@/foundation/routing/paths";
 import { useRouterWithState } from "@/foundation/use-router-with-state";
 
@@ -92,7 +91,7 @@ export const CreateShippingAddressForm = ({
   };
 
   return (
-    <Form {...form}>
+    <FormProvider {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
         className="flex flex-col gap-y-6"
@@ -124,6 +123,6 @@ export const CreateShippingAddressForm = ({
           {canProceed ? t("common.continue") : t("common.please-wait")}
         </Button>
       </form>
-    </Form>
+    </FormProvider>
   );
 };

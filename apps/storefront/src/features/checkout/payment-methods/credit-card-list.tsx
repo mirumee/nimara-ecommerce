@@ -3,8 +3,8 @@
 import { useTranslations } from "next-intl";
 
 import { type CardPaymentMethod } from "@nimara/domain/objects/Payment";
-import { MethodFormItem } from "./method-form-item";
 
+import { MethodFormItem } from "./method-form-item";
 
 export const CreditCardList = ({ items }: { items: CardPaymentMethod[] }) => {
   const t = useTranslations();

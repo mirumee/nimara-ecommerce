@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
-
 import { addressSchema } from "@nimara/foundation/address/address-form/schema";
 import { type GetTranslations } from "@nimara/foundation/i18n/types";
 

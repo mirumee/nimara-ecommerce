@@ -8,11 +8,11 @@ import type {
   PaymentMethodType,
   PaypalPaymentMethod,
 } from "@nimara/domain/objects/Payment";
+import { translateOrFallback } from "@nimara/foundation/i18n/helpers/translate-or-fallback";
+import type { GetTranslations } from "@nimara/foundation/i18n/types";
 
 import { clientEnvs } from "@/envs/client";
 import { LocalizedLink } from "@/i18n/routing";
-import { translateOrFallback } from "@nimara/foundation/i18n/helpers/translate-or-fallback";
-import type { GetTranslations } from "@nimara/foundation/i18n/types";
 
 export type PaymentMethodMap = {
   [K in PaymentMethodType]?: Extract<PaymentMethod, { type: K }>[];
@@ -48,9 +48,10 @@ export const formatPaymentMethod = ({
   t: GetTranslations;
 }) => {
   if (type === "card") {
-    return FORMATTERS.card(t, paymentMethod as CardPaymentMethod["paymentMethod"]);
+    return FORMATTERS.card(t, paymentMethod);
   }
-  return FORMATTERS.paypal(t, paymentMethod as PaypalPaymentMethod["paymentMethod"]);
+
+  return FORMATTERS.paypal(t, paymentMethod);
 };
 
 const DEFAULT_ERROR_CODES = [

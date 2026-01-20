@@ -5,11 +5,11 @@ import { useTranslations } from "next-intl";
 import type { PropsWithChildren } from "react";
 
 import type { SearchProduct } from "@nimara/domain/objects/SearchProduct";
-
-import productPlaceholder from "@/assets/product_placeholder.svg?url";
 import { DiscountBadge } from "@nimara/features/shared/product/discount-badge";
 import { getDiscountInfo, Price } from "@nimara/features/shared/product/price";
 import { useLocalizedLink } from "@nimara/foundation/i18n/hooks/use-localized-link";
+
+import productPlaceholder from "@/assets/product_placeholder.svg?url";
 
 import { ProductImagePlaceholder } from "./product-image-placeholder";
 
@@ -31,7 +31,7 @@ type Props = {
 } & Pick<ImageProps, "height" | "width" | "sizes">;
 
 export const SearchProductCard = ({
-  product: { slug, thumbnail, name, price, undiscountedPrice },
+  product: { thumbnail, name, price, undiscountedPrice },
   sizes,
   productPath,
 }: Props) => {

@@ -5,20 +5,20 @@ import {
   type Product,
   type ProductAvailability,
 } from "@nimara/domain/objects/Product";
+import { VariantSelector } from "@nimara/features/product-detail-page/shared/components/variant-selector";
+import { type ServiceRegistry } from "@nimara/infrastructure/types";
 import { Button } from "@nimara/ui/components/button";
 import { Skeleton } from "@nimara/ui/components/skeleton";
 
-import { VariantSelector } from "@nimara/features/product-detail-page/shared/components/variant-selector";
-import { ServiceRegistry } from "@nimara/infrastructure/types";
 import { type AddToBagAction } from "../types";
 
 type VariantPickerProps = {
+  addToBagAction: AddToBagAction;
   availability: ProductAvailability;
-  product: Product;
-  services: ServiceRegistry;
   cartPath: string;
   checkoutId: string | null;
-  addToBagAction: AddToBagAction;
+  product: Product;
+  services: ServiceRegistry;
 };
 
 /**
@@ -33,19 +33,19 @@ export const VariantSelectorWrapper = async ({
   checkoutId,
   addToBagAction,
 }: VariantPickerProps) => {
-
+  const cartService = await services.getCartService();
   const resultCartGet = checkoutId
-    ? await services.cart.cartGet({
-      cartId: checkoutId,
-      languageCode: services.region.language.code,
-      countryCode: services.region.market.countryCode,
-      options: {
-        next: {
-          revalidate: services.config.cacheTTL.cart,
-          tags: [`CHECKOUT:${checkoutId}`],
+    ? await cartService.cartGet({
+        cartId: checkoutId,
+        languageCode: services.region.language.code,
+        countryCode: services.region.market.countryCode,
+        options: {
+          next: {
+            revalidate: services.config.cacheTTL.cart,
+            tags: [`CHECKOUT:${checkoutId}`],
+          },
         },
-      },
-    })
+      })
     : null;
 
   return (

@@ -6,10 +6,10 @@ import {
   NextResponse,
 } from "next/server";
 
+import { type CustomMiddleware } from "@nimara/foundation/middleware/chain";
+
 import { COOKIE_KEY } from "@/config";
 import { getAuthService } from "@/services/auth";
-
-import { type CustomMiddleware } from "@nimara/foundation/middleware/chain";
 
 const PROTECTED_ROUTES = ["/account"];
 

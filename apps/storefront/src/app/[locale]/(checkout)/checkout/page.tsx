@@ -1,7 +1,7 @@
-import { getAccessToken } from "@/auth";
+import { getCheckoutOrRedirect } from "@/features/checkout/checkout-actions";
 import type { SupportedLocale } from "@/foundation/regions/types";
-import { getCheckoutOrRedirect } from "@/others/checkout/checkout-actions";
-import { getUserService } from "@/services/user";
+import { getServiceRegistry } from "@/services/registry";
+import { getAccessToken } from "@/services/tokens";
 
 import { validateCheckoutStepAction } from "./actions";
 
@@ -10,12 +10,13 @@ type PageProps = {
 };
 
 export default async function Page(props: PageProps) {
-  const [{ locale }, checkout, accessToken, userService] = await Promise.all([
+  const [{ locale }, checkout, accessToken, services] = await Promise.all([
     props.params,
     getCheckoutOrRedirect(),
     getAccessToken(),
-    getUserService(),
+    getServiceRegistry(),
   ]);
+  const userService = await services.getUserService();
 
   const resultUserGet = await userService.userGet(accessToken);
 

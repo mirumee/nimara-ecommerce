@@ -1,9 +1,8 @@
 "use client";
 
+import { type Maybe } from "@nimara/domain/objects/Maybe";
 import type { Menu } from "@nimara/domain/objects/Menu";
-
 import { useLocalizedLink } from "@nimara/foundation/i18n/hooks/use-localized-link";
-import { Maybe } from "@nimara/domain/objects/Maybe";
 
 export const MobileNavigation = ({
   menu,

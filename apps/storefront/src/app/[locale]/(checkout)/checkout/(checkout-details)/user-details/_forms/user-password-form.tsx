@@ -2,14 +2,13 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
-import { useForm } from "react-hook-form";
-
-import { Button } from "@nimara/ui/components/button";
-import { Form } from "@nimara/ui/components/form";
+import { FormProvider, useForm } from "react-hook-form";
 
 import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
-import { ResetPasswordLink } from "@/foundation/auth/reset-password-link";
+import { Button } from "@nimara/ui/components/button";
+
 import { login } from "@/foundation/auth/login";
+import { ResetPasswordLink } from "@/foundation/auth/reset-password-link";
 import { paths } from "@/foundation/routing/paths";
 import { useRouterWithState } from "@/foundation/use-router-with-state";
 
@@ -50,7 +49,7 @@ export const UserPasswordForm = ({
   };
 
   return (
-    <Form {...form}>
+    <FormProvider {...form}>
       <form
         className="flex flex-col gap-4 py-4"
         onSubmit={form.handleSubmit(handleSubmit)}
@@ -76,6 +75,6 @@ export const UserPasswordForm = ({
           {isDisabled ? t("common.please-wait") : t("common.continue")}
         </Button>
       </form>
-    </Form>
+    </FormProvider>
   );
 };

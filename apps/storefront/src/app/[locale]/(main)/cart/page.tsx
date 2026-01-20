@@ -1,11 +1,13 @@
-import { getAccessToken } from "@/auth";
-import { getServiceRegistry } from "@/services/registry";
-import { getCheckoutId, revalidateCart } from "@/features/checkout/cart";
-import { paths } from "@/foundation/routing/paths";
 import {
   generateStandardCartMetadata,
   StandardCartView,
 } from "@nimara/features/cart/shop-basic-cart/standard";
+
+import { getCheckoutId, revalidateCart } from "@/features/checkout/cart";
+import { paths } from "@/foundation/routing/paths";
+import { getServiceRegistry } from "@/services/registry";
+import { getAccessToken } from "@/services/tokens";
+
 import {
   deleteLineAction,
   updateLineQuantityAction,

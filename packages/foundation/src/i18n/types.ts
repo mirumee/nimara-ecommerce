@@ -8,7 +8,5 @@ export type TranslationNamespace = NamespaceKeys<
   NestedKeyOf<IntlMessages>
 >;
 
-
-
 export type TranslationMessage<Namespace extends TranslationNamespace = never> =
   Parameters<GetTranslations<Namespace>>[0];

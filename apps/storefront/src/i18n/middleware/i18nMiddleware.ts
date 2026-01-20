@@ -7,18 +7,13 @@ import {
 } from "next/server";
 import createIntlMiddleware from "next-intl/middleware";
 
-import { COOKIE_KEY, COOKIE_MAX_AGE } from "@/config";
-import { localePrefixes, routing } from "@/i18n/routing";
-import {
-  DEFAULT_LOCALE,
-  SUPPORTED_LOCALES,
-} from "@/foundation/regions/config";
-import {
-  type SupportedLocale,
-} from "@/foundation/regions/types";
-import { getStorefrontLogger } from "@/services/lazy-logging";
-
 import type { CustomMiddleware } from "@nimara/foundation/middleware/chain";
+
+import { COOKIE_KEY, COOKIE_MAX_AGE } from "@/config";
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from "@/foundation/regions/config";
+import { type SupportedLocale } from "@/foundation/regions/types";
+import { localePrefixes, routing } from "@/i18n/routing";
+import { getStorefrontLogger } from "@/services/lazy-logging";
 
 function getLocale(request: NextRequest): SupportedLocale {
   const languages = new Negotiator({
@@ -121,7 +116,7 @@ export function i18nMiddleware(next: CustomMiddleware): CustomMiddleware {
         (Object.keys(localePrefixes).find(
           (key) =>
             localePrefixes[
-            key as Exclude<SupportedLocale, typeof DEFAULT_LOCALE>
+              key as Exclude<SupportedLocale, typeof DEFAULT_LOCALE>
             ] === localePrefix,
         ) as SupportedLocale) ?? DEFAULT_LOCALE;
     }

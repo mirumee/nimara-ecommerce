@@ -1,13 +1,15 @@
+import { generateStandardCollectionMetadata } from "@nimara/features/collection/shared/metadata/standard-metadata";
+import { type CollectionViewProps } from "@nimara/features/collection/shared/types";
+import { StandardCollectionView } from "@nimara/features/collection/shop-basic-collection/standard";
+
 import { DEFAULT_RESULTS_PER_PAGE } from "@/config";
 import { clientEnvs } from "@/envs/client";
-import { localePrefixes } from "@/i18n/routing";
 import { DEFAULT_LOCALE } from "@/foundation/regions/config";
 import { paths } from "@/foundation/routing/paths";
+import { localePrefixes } from "@/i18n/routing";
 import { getServiceRegistry } from "@/services/registry";
-import { StandardCollectionView } from "@nimara/features/collection/shop-basic-collection/standard";
-import { generateStandardCollectionMetadata } from "@nimara/features/collection/shared/metadata/standard-metadata";
 
-export async function generateMetadata(props: any) {
+export async function generateMetadata(props: CollectionViewProps) {
   const services = await getServiceRegistry();
   const { slug } = await props.params;
   const storefrontUrl = clientEnvs.NEXT_PUBLIC_STOREFRONT_URL;
@@ -22,7 +24,7 @@ export async function generateMetadata(props: any) {
   });
 }
 
-export default async function Page(props: any) {
+export default async function Page(props: CollectionViewProps) {
   const services = await getServiceRegistry();
   // const { slug } = await props.params;
 

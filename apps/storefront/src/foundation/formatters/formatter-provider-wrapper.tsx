@@ -6,16 +6,16 @@ import { localizedFormatter } from "@nimara/foundation/formatters/util";
 import { useCurrentRegion } from "@/foundation/regions";
 
 export const FormatterProviderWrapper = ({
-    children,
+  children,
 }: {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }) => {
-    const region = useCurrentRegion();
-    const formatter = localizedFormatter({ region });
+  const region = useCurrentRegion();
+  const formatter = localizedFormatter({ region });
 
-    return (
-        <LocalizedFormatterProvider formatter={formatter}>
-            {children}
-        </LocalizedFormatterProvider>
-    );
+  return (
+    <LocalizedFormatterProvider formatter={formatter}>
+      {children}
+    </LocalizedFormatterProvider>
+  );
 };

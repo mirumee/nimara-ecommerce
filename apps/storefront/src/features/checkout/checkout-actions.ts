@@ -1,14 +1,13 @@
 import { getLocale } from "next-intl/server";
 
-import { type Address } from "@nimara/domain/objects/Address";
 import { type Checkout } from "@nimara/domain/objects/Checkout";
 
-import { redirect } from "@/i18n/routing";
+import { getCheckoutId } from "@/features/checkout/cart";
+import { deleteCheckoutIdCookie } from "@/features/checkout/checkout";
 import { getCurrentRegion } from "@/foundation/regions";
 import type { SupportedLocale } from "@/foundation/regions/types";
 import { paths } from "@/foundation/routing/paths";
-import { getCheckoutId } from "@/features/checkout/cart";
-import { deleteCheckoutIdCookie } from "@/features/checkout/checkout";
+import { redirect } from "@/i18n/routing";
 import { getCheckoutService } from "@/services/checkout";
 
 export const getCheckoutOrRedirect = async (): Promise<Checkout> | never => {
@@ -38,7 +37,6 @@ export const getCheckoutOrRedirect = async (): Promise<Checkout> | never => {
 
   return resultCheckout.data.checkout;
 };
-
 
 /**
  * Validates checkout lines and redirects to the cart page if there are issues.

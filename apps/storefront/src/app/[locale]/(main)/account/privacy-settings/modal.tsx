@@ -20,8 +20,8 @@ import { Label } from "@nimara/ui/components/label";
 import { Spinner } from "@nimara/ui/components/spinner";
 
 import { clientEnvs } from "@/envs/client";
-import { LocalizedLink } from "@/i18n/routing";
 import { paths } from "@/foundation/routing/paths";
+import { LocalizedLink } from "@/i18n/routing";
 
 import { requestUserAccountDeletion } from "./actions";
 

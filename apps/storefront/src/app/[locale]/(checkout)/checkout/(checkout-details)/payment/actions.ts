@@ -2,11 +2,11 @@
 
 import { type AllCountryCode } from "@nimara/domain/consts";
 import { type Checkout } from "@nimara/domain/objects/Checkout";
-
-import { getAccessToken } from "@/auth";
 import { schemaToAddress } from "@nimara/foundation/address/address";
+
 import { updateCheckoutAddressAction } from "@/foundation/address/update-checkout-address-action";
-import { getUserService } from "@/services/user";
+import { getServiceRegistry } from "@/services/registry";
+import { getAccessToken } from "@/services/tokens";
 
 import { type Schema } from "./schema";
 
@@ -29,10 +29,11 @@ export async function updateBillingAddress({
   });
 
   if (saveAddressForFutureUse) {
-    const [accessToken, userService] = await Promise.all([
+    const [accessToken, services] = await Promise.all([
       getAccessToken(),
-      getUserService(),
+      getServiceRegistry(),
     ]);
+    const userService = await services.getUserService();
 
     await userService.accountAddressCreate({
       accessToken,

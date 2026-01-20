@@ -3,20 +3,19 @@
 import { useTranslations } from "next-intl";
 
 import { type SearchProduct } from "@nimara/domain/objects/SearchProduct";
+import { SearchProductCard } from "@nimara/features/shared/product/search-product-card";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
 } from "@nimara/ui/components/carousel";
 
-import { SearchProductCard } from "@nimara/features/shared/product/search-product-card";
-
 export const RelatedProducts = ({
   products,
   productPaths,
 }: {
-  products: SearchProduct[];
   productPaths: Record<string, string>;
+  products: SearchProduct[];
 }) => {
   const t = useTranslations("products");
 
@@ -27,7 +26,10 @@ export const RelatedProducts = ({
         <CarouselContent>
           {products.map((product) => {
             const path = productPaths[product.slug];
-            if (!path) return null;
+
+            if (!path) {
+              return null;
+            }
 
             return (
               <CarouselItem

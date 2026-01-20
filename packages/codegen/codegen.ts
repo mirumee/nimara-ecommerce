@@ -31,6 +31,7 @@ export const baseCodegenConfig: CodegenConfig["config"] = {
     Metadata: "Record<string, string>",
     Hour: "number",
     Minute: "number",
+    PositiveInt: "number",
     PositiveDecimal: "number",
     UUID: "string",
     Upload: "unknown",

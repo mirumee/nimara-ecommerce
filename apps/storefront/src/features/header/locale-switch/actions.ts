@@ -5,9 +5,9 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { COOKIE_KEY } from "@/config";
-import { localePrefixes } from "@/i18n/routing";
 import { DEFAULT_LOCALE } from "@/foundation/regions/config";
 import type { SupportedLocale } from "@/foundation/regions/types";
+import { localePrefixes } from "@/i18n/routing";
 
 export const handleLocaleChange = async (locale: SupportedLocale) => {
   const cookieStore = await cookies();
@@ -20,7 +20,7 @@ export const handleLocaleChange = async (locale: SupportedLocale) => {
     locale === DEFAULT_LOCALE
       ? "/"
       : localePrefixes[
-      locale as Exclude<SupportedLocale, typeof DEFAULT_LOCALE>
-      ],
+          locale as Exclude<SupportedLocale, typeof DEFAULT_LOCALE>
+        ],
   );
 };

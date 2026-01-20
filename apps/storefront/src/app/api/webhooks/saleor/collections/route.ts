@@ -1,5 +1,5 @@
-import { storefrontLogger } from "@/services/logging";
 import { type CollectionEventSubscriptionFragment } from "@/infrastructure/webhook/saleor/graphql/fragments/generated";
+import { storefrontLogger } from "@/services/logging";
 
 import { handleWebhookPostRequest } from "../helpers";
 

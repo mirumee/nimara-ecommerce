@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 
-import { getServiceRegistry } from "@/services/registry";
-import { StandardCMSPageView } from "@nimara/features/cms-page/shop-basic-cms-page/standard";
 import { generateStandardCMSPageMetadata } from "@nimara/features/cms-page/shared/metadata/standard-metadata";
+import { StandardCMSPageView } from "@nimara/features/cms-page/shop-basic-cms-page/standard";
+
+import { getServiceRegistry } from "@/services/registry";
 
 type CMSPageProps = {
   params: Promise<{ locale: string; slug: string }>;

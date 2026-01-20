@@ -9,7 +9,6 @@ import {
   type ProductAvailability,
 } from "@nimara/domain/objects/Product";
 
-
 import {
   getAllSelectionAttributes,
   getParserForAttributeType,
@@ -129,8 +128,8 @@ export const useVariantSelection = ({
 
           return type === "MULTISELECT"
             ? (selectedValue as string[]).every((v) =>
-              values.some((attr) => attr.slug === v),
-            )
+                values.some((attr) => attr.slug === v),
+              )
             : values.some((v) => v.slug === selectedValue);
         }),
       ) ?? []
@@ -166,9 +165,9 @@ export const useVariantSelection = ({
   const discountPercent =
     chosenVariantAvailability && chosenVariantAvailability.priceUndiscounted
       ? calculateDiscountPercent(
-        chosenVariantAvailability.price.amount,
-        chosenVariantAvailability.priceUndiscounted.amount,
-      )
+          chosenVariantAvailability.price.amount,
+          chosenVariantAvailability.priceUndiscounted.amount,
+        )
       : 0;
 
   return {

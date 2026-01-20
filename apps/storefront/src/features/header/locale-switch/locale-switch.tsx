@@ -4,9 +4,8 @@ import { Globe } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
-import { Button } from "@nimara/ui/components/button";
-
 import type { Region } from "@nimara/foundation/regions/types";
+import { Button } from "@nimara/ui/components/button";
 
 import { LocaleSwitchModal } from "./locale-modal";
 

@@ -3,8 +3,8 @@
 import { getLocale } from "next-intl/server";
 import { z } from "zod";
 
-import { redirect } from "@/i18n/routing";
 import { paths } from "@/foundation/routing/paths";
+import { redirect } from "@/i18n/routing";
 import { getServiceRegistry } from "@/services/registry";
 
 const searchFormSchema = z.object({ query: z.string().default("") });
@@ -22,9 +22,12 @@ export const performSearch = async (formData: FormData) => {
 
 export const searchProducts = async (
   value: string,
-): Promise<{ results: Array<{ id: string; label: string; slug: string | null }> }> => {
+): Promise<{
+  results: Array<{ id: string; label: string; slug: string | null }>;
+}> => {
   const services = await getServiceRegistry();
-  const result = await services.search.search(
+  const searchService = await services.getSearchService();
+  const result = await searchService.search(
     {
       query: value,
       limit: maxSearchSuggestions,

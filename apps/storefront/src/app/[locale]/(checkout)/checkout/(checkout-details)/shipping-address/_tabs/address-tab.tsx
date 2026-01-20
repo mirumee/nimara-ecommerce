@@ -10,6 +10,7 @@ import {
 } from "@nimara/domain/objects/Address";
 import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import { type Checkout } from "@nimara/domain/objects/Checkout";
+import type { FormattedAddress } from "@nimara/foundation/address/types";
 import {
   Tabs,
   TabsContent,
@@ -17,10 +18,9 @@ import {
   TabsTrigger,
 } from "@nimara/ui/components/tabs";
 
-import { useRouter } from "@/i18n/routing";
 import { useCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
-import type { FormattedAddress } from "@nimara/foundation/address/types";
+import { useRouter } from "@/i18n/routing";
 
 import { CreateShippingAddressForm } from "../_forms/create-form";
 import { UpdateShippingAddressForm } from "../_forms/update-form";
