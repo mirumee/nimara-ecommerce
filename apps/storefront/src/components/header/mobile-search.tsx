@@ -47,11 +47,7 @@ export const MobileSearch = () => {
         aria-label={t("search-label")}
         modal={true}
       >
-        <SheetContent
-          side="top"
-          closeClassName="right-2 top-2"
-          aria-describedby={t("open-search")}
-        >
+        <SheetContent side="top" closeClassName="right-2 top-2">
           <SheetHeader>
             <SheetTitle></SheetTitle>
             <SheetDescription></SheetDescription>
