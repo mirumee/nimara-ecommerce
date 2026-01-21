@@ -5,7 +5,13 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 import { Button } from "@nimara/ui/components/button";
-import { Sheet, SheetContent } from "@nimara/ui/components/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@nimara/ui/components/sheet";
 
 import { SearchForm } from "@/components/header/search-form";
 import { usePathname } from "@/i18n/routing";
@@ -42,6 +48,11 @@ export const MobileSearch = () => {
         modal={true}
       >
         <SheetContent side="top" closeClassName="right-2 top-2">
+          <SheetHeader>
+            <SheetTitle></SheetTitle>
+            <SheetDescription></SheetDescription>
+          </SheetHeader>
+
           <SearchForm onSubmit={handleCloseSheet} />
         </SheetContent>
       </Sheet>

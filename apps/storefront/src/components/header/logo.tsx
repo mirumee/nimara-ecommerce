@@ -1,11 +1,11 @@
-import { getTranslations } from "next-intl/server";
+import { useTranslations } from "next-intl";
 
 import BrandLogo from "@/assets/brand-logo-dark.svg";
 import { LocalizedLink } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 
-export const Logo = async () => {
-  const t = await getTranslations("common");
+export const Logo = () => {
+  const t = useTranslations("common");
 
   return (
     <LocalizedLink
