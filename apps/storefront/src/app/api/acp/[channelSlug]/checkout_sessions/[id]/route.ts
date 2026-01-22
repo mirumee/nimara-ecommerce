@@ -125,8 +125,8 @@ export async function POST(
       {
         type: "invalid_request",
         code: "request_not_idempotent",
-        message: parsedBody.error.errors[0].message,
-        param: parsedBody.error.errors[0].path.join("."),
+        message: parsedBody.error.issues[0]?.message,
+        param: parsedBody.error.issues[0]?.path.join("."),
       },
       { status: 400 },
     );

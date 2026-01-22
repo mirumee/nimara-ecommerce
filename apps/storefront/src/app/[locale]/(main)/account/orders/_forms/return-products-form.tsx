@@ -32,13 +32,13 @@ export const ReturnProductsForm = ({
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema({ t })),
     defaultValues: {
-      selectedLines: order?.lines.reduce(
+      selectedLines: order?.lines.reduce<Record<string, boolean>>(
         (acc, line) => {
           acc[line.id] = false;
 
           return acc;
         },
-        {} as { [lineId: string]: boolean },
+        {},
       ),
     },
   });

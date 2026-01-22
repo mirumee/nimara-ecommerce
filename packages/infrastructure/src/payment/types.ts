@@ -63,7 +63,7 @@ export type PaymentExecuteInfra = (opts: {
 export type PaymentExecuteUseCase = PaymentExecuteInfra;
 
 export type PaymentElementCreateInfra = (opts: {
-  appearance?: Pick<Appearance, "theme" | "variables">;
+  appearance?: Appearance;
   locale?: string;
   secret: string;
 }) => Promise<{

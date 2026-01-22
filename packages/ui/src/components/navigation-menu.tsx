@@ -40,8 +40,9 @@ NavigationMenuList.displayName = NavigationMenuPrimitive.List.displayName;
 
 const NavigationMenuItem = NavigationMenuPrimitive.Item;
 
-interface NavigationMenuTriggerProps
-  extends React.ComponentProps<typeof NavigationMenuPrimitive.Trigger> {
+interface NavigationMenuTriggerProps extends React.ComponentProps<
+  typeof NavigationMenuPrimitive.Trigger
+> {
   showIcon?: boolean;
 }
 

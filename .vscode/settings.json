@@ -20,5 +20,8 @@
     "bradlc.vscode-tailwindcss"
   ],
   "cSpell.words": ["nimara", "saleor", "undiscounted"],
-  "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }
