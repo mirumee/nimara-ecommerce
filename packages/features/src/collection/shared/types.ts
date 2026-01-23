@@ -45,8 +45,7 @@ export interface StandardCollectionViewProps extends CollectionViewProps {
  * @property collectionPath - The path to the collection page.
  * @property defaultResultsPerPage - The default number of results per page.
  */
-export interface StandardCollectionViewMetadataProps
-  extends CollectionViewProps {
+export interface StandardCollectionViewMetadataProps extends CollectionViewProps {
   collectionPath: string;
   defaultResultsPerPage: number;
   services: ServiceRegistry;

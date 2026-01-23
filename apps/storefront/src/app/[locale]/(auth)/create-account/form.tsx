@@ -107,7 +107,7 @@ export function SignUpForm() {
           />
         </div>
         <div className="mt-7">
-          <p className="dark:text-muted-foreground text-sm text-stone-700">
+          <p className="text-sm text-stone-700 dark:text-muted-foreground">
             {t.rich("auth.create-account-agreement", {
               termsOfUse: () => (
                 <LocalizedLink

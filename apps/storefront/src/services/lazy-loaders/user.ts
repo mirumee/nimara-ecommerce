@@ -16,9 +16,8 @@ export const createUserServiceLoader = (logger: Logger) => {
       return userServiceInstance;
     }
 
-    const { saleorUserService } = await import(
-      "@nimara/infrastructure/user/index"
-    );
+    const { saleorUserService } =
+      await import("@nimara/infrastructure/user/index");
 
     userServiceInstance = saleorUserService({
       apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,

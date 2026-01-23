@@ -29,7 +29,7 @@ export function ContinentRow({
 
   return (
     <>
-      <Label className="border-bottom text-primary block border-b border-stone-200 py-6 text-2xl font-normal leading-8 md:py-10">
+      <Label className="border-bottom block border-b border-stone-200 py-6 text-2xl font-normal leading-8 text-primary md:py-10">
         {name}
       </Label>
       <div className="grid grid-cols-2 gap-8 py-4 md:grid-cols-4">
@@ -43,7 +43,7 @@ export function ContinentRow({
                 key={market.id}
                 variant="ghost"
                 className={cn(
-                  "text-muted-foreground flex h-auto flex-col items-start p-4 text-left text-sm font-normal leading-5",
+                  "flex h-auto flex-col items-start p-4 text-left text-sm font-normal leading-5 text-muted-foreground",
                   {
                     "pointer-events-none opacity-50": isActive,
                   },

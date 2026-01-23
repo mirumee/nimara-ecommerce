@@ -118,7 +118,7 @@ export default async function Page(props: PageProps) {
   return (
     <div className="flex flex-col gap-8 text-sm">
       <div className="flex items-center justify-between">
-        <h2 className="text-primary text-2xl">{t("account.addresses")}</h2>
+        <h2 className="text-2xl text-primary">{t("account.addresses")}</h2>
         {!noAddresses && (
           <AddNewAddressModal
             addressFormRows={resultAddressRows.data}
@@ -143,7 +143,7 @@ export default async function Page(props: PageProps) {
       {noAddresses && (
         <div className="space-y-8">
           <hr />
-          <p className="dark:text-muted-foreground text-stone-500">
+          <p className="text-stone-500 dark:text-muted-foreground">
             {t("address.sorry-you-dont-have-any-addresses")}
           </p>
           <AddNewAddressModal
@@ -164,7 +164,7 @@ export default async function Page(props: PageProps) {
       )}
       {sortedAddresses.map(
         ({ isDefaultBillingAddress, isDefaultShippingAddress, ...address }) => (
-          <div key={address.id} className="text-primary space-y-8">
+          <div key={address.id} className="space-y-8 text-primary">
             <hr />
             <div className="grid grid-cols-12 gap-2">
               <div className="col-span-5 md:col-span-7 lg:col-span-5">

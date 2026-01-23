@@ -14,7 +14,7 @@ import productPlaceholder from "@/assets/product_placeholder.svg?url";
 import { ProductImagePlaceholder } from "./product-image-placeholder";
 
 export const ProductName = ({ children }: PropsWithChildren) => (
-  <h2 className="line-clamp-1 overflow-hidden text-ellipsis text-left">
+  <h2 className="line-clamp-1 overflow-hidden text-left text-ellipsis">
     {children}
   </h2>
 );

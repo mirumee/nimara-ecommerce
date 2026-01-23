@@ -93,7 +93,7 @@ export default async function Page(props: PageProps) {
   return (
     <div className="flex flex-col gap-8 text-sm">
       <div className="flex justify-between">
-        <h2 className="text-primary text-2xl">
+        <h2 className="text-2xl text-primary">
           {t("payment.payment-methods")}
         </h2>
 
@@ -116,7 +116,7 @@ export default async function Page(props: PageProps) {
           />
         ) : (
           <div className="grid gap-6">
-            <p className="dark:text-muted-foreground text-sm text-stone-500">
+            <p className="text-sm text-stone-500 dark:text-muted-foreground">
               {t("payment.no-payment-methods")}
             </p>
             <div>
@@ -130,7 +130,7 @@ export default async function Page(props: PageProps) {
         )}
 
         {error && (
-          <p className="text-destructive text-sm font-medium">{error}</p>
+          <p className="text-sm font-medium text-destructive">{error}</p>
         )}
       </div>
     </div>

@@ -48,75 +48,71 @@ export async function GET(
 
   if (!collection?.thumbnail?.url) {
     return new ImageResponse(
-      (
-        <div
+      <div
+        style={{
+          display: "flex",
+          width: "100%",
+          height: "100%",
+        }}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={new URL(
+            "og-hp.png",
+            clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
+          ).toString()}
+          alt={t("common.logo")}
           style={{
-            display: "flex",
-            width: "100%",
-            height: "100%",
+            maxWidth: "100%",
+            maxHeight: "100%",
+            objectFit: "contain",
           }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={new URL(
-              "og-hp.png",
-              clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
-            ).toString()}
-            alt={t("common.logo")}
-            style={{
-              maxWidth: "100%",
-              maxHeight: "100%",
-              objectFit: "contain",
-            }}
-          />
-        </div>
-      ),
+        />
+      </div>,
       { ...size },
     );
   }
 
   return new ImageResponse(
-    (
-      <div style={{ display: "flex", width: "100%", height: "100%" }}>
-        <div
+    <div style={{ display: "flex", width: "100%", height: "100%" }}>
+      <div
+        style={{
+          width: "50%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={new URL(
+            "brand-logo-dark.svg",
+            clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
+          ).toString()}
+          alt={t("common.logo")}
           style={{
-            width: "50%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
+            maxWidth: "100%",
+            maxHeight: "100%",
+            objectFit: "contain",
           }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={new URL(
-              "brand-logo-dark.svg",
-              clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
-            ).toString()}
-            alt={t("common.logo")}
-            style={{
-              maxWidth: "100%",
-              maxHeight: "100%",
-              objectFit: "contain",
-            }}
-          />
-        </div>
-        <div
-          style={{
-            width: "50%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={collection.thumbnail.url}
-            alt={collection.thumbnail.alt || t("collections.collection-image")}
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-          />
-        </div>
+        />
       </div>
-    ),
+      <div
+        style={{
+          width: "50%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={collection.thumbnail.url}
+          alt={collection.thumbnail.alt || t("collections.collection-image")}
+          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+        />
+      </div>
+    </div>,
     { ...size },
   );
 }

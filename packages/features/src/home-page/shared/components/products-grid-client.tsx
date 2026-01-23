@@ -69,7 +69,7 @@ export const ProductsGridClient = ({
             {subheader}
           </h3>
           <Button
-            className="absolute bottom-4 right-4 p-3"
+            className="absolute right-4 bottom-4 p-3"
             variant="outline"
             asChild
             size="icon"

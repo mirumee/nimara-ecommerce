@@ -40,7 +40,7 @@ export const Footer = async () => {
   });
 
   return (
-    <footer className="bg-muted text-primary mt-8 text-sm dark:bg-stone-900">
+    <footer className="mt-8 bg-muted text-sm text-primary dark:bg-stone-900">
       <div className="container">
         <div className="flex flex-wrap justify-between gap-8 py-8">
           <div className="grid w-full grid-cols-2 grid-rows-[max-content,max-content] place-items-start justify-start gap-6 md:grid-cols-3">
@@ -71,7 +71,7 @@ export const Footer = async () => {
             </div>
 
             <div className="row-span-2 grid grid-cols-subgrid grid-rows-subgrid md:col-span-1">
-              <span className="text-primary flex items-center">
+              <span className="flex items-center text-primary">
                 {t("footer.our-products")}
               </span>
               <div className="flex flex-col gap-4">
@@ -90,7 +90,7 @@ export const Footer = async () => {
             </div>
 
             <div className="row-span-2 grid grid-cols-subgrid grid-rows-subgrid md:col-span-1">
-              <span className="text-primary flex items-center">
+              <span className="flex items-center text-primary">
                 {t("footer.help")}
               </span>
               <div className="flex flex-col gap-4">
@@ -112,7 +112,7 @@ export const Footer = async () => {
       </div>
 
       <div className="container">
-        <div className="border-muted-foreground/50 text-muted-foreground flex flex-wrap justify-between gap-4 border-t py-8">
+        <div className="flex flex-wrap justify-between gap-4 border-t border-muted-foreground/50 py-8 text-muted-foreground">
           <span className="flex-grow basis-full text-center sm:basis-1 sm:text-left">
             &#xa9; Mirumee {new Date().getFullYear()}
           </span>

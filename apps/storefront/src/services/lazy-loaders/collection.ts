@@ -16,9 +16,8 @@ export const createCollectionServiceLoader = (logger: Logger) => {
       return collectionServiceInstance;
     }
 
-    const { saleorCollectionService } = await import(
-      "@nimara/infrastructure/collection/providers"
-    );
+    const { saleorCollectionService } =
+      await import("@nimara/infrastructure/collection/providers");
 
     collectionServiceInstance = saleorCollectionService({
       apiURI: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,

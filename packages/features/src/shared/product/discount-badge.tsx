@@ -14,7 +14,7 @@ export const DiscountBadge = ({
   return (
     <span
       className={cn(
-        "absolute left-2 top-2 z-10 rounded-md bg-red-600 px-2 py-1 text-xs text-white",
+        "absolute top-2 left-2 z-10 rounded-md bg-red-600 px-2 py-1 text-xs text-white",
         className,
       )}
     >

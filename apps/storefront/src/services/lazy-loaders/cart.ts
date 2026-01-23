@@ -16,9 +16,8 @@ export const createCartServiceLoader = (logger: Logger) => {
       return cartServiceInstance;
     }
 
-    const { saleorCartService } = await import(
-      "@nimara/infrastructure/cart/providers"
-    );
+    const { saleorCartService } =
+      await import("@nimara/infrastructure/cart/providers");
 
     cartServiceInstance = saleorCartService({
       apiURI: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
