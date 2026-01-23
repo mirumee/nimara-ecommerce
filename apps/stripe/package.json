@@ -20,7 +20,6 @@
     "@sentry/integrations": "^7.114.0",
     "@sentry/nextjs": "^8.55.0",
     "@sentry/types": "^8.55.0",
-    "@vercel/otel": "^2.1.0",
     "clsx": "2.1.1",
     "eslint-config-next": "^15.5.9",
     "jose": "^6.1.3",

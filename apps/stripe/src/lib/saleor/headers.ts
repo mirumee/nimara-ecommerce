@@ -7,12 +7,11 @@ export const saleorHeaders = z.object({
 
 export type SaleorHeaders = z.infer<typeof saleorHeaders>;
 
-export const saleorWebhookHeaders = z
-  .object({
-    "saleor-signature": z.string(),
-    "saleor-event": z.string(),
-  })
-  .extend(saleorHeaders);
+export const saleorWebhookHeaders = z.object({
+  ...saleorHeaders.shape,
+  "saleor-signature": z.string(),
+  "saleor-event": z.string(),
+});
 
 export type SaleorWebhookHeaders = z.infer<typeof saleorWebhookHeaders>;
 
