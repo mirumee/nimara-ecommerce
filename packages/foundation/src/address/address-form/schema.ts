@@ -2,7 +2,7 @@ import * as z from "zod";
 
 import { ALLOWED_COUNTRY_CODES } from "@nimara/domain/consts";
 import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
-import { type GetTranslations } from "@nimara/foundation/i18n/types";
+import { type GetTranslations } from "@nimara/i18n/types";
 
 export const addressSchema = ({
   addressFormRows,

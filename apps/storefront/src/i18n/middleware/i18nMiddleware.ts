@@ -8,11 +8,15 @@ import {
 import createIntlMiddleware from "next-intl/middleware";
 
 import type { CustomMiddleware } from "@nimara/foundation/middleware/chain";
+import {
+  DEFAULT_LOCALE,
+  LOCALE_PREFIXES,
+  SUPPORTED_LOCALES,
+} from "@nimara/i18n/config";
+import { routing } from "@nimara/i18n/routing";
 
 import { COOKIE_KEY, COOKIE_MAX_AGE } from "@/config";
-import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from "@/foundation/regions/config";
 import { type SupportedLocale } from "@/foundation/regions/types";
-import { localePrefixes, routing } from "@/i18n/routing";
 import { getStorefrontLogger } from "@/services/lazy-logging";
 
 function getLocale(request: NextRequest): SupportedLocale {
@@ -25,7 +29,7 @@ function getLocale(request: NextRequest): SupportedLocale {
   const matchedLanguage = match(languages, SUPPORTED_LOCALES, DEFAULT_LOCALE);
 
   if (SUPPORTED_LOCALES.includes(matchedLanguage)) {
-    return matchedLanguage as SupportedLocale;
+    return matchedLanguage;
   }
 
   // Log a warning if the matched language is not supported
@@ -74,7 +78,7 @@ export function i18nMiddleware(next: CustomMiddleware): CustomMiddleware {
 
     // Custom: For 'opengraph-image' paths without locale prefix, rewrite the path
     // internally to include the default locale, avoiding a redirect.
-    const hasLocalePrefix = Object.values(localePrefixes).some((prefix) =>
+    const hasLocalePrefix = Object.values(LOCALE_PREFIXES).some((prefix) =>
       pathname.startsWith(prefix),
     );
     const isDefaultLocalePath = !hasLocalePrefix; // no prefix means default locale path
@@ -96,7 +100,7 @@ export function i18nMiddleware(next: CustomMiddleware): CustomMiddleware {
       return next(request, event, prevResponse);
     }
 
-    const localePrefix = Object.values(localePrefixes).find(
+    const localePrefix = Object.values(LOCALE_PREFIXES).find(
       (localePrefix) =>
         pathname.startsWith(localePrefix) || pathname === localePrefix,
     );
@@ -113,9 +117,9 @@ export function i18nMiddleware(next: CustomMiddleware): CustomMiddleware {
     // otherwise navigate to the requested locale prefixed pathname
     if (isLocalePrefixedPathname) {
       localeFromRequest =
-        (Object.keys(localePrefixes).find(
+        (Object.keys(LOCALE_PREFIXES).find(
           (key) =>
-            localePrefixes[
+            LOCALE_PREFIXES[
               key as Exclude<SupportedLocale, typeof DEFAULT_LOCALE>
             ] === localePrefix,
         ) as SupportedLocale) ?? DEFAULT_LOCALE;

@@ -2,18 +2,21 @@ import type { Metadata } from "next";
 
 import { generateStandardSearchMetadata } from "@nimara/features/search/shared/metadata/standard-metadata";
 import { StandardSearchView } from "@nimara/features/search/shop-basic-plp/standard";
+import {
+  DEFAULT_LOCALE,
+  LOCALE_PREFIXES,
+  type SupportedLocale,
+} from "@nimara/i18n/config";
 
 import { DEFAULT_RESULTS_PER_PAGE, DEFAULT_SORT_BY } from "@/config";
 import { clientEnvs } from "@/envs/client";
-import { DEFAULT_LOCALE } from "@/foundation/regions/config";
 import { paths } from "@/foundation/routing/paths";
-import { localePrefixes } from "@/i18n/routing";
 import { getServiceRegistry } from "@/services/registry";
 
 import { handleFiltersFormSubmit } from "./_actions/handle-filters-form-submit";
 
 type SearchPageProps = {
-  params: Promise<{ locale: string }>;
+  params: Promise<{ locale: SupportedLocale }>;
   searchParams: Promise<Record<string, string | undefined>>;
 };
 
@@ -44,7 +47,7 @@ export default async function Page(props: SearchPageProps) {
         search: paths.search.asPath(),
         product: (slug) => paths.products.asPath({ slug }),
       }}
-      localePrefixes={localePrefixes}
+      localePrefixes={LOCALE_PREFIXES}
       defaultLocale={DEFAULT_LOCALE}
       defaultResultsPerPage={DEFAULT_RESULTS_PER_PAGE}
       defaultSortBy={DEFAULT_SORT_BY}

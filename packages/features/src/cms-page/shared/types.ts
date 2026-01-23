@@ -1,4 +1,4 @@
-import type { SupportedLocale } from "@nimara/foundation/regions/types";
+import type { SupportedLocale } from "@nimara/i18n/config";
 import type { ServiceRegistry } from "@nimara/infrastructure/types";
 
 /**

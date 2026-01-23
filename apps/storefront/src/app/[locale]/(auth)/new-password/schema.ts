@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { type GetTranslations } from "@nimara/foundation/i18n/types";
+import { type GetTranslations } from "@nimara/i18n/types";
 
 import { MIN_PASSWORD_LENGTH } from "@/config";
 

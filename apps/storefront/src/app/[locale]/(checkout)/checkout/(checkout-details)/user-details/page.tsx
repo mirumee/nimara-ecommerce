@@ -1,5 +1,6 @@
+import type { SupportedLocale } from "@nimara/i18n/config";
+
 import { getCheckoutOrRedirect } from "@/features/checkout/checkout-actions";
-import type { SupportedLocale } from "@/foundation/regions/types";
 import { getCheckoutService } from "@/services/checkout";
 import { getServiceRegistry } from "@/services/registry";
 import { getAccessToken } from "@/services/tokens";

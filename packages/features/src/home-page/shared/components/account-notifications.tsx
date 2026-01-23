@@ -16,7 +16,15 @@ const DynamicAccountDeletedModal = dynamic(
   { ssr: false },
 );
 
-export function AccountNotifications({ user }: { user: User | null }) {
+export function AccountNotifications({
+  user,
+  mailTo,
+  paths,
+}: {
+  mailTo: string;
+  paths: { home: string; privacyPolicy: string };
+  user: User | null;
+}) {
   const t = useTranslations();
   const { toast } = useToast();
   const searchParams = useSearchParams();
@@ -39,5 +47,11 @@ export function AccountNotifications({ user }: { user: User | null }) {
     }
   }, [isLoginSuccessful, isLogoutSuccessful, user]);
 
-  return <DynamicAccountDeletedModal open={isAccountDeleted} />;
+  return (
+    <DynamicAccountDeletedModal
+      open={isAccountDeleted}
+      mailTo={mailTo}
+      paths={paths}
+    />
+  );
 }

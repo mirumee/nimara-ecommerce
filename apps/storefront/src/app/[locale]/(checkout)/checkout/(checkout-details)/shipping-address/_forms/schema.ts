@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import { addressSchema } from "@nimara/foundation/address/address-form/schema";
-import { type GetTranslations } from "@nimara/foundation/i18n/types";
+import { type GetTranslations } from "@nimara/i18n/types";
 
 type Params = {
   addressFormRows: readonly AddressFormRow[];

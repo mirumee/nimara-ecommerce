@@ -12,7 +12,7 @@
       "@nimara/infrastructure/*": ["../../packages/infrastructure/src/*"],
       "@nimara/domain/*": ["../../packages/domain/src/*"],
       "@nimara/features/*": ["../../packages/features/src/*"],
-      "@nimara/translations/*": ["../../packages/translations/src/*"],
+      "@nimara/i18n/*": ["../../packages/i18n/src/*"],
       "@nimara/ui/*": ["../../packages/ui/src/*"],
       "@nimara/codegen/*": ["../../packages/codegen/*"]
     }

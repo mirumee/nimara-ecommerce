@@ -2,7 +2,7 @@ import * as z from "zod";
 
 import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import { addressSchema } from "@nimara/foundation/address/address-form/schema";
-import type { GetTranslations } from "@nimara/foundation/i18n/types";
+import type { GetTranslations } from "@nimara/i18n/types";
 
 export const formSchema = ({
   addressFormRows,
@@ -11,11 +11,10 @@ export const formSchema = ({
   addressFormRows: readonly AddressFormRow[];
   t: GetTranslations;
 }) =>
-  addressSchema({ addressFormRows, t }).merge(
-    z.object({
-      isDefaultShippingAddress: z.boolean(),
-      isDefaultBillingAddress: z.boolean(),
-    }),
-  );
+  z.object({
+    ...addressSchema({ addressFormRows, t }).shape,
+    isDefaultShippingAddress: z.boolean(),
+    isDefaultBillingAddress: z.boolean(),
+  });
 
 export type FormSchema = z.infer<ReturnType<typeof formSchema>>;

@@ -13,7 +13,7 @@ import type {
 } from "@nimara/domain/objects/common";
 import { Price } from "@nimara/features/shared/product/price";
 import { ProductImagePlaceholder } from "@nimara/features/shared/product/product-image-placeholder";
-import { useLocalizedLink } from "@nimara/foundation/i18n/hooks/use-localized-link";
+import { Link as LocalizedLink } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
 import { Input } from "@nimara/ui/components/input";
 import { Label } from "@nimara/ui/components/label";
@@ -65,7 +65,6 @@ export const Line = ({
 
   const t = useTranslations();
   const inputValue = useDebounce(value, 1000);
-  const LocalizedLink = useLocalizedLink();
 
   const attributeNames = variant.selectionAttributes
     ?.map((attr) => attr.values?.[0]?.name)

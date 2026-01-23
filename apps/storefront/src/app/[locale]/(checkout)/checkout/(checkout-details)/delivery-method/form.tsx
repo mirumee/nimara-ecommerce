@@ -9,7 +9,7 @@ import type { Checkout } from "@nimara/domain/objects/Checkout";
 import { isGlobalError } from "@nimara/foundation/errors/errors";
 import { RadioFormGroup } from "@nimara/foundation/form-components/radio-form-group";
 import { useLocalizedFormatter } from "@nimara/foundation/formatters/use-localized-formatter";
-import type { TranslationMessage } from "@nimara/foundation/i18n/types";
+import { type MessagePath } from "@nimara/i18n/types";
 import { Button } from "@nimara/ui/components/button";
 
 import { useRouterWithState } from "@/foundation/use-router-with-state";
@@ -75,7 +75,8 @@ export const DeliveryMethodForm = ({ checkout }: { checkout: Checkout }) => {
       };
     }),
   };
-  const serverErrorCode = form.formState.errors.root?.serverError?.message;
+  const serverErrorCode = form.formState.errors.root?.serverError
+    ?.message as MessagePath;
 
   return (
     <section className="space-y-4 pt-4">
@@ -106,9 +107,7 @@ export const DeliveryMethodForm = ({ checkout }: { checkout: Checkout }) => {
             </div>
           </div>
           {serverErrorCode ? (
-            <p className="text-red-600">
-              {t(serverErrorCode as TranslationMessage)}
-            </p>
+            <p className="text-red-600">{t(serverErrorCode)}</p>
           ) : null}
           <Button
             type="submit"

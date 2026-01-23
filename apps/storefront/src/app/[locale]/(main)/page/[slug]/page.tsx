@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 
 import { generateStandardCMSPageMetadata } from "@nimara/features/cms-page/shared/metadata/standard-metadata";
 import { StandardCMSPageView } from "@nimara/features/cms-page/shop-basic-cms-page/standard";
+import { type SupportedLocale } from "@nimara/i18n/config";
 
 import { getServiceRegistry } from "@/services/registry";
 
 type CMSPageProps = {
-  params: Promise<{ locale: string; slug: string }>;
+  params: Promise<{ locale: SupportedLocale; slug: string }>;
   searchParams: Promise<Record<string, string | undefined>>;
 };
 

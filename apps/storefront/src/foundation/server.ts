@@ -1,9 +1,11 @@
 import { headers } from "next/headers";
 import { getLocale } from "next-intl/server";
 
-import { DEFAULT_LOCALE } from "@/foundation/regions/config";
-import type { SupportedLocale } from "@/foundation/regions/types";
-import { localePrefixes } from "@/i18n/routing";
+import {
+  DEFAULT_LOCALE,
+  LOCALE_PREFIXES,
+  type SupportedLocale,
+} from "@nimara/i18n/config";
 
 export const getStoreUrl = async () => {
   const locale = await getLocale();
@@ -13,7 +15,7 @@ export const getStoreUrl = async () => {
 
   return locale === DEFAULT_LOCALE
     ? domain
-    : `${domain}${localePrefixes[locale as Exclude<SupportedLocale, typeof DEFAULT_LOCALE>]}`;
+    : `${domain}${LOCALE_PREFIXES[locale as Exclude<SupportedLocale, typeof DEFAULT_LOCALE>]}`;
 };
 
 export const getLocalePrefix = async (): Promise<string> => {
@@ -23,7 +25,7 @@ export const getLocalePrefix = async (): Promise<string> => {
     return "";
   }
 
-  return localePrefixes[
+  return LOCALE_PREFIXES[
     locale as Exclude<SupportedLocale, typeof DEFAULT_LOCALE>
   ];
 };

@@ -7,7 +7,7 @@ import type { PropsWithChildren } from "react";
 import type { SearchProduct } from "@nimara/domain/objects/SearchProduct";
 import { DiscountBadge } from "@nimara/features/shared/product/discount-badge";
 import { getDiscountInfo, Price } from "@nimara/features/shared/product/price";
-import { useLocalizedLink } from "@nimara/foundation/i18n/hooks/use-localized-link";
+import { Link as LocalizedLink } from "@nimara/i18n/routing";
 
 import productPlaceholder from "@/assets/product_placeholder.svg?url";
 
@@ -36,7 +36,6 @@ export const SearchProductCard = ({
   productPath,
 }: Props) => {
   const t = useTranslations();
-  const LocalizedLink = useLocalizedLink();
 
   const { discountPercent } = getDiscountInfo(price, undiscountedPrice);
 

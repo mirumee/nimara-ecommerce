@@ -1,12 +1,12 @@
 import { type AllCountryCode } from "@nimara/domain/consts";
 import { type AppErrorCode } from "@nimara/domain/objects/Error";
 import { type PaymentMethod } from "@nimara/domain/objects/Payment";
+import type { SupportedLocale } from "@nimara/i18n/config";
 
 import { clientEnvs } from "@/envs/client";
 import { serverEnvs } from "@/envs/server";
 import { getCheckoutOrRedirect } from "@/features/checkout/checkout-actions";
 import { getCurrentRegion } from "@/foundation/regions";
-import type { SupportedLocale } from "@/foundation/regions/types";
 import { getStoreUrl } from "@/foundation/server";
 import { getAddressService } from "@/services/address";
 import { getPaymentService } from "@/services/payment";

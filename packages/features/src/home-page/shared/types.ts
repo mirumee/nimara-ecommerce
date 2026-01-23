@@ -1,4 +1,4 @@
-import type { SupportedLocale } from "@nimara/foundation/regions/types";
+import type { SupportedLocale } from "@nimara/i18n/config";
 import type { ServiceRegistry } from "@nimara/infrastructure/types";
 
 /**
@@ -22,7 +22,10 @@ export interface HomeViewProps {
  */
 export interface StandardHomeViewProps extends HomeViewProps {
   accessToken: string | null;
+  mailTo: string;
   paths: {
+    home: string;
+    privacyPolicy: string;
     product: (slug: string) => string;
     search: string;
   };

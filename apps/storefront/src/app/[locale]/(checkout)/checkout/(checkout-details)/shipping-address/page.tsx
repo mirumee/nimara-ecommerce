@@ -3,10 +3,10 @@ import {
   type Address,
   type CountryOption,
 } from "@nimara/domain/objects/Address";
+import type { SupportedLocale } from "@nimara/i18n/config";
 
 import { getCheckoutOrRedirect } from "@/features/checkout/checkout-actions";
 import { getCurrentRegion } from "@/foundation/regions";
-import type { SupportedLocale } from "@/foundation/regions/types";
 import { getAddressService } from "@/services/address";
 import { getServiceRegistry } from "@/services/registry";
 import { getAccessToken } from "@/services/tokens";

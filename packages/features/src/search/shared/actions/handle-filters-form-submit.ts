@@ -2,7 +2,7 @@
 
 import { getLocale } from "next-intl/server";
 
-type RedirectFunction = (opts: { href: string; locale: string }) => never;
+import { type Redirect } from "@nimara/i18n/routing";
 
 /**
  * List of parameters that should be passed through without modification.
@@ -75,7 +75,7 @@ export const handleFiltersFormSubmit = async (
   defaultSortBy: string,
   formData: FormData,
   searchPath: string,
-  redirect: RedirectFunction,
+  redirect: Redirect,
 ) => {
   const locale = await getLocale();
   const { toAdd, toDelete, passThrough, shouldClear } =

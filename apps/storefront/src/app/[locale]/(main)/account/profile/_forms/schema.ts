@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-import { type GetTranslations } from "@nimara/foundation/i18n/types";
+import { type GetTranslations } from "@nimara/i18n/types";
 
 import { MIN_PASSWORD_LENGTH } from "@/config";
 
@@ -18,10 +18,7 @@ export const updateNameFormSchema = ({ t }: { t: GetTranslations }) =>
 
 export const updateEmailFormSchema = ({ t }: { t: GetTranslations }) =>
   z.object({
-    email: z
-      .string()
-      .email({ message: t("form-validation.invalid-email") })
-      .trim(),
+    email: z.email({ message: t("form-validation.invalid-email") }).trim(),
     password: z
       .string()
       .min(MIN_PASSWORD_LENGTH, {

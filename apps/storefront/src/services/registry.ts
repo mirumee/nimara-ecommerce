@@ -13,7 +13,7 @@ import { createStoreServiceLoader } from "./lazy-loaders/store";
 import { createUserServiceLoader } from "./lazy-loaders/user";
 import { getAccessToken } from "./tokens";
 
-const serviceRegistryInstance: ServiceRegistry | null = null;
+let serviceRegistryInstance: ServiceRegistry | null = null;
 
 /**
  * Initializes and returns the service registry singleton.
@@ -47,7 +47,7 @@ export const getServiceRegistry = async (): Promise<ServiceRegistry> => {
   const getCMSMenuService = createCMSMenuServiceLoader(logger);
   const getCollectionService = createCollectionServiceLoader(logger);
 
-  return {
+  serviceRegistryInstance = {
     config,
     accessToken,
     region,
@@ -60,4 +60,6 @@ export const getServiceRegistry = async (): Promise<ServiceRegistry> => {
     getCMSMenuService,
     getCollectionService,
   };
+
+  return serviceRegistryInstance;
 };

@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
-import { useLocalizedLink } from "@nimara/foundation/i18n/hooks/use-localized-link";
+import { Link as LocalizedLink } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
 import {
   Dialog,
@@ -14,13 +14,20 @@ import {
   DialogTitle,
 } from "@nimara/ui/components/dialog";
 
-import { clientEnvs } from "@/envs/client";
-import { paths } from "@/foundation/routing/paths";
-
-export function AccountDeletedModal({ open }: { open: boolean }) {
+export function AccountDeletedModal({
+  open,
+  mailTo,
+  paths,
+}: {
+  mailTo: string;
+  open: boolean;
+  paths: {
+    home: string;
+    privacyPolicy: string;
+  };
+}) {
   const [isOpen, setIsOpen] = useState(open);
   const t = useTranslations();
-  const LocalizedLink = useLocalizedLink();
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -34,7 +41,7 @@ export function AccountDeletedModal({ open }: { open: boolean }) {
           {t.rich("account.in-case-of-any-questions", {
             contactUs: () => (
               <LocalizedLink
-                href={`mailto:${clientEnvs.NEXT_PUBLIC_DEFAULT_EMAIL}`}
+                href={`mailto:${mailTo}`}
                 className="underline decoration-gray-400 underline-offset-2"
                 target="_blank"
               >
@@ -43,7 +50,7 @@ export function AccountDeletedModal({ open }: { open: boolean }) {
             ),
             privacyPolicy: () => (
               <LocalizedLink
-                href={paths.privacyPolicy.asPath()}
+                href={paths.privacyPolicy}
                 className="underline decoration-gray-400 underline-offset-2"
               >
                 {t("common.privacy-policy")}
@@ -54,7 +61,7 @@ export function AccountDeletedModal({ open }: { open: boolean }) {
         <DialogFooter>
           <DialogClose asChild className="mt-4 w-full">
             <Button variant="outline" asChild>
-              <LocalizedLink href={paths.home.asPath()}>
+              <LocalizedLink href={paths.home}>
                 {t("common.close")}
               </LocalizedLink>
             </Button>

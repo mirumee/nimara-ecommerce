@@ -1,4 +1,4 @@
-import type { SupportedLocale } from "@nimara/foundation/regions/types";
+import type { LocalePrefixes, SupportedLocale } from "@nimara/i18n/config";
 import type { ServiceRegistry } from "@nimara/infrastructure/types";
 
 /**
@@ -30,7 +30,7 @@ export interface SearchViewProps {
     searchParams: Record<string, string>,
     formData: FormData,
   ) => Promise<never>;
-  localePrefixes: Record<Exclude<SupportedLocale, "en-US">, string>;
+  localePrefixes: LocalePrefixes;
   params: Promise<{ locale: SupportedLocale }>;
   paths: {
     home: string;

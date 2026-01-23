@@ -8,6 +8,7 @@ import type { Menu } from "@nimara/domain/objects/Menu";
 import type { User } from "@nimara/domain/objects/User";
 import { cn } from "@nimara/foundation/lib/cn";
 import { MobileNavigation } from "@nimara/foundation/navigation/mobile-navigation";
+import { Link as LocalizedLink, usePathname } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
 import {
   Sheet,
@@ -19,7 +20,6 @@ import {
 
 import { useCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
-import { LocalizedLink, usePathname } from "@/i18n/routing";
 
 import { LocaleSwitch } from "./locale-switch";
 import { Logo } from "./logo";

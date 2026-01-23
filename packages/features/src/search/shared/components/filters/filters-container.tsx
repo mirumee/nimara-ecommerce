@@ -2,7 +2,7 @@ import { Filter } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
 import { type SortByOption } from "@nimara/domain/objects/Search";
-import { type TranslationMessage } from "@nimara/foundation/i18n/types";
+import { type MessagePath } from "@nimara/i18n/types";
 import type { Facet } from "@nimara/infrastructure/use-cases/search/types";
 import { Button } from "@nimara/ui/components/button";
 import { Label } from "@nimara/ui/components/label";
@@ -139,7 +139,7 @@ export const FiltersContainer = async ({
                     <div key={option.value} className="flex gap-2">
                       <RadioGroupItem value={option.value} id={option.value} />
                       <Label htmlFor={option.value}>
-                        {t(option.messageKey as TranslationMessage)}
+                        {t(option.messageKey as MessagePath)}
                       </Label>
                     </div>
                   ))}

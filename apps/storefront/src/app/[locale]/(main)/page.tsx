@@ -22,10 +22,14 @@ export default async function Page(props: HomeViewProps) {
       {...props}
       services={services}
       accessToken={accessToken || null}
+      mailTo={clientEnvs.NEXT_PUBLIC_DEFAULT_EMAIL}
       paths={{
         search: paths.search.asPath(),
         product: (slug) => paths.products.asPath({ slug }),
+        home: paths.home.asPath(),
+        privacyPolicy: paths.privacyPolicy.asPath(),
       }}
+      storefrontUrl={clientEnvs.NEXT_PUBLIC_STOREFRONT_URL}
     />
   );
 }

@@ -1,10 +1,11 @@
 import { getTranslations } from "next-intl/server";
 
+import { Link as LocalizedLink } from "@nimara/i18n/routing";
+
 import BrandLogo from "@/assets/brand-logo-dark.svg";
 import { CACHE_TTL } from "@/config";
 import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
-import { LocalizedLink } from "@/i18n/routing";
 import { getServiceRegistry } from "@/services/registry";
 
 export const Footer = async () => {

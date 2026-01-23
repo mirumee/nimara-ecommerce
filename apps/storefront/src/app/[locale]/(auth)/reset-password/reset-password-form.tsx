@@ -8,12 +8,12 @@ import { FormProvider, useForm } from "react-hook-form";
 import * as z from "zod";
 
 import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
-import { type GetTranslations } from "@nimara/foundation/i18n/types";
+import { Link as LocalizedLink } from "@nimara/i18n/routing";
+import { type GetTranslations } from "@nimara/i18n/types";
 import { Button } from "@nimara/ui/components/button";
 
 import { useCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
-import { LocalizedLink } from "@/i18n/routing";
 
 import { requestPasswordResetAction } from "./action";
 

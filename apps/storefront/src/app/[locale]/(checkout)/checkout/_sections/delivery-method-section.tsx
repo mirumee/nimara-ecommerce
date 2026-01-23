@@ -1,10 +1,10 @@
 import { getTranslations } from "next-intl/server";
 
 import { type Checkout } from "@nimara/domain/objects/Checkout";
+import { Link as LocalizedLink } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
 
 import { paths } from "@/foundation/routing/paths";
-import { LocalizedLink } from "@/i18n/routing";
 
 export const DeliveryMethodSection = async ({
   checkout,

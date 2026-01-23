@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import React from "react";
 
-import { useLocalizedLink } from "@nimara/foundation/i18n/hooks/use-localized-link";
+import { Link as LocalizedLink } from "@nimara/i18n/routing";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -23,7 +23,6 @@ export const Breadcrumbs = ({
   pageName?: string;
 }) => {
   const t = useTranslations("home");
-  const LocalizedLink = useLocalizedLink();
 
   return (
     <div className="hidden md:block">

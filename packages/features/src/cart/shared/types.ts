@@ -1,5 +1,5 @@
 import type { AsyncResult } from "@nimara/domain/objects/Result";
-import type { SupportedLocale } from "@nimara/foundation/regions/types";
+import type { SupportedLocale } from "@nimara/i18n/config";
 import type { ServiceRegistry } from "@nimara/infrastructure/types";
 
 /**

@@ -1,12 +1,13 @@
 import { getTranslations } from "next-intl/server";
 
+import type { SupportedLocale } from "@nimara/i18n/config";
+import { Link as LocalizedLink, redirect } from "@nimara/i18n/routing";
+
 import { clientEnvs } from "@/envs/client";
 import { serverEnvs } from "@/envs/server";
 import { getCurrentRegion } from "@/foundation/regions";
-import type { SupportedLocale } from "@/foundation/regions/types";
 import { paths } from "@/foundation/routing/paths";
 import { getStoreUrl } from "@/foundation/server";
-import { LocalizedLink, redirect } from "@/i18n/routing";
 import { getPaymentService } from "@/services/payment";
 import { getServiceRegistry } from "@/services/registry";
 import { getAccessToken } from "@/services/tokens";

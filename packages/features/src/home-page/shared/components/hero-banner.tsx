@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 
 import type { PageField } from "@nimara/domain/objects/CMSPage";
-import { useLocalizedLink } from "@nimara/foundation/i18n/hooks/use-localized-link";
+import { Link as LocalizedLink } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
 
 import { createFieldsMap, type FieldsMap } from "../utils/create-fields-map";
@@ -17,7 +17,6 @@ export interface HeroBannerProps {
 
 export const HeroBanner = ({ fields, searchPath }: HeroBannerProps) => {
   const t = useTranslations("home");
-  const LocalizedLink = useLocalizedLink();
 
   if (!fields || fields.length === 0) {
     return null;

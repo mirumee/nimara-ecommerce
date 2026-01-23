@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { type Checkout } from "@nimara/domain/objects/Checkout";
 // TODO: When we try to move this compoentn this Line genrate circular dependency. How to organize moving it?
 import { Line } from "@nimara/features/shared/shopping-bag/components/line";
-import { useLocalizedLink } from "@nimara/foundation/i18n/hooks/use-localized-link";
+import { Link as LocalizedLink } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
 import {
   Dialog,
@@ -24,7 +24,6 @@ type ErrorDialogProps = {
 
 export const ErrorDialog = ({ checkout, cartPath }: ErrorDialogProps) => {
   const t = useTranslations();
-  const LocalizedLink = useLocalizedLink();
 
   const unavailableLinesNumber = checkout.problems.insufficientStock.length;
 

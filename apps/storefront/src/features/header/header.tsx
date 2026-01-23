@@ -2,6 +2,7 @@ import { User } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 
+import { Link as LocalizedLink } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
 
 import { CACHE_TTL } from "@/config";
@@ -9,7 +10,6 @@ import { getCheckoutId } from "@/features/checkout/cart";
 import { LocaleSwitch } from "@/features/header/locale-switch";
 import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
-import { LocalizedLink } from "@/i18n/routing";
 import { getServiceRegistry } from "@/services/registry";
 import { getAccessToken } from "@/services/tokens";
 

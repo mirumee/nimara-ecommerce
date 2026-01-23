@@ -4,9 +4,9 @@ import { getTranslations } from "next-intl/server";
 import { type AllCountryCode } from "@nimara/domain/consts";
 import { type Address } from "@nimara/domain/objects/Address";
 import { displayFormattedAddressLines } from "@nimara/foundation/address/address";
+import type { SupportedLocale } from "@nimara/i18n/config";
 
 import { getCurrentRegion } from "@/foundation/regions";
-import type { SupportedLocale } from "@/foundation/regions/types";
 import { getAddressService } from "@/services/address";
 import { getServiceRegistry } from "@/services/registry";
 import { getAccessToken } from "@/services/tokens";

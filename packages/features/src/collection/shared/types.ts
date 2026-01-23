@@ -1,4 +1,4 @@
-import type { SupportedLocale } from "@nimara/foundation/regions/types";
+import { type LocalePrefixes, type SupportedLocale } from "@nimara/i18n/config";
 import type { ServiceRegistry } from "@nimara/infrastructure/types";
 
 /**
@@ -28,12 +28,12 @@ export interface CollectionViewProps {
 export interface StandardCollectionViewProps extends CollectionViewProps {
   defaultLocale: SupportedLocale;
   defaultResultsPerPage: number;
+  localePrefixes: LocalePrefixes;
   paths: {
     collection: (slug: string) => string;
     home: string;
     product: (slug: string) => string;
   };
-  localePrefixes: Record<Exclude<SupportedLocale, "en-US">, string>;
   services: ServiceRegistry;
 }
 

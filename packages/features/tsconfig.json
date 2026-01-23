@@ -10,7 +10,8 @@
       "@nimara/features/*": ["./src/*"],
       "@nimara/foundation/*": ["../foundation/src/*"],
       "@nimara/domain/*": ["../domain/src/*"],
-      "@nimara/infrastructure/*": ["../infrastructure/src/*"]
+      "@nimara/infrastructure/*": ["../infrastructure/src/*"],
+      "@nimara/i18n/*": ["../i18n/src/*"]
     }
   }
 }

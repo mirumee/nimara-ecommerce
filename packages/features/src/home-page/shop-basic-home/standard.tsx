@@ -16,10 +16,11 @@ import { type StandardHomeViewProps } from "../shared/types";
  * @returns A React component rendering the standard home page.
  */
 export const StandardHomeView = async ({
+  mailTo,
   services,
   accessToken,
   paths,
-}: Pick<StandardHomeViewProps, "services" | "accessToken" | "paths">) => {
+}: StandardHomeViewProps) => {
   return (
     <HomeProvider
       services={services}
@@ -36,7 +37,11 @@ export const StandardHomeView = async ({
             />
           </Suspense>
           <div>
-            <AccountNotifications user={user} />
+            <AccountNotifications
+              user={user}
+              mailTo={mailTo}
+              paths={{ home: paths.home, privacyPolicy: paths.privacyPolicy }}
+            />
           </div>
           <div className="mb-8">
             <Newsletter />

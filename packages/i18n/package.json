@@ -1,11 +1,19 @@
 {
-  "name": "@nimara/translations",
+  "name": "@nimara/i18n",
   "version": "1.0.0",
   "private": true,
   "scripts": {
     "lint": "eslint . --ext .js,.ts,.tsx --fix"
   },
+  "peerDependencies": {
+    "next": "^15.5.9",
+    "react": "^19.2.3"
+  },
+  "dependencies": {
+    "next-intl": "4.7.0"
+  },
   "devDependencies": {
+    "@types/react": "^19.2.9",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "eslint": "^8.57.0",
@@ -17,11 +25,10 @@
     "node": "22.x"
   },
   "exports": {
-    "./messages/*": "./src/messages/*.json",
-    "./messages/en-US": "./src/messages/en-US.json",
-    "./messages/en-GB": "./src/messages/en-GB.json",
-    "./messages/index": "./src/messages/index.ts",
-    "./types": "./src/types.ts"
+    "./*": "./src/*",
+    "./provider": "./src/provider.tsx",
+    "./global": "./global.d.ts",
+    "./messages/*": "./src/messages/*.json"
   },
   "typesVersions": {
     "*": {

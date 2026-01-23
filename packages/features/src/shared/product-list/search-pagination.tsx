@@ -2,7 +2,7 @@
 
 import { useLocale, useTranslations } from "next-intl";
 
-import type { SupportedLocale } from "@nimara/foundation/regions/types.js";
+import type { LocalePrefixes, SupportedLocale } from "@nimara/i18n/config";
 import type { PageInfo } from "@nimara/infrastructure/use-cases/search/types";
 import {
   Pagination,
@@ -16,7 +16,7 @@ import { cn } from "@nimara/ui/lib/utils";
 type Props = {
   baseUrl: string;
   defaultLocale: SupportedLocale;
-  localePrefixes: Record<Exclude<SupportedLocale, "en-US">, string>;
+  localePrefixes: LocalePrefixes;
   pageInfo: PageInfo;
   searchParams: Record<string, string>;
 };

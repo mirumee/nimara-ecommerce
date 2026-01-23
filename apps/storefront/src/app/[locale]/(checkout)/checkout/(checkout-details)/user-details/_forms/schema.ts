@@ -1,13 +1,10 @@
 import * as z from "zod";
 
-import { type GetTranslations } from "@nimara/foundation/i18n/types";
+import { type GetTranslations } from "@nimara/i18n/types";
 
 export const emailFormSchema = ({ t }: { t: GetTranslations }) =>
   z.object({
-    email: z
-      .string()
-      .email({ message: t("form-validation.invalid-email") })
-      .trim(),
+    email: z.email({ message: t("form-validation.invalid-email") }).trim(),
   });
 
 export const passwordFormSchema = ({ t }: { t: GetTranslations }) =>

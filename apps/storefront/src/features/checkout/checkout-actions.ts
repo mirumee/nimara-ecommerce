@@ -1,13 +1,13 @@
 import { getLocale } from "next-intl/server";
 
 import { type Checkout } from "@nimara/domain/objects/Checkout";
+import type { SupportedLocale } from "@nimara/i18n/config";
+import { redirect } from "@nimara/i18n/routing";
 
 import { getCheckoutId } from "@/features/checkout/cart";
 import { deleteCheckoutIdCookie } from "@/features/checkout/checkout";
 import { getCurrentRegion } from "@/foundation/regions";
-import type { SupportedLocale } from "@/foundation/regions/types";
 import { paths } from "@/foundation/routing/paths";
-import { redirect } from "@/i18n/routing";
 import { getCheckoutService } from "@/services/checkout";
 
 export const getCheckoutOrRedirect = async (): Promise<Checkout> | never => {

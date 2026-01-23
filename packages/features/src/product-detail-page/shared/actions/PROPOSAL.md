@@ -148,7 +148,6 @@ import { Button } from "@nimara/ui/components/button";
 import { ToastAction } from "@nimara/ui/components/toast";
 import { useToast } from "@nimara/ui/hooks";
 import { TranslationMessage } from "@nimara/foundation/i18n/types.js";
-import { useLocalizedLink } from "@nimara/foundation/i18n/hooks/use-localized-link";
 
 type AddToBagAction = (params: {
   variantId: string;

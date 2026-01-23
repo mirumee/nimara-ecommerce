@@ -1,24 +1,25 @@
 import * as Sentry from "@sentry/nextjs";
+import { hasLocale } from "next-intl";
 import { getRequestConfig } from "next-intl/server";
+
+import { routing } from "@nimara/i18n/routing";
 
 import { storefrontLogger } from "@/services/logging";
 
-import { routing } from "./routing";
-
 export default getRequestConfig(async ({ requestLocale }) => {
-  let locale = await requestLocale;
+  const requested = await requestLocale;
 
-  if (!locale || !routing.locales.includes(locale)) {
-    locale = routing.defaultLocale;
-  }
+  const locale = hasLocale(routing.locales, requested)
+    ? requested
+    : routing.defaultLocale;
 
   let messages = await getMessages(locale);
 
   if (messages === null) {
     storefrontLogger.warning(
-      `Messages for "${locale}" not found. Falling back to "${routing.defaultLocale}". Please ensure the translation file exists.`,
+      `Messages for "${requested}" not found. Falling back to "${routing.defaultLocale}". Please ensure the translation file exists.`,
     );
-    Sentry.captureMessage(`Missing translation file for: ${locale}`, {
+    Sentry.captureMessage(`Missing translation file for: ${requested}`, {
       level: "warning",
     });
 
@@ -55,7 +56,7 @@ async function getMessages(
 ): Promise<Record<string, string> | null> {
   try {
     // If this specific file doesn't exist at runtime, the import will reject.
-    return (await import(`../../messages/${locale}.json`)).default;
+    return (await import(`@nimara/i18n/messages/${locale}.json`)).default;
   } catch (error) {
     // The import failed, so we return null to signal a fallback is needed.
     return null;

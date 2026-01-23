@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 
-import { useLocalizedLink } from "@nimara/foundation/i18n/hooks/use-localized-link";
+import { Link as LocalizedLink } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
 
 export interface EmptyCartProps {
@@ -13,7 +13,6 @@ export interface EmptyCartProps {
 
 export const EmptyCart = ({ paths }: EmptyCartProps) => {
   const t = useTranslations();
-  const LocalizedLink = useLocalizedLink();
 
   return (
     <div className="flex flex-col items-center justify-center gap-8 py-8">
