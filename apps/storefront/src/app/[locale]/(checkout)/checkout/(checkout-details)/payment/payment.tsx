@@ -8,7 +8,10 @@ import { type ReactNode, useEffect, useState } from "react";
 import { FormProvider, type SubmitHandler, useForm } from "react-hook-form";
 
 import { type AllCountryCode } from "@nimara/domain/consts";
-import { type CountryOption } from "@nimara/domain/objects/Address";
+import {
+  type Address,
+  type CountryOption,
+} from "@nimara/domain/objects/Address";
 import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { type AppErrorCode } from "@nimara/domain/objects/Error";
@@ -106,9 +109,14 @@ export const Payment = ({
       : [],
   );
 
-  const defaultBillingAddress = formattedAddresses[0]?.address;
+  const defaultBillingAddress = formattedAddresses.find(
+    ({ address }) => address.isDefaultBillingAddress,
+  )?.address;
   const formattedToSchemaDefaultBillingAddress = {
-    ...addressToSchema(defaultBillingAddress),
+    ...ADDRESS_DEFAULT_VALUES,
+    ...addressToSchema(
+      defaultBillingAddress ?? (ADDRESS_DEFAULT_VALUES as Address),
+    ),
     id: defaultBillingAddress?.id,
   };
   const defaultEmptyBillingAddress = {
@@ -154,12 +162,6 @@ export const Payment = ({
     (isAddingNewPaymentMethod ? isMounted : hasSelectedPaymentMethod);
 
   const isDark = resolvedTheme === "dark";
-  const appearance = {
-    theme: (isDark ? "night" : "stripe") as "night" | "stripe",
-    variables: {
-      colorBackground: isDark ? "#1C1917" : "#fff",
-    },
-  };
 
   const handlePlaceOrder: SubmitHandler<Schema> = async ({
     paymentMethod,
@@ -301,7 +303,13 @@ export const Payment = ({
         const data = await paymentService.paymentElementCreate({
           locale: region.language.locale,
           secret: secret!,
-          appearance,
+          appearance: {
+            theme: isDark ? "night" : "stripe",
+            variables: {
+              focusBoxShadow: "0 none",
+              borderRadius: "0",
+            },
+          },
         });
 
         if (document.getElementById(PAYMENT_ELEMENT_ID)) {
@@ -415,12 +423,12 @@ export const Payment = ({
           </Tabs>
 
           <div className="space-y-6">
-            <h3 className="text-muted-foreground text-base font-normal leading-7">
+            <h3 className="text-base font-normal leading-7 text-muted-foreground">
               {t("payment.billing-address")}
             </h3>
 
             {checkout.isShippingRequired && (
-              <div className="border-input bg-background flex w-full items-center gap-2 rounded-md border px-4">
+              <div className="flex w-full items-center gap-2 rounded-md border border-input bg-background px-4">
                 <CheckboxField
                   label={t("payment.same-as-shipping-address")}
                   name="sameAsShippingAddress"
@@ -471,7 +479,7 @@ export const Payment = ({
             </Button>
 
             {errors.map((message, i) => (
-              <p key={i} className="text-destructive text-sm font-medium">
+              <p key={i} className="text-sm font-medium text-destructive">
                 {message}
               </p>
             ))}

@@ -11,11 +11,11 @@
   },
   "dependencies": {
     "@tailwindcss/typography": "0.5.18",
-    "tailwindcss": "^3.4.17",
+    "tailwindcss": "^3.4.19",
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
-    "lint-staged": "^16.1.5"
+    "lint-staged": "^16.2.7"
   },
   "lint-staged": {
     "*.{js,cjs,mjs,jsx,ts,cts,mts,tsx}": "eslint --fix",

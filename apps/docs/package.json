@@ -9,11 +9,11 @@
     "postbuild": "pagefind --site .next/server/app --output-path public/_pagefind"
   },
   "dependencies": {
-    "next": "catalog:next",
+    "next": "^15.5.9",
     "nextra": "4.6.0",
     "nextra-theme-docs": "4.6.0",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
   },
   "devDependencies": {
     "@nimara/config": "workspace:*",

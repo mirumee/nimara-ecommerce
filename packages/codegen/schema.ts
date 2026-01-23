@@ -19931,6 +19931,7 @@ export type ProductErrorCode =
   | 'DUPLICATED_INPUT_ITEM'
   | 'GRAPHQL_ERROR'
   | 'INVALID'
+  | 'INVALID_FILE_TYPE'
   | 'INVALID_PRICE'
   | 'MEDIA_ALREADY_ASSIGNED'
   | 'NOT_FOUND'
@@ -19942,6 +19943,7 @@ export type ProductErrorCode =
   | 'REQUIRED'
   | 'UNIQUE'
   | 'UNSUPPORTED_MEDIA_PROVIDER'
+  | 'UNSUPPORTED_MIME_TYPE'
   | 'VARIANT_NO_DIGITAL_CONTENT';
 
 /** Event sent when product export is completed. */
@@ -28098,7 +28100,9 @@ export type UploadError = {
 };
 
 export type UploadErrorCode =
-  | 'GRAPHQL_ERROR';
+  | 'GRAPHQL_ERROR'
+  | 'INVALID_FILE_TYPE'
+  | 'UNSUPPORTED_MIME_TYPE';
 
 /** Represents user data. */
 export type User = Node & ObjectWithMetadata & {

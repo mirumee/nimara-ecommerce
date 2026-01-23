@@ -27,11 +27,11 @@ export default async function Page() {
 
   return (
     <div className="flex flex-col gap-6 text-sm">
-      <h2 className="text-primary text-2xl">{t("account.order-history")}</h2>
+      <h2 className="text-2xl text-primary">{t("account.order-history")}</h2>
       {orders.length === 0 && (
         <div className="space-y-8">
           <hr />
-          <p className="dark:text-muted-foreground text-stone-500">
+          <p className="text-stone-500 dark:text-muted-foreground">
             {t("order.sorry-you-dont-have-any-orders")}
           </p>
         </div>

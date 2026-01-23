@@ -16,9 +16,8 @@ export const createCMSPageServiceLoader = (logger: Logger) => {
       return cmsServiceInstance;
     }
 
-    const { saleorCMSPageService } = await import(
-      "@nimara/infrastructure/cms-page/providers"
-    );
+    const { saleorCMSPageService } =
+      await import("@nimara/infrastructure/cms-page/providers");
 
     cmsServiceInstance = saleorCMSPageService({
       apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,

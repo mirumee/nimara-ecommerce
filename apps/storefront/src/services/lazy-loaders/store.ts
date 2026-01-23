@@ -16,9 +16,8 @@ export const createStoreServiceLoader = (logger: Logger) => {
       return storeServiceInstance;
     }
 
-    const { saleorStoreService } = await import(
-      "@nimara/infrastructure/store/index"
-    );
+    const { saleorStoreService } =
+      await import("@nimara/infrastructure/store/index");
 
     storeServiceInstance = saleorStoreService({
       apiURI: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,

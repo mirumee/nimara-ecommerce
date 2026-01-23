@@ -21,7 +21,7 @@ export default async function Page() {
       <hr className="h-auto w-px bg-gray-300" />
       <div className="w-full sm:w-1/2 sm:pl-12 md:pl-16">
         <div className="pb-4 sm:pb-10">
-          <h2 className="text-foreground text-2xl font-normal leading-8">
+          <h2 className="text-2xl font-normal leading-8 text-foreground">
             {t("sign-up")}
           </h2>
           <p className="pb-2 pt-2 text-sm font-normal leading-5 text-stone-500">
@@ -34,7 +34,7 @@ export default async function Page() {
           </Button>
         </div>
         <div>
-          <h2 className="text-foreground text-2xl font-normal leading-8">
+          <h2 className="text-2xl font-normal leading-8 text-foreground">
             {t("or-continue-as-guest")}
           </h2>
           <p className="pb-2 pt-2 text-sm font-normal leading-5 text-stone-500">

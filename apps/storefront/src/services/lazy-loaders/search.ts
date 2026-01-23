@@ -51,9 +51,8 @@ export const createSearchServiceLoader = (logger: Logger) => {
       return searchServiceInstance;
     }
 
-    const { saleorSearchService } = await import(
-      "@nimara/infrastructure/search/saleor/provider"
-    );
+    const { saleorSearchService } =
+      await import("@nimara/infrastructure/search/saleor/provider");
 
     searchServiceInstance = saleorSearchService(saleorSearchServiceConfig());
 

@@ -4,7 +4,7 @@ import { AccountSideMenu } from "@/features/account/account-menu";
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
-    <div className="text-primary grid flex-1 grid-cols-12 gap-4 py-8 pt-0 md:pt-8">
+    <div className="grid flex-1 grid-cols-12 gap-4 py-8 pt-0 text-primary md:pt-8">
       <div className="col-span-12 md:col-span-3 xl:col-span-2">
         <AccountSideMenu />
       </div>

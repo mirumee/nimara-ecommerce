@@ -5,7 +5,7 @@ import { type GetTranslations } from "@nimara/foundation/i18n/types";
 export const formSchema = ({ t }: { t: GetTranslations }) =>
   z.object({
     selectedLines: z
-      .record(z.boolean())
+      .record(z.string(), z.boolean())
       .refine(
         (selectedLines) =>
           Object.values(selectedLines).some((isSelected) => isSelected),

@@ -86,7 +86,7 @@ export const ProductsGridSkeleton = () => {
         <div className="relative min-h-44 border-stone-200 bg-stone-200 p-6">
           <Skeleton className="mb-2 h-6 w-1/2" />
           <Skeleton className="mb-4 h-4 w-1/3" />
-          <Skeleton className="absolute bottom-4 right-4 h-10 w-10 rounded-md" />
+          <Skeleton className="absolute right-4 bottom-4 h-10 w-10 rounded-md" />
         </div>
 
         {Array.from({ length: 7 }).map((_, index) => (

@@ -72,7 +72,7 @@ export function SignInForm({ redirectUrl }: { redirectUrl?: string }) {
 
   return (
     <>
-      <h1 className="text-primary pb-8 text-2xl font-normal leading-8">
+      <h1 className="pb-8 text-2xl font-normal leading-8 text-primary">
         {t("auth.sign-in")}
       </h1>
 
@@ -85,18 +85,18 @@ export function SignInForm({ redirectUrl }: { redirectUrl?: string }) {
         >
           {(form?.formState?.errors?.email ||
             form?.formState?.errors?.password) && (
-            <p className="text-destructive pb-2 text-sm">
+            <p className="pb-2 text-sm text-destructive">
               {t("auth.sign-in-error")}
             </p>
           )}
-          <div className="text-foreground w-full">
+          <div className="w-full text-foreground">
             <TextFormField
               name="email"
               label={t("common.email")}
               type="email"
             />
           </div>
-          <div className="text-foreground w-full">
+          <div className="w-full text-foreground">
             <TextFormField
               name="password"
               label={t("common.password")}

@@ -89,21 +89,21 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
               )}
 
               <NavigationMenuContent>
-                <div className="bg-background grid w-full grid-cols-6 p-6">
+                <div className="grid w-full grid-cols-6 bg-background p-6">
                   <div className="col-span-2 flex flex-col gap-3 pr-6">
                     {!!item.children?.length &&
                       childrenWithoutImage?.map((child) => (
                         <LocalizedLink
                           key={child.id}
                           href={child.url}
-                          className="hover:bg-accent group block space-y-1 rounded-md p-3"
+                          className="group block space-y-1 rounded-md p-3 hover:bg-accent"
                           prefetch={false}
                         >
                           <div className="text-sm font-medium leading-none">
                             {child.label}
                           </div>
                           {child.description && (
-                            <div className="text-muted-foreground text-sm leading-snug">
+                            <div className="text-sm leading-snug text-muted-foreground">
                               {isValidJson(child.description) ? (
                                 <RichText
                                   className="line-clamp-3 py-1"
@@ -130,7 +130,7 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
                         <LocalizedLink
                           key={child.id}
                           href={child.url}
-                          className="bg-accent group relative min-h-[270px] overflow-hidden rounded-lg"
+                          className="group relative min-h-[270px] overflow-hidden rounded-lg bg-accent"
                           onClick={() => setCurrentMenuItem("")}
                           prefetch={false}
                         >
@@ -144,12 +144,12 @@ export const Navigation = ({ menu }: { menu: Maybe<Menu> }) => {
                               />
                             )}
                           </div>
-                          <div className="bg-muted/50 flex h-1/2 flex-col justify-start p-6">
+                          <div className="flex h-1/2 flex-col justify-start bg-muted/50 p-6">
                             <div className="relative z-20 space-y-2">
                               <div className="text-lg font-medium leading-none group-hover:underline">
                                 {child.label}
                               </div>
-                              <div className="text-muted-foreground overflow-hidden text-sm leading-snug">
+                              <div className="overflow-hidden text-sm leading-snug text-muted-foreground">
                                 {child.description &&
                                 isValidJson(child.description) ? (
                                   <RichText

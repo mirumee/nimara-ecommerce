@@ -16,9 +16,8 @@ export const createCMSMenuServiceLoader = (logger: Logger) => {
       return cmsMenuServiceInstance;
     }
 
-    const { saleorCMSMenuService } = await import(
-      "@nimara/infrastructure/cms-menu/providers"
-    );
+    const { saleorCMSMenuService } =
+      await import("@nimara/infrastructure/cms-menu/providers");
 
     cmsMenuServiceInstance = saleorCMSMenuService({
       apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,

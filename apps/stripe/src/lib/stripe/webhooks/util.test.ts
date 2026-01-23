@@ -1,4 +1,4 @@
-import { describe, expect, it, type Mock, vi } from "vitest";
+import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 
 import { type PaymentGatewayConfig } from "@/lib/saleor/config/schema";
 import { MagicMock } from "@/lib/test/mock";
@@ -49,6 +49,10 @@ describe("util", () => {
   vi.mock("./gatewayMetadata", () => ({
     getGatewayMetadata: vi.fn(() => ({})),
   }));
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   describe("installWebhook", () => {
     it("does nothing when secretKey is missing", async () => {

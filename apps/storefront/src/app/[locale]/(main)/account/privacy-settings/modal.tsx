@@ -43,7 +43,7 @@ export function DeleteAccountModal() {
           <DialogTitle>{t("account.confirm-account-deletion")}</DialogTitle>
         </DialogHeader>
         <div className="space-y-6">
-          <p className="dark:text-muted-foreground text-sm text-stone-500">
+          <p className="text-sm text-stone-500 dark:text-muted-foreground">
             {t("account.confirm-account-deletion-description")}
           </p>
           <DialogFooter>
@@ -71,7 +71,7 @@ export function DeleteAccountModal() {
             </p>
           ) : (
             <>
-              <p className="dark:text-muted-foreground text-sm text-stone-500">
+              <p className="text-sm text-stone-500 dark:text-muted-foreground">
                 {t("account.delete-account-modal-description")}{" "}
                 {t.rich("account.in-case-of-any-questions", {
                   contactUs: () => (
