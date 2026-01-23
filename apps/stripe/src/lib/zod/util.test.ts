@@ -45,7 +45,7 @@ describe("utils", () => {
       expect(() =>
         prepareConfig({ schema, input, name: "TestConfig" }),
       ).toThrow(
-        "Invalid TestConfig CONFIG\n\nkey: Expected string, received number",
+        "Invalid TestConfig CONFIG\n\nkey: Invalid input: expected string, received number",
       );
     });
 
@@ -80,7 +80,7 @@ describe("utils", () => {
       expect(() =>
         prepareConfig({ schema, input, name: "MultiErrorConfig" }),
       ).toThrow(
-        "Invalid MultiErrorConfig CONFIG\n\nkey1: Expected string, received number\nkey2: Expected number, received string",
+        "Invalid MultiErrorConfig CONFIG\n\nkey1: Invalid input: expected string, received number\nkey2: Invalid input: expected number, received string",
       );
     });
 

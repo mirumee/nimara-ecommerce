@@ -4,9 +4,7 @@
   "private": true,
   "scripts": {
     "lint": "eslint . --ext .js,.ts,.tsx --fix",
-    "lint:staged": "lint-staged",
-    "test": "vitest run",
-    "test:watch": "vitest --watch"
+    "lint:staged": "lint-staged"
   },
   "dependencies": {
     "@formatjs/intl-localematcher": "0.6.1",
@@ -41,8 +39,7 @@
     "eslint-config-custom": "workspace:*",
     "tsconfig": "workspace:*",
     "typescript": "^5.9.2",
-    "vite-tsconfig-paths": "5.1.4",
-    "vitest": "3.2.4"
+    "vite-tsconfig-paths": "5.1.4"
   },
   "lint-staged": {
     "*.{js,cjs,ts,tsx}": "eslint --fix",

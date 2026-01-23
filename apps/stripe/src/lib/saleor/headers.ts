@@ -12,7 +12,7 @@ export const saleorWebhookHeaders = z
     "saleor-signature": z.string(),
     "saleor-event": z.string(),
   })
-  .merge(saleorHeaders);
+  .extend(saleorHeaders);
 
 export type SaleorWebhookHeaders = z.infer<typeof saleorWebhookHeaders>;
 
