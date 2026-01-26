@@ -12,7 +12,7 @@
     "@graphql-codegen/typescript": "4.1.6",
     "@graphql-codegen/typescript-operations": "4.6.1",
     "@graphql-typed-document-node/core": "3.2.0",
-    "@types/node": "^22.19.0",
+    "@types/node": "^22.19.7",
     "eslint-config-custom": "workspace:*",
     "tsconfig": "workspace:*"
   },

@@ -57,7 +57,7 @@
     "@next/env": "^15.5.9",
     "@nimara/codegen": "workspace:*",
     "@nimara/config": "workspace:*",
-    "@parcel/watcher": "2.5.1",
+    "@parcel/watcher": "2.5.6",
     "@svgr/webpack": "8.1.0",
     "@tailwindcss/typography": "0.5.18",
     "@types/lodash": "4.17.20",
@@ -66,7 +66,7 @@
     "@types/react-dom": "^19.2.3",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
-    "autoprefixer": "10.4.21",
+    "autoprefixer": "10.4.23",
     "dotenv": "17.2.3",
     "eslint": "^8.57.0",
     "eslint-config-custom": "workspace:*",
@@ -78,7 +78,7 @@
     "ts-toolbelt": "^9.6.0",
     "tsconfig": "workspace:*",
     "typescript": "^5.9.2",
-    "vite-tsconfig-paths": "6.0.4",
+    "vite-tsconfig-paths": "6.0.5",
     "vitest": "4.0.18"
   },
   "lint-staged": {
