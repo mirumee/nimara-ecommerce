@@ -13,6 +13,7 @@ Full-stack e-commerce platform using Next.js 15 with Saleor headless commerce ba
 ## Tech Stack
 
 ### Frontend
+
 - **Framework:** Next.js 15 (App Router, Server Components, Server Actions)
 - **React:** Version 19
 - **TypeScript:** Strict mode enabled
@@ -21,6 +22,7 @@ Full-stack e-commerce platform using Next.js 15 with Saleor headless commerce ba
 - **Forms:** React Hook Form with Zod validation
 
 ### Backend & APIs
+
 - **Commerce Backend:** Saleor GraphQL API
 - **Payment Processing:** Stripe Payment Element
 - **Authentication:** NextAuth.js v5 (Auth.js)
@@ -28,6 +30,7 @@ Full-stack e-commerce platform using Next.js 15 with Saleor headless commerce ba
 - **Search:** Saleor (default) or Algolia (optional)
 
 ### Monorepo & Tools
+
 - **Monorepo:** Turborepo with pnpm workspaces
 - **Package Manager:** pnpm 9.x
 - **Code Generation:** GraphQL Code Generator
@@ -36,6 +39,7 @@ Full-stack e-commerce platform using Next.js 15 with Saleor headless commerce ba
 - **Formatting:** Prettier with Tailwind plugin
 
 ### Deployment
+
 - **Hosting:** Vercel (multi-environment setup)
 - **Error Tracking:** Sentry
 - **Logging:** Pino structured logging
@@ -65,6 +69,7 @@ nimara-ecommerce/
 ```
 
 **Package Dependencies:**
+
 - `domain` & `foundation` are leaf packages (no internal dependencies)
 - `infrastructure` depends on `domain` and `foundation`
 - `features` depends on `domain`, `infrastructure`, `foundation`, and `ui`
@@ -75,6 +80,7 @@ nimara-ecommerce/
 ## Key Principles
 
 ### 1. Server Components First
+
 - **Default:** All components are Server Components
 - **Rule:** Only add `'use client'` when you need:
   - Interactivity (onClick, onChange, event handlers)
@@ -84,18 +90,21 @@ nimara-ecommerce/
 - **Benefits:** Better performance, SEO, smaller bundle size
 
 ### 2. Type Safety First
+
 - **TypeScript strict mode** is enabled across all packages
 - **GraphQL types** are generated via codegen - never write them manually
 - **Validation** uses Zod schemas for runtime type checking
 - **Public functions** must have explicit return types
 
 ### 3. Composition Over Configuration
+
 - Build complex UIs from simple, focused components
 - Prefer component composition over prop drilling
 - Server Components wrap Client Components for optimal performance
 - Keep components under 200 lines
 
 ### 4. Performance Matters
+
 - Leverage Next.js caching (Router Cache, Full Route Cache, Data Cache)
 - Use ISR (Incremental Static Regeneration) for frequently updated content
 - Implement streaming with Suspense boundaries
@@ -103,6 +112,7 @@ nimara-ecommerce/
 - Code-split heavy components with dynamic imports
 
 ### 5. Internationalization Ready
+
 - All user-facing text must use translation keys
 - Use `next-intl` for internationalization
 - Support multiple currencies and locales
@@ -115,6 +125,7 @@ nimara-ecommerce/
 ### Data Fetching
 
 **Server Components (default):**
+
 ```typescript
 // app/products/page.tsx
 export default async function ProductsPage() {
@@ -126,24 +137,26 @@ export default async function ProductsPage() {
 ```
 
 **Server Actions (mutations):**
+
 ```typescript
 // actions/cart.ts
-'use server';
+"use server";
 
 export async function addToCart(productId: string) {
   const session = await auth();
   if (!session) {
-    return { success: false, error: 'Not authenticated' };
+    return { success: false, error: "Not authenticated" };
   }
 
   const result = await saleorAPI.addToCart(productId);
-  revalidatePath('/cart');
+  revalidatePath("/cart");
 
   return { success: true, data: result };
 }
 ```
 
 **GraphQL Queries:**
+
 ```typescript
 // 1. Define query in .graphql file
 // infrastructure/product/queries/GetProducts.graphql
@@ -152,7 +165,7 @@ export async function addToCart(productId: string) {
 // pnpm run codegen
 
 // 3. Use generated types
-import { GetProductsDocument } from './queries.generated';
+import { GetProductsDocument } from "./queries.generated";
 
 const { data } = await saleorClient.query({
   query: GetProductsDocument,
@@ -162,33 +175,35 @@ const { data } = await saleorClient.query({
 
 ### State Management
 
-| State Type | Solution | Example |
-|------------|----------|---------|
-| **Server state** | React Server Components | Product catalog, user data |
-| **Client state** | `useState`, `useReducer` | UI toggles, temporary form data |
-| **URL state** | `searchParams` | Filters, pagination, sorting |
-| **Form state** | Server Actions + `useFormState` | Checkout, login forms |
+| State Type       | Solution                        | Example                         |
+| ---------------- | ------------------------------- | ------------------------------- |
+| **Server state** | React Server Components         | Product catalog, user data      |
+| **Client state** | `useState`, `useReducer`        | UI toggles, temporary form data |
+| **URL state**    | `searchParams`                  | Filters, pagination, sorting    |
+| **Form state**   | Server Actions + `useFormState` | Checkout, login forms           |
 
 ### Error Handling
 
 **Server Actions:**
+
 ```typescript
-'use server';
+"use server";
 
 export async function updateProfile(data: FormData) {
   try {
     const validated = profileSchema.parse(data);
     await updateUser(validated);
-    revalidatePath('/account');
+    revalidatePath("/account");
     return { success: true };
   } catch (error) {
-    console.error('Profile update failed:', error);
-    return { success: false, error: 'Failed to update profile' };
+    console.error("Profile update failed:", error);
+    return { success: false, error: "Failed to update profile" };
   }
 }
 ```
 
 **Client Components:**
+
 ```typescript
 // app/products/error.tsx
 'use client';
@@ -205,15 +220,15 @@ export default function Error({ error, reset }) {
 
 ### File Naming
 
-| Type | Convention | Example |
-|------|-----------|---------|
-| Components | PascalCase | `ProductCard.tsx`, `CheckoutForm.tsx` |
-| Utilities | camelCase | `formatPrice.ts`, `validateEmail.ts` |
-| Types | PascalCase + `.types.ts` | `Product.types.ts` |
-| Constants | camelCase + `constants.ts` | `apiConstants.ts` |
-| Server Actions | Inline in components | `add-to-cart.ts` |
-| Tests | Same + `.test.ts` | `formatPrice.test.ts` |
-| GraphQL | PascalCase + `.graphql` | `GetProducts.graphql` |
+| Type           | Convention                 | Example                               |
+| -------------- | -------------------------- | ------------------------------------- |
+| Components     | PascalCase                 | `ProductCard.tsx`, `CheckoutForm.tsx` |
+| Utilities      | camelCase                  | `formatPrice.ts`, `validateEmail.ts`  |
+| Types          | PascalCase + `.types.ts`   | `Product.types.ts`                    |
+| Constants      | camelCase + `constants.ts` | `apiConstants.ts`                     |
+| Server Actions | Inline in components       | `add-to-cart.ts`                      |
+| Tests          | Same + `.test.ts`          | `formatPrice.test.ts`                 |
+| GraphQL        | PascalCase + `.graphql`    | `GetProducts.graphql`                 |
 
 ---
 
@@ -261,6 +276,7 @@ Follow this checklist:
 ## Common Gotchas
 
 ### Server Components
+
 - ❌ **Cannot** use React hooks (`useState`, `useEffect`, etc.)
 - ❌ **Cannot** use browser APIs (`window`, `localStorage`, etc.)
 - ❌ **Cannot** use event handlers (`onClick`, `onChange`, etc.)
@@ -269,6 +285,7 @@ Follow this checklist:
 - ✅ **Can** access server-only resources
 
 ### Client Components
+
 - ❌ **Cannot** receive non-serializable props (functions, Dates, etc.)
 - ❌ **Cannot** directly access server resources
 - ✅ **Can** use all React hooks
@@ -276,16 +293,19 @@ Follow this checklist:
 - ✅ **Can** handle user interactions
 
 ### Caching
+
 - Always call `revalidatePath()` or `revalidateTag()` after mutations
 - Use `export const dynamic = 'force-dynamic'` for auth-protected pages
 - Understand the difference between ISR and dynamic rendering
 
 ### Stripe
+
 - Webhook signatures **must** be verified
 - Payment Intents need proper metadata for order reconciliation
 - Test webhooks locally with Stripe CLI
 
 ### GraphQL
+
 - Schema changes require running `pnpm run codegen`
 - Never manually write types for GraphQL responses
 - Use fragments for reusable field selections
@@ -295,6 +315,7 @@ Follow this checklist:
 ## Code Style
 
 ### Components
+
 ```typescript
 // ✅ Preferred: Functional components with explicit types
 export function ProductCard({ product }: { product: Product }) {
@@ -306,26 +327,29 @@ class ProductCard extends React.Component { }
 ```
 
 ### Exports
+
 ```typescript
 // ✅ Preferred: Named exports
-export function formatPrice() { }
-export const API_URL = '...';
+export function formatPrice() {}
+export const API_URL = "...";
 
 // ❌ Avoid: Default exports (except for pages)
-export default function formatPrice() { }
+export default function formatPrice() {}
 ```
 
 ### Imports
+
 ```typescript
 // ✅ Correct order
-import { Suspense } from 'react';           // React/Next.js
-import { useTranslations } from 'next-intl'; // External
-import { Product } from '@nimara/domain';    // Internal
-import { formatPrice } from './utils';       // Relative
-import type { Props } from './types';        // Types last
+import { Suspense } from "react"; // React/Next.js
+import { useTranslations } from "next-intl"; // External
+import { Product } from "@nimara/domain"; // Internal
+import { formatPrice } from "./utils"; // Relative
+import type { Props } from "./types"; // Types last
 ```
 
 ### TypeScript
+
 ```typescript
 // ✅ Explicit return types for public functions
 export function calculateTotal(items: CartItem[]): number {
@@ -337,6 +361,7 @@ const count = items.length; // Type inferred as number
 ```
 
 ### Styling
+
 ```typescript
 // ✅ Preferred: Tailwind utility classes
 <div className="rounded-lg border p-4 shadow-sm hover:shadow-md">
@@ -354,16 +379,19 @@ import styles from './ProductCard.module.css';
 ## Testing
 
 ### Unit Tests
+
 - Test pure functions and utilities
 - Use Vitest + React Testing Library
 - Colocate tests with source: `utils.ts` → `utils.test.ts`
 
 ### Integration Tests
+
 - Test Server Actions with full flow
 - Mock external APIs (Saleor, Stripe)
 - Verify cache revalidation
 
 ### E2E Tests
+
 - Use Playwright with Page Object Model
 - Cover critical user journeys:
   - Browse → Add to cart → Checkout → Payment
@@ -372,6 +400,7 @@ import styles from './ProductCard.module.css';
 - Fixtures in `automated-tests/fixtures/`
 
 ### Running Tests
+
 ```bash
 pnpm run test              # Run all unit tests
 pnpm run test:watch        # Watch mode
@@ -383,9 +412,10 @@ pnpm run test:e2e          # Run E2E tests
 ## Documentation
 
 ### JSDoc
+
 Add JSDoc comments for public APIs:
 
-```typescript
+````typescript
 /**
  * Formats a price value according to the specified currency and locale.
  *
@@ -403,13 +433,14 @@ Add JSDoc comments for public APIs:
 export function formatPrice(
   amount: number,
   currency: string,
-  locale: string
+  locale: string,
 ): string {
   // Implementation
 }
-```
+````
 
 ### Complex Logic
+
 Add inline comments for non-obvious code:
 
 ```typescript
@@ -418,6 +449,7 @@ const amountInCents = Math.round(amount * 100);
 ```
 
 ### Architecture Changes
+
 - Update `ARCHITECTURE.md` for structural changes
 - Create ADR (Architecture Decision Record) for significant decisions
 
@@ -426,6 +458,7 @@ const amountInCents = Math.round(amount * 100);
 ## Environment Variables
 
 ### Required
+
 ```env
 # Saleor
 NEXT_PUBLIC_SALEOR_API_URL=
@@ -446,6 +479,7 @@ NEXT_PUBLIC_STOREFRONT_URL=
 ```
 
 ### Optional
+
 ```env
 # Search (Algolia)
 ALGOLIA_APP_ID=
@@ -484,11 +518,13 @@ pnpm run test:e2e           # Run E2E tests
 ## Git Workflow
 
 Three-branch strategy:
+
 - `develop` → Development environment (Vercel)
 - `staging` → QA environment (Vercel)
 - `main` → Production environment (Vercel)
 
 **Workflow:**
+
 1. Create feature branch from `develop`
 2. Develop locally with `pnpm run dev:storefront`
 3. Open PR to `develop`
@@ -501,18 +537,21 @@ Three-branch strategy:
 ## Additional Context
 
 ### Performance Targets
+
 - Lighthouse score: 90+ on all metrics
 - First Contentful Paint: < 1.5s
 - Time to Interactive: < 3.5s
 - Bundle size: Monitor and optimize regularly
 
 ### Accessibility
+
 - WCAG 2.1 Level AA compliance
 - Keyboard navigation support
 - Screen reader friendly
 - Focus management
 
 ### SEO
+
 - Semantic HTML
 - OpenGraph meta tags
 - JSON-LD structured data
