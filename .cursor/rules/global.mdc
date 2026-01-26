@@ -1,0 +1,270 @@
+---
+alwaysApply: true
+---
+
+# Nimara E-commerce - Cursor AI Rules
+
+You are an expert AI assistant for the Nimara e-commerce project - a Next.js 15 full-stack platform with Saleor headless commerce backend.
+
+## Core Tech Stack
+
+- **Framework:** Next.js 15 (App Router, Server Components, Server Actions)
+- **React:** 19
+- **TypeScript:** Strict mode
+- **Styling:** Tailwind CSS + Shadcn UI
+- **GraphQL:** Saleor API with GraphQL Code Generator
+- **Monorepo:** Turborepo + pnpm workspaces
+- **Auth:** NextAuth.js v5
+- **Payments:** Stripe
+- **Testing:** Vitest + Playwright
+
+## Project Structure
+
+```
+apps/
+  ├── storefront/        # Main customer-facing app
+  ├── stripe/            # Stripe integration app
+  └── automated-tests/   # E2E tests
+packages/
+  ├── domain/            # Business logic (no external deps)
+  ├── features/          # Feature implementations
+  ├── infrastructure/    # External API integrations
+  ├── foundation/        # Core utilities, hooks
+  └── ui/                # Shared UI components
+```
+
+**Package dependencies:**
+
+- `domain` & `foundation` are leaf packages
+- `infrastructure` depends on `domain` + `foundation`
+- `features` depends on all packages
+- Apps can depend on any package
+
+## Critical Rules
+
+### 1. Server Components First (MOST IMPORTANT!)
+
+- **Default:** ALL components are Server Components
+- **Only use `'use client'` when you need:**
+  - Event handlers (onClick, onChange, onSubmit)
+  - React hooks (useState, useEffect, useContext, useReducer)
+  - Browser APIs (window, localStorage, document)
+  - Third-party client libraries
+- **Benefits:** Better performance, SEO, smaller bundle
+- **Server Components can:**
+  - Be async functions
+  - Fetch data directly
+  - Access server-only resources
+
+### 2. Type Safety
+
+- TypeScript strict mode enabled everywhere
+- **GraphQL types:** ALWAYS generated via codegen - NEVER write manually
+- After schema changes: `pnpm run codegen`
+- **Validation:** Use Zod schemas for user input
+- **Public functions:** Must have explicit return types
+
+### 3. File Naming
+
+- **Components:** PascalCase (`ProductCard.tsx`)
+- **Utilities:** camelCase (`formatPrice.ts`)
+- **Types:** PascalCase + `.types.ts` (`Product.types.ts`)
+- **GraphQL:** PascalCase + `.graphql` (`GetProducts.graphql`)
+- **Tests:** Same name + `.test.ts`
+
+### 4. Code Style
+
+**Imports order:**
+
+```typescript
+import { Suspense } from "react"; // React/Next.js
+import { useTranslations } from "next-intl"; // External
+import { Product } from "@nimara/domain"; // Internal
+import { formatPrice } from "./utils"; // Relative
+import type { Props } from "./types"; // Types last
+```
+
+**Components:**
+
+```typescript
+// ✅ Preferred: Functional components with explicit types
+export function ProductCard({ product }: { product: Product }) {
+  return <div>{product.name}</div>;
+}
+
+// ❌ Avoid: Class components, default exports (except pages)
+```
+
+**Styling:**
+
+```typescript
+// ✅ Preferred: Tailwind utility classes
+<div className="rounded-lg border p-4 shadow-sm hover:shadow-md">
+
+// ❌ Avoid: Inline styles
+```
+
+## Common Patterns
+
+### Data Fetching
+
+**Server Components (default):**
+
+```typescript
+export default async function ProductsPage() {
+  const products = await getProducts(); // Direct API call
+  return <ProductList products={products} />;
+}
+```
+
+**Server Actions (mutations):**
+
+```typescript
+"use server";
+
+export async function addToCart(productId: string) {
+  const session = await auth();
+  if (!session) return { success: false, error: "Not authenticated" };
+
+  const result = await saleorAPI.addToCart(productId);
+  revalidatePath("/cart"); // ALWAYS revalidate after mutations
+
+  return { success: true, data: result };
+}
+```
+
+**GraphQL:**
+
+```typescript
+// 1. Define in .graphql file: infrastructure/product/queries/GetProducts.graphql
+// 2. Run: pnpm run codegen
+// 3. Use generated types:
+import { GetProductsDocument } from "./queries.generated";
+
+const { data } = await saleorClient.query({
+  query: GetProductsDocument,
+  variables: { first: 10 },
+});
+```
+
+### State Management
+
+- **Server state:** React Server Components (default)
+- **Client state:** `useState`, `useReducer`
+- **URL state:** `searchParams`
+- **Form state:** Server Actions + `useFormState`
+
+### Error Handling
+
+```typescript
+"use server";
+
+export async function updateProfile(data: FormData) {
+  try {
+    const validated = profileSchema.parse(data); // Zod validation
+    await updateUser(validated);
+    revalidatePath("/account");
+    return { success: true };
+  } catch (error) {
+    console.error("Profile update failed:", error);
+    return { success: false, error: "Failed to update profile" };
+  }
+}
+```
+
+## When Adding New Features
+
+1. **Check existing patterns** - Look for similar features first
+2. **Choose correct package:**
+   - `domain` - Pure business logic, entities
+   - `features` - Feature implementations with components
+   - `infrastructure` - External API integrations
+   - `foundation` - Utilities, helpers, hooks
+3. **Add types** in `@nimara/domain` if shared
+4. **Create GraphQL operations:**
+   - Add `.graphql` file in `infrastructure`
+   - Run `pnpm run codegen`
+5. **Add translations** - All user-facing text uses `next-intl`
+6. **Write tests** - Unit, integration, and E2E for critical flows
+7. **Add JSDoc** for public APIs
+
+## When Fixing Bugs
+
+1. **Understand data flow:** Server vs Client Component?
+2. **Verify boundaries:** Props serializable when passing Server → Client?
+3. **Check types:** Run `pnpm run codegen` if GraphQL schema changed
+4. **Verify cache:** Add `revalidatePath()` after mutations
+5. **Add regression test**
+
+## Common Gotchas
+
+### Server Components
+
+- ❌ Cannot use React hooks (`useState`, `useEffect`)
+- ❌ Cannot use browser APIs (`window`, `localStorage`)
+- ❌ Cannot use event handlers (`onClick`)
+- ✅ Can be async
+- ✅ Can fetch data directly
+
+### Client Components
+
+- ❌ Cannot receive non-serializable props (functions, Dates)
+- ✅ Can use all React hooks
+- ✅ Can use browser APIs
+
+### Caching
+
+- ALWAYS call `revalidatePath()` or `revalidateTag()` after mutations
+- Use `export const dynamic = 'force-dynamic'` for auth-protected pages
+
+### GraphQL
+
+- Schema changes require `pnpm run codegen`
+- NEVER manually write GraphQL types
+- Use fragments for reusable field selections
+
+## Commands
+
+```bash
+pnpm run dev:storefront  # Start dev server
+pnpm run codegen         # Generate GraphQL types
+pnpm run build           # Build all packages
+pnpm run test            # Run tests
+pnpm run lint            # Lint all packages
+```
+
+## Key Reminders
+
+1. **Server Components first** - Add `'use client'` only when absolutely needed
+2. **Run codegen** after GraphQL schema changes
+3. **Validate inputs** with Zod schemas
+4. **Revalidate cache** after mutations
+5. **Translate text** - All user-facing strings through i18n
+6. **Write tests** for business logic
+7. **Keep components under 200 lines**
+
+## Performance
+
+- Leverage Next.js caching layers
+- Use ISR for frequently updated content
+- Implement Suspense boundaries for streaming
+- Optimize images with `next/image`
+- Code-split heavy components with dynamic imports
+
+## Accessibility & SEO
+
+- WCAG 2.1 Level AA compliance
+- Semantic HTML
+- OpenGraph meta tags
+- JSON-LD structured data
+
+---
+
+When implementing features, prioritize:
+
+1. Type safety (TypeScript + Zod)
+2. Performance (Server Components, caching)
+3. Developer experience (clear patterns, good documentation)
+4. User experience (accessibility, i18n, fast loading)
+
+Always check existing code for similar patterns before implementing new features.
