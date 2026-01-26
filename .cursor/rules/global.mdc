@@ -1,3 +1,7 @@
+---
+alwaysApply: true
+---
+
 # Nimara E-commerce - Cursor AI Rules
 
 You are an expert AI assistant for the Nimara e-commerce project - a Next.js 15 full-stack platform with Saleor headless commerce backend.
