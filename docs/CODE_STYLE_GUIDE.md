@@ -171,12 +171,13 @@ interface ProductCardProps {
 Server Components are the default in Next.js App Router:
 
 ```typescript
-// app/products/page.tsx
-export default async function ProductsPage() {
+export default async function ProductPage() {
   // Direct API call in Server Component
-  const products = await getProducts();
+  const services = await getServiceRegistry();
+  const storeService = await services.getStoreService()
+  const productDetails = await storeService.getProductDetails({ ... });
 
-  return <ProductList products={products} />;
+  return // ... work with productDetails;
 }
 ```
 
@@ -213,16 +214,18 @@ Compose Client Components within Server Components:
 ```typescript
 // ✅ GOOD: Server Component wraps Client Components
 export default async function ProductPage({ params }: { params: { slug: string } }) {
-  const product = await getProduct(params.slug);
+  const services = await getServiceRegistry();
+  const storeService = await services.getStoreService()
+  const productDetails = await storeService.getProductDetails({ ... });
 
   return (
     <div>
       {/* Server Component content */}
-      <ProductInfo product={product} />
+      <ProductInfo product={productDetails} />
 
       {/* Client Components for interactivity */}
-      <AddToCartButton productId={product.id} />
-      <ProductGallery images={product.images} />
+      <AddToCartButton productId={productDetails.id} />
+      <ProductGallery images={productDetails.images} />
     </div>
   );
 }
@@ -311,14 +314,11 @@ packages/features/cart/
 ├── shared/
 │   ├── components/
 │   │   ├── CartItem.tsx
-│   │   ├── CartItem.test.tsx
 │   │   └── CartItem.types.ts
 │   ├── actions/
-│   │   ├── add-to-cart.core.ts
-│   │   └── add-to-cart.test.ts
+│   │   └── add-to-cart.core.ts
 │   └── utils/
-│       ├── calculateTotal.ts
-│       └── calculateTotal.test.ts
+│       └── calculateTotal.ts
 ├── messages/
 │   ├── en-US.json
 │   └── en-GB.json
