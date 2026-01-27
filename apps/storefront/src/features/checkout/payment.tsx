@@ -40,15 +40,8 @@ export const renderPaymentMethod = ({
   method: PaymentMethod;
 }) => {
   if (type === "card") {
-    return (
-      <FormattedCreditCard
-        brand={paymentMethod.brand}
-        last4={paymentMethod.last4}
-        expYear={paymentMethod.expYear}
-        expMonth={paymentMethod.expMonth}
-      />
-    );
+    return <FormattedCreditCard {...paymentMethod} />;
   }
 
-  return <FormattedPayPal email={paymentMethod.email} />;
+  return <FormattedPayPal {...paymentMethod} />;
 };

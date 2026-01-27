@@ -1,5 +1,5 @@
 import { withSentryConfig } from "@sentry/nextjs";
-import { type NextConfig } from "next";
+import type { NextConfig } from "next";
 
 const APP_SEMVER_NAME = `${process.env.npm_package_name}@${process.env.npm_package_version}`;
 const isSentryAvailable =
@@ -45,9 +45,12 @@ const configWithSentry = withSentryConfig(nextConfig, {
   },
   widenClientFileUpload: true,
   tunnelRoute: "/monitoring",
-  hideSourceMaps: true,
-  disableLogger: true,
-  automaticVercelMonitors: true,
+  webpack: {
+    automaticVercelMonitors: true,
+    treeshake: {
+      removeDebugLogging: true,
+    },
+  },
 });
 
 export default isSentryAvailable ? configWithSentry : nextConfig;

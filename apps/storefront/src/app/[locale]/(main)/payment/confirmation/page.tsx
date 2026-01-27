@@ -1,8 +1,9 @@
+import { type Locale } from "next-intl";
+
 import { type AppErrorCode } from "@nimara/domain/objects/Error";
 import { redirect } from "@nimara/i18n/routing";
 
 import { getCheckoutOrRedirect } from "@/features/checkout/checkout-actions";
-import { type SupportedLocale } from "@/foundation/regions/types";
 import { paths, QUERY_PARAMS } from "@/foundation/routing/paths";
 import { getCheckoutService } from "@/services/checkout";
 import { getPaymentService } from "@/services/payment";
@@ -10,7 +11,7 @@ import { getPaymentService } from "@/services/payment";
 import { ProcessingInfo } from "./components/processing-info";
 
 type PageProps = {
-  params: Promise<{ locale: SupportedLocale }>;
+  params: Promise<{ locale: Locale }>;
   searchParams: Promise<Record<string, string>>;
 };
 

@@ -21,7 +21,6 @@ import { type User } from "@nimara/domain/objects/User";
 import { addressToSchema } from "@nimara/foundation/address/address";
 import { AddressForm } from "@nimara/foundation/address/address-form/address-form";
 import type { FormattedAddress } from "@nimara/foundation/address/types";
-import { isGlobalError } from "@nimara/foundation/errors/errors";
 import { CheckboxField } from "@nimara/foundation/form-components/checkbox-field";
 import { cn } from "@nimara/foundation/lib/cn";
 import { usePathname, useRouter } from "@nimara/i18n/routing";
@@ -38,6 +37,7 @@ import { useToast } from "@nimara/ui/hooks";
 
 import { PAYMENT_ELEMENT_ID } from "@/features/checkout/consts";
 import { PaymentMethods } from "@/features/checkout/payment-methods";
+import { isGlobalError } from "@/foundation/errors/errors";
 import { useCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
 import { getPaymentService } from "@/services/payment";

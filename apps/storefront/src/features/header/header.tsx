@@ -2,7 +2,7 @@ import { User } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 
-import { Link as LocalizedLink } from "@nimara/i18n/routing";
+import { LocalizedLink } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
 
 import { CACHE_TTL } from "@/config";

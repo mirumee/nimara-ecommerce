@@ -8,7 +8,7 @@ import { type Cart } from "@nimara/domain/objects/Cart";
 import type { AsyncResult } from "@nimara/domain/objects/Result";
 import { type User } from "@nimara/domain/objects/User";
 import { ShoppingBag } from "@nimara/features/shared/shopping-bag/shopping-bag";
-import { Link as LocalizedLink, useRouter } from "@nimara/i18n/routing";
+import { LocalizedLink, useRouter } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
 import { useToast } from "@nimara/ui/hooks";
 import { cn } from "@nimara/ui/lib/utils";

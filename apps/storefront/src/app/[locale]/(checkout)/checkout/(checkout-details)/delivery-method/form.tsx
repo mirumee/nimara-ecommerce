@@ -1,17 +1,16 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { Fragment } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import type { Checkout } from "@nimara/domain/objects/Checkout";
-import { isGlobalError } from "@nimara/foundation/errors/errors";
 import { RadioFormGroup } from "@nimara/foundation/form-components/radio-form-group";
-import { useLocalizedFormatter } from "@nimara/foundation/formatters/use-localized-formatter";
 import { type MessagePath } from "@nimara/i18n/types";
 import { Button } from "@nimara/ui/components/button";
 
+import { isGlobalError } from "@/foundation/errors/errors";
 import { useRouterWithState } from "@/foundation/use-router-with-state";
 
 import { updateDeliveryMethod } from "./_actions/update-delivery-method";
@@ -21,7 +20,7 @@ const DELIVERY_METHOD_ID = "deliveryMethodId";
 
 export const DeliveryMethodForm = ({ checkout }: { checkout: Checkout }) => {
   const t = useTranslations();
-  const formatter = useLocalizedFormatter();
+  const formatter = useFormatter();
   const { isRedirecting, push } = useRouterWithState();
 
   const form = useForm<FormSchema>({
@@ -64,8 +63,9 @@ export const DeliveryMethodForm = ({ checkout }: { checkout: Checkout }) => {
     name: DELIVERY_METHOD_ID,
     isSrOnlyLabel: true,
     options: checkout.shippingMethods.map((method) => {
-      const shippingMethodPrice = formatter.price({
-        amount: method.price.amount,
+      const shippingMethodPrice = formatter.number(method.price.amount, {
+        style: "currency",
+        currency: method.price.currency,
       });
 
       return {

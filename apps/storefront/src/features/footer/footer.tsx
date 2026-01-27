@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 
-import { Link as LocalizedLink } from "@nimara/i18n/routing";
+import { LocalizedLink } from "@nimara/i18n/routing";
 
 import BrandLogo from "@/assets/brand-logo-dark.svg";
 import { CACHE_TTL } from "@/config";

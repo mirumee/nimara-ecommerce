@@ -1,10 +1,10 @@
 import { PlusIcon } from "lucide-react";
+import { type Locale } from "next-intl";
 import { getTranslations } from "next-intl/server";
 
 import { type AllCountryCode } from "@nimara/domain/consts";
 import { type Address } from "@nimara/domain/objects/Address";
 import { displayFormattedAddressLines } from "@nimara/foundation/address/address";
-import type { SupportedLocale } from "@nimara/i18n/config";
 
 import { getCurrentRegion } from "@/foundation/regions";
 import { getAddressService } from "@/services/address";
@@ -15,7 +15,7 @@ import { AddNewAddressModal } from "./_modals/create-address-modal";
 import { EditAddressModal } from "./_modals/update-address-modal";
 
 type PageProps = {
-  params: Promise<{ locale: SupportedLocale }>;
+  params: Promise<{ locale: Locale }>;
   searchParams: Promise<Record<string, string>>;
 };
 

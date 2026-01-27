@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl";
 
-import { Link as LocalizedLink } from "@nimara/i18n/routing";
+import { LocalizedLink } from "@nimara/i18n/routing";
 
 import BrandLogo from "@/assets/brand-logo-dark.svg";
 import { paths } from "@/foundation/routing/paths";

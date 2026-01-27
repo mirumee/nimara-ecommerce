@@ -1,3 +1,8 @@
+/**
+ * Global declarations for the i18n package.
+ * This file is used to declare the types for the i18n package.
+ */
+
 import type { SupportedLocale } from "./src/config";
 /**
  * Import the messages from the default locale.

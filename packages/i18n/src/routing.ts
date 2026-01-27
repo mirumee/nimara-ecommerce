@@ -1,10 +1,10 @@
 import { createNavigation } from "next-intl/navigation";
 import { defineRouting } from "next-intl/routing";
 
-import { DEFAULT_LOCALE, LOCALE_PREFIXES, SUPPORTED_LOCALES } from "./config";
+import { DEFAULT_LOCALE, LOCALE_PREFIXES, LOCALES } from "./config";
 
 const routing = defineRouting({
-  locales: SUPPORTED_LOCALES,
+  locales: LOCALES,
   defaultLocale: DEFAULT_LOCALE,
   localeDetection: false,
   localePrefix: {
@@ -19,4 +19,10 @@ export type Redirect = typeof redirect;
 
 const redirect_: Redirect = redirect;
 
-export { Link, redirect_ as redirect, routing, usePathname, useRouter };
+export {
+  Link as LocalizedLink,
+  redirect_ as redirect,
+  routing,
+  usePathname,
+  useRouter,
+};

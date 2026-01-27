@@ -1,8 +1,8 @@
 "use client";
 
-import { useLocale, useTranslations } from "next-intl";
+import { type Locale, useLocale, useTranslations } from "next-intl";
 
-import type { LocalePrefixes, SupportedLocale } from "@nimara/i18n/config";
+import type { LocalePrefixes } from "@nimara/i18n/config";
 import type { PageInfo } from "@nimara/infrastructure/use-cases/search/types";
 import {
   Pagination,
@@ -15,7 +15,7 @@ import { cn } from "@nimara/ui/lib/utils";
 
 type Props = {
   baseUrl: string;
-  defaultLocale: SupportedLocale;
+  defaultLocale: Locale;
   localePrefixes: LocalePrefixes;
   pageInfo: PageInfo;
   searchParams: Record<string, string>;
@@ -57,7 +57,7 @@ export const SearchPagination = ({
     // Shadcn use simple <a> tag instead of next-intl <Link> so we need to pass locale explicitly
     const isLocaleDifferent = locale !== defaultLocale;
     const localePrefix = isLocaleDifferent
-      ? localePrefixes[locale as Exclude<SupportedLocale, typeof defaultLocale>]
+      ? localePrefixes[locale as Exclude<Locale, typeof defaultLocale>]
       : "";
     const baseUrlWithParams = `${baseUrl}?${params.toString()}`;
 

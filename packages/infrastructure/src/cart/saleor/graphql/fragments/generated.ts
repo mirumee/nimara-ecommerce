@@ -63,7 +63,10 @@ export type CartFragment_Checkout_problems_CheckoutLineProblemVariantNotAvailabl
   & { __typename: 'CheckoutLineProblemVariantNotAvailable' }
 );
 
-export type CartFragment_Checkout_problems = CartFragment_Checkout_problems_CheckoutLineProblemInsufficientStock | CartFragment_Checkout_problems_CheckoutLineProblemVariantNotAvailable;
+export type CartFragment_Checkout_problems =
+  | CartFragment_Checkout_problems_CheckoutLineProblemInsufficientStock
+  | CartFragment_Checkout_problems_CheckoutLineProblemVariantNotAvailable
+;
 
 export type CartFragment = { id: string, displayGrossPrices: boolean, subtotalPrice: CartFragment_Checkout_subtotalPrice_TaxedMoney, totalPrice: CartFragment_Checkout_totalPrice_TaxedMoney, lines: Array<CartFragment_Checkout_lines_CheckoutLine>, problems: Array<CartFragment_Checkout_problems> | null };
 

@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { type Checkout } from "@nimara/domain/objects/Checkout";
 // TODO: When we try to move this compoentn this Line genrate circular dependency. How to organize moving it?
 import { Line } from "@nimara/features/shared/shopping-bag/components/line";
-import { Link as LocalizedLink } from "@nimara/i18n/routing";
+import { LocalizedLink } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
 import {
   Dialog,

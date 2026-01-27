@@ -1,9 +1,8 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 
 import { type Price } from "@nimara/domain/objects/common";
-import { useLocalizedFormatter } from "@nimara/foundation/formatters/use-localized-formatter";
 import { cn } from "@nimara/ui/lib/utils";
 
 export const Header = ({
@@ -14,7 +13,7 @@ export const Header = ({
   totalPrice?: Price;
 }) => {
   const t = useTranslations();
-  const formatter = useLocalizedFormatter();
+  const formatter = useFormatter();
 
   const headerTextClass = "text-2xl text-primary";
 
@@ -30,7 +29,10 @@ export const Header = ({
       )}
       {totalPrice && (
         <p className={headerTextClass}>
-          {formatter.price({ amount: totalPrice.amount })}
+          {formatter.number(totalPrice.amount, {
+            style: "currency",
+            currency: totalPrice.currency,
+          })}
         </p>
       )}
     </div>

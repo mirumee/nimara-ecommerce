@@ -9,7 +9,7 @@ import { useState } from "react";
 import { type Maybe } from "@nimara/domain/objects/Maybe";
 import type { Menu } from "@nimara/domain/objects/Menu";
 import { isValidJson } from "@nimara/foundation/lib/is-valid-json";
-import { Link as LocalizedLink } from "@nimara/i18n/routing";
+import { LocalizedLink } from "@nimara/i18n/routing";
 import {
   NavigationMenu,
   NavigationMenuContent,

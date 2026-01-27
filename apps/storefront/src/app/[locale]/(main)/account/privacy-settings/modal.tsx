@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { type ReactNode, useState } from "react";
 import { useFormStatus } from "react-dom";
 
-import { Link as LocalizedLink } from "@nimara/i18n/routing";
+import { LocalizedLink } from "@nimara/i18n/routing";
 import { Button, type ButtonProps } from "@nimara/ui/components/button";
 import { Checkbox } from "@nimara/ui/components/checkbox";
 import {

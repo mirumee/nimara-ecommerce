@@ -1,4 +1,6 @@
-import type { LocalePrefixes, SupportedLocale } from "@nimara/i18n/config";
+import type { Locale } from "next-intl";
+
+import type { LocalePrefixes } from "@nimara/i18n/config";
 import type { ServiceRegistry } from "@nimara/infrastructure/types";
 
 /**
@@ -23,7 +25,7 @@ export type SearchParams = {
  * @property searchParams - A promise that resolves to an object containing search parameters.
  */
 export interface SearchViewProps {
-  defaultLocale: SupportedLocale;
+  defaultLocale: Locale;
   defaultResultsPerPage: number;
   defaultSortBy: string;
   handleFiltersFormSubmit: (
@@ -31,7 +33,7 @@ export interface SearchViewProps {
     formData: FormData,
   ) => Promise<never>;
   localePrefixes: LocalePrefixes;
-  params: Promise<{ locale: SupportedLocale }>;
+  params: Promise<{ locale: Locale }>;
   paths: {
     home: string;
     product: (slug: string) => string;
@@ -50,7 +52,7 @@ export interface SearchViewProps {
  * @property searchPath - The path to the search page.
  */
 export interface GenerateStandardSearchMetadataProps {
-  params: Promise<{ locale: SupportedLocale }>;
+  params: Promise<{ locale: Locale }>;
   searchParams: Promise<SearchParams>;
   searchPath: string;
   services: ServiceRegistry;

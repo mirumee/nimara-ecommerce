@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { useCallback, useState } from "react";
 
 import { type BaseError } from "@nimara/domain/objects/Error";
-import { Link as LocalizedLink } from "@nimara/i18n/routing";
+import { LocalizedLink } from "@nimara/i18n/routing";
 import { type MessagePath } from "@nimara/i18n/types";
 import { Button } from "@nimara/ui/components/button";
 import { ToastAction } from "@nimara/ui/components/toast";
@@ -41,7 +41,12 @@ export const AddToBag = ({
       resultLinesAdd.errors.forEach((error: BaseError) => {
         if (error.field) {
           toast({
-            description: t(`checkout-errors.${error.field}` as MessagePath),
+            description: t(`errors.${error.field}` as MessagePath),
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            description: t(`errors.${error.code}` as MessagePath),
             variant: "destructive",
           });
         }

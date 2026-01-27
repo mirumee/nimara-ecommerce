@@ -2,7 +2,7 @@ import { getTranslations } from "next-intl/server";
 
 import type { Checkout } from "@nimara/domain/objects/Checkout";
 import type { User } from "@nimara/domain/objects/User";
-import { Link as LocalizedLink } from "@nimara/i18n/routing";
+import { LocalizedLink } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
 
 import { paths } from "@/foundation/routing/paths";

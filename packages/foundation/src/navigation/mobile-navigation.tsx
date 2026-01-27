@@ -2,7 +2,7 @@
 
 import { type Maybe } from "@nimara/domain/objects/Maybe";
 import type { Menu } from "@nimara/domain/objects/Menu";
-import { Link as LocalizedLink } from "@nimara/i18n/routing";
+import { LocalizedLink } from "@nimara/i18n/routing";
 
 export const MobileNavigation = ({
   menu,

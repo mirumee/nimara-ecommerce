@@ -20,7 +20,7 @@
     "editorjs-html": "3.4.3",
     "libphonenumber-js": "1.12.18",
     "pino": "10.2.1",
-    "string-strip-html": "^13.4.24",
+    "string-strip-html": "^13.5.3",
     "stripe": "20.2.0",
     "ts-invariant": "0.10.3",
     "zod": "^4.3.5"

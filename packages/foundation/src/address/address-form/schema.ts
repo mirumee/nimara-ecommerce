@@ -101,7 +101,7 @@ export const checkIfRequired =
     }
     if (foundField.isRequired && !arg) {
       ctx.addIssue({
-        code: z.ZodIssueCode.invalid_type,
+        code: "invalid_type",
         path: [],
         fatal: true,
         message: t("form-validation.required"),
@@ -117,7 +117,7 @@ export const checkIfRequired =
 
       if (!isValid) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           path: [],
           fatal: true,
           message: t("form-validation.wrong-code-format"),

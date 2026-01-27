@@ -1,15 +1,15 @@
+import { type Locale } from "next-intl";
 import { getTranslations } from "next-intl/server";
 
-import { Link as LocalizedLink } from "@nimara/i18n/routing";
+import { LocalizedLink } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
 
-import { type SupportedLocale } from "@/foundation/regions/types";
 import { paths, type QUERY_PARAMS } from "@/foundation/routing/paths";
 
 import { CheckoutRemover } from "./components/checkout-remover";
 
 type PageProps = {
-  params: Promise<{ id: string; locale: SupportedLocale }>;
+  params: Promise<{ id: string; locale: Locale }>;
   searchParams: Promise<{ [QUERY_PARAMS.orderPlaced]: string }>;
 };
 

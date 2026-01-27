@@ -1,7 +1,7 @@
+import { type Locale } from "next-intl";
 import { getTranslations } from "next-intl/server";
 
-import type { SupportedLocale } from "@nimara/i18n/config";
-import { Link as LocalizedLink, redirect } from "@nimara/i18n/routing";
+import { LocalizedLink, redirect } from "@nimara/i18n/routing";
 
 import { clientEnvs } from "@/envs/client";
 import { serverEnvs } from "@/envs/server";
@@ -16,7 +16,7 @@ import { AddNewPaymentTrigger } from "./components/add-new-payment-trigger";
 import { PaymentMethodsList } from "./components/payment-methods-list";
 
 type PageProps = {
-  params: Promise<{ locale: SupportedLocale }>;
+  params: Promise<{ locale: Locale }>;
   searchParams: Promise<Record<string, string>>;
 };
 

@@ -1,4 +1,4 @@
-import { SUPPORTED_LOCALES } from "@nimara/i18n/config";
+import { LOCALES } from "@nimara/i18n/config";
 
 import { clientEnvs } from "@/envs/client";
 
@@ -63,7 +63,7 @@ export const MARKETS = {
 
 export const REGIONS_CONFIG = {
   channel: CHANNEL,
-  supportedLocales: SUPPORTED_LOCALES,
+  supportedLocales: LOCALES,
   languages: LANGUAGES,
   markets: MARKETS,
   localeToMarket: LOCALE_CHANNEL_MAP,

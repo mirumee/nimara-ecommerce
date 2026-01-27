@@ -1,3 +1,5 @@
+import { type IntlConfig } from "next-intl";
+
 /**
  * List of supported locales in the storefront.
  * The locales must be in BCP 47 / IETF language tag format (e.g. "en-US", "en-GB" or "es-ES").
@@ -6,8 +8,8 @@
  * @see https://en.wikipedia.org/wiki/ISO_639-1
  * @see https://en.wikipedia.org/wiki/ISO_3166-1
  */
-export const SUPPORTED_LOCALES = ["en-US", "en-GB"] as const;
-export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
+export const LOCALES = ["en-US", "en-GB"] as const;
+export type SupportedLocale = (typeof LOCALES)[number];
 
 /**
  * Default locale.
@@ -48,3 +50,11 @@ export const LOCALE_PREFIXES = {
   `/${string}`
 >;
 export type LocalePrefixes = typeof LOCALE_PREFIXES;
+
+export const INTL_FORMATS_CONFIG = {
+  number: {
+    currency: {
+      currencyDisplay: "name",
+    },
+  },
+} as const satisfies IntlConfig["formats"];

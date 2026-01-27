@@ -15,7 +15,11 @@ export const Summary = ({ checkout }: { checkout: Checkout }) => {
       <ShoppingBag.DiscountCode checkout={checkout} />
       <ShoppingBag.Pricing>
         <ShoppingBag.Subtotal price={checkout.subtotalPrice.gross} />
-        <ShoppingBag.Shipping price={checkout.shippingPrice.gross} />
+        <ShoppingBag.Shipping
+          price={checkout.shippingPrice.gross}
+          isShippingSelected={!!checkout.deliveryMethod}
+          isShippingRequired={checkout.isShippingRequired}
+        />
         {!!checkout?.discount?.amount && (
           <ShoppingBag.Discount discount={checkout.discount} />
         )}

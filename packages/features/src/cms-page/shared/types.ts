@@ -1,4 +1,5 @@
-import type { SupportedLocale } from "@nimara/i18n/config";
+import type { Locale } from "next-intl";
+
 import type { ServiceRegistry } from "@nimara/infrastructure/types";
 
 /**
@@ -7,7 +8,7 @@ import type { ServiceRegistry } from "@nimara/infrastructure/types";
  * @property params - A promise that resolves to an object containing the locale and slug.
  */
 export interface CMSPageViewProps {
-  params: Promise<{ locale: SupportedLocale; slug: string }>;
+  params: Promise<{ locale: Locale; slug: string }>;
   services: ServiceRegistry;
 }
 
@@ -17,6 +18,6 @@ export interface CMSPageViewProps {
  * @property services - The service registry.
  */
 export interface GenerateStandardCMSPageMetadataProps {
-  params: Promise<{ locale: SupportedLocale; slug: string }>;
+  params: Promise<{ locale: Locale; slug: string }>;
   services: ServiceRegistry;
 }

@@ -1,11 +1,7 @@
 import { headers } from "next/headers";
 import { getLocale } from "next-intl/server";
 
-import {
-  DEFAULT_LOCALE,
-  LOCALE_PREFIXES,
-  type SupportedLocale,
-} from "@nimara/i18n/config";
+import { DEFAULT_LOCALE, LOCALE_PREFIXES } from "@nimara/i18n/config";
 
 export const getStoreUrl = async () => {
   const locale = await getLocale();
@@ -15,7 +11,7 @@ export const getStoreUrl = async () => {
 
   return locale === DEFAULT_LOCALE
     ? domain
-    : `${domain}${LOCALE_PREFIXES[locale as Exclude<SupportedLocale, typeof DEFAULT_LOCALE>]}`;
+    : `${domain}${LOCALE_PREFIXES[locale]}`;
 };
 
 export const getLocalePrefix = async (): Promise<string> => {
@@ -25,9 +21,7 @@ export const getLocalePrefix = async (): Promise<string> => {
     return "";
   }
 
-  return LOCALE_PREFIXES[
-    locale as Exclude<SupportedLocale, typeof DEFAULT_LOCALE>
-  ];
+  return LOCALE_PREFIXES[locale] ?? "";
 };
 
 // builds a full URL by joining a relative path to the store base URL avoiding incorrect slash handling.

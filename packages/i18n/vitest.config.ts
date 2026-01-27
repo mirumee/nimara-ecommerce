@@ -3,10 +3,11 @@ import { resolve } from "path";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
 
-// Load .env.test from repo root (2 levels up from apps/storefront)
+// Load .env.test from repo root (2 levels up from packages/i18n)
 const repoRoot = resolve(process.cwd(), "../..");
 const envTestPath = resolve(repoRoot, ".env.test");
 
+// eslint-disable-next-line import/no-default-export
 export default defineConfig({
   plugins: [tsconfigPaths()],
   test: {
@@ -16,11 +17,10 @@ export default defineConfig({
       ...config({ path: envTestPath }).parsed,
       NODE_ENV: "test",
     },
-    setupFiles: ["./src/foundation/tests/setup"],
     passWithNoTests: true,
     server: {
       deps: {
-        inline: ["next-intl"],
+        inline: ["next-intl", "next"],
       },
     },
   },

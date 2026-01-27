@@ -1,4 +1,4 @@
-import type { SupportedLocale } from "@nimara/i18n/config";
+import { type Locale } from "next-intl";
 
 import { getCheckoutOrRedirect } from "@/features/checkout/checkout-actions";
 import { getCheckoutService } from "@/services/checkout";
@@ -11,7 +11,7 @@ import { ShippingAddressSection } from "../../_sections/shipping-address-section
 import { UserDetailsForm } from "./user-details-form";
 
 type PageProps = {
-  params: Promise<{ locale: SupportedLocale }>;
+  params: Promise<{ locale: Locale }>;
 };
 
 export default async function Page(props: PageProps) {

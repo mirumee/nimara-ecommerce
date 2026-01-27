@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 
-import { Link as LocalizedLink, usePathname } from "@nimara/i18n/routing";
+import { LocalizedLink, usePathname } from "@nimara/i18n/routing";
 import { type MessagePath } from "@nimara/i18n/types";
 import { Button } from "@nimara/ui/components/button";
 import { cn } from "@nimara/ui/lib/utils";

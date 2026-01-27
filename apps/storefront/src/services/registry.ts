@@ -2,8 +2,9 @@ import { getLogger } from "@nimara/infrastructure/logging/service";
 import type { ServiceRegistry } from "@nimara/infrastructure/types";
 
 import { CACHE_TTL } from "@/config";
+import { getCurrentRegion } from "@/foundation/regions";
+import { getAccessToken } from "@/services/tokens";
 
-import { getCurrentRegion } from "../foundation/regions";
 import { createCartServiceLoader } from "./lazy-loaders/cart";
 import { createCMSMenuServiceLoader } from "./lazy-loaders/cms-menu";
 import { createCMSPageServiceLoader } from "./lazy-loaders/cms-page";
@@ -11,7 +12,6 @@ import { createCollectionServiceLoader } from "./lazy-loaders/collection";
 import { createSearchServiceLoader } from "./lazy-loaders/search";
 import { createStoreServiceLoader } from "./lazy-loaders/store";
 import { createUserServiceLoader } from "./lazy-loaders/user";
-import { getAccessToken } from "./tokens";
 
 let serviceRegistryInstance: ServiceRegistry | null = null;
 

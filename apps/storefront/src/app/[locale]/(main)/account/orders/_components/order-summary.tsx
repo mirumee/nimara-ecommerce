@@ -1,9 +1,7 @@
-import { getTranslations } from "next-intl/server";
+import { getFormatter, getTranslations } from "next-intl/server";
 
 import type { Order } from "@nimara/domain/objects/Order";
 import { cn } from "@nimara/foundation/lib/cn";
-
-import { getLocalizedFormatter } from "@/foundation/formatters/get-localized-formatter";
 
 export const OrderSummary = async ({
   order,
@@ -12,10 +10,7 @@ export const OrderSummary = async ({
   order: Order;
   withStatus?: boolean;
 }) => {
-  const [t, formatter] = await Promise.all([
-    getTranslations(),
-    getLocalizedFormatter(),
-  ]);
+  const [t, formatter] = await Promise.all([getTranslations(), getFormatter()]);
 
   return (
     <div
@@ -35,8 +30,10 @@ export const OrderSummary = async ({
           {t("order.total")}
         </p>
         <p className="text-primary">
-          {formatter.price({
-            amount: order.total.amount,
+          {formatter.number(order.total.amount, {
+            style: "currency",
+            currencyDisplay: "narrowSymbol",
+            currency: order.total.currency,
           })}
         </p>
       </div>
@@ -45,14 +42,11 @@ export const OrderSummary = async ({
           {t("order.date-ordered")}
         </p>
         <p className="text-primary">
-          {formatter.date({
-            date: order.created,
-            options: {
-              weekday: "short",
-              month: "2-digit",
-              year: "numeric",
-              day: "2-digit",
-            },
+          {formatter.dateTime(new Date(order.created), {
+            weekday: "short",
+            month: "2-digit",
+            year: "numeric",
+            day: "2-digit",
           })}
         </p>
       </div>

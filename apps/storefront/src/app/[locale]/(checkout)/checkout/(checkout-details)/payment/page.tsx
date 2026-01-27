@@ -1,7 +1,8 @@
+import { type Locale } from "next-intl";
+
 import { type AllCountryCode } from "@nimara/domain/consts";
 import { type AppErrorCode } from "@nimara/domain/objects/Error";
 import { type PaymentMethod } from "@nimara/domain/objects/Payment";
-import type { SupportedLocale } from "@nimara/i18n/config";
 
 import { clientEnvs } from "@/envs/client";
 import { serverEnvs } from "@/envs/server";
@@ -21,7 +22,7 @@ import { validateCheckoutStepAction } from "../../actions";
 import { Payment } from "./payment";
 
 type PageProps = {
-  params: Promise<{ locale: SupportedLocale }>;
+  params: Promise<{ locale: Locale }>;
   searchParams: Promise<{
     country?: AllCountryCode;
     errorCode?: AppErrorCode;

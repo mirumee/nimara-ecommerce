@@ -57,13 +57,9 @@ export const PaymentMethodsList = ({
           {methods.map((method) => (
             <div key={method.id} className="py-4">
               <div className="flex items-center gap-4 text-primary">
-                <p
-                  className="basis-full whitespace-pre-wrap"
-                  dangerouslySetInnerHTML={{
-                    __html: renderPaymentMethod({ method }),
-                  }}
-                />
-
+                <p className="basis-full whitespace-pre-wrap">
+                  {renderPaymentMethod({ method })}
+                </p>
                 {method.isDefault && (
                   <div className="max-md:hidden">{defaultMethodMessage}</div>
                 )}

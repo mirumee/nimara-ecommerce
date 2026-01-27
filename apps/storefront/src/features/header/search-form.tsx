@@ -11,11 +11,7 @@ import {
 } from "react";
 import { useClickAnyWhere } from "usehooks-ts";
 
-import {
-  Link as LocalizedLink,
-  usePathname,
-  useRouter,
-} from "@nimara/i18n/routing";
+import { LocalizedLink, usePathname, useRouter } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
 import {
   Combobox,

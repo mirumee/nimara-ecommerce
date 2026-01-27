@@ -1,3 +1,9 @@
+import { type NextMiddlewareResult } from "next/dist/server/web/types";
+import {
+  type NextFetchEvent,
+  type NextRequest,
+  type NextResponse,
+} from "next/server";
 import {
   type createTranslator,
   type MessageKeys,
@@ -5,7 +11,6 @@ import {
   type NamespaceKeys,
   type NestedKeyOf,
 } from "next-intl";
-
 /**
  * Helper type to filter keys that start with a given namespace.
  * @example
@@ -75,3 +80,39 @@ export type CurrencyCode =
   | "CHF"
   | "JPY"
   | "PLN";
+
+export interface I18nMiddlewareOptions {
+  /**
+   * Cookie key name for storing the checkout ID (optional).
+   * If provided, the checkout ID cookie will be deleted when locale changes.
+   * Default is "checkoutId".
+   */
+  checkoutIdCookieKey?: string;
+  /**
+   * Cookie key name for storing the locale.
+   * Default is "NEXT_LOCALE".
+   */
+  localeCookieKey?: string;
+  /**
+   * Max age for the locale cookie in seconds.
+   * Default is 360 days.
+   */
+  localeCookieMaxAge?: number;
+  /**
+   * Optional logger for debug and warning messages.
+   */
+  logger?: {
+    debug: (message: string, meta?: Record<string, unknown>) => void;
+    warning: (message: string) => void;
+  };
+  /**
+   * Optional callback when locale changes.
+   */
+  onLocaleChange?: (from: string, to: string) => void;
+}
+
+export type CustomMiddleware = (
+  request: NextRequest,
+  event: NextFetchEvent,
+  response: NextResponse,
+) => NextMiddlewareResult | Promise<NextMiddlewareResult>;

@@ -1,4 +1,5 @@
-import type { SupportedLocale } from "@nimara/i18n/config";
+import type { Locale } from "next-intl";
+
 import type { ServiceRegistry } from "@nimara/infrastructure/types";
 
 /**
@@ -8,7 +9,7 @@ import type { ServiceRegistry } from "@nimara/infrastructure/types";
  * @property searchParams - A promise that resolves to an object containing search parameters.
  */
 export interface HomeViewProps {
-  params: Promise<{ locale: SupportedLocale }>;
+  params: Promise<{ locale: Locale }>;
   searchParams: Promise<Record<string, string>>;
 }
 

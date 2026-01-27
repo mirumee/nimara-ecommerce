@@ -1,4 +1,4 @@
-import type { SupportedLocale } from "@nimara/i18n/config";
+import { type Locale } from "next-intl";
 
 import { getCheckoutOrRedirect } from "@/features/checkout/checkout-actions";
 import { getServiceRegistry } from "@/services/registry";
@@ -7,7 +7,7 @@ import { getAccessToken } from "@/services/tokens";
 import { validateCheckoutStepAction } from "./actions";
 
 type PageProps = {
-  params: Promise<{ locale: SupportedLocale }>;
+  params: Promise<{ locale: Locale }>;
 };
 
 export default async function Page(props: PageProps) {

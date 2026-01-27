@@ -8,7 +8,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import * as z from "zod";
 
 import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
-import { Link as LocalizedLink } from "@nimara/i18n/routing";
+import { LocalizedLink } from "@nimara/i18n/routing";
 import { type GetTranslations } from "@nimara/i18n/types";
 import { Button } from "@nimara/ui/components/button";
 

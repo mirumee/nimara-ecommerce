@@ -1,4 +1,6 @@
-import { type LocalePrefixes, type SupportedLocale } from "@nimara/i18n/config";
+import type { Locale } from "next-intl";
+
+import { type LocalePrefixes } from "@nimara/i18n/config";
 import type { ServiceRegistry } from "@nimara/infrastructure/types";
 
 /**
@@ -8,7 +10,7 @@ import type { ServiceRegistry } from "@nimara/infrastructure/types";
  * @property searchParams - A promise that resolves to an object containing search parameters.
  */
 export interface CollectionViewProps {
-  params: Promise<{ locale: SupportedLocale; slug: string }>;
+  params: Promise<{ locale: Locale; slug: string }>;
   searchParams: Promise<{
     after?: string;
     before?: string;
@@ -26,7 +28,7 @@ export interface CollectionViewProps {
  * @property services - The service registry containing all necessary services for the collection view.
  */
 export interface StandardCollectionViewProps extends CollectionViewProps {
-  defaultLocale: SupportedLocale;
+  defaultLocale: Locale;
   defaultResultsPerPage: number;
   localePrefixes: LocalePrefixes;
   paths: {
