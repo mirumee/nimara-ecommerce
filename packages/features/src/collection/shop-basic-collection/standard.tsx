@@ -8,7 +8,7 @@ import { Skeleton } from "@nimara/ui/components/skeleton";
 import { CollectionDescription } from "../shared/components/collection-description";
 import { CollectionHeader } from "../shared/components/collection-header";
 import { CollectionProvider } from "../shared/providers/collection-provider";
-import { StandardCollectionViewProps } from "../shared/types";
+import { type StandardCollectionViewProps } from "../shared/types";
 
 /**
  * Standard view for the collection page.

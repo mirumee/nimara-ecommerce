@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import { addressSchema } from "@nimara/foundation/address/address-form/schema";
-import { type GetTranslations } from "@nimara/foundation/i18n/types";
+import { type GetTranslations } from "@nimara/i18n/types";
 
 export const schema = ({
   addressFormRows,
@@ -17,12 +17,11 @@ export const schema = ({
     sameAsShippingAddress: z.boolean(),
     saveForFutureUse: z.boolean(),
     saveAddressForFutureUse: z.boolean(),
-    billingAddress: addressSchema({ addressFormRows, t })
-      .merge(
-        z.object({
-          id: z.string().optional(),
-        }),
-      )
+    billingAddress: z
+      .object({
+        id: z.string().optional(),
+        ...addressSchema({ addressFormRows, t }).shape,
+      })
       .optional(),
   });
 

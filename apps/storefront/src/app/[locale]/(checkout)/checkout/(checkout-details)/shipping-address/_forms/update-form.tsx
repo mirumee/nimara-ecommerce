@@ -11,11 +11,11 @@ import {
 } from "@nimara/domain/objects/Address";
 import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import { AddressForm } from "@nimara/foundation/address/address-form/address-form";
+import { useRouter } from "@nimara/i18n/routing";
 import { ADDRESS_CORE_FIELDS } from "@nimara/infrastructure/consts";
 import { Button } from "@nimara/ui/components/button";
 
 import { paths } from "@/foundation/routing/paths";
-import { useRouter } from "@/i18n/routing";
 import { storefrontLogger } from "@/services/logging";
 
 import { accountAddressUpdateAction } from "./actions";

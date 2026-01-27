@@ -1,3 +1,5 @@
+import { type Locale } from "next-intl";
+
 import { type AllCountryCode } from "@nimara/domain/consts";
 import { type AppErrorCode } from "@nimara/domain/objects/Error";
 import { type PaymentMethod } from "@nimara/domain/objects/Payment";
@@ -6,7 +8,6 @@ import { clientEnvs } from "@/envs/client";
 import { serverEnvs } from "@/envs/server";
 import { getCheckoutOrRedirect } from "@/features/checkout/checkout-actions";
 import { getCurrentRegion } from "@/foundation/regions";
-import type { SupportedLocale } from "@/foundation/regions/types";
 import { getStoreUrl } from "@/foundation/server";
 import { getAddressService } from "@/services/address";
 import { getPaymentService } from "@/services/payment";
@@ -21,7 +22,7 @@ import { validateCheckoutStepAction } from "../../actions";
 import { Payment } from "./payment";
 
 type PageProps = {
-  params: Promise<{ locale: SupportedLocale }>;
+  params: Promise<{ locale: Locale }>;
   searchParams: Promise<{
     country?: AllCountryCode;
     errorCode?: AppErrorCode;

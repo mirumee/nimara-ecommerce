@@ -4,8 +4,8 @@ import { type CartService } from "./cart/types";
 import type { CollectionService } from "./collection/types";
 import type { Logger } from "./logging/types";
 import type { StoreService } from "./store/types";
-import type { CMSPageService } from "./use-cases/cms-page/types";
 import type { CMSMenuService } from "./use-cases/cms-menu/types";
+import type { CMSPageService } from "./use-cases/cms-page/types";
 import type { SearchService } from "./use-cases/search/types";
 import type { UserService } from "./user/types";
 
@@ -23,14 +23,12 @@ export interface ServiceRegistry {
       pdp: number;
     };
   };
-  logger: Logger;
-  region: Region;
   /**
-   * Gets the cart service, initializing it lazily on first access.
+   * Gets the CMS menu service, initializing it lazily on first access.
    * The service is cached after first initialization.
-   * @returns A promise that resolves to the cart service instance
+   * @returns A promise that resolves to the CMS menu service instance
    */
-  getCartService(): Promise<CartService>;
+  getCMSMenuService(): Promise<CMSMenuService>;
   /**
    * Gets the CMS page service, initializing it lazily on first access.
    * The service is cached after first initialization.
@@ -38,11 +36,11 @@ export interface ServiceRegistry {
    */
   getCMSPageService(): Promise<CMSPageService>;
   /**
-   * Gets the CMS menu service, initializing it lazily on first access.
+   * Gets the cart service, initializing it lazily on first access.
    * The service is cached after first initialization.
-   * @returns A promise that resolves to the CMS menu service instance
+   * @returns A promise that resolves to the cart service instance
    */
-  getCMSMenuService(): Promise<CMSMenuService>;
+  getCartService(): Promise<CartService>;
   /**
    * Gets the collection service, initializing it lazily on first access.
    * The service is cached after first initialization.
@@ -67,4 +65,6 @@ export interface ServiceRegistry {
    * @returns A promise that resolves to the user service instance
    */
   getUserService(): Promise<UserService>;
+  logger: Logger;
+  region: Region;
 }

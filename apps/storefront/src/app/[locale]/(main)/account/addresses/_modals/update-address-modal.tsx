@@ -9,6 +9,7 @@ import {
   type CountryOption,
 } from "@nimara/domain/objects/Address";
 import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
+import { usePathname, useRouter } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
 import {
   Dialog,
@@ -20,7 +21,6 @@ import {
 } from "@nimara/ui/components/dialog";
 import { useToast } from "@nimara/ui/hooks";
 
-import { usePathname, useRouter } from "@/i18n/routing";
 import { storefrontLogger } from "@/services/logging";
 
 import { deleteAddress } from "../_forms/actions";

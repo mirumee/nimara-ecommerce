@@ -4,6 +4,7 @@ import { Search } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
+import { usePathname } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
 import {
   Sheet,
@@ -14,7 +15,6 @@ import {
 } from "@nimara/ui/components/sheet";
 
 import { SearchForm } from "@/features/header/search-form";
-import { usePathname } from "@/i18n/routing";
 
 export const MobileSearch = () => {
   const t = useTranslations("search");

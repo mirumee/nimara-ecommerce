@@ -1,5 +1,6 @@
+import type { Locale } from "next-intl";
+
 import type { AsyncResult } from "@nimara/domain/objects/Result";
-import type { SupportedLocale } from "@nimara/foundation/regions/types";
 import type { ServiceRegistry } from "@nimara/infrastructure/types";
 
 /**
@@ -21,7 +22,7 @@ export interface CartViewProps {
     lineId: string;
     quantity: number;
   }) => AsyncResult<{ success: true }>;
-  params: Promise<{ locale: SupportedLocale }>;
+  params: Promise<{ locale: Locale }>;
   paths: {
     checkout: string;
     checkoutSignIn: string;

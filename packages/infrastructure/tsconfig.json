@@ -8,7 +8,7 @@
       "@nimara/foundation/*": ["../foundation/src/*"],
       "@nimara/domain/*": ["../domain/src/*"],
       "@nimara/features/*": ["../features/src/*"],
-      "@nimara/translations/*": ["../translations/src/*"],
+      "@nimara/i18n/*": ["../i18n/src/*"],
       "@nimara/ui/*": ["../ui/src/*"],
       "@nimara/codegen/*": ["../codegen/*"]
     }

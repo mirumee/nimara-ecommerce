@@ -13,10 +13,7 @@ import {
   type AddressFormRow,
   type FieldType,
 } from "@nimara/domain/objects/AddressForm";
-import {
-  useLocalizedPathname,
-  useLocalizedRouter,
-} from "@nimara/foundation/i18n/hooks/use-localized-link";
+import { usePathname, useRouter } from "@nimara/i18n/routing";
 
 import { AddressFormGenerator } from "./address-form-generator";
 
@@ -75,8 +72,8 @@ export const AddressForm = ({
   onCountryChange,
 }: AddressFormProps) => {
   const t = useTranslations();
-  const router = useLocalizedRouter();
-  const pathname = useLocalizedPathname();
+  const router = useRouter();
+  const pathname = usePathname();
   const form = useFormContext();
   const [isChangingCountry, setIsChangingCountry] = useState(false);
 
@@ -93,6 +90,7 @@ export const AddressForm = ({
     dynamicFields.forEach((fieldName) =>
       form.resetField(fieldName, { defaultValue: "", keepError: false }),
     );
+
     router.push(`${pathname}?country=${countryCode}`);
   };
 

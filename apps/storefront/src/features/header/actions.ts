@@ -3,8 +3,9 @@
 import { getLocale } from "next-intl/server";
 import { z } from "zod";
 
+import { redirect } from "@nimara/i18n/routing";
+
 import { paths } from "@/foundation/routing/paths";
-import { redirect } from "@/i18n/routing";
 import { getServiceRegistry } from "@/services/registry";
 
 const searchFormSchema = z.object({ query: z.string().default("") });

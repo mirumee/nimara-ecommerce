@@ -1,3 +1,5 @@
+/// <reference types="@nimara/i18n/global" />
+
 type NonFalsy<T> = T extends false | 0 | "" | null | undefined | 0n ? never : T;
 
 interface Array<T> {
@@ -53,9 +55,6 @@ declare module "*.svg?url" {
 
   export default content;
 }
-
-type Messages = typeof import("./messages/en-US.json");
-declare interface IntlMessages extends Messages {}
 
 type Slug = string;
 type Id = string;

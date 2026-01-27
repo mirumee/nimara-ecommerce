@@ -1,17 +1,18 @@
+import { type Locale } from "next-intl";
+
 import { type LanguageCodeEnum } from "@nimara/codegen/schema";
 import { type AllCountryCode } from "@nimara/domain/consts";
 
 export type LanguageId = string;
 export type MarketId = string;
 export type ChannelId = string;
-export type SupportedLocale = string;
 export type SupportedCurrency = string;
 export type Continent = string;
 
 export type Language = {
   code: LanguageCodeEnum;
   id: LanguageId;
-  locale: SupportedLocale;
+  locale: Locale;
   name: string;
 };
 
@@ -28,13 +29,13 @@ export type Market = {
 
 export type Region = {
   language: Language;
-  locale: SupportedLocale;
+  locale: Locale;
   market: Market;
 };
 
 // Helper generic types to derive literal unions from a given config object
 export type SupportedLocaleOf<
-  C extends { supportedLocales: readonly string[] },
+  C extends { supportedLocales: readonly Locale[] },
 > = C["supportedLocales"][number];
 export type MarketIdOf<
   C extends { markets: Readonly<Record<string, unknown>> },

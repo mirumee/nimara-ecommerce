@@ -1,10 +1,10 @@
 "use server";
 
 import { handleFiltersFormSubmit as handleFiltersFormSubmitCore } from "@nimara/features/search/shared/actions/handle-filters-form-submit";
+import { redirect } from "@nimara/i18n/routing";
 
 import { DEFAULT_SORT_BY } from "@/config";
 import { paths } from "@/foundation/routing/paths";
-import { redirect } from "@/i18n/routing";
 
 /**
  * Server action wrapper for handling filter form submissions.

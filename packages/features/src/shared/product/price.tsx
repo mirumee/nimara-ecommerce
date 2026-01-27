@@ -1,8 +1,7 @@
 "use client";
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 
 import type { TaxedPrice } from "@nimara/domain/objects/common";
-import { useLocalizedFormatter } from "@nimara/foundation/formatters/use-localized-formatter";
 
 type Props = {
   className?: string;
@@ -44,14 +43,18 @@ export const Price = ({
   undiscountedPrice,
 }: Props) => {
   const t = useTranslations();
-  const formatter = useLocalizedFormatter();
+  const formatter = useFormatter();
 
   const renderPrice = (priceToFormat?: TaxedPrice) => {
     if (!priceToFormat || priceToFormat.amount === 0) {
       return t("common.free");
     }
 
-    return formatter.price({ amount: priceToFormat.amount });
+    return formatter.number(priceToFormat.amount, {
+      style: "currency",
+      currencyDisplay: "narrowSymbol",
+      currency: priceToFormat.currency,
+    });
   };
 
   // A specific variant is selected (price is defined).

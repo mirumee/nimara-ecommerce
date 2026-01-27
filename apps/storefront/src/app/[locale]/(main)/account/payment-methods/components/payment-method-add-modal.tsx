@@ -5,6 +5,7 @@ import { useTheme } from "next-themes";
 import { type ReactNode, useEffect, useState } from "react";
 
 import { cn } from "@nimara/foundation/lib/cn";
+import { usePathname } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
 import { Checkbox } from "@nimara/ui/components/checkbox";
 import {
@@ -17,9 +18,7 @@ import { Label } from "@nimara/ui/components/label";
 import { Spinner } from "@nimara/ui/components/spinner";
 
 import { PAYMENT_ELEMENT_ID } from "@/features/checkout/consts";
-import { translateApiErrors } from "@/features/checkout/payment";
 import { useCurrentRegion } from "@/foundation/regions";
-import { usePathname } from "@/i18n/routing";
 import { getPaymentService } from "@/services/payment";
 
 export const PaymentMethodAddModal = ({
@@ -63,7 +62,7 @@ export const PaymentMethodAddModal = ({
     });
 
     if (!result.ok) {
-      setErrors(translateApiErrors({ t, errors: result.errors }));
+      setErrors(result.errors.map(({ code }) => code));
     }
 
     setIsProcessing(false);

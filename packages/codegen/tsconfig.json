@@ -3,13 +3,7 @@
   "include": ["./**/*.ts", "./**/*.tsx", "./**/*/*.d.ts"],
   "compilerOptions": {
     "paths": {
-      "@nimara/codegen/*": ["./*"],
-      "@nimara/foundation/*": ["../foundation/src/*"],
-      "@nimara/domain/*": ["../domain/src/*"],
-      "@nimara/infrastructure/*": ["../infrastructure/src/*"],
-      "@nimara/features/*": ["../features/src/*"],
-      "@nimara/translations/*": ["../translations/src/*"],
-      "@nimara/ui/*": ["../ui/src/*"]
+      "@nimara/codegen/*": ["./*"]
     }
   },
   "exclude": ["dist", "build", "node_modules"]

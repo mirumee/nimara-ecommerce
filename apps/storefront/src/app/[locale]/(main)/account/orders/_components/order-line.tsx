@@ -1,10 +1,8 @@
 import Image from "next/image";
-import { getTranslations } from "next-intl/server";
+import { getFormatter, getTranslations } from "next-intl/server";
 
 import type { OrderLine as OrderLineType } from "@nimara/domain/objects/Order";
 import { ProductImagePlaceholder } from "@nimara/features/shared/product/product-image-placeholder";
-
-import { getLocalizedFormatter } from "@/foundation/formatters/get-localized-formatter";
 
 export const OrderLine = async ({
   line,
@@ -13,16 +11,15 @@ export const OrderLine = async ({
   line: OrderLineType;
   returnStatus?: string;
 }) => {
-  const [t, formatter] = await Promise.all([
-    getTranslations(),
-    getLocalizedFormatter(),
-  ]);
+  const [t, formatter] = await Promise.all([getTranslations(), getFormatter()]);
 
   const isFree = line.totalPrice?.amount === 0;
   const priceLabel = isFree
     ? t("common.free")
-    : formatter.price({
-        amount: line.totalPrice.amount,
+    : formatter.number(line.totalPrice.amount, {
+        style: "currency",
+        currencyDisplay: "narrowSymbol",
+        currency: line.totalPrice.currency,
       });
   const lineName = [line?.productName, line?.variantName].join(" • ");
   const quantityLabel = `${t("common.qty")}: ${line.quantity}`;

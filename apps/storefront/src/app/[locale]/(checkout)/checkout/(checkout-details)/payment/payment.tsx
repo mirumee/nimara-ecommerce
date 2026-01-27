@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { LockIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
-import { type ReactNode, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FormProvider, type SubmitHandler, useForm } from "react-hook-form";
 
 import { type AllCountryCode } from "@nimara/domain/consts";
@@ -21,9 +21,9 @@ import { type User } from "@nimara/domain/objects/User";
 import { addressToSchema } from "@nimara/foundation/address/address";
 import { AddressForm } from "@nimara/foundation/address/address-form/address-form";
 import type { FormattedAddress } from "@nimara/foundation/address/types";
-import { isGlobalError } from "@nimara/foundation/errors/errors";
 import { CheckboxField } from "@nimara/foundation/form-components/checkbox-field";
 import { cn } from "@nimara/foundation/lib/cn";
+import { usePathname, useRouter } from "@nimara/i18n/routing";
 import { ADDRESS_DEFAULT_VALUES } from "@nimara/infrastructure/consts";
 import { Button } from "@nimara/ui/components/button";
 import { Spinner } from "@nimara/ui/components/spinner";
@@ -36,11 +36,10 @@ import {
 import { useToast } from "@nimara/ui/hooks";
 
 import { PAYMENT_ELEMENT_ID } from "@/features/checkout/consts";
-import { translateApiErrors } from "@/features/checkout/payment";
 import { PaymentMethods } from "@/features/checkout/payment-methods";
+import { isGlobalError } from "@/foundation/errors/errors";
 import { useCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
-import { usePathname, useRouter } from "@/i18n/routing";
 import { getPaymentService } from "@/services/payment";
 
 import { updateBillingAddress } from "./actions";
@@ -98,15 +97,8 @@ export const Payment = ({
   const [addressActiveTab, setAddressActiveTab] = useState<TabName>(
     formattedAddresses.length ? "saved" : "new",
   );
-  const [errors, setErrors] = useState<(string | ReactNode)[]>(
-    errorCode
-      ? [
-          translateApiErrors({
-            t,
-            errors: [{ code: errorCode }],
-          }),
-        ]
-      : [],
+  const [errors, setErrors] = useState<AppErrorCode[]>(
+    errorCode ? [errorCode] : [],
   );
 
   const defaultBillingAddress = formattedAddresses.find(
@@ -226,7 +218,7 @@ export const Payment = ({
       });
 
       if (!result.ok) {
-        setErrors(translateApiErrors({ t, errors: result.errors }));
+        setErrors(result.errors.map(({ code }) => code));
         setIsProcessing(false);
 
         return;
@@ -245,7 +237,7 @@ export const Payment = ({
     });
 
     if (!result.ok) {
-      setErrors(translateApiErrors({ t, errors: result.errors }));
+      setErrors(result.errors.map(({ code }) => code));
       setIsProcessing(false);
     }
   };
@@ -262,7 +254,7 @@ export const Payment = ({
       ]);
 
       if (!result.ok) {
-        setErrors(translateApiErrors({ t, errors: result.errors }));
+        setErrors(result.errors.map(({ code }) => code));
       } else {
         setIsInitialized(true);
       }
@@ -294,7 +286,7 @@ export const Payment = ({
             });
 
           if (!result.ok) {
-            return setErrors(translateApiErrors({ t, errors: result.errors }));
+            return setErrors(result.errors.map(({ code }) => code));
           } else {
             secret = result.data.clientSecret;
           }
@@ -478,9 +470,9 @@ export const Payment = ({
               </span>
             </Button>
 
-            {errors.map((message, i) => (
+            {errors.map((code, i) => (
               <p key={i} className="text-sm font-medium text-destructive">
-                {message}
+                {t(`errors.${code}`)}
               </p>
             ))}
           </div>

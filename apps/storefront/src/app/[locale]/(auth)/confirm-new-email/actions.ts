@@ -3,9 +3,10 @@
 import { redirect as appRedirect } from "next/navigation";
 import { getLocale } from "next-intl/server";
 
+import { redirect } from "@nimara/i18n/routing";
+
 import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
-import { redirect } from "@/i18n/routing";
 import { getServiceRegistry } from "@/services/registry";
 import { getAccessToken } from "@/services/tokens";
 

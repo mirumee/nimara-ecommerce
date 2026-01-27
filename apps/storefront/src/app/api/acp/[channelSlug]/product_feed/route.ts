@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 
+import { LOCALE_PREFIXES } from "@nimara/i18n/config";
+
 import { idempotencyStorage } from "@/features/acp/acp";
 import { validateChannelParam } from "@/foundation/validate-channel-param";
-import { localePrefixes } from "@/i18n/routing";
 import { getACPService } from "@/services/acp";
 import { storefrontLogger } from "@/services/logging";
 
@@ -43,7 +44,7 @@ export async function GET(
 
   const marketLanguage = channelValidationResult.market.defaultLanguage.locale;
   const marketPrefix =
-    marketLanguage === "en-US" ? "" : localePrefixes[marketLanguage];
+    marketLanguage === "en-US" ? "" : LOCALE_PREFIXES[marketLanguage];
 
   const productFeedResult = await acpService.getProductFeed({
     channelPrefix: marketPrefix,

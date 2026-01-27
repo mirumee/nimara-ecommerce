@@ -5,19 +5,18 @@ import { useTranslations } from "next-intl";
 import { FormProvider, useForm } from "react-hook-form";
 
 import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
+import { LocalizedLink } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
 
 import { MIN_PASSWORD_LENGTH } from "@/config";
 import { paths } from "@/foundation/routing/paths";
 import { useRouterWithState } from "@/foundation/use-router-with-state";
-import { LocalizedLink } from "@/i18n/routing";
 
 import { registerAccount } from "./actions";
 import { type FormSchema, formSchema } from "./schema";
 
 export function SignUpForm() {
   const t = useTranslations();
-
   const { isRedirecting, push } = useRouterWithState();
 
   const form = useForm<FormSchema>({

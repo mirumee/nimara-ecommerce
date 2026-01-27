@@ -2,7 +2,7 @@
 
 import { type Maybe } from "@nimara/domain/objects/Maybe";
 import type { Menu } from "@nimara/domain/objects/Menu";
-import { useLocalizedLink } from "@nimara/foundation/i18n/hooks/use-localized-link";
+import { LocalizedLink } from "@nimara/i18n/routing";
 
 export const MobileNavigation = ({
   menu,
@@ -11,8 +11,6 @@ export const MobileNavigation = ({
   menu: Maybe<Menu>;
   onMenuItemClick: (isMenuItemClicked: boolean) => void;
 }) => {
-  const LocalizedLink = useLocalizedLink();
-
   if (!menu || menu?.items?.length === 0) {
     return null;
   }

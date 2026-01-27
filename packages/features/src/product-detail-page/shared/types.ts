@@ -1,5 +1,6 @@
+import { type Locale } from "next-intl";
+
 import { type AsyncResult } from "@nimara/domain/objects/Result";
-import { type SupportedLocale } from "@nimara/foundation/regions/types.js";
 import { type ServiceRegistry } from "@nimara/infrastructure/types";
 
 export type AddToBagAction = (params: {
@@ -15,7 +16,7 @@ export type AddToBagAction = (params: {
 export interface PDPViewProps {
   addToBagAction: AddToBagAction;
   checkoutId: string | null;
-  params: Promise<{ locale: SupportedLocale; slug: string }>;
+  params: Promise<{ locale: Locale; slug: string }>;
   paths: {
     cart: string;
     home: string;
@@ -26,7 +27,7 @@ export interface PDPViewProps {
 }
 
 export interface GenerateStandardPDPMetadataProps {
-  params: Promise<{ locale: SupportedLocale; slug: string }>;
+  params: Promise<{ locale: Locale; slug: string }>;
   productPath: string;
   services: ServiceRegistry;
   storefrontUrl: string;

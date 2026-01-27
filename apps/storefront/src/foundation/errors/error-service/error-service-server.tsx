@@ -2,15 +2,16 @@ import * as Sentry from "@sentry/nextjs";
 
 import { type ServiceRegistry } from "@nimara/infrastructure/types";
 
+import { getServiceRegistry } from "@/services/registry";
+
 import { ErrorServiceClient } from "./error-service-client";
 
 export interface ErrorServiceServerProps {
   services: ServiceRegistry;
 }
 
-export const ErrorServiceServer = async ({
-  services,
-}: ErrorServiceServerProps) => {
+export const ErrorServiceServer = async () => {
+  const services = await getServiceRegistry();
   const accessToken = services.accessToken;
   const userService = await services.getUserService();
 

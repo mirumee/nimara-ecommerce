@@ -1,3 +1,4 @@
+import { type Locale } from "next-intl";
 import { getLocale } from "next-intl/server";
 
 import type {
@@ -10,26 +11,22 @@ import type {
   MarketOf,
   RegionOf,
   SupportedCurrency,
-  SupportedLocale,
 } from "./types";
 
 export type RegionsConfig = {
   channel: ChannelId;
   languages: Readonly<Record<Uppercase<LanguageId>, Language>>;
-  localeToMarket: Readonly<Record<SupportedLocale, MarketId>>;
+  localeToMarket: Readonly<Record<Locale, MarketId>>;
   markets: Readonly<Record<Uppercase<MarketId>, Market>>;
   supportedCurrencies: readonly SupportedCurrency[];
-  supportedLocales: readonly SupportedLocale[];
+  supportedLocales: readonly Locale[];
 };
 
-function getMarketId(locale: SupportedLocale, cfg: RegionsConfig): MarketId {
+function getMarketId(locale: Locale, cfg: RegionsConfig): MarketId {
   return cfg.localeToMarket[locale];
 }
 
-function getLanguageId(
-  locale: SupportedLocale,
-  cfg: RegionsConfig,
-): LanguageId {
+function getLanguageId(locale: Locale, cfg: RegionsConfig): LanguageId {
   return cfg.localeToMarket[locale];
 }
 
