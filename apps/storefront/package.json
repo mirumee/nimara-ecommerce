@@ -8,7 +8,7 @@
     "dev:inspect": "NODE_OPTIONS='--inspect' next dev",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "next lint --dir src --fix",
+    "lint": "eslint . --ext ts,tsx --fix",
     "lint:staged": "lint-staged",
     "test": "vitest run",
     "test:watch": "vitest --watch"
@@ -53,8 +53,8 @@
   },
   "devDependencies": {
     "@graphql-typed-document-node/core": "3.2.0",
-    "@next/bundle-analyzer": "^15.5.9",
-    "@next/env": "^15.5.9",
+    "@next/bundle-analyzer": "^16.1.6",
+    "@next/env": "^16.1.6",
     "@nimara/codegen": "workspace:*",
     "@nimara/config": "workspace:*",
     "@parcel/watcher": "2.5.1",
@@ -70,7 +70,7 @@
     "dotenv": "17.2.3",
     "eslint": "^8.57.0",
     "eslint-config-custom": "workspace:*",
-    "eslint-config-next": "^15.5.9",
+    "eslint-config-next": "^16.1.6",
     "file-loader": "6.2.0",
     "postcss": "^8.5.6",
     "semantic-release": "25.0.2",

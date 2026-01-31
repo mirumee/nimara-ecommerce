@@ -86,7 +86,12 @@ const nextConfig = withAnalyzer(
       imageSizes: [256, 512, 768, 1024],
     },
     reactStrictMode: true,
-    transpilePackages: ["@nimara/ui"],
+    transpilePackages: [
+      "@nimara/ui",
+      "@nimara/features",
+      "@nimara/foundation",
+      "@nimara/i18n",
+    ],
     async headers() {
       const headers = [];
       if (process.env.NEXT_PUBLIC_VERCEL_ENV !== "production") {
