@@ -1,15 +1,25 @@
 "use client";
 
-import { useTranslations } from "next-intl";
-
-import { useLocalizedFormatter } from "@nimara/foundation/formatters/use-localized-formatter";
+import { useFormatter, useTranslations } from "next-intl";
 
 import { type ShoppingBagPriceProps } from "./shopping-bag-price";
 
-export const Shipping = (props: Pick<ShoppingBagPriceProps, "price">) => {
-  const t = useTranslations();
+type ShippingProps = Pick<ShoppingBagPriceProps, "price"> & {
+  isShippingRequired: boolean;
+  isShippingSelected: boolean;
+};
 
-  const formatter = useLocalizedFormatter();
+export const Shipping = ({
+  isShippingRequired,
+  isShippingSelected,
+  price,
+}: ShippingProps) => {
+  const t = useTranslations();
+  const formatter = useFormatter();
+
+  if (!isShippingRequired) {
+    return null;
+  }
 
   return (
     <div
@@ -17,11 +27,18 @@ export const Shipping = (props: Pick<ShoppingBagPriceProps, "price">) => {
       data-testid="shopping-bag-price-delivery-method"
     >
       <p>{t("delivery-method.title")}</p>
-      <p>
-        {props?.price && props.price.amount > 0
-          ? formatter.price({ amount: props.price.amount })
-          : t("common.free")}
-      </p>
+      {isShippingSelected ? (
+        <p>
+          {price && price.amount > 0
+            ? formatter.number(price.amount, {
+                style: "currency",
+                currency: price.currency,
+              })
+            : t("common.free")}
+        </p>
+      ) : (
+        <p>-</p>
+      )}
     </div>
   );
 };

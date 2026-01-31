@@ -1,12 +1,13 @@
 "use client";
 
+import { type Locale } from "next-intl";
 import { useTransition } from "react";
 
 import { cn } from "@nimara/foundation/lib/cn";
 import { Button } from "@nimara/ui/components/button";
 import { Label } from "@nimara/ui/components/label";
 
-import type { Market, SupportedLocale } from "@/foundation/regions/types";
+import type { Market } from "@/foundation/regions/types";
 
 import { handleLocaleChange } from "./actions";
 
@@ -15,13 +16,13 @@ export function ContinentRow({
   markets,
   name,
 }: {
-  currentLocale: SupportedLocale;
+  currentLocale: Locale;
   markets: Market[];
   name: string;
 }) {
   const [isPending, startTransition] = useTransition();
 
-  const onLocaleClick = (locale: SupportedLocale) => {
+  const onLocaleClick = (locale: Locale) => {
     startTransition(() => {
       void handleLocaleChange(locale);
     });

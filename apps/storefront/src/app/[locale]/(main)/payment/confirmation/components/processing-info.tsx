@@ -5,9 +5,8 @@ import { useState } from "react";
 import { useInterval } from "usehooks-ts";
 
 import { type AppErrorCode } from "@nimara/domain/objects/Error";
+import { useRouter } from "@nimara/i18n/routing";
 import { Spinner } from "@nimara/ui/components/spinner";
-
-import { useRouter } from "@/i18n/routing";
 
 export const ProcessingInfo = ({
   errors,

@@ -12,5 +12,10 @@ export default defineConfig({
       NODE_ENV: "test",
     },
     setupFiles: ["./src/lib/test/setup"],
+    server: {
+      deps: {
+        inline: ["next-intl"],
+      },
+    },
   },
 });

@@ -17,6 +17,5 @@ export default defineConfig({
       ...config({ path: envTestPath }).parsed,
       NODE_ENV: "test",
     },
-    passWithNoTests: true,
   },
 });

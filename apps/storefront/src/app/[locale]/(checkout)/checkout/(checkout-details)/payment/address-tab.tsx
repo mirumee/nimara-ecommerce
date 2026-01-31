@@ -15,6 +15,7 @@ import type { FormattedAddress } from "@nimara/foundation/address/types";
 import { CheckboxField } from "@nimara/foundation/form-components/checkbox-field";
 import { RadioFormGroup } from "@nimara/foundation/form-components/radio-form-group";
 import { cn } from "@nimara/foundation/lib/cn";
+import { useRouter } from "@nimara/i18n/routing";
 import { ADDRESS_CORE_FIELDS } from "@nimara/infrastructure/consts";
 import {
   Tabs,
@@ -25,7 +26,6 @@ import {
 
 import { useCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
-import { useRouter } from "@/i18n/routing";
 
 import { type TabName } from "./payment";
 import { type Schema } from "./schema";

@@ -11,6 +11,7 @@ import {
 } from "react";
 import { useClickAnyWhere } from "usehooks-ts";
 
+import { LocalizedLink, usePathname, useRouter } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
 import {
   Combobox,
@@ -24,7 +25,6 @@ import { Spinner } from "@nimara/ui/components/spinner";
 
 import { DEFAULT_DEBOUNCE_TIME_IN_MS } from "@/config";
 import { paths } from "@/foundation/routing/paths";
-import { LocalizedLink, usePathname, useRouter } from "@/i18n/routing";
 
 import { performSearch, searchProducts } from "./actions";
 

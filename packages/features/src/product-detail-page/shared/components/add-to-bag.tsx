@@ -5,8 +5,8 @@ import { useTranslations } from "next-intl";
 import { useCallback, useState } from "react";
 
 import { type BaseError } from "@nimara/domain/objects/Error";
-import { useLocalizedLink } from "@nimara/foundation/i18n/hooks/use-localized-link";
-import { type TranslationMessage } from "@nimara/foundation/i18n/types.js";
+import { LocalizedLink } from "@nimara/i18n/routing";
+import { type MessagePath } from "@nimara/i18n/types";
 import { Button } from "@nimara/ui/components/button";
 import { ToastAction } from "@nimara/ui/components/toast";
 import { useToast } from "@nimara/ui/hooks";
@@ -28,7 +28,6 @@ export const AddToBag = ({
 }: AddToBagProps) => {
   const t = useTranslations();
   const { toast } = useToast();
-  const LocalizedLink = useLocalizedLink();
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleProductAdd = async () => {
@@ -42,9 +41,12 @@ export const AddToBag = ({
       resultLinesAdd.errors.forEach((error: BaseError) => {
         if (error.field) {
           toast({
-            description: t(
-              `checkout-errors.${error.field}` as TranslationMessage,
-            ),
+            description: t(`errors.${error.field}` as MessagePath),
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            description: t(`errors.${error.code}` as MessagePath),
             variant: "destructive",
           });
         }

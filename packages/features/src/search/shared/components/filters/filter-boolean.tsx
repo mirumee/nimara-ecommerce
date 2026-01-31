@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
-import { type TranslationMessage } from "@nimara/foundation/i18n/types";
+import { type MessagePath } from "@nimara/i18n/types";
 import type { Facet } from "@nimara/infrastructure/use-cases/search/types";
 import { Checkbox } from "@nimara/ui/components/checkbox";
 import { Label } from "@nimara/ui/components/label";
@@ -19,7 +19,7 @@ export const FilterBoolean = ({
   const isCheckedInitial = searchParams[slug] === "true";
   const [isChecked, setIsChecked] = useState(isCheckedInitial);
 
-  const labelText = name ?? t(messageKey as TranslationMessage) ?? slug;
+  const labelText = name ?? t(messageKey as MessagePath) ?? slug;
   const checkboxId = `boolean-${slug}`;
 
   return (

@@ -1,12 +1,14 @@
 import { getLocale } from "next-intl/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { redirect } from "@/i18n/routing";
+import { redirect } from "@nimara/i18n/routing";
 
 import * as actions from "./handle-filters-form-submit";
 
 vi.mock("next-intl/server");
-vi.mock("@/i18n/routing");
+vi.mock("@nimara/i18n/routing");
+
+const DEFAULT_SORT_BY = "price-asc";
 
 describe("PLP - Filters", () => {
   beforeEach(() => {
@@ -17,6 +19,9 @@ describe("PLP - Filters", () => {
     const currentLocale = "en-US";
 
     vi.mocked(getLocale).mockResolvedValue(currentLocale);
+    vi.mock("@nimara/i18n/routing", () => ({
+      redirect: vi.fn(),
+    }));
 
     const formData = new FormData();
 
@@ -25,7 +30,13 @@ describe("PLP - Filters", () => {
 
     const searchParams = { sortBy: "name-asc" };
 
-    await actions.handleFiltersFormSubmit(searchParams, formData);
+    await actions.handleFiltersFormSubmit(
+      searchParams,
+      DEFAULT_SORT_BY,
+      formData,
+      "/search",
+      redirect,
+    );
 
     expect(redirect).toHaveBeenCalledOnce();
     expect(redirect).toHaveBeenCalledWith({
@@ -38,6 +49,9 @@ describe("PLP - Filters", () => {
     const currentLocale = "en-US";
 
     vi.mocked(getLocale).mockResolvedValue(currentLocale);
+    vi.mock("@nimara/i18n/routing", () => ({
+      redirect: vi.fn(),
+    }));
 
     const formData = new FormData();
 
@@ -45,7 +59,13 @@ describe("PLP - Filters", () => {
 
     const searchParams = { sortBy: "name-asc" };
 
-    await actions.handleFiltersFormSubmit(searchParams, formData);
+    await actions.handleFiltersFormSubmit(
+      searchParams,
+      DEFAULT_SORT_BY,
+      formData,
+      "/search",
+      redirect,
+    );
 
     expect(redirect).toHaveBeenCalledOnce();
     expect(redirect).toHaveBeenCalledWith({
@@ -58,11 +78,20 @@ describe("PLP - Filters", () => {
     const currentLocale = "en-GB";
 
     vi.mocked(getLocale).mockResolvedValue(currentLocale);
+    vi.mock("@nimara/i18n/routing", () => ({
+      redirect: vi.fn(),
+    }));
 
     const formData = new FormData();
     const searchParams = { sortBy: "price-desc", page: "2" };
 
-    await actions.handleFiltersFormSubmit(searchParams, formData);
+    await actions.handleFiltersFormSubmit(
+      searchParams,
+      DEFAULT_SORT_BY,
+      formData,
+      "/search",
+      redirect,
+    );
 
     expect(redirect).toHaveBeenCalledOnce();
     expect(redirect).toHaveBeenCalledWith({
@@ -75,6 +104,9 @@ describe("PLP - Filters", () => {
     const currentLocale = "en-GB";
 
     vi.mocked(getLocale).mockResolvedValue(currentLocale);
+    vi.mock("@nimara/i18n/routing", () => ({
+      redirect: vi.fn(),
+    }));
 
     const formData = new FormData();
 
@@ -84,7 +116,13 @@ describe("PLP - Filters", () => {
 
     const searchParams = { sortBy: "price-asc", "is-digital": "true" };
 
-    await actions.handleFiltersFormSubmit(searchParams, formData);
+    await actions.handleFiltersFormSubmit(
+      searchParams,
+      DEFAULT_SORT_BY,
+      formData,
+      "/search",
+      redirect,
+    );
 
     expect(redirect).toHaveBeenCalledOnce();
     expect(redirect).toHaveBeenCalledWith({

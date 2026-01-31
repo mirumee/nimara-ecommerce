@@ -2,7 +2,7 @@ import * as z from "zod";
 
 import { ALLOWED_COUNTRY_CODES } from "@nimara/domain/consts";
 import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
-import { type GetTranslations } from "@nimara/foundation/i18n/types";
+import { type GetTranslations } from "@nimara/i18n/types";
 
 export const addressSchema = ({
   addressFormRows,
@@ -101,7 +101,7 @@ export const checkIfRequired =
     }
     if (foundField.isRequired && !arg) {
       ctx.addIssue({
-        code: z.ZodIssueCode.invalid_type,
+        code: "invalid_type",
         path: [],
         fatal: true,
         message: t("form-validation.required"),
@@ -117,7 +117,7 @@ export const checkIfRequired =
 
       if (!isValid) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           path: [],
           fatal: true,
           message: t("form-validation.wrong-code-format"),

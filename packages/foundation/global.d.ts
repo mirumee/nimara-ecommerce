@@ -1,19 +1,6 @@
-// import { routing } from '@/i18n/routing';
-// import { formats } from '@/i18n/request';
-// import messages from '@nimara/translations/messages/en-US.json';
-
-// declare module 'next-intl' {
-//   interface AppConfig {
-//     // Locale: (typeof routing.locales)[number];
-//     // Messages: typeof import("./messages/en-US.json");
-//     // Formats: typeof formats;
-//   }
-// }
+/// <reference types="@nimara/i18n/global" />
 
 // OLD ONE
-type Messages = typeof import("./messages/en-US.json");
-declare interface IntlMessages extends Messages {}
-
 type NonFalsy<T> = T extends false | 0 | "" | null | undefined | 0n ? never : T;
 
 interface Array<T> {

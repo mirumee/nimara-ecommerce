@@ -54,10 +54,11 @@ export const SelectFormField = ({
               field.onChange(value);
               onChange?.(value);
             }}
+            name={label}
             defaultValue={field.value}
           >
             <FormControl>
-              <SelectTrigger aria-label={label} error={fieldState.invalid}>
+              <SelectTrigger error={fieldState.invalid} aria-label={label}>
                 <SelectValue placeholder={placeholder} />
               </SelectTrigger>
             </FormControl>

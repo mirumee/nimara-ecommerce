@@ -2,11 +2,12 @@
   "name": "@nimara/config",
   "private": true,
   "version": "1.0.0",
+  "type": "module",
   "scripts": {
     "lint:staged": "lint-staged"
   },
   "exports": {
-    "./postcss": "./src/postcss.config.js",
+    "./postcss": "./src/postcss.config.cjs",
     "./tailwind": "./src/tailwind.config.ts"
   },
   "dependencies": {

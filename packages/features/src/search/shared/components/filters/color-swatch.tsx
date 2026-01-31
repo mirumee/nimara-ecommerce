@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 
-import type { TranslationMessage } from "@nimara/foundation/i18n/types";
+import type { MessagePath } from "@nimara/i18n/types";
 import type { Facet } from "@nimara/infrastructure/use-cases/search/types";
 import { Toggle } from "@nimara/ui/components/toggle";
 import { cn } from "@nimara/ui/lib/utils";
@@ -42,7 +42,7 @@ export const ColorSwatch = async ({
   searchParams: Record<string, string>;
 }) => {
   const t = await getTranslations();
-  const label = name ?? t(messageKey as TranslationMessage);
+  const label = name ?? t(messageKey as MessagePath);
   const defaultValue = searchParams[slug]?.split(".") ?? [];
 
   return (

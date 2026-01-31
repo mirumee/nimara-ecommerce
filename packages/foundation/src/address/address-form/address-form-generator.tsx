@@ -6,11 +6,8 @@ import {
 } from "@nimara/domain/objects/AddressForm";
 import { SelectFormField } from "@nimara/foundation/form-components/select-form-field";
 import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
-import {
-  type GetTranslations,
-  type TranslationMessage,
-} from "@nimara/foundation/i18n/types";
 import { cn } from "@nimara/foundation/lib/cn";
+import { type GetTranslations, type MessagePath } from "@nimara/i18n/types";
 
 const generateFieldPrefix =
   <V extends Record<string, unknown>>(schemaPrefix: string | undefined) =>
@@ -34,7 +31,7 @@ const renderInput = ({
     ...field,
     disabled: isDisabled,
     name: withSchemaPrefix(field.name),
-    label: t((field.label ?? field.name) as TranslationMessage<"address">),
+    label: t((field.label ?? field.name) as MessagePath<"address">),
   };
 
   switch (field.type) {

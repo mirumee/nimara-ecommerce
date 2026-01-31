@@ -10,12 +10,12 @@ import { type CountryOption } from "@nimara/domain/objects/Address";
 import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { AddressForm } from "@nimara/foundation/address/address-form/address-form";
-import { isGlobalError } from "@nimara/foundation/errors/errors";
 import { CheckboxField } from "@nimara/foundation/form-components/checkbox-field";
 import { ADDRESS_CORE_FIELDS } from "@nimara/infrastructure/consts";
 import { Button } from "@nimara/ui/components/button";
 import { useToast } from "@nimara/ui/hooks";
 
+import { isGlobalError } from "@/foundation/errors/errors";
 import { paths } from "@/foundation/routing/paths";
 import { useRouterWithState } from "@/foundation/use-router-with-state";
 

@@ -15,12 +15,12 @@ import {
   type AddressSchema,
   addressSchema,
 } from "@nimara/foundation/address/address-form/schema";
-import { isGlobalError } from "@nimara/foundation/errors/errors";
 import { ADDRESS_CORE_FIELDS } from "@nimara/infrastructure/consts";
 import { Button } from "@nimara/ui/components/button";
 import { useToast } from "@nimara/ui/hooks";
 
 import { updateCheckoutAddressAction } from "@/foundation/address/update-checkout-address-action";
+import { isGlobalError } from "@/foundation/errors/errors";
 import { paths } from "@/foundation/routing/paths";
 import { useRouterWithState } from "@/foundation/use-router-with-state";
 

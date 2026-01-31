@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 
 import type { SearchProduct } from "@nimara/domain/objects/SearchProduct";
 import { SearchProductCard } from "@nimara/features/shared/product/search-product-card";
-import { useLocalizedLink } from "@nimara/foundation/i18n/hooks/use-localized-link";
+import { LocalizedLink } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
 import {
   Carousel,
@@ -37,7 +37,6 @@ export const ProductsGridClient = ({
   searchPath,
 }: ProductsGridClientProps) => {
   const t = useTranslations();
-  const LocalizedLink = useLocalizedLink();
 
   if (!products.length) {
     return null;

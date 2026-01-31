@@ -1,4 +1,4 @@
-import { type NextMiddlewareResult } from "next/dist/server/web/types";
+import type { NextMiddlewareResult } from "next/dist/server/web/types";
 import type { NextFetchEvent, NextRequest, NextResponse } from "next/server";
 
 export type CustomMiddleware = (

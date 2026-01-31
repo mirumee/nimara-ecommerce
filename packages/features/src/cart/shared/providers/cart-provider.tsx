@@ -45,18 +45,14 @@ export const CartProvider = async ({
   if (!resultCartGet.ok) {
     services.logger.error("Failed to fetch cart", {
       error: resultCartGet.errors,
+      checkoutId,
     });
 
     return <>{emptyCartRender()}</>;
   }
 
   if (!resultCartGet.data.lines.length) {
-    services.logger.error("Rendering empty Cart due to errors.", {
-      error: resultCartGet.errors,
-      checkoutId,
-    });
-
-    return <>{emptyCartRender()}</>;
+    return emptyCartRender();
   }
 
   const userService = await services.getUserService();

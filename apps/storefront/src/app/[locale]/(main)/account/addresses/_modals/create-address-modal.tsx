@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { type AllCountryCode } from "@nimara/domain/consts";
 import { type CountryOption } from "@nimara/domain/objects/Address";
 import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
+import { useRouter } from "@nimara/i18n/routing";
 import { Button, type ButtonProps } from "@nimara/ui/components/button";
 import {
   Dialog,
@@ -17,7 +18,6 @@ import {
 } from "@nimara/ui/components/dialog";
 
 import { paths } from "@/foundation/routing/paths";
-import { useRouter } from "@/i18n/routing";
 
 import { AddNewAddressForm } from "../_forms/create-address-form";
 

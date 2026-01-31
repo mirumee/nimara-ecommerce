@@ -36,6 +36,11 @@ export async function addToBag(
   const { variantId, quantity = 1 } = input;
   const { region, cartId, accessToken, cacheTTL } = ctx;
 
+  console.log(region.market);
+  console.log(region.language);
+  console.log(region.locale);
+  console.log({ variantId, quantity });
+
   services.logger.debug("Adding item to bag", { variantId, quantity });
 
   // Get user if access token is available

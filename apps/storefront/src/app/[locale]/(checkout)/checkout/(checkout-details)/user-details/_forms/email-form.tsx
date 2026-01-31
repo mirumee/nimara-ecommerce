@@ -6,8 +6,8 @@ import { FormProvider, type UseFormReturn } from "react-hook-form";
 import type { FieldType } from "@nimara/domain/objects/AddressForm";
 import type { Checkout } from "@nimara/domain/objects/Checkout";
 import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
-import type { TranslationMessage } from "@nimara/foundation/i18n/types";
 import { cn } from "@nimara/foundation/lib/cn";
+import type { MessagePath } from "@nimara/i18n/types";
 import { Button } from "@nimara/ui/components/button";
 
 import { useRouterWithState } from "@/foundation/use-router-with-state";
@@ -62,7 +62,7 @@ export const UserEmailForm = ({
     });
   };
 
-  const serverErrorCode = form.formState.errors.root?.message;
+  const serverErrorCode = form.formState.errors.root?.message as MessagePath;
 
   return (
     <FormProvider {...form}>
@@ -94,9 +94,7 @@ export const UserEmailForm = ({
           </div>
         </div>
         {serverErrorCode && (
-          <p className="text-destructive">
-            {t(serverErrorCode as TranslationMessage)}
-          </p>
+          <p className="text-destructive">{t(serverErrorCode)}</p>
         )}
       </form>
     </FormProvider>
