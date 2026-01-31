@@ -24,7 +24,7 @@
     "dotenv": "17.2.3",
     "eslint": "^8.57.0",
     "eslint-config-custom": "workspace:*",
-    "next": "^15.5.9",
+    "next": "^16.1.6",
     "tsconfig": "workspace:*",
     "typescript": "^5.9.2",
     "vite-tsconfig-paths": "6.0.4",

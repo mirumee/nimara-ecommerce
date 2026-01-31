@@ -86,12 +86,9 @@ export const PaymentMethodDeleteModal = ({
           </DialogDescription>
         </DialogHeader>
 
-        <p
-          className="whitespace-pre-wrap text-sm leading-5 text-primary"
-          dangerouslySetInnerHTML={{
-            __html: renderPaymentMethod({ method }),
-          }}
-        />
+        <p className="whitespace-pre-wrap text-sm leading-5 text-primary">
+          {renderPaymentMethod({ method })}
+        </p>
 
         <div className="flex w-full justify-end gap-4">
           <Button

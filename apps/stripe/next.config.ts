@@ -21,14 +21,6 @@ const nextConfig: NextConfig = {
 
   reactStrictMode: true,
   transpilePackages: ["@nimara/ui"],
-
-  webpack: (config, { isServer }) => {
-    if (isServer) {
-      config.ignoreWarnings = [{ module: /opentelemetry/ }];
-    }
-
-    return config;
-  },
 };
 
 const configWithSentry = withSentryConfig(nextConfig, {
