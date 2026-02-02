@@ -6,9 +6,9 @@
     "access": "public"
   },
   "dependencies": {
-    "eslint-config-next": "15.5.3",
+    "eslint-config-next": "15.5.11",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-config-turbo": "^2.5.6",
+    "eslint-config-turbo": "^2.8.1",
     "eslint-import-resolver-node": "^0.3.9",
     "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import": "^2.32.0",
