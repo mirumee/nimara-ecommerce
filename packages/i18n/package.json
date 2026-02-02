@@ -27,7 +27,7 @@
     "next": "^16.1.6",
     "tsconfig": "workspace:*",
     "typescript": "^5.9.2",
-    "vite-tsconfig-paths": "6.0.4",
+    "vite-tsconfig-paths": "6.0.5",
     "vitest": "^4.0.18"
   },
   "engines": {
