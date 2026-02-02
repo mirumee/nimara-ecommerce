@@ -1,11 +1,12 @@
 "use server";
 
+import { type Locale } from "next-intl";
+
 import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { type User } from "@nimara/domain/objects/User";
+import { redirect } from "@nimara/i18n/routing";
 
-import type { SupportedLocale } from "@/foundation/regions/types";
 import { paths } from "@/foundation/routing/paths";
-import { redirect } from "@/i18n/routing";
 
 export const validateCheckoutStepAction = async ({
   checkout,
@@ -14,7 +15,7 @@ export const validateCheckoutStepAction = async ({
   step,
 }: {
   checkout: Checkout;
-  locale: SupportedLocale;
+  locale: Locale;
   step:
     | "payment"
     | "delivery-method"

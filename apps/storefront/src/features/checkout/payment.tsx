@@ -1,18 +1,12 @@
 import groupBy from "lodash/groupBy";
-import type { ReactNode } from "react";
+import { useTranslations } from "next-intl";
 
-import { type BaseError } from "@nimara/domain/objects/Error";
 import type {
   CardPaymentMethod,
   PaymentMethod,
   PaymentMethodType,
   PaypalPaymentMethod,
 } from "@nimara/domain/objects/Payment";
-import { translateOrFallback } from "@nimara/foundation/i18n/helpers/translate-or-fallback";
-import type { GetTranslations } from "@nimara/foundation/i18n/types";
-
-import { clientEnvs } from "@/envs/client";
-import { LocalizedLink } from "@/i18n/routing";
 
 export type PaymentMethodMap = {
   [K in PaymentMethodType]?: Extract<PaymentMethod, { type: K }>[];
@@ -21,77 +15,33 @@ export type PaymentMethodMap = {
 export const groupPaymentMethods = (methods: PaymentMethod[]) =>
   groupBy(methods, "type") as PaymentMethodMap;
 
-export const formatCreditCard = (
-  t: GetTranslations,
-  { brand, last4, expYear, expMonth }: CardPaymentMethod["paymentMethod"],
-) =>
-  [
+export const FormattedCreditCard = ({
+  brand,
+  last4,
+  expYear,
+  expMonth,
+}: CardPaymentMethod["paymentMethod"]) => {
+  const t = useTranslations();
+
+  return [
     `${brand.toUpperCase()} ${t("payment.credit-card")} (${last4})`,
     `${t("payment.exp-date")}: ${expMonth}/${expYear}`,
   ].join("\n");
+};
+export const FormattedPayPal = ({
+  email,
+}: PaypalPaymentMethod["paymentMethod"]) => {
+  return email;
+};
 
-export const formatPayPal = (
-  _: GetTranslations,
-  { email }: PaypalPaymentMethod["paymentMethod"],
-) => email;
-
-const FORMATTERS = {
-  card: formatCreditCard,
-  paypal: formatPayPal,
-} as const;
-
-export const formatPaymentMethod = ({
-  t,
+export const renderPaymentMethod = ({
   method: { type, paymentMethod },
 }: {
   method: PaymentMethod;
-  t: GetTranslations;
 }) => {
   if (type === "card") {
-    return FORMATTERS.card(t, paymentMethod);
+    return <FormattedCreditCard {...paymentMethod} />;
   }
 
-  return FORMATTERS.paypal(t, paymentMethod);
-};
-
-const DEFAULT_ERROR_CODES = [
-  "errors.stripe.payment_intent_authentication_failure",
-];
-
-export const translateApiErrors = ({
-  errors,
-  t,
-}: {
-  errors: BaseError[];
-  t: GetTranslations;
-}) => {
-  const defaultErrorMessage = t.rich("errors.GENERIC_PAYMENT_ERROR", {
-    link: (chunks) => (
-      <LocalizedLink
-        href={`mailto:${clientEnvs.NEXT_PUBLIC_DEFAULT_EMAIL}`}
-        className="underline"
-        target="_blank"
-      >
-        {chunks}
-      </LocalizedLink>
-    ),
-  }) as ReactNode;
-
-  return errors.map(({ code }) => {
-    const path = ["errors", code].filter(Boolean).join(".");
-
-    /**
-     * Some messages should be presented as a default error. To avoid missing message errors
-     * return the default message immediately.
-     */
-    if (DEFAULT_ERROR_CODES.includes(path)) {
-      return defaultErrorMessage;
-    }
-
-    return translateOrFallback({
-      t,
-      path,
-      fallback: defaultErrorMessage,
-    });
-  });
+  return <FormattedPayPal {...paymentMethod} />;
 };

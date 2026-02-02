@@ -7,7 +7,8 @@ import {
   type PaymentMethod,
   type PaymentMethodType,
 } from "@nimara/domain/objects/Payment";
-import { type TranslationMessage } from "@nimara/foundation/i18n/types";
+import { useRouter } from "@nimara/i18n/routing";
+import { type MessagePath } from "@nimara/i18n/types";
 import { Button } from "@nimara/ui/components/button";
 import {
   Dialog,
@@ -18,12 +19,11 @@ import {
 } from "@nimara/ui/components/dialog";
 
 import { delay } from "@/features/checkout/delay";
-import { formatPaymentMethod } from "@/features/checkout/payment";
-import { useRouter } from "@/i18n/routing";
+import { renderPaymentMethod } from "@/features/checkout/payment";
 
 import { paymentMethodDeleteAction } from "../actions";
 
-const TYPE_MESSAGE_MAPPING: Record<PaymentMethodType, TranslationMessage> = {
+const TYPE_MESSAGE_MAPPING: Record<PaymentMethodType, MessagePath> = {
   card: "payment.credit-card",
   paypal: "payment.paypal-account",
 };
@@ -86,12 +86,9 @@ export const PaymentMethodDeleteModal = ({
           </DialogDescription>
         </DialogHeader>
 
-        <p
-          className="whitespace-pre-wrap text-sm leading-5 text-primary"
-          dangerouslySetInnerHTML={{
-            __html: formatPaymentMethod({ t, method }),
-          }}
-        />
+        <p className="whitespace-pre-wrap text-sm leading-5 text-primary">
+          {renderPaymentMethod({ method })}
+        </p>
 
         <div className="flex w-full justify-end gap-4">
           <Button

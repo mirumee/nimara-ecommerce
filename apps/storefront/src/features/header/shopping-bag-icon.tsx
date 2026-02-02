@@ -4,11 +4,10 @@ import { ShoppingBag } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { PropsWithChildren } from "react";
 
+import { LocalizedLink } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
 
 import { paths } from "@/foundation/routing/paths";
-import { LocalizedLink } from "@/i18n/routing";
-
 interface ShoppingBagIconProps extends PropsWithChildren {
   count?: number;
 }

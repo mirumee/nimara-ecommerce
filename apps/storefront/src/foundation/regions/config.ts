@@ -1,3 +1,5 @@
+import { LOCALES } from "@nimara/i18n/config";
+
 import { clientEnvs } from "@/envs/client";
 
 export const CHANNEL = clientEnvs.NEXT_PUBLIC_DEFAULT_CHANNEL;
@@ -59,15 +61,9 @@ export const MARKETS = {
   },
 } as const;
 
-export const SUPPORTED_LOCALES = Object.keys(
-  LOCALE_CHANNEL_MAP,
-) as readonly (keyof typeof LOCALE_CHANNEL_MAP)[];
-
-export const DEFAULT_LOCALE = "en-US" as const;
-
 export const REGIONS_CONFIG = {
   channel: CHANNEL,
-  supportedLocales: SUPPORTED_LOCALES,
+  supportedLocales: LOCALES,
   languages: LANGUAGES,
   markets: MARKETS,
   localeToMarket: LOCALE_CHANNEL_MAP,

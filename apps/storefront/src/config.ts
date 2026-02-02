@@ -1,9 +1,3 @@
-// Saleor config
-export const IMAGE_FORMAT: "AVIF" | "ORIGINAL" | "WEBP" = "AVIF";
-export const IMAGE_SIZES = {
-  pdp: 1024,
-};
-
 const MINUTE = 60;
 const HOUR = MINUTE * 60;
 const DAY = HOUR * 24;
@@ -31,8 +25,6 @@ export const COOKIE_MAX_AGE = {
 } as const;
 
 export const MIN_PASSWORD_LENGTH = 8;
-
-export const DEFAULT_PAGE_TITLE = "Nimara Storefront";
 
 export const CHANGE_EMAIL_TOKEN_VALIDITY_IN_HOURS = 72;
 

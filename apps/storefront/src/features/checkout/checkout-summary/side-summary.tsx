@@ -1,5 +1,6 @@
 import { getLocale, getTranslations } from "next-intl/server";
 
+import { redirect } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
 import { Sheet, SheetContent, SheetTrigger } from "@nimara/ui/components/sheet";
 
@@ -7,7 +8,6 @@ import { getCheckoutId } from "@/features/checkout/cart";
 import { ErrorDialog } from "@/foundation/errors/components/error-dialog";
 import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
-import { redirect } from "@/i18n/routing";
 import { getCheckoutService } from "@/services/checkout";
 
 import { Summary } from "./summary";

@@ -2,7 +2,9 @@ import { withSentryConfig } from "@sentry/nextjs";
 import createNextIntlPlugin from "next-intl/plugin";
 import withBundleAnalyzer from "@next/bundle-analyzer";
 
-const withNextIntl = createNextIntlPlugin();
+const withNextIntl = createNextIntlPlugin({
+  requestConfig: "./src/foundation/i18n/request.ts",
+});
 
 const withAnalyzer = withBundleAnalyzer({
   enabled: process.env.ANALYZE === "true",
@@ -84,7 +86,12 @@ const nextConfig = withAnalyzer(
       imageSizes: [256, 512, 768, 1024],
     },
     reactStrictMode: true,
-    transpilePackages: ["@nimara/ui"],
+    transpilePackages: [
+      "@nimara/ui",
+      "@nimara/features",
+      "@nimara/foundation",
+      "@nimara/i18n",
+    ],
     async headers() {
       const headers = [];
       if (process.env.NEXT_PUBLIC_VERCEL_ENV !== "production") {
@@ -167,14 +174,12 @@ const configWithSentry = withSentryConfig(nextConfig, {
   // Hides source maps from generated client bundles
   hideSourceMaps: true,
 
-  // Automatically tree-shake Sentry logger statements to reduce bundle size
-  disableLogger: true,
-
-  // Enables automatic instrumentation of Vercel Cron Monitors. (Does not yet work with App Router route handlers.)
-  // See the following for more information:
-  // https://docs.sentry.io/product/crons/
-  // https://vercel.com/docs/cron-jobs
-  automaticVercelMonitors: true,
+  webpack: {
+    automaticVercelMonitors: true,
+    treeshake: {
+      removeDebugLogging: true,
+    },
+  },
 });
 
 export default isSentryAvailable ? configWithSentry : nextConfig;

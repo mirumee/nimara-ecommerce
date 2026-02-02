@@ -5,13 +5,15 @@ import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
-import { type PaymentMethod } from "@nimara/domain/objects/Payment";
-import { type TranslationMessage } from "@nimara/foundation/i18n/types";
+import {
+  type PaymentMethod,
+  type PaymentMethodType,
+} from "@nimara/domain/objects/Payment";
 import { Button } from "@nimara/ui/components/button";
 
 import {
-  formatPaymentMethod,
   groupPaymentMethods,
+  renderPaymentMethod,
 } from "@/features/checkout/payment";
 
 const PaymentMethodDeleteModal = dynamic(
@@ -50,18 +52,14 @@ export const PaymentMethodsList = ({
       {Object.entries(groupedMethods).map(([type, methods]) => (
         <div key={type} className="w-full">
           <p className="text-lg font-semibold leading-7 text-primary">
-            {t(`payment.${type}` as TranslationMessage)}
+            {t(`payment.${type as PaymentMethodType}`)}
           </p>
           {methods.map((method) => (
             <div key={method.id} className="py-4">
               <div className="flex items-center gap-4 text-primary">
-                <p
-                  className="basis-full whitespace-pre-wrap"
-                  dangerouslySetInnerHTML={{
-                    __html: formatPaymentMethod({ t, method }),
-                  }}
-                />
-
+                <p className="basis-full whitespace-pre-wrap">
+                  {renderPaymentMethod({ method })}
+                </p>
                 {method.isDefault && (
                   <div className="max-md:hidden">{defaultMethodMessage}</div>
                 )}

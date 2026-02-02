@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 
-import { type TranslationMessage } from "@nimara/foundation/i18n/types";
+import { type MessagePath } from "@nimara/i18n/types";
 import type { Facet } from "@nimara/infrastructure/use-cases/search/types";
 import { Toggle } from "@nimara/ui/components/toggle";
 
@@ -13,7 +13,7 @@ export const FilterText = async ({
 }) => {
   const t = await getTranslations();
   const defaultValue = searchParams[slug]?.split(".") ?? [];
-  const label = name ?? t(messageKey as TranslationMessage);
+  const label = name ?? t(messageKey as MessagePath);
 
   return (
     <div className="flex flex-col space-y-4 py-2">

@@ -1,12 +1,13 @@
+import { type Locale } from "next-intl";
+
 import { getCheckoutOrRedirect } from "@/features/checkout/checkout-actions";
-import type { SupportedLocale } from "@/foundation/regions/types";
 import { getServiceRegistry } from "@/services/registry";
 import { getAccessToken } from "@/services/tokens";
 
 import { validateCheckoutStepAction } from "./actions";
 
 type PageProps = {
-  params: Promise<{ locale: SupportedLocale }>;
+  params: Promise<{ locale: Locale }>;
 };
 
 export default async function Page(props: PageProps) {

@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 
-import type { TranslationMessage } from "@nimara/foundation/i18n/types";
+import type { MessagePath } from "@nimara/i18n/types";
 import type { Facet } from "@nimara/infrastructure/use-cases/search/types";
 import { MultiSelect } from "@nimara/ui/components/multi-select";
 
@@ -12,7 +12,7 @@ export const FilterMultiSelect = async ({
   searchParams: Record<string, string>;
 }) => {
   const t = await getTranslations();
-  const filterName = name ?? t(messageKey as TranslationMessage);
+  const filterName = name ?? t(messageKey as MessagePath);
   const selectedFromParams =
     searchParams[slug]
       ?.split(",")

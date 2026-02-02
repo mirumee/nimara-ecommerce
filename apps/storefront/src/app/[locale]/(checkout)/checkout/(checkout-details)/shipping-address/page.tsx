@@ -1,3 +1,5 @@
+import { type Locale } from "next-intl";
+
 import { type AllCountryCode } from "@nimara/domain/consts";
 import {
   type Address,
@@ -6,7 +8,6 @@ import {
 
 import { getCheckoutOrRedirect } from "@/features/checkout/checkout-actions";
 import { getCurrentRegion } from "@/foundation/regions";
-import type { SupportedLocale } from "@/foundation/regions/types";
 import { getAddressService } from "@/services/address";
 import { getServiceRegistry } from "@/services/registry";
 import { getAccessToken } from "@/services/tokens";
@@ -19,7 +20,7 @@ import { ShippingAddressForm } from "./_forms/guest-form";
 import { AddressTab } from "./_tabs/address-tab";
 
 type PageProps = {
-  params: Promise<{ locale: SupportedLocale }>;
+  params: Promise<{ locale: Locale }>;
   searchParams: Promise<{ country?: AllCountryCode }>;
 };
 

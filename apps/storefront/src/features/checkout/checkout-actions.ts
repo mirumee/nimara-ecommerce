@@ -1,13 +1,13 @@
+import { type Locale } from "next-intl";
 import { getLocale } from "next-intl/server";
 
 import { type Checkout } from "@nimara/domain/objects/Checkout";
+import { redirect } from "@nimara/i18n/routing";
 
 import { getCheckoutId } from "@/features/checkout/cart";
 import { deleteCheckoutIdCookie } from "@/features/checkout/checkout";
 import { getCurrentRegion } from "@/foundation/regions";
-import type { SupportedLocale } from "@/foundation/regions/types";
 import { paths } from "@/foundation/routing/paths";
-import { redirect } from "@/i18n/routing";
 import { getCheckoutService } from "@/services/checkout";
 
 export const getCheckoutOrRedirect = async (): Promise<Checkout> | never => {
@@ -32,7 +32,7 @@ export const getCheckoutOrRedirect = async (): Promise<Checkout> | never => {
 
   await validateCheckoutLinesAction({
     checkout: resultCheckout.data.checkout,
-    locale: locale as SupportedLocale,
+    locale,
   });
 
   return resultCheckout.data.checkout;
@@ -46,7 +46,7 @@ export const validateCheckoutLinesAction = async ({
   locale,
 }: {
   checkout: Checkout;
-  locale: SupportedLocale;
+  locale: Locale;
 }) => {
   let redirectReason: string | undefined;
 

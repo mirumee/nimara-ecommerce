@@ -84,6 +84,12 @@ export const saleorCheckoutGetInfra =
           thumbnailSize: THUMBNAIL_SIZE_SMALL,
         },
         operationName: "CheckoutFindQuery",
+        options: {
+          next: {
+            tags: [`CHECKOUT:${checkoutId}`],
+            revalidate: 60, // 1 minute
+          },
+        },
       },
     );
 

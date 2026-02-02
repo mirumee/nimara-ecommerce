@@ -7,12 +7,12 @@ import type { Address } from "@nimara/domain/objects/Address";
 import type { Checkout } from "@nimara/domain/objects/Checkout";
 import { displayFormattedAddressLines } from "@nimara/foundation/address/address";
 import type { FormattedAddress } from "@nimara/foundation/address/types";
-import { isGlobalError } from "@nimara/foundation/errors/errors";
 import { RadioFormGroup } from "@nimara/foundation/form-components/radio-form-group";
 import { Button } from "@nimara/ui/components/button";
 import { useToast } from "@nimara/ui/hooks";
 
 import { updateCheckoutAddressAction } from "@/foundation/address/update-checkout-address-action";
+import { isGlobalError } from "@/foundation/errors/errors";
 import { paths } from "@/foundation/routing/paths";
 import { useRouterWithState } from "@/foundation/use-router-with-state";
 

@@ -3,11 +3,8 @@
 import { useTranslations } from "next-intl";
 
 import type { SortByOption } from "@nimara/domain/objects/Search";
-import {
-  useLocalizedPathname,
-  useLocalizedRouter,
-} from "@nimara/foundation/i18n/hooks/use-localized-link";
-import type { TranslationMessage } from "@nimara/foundation/i18n/types";
+import { usePathname, useRouter } from "@nimara/i18n/routing";
+import type { MessagePath } from "@nimara/i18n/types";
 import {
   Select,
   SelectContent,
@@ -27,8 +24,9 @@ export const SearchSortBy = ({
   searchParams: Record<string, string>;
 }) => {
   const t = useTranslations();
-  const router = useLocalizedRouter();
-  const pathname = useLocalizedPathname();
+  const router = useRouter();
+  const pathname = usePathname();
+
   const defaultValue = options.find(
     (option) =>
       option.value === searchParams["sortBy"] || option.value === defaultSortBy,
@@ -64,7 +62,7 @@ export const SearchSortBy = ({
             <SelectGroup>
               {options.map(({ value, messageKey }) => (
                 <SelectItem value={value} key={value}>
-                  {t(messageKey as TranslationMessage)}
+                  {t(messageKey as MessagePath)}
                 </SelectItem>
               ))}
             </SelectGroup>

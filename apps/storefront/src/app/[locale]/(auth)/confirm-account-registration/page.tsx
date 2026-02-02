@@ -1,12 +1,13 @@
+import { type Locale } from "next-intl";
 import { getTranslations } from "next-intl/server";
 
-import type { SupportedLocale } from "@/foundation/regions/types";
+import { redirect } from "@nimara/i18n/routing";
+
 import { paths } from "@/foundation/routing/paths";
-import { redirect } from "@/i18n/routing";
 import { getAuthService } from "@/services/auth";
 
 type PageProps = {
-  params: Promise<{ locale: SupportedLocale }>;
+  params: Promise<{ locale: Locale }>;
   searchParams?: Promise<Record<"email" | "token", string>>;
 };
 

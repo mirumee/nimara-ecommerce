@@ -7,8 +7,6 @@ import {
 import { JsonLd, productToJsonLd } from "@nimara/features/json-ld/json-ld";
 import type { ServiceRegistry } from "@nimara/infrastructure/types";
 
-import { NuqsWrapper } from "./nuqs-wrapper";
-
 export interface ProductProviderProps {
   render: (data: Product, availability: ProductAvailability) => React.ReactNode;
   services: ServiceRegistry;
@@ -41,9 +39,9 @@ export const ProductProvider = async ({
   }
 
   return (
-    <NuqsWrapper>
+    <>
       {render(data.product, data.availability)}
       <JsonLd jsonLd={productToJsonLd(data.product, data?.availability)} />
-    </NuqsWrapper>
+    </>
   );
 };

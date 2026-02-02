@@ -72,7 +72,7 @@ export const graphqlClient = (
     const isCached = !!options?.next?.tags;
 
     if (!isCached && options?.cache !== "no-store") {
-      logger.warning("GraphQL request without caching", {
+      logger.debug("GraphQL request without caching", {
         operationName,
         variables,
       });

@@ -17,5 +17,11 @@ export default defineConfig({
       NODE_ENV: "test",
     },
     setupFiles: ["./src/foundation/tests/setup"],
+    passWithNoTests: true,
+    server: {
+      deps: {
+        inline: ["next-intl"],
+      },
+    },
   },
 });

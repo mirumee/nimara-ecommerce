@@ -2,12 +2,12 @@
 
 import { useTranslations } from "next-intl";
 
-import { type TranslationMessage } from "@nimara/foundation/i18n/types";
+import { LocalizedLink, usePathname } from "@nimara/i18n/routing";
+import { type MessagePath } from "@nimara/i18n/types";
 import { Button } from "@nimara/ui/components/button";
 import { cn } from "@nimara/ui/lib/utils";
 
 import { paths } from "@/foundation/routing/paths";
-import { LocalizedLink, usePathname } from "@/i18n/routing";
 
 import { logout } from "./actions";
 
@@ -18,7 +18,7 @@ export function SideLinks() {
 
   const navLinks: {
     href: string;
-    title: TranslationMessage;
+    title: MessagePath;
   }[] = [
     { title: "account.order-history", href: paths.account.orders.asPath() },
     { title: "account.addresses", href: paths.account.addresses.asPath() },

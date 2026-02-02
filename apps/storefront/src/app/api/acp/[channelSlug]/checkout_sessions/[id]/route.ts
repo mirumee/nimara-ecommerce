@@ -1,10 +1,10 @@
-import { revalidateTag } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
 
 import { checkoutSessionUpdateSchema } from "@nimara/infrastructure/acp/schema";
 import { type ACPError } from "@nimara/infrastructure/acp/types";
 
 import { idempotencyStorage } from "@/features/acp/acp";
+import { revalidateTag } from "@/foundation/cache/cache";
 import { validateChannelParam } from "@/foundation/validate-channel-param";
 import { getACPService } from "@/services/acp";
 import { storefrontLogger } from "@/services/logging";

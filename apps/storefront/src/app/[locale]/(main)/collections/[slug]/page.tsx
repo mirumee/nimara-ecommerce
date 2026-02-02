@@ -1,12 +1,11 @@
 import { generateStandardCollectionMetadata } from "@nimara/features/collection/shared/metadata/standard-metadata";
 import { type CollectionViewProps } from "@nimara/features/collection/shared/types";
 import { StandardCollectionView } from "@nimara/features/collection/shop-basic-collection/standard";
+import { DEFAULT_LOCALE, LOCALE_PREFIXES } from "@nimara/i18n/config";
 
 import { DEFAULT_RESULTS_PER_PAGE } from "@/config";
 import { clientEnvs } from "@/envs/client";
-import { DEFAULT_LOCALE } from "@/foundation/regions/config";
 import { paths } from "@/foundation/routing/paths";
-import { localePrefixes } from "@/i18n/routing";
 import { getServiceRegistry } from "@/services/registry";
 
 export async function generateMetadata(props: CollectionViewProps) {
@@ -37,7 +36,7 @@ export default async function Page(props: CollectionViewProps) {
         collection: (slug) => paths.collections.asPath({ slug }),
         product: (slug) => paths.products.asPath({ slug }),
       }}
-      localePrefixes={localePrefixes}
+      localePrefixes={LOCALE_PREFIXES}
       defaultLocale={DEFAULT_LOCALE}
       defaultResultsPerPage={DEFAULT_RESULTS_PER_PAGE}
     />
