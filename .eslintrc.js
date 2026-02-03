@@ -1,6 +1,7 @@
+/** @type {import("eslint").Linter.Config} */
 module.exports = {
   root: true,
-  extends: ["./packages/eslint-config-custom/base"],
+  extends: ["./packages/config/eslint/base.js"],
   settings: {
     next: {
       rootDir: ["apps/*/"],

@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useEffect, useState, useTransition } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
@@ -14,7 +15,6 @@ import { useToast } from "@nimara/ui/hooks";
 import { useDiscountCodeActions } from "../../hooks";
 import { type DiscountCodeActions } from "../../types";
 import { type FormSchema, formSchema } from "./schema";
-import { useTranslations } from "next-intl";
 
 export interface DiscountCodeProps {
   actions?: DiscountCodeActions;

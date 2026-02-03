@@ -35,8 +35,6 @@
     "@typescript-eslint/parser": "^6.21.0",
     "dotenv": "17.2.3",
     "eslint": "^8.57.0",
-    "eslint-config-custom": "workspace:*",
-    "tsconfig": "workspace:*",
     "typescript": "^5.9.2",
     "vite-tsconfig-paths": "6.0.4",
     "vitest": "4.0.18"

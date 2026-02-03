@@ -1,6 +1,10 @@
+/** @type {import("eslint").Linter.Config} */
 module.exports = {
   $schema: "https://json.schemastore.org/eslintrc.json",
-  extends: ["custom/base", "plugin:playwright/recommended"],
+  extends: [
+    require.resolve("@nimara/config/eslint/base"),
+    "plugin:playwright/recommended",
+  ],
   root: true,
   parserOptions: {
     project: "tsconfig.json",

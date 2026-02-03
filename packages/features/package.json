@@ -16,7 +16,7 @@
     }
   },
   "scripts": {
-    "lint": "eslint . --ext ts,tsx --fix",
+    "lint": "eslint . --ext .js,.ts,.tsx --fix",
     "test": "vitest run",
     "test:watch": "vitest --watch"
   },
@@ -51,8 +51,6 @@
     "@types/react": "^19.2.3",
     "@types/react-dom": "^19.2.3",
     "eslint": "^8.57.0",
-    "eslint-config-custom": "workspace:*",
-    "tsconfig": "workspace:*",
     "typescript": "^5.9.2",
     "vitest": "^4.0.18"
   }

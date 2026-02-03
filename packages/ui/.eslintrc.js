@@ -1,6 +1,6 @@
 module.exports = {
   $schema: "https://json.schemastore.org/eslintrc.json",
-  extends: ["custom/base.js"],
+  extends: [require.resolve("@nimara/config/eslint/base")],
   overrides: [
     {
       files: ["*.tsx"],

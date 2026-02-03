@@ -19,7 +19,6 @@
   "remoteCache": {
     "enabled": true
   },
-  "ui": "stream",
   "tasks": {
     "build": {
       "dependsOn": ["^codegen", "^build"],

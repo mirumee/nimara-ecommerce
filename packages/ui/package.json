@@ -53,9 +53,7 @@
     "@types/react": "^19.2.3",
     "@types/react-dom": "^19.2.3",
     "eslint": "^8.57.0",
-    "eslint-config-custom": "workspace:*",
     "lint-staged": "^16.2.7",
-    "tsconfig": "workspace:*",
     "typescript": "^5.9.2"
   },
   "lint-staged": {
