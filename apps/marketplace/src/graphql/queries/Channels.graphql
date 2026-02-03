@@ -1,0 +1,13 @@
+query Channels {
+  channels {
+    id
+    name
+    slug
+    currencyCode
+    defaultCountry {
+      code
+      country
+    }
+    isActive
+  }
+}

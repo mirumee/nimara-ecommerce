@@ -27,6 +27,7 @@
     "codegen": "dotenv -- turbo run codegen",
     "dev": "dotenv -- turbo run dev",
     "dev:storefront": "pnpm run dev --filter=storefront",
+    "dev:marketplace": "pnpm run dev --filter=marketplace",
     "dev:stripe": "pnpm run dev --filter=stripe",
     "dev:docs": "pnpm run dev --filter=docs",
     "test": "dotenv -- turbo run test",

@@ -1,0 +1,100 @@
+query Product($id: ID!) {
+  product(id: $id) {
+    id
+    name
+    slug
+    description
+    seoTitle
+    seoDescription
+    thumbnail {
+      url
+      alt
+    }
+    media {
+      id
+      url
+      alt
+      type
+    }
+    productType {
+      id
+      name
+    }
+    category {
+      id
+      name
+    }
+    pricing {
+      priceRange {
+        start {
+          gross {
+            amount
+            currency
+          }
+        }
+        stop {
+          gross {
+            amount
+            currency
+          }
+        }
+      }
+    }
+    channelListings {
+      id
+      channel {
+        id
+        name
+      }
+      isPublished
+      visibleInListings
+      availableForPurchase
+      pricing {
+        priceRange {
+          start {
+            gross {
+              amount
+              currency
+            }
+          }
+        }
+      }
+    }
+    variants {
+      id
+      name
+      sku
+      pricing {
+        price {
+          gross {
+            amount
+            currency
+          }
+        }
+      }
+      stocks {
+        warehouse {
+          name
+        }
+        quantity
+        quantityAllocated
+      }
+    }
+    attributes {
+      attribute {
+        id
+        name
+        slug
+      }
+      values {
+        id
+        name
+        slug
+      }
+    }
+    metadata {
+      key
+      value
+    }
+  }
+}

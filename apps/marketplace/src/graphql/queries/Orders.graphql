@@ -1,0 +1,38 @@
+query Orders($first: Int, $after: String, $filter: OrderFilterInput) {
+  orders(first: $first, after: $after, filter: $filter) {
+    edges {
+      node {
+        id
+        number
+        created
+        status
+        paymentStatus
+        total {
+          gross {
+            amount
+            currency
+          }
+        }
+        user {
+          email
+          firstName
+          lastName
+        }
+        shippingAddress {
+          city
+          country {
+            country
+          }
+        }
+      }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    totalCount
+  }
+}

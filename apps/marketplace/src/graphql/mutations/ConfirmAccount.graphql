@@ -1,0 +1,14 @@
+mutation ConfirmAccount($email: String!, $token: String!) {
+  confirmAccount(email: $email, token: $token) {
+    user {
+      id
+      email
+      isActive
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}

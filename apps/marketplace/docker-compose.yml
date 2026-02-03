@@ -1,0 +1,23 @@
+services:
+  # LocalStack for AWS Services
+  localstack:
+    container_name: marketplace-localstack
+    image: localstack/localstack:4.5
+    ports:
+      - "127.0.0.1:4566:4566"
+      - "127.0.0.1:4510-4559:4510-4559"
+    environment:
+      - SERVICES=secretsmanager
+      - DEBUG=${DEBUG:-0}
+      - DATA_DIR=/var/lib/localstack/data
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - AWS_DEFAULT_REGION=ap-southeast-1
+    volumes:
+      - "./localstack:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./etc/commands/init-aws.sh:/etc/localstack/init/ready.d/init-aws.sh"
+    healthcheck:
+      test: ["CMD", "awslocal", "secretsmanager", "list-secrets"]
+      interval: 10s
+      timeout: 5s
+      retries: 5

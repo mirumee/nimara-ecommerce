@@ -1,0 +1,112 @@
+query Order($id: ID!) {
+  order(id: $id) {
+    id
+    number
+    created
+    status
+    paymentStatus
+    total {
+      gross {
+        amount
+        currency
+      }
+      net {
+        amount
+        currency
+      }
+      tax {
+        amount
+        currency
+      }
+    }
+    subtotal {
+      gross {
+        amount
+        currency
+      }
+    }
+    shippingPrice {
+      gross {
+        amount
+        currency
+      }
+    }
+    user {
+      id
+      email
+      firstName
+      lastName
+    }
+    billingAddress {
+      firstName
+      lastName
+      streetAddress1
+      streetAddress2
+      city
+      postalCode
+      country {
+        country
+        code
+      }
+      phone
+    }
+    shippingAddress {
+      firstName
+      lastName
+      streetAddress1
+      streetAddress2
+      city
+      postalCode
+      country {
+        country
+        code
+      }
+      phone
+    }
+    lines {
+      id
+      productName
+      variantName
+      productSku
+      quantity
+      unitPrice {
+        gross {
+          amount
+          currency
+        }
+      }
+      totalPrice {
+        gross {
+          amount
+          currency
+        }
+      }
+      thumbnail {
+        url
+        alt
+      }
+    }
+    events {
+      id
+      date
+      type
+      message
+      user {
+        email
+      }
+    }
+    fulfillments {
+      id
+      status
+      created
+      trackingNumber
+      lines {
+        id
+        quantity
+        orderLine {
+          productName
+        }
+      }
+    }
+  }
+}
