@@ -5,19 +5,18 @@ import { revalidatePath } from "next/cache";
 import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { type AsyncResult, ok } from "@nimara/domain/objects/Result";
 
+import { updateDeliveryMethodAction } from "@/foundation/checkout/update-delivery-method-action";
 import { paths } from "@/foundation/routing/paths";
-import { getCheckoutService } from "@/services/checkout";
 
 export const updateDeliveryMethod = async ({
   deliveryMethodId,
-  checkout,
+  checkoutId,
 }: {
-  checkout: Checkout;
+  checkoutId: Checkout["id"];
   deliveryMethodId: string;
 }): AsyncResult<{ redirectUrl: string }> => {
-  const checkoutService = await getCheckoutService();
-  const result = await checkoutService.deliveryMethodUpdate({
-    checkout,
+  const result = await updateDeliveryMethodAction({
+    checkoutId,
     deliveryMethodId,
   });
 

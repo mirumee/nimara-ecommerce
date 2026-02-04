@@ -12,11 +12,10 @@ type Params = {
 const baseShippingAddressSchema = (params: Params) => addressSchema(params);
 
 export const createShippingAddressSchema = (params: Params) =>
-  baseShippingAddressSchema(params).merge(
-    z.object({
-      saveForFutureUse: z.boolean(),
-    }),
-  );
+  z.object({
+    ...baseShippingAddressSchema(params).shape,
+    saveForFutureUse: z.boolean(),
+  });
 export type CreateShippingAddressSchema = z.infer<
   ReturnType<typeof createShippingAddressSchema>
 >;

@@ -4,8 +4,9 @@ import { type AllCountryCode } from "@nimara/domain/consts";
 import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { schemaToAddress } from "@nimara/foundation/address/address";
 
-import { updateCheckoutAddressAction } from "@/foundation/address/update-checkout-address-action";
-import { getServiceRegistry } from "@/services/registry";
+import { createAddressAction } from "@/foundation/address/create-address-action";
+import { updateCheckoutAddressAction } from "@/foundation/checkout/update-checkout-address-action";
+import { storefrontLogger } from "@/services/logging";
 import { getAccessToken } from "@/services/tokens";
 
 import { type Schema } from "./schema";
@@ -25,24 +26,26 @@ export async function updateBillingAddress({
     address: sameAsShippingAddress
       ? checkout.shippingAddress!
       : schemaToAddress(billingAddress!),
-    type: "billing",
+    type: "BILLING",
   });
 
   if (saveAddressForFutureUse) {
-    const [accessToken, services] = await Promise.all([
-      getAccessToken(),
-      getServiceRegistry(),
-    ]);
-    const userService = await services.getUserService();
+    const accessToken = await getAccessToken();
 
-    await userService.accountAddressCreate({
-      accessToken,
-      input: {
-        ...billingAddress,
-        country: billingAddress?.country as AllCountryCode,
-      },
-      type: "BILLING",
-    });
+    if (accessToken) {
+      await createAddressAction({
+        accessToken,
+        address: {
+          ...billingAddress,
+          country: billingAddress?.country as AllCountryCode,
+        },
+        type: "BILLING",
+      });
+    } else {
+      storefrontLogger.error(
+        "Access token not found while creating checkout billing address. Skipping address creation.",
+      );
+    }
   }
 
   return result;

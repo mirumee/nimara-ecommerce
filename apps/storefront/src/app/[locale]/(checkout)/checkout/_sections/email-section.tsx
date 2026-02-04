@@ -6,8 +6,8 @@ import { LocalizedLink } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
 
 import { paths } from "@/foundation/routing/paths";
-import { getCheckoutService } from "@/services/checkout";
 import { storefrontLogger } from "@/services/logging";
+import { getServiceRegistry } from "@/services/registry";
 
 export const EmailSection = async ({
   checkout,
@@ -19,7 +19,9 @@ export const EmailSection = async ({
   const t = await getTranslations();
 
   if (!checkout?.email && user) {
-    const checkoutService = await getCheckoutService();
+    const services = await getServiceRegistry();
+    const checkoutService = await services.getCheckoutService();
+
     const result = await checkoutService.checkoutEmailUpdate({
       checkout,
       email: user.email,

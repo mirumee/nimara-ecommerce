@@ -8,7 +8,6 @@ import { CACHE_TTL } from "@/config";
 import { getCheckoutId, setCheckoutIdCookie } from "@/features/checkout/cart";
 import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
-import { getCheckoutService } from "@/services/checkout";
 import { errorService } from "@/services/error";
 import { getServiceRegistry } from "@/services/registry";
 import { getAccessToken } from "@/services/tokens";
@@ -29,14 +28,15 @@ export async function login({
       redirect: false,
     });
 
-    const [accessToken, checkoutId, services, checkoutService] =
-      await Promise.all([
-        getAccessToken(),
-        getCheckoutId(),
-        getServiceRegistry(),
-        getCheckoutService(),
-      ]);
-    const userService = await services.getUserService();
+    const [accessToken, checkoutId, services] = await Promise.all([
+      getAccessToken(),
+      getCheckoutId(),
+      getServiceRegistry(),
+    ]);
+    const [checkoutService, userService] = await Promise.all([
+      services.getCheckoutService(),
+      services.getUserService(),
+    ]);
 
     const resultUserGet = await userService.userGet(accessToken);
     const user = resultUserGet.ok ? resultUserGet.data : null;

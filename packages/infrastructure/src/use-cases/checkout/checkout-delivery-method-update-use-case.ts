@@ -1,5 +1,4 @@
 import type { Checkout } from "@nimara/domain/objects/Checkout";
-import { ok } from "@nimara/domain/objects/Result";
 
 import type {
   CheckoutDeliveryMethodUpdateInfra,
@@ -12,18 +11,14 @@ export const deliveryMethodUpdateUseCase = ({
   deliveryMethodUpdateInfra: CheckoutDeliveryMethodUpdateInfra;
 }): CheckoutDeliveryMethodUpdateUseCase => {
   return async ({
-    checkout,
+    checkoutId,
     deliveryMethodId,
   }: {
-    checkout: Checkout;
+    checkoutId: Checkout["id"];
     deliveryMethodId: string;
   }) => {
-    if (checkout.deliveryMethod?.id === deliveryMethodId) {
-      return ok({ success: true });
-    }
-
     return deliveryMethodUpdateInfra({
-      checkout,
+      checkoutId,
       deliveryMethodId,
     });
   };

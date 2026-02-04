@@ -9,7 +9,6 @@ import { serverEnvs } from "@/envs/server";
 import { getCheckoutOrRedirect } from "@/features/checkout/checkout-actions";
 import { getCurrentRegion } from "@/foundation/regions";
 import { getStoreUrl } from "@/foundation/server";
-import { getAddressService } from "@/services/address";
 import { getPaymentService } from "@/services/payment";
 import { getServiceRegistry } from "@/services/registry";
 import { getAccessToken } from "@/services/tokens";
@@ -38,7 +37,6 @@ export default async function Page(props: PageProps) {
     accessToken,
     storeUrl,
     services,
-    addressService,
   ] = await Promise.all([
     props.params,
     props.searchParams,
@@ -47,8 +45,8 @@ export default async function Page(props: PageProps) {
     getAccessToken(),
     getStoreUrl(),
     getServiceRegistry(),
-    getAddressService(),
   ]);
+  const addressService = await services.getAddressService();
   const userService = await services.getUserService();
 
   const resultUserGet = await userService.userGet(accessToken);

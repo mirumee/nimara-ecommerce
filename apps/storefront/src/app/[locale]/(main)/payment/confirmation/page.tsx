@@ -5,8 +5,8 @@ import { redirect } from "@nimara/i18n/routing";
 
 import { getCheckoutOrRedirect } from "@/features/checkout/checkout-actions";
 import { paths, QUERY_PARAMS } from "@/foundation/routing/paths";
-import { getCheckoutService } from "@/services/checkout";
 import { getPaymentService } from "@/services/payment";
+import { getServiceRegistry } from "@/services/registry";
 
 import { ProcessingInfo } from "./components/processing-info";
 
@@ -32,7 +32,8 @@ export default async function Page(props: PageProps) {
   });
 
   if (resultPaymentProcess.data?.success) {
-    const checkoutService = await getCheckoutService();
+    const services = await getServiceRegistry();
+    const checkoutService = await services.getCheckoutService();
     const resultOrderCreate = await checkoutService.orderCreate({
       id: checkout.id,
     });

@@ -6,8 +6,10 @@ import { type AllCountryCode } from "@nimara/domain/consts";
 import type { Checkout } from "@nimara/domain/objects/Checkout";
 import { schemaToAddress } from "@nimara/foundation/address/address";
 
-import { updateCheckoutAddressAction } from "@/foundation/address/update-checkout-address-action";
+import { createAddressAction } from "@/foundation/address/create-address-action";
+import { updateCheckoutAddressAction } from "@/foundation/checkout/update-checkout-address-action";
 import { paths } from "@/foundation/routing/paths";
+import { storefrontLogger } from "@/services/logging";
 import { getServiceRegistry } from "@/services/registry";
 import { getAccessToken } from "@/services/tokens";
 
@@ -46,6 +48,12 @@ export async function accountAddressUpdateAction({
   return data;
 }
 
+/**
+ * Creates a new shipping address for the checkout.
+ * @param checkoutId - The ID of the checkout.
+ * @param input - The input data for the shipping address.
+ * @returns A promise that resolves to the result of the action.
+ */
 export async function createCheckoutShippingAddress({
   checkoutId,
   input: { saveForFutureUse, ...input },
@@ -56,21 +64,30 @@ export async function createCheckoutShippingAddress({
   const result = await updateCheckoutAddressAction({
     checkoutId,
     address: schemaToAddress(input),
-    type: "shipping",
+    type: "SHIPPING",
   });
 
   if (saveForFutureUse) {
-    const [accessToken, services] = await Promise.all([
-      getAccessToken(),
-      getServiceRegistry(),
-    ]);
-    const userService = await services.getUserService();
+    const accessToken = await getAccessToken();
 
-    await userService.accountAddressCreate({
-      accessToken,
-      input: { ...input, country: input.country as AllCountryCode },
-      type: "SHIPPING",
-    });
+    if (accessToken) {
+      const createAddressResult = await createAddressAction({
+        accessToken,
+        address: schemaToAddress(input),
+        type: "SHIPPING",
+      });
+
+      if (!createAddressResult.ok) {
+        storefrontLogger.error(
+          "Error while creating checkout shipping address.",
+          { result: createAddressResult },
+        );
+      }
+    } else {
+      storefrontLogger.error(
+        "Access token not found while creating checkout shipping address. Skipping address creation.",
+      );
+    }
   }
 
   revalidatePath(paths.checkout.shippingAddress.asPath());

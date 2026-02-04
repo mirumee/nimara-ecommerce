@@ -7,7 +7,7 @@ import { LocalizedLink } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
 
 import { paths } from "@/foundation/routing/paths";
-import { getAddressService } from "@/services/address";
+import { getServiceRegistry } from "@/services/registry";
 
 export async function ShippingAddressSection({
   checkout,
@@ -32,7 +32,8 @@ export async function ShippingAddressSection({
 
   const { shippingAddress } = checkout;
 
-  const addressService = await getAddressService();
+  const services = await getServiceRegistry();
+  const addressService = await services.getAddressService();
   const result = await addressService.addressFormat({
     variables: { address: shippingAddress },
     locale,
