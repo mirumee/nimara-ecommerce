@@ -29,14 +29,14 @@
     "@nimara/i18n": "workspace:*",
     "@nimara/ui": "workspace:*",
     "@types/negotiator": "0.6.4",
-    "@types/react": "^19.2.3",
+    "@types/react": "^19.2.11",
     "@types/react-dom": "^19.2.3",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "dotenv": "17.2.3",
     "eslint": "^8.57.0",
     "typescript": "^5.9.2",
-    "vite-tsconfig-paths": "6.0.4",
+    "vite-tsconfig-paths": "6.0.5",
     "vitest": "4.0.18"
   },
   "lint-staged": {

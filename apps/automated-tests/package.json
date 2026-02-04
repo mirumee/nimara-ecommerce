@@ -8,8 +8,8 @@
   },
   "devDependencies": {
     "@nimara/config": "workspace:*",
-    "@playwright/test": "^1.56.1",
-    "@types/node": "^22.19.0",
+    "@playwright/test": "^1.58.1",
+    "@types/node": "^22.19.8",
     "dotenv": "17.2.3",
     "eslint": "^8.57.0",
     "eslint-plugin-playwright": "^2.3.0",
