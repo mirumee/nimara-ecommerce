@@ -1,6 +1,8 @@
 import type { Region } from "@nimara/foundation/regions/types.js";
 
-import { type CartService } from "./cart/types";
+import type { AddressService } from "./address/types";
+import type { CartService } from "./cart/types";
+import type { CheckoutService } from "./checkout/types";
 import type { CollectionService } from "./collection/types";
 import type { Logger } from "./logging/types";
 import type { StoreService } from "./store/types";
@@ -24,6 +26,12 @@ export interface ServiceRegistry {
     };
   };
   /**
+   * Gets the address service, initializing it lazily on first access.
+   * The service is cached after first initialization.
+   * @returns A promise that resolves to the address service instance
+   */
+  getAddressService(): Promise<AddressService>;
+  /**
    * Gets the CMS menu service, initializing it lazily on first access.
    * The service is cached after first initialization.
    * @returns A promise that resolves to the CMS menu service instance
@@ -41,6 +49,12 @@ export interface ServiceRegistry {
    * @returns A promise that resolves to the cart service instance
    */
   getCartService(): Promise<CartService>;
+  /**
+   * Gets the checkout service, initializing it lazily on first access.
+   * The service is cached after first initialization.
+   * @returns A promise that resolves to the checkout service instance
+   */
+  getCheckoutService(): Promise<CheckoutService>;
   /**
    * Gets the collection service, initializing it lazily on first access.
    * The service is cached after first initialization.

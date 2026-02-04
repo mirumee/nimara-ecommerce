@@ -7,7 +7,6 @@ import { type Address } from "@nimara/domain/objects/Address";
 import { displayFormattedAddressLines } from "@nimara/foundation/address/address";
 
 import { getCurrentRegion } from "@/foundation/regions";
-import { getAddressService } from "@/services/address";
 import { getServiceRegistry } from "@/services/registry";
 import { getAccessToken } from "@/services/tokens";
 
@@ -22,16 +21,16 @@ type PageProps = {
 export default async function Page(props: PageProps) {
   const { locale } = await props.params;
   const searchParams = await props.searchParams;
-  const [accessToken, services, addressService] = await Promise.all([
+  const [accessToken, services] = await Promise.all([
     getAccessToken(),
     getServiceRegistry(),
-    getAddressService(),
   ]);
   const userService = await services.getUserService();
-  const [t, region, resultUserAddresses] = await Promise.all([
+  const [t, region, resultUserAddresses, addressService] = await Promise.all([
     getTranslations(),
     getCurrentRegion(),
     userService.addressesGet({ variables: { accessToken } }),
+    services.getAddressService(),
   ]);
 
   const savedAddresses = resultUserAddresses.data ?? [];

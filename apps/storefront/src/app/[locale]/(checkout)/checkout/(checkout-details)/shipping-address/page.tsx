@@ -8,7 +8,6 @@ import {
 
 import { getCheckoutOrRedirect } from "@/features/checkout/checkout-actions";
 import { getCurrentRegion } from "@/foundation/regions";
-import { getAddressService } from "@/services/address";
 import { getServiceRegistry } from "@/services/registry";
 import { getAccessToken } from "@/services/tokens";
 
@@ -25,26 +24,17 @@ type PageProps = {
 };
 
 export default async function Page(props: PageProps) {
-  const [
-    { locale },
-    searchParams,
-    region,
-    checkout,
-    accessToken,
-    services,
-    addressService,
-  ] = await Promise.all([
-    props.params,
-    props.searchParams,
-    getCurrentRegion(),
-    getCheckoutOrRedirect(),
-    getAccessToken(),
-    getServiceRegistry(),
-    getAddressService(),
-  ]);
-
+  const [{ locale }, searchParams, region, checkout, accessToken, services] =
+    await Promise.all([
+      props.params,
+      props.searchParams,
+      getCurrentRegion(),
+      getCheckoutOrRedirect(),
+      getAccessToken(),
+      getServiceRegistry(),
+    ]);
+  const addressService = await services.getAddressService();
   const userService = await services.getUserService();
-
   const resultUserGet = await userService.userGet(accessToken);
 
   const user = resultUserGet.ok ? resultUserGet.data : null;

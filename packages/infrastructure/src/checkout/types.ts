@@ -1,4 +1,4 @@
-import type { Address } from "@nimara/domain/objects/Address";
+import type { AddressCreateInput } from "@nimara/domain/objects/Address";
 import type { Checkout } from "@nimara/domain/objects/Checkout";
 import { type AsyncResult } from "@nimara/domain/objects/Result";
 
@@ -19,7 +19,7 @@ export type CheckoutEmailUpdateInfra = (
 export type CheckoutEmailUpdateUseCase = CheckoutEmailUpdateInfra;
 
 export type CheckoutDeliveryMethodOptions = {
-  checkout: Checkout;
+  checkoutId: Checkout["id"];
   deliveryMethodId: string;
 } & WithFetchOptions;
 
@@ -62,7 +62,7 @@ export type OrderCreateInfra = (opts: { id: string }) => AsyncResult<{
 export type OrderCreateUseCase = OrderCreateInfra;
 
 export type CheckoutBillingAddressUpdateInfra = (opts: {
-  address: Partial<Omit<Address, "id">>;
+  address: Partial<AddressCreateInput>;
   checkoutId: string;
 }) => AsyncResult<{ success: true }>;
 

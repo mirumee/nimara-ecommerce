@@ -1,7 +1,6 @@
 import { type Locale } from "next-intl";
 
 import { getCheckoutOrRedirect } from "@/features/checkout/checkout-actions";
-import { getCheckoutService } from "@/services/checkout";
 import { getServiceRegistry } from "@/services/registry";
 import { getAccessToken } from "@/services/tokens";
 
@@ -26,7 +25,7 @@ export default async function Page(props: PageProps) {
   const resultUserGet = await userService.userGet(accessToken);
 
   if (resultUserGet?.data) {
-    const checkoutService = await getCheckoutService();
+    const checkoutService = await services.getCheckoutService();
 
     await checkoutService.checkoutCustomerAttach({
       accessToken,

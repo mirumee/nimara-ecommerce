@@ -4,8 +4,8 @@ import type { Checkout } from "@nimara/domain/objects/Checkout";
 import { type AsyncResult, ok } from "@nimara/domain/objects/Result";
 
 import { serverEnvs } from "@/envs/server";
+import { updateCheckoutEmailAction } from "@/foundation/checkout/update-checkout-email-action";
 import { paths } from "@/foundation/routing/paths";
-import { getCheckoutService } from "@/services/checkout";
 import { getServiceRegistry } from "@/services/registry";
 
 import type { EmailFormSchema } from "./schema";
@@ -28,10 +28,9 @@ export const updateUserDetails = async ({
   checkout: Checkout;
   email: EmailFormSchema["email"];
 }): AsyncResult<{ redirectUrl: string }> => {
-  const checkoutService = await getCheckoutService();
-  const result = await checkoutService.checkoutEmailUpdate({
+  const result = await updateCheckoutEmailAction({
     checkout,
-    email: email,
+    email,
   });
 
   if (result.ok) {

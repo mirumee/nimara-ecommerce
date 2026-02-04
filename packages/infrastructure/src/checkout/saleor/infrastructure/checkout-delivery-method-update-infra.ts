@@ -15,12 +15,12 @@ export const saleorDeliveryMethodUpdateInfra =
     apiURL,
     logger,
   }: SaleorCheckoutServiceConfig): CheckoutDeliveryMethodUpdateInfra =>
-  async ({ checkout, deliveryMethodId }: CheckoutDeliveryMethodOptions) => {
+  async ({ checkoutId, deliveryMethodId }: CheckoutDeliveryMethodOptions) => {
     const result = await graphqlClient(apiURL).execute(
       CheckoutDeliveryMethodUpdateMutationDocument,
       {
         variables: {
-          checkoutId: checkout.id,
+          checkoutId,
           deliveryMethodId,
         },
         operationName: "CheckoutDeliveryMethodUpdateMutation",
@@ -30,7 +30,7 @@ export const saleorDeliveryMethodUpdateInfra =
     if (!result.ok) {
       logger.error("Failed to update delivery method", {
         error: result.errors,
-        checkoutId: checkout.id,
+        checkoutId,
       });
 
       return result;
@@ -39,7 +39,7 @@ export const saleorDeliveryMethodUpdateInfra =
     if (result.data?.checkoutDeliveryMethodUpdate?.errors?.length) {
       logger.error("Failed to update delivery method", {
         error: result.data?.checkoutDeliveryMethodUpdate?.errors,
-        checkoutId: checkout.id,
+        checkoutId,
       });
 
       return err(

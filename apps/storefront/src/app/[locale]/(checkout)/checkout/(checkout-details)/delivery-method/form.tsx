@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFormatter, useTranslations } from "next-intl";
 import { Fragment } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, type SubmitHandler, useForm } from "react-hook-form";
 
 import type { Checkout } from "@nimara/domain/objects/Checkout";
 import { RadioFormGroup } from "@nimara/foundation/form-components/radio-form-group";
@@ -14,7 +14,7 @@ import { isGlobalError } from "@/foundation/errors/errors";
 import { useRouterWithState } from "@/foundation/use-router-with-state";
 
 import { updateDeliveryMethod } from "./_actions/update-delivery-method";
-import { type FormSchema, formSchema } from "./schema";
+import { type DeliveryMethodSchema, deliveryMethodSchema } from "./schema";
 
 const DELIVERY_METHOD_ID = "deliveryMethodId";
 
@@ -23,8 +23,8 @@ export const DeliveryMethodForm = ({ checkout }: { checkout: Checkout }) => {
   const formatter = useFormatter();
   const { isRedirecting, push } = useRouterWithState();
 
-  const form = useForm<FormSchema>({
-    resolver: zodResolver(formSchema({ t })),
+  const form = useForm<DeliveryMethodSchema>({
+    resolver: zodResolver(deliveryMethodSchema({ t })),
     defaultValues: {
       deliveryMethodId:
         checkout.deliveryMethod?.id ?? checkout.shippingMethods?.[0].id,
@@ -33,10 +33,16 @@ export const DeliveryMethodForm = ({ checkout }: { checkout: Checkout }) => {
 
   const isDisabled = isRedirecting || form.formState?.isSubmitting;
 
-  const handleSubmit = async (deliveryMethod: FormSchema) => {
+  const handleSubmit: SubmitHandler<DeliveryMethodSchema> = async ({
+    deliveryMethodId,
+  }) => {
+    if (checkout.deliveryMethod?.id === deliveryMethodId) {
+      return;
+    }
+
     const result = await updateDeliveryMethod({
-      checkout,
-      deliveryMethodId: deliveryMethod.deliveryMethodId,
+      checkoutId: checkout.id,
+      deliveryMethodId,
     });
 
     if (result.ok) {
@@ -47,7 +53,7 @@ export const DeliveryMethodForm = ({ checkout }: { checkout: Checkout }) => {
 
     result.errors.forEach(({ field, code }) => {
       if (field) {
-        form.setError(field as keyof FormSchema, {
+        form.setError(field as keyof DeliveryMethodSchema, {
           message: t(`errors.${code}`),
         });
       } else if (isGlobalError(field)) {

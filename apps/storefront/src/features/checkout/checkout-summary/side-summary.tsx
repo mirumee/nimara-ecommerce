@@ -8,7 +8,7 @@ import { getCheckoutId } from "@/features/checkout/cart";
 import { ErrorDialog } from "@/foundation/errors/components/error-dialog";
 import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
-import { getCheckoutService } from "@/services/checkout";
+import { getServiceRegistry } from "@/services/registry";
 
 import { Summary } from "./summary";
 
@@ -24,7 +24,8 @@ export const SideSummary = async () => {
     redirect({ href: paths.cart.asPath(), locale });
   }
 
-  const checkoutService = await getCheckoutService();
+  const services = await getServiceRegistry();
+  const checkoutService = await services.getCheckoutService();
   const resultCheckout = await checkoutService.checkoutGet({
     checkoutId,
     languageCode: region.language.code,

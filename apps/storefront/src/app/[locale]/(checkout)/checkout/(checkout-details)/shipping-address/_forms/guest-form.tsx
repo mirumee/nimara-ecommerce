@@ -19,7 +19,7 @@ import { ADDRESS_CORE_FIELDS } from "@nimara/infrastructure/consts";
 import { Button } from "@nimara/ui/components/button";
 import { useToast } from "@nimara/ui/hooks";
 
-import { updateCheckoutAddressAction } from "@/foundation/address/update-checkout-address-action";
+import { updateCheckoutAddressAction } from "@/foundation/checkout/update-checkout-address-action";
 import { isGlobalError } from "@/foundation/errors/errors";
 import { paths } from "@/foundation/routing/paths";
 import { useRouterWithState } from "@/foundation/use-router-with-state";
@@ -61,7 +61,7 @@ export function ShippingAddressForm({
     const result = await updateCheckoutAddressAction({
       checkoutId: checkout.id,
       address: schemaToAddress(input),
-      type: "shipping",
+      type: "SHIPPING",
     });
 
     if (result.ok) {

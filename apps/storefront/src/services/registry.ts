@@ -3,6 +3,8 @@ import type { ServiceRegistry } from "@nimara/infrastructure/types";
 
 import { CACHE_TTL } from "@/config";
 import { getCurrentRegion } from "@/foundation/regions";
+import { createAddressServiceLoader } from "@/services/lazy-loaders/address";
+import { createCheckoutServiceLoader } from "@/services/lazy-loaders/checkout";
 import { getAccessToken } from "@/services/tokens";
 
 import { createCartServiceLoader } from "./lazy-loaders/cart";
@@ -28,37 +30,38 @@ export const getServiceRegistry = async (): Promise<ServiceRegistry> => {
     return serviceRegistryInstance;
   }
 
+  const accessToken = await getAccessToken();
   const config = {
     cacheTTL: CACHE_TTL,
   };
-
+  const logger = getLogger({ name: "storefront" });
   const region = await getCurrentRegion();
 
-  const accessToken = await getAccessToken();
-
-  const logger = getLogger({ name: "storefront" });
-
   // Create lazy loaders for each service
-  const getStoreService = createStoreServiceLoader(logger);
+  const getAddressService = createAddressServiceLoader(logger);
   const getCartService = createCartServiceLoader(logger);
-  const getUserService = createUserServiceLoader(logger);
-  const getSearchService = createSearchServiceLoader(logger);
-  const getCMSPageService = createCMSPageServiceLoader(logger);
+  const getCheckoutService = createCheckoutServiceLoader(logger);
   const getCMSMenuService = createCMSMenuServiceLoader(logger);
+  const getCMSPageService = createCMSPageServiceLoader(logger);
   const getCollectionService = createCollectionServiceLoader(logger);
+  const getSearchService = createSearchServiceLoader(logger);
+  const getStoreService = createStoreServiceLoader(logger);
+  const getUserService = createUserServiceLoader(logger);
 
   serviceRegistryInstance = {
-    config,
     accessToken,
-    region,
+    config,
     logger,
-    getStoreService,
+    region,
+    getAddressService,
     getCartService,
-    getUserService,
-    getSearchService,
-    getCMSPageService,
+    getCheckoutService,
     getCMSMenuService,
+    getCMSPageService,
     getCollectionService,
+    getSearchService,
+    getStoreService,
+    getUserService,
   };
 
   return serviceRegistryInstance;
