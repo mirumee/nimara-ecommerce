@@ -3,8 +3,8 @@ node_modules
 .pnpm-debug.log
 
 # Next.js
-.next
-out
+/.next/
+/out/
 
 # Production
 build
@@ -43,6 +43,10 @@ yarn-error.log*
 
 # Misc
 *.log
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
 
 # Original vendor panel directories
 nimara-vendor-panel/
