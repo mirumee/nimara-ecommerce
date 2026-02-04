@@ -1,22 +1,114 @@
 import type * as Types from '@nimara/codegen/schema';
 
 import type { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
+export type Channels_channels_Channel_defaultCountry_CountryDisplay = { code: string, country: string };
+
+export type Channels_channels_Channel = { id: string, name: string, slug: string, currencyCode: string, isActive: boolean, defaultCountry: Channels_channels_Channel_defaultCountry_CountryDisplay };
+
+export type Channels_Query = { channels: Array<Channels_channels_Channel> | null };
+
+
 export type ChannelsVariables = Types.Exact<{ [key: string]: never; }>;
 
 
-export type Channels = { __typename?: 'Query', channels?: Array<{ __typename?: 'Channel', id: string, name: string, slug: string, currencyCode: string, isActive: boolean, defaultCountry?: { __typename?: 'Country', code: string, country: string } | null }> | null };
+export type Channels = Channels_Query;
+
+export type Me_me_User_metadata_MetadataItem = { key: string, value: string };
+
+export type Me_me_User_addresses_Address_country_CountryDisplay = { country: string, code: string };
+
+export type Me_me_User_addresses_Address = { id: string, firstName: string, lastName: string, streetAddress1: string, streetAddress2: string, city: string, postalCode: string, phone: string | null, isDefaultBillingAddress: boolean | null, isDefaultShippingAddress: boolean | null, country: Me_me_User_addresses_Address_country_CountryDisplay };
+
+export type Me_me_User = { id: string, email: string, firstName: string, lastName: string, metadata: Array<Me_me_User_metadata_MetadataItem>, addresses: Array<Me_me_User_addresses_Address> };
+
+export type Me_Query = { me: Me_me_User | null };
+
 
 export type MeVariables = Types.Exact<{ [key: string]: never; }>;
 
 
-export type Me = { __typename?: 'Query', me?: { __typename?: 'User', id: string, email?: string | null, firstName?: string | null, lastName?: string | null, metadata?: Array<{ __typename?: 'MetadataItem', key: string, value: string }> | null, addresses?: Array<{ __typename?: 'Address', id: string, firstName?: string | null, lastName?: string | null, streetAddress1?: string | null, streetAddress2?: string | null, city?: string | null, postalCode?: string | null, phone?: string | null, isDefaultBillingAddress?: boolean | null, isDefaultShippingAddress?: boolean | null, country?: { __typename?: 'Country', country: string, code: string } | null } | null> | null } | null };
+export type Me = Me_Query;
+
+export type Order_order_Order_total_TaxedMoney_gross_Money = { amount: number, currency: string };
+
+export type Order_order_Order_total_TaxedMoney_net_Money = { amount: number, currency: string };
+
+export type Order_order_Order_total_TaxedMoney_tax_Money = { amount: number, currency: string };
+
+export type Order_order_Order_total_TaxedMoney = { gross: Order_order_Order_total_TaxedMoney_gross_Money, net: Order_order_Order_total_TaxedMoney_net_Money, tax: Order_order_Order_total_TaxedMoney_tax_Money };
+
+export type Order_order_Order_subtotal_TaxedMoney_gross_Money = { amount: number, currency: string };
+
+export type Order_order_Order_subtotal_TaxedMoney = { gross: Order_order_Order_subtotal_TaxedMoney_gross_Money };
+
+export type Order_order_Order_shippingPrice_TaxedMoney_gross_Money = { amount: number, currency: string };
+
+export type Order_order_Order_shippingPrice_TaxedMoney = { gross: Order_order_Order_shippingPrice_TaxedMoney_gross_Money };
+
+export type Order_order_Order_user_User = { id: string, email: string, firstName: string, lastName: string };
+
+export type Order_order_Order_billingAddress_Address_country_CountryDisplay = { country: string, code: string };
+
+export type Order_order_Order_billingAddress_Address = { firstName: string, lastName: string, streetAddress1: string, streetAddress2: string, city: string, postalCode: string, phone: string | null, country: Order_order_Order_billingAddress_Address_country_CountryDisplay };
+
+export type Order_order_Order_shippingAddress_Address_country_CountryDisplay = { country: string, code: string };
+
+export type Order_order_Order_shippingAddress_Address = { firstName: string, lastName: string, streetAddress1: string, streetAddress2: string, city: string, postalCode: string, phone: string | null, country: Order_order_Order_shippingAddress_Address_country_CountryDisplay };
+
+export type Order_order_Order_lines_OrderLine_unitPrice_TaxedMoney_gross_Money = { amount: number, currency: string };
+
+export type Order_order_Order_lines_OrderLine_unitPrice_TaxedMoney = { gross: Order_order_Order_lines_OrderLine_unitPrice_TaxedMoney_gross_Money };
+
+export type Order_order_Order_lines_OrderLine_totalPrice_TaxedMoney_gross_Money = { amount: number, currency: string };
+
+export type Order_order_Order_lines_OrderLine_totalPrice_TaxedMoney = { gross: Order_order_Order_lines_OrderLine_totalPrice_TaxedMoney_gross_Money };
+
+export type Order_order_Order_lines_OrderLine_thumbnail_Image = { url: string, alt: string | null };
+
+export type Order_order_Order_lines_OrderLine = { id: string, productName: string, variantName: string, productSku: string | null, quantity: number, unitPrice: Order_order_Order_lines_OrderLine_unitPrice_TaxedMoney, totalPrice: Order_order_Order_lines_OrderLine_totalPrice_TaxedMoney, thumbnail: Order_order_Order_lines_OrderLine_thumbnail_Image | null };
+
+export type Order_order_Order_events_OrderEvent_user_User = { email: string };
+
+export type Order_order_Order_events_OrderEvent = { id: string, date: string | null, type: Types.OrderEventsEnum | null, message: string | null, user: Order_order_Order_events_OrderEvent_user_User | null };
+
+export type Order_order_Order_fulfillments_Fulfillment_lines_FulfillmentLine_orderLine_OrderLine = { productName: string };
+
+export type Order_order_Order_fulfillments_Fulfillment_lines_FulfillmentLine = { id: string, quantity: number, orderLine: Order_order_Order_fulfillments_Fulfillment_lines_FulfillmentLine_orderLine_OrderLine | null };
+
+export type Order_order_Order_fulfillments_Fulfillment = { id: string, status: Types.FulfillmentStatus, created: string, trackingNumber: string, lines: Array<Order_order_Order_fulfillments_Fulfillment_lines_FulfillmentLine> | null };
+
+export type Order_order_Order = { id: string, number: string, created: string, status: Types.OrderStatus, paymentStatus: Types.PaymentChargeStatusEnum, total: Order_order_Order_total_TaxedMoney, subtotal: Order_order_Order_subtotal_TaxedMoney, shippingPrice: Order_order_Order_shippingPrice_TaxedMoney, user: Order_order_Order_user_User | null, billingAddress: Order_order_Order_billingAddress_Address | null, shippingAddress: Order_order_Order_shippingAddress_Address | null, lines: Array<Order_order_Order_lines_OrderLine>, events: Array<Order_order_Order_events_OrderEvent>, fulfillments: Array<Order_order_Order_fulfillments_Fulfillment> };
+
+export type Order_Query = { order: Order_order_Order | null };
+
 
 export type OrderVariables = Types.Exact<{
   id: Types.Scalars['ID']['input'];
 }>;
 
 
-export type Order = { __typename?: 'Query', order?: { __typename?: 'Order', id: string, number?: string | null, created?: string | null, status: string, paymentStatus: string, total: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string }, net: { __typename?: 'Money', amount: number, currency: string }, tax: { __typename?: 'Money', amount: number, currency: string } }, subtotal: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, shippingPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, user?: { __typename?: 'User', id: string, email?: string | null, firstName?: string | null, lastName?: string | null } | null, billingAddress?: { __typename?: 'Address', firstName?: string | null, lastName?: string | null, streetAddress1?: string | null, streetAddress2?: string | null, city?: string | null, postalCode?: string | null, phone?: string | null, country?: { __typename?: 'Country', country: string, code: string } | null } | null, shippingAddress?: { __typename?: 'Address', firstName?: string | null, lastName?: string | null, streetAddress1?: string | null, streetAddress2?: string | null, city?: string | null, postalCode?: string | null, phone?: string | null, country?: { __typename?: 'Country', country: string, code: string } | null } | null, lines: Array<{ __typename?: 'OrderLine', id: string, productName: string, variantName?: string | null, productSku?: string | null, quantity: number, unitPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, totalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, thumbnail?: { __typename?: 'Image', url: string, alt?: string | null } | null }>, events?: Array<{ __typename?: 'OrderEvent', id: string, date?: string | null, type?: string | null, message?: string | null, user?: { __typename?: 'User', email?: string | null } | null } | null> | null, fulfillments?: Array<{ __typename?: 'Fulfillment', id: string, status: string, created?: string | null, trackingNumber?: string | null, lines: Array<{ __typename?: 'FulfillmentLine', id: string, quantity: number, orderLine?: { __typename?: 'OrderLine', productName: string } | null }> }> | null } | null };
+export type Order = Order_Query;
+
+export type Orders_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_total_TaxedMoney_gross_Money = { amount: number, currency: string };
+
+export type Orders_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_total_TaxedMoney = { gross: Orders_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_total_TaxedMoney_gross_Money };
+
+export type Orders_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_user_User = { email: string, firstName: string, lastName: string };
+
+export type Orders_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_shippingAddress_Address_country_CountryDisplay = { country: string };
+
+export type Orders_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_shippingAddress_Address = { city: string, country: Orders_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_shippingAddress_Address_country_CountryDisplay };
+
+export type Orders_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order = { id: string, number: string, created: string, status: Types.OrderStatus, paymentStatus: Types.PaymentChargeStatusEnum, total: Orders_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_total_TaxedMoney, user: Orders_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_user_User | null, shippingAddress: Orders_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_shippingAddress_Address | null };
+
+export type Orders_orders_OrderCountableConnection_edges_OrderCountableEdge = { cursor: string, node: Orders_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order };
+
+export type Orders_orders_OrderCountableConnection_pageInfo_PageInfo = { hasNextPage: boolean, hasPreviousPage: boolean, startCursor: string | null, endCursor: string | null };
+
+export type Orders_orders_OrderCountableConnection = { totalCount: number | null, edges: Array<Orders_orders_OrderCountableConnection_edges_OrderCountableEdge>, pageInfo: Orders_orders_OrderCountableConnection_pageInfo_PageInfo };
+
+export type Orders_Query = { orders: Orders_orders_OrderCountableConnection | null };
+
 
 export type OrdersVariables = Types.Exact<{
   first?: Types.InputMaybe<Types.Scalars['Int']['input']>;
@@ -25,14 +117,100 @@ export type OrdersVariables = Types.Exact<{
 }>;
 
 
-export type Orders = { __typename?: 'Query', orders?: { __typename?: 'OrderCountableConnection', totalCount?: number | null, edges: Array<{ __typename?: 'OrderCountableEdge', cursor: string, node: { __typename?: 'Order', id: string, number?: string | null, created?: string | null, status: string, paymentStatus: string, total: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, user?: { __typename?: 'User', email?: string | null, firstName?: string | null, lastName?: string | null } | null, shippingAddress?: { __typename?: 'Address', city?: string | null, country?: { __typename?: 'Country', country: string } | null } | null } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } | null };
+export type Orders = Orders_Query;
+
+export type Product_product_Product_thumbnail_Image = { url: string, alt: string | null };
+
+export type Product_product_Product_media_ProductMedia = { id: string, url: string, alt: string, type: Types.ProductMediaType };
+
+export type Product_product_Product_productType_ProductType = { id: string, name: string };
+
+export type Product_product_Product_category_Category = { id: string, name: string };
+
+export type Product_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_gross_Money = { amount: number, currency: string };
+
+export type Product_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney = { gross: Product_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_gross_Money };
+
+export type Product_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_stop_TaxedMoney_gross_Money = { amount: number, currency: string };
+
+export type Product_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_stop_TaxedMoney = { gross: Product_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_stop_TaxedMoney_gross_Money };
+
+export type Product_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange = { start: Product_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney | null, stop: Product_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_stop_TaxedMoney | null };
+
+export type Product_product_Product_pricing_ProductPricingInfo = { priceRange: Product_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange | null };
+
+export type Product_product_Product_channelListings_ProductChannelListing_channel_Channel = { id: string, name: string };
+
+export type Product_product_Product_channelListings_ProductChannelListing_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_gross_Money = { amount: number, currency: string };
+
+export type Product_product_Product_channelListings_ProductChannelListing_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney = { gross: Product_product_Product_channelListings_ProductChannelListing_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_gross_Money };
+
+export type Product_product_Product_channelListings_ProductChannelListing_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange = { start: Product_product_Product_channelListings_ProductChannelListing_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney | null };
+
+export type Product_product_Product_channelListings_ProductChannelListing_pricing_ProductPricingInfo = { priceRange: Product_product_Product_channelListings_ProductChannelListing_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange | null };
+
+export type Product_product_Product_channelListings_ProductChannelListing = { id: string, isPublished: boolean, visibleInListings: boolean, availableForPurchase: string | null, channel: Product_product_Product_channelListings_ProductChannelListing_channel_Channel, pricing: Product_product_Product_channelListings_ProductChannelListing_pricing_ProductPricingInfo | null };
+
+export type Product_product_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney_gross_Money = { amount: number, currency: string };
+
+export type Product_product_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney = { gross: Product_product_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney_gross_Money };
+
+export type Product_product_Product_variants_ProductVariant_pricing_VariantPricingInfo = { price: Product_product_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney | null };
+
+export type Product_product_Product_variants_ProductVariant_stocks_Stock_warehouse_Warehouse = { name: string };
+
+export type Product_product_Product_variants_ProductVariant_stocks_Stock = { quantity: number, quantityAllocated: number, warehouse: Product_product_Product_variants_ProductVariant_stocks_Stock_warehouse_Warehouse };
+
+export type Product_product_Product_variants_ProductVariant = { id: string, name: string, sku: string | null, pricing: Product_product_Product_variants_ProductVariant_pricing_VariantPricingInfo | null, stocks: Array<Product_product_Product_variants_ProductVariant_stocks_Stock> | null };
+
+export type Product_product_Product_attributes_SelectedAttribute_attribute_Attribute = { id: string, name: string | null, slug: string | null };
+
+export type Product_product_Product_attributes_SelectedAttribute_values_AttributeValue = { id: string, name: string | null, slug: string | null };
+
+export type Product_product_Product_attributes_SelectedAttribute = { attribute: Product_product_Product_attributes_SelectedAttribute_attribute_Attribute, values: Array<Product_product_Product_attributes_SelectedAttribute_values_AttributeValue> };
+
+export type Product_product_Product_metadata_MetadataItem = { key: string, value: string };
+
+export type Product_product_Product = { id: string, name: string, slug: string, description: string | null, seoTitle: string | null, seoDescription: string | null, thumbnail: Product_product_Product_thumbnail_Image | null, media: Array<Product_product_Product_media_ProductMedia> | null, productType: Product_product_Product_productType_ProductType, category: Product_product_Product_category_Category | null, pricing: Product_product_Product_pricing_ProductPricingInfo | null, channelListings: Array<Product_product_Product_channelListings_ProductChannelListing> | null, variants: Array<Product_product_Product_variants_ProductVariant> | null, attributes: Array<Product_product_Product_attributes_SelectedAttribute>, metadata: Array<Product_product_Product_metadata_MetadataItem> };
+
+export type Product_Query = { product: Product_product_Product | null };
+
 
 export type ProductVariables = Types.Exact<{
   id: Types.Scalars['ID']['input'];
 }>;
 
 
-export type Product = { __typename?: 'Query', product?: { __typename?: 'Product', id: string, name: string, slug: string, description?: string | null, seoTitle?: string | null, seoDescription?: string | null, thumbnail?: { __typename?: 'Image', url: string, alt?: string | null } | null, media?: Array<{ __typename?: 'ProductMedia', id: string, url: string, alt?: string | null, type?: string | null } | null> | null, productType?: { __typename?: 'ProductType', id: string, name: string } | null, category?: { __typename?: 'Category', id: string, name: string } | null, pricing?: { __typename?: 'ProductPricingInfo', priceRange?: { __typename?: 'TaxedMoneyRange', start?: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } } | null, stop?: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } } | null } | null } | null, channelListings?: Array<{ __typename?: 'ProductChannelListing', id: string, isPublished: boolean, visibleInListings?: boolean | null, availableForPurchase?: boolean | null, channel: { __typename?: 'Channel', id: string, name: string }, pricing?: { __typename?: 'ProductPricingInfo', priceRange?: { __typename?: 'TaxedMoneyRange', start?: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } } | null } | null } | null }> | null, variants?: Array<{ __typename?: 'ProductVariant', id: string, name: string, sku?: string | null, pricing?: { __typename?: 'VariantPricingInfo', price?: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } } | null } | null, stocks?: Array<{ __typename?: 'Stock', quantity: number, quantityAllocated: number, warehouse: { __typename?: 'Warehouse', name: string } }> | null } | null> | null, attributes?: Array<{ __typename?: 'SelectedAttribute', attribute: { __typename?: 'Attribute', id: string, name?: string | null, slug?: string | null }, values: Array<{ __typename?: 'AttributeValue', id: string, name?: string | null, slug?: string | null }> }> | null, metadata?: Array<{ __typename?: 'MetadataItem', key: string, value: string }> | null } | null };
+export type Product = Product_Query;
+
+export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_thumbnail_Image = { url: string, alt: string | null };
+
+export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_productType_ProductType = { name: string };
+
+export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_category_Category = { name: string };
+
+export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_gross_Money = { amount: number, currency: string };
+
+export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney = { gross: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_gross_Money };
+
+export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange = { start: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney | null };
+
+export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo = { priceRange: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange | null };
+
+export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_channelListings_ProductChannelListing_channel_Channel = { name: string };
+
+export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_channelListings_ProductChannelListing = { isPublished: boolean, channel: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_channelListings_ProductChannelListing_channel_Channel };
+
+export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product = { id: string, name: string, slug: string, thumbnail: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_thumbnail_Image | null, productType: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_productType_ProductType, category: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_category_Category | null, pricing: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo | null, channelListings: Array<Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_channelListings_ProductChannelListing> | null };
+
+export type Products_products_ProductCountableConnection_edges_ProductCountableEdge = { cursor: string, node: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product };
+
+export type Products_products_ProductCountableConnection_pageInfo_PageInfo = { hasNextPage: boolean, hasPreviousPage: boolean, startCursor: string | null, endCursor: string | null };
+
+export type Products_products_ProductCountableConnection = { totalCount: number | null, edges: Array<Products_products_ProductCountableConnection_edges_ProductCountableEdge>, pageInfo: Products_products_ProductCountableConnection_pageInfo_PageInfo };
+
+export type Products_Query = { products: Products_products_ProductCountableConnection | null };
+
 
 export type ProductsVariables = Types.Exact<{
   first?: Types.InputMaybe<Types.Scalars['Int']['input']>;
@@ -42,12 +220,31 @@ export type ProductsVariables = Types.Exact<{
 }>;
 
 
-export type Products = { __typename?: 'Query', products?: { __typename?: 'ProductCountableConnection', totalCount?: number | null, edges: Array<{ __typename?: 'ProductCountableEdge', cursor: string, node: { __typename?: 'Product', id: string, name: string, slug: string, thumbnail?: { __typename?: 'Image', url: string, alt?: string | null } | null, productType?: { __typename?: 'ProductType', name: string } | null, category?: { __typename?: 'Category', name: string } | null, pricing?: { __typename?: 'ProductPricingInfo', priceRange?: { __typename?: 'TaxedMoneyRange', start?: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } } | null } | null } | null, channelListings?: Array<{ __typename?: 'ProductChannelListing', isPublished: boolean, channel: { __typename?: 'Channel', name: string } }> | null } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } | null };
+export type Products = Products_Query;
+
+export type Warehouses_warehouses_WarehouseCountableConnection_edges_WarehouseCountableEdge_node_Warehouse_address_Address_country_CountryDisplay = { country: string, code: string };
+
+export type Warehouses_warehouses_WarehouseCountableConnection_edges_WarehouseCountableEdge_node_Warehouse_address_Address = { streetAddress1: string, streetAddress2: string, city: string, postalCode: string, phone: string | null, country: Warehouses_warehouses_WarehouseCountableConnection_edges_WarehouseCountableEdge_node_Warehouse_address_Address_country_CountryDisplay };
+
+export type Warehouses_warehouses_WarehouseCountableConnection_edges_WarehouseCountableEdge_node_Warehouse_shippingZones_ShippingZoneCountableConnection_edges_ShippingZoneCountableEdge_node_ShippingZone = { id: string, name: string };
+
+export type Warehouses_warehouses_WarehouseCountableConnection_edges_WarehouseCountableEdge_node_Warehouse_shippingZones_ShippingZoneCountableConnection_edges_ShippingZoneCountableEdge = { node: Warehouses_warehouses_WarehouseCountableConnection_edges_WarehouseCountableEdge_node_Warehouse_shippingZones_ShippingZoneCountableConnection_edges_ShippingZoneCountableEdge_node_ShippingZone };
+
+export type Warehouses_warehouses_WarehouseCountableConnection_edges_WarehouseCountableEdge_node_Warehouse_shippingZones_ShippingZoneCountableConnection = { edges: Array<Warehouses_warehouses_WarehouseCountableConnection_edges_WarehouseCountableEdge_node_Warehouse_shippingZones_ShippingZoneCountableConnection_edges_ShippingZoneCountableEdge> };
+
+export type Warehouses_warehouses_WarehouseCountableConnection_edges_WarehouseCountableEdge_node_Warehouse = { id: string, name: string, slug: string, address: Warehouses_warehouses_WarehouseCountableConnection_edges_WarehouseCountableEdge_node_Warehouse_address_Address, shippingZones: Warehouses_warehouses_WarehouseCountableConnection_edges_WarehouseCountableEdge_node_Warehouse_shippingZones_ShippingZoneCountableConnection };
+
+export type Warehouses_warehouses_WarehouseCountableConnection_edges_WarehouseCountableEdge = { node: Warehouses_warehouses_WarehouseCountableConnection_edges_WarehouseCountableEdge_node_Warehouse };
+
+export type Warehouses_warehouses_WarehouseCountableConnection = { totalCount: number | null, edges: Array<Warehouses_warehouses_WarehouseCountableConnection_edges_WarehouseCountableEdge> };
+
+export type Warehouses_Query = { warehouses: Warehouses_warehouses_WarehouseCountableConnection | null };
+
 
 export type WarehousesVariables = Types.Exact<{ [key: string]: never; }>;
 
 
-export type Warehouses = { __typename?: 'Query', warehouses?: { __typename?: 'WarehouseCountableConnection', totalCount?: number | null, edges: Array<{ __typename?: 'WarehouseCountableEdge', node: { __typename?: 'Warehouse', id: string, name: string, slug: string, address?: { __typename?: 'Address', streetAddress1?: string | null, streetAddress2?: string | null, city?: string | null, postalCode?: string | null, phone?: string | null, country?: { __typename?: 'Country', country: string, code: string } | null } | null, shippingZones?: { __typename?: 'ShippingZoneCountableConnection', edges: Array<{ __typename?: 'ShippingZoneCountableEdge', node: { __typename?: 'ShippingZone', id: string, name: string } }> } | null } }> } | null };
+export type Warehouses = Warehouses_Query;
 
 export class TypedDocumentString<TResult, TVariables>
   extends String

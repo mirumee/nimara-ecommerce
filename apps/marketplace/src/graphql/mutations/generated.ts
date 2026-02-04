@@ -1,12 +1,30 @@
 import type * as Types from '@nimara/codegen/schema';
 
 import type { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
+export type AccountRegister_accountRegister_AccountRegister_user_User = { id: string, email: string };
+
+export type AccountRegister_accountRegister_AccountRegister_errors_AccountError = { field: string | null, message: string | null, code: Types.AccountErrorCode };
+
+export type AccountRegister_accountRegister_AccountRegister = { requiresConfirmation: boolean | null, user: AccountRegister_accountRegister_AccountRegister_user_User | null, errors: Array<AccountRegister_accountRegister_AccountRegister_errors_AccountError> };
+
+export type AccountRegister_Mutation = { accountRegister: AccountRegister_accountRegister_AccountRegister | null };
+
+
 export type AccountRegisterVariables = Types.Exact<{
   input: Types.AccountRegisterInput;
 }>;
 
 
-export type AccountRegister = { __typename?: 'Mutation', accountRegister?: { __typename?: 'AccountRegister', requiresConfirmation?: boolean | null, user?: { __typename?: 'User', id: string, email?: string | null } | null, errors: Array<{ __typename?: 'AccountError', field?: string | null, message?: string | null, code: Types.AccountErrorCode }> } | null };
+export type AccountRegister = AccountRegister_Mutation;
+
+export type ConfirmAccount_confirmAccount_ConfirmAccount_user_User = { id: string, email: string, isActive: boolean };
+
+export type ConfirmAccount_confirmAccount_ConfirmAccount_errors_AccountError = { field: string | null, message: string | null, code: Types.AccountErrorCode };
+
+export type ConfirmAccount_confirmAccount_ConfirmAccount = { user: ConfirmAccount_confirmAccount_ConfirmAccount_user_User | null, errors: Array<ConfirmAccount_confirmAccount_ConfirmAccount_errors_AccountError> };
+
+export type ConfirmAccount_Mutation = { confirmAccount: ConfirmAccount_confirmAccount_ConfirmAccount | null };
+
 
 export type ConfirmAccountVariables = Types.Exact<{
   email: Types.Scalars['String']['input'];
@@ -14,7 +32,7 @@ export type ConfirmAccountVariables = Types.Exact<{
 }>;
 
 
-export type ConfirmAccount = { __typename?: 'Mutation', confirmAccount?: { __typename?: 'ConfirmAccount', user?: { __typename?: 'User', id: string, email?: string | null, isActive?: boolean | null } | null, errors: Array<{ __typename?: 'AccountError', field?: string | null, message?: string | null, code: Types.AccountErrorCode }> } | null };
+export type ConfirmAccount = ConfirmAccount_Mutation;
 
 export class TypedDocumentString<TResult, TVariables>
   extends String

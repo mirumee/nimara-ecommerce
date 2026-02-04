@@ -18,6 +18,7 @@ build
 .vscode
 # Keep just the settings
 !.vscode/settings.json
+.cursor
 
 # misc
 .DS_Store

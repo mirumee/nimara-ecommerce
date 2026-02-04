@@ -47,7 +47,6 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "codegen": "graphql-codegen --config codegen.ts",
     "dev": "next dev --port 3001 --turbopack",
     "dev:docker": "docker-compose up -d && next dev --port 3001 --turbopack",
     "lint": "next lint",
