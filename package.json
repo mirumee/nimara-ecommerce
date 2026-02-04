@@ -35,7 +35,10 @@
     "test:e2e": "dotenv -- turbo run test:e2e",
     "prepare": "husky",
     "format": "pnpm prettier --write '**/*.{js,ts,tsx,json,md}'",
-    "format:check": "pnpm prettier --check '**/*.{js,ts,tsx,json,md}'"
+    "format:check": "pnpm prettier --check '**/*.{js,ts,tsx,json,md}'",
+    "localstack:up": "docker compose -f apps/marketplace/docker-compose.yml up -d localstack",
+    "localstack:down": "docker compose -f apps/marketplace/docker-compose.yml down",
+    "localstack:export-secret": "docker compose -f apps/marketplace/docker-compose.yml exec localstack bash /opt/localstack/export-secret.sh"
   },
   "devDependencies": {
     "commitizen": "4.3.1",

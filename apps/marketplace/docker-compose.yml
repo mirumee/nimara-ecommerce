@@ -11,11 +11,15 @@ services:
       - DEBUG=${DEBUG:-0}
       - DATA_DIR=/var/lib/localstack/data
       - DOCKER_HOST=unix:///var/run/docker.sock
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
       - AWS_DEFAULT_REGION=ap-southeast-1
+      - SECRET_MANAGER_APP_CONFIG_PATH=/marketplace/app-config
     volumes:
       - "./localstack:/var/lib/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "./etc/commands/init-aws.sh:/etc/localstack/init/ready.d/init-aws.sh"
+      - "./etc/commands/export-secret.sh:/opt/localstack/export-secret.sh"
     healthcheck:
       test: ["CMD", "awslocal", "secretsmanager", "list-secrets"]
       interval: 10s
