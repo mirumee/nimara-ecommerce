@@ -12,10 +12,9 @@
     "@graphql-codegen/typescript": "5.0.7",
     "@graphql-codegen/typescript-operations": "5.0.7",
     "@graphql-typed-document-node/core": "3.2.0",
+    "@nimara/config": "workspace:*",
     "@types/node": "^22.19.0",
-    "eslint-config-custom": "workspace:*",
     "ts-log": "2.2.7",
-    "tsconfig": "workspace:*",
     "typescript": "5.9.3"
   },
   "dependencies": {

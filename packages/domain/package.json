@@ -10,9 +10,7 @@
   "devDependencies": {
     "@nimara/config": "workspace:*",
     "eslint": "^8.57.0",
-    "eslint-config-custom": "workspace:*",
     "prettier": "3.8.1",
-    "ts-toolbelt": "9.6.0",
-    "tsconfig": "workspace:*"
+    "ts-toolbelt": "9.6.0"
   }
 }

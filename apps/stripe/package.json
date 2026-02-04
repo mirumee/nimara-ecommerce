@@ -8,7 +8,7 @@
     "dev:inspect": "NODE_OPTIONS='--inspect' next dev -p 4000",
     "build": "next build",
     "start": "next start -p 4000",
-    "lint": "next lint --dir src --fix",
+    "lint": "eslint . --ext .js,.ts,.tsx --fix",
     "lint:staged": "lint-staged",
     "test": "vitest run",
     "test:watch": "vitest --watch"
@@ -48,11 +48,9 @@
     "autoprefixer": "10.4.21",
     "dotenv": "17.2.3",
     "eslint": "^8.57.0",
-    "eslint-config-custom": "workspace:*",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.19",
     "ts-essentials": "10.1.1",
-    "tsconfig": "workspace:*",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "6.0.4",
     "vitest": "4.0.18"

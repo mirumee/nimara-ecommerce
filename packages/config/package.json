@@ -8,15 +8,35 @@
   },
   "exports": {
     "./postcss": "./src/postcss.config.cjs",
-    "./tailwind": "./src/tailwind.config.ts"
+    "./tailwind": "./src/tailwind.config.ts",
+    "./eslint/base": "./src/eslint/base.cjs",
+    "./eslint/next": "./src/eslint/next.cjs",
+    "./tsconfig/base": "./src/tsconfig/base.json",
+    "./tsconfig/nextjs": "./src/tsconfig/nextjs.json",
+    "./tsconfig/react-library": "./src/tsconfig/react-library.json"
   },
   "dependencies": {
     "@tailwindcss/typography": "0.5.18",
+    "eslint-config-next": "15.5.3",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-config-turbo": "^2.5.6",
+    "eslint-import-resolver-node": "^0.3.9",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-react": "^7.37.5",
+    "prettier": "3.8.1",
     "tailwindcss": "^3.4.19",
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
-    "lint-staged": "^16.2.7"
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-simple-import-sort": "12.1.1",
+    "eslint-plugin-sort-keys-fix": "1.1.2",
+    "eslint-plugin-typescript-sort-keys": "3.3.0",
+    "lint-staged": "^16.2.7",
+    "typescript": "^5.9.2"
   },
   "lint-staged": {
     "*.{js,cjs,mjs,jsx,ts,cts,mts,tsx}": "eslint --fix",

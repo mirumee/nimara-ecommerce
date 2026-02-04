@@ -2,26 +2,7 @@
   "name": "eslint-config-custom",
   "private": true,
   "version": "1.0.0",
-  "publishConfig": {
-    "access": "public"
-  },
   "dependencies": {
-    "eslint-config-next": "15.5.3",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-config-turbo": "^2.5.6",
-    "eslint-import-resolver-node": "^0.3.9",
-    "eslint-import-resolver-typescript": "^4.4.4",
-    "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-react": "^7.37.5",
-    "prettier": "3.8.1"
-  },
-  "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^6.21.0",
-    "@typescript-eslint/parser": "^6.21.0",
-    "eslint": "^8.57.0",
-    "eslint-plugin-simple-import-sort": "12.1.1",
-    "eslint-plugin-sort-keys-fix": "1.1.2",
-    "eslint-plugin-typescript-sort-keys": "3.3.0",
-    "typescript": "^5.9.2"
+    "@nimara/config": "workspace:*"
   }
 }

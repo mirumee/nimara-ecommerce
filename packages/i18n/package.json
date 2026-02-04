@@ -22,10 +22,9 @@
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "dotenv": "17.2.3",
+    "@nimara/config": "workspace:*",
     "eslint": "^8.57.0",
-    "eslint-config-custom": "workspace:*",
     "next": "^16.1.6",
-    "tsconfig": "workspace:*",
     "typescript": "^5.9.2",
     "vite-tsconfig-paths": "6.0.4",
     "vitest": "^4.0.18"

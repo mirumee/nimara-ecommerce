@@ -1,9 +1,10 @@
 {
-  "extends": "tsconfig/react-library.json",
+  "extends": "@nimara/config/tsconfig/react-library",
   "include": [
     "./src/**/*.ts",
     "./src/**/*.tsx",
     "./src/**/*.json",
+    "vitest.config.ts",
     "**/*/*.d.ts",
     "global.d.ts"
   ],
