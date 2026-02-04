@@ -21,7 +21,7 @@
     "test:watch": "vitest --watch"
   },
   "peerDependencies": {
-    "next-intl": "^4.7.0"
+    "next-intl": "^4.8.2"
   },
   "dependencies": {
     "@hookform/resolvers": "5.2.2",
@@ -32,11 +32,11 @@
     "@nimara/ui": "workspace:*",
     "@uidotdev/usehooks": "2.4.1",
     "editorjs-html": "3.4.3",
-    "lodash": "4.17.21",
-    "lucide-react": "^0.562.0",
-    "next": "^16.1.6",
-    "next-intl": "^4.7.0",
-    "nuqs": "^2.8.6",
+    "lodash": "4.17.23",
+    "lucide-react": "^0.563.0",
+    "next": "^15.5.11",
+    "next-intl": "^4.8.2",
+    "nuqs": "^2.8.8",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-hook-form": "^7.65.0",
@@ -47,7 +47,7 @@
   },
   "devDependencies": {
     "@nimara/config": "workspace:*",
-    "@types/lodash": "4.17.20",
+    "@types/lodash": "4.17.23",
     "@types/react": "^19.2.3",
     "@types/react-dom": "^19.2.3",
     "eslint": "^8.57.0",
