@@ -11,13 +11,14 @@ function getManifestBaseUrl(request: NextRequest): string {
   const configured = process.env.NEXT_PUBLIC_MARKETPLACE_VENDOR_URL?.trim();
 
   if (configured) {
-    const url = configured.startsWith("http") ? configured : `https://${configured}`;
+    const url = configured.startsWith("http")
+      ? configured
+      : `https://${configured}`;
 
     try {
       const parsed = new URL(url);
 
-      
-return `${parsed.protocol}//${parsed.host}`;
+      return `${parsed.protocol}//${parsed.host}`;
     } catch {
       // fall through
     }
@@ -31,10 +32,11 @@ return `${parsed.protocol}//${parsed.host}`;
 
 /** Build a manifest URL that Saleor accepts: absolute, http/https, no trailing slash. */
 function manifestUrl(baseUrl: string, path: string): string {
-  const full = path.startsWith("http") ? path : `${baseUrl.replace(/\/$/, "")}${path.startsWith("/") ? path : `/${path}`}`;
+  const full = path.startsWith("http")
+    ? path
+    : `${baseUrl.replace(/\/$/, "")}${path.startsWith("/") ? path : `/${path}`}`;
 
-  
-return new URL(full).href.replace(/\/$/, "");
+  return new URL(full).href.replace(/\/$/, "");
 }
 
 export async function GET(request: NextRequest) {
@@ -51,6 +53,8 @@ export async function GET(request: NextRequest) {
       "MANAGE_PRODUCTS",
       "MANAGE_USERS",
       "MANAGE_ORDERS",
+      "MANAGE_SHIPPING",
+      "MANAGE_CHANNELS",
     ],
     tokenTargetUrl: manifestUrl(baseUrl, "/api/saleor/register"),
     appUrl: manifestUrl(baseUrl, "/app"),

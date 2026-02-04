@@ -1,10 +1,14 @@
 import { z } from "zod";
 
 const envSchema = z.object({
-  NODE_ENV: z
+  MARKETPLACE_NODE_ENV: z
     .enum(["development", "production", "test"])
     .default("development"),
-  PORT: z.coerce.number().default(3001),
+  MARKETPLACE_PORT: z.coerce.number().default(3001),
+  MARKETPLACE_BASE_PATH: z.string().default(""),
+  MARKETPLACE_CORS_ORIGINS: z
+    .string()
+    .default("http://localhost:3000,http://localhost:3001"),
   LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
 
   // AWS
@@ -55,10 +59,12 @@ function getEnv(): Env {
 export const env = getEnv();
 
 export const config = {
-  isDev: env.NODE_ENV === "development",
-  isProd: env.NODE_ENV === "production",
-  isTest: env.NODE_ENV === "test",
-  port: env.PORT,
+  isDev: env.MARKETPLACE_NODE_ENV === "development",
+  isProd: env.MARKETPLACE_NODE_ENV === "production",
+  isTest: env.MARKETPLACE_NODE_ENV === "test",
+  port: env.MARKETPLACE_PORT,
+  basePath: env.MARKETPLACE_BASE_PATH,
+  corsOrigins: env.MARKETPLACE_CORS_ORIGINS,
   logLevel: env.LOG_LEVEL,
   aws: {
     accessKeyId: env.AWS_ACCESS_KEY_ID,

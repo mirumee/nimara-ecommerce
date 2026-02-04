@@ -21,8 +21,8 @@ function isDomainAllowed(domain: string, allowedDomains: string[]): boolean {
     // If no domains are configured, allow all (development mode)
     return true;
   }
-  
-return allowedDomains.some(
+
+  return allowedDomains.some(
     (allowed) => domain === allowed || domain.endsWith(`.${allowed}`),
   );
 }
@@ -54,12 +54,11 @@ async function fetchAppId(
 
     const data = await response.json();
 
-    
-return data?.data?.app?.id || null;
+    return data?.data?.app?.id || null;
   } catch (error) {
     console.error("Failed to fetch app ID:", error);
-    
-return null;
+
+    return null;
   }
 }
 
@@ -127,7 +126,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ status: "ok" });
   } catch (error) {
     console.error("Registration failed:", error);
-    
-return NextResponse.json({ error: "Registration failed" }, { status: 500 });
+
+    return NextResponse.json({ error: "Registration failed" }, { status: 500 });
   }
 }

@@ -41,8 +41,8 @@ function getClient(): SecretsManagerClient {
   if (!clientInstance) {
     clientInstance = createClient();
   }
-  
-return clientInstance;
+
+  return clientInstance;
 }
 
 /**
@@ -110,8 +110,7 @@ export async function getSecretValue<T = string>(
 ): Promise<T | null> {
   const secret = await getSecret<Record<string, T>>(secretId);
 
-  
-return secret?.[key] ?? null;
+  return secret?.[key] ?? null;
 }
 
 /**
