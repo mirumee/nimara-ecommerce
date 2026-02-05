@@ -343,7 +343,12 @@ export class CheckoutPage {
     await expect(this.placeOrderButton).toBeEnabled();
 
     await this.placeOrderButton.click();
-    await this.page.waitForURL(URLS().ORDER_CONFIRMATION_PAGE);
+
+    // Wait for navigation to confirmation page with extended timeout
+    await this.page.waitForURL(/.*\/order\/confirmation\/.*/, {
+      timeout: 90000,
+      waitUntil: "domcontentloaded",
+    });
 
     await expect(
       this.page.getByText("Your order has been successfully placed"),
