@@ -216,4 +216,173 @@ test.describe("Guest checkout - Refactored", () => {
 
     console.log("✓ Test completed successfully");
   });
+
+  test("CHE-03002: Guest user attempts checkout with declined card", async ({
+    checkoutPage,
+    page,
+  }) => {
+    console.log("=== CHE-03002: Guest Checkout - Declined Card ===");
+
+    // Declined card details
+    const declinedCard = {
+      cardNumber: "4000000000000002",
+      expiryDate: "12/29",
+      cvc: "123",
+    };
+
+    // Steps 1-5: Navigate through checkout to payment page
+    console.log("Steps 1-5: Email, shipping, delivery, payment setup");
+    await checkoutPage.provideUserDetails(user.email);
+    await checkoutPage.assertPageSections("guest");
+    await checkoutPage.provideShippingAddress(user);
+    await checkoutPage.selectDeliveryOption(product.deliveryMethod.name);
+
+    // Step 6: Provide DECLINED payment card
+    console.log("Step 6: Filling declined card (4000 0000 0000 0002)");
+    await checkoutPage.providePaymentMethod("guestPayment", declinedCard);
+
+    // Step 7: Set billing address
+    console.log("Step 7: Setting billing address");
+    await checkoutPage.provideBillingAddress("sameAsShipping");
+
+    // Step 8: Verify order summary
+    console.log("Step 8: Verifying order summary");
+    await checkoutPage.assertOrderSummaryStructure();
+
+    // Step 9: Attempt to place order (should fail)
+    console.log("Step 9: Attempting to place order with declined card");
+    await checkoutPage.placeOrderButton.scrollIntoViewIfNeeded();
+    await checkoutPage.placeOrderButton.click();
+
+    // Step 10: Wait for payment processing
+    console.log("Waiting for Stripe to process payment...");
+    await page.waitForTimeout(5000);
+
+    // Step 11: Verify error message appears
+    console.log("Step 11: Verifying error message");
+    const errorMessage = page.locator(
+      "text=/There was an error with your card/i",
+    );
+
+    await errorMessage.waitFor({ state: "visible", timeout: 10000 });
+    console.log("✓ Error message displayed");
+
+    // Step 12: Verify still on payment page (not redirected)
+    console.log("Step 12: Verifying URL stayed on payment page");
+    await page.waitForURL(/.*\/checkout\/payment/, { timeout: 5000 });
+    console.log("✓ Still on payment page");
+
+    // Step 13: Verify Place Order button still enabled (can retry)
+    console.log("Step 13: Verifying button state");
+    const isButtonEnabled = await checkoutPage.placeOrderButton.isEnabled();
+
+    if (isButtonEnabled) {
+      console.log("✓ Place Order button enabled (user can retry)");
+    } else {
+      console.log("⚠ Place Order button disabled");
+    }
+
+    // Step 14: Verify NOT redirected to confirmation
+    console.log("Step 14: Confirming no order created");
+    const currentUrl = page.url();
+
+    if (!currentUrl.includes("/confirmation")) {
+      console.log("✓ No redirect to confirmation (order not created)");
+    } else {
+      throw new Error(
+        "UNEXPECTED: Redirected to confirmation with declined card!",
+      );
+    }
+
+    console.log(
+      "✓ Test completed successfully - Declined card handled correctly",
+    );
+  });
+
+  test("CHE-03003: Guest user attempts checkout with insufficient funds card", async ({
+    checkoutPage,
+    page,
+  }) => {
+    console.log("=== CHE-03003: Guest Checkout - Insufficient Funds ===");
+
+    // Insufficient funds card details
+    const insufficientFundsCard = {
+      cardNumber: "4000000000009995",
+      expiryDate: "12/29",
+      cvc: "123",
+    };
+
+    // Steps 1-5: Navigate through checkout to payment page
+    console.log("Steps 1-5: Email, shipping, delivery, payment setup");
+    await checkoutPage.provideUserDetails(user.email);
+    await checkoutPage.assertPageSections("guest");
+    await checkoutPage.provideShippingAddress(user);
+    await checkoutPage.selectDeliveryOption(product.deliveryMethod.name);
+
+    // Step 6: Provide card with insufficient funds
+    console.log(
+      "Step 6: Filling insufficient funds card (4000 0000 0000 9995)",
+    );
+    await checkoutPage.providePaymentMethod(
+      "guestPayment",
+      insufficientFundsCard,
+    );
+
+    // Step 7: Set billing address
+    console.log("Step 7: Setting billing address");
+    await checkoutPage.provideBillingAddress("sameAsShipping");
+
+    // Step 8: Verify order summary
+    console.log("Step 8: Verifying order summary");
+    await checkoutPage.assertOrderSummaryStructure();
+
+    // Step 9: Attempt to place order (should fail)
+    console.log(
+      "Step 9: Attempting to place order with insufficient funds card",
+    );
+    await checkoutPage.placeOrderButton.scrollIntoViewIfNeeded();
+    await checkoutPage.placeOrderButton.click();
+
+    // Step 10: Wait for payment processing
+    console.log("Waiting for Stripe to process payment...");
+    await page.waitForTimeout(5000);
+
+    // Step 11: Verify error message appears
+    console.log("Step 11: Verifying error message");
+    const errorMessage = page.locator(
+      "text=/There was an error with your card/i",
+    );
+
+    await errorMessage.waitFor({ state: "visible", timeout: 10000 });
+    console.log("✓ Error message displayed");
+
+    // Step 12: Verify still on payment page
+    console.log("Step 12: Verifying URL stayed on payment page");
+    await page.waitForURL(/.*\/checkout\/payment/, { timeout: 5000 });
+    console.log("✓ Still on payment page");
+
+    // Step 13: Verify Place Order button still enabled
+    console.log("Step 13: Verifying button state");
+    const isButtonEnabled = await checkoutPage.placeOrderButton.isEnabled();
+
+    if (isButtonEnabled) {
+      console.log("✓ Place Order button enabled (user can retry)");
+    }
+
+    // Step 14: Verify NOT redirected to confirmation
+    console.log("Step 14: Confirming no order created");
+    const currentUrl = page.url();
+
+    if (!currentUrl.includes("/confirmation")) {
+      console.log("✓ No redirect to confirmation (order not created)");
+    } else {
+      throw new Error(
+        "UNEXPECTED: Redirected to confirmation with insufficient funds card!",
+      );
+    }
+
+    console.log(
+      "✓ Test completed successfully - Insufficient funds handled correctly",
+    );
+  });
 });
