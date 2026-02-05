@@ -10,6 +10,9 @@ import { paymentDetails, product, user } from "utils/constants";
  */
 
 test.describe("Guest checkout - Refactored", () => {
+  // Set test timeout to 120 seconds (checkout tests take longer due to Stripe)
+  test.setTimeout(120000);
+
   // Prepare checkout: Add product to cart and navigate to checkout
   test.beforeEach(async ({ productPage, cartPage, checkoutLoginPage }) => {
     await productPage.goto(product.url);
@@ -383,6 +386,103 @@ test.describe("Guest checkout - Refactored", () => {
 
     console.log(
       "✓ Test completed successfully - Insufficient funds handled correctly",
+    );
+  });
+
+  test("CHE-02001: Guest user cannot proceed with invalid email formats", async ({
+    checkoutPage,
+    page,
+  }) => {
+    console.log("=== CHE-02001: Email Validation ===");
+
+    // Invalid email test cases (as documented in exploration)
+    const invalidEmails = [
+      { input: "notanemail", description: "No @ symbol" },
+      { input: "@example.com", description: "Missing local part" },
+      { input: "test@", description: "Missing domain" },
+      { input: "test @example.com", description: "Space in email" },
+      { input: "", description: "Empty field" },
+    ];
+
+    // Test each invalid email format
+    for (let i = 0; i < invalidEmails.length; i++) {
+      const testCase = invalidEmails[i];
+
+      console.log(`\n--- Test case ${i + 1}: ${testCase.description} ---`);
+      console.log(`Input: "${testCase.input}"`);
+
+      // Clear email field
+      await checkoutPage.emailInput.clear();
+      await page.waitForTimeout(500);
+
+      // Fill with invalid email (or leave empty)
+      if (testCase.input !== "") {
+        await checkoutPage.emailInput.fill(testCase.input);
+      }
+
+      // Click Continue button
+      console.log("Clicking Continue button...");
+      await checkoutPage.continueButton.click();
+      await page.waitForTimeout(1000);
+
+      // Step 1: Verify error message appears
+      console.log("Step 1: Verifying error message appears");
+      const errorMessage = page.locator("text=/Oops.*wrong.*email/i");
+
+      await errorMessage.waitFor({ state: "visible", timeout: 5000 });
+      const errorText = await errorMessage.textContent();
+
+      console.log(`✓ Error message displayed: "${errorText}"`);
+
+      // Step 2: Verify URL stays on user-details page
+      console.log("Step 2: Verifying URL stayed on user-details page");
+      const currentUrl = page.url();
+
+      if (currentUrl.includes("/user-details")) {
+        console.log("✓ Still on user-details page (validation working)");
+      } else {
+        throw new Error(
+          `UNEXPECTED: Navigation occurred! Current URL: ${currentUrl}`,
+        );
+      }
+
+      // Step 3: Verify email field has error styling
+      console.log("Step 3: Checking email field error styling");
+      const emailClasses = await checkoutPage.emailInput.getAttribute("class");
+
+      if (emailClasses?.includes("border-red")) {
+        console.log("✓ Email field has error styling (red border)");
+      } else {
+        console.log(`⚠ Email field classes: ${emailClasses ?? "null"}`);
+      }
+
+      console.log(`✓ Test case ${i + 1} passed`);
+    }
+
+    // Step 4: Verify valid email allows progression
+    console.log("\n--- Final test: Valid email allows progression ---");
+    await checkoutPage.emailInput.clear();
+    await checkoutPage.emailInput.fill(user.email);
+    console.log(`✓ Filled valid email: ${user.email}`);
+
+    await checkoutPage.continueButton.click();
+
+    // Wait for navigation to shipping address page
+    await page.waitForURL(/.*\/checkout\/shipping-address/, { timeout: 10000 });
+    console.log("✓ Successfully navigated to shipping address page");
+
+    const finalUrl = page.url();
+
+    if (finalUrl.includes("/shipping-address")) {
+      console.log("✓ Valid email allows progression to next step");
+    } else {
+      throw new Error(
+        `UNEXPECTED: Did not reach shipping page! Current URL: ${finalUrl}`,
+      );
+    }
+
+    console.log(
+      "\n✓ Test completed successfully - Email validation working correctly",
     );
   });
 });
