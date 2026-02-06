@@ -20,11 +20,8 @@ import {
 
 import { InputField } from "@/components/fields/input-field";
 import { PasswordField } from "@/components/fields/password-field";
-import {
-  type AccountRegister,
-  AccountRegisterDocument,
-} from "@/graphql/mutations/generated";
-import { graphqlFetcher } from "@/lib/graphql/client";
+
+import { registerAccount } from "./actions";
 
 const signUpSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -63,12 +60,18 @@ export default function SignUpPage() {
         channel: process.env.NEXT_PUBLIC_SALEOR_MARKETPLACE_CHANNEL_SLUG ?? "default-channel",
       };
 
-      const result = await graphqlFetcher<AccountRegister, { input: typeof input }>(
-        String(AccountRegisterDocument),
-        { input }
-      )();
+      const result = await registerAccount(input);
 
-      const payload = result.accountRegister;
+      if (!result.ok) {
+        form.setError("root", {
+          type: "server",
+          message: result.errors[0]?.message || "Registration failed. Please try again.",
+        });
+
+        return;
+      }
+
+      const payload = (result.data as any).accountRegister;
 
       if (payload?.errors?.length) {
         const error = payload.errors[0];

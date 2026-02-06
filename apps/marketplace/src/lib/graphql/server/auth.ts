@@ -47,6 +47,7 @@ const OPERATION_AUTH_CONFIG: Record<string, GraphQLAuthLevel> = {
   warehouses: GraphQLAuthLevel.AUTHENTICATED,
   orderFulfill: GraphQLAuthLevel.AUTHENTICATED,
   orderCancel: GraphQLAuthLevel.AUTHENTICATED,
+  orderFulfillmentCancel: GraphQLAuthLevel.AUTHENTICATED,
   orderNoteAdd: GraphQLAuthLevel.AUTHENTICATED,
 };
 
@@ -54,15 +55,16 @@ const OPERATION_AUTH_CONFIG: Record<string, GraphQLAuthLevel> = {
  * Extract root field name from a GraphQL query string
  */
 function extractRootFieldName(query: string | null | undefined): string | null {
-  if (!query) {return null;}
+  if (!query) {
+    return null;
+  }
 
   // Simple regex to extract the first field name after query/mutation
   const match = query.match(
     /(?:query|mutation)\s*\w*\s*(?:\([^)]*\))?\s*\{\s*(\w+)/,
   );
 
-  
-return match?.[1] || null;
+  return match?.[1] || null;
 }
 
 /**
@@ -105,7 +107,9 @@ function getDomainFromRequest(request: Request): string | null {
   // Check header first
   const headerDomain = request.headers.get("x-saleor-domain");
 
-  if (headerDomain) {return headerDomain;}
+  if (headerDomain) {
+    return headerDomain;
+  }
 
   // Try to extract from JWT
   const authHeader = request.headers.get("authorization");
@@ -241,6 +245,6 @@ export function requireVendorID(context: ServerContext): string {
       extensions: { code: "UNAUTHORIZED" },
     });
   }
-  
-return context.vendorId;
+
+  return context.vendorId;
 }

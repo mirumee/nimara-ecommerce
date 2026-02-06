@@ -1,0 +1,17 @@
+mutation OrderNoteAdd($order: ID!, $input: OrderNoteInput!) {
+  orderNoteAdd(order: $order, input: $input) {
+    errors {
+      field
+      message
+      code
+    }
+    order {
+      id
+    }
+    event {
+      id
+      message
+      date
+    }
+  }
+}

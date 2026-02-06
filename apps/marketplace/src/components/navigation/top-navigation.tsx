@@ -79,7 +79,6 @@ export function TopNavigation() {
             {navigationLinks.map((item) => {
               const active = isActive(item.href);
 
-
               return (
                 <Link
                   key={item.name}
@@ -111,7 +110,7 @@ export function TopNavigation() {
           <DropdownMenuTrigger asChild>
             <button className="hover:bg-primary hover:text-primary-foreground flex items-center gap-3 rounded-lg px-3 py-2 transition-colors">
               <Avatar className="h-8 w-8 bg-stone-900">
-                <AvatarFallback className="font-medium text-white">
+                <AvatarFallback className="font-medium text-stone-900">
                   {vendorName.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>

@@ -125,6 +125,7 @@ return allowedQueries.includes(fieldName);
             "productVariantChannelListingUpdate",
             "orderFulfill",
             "orderCancel",
+            "orderFulfillmentCancel",
             "orderNoteAdd",
             "updateMetadata",
           ];

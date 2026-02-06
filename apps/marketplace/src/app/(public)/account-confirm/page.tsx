@@ -18,8 +18,8 @@ import {
 import {
   type ConfirmAccount,
   ConfirmAccountDocument,
-} from "@/graphql/mutations/generated";
-import { graphqlFetcher } from "@/lib/graphql/client";
+} from "@/graphql/generated/client";
+import { confirmAccount } from "./actions";
 
 type ConfirmStatus = "loading" | "success" | "error";
 
@@ -39,14 +39,20 @@ export default function AccountConfirmPage() {
       return;
     }
 
-    const confirmAccount = async () => {
+    const confirmAccountAction = async () => {
       try {
-        const result = await graphqlFetcher<ConfirmAccount, { email: string; token: string }>(
-          String(ConfirmAccountDocument),
-          { email, token }
-        )();
+        const result = await confirmAccount({ email, token });
 
-        const payload = result.confirmAccount;
+        if (!result.ok) {
+          setStatus("error");
+          setErrorMessage(
+            result.errors[0]?.message || "Confirmation failed"
+          );
+
+          return;
+        }
+
+        const payload = result.data.confirmAccount;
 
         if (payload?.errors?.length) {
           setStatus("error");
@@ -73,7 +79,7 @@ export default function AccountConfirmPage() {
       }
     };
 
-    void confirmAccount();
+    void confirmAccountAction();
   }, [email, token]);
 
   return (

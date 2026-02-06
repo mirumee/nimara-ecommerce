@@ -4,7 +4,12 @@ query Order($id: ID!) {
     number
     created
     status
+    statusDisplay
     paymentStatus
+    paymentStatusDisplay
+    userEmail
+    chargeStatus
+    authorizeStatus
     total {
       gross {
         amount
@@ -69,6 +74,8 @@ query Order($id: ID!) {
       variantName
       productSku
       quantity
+      quantityToFulfill
+      quantityFulfilled
       unitPrice {
         gross {
           amount
@@ -85,6 +92,19 @@ query Order($id: ID!) {
         url
         alt
       }
+      variant {
+        name
+        media {
+          url
+          alt
+        }
+        stocks {
+          warehouse {
+            id
+            name
+          }
+        }
+      }
     }
     events {
       id
@@ -100,6 +120,9 @@ query Order($id: ID!) {
       status
       created
       trackingNumber
+      warehouse {
+        id
+      }
       lines {
         id
         quantity

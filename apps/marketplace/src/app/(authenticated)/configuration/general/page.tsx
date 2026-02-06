@@ -1,32 +1,31 @@
-"use client";
-
-import { Edit, Loader2, Upload } from "lucide-react";
+import { Edit, Upload } from "lucide-react";
 
 import { Button } from "@nimara/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@nimara/ui/components/card";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { MeDocument } from "@/graphql/queries/generated";
-import { useGraphQLQuery } from "@/hooks/use-graphql-query";
+import { getServerAuthToken } from "@/lib/auth/server";
+import { configurationService } from "@/services/configuration";
 
-export default function ConfigurationGeneralPage() {
-  const { data, isLoading } = useGraphQLQuery(MeDocument);
+export default async function ConfigurationGeneralPage() {
+  const token = await getServerAuthToken();
+  const result = await configurationService.getMe(token);
 
-  const user = data?.me;
+  if (!result.ok) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <p className="text-muted-foreground">Failed to load user data</p>
+      </div>
+    );
+  }
+
+  const user = result.data.me;
   const vendorName =
     user?.firstName || user?.email || "Vendor name";
   const vendorUrl = `marketplace.com/${String(vendorName).toLowerCase().replace(/\s+/g, "-")}`;
   const fullName = user
     ? [user.firstName, user.lastName].filter(Boolean).join(" ")
     : "";
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-8">

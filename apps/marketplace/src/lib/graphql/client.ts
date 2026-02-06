@@ -1,4 +1,4 @@
-import { GraphQLClient } from "graphql-request";
+import { graphqlClient as createGraphqlClient } from "@nimara/infrastructure/graphql/client";
 
 const endpoint =
   process.env.NEXT_PUBLIC_GRAPHQL_URL || "http://localhost:3001/api/graphql";
@@ -6,127 +6,67 @@ const endpoint =
 /**
  * Get Saleor domain from env (hostname of NEXT_PUBLIC_SALEOR_URL).
  * Required by the marketplace GraphQL API for domain-only and authenticated operations.
+ * Works on both client and server so server actions send the header too.
  */
 export function getSaleorDomainHeader(): Record<string, string> {
-  if (typeof window === "undefined") {return {};}
   const url = process.env.NEXT_PUBLIC_SALEOR_URL;
 
-  if (!url) {return {};}
+  if (!url) {
+    return {};
+  }
   try {
     const domain = new URL(url).hostname;
 
-
-return { "x-saleor-domain": domain };
+    return { "x-saleor-domain": domain };
   } catch {
     return {};
   }
 }
 
-export function getGraphQLClient(token?: string | null) {
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-    ...getSaleorDomainHeader(),
+/**
+ * Client for making GraphQL requests with optional authentication.
+ * Uses the infrastructure's graphqlClient which returns AsyncResult (ok/err pattern).
+ *
+ * Note: This adds the x-saleor-domain header for marketplace-specific needs.
+ *
+ * @param token - Optional access token for authenticated requests
+ * @returns GraphQL client with execute method
+ */
+export const graphqlClient = (token?: string | null) => {
+  const client = createGraphqlClient(endpoint, token);
+
+  // Wrap execute to add x-saleor-domain header (client-side only)
+  const originalExecute = client.execute;
+
+  return {
+    execute: <TResult, TVariables extends Record<string, unknown>>(
+      ...args: Parameters<typeof originalExecute<TResult, TVariables>>
+    ) => {
+      const [query, input] = args;
+      const saleorDomainHeader = getSaleorDomainHeader();
+
+      return originalExecute(query, {
+        ...input,
+        options: {
+          ...input.options,
+          headers: {
+            ...saleorDomainHeader,
+            ...input.options?.headers,
+          },
+        },
+      });
+    },
   };
+};
 
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
+/**
+ * Get the current access token from localStorage (client-side only).
+ * For server-side, use getServerAuthToken() from @/lib/auth/server instead.
+ */
+export function getAccessToken(): string | null {
+  if (typeof window === "undefined") {
+    return null;
   }
 
-  return new GraphQLClient(endpoint, { headers });
-}
-
-// Fetcher for client-side GraphQL requests (e.g. used by useGraphQLQuery)
-export function graphqlFetcher<TData, TVariables>(
-  query: string,
-  variables?: TVariables,
-  options?: RequestInit | HeadersInit,
-): () => Promise<TData> {
-  return async () => {
-    const token =
-      typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
-
-    const requestInit: RequestInit =
-      options && typeof options === "object" && "method" in options
-        ? (options as RequestInit)
-        : {};
-
-    const headers: Record<string, string> = {
-      "Content-Type": "application/json",
-      ...getSaleorDomainHeader(),
-      ...(requestInit.headers &&
-      typeof requestInit.headers === "object" &&
-      !(requestInit.headers instanceof Headers)
-        ? (requestInit.headers as Record<string, string>)
-        : {}),
-    };
-
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
-    }
-
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers,
-      body: JSON.stringify({
-        query,
-        variables,
-      }),
-      ...requestInit,
-    });
-
-    const json = await response.json();
-
-    if (json.errors) {
-      const first = json.errors[0];
-      const message =
-        first?.message != null ? String(first.message) : "Error fetching GraphQL data";
-
-      throw new Error(message);
-    }
-
-    return json.data;
-  };
-}
-
-// Server-side fetcher for use in Server Components
-export async function serverGraphqlFetcher<TData, TVariables>(
-  query: string,
-  variables?: TVariables,
-  token?: string,
-): Promise<TData> {
-  const saleorUrl = process.env.NEXT_PUBLIC_SALEOR_URL;
-
-  if (!saleorUrl) {
-    throw new Error("NEXT_PUBLIC_SALEOR_URL is not defined");
-  }
-
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-  };
-
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
-  }
-
-  const response = await fetch(saleorUrl, {
-    method: "POST",
-    headers,
-    body: JSON.stringify({
-      query,
-      variables,
-    }),
-    cache: "no-store",
-  });
-
-  const json = await response.json();
-
-  if (json.errors) {
-    const first = json.errors[0];
-    const message =
-      first?.message != null ? String(first.message) : "Error fetching GraphQL data";
-
-    throw new Error(message);
-  }
-
-  return json.data;
+  return localStorage.getItem("auth_token");
 }

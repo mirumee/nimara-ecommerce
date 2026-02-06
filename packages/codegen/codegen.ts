@@ -56,14 +56,19 @@ const nearOperationFileConfig = {
   },
 } as const;
 
+const singleFileConfig = {
+  plugins: ["typescript", "typescript-operations", "typed-document-node"],
+  config: baseCodegenConfig,
+} as const;
+
 const createAppProject = (appName: string) => ({
   schema: process.env.NEXT_PUBLIC_SALEOR_API_URL,
-  documents: [`../../apps/${appName}/**/*.graphql`],
+  documents: [`../../apps/${appName}/src/**/*.graphql`],
   extensions: {
     codegen: {
       overwrite: true,
       generates: {
-        [`../../apps/${appName}/src/graphql/`]: nearOperationFileConfig,
+        [`../../apps/${appName}/src/graphql/generated/client.ts`]: singleFileConfig,
       },
     },
   },

@@ -1,38 +1,25 @@
-"use client";
-
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 
 import { Button } from "@nimara/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@nimara/ui/components/card";
 
-import { ProductDocument } from "@/graphql/queries/generated";
-import { useGraphQLQuery } from "@/hooks/use-graphql-query";
+import { getServerAuthToken } from "@/lib/auth/server";
+import { productsService } from "@/services/products";
 
-export default function ProductDetailPage() {
-  const params = useParams();
-  const rawId = params.productId as string;
-  const productId =
-    typeof rawId === "string" ? decodeURIComponent(rawId) : rawId;
+export default async function ProductDetailPage({
+  params,
+}: {
+  params: Promise<{ productId: string }>;
+}) {
+  const { productId: rawId } = await params;
+  const productId = decodeURIComponent(rawId);
+  const token = await getServerAuthToken();
 
-  const { data, isLoading, error } = useGraphQLQuery(ProductDocument, {
-    variables: { id: productId },
-    enabled: !!productId,
-  });
+  const result = await productsService.getProduct({ id: productId }, token);
 
-  const product = data?.product;
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-      </div>
-    );
-  }
-
-  if (error || !product) {
+  if (!result.ok || !result.data.product) {
     return (
       <div className="space-y-4">
         <Button asChild variant="ghost">
@@ -44,13 +31,15 @@ export default function ProductDetailPage() {
         <Card>
           <CardContent className="py-12 text-center">
             <p className="text-muted-foreground">
-              {error ? "Failed to load product" : "Product not found"}
+              {!result.ok ? "Failed to load product" : "Product not found"}
             </p>
           </CardContent>
         </Card>
       </div>
     );
   }
+
+  const product = result.data.product;
 
   return (
     <div className="space-y-6">

@@ -1,0 +1,9 @@
+mutation OrderFulfill($order: ID!, $input: OrderFulfillInput!) {
+  orderFulfill(order: $order, input: $input) {
+    errors {
+      field
+      message
+      code
+    }
+  }
+}

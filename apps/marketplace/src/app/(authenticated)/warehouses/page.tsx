@@ -1,7 +1,3 @@
-"use client";
-
-import { Loader2 } from "lucide-react";
-
 import {
   Table,
   TableBody,
@@ -10,21 +6,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { WarehousesDocument } from "@/graphql/queries/generated";
-import { useGraphQLQuery } from "@/hooks/use-graphql-query";
+import { getServerAuthToken } from "@/lib/auth/server";
+import { configurationService } from "@/services/configuration";
 
-export default function WarehousesPage() {
-  const { data, isLoading } = useGraphQLQuery(WarehousesDocument);
+export default async function WarehousesPage() {
+  const token = await getServerAuthToken();
+  const result = await configurationService.getWarehouses(token);
 
-  const warehouses = data?.warehouses?.edges?.map((e) => e.node) || [];
-
-  if (isLoading) {
+  if (!result.ok) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <p className="text-muted-foreground">Failed to load warehouses</p>
       </div>
     );
   }
+
+  const warehouses = result.data.warehouses?.edges?.map((e) => e.node) || [];
 
   if (!warehouses.length) {
     return <div>No warehouses found</div>;

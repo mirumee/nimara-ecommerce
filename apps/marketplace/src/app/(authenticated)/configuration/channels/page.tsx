@@ -1,24 +1,23 @@
-"use client";
-
-import { Globe, Loader2 } from "lucide-react";
+import { Globe } from "lucide-react";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@nimara/ui/components/card";
 
-import { ChannelsDocument } from "@/graphql/queries/generated";
-import { useGraphQLQuery } from "@/hooks/use-graphql-query";
+import { getServerAuthToken } from "@/lib/auth/server";
+import { configurationService } from "@/services/configuration";
 
-export default function ConfigurationChannelsPage() {
-  const { data, isLoading } = useGraphQLQuery(ChannelsDocument);
+export default async function ConfigurationChannelsPage() {
+  const token = await getServerAuthToken();
+  const result = await configurationService.getChannels(token);
 
-  const channels = data?.channels || [];
-
-  if (isLoading) {
+  if (!result.ok) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <p className="text-muted-foreground">Failed to load channels</p>
       </div>
     );
   }
+
+  const channels = result.data.channels || [];
 
   return (
     <div className="space-y-6">

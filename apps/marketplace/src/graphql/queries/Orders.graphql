@@ -1,12 +1,28 @@
-query Orders($first: Int, $after: String, $filter: OrderFilterInput) {
-  orders(first: $first, after: $after, filter: $filter) {
+query Orders(
+  $first: Int
+  $last: Int
+  $after: String
+  $before: String
+  $filter: OrderFilterInput
+  $sortBy: OrderSortingInput
+) {
+  orders(
+    first: $first
+    last: $last
+    after: $after
+    before: $before
+    filter: $filter
+    sortBy: $sortBy
+  ) {
     edges {
       node {
         id
         number
         created
         status
+        statusDisplay
         paymentStatus
+        paymentStatusDisplay
         total {
           gross {
             amount
