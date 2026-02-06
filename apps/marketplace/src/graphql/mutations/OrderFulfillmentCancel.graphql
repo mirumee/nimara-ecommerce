@@ -1,0 +1,9 @@
+mutation CancelOrderFulfillment($id: ID!, $input: FulfillmentCancelInput) {
+  orderFulfillmentCancel(id: $id, input: $input) {
+    errors {
+      field
+      message
+      code
+    }
+  }
+}

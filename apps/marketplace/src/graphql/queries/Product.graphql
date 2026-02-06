@@ -1,0 +1,156 @@
+query ProductDetail($id: ID!) {
+  product(id: $id) {
+    id
+    name
+    slug
+    description
+    seoTitle
+    seoDescription
+    collections {
+      id
+      name
+    }
+    thumbnail {
+      url
+      alt
+    }
+    media {
+      id
+      url
+      alt
+      type
+    }
+    productType {
+      id
+      name
+    }
+    category {
+      id
+      name
+    }
+    assignedAttributes(limit: 100) {
+      __typename
+      attribute {
+        id
+        name
+        slug
+        inputType
+        valueRequired
+        choices(first: 100) {
+          edges {
+            node {
+              ... on AttributeValue {
+                id
+                name
+                slug
+              }
+            }
+          }
+        }
+      }
+      ... on AssignedBooleanAttribute {
+        booleanValue: value
+      }
+      ... on AssignedDateAttribute {
+        dateValue: value
+      }
+      ... on AssignedDateTimeAttribute {
+        dateTimeValue: value
+      }
+      ... on AssignedNumericAttribute {
+        numericValue: value
+      }
+      ... on AssignedPlainTextAttribute {
+        plainTextValue: value
+      }
+      ... on AssignedTextAttribute {
+        textValue: value
+      }
+      ... on AssignedSingleChoiceAttribute {
+        singleChoiceValue: value {
+          name
+          slug
+        }
+      }
+      ... on AssignedMultiChoiceAttribute {
+        multiChoiceValue: value {
+          name
+          slug
+        }
+      }
+      ... on AssignedSwatchAttribute {
+        swatchValue: value {
+          name
+          slug
+          hexColor
+        }
+      }
+      ... on AssignedFileAttribute {
+        fileValue: value {
+          url
+          contentType
+        }
+      }
+    }
+    pricing {
+      priceRange {
+        start {
+          gross {
+            amount
+            currency
+          }
+        }
+        stop {
+          gross {
+            amount
+            currency
+          }
+        }
+      }
+    }
+    channelListings {
+      id
+      channel {
+        id
+        name
+      }
+      isPublished
+      visibleInListings
+      isAvailableForPurchase
+      pricing {
+        priceRange {
+          start {
+            gross {
+              amount
+              currency
+            }
+          }
+        }
+      }
+    }
+    variants {
+      id
+      name
+      sku
+      pricing {
+        price {
+          gross {
+            amount
+            currency
+          }
+        }
+      }
+      stocks {
+        warehouse {
+          name
+        }
+        quantity
+        quantityAllocated
+      }
+    }
+    metadata {
+      key
+      value
+    }
+  }
+}

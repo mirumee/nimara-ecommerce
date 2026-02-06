@@ -1,0 +1,31 @@
+query Warehouses {
+  warehouses(first: 50) {
+    edges {
+      node {
+        id
+        name
+        slug
+        address {
+          streetAddress1
+          streetAddress2
+          city
+          postalCode
+          country {
+            country
+            code
+          }
+          phone
+        }
+        shippingZones(first: 10) {
+          edges {
+            node {
+              id
+              name
+            }
+          }
+        }
+      }
+    }
+    totalCount
+  }
+}

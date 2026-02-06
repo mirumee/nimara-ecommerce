@@ -45,11 +45,46 @@ invariant(
   `NEXT_PUBLIC_SALEOR_API_URL not set!`,
 );
 
+const nearOperationFileConfig = {
+  config: baseCodegenConfig,
+  plugins: ["typescript-operations", "typed-document-node"],
+  preset: "near-operation-file-preset",
+  presetConfig: {
+    baseTypesPath: "~@nimara/codegen/schema",
+    fileName: "generated",
+    extension: ".ts",
+  },
+} as const;
+
+const singleFileConfig = {
+  plugins: ["typescript", "typescript-operations", "typed-document-node"],
+  config: baseCodegenConfig,
+} as const;
+
+const createAppProject = (appName: string) => ({
+  schema: process.env.NEXT_PUBLIC_SALEOR_API_URL,
+  documents: [`../../apps/${appName}/src/**/*.graphql`],
+  extensions: {
+    codegen: {
+      overwrite: true,
+      generates: {
+        [`../../apps/${appName}/src/graphql/generated/client.ts`]: singleFileConfig,
+      },
+    },
+  },
+});
+
+// Apps with separate GraphQL codegen (to avoid fragment name conflicts)
+const SEPARATE_APPS = ["marketplace", "stripe"];
+
 const config: IGraphQLConfig = {
   projects: {
     saleor: {
       schema: process.env.NEXT_PUBLIC_SALEOR_API_URL,
-      documents: ["../../**/*.graphql"],
+      documents: [
+        "../../**/*.graphql",
+        ...SEPARATE_APPS.map((app) => `!../../apps/${app}/**/*.graphql`),
+      ],
       extensions: {
         codegen: {
           overwrite: true,
@@ -58,20 +93,14 @@ const config: IGraphQLConfig = {
               plugins: ["typescript"],
               config: baseCodegenConfig,
             },
-            "./graphql/": {
-              config: baseCodegenConfig,
-              plugins: ["typescript-operations", "typed-document-node"],
-              preset: "near-operation-file-preset",
-              presetConfig: {
-                baseTypesPath: "~@nimara/codegen/schema",
-                fileName: "generated",
-                extension: ".ts",
-              },
-            },
+            "./graphql/": nearOperationFileConfig,
           },
         },
       },
     },
+    ...Object.fromEntries(
+      SEPARATE_APPS.map((app) => [app, createAppProject(app)]),
+    ),
   },
 };
 

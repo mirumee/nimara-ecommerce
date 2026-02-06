@@ -1,0 +1,54 @@
+query OrdersList(
+  $first: Int
+  $last: Int
+  $after: String
+  $before: String
+  $filter: OrderFilterInput
+  $sortBy: OrderSortingInput
+) {
+  orders(
+    first: $first
+    last: $last
+    after: $after
+    before: $before
+    filter: $filter
+    sortBy: $sortBy
+  ) {
+    edges {
+      node {
+        id
+        number
+        created
+        status
+        statusDisplay
+        paymentStatus
+        paymentStatusDisplay
+        total {
+          gross {
+            amount
+            currency
+          }
+        }
+        user {
+          email
+          firstName
+          lastName
+        }
+        shippingAddress {
+          city
+          country {
+            country
+          }
+        }
+      }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    totalCount
+  }
+}

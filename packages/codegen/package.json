@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "scripts": {
     "codegen:saleor": "graphql-codegen --config ./codegen.ts --project saleor",
-    "codegen": "pnpm codegen:saleor"
+    "codegen:marketplace": "graphql-codegen --config ./codegen.ts --project marketplace",
+    "codegen:stripe": "graphql-codegen --config ./codegen.ts --project stripe",
+    "codegen": "pnpm codegen:saleor && pnpm codegen:marketplace && pnpm codegen:stripe"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "5.0.7",

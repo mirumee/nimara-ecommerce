@@ -25,8 +25,12 @@
     "start:storefront": "pnpm run start --filter=storefront",
     "start:docs": "pnpm run start --filter=docs",
     "codegen": "dotenv -- turbo run codegen",
+    "codegen:saleor": "dotenv -- pnpm --filter @nimara/codegen codegen:saleor",
+    "codegen:marketplace": "dotenv -- pnpm --filter @nimara/codegen codegen:marketplace",
+    "codegen:stripe": "dotenv -- pnpm --filter @nimara/codegen codegen:stripe",
     "dev": "dotenv -- turbo run dev",
     "dev:storefront": "pnpm run dev --filter=storefront",
+    "dev:marketplace": "pnpm run dev --filter=marketplace",
     "dev:stripe": "pnpm run dev --filter=stripe",
     "dev:docs": "pnpm run dev --filter=docs",
     "test": "dotenv -- turbo run test",
@@ -34,7 +38,10 @@
     "test:e2e": "dotenv -- turbo run test:e2e",
     "prepare": "husky",
     "format": "pnpm prettier --write '**/*.{js,ts,tsx,json,md}'",
-    "format:check": "pnpm prettier --check '**/*.{js,ts,tsx,json,md}'"
+    "format:check": "pnpm prettier --check '**/*.{js,ts,tsx,json,md}'",
+    "localstack:up": "docker compose -f apps/marketplace/docker-compose.yml up -d localstack",
+    "localstack:down": "docker compose -f apps/marketplace/docker-compose.yml down",
+    "localstack:export-secret": "docker compose -f apps/marketplace/docker-compose.yml exec localstack bash /opt/localstack/export-secret.sh"
   },
   "devDependencies": {
     "commitizen": "4.3.1",

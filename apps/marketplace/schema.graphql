@@ -1,0 +1,342 @@
+# Minimal Saleor-compatible schema for marketplace codegen when NEXT_PUBLIC_SALEOR_URL is not set.
+# For full types, set NEXT_PUBLIC_SALEOR_URL to your Saleor GraphQL endpoint and run codegen.
+
+scalar DateTime
+scalar Date
+scalar Decimal
+scalar JSON
+scalar JSONString
+scalar Metadata
+scalar PositiveDecimal
+scalar UUID
+scalar WeightScalar
+scalar GenericScalar
+
+type Query {
+  me: User
+  product(id: ID!): Product
+  products(
+    first: Int
+    after: String
+    search: String
+    filter: ProductFilterInput
+  ): ProductCountableConnection
+  order(id: ID!): Order
+  orders(
+    first: Int
+    after: String
+    filter: OrderFilterInput
+  ): OrderCountableConnection
+  warehouses(first: Int): WarehouseCountableConnection
+  channels: [Channel!]
+}
+
+type User {
+  id: ID!
+  email: String
+  firstName: String
+  lastName: String
+  isActive: Boolean
+  metadata: [MetadataItem!]
+  addresses: [Address]
+}
+
+type MetadataItem {
+  key: String!
+  value: String!
+}
+
+type Address {
+  id: ID!
+  firstName: String
+  lastName: String
+  streetAddress1: String
+  streetAddress2: String
+  city: String
+  postalCode: String
+  country: Country
+  phone: String
+  isDefaultBillingAddress: Boolean
+  isDefaultShippingAddress: Boolean
+}
+
+type Country {
+  code: String!
+  country: String!
+}
+
+input ProductFilterInput {
+  isPublished: Boolean
+}
+
+type ProductCountableConnection {
+  edges: [ProductCountableEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int
+}
+
+type ProductCountableEdge {
+  node: Product!
+  cursor: String!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+type Product {
+  id: ID!
+  name: String!
+  slug: String!
+  description: JSONString
+  seoTitle: String
+  seoDescription: String
+  thumbnail: Image
+  media: [ProductMedia]
+  productType: ProductType
+  category: Category
+  pricing: ProductPricingInfo
+  channelListings: [ProductChannelListing!]
+  variants: [ProductVariant]
+  attributes: [SelectedAttribute!]
+  metadata: [MetadataItem!]
+}
+
+type Image {
+  url: String!
+  alt: String
+}
+
+type ProductMedia {
+  id: ID!
+  url: String!
+  alt: String
+  type: String
+}
+
+type ProductType {
+  id: ID!
+  name: String!
+}
+
+type Category {
+  id: ID!
+  name: String!
+}
+
+type ProductPricingInfo {
+  priceRange: TaxedMoneyRange
+}
+
+type TaxedMoneyRange {
+  start: TaxedMoney
+  stop: TaxedMoney
+}
+
+type TaxedMoney {
+  gross: Money!
+  net: Money!
+  tax: Money!
+}
+
+type Money {
+  amount: Float!
+  currency: String!
+}
+
+type ProductChannelListing {
+  id: ID!
+  channel: Channel!
+  isPublished: Boolean!
+  visibleInListings: Boolean
+  availableForPurchase: Boolean
+  pricing: ProductPricingInfo
+}
+
+type Channel {
+  id: ID!
+  name: String!
+  slug: String!
+  currencyCode: String!
+  defaultCountry: Country
+  isActive: Boolean!
+}
+
+type ProductVariant {
+  id: ID!
+  name: String!
+  sku: String
+  pricing: VariantPricingInfo
+  stocks: [Stock!]
+}
+
+type VariantPricingInfo {
+  price: TaxedMoney
+}
+
+type Stock {
+  warehouse: Warehouse!
+  quantity: Int!
+  quantityAllocated: Int!
+}
+
+type SelectedAttribute {
+  attribute: Attribute!
+  values: [AttributeValue!]!
+}
+
+type Attribute {
+  id: ID!
+  name: String
+  slug: String
+}
+
+type AttributeValue {
+  id: ID!
+  name: String
+  slug: String
+}
+
+input OrderFilterInput {
+  paymentStatus: [String]
+  status: [String]
+  search: String
+}
+
+type OrderCountableConnection {
+  edges: [OrderCountableEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int
+}
+
+type OrderCountableEdge {
+  node: Order!
+  cursor: String!
+}
+
+type Order {
+  id: ID!
+  number: String
+  created: DateTime
+  status: String!
+  paymentStatus: String!
+  total: TaxedMoney!
+  subtotal: TaxedMoney!
+  shippingPrice: TaxedMoney!
+  user: User
+  billingAddress: Address
+  shippingAddress: Address
+  lines: [OrderLine!]!
+  events: [OrderEvent]
+  fulfillments: [Fulfillment!]
+}
+
+type OrderLine {
+  id: ID!
+  productName: String!
+  variantName: String
+  productSku: String
+  quantity: Int!
+  unitPrice: TaxedMoney!
+  totalPrice: TaxedMoney!
+  thumbnail: Image
+}
+
+type OrderEvent {
+  id: ID!
+  date: DateTime
+  type: String
+  message: String
+  user: User
+}
+
+type Fulfillment {
+  id: ID!
+  status: String!
+  created: DateTime
+  trackingNumber: String
+  lines: [FulfillmentLine!]!
+}
+
+type FulfillmentLine {
+  id: ID!
+  quantity: Int!
+  orderLine: OrderLine
+}
+
+type WarehouseCountableConnection {
+  edges: [WarehouseCountableEdge!]!
+  totalCount: Int
+}
+
+type WarehouseCountableEdge {
+  node: Warehouse!
+  cursor: String!
+}
+
+type Warehouse {
+  id: ID!
+  name: String!
+  slug: String!
+  address: Address
+  shippingZones(first: Int): ShippingZoneCountableConnection
+}
+
+type ShippingZoneCountableConnection {
+  edges: [ShippingZoneCountableEdge!]!
+}
+
+type ShippingZoneCountableEdge {
+  node: ShippingZone!
+  cursor: String!
+}
+
+type ShippingZone {
+  id: ID!
+  name: String!
+}
+
+# Auth / account (for confirmAccount, accountRegister when using minimal schema)
+type Mutation {
+  confirmAccount(email: String!, token: String!): ConfirmAccount
+  accountRegister(input: AccountRegisterInput!): AccountRegister
+}
+
+input AccountRegisterInput {
+  channel: String
+  email: String!
+  firstName: String
+  lastName: String
+  password: String!
+  redirectUrl: String
+}
+
+type AccountRegister {
+  requiresConfirmation: Boolean
+  user: User
+  errors: [AccountError!]!
+}
+
+type ConfirmAccount {
+  user: User
+  errors: [AccountError!]!
+}
+
+type AccountError {
+  field: String
+  message: String
+  code: AccountErrorCode!
+}
+
+enum AccountErrorCode {
+  ACCOUNT_NOT_CONFIRMED
+  INVALID
+  INVALID_CREDENTIALS
+  NOT_FOUND
+  OUT_OF_SCOPE
+  REQUIRED
+  UNIQUE
+}

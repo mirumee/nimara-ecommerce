@@ -1,0 +1,28 @@
+query Me {
+  me {
+    id
+    email
+    firstName
+    lastName
+    metadata {
+      key
+      value
+    }
+    addresses {
+      id
+      firstName
+      lastName
+      streetAddress1
+      streetAddress2
+      city
+      postalCode
+      country {
+        country
+        code
+      }
+      phone
+      isDefaultBillingAddress
+      isDefaultShippingAddress
+    }
+  }
+}

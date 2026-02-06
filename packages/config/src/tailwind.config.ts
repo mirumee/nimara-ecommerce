@@ -1,14 +1,25 @@
 import type { Config as TwConfig } from "tailwindcss";
 const plugin = require("tailwindcss/plugin");
 
-export default function config(app?: "storefront" | "stripe") {
+type AppName = "storefront" | "stripe" | "marketplace";
+
+function getContentPaths(app: AppName): string[] {
+  const appSrc = `../../apps/${app}/src`;
+  const uiSrc = "../../packages/ui/src/**/*.{ts,tsx,html,stories.tsx}";
+  if (app === "marketplace") {
+    return [`${appSrc}/**/*.{js,ts,jsx,tsx,mdx}`, uiSrc];
+  }
+  return [
+    `${appSrc}/index.html`,
+    `${appSrc}/**/*.{ts,tsx,html,stories.tsx}`,
+    uiSrc,
+    "../../interface/**/*.{ts,tsx,html,stories.tsx}",
+  ];
+}
+
+export default function config(app: AppName) {
   const config = {
-    content: [
-      `../../apps/${app}/src/index.html`,
-      `../../apps/${app}/src/**/*.{ts,tsx,html,stories.tsx}`,
-      "../../packages/ui/src/**/*.{ts,tsx,html,stories.tsx}",
-      "../../interface/**/*.{ts,tsx,html,stories.tsx}",
-    ],
+    content: getContentPaths(app),
     darkMode: "class",
     theme: {
       screens: {
