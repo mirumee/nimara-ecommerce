@@ -1,41 +1,77 @@
-"use client";
+import { Card, CardContent } from "@nimara/ui/components/card";
 
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
+import { getServerAuthToken } from "@/lib/auth/server";
+import { configurationService, productsService } from "@/services";
 
-import { Button } from "@nimara/ui/components/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@nimara/ui/components/card";
+import { VariantDetailClient } from "./_components/variant-detail-client";
 
-export default function VariantDetailPage() {
-  const params = useParams();
-  const productId = params.productId as string;
-  const variantId = params.variantId as string;
+export default async function VariantDetailPage({
+  params,
+}: {
+  params: Promise<{ productId: string; variantId: string }>;
+}) {
+  const { productId: rawProductId, variantId: rawVariantId } = await params;
+  const productId = decodeURIComponent(rawProductId);
+  const variantId = decodeURIComponent(rawVariantId);
+  const token = await getServerAuthToken();
 
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Button asChild variant="ghost" size="icon">
-          <Link href={`/products/${productId}`}>
-            <ArrowLeft className="h-4 w-4" />
-          </Link>
-        </Button>
-        <h1 className="text-2xl font-bold">Variant Details</h1>
-      </div>
+  const [productResult, variantResult, channelsResult, warehousesResult] =
+    await Promise.all([
+      productsService.getProduct({ id: productId }, token),
+      productsService.getProductVariant({ id: variantId }, token),
+      configurationService.getChannels(token),
+      configurationService.getWarehouses(token),
+    ]);
 
+  const product = productResult.ok ? productResult.data.product : null;
+  const variant = variantResult.ok ? variantResult.data.productVariant : null;
+
+  if (!product || !variant) {
+    return (
       <Card>
-        <CardHeader>
-          <CardTitle>Variant Information</CardTitle>
-        </CardHeader>
-        <CardContent>
+        <CardContent className="py-12 text-center">
           <p className="text-muted-foreground">
-            Variant ID: {variantId}
-          </p>
-          <p className="mt-4 text-sm text-muted-foreground">
-            Variant editing form will be implemented here.
+            {!productResult.ok || !variantResult.ok
+              ? "Failed to load variant"
+              : "Variant not found"}
           </p>
         </CardContent>
       </Card>
-    </div>
+    );
+  }
+
+  const channels = channelsResult.ok ? channelsResult.data.channels ?? [] : [];
+  const warehouses =
+    warehousesResult.ok && warehousesResult.data.warehouses?.edges
+      ? warehousesResult.data.warehouses.edges.map((e) => e.node)
+      : [];
+
+  const productTypeId = product.productType?.id;
+  const productTypeResult = productTypeId
+    ? await productsService.getProductType({ id: productTypeId }, token)
+    : null;
+  const productType =
+    productTypeResult && productTypeResult.ok ? productTypeResult.data.productType : null;
+
+  if (!productType) {
+    return (
+      <Card>
+        <CardContent className="py-12 text-center">
+          <p className="text-muted-foreground">Failed to load product type</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <VariantDetailClient
+      productId={productId}
+      variantId={variantId}
+      product={product}
+      variant={variant}
+      productType={productType}
+      channels={channels}
+      warehouses={warehouses}
+    />
   );
 }

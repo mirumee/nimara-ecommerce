@@ -1,5 +1,5 @@
 import type {
-  Order_order_Order_events_OrderEvent as OrderEvent,
+  OrderDetail_order_Order_events_OrderEvent as OrderEvent,
   OrderEventsEmailsEnum,
   OrderEventsEnum,
 } from "@/graphql/generated/client";
@@ -90,11 +90,11 @@ export const getOrderEventMessage = (
   event: OrderEvent,
   _currency?: string,
 ): string | null => {
-  const { type, email, emailType, message } = event as OrderEvent & {
-    amount?: number | null;
-    email?: string | null;
-    emailType?: OrderEventsEmailsEnum | null;
-  };
+  const type = (event.type ?? null) as OrderEventsEnum | null;
+  const message = event.message ?? null;
+  const email = (event as unknown as { email?: string | null }).email ?? null;
+  const emailType =
+    (event as unknown as { emailType?: OrderEventsEmailsEnum | null }).emailType ?? null;
 
   if (!type) {
     return message ?? null;

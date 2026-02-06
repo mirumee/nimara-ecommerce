@@ -1,0 +1,47 @@
+query ProductTypeDetail($id: ID!) {
+  productType(id: $id) {
+    id
+    name
+    slug
+    hasVariants
+    productAttributes {
+      id
+      name
+      slug
+      inputType
+      valueRequired
+      choices(first: 50) {
+        edges {
+          node {
+            ... on AttributeValue {
+              id
+              name
+              slug
+            }
+          }
+        }
+      }
+    }
+    assignedVariantAttributes {
+      variantSelection
+      attribute {
+        id
+        name
+        slug
+        inputType
+        valueRequired
+        choices(first: 50) {
+          edges {
+            node {
+              ... on AttributeValue {
+                id
+                name
+                slug
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

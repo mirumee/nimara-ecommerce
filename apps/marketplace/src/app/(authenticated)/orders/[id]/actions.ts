@@ -3,15 +3,15 @@
 import { revalidatePath } from "next/cache";
 
 import type {
-  OrderCancelVariables,
-  OrderFulfillmentCancelVariables,
-  OrderFulfillVariables,
-  OrderNoteAddVariables,
+  AddOrderNoteVariables,
+  CancelOrderFulfillmentVariables,
+  CancelOrderVariables,
+  FulfillOrderVariables,
 } from "@/graphql/generated/client";
 import { getServerAuthToken } from "@/lib/auth/server";
 import { ordersService } from "@/services";
 
-export async function fulfillOrder(variables: OrderFulfillVariables) {
+export async function fulfillOrder(variables: FulfillOrderVariables) {
   const token = await getServerAuthToken();
   const result = await ordersService.fulfillOrder(variables, token);
 
@@ -21,7 +21,7 @@ export async function fulfillOrder(variables: OrderFulfillVariables) {
 }
 
 export async function cancelFulfillment(
-  variables: OrderFulfillmentCancelVariables,
+  variables: CancelOrderFulfillmentVariables,
   orderId: string,
 ) {
   const token = await getServerAuthToken();
@@ -32,7 +32,7 @@ export async function cancelFulfillment(
   return result;
 }
 
-export async function cancelOrder(variables: OrderCancelVariables) {
+export async function cancelOrder(variables: CancelOrderVariables) {
   const token = await getServerAuthToken();
   const result = await ordersService.cancelOrder(variables, token);
 
@@ -43,7 +43,7 @@ export async function cancelOrder(variables: OrderCancelVariables) {
 }
 
 export async function addOrderNote(
-  variables: OrderNoteAddVariables,
+  variables: AddOrderNoteVariables,
   orderId: string,
 ) {
   const token = await getServerAuthToken();

@@ -1,4 +1,4 @@
-query Orders(
+query OrdersList(
   $first: Int
   $last: Int
   $after: String

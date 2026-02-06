@@ -1,4 +1,4 @@
-query Order($id: ID!) {
+query OrderDetail($id: ID!) {
   order(id: $id) {
     id
     number

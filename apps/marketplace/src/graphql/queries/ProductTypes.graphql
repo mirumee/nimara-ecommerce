@@ -1,0 +1,36 @@
+query ProductTypesList($first: Int = 100, $after: String) {
+  productTypes(first: $first, after: $after) {
+    edges {
+      node {
+        id
+        name
+        slug
+        hasVariants
+        productAttributes {
+          id
+          name
+          slug
+          inputType
+          valueRequired
+          choices(first: 50) {
+            edges {
+              node {
+                ... on AttributeValue {
+                  id
+                  name
+                  slug
+                }
+              }
+            }
+          }
+        }
+      }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+    totalCount
+  }
+}

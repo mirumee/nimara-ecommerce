@@ -38,9 +38,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type {
-  Order_Query,
-  OrderCancel_Mutation,
-  OrderFulfill_Mutation,
+  CancelOrder,
+  FulfillOrder,
+  OrderDetail,
 } from "@/graphql/generated/client";
 import { formatPrice } from "@/lib/utils";
 
@@ -97,7 +97,7 @@ function formatAddress(address?: Address | null): string {
 }
 
 interface OrderDetailClientProps {
-  order: NonNullable<Order_Query["order"]>;
+  order: NonNullable<OrderDetail["order"]>;
   warehouses: Array<{ id: string; name: string }>;
 }
 
@@ -157,7 +157,7 @@ export function OrderDetailClient({
         return;
       }
 
-      const fulfillData = result.data as unknown as OrderFulfill_Mutation;
+      const fulfillData = result.data as unknown as FulfillOrder;
       const errors = fulfillData?.orderFulfill?.errors ?? [];
 
       if (errors.length > 0) {
@@ -285,7 +285,7 @@ export function OrderDetailClient({
         return;
       }
 
-      const cancelPayload = (result.data as unknown as OrderCancel_Mutation)?.orderCancel;
+      const cancelPayload = (result.data as unknown as CancelOrder)?.orderCancel;
 
       if (cancelPayload?.errors?.length) {
         const messages = cancelPayload.errors

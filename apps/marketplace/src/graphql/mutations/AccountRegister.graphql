@@ -1,4 +1,4 @@
-mutation AccountRegister($input: AccountRegisterInput!) {
+mutation RegisterAccount($input: AccountRegisterInput!) {
   accountRegister(input: $input) {
     requiresConfirmation
     user {

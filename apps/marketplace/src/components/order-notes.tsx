@@ -8,8 +8,8 @@ import { useToast } from "@nimara/ui/hooks";
 import { addOrderNote } from "@/app/(authenticated)/orders/[id]/actions";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  type Order_order_Order_events_OrderEvent as OrderEvent,
-  type OrderNoteAdd_Mutation,
+  type AddOrderNote_Mutation,
+  type OrderDetail_order_Order_events_OrderEvent as OrderEvent,
 } from "@/graphql/generated/client";
 
 import { getOrderNotes } from "../lib/order-events-utils";
@@ -86,7 +86,7 @@ export function OrderNotes({
         return;
       }
 
-      const addNoteData = result.data as unknown as OrderNoteAdd_Mutation;
+      const addNoteData = result.data as unknown as AddOrderNote_Mutation;
       const payload = addNoteData?.orderNoteAdd;
       const errors = payload?.errors ?? [];
 

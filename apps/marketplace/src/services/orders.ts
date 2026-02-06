@@ -3,24 +3,24 @@ import type { DocumentTypeDecoration } from "@graphql-typed-document-node/core";
 import type { AsyncResult } from "@nimara/domain/objects/Result";
 
 import {
-  type Order_Query,
-  type OrderCancel,
-  OrderCancelDocument,
-  type OrderCancelVariables,
-  OrderDocument,
-  type OrderFulfill_Mutation,
-  OrderFulfillDocument,
-  type OrderFulfillmentCancel_Mutation,
-  OrderFulfillmentCancelDocument,
-  type OrderFulfillmentCancelVariables,
-  type OrderFulfillVariables,
-  type OrderNoteAdd,
-  OrderNoteAddDocument,
-  type OrderNoteAddVariables,
-  type Orders,
-  OrdersDocument,
-  type OrdersVariables,
-  type OrderVariables,
+  type AddOrderNote,
+  AddOrderNoteDocument,
+  type AddOrderNoteVariables,
+  type CancelOrder,
+  CancelOrderDocument,
+  type CancelOrderVariables,
+  type CancelOrderFulfillment,
+  CancelOrderFulfillmentDocument,
+  type CancelOrderFulfillmentVariables,
+  type FulfillOrder,
+  FulfillOrderDocument,
+  type FulfillOrderVariables,
+  type OrderDetail,
+  OrderDetailDocument,
+  type OrderDetailVariables,
+  type OrdersList,
+  OrdersListDocument,
+  type OrdersListVariables,
 } from "@/graphql/generated/client";
 import { executeGraphQL } from "@/lib/graphql/execute";
 
@@ -34,81 +34,81 @@ type DocumentWithToString = DocumentTypeDecoration<unknown, unknown> & {
  */
 class OrdersService {
   async getOrders(
-    variables?: OrdersVariables,
+    variables?: OrdersListVariables,
     token?: string | null,
-  ): AsyncResult<Orders> {
-    return executeGraphQL(OrdersDocument, "OrdersQuery", variables, token);
+  ): AsyncResult<OrdersList> {
+    return executeGraphQL(OrdersListDocument, "OrdersListQuery", variables, token);
   }
 
   async getOrder(
-    variables: OrderVariables,
+    variables: OrderDetailVariables,
     token?: string | null,
-  ): AsyncResult<Order_Query> {
+  ): AsyncResult<OrderDetail> {
     return executeGraphQL(
-      OrderDocument,
-      "OrderQuery",
+      OrderDetailDocument,
+      "OrderDetailQuery",
       variables,
       token,
-    ) as AsyncResult<Order_Query>;
+    );
   }
 
   async fulfillOrder(
-    variables: OrderFulfillVariables,
+    variables: FulfillOrderVariables,
     token?: string | null,
-  ): AsyncResult<OrderFulfill_Mutation> {
+  ): AsyncResult<FulfillOrder> {
     return executeGraphQL<
-      OrderFulfill_Mutation,
-      OrderFulfillVariables
+      FulfillOrder,
+      FulfillOrderVariables
     >(
-      OrderFulfillDocument as DocumentTypeDecoration<
-        OrderFulfill_Mutation,
-        OrderFulfillVariables
+      FulfillOrderDocument as DocumentTypeDecoration<
+        FulfillOrder,
+        FulfillOrderVariables
       > &
         DocumentWithToString,
-      "OrderFulfillMutation",
+      "FulfillOrderMutation",
       variables,
       token,
     );
   }
 
   async cancelFulfillment(
-    variables: OrderFulfillmentCancelVariables,
+    variables: CancelOrderFulfillmentVariables,
     token?: string | null,
-  ): AsyncResult<OrderFulfillmentCancel_Mutation> {
+  ): AsyncResult<CancelOrderFulfillment> {
     return executeGraphQL<
-      OrderFulfillmentCancel_Mutation,
-      OrderFulfillmentCancelVariables
+      CancelOrderFulfillment,
+      CancelOrderFulfillmentVariables
     >(
-      OrderFulfillmentCancelDocument as DocumentTypeDecoration<
-        OrderFulfillmentCancel_Mutation,
-        OrderFulfillmentCancelVariables
+      CancelOrderFulfillmentDocument as DocumentTypeDecoration<
+        CancelOrderFulfillment,
+        CancelOrderFulfillmentVariables
       > &
         DocumentWithToString,
-      "OrderFulfillmentCancelMutation",
+      "CancelOrderFulfillmentMutation",
       variables,
       token,
     );
   }
 
   async cancelOrder(
-    variables: OrderCancelVariables,
+    variables: CancelOrderVariables,
     token?: string | null,
-  ): AsyncResult<OrderCancel> {
+  ): AsyncResult<CancelOrder> {
     return executeGraphQL(
-      OrderCancelDocument,
-      "OrderCancelMutation",
+      CancelOrderDocument,
+      "CancelOrderMutation",
       variables,
       token,
     );
   }
 
   async addOrderNote(
-    variables: OrderNoteAddVariables,
+    variables: AddOrderNoteVariables,
     token?: string | null,
-  ): AsyncResult<OrderNoteAdd> {
+  ): AsyncResult<AddOrderNote> {
     return executeGraphQL(
-      OrderNoteAddDocument,
-      "OrderNoteAddMutation",
+      AddOrderNoteDocument,
+      "AddOrderNoteMutation",
       variables,
       token,
     );

@@ -1,0 +1,31 @@
+mutation ProductMediaUpdateMutation($id: ID!, $input: ProductMediaUpdateInput!) {
+  productMediaUpdate(id: $id, input: $input) {
+    errors {
+      field
+      message
+      code
+    }
+    media {
+      id
+      url
+      alt
+      type
+      sortOrder
+    }
+    product {
+      id
+      media {
+        id
+        url
+        alt
+        type
+        sortOrder
+      }
+      thumbnail {
+        url
+        alt
+      }
+    }
+  }
+}
+

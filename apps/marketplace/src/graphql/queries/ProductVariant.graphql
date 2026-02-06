@@ -1,34 +1,38 @@
-query ProductDetail($id: ID!) {
-  product(id: $id) {
+query ProductVariantDetail($id: ID!) {
+  productVariant(id: $id) {
     id
     name
-    slug
-    description
-    seoTitle
-    seoDescription
-    collections {
+    sku
+    trackInventory
+    weight {
+      value
+      unit
+    }
+    channelListings {
       id
-      name
+      channel {
+        id
+        name
+        currencyCode
+      }
+      price {
+        currency
+        amount
+      }
+      costPrice {
+        currency
+        amount
+      }
+      priorPrice {
+        currency
+        amount
+      }
+      preorderThreshold {
+        quantity
+      }
+      margin
     }
-    thumbnail {
-      url
-      alt
-    }
-    media {
-      id
-      url
-      alt
-      type
-    }
-    productType {
-      id
-      name
-    }
-    category {
-      id
-      name
-    }
-    assignedAttributes(limit: 100) {
+    assignedAttributes {
       __typename
       attribute {
         id
@@ -92,60 +96,13 @@ query ProductDetail($id: ID!) {
         }
       }
     }
-    pricing {
-      priceRange {
-        start {
-          gross {
-            amount
-            currency
-          }
-        }
-        stop {
-          gross {
-            amount
-            currency
-          }
-        }
-      }
-    }
-    channelListings {
+    stocks {
       id
-      channel {
+      quantity
+      quantityAllocated
+      warehouse {
         id
         name
-      }
-      isPublished
-      visibleInListings
-      isAvailableForPurchase
-      pricing {
-        priceRange {
-          start {
-            gross {
-              amount
-              currency
-            }
-          }
-        }
-      }
-    }
-    variants {
-      id
-      name
-      sku
-      pricing {
-        price {
-          gross {
-            amount
-            currency
-          }
-        }
-      }
-      stocks {
-        warehouse {
-          name
-        }
-        quantity
-        quantityAllocated
       }
     }
     metadata {
@@ -154,3 +111,4 @@ query ProductDetail($id: ID!) {
     }
   }
 }
+

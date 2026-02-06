@@ -1,4 +1,4 @@
-mutation ConfirmAccount($email: String!, $token: String!) {
+mutation ConfirmVendorAccount($email: String!, $token: String!) {
   confirmAccount(email: $email, token: $token) {
     user {
       id

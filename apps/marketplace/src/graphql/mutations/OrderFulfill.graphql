@@ -1,4 +1,4 @@
-mutation OrderFulfill($order: ID!, $input: OrderFulfillInput!) {
+mutation FulfillOrder($order: ID!, $input: OrderFulfillInput!) {
   orderFulfill(order: $order, input: $input) {
     errors {
       field

@@ -30646,103 +30646,251 @@ export type _Service = {
   sdl: Maybe<Scalars['String']['output']>;
 };
 
-export type AccountRegister_accountRegister_AccountRegister_user_User = { id: string, email: string };
+export type RegisterAccount_accountRegister_AccountRegister_user_User = { id: string, email: string };
 
-export type AccountRegister_accountRegister_AccountRegister_errors_AccountError = { field: string | null, message: string | null, code: AccountErrorCode };
+export type RegisterAccount_accountRegister_AccountRegister_errors_AccountError = { field: string | null, message: string | null, code: AccountErrorCode };
 
-export type AccountRegister_accountRegister_AccountRegister = { requiresConfirmation: boolean | null, user: AccountRegister_accountRegister_AccountRegister_user_User | null, errors: Array<AccountRegister_accountRegister_AccountRegister_errors_AccountError> };
+export type RegisterAccount_accountRegister_AccountRegister = { requiresConfirmation: boolean | null, user: RegisterAccount_accountRegister_AccountRegister_user_User | null, errors: Array<RegisterAccount_accountRegister_AccountRegister_errors_AccountError> };
 
-export type AccountRegister_Mutation = { accountRegister: AccountRegister_accountRegister_AccountRegister | null };
+export type RegisterAccount_Mutation = { accountRegister: RegisterAccount_accountRegister_AccountRegister | null };
 
 
-export type AccountRegisterVariables = Exact<{
+export type RegisterAccountVariables = Exact<{
   input: AccountRegisterInput;
 }>;
 
 
-export type AccountRegister = AccountRegister_Mutation;
+export type RegisterAccount = RegisterAccount_Mutation;
 
-export type ConfirmAccount_confirmAccount_ConfirmAccount_user_User = { id: string, email: string, isActive: boolean };
+export type ConfirmVendorAccount_confirmAccount_ConfirmAccount_user_User = { id: string, email: string, isActive: boolean };
 
-export type ConfirmAccount_confirmAccount_ConfirmAccount_errors_AccountError = { field: string | null, message: string | null, code: AccountErrorCode };
+export type ConfirmVendorAccount_confirmAccount_ConfirmAccount_errors_AccountError = { field: string | null, message: string | null, code: AccountErrorCode };
 
-export type ConfirmAccount_confirmAccount_ConfirmAccount = { user: ConfirmAccount_confirmAccount_ConfirmAccount_user_User | null, errors: Array<ConfirmAccount_confirmAccount_ConfirmAccount_errors_AccountError> };
+export type ConfirmVendorAccount_confirmAccount_ConfirmAccount = { user: ConfirmVendorAccount_confirmAccount_ConfirmAccount_user_User | null, errors: Array<ConfirmVendorAccount_confirmAccount_ConfirmAccount_errors_AccountError> };
 
-export type ConfirmAccount_Mutation = { confirmAccount: ConfirmAccount_confirmAccount_ConfirmAccount | null };
+export type ConfirmVendorAccount_Mutation = { confirmAccount: ConfirmVendorAccount_confirmAccount_ConfirmAccount | null };
 
 
-export type ConfirmAccountVariables = Exact<{
+export type ConfirmVendorAccountVariables = Exact<{
   email: Scalars['String']['input'];
   token: Scalars['String']['input'];
 }>;
 
 
-export type ConfirmAccount = ConfirmAccount_Mutation;
+export type ConfirmVendorAccount = ConfirmVendorAccount_Mutation;
 
-export type OrderCancel_orderCancel_OrderCancel_order_Order = { id: string, status: OrderStatus };
+export type CancelOrder_orderCancel_OrderCancel_order_Order = { id: string, status: OrderStatus };
 
-export type OrderCancel_orderCancel_OrderCancel_errors_OrderError = { field: string | null, message: string | null, code: OrderErrorCode };
+export type CancelOrder_orderCancel_OrderCancel_errors_OrderError = { field: string | null, message: string | null, code: OrderErrorCode };
 
-export type OrderCancel_orderCancel_OrderCancel = { order: OrderCancel_orderCancel_OrderCancel_order_Order | null, errors: Array<OrderCancel_orderCancel_OrderCancel_errors_OrderError> };
+export type CancelOrder_orderCancel_OrderCancel = { order: CancelOrder_orderCancel_OrderCancel_order_Order | null, errors: Array<CancelOrder_orderCancel_OrderCancel_errors_OrderError> };
 
-export type OrderCancel_Mutation = { orderCancel: OrderCancel_orderCancel_OrderCancel | null };
+export type CancelOrder_Mutation = { orderCancel: CancelOrder_orderCancel_OrderCancel | null };
 
 
-export type OrderCancelVariables = Exact<{
+export type CancelOrderVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
 
-export type OrderCancel = OrderCancel_Mutation;
+export type CancelOrder = CancelOrder_Mutation;
 
-export type OrderFulfill_orderFulfill_OrderFulfill_errors_OrderError = { field: string | null, message: string | null, code: OrderErrorCode };
+export type FulfillOrder_orderFulfill_OrderFulfill_errors_OrderError = { field: string | null, message: string | null, code: OrderErrorCode };
 
-export type OrderFulfill_orderFulfill_OrderFulfill = { errors: Array<OrderFulfill_orderFulfill_OrderFulfill_errors_OrderError> };
+export type FulfillOrder_orderFulfill_OrderFulfill = { errors: Array<FulfillOrder_orderFulfill_OrderFulfill_errors_OrderError> };
 
-export type OrderFulfill_Mutation = { orderFulfill: OrderFulfill_orderFulfill_OrderFulfill | null };
+export type FulfillOrder_Mutation = { orderFulfill: FulfillOrder_orderFulfill_OrderFulfill | null };
 
 
-export type OrderFulfillVariables = Exact<{
+export type FulfillOrderVariables = Exact<{
   order: Scalars['ID']['input'];
   input: OrderFulfillInput;
 }>;
 
 
-export type OrderFulfill = OrderFulfill_Mutation;
+export type FulfillOrder = FulfillOrder_Mutation;
 
-export type OrderFulfillmentCancel_orderFulfillmentCancel_FulfillmentCancel_errors_OrderError = { field: string | null, message: string | null, code: OrderErrorCode };
+export type CancelOrderFulfillment_orderFulfillmentCancel_FulfillmentCancel_errors_OrderError = { field: string | null, message: string | null, code: OrderErrorCode };
 
-export type OrderFulfillmentCancel_orderFulfillmentCancel_FulfillmentCancel = { errors: Array<OrderFulfillmentCancel_orderFulfillmentCancel_FulfillmentCancel_errors_OrderError> };
+export type CancelOrderFulfillment_orderFulfillmentCancel_FulfillmentCancel = { errors: Array<CancelOrderFulfillment_orderFulfillmentCancel_FulfillmentCancel_errors_OrderError> };
 
-export type OrderFulfillmentCancel_Mutation = { orderFulfillmentCancel: OrderFulfillmentCancel_orderFulfillmentCancel_FulfillmentCancel | null };
+export type CancelOrderFulfillment_Mutation = { orderFulfillmentCancel: CancelOrderFulfillment_orderFulfillmentCancel_FulfillmentCancel | null };
 
 
-export type OrderFulfillmentCancelVariables = Exact<{
+export type CancelOrderFulfillmentVariables = Exact<{
   id: Scalars['ID']['input'];
   input?: InputMaybe<FulfillmentCancelInput>;
 }>;
 
 
-export type OrderFulfillmentCancel = OrderFulfillmentCancel_Mutation;
+export type CancelOrderFulfillment = CancelOrderFulfillment_Mutation;
 
-export type OrderNoteAdd_orderNoteAdd_OrderNoteAdd_errors_OrderNoteAddError = { field: string | null, message: string | null, code: OrderNoteAddErrorCode | null };
+export type AddOrderNote_orderNoteAdd_OrderNoteAdd_errors_OrderNoteAddError = { field: string | null, message: string | null, code: OrderNoteAddErrorCode | null };
 
-export type OrderNoteAdd_orderNoteAdd_OrderNoteAdd_order_Order = { id: string };
+export type AddOrderNote_orderNoteAdd_OrderNoteAdd_order_Order = { id: string };
 
-export type OrderNoteAdd_orderNoteAdd_OrderNoteAdd_event_OrderEvent = { id: string, message: string | null, date: string | null };
+export type AddOrderNote_orderNoteAdd_OrderNoteAdd_event_OrderEvent = { id: string, message: string | null, date: string | null };
 
-export type OrderNoteAdd_orderNoteAdd_OrderNoteAdd = { errors: Array<OrderNoteAdd_orderNoteAdd_OrderNoteAdd_errors_OrderNoteAddError>, order: OrderNoteAdd_orderNoteAdd_OrderNoteAdd_order_Order | null, event: OrderNoteAdd_orderNoteAdd_OrderNoteAdd_event_OrderEvent | null };
+export type AddOrderNote_orderNoteAdd_OrderNoteAdd = { errors: Array<AddOrderNote_orderNoteAdd_OrderNoteAdd_errors_OrderNoteAddError>, order: AddOrderNote_orderNoteAdd_OrderNoteAdd_order_Order | null, event: AddOrderNote_orderNoteAdd_OrderNoteAdd_event_OrderEvent | null };
 
-export type OrderNoteAdd_Mutation = { orderNoteAdd: OrderNoteAdd_orderNoteAdd_OrderNoteAdd | null };
+export type AddOrderNote_Mutation = { orderNoteAdd: AddOrderNote_orderNoteAdd_OrderNoteAdd | null };
 
 
-export type OrderNoteAddVariables = Exact<{
+export type AddOrderNoteVariables = Exact<{
   order: Scalars['ID']['input'];
   input: OrderNoteInput;
 }>;
 
 
-export type OrderNoteAdd = OrderNoteAdd_Mutation;
+export type AddOrderNote = AddOrderNote_Mutation;
+
+export type UpdateProductChannelListing_productChannelListingUpdate_ProductChannelListingUpdate_errors_ProductChannelListingError = { field: string | null, message: string | null, code: ProductErrorCode };
+
+export type UpdateProductChannelListing_productChannelListingUpdate_ProductChannelListingUpdate = { errors: Array<UpdateProductChannelListing_productChannelListingUpdate_ProductChannelListingUpdate_errors_ProductChannelListingError> };
+
+export type UpdateProductChannelListing_Mutation = { productChannelListingUpdate: UpdateProductChannelListing_productChannelListingUpdate_ProductChannelListingUpdate | null };
+
+
+export type UpdateProductChannelListingVariables = Exact<{
+  id: Scalars['ID']['input'];
+  input: ProductChannelListingUpdateInput;
+}>;
+
+
+export type UpdateProductChannelListing = UpdateProductChannelListing_Mutation;
+
+export type ProductMediaCreateMutation_productMediaCreate_ProductMediaCreate_errors_ProductError = { field: string | null, message: string | null, code: ProductErrorCode };
+
+export type ProductMediaCreateMutation_productMediaCreate_ProductMediaCreate_media_ProductMedia = { id: string, url: string, alt: string, type: ProductMediaType, sortOrder: number | null };
+
+export type ProductMediaCreateMutation_productMediaCreate_ProductMediaCreate_product_Product_media_ProductMedia = { id: string, url: string, alt: string, type: ProductMediaType, sortOrder: number | null };
+
+export type ProductMediaCreateMutation_productMediaCreate_ProductMediaCreate_product_Product_thumbnail_Image = { url: string, alt: string | null };
+
+export type ProductMediaCreateMutation_productMediaCreate_ProductMediaCreate_product_Product = { id: string, media: Array<ProductMediaCreateMutation_productMediaCreate_ProductMediaCreate_product_Product_media_ProductMedia> | null, thumbnail: ProductMediaCreateMutation_productMediaCreate_ProductMediaCreate_product_Product_thumbnail_Image | null };
+
+export type ProductMediaCreateMutation_productMediaCreate_ProductMediaCreate = { errors: Array<ProductMediaCreateMutation_productMediaCreate_ProductMediaCreate_errors_ProductError>, media: ProductMediaCreateMutation_productMediaCreate_ProductMediaCreate_media_ProductMedia | null, product: ProductMediaCreateMutation_productMediaCreate_ProductMediaCreate_product_Product | null };
+
+export type ProductMediaCreateMutation_Mutation = { productMediaCreate: ProductMediaCreateMutation_productMediaCreate_ProductMediaCreate | null };
+
+
+export type ProductMediaCreateMutationVariables = Exact<{
+  input: ProductMediaCreateInput;
+}>;
+
+
+export type ProductMediaCreateMutation = ProductMediaCreateMutation_Mutation;
+
+export type ProductMediaDeleteMutation_productMediaDelete_ProductMediaDelete_errors_ProductError = { field: string | null, message: string | null, code: ProductErrorCode };
+
+export type ProductMediaDeleteMutation_productMediaDelete_ProductMediaDelete_media_ProductMedia = { id: string };
+
+export type ProductMediaDeleteMutation_productMediaDelete_ProductMediaDelete_product_Product_media_ProductMedia = { id: string, url: string, alt: string, type: ProductMediaType, sortOrder: number | null };
+
+export type ProductMediaDeleteMutation_productMediaDelete_ProductMediaDelete_product_Product_thumbnail_Image = { url: string, alt: string | null };
+
+export type ProductMediaDeleteMutation_productMediaDelete_ProductMediaDelete_product_Product = { id: string, media: Array<ProductMediaDeleteMutation_productMediaDelete_ProductMediaDelete_product_Product_media_ProductMedia> | null, thumbnail: ProductMediaDeleteMutation_productMediaDelete_ProductMediaDelete_product_Product_thumbnail_Image | null };
+
+export type ProductMediaDeleteMutation_productMediaDelete_ProductMediaDelete = { errors: Array<ProductMediaDeleteMutation_productMediaDelete_ProductMediaDelete_errors_ProductError>, media: ProductMediaDeleteMutation_productMediaDelete_ProductMediaDelete_media_ProductMedia | null, product: ProductMediaDeleteMutation_productMediaDelete_ProductMediaDelete_product_Product | null };
+
+export type ProductMediaDeleteMutation_Mutation = { productMediaDelete: ProductMediaDeleteMutation_productMediaDelete_ProductMediaDelete | null };
+
+
+export type ProductMediaDeleteMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type ProductMediaDeleteMutation = ProductMediaDeleteMutation_Mutation;
+
+export type ProductMediaUpdateMutation_productMediaUpdate_ProductMediaUpdate_errors_ProductError = { field: string | null, message: string | null, code: ProductErrorCode };
+
+export type ProductMediaUpdateMutation_productMediaUpdate_ProductMediaUpdate_media_ProductMedia = { id: string, url: string, alt: string, type: ProductMediaType, sortOrder: number | null };
+
+export type ProductMediaUpdateMutation_productMediaUpdate_ProductMediaUpdate_product_Product_media_ProductMedia = { id: string, url: string, alt: string, type: ProductMediaType, sortOrder: number | null };
+
+export type ProductMediaUpdateMutation_productMediaUpdate_ProductMediaUpdate_product_Product_thumbnail_Image = { url: string, alt: string | null };
+
+export type ProductMediaUpdateMutation_productMediaUpdate_ProductMediaUpdate_product_Product = { id: string, media: Array<ProductMediaUpdateMutation_productMediaUpdate_ProductMediaUpdate_product_Product_media_ProductMedia> | null, thumbnail: ProductMediaUpdateMutation_productMediaUpdate_ProductMediaUpdate_product_Product_thumbnail_Image | null };
+
+export type ProductMediaUpdateMutation_productMediaUpdate_ProductMediaUpdate = { errors: Array<ProductMediaUpdateMutation_productMediaUpdate_ProductMediaUpdate_errors_ProductError>, media: ProductMediaUpdateMutation_productMediaUpdate_ProductMediaUpdate_media_ProductMedia | null, product: ProductMediaUpdateMutation_productMediaUpdate_ProductMediaUpdate_product_Product | null };
+
+export type ProductMediaUpdateMutation_Mutation = { productMediaUpdate: ProductMediaUpdateMutation_productMediaUpdate_ProductMediaUpdate | null };
+
+
+export type ProductMediaUpdateMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+  input: ProductMediaUpdateInput;
+}>;
+
+
+export type ProductMediaUpdateMutation = ProductMediaUpdateMutation_Mutation;
+
+export type UpdateProduct_productUpdate_ProductUpdate_errors_ProductError = { field: string | null, message: string | null, code: ProductErrorCode };
+
+export type UpdateProduct_productUpdate_ProductUpdate_product_Product_productType_ProductType = { id: string, name: string };
+
+export type UpdateProduct_productUpdate_ProductUpdate_product_Product_category_Category = { id: string, name: string };
+
+export type UpdateProduct_productUpdate_ProductUpdate_product_Product_collections_Collection = { id: string, name: string };
+
+export type UpdateProduct_productUpdate_ProductUpdate_product_Product = { id: string, name: string, slug: string, description: string | null, seoTitle: string | null, seoDescription: string | null, productType: UpdateProduct_productUpdate_ProductUpdate_product_Product_productType_ProductType, category: UpdateProduct_productUpdate_ProductUpdate_product_Product_category_Category | null, collections: Array<UpdateProduct_productUpdate_ProductUpdate_product_Product_collections_Collection> | null };
+
+export type UpdateProduct_productUpdate_ProductUpdate = { errors: Array<UpdateProduct_productUpdate_ProductUpdate_errors_ProductError>, product: UpdateProduct_productUpdate_ProductUpdate_product_Product | null };
+
+export type UpdateProduct_Mutation = { productUpdate: UpdateProduct_productUpdate_ProductUpdate | null };
+
+
+export type UpdateProductVariables = Exact<{
+  id: Scalars['ID']['input'];
+  input: ProductInput;
+}>;
+
+
+export type UpdateProduct = UpdateProduct_Mutation;
+
+export type ProductVariantBulkUpdateMutation_productVariantBulkUpdate_ProductVariantBulkUpdate_errors_ProductVariantBulkError = { field: string | null, message: string | null, code: ProductVariantBulkErrorCode };
+
+export type ProductVariantBulkUpdateMutation_productVariantBulkUpdate_ProductVariantBulkUpdate_results_ProductVariantBulkResult_errors_ProductVariantBulkError = { field: string | null, message: string | null, code: ProductVariantBulkErrorCode };
+
+export type ProductVariantBulkUpdateMutation_productVariantBulkUpdate_ProductVariantBulkUpdate_results_ProductVariantBulkResult_productVariant_ProductVariant_weight_Weight = { value: number, unit: WeightUnitsEnum };
+
+export type ProductVariantBulkUpdateMutation_productVariantBulkUpdate_ProductVariantBulkUpdate_results_ProductVariantBulkResult_productVariant_ProductVariant = { id: string, name: string, sku: string | null, trackInventory: boolean, weight: ProductVariantBulkUpdateMutation_productVariantBulkUpdate_ProductVariantBulkUpdate_results_ProductVariantBulkResult_productVariant_ProductVariant_weight_Weight | null };
+
+export type ProductVariantBulkUpdateMutation_productVariantBulkUpdate_ProductVariantBulkUpdate_results_ProductVariantBulkResult = { errors: Array<ProductVariantBulkUpdateMutation_productVariantBulkUpdate_ProductVariantBulkUpdate_results_ProductVariantBulkResult_errors_ProductVariantBulkError> | null, productVariant: ProductVariantBulkUpdateMutation_productVariantBulkUpdate_ProductVariantBulkUpdate_results_ProductVariantBulkResult_productVariant_ProductVariant | null };
+
+export type ProductVariantBulkUpdateMutation_productVariantBulkUpdate_ProductVariantBulkUpdate = { count: number, errors: Array<ProductVariantBulkUpdateMutation_productVariantBulkUpdate_ProductVariantBulkUpdate_errors_ProductVariantBulkError>, results: Array<ProductVariantBulkUpdateMutation_productVariantBulkUpdate_ProductVariantBulkUpdate_results_ProductVariantBulkResult> };
+
+export type ProductVariantBulkUpdateMutation_Mutation = { productVariantBulkUpdate: ProductVariantBulkUpdateMutation_productVariantBulkUpdate_ProductVariantBulkUpdate | null };
+
+
+export type ProductVariantBulkUpdateMutationVariables = Exact<{
+  product: Scalars['ID']['input'];
+  variants: Array<ProductVariantBulkUpdateInput> | ProductVariantBulkUpdateInput;
+}>;
+
+
+export type ProductVariantBulkUpdateMutation = ProductVariantBulkUpdateMutation_Mutation;
+
+export type CategoriesList_categories_CategoryCountableConnection_edges_CategoryCountableEdge_node_Category = { id: string, name: string, slug: string };
+
+export type CategoriesList_categories_CategoryCountableConnection_edges_CategoryCountableEdge = { cursor: string, node: CategoriesList_categories_CategoryCountableConnection_edges_CategoryCountableEdge_node_Category };
+
+export type CategoriesList_categories_CategoryCountableConnection_pageInfo_PageInfo = { hasNextPage: boolean, endCursor: string | null };
+
+export type CategoriesList_categories_CategoryCountableConnection = { totalCount: number | null, edges: Array<CategoriesList_categories_CategoryCountableConnection_edges_CategoryCountableEdge>, pageInfo: CategoriesList_categories_CategoryCountableConnection_pageInfo_PageInfo };
+
+export type CategoriesList_Query = { categories: CategoriesList_categories_CategoryCountableConnection | null };
+
+
+export type CategoriesListVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']['input']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<CategoryFilterInput>;
+}>;
+
+
+export type CategoriesList = CategoriesList_Query;
 
 export type Channels_channels_Channel_defaultCountry_CountryDisplay = { code: string, country: string };
 
@@ -30755,6 +30903,26 @@ export type ChannelsVariables = Exact<{ [key: string]: never; }>;
 
 
 export type Channels = Channels_Query;
+
+export type CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection = { id: string, name: string, slug: string };
+
+export type CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge = { cursor: string, node: CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection };
+
+export type CollectionsList_collections_CollectionCountableConnection_pageInfo_PageInfo = { hasNextPage: boolean, endCursor: string | null };
+
+export type CollectionsList_collections_CollectionCountableConnection = { totalCount: number | null, edges: Array<CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge>, pageInfo: CollectionsList_collections_CollectionCountableConnection_pageInfo_PageInfo };
+
+export type CollectionsList_Query = { collections: CollectionsList_collections_CollectionCountableConnection | null };
+
+
+export type CollectionsListVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']['input']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<CollectionFilterInput>;
+}>;
+
+
+export type CollectionsList = CollectionsList_Query;
 
 export type Me_me_User_metadata_MetadataItem = { key: string, value: string };
 
@@ -30772,98 +30940,98 @@ export type MeVariables = Exact<{ [key: string]: never; }>;
 
 export type Me = Me_Query;
 
-export type Order_order_Order_total_TaxedMoney_gross_Money = { amount: number, currency: string };
+export type OrderDetail_order_Order_total_TaxedMoney_gross_Money = { amount: number, currency: string };
 
-export type Order_order_Order_total_TaxedMoney_net_Money = { amount: number, currency: string };
+export type OrderDetail_order_Order_total_TaxedMoney_net_Money = { amount: number, currency: string };
 
-export type Order_order_Order_total_TaxedMoney_tax_Money = { amount: number, currency: string };
+export type OrderDetail_order_Order_total_TaxedMoney_tax_Money = { amount: number, currency: string };
 
-export type Order_order_Order_total_TaxedMoney = { gross: Order_order_Order_total_TaxedMoney_gross_Money, net: Order_order_Order_total_TaxedMoney_net_Money, tax: Order_order_Order_total_TaxedMoney_tax_Money };
+export type OrderDetail_order_Order_total_TaxedMoney = { gross: OrderDetail_order_Order_total_TaxedMoney_gross_Money, net: OrderDetail_order_Order_total_TaxedMoney_net_Money, tax: OrderDetail_order_Order_total_TaxedMoney_tax_Money };
 
-export type Order_order_Order_subtotal_TaxedMoney_gross_Money = { amount: number, currency: string };
+export type OrderDetail_order_Order_subtotal_TaxedMoney_gross_Money = { amount: number, currency: string };
 
-export type Order_order_Order_subtotal_TaxedMoney = { gross: Order_order_Order_subtotal_TaxedMoney_gross_Money };
+export type OrderDetail_order_Order_subtotal_TaxedMoney = { gross: OrderDetail_order_Order_subtotal_TaxedMoney_gross_Money };
 
-export type Order_order_Order_shippingPrice_TaxedMoney_gross_Money = { amount: number, currency: string };
+export type OrderDetail_order_Order_shippingPrice_TaxedMoney_gross_Money = { amount: number, currency: string };
 
-export type Order_order_Order_shippingPrice_TaxedMoney = { gross: Order_order_Order_shippingPrice_TaxedMoney_gross_Money };
+export type OrderDetail_order_Order_shippingPrice_TaxedMoney = { gross: OrderDetail_order_Order_shippingPrice_TaxedMoney_gross_Money };
 
-export type Order_order_Order_user_User = { id: string, email: string, firstName: string, lastName: string };
+export type OrderDetail_order_Order_user_User = { id: string, email: string, firstName: string, lastName: string };
 
-export type Order_order_Order_billingAddress_Address_country_CountryDisplay = { country: string, code: string };
+export type OrderDetail_order_Order_billingAddress_Address_country_CountryDisplay = { country: string, code: string };
 
-export type Order_order_Order_billingAddress_Address = { firstName: string, lastName: string, streetAddress1: string, streetAddress2: string, city: string, postalCode: string, phone: string | null, country: Order_order_Order_billingAddress_Address_country_CountryDisplay };
+export type OrderDetail_order_Order_billingAddress_Address = { firstName: string, lastName: string, streetAddress1: string, streetAddress2: string, city: string, postalCode: string, phone: string | null, country: OrderDetail_order_Order_billingAddress_Address_country_CountryDisplay };
 
-export type Order_order_Order_shippingAddress_Address_country_CountryDisplay = { country: string, code: string };
+export type OrderDetail_order_Order_shippingAddress_Address_country_CountryDisplay = { country: string, code: string };
 
-export type Order_order_Order_shippingAddress_Address = { firstName: string, lastName: string, streetAddress1: string, streetAddress2: string, city: string, postalCode: string, phone: string | null, country: Order_order_Order_shippingAddress_Address_country_CountryDisplay };
+export type OrderDetail_order_Order_shippingAddress_Address = { firstName: string, lastName: string, streetAddress1: string, streetAddress2: string, city: string, postalCode: string, phone: string | null, country: OrderDetail_order_Order_shippingAddress_Address_country_CountryDisplay };
 
-export type Order_order_Order_lines_OrderLine_unitPrice_TaxedMoney_gross_Money = { amount: number, currency: string };
+export type OrderDetail_order_Order_lines_OrderLine_unitPrice_TaxedMoney_gross_Money = { amount: number, currency: string };
 
-export type Order_order_Order_lines_OrderLine_unitPrice_TaxedMoney = { gross: Order_order_Order_lines_OrderLine_unitPrice_TaxedMoney_gross_Money };
+export type OrderDetail_order_Order_lines_OrderLine_unitPrice_TaxedMoney = { gross: OrderDetail_order_Order_lines_OrderLine_unitPrice_TaxedMoney_gross_Money };
 
-export type Order_order_Order_lines_OrderLine_totalPrice_TaxedMoney_gross_Money = { amount: number, currency: string };
+export type OrderDetail_order_Order_lines_OrderLine_totalPrice_TaxedMoney_gross_Money = { amount: number, currency: string };
 
-export type Order_order_Order_lines_OrderLine_totalPrice_TaxedMoney = { gross: Order_order_Order_lines_OrderLine_totalPrice_TaxedMoney_gross_Money };
+export type OrderDetail_order_Order_lines_OrderLine_totalPrice_TaxedMoney = { gross: OrderDetail_order_Order_lines_OrderLine_totalPrice_TaxedMoney_gross_Money };
 
-export type Order_order_Order_lines_OrderLine_thumbnail_Image = { url: string, alt: string | null };
+export type OrderDetail_order_Order_lines_OrderLine_thumbnail_Image = { url: string, alt: string | null };
 
-export type Order_order_Order_lines_OrderLine_variant_ProductVariant_media_ProductMedia = { url: string, alt: string };
+export type OrderDetail_order_Order_lines_OrderLine_variant_ProductVariant_media_ProductMedia = { url: string, alt: string };
 
-export type Order_order_Order_lines_OrderLine_variant_ProductVariant_stocks_Stock_warehouse_Warehouse = { id: string, name: string };
+export type OrderDetail_order_Order_lines_OrderLine_variant_ProductVariant_stocks_Stock_warehouse_Warehouse = { id: string, name: string };
 
-export type Order_order_Order_lines_OrderLine_variant_ProductVariant_stocks_Stock = { warehouse: Order_order_Order_lines_OrderLine_variant_ProductVariant_stocks_Stock_warehouse_Warehouse };
+export type OrderDetail_order_Order_lines_OrderLine_variant_ProductVariant_stocks_Stock = { warehouse: OrderDetail_order_Order_lines_OrderLine_variant_ProductVariant_stocks_Stock_warehouse_Warehouse };
 
-export type Order_order_Order_lines_OrderLine_variant_ProductVariant = { name: string, media: Array<Order_order_Order_lines_OrderLine_variant_ProductVariant_media_ProductMedia> | null, stocks: Array<Order_order_Order_lines_OrderLine_variant_ProductVariant_stocks_Stock> | null };
+export type OrderDetail_order_Order_lines_OrderLine_variant_ProductVariant = { name: string, media: Array<OrderDetail_order_Order_lines_OrderLine_variant_ProductVariant_media_ProductMedia> | null, stocks: Array<OrderDetail_order_Order_lines_OrderLine_variant_ProductVariant_stocks_Stock> | null };
 
-export type Order_order_Order_lines_OrderLine = { id: string, productName: string, variantName: string, productSku: string | null, quantity: number, quantityToFulfill: number, quantityFulfilled: number, unitPrice: Order_order_Order_lines_OrderLine_unitPrice_TaxedMoney, totalPrice: Order_order_Order_lines_OrderLine_totalPrice_TaxedMoney, thumbnail: Order_order_Order_lines_OrderLine_thumbnail_Image | null, variant: Order_order_Order_lines_OrderLine_variant_ProductVariant | null };
+export type OrderDetail_order_Order_lines_OrderLine = { id: string, productName: string, variantName: string, productSku: string | null, quantity: number, quantityToFulfill: number, quantityFulfilled: number, unitPrice: OrderDetail_order_Order_lines_OrderLine_unitPrice_TaxedMoney, totalPrice: OrderDetail_order_Order_lines_OrderLine_totalPrice_TaxedMoney, thumbnail: OrderDetail_order_Order_lines_OrderLine_thumbnail_Image | null, variant: OrderDetail_order_Order_lines_OrderLine_variant_ProductVariant | null };
 
-export type Order_order_Order_events_OrderEvent_user_User = { email: string };
+export type OrderDetail_order_Order_events_OrderEvent_user_User = { email: string };
 
-export type Order_order_Order_events_OrderEvent = { id: string, date: string | null, type: OrderEventsEnum | null, message: string | null, user: Order_order_Order_events_OrderEvent_user_User | null };
+export type OrderDetail_order_Order_events_OrderEvent = { id: string, date: string | null, type: OrderEventsEnum | null, message: string | null, user: OrderDetail_order_Order_events_OrderEvent_user_User | null };
 
-export type Order_order_Order_fulfillments_Fulfillment_warehouse_Warehouse = { id: string };
+export type OrderDetail_order_Order_fulfillments_Fulfillment_warehouse_Warehouse = { id: string };
 
-export type Order_order_Order_fulfillments_Fulfillment_lines_FulfillmentLine_orderLine_OrderLine = { productName: string };
+export type OrderDetail_order_Order_fulfillments_Fulfillment_lines_FulfillmentLine_orderLine_OrderLine = { productName: string };
 
-export type Order_order_Order_fulfillments_Fulfillment_lines_FulfillmentLine = { id: string, quantity: number, orderLine: Order_order_Order_fulfillments_Fulfillment_lines_FulfillmentLine_orderLine_OrderLine | null };
+export type OrderDetail_order_Order_fulfillments_Fulfillment_lines_FulfillmentLine = { id: string, quantity: number, orderLine: OrderDetail_order_Order_fulfillments_Fulfillment_lines_FulfillmentLine_orderLine_OrderLine | null };
 
-export type Order_order_Order_fulfillments_Fulfillment = { id: string, status: FulfillmentStatus, created: string, trackingNumber: string, warehouse: Order_order_Order_fulfillments_Fulfillment_warehouse_Warehouse | null, lines: Array<Order_order_Order_fulfillments_Fulfillment_lines_FulfillmentLine> | null };
+export type OrderDetail_order_Order_fulfillments_Fulfillment = { id: string, status: FulfillmentStatus, created: string, trackingNumber: string, warehouse: OrderDetail_order_Order_fulfillments_Fulfillment_warehouse_Warehouse | null, lines: Array<OrderDetail_order_Order_fulfillments_Fulfillment_lines_FulfillmentLine> | null };
 
-export type Order_order_Order = { id: string, number: string, created: string, status: OrderStatus, statusDisplay: string, paymentStatus: PaymentChargeStatusEnum, paymentStatusDisplay: string, userEmail: string | null, chargeStatus: OrderChargeStatusEnum, authorizeStatus: OrderAuthorizeStatusEnum, total: Order_order_Order_total_TaxedMoney, subtotal: Order_order_Order_subtotal_TaxedMoney, shippingPrice: Order_order_Order_shippingPrice_TaxedMoney, user: Order_order_Order_user_User | null, billingAddress: Order_order_Order_billingAddress_Address | null, shippingAddress: Order_order_Order_shippingAddress_Address | null, lines: Array<Order_order_Order_lines_OrderLine>, events: Array<Order_order_Order_events_OrderEvent>, fulfillments: Array<Order_order_Order_fulfillments_Fulfillment> };
+export type OrderDetail_order_Order = { id: string, number: string, created: string, status: OrderStatus, statusDisplay: string, paymentStatus: PaymentChargeStatusEnum, paymentStatusDisplay: string, userEmail: string | null, chargeStatus: OrderChargeStatusEnum, authorizeStatus: OrderAuthorizeStatusEnum, total: OrderDetail_order_Order_total_TaxedMoney, subtotal: OrderDetail_order_Order_subtotal_TaxedMoney, shippingPrice: OrderDetail_order_Order_shippingPrice_TaxedMoney, user: OrderDetail_order_Order_user_User | null, billingAddress: OrderDetail_order_Order_billingAddress_Address | null, shippingAddress: OrderDetail_order_Order_shippingAddress_Address | null, lines: Array<OrderDetail_order_Order_lines_OrderLine>, events: Array<OrderDetail_order_Order_events_OrderEvent>, fulfillments: Array<OrderDetail_order_Order_fulfillments_Fulfillment> };
 
-export type Order_Query = { order: Order_order_Order | null };
+export type OrderDetail_Query = { order: OrderDetail_order_Order | null };
 
 
-export type OrderVariables = Exact<{
+export type OrderDetailVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
 
-export type Order = Order_Query;
+export type OrderDetail = OrderDetail_Query;
 
-export type Orders_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_total_TaxedMoney_gross_Money = { amount: number, currency: string };
+export type OrdersList_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_total_TaxedMoney_gross_Money = { amount: number, currency: string };
 
-export type Orders_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_total_TaxedMoney = { gross: Orders_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_total_TaxedMoney_gross_Money };
+export type OrdersList_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_total_TaxedMoney = { gross: OrdersList_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_total_TaxedMoney_gross_Money };
 
-export type Orders_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_user_User = { email: string, firstName: string, lastName: string };
+export type OrdersList_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_user_User = { email: string, firstName: string, lastName: string };
 
-export type Orders_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_shippingAddress_Address_country_CountryDisplay = { country: string };
+export type OrdersList_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_shippingAddress_Address_country_CountryDisplay = { country: string };
 
-export type Orders_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_shippingAddress_Address = { city: string, country: Orders_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_shippingAddress_Address_country_CountryDisplay };
+export type OrdersList_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_shippingAddress_Address = { city: string, country: OrdersList_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_shippingAddress_Address_country_CountryDisplay };
 
-export type Orders_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order = { id: string, number: string, created: string, status: OrderStatus, statusDisplay: string, paymentStatus: PaymentChargeStatusEnum, paymentStatusDisplay: string, total: Orders_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_total_TaxedMoney, user: Orders_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_user_User | null, shippingAddress: Orders_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_shippingAddress_Address | null };
+export type OrdersList_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order = { id: string, number: string, created: string, status: OrderStatus, statusDisplay: string, paymentStatus: PaymentChargeStatusEnum, paymentStatusDisplay: string, total: OrdersList_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_total_TaxedMoney, user: OrdersList_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_user_User | null, shippingAddress: OrdersList_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_shippingAddress_Address | null };
 
-export type Orders_orders_OrderCountableConnection_edges_OrderCountableEdge = { cursor: string, node: Orders_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order };
+export type OrdersList_orders_OrderCountableConnection_edges_OrderCountableEdge = { cursor: string, node: OrdersList_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order };
 
-export type Orders_orders_OrderCountableConnection_pageInfo_PageInfo = { hasNextPage: boolean, hasPreviousPage: boolean, startCursor: string | null, endCursor: string | null };
+export type OrdersList_orders_OrderCountableConnection_pageInfo_PageInfo = { hasNextPage: boolean, hasPreviousPage: boolean, startCursor: string | null, endCursor: string | null };
 
-export type Orders_orders_OrderCountableConnection = { totalCount: number | null, edges: Array<Orders_orders_OrderCountableConnection_edges_OrderCountableEdge>, pageInfo: Orders_orders_OrderCountableConnection_pageInfo_PageInfo };
+export type OrdersList_orders_OrderCountableConnection = { totalCount: number | null, edges: Array<OrdersList_orders_OrderCountableConnection_edges_OrderCountableEdge>, pageInfo: OrdersList_orders_OrderCountableConnection_pageInfo_PageInfo };
 
-export type Orders_Query = { orders: Orders_orders_OrderCountableConnection | null };
+export type OrdersList_Query = { orders: OrdersList_orders_OrderCountableConnection | null };
 
 
-export type OrdersVariables = Exact<{
+export type OrdersListVariables = Exact<{
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
@@ -30873,71 +31041,302 @@ export type OrdersVariables = Exact<{
 }>;
 
 
-export type Orders = Orders_Query;
+export type OrdersList = OrdersList_Query;
 
-export type Product_product_Product_thumbnail_Image = { url: string, alt: string | null };
+export type ProductDetail_product_Product_collections_Collection = { id: string, name: string };
 
-export type Product_product_Product_media_ProductMedia = { id: string, url: string, alt: string, type: ProductMediaType };
+export type ProductDetail_product_Product_thumbnail_Image = { url: string, alt: string | null };
 
-export type Product_product_Product_productType_ProductType = { id: string, name: string };
+export type ProductDetail_product_Product_media_ProductMedia = { id: string, url: string, alt: string, type: ProductMediaType };
 
-export type Product_product_Product_category_Category = { id: string, name: string };
+export type ProductDetail_product_Product_productType_ProductType = { id: string, name: string };
 
-export type Product_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_gross_Money = { amount: number, currency: string };
+export type ProductDetail_product_Product_category_Category = { id: string, name: string };
 
-export type Product_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney = { gross: Product_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_gross_Money };
+export type ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute_choices_AttributeValueCountableConnection_edges_AttributeValueCountableEdge_node_AttributeValue = { id: string, name: string | null, slug: string | null };
 
-export type Product_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_stop_TaxedMoney_gross_Money = { amount: number, currency: string };
+export type ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute_choices_AttributeValueCountableConnection_edges_AttributeValueCountableEdge = { node: ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute_choices_AttributeValueCountableConnection_edges_AttributeValueCountableEdge_node_AttributeValue };
 
-export type Product_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_stop_TaxedMoney = { gross: Product_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_stop_TaxedMoney_gross_Money };
+export type ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute_choices_AttributeValueCountableConnection = { edges: Array<ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute_choices_AttributeValueCountableConnection_edges_AttributeValueCountableEdge> };
 
-export type Product_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange = { start: Product_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney | null, stop: Product_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_stop_TaxedMoney | null };
+export type ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute = { id: string, name: string | null, slug: string | null, inputType: AttributeInputTypeEnum | null, valueRequired: boolean, choices: ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute_choices_AttributeValueCountableConnection | null };
 
-export type Product_product_Product_pricing_ProductPricingInfo = { priceRange: Product_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange | null };
+export type ProductDetail_product_Product_assignedAttributes_AssignedFileAttribute_fileValue_File = { url: string, contentType: string | null };
 
-export type Product_product_Product_channelListings_ProductChannelListing_channel_Channel = { id: string, name: string };
+export type ProductDetail_product_Product_assignedAttributes_AssignedMultiChoiceAttribute_multiChoiceValue_AssignedChoiceAttributeValue = { name: string | null, slug: string | null };
 
-export type Product_product_Product_channelListings_ProductChannelListing_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_gross_Money = { amount: number, currency: string };
+export type ProductDetail_product_Product_assignedAttributes_AssignedSingleChoiceAttribute_singleChoiceValue_AssignedChoiceAttributeValue = { name: string | null, slug: string | null };
 
-export type Product_product_Product_channelListings_ProductChannelListing_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney = { gross: Product_product_Product_channelListings_ProductChannelListing_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_gross_Money };
+export type ProductDetail_product_Product_assignedAttributes_AssignedSwatchAttribute_swatchValue_AssignedSwatchAttributeValue = { name: string | null, slug: string | null, hexColor: string | null };
 
-export type Product_product_Product_channelListings_ProductChannelListing_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange = { start: Product_product_Product_channelListings_ProductChannelListing_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney | null };
+export type ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute = (
+  { booleanValue: boolean | null, attribute: ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute }
+  & { __typename: 'AssignedBooleanAttribute' }
+);
 
-export type Product_product_Product_channelListings_ProductChannelListing_pricing_ProductPricingInfo = { priceRange: Product_product_Product_channelListings_ProductChannelListing_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange | null };
+export type ProductDetail_product_Product_assignedAttributes_AssignedDateAttribute = (
+  { dateValue: string | null, attribute: ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute }
+  & { __typename: 'AssignedDateAttribute' }
+);
 
-export type Product_product_Product_channelListings_ProductChannelListing = { id: string, isPublished: boolean, visibleInListings: boolean, availableForPurchase: string | null, channel: Product_product_Product_channelListings_ProductChannelListing_channel_Channel, pricing: Product_product_Product_channelListings_ProductChannelListing_pricing_ProductPricingInfo | null };
+export type ProductDetail_product_Product_assignedAttributes_AssignedDateTimeAttribute = (
+  { dateTimeValue: string | null, attribute: ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute }
+  & { __typename: 'AssignedDateTimeAttribute' }
+);
 
-export type Product_product_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney_gross_Money = { amount: number, currency: string };
+export type ProductDetail_product_Product_assignedAttributes_AssignedFileAttribute = (
+  { fileValue: ProductDetail_product_Product_assignedAttributes_AssignedFileAttribute_fileValue_File | null, attribute: ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute }
+  & { __typename: 'AssignedFileAttribute' }
+);
 
-export type Product_product_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney = { gross: Product_product_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney_gross_Money };
+export type ProductDetail_product_Product_assignedAttributes_EP9HcmmFCQqdoG7811YxTX6aNOeQ5zZmEGxiLqdpAO4 = (
+  { attribute: ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute }
+  & { __typename: 'AssignedMultiCategoryReferenceAttribute' | 'AssignedMultiCollectionReferenceAttribute' | 'AssignedMultiPageReferenceAttribute' | 'AssignedMultiProductReferenceAttribute' | 'AssignedMultiProductVariantReferenceAttribute' | 'AssignedSingleCategoryReferenceAttribute' | 'AssignedSingleCollectionReferenceAttribute' | 'AssignedSinglePageReferenceAttribute' | 'AssignedSingleProductReferenceAttribute' | 'AssignedSingleProductVariantReferenceAttribute' }
+);
 
-export type Product_product_Product_variants_ProductVariant_pricing_VariantPricingInfo = { price: Product_product_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney | null };
+export type ProductDetail_product_Product_assignedAttributes_AssignedMultiChoiceAttribute = (
+  { multiChoiceValue: Array<ProductDetail_product_Product_assignedAttributes_AssignedMultiChoiceAttribute_multiChoiceValue_AssignedChoiceAttributeValue>, attribute: ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute }
+  & { __typename: 'AssignedMultiChoiceAttribute' }
+);
 
-export type Product_product_Product_variants_ProductVariant_stocks_Stock_warehouse_Warehouse = { name: string };
+export type ProductDetail_product_Product_assignedAttributes_AssignedNumericAttribute = (
+  { numericValue: number | null, attribute: ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute }
+  & { __typename: 'AssignedNumericAttribute' }
+);
 
-export type Product_product_Product_variants_ProductVariant_stocks_Stock = { quantity: number, quantityAllocated: number, warehouse: Product_product_Product_variants_ProductVariant_stocks_Stock_warehouse_Warehouse };
+export type ProductDetail_product_Product_assignedAttributes_AssignedPlainTextAttribute = (
+  { plainTextValue: string | null, attribute: ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute }
+  & { __typename: 'AssignedPlainTextAttribute' }
+);
 
-export type Product_product_Product_variants_ProductVariant = { id: string, name: string, sku: string | null, pricing: Product_product_Product_variants_ProductVariant_pricing_VariantPricingInfo | null, stocks: Array<Product_product_Product_variants_ProductVariant_stocks_Stock> | null };
+export type ProductDetail_product_Product_assignedAttributes_AssignedSingleChoiceAttribute = (
+  { singleChoiceValue: ProductDetail_product_Product_assignedAttributes_AssignedSingleChoiceAttribute_singleChoiceValue_AssignedChoiceAttributeValue | null, attribute: ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute }
+  & { __typename: 'AssignedSingleChoiceAttribute' }
+);
 
-export type Product_product_Product_attributes_SelectedAttribute_attribute_Attribute = { id: string, name: string | null, slug: string | null };
+export type ProductDetail_product_Product_assignedAttributes_AssignedSwatchAttribute = (
+  { swatchValue: ProductDetail_product_Product_assignedAttributes_AssignedSwatchAttribute_swatchValue_AssignedSwatchAttributeValue | null, attribute: ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute }
+  & { __typename: 'AssignedSwatchAttribute' }
+);
 
-export type Product_product_Product_attributes_SelectedAttribute_values_AttributeValue = { id: string, name: string | null, slug: string | null };
+export type ProductDetail_product_Product_assignedAttributes_AssignedTextAttribute = (
+  { textValue: unknown | null, attribute: ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute }
+  & { __typename: 'AssignedTextAttribute' }
+);
 
-export type Product_product_Product_attributes_SelectedAttribute = { attribute: Product_product_Product_attributes_SelectedAttribute_attribute_Attribute, values: Array<Product_product_Product_attributes_SelectedAttribute_values_AttributeValue> };
+export type ProductDetail_product_Product_assignedAttributes = ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute | ProductDetail_product_Product_assignedAttributes_AssignedDateAttribute | ProductDetail_product_Product_assignedAttributes_AssignedDateTimeAttribute | ProductDetail_product_Product_assignedAttributes_AssignedFileAttribute | ProductDetail_product_Product_assignedAttributes_EP9HcmmFCQqdoG7811YxTX6aNOeQ5zZmEGxiLqdpAO4 | ProductDetail_product_Product_assignedAttributes_AssignedMultiChoiceAttribute | ProductDetail_product_Product_assignedAttributes_AssignedNumericAttribute | ProductDetail_product_Product_assignedAttributes_AssignedPlainTextAttribute | ProductDetail_product_Product_assignedAttributes_AssignedSingleChoiceAttribute | ProductDetail_product_Product_assignedAttributes_AssignedSwatchAttribute | ProductDetail_product_Product_assignedAttributes_AssignedTextAttribute;
 
-export type Product_product_Product_metadata_MetadataItem = { key: string, value: string };
+export type ProductDetail_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_gross_Money = { amount: number, currency: string };
 
-export type Product_product_Product = { id: string, name: string, slug: string, description: string | null, seoTitle: string | null, seoDescription: string | null, thumbnail: Product_product_Product_thumbnail_Image | null, media: Array<Product_product_Product_media_ProductMedia> | null, productType: Product_product_Product_productType_ProductType, category: Product_product_Product_category_Category | null, pricing: Product_product_Product_pricing_ProductPricingInfo | null, channelListings: Array<Product_product_Product_channelListings_ProductChannelListing> | null, variants: Array<Product_product_Product_variants_ProductVariant> | null, attributes: Array<Product_product_Product_attributes_SelectedAttribute>, metadata: Array<Product_product_Product_metadata_MetadataItem> };
+export type ProductDetail_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney = { gross: ProductDetail_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_gross_Money };
 
-export type Product_Query = { product: Product_product_Product | null };
+export type ProductDetail_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_stop_TaxedMoney_gross_Money = { amount: number, currency: string };
+
+export type ProductDetail_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_stop_TaxedMoney = { gross: ProductDetail_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_stop_TaxedMoney_gross_Money };
+
+export type ProductDetail_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange = { start: ProductDetail_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney | null, stop: ProductDetail_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_stop_TaxedMoney | null };
+
+export type ProductDetail_product_Product_pricing_ProductPricingInfo = { priceRange: ProductDetail_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange | null };
+
+export type ProductDetail_product_Product_channelListings_ProductChannelListing_channel_Channel = { id: string, name: string };
+
+export type ProductDetail_product_Product_channelListings_ProductChannelListing_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_gross_Money = { amount: number, currency: string };
+
+export type ProductDetail_product_Product_channelListings_ProductChannelListing_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney = { gross: ProductDetail_product_Product_channelListings_ProductChannelListing_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_gross_Money };
+
+export type ProductDetail_product_Product_channelListings_ProductChannelListing_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange = { start: ProductDetail_product_Product_channelListings_ProductChannelListing_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney | null };
+
+export type ProductDetail_product_Product_channelListings_ProductChannelListing_pricing_ProductPricingInfo = { priceRange: ProductDetail_product_Product_channelListings_ProductChannelListing_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange | null };
+
+export type ProductDetail_product_Product_channelListings_ProductChannelListing = { id: string, isPublished: boolean, visibleInListings: boolean, isAvailableForPurchase: boolean | null, channel: ProductDetail_product_Product_channelListings_ProductChannelListing_channel_Channel, pricing: ProductDetail_product_Product_channelListings_ProductChannelListing_pricing_ProductPricingInfo | null };
+
+export type ProductDetail_product_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney_gross_Money = { amount: number, currency: string };
+
+export type ProductDetail_product_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney = { gross: ProductDetail_product_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney_gross_Money };
+
+export type ProductDetail_product_Product_variants_ProductVariant_pricing_VariantPricingInfo = { price: ProductDetail_product_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney | null };
+
+export type ProductDetail_product_Product_variants_ProductVariant_stocks_Stock_warehouse_Warehouse = { name: string };
+
+export type ProductDetail_product_Product_variants_ProductVariant_stocks_Stock = { quantity: number, quantityAllocated: number, warehouse: ProductDetail_product_Product_variants_ProductVariant_stocks_Stock_warehouse_Warehouse };
+
+export type ProductDetail_product_Product_variants_ProductVariant = { id: string, name: string, sku: string | null, pricing: ProductDetail_product_Product_variants_ProductVariant_pricing_VariantPricingInfo | null, stocks: Array<ProductDetail_product_Product_variants_ProductVariant_stocks_Stock> | null };
+
+export type ProductDetail_product_Product_metadata_MetadataItem = { key: string, value: string };
+
+export type ProductDetail_product_Product = { id: string, name: string, slug: string, description: string | null, seoTitle: string | null, seoDescription: string | null, collections: Array<ProductDetail_product_Product_collections_Collection> | null, thumbnail: ProductDetail_product_Product_thumbnail_Image | null, media: Array<ProductDetail_product_Product_media_ProductMedia> | null, productType: ProductDetail_product_Product_productType_ProductType, category: ProductDetail_product_Product_category_Category | null, assignedAttributes: Array<ProductDetail_product_Product_assignedAttributes>, pricing: ProductDetail_product_Product_pricing_ProductPricingInfo | null, channelListings: Array<ProductDetail_product_Product_channelListings_ProductChannelListing> | null, variants: Array<ProductDetail_product_Product_variants_ProductVariant> | null, metadata: Array<ProductDetail_product_Product_metadata_MetadataItem> };
+
+export type ProductDetail_Query = { product: ProductDetail_product_Product | null };
 
 
-export type ProductVariables = Exact<{
+export type ProductDetailVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
 
-export type Product = Product_Query;
+export type ProductDetail = ProductDetail_Query;
+
+export type ProductTypeDetail_productType_ProductType_productAttributes_Attribute_choices_AttributeValueCountableConnection_edges_AttributeValueCountableEdge_node_AttributeValue = { id: string, name: string | null, slug: string | null };
+
+export type ProductTypeDetail_productType_ProductType_productAttributes_Attribute_choices_AttributeValueCountableConnection_edges_AttributeValueCountableEdge = { node: ProductTypeDetail_productType_ProductType_productAttributes_Attribute_choices_AttributeValueCountableConnection_edges_AttributeValueCountableEdge_node_AttributeValue };
+
+export type ProductTypeDetail_productType_ProductType_productAttributes_Attribute_choices_AttributeValueCountableConnection = { edges: Array<ProductTypeDetail_productType_ProductType_productAttributes_Attribute_choices_AttributeValueCountableConnection_edges_AttributeValueCountableEdge> };
+
+export type ProductTypeDetail_productType_ProductType_productAttributes_Attribute = { id: string, name: string | null, slug: string | null, inputType: AttributeInputTypeEnum | null, valueRequired: boolean, choices: ProductTypeDetail_productType_ProductType_productAttributes_Attribute_choices_AttributeValueCountableConnection | null };
+
+export type ProductTypeDetail_productType_ProductType_assignedVariantAttributes_AssignedVariantAttribute_attribute_Attribute_choices_AttributeValueCountableConnection_edges_AttributeValueCountableEdge_node_AttributeValue = { id: string, name: string | null, slug: string | null };
+
+export type ProductTypeDetail_productType_ProductType_assignedVariantAttributes_AssignedVariantAttribute_attribute_Attribute_choices_AttributeValueCountableConnection_edges_AttributeValueCountableEdge = { node: ProductTypeDetail_productType_ProductType_assignedVariantAttributes_AssignedVariantAttribute_attribute_Attribute_choices_AttributeValueCountableConnection_edges_AttributeValueCountableEdge_node_AttributeValue };
+
+export type ProductTypeDetail_productType_ProductType_assignedVariantAttributes_AssignedVariantAttribute_attribute_Attribute_choices_AttributeValueCountableConnection = { edges: Array<ProductTypeDetail_productType_ProductType_assignedVariantAttributes_AssignedVariantAttribute_attribute_Attribute_choices_AttributeValueCountableConnection_edges_AttributeValueCountableEdge> };
+
+export type ProductTypeDetail_productType_ProductType_assignedVariantAttributes_AssignedVariantAttribute_attribute_Attribute = { id: string, name: string | null, slug: string | null, inputType: AttributeInputTypeEnum | null, valueRequired: boolean, choices: ProductTypeDetail_productType_ProductType_assignedVariantAttributes_AssignedVariantAttribute_attribute_Attribute_choices_AttributeValueCountableConnection | null };
+
+export type ProductTypeDetail_productType_ProductType_assignedVariantAttributes_AssignedVariantAttribute = { variantSelection: boolean, attribute: ProductTypeDetail_productType_ProductType_assignedVariantAttributes_AssignedVariantAttribute_attribute_Attribute };
+
+export type ProductTypeDetail_productType_ProductType = { id: string, name: string, slug: string, hasVariants: boolean, productAttributes: Array<ProductTypeDetail_productType_ProductType_productAttributes_Attribute> | null, assignedVariantAttributes: Array<ProductTypeDetail_productType_ProductType_assignedVariantAttributes_AssignedVariantAttribute> | null };
+
+export type ProductTypeDetail_Query = { productType: ProductTypeDetail_productType_ProductType | null };
+
+
+export type ProductTypeDetailVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type ProductTypeDetail = ProductTypeDetail_Query;
+
+export type ProductTypesList_productTypes_ProductTypeCountableConnection_edges_ProductTypeCountableEdge_node_ProductType_productAttributes_Attribute_choices_AttributeValueCountableConnection_edges_AttributeValueCountableEdge_node_AttributeValue = { id: string, name: string | null, slug: string | null };
+
+export type ProductTypesList_productTypes_ProductTypeCountableConnection_edges_ProductTypeCountableEdge_node_ProductType_productAttributes_Attribute_choices_AttributeValueCountableConnection_edges_AttributeValueCountableEdge = { node: ProductTypesList_productTypes_ProductTypeCountableConnection_edges_ProductTypeCountableEdge_node_ProductType_productAttributes_Attribute_choices_AttributeValueCountableConnection_edges_AttributeValueCountableEdge_node_AttributeValue };
+
+export type ProductTypesList_productTypes_ProductTypeCountableConnection_edges_ProductTypeCountableEdge_node_ProductType_productAttributes_Attribute_choices_AttributeValueCountableConnection = { edges: Array<ProductTypesList_productTypes_ProductTypeCountableConnection_edges_ProductTypeCountableEdge_node_ProductType_productAttributes_Attribute_choices_AttributeValueCountableConnection_edges_AttributeValueCountableEdge> };
+
+export type ProductTypesList_productTypes_ProductTypeCountableConnection_edges_ProductTypeCountableEdge_node_ProductType_productAttributes_Attribute = { id: string, name: string | null, slug: string | null, inputType: AttributeInputTypeEnum | null, valueRequired: boolean, choices: ProductTypesList_productTypes_ProductTypeCountableConnection_edges_ProductTypeCountableEdge_node_ProductType_productAttributes_Attribute_choices_AttributeValueCountableConnection | null };
+
+export type ProductTypesList_productTypes_ProductTypeCountableConnection_edges_ProductTypeCountableEdge_node_ProductType = { id: string, name: string, slug: string, hasVariants: boolean, productAttributes: Array<ProductTypesList_productTypes_ProductTypeCountableConnection_edges_ProductTypeCountableEdge_node_ProductType_productAttributes_Attribute> | null };
+
+export type ProductTypesList_productTypes_ProductTypeCountableConnection_edges_ProductTypeCountableEdge = { cursor: string, node: ProductTypesList_productTypes_ProductTypeCountableConnection_edges_ProductTypeCountableEdge_node_ProductType };
+
+export type ProductTypesList_productTypes_ProductTypeCountableConnection_pageInfo_PageInfo = { hasNextPage: boolean, endCursor: string | null };
+
+export type ProductTypesList_productTypes_ProductTypeCountableConnection = { totalCount: number | null, edges: Array<ProductTypesList_productTypes_ProductTypeCountableConnection_edges_ProductTypeCountableEdge>, pageInfo: ProductTypesList_productTypes_ProductTypeCountableConnection_pageInfo_PageInfo };
+
+export type ProductTypesList_Query = { productTypes: ProductTypesList_productTypes_ProductTypeCountableConnection | null };
+
+
+export type ProductTypesListVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']['input']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type ProductTypesList = ProductTypesList_Query;
+
+export type ProductVariantDetail_productVariant_ProductVariant_weight_Weight = { value: number, unit: WeightUnitsEnum };
+
+export type ProductVariantDetail_productVariant_ProductVariant_channelListings_ProductVariantChannelListing_channel_Channel = { id: string, name: string, currencyCode: string };
+
+export type ProductVariantDetail_productVariant_ProductVariant_channelListings_ProductVariantChannelListing_price_Money = { currency: string, amount: number };
+
+export type ProductVariantDetail_productVariant_ProductVariant_channelListings_ProductVariantChannelListing_costPrice_Money = { currency: string, amount: number };
+
+export type ProductVariantDetail_productVariant_ProductVariant_channelListings_ProductVariantChannelListing_priorPrice_Money = { currency: string, amount: number };
+
+export type ProductVariantDetail_productVariant_ProductVariant_channelListings_ProductVariantChannelListing_preorderThreshold_PreorderThreshold = { quantity: number | null };
+
+export type ProductVariantDetail_productVariant_ProductVariant_channelListings_ProductVariantChannelListing = { id: string, margin: number | null, channel: ProductVariantDetail_productVariant_ProductVariant_channelListings_ProductVariantChannelListing_channel_Channel, price: ProductVariantDetail_productVariant_ProductVariant_channelListings_ProductVariantChannelListing_price_Money | null, costPrice: ProductVariantDetail_productVariant_ProductVariant_channelListings_ProductVariantChannelListing_costPrice_Money | null, priorPrice: ProductVariantDetail_productVariant_ProductVariant_channelListings_ProductVariantChannelListing_priorPrice_Money | null, preorderThreshold: ProductVariantDetail_productVariant_ProductVariant_channelListings_ProductVariantChannelListing_preorderThreshold_PreorderThreshold | null };
+
+export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute_choices_AttributeValueCountableConnection_edges_AttributeValueCountableEdge_node_AttributeValue = { id: string, name: string | null, slug: string | null };
+
+export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute_choices_AttributeValueCountableConnection_edges_AttributeValueCountableEdge = { node: ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute_choices_AttributeValueCountableConnection_edges_AttributeValueCountableEdge_node_AttributeValue };
+
+export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute_choices_AttributeValueCountableConnection = { edges: Array<ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute_choices_AttributeValueCountableConnection_edges_AttributeValueCountableEdge> };
+
+export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute = { id: string, name: string | null, slug: string | null, inputType: AttributeInputTypeEnum | null, valueRequired: boolean, choices: ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute_choices_AttributeValueCountableConnection | null };
+
+export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedFileAttribute_fileValue_File = { url: string, contentType: string | null };
+
+export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedMultiChoiceAttribute_multiChoiceValue_AssignedChoiceAttributeValue = { name: string | null, slug: string | null };
+
+export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedSingleChoiceAttribute_singleChoiceValue_AssignedChoiceAttributeValue = { name: string | null, slug: string | null };
+
+export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedSwatchAttribute_swatchValue_AssignedSwatchAttributeValue = { name: string | null, slug: string | null, hexColor: string | null };
+
+export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute = (
+  { booleanValue: boolean | null, attribute: ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute }
+  & { __typename: 'AssignedBooleanAttribute' }
+);
+
+export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedDateAttribute = (
+  { dateValue: string | null, attribute: ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute }
+  & { __typename: 'AssignedDateAttribute' }
+);
+
+export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedDateTimeAttribute = (
+  { dateTimeValue: string | null, attribute: ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute }
+  & { __typename: 'AssignedDateTimeAttribute' }
+);
+
+export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedFileAttribute = (
+  { fileValue: ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedFileAttribute_fileValue_File | null, attribute: ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute }
+  & { __typename: 'AssignedFileAttribute' }
+);
+
+export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_EP9HcmmFCQqdoG7811YxTX6aNOeQ5zZmEGxiLqdpAO4 = (
+  { attribute: ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute }
+  & { __typename: 'AssignedMultiCategoryReferenceAttribute' | 'AssignedMultiCollectionReferenceAttribute' | 'AssignedMultiPageReferenceAttribute' | 'AssignedMultiProductReferenceAttribute' | 'AssignedMultiProductVariantReferenceAttribute' | 'AssignedSingleCategoryReferenceAttribute' | 'AssignedSingleCollectionReferenceAttribute' | 'AssignedSinglePageReferenceAttribute' | 'AssignedSingleProductReferenceAttribute' | 'AssignedSingleProductVariantReferenceAttribute' }
+);
+
+export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedMultiChoiceAttribute = (
+  { multiChoiceValue: Array<ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedMultiChoiceAttribute_multiChoiceValue_AssignedChoiceAttributeValue>, attribute: ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute }
+  & { __typename: 'AssignedMultiChoiceAttribute' }
+);
+
+export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedNumericAttribute = (
+  { numericValue: number | null, attribute: ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute }
+  & { __typename: 'AssignedNumericAttribute' }
+);
+
+export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedPlainTextAttribute = (
+  { plainTextValue: string | null, attribute: ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute }
+  & { __typename: 'AssignedPlainTextAttribute' }
+);
+
+export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedSingleChoiceAttribute = (
+  { singleChoiceValue: ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedSingleChoiceAttribute_singleChoiceValue_AssignedChoiceAttributeValue | null, attribute: ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute }
+  & { __typename: 'AssignedSingleChoiceAttribute' }
+);
+
+export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedSwatchAttribute = (
+  { swatchValue: ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedSwatchAttribute_swatchValue_AssignedSwatchAttributeValue | null, attribute: ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute }
+  & { __typename: 'AssignedSwatchAttribute' }
+);
+
+export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedTextAttribute = (
+  { textValue: unknown | null, attribute: ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute }
+  & { __typename: 'AssignedTextAttribute' }
+);
+
+export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes = ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedDateAttribute | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedDateTimeAttribute | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedFileAttribute | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_EP9HcmmFCQqdoG7811YxTX6aNOeQ5zZmEGxiLqdpAO4 | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedMultiChoiceAttribute | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedNumericAttribute | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedPlainTextAttribute | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedSingleChoiceAttribute | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedSwatchAttribute | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedTextAttribute;
+
+export type ProductVariantDetail_productVariant_ProductVariant_stocks_Stock_warehouse_Warehouse = { id: string, name: string };
+
+export type ProductVariantDetail_productVariant_ProductVariant_stocks_Stock = { id: string, quantity: number, quantityAllocated: number, warehouse: ProductVariantDetail_productVariant_ProductVariant_stocks_Stock_warehouse_Warehouse };
+
+export type ProductVariantDetail_productVariant_ProductVariant_metadata_MetadataItem = { key: string, value: string };
+
+export type ProductVariantDetail_productVariant_ProductVariant = { id: string, name: string, sku: string | null, trackInventory: boolean, weight: ProductVariantDetail_productVariant_ProductVariant_weight_Weight | null, channelListings: Array<ProductVariantDetail_productVariant_ProductVariant_channelListings_ProductVariantChannelListing> | null, assignedAttributes: Array<ProductVariantDetail_productVariant_ProductVariant_assignedAttributes>, stocks: Array<ProductVariantDetail_productVariant_ProductVariant_stocks_Stock> | null, metadata: Array<ProductVariantDetail_productVariant_ProductVariant_metadata_MetadataItem> };
+
+export type ProductVariantDetail_Query = { productVariant: ProductVariantDetail_productVariant_ProductVariant | null };
+
+
+export type ProductVariantDetailVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type ProductVariantDetail = ProductVariantDetail_Query;
 
 export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_thumbnail_Image = { url: string, alt: string | null };
 
@@ -31021,8 +31420,8 @@ export class TypedDocumentString<TResult, TVariables>
   }
 }
 
-export const AccountRegisterDocument = new TypedDocumentString(`
-    mutation AccountRegister($input: AccountRegisterInput!) {
+export const RegisterAccountDocument = new TypedDocumentString(`
+    mutation RegisterAccount($input: AccountRegisterInput!) {
   accountRegister(input: $input) {
     requiresConfirmation
     user {
@@ -31036,9 +31435,9 @@ export const AccountRegisterDocument = new TypedDocumentString(`
     }
   }
 }
-    `) as unknown as TypedDocumentString<AccountRegister, AccountRegisterVariables>;
-export const ConfirmAccountDocument = new TypedDocumentString(`
-    mutation ConfirmAccount($email: String!, $token: String!) {
+    `) as unknown as TypedDocumentString<RegisterAccount, RegisterAccountVariables>;
+export const ConfirmVendorAccountDocument = new TypedDocumentString(`
+    mutation ConfirmVendorAccount($email: String!, $token: String!) {
   confirmAccount(email: $email, token: $token) {
     user {
       id
@@ -31052,9 +31451,9 @@ export const ConfirmAccountDocument = new TypedDocumentString(`
     }
   }
 }
-    `) as unknown as TypedDocumentString<ConfirmAccount, ConfirmAccountVariables>;
-export const OrderCancelDocument = new TypedDocumentString(`
-    mutation OrderCancel($id: ID!) {
+    `) as unknown as TypedDocumentString<ConfirmVendorAccount, ConfirmVendorAccountVariables>;
+export const CancelOrderDocument = new TypedDocumentString(`
+    mutation CancelOrder($id: ID!) {
   orderCancel(id: $id) {
     order {
       id
@@ -31067,9 +31466,9 @@ export const OrderCancelDocument = new TypedDocumentString(`
     }
   }
 }
-    `) as unknown as TypedDocumentString<OrderCancel, OrderCancelVariables>;
-export const OrderFulfillDocument = new TypedDocumentString(`
-    mutation OrderFulfill($order: ID!, $input: OrderFulfillInput!) {
+    `) as unknown as TypedDocumentString<CancelOrder, CancelOrderVariables>;
+export const FulfillOrderDocument = new TypedDocumentString(`
+    mutation FulfillOrder($order: ID!, $input: OrderFulfillInput!) {
   orderFulfill(order: $order, input: $input) {
     errors {
       field
@@ -31078,9 +31477,9 @@ export const OrderFulfillDocument = new TypedDocumentString(`
     }
   }
 }
-    `) as unknown as TypedDocumentString<OrderFulfill, OrderFulfillVariables>;
-export const OrderFulfillmentCancelDocument = new TypedDocumentString(`
-    mutation OrderFulfillmentCancel($id: ID!, $input: FulfillmentCancelInput) {
+    `) as unknown as TypedDocumentString<FulfillOrder, FulfillOrderVariables>;
+export const CancelOrderFulfillmentDocument = new TypedDocumentString(`
+    mutation CancelOrderFulfillment($id: ID!, $input: FulfillmentCancelInput) {
   orderFulfillmentCancel(id: $id, input: $input) {
     errors {
       field
@@ -31089,9 +31488,9 @@ export const OrderFulfillmentCancelDocument = new TypedDocumentString(`
     }
   }
 }
-    `) as unknown as TypedDocumentString<OrderFulfillmentCancel, OrderFulfillmentCancelVariables>;
-export const OrderNoteAddDocument = new TypedDocumentString(`
-    mutation OrderNoteAdd($order: ID!, $input: OrderNoteInput!) {
+    `) as unknown as TypedDocumentString<CancelOrderFulfillment, CancelOrderFulfillmentVariables>;
+export const AddOrderNoteDocument = new TypedDocumentString(`
+    mutation AddOrderNote($order: ID!, $input: OrderNoteInput!) {
   orderNoteAdd(order: $order, input: $input) {
     errors {
       field
@@ -31108,7 +31507,189 @@ export const OrderNoteAddDocument = new TypedDocumentString(`
     }
   }
 }
-    `) as unknown as TypedDocumentString<OrderNoteAdd, OrderNoteAddVariables>;
+    `) as unknown as TypedDocumentString<AddOrderNote, AddOrderNoteVariables>;
+export const UpdateProductChannelListingDocument = new TypedDocumentString(`
+    mutation UpdateProductChannelListing($id: ID!, $input: ProductChannelListingUpdateInput!) {
+  productChannelListingUpdate(id: $id, input: $input) {
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<UpdateProductChannelListing, UpdateProductChannelListingVariables>;
+export const ProductMediaCreateMutationDocument = new TypedDocumentString(`
+    mutation ProductMediaCreateMutation($input: ProductMediaCreateInput!) {
+  productMediaCreate(input: $input) {
+    errors {
+      field
+      message
+      code
+    }
+    media {
+      id
+      url
+      alt
+      type
+      sortOrder
+    }
+    product {
+      id
+      media {
+        id
+        url
+        alt
+        type
+        sortOrder
+      }
+      thumbnail {
+        url
+        alt
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<ProductMediaCreateMutation, ProductMediaCreateMutationVariables>;
+export const ProductMediaDeleteMutationDocument = new TypedDocumentString(`
+    mutation ProductMediaDeleteMutation($id: ID!) {
+  productMediaDelete(id: $id) {
+    errors {
+      field
+      message
+      code
+    }
+    media {
+      id
+    }
+    product {
+      id
+      media {
+        id
+        url
+        alt
+        type
+        sortOrder
+      }
+      thumbnail {
+        url
+        alt
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<ProductMediaDeleteMutation, ProductMediaDeleteMutationVariables>;
+export const ProductMediaUpdateMutationDocument = new TypedDocumentString(`
+    mutation ProductMediaUpdateMutation($id: ID!, $input: ProductMediaUpdateInput!) {
+  productMediaUpdate(id: $id, input: $input) {
+    errors {
+      field
+      message
+      code
+    }
+    media {
+      id
+      url
+      alt
+      type
+      sortOrder
+    }
+    product {
+      id
+      media {
+        id
+        url
+        alt
+        type
+        sortOrder
+      }
+      thumbnail {
+        url
+        alt
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<ProductMediaUpdateMutation, ProductMediaUpdateMutationVariables>;
+export const UpdateProductDocument = new TypedDocumentString(`
+    mutation UpdateProduct($id: ID!, $input: ProductInput!) {
+  productUpdate(id: $id, input: $input) {
+    errors {
+      field
+      message
+      code
+    }
+    product {
+      id
+      name
+      slug
+      description
+      seoTitle
+      seoDescription
+      productType {
+        id
+        name
+      }
+      category {
+        id
+        name
+      }
+      collections {
+        id
+        name
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<UpdateProduct, UpdateProductVariables>;
+export const ProductVariantBulkUpdateMutationDocument = new TypedDocumentString(`
+    mutation ProductVariantBulkUpdateMutation($product: ID!, $variants: [ProductVariantBulkUpdateInput!]!) {
+  productVariantBulkUpdate(product: $product, variants: $variants) {
+    count
+    errors {
+      field
+      message
+      code
+    }
+    results {
+      errors {
+        field
+        message
+        code
+      }
+      productVariant {
+        id
+        name
+        sku
+        trackInventory
+        weight {
+          value
+          unit
+        }
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<ProductVariantBulkUpdateMutation, ProductVariantBulkUpdateMutationVariables>;
+export const CategoriesListDocument = new TypedDocumentString(`
+    query CategoriesList($first: Int = 100, $after: String, $filter: CategoryFilterInput) {
+  categories(first: $first, after: $after, filter: $filter) {
+    edges {
+      node {
+        id
+        name
+        slug
+      }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+    totalCount
+  }
+}
+    `) as unknown as TypedDocumentString<CategoriesList, CategoriesListVariables>;
 export const ChannelsDocument = new TypedDocumentString(`
     query Channels {
   channels {
@@ -31124,6 +31705,25 @@ export const ChannelsDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<Channels, ChannelsVariables>;
+export const CollectionsListDocument = new TypedDocumentString(`
+    query CollectionsList($first: Int = 100, $after: String, $filter: CollectionFilterInput) {
+  collections(first: $first, after: $after, filter: $filter) {
+    edges {
+      node {
+        id
+        name
+        slug
+      }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+    totalCount
+  }
+}
+    `) as unknown as TypedDocumentString<CollectionsList, CollectionsListVariables>;
 export const MeDocument = new TypedDocumentString(`
     query Me {
   me {
@@ -31154,8 +31754,8 @@ export const MeDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<Me, MeVariables>;
-export const OrderDocument = new TypedDocumentString(`
-    query Order($id: ID!) {
+export const OrderDetailDocument = new TypedDocumentString(`
+    query OrderDetail($id: ID!) {
   order(id: $id) {
     id
     number
@@ -31290,9 +31890,9 @@ export const OrderDocument = new TypedDocumentString(`
     }
   }
 }
-    `) as unknown as TypedDocumentString<Order, OrderVariables>;
-export const OrdersDocument = new TypedDocumentString(`
-    query Orders($first: Int, $last: Int, $after: String, $before: String, $filter: OrderFilterInput, $sortBy: OrderSortingInput) {
+    `) as unknown as TypedDocumentString<OrderDetail, OrderDetailVariables>;
+export const OrdersListDocument = new TypedDocumentString(`
+    query OrdersList($first: Int, $last: Int, $after: String, $before: String, $filter: OrderFilterInput, $sortBy: OrderSortingInput) {
   orders(
     first: $first
     last: $last
@@ -31339,9 +31939,9 @@ export const OrdersDocument = new TypedDocumentString(`
     totalCount
   }
 }
-    `) as unknown as TypedDocumentString<Orders, OrdersVariables>;
-export const ProductDocument = new TypedDocumentString(`
-    query Product($id: ID!) {
+    `) as unknown as TypedDocumentString<OrdersList, OrdersListVariables>;
+export const ProductDetailDocument = new TypedDocumentString(`
+    query ProductDetail($id: ID!) {
   product(id: $id) {
     id
     name
@@ -31349,6 +31949,10 @@ export const ProductDocument = new TypedDocumentString(`
     description
     seoTitle
     seoDescription
+    collections {
+      id
+      name
+    }
     thumbnail {
       url
       alt
@@ -31366,6 +31970,70 @@ export const ProductDocument = new TypedDocumentString(`
     category {
       id
       name
+    }
+    assignedAttributes(limit: 100) {
+      __typename
+      attribute {
+        id
+        name
+        slug
+        inputType
+        valueRequired
+        choices(first: 100) {
+          edges {
+            node {
+              ... on AttributeValue {
+                id
+                name
+                slug
+              }
+            }
+          }
+        }
+      }
+      ... on AssignedBooleanAttribute {
+        booleanValue: value
+      }
+      ... on AssignedDateAttribute {
+        dateValue: value
+      }
+      ... on AssignedDateTimeAttribute {
+        dateTimeValue: value
+      }
+      ... on AssignedNumericAttribute {
+        numericValue: value
+      }
+      ... on AssignedPlainTextAttribute {
+        plainTextValue: value
+      }
+      ... on AssignedTextAttribute {
+        textValue: value
+      }
+      ... on AssignedSingleChoiceAttribute {
+        singleChoiceValue: value {
+          name
+          slug
+        }
+      }
+      ... on AssignedMultiChoiceAttribute {
+        multiChoiceValue: value {
+          name
+          slug
+        }
+      }
+      ... on AssignedSwatchAttribute {
+        swatchValue: value {
+          name
+          slug
+          hexColor
+        }
+      }
+      ... on AssignedFileAttribute {
+        fileValue: value {
+          url
+          contentType
+        }
+      }
     }
     pricing {
       priceRange {
@@ -31391,7 +32059,7 @@ export const ProductDocument = new TypedDocumentString(`
       }
       isPublished
       visibleInListings
-      availableForPurchase
+      isAvailableForPurchase
       pricing {
         priceRange {
           start {
@@ -31423,16 +32091,206 @@ export const ProductDocument = new TypedDocumentString(`
         quantityAllocated
       }
     }
-    attributes {
+    metadata {
+      key
+      value
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<ProductDetail, ProductDetailVariables>;
+export const ProductTypeDetailDocument = new TypedDocumentString(`
+    query ProductTypeDetail($id: ID!) {
+  productType(id: $id) {
+    id
+    name
+    slug
+    hasVariants
+    productAttributes {
+      id
+      name
+      slug
+      inputType
+      valueRequired
+      choices(first: 50) {
+        edges {
+          node {
+            ... on AttributeValue {
+              id
+              name
+              slug
+            }
+          }
+        }
+      }
+    }
+    assignedVariantAttributes {
+      variantSelection
       attribute {
         id
         name
         slug
+        inputType
+        valueRequired
+        choices(first: 50) {
+          edges {
+            node {
+              ... on AttributeValue {
+                id
+                name
+                slug
+              }
+            }
+          }
+        }
       }
-      values {
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<ProductTypeDetail, ProductTypeDetailVariables>;
+export const ProductTypesListDocument = new TypedDocumentString(`
+    query ProductTypesList($first: Int = 100, $after: String) {
+  productTypes(first: $first, after: $after) {
+    edges {
+      node {
         id
         name
         slug
+        hasVariants
+        productAttributes {
+          id
+          name
+          slug
+          inputType
+          valueRequired
+          choices(first: 50) {
+            edges {
+              node {
+                ... on AttributeValue {
+                  id
+                  name
+                  slug
+                }
+              }
+            }
+          }
+        }
+      }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+    totalCount
+  }
+}
+    `) as unknown as TypedDocumentString<ProductTypesList, ProductTypesListVariables>;
+export const ProductVariantDetailDocument = new TypedDocumentString(`
+    query ProductVariantDetail($id: ID!) {
+  productVariant(id: $id) {
+    id
+    name
+    sku
+    trackInventory
+    weight {
+      value
+      unit
+    }
+    channelListings {
+      id
+      channel {
+        id
+        name
+        currencyCode
+      }
+      price {
+        currency
+        amount
+      }
+      costPrice {
+        currency
+        amount
+      }
+      priorPrice {
+        currency
+        amount
+      }
+      preorderThreshold {
+        quantity
+      }
+      margin
+    }
+    assignedAttributes {
+      __typename
+      attribute {
+        id
+        name
+        slug
+        inputType
+        valueRequired
+        choices(first: 100) {
+          edges {
+            node {
+              ... on AttributeValue {
+                id
+                name
+                slug
+              }
+            }
+          }
+        }
+      }
+      ... on AssignedBooleanAttribute {
+        booleanValue: value
+      }
+      ... on AssignedDateAttribute {
+        dateValue: value
+      }
+      ... on AssignedDateTimeAttribute {
+        dateTimeValue: value
+      }
+      ... on AssignedNumericAttribute {
+        numericValue: value
+      }
+      ... on AssignedPlainTextAttribute {
+        plainTextValue: value
+      }
+      ... on AssignedTextAttribute {
+        textValue: value
+      }
+      ... on AssignedSingleChoiceAttribute {
+        singleChoiceValue: value {
+          name
+          slug
+        }
+      }
+      ... on AssignedMultiChoiceAttribute {
+        multiChoiceValue: value {
+          name
+          slug
+        }
+      }
+      ... on AssignedSwatchAttribute {
+        swatchValue: value {
+          name
+          slug
+          hexColor
+        }
+      }
+      ... on AssignedFileAttribute {
+        fileValue: value {
+          url
+          contentType
+        }
+      }
+    }
+    stocks {
+      id
+      quantity
+      quantityAllocated
+      warehouse {
+        id
+        name
       }
     }
     metadata {
@@ -31441,7 +32299,7 @@ export const ProductDocument = new TypedDocumentString(`
     }
   }
 }
-    `) as unknown as TypedDocumentString<Product, ProductVariables>;
+    `) as unknown as TypedDocumentString<ProductVariantDetail, ProductVariantDetailVariables>;
 export const ProductsDocument = new TypedDocumentString(`
     query Products($first: Int, $after: String, $search: String, $filter: ProductFilterInput) {
   products(first: $first, after: $after, search: $search, filter: $filter) {

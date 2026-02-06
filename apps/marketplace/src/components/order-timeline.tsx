@@ -2,7 +2,7 @@ import { useMemo } from "react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@nimara/ui/components/card";
 
-import type { Order_order_Order_events_OrderEvent as OrderEvent } from "@/graphql/generated/client";
+import type { OrderDetail_order_Order_events_OrderEvent as OrderEvent } from "@/graphql/generated/client";
 
 import {
   getOrderEventMessage,

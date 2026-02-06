@@ -1,6 +1,6 @@
 "use server";
 
-import { AccountRegisterDocument } from "@/graphql/generated/client";
+import { RegisterAccountDocument } from "@/graphql/generated/client";
 import { executeGraphQL } from "@/lib/graphql/execute";
 
 export async function registerAccount(input: {
@@ -12,8 +12,8 @@ export async function registerAccount(input: {
   redirectUrl: string;
 }) {
   return executeGraphQL(
-    AccountRegisterDocument,
-    "AccountRegisterMutation",
+    RegisterAccountDocument,
+    "RegisterAccountMutation",
     { input },
   );
 }

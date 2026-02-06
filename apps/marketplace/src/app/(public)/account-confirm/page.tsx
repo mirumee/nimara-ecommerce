@@ -15,10 +15,6 @@ import {
   CardTitle,
 } from "@nimara/ui/components/card";
 
-import {
-  type ConfirmAccount,
-  ConfirmAccountDocument,
-} from "@/graphql/generated/client";
 import { confirmAccount } from "./actions";
 
 type ConfirmStatus = "loading" | "success" | "error";
