@@ -1,7 +1,12 @@
 import { defineConfig, devices } from "@playwright/test";
 import { config as envConfig } from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
 
-envConfig();
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// Load .env from monorepo root
+envConfig({ path: path.resolve(__dirname, "../../.env") });
 
 if (process.env.TEST_ENV_URL === undefined) {
   throw new Error("Missing TEST_ENV_URL");
