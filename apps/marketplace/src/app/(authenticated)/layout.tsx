@@ -11,7 +11,9 @@ interface AuthenticatedLayoutProps {
   children: ReactNode;
 }
 
-export default function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
+export default function AuthenticatedLayout({
+  children,
+}: AuthenticatedLayoutProps) {
   const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
 
@@ -36,9 +38,7 @@ export default function AuthenticatedLayout({ children }: AuthenticatedLayoutPro
   return (
     <div className="grid w-full gap-4">
       <TopNavigation />
-      <main className="px-6 pb-6">
-        {children}
-      </main>
+      <main className="px-6 pb-6">{children}</main>
     </div>
   );
 }

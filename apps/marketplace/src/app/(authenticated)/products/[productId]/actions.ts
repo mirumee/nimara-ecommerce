@@ -30,7 +30,10 @@ export async function updateProductChannelListing(
   productId: string,
 ) {
   const token = await getServerAuthToken();
-  const result = await productsService.updateProductChannelListing(variables, token);
+  const result = await productsService.updateProductChannelListing(
+    variables,
+    token,
+  );
 
   revalidatePath(`/products/${productId}`);
 

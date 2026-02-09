@@ -31,7 +31,10 @@ type PageProps = {
 export default async function OrdersPage({ searchParams }: PageProps) {
   const params = await searchParams;
 
-  const rawPageSize = parseInt(params.pageSize ?? String(DEFAULT_PAGE_SIZE), 10);
+  const rawPageSize = parseInt(
+    params.pageSize ?? String(DEFAULT_PAGE_SIZE),
+    10,
+  );
   const pageSize = PAGE_SIZE_OPTIONS.includes(rawPageSize)
     ? rawPageSize
     : DEFAULT_PAGE_SIZE;
@@ -59,20 +62,20 @@ export default async function OrdersPage({ searchParams }: PageProps) {
 
   const filter: OrderFilterInput | undefined =
     search ||
-      createdGte ||
-      createdLte ||
-      paymentStatus.length > 0 ||
-      status.length > 0
+    createdGte ||
+    createdLte ||
+    paymentStatus.length > 0 ||
+    status.length > 0
       ? {
-        ...(search && { search }),
-        ...((createdGte || createdLte) && {
-          created: { gte: createdGte, lte: createdLte },
-        }),
-        ...(paymentStatus.length > 0 && {
-          paymentStatus: paymentStatus as PaymentChargeStatusEnum[],
-        }),
-        ...(status.length > 0 && { status: status as OrderStatusFilter[] }),
-      }
+          ...(search && { search }),
+          ...((createdGte || createdLte) && {
+            created: { gte: createdGte, lte: createdLte },
+          }),
+          ...(paymentStatus.length > 0 && {
+            paymentStatus: paymentStatus as PaymentChargeStatusEnum[],
+          }),
+          ...(status.length > 0 && { status: status as OrderStatusFilter[] }),
+        }
       : undefined;
 
   const sortBy: OrderSortingInput | undefined =

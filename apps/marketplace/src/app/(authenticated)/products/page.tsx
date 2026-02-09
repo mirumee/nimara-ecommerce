@@ -31,9 +31,9 @@ export default async function ProductsPage({ searchParams }: PageProps) {
           ? { search }
           : undefined
         : {
-          isPublished: statusFilter.includes("published"),
-          ...(search && { search }),
-        };
+            isPublished: statusFilter.includes("published"),
+            ...(search && { search }),
+          };
 
   const token = await getServerAuthToken();
   const result = await productsService.getProducts(

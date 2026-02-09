@@ -67,7 +67,7 @@ export function TopNavigation() {
     "Vendor";
 
   return (
-    <header className="bg-background sticky top-0 right-0 left-0 z-50 w-full border-b">
+    <header className="sticky left-0 right-0 top-0 z-50 w-full border-b bg-background">
       <div className="flex items-center justify-between px-6 py-2">
         {/* Left side - Brand and Navigation */}
         <div className="flex items-center gap-8">
@@ -87,13 +87,13 @@ export function TopNavigation() {
                     "flex items-center gap-2 rounded-full px-4 py-2 text-sm transition-colors",
                     active
                       ? "bg-stone-100 text-stone-900"
-                      : "text-stone-600 hover:bg-stone-50 hover:text-stone-900"
+                      : "text-stone-600 hover:bg-stone-50 hover:text-stone-900",
                   )}
                 >
                   <div
                     className={cn(
                       "rounded-full p-1",
-                      active ? "bg-stone-200" : "bg-stone-100"
+                      active ? "bg-stone-200" : "bg-stone-100",
                     )}
                   >
                     <item.icon className="h-3 w-3" />
@@ -108,7 +108,7 @@ export function TopNavigation() {
         {/* Right side - User menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="hover:bg-primary hover:text-primary-foreground flex items-center gap-3 rounded-lg px-3 py-2 transition-colors">
+            <button className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-primary hover:text-primary-foreground">
               <Avatar className="h-8 w-8 bg-stone-900">
                 <AvatarFallback className="font-medium text-stone-900">
                   {vendorName.charAt(0).toUpperCase()}
@@ -120,7 +120,7 @@ export function TopNavigation() {
           <DropdownMenuContent align="end" className="w-64">
             <div className="border-b px-3 py-2">
               <div className="text-sm font-medium">{vendorName}</div>
-              <div className="text-muted-foreground text-xs">{user?.email}</div>
+              <div className="text-xs text-muted-foreground">{user?.email}</div>
             </div>
             <DropdownMenuItem className="cursor-pointer gap-2">
               <Users className="h-4 w-4" />
@@ -133,7 +133,10 @@ export function TopNavigation() {
               Support
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href="/configuration/general" className="cursor-pointer gap-2">
+              <Link
+                href="/configuration/general"
+                className="cursor-pointer gap-2"
+              >
                 <Settings className="h-4 w-4" />
                 Configuration
               </Link>

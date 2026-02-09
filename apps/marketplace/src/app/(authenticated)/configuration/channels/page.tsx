@@ -1,6 +1,12 @@
 import { Globe } from "lucide-react";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@nimara/ui/components/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@nimara/ui/components/card";
 
 import { getServerAuthToken } from "@/lib/auth/server";
 import { configurationService } from "@/services/configuration";
@@ -28,14 +34,16 @@ export default async function ConfigurationChannelsPage() {
       {channels.length === 0 ? (
         <div className="rounded-xl border bg-white p-8 shadow-sm">
           <p className="text-muted-foreground">
-            Channels and warehouses configuration settings will be available here.
+            Channels and warehouses configuration settings will be available
+            here.
           </p>
         </div>
       ) : (
         <>
           <div className="rounded-xl border bg-white p-8 shadow-sm">
-            <p className="text-muted-foreground mb-6">
-              Channels and warehouses configuration settings will be available here.
+            <p className="mb-6 text-muted-foreground">
+              Channels and warehouses configuration settings will be available
+              here.
             </p>
           </div>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -63,11 +71,15 @@ export default async function ConfigurationChannelsPage() {
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Currency</span>
-                      <span className="font-medium">{channel.currencyCode}</span>
+                      <span className="font-medium">
+                        {channel.currencyCode}
+                      </span>
                     </div>
                     {channel.defaultCountry && (
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">Default Country</span>
+                        <span className="text-muted-foreground">
+                          Default Country
+                        </span>
                         <span className="font-medium">
                           {channel.defaultCountry.country}
                         </span>

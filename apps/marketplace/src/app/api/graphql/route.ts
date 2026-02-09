@@ -28,8 +28,7 @@ async function getYogaInstance() {
           params.query,
         );
 
-
-return context;
+        return context;
       },
       plugins: [
         // Proxy cookies from Saleor to client
@@ -54,20 +53,17 @@ return context;
 export async function GET(request: NextRequest) {
   const yoga = await getYogaInstance();
 
-
-return yoga.fetch(request) as Promise<NextResponse>;
+  return yoga.fetch(request) as Promise<NextResponse>;
 }
 
 export async function POST(request: NextRequest) {
   const yoga = await getYogaInstance();
 
-
-return yoga.fetch(request) as Promise<NextResponse>;
+  return yoga.fetch(request) as Promise<NextResponse>;
 }
 
 export async function OPTIONS(request: NextRequest) {
   const yoga = await getYogaInstance();
 
-
-return yoga.fetch(request) as Promise<NextResponse>;
+  return yoga.fetch(request) as Promise<NextResponse>;
 }

@@ -45,7 +45,7 @@ export function VariantStocksSection() {
 
       <div className="border-t" />
 
-      <h4 className="text-muted-foreground text-sm font-medium">
+      <h4 className="text-sm font-medium text-muted-foreground">
         Assigned warehouses
       </h4>
 
@@ -81,7 +81,7 @@ export function VariantStocksSection() {
                   <input
                     type="number"
                     className={cn(
-                      "border-input bg-background ring-offset-background focus-visible:ring-ring h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+                      "h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                       !isAssigned && "opacity-50",
                     )}
                     disabled={!isAssigned}
@@ -97,4 +97,3 @@ export function VariantStocksSection() {
     </div>
   );
 }
-

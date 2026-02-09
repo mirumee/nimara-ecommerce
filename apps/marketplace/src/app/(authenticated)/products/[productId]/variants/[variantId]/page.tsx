@@ -40,7 +40,9 @@ export default async function VariantDetailPage({
     );
   }
 
-  const channels = channelsResult.ok ? channelsResult.data.channels ?? [] : [];
+  const channels = channelsResult.ok
+    ? (channelsResult.data.channels ?? [])
+    : [];
   const warehouses =
     warehousesResult.ok && warehousesResult.data.warehouses?.edges
       ? warehousesResult.data.warehouses.edges.map((e) => e.node)
@@ -51,7 +53,9 @@ export default async function VariantDetailPage({
     ? await productsService.getProductType({ id: productTypeId }, token)
     : null;
   const productType =
-    productTypeResult && productTypeResult.ok ? productTypeResult.data.productType : null;
+    productTypeResult && productTypeResult.ok
+      ? productTypeResult.data.productType
+      : null;
 
   if (!productType) {
     return (

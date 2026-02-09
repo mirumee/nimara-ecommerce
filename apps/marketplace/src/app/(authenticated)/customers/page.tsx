@@ -1,8 +1,7 @@
 export default async function CustomersPage() {
-
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-4">Customers</h2>
+      <h2 className="mb-4 text-2xl font-semibold">Customers</h2>
       <p>No customers found</p>
     </div>
   );

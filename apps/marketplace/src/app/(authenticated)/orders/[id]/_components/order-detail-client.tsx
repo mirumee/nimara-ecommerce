@@ -83,7 +83,9 @@ function addressesAreEqual(a?: Address | null, b?: Address | null): boolean {
 }
 
 function formatAddress(address?: Address | null): string {
-  if (!address) { return "No address provided"; }
+  if (!address) {
+    return "No address provided";
+  }
 
   const parts = [
     [address.firstName, address.lastName].filter(Boolean).join(" "),
@@ -196,14 +198,14 @@ export function OrderDetailClient({
 
   const handleCancelFulfillmentById = async (
     fulfillmentId: string,
-    warehouseId: string
+    warehouseId: string,
   ) => {
     setCancelingFulfillmentId(fulfillmentId);
 
     try {
       const result = await cancelFulfillment(
         { id: fulfillmentId, input: { warehouseId } },
-        order.id
+        order.id,
       );
 
       if (!result.ok) {
@@ -273,7 +275,9 @@ export function OrderDetailClient({
 
       if (!result.ok) {
         const message = (result.errors ?? [])
-          .map((e: { message?: string | null }) => e?.message || "Unknown error")
+          .map(
+            (e: { message?: string | null }) => e?.message || "Unknown error",
+          )
           .join(", ");
 
         toast({
@@ -285,7 +289,8 @@ export function OrderDetailClient({
         return;
       }
 
-      const cancelPayload = (result.data as unknown as CancelOrder)?.orderCancel;
+      const cancelPayload = (result.data as unknown as CancelOrder)
+        ?.orderCancel;
 
       if (cancelPayload?.errors?.length) {
         const messages = cancelPayload.errors
@@ -310,7 +315,10 @@ export function OrderDetailClient({
       console.error("Order cancel error:", error);
       toast({
         title: "Order cancel failed",
-        description: error instanceof Error ? error.message : "Something went wrong. Please try again.",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Something went wrong. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -320,16 +328,16 @@ export function OrderDetailClient({
 
   const isSameAddress = addressesAreEqual(
     order.billingAddress,
-    order.shippingAddress
+    order.shippingAddress,
   );
 
-  const unfulfilledLines = order.lines?.filter(
-    (line) => line.quantityToFulfill && line.quantityToFulfill > 0
-  ) ?? [];
+  const unfulfilledLines =
+    order.lines?.filter(
+      (line) => line.quantityToFulfill && line.quantityToFulfill > 0,
+    ) ?? [];
 
-  const fulfilledLines = order.lines?.filter(
-    (line) => line.quantityFulfilled > 0
-  ) ?? [];
+  const fulfilledLines =
+    order.lines?.filter((line) => line.quantityFulfilled > 0) ?? [];
 
   const customerPhone =
     order.shippingAddress?.phone ?? order.billingAddress?.phone ?? null;
@@ -352,7 +360,7 @@ export function OrderDetailClient({
   return (
     <div className="min-h-screen">
       {/* Sticky header bar */}
-      <div className="bg-background fixed top-16 left-0 right-0 z-40 border-b">
+      <div className="fixed left-0 right-0 top-16 z-40 border-b bg-background">
         <div className="flex items-center justify-between px-6 py-4">
           <div className="flex items-center gap-4">
             <Button asChild variant="ghost" size="sm" className="gap-2">
@@ -367,17 +375,16 @@ export function OrderDetailClient({
           <div className="flex items-center gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button
-                  size="sm"
-                  variant="outline"
-                >
+                <Button size="sm" variant="outline">
                   More actions
                   <ChevronDown className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 {order.status !== "CANCELED" && (
-                  <DropdownMenuItem onClick={() => setShowCancelOrderDialog(true)}>
+                  <DropdownMenuItem
+                    onClick={() => setShowCancelOrderDialog(true)}
+                  >
                     Cancel order
                   </DropdownMenuItem>
                 )}
@@ -389,11 +396,7 @@ export function OrderDetailClient({
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={handleRefund}
-            >
+            <Button size="sm" variant="outline" onClick={handleRefund}>
               Refund
             </Button>
           </div>
@@ -414,7 +417,9 @@ export function OrderDetailClient({
                   <p className="font-medium">
                     {[order.user?.firstName, order.user?.lastName]
                       .filter(Boolean)
-                      .join(" ") || order.userEmail || "Guest"}
+                      .join(" ") ||
+                      order.userEmail ||
+                      "Guest"}
                   </p>
                 </div>
                 <div>
@@ -422,9 +427,7 @@ export function OrderDetailClient({
                     Contact information
                   </h3>
                   <p className="text-sm">{order.userEmail ?? "—"}</p>
-                  {customerPhone && (
-                    <p className="text-sm">{customerPhone}</p>
-                  )}
+                  {customerPhone && <p className="text-sm">{customerPhone}</p>}
                 </div>
                 <div>
                   <h3 className="mb-2 text-sm font-medium text-muted-foreground">
@@ -467,16 +470,19 @@ export function OrderDetailClient({
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => console.log("View tracking")}>
+                        <DropdownMenuItem
+                          onClick={() => console.log("View tracking")}
+                        >
                           View tracking
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => console.log("Print shipping label")}>
+                        <DropdownMenuItem
+                          onClick={() => console.log("Print shipping label")}
+                        >
                           Print shipping label
                         </DropdownMenuItem>
                         {order.fulfillments
                           ?.filter(
-                            (f) =>
-                              f.status !== "CANCELED" && f.warehouse?.id
+                            (f) => f.status !== "CANCELED" && f.warehouse?.id,
                           )
                           .map((f, idx) => (
                             <DropdownMenuItem
@@ -529,12 +535,17 @@ export function OrderDetailClient({
                         </div>
                         <div className="flex items-center gap-4 text-sm">
                           <span className="text-muted-foreground">
-                            {formatPrice(line.unitPrice.gross.amount, line.unitPrice.gross.currency)} × {line.quantityFulfilled}
+                            {formatPrice(
+                              line.unitPrice.gross.amount,
+                              line.unitPrice.gross.currency,
+                            )}{" "}
+                            × {line.quantityFulfilled}
                           </span>
                           <span className="font-medium">
                             {formatPrice(
-                              line.unitPrice.gross.amount * line.quantityFulfilled,
-                              line.unitPrice.gross.currency
+                              line.unitPrice.gross.amount *
+                                line.quantityFulfilled,
+                              line.unitPrice.gross.currency,
                             )}
                           </span>
                         </div>
@@ -553,8 +564,8 @@ export function OrderDetailClient({
                         : "Fulfilling items"}
                     </CardTitle>
                     <div className="flex items-center gap-2">
-                      {order.status !== "CANCELED" && (
-                        !isFulfilling ? (
+                      {order.status !== "CANCELED" &&
+                        (!isFulfilling ? (
                           <>
                             <Button
                               size="sm"
@@ -570,7 +581,11 @@ export function OrderDetailClient({
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => console.log("Create shipping label")}>
+                                <DropdownMenuItem
+                                  onClick={() =>
+                                    console.log("Create shipping label")
+                                  }
+                                >
                                   Create shipping label
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
@@ -624,7 +639,9 @@ export function OrderDetailClient({
                           {isFulfilling ? (
                             <div className="flex items-center gap-2">
                               <Select
-                                value={fulfillmentData[line.id]?.warehouse_id ?? ""}
+                                value={
+                                  fulfillmentData[line.id]?.warehouse_id ?? ""
+                                }
                                 onValueChange={(value) =>
                                   setFulfillmentData((prev) => ({
                                     ...prev,
@@ -662,19 +679,24 @@ export function OrderDetailClient({
                                   }))
                                 }
                               />
-                              <span className="text-muted-foreground text-sm">
+                              <span className="text-sm text-muted-foreground">
                                 of {line.quantityToFulfill}
                               </span>
                             </div>
                           ) : (
                             <>
                               <span className="text-sm text-muted-foreground">
-                                {formatPrice(line.unitPrice.gross.amount, line.unitPrice.gross.currency)} × {line.quantityToFulfill}
+                                {formatPrice(
+                                  line.unitPrice.gross.amount,
+                                  line.unitPrice.gross.currency,
+                                )}{" "}
+                                × {line.quantityToFulfill}
                               </span>
                               <span className="font-medium">
                                 {formatPrice(
-                                  (line.unitPrice.gross.amount ?? 0) * (line.quantityToFulfill ?? 0),
-                                  line.unitPrice.gross.currency
+                                  (line.unitPrice.gross.amount ?? 0) *
+                                    (line.quantityToFulfill ?? 0),
+                                  line.unitPrice.gross.currency,
                                 )}
                               </span>
                             </>
@@ -716,10 +738,13 @@ export function OrderDetailClient({
                           className="bg-stone-900 hover:bg-stone-800"
                           onClick={handleCompleteFulfillment}
                           disabled={
-                            fulfillmentLines.length === 0 || isPendingFulfillment
+                            fulfillmentLines.length === 0 ||
+                            isPendingFulfillment
                           }
                         >
-                          {isPendingFulfillment ? "Fulfilling..." : "Fulfill items"}
+                          {isPendingFulfillment
+                            ? "Fulfilling..."
+                            : "Fulfill items"}
                         </Button>
                       </div>
                     </div>
@@ -746,7 +771,10 @@ export function OrderDetailClient({
                       {itemCount} {itemLabel}
                     </span>
                     <div>
-                      {formatPrice(order.subtotal.gross.amount, order.subtotal.gross.currency)}
+                      {formatPrice(
+                        order.subtotal.gross.amount,
+                        order.subtotal.gross.currency,
+                      )}
                     </div>
                   </div>
                 </div>
@@ -758,7 +786,7 @@ export function OrderDetailClient({
                       <div>
                         {formatPrice(
                           order.shippingPrice.gross.amount,
-                          order.shippingPrice.gross.currency
+                          order.shippingPrice.gross.currency,
                         )}
                       </div>
                     </div>
@@ -767,7 +795,10 @@ export function OrderDetailClient({
                 <div className="flex justify-between border-t pt-3 text-base font-semibold">
                   <span>Total</span>
                   <span>
-                    {formatPrice(order.total.gross.amount, order.total.gross.currency)}
+                    {formatPrice(
+                      order.total.gross.amount,
+                      order.total.gross.currency,
+                    )}
                   </span>
                 </div>
                 <div className="flex items-center justify-between border-t pt-3">
@@ -782,11 +813,16 @@ export function OrderDetailClient({
                           : "text-muted-foreground"
                       }
                     >
-                      {order.paymentStatus === "FULLY_CHARGED" ? "Paid" : order.paymentStatusDisplay ?? "Payment"}
+                      {order.paymentStatus === "FULLY_CHARGED"
+                        ? "Paid"
+                        : (order.paymentStatusDisplay ?? "Payment")}
                     </span>
                   </div>
                   <span>
-                    {formatPrice(order.total.gross.amount, order.total.gross.currency)}
+                    {formatPrice(
+                      order.total.gross.amount,
+                      order.total.gross.currency,
+                    )}
                   </span>
                 </div>
               </div>
@@ -796,7 +832,10 @@ export function OrderDetailClient({
           {/* Bottom content - 2 columns */}
           <div className="grid grid-cols-2 gap-6">
             {/* Timeline */}
-            <OrderTimeline events={order.events || []} currency={order.total.gross.currency} />
+            <OrderTimeline
+              events={order.events || []}
+              currency={order.total.gross.currency}
+            />
 
             {/* Order notes */}
             <OrderNotes
@@ -805,17 +844,20 @@ export function OrderDetailClient({
               onNoteAdded={() => router.refresh()}
             />
           </div>
-
         </div>
       </div>
 
       {/* Cancel order dialog */}
-      <Dialog open={showCancelOrderDialog} onOpenChange={setShowCancelOrderDialog}>
+      <Dialog
+        open={showCancelOrderDialog}
+        onOpenChange={setShowCancelOrderDialog}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Cancel Order</DialogTitle>
             <DialogDescription>
-              Are you sure you want to cancel this order? This action cannot be undone.
+              Are you sure you want to cancel this order? This action cannot be
+              undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -862,7 +904,7 @@ export function OrderDetailClient({
                 if (cancelFulfillmentTarget) {
                   void handleCancelFulfillmentById(
                     cancelFulfillmentTarget.fulfillmentId,
-                    cancelFulfillmentTarget.warehouseId
+                    cancelFulfillmentTarget.warehouseId,
                   );
                 }
               }}

@@ -30,7 +30,9 @@ export async function updateAccount(input: {
   } as AccountUpdateVariables;
 
   return executeGraphQL(
-    AccountUpdateDocument as unknown as Parameters<typeof executeGraphQL<AccountUpdate_Mutation, AccountUpdateVariables>>[0],
+    AccountUpdateDocument as unknown as Parameters<
+      typeof executeGraphQL<AccountUpdate_Mutation, AccountUpdateVariables>
+    >[0],
     "AccountUpdateMutation",
     variables,
     token,

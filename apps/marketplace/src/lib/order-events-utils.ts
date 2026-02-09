@@ -94,7 +94,8 @@ export const getOrderEventMessage = (
   const message = event.message ?? null;
   const email = (event as unknown as { email?: string | null }).email ?? null;
   const emailType =
-    (event as unknown as { emailType?: OrderEventsEmailsEnum | null }).emailType ?? null;
+    (event as unknown as { emailType?: OrderEventsEmailsEnum | null })
+      .emailType ?? null;
 
   if (!type) {
     return message ?? null;

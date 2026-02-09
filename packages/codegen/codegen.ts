@@ -68,7 +68,8 @@ const createAppProject = (appName: string) => ({
     codegen: {
       overwrite: true,
       generates: {
-        [`../../apps/${appName}/src/graphql/generated/client.ts`]: singleFileConfig,
+        [`../../apps/${appName}/src/graphql/generated/client.ts`]:
+          singleFileConfig,
       },
     },
   },

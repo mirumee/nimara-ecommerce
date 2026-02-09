@@ -12,11 +12,13 @@ export async function productVariantBulkUpdate(
   variantId: string,
 ) {
   const token = await getServerAuthToken();
-  const result = await productsService.productVariantBulkUpdate(variables, token);
+  const result = await productsService.productVariantBulkUpdate(
+    variables,
+    token,
+  );
 
   revalidatePath(`/products/${productId}`);
   revalidatePath(`/products/${productId}/variants/${variantId}`);
 
   return result;
 }
-

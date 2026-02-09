@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 
 import { Button } from "@nimara/ui/components/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@nimara/ui/components/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@nimara/ui/components/card";
 import { Skeleton } from "@nimara/ui/components/skeleton";
 import { useToast } from "@nimara/ui/hooks";
 
@@ -41,11 +46,7 @@ export function OrderNotes({
   useEffect(() => {
     const trimmed = newNote.trim();
 
-    if (
-      isAddingNote &&
-      trimmed &&
-      notes.some((n) => n.message === trimmed)
-    ) {
+    if (isAddingNote && trimmed && notes.some((n) => n.message === trimmed)) {
       setIsAddingNote(false);
       setNewNote("");
     }
@@ -67,7 +68,7 @@ export function OrderNotes({
           order: orderId,
           input: { message },
         },
-        orderId
+        orderId,
       );
 
       if (!result.ok) {
@@ -184,7 +185,7 @@ export function OrderNotes({
                   No notes from customer
                 </p>
               ) : (
-                <div className="space-y-4 max-h-64 overflow-y-auto">
+                <div className="max-h-64 space-y-4 overflow-y-auto">
                   {notes.map((note) => (
                     <div
                       key={note.id}

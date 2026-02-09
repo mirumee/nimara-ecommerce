@@ -20,7 +20,10 @@ import { useToast } from "@nimara/ui/hooks";
 
 import { CheckboxField } from "@/components/fields/checkbox-field";
 import { InputField } from "@/components/fields/input-field";
-import { SelectField, type SelectOption } from "@/components/fields/select-field";
+import {
+  SelectField,
+  type SelectOption,
+} from "@/components/fields/select-field";
 import { ProductViewNavigation } from "@/components/product-view-navigation";
 import type {
   AttributeInputTypeEnum,
@@ -205,14 +208,16 @@ export function VariantDetailClient({
 
   const selectionAttributes = useMemo(
     () =>
-      productType.assignedVariantAttributes?.filter((a) => a.variantSelection) ??
-      [],
+      productType.assignedVariantAttributes?.filter(
+        (a) => a.variantSelection,
+      ) ?? [],
     [productType.assignedVariantAttributes],
   );
   const nonSelectionAttributes = useMemo(
     () =>
-      productType.assignedVariantAttributes?.filter((a) => !a.variantSelection) ??
-      [],
+      productType.assignedVariantAttributes?.filter(
+        (a) => !a.variantSelection,
+      ) ?? [],
     [productType.assignedVariantAttributes],
   );
 
@@ -382,7 +387,9 @@ export function VariantDetailClient({
         toast({
           title: "Failed to update variant",
           description: result.errors
-            .map((e: { message?: string | null }) => e.message || "Unknown error")
+            .map(
+              (e: { message?: string | null }) => e.message || "Unknown error",
+            )
             .join(", "),
           variant: "destructive",
         });
@@ -407,7 +414,10 @@ export function VariantDetailClient({
         return;
       }
 
-      toast({ title: "Variant updated", description: "Changes saved successfully." });
+      toast({
+        title: "Variant updated",
+        description: "Changes saved successfully.",
+      });
       form.reset(values, { keepDirty: false });
       router.refresh();
     } catch (error) {
@@ -471,7 +481,7 @@ export function VariantDetailClient({
                 <h3 className="text-lg font-medium">Attributes</h3>
 
                 <div className="space-y-3">
-                  <h4 className="text-muted-foreground text-sm font-medium">
+                  <h4 className="text-sm font-medium text-muted-foreground">
                     Selection Attributes
                   </h4>
                   {selectionAttributes.map(({ attribute }) => {
@@ -481,8 +491,12 @@ export function VariantDetailClient({
                       attribute.choices?.edges
                         ?.map((e) => e.node)
                         .filter(
-                          (n): n is { name: string | null; slug: string | null } =>
-                            Boolean(n && "slug" in n),
+                          (
+                            n,
+                          ): n is {
+                            name: string | null;
+                            slug: string | null;
+                          } => Boolean(n && "slug" in n),
                         )
                         .map((n) => ({
                           value: n.slug ?? "",
@@ -495,7 +509,9 @@ export function VariantDetailClient({
                         <CheckboxField
                           key={attribute.id}
                           name={fieldName}
-                          label={attribute.name ?? attribute.slug ?? "Attribute"}
+                          label={
+                            attribute.name ?? attribute.slug ?? "Attribute"
+                          }
                         />
                       );
                     }
@@ -508,19 +524,25 @@ export function VariantDetailClient({
                         <SelectField
                           key={attribute.id}
                           name={fieldName}
-                          label={attribute.name ?? attribute.slug ?? "Attribute"}
+                          label={
+                            attribute.name ?? attribute.slug ?? "Attribute"
+                          }
                           options={choices}
                           placeholder="Select value"
                         />
                       );
                     }
 
-                    if (inputType === ("MULTISELECT" as AttributeInputTypeEnum)) {
+                    if (
+                      inputType === ("MULTISELECT" as AttributeInputTypeEnum)
+                    ) {
                       return (
                         <SelectField
                           key={attribute.id}
                           name={fieldName}
-                          label={attribute.name ?? attribute.slug ?? "Attribute"}
+                          label={
+                            attribute.name ?? attribute.slug ?? "Attribute"
+                          }
                           options={choices}
                           isMulti
                           placeholder="Select values"
@@ -542,7 +564,7 @@ export function VariantDetailClient({
                 <div className="border-t" />
 
                 <div className="space-y-3">
-                  <h4 className="text-muted-foreground text-sm font-medium">
+                  <h4 className="text-sm font-medium text-muted-foreground">
                     Non-selection Attributes
                   </h4>
                   {nonSelectionAttributes.map(({ attribute }) => {
@@ -552,8 +574,12 @@ export function VariantDetailClient({
                       attribute.choices?.edges
                         ?.map((e) => e.node)
                         .filter(
-                          (n): n is { name: string | null; slug: string | null } =>
-                            Boolean(n && "slug" in n),
+                          (
+                            n,
+                          ): n is {
+                            name: string | null;
+                            slug: string | null;
+                          } => Boolean(n && "slug" in n),
                         )
                         .map((n) => ({
                           value: n.slug ?? "",
@@ -566,7 +592,9 @@ export function VariantDetailClient({
                         <CheckboxField
                           key={attribute.id}
                           name={fieldName}
-                          label={attribute.name ?? attribute.slug ?? "Attribute"}
+                          label={
+                            attribute.name ?? attribute.slug ?? "Attribute"
+                          }
                         />
                       );
                     }
@@ -579,19 +607,25 @@ export function VariantDetailClient({
                         <SelectField
                           key={attribute.id}
                           name={fieldName}
-                          label={attribute.name ?? attribute.slug ?? "Attribute"}
+                          label={
+                            attribute.name ?? attribute.slug ?? "Attribute"
+                          }
                           options={choices}
                           placeholder="Select value"
                         />
                       );
                     }
 
-                    if (inputType === ("MULTISELECT" as AttributeInputTypeEnum)) {
+                    if (
+                      inputType === ("MULTISELECT" as AttributeInputTypeEnum)
+                    ) {
                       return (
                         <SelectField
                           key={attribute.id}
                           name={fieldName}
-                          label={attribute.name ?? attribute.slug ?? "Attribute"}
+                          label={
+                            attribute.name ?? attribute.slug ?? "Attribute"
+                          }
                           options={choices}
                           isMulti
                           placeholder="Select values"
@@ -620,7 +654,12 @@ export function VariantDetailClient({
 
         <Card className="sticky bottom-0 z-10">
           <CardHeader className="flex flex-row flex-wrap justify-between gap-4">
-            <Button type="button" variant="destructive" disabled className="m-0">
+            <Button
+              type="button"
+              variant="destructive"
+              disabled
+              className="m-0"
+            >
               Delete variant
             </Button>
 
@@ -629,14 +668,18 @@ export function VariantDetailClient({
                 type="button"
                 variant="outline"
                 disabled={isSubmitting}
-                onClick={() => router.push(`/products/${encodeURIComponent(productId)}`)}
+                onClick={() =>
+                  router.push(`/products/${encodeURIComponent(productId)}`)
+                }
               >
                 Discard
               </Button>
 
               <Button type="submit" disabled={isSubmitting}>
                 Save{" "}
-                {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                {isSubmitting ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : null}
               </Button>
             </span>
           </CardHeader>
@@ -645,4 +688,3 @@ export function VariantDetailClient({
     </FormProvider>
   );
 }
-

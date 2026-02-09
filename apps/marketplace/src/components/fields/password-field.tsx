@@ -17,7 +17,12 @@ interface PasswordFieldProps {
   name: string;
 }
 
-export function PasswordField({ name, label, description, inputProps }: PasswordFieldProps) {
+export function PasswordField({
+  name,
+  label,
+  description,
+  inputProps,
+}: PasswordFieldProps) {
   const [showPassword, setShowPassword] = useState(false);
   const {
     register,
@@ -38,7 +43,7 @@ export function PasswordField({ name, label, description, inputProps }: Password
           className={cn(
             "pr-10",
             inputProps?.className,
-            error && "border-destructive focus-visible:ring-destructive"
+            error && "border-destructive focus-visible:ring-destructive",
           )}
         />
         <Button

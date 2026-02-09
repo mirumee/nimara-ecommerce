@@ -37,7 +37,12 @@ class OrdersService {
     variables?: OrdersListVariables,
     token?: string | null,
   ): AsyncResult<OrdersList> {
-    return executeGraphQL(OrdersListDocument, "OrdersListQuery", variables, token);
+    return executeGraphQL(
+      OrdersListDocument,
+      "OrdersListQuery",
+      variables,
+      token,
+    );
   }
 
   async getOrder(
@@ -56,10 +61,7 @@ class OrdersService {
     variables: FulfillOrderVariables,
     token?: string | null,
   ): AsyncResult<FulfillOrder> {
-    return executeGraphQL<
-      FulfillOrder,
-      FulfillOrderVariables
-    >(
+    return executeGraphQL<FulfillOrder, FulfillOrderVariables>(
       FulfillOrderDocument as DocumentTypeDecoration<
         FulfillOrder,
         FulfillOrderVariables

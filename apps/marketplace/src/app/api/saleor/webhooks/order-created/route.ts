@@ -94,8 +94,8 @@ export async function POST(request: NextRequest) {
 
     if (!appConfig) {
       console.error("No app config found for domain:", saleorDomain);
-      
-return NextResponse.json(
+
+      return NextResponse.json(
         { error: "App not configured for this domain" },
         { status: 500 },
       );
@@ -107,8 +107,8 @@ return NextResponse.json(
 
     if (!order || !order.id) {
       console.warn("Order created webhook received without order data");
-      
-return NextResponse.json({ status: "skipped", reason: "No order data" });
+
+      return NextResponse.json({ status: "skipped", reason: "No order data" });
     }
 
     // Get order lines
@@ -118,8 +118,8 @@ return NextResponse.json({ status: "skipped", reason: "No order data" });
       console.warn("Order created webhook received with no order lines", {
         orderId: order.id,
       });
-      
-return NextResponse.json({ status: "skipped", reason: "No order lines" });
+
+      return NextResponse.json({ status: "skipped", reason: "No order lines" });
     }
 
     // Extract vendor ID from first product's metadata
@@ -144,8 +144,8 @@ return NextResponse.json({ status: "skipped", reason: "No order lines" });
       console.warn("No vendor ID found in order line products", {
         orderId: order.id,
       });
-      
-return NextResponse.json({
+
+      return NextResponse.json({
         status: "skipped",
         reason: "No vendor ID found in products",
       });
@@ -163,8 +163,8 @@ return NextResponse.json({
         orderId: order.id,
         vendorId,
       });
-      
-return NextResponse.json({
+
+      return NextResponse.json({
         status: "skipped",
         reason: "Already has vendor_id",
       });
@@ -191,8 +191,8 @@ return NextResponse.json({
     });
   } catch (error) {
     console.error("Failed to process order created webhook:", error);
-    
-return NextResponse.json(
+
+    return NextResponse.json(
       {
         status: "error",
         message: error instanceof Error ? error.message : "Unknown error",

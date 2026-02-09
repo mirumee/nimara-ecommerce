@@ -1,6 +1,11 @@
 import { useMemo } from "react";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@nimara/ui/components/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@nimara/ui/components/card";
 
 import type { OrderDetail_order_Order_events_OrderEvent as OrderEvent } from "@/graphql/generated/client";
 
@@ -44,8 +49,8 @@ const TimelineEvent = ({
     <div className="ml-1 flex items-start gap-3 pb-4 last:pb-0 [&:last-child>div:first-child>div:last-child]:hidden">
       {/* Timeline dot and line */}
       <div className="flex flex-col items-center">
-        <div className="bg-muted-foreground/50 mt-2 h-2 w-2 shrink-0 rounded-full" />
-        <div className="bg-border min-h-6 w-px flex-1" />
+        <div className="mt-2 h-2 w-2 shrink-0 rounded-full bg-muted-foreground/50" />
+        <div className="min-h-6 w-px flex-1 bg-border" />
       </div>
 
       {/* Event content */}
@@ -57,7 +62,7 @@ const TimelineEvent = ({
           )}
         </p>
         {date && (
-          <p className="text-muted-foreground mt-0.5 text-xs">
+          <p className="mt-0.5 text-xs text-muted-foreground">
             {showFullDate ? formatDateTime(date) : formatTime(date)}
           </p>
         )}
@@ -88,16 +93,14 @@ const DateGroup = ({
 
   const visibleEvents = useMemo(
     () =>
-      events.filter(
-        (event) => getOrderEventMessage(event, currency) !== null,
-      ),
+      events.filter((event) => getOrderEventMessage(event, currency) !== null),
     [events, currency],
   );
 
   return (
     <div>
       {showHeader && (
-        <div className="text-muted-foreground mb-3 text-xs font-medium capitalize">
+        <div className="mb-3 text-xs font-medium capitalize text-muted-foreground">
           {getDateGroupLabel(groupKey)}
         </div>
       )}
@@ -116,10 +119,7 @@ const DateGroup = ({
 };
 
 export function OrderTimeline({ events, currency }: OrderTimelineProps) {
-  const groupedEvents = useMemo(
-    () => groupEventsByDate(events),
-    [events],
-  );
+  const groupedEvents = useMemo(() => groupEventsByDate(events), [events]);
 
   const visibleGroups = useMemo(
     () =>
@@ -141,7 +141,7 @@ export function OrderTimeline({ events, currency }: OrderTimelineProps) {
         <CardTitle>Timeline</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-6 max-h-64 overflow-y-auto">
+        <div className="max-h-64 space-y-6 overflow-y-auto">
           {visibleGroups.map(([groupKey, groupEvents]) => (
             <DateGroup
               key={groupKey}

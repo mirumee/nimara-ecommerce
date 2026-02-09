@@ -57,7 +57,9 @@ export default function SignUpPage() {
         firstName: data.firstName,
         lastName: data.lastName,
         redirectUrl: `${window.location.origin}/account-confirm`,
-        channel: process.env.NEXT_PUBLIC_SALEOR_MARKETPLACE_CHANNEL_SLUG ?? "default-channel",
+        channel:
+          process.env.NEXT_PUBLIC_SALEOR_MARKETPLACE_CHANNEL_SLUG ??
+          "default-channel",
       };
 
       const result = await registerAccount(input);
@@ -65,7 +67,9 @@ export default function SignUpPage() {
       if (!result.ok) {
         form.setError("root", {
           type: "server",
-          message: result.errors[0]?.message || "Registration failed. Please try again.",
+          message:
+            result.errors[0]?.message ||
+            "Registration failed. Please try again.",
         });
 
         return;
@@ -75,8 +79,13 @@ export default function SignUpPage() {
 
       if (payload?.errors?.length) {
         const error = payload.errors[0];
-        const field = (error?.field != null ? String(error.field) : "root") as keyof SignUpFormData;
-        const message = error?.message != null ? String(error.message) : "Registration failed";
+        const field = (
+          error?.field != null ? String(error.field) : "root"
+        ) as keyof SignUpFormData;
+        const message =
+          error?.message != null
+            ? String(error.message)
+            : "Registration failed";
 
         form.setError(field, { type: "server", message });
 
@@ -91,7 +100,10 @@ export default function SignUpPage() {
     } catch (error) {
       form.setError("root", {
         type: "server",
-        message: error instanceof Error ? error.message : "Registration failed. Please try again.",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Registration failed. Please try again.",
       });
     }
   };
@@ -102,7 +114,8 @@ export default function SignUpPage() {
         <CardHeader>
           <CardTitle>Check your email</CardTitle>
           <CardDescription>
-            We&apos;ve sent a confirmation link to your email address. Please click the link to activate your account.
+            We&apos;ve sent a confirmation link to your email address. Please
+            click the link to activate your account.
           </CardDescription>
         </CardHeader>
         <CardFooter>

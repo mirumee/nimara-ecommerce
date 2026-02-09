@@ -5,7 +5,12 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 
 import { Button } from "@nimara/ui/components/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@nimara/ui/components/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@nimara/ui/components/card";
 
 export default function NewVariantPage() {
   const params = useParams();

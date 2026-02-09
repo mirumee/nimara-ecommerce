@@ -52,7 +52,10 @@ export default function SignInPage() {
     } catch (error) {
       form.setError("root", {
         type: "server",
-        message: error instanceof Error ? error.message : "Sign-in failed. Please try again.",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Sign-in failed. Please try again.",
       });
     }
   };

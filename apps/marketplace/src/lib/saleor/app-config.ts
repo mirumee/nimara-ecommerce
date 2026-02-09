@@ -43,8 +43,7 @@ export async function getAppConfig(
 
   const parsed = saleorAppConfigSchema.safeParse(config);
 
-  
-return parsed.success ? parsed.data : null;
+  return parsed.success ? parsed.data : null;
 }
 
 /**
@@ -80,6 +79,5 @@ export async function deleteAppConfig(saleorDomain: string): Promise<void> {
 export async function listAppConfigs(): Promise<string[]> {
   const store = await getSecret<AppConfigStore>(SECRET_PATH);
 
-  
-return store ? Object.keys(store) : [];
+  return store ? Object.keys(store) : [];
 }

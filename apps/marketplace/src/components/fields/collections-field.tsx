@@ -1,6 +1,9 @@
 "use client";
 
-import { SelectField, type SelectOption } from "@/components/fields/select-field";
+import {
+  SelectField,
+  type SelectOption,
+} from "@/components/fields/select-field";
 
 export function CollectionsField({
   name,
@@ -30,4 +33,3 @@ export function CollectionsField({
     />
   );
 }
-

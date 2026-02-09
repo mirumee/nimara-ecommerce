@@ -74,10 +74,13 @@ export function SelectField({
     formState: { errors },
   } = useFormContext();
 
-  const error = getErrorAtPath(errors, name) as { message?: unknown } | undefined;
+  const error = getErrorAtPath(errors, name) as
+    | { message?: unknown }
+    | undefined;
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [availableOptions, setAvailableOptions] = useState<SelectOption[]>(options);
+  const [availableOptions, setAvailableOptions] =
+    useState<SelectOption[]>(options);
   const [searching, setSearching] = useState(false);
   const searchRequestRef = useRef(0);
 
@@ -88,7 +91,9 @@ export function SelectField({
 
     const normalized = searchQuery.toLowerCase();
     setAvailableOptions(
-      options.filter((option) => option.label.toLowerCase().includes(normalized)),
+      options.filter((option) =>
+        option.label.toLowerCase().includes(normalized),
+      ),
     );
   }, [isMulti, loadOptions, options, searchQuery]);
 
@@ -132,10 +137,14 @@ export function SelectField({
     return map;
   }, [availableOptions, options]);
 
-  const placeholderText = placeholder ?? (label ? `Select a ${label.toLowerCase()}` : "Select...");
+  const placeholderText =
+    placeholder ?? (label ? `Select a ${label.toLowerCase()}` : "Select...");
 
   const renderBadges = useCallback(
-    (selected: SelectOption[], removeOption: (option: SelectOption) => void) => {
+    (
+      selected: SelectOption[],
+      removeOption: (option: SelectOption) => void,
+    ) => {
       if (!selected.length) {
         return <span className="text-muted-foreground">{placeholderText}</span>;
       }
@@ -175,7 +184,8 @@ export function SelectField({
       }));
 
       const isOptionSelected = (opt: SelectOption) =>
-        selectedMap.has(opt.value) || selectedOptions.some((s) => s.value === opt.value);
+        selectedMap.has(opt.value) ||
+        selectedOptions.some((s) => s.value === opt.value);
 
       const toggleValue = (opt: SelectOption) => {
         if (isOptionSelected(opt)) {
@@ -183,7 +193,10 @@ export function SelectField({
         } else {
           field.onChange([
             ...selectedOptions,
-            { value: opt.value, label: opt.label || optionLookup.get(opt.value) || opt.value },
+            {
+              value: opt.value,
+              label: opt.label || optionLookup.get(opt.value) || opt.value,
+            },
           ]);
         }
       };
@@ -205,7 +218,7 @@ export function SelectField({
                 tabIndex={isDisabled ? -1 : 0}
                 aria-disabled={isDisabled}
                 className={cn(
-                  "border-input bg-background flex min-h-10 w-full items-center justify-between rounded-md border px-3 py-2 text-sm",
+                  "flex min-h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm",
                   isDisabled && "cursor-not-allowed opacity-50",
                   error && "border-destructive focus-visible:ring-destructive",
                 )}
@@ -224,41 +237,49 @@ export function SelectField({
                 <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </div>
             </PopoverTrigger>
-            <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+            <PopoverContent
+              className="w-[--radix-popover-trigger-width] p-0"
+              align="start"
+            >
               <div className="p-2">
                 <Input
                   value={searchQuery}
                   onChange={(event) => setSearchQuery(event.target.value)}
                   placeholder={
-                    searchPlaceholder ?? (label ? `Search ${label.toLowerCase()}` : "Search")
+                    searchPlaceholder ??
+                    (label ? `Search ${label.toLowerCase()}` : "Search")
                   }
                 />
               </div>
               <ScrollArea className="max-h-60">
                 {searching ? (
-                  <div className="text-muted-foreground p-4 text-sm">Searching…</div>
+                  <div className="p-4 text-sm text-muted-foreground">
+                    Searching…
+                  </div>
                 ) : availableOptions.length ? (
                   <div className="flex flex-col">
                     {availableOptions
                       .filter((opt) => !isOptionSelected(opt))
                       .map((opt) => {
-                      return (
-                        <button
-                          key={opt.value}
-                          type="button"
-                          className={cn(
-                            "hover:bg-muted flex items-center justify-between px-3 py-2 text-left text-sm",
-                          )}
-                          onClick={() => toggleValue(opt)}
-                        >
-                          <span>{opt.label}</span>
-                          <Check className="h-4 w-4 opacity-0" />
-                        </button>
-                      );
-                    })}
+                        return (
+                          <button
+                            key={opt.value}
+                            type="button"
+                            className={cn(
+                              "flex items-center justify-between px-3 py-2 text-left text-sm hover:bg-muted",
+                            )}
+                            onClick={() => toggleValue(opt)}
+                          >
+                            <span>{opt.label}</span>
+                            <Check className="h-4 w-4 opacity-0" />
+                          </button>
+                        );
+                      })}
                   </div>
                 ) : (
-                  <div className="text-muted-foreground p-4 text-sm">{emptyStateText}</div>
+                  <div className="p-4 text-sm text-muted-foreground">
+                    {emptyStateText}
+                  </div>
                 )}
               </ScrollArea>
             </PopoverContent>
@@ -268,7 +289,9 @@ export function SelectField({
             <p className="text-sm text-muted-foreground">{description}</p>
           ) : null}
           {error ? (
-            <p className="text-sm text-destructive">{String(error.message ?? "")}</p>
+            <p className="text-sm text-destructive">
+              {String(error.message ?? "")}
+            </p>
           ) : null}
         </div>
       );
@@ -313,13 +336,20 @@ export function SelectField({
               >
                 <SelectTrigger
                   id={name}
-                  className={cn(error && "border-destructive focus-visible:ring-destructive")}
+                  className={cn(
+                    error &&
+                      "border-destructive focus-visible:ring-destructive",
+                  )}
                 >
                   <SelectValue placeholder={placeholderText} />
                 </SelectTrigger>
                 <SelectContent>
                   {options.map((o) => (
-                    <SelectItem key={o.value} value={o.value} disabled={o.disabled}>
+                    <SelectItem
+                      key={o.value}
+                      value={o.value}
+                      disabled={o.disabled}
+                    >
                       {o.label}
                     </SelectItem>
                   ))}
@@ -329,7 +359,9 @@ export function SelectField({
                 <p className="text-sm text-muted-foreground">{description}</p>
               ) : null}
               {error ? (
-                <p className="text-sm text-destructive">{String(error.message ?? "")}</p>
+                <p className="text-sm text-destructive">
+                  {String(error.message ?? "")}
+                </p>
               ) : null}
             </>
           )

@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  ChevronDown,
-  ChevronUp,
-  Filter,
-  Search,
-} from "lucide-react";
+import { ChevronDown, ChevronUp, Filter, Search } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
@@ -103,13 +98,13 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
   const searchParams = useSearchParams();
 
   const [searchValue, setSearchValue] = useState(
-    searchParams.get("search") || ""
+    searchParams.get("search") || "",
   );
   const debouncedSearch = useDebounce(searchValue, 300);
 
   const pageSize = parseInt(
     searchParams.get("pageSize") || String(DEFAULT_PAGE_SIZE),
-    10
+    10,
   );
   const _after = searchParams.get("after");
   const _before = searchParams.get("before");
@@ -125,20 +120,23 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
 
   const filter: OrderFilterInput | undefined =
     debouncedSearch ||
-      createdGte ||
-      createdLte ||
-      paymentStatus.length > 0 ||
-      status.length > 0
+    createdGte ||
+    createdLte ||
+    paymentStatus.length > 0 ||
+    status.length > 0
       ? {
-        ...(debouncedSearch && { search: debouncedSearch }),
-        ...((createdGte || createdLte) && {
-          created: { gte: createdGte || undefined, lte: createdLte || undefined },
-        }),
-        ...(paymentStatus.length > 0 && {
-          paymentStatus: paymentStatus as PaymentChargeStatusEnum[],
-        }),
-        ...(status.length > 0 && { status: status as OrderStatusFilter[] }),
-      }
+          ...(debouncedSearch && { search: debouncedSearch }),
+          ...((createdGte || createdLte) && {
+            created: {
+              gte: createdGte || undefined,
+              lte: createdLte || undefined,
+            },
+          }),
+          ...(paymentStatus.length > 0 && {
+            paymentStatus: paymentStatus as PaymentChargeStatusEnum[],
+          }),
+          ...(status.length > 0 && { status: status as OrderStatusFilter[] }),
+        }
       : undefined;
 
   const _sortBy: OrderSortingInput | undefined =
@@ -194,7 +192,7 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
 
       router.push(`${pathname}?${params.toString()}`);
     },
-    [pathname, router, searchParams]
+    [pathname, router, searchParams],
   );
 
   // Update search param when debounced value changes
@@ -205,7 +203,11 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
   }, [debouncedSearch]);
 
   const handlePageSizeChange = (newSize: string) => {
-    updateSearchParams({ pageSize: parseInt(newSize, 10), after: null, before: null });
+    updateSearchParams({
+      pageSize: parseInt(newSize, 10),
+      after: null,
+      before: null,
+    });
   };
 
   const handleNextPage = () => {
@@ -229,7 +231,11 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
 
   const togglePaymentStatus = (value: string) => {
     const isCurrentlyChecked = paymentStatus.includes(value);
-    const newValues = toggleValueInArray(paymentStatus, value, !isCurrentlyChecked);
+    const newValues = toggleValueInArray(
+      paymentStatus,
+      value,
+      !isCurrentlyChecked,
+    );
 
     updateSearchParams({ paymentStatus: newValues });
   };
@@ -241,7 +247,9 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
     updateSearchParams({ status: newValues });
   };
 
-  const handleDateRangeSelect = (range: { from: string; to: string } | null) => {
+  const handleDateRangeSelect = (
+    range: { from: string; to: string } | null,
+  ) => {
     if (range) {
       updateSearchParams({ createdGte: range.from, createdLte: range.to });
     } else {
@@ -353,7 +361,10 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
                               checked={paymentStatus.includes(opt)}
                               onCheckedChange={() => togglePaymentStatus(opt)}
                             />
-                            <Label htmlFor={`payment-${opt}`} className="flex-1">
+                            <Label
+                              htmlFor={`payment-${opt}`}
+                              className="flex-1"
+                            >
                               {formatEnumLabel(opt)}
                             </Label>
                           </div>
@@ -440,10 +451,12 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
                 </TableRow>
               ) : (
                 orders.map((order) => (
-                  <TableRow key={order.id} className="cursor-pointer hover:bg-muted" onClick={() => router.push(`/orders/${order.id}`)}>
-                    <TableCell>
-                      #{order.number}
-                    </TableCell>
+                  <TableRow
+                    key={order.id}
+                    className="cursor-pointer hover:bg-muted"
+                    onClick={() => router.push(`/orders/${order.id}`)}
+                  >
+                    <TableCell>#{order.number}</TableCell>
                     <TableCell>{formatDateTime(order.created)}</TableCell>
                     <TableCell>
                       {order.user
@@ -453,7 +466,7 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
                     <TableCell>
                       {formatPrice(
                         order.total.gross.amount,
-                        order.total.gross.currency
+                        order.total.gross.currency,
                       )}
                     </TableCell>
                     <TableCell>
@@ -470,8 +483,13 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
 
           <div className="flex items-center justify-between border-t p-4">
             <div className="flex items-center gap-2">
-              <span className="w-24 text-sm text-muted-foreground">View items</span>
-              <Select value={String(pageSize)} onValueChange={handlePageSizeChange}>
+              <span className="w-24 text-sm text-muted-foreground">
+                View items
+              </span>
+              <Select
+                value={String(pageSize)}
+                onValueChange={handlePageSizeChange}
+              >
                 <SelectTrigger className="w-[70px]">
                   <SelectValue />
                 </SelectTrigger>

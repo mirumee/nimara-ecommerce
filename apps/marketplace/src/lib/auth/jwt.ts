@@ -23,8 +23,7 @@ export function decodeToken(token: string): JWTPayload | null {
   try {
     const decoded = jose.decodeJwt(token) as JWTPayload;
 
-    
-return decoded;
+    return decoded;
   } catch {
     return null;
   }
@@ -37,8 +36,7 @@ return decoded;
 export function extractVendorId(token: string): string | null {
   const payload = decodeToken(token);
 
-  
-return payload?.user_id || null;
+  return payload?.user_id || null;
 }
 
 /**
@@ -61,8 +59,7 @@ export function extractSaleorDomain(
       try {
         const url = new URL(payload.iss);
 
-        
-return url.hostname;
+        return url.hostname;
       } catch {
         return payload.iss;
       }
@@ -81,8 +78,8 @@ export function isTokenExpired(token: string): boolean {
   if (!payload?.exp) {
     return false; // No expiration claim, consider valid
   }
-  
-return Date.now() >= payload.exp * 1000;
+
+  return Date.now() >= payload.exp * 1000;
 }
 
 /**

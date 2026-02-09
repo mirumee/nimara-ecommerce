@@ -172,7 +172,10 @@ class ProductsService {
     variables: ProductMediaCreateMutationVariables,
     token?: string | null,
   ): AsyncResult<ProductMediaCreateMutation> {
-    return executeGraphQL<ProductMediaCreateMutation, ProductMediaCreateMutationVariables>(
+    return executeGraphQL<
+      ProductMediaCreateMutation,
+      ProductMediaCreateMutationVariables
+    >(
       ProductMediaCreateMutationDocument as DocumentTypeDecoration<
         ProductMediaCreateMutation,
         ProductMediaCreateMutationVariables
@@ -188,7 +191,10 @@ class ProductsService {
     variables: ProductMediaUpdateMutationVariables,
     token?: string | null,
   ): AsyncResult<ProductMediaUpdateMutation> {
-    return executeGraphQL<ProductMediaUpdateMutation, ProductMediaUpdateMutationVariables>(
+    return executeGraphQL<
+      ProductMediaUpdateMutation,
+      ProductMediaUpdateMutationVariables
+    >(
       ProductMediaUpdateMutationDocument as DocumentTypeDecoration<
         ProductMediaUpdateMutation,
         ProductMediaUpdateMutationVariables
@@ -204,7 +210,10 @@ class ProductsService {
     variables: ProductMediaDeleteMutationVariables,
     token?: string | null,
   ): AsyncResult<ProductMediaDeleteMutation> {
-    return executeGraphQL<ProductMediaDeleteMutation, ProductMediaDeleteMutationVariables>(
+    return executeGraphQL<
+      ProductMediaDeleteMutation,
+      ProductMediaDeleteMutationVariables
+    >(
       ProductMediaDeleteMutationDocument as DocumentTypeDecoration<
         ProductMediaDeleteMutation,
         ProductMediaDeleteMutationVariables

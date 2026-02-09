@@ -55,7 +55,7 @@ export function VariantChannelListingSection({
                 </TableCell>
                 <TableCell>
                   <div className="grid gap-1">
-                    <div className="text-muted-foreground text-xs">
+                    <div className="text-xs text-muted-foreground">
                       {channel.currencyCode}
                     </div>
                     <Input
@@ -71,7 +71,7 @@ export function VariantChannelListingSection({
                 </TableCell>
                 <TableCell>
                   <div className="grid gap-1">
-                    <div className="text-muted-foreground text-xs">
+                    <div className="text-xs text-muted-foreground">
                       {channel.currencyCode}
                     </div>
                     <Input
@@ -93,4 +93,3 @@ export function VariantChannelListingSection({
     </div>
   );
 }
-

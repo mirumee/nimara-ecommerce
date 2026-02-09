@@ -41,9 +41,7 @@ export default function AccountConfirmPage() {
 
         if (!result.ok) {
           setStatus("error");
-          setErrorMessage(
-            result.errors[0]?.message || "Confirmation failed"
-          );
+          setErrorMessage(result.errors[0]?.message || "Confirmation failed");
 
           return;
         }
@@ -55,7 +53,7 @@ export default function AccountConfirmPage() {
           setErrorMessage(
             payload.errors[0]?.message != null
               ? String(payload.errors[0].message)
-              : "Confirmation failed"
+              : "Confirmation failed",
           );
 
           return;
@@ -70,7 +68,9 @@ export default function AccountConfirmPage() {
       } catch (error) {
         setStatus("error");
         setErrorMessage(
-          error instanceof Error ? error.message : "An unexpected error occurred."
+          error instanceof Error
+            ? error.message
+            : "An unexpected error occurred.",
         );
       }
     };

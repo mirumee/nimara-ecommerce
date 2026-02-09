@@ -28,7 +28,10 @@ import { useToast } from "@nimara/ui/hooks";
 import { CheckboxField } from "@/components/fields/checkbox-field";
 import { CollectionsField } from "@/components/fields/collections-field";
 import { InputField } from "@/components/fields/input-field";
-import { SelectField, type SelectOption } from "@/components/fields/select-field";
+import {
+  SelectField,
+  type SelectOption,
+} from "@/components/fields/select-field";
 import { Textarea } from "@/components/ui/textarea";
 import type {
   AttributeInputTypeEnum,
@@ -52,7 +55,12 @@ type Props = {
   collections: Array<{ id: string; name: string; slug: string }>;
   product: NonNullable<ProductDetail["product"]>;
   productId: string;
-  productTypes: Array<{ hasVariants: boolean; id: string; name: string; slug: string }>;
+  productTypes: Array<{
+    hasVariants: boolean;
+    id: string;
+    name: string;
+    slug: string;
+  }>;
 };
 
 type MediaDraftItem = { id: string; url: string };
@@ -82,7 +90,11 @@ function tryExtractEditorJsPlainText(value?: string | null): string {
       blocks?: Array<{ type?: string; data?: { text?: string } }>;
     };
 
-    if (!parsed || typeof parsed !== "object" || !Array.isArray(parsed.blocks)) {
+    if (
+      !parsed ||
+      typeof parsed !== "object" ||
+      !Array.isArray(parsed.blocks)
+    ) {
       return value;
     }
 
@@ -220,7 +232,7 @@ function AttributesSection({
           <CardTitle>Attributes</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground text-sm">No attributes</p>
+          <p className="text-sm text-muted-foreground">No attributes</p>
         </CardContent>
       </Card>
     );
@@ -240,8 +252,13 @@ function AttributesSection({
             attribute.choices?.edges
               ?.map((e) => e.node)
               .filter(
-                (n): n is { id: string; name: string | null; slug: string | null } =>
-                  Boolean(n && "slug" in n),
+                (
+                  n,
+                ): n is {
+                  id: string;
+                  name: string | null;
+                  slug: string | null;
+                } => Boolean(n && "slug" in n),
               )
               .map((n) => ({
                 value: n.slug ?? "",
@@ -294,11 +311,11 @@ function AttributesSection({
               )}
 
               {attribute.valueRequired ? (
-                <p className="text-muted-foreground text-xs">Required</p>
+                <p className="text-xs text-muted-foreground">Required</p>
               ) : null}
 
               {inputType === ("FILE" as AttributeInputTypeEnum) ? (
-                <p className="text-muted-foreground text-xs">
+                <p className="text-xs text-muted-foreground">
                   File attributes are read-only here.
                 </p>
               ) : null}
@@ -320,13 +337,15 @@ function AvailabilitySection({ channels }: { channels: Props["channels"] }) {
       </CardHeader>
       <CardContent className="space-y-4">
         {channels.map((channel) => {
-          const published = watch(`channelAvailability.${channel.id}.isPublished`);
+          const published = watch(
+            `channelAvailability.${channel.id}.isPublished`,
+          );
 
           return (
             <div key={channel.id} className="space-y-3 rounded-lg border p-4">
               <div className="flex items-center justify-between gap-4">
                 <div className="font-medium">{channel.name}</div>
-                <div className="text-muted-foreground text-xs">
+                <div className="text-xs text-muted-foreground">
                   {channel.currencyCode}
                 </div>
               </div>
@@ -589,15 +608,17 @@ export function ProductDetailClient({
           mediaHadErrors = true;
           toast({
             title: "Product updated, but media delete failed",
-            description:
-              del.ok
-                ? del.data.productMediaDelete?.errors
-                    .map((e: { message?: string | null }) => e.message)
-                    .filter(Boolean)
-                    .join(", ") || "Unknown error"
-                : del.errors
-                    .map((e: { message?: string | null }) => e.message || "Unknown error")
-                    .join(", "),
+            description: del.ok
+              ? del.data.productMediaDelete?.errors
+                  .map((e: { message?: string | null }) => e.message)
+                  .filter(Boolean)
+                  .join(", ") || "Unknown error"
+              : del.errors
+                  .map(
+                    (e: { message?: string | null }) =>
+                      e.message || "Unknown error",
+                  )
+                  .join(", "),
             variant: "destructive",
           });
           // Continue syncing the rest
@@ -634,20 +655,25 @@ export function ProductDetailClient({
           mediaHadErrors = true;
           toast({
             title: "Product updated, but media create failed",
-            description:
-              created.ok
-                ? created.data.productMediaCreate?.errors
-                    .map((e: { message?: string | null }) => e.message)
-                    .filter(Boolean)
-                    .join(", ") || "Unknown error"
-                : created.errors
-                    .map((e: { message?: string | null }) => e.message || "Unknown error")
-                    .join(", "),
+            description: created.ok
+              ? created.data.productMediaCreate?.errors
+                  .map((e: { message?: string | null }) => e.message)
+                  .filter(Boolean)
+                  .join(", ") || "Unknown error"
+              : created.errors
+                  .map(
+                    (e: { message?: string | null }) =>
+                      e.message || "Unknown error",
+                  )
+                  .join(", "),
             variant: "destructive",
           });
         } else {
           const createdMedia = created.data.productMediaCreate.media;
-          setMediaDraft((prev) => [...prev, { id: createdMedia.id, url: createdMedia.url }]);
+          setMediaDraft((prev) => [
+            ...prev,
+            { id: createdMedia.id, url: createdMedia.url },
+          ]);
           setPendingMediaUrl("");
           setIsAddMediaOpen(false);
         }
@@ -717,7 +743,8 @@ export function ProductDetailClient({
         mediaHadErrors
           ? {
               title: "Product updated with media errors",
-              description: "Some media changes failed. Please review the Media section.",
+              description:
+                "Some media changes failed. Please review the Media section.",
               variant: "destructive",
             }
           : {
@@ -811,7 +838,10 @@ export function ProductDetailClient({
                               />
                             </div>
                             <div className="min-w-0">
-                              <div className="truncate text-sm font-medium" title={m.url}>
+                              <div
+                                className="truncate text-sm font-medium"
+                                title={m.url}
+                              >
                                 {m.url}
                               </div>
                             </div>
@@ -824,9 +854,7 @@ export function ProductDetailClient({
                             className="h-8 w-8"
                             onClick={() => {
                               setMediaDraft((prev) =>
-                                prev.filter((x) =>
-                                  x.id !== m.id,
-                                ),
+                                prev.filter((x) => x.id !== m.id),
                               );
                             }}
                             aria-label="Remove media"
@@ -838,7 +866,7 @@ export function ProductDetailClient({
                     ))}
                   </div>
                 ) : (
-                  <p className="text-muted-foreground text-sm">No media</p>
+                  <p className="text-sm text-muted-foreground">No media</p>
                 )}
 
                 {!isAddMediaOpen ? (
@@ -862,7 +890,7 @@ export function ProductDetailClient({
                       />
                     </div>
                     <div className="flex items-center justify-between gap-2">
-                      <p className="text-muted-foreground text-xs">
+                      <p className="text-xs text-muted-foreground">
                         Click Save to upload this URL.
                       </p>
                       <Button
@@ -881,13 +909,17 @@ export function ProductDetailClient({
               </CardContent>
             </Card>
 
-            <AttributesSection assignedAttributes={product.assignedAttributes ?? []} />
+            <AttributesSection
+              assignedAttributes={product.assignedAttributes ?? []}
+            />
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>Variants</CardTitle>
                 <Button variant="outline" size="sm" asChild>
-                  <Link href={`/products/${productId}/variants/new`}>Add Variant</Link>
+                  <Link href={`/products/${productId}/variants/new`}>
+                    Add Variant
+                  </Link>
                 </Button>
               </CardHeader>
               <CardContent>
@@ -960,7 +992,12 @@ export function ProductDetailClient({
 
         <Card className="sticky bottom-0 z-10">
           <CardHeader className="flex flex-row flex-wrap justify-between gap-4">
-            <Button type="button" variant="destructive" disabled className="m-0">
+            <Button
+              type="button"
+              variant="destructive"
+              disabled
+              className="m-0"
+            >
               Delete product
             </Button>
 
@@ -976,7 +1013,9 @@ export function ProductDetailClient({
 
               <Button type="submit" disabled={isSubmitting}>
                 Save{" "}
-                {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                {isSubmitting ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : null}
               </Button>
             </span>
           </CardHeader>

@@ -2,7 +2,12 @@ import { Settings, Upload } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@nimara/ui/components/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@nimara/ui/components/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@nimara/ui/components/card";
 
 import type { Me_me_User_addresses_Address } from "@/graphql/generated/client";
 import { getServerAuthToken } from "@/lib/auth/server";
@@ -26,10 +31,10 @@ export default async function ConfigurationGeneralPage() {
 
   // Find default addresses
   const defaultBillingAddress = user?.addresses?.find(
-    (addr) => addr.isDefaultBillingAddress === true
+    (addr) => addr.isDefaultBillingAddress === true,
   );
   const defaultShippingAddress = user?.addresses?.find(
-    (addr) => addr.isDefaultShippingAddress === true
+    (addr) => addr.isDefaultShippingAddress === true,
   );
 
   // Shipping is same as billing when:
@@ -69,12 +74,12 @@ export default async function ConfigurationGeneralPage() {
           <CardTitle>Address Information</CardTitle>
           <Button variant="outline" asChild>
             <Link href="/configuration/general/addresses">
-              <Settings className="h-4 w-4 mr-2" /> Manage
+              <Settings className="mr-2 h-4 w-4" /> Manage
             </Link>
           </Button>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {/* When shipping same as billing: one combined block */}
             {shippingSameAsBilling && defaultBillingAddress ? (
               <div className="md:col-span-2">
@@ -88,7 +93,7 @@ export default async function ConfigurationGeneralPage() {
                     </div>
                   ))}
                   {defaultBillingAddress.phone && (
-                    <div className="text-sm text-gray-600 mt-2">
+                    <div className="mt-2 text-sm text-gray-600">
                       {defaultBillingAddress.phone}
                     </div>
                   )}
@@ -103,13 +108,15 @@ export default async function ConfigurationGeneralPage() {
                   </label>
                   {defaultBillingAddress ? (
                     <div className="mt-2 space-y-1">
-                      {formatAddress(defaultBillingAddress)?.map((line, idx) => (
-                        <div key={idx} className="text-sm text-gray-600">
-                          {line}
-                        </div>
-                      ))}
+                      {formatAddress(defaultBillingAddress)?.map(
+                        (line, idx) => (
+                          <div key={idx} className="text-sm text-gray-600">
+                            {line}
+                          </div>
+                        ),
+                      )}
                       {defaultBillingAddress.phone && (
-                        <div className="text-sm text-gray-600 mt-2">
+                        <div className="mt-2 text-sm text-gray-600">
                           {defaultBillingAddress.phone}
                         </div>
                       )}
@@ -126,13 +133,15 @@ export default async function ConfigurationGeneralPage() {
                   </label>
                   {defaultShippingAddress ? (
                     <div className="mt-2 space-y-1">
-                      {formatAddress(defaultShippingAddress)?.map((line, idx) => (
-                        <div key={idx} className="text-sm text-gray-600">
-                          {line}
-                        </div>
-                      ))}
+                      {formatAddress(defaultShippingAddress)?.map(
+                        (line, idx) => (
+                          <div key={idx} className="text-sm text-gray-600">
+                            {line}
+                          </div>
+                        ),
+                      )}
                       {defaultShippingAddress.phone && (
-                        <div className="text-sm text-gray-600 mt-2">
+                        <div className="mt-2 text-sm text-gray-600">
                           {defaultShippingAddress.phone}
                         </div>
                       )}
@@ -152,7 +161,7 @@ export default async function ConfigurationGeneralPage() {
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
             <CardTitle>Cover photo</CardTitle>
-            <p className="text-muted-foreground mt-1 text-sm">
+            <p className="mt-1 text-sm text-muted-foreground">
               Recommended dimensions: 1920×512px
             </p>
           </div>
@@ -168,11 +177,10 @@ export default async function ConfigurationGeneralPage() {
         </CardHeader>
         <CardContent>
           <div className="flex h-48 items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50">
-            <span className="text-muted-foreground text-sm">(cover photo)</span>
+            <span className="text-sm text-muted-foreground">(cover photo)</span>
           </div>
         </CardContent>
       </Card>
-
     </div>
   );
 }

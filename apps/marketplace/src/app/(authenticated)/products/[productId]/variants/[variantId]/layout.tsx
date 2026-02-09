@@ -18,9 +18,14 @@ export default async function VariantDetailLayout({
   const variantId = decodeURIComponent(rawVariantId);
 
   const token = await getServerAuthToken();
-  const productResult = await productsService.getProduct({ id: productId }, token);
+  const productResult = await productsService.getProduct(
+    { id: productId },
+    token,
+  );
 
-  const variants = productResult.ok ? productResult.data.product?.variants ?? [] : [];
+  const variants = productResult.ok
+    ? (productResult.data.product?.variants ?? [])
+    : [];
 
   return (
     <div className="w-full">
@@ -43,12 +48,12 @@ export default async function VariantDetailLayout({
                     <Link
                       href={`/products/${encodeURIComponent(productId)}/variants/${encodeURIComponent(v.id)}`}
                       className={[
-                        "hover:bg-accent flex flex-col gap-1 py-4 px-6",
+                        "flex flex-col gap-1 px-6 py-4 hover:bg-accent",
                         isActive ? "bg-accent" : "",
                       ].join(" ")}
                     >
                       <h3 className="text-sm font-medium">{v.name}</h3>
-                      <h4 className="text-muted-foreground text-xs">
+                      <h4 className="text-xs text-muted-foreground">
                         SKU: {v.sku ?? "N/A"}
                       </h4>
                     </Link>
@@ -64,4 +69,3 @@ export default async function VariantDetailLayout({
     </div>
   );
 }
-

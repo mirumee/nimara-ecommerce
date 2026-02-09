@@ -35,7 +35,9 @@ function getDefaultSaleorEndpoint(): string {
     return `${saleorUrl}/`;
   }
 
-return saleorUrl.endsWith("/") ? `${saleorUrl}graphql/` : `${saleorUrl}/graphql/`;
+  return saleorUrl.endsWith("/")
+    ? `${saleorUrl}graphql/`
+    : `${saleorUrl}/graphql/`;
 }
 
 let cachedSchema: Awaited<ReturnType<typeof makeSaleorSchema>> | null = null;
@@ -103,8 +105,7 @@ async function makeSaleorSchema() {
             "user",
           ];
 
-
-return allowedQueries.includes(fieldName);
+          return allowedQueries.includes(fieldName);
         }
 
         if (operationName === "Mutation") {
@@ -135,8 +136,7 @@ return allowedQueries.includes(fieldName);
             "updateMetadata",
           ];
 
-
-return allowedMutations.includes(fieldName);
+          return allowedMutations.includes(fieldName);
         }
 
         return false;
@@ -150,7 +150,7 @@ return allowedMutations.includes(fieldName);
           }
         }
 
-return fieldConfig;
+        return fieldConfig;
       }),
 
       new PruneSchema({}),
@@ -163,7 +163,7 @@ async function getSaleorSchema() {
     cachedSchema = await makeSaleorSchema();
   }
 
-return cachedSchema;
+  return cachedSchema;
 }
 
 export async function getStitchedSchema() {

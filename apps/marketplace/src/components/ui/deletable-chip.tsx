@@ -19,7 +19,11 @@ export function DeletableChip({
   return (
     <Badge
       variant="secondary"
-      className={cn("h-min gap-1 pr-1 font-normal", onDelete && "pr-1", className)}
+      className={cn(
+        "h-min gap-1 pr-1 font-normal",
+        onDelete && "pr-1",
+        className,
+      )}
     >
       {label}
       {onDelete && (

@@ -11,9 +11,7 @@ export async function registerAccount(input: {
   password: string;
   redirectUrl: string;
 }) {
-  return executeGraphQL(
-    RegisterAccountDocument,
-    "RegisterAccountMutation",
-    { input },
-  );
+  return executeGraphQL(RegisterAccountDocument, "RegisterAccountMutation", {
+    input,
+  });
 }

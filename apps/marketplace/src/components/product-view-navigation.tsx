@@ -23,14 +23,16 @@ export function ProductViewNavigation({
       ? `/products/${encodedProductId}/variants/${encodeURIComponent(firstVariantId)}`
       : `/products/${encodedProductId}/variants/new`;
 
-  const isVariants = pathname?.includes(`/products/${encodedProductId}/variants`);
+  const isVariants = pathname?.includes(
+    `/products/${encodedProductId}/variants`,
+  );
 
   const linkClasses =
     "inline-flex items-center justify-center rounded-sm px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-all focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50";
   const activeLinkClasses = "bg-background text-foreground shadow-sm";
 
   return (
-    <div className="text-muted-foreground bg-muted mr-auto inline-flex h-10 items-center justify-start rounded-md p-1">
+    <div className="mr-auto inline-flex h-10 items-center justify-start rounded-md bg-muted p-1 text-muted-foreground">
       <Link
         href={productHref}
         className={cn(linkClasses, !isVariants && activeLinkClasses)}
@@ -47,4 +49,3 @@ export function ProductViewNavigation({
     </div>
   );
 }
-

@@ -28,13 +28,20 @@ interface InputFieldProps {
   name: string;
 }
 
-export function InputField({ name, label, description, inputProps }: InputFieldProps) {
+export function InputField({
+  name,
+  label,
+  description,
+  inputProps,
+}: InputFieldProps) {
   const {
     register,
     formState: { errors },
   } = useFormContext();
 
-  const error = getErrorAtPath(errors, name) as { message?: unknown } | undefined;
+  const error = getErrorAtPath(errors, name) as
+    | { message?: unknown }
+    | undefined;
 
   return (
     <div className="grid gap-2">
@@ -52,7 +59,9 @@ export function InputField({ name, label, description, inputProps }: InputFieldP
         <p className="text-sm text-muted-foreground">{description}</p>
       )}
       {error && (
-        <p className="text-sm text-destructive">{String(error.message ?? "")}</p>
+        <p className="text-sm text-destructive">
+          {String(error.message ?? "")}
+        </p>
       )}
     </div>
   );

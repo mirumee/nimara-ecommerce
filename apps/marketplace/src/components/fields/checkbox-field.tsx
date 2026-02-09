@@ -37,7 +37,9 @@ export function CheckboxField({
     formState: { errors },
   } = useFormContext();
 
-  const error = getErrorAtPath(errors, name) as { message?: unknown } | undefined;
+  const error = getErrorAtPath(errors, name) as
+    | { message?: unknown }
+    | undefined;
 
   return (
     <div className="grid gap-1">
@@ -59,7 +61,9 @@ export function CheckboxField({
         <p className="text-sm text-muted-foreground">{description}</p>
       )}
       {error && (
-        <p className="text-sm text-destructive">{String(error.message ?? "")}</p>
+        <p className="text-sm text-destructive">
+          {String(error.message ?? "")}
+        </p>
       )}
     </div>
   );

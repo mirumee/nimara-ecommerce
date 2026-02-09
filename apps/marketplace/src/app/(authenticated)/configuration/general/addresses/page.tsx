@@ -27,17 +27,19 @@ export default async function AddressesPage() {
 
   const user = result.data.me;
   const userName = user
-    ? [user.firstName, user.lastName].filter(Boolean).join(" ") || user.email || "User"
+    ? [user.firstName, user.lastName].filter(Boolean).join(" ") ||
+      user.email ||
+      "User"
     : "User";
 
   const addresses = user?.addresses || [];
 
   // Find default addresses
   const defaultBillingAddress = addresses.find(
-    (addr) => addr.isDefaultBillingAddress === true
+    (addr) => addr.isDefaultBillingAddress === true,
   );
   const defaultShippingAddress = addresses.find(
-    (addr) => addr.isDefaultShippingAddress === true
+    (addr) => addr.isDefaultShippingAddress === true,
   );
 
   // Shipping is same as billing when:
@@ -58,10 +60,12 @@ export default async function AddressesPage() {
   });
 
   // Helper function to get full name
-  const getFullName = (address: typeof addresses[0]) => {
-    return [address.firstName, address.lastName].filter(Boolean).join(" ") || "Unknown";
+  const getFullName = (address: (typeof addresses)[0]) => {
+    return (
+      [address.firstName, address.lastName].filter(Boolean).join(" ") ||
+      "Unknown"
+    );
   };
-
 
   return (
     <div className="space-y-6">
@@ -80,19 +84,19 @@ export default async function AddressesPage() {
           {userName}&apos;s Address Book
         </h1>
         <Button>
-          <Plus className="h-4 w-4 mr-2" />
+          <Plus className="mr-2 h-4 w-4" />
           Add address
         </Button>
       </div>
 
       {/* Addresses Grid - Three Columns */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {/* Default Shipping Address - only when explicitly set and different from billing */}
         {defaultShippingAddress &&
           defaultShippingAddress.id !== defaultBillingAddress?.id && (
             <Card>
               <CardContent className="p-4">
-                <div className="flex items-start justify-between mb-3">
+                <div className="mb-3 flex items-start justify-between">
                   <h2 className="text-sm font-semibold text-gray-900">
                     Default Shipping Address
                   </h2>
@@ -103,9 +107,13 @@ export default async function AddressesPage() {
                       </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem>Set as default billing address</DropdownMenuItem>
+                      <DropdownMenuItem>
+                        Set as default billing address
+                      </DropdownMenuItem>
                       <DropdownMenuItem>Edit Address</DropdownMenuItem>
-                      <DropdownMenuItem className="text-red-600 focus:text-red-600">Delete Address</DropdownMenuItem>
+                      <DropdownMenuItem className="text-red-600 focus:text-red-600">
+                        Delete Address
+                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
@@ -141,7 +149,8 @@ export default async function AddressesPage() {
                     ]
                       .filter(Boolean)
                       .join(", ")}
-                    {defaultShippingAddress.country.country && `, ${defaultShippingAddress.country.country}`}
+                    {defaultShippingAddress.country.country &&
+                      `, ${defaultShippingAddress.country.country}`}
                   </div>
                 </div>
               </CardContent>
@@ -152,7 +161,7 @@ export default async function AddressesPage() {
         {defaultBillingAddress && (
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-start justify-between mb-3">
+              <div className="mb-3 flex items-start justify-between">
                 <h2 className="text-sm font-semibold text-gray-900">
                   {shippingSameAsBilling
                     ? "Default Shipping & Billing Address"
@@ -165,9 +174,13 @@ export default async function AddressesPage() {
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem>Set as default shipping address</DropdownMenuItem>
+                    <DropdownMenuItem>
+                      Set as default shipping address
+                    </DropdownMenuItem>
                     <DropdownMenuItem>Edit Address</DropdownMenuItem>
-                    <DropdownMenuItem className="text-red-600 focus:text-red-600">Delete Address</DropdownMenuItem>
+                    <DropdownMenuItem className="text-red-600 focus:text-red-600">
+                      Delete Address
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
@@ -203,7 +216,8 @@ export default async function AddressesPage() {
                   ]
                     .filter(Boolean)
                     .join(", ")}
-                  {defaultBillingAddress.country.country && `, ${defaultBillingAddress.country.country}`}
+                  {defaultBillingAddress.country.country &&
+                    `, ${defaultBillingAddress.country.country}`}
                 </div>
               </div>
             </CardContent>
@@ -214,7 +228,7 @@ export default async function AddressesPage() {
         {otherAddresses.map((address) => (
           <Card key={address.id}>
             <CardContent className="p-4">
-              <div className="flex items-start justify-between mb-3">
+              <div className="mb-3 flex items-start justify-between">
                 <div className="flex-1" />
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -223,8 +237,12 @@ export default async function AddressesPage() {
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem>Set as default shipping address</DropdownMenuItem>
-                    <DropdownMenuItem>Set as default billing address</DropdownMenuItem>
+                    <DropdownMenuItem>
+                      Set as default shipping address
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      Set as default billing address
+                    </DropdownMenuItem>
                     <DropdownMenuItem>Edit Address</DropdownMenuItem>
                     <DropdownMenuItem className="text-red-600 focus:text-red-600">
                       Delete Address
@@ -255,11 +273,7 @@ export default async function AddressesPage() {
                   </div>
                 )}
                 <div className="text-sm text-gray-600">
-                  {[
-                    address.city,
-                    address.countryArea,
-                    address.postalCode,
-                  ]
+                  {[address.city, address.countryArea, address.postalCode]
                     .filter(Boolean)
                     .join(", ")}
                   {address.country.country && `, ${address.country.country}`}
@@ -271,8 +285,10 @@ export default async function AddressesPage() {
 
         {/* Empty State */}
         {addresses.length === 0 && (
-          <div className="col-span-full text-center py-12">
-            <p className="text-gray-500">No addresses found. Add your first address to get started.</p>
+          <div className="col-span-full py-12 text-center">
+            <p className="text-gray-500">
+              No addresses found. Add your first address to get started.
+            </p>
           </div>
         )}
       </div>

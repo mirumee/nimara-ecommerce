@@ -8,7 +8,12 @@ import { FormProvider, type SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@nimara/ui/components/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@nimara/ui/components/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@nimara/ui/components/card";
 import { Skeleton } from "@nimara/ui/components/skeleton";
 import { useToast } from "@nimara/ui/hooks";
 
@@ -43,8 +48,14 @@ export function AccountInformationCard({
   const submittedDataRef = useRef<AccountInfoFormData | null>(null);
 
   // Get vendor name from metadata
-  const vendorNameMetadata = user?.metadata?.find((m) => m.key === "vendor.name");
-  const vendorName = vendorNameMetadata?.value || user?.firstName || user?.email || "Vendor name";
+  const vendorNameMetadata = user?.metadata?.find(
+    (m) => m.key === "vendor.name",
+  );
+  const vendorName =
+    vendorNameMetadata?.value ||
+    user?.firstName ||
+    user?.email ||
+    "Vendor name";
   const vendorUrl = `marketplace.com/${String(vendorName).toLowerCase().replace(/\s+/g, "-")}`;
   const fullName = user
     ? [user.firstName, user.lastName].filter(Boolean).join(" ")
@@ -84,7 +95,14 @@ export function AccountInformationCard({
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.metadata, user?.firstName, user?.lastName, user?.email, isEditing, isPending]);
+  }, [
+    user?.metadata,
+    user?.firstName,
+    user?.lastName,
+    user?.email,
+    isEditing,
+    isPending,
+  ]);
 
   // Update form values when user data changes (only when not editing)
   useEffect(() => {
@@ -99,7 +117,14 @@ export function AccountInformationCard({
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.id, user?.metadata, user?.firstName, user?.lastName, user?.email, isEditing]);
+  }, [
+    user?.id,
+    user?.metadata,
+    user?.firstName,
+    user?.lastName,
+    user?.email,
+    isEditing,
+  ]);
 
   const onSubmit: SubmitHandler<AccountInfoFormData> = async (data) => {
     setIsPending(true);
@@ -195,7 +220,7 @@ export function AccountInformationCard({
             onClick={() => setIsEditing(true)}
             disabled={isLoading || isPending}
           >
-            <Edit className="h-4 w-4 mr-2" /> Edit
+            <Edit className="mr-2 h-4 w-4" /> Edit
           </Button>
         )}
       </CardHeader>
@@ -203,7 +228,7 @@ export function AccountInformationCard({
         {isEditing ? (
           <FormProvider {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 {/* First Column - Name, First Name and Last Name */}
                 <div className="space-y-4">
                   <InputField
@@ -251,7 +276,7 @@ export function AccountInformationCard({
             </form>
           </FormProvider>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {/* First Column - Account Info */}
             <div className="flex items-center gap-6">
               {isLoading || isPending ? (
@@ -274,9 +299,13 @@ export function AccountInformationCard({
                     <div className="text-xl font-semibold text-gray-900">
                       {vendorName}
                     </div>
-                    <div className="text-muted-foreground text-sm">{vendorUrl}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {vendorUrl}
+                    </div>
                     {fullName && (
-                      <div className="mt-1 text-sm text-gray-600">{fullName}</div>
+                      <div className="mt-1 text-sm text-gray-600">
+                        {fullName}
+                      </div>
                     )}
                   </div>
                 </>
@@ -287,12 +316,14 @@ export function AccountInformationCard({
             <div>
               {isLoading || isPending ? (
                 <>
-                  <Skeleton className="h-5 w-1/2 mb-2" />
+                  <Skeleton className="mb-2 h-5 w-1/2" />
                   <Skeleton className="h-5 w-1/2" />
                 </>
               ) : (
                 <>
-                  <label className="text-sm font-medium text-gray-900">Email</label>
+                  <label className="text-sm font-medium text-gray-900">
+                    Email
+                  </label>
                   <div className="mt-1 text-sm text-gray-600">
                     {user?.email || "Not set"}
                   </div>

@@ -27,9 +27,9 @@ export function ConfigurationLayoutClient({
   return (
     <div className="-mx-6 -mt-4 flex min-h-screen">
       {/* Left sidebar */}
-      <div className="sticky top-[4.5rem] h-[calc(100vh-4.5rem)] w-64 border-r bg-gray-50 flex flex-col self-start">
+      <div className="sticky top-[4.5rem] flex h-[calc(100vh-4.5rem)] w-64 flex-col self-start border-r bg-gray-50">
         {/* Vendor info header */}
-        <div className="border-b bg-white p-6 flex-shrink-0">
+        <div className="flex-shrink-0 border-b bg-white p-6">
           <div className="flex items-center gap-3">
             <Avatar className="h-10 w-10 bg-stone-100">
               <AvatarFallback className="font-medium text-stone-600">
@@ -40,15 +40,16 @@ export function ConfigurationLayoutClient({
               <div className="text-sm font-semibold text-gray-900">
                 {vendorName}
               </div>
-              <div className="text-muted-foreground text-xs">{vendorUrl}</div>
+              <div className="text-xs text-muted-foreground">{vendorUrl}</div>
             </div>
           </div>
         </div>
 
         {/* Navigation */}
-        <nav className="p-3 flex-1 overflow-y-auto">
+        <nav className="flex-1 overflow-y-auto p-3">
           {configNavigation.map((item) => {
-            const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+            const isActive =
+              pathname === item.href || pathname.startsWith(`${item.href}/`);
 
             return (
               <Link key={item.name} href={item.href}>
@@ -57,7 +58,7 @@ export function ConfigurationLayoutClient({
                     "flex w-full items-center rounded-md px-3 py-2 text-left text-sm transition-colors",
                     isActive
                       ? "bg-gray-200 font-medium text-gray-900"
-                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900",
                   )}
                 >
                   {item.name}

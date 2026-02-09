@@ -48,4 +48,3 @@ export const variantUpdateSchema = z.object({
 });
 
 export type VariantUpdateFormValues = z.infer<typeof variantUpdateSchema>;
-

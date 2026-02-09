@@ -54,7 +54,9 @@ export default async function ProductDetailPage({
   }
 
   const product = result.data.product;
-  const channels = channelsResult.ok ? channelsResult.data.channels ?? [] : [];
+  const channels = channelsResult.ok
+    ? (channelsResult.data.channels ?? [])
+    : [];
   const categories =
     categoriesResult.ok && categoriesResult.data.categories?.edges
       ? categoriesResult.data.categories.edges.map((e) => e.node)

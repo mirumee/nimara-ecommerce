@@ -63,7 +63,7 @@ export function ProductsListClient({ products }: ProductsListClientProps) {
   const searchParams = useSearchParams();
 
   const [searchValue, setSearchValue] = useState(
-    searchParams.get("search") || ""
+    searchParams.get("search") || "",
   );
   const debouncedSearch = useDebounce(searchValue, 300);
 
@@ -89,7 +89,9 @@ export function ProductsListClient({ products }: ProductsListClientProps) {
 
     if (currentValues.includes(value)) {
       // Remove value
-      currentValues.filter((v) => v !== value).forEach((v) => params.append("status", v));
+      currentValues
+        .filter((v) => v !== value)
+        .forEach((v) => params.append("status", v));
     } else {
       // Add value
       [...currentValues, value].forEach((v) => params.append("status", v));
@@ -119,7 +121,7 @@ export function ProductsListClient({ products }: ProductsListClientProps) {
         <CardContent className="p-0">
           <div className="flex p-4">
             <div className="relative">
-              <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
               <Input
                 placeholder="Search"
                 value={searchValue}
@@ -237,7 +239,9 @@ export function ProductsListClient({ products }: ProductsListClientProps) {
                       {product.pricing?.priceRange?.start?.gross ? (
                         <span>
                           {product.pricing.priceRange.start.gross.currency}{" "}
-                          {product.pricing.priceRange.start.gross.amount.toFixed(2)}
+                          {product.pricing.priceRange.start.gross.amount.toFixed(
+                            2,
+                          )}
                         </span>
                       ) : (
                         "-"

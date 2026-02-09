@@ -83,18 +83,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   // Fetch user data with given token
-  const fetchUser = useCallback(
-    async (accessToken: string) => {
-      const saleorDomain = getSaleorDomainHeader();
-      const response = await fetch("/api/graphql", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-          ...saleorDomain,
-        },
-        body: JSON.stringify({
-          query: `
+  const fetchUser = useCallback(async (accessToken: string) => {
+    const saleorDomain = getSaleorDomainHeader();
+    const response = await fetch("/api/graphql", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+        ...saleorDomain,
+      },
+      body: JSON.stringify({
+        query: `
             query Me {
               me {
                 id
@@ -104,42 +103,40 @@ export function AuthProvider({ children }: AuthProviderProps) {
               }
             }
           `,
-        }),
+      }),
+    });
+
+    const data = (await response.json()) as {
+      data?: {
+        me?: {
+          email?: string;
+          firstName?: string;
+          id: string;
+          lastName?: string;
+        };
+      };
+      errors?: Array<{ message?: string }>;
+    };
+
+    if (data.errors?.length) {
+      throw new Error(data.errors[0]?.message || "Failed to fetch user");
+    }
+
+    if (data.data?.me) {
+      const me = data.data.me;
+
+      setUser({
+        email: me.email ?? "",
+        firstName: me.firstName,
+        id: me.id,
+        lastName: me.lastName,
       });
 
-      const data = (await response.json()) as {
-        data?: {
-          me?: {
-            email?: string;
-            firstName?: string;
-            id: string;
-            lastName?: string;
-          };
-        };
-        errors?: Array<{ message?: string }>;
-      };
+      return true;
+    }
 
-      if (data.errors?.length) {
-        throw new Error(data.errors[0]?.message || "Failed to fetch user");
-      }
-
-      if (data.data?.me) {
-        const me = data.data.me;
-
-        setUser({
-          email: me.email ?? "",
-          firstName: me.firstName,
-          id: me.id,
-          lastName: me.lastName,
-        });
-
-        return true;
-      }
-
-      return false;
-    },
-    [],
-  );
+    return false;
+  }, []);
 
   // Refresh access token using refresh token or HTTP-only cookie
   const refreshAccessToken = useCallback(async (): Promise<string | null> => {
@@ -390,11 +387,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setUser(
           loginUser
             ? {
-              email: loginUser.email ?? "",
-              firstName: loginUser.firstName,
-              id: loginUser.id,
-              lastName: loginUser.lastName,
-            }
+                email: loginUser.email ?? "",
+                firstName: loginUser.firstName,
+                id: loginUser.id,
+                lastName: loginUser.lastName,
+              }
             : null,
         );
         router.push("/dashboard");
