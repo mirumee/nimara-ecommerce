@@ -50,11 +50,13 @@ type Address {
   id: ID!
   firstName: String
   lastName: String
+  companyName: String
   streetAddress1: String
   streetAddress2: String
   city: String
   postalCode: String
   country: Country
+  countryArea: String
   phone: String
   isDefaultBillingAddress: Boolean
   isDefaultShippingAddress: Boolean

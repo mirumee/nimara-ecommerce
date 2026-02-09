@@ -200,7 +200,7 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
     if (debouncedSearch !== (searchParams.get("search") || "")) {
       updateSearchParams({ search: debouncedSearch || null });
     }
-  }, [debouncedSearch]);
+  }, [debouncedSearch, searchParams, updateSearchParams]);
 
   const handlePageSizeChange = (newSize: string) => {
     updateSearchParams({

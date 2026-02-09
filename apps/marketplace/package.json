@@ -54,8 +54,9 @@
     "localstack:down": "docker-compose down",
     "localstack:up": "docker-compose up -d localstack",
     "start": "next start --port 3001",
-    "test": "vitest",
-    "test:coverage": "vitest --coverage",
+    "test": "vitest run",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest run --coverage",
     "type-check": "tsc --noEmit"
   },
   "version": "0.1.0"

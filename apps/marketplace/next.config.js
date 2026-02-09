@@ -1,4 +1,7 @@
 /** @type {import('next').NextConfig} */
+const allowedCorsOrigin =
+  process.env.NEXT_PUBLIC_MARKETPLACE_STOREFRONT_URL || "http://localhost:3000";
+
 const nextConfig = {
   transpilePackages: ["@nimara/ui", "@nimara/infrastructure", "@nimara/domain"],
   images: {
@@ -19,7 +22,7 @@ const nextConfig = {
         source: "/api/:path*",
         headers: [
           { key: "Access-Control-Allow-Credentials", value: "true" },
-          { key: "Access-Control-Allow-Origin", value: "*" },
+          { key: "Access-Control-Allow-Origin", value: allowedCorsOrigin },
           {
             key: "Access-Control-Allow-Methods",
             value: "GET,DELETE,PATCH,POST,PUT,OPTIONS",

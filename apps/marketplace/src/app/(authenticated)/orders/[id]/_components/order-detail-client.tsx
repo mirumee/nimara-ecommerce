@@ -480,11 +480,13 @@ export function OrderDetailClient({
                         >
                           Print shipping label
                         </DropdownMenuItem>
-                        {order.fulfillments
-                          ?.filter(
-                            (f) => f.status !== "CANCELED" && f.warehouse?.id,
-                          )
-                          .map((f, idx) => (
+                        {(() => {
+                          const activeFulfillments =
+                            order.fulfillments?.filter(
+                              (f) => f.status !== "CANCELED" && f.warehouse?.id,
+                            ) ?? [];
+
+                          return activeFulfillments.map((f, idx) => (
                             <DropdownMenuItem
                               key={f.id}
                               className="text-red-600 focus:text-red-600"
@@ -497,11 +499,12 @@ export function OrderDetailClient({
                               }
                             >
                               Cancel fulfillment
-                              {(order.fulfillments?.length ?? 0) > 1
+                              {activeFulfillments.length > 1
                                 ? ` #${idx + 1}`
                                 : ""}
                             </DropdownMenuItem>
-                          ))}
+                          ));
+                        })()}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
