@@ -43,9 +43,9 @@ const navigationLinks = [
     icon: ShoppingCart,
   },
   {
-    name: "Warehouses",
-    href: "/warehouses",
-    icon: Warehouse,
+    name: "Customers",
+    href: "/customers",
+    icon: Users,
   },
 ];
 

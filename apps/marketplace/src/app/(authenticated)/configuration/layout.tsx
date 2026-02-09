@@ -12,7 +12,9 @@ export default async function ConfigurationLayout({
   const result = await configurationService.getMe(token);
 
   const user = result.ok ? result.data.me : null;
-  const vendorName = user?.firstName || user?.email || "Vendor name";
+  // Get vendor name from metadata, fallback to firstName or email
+  const vendorNameMetadata = user?.metadata?.find((m) => m.key === "vendor.name");
+  const vendorName = vendorNameMetadata?.value || user?.firstName || user?.email || "Vendor name";
   const vendorUrl = `marketplace.com/${String(vendorName).toLowerCase().replace(/\s+/g, "-")}`;
 
   return (

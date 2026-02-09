@@ -30662,6 +30662,25 @@ export type RegisterAccountVariables = Exact<{
 
 export type RegisterAccount = RegisterAccount_Mutation;
 
+export type AccountUpdate_accountUpdate_AccountUpdate_user_User_metadata_MetadataItem = { key: string, value: string };
+
+export type AccountUpdate_accountUpdate_AccountUpdate_user_User = { id: string, email: string, firstName: string, lastName: string, metadata: Array<AccountUpdate_accountUpdate_AccountUpdate_user_User_metadata_MetadataItem> };
+
+export type AccountUpdate_accountUpdate_AccountUpdate_errors_AccountError = { field: string | null, message: string | null, code: AccountErrorCode };
+
+export type AccountUpdate_accountUpdate_AccountUpdate = { user: AccountUpdate_accountUpdate_AccountUpdate_user_User | null, errors: Array<AccountUpdate_accountUpdate_AccountUpdate_errors_AccountError> };
+
+export type AccountUpdate_Mutation = { accountUpdate: AccountUpdate_accountUpdate_AccountUpdate | null };
+
+
+export type AccountUpdateVariables = Exact<{
+  customerId?: InputMaybe<Scalars['ID']['input']>;
+  input: AccountInput;
+}>;
+
+
+export type AccountUpdate = AccountUpdate_Mutation;
+
 export type ConfirmVendorAccount_confirmAccount_ConfirmAccount_user_User = { id: string, email: string, isActive: boolean };
 
 export type ConfirmVendorAccount_confirmAccount_ConfirmAccount_errors_AccountError = { field: string | null, message: string | null, code: AccountErrorCode };
@@ -30928,7 +30947,7 @@ export type Me_me_User_metadata_MetadataItem = { key: string, value: string };
 
 export type Me_me_User_addresses_Address_country_CountryDisplay = { country: string, code: string };
 
-export type Me_me_User_addresses_Address = { id: string, firstName: string, lastName: string, streetAddress1: string, streetAddress2: string, city: string, postalCode: string, phone: string | null, isDefaultBillingAddress: boolean | null, isDefaultShippingAddress: boolean | null, country: Me_me_User_addresses_Address_country_CountryDisplay };
+export type Me_me_User_addresses_Address = { id: string, firstName: string, lastName: string, companyName: string, streetAddress1: string, streetAddress2: string, city: string, countryArea: string, postalCode: string, phone: string | null, isDefaultBillingAddress: boolean | null, isDefaultShippingAddress: boolean | null, country: Me_me_User_addresses_Address_country_CountryDisplay };
 
 export type Me_me_User = { id: string, email: string, firstName: string, lastName: string, metadata: Array<Me_me_User_metadata_MetadataItem>, addresses: Array<Me_me_User_addresses_Address> };
 
@@ -31436,6 +31455,27 @@ export const RegisterAccountDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<RegisterAccount, RegisterAccountVariables>;
+export const AccountUpdateDocument = new TypedDocumentString(`
+    mutation AccountUpdate($customerId: ID, $input: AccountInput!) {
+  accountUpdate(customerId: $customerId, input: $input) {
+    user {
+      id
+      email
+      firstName
+      lastName
+      metadata {
+        key
+        value
+      }
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<AccountUpdate, AccountUpdateVariables>;
 export const ConfirmVendorAccountDocument = new TypedDocumentString(`
     mutation ConfirmVendorAccount($email: String!, $token: String!) {
   confirmAccount(email: $email, token: $token) {
@@ -31739,9 +31779,11 @@ export const MeDocument = new TypedDocumentString(`
       id
       firstName
       lastName
+      companyName
       streetAddress1
       streetAddress2
       city
+      countryArea
       postalCode
       country {
         country

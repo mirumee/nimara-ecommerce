@@ -12,9 +12,11 @@ query Me {
       id
       firstName
       lastName
+      companyName
       streetAddress1
       streetAddress2
       city
+      countryArea
       postalCode
       country {
         country

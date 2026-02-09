@@ -25,11 +25,11 @@ export function ConfigurationLayoutClient({
   const pathname = usePathname();
 
   return (
-    <div className="-mx-6 -mt-4 flex min-h-[calc(100vh-4rem)] overflow-hidden">
+    <div className="-mx-6 -mt-4 flex min-h-screen">
       {/* Left sidebar */}
-      <div className="w-64 border-r bg-gray-50">
+      <div className="sticky top-[4.5rem] h-[calc(100vh-4.5rem)] w-64 border-r bg-gray-50 flex flex-col self-start">
         {/* Vendor info header */}
-        <div className="border-b bg-white p-6">
+        <div className="border-b bg-white p-6 flex-shrink-0">
           <div className="flex items-center gap-3">
             <Avatar className="h-10 w-10 bg-stone-100">
               <AvatarFallback className="font-medium text-stone-600">
@@ -46,9 +46,9 @@ export function ConfigurationLayoutClient({
         </div>
 
         {/* Navigation */}
-        <nav className="p-3">
+        <nav className="p-3 flex-1 overflow-y-auto">
           {configNavigation.map((item) => {
-            const isActive = pathname === item.href;
+            const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
 
             return (
               <Link key={item.name} href={item.href}>
@@ -69,7 +69,7 @@ export function ConfigurationLayoutClient({
       </div>
 
       {/* Main content */}
-      <div className="flex-1 overflow-y-auto bg-gray-50/30 p-8">
+      <div className="flex-1 bg-gray-50/30 p-8">
         <div className="mx-auto max-w-4xl">{children}</div>
       </div>
     </div>

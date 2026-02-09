@@ -1,11 +1,14 @@
-import { Edit, Upload } from "lucide-react";
+import { Settings, Upload } from "lucide-react";
+import Link from "next/link";
 
 import { Button } from "@nimara/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@nimara/ui/components/card";
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import type { Me_me_User_addresses_Address } from "@/graphql/generated/client";
 import { getServerAuthToken } from "@/lib/auth/server";
 import { configurationService } from "@/services/configuration";
+
+import { AccountInformationCard } from "./_components/account-information-card";
 
 export default async function ConfigurationGeneralPage() {
   const token = await getServerAuthToken();
@@ -20,41 +23,126 @@ export default async function ConfigurationGeneralPage() {
   }
 
   const user = result.data.me;
-  const vendorName =
-    user?.firstName || user?.email || "Vendor name";
-  const vendorUrl = `marketplace.com/${String(vendorName).toLowerCase().replace(/\s+/g, "-")}`;
-  const fullName = user
-    ? [user.firstName, user.lastName].filter(Boolean).join(" ")
-    : "";
+
+  // Find default addresses
+  const defaultBillingAddress = user?.addresses?.find(
+    (addr) => addr.isDefaultBillingAddress === true
+  );
+  const defaultShippingAddress = user?.addresses?.find(
+    (addr) => addr.isDefaultShippingAddress === true
+  );
+
+  // Shipping is same as billing when:
+  // 1. No explicit shipping address exists, OR
+  // 2. The shipping address is the same as the billing address
+  const shippingSameAsBilling =
+    defaultBillingAddress != null &&
+    (defaultShippingAddress == null ||
+      defaultShippingAddress.id === defaultBillingAddress.id);
+
+  // Helper function to format address
+  const formatAddress = (address: Me_me_User_addresses_Address | undefined) => {
+    if (!address) {
+      return null;
+    }
+
+    const parts = [
+      address.streetAddress1,
+      address.streetAddress2,
+      `${address.city}, ${address.countryArea || ""} ${address.postalCode}`.trim(),
+      address.country.country,
+    ].filter(Boolean);
+
+    return parts;
+  };
 
   return (
     <div className="space-y-8">
       <h1 className="text-2xl font-semibold text-gray-900">General</h1>
 
-      {/* Basic Info Card */}
+      {/* Account Information Card */}
+      <AccountInformationCard user={user} />
+
+      {/* Address Information Card */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Basic info</CardTitle>
-          <Button variant="ghost" size="icon">
-            <Edit className="h-4 w-4" />
+          <CardTitle>Address Information</CardTitle>
+          <Button variant="outline" asChild>
+            <Link href="/configuration/general/addresses">
+              <Settings className="h-4 w-4 mr-2" /> Manage
+            </Link>
           </Button>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center gap-6">
-            <Avatar className="h-20 w-20 bg-stone-100">
-              <AvatarFallback className="text-2xl font-medium text-stone-600">
-                {vendorName.charAt(0)}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <div className="text-xl font-semibold text-gray-900">
-                {vendorName}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* When shipping same as billing: one combined block */}
+            {shippingSameAsBilling && defaultBillingAddress ? (
+              <div className="md:col-span-2">
+                <label className="text-sm font-medium text-gray-900">
+                  Default Shipping & Billing Address
+                </label>
+                <div className="mt-2 space-y-1">
+                  {formatAddress(defaultBillingAddress)?.map((line, idx) => (
+                    <div key={idx} className="text-sm text-gray-600">
+                      {line}
+                    </div>
+                  ))}
+                  {defaultBillingAddress.phone && (
+                    <div className="text-sm text-gray-600 mt-2">
+                      {defaultBillingAddress.phone}
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className="text-muted-foreground text-sm">{vendorUrl}</div>
-              {fullName && (
-                <div className="mt-1 text-sm text-gray-600">{fullName}</div>
-              )}
-            </div>
+            ) : (
+              <>
+                {/* Default Billing Address */}
+                <div>
+                  <label className="text-sm font-medium text-gray-900">
+                    Default Billing Address
+                  </label>
+                  {defaultBillingAddress ? (
+                    <div className="mt-2 space-y-1">
+                      {formatAddress(defaultBillingAddress)?.map((line, idx) => (
+                        <div key={idx} className="text-sm text-gray-600">
+                          {line}
+                        </div>
+                      ))}
+                      {defaultBillingAddress.phone && (
+                        <div className="text-sm text-gray-600 mt-2">
+                          {defaultBillingAddress.phone}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="mt-1 text-sm text-gray-500">Not set</div>
+                  )}
+                </div>
+
+                {/* Default Shipping Address */}
+                <div>
+                  <label className="text-sm font-medium text-gray-900">
+                    Default Shipping Address
+                  </label>
+                  {defaultShippingAddress ? (
+                    <div className="mt-2 space-y-1">
+                      {formatAddress(defaultShippingAddress)?.map((line, idx) => (
+                        <div key={idx} className="text-sm text-gray-600">
+                          {line}
+                        </div>
+                      ))}
+                      {defaultShippingAddress.phone && (
+                        <div className="text-sm text-gray-600 mt-2">
+                          {defaultShippingAddress.phone}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="mt-1 text-sm text-gray-500">Not set</div>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -85,31 +173,6 @@ export default async function ConfigurationGeneralPage() {
         </CardContent>
       </Card>
 
-      {/* Contact Info Card */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Contact info</CardTitle>
-          <Button variant="ghost" size="icon">
-            <Edit className="h-4 w-4" />
-          </Button>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div>
-              <label className="text-sm font-medium text-gray-900">Email</label>
-              <div className="mt-1 text-sm text-gray-600">
-                {user?.email || "Not set"}
-              </div>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-gray-900">Phone</label>
-              <div className="mt-1 text-sm text-gray-600">
-                {user?.addresses?.[0]?.phone || "Not set"}
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }
