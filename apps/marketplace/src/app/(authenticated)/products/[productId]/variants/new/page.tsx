@@ -1,52 +1,47 @@
-"use client";
+import { Card, CardContent } from "@nimara/ui/components/card";
 
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
+import { getServerAuthToken } from "@/lib/auth/server";
+import { productsService } from "@/services";
 
-import { Button } from "@nimara/ui/components/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@nimara/ui/components/card";
+import { NewVariantClient } from "./_components/new-variant-client";
 
-export default function NewVariantPage() {
-  const params = useParams();
-  const productId = params.productId as string;
+export default async function NewVariantPage({
+  params,
+}: {
+  params: Promise<{ productId: string }>;
+}) {
+  const { productId: rawProductId } = await params;
+  const productId = decodeURIComponent(rawProductId);
+  const token = await getServerAuthToken();
 
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Button asChild variant="ghost" size="icon">
-          <Link href={`/products/${productId}`}>
-            <ArrowLeft className="h-4 w-4" />
-          </Link>
-        </Button>
-        <h1 className="text-2xl font-bold">Add New Variant</h1>
-      </div>
+  const productResult = await productsService.getProduct(
+    { id: productId },
+    token,
+  );
+  const product = productResult.ok ? productResult.data.product : null;
 
+  if (!product) {
+    return (
       <Card>
-        <CardHeader>
-          <CardTitle>Variant Details</CardTitle>
-        </CardHeader>
-        <CardContent>
+        <CardContent className="py-12 text-center">
           <p className="text-muted-foreground">
-            Variant creation form will be implemented here.
+            {!productResult.ok || !product
+              ? "Failed to load product"
+              : "Product not found"}
           </p>
-          <p className="mt-4 text-sm text-muted-foreground">
-            This page will include:
-          </p>
-          <ul className="mt-2 list-inside list-disc text-sm text-muted-foreground">
-            <li>Variant name and SKU</li>
-            <li>Pricing configuration</li>
-            <li>Stock management</li>
-            <li>Attributes</li>
-            <li>Media upload</li>
-          </ul>
         </CardContent>
       </Card>
-    </div>
+    );
+  }
+
+  const variantCount = product.variants?.length ?? 0;
+  const firstVariantId = product.variants?.[0]?.id ?? null;
+
+  return (
+    <NewVariantClient
+      productId={productId}
+      variantCount={variantCount}
+      firstVariantId={firstVariantId}
+    />
   );
 }

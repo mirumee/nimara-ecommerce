@@ -10,9 +10,9 @@ export function ProductViewNavigation({
   variantCount,
   firstVariantId,
 }: {
+  firstVariantId?: string | null;
   productId: string;
   variantCount: number;
-  firstVariantId?: string | null;
 }) {
   const pathname = usePathname();
   const encodedProductId = encodeURIComponent(productId);

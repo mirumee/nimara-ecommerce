@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
+import { ArrowLeft, ChevronDown, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
@@ -20,11 +20,14 @@ import { useToast } from "@nimara/ui/hooks";
 
 import { CheckboxField } from "@/components/fields/checkbox-field";
 import { InputField } from "@/components/fields/input-field";
-import {
-  SelectField,
-  type SelectOption,
-} from "@/components/fields/select-field";
+import { SelectField } from "@/components/fields/select-field";
 import { ProductViewNavigation } from "@/components/product-view-navigation";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import type {
   AttributeInputTypeEnum,
   BulkAttributeValueInput,
@@ -36,7 +39,7 @@ import type {
 } from "@/graphql/generated/client";
 
 import { productVariantBulkUpdate } from "../actions";
-import { variantUpdateSchema, type VariantUpdateFormValues } from "../schema";
+import { type VariantUpdateFormValues, variantUpdateSchema } from "../schema";
 import { VariantChannelListingSection } from "./variant-channel-listing-section";
 import { VariantStocksSection } from "./variant-stocks-section";
 
@@ -104,10 +107,13 @@ function buildBulkAttributeValueInputs(
         if (Array.isArray(value) && value.length > 0) {
           const selected = value
             .map((v) => {
-              if (typeof v === "string") return v;
+              if (typeof v === "string") {
+                return v;
+              }
               if (v && typeof v === "object" && "value" in v) {
                 return String((v as { value?: unknown }).value ?? "");
               }
+
               return "";
             })
             .filter(Boolean);
@@ -192,12 +198,12 @@ export function VariantDetailClient({
   channels,
   warehouses,
 }: {
-  productId: string;
-  variantId: string;
-  product: NonNullable<ProductDetail["product"]>;
-  variant: NonNullable<ProductVariantDetail["productVariant"]>;
-  productType: NonNullable<ProductTypeDetail["productType"]>;
   channels: NonNullable<Channels["channels"]>;
+  product: NonNullable<ProductDetail["product"]>;
+  productId: string;
+  productType: NonNullable<ProductTypeDetail["productType"]>;
+  variant: NonNullable<ProductVariantDetail["productVariant"]>;
+  variantId: string;
   warehouses: NonNullable<Warehouses["warehouses"]>["edges"][number]["node"][];
 }) {
   const router = useRouter();
@@ -229,6 +235,7 @@ export function VariantDetailClient({
     return Object.fromEntries(
       warehouses.map((w) => {
         const stock = byWarehouseId.get(w.id);
+
         return [
           w.id,
           {
@@ -250,6 +257,7 @@ export function VariantDetailClient({
 
     return channels.map((ch) => {
       const listing = byChannelId.get(ch.id);
+
       return {
         listingId: listing?.id,
         channelId: ch.id,
@@ -289,19 +297,19 @@ export function VariantDetailClient({
       const channelListings = (values.channelListings ?? []).reduce<{
         create: Array<{
           channelId: string;
+          costPrice?: number;
+          preorderThreshold?: number;
           price: number;
-          costPrice?: number;
           priorPrice?: number;
-          preorderThreshold?: number;
-        }>;
-        update: Array<{
-          channelListing: string;
-          price?: number;
-          costPrice?: number;
-          priorPrice?: number;
-          preorderThreshold?: number;
         }>;
         remove: string[];
+        update: Array<{
+          channelListing: string;
+          costPrice?: number;
+          preorderThreshold?: number;
+          price?: number;
+          priorPrice?: number;
+        }>;
       }>(
         (acc, listing) => {
           const price = listing.price ? parseFloat(listing.price) : undefined;
@@ -340,9 +348,9 @@ export function VariantDetailClient({
       );
 
       const stocksInput = Object.entries(values.stocks ?? {}).reduce<{
-        create: Array<{ warehouse: string; quantity: number }>;
-        update: Array<{ stock: string; quantity: number }>;
+        create: Array<{ quantity: number; warehouse: string }>;
         remove: string[];
+        update: Array<{ quantity: number; stock: string }>;
       }>(
         (acc, [warehouseId, stock]) => {
           const quantity = parseInt(stock.quantity ?? "0", 10) || 0;
@@ -393,6 +401,7 @@ export function VariantDetailClient({
             .join(", "),
           variant: "destructive",
         });
+
         return;
       }
 
@@ -411,6 +420,7 @@ export function VariantDetailClient({
               .join(", ") || "Unknown error",
           variant: "destructive",
         });
+
         return;
       }
 
@@ -433,257 +443,286 @@ export function VariantDetailClient({
 
   return (
     <FormProvider {...form}>
-      <form onSubmit={onSubmit} noValidate className="grid w-full gap-4">
-        <div className="flex flex-col gap-4">
-          <Button asChild className="self-start" type="button" variant="ghost">
-            <Link href={`/products/${encodeURIComponent(productId)}`}>
-              Back to product
-            </Link>
-          </Button>
-
-          <ProductViewNavigation
-            productId={productId}
-            variantCount={variantCount}
-            firstVariantId={firstVariantId}
-          />
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Edit variant</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid gap-4">
-                <InputField
-                  name="name"
-                  label="Name"
-                  inputProps={{ placeholder: "Variant name" }}
-                />
-
-                <div className="grid gap-2">
-                  <Label htmlFor="weight.value">Weight (kg)</Label>
-                  <Input
-                    id="weight.value"
-                    type="number"
-                    step="0.01"
-                    placeholder="0.00"
-                    {...form.register("weight.value")}
-                  />
-                </div>
+      <form onSubmit={onSubmit} noValidate>
+        <div className="min-h-screen">
+          {/* Sticky header bar */}
+          <div className="fixed left-0 right-0 top-16 z-40 border-b bg-background">
+            <div className="flex items-center justify-between px-6 py-4">
+              <div className="flex items-center gap-4">
+                <Button asChild variant="ghost" size="sm" className="gap-2">
+                  <Link href={`/products/${encodeURIComponent(productId)}`}>
+                    <ArrowLeft className="h-4 w-4" />
+                    Back to product
+                  </Link>
+                </Button>
+                <h1 className="text-2xl font-semibold">
+                  {variant.name ?? product.name ?? "Variant"}
+                </h1>
               </div>
-
-              <div className="border-t" />
-
-              <VariantChannelListingSection channels={channels} />
-
-              <div className="border-t" />
-
-              <div className="space-y-4">
-                <h3 className="text-lg font-medium">Attributes</h3>
-
-                <div className="space-y-3">
-                  <h4 className="text-sm font-medium text-muted-foreground">
-                    Selection Attributes
-                  </h4>
-                  {selectionAttributes.map(({ attribute }) => {
-                    const inputType = attribute.inputType;
-                    const fieldName = `attributes.${attribute.id}` as const;
-                    const choices =
-                      attribute.choices?.edges
-                        ?.map((e) => e.node)
-                        .filter(
-                          (
-                            n,
-                          ): n is {
-                            name: string | null;
-                            slug: string | null;
-                          } => Boolean(n && "slug" in n),
-                        )
-                        .map((n) => ({
-                          value: n.slug ?? "",
-                          label: n.name ?? n.slug ?? "",
-                        }))
-                        .filter((o) => o.value) ?? [];
-
-                    if (inputType === ("BOOLEAN" as AttributeInputTypeEnum)) {
-                      return (
-                        <CheckboxField
-                          key={attribute.id}
-                          name={fieldName}
-                          label={
-                            attribute.name ?? attribute.slug ?? "Attribute"
-                          }
-                        />
-                      );
-                    }
-
-                    if (
-                      inputType === ("DROPDOWN" as AttributeInputTypeEnum) ||
-                      inputType === ("SWATCH" as AttributeInputTypeEnum)
-                    ) {
-                      return (
-                        <SelectField
-                          key={attribute.id}
-                          name={fieldName}
-                          label={
-                            attribute.name ?? attribute.slug ?? "Attribute"
-                          }
-                          options={choices}
-                          placeholder="Select value"
-                        />
-                      );
-                    }
-
-                    if (
-                      inputType === ("MULTISELECT" as AttributeInputTypeEnum)
-                    ) {
-                      return (
-                        <SelectField
-                          key={attribute.id}
-                          name={fieldName}
-                          label={
-                            attribute.name ?? attribute.slug ?? "Attribute"
-                          }
-                          options={choices}
-                          isMulti
-                          placeholder="Select values"
-                          searchPlaceholder={`Search ${attribute.name ?? attribute.slug ?? "attribute"}`}
-                        />
-                      );
-                    }
-
-                    return (
-                      <InputField
-                        key={attribute.id}
-                        name={fieldName}
-                        label={attribute.name ?? attribute.slug ?? "Attribute"}
-                      />
-                    );
-                  })}
-                </div>
-
-                <div className="border-t" />
-
-                <div className="space-y-3">
-                  <h4 className="text-sm font-medium text-muted-foreground">
-                    Non-selection Attributes
-                  </h4>
-                  {nonSelectionAttributes.map(({ attribute }) => {
-                    const inputType = attribute.inputType;
-                    const fieldName = `attributes.${attribute.id}` as const;
-                    const choices =
-                      attribute.choices?.edges
-                        ?.map((e) => e.node)
-                        .filter(
-                          (
-                            n,
-                          ): n is {
-                            name: string | null;
-                            slug: string | null;
-                          } => Boolean(n && "slug" in n),
-                        )
-                        .map((n) => ({
-                          value: n.slug ?? "",
-                          label: n.name ?? n.slug ?? "",
-                        }))
-                        .filter((o) => o.value) ?? [];
-
-                    if (inputType === ("BOOLEAN" as AttributeInputTypeEnum)) {
-                      return (
-                        <CheckboxField
-                          key={attribute.id}
-                          name={fieldName}
-                          label={
-                            attribute.name ?? attribute.slug ?? "Attribute"
-                          }
-                        />
-                      );
-                    }
-
-                    if (
-                      inputType === ("DROPDOWN" as AttributeInputTypeEnum) ||
-                      inputType === ("SWATCH" as AttributeInputTypeEnum)
-                    ) {
-                      return (
-                        <SelectField
-                          key={attribute.id}
-                          name={fieldName}
-                          label={
-                            attribute.name ?? attribute.slug ?? "Attribute"
-                          }
-                          options={choices}
-                          placeholder="Select value"
-                        />
-                      );
-                    }
-
-                    if (
-                      inputType === ("MULTISELECT" as AttributeInputTypeEnum)
-                    ) {
-                      return (
-                        <SelectField
-                          key={attribute.id}
-                          name={fieldName}
-                          label={
-                            attribute.name ?? attribute.slug ?? "Attribute"
-                          }
-                          options={choices}
-                          isMulti
-                          placeholder="Select values"
-                          searchPlaceholder={`Search ${attribute.name ?? attribute.slug ?? "attribute"}`}
-                        />
-                      );
-                    }
-
-                    return (
-                      <InputField
-                        key={attribute.id}
-                        name={fieldName}
-                        label={attribute.name ?? attribute.slug ?? "Attribute"}
-                      />
-                    );
-                  })}
-                </div>
+              <div className="flex items-center gap-2">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button size="sm" variant="outline">
+                      More actions
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem asChild>
+                      <Link
+                        href={`/products/${encodeURIComponent(productId)}/variants/new`}
+                      >
+                        Add new variant
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="text-destructive focus:text-destructive"
+                      disabled
+                    >
+                      Delete variant
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <Button type="submit" size="sm" disabled={isSubmitting}>
+                  Save{" "}
+                  {isSubmitting ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : null}
+                </Button>
               </div>
+            </div>
+          </div>
 
-              <div className="border-t" />
+          {/* Main content: offset below sticky bar */}
+          <div className="mx-auto mt-20 px-6 pb-6">
+            <div className="mb-4">
+              <ProductViewNavigation
+                productId={productId}
+                variantCount={variantCount}
+                firstVariantId={firstVariantId}
+              />
+            </div>
+            <div className="flex flex-col gap-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Edit variant</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid gap-4">
+                    <InputField
+                      name="name"
+                      label="Name"
+                      inputProps={{ placeholder: "Variant name" }}
+                    />
 
-              <VariantStocksSection />
-            </CardContent>
-          </Card>
+                    <div className="grid gap-2">
+                      <Label htmlFor="weight.value">Weight (kg)</Label>
+                      <Input
+                        id="weight.value"
+                        type="number"
+                        step="0.01"
+                        placeholder="0.00"
+                        {...form.register("weight.value")}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="border-t" />
+
+                  <VariantChannelListingSection channels={channels} />
+
+                  <div className="border-t" />
+
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-medium">Attributes</h3>
+
+                    <div className="space-y-3">
+                      <h4 className="text-sm font-medium text-muted-foreground">
+                        Selection Attributes
+                      </h4>
+                      {selectionAttributes.map(({ attribute }) => {
+                        const inputType = attribute.inputType;
+                        const fieldName = `attributes.${attribute.id}` as const;
+                        const choices =
+                          attribute.choices?.edges
+                            ?.map((e) => e.node)
+                            .filter(
+                              (
+                                n,
+                              ): n is {
+                                id: string;
+                                name: string | null;
+                                slug: string | null;
+                              } => Boolean(n && "slug" in n),
+                            )
+                            .map((n) => ({
+                              value: n.slug ?? "",
+                              label: n.name ?? n.slug ?? "",
+                            }))
+                            .filter((o) => o.value) ?? [];
+
+                        if (
+                          inputType === ("BOOLEAN" as AttributeInputTypeEnum)
+                        ) {
+                          return (
+                            <CheckboxField
+                              key={attribute.id}
+                              name={fieldName}
+                              label={
+                                attribute.name ?? attribute.slug ?? "Attribute"
+                              }
+                            />
+                          );
+                        }
+
+                        if (
+                          inputType ===
+                            ("DROPDOWN" as AttributeInputTypeEnum) ||
+                          inputType === ("SWATCH" as AttributeInputTypeEnum)
+                        ) {
+                          return (
+                            <SelectField
+                              key={attribute.id}
+                              name={fieldName}
+                              label={
+                                attribute.name ?? attribute.slug ?? "Attribute"
+                              }
+                              options={choices}
+                              placeholder="Select value"
+                            />
+                          );
+                        }
+
+                        if (
+                          inputType ===
+                          ("MULTISELECT" as AttributeInputTypeEnum)
+                        ) {
+                          return (
+                            <SelectField
+                              key={attribute.id}
+                              name={fieldName}
+                              label={
+                                attribute.name ?? attribute.slug ?? "Attribute"
+                              }
+                              options={choices}
+                              isMulti
+                              placeholder="Select values"
+                              searchPlaceholder={`Search ${attribute.name ?? attribute.slug ?? "attribute"}`}
+                            />
+                          );
+                        }
+
+                        return (
+                          <InputField
+                            key={attribute.id}
+                            name={fieldName}
+                            label={
+                              attribute.name ?? attribute.slug ?? "Attribute"
+                            }
+                          />
+                        );
+                      })}
+                    </div>
+
+                    <div className="border-t" />
+
+                    <div className="space-y-3">
+                      <h4 className="text-sm font-medium text-muted-foreground">
+                        Non-selection Attributes
+                      </h4>
+                      {nonSelectionAttributes.map(({ attribute }) => {
+                        const inputType = attribute.inputType;
+                        const fieldName = `attributes.${attribute.id}` as const;
+                        const choices =
+                          attribute.choices?.edges
+                            ?.map((e) => e.node)
+                            .filter(
+                              (
+                                n,
+                              ): n is {
+                                id: string;
+                                name: string | null;
+                                slug: string | null;
+                              } => Boolean(n && "slug" in n),
+                            )
+                            .map((n) => ({
+                              value: n.slug ?? "",
+                              label: n.name ?? n.slug ?? "",
+                            }))
+                            .filter((o) => o.value) ?? [];
+
+                        if (
+                          inputType === ("BOOLEAN" as AttributeInputTypeEnum)
+                        ) {
+                          return (
+                            <CheckboxField
+                              key={attribute.id}
+                              name={fieldName}
+                              label={
+                                attribute.name ?? attribute.slug ?? "Attribute"
+                              }
+                            />
+                          );
+                        }
+
+                        if (
+                          inputType ===
+                            ("DROPDOWN" as AttributeInputTypeEnum) ||
+                          inputType === ("SWATCH" as AttributeInputTypeEnum)
+                        ) {
+                          return (
+                            <SelectField
+                              key={attribute.id}
+                              name={fieldName}
+                              label={
+                                attribute.name ?? attribute.slug ?? "Attribute"
+                              }
+                              options={choices}
+                              placeholder="Select value"
+                            />
+                          );
+                        }
+
+                        if (
+                          inputType ===
+                          ("MULTISELECT" as AttributeInputTypeEnum)
+                        ) {
+                          return (
+                            <SelectField
+                              key={attribute.id}
+                              name={fieldName}
+                              label={
+                                attribute.name ?? attribute.slug ?? "Attribute"
+                              }
+                              options={choices}
+                              isMulti
+                              placeholder="Select values"
+                              searchPlaceholder={`Search ${attribute.name ?? attribute.slug ?? "attribute"}`}
+                            />
+                          );
+                        }
+
+                        return (
+                          <InputField
+                            key={attribute.id}
+                            name={fieldName}
+                            label={
+                              attribute.name ?? attribute.slug ?? "Attribute"
+                            }
+                          />
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <div className="border-t" />
+
+                  <VariantStocksSection />
+                </CardContent>
+              </Card>
+            </div>
+          </div>
         </div>
-
-        <Card className="sticky bottom-0 z-10">
-          <CardHeader className="flex flex-row flex-wrap justify-between gap-4">
-            <Button
-              type="button"
-              variant="destructive"
-              disabled
-              className="m-0"
-            >
-              Delete variant
-            </Button>
-
-            <span className="flex flex-row justify-end gap-4">
-              <Button
-                type="button"
-                variant="outline"
-                disabled={isSubmitting}
-                onClick={() =>
-                  router.push(`/products/${encodeURIComponent(productId)}`)
-                }
-              >
-                Discard
-              </Button>
-
-              <Button type="submit" disabled={isSubmitting}>
-                Save{" "}
-                {isSubmitting ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : null}
-              </Button>
-            </span>
-          </CardHeader>
-        </Card>
       </form>
     </FormProvider>
   );

@@ -1,17 +1,12 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, Plus, Trash2, X } from "lucide-react";
+import { ArrowLeft, ChevronDown, Loader2, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import {
-  Controller,
-  FormProvider,
-  useForm,
-  useFormContext,
-} from "react-hook-form";
+import { FormProvider, useForm, useFormContext } from "react-hook-form";
 
 import { Button } from "@nimara/ui/components/button";
 import {
@@ -32,6 +27,14 @@ import {
   SelectField,
   type SelectOption,
 } from "@/components/fields/select-field";
+import { ProductViewNavigation } from "@/components/product-view-navigation";
+import { ColorBadge } from "@/components/ui/color-badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Textarea } from "@/components/ui/textarea";
 import type {
   AttributeInputTypeEnum,
@@ -47,11 +50,11 @@ import {
   updateProduct,
   updateProductChannelListing,
 } from "../actions";
-import { productUpdateSchema, type ProductUpdateFormValues } from "../schema";
+import { type ProductUpdateFormValues, productUpdateSchema } from "../schema";
 
 type Props = {
-  channels: NonNullable<Channels["channels"]>;
   categories: Array<{ id: string; name: string; slug: string }>;
+  channels: NonNullable<Channels["channels"]>;
   collections: Array<{ id: string; name: string; slug: string }>;
   product: NonNullable<ProductDetail["product"]>;
   productId: string;
@@ -67,7 +70,10 @@ type MediaDraftItem = { id: string; url: string };
 
 function normalizeMaybeUrl(input: string): string | null {
   const raw = input.trim();
-  if (!raw) return null;
+
+  if (!raw) {
+    return null;
+  }
 
   try {
     return new URL(raw).toString();
@@ -87,7 +93,7 @@ function tryExtractEditorJsPlainText(value?: string | null): string {
 
   try {
     const parsed = JSON.parse(value) as {
-      blocks?: Array<{ type?: string; data?: { text?: string } }>;
+      blocks?: Array<{ data?: { text?: string }; type?: string }>;
     };
 
     if (
@@ -191,10 +197,13 @@ function buildAttributeValueInputs(
         if (Array.isArray(value) && value.length > 0) {
           const selected = value
             .map((v) => {
-              if (typeof v === "string") return v;
+              if (typeof v === "string") {
+                return v;
+              }
               if (v && typeof v === "object" && "value" in v) {
                 return String((v as { value?: unknown }).value ?? "");
               }
+
               return "";
             })
             .filter(Boolean);
@@ -444,6 +453,7 @@ export function ProductDetailClient({
     return Object.fromEntries(
       channels.map((ch) => {
         const listing = byChannelId.get(ch.id);
+
         return [
           ch.id,
           {
@@ -570,10 +580,12 @@ export function ProductDetailClient({
           description: message,
           variant: "destructive",
         });
+
         return;
       }
 
       const errors = result.data.productUpdate?.errors ?? [];
+
       if (errors.length > 0) {
         toast({
           title: "Failed to update product",
@@ -584,6 +596,7 @@ export function ProductDetailClient({
               .join(", ") || "Unknown error",
           variant: "destructive",
         });
+
         return;
       }
 
@@ -604,6 +617,7 @@ export function ProductDetailClient({
 
       for (const id of toDelete) {
         const del = await productMediaDelete({ id }, productId);
+
         if (!del.ok || (del.data.productMediaDelete?.errors ?? []).length) {
           mediaHadErrors = true;
           toast({
@@ -670,6 +684,7 @@ export function ProductDetailClient({
           });
         } else {
           const createdMedia = created.data.productMediaCreate.media;
+
           setMediaDraft((prev) => [
             ...prev,
             { id: createdMedia.id, url: createdMedia.url },
@@ -684,7 +699,10 @@ export function ProductDetailClient({
 
       for (const channel of channels) {
         const config = values.channelAvailability?.[channel.id];
-        if (!config) continue;
+
+        if (!config) {
+          continue;
+        }
 
         if (config.isPublished) {
           updateChannels.push({
@@ -720,11 +738,13 @@ export function ProductDetailClient({
           variant: "destructive",
         });
         router.refresh();
+
         return;
       }
 
       const channelErrors =
         channelListingResult.data.productChannelListingUpdate?.errors ?? [];
+
       if (channelErrors.length > 0) {
         toast({
           title: "Updated product, but channel listing update failed",
@@ -736,6 +756,7 @@ export function ProductDetailClient({
           variant: "destructive",
         });
         router.refresh();
+
         return;
       }
 
@@ -768,258 +789,296 @@ export function ProductDetailClient({
 
   const isSubmitting = form.formState.isSubmitting;
 
+  const productStatus = product.channelListings?.some((l) => l.isPublished)
+    ? "Published"
+    : "Draft";
+
   return (
     <FormProvider {...form}>
-      <form onSubmit={onSubmit} noValidate className="grid w-full gap-4">
-        <div className="flex w-full gap-4">
-          <div className="flex grow basis-2/3 flex-col gap-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Product Information</CardTitle>
-              </CardHeader>
-
-              <CardContent className="flex flex-col gap-4">
-                <InputField label="Product Name" name="name" />
-                <InputField
-                  label="Slug"
-                  name="slug"
-                  inputProps={{
-                    placeholder:
-                      "Product slug, if not provided, it will be generated from the product name",
-                  }}
-                />
-                <div className="grid gap-2">
-                  <Label>Product Description</Label>
-                  <Textarea
-                    {...form.register("description")}
-                    placeholder="Enter product description"
-                    disabled={isSubmitting}
-                  />
-                </div>
-                <InputField label="SEO Title" name="seo.title" />
-                <InputField label="SEO Description" name="seo.description" />
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Media</CardTitle>
-              </CardHeader>
-
-              <CardContent className="flex flex-col gap-4">
-                {product.thumbnail?.url ? (
-                  <div className="relative aspect-square w-56 overflow-hidden rounded-lg border">
-                    <Image
-                      src={product.thumbnail.url}
-                      alt={product.thumbnail.alt || product.name || "Product"}
-                      fill
-                      className="object-cover"
-                      unoptimized
-                    />
-                  </div>
-                ) : null}
-
-                {mediaDraft.length ? (
-                  <div className="flex flex-col gap-3">
-                    {mediaDraft.map((m) => (
-                      <div
-                        key={m.id}
-                        className="grid gap-2 rounded-lg border p-3"
-                      >
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="flex min-w-0 items-center gap-3">
-                            <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md border">
-                              <Image
-                                src={m.url}
-                                alt=""
-                                fill
-                                className="object-cover"
-                                unoptimized
-                              />
-                            </div>
-                            <div className="min-w-0">
-                              <div
-                                className="truncate text-sm font-medium"
-                                title={m.url}
-                              >
-                                {m.url}
-                              </div>
-                            </div>
-                          </div>
-
-                          <Button
-                            type="button"
-                            size="icon"
-                            variant="ghost"
-                            className="h-8 w-8"
-                            onClick={() => {
-                              setMediaDraft((prev) =>
-                                prev.filter((x) => x.id !== m.id),
-                              );
-                            }}
-                            aria-label="Remove media"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-sm text-muted-foreground">No media</p>
-                )}
-
-                {!isAddMediaOpen ? (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setIsAddMediaOpen(true)}
-                  >
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add media URL
-                  </Button>
-                ) : (
-                  <div className="grid gap-3 rounded-lg border p-3">
-                    <div className="text-sm font-medium">Add media</div>
-                    <div className="grid gap-2">
-                      <Label>URL</Label>
-                      <Input
-                        value={pendingMediaUrl}
-                        onChange={(e) => setPendingMediaUrl(e.target.value)}
-                        placeholder="https://example.com/image.jpg"
-                      />
-                    </div>
-                    <div className="flex items-center justify-between gap-2">
-                      <p className="text-xs text-muted-foreground">
-                        Click Save to upload this URL.
-                      </p>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        onClick={() => {
-                          setPendingMediaUrl("");
-                          setIsAddMediaOpen(false);
-                        }}
-                      >
-                        Cancel
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            <AttributesSection
-              assignedAttributes={product.assignedAttributes ?? []}
-            />
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle>Variants</CardTitle>
-                <Button variant="outline" size="sm" asChild>
-                  <Link href={`/products/${productId}/variants/new`}>
-                    Add Variant
+      <form onSubmit={onSubmit} noValidate>
+        <div className="min-h-screen">
+          {/* Sticky header bar */}
+          <div className="fixed left-0 right-0 top-16 z-40 border-b bg-background">
+            <div className="flex items-center justify-between px-6 py-4">
+              <div className="flex items-center gap-4">
+                <Button asChild variant="ghost" size="sm" className="gap-2">
+                  <Link href="/products">
+                    <ArrowLeft className="h-4 w-4" />
+                    All products
                   </Link>
                 </Button>
-              </CardHeader>
-              <CardContent>
-                {product.variants && product.variants.length > 0 ? (
-                  <div className="space-y-2">
-                    {product.variants.map((variant) => (
-                      <Link
-                        key={variant.id}
-                        href={`/products/${productId}/variants/${variant.id}`}
-                        className="flex items-center justify-between rounded-lg border p-3 transition-colors hover:bg-muted"
-                      >
-                        <div>
-                          <p className="font-medium">{variant.name}</p>
-                          <p className="text-sm text-muted-foreground">
-                            SKU: {variant.sku || "-"}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-medium">
-                            {variant.pricing?.price?.gross
-                              ? `${variant.pricing.price.gross.currency} ${variant.pricing.price.gross.amount.toFixed(2)}`
-                              : "-"}
-                          </p>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-muted-foreground">No variants</p>
-                )}
-              </CardContent>
-            </Card>
+                <h1 className="text-2xl font-semibold">
+                  {product.name ?? "Product"}
+                </h1>
+                <ColorBadge label={productStatus} />
+              </div>
+              <div className="flex items-center gap-2">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button size="sm" variant="outline">
+                      More actions
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem
+                      className="text-destructive focus:text-destructive"
+                      disabled
+                    >
+                      Archive product
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <Button type="submit" size="sm" disabled={isSubmitting}>
+                  Save{" "}
+                  {isSubmitting ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : null}
+                </Button>
+              </div>
+            </div>
           </div>
 
-          <div className="flex grow basis-1/3 flex-col gap-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Organize product</CardTitle>
-                <CardDescription>
-                  Select categories, collections, and product type.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="flex flex-col gap-4">
-                <SelectField
-                  name="productTypeId"
-                  label="Product Type"
-                  options={productTypeOptions}
-                  disabled
-                  description="Changing product type is disabled."
-                />
-                <SelectField
-                  name="categoryId"
-                  label="Product Category"
-                  options={categoryOptions}
-                  placeholder="Select category"
-                />
+          {/* Main content: offset below sticky bar */}
+          <div className="mx-auto mt-20 px-6 pb-6">
+            <div className="mb-4">
+              <ProductViewNavigation
+                productId={productId}
+                variantCount={product.variants?.length ?? 0}
+                firstVariantId={product.variants?.[0]?.id}
+              />
+            </div>
+            <div className="grid w-full gap-4">
+              <div className="flex w-full gap-4">
+                <div className="flex grow basis-2/3 flex-col gap-4">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Product Information</CardTitle>
+                    </CardHeader>
 
-                <CollectionsField
-                  name="collectionIds"
-                  label="Product Collections"
-                  options={collectionOptions}
-                  placeholder="Select collections"
-                />
-              </CardContent>
-            </Card>
+                    <CardContent className="flex flex-col gap-4">
+                      <InputField label="Product Name" name="name" />
+                      <InputField
+                        label="Slug"
+                        name="slug"
+                        inputProps={{
+                          placeholder:
+                            "Product slug, if not provided, it will be generated from the product name",
+                        }}
+                      />
+                      <div className="grid gap-2">
+                        <Label>Product Description</Label>
+                        <Textarea
+                          {...form.register("description")}
+                          placeholder="Enter product description"
+                          disabled={isSubmitting}
+                        />
+                      </div>
+                      <InputField label="SEO Title" name="seo.title" />
+                      <InputField
+                        label="SEO Description"
+                        name="seo.description"
+                      />
+                    </CardContent>
+                  </Card>
 
-            <AvailabilitySection channels={channels} />
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Media</CardTitle>
+                    </CardHeader>
+
+                    <CardContent className="flex flex-col gap-4">
+                      {product.thumbnail?.url ? (
+                        <div className="relative aspect-square w-56 overflow-hidden rounded-lg border">
+                          <Image
+                            src={product.thumbnail.url}
+                            alt={
+                              product.thumbnail.alt || product.name || "Product"
+                            }
+                            fill
+                            className="object-cover"
+                            unoptimized
+                          />
+                        </div>
+                      ) : null}
+
+                      {mediaDraft.length ? (
+                        <div className="flex flex-col gap-3">
+                          {mediaDraft.map((m) => (
+                            <div
+                              key={m.id}
+                              className="grid gap-2 rounded-lg border p-3"
+                            >
+                              <div className="flex items-start justify-between gap-3">
+                                <div className="flex min-w-0 items-center gap-3">
+                                  <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md border">
+                                    <Image
+                                      src={m.url}
+                                      alt=""
+                                      fill
+                                      className="object-cover"
+                                      unoptimized
+                                    />
+                                  </div>
+                                  <div className="min-w-0">
+                                    <div
+                                      className="truncate text-sm font-medium"
+                                      title={m.url}
+                                    >
+                                      {m.url}
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <Button
+                                  type="button"
+                                  size="icon"
+                                  variant="ghost"
+                                  className="h-8 w-8"
+                                  onClick={() => {
+                                    setMediaDraft((prev) =>
+                                      prev.filter((x) => x.id !== m.id),
+                                    );
+                                  }}
+                                  aria-label="Remove media"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-sm text-muted-foreground">
+                          No media
+                        </p>
+                      )}
+
+                      {!isAddMediaOpen ? (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => setIsAddMediaOpen(true)}
+                        >
+                          <Plus className="mr-2 h-4 w-4" />
+                          Add media URL
+                        </Button>
+                      ) : (
+                        <div className="grid gap-3 rounded-lg border p-3">
+                          <div className="text-sm font-medium">Add media</div>
+                          <div className="grid gap-2">
+                            <Label>URL</Label>
+                            <Input
+                              value={pendingMediaUrl}
+                              onChange={(e) =>
+                                setPendingMediaUrl(e.target.value)
+                              }
+                              placeholder="https://example.com/image.jpg"
+                            />
+                          </div>
+                          <div className="flex items-center justify-between gap-2">
+                            <p className="text-xs text-muted-foreground">
+                              Click Save to upload this URL.
+                            </p>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              onClick={() => {
+                                setPendingMediaUrl("");
+                                setIsAddMediaOpen(false);
+                              }}
+                            >
+                              Cancel
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+
+                  <AttributesSection
+                    assignedAttributes={product.assignedAttributes ?? []}
+                  />
+
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between">
+                      <CardTitle>Variants</CardTitle>
+                      <Button variant="outline" size="sm" asChild>
+                        <Link href={`/products/${productId}/variants/new`}>
+                          Add Variant
+                        </Link>
+                      </Button>
+                    </CardHeader>
+                    <CardContent>
+                      {product.variants && product.variants.length > 0 ? (
+                        <div className="space-y-2">
+                          {product.variants.map((variant) => (
+                            <Link
+                              key={variant.id}
+                              href={`/products/${productId}/variants/${variant.id}`}
+                              className="flex items-center justify-between rounded-lg border p-3 transition-colors hover:bg-muted"
+                            >
+                              <div>
+                                <p className="font-medium">{variant.name}</p>
+                                <p className="text-sm text-muted-foreground">
+                                  SKU: {variant.sku || "-"}
+                                </p>
+                              </div>
+                              <div className="text-right">
+                                <p className="font-medium">
+                                  {variant.pricing?.price?.gross
+                                    ? `${variant.pricing.price.gross.currency} ${variant.pricing.price.gross.amount.toFixed(2)}`
+                                    : "-"}
+                                </p>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-muted-foreground">No variants</p>
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
+
+                <div className="flex grow basis-1/3 flex-col gap-4">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Organize product</CardTitle>
+                      <CardDescription>
+                        Select categories, collections, and product type.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex flex-col gap-4">
+                      <SelectField
+                        name="productTypeId"
+                        label="Product Type"
+                        options={productTypeOptions}
+                        disabled
+                        description="Changing product type is disabled."
+                      />
+                      <SelectField
+                        name="categoryId"
+                        label="Product Category"
+                        options={categoryOptions}
+                        placeholder="Select category"
+                      />
+
+                      <CollectionsField
+                        name="collectionIds"
+                        label="Product Collections"
+                        options={collectionOptions}
+                        placeholder="Select collections"
+                      />
+                    </CardContent>
+                  </Card>
+
+                  <AvailabilitySection channels={channels} />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-
-        <Card className="sticky bottom-0 z-10">
-          <CardHeader className="flex flex-row flex-wrap justify-between gap-4">
-            <Button
-              type="button"
-              variant="destructive"
-              disabled
-              className="m-0"
-            >
-              Delete product
-            </Button>
-
-            <span className="flex flex-row justify-end gap-4">
-              <Button
-                type="button"
-                variant="outline"
-                disabled={isSubmitting}
-                onClick={() => router.push("/products")}
-              >
-                Discard
-              </Button>
-
-              <Button type="submit" disabled={isSubmitting}>
-                Save{" "}
-                {isSubmitting ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : null}
-              </Button>
-            </span>
-          </CardHeader>
-        </Card>
       </form>
     </FormProvider>
   );

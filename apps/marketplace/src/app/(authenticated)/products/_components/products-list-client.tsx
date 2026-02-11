@@ -198,15 +198,19 @@ export function ProductsListClient({ products }: ProductsListClientProps) {
                 <TableRow className="border-t px-6 py-4">
                   <TableHead className="w-[80px]">Image</TableHead>
                   <TableHead>Name</TableHead>
+                  <TableHead>Status</TableHead>
                   <TableHead>Type</TableHead>
                   <TableHead>Category</TableHead>
                   <TableHead>Price</TableHead>
-                  <TableHead>Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {products.map((product) => (
-                  <TableRow key={product.id}>
+                  <TableRow
+                    key={product.id}
+                    className="cursor-pointer hover:bg-muted"
+                    onClick={() => router.push(`/products/${product.id}`)}
+                  >
                     <TableCell>
                       {product.thumbnail?.url ? (
                         <Image
@@ -221,13 +225,15 @@ export function ProductsListClient({ products }: ProductsListClientProps) {
                         <div className="h-10 w-10 rounded bg-muted" />
                       )}
                     </TableCell>
+                    <TableCell>{product.name}</TableCell>
                     <TableCell>
-                      <Link
-                        href={`/products/${product.id}`}
-                        className="font-medium hover:underline"
-                      >
-                        {product.name}
-                      </Link>
+                      <ColorBadge
+                        label={
+                          product.channelListings?.some((l) => l.isPublished)
+                            ? "Published"
+                            : "Draft"
+                        }
+                      />
                     </TableCell>
                     <TableCell className="text-muted-foreground">
                       {product.productType?.name || "-"}
@@ -246,15 +252,6 @@ export function ProductsListClient({ products }: ProductsListClientProps) {
                       ) : (
                         "-"
                       )}
-                    </TableCell>
-                    <TableCell>
-                      <ColorBadge
-                        label={
-                          product.channelListings?.some((l) => l.isPublished)
-                            ? "Published"
-                            : "Draft"
-                        }
-                      />
                     </TableCell>
                   </TableRow>
                 ))}

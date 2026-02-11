@@ -4,7 +4,6 @@ import Link from "next/link";
 import { Button } from "@nimara/ui/components/button";
 import { Card, CardContent } from "@nimara/ui/components/card";
 
-import { ProductViewNavigation } from "@/components/product-view-navigation";
 import { getServerAuthToken } from "@/lib/auth/server";
 import { configurationService, productsService } from "@/services";
 
@@ -72,28 +71,14 @@ export default async function ProductDetailPage({
 
   return (
     <div className="[view-transition-name:main-content]">
-      <div className="flex flex-col items-center justify-between gap-4">
-        <Button asChild className="self-start" type="button" variant="ghost">
-          <Link href="/products">
-            <ArrowLeft className="mr-2 h-4 w-4" /> All products
-          </Link>
-        </Button>
-
-        <ProductViewNavigation
-          productId={productId}
-          variantCount={product.variants?.length ?? 0}
-          firstVariantId={product.variants?.[0]?.id}
-        />
-
-        <ProductDetailClient
-          productId={productId}
-          product={product}
-          channels={channels}
-          categories={categories}
-          collections={collections}
-          productTypes={productTypes}
-        />
-      </div>
+      <ProductDetailClient
+        productId={productId}
+        product={product}
+        channels={channels}
+        categories={categories}
+        collections={collections}
+        productTypes={productTypes}
+      />
     </div>
   );
 }
