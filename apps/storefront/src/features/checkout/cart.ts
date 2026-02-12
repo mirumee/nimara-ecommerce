@@ -1,9 +1,11 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
 import { COOKIE_KEY, COOKIE_MAX_AGE } from "@/config";
 import { revalidateTag } from "@/foundation/cache/cache";
+import { paths } from "@/foundation/routing/paths";
 import { getStorefrontLogger } from "@/services/lazy-logging";
 
 /**
@@ -12,11 +14,9 @@ import { getStorefrontLogger } from "@/services/lazy-logging";
  * @returns void
  */
 export const revalidateCart = async (id: string): Promise<void> => {
-  const storefrontLogger = await getStorefrontLogger();
-
-  storefrontLogger.debug("Revalidating checkout cache.", { id });
-
   revalidateTag(`CHECKOUT:${id}`);
+  revalidatePath(paths.cart.asPath());
+  revalidatePath(paths.checkout.asPath());
 };
 
 /**

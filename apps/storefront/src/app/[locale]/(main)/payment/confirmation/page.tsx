@@ -54,8 +54,9 @@ export default async function Page(props: PageProps) {
     const errorCode = firstError ? firstError.code : "DEFAULT_PAYMENT_ERROR";
 
     redirect({
-      href: paths.checkout.payment.asPath({
+      href: paths.checkout.asPath({
         query: {
+          step: "payment",
           [QUERY_PARAMS.errorCode]: errorCode,
         },
       }),

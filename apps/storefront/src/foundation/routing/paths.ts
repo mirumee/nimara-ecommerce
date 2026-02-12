@@ -107,14 +107,7 @@ export const paths = {
   collections: {
     ...url<"slug">("/collections/[slug]"),
   },
-  checkout: {
-    ...url("/checkout"),
-    signIn: url("/checkout/sign-in"),
-    userDetails: url("/checkout/user-details"),
-    shippingAddress: url("/checkout/shipping-address"),
-    deliveryMethod: url("/checkout/delivery-method"),
-    payment: url("/checkout/payment"),
-  },
+  checkout: url("/checkout"),
   order: {
     confirmation: url<"id">("/order/confirmation/[id]"),
   },

@@ -10,16 +10,7 @@ export const deliveryMethodUpdateUseCase = ({
 }: {
   deliveryMethodUpdateInfra: CheckoutDeliveryMethodUpdateInfra;
 }): CheckoutDeliveryMethodUpdateUseCase => {
-  return async ({
-    checkoutId,
-    deliveryMethodId,
-  }: {
-    checkoutId: Checkout["id"];
-    deliveryMethodId: string;
-  }) => {
-    return deliveryMethodUpdateInfra({
-      checkoutId,
-      deliveryMethodId,
-    });
+  return async (data: { deliveryMethodId: string; id: Checkout["id"] }) => {
+    return deliveryMethodUpdateInfra(data);
   };
 };

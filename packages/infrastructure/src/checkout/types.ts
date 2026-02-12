@@ -19,8 +19,8 @@ export type CheckoutEmailUpdateInfra = (
 export type CheckoutEmailUpdateUseCase = CheckoutEmailUpdateInfra;
 
 export type CheckoutDeliveryMethodOptions = {
-  checkoutId: Checkout["id"];
   deliveryMethodId: string;
+  id: Checkout["id"];
 } & WithFetchOptions;
 
 export type CheckoutDeliveryMethodUpdateInfra = (
@@ -63,12 +63,12 @@ export type OrderCreateUseCase = OrderCreateInfra;
 
 export type CheckoutBillingAddressUpdateInfra = (opts: {
   address: Partial<AddressCreateInput>;
-  checkoutId: string;
+  id: Checkout["id"];
 }) => AsyncResult<{ success: true }>;
 
 export type CheckoutCustomerAttachInfra = (opts: {
   accessToken: string | undefined;
-  id: string;
+  id: Checkout["id"];
 }) => AsyncResult<{ success: true }>;
 
 export type CheckoutCustomerAttachUseCase = CheckoutCustomerAttachInfra;

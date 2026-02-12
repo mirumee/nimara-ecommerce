@@ -1,12 +1,12 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
+
 import { addToBag } from "@nimara/features/product-detail-page/shared/actions/add-to-bag.core";
 
-import {
-  getCheckoutId,
-  revalidateCart,
-  setCheckoutIdCookie,
-} from "@/features/checkout/cart";
+import { getCheckoutId, setCheckoutIdCookie } from "@/features/checkout/cart";
+import { revalidateTag } from "@/foundation/cache/cache";
+import { paths } from "@/foundation/routing/paths";
 import { getServiceRegistry } from "@/services/registry";
 import { getAccessToken } from "@/services/tokens";
 
@@ -49,7 +49,8 @@ export const addToBagAction = async ({
       await setCheckoutIdCookie(result.data.cartId);
     }
 
-    void revalidateCart(cartId ?? result.data.cartId);
+    revalidateTag(`CHECKOUT:${cartId ?? result.data.cartId}`, "max");
+    revalidatePath(paths.cart.asPath());
   }
 
   return result;

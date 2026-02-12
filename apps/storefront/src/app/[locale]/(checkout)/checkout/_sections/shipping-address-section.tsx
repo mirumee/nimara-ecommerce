@@ -59,8 +59,11 @@ export async function ShippingAddressSection({
       {shippingAddress && (
         <Button variant="outline" asChild>
           <LocalizedLink
-            href={paths.checkout.shippingAddress.asPath({
-              query: { country: shippingAddress.country },
+            href={paths.checkout.asPath({
+              query: {
+                country: shippingAddress.country,
+                step: "shipping-address",
+              },
             })}
           >
             {t("common.edit")}

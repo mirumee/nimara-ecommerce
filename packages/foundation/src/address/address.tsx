@@ -36,9 +36,7 @@ export function displayFormattedAddressLines({
     chunk === "\n" && index !== 1 ? (
       <br key={`${addressId}_${index}`} />
     ) : index === 0 ? (
-      <p className="pb-2" key={`${addressId}_${index}`}>
-        {chunk}
-      </p>
+      <p key={`${addressId}_${index}`}>{chunk}</p>
     ) : (
       index !== 1 && <span key={`${addressId}_${index}`}>{chunk}</span>
     ),

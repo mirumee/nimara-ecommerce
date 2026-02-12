@@ -24,7 +24,9 @@ export const DeliveryMethodSection = async ({
       </div>
       {checkout.deliveryMethod && (
         <Button variant="outline" asChild>
-          <LocalizedLink href={paths.checkout.deliveryMethod.asPath()}>
+          <LocalizedLink
+            href={paths.checkout.asPath({ query: { step: "delivery-method" } })}
+          >
             {tc("edit")}
           </LocalizedLink>
         </Button>

@@ -28,7 +28,10 @@ export const validateCheckoutStepAction = async ({
   // If missing, redirect to user details step
   if (!checkout.email && !user?.email) {
     if (step !== "user-details") {
-      redirect({ href: paths.checkout.userDetails.asPath(), locale });
+      redirect({
+        href: paths.checkout.asPath({ query: { step: "user-details" } }),
+        locale,
+      });
     }
 
     return;
@@ -48,7 +51,10 @@ export const validateCheckoutStepAction = async ({
     // If missing, redirect to shipping address step
     if (!checkout.shippingAddress) {
       if (step !== "shipping-address") {
-        redirect({ href: paths.checkout.shippingAddress.asPath(), locale });
+        redirect({
+          href: paths.checkout.asPath({ query: { step: "shipping-address" } }),
+          locale,
+        });
       }
 
       return;
@@ -63,7 +69,10 @@ export const validateCheckoutStepAction = async ({
     // If missing, redirect to delivery-method step
     if (!checkout.deliveryMethod) {
       if (step !== "delivery-method") {
-        redirect({ href: paths.checkout.deliveryMethod.asPath(), locale });
+        redirect({
+          href: paths.checkout.asPath({ query: { step: "delivery-method" } }),
+          locale,
+        });
       }
 
       return;
@@ -77,6 +86,9 @@ export const validateCheckoutStepAction = async ({
 
   // Final Step: if user is on any other step than payment, redirect to it
   if (step !== "payment") {
-    redirect({ href: paths.checkout.payment.asPath(), locale });
+    redirect({
+      href: paths.checkout.asPath({ query: { step: "payment" } }),
+      locale,
+    });
   }
 };

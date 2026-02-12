@@ -193,7 +193,8 @@
   "user-details": {
     "title": "Email",
     "email": "Email",
-    "signed-in-as": "Signed in as"
+    "signed-in-as": "Signed in as",
+    "email-update-success": "Email updated successfully"
   },
   "delivery-method": {
     "title": "Delivery",

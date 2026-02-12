@@ -33,6 +33,7 @@
     "jose": "^6.1.3",
     "lodash": "4.17.21",
     "lucide-react": "^0.562.0",
+    "motion": "12.34.0",
     "negotiator": "1.0.0",
     "next": "^16.1.6",
     "next-auth": "^5.0.0-beta.29",
