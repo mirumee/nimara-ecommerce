@@ -8,7 +8,6 @@ import { serverEnvs } from "@/envs/server";
 import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
 import { getStoreUrl } from "@/foundation/server";
-import { getPaymentService } from "@/services/payment";
 import { getServiceRegistry } from "@/services/registry";
 import { getAccessToken } from "@/services/tokens";
 
@@ -30,8 +29,8 @@ export default async function Page(props: PageProps) {
       getServiceRegistry(),
     ]);
   const userService = await services.getUserService();
-
   const resultUserGet = await userService.userGet(accessToken);
+  const paymentService = await services.getPaymentService();
 
   const user = resultUserGet.ok ? resultUserGet.data : null;
 
@@ -39,10 +38,7 @@ export default async function Page(props: PageProps) {
     redirect({ href: paths.signIn.asPath(), locale });
   }
 
-  const [paymentService, region] = await Promise.all([
-    getPaymentService(),
-    getCurrentRegion(),
-  ]);
+  const region = await getCurrentRegion();
   const resultCustomerGet = await paymentService.customerGet({
     user: user,
     channel: region.market.channel,
@@ -103,6 +99,7 @@ export default async function Page(props: PageProps) {
             storeUrl={storeUrl}
             customerId={customerId}
             variant="outline"
+            services={services}
           />
         )}
       </div>
@@ -125,6 +122,7 @@ export default async function Page(props: PageProps) {
                 storeUrl={storeUrl}
                 customerId={customerId}
                 variant="default"
+                services={services}
               />
             </div>
           </div>

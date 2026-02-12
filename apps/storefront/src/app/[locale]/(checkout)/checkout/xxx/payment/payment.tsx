@@ -25,6 +25,7 @@ import { CheckboxField } from "@nimara/foundation/form-components/checkbox-field
 import { cn } from "@nimara/foundation/lib/cn";
 import { usePathname, useRouter } from "@nimara/i18n/routing";
 import { ADDRESS_DEFAULT_VALUES } from "@nimara/infrastructure/consts";
+import { type ServiceRegistry } from "@nimara/infrastructure/types";
 import { Button } from "@nimara/ui/components/button";
 import { Spinner } from "@nimara/ui/components/spinner";
 import {
@@ -40,7 +41,6 @@ import { PaymentMethods } from "@/features/checkout/payment-methods";
 import { isGlobalError } from "@/foundation/errors/errors";
 import { useCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
-import { getPaymentService } from "@/services/payment";
 
 import { updateBillingAddress } from "./actions";
 import { AddressTab } from "./address-tab";
@@ -62,6 +62,7 @@ type PaymentProps = {
   formattedAddresses: FormattedAddress[];
   paymentGatewayCustomer: Maybe<string>;
   paymentGatewayMethods: PaymentMethod[];
+  services: ServiceRegistry;
   storeUrl: string;
   user: User | null;
 };
@@ -76,6 +77,7 @@ export const Payment = ({
   paymentGatewayMethods,
   paymentGatewayCustomer,
   formattedAddresses,
+  services,
   user,
 }: PaymentProps) => {
   const t = useTranslations();
@@ -200,7 +202,7 @@ export const Payment = ({
 
     let paymentSecret: Maybe<string> = undefined;
     const redirectUrl = `${storeUrl}${paths.payment.confirmation.asPath()}`;
-    const paymentService = await getPaymentService();
+    const paymentService = await services.getPaymentService();
 
     /**
      * Using existing payment method requires passing it to the stripe app to
@@ -244,7 +246,7 @@ export const Payment = ({
 
   useEffect(() => {
     void (async () => {
-      const paymentService = await getPaymentService();
+      const paymentService = await services.getPaymentService();
       const [result] = await Promise.all([
         paymentService.paymentGatewayInitialize({
           id: checkout.id,
@@ -267,7 +269,7 @@ export const Payment = ({
     }
 
     void (async () => {
-      const paymentService = await getPaymentService();
+      const paymentService = await services.getPaymentService();
 
       /**
        * Using new payment method requires an new intent secret which is then passed

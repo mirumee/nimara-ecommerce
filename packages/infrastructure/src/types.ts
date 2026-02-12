@@ -5,12 +5,12 @@ import type { CartService } from "./cart/types";
 import type { CheckoutService } from "./checkout/types";
 import type { CollectionService } from "./collection/types";
 import type { Logger } from "./logging/types";
+import type { StripePaymentService } from "./payment/providers";
 import type { StoreService } from "./store/types";
 import type { CMSMenuService } from "./use-cases/cms-menu/types";
 import type { CMSPageService } from "./use-cases/cms-page/types";
 import type { SearchService } from "./use-cases/search/types";
 import type { UserService } from "./user/types";
-
 /**
  * Service registry interface that contains all services available to features.
  * Services are initialized by the storefront and passed to features via dependency injection.
@@ -61,6 +61,12 @@ export interface ServiceRegistry {
    * @returns A promise that resolves to the collection service instance
    */
   getCollectionService(): Promise<CollectionService>;
+  /**
+   * Gets the payment service, initializing it lazily on first access.
+   * The service is cached after first initialization.
+   * @returns A promise that resolves to the payment service instance
+   */
+  getPaymentService(): Promise<StripePaymentService>;
   /**
    * Gets the search service, initializing it lazily on first access.
    * The service is cached after first initialization.

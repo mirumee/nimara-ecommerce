@@ -6,6 +6,7 @@ import { type ReactNode, useEffect, useState } from "react";
 
 import { cn } from "@nimara/foundation/lib/cn";
 import { usePathname } from "@nimara/i18n/routing";
+import { type ServiceRegistry } from "@nimara/infrastructure/types";
 import { Button } from "@nimara/ui/components/button";
 import { Checkbox } from "@nimara/ui/components/checkbox";
 import {
@@ -19,15 +20,16 @@ import { Spinner } from "@nimara/ui/components/spinner";
 
 import { PAYMENT_ELEMENT_ID } from "@/features/checkout/consts";
 import { useCurrentRegion } from "@/foundation/regions";
-import { getPaymentService } from "@/services/payment";
 
 export const PaymentMethodAddModal = ({
   secret,
   storeUrl,
+  services,
   onClose,
 }: {
   onClose: () => void;
   secret: string;
+  services: ServiceRegistry;
   storeUrl: string;
 }) => {
   const t = useTranslations();
@@ -55,7 +57,7 @@ export const PaymentMethodAddModal = ({
   const handlePaymentSave = async () => {
     setIsProcessing(true);
 
-    const paymentService = await getPaymentService();
+    const paymentService = await services.getPaymentService();
     const result = await paymentService.paymentMethodSaveExecute({
       redirectUrl,
       saveForFutureUse: isDefault,
@@ -70,7 +72,7 @@ export const PaymentMethodAddModal = ({
 
   useEffect(() => {
     void (async () => {
-      const paymentService = await getPaymentService();
+      const paymentService = await services.getPaymentService();
 
       await paymentService.paymentInitialize();
 

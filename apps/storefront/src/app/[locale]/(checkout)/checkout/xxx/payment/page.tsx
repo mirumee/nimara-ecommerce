@@ -9,7 +9,6 @@ import { serverEnvs } from "@/envs/server";
 import { getCheckoutOrRedirect } from "@/features/checkout/checkout-actions";
 import { getCurrentRegion } from "@/foundation/regions";
 import { getStoreUrl } from "@/foundation/server";
-import { getPaymentService } from "@/services/payment";
 import { getServiceRegistry } from "@/services/registry";
 import { getAccessToken } from "@/services/tokens";
 
@@ -131,7 +130,7 @@ export default async function Page(props: PageProps) {
   let paymentGatewayMethods: PaymentMethod[] = [];
 
   if (user) {
-    const paymentService = await getPaymentService();
+    const paymentService = await services.getPaymentService();
     const resultPaymentGatewayCustomer = await paymentService.customerGet({
       user,
       channel: region.market.channel,
@@ -176,6 +175,7 @@ export default async function Page(props: PageProps) {
           countryCode={countryCode}
           formattedAddresses={sortedAddresses}
           user={user}
+          services={services}
         />
       </PaymentSection>
     </>
