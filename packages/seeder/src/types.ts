@@ -153,6 +153,7 @@ export interface MockData {
     price?: number;
     sku?: string;
     variants?: { sku: string; name: string; price: number }[];
+    photoUrl: string;
   }[];
 }
 
@@ -166,4 +167,9 @@ export interface HomepageAttribute {
   inputType: string;
   entityType?: string | null;
   slug: string
+}
+
+export interface ProductNode {
+  id: string;
+  name: string;
 }

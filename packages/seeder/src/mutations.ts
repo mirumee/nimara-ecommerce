@@ -115,6 +115,27 @@ export const PRODUCT_TYPE_CREATE_MUTATION = gql`
   }
 `;
 
+export const PRODUCT_MEDIA_CREATE_MUTATION = gql`
+  mutation ProductMediaCreate($productId: ID!, $file: Upload!) {
+    productMediaCreate(
+      input: {
+        product: $productId
+        image: $file
+        alt: "Product image"
+      }
+    ) {
+      media {
+        id
+        url
+      }
+      errors {
+        field
+        message
+      }
+    }
+  }
+`;
+
 export const PRODUCT_BULK_CREATE_MUTATION = gql`
   mutation ProductBulkCreate($input: [ProductBulkCreateInput!]!) {
     productBulkCreate(products: $input) {

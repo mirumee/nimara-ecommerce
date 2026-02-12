@@ -3,6 +3,7 @@ import { gql } from "graphql-request";
 import {
   createCategories,
   createHomepageAttributes,
+  createMediaForAllProducts,
   createMenu,
   createMenuItem,
   createPage,
@@ -15,6 +16,8 @@ import {
 import { client } from "./client";
 import mockDataRaw from "./mock-data.json";
 import { MockData, ShopQueryResponse } from "./types";
+import { readFile } from "fs/promises";
+import path from "path";
 
 const mockData = mockDataRaw as MockData;
 
@@ -105,11 +108,17 @@ async function seed() {
     }
 
     // Create products in bulk
-    await createProducts(
+    const products = await createProducts(
       mockData.products,
       categoryMap,
       productTypeMap,
       defaultChannel.id,
+    );
+
+    // Create media for products
+    await createMediaForAllProducts(
+      products,
+      mockData.products,
     );
 
     console.log("[SEEDING] Seeding completed successfully");

@@ -65,6 +65,7 @@
       "category": "Progressive Rock",
       "productType": "Vinyl",
       "description": "The eighth studio album by the English rock band Pink Floyd, released on 1 March 1973 by Harvest Records.",
+      "photoUrl": "https://picsum.photos/seed/pink-floyd-dsom/400/400",
       "variants": [
         { "sku": "VIN-PF-DSOM-STD", "name": "Black Vinyl", "price": 35.99 },
         { "sku": "VIN-PF-DSOM-CLR", "name": "Clear Vinyl Limited", "price": 49.99 }
@@ -75,6 +76,7 @@
       "category": "Progressive Rock",
       "productType": "Vinyl",
       "description": "The debut studio album by British rock band King Crimson, released on 10 October 1969.",
+      "photoUrl": "https://picsum.photos/seed/king-crimson-itck/400/400",
       "price": 38.50,
       "sku": "VIN-KC-ITCK"
     },
@@ -83,6 +85,7 @@
       "category": "Alternative Rock",
       "productType": "Vinyl",
       "description": "The third studio album by English rock band Radiohead, released in 1997.",
+      "photoUrl": "https://picsum.photos/seed/radiohead-okc/400/400",
       "variants": [
         { "sku": "VIN-RH-OKC-180", "name": "180g Pressing", "price": 32.99 },
         { "sku": "VIN-RH-OKC-BLUE", "name": "Blue Vinyl", "price": 39.99 }
@@ -93,6 +96,7 @@
       "category": "Alternative Rock",
       "productType": "Vinyl",
       "description": "The second studio album by American rock band Nirvana, released in 1991.",
+      "photoUrl": "https://picsum.photos/seed/nirvana-nevermind/400/400",
       "price": 29.99,
       "sku": "VIN-NV-NM"
     },
@@ -101,6 +105,7 @@
       "category": "Classic Rock",
       "productType": "Vinyl",
       "description": "The eleventh studio album by the English rock band the Beatles, released in 1969.",
+      "photoUrl": "https://picsum.photos/seed/beatles-abbey-road/400/400",
       "price": 45.00,
       "sku": "VIN-TB-AR"
     },
@@ -109,6 +114,7 @@
       "category": "Classic Rock",
       "productType": "Vinyl",
       "description": "The untitled fourth studio album by the English rock band Led Zeppelin, released in 1971.",
+      "photoUrl": "https://picsum.photos/seed/led-zeppelin-iv/400/400",
       "price": 34.99,
       "sku": "VIN-LZ-IV"
     },
@@ -117,6 +123,7 @@
       "category": "Bebop",
       "productType": "Vinyl",
       "description": "The best-selling jazz album of all time by Miles Davis.",
+      "photoUrl": "https://picsum.photos/seed/miles-davis-kob/400/400",
       "variants": [
         { "sku": "VIN-MD-KOB-STD", "name": "Standard Pressing", "price": 29.99 },
         { "sku": "VIN-MD-KOB-MONO", "name": "Mono Edition", "price": 34.99 }
@@ -127,6 +134,7 @@
       "category": "Bebop",
       "productType": "Vinyl",
       "description": "A studio album by American jazz saxophonist John Coltrane, released in 1965.",
+      "photoUrl": "https://picsum.photos/seed/coltrane-als/400/400",
       "price": 31.50,
       "sku": "VIN-JC-ALS"
     },
@@ -135,6 +143,7 @@
       "category": "Fusion",
       "productType": "Vinyl",
       "description": "The twelfth studio album by American jazz pianist Herbie Hancock, released in 1973.",
+      "photoUrl": "https://picsum.photos/seed/hancock-headhunters/400/400",
       "price": 28.99,
       "sku": "VIN-HH-HH"
     },
@@ -143,6 +152,7 @@
       "category": "Fusion",
       "productType": "Vinyl",
       "description": "The eighth studio album by jazz fusion group Weather Report, released in 1977.",
+      "photoUrl": "https://picsum.photos/seed/weather-report-hw/400/400",
       "price": 27.50,
       "sku": "VIN-WR-HW"
     },
@@ -151,6 +161,7 @@
       "category": "Electronic",
       "productType": "Vinyl",
       "description": "Daft Punk's fourth and final studio album.",
+      "photoUrl": "https://picsum.photos/seed/daft-punk-ram/400/400",
       "variants": [
         { "sku": "VIN-DP-RAM-2LP", "name": "Standard 2LP", "price": 42.50 },
         { "sku": "VIN-DP-RAM-10TH", "name": "10th Anniversary Boxset", "price": 89.99 }
@@ -161,6 +172,7 @@
       "category": "Ambient",
       "productType": "Vinyl",
       "description": "The debut studio album by Aphex Twin, released in 1992.",
+      "photoUrl": "https://picsum.photos/seed/aphex-twin-saw/400/400",
       "price": 36.99,
       "sku": "VIN-AT-SAW"
     },
@@ -169,6 +181,7 @@
       "category": "Synth-pop",
       "productType": "Vinyl",
       "description": "The seventh studio album by the German electronic music band Kraftwerk, released in 1978.",
+      "photoUrl": "https://picsum.photos/seed/kraftwerk-tmm/400/400",
       "price": 33.00,
       "sku": "VIN-KW-TMM"
     },
@@ -177,6 +190,7 @@
       "category": "East Coast",
       "productType": "Vinyl",
       "description": "The debut studio album by American rapper Nas, released in 1994.",
+      "photoUrl": "https://picsum.photos/seed/nas-illmatic/400/400",
       "variants": [
         { "sku": "VIN-NAS-ILL-BLK", "name": "Black Vinyl", "price": 24.99 },
         { "sku": "VIN-NAS-ILL-GOLD", "name": "Gold Edition", "price": 31.99 }
@@ -187,6 +201,7 @@
       "category": "East Coast",
       "productType": "Vinyl",
       "description": "The second studio album by hip hop group A Tribe Called Quest, released in 1991.",
+      "photoUrl": "https://picsum.photos/seed/atcq-let/400/400",
       "price": 31.99,
       "sku": "VIN-ATCQ-LET"
     },
@@ -195,6 +210,7 @@
       "category": "West Coast",
       "productType": "Vinyl",
       "description": "The debut studio album by American hip hop producer Dr. Dre, released in 1992.",
+      "photoUrl": "https://picsum.photos/seed/dre-chronic/400/400",
       "price": 33.99,
       "sku": "VIN-DD-TC"
     },
@@ -203,6 +219,7 @@
       "category": "Underground",
       "productType": "Vinyl",
       "description": "The third studio album by American rapper Kendrick Lamar, released in 2015.",
+      "photoUrl": "https://picsum.photos/seed/kendrick-tpab/400/400",
       "price": 39.99,
       "sku": "VIN-KL-TPAB"
     },
@@ -211,6 +228,7 @@
       "category": "Underground",
       "productType": "Vinyl",
       "description": "A collaboration between producer Madlib and rapper MF DOOM.",
+      "photoUrl": "https://picsum.photos/seed/madvillain-mv/400/400",
       "price": 35.50,
       "sku": "VIN-MV-MV"
     },
@@ -219,6 +237,7 @@
       "category": "Baroque",
       "productType": "Vinyl",
       "description": "Glenn Gould's debut recording of J.S. Bach's Goldberg Variations.",
+      "photoUrl": "https://picsum.photos/seed/bach-goldberg/400/400",
       "variants": [
         { "sku": "VIN-BACH-GV-55", "name": "1955 Recording", "price": 22.99 },
         { "sku": "VIN-BACH-GV-81", "name": "1981 Recording", "price": 25.99 }
@@ -229,6 +248,7 @@
       "category": "Romantic",
       "productType": "Vinyl",
       "description": "Herbert von Karajan's legendary conducting of Beethoven's Ninth.",
+      "photoUrl": "https://picsum.photos/seed/beethoven-s9/400/400",
       "price": 26.50,
       "sku": "VIN-BEE-S9"
     },
@@ -237,6 +257,7 @@
       "category": "Post-Rock",
       "productType": "Vinyl",
       "description": "The second studio album by British electronic musician Burial, released in 2007.",
+      "photoUrl": "https://picsum.photos/seed/burial-untrue/400/400",
       "price": 31.00,
       "sku": "VIN-BU-UT"
     },
@@ -245,6 +266,7 @@
       "category": "Post-Rock",
       "productType": "Vinyl",
       "description": "The debut album of the Canadian post-rock group Godspeed You! Black Emperor.",
+      "photoUrl": "https://picsum.photos/seed/gybe-fa/400/400",
       "price": 38.00,
       "sku": "VIN-GYBE-FA"
     },
@@ -253,6 +275,7 @@
       "category": "Synth-pop",
       "productType": "Vinyl",
       "description": "The seventh studio album by English electronic music band Depeche Mode, released in 1990.",
+      "photoUrl": "https://picsum.photos/seed/depeche-violator/400/400",
       "price": 32.50,
       "sku": "VIN-DM-VIO"
     },
@@ -261,6 +284,7 @@
       "category": "Alternative Rock",
       "productType": "Vinyl",
       "description": "The eighth studio album by English rock band the Cure, released in 1989.",
+      "photoUrl": "https://picsum.photos/seed/cure-disintegration/400/400",
       "price": 34.00,
       "sku": "VIN-CURE-DIS"
     },
@@ -269,6 +293,7 @@
       "category": "East Coast",
       "productType": "Vinyl",
       "description": "The debut studio album by American hip hop group Wu-Tang Clan.",
+      "photoUrl": "https://picsum.photos/seed/wu-tang-36c/400/400",
       "price": 29.99,
       "sku": "VIN-WT-36C"
     },
@@ -277,6 +302,7 @@
       "category": "West Coast",
       "productType": "Vinyl",
       "description": "The debut studio album by hip hop group N.W.A, released in 1988.",
+      "photoUrl": "https://picsum.photos/seed/nwa-soc/400/400",
       "price": 28.50,
       "sku": "VIN-NWA-SOC"
     },
@@ -285,6 +311,7 @@
       "category": "Smooth Jazz",
       "productType": "Vinyl",
       "description": "The debut vocal album by jazz trumpeter Chet Baker.",
+      "photoUrl": "https://picsum.photos/seed/chet-baker-sings/400/400",
       "price": 24.50,
       "sku": "VIN-CB-SING"
     },
@@ -293,6 +320,7 @@
       "category": "Smooth Jazz",
       "productType": "Vinyl",
       "description": "An album by American saxophonist Stan Getz and Brazilian guitarist João Gilberto.",
+      "photoUrl": "https://picsum.photos/seed/getz-gilberto/400/400",
       "price": 27.99,
       "sku": "VIN-GG-GG"
     },
@@ -301,6 +329,7 @@
       "category": "Techno",
       "productType": "Vinyl",
       "description": "The second studio album by English electronic music duo the Chemical Brothers.",
+      "photoUrl": "https://picsum.photos/seed/chemical-bros-dyoh/400/400",
       "price": 30.00,
       "sku": "VIN-CB-DYOH"
     },
@@ -309,6 +338,7 @@
       "category": "Ambient",
       "productType": "Vinyl",
       "description": "The sixth studio album by English musician Brian Eno, released in 1978.",
+      "photoUrl": "https://picsum.photos/seed/eno-mfa/400/400",
       "price": 25.00,
       "sku": "VIN-ENO-MFA"
     }
