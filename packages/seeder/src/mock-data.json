@@ -50,6 +50,12 @@
       ]
     }
   ],
+  "staticPages": [
+    { "title": "About Us", "slug": "about-us", "content": "We've been selling vinyl records since 2010. We are passionate about music and our customers. We are located in Warsaw, Poland." },
+    { "title": "Contact Us", "slug": "contact-us", "content": "Contact us at info@[store domain].com" },
+    { "title": "Terms and Conditions", "slug": "terms-and-conditions", "content": "Terms and Conditions" },
+    { "title": "Privacy Policy", "slug": "privacy-policy", "content": "Privacy Policy" }
+  ],
   "productTypes": [
     { "name": "Vinyl", "hasVariants": true, "isShippingRequired": true }
   ],

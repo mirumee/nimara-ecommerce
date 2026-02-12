@@ -54,7 +54,7 @@ export interface PageTypeCreateResponse {
 
 export interface PageCreateResponse {
   pageCreate: {
-    page: { id: string; title: string; slug: string } | null;
+    page: { id: string; title: string; slug: string; content: string } | null;
     errors: SaleorError[];
   };
 }
@@ -135,6 +135,11 @@ export interface ChannelsQueryResponse {
 
 export interface MockData {
   categories: CategoryMock[];
+  staticPages: {
+    title: string;
+    slug: string;
+    content?: string;
+  }[];
   productTypes: {
     name: string;
     hasVariants: boolean;

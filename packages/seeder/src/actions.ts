@@ -116,14 +116,28 @@ export async function createPage(
   title: string,
   slug: string,
   pageTypeId: string,
+  content?: string,
 ): Promise<string> {
   console.log(`[SEEDING] Creating page: ${title}...`);
+
+    const editorJsContent = content
+    ? JSON.stringify({
+        blocks: [
+          {
+            type: "paragraph",
+            data: { text: content },
+          },
+        ],
+      })
+    : undefined;
+
   const res = await client.request<PageCreateResponse>(PAGE_CREATE_MUTATION, {
     input: {
       title,
       slug,
       pageType: pageTypeId,
       isPublished: true,
+      content: editorJsContent,
     },
   });
 
@@ -134,7 +148,7 @@ export async function createPage(
   }
 
   const id = res.pageCreate.page!.id;
-  console.log(`[SEEDING] Created page instance: ${id}`);
+  console.log(`[SEEDING] Created page instance: ${title} (${id})`);
   return id;
 }
 

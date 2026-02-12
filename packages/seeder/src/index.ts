@@ -45,12 +45,12 @@ async function seed() {
     );
     await createPageType("Static page");
 
-    // Create Pages
-    const homepageId = await createPage("Homepage", "home", homepagePageTypeId);
-    const aboutPageId = await createPage(
-      "About usability",
-      "about",
-      homepagePageTypeId,
+    // Create homepage and static pages
+    const _homepageId = await createPage("Homepage", "home", homepagePageTypeId);
+    const staticPagesIds = await Promise.all(
+      mockData.staticPages.map((page) =>
+        createPage(page.title, page.slug, homepagePageTypeId, page.content),
+      ),
     );
 
     // Create mock store data foundation
@@ -61,9 +61,6 @@ async function seed() {
     // Create Menus and Menu Items
     const navbarId = await createMenu("navbar");
     const footerId = await createMenu("footer");
-
-    // Navbar items
-    await createMenuItem(navbarId, "Home", { pageId: homepageId });
 
     async function createMenuHierarchy(
       categories: any[],
@@ -81,16 +78,24 @@ async function seed() {
       }
     }
 
+    console.log("[SEEDING] Creating navbar menu items for categories...");
     await createMenuHierarchy(mockData.categories);
 
-    // Footer items
-    await createMenuItem(footerId, "About", { pageId: aboutPageId });
-    await createMenuItem(footerId, "GitHub", {
-      url: "https://github.com/mirumee/nimara-ecommerce",
-    });
+    console.log("[SEEDING] Creating footer menu items for static pages...");
+    await Promise.all(
+      mockData.staticPages.map(async (page, index) => {
+        const menuItemId = await createMenuItem(footerId, page.title, {
+          pageId: staticPagesIds[index],
+        });
+        console.log(
+          `[SEEDING] Created footer menu item: ${page.title} (${menuItemId})`,
+        );
+        return menuItemId;
+      }),
+    );
 
-    // Seed Products
-    console.log("[SEEDING] Seeding products...");
+    // Fetch default channel
+    console.log("[SEEDING] Fetching default channel...");
     const channels = await fetchChannels();
     const defaultChannel =
       channels.find((c) => c.slug === "default-channel") || channels[0];
@@ -99,6 +104,7 @@ async function seed() {
       throw new Error("No channel found in Saleor.");
     }
 
+    // Create products in bulk
     await createProducts(
       mockData.products,
       categoryMap,
