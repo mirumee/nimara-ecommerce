@@ -101,7 +101,7 @@
       "category": "Alternative Rock",
       "productType": "Vinyl",
       "description": "The third studio album by English rock band Radiohead, released in 1997.",
-      "photoUrl": "https://picsum.photos/seed/radiohead-okc/400/400",
+      "photoUrl": "https://picsum.photos/seed/radiohead-ok/400/400",
       "variants": [
         { "sku": "VIN-RH-OKC-180", "name": "180g Pressing", "price": 32.99 },
         { "sku": "VIN-RH-OKC-BLUE", "name": "Blue Vinyl", "price": 39.99 }
@@ -244,7 +244,7 @@
       "category": "Underground",
       "productType": "Vinyl",
       "description": "A collaboration between producer Madlib and rapper MF DOOM.",
-      "photoUrl": "https://picsum.photos/seed/madvillain-mv/400/400",
+      "photoUrl": "https://picsum.photos/seed/madvillain/400/400",
       "price": 35.50,
       "sku": "VIN-MV-MV"
     },
@@ -273,7 +273,7 @@
       "category": "Post-Rock",
       "productType": "Vinyl",
       "description": "The second studio album by British electronic musician Burial, released in 2007.",
-      "photoUrl": "https://picsum.photos/seed/burial-untrue/400/400",
+      "photoUrl": "https://picsum.photos/seed/burial/400/400",
       "price": 31.00,
       "sku": "VIN-BU-UT"
     },
@@ -282,7 +282,7 @@
       "category": "Post-Rock",
       "productType": "Vinyl",
       "description": "The debut album of the Canadian post-rock group Godspeed You! Black Emperor.",
-      "photoUrl": "https://picsum.photos/seed/gybe-fa/400/400",
+      "photoUrl": "https://picsum.photos/seed/godspeed-you-black-emperor/400/400",
       "price": 38.00,
       "sku": "VIN-GYBE-FA"
     },
