@@ -129,23 +129,6 @@ export const PRODUCT_TYPE_CREATE_MUTATION = gql`
   }
 `;
 
-export const PRODUCT_MEDIA_CREATE_MUTATION = gql`
-  mutation ProductMediaCreate($productId: ID!, $file: Upload!) {
-    productMediaCreate(
-      input: { product: $productId, image: $file, alt: "Product image" }
-    ) {
-      media {
-        id
-        url
-      }
-      errors {
-        field
-        message
-      }
-    }
-  }
-`;
-
 export const PRODUCT_BULK_CREATE_MUTATION = gql`
   mutation ProductBulkCreate($input: [ProductBulkCreateInput!]!) {
     productBulkCreate(products: $input) {
@@ -160,52 +143,6 @@ export const PRODUCT_BULK_CREATE_MUTATION = gql`
         }
       }
       count
-    }
-  }
-`;
-
-export const PRODUCT_VARIANT_CREATE_MUTATION = gql`
-  mutation ProductVariantCreate($input: ProductVariantCreateInput!) {
-    productVariantCreate(input: $input) {
-      productVariant {
-        id
-        name
-      }
-      errors {
-        field
-        message
-      }
-    }
-  }
-`;
-
-export const PRODUCT_CHANNEL_LISTING_UPDATE_MUTATION = gql`
-  mutation ProductChannelListingUpdate(
-    $id: ID!
-    $input: ProductChannelListingUpdateInput!
-  ) {
-    productChannelListingUpdate(id: $id, input: $input) {
-      product {
-        id
-      }
-      errors {
-        field
-        message
-      }
-    }
-  }
-`;
-
-export const PAGE_REORDER_ATTRIBUTES_MUTATION = gql`
-  mutation PageReorderAttributes($pageTypeId: ID!, $moves: [ReorderInput!]!) {
-    pageTypeReorderAttributes(pageTypeId: $pageTypeId, moves: $moves) {
-      pageType {
-        id
-      }
-      errors {
-        field
-        message
-      }
     }
   }
 `;
@@ -286,20 +223,6 @@ export const MENU_BULK_DELETE_MUTATION = gql`
   mutation MenuBulkDelete($ids: [ID!]!) {
     menuBulkDelete(ids: $ids) {
       count
-      errors {
-        field
-        message
-      }
-    }
-  }
-`;
-
-export const PAGE_TYPE_ASSIGN_ATTRIBUTES_MUTATION = gql`
-  mutation AssignPageTypeAttributes($pageTypeId: ID!, $attributeIds: [ID!]!) {
-    pageAttributeAssign(pageTypeId: $pageTypeId, attributeIds: $attributeIds) {
-      pageType {
-        id
-      }
       errors {
         field
         message
