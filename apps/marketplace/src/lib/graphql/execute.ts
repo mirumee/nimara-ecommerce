@@ -34,7 +34,7 @@ export async function executeGraphQL<
   token?: string | null,
   options?: ExecuteOptions,
 ): AsyncResult<TResult> {
-  const authToken = token ?? getAccessToken();
+  const authToken = token === undefined ? getAccessToken() : token;
   const client = graphqlClient(authToken);
 
   return client.execute<TResult, TVariables>(document, {

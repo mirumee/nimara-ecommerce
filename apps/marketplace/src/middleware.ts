@@ -8,6 +8,7 @@ const publicApiRoutes = [
   "/api/graphql",
   "/api/saleor/manifest",
   "/api/saleor/register",
+  "/api/saleor/bootstrap",
   "/api/saleor/webhooks",
 ];
 

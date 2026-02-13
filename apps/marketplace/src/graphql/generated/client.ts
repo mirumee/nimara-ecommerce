@@ -22625,9 +22625,17 @@ export type Query = {
   /**
    * Look up a transaction by ID.
    *
-   * Requires one of the following permissions: HANDLE_PAYMENTS.
+   * Requires one of the following permissions: HANDLE_PAYMENTS, MANAGE_ORDERS.
    */
   transaction: Maybe<TransactionItem>;
+  /**
+   * List of transactions. For apps with `MANAGE_ORDERS` permission, returns all transactions. For apps with just `HANDLE_PAYMENTS` permission, returns only transactions created by that app. For staff users, returns transactions from orders and checkouts in channels they have access to.
+   *
+   * Added in Saleor 3.22.
+   *
+   * Requires one of the following permissions: HANDLE_PAYMENTS, MANAGE_ORDERS.
+   */
+  transactions: Maybe<TransactionCountableConnection>;
   /**
    * Lookup a translatable item by ID.
    *
@@ -23164,6 +23172,14 @@ export type QueryTaxCountryConfigurationArgs = {
 export type QueryTransactionArgs = {
   id?: InputMaybe<Scalars["ID"]["input"]>;
   token?: InputMaybe<Scalars["UUID"]["input"]>;
+};
+
+export type QueryTransactionsArgs = {
+  after?: InputMaybe<Scalars["String"]["input"]>;
+  before?: InputMaybe<Scalars["String"]["input"]>;
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  last?: InputMaybe<Scalars["Int"]["input"]>;
+  where?: InputMaybe<TransactionWhereInput>;
 };
 
 export type QueryTranslationArgs = {
@@ -26656,6 +26672,21 @@ export type TransactionChargeRequested = Event & {
   version: Maybe<Scalars["String"]["output"]>;
 };
 
+export type TransactionCountableConnection = {
+  edges: Array<TransactionCountableEdge>;
+  /** Pagination data for this connection. */
+  pageInfo: PageInfo;
+  /** A total count of items in the collection. */
+  totalCount: Maybe<Scalars["Int"]["output"]>;
+};
+
+export type TransactionCountableEdge = {
+  /** A cursor for use in pagination. */
+  cursor: Scalars["String"]["output"];
+  /** The item at the end of the edge. */
+  node: TransactionItem;
+};
+
 /**
  * Creates transaction for checkout or order.
  *
@@ -26848,6 +26879,12 @@ export type TransactionFilterInput = {
   metadata?: InputMaybe<MetadataFilterInput>;
   /** Filter by payment method details used to pay for the order. */
   paymentMethodDetails?: InputMaybe<PaymentMethodDetailsFilterInput>;
+  /**
+   * Filter by PSP reference of transactions.
+   *
+   * Added in Saleor 3.22.
+   */
+  pspReference?: InputMaybe<StringFilterInput>;
 };
 
 /**
@@ -27244,6 +27281,18 @@ export type TransactionUpdateInput = {
   privateMetadata?: InputMaybe<Array<MetadataInput>>;
   /** PSP Reference of the transaction. */
   pspReference?: InputMaybe<Scalars["String"]["input"]>;
+};
+
+export type TransactionWhereInput = {
+  /** List of conditions that must be met. */
+  AND?: InputMaybe<Array<TransactionWhereInput>>;
+  /** A list of conditions of which at least one must be met. */
+  OR?: InputMaybe<Array<TransactionWhereInput>>;
+  /** Filter by app identifier. */
+  appIdentifier?: InputMaybe<StringFilterInput>;
+  ids?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  /** Filter by PSP reference. */
+  pspReference?: InputMaybe<StringFilterInput>;
 };
 
 export type TranslatableItem =
@@ -30446,6 +30495,51 @@ export type CollectionsListVariables = Exact<{
 
 export type CollectionsList = CollectionsList_Query;
 
+export type VendorsList_customers_UserCountableConnection_edges_UserCountableEdge_node_User =
+  {
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    isActive: boolean;
+    dateJoined: string;
+  };
+
+export type VendorsList_customers_UserCountableConnection_edges_UserCountableEdge =
+  {
+    cursor: string;
+    node: VendorsList_customers_UserCountableConnection_edges_UserCountableEdge_node_User;
+  };
+
+export type VendorsList_customers_UserCountableConnection_pageInfo_PageInfo = {
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  startCursor: string | null;
+  endCursor: string | null;
+};
+
+export type VendorsList_customers_UserCountableConnection = {
+  totalCount: number | null;
+  edges: Array<VendorsList_customers_UserCountableConnection_edges_UserCountableEdge>;
+  pageInfo: VendorsList_customers_UserCountableConnection_pageInfo_PageInfo;
+};
+
+export type VendorsList_Query = {
+  customers: VendorsList_customers_UserCountableConnection | null;
+};
+
+export type VendorsListVariables = Exact<{
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  last?: InputMaybe<Scalars["Int"]["input"]>;
+  after?: InputMaybe<Scalars["String"]["input"]>;
+  before?: InputMaybe<Scalars["String"]["input"]>;
+  filter?: InputMaybe<CustomerFilterInput>;
+  sortBy?: InputMaybe<UserSortingInput>;
+  search?: InputMaybe<Scalars["String"]["input"]>;
+}>;
+
+export type VendorsList = VendorsList_Query;
+
 export type Me_me_User_metadata_MetadataItem = { key: string; value: string };
 
 export type Me_me_User_addresses_Address_country_CountryDisplay = {
@@ -31845,6 +31939,38 @@ export const CollectionsListDocument = new TypedDocumentString(`
   CollectionsList,
   CollectionsListVariables
 >;
+export const VendorsListDocument = new TypedDocumentString(`
+    query VendorsList($first: Int, $last: Int, $after: String, $before: String, $filter: CustomerFilterInput, $sortBy: UserSortingInput, $search: String) {
+  customers(
+    first: $first
+    last: $last
+    after: $after
+    before: $before
+    filter: $filter
+    sortBy: $sortBy
+    search: $search
+  ) {
+    edges {
+      node {
+        id
+        email
+        firstName
+        lastName
+        isActive
+        dateJoined
+      }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    totalCount
+  }
+}
+    `) as unknown as TypedDocumentString<VendorsList, VendorsListVariables>;
 export const MeDocument = new TypedDocumentString(`
     query Me {
   me {

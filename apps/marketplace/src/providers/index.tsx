@@ -2,6 +2,8 @@
 
 import type { ReactNode } from "react";
 
+import { AppBridgeProvider } from "@saleor/app-sdk/app-bridge";
+
 import { AuthProvider } from "./auth-provider";
 
 interface ProvidersProps {
@@ -9,5 +11,9 @@ interface ProvidersProps {
 }
 
 export function Providers({ children }: ProvidersProps) {
-  return <AuthProvider>{children}</AuthProvider>;
+  return (
+    <AppBridgeProvider>
+      <AuthProvider>{children}</AuthProvider>
+    </AppBridgeProvider>
+  );
 }

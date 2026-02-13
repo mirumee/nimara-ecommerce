@@ -1,8 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-import { setAppConfig } from "@/lib/saleor/app-config";
+import { getAppConfig, setAppConfig } from "@/lib/saleor/app-config";
 import { APP_CONFIG } from "@/lib/saleor/consts";
+import { bootstrapVendorProfileModel } from "@/lib/saleor/vendor-profile-bootstrap";
 
 const registerBodySchema = z.object({
   auth_token: z.string(),
@@ -110,7 +111,46 @@ export async function POST(request: NextRequest) {
       console.warn("Could not fetch app ID, registration may be incomplete");
     }
 
-    // Store app configuration
+    // Get existing config (for vendor profile page type ID if re-registering)
+    const existingConfig = await getAppConfig(saleorDomain);
+
+    const existingPageTypeId = existingConfig?.config
+      ? (existingConfig.config as { vendorProfilePageTypeId?: string })
+          .vendorProfilePageTypeId
+      : undefined;
+
+    // Bootstrap Vendor Profile model – generates unique slug/ID during installation
+    const bootstrapResult = await bootstrapVendorProfileModel(
+      saleorApiUrl,
+      authToken,
+      existingPageTypeId,
+    );
+
+    const vendorProfilePageTypeId =
+      bootstrapResult.pageTypeId ?? existingPageTypeId;
+
+    if (!bootstrapResult.ok) {
+      console.error(
+        `Vendor profile bootstrap failed for ${saleorDomain}:`,
+        bootstrapResult.error,
+      );
+
+      return NextResponse.json(
+        {
+          error: "Vendor profile bootstrap failed",
+          details: bootstrapResult.error,
+        },
+        { status: 500 },
+      );
+    } else if (bootstrapResult.skipped) {
+      console.log(`Vendor profile model already exists for ${saleorDomain}`);
+    } else {
+      console.log(
+        `Vendor profile model created for ${saleorDomain} (pageTypeId: ${vendorProfilePageTypeId})`,
+      );
+    }
+
+    // Store app configuration (including generated vendor profile page type ID)
     await setAppConfig(saleorDomain, {
       authToken,
       saleorAppId: appId || "",
@@ -118,6 +158,9 @@ export async function POST(request: NextRequest) {
       config: {
         apiUrl: saleorApiUrl,
         registeredAt: new Date().toISOString(),
+        ...(vendorProfilePageTypeId && {
+          vendorProfilePageTypeId,
+        }),
       },
     });
 

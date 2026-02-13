@@ -55,9 +55,21 @@ export async function GET(request: NextRequest) {
       "MANAGE_ORDERS",
       "MANAGE_SHIPPING",
       "MANAGE_CHANNELS",
+      "MANAGE_PAGES",
+      "MANAGE_PAGE_TYPES_AND_ATTRIBUTES",
     ],
     tokenTargetUrl: manifestUrl(baseUrl, "/api/saleor/register"),
     appUrl: manifestUrl(baseUrl, "/app"),
+    extensions: [
+      {
+        label: "Marketplace",
+        mount: "NAVIGATION_CATALOG",
+        target: "NEW_TAB",
+        permissions: ["MANAGE_USERS"],
+        url: manifestUrl(baseUrl, "/app"),
+        options: { newTabTarget: { method: "GET" } },
+      },
+    ],
     webhooks: [
       {
         name: "Order created",
@@ -88,6 +100,21 @@ export async function GET(request: NextRequest) {
           key
           value
         }
+      }
+    }
+  }
+}`,
+        syncEvents: [],
+      },
+      {
+        name: "App deleted",
+        targetUrl: manifestUrl(baseUrl, "/api/saleor/webhooks/app-deleted"),
+        asyncEvents: ["APP_DELETED"],
+        query: `subscription AppDeletedSubscription {
+  event {
+    ... on AppDeleted {
+      app {
+        id
       }
     }
   }

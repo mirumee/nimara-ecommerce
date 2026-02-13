@@ -1,5 +1,6 @@
 "use client";
 
+import { useAppBridge } from "@saleor/app-sdk/app-bridge";
 import { useRouter } from "next/navigation";
 import {
   createContext,
@@ -13,6 +14,11 @@ import {
 
 import { isTokenExpired, isTokenExpiringSoon } from "@/lib/auth-utils";
 import { getSaleorDomainHeader } from "@/lib/graphql/client";
+import {
+  getAppBridgeDomain,
+  initDomainFromUrl,
+  setAppBridgeDomain,
+} from "@/lib/saleor/app-bridge-domain";
 
 // Storage keys for auth tokens
 const AUTH_ACCESS_TOKEN_KEY = "auth_token";
@@ -28,6 +34,8 @@ interface User {
 }
 
 interface AuthContextType {
+  /** True when opened from dashboard with saleorApiUrl in URL (uses app token) */
+  dashboardContext: boolean;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
@@ -55,11 +63,19 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
+  const { appBridgeState } = useAppBridge();
   const [user, setUser] = useState<User | null>(null);
   const [token, setTokenState] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [dashboardContext, setDashboardContext] = useState(false);
   const router = useRouter();
   const refreshInProgress = useRef(false);
+
+  /** Token from Saleor dashboard App Bridge (when app opened from Saleor Cloud) */
+  const appBridgeToken =
+    appBridgeState?.ready && appBridgeState?.token
+      ? appBridgeState.token
+      : null;
 
   const setToken = useCallback((newToken: string) => {
     setTokenState(newToken);
@@ -238,8 +254,32 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, [setToken]);
 
-  // Initialize auth state from localStorage
+  // Parse saleorApiUrl from URL (NEW_TAB extension with GET) – fallback when App Bridge has no token
   useEffect(() => {
+    if (typeof window !== "undefined" && initDomainFromUrl()) {
+      setDashboardContext(true);
+      setIsLoading(false);
+    }
+  }, []);
+
+  // When App Bridge provides token (app opened from Saleor Cloud dashboard iframe), use it
+  useEffect(() => {
+    if (appBridgeToken && appBridgeState?.saleorApiUrl) {
+      setAppBridgeDomain(appBridgeState.saleorApiUrl);
+      setTokenState(appBridgeToken);
+      setDashboardContext(true);
+      fetchUser(appBridgeToken)
+        .then(() => setIsLoading(false))
+        .catch(() => setIsLoading(false));
+    }
+  }, [appBridgeToken, appBridgeState?.saleorApiUrl, fetchUser]);
+
+  // Initialize auth from localStorage when not using App Bridge
+  useEffect(() => {
+    if (appBridgeToken) {
+      return;
+    }
+
     const initializeAuth = async () => {
       try {
         const storedToken =
@@ -256,7 +296,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
         // Check if token is expired
         if (isTokenExpired(storedToken)) {
           console.log("Token expired, attempting refresh...");
-          // Try to refresh the token
           const newToken = await refreshAccessToken();
 
           if (!newToken) {
@@ -267,11 +306,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
             return;
           }
 
-          // Use the new token to fetch user
           setTokenState(newToken);
           await fetchUser(newToken);
         } else {
-          // Token is still valid
           setTokenState(storedToken);
           await fetchUser(storedToken);
         }
@@ -284,7 +321,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     };
 
     void initializeAuth();
-  }, [clearAuth, fetchUser, refreshAccessToken]);
+  }, [appBridgeToken, clearAuth, fetchUser, refreshAccessToken]);
 
   const login = useCallback(
     async (email: string, password: string) => {
@@ -439,11 +476,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return () => clearInterval(interval);
   }, [token, user, refreshAccessToken]);
 
+  // Authenticated: Saleor Cloud user token (App Bridge/login) OR dashboard context (saleorApiUrl in URL)
+  const isAuthenticated =
+    (!!token && (!!user || !!appBridgeToken)) ||
+    (dashboardContext && !!getAppBridgeDomain());
+
   return (
     <AuthContext.Provider
       value={{
         user,
-        isAuthenticated: !!user && !!token,
+        dashboardContext: dashboardContext && !!getAppBridgeDomain(),
+        isAuthenticated,
         isLoading,
         token,
         login,
