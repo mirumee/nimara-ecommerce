@@ -3,6 +3,10 @@ import { HOMEPAGE_ATTRIBUTES } from "../constants";
 import { ATTRIBUTE_BULK_CREATE_MUTATION } from "../mutations";
 import { AttributeBulkCreateResponse } from "../types";
 
+/**
+ * Creates homepage attributes.
+ * @returns Map of attribute slugs to attribute ids.
+ */
 export async function createHomepageAttributes(): Promise<
   Record<string, string>
 > {

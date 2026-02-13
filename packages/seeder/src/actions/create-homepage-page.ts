@@ -4,6 +4,13 @@ import { PAGE_CREATE_MUTATION } from "../mutations";
 import { MockData } from "../types";
 import { uploadPageFileAttributesGeneric } from "./upload-page-file-attributes-generic";
 
+/**
+ * Creates homepage page.
+ * @param pageTypeId - Id of the page type.
+ * @param attrIdsBySlug - Map of attribute slugs to attribute ids.
+ * @param productIds - Array of product ids.
+ * @param homepage - Homepage data.
+ */
 export async function createHomepagePage(
   pageTypeId: string,
   attrIdsBySlug: Record<string, string>,

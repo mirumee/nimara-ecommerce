@@ -2,6 +2,13 @@ import { client } from "../client";
 import { MENU_ITEM_CREATE_MUTATION } from "../mutations";
 import { MenuItemCreateResponse } from "../types";
 
+/**
+ * Creates a menu item.
+ * @param menuId - Id of the menu.
+ * @param name - Name of the menu item.
+ * @param link - Link to the menu item.
+ * @returns Id of the created menu item.
+ */
 export async function createMenuItem(
   menuId: string,
   name: string,

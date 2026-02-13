@@ -2,6 +2,11 @@ import { client } from "../client";
 import { CATEGORY_CREATE_MUTATION } from "../mutations";
 import { CategoryCreateResponse, MockData } from "../types";
 
+/**
+ * Creates categories recursively.
+ * @param categories - Array of category objects.
+ * @returns Map of category names to category ids.
+ */
 export async function createCategories(
   categories: MockData["categories"],
 ): Promise<Record<string, string>> {

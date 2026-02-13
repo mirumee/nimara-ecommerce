@@ -11,6 +11,9 @@ if (!SALEOR_API_URL || !SALEOR_APP_TOKEN) {
   process.exit(1);
 }
 
+/**
+ * GraphQL client for Saleor API.
+ */
 export const client = new GraphQLClient(SALEOR_API_URL, {
   headers: {
     Authorization: `Bearer ${SALEOR_APP_TOKEN}`,

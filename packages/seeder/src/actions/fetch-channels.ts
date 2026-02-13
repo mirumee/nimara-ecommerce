@@ -2,6 +2,10 @@ import { gql } from "graphql-request";
 import { ChannelNode, ChannelsQueryResponse } from "../types";
 import { client } from "../client";
 
+/**
+ * Fetches all channels.
+ * @returns Array of channel nodes.
+ */
 export async function fetchChannels(): Promise<ChannelNode[]> {
   const query = gql`
     query {

@@ -2,6 +2,14 @@ import { client } from "../client";
 import { PRODUCT_BULK_CREATE_MUTATION } from "../mutations";
 import { MockData, ProductBulkCreateResponse } from "../types";
 
+/**
+ * Creates products in bulk.
+ * @param products - Array of product objects.
+ * @param categoryMap - Map of category names to category ids.
+ * @param productTypeMap - Map of product type names to product type ids.
+ * @param channelId - Id of the channel.
+ * @returns Array of created product results.
+ */
 export async function createProducts(
   products: MockData["products"],
   categoryMap: Record<string, string>,

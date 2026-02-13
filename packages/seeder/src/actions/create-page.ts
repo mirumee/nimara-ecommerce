@@ -2,6 +2,14 @@ import { client } from "../client";
 import { PAGE_CREATE_MUTATION } from "../mutations";
 import { PageCreateResponse } from "../types";
 
+/**
+ * Creates a page.
+ * @param title - Title of the page.
+ * @param slug - Slug of the page.
+ * @param pageTypeId - Id of the page type.
+ * @param content - Content of the page.
+ * @returns Id of the created page.
+ */
 export async function createPage(
   title: string,
   slug: string,

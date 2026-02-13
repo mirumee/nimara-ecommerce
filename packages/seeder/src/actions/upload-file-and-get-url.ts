@@ -1,6 +1,11 @@
 const SALEOR_API_URL = process.env.NEXT_PUBLIC_SALEOR_API_URL;
 const SALEOR_APP_TOKEN = process.env.SALEOR_APP_TOKEN;
 
+/**
+ * Uploads a file and gets its URL.
+ * @param imageUrl - URL of the image to upload.
+ * @returns URL of the uploaded file.
+ */
 export async function uploadFileAndGetUrl(imageUrl: string): Promise<string> {
   const imageRes = await fetch(imageUrl);
   const buffer = Buffer.from(await imageRes.arrayBuffer());

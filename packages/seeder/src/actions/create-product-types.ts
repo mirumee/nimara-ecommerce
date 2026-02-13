@@ -2,6 +2,11 @@ import { client } from "../client";
 import { PRODUCT_TYPE_CREATE_MUTATION } from "../mutations";
 import { MockData, ProductTypeCreateResponse } from "../types";
 
+/**
+ * Creates product types.
+ * @param productTypes - Array of product type objects.
+ * @returns Map of product type names to product type ids.
+ */
 export async function createProductTypes(
   productTypes: MockData["productTypes"],
 ): Promise<Record<string, string>> {

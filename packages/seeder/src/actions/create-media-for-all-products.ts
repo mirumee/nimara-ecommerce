@@ -3,6 +3,11 @@ import { MockData, ProductBulkCreateResponse } from "../types";
 const SALEOR_API_URL = process.env.NEXT_PUBLIC_SALEOR_API_URL;
 const SALEOR_APP_TOKEN = process.env.SALEOR_APP_TOKEN;
 
+/**
+ * Creates media for all products.
+ * @param products - Array of product objects.
+ * @param seedProducts - Array of seed product objects.
+ */
 export async function createMediaForAllProducts(
   products: ProductBulkCreateResponse["productBulkCreate"]["results"],
   seedProducts: MockData["products"],

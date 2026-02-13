@@ -1,9 +1,13 @@
-import { gql } from "graphql-request";
 import { client } from "../client";
 import { FileUploadTask } from "../types";
 import { PAGE_UPDATE_MUTATION } from "../mutations";
 import { uploadFileAndGetUrl } from "./upload-file-and-get-url";
 
+/**
+ * Uploads file attributes for a page.
+ * @param pageId - Id of the page.
+ * @param fileUploads - Array of file upload tasks.
+ */
 export async function uploadPageFileAttributesGeneric(
   pageId: string,
   fileUploads: FileUploadTask[],
