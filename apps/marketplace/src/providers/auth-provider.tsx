@@ -62,8 +62,19 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+function useSafeAppBridge(): { appBridgeState: ReturnType<typeof useAppBridge>["appBridgeState"] | null } {
+  try {
+    // When the app is opened outside of Saleor dashboard (no AppBridgeProvider),
+    // useAppBridge() throws. We treat it as "no app bridge available".
+    const { appBridgeState } = useAppBridge();
+    return { appBridgeState };
+  } catch {
+    return { appBridgeState: null };
+  }
+}
+
 export function AuthProvider({ children }: AuthProviderProps) {
-  const { appBridgeState } = useAppBridge();
+  const { appBridgeState } = useSafeAppBridge();
   const [user, setUser] = useState<User | null>(null);
   const [token, setTokenState] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -116,6 +127,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 email
                 firstName
                 lastName
+                metadata {
+                  key
+                  value
+                }
               }
             }
           `,
@@ -129,6 +144,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           firstName?: string;
           id: string;
           lastName?: string;
+          metadata?: Array<{ key: string; value: string }>;
         };
       };
       errors?: Array<{ message?: string }>;
@@ -141,11 +157,82 @@ export function AuthProvider({ children }: AuthProviderProps) {
     if (data.data?.me) {
       const me = data.data.me;
 
+      const metadata = Array.isArray(me.metadata) ? me.metadata : [];
+      const metadataMap = metadata.reduce<Record<string, string>>((acc, item) => {
+        if (item?.key) {
+          acc[item.key] = item.value;
+        }
+
+        return acc;
+      }, {});
+
+      const vendorPageId = metadataMap["vendor.id"] || "";
+
+      if (vendorPageId) {
+        const vendorResponse = await fetch("/api/graphql", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+            ...saleorDomain,
+          },
+          body: JSON.stringify({
+            query: `
+              query VendorPageStatus($id: ID!) {
+                page(id: $id) {
+                  id
+                  attributes {
+                    attribute { slug }
+                    values { name }
+                  }
+                }
+              }
+            `,
+            variables: { id: vendorPageId },
+          }),
+        });
+
+        const vendorData = (await vendorResponse.json()) as {
+          data?: {
+            page?: {
+              attributes?: Array<{
+                attribute?: { slug?: string | null } | null;
+                values?: Array<{ name?: string | null } | null> | null;
+              }> | null;
+            } | null;
+          };
+          errors?: Array<{ message?: unknown }>;
+        };
+
+        if (vendorData.errors?.length) {
+          const msg = vendorData.errors
+            .map((e) => (e.message != null ? String(e.message) : ""))
+            .filter(Boolean)
+            .join(", ");
+
+          throw new Error(msg || "Failed to fetch vendor status");
+        }
+
+        const attrs = vendorData.data?.page?.attributes ?? [];
+        const statusAttr = attrs.find(
+          (a) => a?.attribute?.slug === "vendor-status",
+        );
+        const statusValue =
+          statusAttr?.values?.[0]?.name != null
+            ? String(statusAttr.values[0]?.name)
+            : "";
+
+        if (statusValue !== "active") {
+          throw new Error("Your account is not yet active.");
+        }
+      }
+
       setUser({
         email: me.email ?? "",
         firstName: me.firstName,
         id: me.id,
         lastName: me.lastName,
+        ...(vendorPageId ? { vendorId: vendorPageId } : {}),
       });
 
       return true;
@@ -264,11 +351,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // When App Bridge provides token (app opened from Saleor Cloud dashboard iframe), use it
   useEffect(() => {
-    if (appBridgeToken && appBridgeState?.saleorApiUrl) {
-      setAppBridgeDomain(appBridgeState.saleorApiUrl);
-      setTokenState(appBridgeToken);
+    const saleorApiUrl =
+      typeof appBridgeState?.saleorApiUrl === "string"
+        ? appBridgeState.saleorApiUrl
+        : null;
+    const tokenFromBridge = typeof appBridgeToken === "string" ? appBridgeToken : null;
+
+    if (tokenFromBridge && saleorApiUrl) {
+      setAppBridgeDomain(String(saleorApiUrl));
+      setTokenState(tokenFromBridge);
       setDashboardContext(true);
-      fetchUser(appBridgeToken)
+      fetchUser(tokenFromBridge)
         .then(() => setIsLoading(false))
         .catch(() => setIsLoading(false));
     }
@@ -419,24 +512,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
           localStorage.setItem(AUTH_CSRF_TOKEN_KEY, tokenCreate.csrfToken);
         }
 
-        const loginUser = tokenCreate.user;
+        // Fetch user (and validate vendor status if linked)
+        try {
+          await fetchUser(String(tokenValue));
+        } catch (e) {
+          clearAuth();
+          throw e;
+        }
 
-        setUser(
-          loginUser
-            ? {
-                email: loginUser.email ?? "",
-                firstName: loginUser.firstName,
-                id: loginUser.id,
-                lastName: loginUser.lastName,
-              }
-            : null,
-        );
         router.push("/dashboard");
       } finally {
         setIsLoading(false);
       }
     },
-    [router, setToken],
+    [clearAuth, fetchUser, router, setToken],
   );
 
   const logout = useCallback(async () => {

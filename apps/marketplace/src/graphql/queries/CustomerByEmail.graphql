@@ -1,0 +1,11 @@
+query CustomerByEmail($search: String!) {
+  customers(first: 1, search: $search) {
+    edges {
+      node {
+        id
+        email
+      }
+    }
+  }
+}
+

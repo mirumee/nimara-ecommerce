@@ -20,6 +20,19 @@ import { requireVendorID } from "./auth";
 const MARKETPLACE_CHANNEL =
   process.env.NEXT_PUBLIC_SALEOR_MARKETPLACE_CHANNEL_SLUG || "default-channel";
 
+function withVendorMetadata<T extends { metadata?: Array<{ key: string; value: string }> }>(
+  input: T,
+  vendorId: string,
+): T {
+  const metadata = Array.isArray(input.metadata) ? [...input.metadata] : [];
+  const withoutVendor = metadata.filter((m) => m.key !== "vendor.id");
+
+  return {
+    ...input,
+    metadata: [...withoutVendor, { key: "vendor.id", value: vendorId }],
+  };
+}
+
 // Get the default Saleor GraphQL endpoint from environment
 function getDefaultSaleorEndpoint(): string {
   const saleorUrl = process.env.NEXT_PUBLIC_SALEOR_URL;
@@ -97,6 +110,7 @@ async function makeSaleorSchema() {
             "customers",
             "order",
             "orders",
+            "page",
             "pages",
             "product",
             "products",
@@ -222,15 +236,33 @@ export async function getStitchedSchema() {
             });
           },
         },
+        productBulkCreate: {
+          resolve(_source, args, context: ServerContext, info) {
+            const vendorId = requireVendorID(context);
+            const products = (args?.products ?? []).map((p: any) =>
+              withVendorMetadata(p, vendorId),
+            );
+
+            return delegateToSchema({
+              schema: saleorSchema,
+              operation: OperationTypeNode.MUTATION,
+              fieldName: "productBulkCreate",
+              args: { ...args, products },
+              context,
+              info,
+            });
+          },
+        },
         productUpdate: {
           resolve(_source, args, context: ServerContext, info) {
-            requireVendorID(context);
+            const vendorId = requireVendorID(context);
+            const input = args?.input ? withVendorMetadata(args.input, vendorId) : args?.input;
 
             return delegateToSchema({
               schema: saleorSchema,
               operation: OperationTypeNode.MUTATION,
               fieldName: "productUpdate",
-              args,
+              args: { ...args, input },
               context,
               info,
             });

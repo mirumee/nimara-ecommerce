@@ -8,6 +8,56 @@ import {
   type ServerContext,
 } from "@/lib/saleor/types";
 
+async function fetchVendorIdForUser(args: {
+  authToken: string;
+  saleorDomain: string;
+  userId: string;
+}): Promise<string | null> {
+  const query = `
+    query UserVendorId($id: ID!) {
+      user(id: $id) {
+        id
+        metadata {
+          key
+          value
+        }
+      }
+    }
+  `;
+
+  const response = await fetch(`https://${args.saleorDomain}/graphql/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${args.authToken}`,
+    },
+    body: JSON.stringify({ query, variables: { id: args.userId } }),
+  });
+
+  const json = (await response.json()) as {
+    data?: { user?: { metadata?: Array<{ key: string; value: string }> } };
+    errors?: Array<{ message?: string }>;
+  };
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch user metadata (status=${response.status})`,
+    );
+  }
+
+  if (json.errors?.length) {
+    throw new Error(
+      json.errors.map((e) => e.message).filter(Boolean).join("; ") ||
+        "Failed to fetch user metadata",
+    );
+  }
+
+  const metadata = json.data?.user?.metadata ?? [];
+  const vendorId = metadata.find((m) => m.key === "vendor.id")?.value ?? null;
+
+  return vendorId || null;
+}
+
 /**
  * Configuration for determining authorization requirements for GraphQL operations.
  */
@@ -248,11 +298,21 @@ export async function authorizeGraphQLContext(
     }
   }
 
-  const vendorId = decoded.user_id;
+  const userId = decoded.user_id;
 
-  if (!vendorId) {
-    throw new GraphQLError("Invalid token: missing vendor ID.", {
+  if (!userId) {
+    throw new GraphQLError("Invalid token: missing user ID.", {
       extensions: { code: "UNAUTHORIZED" },
+    });
+  }
+
+  let vendorId: string | null = null;
+
+  if (appConfig?.authToken) {
+    vendorId = await fetchVendorIdForUser({
+      authToken: appConfig.authToken,
+      saleorDomain,
+      userId,
     });
   }
 
@@ -260,7 +320,9 @@ export async function authorizeGraphQLContext(
     request,
     appConfig: appConfig || undefined,
     saleorDomain,
-    vendorId,
+    userId,
+    // Vendor isolation uses vendor profile id, not the Saleor user id.
+    vendorId: vendorId || undefined,
     proxiedCookies: [],
   };
 }

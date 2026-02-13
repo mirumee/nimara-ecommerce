@@ -2,12 +2,12 @@
  * Metadata keys used in Saleor
  *
  * Vendor identification:
- * - vendor.id = UUID (canonical vendor identifier, from generateVendorId())
- * - Stored in User metadata to link customer account to vendor profile
- * - Stored in Product/Order metadata to associate with vendor
+ * - vendor.id = Vendor Profile Page.id (links customer account to vendor profile)
+ * - Stored in Customer metadata to link account to vendor profile
+ * - Stored in Product/Order metadata to associate objects with vendor
  */
 export const METADATA_KEYS = {
-  /** Vendor ID (UUID) – canonical vendor identifier; links User/Product/Order to vendor */
+  /** Vendor profile id – links Customer/Product/Order to vendor */
   VENDOR_ID: "vendor.id",
 } as const;
 

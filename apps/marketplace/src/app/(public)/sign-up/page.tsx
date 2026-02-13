@@ -20,6 +20,7 @@ import {
 
 import { InputField } from "@/components/fields/input-field";
 import { PasswordField } from "@/components/fields/password-field";
+import { TextareaField } from "@/components/fields/textarea-field";
 
 import { registerAccount } from "./actions";
 
@@ -28,6 +29,8 @@ const signUpSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters"),
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
+  vendorName: z.string().min(1, "Vendor name is required"),
+  vendorDescription: z.string().min(1, "Vendor description is required"),
 });
 
 type SignUpFormData = z.infer<typeof signUpSchema>;
@@ -42,6 +45,8 @@ export default function SignUpPage() {
       password: "",
       firstName: "",
       lastName: "",
+      vendorName: "",
+      vendorDescription: "",
     },
     mode: "onChange",
     resolver: zodResolver(signUpSchema),
@@ -56,6 +61,8 @@ export default function SignUpPage() {
         password: data.password,
         firstName: data.firstName,
         lastName: data.lastName,
+        vendorName: data.vendorName,
+        vendorDescription: data.vendorDescription,
         redirectUrl: `${window.location.origin}/account-confirm`,
         channel:
           process.env.NEXT_PUBLIC_SALEOR_MARKETPLACE_CHANNEL_SLUG ??
@@ -187,6 +194,24 @@ export default function SignUpPage() {
                   placeholder: "********",
                   autoComplete: "new-password",
                   disabled: isPending,
+                }}
+              />
+              <InputField
+                name="vendorName"
+                label="Vendor name"
+                inputProps={{
+                  placeholder: "Acme Bikes",
+                  autoComplete: "organization",
+                  disabled: isPending,
+                }}
+              />
+              <TextareaField
+                name="vendorDescription"
+                label="Vendor description"
+                textareaProps={{
+                  placeholder: "Tell us about your business...",
+                  disabled: isPending,
+                  rows: 4,
                 }}
               />
             </div>
