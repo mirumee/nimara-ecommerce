@@ -19,9 +19,11 @@ export async function createMediaForAllProducts(
     const photoUrl = seedProducts[i]?.photoUrl;
 
     if (!photoUrl) {
-      console.log(`[SEEDING] Skipping product ${product.product!.name} - no photo URL`);
+      console.log(
+        `[SEEDING] Skipping product ${product.product!.name} - no photo URL`,
+      );
       continue;
-    };
+    }
 
     try {
       console.log(

@@ -1,5 +1,5 @@
 {
-    "homepage": {
+  "homepage": {
     "bannerHeader": "Discover Timeless Vinyl",
     "bannerButtonText": "Shop Now",
     "bannerImageUrl": "https://picsum.photos/id/1041/1200/600.jpg",
@@ -67,10 +67,26 @@
     }
   ],
   "staticPages": [
-    { "title": "About Us", "slug": "about-us", "content": "We've been selling vinyl records since 2010. We are passionate about music and our customers. We are located in Warsaw, Poland." },
-    { "title": "Contact Us", "slug": "contact-us", "content": "Contact us at info@[store domain].com" },
-    { "title": "Terms and Conditions", "slug": "terms-and-conditions", "content": "Terms and Conditions" },
-    { "title": "Privacy Policy", "slug": "privacy-policy", "content": "Privacy Policy" }
+    {
+      "title": "About Us",
+      "slug": "about-us",
+      "content": "We've been selling vinyl records since 2010. We are passionate about music and our customers. We are located in Warsaw, Poland."
+    },
+    {
+      "title": "Contact Us",
+      "slug": "contact-us",
+      "content": "Contact us at info@[store domain].com"
+    },
+    {
+      "title": "Terms and Conditions",
+      "slug": "terms-and-conditions",
+      "content": "Terms and Conditions"
+    },
+    {
+      "title": "Privacy Policy",
+      "slug": "privacy-policy",
+      "content": "Privacy Policy"
+    }
   ],
   "productTypes": [
     { "name": "Vinyl", "hasVariants": true, "isShippingRequired": true }
@@ -84,7 +100,11 @@
       "photoUrl": "https://picsum.photos/seed/pink-floyd-dsom/400/400",
       "variants": [
         { "sku": "VIN-PF-DSOM-STD", "name": "Black Vinyl", "price": 35.99 },
-        { "sku": "VIN-PF-DSOM-CLR", "name": "Clear Vinyl Limited", "price": 49.99 }
+        {
+          "sku": "VIN-PF-DSOM-CLR",
+          "name": "Clear Vinyl Limited",
+          "price": 49.99
+        }
       ]
     },
     {
@@ -93,7 +113,7 @@
       "productType": "Vinyl",
       "description": "The debut studio album by British rock band King Crimson, released on 10 October 1969.",
       "photoUrl": "https://picsum.photos/seed/king-crimson-itck/400/400",
-      "price": 38.50,
+      "price": 38.5,
       "sku": "VIN-KC-ITCK"
     },
     {
@@ -122,7 +142,7 @@
       "productType": "Vinyl",
       "description": "The eleventh studio album by the English rock band the Beatles, released in 1969.",
       "photoUrl": "https://picsum.photos/seed/beatles-abbey-road/400/400",
-      "price": 45.00,
+      "price": 45.0,
       "sku": "VIN-TB-AR"
     },
     {
@@ -141,7 +161,11 @@
       "description": "The best-selling jazz album of all time by Miles Davis.",
       "photoUrl": "https://picsum.photos/seed/miles-davis-kob/400/400",
       "variants": [
-        { "sku": "VIN-MD-KOB-STD", "name": "Standard Pressing", "price": 29.99 },
+        {
+          "sku": "VIN-MD-KOB-STD",
+          "name": "Standard Pressing",
+          "price": 29.99
+        },
         { "sku": "VIN-MD-KOB-MONO", "name": "Mono Edition", "price": 34.99 }
       ]
     },
@@ -151,7 +175,7 @@
       "productType": "Vinyl",
       "description": "A studio album by American jazz saxophonist John Coltrane, released in 1965.",
       "photoUrl": "https://picsum.photos/seed/coltrane-als/400/400",
-      "price": 31.50,
+      "price": 31.5,
       "sku": "VIN-JC-ALS"
     },
     {
@@ -169,7 +193,7 @@
       "productType": "Vinyl",
       "description": "The eighth studio album by jazz fusion group Weather Report, released in 1977.",
       "photoUrl": "https://picsum.photos/seed/weather-report-hw/400/400",
-      "price": 27.50,
+      "price": 27.5,
       "sku": "VIN-WR-HW"
     },
     {
@@ -179,8 +203,12 @@
       "description": "Daft Punk's fourth and final studio album.",
       "photoUrl": "https://picsum.photos/seed/daft-punk-ram/400/400",
       "variants": [
-        { "sku": "VIN-DP-RAM-2LP", "name": "Standard 2LP", "price": 42.50 },
-        { "sku": "VIN-DP-RAM-10TH", "name": "10th Anniversary Boxset", "price": 89.99 }
+        { "sku": "VIN-DP-RAM-2LP", "name": "Standard 2LP", "price": 42.5 },
+        {
+          "sku": "VIN-DP-RAM-10TH",
+          "name": "10th Anniversary Boxset",
+          "price": 89.99
+        }
       ]
     },
     {
@@ -198,7 +226,7 @@
       "productType": "Vinyl",
       "description": "The seventh studio album by the German electronic music band Kraftwerk, released in 1978.",
       "photoUrl": "https://picsum.photos/seed/kraftwerk-tmm/400/400",
-      "price": 33.00,
+      "price": 33.0,
       "sku": "VIN-KW-TMM"
     },
     {
@@ -245,7 +273,7 @@
       "productType": "Vinyl",
       "description": "A collaboration between producer Madlib and rapper MF DOOM.",
       "photoUrl": "https://picsum.photos/seed/madvillain/400/400",
-      "price": 35.50,
+      "price": 35.5,
       "sku": "VIN-MV-MV"
     },
     {
@@ -265,7 +293,7 @@
       "productType": "Vinyl",
       "description": "Herbert von Karajan's legendary conducting of Beethoven's Ninth.",
       "photoUrl": "https://picsum.photos/seed/beethoven-s9/400/400",
-      "price": 26.50,
+      "price": 26.5,
       "sku": "VIN-BEE-S9"
     },
     {
@@ -274,7 +302,7 @@
       "productType": "Vinyl",
       "description": "The second studio album by British electronic musician Burial, released in 2007.",
       "photoUrl": "https://picsum.photos/seed/burial/400/400",
-      "price": 31.00,
+      "price": 31.0,
       "sku": "VIN-BU-UT"
     },
     {
@@ -283,7 +311,7 @@
       "productType": "Vinyl",
       "description": "The debut album of the Canadian post-rock group Godspeed You! Black Emperor.",
       "photoUrl": "https://picsum.photos/seed/godspeed-you-black-emperor/400/400",
-      "price": 38.00,
+      "price": 38.0,
       "sku": "VIN-GYBE-FA"
     },
     {
@@ -292,7 +320,7 @@
       "productType": "Vinyl",
       "description": "The seventh studio album by English electronic music band Depeche Mode, released in 1990.",
       "photoUrl": "https://picsum.photos/seed/depeche-violator/400/400",
-      "price": 32.50,
+      "price": 32.5,
       "sku": "VIN-DM-VIO"
     },
     {
@@ -301,7 +329,7 @@
       "productType": "Vinyl",
       "description": "The eighth studio album by English rock band the Cure, released in 1989.",
       "photoUrl": "https://picsum.photos/seed/cure-disintegration/400/400",
-      "price": 34.00,
+      "price": 34.0,
       "sku": "VIN-CURE-DIS"
     },
     {
@@ -319,7 +347,7 @@
       "productType": "Vinyl",
       "description": "The debut studio album by hip hop group N.W.A, released in 1988.",
       "photoUrl": "https://picsum.photos/seed/nwa-soc/400/400",
-      "price": 28.50,
+      "price": 28.5,
       "sku": "VIN-NWA-SOC"
     },
     {
@@ -328,7 +356,7 @@
       "productType": "Vinyl",
       "description": "The debut vocal album by jazz trumpeter Chet Baker.",
       "photoUrl": "https://picsum.photos/seed/chet-baker-sings/400/400",
-      "price": 24.50,
+      "price": 24.5,
       "sku": "VIN-CB-SING"
     },
     {
@@ -346,7 +374,7 @@
       "productType": "Vinyl",
       "description": "The second studio album by English electronic music duo the Chemical Brothers.",
       "photoUrl": "https://picsum.photos/seed/chemical-bros-dyoh/400/400",
-      "price": 30.00,
+      "price": 30.0,
       "sku": "VIN-CB-DYOH"
     },
     {
@@ -355,7 +383,7 @@
       "productType": "Vinyl",
       "description": "The sixth studio album by English musician Brian Eno, released in 1978.",
       "photoUrl": "https://picsum.photos/seed/eno-mfa/400/400",
-      "price": 25.00,
+      "price": 25.0,
       "sku": "VIN-ENO-MFA"
     }
   ]

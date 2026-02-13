@@ -64,7 +64,10 @@ export const HOMEPAGE_ATTRIBUTES: HomepageAttribute[] = [
     inputType: "SWATCH",
     slug: "homepage-grid-item-header-font-color",
     source: "gridItems.headerFontColor",
-    values: [{ name: "dark", value: "#000000" }, { name: "light", value: "#ffffff" }],
+    values: [
+      { name: "dark", value: "#000000" },
+      { name: "light", value: "#ffffff" },
+    ],
   },
   {
     name: "Homepage grid item subheader font color",
@@ -72,6 +75,9 @@ export const HOMEPAGE_ATTRIBUTES: HomepageAttribute[] = [
     inputType: "SWATCH",
     slug: "homepage-grid-item-subheader-font-color",
     source: "gridItems.subheaderFontColor",
-    values: [{ name: "dark", value: "#000000" }, { name: "light", value: "#ffffff" }],
+    values: [
+      { name: "dark", value: "#000000" },
+      { name: "light", value: "#ffffff" },
+    ],
   },
 ];

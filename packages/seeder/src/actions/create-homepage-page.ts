@@ -36,7 +36,10 @@ export async function createHomepagePage(
   });
 
   if (pageRes.pageCreate.errors?.length > 0) {
-    console.error("[SEEDING] Failed to create homepage:", pageRes.pageCreate.errors);
+    console.error(
+      "[SEEDING] Failed to create homepage:",
+      pageRes.pageCreate.errors,
+    );
     return;
   }
 

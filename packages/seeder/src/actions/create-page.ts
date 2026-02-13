@@ -18,7 +18,7 @@ export async function createPage(
 ): Promise<string> {
   console.log(`[SEEDING] Creating page: ${title}...`);
 
-    const editorJsContent = content
+  const editorJsContent = content
     ? JSON.stringify({
         blocks: [
           {

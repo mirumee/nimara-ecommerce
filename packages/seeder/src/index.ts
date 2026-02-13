@@ -8,7 +8,6 @@ async function seed() {
   console.log("[SEEDING] Starting Saleor seeding...");
 
   try {
-
     // Test connection
     await testConnection();
 
@@ -18,7 +17,7 @@ async function seed() {
     // Seed data
     const { productIds, categoryMap } = await seedProducts();
     const { staticPagesIds } = await seedPages(productIds);
-    await seedMenus(categoryMap, staticPagesIds)
+    await seedMenus(categoryMap, staticPagesIds);
 
     console.log("[SEEDING] Seeding completed successfully");
   } catch (error) {

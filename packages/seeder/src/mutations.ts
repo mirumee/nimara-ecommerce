@@ -70,17 +70,19 @@ export const PAGE_CREATE_MUTATION = gql`
   }
 `;
 
-export const PAGE_UPDATE_MUTATION = gql`mutation PageUpdate($id: ID!, $input: PageInput!) {
-      pageUpdate(id: $id, input: $input) {
-        page {
-          id
-        }
-        errors {
-          field
-          message
-        }
+export const PAGE_UPDATE_MUTATION = gql`
+  mutation PageUpdate($id: ID!, $input: PageInput!) {
+    pageUpdate(id: $id, input: $input) {
+      page {
+        id
       }
-    }`
+      errors {
+        field
+        message
+      }
+    }
+  }
+`;
 
 export const MENU_CREATE_MUTATION = gql`
   mutation MenuCreate($input: MenuCreateInput!) {
@@ -130,11 +132,7 @@ export const PRODUCT_TYPE_CREATE_MUTATION = gql`
 export const PRODUCT_MEDIA_CREATE_MUTATION = gql`
   mutation ProductMediaCreate($productId: ID!, $file: Upload!) {
     productMediaCreate(
-      input: {
-        product: $productId
-        image: $file
-        alt: "Product image"
-      }
+      input: { product: $productId, image: $file, alt: "Product image" }
     ) {
       media {
         id
@@ -182,7 +180,10 @@ export const PRODUCT_VARIANT_CREATE_MUTATION = gql`
 `;
 
 export const PRODUCT_CHANNEL_LISTING_UPDATE_MUTATION = gql`
-  mutation ProductChannelListingUpdate($id: ID!, $input: ProductChannelListingUpdateInput!) {
+  mutation ProductChannelListingUpdate(
+    $id: ID!
+    $input: ProductChannelListingUpdateInput!
+  ) {
     productChannelListingUpdate(id: $id, input: $input) {
       product {
         id
@@ -294,14 +295,8 @@ export const MENU_BULK_DELETE_MUTATION = gql`
 `;
 
 export const PAGE_TYPE_ASSIGN_ATTRIBUTES_MUTATION = gql`
-  mutation AssignPageTypeAttributes(
-    $pageTypeId: ID!
-    $attributeIds: [ID!]!
-  ) {
-    pageAttributeAssign(
-      pageTypeId: $pageTypeId
-      attributeIds: $attributeIds
-    ) {
+  mutation AssignPageTypeAttributes($pageTypeId: ID!, $attributeIds: [ID!]!) {
+    pageAttributeAssign(pageTypeId: $pageTypeId, attributeIds: $attributeIds) {
       pageType {
         id
       }

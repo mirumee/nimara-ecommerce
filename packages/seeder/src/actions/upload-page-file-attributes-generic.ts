@@ -32,7 +32,6 @@ export async function uploadPageFileAttributesGeneric(
     }
   }
 
-
   const updateRes = await client.request<{
     pageUpdate: {
       page: { id: string } | null;

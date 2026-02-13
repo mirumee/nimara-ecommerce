@@ -18,7 +18,7 @@ export async function createCategories(
       CATEGORY_CREATE_MUTATION,
       {
         input: { name: cat.name, slug: cat.slug },
-        parent: parentId
+        parent: parentId,
       },
     );
 

@@ -12,32 +12,29 @@ const mockData = mockDataRaw as MockData;
  * @param productIds - Array of product ids.
  * @returns Object with static page ids and homepage page type id.
  */
-export async function seedPages(productIds: string[]): Promise<{ staticPagesIds: string[], homepagePageTypeId: string }> {
-        const attrIdsBySlug = await createHomepageAttributes();
+export async function seedPages(
+  productIds: string[],
+): Promise<{ staticPagesIds: string[]; homepagePageTypeId: string }> {
+  const attrIdsBySlug = await createHomepageAttributes();
 
-        const homepagePageTypeId = await createPageType(
-      "Homepage",
-      Object.values(attrIdsBySlug),
-    );
-        const staticPageTypeId = await createPageType("Static page");
+  const homepagePageTypeId = await createPageType(
+    "Homepage",
+    Object.values(attrIdsBySlug),
+  );
+  const staticPageTypeId = await createPageType("Static page");
 
-        const staticPagesIds = await Promise.all(
-          mockData.staticPages.map((page) =>
-            createPage(
-              page.title,
-              page.slug,
-              staticPageTypeId,
-              page.content,
-            ),
-          ),
-        );
+  const staticPagesIds = await Promise.all(
+    mockData.staticPages.map((page) =>
+      createPage(page.title, page.slug, staticPageTypeId, page.content),
+    ),
+  );
 
-            await createHomepagePage(
-                 homepagePageTypeId,
-              attrIdsBySlug,
-              productIds,
-              mockData.homepage,
-            );
+  await createHomepagePage(
+    homepagePageTypeId,
+    attrIdsBySlug,
+    productIds,
+    mockData.homepage,
+  );
 
-        return { staticPagesIds, homepagePageTypeId };
+  return { staticPagesIds, homepagePageTypeId };
 }

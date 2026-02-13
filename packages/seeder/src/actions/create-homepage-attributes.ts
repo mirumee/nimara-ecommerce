@@ -12,13 +12,13 @@ export async function createHomepageAttributes(): Promise<
 > {
   console.log("[SEEDING] Creating homepage attributes (bulk)...");
 
-const inputs = HOMEPAGE_ATTRIBUTES.map((attr) => ({
-  name: attr.name,
-  type: attr.type,
-  inputType: attr.inputType,
-  entityType: attr.entityType || null,
-  values: attr.values || [],
-}));
+  const inputs = HOMEPAGE_ATTRIBUTES.map((attr) => ({
+    name: attr.name,
+    type: attr.type,
+    inputType: attr.inputType,
+    entityType: attr.entityType || null,
+    values: attr.values || [],
+  }));
 
   const res = await client.request<AttributeBulkCreateResponse>(
     ATTRIBUTE_BULK_CREATE_MUTATION,

@@ -1,4 +1,3 @@
-
 export interface SaleorError {
   field?: string;
   path?: string;

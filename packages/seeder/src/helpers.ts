@@ -1,6 +1,15 @@
 import { gql } from "graphql-request";
 import { client } from "./client";
-import { BuildPageAttributesResult, BulkDeleteResponse, Connection, Edge, FileUploadTask, IdNode, MockData, ShopQueryResponse } from "./types";
+import {
+  BuildPageAttributesResult,
+  BulkDeleteResponse,
+  Connection,
+  Edge,
+  FileUploadTask,
+  IdNode,
+  MockData,
+  ShopQueryResponse,
+} from "./types";
 import { HOMEPAGE_ATTRIBUTES } from "./constants";
 
 /**
@@ -22,10 +31,11 @@ export async function fetchAllIds(entityField: string): Promise<string[]> {
         }
       }
     `;
-    const res: Record<string, Connection<IdNode>> =
-      await client.request<Record<string, Connection<IdNode>>>(query, {
-        after,
-      });
+    const res: Record<string, Connection<IdNode>> = await client.request<
+      Record<string, Connection<IdNode>>
+    >(query, {
+      after,
+    });
     const connection: Connection<IdNode> = res[entityField];
     ids.push(...connection.edges.map((e: Edge<IdNode>) => e.node.id));
     hasNext = connection.pageInfo.hasNextPage;
@@ -45,7 +55,7 @@ export async function fetchAllIds(entityField: string): Promise<string[]> {
 export async function bulkDelete(
   label: string,
   ids: string[],
-  mutation: string
+  mutation: string,
 ): Promise<void> {
   if (ids.length === 0) return;
 
@@ -94,8 +104,7 @@ export function buildPageAttributes(
     if (def.inputType === "FILE") {
       const urls = isGrid
         ? homepage.gridItems.map(
-            (g) =>
-              g[field as keyof (typeof homepage.gridItems)[0]] as string,
+            (g) => g[field as keyof (typeof homepage.gridItems)[0]] as string,
           )
         : [homepage[field as keyof typeof homepage] as string];
       fileUploads.push({ attributeId: id, urls });
@@ -125,9 +134,7 @@ export function buildPageAttributes(
       for (const g of homepage.gridItems) {
         attributes.push({
           id,
-          plainText: g[
-            field as keyof (typeof homepage.gridItems)[0]
-          ] as string,
+          plainText: g[field as keyof (typeof homepage.gridItems)[0]] as string,
         });
       }
     } else {
@@ -146,12 +153,12 @@ export function buildPageAttributes(
  * @returns Promise<void>
  */
 export async function testConnection(): Promise<void> {
-      const shopRes = await client.request<ShopQueryResponse>(gql`
-        query {
-          shop {
-            name
-          }
-        }
-      `);
-      console.log(`[SEEDING] Connected to shop: ${shopRes.shop.name}`);
+  const shopRes = await client.request<ShopQueryResponse>(gql`
+    query {
+      shop {
+        name
+      }
+    }
+  `);
+  console.log(`[SEEDING] Connected to shop: ${shopRes.shop.name}`);
 }
