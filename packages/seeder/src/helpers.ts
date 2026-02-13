@@ -1,6 +1,6 @@
 import { gql } from "graphql-request";
 import { client } from "./client";
-import { BuildPageAttributesResult, BulkDeleteResponse, Connection, Edge, FileUploadTask, IdNode, MockData } from "./types";
+import { BuildPageAttributesResult, BulkDeleteResponse, Connection, Edge, FileUploadTask, IdNode, MockData, ShopQueryResponse } from "./types";
 import { HOMEPAGE_ATTRIBUTES } from "./constants";
 
 /**
@@ -139,4 +139,19 @@ export function buildPageAttributes(
   }
 
   return { attributes, fileUploads };
+}
+
+/**
+ * Tests connection to Saleor.
+ * @returns Promise<void>
+ */
+export async function testConnection(): Promise<void> {
+      const shopRes = await client.request<ShopQueryResponse>(gql`
+        query {
+          shop {
+            name
+          }
+        }
+      `);
+      console.log(`[SEEDING] Connected to shop: ${shopRes.shop.name}`);
 }
