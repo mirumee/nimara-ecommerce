@@ -1,6 +1,6 @@
 import { client } from "./client";
 import { HOMEPAGE_ATTRIBUTES } from "./constants";
-import { bulkDelete, fetchAllIds } from "./helpers";
+import { buildPageAttributes, bulkDelete, fetchAllIds } from "./helpers";
 
 import {
   ATTRIBUTE_BULK_CREATE_MUTATION,
@@ -24,6 +24,7 @@ import {
   CategoryCreateResponse,
   ChannelNode,
   ChannelsQueryResponse,
+  FileUploadTask,
   MenuCreateResponse,
   MenuItemCreateResponse,
   MockData,
@@ -40,7 +41,6 @@ const SALEOR_APP_TOKEN = process.env.SALEOR_APP_TOKEN;
 export async function wipeAllData(): Promise<void> {
   console.log("[SEEDING] Wiping all data...");
 
-  // Order matters for FK constraints
   const entities: [string, string][] = [
     ["pages", PAGE_BULK_DELETE_MUTATION],
     ["pageTypes", PAGE_TYPE_BULK_DELETE_MUTATION],
@@ -59,32 +59,40 @@ export async function wipeAllData(): Promise<void> {
   console.log("[SEEDING] Data wipe completed.");
 }
 
-export async function createHomepageAttributes(): Promise<string[]> {
+export async function createHomepageAttributes(): Promise<
+  Record<string, string>
+> {
   console.log("[SEEDING] Creating homepage attributes (bulk)...");
 
-  const inputs = HOMEPAGE_ATTRIBUTES.map(attr => ({
-    name: attr.name,
-    type: attr.type,
-    inputType: attr.inputType,
-    entityType: attr.entityType || null,
-  }));
+const inputs = HOMEPAGE_ATTRIBUTES.map((attr) => ({
+  name: attr.name,
+  type: attr.type,
+  inputType: attr.inputType,
+  entityType: attr.entityType || null,
+  values: attr.values || [],
+}));
 
   const res = await client.request<AttributeBulkCreateResponse>(
     ATTRIBUTE_BULK_CREATE_MUTATION,
-    { input: inputs }
+    { input: inputs },
   );
 
-  const ids: string[] = [];
+  const attrIdsBySlug: Record<string, string> = {};
+
   res.attributeBulkCreate.results.forEach((result, index) => {
     if (result.errors && result.errors.length > 0) {
-      console.error(`Failed to create attribute ${HOMEPAGE_ATTRIBUTES[index].name}: ${JSON.stringify(result.errors)}`);
+      console.error(
+        `[SEEDING] Failed to create attribute ${HOMEPAGE_ATTRIBUTES[index].name}: ${JSON.stringify(result.errors)}`,
+      );
     } else if (result.attribute) {
-      ids.push(result.attribute.id);
-      console.log(`[SEEDING] Created attribute: ${result.attribute.name} (${result.attribute.id})`);
+      attrIdsBySlug[HOMEPAGE_ATTRIBUTES[index].slug] = result.attribute.id;
+      console.log(
+        `[SEEDING] Created attribute: ${result.attribute.name} (${result.attribute.id})`,
+      );
     }
   });
 
-  return ids;
+  return attrIdsBySlug;
 }
 
 export async function createPageType(
@@ -104,7 +112,7 @@ export async function createPageType(
 
   if (res.pageTypeCreate.errors.length > 0) {
     throw new Error(
-      `Failed to create Page Type ${name}: ${JSON.stringify(
+      `[SEEDING] Failed to create Page Type ${name}: ${JSON.stringify(
         res.pageTypeCreate.errors,
       )}`,
     );
@@ -146,7 +154,7 @@ export async function createPage(
 
   if (res.pageCreate.errors.length > 0) {
     throw new Error(
-      `Failed to create page ${title}: ${JSON.stringify(res.pageCreate.errors)}`,
+      `[SEEDING] Failed to create page ${title}: ${JSON.stringify(res.pageCreate.errors)}`,
     );
   }
 
@@ -163,7 +171,7 @@ export async function createMenu(name: string): Promise<string> {
 
   if (res.menuCreate.errors.length > 0) {
     throw new Error(
-      `Failed to create menu ${name}: ${JSON.stringify(res.menuCreate.errors)}`,
+      `[SEEDING] Failed to create menu ${name}: ${JSON.stringify(res.menuCreate.errors)}`,
     );
   }
 
@@ -194,7 +202,7 @@ export async function createMenuItem(
 
   if (res.menuItemCreate.errors.length > 0) {
     throw new Error(
-      `Failed to create menu item ${name}: ${JSON.stringify(
+      `[SEEDING] Failed to create menu item ${name}: ${JSON.stringify(
         res.menuItemCreate.errors,
       )}`,
     );
@@ -222,7 +230,7 @@ export async function createCategories(
 
     if (res.categoryCreate.errors.length > 0) {
       throw new Error(
-        `Failed to create category ${cat.name}: ${JSON.stringify(
+        `[SEEDING] Failed to create category ${cat.name}: ${JSON.stringify(
           res.categoryCreate.errors,
         )}`,
       );
@@ -353,7 +361,7 @@ export async function createProducts(
   res.productBulkCreate.results.forEach((result, index) => {
     if (result.errors && result.errors.length > 0) {
       console.error(
-        `Failed to create product ${products[index].name}: ${JSON.stringify(result.errors)}`,
+        `[SEEDING] Failed to create product ${products[index].name}: ${JSON.stringify(result.errors)}`,
       );
     } else if (result.product) {
       console.log(
@@ -441,7 +449,7 @@ export async function createMediaForAllProducts(
 
       if (errors?.length > 0) {
         console.error(
-          `Failed to create media for ${product.product!.name}: ${JSON.stringify(errors)}`,
+          `[SEEDING] Failed to create media for ${product.product!.name}: ${JSON.stringify(errors)}`,
         );
       } else if (res.data?.productMediaCreate?.media) {
         console.log(
@@ -450,9 +458,153 @@ export async function createMediaForAllProducts(
       }
     } catch (error) {
       console.error(
-        `Request failed for product ${product.product!.name} (${product.product!.id})`,
+        `[SEEDING] Request failed for product ${product.product!.name} (${product.product!.id})`,
         error,
       );
     }
   }
+}
+
+export async function createHomepagePage(
+  pageTypeId: string,
+  attrIdsBySlug: Record<string, string>,
+  productIds: string[],
+  homepage: MockData["homepage"],
+): Promise<void> {
+  console.log("[SEEDING] Creating homepage page...");
+
+  const { attributes, fileUploads } = buildPageAttributes(
+    attrIdsBySlug,
+    homepage,
+    productIds,
+  );
+
+  const pageRes = await client.request(PAGE_CREATE_MUTATION, {
+    input: {
+      pageType: pageTypeId,
+      title: "Homepage",
+      slug: "home",
+      isPublished: true,
+      attributes,
+    },
+  });
+
+  if (pageRes.pageCreate.errors?.length > 0) {
+    console.error("[SEEDING] Failed to create homepage:", pageRes.pageCreate.errors);
+    return;
+  }
+
+  const pageId = pageRes.pageCreate.page?.id;
+  console.log(`[SEEDING] Created homepage page (${pageId})`);
+
+  if (fileUploads.length > 0) {
+    await uploadPageFileAttributesGeneric(pageId!, fileUploads);
+  }
+
+  console.log("[SEEDING] Homepage setup complete");
+}
+
+async function uploadFileAndGetUrl(imageUrl: string): Promise<string> {
+  const imageRes = await fetch(imageUrl);
+  const buffer = Buffer.from(await imageRes.arrayBuffer());
+  const file = new File([buffer], "image.jpg", { type: "image/jpeg" });
+
+  const query = `
+    mutation FileUpload($file: Upload!) {
+      fileUpload(file: $file) {
+        uploadedFile {
+          url
+          contentType
+        }
+        errors {
+          field
+          message
+        }
+      }
+    }
+  `;
+
+  const operations = JSON.stringify({
+    query,
+    variables: { file: null },
+  });
+  const map = JSON.stringify({ "0": ["variables.file"] });
+
+  const formData = new FormData();
+  formData.append("operations", operations);
+  formData.append("map", map);
+  formData.append("0", file);
+
+  const response = await fetch(SALEOR_API_URL!, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${SALEOR_APP_TOKEN}` },
+    body: formData,
+  });
+
+  const res = await response.json();
+  const errors = res.data?.fileUpload?.errors;
+
+  if (errors?.length > 0) {
+    throw new Error(`[SEEDING] fileUpload failed: ${JSON.stringify(errors)}`);
+  }
+
+  return res.data.fileUpload.uploadedFile.url;
+}
+
+
+async function uploadPageFileAttributesGeneric(
+  pageId: string,
+  fileUploads: FileUploadTask[],
+): Promise<void> {
+  console.log("[SEEDING] Uploading file attributes for homepage...");
+
+  const fileAttributes: {
+    id: string;
+    file: string;
+    contentType: string;
+  }[] = [];
+
+  for (const task of fileUploads) {
+    for (const url of task.urls) {
+      const uploadedUrl = await uploadFileAndGetUrl(url);
+      console.log(`[SEEDING] Uploaded file: ${uploadedUrl}`);
+      fileAttributes.push({
+        id: task.attributeId,
+        file: uploadedUrl,
+        contentType: "image/jpeg",
+      });
+    }
+  }
+
+  const updateQuery = gql`
+    mutation PageUpdate($id: ID!, $input: PageInput!) {
+      pageUpdate(id: $id, input: $input) {
+        page {
+          id
+        }
+        errors {
+          field
+          message
+        }
+      }
+    }
+  `;
+
+  const updateRes = await client.request<{
+    pageUpdate: {
+      page: { id: string } | null;
+      errors: { field: string; message: string }[];
+    };
+  }>(updateQuery, {
+    id: pageId,
+    input: { attributes: fileAttributes },
+  });
+
+  if (updateRes.pageUpdate.errors.length > 0) {
+    throw new Error(
+      `[SEEDING] Failed to assign file attributes: ${JSON.stringify(updateRes.pageUpdate.errors)}`,
+    );
+  }
+
+  console.log("[SEEDING] File attributes assigned successfully");
 }

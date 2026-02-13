@@ -140,6 +140,20 @@ export interface MockData {
     slug: string;
     content?: string;
   }[];
+  homepage: {
+    bannerHeader: string;
+    bannerButtonText: string;
+    bannerImageUrl: string;
+    buttonText: string;
+    carouselProductCount: number;
+    gridItems: {
+      header: string;
+      subheader: string;
+      headerFontColor: string;
+      subheaderFontColor: string;
+      imageUrl: string;
+    }[];
+  };
   productTypes: {
     name: string;
     hasVariants: boolean;
@@ -163,13 +177,25 @@ export interface ShopQueryResponse {
 
 export interface HomepageAttribute {
   name: string;
-  type: string;
-  inputType: string;
-  entityType?: string | null;
-  slug: string
+  type: "PAGE_TYPE";
+  inputType: "REFERENCE" | "PLAIN_TEXT" | "FILE" | "SWATCH";
+  entityType?: "PRODUCT";
+  slug: string;
+  source: string;
+  values?: { name: string; value: string }[];
 }
 
 export interface ProductNode {
   id: string;
   name: string;
+}
+
+export interface FileUploadTask {
+  attributeId: string;
+  urls: string[];
+}
+
+export interface BuildPageAttributesResult {
+  attributes: Record<string, unknown>[];
+  fileUploads: FileUploadTask[];
 }

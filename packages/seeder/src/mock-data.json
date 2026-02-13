@@ -1,4 +1,20 @@
 {
+    "homepage": {
+    "bannerHeader": "Discover Timeless Vinyl",
+    "bannerButtonText": "Shop Now",
+    "bannerImageUrl": "https://picsum.photos/id/1041/1200/600.jpg",
+    "buttonText": "Browse Collection",
+    "carouselProductCount": 6,
+    "gridItems": [
+      {
+        "header": "Limited Editions",
+        "subheader": "Collector's picks",
+        "headerFontColor": "light",
+        "subheaderFontColor": "light",
+        "imageUrl": "https://picsum.photos/id/573/600/400"
+      }
+    ]
+  },
   "categories": [
     {
       "name": "Rock",

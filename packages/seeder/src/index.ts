@@ -3,6 +3,7 @@ import { gql } from "graphql-request";
 import {
   createCategories,
   createHomepageAttributes,
+  createHomepagePage,
   createMediaForAllProducts,
   createMenu,
   createMenuItem,
@@ -16,8 +17,6 @@ import {
 import { client } from "./client";
 import mockDataRaw from "./mock-data.json";
 import { MockData, ShopQueryResponse } from "./types";
-import { readFile } from "fs/promises";
-import path from "path";
 
 const mockData = mockDataRaw as MockData;
 
@@ -38,63 +37,33 @@ async function seed() {
     // Wipe all data
     await wipeAllData();
 
-    // Create attributes
-    const homepageAttributeIds = await createHomepageAttributes();
+    // Create homepage attributes
+    const attrIdsBySlug = await createHomepageAttributes();
 
-    // Create Page Types
+    // Create page types
     const homepagePageTypeId = await createPageType(
-      "Homepage",
-      homepageAttributeIds,
-    );
-    await createPageType("Static page");
+  "Homepage",
+  Object.values(attrIdsBySlug),
+);
+    const staticPageTypeId = await createPageType("Static page");
 
-    // Create homepage and static pages
-    const _homepageId = await createPage("Homepage", "home", homepagePageTypeId);
+    // Create static pages
     const staticPagesIds = await Promise.all(
       mockData.staticPages.map((page) =>
-        createPage(page.title, page.slug, homepagePageTypeId, page.content),
+        createPage(
+          page.title,
+          page.slug,
+          staticPageTypeId,
+          page.content,
+        ),
       ),
     );
 
     // Create mock store data foundation
     console.log("[SEEDING] Seeding mock store data foundation...");
     const categoryMap = await createCategories(mockData.categories);
-    const productTypeMap = await createProductTypes(mockData.productTypes);
-
-    // Create Menus and Menu Items
-    const navbarId = await createMenu("navbar");
-    const footerId = await createMenu("footer");
-
-    async function createMenuHierarchy(
-      categories: any[],
-      parentMenuItemId?: string,
-    ) {
-      for (const cat of categories) {
-        const menuItemId = await createMenuItem(navbarId, cat.name, {
-          categoryId: categoryMap[cat.name],
-          parent: parentMenuItemId,
-        });
-
-        if (cat.children && cat.children.length > 0) {
-          await createMenuHierarchy(cat.children, menuItemId);
-        }
-      }
-    }
-
-    console.log("[SEEDING] Creating navbar menu items for categories...");
-    await createMenuHierarchy(mockData.categories);
-
-    console.log("[SEEDING] Creating footer menu items for static pages...");
-    await Promise.all(
-      mockData.staticPages.map(async (page, index) => {
-        const menuItemId = await createMenuItem(footerId, page.title, {
-          pageId: staticPagesIds[index],
-        });
-        console.log(
-          `[SEEDING] Created footer menu item: ${page.title} (${menuItemId})`,
-        );
-        return menuItemId;
-      }),
+    const productTypeMap = await createProductTypes(
+      mockData.productTypes,
     );
 
     // Fetch default channel
@@ -116,9 +85,48 @@ async function seed() {
     );
 
     // Create media for products
-    await createMediaForAllProducts(
-      products,
-      mockData.products,
+    await createMediaForAllProducts(products, mockData.products);
+
+    // Create homepage (needs product IDs for carousel)
+    const productIds = products.map((p) => p.product!.id);
+    await createHomepagePage(
+      homepagePageTypeId,
+      attrIdsBySlug,
+      productIds,
+      mockData.homepage,
+    );
+
+    // Create menus
+    const navbarId = await createMenu("navbar");
+    const footerId = await createMenu("footer");
+
+    // Create navbar menu items from categories
+    console.log("[SEEDING] Creating navbar menu items...");
+    async function createMenuHierarchy(
+      categories: any[],
+      parentMenuItemId?: string,
+    ) {
+      for (const cat of categories) {
+        const menuItemId = await createMenuItem(navbarId, cat.name, {
+          categoryId: categoryMap[cat.name],
+          parent: parentMenuItemId,
+        });
+
+        if (cat.children?.length > 0) {
+          await createMenuHierarchy(cat.children, menuItemId);
+        }
+      }
+    }
+    await createMenuHierarchy(mockData.categories);
+
+    // Create footer menu items from static pages
+    console.log("[SEEDING] Creating footer menu items...");
+    await Promise.all(
+      mockData.staticPages.map(async (page, index) => {
+        await createMenuItem(footerId, page.title, {
+          pageId: staticPagesIds[index],
+        });
+      }),
     );
 
     console.log("[SEEDING] Seeding completed successfully");

@@ -280,3 +280,23 @@ export const MENU_BULK_DELETE_MUTATION = gql`
     }
   }
 `;
+
+export const PAGE_TYPE_ASSIGN_ATTRIBUTES_MUTATION = gql`
+  mutation AssignPageTypeAttributes(
+    $pageTypeId: ID!
+    $attributeIds: [ID!]!
+  ) {
+    pageAttributeAssign(
+      pageTypeId: $pageTypeId
+      attributeIds: $attributeIds
+    ) {
+      pageType {
+        id
+      }
+      errors {
+        field
+        message
+      }
+    }
+  }
+`;
