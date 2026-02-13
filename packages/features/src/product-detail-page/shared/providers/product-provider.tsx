@@ -5,9 +5,11 @@ import {
   type ProductAvailability,
 } from "@nimara/domain/objects/Product";
 import { JsonLd, productToJsonLd } from "@nimara/features/json-ld/json-ld";
+import { type Region } from "@nimara/foundation/regions/types";
 import type { ServiceRegistry } from "@nimara/infrastructure/types";
 
 export interface ProductProviderProps {
+  region: Region;
   render: (data: Product, availability: ProductAvailability) => React.ReactNode;
   services: ServiceRegistry;
   slug: string;
@@ -17,9 +19,8 @@ export const ProductProvider = async ({
   render,
   slug,
   services,
+  region,
 }: ProductProviderProps) => {
-  const region = services.region;
-
   const storeService = await services.getStoreService();
   const { data } = await storeService.getProductDetails({
     productSlug: slug,

@@ -1,6 +1,7 @@
 import { type PageField, PageType } from "@nimara/domain/objects/CMSPage";
 import type { User } from "@nimara/domain/objects/User";
 import { JsonLd, websiteToJsonLd } from "@nimara/features/json-ld/json-ld";
+import { type Region } from "@nimara/foundation/regions/types";
 import type { ServiceRegistry } from "@nimara/infrastructure/types";
 
 export interface HomeProviderData {
@@ -10,14 +11,18 @@ export interface HomeProviderData {
 
 export interface HomeProviderProps {
   accessToken: string | null;
+  region: Region;
   render: (data: HomeProviderData) => React.ReactNode;
+  revalidateTime: number;
   services: ServiceRegistry;
 }
 
 export const HomeProvider = async ({
   render,
+  region,
   services,
   accessToken,
+  revalidateTime,
 }: HomeProviderProps) => {
   const [userService, cmsService] = await Promise.all([
     services.getUserService(),
@@ -30,11 +35,11 @@ export const HomeProvider = async ({
     cmsService.cmsPageGet({
       pageType: PageType.HOMEPAGE,
       slug: "home",
-      languageCode: services.region.language.code,
+      languageCode: region.language.code,
       options: {
         next: {
           tags: ["CMS:home"],
-          revalidate: services.config.cacheTTL.cms,
+          revalidate: revalidateTime,
         },
       },
     }),

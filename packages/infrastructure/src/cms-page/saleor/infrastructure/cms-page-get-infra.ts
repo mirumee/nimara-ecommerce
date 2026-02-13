@@ -1,3 +1,4 @@
+import { type LanguageCodeEnum } from "@nimara/codegen/schema";
 import { ok } from "@nimara/domain/objects/Result";
 
 import { graphqlClient } from "#root/graphql/client";
@@ -13,7 +14,7 @@ export const saleorCMSPageGetInfra =
     const result = await graphqlClient(apiURL).execute(PageDocument, {
       options,
       variables: {
-        languageCode,
+        languageCode: languageCode as LanguageCodeEnum,
         slug,
       },
       operationName: "PageQuery",

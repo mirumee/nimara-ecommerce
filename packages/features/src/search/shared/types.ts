@@ -1,5 +1,7 @@
+import { type Metadata } from "next";
 import type { Locale } from "next-intl";
 
+import { type Region } from "@nimara/foundation/regions/types";
 import type { LocalePrefixes } from "@nimara/i18n/config";
 import type { ServiceRegistry } from "@nimara/infrastructure/types";
 
@@ -39,6 +41,7 @@ export interface SearchViewProps {
     product: (slug: string) => string;
     search: string;
   };
+  region: Region;
   searchParams: Promise<SearchParams>;
   services: ServiceRegistry;
 }
@@ -51,10 +54,23 @@ export interface SearchViewProps {
  * @property storefrontUrl - The base URL of the storefront.
  * @property searchPath - The path to the search page.
  */
-export interface GenerateStandardSearchMetadataProps {
+export interface GenerateStandardSearchMetadataProps extends Metadata {
+  /**
+   * The alt text for the Open Graph image.
+   * @default "Search preview"
+   */
+  ogImageAlt?: string;
+  /**
+   * The title of the search page.
+   */
   params: Promise<{ locale: Locale }>;
   searchParams: Promise<SearchParams>;
   searchPath: string;
   services: ServiceRegistry;
+  /**
+   * The site name.
+   * @default "Nimara Store"
+   */
+  siteName?: string;
   storefrontUrl: string;
 }

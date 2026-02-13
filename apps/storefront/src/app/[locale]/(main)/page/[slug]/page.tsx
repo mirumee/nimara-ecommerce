@@ -4,6 +4,7 @@ import { type Locale } from "next-intl";
 import { generateStandardCMSPageMetadata } from "@nimara/features/cms-page/shared/metadata/standard-metadata";
 import { StandardCMSPageView } from "@nimara/features/cms-page/shop-basic-cms-page/standard";
 
+import { getCurrentRegion } from "@/foundation/regions";
 import { getServiceRegistry } from "@/services/registry";
 
 type CMSPageProps = {
@@ -12,16 +13,31 @@ type CMSPageProps = {
 };
 
 export async function generateMetadata(props: CMSPageProps): Promise<Metadata> {
-  const services = await getServiceRegistry();
+  const [services, region] = await Promise.all([
+    getServiceRegistry(),
+    getCurrentRegion(),
+  ]);
 
   return generateStandardCMSPageMetadata({
     ...props,
     services,
+    region,
+    revalidateTime: services.config.cacheTTL.cms,
   });
 }
 
 export default async function Page(props: CMSPageProps) {
-  const services = await getServiceRegistry();
+  const [services, region] = await Promise.all([
+    getServiceRegistry(),
+    getCurrentRegion(),
+  ]);
 
-  return <StandardCMSPageView {...props} services={services} />;
+  return (
+    <StandardCMSPageView
+      {...props}
+      services={services}
+      region={region}
+      revalidateTime={services.config.cacheTTL.cms}
+    />
+  );
 }

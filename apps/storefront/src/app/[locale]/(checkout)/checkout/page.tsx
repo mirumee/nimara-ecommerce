@@ -2,11 +2,13 @@ import { type Metadata } from "next";
 import { type Locale } from "next-intl";
 
 import { type AllCountryCode } from "@nimara/domain/consts";
+import { type AppErrorCode } from "@nimara/domain/objects/Error";
 import { redirect } from "@nimara/i18n/routing";
 
 import { getCheckoutOrRedirect } from "@/features/checkout/checkout-actions";
 import { Summary } from "@/features/checkout/checkout-summary/summary";
 import { CheckoutWrapper } from "@/foundation/checkout/checkout-wrapper";
+import { getCheckoutPaymentSectionData } from "@/foundation/checkout/sections/payment/helpers/get-checkout-payment-section-data";
 import { CheckoutSections } from "@/foundation/checkout/sections/sections";
 import { getCheckoutShippingAddressSectionData } from "@/foundation/checkout/sections/shipping-address/helpers/get-checkout-shipping-address-section-data";
 import {
@@ -21,6 +23,7 @@ interface PageProps {
   params: Promise<{ locale: Locale }>;
   searchParams: Promise<{
     country?: AllCountryCode;
+    errorCode?: AppErrorCode;
     step: CheckoutStep | null;
   }>;
 }
@@ -80,12 +83,24 @@ export default async function Page(props: PageProps) {
         user,
       })
     : null;
+  const paymentSectionData =
+    currentStep === CHECKOUT_STEPS_MAP.PAYMENT
+      ? await getCheckoutPaymentSectionData({
+          accessToken,
+          checkout,
+          country: searchParams.country,
+          errorCode: searchParams.errorCode,
+          locale,
+          user,
+        })
+      : null;
 
   return (
     <CheckoutWrapper summary={<Summary checkout={checkout} />}>
       <CheckoutSections
         step={currentStep}
         checkout={checkout}
+        paymentSectionData={paymentSectionData}
         shippingAddressSectionData={shippingAddressSectionData}
         user={user}
       />

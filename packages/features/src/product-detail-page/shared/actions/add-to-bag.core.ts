@@ -38,8 +38,6 @@ export async function addToBag(
   const { variantId, quantity = 1 } = input;
   const { region, cartId, accessToken, cacheTTL } = ctx;
 
-  services.logger.debug("Adding item to bag", { variantId, quantity });
-
   // Get user if access token is available
   let userData: User | null = null;
 

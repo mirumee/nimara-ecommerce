@@ -28,8 +28,10 @@ export interface CollectionViewProps {
  * @property services - The service registry containing all necessary services for the collection view.
  */
 export interface StandardCollectionViewProps extends CollectionViewProps {
+  channel: string;
   defaultLocale: Locale;
   defaultResultsPerPage: number;
+  languageCode: string;
   localePrefixes: LocalePrefixes;
   paths: {
     collection: (slug: string) => string;
@@ -48,8 +50,10 @@ export interface StandardCollectionViewProps extends CollectionViewProps {
  * @property defaultResultsPerPage - The default number of results per page.
  */
 export interface StandardCollectionViewMetadataProps extends CollectionViewProps {
+  channel: string;
   collectionPath: string;
   defaultResultsPerPage: number;
+  languageCode: string;
   services: ServiceRegistry;
   storefrontUrl: string;
 }

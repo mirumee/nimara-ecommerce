@@ -1,10 +1,7 @@
-import type { Region } from "@nimara/foundation/regions/types.js";
-
 import type { AddressService } from "./address/types";
 import type { CartService } from "./cart/types";
 import type { CheckoutService } from "./checkout/types";
 import type { CollectionService } from "./collection/types";
-import type { Logger } from "./logging/types";
 import type { StripePaymentService } from "./payment/providers";
 import type { StoreService } from "./store/types";
 import type { CMSMenuService } from "./use-cases/cms-menu/types";
@@ -17,7 +14,6 @@ import type { UserService } from "./user/types";
  * Services are lazy-loaded and only initialized when accessed.
  */
 export interface ServiceRegistry {
-  accessToken?: string;
   config: {
     cacheTTL: {
       cart: number;
@@ -85,6 +81,4 @@ export interface ServiceRegistry {
    * @returns A promise that resolves to the user service instance
    */
   getUserService(): Promise<UserService>;
-  logger: Logger;
-  region: Region;
 }

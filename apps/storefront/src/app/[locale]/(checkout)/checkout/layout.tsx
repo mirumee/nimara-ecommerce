@@ -1,4 +1,3 @@
-import { Footer } from "@/features/footer";
 import { Logo } from "@/features/header/logo";
 import { ThemeToggle } from "@/features/header/theme-toggle";
 

@@ -60,20 +60,21 @@ type Slug = string;
 type Id = string;
 type RevalidateTag =
   | "ADDRESS_VALIDATION_RULES"
+  | "COLLECTIONS"
+  | `COUNTRIES:${Slug}`
   | "DETAIL-PAGE:COLLECTION"
   | "DETAIL-PAGE:PRODUCT"
+  | "PRODUCTS"
   | "SEARCH:FACETS"
   | "SEARCH"
+  | `ACP:CHECKOUT_SESSION:${Id}`
+  | `ACP:PRODUCT_FEED:${Id}`
   | `ADDRESS_VALIDATION_RULES:${string}`
   | `CHECKOUT:${Id}`
   | `CMS:${Slug}`
   | `COLLECTION:${Slug}`
-  | "COLLECTIONS"
   | `PRODUCT:${Slug}`
-  | "PRODUCTS"
-  | `SEARCH:${Slug}`
-  | `ACP:CHECKOUT_SESSION:${Id}`
-  | `ACP:PRODUCT_FEED:${Id}`;
+  | `SEARCH:${Slug}`;
 
 declare global {
   type RevalidateTag = RevalidateTag;

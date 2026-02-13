@@ -41,7 +41,7 @@ export const getCheckoutShippingAddressSectionData = async ({
   });
 
   if (!resultCountries.ok) {
-    throw new Error("No countries.");
+    throw new Error("Failed to fetch the countries list.");
   }
 
   const { countryCode: defaultCountryCode } = region.market;

@@ -15,7 +15,9 @@ export interface CollectionProviderData {
 }
 
 export interface CollectionProviderProps {
+  channel: string;
   defaultResultsPerPage: number;
+  languageCode: string;
   render: (data: CollectionProviderData) => React.ReactNode;
   searchParams: {
     after?: string;
@@ -32,13 +34,15 @@ export const CollectionProvider = async ({
   searchParams,
   services,
   defaultResultsPerPage,
+  channel,
+  languageCode,
 }: CollectionProviderProps) => {
   const { after, before, limit } = searchParams;
 
   const collectionService = await services.getCollectionService();
   const getCollectionResult = await collectionService.getCollectionDetails({
-    channel: services.region.market.channel,
-    languageCode: services.region.language.code,
+    channel: channel,
+    languageCode: languageCode,
     slug,
     limit: limit ? Number.parseInt(limit) : defaultResultsPerPage,
     after,

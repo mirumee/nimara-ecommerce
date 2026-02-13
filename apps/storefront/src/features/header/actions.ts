@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import { redirect } from "@nimara/i18n/routing";
 
+import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
 import { getServiceRegistry } from "@/services/registry";
 
@@ -26,7 +27,10 @@ export const searchProducts = async (
 ): Promise<{
   results: Array<{ id: string; label: string; slug: string | null }>;
 }> => {
-  const services = await getServiceRegistry();
+  const [services, region] = await Promise.all([
+    getServiceRegistry(),
+    getCurrentRegion(),
+  ]);
   const searchService = await services.getSearchService();
   const result = await searchService.search(
     {
@@ -34,8 +38,8 @@ export const searchProducts = async (
       limit: maxSearchSuggestions,
     },
     {
-      languageCode: services.region.language.code,
-      channel: services.region.market.channel,
+      languageCode: region.language.code,
+      channel: region.market.channel,
     },
   );
 

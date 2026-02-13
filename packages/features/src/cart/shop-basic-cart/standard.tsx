@@ -23,6 +23,8 @@ export const StandardCartView = async (props: CartViewProps) => {
     onCartUpdate,
     onLineQuantityChange,
     onLineDelete,
+    region,
+    logger,
   } = props;
 
   return (
@@ -33,6 +35,8 @@ export const StandardCartView = async (props: CartViewProps) => {
             services={services}
             checkoutId={checkoutId}
             accessToken={accessToken}
+            region={region}
+            logger={logger}
             emptyCartRender={() => <EmptyCart paths={{ home: paths.home }} />}
             render={({ cart, user }) => (
               <CartDetails

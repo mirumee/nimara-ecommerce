@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/nextjs";
 import { type NextRequest, NextResponse } from "next/server";
 import { type Locale } from "next-intl";
 
@@ -16,6 +17,8 @@ export async function GET(request: NextRequest) {
 
   response.cookies.delete("accessToken");
   response.cookies.delete("refreshToken");
+
+  Sentry.setUser(null);
 
   return response;
 }

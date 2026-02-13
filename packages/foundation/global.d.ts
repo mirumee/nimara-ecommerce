@@ -58,28 +58,3 @@ declare module "*.svg?url" {
   // eslint-disable-next-line import/no-default-export
   export default content;
 }
-
-type Slug = string;
-type Id = string;
-type RevalidateTag =
-  | "ADDRESS_VALIDATION_RULES"
-  | "DETAIL-PAGE:COLLECTION"
-  | "DETAIL-PAGE:PRODUCT"
-  | "SEARCH:FACETS"
-  | "SEARCH"
-  | `ADDRESS_VALIDATION_RULES:${string}`
-  | `CHECKOUT:${Id}`
-  | `CMS:${Slug}`
-  | `COLLECTION:${Slug}`
-  | `PRODUCT:${Slug}`
-  | `SEARCH:${Slug}`
-  | `ACP:CHECKOUT_SESSION:${Id}`
-  | `ACP:PRODUCT_FEED:${Id}`;
-
-declare global {
-  type RevalidateTag = RevalidateTag;
-}
-
-interface NextFetchRequestConfig {
-  tags?: RevalidateTag[];
-}

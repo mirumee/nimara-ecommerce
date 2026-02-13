@@ -99,7 +99,6 @@ export default async function Page(props: PageProps) {
             storeUrl={storeUrl}
             customerId={customerId}
             variant="outline"
-            services={services}
           />
         )}
       </div>
@@ -122,7 +121,6 @@ export default async function Page(props: PageProps) {
                 storeUrl={storeUrl}
                 customerId={customerId}
                 variant="default"
-                services={services}
               />
             </div>
           </div>

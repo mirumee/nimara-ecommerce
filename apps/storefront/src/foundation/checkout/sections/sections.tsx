@@ -8,10 +8,14 @@ import { useRouter } from "@nimara/i18n/routing";
 import { Card } from "@nimara/ui/components/card";
 import { Separator } from "@nimara/ui/components/separator";
 
+import { PaymentForm } from "@/foundation/checkout/sections/payment/form";
+import { CheckoutPaymentSection } from "@/foundation/checkout/sections/payment/section";
 import { paths } from "@/foundation/routing/paths";
 
 import { type CheckoutStep } from "../steps";
-import { CheckoutSection } from "./checkout-section";
+import { DeliveryMethodForm } from "./delivery-method/form";
+import { CheckoutDeliveryMethodSection } from "./delivery-method/section";
+import { type PaymentSectionData } from "./payment/types";
 import { ShippingAddressForm } from "./shipping-address/form";
 import { CheckoutShippingAddressSection } from "./shipping-address/section";
 import { type ShippingAddressSectionData } from "./shipping-address/types";
@@ -20,6 +24,7 @@ import { CheckoutUserDetailsSection } from "./user-details/section";
 
 interface Props {
   checkout: Checkout;
+  paymentSectionData: PaymentSectionData | null;
   shippingAddressSectionData: ShippingAddressSectionData | null;
   step: CheckoutStep;
   user: User | null;
@@ -28,6 +33,7 @@ interface Props {
 export const CheckoutSections = ({
   step,
   checkout,
+  paymentSectionData,
   shippingAddressSectionData,
   user,
 }: Props) => {
@@ -35,72 +41,85 @@ export const CheckoutSections = ({
   const router = useRouter();
 
   return (
-    <div>
-      <Card className="overflow-hidden">
-        <CheckoutUserDetailsSection
+    <Card className="overflow-hidden">
+      <CheckoutUserDetailsSection
+        checkout={checkout}
+        isOpen={step === "user-details"}
+      >
+        <UserDetailsForm
           checkout={checkout}
-          isOpen={step === "user-details"}
+          user={user}
+          onComplete={() => {
+            const nextStep = checkout.isShippingRequired
+              ? "shipping-address"
+              : "payment";
+
+            router.push(
+              paths.checkout.asPath({
+                query: { step: nextStep },
+              }),
+            );
+          }}
+        />
+      </CheckoutUserDetailsSection>
+
+      <Separator />
+
+      {checkout.isShippingRequired && shippingAddressSectionData && (
+        <CheckoutShippingAddressSection
+          checkout={checkout}
+          formattedShippingAddress={
+            shippingAddressSectionData.formattedShippingAddress
+          }
+          isOpen={step === "shipping-address"}
         >
-          <UserDetailsForm
+          <ShippingAddressForm
             checkout={checkout}
             user={user}
-            onComplete={() => {
-              const nextStep = checkout.isShippingRequired
-                ? "shipping-address"
-                : "payment";
-
-              router.push(
-                paths.checkout.asPath({
-                  query: { step: nextStep },
-                }),
-              );
-            }}
+            addresses={shippingAddressSectionData.addresses}
+            countryCode={shippingAddressSectionData.countryCode}
+            countries={shippingAddressSectionData.countries}
+            addressFormRows={shippingAddressSectionData.addressFormRows}
           />
-        </CheckoutUserDetailsSection>
+        </CheckoutShippingAddressSection>
+      )}
 
-        <Separator />
-
-        {checkout.isShippingRequired && shippingAddressSectionData && (
-          <CheckoutShippingAddressSection
+      {checkout.isShippingRequired && (
+        <>
+          <Separator />
+          <CheckoutDeliveryMethodSection
             checkout={checkout}
-            formattedShippingAddress={
-              shippingAddressSectionData.formattedShippingAddress
-            }
-            isOpen={step === "shipping-address"}
+            isOpen={step === "delivery-method"}
           >
-            <ShippingAddressForm
+            <DeliveryMethodForm
               checkout={checkout}
-              user={user}
-              addresses={shippingAddressSectionData.addresses}
-              countryCode={shippingAddressSectionData.countryCode}
-              countries={shippingAddressSectionData.countries}
-              addressFormRows={shippingAddressSectionData.addressFormRows}
+              onComplete={() => {
+                router.push(
+                  paths.checkout.asPath({
+                    query: { step: "payment" },
+                  }),
+                );
+              }}
             />
-          </CheckoutShippingAddressSection>
+          </CheckoutDeliveryMethodSection>
+        </>
+      )}
+
+      <Separator />
+
+      <CheckoutPaymentSection checkout={checkout} isOpen={step === "payment"}>
+        {paymentSectionData ? (
+          <PaymentForm
+            checkout={checkout}
+            paymentSectionData={paymentSectionData}
+            user={user}
+          />
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            {t("errors.GENERIC_PAYMENT_ERROR")}
+          </p>
         )}
-
-        <Separator />
-
-        <CheckoutSection
-          isComplete={checkout.deliveryMethod !== null}
-          step="delivery-method"
-          title={t("delivery-method.title")}
-          isOpen={step === "delivery-method"}
-        >
-          <p>Delivery method</p>
-        </CheckoutSection>
-
-        <Separator />
-
-        <CheckoutSection
-          isComplete={false}
-          step="payment"
-          title={t("payment.title")}
-          isOpen={step === "payment"}
-        >
-          <p>Payment</p>
-        </CheckoutSection>
-      </Card>
-    </div>
+      </CheckoutPaymentSection>
+    </Card>
   );
 };

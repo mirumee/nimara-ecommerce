@@ -8,25 +8,29 @@ import { type AsyncResult, ok } from "@nimara/domain/objects/Result";
 import { updateDeliveryMethodAction } from "@/foundation/checkout/actions/update-delivery-method-action";
 import { paths } from "@/foundation/routing/paths";
 
-export const updateDeliveryMethod = async ({
-  deliveryMethodId,
-  id,
-}: {
+interface UpdateCheckoutDeliveryMethodPayload {
   deliveryMethodId: string;
   id: Checkout["id"];
-}): AsyncResult<{ redirectUrl: string }> => {
+}
+
+export const updateCheckoutDeliveryMethod = async ({
+  deliveryMethodId,
+  id,
+}: UpdateCheckoutDeliveryMethodPayload): AsyncResult<{
+  redirectUrl: string;
+}> => {
   const result = await updateDeliveryMethodAction({
     id,
     deliveryMethodId,
   });
 
-  if (result.ok) {
-    revalidatePath(paths.checkout.asPath());
-
-    return ok({
-      redirectUrl: paths.checkout.asPath({ query: { step: "payment" } }),
-    });
+  if (!result.ok) {
+    return result;
   }
 
-  return result;
+  revalidatePath(paths.checkout.asPath());
+
+  return ok({
+    redirectUrl: paths.checkout.asPath({ query: { step: "payment" } }),
+  });
 };

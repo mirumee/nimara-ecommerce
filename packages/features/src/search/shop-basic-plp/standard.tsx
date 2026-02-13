@@ -24,6 +24,7 @@ export const StandardSearchView = async (props: SearchViewProps) => {
     defaultLocale,
     defaultResultsPerPage,
     handleFiltersFormSubmit,
+    region,
   } = props;
   const searchParams = await searchParamsPromise;
   const headerText = await SearchHeader(searchParams);
@@ -34,6 +35,7 @@ export const StandardSearchView = async (props: SearchViewProps) => {
       services={services}
       defaultResultsPerPage={defaultResultsPerPage}
       defaultSortBy={props.defaultSortBy}
+      region={region}
       render={({ products, pageInfo, facets, sortByOptions, searchParams }) => (
         <div className="w-full">
           <Breadcrumbs pageName={headerText} homePath={paths.home} />

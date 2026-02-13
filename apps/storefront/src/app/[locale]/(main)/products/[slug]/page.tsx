@@ -7,6 +7,7 @@ import { StandardPDPView } from "@nimara/features/product-detail-page/shop-basic
 import { addToBagAction } from "@/app/[locale]/(main)/products/[slug]/_actions/add-to-bag";
 import { clientEnvs } from "@/envs/client";
 import { getCheckoutId } from "@/features/checkout/cart";
+import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
 import { getServiceRegistry } from "@/services/registry";
 
@@ -18,8 +19,11 @@ type ProductPageProps = {
 export async function generateMetadata({
   params,
 }: ProductPageProps): Promise<Metadata> {
-  const services = await getServiceRegistry();
-  const { slug } = await params;
+  const [{ slug }, services, region] = await Promise.all([
+    params,
+    getServiceRegistry(),
+    getCurrentRegion(),
+  ]);
   const storefrontUrl = clientEnvs.NEXT_PUBLIC_STOREFRONT_URL;
   const productPath = paths.products.asPath({ slug });
 
@@ -28,18 +32,23 @@ export async function generateMetadata({
     services,
     storefrontUrl,
     productPath,
+    region,
   });
 }
 
 export default async function ProductPage(props: ProductPageProps) {
   const services = await getServiceRegistry();
-  const checkoutId = await getCheckoutId();
+  const [checkoutId, region] = await Promise.all([
+    getCheckoutId(),
+    getCurrentRegion(),
+  ]);
 
   return (
     <StandardPDPView
       {...props}
       services={services}
       checkoutId={checkoutId}
+      region={region}
       paths={{
         home: paths.home.asPath(),
         cart: paths.cart.asPath(),

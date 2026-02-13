@@ -5,7 +5,7 @@ import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import { addressSchema } from "@nimara/foundation/address/address-form/schema";
 import { type GetTranslations } from "@nimara/i18n/types";
 
-export const schema = ({
+export const paymentSchema = ({
   addressFormRows,
   t,
 }: {
@@ -25,11 +25,11 @@ export const schema = ({
       .optional(),
   });
 
-export type Schema = z.infer<ReturnType<typeof schema>>;
+export type PaymentSchema = z.infer<ReturnType<typeof paymentSchema>>;
 
-export type BillingAddressPath = keyof Schema["billingAddress"];
+export type BillingAddressPath = keyof PaymentSchema["billingAddress"];
 
 export type BillingAddressValue = FieldPathValue<
   any,
-  keyof Schema["billingAddress"]
+  keyof PaymentSchema["billingAddress"]
 >;

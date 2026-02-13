@@ -6,7 +6,9 @@ import { addToBag } from "@nimara/features/product-detail-page/shared/actions/ad
 
 import { getCheckoutId, setCheckoutIdCookie } from "@/features/checkout/cart";
 import { revalidateTag } from "@/foundation/cache/cache";
+import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
+import { storefrontLogger } from "@/services/logging";
 import { getServiceRegistry } from "@/services/registry";
 import { getAccessToken } from "@/services/tokens";
 
@@ -21,19 +23,19 @@ export const addToBagAction = async ({
   quantity?: number;
   variantId: string;
 }) => {
-  const [services, cartId] = await Promise.all([
+  const [services, cartId, region, accessToken] = await Promise.all([
     getServiceRegistry(),
     getCheckoutId(),
+    getCurrentRegion(),
+    getAccessToken(),
   ]);
-
-  const accessToken = await getAccessToken();
 
   // Call the pure function with services and context
   const result = await addToBag(
     services,
     { variantId, quantity },
     {
-      region: services.region,
+      region,
       cartId,
       accessToken: accessToken ?? null,
       cacheTTL: {
@@ -52,6 +54,12 @@ export const addToBagAction = async ({
     revalidateTag(`CHECKOUT:${cartId ?? result.data.cartId}`, "max");
     revalidatePath(paths.cart.asPath());
   }
+
+  storefrontLogger.error("Failed to add item to bag", {
+    variantId,
+    quantity,
+    errors: result.errors,
+  });
 
   return result;
 };

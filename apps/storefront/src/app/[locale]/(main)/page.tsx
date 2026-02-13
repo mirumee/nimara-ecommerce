@@ -3,6 +3,7 @@ import { type HomeViewProps } from "@nimara/features/home-page/shared/types";
 import { StandardHomeView } from "@nimara/features/home-page/shop-basic-home/standard";
 
 import { clientEnvs } from "@/envs/client";
+import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
 import { getServiceRegistry } from "@/services/registry";
 import { getAccessToken } from "@/services/tokens";
@@ -14,8 +15,11 @@ export async function generateMetadata() {
 }
 
 export default async function Page(props: HomeViewProps) {
-  const services = await getServiceRegistry();
-  const accessToken = await getAccessToken();
+  const [services, region, accessToken] = await Promise.all([
+    getServiceRegistry(),
+    getCurrentRegion(),
+    getAccessToken(),
+  ]);
 
   return (
     <StandardHomeView
@@ -23,6 +27,8 @@ export default async function Page(props: HomeViewProps) {
       services={services}
       accessToken={accessToken || null}
       mailTo={clientEnvs.NEXT_PUBLIC_DEFAULT_EMAIL}
+      region={region}
+      revalidateTime={services.config.cacheTTL.cms}
       paths={{
         search: paths.search.asPath(),
         product: (slug) => paths.products.asPath({ slug }),

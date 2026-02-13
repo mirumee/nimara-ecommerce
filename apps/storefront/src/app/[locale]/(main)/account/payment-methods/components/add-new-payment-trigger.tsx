@@ -6,7 +6,6 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { cn } from "@nimara/foundation/lib/cn";
-import { type ServiceRegistry } from "@nimara/infrastructure/types";
 import { Button } from "@nimara/ui/components/button";
 import { Spinner } from "@nimara/ui/components/spinner";
 
@@ -28,10 +27,8 @@ export const AddNewPaymentTrigger = ({
   variant,
   customerId,
   storeUrl,
-  services,
 }: {
   customerId: string;
-  services: ServiceRegistry;
   storeUrl: string;
   variant: "outline" | "default";
 }) => {
@@ -77,7 +74,6 @@ export const AddNewPaymentTrigger = ({
           onClose={handleClose}
           secret={secret}
           storeUrl={storeUrl}
-          services={services}
         />
       )}
     </>

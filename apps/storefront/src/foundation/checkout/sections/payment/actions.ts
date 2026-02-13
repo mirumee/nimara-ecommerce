@@ -1,15 +1,20 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
+
 import { type AllCountryCode } from "@nimara/domain/consts";
 import { type Checkout } from "@nimara/domain/objects/Checkout";
+import { type AsyncResult } from "@nimara/domain/objects/Result";
 import { schemaToAddress } from "@nimara/foundation/address/address";
 
 import { createAddressAction } from "@/foundation/address/create-address-action";
 import { updateCheckoutAddressAction } from "@/foundation/checkout/actions/update-checkout-address-action";
+import { paths } from "@/foundation/routing/paths";
 import { storefrontLogger } from "@/services/logging";
+import { getServiceRegistry } from "@/services/registry";
 import { getAccessToken } from "@/services/tokens";
 
-import { type Schema } from "./schema";
+import { type PaymentSchema } from "./schema";
 
 export async function updateBillingAddress({
   checkout,
@@ -17,7 +22,7 @@ export async function updateBillingAddress({
 }: {
   checkout: Checkout;
   input: Pick<
-    Schema,
+    PaymentSchema,
     "sameAsShippingAddress" | "billingAddress" | "saveAddressForFutureUse"
   >;
 }) {
@@ -48,5 +53,54 @@ export async function updateBillingAddress({
     }
   }
 
+  if (result.ok) {
+    revalidatePath(paths.checkout.asPath());
+  }
+
   return result;
 }
+
+interface InitializePaymentGatewayPayload {
+  amount: number;
+  id: Checkout["id"];
+}
+
+export const initializePaymentGateway = async ({
+  amount,
+  id,
+}: InitializePaymentGatewayPayload): AsyncResult<{ success: boolean }> => {
+  const services = await getServiceRegistry();
+  const paymentService = await services.getPaymentService();
+
+  return paymentService.paymentGatewayInitialize({
+    amount,
+    id,
+  });
+};
+
+interface InitializePaymentTransactionPayload {
+  amount: number;
+  customerId?: string | null;
+  id: Checkout["id"];
+  paymentMethod?: string;
+  saveForFutureUse?: boolean;
+}
+
+export const initializePaymentTransaction = async ({
+  amount,
+  customerId,
+  id,
+  paymentMethod,
+  saveForFutureUse,
+}: InitializePaymentTransactionPayload) => {
+  const services = await getServiceRegistry();
+  const paymentService = await services.getPaymentService();
+
+  return paymentService.paymentGatewayTransactionInitialize({
+    amount,
+    customerId: customerId ?? undefined,
+    id,
+    paymentMethod,
+    saveForFutureUse,
+  });
+};

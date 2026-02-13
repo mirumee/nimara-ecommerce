@@ -1,9 +1,11 @@
+import { type Region } from "@nimara/foundation/regions/types";
 import type { ServiceRegistry } from "@nimara/infrastructure/types";
 
 import { RelatedProducts } from "./related-products";
 
 type Props = {
   productPath: (slug: string) => string;
+  region: Region;
   services: ServiceRegistry;
   slug: string;
 };
@@ -11,10 +13,9 @@ type Props = {
 export const RelatedProductsContainer = async ({
   slug,
   services,
+  region,
   productPath,
 }: Props) => {
-  const region = services.region;
-
   const storeService = await services.getStoreService();
   const result = await storeService.getProductRelatedProducts({
     productSlug: slug,

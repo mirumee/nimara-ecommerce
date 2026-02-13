@@ -28,6 +28,8 @@ export const StandardCollectionView = async (
   return (
     <CollectionProvider
       slug={slug}
+      channel={props.channel}
+      languageCode={props.languageCode}
       searchParams={searchParams}
       services={props.services}
       defaultResultsPerPage={props.defaultResultsPerPage}

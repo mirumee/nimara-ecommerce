@@ -1,5 +1,6 @@
 "use server";
 
+import * as Sentry from "@sentry/nextjs";
 import { revalidatePath } from "next/cache";
 import { getLocale } from "next-intl/server";
 
@@ -16,6 +17,7 @@ export async function logout() {
 
   try {
     await signOut();
+    Sentry.setUser(null);
   } catch (error) {
     errorService.logError(error);
   }

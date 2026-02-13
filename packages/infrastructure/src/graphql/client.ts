@@ -12,15 +12,15 @@ import { logger } from "#root/logging/service";
 
 type AnyVariables = Record<string, unknown>;
 type GraphqlError = {
-  extensions: { exception: { code: string } };
-  locations: Array<{ column: number; line: number }>;
+  extensions?: { code?: string; exception?: { code?: string } };
+  locations?: Array<{ column: number; line: number }>;
   message: string;
-  path: string[];
+  path?: string[];
 };
 type GraphQLResponse<TData = any> = {
   data?: TData;
   errors?: Array<GraphqlError>;
-  extensions: {
+  extensions?: {
     cost?: { maximumAvailable: number; requestedQueryCost: number };
     exception?: object;
   };
@@ -94,33 +94,53 @@ export const graphqlClient = (
       });
 
       const duration = Math.round(performance.now() - startTime);
-      const body = (await response.json()) as GraphQLResponse<TResult>;
+      const parsedResponse = await parseGraphQLResponse<TResult>(response);
+      const { body } = parsedResponse;
 
       if (!response.ok) {
-        if (body.errors?.length) {
-          logger.error("GraphQL Error", {
-            durationMs: duration,
-            error: body["errors"],
-            operationName,
-            variables,
-            url,
-          });
-        }
-
         return handleInvalidResponse({
+          body,
+          parsedResponse,
           response,
           operationName,
           url,
           duration,
+          variables,
         });
       }
 
-      if ("errors" in body && body.errors) {
-        const exceptionCode = body?.errors?.[0].extensions.exception.code;
+      if (!body) {
+        logger.error("Invalid GraphQL response body", {
+          durationMs: duration,
+          operationName,
+          url,
+          variables,
+          status: response.status,
+          statusText: response.statusText,
+          parseError: normalizeErrorForLogging(parsedResponse.parseError),
+          responseBodySnippet: toSnippet(parsedResponse.rawBody),
+        });
+
+        return err([
+          {
+            code: "HTTP_ERROR",
+            message: "Invalid GraphQL response body",
+            status: response.status,
+            context: {
+              operationName,
+              url,
+            },
+          },
+        ]);
+      }
+
+      if (body.errors?.length) {
+        const exceptionCode = getGraphqlExceptionCode(body.errors);
+        const message = body.errors[0]?.message ?? "GraphQL Error";
 
         logger.error("GraphQL Error", {
           durationMs: duration,
-          error: body["errors"],
+          error: body.errors,
           operationName,
           exceptionCode,
           variables,
@@ -130,12 +150,17 @@ export const graphqlClient = (
         return err([
           {
             code: "HTTP_ERROR",
-            message: "GraphQL Error",
+            message,
+            context: {
+              operationName,
+              url,
+              exceptionCode,
+            },
           },
         ]);
       }
 
-      if (!body.data) {
+      if (typeof body.data === "undefined") {
         logger.error("HTTP Error: No data returned", {
           durationMs: duration,
           error: "No data field in GraphQL response",
@@ -161,10 +186,13 @@ export const graphqlClient = (
       return ok(body.data);
     } catch (e) {
       const duration = Math.round(performance.now() - startTime);
+      const normalizedError = normalizeErrorForLogging(e);
+      const errorCode = "UNEXPECTED_HTTP_ERROR";
+      const message = getUnexpectedRequestErrorMessage(e);
 
-      logger.error("Unexpected HTTP error", {
+      logger.error("GraphQL request failed before receiving a valid response", {
         durationMs: duration,
-        error: e,
+        error: normalizedError,
         operationName,
         url,
         variables,
@@ -172,8 +200,12 @@ export const graphqlClient = (
 
       return err([
         {
-          code: "UNEXPECTED_HTTP_ERROR",
-          message: "Unexpected HTTP error",
+          code: errorCode,
+          message,
+          context: {
+            operationName,
+            url,
+          },
         },
       ]);
     }
@@ -181,81 +213,156 @@ export const graphqlClient = (
 });
 
 const handleInvalidResponse = ({
+  body,
+  parsedResponse,
   operationName,
   response,
   url,
   duration,
+  variables,
 }: {
+  body: GraphQLResponse | null;
   duration: number;
   operationName: string;
+  parsedResponse: ParsedGraphqlResponse;
   response: Response;
   url: RequestInfo | URL;
+  variables?: AnyVariables;
 }): Err => {
+  const exceptionCode = getGraphqlExceptionCode(body?.errors);
+  const graphqlMessage = body?.errors?.[0]?.message;
+  const responseMessage = graphqlMessage ?? response.statusText;
+
+  logger.error("API request failed", {
+    durationMs: duration,
+    message: responseMessage,
+    status: response.status,
+    operationName,
+    url,
+    variables,
+    exceptionCode,
+    graphqlErrors: body?.errors,
+    parseError: normalizeErrorForLogging(parsedResponse.parseError),
+    responseBodySnippet: toSnippet(parsedResponse.rawBody),
+  });
+
   // Add more cases for response.status if needed.
   switch (response.status) {
     case 404:
-      logger.error("Not found", {
-        durationMs: duration,
-        message: response.statusText,
-        status: response.status,
-        operationName,
-        url,
-      });
-
       return err([
         {
           code: "NOT_FOUND_ERROR",
           status: response.status,
-          message: response.statusText,
+          message: responseMessage,
           context: {
             operationName,
             url,
+            exceptionCode,
           },
         },
       ]);
 
     case 429:
-      logger.error("Too many requests", {
-        durationMs: duration,
-        message: response.statusText,
-        status: response.status,
-        operationName,
-        url,
-      });
-
       return err([
         {
           code: "TOO_MANY_REQUESTS_ERROR",
           status: response.status,
-          message: response.statusText,
+          message: responseMessage,
           context: {
             operationName,
             url,
+            exceptionCode,
           },
         },
       ]);
 
     default:
-      logger.error("API request failed", {
-        durationMs: duration,
-        message: response.statusText,
-        status: response.status,
-        operationName,
-        url,
-      });
-
       return err([
         {
           code: "HTTP_ERROR",
           status: response.status,
-          message: response.statusText,
+          message: responseMessage,
           context: {
             operationName,
             url,
+            exceptionCode,
           },
         },
       ]);
   }
+};
+
+type ParsedGraphqlResponse<TResult = any> = {
+  body: GraphQLResponse<TResult> | null;
+  parseError?: unknown;
+  rawBody?: string;
+};
+
+const parseGraphQLResponse = async <TResult>(
+  response: Response,
+): Promise<ParsedGraphqlResponse<TResult>> => {
+  try {
+    const rawBody = await response.text();
+
+    if (!rawBody.trim()) {
+      return { body: null, rawBody };
+    }
+
+    try {
+      return {
+        body: JSON.parse(rawBody) as GraphQLResponse<TResult>,
+        rawBody,
+      };
+    } catch (parseError) {
+      return { body: null, parseError, rawBody };
+    }
+  } catch (parseError) {
+    return { body: null, parseError };
+  }
+};
+
+const normalizeErrorForLogging = (error: unknown) => {
+  if (error instanceof Error) {
+    return {
+      message: error.message,
+      name: error.name,
+      stack: error.stack,
+    };
+  }
+
+  return { message: String(error) };
+};
+
+const getGraphqlExceptionCode = (errors?: Array<GraphqlError>) => {
+  const firstError = errors?.[0];
+
+  return (
+    firstError?.extensions?.exception?.code ?? firstError?.extensions?.code
+  );
+};
+
+const getUnexpectedRequestErrorMessage = (error: unknown) => {
+  if (isAbortError(error)) {
+    return "Request was aborted before receiving GraphQL response";
+  }
+
+  if (error instanceof TypeError) {
+    return "Network error while calling GraphQL API";
+  }
+
+  return "Unexpected HTTP error";
+};
+
+const isAbortError = (error: unknown) => {
+  return error instanceof DOMException && error.name === "AbortError";
+};
+
+const toSnippet = (value?: string) => {
+  if (!value) {
+    return undefined;
+  }
+
+  return value.slice(0, 500);
 };
 
 export type GraphqlClient = ReturnType<typeof graphqlClient>;

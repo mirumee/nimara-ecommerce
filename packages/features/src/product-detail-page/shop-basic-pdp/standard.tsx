@@ -26,12 +26,14 @@ export const StandardPDPView = async ({
   paths,
   checkoutId,
   addToBagAction,
+  region,
 }: PDPViewProps) => {
   const { slug } = await params;
 
   return (
     <ProductProvider
       slug={slug}
+      region={region}
       services={services}
       render={(product, availability) => (
         <div className="relative grid w-full gap-4">
@@ -45,6 +47,7 @@ export const StandardPDPView = async ({
           <div className="grid gap-8 md:grid-cols-2 md:gap-28">
             <div className="md:col-span-1">
               <ProductMediaWrapper
+                region={region}
                 product={product}
                 availability={availability}
                 services={services}
@@ -63,6 +66,7 @@ export const StandardPDPView = async ({
                   services={services}
                   checkoutId={checkoutId}
                   cartPath={paths.cart}
+                  region={region}
                   addToBagAction={addToBagAction}
                 />
 
@@ -77,6 +81,7 @@ export const StandardPDPView = async ({
               slug={slug}
               services={services}
               productPath={paths.product}
+              region={region}
             />
           </Suspense>
         </div>

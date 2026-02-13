@@ -18,6 +18,7 @@ export async function generateStandardPDPMetadata({
   services,
   storefrontUrl,
   productPath,
+  region,
 }: GenerateStandardPDPMetadataProps): Promise<Metadata> {
   const [{ slug }, t] = await Promise.all([
     params,
@@ -30,9 +31,9 @@ export async function generateStandardPDPMetadata({
   const storeService = await services.getStoreService();
   const result = await storeService.getProductBase({
     productSlug: slug,
-    channel: services.region.market.channel,
-    languageCode: services.region.language.code,
-    countryCode: services.region.market.countryCode,
+    channel: region.market.channel,
+    languageCode: region.language.code,
+    countryCode: region.market.countryCode,
     options: {
       next: {
         revalidate: services.config.cacheTTL.pdp,

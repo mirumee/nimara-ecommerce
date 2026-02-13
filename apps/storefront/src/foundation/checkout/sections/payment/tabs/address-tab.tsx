@@ -27,8 +27,8 @@ import {
 import { useCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
 
-import { type TabName } from "./payment";
-import { type Schema } from "./schema";
+import { type PaymentSchema } from "../schema";
+import { type TabName } from "../types/internal";
 
 interface AddressTabProps {
   activeTab: TabName;
@@ -41,7 +41,7 @@ interface AddressTabProps {
   setIsCountryChanging?: (value: boolean) => void;
 }
 
-export function AddressTab({
+export const AddressTab = ({
   activeTab,
   addresses,
   countries,
@@ -50,11 +50,10 @@ export function AddressTab({
   setActiveTab,
   setIsCountryChanging,
   isDisabled = false,
-}: AddressTabProps) {
+}: AddressTabProps) => {
   const t = useTranslations();
-
   const router = useRouter();
-  const form = useFormContext();
+  const form = useFormContext<PaymentSchema>();
   const region = useCurrentRegion();
 
   const hasDefaultBillingAddressSet = addresses?.some(
@@ -75,7 +74,7 @@ export function AddressTab({
           {},
         ),
         country: region.market.countryCode,
-      });
+      } as PaymentSchema["billingAddress"]);
     } else {
       form.setValue("saveAddressForFutureUse", false);
       form.setValue("billingAddress", {
@@ -90,14 +89,15 @@ export function AddressTab({
     });
   };
 
-  function handleCountryChange(value: string) {
-    const address = JSON.parse(value) as Schema["billingAddress"];
+  const handleCountryChange = (value: string) => {
+    const address = JSON.parse(value) as PaymentSchema["billingAddress"];
 
     if (address?.country !== countryCode) {
       setIsCountryChanging?.(true);
     }
+
     form.setValue("billingAddress", address);
-  }
+  };
 
   return (
     <div className="space-y-6">
@@ -143,7 +143,7 @@ export function AddressTab({
                 }),
               }))}
               isDisabled={isDisabled}
-              onChange={(value) => handleCountryChange(value)}
+              onChange={handleCountryChange}
               className="mb-0 rounded-none border-b-0 p-4 text-sm first-of-type:rounded-t last-of-type:rounded-b last-of-type:border-b"
             >
               {addresses.map(({ address, formattedAddress }) => (
@@ -183,4 +183,4 @@ export function AddressTab({
       )}
     </div>
   );
-}
+};

@@ -1,4 +1,5 @@
 import type { PageField } from "@nimara/domain/objects/CMSPage";
+import { type Region } from "@nimara/foundation/regions/types";
 import type { ServiceRegistry } from "@nimara/infrastructure/types";
 import type { SearchContext } from "@nimara/infrastructure/use-cases/search/types";
 import {
@@ -14,6 +15,7 @@ import { ProductsGridClient } from "./products-grid-client";
 export interface ProductsGridProps {
   fields: PageField[] | undefined;
   productPath: (slug: string) => string;
+  region: Region;
   searchPath: string;
   services: ServiceRegistry;
 }
@@ -23,11 +25,12 @@ export const ProductsGrid = async ({
   services,
   productPath,
   searchPath,
+  region,
 }: ProductsGridProps) => {
   const searchContext = {
-    currency: services.region.market.currency,
-    channel: services.region.market.channel,
-    languageCode: services.region.language.code,
+    currency: region.market.currency,
+    channel: region.market.channel,
+    languageCode: region.language.code,
   } satisfies SearchContext;
 
   if (!fields || fields.length === 0) {

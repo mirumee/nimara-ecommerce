@@ -14,12 +14,12 @@ export async function generateStandardCMSPageMetadata(
 
   const cmsService = await props.services.getCMSPageService();
   const resultPage = await cmsService.cmsPageGet({
-    languageCode: props.services.region.language.code,
+    languageCode: props.region.language.code,
     slug,
     options: {
       next: {
         tags: [`CMS:${slug}`],
-        revalidate: props.services.config.cacheTTL.cms,
+        revalidate: props.revalidateTime,
       },
     },
   });

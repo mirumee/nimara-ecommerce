@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/nextjs";
 import NextAuth, { type NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { getTranslations } from "next-intl/server";
@@ -53,6 +54,15 @@ export const config = {
         if (!resultUserGet.ok) {
           return null;
         }
+
+        const contextUser: Sentry.User | null = resultUserGet.data
+          ? {
+              email: resultUserGet.data.email ?? "",
+              id: resultUserGet.data.id ?? "",
+            }
+          : null;
+
+        Sentry.setUser(contextUser);
 
         return {
           ...resultUserGet.data,

@@ -4,7 +4,9 @@ import {
 } from "@nimara/features/cart/shop-basic-cart/standard";
 
 import { getCheckoutId, revalidateCart } from "@/features/checkout/cart";
+import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
+import { storefrontLogger } from "@/services/logging";
 import { getServiceRegistry } from "@/services/registry";
 import { getAccessToken } from "@/services/tokens";
 
@@ -16,9 +18,12 @@ import {
 export const generateMetadata = generateStandardCartMetadata;
 
 export default async function Page(props: any) {
-  const services = await getServiceRegistry();
-  const checkoutId = await getCheckoutId();
-  const accessToken = await getAccessToken();
+  const [services, region, accessToken, checkoutId] = await Promise.all([
+    getServiceRegistry(),
+    getCurrentRegion(),
+    getAccessToken(),
+    getCheckoutId(),
+  ]);
 
   return (
     <StandardCartView
@@ -27,6 +32,8 @@ export default async function Page(props: any) {
       checkoutId={checkoutId}
       accessToken={accessToken}
       onCartUpdate={revalidateCart}
+      region={region}
+      logger={storefrontLogger}
       onLineQuantityChange={updateLineQuantityAction}
       onLineDelete={deleteLineAction}
       paths={{
