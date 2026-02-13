@@ -70,6 +70,18 @@ export const PAGE_CREATE_MUTATION = gql`
   }
 `;
 
+export const PAGE_UPDATE_MUTATION = gql`mutation PageUpdate($id: ID!, $input: PageInput!) {
+      pageUpdate(id: $id, input: $input) {
+        page {
+          id
+        }
+        errors {
+          field
+          message
+        }
+      }
+    }`
+
 export const MENU_CREATE_MUTATION = gql`
   mutation MenuCreate($input: MenuCreateInput!) {
     menuCreate(input: $input) {

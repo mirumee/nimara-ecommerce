@@ -1,22 +1,20 @@
 import { gql } from "graphql-request";
 
-import {
-  createCategories,
-  createHomepageAttributes,
-  createHomepagePage,
-  createMediaForAllProducts,
-  createMenu,
-  createMenuItem,
-  createPage,
-  createPageType,
-  createProducts,
-  createProductTypes,
-  fetchChannels,
-  wipeAllData,
-} from "./actions";
 import { client } from "./client";
 import mockDataRaw from "./mock-data.json";
 import { MockData, ShopQueryResponse } from "./types";
+import { wipeAllData } from "./actions/wipe-all-data";
+import { createPageType } from "./actions/create-page-type";
+import { createPage } from "./actions/create-page";
+import { createCategories } from "./actions/create-categories";
+import { createHomepageAttributes } from "./actions/create-homepage-attributes";
+import { createMenu } from "./actions/create-menu";
+import { createMenuItem } from "./actions/create-menu-item";
+import { createProductTypes } from "./actions/create-product-types";
+import { createProducts } from "./actions/create-products";
+import { fetchChannels } from "./actions/fetch-channels";
+import { createMediaForAllProducts } from "./actions/create-media-for-all-products";
+import { createHomepagePage } from "./actions/create-homepage-page";
 
 const mockData = mockDataRaw as MockData;
 
