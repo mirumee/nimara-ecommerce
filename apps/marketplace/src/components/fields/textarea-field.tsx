@@ -59,9 +59,10 @@ export function TextareaField({
         <p className="text-sm text-muted-foreground">{description}</p>
       )}
       {error && (
-        <p className="text-sm text-destructive">{String(error.message ?? "")}</p>
+        <p className="text-sm text-destructive">
+          {String(error.message ?? "")}
+        </p>
       )}
     </div>
   );
 }
-

@@ -2,11 +2,6 @@ import type { DocumentTypeDecoration } from "@graphql-typed-document-node/core";
 
 import type { AsyncResult } from "@nimara/domain/objects/Result";
 
-import {
-  type VendorsList,
-  VendorsListDocument,
-  type VendorsListVariables,
-} from "@/graphql/generated/client";
 import { executeGraphQL } from "@/lib/graphql/execute";
 
 const VENDOR_PROFILES_QUERY = `
@@ -119,29 +114,8 @@ export type PageUpdateResponse = {
   };
 };
 
-/**
- * Service for listing vendors in the marketplace.
- * - getVendors: customers (Saleor users) – for backward compatibility
- * - getVendorProfiles: vendor profile pages (model type) – preferred for dashboard
- */
+/** Service for listing vendors in the marketplace. */
 class VendorsService {
-  async getVendors(
-    variables?: VendorsListVariables,
-    token?: string | null,
-  ): AsyncResult<VendorsList> {
-    return executeGraphQL(
-      VendorsListDocument as DocumentTypeDecoration<
-        VendorsList,
-        VendorsListVariables
-      > & {
-        toString(): string;
-      },
-      "VendorsListQuery",
-      variables,
-      token,
-    );
-  }
-
   async getVendorProfiles(
     variables?: VendorProfilesVariables,
     token?: string | null,

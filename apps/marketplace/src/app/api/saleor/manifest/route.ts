@@ -106,21 +106,6 @@ export async function GET(request: NextRequest) {
 }`,
         syncEvents: [],
       },
-      {
-        name: "App deleted",
-        targetUrl: manifestUrl(baseUrl, "/api/saleor/webhooks/app-deleted"),
-        asyncEvents: ["APP_DELETED"],
-        query: `subscription AppDeletedSubscription {
-  event {
-    ... on AppDeleted {
-      app {
-        id
-      }
-    }
-  }
-}`,
-        syncEvents: [],
-      },
     ],
     brand: {
       logo: {

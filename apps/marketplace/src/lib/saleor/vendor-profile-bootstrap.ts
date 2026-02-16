@@ -116,6 +116,22 @@ const VENDOR_PROFILE_ATTRIBUTES: AttributeInput[] = [
   },
   {
     entityType: "PAGE",
+    inputType: "PLAIN_TEXT",
+    name: "Company name",
+    slug: "company-name",
+    type: "PAGE_TYPE",
+    valueRequired: false,
+  },
+  {
+    entityType: "PAGE",
+    inputType: "PLAIN_TEXT",
+    name: "VAT ID",
+    slug: "vat-id",
+    type: "PAGE_TYPE",
+    valueRequired: true,
+  },
+  {
+    entityType: "PAGE",
     inputType: "DROPDOWN",
     name: "Vendor Status",
     slug: "vendor-status",

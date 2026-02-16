@@ -145,12 +145,14 @@ async function safeRollback(opts: {
 
 export async function registerAccount(input: {
   channel: string;
+  companyName: string;
   email: string;
   firstName: string;
   lastName: string;
   password: string;
   redirectUrl: string;
-  vendorDescription: string;
+  vatId: string;
+  vendorDescription?: string;
   vendorName: string;
 }) {
   let saleorDomain: string;
@@ -193,7 +195,7 @@ export async function registerAccount(input: {
 
   const saleor = graphqlClient(apiUrl, appConfig.authToken);
 
-  const { vendorDescription, vendorName } = input;
+  const { companyName, vatId, vendorDescription, vendorName } = input;
 
   // 1) Create vendor (page + collection) first.
   const resultVendorType = await saleor.execute(VendorPageTypeDocument, {
@@ -216,8 +218,18 @@ export async function registerAccount(input: {
   const statusAttr = vendorPageType?.attributes?.find(
     (a) => a?.slug === "vendor-status",
   );
-  const nameAttr = vendorPageType?.attributes?.find((a) => a?.slug === "vendor-name");
-  const descriptionAttr = vendorPageType?.attributes?.find((a) => a?.slug === "description");
+  const nameAttr = vendorPageType?.attributes?.find(
+    (a) => a?.slug === "vendor-name",
+  );
+  const companyNameAttr = vendorPageType?.attributes?.find(
+    (a) => a?.slug === "company-name",
+  );
+  const vatIdAttr = vendorPageType?.attributes?.find(
+    (a) => a?.slug === "vat-id",
+  );
+  const descriptionAttr = vendorPageType?.attributes?.find(
+    (a) => a?.slug === "description",
+  );
 
   if (!vendorPageType?.id || !statusAttr?.id) {
     return failConfigured("vendorPageType_missing_or_statusAttr_missing", {
@@ -253,7 +265,23 @@ export async function registerAccount(input: {
             },
           ]
         : []),
-      ...(descriptionAttr?.id
+      ...(companyNameAttr?.id
+        ? [
+            {
+              id: companyNameAttr.id,
+              plainText: companyName,
+            },
+          ]
+        : []),
+      ...(vatIdAttr?.id
+        ? [
+            {
+              id: vatIdAttr.id,
+              plainText: vatId,
+            },
+          ]
+        : []),
+      ...(descriptionAttr?.id && vendorDescription
         ? [
             {
               id: descriptionAttr.id,
@@ -301,9 +329,7 @@ export async function registerAccount(input: {
     name: `${vendorName} — Products`,
     slug: collectionSlug,
     isPublished: true,
-    metadata: [
-      { key: "vendor.model_id", value: vendorPageId },
-    ],
+    metadata: [{ key: "vendor.model_id", value: vendorPageId }],
   };
 
   const resultCreateCollection = await saleor.execute(
@@ -420,18 +446,21 @@ export async function registerAccount(input: {
   }
 
   // Attach owner id to collection now that we know customerId.
-  const resultCollectionMetadata = await saleor.execute(MetadataUpdateDocument, {
-    operationName: "MetadataUpdateMutation",
-    variables: {
-      id: vendorCollectionId,
-      input: [
-        { key: "vendor.id", value: vendorPageId },
-        { key: "vendor.model_id", value: vendorPageId },
-        { key: "vendor.user_id", value: resolvedCustomerId },
-      ],
+  const resultCollectionMetadata = await saleor.execute(
+    MetadataUpdateDocument,
+    {
+      operationName: "MetadataUpdateMutation",
+      variables: {
+        id: vendorCollectionId,
+        input: [
+          { key: "vendor.id", value: vendorPageId },
+          { key: "vendor.model_id", value: vendorPageId },
+          { key: "vendor.user_id", value: resolvedCustomerId },
+        ],
+      },
+      options: { cache: "no-store" },
     },
-    options: { cache: "no-store" },
-  });
+  );
 
   if (!resultCollectionMetadata.ok) {
     await safeRollback({
@@ -489,6 +518,13 @@ export async function registerAccount(input: {
   });
 
   if (!resultCustomerMetadata.ok) {
+    await safeRollback({
+      customerId: resolvedCustomerId,
+      saleor,
+      vendorCollectionId,
+      vendorPageId,
+    });
+
     return failSetup("customer_updateMetadata_request_failed", {
       errors: resultCustomerMetadata.errors,
       operationName: "MetadataUpdateMutation",

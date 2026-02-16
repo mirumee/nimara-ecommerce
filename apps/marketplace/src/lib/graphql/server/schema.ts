@@ -20,10 +20,9 @@ import { requireVendorID } from "./auth";
 const MARKETPLACE_CHANNEL =
   process.env.NEXT_PUBLIC_SALEOR_MARKETPLACE_CHANNEL_SLUG || "default-channel";
 
-function withVendorMetadata<T extends { metadata?: Array<{ key: string; value: string }> }>(
-  input: T,
-  vendorId: string,
-): T {
+function withVendorMetadata<
+  T extends { metadata?: Array<{ key: string; value: string }> },
+>(input: T, vendorId: string): T {
   const metadata = Array.isArray(input.metadata) ? [...input.metadata] : [];
   const withoutVendor = metadata.filter((m) => m.key !== "vendor.id");
 
@@ -256,7 +255,9 @@ export async function getStitchedSchema() {
         productUpdate: {
           resolve(_source, args, context: ServerContext, info) {
             const vendorId = requireVendorID(context);
-            const input = args?.input ? withVendorMetadata(args.input, vendorId) : args?.input;
+            const input = args?.input
+              ? withVendorMetadata(args.input, vendorId)
+              : args?.input;
 
             return delegateToSchema({
               schema: saleorSchema,

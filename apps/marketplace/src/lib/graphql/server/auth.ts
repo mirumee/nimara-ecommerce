@@ -47,8 +47,10 @@ async function fetchVendorIdForUser(args: {
 
   if (json.errors?.length) {
     throw new Error(
-      json.errors.map((e) => e.message).filter(Boolean).join("; ") ||
-        "Failed to fetch user metadata",
+      json.errors
+        .map((e) => e.message)
+        .filter(Boolean)
+        .join("; ") || "Failed to fetch user metadata",
     );
   }
 

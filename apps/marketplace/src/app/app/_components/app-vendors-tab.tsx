@@ -368,6 +368,8 @@ export function AppVendorsTab({ isAuthenticated, isLoading }: Props) {
                     <TableRow>
                       <TableHead>Vendor Name</TableHead>
                       <TableHead>Vendor Model ID</TableHead>
+                      <TableHead>Company Name</TableHead>
+                      <TableHead>VAT ID</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead>Created</TableHead>
                     </TableRow>
@@ -400,6 +402,12 @@ export function AppVendorsTab({ isAuthenticated, isLoading }: Props) {
                           </TableCell>
                           <TableCell className="font-mono text-xs text-muted-foreground">
                             {vendor.id}
+                          </TableCell>
+                          <TableCell>
+                            {getAttributeValue(vendor, "company-name") ?? "—"}
+                          </TableCell>
+                          <TableCell>
+                            {getAttributeValue(vendor, "vat-id") ?? "—"}
                           </TableCell>
                           <TableCell>
                             <VendorStatusSelect

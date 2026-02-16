@@ -58,23 +58,30 @@ export function useAuth() {
   return context;
 }
 
+type AppBridgeState = ReturnType<typeof useAppBridge>["appBridgeState"] | null;
+
 interface AuthProviderProps {
+  appBridgeState?: AppBridgeState;
   children: ReactNode;
 }
 
-function useSafeAppBridge(): { appBridgeState: ReturnType<typeof useAppBridge>["appBridgeState"] | null } {
-  try {
-    // When the app is opened outside of Saleor dashboard (no AppBridgeProvider),
-    // useAppBridge() throws. We treat it as "no app bridge available".
-    const { appBridgeState } = useAppBridge();
-    return { appBridgeState };
-  } catch {
-    return { appBridgeState: null };
-  }
+/** Wrapper that calls useAppBridge and passes to AuthProvider. Only use inside AppBridgeProvider. */
+export function AuthProviderWithAppBridge({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const { appBridgeState } = useAppBridge();
+
+  return (
+    <AuthProvider appBridgeState={appBridgeState}>{children}</AuthProvider>
+  );
 }
 
-export function AuthProvider({ children }: AuthProviderProps) {
-  const { appBridgeState } = useSafeAppBridge();
+export function AuthProvider({
+  appBridgeState = null,
+  children,
+}: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setTokenState] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -158,13 +165,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const me = data.data.me;
 
       const metadata = Array.isArray(me.metadata) ? me.metadata : [];
-      const metadataMap = metadata.reduce<Record<string, string>>((acc, item) => {
-        if (item?.key) {
-          acc[item.key] = item.value;
-        }
+      const metadataMap = metadata.reduce<Record<string, string>>(
+        (acc, item) => {
+          if (item?.key) {
+            acc[item.key] = item.value;
+          }
 
-        return acc;
-      }, {});
+          return acc;
+        },
+        {},
+      );
 
       const vendorPageId = metadataMap["vendor.id"] || "";
 
@@ -355,15 +365,29 @@ export function AuthProvider({ children }: AuthProviderProps) {
       typeof appBridgeState?.saleorApiUrl === "string"
         ? appBridgeState.saleorApiUrl
         : null;
-    const tokenFromBridge = typeof appBridgeToken === "string" ? appBridgeToken : null;
+    const tokenFromBridge =
+      typeof appBridgeToken === "string" ? appBridgeToken : null;
 
-    if (tokenFromBridge && saleorApiUrl) {
-      setAppBridgeDomain(String(saleorApiUrl));
+    if (!tokenFromBridge) {
+      return;
+    }
+
+    // Need both token and API URL. Fallback to URL params (e.g. NEW_TAB extension)
+    const hasApiUrl =
+      saleorApiUrl || (typeof window !== "undefined" && initDomainFromUrl());
+
+    if (hasApiUrl) {
+      if (saleorApiUrl) {
+        setAppBridgeDomain(saleorApiUrl);
+      }
       setTokenState(tokenFromBridge);
       setDashboardContext(true);
       fetchUser(tokenFromBridge)
         .then(() => setIsLoading(false))
         .catch(() => setIsLoading(false));
+    } else {
+      // Token from bridge but no API URL – can't use it, stop loading to avoid permanent spinner
+      setIsLoading(false);
     }
   }, [appBridgeToken, appBridgeState?.saleorApiUrl, fetchUser]);
 

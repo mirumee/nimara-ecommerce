@@ -30,7 +30,9 @@ const signUpSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   vendorName: z.string().min(1, "Vendor name is required"),
-  vendorDescription: z.string().min(1, "Vendor description is required"),
+  companyName: z.string().min(1, "Company name is required"),
+  vatId: z.string().min(1, "VAT ID is required"),
+  vendorDescription: z.string().optional(),
 });
 
 type SignUpFormData = z.infer<typeof signUpSchema>;
@@ -46,6 +48,8 @@ export default function SignUpPage() {
       firstName: "",
       lastName: "",
       vendorName: "",
+      companyName: "",
+      vatId: "",
       vendorDescription: "",
     },
     mode: "onChange",
@@ -62,7 +66,9 @@ export default function SignUpPage() {
         firstName: data.firstName,
         lastName: data.lastName,
         vendorName: data.vendorName,
-        vendorDescription: data.vendorDescription,
+        companyName: data.companyName,
+        vatId: data.vatId,
+        vendorDescription: data.vendorDescription ?? "",
         redirectUrl: `${window.location.origin}/account-confirm`,
         channel:
           process.env.NEXT_PUBLIC_SALEOR_MARKETPLACE_CHANNEL_SLUG ??
@@ -193,6 +199,24 @@ export default function SignUpPage() {
                 inputProps={{
                   placeholder: "********",
                   autoComplete: "new-password",
+                  disabled: isPending,
+                }}
+              />
+              <InputField
+                name="companyName"
+                label="Company name"
+                inputProps={{
+                  placeholder: "Acme Bikes Ltd.",
+                  autoComplete: "organization",
+                  disabled: isPending,
+                }}
+              />
+              <InputField
+                name="vatId"
+                label="VAT ID"
+                inputProps={{
+                  placeholder: "1234567890",
+                  autoComplete: "vat",
                   disabled: isPending,
                 }}
               />
