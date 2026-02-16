@@ -1,7 +1,7 @@
 import { createMenu } from "../actions/create-menu";
 import { createMenuItem } from "../actions/create-menu-item";
 import mockDataRaw from "../mock-data.json";
-import { MockData } from "../types";
+import { CategoryMock, MockData } from "../types";
 
 const mockData = mockDataRaw as MockData;
 
@@ -19,7 +19,7 @@ export async function seedMenus(
 
   console.log("[SEEDING] Creating navbar menu items...");
   async function createMenuHierarchy(
-    categories: any[],
+    categories: CategoryMock[],
     parentMenuItemId?: string,
   ) {
     for (const cat of categories) {

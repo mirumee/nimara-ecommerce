@@ -6,8 +6,8 @@ import {
   Connection,
   Edge,
   FileUploadTask,
+  HomepageMock,
   IdNode,
-  MockData,
   ShopQueryResponse,
 } from "./types";
 import { HOMEPAGE_ATTRIBUTES } from "./constants";
@@ -80,7 +80,7 @@ export async function bulkDelete(
 
 export function buildPageAttributes(
   attrIdsBySlug: Record<string, string>,
-  homepage: MockData["homepage"],
+  homepage: HomepageMock,
   productIds: string[],
 ): BuildPageAttributesResult {
   const attributes: Record<string, unknown>[] = [];

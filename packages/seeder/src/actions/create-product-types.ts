@@ -1,6 +1,6 @@
 import { client } from "../client";
 import { PRODUCT_TYPE_CREATE_MUTATION } from "../mutations";
-import { MockData, ProductTypeCreateResponse } from "../types";
+import { ProductTypeCreateResponse, ProductTypeMock } from "../types";
 
 /**
  * Creates product types.
@@ -8,7 +8,7 @@ import { MockData, ProductTypeCreateResponse } from "../types";
  * @returns Map of product type names to product type ids.
  */
 export async function createProductTypes(
-  productTypes: MockData["productTypes"],
+  productTypes: ProductTypeMock[],
 ): Promise<Record<string, string>> {
   console.log("[SEEDING] Creating product types...");
   const mapping: Record<string, string> = {};

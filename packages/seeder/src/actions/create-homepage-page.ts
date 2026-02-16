@@ -1,7 +1,7 @@
 import { client } from "../client";
 import { buildPageAttributes } from "../helpers";
 import { PAGE_CREATE_MUTATION } from "../mutations";
-import { MockData } from "../types";
+import { HomepageMock } from "../types";
 import { uploadPageFileAttributesGeneric } from "./upload-page-file-attributes-generic";
 
 /**
@@ -15,7 +15,7 @@ export async function createHomepagePage(
   pageTypeId: string,
   attrIdsBySlug: Record<string, string>,
   productIds: string[],
-  homepage: MockData["homepage"],
+  homepage: HomepageMock,
 ): Promise<void> {
   console.log("[SEEDING] Creating homepage page...");
 

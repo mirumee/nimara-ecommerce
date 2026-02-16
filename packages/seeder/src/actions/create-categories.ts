@@ -1,6 +1,6 @@
 import { client } from "../client";
 import { CATEGORY_CREATE_MUTATION } from "../mutations";
-import { CategoryCreateResponse, MockData } from "../types";
+import { CategoryCreateResponse, CategoryMock } from "../types";
 
 /**
  * Creates categories recursively.
@@ -8,12 +8,12 @@ import { CategoryCreateResponse, MockData } from "../types";
  * @returns Map of category names to category ids.
  */
 export async function createCategories(
-  categories: MockData["categories"],
+  categories: CategoryMock[],
 ): Promise<Record<string, string>> {
   console.log("[SEEDING] Creating categories...");
   const mapping: Record<string, string> = {};
 
-  async function processCategory(cat: any, parentId?: string) {
+  async function processCategory(cat: CategoryMock, parentId?: string) {
     const res = await client.request<CategoryCreateResponse>(
       CATEGORY_CREATE_MUTATION,
       {

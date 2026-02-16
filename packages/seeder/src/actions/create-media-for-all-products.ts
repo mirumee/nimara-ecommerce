@@ -1,4 +1,4 @@
-import { MockData, ProductBulkCreateResponse } from "../types";
+import { ProductBulkCreateResponse, ProductMock } from "../types";
 
 const SALEOR_API_URL = process.env.NEXT_PUBLIC_SALEOR_API_URL;
 const SALEOR_APP_TOKEN = process.env.SALEOR_APP_TOKEN;
@@ -10,7 +10,7 @@ const SALEOR_APP_TOKEN = process.env.SALEOR_APP_TOKEN;
  */
 export async function createMediaForAllProducts(
   products: ProductBulkCreateResponse["productBulkCreate"]["results"],
-  seedProducts: MockData["products"],
+  seedProducts: ProductMock[],
 ): Promise<void> {
   console.log("[SEEDING] Creating media for all products...");
 
