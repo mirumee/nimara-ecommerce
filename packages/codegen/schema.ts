@@ -23141,9 +23141,17 @@ export type Query = {
   /**
    * Look up a transaction by ID.
    *
-   * Requires one of the following permissions: HANDLE_PAYMENTS.
+   * Requires one of the following permissions: HANDLE_PAYMENTS, MANAGE_ORDERS.
    */
   transaction: Maybe<TransactionItem>;
+  /**
+   * List of transactions. For apps with `MANAGE_ORDERS` permission, returns all transactions. For apps with just `HANDLE_PAYMENTS` permission, returns only transactions created by that app. For staff users, returns transactions from orders and checkouts in channels they have access to.
+   *
+   * Added in Saleor 3.22.
+   *
+   * Requires one of the following permissions: HANDLE_PAYMENTS, MANAGE_ORDERS.
+   */
+  transactions: Maybe<TransactionCountableConnection>;
   /**
    * Lookup a translatable item by ID.
    *
@@ -23747,6 +23755,15 @@ export type QueryTaxCountryConfigurationArgs = {
 export type QueryTransactionArgs = {
   id?: InputMaybe<Scalars['ID']['input']>;
   token?: InputMaybe<Scalars['UUID']['input']>;
+};
+
+
+export type QueryTransactionsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<TransactionWhereInput>;
 };
 
 
@@ -27353,6 +27370,21 @@ export type TransactionChargeRequested = Event & {
   version: Maybe<Scalars['String']['output']>;
 };
 
+export type TransactionCountableConnection = {
+  edges: Array<TransactionCountableEdge>;
+  /** Pagination data for this connection. */
+  pageInfo: PageInfo;
+  /** A total count of items in the collection. */
+  totalCount: Maybe<Scalars['Int']['output']>;
+};
+
+export type TransactionCountableEdge = {
+  /** A cursor for use in pagination. */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge. */
+  node: TransactionItem;
+};
+
 /**
  * Creates transaction for checkout or order.
  *
@@ -27545,6 +27577,12 @@ export type TransactionFilterInput = {
   metadata?: InputMaybe<MetadataFilterInput>;
   /** Filter by payment method details used to pay for the order. */
   paymentMethodDetails?: InputMaybe<PaymentMethodDetailsFilterInput>;
+  /**
+   * Filter by PSP reference of transactions.
+   *
+   * Added in Saleor 3.22.
+   */
+  pspReference?: InputMaybe<StringFilterInput>;
 };
 
 /**
@@ -27946,6 +27984,18 @@ export type TransactionUpdateInput = {
   privateMetadata?: InputMaybe<Array<MetadataInput>>;
   /** PSP Reference of the transaction. */
   pspReference?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type TransactionWhereInput = {
+  /** List of conditions that must be met. */
+  AND?: InputMaybe<Array<TransactionWhereInput>>;
+  /** A list of conditions of which at least one must be met. */
+  OR?: InputMaybe<Array<TransactionWhereInput>>;
+  /** Filter by app identifier. */
+  appIdentifier?: InputMaybe<StringFilterInput>;
+  ids?: InputMaybe<Array<Scalars['ID']['input']>>;
+  /** Filter by PSP reference. */
+  pspReference?: InputMaybe<StringFilterInput>;
 };
 
 export type TranslatableItem = AttributeTranslatableContent | AttributeValueTranslatableContent | CategoryTranslatableContent | CollectionTranslatableContent | MenuItemTranslatableContent | PageTranslatableContent | ProductTranslatableContent | ProductVariantTranslatableContent | PromotionRuleTranslatableContent | PromotionTranslatableContent | SaleTranslatableContent | ShippingMethodTranslatableContent | VoucherTranslatableContent;

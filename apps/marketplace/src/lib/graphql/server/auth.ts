@@ -8,12 +8,69 @@ import {
   type ServerContext,
 } from "@/lib/saleor/types";
 
+async function fetchVendorIdForUser(args: {
+  authToken: string;
+  saleorDomain: string;
+  userId: string;
+}): Promise<string | null> {
+  const query = `
+    query UserVendorId($id: ID!) {
+      user(id: $id) {
+        id
+        metadata {
+          key
+          value
+        }
+      }
+    }
+  `;
+
+  const response = await fetch(`https://${args.saleorDomain}/graphql/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${args.authToken}`,
+    },
+    body: JSON.stringify({ query, variables: { id: args.userId } }),
+  });
+
+  const json = (await response.json()) as {
+    data?: { user?: { metadata?: Array<{ key: string; value: string }> } };
+    errors?: Array<{ message?: string }>;
+  };
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch user metadata (status=${response.status})`,
+    );
+  }
+
+  if (json.errors?.length) {
+    throw new Error(
+      json.errors
+        .map((e) => e.message)
+        .filter(Boolean)
+        .join("; ") || "Failed to fetch user metadata",
+    );
+  }
+
+  const metadata = json.data?.user?.metadata ?? [];
+  const vendorId = metadata.find((m) => m.key === "vendor.id")?.value ?? null;
+
+  return vendorId || null;
+}
+
 /**
  * Configuration for determining authorization requirements for GraphQL operations.
  */
 const OPERATION_AUTH_CONFIG: Record<string, GraphQLAuthLevel> = {
   // Public operations
   IntrospectionQuery: GraphQLAuthLevel.PUBLIC,
+
+  // App token only (dashboard context: x-saleor-domain + app config)
+  customers: GraphQLAuthLevel.APP_TOKEN_ONLY,
+  vendorProfiles: GraphQLAuthLevel.APP_TOKEN_ONLY,
+  VendorProfilesQuery: GraphQLAuthLevel.APP_TOKEN_ONLY,
 
   // Domain-only operations (require x-saleor-domain header but no auth token)
   accountRegister: GraphQLAuthLevel.DOMAIN_ONLY,
@@ -54,6 +111,8 @@ const OPERATION_AUTH_CONFIG: Record<string, GraphQLAuthLevel> = {
   orderCancel: GraphQLAuthLevel.AUTHENTICATED,
   orderFulfillmentCancel: GraphQLAuthLevel.AUTHENTICATED,
   orderNoteAdd: GraphQLAuthLevel.AUTHENTICATED,
+  pageUpdate: GraphQLAuthLevel.APP_TOKEN_ONLY,
+  PageUpdateMutation: GraphQLAuthLevel.APP_TOKEN_ONLY,
 };
 
 /**
@@ -185,7 +244,24 @@ export async function authorizeGraphQLContext(
     };
   }
 
-  // Authenticated operations require JWT
+  // App token only: dashboard context (no user JWT, uses app token for Saleor)
+  if (authLevel === GraphQLAuthLevel.APP_TOKEN_ONLY) {
+    if (!appConfig) {
+      throw new GraphQLError(
+        "App not configured for this Saleor instance. Please install the app first.",
+        { extensions: { code: "UNAUTHORIZED" } },
+      );
+    }
+
+    return {
+      request,
+      appConfig,
+      saleorDomain,
+      proxiedCookies: [],
+    };
+  }
+
+  // Authenticated operations require JWT (Saleor Cloud user token from App Bridge or marketplace login)
   const authHeader = request.headers.get("authorization");
 
   if (!authHeader) {
@@ -224,11 +300,21 @@ export async function authorizeGraphQLContext(
     }
   }
 
-  const vendorId = decoded.user_id;
+  const userId = decoded.user_id;
 
-  if (!vendorId) {
-    throw new GraphQLError("Invalid token: missing vendor ID.", {
+  if (!userId) {
+    throw new GraphQLError("Invalid token: missing user ID.", {
       extensions: { code: "UNAUTHORIZED" },
+    });
+  }
+
+  let vendorId: string | null = null;
+
+  if (appConfig?.authToken) {
+    vendorId = await fetchVendorIdForUser({
+      authToken: appConfig.authToken,
+      saleorDomain,
+      userId,
     });
   }
 
@@ -236,7 +322,9 @@ export async function authorizeGraphQLContext(
     request,
     appConfig: appConfig || undefined,
     saleorDomain,
-    vendorId,
+    userId,
+    // Vendor isolation uses vendor profile id, not the Saleor user id.
+    vendorId: vendorId || undefined,
     proxiedCookies: [],
   };
 }

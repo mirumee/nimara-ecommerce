@@ -1,0 +1,17 @@
+query VendorPageType($slug: String!) {
+  pageTypes(first: 1, filter: { slugs: [$slug] }) {
+    edges {
+      node {
+        id
+        name
+        slug
+        attributes {
+          id
+          slug
+          inputType
+        }
+      }
+    }
+  }
+}
+

@@ -20,6 +20,18 @@ import { requireVendorID } from "./auth";
 const MARKETPLACE_CHANNEL =
   process.env.NEXT_PUBLIC_SALEOR_MARKETPLACE_CHANNEL_SLUG || "default-channel";
 
+function withVendorMetadata<
+  T extends { metadata?: Array<{ key: string; value: string }> },
+>(input: T, vendorId: string): T {
+  const metadata = Array.isArray(input.metadata) ? [...input.metadata] : [];
+  const withoutVendor = metadata.filter((m) => m.key !== "vendor.id");
+
+  return {
+    ...input,
+    metadata: [...withoutVendor, { key: "vendor.id", value: vendorId }],
+  };
+}
+
 // Get the default Saleor GraphQL endpoint from environment
 function getDefaultSaleorEndpoint(): string {
   const saleorUrl = process.env.NEXT_PUBLIC_SALEOR_URL;
@@ -94,8 +106,11 @@ async function makeSaleorSchema() {
             "categories",
             "channels",
             "collections",
+            "customers",
             "order",
             "orders",
+            "page",
+            "pages",
             "product",
             "products",
             "productType",
@@ -133,6 +148,7 @@ async function makeSaleorSchema() {
             "orderCancel",
             "orderFulfillmentCancel",
             "orderNoteAdd",
+            "pageUpdate",
             "updateMetadata",
           ];
 
@@ -176,15 +192,31 @@ export async function getStitchedSchema() {
       extend input AccountInput {
         email: String
       }
+      extend type Query {
+        vendorProfiles(
+          first: Int
+          last: Int
+          after: String
+          before: String
+          filter: PageFilterInput
+          sortBy: PageSortingInput
+        ): PageCountableConnection
+      }
     `,
     resolvers: {
       Mutation: {
         accountUpdate: {
           resolve: async (_source, args, context: ServerContext, info) => {
-            const vendorId = requireVendorID(context);
+            const userId = context.userId;
+
+            if (!userId) {
+              throw new GraphQLError("Authentication required.", {
+                extensions: { code: "UNAUTHORIZED" },
+              });
+            }
             const { input, customerId } = args;
 
-            if (customerId && customerId !== vendorId) {
+            if (customerId && customerId !== userId) {
               throw new GraphQLError("You can only update your own account", {
                 extensions: { code: "UNAUTHORIZED" },
               });
@@ -195,7 +227,7 @@ export async function getStitchedSchema() {
               operation: OperationTypeNode.MUTATION,
               fieldName: "customerUpdate",
               args: {
-                id: customerId || vendorId,
+                id: customerId || userId,
                 input,
               },
               context,
@@ -203,15 +235,35 @@ export async function getStitchedSchema() {
             });
           },
         },
+        productBulkCreate: {
+          resolve(_source, args, context: ServerContext, info) {
+            const vendorId = requireVendorID(context);
+            const products = (args?.products ?? []).map((p: any) =>
+              withVendorMetadata(p, vendorId),
+            );
+
+            return delegateToSchema({
+              schema: saleorSchema,
+              operation: OperationTypeNode.MUTATION,
+              fieldName: "productBulkCreate",
+              args: { ...args, products },
+              context,
+              info,
+            });
+          },
+        },
         productUpdate: {
           resolve(_source, args, context: ServerContext, info) {
-            requireVendorID(context);
+            const vendorId = requireVendorID(context);
+            const input = args?.input
+              ? withVendorMetadata(args.input, vendorId)
+              : args?.input;
 
             return delegateToSchema({
               schema: saleorSchema,
               operation: OperationTypeNode.MUTATION,
               fieldName: "productUpdate",
-              args,
+              args: { ...args, input },
               context,
               info,
             });
@@ -335,7 +387,7 @@ export async function getStitchedSchema() {
               operation: OperationTypeNode.QUERY,
               fieldName: "user",
               args: {
-                id: context?.vendorId,
+                id: context?.userId,
               },
               context,
               info,
@@ -369,6 +421,52 @@ export async function getStitchedSchema() {
                 ...args,
                 filter: {
                   metadata: [{ key: "vendor.id", value: vendorId }],
+                  ...args.filter,
+                },
+              },
+              context,
+              info,
+            });
+          },
+        },
+        customers: {
+          resolve(_source, args, context: ServerContext, info) {
+            // No requireVendorID: allowed via APP_TOKEN_ONLY (dashboard context) or user JWT
+            return delegateToSchema({
+              schema: saleorSchema,
+              operation: OperationTypeNode.QUERY,
+              fieldName: "customers",
+              args,
+              context,
+              info,
+            });
+          },
+        },
+        vendorProfiles: {
+          resolve(_source, args, context: ServerContext, info) {
+            const pageTypeId = context.appConfig?.config
+              ? (
+                  context.appConfig.config as {
+                    vendorProfilePageTypeId?: string;
+                  }
+                ).vendorProfilePageTypeId
+              : undefined;
+
+            if (!pageTypeId) {
+              throw new GraphQLError(
+                "Vendor profile model not configured. Run setup first.",
+                { extensions: { code: "CONFIG_MISSING" } },
+              );
+            }
+
+            return delegateToSchema({
+              schema: saleorSchema,
+              operation: OperationTypeNode.QUERY,
+              fieldName: "pages",
+              args: {
+                ...args,
+                filter: {
+                  pageTypes: [pageTypeId],
                   ...args.filter,
                 },
               },

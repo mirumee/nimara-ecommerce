@@ -1,7 +1,13 @@
 /**
  * Metadata keys used in Saleor
+ *
+ * Vendor identification:
+ * - vendor.id = Vendor Profile Page.id (links customer account to vendor profile)
+ * - Stored in Customer metadata to link account to vendor profile
+ * - Stored in Product/Order metadata to associate objects with vendor
  */
 export const METADATA_KEYS = {
+  /** Vendor profile id – links Customer/Product/Order to vendor */
   VENDOR_ID: "vendor.id",
 } as const;
 

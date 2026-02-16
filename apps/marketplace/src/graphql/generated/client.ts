@@ -11157,24 +11157,28 @@ export type Mutation = {
    * Create new digital content. This mutation must be sent as a `multipart` request. More detailed specs of the upload format can be found here: https://github.com/jaydenseric/graphql-multipart-request-spec
    *
    * Requires one of the following permissions: MANAGE_PRODUCTS.
+   * @deprecated Support for Digital Content is deprecated and will be removed in Saleor v3.23.0. This functionality is legacy and undocumented, and is not part of the supported API. Users should not rely on this behavior.
    */
   digitalContentCreate: Maybe<DigitalContentCreate>;
   /**
    * Remove digital content assigned to given variant.
    *
    * Requires one of the following permissions: MANAGE_PRODUCTS.
+   * @deprecated Support for Digital Content is deprecated and will be removed in Saleor v3.23.0. This functionality is legacy and undocumented, and is not part of the supported API. Users should not rely on this behavior.
    */
   digitalContentDelete: Maybe<DigitalContentDelete>;
   /**
    * Updates digital content.
    *
    * Requires one of the following permissions: MANAGE_PRODUCTS.
+   * @deprecated Support for Digital Content is deprecated and will be removed in Saleor v3.23.0. This functionality is legacy and undocumented, and is not part of the supported API. Users should not rely on this behavior.
    */
   digitalContentUpdate: Maybe<DigitalContentUpdate>;
   /**
    * Generate new URL to digital content.
    *
    * Requires one of the following permissions: MANAGE_PRODUCTS.
+   * @deprecated Support for Digital Content is deprecated and will be removed in Saleor v3.23.0. This functionality is legacy and undocumented, and is not part of the supported API. Users should not rely on this behavior.
    */
   digitalContentUrlCreate: Maybe<DigitalContentUrlCreate>;
   /**
@@ -22358,12 +22362,14 @@ export type Query = {
    * Look up digital content by ID.
    *
    * Requires one of the following permissions: MANAGE_PRODUCTS.
+   * @deprecated Support for Digital Content is deprecated and will be removed in Saleor v3.23.0. This functionality is legacy and undocumented, and is not part of the supported API. Users should not rely on this behavior.
    */
   digitalContent: Maybe<DigitalContent>;
   /**
    * List of digital content.
    *
    * Requires one of the following permissions: MANAGE_PRODUCTS.
+   * @deprecated Support for Digital Content is deprecated and will be removed in Saleor v3.23.0. This functionality is legacy and undocumented, and is not part of the supported API. Users should not rely on this behavior.
    */
   digitalContents: Maybe<DigitalContentCountableConnection>;
   /**
@@ -22625,9 +22631,17 @@ export type Query = {
   /**
    * Look up a transaction by ID.
    *
-   * Requires one of the following permissions: HANDLE_PAYMENTS.
+   * Requires one of the following permissions: HANDLE_PAYMENTS, MANAGE_ORDERS.
    */
   transaction: Maybe<TransactionItem>;
+  /**
+   * List of transactions. For apps with `MANAGE_ORDERS` permission, returns all transactions. For apps with just `HANDLE_PAYMENTS` permission, returns only transactions created by that app. For staff users, returns transactions from orders and checkouts in channels they have access to.
+   *
+   * Added in Saleor 3.22.
+   *
+   * Requires one of the following permissions: HANDLE_PAYMENTS, MANAGE_ORDERS.
+   */
+  transactions: Maybe<TransactionCountableConnection>;
   /**
    * Lookup a translatable item by ID.
    *
@@ -23164,6 +23178,14 @@ export type QueryTaxCountryConfigurationArgs = {
 export type QueryTransactionArgs = {
   id?: InputMaybe<Scalars["ID"]["input"]>;
   token?: InputMaybe<Scalars["UUID"]["input"]>;
+};
+
+export type QueryTransactionsArgs = {
+  after?: InputMaybe<Scalars["String"]["input"]>;
+  before?: InputMaybe<Scalars["String"]["input"]>;
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  last?: InputMaybe<Scalars["Int"]["input"]>;
+  where?: InputMaybe<TransactionWhereInput>;
 };
 
 export type QueryTranslationArgs = {
@@ -26656,6 +26678,21 @@ export type TransactionChargeRequested = Event & {
   version: Maybe<Scalars["String"]["output"]>;
 };
 
+export type TransactionCountableConnection = {
+  edges: Array<TransactionCountableEdge>;
+  /** Pagination data for this connection. */
+  pageInfo: PageInfo;
+  /** A total count of items in the collection. */
+  totalCount: Maybe<Scalars["Int"]["output"]>;
+};
+
+export type TransactionCountableEdge = {
+  /** A cursor for use in pagination. */
+  cursor: Scalars["String"]["output"];
+  /** The item at the end of the edge. */
+  node: TransactionItem;
+};
+
 /**
  * Creates transaction for checkout or order.
  *
@@ -26848,6 +26885,12 @@ export type TransactionFilterInput = {
   metadata?: InputMaybe<MetadataFilterInput>;
   /** Filter by payment method details used to pay for the order. */
   paymentMethodDetails?: InputMaybe<PaymentMethodDetailsFilterInput>;
+  /**
+   * Filter by PSP reference of transactions.
+   *
+   * Added in Saleor 3.22.
+   */
+  pspReference?: InputMaybe<StringFilterInput>;
 };
 
 /**
@@ -27244,6 +27287,18 @@ export type TransactionUpdateInput = {
   privateMetadata?: InputMaybe<Array<MetadataInput>>;
   /** PSP Reference of the transaction. */
   pspReference?: InputMaybe<Scalars["String"]["input"]>;
+};
+
+export type TransactionWhereInput = {
+  /** List of conditions that must be met. */
+  AND?: InputMaybe<Array<TransactionWhereInput>>;
+  /** A list of conditions of which at least one must be met. */
+  OR?: InputMaybe<Array<TransactionWhereInput>>;
+  /** Filter by app identifier. */
+  appIdentifier?: InputMaybe<StringFilterInput>;
+  ids?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  /** Filter by PSP reference. */
+  pspReference?: InputMaybe<StringFilterInput>;
 };
 
 export type TranslatableItem =
@@ -30017,6 +30072,49 @@ export type ConfirmVendorAccountVariables = Exact<{
 
 export type ConfirmVendorAccount = ConfirmVendorAccount_Mutation;
 
+export type CustomerDelete_customerDelete_CustomerDelete_user_User = {
+  id: string;
+};
+
+export type CustomerDelete_customerDelete_CustomerDelete_errors_AccountError = {
+  field: string | null;
+  message: string | null;
+  code: AccountErrorCode;
+};
+
+export type CustomerDelete_customerDelete_CustomerDelete = {
+  user: CustomerDelete_customerDelete_CustomerDelete_user_User | null;
+  errors: Array<CustomerDelete_customerDelete_CustomerDelete_errors_AccountError>;
+};
+
+export type CustomerDelete_Mutation = {
+  customerDelete: CustomerDelete_customerDelete_CustomerDelete | null;
+};
+
+export type CustomerDeleteVariables = Exact<{
+  id: Scalars["ID"]["input"];
+}>;
+
+export type CustomerDelete = CustomerDelete_Mutation;
+
+export type MetadataUpdate_updateMetadata_UpdateMetadata_errors_MetadataError =
+  { field: string | null; message: string | null; code: MetadataErrorCode };
+
+export type MetadataUpdate_updateMetadata_UpdateMetadata = {
+  errors: Array<MetadataUpdate_updateMetadata_UpdateMetadata_errors_MetadataError>;
+};
+
+export type MetadataUpdate_Mutation = {
+  updateMetadata: MetadataUpdate_updateMetadata_UpdateMetadata | null;
+};
+
+export type MetadataUpdateVariables = Exact<{
+  id: Scalars["ID"]["input"];
+  input: Array<MetadataInput> | MetadataInput;
+}>;
+
+export type MetadataUpdate = MetadataUpdate_Mutation;
+
 export type CancelOrder_orderCancel_OrderCancel_order_Order = {
   id: string;
   status: OrderStatus;
@@ -30364,6 +30462,98 @@ export type ProductVariantBulkUpdateMutationVariables = Exact<{
 export type ProductVariantBulkUpdateMutation =
   ProductVariantBulkUpdateMutation_Mutation;
 
+export type VendorCollectionCreate_collectionCreate_CollectionCreate_collection_Collection =
+  { id: string; name: string; slug: string };
+
+export type VendorCollectionCreate_collectionCreate_CollectionCreate_errors_CollectionError =
+  { field: string | null; message: string | null; code: CollectionErrorCode };
+
+export type VendorCollectionCreate_collectionCreate_CollectionCreate = {
+  collection: VendorCollectionCreate_collectionCreate_CollectionCreate_collection_Collection | null;
+  errors: Array<VendorCollectionCreate_collectionCreate_CollectionCreate_errors_CollectionError>;
+};
+
+export type VendorCollectionCreate_Mutation = {
+  collectionCreate: VendorCollectionCreate_collectionCreate_CollectionCreate | null;
+};
+
+export type VendorCollectionCreateVariables = Exact<{
+  input: CollectionCreateInput;
+}>;
+
+export type VendorCollectionCreate = VendorCollectionCreate_Mutation;
+
+export type VendorCollectionDelete_collectionDelete_CollectionDelete_collection_Collection =
+  { id: string };
+
+export type VendorCollectionDelete_collectionDelete_CollectionDelete_errors_CollectionError =
+  { field: string | null; message: string | null; code: CollectionErrorCode };
+
+export type VendorCollectionDelete_collectionDelete_CollectionDelete = {
+  collection: VendorCollectionDelete_collectionDelete_CollectionDelete_collection_Collection | null;
+  errors: Array<VendorCollectionDelete_collectionDelete_CollectionDelete_errors_CollectionError>;
+};
+
+export type VendorCollectionDelete_Mutation = {
+  collectionDelete: VendorCollectionDelete_collectionDelete_CollectionDelete | null;
+};
+
+export type VendorCollectionDeleteVariables = Exact<{
+  id: Scalars["ID"]["input"];
+}>;
+
+export type VendorCollectionDelete = VendorCollectionDelete_Mutation;
+
+export type VendorPageCreate_pageCreate_PageCreate_page_Page = {
+  id: string;
+  title: string;
+  slug: string;
+};
+
+export type VendorPageCreate_pageCreate_PageCreate_errors_PageError = {
+  field: string | null;
+  message: string | null;
+  code: PageErrorCode;
+};
+
+export type VendorPageCreate_pageCreate_PageCreate = {
+  page: VendorPageCreate_pageCreate_PageCreate_page_Page | null;
+  errors: Array<VendorPageCreate_pageCreate_PageCreate_errors_PageError>;
+};
+
+export type VendorPageCreate_Mutation = {
+  pageCreate: VendorPageCreate_pageCreate_PageCreate | null;
+};
+
+export type VendorPageCreateVariables = Exact<{
+  input: PageCreateInput;
+}>;
+
+export type VendorPageCreate = VendorPageCreate_Mutation;
+
+export type VendorPageDelete_pageDelete_PageDelete_page_Page = { id: string };
+
+export type VendorPageDelete_pageDelete_PageDelete_errors_PageError = {
+  field: string | null;
+  message: string | null;
+  code: PageErrorCode;
+};
+
+export type VendorPageDelete_pageDelete_PageDelete = {
+  page: VendorPageDelete_pageDelete_PageDelete_page_Page | null;
+  errors: Array<VendorPageDelete_pageDelete_PageDelete_errors_PageError>;
+};
+
+export type VendorPageDelete_Mutation = {
+  pageDelete: VendorPageDelete_pageDelete_PageDelete | null;
+};
+
+export type VendorPageDeleteVariables = Exact<{
+  id: Scalars["ID"]["input"];
+}>;
+
+export type VendorPageDelete = VendorPageDelete_Mutation;
+
 export type CategoriesList_categories_CategoryCountableConnection_edges_CategoryCountableEdge_node_Category =
   { id: string; name: string; slug: string };
 
@@ -30445,6 +30635,28 @@ export type CollectionsListVariables = Exact<{
 }>;
 
 export type CollectionsList = CollectionsList_Query;
+
+export type CustomerByEmail_customers_UserCountableConnection_edges_UserCountableEdge_node_User =
+  { id: string; email: string };
+
+export type CustomerByEmail_customers_UserCountableConnection_edges_UserCountableEdge =
+  {
+    node: CustomerByEmail_customers_UserCountableConnection_edges_UserCountableEdge_node_User;
+  };
+
+export type CustomerByEmail_customers_UserCountableConnection = {
+  edges: Array<CustomerByEmail_customers_UserCountableConnection_edges_UserCountableEdge>;
+};
+
+export type CustomerByEmail_Query = {
+  customers: CustomerByEmail_customers_UserCountableConnection | null;
+};
+
+export type CustomerByEmailVariables = Exact<{
+  search: Scalars["String"]["input"];
+}>;
+
+export type CustomerByEmail = CustomerByEmail_Query;
 
 export type Me_me_User_metadata_MetadataItem = { key: string; value: string };
 
@@ -31415,6 +31627,63 @@ export type ProductsVariables = Exact<{
 
 export type Products = Products_Query;
 
+export type VendorPageStatus_page_Page_attributes_SelectedAttribute_attribute_Attribute =
+  { slug: string | null };
+
+export type VendorPageStatus_page_Page_attributes_SelectedAttribute_values_AttributeValue =
+  { name: string | null };
+
+export type VendorPageStatus_page_Page_attributes_SelectedAttribute = {
+  attribute: VendorPageStatus_page_Page_attributes_SelectedAttribute_attribute_Attribute;
+  values: Array<VendorPageStatus_page_Page_attributes_SelectedAttribute_values_AttributeValue>;
+};
+
+export type VendorPageStatus_page_Page = {
+  id: string;
+  title: string;
+  attributes: Array<VendorPageStatus_page_Page_attributes_SelectedAttribute>;
+};
+
+export type VendorPageStatus_Query = {
+  page: VendorPageStatus_page_Page | null;
+};
+
+export type VendorPageStatusVariables = Exact<{
+  id: Scalars["ID"]["input"];
+}>;
+
+export type VendorPageStatus = VendorPageStatus_Query;
+
+export type VendorPageType_pageTypes_PageTypeCountableConnection_edges_PageTypeCountableEdge_node_PageType_attributes_Attribute =
+  { id: string; slug: string | null; inputType: AttributeInputTypeEnum | null };
+
+export type VendorPageType_pageTypes_PageTypeCountableConnection_edges_PageTypeCountableEdge_node_PageType =
+  {
+    id: string;
+    name: string;
+    slug: string;
+    attributes: Array<VendorPageType_pageTypes_PageTypeCountableConnection_edges_PageTypeCountableEdge_node_PageType_attributes_Attribute> | null;
+  };
+
+export type VendorPageType_pageTypes_PageTypeCountableConnection_edges_PageTypeCountableEdge =
+  {
+    node: VendorPageType_pageTypes_PageTypeCountableConnection_edges_PageTypeCountableEdge_node_PageType;
+  };
+
+export type VendorPageType_pageTypes_PageTypeCountableConnection = {
+  edges: Array<VendorPageType_pageTypes_PageTypeCountableConnection_edges_PageTypeCountableEdge>;
+};
+
+export type VendorPageType_Query = {
+  pageTypes: VendorPageType_pageTypes_PageTypeCountableConnection | null;
+};
+
+export type VendorPageTypeVariables = Exact<{
+  slug: Scalars["String"]["input"];
+}>;
+
+export type VendorPageType = VendorPageType_Query;
+
 export type Warehouses_warehouses_WarehouseCountableConnection_edges_WarehouseCountableEdge_node_Warehouse_address_Address_country_CountryDisplay =
   { country: string; code: string };
 
@@ -31547,6 +31816,37 @@ export const ConfirmVendorAccountDocument = new TypedDocumentString(`
     `) as unknown as TypedDocumentString<
   ConfirmVendorAccount,
   ConfirmVendorAccountVariables
+>;
+export const CustomerDeleteDocument = new TypedDocumentString(`
+    mutation CustomerDelete($id: ID!) {
+  customerDelete(id: $id) {
+    user {
+      id
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  CustomerDelete,
+  CustomerDeleteVariables
+>;
+export const MetadataUpdateDocument = new TypedDocumentString(`
+    mutation MetadataUpdate($id: ID!, $input: [MetadataInput!]!) {
+  updateMetadata(id: $id, input: $input) {
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  MetadataUpdate,
+  MetadataUpdateVariables
 >;
 export const CancelOrderDocument = new TypedDocumentString(`
     mutation CancelOrder($id: ID!) {
@@ -31786,6 +32086,78 @@ export const ProductVariantBulkUpdateMutationDocument =
     ProductVariantBulkUpdateMutation,
     ProductVariantBulkUpdateMutationVariables
   >;
+export const VendorCollectionCreateDocument = new TypedDocumentString(`
+    mutation VendorCollectionCreate($input: CollectionCreateInput!) {
+  collectionCreate(input: $input) {
+    collection {
+      id
+      name
+      slug
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  VendorCollectionCreate,
+  VendorCollectionCreateVariables
+>;
+export const VendorCollectionDeleteDocument = new TypedDocumentString(`
+    mutation VendorCollectionDelete($id: ID!) {
+  collectionDelete(id: $id) {
+    collection {
+      id
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  VendorCollectionDelete,
+  VendorCollectionDeleteVariables
+>;
+export const VendorPageCreateDocument = new TypedDocumentString(`
+    mutation VendorPageCreate($input: PageCreateInput!) {
+  pageCreate(input: $input) {
+    page {
+      id
+      title
+      slug
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  VendorPageCreate,
+  VendorPageCreateVariables
+>;
+export const VendorPageDeleteDocument = new TypedDocumentString(`
+    mutation VendorPageDelete($id: ID!) {
+  pageDelete(id: $id) {
+    page {
+      id
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  VendorPageDelete,
+  VendorPageDeleteVariables
+>;
 export const CategoriesListDocument = new TypedDocumentString(`
     query CategoriesList($first: Int = 100, $after: String, $filter: CategoryFilterInput) {
   categories(first: $first, after: $after, filter: $filter) {
@@ -31844,6 +32216,21 @@ export const CollectionsListDocument = new TypedDocumentString(`
     `) as unknown as TypedDocumentString<
   CollectionsList,
   CollectionsListVariables
+>;
+export const CustomerByEmailDocument = new TypedDocumentString(`
+    query CustomerByEmail($search: String!) {
+  customers(first: 1, search: $search) {
+    edges {
+      node {
+        id
+        email
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  CustomerByEmail,
+  CustomerByEmailVariables
 >;
 export const MeDocument = new TypedDocumentString(`
     query Me {
@@ -32479,6 +32866,46 @@ export const ProductsDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<Products, ProductsVariables>;
+export const VendorPageStatusDocument = new TypedDocumentString(`
+    query VendorPageStatus($id: ID!) {
+  page(id: $id) {
+    id
+    title
+    attributes {
+      attribute {
+        slug
+      }
+      values {
+        name
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  VendorPageStatus,
+  VendorPageStatusVariables
+>;
+export const VendorPageTypeDocument = new TypedDocumentString(`
+    query VendorPageType($slug: String!) {
+  pageTypes(first: 1, filter: {slugs: [$slug]}) {
+    edges {
+      node {
+        id
+        name
+        slug
+        attributes {
+          id
+          slug
+          inputType
+        }
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  VendorPageType,
+  VendorPageTypeVariables
+>;
 export const WarehousesDocument = new TypedDocumentString(`
     query Warehouses {
   warehouses(first: 50) {

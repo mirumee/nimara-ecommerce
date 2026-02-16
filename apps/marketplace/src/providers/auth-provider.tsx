@@ -1,5 +1,6 @@
 "use client";
 
+import { useAppBridge } from "@saleor/app-sdk/app-bridge";
 import { useRouter } from "next/navigation";
 import {
   createContext,
@@ -13,6 +14,11 @@ import {
 
 import { isTokenExpired, isTokenExpiringSoon } from "@/lib/auth-utils";
 import { getSaleorDomainHeader } from "@/lib/graphql/client";
+import {
+  getAppBridgeDomain,
+  initDomainFromUrl,
+  setAppBridgeDomain,
+} from "@/lib/saleor/app-bridge-domain";
 
 // Storage keys for auth tokens
 const AUTH_ACCESS_TOKEN_KEY = "auth_token";
@@ -28,6 +34,8 @@ interface User {
 }
 
 interface AuthContextType {
+  /** True when opened from dashboard with saleorApiUrl in URL (uses app token) */
+  dashboardContext: boolean;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
@@ -50,16 +58,42 @@ export function useAuth() {
   return context;
 }
 
+type AppBridgeState = ReturnType<typeof useAppBridge>["appBridgeState"] | null;
+
 interface AuthProviderProps {
+  appBridgeState?: AppBridgeState;
   children: ReactNode;
 }
 
-export function AuthProvider({ children }: AuthProviderProps) {
+/** Wrapper that calls useAppBridge and passes to AuthProvider. Only use inside AppBridgeProvider. */
+export function AuthProviderWithAppBridge({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const { appBridgeState } = useAppBridge();
+
+  return (
+    <AuthProvider appBridgeState={appBridgeState}>{children}</AuthProvider>
+  );
+}
+
+export function AuthProvider({
+  appBridgeState = null,
+  children,
+}: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setTokenState] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [dashboardContext, setDashboardContext] = useState(false);
   const router = useRouter();
   const refreshInProgress = useRef(false);
+
+  /** Token from Saleor dashboard App Bridge (when app opened from Saleor Cloud) */
+  const appBridgeToken =
+    appBridgeState?.ready && appBridgeState?.token
+      ? appBridgeState.token
+      : null;
 
   const setToken = useCallback((newToken: string) => {
     setTokenState(newToken);
@@ -100,6 +134,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 email
                 firstName
                 lastName
+                metadata {
+                  key
+                  value
+                }
               }
             }
           `,
@@ -113,6 +151,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           firstName?: string;
           id: string;
           lastName?: string;
+          metadata?: Array<{ key: string; value: string }>;
         };
       };
       errors?: Array<{ message?: string }>;
@@ -125,11 +164,85 @@ export function AuthProvider({ children }: AuthProviderProps) {
     if (data.data?.me) {
       const me = data.data.me;
 
+      const metadata = Array.isArray(me.metadata) ? me.metadata : [];
+      const metadataMap = metadata.reduce<Record<string, string>>(
+        (acc, item) => {
+          if (item?.key) {
+            acc[item.key] = item.value;
+          }
+
+          return acc;
+        },
+        {},
+      );
+
+      const vendorPageId = metadataMap["vendor.id"] || "";
+
+      if (vendorPageId) {
+        const vendorResponse = await fetch("/api/graphql", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+            ...saleorDomain,
+          },
+          body: JSON.stringify({
+            query: `
+              query VendorPageStatus($id: ID!) {
+                page(id: $id) {
+                  id
+                  attributes {
+                    attribute { slug }
+                    values { name }
+                  }
+                }
+              }
+            `,
+            variables: { id: vendorPageId },
+          }),
+        });
+
+        const vendorData = (await vendorResponse.json()) as {
+          data?: {
+            page?: {
+              attributes?: Array<{
+                attribute?: { slug?: string | null } | null;
+                values?: Array<{ name?: string | null } | null> | null;
+              }> | null;
+            } | null;
+          };
+          errors?: Array<{ message?: unknown }>;
+        };
+
+        if (vendorData.errors?.length) {
+          const msg = vendorData.errors
+            .map((e) => (e.message != null ? String(e.message) : ""))
+            .filter(Boolean)
+            .join(", ");
+
+          throw new Error(msg || "Failed to fetch vendor status");
+        }
+
+        const attrs = vendorData.data?.page?.attributes ?? [];
+        const statusAttr = attrs.find(
+          (a) => a?.attribute?.slug === "vendor-status",
+        );
+        const statusValue =
+          statusAttr?.values?.[0]?.name != null
+            ? String(statusAttr.values[0]?.name)
+            : "";
+
+        if (statusValue !== "active") {
+          throw new Error("Your account is not yet active.");
+        }
+      }
+
       setUser({
         email: me.email ?? "",
         firstName: me.firstName,
         id: me.id,
         lastName: me.lastName,
+        ...(vendorPageId ? { vendorId: vendorPageId } : {}),
       });
 
       return true;
@@ -238,8 +351,52 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, [setToken]);
 
-  // Initialize auth state from localStorage
+  // Parse saleorApiUrl from URL (NEW_TAB extension with GET) – fallback when App Bridge has no token
   useEffect(() => {
+    if (typeof window !== "undefined" && initDomainFromUrl()) {
+      setDashboardContext(true);
+      setIsLoading(false);
+    }
+  }, []);
+
+  // When App Bridge provides token (app opened from Saleor Cloud dashboard iframe), use it
+  useEffect(() => {
+    const saleorApiUrl =
+      typeof appBridgeState?.saleorApiUrl === "string"
+        ? appBridgeState.saleorApiUrl
+        : null;
+    const tokenFromBridge =
+      typeof appBridgeToken === "string" ? appBridgeToken : null;
+
+    if (!tokenFromBridge) {
+      return;
+    }
+
+    // Need both token and API URL. Fallback to URL params (e.g. NEW_TAB extension)
+    const hasApiUrl =
+      saleorApiUrl || (typeof window !== "undefined" && initDomainFromUrl());
+
+    if (hasApiUrl) {
+      if (saleorApiUrl) {
+        setAppBridgeDomain(saleorApiUrl);
+      }
+      setTokenState(tokenFromBridge);
+      setDashboardContext(true);
+      fetchUser(tokenFromBridge)
+        .then(() => setIsLoading(false))
+        .catch(() => setIsLoading(false));
+    } else {
+      // Token from bridge but no API URL – can't use it, stop loading to avoid permanent spinner
+      setIsLoading(false);
+    }
+  }, [appBridgeToken, appBridgeState?.saleorApiUrl, fetchUser]);
+
+  // Initialize auth from localStorage when not using App Bridge
+  useEffect(() => {
+    if (appBridgeToken) {
+      return;
+    }
+
     const initializeAuth = async () => {
       try {
         const storedToken =
@@ -256,7 +413,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
         // Check if token is expired
         if (isTokenExpired(storedToken)) {
           console.log("Token expired, attempting refresh...");
-          // Try to refresh the token
           const newToken = await refreshAccessToken();
 
           if (!newToken) {
@@ -267,11 +423,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
             return;
           }
 
-          // Use the new token to fetch user
           setTokenState(newToken);
           await fetchUser(newToken);
         } else {
-          // Token is still valid
           setTokenState(storedToken);
           await fetchUser(storedToken);
         }
@@ -284,7 +438,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     };
 
     void initializeAuth();
-  }, [clearAuth, fetchUser, refreshAccessToken]);
+  }, [appBridgeToken, clearAuth, fetchUser, refreshAccessToken]);
 
   const login = useCallback(
     async (email: string, password: string) => {
@@ -382,24 +536,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
           localStorage.setItem(AUTH_CSRF_TOKEN_KEY, tokenCreate.csrfToken);
         }
 
-        const loginUser = tokenCreate.user;
+        // Fetch user (and validate vendor status if linked)
+        try {
+          await fetchUser(String(tokenValue));
+        } catch (e) {
+          clearAuth();
+          throw e;
+        }
 
-        setUser(
-          loginUser
-            ? {
-                email: loginUser.email ?? "",
-                firstName: loginUser.firstName,
-                id: loginUser.id,
-                lastName: loginUser.lastName,
-              }
-            : null,
-        );
         router.push("/dashboard");
       } finally {
         setIsLoading(false);
       }
     },
-    [router, setToken],
+    [clearAuth, fetchUser, router, setToken],
   );
 
   const logout = useCallback(async () => {
@@ -439,11 +589,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return () => clearInterval(interval);
   }, [token, user, refreshAccessToken]);
 
+  // Authenticated: Saleor Cloud user token (App Bridge/login) OR dashboard context (saleorApiUrl in URL)
+  const isAuthenticated =
+    (!!token && (!!user || !!appBridgeToken)) ||
+    (dashboardContext && !!getAppBridgeDomain());
+
   return (
     <AuthContext.Provider
       value={{
         user,
-        isAuthenticated: !!user && !!token,
+        dashboardContext: dashboardContext && !!getAppBridgeDomain(),
+        isAuthenticated,
         isLoading,
         token,
         login,

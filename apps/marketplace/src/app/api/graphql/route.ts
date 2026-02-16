@@ -24,8 +24,8 @@ async function getYogaInstance() {
       context: async ({ request, params }) => {
         const context = await authorizeGraphQLContext(
           request,
-          params.operationName,
-          params.query,
+          params?.operationName,
+          params?.query,
         );
 
         return context;

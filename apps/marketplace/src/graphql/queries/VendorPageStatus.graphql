@@ -1,0 +1,15 @@
+query VendorPageStatus($id: ID!) {
+  page(id: $id) {
+    id
+    title
+    attributes {
+      attribute {
+        slug
+      }
+      values {
+        name
+      }
+    }
+  }
+}
+

@@ -50,6 +50,8 @@ export async function GET(request: NextRequest) {
     author: APP_CONFIG.AUTHOR,
     permissions: [
       "IMPERSONATE_USER",
+      "MANAGE_PAGES",
+      "MANAGE_PAGE_TYPES_AND_ATTRIBUTES",
       "MANAGE_PRODUCTS",
       "MANAGE_USERS",
       "MANAGE_ORDERS",
@@ -58,6 +60,16 @@ export async function GET(request: NextRequest) {
     ],
     tokenTargetUrl: manifestUrl(baseUrl, "/api/saleor/register"),
     appUrl: manifestUrl(baseUrl, "/app"),
+    extensions: [
+      {
+        label: "Marketplace",
+        mount: "NAVIGATION_CATALOG",
+        target: "NEW_TAB",
+        permissions: ["MANAGE_USERS"],
+        url: manifestUrl(baseUrl, "/app"),
+        options: { newTabTarget: { method: "GET" } },
+      },
+    ],
     webhooks: [
       {
         name: "Order created",

@@ -1,14 +1,30 @@
 import { graphqlClient as createGraphqlClient } from "@nimara/infrastructure/graphql/client";
 
-const endpoint =
-  process.env.NEXT_PUBLIC_GRAPHQL_URL || "http://localhost:3001/api/graphql";
+import { getAppBridgeDomain } from "@/lib/saleor/app-bridge-domain";
+
+/** GraphQL endpoint – use current origin on client (avoids CORS when accessed via ngrok, etc.) */
+function getGraphQLEndpoint(): string {
+  if (typeof window !== "undefined") {
+    return `${window.location.origin}/api/graphql`;
+  }
+
+  return (
+    process.env.NEXT_PUBLIC_GRAPHQL_URL || "http://localhost:3001/api/graphql"
+  );
+}
 
 /**
- * Get Saleor domain from env (hostname of NEXT_PUBLIC_SALEOR_URL).
- * Required by the marketplace GraphQL API for domain-only and authenticated operations.
- * Works on both client and server so server actions send the header too.
+ * Get Saleor domain for the x-saleor-domain header.
+ * Prefers App Bridge domain (when app is opened from Saleor Cloud dashboard),
+ * falls back to env (NEXT_PUBLIC_SALEOR_URL).
  */
 export function getSaleorDomainHeader(): Record<string, string> {
+  const appBridge = getAppBridgeDomain();
+
+  if (appBridge) {
+    return { "x-saleor-domain": appBridge };
+  }
+
   const url = process.env.NEXT_PUBLIC_SALEOR_URL;
 
   if (!url) {
@@ -33,7 +49,7 @@ export function getSaleorDomainHeader(): Record<string, string> {
  * @returns GraphQL client with execute method
  */
 export const graphqlClient = (token?: string | null) => {
-  const client = createGraphqlClient(endpoint, token);
+  const client = createGraphqlClient(getGraphQLEndpoint(), token);
 
   // Wrap execute to add x-saleor-domain header (client-side only)
   const originalExecute = client.execute;

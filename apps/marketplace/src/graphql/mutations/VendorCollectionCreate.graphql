@@ -1,0 +1,15 @@
+mutation VendorCollectionCreate($input: CollectionCreateInput!) {
+  collectionCreate(input: $input) {
+    collection {
+      id
+      name
+      slug
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+

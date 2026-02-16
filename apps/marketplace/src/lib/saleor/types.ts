@@ -1,11 +1,22 @@
 import type { SaleorAppConfig } from "./app-config";
 
+/** App manifest extension */
+export interface SaleorAppManifestExtension {
+  label: string;
+  mount: string;
+  target: string;
+  permissions: string[];
+  url: string;
+  options?: { newTabTarget?: { method: "GET" | "POST" } };
+}
+
 /**
  * Saleor App Manifest structure
  */
 export interface SaleorAppManifest {
   about?: string;
   appUrl: string;
+  extensions?: SaleorAppManifestExtension[];
   author?: string;
   brand?: {
     logo?: {
@@ -51,6 +62,9 @@ export interface ServerContext {
   proxiedCookies: string[];
   request: Request;
   saleorDomain?: string;
+  /** Saleor User ID – for me, accountUpdate, etc. */
+  userId?: string;
+  /** Vendor Profile Page ID – canonical vendor identifier for products, orders */
   vendorId?: string;
 }
 
@@ -69,6 +83,8 @@ export interface SaleorWebhookHeaders {
  */
 export enum GraphQLAuthLevel {
   AUTHENTICATED = "AUTHENTICATED",
+  /** Uses app token when x-saleor-domain present (dashboard context, no user JWT) */
+  APP_TOKEN_ONLY = "APP_TOKEN_ONLY",
   DOMAIN_ONLY = "DOMAIN_ONLY",
   PUBLIC = "PUBLIC",
 }

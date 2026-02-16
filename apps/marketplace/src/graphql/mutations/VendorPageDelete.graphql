@@ -1,0 +1,13 @@
+mutation VendorPageDelete($id: ID!) {
+  pageDelete(id: $id) {
+    page {
+      id
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+
