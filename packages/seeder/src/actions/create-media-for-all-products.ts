@@ -3,35 +3,34 @@ import { ProductBulkCreateResponse, ProductMock } from "../types";
 const SALEOR_API_URL = process.env.NEXT_PUBLIC_SALEOR_API_URL;
 const SALEOR_APP_TOKEN = process.env.SALEOR_APP_TOKEN;
 
-/**
- * Creates media for all products.
- * @param products - Array of product objects.
- * @param seedProducts - Array of seed product objects.
- */
 export async function createMediaForAllProducts(
-  products: ProductBulkCreateResponse["productBulkCreate"]["results"],
+  results: ProductBulkCreateResponse["productBulkCreate"]["results"],
   seedProducts: ProductMock[],
 ): Promise<void> {
   console.log("[SEEDING] Creating media for all products...");
 
-  for (let i = 0; i < products.length; i++) {
-    const product = products[i];
-    const photoUrl = seedProducts[i]?.photoUrl;
+  const tasks = results
+    .map((result, i) => ({
+      product: result.product,
+      photoUrl: seedProducts[i].photoUrl,
+      index: i,
+    }))
+    .filter(
+      (
+        t,
+      ): t is {
+        product: NonNullable<typeof t.product>;
+        photoUrl: string;
+        index: number;
+      } => t.product != null,
+    );
 
-    if (!photoUrl) {
-      console.log(
-        `[SEEDING] Skipping product ${product.product!.name} - no photo URL`,
-      );
-      continue;
-    }
-
+  const promises = tasks.map(async ({ product, photoUrl, index }) => {
     try {
-      console.log(
-        `[SEEDING] Downloading image for ${product.product!.name}...`,
-      );
+      console.log(`[SEEDING] Downloading image for ${product.name}...`);
       const imageRes = await fetch(photoUrl);
       const buffer = Buffer.from(await imageRes.arrayBuffer());
-      const file = new File([buffer], `cover-${i}.jpg`, {
+      const file = new File([buffer], `cover-${index}.jpg`, {
         type: "image/jpeg",
       });
 
@@ -41,7 +40,7 @@ export async function createMediaForAllProducts(
             input: {
               product: $productId
               image: $file
-              alt: "${product.product!.name} cover"
+              alt: "${product.name} cover"
             }
           ) {
             media {
@@ -59,7 +58,7 @@ export async function createMediaForAllProducts(
       const operations = JSON.stringify({
         query,
         variables: {
-          productId: product.product!.id,
+          productId: product.id,
           file: null,
         },
       });
@@ -86,18 +85,20 @@ export async function createMediaForAllProducts(
 
       if (errors?.length > 0) {
         console.error(
-          `[SEEDING] Failed to create media for ${product.product!.name}: ${JSON.stringify(errors)}`,
+          `[SEEDING] Failed to create media for ${product.name}: ${JSON.stringify(errors)}`,
         );
       } else if (res.data?.productMediaCreate?.media) {
         console.log(
-          `[SEEDING] Added media to product: ${product.product!.name} (${product.product!.id})`,
+          `[SEEDING] Added media to product: ${product.name} (${product.id})`,
         );
       }
     } catch (error) {
       console.error(
-        `[SEEDING] Request failed for product ${product.product!.name} (${product.product!.id})`,
+        `[SEEDING] Request failed for product ${product.name} (${product.id})`,
         error,
       );
     }
-  }
+  });
+
+  await Promise.allSettled(promises);
 }
