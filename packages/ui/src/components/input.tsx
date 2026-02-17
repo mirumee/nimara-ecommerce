@@ -19,7 +19,7 @@ const Input = ({ className, error, type = "text", ...props }: InputProps) => {
       {...props}
       type={type}
       className={cn(
-        "border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+        "border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
         error &&
           "border-red-300 bg-red-50 autofill:!bg-red-50 focus-visible:ring-red-300 dark:border-red-600 dark:bg-red-900/30 dark:autofill:!bg-red-900/30 dark:focus-visible:ring-red-500",
         className,
@@ -38,7 +38,7 @@ const PasswordInput = ({ className, error, ...props }: InputProps) => {
   return (
     <div
       className={cn(
-        "border-input ring-offset-background has-[input:focus-visible]:ring-ring flex w-full rounded-md border has-[input:focus-visible]:ring-2 has-[input:focus-visible]:ring-offset-2",
+        "border-input ring-offset-background has-[input:focus-visible]:ring-ring flex w-full rounded-md border transition-colors has-[input:focus-visible]:ring-2 has-[input:focus-visible]:ring-offset-2",
         error &&
           "border-red-300 bg-red-50 has-[input:focus-visible]:ring-red-300 dark:border-red-600 dark:bg-red-900/30 dark:has-[input:focus-visible]:ring-red-500",
       )}
@@ -47,7 +47,7 @@ const PasswordInput = ({ className, error, ...props }: InputProps) => {
         {...props}
         type={type}
         className={cn(
-          "bg-background placeholder:text-muted-foreground flex h-10 w-full rounded-md px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
+          "bg-background placeholder:text-muted-foreground flex h-10 w-full rounded-md px-3 py-2 text-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
           error &&
             "bg-red-50 autofill:!bg-red-50 dark:bg-red-900/30 dark:autofill:!bg-red-900/30",
           className,
