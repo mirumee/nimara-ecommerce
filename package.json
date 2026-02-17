@@ -34,7 +34,8 @@
     "test:e2e": "dotenv -- turbo run test:e2e",
     "prepare": "husky",
     "format": "pnpm prettier --write '**/*.{js,ts,tsx,json,md}'",
-    "format:check": "pnpm prettier --check '**/*.{js,ts,tsx,json,md}'"
+    "format:check": "pnpm prettier --check '**/*.{js,ts,tsx,json,md}'",
+    "seed": "dotenv -- pnpm --filter=@nimara/seeder seed"
   },
   "devDependencies": {
     "commitizen": "4.3.1",
