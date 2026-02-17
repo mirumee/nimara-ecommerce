@@ -181,7 +181,7 @@ export const SearchForm = ({ onSubmit }: { onSubmit?: () => void }) => {
       role="search"
       onSubmit={handleSubmit}
     >
-      <Combobox className="z-50">
+      <Combobox className="transition-colors! z-50">
         <ComboboxInput
           endAdornment={
             <Button

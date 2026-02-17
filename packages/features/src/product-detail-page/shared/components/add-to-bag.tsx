@@ -77,7 +77,7 @@ export const AddToBag = ({
 
   return (
     <Button
-      className="w-full"
+      className="w-full transition-[background-color]"
       disabled={!variantId || isProcessing}
       onClick={isVariantAvailable ? handleProductAdd : handleNotifyMe}
       loading={isProcessing}
