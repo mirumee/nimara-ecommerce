@@ -11248,24 +11248,28 @@ export type Mutation = {
    * Create new digital content. This mutation must be sent as a `multipart` request. More detailed specs of the upload format can be found here: https://github.com/jaydenseric/graphql-multipart-request-spec
    *
    * Requires one of the following permissions: MANAGE_PRODUCTS.
+   * @deprecated Support for Digital Content is deprecated and will be removed in Saleor v3.23.0. This functionality is legacy and undocumented, and is not part of the supported API. Users should not rely on this behavior.
    */
   digitalContentCreate: Maybe<DigitalContentCreate>;
   /**
    * Remove digital content assigned to given variant.
    *
    * Requires one of the following permissions: MANAGE_PRODUCTS.
+   * @deprecated Support for Digital Content is deprecated and will be removed in Saleor v3.23.0. This functionality is legacy and undocumented, and is not part of the supported API. Users should not rely on this behavior.
    */
   digitalContentDelete: Maybe<DigitalContentDelete>;
   /**
    * Updates digital content.
    *
    * Requires one of the following permissions: MANAGE_PRODUCTS.
+   * @deprecated Support for Digital Content is deprecated and will be removed in Saleor v3.23.0. This functionality is legacy and undocumented, and is not part of the supported API. Users should not rely on this behavior.
    */
   digitalContentUpdate: Maybe<DigitalContentUpdate>;
   /**
    * Generate new URL to digital content.
    *
    * Requires one of the following permissions: MANAGE_PRODUCTS.
+   * @deprecated Support for Digital Content is deprecated and will be removed in Saleor v3.23.0. This functionality is legacy and undocumented, and is not part of the supported API. Users should not rely on this behavior.
    */
   digitalContentUrlCreate: Maybe<DigitalContentUrlCreate>;
   /**
@@ -22874,12 +22878,14 @@ export type Query = {
    * Look up digital content by ID.
    *
    * Requires one of the following permissions: MANAGE_PRODUCTS.
+   * @deprecated Support for Digital Content is deprecated and will be removed in Saleor v3.23.0. This functionality is legacy and undocumented, and is not part of the supported API. Users should not rely on this behavior.
    */
   digitalContent: Maybe<DigitalContent>;
   /**
    * List of digital content.
    *
    * Requires one of the following permissions: MANAGE_PRODUCTS.
+   * @deprecated Support for Digital Content is deprecated and will be removed in Saleor v3.23.0. This functionality is legacy and undocumented, and is not part of the supported API. Users should not rely on this behavior.
    */
   digitalContents: Maybe<DigitalContentCountableConnection>;
   /**
