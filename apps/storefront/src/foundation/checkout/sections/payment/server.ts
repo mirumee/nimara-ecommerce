@@ -16,7 +16,7 @@ import { getCurrentRegion } from "@/foundation/regions";
 import { getStoreUrl } from "@/foundation/server";
 import { getServiceRegistry } from "@/services/registry";
 
-import { type PaymentSectionData } from "../types";
+import { type PaymentSectionData } from "./types";
 
 interface GetCheckoutPaymentSectionDataPayload {
   accessToken?: string | null;

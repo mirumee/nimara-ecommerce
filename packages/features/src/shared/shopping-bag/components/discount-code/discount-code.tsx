@@ -4,29 +4,34 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState, useTransition } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, type SubmitHandler, useForm } from "react-hook-form";
 
 import type { Checkout } from "@nimara/domain/objects/Checkout";
 import type { BaseError } from "@nimara/domain/objects/Error";
+import { type Result } from "@nimara/domain/objects/Result";
 import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
 import { Button } from "@nimara/ui/components/button";
 import { useToast } from "@nimara/ui/hooks";
 
-import { useDiscountCodeActions } from "../../hooks";
-import { type DiscountCodeActions } from "../../types";
 import { type FormSchema, formSchema } from "./schema";
 
 export interface DiscountCodeProps {
-  actions?: DiscountCodeActions;
+  addPromoCodeAction?: (params: {
+    checkoutId: string;
+    promoCode: string;
+  }) => Promise<Result<{ success: boolean }>>;
   checkout: Checkout;
+  removePromoCodeAction?: (params: {
+    checkoutId: string;
+    promoCode: string;
+  }) => Promise<Result<{ success: boolean }>>;
 }
 
 export const DiscountCode = ({
   checkout,
-  actions: propsActions,
+  addPromoCodeAction,
+  removePromoCodeAction,
 }: DiscountCodeProps) => {
-  const contextActions = useDiscountCodeActions();
-  const actions = propsActions ?? contextActions;
   const t = useTranslations();
   const { toast } = useToast();
   const [isTransitioning, startTransition] = useTransition();
@@ -47,19 +52,20 @@ export const DiscountCode = ({
 
   const promoCode = checkout?.voucherCode;
   const isCodeApplied =
+    !!promoCode &&
     !!checkout?.discount?.amount &&
     !form.formState.isSubmitting &&
     !form.formState.isLoading;
 
-  const handleSubmit = async (values: FormSchema) => {
-    if (!actions) {
+  const handleSubmit: SubmitHandler<FormSchema> = async (values) => {
+    if (!addPromoCodeAction) {
       return;
     }
 
     startTransition(
       () =>
         void (async () => {
-          const result = await actions.addPromoCode({
+          const result = await addPromoCodeAction({
             checkoutId: checkout.id,
             promoCode: values.code,
           });
@@ -111,7 +117,7 @@ export const DiscountCode = ({
   const handleRemoveCode = async (
     _event: React.MouseEvent<HTMLButtonElement>,
   ) => {
-    if (!actions) {
+    if (!removePromoCodeAction) {
       return;
     }
 
@@ -119,7 +125,7 @@ export const DiscountCode = ({
       () =>
         void (async () => {
           if (promoCode) {
-            const result = await actions.removePromoCode({
+            const result = await removePromoCodeAction({
               checkoutId: checkout.id,
               promoCode,
             });
@@ -169,28 +175,24 @@ export const DiscountCode = ({
             })}
           </span>
           {isTransitioning ? null : !isCodeApplied && !isOpen ? (
-            actions ? (
-              <span
-                className="dark:text-muted-foreground cursor-pointer text-stone-700 hover:underline"
-                onClick={toggleOpen}
-              >
-                {t("cart.add-discount")}
-              </span>
-            ) : null
+            <span
+              className="dark:text-muted-foreground cursor-pointer text-stone-700 hover:underline"
+              onClick={toggleOpen}
+            >
+              {t("cart.add-discount")}
+            </span>
           ) : (
-            actions && (
-              <Button
-                variant="ghost"
-                className="px-3 py-4"
-                onClick={isCodeApplied ? handleRemoveCode : toggleOpen}
-              >
-                <X height={16} width={16} />
-              </Button>
-            )
+            <Button
+              variant="ghost"
+              className="px-3 py-4"
+              onClick={isCodeApplied ? handleRemoveCode : toggleOpen}
+            >
+              <X height={16} width={16} />
+            </Button>
           )}
         </div>
 
-        {!isCodeApplied && isOpen && actions && (
+        {!isCodeApplied && isOpen && (
           <FormProvider {...form}>
             <form
               onSubmit={form.handleSubmit(handleSubmit)}

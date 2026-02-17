@@ -86,7 +86,7 @@ export const ProductsGridSkeleton = () => {
   return (
     <>
       <div className="mb-12 grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-4">
-        <div className="relative min-h-44 border-stone-200 bg-stone-200 p-6">
+        <div className="border-muted bg-muted relative min-h-44 p-6">
           <Skeleton className="mb-2 h-6 w-1/2" />
           <Skeleton className="mb-4 h-4 w-1/3" />
           <Skeleton className="absolute right-4 bottom-4 h-10 w-10 rounded-md" />

@@ -4,11 +4,12 @@ import { useTranslations } from "next-intl";
 
 import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { type User } from "@nimara/domain/objects/User";
-import { useRouter } from "@nimara/i18n/routing";
+import { LocalizedLink, useRouter } from "@nimara/i18n/routing";
 import { Card } from "@nimara/ui/components/card";
 import { Separator } from "@nimara/ui/components/separator";
 
-import { PaymentForm } from "@/foundation/checkout/sections/payment/form";
+import { clientEnvs } from "@/envs/client";
+import { Payment } from "@/foundation/checkout/sections/payment/payment";
 import { CheckoutPaymentSection } from "@/foundation/checkout/sections/payment/section";
 import { paths } from "@/foundation/routing/paths";
 
@@ -109,14 +110,30 @@ export const CheckoutSections = ({
 
       <CheckoutPaymentSection checkout={checkout} isOpen={step === "payment"}>
         {paymentSectionData ? (
-          <PaymentForm
+          <Payment
             checkout={checkout}
-            paymentSectionData={paymentSectionData}
+            addressFormRows={paymentSectionData.addressFormRows}
+            countries={paymentSectionData.countries}
+            countryCode={paymentSectionData.countryCode}
+            formattedAddresses={paymentSectionData.formattedAddresses}
+            paymentGatewayCustomer={paymentSectionData.paymentGatewayCustomer}
+            paymentGatewayMethods={paymentSectionData.paymentGatewayMethods}
+            storeUrl={paymentSectionData.storeUrl}
             user={user}
           />
         ) : (
           <p className="text-sm text-muted-foreground">
-            {t("errors.GENERIC_PAYMENT_ERROR")}
+            {t.rich("errors.GENERIC_PAYMENT_ERROR", {
+              link: (chunks) => (
+                <LocalizedLink
+                  href={`mailto:${clientEnvs.NEXT_PUBLIC_DEFAULT_EMAIL}`}
+                  className="underline"
+                  target="_blank"
+                >
+                  {chunks}
+                </LocalizedLink>
+              ),
+            })}
           </p>
         )}
       </CheckoutPaymentSection>

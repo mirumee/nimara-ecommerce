@@ -2,13 +2,9 @@ import { getLogger } from "@nimara/infrastructure/logging/service";
 import type { ServiceRegistry } from "@nimara/infrastructure/types";
 
 import { CACHE_TTL } from "@/config";
-import { getCurrentRegion } from "@/foundation/regions";
 import { createAddressServiceLoader } from "@/services/lazy-loaders/address";
-import { createAccessTokenLoader } from "@/services/lazy-loaders/auth";
 import { createCheckoutServiceLoader } from "@/services/lazy-loaders/checkout";
 import { createPaymentServiceLoader } from "@/services/lazy-loaders/payment";
-import { createRegionLoader } from "@/services/lazy-loaders/region";
-import { getAccessToken } from "@/services/tokens";
 
 import { createCartServiceLoader } from "./lazy-loaders/cart";
 import { createCMSMenuServiceLoader } from "./lazy-loaders/cms-menu";

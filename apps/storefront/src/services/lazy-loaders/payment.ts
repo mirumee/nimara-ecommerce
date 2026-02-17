@@ -4,14 +4,15 @@ import { type StripePaymentService } from "@nimara/infrastructure/payment/provid
 import { clientEnvs } from "@/envs/client";
 import { serverEnvs } from "@/envs/server";
 
+let paymentServiceInstance: StripePaymentService | null = null;
+
 /**
  * Creates a lazy loader function for the CMS page service.
  * This function is only used by the service registry.
  * @internal
  */
-export const createPaymentServiceLoader = (logger: Logger) => {
-  let paymentServiceInstance: StripePaymentService | null = null;
 
+export const createPaymentServiceLoader = (logger: Logger) => {
   return async (): Promise<StripePaymentService> => {
     if (paymentServiceInstance) {
       return paymentServiceInstance;

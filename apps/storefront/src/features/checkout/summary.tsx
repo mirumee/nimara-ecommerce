@@ -1,9 +1,26 @@
 "use client";
 
 import { type Checkout } from "@nimara/domain/objects/Checkout";
+import { type Result } from "@nimara/domain/objects/Result";
 import { ShoppingBag } from "@nimara/features/shared/shopping-bag/shopping-bag";
 
-export const Summary = ({ checkout }: { checkout: Checkout }) => {
+interface SummaryProps {
+  addPromoCodeAction?: (params: {
+    checkoutId: string;
+    promoCode: string;
+  }) => Promise<Result<{ success: boolean }>>;
+  checkout: Checkout;
+  removePromoCodeAction?: (params: {
+    checkoutId: string;
+    promoCode: string;
+  }) => Promise<Result<{ success: boolean }>>;
+}
+
+export const Summary = ({
+  checkout,
+  addPromoCodeAction,
+  removePromoCodeAction,
+}: SummaryProps) => {
   return (
     <ShoppingBag>
       <ShoppingBag.Header totalPrice={checkout.totalPrice.gross} />
@@ -12,7 +29,11 @@ export const Summary = ({ checkout }: { checkout: Checkout }) => {
         isLinesEditable={false}
         problems={checkout.problems}
       />
-      <ShoppingBag.DiscountCode checkout={checkout} />
+      <ShoppingBag.DiscountCode
+        checkout={checkout}
+        addPromoCodeAction={addPromoCodeAction}
+        removePromoCodeAction={removePromoCodeAction}
+      />
       <ShoppingBag.Pricing>
         <ShoppingBag.Subtotal price={checkout.subtotalPrice.gross} />
         <ShoppingBag.Shipping

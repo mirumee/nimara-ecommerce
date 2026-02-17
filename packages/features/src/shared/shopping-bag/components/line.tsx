@@ -297,6 +297,7 @@ export const Line = ({
           data-testid="shopping-bag-product-line-price"
         >
           <Price
+            className="grid"
             price={finalLineTotal}
             undiscountedPrice={undiscountedLineTotal}
           />

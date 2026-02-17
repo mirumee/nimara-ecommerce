@@ -1,7 +1,9 @@
 "use client";
 import { useFormatter, useTranslations } from "next-intl";
+import { useCallback } from "react";
 
 import type { TaxedPrice } from "@nimara/domain/objects/common";
+import { cn } from "@nimara/ui/lib/utils";
 
 type Props = {
   className?: string;
@@ -45,17 +47,20 @@ export const Price = ({
   const t = useTranslations();
   const formatter = useFormatter();
 
-  const renderPrice = (priceToFormat?: TaxedPrice) => {
-    if (!priceToFormat || priceToFormat.amount === 0) {
-      return t("common.free");
-    }
+  const renderPrice = useCallback(
+    (priceToFormat?: TaxedPrice) => {
+      if (!priceToFormat || priceToFormat.amount === 0) {
+        return t("common.free");
+      }
 
-    return formatter.number(priceToFormat.amount, {
-      style: "currency",
-      currencyDisplay: "narrowSymbol",
-      currency: priceToFormat.currency,
-    });
-  };
+      return formatter.number(priceToFormat.amount, {
+        style: "currency",
+        currencyDisplay: "narrowSymbol",
+        currency: priceToFormat.currency,
+      });
+    },
+    [formatter, t],
+  );
 
   // A specific variant is selected (price is defined).
   if (price) {
@@ -66,9 +71,9 @@ export const Price = ({
     const { hasDiscount, oldPrice } = getDiscountInfo(price, undiscountedPrice);
 
     return (
-      <span className={className}>
+      <span className={cn("flex flex-row flex-wrap gap-1", className)}>
         {hasDiscount && oldPrice && (
-          <span className="mr-2 text-gray-500 line-through dark:text-gray-400">
+          <span className="text-gray-500 line-through dark:text-gray-400">
             {renderPrice(oldPrice)}
           </span>
         )}

@@ -34,7 +34,7 @@ export const CheckoutSection = ({
       <LocalizedLink
         href={disabled ? "#" : paths.checkout.asPath({ query: { step } })}
         className={cn({
-          "hover:cursor-not-allowed": disabled,
+          "pointer-events-none": disabled,
         })}
       >
         <CardHeader className="flex flex-row items-center justify-between gap-2">

@@ -22,7 +22,7 @@ export async function confirmEmailChangeAction(
 
   if (!accessToken) {
     redirect({
-      href: paths.checkout.asPath({ query: { step: "sign-in" } }),
+      href: paths.signIn.asPath(),
       locale,
     });
   }

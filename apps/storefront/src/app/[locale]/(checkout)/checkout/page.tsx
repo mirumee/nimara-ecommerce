@@ -6,15 +6,16 @@ import { type AppErrorCode } from "@nimara/domain/objects/Error";
 import { redirect } from "@nimara/i18n/routing";
 
 import { getCheckoutOrRedirect } from "@/features/checkout/checkout-actions";
-import { Summary } from "@/features/checkout/checkout-summary/summary";
-import { CheckoutWrapper } from "@/foundation/checkout/checkout-wrapper";
-import { getCheckoutPaymentSectionData } from "@/foundation/checkout/sections/payment/helpers/get-checkout-payment-section-data";
-import { CheckoutSections } from "@/foundation/checkout/sections/sections";
-import { getCheckoutShippingAddressSectionData } from "@/foundation/checkout/sections/shipping-address/helpers/get-checkout-shipping-address-section-data";
+import { Summary } from "@/features/checkout/summary";
 import {
   CHECKOUT_STEPS_MAP,
+  CheckoutSections,
   type CheckoutStep,
-} from "@/foundation/checkout/steps";
+  CheckoutWrapper,
+  getCheckoutShippingAddressSectionData,
+} from "@/foundation/checkout";
+import * as foundationActions from "@/foundation/checkout";
+import { getCheckoutPaymentSectionData } from "@/foundation/checkout/sections/payment/server";
 import { paths } from "@/foundation/routing/paths";
 import { getServiceRegistry } from "@/services/registry";
 import { getAccessToken } from "@/services/tokens";
@@ -96,7 +97,15 @@ export default async function Page(props: PageProps) {
       : null;
 
   return (
-    <CheckoutWrapper summary={<Summary checkout={checkout} />}>
+    <CheckoutWrapper
+      summary={
+        <Summary
+          checkout={checkout}
+          addPromoCodeAction={foundationActions.addPromoCodeAction}
+          removePromoCodeAction={foundationActions.removePromoCodeAction}
+        />
+      }
+    >
       <CheckoutSections
         step={currentStep}
         checkout={checkout}

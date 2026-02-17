@@ -17,12 +17,16 @@ export const CheckoutDeliveryMethodSection = ({
 }: PropsWithChildren<CheckoutDeliveryMethodSectionProps>) => {
   const t = useTranslations();
 
+  const isDeliveryMethodProvided = checkout.deliveryMethod !== null;
+  const disabled = !isDeliveryMethodProvided;
+
   return (
     <CheckoutSection
       isComplete={checkout.deliveryMethod !== null}
       step="delivery-method"
       title={t("delivery-method.title")}
       isOpen={isOpen}
+      disabled={disabled}
       closedContent={
         checkout.deliveryMethod ? (
           <p className="text-sm text-muted-foreground">

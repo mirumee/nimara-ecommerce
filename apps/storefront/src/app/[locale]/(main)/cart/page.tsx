@@ -39,7 +39,7 @@ export default async function Page(props: any) {
       paths={{
         home: paths.home.asPath(),
         checkout: paths.checkout.asPath(),
-        checkoutSignIn: paths.checkout.asPath({ query: { step: "sign-in" } }),
+        checkoutSignIn: paths.checkout.signIn.asPath(),
       }}
     />
   );

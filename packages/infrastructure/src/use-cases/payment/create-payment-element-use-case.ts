@@ -9,11 +9,12 @@ export const createPaymentElementUseCase =
   }: {
     paymentElementCreate: PaymentElementCreateInfra;
   }): PaymentElementCreateUseCase =>
-  async ({ locale, secret, appearance }) => {
+  async ({ locale, secret, appearance, options }) => {
     const { mount, unmount } = await paymentElementCreate({
       locale,
       secret,
       appearance,
+      options,
     });
 
     return {

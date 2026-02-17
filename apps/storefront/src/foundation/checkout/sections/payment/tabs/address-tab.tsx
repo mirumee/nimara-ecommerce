@@ -28,7 +28,8 @@ import { useCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
 
 import { type PaymentSchema } from "../schema";
-import { type TabName } from "../types/internal";
+
+export type TabName = "new" | "saved";
 
 interface AddressTabProps {
   activeTab: TabName;

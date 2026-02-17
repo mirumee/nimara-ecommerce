@@ -1,3 +1,5 @@
+"use client";
+
 import { useTranslations } from "next-intl";
 import { type PropsWithChildren } from "react";
 
@@ -11,11 +13,20 @@ interface Props {
 }
 
 export const CheckoutPaymentSection = ({
-  checkout: _checkout,
+  checkout,
   isOpen,
   children,
 }: PropsWithChildren<Props>) => {
   const t = useTranslations();
+
+  const isEmailProvided = checkout.email !== null;
+  const isShippingProvided = checkout.isShippingRequired
+    ? checkout.shippingAddress !== null
+    : true;
+  const isDeliveryMethodProvided = checkout.deliveryMethod !== null;
+
+  const disabled =
+    !isEmailProvided || !isShippingProvided || !isDeliveryMethodProvided;
 
   return (
     <CheckoutSection
@@ -23,9 +34,7 @@ export const CheckoutPaymentSection = ({
       step="payment"
       title={t("payment.title")}
       isOpen={isOpen}
-      closedContent={
-        <p className="text-sm text-muted-foreground">{t("payment.title")}</p>
-      }
+      disabled={disabled}
     >
       {children}
     </CheckoutSection>

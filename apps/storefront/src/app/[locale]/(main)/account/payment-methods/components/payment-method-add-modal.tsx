@@ -45,12 +45,6 @@ export const PaymentMethodAddModal = ({
   const isLoading = !isMounted || isProcessing;
 
   const isDark = resolvedTheme === "dark";
-  const appearance = {
-    theme: (isDark ? "night" : "stripe") as "night" | "stripe",
-    variables: {
-      colorBackground: isDark ? "#1C1917" : "#fff",
-    },
-  };
 
   const handlePaymentSave = async () => {
     setIsProcessing(true);
@@ -80,7 +74,19 @@ export const PaymentMethodAddModal = ({
       const { mount } = await paymentService.paymentElementCreate({
         locale: region.language.locale,
         secret,
-        appearance,
+        appearance: {
+          theme: isDark ? "night" : "flat",
+          variables: {
+            borderRadius: "5px",
+          },
+        },
+        options: {
+          layout: {
+            type: "accordion",
+            paymentMethodLogoPosition: "start",
+            defaultCollapsed: false,
+          },
+        },
       });
 
       mount(`#${PAYMENT_ELEMENT_ID}`);
