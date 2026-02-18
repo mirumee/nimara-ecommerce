@@ -41,7 +41,7 @@ export const Footer = async () => {
   });
 
   return (
-    <footer className="mt-8 bg-muted text-sm text-primary">
+    <footer className="mt-8 bg-muted text-sm text-primary transition-[background-color]">
       <div className="container">
         <div className="flex flex-wrap justify-between gap-8 py-8">
           <div className="grid w-full grid-cols-2 grid-rows-[max-content,max-content] place-items-start justify-start gap-6 md:grid-cols-3">

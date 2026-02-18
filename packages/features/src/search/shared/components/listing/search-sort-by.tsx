@@ -55,7 +55,10 @@ export const SearchSortBy = ({
 
       <div>
         <Select defaultValue={defaultValue} onValueChange={handleValueChange}>
-          <SelectTrigger className="min-w-40" aria-label={t("search.sort-by")}>
+          <SelectTrigger
+            className="min-w-40 transition-colors"
+            aria-label={t("search.sort-by")}
+          >
             <SelectValue placeholder={t("search.sort-by")} />
           </SelectTrigger>
           <SelectContent>
