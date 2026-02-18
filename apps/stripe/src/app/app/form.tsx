@@ -32,7 +32,7 @@ export const ConfigForm = () => {
     resolver: zodResolver(schema),
     defaultValues: getDefaultValues({
       accessToken: appBridgeState!.token!,
-      domain: appBridgeState!.domain,
+      domain: appBridgeState!.saleorApiUrl,
     }),
   });
 
@@ -40,7 +40,7 @@ export const ConfigForm = () => {
     const error = await saveDataAction({
       data,
       accessToken: appBridgeState!.token!,
-      saleorDomain: appBridgeState!.domain,
+      saleorDomain: appBridgeState!.saleorApiUrl,
     });
 
     if (error) {
@@ -51,7 +51,7 @@ export const ConfigForm = () => {
       form.reset(
         await getDefaultValues({
           accessToken: appBridgeState!.token!,
-          domain: appBridgeState!.domain,
+          domain: appBridgeState!.saleorApiUrl,
         })(),
       );
     }
