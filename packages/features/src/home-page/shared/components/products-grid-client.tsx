@@ -47,7 +47,12 @@ export const ProductsGridClient = ({
     <>
       <div className="mb-12 grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-4">
         <div className="relative min-h-44 border-stone-200 bg-cover bg-center p-6">
-          <Image className="absolute" alt="" src={image ?? ""} fill />
+          <Image
+            className="absolute object-cover"
+            alt=""
+            src={image ?? ""}
+            fill
+          />
           <h2
             className="relative z-10 text-2xl opacity-100"
             style={{
