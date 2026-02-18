@@ -15,12 +15,12 @@ export const saleorCheckoutShippingAddressUpdateInfra =
     apiURL,
     logger,
   }: SaleorCheckoutServiceConfig): CheckoutShippingAddressUpdateInfra =>
-  async ({ checkoutId, address }) => {
+  async ({ id, address }) => {
     const result = await graphqlClient(apiURL).execute(
       CheckoutShippingAddressUpdateDocument,
       {
         variables: {
-          checkoutId,
+          id,
           shippingAddress: addressToInput(address),
         },
         operationName: "CheckoutShippingAddressUpdateMutation",
@@ -31,7 +31,7 @@ export const saleorCheckoutShippingAddressUpdateInfra =
       logger.error("Failed to update shipping address", {
         error: result.errors,
         checkout: {
-          id: checkoutId,
+          id,
         },
       });
 
@@ -42,7 +42,7 @@ export const saleorCheckoutShippingAddressUpdateInfra =
       logger.error("Failed to update shipping address", {
         error: "No data returned",
         checkout: {
-          id: checkoutId,
+          id,
         },
       });
 
@@ -58,7 +58,7 @@ export const saleorCheckoutShippingAddressUpdateInfra =
       logger.error("Failed to update shipping address", {
         error: result.data.checkoutShippingAddressUpdate.errors,
         checkout: {
-          id: checkoutId,
+          id,
         },
       });
 

@@ -1,10 +1,12 @@
 import type { Cart } from "@nimara/domain/objects/Cart";
 import type { User } from "@nimara/domain/objects/User";
+import { type Logger } from "@nimara/foundation/logging/types";
+import { type Region } from "@nimara/foundation/regions/types";
 import type { ServiceRegistry } from "@nimara/infrastructure/types";
 
 export interface CartProviderData {
   cart: Cart;
-  region: ServiceRegistry["region"];
+  region: Region;
   user: User | null;
 }
 
@@ -12,6 +14,8 @@ export interface CartProviderProps {
   accessToken: string | null;
   checkoutId: string | null;
   emptyCartRender: () => React.ReactNode;
+  logger: Logger;
+  region: Region;
   render: (data: CartProviderData) => React.ReactNode;
   services: ServiceRegistry;
 }
@@ -22,9 +26,11 @@ export const CartProvider = async ({
   services,
   checkoutId,
   accessToken,
+  region,
+  logger,
 }: CartProviderProps) => {
   if (!checkoutId) {
-    services.logger.debug("No checkoutId cookie. Rendering empty cart.");
+    logger.debug("No checkoutId cookie. Rendering empty cart.");
 
     return <>{emptyCartRender()}</>;
   }
@@ -32,8 +38,8 @@ export const CartProvider = async ({
   const cartService = await services.getCartService();
   const resultCartGet = await cartService.cartGet({
     cartId: checkoutId,
-    languageCode: services.region.language.code,
-    countryCode: services.region.market.countryCode,
+    languageCode: region.language.code,
+    countryCode: region.market.countryCode,
     options: {
       next: {
         revalidate: services.config.cacheTTL.cart,
@@ -43,7 +49,7 @@ export const CartProvider = async ({
   });
 
   if (!resultCartGet.ok) {
-    services.logger.error("Failed to fetch cart", {
+    logger.error("Failed to fetch cart", {
       error: resultCartGet.errors,
       checkoutId,
     });
@@ -67,7 +73,7 @@ export const CartProvider = async ({
       {render({
         cart: resultCartGet.data,
         user,
-        region: services.region,
+        region,
       })}
     </>
   );

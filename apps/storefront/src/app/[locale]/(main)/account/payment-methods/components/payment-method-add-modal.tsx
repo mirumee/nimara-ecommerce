@@ -19,7 +19,7 @@ import { Spinner } from "@nimara/ui/components/spinner";
 
 import { PAYMENT_ELEMENT_ID } from "@/features/checkout/consts";
 import { useCurrentRegion } from "@/foundation/regions";
-import { getPaymentService } from "@/services/payment";
+import { getServiceRegistry } from "@/services/registry";
 
 export const PaymentMethodAddModal = ({
   secret,
@@ -45,17 +45,13 @@ export const PaymentMethodAddModal = ({
   const isLoading = !isMounted || isProcessing;
 
   const isDark = resolvedTheme === "dark";
-  const appearance = {
-    theme: (isDark ? "night" : "stripe") as "night" | "stripe",
-    variables: {
-      colorBackground: isDark ? "#1C1917" : "#fff",
-    },
-  };
 
   const handlePaymentSave = async () => {
     setIsProcessing(true);
 
-    const paymentService = await getPaymentService();
+    const services = await getServiceRegistry();
+    const paymentService = await services.getPaymentService();
+
     const result = await paymentService.paymentMethodSaveExecute({
       redirectUrl,
       saveForFutureUse: isDefault,
@@ -70,14 +66,27 @@ export const PaymentMethodAddModal = ({
 
   useEffect(() => {
     void (async () => {
-      const paymentService = await getPaymentService();
+      const services = await getServiceRegistry();
+      const paymentService = await services.getPaymentService();
 
       await paymentService.paymentInitialize();
 
       const { mount } = await paymentService.paymentElementCreate({
         locale: region.language.locale,
         secret,
-        appearance,
+        appearance: {
+          theme: isDark ? "night" : "flat",
+          variables: {
+            borderRadius: "5px",
+          },
+        },
+        options: {
+          layout: {
+            type: "accordion",
+            paymentMethodLogoPosition: "start",
+            defaultCollapsed: false,
+          },
+        },
       });
 
       mount(`#${PAYMENT_ELEMENT_ID}`);

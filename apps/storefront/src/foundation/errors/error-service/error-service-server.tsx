@@ -3,6 +3,7 @@ import * as Sentry from "@sentry/nextjs";
 import { type ServiceRegistry } from "@nimara/infrastructure/types";
 
 import { getServiceRegistry } from "@/services/registry";
+import { getAccessToken } from "@/services/tokens";
 
 import { ErrorServiceClient } from "./error-service-client";
 
@@ -11,10 +12,12 @@ export interface ErrorServiceServerProps {
 }
 
 export const ErrorServiceServer = async () => {
-  const services = await getServiceRegistry();
-  const accessToken = services.accessToken;
-  const userService = await services.getUserService();
+  const [accessToken, services] = await Promise.all([
+    getAccessToken(),
+    getServiceRegistry(),
+  ]);
 
+  const userService = await services.getUserService();
   const resultUserGet = await userService.userGet(accessToken);
   const user = resultUserGet.ok ? resultUserGet.data : null;
 

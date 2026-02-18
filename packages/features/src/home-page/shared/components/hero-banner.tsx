@@ -32,7 +32,7 @@ export const HeroBanner = ({ fields, searchPath }: HeroBannerProps) => {
     <div className="bg-muted mb-14 flex flex-col items-center transition-colors sm:h-[27rem] sm:flex-row">
       <div className="order-last p-8 sm:order-first sm:basis-1/2 lg:p-16">
         <h1 className="pb-8 text-3xl font-medium lg:text-5xl">{header}</h1>
-        <Button asChild className="dark:hover:bg-stone-100">
+        <Button asChild>
           <LocalizedLink href={searchPath}>
             {buttonText}
             <ArrowRight className="h-4 w-5 pl-1" />

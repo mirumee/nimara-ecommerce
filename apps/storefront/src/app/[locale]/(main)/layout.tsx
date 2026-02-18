@@ -1,6 +1,7 @@
 import { CACHE_TTL } from "@/config";
 import { Footer } from "@/features/footer";
 import { Header } from "@/features/header";
+import { getCurrentRegion } from "@/foundation/regions";
 import { getLocalePrefix } from "@/foundation/server";
 import { getServiceRegistry } from "@/services/registry";
 
@@ -12,10 +13,11 @@ export default async function Layout({ children }: LayoutProps<"/[locale]">) {
     getServiceRegistry(),
   ]);
 
+  const region = await getCurrentRegion();
   const cmsMenuService = await services.getCMSMenuService();
   const resultMenu = await cmsMenuService.menuGet({
-    channel: services.region.market.channel,
-    languageCode: services.region.language.code,
+    channel: region.market.channel,
+    languageCode: region.language.code,
     locale: localePrefix,
     slug: "navbar",
     options: {

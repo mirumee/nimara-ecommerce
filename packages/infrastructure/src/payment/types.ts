@@ -3,6 +3,7 @@ import type {
   Stripe as StripeClient,
   StripeElements,
   StripePaymentElement,
+  StripePaymentElementOptions,
 } from "@stripe/stripe-js";
 
 import type { Checkout } from "@nimara/domain/objects/Checkout";
@@ -65,6 +66,7 @@ export type PaymentExecuteUseCase = PaymentExecuteInfra;
 export type PaymentElementCreateInfra = (opts: {
   appearance?: Appearance;
   locale?: string;
+  options?: StripePaymentElementOptions;
   secret: string;
 }) => Promise<{
   mount: (targetSelector: string) => void;

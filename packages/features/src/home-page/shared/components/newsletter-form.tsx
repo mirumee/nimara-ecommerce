@@ -45,7 +45,7 @@ export const Newsletter = () => {
   };
 
   return (
-    <section className="bg-muted px-4 py-12 sm:px-6 lg:px-8 dark:bg-stone-900">
+    <section className="bg-muted px-4 py-12 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-3xl">
         <div className="text-center">
           <Mail className="mx-auto h-12 w-12 text-gray-400" />

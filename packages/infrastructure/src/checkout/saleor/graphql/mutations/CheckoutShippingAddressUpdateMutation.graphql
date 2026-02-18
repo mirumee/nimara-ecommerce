@@ -1,11 +1,8 @@
 mutation checkoutShippingAddressUpdate(
-  $checkoutId: ID!
+  $id: ID!
   $shippingAddress: AddressInput!
 ) {
-  checkoutShippingAddressUpdate(
-    id: $checkoutId
-    shippingAddress: $shippingAddress
-  ) {
+  checkoutShippingAddressUpdate(id: $id, shippingAddress: $shippingAddress) {
     errors {
       ...CheckoutErrorFragment
     }

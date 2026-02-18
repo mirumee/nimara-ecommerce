@@ -1,8 +1,8 @@
 mutation checkoutBillingAddressUpdateMutation(
-  $checkoutId: ID!
+  $id: ID!
   $address: AddressInput!
 ) {
-  checkoutBillingAddressUpdate(id: $checkoutId, billingAddress: $address) {
+  checkoutBillingAddressUpdate(id: $id, billingAddress: $address) {
     errors {
       ...CheckoutErrorFragment
     }

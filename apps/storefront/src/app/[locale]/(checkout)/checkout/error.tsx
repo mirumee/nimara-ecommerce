@@ -15,7 +15,7 @@ export default function Error({
   const [traceId, setTraceId] = useState<string | null>(null);
 
   useEffect(() => {
-    storefrontLogger.error("Checkout error", error);
+    storefrontLogger.error("Checkout error", { error });
     setTraceId(errorService.logError(error));
   }, [error]);
 

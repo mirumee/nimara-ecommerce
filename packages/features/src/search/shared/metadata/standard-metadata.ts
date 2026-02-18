@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
 
 import { type GenerateStandardSearchMetadataProps } from "../types";
 
@@ -9,34 +8,30 @@ import { type GenerateStandardSearchMetadataProps } from "../types";
  * @returns Metadata object containing title and description for the search page.
  */
 export async function generateStandardSearchMetadata({
-  searchParams: searchParamsPromise,
   searchPath,
   storefrontUrl,
+  ogImageAlt,
+  siteName,
+  ...metadata
 }: GenerateStandardSearchMetadataProps): Promise<Metadata> {
-  const searchParams = await searchParamsPromise;
   const canonicalUrl = new URL(searchPath, storefrontUrl).toString();
 
-  const t = await getTranslations("search");
-
   return {
-    title: searchParams.q
-      ? t("search-for", { query: searchParams.q })
-      : t("all-products"),
-    description: t("description"),
     openGraph: {
       images: [
         {
           url: "/og-hp.png",
           width: 1200,
           height: 630,
-          alt: t("search-preview"),
+          alt: ogImageAlt || "Search preview",
         },
       ],
       url: canonicalUrl,
-      siteName: "Nimara Store",
+      siteName: siteName || "Nimara Store",
     },
     alternates: {
       canonical: canonicalUrl,
     },
+    ...metadata,
   };
 }

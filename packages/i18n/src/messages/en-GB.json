@@ -238,7 +238,7 @@
     "passwords-dont-match": "The entered passwords don't match.",
     "reset-password-required-email": "Type the email to reset the password.",
     "oldPassword": "Wrong password",
-    "typeTheDiscount": "Type the discount code first"
+    "enter-discount-code": "Type the discount code first"
   },
   "server-errors": {
     "Bad Request": "Bad Request",

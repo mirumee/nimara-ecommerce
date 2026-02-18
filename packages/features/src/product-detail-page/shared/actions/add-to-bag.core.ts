@@ -1,3 +1,5 @@
+import { revalidatePath } from "next/cache";
+
 import { type AsyncResult } from "@nimara/domain/objects/Result";
 import { type User } from "@nimara/domain/objects/User";
 import type { Region } from "@nimara/foundation/regions/types";
@@ -35,13 +37,6 @@ export async function addToBag(
 ): Promise<AddToBagResult> {
   const { variantId, quantity = 1 } = input;
   const { region, cartId, accessToken, cacheTTL } = ctx;
-
-  console.log(region.market);
-  console.log(region.language);
-  console.log(region.locale);
-  console.log({ variantId, quantity });
-
-  services.logger.debug("Adding item to bag", { variantId, quantity });
 
   // Get user if access token is available
   let userData: User | null = null;

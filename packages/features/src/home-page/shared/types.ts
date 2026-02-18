@@ -1,5 +1,6 @@
 import type { Locale } from "next-intl";
 
+import type { Region } from "@nimara/foundation/regions/types";
 import type { ServiceRegistry } from "@nimara/infrastructure/types";
 
 /**
@@ -30,6 +31,8 @@ export interface StandardHomeViewProps extends HomeViewProps {
     product: (slug: string) => string;
     search: string;
   };
+  region: Region;
+  revalidateTime: number;
   services: ServiceRegistry;
   storefrontUrl: string;
 }

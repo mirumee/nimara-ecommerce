@@ -19,8 +19,8 @@ export async function generateStandardCollectionMetadata(
 
   const collectionService = await props.services.getCollectionService();
   const getCollectionResult = await collectionService.getCollectionDetails({
-    channel: props.services.region.market.channel,
-    languageCode: props.services.region.language.code,
+    channel: props.channel,
+    languageCode: props.languageCode,
     slug,
     limit: props.defaultResultsPerPage,
     options: {

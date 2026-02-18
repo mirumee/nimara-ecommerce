@@ -5,8 +5,7 @@ import { redirect } from "@nimara/i18n/routing";
 
 import { getCheckoutOrRedirect } from "@/features/checkout/checkout-actions";
 import { paths, QUERY_PARAMS } from "@/foundation/routing/paths";
-import { getCheckoutService } from "@/services/checkout";
-import { getPaymentService } from "@/services/payment";
+import { getServiceRegistry } from "@/services/registry";
 
 import { ProcessingInfo } from "./components/processing-info";
 
@@ -16,15 +15,15 @@ type PageProps = {
 };
 
 export default async function Page(props: PageProps) {
-  const [{ locale }, searchParams, checkout, paymentService] =
-    await Promise.all([
-      props.params,
-      props.searchParams,
-      getCheckoutOrRedirect(),
-      getPaymentService(),
-    ]);
+  const [{ locale }, searchParams, checkout, services] = await Promise.all([
+    props.params,
+    props.searchParams,
+    getCheckoutOrRedirect(),
+    getServiceRegistry(),
+  ]);
 
   let errors: { code: AppErrorCode }[] = [];
+  const paymentService = await services.getPaymentService();
 
   const resultPaymentProcess = await paymentService.paymentResultProcess({
     checkout,
@@ -32,7 +31,7 @@ export default async function Page(props: PageProps) {
   });
 
   if (resultPaymentProcess.data?.success) {
-    const checkoutService = await getCheckoutService();
+    const checkoutService = await services.getCheckoutService();
     const resultOrderCreate = await checkoutService.orderCreate({
       id: checkout.id,
     });
@@ -53,8 +52,9 @@ export default async function Page(props: PageProps) {
     const errorCode = firstError ? firstError.code : "DEFAULT_PAYMENT_ERROR";
 
     redirect({
-      href: paths.checkout.payment.asPath({
+      href: paths.checkout.asPath({
         query: {
+          step: "payment",
           [QUERY_PARAMS.errorCode]: errorCode,
         },
       }),

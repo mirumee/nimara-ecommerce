@@ -32,8 +32,6 @@ export async function updateLineQuantity(
   const { cartId, lineId, quantity } = input;
   const { cacheTTL } = ctx;
 
-  services.logger.debug("Updating line quantity", { cartId, lineId, quantity });
-
   const cartService = await services.getCartService();
   const result = await cartService.linesUpdate({
     cartId,
@@ -75,8 +73,6 @@ export async function deleteLine(
   _ctx: DeleteLineCtx,
 ): Promise<DeleteLineResult> {
   const { cartId, lineId } = input;
-
-  services.logger.debug("Deleting line from cart", { cartId, lineId });
 
   const cartService = await services.getCartService();
   const result = await cartService.linesDelete({

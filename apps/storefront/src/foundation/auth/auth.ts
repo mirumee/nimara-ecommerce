@@ -1,5 +1,6 @@
 "use server";
 
+import * as Sentry from "@sentry/nextjs";
 import { cookies } from "next/headers";
 
 import { saleorAuthClient } from "@nimara/infrastructure/auth/client";
@@ -9,6 +10,8 @@ import { storefrontLogger } from "@/services/logging";
 
 export async function handleLogout() {
   (await saleorAuthClient()).signOut();
+
+  Sentry.setUser(null);
 
   const cookieStore = await cookies();
 

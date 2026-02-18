@@ -20,16 +20,21 @@ export const StandardHomeView = async ({
   services,
   accessToken,
   paths,
+  revalidateTime,
+  region,
 }: StandardHomeViewProps) => {
   return (
     <HomeProvider
+      region={region}
       services={services}
+      revalidateTime={revalidateTime}
       accessToken={accessToken}
       render={({ user, fields }) => (
         <section className="grid w-full content-start">
           <HeroBanner fields={fields} searchPath={paths.search} />
           <Suspense fallback={<ProductsGridSkeleton />}>
             <ProductsGrid
+              region={region}
               fields={fields}
               services={services}
               productPath={paths.product}

@@ -1,6 +1,8 @@
 import type { Locale } from "next-intl";
 
 import type { AsyncResult } from "@nimara/domain/objects/Result";
+import type { Logger } from "@nimara/foundation/logging/types";
+import type { Region } from "@nimara/foundation/regions/types";
 import type { ServiceRegistry } from "@nimara/infrastructure/types";
 
 /**
@@ -12,6 +14,7 @@ import type { ServiceRegistry } from "@nimara/infrastructure/types";
 export interface CartViewProps {
   accessToken: string | null;
   checkoutId: string | null;
+  logger: Logger;
   onCartUpdate: (cartId: string) => Promise<void>;
   onLineDelete: (params: {
     cartId: string;
@@ -28,6 +31,7 @@ export interface CartViewProps {
     checkoutSignIn: string;
     home: string;
   };
+  region: Region;
   searchParams: Promise<Record<string, string>>;
   services: ServiceRegistry;
 }

@@ -21,7 +21,10 @@ export async function confirmEmailChangeAction(
   const token = searchParams?.token ?? "";
 
   if (!accessToken) {
-    redirect({ href: paths.signIn.asPath(), locale });
+    redirect({
+      href: paths.signIn.asPath(),
+      locale,
+    });
   }
 
   const services = await getServiceRegistry();

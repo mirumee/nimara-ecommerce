@@ -17,6 +17,12 @@ export const saleorCountriesGetInfra =
       variables: {
         channelSlug: channelSlug,
       },
+      options: {
+        next: {
+          tags: [`COUNTRIES:${channelSlug}`],
+          revalidate: 60 * 60 * 24, // 1 day
+        },
+      },
       operationName: "ChannelQuery",
     });
 

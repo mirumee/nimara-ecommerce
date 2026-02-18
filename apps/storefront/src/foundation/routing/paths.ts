@@ -110,10 +110,6 @@ export const paths = {
   checkout: {
     ...url("/checkout"),
     signIn: url("/checkout/sign-in"),
-    userDetails: url("/checkout/user-details"),
-    shippingAddress: url("/checkout/shipping-address"),
-    deliveryMethod: url("/checkout/delivery-method"),
-    payment: url("/checkout/payment"),
   },
   order: {
     confirmation: url<"id">("/order/confirmation/[id]"),

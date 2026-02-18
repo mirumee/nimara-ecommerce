@@ -1,6 +1,7 @@
 import { type Locale } from "next-intl";
 
 import { type AsyncResult } from "@nimara/domain/objects/Result";
+import { type Region } from "@nimara/foundation/regions/types";
 import { type ServiceRegistry } from "@nimara/infrastructure/types";
 
 export type AddToBagAction = (params: {
@@ -23,12 +24,14 @@ export interface PDPViewProps {
     product: (slug: string) => string;
     search: (query: { category: string }) => string;
   };
+  region: Region;
   services: ServiceRegistry;
 }
 
 export interface GenerateStandardPDPMetadataProps {
   params: Promise<{ locale: Locale; slug: string }>;
   productPath: string;
+  region: Region;
   services: ServiceRegistry;
   storefrontUrl: string;
 }

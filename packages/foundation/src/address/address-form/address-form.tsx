@@ -1,5 +1,6 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
@@ -74,6 +75,7 @@ export const AddressForm = ({
   const t = useTranslations();
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const form = useFormContext();
   const [isChangingCountry, setIsChangingCountry] = useState(false);
 
@@ -91,7 +93,10 @@ export const AddressForm = ({
       form.resetField(fieldName, { defaultValue: "", keepError: false }),
     );
 
-    router.push(`${pathname}?country=${countryCode}`);
+    const params = new URLSearchParams(searchParams);
+
+    params.set("country", countryCode);
+    router.push(`${pathname}?${params.toString()}`);
   };
 
   const countrySelectorFormRow = [

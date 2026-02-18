@@ -6,6 +6,7 @@ import {
 } from "@nimara/features/cart/shared/actions/cart-actions.core";
 
 import { revalidateCart } from "@/features/checkout/cart";
+import { storefrontLogger } from "@/services/logging";
 import { getServiceRegistry } from "@/services/registry";
 
 /**
@@ -39,6 +40,13 @@ export const updateLineQuantityAction = async ({
     void revalidateCart(cartId);
   }
 
+  storefrontLogger.error("Failed to update line quantity", {
+    cartId,
+    lineId,
+    quantity,
+    errors: result.errors,
+  });
+
   return result;
 };
 
@@ -62,6 +70,12 @@ export const deleteLineAction = async ({
   if (result.ok) {
     void revalidateCart(cartId);
   }
+
+  storefrontLogger.error("Failed to delete line", {
+    cartId,
+    lineId,
+    errors: result.errors,
+  });
 
   return result;
 };

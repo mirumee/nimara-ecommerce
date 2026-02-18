@@ -4,6 +4,7 @@ import {
   JsonLd,
   mappedSearchProductsToJsonLd,
 } from "@nimara/features/json-ld/json-ld";
+import { type Region } from "@nimara/foundation/regions/types";
 import type { ServiceRegistry } from "@nimara/infrastructure/types";
 import {
   type Facet,
@@ -25,6 +26,7 @@ export interface SearchProviderData {
 export interface SearchProviderProps {
   defaultResultsPerPage: number;
   defaultSortBy: string;
+  region: Region;
   render: (data: SearchProviderData) => React.ReactNode;
   searchParams: SearchParams;
   services: ServiceRegistry;
@@ -36,11 +38,12 @@ export const SearchProvider = async ({
   services,
   defaultResultsPerPage,
   defaultSortBy,
+  region,
 }: SearchProviderProps) => {
   const searchContext = {
-    currency: services.region.market.currency,
-    channel: services.region.market.channel,
-    languageCode: services.region.language.code,
+    currency: region.market.currency,
+    channel: region.market.channel,
+    languageCode: region.language.code,
   } satisfies SearchContext;
 
   const {

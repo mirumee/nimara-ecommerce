@@ -24,6 +24,8 @@ export const StandardCMSPageView = async (props: CMSPageViewProps) => {
     <CMSPageProvider
       slug={slug}
       services={props.services}
+      languageCode={props.region.language.code}
+      revalidateTime={props.revalidateTime}
       render={({ content }) => {
         let contentHtml: string[] | null = null;
 
