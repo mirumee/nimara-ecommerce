@@ -1,5 +1,3 @@
-import { revalidatePath } from "next/cache";
-
 import { type AsyncResult } from "@nimara/domain/objects/Result";
 import { type User } from "@nimara/domain/objects/User";
 import type { Region } from "@nimara/foundation/regions/types";

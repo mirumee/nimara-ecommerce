@@ -1,4 +1,3 @@
-import type { LanguageCodeEnum } from "@nimara/codegen/schema";
 import type {
   ButterCMSPageFields,
   PageField,
