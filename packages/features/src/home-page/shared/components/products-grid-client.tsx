@@ -12,6 +12,7 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@nimara/ui/components/carousel";
+import Image from "next/image";
 
 type ProductWithPath = SearchProduct & { path: string };
 
@@ -45,14 +46,10 @@ export const ProductsGridClient = ({
   return (
     <>
       <div className="mb-12 grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-4">
-        <div
-          className="relative min-h-44 border-stone-200 bg-cover bg-center p-6"
-          style={{
-            backgroundImage: `url(${image})`,
-          }}
-        >
+        <div className="relative min-h-44 border-stone-200 bg-cover bg-center p-6">
+          <Image className="absolute" alt="" src={image ?? ""} fill />
           <h2
-            className="text-2xl opacity-100"
+            className="relative z-10 text-2xl opacity-100"
             style={{
               color: `${headerFontColor ?? "#44403c"}`,
             }}
@@ -60,7 +57,7 @@ export const ProductsGridClient = ({
             {header}
           </h2>
           <h3
-            className="text-sm"
+            className="relative z-10 text-sm"
             style={{
               color: `${subheaderFontColor ?? "#78716c"}`,
             }}
@@ -68,7 +65,7 @@ export const ProductsGridClient = ({
             {subheader}
           </h3>
           <Button
-            className="absolute right-4 bottom-4 p-3"
+            className="absolute right-4 bottom-4 z-10 p-3"
             variant="outline"
             asChild
             size="icon"
