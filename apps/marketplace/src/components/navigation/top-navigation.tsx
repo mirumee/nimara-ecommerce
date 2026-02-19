@@ -2,6 +2,7 @@
 
 import {
   LayoutDashboard,
+  LayoutList,
   LogOut,
   Monitor,
   Package,
@@ -40,6 +41,11 @@ const navigationLinks = [
     name: "Orders",
     href: "/orders",
     icon: ShoppingCart,
+  },
+  {
+    name: "Collections",
+    href: "/collections",
+    icon: LayoutList,
   },
   {
     name: "Customers",

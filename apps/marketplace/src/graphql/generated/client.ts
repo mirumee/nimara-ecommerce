@@ -30047,6 +30047,127 @@ export type AccountUpdateVariables = Exact<{
 
 export type AccountUpdate = AccountUpdate_Mutation;
 
+export type CollectionAddProducts_collectionAddProducts_CollectionAddProducts_errors_CollectionError =
+  { field: string | null; message: string | null; code: CollectionErrorCode };
+
+export type CollectionAddProducts_collectionAddProducts_CollectionAddProducts_collection_Collection =
+  { id: string; name: string };
+
+export type CollectionAddProducts_collectionAddProducts_CollectionAddProducts =
+  {
+    errors: Array<CollectionAddProducts_collectionAddProducts_CollectionAddProducts_errors_CollectionError>;
+    collection: CollectionAddProducts_collectionAddProducts_CollectionAddProducts_collection_Collection | null;
+  };
+
+export type CollectionAddProducts_Mutation = {
+  collectionAddProducts: CollectionAddProducts_collectionAddProducts_CollectionAddProducts | null;
+};
+
+export type CollectionAddProductsVariables = Exact<{
+  collectionId: Scalars["ID"]["input"];
+  products: Array<Scalars["ID"]["input"]> | Scalars["ID"]["input"];
+}>;
+
+export type CollectionAddProducts = CollectionAddProducts_Mutation;
+
+export type CollectionChannelListingUpdate_collectionChannelListingUpdate_CollectionChannelListingUpdate_errors_CollectionChannelListingError =
+  { field: string | null; message: string | null; code: ProductErrorCode };
+
+export type CollectionChannelListingUpdate_collectionChannelListingUpdate_CollectionChannelListingUpdate_collection_Collection_channelListings_CollectionChannelListing_channel_Channel =
+  { id: string; name: string };
+
+export type CollectionChannelListingUpdate_collectionChannelListingUpdate_CollectionChannelListingUpdate_collection_Collection_channelListings_CollectionChannelListing =
+  {
+    id: string;
+    isPublished: boolean;
+    publishedAt: string | null;
+    channel: CollectionChannelListingUpdate_collectionChannelListingUpdate_CollectionChannelListingUpdate_collection_Collection_channelListings_CollectionChannelListing_channel_Channel;
+  };
+
+export type CollectionChannelListingUpdate_collectionChannelListingUpdate_CollectionChannelListingUpdate_collection_Collection =
+  {
+    id: string;
+    channelListings: Array<CollectionChannelListingUpdate_collectionChannelListingUpdate_CollectionChannelListingUpdate_collection_Collection_channelListings_CollectionChannelListing> | null;
+  };
+
+export type CollectionChannelListingUpdate_collectionChannelListingUpdate_CollectionChannelListingUpdate =
+  {
+    errors: Array<CollectionChannelListingUpdate_collectionChannelListingUpdate_CollectionChannelListingUpdate_errors_CollectionChannelListingError>;
+    collection: CollectionChannelListingUpdate_collectionChannelListingUpdate_CollectionChannelListingUpdate_collection_Collection | null;
+  };
+
+export type CollectionChannelListingUpdate_Mutation = {
+  collectionChannelListingUpdate: CollectionChannelListingUpdate_collectionChannelListingUpdate_CollectionChannelListingUpdate | null;
+};
+
+export type CollectionChannelListingUpdateVariables = Exact<{
+  id: Scalars["ID"]["input"];
+  input: CollectionChannelListingUpdateInput;
+}>;
+
+export type CollectionChannelListingUpdate =
+  CollectionChannelListingUpdate_Mutation;
+
+export type CollectionRemoveProducts_collectionRemoveProducts_CollectionRemoveProducts_errors_CollectionError =
+  { field: string | null; message: string | null; code: CollectionErrorCode };
+
+export type CollectionRemoveProducts_collectionRemoveProducts_CollectionRemoveProducts_collection_Collection =
+  { id: string; name: string };
+
+export type CollectionRemoveProducts_collectionRemoveProducts_CollectionRemoveProducts =
+  {
+    errors: Array<CollectionRemoveProducts_collectionRemoveProducts_CollectionRemoveProducts_errors_CollectionError>;
+    collection: CollectionRemoveProducts_collectionRemoveProducts_CollectionRemoveProducts_collection_Collection | null;
+  };
+
+export type CollectionRemoveProducts_Mutation = {
+  collectionRemoveProducts: CollectionRemoveProducts_collectionRemoveProducts_CollectionRemoveProducts | null;
+};
+
+export type CollectionRemoveProductsVariables = Exact<{
+  collectionId: Scalars["ID"]["input"];
+  products: Array<Scalars["ID"]["input"]> | Scalars["ID"]["input"];
+}>;
+
+export type CollectionRemoveProducts = CollectionRemoveProducts_Mutation;
+
+export type CollectionUpdate_collectionUpdate_CollectionUpdate_errors_CollectionError =
+  { field: string | null; message: string | null; code: CollectionErrorCode };
+
+export type CollectionUpdate_collectionUpdate_CollectionUpdate_collection_Collection_metadata_MetadataItem =
+  { key: string; value: string };
+
+export type CollectionUpdate_collectionUpdate_CollectionUpdate_collection_Collection_privateMetadata_MetadataItem =
+  { key: string; value: string };
+
+export type CollectionUpdate_collectionUpdate_CollectionUpdate_collection_Collection =
+  {
+    id: string;
+    name: string;
+    slug: string;
+    description: string | null;
+    seoTitle: string | null;
+    seoDescription: string | null;
+    metadata: Array<CollectionUpdate_collectionUpdate_CollectionUpdate_collection_Collection_metadata_MetadataItem>;
+    privateMetadata: Array<CollectionUpdate_collectionUpdate_CollectionUpdate_collection_Collection_privateMetadata_MetadataItem>;
+  };
+
+export type CollectionUpdate_collectionUpdate_CollectionUpdate = {
+  errors: Array<CollectionUpdate_collectionUpdate_CollectionUpdate_errors_CollectionError>;
+  collection: CollectionUpdate_collectionUpdate_CollectionUpdate_collection_Collection | null;
+};
+
+export type CollectionUpdate_Mutation = {
+  collectionUpdate: CollectionUpdate_collectionUpdate_CollectionUpdate | null;
+};
+
+export type CollectionUpdateVariables = Exact<{
+  id: Scalars["ID"]["input"];
+  input: CollectionInput;
+}>;
+
+export type CollectionUpdate = CollectionUpdate_Mutation;
+
 export type ConfirmVendorAccount_confirmAccount_ConfirmAccount_user_User = {
   id: string;
   email: string;
@@ -30606,8 +30727,113 @@ export type ChannelsVariables = Exact<{ [key: string]: never }>;
 
 export type Channels = Channels_Query;
 
+export type CollectionDetail_collection_Collection_backgroundImage_Image = {
+  url: string;
+  alt: string | null;
+};
+
+export type CollectionDetail_collection_Collection_metadata_MetadataItem = {
+  key: string;
+  value: string;
+};
+
+export type CollectionDetail_collection_Collection_privateMetadata_MetadataItem =
+  { key: string; value: string };
+
+export type CollectionDetail_collection_Collection_channelListings_CollectionChannelListing_channel_Channel =
+  { id: string; name: string };
+
+export type CollectionDetail_collection_Collection_channelListings_CollectionChannelListing =
+  {
+    id: string;
+    isPublished: boolean;
+    publishedAt: string | null;
+    channel: CollectionDetail_collection_Collection_channelListings_CollectionChannelListing_channel_Channel;
+  };
+
+export type CollectionDetail_collection_Collection_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_thumbnail_Image =
+  { url: string; alt: string | null };
+
+export type CollectionDetail_collection_Collection_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_productType_ProductType =
+  { name: string };
+
+export type CollectionDetail_collection_Collection_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_channelListings_ProductChannelListing_channel_Channel =
+  { name: string };
+
+export type CollectionDetail_collection_Collection_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_channelListings_ProductChannelListing =
+  {
+    isPublished: boolean;
+    channel: CollectionDetail_collection_Collection_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_channelListings_ProductChannelListing_channel_Channel;
+  };
+
+export type CollectionDetail_collection_Collection_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product =
+  {
+    id: string;
+    name: string;
+    slug: string;
+    thumbnail: CollectionDetail_collection_Collection_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_thumbnail_Image | null;
+    productType: CollectionDetail_collection_Collection_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_productType_ProductType;
+    channelListings: Array<CollectionDetail_collection_Collection_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_channelListings_ProductChannelListing> | null;
+  };
+
+export type CollectionDetail_collection_Collection_products_ProductCountableConnection_edges_ProductCountableEdge =
+  {
+    node: CollectionDetail_collection_Collection_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product;
+  };
+
+export type CollectionDetail_collection_Collection_products_ProductCountableConnection =
+  {
+    edges: Array<CollectionDetail_collection_Collection_products_ProductCountableConnection_edges_ProductCountableEdge>;
+  };
+
+export type CollectionDetail_collection_Collection = {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  backgroundImage: CollectionDetail_collection_Collection_backgroundImage_Image | null;
+  metadata: Array<CollectionDetail_collection_Collection_metadata_MetadataItem>;
+  privateMetadata: Array<CollectionDetail_collection_Collection_privateMetadata_MetadataItem>;
+  channelListings: Array<CollectionDetail_collection_Collection_channelListings_CollectionChannelListing> | null;
+  products: CollectionDetail_collection_Collection_products_ProductCountableConnection | null;
+};
+
+export type CollectionDetail_Query = {
+  collection: CollectionDetail_collection_Collection | null;
+};
+
+export type CollectionDetailVariables = Exact<{
+  id: Scalars["ID"]["input"];
+}>;
+
+export type CollectionDetail = CollectionDetail_Query;
+
+export type CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection_backgroundImage_Image =
+  { url: string; alt: string | null };
+
+export type CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection_products_ProductCountableConnection =
+  { totalCount: number | null };
+
+export type CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection_channelListings_CollectionChannelListing_channel_Channel =
+  { id: string; name: string };
+
+export type CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection_channelListings_CollectionChannelListing =
+  {
+    isPublished: boolean;
+    channel: CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection_channelListings_CollectionChannelListing_channel_Channel;
+  };
+
 export type CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection =
-  { id: string; name: string; slug: string };
+  {
+    id: string;
+    name: string;
+    slug: string;
+    backgroundImage: CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection_backgroundImage_Image | null;
+    products: CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection_products_ProductCountableConnection | null;
+    channelListings: Array<CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection_channelListings_CollectionChannelListing> | null;
+  };
 
 export type CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge =
   {
@@ -31798,6 +32024,98 @@ export const AccountUpdateDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<AccountUpdate, AccountUpdateVariables>;
+export const CollectionAddProductsDocument = new TypedDocumentString(`
+    mutation CollectionAddProducts($collectionId: ID!, $products: [ID!]!) {
+  collectionAddProducts(collectionId: $collectionId, products: $products) {
+    errors {
+      field
+      message
+      code
+    }
+    collection {
+      id
+      name
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  CollectionAddProducts,
+  CollectionAddProductsVariables
+>;
+export const CollectionChannelListingUpdateDocument = new TypedDocumentString(`
+    mutation CollectionChannelListingUpdate($id: ID!, $input: CollectionChannelListingUpdateInput!) {
+  collectionChannelListingUpdate(id: $id, input: $input) {
+    errors {
+      field
+      message
+      code
+    }
+    collection {
+      id
+      channelListings {
+        id
+        channel {
+          id
+          name
+        }
+        isPublished
+        publishedAt
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  CollectionChannelListingUpdate,
+  CollectionChannelListingUpdateVariables
+>;
+export const CollectionRemoveProductsDocument = new TypedDocumentString(`
+    mutation CollectionRemoveProducts($collectionId: ID!, $products: [ID!]!) {
+  collectionRemoveProducts(collectionId: $collectionId, products: $products) {
+    errors {
+      field
+      message
+      code
+    }
+    collection {
+      id
+      name
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  CollectionRemoveProducts,
+  CollectionRemoveProductsVariables
+>;
+export const CollectionUpdateDocument = new TypedDocumentString(`
+    mutation CollectionUpdate($id: ID!, $input: CollectionInput!) {
+  collectionUpdate(id: $id, input: $input) {
+    errors {
+      field
+      message
+      code
+    }
+    collection {
+      id
+      name
+      slug
+      description
+      seoTitle
+      seoDescription
+      metadata {
+        key
+        value
+      }
+      privateMetadata {
+        key
+        value
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  CollectionUpdate,
+  CollectionUpdateVariables
+>;
 export const ConfirmVendorAccountDocument = new TypedDocumentString(`
     mutation ConfirmVendorAccount($email: String!, $token: String!) {
   confirmAccount(email: $email, token: $token) {
@@ -32195,6 +32513,64 @@ export const ChannelsDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<Channels, ChannelsVariables>;
+export const CollectionDetailDocument = new TypedDocumentString(`
+    query CollectionDetail($id: ID!) {
+  collection(id: $id) {
+    id
+    name
+    slug
+    description
+    seoTitle
+    seoDescription
+    backgroundImage {
+      url
+      alt
+    }
+    metadata {
+      key
+      value
+    }
+    privateMetadata {
+      key
+      value
+    }
+    channelListings {
+      id
+      channel {
+        id
+        name
+      }
+      isPublished
+      publishedAt
+    }
+    products(first: 100) {
+      edges {
+        node {
+          id
+          name
+          slug
+          thumbnail {
+            url
+            alt
+          }
+          productType {
+            name
+          }
+          channelListings {
+            channel {
+              name
+            }
+            isPublished
+          }
+        }
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  CollectionDetail,
+  CollectionDetailVariables
+>;
 export const CollectionsListDocument = new TypedDocumentString(`
     query CollectionsList($first: Int = 100, $after: String, $filter: CollectionFilterInput) {
   collections(first: $first, after: $after, filter: $filter) {
@@ -32203,6 +32579,20 @@ export const CollectionsListDocument = new TypedDocumentString(`
         id
         name
         slug
+        backgroundImage {
+          url
+          alt
+        }
+        products {
+          totalCount
+        }
+        channelListings {
+          channel {
+            id
+            name
+          }
+          isPublished
+        }
       }
       cursor
     }

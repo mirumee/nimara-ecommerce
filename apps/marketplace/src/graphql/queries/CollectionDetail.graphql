@@ -1,0 +1,53 @@
+query CollectionDetail($id: ID!) {
+  collection(id: $id) {
+    id
+    name
+    slug
+    description
+    seoTitle
+    seoDescription
+    backgroundImage {
+      url
+      alt
+    }
+    metadata {
+      key
+      value
+    }
+    privateMetadata {
+      key
+      value
+    }
+    channelListings {
+      id
+      channel {
+        id
+        name
+      }
+      isPublished
+      publishedAt
+    }
+    products(first: 100) {
+      edges {
+        node {
+          id
+          name
+          slug
+          thumbnail {
+            url
+            alt
+          }
+          productType {
+            name
+          }
+          channelListings {
+            channel {
+              name
+            }
+            isPublished
+          }
+        }
+      }
+    }
+  }
+}

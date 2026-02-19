@@ -7,6 +7,8 @@ import { err } from "@nimara/domain/objects/Result";
 import { graphqlClient } from "@nimara/infrastructure/graphql/client";
 
 import {
+  ChannelsDocument,
+  CollectionChannelListingUpdateDocument,
   CustomerByEmailDocument,
   CustomerDeleteDocument,
   MetadataUpdateDocument,
@@ -19,6 +21,7 @@ import {
 } from "@/graphql/generated/client";
 import { executeGraphQL } from "@/lib/graphql/execute";
 import { getAppConfig } from "@/lib/saleor/app-config";
+import { METADATA_KEYS } from "@/lib/saleor/consts";
 
 type AppError = BaseError<"ACCOUNT_REGISTER_ERROR">;
 
@@ -35,14 +38,6 @@ function failConfigured(stage: string, details?: Record<string, unknown>) {
       message: "Vendor registration is not configured.",
     },
   ]);
-}
-
-function safeStringify(value: unknown): string {
-  try {
-    return JSON.stringify(value);
-  } catch {
-    return String(value);
-  }
 }
 
 function failSetup(stage: string, details?: Record<string, unknown>) {
@@ -445,7 +440,7 @@ export async function registerAccount(input: {
     });
   }
 
-  // Attach owner id to collection now that we know customerId.
+  // Mark collection as default and attach vendor ID
   const resultCollectionMetadata = await saleor.execute(
     MetadataUpdateDocument,
     {
@@ -453,9 +448,8 @@ export async function registerAccount(input: {
       variables: {
         id: vendorCollectionId,
         input: [
-          { key: "vendor.id", value: vendorPageId },
-          { key: "vendor.model_id", value: vendorPageId },
-          { key: "vendor.user_id", value: resolvedCustomerId },
+          { key: METADATA_KEYS.VENDOR_ID, value: vendorPageId },
+          { key: METADATA_KEYS.VENDOR_DEFAULT_COLLECTION, value: "true" },
         ],
       },
       options: { cache: "no-store" },
@@ -502,6 +496,65 @@ export async function registerAccount(input: {
       errors: updateCollectionMetaPayload.errors,
       message: firstSaleorErrorMessage(updateCollectionMetaPayload.errors),
     });
+  }
+
+  // Set all channels visibility to hidden for the collection
+  const channelsResult = await saleor.execute(ChannelsDocument, {
+    operationName: "ChannelsQuery",
+    variables: {},
+    options: { cache: "no-store" },
+  });
+
+  if (channelsResult.ok && channelsResult.data?.channels) {
+    const channels = channelsResult.data.channels;
+    const hiddenChannels = channels.map((channel) => ({
+      channelId: channel.id,
+      isPublished: false,
+      publishedAt: null,
+    }));
+
+    if (hiddenChannels.length > 0) {
+      const channelListingResult = await saleor.execute(
+        CollectionChannelListingUpdateDocument,
+        {
+          operationName: "CollectionChannelListingUpdateMutation",
+          variables: {
+            id: vendorCollectionId,
+            input: {
+              addChannels: hiddenChannels,
+            },
+          },
+          options: { cache: "no-store" },
+        },
+      );
+
+      // Log but don't fail if channel listing update fails - collection is still created
+      if (!channelListingResult.ok) {
+        console.warn("[sign-up] Failed to set collection channels to hidden", {
+          errors: channelListingResult.errors,
+          collectionId: vendorCollectionId,
+        });
+      } else {
+        const channelListingData = channelListingResult.data as {
+          collectionChannelListingUpdate?: {
+            errors?: Array<{ message?: string | null }>;
+          };
+        } | null;
+
+        if (
+          channelListingData?.collectionChannelListingUpdate?.errors &&
+          channelListingData.collectionChannelListingUpdate.errors.length > 0
+        ) {
+          console.warn(
+            "[sign-up] Collection channel listing update had errors",
+            {
+              errors: channelListingData.collectionChannelListingUpdate.errors,
+              collectionId: vendorCollectionId,
+            },
+          );
+        }
+      }
+    }
   }
 
   const resultCustomerMetadata = await saleor.execute(MetadataUpdateDocument, {
