@@ -13,6 +13,7 @@ import {
 } from "@graphql-tools/wrap";
 import { GraphQLError, OperationTypeNode, parse } from "graphql";
 
+import { METADATA_KEYS } from "@/lib/saleor/consts";
 import type { ServerContext } from "@/lib/saleor/types";
 
 import { requireVendorID } from "./auth";
@@ -105,6 +106,7 @@ async function makeSaleorSchema() {
             "me",
             "categories",
             "channels",
+            "collection",
             "collections",
             "customers",
             "order",
@@ -150,6 +152,12 @@ async function makeSaleorSchema() {
             "orderNoteAdd",
             "pageUpdate",
             "updateMetadata",
+            "collectionCreate",
+            "collectionUpdate",
+            "collectionChannelListingUpdate",
+            "collectionDelete",
+            "collectionAddProducts",
+            "collectionRemoveProducts",
           ];
 
           return allowedMutations.includes(fieldName);
@@ -158,10 +166,15 @@ async function makeSaleorSchema() {
         return false;
       }),
 
-      // Remove channel arg from product queries (vendor-specific filtering)
+      // Remove channel arg from product/collection queries (vendor-specific filtering)
       new TransformRootFields((operationName, fieldName, fieldConfig) => {
         if (operationName === "Query") {
-          if (fieldName === "product" || fieldName === "products") {
+          if (
+            fieldName === "product" ||
+            fieldName === "products" ||
+            fieldName === "collection" ||
+            fieldName === "collections"
+          ) {
             delete fieldConfig?.args?.channel;
           }
         }
@@ -378,6 +391,493 @@ export async function getStitchedSchema() {
             });
           },
         },
+        collectionCreate: {
+          resolve(_source, args, context: ServerContext, info) {
+            const vendorId = requireVendorID(context);
+            const input = args?.input
+              ? withVendorMetadata(args.input, vendorId)
+              : args?.input;
+
+            return delegateToSchema({
+              schema: saleorSchema,
+              operation: OperationTypeNode.MUTATION,
+              fieldName: "collectionCreate",
+              args: { ...args, input },
+              context,
+              info,
+            });
+          },
+        },
+        collectionUpdate: {
+          resolve: async (_source, args, context: ServerContext, info) => {
+            const vendorId = requireVendorID(context);
+
+            const collectionQuery = parse(`
+              query GetCollection($id: ID!) {
+                collection(id: $id) {
+                  id
+                  metadata {
+                    key
+                    value
+                  }
+                }
+              }
+            `);
+
+            const collectionResult = (await saleorSchema.executor!({
+              document: collectionQuery,
+              variables: { id: args.id },
+              context,
+            })) as {
+              data?: {
+                collection?: {
+                  metadata?: Array<{ key: string; value: string }>;
+                };
+              };
+              errors?: unknown[];
+            };
+
+            if (collectionResult.errors || !collectionResult.data?.collection) {
+              throw new GraphQLError("Collection not found", {
+                extensions: { code: "COLLECTION_NOT_FOUND" },
+              });
+            }
+
+            const collectionMetadata =
+              collectionResult.data.collection.metadata || [];
+            const vendorIdMeta = collectionMetadata.find(
+              (m) => m.key === "vendor.id",
+            );
+
+            if (!vendorIdMeta || vendorIdMeta.value !== vendorId) {
+              throw new GraphQLError(
+                "Collection does not belong to this vendor",
+                { extensions: { code: "COLLECTION_VENDOR_MISMATCH" } },
+              );
+            }
+
+            const input = args?.input
+              ? withVendorMetadata(args.input, vendorId)
+              : args?.input;
+
+            return delegateToSchema({
+              schema: saleorSchema,
+              operation: OperationTypeNode.MUTATION,
+              fieldName: "collectionUpdate",
+              args: { ...args, input },
+              context,
+              info,
+            });
+          },
+        },
+        collectionChannelListingUpdate: {
+          resolve: async (_source, args, context: ServerContext, info) => {
+            const vendorId = requireVendorID(context);
+
+            const collectionQuery = parse(`
+              query GetCollection($id: ID!) {
+                collection(id: $id) {
+                  id
+                  metadata {
+                    key
+                    value
+                  }
+                }
+              }
+            `);
+
+            const collectionResult = (await saleorSchema.executor!({
+              document: collectionQuery,
+              variables: { id: args.id },
+              context,
+            })) as {
+              data?: {
+                collection?: {
+                  metadata?: Array<{ key: string; value: string }>;
+                };
+              };
+              errors?: unknown[];
+            };
+
+            if (collectionResult.errors || !collectionResult.data?.collection) {
+              throw new GraphQLError("Collection not found", {
+                extensions: { code: "COLLECTION_NOT_FOUND" },
+              });
+            }
+
+            const collectionMetadata =
+              collectionResult.data.collection.metadata || [];
+            const vendorIdMeta = collectionMetadata.find(
+              (m) => m.key === "vendor.id",
+            );
+
+            if (!vendorIdMeta || vendorIdMeta.value !== vendorId) {
+              throw new GraphQLError(
+                "Collection does not belong to this vendor",
+                { extensions: { code: "COLLECTION_VENDOR_MISMATCH" } },
+              );
+            }
+
+            return delegateToSchema({
+              schema: saleorSchema,
+              operation: OperationTypeNode.MUTATION,
+              fieldName: "collectionChannelListingUpdate",
+              args,
+              context,
+              info,
+            });
+          },
+        },
+        collectionDelete: {
+          resolve: async (_source, args, context: ServerContext, info) => {
+            const vendorId = requireVendorID(context);
+
+            const collectionQuery = parse(`
+              query GetCollection($id: ID!) {
+                collection(id: $id) {
+                  id
+                  metadata {
+                    key
+                    value
+                  }
+                }
+              }
+            `);
+
+            const collectionResult = (await saleorSchema.executor!({
+              document: collectionQuery,
+              variables: { id: args.id },
+              context,
+            })) as {
+              data?: {
+                collection?: {
+                  metadata?: Array<{ key: string; value: string }>;
+                };
+              };
+              errors?: unknown[];
+            };
+
+            if (collectionResult.errors || !collectionResult.data?.collection) {
+              throw new GraphQLError("Collection not found", {
+                extensions: { code: "COLLECTION_NOT_FOUND" },
+              });
+            }
+
+            const collectionMetadata =
+              collectionResult.data.collection.metadata || [];
+            const vendorIdMeta = collectionMetadata.find(
+              (m) => m.key === "vendor.id",
+            );
+
+            if (!vendorIdMeta || vendorIdMeta.value !== vendorId) {
+              throw new GraphQLError(
+                "Collection does not belong to this vendor",
+                { extensions: { code: "COLLECTION_VENDOR_MISMATCH" } },
+              );
+            }
+
+            // Prevent deletion of default collections (created during vendor sign-up)
+            const defaultCollectionMeta = collectionMetadata.find(
+              (m) => m.key === METADATA_KEYS.VENDOR_DEFAULT_COLLECTION,
+            );
+
+            if (defaultCollectionMeta?.value === "true") {
+              throw new GraphQLError(
+                "Cannot delete default collection. This collection was created during sign-up and is required.",
+                { extensions: { code: "DEFAULT_COLLECTION_DELETE_FORBIDDEN" } },
+              );
+            }
+
+            return delegateToSchema({
+              schema: saleorSchema,
+              operation: OperationTypeNode.MUTATION,
+              fieldName: "collectionDelete",
+              args,
+              context,
+              info,
+            });
+          },
+        },
+        collectionAddProducts: {
+          resolve: async (_source, args, context: ServerContext, info) => {
+            const vendorId = requireVendorID(context);
+
+            const collectionQuery = parse(`
+              query GetCollection($id: ID!) {
+                collection(id: $id) {
+                  id
+                  metadata {
+                    key
+                    value
+                  }
+                }
+              }
+            `);
+
+            const collectionResult = (await saleorSchema.executor!({
+              document: collectionQuery,
+              variables: { id: args.collectionId },
+              context,
+            })) as {
+              data?: {
+                collection?: {
+                  metadata?: Array<{ key: string; value: string }>;
+                };
+              };
+              errors?: unknown[];
+            };
+
+            if (collectionResult.errors || !collectionResult.data?.collection) {
+              throw new GraphQLError("Collection not found", {
+                extensions: { code: "COLLECTION_NOT_FOUND" },
+              });
+            }
+
+            const collectionMetadata =
+              collectionResult.data.collection.metadata || [];
+            const vendorIdMeta = collectionMetadata.find(
+              (m) => m.key === "vendor.id",
+            );
+
+            if (!vendorIdMeta || vendorIdMeta.value !== vendorId) {
+              throw new GraphQLError(
+                "Collection does not belong to this vendor",
+                { extensions: { code: "COLLECTION_VENDOR_MISMATCH" } },
+              );
+            }
+
+            // Verify all products belong to this vendor before adding
+            const productIds = args.products || [];
+
+            if (productIds.length > 0) {
+              const productQuery = parse(`
+                query GetProducts($ids: [ID!]!) {
+                  products(filter: { ids: $ids }, first: ${productIds.length}) {
+                    edges {
+                      node {
+                        id
+                        metadata {
+                          key
+                          value
+                        }
+                      }
+                    }
+                  }
+                }
+              `);
+
+              const productResult = (await saleorSchema.executor!({
+                document: productQuery,
+                variables: { ids: productIds },
+                context,
+              })) as {
+                data?: {
+                  products?: {
+                    edges?: Array<{
+                      node?: {
+                        id: string;
+                        metadata?: Array<{ key: string; value: string }>;
+                      };
+                    }>;
+                  };
+                };
+                errors?: unknown[];
+              };
+
+              if (productResult.errors) {
+                throw new GraphQLError("Failed to verify product ownership", {
+                  extensions: { code: "PRODUCT_VERIFICATION_FAILED" },
+                });
+              }
+
+              const productNodes =
+                productResult.data?.products?.edges
+                  ?.map((e) => e.node)
+                  .filter(
+                    (
+                      node,
+                    ): node is {
+                      id: string;
+                      metadata?: Array<{ key: string; value: string }>;
+                    } => node != null,
+                  ) ?? [];
+
+              // Check if all requested products were found
+              if (productNodes.length !== productIds.length) {
+                throw new GraphQLError("One or more products not found", {
+                  extensions: { code: "PRODUCT_NOT_FOUND" },
+                });
+              }
+
+              // Verify each product belongs to this vendor
+              for (const product of productNodes) {
+                const productMetadata = product.metadata || [];
+                const productVendorIdMeta = productMetadata.find(
+                  (m) => m.key === "vendor.id",
+                );
+
+                if (
+                  !productVendorIdMeta ||
+                  productVendorIdMeta.value !== vendorId
+                ) {
+                  throw new GraphQLError(
+                    `Product ${product.id} does not belong to this vendor`,
+                    { extensions: { code: "PRODUCT_VENDOR_MISMATCH" } },
+                  );
+                }
+              }
+            }
+
+            return delegateToSchema({
+              schema: saleorSchema,
+              operation: OperationTypeNode.MUTATION,
+              fieldName: "collectionAddProducts",
+              args,
+              context,
+              info,
+            });
+          },
+        },
+        collectionRemoveProducts: {
+          resolve: async (_source, args, context: ServerContext, info) => {
+            const vendorId = requireVendorID(context);
+
+            const collectionQuery = parse(`
+              query GetCollection($id: ID!) {
+                collection(id: $id) {
+                  id
+                  metadata {
+                    key
+                    value
+                  }
+                }
+              }
+            `);
+
+            const collectionResult = (await saleorSchema.executor!({
+              document: collectionQuery,
+              variables: { id: args.collectionId },
+              context,
+            })) as {
+              data?: {
+                collection?: {
+                  metadata?: Array<{ key: string; value: string }>;
+                };
+              };
+              errors?: unknown[];
+            };
+
+            if (collectionResult.errors || !collectionResult.data?.collection) {
+              throw new GraphQLError("Collection not found", {
+                extensions: { code: "COLLECTION_NOT_FOUND" },
+              });
+            }
+
+            const collectionMetadata =
+              collectionResult.data.collection.metadata || [];
+            const vendorIdMeta = collectionMetadata.find(
+              (m) => m.key === "vendor.id",
+            );
+
+            if (!vendorIdMeta || vendorIdMeta.value !== vendorId) {
+              throw new GraphQLError(
+                "Collection does not belong to this vendor",
+                { extensions: { code: "COLLECTION_VENDOR_MISMATCH" } },
+              );
+            }
+
+            // Verify all products belong to this vendor before removing
+            const productIds = args.products || [];
+
+            if (productIds.length > 0) {
+              const productQuery = parse(`
+                query GetProducts($ids: [ID!]!) {
+                  products(filter: { ids: $ids }, first: ${productIds.length}) {
+                    edges {
+                      node {
+                        id
+                        metadata {
+                          key
+                          value
+                        }
+                      }
+                    }
+                  }
+                }
+              `);
+
+              const productResult = (await saleorSchema.executor!({
+                document: productQuery,
+                variables: { ids: productIds },
+                context,
+              })) as {
+                data?: {
+                  products?: {
+                    edges?: Array<{
+                      node?: {
+                        id: string;
+                        metadata?: Array<{ key: string; value: string }>;
+                      };
+                    }>;
+                  };
+                };
+                errors?: unknown[];
+              };
+
+              if (productResult.errors) {
+                throw new GraphQLError("Failed to verify product ownership", {
+                  extensions: { code: "PRODUCT_VERIFICATION_FAILED" },
+                });
+              }
+
+              const productNodes =
+                productResult.data?.products?.edges
+                  ?.map((e) => e.node)
+                  .filter(
+                    (
+                      node,
+                    ): node is {
+                      id: string;
+                      metadata?: Array<{ key: string; value: string }>;
+                    } => node != null,
+                  ) ?? [];
+
+              // Check if all requested products were found
+              if (productNodes.length !== productIds.length) {
+                throw new GraphQLError("One or more products not found", {
+                  extensions: { code: "PRODUCT_NOT_FOUND" },
+                });
+              }
+
+              // Verify each product belongs to this vendor
+              for (const product of productNodes) {
+                const productMetadata = product.metadata || [];
+                const productVendorIdMeta = productMetadata.find(
+                  (m) => m.key === "vendor.id",
+                );
+
+                if (
+                  !productVendorIdMeta ||
+                  productVendorIdMeta.value !== vendorId
+                ) {
+                  throw new GraphQLError(
+                    `Product ${product.id} does not belong to this vendor`,
+                    { extensions: { code: "PRODUCT_VENDOR_MISMATCH" } },
+                  );
+                }
+              }
+            }
+
+            return delegateToSchema({
+              schema: saleorSchema,
+              operation: OperationTypeNode.MUTATION,
+              fieldName: "collectionRemoveProducts",
+              args,
+              context,
+              info,
+            });
+          },
+        },
       },
       Query: {
         me: {
@@ -413,6 +913,9 @@ export async function getStitchedSchema() {
           resolve(_source, args, context: ServerContext, info) {
             const vendorId = requireVendorID(context);
 
+            const existingMetadata = args.filter?.metadata || [];
+            const vendorMetadata = { key: "vendor.id", value: vendorId };
+
             return delegateToSchema({
               schema: saleorSchema,
               operation: OperationTypeNode.QUERY,
@@ -420,8 +923,8 @@ export async function getStitchedSchema() {
               args: {
                 ...args,
                 filter: {
-                  metadata: [{ key: "vendor.id", value: vendorId }],
                   ...args.filter,
+                  metadata: [...existingMetadata, vendorMetadata],
                 },
               },
               context,
@@ -479,6 +982,9 @@ export async function getStitchedSchema() {
           resolve(_source, args, context: ServerContext, info) {
             const vendorId = requireVendorID(context);
 
+            const existingMetadata = args.filter?.metadata || [];
+            const vendorMetadata = { key: "vendor.id", value: vendorId };
+
             return delegateToSchema({
               schema: saleorSchema,
               operation: OperationTypeNode.QUERY,
@@ -487,10 +993,97 @@ export async function getStitchedSchema() {
                 ...args,
                 channel: MARKETPLACE_CHANNEL,
                 filter: {
-                  metadata: [{ key: "vendor.id", value: vendorId }],
                   ...args.filter,
+                  metadata: [...existingMetadata, vendorMetadata],
                 },
               },
+              context,
+              info,
+            });
+          },
+        },
+        collections: {
+          resolve(_source, args, context: ServerContext, info) {
+            const vendorId = requireVendorID(context);
+
+            const existingMetadata = args.filter?.metadata || [];
+            const vendorMetadata = { key: "vendor.id", value: vendorId };
+
+            return delegateToSchema({
+              schema: saleorSchema,
+              operation: OperationTypeNode.QUERY,
+              fieldName: "collections",
+              args: {
+                ...args,
+                filter: {
+                  ...args.filter,
+                  metadata: [...existingMetadata, vendorMetadata],
+                },
+              },
+              context,
+              info,
+            });
+          },
+        },
+        collection: {
+          resolve: async (_source, args, context: ServerContext, info) => {
+            const vendorId = requireVendorID(context);
+
+            const collectionQuery = parse(`
+              query GetCollection($id: ID!) {
+                collection(id: $id) {
+                  id
+                  metadata {
+                    key
+                    value
+                  }
+                }
+              }
+            `);
+
+            const collectionResult = (await saleorSchema.executor!({
+              document: collectionQuery,
+              variables: { id: args.id },
+              context,
+            })) as {
+              data?: {
+                collection?: {
+                  id: string;
+                  metadata?: Array<{ key: string; value: string }>;
+                };
+              };
+              errors?: unknown[];
+            };
+
+            if (collectionResult.errors || !collectionResult.data?.collection) {
+              return delegateToSchema({
+                schema: saleorSchema,
+                operation: OperationTypeNode.QUERY,
+                fieldName: "collection",
+                args,
+                context,
+                info,
+              });
+            }
+
+            const collectionMetadata =
+              collectionResult.data.collection.metadata || [];
+            const vendorIdMeta = collectionMetadata.find(
+              (m) => m.key === "vendor.id",
+            );
+
+            if (!vendorIdMeta || vendorIdMeta.value !== vendorId) {
+              throw new GraphQLError(
+                "Collection does not belong to this vendor",
+                { extensions: { code: "COLLECTION_VENDOR_MISMATCH" } },
+              );
+            }
+
+            return delegateToSchema({
+              schema: saleorSchema,
+              operation: OperationTypeNode.QUERY,
+              fieldName: "collection",
+              args,
               context,
               info,
             });

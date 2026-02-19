@@ -9,6 +9,20 @@ query CollectionsList(
         id
         name
         slug
+        backgroundImage {
+          url
+          alt
+        }
+        products {
+          totalCount
+        }
+        channelListings {
+          channel {
+            id
+            name
+          }
+          isPublished
+        }
       }
       cursor
     }

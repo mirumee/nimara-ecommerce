@@ -76,7 +76,6 @@ const OPERATION_AUTH_CONFIG: Record<string, GraphQLAuthLevel> = {
   accountRegister: GraphQLAuthLevel.DOMAIN_ONLY,
   categories: GraphQLAuthLevel.DOMAIN_ONLY,
   channels: GraphQLAuthLevel.DOMAIN_ONLY,
-  collections: GraphQLAuthLevel.DOMAIN_ONLY,
   confirmAccount: GraphQLAuthLevel.DOMAIN_ONLY,
   productType: GraphQLAuthLevel.DOMAIN_ONLY,
   productTypes: GraphQLAuthLevel.DOMAIN_ONLY,
@@ -89,12 +88,20 @@ const OPERATION_AUTH_CONFIG: Record<string, GraphQLAuthLevel> = {
   accountUpdate: GraphQLAuthLevel.AUTHENTICATED,
   product: GraphQLAuthLevel.AUTHENTICATED,
   products: GraphQLAuthLevel.AUTHENTICATED,
+  collection: GraphQLAuthLevel.AUTHENTICATED,
+  collections: GraphQLAuthLevel.AUTHENTICATED,
   order: GraphQLAuthLevel.AUTHENTICATED,
   orders: GraphQLAuthLevel.AUTHENTICATED,
   productCreate: GraphQLAuthLevel.AUTHENTICATED,
   productUpdate: GraphQLAuthLevel.AUTHENTICATED,
   productBulkCreate: GraphQLAuthLevel.AUTHENTICATED,
   productChannelListingUpdate: GraphQLAuthLevel.AUTHENTICATED,
+  collectionCreate: GraphQLAuthLevel.AUTHENTICATED,
+  collectionUpdate: GraphQLAuthLevel.AUTHENTICATED,
+  collectionChannelListingUpdate: GraphQLAuthLevel.AUTHENTICATED,
+  collectionDelete: GraphQLAuthLevel.AUTHENTICATED,
+  collectionAddProducts: GraphQLAuthLevel.AUTHENTICATED,
+  collectionRemoveProducts: GraphQLAuthLevel.AUTHENTICATED,
   productVariant: GraphQLAuthLevel.AUTHENTICATED,
   productVariantUpdate: GraphQLAuthLevel.AUTHENTICATED,
   productVariantDelete: GraphQLAuthLevel.AUTHENTICATED,
@@ -311,11 +318,17 @@ export async function authorizeGraphQLContext(
   let vendorId: string | null = null;
 
   if (appConfig?.authToken) {
-    vendorId = await fetchVendorIdForUser({
-      authToken: appConfig.authToken,
-      saleorDomain,
-      userId,
-    });
+    try {
+      vendorId = await fetchVendorIdForUser({
+        authToken: appConfig.authToken,
+        saleorDomain,
+        userId,
+      });
+    } catch (error) {
+      // Log error but don't fail context creation
+      // Some operations don't require vendor ID
+      console.error("Failed to fetch vendor ID:", error);
+    }
   }
 
   return {

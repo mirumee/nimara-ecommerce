@@ -9,6 +9,8 @@
 export const METADATA_KEYS = {
   /** Vendor profile id – links Customer/Product/Order to vendor */
   VENDOR_ID: "vendor.id",
+  /** Default collection flag (stored in collection metadata) */
+  VENDOR_DEFAULT_COLLECTION: "vendor.default_collection",
 } as const;
 
 /**
