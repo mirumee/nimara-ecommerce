@@ -6,7 +6,7 @@ This file provides comprehensive context for AI coding assistants (GitHub Copilo
 
 ## Project Type
 
-Full-stack e-commerce platform using Next.js 15 with Saleor headless commerce backend. Built with a monorepo architecture for multi-region, global brands.
+Full-stack e-commerce platform using Next.js 16 with Saleor headless commerce backend. Built with a monorepo architecture for multi-region, global brands.
 
 ---
 
@@ -14,7 +14,7 @@ Full-stack e-commerce platform using Next.js 15 with Saleor headless commerce ba
 
 ### Frontend
 
-- **Framework:** Next.js 15 (App Router, Server Components, Server Actions)
+- **Framework:** Next.js 16 (App Router, Server Components, Server Actions)
 - **React:** Version 19
 - **TypeScript:** Strict mode enabled
 - **Styling:** Tailwind CSS 3.x with utility-first approach
@@ -565,9 +565,9 @@ Three-branch strategy:
 - **Architecture:** See `ARCHITECTURE.md` for system design
 - **Conventions:** See `CONVENTIONS.md` for coding standards
 - **Troubleshooting:** See `TROUBLESHOOTING.md` for common issues
-- **Saleor API:** https://docs.saleor.io/docs/3.x
-- **Next.js Docs:** https://nextjs.org/docs
-- **Stripe Docs:** https://stripe.com/docs
+- **Saleor API:** <https://docs.saleor.io/docs/3.x>
+- **Next.js Docs:** <https://nextjs.org/docs>
+- **Stripe Docs:** <https://stripe.com/docs>
 
 ---
 

@@ -1,123 +1,133 @@
 import { Steps } from "nextra/components";
 
-# Adding a new channel, language and market in Nimara
+# Adding a new locale, language, and market in Nimara
 
-Nimara storefront currently supports two sales channels: **gb** (Great Britain) and **us** (United States). This guide will walk you through adding a new channel, language, and market (for example, Spanish/Spain) to your Nimara storefront.
+Nimara storefront currently supports two locales: **en-US** (United States) and **en-GB** (Great Britain). This guide walks you through adding a new locale, language, and market (for example, Spanish/Spain) to your Nimara storefront.
+
+## Architecture Overview
+
+Nimara's i18n system is organized across two main layers:
+
+- **`@nimara/i18n` package:** Shared i18n configuration, routing, and message loading (locales, locale prefixes, message paths)
+- **`apps/storefront/src/foundation/regions`:** Storefront-specific market/region configuration (channels, languages, currencies, markets)
+
+This separation allows flexibility: you can have multiple locales mapped to the same market, or create region-specific configurations independent of i18n.
 
 <Steps>
-### Add a new sales channel in Saleor
-Go to your Saleor dashboard -> **Configuration** → **Channels** → click **Create Channel**.
+### 1. Create a new sales channel in Saleor
 
-Enter the channel details. Assign appropriate shipping zones (e.g., “Europe” for Spain).
+Go to your Saleor dashboard → **Configuration** → **Channels** → click **Create Channel**.
+
+Enter the channel details:
+- **Name:** e.g., "Spain Channel"
+- **Slug:** e.g., "channel-es" (used in storefront configuration)
+- **Default country:** Spain
+- **Shipping zones:** Assign appropriate zones (e.g., "Europe" for Spain)
 
 After creating the channel, assign the products you want to offer in this channel.
 
-### Update types Locales, Languages, and Currencies
+### 2. Add the locale to the shared i18n config
 
-Edit `types.ts`:
+The i18n package (`packages/i18n/src/config.ts`) centralizes locale configuration that applies across the storefront.
 
-- extend `SUPPORTED_LANGUAGES` by adding your new language code (e.g., "es" for Spanish):
+Edit `packages/i18n/src/config.ts`:
 
-```ts filename="apps/storefront/src/regions/types.ts"
+```ts filename="packages/i18n/src/config.ts"
 /**
- * Defines available languages in the App.
+ * List of supported locales.
+ * Format: BCP 47 / IETF language tag (e.g. "en-US", "es-ES")
+ * Combines ISO 639-1 language code with ISO 3166-1 region code.
  */
+export const LOCALES = ["en-US", "en-GB", "es-ES"] as const;
 
-export const SUPPORTED_LANGUAGES = ["us", "gb", "es"] as const;
-export type LanguageId = (typeof SUPPORTED_LANGUAGES)[number];
-```
-
-- extend `SUPPORTED_LOCALES` (e.g., "es-ES" for Spanish):
-
-```ts filename="apps/storefront/src/regions/types.ts"
-export const SUPPORTED_LOCALES = [
-  "en-GB",
-  "en-US",
-  "es-ES",
-] as const satisfies AllLocale[];
-export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
-export const DEFAULT_LOCALE = "en-US" as const satisfies AllLocale;
-```
-
-- if you want to add a brand new sales channel (not just a new language for an existing channel), also extend `SUPPORTED_MARKETS`:
-
-```ts filename="apps/storefront/src/regions/types.ts"
 /**
- * Defines available markets in the App.
+ * Map of locales to their display names.
  */
+export const LOCALE_LABELS = {
+  "en-US": "English (United States)",
+  "en-GB": "English (United Kingdom)",
+  "es-ES": "Español (España)",
+} as const satisfies Record<SupportedLocale, string>;
 
-export const SUPPORTED_MARKETS = ["gb", "us", "es"] as const;
-export type MarketId = (typeof SUPPORTED_MARKETS)[number];
-```
-
-- add the currency for the new market:
-
-```ts filename="apps/storefront/src/regions/types.ts"
 /**
- * Defines supported currencies in the App.
+ * Map of locales to their message files.
+ * Each locale must have a corresponding JSON file in src/messages/
  */
+export const MESSAGES_PATH_MAP = {
+  "en-US": "@nimara/i18n/messages/en-US.json",
+  "en-GB": "@nimara/i18n/messages/en-GB.json",
+  "es-ES": "@nimara/i18n/messages/es-ES.json",
+} as const satisfies Record<SupportedLocale, string>;
 
-export const SUPPORTED_CURRENCIES = [
-  "USD",
-  "GBP",
-  "EUR",
-] as const satisfies AllCurrency[];
-export type SupportedCurrency = (typeof SUPPORTED_CURRENCIES)[number];
-```
-
-### Update routing for the new locale
-
-Edit `routing.ts`:
-
-- add a locale prefix for your new locale:
-
-```ts filename="apps/storefront/src/i18n/routing.ts"
-export const localePrefixes = {
+/**
+ * Map of non-default locales to their URL prefixes.
+ * Default locale ("en-US") does not need a prefix.
+ */
+export const LOCALE_PREFIXES = {
   "en-GB": "/gb",
   "es-ES": "/es",
 } as const satisfies Record<
   Exclude<SupportedLocale, typeof DEFAULT_LOCALE>,
-  string
+  `/${string}`
 >;
 ```
 
-### Register the locale globally
+### 3. Add translations for the new locale
 
-Edit `consts.ts`:
+Create a new translation file with all required messages.
 
-- add the new locale:
-
-```ts filename="packages/domain/src/consts.ts":
-export const ALL_LOCALES = [
-  "en",
-  "en-US",
-  "en-GB",
-  "ja-JP",
-  "pl-PL",
-  "es-ES",
-] as const;
+```bash
+# Copy an existing locale as a template
+cp packages/i18n/src/messages/en-GB.json packages/i18n/src/messages/es-ES.json
 ```
 
-### Configure locale, language and market
+Then translate the messages in `packages/i18n/src/messages/es-ES.json` to Spanish.
 
-Edit `config.ts`:
+The structure should mirror existing files:
 
-- map the locale to the channel:
+```json filename="packages/i18n/src/messages/es-ES.json"
+{
+  "common": {
+    "locale_name": "Español (España)",
+    "cart": "Carrito",
+    "checkout": "Pagar"
+  },
+  "errors": {
+    "not_found": "No encontrado"
+  }
+}
+```
 
-```ts filename="apps/storefront/src/regions/config.ts":
-export const LOCALE_CHANNEL_MAP: Record<
-  SupportedLocale,
-  (typeof SUPPORTED_MARKETS)[number]
-> = {
+### 4. Configure the market/region in the storefront
+
+Storefront-specific market configuration lives in `apps/storefront/src/foundation/regions/config.ts`.
+
+This maps the locale to a Saleor channel, defines language metadata, and market-specific details.
+
+Edit `apps/storefront/src/foundation/regions/config.ts`:
+
+```ts filename="apps/storefront/src/foundation/regions/config.ts"
+import { LOCALES } from "@nimara/i18n/config";
+
+import { clientEnvs } from "@/envs/client";
+
+export const CHANNEL = clientEnvs.NEXT_PUBLIC_DEFAULT_CHANNEL;
+
+export const LOCALE_CHANNEL_MAP = {
   "en-GB": "gb",
   "en-US": "us",
-  "es-ES": "es",
-};
-```
+  "es-ES": "es", // Map the locale to the market ID
+} as const;
 
-- add language entry:
+export const SUPPORTED_CURRENCIES = ["USD", "GBP", "EUR"] as const;
 
-```ts filename="apps/storefront/src/regions/config.ts":
+export const SUPPORTED_CHANNELS = [
+  "default-channel",
+  "channel-us",
+  "channel-uk",
+  "channel-es",
+] as const;
+
 export const LANGUAGES = {
   GB: {
     id: "gb",
@@ -131,24 +141,19 @@ export const LANGUAGES = {
     code: "EN_US",
     locale: "en-US",
   },
-
   ES: {
     id: "es",
     name: "Español (España)",
     code: "ES_ES",
     locale: "es-ES",
   },
-} satisfies Record<Uppercase<LanguageId>, Language>;
-```
+} as const;
 
-- define the market:
-
-```ts filename="apps/storefront/src/regions/config.ts":
 export const MARKETS = {
   GB: {
     id: "gb",
     name: "United Kingdom",
-    channel: "channel-uk",
+    channel: "channel-uk", // Saleor channel slug
     currency: "GBP",
     continent: "Europe",
     countryCode: "GB",
@@ -165,23 +170,80 @@ export const MARKETS = {
     defaultLanguage: LANGUAGES.US,
     supportedLanguages: [LANGUAGES.US],
   },
-
   ES: {
     id: "es",
     name: "España",
-    channel: "channel-es",
+    channel: "channel-es", // Must match Saleor channel slug
     currency: "EUR",
     continent: "Europe",
     countryCode: "ES",
     defaultLanguage: LANGUAGES.ES,
     supportedLanguages: [LANGUAGES.ES],
   },
-} satisfies Record<Uppercase<MarketId>, Market>;
+} as const;
+
+export const REGIONS_CONFIG = {
+  channel: CHANNEL,
+  supportedLocales: LOCALES,
+  languages: LANGUAGES,
+  markets: MARKETS,
+  localeToMarket: LOCALE_CHANNEL_MAP,
+  supportedCurrencies: SUPPORTED_CURRENCIES,
+} as const;
 ```
 
-### Add Translation Files
+### 5. Environment variables
 
-Copy the existing translation file (`apps/storefront/messages/en-GB.json`) as a stub for your new language, naming it `es-ES.json`.
+Ensure your `.env.local` includes the Saleor channel configuration:
+
+```bash
+# Your default channel (should match a channel slug in Saleor)
+NEXT_PUBLIC_DEFAULT_CHANNEL=channel-es
+```
+
+When the storefront loads, it uses the current locale's channel map to fetch products and configurations for that market.
+
+### 6. Test the new locale
+
+Start the dev server and test the new locale:
+
+```bash
+pnpm run dev:storefront
+```
+
+Visit:
+- `http://localhost:3000` - Default locale (en-US)
+- `http://localhost:3000/gb` - United Kingdom (en-GB)
+- `http://localhost:3000/es` - Spain (es-ES)
+
+Verify:
+- Correct locale is displayed in headers/footers
+- Products are from the correct Saleor channel
+- Prices are in the correct currency
+- Checkout works with the correct market configuration
 
 </Steps>
-Tip: All changes are repeatable for any locale, language, or market you wish to add. This modular system keeps Nimara scalable and international-ready.
+
+## Key Concepts
+
+**Locale:** A BCP 47 language tag combining language and region (e.g., "es-ES" = Spanish in Spain).
+
+**Market:** Storefront-specific configuration including channel, currency, language metadata, and region details.
+
+**Channel:** A Saleor sales channel that groups products, pricing, and regional configuration.
+
+**Locale Prefix:** URL path segment for non-default locales (e.g., `/es` for "es-ES").
+
+**LOCALE_CHANNEL_MAP:** Maps each locale to a storefront market ID for routing and configuration.
+
+## Summary
+
+Adding a new locale involves:
+
+1. Create channel in Saleor
+2. Add locale to `@nimara/i18n/config.ts` (LOCALES, LOCALE_LABELS, MESSAGES_PATH_MAP, LOCALE_PREFIXES)
+3. Create translation file: `packages/i18n/src/messages/es-ES.json`
+4. Map locale to market in storefront: `apps/storefront/src/foundation/regions/config.ts`
+5. Test across all locales
+
+This modular approach keeps Nimara scalable and international-ready.
