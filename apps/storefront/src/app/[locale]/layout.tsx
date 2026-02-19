@@ -6,8 +6,8 @@ import { notFound } from "next/navigation";
 import Script from "next/script";
 import { hasLocale } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
-import { NuqsAdapter } from "nuqs/adapters/next/app";
 
+import { NuqsWrapper } from "@nimara/features/product-detail-page/shared/providers/nuqs-wrapper";
 import { aspekta } from "@nimara/foundation/fonts";
 import { cn } from "@nimara/foundation/lib/cn";
 import { themePreloadScript } from "@nimara/foundation/theme/theme-preload-script";
@@ -63,12 +63,10 @@ export default async function LocaleLayout({
         />
         <I18nProvider locale={locale} messages={messages}>
           <ClientThemeProvider>
-            <NuqsAdapter>
-              {children}
-              <SpeedInsights />
-              <Toaster />
-              <ErrorServiceServer />
-            </NuqsAdapter>
+            {children}
+            <SpeedInsights />
+            <Toaster />
+            <ErrorServiceServer />
           </ClientThemeProvider>
         </I18nProvider>
       </body>
