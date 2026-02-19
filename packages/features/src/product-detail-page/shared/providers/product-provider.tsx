@@ -5,6 +5,7 @@ import {
   type ProductAvailability,
 } from "@nimara/domain/objects/Product";
 import { JsonLd, productToJsonLd } from "@nimara/features/json-ld/json-ld";
+import { NuqsWrapper } from "@nimara/features/product-detail-page/shared/providers/nuqs-wrapper";
 import { type Region } from "@nimara/foundation/regions/types";
 import type { ServiceRegistry } from "@nimara/infrastructure/types";
 
@@ -40,9 +41,9 @@ export const ProductProvider = async ({
   }
 
   return (
-    <>
+    <NuqsWrapper>
       {render(data.product, data.availability)}
       <JsonLd jsonLd={productToJsonLd(data.product, data?.availability)} />
-    </>
+    </NuqsWrapper>
   );
 };

@@ -1,12 +1,15 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
+
 import {
   type AddressCreateInput,
   type AddressType,
 } from "@nimara/domain/objects/Address";
 import { type Checkout } from "@nimara/domain/objects/Checkout";
-import { type AsyncResult } from "@nimara/domain/objects/Result";
+import { type AsyncResult, ok } from "@nimara/domain/objects/Result";
 
+import { paths } from "@/foundation/routing/paths";
 import { getServiceRegistry } from "@/services/registry";
 
 /**
@@ -34,7 +37,13 @@ export const updateCheckoutAddressAction = async ({
       ? checkoutService.checkoutShippingAddressUpdate
       : checkoutService.checkoutBillingAddressUpdate;
 
-  console.log({ "Updating address": values });
+  const result = await updateFn(values);
 
-  return updateFn(values);
+  if (!result.ok) {
+    return result;
+  }
+
+  revalidatePath(paths.checkout.asPath());
+
+  return ok({ success: true });
 };
