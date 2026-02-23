@@ -15,14 +15,14 @@ import {
 } from "@/components/ui/table";
 import type { Channels } from "@/graphql/generated/client";
 
-import type { VariantUpdateFormValues } from "../schema";
+import type { VariantCreateFormValues } from "../schema";
 
 export function VariantChannelListingSection({
   channels,
 }: {
   channels: NonNullable<Channels["channels"]>;
 }) {
-  const form = useFormContext<VariantUpdateFormValues>();
+  const form = useFormContext<VariantCreateFormValues>();
   const channelListings = form.watch("channelListings") ?? [];
 
   return (

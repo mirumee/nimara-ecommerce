@@ -38,22 +38,22 @@ function getErrorAtPath(errors: unknown, path: string): unknown {
 }
 
 export type SelectOption = {
-  value: string;
-  label: string;
   disabled?: boolean;
+  label: string;
+  value: string;
 };
 
 type SelectFieldProps = {
-  name: string;
-  label?: string;
-  options: SelectOption[];
-  placeholder?: string;
   description?: string;
   disabled?: boolean;
-  isMulti?: boolean;
-  loadOptions?: (search: string) => Promise<SelectOption[]>;
-  searchPlaceholder?: string;
   emptyStateText?: string;
+  isMulti?: boolean;
+  label?: string;
+  loadOptions?: (search: string) => Promise<SelectOption[]>;
+  name: string;
+  options: SelectOption[];
+  placeholder?: string;
+  searchPlaceholder?: string;
 };
 
 export function SelectField({
@@ -90,6 +90,7 @@ export function SelectField({
     }
 
     const normalized = searchQuery.toLowerCase();
+
     setAvailableOptions(
       options.filter((option) =>
         option.label.toLowerCase().includes(normalized),
@@ -103,6 +104,7 @@ export function SelectField({
     }
 
     const requestId = ++searchRequestRef.current;
+
     setSearching(true);
     loadOptions(searchQuery)
       .then((result) => {
@@ -131,9 +133,11 @@ export function SelectField({
 
   const optionLookup = useMemo(() => {
     const map = new Map<string, string>();
+
     [...options, ...availableOptions].forEach((option) => {
       map.set(option.value, option.label);
     });
+
     return map;
   }, [availableOptions, options]);
 
@@ -166,13 +170,14 @@ export function SelectField({
 
   const renderMultiField = useCallback(
     (field: {
-      value: SelectOption[] | undefined;
       onChange: (value: SelectOption[]) => void;
+      value: SelectOption[] | undefined;
     }) => {
       const rawSelected = Array.isArray(field.value) ? field.value : [];
 
       // Deduplicate selected options by value
       const selectedMap = new Map<string, SelectOption>();
+
       for (const opt of rawSelected) {
         if (opt?.value) {
           selectedMap.set(opt.value, opt);
@@ -223,7 +228,9 @@ export function SelectField({
                   error && "border-destructive focus-visible:ring-destructive",
                 )}
                 onKeyDown={(e) => {
-                  if (isDisabled) return;
+                  if (isDisabled) {
+                    return;
+                  }
                   if (e.key === "Enter" || e.key === " ") {
                     // Let Radix PopoverTrigger handle the click semantics; this is only for div focus.
                     e.preventDefault();
@@ -322,8 +329,8 @@ export function SelectField({
           isMulti ? (
             renderMultiField(
               field as unknown as {
-                value: SelectOption[] | undefined;
                 onChange: (value: SelectOption[]) => void;
+                value: SelectOption[] | undefined;
               },
             )
           ) : (

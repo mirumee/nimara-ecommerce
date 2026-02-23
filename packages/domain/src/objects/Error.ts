@@ -18,6 +18,8 @@ export const HTTP_ERROR_CODES = [
   "TOO_MANY_REQUESTS_ERROR",
   "BAD_REQUEST_ERROR",
   "UNEXPECTED_HTTP_ERROR",
+  "INVALID_RESPONSE_ERROR",
+  "INVALID_JSON_ERROR",
 ] as const satisfies ErrorCodeFormat[];
 export type HTTPErrorCode = (typeof HTTP_ERROR_CODES)[number];
 

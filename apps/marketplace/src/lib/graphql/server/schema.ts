@@ -135,13 +135,17 @@ async function makeSaleorSchema() {
             "confirmAccount",
             "customerUpdate",
             "productBulkCreate",
+            "productCreate",
             "productUpdate",
+            "productDelete",
             "productMediaCreate",
             "productMediaUpdate",
             "productMediaDelete",
             "productMediaReorder",
             "productMediaBulkDelete",
             "productVariantUpdate",
+            "productVariantCreate",
+            "productVariantDelete",
             "productVariantBulkCreate",
             "productChannelListingUpdate",
             "productVariantBulkUpdate",
@@ -265,6 +269,23 @@ export async function getStitchedSchema() {
             });
           },
         },
+        productCreate: {
+          resolve(_source, args, context: ServerContext, info) {
+            const vendorId = requireVendorID(context);
+            const input = args?.input
+              ? withVendorMetadata(args.input, vendorId)
+              : args?.input;
+
+            return delegateToSchema({
+              schema: saleorSchema,
+              operation: OperationTypeNode.MUTATION,
+              fieldName: "productCreate",
+              args: { ...args, input },
+              context,
+              info,
+            });
+          },
+        },
         productUpdate: {
           resolve(_source, args, context: ServerContext, info) {
             const vendorId = requireVendorID(context);
@@ -277,6 +298,62 @@ export async function getStitchedSchema() {
               operation: OperationTypeNode.MUTATION,
               fieldName: "productUpdate",
               args: { ...args, input },
+              context,
+              info,
+            });
+          },
+        },
+        productDelete: {
+          resolve: async (_source, args, context: ServerContext, info) => {
+            const vendorId = requireVendorID(context);
+
+            const productQuery = parse(`
+              query GetProduct($id: ID!) {
+                product(id: $id) {
+                  id
+                  metadata {
+                    key
+                    value
+                  }
+                }
+              }
+            `);
+
+            const productResult = (await saleorSchema.executor!({
+              document: productQuery,
+              variables: { id: args.id },
+              context,
+            })) as {
+              data?: {
+                product?: {
+                  metadata?: Array<{ key: string; value: string }>;
+                };
+              };
+              errors?: unknown[];
+            };
+
+            if (productResult.errors || !productResult.data?.product) {
+              throw new GraphQLError("Product not found", {
+                extensions: { code: "PRODUCT_NOT_FOUND" },
+              });
+            }
+
+            const productMetadata = productResult.data.product.metadata || [];
+            const vendorIdMeta = productMetadata.find(
+              (m) => m.key === "vendor.id",
+            );
+
+            if (!vendorIdMeta || vendorIdMeta.value !== vendorId) {
+              throw new GraphQLError("Product does not belong to this vendor", {
+                extensions: { code: "PRODUCT_VENDOR_MISMATCH" },
+              });
+            }
+
+            return delegateToSchema({
+              schema: saleorSchema,
+              operation: OperationTypeNode.MUTATION,
+              fieldName: "productDelete",
+              args,
               context,
               info,
             });

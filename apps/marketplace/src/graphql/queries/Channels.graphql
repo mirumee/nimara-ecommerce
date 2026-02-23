@@ -9,5 +9,9 @@ query Channels {
       country
     }
     isActive
+    warehouses {
+      id
+      name
+    }
   }
 }

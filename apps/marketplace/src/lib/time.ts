@@ -25,12 +25,15 @@ const isSameDay = (a: Date, b: Date) =>
 
 const isToday = (date: Date) => {
   const now = new Date();
+
   return isSameDay(now, date);
 };
 
 const isYesterday = (date: Date) => {
   const yesterday = new Date();
+
   yesterday.setDate(yesterday.getDate() - 1);
+
   return isSameDay(yesterday, date);
 };
 
@@ -38,6 +41,7 @@ const differenceInDays = (a: Date, b: Date) => {
   const msPerDay = 24 * 60 * 60 * 1000;
   const start = new Date(a.getFullYear(), a.getMonth(), a.getDate()).getTime();
   const end = new Date(b.getFullYear(), b.getMonth(), b.getDate()).getTime();
+
   return Math.round((start - end) / msPerDay);
 };
 

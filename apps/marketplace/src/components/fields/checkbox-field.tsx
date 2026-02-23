@@ -6,10 +6,10 @@ import { Checkbox } from "@nimara/ui/components/checkbox";
 import { Label } from "@nimara/ui/components/label";
 
 type CheckboxFieldProps = {
-  name: string;
-  label: string;
   description?: string;
   disabled?: boolean;
+  label: string;
+  name: string;
 };
 
 function getErrorAtPath(errors: unknown, path: string): unknown {

@@ -22,3 +22,15 @@ export async function productVariantBulkUpdate(
 
   return result;
 }
+
+export async function deleteVariant(variantId: string, productId: string) {
+  const token = await getServerAuthToken();
+  const result = await productsService.deleteVariant({ id: variantId }, token);
+
+  if (result.ok && result.data.productVariantDelete?.productVariant) {
+    revalidatePath(`/products/${productId}`);
+    revalidatePath(`/products/${productId}/variants/${variantId}`);
+  }
+
+  return result;
+}

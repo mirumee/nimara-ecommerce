@@ -12,10 +12,13 @@ import { logger } from "#root/logging/service";
 
 type AnyVariables = Record<string, unknown>;
 type GraphqlError = {
-  extensions: { exception: { code: string } };
-  locations: Array<{ column: number; line: number }>;
+  extensions?: {
+    code?: string;
+    exception?: { code: string };
+  };
+  locations?: Array<{ column: number; line: number }>;
   message: string;
-  path: string[];
+  path?: string[];
 };
 type GraphQLResponse<TData = any> = {
   data?: TData;
@@ -94,7 +97,53 @@ export const graphqlClient = (
       });
 
       const duration = Math.round(performance.now() - startTime);
-      const body = (await response.json()) as GraphQLResponse<TResult>;
+
+      // Check if response has content before parsing
+      const contentType = response.headers.get("content-type");
+      const text = await response.text();
+
+      if (!contentType?.includes("application/json")) {
+        logger.error("Invalid content type", {
+          durationMs: duration,
+          contentType,
+          status: response.status,
+          statusText: response.statusText,
+          bodyPreview: text.slice(0, 500),
+          operationName,
+          url,
+        });
+
+        return err([
+          {
+            code: "INVALID_RESPONSE_ERROR",
+            message: `Invalid content type: ${contentType || "unknown"}`,
+          },
+        ]);
+      }
+
+      let body: GraphQLResponse<TResult>;
+
+      try {
+        body = JSON.parse(text) as GraphQLResponse<TResult>;
+      } catch (parseError) {
+        logger.error("Failed to parse JSON response", {
+          durationMs: duration,
+          parseError:
+            parseError instanceof Error
+              ? parseError.message
+              : String(parseError),
+          bodyPreview: text.slice(0, 500),
+          operationName,
+          url,
+        });
+
+        return err([
+          {
+            code: "INVALID_JSON_ERROR",
+            message: "Failed to parse response as JSON",
+          },
+        ]);
+      }
 
       if (!response.ok) {
         if (body.errors?.length) {
@@ -116,7 +165,11 @@ export const graphqlClient = (
       }
 
       if ("errors" in body && body.errors) {
-        const exceptionCode = body?.errors?.[0].extensions.exception.code;
+        const firstError = body.errors[0];
+        const exceptionCode =
+          firstError?.extensions?.exception?.code ||
+          firstError?.extensions?.code ||
+          undefined;
 
         logger.error("GraphQL Error", {
           durationMs: duration,
@@ -127,10 +180,15 @@ export const graphqlClient = (
           url,
         });
 
+        // Extract error messages from GraphQL errors
+        const errorMessages = body.errors
+          .map((e) => e.message || "GraphQL Error")
+          .join(", ");
+
         return err([
           {
             code: "HTTP_ERROR",
-            message: "GraphQL Error",
+            message: errorMessages || "GraphQL Error",
           },
         ]);
       }
@@ -162,18 +220,38 @@ export const graphqlClient = (
     } catch (e) {
       const duration = Math.round(performance.now() - startTime);
 
+      // Better error serialization (plain object so logger does not receive Error prototype)
+      const errorDetails: Record<string, unknown> =
+        e instanceof Error
+          ? {
+              name: e.name,
+              message: e.message,
+              stack: e.stack,
+              cause: e.cause,
+            }
+          : typeof e === "object" && e !== null
+            ? { ...e, toString: String(e) }
+            : { error: String(e) };
+
       logger.error("Unexpected HTTP error", {
         durationMs: duration,
-        error: e,
+        error: errorDetails,
         operationName,
         url,
         variables,
       });
 
+      const errorMessage =
+        e instanceof Error
+          ? e.message
+          : typeof e === "object" && e !== null && "message" in e
+            ? String(e.message)
+            : "Unexpected HTTP error";
+
       return err([
         {
           code: "UNEXPECTED_HTTP_ERROR",
-          message: "Unexpected HTTP error",
+          message: errorMessage,
         },
       ]);
     }

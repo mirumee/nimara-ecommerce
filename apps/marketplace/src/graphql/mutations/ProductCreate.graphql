@@ -1,0 +1,29 @@
+mutation ProductCreateMutation($input: ProductCreateInput!) {
+  productCreate(input: $input) {
+    errors {
+      field
+      message
+      code
+    }
+    product {
+      id
+      name
+      slug
+      description
+      seoTitle
+      seoDescription
+      productType {
+        id
+        name
+      }
+      category {
+        id
+        name
+      }
+      collections {
+        id
+        name
+      }
+    }
+  }
+}
