@@ -9,7 +9,9 @@ import type { CustomerByEmail } from "@/graphql/generated/client";
 import { PickerDialogShell } from "./picker-dialog-shell";
 
 type CustomerNode = NonNullable<
-  NonNullable<NonNullable<CustomerByEmail["customers"]>["edges"][number]>["node"]
+  NonNullable<
+    NonNullable<CustomerByEmail["customers"]>["edges"][number]
+  >["node"]
 >;
 
 type SavedAddress = NonNullable<CustomerNode["addresses"]>[number];
@@ -98,4 +100,3 @@ export function AddressPickerDialog({
     </PickerDialogShell>
   );
 }
-

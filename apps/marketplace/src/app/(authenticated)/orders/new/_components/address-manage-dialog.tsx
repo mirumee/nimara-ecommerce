@@ -19,7 +19,9 @@ import type { CustomerByEmail } from "@/graphql/generated/client";
 import { PickerDialogShell } from "./picker-dialog-shell";
 
 type CustomerNode = NonNullable<
-  NonNullable<NonNullable<CustomerByEmail["customers"]>["edges"][number]>["node"]
+  NonNullable<
+    NonNullable<CustomerByEmail["customers"]>["edges"][number]
+  >["node"]
 >;
 
 type SavedAddress = NonNullable<CustomerNode["addresses"]>[number];
@@ -128,7 +130,8 @@ export function AddressManageDialog({
 
     if (canUseSaved) {
       const source =
-        addresses.find((a) => a.id === (selectedAddressId ?? "")) ?? addresses[0];
+        addresses.find((a) => a.id === (selectedAddressId ?? "")) ??
+        addresses[0];
       if (source) {
         setDraftAddress(savedAddressToDraftAddress(source));
       }
@@ -140,13 +143,16 @@ export function AddressManageDialog({
     }
   }, [addresses, open, options, selectedAddressId]);
 
-  const handlePickSaved = useCallback((id: string) => {
-    setPickedId(id);
-    const addr = addresses.find((a) => a.id === id);
-    if (addr) {
-      setDraftAddress(savedAddressToDraftAddress(addr));
-    }
-  }, [addresses]);
+  const handlePickSaved = useCallback(
+    (id: string) => {
+      setPickedId(id);
+      const addr = addresses.find((a) => a.id === id);
+      if (addr) {
+        setDraftAddress(savedAddressToDraftAddress(addr));
+      }
+    },
+    [addresses],
+  );
 
   const canSaveSaved = mode === "saved" && Boolean(picked);
   const canSaveNew =
@@ -348,4 +354,3 @@ export function AddressManageDialog({
     </PickerDialogShell>
   );
 }
-

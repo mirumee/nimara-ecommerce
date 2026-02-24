@@ -80,7 +80,9 @@ export function VariantSelectionDialog({
   const [loadingVariantsByProductId, setLoadingVariantsByProductId] = useState<
     Record<string, boolean>
   >({});
-  const [selectedVariantIds, setSelectedVariantIds] = useState<Set<string>>(new Set());
+  const [selectedVariantIds, setSelectedVariantIds] = useState<Set<string>>(
+    new Set(),
+  );
   const [quantities, setQuantities] = useState<Record<string, number>>({});
   const [meta, setMeta] = useState<Record<string, VariantMeta>>({});
 
@@ -92,37 +94,34 @@ export function VariantSelectionDialog({
     [initialLines],
   );
 
-  const loadProducts = useCallback(
-    async (searchTerm?: string) => {
-      setIsLoadingProducts(true);
-      try {
-        const res = await getProductsForOrder({
-          first: 50,
-          search: searchTerm?.trim() || undefined,
-        });
-        if (!res.ok) {
-          setProducts([]);
-          return;
-        }
-
-        const nodes =
-          res.data.products?.edges?.map((e) => e.node).filter(Boolean) ?? [];
-
-        const mapped = nodes.map((p) => ({
-          id: p.id,
-          name: p.name,
-          thumbnail: p.thumbnail ?? null,
-        }));
-
-        setProducts(mapped);
-        // By default show variants under each product (like screenshot)
-        setExpandedProductIds(new Set(mapped.map((p) => p.id)));
-      } finally {
-        setIsLoadingProducts(false);
+  const loadProducts = useCallback(async (searchTerm?: string) => {
+    setIsLoadingProducts(true);
+    try {
+      const res = await getProductsForOrder({
+        first: 50,
+        search: searchTerm?.trim() || undefined,
+      });
+      if (!res.ok) {
+        setProducts([]);
+        return;
       }
-    },
-    [],
-  );
+
+      const nodes =
+        res.data.products?.edges?.map((e) => e.node).filter(Boolean) ?? [];
+
+      const mapped = nodes.map((p) => ({
+        id: p.id,
+        name: p.name,
+        thumbnail: p.thumbnail ?? null,
+      }));
+
+      setProducts(mapped);
+      // By default show variants under each product (like screenshot)
+      setExpandedProductIds(new Set(mapped.map((p) => p.id)));
+    } finally {
+      setIsLoadingProducts(false);
+    }
+  }, []);
 
   useEffect(() => {
     if (!open) {
@@ -198,13 +197,16 @@ export function VariantSelectionDialog({
           sku: v.sku,
           unitPrice: (() => {
             const byChannel = channelId
-              ? v.channelListings?.find((cl) => cl.channel.id === channelId)?.price
+              ? v.channelListings?.find((cl) => cl.channel.id === channelId)
+                  ?.price
               : null;
             if (byChannel) {
               return { amount: byChannel.amount, currency: byChannel.currency };
             }
             const gross = v.pricing?.price?.gross ?? null;
-            return gross ? { amount: gross.amount, currency: gross.currency } : null;
+            return gross
+              ? { amount: gross.amount, currency: gross.currency }
+              : null;
           })(),
         }));
 
@@ -225,7 +227,9 @@ export function VariantSelectionDialog({
     };
 
     void Promise.all(
-      Array.from({ length: Math.min(concurrency, products.length) }, () => worker()),
+      Array.from({ length: Math.min(concurrency, products.length) }, () =>
+        worker(),
+      ),
     ).then(() => {
       if (cancelled) return;
       if (seq !== variantsFetchSeq.current) return;
@@ -251,7 +255,10 @@ export function VariantSelectionDialog({
         next.delete(variantId);
       } else {
         next.add(variantId);
-        setQuantities((qPrev) => ({ ...qPrev, [variantId]: qPrev[variantId] ?? 1 }));
+        setQuantities((qPrev) => ({
+          ...qPrev,
+          [variantId]: qPrev[variantId] ?? 1,
+        }));
       }
       return next;
     });
@@ -390,134 +397,149 @@ export function VariantSelectionDialog({
                 {products.map((product) => {
                   const expanded = expandedProductIds.has(product.id);
                   const variants = variantsByProductId[product.id] ?? [];
-                  const isLoadingVariants = Boolean(loadingVariantsByProductId[product.id]);
-                  const { checked, indeterminate } = productSelectionState(product.id);
+                  const isLoadingVariants = Boolean(
+                    loadingVariantsByProductId[product.id],
+                  );
+                  const { checked, indeterminate } = productSelectionState(
+                    product.id,
+                  );
 
                   return (
-                  <div key={product.id}>
-                    {/* Product row */}
-                    <div className="border-b">
-                      <div className="flex w-full items-center gap-3 px-4 py-3 hover:bg-muted/50">
-                        <ProductCheckbox
-                          checked={checked}
-                          indeterminate={indeterminate}
-                          disabled={isLoadingVariants || variants.length === 0}
-                          onChange={() => toggleProductSelection(product.id)}
-                        />
-                        <button
-                          type="button"
-                          className="flex min-w-0 flex-1 items-center gap-3 text-left"
-                          onClick={() => toggleExpandProduct(product)}
-                        >
-                          {product.thumbnail?.url ? (
-                            <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded border">
-                              <Image
-                                src={product.thumbnail.url}
-                                alt={product.thumbnail.alt || product.name}
-                                fill
-                                className="object-cover"
-                                unoptimized
-                              />
-                            </div>
-                          ) : (
-                            <div className="h-10 w-10 shrink-0 rounded border bg-muted" />
-                          )}
-                          <span className="min-w-0 truncate text-sm font-medium">
-                            {product.name}
-                          </span>
-                        </button>
-                        <button
-                          type="button"
-                          className="rounded p-1 text-muted-foreground hover:bg-muted"
-                          onClick={() => toggleExpandProduct(product)}
-                        >
-                          {expanded ? (
-                            <ChevronDown className="h-4 w-4" />
-                          ) : (
-                            <ChevronRight className="h-4 w-4" />
-                          )}
-                        </button>
-                      </div>
-
-                      {expanded ? (
-                        <div className="bg-background">
-                          {isLoadingVariants ? (
-                            <div className="flex items-center gap-2 px-4 py-3 pl-16 text-sm text-muted-foreground">
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                              Loading variants...
-                            </div>
-                          ) : variants.length === 0 ? (
-                            <div className="px-4 py-3 pl-16 text-sm text-muted-foreground">
-                              No variants for this product
-                            </div>
-                          ) : (
-                            variants.map((variant) => {
-                              const checkedVariant = selectedVariantIds.has(variant.id);
-                              const qty = quantities[variant.id] ?? 1;
-                            const canSelect = Boolean(variant.unitPrice);
-                              return (
-                                <div
-                                  key={variant.id}
-                                  className="flex w-full items-center justify-between border-t px-4 py-2.5 pl-16 hover:bg-muted/50"
-                                >
-                                  <button
-                                    type="button"
-                                    className="flex min-w-0 flex-1 items-center gap-3 text-left"
-                                  onClick={() => {
-                                    if (!canSelect) return;
-                                    toggleVariant(variant.id);
-                                  }}
-                                  >
-                                    <input
-                                      type="checkbox"
-                                      className="h-4 w-4 rounded border-gray-300"
-                                      checked={checkedVariant}
-                                    disabled={!canSelect}
-                                    onChange={() => toggleVariant(variant.id)}
-                                      onClick={(e) => e.stopPropagation()}
-                                    />
-                                    <div className="min-w-0">
-                                      <div className="truncate text-sm">
-                                        {variant.name}
-                                      </div>
-                                    </div>
-                                  </button>
-                                  <div className="flex items-center gap-3">
-                                    {variant.unitPrice ? (
-                                      <span className="shrink-0 text-sm text-muted-foreground">
-                                        {formatPrice(
-                                          variant.unitPrice.amount,
-                                          variant.unitPrice.currency,
-                                        )}
-                                      </span>
-                                    ) : (
-                                      <span className="shrink-0 text-sm text-muted-foreground">
-                                        No price in channel
-                                      </span>
-                                    )}
-                                    <Input
-                                      className="w-20"
-                                      type="number"
-                                      min={1}
-                                      value={qty}
-                                      disabled={!checkedVariant || !canSelect}
-                                      onChange={(e) => {
-                                        const next = parseInt(e.target.value, 10);
-                                        setVariantQty(
-                                          variant.id,
-                                          Number.isFinite(next) && next > 0 ? next : 1,
-                                        );
-                                      }}
-                                    />
-                                  </div>
-                                </div>
-                              );
-                            })
-                          )}
+                    <div key={product.id}>
+                      {/* Product row */}
+                      <div className="border-b">
+                        <div className="flex w-full items-center gap-3 px-4 py-3 hover:bg-muted/50">
+                          <ProductCheckbox
+                            checked={checked}
+                            indeterminate={indeterminate}
+                            disabled={
+                              isLoadingVariants || variants.length === 0
+                            }
+                            onChange={() => toggleProductSelection(product.id)}
+                          />
+                          <button
+                            type="button"
+                            className="flex min-w-0 flex-1 items-center gap-3 text-left"
+                            onClick={() => toggleExpandProduct(product)}
+                          >
+                            {product.thumbnail?.url ? (
+                              <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded border">
+                                <Image
+                                  src={product.thumbnail.url}
+                                  alt={product.thumbnail.alt || product.name}
+                                  fill
+                                  className="object-cover"
+                                  unoptimized
+                                />
+                              </div>
+                            ) : (
+                              <div className="h-10 w-10 shrink-0 rounded border bg-muted" />
+                            )}
+                            <span className="min-w-0 truncate text-sm font-medium">
+                              {product.name}
+                            </span>
+                          </button>
+                          <button
+                            type="button"
+                            className="rounded p-1 text-muted-foreground hover:bg-muted"
+                            onClick={() => toggleExpandProduct(product)}
+                          >
+                            {expanded ? (
+                              <ChevronDown className="h-4 w-4" />
+                            ) : (
+                              <ChevronRight className="h-4 w-4" />
+                            )}
+                          </button>
                         </div>
-                      ) : null}
+
+                        {expanded ? (
+                          <div className="bg-background">
+                            {isLoadingVariants ? (
+                              <div className="flex items-center gap-2 px-4 py-3 pl-16 text-sm text-muted-foreground">
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                                Loading variants...
+                              </div>
+                            ) : variants.length === 0 ? (
+                              <div className="px-4 py-3 pl-16 text-sm text-muted-foreground">
+                                No variants for this product
+                              </div>
+                            ) : (
+                              variants.map((variant) => {
+                                const checkedVariant = selectedVariantIds.has(
+                                  variant.id,
+                                );
+                                const qty = quantities[variant.id] ?? 1;
+                                const canSelect = Boolean(variant.unitPrice);
+                                return (
+                                  <div
+                                    key={variant.id}
+                                    className="flex w-full items-center justify-between border-t px-4 py-2.5 pl-16 hover:bg-muted/50"
+                                  >
+                                    <button
+                                      type="button"
+                                      className="flex min-w-0 flex-1 items-center gap-3 text-left"
+                                      onClick={() => {
+                                        if (!canSelect) return;
+                                        toggleVariant(variant.id);
+                                      }}
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        className="h-4 w-4 rounded border-gray-300"
+                                        checked={checkedVariant}
+                                        disabled={!canSelect}
+                                        onChange={() =>
+                                          toggleVariant(variant.id)
+                                        }
+                                        onClick={(e) => e.stopPropagation()}
+                                      />
+                                      <div className="min-w-0">
+                                        <div className="truncate text-sm">
+                                          {variant.name}
+                                        </div>
+                                      </div>
+                                    </button>
+                                    <div className="flex items-center gap-3">
+                                      {variant.unitPrice ? (
+                                        <span className="shrink-0 text-sm text-muted-foreground">
+                                          {formatPrice(
+                                            variant.unitPrice.amount,
+                                            variant.unitPrice.currency,
+                                          )}
+                                        </span>
+                                      ) : (
+                                        <span className="shrink-0 text-sm text-muted-foreground">
+                                          No price in channel
+                                        </span>
+                                      )}
+                                      <Input
+                                        className="w-20"
+                                        type="number"
+                                        min={1}
+                                        value={qty}
+                                        disabled={!checkedVariant || !canSelect}
+                                        onChange={(e) => {
+                                          const next = parseInt(
+                                            e.target.value,
+                                            10,
+                                          );
+                                          setVariantQty(
+                                            variant.id,
+                                            Number.isFinite(next) && next > 0
+                                              ? next
+                                              : 1,
+                                          );
+                                        }}
+                                      />
+                                    </div>
+                                  </div>
+                                );
+                              })
+                            )}
+                          </div>
+                        ) : null}
+                      </div>
                     </div>
-                  </div>
                   );
                 })}
               </div>

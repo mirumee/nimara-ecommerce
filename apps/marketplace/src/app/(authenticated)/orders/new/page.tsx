@@ -28,4 +28,3 @@ export default async function OrderCreatePage() {
 
   return <OrderCreateClient channels={channels} />;
 }
-

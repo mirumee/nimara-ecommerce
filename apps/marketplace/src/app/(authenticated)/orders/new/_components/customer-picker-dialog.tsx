@@ -13,7 +13,9 @@ import { searchCustomers } from "../actions";
 import { PickerDialogShell } from "./picker-dialog-shell";
 
 type CustomerNode = NonNullable<
-  NonNullable<NonNullable<CustomerByEmail["customers"]>["edges"][number]>["node"]
+  NonNullable<
+    NonNullable<CustomerByEmail["customers"]>["edges"][number]
+  >["node"]
 >;
 
 function customerLabel(c: CustomerNode): string {
@@ -97,7 +99,9 @@ export function CustomerPickerDialog({
       setResults(nodes);
       setIsLoading(false);
     })();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearch, open]);
 
@@ -172,4 +176,3 @@ export function CustomerPickerDialog({
     </PickerDialogShell>
   );
 }
-

@@ -131,4 +131,3 @@ export async function addInternalOrderNote(orderId: string, message: string) {
     token,
   );
 }
-

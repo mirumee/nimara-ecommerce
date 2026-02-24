@@ -70,7 +70,9 @@ interface OrderCreateClientProps {
 }
 
 type CustomerNode = NonNullable<
-  NonNullable<NonNullable<CustomerByEmail["customers"]>["edges"][number]>["node"]
+  NonNullable<
+    NonNullable<CustomerByEmail["customers"]>["edges"][number]
+  >["node"]
 >;
 
 type SavedAddress = NonNullable<CustomerNode["addresses"]>[number];
@@ -184,23 +186,31 @@ export function OrderCreateClient({ channels }: OrderCreateClientProps) {
   }, [selectedChannel?.countries, selectedChannel?.defaultCountry?.code]);
 
   // Customer
-  const [selectedCustomer, setSelectedCustomer] = useState<CustomerNode | null>(null);
+  const [selectedCustomer, setSelectedCustomer] = useState<CustomerNode | null>(
+    null,
+  );
   const [isCustomerDialogOpen, setIsCustomerDialogOpen] = useState(false);
 
   // Addresses
   const [billingAddressId, setBillingAddressId] = useState("");
   const [shippingAddressId, setShippingAddressId] = useState("");
-  const [billingDraftAddress, setBillingDraftAddress] = useState<DraftAddress>(EMPTY_ADDRESS);
-  const [shippingDraftAddress, setShippingDraftAddress] = useState<DraftAddress>(EMPTY_ADDRESS);
-  const [isBillingAddressDialogOpen, setIsBillingAddressDialogOpen] = useState(false);
-  const [isShippingAddressDialogOpen, setIsShippingAddressDialogOpen] = useState(false);
+  const [billingDraftAddress, setBillingDraftAddress] =
+    useState<DraftAddress>(EMPTY_ADDRESS);
+  const [shippingDraftAddress, setShippingDraftAddress] =
+    useState<DraftAddress>(EMPTY_ADDRESS);
+  const [isBillingAddressDialogOpen, setIsBillingAddressDialogOpen] =
+    useState(false);
+  const [isShippingAddressDialogOpen, setIsShippingAddressDialogOpen] =
+    useState(false);
 
   // Lines
   const [lines, setLines] = useState<OrderLine[]>([]);
   const [isVariantDialogOpen, setIsVariantDialogOpen] = useState(false);
 
   // Shipping
-  const [shippingMethods, setShippingMethods] = useState<ShippingMethodOption[]>([]);
+  const [shippingMethods, setShippingMethods] = useState<
+    ShippingMethodOption[]
+  >([]);
   const [shippingMethodId, setShippingMethodId] = useState("");
   const [isShippingDialogOpen, setIsShippingDialogOpen] = useState(false);
 
@@ -213,7 +223,11 @@ export function OrderCreateClient({ channels }: OrderCreateClientProps) {
   // Derived
   const linesCount = lines.length;
   const totalQty = useMemo(
-    () => lines.reduce((acc, l) => acc + (Number.isFinite(l.quantity) ? l.quantity : 0), 0),
+    () =>
+      lines.reduce(
+        (acc, l) => acc + (Number.isFinite(l.quantity) ? l.quantity : 0),
+        0,
+      ),
     [lines],
   );
 
@@ -250,7 +264,10 @@ export function OrderCreateClient({ channels }: OrderCreateClientProps) {
     let cancelled = false;
 
     void (async () => {
-      const result = await getChannelShippingMethods(channelId, shippingCountry);
+      const result = await getChannelShippingMethods(
+        channelId,
+        shippingCountry,
+      );
       if (cancelled) return;
 
       if (!result.ok) {
@@ -284,12 +301,15 @@ export function OrderCreateClient({ channels }: OrderCreateClientProps) {
       );
     })();
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [channelId, shippingCountry]);
 
   const canCreate = useMemo(() => {
     const hasCustomer = Boolean(selectedCustomer?.id);
-    const hasLines = lines.length > 0 && lines.every((l) => l.variantId && l.quantity > 0);
+    const hasLines =
+      lines.length > 0 && lines.every((l) => l.variantId && l.quantity > 0);
     const hasShipping =
       Boolean(shippingDraftAddress.firstName.trim()) &&
       Boolean(shippingDraftAddress.streetAddress1.trim()) &&
@@ -301,7 +321,14 @@ export function OrderCreateClient({ channels }: OrderCreateClientProps) {
       Boolean(billingDraftAddress.city.trim()) &&
       Boolean(billingDraftAddress.countryCode.trim());
     const hasShippingMethod = Boolean(shippingMethodId);
-    return Boolean(channelId) && hasCustomer && hasLines && hasShipping && hasBilling && hasShippingMethod;
+    return (
+      Boolean(channelId) &&
+      hasCustomer &&
+      hasLines &&
+      hasShipping &&
+      hasBilling &&
+      hasShippingMethod
+    );
   }, [
     billingDraftAddress,
     channelId,
@@ -361,36 +388,39 @@ export function OrderCreateClient({ channels }: OrderCreateClientProps) {
     setIsChannelDialogOpen(true);
   };
 
-  const handlePickCustomer = useCallback((customer: CustomerNode) => {
-    setSelectedCustomer(customer);
+  const handlePickCustomer = useCallback(
+    (customer: CustomerNode) => {
+      setSelectedCustomer(customer);
 
-    const defaultBilling = customer.defaultBillingAddress ?? null;
-    const defaultShipping = customer.defaultShippingAddress ?? null;
+      const defaultBilling = customer.defaultBillingAddress ?? null;
+      const defaultShipping = customer.defaultShippingAddress ?? null;
 
-    if (defaultBilling) {
-      setBillingAddressId(defaultBilling.id);
-      const next = savedAddressToDraftAddress(defaultBilling);
-      setBillingDraftAddress({
-        ...next,
-        countryCode: next.countryCode || channelDefaultCountryCode,
-      });
-    }
-    if (defaultShipping) {
-      setShippingAddressId(defaultShipping.id);
-      const next = savedAddressToDraftAddress(defaultShipping);
-      setShippingDraftAddress({
-        ...next,
-        countryCode: next.countryCode || channelDefaultCountryCode,
-      });
-    } else if (defaultBilling) {
-      setShippingAddressId(defaultBilling.id);
-      const next = savedAddressToDraftAddress(defaultBilling);
-      setShippingDraftAddress({
-        ...next,
-        countryCode: next.countryCode || channelDefaultCountryCode,
-      });
-    }
-  }, [channelDefaultCountryCode]);
+      if (defaultBilling) {
+        setBillingAddressId(defaultBilling.id);
+        const next = savedAddressToDraftAddress(defaultBilling);
+        setBillingDraftAddress({
+          ...next,
+          countryCode: next.countryCode || channelDefaultCountryCode,
+        });
+      }
+      if (defaultShipping) {
+        setShippingAddressId(defaultShipping.id);
+        const next = savedAddressToDraftAddress(defaultShipping);
+        setShippingDraftAddress({
+          ...next,
+          countryCode: next.countryCode || channelDefaultCountryCode,
+        });
+      } else if (defaultBilling) {
+        setShippingAddressId(defaultBilling.id);
+        const next = savedAddressToDraftAddress(defaultBilling);
+        setShippingDraftAddress({
+          ...next,
+          countryCode: next.countryCode || channelDefaultCountryCode,
+        });
+      }
+    },
+    [channelDefaultCountryCode],
+  );
 
   const handleRemoveLine = (variantId: string) => {
     setLines((prev) => prev.filter((l) => l.variantId !== variantId));
@@ -406,7 +436,10 @@ export function OrderCreateClient({ channels }: OrderCreateClientProps) {
         return;
       }
       if (!lines.length) {
-        toast({ title: "At least one item is required", variant: "destructive" });
+        toast({
+          title: "At least one item is required",
+          variant: "destructive",
+        });
         return;
       }
       if (lines.some((l) => !l.isGift && !l.unitPrice)) {
@@ -421,12 +454,25 @@ export function OrderCreateClient({ channels }: OrderCreateClientProps) {
         toast({ title: "Shipping method is required", variant: "destructive" });
         return;
       }
-      if (!billingDraftAddress.firstName.trim() || !billingDraftAddress.streetAddress1.trim() || !billingDraftAddress.city.trim() || !billingDraftAddress.countryCode.trim()) {
+      if (
+        !billingDraftAddress.firstName.trim() ||
+        !billingDraftAddress.streetAddress1.trim() ||
+        !billingDraftAddress.city.trim() ||
+        !billingDraftAddress.countryCode.trim()
+      ) {
         toast({ title: "Billing address is required", variant: "destructive" });
         return;
       }
-      if (!shippingDraftAddress.firstName.trim() || !shippingDraftAddress.streetAddress1.trim() || !shippingDraftAddress.city.trim() || !shippingDraftAddress.countryCode.trim()) {
-        toast({ title: "Shipping address is required", variant: "destructive" });
+      if (
+        !shippingDraftAddress.firstName.trim() ||
+        !shippingDraftAddress.streetAddress1.trim() ||
+        !shippingDraftAddress.city.trim() ||
+        !shippingDraftAddress.countryCode.trim()
+      ) {
+        toast({
+          title: "Shipping address is required",
+          variant: "destructive",
+        });
         return;
       }
       if (!channelId) {
@@ -468,7 +514,11 @@ export function OrderCreateClient({ channels }: OrderCreateClientProps) {
       if (errors.length) {
         toast({
           title: "Draft order create failed",
-          description: errors.map((e) => e.message).filter(Boolean).join(", ") || "Unknown error",
+          description:
+            errors
+              .map((e) => e.message)
+              .filter(Boolean)
+              .join(", ") || "Unknown error",
           variant: "destructive",
         });
         return;
@@ -476,7 +526,11 @@ export function OrderCreateClient({ channels }: OrderCreateClientProps) {
 
       const orderId = payload?.order?.id;
       if (!orderId) {
-        toast({ title: "Draft order create failed", description: "No order returned", variant: "destructive" });
+        toast({
+          title: "Draft order create failed",
+          description: "No order returned",
+          variant: "destructive",
+        });
         return;
       }
 
@@ -500,8 +554,10 @@ export function OrderCreateClient({ channels }: OrderCreateClientProps) {
         toast({
           title: "Draft created, but completion failed",
           description:
-            completeErrors.map((e) => e.message).filter(Boolean).join(", ") ||
-            "Unknown error",
+            completeErrors
+              .map((e) => e.message)
+              .filter(Boolean)
+              .join(", ") || "Unknown error",
           variant: "destructive",
         });
         return;
@@ -524,8 +580,10 @@ export function OrderCreateClient({ channels }: OrderCreateClientProps) {
             toast({
               title: "Order created, but note failed",
               description:
-                noteErrors.map((e) => e.message).filter(Boolean).join(", ") ||
-                "Unknown error",
+                noteErrors
+                  .map((e) => e.message)
+                  .filter(Boolean)
+                  .join(", ") || "Unknown error",
               variant: "destructive",
             });
           }
@@ -550,16 +608,22 @@ export function OrderCreateClient({ channels }: OrderCreateClientProps) {
     <div className="min-h-screen">
       {/* Channel selection dialog */}
       <Dialog open={isChannelDialogOpen} onOpenChange={() => {}}>
-        <DialogContent className="max-w-md" onPointerDownOutside={(e) => e.preventDefault()}>
+        <DialogContent
+          className="max-w-md"
+          onPointerDownOutside={(e) => e.preventDefault()}
+        >
           <DialogHeader>
             <DialogTitle>Select channel</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <p className="text-sm text-muted-foreground">
-              Choose a channel to start creating the order. All data (products, pricing,
-              shipping) depends on the selected channel.
+              Choose a channel to start creating the order. All data (products,
+              pricing, shipping) depends on the selected channel.
             </p>
-            <Select value={pendingChannelId} onValueChange={setPendingChannelId}>
+            <Select
+              value={pendingChannelId}
+              onValueChange={setPendingChannelId}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select channel" />
               </SelectTrigger>
@@ -601,7 +665,12 @@ export function OrderCreateClient({ channels }: OrderCreateClientProps) {
             <ColorBadge label="Draft" />
           </div>
           <div className="flex items-center gap-2">
-            <Button type="button" size="sm" variant="outline" onClick={() => router.push("/orders")}>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={() => router.push("/orders")}
+            >
               Cancel
             </Button>
             <Button
@@ -652,7 +721,11 @@ export function OrderCreateClient({ channels }: OrderCreateClientProps) {
                               <div className="relative h-12 w-12 overflow-hidden rounded border">
                                 <Image
                                   src={l.thumbnail.url}
-                                  alt={l.thumbnail.alt || l.productName || l.variantName}
+                                  alt={
+                                    l.thumbnail.alt ||
+                                    l.productName ||
+                                    l.variantName
+                                  }
                                   fill
                                   className="object-cover"
                                   unoptimized
@@ -672,7 +745,9 @@ export function OrderCreateClient({ channels }: OrderCreateClientProps) {
                                   </div>
                                 ) : null}
                                 <div className="mt-1 flex items-center gap-2">
-                                  <span className="text-xs text-muted-foreground">Qty</span>
+                                  <span className="text-xs text-muted-foreground">
+                                    Qty
+                                  </span>
                                   <Input
                                     className="w-20"
                                     type="number"
@@ -686,7 +761,10 @@ export function OrderCreateClient({ channels }: OrderCreateClientProps) {
                                             ? {
                                                 ...x,
                                                 quantity:
-                                                  Number.isFinite(next) && next > 0 ? next : 1,
+                                                  Number.isFinite(next) &&
+                                                  next > 0
+                                                    ? next
+                                                    : 1,
                                               }
                                             : x,
                                         ),
@@ -701,7 +779,10 @@ export function OrderCreateClient({ channels }: OrderCreateClientProps) {
                                         setLines((prev) =>
                                           prev.map((x) =>
                                             x.variantId === l.variantId
-                                              ? { ...x, isGift: e.target.checked }
+                                              ? {
+                                                  ...x,
+                                                  isGift: e.target.checked,
+                                                }
                                               : x,
                                           ),
                                         );
@@ -715,7 +796,11 @@ export function OrderCreateClient({ channels }: OrderCreateClientProps) {
                                 {l.unitPrice && !l.isGift ? (
                                   <>
                                     <span className="text-xs text-muted-foreground">
-                                      {formatPrice(l.unitPrice.amount, l.unitPrice.currency)} / unit
+                                      {formatPrice(
+                                        l.unitPrice.amount,
+                                        l.unitPrice.currency,
+                                      )}{" "}
+                                      / unit
                                     </span>
                                     <span className="text-sm font-medium">
                                       {formatPrice(
@@ -725,9 +810,13 @@ export function OrderCreateClient({ channels }: OrderCreateClientProps) {
                                     </span>
                                   </>
                                 ) : l.isGift ? (
-                                  <span className="text-xs font-medium text-green-600">Gift</span>
+                                  <span className="text-xs font-medium text-green-600">
+                                    Gift
+                                  </span>
                                 ) : (
-                                  <span className="text-sm text-muted-foreground">—</span>
+                                  <span className="text-sm text-muted-foreground">
+                                    —
+                                  </span>
                                 )}
                                 <Button
                                   type="button"
@@ -743,7 +832,9 @@ export function OrderCreateClient({ channels }: OrderCreateClientProps) {
                         ))}
                       </div>
                     ) : (
-                      <p className="text-sm text-muted-foreground">No line items</p>
+                      <p className="text-sm text-muted-foreground">
+                        No line items
+                      </p>
                     )}
                   </CardContent>
                 </Card>
@@ -808,9 +899,13 @@ export function OrderCreateClient({ channels }: OrderCreateClientProps) {
                       </span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Subtotal (items)</span>
+                      <span className="text-muted-foreground">
+                        Subtotal (items)
+                      </span>
                       <span className="font-medium">
-                        {subtotal ? formatPrice(subtotal.amount, subtotal.currency) : "—"}
+                        {subtotal
+                          ? formatPrice(subtotal.amount, subtotal.currency)
+                          : "—"}
                       </span>
                     </div>
                     <div className="flex items-start justify-between gap-4 text-sm">
@@ -829,7 +924,8 @@ export function OrderCreateClient({ channels }: OrderCreateClientProps) {
                       <span>
                         {subtotal
                           ? formatPrice(
-                              subtotal.amount + (selectedShippingMethod?.price.amount ?? 0),
+                              subtotal.amount +
+                                (selectedShippingMethod?.price.amount ?? 0),
                               subtotal.currency,
                             )
                           : "—"}
@@ -843,31 +939,43 @@ export function OrderCreateClient({ channels }: OrderCreateClientProps) {
               <div className="flex grow basis-1/3 flex-col gap-4">
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-base">Customer details</CardTitle>
+                    <CardTitle className="text-base">
+                      Customer details
+                    </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="flex items-start justify-between gap-4">
                       <div className="min-w-0">
-                        <p className="text-sm text-muted-foreground">Customer</p>
+                        <p className="text-sm text-muted-foreground">
+                          Customer
+                        </p>
                         <p className="mt-1 truncate font-medium">
-                          {selectedCustomer ? customerDisplay(selectedCustomer) : "Not set"}
+                          {selectedCustomer
+                            ? customerDisplay(selectedCustomer)
+                            : "Not set"}
                         </p>
                       </div>
                       <Button
                         type="button"
                         className={
-                          !selectedCustomer ? "bg-stone-900 text-white hover:bg-stone-800" : ""
+                          !selectedCustomer
+                            ? "bg-stone-900 text-white hover:bg-stone-800"
+                            : ""
                         }
                         variant={selectedCustomer ? "outline" : "default"}
                         onClick={() => setIsCustomerDialogOpen(true)}
                       >
-                        {selectedCustomer ? "Change customer" : "Select customer"}
+                        {selectedCustomer
+                          ? "Change customer"
+                          : "Select customer"}
                       </Button>
                     </div>
 
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
-                        <p className="text-sm text-muted-foreground">Shipping address</p>
+                        <p className="text-sm text-muted-foreground">
+                          Shipping address
+                        </p>
                         <Button
                           type="button"
                           variant="outline"
@@ -885,7 +993,9 @@ export function OrderCreateClient({ channels }: OrderCreateClientProps) {
 
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
-                        <p className="text-sm text-muted-foreground">Billing address</p>
+                        <p className="text-sm text-muted-foreground">
+                          Billing address
+                        </p>
                         <Button
                           type="button"
                           variant="outline"
@@ -915,7 +1025,11 @@ export function OrderCreateClient({ channels }: OrderCreateClientProps) {
                           : "—"}
                       </p>
                     </div>
-                    <Button type="button" variant="outline" onClick={handleChangeChannel}>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleChangeChannel}
+                    >
                       Change
                     </Button>
                   </CardContent>
@@ -942,8 +1056,11 @@ export function OrderCreateClient({ channels }: OrderCreateClientProps) {
             onSave={({ mode, addressId, draftAddress }) => {
               if (mode === "saved" && addressId) {
                 setBillingAddressId(addressId);
-                const addr = selectedCustomer?.addresses?.find((a) => a.id === addressId);
-                if (addr) setBillingDraftAddress(savedAddressToDraftAddress(addr));
+                const addr = selectedCustomer?.addresses?.find(
+                  (a) => a.id === addressId,
+                );
+                if (addr)
+                  setBillingDraftAddress(savedAddressToDraftAddress(addr));
               } else {
                 setBillingAddressId("");
                 setBillingDraftAddress(draftAddress);
@@ -961,8 +1078,11 @@ export function OrderCreateClient({ channels }: OrderCreateClientProps) {
             onSave={({ mode, addressId, draftAddress }) => {
               if (mode === "saved" && addressId) {
                 setShippingAddressId(addressId);
-                const addr = selectedCustomer?.addresses?.find((a) => a.id === addressId);
-                if (addr) setShippingDraftAddress(savedAddressToDraftAddress(addr));
+                const addr = selectedCustomer?.addresses?.find(
+                  (a) => a.id === addressId,
+                );
+                if (addr)
+                  setShippingDraftAddress(savedAddressToDraftAddress(addr));
               } else {
                 setShippingAddressId("");
                 setShippingDraftAddress(draftAddress);
