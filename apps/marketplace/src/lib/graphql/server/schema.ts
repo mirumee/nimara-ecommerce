@@ -105,6 +105,7 @@ async function makeSaleorSchema() {
           const allowedQueries = [
             "me",
             "categories",
+            "channel",
             "channels",
             "collection",
             "collections",
@@ -134,6 +135,9 @@ async function makeSaleorSchema() {
             "accountUpdate",
             "confirmAccount",
             "customerUpdate",
+            "draftOrderCreate",
+            "draftOrderComplete",
+            "draftOrderDelete",
             "productBulkCreate",
             "productUpdate",
             "productMediaCreate",
@@ -897,13 +901,15 @@ export async function getStitchedSchema() {
         product: {
           resolve(_source, args, context: ServerContext, info) {
             requireVendorID(context);
-            // Delegate to Saleor; product list is already filtered by vendor so only our products are linked.
-
+            // Delegate to Saleor with channel so pricing data is returned.
             return delegateToSchema({
               schema: saleorSchema,
               operation: OperationTypeNode.QUERY,
               fieldName: "product",
-              args,
+              args: {
+                ...args,
+                channel: MARKETPLACE_CHANNEL,
+              },
               context,
               info,
             });
@@ -922,6 +928,7 @@ export async function getStitchedSchema() {
               fieldName: "products",
               args: {
                 ...args,
+                channel: MARKETPLACE_CHANNEL,
                 filter: {
                   ...args.filter,
                   metadata: [...existingMetadata, vendorMetadata],

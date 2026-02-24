@@ -36,6 +36,19 @@ query Products(
           }
           isPublished
         }
+        variants {
+          id
+          name
+          sku
+          pricing {
+            price {
+              gross {
+                amount
+                currency
+              }
+            }
+          }
+        }
       }
       cursor
     }

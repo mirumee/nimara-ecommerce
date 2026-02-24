@@ -193,7 +193,7 @@ export function OrderNotes({
                     >
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-medium">
-                          {note.user?.email ?? "Customer"}
+                          {note.user?.email ?? "Vendor"}
                         </span>
                         {note.date && (
                           <span className="text-xs text-muted-foreground">

@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, ChevronUp, Filter, Search } from "lucide-react";
+import { ChevronDown, ChevronUp, Filter, Plus, Search } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
@@ -266,6 +266,14 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
     <div className="grid gap-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold">Orders</h2>
+        <Button
+          type="button"
+          className="bg-stone-900 hover:bg-stone-800"
+          onClick={() => router.push("/orders/new")}
+        >
+          <Plus className="mr-2 h-4 w-4" />
+          New order
+        </Button>
       </div>
 
       <Card>
