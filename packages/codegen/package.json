@@ -6,7 +6,7 @@
     "codegen": "pnpm codegen:saleor"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "6.1.1",
+    "@graphql-codegen/cli": "6.1.2",
     "@graphql-codegen/near-operation-file-preset": "4.0.0",
     "@graphql-codegen/typed-document-node": "6.1.6",
     "@graphql-codegen/typescript": "5.0.8",

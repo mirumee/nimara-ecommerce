@@ -39,7 +39,7 @@
     "@nimara/config": "workspace:*",
     "@nimara/ui": "workspace:*",
     "@tailwindcss/typography": "0.5.19",
-    "@types/lodash": "4.17.23",
+    "@types/lodash": "4.17.24",
     "@types/node": "^22.19.11",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
