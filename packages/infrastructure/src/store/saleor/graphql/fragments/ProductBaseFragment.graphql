@@ -12,8 +12,5 @@ fragment ProductBaseFragment on Product {
     name
     description
   }
-  metadata {
-    key
-    value
-  }
+  vendorId: metafield(key: "vendor.id")
 }

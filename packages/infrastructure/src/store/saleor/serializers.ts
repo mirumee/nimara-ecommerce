@@ -11,7 +11,6 @@ import {
   type ProductDetailsFragment,
   type TaxedMoneyFragment,
 } from "#root/store/saleor/graphql/fragments/generated";
-import { getVendorIdFromMetadata } from "#root/store/saleor/vendor-metadata";
 
 export const serializeMoney = (data: MoneyFragment): Price => ({
   amount: data.amount,
@@ -52,7 +51,7 @@ export const serializeProduct = (data: ProductDetailsFragment): Product => {
       title: data.seoTitle ?? null,
       description: data.seoDescription ?? null,
     },
-    vendorId: getVendorIdFromMetadata(data.metadata),
+    vendorId: data.vendorId,
     attributes: data.attributes.map(parseAttributeData),
     variants: variants.map(
       ({

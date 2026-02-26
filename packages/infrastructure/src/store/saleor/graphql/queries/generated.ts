@@ -39,9 +39,7 @@ export type ProductBaseQuery_product_Product_category_Category = { name: string,
 
 export type ProductBaseQuery_product_Product_translation_ProductTranslation = { name: string | null, description: string | null };
 
-export type ProductBaseQuery_product_Product_metadata_MetadataItem = { key: string, value: string };
-
-export type ProductBaseQuery_product_Product = { id: string, name: string, seoTitle: string | null, description: string | null, seoDescription: string | null, category: ProductBaseQuery_product_Product_category_Category | null, translation: ProductBaseQuery_product_Product_translation_ProductTranslation | null, metadata: Array<ProductBaseQuery_product_Product_metadata_MetadataItem> };
+export type ProductBaseQuery_product_Product = { id: string, name: string, seoTitle: string | null, description: string | null, seoDescription: string | null, vendorId: string | null, category: ProductBaseQuery_product_Product_category_Category | null, translation: ProductBaseQuery_product_Product_translation_ProductTranslation | null };
 
 export type ProductBaseQuery_Query = { product: ProductBaseQuery_product_Product | null };
 
@@ -87,9 +85,7 @@ export type ProductDetailsQuery_product_Product_category_Category = { name: stri
 
 export type ProductDetailsQuery_product_Product_translation_ProductTranslation = { name: string | null, description: string | null };
 
-export type ProductDetailsQuery_product_Product_metadata_MetadataItem = { key: string, value: string };
-
-export type ProductDetailsQuery_product_Product = { id: string, name: string, seoTitle: string | null, description: string | null, seoDescription: string | null, media: Array<ProductDetailsQuery_product_Product_media_ProductMedia> | null, variants: Array<ProductDetailsQuery_product_Product_variants_ProductVariant> | null, attributes: Array<ProductDetailsQuery_product_Product_attributes_SelectedAttribute>, category: ProductDetailsQuery_product_Product_category_Category | null, translation: ProductDetailsQuery_product_Product_translation_ProductTranslation | null, metadata: Array<ProductDetailsQuery_product_Product_metadata_MetadataItem> };
+export type ProductDetailsQuery_product_Product = { id: string, name: string, seoTitle: string | null, description: string | null, seoDescription: string | null, vendorId: string | null, media: Array<ProductDetailsQuery_product_Product_media_ProductMedia> | null, variants: Array<ProductDetailsQuery_product_Product_variants_ProductVariant> | null, attributes: Array<ProductDetailsQuery_product_Product_attributes_SelectedAttribute>, category: ProductDetailsQuery_product_Product_category_Category | null, translation: ProductDetailsQuery_product_Product_translation_ProductTranslation | null };
 
 export type ProductDetailsQuery_Query = { product: ProductDetailsQuery_product_Product | null };
 
@@ -147,9 +143,7 @@ export type ProductRelatedProductsQueryVariables = Types.Exact<{
 
 export type ProductRelatedProductsQuery = ProductRelatedProductsQuery_Query;
 
-export type ProductVariantVendorQuery_productVariant_ProductVariant_product_Product_metadata_MetadataItem = { key: string, value: string };
-
-export type ProductVariantVendorQuery_productVariant_ProductVariant_product_Product = { metadata: Array<ProductVariantVendorQuery_productVariant_ProductVariant_product_Product_metadata_MetadataItem> };
+export type ProductVariantVendorQuery_productVariant_ProductVariant_product_Product = { vendorId: string | null };
 
 export type ProductVariantVendorQuery_productVariant_ProductVariant = { product: ProductVariantVendorQuery_productVariant_ProductVariant_product_Product };
 
@@ -251,10 +245,7 @@ export const ProductBaseQueryDocument = new TypedDocumentString(`
     name
     description
   }
-  metadata {
-    key
-    value
-  }
+  vendorId: metafield(key: "vendor.id")
 }`) as unknown as TypedDocumentString<ProductBaseQuery, ProductBaseQueryVariables>;
 export const ProductDetailsQueryDocument = new TypedDocumentString(`
     query ProductDetailsQuery($slug: String!, $channel: String!, $languageCode: LanguageCodeEnum!, $mediaSize: Int!, $mediaFormat: ThumbnailFormatEnum!) {
@@ -277,10 +268,7 @@ export const ProductDetailsQueryDocument = new TypedDocumentString(`
     name
     description
   }
-  metadata {
-    key
-    value
-  }
+  vendorId: metafield(key: "vendor.id")
 }
 fragment ProductDetailsFragment on Product {
   ...ProductBaseFragment
@@ -421,10 +409,7 @@ export const ProductVariantVendorQueryDocument = new TypedDocumentString(`
     query ProductVariantVendorQuery($id: ID!, $channel: String!) {
   productVariant(id: $id, channel: $channel) {
     product {
-      metadata {
-        key
-        value
-      }
+      vendorId: metafield(key: "vendor.id")
     }
   }
 }

@@ -16,9 +16,6 @@ import { getCurrentRegion } from "@/regions/server";
 import { getCartService } from "@/services/cart";
 import { getUserService } from "@/services/user";
 
-const VENDOR_MISMATCH_MESSAGE =
-  "Your cart has items from another vendor. You can only add products from the same vendor.";
-
 export const addToBagAction = async ({
   variantId,
   quantity = 1,
@@ -59,9 +56,7 @@ export const addToBagAction = async ({
         clientProductVendorId !== null &&
         clientProductVendorId !== cartVendorId
       ) {
-        return err([
-          { code: "VENDOR_MISMATCH_ERROR", message: VENDOR_MISMATCH_MESSAGE },
-        ]);
+        return err([{ code: "VENDOR_MISMATCH_ERROR" }]);
       }
 
       const productVendorId =
@@ -88,7 +83,9 @@ export const addToBagAction = async ({
         }
 
         return err([
-          { code: "VENDOR_MISMATCH_ERROR", message: VENDOR_MISMATCH_MESSAGE },
+          {
+            code: "VENDOR_MISMATCH_ERROR",
+          },
         ]);
       }
     }

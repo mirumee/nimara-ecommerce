@@ -39,9 +39,7 @@ export type CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVarian
 
 export type CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation = { name: string | null };
 
-export type CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_metadata_MetadataItem = { key: string, value: string };
-
-export type CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product = { id: string, slug: string, name: string, thumbnail: CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_thumbnail_Image | null, translation: CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation | null, metadata?: Array<CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_metadata_MetadataItem> };
+export type CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product = { id: string, slug: string, name: string, vendorId?: string | null, thumbnail: CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_thumbnail_Image | null, translation: CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation | null };
 
 export type CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney = { net: CartQuery_checkout_Checkout_subtotalPrice_TaxedMoney_net_Money, gross: CartQuery_checkout_Checkout_subtotalPrice_TaxedMoney_gross_Money, tax: CartQuery_checkout_Checkout_subtotalPrice_TaxedMoney_tax_Money };
 
@@ -182,10 +180,7 @@ fragment CartLineFragment on CheckoutLine {
       translation(languageCode: $languageCode) {
         name
       }
-      metadata @include(if: $includeVendorMetadata) {
-        key
-        value
-      }
+      vendorId: metafield(key: "vendor.id") @include(if: $includeVendorMetadata)
     }
     pricing {
       discount {

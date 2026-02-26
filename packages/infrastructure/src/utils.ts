@@ -7,7 +7,6 @@ import { type CartLineFragment } from "#root/graphql/fragments/generated";
 import { getTranslation } from "#root/lib/saleor";
 import { parseAttributeData } from "#root/lib/serializers/attribute";
 import { serializeMoney } from "#root/store/saleor/serializers";
-import { getVendorIdFromMetadata } from "#root/store/saleor/vendor-metadata";
 
 export const getVariantMaxQuantity = ({
   quantityAvailable,
@@ -70,7 +69,7 @@ export const serializeLine = (
       id: product.id,
       slug: product.slug,
       name: getTranslation("name", product),
-      vendorId: getVendorIdFromMetadata(product.metadata),
+      vendorId: product.vendorId ?? null,
     },
   };
 };

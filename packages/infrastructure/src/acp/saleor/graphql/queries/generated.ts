@@ -53,9 +53,7 @@ export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_Prod
 
 export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation = { name: string | null };
 
-export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_metadata_MetadataItem = { key: string, value: string };
-
-export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product = { id: string, slug: string, name: string, thumbnail: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_thumbnail_Image | null, translation: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation | null, metadata?: Array<CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_metadata_MetadataItem> };
+export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product = { id: string, slug: string, name: string, vendorId?: string | null, thumbnail: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_thumbnail_Image | null, translation: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation | null };
 
 export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money = { currency: string, amount: number };
 
@@ -309,10 +307,7 @@ fragment CartLineFragment on CheckoutLine {
       translation(languageCode: $languageCode) {
         name
       }
-      metadata @include(if: $includeVendorMetadata) {
-        key
-        value
-      }
+      vendorId: metafield(key: "vendor.id") @include(if: $includeVendorMetadata)
     }
     pricing {
       discount {

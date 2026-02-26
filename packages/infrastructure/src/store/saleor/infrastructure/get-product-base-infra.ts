@@ -9,7 +9,6 @@ import { getTranslation } from "#root/lib/saleor";
 import type { GetProductBaseInfra, StoreServiceConfig } from "../../types";
 import type { ProductBaseFragment } from "../graphql/fragments/generated";
 import { ProductBaseQueryDocument } from "../graphql/queries/generated";
-import { getVendorIdFromMetadata } from "../vendor-metadata";
 
 const parseData = (data: ProductBaseFragment): ProductBase => {
   const { id } = data as DeepRequired<DeepNonNullable<ProductBaseFragment>>;
@@ -25,7 +24,7 @@ const parseData = (data: ProductBaseFragment): ProductBase => {
       title: data.seoTitle ?? null,
       description: data.seoDescription ?? null,
     },
-    vendorId: getVendorIdFromMetadata(data.metadata),
+    vendorId: data.vendorId,
   };
 };
 
