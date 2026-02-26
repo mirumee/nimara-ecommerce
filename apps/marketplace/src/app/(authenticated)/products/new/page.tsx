@@ -1,50 +1,47 @@
-"use client";
+import { getServerAuthToken } from "@/lib/auth/server";
+import { configurationService, productsService } from "@/services";
 
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
+import { NewProductClient } from "./_components/new-product-client";
 
-import { Button } from "@nimara/ui/components/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@nimara/ui/components/card";
+export default async function NewProductPage() {
+  const token = await getServerAuthToken();
 
-export default function NewProductPage() {
+  const [
+    channelsResult,
+    categoriesResult,
+    collectionsResult,
+    productTypesResult,
+  ] = await Promise.all([
+    configurationService.getChannels(token),
+    productsService.getCategories({ first: 100 }, token),
+    productsService.getCollections({ first: 100 }, token),
+    productsService.getProductTypes({ first: 100 }, token),
+  ]);
+
+  const channels = channelsResult.ok
+    ? (channelsResult.data.channels ?? [])
+    : [];
+  const categories =
+    categoriesResult.ok && categoriesResult.data.categories?.edges
+      ? categoriesResult.data.categories.edges.map((e) => e.node)
+      : [];
+  const collections =
+    collectionsResult.ok && collectionsResult.data.collections?.edges
+      ? collectionsResult.data.collections.edges.map((e) => e.node)
+      : [];
+  const productTypes =
+    productTypesResult.ok && productTypesResult.data.productTypes?.edges
+      ? productTypesResult.data.productTypes.edges.map((e) => e.node)
+      : [];
+
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Button asChild variant="ghost" size="icon">
-          <Link href="/products">
-            <ArrowLeft className="h-4 w-4" />
-          </Link>
-        </Button>
-        <h1 className="text-2xl font-bold">Add New Product</h1>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Product Details</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">
-            Product creation form will be implemented here.
-          </p>
-          <p className="mt-4 text-sm text-muted-foreground">
-            This page will include:
-          </p>
-          <ul className="mt-2 list-inside list-disc text-sm text-muted-foreground">
-            <li>Product name and description</li>
-            <li>Product type selection</li>
-            <li>Category selection</li>
-            <li>Attributes configuration</li>
-            <li>Media upload</li>
-            <li>Pricing and variants</li>
-            <li>Channel availability</li>
-          </ul>
-        </CardContent>
-      </Card>
+    <div className="[view-transition-name:main-content]">
+      <NewProductClient
+        channels={channels}
+        categories={categories}
+        collections={collections}
+        productTypes={productTypes}
+      />
     </div>
   );
 }

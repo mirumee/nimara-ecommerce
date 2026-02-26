@@ -10,6 +10,7 @@ let appBridgeDomain: string | null = null;
 export function setAppBridgeDomain(saleorApiUrl: string | undefined): void {
   if (!saleorApiUrl) {
     appBridgeDomain = null;
+
     return;
   }
   try {
@@ -25,13 +26,18 @@ export function getAppBridgeDomain(): string | null {
 
 /** Parse saleorApiUrl from URL and set domain. Returns true if found. */
 export function initDomainFromUrl(): boolean {
-  if (typeof window === "undefined") return false;
+  if (typeof window === "undefined") {
+    return false;
+  }
   const saleorApiUrl = new URLSearchParams(window.location.search).get(
     "saleorApiUrl",
   );
+
   if (saleorApiUrl) {
     setAppBridgeDomain(saleorApiUrl);
+
     return true;
   }
+
   return false;
 }

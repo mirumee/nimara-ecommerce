@@ -15,10 +15,10 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 
-import type { VariantUpdateFormValues } from "../schema";
+import type { VariantCreateFormValues } from "../schema";
 
 export function VariantStocksSection() {
-  const form = useFormContext<VariantUpdateFormValues>();
+  const form = useFormContext<VariantCreateFormValues>();
   const stocks = form.watch("stocks") ?? {};
 
   const sorted = useMemo(() => {
@@ -58,7 +58,6 @@ export function VariantStocksSection() {
           <TableRow>
             <TableHead className="w-12" />
             <TableHead>Warehouse</TableHead>
-            <TableHead className="w-48 text-center">Allocated</TableHead>
             <TableHead className="w-56 text-right">Quantity</TableHead>
           </TableRow>
         </TableHeader>
@@ -78,9 +77,6 @@ export function VariantStocksSection() {
                   />
                 </TableCell>
                 <TableCell>{stock.warehouseName}</TableCell>
-                <TableCell className="text-center">
-                  {stock.quantityAllocated ?? "0"}
-                </TableCell>
                 <TableCell className="text-right">
                   <input
                     type="number"

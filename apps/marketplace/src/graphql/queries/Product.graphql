@@ -23,6 +23,7 @@ query ProductDetail($id: ID!) {
     productType {
       id
       name
+      hasVariants
     }
     category {
       id
@@ -140,8 +141,23 @@ query ProductDetail($id: ID!) {
           }
         }
       }
+      channelListings {
+        channel {
+          id
+          name
+        }
+        price {
+          amount
+          currency
+        }
+        costPrice {
+          amount
+          currency
+        }
+      }
       stocks {
         warehouse {
+          id
           name
         }
         quantity

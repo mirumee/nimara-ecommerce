@@ -21,18 +21,18 @@ export type Incremental<T> =
     };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: { input: string; output: string };
-  String: { input: string; output: string };
   Boolean: { input: boolean; output: boolean };
-  Int: { input: number; output: number };
-  Float: { input: number; output: number };
   Date: { input: string; output: string };
   DateTime: { input: string; output: string };
   Day: { input: number; output: number };
   Decimal: { input: number; output: number };
+  Float: { input: number; output: number };
   GenericScalar: { input: unknown; output: unknown };
   Hour: { input: number; output: number };
+  ID: { input: string; output: string };
+  Int: { input: number; output: number };
   JSON: { input: unknown; output: unknown };
+  String: { input: string; output: string };
   JSONString: { input: string; output: string };
   Metadata: { input: Record<string, string>; output: Record<string, string> };
   Minute: { input: number; output: number };
@@ -835,6 +835,14 @@ export type App = Node &
     privateMetafield: Maybe<Scalars["String"]["output"]>;
     /** Private metadata. Requires staff permissions to access. Use `keys` to control which fields you want to include. The default is to include everything. */
     privateMetafields: Maybe<Scalars["Metadata"]["output"]>;
+    /**
+     * List of problems associated with this app.
+     *
+     * Added in Saleor 3.22.
+     *
+     * Requires one of the following permissions: AUTHENTICATED_APP, MANAGE_APPS.
+     */
+    problems: Maybe<Array<AppProblem>>;
     /** Support page for the app. */
     supportUrl: Maybe<Scalars["String"]["output"]>;
     /**
@@ -873,6 +881,11 @@ export type AppPrivateMetafieldArgs = {
 /** Represents app data. */
 export type AppPrivateMetafieldsArgs = {
   keys?: InputMaybe<Array<Scalars["String"]["input"]>>;
+};
+
+/** Represents app data. */
+export type AppProblemsArgs = {
+  limit?: InputMaybe<Scalars["PositiveInt"]["input"]>;
 };
 
 /**
@@ -1363,6 +1376,194 @@ export type AppManifestWebhook = {
   /** The url to receive the payload. */
   targetUrl: Scalars["String"]["output"];
 };
+
+/**
+ * Represents a problem associated with an app.
+ *
+ * Added in Saleor 3.22.
+ */
+export type AppProblem = Node & {
+  /**
+   * Number of occurrences.
+   *
+   * Added in Saleor 3.22.
+   */
+  count: Scalars["Int"]["output"];
+  /**
+   * The date and time when the problem was created.
+   *
+   * Added in Saleor 3.22.
+   */
+  createdAt: Scalars["DateTime"]["output"];
+  /**
+   * Dismissal information. Null if the problem has not been dismissed.
+   *
+   * Added in Saleor 3.22.
+   *
+   * Requires one of the following permissions: AUTHENTICATED_APP, MANAGE_APPS.
+   */
+  dismissed: Maybe<AppProblemDismissed>;
+  /**
+   * The ID of the app problem.
+   *
+   * Added in Saleor 3.22.
+   */
+  id: Scalars["ID"]["output"];
+  /**
+   * Whether the problem has reached critical threshold.
+   *
+   * Added in Saleor 3.22.
+   */
+  isCritical: Scalars["Boolean"]["output"];
+  /**
+   * Key identifying the type of problem.
+   *
+   * Added in Saleor 3.22.
+   */
+  key: Scalars["String"]["output"];
+  /**
+   * The problem message.
+   *
+   * Added in Saleor 3.22.
+   */
+  message: Scalars["String"]["output"];
+  /**
+   * The date and time when the problem was last updated.
+   *
+   * Added in Saleor 3.22.
+   */
+  updatedAt: Scalars["DateTime"]["output"];
+};
+
+/**
+ * Add a problem to the calling app.
+ *
+ * Added in Saleor 3.22.
+ *
+ * Requires one of the following permissions: AUTHENTICATED_APP.
+ */
+export type AppProblemCreate = {
+  /** The created or updated app problem. */
+  appProblem: Maybe<AppProblem>;
+  errors: Array<AppProblemCreateError>;
+};
+
+export type AppProblemCreateError = {
+  /** The error code. */
+  code: AppProblemCreateErrorCode;
+  /** Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field. */
+  field: Maybe<Scalars["String"]["output"]>;
+  /** The error message. */
+  message: Maybe<Scalars["String"]["output"]>;
+};
+
+export type AppProblemCreateErrorCode =
+  | "GRAPHQL_ERROR"
+  | "INVALID"
+  | "NOT_FOUND"
+  | "REQUIRED";
+
+export type AppProblemCreateInput = {
+  /** Time window in minutes for aggregating problems with the same key. Defaults to 60. If 0, a new problem is always created. */
+  aggregationPeriod?: InputMaybe<Scalars["Minute"]["input"]>;
+  /** If set, the problem becomes critical when count reaches this value. If sent again with higher value than already counted, problem can be de-escalated. */
+  criticalThreshold?: InputMaybe<Scalars["PositiveInt"]["input"]>;
+  /** Key identifying the type of problem. App can add multiple problems under the same key, to merge them together or delete them in batch. Must be between 3 and 128 characters. */
+  key: Scalars["String"]["input"];
+  /** The problem message to display. Must be at least 3 characters. Messages longer than 2048 characters will be truncated to 2048 characters with '...' suffix. */
+  message: Scalars["String"]["input"];
+};
+
+/**
+ * Dismiss problems for an app.
+ *
+ * Added in Saleor 3.22.
+ *
+ * Requires one of the following permissions: MANAGE_APPS, AUTHENTICATED_APP.
+ */
+export type AppProblemDismiss = {
+  errors: Array<AppProblemDismissError>;
+};
+
+/** Input for app callers to dismiss their own problems. */
+export type AppProblemDismissByAppInput = {
+  /** List of problem IDs to dismiss. Cannot be combined with keys. Max 100. */
+  ids?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  /** List of problem keys to dismiss. Cannot be combined with ids. Max 100. */
+  keys?: InputMaybe<Array<Scalars["String"]["input"]>>;
+};
+
+/** Input for staff callers to dismiss problems by IDs. */
+export type AppProblemDismissByStaffWithIdsInput = {
+  /** List of problem IDs to dismiss. Max 100. */
+  ids: Array<Scalars["ID"]["input"]>;
+};
+
+/** Input for staff callers to dismiss problems by keys. */
+export type AppProblemDismissByStaffWithKeysInput = {
+  /** ID of the app whose problems to dismiss. */
+  app: Scalars["ID"]["input"];
+  /** List of problem keys to dismiss. Max 100. */
+  keys: Array<Scalars["String"]["input"]>;
+};
+
+export type AppProblemDismissError = {
+  /** The error code. */
+  code: AppProblemDismissErrorCode;
+  /** Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field. */
+  field: Maybe<Scalars["String"]["output"]>;
+  /** The error message. */
+  message: Maybe<Scalars["String"]["output"]>;
+};
+
+export type AppProblemDismissErrorCode =
+  | "GRAPHQL_ERROR"
+  | "INVALID"
+  | "NOT_FOUND"
+  | "OUT_OF_SCOPE_APP"
+  | "REQUIRED";
+
+/** Input for dismissing app problems. Only one can be specified. */
+export type AppProblemDismissInput = {
+  /** For app callers only - dismiss own problems. */
+  byApp?: InputMaybe<AppProblemDismissByAppInput>;
+  /** For staff callers - dismiss problems by IDs. */
+  byStaffWithIds?: InputMaybe<AppProblemDismissByStaffWithIdsInput>;
+  /** For staff callers - dismiss problems by keys for specified app. */
+  byStaffWithKeys?: InputMaybe<AppProblemDismissByStaffWithKeysInput>;
+};
+
+/**
+ * Dismissal information for an app problem.
+ *
+ * Added in Saleor 3.22.
+ */
+export type AppProblemDismissed = {
+  /**
+   * Whether the problem was dismissed by an App or a User.
+   *
+   * Added in Saleor 3.22.
+   */
+  by: AppProblemDismissedByEnum;
+  /**
+   * The user who dismissed this problem. Null if dismissed by an app or the user was deleted.
+   *
+   * Added in Saleor 3.22.
+   *
+   * Requires one of the following permissions: MANAGE_STAFF.
+   */
+  user: Maybe<User>;
+  /**
+   * Email of the user who dismissed this problem. Preserved even if the user is deleted.
+   *
+   * Added in Saleor 3.22.
+   *
+   * Requires one of the following permissions: AUTHENTICATED_STAFF_USER.
+   */
+  userEmail: Maybe<Scalars["String"]["output"]>;
+};
+
+export type AppProblemDismissedByEnum = "APP" | "USER";
 
 /**
  * Re-enable sync webhooks for provided app. Can be used to manually re-enable sync webhooks for the app before the cooldown period ends.
@@ -5798,256 +5999,507 @@ export type ContainsFilterInput = {
  * The `EU` value is DEPRECATED and will be removed in Saleor 3.21.
  */
 export type CountryCode =
+  /** Andorra */
   | "AD"
+  /** United Arab Emirates */
   | "AE"
+  /** Afghanistan */
   | "AF"
+  /** Antigua and Barbuda */
   | "AG"
+  /** Anguilla */
   | "AI"
+  /** Albania */
   | "AL"
+  /** Armenia */
   | "AM"
+  /** Angola */
   | "AO"
+  /** Antarctica */
   | "AQ"
+  /** Argentina */
   | "AR"
+  /** American Samoa */
   | "AS"
+  /** Austria */
   | "AT"
+  /** Australia */
   | "AU"
+  /** Aruba */
   | "AW"
+  /** Åland Islands */
   | "AX"
+  /** Azerbaijan */
   | "AZ"
+  /** Bosnia and Herzegovina */
   | "BA"
+  /** Barbados */
   | "BB"
+  /** Bangladesh */
   | "BD"
+  /** Belgium */
   | "BE"
+  /** Burkina Faso */
   | "BF"
+  /** Bulgaria */
   | "BG"
+  /** Bahrain */
   | "BH"
+  /** Burundi */
   | "BI"
+  /** Benin */
   | "BJ"
+  /** Saint Barthélemy */
   | "BL"
+  /** Bermuda */
   | "BM"
+  /** Brunei */
   | "BN"
+  /** Bolivia */
   | "BO"
+  /** Bonaire, Sint Eustatius and Saba */
   | "BQ"
+  /** Brazil */
   | "BR"
+  /** Bahamas */
   | "BS"
+  /** Bhutan */
   | "BT"
+  /** Bouvet Island */
   | "BV"
+  /** Botswana */
   | "BW"
+  /** Belarus */
   | "BY"
+  /** Belize */
   | "BZ"
+  /** Canada */
   | "CA"
+  /** Cocos (Keeling) Islands */
   | "CC"
+  /** Congo (the Democratic Republic of the) */
   | "CD"
+  /** Central African Republic */
   | "CF"
+  /** Congo */
   | "CG"
+  /** Switzerland */
   | "CH"
+  /** Côte d'Ivoire */
   | "CI"
+  /** Cook Islands */
   | "CK"
+  /** Chile */
   | "CL"
+  /** Cameroon */
   | "CM"
+  /** China */
   | "CN"
+  /** Colombia */
   | "CO"
+  /** Costa Rica */
   | "CR"
+  /** Cuba */
   | "CU"
+  /** Cabo Verde */
   | "CV"
+  /** Curaçao */
   | "CW"
+  /** Christmas Island */
   | "CX"
+  /** Cyprus */
   | "CY"
+  /** Czechia */
   | "CZ"
+  /** Germany */
   | "DE"
+  /** Djibouti */
   | "DJ"
+  /** Denmark */
   | "DK"
+  /** Dominica */
   | "DM"
+  /** Dominican Republic */
   | "DO"
+  /** Algeria */
   | "DZ"
+  /** Ecuador */
   | "EC"
+  /** Estonia */
   | "EE"
+  /** Egypt */
   | "EG"
+  /** Western Sahara */
   | "EH"
+  /** Eritrea */
   | "ER"
+  /** Spain */
   | "ES"
+  /** Ethiopia */
   | "ET"
+  /** European Union */
   | "EU"
+  /** Finland */
   | "FI"
+  /** Fiji */
   | "FJ"
+  /** Falkland Islands (Malvinas) */
   | "FK"
+  /** Micronesia */
   | "FM"
+  /** Faroe Islands */
   | "FO"
+  /** France */
   | "FR"
+  /** Gabon */
   | "GA"
+  /** United Kingdom */
   | "GB"
+  /** Grenada */
   | "GD"
+  /** Georgia */
   | "GE"
+  /** French Guiana */
   | "GF"
+  /** Guernsey */
   | "GG"
+  /** Ghana */
   | "GH"
+  /** Gibraltar */
   | "GI"
+  /** Greenland */
   | "GL"
+  /** Gambia */
   | "GM"
+  /** Guinea */
   | "GN"
+  /** Guadeloupe */
   | "GP"
+  /** Equatorial Guinea */
   | "GQ"
+  /** Greece */
   | "GR"
+  /** South Georgia and the South Sandwich Islands */
   | "GS"
+  /** Guatemala */
   | "GT"
+  /** Guam */
   | "GU"
+  /** Guinea-Bissau */
   | "GW"
+  /** Guyana */
   | "GY"
+  /** Hong Kong */
   | "HK"
+  /** Heard Island and McDonald Islands */
   | "HM"
+  /** Honduras */
   | "HN"
+  /** Croatia */
   | "HR"
+  /** Haiti */
   | "HT"
+  /** Hungary */
   | "HU"
+  /** Indonesia */
   | "ID"
+  /** Ireland */
   | "IE"
+  /** Israel */
   | "IL"
+  /** Isle of Man */
   | "IM"
+  /** India */
   | "IN"
+  /** British Indian Ocean Territory */
   | "IO"
+  /** Iraq */
   | "IQ"
+  /** Iran */
   | "IR"
+  /** Iceland */
   | "IS"
+  /** Italy */
   | "IT"
+  /** Jersey */
   | "JE"
+  /** Jamaica */
   | "JM"
+  /** Jordan */
   | "JO"
+  /** Japan */
   | "JP"
+  /** Kenya */
   | "KE"
+  /** Kyrgyzstan */
   | "KG"
+  /** Cambodia */
   | "KH"
+  /** Kiribati */
   | "KI"
+  /** Comoros */
   | "KM"
+  /** Saint Kitts and Nevis */
   | "KN"
+  /** North Korea */
   | "KP"
+  /** South Korea */
   | "KR"
+  /** Kuwait */
   | "KW"
+  /** Cayman Islands */
   | "KY"
+  /** Kazakhstan */
   | "KZ"
+  /** Laos */
   | "LA"
+  /** Lebanon */
   | "LB"
+  /** Saint Lucia */
   | "LC"
+  /** Liechtenstein */
   | "LI"
+  /** Sri Lanka */
   | "LK"
+  /** Liberia */
   | "LR"
+  /** Lesotho */
   | "LS"
+  /** Lithuania */
   | "LT"
+  /** Luxembourg */
   | "LU"
+  /** Latvia */
   | "LV"
+  /** Libya */
   | "LY"
+  /** Morocco */
   | "MA"
+  /** Monaco */
   | "MC"
+  /** Moldova */
   | "MD"
+  /** Montenegro */
   | "ME"
+  /** Saint Martin (French part) */
   | "MF"
+  /** Madagascar */
   | "MG"
+  /** Marshall Islands */
   | "MH"
+  /** North Macedonia */
   | "MK"
+  /** Mali */
   | "ML"
+  /** Myanmar */
   | "MM"
+  /** Mongolia */
   | "MN"
+  /** Macao */
   | "MO"
+  /** Northern Mariana Islands */
   | "MP"
+  /** Martinique */
   | "MQ"
+  /** Mauritania */
   | "MR"
+  /** Montserrat */
   | "MS"
+  /** Malta */
   | "MT"
+  /** Mauritius */
   | "MU"
+  /** Maldives */
   | "MV"
+  /** Malawi */
   | "MW"
+  /** Mexico */
   | "MX"
+  /** Malaysia */
   | "MY"
+  /** Mozambique */
   | "MZ"
+  /** Namibia */
   | "NA"
+  /** New Caledonia */
   | "NC"
+  /** Niger */
   | "NE"
+  /** Norfolk Island */
   | "NF"
+  /** Nigeria */
   | "NG"
+  /** Nicaragua */
   | "NI"
+  /** Netherlands */
   | "NL"
+  /** Norway */
   | "NO"
+  /** Nepal */
   | "NP"
+  /** Nauru */
   | "NR"
+  /** Niue */
   | "NU"
+  /** New Zealand */
   | "NZ"
+  /** Oman */
   | "OM"
+  /** Panama */
   | "PA"
+  /** Peru */
   | "PE"
+  /** French Polynesia */
   | "PF"
+  /** Papua New Guinea */
   | "PG"
+  /** Philippines */
   | "PH"
+  /** Pakistan */
   | "PK"
+  /** Poland */
   | "PL"
+  /** Saint Pierre and Miquelon */
   | "PM"
+  /** Pitcairn */
   | "PN"
+  /** Puerto Rico */
   | "PR"
+  /** Palestine, State of */
   | "PS"
+  /** Portugal */
   | "PT"
+  /** Palau */
   | "PW"
+  /** Paraguay */
   | "PY"
+  /** Qatar */
   | "QA"
+  /** Réunion */
   | "RE"
+  /** Romania */
   | "RO"
+  /** Serbia */
   | "RS"
+  /** Russia */
   | "RU"
+  /** Rwanda */
   | "RW"
+  /** Saudi Arabia */
   | "SA"
+  /** Solomon Islands */
   | "SB"
+  /** Seychelles */
   | "SC"
+  /** Sudan */
   | "SD"
+  /** Sweden */
   | "SE"
+  /** Singapore */
   | "SG"
+  /** Saint Helena, Ascension and Tristan da Cunha */
   | "SH"
+  /** Slovenia */
   | "SI"
+  /** Svalbard and Jan Mayen */
   | "SJ"
+  /** Slovakia */
   | "SK"
+  /** Sierra Leone */
   | "SL"
+  /** San Marino */
   | "SM"
+  /** Senegal */
   | "SN"
+  /** Somalia */
   | "SO"
+  /** Suriname */
   | "SR"
+  /** South Sudan */
   | "SS"
+  /** Sao Tome and Principe */
   | "ST"
+  /** El Salvador */
   | "SV"
+  /** Sint Maarten (Dutch part) */
   | "SX"
+  /** Syria */
   | "SY"
+  /** Eswatini */
   | "SZ"
+  /** Turks and Caicos Islands */
   | "TC"
+  /** Chad */
   | "TD"
+  /** French Southern Territories */
   | "TF"
+  /** Togo */
   | "TG"
+  /** Thailand */
   | "TH"
+  /** Tajikistan */
   | "TJ"
+  /** Tokelau */
   | "TK"
+  /** Timor-Leste */
   | "TL"
+  /** Turkmenistan */
   | "TM"
+  /** Tunisia */
   | "TN"
+  /** Tonga */
   | "TO"
+  /** Türkiye */
   | "TR"
+  /** Trinidad and Tobago */
   | "TT"
+  /** Tuvalu */
   | "TV"
+  /** Taiwan */
   | "TW"
+  /** Tanzania */
   | "TZ"
+  /** Ukraine */
   | "UA"
+  /** Uganda */
   | "UG"
+  /** United States Minor Outlying Islands */
   | "UM"
+  /** United States of America */
   | "US"
+  /** Uruguay */
   | "UY"
+  /** Uzbekistan */
   | "UZ"
+  /** Holy See */
   | "VA"
+  /** Saint Vincent and the Grenadines */
   | "VC"
+  /** Venezuela */
   | "VE"
+  /** Virgin Islands (British) */
   | "VG"
+  /** Virgin Islands (U.S.) */
   | "VI"
+  /** Vietnam */
   | "VN"
+  /** Vanuatu */
   | "VU"
+  /** Wallis and Futuna */
   | "WF"
+  /** Samoa */
   | "WS"
+  /** Kosovo */
   | "XK"
+  /** Yemen */
   | "YE"
+  /** Mayotte */
   | "YT"
+  /** South Africa */
   | "ZA"
+  /** Zambia */
   | "ZM"
+  /** Zimbabwe */
   | "ZW";
 
 /** Filter by country code. */
@@ -8827,785 +9279,1565 @@ export type Job = {
 
 export type JobStatusEnum = "DELETED" | "FAILED" | "PENDING" | "SUCCESS";
 
+/** Language code enum. It contains all the languages supported by Saleor. */
 export type LanguageCodeEnum =
+  /** Afrikaans */
   | "AF"
+  /** Afrikaans (Namibia) */
   | "AF_NA"
+  /** Afrikaans (South Africa) */
   | "AF_ZA"
+  /** Aghem */
   | "AGQ"
+  /** Aghem (Cameroon) */
   | "AGQ_CM"
+  /** Akan */
   | "AK"
+  /** Akan (Ghana) */
   | "AK_GH"
+  /** Amharic */
   | "AM"
+  /** Amharic (Ethiopia) */
   | "AM_ET"
+  /** Arabic */
   | "AR"
+  /** Arabic (United Arab Emirates) */
   | "AR_AE"
+  /** Arabic (Bahrain) */
   | "AR_BH"
+  /** Arabic (Djibouti) */
   | "AR_DJ"
+  /** Arabic (Algeria) */
   | "AR_DZ"
+  /** Arabic (Egypt) */
   | "AR_EG"
+  /** Arabic (Western Sahara) */
   | "AR_EH"
+  /** Arabic (Eritrea) */
   | "AR_ER"
+  /** Arabic (Israel) */
   | "AR_IL"
+  /** Arabic (Iraq) */
   | "AR_IQ"
+  /** Arabic (Jordan) */
   | "AR_JO"
+  /** Arabic (Comoros) */
   | "AR_KM"
+  /** Arabic (Kuwait) */
   | "AR_KW"
+  /** Arabic (Lebanon) */
   | "AR_LB"
+  /** Arabic (Libya) */
   | "AR_LY"
+  /** Arabic (Morocco) */
   | "AR_MA"
+  /** Arabic (Mauritania) */
   | "AR_MR"
+  /** Arabic (Oman) */
   | "AR_OM"
+  /** Arabic (Palestinian Territories) */
   | "AR_PS"
+  /** Arabic (Qatar) */
   | "AR_QA"
+  /** Arabic (Saudi Arabia) */
   | "AR_SA"
+  /** Arabic (Sudan) */
   | "AR_SD"
+  /** Arabic (Somalia) */
   | "AR_SO"
+  /** Arabic (South Sudan) */
   | "AR_SS"
+  /** Arabic (Syria) */
   | "AR_SY"
+  /** Arabic (Chad) */
   | "AR_TD"
+  /** Arabic (Tunisia) */
   | "AR_TN"
+  /** Arabic (Yemen) */
   | "AR_YE"
+  /** Assamese */
   | "AS"
+  /** Asu */
   | "ASA"
+  /** Asu (Tanzania) */
   | "ASA_TZ"
+  /** Asturian */
   | "AST"
+  /** Asturian (Spain) */
   | "AST_ES"
+  /** Assamese (India) */
   | "AS_IN"
+  /** Azerbaijani */
   | "AZ"
+  /** Azerbaijani (Cyrillic) */
   | "AZ_CYRL"
+  /** Azerbaijani (Cyrillic, Azerbaijan) */
   | "AZ_CYRL_AZ"
+  /** Azerbaijani (Latin) */
   | "AZ_LATN"
+  /** Azerbaijani (Latin, Azerbaijan) */
   | "AZ_LATN_AZ"
+  /** Basaa */
   | "BAS"
+  /** Basaa (Cameroon) */
   | "BAS_CM"
+  /** Belarusian */
   | "BE"
+  /** Bemba */
   | "BEM"
+  /** Bemba (Zambia) */
   | "BEM_ZM"
+  /** Bena */
   | "BEZ"
+  /** Bena (Tanzania) */
   | "BEZ_TZ"
+  /** Belarusian (Belarus) */
   | "BE_BY"
+  /** Bulgarian */
   | "BG"
+  /** Bulgarian (Bulgaria) */
   | "BG_BG"
+  /** Bambara */
   | "BM"
+  /** Bambara (Mali) */
   | "BM_ML"
+  /** Bangla */
   | "BN"
+  /** Bangla (Bangladesh) */
   | "BN_BD"
+  /** Bangla (India) */
   | "BN_IN"
+  /** Tibetan */
   | "BO"
+  /** Tibetan (China) */
   | "BO_CN"
+  /** Tibetan (India) */
   | "BO_IN"
+  /** Breton */
   | "BR"
+  /** Bodo */
   | "BRX"
+  /** Bodo (India) */
   | "BRX_IN"
+  /** Breton (France) */
   | "BR_FR"
+  /** Bosnian */
   | "BS"
+  /** Bosnian (Cyrillic) */
   | "BS_CYRL"
+  /** Bosnian (Cyrillic, Bosnia & Herzegovina) */
   | "BS_CYRL_BA"
+  /** Bosnian (Latin) */
   | "BS_LATN"
+  /** Bosnian (Latin, Bosnia & Herzegovina) */
   | "BS_LATN_BA"
+  /** Catalan */
   | "CA"
+  /** Catalan (Andorra) */
   | "CA_AD"
+  /** Catalan (Spain) */
   | "CA_ES"
+  /** Catalan (Spain, Valencian) */
   | "CA_ES_VALENCIA"
+  /** Catalan (France) */
   | "CA_FR"
+  /** Catalan (Italy) */
   | "CA_IT"
+  /** Chakma */
   | "CCP"
+  /** Chakma (Bangladesh) */
   | "CCP_BD"
+  /** Chakma (India) */
   | "CCP_IN"
+  /** Chechen */
   | "CE"
+  /** Cebuano */
   | "CEB"
+  /** Cebuano (Philippines) */
   | "CEB_PH"
+  /** Chechen (Russia) */
   | "CE_RU"
+  /** Chiga */
   | "CGG"
+  /** Chiga (Uganda) */
   | "CGG_UG"
+  /** Cherokee */
   | "CHR"
+  /** Cherokee (United States) */
   | "CHR_US"
+  /** Central Kurdish */
   | "CKB"
+  /** Central Kurdish (Iraq) */
   | "CKB_IQ"
+  /** Central Kurdish (Iran) */
   | "CKB_IR"
+  /** Czech */
   | "CS"
+  /** Czech (Czechia) */
   | "CS_CZ"
+  /** Church Slavic */
   | "CU"
+  /** Church Slavic (Russia) */
   | "CU_RU"
+  /** Welsh */
   | "CY"
+  /** Welsh (United Kingdom) */
   | "CY_GB"
+  /** Danish */
   | "DA"
+  /** Taita */
   | "DAV"
+  /** Taita (Kenya) */
   | "DAV_KE"
+  /** Danish (Denmark) */
   | "DA_DK"
+  /** Danish (Greenland) */
   | "DA_GL"
+  /** German */
   | "DE"
+  /** German (Austria) */
   | "DE_AT"
+  /** German (Belgium) */
   | "DE_BE"
+  /** German (Switzerland) */
   | "DE_CH"
+  /** German (Germany) */
   | "DE_DE"
+  /** German (Italy) */
   | "DE_IT"
+  /** German (Liechtenstein) */
   | "DE_LI"
+  /** German (Luxembourg) */
   | "DE_LU"
+  /** Zarma */
   | "DJE"
+  /** Zarma (Niger) */
   | "DJE_NE"
+  /** Lower Sorbian */
   | "DSB"
+  /** Lower Sorbian (Germany) */
   | "DSB_DE"
+  /** Duala */
   | "DUA"
+  /** Duala (Cameroon) */
   | "DUA_CM"
+  /** Jola-Fonyi */
   | "DYO"
+  /** Jola-Fonyi (Senegal) */
   | "DYO_SN"
+  /** Dzongkha */
   | "DZ"
+  /** Dzongkha (Bhutan) */
   | "DZ_BT"
+  /** Embu */
   | "EBU"
+  /** Embu (Kenya) */
   | "EBU_KE"
+  /** Ewe */
   | "EE"
+  /** Ewe (Ghana) */
   | "EE_GH"
+  /** Ewe (Togo) */
   | "EE_TG"
+  /** Greek */
   | "EL"
+  /** Greek (Cyprus) */
   | "EL_CY"
+  /** Greek (Greece) */
   | "EL_GR"
+  /** English */
   | "EN"
+  /** English (United Arab Emirates) */
   | "EN_AE"
+  /** English (Antigua & Barbuda) */
   | "EN_AG"
+  /** English (Anguilla) */
   | "EN_AI"
+  /** English (American Samoa) */
   | "EN_AS"
+  /** English (Austria) */
   | "EN_AT"
+  /** English (Australia) */
   | "EN_AU"
+  /** English (Barbados) */
   | "EN_BB"
+  /** English (Belgium) */
   | "EN_BE"
+  /** English (Burundi) */
   | "EN_BI"
+  /** English (Bermuda) */
   | "EN_BM"
+  /** English (Bahamas) */
   | "EN_BS"
+  /** English (Botswana) */
   | "EN_BW"
+  /** English (Belize) */
   | "EN_BZ"
+  /** English (Canada) */
   | "EN_CA"
+  /** English (Cocos (Keeling) Islands) */
   | "EN_CC"
+  /** English (Switzerland) */
   | "EN_CH"
+  /** English (Cook Islands) */
   | "EN_CK"
+  /** English (Cameroon) */
   | "EN_CM"
+  /** English (Christmas Island) */
   | "EN_CX"
+  /** English (Cyprus) */
   | "EN_CY"
+  /** English (Germany) */
   | "EN_DE"
+  /** English (Diego Garcia) */
   | "EN_DG"
+  /** English (Denmark) */
   | "EN_DK"
+  /** English (Dominica) */
   | "EN_DM"
+  /** English (Eritrea) */
   | "EN_ER"
+  /** English (Finland) */
   | "EN_FI"
+  /** English (Fiji) */
   | "EN_FJ"
+  /** English (Falkland Islands) */
   | "EN_FK"
+  /** English (Micronesia) */
   | "EN_FM"
+  /** English (United Kingdom) */
   | "EN_GB"
+  /** English (Grenada) */
   | "EN_GD"
+  /** English (Guernsey) */
   | "EN_GG"
+  /** English (Ghana) */
   | "EN_GH"
+  /** English (Gibraltar) */
   | "EN_GI"
+  /** English (Gambia) */
   | "EN_GM"
+  /** English (Guam) */
   | "EN_GU"
+  /** English (Guyana) */
   | "EN_GY"
+  /** English (Hong Kong SAR China) */
   | "EN_HK"
+  /** English (Ireland) */
   | "EN_IE"
+  /** English (Israel) */
   | "EN_IL"
+  /** English (Isle of Man) */
   | "EN_IM"
+  /** English (India) */
   | "EN_IN"
+  /** English (British Indian Ocean Territory) */
   | "EN_IO"
+  /** English (Jersey) */
   | "EN_JE"
+  /** English (Jamaica) */
   | "EN_JM"
+  /** English (Kenya) */
   | "EN_KE"
+  /** English (Kiribati) */
   | "EN_KI"
+  /** English (St. Kitts & Nevis) */
   | "EN_KN"
+  /** English (Cayman Islands) */
   | "EN_KY"
+  /** English (St. Lucia) */
   | "EN_LC"
+  /** English (Liberia) */
   | "EN_LR"
+  /** English (Lesotho) */
   | "EN_LS"
+  /** English (Madagascar) */
   | "EN_MG"
+  /** English (Marshall Islands) */
   | "EN_MH"
+  /** English (Macao SAR China) */
   | "EN_MO"
+  /** English (Northern Mariana Islands) */
   | "EN_MP"
+  /** English (Montserrat) */
   | "EN_MS"
+  /** English (Malta) */
   | "EN_MT"
+  /** English (Mauritius) */
   | "EN_MU"
+  /** English (Malawi) */
   | "EN_MW"
+  /** English (Malaysia) */
   | "EN_MY"
+  /** English (Namibia) */
   | "EN_NA"
+  /** English (Norfolk Island) */
   | "EN_NF"
+  /** English (Nigeria) */
   | "EN_NG"
+  /** English (Netherlands) */
   | "EN_NL"
+  /** English (Nauru) */
   | "EN_NR"
+  /** English (Niue) */
   | "EN_NU"
+  /** English (New Zealand) */
   | "EN_NZ"
+  /** English (Papua New Guinea) */
   | "EN_PG"
+  /** English (Philippines) */
   | "EN_PH"
+  /** English (Pakistan) */
   | "EN_PK"
+  /** English (Pitcairn Islands) */
   | "EN_PN"
+  /** English (Puerto Rico) */
   | "EN_PR"
+  /** English (Palau) */
   | "EN_PW"
+  /** English (Rwanda) */
   | "EN_RW"
+  /** English (Solomon Islands) */
   | "EN_SB"
+  /** English (Seychelles) */
   | "EN_SC"
+  /** English (Sudan) */
   | "EN_SD"
+  /** English (Sweden) */
   | "EN_SE"
+  /** English (Singapore) */
   | "EN_SG"
+  /** English (St. Helena) */
   | "EN_SH"
+  /** English (Slovenia) */
   | "EN_SI"
+  /** English (Sierra Leone) */
   | "EN_SL"
+  /** English (South Sudan) */
   | "EN_SS"
+  /** English (Sint Maarten) */
   | "EN_SX"
+  /** English (Eswatini) */
   | "EN_SZ"
+  /** English (Turks & Caicos Islands) */
   | "EN_TC"
+  /** English (Tokelau) */
   | "EN_TK"
+  /** English (Tonga) */
   | "EN_TO"
+  /** English (Trinidad & Tobago) */
   | "EN_TT"
+  /** English (Tuvalu) */
   | "EN_TV"
+  /** English (Tanzania) */
   | "EN_TZ"
+  /** English (Uganda) */
   | "EN_UG"
+  /** English (U.S. Outlying Islands) */
   | "EN_UM"
+  /** English (United States) */
   | "EN_US"
+  /** English (St. Vincent & Grenadines) */
   | "EN_VC"
+  /** English (British Virgin Islands) */
   | "EN_VG"
+  /** English (U.S. Virgin Islands) */
   | "EN_VI"
+  /** English (Vanuatu) */
   | "EN_VU"
+  /** English (Samoa) */
   | "EN_WS"
+  /** English (South Africa) */
   | "EN_ZA"
+  /** English (Zambia) */
   | "EN_ZM"
+  /** English (Zimbabwe) */
   | "EN_ZW"
+  /** Esperanto */
   | "EO"
+  /** Spanish */
   | "ES"
+  /** Spanish (Argentina) */
   | "ES_AR"
+  /** Spanish (Bolivia) */
   | "ES_BO"
+  /** Spanish (Brazil) */
   | "ES_BR"
+  /** Spanish (Belize) */
   | "ES_BZ"
+  /** Spanish (Chile) */
   | "ES_CL"
+  /** Spanish (Colombia) */
   | "ES_CO"
+  /** Spanish (Costa Rica) */
   | "ES_CR"
+  /** Spanish (Cuba) */
   | "ES_CU"
+  /** Spanish (Dominican Republic) */
   | "ES_DO"
+  /** Spanish (Ceuta & Melilla) */
   | "ES_EA"
+  /** Spanish (Ecuador) */
   | "ES_EC"
+  /** Spanish (Spain) */
   | "ES_ES"
+  /** Spanish (Equatorial Guinea) */
   | "ES_GQ"
+  /** Spanish (Guatemala) */
   | "ES_GT"
+  /** Spanish (Honduras) */
   | "ES_HN"
+  /** Spanish (Canary Islands) */
   | "ES_IC"
+  /** Spanish (Mexico) */
   | "ES_MX"
+  /** Spanish (Nicaragua) */
   | "ES_NI"
+  /** Spanish (Panama) */
   | "ES_PA"
+  /** Spanish (Peru) */
   | "ES_PE"
+  /** Spanish (Philippines) */
   | "ES_PH"
+  /** Spanish (Puerto Rico) */
   | "ES_PR"
+  /** Spanish (Paraguay) */
   | "ES_PY"
+  /** Spanish (El Salvador) */
   | "ES_SV"
+  /** Spanish (United States) */
   | "ES_US"
+  /** Spanish (Uruguay) */
   | "ES_UY"
+  /** Spanish (Venezuela) */
   | "ES_VE"
+  /** Estonian */
   | "ET"
+  /** Estonian (Estonia) */
   | "ET_EE"
+  /** Basque */
   | "EU"
+  /** Basque (Spain) */
   | "EU_ES"
+  /** Ewondo */
   | "EWO"
+  /** Ewondo (Cameroon) */
   | "EWO_CM"
+  /** Persian */
   | "FA"
+  /** Persian (Afghanistan) */
   | "FA_AF"
+  /** Persian (Iran) */
   | "FA_IR"
+  /** Fulah */
   | "FF"
+  /** Fulah (Adlam) */
   | "FF_ADLM"
+  /** Fulah (Adlam, Burkina Faso) */
   | "FF_ADLM_BF"
+  /** Fulah (Adlam, Cameroon) */
   | "FF_ADLM_CM"
+  /** Fulah (Adlam, Ghana) */
   | "FF_ADLM_GH"
+  /** Fulah (Adlam, Gambia) */
   | "FF_ADLM_GM"
+  /** Fulah (Adlam, Guinea) */
   | "FF_ADLM_GN"
+  /** Fulah (Adlam, Guinea-Bissau) */
   | "FF_ADLM_GW"
+  /** Fulah (Adlam, Liberia) */
   | "FF_ADLM_LR"
+  /** Fulah (Adlam, Mauritania) */
   | "FF_ADLM_MR"
+  /** Fulah (Adlam, Niger) */
   | "FF_ADLM_NE"
+  /** Fulah (Adlam, Nigeria) */
   | "FF_ADLM_NG"
+  /** Fulah (Adlam, Sierra Leone) */
   | "FF_ADLM_SL"
+  /** Fulah (Adlam, Senegal) */
   | "FF_ADLM_SN"
+  /** Fulah (Latin) */
   | "FF_LATN"
+  /** Fulah (Latin, Burkina Faso) */
   | "FF_LATN_BF"
+  /** Fulah (Latin, Cameroon) */
   | "FF_LATN_CM"
+  /** Fulah (Latin, Ghana) */
   | "FF_LATN_GH"
+  /** Fulah (Latin, Gambia) */
   | "FF_LATN_GM"
+  /** Fulah (Latin, Guinea) */
   | "FF_LATN_GN"
+  /** Fulah (Latin, Guinea-Bissau) */
   | "FF_LATN_GW"
+  /** Fulah (Latin, Liberia) */
   | "FF_LATN_LR"
+  /** Fulah (Latin, Mauritania) */
   | "FF_LATN_MR"
+  /** Fulah (Latin, Niger) */
   | "FF_LATN_NE"
+  /** Fulah (Latin, Nigeria) */
   | "FF_LATN_NG"
+  /** Fulah (Latin, Sierra Leone) */
   | "FF_LATN_SL"
+  /** Fulah (Latin, Senegal) */
   | "FF_LATN_SN"
+  /** Finnish */
   | "FI"
+  /** Filipino */
   | "FIL"
+  /** Filipino (Philippines) */
   | "FIL_PH"
+  /** Finnish (Finland) */
   | "FI_FI"
+  /** Faroese */
   | "FO"
+  /** Faroese (Denmark) */
   | "FO_DK"
+  /** Faroese (Faroe Islands) */
   | "FO_FO"
+  /** French */
   | "FR"
+  /** French (Belgium) */
   | "FR_BE"
+  /** French (Burkina Faso) */
   | "FR_BF"
+  /** French (Burundi) */
   | "FR_BI"
+  /** French (Benin) */
   | "FR_BJ"
+  /** French (St. Barthélemy) */
   | "FR_BL"
+  /** French (Canada) */
   | "FR_CA"
+  /** French (Congo - Kinshasa) */
   | "FR_CD"
+  /** French (Central African Republic) */
   | "FR_CF"
+  /** French (Congo - Brazzaville) */
   | "FR_CG"
+  /** French (Switzerland) */
   | "FR_CH"
+  /** French (Côte d’Ivoire) */
   | "FR_CI"
+  /** French (Cameroon) */
   | "FR_CM"
+  /** French (Djibouti) */
   | "FR_DJ"
+  /** French (Algeria) */
   | "FR_DZ"
+  /** French (France) */
   | "FR_FR"
+  /** French (Gabon) */
   | "FR_GA"
+  /** French (French Guiana) */
   | "FR_GF"
+  /** French (Guinea) */
   | "FR_GN"
+  /** French (Guadeloupe) */
   | "FR_GP"
+  /** French (Equatorial Guinea) */
   | "FR_GQ"
+  /** French (Haiti) */
   | "FR_HT"
+  /** French (Comoros) */
   | "FR_KM"
+  /** French (Luxembourg) */
   | "FR_LU"
+  /** French (Morocco) */
   | "FR_MA"
+  /** French (Monaco) */
   | "FR_MC"
+  /** French (St. Martin) */
   | "FR_MF"
+  /** French (Madagascar) */
   | "FR_MG"
+  /** French (Mali) */
   | "FR_ML"
+  /** French (Martinique) */
   | "FR_MQ"
+  /** French (Mauritania) */
   | "FR_MR"
+  /** French (Mauritius) */
   | "FR_MU"
+  /** French (New Caledonia) */
   | "FR_NC"
+  /** French (Niger) */
   | "FR_NE"
+  /** French (French Polynesia) */
   | "FR_PF"
+  /** French (St. Pierre & Miquelon) */
   | "FR_PM"
+  /** French (Réunion) */
   | "FR_RE"
+  /** French (Rwanda) */
   | "FR_RW"
+  /** French (Seychelles) */
   | "FR_SC"
+  /** French (Senegal) */
   | "FR_SN"
+  /** French (Syria) */
   | "FR_SY"
+  /** French (Chad) */
   | "FR_TD"
+  /** French (Togo) */
   | "FR_TG"
+  /** French (Tunisia) */
   | "FR_TN"
+  /** French (Vanuatu) */
   | "FR_VU"
+  /** French (Wallis & Futuna) */
   | "FR_WF"
+  /** French (Mayotte) */
   | "FR_YT"
+  /** Friulian */
   | "FUR"
+  /** Friulian (Italy) */
   | "FUR_IT"
+  /** Western Frisian */
   | "FY"
+  /** Western Frisian (Netherlands) */
   | "FY_NL"
+  /** Irish */
   | "GA"
+  /** Irish (United Kingdom) */
   | "GA_GB"
+  /** Irish (Ireland) */
   | "GA_IE"
+  /** Scottish Gaelic */
   | "GD"
+  /** Scottish Gaelic (United Kingdom) */
   | "GD_GB"
+  /** Galician */
   | "GL"
+  /** Galician (Spain) */
   | "GL_ES"
+  /** Swiss German */
   | "GSW"
+  /** Swiss German (Switzerland) */
   | "GSW_CH"
+  /** Swiss German (France) */
   | "GSW_FR"
+  /** Swiss German (Liechtenstein) */
   | "GSW_LI"
+  /** Gujarati */
   | "GU"
+  /** Gusii */
   | "GUZ"
+  /** Gusii (Kenya) */
   | "GUZ_KE"
+  /** Gujarati (India) */
   | "GU_IN"
+  /** Manx */
   | "GV"
+  /** Manx (Isle of Man) */
   | "GV_IM"
+  /** Hausa */
   | "HA"
+  /** Hawaiian */
   | "HAW"
+  /** Hawaiian (United States) */
   | "HAW_US"
+  /** Hausa (Ghana) */
   | "HA_GH"
+  /** Hausa (Niger) */
   | "HA_NE"
+  /** Hausa (Nigeria) */
   | "HA_NG"
+  /** Hebrew */
   | "HE"
+  /** Hebrew (Israel) */
   | "HE_IL"
+  /** Hindi */
   | "HI"
+  /** Hindi (India) */
   | "HI_IN"
+  /** Croatian */
   | "HR"
+  /** Croatian (Bosnia & Herzegovina) */
   | "HR_BA"
+  /** Croatian (Croatia) */
   | "HR_HR"
+  /** Upper Sorbian */
   | "HSB"
+  /** Upper Sorbian (Germany) */
   | "HSB_DE"
+  /** Hungarian */
   | "HU"
+  /** Hungarian (Hungary) */
   | "HU_HU"
+  /** Armenian */
   | "HY"
+  /** Armenian (Armenia) */
   | "HY_AM"
+  /** Interlingua */
   | "IA"
+  /** Indonesian */
   | "ID"
+  /** Indonesian (Indonesia) */
   | "ID_ID"
+  /** Igbo */
   | "IG"
+  /** Igbo (Nigeria) */
   | "IG_NG"
+  /** Sichuan Yi */
   | "II"
+  /** Sichuan Yi (China) */
   | "II_CN"
+  /** Icelandic */
   | "IS"
+  /** Icelandic (Iceland) */
   | "IS_IS"
+  /** Italian */
   | "IT"
+  /** Italian (Switzerland) */
   | "IT_CH"
+  /** Italian (Italy) */
   | "IT_IT"
+  /** Italian (San Marino) */
   | "IT_SM"
+  /** Italian (Vatican City) */
   | "IT_VA"
+  /** Japanese */
   | "JA"
+  /** Japanese (Japan) */
   | "JA_JP"
+  /** Ngomba */
   | "JGO"
+  /** Ngomba (Cameroon) */
   | "JGO_CM"
+  /** Machame */
   | "JMC"
+  /** Machame (Tanzania) */
   | "JMC_TZ"
+  /** Javanese */
   | "JV"
+  /** Javanese (Indonesia) */
   | "JV_ID"
+  /** Georgian */
   | "KA"
+  /** Kabyle */
   | "KAB"
+  /** Kabyle (Algeria) */
   | "KAB_DZ"
+  /** Kamba */
   | "KAM"
+  /** Kamba (Kenya) */
   | "KAM_KE"
+  /** Georgian (Georgia) */
   | "KA_GE"
+  /** Makonde */
   | "KDE"
+  /** Makonde (Tanzania) */
   | "KDE_TZ"
+  /** Kabuverdianu */
   | "KEA"
+  /** Kabuverdianu (Cape Verde) */
   | "KEA_CV"
+  /** Koyra Chiini */
   | "KHQ"
+  /** Koyra Chiini (Mali) */
   | "KHQ_ML"
+  /** Kikuyu */
   | "KI"
+  /** Kikuyu (Kenya) */
   | "KI_KE"
+  /** Kazakh */
   | "KK"
+  /** Kako */
   | "KKJ"
+  /** Kako (Cameroon) */
   | "KKJ_CM"
+  /** Kazakh (Kazakhstan) */
   | "KK_KZ"
+  /** Kalaallisut */
   | "KL"
+  /** Kalenjin */
   | "KLN"
+  /** Kalenjin (Kenya) */
   | "KLN_KE"
+  /** Kalaallisut (Greenland) */
   | "KL_GL"
+  /** Khmer */
   | "KM"
+  /** Khmer (Cambodia) */
   | "KM_KH"
+  /** Kannada */
   | "KN"
+  /** Kannada (India) */
   | "KN_IN"
+  /** Korean */
   | "KO"
+  /** Konkani */
   | "KOK"
+  /** Konkani (India) */
   | "KOK_IN"
+  /** Korean (North Korea) */
   | "KO_KP"
+  /** Korean (South Korea) */
   | "KO_KR"
+  /** Kashmiri */
   | "KS"
+  /** Shambala */
   | "KSB"
+  /** Shambala (Tanzania) */
   | "KSB_TZ"
+  /** Bafia */
   | "KSF"
+  /** Bafia (Cameroon) */
   | "KSF_CM"
+  /** Colognian */
   | "KSH"
+  /** Colognian (Germany) */
   | "KSH_DE"
+  /** Kashmiri (Arabic) */
   | "KS_ARAB"
+  /** Kashmiri (Arabic, India) */
   | "KS_ARAB_IN"
+  /** Kurdish */
   | "KU"
+  /** Kurdish (Turkey) */
   | "KU_TR"
+  /** Cornish */
   | "KW"
+  /** Cornish (United Kingdom) */
   | "KW_GB"
+  /** Kyrgyz */
   | "KY"
+  /** Kyrgyz (Kyrgyzstan) */
   | "KY_KG"
+  /** Langi */
   | "LAG"
+  /** Langi (Tanzania) */
   | "LAG_TZ"
+  /** Luxembourgish */
   | "LB"
+  /** Luxembourgish (Luxembourg) */
   | "LB_LU"
+  /** Ganda */
   | "LG"
+  /** Ganda (Uganda) */
   | "LG_UG"
+  /** Lakota */
   | "LKT"
+  /** Lakota (United States) */
   | "LKT_US"
+  /** Lingala */
   | "LN"
+  /** Lingala (Angola) */
   | "LN_AO"
+  /** Lingala (Congo - Kinshasa) */
   | "LN_CD"
+  /** Lingala (Central African Republic) */
   | "LN_CF"
+  /** Lingala (Congo - Brazzaville) */
   | "LN_CG"
+  /** Lao */
   | "LO"
+  /** Lao (Laos) */
   | "LO_LA"
+  /** Northern Luri */
   | "LRC"
+  /** Northern Luri (Iraq) */
   | "LRC_IQ"
+  /** Northern Luri (Iran) */
   | "LRC_IR"
+  /** Lithuanian */
   | "LT"
+  /** Lithuanian (Lithuania) */
   | "LT_LT"
+  /** Luba-Katanga */
   | "LU"
+  /** Luo */
   | "LUO"
+  /** Luo (Kenya) */
   | "LUO_KE"
+  /** Luyia */
   | "LUY"
+  /** Luyia (Kenya) */
   | "LUY_KE"
+  /** Luba-Katanga (Congo - Kinshasa) */
   | "LU_CD"
+  /** Latvian */
   | "LV"
+  /** Latvian (Latvia) */
   | "LV_LV"
+  /** Maithili */
   | "MAI"
+  /** Maithili (India) */
   | "MAI_IN"
+  /** Masai */
   | "MAS"
+  /** Masai (Kenya) */
   | "MAS_KE"
+  /** Masai (Tanzania) */
   | "MAS_TZ"
+  /** Meru */
   | "MER"
+  /** Meru (Kenya) */
   | "MER_KE"
+  /** Morisyen */
   | "MFE"
+  /** Morisyen (Mauritius) */
   | "MFE_MU"
+  /** Malagasy */
   | "MG"
+  /** Makhuwa-Meetto */
   | "MGH"
+  /** Makhuwa-Meetto (Mozambique) */
   | "MGH_MZ"
+  /** Metaʼ */
   | "MGO"
+  /** Metaʼ (Cameroon) */
   | "MGO_CM"
+  /** Malagasy (Madagascar) */
   | "MG_MG"
+  /** Maori */
   | "MI"
+  /** Maori (New Zealand) */
   | "MI_NZ"
+  /** Macedonian */
   | "MK"
+  /** Macedonian (North Macedonia) */
   | "MK_MK"
+  /** Malayalam */
   | "ML"
+  /** Malayalam (India) */
   | "ML_IN"
+  /** Mongolian */
   | "MN"
+  /** Manipuri */
   | "MNI"
+  /** Manipuri (Bangla) */
   | "MNI_BENG"
+  /** Manipuri (Bangla, India) */
   | "MNI_BENG_IN"
+  /** Mongolian (Mongolia) */
   | "MN_MN"
+  /** Marathi */
   | "MR"
+  /** Marathi (India) */
   | "MR_IN"
+  /** Malay */
   | "MS"
+  /** Malay (Brunei) */
   | "MS_BN"
+  /** Malay (Indonesia) */
   | "MS_ID"
+  /** Malay (Malaysia) */
   | "MS_MY"
+  /** Malay (Singapore) */
   | "MS_SG"
+  /** Maltese */
   | "MT"
+  /** Maltese (Malta) */
   | "MT_MT"
+  /** Mundang */
   | "MUA"
+  /** Mundang (Cameroon) */
   | "MUA_CM"
+  /** Burmese */
   | "MY"
+  /** Burmese (Myanmar (Burma)) */
   | "MY_MM"
+  /** Mazanderani */
   | "MZN"
+  /** Mazanderani (Iran) */
   | "MZN_IR"
+  /** Nama */
   | "NAQ"
+  /** Nama (Namibia) */
   | "NAQ_NA"
+  /** Norwegian Bokmål */
   | "NB"
+  /** Norwegian Bokmål (Norway) */
   | "NB_NO"
+  /** Norwegian Bokmål (Svalbard & Jan Mayen) */
   | "NB_SJ"
+  /** North Ndebele */
   | "ND"
+  /** Low German */
   | "NDS"
+  /** Low German (Germany) */
   | "NDS_DE"
+  /** Low German (Netherlands) */
   | "NDS_NL"
+  /** North Ndebele (Zimbabwe) */
   | "ND_ZW"
+  /** Nepali */
   | "NE"
+  /** Nepali (India) */
   | "NE_IN"
+  /** Nepali (Nepal) */
   | "NE_NP"
+  /** Dutch */
   | "NL"
+  /** Dutch (Aruba) */
   | "NL_AW"
+  /** Dutch (Belgium) */
   | "NL_BE"
+  /** Dutch (Caribbean Netherlands) */
   | "NL_BQ"
+  /** Dutch (Curaçao) */
   | "NL_CW"
+  /** Dutch (Netherlands) */
   | "NL_NL"
+  /** Dutch (Suriname) */
   | "NL_SR"
+  /** Dutch (Sint Maarten) */
   | "NL_SX"
+  /** Kwasio */
   | "NMG"
+  /** Kwasio (Cameroon) */
   | "NMG_CM"
+  /** Norwegian Nynorsk */
   | "NN"
+  /** Ngiemboon */
   | "NNH"
+  /** Ngiemboon (Cameroon) */
   | "NNH_CM"
+  /** Norwegian Nynorsk (Norway) */
   | "NN_NO"
+  /** Nuer */
   | "NUS"
+  /** Nuer (South Sudan) */
   | "NUS_SS"
+  /** Nyankole */
   | "NYN"
+  /** Nyankole (Uganda) */
   | "NYN_UG"
+  /** Oromo */
   | "OM"
+  /** Oromo (Ethiopia) */
   | "OM_ET"
+  /** Oromo (Kenya) */
   | "OM_KE"
+  /** Odia */
   | "OR"
+  /** Odia (India) */
   | "OR_IN"
+  /** Ossetic */
   | "OS"
+  /** Ossetic (Georgia) */
   | "OS_GE"
+  /** Ossetic (Russia) */
   | "OS_RU"
+  /** Punjabi */
   | "PA"
+  /** Punjabi (Arabic) */
   | "PA_ARAB"
+  /** Punjabi (Arabic, Pakistan) */
   | "PA_ARAB_PK"
+  /** Punjabi (Gurmukhi) */
   | "PA_GURU"
+  /** Punjabi (Gurmukhi, India) */
   | "PA_GURU_IN"
+  /** Nigerian Pidgin */
   | "PCM"
+  /** Nigerian Pidgin (Nigeria) */
   | "PCM_NG"
+  /** Polish */
   | "PL"
+  /** Polish (Poland) */
   | "PL_PL"
+  /** Prussian */
   | "PRG"
+  /** Pashto */
   | "PS"
+  /** Pashto (Afghanistan) */
   | "PS_AF"
+  /** Pashto (Pakistan) */
   | "PS_PK"
+  /** Portuguese */
   | "PT"
+  /** Portuguese (Angola) */
   | "PT_AO"
+  /** Portuguese (Brazil) */
   | "PT_BR"
+  /** Portuguese (Switzerland) */
   | "PT_CH"
+  /** Portuguese (Cape Verde) */
   | "PT_CV"
+  /** Portuguese (Equatorial Guinea) */
   | "PT_GQ"
+  /** Portuguese (Guinea-Bissau) */
   | "PT_GW"
+  /** Portuguese (Luxembourg) */
   | "PT_LU"
+  /** Portuguese (Macao SAR China) */
   | "PT_MO"
+  /** Portuguese (Mozambique) */
   | "PT_MZ"
+  /** Portuguese (Portugal) */
   | "PT_PT"
+  /** Portuguese (São Tomé & Príncipe) */
   | "PT_ST"
+  /** Portuguese (Timor-Leste) */
   | "PT_TL"
+  /** Quechua */
   | "QU"
+  /** Quechua (Bolivia) */
   | "QU_BO"
+  /** Quechua (Ecuador) */
   | "QU_EC"
+  /** Quechua (Peru) */
   | "QU_PE"
+  /** Romansh */
   | "RM"
+  /** Romansh (Switzerland) */
   | "RM_CH"
+  /** Rundi */
   | "RN"
+  /** Rundi (Burundi) */
   | "RN_BI"
+  /** Romanian */
   | "RO"
+  /** Rombo */
   | "ROF"
+  /** Rombo (Tanzania) */
   | "ROF_TZ"
+  /** Romanian (Moldova) */
   | "RO_MD"
+  /** Romanian (Romania) */
   | "RO_RO"
+  /** Russian */
   | "RU"
+  /** Russian (Belarus) */
   | "RU_BY"
+  /** Russian (Kyrgyzstan) */
   | "RU_KG"
+  /** Russian (Kazakhstan) */
   | "RU_KZ"
+  /** Russian (Moldova) */
   | "RU_MD"
+  /** Russian (Russia) */
   | "RU_RU"
+  /** Russian (Ukraine) */
   | "RU_UA"
+  /** Kinyarwanda */
   | "RW"
+  /** Rwa */
   | "RWK"
+  /** Rwa (Tanzania) */
   | "RWK_TZ"
+  /** Kinyarwanda (Rwanda) */
   | "RW_RW"
+  /** Sakha */
   | "SAH"
+  /** Sakha (Russia) */
   | "SAH_RU"
+  /** Samburu */
   | "SAQ"
+  /** Samburu (Kenya) */
   | "SAQ_KE"
+  /** Santali */
   | "SAT"
+  /** Santali (Ol Chiki) */
   | "SAT_OLCK"
+  /** Santali (Ol Chiki, India) */
   | "SAT_OLCK_IN"
+  /** Sangu */
   | "SBP"
+  /** Sangu (Tanzania) */
   | "SBP_TZ"
+  /** Sindhi */
   | "SD"
+  /** Sindhi (Arabic) */
   | "SD_ARAB"
+  /** Sindhi (Arabic, Pakistan) */
   | "SD_ARAB_PK"
+  /** Sindhi (Devanagari) */
   | "SD_DEVA"
+  /** Sindhi (Devanagari, India) */
   | "SD_DEVA_IN"
+  /** Northern Sami */
   | "SE"
+  /** Sena */
   | "SEH"
+  /** Sena (Mozambique) */
   | "SEH_MZ"
+  /** Koyraboro Senni */
   | "SES"
+  /** Koyraboro Senni (Mali) */
   | "SES_ML"
+  /** Northern Sami (Finland) */
   | "SE_FI"
+  /** Northern Sami (Norway) */
   | "SE_NO"
+  /** Northern Sami (Sweden) */
   | "SE_SE"
+  /** Sango */
   | "SG"
+  /** Sango (Central African Republic) */
   | "SG_CF"
+  /** Tachelhit */
   | "SHI"
+  /** Tachelhit (Latin) */
   | "SHI_LATN"
+  /** Tachelhit (Latin, Morocco) */
   | "SHI_LATN_MA"
+  /** Tachelhit (Tifinagh) */
   | "SHI_TFNG"
+  /** Tachelhit (Tifinagh, Morocco) */
   | "SHI_TFNG_MA"
+  /** Sinhala */
   | "SI"
+  /** Sinhala (Sri Lanka) */
   | "SI_LK"
+  /** Slovak */
   | "SK"
+  /** Slovak (Slovakia) */
   | "SK_SK"
+  /** Slovenian */
   | "SL"
+  /** Slovenian (Slovenia) */
   | "SL_SI"
+  /** Inari Sami */
   | "SMN"
+  /** Inari Sami (Finland) */
   | "SMN_FI"
+  /** Shona */
   | "SN"
+  /** Shona (Zimbabwe) */
   | "SN_ZW"
+  /** Somali */
   | "SO"
+  /** Somali (Djibouti) */
   | "SO_DJ"
+  /** Somali (Ethiopia) */
   | "SO_ET"
+  /** Somali (Kenya) */
   | "SO_KE"
+  /** Somali (Somalia) */
   | "SO_SO"
+  /** Albanian */
   | "SQ"
+  /** Albanian (Albania) */
   | "SQ_AL"
+  /** Albanian (North Macedonia) */
   | "SQ_MK"
+  /** Albanian (Kosovo) */
   | "SQ_XK"
+  /** Serbian */
   | "SR"
+  /** Serbian (Cyrillic) */
   | "SR_CYRL"
+  /** Serbian (Cyrillic, Bosnia & Herzegovina) */
   | "SR_CYRL_BA"
+  /** Serbian (Cyrillic, Montenegro) */
   | "SR_CYRL_ME"
+  /** Serbian (Cyrillic, Serbia) */
   | "SR_CYRL_RS"
+  /** Serbian (Cyrillic, Kosovo) */
   | "SR_CYRL_XK"
+  /** Serbian (Latin) */
   | "SR_LATN"
+  /** Serbian (Latin, Bosnia & Herzegovina) */
   | "SR_LATN_BA"
+  /** Serbian (Latin, Montenegro) */
   | "SR_LATN_ME"
+  /** Serbian (Latin, Serbia) */
   | "SR_LATN_RS"
+  /** Serbian (Latin, Kosovo) */
   | "SR_LATN_XK"
+  /** Sundanese */
   | "SU"
+  /** Sundanese (Latin) */
   | "SU_LATN"
+  /** Sundanese (Latin, Indonesia) */
   | "SU_LATN_ID"
+  /** Swedish */
   | "SV"
+  /** Swedish (Åland Islands) */
   | "SV_AX"
+  /** Swedish (Finland) */
   | "SV_FI"
+  /** Swedish (Sweden) */
   | "SV_SE"
+  /** Swahili */
   | "SW"
+  /** Swahili (Congo - Kinshasa) */
   | "SW_CD"
+  /** Swahili (Kenya) */
   | "SW_KE"
+  /** Swahili (Tanzania) */
   | "SW_TZ"
+  /** Swahili (Uganda) */
   | "SW_UG"
+  /** Tamil */
   | "TA"
+  /** Tamil (India) */
   | "TA_IN"
+  /** Tamil (Sri Lanka) */
   | "TA_LK"
+  /** Tamil (Malaysia) */
   | "TA_MY"
+  /** Tamil (Singapore) */
   | "TA_SG"
+  /** Telugu */
   | "TE"
+  /** Teso */
   | "TEO"
+  /** Teso (Kenya) */
   | "TEO_KE"
+  /** Teso (Uganda) */
   | "TEO_UG"
+  /** Telugu (India) */
   | "TE_IN"
+  /** Tajik */
   | "TG"
+  /** Tajik (Tajikistan) */
   | "TG_TJ"
+  /** Thai */
   | "TH"
+  /** Thai (Thailand) */
   | "TH_TH"
+  /** Tigrinya */
   | "TI"
+  /** Tigrinya (Eritrea) */
   | "TI_ER"
+  /** Tigrinya (Ethiopia) */
   | "TI_ET"
+  /** Turkmen */
   | "TK"
+  /** Turkmen (Turkmenistan) */
   | "TK_TM"
+  /** Tongan */
   | "TO"
+  /** Tongan (Tonga) */
   | "TO_TO"
+  /** Turkish */
   | "TR"
+  /** Turkish (Cyprus) */
   | "TR_CY"
+  /** Turkish (Turkey) */
   | "TR_TR"
+  /** Tatar */
   | "TT"
+  /** Tatar (Russia) */
   | "TT_RU"
+  /** Tasawaq */
   | "TWQ"
+  /** Tasawaq (Niger) */
   | "TWQ_NE"
+  /** Central Atlas Tamazight */
   | "TZM"
+  /** Central Atlas Tamazight (Morocco) */
   | "TZM_MA"
+  /** Uyghur */
   | "UG"
+  /** Uyghur (China) */
   | "UG_CN"
+  /** Ukrainian */
   | "UK"
+  /** Ukrainian (Ukraine) */
   | "UK_UA"
+  /** Urdu */
   | "UR"
+  /** Urdu (India) */
   | "UR_IN"
+  /** Urdu (Pakistan) */
   | "UR_PK"
+  /** Uzbek */
   | "UZ"
+  /** Uzbek (Arabic) */
   | "UZ_ARAB"
+  /** Uzbek (Arabic, Afghanistan) */
   | "UZ_ARAB_AF"
+  /** Uzbek (Cyrillic) */
   | "UZ_CYRL"
+  /** Uzbek (Cyrillic, Uzbekistan) */
   | "UZ_CYRL_UZ"
+  /** Uzbek (Latin) */
   | "UZ_LATN"
+  /** Uzbek (Latin, Uzbekistan) */
   | "UZ_LATN_UZ"
+  /** Vai */
   | "VAI"
+  /** Vai (Latin) */
   | "VAI_LATN"
+  /** Vai (Latin, Liberia) */
   | "VAI_LATN_LR"
+  /** Vai (Vai) */
   | "VAI_VAII"
+  /** Vai (Vai, Liberia) */
   | "VAI_VAII_LR"
+  /** Vietnamese */
   | "VI"
+  /** Vietnamese (Vietnam) */
   | "VI_VN"
+  /** Volapük */
   | "VO"
+  /** Vunjo */
   | "VUN"
+  /** Vunjo (Tanzania) */
   | "VUN_TZ"
+  /** Walser */
   | "WAE"
+  /** Walser (Switzerland) */
   | "WAE_CH"
+  /** Wolof */
   | "WO"
+  /** Wolof (Senegal) */
   | "WO_SN"
+  /** Xhosa */
   | "XH"
+  /** Xhosa (South Africa) */
   | "XH_ZA"
+  /** Soga */
   | "XOG"
+  /** Soga (Uganda) */
   | "XOG_UG"
+  /** Yangben */
   | "YAV"
+  /** Yangben (Cameroon) */
   | "YAV_CM"
+  /** Yiddish */
   | "YI"
+  /** Yoruba */
   | "YO"
+  /** Yoruba (Benin) */
   | "YO_BJ"
+  /** Yoruba (Nigeria) */
   | "YO_NG"
+  /** Cantonese */
   | "YUE"
+  /** Cantonese (Simplified) */
   | "YUE_HANS"
+  /** Cantonese (Simplified, China) */
   | "YUE_HANS_CN"
+  /** Cantonese (Traditional) */
   | "YUE_HANT"
+  /** Cantonese (Traditional, Hong Kong SAR China) */
   | "YUE_HANT_HK"
+  /** Standard Moroccan Tamazight */
   | "ZGH"
+  /** Standard Moroccan Tamazight (Morocco) */
   | "ZGH_MA"
+  /** Chinese */
   | "ZH"
+  /** Chinese (Simplified) */
   | "ZH_HANS"
+  /** Chinese (Simplified, China) */
   | "ZH_HANS_CN"
+  /** Chinese (Simplified, Hong Kong SAR China) */
   | "ZH_HANS_HK"
+  /** Chinese (Simplified, Macao SAR China) */
   | "ZH_HANS_MO"
+  /** Chinese (Simplified, Singapore) */
   | "ZH_HANS_SG"
+  /** Chinese (Traditional) */
   | "ZH_HANT"
+  /** Chinese (Traditional, Hong Kong SAR China) */
   | "ZH_HANT_HK"
+  /** Chinese (Traditional, Macao SAR China) */
   | "ZH_HANT_MO"
+  /** Chinese (Traditional, Taiwan) */
   | "ZH_HANT_TW"
+  /** Zulu */
   | "ZU"
+  /** Zulu (South Africa) */
   | "ZU_ZA";
 
 export type LanguageDisplay = {
@@ -10610,6 +11842,22 @@ export type Mutation = {
   appFetchManifest: Maybe<AppFetchManifest>;
   /** Install new app by using app manifest. Requires the following permissions: AUTHENTICATED_STAFF_USER and MANAGE_APPS. */
   appInstall: Maybe<AppInstall>;
+  /**
+   * Add a problem to the calling app.
+   *
+   * Added in Saleor 3.22.
+   *
+   * Requires one of the following permissions: AUTHENTICATED_APP.
+   */
+  appProblemCreate: Maybe<AppProblemCreate>;
+  /**
+   * Dismiss problems for an app.
+   *
+   * Added in Saleor 3.22.
+   *
+   * Requires one of the following permissions: MANAGE_APPS, AUTHENTICATED_APP.
+   */
+  appProblemDismiss: Maybe<AppProblemDismiss>;
   /**
    * Re-enable sync webhooks for provided app. Can be used to manually re-enable sync webhooks for the app before the cooldown period ends.
    *
@@ -12863,6 +14111,14 @@ export type MutationAppFetchManifestArgs = {
 
 export type MutationAppInstallArgs = {
   input: AppInstallInput;
+};
+
+export type MutationAppProblemCreateArgs = {
+  input: AppProblemCreateInput;
+};
+
+export type MutationAppProblemDismissArgs = {
+  input: AppProblemDismissInput;
 };
 
 export type MutationAppReenableSyncWebhooksArgs = {
@@ -24940,6 +26196,14 @@ export type Shop = ObjectWithMetadata & {
   permissions: Array<Permission>;
   /** List of possible phone prefixes. */
   phonePrefixes: Array<Scalars["String"]["output"]>;
+  /**
+   * When enabled, address fields that are not valid for a given country (according to Google's i18n address data) will be preserved instead of being removed during validation. Validation errors are still returned.
+   *
+   * Added in Saleor 3.22.
+   *
+   * Requires one of the following permissions: MANAGE_SETTINGS.
+   */
+  preserveAllAddressFields: Scalars["Boolean"]["output"];
   /** List of private metadata items. Requires staff permissions to access. */
   privateMetadata: Array<MetadataItem>;
   /**
@@ -25156,6 +26420,12 @@ export type ShopSettingsInput = {
    * Warning: never store sensitive information, including financial data such as credit card details.
    */
   metadata?: InputMaybe<Array<MetadataInput>>;
+  /**
+   * When enabled, address fields that are not valid for a given country (according to Google's i18n address data) will be preserved instead of being removed during validation. Validation errors are still returned.
+   *
+   * Added in Saleor 3.22.
+   */
+  preserveAllAddressFields?: InputMaybe<Scalars["Boolean"]["input"]>;
   /**
    * Shop private metadata. Requires permissions to modify and to read the metadata of the object it's attached to.
    *
@@ -29991,17 +31261,17 @@ export type _Service = {
 };
 
 export type RegisterAccount_accountRegister_AccountRegister_user_User = {
-  id: string;
   email: string;
+  id: string;
 };
 
 export type RegisterAccount_accountRegister_AccountRegister_errors_AccountError =
-  { field: string | null; message: string | null; code: AccountErrorCode };
+  { code: AccountErrorCode; field: string | null; message: string | null };
 
 export type RegisterAccount_accountRegister_AccountRegister = {
+  errors: Array<RegisterAccount_accountRegister_AccountRegister_errors_AccountError>;
   requiresConfirmation: boolean | null;
   user: RegisterAccount_accountRegister_AccountRegister_user_User | null;
-  errors: Array<RegisterAccount_accountRegister_AccountRegister_errors_AccountError>;
 };
 
 export type RegisterAccount_Mutation = {
@@ -30018,22 +31288,22 @@ export type AccountUpdate_accountUpdate_AccountUpdate_user_User_metadata_Metadat
   { key: string; value: string };
 
 export type AccountUpdate_accountUpdate_AccountUpdate_user_User = {
-  id: string;
   email: string;
   firstName: string;
+  id: string;
   lastName: string;
   metadata: Array<AccountUpdate_accountUpdate_AccountUpdate_user_User_metadata_MetadataItem>;
 };
 
 export type AccountUpdate_accountUpdate_AccountUpdate_errors_AccountError = {
+  code: AccountErrorCode;
   field: string | null;
   message: string | null;
-  code: AccountErrorCode;
 };
 
 export type AccountUpdate_accountUpdate_AccountUpdate = {
-  user: AccountUpdate_accountUpdate_AccountUpdate_user_User | null;
   errors: Array<AccountUpdate_accountUpdate_AccountUpdate_errors_AccountError>;
+  user: AccountUpdate_accountUpdate_AccountUpdate_user_User | null;
 };
 
 export type AccountUpdate_Mutation = {
@@ -30048,15 +31318,15 @@ export type AccountUpdateVariables = Exact<{
 export type AccountUpdate = AccountUpdate_Mutation;
 
 export type CollectionAddProducts_collectionAddProducts_CollectionAddProducts_errors_CollectionError =
-  { field: string | null; message: string | null; code: CollectionErrorCode };
+  { code: CollectionErrorCode; field: string | null; message: string | null };
 
 export type CollectionAddProducts_collectionAddProducts_CollectionAddProducts_collection_Collection =
   { id: string; name: string };
 
 export type CollectionAddProducts_collectionAddProducts_CollectionAddProducts =
   {
-    errors: Array<CollectionAddProducts_collectionAddProducts_CollectionAddProducts_errors_CollectionError>;
     collection: CollectionAddProducts_collectionAddProducts_CollectionAddProducts_collection_Collection | null;
+    errors: Array<CollectionAddProducts_collectionAddProducts_CollectionAddProducts_errors_CollectionError>;
   };
 
 export type CollectionAddProducts_Mutation = {
@@ -30071,29 +31341,29 @@ export type CollectionAddProductsVariables = Exact<{
 export type CollectionAddProducts = CollectionAddProducts_Mutation;
 
 export type CollectionChannelListingUpdate_collectionChannelListingUpdate_CollectionChannelListingUpdate_errors_CollectionChannelListingError =
-  { field: string | null; message: string | null; code: ProductErrorCode };
+  { code: ProductErrorCode; field: string | null; message: string | null };
 
 export type CollectionChannelListingUpdate_collectionChannelListingUpdate_CollectionChannelListingUpdate_collection_Collection_channelListings_CollectionChannelListing_channel_Channel =
   { id: string; name: string };
 
 export type CollectionChannelListingUpdate_collectionChannelListingUpdate_CollectionChannelListingUpdate_collection_Collection_channelListings_CollectionChannelListing =
   {
+    channel: CollectionChannelListingUpdate_collectionChannelListingUpdate_CollectionChannelListingUpdate_collection_Collection_channelListings_CollectionChannelListing_channel_Channel;
     id: string;
     isPublished: boolean;
     publishedAt: string | null;
-    channel: CollectionChannelListingUpdate_collectionChannelListingUpdate_CollectionChannelListingUpdate_collection_Collection_channelListings_CollectionChannelListing_channel_Channel;
   };
 
 export type CollectionChannelListingUpdate_collectionChannelListingUpdate_CollectionChannelListingUpdate_collection_Collection =
   {
-    id: string;
     channelListings: Array<CollectionChannelListingUpdate_collectionChannelListingUpdate_CollectionChannelListingUpdate_collection_Collection_channelListings_CollectionChannelListing> | null;
+    id: string;
   };
 
 export type CollectionChannelListingUpdate_collectionChannelListingUpdate_CollectionChannelListingUpdate =
   {
-    errors: Array<CollectionChannelListingUpdate_collectionChannelListingUpdate_CollectionChannelListingUpdate_errors_CollectionChannelListingError>;
     collection: CollectionChannelListingUpdate_collectionChannelListingUpdate_CollectionChannelListingUpdate_collection_Collection | null;
+    errors: Array<CollectionChannelListingUpdate_collectionChannelListingUpdate_CollectionChannelListingUpdate_errors_CollectionChannelListingError>;
   };
 
 export type CollectionChannelListingUpdate_Mutation = {
@@ -30109,15 +31379,15 @@ export type CollectionChannelListingUpdate =
   CollectionChannelListingUpdate_Mutation;
 
 export type CollectionRemoveProducts_collectionRemoveProducts_CollectionRemoveProducts_errors_CollectionError =
-  { field: string | null; message: string | null; code: CollectionErrorCode };
+  { code: CollectionErrorCode; field: string | null; message: string | null };
 
 export type CollectionRemoveProducts_collectionRemoveProducts_CollectionRemoveProducts_collection_Collection =
   { id: string; name: string };
 
 export type CollectionRemoveProducts_collectionRemoveProducts_CollectionRemoveProducts =
   {
-    errors: Array<CollectionRemoveProducts_collectionRemoveProducts_CollectionRemoveProducts_errors_CollectionError>;
     collection: CollectionRemoveProducts_collectionRemoveProducts_CollectionRemoveProducts_collection_Collection | null;
+    errors: Array<CollectionRemoveProducts_collectionRemoveProducts_CollectionRemoveProducts_errors_CollectionError>;
   };
 
 export type CollectionRemoveProducts_Mutation = {
@@ -30132,7 +31402,10 @@ export type CollectionRemoveProductsVariables = Exact<{
 export type CollectionRemoveProducts = CollectionRemoveProducts_Mutation;
 
 export type CollectionUpdate_collectionUpdate_CollectionUpdate_errors_CollectionError =
-  { field: string | null; message: string | null; code: CollectionErrorCode };
+  { code: CollectionErrorCode; field: string | null; message: string | null };
+
+export type CollectionUpdate_collectionUpdate_CollectionUpdate_collection_Collection_backgroundImage_Image =
+  { alt: string | null; url: string };
 
 export type CollectionUpdate_collectionUpdate_CollectionUpdate_collection_Collection_metadata_MetadataItem =
   { key: string; value: string };
@@ -30142,19 +31415,20 @@ export type CollectionUpdate_collectionUpdate_CollectionUpdate_collection_Collec
 
 export type CollectionUpdate_collectionUpdate_CollectionUpdate_collection_Collection =
   {
-    id: string;
-    name: string;
-    slug: string;
+    backgroundImage: CollectionUpdate_collectionUpdate_CollectionUpdate_collection_Collection_backgroundImage_Image | null;
     description: string | null;
-    seoTitle: string | null;
-    seoDescription: string | null;
+    id: string;
     metadata: Array<CollectionUpdate_collectionUpdate_CollectionUpdate_collection_Collection_metadata_MetadataItem>;
+    name: string;
     privateMetadata: Array<CollectionUpdate_collectionUpdate_CollectionUpdate_collection_Collection_privateMetadata_MetadataItem>;
+    seoDescription: string | null;
+    seoTitle: string | null;
+    slug: string;
   };
 
 export type CollectionUpdate_collectionUpdate_CollectionUpdate = {
-  errors: Array<CollectionUpdate_collectionUpdate_CollectionUpdate_errors_CollectionError>;
   collection: CollectionUpdate_collectionUpdate_CollectionUpdate_collection_Collection | null;
+  errors: Array<CollectionUpdate_collectionUpdate_CollectionUpdate_errors_CollectionError>;
 };
 
 export type CollectionUpdate_Mutation = {
@@ -30169,17 +31443,17 @@ export type CollectionUpdateVariables = Exact<{
 export type CollectionUpdate = CollectionUpdate_Mutation;
 
 export type ConfirmVendorAccount_confirmAccount_ConfirmAccount_user_User = {
-  id: string;
   email: string;
+  id: string;
   isActive: boolean;
 };
 
 export type ConfirmVendorAccount_confirmAccount_ConfirmAccount_errors_AccountError =
-  { field: string | null; message: string | null; code: AccountErrorCode };
+  { code: AccountErrorCode; field: string | null; message: string | null };
 
 export type ConfirmVendorAccount_confirmAccount_ConfirmAccount = {
-  user: ConfirmVendorAccount_confirmAccount_ConfirmAccount_user_User | null;
   errors: Array<ConfirmVendorAccount_confirmAccount_ConfirmAccount_errors_AccountError>;
+  user: ConfirmVendorAccount_confirmAccount_ConfirmAccount_user_User | null;
 };
 
 export type ConfirmVendorAccount_Mutation = {
@@ -30198,14 +31472,14 @@ export type CustomerDelete_customerDelete_CustomerDelete_user_User = {
 };
 
 export type CustomerDelete_customerDelete_CustomerDelete_errors_AccountError = {
+  code: AccountErrorCode;
   field: string | null;
   message: string | null;
-  code: AccountErrorCode;
 };
 
 export type CustomerDelete_customerDelete_CustomerDelete = {
-  user: CustomerDelete_customerDelete_CustomerDelete_user_User | null;
   errors: Array<CustomerDelete_customerDelete_CustomerDelete_errors_AccountError>;
+  user: CustomerDelete_customerDelete_CustomerDelete_user_User | null;
 };
 
 export type CustomerDelete_Mutation = {
@@ -30219,7 +31493,7 @@ export type CustomerDeleteVariables = Exact<{
 export type CustomerDelete = CustomerDelete_Mutation;
 
 export type MetadataUpdate_updateMetadata_UpdateMetadata_errors_MetadataError =
-  { field: string | null; message: string | null; code: MetadataErrorCode };
+  { code: MetadataErrorCode; field: string | null; message: string | null };
 
 export type MetadataUpdate_updateMetadata_UpdateMetadata = {
   errors: Array<MetadataUpdate_updateMetadata_UpdateMetadata_errors_MetadataError>;
@@ -30242,14 +31516,14 @@ export type CancelOrder_orderCancel_OrderCancel_order_Order = {
 };
 
 export type CancelOrder_orderCancel_OrderCancel_errors_OrderError = {
+  code: OrderErrorCode;
   field: string | null;
   message: string | null;
-  code: OrderErrorCode;
 };
 
 export type CancelOrder_orderCancel_OrderCancel = {
-  order: CancelOrder_orderCancel_OrderCancel_order_Order | null;
   errors: Array<CancelOrder_orderCancel_OrderCancel_errors_OrderError>;
+  order: CancelOrder_orderCancel_OrderCancel_order_Order | null;
 };
 
 export type CancelOrder_Mutation = {
@@ -30263,9 +31537,9 @@ export type CancelOrderVariables = Exact<{
 export type CancelOrder = CancelOrder_Mutation;
 
 export type FulfillOrder_orderFulfill_OrderFulfill_errors_OrderError = {
+  code: OrderErrorCode;
   field: string | null;
   message: string | null;
-  code: OrderErrorCode;
 };
 
 export type FulfillOrder_orderFulfill_OrderFulfill = {
@@ -30277,14 +31551,14 @@ export type FulfillOrder_Mutation = {
 };
 
 export type FulfillOrderVariables = Exact<{
-  order: Scalars["ID"]["input"];
   input: OrderFulfillInput;
+  order: Scalars["ID"]["input"];
 }>;
 
 export type FulfillOrder = FulfillOrder_Mutation;
 
 export type CancelOrderFulfillment_orderFulfillmentCancel_FulfillmentCancel_errors_OrderError =
-  { field: string | null; message: string | null; code: OrderErrorCode };
+  { code: OrderErrorCode; field: string | null; message: string | null };
 
 export type CancelOrderFulfillment_orderFulfillmentCancel_FulfillmentCancel = {
   errors: Array<CancelOrderFulfillment_orderFulfillmentCancel_FulfillmentCancel_errors_OrderError>;
@@ -30302,23 +31576,23 @@ export type CancelOrderFulfillmentVariables = Exact<{
 export type CancelOrderFulfillment = CancelOrderFulfillment_Mutation;
 
 export type AddOrderNote_orderNoteAdd_OrderNoteAdd_errors_OrderNoteAddError = {
+  code: OrderNoteAddErrorCode | null;
   field: string | null;
   message: string | null;
-  code: OrderNoteAddErrorCode | null;
 };
 
 export type AddOrderNote_orderNoteAdd_OrderNoteAdd_order_Order = { id: string };
 
 export type AddOrderNote_orderNoteAdd_OrderNoteAdd_event_OrderEvent = {
+  date: string | null;
   id: string;
   message: string | null;
-  date: string | null;
 };
 
 export type AddOrderNote_orderNoteAdd_OrderNoteAdd = {
   errors: Array<AddOrderNote_orderNoteAdd_OrderNoteAdd_errors_OrderNoteAddError>;
-  order: AddOrderNote_orderNoteAdd_OrderNoteAdd_order_Order | null;
   event: AddOrderNote_orderNoteAdd_OrderNoteAdd_event_OrderEvent | null;
+  order: AddOrderNote_orderNoteAdd_OrderNoteAdd_order_Order | null;
 };
 
 export type AddOrderNote_Mutation = {
@@ -30326,14 +31600,14 @@ export type AddOrderNote_Mutation = {
 };
 
 export type AddOrderNoteVariables = Exact<{
-  order: Scalars["ID"]["input"];
   input: OrderNoteInput;
+  order: Scalars["ID"]["input"];
 }>;
 
 export type AddOrderNote = AddOrderNote_Mutation;
 
 export type UpdateProductChannelListing_productChannelListingUpdate_ProductChannelListingUpdate_errors_ProductChannelListingError =
-  { field: string | null; message: string | null; code: ProductErrorCode };
+  { code: ProductErrorCode; field: string | null; message: string | null };
 
 export type UpdateProductChannelListing_productChannelListingUpdate_ProductChannelListingUpdate =
   {
@@ -30351,29 +31625,94 @@ export type UpdateProductChannelListingVariables = Exact<{
 
 export type UpdateProductChannelListing = UpdateProductChannelListing_Mutation;
 
+export type ProductCreateMutation_productCreate_ProductCreate_errors_ProductError =
+  { code: ProductErrorCode; field: string | null; message: string | null };
+
+export type ProductCreateMutation_productCreate_ProductCreate_product_Product_productType_ProductType =
+  { id: string; name: string };
+
+export type ProductCreateMutation_productCreate_ProductCreate_product_Product_category_Category =
+  { id: string; name: string };
+
+export type ProductCreateMutation_productCreate_ProductCreate_product_Product_collections_Collection =
+  { id: string; name: string };
+
+export type ProductCreateMutation_productCreate_ProductCreate_product_Product =
+  {
+    category: ProductCreateMutation_productCreate_ProductCreate_product_Product_category_Category | null;
+    collections: Array<ProductCreateMutation_productCreate_ProductCreate_product_Product_collections_Collection> | null;
+    description: string | null;
+    id: string;
+    name: string;
+    productType: ProductCreateMutation_productCreate_ProductCreate_product_Product_productType_ProductType;
+    seoDescription: string | null;
+    seoTitle: string | null;
+    slug: string;
+  };
+
+export type ProductCreateMutation_productCreate_ProductCreate = {
+  errors: Array<ProductCreateMutation_productCreate_ProductCreate_errors_ProductError>;
+  product: ProductCreateMutation_productCreate_ProductCreate_product_Product | null;
+};
+
+export type ProductCreateMutation_Mutation = {
+  productCreate: ProductCreateMutation_productCreate_ProductCreate | null;
+};
+
+export type ProductCreateMutationVariables = Exact<{
+  input: ProductCreateInput;
+}>;
+
+export type ProductCreateMutation = ProductCreateMutation_Mutation;
+
+export type ProductDelete_productDelete_ProductDelete_product_Product = {
+  id: string;
+};
+
+export type ProductDelete_productDelete_ProductDelete_errors_ProductError = {
+  code: ProductErrorCode;
+  field: string | null;
+  message: string | null;
+};
+
+export type ProductDelete_productDelete_ProductDelete = {
+  errors: Array<ProductDelete_productDelete_ProductDelete_errors_ProductError>;
+  product: ProductDelete_productDelete_ProductDelete_product_Product | null;
+};
+
+export type ProductDelete_Mutation = {
+  productDelete: ProductDelete_productDelete_ProductDelete | null;
+};
+
+export type ProductDeleteVariables = Exact<{
+  id: Scalars["ID"]["input"];
+}>;
+
+export type ProductDelete = ProductDelete_Mutation;
+
 export type ProductMediaCreateMutation_productMediaCreate_ProductMediaCreate_errors_ProductError =
-  { field: string | null; message: string | null; code: ProductErrorCode };
+  { code: ProductErrorCode; field: string | null; message: string | null };
 
 export type ProductMediaCreateMutation_productMediaCreate_ProductMediaCreate_media_ProductMedia =
   {
-    id: string;
-    url: string;
     alt: string;
-    type: ProductMediaType;
+    id: string;
     sortOrder: number | null;
+    type: ProductMediaType;
+    url: string;
   };
 
 export type ProductMediaCreateMutation_productMediaCreate_ProductMediaCreate_product_Product_media_ProductMedia =
   {
-    id: string;
-    url: string;
     alt: string;
-    type: ProductMediaType;
+    id: string;
     sortOrder: number | null;
+    type: ProductMediaType;
+    url: string;
   };
 
 export type ProductMediaCreateMutation_productMediaCreate_ProductMediaCreate_product_Product_thumbnail_Image =
-  { url: string; alt: string | null };
+  { alt: string | null; url: string };
 
 export type ProductMediaCreateMutation_productMediaCreate_ProductMediaCreate_product_Product =
   {
@@ -30399,22 +31738,22 @@ export type ProductMediaCreateMutationVariables = Exact<{
 export type ProductMediaCreateMutation = ProductMediaCreateMutation_Mutation;
 
 export type ProductMediaDeleteMutation_productMediaDelete_ProductMediaDelete_errors_ProductError =
-  { field: string | null; message: string | null; code: ProductErrorCode };
+  { code: ProductErrorCode; field: string | null; message: string | null };
 
 export type ProductMediaDeleteMutation_productMediaDelete_ProductMediaDelete_media_ProductMedia =
   { id: string };
 
 export type ProductMediaDeleteMutation_productMediaDelete_ProductMediaDelete_product_Product_media_ProductMedia =
   {
-    id: string;
-    url: string;
     alt: string;
-    type: ProductMediaType;
+    id: string;
     sortOrder: number | null;
+    type: ProductMediaType;
+    url: string;
   };
 
 export type ProductMediaDeleteMutation_productMediaDelete_ProductMediaDelete_product_Product_thumbnail_Image =
-  { url: string; alt: string | null };
+  { alt: string | null; url: string };
 
 export type ProductMediaDeleteMutation_productMediaDelete_ProductMediaDelete_product_Product =
   {
@@ -30439,29 +31778,68 @@ export type ProductMediaDeleteMutationVariables = Exact<{
 
 export type ProductMediaDeleteMutation = ProductMediaDeleteMutation_Mutation;
 
+export type ProductMediaReorderMutation_productMediaReorder_ProductMediaReorder_errors_ProductError =
+  { code: ProductErrorCode; field: string | null; message: string | null };
+
+export type ProductMediaReorderMutation_productMediaReorder_ProductMediaReorder_product_Product_media_ProductMedia =
+  {
+    alt: string;
+    id: string;
+    sortOrder: number | null;
+    type: ProductMediaType;
+    url: string;
+  };
+
+export type ProductMediaReorderMutation_productMediaReorder_ProductMediaReorder_product_Product_thumbnail_Image =
+  { alt: string | null; url: string };
+
+export type ProductMediaReorderMutation_productMediaReorder_ProductMediaReorder_product_Product =
+  {
+    id: string;
+    media: Array<ProductMediaReorderMutation_productMediaReorder_ProductMediaReorder_product_Product_media_ProductMedia> | null;
+    thumbnail: ProductMediaReorderMutation_productMediaReorder_ProductMediaReorder_product_Product_thumbnail_Image | null;
+  };
+
+export type ProductMediaReorderMutation_productMediaReorder_ProductMediaReorder =
+  {
+    errors: Array<ProductMediaReorderMutation_productMediaReorder_ProductMediaReorder_errors_ProductError>;
+    product: ProductMediaReorderMutation_productMediaReorder_ProductMediaReorder_product_Product | null;
+  };
+
+export type ProductMediaReorderMutation_Mutation = {
+  productMediaReorder: ProductMediaReorderMutation_productMediaReorder_ProductMediaReorder | null;
+};
+
+export type ProductMediaReorderMutationVariables = Exact<{
+  mediaIds: Array<Scalars["ID"]["input"]> | Scalars["ID"]["input"];
+  productId: Scalars["ID"]["input"];
+}>;
+
+export type ProductMediaReorderMutation = ProductMediaReorderMutation_Mutation;
+
 export type ProductMediaUpdateMutation_productMediaUpdate_ProductMediaUpdate_errors_ProductError =
-  { field: string | null; message: string | null; code: ProductErrorCode };
+  { code: ProductErrorCode; field: string | null; message: string | null };
 
 export type ProductMediaUpdateMutation_productMediaUpdate_ProductMediaUpdate_media_ProductMedia =
   {
-    id: string;
-    url: string;
     alt: string;
-    type: ProductMediaType;
+    id: string;
     sortOrder: number | null;
+    type: ProductMediaType;
+    url: string;
   };
 
 export type ProductMediaUpdateMutation_productMediaUpdate_ProductMediaUpdate_product_Product_media_ProductMedia =
   {
-    id: string;
-    url: string;
     alt: string;
-    type: ProductMediaType;
+    id: string;
     sortOrder: number | null;
+    type: ProductMediaType;
+    url: string;
   };
 
 export type ProductMediaUpdateMutation_productMediaUpdate_ProductMediaUpdate_product_Product_thumbnail_Image =
-  { url: string; alt: string | null };
+  { alt: string | null; url: string };
 
 export type ProductMediaUpdateMutation_productMediaUpdate_ProductMediaUpdate_product_Product =
   {
@@ -30488,9 +31866,9 @@ export type ProductMediaUpdateMutationVariables = Exact<{
 export type ProductMediaUpdateMutation = ProductMediaUpdateMutation_Mutation;
 
 export type UpdateProduct_productUpdate_ProductUpdate_errors_ProductError = {
+  code: ProductErrorCode;
   field: string | null;
   message: string | null;
-  code: ProductErrorCode;
 };
 
 export type UpdateProduct_productUpdate_ProductUpdate_product_Product_productType_ProductType =
@@ -30503,15 +31881,15 @@ export type UpdateProduct_productUpdate_ProductUpdate_product_Product_collection
   { id: string; name: string };
 
 export type UpdateProduct_productUpdate_ProductUpdate_product_Product = {
-  id: string;
-  name: string;
-  slug: string;
-  description: string | null;
-  seoTitle: string | null;
-  seoDescription: string | null;
-  productType: UpdateProduct_productUpdate_ProductUpdate_product_Product_productType_ProductType;
   category: UpdateProduct_productUpdate_ProductUpdate_product_Product_category_Category | null;
   collections: Array<UpdateProduct_productUpdate_ProductUpdate_product_Product_collections_Collection> | null;
+  description: string | null;
+  id: string;
+  name: string;
+  productType: UpdateProduct_productUpdate_ProductUpdate_product_Product_productType_ProductType;
+  seoDescription: string | null;
+  seoTitle: string | null;
+  slug: string;
 };
 
 export type UpdateProduct_productUpdate_ProductUpdate = {
@@ -30532,20 +31910,20 @@ export type UpdateProduct = UpdateProduct_Mutation;
 
 export type ProductVariantBulkUpdateMutation_productVariantBulkUpdate_ProductVariantBulkUpdate_errors_ProductVariantBulkError =
   {
+    code: ProductVariantBulkErrorCode;
     field: string | null;
     message: string | null;
-    code: ProductVariantBulkErrorCode;
   };
 
 export type ProductVariantBulkUpdateMutation_productVariantBulkUpdate_ProductVariantBulkUpdate_results_ProductVariantBulkResult_errors_ProductVariantBulkError =
   {
+    code: ProductVariantBulkErrorCode;
     field: string | null;
     message: string | null;
-    code: ProductVariantBulkErrorCode;
   };
 
 export type ProductVariantBulkUpdateMutation_productVariantBulkUpdate_ProductVariantBulkUpdate_results_ProductVariantBulkResult_productVariant_ProductVariant_weight_Weight =
-  { value: number; unit: WeightUnitsEnum };
+  { unit: WeightUnitsEnum; value: number };
 
 export type ProductVariantBulkUpdateMutation_productVariantBulkUpdate_ProductVariantBulkUpdate_results_ProductVariantBulkResult_productVariant_ProductVariant =
   {
@@ -30583,11 +31961,142 @@ export type ProductVariantBulkUpdateMutationVariables = Exact<{
 export type ProductVariantBulkUpdateMutation =
   ProductVariantBulkUpdateMutation_Mutation;
 
+export type ProductVariantChannelListingUpdateMutation_productVariantChannelListingUpdate_ProductVariantChannelListingUpdate_errors_ProductChannelListingError =
+  { code: ProductErrorCode; field: string | null; message: string | null };
+
+export type ProductVariantChannelListingUpdateMutation_productVariantChannelListingUpdate_ProductVariantChannelListingUpdate_variant_ProductVariant_channelListings_ProductVariantChannelListing_channel_Channel =
+  { id: string; name: string };
+
+export type ProductVariantChannelListingUpdateMutation_productVariantChannelListingUpdate_ProductVariantChannelListingUpdate_variant_ProductVariant_channelListings_ProductVariantChannelListing_price_Money =
+  { amount: number; currency: string };
+
+export type ProductVariantChannelListingUpdateMutation_productVariantChannelListingUpdate_ProductVariantChannelListingUpdate_variant_ProductVariant_channelListings_ProductVariantChannelListing_costPrice_Money =
+  { amount: number; currency: string };
+
+export type ProductVariantChannelListingUpdateMutation_productVariantChannelListingUpdate_ProductVariantChannelListingUpdate_variant_ProductVariant_channelListings_ProductVariantChannelListing =
+  {
+    channel: ProductVariantChannelListingUpdateMutation_productVariantChannelListingUpdate_ProductVariantChannelListingUpdate_variant_ProductVariant_channelListings_ProductVariantChannelListing_channel_Channel;
+    costPrice: ProductVariantChannelListingUpdateMutation_productVariantChannelListingUpdate_ProductVariantChannelListingUpdate_variant_ProductVariant_channelListings_ProductVariantChannelListing_costPrice_Money | null;
+    id: string;
+    price: ProductVariantChannelListingUpdateMutation_productVariantChannelListingUpdate_ProductVariantChannelListingUpdate_variant_ProductVariant_channelListings_ProductVariantChannelListing_price_Money | null;
+  };
+
+export type ProductVariantChannelListingUpdateMutation_productVariantChannelListingUpdate_ProductVariantChannelListingUpdate_variant_ProductVariant =
+  {
+    channelListings: Array<ProductVariantChannelListingUpdateMutation_productVariantChannelListingUpdate_ProductVariantChannelListingUpdate_variant_ProductVariant_channelListings_ProductVariantChannelListing> | null;
+    id: string;
+  };
+
+export type ProductVariantChannelListingUpdateMutation_productVariantChannelListingUpdate_ProductVariantChannelListingUpdate =
+  {
+    errors: Array<ProductVariantChannelListingUpdateMutation_productVariantChannelListingUpdate_ProductVariantChannelListingUpdate_errors_ProductChannelListingError>;
+    variant: ProductVariantChannelListingUpdateMutation_productVariantChannelListingUpdate_ProductVariantChannelListingUpdate_variant_ProductVariant | null;
+  };
+
+export type ProductVariantChannelListingUpdateMutation_Mutation = {
+  productVariantChannelListingUpdate: ProductVariantChannelListingUpdateMutation_productVariantChannelListingUpdate_ProductVariantChannelListingUpdate | null;
+};
+
+export type ProductVariantChannelListingUpdateMutationVariables = Exact<{
+  id: Scalars["ID"]["input"];
+  input:
+    | Array<ProductVariantChannelListingAddInput>
+    | ProductVariantChannelListingAddInput;
+}>;
+
+export type ProductVariantChannelListingUpdateMutation =
+  ProductVariantChannelListingUpdateMutation_Mutation;
+
+export type ProductVariantCreateMutation_productVariantCreate_ProductVariantCreate_errors_ProductError =
+  { code: ProductErrorCode; field: string | null; message: string | null };
+
+export type ProductVariantCreateMutation_productVariantCreate_ProductVariantCreate_productVariant_ProductVariant_weight_Weight =
+  { unit: WeightUnitsEnum; value: number };
+
+export type ProductVariantCreateMutation_productVariantCreate_ProductVariantCreate_productVariant_ProductVariant =
+  {
+    id: string;
+    name: string;
+    sku: string | null;
+    trackInventory: boolean;
+    weight: ProductVariantCreateMutation_productVariantCreate_ProductVariantCreate_productVariant_ProductVariant_weight_Weight | null;
+  };
+
+export type ProductVariantCreateMutation_productVariantCreate_ProductVariantCreate =
+  {
+    errors: Array<ProductVariantCreateMutation_productVariantCreate_ProductVariantCreate_errors_ProductError>;
+    productVariant: ProductVariantCreateMutation_productVariantCreate_ProductVariantCreate_productVariant_ProductVariant | null;
+  };
+
+export type ProductVariantCreateMutation_Mutation = {
+  productVariantCreate: ProductVariantCreateMutation_productVariantCreate_ProductVariantCreate | null;
+};
+
+export type ProductVariantCreateMutationVariables = Exact<{
+  input: ProductVariantCreateInput;
+}>;
+
+export type ProductVariantCreateMutation =
+  ProductVariantCreateMutation_Mutation;
+
+export type ProductVariantDelete_productVariantDelete_ProductVariantDelete_productVariant_ProductVariant =
+  { id: string };
+
+export type ProductVariantDelete_productVariantDelete_ProductVariantDelete_errors_ProductError =
+  { code: ProductErrorCode; field: string | null; message: string | null };
+
+export type ProductVariantDelete_productVariantDelete_ProductVariantDelete = {
+  errors: Array<ProductVariantDelete_productVariantDelete_ProductVariantDelete_errors_ProductError>;
+  productVariant: ProductVariantDelete_productVariantDelete_ProductVariantDelete_productVariant_ProductVariant | null;
+};
+
+export type ProductVariantDelete_Mutation = {
+  productVariantDelete: ProductVariantDelete_productVariantDelete_ProductVariantDelete | null;
+};
+
+export type ProductVariantDeleteVariables = Exact<{
+  id: Scalars["ID"]["input"];
+}>;
+
+export type ProductVariantDelete = ProductVariantDelete_Mutation;
+
+export type ProductVariantUpdateMutation_productVariantUpdate_ProductVariantUpdate_errors_ProductError =
+  { code: ProductErrorCode; field: string | null; message: string | null };
+
+export type ProductVariantUpdateMutation_productVariantUpdate_ProductVariantUpdate_productVariant_ProductVariant_weight_Weight =
+  { unit: WeightUnitsEnum; value: number };
+
+export type ProductVariantUpdateMutation_productVariantUpdate_ProductVariantUpdate_productVariant_ProductVariant =
+  {
+    id: string;
+    name: string;
+    sku: string | null;
+    weight: ProductVariantUpdateMutation_productVariantUpdate_ProductVariantUpdate_productVariant_ProductVariant_weight_Weight | null;
+  };
+
+export type ProductVariantUpdateMutation_productVariantUpdate_ProductVariantUpdate =
+  {
+    errors: Array<ProductVariantUpdateMutation_productVariantUpdate_ProductVariantUpdate_errors_ProductError>;
+    productVariant: ProductVariantUpdateMutation_productVariantUpdate_ProductVariantUpdate_productVariant_ProductVariant | null;
+  };
+
+export type ProductVariantUpdateMutation_Mutation = {
+  productVariantUpdate: ProductVariantUpdateMutation_productVariantUpdate_ProductVariantUpdate | null;
+};
+
+export type ProductVariantUpdateMutationVariables = Exact<{
+  id: Scalars["ID"]["input"];
+  input: ProductVariantInput;
+}>;
+
+export type ProductVariantUpdateMutation =
+  ProductVariantUpdateMutation_Mutation;
+
 export type VendorCollectionCreate_collectionCreate_CollectionCreate_collection_Collection =
   { id: string; name: string; slug: string };
 
 export type VendorCollectionCreate_collectionCreate_CollectionCreate_errors_CollectionError =
-  { field: string | null; message: string | null; code: CollectionErrorCode };
+  { code: CollectionErrorCode; field: string | null; message: string | null };
 
 export type VendorCollectionCreate_collectionCreate_CollectionCreate = {
   collection: VendorCollectionCreate_collectionCreate_CollectionCreate_collection_Collection | null;
@@ -30608,7 +32117,7 @@ export type VendorCollectionDelete_collectionDelete_CollectionDelete_collection_
   { id: string };
 
 export type VendorCollectionDelete_collectionDelete_CollectionDelete_errors_CollectionError =
-  { field: string | null; message: string | null; code: CollectionErrorCode };
+  { code: CollectionErrorCode; field: string | null; message: string | null };
 
 export type VendorCollectionDelete_collectionDelete_CollectionDelete = {
   collection: VendorCollectionDelete_collectionDelete_CollectionDelete_collection_Collection | null;
@@ -30627,19 +32136,19 @@ export type VendorCollectionDelete = VendorCollectionDelete_Mutation;
 
 export type VendorPageCreate_pageCreate_PageCreate_page_Page = {
   id: string;
-  title: string;
   slug: string;
+  title: string;
 };
 
 export type VendorPageCreate_pageCreate_PageCreate_errors_PageError = {
+  code: PageErrorCode;
   field: string | null;
   message: string | null;
-  code: PageErrorCode;
 };
 
 export type VendorPageCreate_pageCreate_PageCreate = {
-  page: VendorPageCreate_pageCreate_PageCreate_page_Page | null;
   errors: Array<VendorPageCreate_pageCreate_PageCreate_errors_PageError>;
+  page: VendorPageCreate_pageCreate_PageCreate_page_Page | null;
 };
 
 export type VendorPageCreate_Mutation = {
@@ -30655,14 +32164,14 @@ export type VendorPageCreate = VendorPageCreate_Mutation;
 export type VendorPageDelete_pageDelete_PageDelete_page_Page = { id: string };
 
 export type VendorPageDelete_pageDelete_PageDelete_errors_PageError = {
+  code: PageErrorCode;
   field: string | null;
   message: string | null;
-  code: PageErrorCode;
 };
 
 export type VendorPageDelete_pageDelete_PageDelete = {
-  page: VendorPageDelete_pageDelete_PageDelete_page_Page | null;
   errors: Array<VendorPageDelete_pageDelete_PageDelete_errors_PageError>;
+  page: VendorPageDelete_pageDelete_PageDelete_page_Page | null;
 };
 
 export type VendorPageDelete_Mutation = {
@@ -30685,12 +32194,12 @@ export type CategoriesList_categories_CategoryCountableConnection_edges_Category
   };
 
 export type CategoriesList_categories_CategoryCountableConnection_pageInfo_PageInfo =
-  { hasNextPage: boolean; endCursor: string | null };
+  { endCursor: string | null; hasNextPage: boolean };
 
 export type CategoriesList_categories_CategoryCountableConnection = {
-  totalCount: number | null;
   edges: Array<CategoriesList_categories_CategoryCountableConnection_edges_CategoryCountableEdge>;
   pageInfo: CategoriesList_categories_CategoryCountableConnection_pageInfo_PageInfo;
+  totalCount: number | null;
 };
 
 export type CategoriesList_Query = {
@@ -30698,9 +32207,9 @@ export type CategoriesList_Query = {
 };
 
 export type CategoriesListVariables = Exact<{
-  first?: InputMaybe<Scalars["Int"]["input"]>;
   after?: InputMaybe<Scalars["String"]["input"]>;
   filter?: InputMaybe<CategoryFilterInput>;
+  first?: InputMaybe<Scalars["Int"]["input"]>;
 }>;
 
 export type CategoriesList = CategoriesList_Query;
@@ -30710,13 +32219,19 @@ export type Channels_channels_Channel_defaultCountry_CountryDisplay = {
   country: string;
 };
 
-export type Channels_channels_Channel = {
+export type Channels_channels_Channel_warehouses_Warehouse = {
   id: string;
   name: string;
-  slug: string;
+};
+
+export type Channels_channels_Channel = {
   currencyCode: string;
-  isActive: boolean;
   defaultCountry: Channels_channels_Channel_defaultCountry_CountryDisplay;
+  id: string;
+  isActive: boolean;
+  name: string;
+  slug: string;
+  warehouses: Array<Channels_channels_Channel_warehouses_Warehouse>;
 };
 
 export type Channels_Query = {
@@ -30728,8 +32243,8 @@ export type ChannelsVariables = Exact<{ [key: string]: never }>;
 export type Channels = Channels_Query;
 
 export type CollectionDetail_collection_Collection_backgroundImage_Image = {
-  url: string;
   alt: string | null;
+  url: string;
 };
 
 export type CollectionDetail_collection_Collection_metadata_MetadataItem = {
@@ -30745,14 +32260,14 @@ export type CollectionDetail_collection_Collection_channelListings_CollectionCha
 
 export type CollectionDetail_collection_Collection_channelListings_CollectionChannelListing =
   {
+    channel: CollectionDetail_collection_Collection_channelListings_CollectionChannelListing_channel_Channel;
     id: string;
     isPublished: boolean;
     publishedAt: string | null;
-    channel: CollectionDetail_collection_Collection_channelListings_CollectionChannelListing_channel_Channel;
   };
 
 export type CollectionDetail_collection_Collection_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_thumbnail_Image =
-  { url: string; alt: string | null };
+  { alt: string | null; url: string };
 
 export type CollectionDetail_collection_Collection_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_productType_ProductType =
   { name: string };
@@ -30762,18 +32277,18 @@ export type CollectionDetail_collection_Collection_products_ProductCountableConn
 
 export type CollectionDetail_collection_Collection_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_channelListings_ProductChannelListing =
   {
-    isPublished: boolean;
     channel: CollectionDetail_collection_Collection_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_channelListings_ProductChannelListing_channel_Channel;
+    isPublished: boolean;
   };
 
 export type CollectionDetail_collection_Collection_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product =
   {
+    channelListings: Array<CollectionDetail_collection_Collection_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_channelListings_ProductChannelListing> | null;
     id: string;
     name: string;
+    productType: CollectionDetail_collection_Collection_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_productType_ProductType;
     slug: string;
     thumbnail: CollectionDetail_collection_Collection_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_thumbnail_Image | null;
-    productType: CollectionDetail_collection_Collection_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_productType_ProductType;
-    channelListings: Array<CollectionDetail_collection_Collection_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_channelListings_ProductChannelListing> | null;
   };
 
 export type CollectionDetail_collection_Collection_products_ProductCountableConnection_edges_ProductCountableEdge =
@@ -30787,17 +32302,17 @@ export type CollectionDetail_collection_Collection_products_ProductCountableConn
   };
 
 export type CollectionDetail_collection_Collection = {
-  id: string;
-  name: string;
-  slug: string;
-  description: string | null;
-  seoTitle: string | null;
-  seoDescription: string | null;
   backgroundImage: CollectionDetail_collection_Collection_backgroundImage_Image | null;
-  metadata: Array<CollectionDetail_collection_Collection_metadata_MetadataItem>;
-  privateMetadata: Array<CollectionDetail_collection_Collection_privateMetadata_MetadataItem>;
   channelListings: Array<CollectionDetail_collection_Collection_channelListings_CollectionChannelListing> | null;
+  description: string | null;
+  id: string;
+  metadata: Array<CollectionDetail_collection_Collection_metadata_MetadataItem>;
+  name: string;
+  privateMetadata: Array<CollectionDetail_collection_Collection_privateMetadata_MetadataItem>;
   products: CollectionDetail_collection_Collection_products_ProductCountableConnection | null;
+  seoDescription: string | null;
+  seoTitle: string | null;
+  slug: string;
 };
 
 export type CollectionDetail_Query = {
@@ -30811,7 +32326,7 @@ export type CollectionDetailVariables = Exact<{
 export type CollectionDetail = CollectionDetail_Query;
 
 export type CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection_backgroundImage_Image =
-  { url: string; alt: string | null };
+  { alt: string | null; url: string };
 
 export type CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection_products_ProductCountableConnection =
   { totalCount: number | null };
@@ -30821,18 +32336,18 @@ export type CollectionsList_collections_CollectionCountableConnection_edges_Coll
 
 export type CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection_channelListings_CollectionChannelListing =
   {
-    isPublished: boolean;
     channel: CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection_channelListings_CollectionChannelListing_channel_Channel;
+    isPublished: boolean;
   };
 
 export type CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection =
   {
+    backgroundImage: CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection_backgroundImage_Image | null;
+    channelListings: Array<CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection_channelListings_CollectionChannelListing> | null;
     id: string;
     name: string;
-    slug: string;
-    backgroundImage: CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection_backgroundImage_Image | null;
     products: CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection_products_ProductCountableConnection | null;
-    channelListings: Array<CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection_channelListings_CollectionChannelListing> | null;
+    slug: string;
   };
 
 export type CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge =
@@ -30842,12 +32357,12 @@ export type CollectionsList_collections_CollectionCountableConnection_edges_Coll
   };
 
 export type CollectionsList_collections_CollectionCountableConnection_pageInfo_PageInfo =
-  { hasNextPage: boolean; endCursor: string | null };
+  { endCursor: string | null; hasNextPage: boolean };
 
 export type CollectionsList_collections_CollectionCountableConnection = {
-  totalCount: number | null;
   edges: Array<CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge>;
   pageInfo: CollectionsList_collections_CollectionCountableConnection_pageInfo_PageInfo;
+  totalCount: number | null;
 };
 
 export type CollectionsList_Query = {
@@ -30855,15 +32370,15 @@ export type CollectionsList_Query = {
 };
 
 export type CollectionsListVariables = Exact<{
-  first?: InputMaybe<Scalars["Int"]["input"]>;
   after?: InputMaybe<Scalars["String"]["input"]>;
   filter?: InputMaybe<CollectionFilterInput>;
+  first?: InputMaybe<Scalars["Int"]["input"]>;
 }>;
 
 export type CollectionsList = CollectionsList_Query;
 
 export type CustomerByEmail_customers_UserCountableConnection_edges_UserCountableEdge_node_User =
-  { id: string; email: string };
+  { email: string; id: string };
 
 export type CustomerByEmail_customers_UserCountableConnection_edges_UserCountableEdge =
   {
@@ -30887,33 +32402,33 @@ export type CustomerByEmail = CustomerByEmail_Query;
 export type Me_me_User_metadata_MetadataItem = { key: string; value: string };
 
 export type Me_me_User_addresses_Address_country_CountryDisplay = {
-  country: string;
   code: string;
+  country: string;
 };
 
 export type Me_me_User_addresses_Address = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  companyName: string;
-  streetAddress1: string;
-  streetAddress2: string;
   city: string;
+  companyName: string;
+  country: Me_me_User_addresses_Address_country_CountryDisplay;
   countryArea: string;
-  postalCode: string;
-  phone: string | null;
+  firstName: string;
+  id: string;
   isDefaultBillingAddress: boolean | null;
   isDefaultShippingAddress: boolean | null;
-  country: Me_me_User_addresses_Address_country_CountryDisplay;
+  lastName: string;
+  phone: string | null;
+  postalCode: string;
+  streetAddress1: string;
+  streetAddress2: string;
 };
 
 export type Me_me_User = {
-  id: string;
+  addresses: Array<Me_me_User_addresses_Address>;
   email: string;
   firstName: string;
+  id: string;
   lastName: string;
   metadata: Array<Me_me_User_metadata_MetadataItem>;
-  addresses: Array<Me_me_User_addresses_Address>;
 };
 
 export type Me_Query = { me: Me_me_User | null };
@@ -30962,38 +32477,38 @@ export type OrderDetail_order_Order_shippingPrice_TaxedMoney = {
 };
 
 export type OrderDetail_order_Order_user_User = {
-  id: string;
   email: string;
   firstName: string;
+  id: string;
   lastName: string;
 };
 
 export type OrderDetail_order_Order_billingAddress_Address_country_CountryDisplay =
-  { country: string; code: string };
+  { code: string; country: string };
 
 export type OrderDetail_order_Order_billingAddress_Address = {
+  city: string;
+  country: OrderDetail_order_Order_billingAddress_Address_country_CountryDisplay;
   firstName: string;
   lastName: string;
+  phone: string | null;
+  postalCode: string;
   streetAddress1: string;
   streetAddress2: string;
-  city: string;
-  postalCode: string;
-  phone: string | null;
-  country: OrderDetail_order_Order_billingAddress_Address_country_CountryDisplay;
 };
 
 export type OrderDetail_order_Order_shippingAddress_Address_country_CountryDisplay =
-  { country: string; code: string };
+  { code: string; country: string };
 
 export type OrderDetail_order_Order_shippingAddress_Address = {
+  city: string;
+  country: OrderDetail_order_Order_shippingAddress_Address_country_CountryDisplay;
   firstName: string;
   lastName: string;
+  phone: string | null;
+  postalCode: string;
   streetAddress1: string;
   streetAddress2: string;
-  city: string;
-  postalCode: string;
-  phone: string | null;
-  country: OrderDetail_order_Order_shippingAddress_Address_country_CountryDisplay;
 };
 
 export type OrderDetail_order_Order_lines_OrderLine_unitPrice_TaxedMoney_gross_Money =
@@ -31011,12 +32526,12 @@ export type OrderDetail_order_Order_lines_OrderLine_totalPrice_TaxedMoney = {
 };
 
 export type OrderDetail_order_Order_lines_OrderLine_thumbnail_Image = {
-  url: string;
   alt: string | null;
+  url: string;
 };
 
 export type OrderDetail_order_Order_lines_OrderLine_variant_ProductVariant_media_ProductMedia =
-  { url: string; alt: string };
+  { alt: string; url: string };
 
 export type OrderDetail_order_Order_lines_OrderLine_variant_ProductVariant_stocks_Stock_warehouse_Warehouse =
   { id: string; name: string };
@@ -31027,23 +32542,23 @@ export type OrderDetail_order_Order_lines_OrderLine_variant_ProductVariant_stock
   };
 
 export type OrderDetail_order_Order_lines_OrderLine_variant_ProductVariant = {
-  name: string;
   media: Array<OrderDetail_order_Order_lines_OrderLine_variant_ProductVariant_media_ProductMedia> | null;
+  name: string;
   stocks: Array<OrderDetail_order_Order_lines_OrderLine_variant_ProductVariant_stocks_Stock> | null;
 };
 
 export type OrderDetail_order_Order_lines_OrderLine = {
   id: string;
   productName: string;
-  variantName: string;
   productSku: string | null;
   quantity: number;
-  quantityToFulfill: number;
   quantityFulfilled: number;
-  unitPrice: OrderDetail_order_Order_lines_OrderLine_unitPrice_TaxedMoney;
-  totalPrice: OrderDetail_order_Order_lines_OrderLine_totalPrice_TaxedMoney;
+  quantityToFulfill: number;
   thumbnail: OrderDetail_order_Order_lines_OrderLine_thumbnail_Image | null;
+  totalPrice: OrderDetail_order_Order_lines_OrderLine_totalPrice_TaxedMoney;
+  unitPrice: OrderDetail_order_Order_lines_OrderLine_unitPrice_TaxedMoney;
   variant: OrderDetail_order_Order_lines_OrderLine_variant_ProductVariant | null;
+  variantName: string;
 };
 
 export type OrderDetail_order_Order_events_OrderEvent_user_User = {
@@ -31051,10 +32566,10 @@ export type OrderDetail_order_Order_events_OrderEvent_user_User = {
 };
 
 export type OrderDetail_order_Order_events_OrderEvent = {
-  id: string;
   date: string | null;
-  type: OrderEventsEnum | null;
+  id: string;
   message: string | null;
+  type: OrderEventsEnum | null;
   user: OrderDetail_order_Order_events_OrderEvent_user_User | null;
 };
 
@@ -31067,39 +32582,39 @@ export type OrderDetail_order_Order_fulfillments_Fulfillment_lines_FulfillmentLi
 export type OrderDetail_order_Order_fulfillments_Fulfillment_lines_FulfillmentLine =
   {
     id: string;
-    quantity: number;
     orderLine: OrderDetail_order_Order_fulfillments_Fulfillment_lines_FulfillmentLine_orderLine_OrderLine | null;
+    quantity: number;
   };
 
 export type OrderDetail_order_Order_fulfillments_Fulfillment = {
-  id: string;
-  status: FulfillmentStatus;
   created: string;
+  id: string;
+  lines: Array<OrderDetail_order_Order_fulfillments_Fulfillment_lines_FulfillmentLine> | null;
+  status: FulfillmentStatus;
   trackingNumber: string;
   warehouse: OrderDetail_order_Order_fulfillments_Fulfillment_warehouse_Warehouse | null;
-  lines: Array<OrderDetail_order_Order_fulfillments_Fulfillment_lines_FulfillmentLine> | null;
 };
 
 export type OrderDetail_order_Order = {
-  id: string;
-  number: string;
-  created: string;
-  status: OrderStatus;
-  statusDisplay: string;
-  paymentStatus: PaymentChargeStatusEnum;
-  paymentStatusDisplay: string;
-  userEmail: string | null;
-  chargeStatus: OrderChargeStatusEnum;
   authorizeStatus: OrderAuthorizeStatusEnum;
-  total: OrderDetail_order_Order_total_TaxedMoney;
-  subtotal: OrderDetail_order_Order_subtotal_TaxedMoney;
-  shippingPrice: OrderDetail_order_Order_shippingPrice_TaxedMoney;
-  user: OrderDetail_order_Order_user_User | null;
   billingAddress: OrderDetail_order_Order_billingAddress_Address | null;
-  shippingAddress: OrderDetail_order_Order_shippingAddress_Address | null;
-  lines: Array<OrderDetail_order_Order_lines_OrderLine>;
+  chargeStatus: OrderChargeStatusEnum;
+  created: string;
   events: Array<OrderDetail_order_Order_events_OrderEvent>;
   fulfillments: Array<OrderDetail_order_Order_fulfillments_Fulfillment>;
+  id: string;
+  lines: Array<OrderDetail_order_Order_lines_OrderLine>;
+  number: string;
+  paymentStatus: PaymentChargeStatusEnum;
+  total: OrderDetail_order_Order_total_TaxedMoney;
+  shippingAddress: OrderDetail_order_Order_shippingAddress_Address | null;
+  shippingPrice: OrderDetail_order_Order_shippingPrice_TaxedMoney;
+  user: OrderDetail_order_Order_user_User | null;
+  status: OrderStatus;
+  subtotal: OrderDetail_order_Order_subtotal_TaxedMoney;
+  userEmail: string | null;
+  statusDisplay: string;
+  paymentStatusDisplay: string;
 };
 
 export type OrderDetail_Query = { order: OrderDetail_order_Order | null };
@@ -31132,16 +32647,16 @@ export type OrdersList_orders_OrderCountableConnection_edges_OrderCountableEdge_
 
 export type OrdersList_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order =
   {
+    created: string;
     id: string;
     number: string;
-    created: string;
-    status: OrderStatus;
-    statusDisplay: string;
     paymentStatus: PaymentChargeStatusEnum;
     paymentStatusDisplay: string;
+    shippingAddress: OrdersList_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_shippingAddress_Address | null;
+    status: OrderStatus;
+    statusDisplay: string;
     total: OrdersList_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_total_TaxedMoney;
     user: OrdersList_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_user_User | null;
-    shippingAddress: OrdersList_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_shippingAddress_Address | null;
   };
 
 export type OrdersList_orders_OrderCountableConnection_edges_OrderCountableEdge =
@@ -31151,16 +32666,16 @@ export type OrdersList_orders_OrderCountableConnection_edges_OrderCountableEdge 
   };
 
 export type OrdersList_orders_OrderCountableConnection_pageInfo_PageInfo = {
+  endCursor: string | null;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
   startCursor: string | null;
-  endCursor: string | null;
 };
 
 export type OrdersList_orders_OrderCountableConnection = {
-  totalCount: number | null;
   edges: Array<OrdersList_orders_OrderCountableConnection_edges_OrderCountableEdge>;
   pageInfo: OrdersList_orders_OrderCountableConnection_pageInfo_PageInfo;
+  totalCount: number | null;
 };
 
 export type OrdersList_Query = {
@@ -31168,11 +32683,11 @@ export type OrdersList_Query = {
 };
 
 export type OrdersListVariables = Exact<{
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  last?: InputMaybe<Scalars["Int"]["input"]>;
   after?: InputMaybe<Scalars["String"]["input"]>;
   before?: InputMaybe<Scalars["String"]["input"]>;
   filter?: InputMaybe<OrderFilterInput>;
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  last?: InputMaybe<Scalars["Int"]["input"]>;
   sortBy?: InputMaybe<OrderSortingInput>;
 }>;
 
@@ -31184,18 +32699,19 @@ export type ProductDetail_product_Product_collections_Collection = {
 };
 
 export type ProductDetail_product_Product_thumbnail_Image = {
-  url: string;
   alt: string | null;
+  url: string;
 };
 
 export type ProductDetail_product_Product_media_ProductMedia = {
-  id: string;
-  url: string;
   alt: string;
+  id: string;
   type: ProductMediaType;
+  url: string;
 };
 
 export type ProductDetail_product_Product_productType_ProductType = {
+  hasVariants: boolean;
   id: string;
   name: string;
 };
@@ -31220,16 +32736,16 @@ export type ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttr
 
 export type ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute =
   {
+    choices: ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute_choices_AttributeValueCountableConnection | null;
     id: string;
+    inputType: AttributeInputTypeEnum | null;
     name: string | null;
     slug: string | null;
-    inputType: AttributeInputTypeEnum | null;
     valueRequired: boolean;
-    choices: ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute_choices_AttributeValueCountableConnection | null;
   };
 
 export type ProductDetail_product_Product_assignedAttributes_AssignedFileAttribute_fileValue_File =
-  { url: string; contentType: string | null };
+  { contentType: string | null; url: string };
 
 export type ProductDetail_product_Product_assignedAttributes_AssignedMultiChoiceAttribute_multiChoiceValue_AssignedChoiceAttributeValue =
   { name: string | null; slug: string | null };
@@ -31238,30 +32754,30 @@ export type ProductDetail_product_Product_assignedAttributes_AssignedSingleChoic
   { name: string | null; slug: string | null };
 
 export type ProductDetail_product_Product_assignedAttributes_AssignedSwatchAttribute_swatchValue_AssignedSwatchAttributeValue =
-  { name: string | null; slug: string | null; hexColor: string | null };
+  { hexColor: string | null; name: string | null; slug: string | null };
 
 export type ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute =
   {
-    booleanValue: boolean | null;
     attribute: ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute;
+    booleanValue: boolean | null;
   } & { __typename: "AssignedBooleanAttribute" };
 
 export type ProductDetail_product_Product_assignedAttributes_AssignedDateAttribute =
   {
-    dateValue: string | null;
     attribute: ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute;
+    dateValue: string | null;
   } & { __typename: "AssignedDateAttribute" };
 
 export type ProductDetail_product_Product_assignedAttributes_AssignedDateTimeAttribute =
   {
-    dateTimeValue: string | null;
     attribute: ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute;
+    dateTimeValue: string | null;
   } & { __typename: "AssignedDateTimeAttribute" };
 
 export type ProductDetail_product_Product_assignedAttributes_AssignedFileAttribute =
   {
-    fileValue: ProductDetail_product_Product_assignedAttributes_AssignedFileAttribute_fileValue_File | null;
     attribute: ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute;
+    fileValue: ProductDetail_product_Product_assignedAttributes_AssignedFileAttribute_fileValue_File | null;
   } & { __typename: "AssignedFileAttribute" };
 
 export type ProductDetail_product_Product_assignedAttributes_EP9HcmmFCQqdoG7811YxTX6aNOeQ5zZmEGxiLqdpAO4 =
@@ -31283,38 +32799,38 @@ export type ProductDetail_product_Product_assignedAttributes_EP9HcmmFCQqdoG7811Y
 
 export type ProductDetail_product_Product_assignedAttributes_AssignedMultiChoiceAttribute =
   {
-    multiChoiceValue: Array<ProductDetail_product_Product_assignedAttributes_AssignedMultiChoiceAttribute_multiChoiceValue_AssignedChoiceAttributeValue>;
     attribute: ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute;
+    multiChoiceValue: Array<ProductDetail_product_Product_assignedAttributes_AssignedMultiChoiceAttribute_multiChoiceValue_AssignedChoiceAttributeValue>;
   } & { __typename: "AssignedMultiChoiceAttribute" };
 
 export type ProductDetail_product_Product_assignedAttributes_AssignedNumericAttribute =
   {
-    numericValue: number | null;
     attribute: ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute;
+    numericValue: number | null;
   } & { __typename: "AssignedNumericAttribute" };
 
 export type ProductDetail_product_Product_assignedAttributes_AssignedPlainTextAttribute =
   {
-    plainTextValue: string | null;
     attribute: ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute;
+    plainTextValue: string | null;
   } & { __typename: "AssignedPlainTextAttribute" };
 
 export type ProductDetail_product_Product_assignedAttributes_AssignedSingleChoiceAttribute =
   {
-    singleChoiceValue: ProductDetail_product_Product_assignedAttributes_AssignedSingleChoiceAttribute_singleChoiceValue_AssignedChoiceAttributeValue | null;
     attribute: ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute;
+    singleChoiceValue: ProductDetail_product_Product_assignedAttributes_AssignedSingleChoiceAttribute_singleChoiceValue_AssignedChoiceAttributeValue | null;
   } & { __typename: "AssignedSingleChoiceAttribute" };
 
 export type ProductDetail_product_Product_assignedAttributes_AssignedSwatchAttribute =
   {
-    swatchValue: ProductDetail_product_Product_assignedAttributes_AssignedSwatchAttribute_swatchValue_AssignedSwatchAttributeValue | null;
     attribute: ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute;
+    swatchValue: ProductDetail_product_Product_assignedAttributes_AssignedSwatchAttribute_swatchValue_AssignedSwatchAttributeValue | null;
   } & { __typename: "AssignedSwatchAttribute" };
 
 export type ProductDetail_product_Product_assignedAttributes_AssignedTextAttribute =
   {
-    textValue: unknown | null;
     attribute: ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute;
+    textValue: unknown | null;
   } & { __typename: "AssignedTextAttribute" };
 
 export type ProductDetail_product_Product_assignedAttributes =
@@ -31379,12 +32895,12 @@ export type ProductDetail_product_Product_channelListings_ProductChannelListing_
 
 export type ProductDetail_product_Product_channelListings_ProductChannelListing =
   {
-    id: string;
-    isPublished: boolean;
-    visibleInListings: boolean;
-    isAvailableForPurchase: boolean | null;
     channel: ProductDetail_product_Product_channelListings_ProductChannelListing_channel_Channel;
+    id: string;
+    isAvailableForPurchase: boolean | null;
+    isPublished: boolean;
     pricing: ProductDetail_product_Product_channelListings_ProductChannelListing_pricing_ProductPricingInfo | null;
+    visibleInListings: boolean;
   };
 
 export type ProductDetail_product_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney_gross_Money =
@@ -31400,8 +32916,24 @@ export type ProductDetail_product_Product_variants_ProductVariant_pricing_Varian
     price: ProductDetail_product_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney | null;
   };
 
+export type ProductDetail_product_Product_variants_ProductVariant_channelListings_ProductVariantChannelListing_channel_Channel =
+  { id: string; name: string };
+
+export type ProductDetail_product_Product_variants_ProductVariant_channelListings_ProductVariantChannelListing_price_Money =
+  { amount: number; currency: string };
+
+export type ProductDetail_product_Product_variants_ProductVariant_channelListings_ProductVariantChannelListing_costPrice_Money =
+  { amount: number; currency: string };
+
+export type ProductDetail_product_Product_variants_ProductVariant_channelListings_ProductVariantChannelListing =
+  {
+    channel: ProductDetail_product_Product_variants_ProductVariant_channelListings_ProductVariantChannelListing_channel_Channel;
+    costPrice: ProductDetail_product_Product_variants_ProductVariant_channelListings_ProductVariantChannelListing_costPrice_Money | null;
+    price: ProductDetail_product_Product_variants_ProductVariant_channelListings_ProductVariantChannelListing_price_Money | null;
+  };
+
 export type ProductDetail_product_Product_variants_ProductVariant_stocks_Stock_warehouse_Warehouse =
-  { name: string };
+  { id: string; name: string };
 
 export type ProductDetail_product_Product_variants_ProductVariant_stocks_Stock =
   {
@@ -31411,10 +32943,11 @@ export type ProductDetail_product_Product_variants_ProductVariant_stocks_Stock =
   };
 
 export type ProductDetail_product_Product_variants_ProductVariant = {
+  channelListings: Array<ProductDetail_product_Product_variants_ProductVariant_channelListings_ProductVariantChannelListing> | null;
   id: string;
   name: string;
-  sku: string | null;
   pricing: ProductDetail_product_Product_variants_ProductVariant_pricing_VariantPricingInfo | null;
+  sku: string | null;
   stocks: Array<ProductDetail_product_Product_variants_ProductVariant_stocks_Stock> | null;
 };
 
@@ -31424,22 +32957,22 @@ export type ProductDetail_product_Product_metadata_MetadataItem = {
 };
 
 export type ProductDetail_product_Product = {
-  id: string;
-  name: string;
-  slug: string;
-  description: string | null;
-  seoTitle: string | null;
-  seoDescription: string | null;
-  collections: Array<ProductDetail_product_Product_collections_Collection> | null;
-  thumbnail: ProductDetail_product_Product_thumbnail_Image | null;
-  media: Array<ProductDetail_product_Product_media_ProductMedia> | null;
-  productType: ProductDetail_product_Product_productType_ProductType;
-  category: ProductDetail_product_Product_category_Category | null;
   assignedAttributes: Array<ProductDetail_product_Product_assignedAttributes>;
-  pricing: ProductDetail_product_Product_pricing_ProductPricingInfo | null;
+  category: ProductDetail_product_Product_category_Category | null;
   channelListings: Array<ProductDetail_product_Product_channelListings_ProductChannelListing> | null;
-  variants: Array<ProductDetail_product_Product_variants_ProductVariant> | null;
+  collections: Array<ProductDetail_product_Product_collections_Collection> | null;
+  description: string | null;
+  id: string;
+  media: Array<ProductDetail_product_Product_media_ProductMedia> | null;
   metadata: Array<ProductDetail_product_Product_metadata_MetadataItem>;
+  name: string;
+  pricing: ProductDetail_product_Product_pricing_ProductPricingInfo | null;
+  productType: ProductDetail_product_Product_productType_ProductType;
+  seoDescription: string | null;
+  seoTitle: string | null;
+  slug: string;
+  thumbnail: ProductDetail_product_Product_thumbnail_Image | null;
+  variants: Array<ProductDetail_product_Product_variants_ProductVariant> | null;
 };
 
 export type ProductDetail_Query = {
@@ -31467,12 +33000,12 @@ export type ProductTypeDetail_productType_ProductType_productAttributes_Attribut
 
 export type ProductTypeDetail_productType_ProductType_productAttributes_Attribute =
   {
+    choices: ProductTypeDetail_productType_ProductType_productAttributes_Attribute_choices_AttributeValueCountableConnection | null;
     id: string;
+    inputType: AttributeInputTypeEnum | null;
     name: string | null;
     slug: string | null;
-    inputType: AttributeInputTypeEnum | null;
     valueRequired: boolean;
-    choices: ProductTypeDetail_productType_ProductType_productAttributes_Attribute_choices_AttributeValueCountableConnection | null;
   };
 
 export type ProductTypeDetail_productType_ProductType_assignedVariantAttributes_AssignedVariantAttribute_attribute_Attribute_choices_AttributeValueCountableConnection_edges_AttributeValueCountableEdge_node_AttributeValue =
@@ -31490,27 +33023,27 @@ export type ProductTypeDetail_productType_ProductType_assignedVariantAttributes_
 
 export type ProductTypeDetail_productType_ProductType_assignedVariantAttributes_AssignedVariantAttribute_attribute_Attribute =
   {
+    choices: ProductTypeDetail_productType_ProductType_assignedVariantAttributes_AssignedVariantAttribute_attribute_Attribute_choices_AttributeValueCountableConnection | null;
     id: string;
+    inputType: AttributeInputTypeEnum | null;
     name: string | null;
     slug: string | null;
-    inputType: AttributeInputTypeEnum | null;
     valueRequired: boolean;
-    choices: ProductTypeDetail_productType_ProductType_assignedVariantAttributes_AssignedVariantAttribute_attribute_Attribute_choices_AttributeValueCountableConnection | null;
   };
 
 export type ProductTypeDetail_productType_ProductType_assignedVariantAttributes_AssignedVariantAttribute =
   {
-    variantSelection: boolean;
     attribute: ProductTypeDetail_productType_ProductType_assignedVariantAttributes_AssignedVariantAttribute_attribute_Attribute;
+    variantSelection: boolean;
   };
 
 export type ProductTypeDetail_productType_ProductType = {
+  assignedVariantAttributes: Array<ProductTypeDetail_productType_ProductType_assignedVariantAttributes_AssignedVariantAttribute> | null;
+  hasVariants: boolean;
   id: string;
   name: string;
-  slug: string;
-  hasVariants: boolean;
   productAttributes: Array<ProductTypeDetail_productType_ProductType_productAttributes_Attribute> | null;
-  assignedVariantAttributes: Array<ProductTypeDetail_productType_ProductType_assignedVariantAttributes_AssignedVariantAttribute> | null;
+  slug: string;
 };
 
 export type ProductTypeDetail_Query = {
@@ -31538,21 +33071,21 @@ export type ProductTypesList_productTypes_ProductTypeCountableConnection_edges_P
 
 export type ProductTypesList_productTypes_ProductTypeCountableConnection_edges_ProductTypeCountableEdge_node_ProductType_productAttributes_Attribute =
   {
+    choices: ProductTypesList_productTypes_ProductTypeCountableConnection_edges_ProductTypeCountableEdge_node_ProductType_productAttributes_Attribute_choices_AttributeValueCountableConnection | null;
     id: string;
+    inputType: AttributeInputTypeEnum | null;
     name: string | null;
     slug: string | null;
-    inputType: AttributeInputTypeEnum | null;
     valueRequired: boolean;
-    choices: ProductTypesList_productTypes_ProductTypeCountableConnection_edges_ProductTypeCountableEdge_node_ProductType_productAttributes_Attribute_choices_AttributeValueCountableConnection | null;
   };
 
 export type ProductTypesList_productTypes_ProductTypeCountableConnection_edges_ProductTypeCountableEdge_node_ProductType =
   {
+    hasVariants: boolean;
     id: string;
     name: string;
-    slug: string;
-    hasVariants: boolean;
     productAttributes: Array<ProductTypesList_productTypes_ProductTypeCountableConnection_edges_ProductTypeCountableEdge_node_ProductType_productAttributes_Attribute> | null;
+    slug: string;
   };
 
 export type ProductTypesList_productTypes_ProductTypeCountableConnection_edges_ProductTypeCountableEdge =
@@ -31562,12 +33095,12 @@ export type ProductTypesList_productTypes_ProductTypeCountableConnection_edges_P
   };
 
 export type ProductTypesList_productTypes_ProductTypeCountableConnection_pageInfo_PageInfo =
-  { hasNextPage: boolean; endCursor: string | null };
+  { endCursor: string | null; hasNextPage: boolean };
 
 export type ProductTypesList_productTypes_ProductTypeCountableConnection = {
-  totalCount: number | null;
   edges: Array<ProductTypesList_productTypes_ProductTypeCountableConnection_edges_ProductTypeCountableEdge>;
   pageInfo: ProductTypesList_productTypes_ProductTypeCountableConnection_pageInfo_PageInfo;
+  totalCount: number | null;
 };
 
 export type ProductTypesList_Query = {
@@ -31575,41 +33108,41 @@ export type ProductTypesList_Query = {
 };
 
 export type ProductTypesListVariables = Exact<{
-  first?: InputMaybe<Scalars["Int"]["input"]>;
   after?: InputMaybe<Scalars["String"]["input"]>;
+  first?: InputMaybe<Scalars["Int"]["input"]>;
 }>;
 
 export type ProductTypesList = ProductTypesList_Query;
 
 export type ProductVariantDetail_productVariant_ProductVariant_weight_Weight = {
-  value: number;
   unit: WeightUnitsEnum;
+  value: number;
 };
 
 export type ProductVariantDetail_productVariant_ProductVariant_channelListings_ProductVariantChannelListing_channel_Channel =
-  { id: string; name: string; currencyCode: string };
+  { currencyCode: string; id: string; name: string };
 
 export type ProductVariantDetail_productVariant_ProductVariant_channelListings_ProductVariantChannelListing_price_Money =
-  { currency: string; amount: number };
+  { amount: number; currency: string };
 
 export type ProductVariantDetail_productVariant_ProductVariant_channelListings_ProductVariantChannelListing_costPrice_Money =
-  { currency: string; amount: number };
+  { amount: number; currency: string };
 
 export type ProductVariantDetail_productVariant_ProductVariant_channelListings_ProductVariantChannelListing_priorPrice_Money =
-  { currency: string; amount: number };
+  { amount: number; currency: string };
 
 export type ProductVariantDetail_productVariant_ProductVariant_channelListings_ProductVariantChannelListing_preorderThreshold_PreorderThreshold =
   { quantity: number | null };
 
 export type ProductVariantDetail_productVariant_ProductVariant_channelListings_ProductVariantChannelListing =
   {
+    channel: ProductVariantDetail_productVariant_ProductVariant_channelListings_ProductVariantChannelListing_channel_Channel;
+    costPrice: ProductVariantDetail_productVariant_ProductVariant_channelListings_ProductVariantChannelListing_costPrice_Money | null;
     id: string;
     margin: number | null;
-    channel: ProductVariantDetail_productVariant_ProductVariant_channelListings_ProductVariantChannelListing_channel_Channel;
-    price: ProductVariantDetail_productVariant_ProductVariant_channelListings_ProductVariantChannelListing_price_Money | null;
-    costPrice: ProductVariantDetail_productVariant_ProductVariant_channelListings_ProductVariantChannelListing_costPrice_Money | null;
-    priorPrice: ProductVariantDetail_productVariant_ProductVariant_channelListings_ProductVariantChannelListing_priorPrice_Money | null;
     preorderThreshold: ProductVariantDetail_productVariant_ProductVariant_channelListings_ProductVariantChannelListing_preorderThreshold_PreorderThreshold | null;
+    price: ProductVariantDetail_productVariant_ProductVariant_channelListings_ProductVariantChannelListing_price_Money | null;
+    priorPrice: ProductVariantDetail_productVariant_ProductVariant_channelListings_ProductVariantChannelListing_priorPrice_Money | null;
   };
 
 export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute_choices_AttributeValueCountableConnection_edges_AttributeValueCountableEdge_node_AttributeValue =
@@ -31627,16 +33160,16 @@ export type ProductVariantDetail_productVariant_ProductVariant_assignedAttribute
 
 export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute =
   {
+    choices: ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute_choices_AttributeValueCountableConnection | null;
     id: string;
+    inputType: AttributeInputTypeEnum | null;
     name: string | null;
     slug: string | null;
-    inputType: AttributeInputTypeEnum | null;
     valueRequired: boolean;
-    choices: ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute_choices_AttributeValueCountableConnection | null;
   };
 
 export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedFileAttribute_fileValue_File =
-  { url: string; contentType: string | null };
+  { contentType: string | null; url: string };
 
 export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedMultiChoiceAttribute_multiChoiceValue_AssignedChoiceAttributeValue =
   { name: string | null; slug: string | null };
@@ -31645,30 +33178,30 @@ export type ProductVariantDetail_productVariant_ProductVariant_assignedAttribute
   { name: string | null; slug: string | null };
 
 export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedSwatchAttribute_swatchValue_AssignedSwatchAttributeValue =
-  { name: string | null; slug: string | null; hexColor: string | null };
+  { hexColor: string | null; name: string | null; slug: string | null };
 
 export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute =
   {
-    booleanValue: boolean | null;
     attribute: ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute;
+    booleanValue: boolean | null;
   } & { __typename: "AssignedBooleanAttribute" };
 
 export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedDateAttribute =
   {
-    dateValue: string | null;
     attribute: ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute;
+    dateValue: string | null;
   } & { __typename: "AssignedDateAttribute" };
 
 export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedDateTimeAttribute =
   {
-    dateTimeValue: string | null;
     attribute: ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute;
+    dateTimeValue: string | null;
   } & { __typename: "AssignedDateTimeAttribute" };
 
 export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedFileAttribute =
   {
-    fileValue: ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedFileAttribute_fileValue_File | null;
     attribute: ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute;
+    fileValue: ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedFileAttribute_fileValue_File | null;
   } & { __typename: "AssignedFileAttribute" };
 
 export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_EP9HcmmFCQqdoG7811YxTX6aNOeQ5zZmEGxiLqdpAO4 =
@@ -31690,38 +33223,38 @@ export type ProductVariantDetail_productVariant_ProductVariant_assignedAttribute
 
 export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedMultiChoiceAttribute =
   {
-    multiChoiceValue: Array<ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedMultiChoiceAttribute_multiChoiceValue_AssignedChoiceAttributeValue>;
     attribute: ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute;
+    multiChoiceValue: Array<ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedMultiChoiceAttribute_multiChoiceValue_AssignedChoiceAttributeValue>;
   } & { __typename: "AssignedMultiChoiceAttribute" };
 
 export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedNumericAttribute =
   {
-    numericValue: number | null;
     attribute: ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute;
+    numericValue: number | null;
   } & { __typename: "AssignedNumericAttribute" };
 
 export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedPlainTextAttribute =
   {
-    plainTextValue: string | null;
     attribute: ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute;
+    plainTextValue: string | null;
   } & { __typename: "AssignedPlainTextAttribute" };
 
 export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedSingleChoiceAttribute =
   {
-    singleChoiceValue: ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedSingleChoiceAttribute_singleChoiceValue_AssignedChoiceAttributeValue | null;
     attribute: ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute;
+    singleChoiceValue: ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedSingleChoiceAttribute_singleChoiceValue_AssignedChoiceAttributeValue | null;
   } & { __typename: "AssignedSingleChoiceAttribute" };
 
 export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedSwatchAttribute =
   {
-    swatchValue: ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedSwatchAttribute_swatchValue_AssignedSwatchAttributeValue | null;
     attribute: ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute;
+    swatchValue: ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedSwatchAttribute_swatchValue_AssignedSwatchAttributeValue | null;
   } & { __typename: "AssignedSwatchAttribute" };
 
 export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedTextAttribute =
   {
-    textValue: unknown | null;
     attribute: ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute_attribute_Attribute;
+    textValue: unknown | null;
   } & { __typename: "AssignedTextAttribute" };
 
 export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes =
@@ -31752,15 +33285,15 @@ export type ProductVariantDetail_productVariant_ProductVariant_metadata_Metadata
   { key: string; value: string };
 
 export type ProductVariantDetail_productVariant_ProductVariant = {
+  assignedAttributes: Array<ProductVariantDetail_productVariant_ProductVariant_assignedAttributes>;
+  channelListings: Array<ProductVariantDetail_productVariant_ProductVariant_channelListings_ProductVariantChannelListing> | null;
   id: string;
+  metadata: Array<ProductVariantDetail_productVariant_ProductVariant_metadata_MetadataItem>;
   name: string;
   sku: string | null;
+  stocks: Array<ProductVariantDetail_productVariant_ProductVariant_stocks_Stock> | null;
   trackInventory: boolean;
   weight: ProductVariantDetail_productVariant_ProductVariant_weight_Weight | null;
-  channelListings: Array<ProductVariantDetail_productVariant_ProductVariant_channelListings_ProductVariantChannelListing> | null;
-  assignedAttributes: Array<ProductVariantDetail_productVariant_ProductVariant_assignedAttributes>;
-  stocks: Array<ProductVariantDetail_productVariant_ProductVariant_stocks_Stock> | null;
-  metadata: Array<ProductVariantDetail_productVariant_ProductVariant_metadata_MetadataItem>;
 };
 
 export type ProductVariantDetail_Query = {
@@ -31774,7 +33307,7 @@ export type ProductVariantDetailVariables = Exact<{
 export type ProductVariantDetail = ProductVariantDetail_Query;
 
 export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_thumbnail_Image =
-  { url: string; alt: string | null };
+  { alt: string | null; url: string };
 
 export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_productType_ProductType =
   { name: string };
@@ -31805,20 +33338,20 @@ export type Products_products_ProductCountableConnection_edges_ProductCountableE
 
 export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_channelListings_ProductChannelListing =
   {
-    isPublished: boolean;
     channel: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_channelListings_ProductChannelListing_channel_Channel;
+    isPublished: boolean;
   };
 
 export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product =
   {
+    category: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_category_Category | null;
+    channelListings: Array<Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_channelListings_ProductChannelListing> | null;
     id: string;
     name: string;
+    pricing: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo | null;
+    productType: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_productType_ProductType;
     slug: string;
     thumbnail: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_thumbnail_Image | null;
-    productType: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_productType_ProductType;
-    category: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_category_Category | null;
-    pricing: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo | null;
-    channelListings: Array<Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_channelListings_ProductChannelListing> | null;
   };
 
 export type Products_products_ProductCountableConnection_edges_ProductCountableEdge =
@@ -31828,16 +33361,16 @@ export type Products_products_ProductCountableConnection_edges_ProductCountableE
   };
 
 export type Products_products_ProductCountableConnection_pageInfo_PageInfo = {
+  endCursor: string | null;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
   startCursor: string | null;
-  endCursor: string | null;
 };
 
 export type Products_products_ProductCountableConnection = {
-  totalCount: number | null;
   edges: Array<Products_products_ProductCountableConnection_edges_ProductCountableEdge>;
   pageInfo: Products_products_ProductCountableConnection_pageInfo_PageInfo;
+  totalCount: number | null;
 };
 
 export type Products_Query = {
@@ -31845,10 +33378,10 @@ export type Products_Query = {
 };
 
 export type ProductsVariables = Exact<{
-  first?: InputMaybe<Scalars["Int"]["input"]>;
   after?: InputMaybe<Scalars["String"]["input"]>;
-  search?: InputMaybe<Scalars["String"]["input"]>;
   filter?: InputMaybe<ProductFilterInput>;
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  search?: InputMaybe<Scalars["String"]["input"]>;
 }>;
 
 export type Products = Products_Query;
@@ -31865,9 +33398,9 @@ export type VendorPageStatus_page_Page_attributes_SelectedAttribute = {
 };
 
 export type VendorPageStatus_page_Page = {
+  attributes: Array<VendorPageStatus_page_Page_attributes_SelectedAttribute>;
   id: string;
   title: string;
-  attributes: Array<VendorPageStatus_page_Page_attributes_SelectedAttribute>;
 };
 
 export type VendorPageStatus_Query = {
@@ -31881,14 +33414,14 @@ export type VendorPageStatusVariables = Exact<{
 export type VendorPageStatus = VendorPageStatus_Query;
 
 export type VendorPageType_pageTypes_PageTypeCountableConnection_edges_PageTypeCountableEdge_node_PageType_attributes_Attribute =
-  { id: string; slug: string | null; inputType: AttributeInputTypeEnum | null };
+  { id: string; inputType: AttributeInputTypeEnum | null; slug: string | null };
 
 export type VendorPageType_pageTypes_PageTypeCountableConnection_edges_PageTypeCountableEdge_node_PageType =
   {
+    attributes: Array<VendorPageType_pageTypes_PageTypeCountableConnection_edges_PageTypeCountableEdge_node_PageType_attributes_Attribute> | null;
     id: string;
     name: string;
     slug: string;
-    attributes: Array<VendorPageType_pageTypes_PageTypeCountableConnection_edges_PageTypeCountableEdge_node_PageType_attributes_Attribute> | null;
   };
 
 export type VendorPageType_pageTypes_PageTypeCountableConnection_edges_PageTypeCountableEdge =
@@ -31911,16 +33444,16 @@ export type VendorPageTypeVariables = Exact<{
 export type VendorPageType = VendorPageType_Query;
 
 export type Warehouses_warehouses_WarehouseCountableConnection_edges_WarehouseCountableEdge_node_Warehouse_address_Address_country_CountryDisplay =
-  { country: string; code: string };
+  { code: string; country: string };
 
 export type Warehouses_warehouses_WarehouseCountableConnection_edges_WarehouseCountableEdge_node_Warehouse_address_Address =
   {
+    city: string;
+    country: Warehouses_warehouses_WarehouseCountableConnection_edges_WarehouseCountableEdge_node_Warehouse_address_Address_country_CountryDisplay;
+    phone: string | null;
+    postalCode: string;
     streetAddress1: string;
     streetAddress2: string;
-    city: string;
-    postalCode: string;
-    phone: string | null;
-    country: Warehouses_warehouses_WarehouseCountableConnection_edges_WarehouseCountableEdge_node_Warehouse_address_Address_country_CountryDisplay;
   };
 
 export type Warehouses_warehouses_WarehouseCountableConnection_edges_WarehouseCountableEdge_node_Warehouse_shippingZones_ShippingZoneCountableConnection_edges_ShippingZoneCountableEdge_node_ShippingZone =
@@ -31938,11 +33471,11 @@ export type Warehouses_warehouses_WarehouseCountableConnection_edges_WarehouseCo
 
 export type Warehouses_warehouses_WarehouseCountableConnection_edges_WarehouseCountableEdge_node_Warehouse =
   {
+    address: Warehouses_warehouses_WarehouseCountableConnection_edges_WarehouseCountableEdge_node_Warehouse_address_Address;
     id: string;
     name: string;
-    slug: string;
-    address: Warehouses_warehouses_WarehouseCountableConnection_edges_WarehouseCountableEdge_node_Warehouse_address_Address;
     shippingZones: Warehouses_warehouses_WarehouseCountableConnection_edges_WarehouseCountableEdge_node_Warehouse_shippingZones_ShippingZoneCountableConnection;
+    slug: string;
   };
 
 export type Warehouses_warehouses_WarehouseCountableConnection_edges_WarehouseCountableEdge =
@@ -31951,8 +33484,8 @@ export type Warehouses_warehouses_WarehouseCountableConnection_edges_WarehouseCo
   };
 
 export type Warehouses_warehouses_WarehouseCountableConnection = {
-  totalCount: number | null;
   edges: Array<Warehouses_warehouses_WarehouseCountableConnection_edges_WarehouseCountableEdge>;
+  totalCount: number | null;
 };
 
 export type Warehouses_Query = {
@@ -32101,6 +33634,10 @@ export const CollectionUpdateDocument = new TypedDocumentString(`
       description
       seoTitle
       seoDescription
+      backgroundImage {
+        url
+        alt
+      }
       metadata {
         key
         value
@@ -32239,6 +33776,54 @@ export const UpdateProductChannelListingDocument = new TypedDocumentString(`
   UpdateProductChannelListing,
   UpdateProductChannelListingVariables
 >;
+export const ProductCreateMutationDocument = new TypedDocumentString(`
+    mutation ProductCreateMutation($input: ProductCreateInput!) {
+  productCreate(input: $input) {
+    errors {
+      field
+      message
+      code
+    }
+    product {
+      id
+      name
+      slug
+      description
+      seoTitle
+      seoDescription
+      productType {
+        id
+        name
+      }
+      category {
+        id
+        name
+      }
+      collections {
+        id
+        name
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  ProductCreateMutation,
+  ProductCreateMutationVariables
+>;
+export const ProductDeleteDocument = new TypedDocumentString(`
+    mutation ProductDelete($id: ID!) {
+  productDelete(id: $id) {
+    product {
+      id
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<ProductDelete, ProductDeleteVariables>;
 export const ProductMediaCreateMutationDocument = new TypedDocumentString(`
     mutation ProductMediaCreateMutation($input: ProductMediaCreateInput!) {
   productMediaCreate(input: $input) {
@@ -32304,6 +33889,34 @@ export const ProductMediaDeleteMutationDocument = new TypedDocumentString(`
     `) as unknown as TypedDocumentString<
   ProductMediaDeleteMutation,
   ProductMediaDeleteMutationVariables
+>;
+export const ProductMediaReorderMutationDocument = new TypedDocumentString(`
+    mutation ProductMediaReorderMutation($productId: ID!, $mediaIds: [ID!]!) {
+  productMediaReorder(productId: $productId, mediaIds: $mediaIds) {
+    errors {
+      field
+      message
+      code
+    }
+    product {
+      id
+      media {
+        id
+        url
+        alt
+        type
+        sortOrder
+      }
+      thumbnail {
+        url
+        alt
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  ProductMediaReorderMutation,
+  ProductMediaReorderMutationVariables
 >;
 export const ProductMediaUpdateMutationDocument = new TypedDocumentString(`
     mutation ProductMediaUpdateMutation($id: ID!, $input: ProductMediaUpdateInput!) {
@@ -32404,6 +34017,103 @@ export const ProductVariantBulkUpdateMutationDocument =
     ProductVariantBulkUpdateMutation,
     ProductVariantBulkUpdateMutationVariables
   >;
+export const ProductVariantChannelListingUpdateMutationDocument =
+  new TypedDocumentString(`
+    mutation ProductVariantChannelListingUpdateMutation($id: ID!, $input: [ProductVariantChannelListingAddInput!]!) {
+  productVariantChannelListingUpdate(id: $id, input: $input) {
+    errors {
+      field
+      message
+      code
+    }
+    variant {
+      id
+      channelListings {
+        id
+        channel {
+          id
+          name
+        }
+        price {
+          amount
+          currency
+        }
+        costPrice {
+          amount
+          currency
+        }
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+    ProductVariantChannelListingUpdateMutation,
+    ProductVariantChannelListingUpdateMutationVariables
+  >;
+export const ProductVariantCreateMutationDocument = new TypedDocumentString(`
+    mutation ProductVariantCreateMutation($input: ProductVariantCreateInput!) {
+  productVariantCreate(input: $input) {
+    errors {
+      field
+      message
+      code
+    }
+    productVariant {
+      id
+      name
+      sku
+      trackInventory
+      weight {
+        value
+        unit
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  ProductVariantCreateMutation,
+  ProductVariantCreateMutationVariables
+>;
+export const ProductVariantDeleteDocument = new TypedDocumentString(`
+    mutation ProductVariantDelete($id: ID!) {
+  productVariantDelete(id: $id) {
+    productVariant {
+      id
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  ProductVariantDelete,
+  ProductVariantDeleteVariables
+>;
+export const ProductVariantUpdateMutationDocument = new TypedDocumentString(`
+    mutation ProductVariantUpdateMutation($id: ID!, $input: ProductVariantInput!) {
+  productVariantUpdate(id: $id, input: $input) {
+    errors {
+      field
+      message
+      code
+    }
+    productVariant {
+      id
+      name
+      sku
+      weight {
+        value
+        unit
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  ProductVariantUpdateMutation,
+  ProductVariantUpdateMutationVariables
+>;
 export const VendorCollectionCreateDocument = new TypedDocumentString(`
     mutation VendorCollectionCreate($input: CollectionCreateInput!) {
   collectionCreate(input: $input) {
@@ -32510,6 +34220,10 @@ export const ChannelsDocument = new TypedDocumentString(`
       country
     }
     isActive
+    warehouses {
+      id
+      name
+    }
   }
 }
     `) as unknown as TypedDocumentString<Channels, ChannelsVariables>;
@@ -32866,6 +34580,7 @@ export const ProductDetailDocument = new TypedDocumentString(`
     productType {
       id
       name
+      hasVariants
     }
     category {
       id
@@ -32983,8 +34698,23 @@ export const ProductDetailDocument = new TypedDocumentString(`
           }
         }
       }
+      channelListings {
+        channel {
+          id
+          name
+        }
+        price {
+          amount
+          currency
+        }
+        costPrice {
+          amount
+          currency
+        }
+      }
       stocks {
         warehouse {
+          id
           name
         }
         quantity

@@ -13,11 +13,11 @@ export function CollectionsField({
   description,
   placeholder,
 }: {
-  name: string;
-  label: string;
-  options: SelectOption[];
-  disabled?: boolean;
   description?: string;
+  disabled?: boolean;
+  label: string;
+  name: string;
+  options: SelectOption[];
   placeholder?: string;
 }) {
   return (

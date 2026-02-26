@@ -23,8 +23,10 @@ export function ProductViewNavigation({
       ? `/products/${encodedProductId}/variants/${encodeURIComponent(firstVariantId)}`
       : `/products/${encodedProductId}/variants/new`;
 
-  const isVariants = pathname?.includes(
-    `/products/${encodedProductId}/variants`,
+  // Check if we're on a variants page
+  // Match pattern: /products/[productId]/variants[/variantId or /new]
+  const isVariants = Boolean(
+    pathname?.match(/\/products\/[^/]+\/variants(\/|$)/),
   );
 
   const linkClasses =

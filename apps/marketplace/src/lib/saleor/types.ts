@@ -4,10 +4,10 @@ import type { SaleorAppConfig } from "./app-config";
 export interface SaleorAppManifestExtension {
   label: string;
   mount: string;
-  target: string;
-  permissions: string[];
-  url: string;
   options?: { newTabTarget?: { method: "GET" | "POST" } };
+  permissions: string[];
+  target: string;
+  url: string;
 }
 
 /**
@@ -16,13 +16,13 @@ export interface SaleorAppManifestExtension {
 export interface SaleorAppManifest {
   about?: string;
   appUrl: string;
-  extensions?: SaleorAppManifestExtension[];
   author?: string;
   brand?: {
     logo?: {
       default?: string;
     };
   };
+  extensions?: SaleorAppManifestExtension[];
   id: string;
   name: string;
   permissions: string[];
@@ -82,9 +82,9 @@ export interface SaleorWebhookHeaders {
  * GraphQL authorization levels
  */
 export enum GraphQLAuthLevel {
-  AUTHENTICATED = "AUTHENTICATED",
   /** Uses app token when x-saleor-domain present (dashboard context, no user JWT) */
   APP_TOKEN_ONLY = "APP_TOKEN_ONLY",
+  AUTHENTICATED = "AUTHENTICATED",
   DOMAIN_ONLY = "DOMAIN_ONLY",
   PUBLIC = "PUBLIC",
 }
