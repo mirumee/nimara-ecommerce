@@ -10,6 +10,19 @@ query OrderDetail($id: ID!) {
     userEmail
     chargeStatus
     authorizeStatus
+    canFinalize
+    channel {
+      id
+      name
+      currencyCode
+      defaultCountry {
+        code
+      }
+      countries {
+        code
+        country
+      }
+    }
     total {
       gross {
         amount
@@ -36,11 +49,46 @@ query OrderDetail($id: ID!) {
         currency
       }
     }
+    shippingMethod {
+      id
+      name
+    }
+    shippingMethodName
+    discounts {
+      id
+      name
+      reason
+      value
+      valueType
+    }
     user {
       id
       email
       firstName
       lastName
+      defaultBillingAddress {
+        id
+      }
+      defaultShippingAddress {
+        id
+      }
+      addresses {
+        id
+        firstName
+        lastName
+        companyName
+        streetAddress1
+        streetAddress2
+        city
+        cityArea
+        postalCode
+        countryArea
+        phone
+        country {
+          country
+          code
+        }
+      }
     }
     billingAddress {
       firstName
@@ -93,6 +141,7 @@ query OrderDetail($id: ID!) {
         alt
       }
       variant {
+        id
         name
         media {
           url

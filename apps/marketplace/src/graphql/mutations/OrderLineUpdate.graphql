@@ -1,0 +1,22 @@
+mutation OrderLineUpdate($id: ID!, $input: OrderLineInput!) {
+  orderLineUpdate(id: $id, input: $input) {
+    order {
+      id
+      number
+      status
+    }
+    orderLine {
+      id
+      quantity
+      variant {
+        id
+      }
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+

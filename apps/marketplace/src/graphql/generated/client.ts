@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import type { DocumentTypeDecoration } from "@graphql-typed-document-node/core";
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
@@ -31561,6 +31563,31 @@ export type DraftOrderDeleteVariables = Exact<{
 
 export type DraftOrderDelete = DraftOrderDelete_Mutation;
 
+export type DraftOrderUpdate_draftOrderUpdate_DraftOrderUpdate_order_Order = {
+  id: string;
+  number: string;
+  status: OrderStatus;
+};
+
+export type DraftOrderUpdate_draftOrderUpdate_DraftOrderUpdate_errors_OrderError =
+  { field: string | null; message: string | null; code: OrderErrorCode };
+
+export type DraftOrderUpdate_draftOrderUpdate_DraftOrderUpdate = {
+  order: DraftOrderUpdate_draftOrderUpdate_DraftOrderUpdate_order_Order | null;
+  errors: Array<DraftOrderUpdate_draftOrderUpdate_DraftOrderUpdate_errors_OrderError>;
+};
+
+export type DraftOrderUpdate_Mutation = {
+  draftOrderUpdate: DraftOrderUpdate_draftOrderUpdate_DraftOrderUpdate | null;
+};
+
+export type DraftOrderUpdateVariables = Exact<{
+  id: Scalars["ID"]["input"];
+  input: DraftOrderInput;
+}>;
+
+export type DraftOrderUpdate = DraftOrderUpdate_Mutation;
+
 export type MetadataUpdate_updateMetadata_UpdateMetadata_errors_MetadataError =
   { field: string | null; message: string | null; code: MetadataErrorCode };
 
@@ -31605,6 +31632,74 @@ export type CancelOrderVariables = Exact<{
 
 export type CancelOrder = CancelOrder_Mutation;
 
+export type OrderDiscountAdd_orderDiscountAdd_OrderDiscountAdd_order_Order = {
+  id: string;
+  number: string;
+  status: OrderStatus;
+};
+
+export type OrderDiscountAdd_orderDiscountAdd_OrderDiscountAdd_errors_OrderError =
+  { field: string | null; message: string | null; code: OrderErrorCode };
+
+export type OrderDiscountAdd_orderDiscountAdd_OrderDiscountAdd = {
+  order: OrderDiscountAdd_orderDiscountAdd_OrderDiscountAdd_order_Order | null;
+  errors: Array<OrderDiscountAdd_orderDiscountAdd_OrderDiscountAdd_errors_OrderError>;
+};
+
+export type OrderDiscountAdd_Mutation = {
+  orderDiscountAdd: OrderDiscountAdd_orderDiscountAdd_OrderDiscountAdd | null;
+};
+
+export type OrderDiscountAddVariables = Exact<{
+  orderId: Scalars["ID"]["input"];
+  input: OrderDiscountCommonInput;
+}>;
+
+export type OrderDiscountAdd = OrderDiscountAdd_Mutation;
+
+export type OrderDiscountDelete_orderDiscountDelete_OrderDiscountDelete_order_Order =
+  { id: string; number: string; status: OrderStatus };
+
+export type OrderDiscountDelete_orderDiscountDelete_OrderDiscountDelete_errors_OrderError =
+  { field: string | null; message: string | null; code: OrderErrorCode };
+
+export type OrderDiscountDelete_orderDiscountDelete_OrderDiscountDelete = {
+  order: OrderDiscountDelete_orderDiscountDelete_OrderDiscountDelete_order_Order | null;
+  errors: Array<OrderDiscountDelete_orderDiscountDelete_OrderDiscountDelete_errors_OrderError>;
+};
+
+export type OrderDiscountDelete_Mutation = {
+  orderDiscountDelete: OrderDiscountDelete_orderDiscountDelete_OrderDiscountDelete | null;
+};
+
+export type OrderDiscountDeleteVariables = Exact<{
+  discountId: Scalars["ID"]["input"];
+}>;
+
+export type OrderDiscountDelete = OrderDiscountDelete_Mutation;
+
+export type OrderDiscountUpdate_orderDiscountUpdate_OrderDiscountUpdate_order_Order =
+  { id: string; number: string; status: OrderStatus };
+
+export type OrderDiscountUpdate_orderDiscountUpdate_OrderDiscountUpdate_errors_OrderError =
+  { field: string | null; message: string | null; code: OrderErrorCode };
+
+export type OrderDiscountUpdate_orderDiscountUpdate_OrderDiscountUpdate = {
+  order: OrderDiscountUpdate_orderDiscountUpdate_OrderDiscountUpdate_order_Order | null;
+  errors: Array<OrderDiscountUpdate_orderDiscountUpdate_OrderDiscountUpdate_errors_OrderError>;
+};
+
+export type OrderDiscountUpdate_Mutation = {
+  orderDiscountUpdate: OrderDiscountUpdate_orderDiscountUpdate_OrderDiscountUpdate | null;
+};
+
+export type OrderDiscountUpdateVariables = Exact<{
+  discountId: Scalars["ID"]["input"];
+  input: OrderDiscountCommonInput;
+}>;
+
+export type OrderDiscountUpdate = OrderDiscountUpdate_Mutation;
+
 export type FulfillOrder_orderFulfill_OrderFulfill_errors_OrderError = {
   field: string | null;
   message: string | null;
@@ -31644,6 +31739,102 @@ export type CancelOrderFulfillmentVariables = Exact<{
 
 export type CancelOrderFulfillment = CancelOrderFulfillment_Mutation;
 
+export type OrderLineDelete_orderLineDelete_OrderLineDelete_order_Order = {
+  id: string;
+  number: string;
+  status: OrderStatus;
+};
+
+export type OrderLineDelete_orderLineDelete_OrderLineDelete_errors_OrderError =
+  { field: string | null; message: string | null; code: OrderErrorCode };
+
+export type OrderLineDelete_orderLineDelete_OrderLineDelete = {
+  order: OrderLineDelete_orderLineDelete_OrderLineDelete_order_Order | null;
+  errors: Array<OrderLineDelete_orderLineDelete_OrderLineDelete_errors_OrderError>;
+};
+
+export type OrderLineDelete_Mutation = {
+  orderLineDelete: OrderLineDelete_orderLineDelete_OrderLineDelete | null;
+};
+
+export type OrderLineDeleteVariables = Exact<{
+  id: Scalars["ID"]["input"];
+}>;
+
+export type OrderLineDelete = OrderLineDelete_Mutation;
+
+export type OrderLineUpdate_orderLineUpdate_OrderLineUpdate_order_Order = {
+  id: string;
+  number: string;
+  status: OrderStatus;
+};
+
+export type OrderLineUpdate_orderLineUpdate_OrderLineUpdate_orderLine_OrderLine_variant_ProductVariant =
+  { id: string };
+
+export type OrderLineUpdate_orderLineUpdate_OrderLineUpdate_orderLine_OrderLine =
+  {
+    id: string;
+    quantity: number;
+    variant: OrderLineUpdate_orderLineUpdate_OrderLineUpdate_orderLine_OrderLine_variant_ProductVariant | null;
+  };
+
+export type OrderLineUpdate_orderLineUpdate_OrderLineUpdate_errors_OrderError =
+  { field: string | null; message: string | null; code: OrderErrorCode };
+
+export type OrderLineUpdate_orderLineUpdate_OrderLineUpdate = {
+  order: OrderLineUpdate_orderLineUpdate_OrderLineUpdate_order_Order | null;
+  orderLine: OrderLineUpdate_orderLineUpdate_OrderLineUpdate_orderLine_OrderLine | null;
+  errors: Array<OrderLineUpdate_orderLineUpdate_OrderLineUpdate_errors_OrderError>;
+};
+
+export type OrderLineUpdate_Mutation = {
+  orderLineUpdate: OrderLineUpdate_orderLineUpdate_OrderLineUpdate | null;
+};
+
+export type OrderLineUpdateVariables = Exact<{
+  id: Scalars["ID"]["input"];
+  input: OrderLineInput;
+}>;
+
+export type OrderLineUpdate = OrderLineUpdate_Mutation;
+
+export type OrderLinesCreate_orderLinesCreate_OrderLinesCreate_order_Order = {
+  id: string;
+  number: string;
+  status: OrderStatus;
+};
+
+export type OrderLinesCreate_orderLinesCreate_OrderLinesCreate_orderLines_OrderLine_variant_ProductVariant =
+  { id: string };
+
+export type OrderLinesCreate_orderLinesCreate_OrderLinesCreate_orderLines_OrderLine =
+  {
+    id: string;
+    quantity: number;
+    variant: OrderLinesCreate_orderLinesCreate_OrderLinesCreate_orderLines_OrderLine_variant_ProductVariant | null;
+  };
+
+export type OrderLinesCreate_orderLinesCreate_OrderLinesCreate_errors_OrderError =
+  { field: string | null; message: string | null; code: OrderErrorCode };
+
+export type OrderLinesCreate_orderLinesCreate_OrderLinesCreate = {
+  order: OrderLinesCreate_orderLinesCreate_OrderLinesCreate_order_Order | null;
+  orderLines: Array<OrderLinesCreate_orderLinesCreate_OrderLinesCreate_orderLines_OrderLine> | null;
+  errors: Array<OrderLinesCreate_orderLinesCreate_OrderLinesCreate_errors_OrderError>;
+};
+
+export type OrderLinesCreate_Mutation = {
+  orderLinesCreate: OrderLinesCreate_orderLinesCreate_OrderLinesCreate | null;
+};
+
+export type OrderLinesCreateVariables = Exact<{
+  id: Scalars["ID"]["input"];
+  input: Array<OrderLineCreateInput> | OrderLineCreateInput;
+}>;
+
+export type OrderLinesCreate = OrderLinesCreate_Mutation;
+
 export type AddOrderNote_orderNoteAdd_OrderNoteAdd_errors_OrderNoteAddError = {
   field: string | null;
   message: string | null;
@@ -31674,6 +31865,34 @@ export type AddOrderNoteVariables = Exact<{
 }>;
 
 export type AddOrderNote = AddOrderNote_Mutation;
+
+export type OrderUpdate_orderUpdate_OrderUpdate_order_Order = {
+  id: string;
+  number: string;
+  status: OrderStatus;
+};
+
+export type OrderUpdate_orderUpdate_OrderUpdate_errors_OrderError = {
+  field: string | null;
+  message: string | null;
+  code: OrderErrorCode;
+};
+
+export type OrderUpdate_orderUpdate_OrderUpdate = {
+  order: OrderUpdate_orderUpdate_OrderUpdate_order_Order | null;
+  errors: Array<OrderUpdate_orderUpdate_OrderUpdate_errors_OrderError>;
+};
+
+export type OrderUpdate_Mutation = {
+  orderUpdate: OrderUpdate_orderUpdate_OrderUpdate | null;
+};
+
+export type OrderUpdateVariables = Exact<{
+  id: Scalars["ID"]["input"];
+  input: OrderUpdateInput;
+}>;
+
+export type OrderUpdate = OrderUpdate_Mutation;
 
 export type UpdateProductChannelListing_productChannelListingUpdate_ProductChannelListingUpdate_errors_ProductChannelListingError =
   { field: string | null; message: string | null; code: ProductErrorCode };
@@ -32373,6 +32592,22 @@ export type MeVariables = Exact<{ [key: string]: never }>;
 
 export type Me = Me_Query;
 
+export type OrderDetail_order_Order_channel_Channel_defaultCountry_CountryDisplay =
+  { code: string };
+
+export type OrderDetail_order_Order_channel_Channel_countries_CountryDisplay = {
+  code: string;
+  country: string;
+};
+
+export type OrderDetail_order_Order_channel_Channel = {
+  id: string;
+  name: string;
+  currencyCode: string;
+  defaultCountry: OrderDetail_order_Order_channel_Channel_defaultCountry_CountryDisplay;
+  countries: Array<OrderDetail_order_Order_channel_Channel_countries_CountryDisplay> | null;
+};
+
 export type OrderDetail_order_Order_total_TaxedMoney_gross_Money = {
   amount: number;
   currency: string;
@@ -32412,11 +32647,53 @@ export type OrderDetail_order_Order_shippingPrice_TaxedMoney = {
   gross: OrderDetail_order_Order_shippingPrice_TaxedMoney_gross_Money;
 };
 
+export type OrderDetail_order_Order_shippingMethod_ShippingMethod = {
+  id: string;
+  name: string;
+};
+
+export type OrderDetail_order_Order_discounts_OrderDiscount = {
+  id: string;
+  name: string | null;
+  reason: string | null;
+  value: number;
+  valueType: DiscountValueTypeEnum;
+};
+
+export type OrderDetail_order_Order_user_User_defaultBillingAddress_Address = {
+  id: string;
+};
+
+export type OrderDetail_order_Order_user_User_defaultShippingAddress_Address = {
+  id: string;
+};
+
+export type OrderDetail_order_Order_user_User_addresses_Address_country_CountryDisplay =
+  { country: string; code: string };
+
+export type OrderDetail_order_Order_user_User_addresses_Address = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  companyName: string;
+  streetAddress1: string;
+  streetAddress2: string;
+  city: string;
+  cityArea: string;
+  postalCode: string;
+  countryArea: string;
+  phone: string | null;
+  country: OrderDetail_order_Order_user_User_addresses_Address_country_CountryDisplay;
+};
+
 export type OrderDetail_order_Order_user_User = {
   id: string;
   email: string;
   firstName: string;
   lastName: string;
+  defaultBillingAddress: OrderDetail_order_Order_user_User_defaultBillingAddress_Address | null;
+  defaultShippingAddress: OrderDetail_order_Order_user_User_defaultShippingAddress_Address | null;
+  addresses: Array<OrderDetail_order_Order_user_User_addresses_Address>;
 };
 
 export type OrderDetail_order_Order_billingAddress_Address_country_CountryDisplay =
@@ -32478,6 +32755,7 @@ export type OrderDetail_order_Order_lines_OrderLine_variant_ProductVariant_stock
   };
 
 export type OrderDetail_order_Order_lines_OrderLine_variant_ProductVariant = {
+  id: string;
   name: string;
   media: Array<OrderDetail_order_Order_lines_OrderLine_variant_ProductVariant_media_ProductMedia> | null;
   stocks: Array<OrderDetail_order_Order_lines_OrderLine_variant_ProductVariant_stocks_Stock> | null;
@@ -32542,9 +32820,14 @@ export type OrderDetail_order_Order = {
   userEmail: string | null;
   chargeStatus: OrderChargeStatusEnum;
   authorizeStatus: OrderAuthorizeStatusEnum;
+  canFinalize: boolean;
+  shippingMethodName: string | null;
+  channel: OrderDetail_order_Order_channel_Channel;
   total: OrderDetail_order_Order_total_TaxedMoney;
   subtotal: OrderDetail_order_Order_subtotal_TaxedMoney;
   shippingPrice: OrderDetail_order_Order_shippingPrice_TaxedMoney;
+  shippingMethod: OrderDetail_order_Order_shippingMethod_ShippingMethod | null;
+  discounts: Array<OrderDetail_order_Order_discounts_OrderDiscount>;
   user: OrderDetail_order_Order_user_User | null;
   billingAddress: OrderDetail_order_Order_billingAddress_Address | null;
   shippingAddress: OrderDetail_order_Order_shippingAddress_Address | null;
@@ -33761,6 +34044,25 @@ export const DraftOrderDeleteDocument = new TypedDocumentString(`
   DraftOrderDelete,
   DraftOrderDeleteVariables
 >;
+export const DraftOrderUpdateDocument = new TypedDocumentString(`
+    mutation DraftOrderUpdate($id: ID!, $input: DraftOrderInput!) {
+  draftOrderUpdate(id: $id, input: $input) {
+    order {
+      id
+      number
+      status
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  DraftOrderUpdate,
+  DraftOrderUpdateVariables
+>;
 export const MetadataUpdateDocument = new TypedDocumentString(`
     mutation MetadataUpdate($id: ID!, $input: [MetadataInput!]!) {
   updateMetadata(id: $id, input: $input) {
@@ -33790,6 +34092,63 @@ export const CancelOrderDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<CancelOrder, CancelOrderVariables>;
+export const OrderDiscountAddDocument = new TypedDocumentString(`
+    mutation OrderDiscountAdd($orderId: ID!, $input: OrderDiscountCommonInput!) {
+  orderDiscountAdd(orderId: $orderId, input: $input) {
+    order {
+      id
+      number
+      status
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  OrderDiscountAdd,
+  OrderDiscountAddVariables
+>;
+export const OrderDiscountDeleteDocument = new TypedDocumentString(`
+    mutation OrderDiscountDelete($discountId: ID!) {
+  orderDiscountDelete(discountId: $discountId) {
+    order {
+      id
+      number
+      status
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  OrderDiscountDelete,
+  OrderDiscountDeleteVariables
+>;
+export const OrderDiscountUpdateDocument = new TypedDocumentString(`
+    mutation OrderDiscountUpdate($discountId: ID!, $input: OrderDiscountCommonInput!) {
+  orderDiscountUpdate(discountId: $discountId, input: $input) {
+    order {
+      id
+      number
+      status
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  OrderDiscountUpdate,
+  OrderDiscountUpdateVariables
+>;
 export const FulfillOrderDocument = new TypedDocumentString(`
     mutation FulfillOrder($order: ID!, $input: OrderFulfillInput!) {
   orderFulfill(order: $order, input: $input) {
@@ -33815,6 +34174,77 @@ export const CancelOrderFulfillmentDocument = new TypedDocumentString(`
   CancelOrderFulfillment,
   CancelOrderFulfillmentVariables
 >;
+export const OrderLineDeleteDocument = new TypedDocumentString(`
+    mutation OrderLineDelete($id: ID!) {
+  orderLineDelete(id: $id) {
+    order {
+      id
+      number
+      status
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  OrderLineDelete,
+  OrderLineDeleteVariables
+>;
+export const OrderLineUpdateDocument = new TypedDocumentString(`
+    mutation OrderLineUpdate($id: ID!, $input: OrderLineInput!) {
+  orderLineUpdate(id: $id, input: $input) {
+    order {
+      id
+      number
+      status
+    }
+    orderLine {
+      id
+      quantity
+      variant {
+        id
+      }
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  OrderLineUpdate,
+  OrderLineUpdateVariables
+>;
+export const OrderLinesCreateDocument = new TypedDocumentString(`
+    mutation OrderLinesCreate($id: ID!, $input: [OrderLineCreateInput!]!) {
+  orderLinesCreate(id: $id, input: $input) {
+    order {
+      id
+      number
+      status
+    }
+    orderLines {
+      id
+      quantity
+      variant {
+        id
+      }
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  OrderLinesCreate,
+  OrderLinesCreateVariables
+>;
 export const AddOrderNoteDocument = new TypedDocumentString(`
     mutation AddOrderNote($order: ID!, $input: OrderNoteInput!) {
   orderNoteAdd(order: $order, input: $input) {
@@ -33834,6 +34264,22 @@ export const AddOrderNoteDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<AddOrderNote, AddOrderNoteVariables>;
+export const OrderUpdateDocument = new TypedDocumentString(`
+    mutation OrderUpdate($id: ID!, $input: OrderUpdateInput!) {
+  orderUpdate(id: $id, input: $input) {
+    order {
+      id
+      number
+      status
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<OrderUpdate, OrderUpdateVariables>;
 export const UpdateProductChannelListingDocument = new TypedDocumentString(`
     mutation UpdateProductChannelListing($id: ID!, $input: ProductChannelListingUpdateInput!) {
   productChannelListingUpdate(id: $id, input: $input) {
@@ -34359,6 +34805,19 @@ export const OrderDetailDocument = new TypedDocumentString(`
     userEmail
     chargeStatus
     authorizeStatus
+    canFinalize
+    channel {
+      id
+      name
+      currencyCode
+      defaultCountry {
+        code
+      }
+      countries {
+        code
+        country
+      }
+    }
     total {
       gross {
         amount
@@ -34385,11 +34844,46 @@ export const OrderDetailDocument = new TypedDocumentString(`
         currency
       }
     }
+    shippingMethod {
+      id
+      name
+    }
+    shippingMethodName
+    discounts {
+      id
+      name
+      reason
+      value
+      valueType
+    }
     user {
       id
       email
       firstName
       lastName
+      defaultBillingAddress {
+        id
+      }
+      defaultShippingAddress {
+        id
+      }
+      addresses {
+        id
+        firstName
+        lastName
+        companyName
+        streetAddress1
+        streetAddress2
+        city
+        cityArea
+        postalCode
+        countryArea
+        phone
+        country {
+          country
+          code
+        }
+      }
     }
     billingAddress {
       firstName
@@ -34442,6 +34936,7 @@ export const OrderDetailDocument = new TypedDocumentString(`
         alt
       }
       variant {
+        id
         name
         media {
           url

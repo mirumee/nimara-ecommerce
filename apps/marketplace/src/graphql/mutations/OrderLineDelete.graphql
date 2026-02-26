@@ -1,0 +1,15 @@
+mutation OrderLineDelete($id: ID!) {
+  orderLineDelete(id: $id) {
+    order {
+      id
+      number
+      status
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+
