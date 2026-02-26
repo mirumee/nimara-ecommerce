@@ -69,6 +69,7 @@ export const serializeLine = (
       id: product.id,
       slug: product.slug,
       name: getTranslation("name", product),
+      vendorId: product.vendorId ?? null,
     },
   };
 };

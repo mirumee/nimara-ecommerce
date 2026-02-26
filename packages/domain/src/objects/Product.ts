@@ -58,6 +58,7 @@ export type ProductBase = {
     description?: string | null;
     title?: string | null;
   };
+  vendorId?: string | null;
 };
 
 export type RelatedProduct = SearchProduct;

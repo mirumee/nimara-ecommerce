@@ -1,0 +1,7 @@
+query ProductVariantVendorQuery($id: ID!, $channel: String!) {
+  productVariant(id: $id, channel: $channel) {
+    product {
+      vendorId: metafield(key: "vendor.id")
+    }
+  }
+}
