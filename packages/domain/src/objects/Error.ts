@@ -97,6 +97,8 @@ export const CHECKOUT_ERROR_CODES = [
   "TRANSACTION_INITIALIZE_ERROR",
   "TRANSACTION_PROCESS_ERROR",
   "VOUCHER_NOT_APPLICABLE_ERROR",
+  "VENDOR_MISMATCH_ERROR",
+  "VENDOR_MIX_NOT_ALLOWED_ERROR",
 ] as const satisfies ErrorCodeFormat[];
 export type CheckoutErrorCode = (typeof CHECKOUT_ERROR_CODES)[number];
 

@@ -55,7 +55,9 @@ export type CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_
 
 export type CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation = { name: string | null };
 
-export type CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product = { id: string, slug: string, name: string, thumbnail: CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_thumbnail_Image | null, translation: CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation | null };
+export type CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_metadata_MetadataItem = { key: string, value: string };
+
+export type CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product = { id: string, slug: string, name: string, thumbnail: CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_thumbnail_Image | null, translation: CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation | null, metadata?: Array<CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_metadata_MetadataItem> };
 
 export type CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money = { currency: string, amount: number };
 
@@ -276,6 +278,10 @@ fragment CartLineFragment on CheckoutLine {
       name
       translation(languageCode: $languageCode) {
         name
+      }
+      metadata @include(if: $includeVendorMetadata) {
+        key
+        value
       }
     }
     pricing {

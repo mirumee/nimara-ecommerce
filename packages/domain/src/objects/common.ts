@@ -21,6 +21,7 @@ export type Line = {
     id: string;
     name: string;
     slug: string;
+    vendorId?: string | null;
   };
   quantity: number;
   thumbnail: Image | null;

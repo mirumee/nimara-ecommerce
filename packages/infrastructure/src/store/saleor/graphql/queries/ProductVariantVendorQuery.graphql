@@ -1,0 +1,10 @@
+query ProductVariantVendorQuery($id: ID!, $channel: String!) {
+  productVariant(id: $id, channel: $channel) {
+    product {
+      metadata {
+        key
+        value
+      }
+    }
+  }
+}

@@ -53,7 +53,9 @@ export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_Prod
 
 export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation = { name: string | null };
 
-export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product = { id: string, slug: string, name: string, thumbnail: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_thumbnail_Image | null, translation: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation | null };
+export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_metadata_MetadataItem = { key: string, value: string };
+
+export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product = { id: string, slug: string, name: string, thumbnail: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_thumbnail_Image | null, translation: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation | null, metadata?: Array<CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_metadata_MetadataItem> };
 
 export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money = { currency: string, amount: number };
 
@@ -102,6 +104,7 @@ export type CheckoutSessionGetVariables = Types.Exact<{
   countryCode?: Types.InputMaybe<Types.CountryCode>;
   thumbnailSize?: Types.InputMaybe<Types.Scalars['Int']['input']>;
   thumbnailFormat?: Types.InputMaybe<Types.ThumbnailFormatEnum>;
+  includeVendorMetadata?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
 }>;
 
 
@@ -170,7 +173,7 @@ export class TypedDocumentString<TResult, TVariables>
 }
 
 export const CheckoutSessionGetDocument = new TypedDocumentString(`
-    query CheckoutSessionGet($id: ID!, $languageCode: LanguageCodeEnum!, $countryCode: CountryCode = US, $thumbnailSize: Int = 128, $thumbnailFormat: ThumbnailFormatEnum = WEBP) {
+    query CheckoutSessionGet($id: ID!, $languageCode: LanguageCodeEnum!, $countryCode: CountryCode = US, $thumbnailSize: Int = 128, $thumbnailFormat: ThumbnailFormatEnum = WEBP, $includeVendorMetadata: Boolean = false) {
   checkout(id: $id) {
     ...CheckoutSessionFragment
   }
@@ -305,6 +308,10 @@ fragment CartLineFragment on CheckoutLine {
       name
       translation(languageCode: $languageCode) {
         name
+      }
+      metadata @include(if: $includeVendorMetadata) {
+        key
+        value
       }
     }
     pricing {

@@ -39,7 +39,9 @@ export type CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVarian
 
 export type CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation = { name: string | null };
 
-export type CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product = { id: string, slug: string, name: string, thumbnail: CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_thumbnail_Image | null, translation: CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation | null };
+export type CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_metadata_MetadataItem = { key: string, value: string };
+
+export type CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product = { id: string, slug: string, name: string, thumbnail: CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_thumbnail_Image | null, translation: CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation | null, metadata?: Array<CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_metadata_MetadataItem> };
 
 export type CartQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney = { net: CartQuery_checkout_Checkout_subtotalPrice_TaxedMoney_net_Money, gross: CartQuery_checkout_Checkout_subtotalPrice_TaxedMoney_gross_Money, tax: CartQuery_checkout_Checkout_subtotalPrice_TaxedMoney_tax_Money };
 
@@ -76,6 +78,7 @@ export type CartQueryVariables = Types.Exact<{
   languageCode: Types.LanguageCodeEnum;
   thumbnailSize: Types.Scalars['Int']['input'];
   thumbnailFormat: Types.ThumbnailFormatEnum;
+  includeVendorMetadata: Types.Scalars['Boolean']['input'];
 }>;
 
 
@@ -101,7 +104,7 @@ export class TypedDocumentString<TResult, TVariables>
 }
 
 export const CartQueryDocument = new TypedDocumentString(`
-    query CartQuery($id: ID!, $countryCode: CountryCode!, $languageCode: LanguageCodeEnum!, $thumbnailSize: Int!, $thumbnailFormat: ThumbnailFormatEnum!) {
+    query CartQuery($id: ID!, $countryCode: CountryCode!, $languageCode: LanguageCodeEnum!, $thumbnailSize: Int!, $thumbnailFormat: ThumbnailFormatEnum!, $includeVendorMetadata: Boolean!) {
   checkout(id: $id) {
     ...CartFragment
   }
@@ -178,6 +181,10 @@ fragment CartLineFragment on CheckoutLine {
       name
       translation(languageCode: $languageCode) {
         name
+      }
+      metadata @include(if: $includeVendorMetadata) {
+        key
+        value
       }
     }
     pricing {

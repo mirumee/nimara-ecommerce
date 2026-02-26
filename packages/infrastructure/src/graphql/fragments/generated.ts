@@ -29,7 +29,9 @@ export type CartLineFragment_CheckoutLine_variant_ProductVariant_product_Product
 
 export type CartLineFragment_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation = { name: string | null };
 
-export type CartLineFragment_CheckoutLine_variant_ProductVariant_product_Product = { id: string, slug: string, name: string, thumbnail: CartLineFragment_CheckoutLine_variant_ProductVariant_product_Product_thumbnail_Image | null, translation: CartLineFragment_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation | null };
+export type CartLineFragment_CheckoutLine_variant_ProductVariant_product_Product_metadata_MetadataItem = { key: string, value: string };
+
+export type CartLineFragment_CheckoutLine_variant_ProductVariant_product_Product = { id: string, slug: string, name: string, thumbnail: CartLineFragment_CheckoutLine_variant_ProductVariant_product_Product_thumbnail_Image | null, translation: CartLineFragment_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation | null, metadata?: Array<CartLineFragment_CheckoutLine_variant_ProductVariant_product_Product_metadata_MetadataItem> };
 
 export type CartLineFragment_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money = { currency: string, amount: number };
 
@@ -115,6 +117,10 @@ export const CartLineFragment = new TypedDocumentString(`
       name
       translation(languageCode: $languageCode) {
         name
+      }
+      metadata @include(if: $includeVendorMetadata) {
+        key
+        value
       }
     }
     pricing {

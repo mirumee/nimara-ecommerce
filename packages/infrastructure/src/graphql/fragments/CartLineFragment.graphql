@@ -40,6 +40,10 @@ fragment CartLineFragment on CheckoutLine {
       translation(languageCode: $languageCode) {
         name
       }
+      metadata @include(if: $includeVendorMetadata) {
+        key
+        value
+      }
     }
     pricing {
       discount {

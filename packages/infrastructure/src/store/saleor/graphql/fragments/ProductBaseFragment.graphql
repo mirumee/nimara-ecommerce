@@ -12,4 +12,8 @@ fragment ProductBaseFragment on Product {
     name
     description
   }
+  metadata {
+    key
+    value
+  }
 }
