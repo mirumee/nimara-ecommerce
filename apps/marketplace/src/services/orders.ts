@@ -21,6 +21,9 @@ import {
   type OrderDetail,
   OrderDetailDocument,
   type OrderDetailVariables,
+  type OrderMarkAsPaidMutation,
+  OrderMarkAsPaidMutationDocument,
+  type OrderMarkAsPaidMutationVariables,
   type OrdersList,
   OrdersListDocument,
   type OrdersListVariables,
@@ -126,6 +129,18 @@ class OrdersService {
     return executeGraphQL(
       AddOrderNoteDocument,
       "AddOrderNoteMutation",
+      variables,
+      token,
+    );
+  }
+
+  async markOrderAsPaid(
+    variables: OrderMarkAsPaidMutationVariables,
+    token?: string | null,
+  ): AsyncResult<OrderMarkAsPaidMutation> {
+    return executeGraphQL(
+      OrderMarkAsPaidMutationDocument,
+      "OrderMarkAsPaidMutation",
       variables,
       token,
     );

@@ -1,0 +1,16 @@
+mutation OrderMarkAsPaidMutation($id: ID!, $transactionReference: String) {
+  orderMarkAsPaid(id: $id, transactionReference: $transactionReference) {
+    order {
+      id
+      paymentStatus
+      paymentStatusDisplay
+      chargeStatus
+      authorizeStatus
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}

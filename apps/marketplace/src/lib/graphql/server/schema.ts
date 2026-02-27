@@ -170,6 +170,7 @@ async function makeSaleorSchema() {
             "productVariantChannelListingUpdate",
             "orderFulfill",
             "orderCancel",
+            "orderMarkAsPaid",
             "orderFulfillmentCancel",
             "orderNoteAdd",
             "pageUpdate",
@@ -497,6 +498,60 @@ export async function getStitchedSchema() {
               schema: saleorSchema,
               operation: OperationTypeNode.MUTATION,
               fieldName: "orderCancel",
+              args,
+              context,
+              info,
+            });
+          },
+        },
+        orderMarkAsPaid: {
+          resolve: async (_source, args, context: ServerContext, info) => {
+            const vendorId = requireVendorID(context);
+
+            const orderQuery = parse(`
+              query GetOrder($id: ID!) {
+                order(id: $id) {
+                  id
+                  metadata {
+                    key
+                    value
+                  }
+                }
+              }
+            `);
+
+            const orderResult = (await saleorSchema.executor!({
+              document: orderQuery,
+              variables: { id: args.id },
+              context,
+            })) as {
+              data?: {
+                order?: { metadata?: Array<{ key: string; value: string }> };
+              };
+              errors?: unknown[];
+            };
+
+            if (orderResult.errors || !orderResult.data?.order) {
+              throw new GraphQLError("Order not found", {
+                extensions: { code: "ORDER_NOT_FOUND" },
+              });
+            }
+
+            const orderMetadata = orderResult.data.order.metadata || [];
+            const vendorIdMeta = orderMetadata.find(
+              (m) => m.key === "vendor.id",
+            );
+
+            if (!vendorIdMeta || vendorIdMeta.value !== vendorId) {
+              throw new GraphQLError("Order does not belong to this vendor", {
+                extensions: { code: "ORDER_VENDOR_MISMATCH" },
+              });
+            }
+
+            return delegateToSchema({
+              schema: saleorSchema,
+              operation: OperationTypeNode.MUTATION,
+              fieldName: "orderMarkAsPaid",
               args,
               context,
               info,

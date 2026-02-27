@@ -13,6 +13,8 @@ import {
   DraftOrderCreateMutationDocument,
   type DraftOrderCreateInput,
   type DraftOrderCreateMutationVariables,
+  DraftOrderDeleteMutationDocument,
+  type DraftOrderDeleteMutationVariables,
   type DraftOrderInput,
   DraftOrderUpdateMutationDocument,
   type DraftOrderUpdateMutationVariables,
@@ -133,6 +135,23 @@ export async function finalizeDraftOrder(orderId: string) {
   const result = await executeGraphQL(
     DraftOrderCompleteMutationDocument,
     "DraftOrderCompleteMutation",
+    variables,
+    token,
+  );
+
+  revalidatePath(`/orders/${orderId}`);
+  revalidatePath("/orders");
+
+  return result;
+}
+
+export async function deleteDraftOrder(orderId: string) {
+  const token = await getServerAuthToken();
+  const variables: DraftOrderDeleteMutationVariables = { id: orderId };
+
+  const result = await executeGraphQL(
+    DraftOrderDeleteMutationDocument,
+    "DraftOrderDeleteMutation",
     variables,
     token,
   );

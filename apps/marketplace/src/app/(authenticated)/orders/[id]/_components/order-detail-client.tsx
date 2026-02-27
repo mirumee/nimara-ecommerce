@@ -1,6 +1,11 @@
 "use client";
 
-import { ArrowLeft, Check, ChevronDown, MoreHorizontal } from "lucide-react";
+import {
+  ArrowLeft,
+  CreditCard,
+  ChevronDown,
+  MoreHorizontal,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -65,6 +70,7 @@ import {
   addOrderDiscount,
   addOrderLines,
   deleteOrderDiscount,
+  deleteDraftOrder,
   deleteOrderLine,
   finalizeDraftOrder,
   getChannelShippingMethods,
@@ -72,7 +78,12 @@ import {
   updateOrder,
   updateOrderLine,
 } from "../../actions";
-import { cancelFulfillment, cancelOrder, fulfillOrder } from "../actions";
+import {
+  cancelFulfillment,
+  cancelOrder,
+  fulfillOrder,
+  markOrderAsPaid,
+} from "../actions";
 
 type LineInputMap = Record<
   string,
@@ -275,6 +286,10 @@ export function OrderDetailClient({
   const [isVariantDialogOpen, setIsVariantDialogOpen] = useState(false);
 
   const [isDiscountDialogOpen, setIsDiscountDialogOpen] = useState(false);
+  const [isDeletingDraft, setIsDeletingDraft] = useState(false);
+  const [showMarkAsPaidDialog, setShowMarkAsPaidDialog] = useState(false);
+  const [isMarkingAsPaid, setIsMarkingAsPaid] = useState(false);
+  const [transactionReference, setTransactionReference] = useState("");
 
   const [shippingMethods, setShippingMethods] = useState<
     ShippingMethodOption[]
@@ -682,6 +697,114 @@ export function OrderDetailClient({
       setIsFinalizing(false);
     }
   };
+
+  const handleDeleteDraft = async () => {
+    if (!isDraft || isDeletingDraft) {
+      return;
+    }
+
+    setIsDeletingDraft(true);
+    try {
+      const result = await deleteDraftOrder(order.id);
+
+      if (!result.ok) {
+        toast({
+          title: "Draft cancel failed",
+          description: result.errors.map((e) => e.message).join(", "),
+          variant: "destructive",
+        });
+
+        return;
+      }
+
+      const errors = result.data.draftOrderDelete?.errors ?? [];
+
+      if (errors.length) {
+        toast({
+          title: "Draft cancel failed",
+          description: formatOrderErrors(errors),
+          variant: "destructive",
+        });
+
+        return;
+      }
+
+      toast({
+        title: "Draft deleted",
+        description: "The draft order was deleted.",
+      });
+      router.push("/orders");
+    } finally {
+      setIsDeletingDraft(false);
+    }
+  };
+
+  const handleMarkAsPaid = async () => {
+    const reference = transactionReference.trim();
+    if (!reference) {
+      toast({
+        title: "Transaction reference required",
+        description: "Enter transaction reference before marking as paid.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsMarkingAsPaid(true);
+    try {
+      const result = await markOrderAsPaid({
+        id: order.id,
+        transactionReference: reference,
+      });
+
+      if (!result.ok) {
+        toast({
+          title: "Mark as paid failed",
+          description: result.errors.map((e) => e.message).join(", "),
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const errors = result.data.orderMarkAsPaid?.errors ?? [];
+      if (errors.length) {
+        toast({
+          title: "Mark as paid failed",
+          description: formatOrderErrors(errors),
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setShowMarkAsPaidDialog(false);
+      setTransactionReference("");
+      toast({
+        title: "Order marked as paid",
+      });
+      router.refresh();
+    } finally {
+      setIsMarkingAsPaid(false);
+    }
+  };
+
+  const hasRegisteredTransactions = (order.transactions ?? []).length > 0;
+  const totalCapturedAmount = order.totalCharged.amount;
+  const totalAuthorizedAmount = order.totalAuthorized.amount;
+  const isFullyCharged =
+    order.paymentStatus === "FULLY_CHARGED" || order.chargeStatus === "FULL";
+  const hasPaymentSummaryData =
+    hasRegisteredTransactions ||
+    totalCapturedAmount > 0 ||
+    totalAuthorizedAmount > 0 ||
+    isFullyCharged;
+  const outstandingAuthorizedAmount = Math.max(
+    totalAuthorizedAmount - totalCapturedAmount,
+    0,
+  );
+  const outstandingBalanceAmount = Math.max(
+    order.total.gross.amount - totalCapturedAmount,
+    0,
+  );
 
   const handlePickCustomer = async (customer: CustomerNode) => {
     if (!isDraft) {
@@ -1108,9 +1231,10 @@ export function OrderDetailClient({
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => router.push("/orders")}
+                  onClick={() => void handleDeleteDraft()}
+                  disabled={isDeletingDraft}
                 >
-                  Cancel
+                  {isDeletingDraft ? "Cancelling..." : "Cancel"}
                 </Button>
                 <Button
                   size="sm"
@@ -1183,7 +1307,7 @@ export function OrderDetailClient({
                       .filter(Boolean)
                       .join(" ") ||
                       order.userEmail ||
-                      "Guest"}
+                      "Not set"}
                   </p>
                 </div>
                 <div>
@@ -1677,139 +1801,207 @@ export function OrderDetailClient({
             </Card>
           ) : null}
 
-          {/* Order summary */}
-          <Card>
-            <CardContent className="p-6">
-              <div className="space-y-3">
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Subtotal</span>
-                  <div className="text-right">
-                    <span className="text-muted-foreground">
-                      {itemCount} {itemLabel}
-                    </span>
-                    <div>
-                      {formatPrice(
-                        order.subtotal.gross.amount,
-                        order.subtotal.gross.currency,
-                      )}
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <Card>
+              <CardContent className="p-6">
+                <div className="mb-4">
+                  <CardTitle className="text-base font-medium">
+                    Order summary
+                  </CardTitle>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Subtotal</span>
+                    <div className="text-right">
+                      <span className="text-muted-foreground">
+                        {itemCount} {itemLabel}
+                      </span>
+                      <div>
+                        {formatPrice(
+                          order.subtotal.gross.amount,
+                          order.subtotal.gross.currency,
+                        )}
+                      </div>
                     </div>
+                  </div>
+                  <div className="flex items-start justify-between gap-4 text-sm">
+                    <span className="text-muted-foreground">Shipping</span>
+                    <div className="flex items-start gap-2">
+                      <div className="text-right">
+                        <div className="text-muted-foreground">
+                          {order.shippingMethodName ??
+                            order.shippingMethod?.name ??
+                            "—"}
+                        </div>
+                        <div>
+                          {order.shippingPrice
+                            ? formatPrice(
+                                order.shippingPrice.gross.amount,
+                                order.shippingPrice.gross.currency,
+                              )
+                            : "—"}
+                        </div>
+                      </div>
+                      {isDraft ? (
+                        <Button
+                          type="button"
+                          size="sm"
+                          className="bg-stone-900 hover:bg-stone-800"
+                          onClick={() => setIsShippingDialogOpen(true)}
+                          disabled={isLoadingShippingMethods}
+                        >
+                          Edit
+                        </Button>
+                      ) : null}
+                    </div>
+                  </div>
+
+                  <div className="flex items-start justify-between gap-4 text-sm">
+                    <span className="text-muted-foreground">Discounts</span>
+                    <div className="flex items-start gap-2">
+                      <div className="space-y-1 text-right">
+                        {(order.discounts ?? []).length === 0 ? (
+                          <div className="text-muted-foreground">—</div>
+                        ) : (
+                          (order.discounts ?? []).map((d) => (
+                            <div
+                              key={d.id}
+                              className="flex items-center justify-end gap-2"
+                            >
+                              <div className="text-muted-foreground">
+                                {d.reason || d.name || "Discount"}{" "}
+                                {d.valueType === "PERCENTAGE"
+                                  ? `(${d.value}%)`
+                                  : `(${formatPrice(
+                                      d.value,
+                                      order.total.gross.currency,
+                                    )})`}
+                              </div>
+                              {isDraft ? (
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() =>
+                                    void handleRemoveDiscount(d.id)
+                                  }
+                                >
+                                  Remove
+                                </Button>
+                              ) : null}
+                            </div>
+                          ))
+                        )}
+                      </div>
+                      {isDraft ? (
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setIsDiscountDialogOpen(true)}
+                        >
+                          Add
+                        </Button>
+                      ) : null}
+                    </div>
+                  </div>
+                  <div className="flex justify-between border-t pt-3 text-base font-semibold">
+                    <span>Total</span>
+                    <span>
+                      {formatPrice(
+                        order.total.gross.amount,
+                        order.total.gross.currency,
+                      )}
+                    </span>
                   </div>
                 </div>
-                <div className="flex items-start justify-between gap-4 text-sm">
-                  <span className="text-muted-foreground">Shipping</span>
-                  <div className="flex items-start gap-2">
-                    <div className="text-right">
-                      <div className="text-muted-foreground">
-                        {order.shippingMethodName ??
-                          order.shippingMethod?.name ??
-                          "—"}
-                      </div>
-                      <div>
-                        {order.shippingPrice
-                          ? formatPrice(
-                              order.shippingPrice.gross.amount,
-                              order.shippingPrice.gross.currency,
-                            )
-                          : "—"}
-                      </div>
-                    </div>
-                    {isDraft ? (
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setIsShippingDialogOpen(true)}
-                        disabled={isLoadingShippingMethods}
-                      >
-                        Edit
-                      </Button>
-                    ) : null}
-                  </div>
+              </CardContent>
+            </Card>
+
+            <Card className={isDraft ? "opacity-60" : undefined}>
+              <CardContent className="p-6">
+                <div className="mb-4 flex items-center justify-between gap-3">
+                  <CardTitle className="text-base font-medium">
+                    Payments summary
+                  </CardTitle>
+                  {!isDraft && !isFullyCharged ? (
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={() => setShowMarkAsPaidDialog(true)}
+                    >
+                      Mark as paid
+                    </Button>
+                  ) : null}
                 </div>
 
-                <div className="flex items-start justify-between gap-4 text-sm">
-                  <span className="text-muted-foreground">Discounts</span>
-                  <div className="flex items-start gap-2">
-                    <div className="space-y-1 text-right">
-                      {(order.discounts ?? []).length === 0 ? (
-                        <div className="text-muted-foreground">—</div>
-                      ) : (
-                        (order.discounts ?? []).map((d) => (
-                          <div
-                            key={d.id}
-                            className="flex items-center justify-end gap-2"
-                          >
-                            <div className="text-muted-foreground">
-                              {d.reason || d.name || "Discount"}{" "}
-                              {d.valueType === "PERCENTAGE"
-                                ? `(${d.value}%)`
-                                : `(${formatPrice(
-                                    d.value,
-                                    order.total.gross.currency,
-                                  )})`}
-                            </div>
-                            {isDraft ? (
-                              <Button
-                                type="button"
-                                size="sm"
-                                variant="outline"
-                                onClick={() => void handleRemoveDiscount(d.id)}
-                              >
-                                Remove
-                              </Button>
-                            ) : null}
-                          </div>
-                        ))
-                      )}
+                {!isDraft && hasPaymentSummaryData ? (
+                  <div className="space-y-4 text-sm">
+                    {hasRegisteredTransactions ? (
+                      <p className="text-sm text-muted-foreground">
+                        All payments from registered transactions.
+                      </p>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">
+                        Payment status was updated manually.
+                      </p>
+                    )}
+
+                    <div className="flex flex-wrap items-center gap-2">
+                      {order.paymentStatus === "FULLY_CHARGED" ? (
+                        <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-900">
+                          Fully charged
+                        </span>
+                      ) : null}
+                      {order.authorizeStatus === "FULL" ? (
+                        <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-900">
+                          Fully authorised
+                        </span>
+                      ) : null}
                     </div>
-                    {isDraft ? (
-                      <Button
-                        type="button"
-                        size="sm"
-                        className="bg-stone-900 hover:bg-stone-800"
-                        onClick={() => setIsDiscountDialogOpen(true)}
-                      >
-                        Add
-                      </Button>
-                    ) : null}
+
+                    <div className="space-y-2 pt-1">
+                      <div className="flex items-center justify-between gap-4">
+                        <span>Total captured</span>
+                        <span>
+                          {formatPrice(
+                            totalCapturedAmount,
+                            order.totalCharged.currency,
+                          )}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between gap-4">
+                        <span>Outstanding authorized</span>
+                        <span>
+                          {formatPrice(
+                            outstandingAuthorizedAmount,
+                            order.totalAuthorized.currency,
+                          )}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between gap-4 font-semibold">
+                        <span>Outstanding balance</span>
+                        <span>
+                          {formatPrice(
+                            outstandingBalanceAmount,
+                            order.total.gross.currency,
+                          )}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div className="flex justify-between border-t pt-3 text-base font-semibold">
-                  <span>Total</span>
-                  <span>
-                    {formatPrice(
-                      order.total.gross.amount,
-                      order.total.gross.currency,
-                    )}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between border-t pt-3">
-                  <div className="flex items-center gap-2">
-                    {order.paymentStatus === "FULLY_CHARGED" ? (
-                      <Check className="h-4 w-4 text-green-600" />
-                    ) : null}
-                    <span
-                      className={
-                        order.paymentStatus === "FULLY_CHARGED"
-                          ? "text-green-600"
-                          : "text-muted-foreground"
-                      }
-                    >
-                      {order.paymentStatus === "FULLY_CHARGED"
-                        ? "Paid"
-                        : (order.paymentStatusDisplay ?? "Payment")}
-                    </span>
+                ) : (
+                  <div className="flex min-h-[140px] flex-col items-center justify-center gap-2 rounded-md border border-dashed text-center">
+                    <CreditCard className="h-5 w-5 text-muted-foreground" />
+                    <p className="text-sm font-medium">No payment received</p>
+                    <p className="text-sm text-muted-foreground">
+                      Mark as paid manually if the payment is confirmed
+                    </p>
                   </div>
-                  <span>
-                    {formatPrice(
-                      order.total.gross.amount,
-                      order.total.gross.currency,
-                    )}
-                  </span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+                )}
+              </CardContent>
+            </Card>
+          </div>
 
           {/* Bottom content - 2 columns */}
           <div className="grid grid-cols-2 gap-6">
@@ -1899,6 +2091,44 @@ export function OrderDetailClient({
         onOpenChange={setIsDiscountDialogOpen}
         onSubmit={(input) => handleAddDiscount(input)}
       />
+
+      <Dialog
+        open={showMarkAsPaidDialog}
+        onOpenChange={setShowMarkAsPaidDialog}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Mark order as paid</DialogTitle>
+            <DialogDescription>
+              Enter transaction reference to mark this order as paid.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2">
+            <Label htmlFor="transaction-reference">Transaction reference</Label>
+            <Input
+              id="transaction-reference"
+              value={transactionReference}
+              onChange={(e) => setTransactionReference(e.target.value)}
+              placeholder="Enter transaction reference"
+            />
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowMarkAsPaidDialog(false)}
+              disabled={isMarkingAsPaid}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => void handleMarkAsPaid()}
+              disabled={isMarkingAsPaid || !transactionReference.trim()}
+            >
+              {isMarkingAsPaid ? "Saving..." : "Mark as paid"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Cancel order dialog */}
       <Dialog

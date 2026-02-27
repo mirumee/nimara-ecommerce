@@ -7,6 +7,7 @@ import type {
   CancelOrderFulfillmentVariables,
   CancelOrderVariables,
   FulfillOrderVariables,
+  OrderMarkAsPaidMutationVariables,
 } from "@/graphql/generated/client";
 import { getServerAuthToken } from "@/lib/auth/server";
 import { ordersService } from "@/services";
@@ -50,6 +51,18 @@ export async function addOrderNote(
   const result = await ordersService.addOrderNote(variables, token);
 
   revalidatePath(`/orders/${orderId}`);
+
+  return result;
+}
+
+export async function markOrderAsPaid(
+  variables: OrderMarkAsPaidMutationVariables,
+) {
+  const token = await getServerAuthToken();
+  const result = await ordersService.markOrderAsPaid(variables, token);
+
+  revalidatePath(`/orders/${variables.id}`);
+  revalidatePath("/orders");
 
   return result;
 }
