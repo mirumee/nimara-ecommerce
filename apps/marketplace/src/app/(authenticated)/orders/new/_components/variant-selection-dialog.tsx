@@ -194,7 +194,7 @@ export function VariantSelectionDialog({
         const mapped: VariantRow[] = vs.map((v) => ({
           id: v.id,
           name: v.name,
-          sku: v.sku,
+          sku: v.sku ?? "",
           unitPrice: (() => {
             const byChannel = channelId
               ? v.channelListings?.find((cl) => cl.channel.id === channelId)

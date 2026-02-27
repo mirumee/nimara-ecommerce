@@ -25,11 +25,16 @@ function withVendorMetadata<
   T extends { metadata?: Array<{ key: string; value: string }> },
 >(input: T, vendorId: string): T {
   const metadata = Array.isArray(input.metadata) ? [...input.metadata] : [];
-  const withoutVendor = metadata.filter((m) => m.key !== "vendor.id");
+  const withoutVendor = metadata.filter(
+    (m) => m.key !== METADATA_KEYS.VENDOR_ID,
+  );
 
   return {
     ...input,
-    metadata: [...withoutVendor, { key: "vendor.id", value: vendorId }],
+    metadata: [
+      ...withoutVendor,
+      { key: METADATA_KEYS.VENDOR_ID, value: vendorId },
+    ],
   };
 }
 
@@ -110,6 +115,7 @@ async function makeSaleorSchema() {
             "collection",
             "collections",
             "customers",
+            "draftOrders",
             "order",
             "orders",
             "page",
@@ -255,6 +261,23 @@ export async function getStitchedSchema() {
                 id: customerId || userId,
                 input,
               },
+              context,
+              info,
+            });
+          },
+        },
+        draftOrderCreate: {
+          resolve(_source, args, context: ServerContext, info) {
+            const vendorId = requireVendorID(context);
+            const input = args?.input
+              ? withVendorMetadata(args.input, vendorId)
+              : args?.input;
+
+            return delegateToSchema({
+              schema: saleorSchema,
+              operation: OperationTypeNode.MUTATION,
+              fieldName: "draftOrderCreate",
+              args: { ...args, input },
               context,
               info,
             });
@@ -907,8 +930,61 @@ export async function getStitchedSchema() {
           },
         },
         product: {
-          resolve(_source, args, context: ServerContext, info) {
-            requireVendorID(context);
+          resolve: async (_source, args, context: ServerContext, info) => {
+            const vendorId = requireVendorID(context);
+
+            const productQuery = parse(`
+              query GetProduct($id: ID!) {
+                product(id: $id) {
+                  id
+                  metadata {
+                    key
+                    value
+                  }
+                }
+              }
+            `);
+
+            const productResult = (await saleorSchema.executor!({
+              document: productQuery,
+              variables: { id: args.id },
+              context,
+            })) as {
+              data?: {
+                product?: {
+                  id: string;
+                  metadata?: Array<{ key: string; value: string }>;
+                };
+              };
+              errors?: unknown[];
+            };
+
+            if (productResult.errors || !productResult.data?.product) {
+              // Delegate to Saleor with channel so pricing data is returned.
+              return delegateToSchema({
+                schema: saleorSchema,
+                operation: OperationTypeNode.QUERY,
+                fieldName: "product",
+                args: {
+                  ...args,
+                  channel: MARKETPLACE_CHANNEL,
+                },
+                context,
+                info,
+              });
+            }
+
+            const productMetadata = productResult.data.product.metadata || [];
+            const vendorIdMeta = productMetadata.find(
+              (m) => m.key === "vendor.id",
+            );
+
+            if (!vendorIdMeta || vendorIdMeta.value !== vendorId) {
+              throw new GraphQLError("Product does not belong to this vendor", {
+                extensions: { code: "PRODUCT_VENDOR_MISMATCH" },
+              });
+            }
+
             // Delegate to Saleor with channel so pricing data is returned.
             return delegateToSchema({
               schema: saleorSchema,
@@ -918,6 +994,79 @@ export async function getStitchedSchema() {
                 ...args,
                 channel: MARKETPLACE_CHANNEL,
               },
+              context,
+              info,
+            });
+          },
+        },
+        productVariant: {
+          resolve: async (_source, args, context: ServerContext, info) => {
+            const vendorId = requireVendorID(context);
+
+            const productVariantQuery = parse(`
+              query GetProductVariantVendor($id: ID!) {
+                productVariant(id: $id) {
+                  id
+                  product {
+                    id
+                    metadata {
+                      key
+                      value
+                    }
+                  }
+                }
+              }
+            `);
+
+            const productVariantResult = (await saleorSchema.executor!({
+              document: productVariantQuery,
+              variables: { id: args.id },
+              context,
+            })) as {
+              data?: {
+                productVariant?: {
+                  id: string;
+                  product?: {
+                    id: string;
+                    metadata?: Array<{ key: string; value: string }>;
+                  } | null;
+                };
+              };
+              errors?: unknown[];
+            };
+
+            if (
+              productVariantResult.errors ||
+              !productVariantResult.data?.productVariant
+            ) {
+              return delegateToSchema({
+                schema: saleorSchema,
+                operation: OperationTypeNode.QUERY,
+                fieldName: "productVariant",
+                args,
+                context,
+                info,
+              });
+            }
+
+            const productMetadata =
+              productVariantResult.data.productVariant.product?.metadata || [];
+            const vendorIdMeta = productMetadata.find(
+              (m) => m.key === "vendor.id",
+            );
+
+            if (!vendorIdMeta || vendorIdMeta.value !== vendorId) {
+              throw new GraphQLError(
+                "Product variant does not belong to this vendor",
+                { extensions: { code: "PRODUCT_VARIANT_VENDOR_MISMATCH" } },
+              );
+            }
+
+            return delegateToSchema({
+              schema: saleorSchema,
+              operation: OperationTypeNode.QUERY,
+              fieldName: "productVariant",
+              args,
               context,
               info,
             });
@@ -1012,6 +1161,88 @@ export async function getStitchedSchema() {
                   metadata: [...existingMetadata, vendorMetadata],
                 },
               },
+              context,
+              info,
+            });
+          },
+        },
+        draftOrders: {
+          resolve(_source, args, context: ServerContext, info) {
+            const vendorId = requireVendorID(context);
+
+            const existingMetadata = args.filter?.metadata || [];
+            const vendorMetadata = { key: "vendor.id", value: vendorId };
+
+            return delegateToSchema({
+              schema: saleorSchema,
+              operation: OperationTypeNode.QUERY,
+              fieldName: "draftOrders",
+              args: {
+                ...args,
+                filter: {
+                  ...args.filter,
+                  metadata: [...existingMetadata, vendorMetadata],
+                },
+              },
+              context,
+              info,
+            });
+          },
+        },
+        order: {
+          resolve: async (_source, args, context: ServerContext, info) => {
+            const vendorId = requireVendorID(context);
+
+            const orderQuery = parse(`
+              query GetOrder($id: ID!) {
+                order(id: $id) {
+                  id
+                  metadata {
+                    key
+                    value
+                  }
+                }
+              }
+            `);
+
+            const orderResult = (await saleorSchema.executor!({
+              document: orderQuery,
+              variables: { id: args.id },
+              context,
+            })) as {
+              data?: {
+                order?: { metadata?: Array<{ key: string; value: string }> };
+              };
+              errors?: unknown[];
+            };
+
+            if (orderResult.errors || !orderResult.data?.order) {
+              return delegateToSchema({
+                schema: saleorSchema,
+                operation: OperationTypeNode.QUERY,
+                fieldName: "order",
+                args,
+                context,
+                info,
+              });
+            }
+
+            const orderMetadata = orderResult.data.order.metadata || [];
+            const vendorIdMeta = orderMetadata.find(
+              (m) => m.key === "vendor.id",
+            );
+
+            if (!vendorIdMeta || vendorIdMeta.value !== vendorId) {
+              throw new GraphQLError("Order does not belong to this vendor", {
+                extensions: { code: "ORDER_VENDOR_MISMATCH" },
+              });
+            }
+
+            return delegateToSchema({
+              schema: saleorSchema,
+              operation: OperationTypeNode.QUERY,
+              fieldName: "order",
+              args,
               context,
               info,
             });

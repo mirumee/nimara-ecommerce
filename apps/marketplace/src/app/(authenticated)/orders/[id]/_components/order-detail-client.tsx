@@ -82,6 +82,10 @@ type LineInputMap = Record<
   }
 >;
 
+function isNonNull<T>(value: T): value is NonNullable<T> {
+  return value !== null && value !== undefined;
+}
+
 interface Address {
   city?: string | null;
   country?: { code: string; country: string } | null;
@@ -308,10 +312,10 @@ export function OrderDetailClient({
   ]);
 
   const draftVariantLines = useMemo((): VariantLineDraft[] => {
-    const lines = (order.lines ?? []).filter(Boolean);
+    const lines = (order.lines ?? []).filter(isNonNull);
 
     return lines
-      .map((l) => {
+      .map((l): VariantLineDraft | null => {
         const variantId = l.variant?.id ?? "";
 
         if (!variantId) {
@@ -332,7 +336,7 @@ export function OrderDetailClient({
             : null,
         };
       })
-      .filter((x): x is VariantLineDraft => Boolean(x));
+      .filter(isNonNull);
   }, [lineQtyById, order.lines]);
 
   useEffect(() => {
@@ -730,9 +734,36 @@ export function OrderDetailClient({
 
   const handleSaveShippingAddress = async (next: DraftAddress) => {
     const input = draftAddressToAddressInput(next);
-    const result = isDraft
-      ? await updateDraftOrder(order.id, { shippingAddress: input })
-      : await updateOrder(order.id, { shippingAddress: input });
+    if (isDraft) {
+      const result = await updateDraftOrder(order.id, {
+        shippingAddress: input,
+      });
+
+      if (!result.ok) {
+        toast({
+          title: "Failed to update shipping address",
+          description: result.errors.map((e) => e.message).join(", "),
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const errors = result.data.draftOrderUpdate?.errors ?? [];
+
+      if (errors.length) {
+        toast({
+          title: "Failed to update shipping address",
+          description: formatOrderErrors(errors),
+          variant: "destructive",
+        });
+        return;
+      }
+
+      router.refresh();
+      return;
+    }
+
+    const result = await updateOrder(order.id, { shippingAddress: input });
 
     if (!result.ok) {
       toast({
@@ -742,9 +773,8 @@ export function OrderDetailClient({
       });
       return;
     }
-    const errors = isDraft
-      ? (result.data.draftOrderUpdate?.errors ?? [])
-      : (result.data.orderUpdate?.errors ?? []);
+
+    const errors = result.data.orderUpdate?.errors ?? [];
 
     if (errors.length) {
       toast({
@@ -760,9 +790,36 @@ export function OrderDetailClient({
 
   const handleSaveBillingAddress = async (next: DraftAddress) => {
     const input = draftAddressToAddressInput(next);
-    const result = isDraft
-      ? await updateDraftOrder(order.id, { billingAddress: input })
-      : await updateOrder(order.id, { billingAddress: input });
+    if (isDraft) {
+      const result = await updateDraftOrder(order.id, {
+        billingAddress: input,
+      });
+
+      if (!result.ok) {
+        toast({
+          title: "Failed to update billing address",
+          description: result.errors.map((e) => e.message).join(", "),
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const errors = result.data.draftOrderUpdate?.errors ?? [];
+
+      if (errors.length) {
+        toast({
+          title: "Failed to update billing address",
+          description: formatOrderErrors(errors),
+          variant: "destructive",
+        });
+        return;
+      }
+
+      router.refresh();
+      return;
+    }
+
+    const result = await updateOrder(order.id, { billingAddress: input });
 
     if (!result.ok) {
       toast({
@@ -772,9 +829,8 @@ export function OrderDetailClient({
       });
       return;
     }
-    const errors = isDraft
-      ? (result.data.draftOrderUpdate?.errors ?? [])
-      : (result.data.orderUpdate?.errors ?? []);
+
+    const errors = result.data.orderUpdate?.errors ?? [];
 
     if (errors.length) {
       toast({

@@ -1,4 +1,4 @@
-mutation CustomerDelete($id: ID!) {
+mutation CustomerDeleteMutation($id: ID!) {
   customerDelete(id: $id) {
     user {
       id

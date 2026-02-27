@@ -1,4 +1,4 @@
-mutation OrderDiscountAdd($orderId: ID!, $input: OrderDiscountCommonInput!) {
+mutation OrderDiscountAddMutation($orderId: ID!, $input: OrderDiscountCommonInput!) {
   orderDiscountAdd(orderId: $orderId, input: $input) {
     order {
       id

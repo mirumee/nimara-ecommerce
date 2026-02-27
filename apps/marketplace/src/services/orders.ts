@@ -12,6 +12,9 @@ import {
   type CancelOrderFulfillment,
   CancelOrderFulfillmentDocument,
   type CancelOrderFulfillmentVariables,
+  type DraftOrdersList,
+  DraftOrdersListDocument,
+  type DraftOrdersListVariables,
   type FulfillOrder,
   FulfillOrderDocument,
   type FulfillOrderVariables,
@@ -40,6 +43,18 @@ class OrdersService {
     return executeGraphQL(
       OrdersListDocument,
       "OrdersListQuery",
+      variables,
+      token,
+    );
+  }
+
+  async getDraftOrders(
+    variables?: DraftOrdersListVariables,
+    token?: string | null,
+  ): AsyncResult<DraftOrdersList> {
+    return executeGraphQL(
+      DraftOrdersListDocument,
+      "DraftOrdersListQuery",
       variables,
       token,
     );

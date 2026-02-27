@@ -1,4 +1,4 @@
-mutation OrderLineUpdate($id: ID!, $input: OrderLineInput!) {
+mutation OrderLineUpdateMutation($id: ID!, $input: OrderLineInput!) {
   orderLineUpdate(id: $id, input: $input) {
     order {
       id

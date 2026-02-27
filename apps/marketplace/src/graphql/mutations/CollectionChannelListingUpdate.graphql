@@ -1,4 +1,4 @@
-mutation CollectionChannelListingUpdate(
+mutation CollectionChannelListingUpdateMutation(
   $id: ID!
   $input: CollectionChannelListingUpdateInput!
 ) {

@@ -1,4 +1,4 @@
-mutation OrderLinesCreate($id: ID!, $input: [OrderLineCreateInput!]!) {
+mutation OrderLinesCreateMutation($id: ID!, $input: [OrderLineCreateInput!]!) {
   orderLinesCreate(id: $id, input: $input) {
     order {
       id

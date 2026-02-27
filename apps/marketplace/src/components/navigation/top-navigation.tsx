@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  FileText,
   LayoutDashboard,
   LayoutList,
   LogOut,
@@ -41,6 +42,11 @@ const navigationLinks = [
     name: "Orders",
     href: "/orders",
     icon: ShoppingCart,
+  },
+  {
+    name: "Drafts",
+    href: "/drafts",
+    icon: FileText,
   },
   {
     name: "Collections",

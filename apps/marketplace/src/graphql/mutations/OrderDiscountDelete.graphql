@@ -1,4 +1,4 @@
-mutation OrderDiscountDelete($discountId: ID!) {
+mutation OrderDiscountDeleteMutation($discountId: ID!) {
   orderDiscountDelete(discountId: $discountId) {
     order {
       id

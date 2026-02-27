@@ -92,7 +92,7 @@ export function VariantPickerDialog({
 
       const mapped: VariantHit[] = vs
         .filter(Boolean)
-        .map((v) => ({ id: v.id, name: v.name, sku: v.sku }));
+        .map((v) => ({ id: v.id, name: v.name, sku: v.sku ?? "" }));
 
       setVariants(mapped);
       if (mapped[0]?.id) {

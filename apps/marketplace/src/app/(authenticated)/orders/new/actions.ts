@@ -5,17 +5,17 @@ import {
   AddOrderNoteDocument,
   ChannelShippingMethodsPerCountryDocument,
   CustomerByEmailDocument,
-  DraftOrderCompleteDocument,
-  DraftOrderCreateDocument,
-  DraftOrderDeleteDocument,
+  DraftOrderCompleteMutationDocument,
+  DraftOrderCreateMutationDocument,
+  DraftOrderDeleteMutationDocument,
   type AddOrderNoteVariables,
   type ChannelShippingMethodsPerCountryVariables,
   type CountryCode,
   type CustomerByEmailVariables,
-  type DraftOrderCompleteVariables,
+  type DraftOrderCompleteMutationVariables,
   type DraftOrderCreateInput,
-  type DraftOrderCreateVariables,
-  type DraftOrderDeleteVariables,
+  type DraftOrderCreateMutationVariables,
+  type DraftOrderDeleteMutationVariables,
   type ProductDetailVariables,
   type ProductsVariables,
 } from "@/graphql/generated/client";
@@ -83,10 +83,10 @@ export async function getChannelShippingMethods(
 export async function createDraftOrder(input: DraftOrderCreateInput) {
   const token = await getServerAuthToken();
 
-  const variables: DraftOrderCreateVariables = { input };
+  const variables: DraftOrderCreateMutationVariables = { input };
 
   return executeGraphQL(
-    DraftOrderCreateDocument,
+    DraftOrderCreateMutationDocument,
     "DraftOrderCreateMutation",
     variables,
     token,
@@ -95,10 +95,10 @@ export async function createDraftOrder(input: DraftOrderCreateInput) {
 
 export async function completeDraftOrder(orderId: string) {
   const token = await getServerAuthToken();
-  const variables: DraftOrderCompleteVariables = { id: orderId };
+  const variables: DraftOrderCompleteMutationVariables = { id: orderId };
 
   return executeGraphQL(
-    DraftOrderCompleteDocument,
+    DraftOrderCompleteMutationDocument,
     "DraftOrderCompleteMutation",
     variables,
     token,
@@ -107,10 +107,10 @@ export async function completeDraftOrder(orderId: string) {
 
 export async function deleteDraftOrder(orderId: string) {
   const token = await getServerAuthToken();
-  const variables: DraftOrderDeleteVariables = { id: orderId };
+  const variables: DraftOrderDeleteMutationVariables = { id: orderId };
 
   return executeGraphQL(
-    DraftOrderDeleteDocument,
+    DraftOrderDeleteMutationDocument,
     "DraftOrderDeleteMutation",
     variables,
     token,

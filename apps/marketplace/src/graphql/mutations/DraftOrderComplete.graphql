@@ -1,4 +1,4 @@
-mutation DraftOrderComplete($id: ID!) {
+mutation DraftOrderCompleteMutation($id: ID!) {
   draftOrderComplete(id: $id) {
     order {
       id

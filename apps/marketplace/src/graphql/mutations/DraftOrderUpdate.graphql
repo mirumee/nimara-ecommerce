@@ -1,4 +1,4 @@
-mutation DraftOrderUpdate($id: ID!, $input: DraftOrderInput!) {
+mutation DraftOrderUpdateMutation($id: ID!, $input: DraftOrderInput!) {
   draftOrderUpdate(id: $id, input: $input) {
     order {
       id

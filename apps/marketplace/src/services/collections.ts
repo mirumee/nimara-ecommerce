@@ -1,26 +1,24 @@
-import type { DocumentTypeDecoration } from "@graphql-typed-document-node/core";
-
 import type { AsyncResult } from "@nimara/domain/objects/Result";
 
 import {
-  type CollectionAddProducts,
-  CollectionAddProductsDocument,
-  type CollectionAddProductsVariables,
-  type CollectionChannelListingUpdate,
-  CollectionChannelListingUpdateDocument,
+  type CollectionAddProductsMutation,
+  CollectionAddProductsMutationDocument,
+  type CollectionAddProductsMutationVariables,
+  type CollectionChannelListingUpdateMutation,
+  CollectionChannelListingUpdateMutationDocument,
   type CollectionChannelListingUpdateInput,
-  type CollectionChannelListingUpdateVariables,
+  type CollectionChannelListingUpdateMutationVariables,
   type CollectionCreateInput,
   type CollectionDetail,
   CollectionDetailDocument,
   type CollectionDetailVariables,
   type CollectionInput,
-  type CollectionRemoveProducts,
-  CollectionRemoveProductsDocument,
-  type CollectionRemoveProductsVariables,
-  type CollectionUpdate,
-  CollectionUpdateDocument,
-  type CollectionUpdateVariables,
+  type CollectionRemoveProductsMutation,
+  CollectionRemoveProductsMutationDocument,
+  type CollectionRemoveProductsMutationVariables,
+  type CollectionUpdateMutation,
+  CollectionUpdateMutationDocument,
+  type CollectionUpdateMutationVariables,
   type VendorCollectionCreate,
   VendorCollectionCreateDocument,
   type VendorCollectionCreateVariables,
@@ -29,10 +27,6 @@ import {
   type VendorCollectionDeleteVariables,
 } from "@/graphql/generated/client";
 import { executeGraphQL } from "@/lib/graphql/execute";
-
-type DocumentWithToString = DocumentTypeDecoration<unknown, unknown> & {
-  toString(): string;
-};
 
 /**
  * Service for marketplace collection operations.
@@ -59,7 +53,7 @@ class CollectionsService {
       VendorCollectionCreate,
       VendorCollectionCreateVariables
     >(
-      VendorCollectionCreateDocument as DocumentWithToString,
+      VendorCollectionCreateDocument,
       "VendorCollectionCreateMutation",
       variables,
       token,
@@ -67,11 +61,14 @@ class CollectionsService {
   }
 
   async updateCollection(
-    variables: CollectionUpdateVariables,
+    variables: CollectionUpdateMutationVariables,
     token?: string | null,
-  ): AsyncResult<CollectionUpdate> {
-    return executeGraphQL<CollectionUpdate, CollectionUpdateVariables>(
-      CollectionUpdateDocument as DocumentWithToString,
+  ): AsyncResult<CollectionUpdateMutation> {
+    return executeGraphQL<
+      CollectionUpdateMutation,
+      CollectionUpdateMutationVariables
+    >(
+      CollectionUpdateMutationDocument,
       "CollectionUpdateMutation",
       variables,
       token,
@@ -79,14 +76,14 @@ class CollectionsService {
   }
 
   async updateCollectionChannelListing(
-    variables: CollectionChannelListingUpdateVariables,
+    variables: CollectionChannelListingUpdateMutationVariables,
     token?: string | null,
-  ): AsyncResult<CollectionChannelListingUpdate> {
+  ): AsyncResult<CollectionChannelListingUpdateMutation> {
     return executeGraphQL<
-      CollectionChannelListingUpdate,
-      CollectionChannelListingUpdateVariables
+      CollectionChannelListingUpdateMutation,
+      CollectionChannelListingUpdateMutationVariables
     >(
-      CollectionChannelListingUpdateDocument as DocumentWithToString,
+      CollectionChannelListingUpdateMutationDocument,
       "CollectionChannelListingUpdateMutation",
       variables,
       token,
@@ -101,7 +98,7 @@ class CollectionsService {
       VendorCollectionDelete,
       VendorCollectionDeleteVariables
     >(
-      VendorCollectionDeleteDocument as DocumentWithToString,
+      VendorCollectionDeleteDocument,
       "VendorCollectionDeleteMutation",
       variables,
       token,
@@ -109,14 +106,14 @@ class CollectionsService {
   }
 
   async addProductsToCollection(
-    variables: CollectionAddProductsVariables,
+    variables: CollectionAddProductsMutationVariables,
     token?: string | null,
-  ): AsyncResult<CollectionAddProducts> {
+  ): AsyncResult<CollectionAddProductsMutation> {
     return executeGraphQL<
-      CollectionAddProducts,
-      CollectionAddProductsVariables
+      CollectionAddProductsMutation,
+      CollectionAddProductsMutationVariables
     >(
-      CollectionAddProductsDocument as DocumentWithToString,
+      CollectionAddProductsMutationDocument,
       "CollectionAddProductsMutation",
       variables,
       token,
@@ -124,14 +121,14 @@ class CollectionsService {
   }
 
   async removeProductsFromCollection(
-    variables: CollectionRemoveProductsVariables,
+    variables: CollectionRemoveProductsMutationVariables,
     token?: string | null,
-  ): AsyncResult<CollectionRemoveProducts> {
+  ): AsyncResult<CollectionRemoveProductsMutation> {
     return executeGraphQL<
-      CollectionRemoveProducts,
-      CollectionRemoveProductsVariables
+      CollectionRemoveProductsMutation,
+      CollectionRemoveProductsMutationVariables
     >(
-      CollectionRemoveProductsDocument as DocumentWithToString,
+      CollectionRemoveProductsMutationDocument,
       "CollectionRemoveProductsMutation",
       variables,
       token,

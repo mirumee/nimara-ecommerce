@@ -3,16 +3,16 @@
 import { revalidatePath } from "next/cache";
 
 import {
-  type CollectionChannelListingUpdateVariables,
-  CollectionUpdateDocument,
-  type CollectionUpdateVariables,
+  type CollectionChannelListingUpdateMutationVariables,
+  CollectionUpdateMutationDocument,
+  type CollectionUpdateMutationVariables,
   type ProductsVariables,
 } from "@/graphql/generated/client";
 import { getServerAuthToken } from "@/lib/auth/server";
 import { collectionsService, productsService } from "@/services";
 
 export async function updateCollection(
-  variables: CollectionUpdateVariables,
+  variables: CollectionUpdateMutationVariables,
   collectionId: string,
 ) {
   const token = await getServerAuthToken();
@@ -25,7 +25,7 @@ export async function updateCollection(
 }
 
 export async function updateCollectionChannelListing(
-  variables: CollectionChannelListingUpdateVariables,
+  variables: CollectionChannelListingUpdateMutationVariables,
   collectionId: string,
 ) {
   const token = await getServerAuthToken();
@@ -130,7 +130,7 @@ export async function uploadCollectionBackgroundImage(
 
     // Create the operations JSON - the file will be referenced as a variable
     const operations = {
-      query: CollectionUpdateDocument.toString(),
+      query: CollectionUpdateMutationDocument.toString(),
       variables: {
         id: collectionId,
         input: {

@@ -1,4 +1,4 @@
-mutation DraftOrderDelete($id: ID!) {
+mutation DraftOrderDeleteMutation($id: ID!) {
   draftOrderDelete(id: $id) {
     order {
       id

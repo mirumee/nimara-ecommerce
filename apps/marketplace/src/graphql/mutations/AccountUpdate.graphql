@@ -1,4 +1,4 @@
-mutation AccountUpdate($customerId: ID, $input: AccountInput!) {
+mutation AccountUpdateMutation($customerId: ID, $input: AccountInput!) {
   accountUpdate(customerId: $customerId, input: $input) {
     user {
       id

@@ -1,4 +1,4 @@
-mutation OrderLineDelete($id: ID!) {
+mutation OrderLineDeleteMutation($id: ID!) {
   orderLineDelete(id: $id) {
     order {
       id

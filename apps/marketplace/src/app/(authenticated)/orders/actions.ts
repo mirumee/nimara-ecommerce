@@ -8,32 +8,32 @@ import {
   type CountryCode,
   CustomerByEmailDocument,
   type CustomerByEmailVariables,
-  DraftOrderCompleteDocument,
-  type DraftOrderCompleteVariables,
-  DraftOrderCreateDocument,
+  DraftOrderCompleteMutationDocument,
+  type DraftOrderCompleteMutationVariables,
+  DraftOrderCreateMutationDocument,
   type DraftOrderCreateInput,
-  type DraftOrderCreateVariables,
+  type DraftOrderCreateMutationVariables,
   type DraftOrderInput,
-  DraftOrderUpdateDocument,
-  type DraftOrderUpdateVariables,
-  OrderDiscountAddDocument,
-  type OrderDiscountAddVariables,
+  DraftOrderUpdateMutationDocument,
+  type DraftOrderUpdateMutationVariables,
+  OrderDiscountAddMutationDocument,
+  type OrderDiscountAddMutationVariables,
   type OrderDiscountCommonInput,
-  OrderDiscountDeleteDocument,
-  type OrderDiscountDeleteVariables,
-  OrderDiscountUpdateDocument,
-  type OrderDiscountUpdateVariables,
+  OrderDiscountDeleteMutationDocument,
+  type OrderDiscountDeleteMutationVariables,
+  OrderDiscountUpdateMutationDocument,
+  type OrderDiscountUpdateMutationVariables,
   type OrderLineCreateInput,
-  OrderLineDeleteDocument,
-  type OrderLineDeleteVariables,
+  OrderLineDeleteMutationDocument,
+  type OrderLineDeleteMutationVariables,
   type OrderLineInput,
-  OrderLinesCreateDocument,
-  type OrderLinesCreateVariables,
-  OrderLineUpdateDocument,
-  type OrderLineUpdateVariables,
-  OrderUpdateDocument,
+  OrderLinesCreateMutationDocument,
+  type OrderLinesCreateMutationVariables,
+  OrderLineUpdateMutationDocument,
+  type OrderLineUpdateMutationVariables,
+  OrderUpdateMutationDocument,
   type OrderUpdateInput,
-  type OrderUpdateVariables,
+  type OrderUpdateMutationVariables,
   type ProductDetailVariables,
   type ProductsVariables,
 } from "@/graphql/generated/client";
@@ -100,10 +100,10 @@ export async function getChannelShippingMethods(
 
 export async function createDraftOrder(input: DraftOrderCreateInput) {
   const token = await getServerAuthToken();
-  const variables: DraftOrderCreateVariables = { input };
+  const variables: DraftOrderCreateMutationVariables = { input };
 
   return executeGraphQL(
-    DraftOrderCreateDocument,
+    DraftOrderCreateMutationDocument,
     "DraftOrderCreateMutation",
     variables,
     token,
@@ -112,10 +112,10 @@ export async function createDraftOrder(input: DraftOrderCreateInput) {
 
 export async function updateDraftOrder(id: string, input: DraftOrderInput) {
   const token = await getServerAuthToken();
-  const variables: DraftOrderUpdateVariables = { id, input };
+  const variables: DraftOrderUpdateMutationVariables = { id, input };
 
   const result = await executeGraphQL(
-    DraftOrderUpdateDocument,
+    DraftOrderUpdateMutationDocument,
     "DraftOrderUpdateMutation",
     variables,
     token,
@@ -128,10 +128,10 @@ export async function updateDraftOrder(id: string, input: DraftOrderInput) {
 
 export async function finalizeDraftOrder(orderId: string) {
   const token = await getServerAuthToken();
-  const variables: DraftOrderCompleteVariables = { id: orderId };
+  const variables: DraftOrderCompleteMutationVariables = { id: orderId };
 
   const result = await executeGraphQL(
-    DraftOrderCompleteDocument,
+    DraftOrderCompleteMutationDocument,
     "DraftOrderCompleteMutation",
     variables,
     token,
@@ -145,10 +145,10 @@ export async function finalizeDraftOrder(orderId: string) {
 
 export async function updateOrder(id: string, input: OrderUpdateInput) {
   const token = await getServerAuthToken();
-  const variables: OrderUpdateVariables = { id, input };
+  const variables: OrderUpdateMutationVariables = { id, input };
 
   const result = await executeGraphQL(
-    OrderUpdateDocument,
+    OrderUpdateMutationDocument,
     "OrderUpdateMutation",
     variables,
     token,
@@ -161,10 +161,10 @@ export async function updateOrder(id: string, input: OrderUpdateInput) {
 
 export async function addOrderLines(id: string, input: OrderLineCreateInput[]) {
   const token = await getServerAuthToken();
-  const variables: OrderLinesCreateVariables = { id, input };
+  const variables: OrderLinesCreateMutationVariables = { id, input };
 
   const result = await executeGraphQL(
-    OrderLinesCreateDocument,
+    OrderLinesCreateMutationDocument,
     "OrderLinesCreateMutation",
     variables,
     token,
@@ -177,10 +177,10 @@ export async function addOrderLines(id: string, input: OrderLineCreateInput[]) {
 
 export async function updateOrderLine(id: string, input: OrderLineInput) {
   const token = await getServerAuthToken();
-  const variables: OrderLineUpdateVariables = { id, input };
+  const variables: OrderLineUpdateMutationVariables = { id, input };
 
   const result = await executeGraphQL(
-    OrderLineUpdateDocument,
+    OrderLineUpdateMutationDocument,
     "OrderLineUpdateMutation",
     variables,
     token,
@@ -199,10 +199,10 @@ export async function updateOrderLine(id: string, input: OrderLineInput) {
 
 export async function deleteOrderLine(id: string) {
   const token = await getServerAuthToken();
-  const variables: OrderLineDeleteVariables = { id };
+  const variables: OrderLineDeleteMutationVariables = { id };
 
   const result = await executeGraphQL(
-    OrderLineDeleteDocument,
+    OrderLineDeleteMutationDocument,
     "OrderLineDeleteMutation",
     variables,
     token,
@@ -224,10 +224,10 @@ export async function addOrderDiscount(
   input: OrderDiscountCommonInput,
 ) {
   const token = await getServerAuthToken();
-  const variables: OrderDiscountAddVariables = { orderId, input };
+  const variables: OrderDiscountAddMutationVariables = { orderId, input };
 
   const result = await executeGraphQL(
-    OrderDiscountAddDocument,
+    OrderDiscountAddMutationDocument,
     "OrderDiscountAddMutation",
     variables,
     token,
@@ -243,10 +243,10 @@ export async function updateOrderDiscount(
   input: OrderDiscountCommonInput,
 ) {
   const token = await getServerAuthToken();
-  const variables: OrderDiscountUpdateVariables = { discountId, input };
+  const variables: OrderDiscountUpdateMutationVariables = { discountId, input };
 
   const result = await executeGraphQL(
-    OrderDiscountUpdateDocument,
+    OrderDiscountUpdateMutationDocument,
     "OrderDiscountUpdateMutation",
     variables,
     token,
@@ -265,10 +265,10 @@ export async function updateOrderDiscount(
 
 export async function deleteOrderDiscount(discountId: string) {
   const token = await getServerAuthToken();
-  const variables: OrderDiscountDeleteVariables = { discountId };
+  const variables: OrderDiscountDeleteMutationVariables = { discountId };
 
   const result = await executeGraphQL(
-    OrderDiscountDeleteDocument,
+    OrderDiscountDeleteMutationDocument,
     "OrderDiscountDeleteMutation",
     variables,
     token,

@@ -31286,136 +31286,135 @@ export type RegisterAccountVariables = Exact<{
 
 export type RegisterAccount = RegisterAccount_Mutation;
 
-export type AccountUpdate_accountUpdate_AccountUpdate_user_User_metadata_MetadataItem =
+export type AccountUpdateMutation_accountUpdate_AccountUpdate_user_User_metadata_MetadataItem =
   { key: string; value: string };
 
-export type AccountUpdate_accountUpdate_AccountUpdate_user_User = {
+export type AccountUpdateMutation_accountUpdate_AccountUpdate_user_User = {
   id: string;
   email: string;
   firstName: string;
   lastName: string;
-  metadata: Array<AccountUpdate_accountUpdate_AccountUpdate_user_User_metadata_MetadataItem>;
+  metadata: Array<AccountUpdateMutation_accountUpdate_AccountUpdate_user_User_metadata_MetadataItem>;
 };
 
-export type AccountUpdate_accountUpdate_AccountUpdate_errors_AccountError = {
-  field: string | null;
-  message: string | null;
-  code: AccountErrorCode;
+export type AccountUpdateMutation_accountUpdate_AccountUpdate_errors_AccountError =
+  { field: string | null; message: string | null; code: AccountErrorCode };
+
+export type AccountUpdateMutation_accountUpdate_AccountUpdate = {
+  user: AccountUpdateMutation_accountUpdate_AccountUpdate_user_User | null;
+  errors: Array<AccountUpdateMutation_accountUpdate_AccountUpdate_errors_AccountError>;
 };
 
-export type AccountUpdate_accountUpdate_AccountUpdate = {
-  user: AccountUpdate_accountUpdate_AccountUpdate_user_User | null;
-  errors: Array<AccountUpdate_accountUpdate_AccountUpdate_errors_AccountError>;
+export type AccountUpdateMutation_Mutation = {
+  accountUpdate: AccountUpdateMutation_accountUpdate_AccountUpdate | null;
 };
 
-export type AccountUpdate_Mutation = {
-  accountUpdate: AccountUpdate_accountUpdate_AccountUpdate | null;
-};
-
-export type AccountUpdateVariables = Exact<{
+export type AccountUpdateMutationVariables = Exact<{
   customerId?: InputMaybe<Scalars["ID"]["input"]>;
   input: AccountInput;
 }>;
 
-export type AccountUpdate = AccountUpdate_Mutation;
+export type AccountUpdateMutation = AccountUpdateMutation_Mutation;
 
-export type CollectionAddProducts_collectionAddProducts_CollectionAddProducts_errors_CollectionError =
+export type CollectionAddProductsMutation_collectionAddProducts_CollectionAddProducts_errors_CollectionError =
   { field: string | null; message: string | null; code: CollectionErrorCode };
 
-export type CollectionAddProducts_collectionAddProducts_CollectionAddProducts_collection_Collection =
+export type CollectionAddProductsMutation_collectionAddProducts_CollectionAddProducts_collection_Collection =
   { id: string; name: string };
 
-export type CollectionAddProducts_collectionAddProducts_CollectionAddProducts =
+export type CollectionAddProductsMutation_collectionAddProducts_CollectionAddProducts =
   {
-    errors: Array<CollectionAddProducts_collectionAddProducts_CollectionAddProducts_errors_CollectionError>;
-    collection: CollectionAddProducts_collectionAddProducts_CollectionAddProducts_collection_Collection | null;
+    errors: Array<CollectionAddProductsMutation_collectionAddProducts_CollectionAddProducts_errors_CollectionError>;
+    collection: CollectionAddProductsMutation_collectionAddProducts_CollectionAddProducts_collection_Collection | null;
   };
 
-export type CollectionAddProducts_Mutation = {
-  collectionAddProducts: CollectionAddProducts_collectionAddProducts_CollectionAddProducts | null;
+export type CollectionAddProductsMutation_Mutation = {
+  collectionAddProducts: CollectionAddProductsMutation_collectionAddProducts_CollectionAddProducts | null;
 };
 
-export type CollectionAddProductsVariables = Exact<{
+export type CollectionAddProductsMutationVariables = Exact<{
   collectionId: Scalars["ID"]["input"];
   products: Array<Scalars["ID"]["input"]> | Scalars["ID"]["input"];
 }>;
 
-export type CollectionAddProducts = CollectionAddProducts_Mutation;
+export type CollectionAddProductsMutation =
+  CollectionAddProductsMutation_Mutation;
 
-export type CollectionChannelListingUpdate_collectionChannelListingUpdate_CollectionChannelListingUpdate_errors_CollectionChannelListingError =
+export type CollectionChannelListingUpdateMutation_collectionChannelListingUpdate_CollectionChannelListingUpdate_errors_CollectionChannelListingError =
   { field: string | null; message: string | null; code: ProductErrorCode };
 
-export type CollectionChannelListingUpdate_collectionChannelListingUpdate_CollectionChannelListingUpdate_collection_Collection_channelListings_CollectionChannelListing_channel_Channel =
+export type CollectionChannelListingUpdateMutation_collectionChannelListingUpdate_CollectionChannelListingUpdate_collection_Collection_channelListings_CollectionChannelListing_channel_Channel =
   { id: string; name: string };
 
-export type CollectionChannelListingUpdate_collectionChannelListingUpdate_CollectionChannelListingUpdate_collection_Collection_channelListings_CollectionChannelListing =
+export type CollectionChannelListingUpdateMutation_collectionChannelListingUpdate_CollectionChannelListingUpdate_collection_Collection_channelListings_CollectionChannelListing =
   {
     id: string;
     isPublished: boolean;
     publishedAt: string | null;
-    channel: CollectionChannelListingUpdate_collectionChannelListingUpdate_CollectionChannelListingUpdate_collection_Collection_channelListings_CollectionChannelListing_channel_Channel;
+    channel: CollectionChannelListingUpdateMutation_collectionChannelListingUpdate_CollectionChannelListingUpdate_collection_Collection_channelListings_CollectionChannelListing_channel_Channel;
   };
 
-export type CollectionChannelListingUpdate_collectionChannelListingUpdate_CollectionChannelListingUpdate_collection_Collection =
+export type CollectionChannelListingUpdateMutation_collectionChannelListingUpdate_CollectionChannelListingUpdate_collection_Collection =
   {
     id: string;
-    channelListings: Array<CollectionChannelListingUpdate_collectionChannelListingUpdate_CollectionChannelListingUpdate_collection_Collection_channelListings_CollectionChannelListing> | null;
+    channelListings: Array<CollectionChannelListingUpdateMutation_collectionChannelListingUpdate_CollectionChannelListingUpdate_collection_Collection_channelListings_CollectionChannelListing> | null;
   };
 
-export type CollectionChannelListingUpdate_collectionChannelListingUpdate_CollectionChannelListingUpdate =
+export type CollectionChannelListingUpdateMutation_collectionChannelListingUpdate_CollectionChannelListingUpdate =
   {
-    errors: Array<CollectionChannelListingUpdate_collectionChannelListingUpdate_CollectionChannelListingUpdate_errors_CollectionChannelListingError>;
-    collection: CollectionChannelListingUpdate_collectionChannelListingUpdate_CollectionChannelListingUpdate_collection_Collection | null;
+    errors: Array<CollectionChannelListingUpdateMutation_collectionChannelListingUpdate_CollectionChannelListingUpdate_errors_CollectionChannelListingError>;
+    collection: CollectionChannelListingUpdateMutation_collectionChannelListingUpdate_CollectionChannelListingUpdate_collection_Collection | null;
   };
 
-export type CollectionChannelListingUpdate_Mutation = {
-  collectionChannelListingUpdate: CollectionChannelListingUpdate_collectionChannelListingUpdate_CollectionChannelListingUpdate | null;
+export type CollectionChannelListingUpdateMutation_Mutation = {
+  collectionChannelListingUpdate: CollectionChannelListingUpdateMutation_collectionChannelListingUpdate_CollectionChannelListingUpdate | null;
 };
 
-export type CollectionChannelListingUpdateVariables = Exact<{
+export type CollectionChannelListingUpdateMutationVariables = Exact<{
   id: Scalars["ID"]["input"];
   input: CollectionChannelListingUpdateInput;
 }>;
 
-export type CollectionChannelListingUpdate =
-  CollectionChannelListingUpdate_Mutation;
+export type CollectionChannelListingUpdateMutation =
+  CollectionChannelListingUpdateMutation_Mutation;
 
-export type CollectionRemoveProducts_collectionRemoveProducts_CollectionRemoveProducts_errors_CollectionError =
+export type CollectionRemoveProductsMutation_collectionRemoveProducts_CollectionRemoveProducts_errors_CollectionError =
   { field: string | null; message: string | null; code: CollectionErrorCode };
 
-export type CollectionRemoveProducts_collectionRemoveProducts_CollectionRemoveProducts_collection_Collection =
+export type CollectionRemoveProductsMutation_collectionRemoveProducts_CollectionRemoveProducts_collection_Collection =
   { id: string; name: string };
 
-export type CollectionRemoveProducts_collectionRemoveProducts_CollectionRemoveProducts =
+export type CollectionRemoveProductsMutation_collectionRemoveProducts_CollectionRemoveProducts =
   {
-    errors: Array<CollectionRemoveProducts_collectionRemoveProducts_CollectionRemoveProducts_errors_CollectionError>;
-    collection: CollectionRemoveProducts_collectionRemoveProducts_CollectionRemoveProducts_collection_Collection | null;
+    errors: Array<CollectionRemoveProductsMutation_collectionRemoveProducts_CollectionRemoveProducts_errors_CollectionError>;
+    collection: CollectionRemoveProductsMutation_collectionRemoveProducts_CollectionRemoveProducts_collection_Collection | null;
   };
 
-export type CollectionRemoveProducts_Mutation = {
-  collectionRemoveProducts: CollectionRemoveProducts_collectionRemoveProducts_CollectionRemoveProducts | null;
+export type CollectionRemoveProductsMutation_Mutation = {
+  collectionRemoveProducts: CollectionRemoveProductsMutation_collectionRemoveProducts_CollectionRemoveProducts | null;
 };
 
-export type CollectionRemoveProductsVariables = Exact<{
+export type CollectionRemoveProductsMutationVariables = Exact<{
   collectionId: Scalars["ID"]["input"];
   products: Array<Scalars["ID"]["input"]> | Scalars["ID"]["input"];
 }>;
 
-export type CollectionRemoveProducts = CollectionRemoveProducts_Mutation;
+export type CollectionRemoveProductsMutation =
+  CollectionRemoveProductsMutation_Mutation;
 
-export type CollectionUpdate_collectionUpdate_CollectionUpdate_errors_CollectionError =
+export type CollectionUpdateMutation_collectionUpdate_CollectionUpdate_errors_CollectionError =
   { field: string | null; message: string | null; code: CollectionErrorCode };
 
-export type CollectionUpdate_collectionUpdate_CollectionUpdate_collection_Collection_backgroundImage_Image =
+export type CollectionUpdateMutation_collectionUpdate_CollectionUpdate_collection_Collection_backgroundImage_Image =
   { url: string; alt: string | null };
 
-export type CollectionUpdate_collectionUpdate_CollectionUpdate_collection_Collection_metadata_MetadataItem =
+export type CollectionUpdateMutation_collectionUpdate_CollectionUpdate_collection_Collection_metadata_MetadataItem =
   { key: string; value: string };
 
-export type CollectionUpdate_collectionUpdate_CollectionUpdate_collection_Collection_privateMetadata_MetadataItem =
+export type CollectionUpdateMutation_collectionUpdate_CollectionUpdate_collection_Collection_privateMetadata_MetadataItem =
   { key: string; value: string };
 
-export type CollectionUpdate_collectionUpdate_CollectionUpdate_collection_Collection =
+export type CollectionUpdateMutation_collectionUpdate_CollectionUpdate_collection_Collection =
   {
     id: string;
     name: string;
@@ -31423,26 +31422,26 @@ export type CollectionUpdate_collectionUpdate_CollectionUpdate_collection_Collec
     description: string | null;
     seoTitle: string | null;
     seoDescription: string | null;
-    backgroundImage: CollectionUpdate_collectionUpdate_CollectionUpdate_collection_Collection_backgroundImage_Image | null;
-    metadata: Array<CollectionUpdate_collectionUpdate_CollectionUpdate_collection_Collection_metadata_MetadataItem>;
-    privateMetadata: Array<CollectionUpdate_collectionUpdate_CollectionUpdate_collection_Collection_privateMetadata_MetadataItem>;
+    backgroundImage: CollectionUpdateMutation_collectionUpdate_CollectionUpdate_collection_Collection_backgroundImage_Image | null;
+    metadata: Array<CollectionUpdateMutation_collectionUpdate_CollectionUpdate_collection_Collection_metadata_MetadataItem>;
+    privateMetadata: Array<CollectionUpdateMutation_collectionUpdate_CollectionUpdate_collection_Collection_privateMetadata_MetadataItem>;
   };
 
-export type CollectionUpdate_collectionUpdate_CollectionUpdate = {
-  errors: Array<CollectionUpdate_collectionUpdate_CollectionUpdate_errors_CollectionError>;
-  collection: CollectionUpdate_collectionUpdate_CollectionUpdate_collection_Collection | null;
+export type CollectionUpdateMutation_collectionUpdate_CollectionUpdate = {
+  errors: Array<CollectionUpdateMutation_collectionUpdate_CollectionUpdate_errors_CollectionError>;
+  collection: CollectionUpdateMutation_collectionUpdate_CollectionUpdate_collection_Collection | null;
 };
 
-export type CollectionUpdate_Mutation = {
-  collectionUpdate: CollectionUpdate_collectionUpdate_CollectionUpdate | null;
+export type CollectionUpdateMutation_Mutation = {
+  collectionUpdate: CollectionUpdateMutation_collectionUpdate_CollectionUpdate | null;
 };
 
-export type CollectionUpdateVariables = Exact<{
+export type CollectionUpdateMutationVariables = Exact<{
   id: Scalars["ID"]["input"];
   input: CollectionInput;
 }>;
 
-export type CollectionUpdate = CollectionUpdate_Mutation;
+export type CollectionUpdateMutation = CollectionUpdateMutation_Mutation;
 
 export type ConfirmVendorAccount_confirmAccount_ConfirmAccount_user_User = {
   id: string;
@@ -31469,124 +31468,112 @@ export type ConfirmVendorAccountVariables = Exact<{
 
 export type ConfirmVendorAccount = ConfirmVendorAccount_Mutation;
 
-export type CustomerDelete_customerDelete_CustomerDelete_user_User = {
+export type CustomerDeleteMutation_customerDelete_CustomerDelete_user_User = {
   id: string;
 };
 
-export type CustomerDelete_customerDelete_CustomerDelete_errors_AccountError = {
-  field: string | null;
-  message: string | null;
-  code: AccountErrorCode;
+export type CustomerDeleteMutation_customerDelete_CustomerDelete_errors_AccountError =
+  { field: string | null; message: string | null; code: AccountErrorCode };
+
+export type CustomerDeleteMutation_customerDelete_CustomerDelete = {
+  user: CustomerDeleteMutation_customerDelete_CustomerDelete_user_User | null;
+  errors: Array<CustomerDeleteMutation_customerDelete_CustomerDelete_errors_AccountError>;
 };
 
-export type CustomerDelete_customerDelete_CustomerDelete = {
-  user: CustomerDelete_customerDelete_CustomerDelete_user_User | null;
-  errors: Array<CustomerDelete_customerDelete_CustomerDelete_errors_AccountError>;
+export type CustomerDeleteMutation_Mutation = {
+  customerDelete: CustomerDeleteMutation_customerDelete_CustomerDelete | null;
 };
 
-export type CustomerDelete_Mutation = {
-  customerDelete: CustomerDelete_customerDelete_CustomerDelete | null;
-};
-
-export type CustomerDeleteVariables = Exact<{
+export type CustomerDeleteMutationVariables = Exact<{
   id: Scalars["ID"]["input"];
 }>;
 
-export type CustomerDelete = CustomerDelete_Mutation;
+export type CustomerDeleteMutation = CustomerDeleteMutation_Mutation;
 
-export type DraftOrderComplete_draftOrderComplete_DraftOrderComplete_order_Order =
+export type DraftOrderCompleteMutation_draftOrderComplete_DraftOrderComplete_order_Order =
   { id: string; number: string; status: OrderStatus };
 
-export type DraftOrderComplete_draftOrderComplete_DraftOrderComplete_errors_OrderError =
+export type DraftOrderCompleteMutation_draftOrderComplete_DraftOrderComplete_errors_OrderError =
   { field: string | null; message: string | null; code: OrderErrorCode };
 
-export type DraftOrderComplete_draftOrderComplete_DraftOrderComplete = {
-  order: DraftOrderComplete_draftOrderComplete_DraftOrderComplete_order_Order | null;
-  errors: Array<DraftOrderComplete_draftOrderComplete_DraftOrderComplete_errors_OrderError>;
+export type DraftOrderCompleteMutation_draftOrderComplete_DraftOrderComplete = {
+  order: DraftOrderCompleteMutation_draftOrderComplete_DraftOrderComplete_order_Order | null;
+  errors: Array<DraftOrderCompleteMutation_draftOrderComplete_DraftOrderComplete_errors_OrderError>;
 };
 
-export type DraftOrderComplete_Mutation = {
-  draftOrderComplete: DraftOrderComplete_draftOrderComplete_DraftOrderComplete | null;
+export type DraftOrderCompleteMutation_Mutation = {
+  draftOrderComplete: DraftOrderCompleteMutation_draftOrderComplete_DraftOrderComplete | null;
 };
 
-export type DraftOrderCompleteVariables = Exact<{
+export type DraftOrderCompleteMutationVariables = Exact<{
   id: Scalars["ID"]["input"];
 }>;
 
-export type DraftOrderComplete = DraftOrderComplete_Mutation;
+export type DraftOrderCompleteMutation = DraftOrderCompleteMutation_Mutation;
 
-export type DraftOrderCreate_draftOrderCreate_DraftOrderCreate_order_Order = {
-  id: string;
-  number: string;
-  status: OrderStatus;
-};
+export type DraftOrderCreateMutation_draftOrderCreate_DraftOrderCreate_order_Order =
+  { id: string; number: string; status: OrderStatus };
 
-export type DraftOrderCreate_draftOrderCreate_DraftOrderCreate_errors_OrderError =
+export type DraftOrderCreateMutation_draftOrderCreate_DraftOrderCreate_errors_OrderError =
   { field: string | null; message: string | null; code: OrderErrorCode };
 
-export type DraftOrderCreate_draftOrderCreate_DraftOrderCreate = {
-  order: DraftOrderCreate_draftOrderCreate_DraftOrderCreate_order_Order | null;
-  errors: Array<DraftOrderCreate_draftOrderCreate_DraftOrderCreate_errors_OrderError>;
+export type DraftOrderCreateMutation_draftOrderCreate_DraftOrderCreate = {
+  order: DraftOrderCreateMutation_draftOrderCreate_DraftOrderCreate_order_Order | null;
+  errors: Array<DraftOrderCreateMutation_draftOrderCreate_DraftOrderCreate_errors_OrderError>;
 };
 
-export type DraftOrderCreate_Mutation = {
-  draftOrderCreate: DraftOrderCreate_draftOrderCreate_DraftOrderCreate | null;
+export type DraftOrderCreateMutation_Mutation = {
+  draftOrderCreate: DraftOrderCreateMutation_draftOrderCreate_DraftOrderCreate | null;
 };
 
-export type DraftOrderCreateVariables = Exact<{
+export type DraftOrderCreateMutationVariables = Exact<{
   input: DraftOrderCreateInput;
 }>;
 
-export type DraftOrderCreate = DraftOrderCreate_Mutation;
+export type DraftOrderCreateMutation = DraftOrderCreateMutation_Mutation;
 
-export type DraftOrderDelete_draftOrderDelete_DraftOrderDelete_order_Order = {
-  id: string;
-  number: string;
-  status: OrderStatus;
-};
+export type DraftOrderDeleteMutation_draftOrderDelete_DraftOrderDelete_order_Order =
+  { id: string; number: string; status: OrderStatus };
 
-export type DraftOrderDelete_draftOrderDelete_DraftOrderDelete_errors_OrderError =
+export type DraftOrderDeleteMutation_draftOrderDelete_DraftOrderDelete_errors_OrderError =
   { field: string | null; message: string | null; code: OrderErrorCode };
 
-export type DraftOrderDelete_draftOrderDelete_DraftOrderDelete = {
-  order: DraftOrderDelete_draftOrderDelete_DraftOrderDelete_order_Order | null;
-  errors: Array<DraftOrderDelete_draftOrderDelete_DraftOrderDelete_errors_OrderError>;
+export type DraftOrderDeleteMutation_draftOrderDelete_DraftOrderDelete = {
+  order: DraftOrderDeleteMutation_draftOrderDelete_DraftOrderDelete_order_Order | null;
+  errors: Array<DraftOrderDeleteMutation_draftOrderDelete_DraftOrderDelete_errors_OrderError>;
 };
 
-export type DraftOrderDelete_Mutation = {
-  draftOrderDelete: DraftOrderDelete_draftOrderDelete_DraftOrderDelete | null;
+export type DraftOrderDeleteMutation_Mutation = {
+  draftOrderDelete: DraftOrderDeleteMutation_draftOrderDelete_DraftOrderDelete | null;
 };
 
-export type DraftOrderDeleteVariables = Exact<{
+export type DraftOrderDeleteMutationVariables = Exact<{
   id: Scalars["ID"]["input"];
 }>;
 
-export type DraftOrderDelete = DraftOrderDelete_Mutation;
+export type DraftOrderDeleteMutation = DraftOrderDeleteMutation_Mutation;
 
-export type DraftOrderUpdate_draftOrderUpdate_DraftOrderUpdate_order_Order = {
-  id: string;
-  number: string;
-  status: OrderStatus;
-};
+export type DraftOrderUpdateMutation_draftOrderUpdate_DraftOrderUpdate_order_Order =
+  { id: string; number: string; status: OrderStatus };
 
-export type DraftOrderUpdate_draftOrderUpdate_DraftOrderUpdate_errors_OrderError =
+export type DraftOrderUpdateMutation_draftOrderUpdate_DraftOrderUpdate_errors_OrderError =
   { field: string | null; message: string | null; code: OrderErrorCode };
 
-export type DraftOrderUpdate_draftOrderUpdate_DraftOrderUpdate = {
-  order: DraftOrderUpdate_draftOrderUpdate_DraftOrderUpdate_order_Order | null;
-  errors: Array<DraftOrderUpdate_draftOrderUpdate_DraftOrderUpdate_errors_OrderError>;
+export type DraftOrderUpdateMutation_draftOrderUpdate_DraftOrderUpdate = {
+  order: DraftOrderUpdateMutation_draftOrderUpdate_DraftOrderUpdate_order_Order | null;
+  errors: Array<DraftOrderUpdateMutation_draftOrderUpdate_DraftOrderUpdate_errors_OrderError>;
 };
 
-export type DraftOrderUpdate_Mutation = {
-  draftOrderUpdate: DraftOrderUpdate_draftOrderUpdate_DraftOrderUpdate | null;
+export type DraftOrderUpdateMutation_Mutation = {
+  draftOrderUpdate: DraftOrderUpdateMutation_draftOrderUpdate_DraftOrderUpdate | null;
 };
 
-export type DraftOrderUpdateVariables = Exact<{
+export type DraftOrderUpdateMutationVariables = Exact<{
   id: Scalars["ID"]["input"];
   input: DraftOrderInput;
 }>;
 
-export type DraftOrderUpdate = DraftOrderUpdate_Mutation;
+export type DraftOrderUpdateMutation = DraftOrderUpdateMutation_Mutation;
 
 export type MetadataUpdate_updateMetadata_UpdateMetadata_errors_MetadataError =
   { field: string | null; message: string | null; code: MetadataErrorCode };
@@ -31632,73 +31619,72 @@ export type CancelOrderVariables = Exact<{
 
 export type CancelOrder = CancelOrder_Mutation;
 
-export type OrderDiscountAdd_orderDiscountAdd_OrderDiscountAdd_order_Order = {
-  id: string;
-  number: string;
-  status: OrderStatus;
-};
+export type OrderDiscountAddMutation_orderDiscountAdd_OrderDiscountAdd_order_Order =
+  { id: string; number: string; status: OrderStatus };
 
-export type OrderDiscountAdd_orderDiscountAdd_OrderDiscountAdd_errors_OrderError =
+export type OrderDiscountAddMutation_orderDiscountAdd_OrderDiscountAdd_errors_OrderError =
   { field: string | null; message: string | null; code: OrderErrorCode };
 
-export type OrderDiscountAdd_orderDiscountAdd_OrderDiscountAdd = {
-  order: OrderDiscountAdd_orderDiscountAdd_OrderDiscountAdd_order_Order | null;
-  errors: Array<OrderDiscountAdd_orderDiscountAdd_OrderDiscountAdd_errors_OrderError>;
+export type OrderDiscountAddMutation_orderDiscountAdd_OrderDiscountAdd = {
+  order: OrderDiscountAddMutation_orderDiscountAdd_OrderDiscountAdd_order_Order | null;
+  errors: Array<OrderDiscountAddMutation_orderDiscountAdd_OrderDiscountAdd_errors_OrderError>;
 };
 
-export type OrderDiscountAdd_Mutation = {
-  orderDiscountAdd: OrderDiscountAdd_orderDiscountAdd_OrderDiscountAdd | null;
+export type OrderDiscountAddMutation_Mutation = {
+  orderDiscountAdd: OrderDiscountAddMutation_orderDiscountAdd_OrderDiscountAdd | null;
 };
 
-export type OrderDiscountAddVariables = Exact<{
+export type OrderDiscountAddMutationVariables = Exact<{
   orderId: Scalars["ID"]["input"];
   input: OrderDiscountCommonInput;
 }>;
 
-export type OrderDiscountAdd = OrderDiscountAdd_Mutation;
+export type OrderDiscountAddMutation = OrderDiscountAddMutation_Mutation;
 
-export type OrderDiscountDelete_orderDiscountDelete_OrderDiscountDelete_order_Order =
+export type OrderDiscountDeleteMutation_orderDiscountDelete_OrderDiscountDelete_order_Order =
   { id: string; number: string; status: OrderStatus };
 
-export type OrderDiscountDelete_orderDiscountDelete_OrderDiscountDelete_errors_OrderError =
+export type OrderDiscountDeleteMutation_orderDiscountDelete_OrderDiscountDelete_errors_OrderError =
   { field: string | null; message: string | null; code: OrderErrorCode };
 
-export type OrderDiscountDelete_orderDiscountDelete_OrderDiscountDelete = {
-  order: OrderDiscountDelete_orderDiscountDelete_OrderDiscountDelete_order_Order | null;
-  errors: Array<OrderDiscountDelete_orderDiscountDelete_OrderDiscountDelete_errors_OrderError>;
+export type OrderDiscountDeleteMutation_orderDiscountDelete_OrderDiscountDelete =
+  {
+    order: OrderDiscountDeleteMutation_orderDiscountDelete_OrderDiscountDelete_order_Order | null;
+    errors: Array<OrderDiscountDeleteMutation_orderDiscountDelete_OrderDiscountDelete_errors_OrderError>;
+  };
+
+export type OrderDiscountDeleteMutation_Mutation = {
+  orderDiscountDelete: OrderDiscountDeleteMutation_orderDiscountDelete_OrderDiscountDelete | null;
 };
 
-export type OrderDiscountDelete_Mutation = {
-  orderDiscountDelete: OrderDiscountDelete_orderDiscountDelete_OrderDiscountDelete | null;
-};
-
-export type OrderDiscountDeleteVariables = Exact<{
+export type OrderDiscountDeleteMutationVariables = Exact<{
   discountId: Scalars["ID"]["input"];
 }>;
 
-export type OrderDiscountDelete = OrderDiscountDelete_Mutation;
+export type OrderDiscountDeleteMutation = OrderDiscountDeleteMutation_Mutation;
 
-export type OrderDiscountUpdate_orderDiscountUpdate_OrderDiscountUpdate_order_Order =
+export type OrderDiscountUpdateMutation_orderDiscountUpdate_OrderDiscountUpdate_order_Order =
   { id: string; number: string; status: OrderStatus };
 
-export type OrderDiscountUpdate_orderDiscountUpdate_OrderDiscountUpdate_errors_OrderError =
+export type OrderDiscountUpdateMutation_orderDiscountUpdate_OrderDiscountUpdate_errors_OrderError =
   { field: string | null; message: string | null; code: OrderErrorCode };
 
-export type OrderDiscountUpdate_orderDiscountUpdate_OrderDiscountUpdate = {
-  order: OrderDiscountUpdate_orderDiscountUpdate_OrderDiscountUpdate_order_Order | null;
-  errors: Array<OrderDiscountUpdate_orderDiscountUpdate_OrderDiscountUpdate_errors_OrderError>;
+export type OrderDiscountUpdateMutation_orderDiscountUpdate_OrderDiscountUpdate =
+  {
+    order: OrderDiscountUpdateMutation_orderDiscountUpdate_OrderDiscountUpdate_order_Order | null;
+    errors: Array<OrderDiscountUpdateMutation_orderDiscountUpdate_OrderDiscountUpdate_errors_OrderError>;
+  };
+
+export type OrderDiscountUpdateMutation_Mutation = {
+  orderDiscountUpdate: OrderDiscountUpdateMutation_orderDiscountUpdate_OrderDiscountUpdate | null;
 };
 
-export type OrderDiscountUpdate_Mutation = {
-  orderDiscountUpdate: OrderDiscountUpdate_orderDiscountUpdate_OrderDiscountUpdate | null;
-};
-
-export type OrderDiscountUpdateVariables = Exact<{
+export type OrderDiscountUpdateMutationVariables = Exact<{
   discountId: Scalars["ID"]["input"];
   input: OrderDiscountCommonInput;
 }>;
 
-export type OrderDiscountUpdate = OrderDiscountUpdate_Mutation;
+export type OrderDiscountUpdateMutation = OrderDiscountUpdateMutation_Mutation;
 
 export type FulfillOrder_orderFulfill_OrderFulfill_errors_OrderError = {
   field: string | null;
@@ -31739,101 +31725,92 @@ export type CancelOrderFulfillmentVariables = Exact<{
 
 export type CancelOrderFulfillment = CancelOrderFulfillment_Mutation;
 
-export type OrderLineDelete_orderLineDelete_OrderLineDelete_order_Order = {
-  id: string;
-  number: string;
-  status: OrderStatus;
-};
+export type OrderLineDeleteMutation_orderLineDelete_OrderLineDelete_order_Order =
+  { id: string; number: string; status: OrderStatus };
 
-export type OrderLineDelete_orderLineDelete_OrderLineDelete_errors_OrderError =
+export type OrderLineDeleteMutation_orderLineDelete_OrderLineDelete_errors_OrderError =
   { field: string | null; message: string | null; code: OrderErrorCode };
 
-export type OrderLineDelete_orderLineDelete_OrderLineDelete = {
-  order: OrderLineDelete_orderLineDelete_OrderLineDelete_order_Order | null;
-  errors: Array<OrderLineDelete_orderLineDelete_OrderLineDelete_errors_OrderError>;
+export type OrderLineDeleteMutation_orderLineDelete_OrderLineDelete = {
+  order: OrderLineDeleteMutation_orderLineDelete_OrderLineDelete_order_Order | null;
+  errors: Array<OrderLineDeleteMutation_orderLineDelete_OrderLineDelete_errors_OrderError>;
 };
 
-export type OrderLineDelete_Mutation = {
-  orderLineDelete: OrderLineDelete_orderLineDelete_OrderLineDelete | null;
+export type OrderLineDeleteMutation_Mutation = {
+  orderLineDelete: OrderLineDeleteMutation_orderLineDelete_OrderLineDelete | null;
 };
 
-export type OrderLineDeleteVariables = Exact<{
+export type OrderLineDeleteMutationVariables = Exact<{
   id: Scalars["ID"]["input"];
 }>;
 
-export type OrderLineDelete = OrderLineDelete_Mutation;
+export type OrderLineDeleteMutation = OrderLineDeleteMutation_Mutation;
 
-export type OrderLineUpdate_orderLineUpdate_OrderLineUpdate_order_Order = {
-  id: string;
-  number: string;
-  status: OrderStatus;
-};
+export type OrderLineUpdateMutation_orderLineUpdate_OrderLineUpdate_order_Order =
+  { id: string; number: string; status: OrderStatus };
 
-export type OrderLineUpdate_orderLineUpdate_OrderLineUpdate_orderLine_OrderLine_variant_ProductVariant =
+export type OrderLineUpdateMutation_orderLineUpdate_OrderLineUpdate_orderLine_OrderLine_variant_ProductVariant =
   { id: string };
 
-export type OrderLineUpdate_orderLineUpdate_OrderLineUpdate_orderLine_OrderLine =
+export type OrderLineUpdateMutation_orderLineUpdate_OrderLineUpdate_orderLine_OrderLine =
   {
     id: string;
     quantity: number;
-    variant: OrderLineUpdate_orderLineUpdate_OrderLineUpdate_orderLine_OrderLine_variant_ProductVariant | null;
+    variant: OrderLineUpdateMutation_orderLineUpdate_OrderLineUpdate_orderLine_OrderLine_variant_ProductVariant | null;
   };
 
-export type OrderLineUpdate_orderLineUpdate_OrderLineUpdate_errors_OrderError =
+export type OrderLineUpdateMutation_orderLineUpdate_OrderLineUpdate_errors_OrderError =
   { field: string | null; message: string | null; code: OrderErrorCode };
 
-export type OrderLineUpdate_orderLineUpdate_OrderLineUpdate = {
-  order: OrderLineUpdate_orderLineUpdate_OrderLineUpdate_order_Order | null;
-  orderLine: OrderLineUpdate_orderLineUpdate_OrderLineUpdate_orderLine_OrderLine | null;
-  errors: Array<OrderLineUpdate_orderLineUpdate_OrderLineUpdate_errors_OrderError>;
+export type OrderLineUpdateMutation_orderLineUpdate_OrderLineUpdate = {
+  order: OrderLineUpdateMutation_orderLineUpdate_OrderLineUpdate_order_Order | null;
+  orderLine: OrderLineUpdateMutation_orderLineUpdate_OrderLineUpdate_orderLine_OrderLine | null;
+  errors: Array<OrderLineUpdateMutation_orderLineUpdate_OrderLineUpdate_errors_OrderError>;
 };
 
-export type OrderLineUpdate_Mutation = {
-  orderLineUpdate: OrderLineUpdate_orderLineUpdate_OrderLineUpdate | null;
+export type OrderLineUpdateMutation_Mutation = {
+  orderLineUpdate: OrderLineUpdateMutation_orderLineUpdate_OrderLineUpdate | null;
 };
 
-export type OrderLineUpdateVariables = Exact<{
+export type OrderLineUpdateMutationVariables = Exact<{
   id: Scalars["ID"]["input"];
   input: OrderLineInput;
 }>;
 
-export type OrderLineUpdate = OrderLineUpdate_Mutation;
+export type OrderLineUpdateMutation = OrderLineUpdateMutation_Mutation;
 
-export type OrderLinesCreate_orderLinesCreate_OrderLinesCreate_order_Order = {
-  id: string;
-  number: string;
-  status: OrderStatus;
-};
+export type OrderLinesCreateMutation_orderLinesCreate_OrderLinesCreate_order_Order =
+  { id: string; number: string; status: OrderStatus };
 
-export type OrderLinesCreate_orderLinesCreate_OrderLinesCreate_orderLines_OrderLine_variant_ProductVariant =
+export type OrderLinesCreateMutation_orderLinesCreate_OrderLinesCreate_orderLines_OrderLine_variant_ProductVariant =
   { id: string };
 
-export type OrderLinesCreate_orderLinesCreate_OrderLinesCreate_orderLines_OrderLine =
+export type OrderLinesCreateMutation_orderLinesCreate_OrderLinesCreate_orderLines_OrderLine =
   {
     id: string;
     quantity: number;
-    variant: OrderLinesCreate_orderLinesCreate_OrderLinesCreate_orderLines_OrderLine_variant_ProductVariant | null;
+    variant: OrderLinesCreateMutation_orderLinesCreate_OrderLinesCreate_orderLines_OrderLine_variant_ProductVariant | null;
   };
 
-export type OrderLinesCreate_orderLinesCreate_OrderLinesCreate_errors_OrderError =
+export type OrderLinesCreateMutation_orderLinesCreate_OrderLinesCreate_errors_OrderError =
   { field: string | null; message: string | null; code: OrderErrorCode };
 
-export type OrderLinesCreate_orderLinesCreate_OrderLinesCreate = {
-  order: OrderLinesCreate_orderLinesCreate_OrderLinesCreate_order_Order | null;
-  orderLines: Array<OrderLinesCreate_orderLinesCreate_OrderLinesCreate_orderLines_OrderLine> | null;
-  errors: Array<OrderLinesCreate_orderLinesCreate_OrderLinesCreate_errors_OrderError>;
+export type OrderLinesCreateMutation_orderLinesCreate_OrderLinesCreate = {
+  order: OrderLinesCreateMutation_orderLinesCreate_OrderLinesCreate_order_Order | null;
+  orderLines: Array<OrderLinesCreateMutation_orderLinesCreate_OrderLinesCreate_orderLines_OrderLine> | null;
+  errors: Array<OrderLinesCreateMutation_orderLinesCreate_OrderLinesCreate_errors_OrderError>;
 };
 
-export type OrderLinesCreate_Mutation = {
-  orderLinesCreate: OrderLinesCreate_orderLinesCreate_OrderLinesCreate | null;
+export type OrderLinesCreateMutation_Mutation = {
+  orderLinesCreate: OrderLinesCreateMutation_orderLinesCreate_OrderLinesCreate | null;
 };
 
-export type OrderLinesCreateVariables = Exact<{
+export type OrderLinesCreateMutationVariables = Exact<{
   id: Scalars["ID"]["input"];
   input: Array<OrderLineCreateInput> | OrderLineCreateInput;
 }>;
 
-export type OrderLinesCreate = OrderLinesCreate_Mutation;
+export type OrderLinesCreateMutation = OrderLinesCreateMutation_Mutation;
 
 export type AddOrderNote_orderNoteAdd_OrderNoteAdd_errors_OrderNoteAddError = {
   field: string | null;
@@ -31866,33 +31843,33 @@ export type AddOrderNoteVariables = Exact<{
 
 export type AddOrderNote = AddOrderNote_Mutation;
 
-export type OrderUpdate_orderUpdate_OrderUpdate_order_Order = {
+export type OrderUpdateMutation_orderUpdate_OrderUpdate_order_Order = {
   id: string;
   number: string;
   status: OrderStatus;
 };
 
-export type OrderUpdate_orderUpdate_OrderUpdate_errors_OrderError = {
+export type OrderUpdateMutation_orderUpdate_OrderUpdate_errors_OrderError = {
   field: string | null;
   message: string | null;
   code: OrderErrorCode;
 };
 
-export type OrderUpdate_orderUpdate_OrderUpdate = {
-  order: OrderUpdate_orderUpdate_OrderUpdate_order_Order | null;
-  errors: Array<OrderUpdate_orderUpdate_OrderUpdate_errors_OrderError>;
+export type OrderUpdateMutation_orderUpdate_OrderUpdate = {
+  order: OrderUpdateMutation_orderUpdate_OrderUpdate_order_Order | null;
+  errors: Array<OrderUpdateMutation_orderUpdate_OrderUpdate_errors_OrderError>;
 };
 
-export type OrderUpdate_Mutation = {
-  orderUpdate: OrderUpdate_orderUpdate_OrderUpdate | null;
+export type OrderUpdateMutation_Mutation = {
+  orderUpdate: OrderUpdateMutation_orderUpdate_OrderUpdate | null;
 };
 
-export type OrderUpdateVariables = Exact<{
+export type OrderUpdateMutationVariables = Exact<{
   id: Scalars["ID"]["input"];
   input: OrderUpdateInput;
 }>;
 
-export type OrderUpdate = OrderUpdate_Mutation;
+export type OrderUpdateMutation = OrderUpdateMutation_Mutation;
 
 export type UpdateProductChannelListing_productChannelListingUpdate_ProductChannelListingUpdate_errors_ProductChannelListingError =
   { field: string | null; message: string | null; code: ProductErrorCode };
@@ -32553,6 +32530,63 @@ export type CustomerByEmailVariables = Exact<{
 }>;
 
 export type CustomerByEmail = CustomerByEmail_Query;
+
+export type DraftOrdersList_draftOrders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_total_TaxedMoney_gross_Money =
+  { amount: number; currency: string };
+
+export type DraftOrdersList_draftOrders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_total_TaxedMoney =
+  {
+    gross: DraftOrdersList_draftOrders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_total_TaxedMoney_gross_Money;
+  };
+
+export type DraftOrdersList_draftOrders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_user_User =
+  { email: string; firstName: string; lastName: string };
+
+export type DraftOrdersList_draftOrders_OrderCountableConnection_edges_OrderCountableEdge_node_Order =
+  {
+    id: string;
+    number: string;
+    created: string;
+    status: OrderStatus;
+    statusDisplay: string;
+    total: DraftOrdersList_draftOrders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_total_TaxedMoney;
+    user: DraftOrdersList_draftOrders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_user_User | null;
+  };
+
+export type DraftOrdersList_draftOrders_OrderCountableConnection_edges_OrderCountableEdge =
+  {
+    cursor: string;
+    node: DraftOrdersList_draftOrders_OrderCountableConnection_edges_OrderCountableEdge_node_Order;
+  };
+
+export type DraftOrdersList_draftOrders_OrderCountableConnection_pageInfo_PageInfo =
+  {
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+    startCursor: string | null;
+    endCursor: string | null;
+  };
+
+export type DraftOrdersList_draftOrders_OrderCountableConnection = {
+  totalCount: number | null;
+  edges: Array<DraftOrdersList_draftOrders_OrderCountableConnection_edges_OrderCountableEdge>;
+  pageInfo: DraftOrdersList_draftOrders_OrderCountableConnection_pageInfo_PageInfo;
+};
+
+export type DraftOrdersList_Query = {
+  draftOrders: DraftOrdersList_draftOrders_OrderCountableConnection | null;
+};
+
+export type DraftOrdersListVariables = Exact<{
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  last?: InputMaybe<Scalars["Int"]["input"]>;
+  after?: InputMaybe<Scalars["String"]["input"]>;
+  before?: InputMaybe<Scalars["String"]["input"]>;
+  filter?: InputMaybe<OrderDraftFilterInput>;
+  sortBy?: InputMaybe<OrderSortingInput>;
+}>;
+
+export type DraftOrdersList = DraftOrdersList_Query;
 
 export type Me_me_User_metadata_MetadataItem = { key: string; value: string };
 
@@ -33834,8 +33868,8 @@ export const RegisterAccountDocument = new TypedDocumentString(`
   RegisterAccount,
   RegisterAccountVariables
 >;
-export const AccountUpdateDocument = new TypedDocumentString(`
-    mutation AccountUpdate($customerId: ID, $input: AccountInput!) {
+export const AccountUpdateMutationDocument = new TypedDocumentString(`
+    mutation AccountUpdateMutation($customerId: ID, $input: AccountInput!) {
   accountUpdate(customerId: $customerId, input: $input) {
     user {
       id
@@ -33854,9 +33888,12 @@ export const AccountUpdateDocument = new TypedDocumentString(`
     }
   }
 }
-    `) as unknown as TypedDocumentString<AccountUpdate, AccountUpdateVariables>;
-export const CollectionAddProductsDocument = new TypedDocumentString(`
-    mutation CollectionAddProducts($collectionId: ID!, $products: [ID!]!) {
+    `) as unknown as TypedDocumentString<
+  AccountUpdateMutation,
+  AccountUpdateMutationVariables
+>;
+export const CollectionAddProductsMutationDocument = new TypedDocumentString(`
+    mutation CollectionAddProductsMutation($collectionId: ID!, $products: [ID!]!) {
   collectionAddProducts(collectionId: $collectionId, products: $products) {
     errors {
       field
@@ -33870,11 +33907,12 @@ export const CollectionAddProductsDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<
-  CollectionAddProducts,
-  CollectionAddProductsVariables
+  CollectionAddProductsMutation,
+  CollectionAddProductsMutationVariables
 >;
-export const CollectionChannelListingUpdateDocument = new TypedDocumentString(`
-    mutation CollectionChannelListingUpdate($id: ID!, $input: CollectionChannelListingUpdateInput!) {
+export const CollectionChannelListingUpdateMutationDocument =
+  new TypedDocumentString(`
+    mutation CollectionChannelListingUpdateMutation($id: ID!, $input: CollectionChannelListingUpdateInput!) {
   collectionChannelListingUpdate(id: $id, input: $input) {
     errors {
       field
@@ -33896,11 +33934,12 @@ export const CollectionChannelListingUpdateDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<
-  CollectionChannelListingUpdate,
-  CollectionChannelListingUpdateVariables
->;
-export const CollectionRemoveProductsDocument = new TypedDocumentString(`
-    mutation CollectionRemoveProducts($collectionId: ID!, $products: [ID!]!) {
+    CollectionChannelListingUpdateMutation,
+    CollectionChannelListingUpdateMutationVariables
+  >;
+export const CollectionRemoveProductsMutationDocument =
+  new TypedDocumentString(`
+    mutation CollectionRemoveProductsMutation($collectionId: ID!, $products: [ID!]!) {
   collectionRemoveProducts(collectionId: $collectionId, products: $products) {
     errors {
       field
@@ -33914,11 +33953,11 @@ export const CollectionRemoveProductsDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<
-  CollectionRemoveProducts,
-  CollectionRemoveProductsVariables
->;
-export const CollectionUpdateDocument = new TypedDocumentString(`
-    mutation CollectionUpdate($id: ID!, $input: CollectionInput!) {
+    CollectionRemoveProductsMutation,
+    CollectionRemoveProductsMutationVariables
+  >;
+export const CollectionUpdateMutationDocument = new TypedDocumentString(`
+    mutation CollectionUpdateMutation($id: ID!, $input: CollectionInput!) {
   collectionUpdate(id: $id, input: $input) {
     errors {
       field
@@ -33948,8 +33987,8 @@ export const CollectionUpdateDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<
-  CollectionUpdate,
-  CollectionUpdateVariables
+  CollectionUpdateMutation,
+  CollectionUpdateMutationVariables
 >;
 export const ConfirmVendorAccountDocument = new TypedDocumentString(`
     mutation ConfirmVendorAccount($email: String!, $token: String!) {
@@ -33970,8 +34009,8 @@ export const ConfirmVendorAccountDocument = new TypedDocumentString(`
   ConfirmVendorAccount,
   ConfirmVendorAccountVariables
 >;
-export const CustomerDeleteDocument = new TypedDocumentString(`
-    mutation CustomerDelete($id: ID!) {
+export const CustomerDeleteMutationDocument = new TypedDocumentString(`
+    mutation CustomerDeleteMutation($id: ID!) {
   customerDelete(id: $id) {
     user {
       id
@@ -33984,11 +34023,11 @@ export const CustomerDeleteDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<
-  CustomerDelete,
-  CustomerDeleteVariables
+  CustomerDeleteMutation,
+  CustomerDeleteMutationVariables
 >;
-export const DraftOrderCompleteDocument = new TypedDocumentString(`
-    mutation DraftOrderComplete($id: ID!) {
+export const DraftOrderCompleteMutationDocument = new TypedDocumentString(`
+    mutation DraftOrderCompleteMutation($id: ID!) {
   draftOrderComplete(id: $id) {
     order {
       id
@@ -34003,11 +34042,11 @@ export const DraftOrderCompleteDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<
-  DraftOrderComplete,
-  DraftOrderCompleteVariables
+  DraftOrderCompleteMutation,
+  DraftOrderCompleteMutationVariables
 >;
-export const DraftOrderCreateDocument = new TypedDocumentString(`
-    mutation DraftOrderCreate($input: DraftOrderCreateInput!) {
+export const DraftOrderCreateMutationDocument = new TypedDocumentString(`
+    mutation DraftOrderCreateMutation($input: DraftOrderCreateInput!) {
   draftOrderCreate(input: $input) {
     order {
       id
@@ -34022,11 +34061,11 @@ export const DraftOrderCreateDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<
-  DraftOrderCreate,
-  DraftOrderCreateVariables
+  DraftOrderCreateMutation,
+  DraftOrderCreateMutationVariables
 >;
-export const DraftOrderDeleteDocument = new TypedDocumentString(`
-    mutation DraftOrderDelete($id: ID!) {
+export const DraftOrderDeleteMutationDocument = new TypedDocumentString(`
+    mutation DraftOrderDeleteMutation($id: ID!) {
   draftOrderDelete(id: $id) {
     order {
       id
@@ -34041,11 +34080,11 @@ export const DraftOrderDeleteDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<
-  DraftOrderDelete,
-  DraftOrderDeleteVariables
+  DraftOrderDeleteMutation,
+  DraftOrderDeleteMutationVariables
 >;
-export const DraftOrderUpdateDocument = new TypedDocumentString(`
-    mutation DraftOrderUpdate($id: ID!, $input: DraftOrderInput!) {
+export const DraftOrderUpdateMutationDocument = new TypedDocumentString(`
+    mutation DraftOrderUpdateMutation($id: ID!, $input: DraftOrderInput!) {
   draftOrderUpdate(id: $id, input: $input) {
     order {
       id
@@ -34060,8 +34099,8 @@ export const DraftOrderUpdateDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<
-  DraftOrderUpdate,
-  DraftOrderUpdateVariables
+  DraftOrderUpdateMutation,
+  DraftOrderUpdateMutationVariables
 >;
 export const MetadataUpdateDocument = new TypedDocumentString(`
     mutation MetadataUpdate($id: ID!, $input: [MetadataInput!]!) {
@@ -34092,8 +34131,8 @@ export const CancelOrderDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<CancelOrder, CancelOrderVariables>;
-export const OrderDiscountAddDocument = new TypedDocumentString(`
-    mutation OrderDiscountAdd($orderId: ID!, $input: OrderDiscountCommonInput!) {
+export const OrderDiscountAddMutationDocument = new TypedDocumentString(`
+    mutation OrderDiscountAddMutation($orderId: ID!, $input: OrderDiscountCommonInput!) {
   orderDiscountAdd(orderId: $orderId, input: $input) {
     order {
       id
@@ -34108,11 +34147,11 @@ export const OrderDiscountAddDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<
-  OrderDiscountAdd,
-  OrderDiscountAddVariables
+  OrderDiscountAddMutation,
+  OrderDiscountAddMutationVariables
 >;
-export const OrderDiscountDeleteDocument = new TypedDocumentString(`
-    mutation OrderDiscountDelete($discountId: ID!) {
+export const OrderDiscountDeleteMutationDocument = new TypedDocumentString(`
+    mutation OrderDiscountDeleteMutation($discountId: ID!) {
   orderDiscountDelete(discountId: $discountId) {
     order {
       id
@@ -34127,11 +34166,11 @@ export const OrderDiscountDeleteDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<
-  OrderDiscountDelete,
-  OrderDiscountDeleteVariables
+  OrderDiscountDeleteMutation,
+  OrderDiscountDeleteMutationVariables
 >;
-export const OrderDiscountUpdateDocument = new TypedDocumentString(`
-    mutation OrderDiscountUpdate($discountId: ID!, $input: OrderDiscountCommonInput!) {
+export const OrderDiscountUpdateMutationDocument = new TypedDocumentString(`
+    mutation OrderDiscountUpdateMutation($discountId: ID!, $input: OrderDiscountCommonInput!) {
   orderDiscountUpdate(discountId: $discountId, input: $input) {
     order {
       id
@@ -34146,8 +34185,8 @@ export const OrderDiscountUpdateDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<
-  OrderDiscountUpdate,
-  OrderDiscountUpdateVariables
+  OrderDiscountUpdateMutation,
+  OrderDiscountUpdateMutationVariables
 >;
 export const FulfillOrderDocument = new TypedDocumentString(`
     mutation FulfillOrder($order: ID!, $input: OrderFulfillInput!) {
@@ -34174,8 +34213,8 @@ export const CancelOrderFulfillmentDocument = new TypedDocumentString(`
   CancelOrderFulfillment,
   CancelOrderFulfillmentVariables
 >;
-export const OrderLineDeleteDocument = new TypedDocumentString(`
-    mutation OrderLineDelete($id: ID!) {
+export const OrderLineDeleteMutationDocument = new TypedDocumentString(`
+    mutation OrderLineDeleteMutation($id: ID!) {
   orderLineDelete(id: $id) {
     order {
       id
@@ -34190,11 +34229,11 @@ export const OrderLineDeleteDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<
-  OrderLineDelete,
-  OrderLineDeleteVariables
+  OrderLineDeleteMutation,
+  OrderLineDeleteMutationVariables
 >;
-export const OrderLineUpdateDocument = new TypedDocumentString(`
-    mutation OrderLineUpdate($id: ID!, $input: OrderLineInput!) {
+export const OrderLineUpdateMutationDocument = new TypedDocumentString(`
+    mutation OrderLineUpdateMutation($id: ID!, $input: OrderLineInput!) {
   orderLineUpdate(id: $id, input: $input) {
     order {
       id
@@ -34216,11 +34255,11 @@ export const OrderLineUpdateDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<
-  OrderLineUpdate,
-  OrderLineUpdateVariables
+  OrderLineUpdateMutation,
+  OrderLineUpdateMutationVariables
 >;
-export const OrderLinesCreateDocument = new TypedDocumentString(`
-    mutation OrderLinesCreate($id: ID!, $input: [OrderLineCreateInput!]!) {
+export const OrderLinesCreateMutationDocument = new TypedDocumentString(`
+    mutation OrderLinesCreateMutation($id: ID!, $input: [OrderLineCreateInput!]!) {
   orderLinesCreate(id: $id, input: $input) {
     order {
       id
@@ -34242,8 +34281,8 @@ export const OrderLinesCreateDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<
-  OrderLinesCreate,
-  OrderLinesCreateVariables
+  OrderLinesCreateMutation,
+  OrderLinesCreateMutationVariables
 >;
 export const AddOrderNoteDocument = new TypedDocumentString(`
     mutation AddOrderNote($order: ID!, $input: OrderNoteInput!) {
@@ -34264,8 +34303,8 @@ export const AddOrderNoteDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<AddOrderNote, AddOrderNoteVariables>;
-export const OrderUpdateDocument = new TypedDocumentString(`
-    mutation OrderUpdate($id: ID!, $input: OrderUpdateInput!) {
+export const OrderUpdateMutationDocument = new TypedDocumentString(`
+    mutation OrderUpdateMutation($id: ID!, $input: OrderUpdateInput!) {
   orderUpdate(id: $id, input: $input) {
     order {
       id
@@ -34279,7 +34318,10 @@ export const OrderUpdateDocument = new TypedDocumentString(`
     }
   }
 }
-    `) as unknown as TypedDocumentString<OrderUpdate, OrderUpdateVariables>;
+    `) as unknown as TypedDocumentString<
+  OrderUpdateMutation,
+  OrderUpdateMutationVariables
+>;
 export const UpdateProductChannelListingDocument = new TypedDocumentString(`
     mutation UpdateProductChannelListing($id: ID!, $input: ProductChannelListingUpdateInput!) {
   productChannelListingUpdate(id: $id, input: $input) {
@@ -34759,6 +34801,50 @@ export const CustomerByEmailDocument = new TypedDocumentString(`
     `) as unknown as TypedDocumentString<
   CustomerByEmail,
   CustomerByEmailVariables
+>;
+export const DraftOrdersListDocument = new TypedDocumentString(`
+    query DraftOrdersList($first: Int, $last: Int, $after: String, $before: String, $filter: OrderDraftFilterInput, $sortBy: OrderSortingInput) {
+  draftOrders(
+    first: $first
+    last: $last
+    after: $after
+    before: $before
+    filter: $filter
+    sortBy: $sortBy
+  ) {
+    edges {
+      node {
+        id
+        number
+        created
+        status
+        statusDisplay
+        total {
+          gross {
+            amount
+            currency
+          }
+        }
+        user {
+          email
+          firstName
+          lastName
+        }
+      }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    totalCount
+  }
+}
+    `) as unknown as TypedDocumentString<
+  DraftOrdersList,
+  DraftOrdersListVariables
 >;
 export const MeDocument = new TypedDocumentString(`
     query Me {
