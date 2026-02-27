@@ -14,7 +14,10 @@ export const config = {
      * - _vercel (deployment files)
      * - monitoring (Sentry "tunnelRoute")
      * - favicon.ico, sitemap.xml, robots.txt (metadata files)
+     * - .well-known (UCP)
+     * - robots.txt (metadata files)
+     * - all other files
      */
-    "/((?!api|_next|_vercel|monitoring|favicon.ico|sitemap.xml|robots.txt|.*\\..*).*)",
+    "/((?!api|_next|_vercel|monitoring|favicon.ico|sitemap.xml|robots.txt|.well-known|.*\\..*).*)",
   ],
 };

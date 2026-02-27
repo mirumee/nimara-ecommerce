@@ -1,0 +1,21 @@
+mutation CheckoutSessionCreate(
+  $input: CheckoutCreateInput!
+  $languageCode: LanguageCodeEnum!
+  $countryCode: CountryCode = US
+  $thumbnailSize: Int = 128
+  $thumbnailFormat: ThumbnailFormatEnum = WEBP
+) {
+  checkoutCreate(input: $input) {
+    checkout {
+      ...CheckoutSessionFragment
+    }
+    errors {
+      field
+      message
+      code
+      variants
+      lines
+      addressType
+    }
+  }
+}

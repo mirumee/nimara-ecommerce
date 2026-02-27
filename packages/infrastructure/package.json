@@ -17,6 +17,7 @@
   "dependencies": {
     "@saleor/auth-sdk": "1.0.3",
     "@stripe/stripe-js": "8.8.0",
+    "@ucp-js/sdk": "0.1.0",
     "editorjs-html": "3.4.3",
     "libphonenumber-js": "1.12.37",
     "pino": "10.3.1",
