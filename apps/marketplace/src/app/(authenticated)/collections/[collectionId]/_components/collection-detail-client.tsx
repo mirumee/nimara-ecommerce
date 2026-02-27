@@ -6,13 +6,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { FormProvider, useForm, useFormContext } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 
 import { Button } from "@nimara/ui/components/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@nimara/ui/components/card";
@@ -24,14 +23,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@nimara/ui/components/dialog";
-import { Input } from "@nimara/ui/components/input";
 import { Label } from "@nimara/ui/components/label";
-import { RadioGroup, RadioGroupItem } from "@nimara/ui/components/radio-group";
 import { Skeleton } from "@nimara/ui/components/skeleton";
 import { useToast } from "@nimara/ui/hooks";
 
-import { CheckboxField } from "@/components/fields/checkbox-field";
 import { InputField } from "@/components/fields/input-field";
+import {
+  type Channel,
+  ChannelAvailabilitySection,
+} from "@/components/product-availability-section";
 import { Textarea } from "@/components/ui/textarea";
 import type { CollectionDetail_collection_Collection } from "@/graphql/generated/client";
 import { METADATA_KEYS } from "@/lib/saleor/consts";
@@ -40,18 +40,13 @@ import {
   deleteCollection,
   updateCollection,
   updateCollectionChannelListing,
+  uploadCollectionBackgroundImage,
 } from "../actions";
 import {
   type CollectionUpdateFormValues,
   collectionUpdateSchema,
 } from "../schema";
 import { AssignedProductsSection } from "./assigned-products-section";
-
-type Channel = {
-  currencyCode: string;
-  id: string;
-  name: string;
-};
 
 function tryExtractEditorJsPlainText(value?: string | null): string {
   if (!value) {
@@ -91,151 +86,6 @@ function toEditorJsJSONString(plainText: string): string {
     blocks,
     version: "2.28.2",
   });
-}
-
-function AvailabilitySection({ channels }: { channels: Channel[] }) {
-  const { watch, setValue, register } =
-    useFormContext<CollectionUpdateFormValues>();
-  const channelAvailability = watch("channelAvailability") ?? {};
-  // Count all channels that have availability configured (both published and hidden)
-  // Since all channels are shown in the Availability section, count all of them
-  const configuredCount = channels.length;
-
-  const formatDate = (dateString: string | null | undefined): string => {
-    if (!dateString) {
-      return "";
-    }
-    try {
-      const date = new Date(dateString);
-
-      return date.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      });
-    } catch {
-      return "";
-    }
-  };
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Availability</CardTitle>
-        <CardDescription>
-          In {configuredCount} out of {channels.length} channels
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {channels.map((channel) => {
-          const isPublished =
-            channelAvailability[channel.id]?.isPublished ?? false;
-          const publishedAt = channelAvailability[channel.id]?.publishedAt;
-          const hasPublicationDate = Boolean(publishedAt);
-          const visibleLabel = hasPublicationDate
-            ? `Visible since ${formatDate(publishedAt)}`
-            : "Visible";
-
-          return (
-            <div key={channel.id} className="space-y-3 rounded-lg border p-4">
-              <div className="flex items-center justify-between gap-4">
-                <div className="font-medium">{channel.name}</div>
-                <div className="text-xs text-muted-foreground">
-                  {channel.currencyCode}
-                </div>
-              </div>
-              <div className="space-y-3">
-                <RadioGroup
-                  value={isPublished ? "visible" : "hidden"}
-                  onValueChange={(value) => {
-                    setValue(
-                      `channelAvailability.${channel.id}.isPublished`,
-                      value === "visible",
-                    );
-                    if (value === "visible") {
-                      setValue(
-                        `channelAvailability.${channel.id}.publishedAt`,
-                        undefined,
-                      );
-                      setValue(
-                        `channelAvailability.${channel.id}.setPublicationDate`,
-                        false,
-                      );
-                    }
-                  }}
-                  className="flex gap-6"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem
-                      value="visible"
-                      id={`${channel.id}-visible`}
-                    />
-                    <Label
-                      htmlFor={`${channel.id}-visible`}
-                      className="cursor-pointer text-sm font-normal"
-                    >
-                      {visibleLabel}
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem
-                      value="hidden"
-                      id={`${channel.id}-hidden`}
-                    />
-                    <Label
-                      htmlFor={`${channel.id}-hidden`}
-                      className="cursor-pointer text-sm font-normal"
-                    >
-                      Hidden
-                    </Label>
-                  </div>
-                </RadioGroup>
-                {!isPublished && (
-                  <div className="flex items-center space-x-2">
-                    <CheckboxField
-                      name={`channelAvailability.${channel.id}.setPublicationDate`}
-                      label="Set publication date"
-                    />
-                  </div>
-                )}
-                {!isPublished &&
-                  watch(
-                    `channelAvailability.${channel.id}.setPublicationDate`,
-                  ) && (
-                    <div className="grid gap-2">
-                      <Label
-                        htmlFor={`${channel.id}-publishedAt`}
-                        className="text-sm"
-                      >
-                        Publication date
-                      </Label>
-                      <Input
-                        type="datetime-local"
-                        id={`${channel.id}-publishedAt`}
-                        {...register(
-                          `channelAvailability.${channel.id}.publishedAt`,
-                        )}
-                        defaultValue={
-                          publishedAt
-                            ? new Date(publishedAt).toISOString().slice(0, 16)
-                            : new Date().toISOString().slice(0, 16)
-                        }
-                        onChange={(e) => {
-                          setValue(
-                            `channelAvailability.${channel.id}.publishedAt`,
-                            e.target.value,
-                          );
-                        }}
-                      />
-                    </div>
-                  )}
-              </div>
-            </div>
-          );
-        })}
-      </CardContent>
-    </Card>
-  );
 }
 
 type Props = {
@@ -309,6 +159,11 @@ export function CollectionDetailClient({
   const onSubmit = form.handleSubmit(
     async (values) => {
       try {
+        // Avoid running update/channel-update if delete is in progress (e.g. race after confirm delete)
+        if (isDeleting) {
+          return;
+        }
+
         const result = await updateCollection(
           {
             id: collectionId,
@@ -365,6 +220,10 @@ export function CollectionDetailClient({
           publishedAt?: string | null;
         }> = [];
 
+        const selectedChannelIds = new Set(
+          Object.keys(values.channelAvailability ?? {}),
+        );
+
         // Process all channels - ensure every channel is included
         for (const channel of channels) {
           const config = values.channelAvailability?.[channel.id];
@@ -410,12 +269,22 @@ export function CollectionDetailClient({
           }
         }
 
+        // Remove collection from channels that were unchecked in Manage
+        const currentListingChannelIds = new Set(
+          collection.channelListings?.map((l) => l.channel.id) ?? [],
+        );
+        const removeChannels = [...currentListingChannelIds].filter(
+          (id) => !selectedChannelIds.has(id),
+        );
+
         const channelResult = await updateCollectionChannelListing(
           {
             id: collectionId,
             input: {
               addChannels:
                 updateChannels.length > 0 ? updateChannels : undefined,
+              removeChannels:
+                removeChannels.length > 0 ? removeChannels : undefined,
             },
           },
           collectionId,
@@ -503,137 +372,36 @@ export function CollectionDetailClient({
   const handleImageUpload = async (file: File) => {
     setIsUploadingImage(true);
     try {
-      // Get auth token from localStorage
-      const token = localStorage.getItem("auth_token");
+      const result = await uploadCollectionBackgroundImage(
+        collectionId,
+        file,
+        collection.name ?? undefined,
+      );
 
-      if (!token) {
-        toast({
-          title: "Authentication required",
-          description: "Please log in to upload images.",
-          variant: "destructive",
-        });
-        setIsUploadingImage(false);
-
-        return;
-      }
-
-      // Get GraphQL endpoint
-      const graphqlEndpoint = `${window.location.origin}/api/graphql`;
-
-      // Create FormData for multipart request following GraphQL Multipart Request Spec
-      const formData = new FormData();
-
-      // Create the operations JSON - the file will be referenced as a variable
-      const operations = {
-        query: `mutation CollectionUpdate($id: ID!, $input: CollectionInput!) {
-          collectionUpdate(id: $id, input: $input) {
-            errors {
-              field
-              message
-              code
-            }
-            collection {
-              id
-              backgroundImage {
-                url
-                alt
-              }
-            }
-          }
-        }`,
-        variables: {
-          id: collectionId,
-          input: {
-            backgroundImage: null, // Placeholder - will be replaced by file reference
-            ...(collection.name && { backgroundImageAlt: collection.name }),
-          },
-        },
-        operationName: "CollectionUpdate",
-      };
-
-      // Map the file to the variable path
-      const map = {
-        "0": ["variables.input.backgroundImage"],
-      };
-
-      // Append operations and map as JSON strings
-      formData.append("operations", JSON.stringify(operations));
-      formData.append("map", JSON.stringify(map));
-
-      // Append the file - the key "0" matches the map above
-      formData.append("0", file, file.name);
-
-      // Send multipart request directly from client
-      const response = await fetch(graphqlEndpoint, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          // Don't set Content-Type header - browser will set it with boundary
-        },
-        body: formData,
-      });
-
-      const result = await response.json();
-
-      if (!response.ok || result.errors) {
+      if (!result.ok) {
         toast({
           title: "Failed to upload image",
           description:
             result.errors
-              ?.map((e: { message?: string }) => e.message)
+              .map((e: { message?: string }) => e.message)
+              .filter(Boolean)
               .join(", ") || "Failed to upload image",
           variant: "destructive",
         });
-        setIsUploadingImage(false);
 
         return;
       }
 
-      if (!result.data?.collectionUpdate) {
-        toast({
-          title: "Failed to upload image",
-          description: "No data returned from server",
-          variant: "destructive",
-        });
-        setIsUploadingImage(false);
-
-        return;
-      }
-
-      const errors = result.data.collectionUpdate.errors || [];
-
-      if (errors.length > 0) {
-        toast({
-          title: "Failed to upload image",
-          description:
-            errors
-              .map((e: { message?: string }) => e.message)
-              .filter(Boolean)
-              .join(", ") || "Unknown error",
-          variant: "destructive",
-        });
-        setIsUploadingImage(false);
-
-        return;
-      }
-
-      // Update preview with the new image URL from server response
-      const uploadedImageUrl =
-        result.data.collectionUpdate.collection?.backgroundImage?.url;
+      const uploadedImageUrl = result.data.collection?.backgroundImage?.url;
 
       if (uploadedImageUrl && typeof uploadedImageUrl === "string") {
         setBackgroundImagePreview(uploadedImageUrl);
-      } else {
-        // Fallback: refresh to get the latest data
-        router.refresh();
       }
 
       toast({
         title: "Image uploaded",
         description: "Background image has been uploaded successfully.",
       });
-
-      // Refresh to ensure we have the latest data
       router.refresh();
     } catch (error) {
       toast({
@@ -880,6 +648,7 @@ export function CollectionDetailClient({
               <div className="flex items-center gap-2">
                 {!isDefaultCollection && (
                   <Button
+                    type="button"
                     onClick={() => setShowDeleteDialog(true)}
                     size="sm"
                     variant="destructive"
@@ -1035,7 +804,10 @@ export function CollectionDetailClient({
               </div>
 
               <div className="flex grow basis-1/3 flex-col gap-4">
-                <AvailabilitySection channels={channels} />
+                <ChannelAvailabilitySection
+                  variant="collection"
+                  channels={channels}
+                />
               </div>
             </div>
           </div>
@@ -1054,6 +826,7 @@ export function CollectionDetailClient({
           </DialogHeader>
           <DialogFooter>
             <Button
+              type="button"
               variant="outline"
               onClick={() => setShowDeleteDialog(false)}
               disabled={isDeleting}

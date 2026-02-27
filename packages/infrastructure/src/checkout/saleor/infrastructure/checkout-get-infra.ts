@@ -73,6 +73,9 @@ const serializeCheckout = (checkout: CheckoutFragment): Checkout => {
 export const saleorCheckoutGetInfra =
   ({ apiURL, logger }: SaleorCheckoutServiceConfig): CheckoutGetInfra =>
   async ({ checkoutId, languageCode, countryCode }) => {
+    const includeVendorMetadata =
+      process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED !== "false";
+
     const result = await graphqlClient(apiURL).execute(
       CheckoutFindQueryDocument,
       {
@@ -82,6 +85,7 @@ export const saleorCheckoutGetInfra =
           countryCode: countryCode as CountryCode,
           thumbnailFormat: THUMBNAIL_FORMAT,
           thumbnailSize: THUMBNAIL_SIZE_SMALL,
+          includeVendorMetadata,
         },
         operationName: "CheckoutFindQuery",
       },

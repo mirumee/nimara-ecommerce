@@ -9,6 +9,12 @@ import {
   type CollectionsList,
   CollectionsListDocument,
   type CollectionsListVariables,
+  type ProductCreateMutation,
+  ProductCreateMutationDocument,
+  type ProductCreateMutationVariables,
+  type ProductDelete,
+  ProductDeleteDocument,
+  type ProductDeleteVariables,
   type ProductDetail,
   ProductDetailDocument,
   type ProductDetailVariables,
@@ -18,30 +24,45 @@ import {
   type ProductMediaDeleteMutation,
   ProductMediaDeleteMutationDocument,
   type ProductMediaDeleteMutationVariables,
+  type ProductMediaReorderMutation,
+  ProductMediaReorderMutationDocument,
+  type ProductMediaReorderMutationVariables,
   type ProductMediaUpdateMutation,
   ProductMediaUpdateMutationDocument,
   type ProductMediaUpdateMutationVariables,
-  type ProductVariantBulkUpdateMutation,
-  ProductVariantBulkUpdateMutationDocument,
-  type ProductVariantBulkUpdateMutationVariables,
-  type ProductVariantDetail,
-  ProductVariantDetailDocument,
-  type ProductVariantDetailVariables,
+  type Products,
+  ProductsDocument,
+  type ProductsVariables,
   type ProductTypeDetail,
   ProductTypeDetailDocument,
   type ProductTypeDetailVariables,
   type ProductTypesList,
   ProductTypesListDocument,
   type ProductTypesListVariables,
-  type Products,
-  ProductsDocument,
-  type ProductsVariables,
+  type ProductVariantBulkUpdateMutation,
+  ProductVariantBulkUpdateMutationDocument,
+  type ProductVariantBulkUpdateMutationVariables,
+  type ProductVariantChannelListingUpdateMutation,
+  ProductVariantChannelListingUpdateMutationDocument,
+  type ProductVariantChannelListingUpdateMutationVariables,
+  type ProductVariantCreateMutation,
+  ProductVariantCreateMutationDocument,
+  type ProductVariantCreateMutationVariables,
+  type ProductVariantDelete,
+  ProductVariantDeleteDocument,
+  type ProductVariantDeleteVariables,
+  type ProductVariantDetail,
+  ProductVariantDetailDocument,
+  type ProductVariantDetailVariables,
+  type ProductVariantUpdateMutation,
+  ProductVariantUpdateMutationDocument,
+  type ProductVariantUpdateMutationVariables,
   type UpdateProduct,
-  UpdateProductDocument,
-  type UpdateProductVariables,
   type UpdateProductChannelListing,
   UpdateProductChannelListingDocument,
   type UpdateProductChannelListingVariables,
+  UpdateProductDocument,
+  type UpdateProductVariables,
 } from "@/graphql/generated/client";
 import { executeGraphQL } from "@/lib/graphql/execute";
 
@@ -128,6 +149,25 @@ class ProductsService {
     return executeGraphQL(
       ProductTypeDetailDocument,
       "ProductTypeDetailQuery",
+      variables,
+      token,
+    );
+  }
+
+  async createProduct(
+    variables: ProductCreateMutationVariables,
+    token?: string | null,
+  ): AsyncResult<ProductCreateMutation> {
+    return executeGraphQL<
+      ProductCreateMutation,
+      ProductCreateMutationVariables
+    >(
+      ProductCreateMutationDocument as DocumentTypeDecoration<
+        ProductCreateMutation,
+        ProductCreateMutationVariables
+      > &
+        DocumentWithToString,
+      "ProductCreateMutation",
       variables,
       token,
     );
@@ -225,6 +265,25 @@ class ProductsService {
     );
   }
 
+  async productMediaReorder(
+    variables: ProductMediaReorderMutationVariables,
+    token?: string | null,
+  ): AsyncResult<ProductMediaReorderMutation> {
+    return executeGraphQL<
+      ProductMediaReorderMutation,
+      ProductMediaReorderMutationVariables
+    >(
+      ProductMediaReorderMutationDocument as DocumentTypeDecoration<
+        ProductMediaReorderMutation,
+        ProductMediaReorderMutationVariables
+      > &
+        DocumentWithToString,
+      "ProductMediaReorderMutation",
+      variables,
+      token,
+    );
+  }
+
   async productVariantBulkUpdate(
     variables: ProductVariantBulkUpdateMutationVariables,
     token?: string | null,
@@ -239,6 +298,95 @@ class ProductsService {
       > &
         DocumentWithToString,
       "ProductVariantBulkUpdateMutation",
+      variables,
+      token,
+    );
+  }
+
+  async productVariantCreate(
+    variables: ProductVariantCreateMutationVariables,
+    token?: string | null,
+  ): AsyncResult<ProductVariantCreateMutation> {
+    return executeGraphQL<
+      ProductVariantCreateMutation,
+      ProductVariantCreateMutationVariables
+    >(
+      ProductVariantCreateMutationDocument as DocumentTypeDecoration<
+        ProductVariantCreateMutation,
+        ProductVariantCreateMutationVariables
+      > &
+        DocumentWithToString,
+      "ProductVariantCreateMutation",
+      variables,
+      token,
+    );
+  }
+
+  async productVariantChannelListingUpdate(
+    variables: ProductVariantChannelListingUpdateMutationVariables,
+    token?: string | null,
+  ): AsyncResult<ProductVariantChannelListingUpdateMutation> {
+    return executeGraphQL<
+      ProductVariantChannelListingUpdateMutation,
+      ProductVariantChannelListingUpdateMutationVariables
+    >(
+      ProductVariantChannelListingUpdateMutationDocument as DocumentTypeDecoration<
+        ProductVariantChannelListingUpdateMutation,
+        ProductVariantChannelListingUpdateMutationVariables
+      > &
+        DocumentWithToString,
+      "ProductVariantChannelListingUpdateMutation",
+      variables,
+      token,
+    );
+  }
+
+  async productVariantUpdate(
+    variables: ProductVariantUpdateMutationVariables,
+    token?: string | null,
+  ): AsyncResult<ProductVariantUpdateMutation> {
+    return executeGraphQL<
+      ProductVariantUpdateMutation,
+      ProductVariantUpdateMutationVariables
+    >(
+      ProductVariantUpdateMutationDocument as DocumentTypeDecoration<
+        ProductVariantUpdateMutation,
+        ProductVariantUpdateMutationVariables
+      > &
+        DocumentWithToString,
+      "ProductVariantUpdateMutation",
+      variables,
+      token,
+    );
+  }
+
+  async deleteVariant(
+    variables: ProductVariantDeleteVariables,
+    token?: string | null,
+  ): AsyncResult<ProductVariantDelete> {
+    return executeGraphQL<ProductVariantDelete, ProductVariantDeleteVariables>(
+      ProductVariantDeleteDocument as DocumentTypeDecoration<
+        ProductVariantDelete,
+        ProductVariantDeleteVariables
+      > &
+        DocumentWithToString,
+      "ProductVariantDeleteMutation",
+      variables,
+      token,
+    );
+  }
+
+  async deleteProduct(
+    variables: ProductDeleteVariables,
+    token?: string | null,
+  ): AsyncResult<ProductDelete> {
+    return executeGraphQL<ProductDelete, ProductDeleteVariables>(
+      ProductDeleteDocument as DocumentTypeDecoration<
+        ProductDelete,
+        ProductDeleteVariables
+      > &
+        DocumentWithToString,
+      "ProductDeleteMutation",
       variables,
       token,
     );

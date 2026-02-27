@@ -4,6 +4,7 @@ query CheckoutFindQuery(
   $languageCode: LanguageCodeEnum!
   $thumbnailSize: Int!
   $thumbnailFormat: ThumbnailFormatEnum!
+  $includeVendorMetadata: Boolean!
 ) {
   checkout(id: $checkoutId) {
     ...CheckoutFragment

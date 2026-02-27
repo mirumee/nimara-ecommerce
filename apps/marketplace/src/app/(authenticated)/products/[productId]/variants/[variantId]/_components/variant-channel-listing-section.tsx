@@ -1,6 +1,9 @@
 "use client";
 
-import { useFormContext } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
+
+import { Checkbox } from "@nimara/ui/components/checkbox";
+import { Input } from "@nimara/ui/components/input";
 
 import {
   Table,
@@ -11,10 +14,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { Channels } from "@/graphql/generated/client";
-import { cn } from "@/lib/utils";
-
-import { CheckboxField } from "@/components/fields/checkbox-field";
-import { Input } from "@nimara/ui/components/input";
 
 import type { VariantUpdateFormValues } from "../schema";
 
@@ -28,13 +27,13 @@ export function VariantChannelListingSection({
 
   return (
     <div className="space-y-3">
-      <h3 className="text-lg font-medium">Availability & Pricing</h3>
+      <h3 className="text-lg font-medium">Pricing</h3>
 
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead>Channel Name</TableHead>
-            <TableHead className="w-28 text-center">Availability</TableHead>
+            <TableHead className="w-24">Available</TableHead>
             <TableHead className="w-56">Selling Price</TableHead>
             <TableHead className="w-56">Cost Price</TableHead>
           </TableRow>
@@ -42,47 +41,55 @@ export function VariantChannelListingSection({
         <TableBody>
           {channels.map((channel, index) => {
             const listing = channelListings[index];
-            const available = listing?.isAvailableForPurchase ?? false;
 
             return (
               <TableRow key={channel.id}>
                 <TableCell className="font-medium">{channel.name}</TableCell>
-                <TableCell className="text-center">
-                  <CheckboxField
+                <TableCell>
+                  <Controller
+                    control={form.control}
                     name={`channelListings.${index}.isAvailableForPurchase`}
-                    label=""
+                    render={({ field }) => (
+                      <Checkbox
+                        checked={field.value ?? false}
+                        onCheckedChange={(checked) =>
+                          field.onChange(checked === true)
+                        }
+                        aria-label={`${channel.name} available for purchase`}
+                      />
+                    )}
                   />
                 </TableCell>
                 <TableCell>
-                  <div className="grid gap-1">
-                    <div className="text-xs text-muted-foreground">
-                      {channel.currencyCode}
-                    </div>
+                  <div className="relative">
                     <Input
                       type="number"
                       step="0.01"
                       placeholder="0.00"
-                      disabled={!available}
+                      defaultValue={listing?.price || "0.00"}
                       {...form.register(`channelListings.${index}.price`)}
-                      className={cn(!available && "opacity-50")}
+                      className="pr-12"
                       aria-label={`${channel.name} selling price`}
                     />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                      {channel.currencyCode}
+                    </span>
                   </div>
                 </TableCell>
                 <TableCell>
-                  <div className="grid gap-1">
-                    <div className="text-xs text-muted-foreground">
-                      {channel.currencyCode}
-                    </div>
+                  <div className="relative">
                     <Input
                       type="number"
                       step="0.01"
                       placeholder="0.00"
-                      disabled={!available}
+                      defaultValue={listing?.costPrice || "0.00"}
                       {...form.register(`channelListings.${index}.costPrice`)}
-                      className={cn(!available && "opacity-50")}
+                      className="pr-12"
                       aria-label={`${channel.name} cost price`}
                     />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                      {channel.currencyCode}
+                    </span>
                   </div>
                 </TableCell>
               </TableRow>

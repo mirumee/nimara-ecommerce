@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, ChevronDown, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import { Button } from "@nimara/ui/components/button";
@@ -14,6 +14,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@nimara/ui/components/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@nimara/ui/components/dialog";
 import { Input } from "@nimara/ui/components/input";
 import { Label } from "@nimara/ui/components/label";
 import { useToast } from "@nimara/ui/hooks";
@@ -34,11 +42,12 @@ import type {
   Channels,
   ProductDetail,
   ProductTypeDetail,
+  ProductVariantDelete_Mutation,
   ProductVariantDetail,
   Warehouses,
 } from "@/graphql/generated/client";
 
-import { productVariantBulkUpdate } from "../actions";
+import { deleteVariant, productVariantBulkUpdate } from "../actions";
 import { type VariantUpdateFormValues, variantUpdateSchema } from "../schema";
 import { VariantChannelListingSection } from "./variant-channel-listing-section";
 import { VariantStocksSection } from "./variant-stocks-section";
@@ -441,6 +450,61 @@ export function VariantDetailClient({
 
   const isSubmitting = form.formState.isSubmitting;
 
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      const result = await deleteVariant(variantId, productId);
+
+      if (!result.ok) {
+        toast({
+          title: "Failed to delete variant",
+          description: result.errors
+            .map((e) => e.message || "Unknown error")
+            .join(", "),
+          variant: "destructive",
+        });
+
+        return;
+      }
+
+      const data = result.data as unknown as ProductVariantDelete_Mutation;
+      const errors = data?.productVariantDelete?.errors ?? [];
+
+      if (errors.length > 0) {
+        toast({
+          title: "Failed to delete variant",
+          description:
+            errors
+              .map((e: { message?: string | null }) => e.message)
+              .filter(Boolean)
+              .join(", ") || "Unknown error",
+          variant: "destructive",
+        });
+
+        return;
+      }
+
+      setShowDeleteDialog(false);
+      toast({
+        title: "Variant deleted",
+        description: "The variant has been deleted successfully.",
+      });
+
+      router.replace(`/products/${encodeURIComponent(productId)}`);
+    } catch (error) {
+      toast({
+        title: "Failed to delete variant",
+        description: error instanceof Error ? error.message : "Unknown error",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
     <FormProvider {...form}>
       <form onSubmit={onSubmit} noValidate>
@@ -477,7 +541,7 @@ export function VariantDetailClient({
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       className="text-destructive focus:text-destructive"
-                      disabled
+                      onSelect={() => setShowDeleteDialog(true)}
                     >
                       Delete variant
                     </DropdownMenuItem>
@@ -503,7 +567,7 @@ export function VariantDetailClient({
               />
             </div>
             <div className="flex flex-col gap-4">
-              <Card>
+              <Card id="variant-details-card" className="scroll-mt-24">
                 <CardHeader>
                   <CardTitle>Edit variant</CardTitle>
                 </CardHeader>
@@ -724,6 +788,43 @@ export function VariantDetailClient({
           </div>
         </div>
       </form>
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Variant</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete the variant &ldquo;
+              {variant.name || variant.sku || variantId}&rdquo;? This action
+              cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setShowDeleteDialog(false)}
+              disabled={isDeleting}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={isDeleting}
+            >
+              {isDeleting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                "Delete variant"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </FormProvider>
   );
 }

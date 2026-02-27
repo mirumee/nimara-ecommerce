@@ -44,6 +44,9 @@ const serializeCart = ({
 export const saleorCartGetInfra =
   ({ apiURI, logger }: CartServiceConfig): CartGetInfra =>
   async ({ cartId, languageCode, countryCode, options }) => {
+    const includeVendorMetadata =
+      process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED !== "false";
+
     const result = await graphqlClient(apiURI).execute(CartQueryDocument, {
       variables: {
         id: cartId,
@@ -51,6 +54,7 @@ export const saleorCartGetInfra =
         countryCode,
         thumbnailFormat: THUMBNAIL_FORMAT,
         thumbnailSize: THUMBNAIL_SIZE_SMALL,
+        includeVendorMetadata,
       },
       options,
       operationName: "CartQuery",

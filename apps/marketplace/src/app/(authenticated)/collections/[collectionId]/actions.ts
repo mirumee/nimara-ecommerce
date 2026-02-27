@@ -138,7 +138,7 @@ export async function uploadCollectionBackgroundImage(
           ...(alt && { backgroundImageAlt: alt }),
         },
       },
-      operationName: "CollectionUpdateMutation",
+      operationName: "CollectionUpdate",
     };
 
     // Map the file to the variable path

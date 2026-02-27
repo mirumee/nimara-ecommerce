@@ -3,6 +3,8 @@
 import { useMemo } from "react";
 import { useFormContext } from "react-hook-form";
 
+import { CheckboxField } from "@/components/fields/checkbox-field";
+import { InputField } from "@/components/fields/input-field";
 import {
   Table,
   TableBody,
@@ -11,8 +13,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CheckboxField } from "@/components/fields/checkbox-field";
-import { InputField } from "@/components/fields/input-field";
 import { cn } from "@/lib/utils";
 
 import type { VariantUpdateFormValues } from "../schema";
@@ -25,7 +25,11 @@ export function VariantStocksSection() {
     return Object.entries(stocks).sort((a, b) => {
       const aAssigned = a[1].isAssigned ? 0 : 1;
       const bAssigned = b[1].isAssigned ? 0 : 1;
-      if (aAssigned !== bAssigned) return aAssigned - bAssigned;
+
+      if (aAssigned !== bAssigned) {
+        return aAssigned - bAssigned;
+      }
+
       return (a[1].warehouseName ?? "").localeCompare(b[1].warehouseName ?? "");
     });
   }, [stocks]);

@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, ChevronDown, Loader2, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, ImageIcon, Loader2, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -16,8 +16,22 @@ import {
   CardHeader,
   CardTitle,
 } from "@nimara/ui/components/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@nimara/ui/components/dialog";
 import { Input } from "@nimara/ui/components/input";
 import { Label } from "@nimara/ui/components/label";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@nimara/ui/components/tooltip";
 import { useToast } from "@nimara/ui/hooks";
 
 import { CheckboxField } from "@/components/fields/checkbox-field";
@@ -27,6 +41,7 @@ import {
   SelectField,
   type SelectOption,
 } from "@/components/fields/select-field";
+import { ChannelAvailabilitySection } from "@/components/product-availability-section";
 import { ProductViewNavigation } from "@/components/product-view-navigation";
 import { ColorBadge } from "@/components/ui/color-badge";
 import {
@@ -41,14 +56,19 @@ import type {
   AttributeValueInput,
   Channels,
   ProductChannelListingAddInput,
+  ProductDelete_Mutation,
   ProductDetail,
 } from "@/graphql/generated/client";
+import { cn } from "@/lib/utils";
 
 import {
+  deleteProduct,
   productMediaCreate,
   productMediaDelete,
+  productMediaReorder,
   updateProduct,
   updateProductChannelListing,
+  uploadProductMedia,
 } from "../actions";
 import { type ProductUpdateFormValues, productUpdateSchema } from "../schema";
 
@@ -336,74 +356,6 @@ function AttributesSection({
   );
 }
 
-function AvailabilitySection({ channels }: { channels: Props["channels"] }) {
-  const { watch, setValue } = useFormContext<ProductUpdateFormValues>();
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Availability</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {channels.map((channel) => {
-          const published = watch(
-            `channelAvailability.${channel.id}.isPublished`,
-          );
-
-          return (
-            <div key={channel.id} className="space-y-3 rounded-lg border p-4">
-              <div className="flex items-center justify-between gap-4">
-                <div className="font-medium">{channel.name}</div>
-                <div className="text-xs text-muted-foreground">
-                  {channel.currencyCode}
-                </div>
-              </div>
-
-              <div className="grid gap-3">
-                <CheckboxField
-                  name={`channelAvailability.${channel.id}.isPublished`}
-                  label="Published"
-                />
-                <CheckboxField
-                  name={`channelAvailability.${channel.id}.isAvailableForPurchase`}
-                  label="Available for purchase"
-                  disabled={!published}
-                />
-                <CheckboxField
-                  name={`channelAvailability.${channel.id}.visibleInListings`}
-                  label="Visible in listings"
-                  disabled={!published}
-                />
-              </div>
-
-              {!published ? (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="px-0 text-muted-foreground"
-                  onClick={() => {
-                    setValue(
-                      `channelAvailability.${channel.id}.isAvailableForPurchase`,
-                      false,
-                    );
-                    setValue(
-                      `channelAvailability.${channel.id}.visibleInListings`,
-                      false,
-                    );
-                  }}
-                >
-                  Clear purchase/listing flags
-                </Button>
-              ) : null}
-            </div>
-          );
-        })}
-      </CardContent>
-    </Card>
-  );
-}
-
 export function ProductDetailClient({
   productId,
   product,
@@ -420,6 +372,12 @@ export function ProductDetailClient({
   );
   const [isAddMediaOpen, setIsAddMediaOpen] = useState(false);
   const [pendingMediaUrl, setPendingMediaUrl] = useState("");
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [isDragOver, setIsDragOver] = useState(false);
+  const [draggedMediaId, setDraggedMediaId] = useState<string | null>(null);
+  const [isReordering, setIsReordering] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const categoryOptions: SelectOption[] = useMemo(
     () =>
@@ -445,13 +403,23 @@ export function ProductDetailClient({
     [collections],
   );
 
+  // Only include channels that have listings for this product
+  const channelsWithListings = useMemo(() => {
+    const listingChannelIds = new Set(
+      product.channelListings?.map((l) => l.channel.id) ?? [],
+    );
+
+    return channels.filter((ch) => listingChannelIds.has(ch.id));
+  }, [channels, product.channelListings]);
+
   const defaultChannelAvailability = useMemo(() => {
     const byChannelId = new Map(
       product.channelListings?.map((l) => [l.channel.id, l]) ?? [],
     );
 
+    // Only create entries for channels that have listings
     return Object.fromEntries(
-      channels.map((ch) => {
+      channelsWithListings.map((ch) => {
         const listing = byChannelId.get(ch.id);
 
         return [
@@ -464,7 +432,7 @@ export function ProductDetailClient({
         ];
       }),
     );
-  }, [channels, product.channelListings]);
+  }, [channelsWithListings, product.channelListings]);
 
   const defaultAttributes = useMemo(() => {
     const values: Record<string, unknown> = {};
@@ -521,7 +489,6 @@ export function ProductDetailClient({
     resolver: zodResolver(productUpdateSchema),
     defaultValues: {
       name: product.name ?? "",
-      slug: product.slug ?? "",
       description: tryExtractEditorJsPlainText(product.description),
       seo: {
         title: product.seoTitle ?? "",
@@ -556,7 +523,7 @@ export function ProductDetailClient({
           id: product.id,
           input: {
             name: values.name,
-            slug: values.slug || null,
+            slug: product.slug || null,
             description: toEditorJsJSONString(values.description ?? ""),
             seo: {
               title: values.seo.title || null,
@@ -603,7 +570,6 @@ export function ProductDetailClient({
       // Sync media: create new, update alt for existing, delete removed
       let mediaHadErrors = false;
       const originalMedia = product.media ?? [];
-      const originalById = new Map(originalMedia.map((m) => [m.id, m]));
       const draftExistingIds = new Set(mediaDraft.map((m) => m.id));
 
       const toDelete = originalMedia
@@ -695,8 +661,11 @@ export function ProductDetailClient({
       }
 
       const updateChannels: ProductChannelListingAddInput[] = [];
-      const removeChannels: string[] = [];
+      const selectedChannelIds = new Set(
+        Object.keys(values.channelAvailability ?? {}),
+      );
 
+      // Every channel selected in Manage gets saved (published or not)
       for (const channel of channels) {
         const config = values.channelAvailability?.[channel.id];
 
@@ -704,17 +673,21 @@ export function ProductDetailClient({
           continue;
         }
 
-        if (config.isPublished) {
-          updateChannels.push({
-            channelId: channel.id,
-            isPublished: true,
-            isAvailableForPurchase: config.isAvailableForPurchase,
-            visibleInListings: config.visibleInListings,
-          });
-        } else {
-          removeChannels.push(channel.id);
-        }
+        updateChannels.push({
+          channelId: channel.id,
+          isPublished: config.isPublished ?? false,
+          isAvailableForPurchase: config.isAvailableForPurchase ?? false,
+          visibleInListings: config.visibleInListings ?? false,
+        });
       }
+
+      // Remove product from channels that were unchecked in Manage
+      const currentListingChannelIds = new Set(
+        product.channelListings?.map((l) => l.channel.id) ?? [],
+      );
+      const removeChannels = [...currentListingChannelIds].filter(
+        (id) => !selectedChannelIds.has(id),
+      );
 
       const channelListingResult = await updateProductChannelListing(
         {
@@ -787,11 +760,433 @@ export function ProductDetailClient({
     }
   });
 
+  const handleImageUpload = async (file: File) => {
+    setIsUploadingImage(true);
+    try {
+      const result = await uploadProductMedia(productId, file);
+
+      if (!result.ok) {
+        toast({
+          title: "Failed to upload image",
+          description:
+            result.errors
+              .map((e: { message?: string }) => e.message)
+              .filter(Boolean)
+              .join(", ") || "Failed to upload image",
+          variant: "destructive",
+        });
+
+        return;
+      }
+
+      const uploadedMedia = result.data.media;
+
+      if (uploadedMedia) {
+        setMediaDraft((prev) => [
+          ...prev,
+          { id: uploadedMedia.id, url: uploadedMedia.url },
+        ]);
+      }
+
+      toast({
+        title: "Image uploaded",
+        description: "Image has been uploaded successfully.",
+      });
+      router.refresh();
+    } catch (error) {
+      toast({
+        title: "Failed to upload image",
+        description:
+          error instanceof Error ? error.message : "Unknown error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploadingImage(false);
+    }
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      toast({
+        title: "Invalid file type",
+        description: "Please select an image file.",
+        variant: "destructive",
+      });
+
+      return;
+    }
+
+    const maxSize = 10 * 1024 * 1024; // 10MB
+
+    if (file.size > maxSize) {
+      toast({
+        title: "File too large",
+        description: "Please select an image smaller than 10MB.",
+        variant: "destructive",
+      });
+
+      return;
+    }
+
+    void handleImageUpload(file);
+  };
+
+  const handleSaveMediaUrl = async () => {
+    if (!pendingMediaUrl.trim()) {
+      toast({
+        title: "URL required",
+        description: "Please enter a media URL.",
+        variant: "destructive",
+      });
+
+      return;
+    }
+
+    const normalizedUrl = normalizeMaybeUrl(pendingMediaUrl);
+
+    if (!normalizedUrl) {
+      toast({
+        title: "Invalid URL",
+        description: "Please enter a valid URL.",
+        variant: "destructive",
+      });
+
+      return;
+    }
+
+    try {
+      const result = await productMediaCreate(
+        {
+          input: {
+            product: product.id,
+            mediaUrl: normalizedUrl,
+            alt: "",
+          },
+        },
+        productId,
+      );
+
+      if (!result.ok || (result.data.productMediaCreate?.errors ?? []).length) {
+        toast({
+          title: "Failed to add media",
+          description: result.ok
+            ? result.data.productMediaCreate?.errors
+                .map((e: { message?: string | null }) => e.message)
+                .filter(Boolean)
+                .join(", ") || "Unknown error"
+            : result.errors
+                .map(
+                  (e: { message?: string | null }) =>
+                    e.message || "Unknown error",
+                )
+                .join(", "),
+          variant: "destructive",
+        });
+
+        return;
+      }
+
+      const createdMedia = result.data.productMediaCreate?.media;
+
+      if (createdMedia) {
+        setMediaDraft((prev) => [
+          ...prev,
+          { id: createdMedia.id, url: createdMedia.url },
+        ]);
+        setPendingMediaUrl("");
+        setIsAddMediaOpen(false);
+        toast({
+          title: "Media added",
+          description: "Media URL has been added successfully.",
+        });
+        router.refresh();
+      }
+    } catch (error) {
+      toast({
+        title: "Failed to add media",
+        description: error instanceof Error ? error.message : "Unknown error",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+
+    const file = e.dataTransfer.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      toast({
+        title: "Invalid file type",
+        description: "Please drop an image file.",
+        variant: "destructive",
+      });
+
+      return;
+    }
+
+    const maxSize = 10 * 1024 * 1024; // 10MB
+
+    if (file.size > maxSize) {
+      toast({
+        title: "File too large",
+        description: "Please drop an image smaller than 10MB.",
+        variant: "destructive",
+      });
+
+      return;
+    }
+
+    void handleImageUpload(file);
+  };
+
+  const handleDeleteMedia = async (mediaId: string) => {
+    try {
+      const result = await productMediaDelete({ id: mediaId }, productId);
+
+      if (!result.ok || (result.data.productMediaDelete?.errors ?? []).length) {
+        toast({
+          title: "Failed to delete media",
+          description: result.ok
+            ? result.data.productMediaDelete?.errors
+                .map((e: { message?: string | null }) => e.message)
+                .filter(Boolean)
+                .join(", ") || "Unknown error"
+            : result.errors
+                .map(
+                  (e: { message?: string | null }) =>
+                    e.message || "Unknown error",
+                )
+                .join(", "),
+          variant: "destructive",
+        });
+
+        return;
+      }
+
+      setMediaDraft((prev) => prev.filter((m) => m.id !== mediaId));
+      toast({
+        title: "Media deleted",
+        description: "Media has been deleted successfully.",
+      });
+      router.refresh();
+    } catch (error) {
+      toast({
+        title: "Failed to delete media",
+        description: error instanceof Error ? error.message : "Unknown error",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleMediaDragStart = (e: React.DragEvent, mediaId: string) => {
+    setDraggedMediaId(mediaId);
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", mediaId);
+  };
+
+  const handleMediaDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.dataTransfer.dropEffect = "move";
+  };
+
+  const handleMediaDragEnd = () => {
+    setDraggedMediaId(null);
+  };
+
+  const handleMediaDrop = async (e: React.DragEvent, targetMediaId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!draggedMediaId || draggedMediaId === targetMediaId) {
+      setDraggedMediaId(null);
+
+      return;
+    }
+
+    const draggedIndex = mediaDraft.findIndex((m) => m.id === draggedMediaId);
+    const targetIndex = mediaDraft.findIndex((m) => m.id === targetMediaId);
+
+    if (draggedIndex === -1 || targetIndex === -1) {
+      setDraggedMediaId(null);
+
+      return;
+    }
+
+    // Reorder the media array
+    const newMediaOrder = [...mediaDraft];
+
+    const [draggedItem] = newMediaOrder.splice(draggedIndex, 1);
+
+    newMediaOrder.splice(targetIndex, 0, draggedItem);
+
+    // Optimistically update UI
+    const previousOrder = mediaDraft;
+
+    setMediaDraft(newMediaOrder);
+    setDraggedMediaId(null);
+
+    // Call API to persist the new order
+    try {
+      setIsReordering(true);
+
+      const mediaIds = newMediaOrder.map((m) => m.id);
+      const result = await productMediaReorder(
+        { productId, mediaIds },
+        productId,
+      );
+
+      if (!result.ok) {
+        // Revert on error
+        setMediaDraft(previousOrder);
+        toast({
+          title: "Failed to reorder media",
+          description: result.errors
+            .map(
+              (e: { message?: string | null }) => e.message || "Unknown error",
+            )
+            .join(", "),
+          variant: "destructive",
+        });
+
+        return;
+      }
+
+      const errors =
+        (
+          result.data as {
+            productMediaReorder?: {
+              errors?: Array<{ message?: string | null }>;
+            };
+          }
+        )?.productMediaReorder?.errors ?? [];
+
+      if (errors.length > 0) {
+        // Revert on error
+        setMediaDraft(previousOrder);
+        toast({
+          title: "Failed to reorder media",
+          description:
+            errors
+              .map((e: { message?: string | null }) => e.message)
+              .filter(Boolean)
+              .join(", ") || "Unknown error",
+          variant: "destructive",
+        });
+
+        return;
+      }
+
+      // Update mediaDraft with the new order from the server response
+      const updatedMedia =
+        (
+          result.data as {
+            productMediaReorder?: {
+              product?: { media?: Array<{ id: string; url: string }> };
+            };
+          }
+        )?.productMediaReorder?.product?.media ?? [];
+
+      if (updatedMedia.length > 0) {
+        setMediaDraft(updatedMedia.map((m) => ({ id: m.id, url: m.url })));
+      }
+
+      router.refresh();
+    } catch (error) {
+      // Revert on error
+      setMediaDraft(previousOrder);
+      toast({
+        title: "Failed to reorder media",
+        description: error instanceof Error ? error.message : "Unknown error",
+        variant: "destructive",
+      });
+    } finally {
+      setIsReordering(false);
+    }
+  };
+
   const isSubmitting = form.formState.isSubmitting;
 
   const productStatus = product.channelListings?.some((l) => l.isPublished)
     ? "Published"
     : "Draft";
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      const result = await deleteProduct(productId);
+
+      if (!result.ok) {
+        toast({
+          title: "Failed to delete product",
+          description: result.errors
+            .map((e) => e.message || "Unknown error")
+            .join(", "),
+          variant: "destructive",
+        });
+
+        return;
+      }
+
+      const data = result.data as unknown as ProductDelete_Mutation;
+      const errors = data?.productDelete?.errors ?? [];
+
+      if (errors.length > 0) {
+        toast({
+          title: "Failed to delete product",
+          description:
+            errors
+              .map((e: { message?: string | null }) => e.message)
+              .filter(Boolean)
+              .join(", ") || "Unknown error",
+          variant: "destructive",
+        });
+
+        return;
+      }
+
+      setShowDeleteDialog(false);
+      toast({
+        title: "Product deleted",
+        description: "The product has been deleted successfully.",
+      });
+
+      router.replace("/products");
+    } catch (error) {
+      toast({
+        title: "Failed to delete product",
+        description: error instanceof Error ? error.message : "Unknown error",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <FormProvider {...form}>
@@ -813,22 +1208,14 @@ export function ProductDetailClient({
                 <ColorBadge label={productStatus} />
               </div>
               <div className="flex items-center gap-2">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button size="sm" variant="outline">
-                      More actions
-                      <ChevronDown className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem
-                      className="text-destructive focus:text-destructive"
-                      disabled
-                    >
-                      Archive product
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <Button
+                  type="button"
+                  onClick={() => setShowDeleteDialog(true)}
+                  size="sm"
+                  variant="destructive"
+                >
+                  Delete
+                </Button>
                 <Button type="submit" size="sm" disabled={isSubmitting}>
                   Save{" "}
                   {isSubmitting ? (
@@ -858,14 +1245,6 @@ export function ProductDetailClient({
 
                     <CardContent className="flex flex-col gap-4">
                       <InputField label="Product Name" name="name" />
-                      <InputField
-                        label="Slug"
-                        name="slug"
-                        inputProps={{
-                          placeholder:
-                            "Product slug, if not provided, it will be generated from the product name",
-                        }}
-                      />
                       <div className="grid gap-2">
                         <Label>Product Description</Label>
                         <Textarea
@@ -874,98 +1253,112 @@ export function ProductDetailClient({
                           disabled={isSubmitting}
                         />
                       </div>
-                      <InputField label="SEO Title" name="seo.title" />
-                      <InputField
-                        label="SEO Description"
-                        name="seo.description"
-                      />
                     </CardContent>
                   </Card>
 
                   <Card>
                     <CardHeader>
-                      <CardTitle>Media</CardTitle>
+                      <div className="flex items-center justify-between">
+                        <CardTitle>Media</CardTitle>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              disabled={isUploadingImage || isSubmitting}
+                            >
+                              {isUploadingImage ? (
+                                <>
+                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                  Uploading...
+                                </>
+                              ) : (
+                                <>Upload</>
+                              )}
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              onClick={() => {
+                                const input = document.createElement("input");
+
+                                input.type = "file";
+                                input.accept = "image/*";
+                                input.onchange = (e) => {
+                                  const target = e.target as HTMLInputElement;
+
+                                  if (target.files?.[0]) {
+                                    handleFileInputChange({
+                                      target,
+                                    } as React.ChangeEvent<HTMLInputElement>);
+                                  }
+                                };
+                                input.click();
+                              }}
+                              disabled={isUploadingImage || isSubmitting}
+                            >
+                              Upload Images
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => setIsAddMediaOpen(true)}
+                              disabled={isUploadingImage || isSubmitting}
+                            >
+                              Upload URL
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
                     </CardHeader>
 
                     <CardContent className="flex flex-col gap-4">
-                      {product.thumbnail?.url ? (
-                        <div className="relative aspect-square w-56 overflow-hidden rounded-lg border">
-                          <Image
-                            src={product.thumbnail.url}
-                            alt={
-                              product.thumbnail.alt || product.name || "Product"
-                            }
-                            fill
-                            className="object-cover"
-                            unoptimized
-                          />
-                        </div>
-                      ) : null}
-
-                      {mediaDraft.length ? (
-                        <div className="flex flex-col gap-3">
+                      {mediaDraft.length > 0 ? (
+                        <div className="grid grid-cols-4 gap-3">
                           {mediaDraft.map((m) => (
                             <div
                               key={m.id}
-                              className="grid gap-2 rounded-lg border p-3"
+                              draggable
+                              onDragStart={(e) => handleMediaDragStart(e, m.id)}
+                              onDragOver={handleMediaDragOver}
+                              onDragEnd={handleMediaDragEnd}
+                              onDrop={(e) => handleMediaDrop(e, m.id)}
+                              className={`group relative aspect-square overflow-hidden rounded-lg border transition-opacity ${
+                                draggedMediaId === m.id
+                                  ? "cursor-grabbing opacity-50"
+                                  : draggedMediaId
+                                    ? "cursor-move opacity-90"
+                                    : "cursor-grab opacity-100"
+                              }`}
                             >
-                              <div className="flex items-start justify-between gap-3">
-                                <div className="flex min-w-0 items-center gap-3">
-                                  <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md border">
-                                    <Image
-                                      src={m.url}
-                                      alt=""
-                                      fill
-                                      className="object-cover"
-                                      unoptimized
-                                    />
-                                  </div>
-                                  <div className="min-w-0">
-                                    <div
-                                      className="truncate text-sm font-medium"
-                                      title={m.url}
-                                    >
-                                      {m.url}
-                                    </div>
-                                  </div>
-                                </div>
-
-                                <Button
-                                  type="button"
-                                  size="icon"
-                                  variant="ghost"
-                                  className="h-8 w-8"
-                                  onClick={() => {
-                                    setMediaDraft((prev) =>
-                                      prev.filter((x) => x.id !== m.id),
-                                    );
-                                  }}
-                                  aria-label="Remove media"
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </div>
+                              <Image
+                                src={m.url}
+                                alt=""
+                                fill
+                                className="object-cover"
+                                unoptimized
+                              />
+                              <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/20" />
+                              <Button
+                                type="button"
+                                size="icon"
+                                variant="destructive"
+                                className="absolute right-2 top-2 h-8 w-8 bg-destructive/90 opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100"
+                                onClick={() => handleDeleteMedia(m.id)}
+                                disabled={isSubmitting || isReordering}
+                                aria-label="Delete media"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
                             </div>
                           ))}
                         </div>
-                      ) : (
-                        <p className="text-sm text-muted-foreground">
-                          No media
-                        </p>
-                      )}
+                      ) : null}
 
-                      {!isAddMediaOpen ? (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => setIsAddMediaOpen(true)}
-                        >
-                          <Plus className="mr-2 h-4 w-4" />
-                          Add media URL
-                        </Button>
-                      ) : (
+                      {isAddMediaOpen ? (
                         <div className="grid gap-3 rounded-lg border p-3">
-                          <div className="text-sm font-medium">Add media</div>
+                          <div className="text-sm font-medium">
+                            Add media URL
+                          </div>
                           <div className="grid gap-2">
                             <Label>URL</Label>
                             <Input
@@ -974,23 +1367,70 @@ export function ProductDetailClient({
                                 setPendingMediaUrl(e.target.value)
                               }
                               placeholder="https://example.com/image.jpg"
+                              disabled={isSubmitting}
                             />
                           </div>
                           <div className="flex items-center justify-between gap-2">
                             <p className="text-xs text-muted-foreground">
-                              Click Save to upload this URL.
+                              Enter a URL and click Save to add it.
                             </p>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              onClick={() => {
-                                setPendingMediaUrl("");
-                                setIsAddMediaOpen(false);
-                              }}
-                            >
-                              Cancel
-                            </Button>
+                            <div className="flex gap-2">
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                  setPendingMediaUrl("");
+                                  setIsAddMediaOpen(false);
+                                }}
+                              >
+                                Cancel
+                              </Button>
+                              <Button
+                                type="button"
+                                variant="default"
+                                size="sm"
+                                onClick={handleSaveMediaUrl}
+                                disabled={
+                                  isSubmitting || !pendingMediaUrl.trim()
+                                }
+                              >
+                                Save
+                              </Button>
+                            </div>
                           </div>
+                        </div>
+                      ) : (
+                        <div
+                          onDragOver={handleDragOver}
+                          onDragLeave={handleDragLeave}
+                          onDrop={handleDrop}
+                          onClick={() => {
+                            const input = document.createElement("input");
+
+                            input.type = "file";
+                            input.accept = "image/*";
+                            input.onchange = (e) => {
+                              const target = e.target as HTMLInputElement;
+
+                              if (target.files?.[0]) {
+                                handleFileInputChange({
+                                  target,
+                                } as React.ChangeEvent<HTMLInputElement>);
+                              }
+                            };
+                            input.click();
+                          }}
+                          className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed bg-muted/30 py-12 transition-colors ${
+                            isDragOver
+                              ? "border-primary bg-muted/50"
+                              : "border-muted-foreground/25 hover:border-muted-foreground/40"
+                          }`}
+                        >
+                          <ImageIcon className="h-10 w-10 text-muted-foreground" />
+                          <p className="mt-2 text-sm font-medium text-muted-foreground">
+                            DROP HERE TO UPLOAD
+                          </p>
                         </div>
                       )}
                     </CardContent>
@@ -1011,32 +1451,211 @@ export function ProductDetailClient({
                     </CardHeader>
                     <CardContent>
                       {product.variants && product.variants.length > 0 ? (
-                        <div className="space-y-2">
-                          {product.variants.map((variant) => (
-                            <Link
-                              key={variant.id}
-                              href={`/products/${productId}/variants/${variant.id}`}
-                              className="flex items-center justify-between rounded-lg border p-3 transition-colors hover:bg-muted"
-                            >
-                              <div>
-                                <p className="font-medium">{variant.name}</p>
-                                <p className="text-sm text-muted-foreground">
-                                  SKU: {variant.sku || "-"}
-                                </p>
+                        <TooltipProvider delayDuration={300}>
+                          <div className="space-y-2">
+                            {/* Three-column header (Variant column wider for long names/SKUs) */}
+                            <div className="grid grid-cols-[minmax(0,2fr)_1fr_1fr] gap-4 px-3 py-1.5 text-xs font-medium text-muted-foreground [&>div]:flex [&>div]:items-center">
+                              <div>Variant</div>
+                              <div>Channels</div>
+                              <div className="justify-end text-right">
+                                Stock
                               </div>
-                              <div className="text-right">
-                                <p className="font-medium">
-                                  {variant.pricing?.price?.gross
-                                    ? `${variant.pricing.price.gross.currency} ${variant.pricing.price.gross.amount.toFixed(2)}`
-                                    : "-"}
-                                </p>
-                              </div>
-                            </Link>
-                          ))}
-                        </div>
+                            </div>
+                            {product.variants.map((variant) => {
+                              const channelListings =
+                                variant.channelListings?.filter(
+                                  (l) => l.price != null,
+                                ) ?? [];
+                              const stocks = variant.stocks ?? [];
+                              const maxVisible = 3;
+
+                              const hasZeroChannelPrice = channelListings.some(
+                                (l) => Number(l.price?.amount ?? 0) === 0,
+                              );
+                              const hasZeroStock = stocks.some(
+                                (s) => s.quantity === 0,
+                              );
+
+                              return (
+                                <Link
+                                  key={variant.id}
+                                  href={`/products/${productId}/variants/${variant.id}`}
+                                  className="grid grid-cols-[minmax(0,2fr)_1fr_1fr] items-center gap-4 rounded-lg border p-3 transition-colors hover:bg-muted"
+                                >
+                                  {/* Column 1: Variant name + SKU (wider, truncate if long) */}
+                                  <div className="flex min-w-0 items-center">
+                                    <div className="min-w-0 flex-1">
+                                      <p
+                                        className="truncate font-medium"
+                                        title={variant.name}
+                                      >
+                                        {variant.name}
+                                      </p>
+                                      <p
+                                        className="truncate text-sm text-muted-foreground"
+                                        title={variant.sku ?? undefined}
+                                      >
+                                        SKU: {variant.sku || "-"}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  {/* Column 2: Pricing per channel */}
+                                  <div className="flex min-w-0 flex-col items-start justify-center gap-0.5 text-xs">
+                                    {channelListings.length === 0 ? (
+                                      <span className="text-xs font-medium text-destructive">
+                                        No channels
+                                      </span>
+                                    ) : channelListings.length <= maxVisible ? (
+                                      channelListings.map((l) => {
+                                        const priceAmount =
+                                          l.price != null
+                                            ? Number(l.price.amount)
+                                            : null;
+                                        const isZeroPrice =
+                                          priceAmount !== null &&
+                                          priceAmount === 0;
+
+                                        return (
+                                          <span
+                                            key={l.channel.id}
+                                            className={cn(
+                                              "truncate",
+                                              isZeroPrice && "text-destructive",
+                                            )}
+                                          >
+                                            <span className="font-medium">
+                                              {l.channel.name}
+                                            </span>
+                                            :{" "}
+                                            {l.price
+                                              ? `${l.price.currency} ${Number(l.price.amount).toFixed(2)}`
+                                              : "—"}
+                                          </span>
+                                        );
+                                      })
+                                    ) : (
+                                      <Tooltip>
+                                        <TooltipTrigger asChild>
+                                          <span
+                                            className={cn(
+                                              "text-xs font-medium",
+                                              hasZeroChannelPrice
+                                                ? "text-destructive"
+                                                : "text-green-600",
+                                            )}
+                                          >
+                                            {channelListings.length} channels
+                                          </span>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                          <div className="flex flex-col gap-0.5 text-xs">
+                                            {channelListings.map((l) => {
+                                              const isZero =
+                                                Number(l.price?.amount ?? 0) ===
+                                                0;
+
+                                              return (
+                                                <div
+                                                  key={l.channel.id}
+                                                  className={cn(
+                                                    isZero &&
+                                                      "text-destructive",
+                                                  )}
+                                                >
+                                                  <span className="font-medium">
+                                                    {l.channel.name}
+                                                  </span>
+                                                  :{" "}
+                                                  {l.price
+                                                    ? `${l.price.currency} ${Number(l.price.amount).toFixed(2)}`
+                                                    : "—"}
+                                                </div>
+                                              );
+                                            })}
+                                          </div>
+                                        </TooltipContent>
+                                      </Tooltip>
+                                    )}
+                                  </div>
+                                  {/* Column 3: Warehouses with stock (right-aligned) */}
+                                  <div className="flex min-w-0 flex-col items-end justify-center gap-0.5 text-right text-xs">
+                                    {stocks.length === 0 ? (
+                                      <span className="text-xs font-medium text-destructive">
+                                        No stock
+                                      </span>
+                                    ) : stocks.length <= maxVisible ? (
+                                      stocks.map((s) => (
+                                        <span
+                                          key={s.warehouse.id}
+                                          className={cn(
+                                            "truncate",
+                                            s.quantity === 0 &&
+                                              "text-destructive",
+                                          )}
+                                        >
+                                          <span className="font-medium">
+                                            {s.warehouse.name}
+                                          </span>
+                                          : {s.quantity}
+                                        </span>
+                                      ))
+                                    ) : (
+                                      <Tooltip>
+                                        <TooltipTrigger asChild>
+                                          <span
+                                            className={cn(
+                                              "text-xs font-medium",
+                                              hasZeroStock
+                                                ? "text-destructive"
+                                                : "text-green-600",
+                                            )}
+                                          >
+                                            {stocks.length} warehouses
+                                          </span>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                          <div className="flex flex-col gap-0.5 text-xs">
+                                            {stocks.map((s) => (
+                                              <div
+                                                key={s.warehouse.id}
+                                                className={cn(
+                                                  s.quantity === 0 &&
+                                                    "text-destructive",
+                                                )}
+                                              >
+                                                <span className="font-medium">
+                                                  {s.warehouse.name}
+                                                </span>
+                                                : {s.quantity} in stock
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </TooltipContent>
+                                      </Tooltip>
+                                    )}
+                                  </div>
+                                </Link>
+                              );
+                            })}
+                          </div>
+                        </TooltipProvider>
                       ) : (
                         <p className="text-muted-foreground">No variants</p>
                       )}
+                    </CardContent>
+                  </Card>
+
+                  {/* Search Engine Preview Section - at the bottom of left column */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Search Engine Preview</CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex flex-col gap-4">
+                      <InputField label="SEO Title" name="seo.title" />
+                      <InputField
+                        label="SEO Description"
+                        name="seo.description"
+                      />
                     </CardContent>
                   </Card>
                 </div>
@@ -1073,13 +1692,61 @@ export function ProductDetailClient({
                     </CardContent>
                   </Card>
 
-                  <AvailabilitySection channels={channels} />
+                  <ChannelAvailabilitySection
+                    channels={channelsWithListings}
+                    allChannels={channels}
+                    disabledReason={null}
+                    isEditPage={true}
+                    totalChannelsCount={channels.length}
+                    product={{
+                      productType: product.productType,
+                      variants: product.variants,
+                      channelListings: product.channelListings,
+                    }}
+                  />
                 </div>
               </div>
             </div>
           </div>
         </div>
       </form>
+
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Product</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete &ldquo;{product.name}&rdquo;? This
+              action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setShowDeleteDialog(false)}
+              disabled={isDeleting}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={isDeleting}
+            >
+              {isDeleting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                "Delete product"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </FormProvider>
   );
 }
