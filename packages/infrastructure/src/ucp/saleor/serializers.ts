@@ -26,7 +26,9 @@ export type UCPCheckoutSessionModel = {
   fulfillmentAddress?: PostalAddress;
   id: string;
   lineItems: LineItemResponse[];
-  order?: Pick<OrderClass, "id"> & { permalinkUrl: OrderClass["permalink_url"] };
+  order?: Pick<OrderClass, "id"> & {
+    permalinkUrl: OrderClass["permalink_url"];
+  };
   status: CheckoutResponseStatus;
   totals: TotalResponse[];
 };
