@@ -8,9 +8,9 @@ import { graphqlClient } from "@nimara/infrastructure/graphql/client";
 
 import {
   ChannelsDocument,
-  CollectionChannelListingUpdateDocument,
+  CollectionChannelListingUpdateMutationDocument,
   CustomerByEmailDocument,
-  CustomerDeleteDocument,
+  CustomerDeleteMutationDocument,
   MetadataUpdateDocument,
   RegisterAccountDocument,
   VendorCollectionCreateDocument,
@@ -114,7 +114,7 @@ async function safeRollback(opts: {
 
   // Best-effort rollback (ignore errors)
   if (customerId) {
-    await saleor.execute(CustomerDeleteDocument, {
+    await saleor.execute(CustomerDeleteMutationDocument, {
       operationName: "CustomerDeleteMutation",
       variables: { id: customerId },
       options: { cache: "no-store" },
@@ -515,7 +515,7 @@ export async function registerAccount(input: {
 
     if (hiddenChannels.length > 0) {
       const channelListingResult = await saleor.execute(
-        CollectionChannelListingUpdateDocument,
+        CollectionChannelListingUpdateMutationDocument,
         {
           operationName: "CollectionChannelListingUpdateMutation",
           variables: {

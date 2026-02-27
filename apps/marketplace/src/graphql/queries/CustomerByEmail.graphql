@@ -1,9 +1,62 @@
 query CustomerByEmail($search: String!) {
-  customers(first: 1, search: $search) {
+  customers(first: 20, search: $search) {
     edges {
       node {
         id
+        firstName
+        lastName
         email
+        addresses {
+          id
+          firstName
+          lastName
+          companyName
+          streetAddress1
+          streetAddress2
+          city
+          cityArea
+          countryArea
+          postalCode
+          phone
+          country {
+            code
+            country
+          }
+        }
+        defaultBillingAddress {
+          id
+          firstName
+          lastName
+          companyName
+          streetAddress1
+          streetAddress2
+          city
+          cityArea
+          countryArea
+          postalCode
+          phone
+          country {
+            code
+            country
+          }
+        }
+        defaultShippingAddress {
+          id
+          firstName
+          lastName
+          companyName
+          streetAddress1
+          streetAddress2
+          city
+          cityArea
+          countryArea
+          postalCode
+          phone
+          country {
+            code
+            country
+          }
+        }
       }
     }
   }

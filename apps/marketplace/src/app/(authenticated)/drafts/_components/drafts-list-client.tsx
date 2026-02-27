@@ -2,13 +2,11 @@
 
 import { ChevronDown, ChevronUp, Filter, Plus, Search } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { Button } from "@nimara/ui/components/button";
 import { Card, CardContent } from "@nimara/ui/components/card";
-import { Checkbox } from "@nimara/ui/components/checkbox";
 import { Input } from "@nimara/ui/components/input";
-import { Label } from "@nimara/ui/components/label";
 import {
   Pagination,
   PaginationContent,
@@ -40,40 +38,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type {
-  OrderFilterInput,
-  OrderSortField,
-  OrderSortingInput,
-  OrderStatus,
-  OrderStatusFilter,
-  PaymentChargeStatusEnum,
-} from "@/graphql/generated/client";
+import type { OrderSortField } from "@/graphql/generated/client";
 import { useDebounce } from "@/hooks/use-debounce";
-import {
-  FULFILLMENT_STATUS_OPTIONS,
-  getActiveFiltersCount,
-  PAYMENT_STATUS_OPTIONS,
-  PRESET_DATE_RANGES,
-  toggleValueInArray,
-} from "@/lib/orders-utils";
+import { PRESET_DATE_RANGES } from "@/lib/orders-utils";
 import { formatDateTime, formatPrice } from "@/lib/utils";
 
 const DEFAULT_PAGE_SIZE = 15;
 const PAGE_SIZE_OPTIONS = [15, 25, 50];
 
-function formatEnumLabel(value: string): string {
-  return value
-    .split("_")
-    .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
-    .join(" ");
-}
-
-type Order = {
+type Draft = {
   created: string;
   id: string;
   number: string;
-  paymentStatus: PaymentChargeStatusEnum;
-  status: OrderStatus;
+  status: string;
   total: { gross: { amount: number; currency: string } };
   user: {
     email: string;
@@ -82,8 +59,8 @@ type Order = {
   } | null;
 };
 
-interface OrdersListClientProps {
-  orders: Order[];
+interface DraftsListClientProps {
+  drafts: Draft[];
   pageInfo: {
     endCursor: string | null;
     hasNextPage: boolean;
@@ -92,7 +69,7 @@ interface OrdersListClientProps {
   } | null;
 }
 
-export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
+export function DraftsListClient({ drafts, pageInfo }: DraftsListClientProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -106,45 +83,27 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
     searchParams.get("pageSize") || String(DEFAULT_PAGE_SIZE),
     10,
   );
-  const _after = searchParams.get("after");
-  const _before = searchParams.get("before");
   const createdGte = searchParams.get("createdGte");
   const createdLte = searchParams.get("createdLte");
-  const paymentStatus = searchParams.getAll("paymentStatus");
-  const status = searchParams.getAll("status");
   const sortField = searchParams.get("sortField") as OrderSortField | null;
   const sortDirection = searchParams.get("sortDirection") as
     | "ASC"
     | "DESC"
     | null;
 
-  const filter: OrderFilterInput | undefined =
-    debouncedSearch ||
-    createdGte ||
-    createdLte ||
-    paymentStatus.length > 0 ||
-    status.length > 0
-      ? {
-          ...(debouncedSearch && { search: debouncedSearch }),
-          ...((createdGte || createdLte) && {
-            created: {
-              gte: createdGte || undefined,
-              lte: createdLte || undefined,
-            },
-          }),
-          ...(paymentStatus.length > 0 && {
-            paymentStatus: paymentStatus as PaymentChargeStatusEnum[],
-          }),
-          ...(status.length > 0 && { status: status as OrderStatusFilter[] }),
-        }
-      : undefined;
+  const activeDateFiltersCount = useMemo(() => {
+    let count = 0;
 
-  const _sortBy: OrderSortingInput | undefined =
-    sortField && sortDirection
-      ? { field: sortField, direction: sortDirection }
-      : undefined;
+    if (createdGte) {
+      count++;
+    }
+    if (createdLte) {
+      count++;
+    }
 
-  const activeFiltersCount = getActiveFiltersCount(filter);
+    return count;
+  }, [createdGte, createdLte]);
+
   const hasNextPage = pageInfo?.hasNextPage ?? false;
   const hasPreviousPage = pageInfo?.hasPreviousPage ?? false;
 
@@ -155,11 +114,9 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
       createdGte?: string | null;
       createdLte?: string | null;
       pageSize?: number;
-      paymentStatus?: string[];
       search?: string | null;
       sortDirection?: string | null;
       sortField?: string | null;
-      status?: string[];
     }) => {
       const params = new URLSearchParams(searchParams.toString());
 
@@ -167,25 +124,19 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
       if (
         updates.search !== undefined ||
         updates.createdGte !== undefined ||
-        updates.createdLte !== undefined ||
-        updates.paymentStatus !== undefined ||
-        updates.status !== undefined
+        updates.createdLte !== undefined
       ) {
         params.delete("after");
         params.delete("before");
       }
 
-      // Update or delete parameters
       Object.entries(updates).forEach(([key, value]) => {
         params.delete(key);
-        if (Array.isArray(value)) {
-          value.forEach((v) => params.append(key, v));
-        } else if (value !== null && value !== undefined && value !== "") {
+        if (value !== null && value !== undefined && value !== "") {
           params.set(key, String(value));
         }
       });
 
-      // Remove default values
       if (params.get("pageSize") === String(DEFAULT_PAGE_SIZE)) {
         params.delete("pageSize");
       }
@@ -195,7 +146,6 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
     [pathname, router, searchParams],
   );
 
-  // Update search param when debounced value changes
   useEffect(() => {
     if (debouncedSearch !== (searchParams.get("search") || "")) {
       updateSearchParams({ search: debouncedSearch || null });
@@ -229,24 +179,6 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
     updateSearchParams({ sortField: field, sortDirection: newDirection });
   };
 
-  const togglePaymentStatus = (value: string) => {
-    const isCurrentlyChecked = paymentStatus.includes(value);
-    const newValues = toggleValueInArray(
-      paymentStatus,
-      value,
-      !isCurrentlyChecked,
-    );
-
-    updateSearchParams({ paymentStatus: newValues });
-  };
-
-  const toggleStatus = (value: string) => {
-    const isCurrentlyChecked = status.includes(value);
-    const newValues = toggleValueInArray(status, value, !isCurrentlyChecked);
-
-    updateSearchParams({ status: newValues });
-  };
-
   const handleDateRangeSelect = (
     range: { from: string; to: string } | null,
   ) => {
@@ -265,7 +197,7 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
   return (
     <div className="grid gap-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-semibold">Orders</h2>
+        <h2 className="text-2xl font-semibold">Drafts</h2>
         <Button
           type="button"
           className="bg-stone-900 hover:bg-stone-800"
@@ -282,7 +214,7 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder="Search orders..."
+                placeholder="Search drafts..."
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
                 className="w-64 pl-9"
@@ -292,24 +224,10 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
             <div className="flex flex-1" />
 
             <div className="flex items-center gap-2">
-              {activeFiltersCount.date > 0 && (
+              {activeDateFiltersCount > 0 && (
                 <DeletableChip
-                  label={`Date created (${activeFiltersCount.date})`}
+                  label={`Date created (${activeDateFiltersCount})`}
                   onDelete={() => handleDateRangeSelect(null)}
-                />
-              )}
-
-              {activeFiltersCount.paymentStatus > 0 && (
-                <DeletableChip
-                  label={`Payment status (${activeFiltersCount.paymentStatus})`}
-                  onDelete={() => updateSearchParams({ paymentStatus: [] })}
-                />
-              )}
-
-              {activeFiltersCount.fulfillmentStatus > 0 && (
-                <DeletableChip
-                  label={`Fulfillment status (${activeFiltersCount.fulfillmentStatus})`}
-                  onDelete={() => updateSearchParams({ status: [] })}
                 />
               )}
             </div>
@@ -319,13 +237,13 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
                 <Button variant="outline" className="ml-2 gap-2">
                   <Filter className="h-4 w-4" />
                   Filters
-                  {activeFiltersCount.total > 0 && (
-                    <span>({activeFiltersCount.total})</span>
+                  {activeDateFiltersCount > 0 && (
+                    <span>({activeDateFiltersCount})</span>
                   )}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-80" align="end">
-                <ScrollArea className="h-[400px]">
+                <ScrollArea className="h-[260px]">
                   <div className="space-y-4">
                     <div>
                       <h4 className="mb-2 font-medium">Date Range</h4>
@@ -359,46 +277,7 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
                       </div>
                     </div>
 
-                    <div>
-                      <h4 className="mb-2 font-medium">Payment Status</h4>
-                      <div className="space-y-2">
-                        {PAYMENT_STATUS_OPTIONS.map((opt) => (
-                          <div key={opt} className="flex items-center gap-2">
-                            <Checkbox
-                              id={`payment-${opt}`}
-                              checked={paymentStatus.includes(opt)}
-                              onCheckedChange={() => togglePaymentStatus(opt)}
-                            />
-                            <Label
-                              htmlFor={`payment-${opt}`}
-                              className="flex-1"
-                            >
-                              {formatEnumLabel(opt)}
-                            </Label>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div>
-                      <h4 className="mb-2 font-medium">Fulfillment Status</h4>
-                      <div className="space-y-2">
-                        {FULFILLMENT_STATUS_OPTIONS.map((opt) => (
-                          <div key={opt} className="flex items-center gap-2">
-                            <Checkbox
-                              id={`status-${opt}`}
-                              checked={status.includes(opt)}
-                              onCheckedChange={() => toggleStatus(opt)}
-                            />
-                            <Label htmlFor={`status-${opt}`} className="flex-1">
-                              {formatEnumLabel(opt)}
-                            </Label>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {activeFiltersCount.total > 0 && (
+                    {activeDateFiltersCount > 0 && (
                       <Button
                         variant="outline"
                         className="w-full"
@@ -421,7 +300,7 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
                   onClick={() => handleSort("NUMBER")}
                 >
                   <div className="flex items-center gap-1">
-                    Order No.
+                    Draft No.
                     {sortField === "NUMBER" &&
                       (sortDirection === "ASC" ? (
                         <ChevronUp className="h-4 w-4" />
@@ -446,42 +325,38 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
                 </TableHead>
                 <TableHead>Customer</TableHead>
                 <TableHead>Total</TableHead>
-                <TableHead>Payment status</TableHead>
-                <TableHead>Fulfillment status</TableHead>
+                <TableHead>Status</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {orders.length === 0 ? (
+              {drafts.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center">
-                    No orders found
+                  <TableCell colSpan={5} className="text-center">
+                    No drafts found
                   </TableCell>
                 </TableRow>
               ) : (
-                orders.map((order) => (
+                drafts.map((draft) => (
                   <TableRow
-                    key={order.id}
+                    key={draft.id}
                     className="cursor-pointer hover:bg-muted"
-                    onClick={() => router.push(`/orders/${order.id}`)}
+                    onClick={() => router.push(`/orders/${draft.id}`)}
                   >
-                    <TableCell>#{order.number}</TableCell>
-                    <TableCell>{formatDateTime(order.created)}</TableCell>
+                    <TableCell>#{draft.number}</TableCell>
+                    <TableCell>{formatDateTime(draft.created)}</TableCell>
                     <TableCell>
-                      {order.user
-                        ? `${order.user.firstName} ${order.user.lastName}`
+                      {draft.user
+                        ? `${draft.user.firstName} ${draft.user.lastName}`
                         : "-"}
                     </TableCell>
                     <TableCell>
                       {formatPrice(
-                        order.total.gross.amount,
-                        order.total.gross.currency,
+                        draft.total.gross.amount,
+                        draft.total.gross.currency,
                       )}
                     </TableCell>
                     <TableCell>
-                      <ColorBadge label={order.paymentStatus} />
-                    </TableCell>
-                    <TableCell>
-                      <ColorBadge label={order.status} />
+                      <ColorBadge label={draft.status} />
                     </TableCell>
                   </TableRow>
                 ))

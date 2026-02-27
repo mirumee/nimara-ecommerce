@@ -1,4 +1,4 @@
-mutation CollectionRemoveProducts($collectionId: ID!, $products: [ID!]!) {
+mutation CollectionRemoveProductsMutation($collectionId: ID!, $products: [ID!]!) {
   collectionRemoveProducts(collectionId: $collectionId, products: $products) {
     errors {
       field

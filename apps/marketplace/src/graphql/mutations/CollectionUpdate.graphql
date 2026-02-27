@@ -1,4 +1,4 @@
-mutation CollectionUpdate($id: ID!, $input: CollectionInput!) {
+mutation CollectionUpdateMutation($id: ID!, $input: CollectionInput!) {
   collectionUpdate(id: $id, input: $input) {
     errors {
       field

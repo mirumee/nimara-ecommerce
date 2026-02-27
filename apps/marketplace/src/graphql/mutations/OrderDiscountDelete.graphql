@@ -1,0 +1,15 @@
+mutation OrderDiscountDeleteMutation($discountId: ID!) {
+  orderDiscountDelete(discountId: $discountId) {
+    order {
+      id
+      number
+      status
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+

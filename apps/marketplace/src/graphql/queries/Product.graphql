@@ -133,6 +133,17 @@ query ProductDetail($id: ID!) {
       id
       name
       sku
+      channelListings {
+        channel {
+          id
+          name
+          currencyCode
+        }
+        price {
+          amount
+          currency
+        }
+      }
       pricing {
         price {
           gross {

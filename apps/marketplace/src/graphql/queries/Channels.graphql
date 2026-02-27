@@ -4,6 +4,10 @@ query Channels {
     name
     slug
     currencyCode
+    countries {
+      code
+      country
+    }
     defaultCountry {
       code
       country

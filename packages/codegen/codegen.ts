@@ -57,7 +57,16 @@ const nearOperationFileConfig = {
 } as const;
 
 const singleFileConfig = {
-  plugins: ["typescript", "typescript-operations", "typed-document-node"],
+  plugins: [
+    {
+      add: {
+        content: "/* eslint-disable */\n",
+      },
+    },
+    "typescript",
+    "typescript-operations",
+    "typed-document-node",
+  ],
   config: baseCodegenConfig,
 } as const;
 
