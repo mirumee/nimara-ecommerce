@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { Button } from "@nimara/ui/components/button";
 
+import { serverEnvs } from "@/envs/server";
 import { LocalizedLink } from "@/i18n/routing";
 import { paths } from "@/lib/paths";
 
@@ -19,10 +20,12 @@ export const DeliveryMethodSection = async ({
       <div className="space-y-2">
         <h3 className="scroll-m-20 text-2xl tracking-tight">{t("title")}</h3>
         <p className="text-sm font-normal leading-5 text-foreground">
-          {checkout.deliveryMethod?.name}
+          {serverEnvs.MARKETPLACE_MODE
+            ? t("delivery-method")
+            : checkout.deliveryMethod?.name}
         </p>
       </div>
-      {checkout.deliveryMethod && (
+      {(serverEnvs.MARKETPLACE_MODE || checkout.deliveryMethod) && (
         <Button variant="outline" asChild>
           <LocalizedLink href={paths.checkout.deliveryMethod.asPath()}>
             {tc("edit")}

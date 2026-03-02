@@ -1,6 +1,5 @@
 import { getAccessToken } from "@/auth";
-import { CACHE_TTL } from "@/config";
-import { getCheckoutId } from "@/lib/actions/cart";
+import { getSessionCart } from "@/lib/marketplace/session-cart";
 import { getCurrentRegion } from "@/regions/server";
 import { getCartService } from "@/services/cart";
 import { storefrontLogger } from "@/services/logging";
@@ -10,37 +9,23 @@ import { CartDetails } from "./cart-details";
 import { EmptyCart } from "./empty-cart";
 
 export const Cart = async () => {
-  const checkoutId = await getCheckoutId();
-
-  if (!checkoutId) {
-    storefrontLogger.debug("No checkoutId cookie. Rendering empty cart.");
-
-    return <EmptyCart />;
-  }
-
   const [region, cartService] = await Promise.all([
     getCurrentRegion(),
     getCartService(),
   ]);
 
-  const resultCartGet = await cartService.cartGet({
-    cartId: checkoutId,
-    languageCode: region.language.code,
-    countryCode: region.market.countryCode,
-    options: {
-      next: { revalidate: CACHE_TTL.cart, tags: [`CHECKOUT:${checkoutId}`] },
-    },
+  const sessionCart = await getSessionCart({
+    cartService,
+    region,
   });
 
-  if (!resultCartGet.ok) {
-    storefrontLogger.error("Failed to fetch cart", {
-      error: resultCartGet.errors,
-    });
+  if (!sessionCart) {
+    storefrontLogger.debug("No checkout in session. Rendering empty cart.");
 
     return <EmptyCart />;
   }
 
-  if (!!resultCartGet.data.lines.length) {
+  if (!!sessionCart.cart.lines.length) {
     const [accessToken, userService] = await Promise.all([
       getAccessToken(),
       getUserService(),
@@ -49,13 +34,17 @@ export const Cart = async () => {
     const user = resultUserGet.ok ? resultUserGet.data : null;
 
     return (
-      <CartDetails region={region} cart={resultCartGet.data} user={user} />
+      <CartDetails
+        region={region}
+        cart={sessionCart.cart}
+        user={user}
+        hasMixedCurrencies={sessionCart.hasMixedCurrencies}
+      />
     );
   }
 
   storefrontLogger.error("Rendering empty Cart due to errors.", {
-    error: resultCartGet.errors,
-    checkoutId,
+    checkoutIds: sessionCart.checkoutIds,
   });
 
   return <EmptyCart />;

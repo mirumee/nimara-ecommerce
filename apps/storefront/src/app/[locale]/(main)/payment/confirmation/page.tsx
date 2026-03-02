@@ -15,13 +15,31 @@ type PageProps = {
 };
 
 export default async function Page(props: PageProps) {
-  const [{ locale }, searchParams, checkout, paymentService] =
-    await Promise.all([
-      props.params,
-      props.searchParams,
-      getCheckoutOrRedirect(),
-      getPaymentService(),
-    ]);
+  const [{ locale }, searchParams] = await Promise.all([
+    props.params,
+    props.searchParams,
+  ]);
+
+  const marketplaceParam = searchParams.marketplace;
+  const marketplaceOrderIds = searchParams.orderIds
+    ?.split(",")
+    .map((id) => id.trim())
+    .filter(Boolean);
+
+  if (marketplaceParam === "1" && marketplaceOrderIds?.length) {
+    redirect({
+      href: paths.order.confirmation.asPath({
+        id: marketplaceOrderIds[0],
+        query: { [QUERY_PARAMS.orderPlaced]: "true" },
+      }),
+      locale,
+    });
+  }
+
+  const [checkout, paymentService] = await Promise.all([
+    getCheckoutOrRedirect(),
+    getPaymentService(),
+  ]);
 
   let errors: { code: AppErrorCode }[] = [];
 

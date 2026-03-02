@@ -143,6 +143,7 @@ export function i18nMiddleware(next: CustomMiddleware): CustomMiddleware {
       });
 
       response.cookies.delete(COOKIE_KEY.checkoutId);
+      response.cookies.delete(COOKIE_KEY.checkoutVendorMap);
     }
 
     return next(request, event, response);

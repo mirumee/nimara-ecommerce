@@ -1,5 +1,6 @@
 import { getAccessToken } from "@/auth";
-import { getCheckoutOrRedirect } from "@/lib/checkout";
+import { serverEnvs } from "@/envs/server";
+import { getCheckoutCollectionOrRedirect } from "@/lib/checkout";
 import { type SupportedLocale } from "@/regions/types";
 import { getUserService } from "@/services/user";
 
@@ -14,12 +15,14 @@ type PageProps = {
 };
 
 export default async function Page(props: PageProps) {
-  const [{ locale }, checkout, accessToken, userService] = await Promise.all([
-    props.params,
-    getCheckoutOrRedirect(),
-    getAccessToken(),
-    getUserService(),
-  ]);
+  const [{ locale }, checkoutCollection, accessToken, userService] =
+    await Promise.all([
+      props.params,
+      getCheckoutCollectionOrRedirect(),
+      getAccessToken(),
+      getUserService(),
+    ]);
+  const { checkout, checkouts } = checkoutCollection;
 
   const resultUserGet = await userService.userGet(accessToken);
 
@@ -36,7 +39,14 @@ export default async function Page(props: PageProps) {
     <>
       <EmailSection checkout={checkout} user={user} />
       <ShippingAddressSection checkout={checkout} locale={locale} />
-      <DeliveryMethodForm checkout={checkout} />
+      <DeliveryMethodForm
+        checkout={checkout}
+        marketplaceCheckouts={
+          serverEnvs.MARKETPLACE_MODE
+            ? checkouts.filter(({ isShippingRequired }) => isShippingRequired)
+            : undefined
+        }
+      />
       <PaymentSection />
     </>
   );

@@ -21,7 +21,12 @@ import { getCartService } from "@/services/cart";
 export const CartDetails = ({
   cart,
   user,
-}: { cart: Cart; user: User | null } & WithRegion) => {
+  hasMixedCurrencies = false,
+}: {
+  cart: Cart;
+  hasMixedCurrencies?: boolean;
+  user: User | null;
+} & WithRegion) => {
   const t = useTranslations();
   const router = useRouter();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -38,22 +43,29 @@ export const CartDetails = ({
     ...cart.problems.variantNotAvailable,
   ].length;
 
-  const isDisabled = isProcessing || !isCartValid;
+  const isDisabled = isProcessing || !isCartValid || hasMixedCurrencies;
 
   const handleLineQuantityChange = async (lineId: string, quantity: number) => {
     setIsProcessing(true);
 
+    const sourceCheckoutId =
+      cart.lines.find((line) => line.id === lineId)?.sourceCheckoutId ??
+      cart.id;
+
     const cartService = await getCartService();
     const resultLinesUpdate = await cartService.linesUpdate({
-      cartId: cart.id,
+      cartId: sourceCheckoutId,
       lines: [{ lineId, quantity }],
       options: {
-        next: { tags: [`CHECKOUT:${cart.id}`], revalidate: CACHE_TTL.cart },
+        next: {
+          tags: [`CHECKOUT:${sourceCheckoutId}`],
+          revalidate: CACHE_TTL.cart,
+        },
       },
     });
 
     if (resultLinesUpdate.ok) {
-      void revalidateCart(cart.id);
+      void revalidateCart(sourceCheckoutId);
       setIsProcessing(false);
 
       return;
@@ -70,15 +82,19 @@ export const CartDetails = ({
   const handleLineDelete = async (lineId: string) => {
     setIsProcessing(true);
 
+    const sourceCheckoutId =
+      cart.lines.find((line) => line.id === lineId)?.sourceCheckoutId ??
+      cart.id;
+
     const cartService = await getCartService();
     const resultLinesDelete = await cartService.linesDelete({
-      cartId: cart.id,
+      cartId: sourceCheckoutId,
       linesIds: [lineId],
-      options: { next: { tags: [`CHECKOUT:${cart.id}`] } },
+      options: { next: { tags: [`CHECKOUT:${sourceCheckoutId}`] } },
     });
 
     if (resultLinesDelete.ok) {
-      void revalidateCart(cart.id);
+      void revalidateCart(sourceCheckoutId);
       router.refresh();
     } else {
       resultLinesDelete.errors.forEach((error) => {
@@ -111,6 +127,17 @@ export const CartDetails = ({
       });
     }
   }, [redirectReason]);
+
+  useEffect(() => {
+    if (!hasMixedCurrencies) {
+      return;
+    }
+
+    toast({
+      description: t("errors.CHECKOUT_COMPLETE_ERROR"),
+      variant: "destructive",
+    });
+  }, [hasMixedCurrencies]);
 
   return (
     <div className="space-y-12">

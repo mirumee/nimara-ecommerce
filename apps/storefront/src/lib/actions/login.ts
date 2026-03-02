@@ -5,7 +5,13 @@ import { AuthError } from "next-auth";
 
 import { getAccessToken, signIn } from "@/auth";
 import { CACHE_TTL } from "@/config";
-import { getCheckoutId, setCheckoutIdCookie } from "@/lib/actions/cart";
+import { serverEnvs } from "@/envs/server";
+import {
+  clearCheckoutSessionCookies,
+  getCheckoutId,
+  getCheckoutVendorMap,
+  setCheckoutIdCookie,
+} from "@/lib/actions/cart";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { getCartService } from "@/services/cart";
@@ -39,6 +45,33 @@ export async function login({
 
     const resultUserGet = await userService.userGet(accessToken);
     const user = resultUserGet.ok ? resultUserGet.data : null;
+
+    if (serverEnvs.MARKETPLACE_MODE) {
+      const checkoutVendorMap = await getCheckoutVendorMap();
+      const checkoutIds = [...new Set(Object.values(checkoutVendorMap))];
+
+      if (!checkoutIds.length) {
+        await clearCheckoutSessionCookies();
+      } else {
+        await Promise.allSettled(
+          checkoutIds.map((checkoutId) =>
+            checkoutService.checkoutCustomerAttach({
+              accessToken,
+              id: checkoutId,
+            }),
+          ),
+        );
+
+        await setCheckoutIdCookie(checkoutIds[0]);
+      }
+
+      revalidatePath(paths.home.asPath());
+
+      return {
+        redirectUrl:
+          redirectUrl || paths.home.asPath({ query: { loggedIn: "true" } }),
+      };
+    }
 
     if (user?.checkoutIds.length) {
       const userLatestCheckoutId = user.checkoutIds[0];

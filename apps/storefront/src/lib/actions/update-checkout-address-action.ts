@@ -1,8 +1,10 @@
 "use server";
 
 import { type Address } from "@nimara/domain/objects/Address";
-import { type AsyncResult } from "@nimara/domain/objects/Result";
+import { type AsyncResult,ok } from "@nimara/domain/objects/Result";
 
+import { serverEnvs } from "@/envs/server";
+import { getMarketplaceCheckoutIds } from "@/lib/actions/cart";
 import { getCheckoutService } from "@/services/checkout";
 
 export const updateCheckoutAddressAction = async ({
@@ -21,7 +23,25 @@ export const updateCheckoutAddressAction = async ({
       ? checkoutService.checkoutShippingAddressUpdate
       : checkoutService.checkoutBillingAddressUpdate;
 
-  const result = await updateFn(values);
+  if (!serverEnvs.MARKETPLACE_MODE) {
+    return updateFn(values);
+  }
 
-  return result;
+  const marketplaceCheckoutIds = await getMarketplaceCheckoutIds();
+  const checkoutIds = marketplaceCheckoutIds.length
+    ? marketplaceCheckoutIds
+    : [values.checkoutId];
+
+  for (const checkoutId of checkoutIds) {
+    const result = await updateFn({
+      ...values,
+      checkoutId,
+    });
+
+    if (!result.ok) {
+      return result;
+    }
+  }
+
+  return ok({ success: true });
 };

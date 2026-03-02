@@ -15,6 +15,8 @@ export async function GET(request: NextRequest) {
 
   response.cookies.delete("accessToken");
   response.cookies.delete("refreshToken");
+  response.cookies.delete(COOKIE_KEY.checkoutId);
+  response.cookies.delete(COOKIE_KEY.checkoutVendorMap);
 
   return response;
 }

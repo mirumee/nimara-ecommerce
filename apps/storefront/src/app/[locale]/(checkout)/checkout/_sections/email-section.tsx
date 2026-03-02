@@ -4,8 +4,11 @@ import type { Checkout } from "@nimara/domain/objects/Checkout";
 import type { User } from "@nimara/domain/objects/User";
 import { Button } from "@nimara/ui/components/button";
 
+import { serverEnvs } from "@/envs/server";
 import { LocalizedLink } from "@/i18n/routing";
+import { getMarketplaceCheckoutIds } from "@/lib/actions/cart";
 import { paths } from "@/lib/paths";
+import { getCurrentRegion } from "@/regions/server";
 import { getCheckoutService } from "@/services/checkout";
 import { storefrontLogger } from "@/services/logging";
 
@@ -20,13 +23,45 @@ export const EmailSection = async ({
 
   if (!checkout?.email && user) {
     const checkoutService = await getCheckoutService();
-    const result = await checkoutService.checkoutEmailUpdate({
-      checkout,
-      email: user.email,
+    const checkoutIds = serverEnvs.MARKETPLACE_MODE
+      ? await getMarketplaceCheckoutIds()
+      : [checkout.id];
+
+    const region = serverEnvs.MARKETPLACE_MODE
+      ? await getCurrentRegion()
+      : null;
+
+    const settled = await Promise.allSettled(
+      checkoutIds.map(async (checkoutId) => {
+        const nextCheckout = serverEnvs.MARKETPLACE_MODE
+          ? await checkoutService.checkoutGet({
+              checkoutId,
+              languageCode: region!.language.code,
+              countryCode: region!.market.countryCode,
+            })
+          : { ok: true, data: { checkout } };
+
+        if (!nextCheckout.ok) {
+          return nextCheckout;
+        }
+
+        return checkoutService.checkoutEmailUpdate({
+          checkout: nextCheckout.data.checkout,
+          email: user.email,
+        });
+      }),
+    );
+
+    const hasFailedResult = settled.some((result) => {
+      if (result.status === "rejected") {
+        return true;
+      }
+
+      return !result.value.ok;
     });
 
-    if (!result.ok) {
-      storefrontLogger.error("Failed to update email", result);
+    if (hasFailedResult) {
+      storefrontLogger.error("Failed to update email", { checkoutIds });
     }
   }
 

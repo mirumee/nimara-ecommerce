@@ -8,7 +8,7 @@ import { getAccessToken } from "@/auth";
 import { LocaleSwitch } from "@/components/locale-switch";
 import { CACHE_TTL } from "@/config";
 import { LocalizedLink } from "@/i18n/routing";
-import { getCheckoutId } from "@/lib/actions/cart";
+import { getSessionCart } from "@/lib/marketplace/session-cart";
 import { paths } from "@/lib/paths";
 import { getCurrentRegion } from "@/regions/server";
 import { getCartService } from "@/services/cart";
@@ -47,24 +47,13 @@ export const Header = async () => {
   const user = resultUserGet.ok ? resultUserGet.data : null;
 
   let checkoutLinesCount = 0;
-  const checkoutId = await getCheckoutId();
+  const cartService = await getCartService();
+  const sessionCart = await getSessionCart({
+    cartService,
+    region,
+  });
 
-  if (checkoutId) {
-    const cartService = await getCartService();
-    const resultCartGet = await cartService.cartGet({
-      cartId: checkoutId,
-      languageCode: region.language.code,
-      countryCode: region.market.countryCode,
-      options: {
-        next: {
-          tags: [`CHECKOUT:${checkoutId}`],
-          revalidate: CACHE_TTL.cart,
-        },
-      },
-    });
-
-    checkoutLinesCount = resultCartGet.data?.linesQuantityCount ?? 0;
-  }
+  checkoutLinesCount = sessionCart?.cart.linesQuantityCount ?? 0;
 
   const shoppingBag = <ShoppingBagIconWithCount count={checkoutLinesCount} />;
 

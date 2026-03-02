@@ -44,6 +44,10 @@ import { getPaymentService } from "@/services/payment";
 import { updateBillingAddress } from "./actions";
 import { AddressTab } from "./address-tab";
 import {
+  canProceedMarketplacePayment,
+  type MarketplacePhase,
+} from "./marketplace-phase";
+import {
   type BillingAddressPath,
   type BillingAddressValue,
   type Schema,
@@ -52,6 +56,14 @@ import {
 
 export type TabName = "new" | "saved";
 
+type MarketplacePrepareResponse = {
+  clientSecret?: string;
+  errors?: Array<{
+    code: AppErrorCode;
+  }>;
+  orderIds?: string[];
+};
+
 type PaymentProps = {
   addressFormRows: readonly AddressFormRow[];
   checkout: Checkout;
@@ -59,6 +71,9 @@ type PaymentProps = {
   countryCode: AllCountryCode;
   errorCode?: AppErrorCode;
   formattedAddresses: FormattedAddress[];
+  marketplaceBuyerId: string;
+  marketplaceCheckoutIds: string[];
+  marketplaceMode: boolean;
   paymentGatewayCustomer: Maybe<string>;
   paymentGatewayMethods: PaymentMethod[];
   storeUrl: string;
@@ -68,6 +83,9 @@ type PaymentProps = {
 export const Payment = ({
   checkout,
   errorCode,
+  marketplaceMode,
+  marketplaceCheckoutIds,
+  marketplaceBuyerId,
   storeUrl,
   addressFormRows,
   countries,
@@ -89,9 +107,16 @@ export const Payment = ({
   const [isInitialized, setIsInitialized] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [isCountryChanging, setIsCountryChanging] = useState(false);
-  const hasSavedPaymentMethods = paymentGatewayMethods.length > 0;
+  const [marketplacePhase, setMarketplacePhase] =
+    useState<MarketplacePhase>("prepare");
+  const [marketplaceClientSecret, setMarketplaceClientSecret] = useState<
+    string | null
+  >(null);
+  const [marketplaceOrderIds, setMarketplaceOrderIds] = useState<string[]>([]);
+  const hasSavedPaymentMethods =
+    !marketplaceMode && paymentGatewayMethods.length > 0;
   const [activeTab, setActiveTab] = useState<TabName>(
-    hasSavedPaymentMethods ? "saved" : "new",
+    hasSavedPaymentMethods && !marketplaceMode ? "saved" : "new",
   );
   const [addressActiveTab, setAddressActiveTab] = useState<TabName>(
     formattedAddresses.length ? "saved" : "new",
@@ -148,13 +173,28 @@ export const Payment = ({
     "paymentMethod",
   ]);
   const hasSelectedPaymentMethod = !!paymentMethod;
-  const isAddingNewPaymentMethod = activeTab === "new";
+  const isAddingNewPaymentMethod = marketplaceMode || activeTab === "new";
   const isLoading = !isInitialized || isProcessing;
   const canProceed =
     !isLoading &&
-    (isAddingNewPaymentMethod ? isMounted : hasSelectedPaymentMethod);
+    (marketplaceMode
+      ? canProceedMarketplacePayment({
+          phase: marketplacePhase,
+          isLoading,
+          isMounted,
+          clientSecret: marketplaceClientSecret,
+          orderIdsCount: marketplaceOrderIds.length,
+        })
+      : isAddingNewPaymentMethod
+        ? isMounted
+        : hasSelectedPaymentMethod);
 
   const isDark = resolvedTheme === "dark";
+  const marketplaceBillingInfoText = t.has(
+    "payment.marketplaceUsesShippingAsBilling",
+  )
+    ? t("payment.marketplaceUsesShippingAsBilling")
+    : "Billing address is the same as your shipping address in marketplace checkout.";
   const appearance = {
     theme: (isDark ? "night" : "stripe") as "night" | "stripe",
     variables: {
@@ -176,16 +216,26 @@ export const Payment = ({
     setErrors([]);
     setIsProcessing(true);
 
-    delete billingAddress?.id;
+    if (!marketplaceMode) {
+      delete billingAddress?.id;
+    }
 
-    {
-      const result = await updateBillingAddress({
-        checkout,
-        input: {
+    const billingInput = marketplaceMode
+      ? {
+          sameAsShippingAddress: true,
+          saveAddressForFutureUse: false,
+          billingAddress: undefined,
+        }
+      : {
           sameAsShippingAddress,
           saveAddressForFutureUse,
           billingAddress,
-        },
+        };
+
+    if (!(marketplaceMode && marketplacePhase === "confirm")) {
+      const result = await updateBillingAddress({
+        checkout,
+        input: billingInput,
       });
 
       if (!result.ok) {
@@ -205,8 +255,102 @@ export const Payment = ({
       }
     }
 
+    if (marketplaceMode && marketplacePhase === "prepare") {
+      try {
+        const response = await fetch("/api/payments/marketplace/prepare", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          cache: "no-store",
+          body: JSON.stringify({
+            buyerId: marketplaceBuyerId,
+            checkoutIds: marketplaceCheckoutIds,
+            languageCode: region.language.code,
+            countryCode,
+            channel: region.market.channel,
+          }),
+        });
+        const payload = (await response
+          .json()
+          .catch(() => ({}))) as MarketplacePrepareResponse;
+
+        if (
+          !response.ok ||
+          !payload.clientSecret ||
+          !payload.orderIds?.length
+        ) {
+          setErrors(
+            translateApiErrors({
+              t,
+              errors: payload.errors?.length
+                ? payload.errors
+                : [{ code: "CHECKOUT_COMPLETE_ERROR" }],
+            }),
+          );
+          setIsProcessing(false);
+
+          return;
+        }
+
+        const paymentService = await getPaymentService();
+        const clientSecret = payload.clientSecret;
+
+        setMarketplaceOrderIds(payload.orderIds);
+        setMarketplaceClientSecret(clientSecret);
+
+        const data = await paymentService.paymentElementCreate({
+          locale: region.language.locale,
+          secret: clientSecret,
+          appearance,
+        });
+
+        if (document.getElementById(PAYMENT_ELEMENT_ID)) {
+          data.mount(`#${PAYMENT_ELEMENT_ID}`);
+          setIsMounted(true);
+        }
+
+        setMarketplacePhase("confirm");
+        setIsProcessing(false);
+
+        return;
+      } catch {
+        setErrors(
+          translateApiErrors({
+            t,
+            errors: [{ code: "CHECKOUT_COMPLETE_ERROR" }],
+          }),
+        );
+        setIsProcessing(false);
+
+        return;
+      }
+    }
+
     let paymentSecret: Maybe<string> = undefined;
-    const redirectUrl = `${storeUrl}${paths.payment.confirmation.asPath()}`;
+    const redirectUrl = new URL(paths.payment.confirmation.asPath(), storeUrl);
+    const finalRedirectUrl = (() => {
+      if (!marketplaceMode) {
+        return redirectUrl.toString();
+      }
+
+      if (!marketplaceOrderIds.length) {
+        setErrors([t("errors.TRANSACTION_INITIALIZE_ERROR")]);
+        setIsProcessing(false);
+
+        return null;
+      }
+
+      redirectUrl.searchParams.set("marketplace", "1");
+      redirectUrl.searchParams.set("orderIds", marketplaceOrderIds.join(","));
+
+      return redirectUrl.toString();
+    })();
+
+    if (!finalRedirectUrl) {
+      return;
+    }
+
     const paymentService = await getPaymentService();
 
     /**
@@ -215,7 +359,7 @@ export const Payment = ({
      * paymentExecute.
      */
 
-    if (paymentMethod) {
+    if (!marketplaceMode && paymentMethod) {
       const result = await paymentService.paymentGatewayTransactionInitialize({
         id: checkout.id,
         amount: checkout.totalPrice.gross.amount,
@@ -240,7 +384,7 @@ export const Payment = ({
         country: checkout.billingAddress?.country,
       },
       paymentSecret,
-      redirectUrl,
+      redirectUrl: finalRedirectUrl,
     });
 
     if (!result.ok) {
@@ -252,13 +396,19 @@ export const Payment = ({
   useEffect(() => {
     void (async () => {
       const paymentService = await getPaymentService();
-      const [result] = await Promise.all([
-        paymentService.paymentGatewayInitialize({
-          id: checkout.id,
-          amount: checkout.totalPrice.gross.amount,
-        }),
-        await paymentService.paymentInitialize(),
-      ]);
+
+      await paymentService.paymentInitialize();
+
+      if (marketplaceMode) {
+        setIsInitialized(true);
+
+        return;
+      }
+
+      const result = await paymentService.paymentGatewayInitialize({
+        id: checkout.id,
+        amount: checkout.totalPrice.gross.amount,
+      });
 
       if (!result.ok) {
         setErrors(translateApiErrors({ t, errors: result.errors }));
@@ -269,7 +419,7 @@ export const Payment = ({
   }, []);
 
   useEffect(() => {
-    if (!isInitialized) {
+    if (!isInitialized || marketplaceMode) {
       return;
     }
 
@@ -329,6 +479,10 @@ export const Payment = ({
   }, [errorCode]);
 
   useEffect(() => {
+    if (marketplaceMode) {
+      return;
+    }
+
     if (sameAsShippingAddress) {
       form.unregister("billingAddress");
     } else if (checkout.billingAddress) {
@@ -348,9 +502,13 @@ export const Payment = ({
         defaultValue: defaultEmptyBillingAddress,
       });
     }
-  }, [sameAsShippingAddress]);
+  }, [sameAsShippingAddress, marketplaceMode]);
 
   useEffect(() => {
+    if (marketplaceMode) {
+      return;
+    }
+
     if (billingAddressCountry && billingAddressCountry !== countryCode) {
       router.push(
         paths.checkout.payment.asPath({
@@ -359,7 +517,7 @@ export const Payment = ({
         { scroll: false },
       );
     }
-  }, [billingAddressCountry]);
+  }, [billingAddressCountry, marketplaceMode]);
 
   useEffect(() => {
     setIsCountryChanging(false);
@@ -392,18 +550,33 @@ export const Payment = ({
             </TabsContent>
 
             <TabsContent value="new">
-              {!isMounted && (
-                <div className={cn("flex w-full justify-center py-16")}>
-                  <Spinner />
-                </div>
-              )}
+              {!isMounted &&
+                (!marketplaceMode || marketplacePhase === "confirm") && (
+                  <div className={cn("flex w-full justify-center py-16")}>
+                    <Spinner />
+                  </div>
+                )}
               <div className={cn({ "pointer-events-none": !isMounted })}>
                 <div
                   className={cn({ hidden: !isMounted })}
                   id={PAYMENT_ELEMENT_ID}
                 />
 
-                {user && (
+                {marketplaceMode && marketplacePhase === "prepare" && (
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {marketplaceBillingInfoText}
+                  </p>
+                )}
+
+                {marketplaceMode &&
+                  marketplacePhase === "confirm" &&
+                  !isMounted && (
+                    <p className="mt-6 text-sm text-muted-foreground">
+                      {t("payment.enterPaymentDetails")}
+                    </p>
+                  )}
+
+                {user && !marketplaceMode && (
                   <CheckboxField
                     className="mt-6"
                     name="saveForFutureUse"
@@ -415,49 +588,51 @@ export const Payment = ({
             </TabsContent>
           </Tabs>
 
-          <div className="space-y-6">
-            <h3 className="text-base font-normal leading-7 text-muted-foreground">
-              {t("payment.billing-address")}
-            </h3>
+          {!marketplaceMode && (
+            <div className="space-y-6">
+              <h3 className="text-base font-normal leading-7 text-muted-foreground">
+                {t("payment.billing-address")}
+              </h3>
 
-            {checkout.isShippingRequired && (
-              <div className="flex w-full items-center gap-2 rounded-md border border-input bg-background px-4">
-                <CheckboxField
-                  label={t("payment.same-as-shipping-address")}
-                  name="sameAsShippingAddress"
-                />
-              </div>
-            )}
+              {checkout.isShippingRequired && (
+                <div className="flex w-full items-center gap-2 rounded-md border border-input bg-background px-4">
+                  <CheckboxField
+                    label={t("payment.same-as-shipping-address")}
+                    name="sameAsShippingAddress"
+                  />
+                </div>
+              )}
 
-            {user ? (
-              <>
-                {!sameAsShippingAddress && (
-                  <AddressTab
-                    activeTab={addressActiveTab}
-                    setActiveTab={setAddressActiveTab}
-                    addresses={formattedAddresses}
-                    addressFormRows={addressFormRows}
-                    countries={countries}
-                    countryCode={countryCode}
-                    isDisabled={isProcessing}
-                    setIsCountryChanging={setIsCountryChanging}
-                  />
-                )}
-              </>
-            ) : (
-              <>
-                {!sameAsShippingAddress && (
-                  <AddressForm
-                    addressFormRows={addressFormRows}
-                    schemaPrefix="billingAddress"
-                    countries={countries}
-                    onCountryChange={setIsProcessing}
-                    isDisabled={isProcessing}
-                  />
-                )}
-              </>
-            )}
-          </div>
+              {user ? (
+                <>
+                  {!sameAsShippingAddress && (
+                    <AddressTab
+                      activeTab={addressActiveTab}
+                      setActiveTab={setAddressActiveTab}
+                      addresses={formattedAddresses}
+                      addressFormRows={addressFormRows}
+                      countries={countries}
+                      countryCode={countryCode}
+                      isDisabled={isProcessing}
+                      setIsCountryChanging={setIsCountryChanging}
+                    />
+                  )}
+                </>
+              ) : (
+                <>
+                  {!sameAsShippingAddress && (
+                    <AddressForm
+                      addressFormRows={addressFormRows}
+                      schemaPrefix="billingAddress"
+                      countries={countries}
+                      onCountryChange={setIsProcessing}
+                      isDisabled={isProcessing}
+                    />
+                  )}
+                </>
+              )}
+            </div>
+          )}
           <div className="flex flex-col gap-3">
             <Button
               type="submit"
@@ -467,7 +642,9 @@ export const Payment = ({
             >
               <span className="flex items-center gap-2">
                 <LockIcon size={16} />
-                {t("payment.placeOrder")}
+                {marketplaceMode && marketplacePhase === "prepare"
+                  ? t("payment.preparePayment")
+                  : t("payment.placeOrder")}
               </span>
             </Button>
 

@@ -33,14 +33,12 @@ export const AddToBag = ({ variantId, isVariantAvailable }: AddToBagProps) => {
 
     if (!resultLinesAdd.ok) {
       resultLinesAdd.errors.forEach((error) => {
-        if (error.field) {
-          toast({
-            description: t(
-              `checkout-errors.${error.field}` as TranslationMessage,
-            ),
-            variant: "destructive",
-          });
-        }
+        toast({
+          description: error.field
+            ? t(`checkout-errors.${error.field}` as TranslationMessage)
+            : t(`errors.${error.code}` as TranslationMessage),
+          variant: "destructive",
+        });
       });
     } else {
       toast({

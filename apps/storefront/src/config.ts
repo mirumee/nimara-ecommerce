@@ -19,6 +19,7 @@ export const DEFAULT_RESULTS_PER_PAGE = 16;
 
 export const COOKIE_KEY = {
   checkoutId: "checkoutId",
+  checkoutVendorMap: "checkoutVendorMap",
   accessToken: "accessToken",
   refreshToken: "refreshToken",
   searchProvider: "searchProvider",
