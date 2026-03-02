@@ -1,0 +1,111 @@
+import { Steps } from "nextra/components";
+
+# Marketplace
+
+This guide will help you set up the [Nimara marketplace](apps/marketplace) app in your local environment.
+
+The marketplace is a vendor portal for managing products, orders, collections, and vendor pages in a multi-vendor e-commerce setup powered by Saleor.
+
+<Steps>
+
+### Fork and clone project
+
+First, **fork** the Nimara repository to your own GitHub account.
+
+Go to the [Nimara GitHub repo](https://github.com/nimara-ecommerce/nimara-ecommerce).
+
+Click the **Fork** button in the top-right corner.
+
+Once the fork is created, clone your fork locally:
+
+```bash
+git clone https://github.com/{your_github_username}/nimara-ecommerce.git nimara-ecommerce
+cd nimara-ecommerce
+```
+
+### Install project's dependencies
+
+```bash
+pnpm install
+```
+
+### Copy variables
+
+Copy environment variables from **.env.example** to **.env**:
+
+```bash
+cp .env.example .env
+```
+
+### Add backend URL and set up environment variables
+
+Use a free developer account at Saleor Cloud or run Saleor locally using Docker.
+
+```properties
+# Add backend address
+NEXT_PUBLIC_SALEOR_API_URL=https://{your_domain}.saleor.cloud/graphql/
+
+# Local example
+# NEXT_PUBLIC_SALEOR_API_URL=http://localhost:8000/graphql/
+```
+
+For a full list of required and optional variables, see the [Environment Variables Guide](./environment-variables).
+
+### Run project
+
+Run the development server:
+
+```bash
+pnpm dev:marketplace
+```
+
+The marketplace app runs on **port 3001** by default.
+
+</Steps>
+
+## Features
+
+The marketplace app provides the following vendor-facing features:
+
+- **Product Management** - Create, update, and manage products and variants
+- **Order Management** - View and fulfill customer orders
+- **Collections** - Organize products into collections
+- **Vendor Pages** - Manage vendor profile pages and page status
+- **Customer Management** - View and manage customers
+
+## Environment Variables
+
+Key environment variables for the marketplace:
+
+| Variable                       | Description                                                          |
+| ------------------------------ | -------------------------------------------------------------------- |
+| `NEXT_PUBLIC_SALEOR_API_URL`   | Saleor GraphQL API endpoint                                          |
+| `AWS_SECRETS_MANAGER_ENDPOINT` | AWS Secrets Manager endpoint (for local development with LocalStack) |
+
+## Deployment
+
+<Steps>
+
+### Connect GitHub Repository
+
+Go to your projects on [Vercel](https://vercel.com/) -> click **Add New** and select **Project**.
+
+Choose your Nimara GitHub repository and click **Import**.
+
+### Set up New Project
+
+Select your **Vercel Team**, add **Project Name**, set **Root Directory** to `apps/marketplace`.
+
+Set **Build Command** to `turbo run build --filter=marketplace` and **Install Command** to `pnpm install`.
+
+### Configure Environment Variables
+
+Add the required environment variables in Vercel:
+
+- `NEXT_PUBLIC_SALEOR_API_URL`
+
+### Deploy
+
+Click **Deploy** to deploy your marketplace app.
+
+</Steps>
