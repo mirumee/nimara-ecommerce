@@ -11,14 +11,14 @@
     "./*": "./src/*.ts"
   },
   "optionalDependencies": {
-    "algoliasearch": "5.49.0",
+    "algoliasearch": "5.49.1",
     "buttercms": "2.1.4"
   },
   "dependencies": {
     "@saleor/auth-sdk": "1.0.3",
     "@stripe/stripe-js": "8.8.0",
     "editorjs-html": "3.4.3",
-    "libphonenumber-js": "1.12.37",
+    "libphonenumber-js": "1.12.38",
     "pino": "10.3.1",
     "string-strip-html": "^13.5.3",
     "stripe": "20.3.1",
@@ -32,7 +32,7 @@
     "@nimara/domain": "workspace:*",
     "@nimara/foundation": "workspace:*",
     "eslint": "^8.57.0",
-    "graphql": "16.12.0",
+    "graphql": "16.13.0",
     "ts-essentials": "10.1.1",
     "ts-toolbelt": "9.6.0",
     "typescript": "^5.9.2"
