@@ -1,6 +1,7 @@
 import { type Checkout } from "@nimara/domain/objects/Checkout";
 
 import { ShoppingBag } from "@/components/shopping-bag";
+import { serverEnvs } from "@/envs/server";
 
 export const Summary = ({ checkout }: { checkout: Checkout }) => {
   return (
@@ -11,7 +12,9 @@ export const Summary = ({ checkout }: { checkout: Checkout }) => {
         isLinesEditable={false}
         problems={checkout.problems}
       />
-      <ShoppingBag.DiscountCode checkout={checkout} />
+      {!serverEnvs.MARKETPLACE_MODE && (
+        <ShoppingBag.DiscountCode checkout={checkout} />
+      )}
       <ShoppingBag.Pricing>
         <ShoppingBag.Subtotal price={checkout.subtotalPrice.gross} />
         <ShoppingBag.Shipping price={checkout.shippingPrice.gross} />

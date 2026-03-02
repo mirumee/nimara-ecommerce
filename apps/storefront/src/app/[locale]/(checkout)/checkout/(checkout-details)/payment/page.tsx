@@ -5,7 +5,7 @@ import { type PaymentMethod } from "@nimara/domain/objects/Payment";
 import { getAccessToken } from "@/auth";
 import { clientEnvs } from "@/envs/client";
 import { serverEnvs } from "@/envs/server";
-import { getCheckoutOrRedirect } from "@/lib/checkout";
+import { getCheckoutCollectionOrRedirect } from "@/lib/checkout";
 import { getStoreUrl } from "@/lib/server";
 import { getCurrentRegion } from "@/regions/server";
 import { type SupportedLocale } from "@/regions/types";
@@ -33,7 +33,7 @@ export default async function Page(props: PageProps) {
     { locale },
     searchParams,
     region,
-    checkout,
+    checkoutCollection,
     accessToken,
     storeUrl,
     userService,
@@ -42,12 +42,13 @@ export default async function Page(props: PageProps) {
     props.params,
     props.searchParams,
     getCurrentRegion(),
-    getCheckoutOrRedirect(),
+    getCheckoutCollectionOrRedirect(),
     getAccessToken(),
     getStoreUrl(),
     getUserService(),
     getAddressService(),
   ]);
+  const { checkout, checkoutIds } = checkoutCollection;
 
   const resultUserGet = await userService.userGet(accessToken);
   const user = resultUserGet.ok ? resultUserGet.data : null;
@@ -130,7 +131,7 @@ export default async function Page(props: PageProps) {
   let paymentGatewayCustomer = null;
   let paymentGatewayMethods: PaymentMethod[] = [];
 
-  if (user) {
+  if (user && !serverEnvs.MARKETPLACE_MODE) {
     const paymentService = await getPaymentService();
     const resultPaymentGatewayCustomer = await paymentService.customerGet({
       user,
@@ -166,6 +167,9 @@ export default async function Page(props: PageProps) {
       )}
       <PaymentSection>
         <Payment
+          marketplaceBuyerId={user?.id ?? checkout.email ?? "guest"}
+          marketplaceCheckoutIds={checkoutIds}
+          marketplaceMode={serverEnvs.MARKETPLACE_MODE}
           paymentGatewayCustomer={paymentGatewayCustomer?.customerId}
           paymentGatewayMethods={paymentGatewayMethods}
           errorCode={searchParams?.errorCode}

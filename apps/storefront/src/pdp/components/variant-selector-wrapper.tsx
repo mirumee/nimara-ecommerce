@@ -8,8 +8,7 @@ import {
 import { Button } from "@nimara/ui/components/button";
 import { Skeleton } from "@nimara/ui/components/skeleton";
 
-import { CACHE_TTL } from "@/config";
-import { getCheckoutId } from "@/lib/actions/cart";
+import { getSessionCart } from "@/lib/marketplace/session-cart";
 import { VariantSelector } from "@/pdp/components/variant-selector";
 import { getCurrentRegion } from "@/regions/server";
 import { getCartService } from "@/services/cart";
@@ -27,29 +26,19 @@ export const VariantSelectorWrapper = async ({
   availability,
   product,
 }: VariantPickerProps) => {
-  const [region, checkoutId, cartService] = await Promise.all([
+  const [region, cartService] = await Promise.all([
     getCurrentRegion(),
-    getCheckoutId(),
     getCartService(),
   ]);
 
-  const resultCartGet = checkoutId
-    ? await cartService.cartGet({
-        cartId: checkoutId,
-        languageCode: region.language.code,
-        countryCode: region.market.countryCode,
-        options: {
-          next: {
-            revalidate: CACHE_TTL.cart,
-            tags: [`CHECKOUT:${checkoutId}`],
-          },
-        },
-      })
-    : null;
+  const sessionCart = await getSessionCart({
+    cartService,
+    region,
+  });
 
   return (
     <VariantSelector
-      cart={resultCartGet?.ok ? resultCartGet.data : null}
+      cart={sessionCart?.cart ?? null}
       product={product}
       productAvailability={availability}
     />

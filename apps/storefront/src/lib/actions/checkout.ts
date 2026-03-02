@@ -13,11 +13,19 @@ export const deleteCheckoutIdCookie = async () => {
   const storeUrl = await getStoreUrl();
   const url = new URL("/api/cookies/delete", storeUrl);
 
-  return fetch(url, {
+  await fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ cookieKey: COOKIE_KEY.checkoutId }),
+  });
+
+  return fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ cookieKey: COOKIE_KEY.checkoutVendorMap }),
   });
 };

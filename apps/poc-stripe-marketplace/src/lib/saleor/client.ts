@@ -37,6 +37,12 @@ interface GetOrderTransactionsInput {
   saleorApiUrl: string;
 }
 
+interface OrderCancelInput {
+  authToken: string;
+  orderId: string;
+  saleorApiUrl: string;
+}
+
 export interface CheckoutCompleteOrder {
   id: string;
   number: string;
@@ -82,6 +88,19 @@ export interface OrderTransaction {
   } | null;
   id: string;
   pspReference: string | null;
+}
+
+export interface OrderCancelError {
+  code: string;
+  field: string | null;
+  message: string | null;
+}
+
+export interface OrderCancelResult {
+  errors: OrderCancelError[];
+  order: {
+    id: string;
+  } | null;
 }
 
 export async function fetchSaleorAppId({
@@ -328,4 +347,74 @@ export async function getOrderTransactions({
   }
 
   return data.data?.order?.transactions ?? [];
+}
+
+export async function orderCancel({
+  saleorApiUrl,
+  authToken,
+  orderId,
+}: OrderCancelInput): Promise<OrderCancelResult> {
+  const response = await fetch(saleorApiUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${authToken}`,
+    },
+    body: JSON.stringify({
+      query: `
+        mutation OrderCancel($id: ID!) {
+          orderCancel(id: $id) {
+            order {
+              id
+            }
+            errors {
+              field
+              message
+              code
+            }
+          }
+        }
+      `,
+      variables: {
+        id: orderId,
+      },
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Saleor request failed with status ${response.status}.`);
+  }
+
+  const data = (await response.json()) as {
+    data?: { orderCancel?: OrderCancelResult | null };
+    errors?: Array<{ message?: string }>;
+  };
+
+  if (data.errors?.length) {
+    return {
+      order: null,
+      errors: data.errors.map((error) => ({
+        field: null,
+        message: error.message ?? "GraphQL error",
+        code: "GRAPHQL_ERROR",
+      })),
+    };
+  }
+
+  const payload = data.data?.orderCancel;
+
+  if (!payload) {
+    return {
+      order: null,
+      errors: [
+        {
+          field: null,
+          message: "Missing orderCancel payload.",
+          code: "MISSING_PAYLOAD",
+        },
+      ],
+    };
+  }
+
+  return payload;
 }

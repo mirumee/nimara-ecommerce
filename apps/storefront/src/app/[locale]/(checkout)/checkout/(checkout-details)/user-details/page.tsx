@@ -1,4 +1,6 @@
 import { getAccessToken } from "@/auth";
+import { serverEnvs } from "@/envs/server";
+import { getMarketplaceCheckoutIds } from "@/lib/actions/cart";
 import { getCheckoutOrRedirect } from "@/lib/checkout";
 import { type SupportedLocale } from "@/regions/types";
 import { getCheckoutService } from "@/services/checkout";
@@ -25,11 +27,18 @@ export default async function Page(props: PageProps) {
 
   if (resultUserGet?.data) {
     const checkoutService = await getCheckoutService();
+    const checkoutIds = serverEnvs.MARKETPLACE_MODE
+      ? await getMarketplaceCheckoutIds()
+      : [checkout.id];
 
-    await checkoutService.checkoutCustomerAttach({
-      accessToken,
-      id: checkout.id,
-    });
+    await Promise.allSettled(
+      checkoutIds.map((checkoutId) =>
+        checkoutService.checkoutCustomerAttach({
+          accessToken,
+          id: checkoutId,
+        }),
+      ),
+    );
   }
 
   return (

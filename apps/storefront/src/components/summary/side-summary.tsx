@@ -1,41 +1,20 @@
-import { getLocale, getTranslations } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 
 import { Button } from "@nimara/ui/components/button";
 import { Sheet, SheetContent, SheetTrigger } from "@nimara/ui/components/sheet";
 
-import { redirect } from "@/i18n/routing";
-import { getCheckoutId } from "@/lib/actions/cart";
-import { paths } from "@/lib/paths";
-import { getCurrentRegion } from "@/regions/server";
-import { getCheckoutService } from "@/services/checkout";
+import { getCheckoutCollectionOrRedirect } from "@/lib/checkout";
 
 import { ErrorDialog } from "../error-dialog";
 import { Summary } from "./summary";
 
 export const SideSummary = async () => {
-  const [t, region, locale, checkoutId] = await Promise.all([
+  const [t, checkoutCollection] = await Promise.all([
     getTranslations("common"),
-    getCurrentRegion(),
-    getLocale(),
-    getCheckoutId(),
+    getCheckoutCollectionOrRedirect(),
   ]);
 
-  if (!checkoutId) {
-    redirect({ href: paths.cart.asPath(), locale });
-  }
-
-  const checkoutService = await getCheckoutService();
-  const resultCheckout = await checkoutService.checkoutGet({
-    checkoutId,
-    languageCode: region.language.code,
-    countryCode: region.market.countryCode,
-  });
-
-  if (!resultCheckout.ok) {
-    redirect({ href: paths.cart.asPath(), locale });
-  }
-
-  const { checkout } = resultCheckout.data;
+  const { checkout } = checkoutCollection;
 
   return (
     <>

@@ -11,4 +11,5 @@ export const clearCheckoutCookieAction = async () => {
   storefrontLogger.debug("Clearing checkout ID cookie on confirmation page.");
 
   cookieStore.delete(COOKIE_KEY.checkoutId);
+  cookieStore.delete(COOKIE_KEY.checkoutVendorMap);
 };

@@ -17,6 +17,7 @@ export type Image = {
 
 export type Line = {
   id: string;
+  sourceCheckoutId?: string;
   product: {
     id: string;
     name: string;

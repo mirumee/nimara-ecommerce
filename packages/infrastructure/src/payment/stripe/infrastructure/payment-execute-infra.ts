@@ -23,7 +23,6 @@ export const paymentExecuteInfra =
       postalCode,
     },
   }) => {
-    invariant(serviceState.transactionId, "Missing transaction id.");
     invariant(serviceState.clientSDK, "Client not initiated.");
 
     const isUsingNewPaymentMethod = !paymentSecret;
@@ -38,10 +37,12 @@ export const paymentExecuteInfra =
 
     const returnUrl = new URL(redirectUrl);
 
-    returnUrl.searchParams.append(
-      QUERY_PARAMS.TRANSACTION_ID,
-      serviceState.transactionId,
-    );
+    if (serviceState.transactionId) {
+      returnUrl.searchParams.append(
+        QUERY_PARAMS.TRANSACTION_ID,
+        serviceState.transactionId,
+      );
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     const { error } = await serviceState.clientSDK.confirmPayment({
@@ -73,7 +74,7 @@ export const paymentExecuteInfra =
 
     if (error) {
       logger.error("Payment execution failed.", {
-        transactionId: serviceState.transactionId,
+        transactionId: serviceState.transactionId ?? "none",
         paymentSecret,
         redirectUrl,
         originalError: {

@@ -4,7 +4,9 @@ import type { Checkout } from "@nimara/domain/objects/Checkout";
 import { type AsyncResult, ok } from "@nimara/domain/objects/Result";
 
 import { serverEnvs } from "@/envs/server";
+import { getMarketplaceCheckoutIds } from "@/lib/actions/cart";
 import { paths } from "@/lib/paths";
+import { getCurrentRegion } from "@/regions/server";
 import { getCheckoutService } from "@/services/checkout";
 import { getUserService } from "@/services/user";
 
@@ -28,6 +30,42 @@ export const updateUserDetails = async ({
   email: EmailFormSchema["email"];
 }): AsyncResult<{ redirectUrl: string }> => {
   const checkoutService = await getCheckoutService();
+
+  if (serverEnvs.MARKETPLACE_MODE) {
+    const marketplaceCheckoutIds = await getMarketplaceCheckoutIds();
+    const checkoutIds = marketplaceCheckoutIds.length
+      ? marketplaceCheckoutIds
+      : [checkout.id];
+    const region = await getCurrentRegion();
+
+    for (const checkoutId of checkoutIds) {
+      const resultCheckoutGet = await checkoutService.checkoutGet({
+        checkoutId,
+        languageCode: region.language.code,
+        countryCode: region.market.countryCode,
+      });
+
+      if (!resultCheckoutGet.ok) {
+        return resultCheckoutGet;
+      }
+
+      const resultEmailUpdate = await checkoutService.checkoutEmailUpdate({
+        checkout: resultCheckoutGet.data.checkout,
+        email,
+      });
+
+      if (!resultEmailUpdate.ok) {
+        return resultEmailUpdate;
+      }
+    }
+
+    return ok({
+      redirectUrl: checkout.isShippingRequired
+        ? paths.checkout.shippingAddress.asPath()
+        : paths.checkout.payment.asPath(),
+    });
+  }
+
   const result = await checkoutService.checkoutEmailUpdate({
     checkout,
     email: email,

@@ -76,6 +76,7 @@ describe("i18nMiddleware", () => {
 
     initialRequest.cookies.set(COOKIE_KEY.locale, "en-US");
     initialRequest.cookies.set(COOKIE_KEY.checkoutId, "321");
+    initialRequest.cookies.set(COOKIE_KEY.checkoutVendorMap, "{}");
 
     const resp = await i18nMiddleware(mockNextMiddleware)(
       initialRequest,
@@ -88,6 +89,7 @@ describe("i18nMiddleware", () => {
     expect(resp?.status).toBe(200);
     expect(cookiesHeader).includes(`${COOKIE_KEY.locale}=en-GB;`);
     expect(cookiesHeader).includes(`${COOKIE_KEY.checkoutId}=;`);
+    expect(cookiesHeader).includes(`${COOKIE_KEY.checkoutVendorMap}=;`);
   });
 
   it("remove the checkout cookie on locale change from / to /gb", async () => {
@@ -98,6 +100,7 @@ describe("i18nMiddleware", () => {
 
     initialRequest.cookies.set(COOKIE_KEY.locale, "en-GB");
     initialRequest.cookies.set(COOKIE_KEY.checkoutId, "321");
+    initialRequest.cookies.set(COOKIE_KEY.checkoutVendorMap, "{}");
 
     const resp = await i18nMiddleware(mockNextMiddleware)(
       initialRequest,
@@ -110,6 +113,7 @@ describe("i18nMiddleware", () => {
     expect(resp?.status).toBe(200);
     expect(cookiesHeader).includes(`${COOKIE_KEY.locale}=en-US;`);
     expect(cookiesHeader).includes(`${COOKIE_KEY.checkoutId}=;`);
+    expect(cookiesHeader).includes(`${COOKIE_KEY.checkoutVendorMap}=;`);
   });
 
   it.each([
@@ -125,6 +129,7 @@ describe("i18nMiddleware", () => {
 
       initialRequest.cookies.set(COOKIE_KEY.locale, locale);
       initialRequest.cookies.set(COOKIE_KEY.checkoutId, "321");
+      initialRequest.cookies.set(COOKIE_KEY.checkoutVendorMap, "{}");
 
       const resp = await i18nMiddleware(mockNextMiddleware)(
         initialRequest,
@@ -137,6 +142,7 @@ describe("i18nMiddleware", () => {
       expect(resp?.status).toBe(200);
       expect(cookiesHeader).includes(`${COOKIE_KEY.locale}=${locale};`);
       expect(cookiesHeader).not.includes(`${COOKIE_KEY.checkoutId};`);
+      expect(cookiesHeader).not.includes(`${COOKIE_KEY.checkoutVendorMap};`);
     },
   );
 });

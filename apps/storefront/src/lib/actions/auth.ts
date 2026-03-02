@@ -15,6 +15,7 @@ export async function handleLogout() {
   cookieStore.delete(COOKIE_KEY.accessToken);
   cookieStore.delete(COOKIE_KEY.refreshToken);
   cookieStore.delete(COOKIE_KEY.checkoutId);
+  cookieStore.delete(COOKIE_KEY.checkoutVendorMap);
 
   storefrontLogger.debug("Cleared auth and checkout cookies after logout.");
 }

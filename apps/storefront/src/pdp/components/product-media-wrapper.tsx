@@ -3,8 +3,7 @@ import {
   type ProductAvailability,
 } from "@nimara/domain/objects/Product";
 
-import { CACHE_TTL } from "@/config";
-import { getCheckoutId } from "@/lib/actions/cart";
+import { getSessionCart } from "@/lib/marketplace/session-cart";
 import { getCurrentRegion } from "@/regions/server";
 import { getCartService } from "@/services/cart";
 
@@ -21,27 +20,15 @@ export const ProductMediaWrapper = async ({
   availability,
   showAs,
 }: ProductMediaWrapperProps) => {
-  const [region, checkoutId, cartService] = await Promise.all([
+  const [region, cartService] = await Promise.all([
     getCurrentRegion(),
-    getCheckoutId(),
     getCartService(),
   ]);
 
-  const resultCartGet = checkoutId
-    ? await cartService.cartGet({
-        cartId: checkoutId,
-        languageCode: region.language.code,
-        countryCode: region.market.countryCode,
-        options: {
-          next: {
-            revalidate: CACHE_TTL.cart,
-            tags: [`CHECKOUT:${checkoutId}`],
-          },
-        },
-      })
-    : null;
-
-  const cart = resultCartGet?.ok ? resultCartGet.data : null;
+  const sessionCart = await getSessionCart({
+    cartService,
+    region,
+  });
 
   return (
     <ProductMedia
@@ -49,7 +36,7 @@ export const ProductMediaWrapper = async ({
       media={product.images}
       variants={product.variants}
       availability={availability}
-      cart={cart}
+      cart={sessionCart?.cart ?? null}
       showAs={showAs}
     />
   );
