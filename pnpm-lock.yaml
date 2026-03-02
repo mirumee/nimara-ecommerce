@@ -236,6 +236,58 @@ importers:
         specifier: ^3.2.0
         version: 3.2.4(@types/debug@4.1.12)(@types/node@22.19.0)(jiti@1.21.7)(terser@5.44.0)(yaml@2.8.1)
 
+  apps/poc-stripe-marketplace:
+    dependencies:
+      '@aws-sdk/client-secrets-manager':
+        specifier: ^3.700.0
+        version: 3.981.0
+      next:
+        specifier: 15.5.9
+        version: 15.5.9(@babel/core@7.28.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.56.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      react:
+        specifier: 19.2.0
+        version: 19.2.0
+      react-dom:
+        specifier: 19.2.0
+        version: 19.2.0(react@19.2.0)
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+    devDependencies:
+      '@types/node':
+        specifier: ^22.19.0
+        version: 22.19.0
+      '@types/react':
+        specifier: 19.2.2
+        version: 19.2.2
+      '@types/react-dom':
+        specifier: 19.2.2
+        version: 19.2.2(@types/react@19.2.2)
+      dotenv:
+        specifier: 16.6.1
+        version: 16.6.1
+      eslint:
+        specifier: ^8.57.0
+        version: 8.57.1
+      eslint-config-custom:
+        specifier: workspace:*
+        version: link:../../packages/eslint-config-custom
+      eslint-config-next:
+        specifier: 15.5.6
+        version: 15.5.6(eslint@8.57.1)(typescript@5.9.3)
+      tsconfig:
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vite-tsconfig-paths:
+        specifier: 5.1.4
+        version: 5.1.4(typescript@5.9.3)(vite@7.0.5(@types/node@22.19.0)(jiti@2.6.1)(terser@5.44.0)(yaml@2.8.1))
+      vitest:
+        specifier: 3.2.4
+        version: 3.2.4(@types/debug@4.1.12)(@types/node@22.19.0)(jiti@2.6.1)(terser@5.44.0)(yaml@2.8.1)
+
   apps/storefront:
     dependencies:
       '@formatjs/intl-localematcher':
