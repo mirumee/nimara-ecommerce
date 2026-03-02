@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@nimara/ui/components/select";
 
+import { updateVendorStatusAndNotify } from "@/app/app/_actions/update-vendor-status";
 import {
   Table,
   TableBody,
@@ -66,14 +67,6 @@ function getAttributeValue(
   }
 
   return attr.choiceValue?.name ?? null;
-}
-
-function getAttributeId(profile: VendorProfile, slug: string): string | null {
-  const attr = profile.assignedAttributes?.find(
-    (a) => a.attribute?.slug === slug,
-  );
-
-  return attr?.attribute?.id ?? null;
 }
 
 function statusTextColor(value: string): string {
@@ -229,42 +222,38 @@ export function AppVendorsTab({ isAuthenticated, isLoading }: Props) {
     vendor: VendorProfile,
     newValue: string,
   ) => {
-    const attributeId = getAttributeId(vendor, "vendor-status");
-
-    if (!attributeId) {
-      return;
-    }
-
     setUpdatingStatusFor(vendor.id);
 
-    const result = await vendorsService.updateVendorStatus(
-      vendor.id,
-      attributeId,
-      newValue,
-      null,
-    );
+    const result = await updateVendorStatusAndNotify({
+      vendor,
+      newStatus: newValue,
+    });
 
     setUpdatingStatusFor(null);
 
-    if (result.ok && !result.data.pageUpdate.errors.length) {
-      setVendors((prev) =>
-        prev.map((v) =>
-          v.id === vendor.id
-            ? {
-                ...v,
-                assignedAttributes: v.assignedAttributes.map((a) =>
-                  a.attribute.slug === "vendor-status"
-                    ? {
-                        ...a,
-                        choiceValue: { name: newValue },
-                      }
-                    : a,
-                ),
-              }
-            : v,
-        ),
-      );
+    if (!result.ok) {
+      setError("Failed to update vendor status");
+
+      return;
     }
+
+    setVendors((prev) =>
+      prev.map((v) =>
+        v.id === vendor.id
+          ? {
+              ...v,
+              assignedAttributes: v.assignedAttributes.map((a) =>
+                a.attribute.slug === "vendor-status"
+                  ? {
+                      ...a,
+                      choiceValue: { name: newValue },
+                    }
+                  : a,
+              ),
+            }
+          : v,
+      ),
+    );
   };
 
   const displayName = (v: VendorProfile) =>

@@ -81,6 +81,13 @@ Key environment variables for the marketplace:
 | ------------------------------ | -------------------------------------------------------------------- |
 | `NEXT_PUBLIC_SALEOR_API_URL`   | Saleor GraphQL API endpoint                                          |
 | `AWS_SECRETS_MANAGER_ENDPOINT` | AWS Secrets Manager endpoint (for local development with LocalStack) |
+| `MARKETPLACE_SMTP_HOST`        | SMTP host used for sending marketplace emails                        |
+| `MARKETPLACE_SMTP_PORT`        | SMTP port (default: `587`)                                           |
+| `MARKETPLACE_SMTP_USER`        | SMTP username (optional, if your SMTP server requires auth)          |
+| `MARKETPLACE_SMTP_PASSWORD`    | SMTP password (optional, if your SMTP server requires auth)          |
+| `MARKETPLACE_SMTP_SECURE`      | Use TLS from the start (default: `false`)                            |
+| `MARKETPLACE_EMAIL_FROM`       | From address, e.g. `"Nimara Marketplace <no-reply@example.com>"`     |
+| `MARKETPLACE_SUPERADMIN_EMAIL` | Email that receives new vendor registration notifications            |
 
 ## Deployment
 
@@ -103,6 +110,13 @@ Set **Build Command** to `turbo run build --filter=marketplace` and **Install Co
 Add the required environment variables in Vercel:
 
 - `NEXT_PUBLIC_SALEOR_API_URL`
+- `MARKETPLACE_SMTP_HOST` (optional, required only to send emails)
+- `MARKETPLACE_SMTP_PORT` (optional)
+- `MARKETPLACE_SMTP_USER` (optional)
+- `MARKETPLACE_SMTP_PASSWORD` (optional)
+- `MARKETPLACE_SMTP_SECURE` (optional)
+- `MARKETPLACE_EMAIL_FROM` (optional, required only to send emails)
+- `MARKETPLACE_SUPERADMIN_EMAIL` (optional, required only to notify admin on registration)
 
 ### Deploy
 

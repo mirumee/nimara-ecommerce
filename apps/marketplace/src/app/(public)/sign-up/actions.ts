@@ -19,6 +19,7 @@ import {
   VendorPageDeleteDocument,
   VendorPageTypeDocument,
 } from "@/graphql/generated/client";
+import { sendNewVendorRegisteredEmailToSuperadmin } from "@/lib/email";
 import { executeGraphQL } from "@/lib/graphql/execute";
 import { getAppConfig } from "@/lib/saleor/app-config";
 import { METADATA_KEYS } from "@/lib/saleor/consts";
@@ -114,6 +115,7 @@ async function safeRollback(opts: {
 
   // Best-effort rollback (ignore errors)
   if (customerId) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     await saleor.execute(CustomerDeleteMutationDocument, {
       operationName: "CustomerDeleteMutation",
       variables: { id: customerId },
@@ -240,7 +242,7 @@ export async function registerAccount(input: {
 
   const uniqueSuffix = crypto.randomUUID().slice(0, 8);
 
-  const vendorSlug = `vendor-${slugify(vendorName)}-${uniqueSuffix}`;
+  const vendorSlug = `vendor-${slugify(vendorName)}`;
 
   const pageInput: any = {
     title: vendorName,
@@ -515,6 +517,7 @@ export async function registerAccount(input: {
 
     if (hiddenChannels.length > 0) {
       const channelListingResult = await saleor.execute(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         CollectionChannelListingUpdateMutationDocument,
         {
           operationName: "CollectionChannelListingUpdateMutation",
@@ -611,6 +614,22 @@ export async function registerAccount(input: {
       errors: metaErrors,
       message: firstSaleorErrorMessage(metaErrors),
     });
+  }
+
+  try {
+    await sendNewVendorRegisteredEmailToSuperadmin({
+      vendorName,
+      companyName,
+      vatId,
+      contactEmail: input.email,
+      vendorId: vendorPageId,
+      vendorSlug,
+    });
+  } catch (error) {
+    console.error(
+      "[sign-up] Failed to send new vendor registration email",
+      error,
+    );
   }
 
   return resultRegister;

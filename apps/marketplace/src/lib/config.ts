@@ -1,5 +1,25 @@
 import { z } from "zod";
 
+const booleanFromEnv = z.preprocess((value) => {
+  if (typeof value === "boolean") {
+    return value;
+  }
+
+  if (typeof value === "string") {
+    const normalized = value.trim().toLowerCase();
+
+    if (["true", "1", "yes", "on"].includes(normalized)) {
+      return true;
+    }
+
+    if (["false", "0", "no", "off", ""].includes(normalized)) {
+      return false;
+    }
+  }
+
+  return value;
+}, z.boolean());
+
 const envSchema = z.object({
   MARKETPLACE_NODE_ENV: z
     .enum(["development", "production", "test"])
@@ -38,6 +58,15 @@ const envSchema = z.object({
 
   // Development
   NEXT_PUBLIC_SALEOR_UI_APP_TOKEN: z.string().optional(),
+
+  // Email / SMTP (provider-agnostic)
+  MARKETPLACE_SMTP_HOST: z.string().optional(),
+  MARKETPLACE_SMTP_PORT: z.coerce.number().default(587),
+  MARKETPLACE_SMTP_USER: z.string().optional(),
+  MARKETPLACE_SMTP_PASSWORD: z.string().optional(),
+  MARKETPLACE_SMTP_SECURE: booleanFromEnv.default(false),
+  MARKETPLACE_EMAIL_FROM: z.string().optional(),
+  MARKETPLACE_SUPERADMIN_EMAIL: z.string().optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;
@@ -83,5 +112,16 @@ export const config = {
   urls: {
     vendor: env.NEXT_PUBLIC_MARKETPLACE_VENDOR_URL,
     storefront: env.NEXT_PUBLIC_MARKETPLACE_STOREFRONT_URL,
+  },
+  email: {
+    smtp: {
+      host: env.MARKETPLACE_SMTP_HOST,
+      port: env.MARKETPLACE_SMTP_PORT,
+      secure: env.MARKETPLACE_SMTP_SECURE,
+      user: env.MARKETPLACE_SMTP_USER,
+      password: env.MARKETPLACE_SMTP_PASSWORD,
+    },
+    from: env.MARKETPLACE_EMAIL_FROM,
+    superadminEmail: env.MARKETPLACE_SUPERADMIN_EMAIL,
   },
 } as const;
