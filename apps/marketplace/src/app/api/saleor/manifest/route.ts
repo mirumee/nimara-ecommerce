@@ -81,6 +81,9 @@ export async function GET(request: NextRequest) {
       order {
         id
         number
+        user {
+          id
+        }
         lines {
           id
           productName

@@ -1,5 +1,5 @@
-query CustomerByEmail($search: String!) {
-  customers(first: 20, search: $search) {
+query CustomerByEmail($search: String!, $ids: [ID!]) {
+  customers(first: 20, filter: { search: $search, ids: $ids }) {
     edges {
       node {
         id

@@ -32851,9 +32851,71 @@ export type CustomerByEmail_Query = {
 
 export type CustomerByEmailVariables = Exact<{
   search: Scalars["String"]["input"];
+  ids?: InputMaybe<Array<Scalars["ID"]["input"]> | Scalars["ID"]["input"]>;
 }>;
 
 export type CustomerByEmail = CustomerByEmail_Query;
+
+export type CustomerOrders_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_total_TaxedMoney_gross_Money =
+  { amount: number; currency: string };
+
+export type CustomerOrders_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_total_TaxedMoney =
+  {
+    gross: CustomerOrders_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_total_TaxedMoney_gross_Money;
+  };
+
+export type CustomerOrders_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order =
+  {
+    id: string;
+    number: string;
+    created: string;
+    statusDisplay: string;
+    paymentStatusDisplay: string;
+    total: CustomerOrders_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_total_TaxedMoney;
+  };
+
+export type CustomerOrders_orders_OrderCountableConnection_edges_OrderCountableEdge =
+  {
+    node: CustomerOrders_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order;
+  };
+
+export type CustomerOrders_orders_OrderCountableConnection = {
+  edges: Array<CustomerOrders_orders_OrderCountableConnection_edges_OrderCountableEdge>;
+};
+
+export type CustomerOrders_Query = {
+  orders: CustomerOrders_orders_OrderCountableConnection | null;
+};
+
+export type CustomerOrdersVariables = Exact<{
+  customer: Scalars["String"]["input"];
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+}>;
+
+export type CustomerOrders = CustomerOrders_Query;
+
+export type CustomersByIds_customers_UserCountableConnection_edges_UserCountableEdge_node_User =
+  { id: string; firstName: string; lastName: string; email: string };
+
+export type CustomersByIds_customers_UserCountableConnection_edges_UserCountableEdge =
+  {
+    node: CustomersByIds_customers_UserCountableConnection_edges_UserCountableEdge_node_User;
+  };
+
+export type CustomersByIds_customers_UserCountableConnection = {
+  edges: Array<CustomersByIds_customers_UserCountableConnection_edges_UserCountableEdge>;
+};
+
+export type CustomersByIds_Query = {
+  customers: CustomersByIds_customers_UserCountableConnection | null;
+};
+
+export type CustomersByIdsVariables = Exact<{
+  ids: Array<Scalars["ID"]["input"]> | Scalars["ID"]["input"];
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+}>;
+
+export type CustomersByIds = CustomersByIds_Query;
 
 export type DraftOrdersList_draftOrders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_total_TaxedMoney_gross_Money =
   { amount: number; currency: string };
@@ -33233,7 +33295,7 @@ export type OrdersList_orders_OrderCountableConnection_edges_OrderCountableEdge_
   };
 
 export type OrdersList_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_user_User =
-  { email: string; firstName: string; lastName: string };
+  { id: string; email: string; firstName: string; lastName: string };
 
 export type OrdersList_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order_shippingAddress_Address_country_CountryDisplay =
   { country: string };
@@ -34068,6 +34130,26 @@ export type ProductsVariables = Exact<{
 }>;
 
 export type Products = Products_Query;
+
+export type VendorCustomerIds_page_Page_metadata_MetadataItem = {
+  key: string;
+  value: string;
+};
+
+export type VendorCustomerIds_page_Page = {
+  id: string;
+  metadata: Array<VendorCustomerIds_page_Page_metadata_MetadataItem>;
+};
+
+export type VendorCustomerIds_Query = {
+  page: VendorCustomerIds_page_Page | null;
+};
+
+export type VendorCustomerIdsVariables = Exact<{
+  id: Scalars["ID"]["input"];
+}>;
+
+export type VendorCustomerIds = VendorCustomerIds_Query;
 
 export type VendorPageStatus_page_Page_attributes_SelectedAttribute_attribute_Attribute =
   { slug: string | null };
@@ -35284,8 +35366,8 @@ export const CollectionsListDocument = new TypedDocumentString(`
   CollectionsListVariables
 >;
 export const CustomerByEmailDocument = new TypedDocumentString(`
-    query CustomerByEmail($search: String!) {
-  customers(first: 20, search: $search) {
+    query CustomerByEmail($search: String!, $ids: [ID!]) {
+  customers(first: 20, filter: {search: $search, ids: $ids}) {
     edges {
       node {
         id
@@ -35350,6 +35432,47 @@ export const CustomerByEmailDocument = new TypedDocumentString(`
     `) as unknown as TypedDocumentString<
   CustomerByEmail,
   CustomerByEmailVariables
+>;
+export const CustomerOrdersDocument = new TypedDocumentString(`
+    query CustomerOrders($customer: String!, $first: Int) {
+  orders(first: $first, filter: {customer: $customer}) {
+    edges {
+      node {
+        id
+        number
+        created
+        statusDisplay
+        paymentStatusDisplay
+        total {
+          gross {
+            amount
+            currency
+          }
+        }
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  CustomerOrders,
+  CustomerOrdersVariables
+>;
+export const CustomersByIdsDocument = new TypedDocumentString(`
+    query CustomersByIds($ids: [ID!]!, $first: Int) {
+  customers(first: $first, filter: {ids: $ids}) {
+    edges {
+      node {
+        id
+        firstName
+        lastName
+        email
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  CustomersByIds,
+  CustomersByIdsVariables
 >;
 export const DraftOrdersListDocument = new TypedDocumentString(`
     query DraftOrdersList($first: Int, $last: Int, $after: String, $before: String, $filter: OrderDraftFilterInput, $sortBy: OrderSortingInput) {
@@ -35655,6 +35778,7 @@ export const OrdersListDocument = new TypedDocumentString(`
           }
         }
         user {
+          id
           email
           firstName
           lastName
@@ -36178,6 +36302,20 @@ export const ProductsDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<Products, ProductsVariables>;
+export const VendorCustomerIdsDocument = new TypedDocumentString(`
+    query VendorCustomerIds($id: ID!) {
+  page(id: $id) {
+    id
+    metadata {
+      key
+      value
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  VendorCustomerIds,
+  VendorCustomerIdsVariables
+>;
 export const VendorPageStatusDocument = new TypedDocumentString(`
     query VendorPageStatus($id: ID!) {
   page(id: $id) {

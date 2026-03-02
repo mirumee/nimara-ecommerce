@@ -30,6 +30,7 @@ query OrdersList(
           }
         }
         user {
+          id
           email
           firstName
           lastName

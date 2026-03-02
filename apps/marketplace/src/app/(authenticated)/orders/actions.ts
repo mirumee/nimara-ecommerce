@@ -41,11 +41,24 @@ import {
 } from "@/graphql/generated/client";
 import { getServerAuthToken } from "@/lib/auth/server";
 import { executeGraphQL } from "@/lib/graphql/execute";
-import { productsService } from "@/services";
+import { productsService, vendorCustomersService } from "@/services";
 
 export async function searchCustomers(search: string) {
   const token = await getServerAuthToken();
-  const variables: CustomerByEmailVariables = { search };
+  const customerIds = await vendorCustomersService.getVendorCustomerIds(token);
+
+  if (customerIds.length === 0) {
+    const variables: CustomerByEmailVariables = { ids: [], search };
+
+    return executeGraphQL(
+      CustomerByEmailDocument,
+      "CustomerByEmailQuery",
+      variables,
+      token,
+    );
+  }
+
+  const variables: CustomerByEmailVariables = { ids: customerIds, search };
 
   return executeGraphQL(
     CustomerByEmailDocument,
