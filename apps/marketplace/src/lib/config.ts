@@ -22,6 +22,7 @@ const envSchema = z.object({
     .default(`${MARKETPLACE_STOREFRONT_URL},${MARKETPLACE_VENDOR_URL}`),
   LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
 
+  // TODO: Get rid of this in favor of using the Vercel Edge/KV storage.
   // AWS
   AWS_ACCESS_KEY_ID: z.string().default("test"),
   AWS_SECRET_ACCESS_KEY: z.string().default("test"),
