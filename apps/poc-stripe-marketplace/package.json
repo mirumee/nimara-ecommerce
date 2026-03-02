@@ -1,0 +1,38 @@
+{
+  "name": "poc-stripe-marketplace",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev -p 3002",
+    "build": "next build",
+    "start": "next start -p 3002",
+    "lint": "next lint --dir src",
+    "test": "vitest run",
+    "test:watch": "vitest --watch",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@aws-sdk/client-secrets-manager": "^3.700.0",
+    "next": "15.5.9",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.0",
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.2",
+    "dotenv": "16.6.1",
+    "eslint": "^8.57.0",
+    "eslint-config-custom": "workspace:*",
+    "eslint-config-next": "15.5.6",
+    "tsconfig": "workspace:*",
+    "typescript": "^5.9.3",
+    "vite-tsconfig-paths": "5.1.4",
+    "vitest": "3.2.4"
+  },
+  "engines": {
+    "node": "22.x"
+  }
+}
