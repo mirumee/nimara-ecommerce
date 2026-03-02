@@ -88,7 +88,7 @@ export function isTokenExpired(token: string): boolean {
  */
 export async function validateToken(
   token: string,
-  jwksUri?: string,
+  _jwksUri?: string,
 ): Promise<TokenValidationResult> {
   try {
     const payload = decodeToken(token);

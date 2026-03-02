@@ -2,8 +2,8 @@
 
 import {
   ArrowLeft,
-  CreditCard,
   ChevronDown,
+  CreditCard,
   MoreHorizontal,
 } from "lucide-react";
 import Image from "next/image";
@@ -69,8 +69,8 @@ import {
 import {
   addOrderDiscount,
   addOrderLines,
-  deleteOrderDiscount,
   deleteDraftOrder,
+  deleteOrderDiscount,
   deleteOrderLine,
   finalizeDraftOrder,
   getChannelShippingMethods,
@@ -163,6 +163,7 @@ function formatOrderErrors(
         .filter(Boolean)
         .join(" ");
       const msg = e.message ?? null;
+
       return [prefix, msg].filter(Boolean).join(" ");
     })
     .filter(Boolean)
@@ -174,6 +175,7 @@ function formatOrderErrors(
 function normalizeCountryCode(code: string): string {
   const upper = code.trim().toUpperCase();
   const map: Record<string, string> = { USA: "US", UK: "GB" };
+
   if (map[upper]) {
     return map[upper];
   }
@@ -202,6 +204,7 @@ function orderAddressToDraftAddress(
 
 function draftAddressToAddressInput(address: DraftAddress): AddressInput {
   const country = normalizeCountryCode(address.countryCode);
+
   return {
     firstName: address.firstName,
     lastName: address.lastName,
@@ -741,12 +744,14 @@ export function OrderDetailClient({
 
   const handleMarkAsPaid = async () => {
     const reference = transactionReference.trim();
+
     if (!reference) {
       toast({
         title: "Transaction reference required",
         description: "Enter transaction reference before marking as paid.",
         variant: "destructive",
       });
+
       return;
     }
 
@@ -763,16 +768,19 @@ export function OrderDetailClient({
           description: result.errors.map((e) => e.message).join(", "),
           variant: "destructive",
         });
+
         return;
       }
 
       const errors = result.data.orderMarkAsPaid?.errors ?? [];
+
       if (errors.length) {
         toast({
           title: "Mark as paid failed",
           description: formatOrderErrors(errors),
           variant: "destructive",
         });
+
         return;
       }
 
@@ -838,6 +846,7 @@ export function OrderDetailClient({
         description: result.errors.map((e) => e.message).join(", "),
         variant: "destructive",
       });
+
       return;
     }
     const errors = result.data.draftOrderUpdate?.errors ?? [];
@@ -848,6 +857,7 @@ export function OrderDetailClient({
         description: formatOrderErrors(errors),
         variant: "destructive",
       });
+
       return;
     }
 
@@ -857,6 +867,7 @@ export function OrderDetailClient({
 
   const handleSaveShippingAddress = async (next: DraftAddress) => {
     const input = draftAddressToAddressInput(next);
+
     if (isDraft) {
       const result = await updateDraftOrder(order.id, {
         shippingAddress: input,
@@ -868,6 +879,7 @@ export function OrderDetailClient({
           description: result.errors.map((e) => e.message).join(", "),
           variant: "destructive",
         });
+
         return;
       }
 
@@ -879,10 +891,12 @@ export function OrderDetailClient({
           description: formatOrderErrors(errors),
           variant: "destructive",
         });
+
         return;
       }
 
       router.refresh();
+
       return;
     }
 
@@ -894,6 +908,7 @@ export function OrderDetailClient({
         description: result.errors.map((e) => e.message).join(", "),
         variant: "destructive",
       });
+
       return;
     }
 
@@ -905,6 +920,7 @@ export function OrderDetailClient({
         description: formatOrderErrors(errors),
         variant: "destructive",
       });
+
       return;
     }
 
@@ -913,6 +929,7 @@ export function OrderDetailClient({
 
   const handleSaveBillingAddress = async (next: DraftAddress) => {
     const input = draftAddressToAddressInput(next);
+
     if (isDraft) {
       const result = await updateDraftOrder(order.id, {
         billingAddress: input,
@@ -924,6 +941,7 @@ export function OrderDetailClient({
           description: result.errors.map((e) => e.message).join(", "),
           variant: "destructive",
         });
+
         return;
       }
 
@@ -935,10 +953,12 @@ export function OrderDetailClient({
           description: formatOrderErrors(errors),
           variant: "destructive",
         });
+
         return;
       }
 
       router.refresh();
+
       return;
     }
 
@@ -950,6 +970,7 @@ export function OrderDetailClient({
         description: result.errors.map((e) => e.message).join(", "),
         variant: "destructive",
       });
+
       return;
     }
 
@@ -961,6 +982,7 @@ export function OrderDetailClient({
         description: formatOrderErrors(errors),
         variant: "destructive",
       });
+
       return;
     }
 

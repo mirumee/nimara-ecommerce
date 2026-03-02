@@ -38,7 +38,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { OrderSortField } from "@/graphql/generated/client";
+import type { OrderSortField, OrderStatus } from "@/graphql/generated/client";
 import { useDebounce } from "@/hooks/use-debounce";
 import { PRESET_DATE_RANGES } from "@/lib/orders-utils";
 import { formatDateTime, formatPrice } from "@/lib/utils";
@@ -356,7 +356,7 @@ export function DraftsListClient({ drafts, pageInfo }: DraftsListClientProps) {
                       )}
                     </TableCell>
                     <TableCell>
-                      <ColorBadge label={draft.status} />
+                      <ColorBadge label={draft.status as OrderStatus} />
                     </TableCell>
                   </TableRow>
                 ))

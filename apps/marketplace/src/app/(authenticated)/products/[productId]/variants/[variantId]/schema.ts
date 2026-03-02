@@ -1,11 +1,5 @@
 import { z } from "zod";
 
-const selectOptionSchema = z.object({
-  value: z.string(),
-  label: z.string(),
-  disabled: z.boolean().optional(),
-});
-
 export const variantUpdateSchema = z.object({
   name: z.string().min(1, "Required"),
   sku: z.string().optional().default(""),

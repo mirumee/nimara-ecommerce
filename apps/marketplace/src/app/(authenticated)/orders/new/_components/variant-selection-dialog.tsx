@@ -32,7 +32,7 @@ export type VariantLineDraft = {
 type ProductHit = {
   id: string;
   name: string;
-  thumbnail: { url: string; alt: string | null } | null;
+  thumbnail: { alt: string | null; url: string } | null;
 };
 
 type VariantRow = {
@@ -45,11 +45,11 @@ type VariantRow = {
 type VariantMeta = {
   id: string;
   name: string;
-  sku: string;
-  unitPrice: { amount: number; currency: string } | null;
   productId?: string;
   productName?: string;
+  sku: string;
   thumbnail?: { alt: string | null; url: string } | null;
+  unitPrice: { amount: number; currency: string } | null;
 };
 
 export function VariantSelectionDialog({
@@ -60,8 +60,8 @@ export function VariantSelectionDialog({
   onSave,
   open,
 }: {
-  channelName?: string;
   channelId?: string;
+  channelName?: string;
   initialLines: VariantLineDraft[];
   onOpenChange: (open: boolean) => void;
   onSave: (lines: VariantLineDraft[]) => void;
@@ -101,8 +101,10 @@ export function VariantSelectionDialog({
         first: 50,
         search: searchTerm?.trim() || undefined,
       });
+
       if (!res.ok) {
         setProducts([]);
+
         return;
       }
 
@@ -126,9 +128,12 @@ export function VariantSelectionDialog({
   useEffect(() => {
     if (!open) {
       prevOpenRef.current = false;
+
       return;
     }
-    if (prevOpenRef.current) return;
+    if (prevOpenRef.current) {
+      return;
+    }
     prevOpenRef.current = true;
 
     setSearch("");
@@ -139,6 +144,7 @@ export function VariantSelectionDialog({
     setQuantities(
       initialLines.reduce<Record<string, number>>((acc, l) => {
         acc[l.variantId] = Math.max(1, l.quantity ?? 1);
+
         return acc;
       }, {}),
     );
@@ -152,6 +158,7 @@ export function VariantSelectionDialog({
           productName: l.productName,
           thumbnail: l.thumbnail ?? null,
         };
+
         return acc;
       }, {}),
     );
@@ -161,15 +168,23 @@ export function VariantSelectionDialog({
 
   // Prefetch variants + prices for all products shown in the list.
   useEffect(() => {
-    if (!open) return;
-    if (products.length === 0) return;
+    if (!open) {
+      return;
+    }
+    if (products.length === 0) {
+      return;
+    }
 
     const seq = ++variantsFetchSeq.current;
     let cancelled = false;
 
     setLoadingVariantsByProductId(() => {
       const next: Record<string, boolean> = {};
-      for (const p of products) next[p.id] = true;
+
+      for (const p of products) {
+        next[p.id] = true;
+      }
+
       return next;
     });
 
@@ -181,9 +196,11 @@ export function VariantSelectionDialog({
     const worker = async () => {
       while (idx < products.length) {
         const product = products[idx];
+
         idx += 1;
 
         const res = await getProductDetail(product.id);
+
         if (!res.ok || !res.data.product) {
           variantsUpdates[product.id] = [];
           continue;
@@ -200,10 +217,12 @@ export function VariantSelectionDialog({
               ? v.channelListings?.find((cl) => cl.channel.id === channelId)
                   ?.price
               : null;
+
             if (byChannel) {
               return { amount: byChannel.amount, currency: byChannel.currency };
             }
             const gross = v.pricing?.price?.gross ?? null;
+
             return gross
               ? { amount: gross.amount, currency: gross.currency }
               : null;
@@ -231,14 +250,22 @@ export function VariantSelectionDialog({
         worker(),
       ),
     ).then(() => {
-      if (cancelled) return;
-      if (seq !== variantsFetchSeq.current) return;
+      if (cancelled) {
+        return;
+      }
+      if (seq !== variantsFetchSeq.current) {
+        return;
+      }
 
       setVariantsByProductId(variantsUpdates);
       setMeta((prev) => ({ ...prev, ...metaUpdates }));
       setLoadingVariantsByProductId(() => {
         const next: Record<string, boolean> = {};
-        for (const p of products) next[p.id] = false;
+
+        for (const p of products) {
+          next[p.id] = false;
+        }
+
         return next;
       });
     });
@@ -251,6 +278,7 @@ export function VariantSelectionDialog({
   const toggleVariant = (variantId: string) => {
     setSelectedVariantIds((prev) => {
       const next = new Set(prev);
+
       if (next.has(variantId)) {
         next.delete(variantId);
       } else {
@@ -260,6 +288,7 @@ export function VariantSelectionDialog({
           [variantId]: qPrev[variantId] ?? 1,
         }));
       }
+
       return next;
     });
   };
@@ -275,31 +304,39 @@ export function VariantSelectionDialog({
 
     setExpandedProductIds((prev) => {
       const next = new Set(prev);
+
       if (isCurrentlyExpanded) {
         next.delete(product.id);
       } else {
         next.add(product.id);
       }
+
       return next;
     });
   };
 
   const toggleProductSelection = (productId: string) => {
     const vs = variantsByProductId[productId] ?? [];
+
     if (vs.length === 0) {
       return;
     }
     const allSelected = vs.every((v) => selectedVariantIds.has(v.id));
+
     setSelectedVariantIds((prev) => {
       const next = new Set(prev);
+
       if (allSelected) {
-        for (const v of vs) next.delete(v.id);
+        for (const v of vs) {
+          next.delete(v.id);
+        }
       } else {
         for (const v of vs) {
           next.add(v.id);
           setQuantities((qPrev) => ({ ...qPrev, [v.id]: qPrev[v.id] ?? 1 }));
         }
       }
+
       return next;
     });
   };
@@ -307,9 +344,13 @@ export function VariantSelectionDialog({
   const productSelectionState = useCallback(
     (productId: string): { checked: boolean; indeterminate: boolean } => {
       const vs = variantsByProductId[productId] ?? [];
-      if (vs.length === 0) return { checked: false, indeterminate: false };
+
+      if (vs.length === 0) {
+        return { checked: false, indeterminate: false };
+      }
       const some = vs.some((v) => selectedVariantIds.has(v.id));
       const all = vs.every((v) => selectedVariantIds.has(v.id));
+
       return { checked: all, indeterminate: some && !all };
     },
     [selectedVariantIds, variantsByProductId],
@@ -367,7 +408,9 @@ export function VariantSelectionDialog({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === "Enter") handleSearch();
+                if (e.key === "Enter") {
+                  handleSearch();
+                }
               }}
             />
           </div>
@@ -470,6 +513,7 @@ export function VariantSelectionDialog({
                                 );
                                 const qty = quantities[variant.id] ?? 1;
                                 const canSelect = Boolean(variant.unitPrice);
+
                                 return (
                                   <div
                                     key={variant.id}
@@ -479,7 +523,9 @@ export function VariantSelectionDialog({
                                       type="button"
                                       className="flex min-w-0 flex-1 items-center gap-3 text-left"
                                       onClick={() => {
-                                        if (!canSelect) return;
+                                        if (!canSelect) {
+                                          return;
+                                        }
                                         toggleVariant(variant.id);
                                       }}
                                     >
@@ -523,6 +569,7 @@ export function VariantSelectionDialog({
                                             e.target.value,
                                             10,
                                           );
+
                                           setVariantQty(
                                             variant.id,
                                             Number.isFinite(next) && next > 0
@@ -570,8 +617,8 @@ function ProductCheckbox({
   onChange,
 }: {
   checked: boolean;
-  indeterminate: boolean;
   disabled?: boolean;
+  indeterminate: boolean;
   onChange: () => void;
 }) {
   const ref = useRef<HTMLInputElement>(null);

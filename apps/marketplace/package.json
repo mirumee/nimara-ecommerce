@@ -1,4 +1,7 @@
 {
+  "engines": {
+    "node": "22.x"
+  },
   "dependencies": {
     "@aws-sdk/client-secrets-manager": "^3.700.0",
     "@graphql-tools/delegate": "^10.2.9",
@@ -19,15 +22,15 @@
     "clsx": "^2.1.1",
     "graphql": "^16.10.0",
     "graphql-request": "^7.3.1",
-    "graphql-yoga": "^5.12.2",
+    "graphql-yoga": "^5.18.0",
     "jose": "^6.1.0",
     "lucide-react": "^0.544.0",
     "next": "^15.3.3",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "react-hook-form": "^7.66.0",
     "tailwind-merge": "^2.6.0",
-    "zod": "^3.25.46"
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
@@ -41,7 +44,7 @@
     "tailwindcss": "^3.4.18",
     "tailwindcss-animate": "^1.0.7",
     "tsconfig": "workspace:*",
-    "typescript": "^5.7.0",
+    "typescript": "^5.9.3",
     "vitest": "^3.2.0"
   },
   "name": "marketplace",

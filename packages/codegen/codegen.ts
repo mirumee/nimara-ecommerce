@@ -60,7 +60,7 @@ const singleFileConfig = {
   plugins: [
     {
       add: {
-        content: "/* eslint-disable */\n",
+        content: "/* eslint-disable */\n// @ts-nocheck - Generated file with complex recursive types can cause TS stack overflow during type checking\n",
       },
     },
     "typescript",

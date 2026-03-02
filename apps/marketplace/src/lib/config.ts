@@ -1,14 +1,25 @@
 import { z } from "zod";
 
+// Marketplace Storefront URL is the URL of the marketplace storefront app. It is used to build the storefront URL.
+// It is set by the Vercel environment variable VERCEL_URL.
+// If VERCEL_URL is not set, it defaults to http://localhost:3000.
+const MARKETPLACE_STOREFRONT_URL = process.env.NEXT_PUBLIC_MARKETPLACE_STOREFRONT_URL ?? "http://localhost:3000";
+
+// Marketplace URL is the URL of the marketplace app. It is used to build the GraphQL endpoint and the storefront URL.
+// It is set by the Vercel environment variable VERCEL_URL (just the domain name, without protocol)
+// Example: "nimara-marketplace.vercel.app"
+// If VERCEL_URL is not set, it defaults to http://localhost:3001.
+const MARKETPLACE_VENDOR_URL = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3001";
+
 const envSchema = z.object({
-  MARKETPLACE_NODE_ENV: z
-    .enum(["development", "production", "test"])
-    .default("development"),
+  ENVIRONMENT: z
+    .enum(["TEST", "LOCAL", "DEVELOPMENT", "PRODUCTION", "STAGING"])
+    .default("LOCAL"),
   MARKETPLACE_PORT: z.coerce.number().default(3001),
   MARKETPLACE_BASE_PATH: z.string().default(""),
   MARKETPLACE_CORS_ORIGINS: z
     .string()
-    .default("http://localhost:3000,http://localhost:3001"),
+    .default(`${MARKETPLACE_STOREFRONT_URL},${MARKETPLACE_VENDOR_URL}`),
   LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
 
   // AWS
@@ -26,15 +37,15 @@ const envSchema = z.object({
     .default("default-channel"),
   NEXT_PUBLIC_GRAPHQL_URL: z
     .string()
-    .default("http://localhost:3001/api/graphql"),
+    .default(`${MARKETPLACE_VENDOR_URL}/api/graphql`),
 
   // URLs
   NEXT_PUBLIC_MARKETPLACE_VENDOR_URL: z
     .string()
-    .default("http://localhost:3001"),
+    .default(MARKETPLACE_VENDOR_URL),
   NEXT_PUBLIC_MARKETPLACE_STOREFRONT_URL: z
     .string()
-    .default("http://localhost:3000"),
+    .default(MARKETPLACE_STOREFRONT_URL),
 
   // Development
   NEXT_PUBLIC_SALEOR_UI_APP_TOKEN: z.string().optional(),
@@ -59,9 +70,9 @@ function getEnv(): Env {
 export const env = getEnv();
 
 export const config = {
-  isDev: env.MARKETPLACE_NODE_ENV === "development",
-  isProd: env.MARKETPLACE_NODE_ENV === "production",
-  isTest: env.MARKETPLACE_NODE_ENV === "test",
+  isDev: env.ENVIRONMENT === "DEVELOPMENT",
+  isProd: env.ENVIRONMENT === "PRODUCTION",
+  isTest: process.env.NODE_ENV === "test",
   port: env.MARKETPLACE_PORT,
   basePath: env.MARKETPLACE_BASE_PATH,
   corsOrigins: env.MARKETPLACE_CORS_ORIGINS,
