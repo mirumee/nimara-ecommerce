@@ -17,6 +17,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@nimara/ui/components/card";
+import { useToast } from "@nimara/ui/hooks";
 
 import { InputField } from "@/components/fields/input-field";
 import { PasswordField } from "@/components/fields/password-field";
@@ -39,6 +40,7 @@ type SignUpFormData = z.infer<typeof signUpSchema>;
 
 export default function SignUpPage() {
   const router = useRouter();
+  const { toast } = useToast();
   const [success, setSuccess] = useState(false);
 
   const form = useForm<SignUpFormData>({
@@ -104,6 +106,12 @@ export default function SignUpPage() {
 
         return;
       }
+
+      toast({
+        title: "Account created",
+        description:
+          "Your account was created and will be verified by a site admin.",
+      });
 
       if (payload?.requiresConfirmation) {
         setSuccess(true);
