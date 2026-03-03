@@ -24,6 +24,7 @@ import {
 const AUTH_ACCESS_TOKEN_KEY = "auth_token";
 const AUTH_REFRESH_TOKEN_KEY = "refresh_token";
 const AUTH_CSRF_TOKEN_KEY = "csrf_token";
+const THROTTLED_ERROR_CODE = "THROTTLED";
 
 interface User {
   email: string;
@@ -63,6 +64,38 @@ type AppBridgeState = ReturnType<typeof useAppBridge>["appBridgeState"] | null;
 interface AuthProviderProps {
   appBridgeState?: AppBridgeState;
   children: ReactNode;
+}
+
+type AuthError = Error & { code?: string };
+
+function createAuthError(message: string, code?: string): AuthError {
+  const error = new Error(message) as AuthError;
+
+  if (code) {
+    error.code = code;
+  }
+
+  return error;
+}
+
+function isThrottledMessage(message: string | undefined): boolean {
+  if (!message) {
+    return false;
+  }
+
+  return /too many requests|throttl/i.test(message);
+}
+
+function isThrottledError(error: unknown): boolean {
+  if (!(error instanceof Error)) {
+    return false;
+  }
+
+  const authError = error as AuthError;
+
+  return (
+    authError.code === THROTTLED_ERROR_CODE || isThrottledMessage(error.message)
+  );
 }
 
 /** Wrapper that calls useAppBridge and passes to AuthProvider. Only use inside AppBridgeProvider. */
@@ -119,67 +152,10 @@ export function AuthProvider({
   // Fetch user data with given token
   const fetchUser = useCallback(async (accessToken: string) => {
     const saleorDomain = getSaleorDomainHeader();
-    const response = await fetch("/api/graphql", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-        ...saleorDomain,
-      },
-      body: JSON.stringify({
-        query: `
-            query Me {
-              me {
-                id
-                email
-                firstName
-                lastName
-                metadata {
-                  key
-                  value
-                }
-              }
-            }
-          `,
-      }),
-    });
 
-    const data = (await response.json()) as {
-      data?: {
-        me?: {
-          email?: string;
-          firstName?: string;
-          id: string;
-          lastName?: string;
-          metadata?: Array<{ key: string; value: string }>;
-        };
-      };
-      errors?: Array<{ message?: string }>;
-    };
-
-    if (data.errors?.length) {
-      throw new Error(data.errors[0]?.message || "Failed to fetch user");
-    }
-
-    if (data.data?.me) {
-      const me = data.data.me;
-
-      const metadata = Array.isArray(me.metadata) ? me.metadata : [];
-      const metadataMap = metadata.reduce<Record<string, string>>(
-        (acc, item) => {
-          if (item?.key) {
-            acc[item.key] = item.value;
-          }
-
-          return acc;
-        },
-        {},
-      );
-
-      const vendorPageId = metadataMap["vendor.id"] || "";
-
-      if (vendorPageId) {
-        const vendorResponse = await fetch("/api/graphql", {
+    for (let attempt = 1; attempt <= 3; attempt += 1) {
+      try {
+        const response = await fetch("/api/graphql", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -188,64 +164,210 @@ export function AuthProvider({
           },
           body: JSON.stringify({
             query: `
-              query VendorPageStatus($id: ID!) {
-                page(id: $id) {
+              query Me {
+                me {
                   id
-                  attributes {
-                    attribute { slug }
-                    values { name }
+                  email
+                  firstName
+                  lastName
+                  metadata {
+                    key
+                    value
                   }
                 }
               }
             `,
-            variables: { id: vendorPageId },
           }),
         });
 
-        const vendorData = (await vendorResponse.json()) as {
+        type MeResponse = {
           data?: {
-            page?: {
-              attributes?: Array<{
-                attribute?: { slug?: string | null } | null;
-                values?: Array<{ name?: string | null } | null> | null;
-              }> | null;
-            } | null;
+            me?: {
+              email?: string;
+              firstName?: string;
+              id: string;
+              lastName?: string;
+              metadata?: Array<{ key: string; value: string }>;
+            };
           };
-          errors?: Array<{ message?: unknown }>;
+          errors?: Array<{ message?: string }>;
+          message?: string;
+          type?: string;
         };
 
-        if (vendorData.errors?.length) {
-          const msg = vendorData.errors
-            .map((e) => (e.message != null ? String(e.message) : ""))
-            .filter(Boolean)
-            .join(", ");
+        let data: MeResponse | null = null;
 
-          throw new Error(msg || "Failed to fetch vendor status");
+        try {
+          data = (await response.json()) as MeResponse;
+        } catch {
+          data = null;
         }
 
-        const attrs = vendorData.data?.page?.attributes ?? [];
-        const statusAttr = attrs.find(
-          (a) => a?.attribute?.slug === "vendor-status",
-        );
-        const statusValue =
-          statusAttr?.values?.[0]?.name != null
-            ? String(statusAttr.values[0]?.name)
-            : "";
+        const firstErrorMessage = data?.errors?.[0]?.message;
+        const responseMessage =
+          typeof data?.message === "string" ? data.message : undefined;
+        const message = firstErrorMessage || responseMessage;
 
-        if (statusValue !== "active") {
-          throw new Error("Your account is not yet active.");
+        if (!response.ok) {
+          if (response.status === 429 || isThrottledMessage(message)) {
+            throw createAuthError(
+              message ||
+                "Environment has been throttled. Try again in a moment",
+              THROTTLED_ERROR_CODE,
+            );
+          }
+
+          throw new Error(
+            message || `Failed to fetch user (status=${response.status})`,
+          );
         }
+
+        if (data?.errors?.length) {
+          const errorMessage =
+            data.errors[0]?.message || "Failed to fetch user";
+
+          if (isThrottledMessage(errorMessage)) {
+            throw createAuthError(errorMessage, THROTTLED_ERROR_CODE);
+          }
+
+          throw new Error(errorMessage);
+        }
+
+        if (data?.data?.me) {
+          const me = data.data.me;
+
+          const metadata = Array.isArray(me.metadata) ? me.metadata : [];
+          const metadataMap = metadata.reduce<Record<string, string>>(
+            (acc, item) => {
+              if (item?.key) {
+                acc[item.key] = item.value;
+              }
+
+              return acc;
+            },
+            {},
+          );
+
+          const vendorPageId = metadataMap["vendor.id"] || "";
+
+          if (vendorPageId) {
+            const vendorResponse = await fetch("/api/graphql", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${accessToken}`,
+                ...saleorDomain,
+              },
+              body: JSON.stringify({
+                query: `
+                  query VendorPageStatus($id: ID!) {
+                    page(id: $id) {
+                      id
+                      attributes {
+                        attribute { slug }
+                        values { name }
+                      }
+                    }
+                  }
+                `,
+                variables: { id: vendorPageId },
+              }),
+            });
+
+            type VendorResponse = {
+              data?: {
+                page?: {
+                  attributes?: Array<{
+                    attribute?: { slug?: string | null } | null;
+                    values?: Array<{ name?: string | null } | null> | null;
+                  }> | null;
+                } | null;
+              };
+              errors?: Array<{ message?: unknown }>;
+              message?: string;
+            };
+
+            let vendorData: VendorResponse | null = null;
+
+            try {
+              vendorData = (await vendorResponse.json()) as VendorResponse;
+            } catch {
+              vendorData = null;
+            }
+
+            const vendorResponseMessage =
+              typeof vendorData?.message === "string"
+                ? vendorData.message
+                : undefined;
+
+            if (!vendorResponse.ok) {
+              if (
+                vendorResponse.status === 429 ||
+                isThrottledMessage(vendorResponseMessage)
+              ) {
+                throw createAuthError(
+                  vendorResponseMessage ||
+                    "Environment has been throttled. Try again in a moment",
+                  THROTTLED_ERROR_CODE,
+                );
+              }
+
+              throw new Error(
+                vendorResponseMessage ||
+                  `Failed to fetch vendor status (status=${vendorResponse.status})`,
+              );
+            }
+
+            if (vendorData?.errors?.length) {
+              const msg = vendorData.errors
+                .map((e) => (e.message != null ? String(e.message) : ""))
+                .filter(Boolean)
+                .join(", ");
+
+              if (isThrottledMessage(msg)) {
+                throw createAuthError(msg, THROTTLED_ERROR_CODE);
+              }
+
+              throw new Error(msg || "Failed to fetch vendor status");
+            }
+
+            const attrs = vendorData?.data?.page?.attributes ?? [];
+            const statusAttr = attrs.find(
+              (a) => a?.attribute?.slug === "vendor-status",
+            );
+            const statusValue =
+              statusAttr?.values?.[0]?.name != null
+                ? String(statusAttr.values[0]?.name)
+                : "";
+
+            if (statusValue !== "active") {
+              throw new Error("Your account is not yet active.");
+            }
+          }
+
+          setUser({
+            email: me.email ?? "",
+            firstName: me.firstName,
+            id: me.id,
+            lastName: me.lastName,
+            ...(vendorPageId ? { vendorId: vendorPageId } : {}),
+          });
+
+          return true;
+        }
+
+        return false;
+      } catch (error) {
+        if (isThrottledError(error) && attempt < 3) {
+          await new Promise((resolve) => {
+            setTimeout(resolve, attempt * 500);
+          });
+
+          continue;
+        }
+
+        throw error;
       }
-
-      setUser({
-        email: me.email ?? "",
-        firstName: me.firstName,
-        id: me.id,
-        lastName: me.lastName,
-        ...(vendorPageId ? { vendorId: vendorPageId } : {}),
-      });
-
-      return true;
     }
 
     return false;
@@ -380,16 +502,23 @@ export function AuthProvider({
       if (saleorApiUrl) {
         setAppBridgeDomain(saleorApiUrl);
       }
-      setTokenState(tokenFromBridge);
+      setToken(tokenFromBridge);
       setDashboardContext(true);
       fetchUser(tokenFromBridge)
         .then(() => setIsLoading(false))
-        .catch(() => setIsLoading(false));
+        .catch((error) => {
+          if (isThrottledError(error)) {
+            console.warn(
+              "Rate-limited while fetching user from App Bridge token; keeping session and retrying later.",
+            );
+          }
+          setIsLoading(false);
+        });
     } else {
       // Token from bridge but no API URL – can't use it, stop loading to avoid permanent spinner
       setIsLoading(false);
     }
-  }, [appBridgeToken, appBridgeState?.saleorApiUrl, fetchUser]);
+  }, [appBridgeToken, appBridgeState?.saleorApiUrl, fetchUser, setToken]);
 
   // Initialize auth from localStorage when not using App Bridge
   useEffect(() => {
@@ -431,7 +560,14 @@ export function AuthProvider({
         }
       } catch (error) {
         console.error("Failed to initialize auth:", error);
-        clearAuth();
+
+        if (!isThrottledError(error)) {
+          clearAuth();
+        } else {
+          console.warn(
+            "Rate-limited while restoring auth state; keeping existing token.",
+          );
+        }
       } finally {
         setIsLoading(false);
       }
@@ -540,8 +676,14 @@ export function AuthProvider({
         try {
           await fetchUser(String(tokenValue));
         } catch (e) {
-          clearAuth();
-          throw e;
+          if (!isThrottledError(e)) {
+            clearAuth();
+            throw e;
+          }
+
+          console.warn(
+            "Rate-limited right after login; continuing with token and loading user profile later.",
+          );
         }
 
         router.push("/dashboard");
@@ -591,8 +733,7 @@ export function AuthProvider({
 
   // Authenticated: Saleor Cloud user token (App Bridge/login) OR dashboard context (saleorApiUrl in URL)
   const isAuthenticated =
-    (!!token && (!!user || !!appBridgeToken)) ||
-    (dashboardContext && !!getAppBridgeDomain());
+    !!token || (dashboardContext && !!getAppBridgeDomain());
 
   return (
     <AuthContext.Provider

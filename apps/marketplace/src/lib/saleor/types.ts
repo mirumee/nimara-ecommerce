@@ -66,6 +66,8 @@ export interface ServerContext {
   userId?: string;
   /** Vendor Profile Page ID – canonical vendor identifier for products, orders */
   vendorId?: string;
+  /** Why vendor ID could not be loaded when user is authenticated */
+  vendorIdUnavailableReason?: "THROTTLED";
 }
 
 /**

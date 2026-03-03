@@ -19,9 +19,9 @@ import {
   VendorPageDeleteDocument,
   VendorPageTypeDocument,
 } from "@/graphql/generated/client";
+import { config } from "@/lib/config";
 import { sendNewVendorRegisteredEmailToSuperadmin } from "@/lib/email";
 import { executeGraphQL } from "@/lib/graphql/execute";
-import { config } from "@/lib/config";
 import { getAppConfig } from "@/lib/saleor/app-config";
 import { METADATA_KEYS } from "@/lib/saleor/consts";
 

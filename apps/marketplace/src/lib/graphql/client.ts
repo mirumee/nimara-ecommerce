@@ -1,6 +1,18 @@
-import { graphqlClient as createGraphqlClient } from "@nimara/infrastructure/graphql/client";
+import type { DocumentTypeDecoration } from "@graphql-typed-document-node/core";
+
+import {
+  type FetchOptions,
+  graphqlClient as createGraphqlClient,
+} from "@nimara/infrastructure/graphql/client";
 
 import { getAppBridgeDomain } from "@/lib/saleor/app-bridge-domain";
+
+type AnyVariables = Record<string, unknown>;
+type GraphqlInput<TVariables extends AnyVariables> = {
+  operationName: `${string}${"Mutation" | "Query"}`;
+  options?: FetchOptions;
+  variables?: TVariables;
+};
 
 /** GraphQL endpoint – use current origin on client (avoids CORS when accessed via ngrok, etc.) */
 function getGraphQLEndpoint(): string {
@@ -55,13 +67,15 @@ export const graphqlClient = (token?: string | null) => {
   const originalExecute = client.execute;
 
   return {
-    execute: <TResult, TVariables extends Record<string, unknown>>(
-      ...args: Parameters<typeof originalExecute<TResult, TVariables>>
+    execute: <TResult, TVariables extends AnyVariables = AnyVariables>(
+      query: DocumentTypeDecoration<TResult, TVariables> & {
+        toString(): string;
+      },
+      input: GraphqlInput<TVariables>,
     ) => {
-      const [query, input] = args;
       const saleorDomainHeader = getSaleorDomainHeader();
 
-      return originalExecute(query, {
+      return originalExecute<TResult, TVariables>(query, {
         ...input,
         options: {
           ...input.options,
