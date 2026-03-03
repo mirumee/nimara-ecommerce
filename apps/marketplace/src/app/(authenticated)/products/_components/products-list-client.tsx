@@ -72,7 +72,9 @@ export function ProductsListClient({ products }: ProductsListClientProps) {
   useEffect(() => {
     const currentSearch = searchParams.get("search") || "";
 
-    if (currentSearch === debouncedSearch) return;
+    if (currentSearch === debouncedSearch) {
+      return;
+    }
 
     const params = new URLSearchParams(searchParams.toString());
 
