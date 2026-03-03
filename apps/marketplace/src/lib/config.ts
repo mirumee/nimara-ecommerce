@@ -39,6 +39,15 @@ const envSchema = z.object({
   AWS_ENDPOINT_URL: z.string().optional(),
   SECRET_MANAGER_APP_CONFIG_PATH: z.string().default("/marketplace/app-config"),
 
+  // App config provider
+  MARKETPLACE_APP_CONFIG_PROVIDER: z.enum(["aws", "edge"]).default("aws"),
+  VERCEL_ACCESS_TOKEN: z.string().optional(),
+  VERCEL_TEAM_ID: z.string().optional(),
+  VERCEL_EDGE_CONFIG_ID: z.string().optional(),
+  MARKETPLACE_APP_CONFIG_EDGE_KEY: z
+    .string()
+    .default("marketplace-app-config"),
+
   // Saleor
   NEXT_PUBLIC_SALEOR_URL: z.string().url(),
   NEXT_PUBLIC_SALEOR_MARKETPLACE_CHANNEL_SLUG: z
@@ -102,6 +111,15 @@ export const config = {
     region: env.AWS_REGION,
     endpointUrl: env.AWS_ENDPOINT_URL,
     secretManagerPath: env.SECRET_MANAGER_APP_CONFIG_PATH,
+  },
+  appConfig: {
+    provider: env.MARKETPLACE_APP_CONFIG_PROVIDER,
+    edge: {
+      accessToken: env.VERCEL_ACCESS_TOKEN,
+      teamId: env.VERCEL_TEAM_ID,
+      edgeConfigId: env.VERCEL_EDGE_CONFIG_ID,
+      configKey: env.MARKETPLACE_APP_CONFIG_EDGE_KEY,
+    },
   },
   saleor: {
     url: env.NEXT_PUBLIC_SALEOR_URL,

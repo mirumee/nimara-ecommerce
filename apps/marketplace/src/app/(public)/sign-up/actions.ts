@@ -21,6 +21,7 @@ import {
 } from "@/graphql/generated/client";
 import { sendNewVendorRegisteredEmailToSuperadmin } from "@/lib/email";
 import { executeGraphQL } from "@/lib/graphql/execute";
+import { config } from "@/lib/config";
 import { getAppConfig } from "@/lib/saleor/app-config";
 import { METADATA_KEYS } from "@/lib/saleor/consts";
 
@@ -169,7 +170,13 @@ export async function registerAccount(input: {
   } catch (e) {
     return failConfigured("getAppConfig_exception", {
       saleorDomain,
-      secretPath: process.env.SECRET_MANAGER_APP_CONFIG_PATH,
+      appConfigProvider: config.appConfig.provider,
+      ...(config.appConfig.provider === "aws"
+        ? { secretPath: config.aws.secretManagerPath }
+        : {
+            edgeConfigId: config.appConfig.edge.edgeConfigId,
+            configKey: config.appConfig.edge.configKey,
+          }),
       error: e instanceof Error ? e.message : String(e),
     });
   }
@@ -177,7 +184,13 @@ export async function registerAccount(input: {
   if (!appConfig?.authToken) {
     return failConfigured("getAppConfig_missing", {
       saleorDomain,
-      secretPath: process.env.SECRET_MANAGER_APP_CONFIG_PATH,
+      appConfigProvider: config.appConfig.provider,
+      ...(config.appConfig.provider === "aws"
+        ? { secretPath: config.aws.secretManagerPath }
+        : {
+            edgeConfigId: config.appConfig.edge.edgeConfigId,
+            configKey: config.appConfig.edge.configKey,
+          }),
       hasAppConfig: Boolean(appConfig),
       hasAuthToken: Boolean(appConfig?.authToken),
       appConfigDomain: appConfig?.saleorDomain,
