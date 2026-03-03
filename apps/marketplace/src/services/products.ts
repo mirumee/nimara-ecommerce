@@ -12,9 +12,9 @@ import {
   type ProductCreateMutation,
   ProductCreateMutationDocument,
   type ProductCreateMutationVariables,
-  type ProductDelete,
-  ProductDeleteDocument,
-  type ProductDeleteVariables,
+  type ProductDeleteMutation,
+  ProductDeleteMutationDocument,
+  type ProductDeleteMutationVariables,
   type ProductDetail,
   ProductDetailDocument,
   type ProductDetailVariables,
@@ -48,9 +48,9 @@ import {
   type ProductVariantCreateMutation,
   ProductVariantCreateMutationDocument,
   type ProductVariantCreateMutationVariables,
-  type ProductVariantDelete,
-  ProductVariantDeleteDocument,
-  type ProductVariantDeleteVariables,
+  type ProductVariantDeleteMutation,
+  ProductVariantDeleteMutationDocument,
+  type ProductVariantDeleteMutationVariables,
   type ProductVariantDetail,
   ProductVariantDetailDocument,
   type ProductVariantDetailVariables,
@@ -361,13 +361,16 @@ class ProductsService {
   }
 
   async deleteVariant(
-    variables: ProductVariantDeleteVariables,
+    variables: ProductVariantDeleteMutationVariables,
     token?: string | null,
-  ): AsyncResult<ProductVariantDelete> {
-    return executeGraphQL<ProductVariantDelete, ProductVariantDeleteVariables>(
-      ProductVariantDeleteDocument as DocumentTypeDecoration<
-        ProductVariantDelete,
-        ProductVariantDeleteVariables
+  ): AsyncResult<ProductVariantDeleteMutation> {
+    return executeGraphQL<
+      ProductVariantDeleteMutation,
+      ProductVariantDeleteMutationVariables
+    >(
+      ProductVariantDeleteMutationDocument as DocumentTypeDecoration<
+        ProductVariantDeleteMutation,
+        ProductVariantDeleteMutationVariables
       > &
         DocumentWithToString,
       "ProductVariantDeleteMutation",
@@ -377,13 +380,16 @@ class ProductsService {
   }
 
   async deleteProduct(
-    variables: ProductDeleteVariables,
+    variables: ProductDeleteMutationVariables,
     token?: string | null,
-  ): AsyncResult<ProductDelete> {
-    return executeGraphQL<ProductDelete, ProductDeleteVariables>(
-      ProductDeleteDocument as DocumentTypeDecoration<
-        ProductDelete,
-        ProductDeleteVariables
+  ): AsyncResult<ProductDeleteMutation> {
+    return executeGraphQL<
+      ProductDeleteMutation,
+      ProductDeleteMutationVariables
+    >(
+      ProductDeleteMutationDocument as DocumentTypeDecoration<
+        ProductDeleteMutation,
+        ProductDeleteMutationVariables
       > &
         DocumentWithToString,
       "ProductDeleteMutation",

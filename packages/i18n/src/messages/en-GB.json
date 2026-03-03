@@ -293,6 +293,8 @@
     "GENERIC_CARD_ERROR": "There was an error with your card.",
     "GENERIC_PAYMENT_ERROR": "Something went wrong with the payment. Please try again or <link>contact with us</link>.",
     "HTTP_ERROR": "HTTP error occurred.",
+    "INVALID_RESPONSE_ERROR": "Received an invalid response from the server.",
+    "INVALID_JSON_ERROR": "Received invalid data from the server.",
     "INPUT_ERROR": "Input error.",
     "INSUFFICIENT_STOCK_ERROR": "Insufficient stock.",
     "INVALID_VALUE_ERROR": "Invalid value.",
@@ -318,6 +320,8 @@
     "UNIQUE_ERROR": "Email is used by other user.",
     "UNKNOWN_ERROR": "Unknown error occurred.",
     "VOUCHER_NOT_APPLICABLE_ERROR": "Promo code is not applicable to this checkout.",
+    "VENDOR_MISMATCH_ERROR": "Some items in your bag can't be purchased together due to vendor restrictions.",
+    "VENDOR_MIX_NOT_ALLOWED_ERROR": "You can only buy products from one vendor at a time. Please adjust your bag and try again.",
     "auth": {
       "email": "Sorry, this email already exists.",
       "newEmail": "Email is used by other user.",

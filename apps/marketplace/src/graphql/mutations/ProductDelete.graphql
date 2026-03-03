@@ -1,4 +1,4 @@
-mutation ProductDelete($id: ID!) {
+mutation ProductDeleteMutation($id: ID!) {
   productDelete(id: $id) {
     product {
       id

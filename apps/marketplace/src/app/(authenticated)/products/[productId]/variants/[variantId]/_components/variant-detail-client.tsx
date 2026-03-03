@@ -42,7 +42,6 @@ import type {
   Channels,
   ProductDetail,
   ProductTypeDetail,
-  ProductVariantDelete_Mutation,
   ProductVariantDetail,
   Warehouses,
 } from "@/graphql/generated/client";
@@ -470,8 +469,7 @@ export function VariantDetailClient({
         return;
       }
 
-      const data = result.data as unknown as ProductVariantDelete_Mutation;
-      const errors = data?.productVariantDelete?.errors ?? [];
+      const errors = result.data.productVariantDelete?.errors ?? [];
 
       if (errors.length > 0) {
         toast({

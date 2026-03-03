@@ -59,6 +59,7 @@ export function CustomerPickerDialog({
 
     if (!q) {
       setResults([]);
+
       return;
     }
     setIsLoading(true);
@@ -67,6 +68,7 @@ export function CustomerPickerDialog({
 
       if (!res.ok) {
         setResults([]);
+
         return;
       }
       const nodes =
@@ -82,23 +84,32 @@ export function CustomerPickerDialog({
   };
 
   useEffect(() => {
-    if (!open || !debouncedSearch.trim()) return;
+    if (!open || !debouncedSearch.trim()) {
+      return;
+    }
 
     let cancelled = false;
+
     setIsLoading(true);
     void (async () => {
       const res = await searchCustomers(debouncedSearch.trim());
-      if (cancelled) return;
+
+      if (cancelled) {
+        return;
+      }
       if (!res.ok) {
         setResults([]);
         setIsLoading(false);
+
         return;
       }
       const nodes =
         res.data.customers?.edges?.map((e) => e.node).filter(Boolean) ?? [];
+
       setResults(nodes);
       setIsLoading(false);
     })();
+
     return () => {
       cancelled = true;
     };

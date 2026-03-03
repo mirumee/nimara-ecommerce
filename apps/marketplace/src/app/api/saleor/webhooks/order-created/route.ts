@@ -1,8 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server";
 
 import { getAppConfig } from "@/lib/saleor/app-config";
-import { mergeVendorCustomerIds } from "@/lib/saleor/customer-ids";
 import { METADATA_KEYS } from "@/lib/saleor/consts";
+import { mergeVendorCustomerIds } from "@/lib/saleor/customer-ids";
 
 interface OrderLine {
   id: string;

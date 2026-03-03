@@ -56,7 +56,6 @@ import type {
   AttributeValueInput,
   Channels,
   ProductChannelListingAddInput,
-  ProductDelete_Mutation,
   ProductDetail,
 } from "@/graphql/generated/client";
 import { cn } from "@/lib/utils";
@@ -1153,8 +1152,7 @@ export function ProductDetailClient({
         return;
       }
 
-      const data = result.data as unknown as ProductDelete_Mutation;
-      const errors = data?.productDelete?.errors ?? [];
+      const errors = result.data.productDelete?.errors ?? [];
 
       if (errors.length > 0) {
         toast({

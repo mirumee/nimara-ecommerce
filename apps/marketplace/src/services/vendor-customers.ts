@@ -11,8 +11,8 @@ import {
   type VendorCustomerIdsVariables,
 } from "@/graphql/generated/client";
 import { executeGraphQL } from "@/lib/graphql/execute";
-import { parseVendorCustomerIds } from "@/lib/saleor/customer-ids";
 import { METADATA_KEYS } from "@/lib/saleor/consts";
+import { parseVendorCustomerIds } from "@/lib/saleor/customer-ids";
 
 export type VendorCustomerOrder = {
   created: string | null;

@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { Button } from "@nimara/ui/components/button";
 import { Input } from "@nimara/ui/components/input";
 import { Label } from "@nimara/ui/components/label";
 import { ScrollArea } from "@nimara/ui/components/scroll-area";
@@ -85,8 +84,8 @@ export function AddressManageDialog({
   onOpenChange: (open: boolean) => void;
   onSave: (payload: {
     addressId?: string;
-    mode: Mode;
     draftAddress: DraftAddress;
+    mode: Mode;
   }) => void;
   open: boolean;
   selectedAddressId?: string;
@@ -118,13 +117,17 @@ export function AddressManageDialog({
   useEffect(() => {
     if (!open) {
       prevOpenRef.current = false;
+
       return;
     }
 
-    if (prevOpenRef.current) return;
+    if (prevOpenRef.current) {
+      return;
+    }
     prevOpenRef.current = true;
 
     const canUseSaved = addresses.length > 0;
+
     setMode(canUseSaved ? "saved" : "new");
     setPickedId(selectedAddressId ?? addresses[0]?.id ?? "");
 
@@ -132,6 +135,7 @@ export function AddressManageDialog({
       const source =
         addresses.find((a) => a.id === (selectedAddressId ?? "")) ??
         addresses[0];
+
       if (source) {
         setDraftAddress(savedAddressToDraftAddress(source));
       }
@@ -147,6 +151,7 @@ export function AddressManageDialog({
     (id: string) => {
       setPickedId(id);
       const addr = addresses.find((a) => a.id === id);
+
       if (addr) {
         setDraftAddress(savedAddressToDraftAddress(addr));
       }

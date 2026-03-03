@@ -18,6 +18,7 @@
   },
   "scripts": {
     "build": "dotenv -- turbo run build",
+    "build:marketplace": "pnpm run build --filter=marketplace",
     "build:storefront": "pnpm run build --filter=storefront",
     "build:stripe": "pnpm run build --filter=stripe",
     "build:docs": "pnpm run build --filter=docs",

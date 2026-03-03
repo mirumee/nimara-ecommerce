@@ -1,4 +1,4 @@
-import * as z from "zod";
+import * as z from "zod/v3";
 
 import { type GetTranslations } from "@nimara/i18n/types";
 
