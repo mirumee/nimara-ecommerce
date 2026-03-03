@@ -46,11 +46,11 @@ describe("util", () => {
 
     it("returns error when headers validation fails", async () => {
       // given
-      const errors = [{ message: "Invalid headers" }];
+      const issues = [{ message: "Invalid headers" }];
 
       (saleorWebhookHeaders.safeParse as Mock).mockReturnValue({
         success: false,
-        error: { errors },
+        error: { issues },
       });
 
       const headers = new Headers();
@@ -63,7 +63,7 @@ describe("util", () => {
 
       // then
       expect(result.headers).toBeNull();
-      expect(result.errors).toEqual(errors);
+      expect(result.errors).toEqual(issues);
     });
 
     it("returns error when signature verification fails", async () => {

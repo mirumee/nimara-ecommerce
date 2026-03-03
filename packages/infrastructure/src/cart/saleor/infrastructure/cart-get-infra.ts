@@ -1,3 +1,7 @@
+import {
+  type CountryCode,
+  type LanguageCodeEnum,
+} from "@nimara/codegen/schema";
 import { type AllCurrency } from "@nimara/domain/consts";
 import type { Cart } from "@nimara/domain/objects/Cart";
 import { err, ok } from "@nimara/domain/objects/Result";
@@ -50,8 +54,8 @@ export const saleorCartGetInfra =
     const result = await graphqlClient(apiURI).execute(CartQueryDocument, {
       variables: {
         id: cartId,
-        languageCode,
-        countryCode,
+        languageCode: languageCode as LanguageCodeEnum,
+        countryCode: countryCode as CountryCode,
         thumbnailFormat: THUMBNAIL_FORMAT,
         thumbnailSize: THUMBNAIL_SIZE_SMALL,
         includeVendorMetadata,

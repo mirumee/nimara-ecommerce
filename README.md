@@ -164,6 +164,17 @@ git pull origin main
 
 A guide how to deploy the app to Vercel using a Terraform can be found here: [Using Terraform - Nimara Docs](https://docs.nimara.store/quickstart/using-terraform).
 
+## 📚 Documentation
+
+Comprehensive documentation is available in the `docs/` folder:
+
+- **[Getting Started](./docs/HOW_TO_USE.md)** - Setup, installation, and basic usage
+- **[Contributing Guide](./docs/CONTRIBUTING.md)** - How to contribute to the project
+- **[Customization Guide](./docs/CUSTOMIZATION.md)** - Adapt Nimara for your needs
+- **[Code Style Guide](./docs/CODE_STYLE_GUIDE.md)** - Coding standards and conventions
+- **[Vision & Roadmap](./docs/VISION_AND_ROADMAP.md)** - Future plans and direction
+- **[Contributors](./docs/CONTRIBUTORS.md)** - Community and contribution information
+
 ## ❤️ Community & Contribution
 
 Join Nimara community on [GitHub Discussions](https://github.com/mirumee/nimara-ecommerce/discussions) and [Discord server](https://discord.gg/w4V3PZxGDj). You can ask questions, report bugs, participate in discussions, share ideas or make feature requests.
@@ -175,7 +186,7 @@ You can also contribute to Nimara in various ways:
 - Share your experiences or projects related to Nimara with the broader community through talks or blog posts.
 - Support [popular feature requests](https://github.com/mirumee/nimara-ecommerce/issues?q=sort%3Aupdated-desc+is%3Aissue+is%3Aopen) by upvoting them.
 
-For detailed contributing guidelines, please see [How to contribute to Nimara Storefron guide](./CONTRIBUTING.md)
+For detailed contributing guidelines, please see [Contributing Guide](./docs/CONTRIBUTING.md)
 
 ### This wouldn't have been possible without your support
 

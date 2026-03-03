@@ -1,36 +1,36 @@
 import { PlusIcon } from "lucide-react";
+import { type Locale } from "next-intl";
 import { getTranslations } from "next-intl/server";
 
 import { type AllCountryCode } from "@nimara/domain/consts";
 import { type Address } from "@nimara/domain/objects/Address";
+import { displayFormattedAddressLines } from "@nimara/foundation/address/address";
 
-import { getAccessToken } from "@/auth";
-import { displayFormattedAddressLines } from "@/lib/address";
-import { getCurrentRegion } from "@/regions/server";
-import { type SupportedLocale } from "@/regions/types";
-import { getAddressService } from "@/services/address";
-import { getUserService } from "@/services/user";
+import { getCurrentRegion } from "@/foundation/regions";
+import { getServiceRegistry } from "@/services/registry";
+import { getAccessToken } from "@/services/tokens";
 
 import { AddNewAddressModal } from "./_modals/create-address-modal";
 import { EditAddressModal } from "./_modals/update-address-modal";
 
 type PageProps = {
-  params: Promise<{ locale: SupportedLocale }>;
+  params: Promise<{ locale: Locale }>;
   searchParams: Promise<Record<string, string>>;
 };
 
 export default async function Page(props: PageProps) {
   const { locale } = await props.params;
   const searchParams = await props.searchParams;
-  const [accessToken, userService, addressService] = await Promise.all([
+  const [accessToken, services] = await Promise.all([
     getAccessToken(),
-    getUserService(),
-    getAddressService(),
+    getServiceRegistry(),
   ]);
-  const [t, region, resultUserAddresses] = await Promise.all([
+  const userService = await services.getUserService();
+  const [t, region, resultUserAddresses, addressService] = await Promise.all([
     getTranslations(),
     getCurrentRegion(),
     userService.addressesGet({ variables: { accessToken } }),
+    services.getAddressService(),
   ]);
 
   const savedAddresses = resultUserAddresses.data ?? [];

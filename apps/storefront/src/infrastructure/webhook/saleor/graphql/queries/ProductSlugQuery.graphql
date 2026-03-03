@@ -1,0 +1,5 @@
+query ProductSlugQuery($id: ID!) {
+  product(id: $id) {
+    slug
+  }
+}

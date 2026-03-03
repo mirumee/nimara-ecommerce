@@ -89,7 +89,10 @@ export type CheckoutSessionGet_checkout_Checkout_problems_CheckoutLineProblemVar
   & { __typename: 'CheckoutLineProblemVariantNotAvailable' }
 );
 
-export type CheckoutSessionGet_checkout_Checkout_problems = CheckoutSessionGet_checkout_Checkout_problems_CheckoutLineProblemInsufficientStock | CheckoutSessionGet_checkout_Checkout_problems_CheckoutLineProblemVariantNotAvailable;
+export type CheckoutSessionGet_checkout_Checkout_problems =
+  | CheckoutSessionGet_checkout_Checkout_problems_CheckoutLineProblemInsufficientStock
+  | CheckoutSessionGet_checkout_Checkout_problems_CheckoutLineProblemVariantNotAvailable
+;
 
 export type CheckoutSessionGet_checkout_Checkout = { id: string, email: string | null, displayGrossPrices: boolean, voucherCode: string | null, isShippingRequired: boolean, authorizeStatus: Types.CheckoutAuthorizeStatusEnum, chargeStatus: Types.CheckoutChargeStatusEnum, fulfillmentAddress: string | null, buyer: string | null, discount: CheckoutSessionGet_checkout_Checkout_discount_Money | null, shippingMethods: Array<CheckoutSessionGet_checkout_Checkout_shippingMethods_ShippingMethod>, shippingAddress: CheckoutSessionGet_checkout_Checkout_shippingAddress_Address | null, billingAddress: CheckoutSessionGet_checkout_Checkout_billingAddress_Address | null, deliveryMethod: CheckoutSessionGet_checkout_Checkout_deliveryMethod_ShippingMethod_Warehouse | null, availablePaymentGateways: Array<CheckoutSessionGet_checkout_Checkout_availablePaymentGateways_PaymentGateway>, lines: Array<CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine>, totalPrice: CheckoutSessionGet_checkout_Checkout_totalPrice_TaxedMoney, subtotalPrice: CheckoutSessionGet_checkout_Checkout_subtotalPrice_TaxedMoney, shippingPrice: CheckoutSessionGet_checkout_Checkout_shippingPrice_TaxedMoney, problems: Array<CheckoutSessionGet_checkout_Checkout_problems> | null };
 

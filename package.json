@@ -44,18 +44,15 @@
     "localstack:export-secret": "docker compose -f apps/marketplace/docker-compose.yml exec localstack bash /opt/localstack/export-secret.sh"
   },
   "devDependencies": {
+    "@nimara/config": "workspace:*",
     "commitizen": "4.3.1",
-    "dotenv-cli": "8.0.0",
+    "dotenv-cli": "11.0.0",
     "eslint": "^8.57.0",
-    "eslint-config-custom": "workspace:*",
     "husky": "9.1.7",
-    "lint-staged": "^16.2.6",
-    "prettier": "3.6.2",
-    "prettier-plugin-tailwindcss": "^0.7.1",
-    "turbo": "2.6.0"
-  },
-  "resolutions": {
-    "graphql": "16.10.0"
+    "lint-staged": "^16.2.7",
+    "prettier": "3.8.1",
+    "prettier-plugin-tailwindcss": "^0.7.2",
+    "turbo": "2.8.10"
   },
   "config": {
     "commitizen": {

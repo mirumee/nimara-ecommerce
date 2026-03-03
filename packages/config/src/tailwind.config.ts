@@ -6,13 +6,24 @@ type AppName = "storefront" | "stripe" | "marketplace";
 function getContentPaths(app: AppName): string[] {
   const appSrc = `../../apps/${app}/src`;
   const uiSrc = "../../packages/ui/src/**/*.{ts,tsx,html,stories.tsx}";
+  const featuresSrc =
+    "../../packages/features/src/**/*.{ts,tsx,html,stories.tsx}";
+  const foundationSrc =
+    "../../packages/foundation/src/**/*.{ts,tsx,html,stories.tsx}";
   if (app === "marketplace") {
-    return [`${appSrc}/**/*.{js,ts,jsx,tsx,mdx}`, uiSrc];
+    return [
+      `${appSrc}/**/*.{js,ts,jsx,tsx,mdx}`,
+      uiSrc,
+      featuresSrc,
+      foundationSrc,
+    ];
   }
   return [
     `${appSrc}/index.html`,
     `${appSrc}/**/*.{ts,tsx,html,stories.tsx}`,
     uiSrc,
+    featuresSrc,
+    foundationSrc,
     "../../interface/**/*.{ts,tsx,html,stories.tsx}",
   ];
 }

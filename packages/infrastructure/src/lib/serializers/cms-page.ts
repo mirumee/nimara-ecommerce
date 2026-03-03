@@ -1,4 +1,3 @@
-import type { LanguageCodeEnum } from "@nimara/codegen/schema";
 import type {
   ButterCMSPageFields,
   PageField,
@@ -59,6 +58,6 @@ export const parseButterCMSDataToFields = (
   });
 };
 
-export const convertLanguageCode = (languageCode: LanguageCodeEnum): string => {
+export const convertLanguageCode = (languageCode: string): string => {
   return languageCode.toLowerCase().replace(/_/g, "");
 };

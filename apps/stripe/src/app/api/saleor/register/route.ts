@@ -19,7 +19,9 @@ export async function POST(request: Request) {
     return responseError({
       description: "Invalid saleor headers.",
       context: "headers",
-      errors: headers.error.errors,
+      errors: headers.error.issues.map((issue) => ({
+        message: issue.message,
+      })),
     });
   }
 
@@ -31,7 +33,7 @@ export async function POST(request: Request) {
     return responseError({
       description: "Invalid body.",
       context: "body",
-      errors: body.error.errors,
+      errors: body.error.issues.map((issue) => ({ message: issue.message })),
     });
   }
   const saleorAuthToken = body.data.auth_token;

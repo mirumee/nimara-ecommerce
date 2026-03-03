@@ -1,81 +1,28 @@
 "use server";
 
-import { type Checkout } from "@nimara/domain/objects/Checkout";
-import { type User } from "@nimara/domain/objects/User";
+import { revalidatePath } from "next/cache";
 
-import { redirect } from "@/i18n/routing";
-import { paths } from "@/lib/paths";
-import { type SupportedLocale } from "@/regions/types";
+import { type AddressCreateInput } from "@nimara/domain/objects/Address";
 
-export const validateCheckoutStepAction = async ({
-  checkout,
-  user,
-  locale,
-  step,
+import * as foundationActions from "@/foundation/checkout/actions";
+import { paths } from "@/foundation/routing/paths";
+
+export const updateCheckoutAddressAction = async ({
+  id,
+  address,
 }: {
-  checkout: Checkout;
-  locale: SupportedLocale;
-  step:
-    | "payment"
-    | "delivery-method"
-    | "shipping-address"
-    | "user-details"
-    | null;
-  user: User | null;
+  address: Partial<AddressCreateInput>;
+  id: string;
 }) => {
-  // Step 1: Make sure we have an email
-  // If missing, redirect to user details step
-  if (!checkout.email && !user?.email) {
-    if (step !== "user-details") {
-      redirect({ href: paths.checkout.userDetails.asPath(), locale });
-    }
+  const result = await foundationActions.updateCheckoutAddressAction({
+    id,
+    address,
+    type: "SHIPPING",
+  });
 
-    return;
+  if (result.ok) {
+    revalidatePath(paths.checkout.asPath());
   }
 
-  // Prevent users from accessing shipping/delivery steps when not needed
-  if (
-    !checkout.isShippingRequired &&
-    (step === "shipping-address" || step === "delivery-method")
-  ) {
-    redirect({ href: paths.checkout.asPath(), locale });
-  }
-
-  // Only enforce shipping steps if shipping is required
-  if (checkout.isShippingRequired) {
-    // Step 2: Make sure we have a shipping address
-    // If missing, redirect to shipping address step
-    if (!checkout.shippingAddress) {
-      if (step !== "shipping-address") {
-        redirect({ href: paths.checkout.shippingAddress.asPath(), locale });
-      }
-
-      return;
-    }
-
-    // Allow user to stay on shipping-address step (e.g. to edit it)
-    if (step === "shipping-address") {
-      return;
-    }
-
-    // Step 3: Make sure delivery method is selected
-    // If missing, redirect to delivery-method step
-    if (!checkout.deliveryMethod) {
-      if (step !== "delivery-method") {
-        redirect({ href: paths.checkout.deliveryMethod.asPath(), locale });
-      }
-
-      return;
-    }
-
-    // Allow user to stay on delivery-method step
-    if (step === "delivery-method") {
-      return;
-    }
-  }
-
-  // Final Step: if user is on any other step than payment, redirect to it
-  if (step !== "payment") {
-    redirect({ href: paths.checkout.payment.asPath(), locale });
-  }
+  return result;
 };

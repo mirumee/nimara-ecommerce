@@ -1,7 +1,11 @@
 {
-  "extends": "tsconfig/nextjs.json",
+  "extends": "@nimara/config/tsconfig/nextjs",
   "compilerOptions": {
-    "plugins": [{ "name": "next" }],
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
     "paths": {
       "@/*": ["./src/*"]
     }

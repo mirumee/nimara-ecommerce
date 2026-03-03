@@ -5,11 +5,12 @@ import { revalidatePath } from "next/cache";
 import { type BaseError } from "@nimara/domain/objects/Error";
 import { err } from "@nimara/domain/objects/Result";
 
-import { auth, getAccessToken, update } from "@/auth";
-import { paths } from "@/lib/paths";
-import { getStoreUrl, getStoreUrlWithPath } from "@/lib/server";
-import { getCurrentRegion } from "@/regions/server";
-import { getUserService } from "@/services/user";
+import { auth, update } from "@/auth";
+import { getCurrentRegion } from "@/foundation/regions";
+import { paths } from "@/foundation/routing/paths";
+import { getStoreUrl, getStoreUrlWithPath } from "@/foundation/server";
+import { getServiceRegistry } from "@/services/registry";
+import { getAccessToken } from "@/services/tokens";
 
 import type {
   UpdateEmailFormSchema,
@@ -32,7 +33,8 @@ export async function updateUserName({
     ]);
   }
 
-  const userService = await getUserService();
+  const services = await getServiceRegistry();
+  const userService = await services.getUserService();
   const result = await userService.accountUpdate({
     accountInput: {
       firstName,
@@ -77,10 +79,11 @@ export async function updateUserEmail({
     ]);
   }
 
-  const [region, userService] = await Promise.all([
+  const [region, services] = await Promise.all([
     getCurrentRegion(),
-    getUserService(),
+    getServiceRegistry(),
   ]);
+  const userService = await services.getUserService();
 
   const result = await userService.requestEmailChange({
     accessToken,
@@ -115,7 +118,8 @@ export async function updateUserPassword({
     ]);
   }
 
-  const userService = await getUserService();
+  const services = await getServiceRegistry();
+  const userService = await services.getUserService();
   const result = await userService.passwordChange({
     accessToken,
     newPassword,

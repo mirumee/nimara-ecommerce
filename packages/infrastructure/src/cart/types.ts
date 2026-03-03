@@ -1,5 +1,4 @@
 import { type LanguageCodeEnum } from "@nimara/codegen/schema";
-import { type AllCountryCode } from "@nimara/domain/consts";
 import type { Cart } from "@nimara/domain/objects/Cart";
 import { type AsyncResult } from "@nimara/domain/objects/Result";
 
@@ -16,8 +15,8 @@ export type WithFetchOptions = { options?: FetchOptions };
 export type CartGetInfra = (
   opts: {
     cartId: string;
-    countryCode: AllCountryCode;
-    languageCode: LanguageCodeEnum;
+    countryCode: string;
+    languageCode: string;
   } & WithFetchOptions,
 ) => AsyncResult<Cart>;
 
@@ -27,7 +26,7 @@ export type CartCreateInfra = (
   opts: {
     channel: string;
     email?: string;
-    languageCode: LanguageCodeEnum;
+    languageCode: string;
     lines: { quantity: number; variantId: string }[];
   } & WithFetchOptions,
 ) => AsyncResult<{ cartId: string }>;

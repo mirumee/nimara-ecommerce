@@ -3,8 +3,8 @@ import { getTranslations } from "next-intl/server";
 
 import { CACHE_TTL } from "@/config";
 import { clientEnvs } from "@/envs/client";
-import { getCurrentRegion } from "@/regions/server";
-import { getStoreService } from "@/services/store";
+import { getCurrentRegion } from "@/foundation/regions";
+import { getServiceRegistry } from "@/services/registry";
 
 const size = {
   width: 1200,
@@ -19,11 +19,12 @@ export async function GET(
 ) {
   const { slug } = await context.params;
 
-  const [region, storeService, t] = await Promise.all([
+  const [region, services, t] = await Promise.all([
     getCurrentRegion(),
-    getStoreService(),
+    getServiceRegistry(),
     getTranslations(),
   ]);
+  const storeService = await services.getStoreService();
 
   const { data } = await storeService.getProductDetails({
     productSlug: slug,
@@ -45,75 +46,71 @@ export async function GET(
 
   if (!data.product?.images?.[0]?.url) {
     return new ImageResponse(
-      (
-        <div
+      <div
+        style={{
+          display: "flex",
+          width: "100%",
+          height: "100%",
+        }}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={new URL(
+            "og-hp.png",
+            clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
+          ).toString()}
+          alt={t("common.logo")}
           style={{
-            display: "flex",
-            width: "100%",
-            height: "100%",
+            maxWidth: "100%",
+            maxHeight: "100%",
+            objectFit: "contain",
           }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={new URL(
-              "og-hp.png",
-              clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
-            ).toString()}
-            alt={t("common.logo")}
-            style={{
-              maxWidth: "100%",
-              maxHeight: "100%",
-              objectFit: "contain",
-            }}
-          />
-        </div>
-      ),
+        />
+      </div>,
       { ...size },
     );
   }
 
   return new ImageResponse(
-    (
-      <div style={{ display: "flex", width: "100%", height: "100%" }}>
-        <div
+    <div style={{ display: "flex", width: "100%", height: "100%" }}>
+      <div
+        style={{
+          width: "50%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={new URL(
+            "brand-logo-dark.svg",
+            clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
+          ).toString()}
+          alt={t("common.logo")}
           style={{
-            width: "50%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
+            maxWidth: "100%",
+            maxHeight: "100%",
+            objectFit: "contain",
           }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={new URL(
-              "brand-logo-dark.svg",
-              clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
-            ).toString()}
-            alt={t("common.logo")}
-            style={{
-              maxWidth: "100%",
-              maxHeight: "100%",
-              objectFit: "contain",
-            }}
-          />
-        </div>
-        <div
-          style={{
-            width: "50%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={data.product.images[0].url}
-            alt={data.product.name}
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-          />
-        </div>
+        />
       </div>
-    ),
+      <div
+        style={{
+          width: "50%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={data.product.images[0].url}
+          alt={data.product.name}
+          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+        />
+      </div>
+    </div>,
     { ...size },
   );
 }

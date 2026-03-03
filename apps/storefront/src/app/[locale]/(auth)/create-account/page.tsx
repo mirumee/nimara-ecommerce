@@ -1,9 +1,9 @@
 import { getTranslations } from "next-intl/server";
 
+import { LocalizedLink } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
 
-import { LocalizedLink } from "@/i18n/routing";
-import { paths } from "@/lib/paths";
+import { paths } from "@/foundation/routing/paths";
 
 import { SignUpForm } from "./form";
 

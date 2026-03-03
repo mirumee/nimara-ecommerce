@@ -7,17 +7,13 @@ import type {
   StripeServiceState,
 } from "../../types";
 
-const API_VERSION = "2022-11-15";
-
 export const clientInitializeInfra =
   (
     { publicKey }: PaymentServiceConfig,
     state: StripeServiceState,
   ): ClientInitializeInfra =>
   async () => {
-    const client = await loadStripe(publicKey, {
-      apiVersion: API_VERSION,
-    });
+    const client = await loadStripe(publicKey);
 
     invariant(client, "Could not load stripe client.");
 

@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { type ReactNode, useState } from "react";
 import { useFormStatus } from "react-dom";
 
+import { LocalizedLink } from "@nimara/i18n/routing";
 import { Button, type ButtonProps } from "@nimara/ui/components/button";
 import { Checkbox } from "@nimara/ui/components/checkbox";
 import {
@@ -20,8 +21,7 @@ import { Label } from "@nimara/ui/components/label";
 import { Spinner } from "@nimara/ui/components/spinner";
 
 import { clientEnvs } from "@/envs/client";
-import { LocalizedLink } from "@/i18n/routing";
-import { paths } from "@/lib/paths";
+import { paths } from "@/foundation/routing/paths";
 
 import { requestUserAccountDeletion } from "./actions";
 

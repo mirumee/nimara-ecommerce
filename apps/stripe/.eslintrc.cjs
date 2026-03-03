@@ -1,6 +1,6 @@
 module.exports = {
   $schema: "https://json.schemastore.org/eslintrc.json",
-  extends: ["custom/next"],
+  extends: [require.resolve("@nimara/config/eslint/next")],
   root: true,
   parserOptions: {
     project: "tsconfig.json",

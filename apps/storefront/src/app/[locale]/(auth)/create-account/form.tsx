@@ -2,23 +2,21 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 
+import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
+import { LocalizedLink } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
-import { Form } from "@nimara/ui/components/form";
 
-import { TextFormField } from "@/components/form/text-form-field";
 import { MIN_PASSWORD_LENGTH } from "@/config";
-import { LocalizedLink } from "@/i18n/routing";
-import { useRouterWithState } from "@/lib/hooks";
-import { paths } from "@/lib/paths";
+import { paths } from "@/foundation/routing/paths";
+import { useRouterWithState } from "@/foundation/use-router-with-state";
 
 import { registerAccount } from "./actions";
 import { type FormSchema, formSchema } from "./schema";
 
 export function SignUpForm() {
   const t = useTranslations();
-
   const { isRedirecting, push } = useRouterWithState();
 
   const form = useForm<FormSchema>({
@@ -59,7 +57,7 @@ export function SignUpForm() {
   }
 
   return (
-    <Form {...form}>
+    <FormProvider {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
         className="flex flex-col gap-y-2"
@@ -139,6 +137,6 @@ export function SignUpForm() {
           {t("auth.create-account")}
         </Button>
       </form>
-    </Form>
+    </FormProvider>
   );
 }

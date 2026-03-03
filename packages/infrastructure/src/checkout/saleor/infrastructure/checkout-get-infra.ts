@@ -88,6 +88,12 @@ export const saleorCheckoutGetInfra =
           includeVendorMetadata,
         },
         operationName: "CheckoutFindQuery",
+        options: {
+          next: {
+            tags: [`CHECKOUT:${checkoutId}`],
+            revalidate: 60, // 1 minute
+          },
+        },
       },
     );
 

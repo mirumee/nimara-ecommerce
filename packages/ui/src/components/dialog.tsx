@@ -29,8 +29,9 @@ const DialogOverlay = ({
 
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
-interface DialogContentProps
-  extends React.ComponentProps<typeof DialogPrimitive.Content> {
+interface DialogContentProps extends React.ComponentProps<
+  typeof DialogPrimitive.Content
+> {
   withCloseButton?: boolean;
 }
 

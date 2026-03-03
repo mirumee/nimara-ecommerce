@@ -1,13 +1,15 @@
+import * as Sentry from "@sentry/nextjs";
 import { type NextRequest, NextResponse } from "next/server";
+import { type Locale } from "next-intl";
 
 import { COOKIE_KEY } from "@/config";
-import { LOCALE_CHANNEL_MAP } from "@/regions/config";
+import { LOCALE_CHANNEL_MAP } from "@/foundation/regions/config";
 
 export async function GET(request: NextRequest) {
   const nextLocale = request.cookies.get(COOKIE_KEY.locale)?.value;
 
-  const market =
-    LOCALE_CHANNEL_MAP[nextLocale as keyof typeof LOCALE_CHANNEL_MAP] ?? "us";
+  // TODO why this "us" magic string
+  const market = LOCALE_CHANNEL_MAP[nextLocale as Locale] ?? "us";
 
   const response = NextResponse.redirect(
     new URL(`/${market}/sign-in`, request.url),
@@ -15,6 +17,8 @@ export async function GET(request: NextRequest) {
 
   response.cookies.delete("accessToken");
   response.cookies.delete("refreshToken");
+
+  Sentry.setUser(null);
 
   return response;
 }

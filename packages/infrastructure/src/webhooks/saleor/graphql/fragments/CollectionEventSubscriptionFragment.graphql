@@ -1,0 +1,13 @@
+fragment CollectionEventSubscriptionFragment on Event {
+  __typename
+  ... on CollectionUpdated {
+    collection {
+      slug
+    }
+  }
+  ... on CollectionDeleted {
+    collection {
+      slug
+    }
+  }
+}

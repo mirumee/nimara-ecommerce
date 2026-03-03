@@ -1,9 +1,9 @@
 {
-  "extends": "tsconfig/react-library.json",
+  "extends": "@nimara/config/tsconfig/react-library",
   "include": ["./**/*.ts", "./**/*.tsx", "./**/*/*.d.ts"],
   "compilerOptions": {
     "paths": {
-      "@/infrastructure/*": ["./*"]
+      "@nimara/codegen/*": ["./*"]
     }
   },
   "exclude": ["dist", "build", "node_modules"]

@@ -4,17 +4,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import * as z from "zod";
 
+import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
+import { LocalizedLink } from "@nimara/i18n/routing";
+import { type GetTranslations } from "@nimara/i18n/types";
 import { Button } from "@nimara/ui/components/button";
-import { Form } from "@nimara/ui/components/form";
 
-import { TextFormField } from "@/components/form/text-form-field";
-import { LocalizedLink } from "@/i18n/routing";
-import { paths } from "@/lib/paths";
-import { useCurrentRegion } from "@/regions/client";
-import { type GetTranslations } from "@/types";
+import { useCurrentRegion } from "@/foundation/regions";
+import { paths } from "@/foundation/routing/paths";
 
 import { requestPasswordResetAction } from "./action";
 
@@ -81,7 +80,7 @@ export function ResetPasswordForm() {
             </h1>
           </div>
 
-          <Form {...form}>
+          <FormProvider {...form}>
             <form
               onSubmit={form.handleSubmit(handleSubmit)}
               className="flex flex-col gap-y-2"
@@ -104,7 +103,7 @@ export function ResetPasswordForm() {
                 {t("auth.password-reset")}
               </Button>
             </form>
-          </Form>
+          </FormProvider>
         </>
       )}
     </div>

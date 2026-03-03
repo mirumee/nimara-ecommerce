@@ -6,7 +6,10 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
+import { type Maybe } from "@nimara/domain/objects/Maybe";
 import type { Menu } from "@nimara/domain/objects/Menu";
+import { isValidJson } from "@nimara/foundation/lib/is-valid-json";
+import { LocalizedLink } from "@nimara/i18n/routing";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -16,10 +19,6 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@nimara/ui/components/navigation-menu";
-
-import { LocalizedLink } from "@/i18n/routing";
-import { isValidJson } from "@/lib/helpers";
-import type { Maybe } from "@/lib/types";
 
 const RichText = dynamic(
   () =>

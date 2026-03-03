@@ -4,6 +4,8 @@ import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { type ReactNode, useEffect, useState } from "react";
 
+import { cn } from "@nimara/foundation/lib/cn";
+import { usePathname } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
 import { Checkbox } from "@nimara/ui/components/checkbox";
 import {
@@ -15,12 +17,9 @@ import {
 import { Label } from "@nimara/ui/components/label";
 import { Spinner } from "@nimara/ui/components/spinner";
 
-import { usePathname } from "@/i18n/routing";
-import { PAYMENT_ELEMENT_ID } from "@/lib/consts";
-import { translateApiErrors } from "@/lib/payment";
-import { cn } from "@/lib/utils";
-import { useCurrentRegion } from "@/regions/client";
-import { getPaymentService } from "@/services/payment";
+import { PAYMENT_ELEMENT_ID } from "@/features/checkout/consts";
+import { useCurrentRegion } from "@/foundation/regions";
+import { getServiceRegistry } from "@/services/registry";
 
 export const PaymentMethodAddModal = ({
   secret,
@@ -46,24 +45,20 @@ export const PaymentMethodAddModal = ({
   const isLoading = !isMounted || isProcessing;
 
   const isDark = resolvedTheme === "dark";
-  const appearance = {
-    theme: (isDark ? "night" : "stripe") as "night" | "stripe",
-    variables: {
-      colorBackground: isDark ? "#1C1917" : "#fff",
-    },
-  };
 
   const handlePaymentSave = async () => {
     setIsProcessing(true);
 
-    const paymentService = await getPaymentService();
+    const services = await getServiceRegistry();
+    const paymentService = await services.getPaymentService();
+
     const result = await paymentService.paymentMethodSaveExecute({
       redirectUrl,
       saveForFutureUse: isDefault,
     });
 
     if (!result.ok) {
-      setErrors(translateApiErrors({ t, errors: result.errors }));
+      setErrors(result.errors.map(({ code }) => code));
     }
 
     setIsProcessing(false);
@@ -71,14 +66,27 @@ export const PaymentMethodAddModal = ({
 
   useEffect(() => {
     void (async () => {
-      const paymentService = await getPaymentService();
+      const services = await getServiceRegistry();
+      const paymentService = await services.getPaymentService();
 
       await paymentService.paymentInitialize();
 
       const { mount } = await paymentService.paymentElementCreate({
         locale: region.language.locale,
         secret,
-        appearance,
+        appearance: {
+          theme: isDark ? "night" : "flat",
+          variables: {
+            borderRadius: "5px",
+          },
+        },
+        options: {
+          layout: {
+            type: "accordion",
+            paymentMethodLogoPosition: "start",
+            defaultCollapsed: false,
+          },
+        },
       });
 
       mount(`#${PAYMENT_ELEMENT_ID}`);

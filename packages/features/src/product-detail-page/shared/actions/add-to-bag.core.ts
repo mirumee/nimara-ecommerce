@@ -1,0 +1,110 @@
+import { type AsyncResult, err } from "@nimara/domain/objects/Result";
+import { type User } from "@nimara/domain/objects/User";
+import type { Region } from "@nimara/foundation/regions/types";
+import type { ServiceRegistry } from "@nimara/infrastructure/types";
+
+export type AddToBagCtx = {
+  accessToken: string | null;
+  cacheTTL: {
+    cart: number;
+  };
+  cartId: string | null;
+  marketplaceEnabled: boolean;
+  region: Region;
+};
+
+export type AddToBagInput = {
+  clientProductVendorId?: string | null;
+  quantity?: number;
+  variantId: string;
+};
+
+export type AddToBagResult = AsyncResult<{ cartId: string }>;
+
+/**
+ * Pure add-to-bag function that can be used in any context.
+ * This function has no dependencies on Next.js or app-specific code.
+ *
+ * @param services - Service registry containing cart, user, and logger services
+ * @param input - Input parameters: variantId and optional quantity
+ * @param ctx - Context: region, cartId, accessToken, and cacheTTL
+ * @returns A promise that resolves to the result of adding items to the cart
+ */
+export async function addToBag(
+  services: ServiceRegistry,
+  input: AddToBagInput,
+  ctx: AddToBagCtx,
+): Promise<AddToBagResult> {
+  const { variantId, quantity = 1, clientProductVendorId = null } = input;
+  const { region, cartId, accessToken, cacheTTL, marketplaceEnabled } = ctx;
+
+  const cartService = await services.getCartService();
+
+  if (marketplaceEnabled && cartId) {
+    const cartResult = await cartService.cartGet({
+      cartId,
+      countryCode: region.market.countryCode,
+      languageCode: region.language.code,
+      options: {
+        next: {
+          revalidate: 0,
+          tags: [`CHECKOUT:${cartId}`],
+        },
+      },
+    });
+
+    if (cartResult.ok && cartResult.data.lines.length > 0) {
+      const cartVendorId =
+        cartResult.data.lines
+          .map((line) => line.product.vendorId)
+          .find((vendorId): vendorId is string => vendorId != null) ?? null;
+
+      const vendorMix =
+        (cartVendorId !== null && clientProductVendorId === null) ||
+        (cartVendorId === null && clientProductVendorId !== null);
+
+      if (vendorMix) {
+        return err([{ code: "VENDOR_MIX_NOT_ALLOWED_ERROR" }]);
+      }
+
+      if (
+        cartVendorId !== null &&
+        clientProductVendorId !== null &&
+        cartVendorId !== clientProductVendorId
+      ) {
+        return err([{ code: "VENDOR_MISMATCH_ERROR" }]);
+      }
+    }
+  }
+
+  // Get user if access token is available
+  let userData: User | null = null;
+
+  if (accessToken) {
+    const userService = await services.getUserService();
+    const userGetResult = await userService.userGet(accessToken);
+
+    if (userGetResult.ok) {
+      userData = userGetResult.data;
+    }
+  }
+
+  // Add item to cart
+  const result = await cartService.linesAdd({
+    email: userData?.email,
+    channel: region.market.channel,
+    languageCode: region.language.code,
+    cartId,
+    lines: [{ variantId, quantity }],
+    options: cartId
+      ? {
+          next: {
+            tags: [`CHECKOUT:${cartId}`],
+            revalidate: cacheTTL.cart,
+          },
+        }
+      : undefined,
+  });
+
+  return result;
+}

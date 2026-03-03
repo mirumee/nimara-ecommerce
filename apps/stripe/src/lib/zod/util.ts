@@ -1,4 +1,4 @@
-import type { SafeParseSuccess, z } from "zod";
+import type { z, ZodSafeParseResult, ZodSafeParseSuccess } from "zod";
 
 import { type AnyZodSchema } from "./types";
 
@@ -12,14 +12,14 @@ export const prepareConfig = <Schema extends AnyZodSchema = AnyZodSchema>({
   name?: string;
   schema: Schema;
   serverOnly?: boolean;
-}): SafeParseSuccess<Schema["_output"]>["data"] => {
+}): ZodSafeParseSuccess<Schema["_output"]>["data"] => {
   const parsedConfig = schema.safeParse({
     ...process.env,
     ...(input ?? {}),
   });
 
   if (serverOnly && typeof window !== "undefined") {
-    return {} as SafeParseSuccess<Schema["_output"]>["data"];
+    return {} as ZodSafeParseResult<Schema["_output"]>["data"];
   }
 
   if (!parsedConfig.success) {

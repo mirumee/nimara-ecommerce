@@ -2,8 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 
-import { paths } from "@/lib/paths";
-import { getPaymentService } from "@/services/payment";
+import { paths } from "@/foundation/routing/paths";
+import { getServiceRegistry } from "@/services/registry";
 
 export const paymentMethodDeleteAction = async ({
   customerId,
@@ -12,7 +12,8 @@ export const paymentMethodDeleteAction = async ({
   customerId: string;
   paymentMethodId: string;
 }) => {
-  const paymentService = await getPaymentService();
+  const services = await getServiceRegistry();
+  const paymentService = await services.getPaymentService();
   const result = await paymentService.customerPaymentMethodDelete({
     customerId,
     paymentMethodId,
@@ -30,7 +31,8 @@ export const generateSecretAction = async ({
 }: {
   customerId: string;
 }) => {
-  const paymentService = await getPaymentService();
+  const services = await getServiceRegistry();
+  const paymentService = await services.getPaymentService();
 
   return paymentService.paymentMethodSaveInitialize({
     customerId,

@@ -1,11 +1,8 @@
 mutation CheckoutDeliveryMethodUpdateMutation(
-  $checkoutId: ID!
+  $id: ID!
   $deliveryMethodId: ID!
 ) {
-  checkoutDeliveryMethodUpdate(
-    id: $checkoutId
-    deliveryMethodId: $deliveryMethodId
-  ) {
+  checkoutDeliveryMethodUpdate(id: $id, deliveryMethodId: $deliveryMethodId) {
     errors {
       ...CheckoutErrorFragment
     }

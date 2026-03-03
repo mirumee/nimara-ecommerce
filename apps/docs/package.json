@@ -4,23 +4,22 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
     "postbuild": "pagefind --site .next/server/app --output-path public/_pagefind"
   },
   "dependencies": {
-    "next": "15.5.9",
-    "nextra": "4.6.0",
-    "nextra-theme-docs": "4.6.0",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "next": "^16.1.6",
+    "nextra": "4.6.1",
+    "nextra-theme-docs": "4.6.1",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
   },
   "devDependencies": {
     "@nimara/config": "workspace:*",
     "@nimara/ui": "workspace:*",
     "@svgr/webpack": "8.1.0",
     "eslint": "^8.57.0",
-    "eslint-config-custom": "workspace:*",
     "pagefind": "1.4.0",
     "typescript": "^5.9.3"
   }

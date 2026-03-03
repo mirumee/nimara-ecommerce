@@ -179,7 +179,7 @@ export const validateAndSerializeCheckout = (
 
     if (!parsedCheckout.success) {
       logger?.error("Failed to parse checkout", {
-        errors: parsedCheckout.error.errors.map(({ message, path }) => ({
+        errors: parsedCheckout.error.issues.map(({ message, path }) => ({
           message,
           path: path.join("."),
         })),
@@ -265,7 +265,7 @@ export function validateAndSerializeProducts(
       if (!parsedItem.success) {
         logger?.error("Failed to parse product feed item", {
           variantId: variant.id,
-          errors: parsedItem.error.errors,
+          errors: parsedItem.error.issues,
         });
 
         continue;

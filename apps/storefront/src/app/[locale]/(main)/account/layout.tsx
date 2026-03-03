@@ -1,6 +1,6 @@
 import { type ReactNode } from "react";
 
-import { AccountSideMenu } from "@/components/account-menu";
+import { AccountSideMenu } from "@/features/account/account-menu";
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
@@ -8,7 +8,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       <div className="col-span-12 md:col-span-3 xl:col-span-2">
         <AccountSideMenu />
       </div>
-      <div className="col-span-12 md:col-span-8 lg:col-start-5 xl:col-span-6 xl:col-start-5">
+      <div className="col-span-12 md:col-span-8 lg:col-start-5 xl:col-span-8 xl:col-start-5">
         {children}
       </div>
     </div>

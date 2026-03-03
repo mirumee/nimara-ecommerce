@@ -8,17 +8,13 @@ const schema = z.object({
     .default("LOCAL"),
   NEXT_PUBLIC_BUTTER_CMS_API_KEY: z.string().trim().optional(),
   NEXT_PUBLIC_DEFAULT_CHANNEL: z.string().trim(),
-  NEXT_PUBLIC_DEFAULT_EMAIL: z
-    .string()
-    .trim()
-    .email()
-    .default("contact@mirumee.com"),
+  NEXT_PUBLIC_DEFAULT_EMAIL: z.email().trim().default("contact@mirumee.com"),
   NEXT_PUBLIC_DEFAULT_PAGE_TITLE: z
     .string()
     .trim()
     .default("Nimara Storefront"),
-  NEXT_PUBLIC_SALEOR_API_URL: z.string().url().trim(),
-  NEXT_PUBLIC_STOREFRONT_URL: z.string().url().trim(),
+  NEXT_PUBLIC_SALEOR_API_URL: z.url().trim(),
+  NEXT_PUBLIC_STOREFRONT_URL: z.url().trim(),
   PAYMENT_APP_ID: z.string().trim(),
   STRIPE_PUBLIC_KEY: z.string().trim(),
   // Algolia specific

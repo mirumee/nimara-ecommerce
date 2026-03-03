@@ -1,35 +1,36 @@
+import { type Locale } from "next-intl";
 import { getTranslations } from "next-intl/server";
 
-import { getAccessToken } from "@/auth";
+import { LocalizedLink, redirect } from "@nimara/i18n/routing";
+
 import { clientEnvs } from "@/envs/client";
 import { serverEnvs } from "@/envs/server";
-import { LocalizedLink, redirect } from "@/i18n/routing";
-import { paths } from "@/lib/paths";
-import { getStoreUrl } from "@/lib/server";
-import { getCurrentRegion } from "@/regions/server";
-import { type SupportedLocale } from "@/regions/types";
-import { getPaymentService } from "@/services/payment";
-import { getUserService } from "@/services/user";
+import { getCurrentRegion } from "@/foundation/regions";
+import { paths } from "@/foundation/routing/paths";
+import { getStoreUrl } from "@/foundation/server";
+import { getServiceRegistry } from "@/services/registry";
+import { getAccessToken } from "@/services/tokens";
 
 import { AddNewPaymentTrigger } from "./components/add-new-payment-trigger";
 import { PaymentMethodsList } from "./components/payment-methods-list";
 
 type PageProps = {
-  params: Promise<{ locale: SupportedLocale }>;
+  params: Promise<{ locale: Locale }>;
   searchParams: Promise<Record<string, string>>;
 };
 
 export default async function Page(props: PageProps) {
-  const [t, { locale }, searchParams, accessToken, userService] =
+  const [t, { locale }, searchParams, accessToken, services] =
     await Promise.all([
       getTranslations(),
       props.params,
       props.searchParams,
       getAccessToken(),
-      getUserService(),
+      getServiceRegistry(),
     ]);
-
+  const userService = await services.getUserService();
   const resultUserGet = await userService.userGet(accessToken);
+  const paymentService = await services.getPaymentService();
 
   const user = resultUserGet.ok ? resultUserGet.data : null;
 
@@ -37,10 +38,7 @@ export default async function Page(props: PageProps) {
     redirect({ href: paths.signIn.asPath(), locale });
   }
 
-  const [paymentService, region] = await Promise.all([
-    getPaymentService(),
-    getCurrentRegion(),
-  ]);
+  const region = await getCurrentRegion();
   const resultCustomerGet = await paymentService.customerGet({
     user: user,
     channel: region.market.channel,

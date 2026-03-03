@@ -1,3 +1,4 @@
+import { type LanguageCodeEnum } from "@nimara/codegen/schema";
 import { err, ok } from "@nimara/domain/objects/Result";
 
 import { graphqlClient } from "#root/graphql/client";
@@ -16,7 +17,7 @@ export const saleorCartCreateInfra =
             ...(email && { email }),
             lines,
             channel,
-            languageCode,
+            languageCode: languageCode as LanguageCodeEnum,
           },
         },
         options,

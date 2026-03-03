@@ -16,7 +16,7 @@ export const verifySaleorWebhookSignature = async ({
   );
 
   if (!success) {
-    return { headers: null, errors: error.errors, context: "signature" };
+    return { headers: null, errors: error.issues, context: "signature" };
   }
 
   const jwksProvider = getJWKSProvider();

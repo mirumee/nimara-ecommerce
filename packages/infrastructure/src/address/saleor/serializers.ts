@@ -11,6 +11,8 @@ import { type AddressFragment } from "#root/address/saleor/graphql/fragments/gen
 export const serializeAddress = (address: AddressFragment): Address => {
   return {
     ...address,
+    isDefaultBillingAddress: address.isDefaultBillingAddress ?? false,
+    isDefaultShippingAddress: address.isDefaultShippingAddress ?? false,
     country: address.country.code as AllCountryCode,
   };
 };

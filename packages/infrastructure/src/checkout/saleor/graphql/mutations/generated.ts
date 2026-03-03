@@ -26,7 +26,7 @@ export type CheckoutBillingAddressUpdateMutation_Mutation = { checkoutBillingAdd
 
 
 export type CheckoutBillingAddressUpdateMutationVariables = Types.Exact<{
-  checkoutId: Types.Scalars['ID']['input'];
+  id: Types.Scalars['ID']['input'];
   address: Types.AddressInput;
 }>;
 
@@ -73,7 +73,7 @@ export type CheckoutDeliveryMethodUpdateMutation_Mutation = { checkoutDeliveryMe
 
 
 export type CheckoutDeliveryMethodUpdateMutationVariables = Types.Exact<{
-  checkoutId: Types.Scalars['ID']['input'];
+  id: Types.Scalars['ID']['input'];
   deliveryMethodId: Types.Scalars['ID']['input'];
 }>;
 
@@ -122,7 +122,7 @@ export type CheckoutShippingAddressUpdate_Mutation = { checkoutShippingAddressUp
 
 
 export type CheckoutShippingAddressUpdateVariables = Types.Exact<{
-  checkoutId: Types.Scalars['ID']['input'];
+  id: Types.Scalars['ID']['input'];
   shippingAddress: Types.AddressInput;
 }>;
 
@@ -168,8 +168,8 @@ export const CheckoutAddPromoCodeMutationDocument = new TypedDocumentString(`
   variants
 }`) as unknown as TypedDocumentString<CheckoutAddPromoCodeMutation, CheckoutAddPromoCodeMutationVariables>;
 export const CheckoutBillingAddressUpdateMutationDocument = new TypedDocumentString(`
-    mutation checkoutBillingAddressUpdateMutation($checkoutId: ID!, $address: AddressInput!) {
-  checkoutBillingAddressUpdate(id: $checkoutId, billingAddress: $address) {
+    mutation checkoutBillingAddressUpdateMutation($id: ID!, $address: AddressInput!) {
+  checkoutBillingAddressUpdate(id: $id, billingAddress: $address) {
     errors {
       ...CheckoutErrorFragment
     }
@@ -214,11 +214,8 @@ export const CheckoutCustomerAttachMutationDocument = new TypedDocumentString(`
   variants
 }`) as unknown as TypedDocumentString<CheckoutCustomerAttachMutation, CheckoutCustomerAttachMutationVariables>;
 export const CheckoutDeliveryMethodUpdateMutationDocument = new TypedDocumentString(`
-    mutation CheckoutDeliveryMethodUpdateMutation($checkoutId: ID!, $deliveryMethodId: ID!) {
-  checkoutDeliveryMethodUpdate(
-    id: $checkoutId
-    deliveryMethodId: $deliveryMethodId
-  ) {
+    mutation CheckoutDeliveryMethodUpdateMutation($id: ID!, $deliveryMethodId: ID!) {
+  checkoutDeliveryMethodUpdate(id: $id, deliveryMethodId: $deliveryMethodId) {
     errors {
       ...CheckoutErrorFragment
     }
@@ -268,11 +265,8 @@ export const CheckoutRemovePromoCodeMutationDocument = new TypedDocumentString(`
   variants
 }`) as unknown as TypedDocumentString<CheckoutRemovePromoCodeMutation, CheckoutRemovePromoCodeMutationVariables>;
 export const CheckoutShippingAddressUpdateDocument = new TypedDocumentString(`
-    mutation checkoutShippingAddressUpdate($checkoutId: ID!, $shippingAddress: AddressInput!) {
-  checkoutShippingAddressUpdate(
-    id: $checkoutId
-    shippingAddress: $shippingAddress
-  ) {
+    mutation checkoutShippingAddressUpdate($id: ID!, $shippingAddress: AddressInput!) {
+  checkoutShippingAddressUpdate(id: $id, shippingAddress: $shippingAddress) {
     errors {
       ...CheckoutErrorFragment
     }
