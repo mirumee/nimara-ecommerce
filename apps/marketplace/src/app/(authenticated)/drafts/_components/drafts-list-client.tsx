@@ -141,7 +141,9 @@ export function DraftsListClient({ drafts, pageInfo }: DraftsListClientProps) {
         params.delete("pageSize");
       }
 
-      router.push(`${pathname}?${params.toString()}`);
+      const query = params.toString();
+
+      router.replace(`${pathname}${query ? `?${query}` : ""}`);
     },
     [pathname, router, searchParams],
   );
