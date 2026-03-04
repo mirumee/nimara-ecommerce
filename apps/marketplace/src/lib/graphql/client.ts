@@ -1,4 +1,5 @@
 import type { DocumentTypeDecoration } from "@graphql-typed-document-node/core";
+import * as jose from "jose";
 
 import {
   type FetchOptions,
@@ -7,6 +8,7 @@ import {
 
 import { config } from "@/lib/config";
 import { getAppBridgeDomain } from "@/lib/saleor/app-bridge-domain";
+import type { SaleorJWTPayload } from "@/lib/saleor/types";
 
 type AnyVariables = Record<string, unknown>;
 type GraphqlInput<TVariables extends AnyVariables> = {
@@ -71,9 +73,13 @@ function getGraphQLEndpoint(): string {
 /**
  * Get Saleor domain for the x-saleor-domain header.
  * Prefers App Bridge domain (when app is opened from Saleor Cloud dashboard),
- * falls back to env (NEXT_PUBLIC_SALEOR_URL).
+ * falls back to env (NEXT_PUBLIC_SALEOR_URL), then to JWT issuer (server-side only).
+ *
+ * @param token - Optional JWT for server-side fallback when env is not set
  */
-export function getSaleorDomainHeader(): Record<string, string> {
+export function getSaleorDomainHeader(
+  token?: string | null,
+): Record<string, string> {
   const appBridge = getAppBridgeDomain();
 
   if (appBridge) {
@@ -82,16 +88,32 @@ export function getSaleorDomainHeader(): Record<string, string> {
 
   const url = process.env.NEXT_PUBLIC_SALEOR_URL;
 
-  if (!url) {
-    return {};
-  }
-  try {
-    const domain = new URL(url).hostname;
+  if (url) {
+    try {
+      const domain = new URL(url).hostname;
 
-    return { "x-saleor-domain": domain };
-  } catch {
-    return {};
+      return { "x-saleor-domain": domain };
+    } catch {
+      // fall through to JWT
+    }
   }
+
+  // Server-side fallback: extract domain from JWT issuer (e.g. Saleor Cloud)
+  if (typeof window === "undefined" && token) {
+    try {
+      const decoded = jose.decodeJwt(token) as SaleorJWTPayload;
+
+      if (decoded.iss) {
+        const domain = new URL(decoded.iss).host;
+
+        return { "x-saleor-domain": domain };
+      }
+    } catch {
+      // Ignore
+    }
+  }
+
+  return {};
 }
 
 /**
@@ -116,7 +138,7 @@ export const graphqlClient = (token?: string | null) => {
       },
       input: GraphqlInput<TVariables>,
     ) => {
-      const saleorDomainHeader = getSaleorDomainHeader();
+      const saleorDomainHeader = getSaleorDomainHeader(token);
 
       return originalExecute<TResult, TVariables>(query, {
         ...input,

@@ -2,14 +2,17 @@
 
 import { revalidatePath } from "next/cache";
 
-import type {
-  ProductCreateMutationVariables,
-  ProductMediaCreateMutationVariables,
-  ProductTypeDetailVariables,
-  ProductVariantChannelListingAddInput,
-  UpdateProductChannelListingVariables,
+import {
+  MetadataUpdateDocument,
+  type ProductCreateMutationVariables,
+  type ProductMediaCreateMutationVariables,
+  type ProductTypeDetailVariables,
+  type ProductVariantChannelListingAddInput,
+  type UpdateProductChannelListingVariables,
 } from "@/graphql/generated/client";
-import { getServerAuthToken } from "@/lib/auth/server";
+import { getServerAuthToken, getServerVendorId } from "@/lib/auth/server";
+import { executeGraphQL } from "@/lib/graphql/execute";
+import { METADATA_KEYS } from "@/lib/saleor/consts";
 import { productsService } from "@/services";
 
 export type DefaultVariantPayload = {
@@ -33,6 +36,62 @@ export async function createProduct(variables: ProductCreateMutationVariables) {
 
   if (result.ok && result.data.productCreate?.product?.id) {
     const productId = result.data.productCreate.product.id;
+
+    // Ensure vendor.id in metadata before redirect. productCreate adds it via schema,
+    // but we explicitly set it here so the product detail page (which filters by vendor)
+    // can load immediately after redirect.
+    const vendorId = await getServerVendorId();
+
+    if (!vendorId) {
+      return {
+        ok: false as const,
+        data: result.data,
+        errors: [
+          {
+            message:
+              "Could not determine vendor. Product was created but cannot be displayed.",
+          },
+        ],
+      };
+    }
+
+    const metaResult = await executeGraphQL(
+      MetadataUpdateDocument,
+      "MetadataUpdateMutation",
+      {
+        id: productId,
+        input: [{ key: METADATA_KEYS.VENDOR_ID, value: vendorId }],
+      },
+      token,
+    );
+
+    if (!metaResult.ok) {
+      return {
+        ok: false as const,
+        data: result.data,
+        errors: metaResult.errors?.map((e) => ({
+          message: e.message ?? "Failed to set product vendor metadata",
+        })) ?? [
+          {
+            message:
+              "Product was created but vendor metadata could not be set. Please refresh or edit the product.",
+          },
+        ],
+      };
+    }
+
+    const metaErrors = metaResult.data?.updateMetadata?.errors ?? [];
+
+    if (metaErrors.length > 0) {
+      return {
+        ok: false as const,
+        data: result.data,
+        errors: metaErrors.map((e) => ({
+          message:
+            e.message ?? e.code ?? "Failed to set product vendor metadata",
+        })),
+      };
+    }
 
     revalidatePath(`/products/${productId}`);
     revalidatePath("/products");

@@ -39,6 +39,8 @@ import {
   type ProductDetailVariables,
   type ProductsVariables,
 } from "@/graphql/generated/client";
+import { ok } from "@nimara/domain/objects/Result";
+
 import { getServerAuthToken } from "@/lib/auth/server";
 import { executeGraphQL } from "@/lib/graphql/execute";
 import { productsService, vendorCustomersService } from "@/services";
@@ -47,15 +49,9 @@ export async function searchCustomers(search: string) {
   const token = await getServerAuthToken();
   const customerIds = await vendorCustomersService.getVendorCustomerIds(token);
 
+  // No vendor customers metadata or empty list → vendor has no customers, return empty
   if (customerIds.length === 0) {
-    const variables: CustomerByEmailVariables = { ids: [], search };
-
-    return executeGraphQL(
-      CustomerByEmailDocument,
-      "CustomerByEmailQuery",
-      variables,
-      token,
-    );
+    return ok({ customers: { edges: [] } });
   }
 
   const variables: CustomerByEmailVariables = { ids: customerIds, search };

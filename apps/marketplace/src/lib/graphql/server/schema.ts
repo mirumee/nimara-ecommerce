@@ -312,6 +312,15 @@ export async function getStitchedSchema() {
               ? withVendorMetadata(args.input, vendorId)
               : args?.input;
 
+            if (process.env.NODE_ENV === "development") {
+              console.debug(
+                "[productCreate] vendorId:",
+                vendorId,
+                "metadata:",
+                input?.metadata,
+              );
+            }
+
             return delegateToSchema({
               schema: saleorSchema,
               operation: OperationTypeNode.MUTATION,
@@ -1092,15 +1101,12 @@ export async function getStitchedSchema() {
             };
 
             if (productResult.errors || !productResult.data?.product) {
-              // Delegate to Saleor with channel so pricing data is returned.
+              // Don't pass channel: Saleor returns null for products without channel listing when channel is set.
               return delegateToSchema({
                 schema: saleorSchema,
                 operation: OperationTypeNode.QUERY,
                 fieldName: "product",
-                args: {
-                  ...args,
-                  channel: MARKETPLACE_CHANNEL,
-                },
+                args,
                 context,
                 info,
               });
@@ -1117,15 +1123,12 @@ export async function getStitchedSchema() {
               });
             }
 
-            // Delegate to Saleor with channel so pricing data is returned.
+            // Don't pass channel: Saleor returns null for products without channel listing when channel is set.
             return delegateToSchema({
               schema: saleorSchema,
               operation: OperationTypeNode.QUERY,
               fieldName: "product",
-              args: {
-                ...args,
-                channel: MARKETPLACE_CHANNEL,
-              },
+              args,
               context,
               info,
             });
@@ -1217,7 +1220,8 @@ export async function getStitchedSchema() {
               fieldName: "products",
               args: {
                 ...args,
-                channel: MARKETPLACE_CHANNEL,
+                // Don't pass channel: Saleor returns only products with channel listing when channel is set.
+                // Omitting channel includes products without channel listings (vendor can see them and add channels).
                 filter: {
                   ...args.filter,
                   metadata: [...existingMetadata, vendorMetadata],
