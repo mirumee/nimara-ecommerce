@@ -56,12 +56,16 @@ const envSchema = z.object({
     .default("http://localhost:3001/api/graphql"),
 
   // URLs
-  NEXT_PUBLIC_MARKETPLACE_VENDOR_URL: z
-    .string()
-    .default("http://localhost:3001"),
+  NEXT_PUBLIC_MARKETPLACE_VENDOR_URL: z.string().optional(),
   NEXT_PUBLIC_MARKETPLACE_STOREFRONT_URL: z
     .string()
     .default("http://localhost:3000"),
+
+  // Vercel system env vars (auto-injected by Vercel)
+  VERCEL: z.string().optional(),
+  VERCEL_ENV: z.enum(["production", "preview", "development"]).optional(),
+  VERCEL_URL: z.string().optional(),
+  VERCEL_PROJECT_PRODUCTION_URL: z.string().optional(),
 
   // Development
   NEXT_PUBLIC_SALEOR_UI_APP_TOKEN: z.string().optional(),
@@ -93,6 +97,33 @@ function getEnv(): Env {
 }
 
 export const env = getEnv();
+
+/**
+ * Resolves the vendor URL with proper fallback logic:
+ * 1. Explicit NEXT_PUBLIC_MARKETPLACE_VENDOR_URL (highest priority)
+ * 2. On Vercel production: VERCEL_PROJECT_PRODUCTION_URL
+ * 3. On Vercel preview: VERCEL_URL (preview deployment URL)
+ * 4. Fallback: localhost for development
+ */
+function resolveVendorUrl(): string {
+  if (env.NEXT_PUBLIC_MARKETPLACE_VENDOR_URL) {
+    return env.NEXT_PUBLIC_MARKETPLACE_VENDOR_URL;
+  }
+
+  if (env.VERCEL) {
+    if (env.VERCEL_ENV === "production" && env.VERCEL_PROJECT_PRODUCTION_URL) {
+      return `https://${env.VERCEL_PROJECT_PRODUCTION_URL}`;
+    }
+
+    if (env.VERCEL_URL) {
+      return `https://${env.VERCEL_URL}`;
+    }
+  }
+
+  const port = env.MARKETPLACE_PORT;
+
+  return `http://localhost:${port}`;
+}
 
 export const config = {
   isDev: env.MARKETPLACE_NODE_ENV === "development",
@@ -126,7 +157,7 @@ export const config = {
     devToken: env.NEXT_PUBLIC_SALEOR_UI_APP_TOKEN,
   },
   urls: {
-    vendor: env.NEXT_PUBLIC_MARKETPLACE_VENDOR_URL,
+    vendor: resolveVendorUrl(),
     storefront: env.NEXT_PUBLIC_MARKETPLACE_STOREFRONT_URL,
   },
   email: {

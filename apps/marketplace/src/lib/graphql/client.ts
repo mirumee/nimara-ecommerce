@@ -5,6 +5,7 @@ import {
   graphqlClient as createGraphqlClient,
 } from "@nimara/infrastructure/graphql/client";
 
+import { config } from "@/lib/config";
 import { getAppBridgeDomain } from "@/lib/saleor/app-bridge-domain";
 
 type AnyVariables = Record<string, unknown>;
@@ -14,15 +15,57 @@ type GraphqlInput<TVariables extends AnyVariables> = {
   variables?: TVariables;
 };
 
+function normalizeUrl(input: string): string | null {
+  const value = input.trim();
+
+  if (!value) {
+    return null;
+  }
+
+  const withProtocol =
+    value.startsWith("http://") || value.startsWith("https://")
+      ? value
+      : `https://${value}`;
+
+  try {
+    return new URL(withProtocol).toString().replace(/\/$/, "");
+  } catch {
+    return null;
+  }
+}
+
+function getServerOrigin(): string {
+  return config.urls.vendor.replace(/\/$/, "");
+}
+
 /** GraphQL endpoint – use current origin on client (avoids CORS when accessed via ngrok, etc.) */
 function getGraphQLEndpoint(): string {
   if (typeof window !== "undefined") {
     return `${window.location.origin}/api/graphql`;
   }
 
-  return (
-    process.env.NEXT_PUBLIC_GRAPHQL_URL || "http://localhost:3001/api/graphql"
-  );
+  const configuredEndpoint = process.env.NEXT_PUBLIC_GRAPHQL_URL?.trim();
+
+  if (configuredEndpoint) {
+    if (
+      configuredEndpoint.startsWith("http://") ||
+      configuredEndpoint.startsWith("https://")
+    ) {
+      return configuredEndpoint;
+    }
+
+    if (configuredEndpoint.startsWith("/")) {
+      return `${getServerOrigin()}${configuredEndpoint}`;
+    }
+
+    const normalized = normalizeUrl(configuredEndpoint);
+
+    if (normalized) {
+      return normalized;
+    }
+  }
+
+  return `${getServerOrigin()}/api/graphql`;
 }
 
 /**
