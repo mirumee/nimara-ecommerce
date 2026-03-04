@@ -70,6 +70,12 @@ export function ProductsListClient({ products }: ProductsListClientProps) {
   const publishedFilter = searchParams.getAll("status");
 
   useEffect(() => {
+    const currentSearch = searchParams.get("search") || "";
+
+    if (currentSearch === debouncedSearch) {
+      return;
+    }
+
     const params = new URLSearchParams(searchParams.toString());
 
     if (debouncedSearch) {
@@ -78,7 +84,9 @@ export function ProductsListClient({ products }: ProductsListClientProps) {
       params.delete("search");
     }
 
-    router.push(`${pathname}?${params.toString()}`);
+    const query = params.toString();
+
+    router.replace(`${pathname}${query ? `?${query}` : ""}`);
   }, [debouncedSearch, pathname, router, searchParams]);
 
   const togglePublishedFilter = (value: string) => {

@@ -26,16 +26,27 @@ function assertEdgeConfig(
   edgeCfg: typeof config.appConfig.edge,
 ): asserts edgeCfg is {
   accessToken: string;
-  teamId: string;
-  edgeConfigId: string;
   configKey: string;
+  edgeConfigId: string;
+  teamId: string;
 } {
   const missing: string[] = [];
 
-  if (!edgeCfg.accessToken) missing.push("VERCEL_ACCESS_TOKEN");
-  if (!edgeCfg.teamId) missing.push("VERCEL_TEAM_ID");
-  if (!edgeCfg.edgeConfigId) missing.push("VERCEL_EDGE_CONFIG_ID");
-  if (!edgeCfg.configKey) missing.push("MARKETPLACE_APP_CONFIG_EDGE_KEY");
+  if (!edgeCfg.accessToken) {
+    missing.push("VERCEL_ACCESS_TOKEN");
+  }
+
+  if (!edgeCfg.teamId) {
+    missing.push("VERCEL_TEAM_ID");
+  }
+
+  if (!edgeCfg.edgeConfigId) {
+    missing.push("VERCEL_EDGE_CONFIG_ID");
+  }
+
+  if (!edgeCfg.configKey) {
+    missing.push("MARKETPLACE_APP_CONFIG_EDGE_KEY");
+  }
 
   if (missing.length > 0) {
     throw new Error(

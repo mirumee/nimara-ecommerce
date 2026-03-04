@@ -8,6 +8,105 @@ import {
   type ServerContext,
 } from "@/lib/saleor/types";
 
+const VENDOR_ID_CACHE_TTL_MS = 60_000;
+const VENDOR_ID_THROTTLE_FALLBACK_TTL_MS = 30_000;
+const MAX_VENDOR_ID_CACHE_ENTRIES = 10_000;
+
+type VendorIdCacheEntry = {
+  expiresAt: number;
+  unavailableReason?: "THROTTLED";
+  vendorId: string | null;
+};
+
+const vendorIdCache = new Map<string, VendorIdCacheEntry>();
+
+class VendorMetadataRateLimitError extends Error {
+  retryAfterMs?: number;
+
+  constructor(message: string, retryAfterMs?: number) {
+    super(message);
+    this.name = "VendorMetadataRateLimitError";
+    this.retryAfterMs = retryAfterMs;
+  }
+}
+
+function parseRetryAfterHeader(headerValue: string | null): number | undefined {
+  if (!headerValue) {
+    return undefined;
+  }
+
+  const seconds = Number(headerValue);
+
+  if (Number.isFinite(seconds) && seconds >= 0) {
+    return seconds * 1000;
+  }
+
+  const timestamp = Date.parse(headerValue);
+
+  if (Number.isFinite(timestamp)) {
+    const retryAfterMs = timestamp - Date.now();
+
+    return retryAfterMs > 0 ? retryAfterMs : undefined;
+  }
+
+  return undefined;
+}
+
+function isRateLimitMessage(message: string): boolean {
+  const normalizedMessage = message.toLowerCase();
+
+  return (
+    normalizedMessage.includes("429") ||
+    normalizedMessage.includes("too many") ||
+    normalizedMessage.includes("rate limit") ||
+    normalizedMessage.includes("throttl")
+  );
+}
+
+function isVendorMetadataRateLimitError(
+  error: unknown,
+): error is VendorMetadataRateLimitError {
+  return error instanceof VendorMetadataRateLimitError;
+}
+
+function getVendorCacheKey(saleorDomain: string, userId: string): string {
+  return `${saleorDomain}:${userId}`;
+}
+
+function getCachedVendorEntry(key: string): VendorIdCacheEntry | null {
+  const cachedEntry = vendorIdCache.get(key);
+
+  if (!cachedEntry) {
+    return null;
+  }
+
+  if (cachedEntry.expiresAt <= Date.now()) {
+    vendorIdCache.delete(key);
+
+    return null;
+  }
+
+  return cachedEntry;
+}
+
+function setCachedVendorEntry(key: string, entry: VendorIdCacheEntry): void {
+  if (vendorIdCache.size >= MAX_VENDOR_ID_CACHE_ENTRIES) {
+    const now = Date.now();
+
+    for (const [cacheKey, cachedEntry] of vendorIdCache) {
+      if (cachedEntry.expiresAt <= now) {
+        vendorIdCache.delete(cacheKey);
+      }
+    }
+
+    if (vendorIdCache.size >= MAX_VENDOR_ID_CACHE_ENTRIES) {
+      vendorIdCache.clear();
+    }
+  }
+
+  vendorIdCache.set(key, entry);
+}
+
 async function fetchVendorIdForUser(args: {
   authToken: string;
   saleorDomain: string;
@@ -40,18 +139,33 @@ async function fetchVendorIdForUser(args: {
   };
 
   if (!response.ok) {
-    throw new Error(
-      `Failed to fetch user metadata (status=${response.status})`,
-    );
+    const errorMessage = `Failed to fetch user metadata (status=${response.status})`;
+
+    if (response.status === 429) {
+      throw new VendorMetadataRateLimitError(
+        errorMessage,
+        parseRetryAfterHeader(response.headers.get("retry-after")),
+      );
+    }
+
+    throw new Error(errorMessage);
   }
 
   if (json.errors?.length) {
-    throw new Error(
+    const errorMessage =
       json.errors
         .map((e) => e.message)
         .filter(Boolean)
-        .join("; ") || "Failed to fetch user metadata",
-    );
+        .join("; ") || "Failed to fetch user metadata";
+
+    if (isRateLimitMessage(errorMessage)) {
+      throw new VendorMetadataRateLimitError(
+        errorMessage,
+        parseRetryAfterHeader(response.headers.get("retry-after")),
+      );
+    }
+
+    throw new Error(errorMessage);
   }
 
   const metadata = json.data?.user?.metadata ?? [];
@@ -318,18 +432,47 @@ export async function authorizeGraphQLContext(
   }
 
   let vendorId: string | null = null;
+  let vendorIdUnavailableReason: ServerContext["vendorIdUnavailableReason"];
 
   if (appConfig?.authToken) {
-    try {
-      vendorId = await fetchVendorIdForUser({
-        authToken: appConfig.authToken,
-        saleorDomain,
-        userId,
-      });
-    } catch (error) {
-      // Log error but don't fail context creation
-      // Some operations don't require vendor ID
-      console.error("Failed to fetch vendor ID:", error);
+    const cacheKey = getVendorCacheKey(saleorDomain, userId);
+    const cachedEntry = getCachedVendorEntry(cacheKey);
+
+    if (cachedEntry) {
+      vendorId = cachedEntry.vendorId;
+      vendorIdUnavailableReason = cachedEntry.unavailableReason;
+    } else {
+      try {
+        vendorId = await fetchVendorIdForUser({
+          authToken: appConfig.authToken,
+          saleorDomain,
+          userId,
+        });
+
+        setCachedVendorEntry(cacheKey, {
+          vendorId,
+          expiresAt: Date.now() + VENDOR_ID_CACHE_TTL_MS,
+        });
+      } catch (error) {
+        if (isVendorMetadataRateLimitError(error)) {
+          const retryAfterMs =
+            error.retryAfterMs ?? VENDOR_ID_THROTTLE_FALLBACK_TTL_MS;
+
+          vendorIdUnavailableReason = "THROTTLED";
+          setCachedVendorEntry(cacheKey, {
+            vendorId: null,
+            unavailableReason: "THROTTLED",
+            expiresAt: Date.now() + retryAfterMs,
+          });
+          console.warn(
+            `Vendor metadata request throttled for ${saleorDomain}:${userId}. Retrying in ${retryAfterMs}ms.`,
+          );
+        } else {
+          // Log error but don't fail context creation
+          // Some operations don't require vendor ID
+          console.error("Failed to fetch vendor ID:", error);
+        }
+      }
     }
   }
 
@@ -340,6 +483,7 @@ export async function authorizeGraphQLContext(
     userId,
     // Vendor isolation uses vendor profile id, not the Saleor user id.
     vendorId: vendorId || undefined,
+    vendorIdUnavailableReason,
     proxiedCookies: [],
   };
 }
@@ -349,6 +493,15 @@ export async function authorizeGraphQLContext(
  */
 export function requireVendorID(context: ServerContext): string {
   if (!context.vendorId) {
+    if (context.vendorIdUnavailableReason === "THROTTLED") {
+      throw new GraphQLError(
+        "Vendor metadata lookup is temporarily throttled. Please retry shortly.",
+        {
+          extensions: { code: "THROTTLED" },
+        },
+      );
+    }
+
     throw new GraphQLError("Authentication required.", {
       extensions: { code: "UNAUTHORIZED" },
     });

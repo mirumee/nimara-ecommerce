@@ -1,18 +1,4 @@
 {
-  "name": "stripe",
-  "version": "1.0.0",
-  "private": false,
-  "type": "module",
-  "scripts": {
-    "dev": "next dev -p 4000",
-    "dev:inspect": "NODE_OPTIONS='--inspect' next dev -p 4000",
-    "build": "next build",
-    "start": "next start -p 4000",
-    "lint": "eslint . --ext .js,.ts,.tsx --fix",
-    "lint:staged": "lint-staged",
-    "test": "vitest run",
-    "test:watch": "vitest --watch"
-  },
   "dependencies": {
     "@hookform/resolvers": "5.2.2",
     "@nimara/infrastructure": "workspace:*",
@@ -55,11 +41,25 @@
     "vite-tsconfig-paths": "6.1.1",
     "vitest": "4.0.18"
   },
-  "lint-staged": {
-    "*.{js,cjs,ts,tsx}": "eslint --fix",
-    "*.*": "prettier --write --ignore-unknown"
-  },
   "engines": {
     "node": "22.x"
-  }
+  },
+  "lint-staged": {
+    "*.*": "prettier --write --ignore-unknown",
+    "*.{js,cjs,ts,tsx}": "eslint --fix"
+  },
+  "name": "stripe",
+  "private": false,
+  "scripts": {
+    "build": "next build",
+    "dev": "next dev -p 4000",
+    "dev:inspect": "NODE_OPTIONS='--inspect' next dev -p 4000",
+    "lint": "eslint . --ext .js,.ts,.tsx --fix",
+    "lint:staged": "lint-staged",
+    "start": "next start -p 4000",
+    "test": "vitest run",
+    "test:watch": "vitest --watch"
+  },
+  "type": "module",
+  "version": "1.0.0"
 }

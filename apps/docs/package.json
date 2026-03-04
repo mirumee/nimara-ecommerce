@@ -1,13 +1,4 @@
 {
-  "name": "docs",
-  "version": "0.0.1",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build --webpack",
-    "start": "next start",
-    "postbuild": "pagefind --site .next/server/app --output-path public/_pagefind"
-  },
   "dependencies": {
     "next": "^16.1.6",
     "nextra": "4.6.1",
@@ -22,5 +13,14 @@
     "eslint": "^8.57.0",
     "pagefind": "1.4.0",
     "typescript": "^5.9.3"
-  }
+  },
+  "name": "docs",
+  "private": true,
+  "scripts": {
+    "build": "next build --webpack",
+    "dev": "next dev",
+    "postbuild": "pagefind --site .next/server/app --output-path public/_pagefind",
+    "start": "next start"
+  },
+  "version": "0.0.1"
 }

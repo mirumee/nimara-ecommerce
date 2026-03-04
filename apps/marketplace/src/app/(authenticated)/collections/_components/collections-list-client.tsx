@@ -75,6 +75,12 @@ export function CollectionsListClient({
   const debouncedSearch = useDebounce(searchValue, 300);
 
   useEffect(() => {
+    const currentSearch = searchParams.get("search") || "";
+
+    if (currentSearch === debouncedSearch) {
+      return;
+    }
+
     const params = new URLSearchParams(searchParams.toString());
 
     if (debouncedSearch) {
@@ -83,7 +89,9 @@ export function CollectionsListClient({
       params.delete("search");
     }
 
-    router.push(`${pathname}?${params.toString()}`);
+    const query = params.toString();
+
+    router.replace(`${pathname}${query ? `?${query}` : ""}`);
   }, [debouncedSearch, pathname, router, searchParams]);
 
   return (
