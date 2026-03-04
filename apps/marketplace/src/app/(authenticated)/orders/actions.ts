@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 
+import { ok } from "@nimara/domain/objects/Result";
+
 import {
   ChannelShippingMethodsPerCountryDocument,
   type ChannelShippingMethodsPerCountryVariables,
@@ -39,8 +41,6 @@ import {
   type ProductDetailVariables,
   type ProductsVariables,
 } from "@/graphql/generated/client";
-import { ok } from "@nimara/domain/objects/Result";
-
 import { getServerAuthToken } from "@/lib/auth/server";
 import { executeGraphQL } from "@/lib/graphql/execute";
 import { productsService, vendorCustomersService } from "@/services";
