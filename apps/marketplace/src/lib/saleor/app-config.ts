@@ -1,3 +1,4 @@
+import { createClient } from "@vercel/edge-config";
 import { z } from "zod";
 
 import { getSecret, putSecret } from "@/lib/aws/secrets-manager";
@@ -27,6 +28,7 @@ function assertEdgeConfig(
 ): asserts edgeCfg is {
   accessToken: string;
   configKey: string;
+  edgeConfigConnectionString: string | undefined;
   edgeConfigId: string;
   teamId: string;
 } {
@@ -59,6 +61,15 @@ async function loadStore(): Promise<AppConfigStore | null> {
   if (config.appConfig.provider === "edge") {
     const edge = config.appConfig.edge;
 
+    // Path 1: SDK (when MARKETPLACE_EDGE_CONFIG is set)
+    if (edge.edgeConfigConnectionString) {
+      const client = createClient(edge.edgeConfigConnectionString);
+      const value = await client.get<AppConfigStore>(edge.configKey);
+
+      return value ?? null;
+    }
+
+    // Path 2: REST API (fallback)
     assertEdgeConfig(edge);
 
     const response = await fetch(

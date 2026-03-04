@@ -45,6 +45,7 @@ const envSchema = z.object({
   VERCEL_TEAM_ID: z.string().optional(),
   VERCEL_EDGE_CONFIG_ID: z.string().optional(),
   MARKETPLACE_APP_CONFIG_EDGE_KEY: z.string().default("marketplace-app-config"),
+  MARKETPLACE_EDGE_CONFIG: z.string().optional(),
 
   // Saleor
   NEXT_PUBLIC_SALEOR_URL: z.string().url(),
@@ -148,6 +149,7 @@ export const config = {
       teamId: env.VERCEL_TEAM_ID,
       edgeConfigId: env.VERCEL_EDGE_CONFIG_ID,
       configKey: env.MARKETPLACE_APP_CONFIG_EDGE_KEY,
+      edgeConfigConnectionString: env.MARKETPLACE_EDGE_CONFIG,
     },
   },
   saleor: {
