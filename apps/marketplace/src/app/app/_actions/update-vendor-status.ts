@@ -5,6 +5,54 @@ import { sendVendorAcceptedEmail, sendVendorRejectedEmail } from "@/lib/email";
 import { getAppConfig } from "@/lib/saleor/app-config";
 import { type VendorProfile, vendorsService } from "@/services/vendors";
 
+function normalizeBaseUrl(input?: string): string | null {
+  const value = input?.trim();
+
+  if (!value) {
+    return null;
+  }
+
+  const withProtocol =
+    value.startsWith("http://") || value.startsWith("https://")
+      ? value
+      : `https://${value}`;
+
+  try {
+    return new URL(withProtocol).toString().replace(/\/$/, "");
+  } catch {
+    return null;
+  }
+}
+
+function getVendorSignInUrl(): string {
+  const configuredVendorUrl = normalizeBaseUrl(
+    process.env.NEXT_PUBLIC_MARKETPLACE_VENDOR_URL,
+  );
+  const vercelPreviewUrl = normalizeBaseUrl(process.env.VERCEL_URL);
+  const vercelEnv = process.env.VERCEL_ENV;
+
+  // Production should use explicit public marketplace URL.
+  if (vercelEnv === "production" && configuredVendorUrl) {
+    return `${configuredVendorUrl}/sign-in`;
+  }
+
+  // Preview deployments should point to the current Vercel preview URL.
+  if (vercelEnv === "preview" && vercelPreviewUrl) {
+    return `${vercelPreviewUrl}/sign-in`;
+  }
+
+  // Fallbacks for non-Vercel or misconfigured environments.
+  if (configuredVendorUrl) {
+    return `${configuredVendorUrl}/sign-in`;
+  }
+
+  if (vercelPreviewUrl) {
+    return `${vercelPreviewUrl}/sign-in`;
+  }
+
+  return `${config.urls.vendor}/sign-in`;
+}
+
 function getAttributeValue(
   profile: VendorProfile,
   slug: string,
@@ -175,7 +223,7 @@ export async function updateVendorStatusAndNotify(params: {
         vendorName,
         companyName,
         contactEmail,
-        signInUrl: `${config.urls.vendor}/sign-in`,
+        signInUrl: getVendorSignInUrl(),
       });
     } else if (newStatus.toLowerCase() === "rejected") {
       await sendVendorRejectedEmail({
