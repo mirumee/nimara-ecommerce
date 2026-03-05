@@ -48,7 +48,7 @@ const envSchema = z.object({
   MARKETPLACE_EDGE_CONFIG: z.string().optional(),
 
   // Saleor
-  NEXT_PUBLIC_SALEOR_URL: z.string().url(),
+  NEXT_PUBLIC_SALEOR_URL: z.string().optional(),
   NEXT_PUBLIC_SALEOR_MARKETPLACE_CHANNEL_SLUG: z
     .string()
     .default("default-channel"),
