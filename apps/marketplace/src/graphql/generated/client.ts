@@ -33541,7 +33541,7 @@ export type Products_products_ProductCountableConnection_edges_ProductCountableE
 
 export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant = { id: string, name: string, sku: string | null, pricing: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_pricing_VariantPricingInfo | null };
 
-export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product = { id: string, name: string, slug: string, thumbnail: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_thumbnail_Image | null, productType: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_productType_ProductType, category: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_category_Category | null, pricing: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo | null, channelListings: Array<Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_channelListings_ProductChannelListing> | null, variants: Array<Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant> | null };
+export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product = { id: string, name: string, slug: string, created: string, thumbnail: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_thumbnail_Image | null, productType: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_productType_ProductType, category: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_category_Category | null, pricing: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo | null, channelListings: Array<Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_channelListings_ProductChannelListing> | null, variants: Array<Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant> | null };
 
 export type Products_products_ProductCountableConnection_edges_ProductCountableEdge = { cursor: string, node: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product };
 
@@ -33554,7 +33554,9 @@ export type Products_Query = { products: Products_products_ProductCountableConne
 
 export type ProductsVariables = Exact<{
   first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
   search?: InputMaybe<Scalars['String']['input']>;
   filter?: InputMaybe<ProductFilterInput>;
 }>;
@@ -35464,13 +35466,21 @@ export const ProductVariantsSearchDocument = new TypedDocumentString(`
 }
     `) as unknown as TypedDocumentString<ProductVariantsSearch, ProductVariantsSearchVariables>;
 export const ProductsDocument = new TypedDocumentString(`
-    query Products($first: Int, $after: String, $search: String, $filter: ProductFilterInput) {
-  products(first: $first, after: $after, search: $search, filter: $filter) {
+    query Products($first: Int, $last: Int, $after: String, $before: String, $search: String, $filter: ProductFilterInput) {
+  products(
+    first: $first
+    last: $last
+    after: $after
+    before: $before
+    search: $search
+    filter: $filter
+  ) {
     edges {
       node {
         id
         name
         slug
+        created
         thumbnail {
           url
           alt

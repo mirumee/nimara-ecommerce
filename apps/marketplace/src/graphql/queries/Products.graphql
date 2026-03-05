@@ -1,15 +1,25 @@
 query Products(
   $first: Int
+  $last: Int
   $after: String
+  $before: String
   $search: String
   $filter: ProductFilterInput
 ) {
-  products(first: $first, after: $after, search: $search, filter: $filter) {
+  products(
+    first: $first
+    last: $last
+    after: $after
+    before: $before
+    search: $search
+    filter: $filter
+  ) {
     edges {
       node {
         id
         name
         slug
+        created
         thumbnail {
           url
           alt

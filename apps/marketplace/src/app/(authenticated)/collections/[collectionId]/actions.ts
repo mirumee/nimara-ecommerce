@@ -9,6 +9,11 @@ import {
   type ProductsVariables,
 } from "@/graphql/generated/client";
 import { getServerAuthToken } from "@/lib/auth/server";
+import { getAppConfig } from "@/lib/saleor/app-config";
+import {
+  getSaleorDomainFromToken,
+  getSaleorGraphQLEndpoint,
+} from "@/lib/saleor/domain";
 import { collectionsService, productsService } from "@/services";
 
 export async function updateCollection(
@@ -104,15 +109,19 @@ export async function getAvailableProducts(variables?: ProductsVariables) {
  * Upload collection background image using multipart request.
  * This function handles file uploads which require multipart/form-data.
  * Follows the GraphQL Multipart Request Specification: https://github.com/jaydenseric/graphql-multipart-request-spec
+ *
+ * NOTE: File uploads must go directly to Saleor's GraphQL endpoint because
+ * schema stitching via graphql-tools doesn't support multipart file uploads.
+ * We use the app token (not user token) because users don't have MANAGE_PRODUCTS permission.
  */
 export async function uploadCollectionBackgroundImage(
   collectionId: string,
   file: File,
   alt?: string,
 ) {
-  const token = await getServerAuthToken();
+  const userToken = await getServerAuthToken();
 
-  if (!token) {
+  if (!userToken) {
     return {
       ok: false as const,
       errors: [{ code: "UNAUTHORIZED", message: "Authentication required" }],
@@ -120,10 +129,38 @@ export async function uploadCollectionBackgroundImage(
   }
 
   try {
-    // Get GraphQL endpoint
-    const graphqlEndpoint =
-      process.env.NEXT_PUBLIC_GRAPHQL_URL ||
-      "http://localhost:3001/api/graphql";
+    // Get Saleor domain from user's JWT
+    const saleorDomain = getSaleorDomainFromToken(userToken);
+
+    if (!saleorDomain) {
+      return {
+        ok: false as const,
+        errors: [
+          {
+            code: "CONFIG_ERROR",
+            message: "Could not determine Saleor domain",
+          },
+        ],
+      };
+    }
+
+    // Get app config to retrieve the app token (has MANAGE_PRODUCTS permission)
+    const appConfig = await getAppConfig(saleorDomain);
+
+    if (!appConfig?.authToken) {
+      return {
+        ok: false as const,
+        errors: [
+          {
+            code: "CONFIG_ERROR",
+            message: "App not configured for this Saleor instance",
+          },
+        ],
+      };
+    }
+
+    // File uploads must go directly to Saleor (schema stitching doesn't handle multipart)
+    const graphqlEndpoint = getSaleorGraphQLEndpoint(saleorDomain);
 
     // Create FormData for multipart request following GraphQL Multipart Request Spec
     const formData = new FormData();
@@ -154,11 +191,11 @@ export async function uploadCollectionBackgroundImage(
     // Append the file - the key "0" matches the map above
     formData.append("0", file, file.name);
 
-    // Send multipart request
+    // Send multipart request directly to Saleor using app token (has required permissions)
     const response = await fetch(graphqlEndpoint, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${appConfig.authToken}`,
         // Don't set Content-Type header - browser will set it with boundary
       },
       body: formData,

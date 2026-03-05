@@ -4,7 +4,7 @@ import { Filter, Plus, Search } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "@nimara/ui/components/button";
 import { Card, CardContent } from "@nimara/ui/components/card";
@@ -12,10 +12,24 @@ import { Checkbox } from "@nimara/ui/components/checkbox";
 import { Input } from "@nimara/ui/components/input";
 import { Label } from "@nimara/ui/components/label";
 import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@nimara/ui/components/pagination";
+import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@nimara/ui/components/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@nimara/ui/components/select";
 
 import { ColorBadge } from "@/components/ui/color-badge";
 import {
@@ -27,6 +41,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useDebounce } from "@/hooks/use-debounce";
+import { formatDateTime } from "@/lib/utils";
+
+const DEFAULT_PAGE_SIZE = 15;
+const PAGE_SIZE_OPTIONS = [15, 25, 50];
 
 const PUBLISHED_FILTER_OPTIONS = [
   { value: "published", label: "Published" },
@@ -36,6 +54,7 @@ const PUBLISHED_FILTER_OPTIONS = [
 type Product = {
   category: { name: string } | null;
   channelListings: Array<{ isPublished: boolean }> | null;
+  created: string;
   id: string;
   name: string;
   pricing: {
@@ -54,10 +73,19 @@ type Product = {
 };
 
 interface ProductsListClientProps {
+  pageInfo: {
+    endCursor: string | null;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+    startCursor: string | null;
+  } | null;
   products: Product[];
 }
 
-export function ProductsListClient({ products }: ProductsListClientProps) {
+export function ProductsListClient({
+  products,
+  pageInfo,
+}: ProductsListClientProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -67,45 +95,85 @@ export function ProductsListClient({ products }: ProductsListClientProps) {
   );
   const debouncedSearch = useDebounce(searchValue, 300);
 
+  const pageSize = parseInt(
+    searchParams.get("pageSize") || String(DEFAULT_PAGE_SIZE),
+    10,
+  );
   const publishedFilter = searchParams.getAll("status");
 
+  const hasNextPage = pageInfo?.hasNextPage ?? false;
+  const hasPreviousPage = pageInfo?.hasPreviousPage ?? false;
+
+  const updateSearchParams = useCallback(
+    (updates: {
+      after?: string | null;
+      before?: string | null;
+      pageSize?: number;
+      search?: string | null;
+      status?: string[];
+    }) => {
+      const params = new URLSearchParams(searchParams.toString());
+
+      // Remove pagination cursors when changing filters
+      if (updates.search !== undefined || updates.status !== undefined) {
+        params.delete("after");
+        params.delete("before");
+      }
+
+      Object.entries(updates).forEach(([key, value]) => {
+        params.delete(key);
+        if (Array.isArray(value)) {
+          value.forEach((v) => params.append(key, v));
+        } else if (value !== null && value !== undefined && value !== "") {
+          params.set(key, String(value));
+        }
+      });
+
+      // Remove default values
+      if (params.get("pageSize") === String(DEFAULT_PAGE_SIZE)) {
+        params.delete("pageSize");
+      }
+
+      const query = params.toString();
+
+      router.replace(`${pathname}${query ? `?${query}` : ""}`);
+    },
+    [pathname, router, searchParams],
+  );
+
   useEffect(() => {
-    const currentSearch = searchParams.get("search") || "";
-
-    if (currentSearch === debouncedSearch) {
-      return;
+    if (debouncedSearch !== (searchParams.get("search") || "")) {
+      updateSearchParams({ search: debouncedSearch || null });
     }
+  }, [debouncedSearch, searchParams, updateSearchParams]);
 
-    const params = new URLSearchParams(searchParams.toString());
+  const handlePageSizeChange = (newSize: string) => {
+    updateSearchParams({
+      pageSize: parseInt(newSize, 10),
+      after: null,
+      before: null,
+    });
+  };
 
-    if (debouncedSearch) {
-      params.set("search", debouncedSearch);
-    } else {
-      params.delete("search");
+  const handleNextPage = () => {
+    if (pageInfo?.endCursor) {
+      updateSearchParams({ after: pageInfo.endCursor, before: null });
     }
+  };
 
-    const query = params.toString();
-
-    router.replace(`${pathname}${query ? `?${query}` : ""}`);
-  }, [debouncedSearch, pathname, router, searchParams]);
+  const handlePreviousPage = () => {
+    if (pageInfo?.startCursor) {
+      updateSearchParams({ before: pageInfo.startCursor, after: null });
+    }
+  };
 
   const togglePublishedFilter = (value: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-    const currentValues = params.getAll("status");
+    const currentValues = publishedFilter;
+    const newValues = currentValues.includes(value)
+      ? currentValues.filter((v) => v !== value)
+      : [...currentValues, value];
 
-    params.delete("status");
-
-    if (currentValues.includes(value)) {
-      // Remove value
-      currentValues
-        .filter((v) => v !== value)
-        .forEach((v) => params.append("status", v));
-    } else {
-      // Add value
-      [...currentValues, value].forEach((v) => params.append("status", v));
-    }
-
-    router.push(`${pathname}?${params.toString()}`);
+    updateSearchParams({ status: newValues });
   };
 
   const clearFilters = () => {
@@ -209,7 +277,7 @@ export function ProductsListClient({ products }: ProductsListClientProps) {
                   <TableHead>Status</TableHead>
                   <TableHead>Type</TableHead>
                   <TableHead>Category</TableHead>
-                  <TableHead>Price</TableHead>
+                  <TableHead>Created At</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -249,23 +317,62 @@ export function ProductsListClient({ products }: ProductsListClientProps) {
                     <TableCell className="text-muted-foreground">
                       {product.category?.name || "-"}
                     </TableCell>
-                    <TableCell>
-                      {product.pricing?.priceRange?.start?.gross ? (
-                        <span>
-                          {product.pricing.priceRange.start.gross.currency}{" "}
-                          {product.pricing.priceRange.start.gross.amount.toFixed(
-                            2,
-                          )}
-                        </span>
-                      ) : (
-                        "-"
-                      )}
-                    </TableCell>
+                    <TableCell>{formatDateTime(product.created)}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           )}
+
+          <div className="flex items-center justify-between border-t p-4">
+            <div className="flex items-center gap-2">
+              <span className="w-24 text-sm text-muted-foreground">
+                View items
+              </span>
+              <Select
+                value={String(pageSize)}
+                onValueChange={handlePageSizeChange}
+              >
+                <SelectTrigger className="w-[70px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {PAGE_SIZE_OPTIONS.map((size) => (
+                    <SelectItem key={size} value={String(size)}>
+                      {size}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    label="Previous"
+                    onClick={handlePreviousPage}
+                    className={
+                      !hasPreviousPage
+                        ? "pointer-events-none opacity-50"
+                        : "cursor-pointer"
+                    }
+                  />
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationNext
+                    label="Next"
+                    onClick={handleNextPage}
+                    className={
+                      !hasNextPage
+                        ? "pointer-events-none opacity-50"
+                        : "cursor-pointer"
+                    }
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
         </CardContent>
       </Card>
     </div>

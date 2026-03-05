@@ -4,8 +4,14 @@ import { productsService } from "@/services";
 
 import { ProductsListClient } from "./_components/products-list-client";
 
+const DEFAULT_PAGE_SIZE = 15;
+const PAGE_SIZE_OPTIONS = [15, 25, 50];
+
 type PageProps = {
   searchParams: Promise<{
+    after?: string;
+    before?: string;
+    pageSize?: string;
     search?: string;
     status?: string | string[];
   }>;
@@ -14,6 +20,16 @@ type PageProps = {
 export default async function ProductsPage({ searchParams }: PageProps) {
   const params = await searchParams;
 
+  const rawPageSize = parseInt(
+    params.pageSize ?? String(DEFAULT_PAGE_SIZE),
+    10,
+  );
+  const pageSize = PAGE_SIZE_OPTIONS.includes(rawPageSize)
+    ? rawPageSize
+    : DEFAULT_PAGE_SIZE;
+
+  const after = params.after;
+  const before = params.before;
   const search = params.search?.trim() || undefined;
   const statusFilter = Array.isArray(params.status)
     ? params.status
@@ -38,7 +54,10 @@ export default async function ProductsPage({ searchParams }: PageProps) {
   const token = await getServerAuthToken();
   const result = await productsService.getProducts(
     {
-      first: 20,
+      after: after ?? undefined,
+      before: before ?? undefined,
+      first: before ? undefined : pageSize,
+      last: before ? pageSize : undefined,
       search: search,
       filter: productFilter,
     },
@@ -54,6 +73,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
   }
 
   const products = result.data.products?.edges?.map((e) => e.node) || [];
+  const pageInfo = result.data.products?.pageInfo || null;
 
-  return <ProductsListClient products={products} />;
+  return <ProductsListClient products={products} pageInfo={pageInfo} />;
 }
