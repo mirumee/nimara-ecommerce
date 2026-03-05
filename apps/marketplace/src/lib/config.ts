@@ -159,7 +159,9 @@ export const config = {
     devToken: env.NEXT_PUBLIC_SALEOR_UI_APP_TOKEN,
   },
   urls: {
-    vendor: resolveVendorUrl(),
+    get vendor(): string {
+      return resolveVendorUrl();
+    },
     storefront: env.NEXT_PUBLIC_MARKETPLACE_STOREFRONT_URL,
   },
   email: {
