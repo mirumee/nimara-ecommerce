@@ -25,31 +25,6 @@ function normalizeBaseUrl(input?: string): string | null {
 }
 
 function getVendorSignInUrl(): string {
-  const configuredVendorUrl = normalizeBaseUrl(
-    process.env.NEXT_PUBLIC_MARKETPLACE_VENDOR_URL,
-  );
-  const vercelPreviewUrl = normalizeBaseUrl(process.env.VERCEL_URL);
-  const vercelEnv = process.env.VERCEL_ENV;
-
-  // Production should use explicit public marketplace URL.
-  if (vercelEnv === "production" && configuredVendorUrl) {
-    return `${configuredVendorUrl}/sign-in`;
-  }
-
-  // Preview deployments should point to the current Vercel preview URL.
-  if (vercelEnv === "preview" && vercelPreviewUrl) {
-    return `${vercelPreviewUrl}/sign-in`;
-  }
-
-  // Fallbacks for non-Vercel or misconfigured environments.
-  if (configuredVendorUrl) {
-    return `${configuredVendorUrl}/sign-in`;
-  }
-
-  if (vercelPreviewUrl) {
-    return `${vercelPreviewUrl}/sign-in`;
-  }
-
   return `${config.urls.vendor}/sign-in`;
 }
 
