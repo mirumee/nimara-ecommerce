@@ -32891,13 +32891,15 @@ export type CollectionDetail = CollectionDetail_Query;
 
 export type CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection_backgroundImage_Image = { url: string, alt: string | null };
 
+export type CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection_metadata_MetadataItem = { key: string, value: string };
+
 export type CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection_products_ProductCountableConnection = { totalCount: number | null };
 
 export type CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection_channelListings_CollectionChannelListing_channel_Channel = { id: string, name: string };
 
 export type CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection_channelListings_CollectionChannelListing = { isPublished: boolean, channel: CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection_channelListings_CollectionChannelListing_channel_Channel };
 
-export type CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection = { id: string, name: string, slug: string, backgroundImage: CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection_backgroundImage_Image | null, products: CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection_products_ProductCountableConnection | null, channelListings: Array<CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection_channelListings_CollectionChannelListing> | null };
+export type CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection = { id: string, name: string, slug: string, backgroundImage: CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection_backgroundImage_Image | null, metadata: Array<CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection_metadata_MetadataItem>, products: CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection_products_ProductCountableConnection | null, channelListings: Array<CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection_channelListings_CollectionChannelListing> | null };
 
 export type CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge = { cursor: string, node: CollectionsList_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection };
 
@@ -34590,6 +34592,10 @@ export const CollectionsListDocument = new TypedDocumentString(`
         backgroundImage {
           url
           alt
+        }
+        metadata {
+          key
+          value
         }
         products {
           totalCount

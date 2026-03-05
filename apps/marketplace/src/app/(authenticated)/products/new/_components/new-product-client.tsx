@@ -43,6 +43,7 @@ import type {
   ProductChannelListingAddInput,
   ProductTypeDetail,
 } from "@/graphql/generated/client";
+import { METADATA_KEYS } from "@/lib/saleor/consts";
 import { cn } from "@/lib/utils";
 
 import {
@@ -56,7 +57,12 @@ import { type ProductCreateFormValues, productCreateSchema } from "../schema";
 type Props = {
   categories: Array<{ id: string; name: string; slug: string }>;
   channels: NonNullable<Channels["channels"]>;
-  collections: Array<{ id: string; name: string; slug: string }>;
+  collections: Array<{
+    id: string;
+    metadata: Array<{ key: string; value: string }>;
+    name: string;
+    slug: string;
+  }>;
   productTypes: Array<{
     hasVariants: boolean;
     id: string;
@@ -320,6 +326,28 @@ export function NewProductClient({
     [collections],
   );
 
+  const defaultCollectionIds = useMemo(() => {
+    // Find the vendor's default collection (created during sign-up)
+    const defaultCollection = collections.find((c) =>
+      c.metadata?.some(
+        (m) =>
+          m.key === METADATA_KEYS.VENDOR_DEFAULT_COLLECTION &&
+          m.value === "true",
+      ),
+    );
+
+    if (defaultCollection) {
+      return [
+        {
+          value: defaultCollection.id,
+          label: defaultCollection.name || defaultCollection.slug,
+        },
+      ];
+    }
+
+    return [];
+  }, [collections]);
+
   // Start empty: channels are added only when user selects them in Manage channels modal
   const defaultChannelAvailability = useMemo(() => ({}), []);
 
@@ -332,7 +360,8 @@ export function NewProductClient({
   }, [channels]);
 
   const form = useForm<ProductCreateFormValues>({
-    resolver: zodResolver(productCreateSchema),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(productCreateSchema as any),
     defaultValues: {
       name: "",
       description: "",
@@ -343,7 +372,7 @@ export function NewProductClient({
       media: [],
       productTypeId: "",
       categoryId: "",
-      collectionIds: [],
+      collectionIds: defaultCollectionIds,
       channelAvailability: defaultChannelAvailability,
       attributes: {},
       weight: { value: "0.00", unit: "KG" },

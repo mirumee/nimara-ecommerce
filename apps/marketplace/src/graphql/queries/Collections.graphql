@@ -13,6 +13,10 @@ query CollectionsList(
           url
           alt
         }
+        metadata {
+          key
+          value
+        }
         products {
           totalCount
         }
