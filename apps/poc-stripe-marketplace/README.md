@@ -9,6 +9,7 @@ REST-only Saleor external app used for installation flow experiments.
 - `POST /api/payments/checkout-complete` - best-effort checkout completion for a list of checkout IDs
 - `POST /api/payments/payment-intents` - create Stripe PaymentIntent and initial `transactionCreate` for provided orders
 - `POST /api/payments/stripe/webhooks` - Stripe webhook endpoint (`payment_intent.succeeded`)
+- `POST /api/saleor/webhooks/payment/transaction-refund-requested` - Saleor sync webhook endpoint (`TRANSACTION_REFUND_REQUESTED`)
 - `GET /app` - minimal informational app page
 
 Compatibility aliases (legacy):
@@ -119,6 +120,20 @@ Endpoint przyjmuje eventy Stripe i obsługuje `payment_intent.succeeded`:
 - waliduje podpis z headera `stripe-signature` przez `STRIPE_WEBHOOK_SIGNING_SECRET`,
 - czyta `metadata.suborders` + `metadata.order_amounts`,
 - tworzy `transactionCreate` (`amountCharged`) dla każdego ordera.
+
+### Saleor refund webhook
+
+`POST /api/saleor/webhooks/payment/transaction-refund-requested`
+
+Endpoint obsługuje webhook Saleora `TRANSACTION_REFUND_REQUESTED`:
+- wymaga nagłówków `saleor-signature`, `saleor-domain`, `saleor-api-url`,
+- weryfikuje podpis JWS przez JWKS (`/.well-known/jwks.json`),
+- wykonuje `Stripe refunds.create` dla `event.transaction.pspReference`,
+- mapuje status refundu Stripe:
+  - `succeeded` => `REFUND_SUCCESS`,
+  - `pending`/`requires_action` => `REFUND_REQUEST`,
+  - `failed`/`canceled` => `REFUND_FAILURE`,
+- zwraca payload eventu transakcyjnego do Saleora.
 
 ### Error statuses
 

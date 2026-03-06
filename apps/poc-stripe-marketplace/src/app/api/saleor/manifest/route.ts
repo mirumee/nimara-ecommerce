@@ -1,5 +1,6 @@
 import { CONFIG } from "@/config";
 import { getRequestOrigin } from "@/lib/http/request";
+import { TRANSACTION_REFUND_REQUESTED_SUBSCRIPTION } from "@/lib/saleor/transaction-refund-requested";
 import { type SaleorAppManifest } from "@/lib/saleor/types";
 
 export async function GET(request: Request) {
@@ -12,7 +13,15 @@ export async function GET(request: Request) {
     permissions: ["HANDLE_CHECKOUTS", "MANAGE_ORDERS", "HANDLE_PAYMENTS"],
     tokenTargetUrl: `${origin}/api/saleor/register`,
     appUrl: `${origin}/app`,
-    webhooks: [],
+    webhooks: [
+      {
+        name: "TransactionRefundRequested",
+        targetUrl: `${origin}/api/saleor/webhooks/payment/transaction-refund-requested`,
+        syncEvents: ["TRANSACTION_REFUND_REQUESTED"],
+        asyncEvents: [],
+        query: TRANSACTION_REFUND_REQUESTED_SUBSCRIPTION,
+      },
+    ],
   };
 
   return Response.json(manifest);

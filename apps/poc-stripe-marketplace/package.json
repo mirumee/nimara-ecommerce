@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-secrets-manager": "^3.700.0",
+    "jose": "^6.1.0",
     "next": "15.5.9",
     "react": "19.2.0",
     "react-dom": "19.2.0",

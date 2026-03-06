@@ -16,7 +16,29 @@ interface PaymentIntentCreateOutput {
   id: string;
 }
 
-const toFormBody = (input: PaymentIntentCreateInput): URLSearchParams => {
+interface RefundCreateInput {
+  amount: number;
+  idempotencyKey?: string;
+  metadata?: Record<string, string>;
+  payment_intent: string;
+}
+
+type RefundStatus =
+  | "pending"
+  | "requires_action"
+  | "succeeded"
+  | "failed"
+  | "canceled";
+
+interface RefundCreateOutput {
+  amount: number;
+  currency: string;
+  failure_reason: string | null;
+  id: string;
+  status: RefundStatus;
+}
+
+const toPaymentIntentFormBody = (input: PaymentIntentCreateInput): URLSearchParams => {
   const form = new URLSearchParams();
 
   form.set("amount", String(input.amount));
@@ -37,6 +59,38 @@ const toFormBody = (input: PaymentIntentCreateInput): URLSearchParams => {
   return form;
 };
 
+const toRefundFormBody = (input: RefundCreateInput): URLSearchParams => {
+  const form = new URLSearchParams();
+
+  form.set("payment_intent", input.payment_intent);
+  form.set("amount", String(input.amount));
+
+  Object.entries(input.metadata ?? {}).forEach(([key, value]) => {
+    form.set(`metadata[${key}]`, value);
+  });
+
+  return form;
+};
+
+const parseStripeError = (data: unknown, fallbackMessage: string) => {
+  if (typeof data !== "object" || data === null || !("error" in data)) {
+    return fallbackMessage;
+  }
+
+  const stripeError = data.error;
+
+  if (
+    typeof stripeError === "object" &&
+    stripeError !== null &&
+    "message" in stripeError &&
+    typeof stripeError.message === "string"
+  ) {
+    return stripeError.message;
+  }
+
+  return fallbackMessage;
+};
+
 const paymentIntents = {
   create: async (
     input: PaymentIntentCreateInput,
@@ -50,31 +104,61 @@ const paymentIntents = {
           ? { "Idempotency-Key": input.idempotencyKey }
           : {}),
       },
-      body: toFormBody(input).toString(),
+      body: toPaymentIntentFormBody(input).toString(),
     });
 
-    const data = (await response.json()) as
-      | PaymentIntentCreateOutput
-      | {
-          error?: {
-            message?: string;
-          };
-        };
+    const data = (await response.json()) as unknown;
 
     if (!response.ok) {
-      throw new Error(
-        "error" in data && data.error?.message
-          ? data.error.message
-          : "Stripe payment intent create failed.",
-      );
+      throw new Error(parseStripeError(data, "Stripe payment intent create failed."));
     }
 
-    if (!("id" in data)) {
+    if (
+      typeof data !== "object" ||
+      data === null ||
+      !("id" in data) ||
+      !("client_secret" in data)
+    ) {
       throw new Error("Invalid Stripe response.");
     }
 
-    return data;
+    return data as PaymentIntentCreateOutput;
   },
 };
 
-export const getStripeClient = () => ({ paymentIntents });
+const refunds = {
+  create: async (input: RefundCreateInput): Promise<RefundCreateOutput> => {
+    const response = await fetch("https://api.stripe.com/v1/refunds", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${CONFIG.STRIPE_SECRET_KEY}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+        ...(input.idempotencyKey
+          ? { "Idempotency-Key": input.idempotencyKey }
+          : {}),
+      },
+      body: toRefundFormBody(input).toString(),
+    });
+
+    const data = (await response.json()) as unknown;
+
+    if (!response.ok) {
+      throw new Error(parseStripeError(data, "Stripe refund create failed."));
+    }
+
+    if (
+      typeof data !== "object" ||
+      data === null ||
+      !("id" in data) ||
+      !("status" in data) ||
+      !("amount" in data) ||
+      !("currency" in data)
+    ) {
+      throw new Error("Invalid Stripe refund response.");
+    }
+
+    return data as RefundCreateOutput;
+  },
+};
+
+export const getStripeClient = () => ({ paymentIntents, refunds });

@@ -42,3 +42,10 @@ export const getCentsFromAmount = (money: Money) => {
 
   return Math.round(amount * multiplier);
 };
+
+export const getAmountFromCents = (money: Money) => {
+  const decimals = getDecimalsForStripe(money.currency);
+  const multiplier = 10 ** decimals;
+
+  return (money.amount / multiplier).toFixed(decimals);
+};
