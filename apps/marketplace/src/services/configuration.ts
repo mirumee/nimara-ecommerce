@@ -5,6 +5,8 @@ import {
   ChannelsDocument,
   type Me,
   MeDocument,
+  type VendorPageStatus,
+  VendorPageStatusDocument,
   type Warehouses,
   WarehousesDocument,
 } from "@/graphql/generated/client";
@@ -28,6 +30,18 @@ class ConfigurationService {
       WarehousesDocument,
       "WarehousesQuery",
       undefined,
+      token,
+    );
+  }
+
+  async getVendorProfile(
+    vendorId: string,
+    token?: string | null,
+  ): AsyncResult<VendorPageStatus> {
+    return executeGraphQL(
+      VendorPageStatusDocument,
+      "VendorPageStatusQuery",
+      { id: vendorId },
       token,
     );
   }

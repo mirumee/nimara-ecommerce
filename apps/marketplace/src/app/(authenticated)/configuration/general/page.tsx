@@ -29,6 +29,30 @@ export default async function ConfigurationGeneralPage() {
 
   const user = result.data.me;
 
+  const vendorPageId = user?.metadata?.find(
+    (m) => m.key === "vendor.id",
+  )?.value;
+  let vendor: { name: string; slug: string } | null = null;
+
+  if (vendorPageId) {
+    const vendorResult = await configurationService.getVendorProfile(
+      vendorPageId,
+      token,
+    );
+
+    if (vendorResult.ok && vendorResult.data.page) {
+      const page = vendorResult.data.page;
+      const vendorNameAttr = page.attributes.find(
+        (attr) => attr.attribute.slug === "vendor-name",
+      );
+
+      vendor = {
+        name: vendorNameAttr?.values[0]?.name ?? page.title,
+        slug: page.slug,
+      };
+    }
+  }
+
   // Find default addresses
   const defaultBillingAddress = user?.addresses?.find(
     (addr) => addr.isDefaultBillingAddress === true,
@@ -66,7 +90,7 @@ export default async function ConfigurationGeneralPage() {
       <h1 className="text-2xl font-semibold text-gray-900">General</h1>
 
       {/* Account Information Card */}
-      <AccountInformationCard user={user} />
+      <AccountInformationCard user={user} vendor={vendor} />
 
       {/* Address Information Card */}
       <Card>

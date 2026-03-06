@@ -843,7 +843,9 @@ export function ChannelAvailabilitySection({
                                         }
                                       }}
                                       className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 ${
-                                        field.value ? "bg-primary" : "bg-muted"
+                                        field.value
+                                          ? "bg-primary"
+                                          : "bg-muted-foreground/30"
                                       }`}
                                     >
                                       <span
@@ -885,7 +887,7 @@ export function ChannelAvailabilitySection({
                                       className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 ${
                                         (field.value ?? false)
                                           ? "bg-primary"
-                                          : "bg-muted"
+                                          : "bg-muted-foreground/30"
                                       }`}
                                     >
                                       <span
@@ -928,7 +930,9 @@ export function ChannelAvailabilitySection({
                                         }}
                                         disabled={!published}
                                         className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 ${
-                                          isChecked ? "bg-primary" : "bg-muted"
+                                          isChecked
+                                            ? "bg-primary"
+                                            : "bg-muted-foreground/30"
                                         }`}
                                       >
                                         <span

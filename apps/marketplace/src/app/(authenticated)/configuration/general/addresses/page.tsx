@@ -107,11 +107,14 @@ export default async function AddressesPage() {
                       </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem>
+                      <DropdownMenuItem disabled>
                         Set as default billing address
                       </DropdownMenuItem>
-                      <DropdownMenuItem>Edit Address</DropdownMenuItem>
-                      <DropdownMenuItem className="text-red-600 focus:text-red-600">
+                      <DropdownMenuItem disabled>Edit Address</DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="text-red-600 focus:text-red-600"
+                        disabled
+                      >
                         Delete Address
                       </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -174,11 +177,14 @@ export default async function AddressesPage() {
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem>
+                    <DropdownMenuItem disabled>
                       Set as default shipping address
                     </DropdownMenuItem>
-                    <DropdownMenuItem>Edit Address</DropdownMenuItem>
-                    <DropdownMenuItem className="text-red-600 focus:text-red-600">
+                    <DropdownMenuItem disabled>Edit Address</DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="text-red-600 focus:text-red-600"
+                      disabled
+                    >
                       Delete Address
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -237,14 +243,17 @@ export default async function AddressesPage() {
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem>
+                    <DropdownMenuItem disabled>
                       Set as default shipping address
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem disabled>
                       Set as default billing address
                     </DropdownMenuItem>
-                    <DropdownMenuItem>Edit Address</DropdownMenuItem>
-                    <DropdownMenuItem className="text-red-600 focus:text-red-600">
+                    <DropdownMenuItem disabled>Edit Address</DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="text-red-600 focus:text-red-600"
+                      disabled
+                    >
                       Delete Address
                     </DropdownMenuItem>
                   </DropdownMenuContent>

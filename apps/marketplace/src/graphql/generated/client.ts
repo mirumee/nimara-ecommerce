@@ -33580,13 +33580,13 @@ export type VendorCustomerIdsVariables = Exact<{
 
 export type VendorCustomerIds = VendorCustomerIds_Query;
 
-export type VendorPageStatus_page_Page_attributes_SelectedAttribute_attribute_Attribute = { slug: string | null };
+export type VendorPageStatus_page_Page_attributes_SelectedAttribute_attribute_Attribute = { id: string, slug: string | null };
 
 export type VendorPageStatus_page_Page_attributes_SelectedAttribute_values_AttributeValue = { name: string | null };
 
 export type VendorPageStatus_page_Page_attributes_SelectedAttribute = { attribute: VendorPageStatus_page_Page_attributes_SelectedAttribute_attribute_Attribute, values: Array<VendorPageStatus_page_Page_attributes_SelectedAttribute_values_AttributeValue> };
 
-export type VendorPageStatus_page_Page = { id: string, title: string, attributes: Array<VendorPageStatus_page_Page_attributes_SelectedAttribute> };
+export type VendorPageStatus_page_Page = { id: string, title: string, slug: string, attributes: Array<VendorPageStatus_page_Page_attributes_SelectedAttribute> };
 
 export type VendorPageStatus_Query = { page: VendorPageStatus_page_Page | null };
 
@@ -35555,8 +35555,10 @@ export const VendorPageStatusDocument = new TypedDocumentString(`
   page(id: $id) {
     id
     title
+    slug
     attributes {
       attribute {
+        id
         slug
       }
       values {

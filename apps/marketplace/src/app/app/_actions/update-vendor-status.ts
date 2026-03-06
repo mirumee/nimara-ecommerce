@@ -5,25 +5,6 @@ import { sendVendorAcceptedEmail, sendVendorRejectedEmail } from "@/lib/email";
 import { getAppConfig } from "@/lib/saleor/app-config";
 import { type VendorProfile, vendorsService } from "@/services/vendors";
 
-function normalizeBaseUrl(input?: string): string | null {
-  const value = input?.trim();
-
-  if (!value) {
-    return null;
-  }
-
-  const withProtocol =
-    value.startsWith("http://") || value.startsWith("https://")
-      ? value
-      : `https://${value}`;
-
-  try {
-    return new URL(withProtocol).toString().replace(/\/$/, "");
-  } catch {
-    return null;
-  }
-}
-
 function getVendorSignInUrl(): string {
   return `${config.urls.vendor}/sign-in`;
 }

@@ -14,6 +14,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@nimara/ui/components/card";
+import { Input } from "@nimara/ui/components/input";
+import { Label } from "@nimara/ui/components/label";
 import { Skeleton } from "@nimara/ui/components/skeleton";
 import { useToast } from "@nimara/ui/hooks";
 
@@ -27,19 +29,25 @@ const accountInfoSchema = z.object({
   name: z.string().min(1, "Name is required"),
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
-  email: z.string().email("Invalid email address").min(1, "Email is required"),
 });
 
 type AccountInfoFormData = z.infer<typeof accountInfoSchema>;
 
+interface Vendor {
+  name: string;
+  slug: string;
+}
+
 interface AccountInformationCardProps {
   isLoading?: boolean;
   user: Me_me_User | null;
+  vendor: Vendor | null;
 }
 
 export function AccountInformationCard({
   user,
   isLoading = false,
+  vendor,
 }: AccountInformationCardProps) {
   const router = useRouter();
   const { toast } = useToast();
@@ -47,16 +55,11 @@ export function AccountInformationCard({
   const [isPending, setIsPending] = useState(false);
   const submittedDataRef = useRef<AccountInfoFormData | null>(null);
 
-  // Get vendor name from metadata
-  const vendorNameMetadata = user?.metadata?.find(
-    (m) => m.key === "vendor.name",
-  );
   const vendorName =
-    vendorNameMetadata?.value ||
-    user?.firstName ||
-    user?.email ||
-    "Vendor name";
-  const vendorUrl = `marketplace.com/${String(vendorName).toLowerCase().replace(/\s+/g, "-")}`;
+    vendor?.name || user?.firstName || user?.email || "Vendor name";
+  const vendorUrl = vendor?.slug
+    ? `marketplace.com/${vendor.slug}`
+    : `marketplace.com/${String(vendorName).toLowerCase().replace(/\s+/g, "-")}`;
   const fullName = user
     ? [user.firstName, user.lastName].filter(Boolean).join(" ")
     : "";
@@ -65,13 +68,12 @@ export function AccountInformationCard({
     () => ({
       resolver: zodResolver(accountInfoSchema),
       defaultValues: {
-        name: vendorNameMetadata?.value || "",
+        name: vendor?.name || "",
         firstName: user?.firstName || "",
         lastName: user?.lastName || "",
-        email: user?.email || "",
       },
     }),
-    [vendorNameMetadata?.value, user?.firstName, user?.lastName, user?.email],
+    [vendor?.name, user?.firstName, user?.lastName],
   );
 
   const form = useForm<AccountInfoFormData>(formConfig);
@@ -79,52 +81,31 @@ export function AccountInformationCard({
   // Hide skeleton once refreshed user data includes the submitted values
   useEffect(() => {
     if (user && !isEditing && isPending && submittedDataRef.current) {
-      const nameMetadata = user.metadata?.find((m) => m.key === "vendor.name");
-      const currentName = nameMetadata?.value || "";
       const submitted = submittedDataRef.current;
 
       // Check if the submitted values match the current user data
       if (
-        currentName === submitted.name &&
         user.firstName === submitted.firstName &&
-        user.lastName === submitted.lastName &&
-        user.email === submitted.email
+        user.lastName === submitted.lastName
       ) {
         setIsPending(false);
         submittedDataRef.current = null;
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    user?.metadata,
-    user?.firstName,
-    user?.lastName,
-    user?.email,
-    isEditing,
-    isPending,
-  ]);
+  }, [user?.firstName, user?.lastName, isEditing, isPending]);
 
   // Update form values when user data changes (only when not editing)
   useEffect(() => {
     if (user && !isEditing) {
-      const nameMetadata = user.metadata?.find((m) => m.key === "vendor.name");
-
       form.reset({
-        name: nameMetadata?.value || "",
+        name: vendor?.name || "",
         firstName: user.firstName || "",
         lastName: user.lastName || "",
-        email: user.email || "",
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    user?.id,
-    user?.metadata,
-    user?.firstName,
-    user?.lastName,
-    user?.email,
-    isEditing,
-  ]);
+  }, [user?.id, vendor?.name, user?.firstName, user?.lastName, isEditing]);
 
   const onSubmit: SubmitHandler<AccountInfoFormData> = async (data) => {
     setIsPending(true);
@@ -133,13 +114,7 @@ export function AccountInformationCard({
       const result = await updateAccount({
         firstName: data.firstName,
         lastName: data.lastName,
-        email: data.email,
-        metadata: [
-          {
-            key: "vendor.name",
-            value: data.name,
-          },
-        ],
+        vendorName: data.name,
       });
 
       if (!result.ok) {
@@ -200,13 +175,10 @@ export function AccountInformationCard({
 
   const handleCancel = () => {
     setIsEditing(false);
-    const nameMetadata = user?.metadata?.find((m) => m.key === "vendor.name");
-
     form.reset({
-      name: nameMetadata?.value || "",
+      name: vendor?.name || "",
       firstName: user?.firstName || "",
       lastName: user?.lastName || "",
-      email: user?.email || "",
     });
   };
 
@@ -229,7 +201,6 @@ export function AccountInformationCard({
           <FormProvider {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                {/* First Column - Name, First Name and Last Name */}
                 <div className="space-y-4">
                   <InputField
                     label="Name"
@@ -247,17 +218,17 @@ export function AccountInformationCard({
                     inputProps={{ placeholder: "Last name" }}
                   />
                 </div>
-
-                {/* Second Column - Email */}
                 <div className="space-y-4">
-                  <InputField
-                    label="Email"
-                    name="email"
-                    inputProps={{
-                      type: "email",
-                      placeholder: "contact@vendorname.com",
-                    }}
-                  />
+                  <div className="grid gap-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={user?.email || ""}
+                      disabled
+                      className="bg-muted"
+                    />
+                  </div>
                 </div>
               </div>
               <div className="flex gap-2">

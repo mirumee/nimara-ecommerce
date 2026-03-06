@@ -164,6 +164,39 @@ class VendorsService {
       token,
     );
   }
+
+  async updateVendorName(
+    pageId: string,
+    attributeId: string,
+    name: string,
+    token?: string | null,
+  ): AsyncResult<PageUpdateResponse> {
+    const doc = {
+      toString: () => PAGE_UPDATE_MUTATION,
+    } as DocumentTypeDecoration<
+      PageUpdateResponse,
+      { id: string; input: unknown }
+    > & {
+      toString(): string;
+    };
+
+    return executeGraphQL(
+      doc,
+      "PageUpdateMutation",
+      {
+        id: pageId,
+        input: {
+          attributes: [
+            {
+              id: attributeId,
+              plainText: name,
+            },
+          ],
+        },
+      },
+      token,
+    );
+  }
 }
 
 export const vendorsService = new VendorsService();
