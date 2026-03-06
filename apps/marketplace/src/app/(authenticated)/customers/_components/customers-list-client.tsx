@@ -97,11 +97,7 @@ export function CustomersListClient({
                 </div>
               </AccordionTrigger>
               <AccordionContent>
-                {customer.orders.length === 0 ? (
-                  <p className="pb-3 text-sm text-muted-foreground">
-                    No orders for this customer yet.
-                  </p>
-                ) : (
+                {customer.orders.length > 0 && (
                   <div className="overflow-x-auto pb-2">
                     <table className="min-w-full text-sm">
                       <thead className="text-left text-muted-foreground">
