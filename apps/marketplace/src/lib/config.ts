@@ -1,5 +1,6 @@
-import { DEFAULT_CHANNEL_SLUG } from "@nimara/domain/consts";
 import { z } from "zod";
+
+import { DEFAULT_CHANNEL_SLUG } from "@nimara/domain/consts";
 
 const booleanFromEnv = z.preprocess((value) => {
   if (typeof value === "boolean") {

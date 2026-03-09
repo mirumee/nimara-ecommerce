@@ -14,6 +14,7 @@ import {
 import { GraphQLError, OperationTypeNode, parse } from "graphql";
 
 import { DEFAULT_CHANNEL_SLUG } from "@nimara/domain/consts";
+
 import { METADATA_KEYS } from "@/lib/saleor/consts";
 import type { ServerContext } from "@/lib/saleor/types";
 
