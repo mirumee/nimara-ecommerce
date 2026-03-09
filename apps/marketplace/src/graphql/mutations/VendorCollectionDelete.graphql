@@ -1,0 +1,13 @@
+mutation VendorCollectionDelete($id: ID!) {
+  collectionDelete(id: $id) {
+    collection {
+      id
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+

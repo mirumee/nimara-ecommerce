@@ -5,6 +5,7 @@ import { type Region } from "@nimara/foundation/regions/types";
 import { type ServiceRegistry } from "@nimara/infrastructure/types";
 
 export type AddToBagAction = (params: {
+  clientProductVendorId?: string | null;
   quantity?: number;
   variantId: string;
 }) => AsyncResult<{ cartId: string }>;

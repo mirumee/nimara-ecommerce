@@ -1,0 +1,46 @@
+query ProductVariantsSearch(
+  $first: Int
+  $after: String
+  $ids: [ID!]
+  $search: String
+  $channel: String
+) {
+  productVariants(
+    first: $first
+    after: $after
+    ids: $ids
+    search: $search
+    channel: $channel
+  ) {
+    edges {
+      node {
+        id
+        name
+        sku
+        pricing {
+          price {
+            gross {
+              amount
+              currency
+            }
+          }
+        }
+        product {
+          id
+          name
+          thumbnail {
+            url
+            alt
+          }
+        }
+      }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+    totalCount
+  }
+}
+

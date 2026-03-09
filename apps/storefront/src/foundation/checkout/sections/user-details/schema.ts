@@ -1,10 +1,11 @@
-import { z } from "zod";
+import { z } from "zod/v3";
 
 import { type GetTranslations } from "@nimara/i18n/types";
 
 export const userDetailsEmailFormSchema = ({ t }: { t: GetTranslations }) =>
   z.object({
     email: z
+      .string()
       .email({ message: t("form-validation.invalid-email") })
       .min(1, { message: t("form-validation.required") })
       .trim(),

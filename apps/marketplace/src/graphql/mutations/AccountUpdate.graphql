@@ -1,0 +1,19 @@
+mutation AccountUpdateMutation($customerId: ID, $input: AccountInput!) {
+  accountUpdate(customerId: $customerId, input: $input) {
+    user {
+      id
+      email
+      firstName
+      lastName
+      metadata {
+        key
+        value
+      }
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}

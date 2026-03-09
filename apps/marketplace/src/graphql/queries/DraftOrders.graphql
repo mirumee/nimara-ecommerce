@@ -1,0 +1,47 @@
+query DraftOrdersList(
+  $first: Int
+  $last: Int
+  $after: String
+  $before: String
+  $filter: OrderDraftFilterInput
+  $sortBy: OrderSortingInput
+) {
+  draftOrders(
+    first: $first
+    last: $last
+    after: $after
+    before: $before
+    filter: $filter
+    sortBy: $sortBy
+  ) {
+    edges {
+      node {
+        id
+        number
+        created
+        status
+        statusDisplay
+        total {
+          gross {
+            amount
+            currency
+          }
+        }
+        user {
+          email
+          firstName
+          lastName
+        }
+      }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    totalCount
+  }
+}
+

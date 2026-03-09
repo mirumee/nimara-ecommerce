@@ -1,0 +1,15 @@
+mutation DraftOrderDeleteMutation($id: ID!) {
+  draftOrderDelete(id: $id) {
+    order {
+      id
+      number
+      status
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+

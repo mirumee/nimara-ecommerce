@@ -1,0 +1,9 @@
+query VendorCustomerIds($id: ID!) {
+  page(id: $id) {
+    id
+    metadata {
+      key
+      value
+    }
+  }
+}

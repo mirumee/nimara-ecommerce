@@ -51,6 +51,7 @@ export const serializeProduct = (data: ProductDetailsFragment): Product => {
       title: data.seoTitle ?? null,
       description: data.seoDescription ?? null,
     },
+    vendorId: data.vendorId,
     attributes: data.attributes.map(parseAttributeData),
     variants: variants.map(
       ({

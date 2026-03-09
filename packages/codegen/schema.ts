@@ -6045,256 +6045,507 @@ export type ContainsFilterInput = {
  * The `EU` value is DEPRECATED and will be removed in Saleor 3.21.
  */
 export type CountryCode =
+  /** Andorra */
   | 'AD'
+  /** United Arab Emirates */
   | 'AE'
+  /** Afghanistan */
   | 'AF'
+  /** Antigua and Barbuda */
   | 'AG'
+  /** Anguilla */
   | 'AI'
+  /** Albania */
   | 'AL'
+  /** Armenia */
   | 'AM'
+  /** Angola */
   | 'AO'
+  /** Antarctica */
   | 'AQ'
+  /** Argentina */
   | 'AR'
+  /** American Samoa */
   | 'AS'
+  /** Austria */
   | 'AT'
+  /** Australia */
   | 'AU'
+  /** Aruba */
   | 'AW'
+  /** Åland Islands */
   | 'AX'
+  /** Azerbaijan */
   | 'AZ'
+  /** Bosnia and Herzegovina */
   | 'BA'
+  /** Barbados */
   | 'BB'
+  /** Bangladesh */
   | 'BD'
+  /** Belgium */
   | 'BE'
+  /** Burkina Faso */
   | 'BF'
+  /** Bulgaria */
   | 'BG'
+  /** Bahrain */
   | 'BH'
+  /** Burundi */
   | 'BI'
+  /** Benin */
   | 'BJ'
+  /** Saint Barthélemy */
   | 'BL'
+  /** Bermuda */
   | 'BM'
+  /** Brunei */
   | 'BN'
+  /** Bolivia */
   | 'BO'
+  /** Bonaire, Sint Eustatius and Saba */
   | 'BQ'
+  /** Brazil */
   | 'BR'
+  /** Bahamas */
   | 'BS'
+  /** Bhutan */
   | 'BT'
+  /** Bouvet Island */
   | 'BV'
+  /** Botswana */
   | 'BW'
+  /** Belarus */
   | 'BY'
+  /** Belize */
   | 'BZ'
+  /** Canada */
   | 'CA'
+  /** Cocos (Keeling) Islands */
   | 'CC'
+  /** Congo (the Democratic Republic of the) */
   | 'CD'
+  /** Central African Republic */
   | 'CF'
+  /** Congo */
   | 'CG'
+  /** Switzerland */
   | 'CH'
+  /** Côte d'Ivoire */
   | 'CI'
+  /** Cook Islands */
   | 'CK'
+  /** Chile */
   | 'CL'
+  /** Cameroon */
   | 'CM'
+  /** China */
   | 'CN'
+  /** Colombia */
   | 'CO'
+  /** Costa Rica */
   | 'CR'
+  /** Cuba */
   | 'CU'
+  /** Cabo Verde */
   | 'CV'
+  /** Curaçao */
   | 'CW'
+  /** Christmas Island */
   | 'CX'
+  /** Cyprus */
   | 'CY'
+  /** Czechia */
   | 'CZ'
+  /** Germany */
   | 'DE'
+  /** Djibouti */
   | 'DJ'
+  /** Denmark */
   | 'DK'
+  /** Dominica */
   | 'DM'
+  /** Dominican Republic */
   | 'DO'
+  /** Algeria */
   | 'DZ'
+  /** Ecuador */
   | 'EC'
+  /** Estonia */
   | 'EE'
+  /** Egypt */
   | 'EG'
+  /** Western Sahara */
   | 'EH'
+  /** Eritrea */
   | 'ER'
+  /** Spain */
   | 'ES'
+  /** Ethiopia */
   | 'ET'
+  /** European Union */
   | 'EU'
+  /** Finland */
   | 'FI'
+  /** Fiji */
   | 'FJ'
+  /** Falkland Islands (Malvinas) */
   | 'FK'
+  /** Micronesia */
   | 'FM'
+  /** Faroe Islands */
   | 'FO'
+  /** France */
   | 'FR'
+  /** Gabon */
   | 'GA'
+  /** United Kingdom */
   | 'GB'
+  /** Grenada */
   | 'GD'
+  /** Georgia */
   | 'GE'
+  /** French Guiana */
   | 'GF'
+  /** Guernsey */
   | 'GG'
+  /** Ghana */
   | 'GH'
+  /** Gibraltar */
   | 'GI'
+  /** Greenland */
   | 'GL'
+  /** Gambia */
   | 'GM'
+  /** Guinea */
   | 'GN'
+  /** Guadeloupe */
   | 'GP'
+  /** Equatorial Guinea */
   | 'GQ'
+  /** Greece */
   | 'GR'
+  /** South Georgia and the South Sandwich Islands */
   | 'GS'
+  /** Guatemala */
   | 'GT'
+  /** Guam */
   | 'GU'
+  /** Guinea-Bissau */
   | 'GW'
+  /** Guyana */
   | 'GY'
+  /** Hong Kong */
   | 'HK'
+  /** Heard Island and McDonald Islands */
   | 'HM'
+  /** Honduras */
   | 'HN'
+  /** Croatia */
   | 'HR'
+  /** Haiti */
   | 'HT'
+  /** Hungary */
   | 'HU'
+  /** Indonesia */
   | 'ID'
+  /** Ireland */
   | 'IE'
+  /** Israel */
   | 'IL'
+  /** Isle of Man */
   | 'IM'
+  /** India */
   | 'IN'
+  /** British Indian Ocean Territory */
   | 'IO'
+  /** Iraq */
   | 'IQ'
+  /** Iran */
   | 'IR'
+  /** Iceland */
   | 'IS'
+  /** Italy */
   | 'IT'
+  /** Jersey */
   | 'JE'
+  /** Jamaica */
   | 'JM'
+  /** Jordan */
   | 'JO'
+  /** Japan */
   | 'JP'
+  /** Kenya */
   | 'KE'
+  /** Kyrgyzstan */
   | 'KG'
+  /** Cambodia */
   | 'KH'
+  /** Kiribati */
   | 'KI'
+  /** Comoros */
   | 'KM'
+  /** Saint Kitts and Nevis */
   | 'KN'
+  /** North Korea */
   | 'KP'
+  /** South Korea */
   | 'KR'
+  /** Kuwait */
   | 'KW'
+  /** Cayman Islands */
   | 'KY'
+  /** Kazakhstan */
   | 'KZ'
+  /** Laos */
   | 'LA'
+  /** Lebanon */
   | 'LB'
+  /** Saint Lucia */
   | 'LC'
+  /** Liechtenstein */
   | 'LI'
+  /** Sri Lanka */
   | 'LK'
+  /** Liberia */
   | 'LR'
+  /** Lesotho */
   | 'LS'
+  /** Lithuania */
   | 'LT'
+  /** Luxembourg */
   | 'LU'
+  /** Latvia */
   | 'LV'
+  /** Libya */
   | 'LY'
+  /** Morocco */
   | 'MA'
+  /** Monaco */
   | 'MC'
+  /** Moldova */
   | 'MD'
+  /** Montenegro */
   | 'ME'
+  /** Saint Martin (French part) */
   | 'MF'
+  /** Madagascar */
   | 'MG'
+  /** Marshall Islands */
   | 'MH'
+  /** North Macedonia */
   | 'MK'
+  /** Mali */
   | 'ML'
+  /** Myanmar */
   | 'MM'
+  /** Mongolia */
   | 'MN'
+  /** Macao */
   | 'MO'
+  /** Northern Mariana Islands */
   | 'MP'
+  /** Martinique */
   | 'MQ'
+  /** Mauritania */
   | 'MR'
+  /** Montserrat */
   | 'MS'
+  /** Malta */
   | 'MT'
+  /** Mauritius */
   | 'MU'
+  /** Maldives */
   | 'MV'
+  /** Malawi */
   | 'MW'
+  /** Mexico */
   | 'MX'
+  /** Malaysia */
   | 'MY'
+  /** Mozambique */
   | 'MZ'
+  /** Namibia */
   | 'NA'
+  /** New Caledonia */
   | 'NC'
+  /** Niger */
   | 'NE'
+  /** Norfolk Island */
   | 'NF'
+  /** Nigeria */
   | 'NG'
+  /** Nicaragua */
   | 'NI'
+  /** Netherlands */
   | 'NL'
+  /** Norway */
   | 'NO'
+  /** Nepal */
   | 'NP'
+  /** Nauru */
   | 'NR'
+  /** Niue */
   | 'NU'
+  /** New Zealand */
   | 'NZ'
+  /** Oman */
   | 'OM'
+  /** Panama */
   | 'PA'
+  /** Peru */
   | 'PE'
+  /** French Polynesia */
   | 'PF'
+  /** Papua New Guinea */
   | 'PG'
+  /** Philippines */
   | 'PH'
+  /** Pakistan */
   | 'PK'
+  /** Poland */
   | 'PL'
+  /** Saint Pierre and Miquelon */
   | 'PM'
+  /** Pitcairn */
   | 'PN'
+  /** Puerto Rico */
   | 'PR'
+  /** Palestine, State of */
   | 'PS'
+  /** Portugal */
   | 'PT'
+  /** Palau */
   | 'PW'
+  /** Paraguay */
   | 'PY'
+  /** Qatar */
   | 'QA'
+  /** Réunion */
   | 'RE'
+  /** Romania */
   | 'RO'
+  /** Serbia */
   | 'RS'
+  /** Russia */
   | 'RU'
+  /** Rwanda */
   | 'RW'
+  /** Saudi Arabia */
   | 'SA'
+  /** Solomon Islands */
   | 'SB'
+  /** Seychelles */
   | 'SC'
+  /** Sudan */
   | 'SD'
+  /** Sweden */
   | 'SE'
+  /** Singapore */
   | 'SG'
+  /** Saint Helena, Ascension and Tristan da Cunha */
   | 'SH'
+  /** Slovenia */
   | 'SI'
+  /** Svalbard and Jan Mayen */
   | 'SJ'
+  /** Slovakia */
   | 'SK'
+  /** Sierra Leone */
   | 'SL'
+  /** San Marino */
   | 'SM'
+  /** Senegal */
   | 'SN'
+  /** Somalia */
   | 'SO'
+  /** Suriname */
   | 'SR'
+  /** South Sudan */
   | 'SS'
+  /** Sao Tome and Principe */
   | 'ST'
+  /** El Salvador */
   | 'SV'
+  /** Sint Maarten (Dutch part) */
   | 'SX'
+  /** Syria */
   | 'SY'
+  /** Eswatini */
   | 'SZ'
+  /** Turks and Caicos Islands */
   | 'TC'
+  /** Chad */
   | 'TD'
+  /** French Southern Territories */
   | 'TF'
+  /** Togo */
   | 'TG'
+  /** Thailand */
   | 'TH'
+  /** Tajikistan */
   | 'TJ'
+  /** Tokelau */
   | 'TK'
+  /** Timor-Leste */
   | 'TL'
+  /** Turkmenistan */
   | 'TM'
+  /** Tunisia */
   | 'TN'
+  /** Tonga */
   | 'TO'
+  /** Türkiye */
   | 'TR'
+  /** Trinidad and Tobago */
   | 'TT'
+  /** Tuvalu */
   | 'TV'
+  /** Taiwan */
   | 'TW'
+  /** Tanzania */
   | 'TZ'
+  /** Ukraine */
   | 'UA'
+  /** Uganda */
   | 'UG'
+  /** United States Minor Outlying Islands */
   | 'UM'
+  /** United States of America */
   | 'US'
+  /** Uruguay */
   | 'UY'
+  /** Uzbekistan */
   | 'UZ'
+  /** Holy See */
   | 'VA'
+  /** Saint Vincent and the Grenadines */
   | 'VC'
+  /** Venezuela */
   | 'VE'
+  /** Virgin Islands (British) */
   | 'VG'
+  /** Virgin Islands (U.S.) */
   | 'VI'
+  /** Vietnam */
   | 'VN'
+  /** Vanuatu */
   | 'VU'
+  /** Wallis and Futuna */
   | 'WF'
+  /** Samoa */
   | 'WS'
+  /** Kosovo */
   | 'XK'
+  /** Yemen */
   | 'YE'
+  /** Mayotte */
   | 'YT'
+  /** South Africa */
   | 'ZA'
+  /** Zambia */
   | 'ZM'
+  /** Zimbabwe */
   | 'ZW';
 
 /** Filter by country code. */
@@ -6578,6 +6829,62 @@ export type CustomerMetadataUpdated = Event & {
   user: Maybe<User>;
   /** Saleor version that triggered the event. */
   version: Maybe<Scalars['String']['output']>;
+};
+
+export type CustomerOrderWhereInput = {
+  /** List of conditions that must be met. */
+  AND?: InputMaybe<Array<CustomerOrderWhereInput>>;
+  /** A list of conditions of which at least one must be met. */
+  OR?: InputMaybe<Array<CustomerOrderWhereInput>>;
+  /** Filter by authorize status. */
+  authorizeStatus?: InputMaybe<OrderAuthorizeStatusEnumFilterInput>;
+  /** Filter by billing address of the order. */
+  billingAddress?: InputMaybe<AddressFilterInput>;
+  /** Filter by channel. */
+  channelId?: InputMaybe<GlobalIdFilterInput>;
+  /** Filter by charge status. */
+  chargeStatus?: InputMaybe<OrderChargeStatusEnumFilterInput>;
+  /** Filter by checkout id. */
+  checkoutId?: InputMaybe<GlobalIdFilterInput>;
+  /** Filter by checkout token. */
+  checkoutToken?: InputMaybe<UuidFilterInput>;
+  /** Filter order by created at date. */
+  createdAt?: InputMaybe<DateTimeRangeInput>;
+  /** Filter by whether the order has any fulfillments. */
+  hasFulfillments?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Filter by whether the order has any invoices. */
+  hasInvoices?: InputMaybe<Scalars['Boolean']['input']>;
+  ids?: InputMaybe<Array<Scalars['ID']['input']>>;
+  /** Filter by invoice data associated with the order. Each list item represents conditions that must be satisfied by a single object. The filter matches orders that have related objects meeting all specified groups of conditions. */
+  invoices?: InputMaybe<Array<InvoiceFilterInput>>;
+  /** Filter by whether the order uses the click and collect delivery method. */
+  isClickAndCollect?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Filter based on whether the order includes a gift card purchase. */
+  isGiftCardBought?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Filter based on whether a gift card was used in the order. */
+  isGiftCardUsed?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Filter by number of lines in the order. */
+  linesCount?: InputMaybe<IntFilterInput>;
+  /** Filter by metadata fields. */
+  metadata?: InputMaybe<MetadataFilterInput>;
+  /** Filter by order number. */
+  number?: InputMaybe<IntFilterInput>;
+  /** Filter by the product type of related order lines. */
+  productTypeId?: InputMaybe<GlobalIdFilterInput>;
+  /** Filter by shipping address of the order. */
+  shippingAddress?: InputMaybe<AddressFilterInput>;
+  /** Filter by order status. */
+  status?: InputMaybe<OrderStatusEnumFilterInput>;
+  /** Filter by total gross amount of the order. */
+  totalGross?: InputMaybe<PriceFilterInput>;
+  /** Filter by total net amount of the order. */
+  totalNet?: InputMaybe<PriceFilterInput>;
+  /** Filter order by updated at date. */
+  updatedAt?: InputMaybe<DateTimeRangeInput>;
+  /** Filter by user email. */
+  userEmail?: InputMaybe<StringFilterInput>;
+  /** Filter by voucher code used in the order. */
+  voucherCode?: InputMaybe<StringFilterInput>;
 };
 
 /**
@@ -8082,9 +8389,9 @@ export type GiftCard = Node & ObjectWithMetadata & {
    */
   endDate: Maybe<Scalars['DateTime']['output']>;
   /**
-   * List of events associated with the gift card.
+   * List of events associated with the gift card. Requires MANAGE_GIFT_CARD permission to access all events. Users with MANAGE_ORDERS permission can access only USED_IN_ORDER events.
    *
-   * Requires one of the following permissions: MANAGE_GIFT_CARD.
+   * Requires one of the following permissions: MANAGE_GIFT_CARD, MANAGE_ORDERS.
    */
   events: Array<GiftCardEvent>;
   /** Expiry date of the gift card. */
@@ -26590,6 +26897,14 @@ export type Shop = ObjectWithMetadata & {
   permissions: Array<Permission>;
   /** List of possible phone prefixes. */
   phonePrefixes: Array<Scalars['String']['output']>;
+  /**
+   * When enabled, address fields that are not valid for a given country (according to Google's i18n address data) will be preserved instead of being removed during validation. Validation errors are still returned.
+   *
+   * Added in Saleor 3.22.
+   *
+   * Requires one of the following permissions: MANAGE_SETTINGS.
+   */
+  preserveAllAddressFields: Scalars['Boolean']['output'];
   /** List of private metadata items. Requires staff permissions to access. */
   privateMetadata: Array<MetadataItem>;
   /**
@@ -26814,6 +27129,12 @@ export type ShopSettingsInput = {
    * Warning: never store sensitive information, including financial data such as credit card details.
    */
   metadata?: InputMaybe<Array<MetadataInput>>;
+  /**
+   * When enabled, address fields that are not valid for a given country (according to Google's i18n address data) will be preserved instead of being removed during validation. Validation errors are still returned.
+   *
+   * Added in Saleor 3.22.
+   */
+  preserveAllAddressFields?: InputMaybe<Scalars['Boolean']['input']>;
   /**
    * Shop private metadata. Requires permissions to modify and to read the metadata of the object it's attached to.
    *
@@ -29327,6 +29648,7 @@ export type UserOrdersArgs = {
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<CustomerOrderWhereInput>;
 };
 
 

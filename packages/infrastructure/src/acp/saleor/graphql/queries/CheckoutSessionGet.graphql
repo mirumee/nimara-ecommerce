@@ -4,6 +4,7 @@ query CheckoutSessionGet(
   $countryCode: CountryCode = US
   $thumbnailSize: Int = 128
   $thumbnailFormat: ThumbnailFormatEnum = WEBP
+  $includeVendorMetadata: Boolean = false
 ) {
   checkout(id: $id) {
     ...CheckoutSessionFragment

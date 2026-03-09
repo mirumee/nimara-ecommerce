@@ -1,4 +1,4 @@
-import * as z from "zod";
+import * as z from "zod/v3";
 
 import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import { addressSchema } from "@nimara/foundation/address/address-form/schema";

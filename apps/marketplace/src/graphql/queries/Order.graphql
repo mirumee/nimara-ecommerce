@@ -1,0 +1,200 @@
+query OrderDetail($id: ID!) {
+  order(id: $id) {
+    id
+    number
+    created
+    status
+    statusDisplay
+    paymentStatus
+    paymentStatusDisplay
+    userEmail
+    chargeStatus
+    authorizeStatus
+    totalAuthorized {
+      amount
+      currency
+    }
+    totalCharged {
+      amount
+      currency
+    }
+    transactions {
+      id
+    }
+    canFinalize
+    channel {
+      id
+      name
+      currencyCode
+      defaultCountry {
+        code
+      }
+      countries {
+        code
+        country
+      }
+    }
+    total {
+      gross {
+        amount
+        currency
+      }
+      net {
+        amount
+        currency
+      }
+      tax {
+        amount
+        currency
+      }
+    }
+    subtotal {
+      gross {
+        amount
+        currency
+      }
+    }
+    shippingPrice {
+      gross {
+        amount
+        currency
+      }
+    }
+    shippingMethod {
+      id
+      name
+    }
+    shippingMethodName
+    discounts {
+      id
+      name
+      reason
+      value
+      valueType
+    }
+    user {
+      id
+      email
+      firstName
+      lastName
+      defaultBillingAddress {
+        id
+      }
+      defaultShippingAddress {
+        id
+      }
+      addresses {
+        id
+        firstName
+        lastName
+        companyName
+        streetAddress1
+        streetAddress2
+        city
+        cityArea
+        postalCode
+        countryArea
+        phone
+        country {
+          country
+          code
+        }
+      }
+    }
+    billingAddress {
+      firstName
+      lastName
+      streetAddress1
+      streetAddress2
+      city
+      postalCode
+      country {
+        country
+        code
+      }
+      phone
+    }
+    shippingAddress {
+      firstName
+      lastName
+      streetAddress1
+      streetAddress2
+      city
+      postalCode
+      country {
+        country
+        code
+      }
+      phone
+    }
+    lines {
+      id
+      productName
+      variantName
+      productSku
+      quantity
+      quantityToFulfill
+      quantityFulfilled
+      unitPrice {
+        gross {
+          amount
+          currency
+        }
+      }
+      totalPrice {
+        gross {
+          amount
+          currency
+        }
+      }
+      thumbnail {
+        url
+        alt
+      }
+      variant {
+        id
+        name
+        media {
+          url
+          alt
+        }
+        stocks {
+          warehouse {
+            id
+            name
+          }
+        }
+      }
+    }
+    events {
+      id
+      date
+      type
+      message
+      amount
+      paymentGateway
+      paymentId
+      reference
+      transactionReference
+      user {
+        email
+      }
+    }
+    fulfillments {
+      id
+      status
+      created
+      trackingNumber
+      warehouse {
+        id
+      }
+      lines {
+        id
+        quantity
+        orderLine {
+          productName
+        }
+      }
+    }
+  }
+}

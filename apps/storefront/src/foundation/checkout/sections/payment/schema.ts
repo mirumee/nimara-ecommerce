@@ -1,5 +1,5 @@
 import type { FieldPathValue } from "react-hook-form";
-import { z } from "zod";
+import { z } from "zod/v3";
 
 import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import { addressSchema } from "@nimara/foundation/address/address-form/schema";

@@ -4,6 +4,7 @@ pnpm-workspace.yaml
 node_modules
 
 **/generated.ts
+apps/*/src/graphql/generated/
 packages/codegen/schema.ts
 
 .cache

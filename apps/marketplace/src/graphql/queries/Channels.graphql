@@ -1,0 +1,21 @@
+query Channels {
+  channels {
+    id
+    name
+    slug
+    currencyCode
+    countries {
+      code
+      country
+    }
+    defaultCountry {
+      code
+      country
+    }
+    isActive
+    warehouses {
+      id
+      name
+    }
+  }
+}

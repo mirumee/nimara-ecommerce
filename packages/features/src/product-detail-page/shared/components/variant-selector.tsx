@@ -36,6 +36,8 @@ export const VariantSelector = ({
   addToBagAction,
 }: VariantSelectorProps) => {
   const t = useTranslations();
+  const marketplaceEnabled =
+    process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED !== "false";
   const {
     allSelectionAttributes,
     areAllRequiredSelectionAttributesChosen,
@@ -177,7 +179,9 @@ export const VariantSelector = ({
       </div>
 
       <AddToBag
+        cart={marketplaceEnabled ? cart : null}
         cartPath={cartPath}
+        productVendorId={marketplaceEnabled ? (product.vendorId ?? null) : null}
         variantId={
           matchingVariants?.length > 1
             ? discriminatedVariantId

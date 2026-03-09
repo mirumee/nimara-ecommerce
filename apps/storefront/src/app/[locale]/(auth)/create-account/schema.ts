@@ -1,4 +1,4 @@
-import * as z from "zod";
+import * as z from "zod/v3";
 
 import { type GetTranslations } from "@nimara/i18n/types";
 
@@ -16,6 +16,7 @@ export const formSchema = ({ t }: { t: GetTranslations }) =>
         .min(1, { message: t("form-validation.required") })
         .trim(),
       email: z
+        .string()
         .email({ message: t("form-validation.invalid-email") })
         .min(1, { message: t("form-validation.email-required") })
         .trim(),

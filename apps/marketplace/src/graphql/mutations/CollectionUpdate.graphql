@@ -1,0 +1,29 @@
+mutation CollectionUpdateMutation($id: ID!, $input: CollectionInput!) {
+  collectionUpdate(id: $id, input: $input) {
+    errors {
+      field
+      message
+      code
+    }
+    collection {
+      id
+      name
+      slug
+      description
+      seoTitle
+      seoDescription
+      backgroundImage {
+        url
+        alt
+      }
+      metadata {
+        key
+        value
+      }
+      privateMetadata {
+        key
+        value
+      }
+    }
+  }
+}

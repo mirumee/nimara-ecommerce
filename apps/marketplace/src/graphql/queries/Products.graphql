@@ -1,0 +1,73 @@
+query Products(
+  $first: Int
+  $last: Int
+  $after: String
+  $before: String
+  $search: String
+  $filter: ProductFilterInput
+) {
+  products(
+    first: $first
+    last: $last
+    after: $after
+    before: $before
+    search: $search
+    filter: $filter
+  ) {
+    edges {
+      node {
+        id
+        name
+        slug
+        created
+        thumbnail {
+          url
+          alt
+        }
+        productType {
+          name
+        }
+        category {
+          name
+        }
+        pricing {
+          priceRange {
+            start {
+              gross {
+                amount
+                currency
+              }
+            }
+          }
+        }
+        channelListings {
+          channel {
+            name
+          }
+          isPublished
+        }
+        variants {
+          id
+          name
+          sku
+          pricing {
+            price {
+              gross {
+                amount
+                currency
+              }
+            }
+          }
+        }
+      }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    totalCount
+  }
+}

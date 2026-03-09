@@ -53,7 +53,7 @@ export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_Produ
 
 export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation = { name: string | null };
 
-export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product = { id: string, slug: string, name: string, thumbnail: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_thumbnail_Image | null, translation: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation | null };
+export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product = { id: string, slug: string, name: string, vendorId?: string | null, thumbnail: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_thumbnail_Image | null, translation: CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation | null };
 
 export type CheckoutFindQuery_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money = { currency: string, amount: number };
 
@@ -105,6 +105,7 @@ export type CheckoutFindQueryVariables = Types.Exact<{
   languageCode: Types.LanguageCodeEnum;
   thumbnailSize: Types.Scalars['Int']['input'];
   thumbnailFormat: Types.ThumbnailFormatEnum;
+  includeVendorMetadata: Types.Scalars['Boolean']['input'];
 }>;
 
 
@@ -130,7 +131,7 @@ export class TypedDocumentString<TResult, TVariables>
 }
 
 export const CheckoutFindQueryDocument = new TypedDocumentString(`
-    query CheckoutFindQuery($checkoutId: ID!, $countryCode: CountryCode!, $languageCode: LanguageCodeEnum!, $thumbnailSize: Int!, $thumbnailFormat: ThumbnailFormatEnum!) {
+    query CheckoutFindQuery($checkoutId: ID!, $countryCode: CountryCode!, $languageCode: LanguageCodeEnum!, $thumbnailSize: Int!, $thumbnailFormat: ThumbnailFormatEnum!, $includeVendorMetadata: Boolean!) {
   checkout(id: $checkoutId) {
     ...CheckoutFragment
   }
@@ -261,6 +262,7 @@ fragment CartLineFragment on CheckoutLine {
       translation(languageCode: $languageCode) {
         name
       }
+      vendorId: metafield(key: "vendor.id") @include(if: $includeVendorMetadata)
     }
     pricing {
       discount {

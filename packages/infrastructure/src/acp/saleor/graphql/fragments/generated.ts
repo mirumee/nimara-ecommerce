@@ -53,7 +53,7 @@ export type CheckoutSessionFragment_Checkout_lines_CheckoutLine_variant_ProductV
 
 export type CheckoutSessionFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation = { name: string | null };
 
-export type CheckoutSessionFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product = { id: string, slug: string, name: string, thumbnail: CheckoutSessionFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_thumbnail_Image | null, translation: CheckoutSessionFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation | null };
+export type CheckoutSessionFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product = { id: string, slug: string, name: string, vendorId?: string | null, thumbnail: CheckoutSessionFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_thumbnail_Image | null, translation: CheckoutSessionFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation | null };
 
 export type CheckoutSessionFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money = { currency: string, amount: number };
 
@@ -270,6 +270,7 @@ fragment CartLineFragment on CheckoutLine {
       translation(languageCode: $languageCode) {
         name
       }
+      vendorId: metafield(key: "vendor.id") @include(if: $includeVendorMetadata)
     }
     pricing {
       discount {

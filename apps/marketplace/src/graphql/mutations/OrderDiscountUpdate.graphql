@@ -1,0 +1,15 @@
+mutation OrderDiscountUpdateMutation($discountId: ID!, $input: OrderDiscountCommonInput!) {
+  orderDiscountUpdate(discountId: $discountId, input: $input) {
+    order {
+      id
+      number
+      status
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+

@@ -2,7 +2,7 @@ import resolveConfig from "tailwindcss/resolveConfig";
 
 import twConfig from "@nimara/config/tailwind";
 
-export const config = resolveConfig(twConfig());
+export const config = resolveConfig(twConfig("storefront"));
 
 type ScreenSize = keyof typeof config.theme.screens;
 export const screenSizes = Object.entries(config.theme.screens).reduce(

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v3";
 
 import { type GetTranslations } from "@nimara/i18n/types";
 
@@ -15,7 +15,10 @@ export const newPasswordFormSchema = ({ t }: { t: GetTranslations }) =>
           }),
         })
         .trim(),
-      confirm: z.string({ error: t("form-validation.required") }).trim(),
+      confirm: z
+        .string()
+        .min(1, { message: t("form-validation.required") })
+        .trim(),
     })
     .refine((data) => data.password === data.confirm, {
       message: t("form-validation.passwords-dont-match"),
