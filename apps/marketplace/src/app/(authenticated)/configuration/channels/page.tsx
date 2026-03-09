@@ -33,19 +33,10 @@ export default async function ConfigurationChannelsPage() {
 
       {channels.length === 0 ? (
         <div className="rounded-xl border bg-white p-8 shadow-sm">
-          <p className="text-muted-foreground">
-            Channels and warehouses configuration settings will be available
-            here.
-          </p>
+          <p className="text-muted-foreground">No channels found</p>
         </div>
       ) : (
         <>
-          <div className="rounded-xl border bg-white p-8 shadow-sm">
-            <p className="mb-6 text-muted-foreground">
-              Channels and warehouses configuration settings will be available
-              here.
-            </p>
-          </div>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {channels.map((channel) => (
               <Card key={channel.id}>
