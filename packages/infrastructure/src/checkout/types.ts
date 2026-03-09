@@ -1,3 +1,4 @@
+import { type ThumbnailFormatEnum } from "@nimara/codegen/schema";
 import type { AddressCreateInput } from "@nimara/domain/objects/Address";
 import type { Checkout } from "@nimara/domain/objects/Checkout";
 import { type AsyncResult } from "@nimara/domain/objects/Result";
@@ -84,7 +85,9 @@ export type CheckoutShippingAddressUpdateUseCase =
 
 export type SaleorCheckoutServiceConfig = {
   apiURL: string;
+  isMarketplaceEnabled: boolean;
   logger: Logger;
+  thumbnailFormat: ThumbnailFormatEnum;
 };
 
 export type CheckoutService = {

@@ -1,4 +1,4 @@
-import * as z from "zod/v3";
+import { z } from "zod";
 
 import { ALLOWED_COUNTRY_CODES } from "@nimara/domain/consts";
 import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";

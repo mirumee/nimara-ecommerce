@@ -20,6 +20,10 @@ const schema = z.object({
   // Algolia specific
   NEXT_PUBLIC_ALGOLIA_APP_ID: z.string().trim().min(1).default("YOUR_APP_ID"),
   NEXT_PUBLIC_ALGOLIA_API_KEY: z.string().trim().min(1).default("YOUR_API_KEY"),
+  NEXT_PUBLIC_DEFAULT_IMAGE_FORMAT: z
+    .enum(["AVIF", "WEBP", "ORIGINAL"])
+    .optional()
+    .default("AVIF"),
   // Marketplace - when true, cart only allows products from the same vendor (marketplace behavior).
   // Defaults to false. Set to any value other than "false" (e.g. "true") to enable.
   NEXT_PUBLIC_MARKETPLACE_ENABLED: z
@@ -45,5 +49,7 @@ export const clientEnvs = schema.parse({
   STRIPE_PUBLIC_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY,
   NEXT_PUBLIC_ALGOLIA_APP_ID: process.env.NEXT_PUBLIC_ALGOLIA_APP_ID,
   NEXT_PUBLIC_ALGOLIA_API_KEY: process.env.NEXT_PUBLIC_ALGOLIA_API_KEY,
+  NEXT_PUBLIC_DEFAULT_IMAGE_FORMAT:
+    process.env.NEXT_PUBLIC_DEFAULT_IMAGE_FORMAT,
   NEXT_PUBLIC_MARKETPLACE_ENABLED: process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED,
 });

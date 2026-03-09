@@ -39,7 +39,7 @@ export default function SignInPage() {
       email: "",
       password: "",
     },
-    mode: "onChange",
+    mode: "onSubmit",
     resolver: zodResolver(signInSchema),
   });
 

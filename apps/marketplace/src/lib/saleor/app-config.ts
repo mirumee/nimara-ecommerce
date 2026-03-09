@@ -11,7 +11,7 @@ export const saleorAppConfigSchema = z.object({
   authToken: z.string(),
   saleorAppId: z.string(),
   saleorDomain: z.string(),
-  config: z.record(z.unknown()).optional(),
+  config: z.record(z.string(), z.unknown()).optional(),
 });
 
 export type SaleorAppConfig = z.infer<typeof saleorAppConfigSchema>;
@@ -158,9 +158,15 @@ export async function getAppConfig(
     return null;
   }
 
-  const parsed = saleorAppConfigSchema.safeParse(entry);
+  try {
+    const parsed = saleorAppConfigSchema.safeParse(entry);
 
-  return parsed.success ? parsed.data : null;
+    return parsed.success ? parsed.data : null;
+  } catch {
+    // Zod v4 can throw "_zod" internal errors with certain data shapes
+    // (e.g. from Secrets Manager). Fail gracefully.
+    return null;
+  }
 }
 
 /**

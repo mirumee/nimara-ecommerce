@@ -8,7 +8,7 @@ import { err, ok } from "@nimara/domain/objects/Result";
 
 import { serializeAddress } from "#root/address/saleor/serializers";
 import { serializeCheckoutProblems } from "#root/checkout/saleor/serializers";
-import { THUMBNAIL_FORMAT, THUMBNAIL_SIZE_SMALL } from "#root/config";
+import { THUMBNAIL_SIZE_SMALL } from "#root/config";
 import { graphqlClient } from "#root/graphql/client";
 import {
   serializeMoney,
@@ -71,11 +71,13 @@ const serializeCheckout = (checkout: CheckoutFragment): Checkout => {
 };
 
 export const saleorCheckoutGetInfra =
-  ({ apiURL, logger }: SaleorCheckoutServiceConfig): CheckoutGetInfra =>
+  ({
+    apiURL,
+    isMarketplaceEnabled,
+    logger,
+    thumbnailFormat,
+  }: SaleorCheckoutServiceConfig): CheckoutGetInfra =>
   async ({ checkoutId, languageCode, countryCode }) => {
-    const includeVendorMetadata =
-      process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED !== "false";
-
     const result = await graphqlClient(apiURL).execute(
       CheckoutFindQueryDocument,
       {
@@ -83,9 +85,9 @@ export const saleorCheckoutGetInfra =
           checkoutId,
           languageCode: languageCode as LanguageCodeEnum,
           countryCode: countryCode as CountryCode,
-          thumbnailFormat: THUMBNAIL_FORMAT,
+          thumbnailFormat,
           thumbnailSize: THUMBNAIL_SIZE_SMALL,
-          includeVendorMetadata,
+          isMarketplaceEnabled,
         },
         operationName: "CheckoutFindQuery",
         options: {

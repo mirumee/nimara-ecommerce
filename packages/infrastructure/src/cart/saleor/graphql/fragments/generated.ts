@@ -164,7 +164,7 @@ fragment CartLineFragment on CheckoutLine {
       translation(languageCode: $languageCode) {
         name
       }
-      vendorId: metafield(key: "vendor.id") @include(if: $includeVendorMetadata)
+      vendorId: metafield(key: "vendor.id") @include(if: $isMarketplaceEnabled)
     }
     pricing {
       discount {

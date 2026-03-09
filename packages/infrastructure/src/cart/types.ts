@@ -1,4 +1,7 @@
-import { type LanguageCodeEnum } from "@nimara/codegen/schema";
+import {
+  type LanguageCodeEnum,
+  type ThumbnailFormatEnum,
+} from "@nimara/codegen/schema";
 import type { Cart } from "@nimara/domain/objects/Cart";
 import { type AsyncResult } from "@nimara/domain/objects/Result";
 
@@ -7,7 +10,9 @@ import { type Logger } from "#root/logging/types";
 
 export type CartServiceConfig = {
   apiURI: string;
+  isMarketplaceEnabled: boolean;
   logger: Logger;
+  thumbnailFormat: ThumbnailFormatEnum;
 };
 
 export type WithFetchOptions = { options?: FetchOptions };

@@ -1,3 +1,4 @@
+import { DEFAULT_CHANNEL_SLUG } from "@nimara/domain/consts";
 import { z } from "zod";
 
 const booleanFromEnv = z.preprocess((value) => {
@@ -51,7 +52,7 @@ const envSchema = z.object({
   NEXT_PUBLIC_SALEOR_URL: z.string().optional(),
   NEXT_PUBLIC_SALEOR_MARKETPLACE_CHANNEL_SLUG: z
     .string()
-    .default("default-channel"),
+    .default(DEFAULT_CHANNEL_SLUG),
   NEXT_PUBLIC_GRAPHQL_URL: z
     .string()
     .default("http://localhost:3001/api/graphql"),

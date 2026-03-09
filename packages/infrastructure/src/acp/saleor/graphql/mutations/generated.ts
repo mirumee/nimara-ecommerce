@@ -125,7 +125,7 @@ export type CheckoutSessionCreateVariables = Types.Exact<{
   countryCode?: Types.InputMaybe<Types.CountryCode>;
   thumbnailSize?: Types.InputMaybe<Types.Scalars['Int']['input']>;
   thumbnailFormat?: Types.InputMaybe<Types.ThumbnailFormatEnum>;
-  includeVendorMetadata?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
+  isMarketplaceEnabled?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
 }>;
 
 
@@ -227,7 +227,7 @@ export const AcpCheckoutCompleteMutationDocument = new TypedDocumentString(`
 }
     `) as unknown as TypedDocumentString<AcpCheckoutCompleteMutation, AcpCheckoutCompleteMutationVariables>;
 export const CheckoutSessionCreateDocument = new TypedDocumentString(`
-    mutation CheckoutSessionCreate($input: CheckoutCreateInput!, $languageCode: LanguageCodeEnum!, $countryCode: CountryCode = US, $thumbnailSize: Int = 128, $thumbnailFormat: ThumbnailFormatEnum = WEBP, $includeVendorMetadata: Boolean = false) {
+    mutation CheckoutSessionCreate($input: CheckoutCreateInput!, $languageCode: LanguageCodeEnum!, $countryCode: CountryCode = US, $thumbnailSize: Int = 128, $thumbnailFormat: ThumbnailFormatEnum = WEBP, $isMarketplaceEnabled: Boolean = false) {
   checkoutCreate(input: $input) {
     checkout {
       ...CheckoutSessionFragment
@@ -373,7 +373,7 @@ fragment CartLineFragment on CheckoutLine {
       translation(languageCode: $languageCode) {
         name
       }
-      vendorId: metafield(key: "vendor.id") @include(if: $includeVendorMetadata)
+      vendorId: metafield(key: "vendor.id") @include(if: $isMarketplaceEnabled)
     }
     pricing {
       discount {
