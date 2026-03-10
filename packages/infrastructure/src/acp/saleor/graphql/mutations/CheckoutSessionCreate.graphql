@@ -4,7 +4,7 @@ mutation CheckoutSessionCreate(
   $countryCode: CountryCode = US
   $thumbnailSize: Int = 128
   $thumbnailFormat: ThumbnailFormatEnum = WEBP
-  $includeVendorMetadata: Boolean = false
+  $isMarketplaceEnabled: Boolean = false
 ) {
   checkoutCreate(input: $input) {
     checkout {

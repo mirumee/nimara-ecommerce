@@ -15,6 +15,8 @@ import { useToast } from "@nimara/ui/hooks";
 
 import { type FormSchema, formSchema } from "./schema";
 
+const DISCOUNT_CODE_DEBOUNCE_MS = 3000;
+
 export interface DiscountCodeProps {
   addPromoCodeAction?: (params: {
     checkoutId: string;
@@ -159,7 +161,7 @@ export const DiscountCode = ({
       const timer = setTimeout(() => {
         form.reset({ code: "" });
         setShouldClearInput(false);
-      }, 3000);
+      }, DISCOUNT_CODE_DEBOUNCE_MS);
 
       return () => clearTimeout(timer);
     }

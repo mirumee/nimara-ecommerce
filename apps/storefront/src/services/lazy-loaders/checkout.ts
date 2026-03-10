@@ -23,7 +23,12 @@ export const createCheckoutServiceLoader = (logger: Logger) => {
 
     checkoutServiceInstance = saleorCheckoutService({
       apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
+      isMarketplaceEnabled: clientEnvs.NEXT_PUBLIC_MARKETPLACE_ENABLED,
       logger,
+      thumbnailFormat: clientEnvs.NEXT_PUBLIC_DEFAULT_IMAGE_FORMAT as
+        | "AVIF"
+        | "WEBP"
+        | "ORIGINAL",
     });
 
     return checkoutServiceInstance;

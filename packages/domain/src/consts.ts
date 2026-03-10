@@ -1,3 +1,6 @@
+/** Default Saleor channel slug used when env is not set (e.g. marketplace, cms-menu) */
+export const DEFAULT_CHANNEL_SLUG = "default-channel";
+
 export const ALLOWED_COUNTRY_CODES = [
   "AD",
   "AE",

@@ -13,13 +13,16 @@ import {
 } from "@graphql-tools/wrap";
 import { GraphQLError, OperationTypeNode, parse } from "graphql";
 
+import { DEFAULT_CHANNEL_SLUG } from "@nimara/domain/consts";
+
 import { METADATA_KEYS } from "@/lib/saleor/consts";
 import type { ServerContext } from "@/lib/saleor/types";
 
 import { requireVendorID } from "./auth";
 
 const MARKETPLACE_CHANNEL =
-  process.env.NEXT_PUBLIC_SALEOR_MARKETPLACE_CHANNEL_SLUG || "default-channel";
+  process.env.NEXT_PUBLIC_SALEOR_MARKETPLACE_CHANNEL_SLUG ||
+  DEFAULT_CHANNEL_SLUG;
 
 function withVendorMetadata<
   T extends { metadata?: Array<{ key: string; value: string }> },

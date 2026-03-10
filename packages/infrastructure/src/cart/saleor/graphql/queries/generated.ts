@@ -79,7 +79,7 @@ export type CartQueryVariables = Types.Exact<{
   languageCode: Types.LanguageCodeEnum;
   thumbnailSize: Types.Scalars['Int']['input'];
   thumbnailFormat: Types.ThumbnailFormatEnum;
-  includeVendorMetadata: Types.Scalars['Boolean']['input'];
+  isMarketplaceEnabled: Types.Scalars['Boolean']['input'];
 }>;
 
 
@@ -105,7 +105,7 @@ export class TypedDocumentString<TResult, TVariables>
 }
 
 export const CartQueryDocument = new TypedDocumentString(`
-    query CartQuery($id: ID!, $countryCode: CountryCode!, $languageCode: LanguageCodeEnum!, $thumbnailSize: Int!, $thumbnailFormat: ThumbnailFormatEnum!, $includeVendorMetadata: Boolean!) {
+    query CartQuery($id: ID!, $countryCode: CountryCode!, $languageCode: LanguageCodeEnum!, $thumbnailSize: Int!, $thumbnailFormat: ThumbnailFormatEnum!, $isMarketplaceEnabled: Boolean!) {
   checkout(id: $id) {
     ...CartFragment
   }
@@ -183,7 +183,7 @@ fragment CartLineFragment on CheckoutLine {
       translation(languageCode: $languageCode) {
         name
       }
-      vendorId: metafield(key: "vendor.id") @include(if: $includeVendorMetadata)
+      vendorId: metafield(key: "vendor.id") @include(if: $isMarketplaceEnabled)
     }
     pricing {
       discount {

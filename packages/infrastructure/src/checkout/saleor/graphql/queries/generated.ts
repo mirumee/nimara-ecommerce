@@ -105,7 +105,7 @@ export type CheckoutFindQueryVariables = Types.Exact<{
   languageCode: Types.LanguageCodeEnum;
   thumbnailSize: Types.Scalars['Int']['input'];
   thumbnailFormat: Types.ThumbnailFormatEnum;
-  includeVendorMetadata: Types.Scalars['Boolean']['input'];
+  isMarketplaceEnabled: Types.Scalars['Boolean']['input'];
 }>;
 
 
@@ -131,7 +131,7 @@ export class TypedDocumentString<TResult, TVariables>
 }
 
 export const CheckoutFindQueryDocument = new TypedDocumentString(`
-    query CheckoutFindQuery($checkoutId: ID!, $countryCode: CountryCode!, $languageCode: LanguageCodeEnum!, $thumbnailSize: Int!, $thumbnailFormat: ThumbnailFormatEnum!, $includeVendorMetadata: Boolean!) {
+    query CheckoutFindQuery($checkoutId: ID!, $countryCode: CountryCode!, $languageCode: LanguageCodeEnum!, $thumbnailSize: Int!, $thumbnailFormat: ThumbnailFormatEnum!, $isMarketplaceEnabled: Boolean!) {
   checkout(id: $checkoutId) {
     ...CheckoutFragment
   }
@@ -262,7 +262,7 @@ fragment CartLineFragment on CheckoutLine {
       translation(languageCode: $languageCode) {
         name
       }
-      vendorId: metafield(key: "vendor.id") @include(if: $includeVendorMetadata)
+      vendorId: metafield(key: "vendor.id") @include(if: $isMarketplaceEnabled)
     }
     pricing {
       discount {

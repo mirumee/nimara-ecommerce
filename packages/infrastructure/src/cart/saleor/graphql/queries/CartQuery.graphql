@@ -4,7 +4,7 @@ query CartQuery(
   $languageCode: LanguageCodeEnum!
   $thumbnailSize: Int!
   $thumbnailFormat: ThumbnailFormatEnum!
-  $includeVendorMetadata: Boolean!
+  $isMarketplaceEnabled: Boolean!
 ) {
   checkout(id: $id) {
     ...CartFragment

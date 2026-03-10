@@ -1,4 +1,4 @@
-import * as z from "zod";
+import { z } from "zod";
 
 const buyerSchema = z.object({
   first_name: z.string().min(1, "First name cannot be empty"),
