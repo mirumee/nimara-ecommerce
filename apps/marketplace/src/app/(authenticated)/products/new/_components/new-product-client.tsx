@@ -5,7 +5,13 @@ import { ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { FormProvider, useForm, useFormContext } from "react-hook-form";
+import {
+  type FieldPath,
+  FormProvider,
+  useForm,
+  useFormContext,
+  type UseFormReturn,
+} from "react-hook-form";
 
 import { Button } from "@nimara/ui/components/button";
 import {
@@ -15,6 +21,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@nimara/ui/components/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@nimara/ui/components/dialog";
 import { Input } from "@nimara/ui/components/input";
 import { Label } from "@nimara/ui/components/label";
 import { useToast } from "@nimara/ui/hooks";
@@ -180,6 +193,88 @@ function buildAttributeValueInputs(
   return inputs;
 }
 
+function getErrorAtPath(errors: unknown, path: string): unknown {
+  if (!errors || typeof errors !== "object") {
+    return undefined;
+  }
+
+  return path.split(".").reduce<unknown>((acc, key) => {
+    if (!acc || typeof acc !== "object") {
+      return undefined;
+    }
+
+    return (acc as Record<string, unknown>)[key];
+  }, errors);
+}
+
+function validateRequiredAttributes(
+  form: UseFormReturn<ProductCreateFormValues>,
+  productAttributes: NonNullable<
+    NonNullable<ProductTypeDetail["productType"]>["productAttributes"]
+  >,
+): boolean {
+  const attributeValues: Record<string, unknown> =
+    form.getValues("attributes") ?? {};
+
+  let hasAttributeErrors = false;
+  let firstMissingFieldName: FieldPath<ProductCreateFormValues> | null = null;
+
+  form.clearErrors("attributes");
+
+  for (const attribute of productAttributes) {
+    if (!attribute.valueRequired) {
+      continue;
+    }
+
+    const fieldName = `attributes.${attribute.id}`;
+    const rawValue = attributeValues[attribute.id];
+    const inputType = attribute.inputType;
+
+    let isEmpty = false;
+
+    switch (inputType) {
+      case "BOOLEAN" as AttributeInputTypeEnum: {
+        isEmpty = rawValue === undefined || rawValue === null;
+        break;
+      }
+      case "MULTISELECT" as AttributeInputTypeEnum: {
+        isEmpty = !Array.isArray(rawValue) || rawValue.length === 0;
+        break;
+      }
+      default: {
+        const normalized =
+          rawValue === undefined || rawValue === null
+            ? ""
+            : String(rawValue).trim();
+
+        isEmpty = normalized.length === 0;
+        break;
+      }
+    }
+
+    if (isEmpty) {
+      hasAttributeErrors = true;
+
+      const typedFieldName = fieldName as FieldPath<ProductCreateFormValues>;
+
+      if (!firstMissingFieldName) {
+        firstMissingFieldName = typedFieldName;
+      }
+
+      form.setError(typedFieldName, {
+        type: "manual",
+        message: "Required",
+      });
+    }
+  }
+
+  if (firstMissingFieldName) {
+    form.setFocus(firstMissingFieldName);
+  }
+
+  return hasAttributeErrors;
+}
+
 function AttributesSection({
   productAttributes,
 }: {
@@ -187,7 +282,10 @@ function AttributesSection({
     NonNullable<ProductTypeDetail["productType"]>["productAttributes"]
   >;
 }) {
-  const { register } = useFormContext<ProductCreateFormValues>();
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext<ProductCreateFormValues>();
 
   if (!productAttributes?.length) {
     return (
@@ -210,6 +308,9 @@ function AttributesSection({
       <CardContent className="space-y-4">
         {productAttributes.map((attribute) => {
           const fieldName = `attributes.${attribute.id}` as const;
+          const fieldError = getErrorAtPath(errors, fieldName) as
+            | { message?: unknown }
+            | undefined;
 
           const choices =
             attribute.choices?.edges
@@ -230,6 +331,11 @@ function AttributesSection({
               .filter((o) => o.value) ?? [];
 
           const inputType = attribute.inputType;
+          const shouldShowInlineError =
+            inputType !== ("BOOLEAN" as AttributeInputTypeEnum) &&
+            inputType !== ("DROPDOWN" as AttributeInputTypeEnum) &&
+            inputType !== ("SWATCH" as AttributeInputTypeEnum) &&
+            inputType !== ("MULTISELECT" as AttributeInputTypeEnum);
 
           return (
             <div key={attribute.id} className="grid gap-2">
@@ -262,19 +368,58 @@ function AttributesSection({
                   searchPlaceholder={`Search ${attribute.name ?? attribute.slug ?? "attribute"}`}
                 />
               ) : inputType === ("DATE" as AttributeInputTypeEnum) ? (
-                <Input type="date" {...register(fieldName)} />
+                <Input
+                  type="date"
+                  {...register(fieldName)}
+                  className={cn(
+                    fieldError &&
+                      "border-destructive focus-visible:ring-destructive",
+                  )}
+                />
               ) : inputType === ("DATE_TIME" as AttributeInputTypeEnum) ? (
-                <Input type="datetime-local" {...register(fieldName)} />
+                <Input
+                  type="datetime-local"
+                  {...register(fieldName)}
+                  className={cn(
+                    fieldError &&
+                      "border-destructive focus-visible:ring-destructive",
+                  )}
+                />
               ) : inputType === ("NUMERIC" as AttributeInputTypeEnum) ? (
-                <Input type="number" step="0.01" {...register(fieldName)} />
+                <Input
+                  type="number"
+                  step="0.01"
+                  {...register(fieldName)}
+                  className={cn(
+                    fieldError &&
+                      "border-destructive focus-visible:ring-destructive",
+                  )}
+                />
               ) : inputType === ("RICH_TEXT" as AttributeInputTypeEnum) ? (
                 <Textarea
                   {...register(fieldName)}
                   placeholder="Plain text will be converted to EditorJS JSON on save."
+                  className={cn(
+                    fieldError &&
+                      "border-destructive focus-visible:ring-destructive",
+                  )}
                 />
               ) : (
-                <Input {...register(fieldName)} placeholder="Value" />
+                <Input
+                  {...register(fieldName)}
+                  placeholder="Value"
+                  className={cn(
+                    fieldError &&
+                      "border-destructive focus-visible:ring-destructive",
+                  )}
+                />
               )}
+
+              {shouldShowInlineError && fieldError ? (
+                <p className="text-sm text-destructive">
+                  {String(fieldError.message ?? "")}
+                </p>
+              ) : null}
 
               {inputType === ("FILE" as AttributeInputTypeEnum) ? (
                 <p className="text-xs text-muted-foreground">
@@ -301,6 +446,7 @@ export function NewProductClient({
   const [productTypeDetail, setProductTypeDetail] =
     useState<ProductTypeDetail | null>(null);
   const [isLoadingProductType, setIsLoadingProductType] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const categoryOptions: SelectOption[] = useMemo(
     () =>
@@ -407,8 +553,22 @@ export function NewProductClient({
         .then((result) => {
           if (result.ok && result.data.productType) {
             setProductTypeDetail(result.data);
-            // Reset attributes when product type changes
-            form.setValue("attributes", {});
+            const productAttributes =
+              result.data.productType.productAttributes ?? [];
+            const defaultAttributeValues: Record<string, unknown> = {};
+
+            for (const attribute of productAttributes) {
+              if (
+                attribute.inputType === ("BOOLEAN" as AttributeInputTypeEnum)
+              ) {
+                defaultAttributeValues[attribute.id] = false;
+              }
+            }
+
+            // Reset attributes when product type changes and apply defaults
+            form.setValue("attributes", defaultAttributeValues, {
+              shouldDirty: false,
+            });
           } else {
             // Silently fail - we already have hasVariants from the list
             // Only show error if we really need the detail
@@ -442,6 +602,14 @@ export function NewProductClient({
 
       const productAttributes =
         productTypeDetail?.productType?.productAttributes ?? [];
+
+      if (
+        productAttributes.length > 0 &&
+        validateRequiredAttributes(form, productAttributes)
+      ) {
+        return;
+      }
+
       const attributesInput = buildAttributeValueInputs(
         productAttributes,
         values.attributes,
@@ -520,9 +688,6 @@ export function NewProductClient({
         return;
       }
 
-      // Persist channel selection for all products: every channel selected in
-      // Manage channels modal is saved (published or not). Product must be in
-      // channels before variant channel listings can be set (when !hasVariants).
       const updateChannels: ProductChannelListingAddInput[] = [];
 
       for (const channel of channels) {
@@ -564,8 +729,6 @@ export function NewProductClient({
         }
       }
 
-      // When product type hasVariants is false: create default variant and set
-      // its channel listings (same order as Saleor dashboard).
       if (!hasVariants) {
         const variantResult = await createDefaultVariantAfterProductCreate(
           productId,
@@ -605,6 +768,7 @@ export function NewProductClient({
         description: "Product has been created successfully.",
       });
 
+      setIsRedirecting(true);
       router.replace(`/products/${productId}`);
     } catch (error) {
       toast({
@@ -616,6 +780,7 @@ export function NewProductClient({
   });
 
   const isSubmitting = form.formState.isSubmitting;
+  const isLoading = isSubmitting || isRedirecting;
   const productAttributes =
     productTypeDetail?.productType?.productAttributes ?? [];
 
@@ -623,6 +788,20 @@ export function NewProductClient({
     <FormProvider {...form}>
       <form onSubmit={onSubmit} noValidate>
         <div className="min-h-screen">
+          <Dialog open={isLoading}>
+            <DialogContent withCloseButton={false} className="w-full max-w-sm">
+              <DialogHeader className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                  <DialogTitle>Creating product…</DialogTitle>
+                </div>
+                <DialogDescription>
+                  You will be redirected to the product details once it is
+                  ready.
+                </DialogDescription>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
           {/* Sticky header bar */}
           <div className="fixed left-0 right-0 top-16 z-40 border-b bg-background">
             <div className="flex items-center justify-between px-6 py-4">

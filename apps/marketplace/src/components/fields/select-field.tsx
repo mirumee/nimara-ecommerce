@@ -171,6 +171,7 @@ export function SelectField({
   const renderMultiField = useCallback(
     (field: {
       onChange: (value: SelectOption[]) => void;
+      ref: (instance: HTMLDivElement | null) => void;
       value: SelectOption[] | undefined;
     }) => {
       const rawSelected = Array.isArray(field.value) ? field.value : [];
@@ -222,6 +223,7 @@ export function SelectField({
                 role="button"
                 tabIndex={isDisabled ? -1 : 0}
                 aria-disabled={isDisabled}
+                ref={field.ref}
                 className={cn(
                   "flex min-h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm",
                   isDisabled && "cursor-not-allowed opacity-50",
@@ -330,6 +332,7 @@ export function SelectField({
             renderMultiField(
               field as unknown as {
                 onChange: (value: SelectOption[]) => void;
+                ref: (instance: HTMLDivElement | null) => void;
                 value: SelectOption[] | undefined;
               },
             )
@@ -343,6 +346,7 @@ export function SelectField({
               >
                 <SelectTrigger
                   id={name}
+                  ref={field.ref}
                   className={cn(
                     error &&
                       "border-destructive focus-visible:ring-destructive",
