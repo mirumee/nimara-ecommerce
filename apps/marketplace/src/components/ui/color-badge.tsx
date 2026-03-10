@@ -23,7 +23,13 @@ function formatBadgeLabel(label: BadgeStatusType): string {
   return String(label).replace(/_/g, " ").toLowerCase();
 }
 
-export const ColorBadge = ({ label }: { label: BadgeStatusType }) => {
+export const ColorBadge = ({
+  label,
+  displayLabel,
+}: {
+  displayLabel?: string;
+  label: BadgeStatusType;
+}) => {
   return (
     <span
       className={cn(
@@ -31,7 +37,7 @@ export const ColorBadge = ({ label }: { label: BadgeStatusType }) => {
         getBadgeColor(label),
       )}
     >
-      {formatBadgeLabel(label)}
+      {displayLabel ?? formatBadgeLabel(label)}
     </span>
   );
 };

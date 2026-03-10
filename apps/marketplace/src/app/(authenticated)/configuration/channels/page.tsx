@@ -1,4 +1,5 @@
 import { Globe } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 import {
   Card,
@@ -12,13 +13,14 @@ import { getServerAuthToken } from "@/lib/auth/server";
 import { configurationService } from "@/services/configuration";
 
 export default async function ConfigurationChannelsPage() {
+  const t = await getTranslations();
   const token = await getServerAuthToken();
   const result = await configurationService.getChannels(token);
 
   if (!result.ok) {
     return (
       <div className="flex items-center justify-center py-12">
-        <p className="text-muted-foreground">Failed to load channels</p>
+        <p className="text-muted-foreground">{t("common.failed-to-load")}</p>
       </div>
     );
   }

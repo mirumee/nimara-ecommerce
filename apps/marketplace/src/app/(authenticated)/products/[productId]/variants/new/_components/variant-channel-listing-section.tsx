@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Controller, useFormContext } from "react-hook-form";
 
 import { Checkbox } from "@nimara/ui/components/checkbox";
@@ -22,20 +23,23 @@ export function VariantChannelListingSection({
 }: {
   channels: NonNullable<Channels["channels"]>;
 }) {
+  const t = useTranslations();
   const form = useFormContext<VariantCreateFormValues>();
   const channelListings = form.watch("channelListings") ?? [];
 
   return (
     <div className="space-y-3">
-      <h3 className="text-lg font-medium">Pricing</h3>
+      <h3 className="text-lg font-medium">{t("common.pricing")}</h3>
 
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Channel Name</TableHead>
-            <TableHead className="w-24">Available</TableHead>
-            <TableHead className="w-56">Selling Price</TableHead>
-            <TableHead className="w-56">Cost Price</TableHead>
+            <TableHead>{t("common.channel-name")}</TableHead>
+            <TableHead className="w-24">
+              {t("marketplace.products.variants.pricing.available")}
+            </TableHead>
+            <TableHead className="w-56">{t("common.selling-price")}</TableHead>
+            <TableHead className="w-56">{t("common.cost-price")}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -65,7 +69,7 @@ export function VariantChannelListingSection({
                     <Input
                       type="number"
                       step="0.01"
-                      placeholder="0.00"
+                      placeholder={t("common.numeric-placeholder")}
                       defaultValue={listing?.price || "0.00"}
                       {...form.register(`channelListings.${index}.price`)}
                       className="pr-12"
@@ -81,7 +85,7 @@ export function VariantChannelListingSection({
                     <Input
                       type="number"
                       step="0.01"
-                      placeholder="0.00"
+                      placeholder={t("common.numeric-placeholder")}
                       defaultValue={listing?.costPrice || "0.00"}
                       {...form.register(`channelListings.${index}.costPrice`)}
                       className="pr-12"

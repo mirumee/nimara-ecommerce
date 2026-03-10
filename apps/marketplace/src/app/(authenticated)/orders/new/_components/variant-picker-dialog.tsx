@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 
 import { Button } from "@nimara/ui/components/button";
@@ -21,6 +22,7 @@ export function VariantPickerDialog({
   onOpenChange: (open: boolean) => void;
   open: boolean;
 }) {
+  const t = useTranslations();
   const [search, setSearch] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [products, setProducts] = useState<ProductHit[]>([]);
@@ -106,9 +108,9 @@ export function VariantPickerDialog({
   return (
     <PickerDialogShell
       open={open}
-      title="Assign product"
+      title={t("marketplace.orders.dialogs.variant-picker.title")}
       onOpenChange={onOpenChange}
-      primaryLabel="Assign and save"
+      primaryLabel={t("assign-and-save")}
       onPrimary={() => {
         if (!selectedVariant || quantity <= 0) {
           return;
@@ -118,13 +120,19 @@ export function VariantPickerDialog({
       }}
       primaryDisabled={!selectedVariant || quantity <= 0}
       footerLeft={
-        selectedVariant ? `1 variant selected (${selectedVariant.sku})` : ""
+        selectedVariant
+          ? t("marketplace.orders.dialogs.variant-picker.variant-selected", {
+              sku: selectedVariant.sku,
+            })
+          : ""
       }
     >
       <div className="grid gap-3">
         <div className="flex gap-2">
           <Input
-            placeholder="Search products..."
+            placeholder={t(
+              "marketplace.orders.dialogs.variant-picker.search-placeholder",
+            )}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onKeyDown={(e) => {
@@ -139,7 +147,7 @@ export function VariantPickerDialog({
             onClick={() => void handleSearchProducts()}
             disabled={isSearching}
           >
-            {isSearching ? "Searching..." : "Search"}
+            {isSearching ? t("common.searching") : t("common.search")}
           </Button>
         </div>
 
@@ -149,7 +157,7 @@ export function VariantPickerDialog({
               <div className="p-2">
                 {products.length === 0 ? (
                   <div className="px-2 py-8 text-center text-sm text-muted-foreground">
-                    No products
+                    {t("marketplace.orders.dialogs.variant-picker.no-products")}
                   </div>
                 ) : (
                   products.map((p) => (
@@ -176,11 +184,15 @@ export function VariantPickerDialog({
               <div className="p-2">
                 {isLoadingVariants ? (
                   <div className="px-2 py-8 text-center text-sm text-muted-foreground">
-                    Loading variants...
+                    {t(
+                      "marketplace.orders.dialogs.variant-picker.loading-variants",
+                    )}
                   </div>
                 ) : variants.length === 0 ? (
                   <div className="px-2 py-8 text-center text-sm text-muted-foreground">
-                    Pick a product to see variants
+                    {t(
+                      "marketplace.orders.dialogs.variant-picker.pick-product-for-variants",
+                    )}
                   </div>
                 ) : (
                   variants.map((v) => (
@@ -210,10 +222,14 @@ export function VariantPickerDialog({
           <div className="text-sm text-muted-foreground">
             {selectedVariant
               ? `${selectedVariant.name} (${selectedVariant.sku})`
-              : "No variant selected"}
+              : t(
+                  "marketplace.orders.dialogs.variant-picker.no-variant-selected",
+                )}
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">Qty</span>
+            <span className="text-sm text-muted-foreground">
+              {t("common.qty")}
+            </span>
             <Input
               className="w-24"
               type="number"

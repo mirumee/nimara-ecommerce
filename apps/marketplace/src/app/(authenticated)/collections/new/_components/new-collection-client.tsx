@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { FormProvider, type Resolver, useForm } from "react-hook-form";
 
@@ -42,6 +43,7 @@ type Props = {
 };
 
 export function NewCollectionClient({ channels }: Props) {
+  const t = useTranslations();
   const router = useRouter();
   const { toast } = useToast();
   const [isRedirecting, setIsRedirecting] = useState(false);
@@ -83,8 +85,10 @@ export function NewCollectionClient({ channels }: Props) {
 
         if (!result.ok) {
           toast({
-            title: "Failed to create collection",
-            description: (result.errors ?? []).join(", ") || "Unknown error",
+            title: t("marketplace.collections.new.toast-failed"),
+            description:
+              (result.errors ?? []).join(", ") ||
+              t("common.toast-unknown-error"),
             variant: "destructive",
           });
 
@@ -94,15 +98,18 @@ export function NewCollectionClient({ channels }: Props) {
         if (result.id) {
           if (result.errors?.length) {
             toast({
-              title: "Collection created",
-              description:
-                "Channel visibility could not be updated. You can edit it here.",
+              title: t("marketplace.collections.new.toast-created"),
+              description: t(
+                "marketplace.collections.new.toast-created-channel-warning",
+              ),
               variant: "destructive",
             });
           } else {
             toast({
-              title: "Collection created",
-              description: "Collection has been created successfully.",
+              title: t("marketplace.collections.new.toast-created"),
+              description: t(
+                "marketplace.collections.new.toast-created-success",
+              ),
             });
           }
 
@@ -112,8 +119,11 @@ export function NewCollectionClient({ channels }: Props) {
         }
       } catch (error) {
         toast({
-          title: "Failed to create collection",
-          description: error instanceof Error ? error.message : "Unknown error",
+          title: t("marketplace.collections.new.toast-failed"),
+          description:
+            error instanceof Error
+              ? error.message
+              : t("common.toast-unknown-error"),
           variant: "destructive",
         });
       }
@@ -133,11 +143,11 @@ export function NewCollectionClient({ channels }: Props) {
         .filter((msg): msg is string => msg !== null);
 
       toast({
-        title: "Validation error",
+        title: t("marketplace.shared.toast-validation-error"),
         description:
           errorMessages.length > 0
             ? errorMessages.join(", ")
-            : "Please check the form fields",
+            : t("marketplace.shared.toast-check-fields"),
         variant: "destructive",
       });
     },
@@ -155,11 +165,12 @@ export function NewCollectionClient({ channels }: Props) {
               <DialogHeader className="space-y-3">
                 <div className="flex items-center gap-3">
                   <Loader2 className="h-5 w-5 animate-spin text-primary" />
-                  <DialogTitle>Creating collection…</DialogTitle>
+                  <DialogTitle>
+                    {t("marketplace.collections.new.creating-dialog-title")}
+                  </DialogTitle>
                 </div>
                 <DialogDescription>
-                  You&apos;ll be redirected to the collection details once
-                  it&apos;s ready.
+                  {t("marketplace.collections.new.creating-dialog-description")}
                 </DialogDescription>
               </DialogHeader>
             </DialogContent>
@@ -170,13 +181,15 @@ export function NewCollectionClient({ channels }: Props) {
                 <Button asChild variant="ghost" size="sm" className="gap-2">
                   <Link href="/collections">
                     <ArrowLeft className="h-4 w-4" />
-                    All collections
+                    {t("marketplace.collections.new.back-to-collections")}
                   </Link>
                 </Button>
-                <h1 className="text-2xl font-semibold">Add Collection</h1>
+                <h1 className="text-2xl font-semibold">
+                  {t("marketplace.collections.new.title")}
+                </h1>
               </div>
               <Button type="submit" size="sm" disabled={isSubmitting}>
-                Create{" "}
+                {t("marketplace.collections.new.create-button")}{" "}
                 {isSubmitting ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : null}
@@ -189,15 +202,21 @@ export function NewCollectionClient({ channels }: Props) {
               <div className="flex grow basis-2/3 flex-col gap-4">
                 <Card>
                   <CardHeader>
-                    <CardTitle>General Information</CardTitle>
+                    <CardTitle>
+                      {t("marketplace.collections.new.general-info-title")}
+                    </CardTitle>
                   </CardHeader>
                   <CardContent className="flex flex-col gap-4">
-                    <InputField label="Name" name="name" />
+                    <InputField label={t("common.name")} name="name" />
                     <div className="grid gap-2">
-                      <Label>Description</Label>
+                      <Label>
+                        {t("marketplace.collections.new.field-description")}
+                      </Label>
                       <Textarea
                         {...form.register("description")}
-                        placeholder="Description"
+                        placeholder={t(
+                          "marketplace.collections.new.field-description-placeholder",
+                        )}
                         rows={7}
                         disabled={isSubmitting}
                       />

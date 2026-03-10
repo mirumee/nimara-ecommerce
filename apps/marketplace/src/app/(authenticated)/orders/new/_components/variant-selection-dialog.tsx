@@ -2,6 +2,7 @@
 
 import { ChevronDown, ChevronRight, Loader2, Search } from "lucide-react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { Button } from "@nimara/ui/components/button";
@@ -67,6 +68,7 @@ export function VariantSelectionDialog({
   onSave: (lines: VariantLineDraft[]) => void;
   open: boolean;
 }) {
+  const t = useTranslations();
   const [search, setSearch] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [isLoadingProducts, setIsLoadingProducts] = useState(false);
@@ -392,10 +394,17 @@ export function VariantSelectionDialog({
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle>
-            Add product{channelName ? ` from ${channelName}` : ""}
+            {channelName
+              ? t(
+                  "marketplace.orders.dialogs.variant-selection.add-product-from-channel",
+                  { channel: channelName },
+                )
+              : t("marketplace.orders.dialogs.variant-selection.add-product")}
           </DialogTitle>
           <p className="text-sm text-muted-foreground">
-            You can only add products available for the order&apos;s channel
+            {t(
+              "marketplace.orders.dialogs.variant-selection.channel-only-hint",
+            )}
           </p>
         </DialogHeader>
 
@@ -404,7 +413,9 @@ export function VariantSelectionDialog({
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               className="pl-9"
-              placeholder="Search products"
+              placeholder={t(
+                "marketplace.orders.dialogs.variant-selection.search-placeholder",
+              )}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               onKeyDown={(e) => {
@@ -420,7 +431,7 @@ export function VariantSelectionDialog({
             onClick={handleSearch}
             disabled={isSearching || isLoadingProducts}
           >
-            {isSearching ? "Searching..." : "Search"}
+            {isSearching ? t("common.searching") : t("common.search")}
           </Button>
         </div>
 
@@ -429,7 +440,9 @@ export function VariantSelectionDialog({
             {isLoadingProducts ? (
               <div className="flex items-center justify-center py-12 text-sm text-muted-foreground">
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Loading products...
+                {t(
+                  "marketplace.orders.dialogs.variant-selection.loading-products",
+                )}
               </div>
             ) : products.length === 0 ? (
               <div className="py-12 text-center text-sm text-muted-foreground">
@@ -500,11 +513,15 @@ export function VariantSelectionDialog({
                             {isLoadingVariants ? (
                               <div className="flex items-center gap-2 px-4 py-3 pl-16 text-sm text-muted-foreground">
                                 <Loader2 className="h-4 w-4 animate-spin" />
-                                Loading variants...
+                                {t(
+                                  "marketplace.orders.dialogs.variant-selection.loading-variants",
+                                )}
                               </div>
                             ) : variants.length === 0 ? (
                               <div className="px-4 py-3 pl-16 text-sm text-muted-foreground">
-                                No variants for this product
+                                {t(
+                                  "marketplace.orders.dialogs.variant-selection.no-variants",
+                                )}
                               </div>
                             ) : (
                               variants.map((variant) => {
@@ -596,13 +613,13 @@ export function VariantSelectionDialog({
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Back
+            {t("common.back")}
           </Button>
           <Button
             onClick={handleConfirm}
             disabled={selectedVariantIds.size === 0}
           >
-            Confirm
+            {t("common.confirm")}
           </Button>
         </DialogFooter>
       </DialogContent>

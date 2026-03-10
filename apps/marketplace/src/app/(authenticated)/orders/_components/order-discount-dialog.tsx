@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 
 import { Button } from "@nimara/ui/components/button";
@@ -35,6 +36,7 @@ export function OrderDiscountDialog({
   }) => Promise<void> | void;
   open: boolean;
 }) {
+  const t = useTranslations();
   const [valueType, setValueType] = useState<DiscountValueTypeEnum>("FIXED");
   const [value, setValue] = useState<string>("");
   const [reason, setReason] = useState<string>("");
@@ -71,12 +73,14 @@ export function OrderDiscountDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Add discount</DialogTitle>
+          <DialogTitle>
+            {t("marketplace.orders.dialogs.discount.title")}
+          </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
           <div className="space-y-1">
-            <Label>Type</Label>
+            <Label>{t("common.type")}</Label>
             <Select
               value={valueType}
               onValueChange={(v) => setValueType(v as DiscountValueTypeEnum)}
@@ -85,33 +89,51 @@ export function OrderDiscountDialog({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="FIXED">Fixed</SelectItem>
-                <SelectItem value="PERCENTAGE">Percentage</SelectItem>
+                <SelectItem value="FIXED">
+                  {t("marketplace.orders.dialogs.discount.type-fixed")}
+                </SelectItem>
+                <SelectItem value="PERCENTAGE">
+                  {t("marketplace.orders.dialogs.discount.type-percentage")}
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-1">
-            <Label>Value</Label>
+            <Label>{t("common.value")}</Label>
             <Input
               type="number"
               min={0}
               step="0.01"
               value={value}
               onChange={(e) => setValue(e.target.value)}
-              placeholder={valueType === "PERCENTAGE" ? "e.g. 10" : "e.g. 5"}
+              placeholder={
+                valueType === "PERCENTAGE"
+                  ? t(
+                      "marketplace.orders.dialogs.discount.value-placeholder-percentage",
+                    )
+                  : t(
+                      "marketplace.orders.dialogs.discount.value-placeholder-fixed",
+                    )
+              }
             />
             {valueType === "PERCENTAGE" ? (
-              <p className="text-xs text-muted-foreground">0–100</p>
+              <p className="text-xs text-muted-foreground">
+                {t("marketplace.orders.dialogs.discount.value-hint")}
+              </p>
             ) : null}
           </div>
 
           <div className="space-y-1">
-            <Label>Reason (optional)</Label>
+            <Label>
+              {t("marketplace.orders.dialogs.discount.reason-label")}
+            </Label>
             <Input
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              placeholder="e.g. VIP customer"
+              placeholder={t(
+                "marketplace.orders.dialogs.discount.reason-placeholder",
+              )}
             />
           </div>
         </div>
@@ -123,7 +145,7 @@ export function OrderDiscountDialog({
             onClick={() => onOpenChange(false)}
             disabled={isSubmitting}
           >
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button
             type="button"
@@ -143,7 +165,7 @@ export function OrderDiscountDialog({
               ).finally(() => setIsSubmitting(false));
             }}
           >
-            {isSubmitting ? "Adding..." : "Add"}
+            {isSubmitting ? t("common.adding") : t("common.add")}
           </Button>
         </DialogFooter>
       </DialogContent>

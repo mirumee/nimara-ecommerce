@@ -1,6 +1,7 @@
 "use client";
 
 import { Check, ChevronDown } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 
@@ -66,8 +67,12 @@ export function SelectField({
   isMulti,
   loadOptions,
   searchPlaceholder,
-  emptyStateText = "No options found.",
+  emptyStateText,
 }: SelectFieldProps) {
+  const t = useTranslations();
+  const defaultEmptyStateText = t("common.no-options-found");
+  const effectiveEmptyStateText = emptyStateText ?? defaultEmptyStateText;
+
   const {
     control,
     formState,
@@ -142,7 +147,10 @@ export function SelectField({
   }, [availableOptions, options]);
 
   const placeholderText =
-    placeholder ?? (label ? `Select a ${label.toLowerCase()}` : "Select...");
+    placeholder ??
+    (label
+      ? t("common.select-label-placeholder", { label: label.toLowerCase() })
+      : t("common.select-placeholder"));
 
   const renderBadges = useCallback(
     (
@@ -256,14 +264,18 @@ export function SelectField({
                   onChange={(event) => setSearchQuery(event.target.value)}
                   placeholder={
                     searchPlaceholder ??
-                    (label ? `Search ${label.toLowerCase()}` : "Search")
+                    (label
+                      ? t("common.search-label-placeholder", {
+                          label: label.toLowerCase(),
+                        })
+                      : t("common.search"))
                   }
                 />
               </div>
               <ScrollArea className="max-h-60">
                 {searching ? (
                   <div className="p-4 text-sm text-muted-foreground">
-                    Searching…
+                    {t("common.searching")}
                   </div>
                 ) : availableOptions.length ? (
                   <div className="flex flex-col">
@@ -287,7 +299,7 @@ export function SelectField({
                   </div>
                 ) : (
                   <div className="p-4 text-sm text-muted-foreground">
-                    {emptyStateText}
+                    {effectiveEmptyStateText}
                   </div>
                 )}
               </ScrollArea>
@@ -309,7 +321,7 @@ export function SelectField({
       availableOptions,
       description,
       disabled,
-      emptyStateText,
+      effectiveEmptyStateText,
       error,
       formState.disabled,
       formState.isSubmitting,
@@ -319,6 +331,7 @@ export function SelectField({
       searchPlaceholder,
       searchQuery,
       searching,
+      t,
     ],
   );
 

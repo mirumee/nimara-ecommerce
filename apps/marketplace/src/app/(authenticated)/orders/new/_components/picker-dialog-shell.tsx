@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 
 import { Button } from "@nimara/ui/components/button";
@@ -30,6 +31,8 @@ export function PickerDialogShell({
   primaryLabel: string;
   title: string;
 }) {
+  const t = useTranslations();
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-xl">
@@ -47,7 +50,7 @@ export function PickerDialogShell({
               type="button"
               onClick={() => onOpenChange(false)}
             >
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button
               type="button"
