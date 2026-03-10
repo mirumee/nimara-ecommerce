@@ -49,6 +49,7 @@ export function CheckboxField({
           name={name}
           render={({ field }) => (
             <Checkbox
+              ref={field.ref}
               checked={field.value ?? false}
               onCheckedChange={(checked) => field.onChange(checked === true)}
               disabled={disabled}

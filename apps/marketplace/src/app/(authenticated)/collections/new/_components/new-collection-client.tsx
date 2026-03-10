@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import { Button } from "@nimara/ui/components/button";
@@ -13,6 +14,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@nimara/ui/components/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@nimara/ui/components/dialog";
 import { Label } from "@nimara/ui/components/label";
 import { useToast } from "@nimara/ui/hooks";
 
@@ -36,6 +44,7 @@ type Props = {
 export function NewCollectionClient({ channels }: Props) {
   const router = useRouter();
   const { toast } = useToast();
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const defaultChannelAvailability = Object.fromEntries(
     channels.map((ch) => [
@@ -94,6 +103,8 @@ export function NewCollectionClient({ channels }: Props) {
               description: "Collection has been created successfully.",
             });
           }
+
+          setIsRedirecting(true);
           router.push(`/collections/${result.id}`);
           router.refresh();
         }
@@ -131,11 +142,26 @@ export function NewCollectionClient({ channels }: Props) {
   );
 
   const isSubmitting = form.formState.isSubmitting;
+  const isLoading = isSubmitting || isRedirecting;
 
   return (
     <FormProvider {...form}>
       <form onSubmit={onSubmit} noValidate>
         <div className="min-h-screen">
+          <Dialog open={isLoading}>
+            <DialogContent withCloseButton={false} className="w-full max-w-sm">
+              <DialogHeader className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                  <DialogTitle>Creating collection…</DialogTitle>
+                </div>
+                <DialogDescription>
+                  You&apos;ll be redirected to the collection details once
+                  it&apos;s ready.
+                </DialogDescription>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
           <div className="fixed left-0 right-0 top-16 z-40 border-b bg-background">
             <div className="flex items-center justify-between px-6 py-4">
               <div className="flex items-center gap-4">
