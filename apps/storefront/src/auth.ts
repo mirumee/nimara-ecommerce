@@ -3,8 +3,9 @@ import NextAuth, { type NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { getTranslations } from "next-intl/server";
 
-import { saleorAuthClient } from "@nimara/infrastructure/auth/client";
+import { createSaleorAuthClientFromConfig } from "@nimara/infrastructure/auth/client";
 
+import { clientEnvs } from "@/envs/client";
 import { signInSchema } from "@/foundation/auth/sign-in/schema";
 import { getServiceRegistry } from "@/services/registry";
 
@@ -28,7 +29,9 @@ export const config = {
         );
 
         const { data } = await (
-          await saleorAuthClient()
+          await createSaleorAuthClientFromConfig({
+            saleorApiUrl: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
+          })
         ).signIn({ email, password });
 
         if (data?.tokenCreate?.errors.length) {

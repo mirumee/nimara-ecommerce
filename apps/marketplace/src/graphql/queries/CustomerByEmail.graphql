@@ -1,0 +1,64 @@
+query CustomerByEmail($search: String!, $ids: [ID!]) {
+  customers(first: 20, filter: { search: $search, ids: $ids }) {
+    edges {
+      node {
+        id
+        firstName
+        lastName
+        email
+        addresses {
+          id
+          firstName
+          lastName
+          companyName
+          streetAddress1
+          streetAddress2
+          city
+          cityArea
+          countryArea
+          postalCode
+          phone
+          country {
+            code
+            country
+          }
+        }
+        defaultBillingAddress {
+          id
+          firstName
+          lastName
+          companyName
+          streetAddress1
+          streetAddress2
+          city
+          cityArea
+          countryArea
+          postalCode
+          phone
+          country {
+            code
+            country
+          }
+        }
+        defaultShippingAddress {
+          id
+          firstName
+          lastName
+          companyName
+          streetAddress1
+          streetAddress2
+          city
+          cityArea
+          countryArea
+          postalCode
+          phone
+          country {
+            code
+            country
+          }
+        }
+      }
+    }
+  }
+}
+

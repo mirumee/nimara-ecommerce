@@ -1,0 +1,52 @@
+import { getServerAuthToken } from "@/lib/auth/server";
+import { configurationService } from "@/services/configuration";
+
+import { AccountInformationCard } from "./_components/account-information-card";
+
+export default async function ConfigurationGeneralPage() {
+  const token = await getServerAuthToken();
+  const result = await configurationService.getMe(token);
+
+  if (!result.ok) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <p className="text-muted-foreground">Failed to load user data</p>
+      </div>
+    );
+  }
+
+  const user = result.data.me;
+
+  const vendorPageId = user?.metadata?.find(
+    (m) => m.key === "vendor.id",
+  )?.value;
+  let vendor: { name: string; slug: string } | null = null;
+
+  if (vendorPageId) {
+    const vendorResult = await configurationService.getVendorProfile(
+      vendorPageId,
+      token,
+    );
+
+    if (vendorResult.ok && vendorResult.data.page) {
+      const page = vendorResult.data.page;
+      const vendorNameAttr = page.attributes.find(
+        (attr) => attr.attribute.slug === "vendor-name",
+      );
+
+      vendor = {
+        name: vendorNameAttr?.values[0]?.name ?? page.title,
+        slug: page.slug,
+      };
+    }
+  }
+
+  return (
+    <div className="space-y-8">
+      <h1 className="text-2xl font-semibold text-gray-900">General</h1>
+
+      {/* Account Information Card */}
+      <AccountInformationCard user={user} vendor={vendor} />
+    </div>
+  );
+}

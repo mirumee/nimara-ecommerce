@@ -1,0 +1,39 @@
+query CollectionsList(
+  $first: Int = 100
+  $after: String
+  $filter: CollectionFilterInput
+) {
+  collections(first: $first, after: $after, filter: $filter) {
+    edges {
+      node {
+        id
+        name
+        slug
+        backgroundImage {
+          url
+          alt
+        }
+        metadata {
+          key
+          value
+        }
+        products {
+          totalCount
+        }
+        channelListings {
+          channel {
+            id
+            name
+          }
+          isPublished
+        }
+      }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+    totalCount
+  }
+}

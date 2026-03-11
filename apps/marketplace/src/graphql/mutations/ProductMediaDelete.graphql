@@ -1,0 +1,27 @@
+mutation ProductMediaDeleteMutation($id: ID!) {
+  productMediaDelete(id: $id) {
+    errors {
+      field
+      message
+      code
+    }
+    media {
+      id
+    }
+    product {
+      id
+      media {
+        id
+        url
+        alt
+        type
+        sortOrder
+      }
+      thumbnail {
+        url
+        alt
+      }
+    }
+  }
+}
+

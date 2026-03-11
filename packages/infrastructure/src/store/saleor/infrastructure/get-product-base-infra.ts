@@ -24,6 +24,7 @@ const parseData = (data: ProductBaseFragment): ProductBase => {
       title: data.seoTitle ?? null,
       description: data.seoDescription ?? null,
     },
+    vendorId: data.vendorId,
   };
 };
 

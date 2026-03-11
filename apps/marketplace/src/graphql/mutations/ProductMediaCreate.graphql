@@ -1,0 +1,31 @@
+mutation ProductMediaCreateMutation($input: ProductMediaCreateInput!) {
+  productMediaCreate(input: $input) {
+    errors {
+      field
+      message
+      code
+    }
+    media {
+      id
+      url
+      alt
+      type
+      sortOrder
+    }
+    product {
+      id
+      media {
+        id
+        url
+        alt
+        type
+        sortOrder
+      }
+      thumbnail {
+        url
+        alt
+      }
+    }
+  }
+}
+

@@ -1,0 +1,12 @@
+query CustomersByIds($ids: [ID!]!, $first: Int) {
+  customers(first: $first, filter: { ids: $ids }) {
+    edges {
+      node {
+        id
+        firstName
+        lastName
+        email
+      }
+    }
+  }
+}

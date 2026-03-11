@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import * as z from "zod";
+import { z } from "zod";
 
 import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
 import { LocalizedLink } from "@nimara/i18n/routing";

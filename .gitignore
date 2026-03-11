@@ -19,6 +19,11 @@ build
 # Keep just the settings
 !.vscode/settings.json
 
+# Cursor
+# Uncomment to commit shared Cursor rules:
+# !.cursor/rules/
+.cursor/plans/
+
 # misc
 .DS_Store
 *.pem

@@ -1,0 +1,15 @@
+mutation VendorPageCreate($input: PageCreateInput!) {
+  pageCreate(input: $input) {
+    page {
+      id
+      title
+      slug
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+

@@ -17,9 +17,11 @@ import { getAccessToken } from "@/services/tokens";
  * This is the only file that uses "use server" and Next.js-specific APIs.
  */
 export const addToBagAction = async ({
+  clientProductVendorId = null,
   variantId,
   quantity = 1,
 }: {
+  clientProductVendorId?: string | null;
   quantity?: number;
   variantId: string;
 }) => {
@@ -33,11 +35,13 @@ export const addToBagAction = async ({
   // Call the pure function with services and context
   const result = await addToBag(
     services,
-    { variantId, quantity },
+    { variantId, quantity, clientProductVendorId },
     {
       region,
       cartId,
       accessToken: accessToken ?? null,
+      marketplaceEnabled:
+        process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED !== "false",
       cacheTTL: {
         cart: services.config.cacheTTL.cart,
       },

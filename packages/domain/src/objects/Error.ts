@@ -18,6 +18,8 @@ export const HTTP_ERROR_CODES = [
   "TOO_MANY_REQUESTS_ERROR",
   "BAD_REQUEST_ERROR",
   "UNEXPECTED_HTTP_ERROR",
+  "INVALID_RESPONSE_ERROR",
+  "INVALID_JSON_ERROR",
 ] as const satisfies ErrorCodeFormat[];
 export type HTTPErrorCode = (typeof HTTP_ERROR_CODES)[number];
 
@@ -97,6 +99,8 @@ export const CHECKOUT_ERROR_CODES = [
   "TRANSACTION_INITIALIZE_ERROR",
   "TRANSACTION_PROCESS_ERROR",
   "VOUCHER_NOT_APPLICABLE_ERROR",
+  "VENDOR_MISMATCH_ERROR",
+  "VENDOR_MIX_NOT_ALLOWED_ERROR",
 ] as const satisfies ErrorCodeFormat[];
 export type CheckoutErrorCode = (typeof CHECKOUT_ERROR_CODES)[number];
 

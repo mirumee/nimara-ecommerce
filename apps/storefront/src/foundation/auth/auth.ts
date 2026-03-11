@@ -3,13 +3,18 @@
 import * as Sentry from "@sentry/nextjs";
 import { cookies } from "next/headers";
 
-import { saleorAuthClient } from "@nimara/infrastructure/auth/client";
+import { createSaleorAuthClientFromConfig } from "@nimara/infrastructure/auth/client";
 
 import { COOKIE_KEY } from "@/config";
+import { clientEnvs } from "@/envs/client";
 import { storefrontLogger } from "@/services/logging";
 
 export async function handleLogout() {
-  (await saleorAuthClient()).signOut();
+  (
+    await createSaleorAuthClientFromConfig({
+      saleorApiUrl: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
+    })
+  ).signOut();
 
   Sentry.setUser(null);
 

@@ -69,7 +69,7 @@ export type CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkou
 
 export type CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation = { name: string | null };
 
-export type CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product = { id: string, slug: string, name: string, thumbnail: CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_thumbnail_Image | null, translation: CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation | null };
+export type CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product = { id: string, slug: string, name: string, vendorId?: string | null, thumbnail: CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_thumbnail_Image | null, translation: CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation | null };
 
 export type CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money = { currency: string, amount: number };
 
@@ -125,6 +125,7 @@ export type CheckoutSessionCreateVariables = Types.Exact<{
   countryCode?: Types.InputMaybe<Types.CountryCode>;
   thumbnailSize?: Types.InputMaybe<Types.Scalars['Int']['input']>;
   thumbnailFormat?: Types.InputMaybe<Types.ThumbnailFormatEnum>;
+  isMarketplaceEnabled?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
 }>;
 
 
@@ -226,7 +227,7 @@ export const AcpCheckoutCompleteMutationDocument = new TypedDocumentString(`
 }
     `) as unknown as TypedDocumentString<AcpCheckoutCompleteMutation, AcpCheckoutCompleteMutationVariables>;
 export const CheckoutSessionCreateDocument = new TypedDocumentString(`
-    mutation CheckoutSessionCreate($input: CheckoutCreateInput!, $languageCode: LanguageCodeEnum!, $countryCode: CountryCode = US, $thumbnailSize: Int = 128, $thumbnailFormat: ThumbnailFormatEnum = WEBP) {
+    mutation CheckoutSessionCreate($input: CheckoutCreateInput!, $languageCode: LanguageCodeEnum!, $countryCode: CountryCode = US, $thumbnailSize: Int = 128, $thumbnailFormat: ThumbnailFormatEnum = WEBP, $isMarketplaceEnabled: Boolean = false) {
   checkoutCreate(input: $input) {
     checkout {
       ...CheckoutSessionFragment
@@ -372,6 +373,7 @@ fragment CartLineFragment on CheckoutLine {
       translation(languageCode: $languageCode) {
         name
       }
+      vendorId: metafield(key: "vendor.id") @include(if: $isMarketplaceEnabled)
     }
     pricing {
       discount {

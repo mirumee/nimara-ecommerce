@@ -1,0 +1,19 @@
+query CustomerOrders($customer: String!, $first: Int) {
+  orders(first: $first, filter: { customer: $customer }) {
+    edges {
+      node {
+        id
+        number
+        created
+        statusDisplay
+        paymentStatusDisplay
+        total {
+          gross {
+            amount
+            currency
+          }
+        }
+      }
+    }
+  }
+}

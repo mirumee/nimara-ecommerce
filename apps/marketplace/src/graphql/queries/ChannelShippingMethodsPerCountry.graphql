@@ -1,0 +1,21 @@
+query ChannelShippingMethodsPerCountry($channelId: ID!, $countries: [CountryCode!]) {
+  channel(id: $channelId) {
+    id
+    name
+    slug
+    currencyCode
+    availableShippingMethodsPerCountry(countries: $countries) {
+      countryCode
+      shippingMethods {
+        id
+        name
+        active
+        price {
+          amount
+          currency
+        }
+      }
+    }
+  }
+}
+

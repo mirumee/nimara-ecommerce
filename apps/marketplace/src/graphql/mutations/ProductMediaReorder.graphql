@@ -1,0 +1,23 @@
+mutation ProductMediaReorderMutation($productId: ID!, $mediaIds: [ID!]!) {
+  productMediaReorder(productId: $productId, mediaIds: $mediaIds) {
+    errors {
+      field
+      message
+      code
+    }
+    product {
+      id
+      media {
+        id
+        url
+        alt
+        type
+        sortOrder
+      }
+      thumbnail {
+        url
+        alt
+      }
+    }
+  }
+}

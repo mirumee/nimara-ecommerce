@@ -1,0 +1,114 @@
+query ProductVariantDetail($id: ID!) {
+  productVariant(id: $id) {
+    id
+    name
+    sku
+    trackInventory
+    weight {
+      value
+      unit
+    }
+    channelListings {
+      id
+      channel {
+        id
+        name
+        currencyCode
+      }
+      price {
+        currency
+        amount
+      }
+      costPrice {
+        currency
+        amount
+      }
+      priorPrice {
+        currency
+        amount
+      }
+      preorderThreshold {
+        quantity
+      }
+      margin
+    }
+    assignedAttributes {
+      __typename
+      attribute {
+        id
+        name
+        slug
+        inputType
+        valueRequired
+        choices(first: 100) {
+          edges {
+            node {
+              ... on AttributeValue {
+                id
+                name
+                slug
+              }
+            }
+          }
+        }
+      }
+      ... on AssignedBooleanAttribute {
+        booleanValue: value
+      }
+      ... on AssignedDateAttribute {
+        dateValue: value
+      }
+      ... on AssignedDateTimeAttribute {
+        dateTimeValue: value
+      }
+      ... on AssignedNumericAttribute {
+        numericValue: value
+      }
+      ... on AssignedPlainTextAttribute {
+        plainTextValue: value
+      }
+      ... on AssignedTextAttribute {
+        textValue: value
+      }
+      ... on AssignedSingleChoiceAttribute {
+        singleChoiceValue: value {
+          name
+          slug
+        }
+      }
+      ... on AssignedMultiChoiceAttribute {
+        multiChoiceValue: value {
+          name
+          slug
+        }
+      }
+      ... on AssignedSwatchAttribute {
+        swatchValue: value {
+          name
+          slug
+          hexColor
+        }
+      }
+      ... on AssignedFileAttribute {
+        fileValue: value {
+          url
+          contentType
+        }
+      }
+    }
+    stocks {
+      id
+      quantity
+      quantityAllocated
+      warehouse {
+        id
+        name
+      }
+    }
+    metadata {
+      key
+      value
+    }
+  }
+}
+
