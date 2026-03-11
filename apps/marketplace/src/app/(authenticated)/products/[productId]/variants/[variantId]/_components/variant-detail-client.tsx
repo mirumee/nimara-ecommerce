@@ -5,7 +5,7 @@ import { ArrowLeft, ChevronDown, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, type Resolver, useForm } from "react-hook-form";
 
 import { Button } from "@nimara/ui/components/button";
 import {
@@ -279,7 +279,9 @@ export function VariantDetailClient({
   }, [channels, variant.channelListings]);
 
   const form = useForm<VariantUpdateFormValues>({
-    resolver: zodResolver(variantUpdateSchema),
+    resolver: zodResolver(
+      variantUpdateSchema,
+    ) as Resolver<VariantUpdateFormValues>,
     defaultValues: {
       name: variant.name ?? "",
       sku: variant.sku ?? "",

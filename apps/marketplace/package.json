@@ -7,7 +7,7 @@
     "@graphql-tools/stitch": "^9.4.11",
     "@graphql-tools/wrap": "^10.0.27",
     "@graphql-typed-document-node/core": "3.2.0",
-    "@hookform/resolvers": "^3.9.1",
+    "@hookform/resolvers": "^5.2.2",
     "@nimara/codegen": "workspace:*",
     "@nimara/config": "workspace:*",
     "@nimara/domain": "workspace:*",

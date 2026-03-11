@@ -5,7 +5,7 @@ import { ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, type Resolver, useForm } from "react-hook-form";
 
 import { Button } from "@nimara/ui/components/button";
 import {
@@ -58,7 +58,9 @@ export function NewCollectionClient({ channels }: Props) {
   );
 
   const form = useForm<CollectionCreateFormValues>({
-    resolver: zodResolver(collectionCreateSchema),
+    resolver: zodResolver(
+      collectionCreateSchema,
+    ) as Resolver<CollectionCreateFormValues>,
     defaultValues: {
       name: "",
       slug: "",

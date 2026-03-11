@@ -6,7 +6,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { FormProvider, useForm, useFormContext } from "react-hook-form";
+import {
+  FormProvider,
+  type Resolver,
+  useForm,
+  useFormContext,
+} from "react-hook-form";
 
 import { Button } from "@nimara/ui/components/button";
 import {
@@ -485,7 +490,9 @@ export function ProductDetailClient({
   }, [product.assignedAttributes]);
 
   const form = useForm<ProductUpdateFormValues>({
-    resolver: zodResolver(productUpdateSchema),
+    resolver: zodResolver(
+      productUpdateSchema,
+    ) as Resolver<ProductUpdateFormValues>,
     defaultValues: {
       name: product.name ?? "",
       description: tryExtractEditorJsPlainText(product.description),

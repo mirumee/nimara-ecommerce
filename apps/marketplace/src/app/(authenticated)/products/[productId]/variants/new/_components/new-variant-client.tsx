@@ -5,7 +5,7 @@ import { ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, type Resolver, useForm } from "react-hook-form";
 
 import { Button } from "@nimara/ui/components/button";
 import {
@@ -204,7 +204,9 @@ export function NewVariantClient({
   }, [channels]);
 
   const form = useForm<VariantCreateFormValues>({
-    resolver: zodResolver(variantCreateSchema),
+    resolver: zodResolver(
+      variantCreateSchema,
+    ) as Resolver<VariantCreateFormValues>,
     defaultValues: {
       name: product.name ?? "",
       sku: "",

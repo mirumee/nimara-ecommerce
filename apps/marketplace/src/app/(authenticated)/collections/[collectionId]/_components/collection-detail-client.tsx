@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, type Resolver, useForm } from "react-hook-form";
 
 import { Button } from "@nimara/ui/components/button";
 import {
@@ -140,7 +140,9 @@ export function CollectionDetailClient({
   }, [channels, collection.channelListings]);
 
   const form = useForm<CollectionUpdateFormValues>({
-    resolver: zodResolver(collectionUpdateSchema),
+    resolver: zodResolver(
+      collectionUpdateSchema,
+    ) as Resolver<CollectionUpdateFormValues>,
     defaultValues: {
       name: collection.name ?? "",
       slug: collection.slug ?? "",
