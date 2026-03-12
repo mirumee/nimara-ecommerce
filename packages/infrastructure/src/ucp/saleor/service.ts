@@ -19,7 +19,12 @@ import {
   type UcpCheckoutSessionUpdateVariables,
 } from "./graphql/mutations/generated";
 import { CheckoutSessionGetDocument } from "./graphql/queries/generated";
-import { toSaleorAddress } from "./helpers";
+import {
+  toSaleorAddress,
+  validateCheckoutTermsDummy,
+  verifyCheckoutMandateDummy,
+  verifyMerchantAuthorizationDummy,
+} from "./helpers";
 import {
   sessionToCheckoutResponse,
   toPaymentHandlers,
@@ -425,7 +430,75 @@ export const saleorUCPService = ({
         return err([
           {
             code: "CHECKOUT_COMPLETE_ERROR",
-            message: "AP2 checkout mandate is required",
+            message: "mandate_required",
+          },
+        ]);
+      }
+
+      const currentCheckoutResult = await client.execute(
+        CheckoutSessionGetDocument,
+        {
+          variables: {
+            id: checkoutId,
+            languageCode,
+          },
+          operationName: "UCP:CheckoutSessionGetQuery",
+          options: {
+            cache: "no-store",
+          },
+        },
+      );
+
+      if (!currentCheckoutResult.ok || !currentCheckoutResult.data.checkout) {
+        return err([
+          {
+            code: "CHECKOUT_NOT_FOUND_ERROR",
+            message: "Checkout session not found.",
+          },
+        ]);
+      }
+
+      const currentCheckout = sessionToCheckoutResponse(
+        toUCPCheckoutSession(currentCheckoutResult.data.checkout),
+        toPaymentHandlers(currentCheckoutResult.data.checkout),
+      );
+
+      const authVerification =
+        verifyMerchantAuthorizationDummy(currentCheckout);
+
+      if (!authVerification.valid) {
+        return err([
+          {
+            code: "CHECKOUT_COMPLETE_ERROR",
+            message: "merchant_authorization_invalid",
+          },
+        ]);
+      }
+
+      const mandateVerification = verifyCheckoutMandateDummy(
+        input.ap2.checkout_mandate,
+        currentCheckout,
+      );
+
+      if (!mandateVerification.valid) {
+        return err([
+          {
+            code: "CHECKOUT_COMPLETE_ERROR",
+            message: "mandate_invalid_signature",
+          },
+        ]);
+      }
+
+      const termsValidation = validateCheckoutTermsDummy(
+        currentCheckout,
+        mandateVerification.checkout || currentCheckout,
+      );
+
+      if (!termsValidation.valid) {
+        return err([
+          {
+            code: "CHECKOUT_COMPLETE_ERROR",
+            message: "mandate_scope_mismatch",
           },
         ]);
       }
@@ -515,70 +588,14 @@ export const saleorUCPService = ({
     }
   },
 
-  cancelCheckout: async (input: {
+  cancelCheckout: async (_input: {
     id: string;
   }): AsyncResult<CheckoutResponse> => {
-    const client = graphqlClient(apiUrl);
-
-    if (!client) {
-      return err([
-        {
-          code: "BAD_REQUEST_ERROR",
-          message: "Missing Saleor API URL.",
-        },
-      ]);
-    }
-
-    try {
-      const result = await client.execute(CheckoutSessionGetDocument, {
-        variables: {
-          id: input.id,
-          languageCode,
-        },
-        operationName: "UCP:CheckoutSessionGetQuery",
-      });
-
-      if (!result.ok) {
-        return err(result.errors);
-      }
-
-      if (!result.data.checkout) {
-        return err([
-          {
-            code: "CHECKOUT_NOT_FOUND_ERROR",
-            message: "Checkout session not found.",
-          },
-        ]);
-      }
-
-      const session = toUCPCheckoutSession(result.data.checkout);
-
-      // Per UCP spec: checkout sessions that are already completed or canceled
-      // should not be cancelable and should return an error
-      // @link https://ucp.dev/latest/specification/checkout/#cancel-checkout
-      if (session.status === "completed" || session.status === "canceled") {
-        return err([
-          {
-            code: "CHECKOUT_NOT_FOUND_ERROR",
-            message: `Checkout session cannot be canceled. Current status: ${session.status}`,
-          },
-        ]);
-      }
-
-      const paymentHandlers = toPaymentHandlers(result.data.checkout);
-      const response = sessionToCheckoutResponse(
-        { ...session, status: "canceled" },
-        paymentHandlers,
-      );
-
-      return ok(response);
-    } catch {
-      return err([
-        {
-          code: "CHECKOUT_NOT_FOUND_ERROR",
-          message: "Failed to cancel checkout session",
-        },
-      ]);
-    }
+    return err([
+      {
+        code: "BAD_REQUEST_ERROR",
+        message: "Checkout cancellation is not supported by Saleor.",
+      },
+    ]);
   },
 });

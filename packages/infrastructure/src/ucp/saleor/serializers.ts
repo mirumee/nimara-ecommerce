@@ -354,52 +354,64 @@ export const toPaymentHandlers = (
 export const sessionToCheckoutResponse = (
   session: UCPCheckoutSessionModel,
   paymentHandlers: ReturnType<typeof toPaymentHandlers> = [],
-): CheckoutWithFulfillmentResponse => ({
-  fulfillment: (session.fulfillment || {
-    methods: [],
-  }) as unknown as CheckoutWithFulfillmentResponse["fulfillment"],
-  id: session.id,
-  status: session.status,
-  currency: session.currency,
-  buyer: session.buyer,
-  line_items: session.lineItems.map((item) => ({
-    id: item.id,
-    item: {
-      id: item.item.id,
-      price: toMinorCurrency(item.item.price, session.currency),
-      title: item.item.title,
-    },
-    quantity: item.quantity,
-    totals: item.totals.map((total) => ({
+): CheckoutWithFulfillmentResponse => {
+  const response = {
+    fulfillment: (session.fulfillment || {
+      methods: [],
+    }) as unknown as CheckoutWithFulfillmentResponse["fulfillment"],
+    id: session.id,
+    status: session.status,
+    currency: session.currency,
+    buyer: session.buyer,
+    line_items: session.lineItems.map((item) => ({
+      id: item.id,
+      item: {
+        id: item.item.id,
+        price: toMinorCurrency(item.item.price, session.currency),
+        title: item.item.title,
+      },
+      quantity: item.quantity,
+      totals: item.totals.map((total) => ({
+        type: total.type,
+        amount: toMinorCurrency(total.amount, session.currency),
+      })),
+    })) as unknown as CheckoutResponse["line_items"],
+    totals: session.totals.map((total) => ({
       type: total.type,
       amount: toMinorCurrency(total.amount, session.currency),
-    })),
-  })) as unknown as CheckoutResponse["line_items"],
-  totals: session.totals.map((total) => ({
-    type: total.type,
-    amount: toMinorCurrency(total.amount, session.currency),
-  })) as unknown as TotalResponse[],
-  ucp: {
-    version: UCP_VERSION,
-    capabilities: [{ name: "dev.ucp.shopping.checkout", version: UCP_VERSION }],
-  },
-  payment: {
-    handlers: paymentHandlers,
-    instruments: [],
-  } as unknown as CheckoutResponse["payment"],
-  ...(session.order
-    ? {
-        order: {
-          id: session.order.id,
-          permalink_url: session.order.permalinkUrl,
-        },
-      }
-    : {}),
-  ...(session.fulfillmentAddress
-    ? { fulfillment_address: session.fulfillmentAddress }
-    : {}),
-  ...(session.billingAddress
-    ? { billing_address: session.billingAddress }
-    : {}),
-  links: [] as unknown as CheckoutResponse["links"],
-});
+    })) as unknown as TotalResponse[],
+    ucp: {
+      version: UCP_VERSION,
+      capabilities: [
+        { name: "dev.ucp.shopping.checkout", version: UCP_VERSION },
+      ],
+    },
+    payment: {
+      handlers: paymentHandlers,
+      instruments: [],
+    } as unknown as CheckoutResponse["payment"],
+    ...(session.order
+      ? {
+          order: {
+            id: session.order.id,
+            permalink_url: session.order.permalinkUrl,
+          },
+        }
+      : {}),
+    ...(session.fulfillmentAddress
+      ? { fulfillment_address: session.fulfillmentAddress }
+      : {}),
+    ...(session.billingAddress
+      ? { billing_address: session.billingAddress }
+      : {}),
+    links: [] as unknown as CheckoutResponse["links"],
+  };
+
+  return {
+    ...response,
+    ap2: {
+      merchant_authorization:
+        "eyJhbGciOiJFUzI1NiIsImtpZCI6InRlc3RfbWVyY2hhbnRfMjAyNSJ9..dGVzdF9zaWduYXR1cmVfZm9yX3Rlc3Rpbmdffm9ubHk",
+    },
+  } as unknown as CheckoutWithFulfillmentResponse;
+};
