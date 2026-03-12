@@ -426,7 +426,10 @@ export const saleorUCPService = ({
         ]);
       }
 
-      if (!input.ap2?.checkout_mandate) {
+      const requireAp2Mandate =
+        process.env.UCP_REQUIRE_AP2_MANDATE === "true";
+
+      if (requireAp2Mandate && !input.ap2?.checkout_mandate) {
         return err([
           {
             code: "CHECKOUT_COMPLETE_ERROR",
@@ -463,44 +466,46 @@ export const saleorUCPService = ({
         toPaymentHandlers(currentCheckoutResult.data.checkout),
       );
 
-      const authVerification =
-        verifyMerchantAuthorizationDummy(currentCheckout);
+      if (requireAp2Mandate && input.ap2?.checkout_mandate) {
+        const authVerification =
+          verifyMerchantAuthorizationDummy(currentCheckout);
 
-      if (!authVerification.valid) {
-        return err([
-          {
-            code: "CHECKOUT_COMPLETE_ERROR",
-            message: "merchant_authorization_invalid",
-          },
-        ]);
-      }
+        if (!authVerification.valid) {
+          return err([
+            {
+              code: "CHECKOUT_COMPLETE_ERROR",
+              message: "merchant_authorization_invalid",
+            },
+          ]);
+        }
 
-      const mandateVerification = verifyCheckoutMandateDummy(
-        input.ap2.checkout_mandate,
-        currentCheckout,
-      );
+        const mandateVerification = verifyCheckoutMandateDummy(
+          input.ap2.checkout_mandate,
+          currentCheckout,
+        );
 
-      if (!mandateVerification.valid) {
-        return err([
-          {
-            code: "CHECKOUT_COMPLETE_ERROR",
-            message: "mandate_invalid_signature",
-          },
-        ]);
-      }
+        if (!mandateVerification.valid) {
+          return err([
+            {
+              code: "CHECKOUT_COMPLETE_ERROR",
+              message: "mandate_invalid_signature",
+            },
+          ]);
+        }
 
-      const termsValidation = validateCheckoutTermsDummy(
-        currentCheckout,
-        mandateVerification.checkout || currentCheckout,
-      );
+        const termsValidation = validateCheckoutTermsDummy(
+          currentCheckout,
+          mandateVerification.checkout || currentCheckout,
+        );
 
-      if (!termsValidation.valid) {
-        return err([
-          {
-            code: "CHECKOUT_COMPLETE_ERROR",
-            message: "mandate_scope_mismatch",
-          },
-        ]);
+        if (!termsValidation.valid) {
+          return err([
+            {
+              code: "CHECKOUT_COMPLETE_ERROR",
+              message: "mandate_scope_mismatch",
+            },
+          ]);
+        }
       }
 
       const result = await client.execute(UcpCheckoutCompleteMutationDocument, {
