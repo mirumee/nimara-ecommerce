@@ -1,10 +1,15 @@
-import { hasLocale } from "next-intl";
+import { hasLocale, type Messages } from "next-intl";
 import { getRequestConfig } from "next-intl/server";
 
-import { INTL_FORMATS_CONFIG } from "./config";
+import { INTL_FORMATS_CONFIG, type SupportedLocale } from "./config";
+import { loadMessages } from "./loadMessages";
 import { routing } from "./routing";
 
 export interface RequestConfigOptions {
+  /**
+   * Application identifier used to compose the correct message bundle.
+   */
+  app: "storefront" | "marketplace";
   /**
    * Optional logger for warning messages.
    */
@@ -26,9 +31,14 @@ export interface RequestConfigOptions {
   onTranslationError?: (error: { code: string; message: string }) => void;
 }
 
-export function createRequestConfig(options: RequestConfigOptions = {}) {
-  const { logger, onMissingTranslation, onCriticalError, onTranslationError } =
-    options;
+export function createRequestConfig(options: RequestConfigOptions) {
+  const {
+    logger,
+    onMissingTranslation,
+    onCriticalError,
+    onTranslationError,
+    app,
+  } = options;
 
   return getRequestConfig(async ({ requestLocale }) => {
     const requested = await requestLocale;
@@ -37,7 +47,7 @@ export function createRequestConfig(options: RequestConfigOptions = {}) {
       ? requested
       : routing.defaultLocale;
 
-    let messages = await getMessages(locale);
+    let messages = await getMessages(locale, app);
 
     if (messages === null) {
       const warningMessage = `Messages for "${requested}" not found. Falling back to "${routing.defaultLocale}". Please ensure the translation file exists.`;
@@ -45,7 +55,7 @@ export function createRequestConfig(options: RequestConfigOptions = {}) {
       logger?.warning(warningMessage);
       onMissingTranslation?.(requested ?? "");
 
-      messages = await getMessages(routing.defaultLocale);
+      messages = await getMessages(routing.defaultLocale, app);
     }
 
     if (messages === null) {
@@ -77,10 +87,16 @@ export function createRequestConfig(options: RequestConfigOptions = {}) {
 
 async function getMessages(
   locale: string,
-): Promise<Record<string, string> | null> {
+  app: "storefront" | "marketplace",
+): Promise<Messages | null> {
   try {
-    // If this specific file doesn't exist at runtime, the import will reject.
-    return (await import(`@nimara/i18n/messages/${locale}.json`)).default;
+    if (!hasLocale(routing.locales, locale)) {
+      return null;
+    }
+
+    const typedLocale = locale as SupportedLocale;
+
+    return await loadMessages(typedLocale, app);
   } catch (error) {
     // The import failed, so we return null to signal a fallback is needed.
     return null;

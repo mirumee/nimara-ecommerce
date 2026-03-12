@@ -12,7 +12,8 @@ export const FilterMultiSelect = async ({
   searchParams: Record<string, string>;
 }) => {
   const t = await getTranslations();
-  const filterName = name ?? t(messageKey as MessagePath);
+  const filterName =
+    (messageKey ? t(messageKey as MessagePath) : undefined) ?? name;
   const selectedFromParams =
     searchParams[slug]
       ?.split(",")
