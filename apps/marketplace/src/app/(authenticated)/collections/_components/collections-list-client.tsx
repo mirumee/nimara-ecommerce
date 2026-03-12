@@ -3,6 +3,7 @@
 import { Plus, Search } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 import { Button } from "@nimara/ui/components/button";
@@ -33,7 +34,10 @@ type Collection = {
   slug: string;
 };
 
-function getChannelBadgeProps(collection: Collection): {
+function getChannelBadgeProps(
+  collection: Collection,
+  t: (key: string, values?: Record<string, string | number | Date>) => string,
+): {
   label: string;
   variant: "published" | "hidden" | "none";
 } {
@@ -42,18 +46,23 @@ function getChannelBadgeProps(collection: Collection): {
   const publishedCount = listings.filter((l) => l.isPublished).length;
 
   if (total === 0) {
-    return { label: "No channels", variant: "none" };
+    return {
+      label: t("marketplace.collections.list.channel-none"),
+      variant: "none",
+    };
   }
+
+  const channelLabel = t("common.channel-count", { count: total });
 
   if (publishedCount === 0) {
     return {
-      label: `${total} ${total === 1 ? "Channel" : "Channels"}`,
+      label: `${total} ${channelLabel}`,
       variant: "hidden",
     };
   }
 
   return {
-    label: `${total} ${total === 1 ? "Channel" : "Channels"}`,
+    label: `${total} ${channelLabel}`,
     variant: "published",
   };
 }
@@ -65,6 +74,7 @@ interface CollectionsListClientProps {
 export function CollectionsListClient({
   collections,
 }: CollectionsListClientProps) {
+  const t = useTranslations();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -97,11 +107,13 @@ export function CollectionsListClient({
   return (
     <div className="grid gap-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-semibold">Collections</h2>
+        <h2 className="text-2xl font-semibold">
+          {t("marketplace.collections.list.title")}
+        </h2>
         <Button asChild>
           <Link href="/collections/new">
             <Plus className="mr-2 h-4 w-4" />
-            Add collection
+            {t("marketplace.collections.list.add-collection")}
           </Link>
         </Button>
       </div>
@@ -112,7 +124,9 @@ export function CollectionsListClient({
             <div className="relative">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
               <Input
-                placeholder="Search collections"
+                placeholder={t(
+                  "marketplace.collections.list.search-placeholder",
+                )}
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
                 className="w-64 pl-9"
@@ -122,10 +136,12 @@ export function CollectionsListClient({
 
           {collections.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12">
-              <p className="text-muted-foreground">No collections found</p>
+              <p className="text-muted-foreground">
+                {t("marketplace.collections.list.empty-list")}
+              </p>
               <Button asChild variant="link" className="mt-2">
                 <Link href="/collections/new">
-                  Create your first collection
+                  {t("marketplace.collections.list.empty-cta")}
                 </Link>
               </Button>
             </div>
@@ -133,15 +149,24 @@ export function CollectionsListClient({
             <Table>
               <TableHeader>
                 <TableRow className="border-t px-6 py-4">
-                  <TableHead>Collection Name</TableHead>
-                  <TableHead>No. of Products</TableHead>
-                  <TableHead>Availability</TableHead>
+                  <TableHead>
+                    {t("marketplace.collections.list.table-name")}
+                  </TableHead>
+                  <TableHead>
+                    {t("marketplace.collections.list.table-products-count")}
+                  </TableHead>
+                  <TableHead>
+                    {t("marketplace.collections.list.table-availability")}
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {collections.map((collection) => {
                   const productCount = collection.products?.totalCount ?? 0;
-                  const { label, variant } = getChannelBadgeProps(collection);
+                  const { label, variant } = getChannelBadgeProps(
+                    collection,
+                    t,
+                  );
 
                   return (
                     <TableRow

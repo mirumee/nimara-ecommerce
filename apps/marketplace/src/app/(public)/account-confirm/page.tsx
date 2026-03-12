@@ -3,6 +3,7 @@
 import { CheckCircle2, Loader2, XCircle } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 import { Button } from "@nimara/ui/components/button";
@@ -20,6 +21,7 @@ import { confirmAccount } from "./actions";
 type ConfirmStatus = "loading" | "success" | "error";
 
 export default function AccountConfirmPage() {
+  const t = useTranslations();
   const searchParams = useSearchParams();
   const email = searchParams.get("email");
   const token = searchParams.get("token");
@@ -30,7 +32,9 @@ export default function AccountConfirmPage() {
   useEffect(() => {
     if (!email || !token) {
       setStatus("error");
-      setErrorMessage("Invalid confirmation link. Please request a new one.");
+      setErrorMessage(
+        t("marketplace.pages.account-confirm-error-invalid-link"),
+      );
 
       return;
     }
@@ -41,7 +45,10 @@ export default function AccountConfirmPage() {
 
         if (!result.ok) {
           setStatus("error");
-          setErrorMessage(result.errors[0]?.message || "Confirmation failed");
+          setErrorMessage(
+            result.errors[0]?.message ||
+              t("marketplace.pages.account-confirm-error-generic-failed"),
+          );
 
           return;
         }
@@ -53,7 +60,7 @@ export default function AccountConfirmPage() {
           setErrorMessage(
             payload.errors[0]?.message != null
               ? String(payload.errors[0].message)
-              : "Confirmation failed",
+              : t("account-confirm-error-generic-failed"),
           );
 
           return;
@@ -63,19 +70,22 @@ export default function AccountConfirmPage() {
           setStatus("success");
         } else {
           setStatus("error");
-          setErrorMessage("Account confirmation failed. Please try again.");
+          setErrorMessage(
+            t("marketplace.pages.account-confirm-error-account-failed"),
+          );
         }
       } catch (error) {
         setStatus("error");
         setErrorMessage(
           error instanceof Error
             ? error.message
-            : "An unexpected error occurred.",
+            : t("marketplace.pages.account-confirm-error-generic"),
         );
       }
     };
 
     void confirmAccountAction();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- t is stable; avoid re-running confirm on locale change
   }, [email, token]);
 
   return (
@@ -86,9 +96,11 @@ export default function AccountConfirmPage() {
             <div className="mx-auto mb-4">
               <Loader2 className="h-12 w-12 animate-spin text-primary" />
             </div>
-            <CardTitle>Confirming your account</CardTitle>
+            <CardTitle>
+              {t("marketplace.pages.account-confirm-loading-title")}
+            </CardTitle>
             <CardDescription>
-              Please wait while we verify your email address...
+              {t("marketplace.pages.account-confirm-loading-description")}
             </CardDescription>
           </CardHeader>
         </>
@@ -100,14 +112,18 @@ export default function AccountConfirmPage() {
             <div className="mx-auto mb-4">
               <CheckCircle2 className="h-12 w-12 text-green-500" />
             </div>
-            <CardTitle>Account confirmed!</CardTitle>
+            <CardTitle>
+              {t("marketplace.pages.account-confirm-success-title")}
+            </CardTitle>
             <CardDescription>
-              Your email has been verified. You can now sign in to your account.
+              {t("marketplace.pages.account-confirm-success-description")}
             </CardDescription>
           </CardHeader>
           <CardFooter>
             <Link href="/sign-in" className="w-full">
-              <Button className="w-full">Sign In</Button>
+              <Button className="w-full">
+                {t("marketplace.pages.account-confirm-button-sign-in")}
+              </Button>
             </Link>
           </CardFooter>
         </>
@@ -119,21 +135,23 @@ export default function AccountConfirmPage() {
             <div className="mx-auto mb-4">
               <XCircle className="h-12 w-12 text-destructive" />
             </div>
-            <CardTitle>Confirmation failed</CardTitle>
+            <CardTitle>
+              {t("marketplace.pages.account-confirm-error-title")}
+            </CardTitle>
             <CardDescription>{errorMessage}</CardDescription>
           </CardHeader>
           <CardContent className="text-center text-sm text-muted-foreground">
-            If you continue to have issues, please contact support.
+            {t("marketplace.pages.account-confirm-error-support")}
           </CardContent>
           <CardFooter className="flex-col gap-2">
             <Link href="/sign-up" className="w-full">
               <Button variant="outline" className="w-full">
-                Try Again
+                {t("marketplace.pages.account-confirm-button-try-again")}
               </Button>
             </Link>
             <Link href="/sign-in" className="w-full">
               <Button variant="ghost" className="w-full">
-                Back to Sign In
+                {t("marketplace.pages.account-confirm-button-back-to-sign-in")}
               </Button>
             </Link>
           </CardFooter>

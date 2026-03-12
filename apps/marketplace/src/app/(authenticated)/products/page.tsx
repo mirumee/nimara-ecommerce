@@ -1,3 +1,5 @@
+import { getTranslations } from "next-intl/server";
+
 import type { ProductFilterInput } from "@/graphql/generated/client";
 import { getServerAuthToken } from "@/lib/auth/server";
 import { productsService } from "@/services";
@@ -18,6 +20,7 @@ type PageProps = {
 };
 
 export default async function ProductsPage({ searchParams }: PageProps) {
+  const t = await getTranslations();
   const params = await searchParams;
 
   const rawPageSize = parseInt(
@@ -67,7 +70,9 @@ export default async function ProductsPage({ searchParams }: PageProps) {
   if (!result.ok) {
     return (
       <div className="flex items-center justify-center py-12">
-        <p className="text-muted-foreground">Failed to load products</p>
+        <p className="text-muted-foreground">
+          {t("marketplace.products.list.failed-to-load")}
+        </p>
       </div>
     );
   }

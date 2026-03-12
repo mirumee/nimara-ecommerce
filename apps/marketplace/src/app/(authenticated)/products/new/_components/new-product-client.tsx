@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import {
   type FieldPath,
@@ -212,6 +213,7 @@ function validateRequiredAttributes(
   productAttributes: NonNullable<
     NonNullable<ProductTypeDetail["productType"]>["productAttributes"]
   >,
+  t: (key: string) => string,
 ): boolean {
   const attributeValues: Record<string, unknown> =
     form.getValues("attributes") ?? {};
@@ -263,7 +265,7 @@ function validateRequiredAttributes(
 
       form.setError(typedFieldName, {
         type: "manual",
-        message: "Required",
+        message: t("common.required"),
       });
     }
   }
@@ -282,6 +284,7 @@ function AttributesSection({
     NonNullable<ProductTypeDetail["productType"]>["productAttributes"]
   >;
 }) {
+  const t = useTranslations();
   const {
     register,
     formState: { errors },
@@ -291,10 +294,12 @@ function AttributesSection({
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Attributes</CardTitle>
+          <CardTitle>{t("common.attributes")}</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">No attributes</p>
+          <p className="text-sm text-muted-foreground">
+            {t("marketplace.products.new.no-attributes")}
+          </p>
         </CardContent>
       </Card>
     );
@@ -303,7 +308,7 @@ function AttributesSection({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Attributes</CardTitle>
+        <CardTitle>{t("common.attributes")}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {productAttributes.map((attribute) => {
@@ -341,7 +346,9 @@ function AttributesSection({
             <div key={attribute.id} className="grid gap-2">
               <div className="flex items-baseline justify-between gap-4">
                 <Label className="font-medium">
-                  {attribute.name ?? attribute.slug ?? "Attribute"}
+                  {attribute.name ??
+                    attribute.slug ??
+                    t("common.attribute-fallback")}
                   {attribute.valueRequired ? (
                     <span className="text-destructive"> *</span>
                   ) : null}
@@ -349,14 +356,17 @@ function AttributesSection({
               </div>
 
               {inputType === ("BOOLEAN" as AttributeInputTypeEnum) ? (
-                <CheckboxField name={fieldName} label="Enabled" />
+                <CheckboxField
+                  name={fieldName}
+                  label={t("marketplace.products.new.enabled")}
+                />
               ) : inputType === ("DROPDOWN" as AttributeInputTypeEnum) ||
                 inputType === ("SWATCH" as AttributeInputTypeEnum) ? (
                 <SelectField
                   name={fieldName}
                   label={undefined}
                   options={choices}
-                  placeholder="Select value"
+                  placeholder={t("common.select-value")}
                 />
               ) : inputType === ("MULTISELECT" as AttributeInputTypeEnum) ? (
                 <SelectField
@@ -364,8 +374,16 @@ function AttributesSection({
                   label={undefined}
                   options={choices}
                   isMulti
-                  placeholder="Select values"
-                  searchPlaceholder={`Search ${attribute.name ?? attribute.slug ?? "attribute"}`}
+                  placeholder={t("common.select-values")}
+                  searchPlaceholder={t(
+                    "marketplace.products.new.search-attribute",
+                    {
+                      name:
+                        attribute.name ??
+                        attribute.slug ??
+                        t("common.attribute-fallback"),
+                    },
+                  )}
                 />
               ) : inputType === ("DATE" as AttributeInputTypeEnum) ? (
                 <Input
@@ -398,7 +416,9 @@ function AttributesSection({
               ) : inputType === ("RICH_TEXT" as AttributeInputTypeEnum) ? (
                 <Textarea
                   {...register(fieldName)}
-                  placeholder="Plain text will be converted to EditorJS JSON on save."
+                  placeholder={t(
+                    "marketplace.products.new.rich-text-placeholder",
+                  )}
                   className={cn(
                     fieldError &&
                       "border-destructive focus-visible:ring-destructive",
@@ -407,7 +427,7 @@ function AttributesSection({
               ) : (
                 <Input
                   {...register(fieldName)}
-                  placeholder="Value"
+                  placeholder={t("common.value")}
                   className={cn(
                     fieldError &&
                       "border-destructive focus-visible:ring-destructive",
@@ -423,7 +443,7 @@ function AttributesSection({
 
               {inputType === ("FILE" as AttributeInputTypeEnum) ? (
                 <p className="text-xs text-muted-foreground">
-                  File attributes are not supported during creation.
+                  {t("marketplace.products.new.file-attributes-unsupported")}
                 </p>
               ) : null}
             </div>
@@ -440,6 +460,7 @@ export function NewProductClient({
   collections,
   productTypes,
 }: Props) {
+  const t = useTranslations();
   const router = useRouter();
   const { toast } = useToast();
 
@@ -592,8 +613,10 @@ export function NewProductClient({
     try {
       if (!values.productTypeId) {
         toast({
-          title: "Product type required",
-          description: "Please select a product type.",
+          title: t("marketplace.products.new.toast-product-type-required"),
+          description: t(
+            "marketplace.products.new.toast-product-type-required-desc",
+          ),
           variant: "destructive",
         });
 
@@ -605,7 +628,7 @@ export function NewProductClient({
 
       if (
         productAttributes.length > 0 &&
-        validateRequiredAttributes(form, productAttributes)
+        validateRequiredAttributes(form, productAttributes, t)
       ) {
         return;
       }
@@ -648,11 +671,14 @@ export function NewProductClient({
 
       if (!result.ok) {
         const message = result.errors
-          .map((e: { message?: string | null }) => e.message || "Unknown error")
+          .map(
+            (e: { message?: string | null }) =>
+              e.message || t("common.toast-unknown-error"),
+          )
           .join(", ");
 
         toast({
-          title: "Failed to create product",
+          title: t("marketplace.products.new.toast-create-failed"),
           description: message,
           variant: "destructive",
         });
@@ -664,12 +690,12 @@ export function NewProductClient({
 
       if (errors.length > 0) {
         toast({
-          title: "Failed to create product",
+          title: t("marketplace.products.new.toast-create-failed"),
           description:
             errors
               .map((e) => e.message)
               .filter(Boolean)
-              .join(", ") || "Unknown error",
+              .join(", ") || t("common.toast-unknown-error"),
           variant: "destructive",
         });
 
@@ -680,8 +706,8 @@ export function NewProductClient({
 
       if (!productId) {
         toast({
-          title: "Failed to create product",
-          description: "Product was created but ID is missing.",
+          title: t("marketplace.products.new.toast-create-failed"),
+          description: t("marketplace.products.new.toast-id-missing"),
           variant: "destructive",
         });
 
@@ -719,8 +745,10 @@ export function NewProductClient({
 
         if (!channelListingResult.ok) {
           toast({
-            title: "Product created, but channel listing update failed",
-            description: "Please update channel availability manually.",
+            title: t("marketplace.products.new.toast-channel-listing-failed"),
+            description: t(
+              "marketplace.products.new.toast-channel-listing-failed-desc",
+            ),
             variant: "destructive",
           });
           router.replace(`/products/${productId}`);
@@ -749,11 +777,14 @@ export function NewProductClient({
 
         if (!variantResult.ok) {
           const msg = variantResult.errors
-            .map((e: { message?: string }) => e.message ?? "Unknown error")
+            .map(
+              (e: { message?: string }) =>
+                e.message ?? t("common.toast-unknown-error"),
+            )
             .join(", ");
 
           toast({
-            title: "Product created, but variant create failed",
+            title: t("marketplace.products.new.toast-variant-create-failed"),
             description: msg,
             variant: "destructive",
           });
@@ -764,16 +795,19 @@ export function NewProductClient({
       }
 
       toast({
-        title: "Product created",
-        description: "Product has been created successfully.",
+        title: t("marketplace.products.new.toast-created"),
+        description: t("marketplace.products.new.toast-created-desc"),
       });
 
       setIsRedirecting(true);
       router.replace(`/products/${productId}`);
     } catch (error) {
       toast({
-        title: "Failed to create product",
-        description: error instanceof Error ? error.message : "Unknown error",
+        title: t("marketplace.products.new.toast-create-failed"),
+        description:
+          error instanceof Error
+            ? error.message
+            : t("common.toast-unknown-error"),
         variant: "destructive",
       });
     }
@@ -793,11 +827,12 @@ export function NewProductClient({
               <DialogHeader className="space-y-3">
                 <div className="flex items-center gap-3">
                   <Loader2 className="h-5 w-5 animate-spin text-primary" />
-                  <DialogTitle>Creating product…</DialogTitle>
+                  <DialogTitle>
+                    {t("marketplace.products.new.creating-dialog-title")}
+                  </DialogTitle>
                 </div>
                 <DialogDescription>
-                  You will be redirected to the product details once it is
-                  ready.
+                  {t("marketplace.products.new.creating-dialog-desc")}
                 </DialogDescription>
               </DialogHeader>
             </DialogContent>
@@ -809,14 +844,16 @@ export function NewProductClient({
                 <Button asChild variant="ghost" size="sm" className="gap-2">
                   <Link href="/products">
                     <ArrowLeft className="h-4 w-4" />
-                    All products
+                    {t("marketplace.products.new.all-products")}
                   </Link>
                 </Button>
-                <h1 className="text-2xl font-semibold">Add New Product</h1>
+                <h1 className="text-2xl font-semibold">
+                  {t("marketplace.products.new.title")}
+                </h1>
               </div>
               <div className="flex items-center gap-2">
                 <Button type="submit" size="sm" disabled={isSubmitting}>
-                  Create Product{" "}
+                  {t("marketplace.products.new.create-button")}{" "}
                   {isSubmitting ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : null}
@@ -832,16 +869,25 @@ export function NewProductClient({
                 <div className="flex grow basis-2/3 flex-col gap-4">
                   <Card>
                     <CardHeader>
-                      <CardTitle>Product Information</CardTitle>
+                      <CardTitle>
+                        {t("marketplace.products.new.product-information")}
+                      </CardTitle>
                     </CardHeader>
 
                     <CardContent className="flex flex-col gap-4">
-                      <InputField label="Product Name" name="name" />
+                      <InputField
+                        label={t("marketplace.products.new.product-name")}
+                        name="name"
+                      />
                       <div className="grid gap-2">
-                        <Label>Product Description</Label>
+                        <Label>
+                          {t("marketplace.products.new.product-description")}
+                        </Label>
                         <Textarea
                           {...form.register("description")}
-                          placeholder="Enter product description"
+                          placeholder={t(
+                            "marketplace.products.new.product-description-placeholder",
+                          )}
                           disabled={isSubmitting}
                         />
                       </div>
@@ -855,17 +901,19 @@ export function NewProductClient({
                         {/* Shipping Section */}
                         <Card className="flex-1">
                           <CardHeader>
-                            <CardTitle>Shipping</CardTitle>
+                            <CardTitle>{t("common.shipping")}</CardTitle>
                           </CardHeader>
                           <CardContent className="flex flex-col gap-4">
                             <div className="grid gap-2">
-                              <Label htmlFor="weight">Weight</Label>
+                              <Label htmlFor="weight">
+                                {t("common.weight")}
+                              </Label>
                               <div className="relative">
                                 <Input
                                   id="weight"
                                   type="number"
                                   step="0.01"
-                                  placeholder="0.00"
+                                  placeholder={t("common.numeric-placeholder")}
                                   {...form.register("weight.value")}
                                   disabled={isSubmitting}
                                   className="pr-12"
@@ -881,14 +929,14 @@ export function NewProductClient({
                         {/* Inventory Section */}
                         <Card className="flex-1">
                           <CardHeader>
-                            <CardTitle>Inventory</CardTitle>
+                            <CardTitle>{t("common.inventory")}</CardTitle>
                           </CardHeader>
                           <CardContent className="flex flex-col gap-4">
                             <InputField
-                              label="SKU (Stock Keeping Unit)"
+                              label={t("common.sku-label")}
                               name="sku"
                               inputProps={{
-                                placeholder: "Enter SKU",
+                                placeholder: t("common.sku-placeholder"),
                                 disabled: isSubmitting,
                               }}
                             />
@@ -899,18 +947,20 @@ export function NewProductClient({
                       {/* Pricing Section */}
                       <Card>
                         <CardHeader>
-                          <CardTitle>Pricing</CardTitle>
+                          <CardTitle>{t("common.pricing")}</CardTitle>
                         </CardHeader>
                         <CardContent>
                           <Table>
                             <TableHeader>
                               <TableRow>
-                                <TableHead>Channel Name</TableHead>
-                                <TableHead className="w-56">
-                                  Selling Price
+                                <TableHead>
+                                  {t("common.channel-name")}
                                 </TableHead>
                                 <TableHead className="w-56">
-                                  Cost Price
+                                  {t("common.selling-price")}
+                                </TableHead>
+                                <TableHead className="w-56">
+                                  {t("common.cost-price")}
                                 </TableHead>
                               </TableRow>
                             </TableHeader>
@@ -931,7 +981,9 @@ export function NewProductClient({
                                         <Input
                                           type="number"
                                           step="0.01"
-                                          placeholder="0.00"
+                                          placeholder={t(
+                                            "common.numeric-placeholder",
+                                          )}
                                           disabled={!available || isSubmitting}
                                           {...form.register(
                                             `channelListings.${index}.price`,
@@ -953,7 +1005,9 @@ export function NewProductClient({
                                         <Input
                                           type="number"
                                           step="0.01"
-                                          placeholder="0.00"
+                                          placeholder={t(
+                                            "common.numeric-placeholder",
+                                          )}
                                           disabled={!available || isSubmitting}
                                           {...form.register(
                                             `channelListings.${index}.costPrice`,
@@ -983,11 +1037,11 @@ export function NewProductClient({
                   {isLoadingProductType ? (
                     <Card>
                       <CardHeader>
-                        <CardTitle>Attributes</CardTitle>
+                        <CardTitle>{t("common.attributes")}</CardTitle>
                       </CardHeader>
                       <CardContent>
                         <p className="text-sm text-muted-foreground">
-                          Loading attributes...
+                          {t("marketplace.products.new.loading-attributes")}
                         </p>
                       </CardContent>
                     </Card>
@@ -996,11 +1050,11 @@ export function NewProductClient({
                   ) : selectedProductTypeId ? (
                     <Card>
                       <CardHeader>
-                        <CardTitle>Attributes</CardTitle>
+                        <CardTitle>{t("common.attributes")}</CardTitle>
                       </CardHeader>
                       <CardContent>
                         <p className="text-sm text-muted-foreground">
-                          No attributes for this product type
+                          {t("marketplace.products.new.no-attributes-for-type")}
                         </p>
                       </CardContent>
                     </Card>
@@ -1009,12 +1063,17 @@ export function NewProductClient({
                   {/* Search Engine Preview Section - at the bottom of left column */}
                   <Card>
                     <CardHeader>
-                      <CardTitle>Search Engine Preview</CardTitle>
+                      <CardTitle>
+                        {t("marketplace.products.new.search-engine-preview")}
+                      </CardTitle>
                     </CardHeader>
                     <CardContent className="flex flex-col gap-4">
-                      <InputField label="SEO Title" name="seo.title" />
                       <InputField
-                        label="SEO Description"
+                        label={t("marketplace.products.new.seo-title")}
+                        name="seo.title"
+                      />
+                      <InputField
+                        label={t("marketplace.products.new.seo-description")}
                         name="seo.description"
                       />
                     </CardContent>
@@ -1024,30 +1083,40 @@ export function NewProductClient({
                 <div className="flex grow basis-1/3 flex-col gap-4">
                   <Card>
                     <CardHeader>
-                      <CardTitle>Organize product</CardTitle>
+                      <CardTitle>
+                        {t("marketplace.products.new.organize-product")}
+                      </CardTitle>
                       <CardDescription>
-                        Select categories, collections, and product type.
+                        {t("marketplace.products.new.organize-product-desc")}
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col gap-4">
                       <SelectField
                         name="productTypeId"
-                        label="Product Type"
+                        label={t("marketplace.products.new.product-type")}
                         options={productTypeOptions}
-                        placeholder="Select product type"
+                        placeholder={t(
+                          "marketplace.products.new.select-product-type",
+                        )}
                       />
                       <SelectField
                         name="categoryId"
-                        label="Product Category"
+                        label={t("marketplace.products.new.product-category")}
                         options={categoryOptions}
-                        placeholder="Select category"
+                        placeholder={t(
+                          "marketplace.products.new.select-category",
+                        )}
                       />
 
                       <CollectionsField
                         name="collectionIds"
-                        label="Product Collections"
+                        label={t(
+                          "marketplace.products.new.product-collections",
+                        )}
                         options={collectionOptions}
-                        placeholder="Select collections"
+                        placeholder={t(
+                          "marketplace.products.new.select-collections",
+                        )}
                       />
                     </CardContent>
                   </Card>

@@ -9,6 +9,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { Button } from "@nimara/ui/components/button";
@@ -125,9 +126,12 @@ function addressesAreEqual(a?: Address | null, b?: Address | null): boolean {
   );
 }
 
-function formatAddress(address?: Address | null): string {
+function formatAddress(
+  address: Address | null | undefined,
+  t: (key: string) => string,
+): string {
   if (!address) {
-    return "No address provided";
+    return t("common.no-address-provided");
   }
 
   const parts = [
@@ -153,6 +157,7 @@ function formatOrderErrors(
     field?: string | null;
     message?: string | null;
   }>,
+  fallback: string,
 ): string {
   const text = errors
     .map((e) => {
@@ -169,7 +174,7 @@ function formatOrderErrors(
     .filter(Boolean)
     .join(", ");
 
-  return text || "Unknown error";
+  return text || fallback;
 }
 
 function normalizeCountryCode(code: string): string {
@@ -257,6 +262,7 @@ export function OrderDetailClient({
   order,
   warehouses,
 }: OrderDetailClientProps) {
+  const t = useTranslations();
   const router = useRouter();
   const { toast } = useToast();
 
@@ -449,11 +455,14 @@ export function OrderDetailClient({
 
       if (!result.ok) {
         const message = result.errors
-          .map((e: { message?: string | null }) => e.message || "Unknown error")
+          .map(
+            (e: { message?: string | null }) =>
+              e.message || t("common.toast-unknown-error"),
+          )
           .join(", ");
 
         toast({
-          title: "Failed to fulfill order",
+          title: t("marketplace.orders.detail.toast-fulfill-failed"),
           description: message,
           variant: "destructive",
         });
@@ -471,16 +480,16 @@ export function OrderDetailClient({
           .join(", ");
 
         toast({
-          title: "Failed to fulfill order",
-          description: message || "Unknown error",
+          title: t("marketplace.orders.detail.toast-fulfill-failed"),
+          description: message || t("common.toast-unknown-error"),
           variant: "destructive",
         });
 
         return;
       }
       toast({
-        title: "Order fulfilled",
-        description: "Successfully fulfilled order.",
+        title: t("marketplace.orders.detail.toast-fulfilled"),
+        description: t("marketplace.orders.detail.toast-fulfilled-desc"),
       });
       setFulfillmentData({});
       setIsFulfilling(false);
@@ -489,8 +498,8 @@ export function OrderDetailClient({
       router.refresh();
     } catch (error) {
       toast({
-        title: "Failed to fulfill order",
-        description: "Something went wrong. Please try again.",
+        title: t("marketplace.orders.detail.toast-fulfill-failed"),
+        description: t("common.toast-something-wrong"),
         variant: "destructive",
       });
     } finally {
@@ -512,11 +521,14 @@ export function OrderDetailClient({
 
       if (!result.ok) {
         const message = result.errors
-          .map((e: { message?: string | null }) => e.message || "Unknown error")
+          .map(
+            (e: { message?: string | null }) =>
+              e.message || t("common.toast-unknown-error"),
+          )
           .join(", ");
 
         toast({
-          title: "Failed to cancel fulfillment",
+          title: t("marketplace.orders.detail.toast-cancel-fulfillment-failed"),
           description: message,
           variant: "destructive",
         });
@@ -533,8 +545,8 @@ export function OrderDetailClient({
           .join(", ");
 
         toast({
-          title: "Failed to cancel fulfillment",
-          description: message || "Unknown error",
+          title: t("marketplace.orders.detail.toast-cancel-fulfillment-failed"),
+          description: message || t("common.toast-unknown-error"),
           variant: "destructive",
         });
 
@@ -542,16 +554,18 @@ export function OrderDetailClient({
       }
 
       toast({
-        title: "Fulfillment canceled",
-        description: "The fulfillment was canceled successfully.",
+        title: t("marketplace.orders.detail.toast-fulfillment-canceled"),
+        description: t(
+          "marketplace.orders.detail.toast-fulfillment-canceled-desc",
+        ),
       });
 
       setCancelFulfillmentTarget(null);
       router.refresh();
     } catch (error) {
       toast({
-        title: "Failed to cancel fulfillment",
-        description: "Something went wrong. Please try again.",
+        title: t("marketplace.orders.detail.toast-cancel-fulfillment-failed"),
+        description: t("common.toast-something-wrong"),
         variant: "destructive",
       });
     } finally {
@@ -567,8 +581,8 @@ export function OrderDetailClient({
 
       if (!result) {
         toast({
-          title: "Order cancel failed",
-          description: "No response from server. Please try again.",
+          title: t("marketplace.orders.detail.toast-order-cancel-failed"),
+          description: t("common.toast-no-response"),
           variant: "destructive",
         });
 
@@ -578,13 +592,14 @@ export function OrderDetailClient({
       if (!result.ok) {
         const message = (result.errors ?? [])
           .map(
-            (e: { message?: string | null }) => e?.message || "Unknown error",
+            (e: { message?: string | null }) =>
+              e?.message || t("common.toast-unknown-error"),
           )
           .join(", ");
 
         toast({
-          title: "Order cancel failed",
-          description: message || "Something went wrong.",
+          title: t("marketplace.orders.detail.toast-order-cancel-failed"),
+          description: message || t("common.toast-something-wrong"),
           variant: "destructive",
         });
 
@@ -601,26 +616,26 @@ export function OrderDetailClient({
           .join(", ");
 
         toast({
-          title: "Order cancel failed",
-          description: messages || "Unknown error",
+          title: t("marketplace.orders.detail.toast-order-cancel-failed"),
+          description: messages || t("common.toast-unknown-error"),
           variant: "destructive",
         });
       } else {
         setShowCancelOrderDialog(false);
         toast({
-          title: "Order canceled",
-          description: "The order was canceled successfully.",
+          title: t("marketplace.orders.detail.toast-order-canceled"),
+          description: t("marketplace.orders.detail.toast-order-canceled-desc"),
         });
         router.push("/orders");
       }
     } catch (error) {
       console.error("Order cancel error:", error);
       toast({
-        title: "Order cancel failed",
+        title: t("marketplace.orders.detail.toast-order-cancel-failed"),
         description:
           error instanceof Error
             ? error.message
-            : "Something went wrong. Please try again.",
+            : t("common.toast-something-wrong"),
         variant: "destructive",
       });
     } finally {
@@ -645,7 +660,10 @@ export function OrderDetailClient({
     order.shippingAddress?.phone ?? order.billingAddress?.phone ?? null;
 
   const itemCount = order.lines?.length ?? 0;
-  const itemLabel = itemCount === 1 ? "item" : "items";
+  const itemLabel =
+    itemCount === 1
+      ? t("marketplace.orders.detail.item")
+      : t("marketplace.orders.detail.items");
 
   const handlePrintPackingSlips = () => {
     console.log("Print packing slips");
@@ -670,7 +688,7 @@ export function OrderDetailClient({
 
       if (!result.ok) {
         toast({
-          title: "Finalize failed",
+          title: t("marketplace.orders.detail.toast-finalize-failed"),
           description: result.errors.map((e) => e.message).join(", "),
           variant: "destructive",
         });
@@ -682,19 +700,21 @@ export function OrderDetailClient({
 
       if (errors.length) {
         toast({
-          title: "Finalize failed",
+          title: t("marketplace.orders.detail.toast-finalize-failed"),
           description:
             errors
               .map((e) => e.message)
               .filter(Boolean)
-              .join(", ") || "Unknown error",
+              .join(", ") || t("common.toast-unknown-error"),
           variant: "destructive",
         });
 
         return;
       }
 
-      toast({ title: "Order finalized" });
+      toast({
+        title: t("marketplace.orders.detail.toast-order-finalized"),
+      });
       router.refresh();
     } finally {
       setIsFinalizing(false);
@@ -712,7 +732,7 @@ export function OrderDetailClient({
 
       if (!result.ok) {
         toast({
-          title: "Draft cancel failed",
+          title: t("marketplace.orders.detail.toast-draft-cancel-failed"),
           description: result.errors.map((e) => e.message).join(", "),
           variant: "destructive",
         });
@@ -724,8 +744,11 @@ export function OrderDetailClient({
 
       if (errors.length) {
         toast({
-          title: "Draft cancel failed",
-          description: formatOrderErrors(errors),
+          title: t("marketplace.orders.detail.toast-draft-cancel-failed"),
+          description: formatOrderErrors(
+            errors,
+            t("common.toast-unknown-error"),
+          ),
           variant: "destructive",
         });
 
@@ -733,8 +756,8 @@ export function OrderDetailClient({
       }
 
       toast({
-        title: "Draft deleted",
-        description: "The draft order was deleted.",
+        title: t("marketplace.orders.detail.toast-draft-deleted"),
+        description: t("marketplace.orders.detail.toast-draft-deleted-desc"),
       });
       router.push("/orders");
     } finally {
@@ -747,8 +770,8 @@ export function OrderDetailClient({
 
     if (!reference) {
       toast({
-        title: "Transaction reference required",
-        description: "Enter transaction reference before marking as paid.",
+        title: t("marketplace.orders.detail.transaction-reference-required"),
+        description: t("marketplace.orders.detail.transaction-reference-desc"),
         variant: "destructive",
       });
 
@@ -764,7 +787,7 @@ export function OrderDetailClient({
 
       if (!result.ok) {
         toast({
-          title: "Mark as paid failed",
+          title: t("marketplace.orders.detail.toast-mark-as-paid-failed"),
           description: result.errors.map((e) => e.message).join(", "),
           variant: "destructive",
         });
@@ -776,8 +799,11 @@ export function OrderDetailClient({
 
       if (errors.length) {
         toast({
-          title: "Mark as paid failed",
-          description: formatOrderErrors(errors),
+          title: t("marketplace.orders.detail.toast-mark-as-paid-failed"),
+          description: formatOrderErrors(
+            errors,
+            t("common.toast-unknown-error"),
+          ),
           variant: "destructive",
         });
 
@@ -787,7 +813,7 @@ export function OrderDetailClient({
       setShowMarkAsPaidDialog(false);
       setTransactionReference("");
       toast({
-        title: "Order marked as paid",
+        title: t("marketplace.orders.detail.toast-mark-as-paid"),
       });
       router.refresh();
     } finally {
@@ -842,7 +868,7 @@ export function OrderDetailClient({
 
     if (!result.ok) {
       toast({
-        title: "Failed to update customer",
+        title: t("marketplace.orders.detail.toast-update-customer-failed"),
         description: result.errors.map((e) => e.message).join(", "),
         variant: "destructive",
       });
@@ -853,8 +879,8 @@ export function OrderDetailClient({
 
     if (errors.length) {
       toast({
-        title: "Failed to update customer",
-        description: formatOrderErrors(errors),
+        title: t("marketplace.orders.detail.toast-update-customer-failed"),
+        description: formatOrderErrors(errors, t("common.toast-unknown-error")),
         variant: "destructive",
       });
 
@@ -875,7 +901,7 @@ export function OrderDetailClient({
 
       if (!result.ok) {
         toast({
-          title: "Failed to update shipping address",
+          title: t("marketplace.orders.detail.toast-update-shipping-failed"),
           description: result.errors.map((e) => e.message).join(", "),
           variant: "destructive",
         });
@@ -887,8 +913,11 @@ export function OrderDetailClient({
 
       if (errors.length) {
         toast({
-          title: "Failed to update shipping address",
-          description: formatOrderErrors(errors),
+          title: t("marketplace.orders.detail.toast-update-shipping-failed"),
+          description: formatOrderErrors(
+            errors,
+            t("common.toast-unknown-error"),
+          ),
           variant: "destructive",
         });
 
@@ -904,7 +933,7 @@ export function OrderDetailClient({
 
     if (!result.ok) {
       toast({
-        title: "Failed to update shipping address",
+        title: t("marketplace.orders.detail.toast-update-shipping-failed"),
         description: result.errors.map((e) => e.message).join(", "),
         variant: "destructive",
       });
@@ -916,8 +945,8 @@ export function OrderDetailClient({
 
     if (errors.length) {
       toast({
-        title: "Failed to update shipping address",
-        description: formatOrderErrors(errors),
+        title: t("marketplace.orders.detail.toast-update-shipping-failed"),
+        description: formatOrderErrors(errors, t("common.toast-unknown-error")),
         variant: "destructive",
       });
 
@@ -937,7 +966,7 @@ export function OrderDetailClient({
 
       if (!result.ok) {
         toast({
-          title: "Failed to update billing address",
+          title: t("marketplace.orders.detail.toast-update-billing-failed"),
           description: result.errors.map((e) => e.message).join(", "),
           variant: "destructive",
         });
@@ -949,8 +978,11 @@ export function OrderDetailClient({
 
       if (errors.length) {
         toast({
-          title: "Failed to update billing address",
-          description: formatOrderErrors(errors),
+          title: t("marketplace.orders.detail.toast-update-billing-failed"),
+          description: formatOrderErrors(
+            errors,
+            t("common.toast-unknown-error"),
+          ),
           variant: "destructive",
         });
 
@@ -966,7 +998,7 @@ export function OrderDetailClient({
 
     if (!result.ok) {
       toast({
-        title: "Failed to update billing address",
+        title: t("marketplace.orders.detail.toast-update-billing-failed"),
         description: result.errors.map((e) => e.message).join(", "),
         variant: "destructive",
       });
@@ -978,8 +1010,8 @@ export function OrderDetailClient({
 
     if (errors.length) {
       toast({
-        title: "Failed to update billing address",
-        description: formatOrderErrors(errors),
+        title: t("marketplace.orders.detail.toast-update-billing-failed"),
+        description: formatOrderErrors(errors, t("common.toast-unknown-error")),
         variant: "destructive",
       });
 
@@ -999,7 +1031,9 @@ export function OrderDetailClient({
 
     if (!result.ok) {
       toast({
-        title: "Failed to update shipping method",
+        title: t(
+          "marketplace.orders.detail.toast-update-shipping-method-failed",
+        ),
         description: result.errors.map((e) => e.message).join(", "),
         variant: "destructive",
       });
@@ -1010,12 +1044,14 @@ export function OrderDetailClient({
 
     if (errors.length) {
       toast({
-        title: "Failed to update shipping method",
+        title: t(
+          "marketplace.orders.detail.toast-update-shipping-method-failed",
+        ),
         description:
           errors
             .map((e) => e.message)
             .filter(Boolean)
-            .join(", ") || "Unknown error",
+            .join(", ") || t("common.toast-unknown-error"),
         variant: "destructive",
       });
 
@@ -1037,7 +1073,7 @@ export function OrderDetailClient({
 
     if (!result.ok) {
       toast({
-        title: "Failed to add discount",
+        title: t("marketplace.orders.detail.toast-add-discount-failed"),
         description: result.errors.map((e) => e.message).join(", "),
         variant: "destructive",
       });
@@ -1048,12 +1084,12 @@ export function OrderDetailClient({
 
     if (errors.length) {
       toast({
-        title: "Failed to add discount",
+        title: t("marketplace.orders.detail.toast-add-discount-failed"),
         description:
           errors
             .map((e) => e.message)
             .filter(Boolean)
-            .join(", ") || "Unknown error",
+            .join(", ") || t("common.toast-unknown-error"),
         variant: "destructive",
       });
 
@@ -1073,7 +1109,7 @@ export function OrderDetailClient({
 
     if (!result.ok) {
       toast({
-        title: "Failed to remove discount",
+        title: t("marketplace.orders.detail.toast-remove-discount-failed"),
         description: result.errors.map((e) => e.message).join(", "),
         variant: "destructive",
       });
@@ -1084,12 +1120,12 @@ export function OrderDetailClient({
 
     if (errors.length) {
       toast({
-        title: "Failed to remove discount",
+        title: t("marketplace.orders.detail.toast-remove-discount-failed"),
         description:
           errors
             .map((e) => e.message)
             .filter(Boolean)
-            .join(", ") || "Unknown error",
+            .join(", ") || t("common.toast-unknown-error"),
         variant: "destructive",
       });
 
@@ -1119,7 +1155,7 @@ export function OrderDetailClient({
 
         if (!res.ok) {
           toast({
-            title: "Failed to update quantity",
+            title: t("marketplace.orders.detail.toast-update-qty-failed"),
             description: res.errors.map((e) => e.message).join(", "),
             variant: "destructive",
           });
@@ -1130,12 +1166,12 @@ export function OrderDetailClient({
 
         if (errs.length) {
           toast({
-            title: "Failed to update quantity",
+            title: t("marketplace.orders.detail.toast-update-qty-failed"),
             description:
               errs
                 .map((e) => e.message)
                 .filter(Boolean)
-                .join(", ") || "Unknown error",
+                .join(", ") || t("common.toast-unknown-error"),
             variant: "destructive",
           });
 
@@ -1154,7 +1190,7 @@ export function OrderDetailClient({
 
     if (!res.ok) {
       toast({
-        title: "Failed to remove item",
+        title: t("marketplace.orders.detail.toast-remove-item-failed"),
         description: res.errors.map((e) => e.message).join(", "),
         variant: "destructive",
       });
@@ -1165,12 +1201,12 @@ export function OrderDetailClient({
 
     if (errs.length) {
       toast({
-        title: "Failed to remove item",
+        title: t("marketplace.orders.detail.toast-remove-item-failed"),
         description:
           errs
             .map((e) => e.message)
             .filter(Boolean)
-            .join(", ") || "Unknown error",
+            .join(", ") || t("common.toast-unknown-error"),
         variant: "destructive",
       });
 
@@ -1241,7 +1277,7 @@ export function OrderDetailClient({
             <Button asChild variant="ghost" size="sm" className="gap-2">
               <Link href="/orders">
                 <ArrowLeft className="h-4 w-4" />
-                All orders
+                {t("marketplace.orders.detail.back-to-orders")}
               </Link>
             </Button>
             <h1 className="text-2xl font-semibold">{order.number}</h1>
@@ -1256,7 +1292,9 @@ export function OrderDetailClient({
                   onClick={() => void handleDeleteDraft()}
                   disabled={isDeletingDraft}
                 >
-                  {isDeletingDraft ? "Cancelling..." : "Cancel"}
+                  {isDeletingDraft
+                    ? t("marketplace.orders.detail.cancelling")
+                    : t("common.cancel")}
                 </Button>
                 <Button
                   size="sm"
@@ -1264,7 +1302,9 @@ export function OrderDetailClient({
                   onClick={() => void handleFinalizeDraft()}
                   disabled={!order.canFinalize || isFinalizing}
                 >
-                  {isFinalizing ? "Finalizing..." : "Finalize"}
+                  {isFinalizing
+                    ? t("marketplace.orders.detail.finalizing")
+                    : t("marketplace.orders.detail.finalize-button")}
                 </Button>
               </>
             ) : (
@@ -1272,7 +1312,7 @@ export function OrderDetailClient({
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button size="sm" variant="outline">
-                      More actions
+                      {t("marketplace.orders.detail.more-actions")}
                       <ChevronDown className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
@@ -1281,19 +1321,19 @@ export function OrderDetailClient({
                       <DropdownMenuItem
                         onClick={() => setShowCancelOrderDialog(true)}
                       >
-                        Cancel order
+                        {t("marketplace.orders.detail.cancel-order")}
                       </DropdownMenuItem>
                     )}
                     <DropdownMenuItem onClick={handlePrintPackingSlips}>
-                      Print packing slips
+                      {t("marketplace.orders.detail.print-packing-slips")}
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={handleMessageCustomer}>
-                      Message customer
+                      {t("marketplace.orders.detail.message-customer")}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
                 <Button size="sm" variant="outline" onClick={handleRefund}>
-                  Refund
+                  {t("marketplace.orders.detail.refund")}
                 </Button>
               </>
             )}
@@ -1311,7 +1351,7 @@ export function OrderDetailClient({
                 <div>
                   <div className="mb-2 flex items-center justify-between gap-3">
                     <h3 className="text-sm font-medium text-muted-foreground">
-                      Customer
+                      {t("common.customer")}
                     </h3>
                     {isDraft ? (
                       <Button
@@ -1320,7 +1360,7 @@ export function OrderDetailClient({
                         variant="outline"
                         onClick={() => setIsCustomerDialogOpen(true)}
                       >
-                        Edit
+                        {t("common.edit")}
                       </Button>
                     ) : null}
                   </div>
@@ -1329,12 +1369,12 @@ export function OrderDetailClient({
                       .filter(Boolean)
                       .join(" ") ||
                       order.userEmail ||
-                      "Not set"}
+                      t("common.not-set")}
                   </p>
                 </div>
                 <div>
                   <h3 className="mb-2 text-sm font-medium text-muted-foreground">
-                    Contact information
+                    {t("marketplace.orders.detail.contact-information")}
                   </h3>
                   <p className="text-sm">{order.userEmail ?? "—"}</p>
                   {customerPhone && <p className="text-sm">{customerPhone}</p>}
@@ -1342,7 +1382,7 @@ export function OrderDetailClient({
                 <div>
                   <div className="mb-2 flex items-center justify-between gap-3">
                     <h3 className="text-sm font-medium text-muted-foreground">
-                      Shipping address
+                      {t("marketplace.orders.detail.shipping-address")}
                     </h3>
                     <Button
                       type="button"
@@ -1350,19 +1390,19 @@ export function OrderDetailClient({
                       variant="outline"
                       onClick={() => setIsShippingAddressDialogOpen(true)}
                     >
-                      Edit
+                      {t("common.edit")}
                     </Button>
                   </div>
                   <div className="text-sm">
                     {order.shippingAddress
-                      ? formatAddress(order.shippingAddress)
-                      : "No shipping address"}
+                      ? formatAddress(order.shippingAddress, t)
+                      : t("marketplace.orders.detail.no-shipping-address")}
                   </div>
                 </div>
                 <div>
                   <div className="mb-2 flex items-center justify-between gap-3">
                     <h3 className="text-sm font-medium text-muted-foreground">
-                      Billing address
+                      {t("marketplace.orders.detail.billing-address")}
                     </h3>
                     <Button
                       type="button"
@@ -1370,15 +1410,15 @@ export function OrderDetailClient({
                       variant="outline"
                       onClick={() => setIsBillingAddressDialogOpen(true)}
                     >
-                      Edit
+                      {t("common.edit")}
                     </Button>
                   </div>
                   <div className="text-sm text-muted-foreground">
                     {isSameAddress
-                      ? "(Same as shipping)"
+                      ? t("marketplace.orders.detail.same-as-shipping")
                       : order.billingAddress
-                        ? formatAddress(order.billingAddress)
-                        : "No billing address"}
+                        ? formatAddress(order.billingAddress, t)
+                        : t("marketplace.orders.detail.no-billing-address")}
                   </div>
                 </div>
               </div>
@@ -1390,10 +1430,10 @@ export function OrderDetailClient({
                 <div className="flex items-center justify-between gap-4">
                   <div>
                     <CardTitle className="text-base font-medium">
-                      Order lines
+                      {t("marketplace.orders.detail.order-lines")}
                     </CardTitle>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      Add one or more variants as order lines.
+                      {t("marketplace.orders.detail.order-lines-description")}
                     </p>
                   </div>
                   <Button
@@ -1401,7 +1441,7 @@ export function OrderDetailClient({
                     className="bg-stone-900 hover:bg-stone-800"
                     onClick={() => setIsVariantDialogOpen(true)}
                   >
-                    Add products
+                    {t("common.add-products")}
                   </Button>
                 </div>
 
@@ -1439,7 +1479,7 @@ export function OrderDetailClient({
 
                             <div className="mt-1 flex items-center gap-2">
                               <span className="text-xs text-muted-foreground">
-                                Qty
+                                {t("common.qty-header")}
                               </span>
                               <Input
                                 className="w-20"
@@ -1492,7 +1532,7 @@ export function OrderDetailClient({
                                 void handleRemoveDraftLine(line.id)
                               }
                             >
-                              Remove
+                              {t("common.remove")}
                             </Button>
                           </div>
                         </div>
@@ -1500,7 +1540,9 @@ export function OrderDetailClient({
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm text-muted-foreground">No line items</p>
+                  <p className="text-sm text-muted-foreground">
+                    {t("marketplace.orders.detail.no-line-items")}
+                  </p>
                 )}
               </CardContent>
             </Card>
@@ -1514,7 +1556,9 @@ export function OrderDetailClient({
                   <div className="border-b">
                     <div className="flex items-center justify-between bg-muted/20 px-6 py-4">
                       <CardTitle className="text-base font-medium">
-                        Fulfilled ({fulfilledLines.length})
+                        {t("marketplace.orders.detail.fulfilled", {
+                          count: fulfilledLines.length,
+                        })}
                       </CardTitle>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -1526,12 +1570,14 @@ export function OrderDetailClient({
                           <DropdownMenuItem
                             onClick={() => console.log("View tracking")}
                           >
-                            View tracking
+                            {t("marketplace.orders.detail.view-tracking")}
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => console.log("Print shipping label")}
                           >
-                            Print shipping label
+                            {t(
+                              "marketplace.orders.detail.print-shipping-label",
+                            )}
                           </DropdownMenuItem>
                           {(() => {
                             const activeFulfillments =
@@ -1552,7 +1598,9 @@ export function OrderDetailClient({
                                   })
                                 }
                               >
-                                Cancel fulfillment
+                                {t(
+                                  "marketplace.orders.detail.cancel-fulfillment",
+                                )}
                                 {activeFulfillments.length > 1
                                   ? ` #${idx + 1}`
                                   : ""}
@@ -1617,8 +1665,10 @@ export function OrderDetailClient({
                     <div className="flex items-center justify-between bg-muted/20 px-6 py-4">
                       <CardTitle className="text-base font-medium">
                         {!isFulfilling
-                          ? `Unfulfilled (${unfulfilledLines.length})`
-                          : "Fulfilling items"}
+                          ? t("marketplace.orders.detail.unfulfilled", {
+                              count: unfulfilledLines.length,
+                            })
+                          : t("marketplace.orders.detail.fulfilling-items")}
                       </CardTitle>
                       <div className="flex items-center gap-2">
                         {order.status !== "CANCELED" &&
@@ -1629,7 +1679,7 @@ export function OrderDetailClient({
                                 className="bg-stone-900 hover:bg-stone-800"
                                 onClick={() => setIsFulfilling(true)}
                               >
-                                Fulfill items
+                                {t("marketplace.orders.detail.fulfill-items")}
                               </Button>
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
@@ -1643,7 +1693,9 @@ export function OrderDetailClient({
                                       console.log("Create shipping label")
                                     }
                                   >
-                                    Create shipping label
+                                    {t(
+                                      "marketplace.orders.detail.create-shipping-label",
+                                    )}
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
                               </DropdownMenu>
@@ -1659,7 +1711,7 @@ export function OrderDetailClient({
                                 setNotifyCustomer(false);
                               }}
                             >
-                              Cancel
+                              {t("common.cancel")}
                             </Button>
                           ))}
                       </div>
@@ -1710,7 +1762,11 @@ export function OrderDetailClient({
                                   }
                                 >
                                   <SelectTrigger className="w-[200px]">
-                                    <SelectValue placeholder="Select warehouse" />
+                                    <SelectValue
+                                      placeholder={t(
+                                        "marketplace.orders.detail.select-warehouse",
+                                      )}
+                                    />
                                   </SelectTrigger>
                                   <SelectContent>
                                     {warehouses.map((w) => (
@@ -1768,17 +1824,23 @@ export function OrderDetailClient({
                     {/* Fulfillment form */}
                     {isFulfilling && (
                       <div className="space-y-4 border-t px-6 py-4">
-                        <h4 className="font-medium">Tracking information</h4>
+                        <h4 className="font-medium">
+                          {t("marketplace.orders.detail.tracking-information")}
+                        </h4>
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-2">
-                            <Label htmlFor="tracking">Tracking number</Label>
+                            <Label htmlFor="tracking">
+                              {t("marketplace.orders.detail.tracking-number")}
+                            </Label>
                             <Input
                               id="tracking"
                               value={trackingNumber}
                               onChange={(e) =>
                                 setTrackingNumber(e.target.value)
                               }
-                              placeholder="Enter tracking number"
+                              placeholder={t(
+                                "marketplace.orders.detail.tracking-placeholder",
+                              )}
                             />
                           </div>
                         </div>
@@ -1792,7 +1854,7 @@ export function OrderDetailClient({
                               }
                             />
                             <Label htmlFor="notify">
-                              Send a notification to the customer
+                              {t("marketplace.orders.detail.notify-customer")}
                             </Label>
                           </div>
                           <Button
@@ -1804,8 +1866,10 @@ export function OrderDetailClient({
                             }
                           >
                             {isPendingFulfillment
-                              ? "Fulfilling..."
-                              : "Fulfill items"}
+                              ? t("marketplace.orders.detail.fulfilling-items")
+                              : t(
+                                  "marketplace.orders.detail.fulfill-order-button",
+                                )}
                           </Button>
                         </div>
                       </div>
@@ -1828,12 +1892,14 @@ export function OrderDetailClient({
               <CardContent className="p-6">
                 <div className="mb-4">
                   <CardTitle className="text-base font-medium">
-                    Order summary
+                    {t("marketplace.orders.detail.order-summary")}
                   </CardTitle>
                 </div>
                 <div className="space-y-3">
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Subtotal</span>
+                    <span className="text-muted-foreground">
+                      {t("marketplace.orders.detail.subtotal")}
+                    </span>
                     <div className="text-right">
                       <span className="text-muted-foreground">
                         {itemCount} {itemLabel}
@@ -1847,7 +1913,9 @@ export function OrderDetailClient({
                     </div>
                   </div>
                   <div className="flex items-start justify-between gap-4 text-sm">
-                    <span className="text-muted-foreground">Shipping</span>
+                    <span className="text-muted-foreground">
+                      {t("common.shipping")}
+                    </span>
                     <div className="flex items-start gap-2">
                       <div className="text-right">
                         <div className="text-muted-foreground">
@@ -1872,14 +1940,16 @@ export function OrderDetailClient({
                           onClick={() => setIsShippingDialogOpen(true)}
                           disabled={isLoadingShippingMethods}
                         >
-                          Edit
+                          {t("common.edit")}
                         </Button>
                       ) : null}
                     </div>
                   </div>
 
                   <div className="flex items-start justify-between gap-4 text-sm">
-                    <span className="text-muted-foreground">Discounts</span>
+                    <span className="text-muted-foreground">
+                      {t("common.discounts")}
+                    </span>
                     <div className="flex items-start gap-2">
                       <div className="space-y-1 text-right">
                         {(order.discounts ?? []).length === 0 ? (
@@ -1891,7 +1961,7 @@ export function OrderDetailClient({
                               className="flex items-center justify-end gap-2"
                             >
                               <div className="text-muted-foreground">
-                                {d.reason || d.name || "Discount"}{" "}
+                                {d.reason || d.name || t("common.discount")}{" "}
                                 {d.valueType === "PERCENTAGE"
                                   ? `(${d.value}%)`
                                   : `(${formatPrice(
@@ -1908,7 +1978,7 @@ export function OrderDetailClient({
                                     void handleRemoveDiscount(d.id)
                                   }
                                 >
-                                  Remove
+                                  {t("common.remove")}
                                 </Button>
                               ) : null}
                             </div>
@@ -1922,13 +1992,13 @@ export function OrderDetailClient({
                           variant="outline"
                           onClick={() => setIsDiscountDialogOpen(true)}
                         >
-                          Add
+                          {t("common.add")}
                         </Button>
                       ) : null}
                     </div>
                   </div>
                   <div className="flex justify-between border-t pt-3 text-base font-semibold">
-                    <span>Total</span>
+                    <span>{t("common.total")}</span>
                     <span>
                       {formatPrice(
                         order.total.gross.amount,
@@ -1944,7 +2014,7 @@ export function OrderDetailClient({
               <CardContent className="p-6">
                 <div className="mb-4 flex items-center justify-between gap-3">
                   <CardTitle className="text-base font-medium">
-                    Payments summary
+                    {t("marketplace.orders.detail.payments-summary")}
                   </CardTitle>
                   {!isDraft && !isFullyCharged ? (
                     <Button
@@ -1952,7 +2022,7 @@ export function OrderDetailClient({
                       size="sm"
                       onClick={() => setShowMarkAsPaidDialog(true)}
                     >
-                      Mark as paid
+                      {t("marketplace.orders.detail.mark-as-paid")}
                     </Button>
                   ) : null}
                 </div>
@@ -1984,7 +2054,9 @@ export function OrderDetailClient({
 
                     <div className="space-y-2 pt-1">
                       <div className="flex items-center justify-between gap-4">
-                        <span>Total captured</span>
+                        <span>
+                          {t("marketplace.orders.detail.total-captured")}
+                        </span>
                         <span>
                           {formatPrice(
                             totalCapturedAmount,
@@ -1993,7 +2065,11 @@ export function OrderDetailClient({
                         </span>
                       </div>
                       <div className="flex items-center justify-between gap-4">
-                        <span>Outstanding authorized</span>
+                        <span>
+                          {t(
+                            "marketplace.orders.detail.outstanding-authorized",
+                          )}
+                        </span>
                         <span>
                           {formatPrice(
                             outstandingAuthorizedAmount,
@@ -2002,7 +2078,9 @@ export function OrderDetailClient({
                         </span>
                       </div>
                       <div className="flex items-center justify-between gap-4 font-semibold">
-                        <span>Outstanding balance</span>
+                        <span>
+                          {t("marketplace.orders.detail.outstanding-balance")}
+                        </span>
                         <span>
                           {formatPrice(
                             outstandingBalanceAmount,
@@ -2015,9 +2093,11 @@ export function OrderDetailClient({
                 ) : (
                   <div className="flex min-h-[140px] flex-col items-center justify-center gap-2 rounded-md border border-dashed text-center">
                     <CreditCard className="h-5 w-5 text-muted-foreground" />
-                    <p className="text-sm font-medium">No payment received</p>
+                    <p className="text-sm font-medium">
+                      {t("marketplace.orders.detail.no-payment-received")}
+                    </p>
                     <p className="text-sm text-muted-foreground">
-                      Mark as paid manually if the payment is confirmed
+                      {t("marketplace.orders.detail.mark-as-paid-manual-hint")}
                     </p>
                   </div>
                 )}
@@ -2054,7 +2134,7 @@ export function OrderDetailClient({
       <AddressManageDialog
         open={isShippingAddressDialogOpen}
         onOpenChange={setIsShippingAddressDialogOpen}
-        title="Edit shipping address"
+        title={t("marketplace.orders.detail.edit-shipping-address")}
         addresses={draftCustomer?.addresses ?? order.user?.addresses ?? []}
         selectedAddressId={
           draftCustomer?.defaultShippingAddress?.id ??
@@ -2074,7 +2154,7 @@ export function OrderDetailClient({
       <AddressManageDialog
         open={isBillingAddressDialogOpen}
         onOpenChange={setIsBillingAddressDialogOpen}
-        title="Edit billing address"
+        title={t("marketplace.orders.detail.edit-billing-address")}
         addresses={draftCustomer?.addresses ?? order.user?.addresses ?? []}
         selectedAddressId={
           draftCustomer?.defaultBillingAddress?.id ??
@@ -2120,18 +2200,24 @@ export function OrderDetailClient({
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Mark order as paid</DialogTitle>
+            <DialogTitle>
+              {t("marketplace.orders.detail.mark-as-paid-dialog-title")}
+            </DialogTitle>
             <DialogDescription>
-              Enter transaction reference to mark this order as paid.
+              {t("marketplace.orders.detail.mark-as-paid-dialog-desc")}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2">
-            <Label htmlFor="transaction-reference">Transaction reference</Label>
+            <Label htmlFor="transaction-reference">
+              {t("marketplace.orders.detail.transaction-reference-label")}
+            </Label>
             <Input
               id="transaction-reference"
               value={transactionReference}
               onChange={(e) => setTransactionReference(e.target.value)}
-              placeholder="Enter transaction reference"
+              placeholder={t(
+                "marketplace.orders.detail.transaction-reference-placeholder",
+              )}
             />
           </div>
           <DialogFooter>
@@ -2140,13 +2226,15 @@ export function OrderDetailClient({
               onClick={() => setShowMarkAsPaidDialog(false)}
               disabled={isMarkingAsPaid}
             >
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button
               onClick={() => void handleMarkAsPaid()}
               disabled={isMarkingAsPaid || !transactionReference.trim()}
             >
-              {isMarkingAsPaid ? "Saving..." : "Mark as paid"}
+              {isMarkingAsPaid
+                ? t("common.saving")
+                : t("marketplace.orders.detail.mark-as-paid")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -2159,10 +2247,11 @@ export function OrderDetailClient({
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Cancel Order</DialogTitle>
+            <DialogTitle>
+              {t("marketplace.orders.detail.cancel-order-dialog-title")}
+            </DialogTitle>
             <DialogDescription>
-              Are you sure you want to cancel this order? This action cannot be
-              undone.
+              {t("marketplace.orders.detail.cancel-order-dialog-description")}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -2170,14 +2259,16 @@ export function OrderDetailClient({
               variant="outline"
               onClick={() => setShowCancelOrderDialog(false)}
             >
-              No, keep order
+              {t("marketplace.orders.detail.cancel-order-dialog-no-keep")}
             </Button>
             <Button
               variant="destructive"
               onClick={handleCancelOrder}
               disabled={isCancelling}
             >
-              {isCancelling ? "Canceling..." : "Yes, cancel order"}
+              {isCancelling
+                ? t("marketplace.orders.detail.cancelling")
+                : t("marketplace.orders.detail.cancel-order-confirm")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -2190,9 +2281,13 @@ export function OrderDetailClient({
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Cancel Fulfillment</DialogTitle>
+            <DialogTitle>
+              {t("marketplace.orders.detail.cancel-fulfillment-dialog-title")}
+            </DialogTitle>
             <DialogDescription>
-              Are you sure you want to cancel this fulfillment?
+              {t(
+                "marketplace.orders.detail.cancel-fulfillment-dialog-description",
+              )}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -2200,7 +2295,7 @@ export function OrderDetailClient({
               variant="outline"
               onClick={() => setCancelFulfillmentTarget(null)}
             >
-              No
+              {t("marketplace.orders.detail.cancel-fulfillment-no")}
             </Button>
             <Button
               variant="destructive"
@@ -2214,7 +2309,9 @@ export function OrderDetailClient({
                 }
               }}
             >
-              {cancelingFulfillmentId ? "Canceling..." : "Yes, cancel"}
+              {cancelingFulfillmentId
+                ? t("marketplace.orders.detail.cancelling")
+                : t("marketplace.orders.detail.cancel-fulfillment-confirm")}
             </Button>
           </DialogFooter>
         </DialogContent>

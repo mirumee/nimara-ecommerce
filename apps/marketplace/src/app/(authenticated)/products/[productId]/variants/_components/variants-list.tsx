@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 import { Card, CardHeader, CardTitle } from "@nimara/ui/components/card";
 
@@ -17,6 +18,7 @@ type Props = {
 };
 
 export function VariantsList({ productId, variants }: Props) {
+  const t = useTranslations();
   const pathname = usePathname();
   const encodedProductId = encodeURIComponent(productId);
 
@@ -35,7 +37,7 @@ export function VariantsList({ productId, variants }: Props) {
   return (
     <Card className="mt-20">
       <CardHeader>
-        <CardTitle>Variants</CardTitle>
+        <CardTitle>{t("marketplace.products.variants.list.title")}</CardTitle>
       </CardHeader>
 
       <div>
@@ -70,8 +72,12 @@ export function VariantsList({ productId, variants }: Props) {
           <>
             <div className="border-t" />
             <div className="flex flex-col gap-1 bg-accent px-6 py-4 opacity-60">
-              <h3 className="text-sm font-medium">New Variant</h3>
-              <h4 className="text-xs text-muted-foreground">Creating...</h4>
+              <h3 className="text-sm font-medium">
+                {t("marketplace.products.variants.list.new-variant")}
+              </h3>
+              <h4 className="text-xs text-muted-foreground">
+                {t("marketplace.products.variants.list.creating")}
+              </h4>
             </div>
           </>
         )}

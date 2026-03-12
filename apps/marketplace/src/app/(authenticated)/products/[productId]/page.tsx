@@ -1,5 +1,6 @@
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 import { Button } from "@nimara/ui/components/button";
 import { Card, CardContent } from "@nimara/ui/components/card";
@@ -14,6 +15,7 @@ export default async function ProductDetailPage({
 }: {
   params: Promise<{ productId: string }>;
 }) {
+  const t = await getTranslations();
   const { productId: rawId } = await params;
   const productId = decodeURIComponent(rawId);
   const token = await getServerAuthToken();
@@ -38,13 +40,15 @@ export default async function ProductDetailPage({
         <Button asChild variant="ghost">
           <Link href="/products">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Products
+            {t("back-to-products-link")}
           </Link>
         </Button>
         <Card>
           <CardContent className="py-12 text-center">
             <p className="text-muted-foreground">
-              {!result.ok ? "Failed to load product" : "Product not found"}
+              {!result.ok
+                ? t("marketplace.shared.failed-to-load-product")
+                : t("marketplace.products.detail.not-found")}
             </p>
           </CardContent>
         </Card>

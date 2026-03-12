@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertCircle, AlertTriangle, Package, Search } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 
@@ -142,6 +143,7 @@ export function ChannelAvailabilitySection({
   variant = "product",
 }: Props) {
   // All hooks must be called at the top, before any conditional returns
+  const t = useTranslations();
   const { watch, setValue, control, register } =
     useFormContext<ChannelAvailabilityFormValues>();
   const [isManageModalOpen, setIsManageModalOpen] = useState(false);
@@ -182,7 +184,7 @@ export function ChannelAvailabilitySection({
     // Use allChannels to find channel name to ensure we get the correct name
     const channelName =
       (allChannels ?? channels).find((ch) => ch.id === channelId)?.name ||
-      "this channel";
+      t("marketplace.configuration.channel-availability.this-channel");
 
     // Check for missing variants (applies to all channels)
     // Maps to Saleor error: CANNOT_MANAGE_PRODUCT_WITHOUT_VARIANT
@@ -190,7 +192,9 @@ export function ChannelAvailabilitySection({
       issues.push({
         severity: "error",
         type: "missing-variants",
-        message: "No variants created",
+        message: t(
+          "marketplace.configuration.channel-availability.no-variants-created",
+        ),
       });
     }
 
@@ -210,7 +214,9 @@ export function ChannelAvailabilitySection({
         issues.push({
           severity: "error",
           type: "availability",
-          message: "Has availability issues",
+          message: t(
+            "marketplace.configuration.channel-availability.has-availability-issues-error",
+          ),
         });
       }
 
@@ -219,7 +225,9 @@ export function ChannelAvailabilitySection({
         issues.push({
           severity: "warning",
           type: "availability",
-          message: "Hidden from listings",
+          message: t(
+            "marketplace.configuration.channel-availability.hidden-from-listings",
+          ),
         });
       }
     }
@@ -238,7 +246,9 @@ export function ChannelAvailabilitySection({
         issues.push({
           severity: "error",
           type: "variant-listing",
-          message: "No variant listed in this channel",
+          message: t(
+            "marketplace.configuration.channel-availability.no-variant-listed",
+          ),
         });
       }
 
@@ -258,7 +268,12 @@ export function ChannelAvailabilitySection({
         issues.push({
           severity: "error",
           type: "variant-pricing",
-          message: `No variant has a price in "${channelName}"`,
+          message: t(
+            "marketplace.configuration.channel-availability.no-variant-price",
+            {
+              channelName,
+            },
+          ),
         });
       }
 
@@ -288,7 +303,12 @@ export function ChannelAvailabilitySection({
           issues.push({
             severity: "warning", // Stock is a warning, not a blocking error
             type: "stock",
-            message: `No stock in warehouses for "${channelName}"`,
+            message: t(
+              "marketplace.configuration.channel-availability.no-stock-in-warehouses",
+              {
+                channelName,
+              },
+            ),
           });
         }
 
@@ -332,7 +352,12 @@ export function ChannelAvailabilitySection({
             issues.push({
               severity: "warning",
               type: "stock-unreachable",
-              message: `Stock unreachable in "${channelName}"`,
+              message: t(
+                "marketplace.configuration.channel-availability.stock-unreachable",
+                {
+                  channelName,
+                },
+              ),
             });
           }
         }
@@ -349,7 +374,9 @@ export function ChannelAvailabilitySection({
         issues.push({
           severity: "error",
           type: "pricing",
-          message: "No price set",
+          message: t(
+            "marketplace.configuration.channel-availability.no-price-set",
+          ),
         });
       }
     }
@@ -399,11 +426,15 @@ export function ChannelAvailabilitySection({
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Availability</CardTitle>
+          <CardTitle>
+            {t("marketplace.configuration.channel-availability.availability")}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            This option will be changed based on the product type.
+            {t(
+              "marketplace.configuration.channel-availability.option-no-product-type",
+            )}
           </p>
         </CardContent>
       </Card>
@@ -414,12 +445,15 @@ export function ChannelAvailabilitySection({
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Availability</CardTitle>
+          <CardTitle>
+            {t("marketplace.configuration.channel-availability.availability")}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            You will be able to define availability of product after creating
-            variants.
+            {t(
+              "marketplace.configuration.channel-availability.option-has-variants",
+            )}
           </p>
         </CardContent>
       </Card>
@@ -473,9 +507,19 @@ export function ChannelAvailabilitySection({
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle>Availability</CardTitle>
+                <CardTitle>
+                  {t(
+                    "marketplace.configuration.channel-availability.availability",
+                  )}
+                </CardTitle>
                 <CardDescription>
-                  In {configuredCount} out of {channels.length} channels
+                  {t(
+                    "marketplace.configuration.channel-availability.in-channels",
+                    {
+                      configured: String(configuredCount),
+                      total: String(channels.length),
+                    },
+                  )}
                 </CardDescription>
               </div>
               <Button
@@ -483,7 +527,7 @@ export function ChannelAvailabilitySection({
                 variant="outline"
                 onClick={() => setIsManageModalOpen(true)}
               >
-                Manage
+                {t("marketplace.configuration.channel-availability.manage")}
               </Button>
             </div>
           </CardHeader>
@@ -493,7 +537,9 @@ export function ChannelAvailabilitySection({
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 type="text"
-                placeholder="Search channels..."
+                placeholder={t(
+                  "marketplace.configuration.channel-availability.search-placeholder",
+                )}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-9"
@@ -502,12 +548,16 @@ export function ChannelAvailabilitySection({
 
             {collectionDisplayChannels.length === 0 ? (
               <div className="py-8 text-center text-sm text-muted-foreground">
-                No channels selected. Click &apos;Manage&apos; to select
-                channels for this collection.
+                {t(
+                  "marketplace.configuration.channel-availability.no-channels-selected-collection",
+                )}
               </div>
             ) : collectionFilteredChannels.length === 0 ? (
               <div className="py-8 text-center text-sm text-muted-foreground">
-                No channels found matching &quot;{searchQuery}&quot;
+                {t(
+                  "marketplace.configuration.channel-availability.no-channels-found-matching",
+                  { query: searchQuery },
+                )}
               </div>
             ) : (
               <Accordion type="multiple" className="w-full">
@@ -519,8 +569,13 @@ export function ChannelAvailabilitySection({
                   const publishedAt = entry?.publishedAt;
                   const hasPublicationDate = Boolean(publishedAt);
                   const visibleLabel = hasPublicationDate
-                    ? `Visible since ${formatDate(publishedAt)}`
-                    : "Visible";
+                    ? t(
+                        "marketplace.configuration.channel-availability.visible-since",
+                        { date: formatDate(publishedAt) },
+                      )
+                    : t(
+                        "marketplace.configuration.channel-availability.visible",
+                      );
 
                   return (
                     <AccordionItem
@@ -579,7 +634,9 @@ export function ChannelAvailabilitySection({
                                 htmlFor={`${channel.id}-hidden`}
                                 className="cursor-pointer text-sm font-normal"
                               >
-                                Hidden
+                                {t(
+                                  "marketplace.configuration.channel-availability.hidden",
+                                )}
                               </Label>
                             </div>
                           </RadioGroup>
@@ -587,7 +644,9 @@ export function ChannelAvailabilitySection({
                             <div className="flex items-center space-x-2">
                               <CheckboxField
                                 name={`channelAvailability.${channel.id}.setPublicationDate`}
-                                label="Set publication date"
+                                label={t(
+                                  "marketplace.configuration.channel-availability.set-publication-date",
+                                )}
                               />
                             </div>
                           )}
@@ -600,7 +659,9 @@ export function ChannelAvailabilitySection({
                                   htmlFor={`${channel.id}-publishedAt`}
                                   className="text-sm"
                                 >
-                                  Publication date
+                                  {t(
+                                    "marketplace.configuration.channel-availability.publication-date",
+                                  )}
                                 </Label>
                                 <Input
                                   type="datetime-local"
@@ -654,31 +715,51 @@ export function ChannelAvailabilitySection({
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Availability</CardTitle>
+              <CardTitle>
+                {t(
+                  "marketplace.configuration.channel-availability.availability",
+                )}
+              </CardTitle>
               <CardDescription>
-                In {configuredChannelsCount} out of{" "}
-                {totalChannelsCount ?? configuredChannelsCount}{" "}
-                {(totalChannelsCount ?? configuredChannelsCount) === 1
-                  ? "channel"
-                  : "channels"}
+                {t(
+                  "marketplace.configuration.channel-availability.in-channels",
+                  {
+                    configured: String(configuredChannelsCount),
+                    total: String(
+                      totalChannelsCount ?? configuredChannelsCount,
+                    ),
+                  },
+                )}
               </CardDescription>
               {isEditPage && (totalProblems > 0 || totalWarnings > 0) && (
                 <div className="mt-1 text-sm text-destructive">
                   {totalProblems > 0 && (
                     <span>
-                      {totalProblems}{" "}
-                      {totalProblems === 1 ? "problem" : "problems"}
+                      {t(
+                        "marketplace.configuration.channel-availability.problem-count",
+                        { count: totalProblems },
+                      )}
                     </span>
                   )}
                   {totalProblems > 0 && totalWarnings > 0 && <span>, </span>}
                   {totalWarnings > 0 && (
                     <span className="text-orange-500">
-                      {totalWarnings}{" "}
-                      {totalWarnings === 1 ? "warning" : "warnings"} found
+                      {t(
+                        "marketplace.configuration.channel-availability.warning-count",
+                        { count: totalWarnings },
+                      )}{" "}
+                      {t(
+                        "marketplace.configuration.channel-availability.found",
+                      )}
                     </span>
                   )}
                   {totalProblems > 0 && totalWarnings === 0 && (
-                    <span> found</span>
+                    <span>
+                      {" "}
+                      {t(
+                        "marketplace.configuration.channel-availability.found",
+                      )}
+                    </span>
                   )}
                 </div>
               )}
@@ -688,7 +769,7 @@ export function ChannelAvailabilitySection({
               variant="outline"
               onClick={() => setIsManageModalOpen(true)}
             >
-              Manage
+              {t("marketplace.configuration.channel-availability.manage")}
             </Button>
           </div>
         </CardHeader>
@@ -698,7 +779,9 @@ export function ChannelAvailabilitySection({
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               type="text"
-              placeholder="Search channels..."
+              placeholder={t(
+                "marketplace.configuration.channel-availability.search-placeholder",
+              )}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-9"
@@ -707,12 +790,16 @@ export function ChannelAvailabilitySection({
 
           {availableChannels.length === 0 ? (
             <div className="py-8 text-center text-sm text-muted-foreground">
-              No channels selected. Click &apos;Manage&apos; to select channels
-              for this product.
+              {t(
+                "marketplace.configuration.channel-availability.no-channels-selected-product",
+              )}
             </div>
           ) : filteredChannels.length === 0 ? (
             <div className="py-8 text-center text-sm text-muted-foreground">
-              No channels found matching &quot;{searchQuery}&quot;
+              {t(
+                "marketplace.configuration.channel-availability.no-channels-found-matching",
+                { query: searchQuery },
+              )}
             </div>
           ) : (
             <TooltipProvider delayDuration={300}>
@@ -759,19 +846,31 @@ export function ChannelAvailabilitySection({
                                     )}
                                     aria-label={
                                       hasIssues
-                                        ? "Channel has issues"
+                                        ? t(
+                                            "marketplace.configuration.channel-availability.channel-has-issues",
+                                          )
                                         : published
-                                          ? "Channel is published"
-                                          : "Channel is not published"
+                                          ? t(
+                                              "marketplace.configuration.channel-availability.channel-is-published",
+                                            )
+                                          : t(
+                                              "marketplace.configuration.channel-availability.channel-not-published",
+                                            )
                                     }
                                   />
                                 </TooltipTrigger>
                                 <TooltipContent side="top">
                                   {hasIssues
-                                    ? "Channel has availability issues"
+                                    ? t(
+                                        "marketplace.configuration.channel-availability.channel-has-issues-tooltip",
+                                      )
                                     : published
-                                      ? "Channel is published"
-                                      : "Channel is not published"}
+                                      ? t(
+                                          "marketplace.configuration.channel-availability.channel-is-published",
+                                        )
+                                      : t(
+                                          "marketplace.configuration.channel-availability.channel-not-published",
+                                        )}
                                 </TooltipContent>
                               </Tooltip>
                             )}
@@ -798,10 +897,14 @@ export function ChannelAvailabilitySection({
                             <div className="flex items-center gap-2 text-sm">
                               <span className="h-2 w-2 shrink-0 rounded-full bg-green-500" />
                               <span className="font-medium text-green-600">
-                                Issues
+                                {t(
+                                  "marketplace.configuration.channel-availability.issues",
+                                )}
                               </span>
                               <span className="text-muted-foreground">
-                                Has availability issues
+                                {t(
+                                  "marketplace.configuration.channel-availability.has-availability-issues",
+                                )}
                               </span>
                             </div>
                           )}
@@ -811,12 +914,18 @@ export function ChannelAvailabilitySection({
                               <div className="flex items-center justify-between">
                                 <div className="space-y-0.5">
                                   <Label className="text-sm font-medium">
-                                    Published
+                                    {t(
+                                      "marketplace.configuration.channel-availability.published",
+                                    )}
                                   </Label>
                                   <p className="text-xs text-muted-foreground">
                                     {published
-                                      ? "Visible via public API. Customers can find and view this product."
-                                      : "Hidden from public API. Customers cannot find or view this product."}
+                                      ? t(
+                                          "marketplace.configuration.channel-availability.published-description-visible",
+                                        )
+                                      : t(
+                                          "marketplace.configuration.channel-availability.published-description-hidden",
+                                        )}
                                   </p>
                                 </div>
                                 <Controller
@@ -864,12 +973,18 @@ export function ChannelAvailabilitySection({
                               <div className="flex items-center justify-between">
                                 <div className="space-y-0.5">
                                   <Label className="text-sm font-medium">
-                                    Available for purchase
+                                    {t(
+                                      "marketplace.configuration.channel-availability.available-for-purchase",
+                                    )}
                                   </Label>
                                   <p className="text-xs text-muted-foreground">
                                     {availableForPurchase
-                                      ? "Product can be added to cart and purchased."
-                                      : "Visible but not purchasable. Customers can view this product but cannot add it to cart."}
+                                      ? t(
+                                          "marketplace.configuration.channel-availability.available-for-purchase-on",
+                                        )
+                                      : t(
+                                          "marketplace.configuration.channel-availability.available-for-purchase-off",
+                                        )}
                                   </p>
                                 </div>
                                 <Controller
@@ -906,12 +1021,18 @@ export function ChannelAvailabilitySection({
                               <div className="flex items-center justify-between">
                                 <div className="space-y-0.5">
                                   <Label className="text-sm font-medium">
-                                    Show in listings
+                                    {t(
+                                      "marketplace.configuration.channel-availability.show-in-listings",
+                                    )}
                                   </Label>
                                   <p className="text-xs text-muted-foreground">
                                     {visibleInListings
-                                      ? "Visible in search and category pages."
-                                      : "Hidden from browsing. Customers can still access it via direct link."}
+                                      ? t(
+                                          "marketplace.configuration.channel-availability.show-in-listings-on",
+                                        )
+                                      : t(
+                                          "marketplace.configuration.channel-availability.show-in-listings-off",
+                                        )}
                                   </p>
                                 </div>
                                 <Controller
@@ -981,7 +1102,9 @@ export function ChannelAvailabilitySection({
                                     htmlFor={`${channel.id}-published`}
                                     className="cursor-pointer text-sm font-normal"
                                   >
-                                    Published
+                                    {t(
+                                      "marketplace.configuration.channel-availability.published",
+                                    )}
                                   </Label>
                                 </div>
                                 <div className="flex items-center space-x-2">
@@ -993,7 +1116,9 @@ export function ChannelAvailabilitySection({
                                     htmlFor={`${channel.id}-not-published`}
                                     className="cursor-pointer text-sm font-normal"
                                   >
-                                    Not published
+                                    {t(
+                                      "marketplace.configuration.channel-availability.not-published",
+                                    )}
                                   </Label>
                                 </div>
                               </RadioGroup>
@@ -1019,13 +1144,15 @@ export function ChannelAvailabilitySection({
                                       htmlFor={`${channel.id}-hide-in-listings`}
                                       className="cursor-pointer text-sm font-normal leading-none"
                                     >
-                                      Hide in product listings
+                                      {t(
+                                        "marketplace.configuration.channel-availability.hide-in-listings",
+                                      )}
                                     </Label>
                                   </div>
                                   <p className="text-xs text-muted-foreground">
-                                    Enabling this checkbox will remove product
-                                    from search and category pages. It will be
-                                    available on collection pages.
+                                    {t(
+                                      "marketplace.configuration.channel-availability.hide-in-listings-description",
+                                    )}
                                   </p>
                                 </>
                               )}
@@ -1035,7 +1162,9 @@ export function ChannelAvailabilitySection({
                             <>
                               <div className="border-t pt-4">
                                 <div className="mb-3 text-sm font-medium">
-                                  Delivery configuration
+                                  {t(
+                                    "marketplace.configuration.channel-availability.delivery-configuration",
+                                  )}
                                 </div>
                                 <div className="space-y-2">
                                   {issues.map((issue, idx) => {

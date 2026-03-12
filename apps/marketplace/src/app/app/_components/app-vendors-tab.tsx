@@ -2,6 +2,7 @@
 
 import { Search } from "lucide-react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "@nimara/ui/components/button";
@@ -40,13 +41,13 @@ type Props = {
 };
 
 const VENDOR_STATUS_OPTIONS = [
-  { value: "pending", label: "Pending" },
-  { value: "active", label: "Active" },
-  { value: "rejected", label: "Rejected" },
+  { value: "pending", labelKey: "status-option-pending" },
+  { value: "active", labelKey: "status-option-active" },
+  { value: "rejected", labelKey: "status-option-rejected" },
 ] as const;
 
 const STATUS_FILTER_OPTIONS = [
-  { value: "all", label: "All statuses" },
+  { value: "all", labelKey: "status-option-all" },
   ...VENDOR_STATUS_OPTIONS,
 ] as const;
 
@@ -91,6 +92,7 @@ function VendorStatusSelect({
   value: string;
   vendor: VendorProfile;
 }) {
+  const t = useTranslations("marketplace.vendors");
   const normalizedValue = value.toLowerCase();
   const isLocked =
     normalizedValue === "active" || normalizedValue === "rejected";
@@ -113,7 +115,7 @@ function VendorStatusSelect({
             value={opt.value}
             className={statusTextColor(opt.value)}
           >
-            {opt.label}
+            {t(opt.labelKey)}
           </SelectItem>
         ))}
       </SelectContent>
@@ -122,6 +124,7 @@ function VendorStatusSelect({
 }
 
 export function AppVendorsTab({ isAuthenticated, isLoading }: Props) {
+  const t = useTranslations();
   const { dashboardContext } = useAuth();
   const [vendors, setVendors] = useState<VendorProfile[]>([]);
   const [pageInfo, setPageInfo] = useState<{
@@ -163,7 +166,7 @@ export function AppVendorsTab({ isAuthenticated, isLoading }: Props) {
       setLoading(false);
 
       if (!result.ok) {
-        setError("Failed to load vendor profiles");
+        setError(t("marketplace.vendors.failed-to-load"));
 
         return;
       }
@@ -232,7 +235,7 @@ export function AppVendorsTab({ isAuthenticated, isLoading }: Props) {
     setUpdatingStatusFor(null);
 
     if (!result.ok) {
-      setError("Failed to update vendor status");
+      setError(t("marketplace.vendors.failed-to-update-status"));
 
       return;
     }
@@ -271,7 +274,7 @@ export function AppVendorsTab({ isAuthenticated, isLoading }: Props) {
     return (
       <div className="flex flex-col items-center justify-center gap-4 py-12 text-center">
         <p className="text-muted-foreground">
-          Sign in to view the list of registered vendors.
+          {t("marketplace.vendors.sign-in-to-view")}
         </p>
         <Button asChild>
           <Link href="/sign-in">Sign in</Link>
@@ -284,7 +287,7 @@ export function AppVendorsTab({ isAuthenticated, isLoading }: Props) {
     return (
       <div className="flex flex-col items-center justify-center gap-4 py-12 text-center">
         <p className="text-muted-foreground">
-          Open the app from Saleor dashboard to view vendor profiles.
+          {t("marketplace.vendors.open-from-dashboard")}
         </p>
       </div>
     );
@@ -305,18 +308,18 @@ export function AppVendorsTab({ isAuthenticated, isLoading }: Props) {
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             name="search"
-            placeholder="Search by vendor name..."
+            placeholder={t("marketplace.vendors.search-placeholder")}
             className="pl-9"
           />
         </form>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-[140px]">
-            <SelectValue placeholder="Status" />
+            <SelectValue placeholder={t("common.status")} />
           </SelectTrigger>
           <SelectContent>
             {STATUS_FILTER_OPTIONS.map((opt) => (
               <SelectItem key={opt.value} value={opt.value}>
-                {opt.label}
+                {t(`marketplace.vendors.${opt.labelKey}`)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -345,8 +348,8 @@ export function AppVendorsTab({ isAuthenticated, isLoading }: Props) {
             <div className="py-12 text-center">
               <p className="text-muted-foreground">
                 {search || statusFilter !== "all"
-                  ? "No vendors match your search and filters"
-                  : "No vendors found"}
+                  ? t("marketplace.vendors.no-vendors-match")
+                  : t("marketplace.vendors.no-vendors-found")}
               </p>
             </div>
           ) : (
@@ -355,12 +358,20 @@ export function AppVendorsTab({ isAuthenticated, isLoading }: Props) {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Vendor Name</TableHead>
-                      <TableHead>Vendor Model ID</TableHead>
-                      <TableHead>Company Name</TableHead>
-                      <TableHead>VAT ID</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Created</TableHead>
+                      <TableHead>
+                        {t("marketplace.vendors.table.vendor-name")}
+                      </TableHead>
+                      <TableHead>
+                        {t("marketplace.vendors.table.vendor-model-id")}
+                      </TableHead>
+                      <TableHead>
+                        {t("marketplace.vendors.table.company-name")}
+                      </TableHead>
+                      <TableHead>
+                        {t("marketplace.vendors.table.vat-id")}
+                      </TableHead>
+                      <TableHead>{t("common.status")}</TableHead>
+                      <TableHead>{t("common.created")}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -428,12 +439,12 @@ export function AppVendorsTab({ isAuthenticated, isLoading }: Props) {
                         onClick={handlePrevPage}
                         disabled={!pageInfo?.hasPreviousPage}
                       >
-                        <PaginationPrevious label="Previous" />
+                        <PaginationPrevious label={t("common.previous")} />
                       </Button>
                     </PaginationItem>
                     <PaginationItem>
                       <span className="px-4 text-sm text-muted-foreground">
-                        {totalCount} total
+                        {t("total-count", { count: totalCount })}
                       </span>
                     </PaginationItem>
                     <PaginationItem>
@@ -443,7 +454,7 @@ export function AppVendorsTab({ isAuthenticated, isLoading }: Props) {
                         onClick={handleNextPage}
                         disabled={!pageInfo?.hasNextPage}
                       >
-                        <PaginationNext label="Next" />
+                        <PaginationNext label={t("common.next")} />
                       </Button>
                     </PaginationItem>
                   </PaginationContent>

@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 import { Button } from "@nimara/ui/components/button";
@@ -35,6 +36,7 @@ export function OrderNotes({
   isLoading = false,
   onNoteAdded,
 }: OrderNotesProps) {
+  const t = useTranslations();
   const notes = getOrderNotes(events);
   const [isEditingNotes, setIsEditingNotes] = useState(false);
   const [newNote, setNewNote] = useState("");
@@ -73,11 +75,14 @@ export function OrderNotes({
 
       if (!result.ok) {
         const errorMessage = result.errors
-          .map((e: { message?: string | null }) => e.message || "Unknown error")
+          .map(
+            (e: { message?: string | null }) =>
+              e.message || t("common.toast-unknown-error"),
+          )
           .join(", ");
 
         toast({
-          title: "Failed to add note",
+          title: t("marketplace.orders.detail.toast-add-note-failed"),
           description: errorMessage,
           variant: "destructive",
         });
@@ -96,10 +101,10 @@ export function OrderNotes({
           errors
             .map((e: { message: string | null }) => e.message)
             .filter(Boolean)
-            .join(", ") || "Unknown error";
+            .join(", ") || t("common.toast-unknown-error");
 
         toast({
-          title: "Failed to add note",
+          title: t("marketplace.orders.detail.toast-add-note-failed"),
           description: errorMessage,
           variant: "destructive",
         });
@@ -110,15 +115,15 @@ export function OrderNotes({
       }
 
       toast({
-        title: "Note added",
-        description: "The note was added to the order.",
+        title: t("marketplace.orders.detail.toast-note-added"),
+        description: t("marketplace.orders.detail.toast-note-added-desc"),
       });
 
       onNoteAdded?.();
     } catch (error) {
       toast({
-        title: "Failed to add note",
-        description: "Something went wrong. Please try again.",
+        title: t("marketplace.orders.detail.toast-add-note-failed"),
+        description: t("common.toast-something-wrong"),
         variant: "destructive",
       });
       setIsAddingNote(false);
@@ -129,18 +134,15 @@ export function OrderNotes({
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Order notes</CardTitle>
+        <CardTitle>
+          {t("marketplace.orders.detail.order-notes-title")}
+        </CardTitle>
         <Button
           variant="outline"
           size="sm"
-          onClick={() => {
-            if (!isEditingNotes) {
-              console.log("Edit order notes");
-            }
-            setIsEditingNotes(!isEditingNotes);
-          }}
+          onClick={() => setIsEditingNotes(!isEditingNotes)}
         >
-          {isEditingNotes ? "Cancel" : "Edit"}
+          {isEditingNotes ? t("common.cancel") : t("common.edit")}
         </Button>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -164,7 +166,9 @@ export function OrderNotes({
             {isEditingNotes && (
               <div className="space-y-3 rounded-lg border bg-muted/20 p-4">
                 <Textarea
-                  placeholder="Add a note..."
+                  placeholder={t(
+                    "marketplace.orders.detail.add-note-placeholder",
+                  )}
                   value={newNote}
                   onChange={(e) => setNewNote(e.target.value)}
                   className="min-h-20"
@@ -174,7 +178,7 @@ export function OrderNotes({
                   onClick={handleAddNote}
                   disabled={!newNote.trim()}
                 >
-                  Add note
+                  {t("marketplace.orders.detail.add-note-button")}
                 </Button>
               </div>
             )}
@@ -182,7 +186,7 @@ export function OrderNotes({
             {!isEditingNotes &&
               (notes.length === 0 ? (
                 <p className="text-sm text-muted-foreground">
-                  No notes from customer
+                  {t("marketplace.orders.detail.no-notes")}
                 </p>
               ) : (
                 <div className="max-h-64 space-y-4 overflow-y-auto">
@@ -193,7 +197,8 @@ export function OrderNotes({
                     >
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-medium">
-                          {note.user?.email ?? "Vendor"}
+                          {note.user?.email ??
+                            t("marketplace.orders.detail.vendor-fallback")}
                         </span>
                         {note.date && (
                           <span className="text-xs text-muted-foreground">

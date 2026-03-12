@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useMemo } from "react";
 import { useFormContext } from "react-hook-form";
 
@@ -18,6 +19,7 @@ import { cn } from "@/lib/utils";
 import type { VariantCreateFormValues } from "../schema";
 
 export function VariantStocksSection() {
+  const t = useTranslations();
   const form = useFormContext<VariantCreateFormValues>();
   const stocks = form.watch("stocks") ?? {};
 
@@ -36,29 +38,37 @@ export function VariantStocksSection() {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-medium">Inventory & Stocks</h3>
+      <h3 className="text-lg font-medium">
+        {t("marketplace.products.variants.stocks.inventory-stocks")}
+      </h3>
 
       <div className="grid gap-4">
-        <InputField name="sku" label="SKU" />
+        <InputField name="sku" label={t("common.sku")} />
         <CheckboxField
           name="trackInventory"
-          label="Track inventory"
-          description="Active inventory tracking will automatically calculate changes of stock"
+          label={t("marketplace.products.variants.stocks.track-inventory")}
+          description={t(
+            "marketplace.products.variants.stocks.track-inventory-desc",
+          )}
         />
       </div>
 
       <div className="border-t" />
 
       <h4 className="text-sm font-medium text-muted-foreground">
-        Assigned warehouses
+        {t("marketplace.products.variants.stocks.assigned-warehouses")}
       </h4>
 
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead className="w-12" />
-            <TableHead>Warehouse</TableHead>
-            <TableHead className="w-56 text-right">Quantity</TableHead>
+            <TableHead>
+              {t("marketplace.products.variants.stocks.warehouse")}
+            </TableHead>
+            <TableHead className="w-56 text-right">
+              {t("marketplace.products.variants.stocks.quantity")}
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

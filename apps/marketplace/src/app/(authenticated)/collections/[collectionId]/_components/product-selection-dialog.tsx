@@ -2,6 +2,7 @@
 
 import { Loader2, Search } from "lucide-react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 import { Button } from "@nimara/ui/components/button";
@@ -54,6 +55,7 @@ export function ProductSelectionDialog({
   assignedProductIds,
   onProductsAssigned,
 }: Props) {
+  const t = useTranslations();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedProductIds, setSelectedProductIds] = useState<Set<string>>(
@@ -105,8 +107,12 @@ export function ProductSelectionDialog({
 
       if (!result.ok) {
         toast({
-          title: "Failed to load products",
-          description: "Could not fetch available products.",
+          title: t(
+            "marketplace.collections.assigned-products.toast-load-failed",
+          ),
+          description: t(
+            "marketplace.collections.assigned-products.toast-load-failed-desc",
+          ),
           variant: "destructive",
         });
 
@@ -120,8 +126,11 @@ export function ProductSelectionDialog({
       setProducts(allProducts);
     } catch (error) {
       toast({
-        title: "Failed to load products",
-        description: error instanceof Error ? error.message : "Unknown error",
+        title: t("marketplace.collections.assigned-products.toast-load-failed"),
+        description:
+          error instanceof Error
+            ? error.message
+            : t("common.toast-unknown-error"),
         variant: "destructive",
       });
     } finally {
@@ -165,7 +174,7 @@ export function ProductSelectionDialog({
                 result.errors
                   .map(
                     (e: { message?: string | null }) =>
-                      e.message || "Unknown error",
+                      e.message || t("common.toast-unknown-error"),
                   )
                   .join(", "),
               );
@@ -184,7 +193,7 @@ export function ProductSelectionDialog({
                 errors
                   .map((e: { message?: string | null }) => e.message)
                   .filter((msg): msg is string => Boolean(msg))
-                  .join(", ") || "Unknown error",
+                  .join(", ") || t("common.toast-unknown-error"),
               );
             }
           }),
@@ -200,7 +209,7 @@ export function ProductSelectionDialog({
                   result.errors
                     .map(
                       (e: { message?: string | null }) =>
-                        e.message || "Unknown error",
+                        e.message || t("common.toast-unknown-error"),
                     )
                     .join(", "),
                 );
@@ -219,7 +228,7 @@ export function ProductSelectionDialog({
                   errors
                     .map((e: { message?: string | null }) => e.message)
                     .filter((msg): msg is string => Boolean(msg))
-                    .join(", ") || "Unknown error",
+                    .join(", ") || t("common.toast-unknown-error"),
                 );
               }
             },
@@ -237,28 +246,52 @@ export function ProductSelectionDialog({
       await Promise.all(promises);
 
       const addedCount = toAdd.length;
-
       const removedCount = toRemove.length;
       let message = "";
 
       if (addedCount > 0 && removedCount > 0) {
-        message = `${addedCount} ${addedCount === 1 ? "product added" : "products added"} and ${removedCount} ${removedCount === 1 ? "product removed" : "products removed"}.`;
+        const addedPart = t(
+          "marketplace.collections.assigned-products.message-added-part",
+          {
+            count: addedCount,
+          },
+        );
+        const removedPart = t(
+          "marketplace.collections.assigned-products.message-removed-part",
+          {
+            count: removedCount,
+          },
+        );
+
+        message = `${addedPart} and ${removedPart}.`;
       } else if (addedCount > 0) {
-        message = `${addedCount} ${addedCount === 1 ? "product has" : "products have"} been assigned.`;
+        message = t("marketplace.collections.assigned-products.message-added", {
+          count: addedCount,
+        });
       } else if (removedCount > 0) {
-        message = `${removedCount} ${removedCount === 1 ? "product has" : "products have"} been removed.`;
+        message = t(
+          "marketplace.collections.assigned-products.message-removed",
+          {
+            count: removedCount,
+          },
+        );
       }
 
       toast({
-        title: "Products updated",
+        title: t("marketplace.collections.assigned-products.toast-updated"),
         description: message,
       });
       onProductsAssigned?.();
       onOpenChange(false);
     } catch (error) {
       toast({
-        title: "Failed to update products",
-        description: error instanceof Error ? error.message : "Unknown error",
+        title: t(
+          "marketplace.collections.assigned-products.toast-update-failed",
+        ),
+        description:
+          error instanceof Error
+            ? error.message
+            : t("common.toast-unknown-error"),
         variant: "destructive",
       });
     } finally {
@@ -270,10 +303,11 @@ export function ProductSelectionDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Assign product</DialogTitle>
+          <DialogTitle>
+            {t("marketplace.collections.assigned-products.dialog-title")}
+          </DialogTitle>
           <DialogDescription>
-            Select products to assign to this collection. Already assigned
-            products are checked.
+            {t("marketplace.collections.assigned-products.dialog-description")}
           </DialogDescription>
         </DialogHeader>
 
@@ -281,7 +315,9 @@ export function ProductSelectionDialog({
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Search products..."
+              placeholder={t(
+                "marketplace.collections.assigned-products.search-placeholder",
+              )}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-9"
@@ -297,8 +333,12 @@ export function ProductSelectionDialog({
               <div className="flex flex-col items-center justify-center py-12">
                 <p className="text-sm text-muted-foreground">
                   {debouncedSearch
-                    ? "No products found matching your search."
-                    : "No products found."}
+                    ? t(
+                        "marketplace.collections.assigned-products.empty-search",
+                      )
+                    : t(
+                        "marketplace.collections.assigned-products.empty-no-products",
+                      )}
                 </p>
               </div>
             ) : (
@@ -338,11 +378,15 @@ export function ProductSelectionDialog({
           </ScrollArea>
 
           <div className="text-sm text-muted-foreground">
-            {selectedProductIds.size}{" "}
-            {selectedProductIds.size === 1 ? "product" : "products"} selected
+            {t("marketplace.collections.assigned-products.selected-count", {
+              count: selectedProductIds.size,
+            })}
             {assignedProductIds.length > 0 && (
               <span className="ml-2">
-                ({assignedProductIds.length} already assigned)
+                {t(
+                  "marketplace.collections.assigned-products.already-assigned",
+                  { count: assignedProductIds.length },
+                )}
               </span>
             )}
           </div>
@@ -350,16 +394,16 @@ export function ProductSelectionDialog({
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button onClick={handleAssign} disabled={isSubmitting}>
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Saving...
+                {t("common.saving")}
               </>
             ) : (
-              "Assign and save"
+              t("marketplace.collections.assigned-products.assign-save-button")
             )}
           </Button>
         </DialogFooter>

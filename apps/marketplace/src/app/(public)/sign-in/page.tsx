@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRight, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { FormProvider, type SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -21,14 +22,19 @@ import { InputField } from "@/components/fields/input-field";
 import { PasswordField } from "@/components/fields/password-field";
 import { useAuth } from "@/providers/auth-provider";
 
-const signInSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(1, "Password is required"),
-});
-
-type SignInFormData = z.infer<typeof signInSchema>;
+type SignInFormData = {
+  email: string;
+  password: string;
+};
 
 export default function SignInPage() {
+  const t = useTranslations();
+  const signInSchema = z.object({
+    email: z.string().email(t("marketplace.auth.validation-email-invalid")),
+    password: z
+      .string()
+      .min(1, t("marketplace.auth.validation-password-required")),
+  });
   const { login, isLoading: authLoading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -55,7 +61,7 @@ export default function SignInPage() {
         message:
           error instanceof Error
             ? error.message
-            : "Sign-in failed. Please try again.",
+            : t("marketplace.auth.sign-in-failed"),
       });
     }
   };
@@ -63,9 +69,9 @@ export default function SignInPage() {
   return (
     <Card className="w-full max-w-sm">
       <CardHeader>
-        <CardTitle>Sign in</CardTitle>
+        <CardTitle>{t("marketplace.auth.sign-in-title")}</CardTitle>
         <CardDescription>
-          Enter your email and password to sign in.
+          {t("marketplace.auth.sign-in-description")}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -83,9 +89,9 @@ export default function SignInPage() {
               )}
               <InputField
                 name="email"
-                label="Email"
+                label={t("common.email")}
                 inputProps={{
-                  placeholder: "john.doe@example.com",
+                  placeholder: t("marketplace.auth.email-placeholder"),
                   autoComplete: "email",
                   type: "email",
                   disabled: isPending,
@@ -93,9 +99,9 @@ export default function SignInPage() {
               />
               <PasswordField
                 name="password"
-                label="Password"
+                label={t("common.password")}
                 inputProps={{
-                  placeholder: "********",
+                  placeholder: t("marketplace.auth.password-placeholder"),
                   autoComplete: "current-password",
                   disabled: isPending,
                 }}
@@ -113,11 +119,13 @@ export default function SignInPage() {
         >
           {isPending ? (
             <>
-              Signing In <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+              {t("marketplace.auth.sign-in-title")}{" "}
+              <Loader2 className="ml-2 h-4 w-4 animate-spin" />
             </>
           ) : (
             <>
-              Sign In <ArrowRight className="ml-2 h-4 w-4" />
+              {t("marketplace.auth.sign-in-title")}{" "}
+              <ArrowRight className="ml-2 h-4 w-4" />
             </>
           )}
         </Button>
@@ -126,7 +134,7 @@ export default function SignInPage() {
           href="/sign-up"
           className="inline-block text-sm underline-offset-4 hover:underline"
         >
-          Don&apos;t have an account? Sign Up here. &rarr;
+          {t("marketplace.auth.no-account-cta")}
         </Link>
       </CardFooter>
     </Card>
