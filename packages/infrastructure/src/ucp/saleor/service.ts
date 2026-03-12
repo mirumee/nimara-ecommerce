@@ -10,6 +10,7 @@ import { type AsyncResult, err, ok } from "@nimara/domain/objects/Result";
 
 import { graphqlClient } from "#root/graphql/client";
 
+import { type ErrorCode } from "../error";
 import { type UCPService } from "../types";
 import {
   CheckoutSessionCreateDocument,
@@ -51,6 +52,7 @@ export const saleorUCPService = ({
   baseUrl,
   channel,
   languageCode = DEFAULT_LANGUAGE_CODE,
+  requireAp2Mandate = false,
 }: UCPSaleorServiceConfig): UCPService => ({
   createCheckoutSession: async (
     input: CheckoutCreateRequest,
@@ -425,9 +427,6 @@ export const saleorUCPService = ({
           },
         ]);
       }
-
-      const requireAp2Mandate =
-        process.env.UCP_REQUIRE_AP2_MANDATE === "true";
 
       if (requireAp2Mandate && !input.ap2?.checkout_mandate) {
         return err([
