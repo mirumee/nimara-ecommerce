@@ -66,20 +66,8 @@ export function AccountInformationCard({
           ),
         firstName: z
           .string()
-          .min(
-            1,
-            t(
-              "marketplace.configuration.general.validation-first-name-required",
-            ),
-          ),
-        lastName: z
-          .string()
-          .min(
-            1,
-            t(
-              "marketplace.configuration.general.validation-last-name-required",
-            ),
-          ),
+          .min(1, t("common.validation.first-name-required")),
+        lastName: z.string().min(1, t("common.validation.last-name-required")),
       }),
     [t],
   );
@@ -260,18 +248,14 @@ export function AccountInformationCard({
                     label={t("common.first-name")}
                     name="firstName"
                     inputProps={{
-                      placeholder: t(
-                        "marketplace.configuration.general.first-name-placeholder",
-                      ),
+                      placeholder: t("common.first-name"),
                     }}
                   />
                   <InputField
                     label={t("common.last-name")}
                     name="lastName"
                     inputProps={{
-                      placeholder: t(
-                        "marketplace.configuration.general.last-name-placeholder",
-                      ),
+                      placeholder: t("common.last-name"),
                     }}
                   />
                 </div>

@@ -169,7 +169,11 @@
     "select-placeholder": "Select...",
     "select-label-placeholder": "Select a {label}",
     "search-label-placeholder": "Search {label}",
-    "no-address-provided": "No address provided"
+    "no-address-provided": "No address provided",
+    "validation": {
+      "first-name-required": "First name is required",
+      "last-name-required": "Last name is required"
+    }
   },
   "cart": {
     "empty": "Your bag is empty",
@@ -546,11 +550,7 @@
         "account-updated-desc": "Account information has been updated successfully.",
         "toast-update-account-failed": "Failed to update account",
         "name-placeholder": "Vendor name",
-        "first-name-placeholder": "First name",
-        "last-name-placeholder": "Last name",
-        "validation-name-required": "Name is required",
-        "validation-first-name-required": "First name is required",
-        "validation-last-name-required": "Last name is required"
+        "validation-name-required": "Name is required"
       },
       "addresses": {
         "breadcrumbs-general": "General",
@@ -652,26 +652,19 @@
       "validation-email-invalid": "Please enter a valid email address",
       "validation-password-required": "Password is required",
       "validation-password-min": "Password must be at least 8 characters",
-      "validation-first-name-required": "First name is required",
-      "validation-last-name-required": "Last name is required",
       "validation-vendor-name-required": "Vendor name is required",
       "validation-company-name-required": "Company name is required",
       "validation-vat-id-required": "VAT ID is required",
-      "label-first-name": "First name",
-      "label-last-name": "Last name",
       "label-company-name": "Company name",
       "label-vendor-name": "Vendor name",
       "label-vat-id": "VAT ID",
       "label-vendor-description": "Vendor description",
-      "placeholder-first-name": "John",
-      "placeholder-last-name": "Doe",
       "placeholder-company-name": "Acme Bikes Ltd.",
       "placeholder-vat-id": "1234567890",
       "placeholder-vendor-name": "Acme Bikes",
       "placeholder-vendor-description": "Tell us about your business..."
     },
     "pages": {
-      "not-found-code": "404",
       "not-found-message": "Page not found",
       "not-found-go-to-dashboard": "Go to Dashboard",
       "error-title": "Something went wrong",

@@ -44,12 +44,8 @@ export default function SignUpPage() {
   const signUpSchema = z.object({
     email: z.string().email(t("marketplace.auth.validation-email-invalid")),
     password: z.string().min(8, t("marketplace.auth.validation-password-min")),
-    firstName: z
-      .string()
-      .min(1, t("marketplace.auth.validation-first-name-required")),
-    lastName: z
-      .string()
-      .min(1, t("marketplace.auth.validation-last-name-required")),
+    firstName: z.string().min(1, t("common.validation.first-name-required")),
+    lastName: z.string().min(1, t("common.validation.last-name-required")),
     vendorName: z
       .string()
       .min(1, t("marketplace.auth.validation-vendor-name-required")),
@@ -190,18 +186,18 @@ export default function SignUpPage() {
               <div className="grid grid-cols-2 gap-4">
                 <InputField
                   name="firstName"
-                  label={t("marketplace.auth.label-first-name")}
+                  label={t("common.first-name")}
                   inputProps={{
-                    placeholder: t("marketplace.auth.placeholder-first-name"),
+                    placeholder: t("common.first-name"),
                     autoComplete: "given-name",
                     disabled: isPending,
                   }}
                 />
                 <InputField
                   name="lastName"
-                  label={t("marketplace.auth.label-last-name")}
+                  label={t("common.last-name")}
                   inputProps={{
-                    placeholder: t("marketplace.auth.placeholder-last-name"),
+                    placeholder: t("common.last-name"),
                     autoComplete: "family-name",
                     disabled: isPending,
                   }}
