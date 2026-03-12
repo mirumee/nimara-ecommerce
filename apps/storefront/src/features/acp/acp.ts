@@ -3,11 +3,20 @@ import { NextResponse } from "next/server";
 type CachedResponse = {
   data: unknown;
   headers: Record<string, string>;
+  requestHash: string;
   status: number;
   timestamp: number;
 };
 
 const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
+
+/**
+ * Computes a simple hash of the request body for conflict detection.
+ * Used to detect if the same idempotency key is used with different request data.
+ */
+const computeRequestHash = (requestBody: unknown): string => {
+  return JSON.stringify(requestBody);
+};
 
 /**
  * In-memory storage for idempotent request responses.
@@ -22,16 +31,21 @@ class IdempotencyStorage {
     data: unknown,
     status: number,
     headers: Record<string, string>,
+    requestBody?: unknown,
   ): void {
     this.storage.set(key, {
       data,
       status,
       headers,
       timestamp: Date.now(),
+      requestHash: computeRequestHash(requestBody),
     });
   }
 
-  get(key: string): CachedResponse | null {
+  get(
+    key: string,
+    requestBody?: unknown,
+  ): { cached: CachedResponse; conflict: boolean } | null {
     const cached = this.storage.get(key);
 
     if (!cached) {
@@ -45,7 +59,12 @@ class IdempotencyStorage {
       return null;
     }
 
-    return cached;
+    // Check if the request body matches the cached request
+    const conflict =
+      requestBody !== undefined &&
+      cached.requestHash !== computeRequestHash(requestBody);
+
+    return { cached, conflict };
   }
 
   has(key: string): boolean {
@@ -68,6 +87,19 @@ class IdempotencyStorage {
       status: cached.status,
       headers: cached.headers,
     });
+  }
+
+  createConflictResponse(): NextResponse {
+    return NextResponse.json(
+      [
+        {
+          code: "CONFLICT_ERROR",
+          message:
+            "Idempotency key reused with different request body (409 Conflict)",
+        },
+      ],
+      { status: 409 },
+    );
   }
 }
 

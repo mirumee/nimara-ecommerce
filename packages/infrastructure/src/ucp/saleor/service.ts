@@ -84,11 +84,12 @@ export const saleorUCPService = ({
       }
 
       const checkout = result.data.checkoutCreate?.checkout;
-      const createErrors = getMutationErrors(
-        result.data.checkoutCreate?.errors,
-      );
 
       if (!checkout) {
+        const createErrors = getMutationErrors(
+          result.data.checkoutCreate?.errors,
+        );
+
         return err([
           {
             code: "CART_CREATE_ERROR",
@@ -101,7 +102,7 @@ export const saleorUCPService = ({
       const paymentHandlers = toPaymentHandlers(checkout);
 
       return ok(sessionToCheckoutResponse(session, paymentHandlers));
-    } catch {
+    } catch (error) {
       return err([
         {
           code: "CART_CREATE_ERROR",
@@ -481,6 +482,7 @@ export const saleorUCPService = ({
           id: checkoutId,
           status: "completed",
           currency: "USD",
+          fulfillment: {},
           lineItems: [],
           totals: [{ type: "total", amount: 0 }],
           order: {
@@ -550,6 +552,19 @@ export const saleorUCPService = ({
       }
 
       const session = toUCPCheckoutSession(result.data.checkout);
+
+      // Per UCP spec: checkout sessions that are already completed or canceled
+      // should not be cancelable and should return an error
+      // @link https://ucp.dev/latest/specification/checkout/#cancel-checkout
+      if (session.status === "completed" || session.status === "canceled") {
+        return err([
+          {
+            code: "CHECKOUT_NOT_FOUND_ERROR",
+            message: `Checkout session cannot be canceled. Current status: ${session.status}`,
+          },
+        ]);
+      }
+
       const paymentHandlers = toPaymentHandlers(result.data.checkout);
       const response = sessionToCheckoutResponse(
         { ...session, status: "canceled" },

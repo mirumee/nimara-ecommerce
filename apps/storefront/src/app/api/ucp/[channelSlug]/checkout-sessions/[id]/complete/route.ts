@@ -21,20 +21,33 @@ export async function POST(
     return channelValidationResult.errorResponse;
   }
 
+  // Parse body early for idempotency check
+  const body = (await request.json()) as CompleteCheckoutRequestWithAp2;
+
   if (idempotencyKey) {
-    const cached = idempotencyStorage.get(idempotencyKey);
+    const cached = idempotencyStorage.get(idempotencyKey, body);
 
     if (cached) {
+      if (cached.conflict) {
+        storefrontLogger.debug(
+          "Idempotency conflict - same key with different request body",
+          {
+            idempotencyKey,
+          },
+        );
+
+        return idempotencyStorage.createConflictResponse();
+      }
+
       storefrontLogger.debug("Idempotent request - returning cached response", {
         idempotencyKey,
       });
 
-      return idempotencyStorage.createResponse(cached);
+      return idempotencyStorage.createResponse(cached?.cached);
     }
   }
 
   const ucpService = await getUCPService({ channelSlug });
-  const body = (await request.json()) as CompleteCheckoutRequestWithAp2;
   const result = await ucpService.completeCheckoutSession({
     ...body,
     id,
@@ -67,6 +80,7 @@ export async function POST(
       responseData,
       responseStatus,
       responseHeaders,
+      body,
     );
   }
 

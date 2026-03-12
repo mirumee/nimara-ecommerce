@@ -1,40 +1,31 @@
-import { type CheckoutCreateRequest } from "@ucp-js/sdk";
 import { type NextRequest, NextResponse } from "next/server";
 
 import { idempotencyStorage } from "@/features/acp/acp";
+import { revalidateTag } from "@/foundation/cache/cache";
 import { validateChannelParam } from "@/foundation/validate-channel-param";
 import { storefrontLogger } from "@/services/logging";
 import { getUCPService } from "@/services/ucp";
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ channelSlug: string }> },
+  { params }: { params: Promise<{ channelSlug: string; id: string }> },
 ) {
-  const authHeader = request.headers.get("Authorization");
   const idempotencyKey = request.headers.get("Idempotency-Key");
   const requestId = request.headers.get("Request-Id") || "";
-  const signature = request.headers.get("Signature");
-  const apiVersion = request.headers.get("Api-Version");
 
-  storefrontLogger.debug("Received request to create checkout session", {
-    authHeader,
-    idempotencyKey,
-    requestId,
-    signature,
-    apiVersion,
-  });
-
-  const { channelSlug } = await params;
+  const { channelSlug, id } = await params;
   const channelValidationResult = validateChannelParam(channelSlug);
 
   if (!channelValidationResult.ok) {
     return channelValidationResult.errorResponse;
   }
 
-  const body = (await request.json()) as CheckoutCreateRequest;
+  // Cancel checkout has no request body per UCP spec - only id in path
+  // For idempotency, we use id as the body identifier
+  const idempotencyBody = { id };
 
   if (idempotencyKey) {
-    const cached = idempotencyStorage.get(idempotencyKey, body);
+    const cached = idempotencyStorage.get(idempotencyKey, idempotencyBody);
 
     if (cached) {
       if (cached.conflict) {
@@ -57,23 +48,41 @@ export async function POST(
   }
 
   const ucpService = await getUCPService({ channelSlug });
-  const result = await ucpService.createCheckoutSession(body);
+  const result = await ucpService.cancelCheckout({ id });
 
   if (!result.ok) {
-    storefrontLogger.error("Invalid request body", {
+    storefrontLogger.error("Failed to cancel checkout session", {
+      id,
       errors: result.errors,
     });
 
-    return NextResponse.json(result.errors, {
-      status: 500,
-      headers: {
-        "Request-Id": requestId,
+    // Return UCP Error Response format
+    return NextResponse.json(
+      {
+        ucp: {
+          version: "2026-01-11",
+          status: "error",
+        },
+        messages: result.errors.map((error) => ({
+          type: "error",
+          code: error.code,
+          content: error.message,
+          severity: "unrecoverable",
+        })),
       },
-    });
+      {
+        status: 400,
+        headers: {
+          "Request-Id": requestId,
+        },
+      },
+    );
   }
 
+  revalidateTag(`UCP:CHECKOUT_SESSION:${id}`);
+
   const responseData = result.data;
-  const responseStatus = 201;
+  const responseStatus = 200;
   const responseHeaders = {
     "Request-Id": requestId,
     "Idempotency-Key": idempotencyKey || "",
@@ -90,7 +99,7 @@ export async function POST(
       responseData,
       responseStatus,
       responseHeaders,
-      body,
+      idempotencyBody,
     );
   }
 

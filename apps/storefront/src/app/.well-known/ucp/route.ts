@@ -5,38 +5,39 @@ import { UcpDiscoveryProfile } from "@ucp-js/sdk";
 import { clientEnvs } from "@/envs/client";
 
 const UCP_VERSION = "2026-01-23";
+const UCP_API_ENDPOINT = new URL(
+  `/api/ucp/${clientEnvs.NEXT_PUBLIC_DEFAULT_CHANNEL}`,
+  clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
+).toString();
 
 function ucpDiscoveryProfile(): UcpDiscoveryProfile {
   return {
     ucp: {
       version: UCP_VERSION,
+      services: {
+        "dev.ucp.shopping": {
+          version: UCP_VERSION,
+          spec: "https://ucp.dev/specification/reference",
+          rest: {
+            schema: "https://ucp.dev/services/shopping/rest.openapi.json",
+            endpoint: UCP_API_ENDPOINT,
+          },
+        },
+      },
       capabilities: [
         {
           name: "dev.ucp.shopping.checkout",
-          spec: "https://ucp.dev/specs/checkout",
           version: UCP_VERSION,
+          spec: "https://ucp.dev/specification/checkout",
           schema: "https://ucp.dev/schemas/shopping/checkout.json",
         },
         {
           name: "dev.ucp.shopping.order",
-          spec: "https://ucp.dev/specs/order",
           version: UCP_VERSION,
+          spec: "https://ucp.dev/specification/order",
           schema: "https://ucp.dev/schemas/shopping/order.json",
         },
       ],
-      services: {
-        "dev.ucp.shopping.checkout": {
-          spec: "https://ucp.dev/specs/checkout",
-          version: UCP_VERSION,
-          rest: {
-            schema: "https://ucp.dev/schemas/shopping/checkout.json",
-            endpoint: new URL(
-              `/api/ucp/${clientEnvs.NEXT_PUBLIC_DEFAULT_CHANNEL}/checkout-sessions`,
-              clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
-            ).toString(),
-          },
-        },
-      },
     },
     payment: {
       handlers: [
@@ -96,4 +97,4 @@ export async function GET() {
   });
 }
 
-export const dynamic = "force-dynamic";
+export const dynamic = "force-static";

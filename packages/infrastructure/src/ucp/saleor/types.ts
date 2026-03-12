@@ -7,12 +7,15 @@ import {
 
 import { type LanguageCodeEnum } from "@nimara/codegen/schema";
 
+import { type Logger } from "#root/logging/types";
+
 /** Service configuration. */
 export type UCPSaleorServiceConfig = {
   apiUrl: string;
   baseUrl: string;
   channel: string;
   languageCode?: LanguageCodeEnum;
+  logger: Logger;
 };
 
 /** GraphQL mutation error shape. */

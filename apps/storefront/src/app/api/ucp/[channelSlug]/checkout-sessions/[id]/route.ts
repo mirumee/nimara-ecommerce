@@ -32,7 +32,7 @@ export async function GET(
         },
       );
 
-      return idempotencyStorage.createResponse(cached);
+      return idempotencyStorage.createResponse(cached.cached);
     }
   }
 
@@ -97,22 +97,6 @@ export async function PUT(
     return channelValidationResult.errorResponse;
   }
 
-  if (idempotencyKey) {
-    const cached = idempotencyStorage.get(idempotencyKey);
-
-    if (cached) {
-      storefrontLogger.debug(
-        "[UCP] Idempotent request - returning cached response",
-        {
-          idempotencyKey,
-        },
-      );
-
-      return idempotencyStorage.createResponse(cached);
-    }
-  }
-
-  const ucpService = await getUCPService({ channelSlug });
   const body = (await request.json()) as CheckoutUpdateRequest;
 
   if (Object.keys(body).length === 0) {
@@ -122,13 +106,41 @@ export async function PUT(
     );
   }
 
+  if (idempotencyKey) {
+    const cached = idempotencyStorage.get(idempotencyKey, body);
+
+    if (cached) {
+      if (cached.conflict) {
+        storefrontLogger.debug(
+          "[UCP] Idempotency conflict - same key with different request body",
+          {
+            idempotencyKey,
+          },
+        );
+
+        return idempotencyStorage.createConflictResponse();
+      }
+
+      storefrontLogger.debug(
+        "[UCP] Idempotent request - returning cached response",
+        {
+          idempotencyKey,
+        },
+      );
+
+      return idempotencyStorage.createResponse(cached.cached);
+    }
+  }
+
+  const ucpService = await getUCPService({ channelSlug });
+
   const result = await ucpService.updateCheckoutSession({
     ...body,
     id,
   });
 
   if (!result.ok) {
-    return NextResponse.json(result.errors, { status: 500 });
+    return NextResponse.json(result.errors, { status: 400 });
   }
 
   // Revalidate cache for this particular checkout session ID on update on success
@@ -147,6 +159,7 @@ export async function PUT(
       responseData,
       responseStatus,
       responseHeaders,
+      body,
     );
   }
 

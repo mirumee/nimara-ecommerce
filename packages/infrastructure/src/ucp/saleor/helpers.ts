@@ -42,3 +42,50 @@ export function toSaleorAddress(
     streetAddress2: "",
   };
 }
+
+/**
+ * Converts a currency amount to minor currency.
+ * Example: 12.99 USD -> 1299
+ * @param amount - The amount to convert to minor currency.
+ * @param currency - The currency to convert to minor currency.
+ * @returns The amount converted to minor currency.
+ */
+export const toMinorCurrency = (amount: number, currency: string): number => {
+  if (currency.toUpperCase() === "JPY") {
+    // JPY is a zero-decimal currency, so we don't need to multiply by 100
+    return amount;
+  }
+
+  return Number((amount * 100).toFixed(0));
+};
+
+/**
+ * Calculates fulfillment date based on delivery days offset.
+ * @param daysOffset - Number of days from now
+ * @returns ISO 8601 date string
+ */
+export const calculateFulfillmentDate = (daysOffset: number): string => {
+  const date = new Date();
+
+  date.setDate(date.getDate() + daysOffset);
+
+  return date.toISOString();
+};
+
+/**
+ * Formats delivery timeframe for display (e.g., "5-7 days").
+ */
+export const formatDeliveryDays = (
+  minDays: number | null,
+  maxDays: number | null,
+): string => {
+  if (minDays === null && maxDays === null) {
+    return "";
+  }
+
+  if (minDays === maxDays) {
+    return `${minDays} days`;
+  }
+
+  return `${minDays || 0}-${maxDays || 0} days`;
+};
