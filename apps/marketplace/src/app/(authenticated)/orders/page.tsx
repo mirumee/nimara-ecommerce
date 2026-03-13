@@ -1,3 +1,5 @@
+import { getTranslations } from "next-intl/server";
+
 import type {
   OrderFilterInput,
   OrderSortField,
@@ -29,6 +31,7 @@ type PageProps = {
 };
 
 export default async function OrdersPage({ searchParams }: PageProps) {
+  const t = await getTranslations();
   const params = await searchParams;
 
   const rawPageSize = parseInt(
@@ -99,7 +102,9 @@ export default async function OrdersPage({ searchParams }: PageProps) {
   if (!result.ok) {
     return (
       <div className="flex items-center justify-center py-12">
-        <p className="text-muted-foreground">Failed to load orders</p>
+        <p className="text-muted-foreground">
+          {t("marketplace.orders.list.failed-to-load")}
+        </p>
       </div>
     );
   }

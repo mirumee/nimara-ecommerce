@@ -1,6 +1,7 @@
 "use client";
 
 import { Search } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
@@ -50,6 +51,7 @@ export function ManageChannelAvailabilityModal({
   onClose,
   variant = "product",
 }: Props) {
+  const t = useTranslations();
   const { watch, setValue } = useFormContext<ChannelAvailabilityFormValues>();
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebounce(searchQuery, 300);
@@ -195,13 +197,21 @@ export function ManageChannelAvailabilityModal({
         <DialogHeader>
           <DialogTitle>
             {variant === "collection"
-              ? "Manage collection channel availability"
-              : "Manage product channel availability"}
+              ? t(
+                  "marketplace.configuration.channel-availability.manage-modal-title-collection",
+                )
+              : t(
+                  "marketplace.configuration.channel-availability.manage-modal-title-product",
+                )}
           </DialogTitle>
           <DialogDescription>
             {variant === "collection"
-              ? "Select which channels to configure for this collection. Only selected channels will appear in the Availability section."
-              : "Select which channels to configure for this product. Only selected channels will appear in the Availability section."}
+              ? t(
+                  "marketplace.configuration.channel-availability.manage-modal-description-collection",
+                )
+              : t(
+                  "marketplace.configuration.channel-availability.manage-modal-description-product",
+                )}
           </DialogDescription>
         </DialogHeader>
 
@@ -211,7 +221,9 @@ export function ManageChannelAvailabilityModal({
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               type="text"
-              placeholder="Search through channels"
+              placeholder={t(
+                "marketplace.configuration.channel-availability.search-through-channels",
+              )}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-9"
@@ -247,7 +259,9 @@ export function ManageChannelAvailabilityModal({
           {/* Channels list */}
           <div className="space-y-2">
             <div className="text-sm font-medium text-muted-foreground">
-              Channels from A to Z
+              {t(
+                "marketplace.configuration.channel-availability.channels-from-a-to-z",
+              )}
             </div>
             <ScrollArea className="h-[300px]">
               <div className="space-y-2 pr-4">
@@ -291,10 +305,10 @@ export function ManageChannelAvailabilityModal({
 
         <DialogFooter className="flex justify-between">
           <Button type="button" variant="outline" onClick={handleBack}>
-            Back
+            {t("common.back")}
           </Button>
           <Button type="button" onClick={handleConfirm}>
-            Confirm
+            {t("common.confirm")}
           </Button>
         </DialogFooter>
       </DialogContent>

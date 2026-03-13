@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 
 import { ScrollArea } from "@nimara/ui/components/scroll-area";
@@ -28,6 +29,7 @@ export function ShippingMethodPickerDialog({
   open: boolean;
   selectedId?: string;
 }) {
+  const t = useTranslations();
   const active = useMemo(() => methods.filter((m) => m.active), [methods]);
   const [pickedId, setPickedId] = useState(selectedId ?? "");
 
@@ -45,9 +47,11 @@ export function ShippingMethodPickerDialog({
   return (
     <PickerDialogShell
       open={open}
-      title="Select shipping method"
+      title={t("marketplace.orders.dialogs.shipping-method-picker.title")}
       onOpenChange={onOpenChange}
-      primaryLabel="Assign and save"
+      primaryLabel={t(
+        "marketplace.orders.dialogs.shipping-method-picker.assign-and-save",
+      )}
       onPrimary={() => {
         if (picked) {
           onPick(picked.id);
@@ -55,14 +59,21 @@ export function ShippingMethodPickerDialog({
         }
       }}
       primaryDisabled={!picked}
-      footerLeft={`${active.length} method${active.length === 1 ? "" : "s"}`}
+      footerLeft={t(
+        "marketplace.orders.dialogs.shipping-method-picker.methods-count",
+        {
+          count: active.length,
+        },
+      )}
     >
       <div className="rounded-md border">
         <ScrollArea className="h-[320px]">
           <div className="p-2">
             {active.length === 0 ? (
               <div className="px-2 py-8 text-center text-sm text-muted-foreground">
-                No shipping methods
+                {t(
+                  "marketplace.orders.dialogs.shipping-method-picker.no-shipping-methods",
+                )}
               </div>
             ) : (
               active.map((m) => (

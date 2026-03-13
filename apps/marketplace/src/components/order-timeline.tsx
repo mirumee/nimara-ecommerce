@@ -1,4 +1,5 @@
-import { useMemo } from "react";
+import { useTranslations } from "next-intl";
+import { useCallback, useMemo } from "react";
 
 import {
   Card,
@@ -21,12 +22,22 @@ import {
   getDateGroupLabel,
 } from "../lib/time";
 
+const DATE_GROUP_KEYS: Record<
+  "LAST_7_DAYS" | "LAST_30_DAYS" | "OLDER",
+  string
+> = {
+  LAST_7_DAYS: "common.date-group-last-7-days",
+  LAST_30_DAYS: "common.date-group-last-30-days",
+  OLDER: "common.date-group-older",
+};
+
 interface OrderTimelineProps {
   currency?: string;
   events: OrderEvent[];
 }
 
 interface TimelineEventProps {
+  byPrefix: string;
   currency?: string;
   event: OrderEvent;
   showFullDate?: boolean;
@@ -36,6 +47,7 @@ const TimelineEvent = ({
   event,
   currency,
   showFullDate,
+  byPrefix,
 }: TimelineEventProps) => {
   const message = getOrderEventMessage(event, currency);
   const date = event.date ? new Date(event.date) : null;
@@ -58,7 +70,10 @@ const TimelineEvent = ({
         <p className="text-sm leading-relaxed">
           {message}
           {userName && (
-            <span className="text-muted-foreground"> by {userName}</span>
+            <span className="text-muted-foreground">
+              {byPrefix}
+              {userName}
+            </span>
           )}
         </p>
         {date && (
@@ -72,8 +87,10 @@ const TimelineEvent = ({
 };
 
 interface DateGroupProps {
+  byPrefix: string;
   currency?: string;
   events: OrderEvent[];
+  getDateGroupLabelResolved: (key: DateGroupKey) => string;
   groupKey: DateGroupKey;
   showHeader: boolean;
 }
@@ -83,6 +100,8 @@ const DateGroup = ({
   events,
   currency,
   showHeader,
+  getDateGroupLabelResolved,
+  byPrefix,
 }: DateGroupProps) => {
   const isOlderGroup =
     groupKey === "LAST_7_DAYS" ||
@@ -101,7 +120,7 @@ const DateGroup = ({
     <div>
       {showHeader && (
         <div className="mb-3 text-xs font-medium capitalize text-muted-foreground">
-          {getDateGroupLabel(groupKey)}
+          {getDateGroupLabelResolved(groupKey)}
         </div>
       )}
       <div>
@@ -111,6 +130,7 @@ const DateGroup = ({
             event={event}
             currency={currency}
             showFullDate={showFullDate}
+            byPrefix={byPrefix}
           />
         ))}
       </div>
@@ -119,7 +139,20 @@ const DateGroup = ({
 };
 
 export function OrderTimeline({ events, currency }: OrderTimelineProps) {
+  const t = useTranslations();
+  const byPrefix = t("common.event-by-prefix");
   const groupedEvents = useMemo(() => groupEventsByDate(events), [events]);
+
+  const getDateGroupLabelResolved = useCallback(
+    (key: DateGroupKey): string => {
+      if (key === "LAST_7_DAYS" || key === "LAST_30_DAYS" || key === "OLDER") {
+        return t(DATE_GROUP_KEYS[key]);
+      }
+
+      return getDateGroupLabel(key);
+    },
+    [t],
+  );
 
   const visibleGroups = useMemo(
     () =>
@@ -138,7 +171,7 @@ export function OrderTimeline({ events, currency }: OrderTimelineProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Timeline</CardTitle>
+        <CardTitle>{t("marketplace.orders.detail.timeline")}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="max-h-64 space-y-6 overflow-y-auto">
@@ -149,6 +182,8 @@ export function OrderTimeline({ events, currency }: OrderTimelineProps) {
               events={groupEvents}
               currency={currency}
               showHeader={showHeaders}
+              getDateGroupLabelResolved={getDateGroupLabelResolved}
+              byPrefix={byPrefix}
             />
           ))}
         </div>

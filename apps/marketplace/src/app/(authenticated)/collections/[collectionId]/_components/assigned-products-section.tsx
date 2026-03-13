@@ -2,6 +2,7 @@
 
 import { Trash2 } from "lucide-react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { Button } from "@nimara/ui/components/button";
@@ -46,6 +47,7 @@ export function AssignedProductsSection({
   products,
   onProductsChange,
 }: Props) {
+  const t = useTranslations();
   const { toast } = useToast();
   const [isRemoveLoading, setIsRemoveLoading] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -59,10 +61,13 @@ export function AssignedProductsSection({
 
       if (!result.ok) {
         toast({
-          title: "Failed to remove product",
+          title: t(
+            "marketplace.collections.assigned-products.toast-remove-failed",
+          ),
           description: result.errors
             .map(
-              (e: { message?: string | null }) => e.message || "Unknown error",
+              (e: { message?: string | null }) =>
+                e.message || t("common.toast-unknown-error"),
             )
             .join(", "),
           variant: "destructive",
@@ -83,12 +88,14 @@ export function AssignedProductsSection({
 
       if (errors.length > 0) {
         toast({
-          title: "Failed to remove product",
+          title: t(
+            "marketplace.collections.assigned-products.toast-remove-failed",
+          ),
           description:
             errors
               .map((e: { message?: string | null }) => e.message)
               .filter(Boolean)
-              .join(", ") || "Unknown error",
+              .join(", ") || t("common.toast-unknown-error"),
           variant: "destructive",
         });
         setIsRemoveLoading(null);
@@ -97,14 +104,21 @@ export function AssignedProductsSection({
       }
 
       toast({
-        title: "Product removed",
-        description: "Product has been removed from collection.",
+        title: t("marketplace.collections.assigned-products.toast-removed"),
+        description: t(
+          "marketplace.collections.assigned-products.toast-removed-desc",
+        ),
       });
       onProductsChange?.();
     } catch (error) {
       toast({
-        title: "Failed to remove product",
-        description: error instanceof Error ? error.message : "Unknown error",
+        title: t(
+          "marketplace.collections.assigned-products.toast-remove-failed",
+        ),
+        description:
+          error instanceof Error
+            ? error.message
+            : t("common.toast-unknown-error"),
         variant: "destructive",
       });
     } finally {
@@ -127,10 +141,15 @@ export function AssignedProductsSection({
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Products in {collectionName}</CardTitle>
+              <CardTitle>
+                {t("marketplace.collections.assigned-products.title", {
+                  name: collectionName ?? "",
+                })}
+              </CardTitle>
               <CardDescription>
-                {products.length}{" "}
-                {products.length === 1 ? "product" : "products"} assigned
+                {t("marketplace.collections.assigned-products.count-assigned", {
+                  count: products.length,
+                })}
               </CardDescription>
             </div>
             <Button
@@ -138,7 +157,7 @@ export function AssignedProductsSection({
               variant="outline"
               onClick={() => setIsDialogOpen(true)}
             >
-              Assign product
+              {t("marketplace.collections.assigned-products.assign-button")}
             </Button>
           </div>
         </CardHeader>
@@ -146,18 +165,22 @@ export function AssignedProductsSection({
           {products.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12">
               <p className="text-sm text-muted-foreground">
-                No products assigned to this collection yet.
+                {t("marketplace.collections.assigned-products.empty-state")}
               </p>
             </div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[50px]">Name</TableHead>
-                  <TableHead></TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Availability</TableHead>
-                  <TableHead className="w-[50px]"></TableHead>
+                  <TableHead className="w-[50px]">{t("common.name")}</TableHead>
+                  <TableHead />
+                  <TableHead>{t("common.type")}</TableHead>
+                  <TableHead>
+                    {t(
+                      "marketplace.collections.assigned-products.table-availability",
+                    )}
+                  </TableHead>
+                  <TableHead className="w-[50px]" />
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -189,11 +212,13 @@ export function AssignedProductsSection({
                         {channelCount > 0 ? (
                           <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
                             {channelCount}{" "}
-                            {channelCount === 1 ? "Channel" : "Channels"}
+                            {t("common.channel-count", { count: channelCount })}
                           </span>
                         ) : (
                           <span className="text-xs text-muted-foreground">
-                            No channels
+                            {t(
+                              "marketplace.collections.assigned-products.channel-none",
+                            )}
                           </span>
                         )}
                       </TableCell>

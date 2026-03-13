@@ -1,6 +1,7 @@
 "use client";
 
 import { X } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { Badge } from "@nimara/ui/components/badge";
 import { Button } from "@nimara/ui/components/button";
@@ -16,6 +17,8 @@ export function DeletableChip({
   label: string;
   onDelete?: () => void;
 }) {
+  const t = useTranslations();
+
   return (
     <Badge
       variant="secondary"
@@ -37,7 +40,7 @@ export function DeletableChip({
             e.stopPropagation();
             onDelete();
           }}
-          aria-label="Remove filter"
+          aria-label={t("common.remove-filter-aria")}
         >
           <X className="h-3.5 w-3.5" />
         </Button>

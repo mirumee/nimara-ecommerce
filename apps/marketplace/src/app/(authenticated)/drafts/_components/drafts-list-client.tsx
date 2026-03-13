@@ -2,6 +2,7 @@
 
 import { ChevronDown, ChevronUp, Filter, Plus, Search } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { Button } from "@nimara/ui/components/button";
@@ -70,6 +71,7 @@ interface DraftsListClientProps {
 }
 
 export function DraftsListClient({ drafts, pageInfo }: DraftsListClientProps) {
+  const t = useTranslations();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -199,14 +201,16 @@ export function DraftsListClient({ drafts, pageInfo }: DraftsListClientProps) {
   return (
     <div className="grid gap-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-semibold">Drafts</h2>
+        <h2 className="text-2xl font-semibold">
+          {t("marketplace.drafts.list.title")}
+        </h2>
         <Button
           type="button"
           className="bg-stone-900 hover:bg-stone-800"
           onClick={() => router.push("/orders/new")}
         >
           <Plus className="mr-2 h-4 w-4" />
-          New order
+          {t("common.new-order")}
         </Button>
       </div>
 
@@ -216,7 +220,7 @@ export function DraftsListClient({ drafts, pageInfo }: DraftsListClientProps) {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder="Search drafts..."
+                placeholder={t("marketplace.drafts.list.search-placeholder")}
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
                 className="w-64 pl-9"
@@ -228,7 +232,9 @@ export function DraftsListClient({ drafts, pageInfo }: DraftsListClientProps) {
             <div className="flex items-center gap-2">
               {activeDateFiltersCount > 0 && (
                 <DeletableChip
-                  label={`Date created (${activeDateFiltersCount})`}
+                  label={t("common.chip-date-created", {
+                    count: activeDateFiltersCount,
+                  })}
                   onDelete={() => handleDateRangeSelect(null)}
                 />
               )}
@@ -238,7 +244,7 @@ export function DraftsListClient({ drafts, pageInfo }: DraftsListClientProps) {
               <PopoverTrigger asChild>
                 <Button variant="outline" className="ml-2 gap-2">
                   <Filter className="h-4 w-4" />
-                  Filters
+                  {t("common.filter-button")}
                   {activeDateFiltersCount > 0 && (
                     <span>({activeDateFiltersCount})</span>
                   )}
@@ -248,11 +254,13 @@ export function DraftsListClient({ drafts, pageInfo }: DraftsListClientProps) {
                 <ScrollArea className="h-[260px]">
                   <div className="space-y-4">
                     <div>
-                      <h4 className="mb-2 font-medium">Date Range</h4>
+                      <h4 className="mb-2 font-medium">
+                        {t("common.filter-date-range")}
+                      </h4>
                       <div className="space-y-2">
                         {PRESET_DATE_RANGES.map((preset) => (
                           <Button
-                            key={preset.label}
+                            key={preset.labelKey}
                             variant="outline"
                             size="sm"
                             className="w-full justify-start"
@@ -263,7 +271,7 @@ export function DraftsListClient({ drafts, pageInfo }: DraftsListClientProps) {
                               })
                             }
                           >
-                            {preset.label}
+                            {t(`common.${preset.labelKey}`)}
                           </Button>
                         ))}
                         {(createdGte || createdLte) && (
@@ -273,7 +281,7 @@ export function DraftsListClient({ drafts, pageInfo }: DraftsListClientProps) {
                             className="w-full justify-start"
                             onClick={() => handleDateRangeSelect(null)}
                           >
-                            Clear date range
+                            {t("common.filter-date-clear")}
                           </Button>
                         )}
                       </div>
@@ -285,7 +293,7 @@ export function DraftsListClient({ drafts, pageInfo }: DraftsListClientProps) {
                         className="w-full"
                         onClick={clearFilters}
                       >
-                        Clear all filters
+                        {t("common.filter-clear-all")}
                       </Button>
                     )}
                   </div>
@@ -302,7 +310,7 @@ export function DraftsListClient({ drafts, pageInfo }: DraftsListClientProps) {
                   onClick={() => handleSort("NUMBER")}
                 >
                   <div className="flex items-center gap-1">
-                    Draft No.
+                    {t("marketplace.drafts.list.table-draft-no")}
                     {sortField === "NUMBER" &&
                       (sortDirection === "ASC" ? (
                         <ChevronUp className="h-4 w-4" />
@@ -316,7 +324,7 @@ export function DraftsListClient({ drafts, pageInfo }: DraftsListClientProps) {
                   onClick={() => handleSort("CREATION_DATE")}
                 >
                   <div className="flex items-center gap-1">
-                    Date
+                    {t("common.date")}
                     {sortField === "CREATION_DATE" &&
                       (sortDirection === "ASC" ? (
                         <ChevronUp className="h-4 w-4" />
@@ -325,16 +333,16 @@ export function DraftsListClient({ drafts, pageInfo }: DraftsListClientProps) {
                       ))}
                   </div>
                 </TableHead>
-                <TableHead>Customer</TableHead>
-                <TableHead>Total</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>{t("common.customer")}</TableHead>
+                <TableHead>{t("common.total")}</TableHead>
+                <TableHead>{t("common.status")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {drafts.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center">
-                    No drafts found
+                    {t("marketplace.drafts.list.empty-list")}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -369,7 +377,7 @@ export function DraftsListClient({ drafts, pageInfo }: DraftsListClientProps) {
           <div className="flex items-center justify-between border-t p-4">
             <div className="flex items-center gap-2">
               <span className="w-24 text-sm text-muted-foreground">
-                View items
+                {t("common.view-items")}
               </span>
               <Select
                 value={String(pageSize)}
@@ -392,7 +400,7 @@ export function DraftsListClient({ drafts, pageInfo }: DraftsListClientProps) {
               <PaginationContent>
                 <PaginationItem>
                   <PaginationPrevious
-                    label="Previous"
+                    label={t("common.previous")}
                     onClick={handlePreviousPage}
                     className={
                       !hasPreviousPage
@@ -403,7 +411,7 @@ export function DraftsListClient({ drafts, pageInfo }: DraftsListClientProps) {
                 </PaginationItem>
                 <PaginationItem>
                   <PaginationNext
-                    label="Next"
+                    label={t("common.next")}
                     onClick={handleNextPage}
                     className={
                       !hasNextPage

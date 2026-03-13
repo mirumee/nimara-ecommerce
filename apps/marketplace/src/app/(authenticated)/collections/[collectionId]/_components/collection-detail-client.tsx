@@ -5,6 +5,7 @@ import { ArrowLeft, ImageIcon, Loader2, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { FormProvider, type Resolver, useForm } from "react-hook-form";
 
@@ -99,6 +100,7 @@ export function CollectionDetailClient({
   collectionId,
   channels,
 }: Props) {
+  const t = useTranslations();
   const router = useRouter();
   const { toast } = useToast();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -180,11 +182,11 @@ export function CollectionDetailClient({
 
         if (!result.ok) {
           toast({
-            title: "Failed to update collection",
+            title: t("marketplace.collections.detail.toast-update-failed"),
             description: result.errors
               .map(
                 (e: { message?: string | null }) =>
-                  e.message || "Unknown error",
+                  e.message || t("common.toast-unknown-error"),
               )
               .join(", "),
             variant: "destructive",
@@ -204,12 +206,12 @@ export function CollectionDetailClient({
 
         if (errors.length > 0) {
           toast({
-            title: "Failed to update collection",
+            title: t("marketplace.collections.detail.toast-update-failed"),
             description:
               errors
                 .map((e: { message?: string | null }) => e.message)
                 .filter(Boolean)
-                .join(", ") || "Unknown error",
+                .join(", ") || t("common.toast-unknown-error"),
             variant: "destructive",
           });
 
@@ -294,11 +296,13 @@ export function CollectionDetailClient({
 
         if (!channelResult.ok) {
           toast({
-            title: "Collection updated, but channel update failed",
+            title: t(
+              "marketplace.collections.detail.toast-channel-update-failed",
+            ),
             description: channelResult.errors
               .map(
                 (e: { message?: string | null }) =>
-                  e.message || "Unknown error",
+                  e.message || t("common.toast-unknown-error"),
               )
               .join(", "),
             variant: "destructive",
@@ -319,12 +323,14 @@ export function CollectionDetailClient({
 
         if (channelErrors.length > 0) {
           toast({
-            title: "Collection updated, but channel update failed",
+            title: t(
+              "marketplace.collections.detail.toast-channel-update-failed",
+            ),
             description:
               channelErrors
                 .map((e: { message?: string | null }) => e.message)
                 .filter(Boolean)
-                .join(", ") || "Unknown error",
+                .join(", ") || t("common.toast-unknown-error"),
             variant: "destructive",
           });
           router.refresh();
@@ -333,15 +339,18 @@ export function CollectionDetailClient({
         }
 
         toast({
-          title: "Collection updated",
-          description: "Changes saved successfully.",
+          title: t("marketplace.collections.detail.toast-updated"),
+          description: t("marketplace.shared.toast-updated-success"),
         });
         form.reset(values, { keepDirty: false });
         router.refresh();
       } catch (error) {
         toast({
-          title: "Failed to update collection",
-          description: error instanceof Error ? error.message : "Unknown error",
+          title: t("marketplace.collections.detail.toast-update-failed"),
+          description:
+            error instanceof Error
+              ? error.message
+              : t("common.toast-unknown-error"),
           variant: "destructive",
         });
       }
@@ -361,11 +370,11 @@ export function CollectionDetailClient({
         .filter((msg): msg is string => msg !== null);
 
       toast({
-        title: "Validation error",
+        title: t("marketplace.shared.toast-validation-error"),
         description:
           errorMessages.length > 0
             ? errorMessages.join(", ")
-            : "Please check the form fields",
+            : t("marketplace.shared.toast-check-fields"),
         variant: "destructive",
       });
     },
@@ -382,12 +391,12 @@ export function CollectionDetailClient({
 
       if (!result.ok) {
         toast({
-          title: "Failed to upload image",
+          title: t("marketplace.shared.media.toast-upload-failed"),
           description:
             result.errors
               .map((e: { message?: string }) => e.message)
               .filter(Boolean)
-              .join(", ") || "Failed to upload image",
+              .join(", ") || t("marketplace.shared.media.toast-upload-failed"),
           variant: "destructive",
         });
 
@@ -401,15 +410,19 @@ export function CollectionDetailClient({
       }
 
       toast({
-        title: "Image uploaded",
-        description: "Background image has been uploaded successfully.",
+        title: t("marketplace.shared.media.toast-upload-success"),
+        description: t(
+          "marketplace.collections.detail.toast-upload-success-desc",
+        ),
       });
       router.refresh();
     } catch (error) {
       toast({
-        title: "Failed to upload image",
+        title: t("marketplace.shared.media.toast-upload-failed"),
         description:
-          error instanceof Error ? error.message : "Unknown error occurred",
+          error instanceof Error
+            ? error.message
+            : t("common.toast-unknown-error"),
         variant: "destructive",
       });
     } finally {
@@ -427,8 +440,8 @@ export function CollectionDetailClient({
     // Validate file type
     if (!file.type.startsWith("image/")) {
       toast({
-        title: "Invalid file type",
-        description: "Please select an image file.",
+        title: t("marketplace.shared.media.toast-invalid-file"),
+        description: t("marketplace.shared.media.toast-invalid-file-desc"),
         variant: "destructive",
       });
 
@@ -440,8 +453,8 @@ export function CollectionDetailClient({
 
     if (file.size > maxSize) {
       toast({
-        title: "File too large",
-        description: "Please select an image smaller than 10MB.",
+        title: t("marketplace.shared.media.toast-file-too-large"),
+        description: t("marketplace.shared.media.toast-file-too-large-desc"),
         variant: "destructive",
       });
 
@@ -459,8 +472,10 @@ export function CollectionDetailClient({
 
       if (!token) {
         toast({
-          title: "Authentication required",
-          description: "Please log in to remove images.",
+          title: t("marketplace.collections.detail.toast-auth-required"),
+          description: t(
+            "marketplace.collections.detail.toast-auth-required-desc",
+          ),
           variant: "destructive",
         });
         setIsRemovingImage(false);
@@ -509,11 +524,12 @@ export function CollectionDetailClient({
 
       if (!response.ok || result.errors) {
         toast({
-          title: "Failed to remove image",
+          title: t("marketplace.collections.detail.toast-remove-failed"),
           description:
             result.errors
               ?.map((e: { message?: string }) => e.message)
-              .join(", ") || "Failed to remove image",
+              .join(", ") ||
+            t("marketplace.collections.detail.toast-remove-failed"),
           variant: "destructive",
         });
         setIsRemovingImage(false);
@@ -523,8 +539,8 @@ export function CollectionDetailClient({
 
       if (!result.data?.collectionUpdate) {
         toast({
-          title: "Failed to remove image",
-          description: "No data returned from server",
+          title: t("marketplace.collections.detail.toast-remove-failed"),
+          description: t("marketplace.collections.detail.toast-no-data"),
           variant: "destructive",
         });
         setIsRemovingImage(false);
@@ -536,12 +552,12 @@ export function CollectionDetailClient({
 
       if (errors.length > 0) {
         toast({
-          title: "Failed to remove image",
+          title: t("marketplace.collections.detail.toast-remove-failed"),
           description:
             errors
               .map((e: { message?: string }) => e.message)
               .filter(Boolean)
-              .join(", ") || "Unknown error",
+              .join(", ") || t("common.toast-unknown-error"),
           variant: "destructive",
         });
         setIsRemovingImage(false);
@@ -553,15 +569,19 @@ export function CollectionDetailClient({
       setBackgroundImagePreview(null);
 
       toast({
-        title: "Image removed",
-        description: "Background image has been removed successfully.",
+        title: t("marketplace.collections.detail.toast-remove-success"),
+        description: t(
+          "marketplace.collections.detail.toast-remove-success-desc",
+        ),
       });
       router.refresh();
     } catch (error) {
       toast({
-        title: "Failed to remove image",
+        title: t("marketplace.collections.detail.toast-remove-failed"),
         description:
-          error instanceof Error ? error.message : "Unknown error occurred",
+          error instanceof Error
+            ? error.message
+            : t("common.toast-unknown-error"),
         variant: "destructive",
       });
     } finally {
@@ -576,10 +596,11 @@ export function CollectionDetailClient({
 
       if (!result.ok) {
         toast({
-          title: "Failed to delete collection",
+          title: t("marketplace.collections.detail.toast-delete-failed"),
           description: result.errors
             .map(
-              (e: { message?: string | null }) => e.message || "Unknown error",
+              (e: { message?: string | null }) =>
+                e.message || t("common.toast-unknown-error"),
             )
             .join(", "),
           variant: "destructive",
@@ -592,12 +613,12 @@ export function CollectionDetailClient({
 
       if (errors.length > 0) {
         toast({
-          title: "Failed to delete collection",
+          title: t("marketplace.collections.detail.toast-delete-failed"),
           description:
             errors
               .map((e) => e.message)
               .filter(Boolean)
-              .join(", ") || "Unknown error",
+              .join(", ") || t("common.toast-unknown-error"),
           variant: "destructive",
         });
 
@@ -611,16 +632,19 @@ export function CollectionDetailClient({
       setShowDeleteDialog(false);
 
       toast({
-        title: "Collection deleted",
-        description: "The collection has been deleted successfully.",
+        title: t("marketplace.collections.detail.toast-deleted"),
+        description: t("marketplace.collections.detail.toast-deleted-desc"),
       });
 
       // Navigate away using router.replace to prevent back navigation to deleted collection
       router.replace("/collections");
     } catch (error) {
       toast({
-        title: "Failed to delete collection",
-        description: error instanceof Error ? error.message : "Unknown error",
+        title: t("marketplace.collections.detail.toast-delete-failed"),
+        description:
+          error instanceof Error
+            ? error.message
+            : t("common.toast-unknown-error"),
         variant: "destructive",
       });
     } finally {
@@ -640,11 +664,12 @@ export function CollectionDetailClient({
                 <Button asChild variant="ghost" size="sm" className="gap-2">
                   <Link href="/collections">
                     <ArrowLeft className="h-4 w-4" />
-                    All collections
+                    {t("marketplace.collections.detail.back-to-collections")}
                   </Link>
                 </Button>
                 <h1 className="text-2xl font-semibold">
-                  {collection.name ?? "Collection"}
+                  {collection.name ??
+                    t("marketplace.collections.detail.name-fallback")}
                 </h1>
               </div>
               <div className="flex items-center gap-2">
@@ -655,11 +680,11 @@ export function CollectionDetailClient({
                     size="sm"
                     variant="destructive"
                   >
-                    Delete
+                    {t("common.delete")}
                   </Button>
                 )}
                 <Button type="submit" size="sm" disabled={isSubmitting}>
-                  Save{" "}
+                  {t("common.save")}{" "}
                   {isSubmitting ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : null}
@@ -673,15 +698,21 @@ export function CollectionDetailClient({
               <div className="flex grow basis-2/3 flex-col gap-4">
                 <Card>
                   <CardHeader>
-                    <CardTitle>General Information</CardTitle>
+                    <CardTitle>
+                      {t("marketplace.collections.detail.general-info-title")}
+                    </CardTitle>
                   </CardHeader>
                   <CardContent className="flex flex-col gap-4">
-                    <InputField label="Name" name="name" />
+                    <InputField label={t("common.name")} name="name" />
                     <div className="grid gap-2">
-                      <Label>Description</Label>
+                      <Label>
+                        {t("marketplace.collections.detail.field-description")}
+                      </Label>
                       <Textarea
                         {...form.register("description")}
-                        placeholder="Description"
+                        placeholder={t(
+                          "marketplace.collections.detail.field-description-placeholder",
+                        )}
                         rows={7}
                         disabled={isSubmitting}
                       />
@@ -691,7 +722,11 @@ export function CollectionDetailClient({
 
                 <Card>
                   <CardHeader>
-                    <CardTitle>Background Image</CardTitle>
+                    <CardTitle>
+                      {t(
+                        "marketplace.collections.detail.background-image-title",
+                      )}
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
                     {isUploadingImage ? (
@@ -705,7 +740,7 @@ export function CollectionDetailClient({
                           alt={
                             collection.backgroundImage?.alt ||
                             collection.name ||
-                            "Collection"
+                            t("marketplace.collections.detail.name-fallback")
                           }
                           fill
                           className="object-cover"
@@ -723,7 +758,9 @@ export function CollectionDetailClient({
                             >
                               <span className="flex items-center gap-1.5">
                                 <ImageIcon className="h-4 w-4" />
-                                Replace
+                                {t(
+                                  "marketplace.collections.detail.replace-button",
+                                )}
                               </span>
                             </Button>
                           </label>
@@ -742,17 +779,19 @@ export function CollectionDetailClient({
                             className="bg-destructive/90 backdrop-blur-sm hover:bg-destructive"
                             onClick={handleRemoveImage}
                             disabled={isRemovingImage || isSubmitting}
-                            aria-label="Remove image"
+                            aria-label={t(
+                              "marketplace.collections.detail.remove-image-aria",
+                            )}
                           >
                             {isRemovingImage ? (
                               <>
                                 <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
-                                Removing...
+                                {t("marketplace.collections.detail.removing")}
                               </>
                             ) : (
                               <>
                                 <Trash2 className="mr-1.5 h-4 w-4" />
-                                Remove
+                                {t("common.remove")}
                               </>
                             )}
                           </Button>
@@ -762,7 +801,7 @@ export function CollectionDetailClient({
                       <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/25 bg-muted/30 py-12">
                         <ImageIcon className="h-10 w-10 text-muted-foreground" />
                         <p className="mt-2 text-sm font-medium text-muted-foreground">
-                          DROP HERE TO UPLOAD
+                          {t("marketplace.collections.detail.drop-upload")}
                         </p>
                         <label htmlFor="background-image-upload-empty">
                           <Button
@@ -776,10 +815,14 @@ export function CollectionDetailClient({
                               {isUploadingImage ? (
                                 <>
                                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                  Uploading...
+                                  {t(
+                                    "marketplace.collections.detail.uploading",
+                                  )}
                                 </>
                               ) : (
-                                "Upload image"
+                                t(
+                                  "marketplace.collections.detail.upload-button",
+                                )
                               )}
                             </span>
                           </Button>
@@ -819,11 +862,13 @@ export function CollectionDetailClient({
       <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Collection</DialogTitle>
+            <DialogTitle>
+              {t("marketplace.collections.detail.delete-dialog-title")}
+            </DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete &quot;{collection.name}&quot;?
-              This action cannot be undone and will remove all products from
-              this collection.
+              {t("marketplace.collections.detail.delete-dialog-description", {
+                name: collection.name,
+              })}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -833,7 +878,7 @@ export function CollectionDetailClient({
               onClick={() => setShowDeleteDialog(false)}
               disabled={isDeleting}
             >
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button
               type="button"
@@ -844,10 +889,10 @@ export function CollectionDetailClient({
               {isDeleting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Deleting...
+                  {t("marketplace.collections.detail.deleting")}
                 </>
               ) : (
-                "Delete collection"
+                t("marketplace.collections.detail.delete-confirm-button")
               )}
             </Button>
           </DialogFooter>

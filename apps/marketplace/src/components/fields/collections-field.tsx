@@ -29,7 +29,6 @@ export function CollectionsField({
       disabled={disabled}
       description={description}
       placeholder={placeholder}
-      searchPlaceholder={`Search ${label.toLowerCase()}`}
     />
   );
 }

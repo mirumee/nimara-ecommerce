@@ -1,16 +1,19 @@
+import { getTranslations } from "next-intl/server";
+
 import { getServerAuthToken } from "@/lib/auth/server";
 import { configurationService } from "@/services/configuration";
 
 import { AccountInformationCard } from "./_components/account-information-card";
 
 export default async function ConfigurationGeneralPage() {
+  const t = await getTranslations();
   const token = await getServerAuthToken();
   const result = await configurationService.getMe(token);
 
   if (!result.ok) {
     return (
       <div className="flex items-center justify-center py-12">
-        <p className="text-muted-foreground">Failed to load user data</p>
+        <p className="text-muted-foreground">{t("failed-to-load-user-data")}</p>
       </div>
     );
   }
@@ -43,7 +46,9 @@ export default async function ConfigurationGeneralPage() {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-2xl font-semibold text-gray-900">General</h1>
+      <h1 className="text-2xl font-semibold text-gray-900">
+        {t("marketplace.configuration.general.heading")}
+      </h1>
 
       {/* Account Information Card */}
       <AccountInformationCard user={user} vendor={vendor} />

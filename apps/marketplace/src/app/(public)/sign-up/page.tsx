@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRight, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { FormProvider, type SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -25,22 +26,35 @@ import { TextareaField } from "@/components/fields/textarea-field";
 
 import { registerAccount } from "./actions";
 
-const signUpSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  vendorName: z.string().min(1, "Vendor name is required"),
-  companyName: z.string().min(1, "Company name is required"),
-  vatId: z.string().min(1, "VAT ID is required"),
-  vendorDescription: z.string().optional(),
-});
-
-type SignUpFormData = z.infer<typeof signUpSchema>;
+type SignUpFormData = {
+  companyName: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  password: string;
+  vatId: string;
+  vendorDescription?: string;
+  vendorName: string;
+};
 
 export default function SignUpPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const t = useTranslations();
+  const signUpSchema = z.object({
+    email: z.string().email(t("marketplace.auth.validation-email-invalid")),
+    password: z.string().min(8, t("marketplace.auth.validation-password-min")),
+    firstName: z.string().min(1, t("common.validation.first-name-required")),
+    lastName: z.string().min(1, t("common.validation.last-name-required")),
+    vendorName: z
+      .string()
+      .min(1, t("marketplace.auth.validation-vendor-name-required")),
+    companyName: z
+      .string()
+      .min(1, t("marketplace.auth.validation-company-name-required")),
+    vatId: z.string().min(1, t("marketplace.auth.validation-vat-id-required")),
+    vendorDescription: z.string().optional(),
+  });
   const [success, setSuccess] = useState(false);
 
   const form = useForm<SignUpFormData>({
@@ -84,7 +98,7 @@ export default function SignUpPage() {
           type: "server",
           message:
             result.errors[0]?.message ||
-            "Registration failed. Please try again.",
+            t("marketplace.auth.registration-failed-try-again"),
         });
 
         return;
@@ -100,7 +114,7 @@ export default function SignUpPage() {
         const message =
           error?.message != null
             ? String(error.message)
-            : "Registration failed";
+            : t("marketplace.auth.registration-failed");
 
         form.setError(field, { type: "server", message });
 
@@ -108,9 +122,8 @@ export default function SignUpPage() {
       }
 
       toast({
-        title: "Account created",
-        description:
-          "Your account was created and will be verified by a site admin.",
+        title: t("marketplace.auth.sign-up-button-label"),
+        description: t("marketplace.auth.sign-up-description"),
       });
 
       if (payload?.requiresConfirmation) {
@@ -124,7 +137,7 @@ export default function SignUpPage() {
         message:
           error instanceof Error
             ? error.message
-            : "Registration failed. Please try again.",
+            : t("marketplace.auth.registration-failed-try-again"),
       });
     }
   };
@@ -133,16 +146,15 @@ export default function SignUpPage() {
     return (
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle>Check your email</CardTitle>
+          <CardTitle>{t("marketplace.auth.sign-up-success-title")}</CardTitle>
           <CardDescription>
-            We&apos;ve sent a confirmation link to your email address. Please
-            click the link to activate your account.
+            {t("marketplace.auth.sign-up-success-description")}
           </CardDescription>
         </CardHeader>
         <CardFooter>
           <Link href="/sign-in" className="w-full">
             <Button variant="outline" className="w-full">
-              Back to Sign In
+              {t("marketplace.auth.back-to-sign-in")}
             </Button>
           </Link>
         </CardFooter>
@@ -153,9 +165,9 @@ export default function SignUpPage() {
   return (
     <Card className="w-full max-w-sm">
       <CardHeader>
-        <CardTitle>Create an account</CardTitle>
+        <CardTitle>{t("marketplace.auth.sign-up-title")}</CardTitle>
         <CardDescription>
-          Enter your details to create a vendor account.
+          {t("marketplace.auth.sign-up-description")}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -174,18 +186,18 @@ export default function SignUpPage() {
               <div className="grid grid-cols-2 gap-4">
                 <InputField
                   name="firstName"
-                  label="First name"
+                  label={t("common.first-name")}
                   inputProps={{
-                    placeholder: "John",
+                    placeholder: t("common.first-name"),
                     autoComplete: "given-name",
                     disabled: isPending,
                   }}
                 />
                 <InputField
                   name="lastName"
-                  label="Last name"
+                  label={t("common.last-name")}
                   inputProps={{
-                    placeholder: "Doe",
+                    placeholder: t("common.last-name"),
                     autoComplete: "family-name",
                     disabled: isPending,
                   }}
@@ -193,9 +205,9 @@ export default function SignUpPage() {
               </div>
               <InputField
                 name="email"
-                label="Email"
+                label={t("common.email")}
                 inputProps={{
-                  placeholder: "john.doe@example.com",
+                  placeholder: t("marketplace.auth.email-placeholder"),
                   autoComplete: "email",
                   type: "email",
                   disabled: isPending,
@@ -203,45 +215,47 @@ export default function SignUpPage() {
               />
               <PasswordField
                 name="password"
-                label="Password"
+                label={t("common.password")}
                 inputProps={{
-                  placeholder: "********",
+                  placeholder: t("marketplace.auth.password-placeholder"),
                   autoComplete: "new-password",
                   disabled: isPending,
                 }}
               />
               <InputField
                 name="companyName"
-                label="Company name"
+                label={t("marketplace.auth.label-company-name")}
                 inputProps={{
-                  placeholder: "Acme Bikes Ltd.",
+                  placeholder: t("marketplace.auth.placeholder-company-name"),
                   autoComplete: "organization",
                   disabled: isPending,
                 }}
               />
               <InputField
                 name="vatId"
-                label="VAT ID"
+                label={t("marketplace.auth.label-vat-id")}
                 inputProps={{
-                  placeholder: "1234567890",
+                  placeholder: t("marketplace.auth.placeholder-vat-id"),
                   autoComplete: "vat",
                   disabled: isPending,
                 }}
               />
               <InputField
                 name="vendorName"
-                label="Vendor name"
+                label={t("marketplace.auth.label-vendor-name")}
                 inputProps={{
-                  placeholder: "Acme Bikes",
+                  placeholder: t("marketplace.auth.placeholder-vendor-name"),
                   autoComplete: "organization",
                   disabled: isPending,
                 }}
               />
               <TextareaField
                 name="vendorDescription"
-                label="Vendor description"
+                label={t("marketplace.auth.label-vendor-description")}
                 textareaProps={{
-                  placeholder: "Tell us about your business...",
+                  placeholder: t(
+                    "marketplace.auth.placeholder-vendor-description",
+                  ),
                   disabled: isPending,
                   rows: 4,
                 }}
@@ -259,11 +273,13 @@ export default function SignUpPage() {
         >
           {isPending ? (
             <>
-              Creating Account <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+              {t("marketplace.auth.sign-up-button-creating")}{" "}
+              <Loader2 className="ml-2 h-4 w-4 animate-spin" />
             </>
           ) : (
             <>
-              Create Account <ArrowRight className="ml-2 h-4 w-4" />
+              {t("marketplace.auth.sign-up-button-label")}{" "}
+              <ArrowRight className="ml-2 h-4 w-4" />
             </>
           )}
         </Button>
@@ -272,7 +288,7 @@ export default function SignUpPage() {
           href="/sign-in"
           className="inline-block text-sm underline-offset-4 hover:underline"
         >
-          Already have an account? Sign In here. &rarr;
+          {t("marketplace.auth.already-have-account-cta")}
         </Link>
       </CardFooter>
     </Card>

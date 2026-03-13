@@ -30,25 +30,30 @@ const subMonths = (d: Date, months: number): Date => {
 export const PRESET_DATE_RANGES: {
   gte: string;
   label: string;
+  labelKey: string;
   lte: string;
 }[] = [
   {
     label: "Today",
+    labelKey: "date-preset-today",
     gte: formatToDateString(startOfDay(new Date())),
     lte: formatToDateString(endOfDay(new Date())),
   },
   {
     label: "Yesterday",
+    labelKey: "date-preset-yesterday",
     gte: formatToDateString(startOfDay(subDays(new Date(), 1))),
     lte: formatToDateString(endOfDay(subDays(new Date(), 1))),
   },
   {
     label: "Last 7 days",
+    labelKey: "date-preset-last-7-days",
     gte: formatToDateString(startOfDay(subDays(new Date(), 7))),
     lte: formatToDateString(endOfDay(new Date())),
   },
   {
     label: "Last month",
+    labelKey: "date-preset-last-month",
     gte: formatToDateString(startOfDay(subMonths(new Date(), 1))),
     lte: formatToDateString(endOfDay(new Date())),
   },

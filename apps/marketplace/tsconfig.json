@@ -5,7 +5,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "@ui/*": ["../../packages/ui/*"],
-      "@ui/components/*": ["../../packages/ui/src/components/*"]
+      "@ui/components/*": ["../../packages/ui/src/components/*"],
+      "@nimara/i18n/*": ["../../packages/i18n/src/*"]
     },
     "baseUrl": "."
   },

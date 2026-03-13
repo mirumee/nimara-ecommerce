@@ -1,3 +1,5 @@
+import { getTranslations } from "next-intl/server";
+
 import type {
   OrderDraftFilterInput,
   OrderSortField,
@@ -25,6 +27,7 @@ type PageProps = {
 };
 
 export default async function DraftsPage({ searchParams }: PageProps) {
+  const t = await getTranslations();
   const params = await searchParams;
 
   const rawPageSize = parseInt(
@@ -75,7 +78,9 @@ export default async function DraftsPage({ searchParams }: PageProps) {
   if (!result.ok) {
     return (
       <div className="flex items-center justify-center py-12">
-        <p className="text-muted-foreground">Failed to load drafts</p>
+        <p className="text-muted-foreground">
+          {t("marketplace.drafts.list.failed-to-load")}
+        </p>
       </div>
     );
   }

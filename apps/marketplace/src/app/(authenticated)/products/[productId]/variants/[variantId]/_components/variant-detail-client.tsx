@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, ChevronDown, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { FormProvider, type Resolver, useForm } from "react-hook-form";
 
@@ -214,6 +215,7 @@ export function VariantDetailClient({
   variantId: string;
   warehouses: NonNullable<Warehouses["warehouses"]>["edges"][number]["node"][];
 }) {
+  const t = useTranslations();
   const router = useRouter();
   const { toast } = useToast();
 
@@ -403,10 +405,11 @@ export function VariantDetailClient({
 
       if (!result.ok) {
         toast({
-          title: "Failed to update variant",
+          title: t("marketplace.products.variants.detail.toast-update-failed"),
           description: result.errors
             .map(
-              (e: { message?: string | null }) => e.message || "Unknown error",
+              (e: { message?: string | null }) =>
+                e.message || t("common.toast-unknown-error"),
             )
             .join(", "),
           variant: "destructive",
@@ -422,12 +425,12 @@ export function VariantDetailClient({
 
       if (errors.length > 0) {
         toast({
-          title: "Failed to update variant",
+          title: t("marketplace.products.variants.detail.toast-update-failed"),
           description:
             errors
               .map((e) => e.message)
               .filter(Boolean)
-              .join(", ") || "Unknown error",
+              .join(", ") || t("common.toast-unknown-error"),
           variant: "destructive",
         });
 
@@ -435,15 +438,18 @@ export function VariantDetailClient({
       }
 
       toast({
-        title: "Variant updated",
-        description: "Changes saved successfully.",
+        title: t("marketplace.products.variants.detail.toast-updated"),
+        description: t("marketplace.shared.toast-updated-success"),
       });
       form.reset(values, { keepDirty: false });
       router.refresh();
     } catch (error) {
       toast({
-        title: "Failed to update variant",
-        description: error instanceof Error ? error.message : "Unknown error",
+        title: t("marketplace.products.variants.detail.toast-update-failed"),
+        description:
+          error instanceof Error
+            ? error.message
+            : t("common.toast-unknown-error"),
         variant: "destructive",
       });
     }
@@ -461,9 +467,9 @@ export function VariantDetailClient({
 
       if (!result.ok) {
         toast({
-          title: "Failed to delete variant",
+          title: t("marketplace.products.variants.detail.toast-delete-failed"),
           description: result.errors
-            .map((e) => e.message || "Unknown error")
+            .map((e) => e.message || t("common.toast-unknown-error"))
             .join(", "),
           variant: "destructive",
         });
@@ -475,12 +481,12 @@ export function VariantDetailClient({
 
       if (errors.length > 0) {
         toast({
-          title: "Failed to delete variant",
+          title: t("marketplace.products.variants.detail.toast-delete-failed"),
           description:
             errors
               .map((e: { message?: string | null }) => e.message)
               .filter(Boolean)
-              .join(", ") || "Unknown error",
+              .join(", ") || t("common.toast-unknown-error"),
           variant: "destructive",
         });
 
@@ -489,15 +495,20 @@ export function VariantDetailClient({
 
       setShowDeleteDialog(false);
       toast({
-        title: "Variant deleted",
-        description: "The variant has been deleted successfully.",
+        title: t("marketplace.products.variants.detail.toast-deleted"),
+        description: t(
+          "marketplace.products.variants.detail.toast-deleted-desc",
+        ),
       });
 
       router.replace(`/products/${encodeURIComponent(productId)}`);
     } catch (error) {
       toast({
-        title: "Failed to delete variant",
-        description: error instanceof Error ? error.message : "Unknown error",
+        title: t("marketplace.products.variants.detail.toast-delete-failed"),
+        description:
+          error instanceof Error
+            ? error.message
+            : t("common.toast-unknown-error"),
         variant: "destructive",
       });
     } finally {
@@ -516,18 +527,20 @@ export function VariantDetailClient({
                 <Button asChild variant="ghost" size="sm" className="gap-2">
                   <Link href={`/products/${encodeURIComponent(productId)}`}>
                     <ArrowLeft className="h-4 w-4" />
-                    Back to product
+                    {t("marketplace.products.variants.detail.back-to-product")}
                   </Link>
                 </Button>
                 <h1 className="text-2xl font-semibold">
-                  {variant.name ?? product.name ?? "Variant"}
+                  {variant.name ??
+                    product.name ??
+                    t("marketplace.products.variants.detail.name-fallback")}
                 </h1>
               </div>
               <div className="flex items-center gap-2">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button size="sm" variant="outline">
-                      More actions
+                      {t("marketplace.products.variants.detail.more-actions")}
                       <ChevronDown className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
@@ -536,19 +549,21 @@ export function VariantDetailClient({
                       <Link
                         href={`/products/${encodeURIComponent(productId)}/variants/new`}
                       >
-                        Add new variant
+                        {t(
+                          "marketplace.products.variants.detail.add-new-variant",
+                        )}
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       className="text-destructive focus:text-destructive"
                       onSelect={() => setShowDeleteDialog(true)}
                     >
-                      Delete variant
+                      {t("marketplace.products.variants.detail.delete-variant")}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
                 <Button type="submit" size="sm" disabled={isSubmitting}>
-                  Save{" "}
+                  {t("common.save")}{" "}
                   {isSubmitting ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : null}
@@ -569,23 +584,31 @@ export function VariantDetailClient({
             <div className="flex flex-col gap-4">
               <Card id="variant-details-card" className="scroll-mt-24">
                 <CardHeader>
-                  <CardTitle>Edit variant</CardTitle>
+                  <CardTitle>
+                    {t("marketplace.products.variants.detail.edit-variant")}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="grid gap-4">
                     <InputField
                       name="name"
-                      label="Name"
-                      inputProps={{ placeholder: "Variant name" }}
+                      label={t("common.name")}
+                      inputProps={{
+                        placeholder: t(
+                          "marketplace.products.variants.detail.variant-name-placeholder",
+                        ),
+                      }}
                     />
 
                     <div className="grid gap-2">
-                      <Label htmlFor="weight.value">Weight (kg)</Label>
+                      <Label htmlFor="weight.value">
+                        {t("marketplace.products.variants.detail.weight-label")}
+                      </Label>
                       <Input
                         id="weight.value"
                         type="number"
                         step="0.01"
-                        placeholder="0.00"
+                        placeholder={t("common.numeric-placeholder")}
                         {...form.register("weight.value")}
                       />
                     </div>
@@ -598,11 +621,15 @@ export function VariantDetailClient({
                   <div className="border-t" />
 
                   <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Attributes</h3>
+                    <h3 className="text-lg font-medium">
+                      {t("common.attributes")}
+                    </h3>
 
                     <div className="space-y-3">
                       <h4 className="text-sm font-medium text-muted-foreground">
-                        Selection Attributes
+                        {t(
+                          "marketplace.products.variants.detail.selection-attributes",
+                        )}
                       </h4>
                       {selectionAttributes.map(({ attribute }) => {
                         const inputType = attribute.inputType;
@@ -633,7 +660,9 @@ export function VariantDetailClient({
                               key={attribute.id}
                               name={fieldName}
                               label={
-                                attribute.name ?? attribute.slug ?? "Attribute"
+                                attribute.name ??
+                                attribute.slug ??
+                                t("common.attribute-fallback")
                               }
                             />
                           );
@@ -649,10 +678,12 @@ export function VariantDetailClient({
                               key={attribute.id}
                               name={fieldName}
                               label={
-                                attribute.name ?? attribute.slug ?? "Attribute"
+                                attribute.name ??
+                                attribute.slug ??
+                                t("common.attribute-fallback")
                               }
                               options={choices}
-                              placeholder="Select value"
+                              placeholder={t("common.select-value")}
                             />
                           );
                         }
@@ -666,12 +697,22 @@ export function VariantDetailClient({
                               key={attribute.id}
                               name={fieldName}
                               label={
-                                attribute.name ?? attribute.slug ?? "Attribute"
+                                attribute.name ??
+                                attribute.slug ??
+                                t("common.attribute-fallback")
                               }
                               options={choices}
                               isMulti
-                              placeholder="Select values"
-                              searchPlaceholder={`Search ${attribute.name ?? attribute.slug ?? "attribute"}`}
+                              placeholder={t("common.select-values")}
+                              searchPlaceholder={t(
+                                "marketplace.products.new.search-attribute",
+                                {
+                                  name:
+                                    attribute.name ??
+                                    attribute.slug ??
+                                    "attribute",
+                                },
+                              )}
                             />
                           );
                         }
@@ -681,7 +722,9 @@ export function VariantDetailClient({
                             key={attribute.id}
                             name={fieldName}
                             label={
-                              attribute.name ?? attribute.slug ?? "Attribute"
+                              attribute.name ??
+                              attribute.slug ??
+                              t("common.attribute-fallback")
                             }
                           />
                         );
@@ -692,7 +735,9 @@ export function VariantDetailClient({
 
                     <div className="space-y-3">
                       <h4 className="text-sm font-medium text-muted-foreground">
-                        Non-selection Attributes
+                        {t(
+                          "marketplace.products.variants.detail.non-selection-attributes",
+                        )}
                       </h4>
                       {nonSelectionAttributes.map(({ attribute }) => {
                         const inputType = attribute.inputType;
@@ -723,7 +768,9 @@ export function VariantDetailClient({
                               key={attribute.id}
                               name={fieldName}
                               label={
-                                attribute.name ?? attribute.slug ?? "Attribute"
+                                attribute.name ??
+                                attribute.slug ??
+                                t("common.attribute-fallback")
                               }
                             />
                           );
@@ -739,10 +786,12 @@ export function VariantDetailClient({
                               key={attribute.id}
                               name={fieldName}
                               label={
-                                attribute.name ?? attribute.slug ?? "Attribute"
+                                attribute.name ??
+                                attribute.slug ??
+                                t("common.attribute-fallback")
                               }
                               options={choices}
-                              placeholder="Select value"
+                              placeholder={t("common.select-value")}
                             />
                           );
                         }
@@ -756,12 +805,22 @@ export function VariantDetailClient({
                               key={attribute.id}
                               name={fieldName}
                               label={
-                                attribute.name ?? attribute.slug ?? "Attribute"
+                                attribute.name ??
+                                attribute.slug ??
+                                t("common.attribute-fallback")
                               }
                               options={choices}
                               isMulti
-                              placeholder="Select values"
-                              searchPlaceholder={`Search ${attribute.name ?? attribute.slug ?? "attribute"}`}
+                              placeholder={t("common.select-values")}
+                              searchPlaceholder={t(
+                                "marketplace.products.new.search-attribute",
+                                {
+                                  name:
+                                    attribute.name ??
+                                    attribute.slug ??
+                                    "attribute",
+                                },
+                              )}
                             />
                           );
                         }
@@ -771,7 +830,9 @@ export function VariantDetailClient({
                             key={attribute.id}
                             name={fieldName}
                             label={
-                              attribute.name ?? attribute.slug ?? "Attribute"
+                              attribute.name ??
+                              attribute.slug ??
+                              t("common.attribute-fallback")
                             }
                           />
                         );
@@ -791,11 +852,16 @@ export function VariantDetailClient({
       <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Variant</DialogTitle>
+            <DialogTitle>
+              {t("marketplace.products.variants.detail.delete-dialog-title")}
+            </DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete the variant &ldquo;
-              {variant.name || variant.sku || variantId}&rdquo;? This action
-              cannot be undone.
+              {t(
+                "marketplace.products.variants.detail.delete-dialog-description",
+                {
+                  name: variant.name || variant.sku || variantId,
+                },
+              )}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -805,7 +871,7 @@ export function VariantDetailClient({
               onClick={() => setShowDeleteDialog(false)}
               disabled={isDeleting}
             >
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button
               type="button"
@@ -816,10 +882,10 @@ export function VariantDetailClient({
               {isDeleting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Deleting...
+                  {t("marketplace.collections.detail.deleting")}
                 </>
               ) : (
-                "Delete variant"
+                t("marketplace.products.variants.detail.delete-confirm")
               )}
             </Button>
           </DialogFooter>

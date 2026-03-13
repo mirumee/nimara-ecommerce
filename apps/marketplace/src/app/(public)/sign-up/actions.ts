@@ -96,6 +96,54 @@ function slugify(input: string): string {
   return slug.length ? slug.slice(0, 80) : "vendor";
 }
 
+function isNonEmptyString(value: unknown): value is string {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
+function wait(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+async function lookupCustomerIdByEmail(
+  saleor: ReturnType<typeof graphqlClient>,
+  email: string,
+): Promise<string | null> {
+  const lookup = await saleor.execute(CustomerByEmailDocument, {
+    operationName: "CustomerByEmailQuery",
+    variables: { search: email },
+    options: { cache: "no-store" },
+  });
+
+  if (!lookup.ok) {
+    return null;
+  }
+
+  const normalizedEmail = email.trim().toLowerCase();
+  const edges = lookup.data.customers?.edges ?? [];
+
+  const exactMatch = edges.find((edge) => {
+    const candidateEmail = edge?.node?.email;
+    const candidateId = edge?.node?.id;
+
+    return (
+      isNonEmptyString(candidateEmail) &&
+      candidateEmail.trim().toLowerCase() === normalizedEmail &&
+      isNonEmptyString(candidateId)
+    );
+  });
+
+  if (isNonEmptyString(exactMatch?.node?.id)) {
+    return exactMatch.node.id;
+  }
+
+  const firstValidId = edges.find((edge) => isNonEmptyString(edge?.node?.id))
+    ?.node?.id;
+
+  return isNonEmptyString(firstValidId) ? firstValidId : null;
+}
+
 function getSaleorDomainFromEnv(): string {
   const url = process.env.NEXT_PUBLIC_SALEOR_URL;
 
@@ -426,22 +474,30 @@ export async function registerAccount(input: {
       : undefined;
 
   const resolvedCustomerId = await (async () => {
-    if (customerId) {
+    if (isNonEmptyString(customerId)) {
       return customerId;
     }
 
     // Some Saleor setups return user.id as empty string / null for accountRegister.
-    const lookup = await saleor.execute(CustomerByEmailDocument, {
-      operationName: "CustomerByEmailQuery",
-      variables: { search: input.email },
-      options: { cache: "no-store" },
-    });
+    // Customer may appear with a small delay, so retry lookup with short backoff.
+    const maxAttempts = 5;
 
-    if (!lookup.ok) {
-      return null;
+    for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+      const foundCustomerId = await lookupCustomerIdByEmail(
+        saleor,
+        input.email,
+      );
+
+      if (isNonEmptyString(foundCustomerId)) {
+        return foundCustomerId;
+      }
+
+      if (attempt < maxAttempts) {
+        await wait(attempt * 200);
+      }
     }
 
-    return lookup.data.customers?.edges?.[0]?.node?.id ?? null;
+    return null;
   })();
 
   if (!resolvedCustomerId) {
