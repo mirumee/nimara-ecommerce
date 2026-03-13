@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  CircleDollarSign,
   FileText,
   LayoutDashboard,
   LayoutList,
@@ -13,7 +14,9 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 
+import { createStripeConnectLoginSession } from "@/app/(authenticated)/_actions/stripe-connect";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -63,6 +66,7 @@ const navigationLinks = [
 export function TopNavigation() {
   const { user, logout } = useAuth();
   const pathname = usePathname();
+  const [isOpeningStripe, setIsOpeningStripe] = useState(false);
 
   const isActive = (href: string) => {
     if (href === "/dashboard") {
@@ -76,6 +80,29 @@ export function TopNavigation() {
     [user?.firstName, user?.lastName].filter(Boolean).join(" ") ||
     user?.email ||
     "Vendor";
+  const hasStripeAccount = Boolean(user?.stripePaymentAccountId);
+
+  const handleOpenStripe = async () => {
+    if (!hasStripeAccount || isOpeningStripe) {
+      return;
+    }
+
+    setIsOpeningStripe(true);
+
+    try {
+      const result = await createStripeConnectLoginSession();
+
+      if (!result.ok) {
+        console.error("[stripe-connect] Failed to open Stripe:", result.error);
+
+        return;
+      }
+
+      window.open(result.url, "_blank", "noopener,noreferrer");
+    } finally {
+      setIsOpeningStripe(false);
+    }
+  };
 
   return (
     <header className="sticky left-0 right-0 top-0 z-50 w-full border-b bg-background">
@@ -151,6 +178,14 @@ export function TopNavigation() {
                 <Settings className="h-4 w-4" />
                 Configuration
               </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="cursor-pointer gap-2"
+              onClick={() => void handleOpenStripe()}
+              disabled={!hasStripeAccount || isOpeningStripe}
+            >
+              <CircleDollarSign className="h-4 w-4" />
+              Go to Stripe
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="cursor-pointer gap-2">

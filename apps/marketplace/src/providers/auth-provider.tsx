@@ -19,6 +19,7 @@ import {
   initDomainFromUrl,
   setAppBridgeDomain,
 } from "@/lib/saleor/app-bridge-domain";
+import { getVendorPaymentMetadata } from "@/lib/saleor/vendor-payment-metadata";
 
 // Storage keys for auth tokens
 const AUTH_ACCESS_TOKEN_KEY = "auth_token";
@@ -31,6 +32,8 @@ interface User {
   firstName?: string;
   id: string;
   lastName?: string;
+  stripePaymentAccountConnected?: boolean;
+  stripePaymentAccountId?: string | null;
   vendorId?: string;
 }
 
@@ -42,7 +45,9 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshAccessToken: () => Promise<string | null>;
+  refreshVendorStripeState: () => Promise<void>;
   setToken: (token: string) => void;
+  stripeConnectRequired: boolean;
   token: string | null;
   user: User | null;
 }
@@ -263,6 +268,10 @@ export function AuthProvider({
                   query VendorPageStatus($id: ID!) {
                     page(id: $id) {
                       id
+                      metadata {
+                        key
+                        value
+                      }
                       attributes {
                         attribute { slug }
                         values { name }
@@ -281,6 +290,7 @@ export function AuthProvider({
                     attribute?: { slug?: string | null } | null;
                     values?: Array<{ name?: string | null } | null> | null;
                   }> | null;
+                  metadata?: Array<{ key: string; value: string }> | null;
                 } | null;
               };
               errors?: Array<{ message?: unknown }>;
@@ -339,10 +349,26 @@ export function AuthProvider({
               statusAttr?.values?.[0]?.name != null
                 ? String(statusAttr.values[0]?.name)
                 : "";
+            const paymentMetadata = getVendorPaymentMetadata(
+              vendorData?.data?.page?.metadata,
+            );
 
             if (statusValue !== "active") {
               throw new Error("Your account is not yet active.");
             }
+
+            setUser({
+              email: me.email ?? "",
+              firstName: me.firstName,
+              id: me.id,
+              lastName: me.lastName,
+              stripePaymentAccountConnected:
+                paymentMetadata.paymentAccountConnected,
+              stripePaymentAccountId: paymentMetadata.paymentAccountId,
+              ...(vendorPageId ? { vendorId: vendorPageId } : {}),
+            });
+
+            return true;
           }
 
           setUser({
@@ -699,6 +725,14 @@ export function AuthProvider({
     router.push("/sign-in");
   }, [clearAuth, router]);
 
+  const refreshVendorStripeState = useCallback(async () => {
+    if (!token) {
+      return;
+    }
+
+    await fetchUser(token);
+  }, [fetchUser, token]);
+
   // Periodic token refresh - check every minute if token needs refresh
   useEffect(() => {
     if (!token || !user) {
@@ -734,6 +768,9 @@ export function AuthProvider({
   // Authenticated: Saleor Cloud user token (App Bridge/login) OR dashboard context (saleorApiUrl in URL)
   const isAuthenticated =
     !!token || (dashboardContext && !!getAppBridgeDomain());
+  const stripeConnectRequired =
+    Boolean(user?.vendorId) &&
+    (!user?.stripePaymentAccountId || !user?.stripePaymentAccountConnected);
 
   return (
     <AuthContext.Provider
@@ -743,8 +780,10 @@ export function AuthProvider({
         isAuthenticated,
         isLoading,
         token,
+        stripeConnectRequired,
         login,
         logout,
+        refreshVendorStripeState,
         setToken,
         refreshAccessToken,
       }}
