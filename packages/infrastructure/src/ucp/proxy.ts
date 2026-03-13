@@ -50,33 +50,33 @@ export const ucpProxyMiddleware =
   ) => {
     const url = new URL(request.url);
     const checkoutID = url.searchParams.get("checkoutID");
+    const redirectPath = url.searchParams.get("redirectPath");
 
+    // If checkoutID is present, set the cookie
     if (checkoutID) {
-      const redirectPath = url.searchParams.get("redirectPath") ?? checkoutPath;
-      const redirectResponse = NextResponse.redirect(
-        new URL(redirectPath, request.url),
-      );
-
-      // Set secure httpOnly cookie for checkout session.
-      redirectResponse.cookies.set(cookieKey, checkoutID, cookieConfig);
-
       logger.info("UCP checkout handoff detected", {
         checkoutID,
-        redirectPath,
+        hasRedirectPath: !!redirectPath,
         requestUrl: request.url,
       });
 
-      // Return redirect immediately - don't pass to next() to preserve cookie
-      return redirectResponse;
+      // If redirectPath is also provided, redirect with cookie
+      if (redirectPath) {
+        const redirectResponse = NextResponse.redirect(
+          new URL(redirectPath, request.url),
+        );
+
+        // Set secure httpOnly cookie for checkout session
+        redirectResponse.cookies.set(cookieKey, checkoutID, cookieConfig);
+
+        return redirectResponse;
+      }
+
+      // Only checkoutID provided (no redirectPath) - set cookie and pass through
+      response.cookies.set(cookieKey, checkoutID, cookieConfig);
+      return next(request, event, response);
     }
 
-    // No checkoutId or redirectPath provided, pass through, but log an error.
-    if (!checkoutID) {
-      logger.error("No checkoutId provided from UCP.", {
-        requestUrl: request.url,
-        nextUrl: request.nextUrl.toString(),
-      });
-    }
-
+    // No checkoutID provided, pass through
     return next(request, event, response);
   };
