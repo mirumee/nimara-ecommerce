@@ -6,10 +6,11 @@ import {
 
 import { type CustomMiddleware } from "@nimara/foundation/middleware/chain";
 import { type Logger } from "#root/logging/types";
+import { redirect } from "next/navigation";
 
 export interface UcpProxyConfig {
   logger: Logger;
-  checkoutPath: string;
+  redirectEnabled: boolean;
   checkoutCookie: {
     key: string;
     maxAge: number;
@@ -39,7 +40,7 @@ export interface UcpProxyConfig {
 export const ucpProxyMiddleware =
   ({
     checkoutCookie: { key: cookieKey, ...cookieConfig },
-    checkoutPath,
+    redirectEnabled,
     logger,
   }: UcpProxyConfig) =>
   (next: CustomMiddleware) =>
@@ -52,16 +53,25 @@ export const ucpProxyMiddleware =
     const checkoutID = url.searchParams.get("checkoutID");
     const redirectPath = url.searchParams.get("redirectPath");
 
-    // If checkoutID is present, set the cookie
-    if (checkoutID) {
-      logger.info("UCP checkout handoff detected", {
+    logger.info("[UCP Proxy] Checkout handoff detected.", {
+      context: {
+        requestURL: request.url,
+        redirectEnabled: redirect,
+        redirectPath,
         checkoutID,
-        hasRedirectPath: !!redirectPath,
-        requestUrl: request.url,
-      });
+      },
+    });
 
-      // If redirectPath is also provided, redirect with cookie
-      if (redirectPath) {
+    if (checkoutID) {
+      if (redirectEnabled && redirectPath) {
+        logger.info("[UCP Proxy] Redirecting to provided `redirectPath`.", {
+          context: {
+            checkoutID,
+            redirectPath,
+            requestUrl: request.url,
+          },
+        });
+
         const redirectResponse = NextResponse.redirect(
           new URL(redirectPath, request.url),
         );
@@ -72,11 +82,32 @@ export const ucpProxyMiddleware =
         return redirectResponse;
       }
 
-      // Only checkoutID provided (no redirectPath) - set cookie and pass through
+      if (redirectEnabled && !redirectPath) {
+        logger.warning(
+          "[UCP Proxy] `redirectPath` query parameter is required when proxy redirect is enabled. Setting cookie and passing through.",
+          {
+            context: {
+              checkoutID,
+              redirectPath,
+            },
+          },
+        );
+      }
+
       response.cookies.set(cookieKey, checkoutID, cookieConfig);
       return next(request, event, response);
     }
 
-    // No checkoutID provided, pass through
+    logger.warning(
+      "[UCP Proxy] No `checkoutID` query parameter provided, passing through.",
+      {
+        context: {
+          checkoutID,
+          redirectEnabled,
+          redirectPath,
+        },
+      },
+    );
+
     return next(request, event, response);
   };

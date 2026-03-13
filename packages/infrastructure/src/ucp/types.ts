@@ -7,6 +7,13 @@ import {
 
 import { type AsyncResult } from "@nimara/domain/objects/Result";
 
+import { type ErrorResponse } from "./error";
+
+export type UCPResponse<TRes> = Promise<
+  | { data: never; error: ErrorResponse; ok: false }
+  | { data: TRes; errors?: never; ok: true }
+>;
+
 export type UCPService = {
   /**
    * Cancels a checkout session.

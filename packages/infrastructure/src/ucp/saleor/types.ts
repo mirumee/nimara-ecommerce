@@ -16,6 +16,7 @@ export type UCPSaleorServiceConfig = {
   channel: string;
   languageCode?: LanguageCodeEnum;
   logger: Logger;
+  requireAp2Mandate?: boolean;
 };
 
 /** GraphQL mutation error shape. */

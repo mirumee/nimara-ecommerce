@@ -4,13 +4,14 @@ import {
   type CheckoutUpdateRequest,
   type CompleteCheckoutRequestWithAp2,
 } from "@ucp-js/sdk";
+import { never } from "zod";
 
 import { type LanguageCodeEnum } from "@nimara/codegen/schema";
 import { type AsyncResult, err, ok } from "@nimara/domain/objects/Result";
 
 import { graphqlClient } from "#root/graphql/client";
+import { createErrorResponse } from "#root/ucp/error";
 
-import { type ErrorCode } from "../error";
 import { type UCPService } from "../types";
 import {
   CheckoutSessionCreateDocument,
@@ -87,7 +88,17 @@ export const saleorUCPService = ({
       });
 
       if (!result.ok) {
-        return err(result.errors);
+        return {
+          error: createErrorResponse(
+            result.errors.map((error) => ({
+              code: error.code,
+              message: error.message,
+              severity: "error",
+              type: "error",
+            })),
+          ),
+          ok: false,
+        };
       }
 
       const checkout = result.data.checkoutCreate?.checkout;

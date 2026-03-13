@@ -10,8 +10,7 @@ export type ErrorCode =
   | "mandate_expired"
   | "mandate_scope_mismatch"
   | "merchant_authorization_invalid"
-  | "merchant_authorization_missing"
-  | string;
+  | "merchant_authorization_missing";
 
 /**
  * Severity level indicating how the error affects the resource state.

@@ -1,6 +1,11 @@
 import { type CompleteCheckoutRequestWithAp2 } from "@ucp-js/sdk";
 import { type NextRequest, NextResponse } from "next/server";
 
+import {
+  createErrorResponse,
+  createMessageError,
+} from "@nimara/infrastructure/ucp/error";
+
 import { idempotencyStorage } from "@/features/acp/acp";
 import { revalidateTag } from "@/foundation/cache/cache";
 import { validateChannelParam } from "@/foundation/validate-channel-param";
@@ -54,10 +59,21 @@ export async function POST(
   } as CompleteCheckoutRequestWithAp2);
 
   if (!result.ok) {
-    return NextResponse.json(result.errors, {
-      status: 400,
-      statusText: "Failed to complete checkout session",
-    });
+    return NextResponse.json(
+      createErrorResponse(
+        result.errors?.map((error) =>
+          createMessageError(
+            error.code as string,
+            error.message || "",
+            "recoverable",
+          ),
+        ) || [],
+      ),
+      {
+        status: 400,
+        statusText: "Failed to complete checkout session",
+      },
+    );
   }
 
   revalidateTag(`UCP:CHECKOUT_SESSION:${id}`);

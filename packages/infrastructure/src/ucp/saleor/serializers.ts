@@ -46,16 +46,14 @@ export type UCPCheckoutSessionModel = {
  * Derives a UCP-compatible checkout status from Saleor checkout shape.
  */
 const getCheckoutStatus = (
-  checkout: Pick<
-    SaleorCheckout,
-    "authorizeStatus" | "billingAddress" | "shippingAddress" | "deliveryMethod"
-  >,
+  checkout: SaleorCheckout,
 ): CheckoutResponseStatus => {
   if (checkout.authorizeStatus === "FULL") {
     return "completed";
   }
 
   const hasRequiredData =
+    checkout.email !== null &&
     checkout.shippingAddress &&
     checkout.billingAddress &&
     checkout.deliveryMethod;
