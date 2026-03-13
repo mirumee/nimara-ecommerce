@@ -33616,6 +33616,30 @@ export type VendorPageTypeVariables = Exact<{
 
 export type VendorPageType = VendorPageType_Query;
 
+export type VendorPageUniqueness_bySlug_PageCountableConnection_edges_PageCountableEdge_node_Page = { id: string, slug: string, title: string };
+
+export type VendorPageUniqueness_bySlug_PageCountableConnection_edges_PageCountableEdge = { node: VendorPageUniqueness_bySlug_PageCountableConnection_edges_PageCountableEdge_node_Page };
+
+export type VendorPageUniqueness_bySlug_PageCountableConnection = { edges: Array<VendorPageUniqueness_bySlug_PageCountableConnection_edges_PageCountableEdge> };
+
+export type VendorPageUniqueness_byName_PageCountableConnection_edges_PageCountableEdge_node_Page = { id: string, slug: string, title: string };
+
+export type VendorPageUniqueness_byName_PageCountableConnection_edges_PageCountableEdge = { node: VendorPageUniqueness_byName_PageCountableConnection_edges_PageCountableEdge_node_Page };
+
+export type VendorPageUniqueness_byName_PageCountableConnection = { edges: Array<VendorPageUniqueness_byName_PageCountableConnection_edges_PageCountableEdge> };
+
+export type VendorPageUniqueness_Query = { bySlug: VendorPageUniqueness_bySlug_PageCountableConnection | null, byName: VendorPageUniqueness_byName_PageCountableConnection | null };
+
+
+export type VendorPageUniquenessVariables = Exact<{
+  pageTypeId: Scalars['ID']['input'];
+  search: Scalars['String']['input'];
+  slug: Scalars['String']['input'];
+}>;
+
+
+export type VendorPageUniqueness = VendorPageUniqueness_Query;
+
 export type Warehouses_warehouses_WarehouseCountableConnection_edges_WarehouseCountableEdge_node_Warehouse_address_Address_country_CountryDisplay = { country: string, code: string };
 
 export type Warehouses_warehouses_WarehouseCountableConnection_edges_WarehouseCountableEdge_node_Warehouse_address_Address = { streetAddress1: string, streetAddress2: string, city: string, postalCode: string, phone: string | null, country: Warehouses_warehouses_WarehouseCountableConnection_edges_WarehouseCountableEdge_node_Warehouse_address_Address_country_CountryDisplay };
@@ -35586,6 +35610,28 @@ export const VendorPageTypeDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<VendorPageType, VendorPageTypeVariables>;
+export const VendorPageUniquenessDocument = new TypedDocumentString(`
+    query VendorPageUniqueness($pageTypeId: ID!, $search: String!, $slug: String!) {
+  bySlug: pages(first: 1, filter: {pageTypes: [$pageTypeId], slugs: [$slug]}) {
+    edges {
+      node {
+        id
+        slug
+        title
+      }
+    }
+  }
+  byName: pages(first: 10, filter: {pageTypes: [$pageTypeId], search: $search}) {
+    edges {
+      node {
+        id
+        slug
+        title
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<VendorPageUniqueness, VendorPageUniquenessVariables>;
 export const WarehousesDocument = new TypedDocumentString(`
     query Warehouses {
   warehouses(first: 50) {
