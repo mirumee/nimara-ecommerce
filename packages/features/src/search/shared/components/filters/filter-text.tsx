@@ -13,7 +13,7 @@ export const FilterText = async ({
 }) => {
   const t = await getTranslations();
   const defaultValue = searchParams[slug]?.split(".") ?? [];
-  const label = name ?? t(messageKey as MessagePath);
+  const label = (messageKey ? t(messageKey as MessagePath) : undefined) ?? name;
 
   return (
     <div className="flex flex-col space-y-4 py-2">

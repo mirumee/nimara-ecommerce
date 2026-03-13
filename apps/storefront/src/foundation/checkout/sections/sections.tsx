@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import type { ReactNode } from "react";
 
 import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { type User } from "@nimara/domain/objects/User";
@@ -124,7 +125,7 @@ export const CheckoutSections = ({
         ) : (
           <p className="text-sm text-muted-foreground">
             {t.rich("errors.GENERIC_PAYMENT_ERROR", {
-              link: (chunks) => (
+              link: (chunks: ReactNode) => (
                 <LocalizedLink
                   href={`mailto:${clientEnvs.NEXT_PUBLIC_DEFAULT_EMAIL}`}
                   className="underline"

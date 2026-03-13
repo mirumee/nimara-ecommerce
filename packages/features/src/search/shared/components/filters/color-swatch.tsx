@@ -42,7 +42,7 @@ export const ColorSwatch = async ({
   searchParams: Record<string, string>;
 }) => {
   const t = await getTranslations();
-  const label = name ?? t(messageKey as MessagePath);
+  const label = (messageKey ? t(messageKey as MessagePath) : undefined) ?? name;
   const defaultValue = searchParams[slug]?.split(".") ?? [];
 
   return (

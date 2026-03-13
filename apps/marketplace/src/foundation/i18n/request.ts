@@ -3,6 +3,7 @@ import { createRequestConfig } from "@nimara/i18n/request";
 import { marketplaceLogger } from "@/services/logging";
 
 export default createRequestConfig({
+  app: "marketplace",
   logger: marketplaceLogger,
   onMissingTranslation: (locale) => {
     marketplaceLogger.warning(
