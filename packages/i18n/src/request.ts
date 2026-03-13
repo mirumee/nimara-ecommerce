@@ -1,4 +1,4 @@
-import { hasLocale, type Messages } from "next-intl";
+import { hasLocale } from "next-intl";
 import { getRequestConfig } from "next-intl/server";
 
 import { INTL_FORMATS_CONFIG, type SupportedLocale } from "./config";
@@ -85,11 +85,12 @@ export function createRequestConfig(options: RequestConfigOptions) {
   });
 }
 
-// eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+type LoadedMessages = Record<string, unknown>;
+
 async function getMessages(
   locale: string,
   app: "storefront" | "marketplace",
-): Promise<Messages | null> {
+): Promise<LoadedMessages | null> {
   try {
     if (!hasLocale(routing.locales, locale)) {
       return null;
