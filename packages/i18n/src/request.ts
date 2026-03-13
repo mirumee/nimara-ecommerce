@@ -85,6 +85,7 @@ export function createRequestConfig(options: RequestConfigOptions) {
   });
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
 async function getMessages(
   locale: string,
   app: "storefront" | "marketplace",
