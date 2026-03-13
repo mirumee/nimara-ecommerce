@@ -354,7 +354,7 @@ export function AuthProvider({
                 throw new Error(t("error-account-not-active"));
               }
 
-              const paymentMetadata = getVendorPaymentMetadata(
+              paymentMetadata = getVendorPaymentMetadata(
                 vendorData?.data?.page?.metadata,
               );
             }
