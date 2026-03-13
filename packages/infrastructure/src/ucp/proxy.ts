@@ -1,58 +1,82 @@
 import {
   type NextFetchEvent,
   type NextRequest,
-  type NextResponse,
-  NextResponse as NextResponseClass,
+  NextResponse,
 } from "next/server";
 
 import { type CustomMiddleware } from "@nimara/foundation/middleware/chain";
+import { type Logger } from "#root/logging/types";
 
-/**
- * Proxy middleware for UCP Checkout handoff.
- * Checks if the incoming URL contains a checkoutId query parameter.
- * If present:
- *   1. Sets a checkout cookie with the ID
- *   2. Redirects to the checkout page
- * If not present:
- *   - Passes through to the next middleware/route
- * @see https://ucp.dev/draft/specification/checkout/#continue-url
- */
 export interface UcpProxyConfig {
-  cookieKey: string;
-  cookieMaxAge: number;
-}
-
-export function ucpProxyMiddleware(config: UcpProxyConfig) {
-  return (next: CustomMiddleware) => {
-    return async (
-      request: NextRequest,
-      event: NextFetchEvent,
-      response: NextResponse,
-    ) => {
-      const url = new URL(request.url);
-      const checkoutId = url.searchParams.get("checkoutId");
-
-      // If checkoutId is present, redirect to checkout with cookie
-      if (checkoutId) {
-        const checkoutUrl = new URL("/checkout", request.url);
-        checkoutUrl.searchParams.set("id", checkoutId);
-
-        const redirectResponse = NextResponseClass.redirect(checkoutUrl);
-
-        // Set secure httpOnly cookie for checkout session
-        redirectResponse.cookies.set(config.cookieKey, checkoutId, {
-          path: "/",
-          maxAge: config.cookieMaxAge,
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax",
-        });
-
-        return redirectResponse;
-      }
-
-      // No checkoutId query parameter, pass through
-      return next(request, event, response);
-    };
+  logger: Logger;
+  checkoutPath: string;
+  checkoutCookie: {
+    key: string;
+    maxAge: number;
+    [key: string]: unknown;
   };
 }
+
+/**
+ * Proxy middleware for handling checkout handoff from UCP.
+ * Customer gets here when they cannot complete the checkout process via agentic checkout flow.
+ *
+ * Requires:
+ * - a checkout ID passed as a query parameter (`checkoutId`), for setting a checkout cookie.
+ *
+ * Optional:
+ * - a redirect, relative path used for redirecting the customer to the checkout page.
+ *
+ * If present:
+ *   1. Sets a checkout cookie with the ID.
+ *   2. Redirect the customer to the checkout page for completing the checkout.
+ *
+ * If not present:
+ *   - Passes through to the next middleware/route, does nothing.
+ *
+ * @see https://ucp.dev/draft/specification/checkout/#checkout-permalink
+ */
+export const ucpProxyMiddleware =
+  ({
+    checkoutCookie: { key: cookieKey, ...cookieConfig },
+    checkoutPath,
+    logger,
+  }: UcpProxyConfig) =>
+  (next: CustomMiddleware) =>
+  async (
+    request: NextRequest,
+    event: NextFetchEvent,
+    response: NextResponse,
+  ) => {
+    const url = new URL(request.url);
+    const checkoutID = url.searchParams.get("checkoutID");
+
+    if (checkoutID) {
+      const redirectPath = url.searchParams.get("redirectPath") ?? checkoutPath;
+      const redirectResponse = NextResponse.redirect(
+        new URL(redirectPath, request.url),
+      );
+
+      // Set secure httpOnly cookie for checkout session.
+      redirectResponse.cookies.set(cookieKey, checkoutID, cookieConfig);
+
+      logger.info("UCP checkout handoff detected", {
+        checkoutID,
+        redirectPath,
+        requestUrl: request.url,
+      });
+
+      // Return redirect immediately - don't pass to next() to preserve cookie
+      return redirectResponse;
+    }
+
+    // No checkoutId or redirectPath provided, pass through, but log an error.
+    if (!checkoutID) {
+      logger.error("No checkoutId provided from UCP.", {
+        requestUrl: request.url,
+        nextUrl: request.nextUrl.toString(),
+      });
+    }
+
+    return next(request, event, response);
+  };
