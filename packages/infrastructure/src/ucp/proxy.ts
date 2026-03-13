@@ -17,35 +17,42 @@ import { type CustomMiddleware } from "@nimara/foundation/middleware/chain";
  *   - Passes through to the next middleware/route
  * @see https://ucp.dev/draft/specification/checkout/#continue-url
  */
-export function ucpProxyMiddleware(next: CustomMiddleware) {
-  return async (
-    request: NextRequest,
-    event: NextFetchEvent,
-    response: NextResponse,
-  ) => {
-    const url = new URL(request.url);
-    const checkoutId = url.searchParams.get("checkoutId");
+export interface UcpProxyConfig {
+  cookieKey: string;
+  cookieMaxAge: number;
+}
 
-    // If checkoutId is present, redirect to checkout with cookie
-    if (checkoutId) {
-      const checkoutUrl = new URL("/checkout", request.url);
-      checkoutUrl.searchParams.set("id", checkoutId);
+export function ucpProxyMiddleware(config: UcpProxyConfig) {
+  return (next: CustomMiddleware) => {
+    return async (
+      request: NextRequest,
+      event: NextFetchEvent,
+      response: NextResponse,
+    ) => {
+      const url = new URL(request.url);
+      const checkoutId = url.searchParams.get("checkoutId");
 
-      const redirectResponse = NextResponseClass.redirect(checkoutUrl);
+      // If checkoutId is present, redirect to checkout with cookie
+      if (checkoutId) {
+        const checkoutUrl = new URL("/checkout", request.url);
+        checkoutUrl.searchParams.set("id", checkoutId);
 
-      // Set secure httpOnly cookie for checkout session
-      redirectResponse.cookies.set("checkout-id", checkoutId, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: 60 * 60 * 24, // 24 hours
-        path: "/",
-      });
+        const redirectResponse = NextResponseClass.redirect(checkoutUrl);
 
-      return redirectResponse;
-    }
+        // Set secure httpOnly cookie for checkout session
+        redirectResponse.cookies.set(config.cookieKey, checkoutId, {
+          path: "/",
+          maxAge: config.cookieMaxAge,
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+        });
 
-    // No checkoutId query parameter, pass through
-    return next(request, event, response);
+        return redirectResponse;
+      }
+
+      // No checkoutId query parameter, pass through
+      return next(request, event, response);
+    };
   };
 }
