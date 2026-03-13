@@ -7,37 +7,11 @@ import enStorefront from "./messages/en/storefront.json";
 import enGbSharedCommon from "./messages/en-GB/common.json";
 import enGbMarketplace from "./messages/en-GB/marketplace.json";
 import enGbStorefront from "./messages/en-GB/storefront.json";
+import { deepMerge } from "./utils";
 
 type AppId = "storefront" | "marketplace";
 
 type AnyMessages = Record<string, unknown>;
-
-function isPlainObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-function deepMerge<TTarget extends AnyMessages, TSource extends AnyMessages>(
-  target: TTarget,
-  source: TSource,
-): TTarget & TSource {
-  const output: AnyMessages = { ...target };
-
-  for (const [key, sourceValue] of Object.entries(source)) {
-    const targetValue = output[key];
-
-    if (isPlainObject(targetValue) && isPlainObject(sourceValue)) {
-      output[key] = deepMerge(
-        targetValue as AnyMessages,
-        sourceValue as AnyMessages,
-      );
-      continue;
-    }
-
-    output[key] = sourceValue;
-  }
-
-  return output as TTarget & TSource;
-}
 
 const BASE_SHARED = enSharedCommon as Messages;
 const BASE_APP: Record<AppId, Messages> = {
