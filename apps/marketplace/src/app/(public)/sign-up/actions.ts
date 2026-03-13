@@ -17,8 +17,8 @@ import {
   VendorCollectionDeleteDocument,
   VendorPageCreateDocument,
   VendorPageDeleteDocument,
-  VendorPageUniquenessDocument,
   VendorPageTypeDocument,
+  VendorPageUniquenessDocument,
 } from "@/graphql/generated/client";
 import { config } from "@/lib/config";
 import { sendNewVendorRegisteredEmailToSuperadmin } from "@/lib/email";
