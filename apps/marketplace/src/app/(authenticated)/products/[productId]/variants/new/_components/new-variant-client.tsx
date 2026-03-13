@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useMemo } from "react";
 import { FormProvider, type Resolver, useForm } from "react-hook-form";
 
@@ -162,6 +163,7 @@ export function NewVariantClient({
   variantCount,
   firstVariantId,
 }: NewVariantClientProps) {
+  const t = useTranslations();
   const router = useRouter();
   const { toast } = useToast();
 
@@ -243,11 +245,18 @@ export function NewVariantClient({
 
       if (missingRequiredAttributes.length > 0) {
         toast({
-          title: "Required attributes missing",
-          description: `Please provide values for: ${missingRequiredAttributes
-            .map((a) => a?.name)
-            .filter(Boolean)
-            .join(", ")}`,
+          title: t(
+            "marketplace.products.variants.new.required-attributes-missing",
+          ),
+          description: t(
+            "marketplace.products.variants.new.required-attributes-missing-desc",
+            {
+              names: missingRequiredAttributes
+                .map((a) => a?.name)
+                .filter(Boolean)
+                .join(", "),
+            },
+          ),
           variant: "destructive",
         });
 
@@ -295,15 +304,15 @@ export function NewVariantClient({
             ? result.errors
                 .map(
                   (e: { code?: string; message?: string | null }) =>
-                    e.code || e.message || "Unknown error",
+                    e.code || e.message || t("common.toast-unknown-error"),
                 )
                 .join(", ")
             : result.errors && typeof result.errors === "object"
               ? JSON.stringify(result.errors)
-              : "Unexpected HTTP error";
+              : t("common.toast-unknown-error");
 
         toast({
-          title: "Failed to create variant",
+          title: t("marketplace.products.variants.new.toast-create-failed"),
           description: errorMessages,
           variant: "destructive",
         });
@@ -315,12 +324,12 @@ export function NewVariantClient({
 
       if (errors.length > 0) {
         toast({
-          title: "Failed to create variant",
+          title: t("marketplace.products.variants.new.toast-create-failed"),
           description:
             errors
               .map((e) => e.message)
               .filter(Boolean)
-              .join(", ") || "Unknown error",
+              .join(", ") || t("common.toast-unknown-error"),
           variant: "destructive",
         });
 
@@ -331,8 +340,8 @@ export function NewVariantClient({
 
       if (!variantId) {
         toast({
-          title: "Failed to create variant",
-          description: "Variant was created but ID is missing.",
+          title: t("marketplace.products.variants.new.toast-create-failed"),
+          description: t("marketplace.products.variants.new.toast-id-missing"),
           variant: "destructive",
         });
 
@@ -372,11 +381,13 @@ export function NewVariantClient({
 
         if (!channelListingResult.ok) {
           toast({
-            title: "Variant created, but channel listing update failed",
+            title: t(
+              "marketplace.products.variants.new.toast-channel-listing-failed",
+            ),
             description: channelListingResult.errors
               .map(
                 (e: { message?: string | null }) =>
-                  e.message || "Unknown error",
+                  e.message || t("common.toast-unknown-error"),
               )
               .join(", "),
             variant: "destructive",
@@ -392,12 +403,14 @@ export function NewVariantClient({
 
         if (channelErrors.length > 0) {
           toast({
-            title: "Variant created, but channel listing update failed",
+            title: t(
+              "marketplace.products.variants.new.toast-channel-listing-failed",
+            ),
             description:
               channelErrors
                 .map((e) => e.message)
                 .filter(Boolean)
-                .join(", ") || "Unknown error",
+                .join(", ") || t("common.toast-unknown-error"),
             variant: "destructive",
           });
           router.replace(`/products/${productId}/variants/${variantId}`);
@@ -407,8 +420,8 @@ export function NewVariantClient({
       }
 
       toast({
-        title: "Variant created",
-        description: "Variant has been created successfully.",
+        title: t("marketplace.products.variants.new.toast-created"),
+        description: t("marketplace.products.variants.new.toast-created-desc"),
       });
 
       router.replace(`/products/${productId}/variants/${variantId}`);
@@ -416,11 +429,11 @@ export function NewVariantClient({
       console.error("Unexpected error while creating variant:", error);
 
       toast({
-        title: "Failed to create variant",
+        title: t("marketplace.products.variants.new.toast-create-failed"),
         description:
           error instanceof Error
             ? error.message
-            : "An unexpected error occurred. Please check the console for details.",
+            : t("common.toast-unknown-error"),
         variant: "destructive",
       });
     }
@@ -439,13 +452,15 @@ export function NewVariantClient({
                 <Button asChild variant="ghost" size="sm" className="gap-2">
                   <Link href={`/products/${encodeURIComponent(productId)}`}>
                     <ArrowLeft className="h-4 w-4" />
-                    Back to product
+                    {t("marketplace.products.variants.detail.back-to-product")}
                   </Link>
                 </Button>
-                <h1 className="text-2xl font-semibold">Add New Variant</h1>
+                <h1 className="text-2xl font-semibold">
+                  {t("marketplace.products.variants.new.title")}
+                </h1>
               </div>
               <Button type="submit" size="sm" disabled={isSubmitting}>
-                Save{" "}
+                {t("common.save")}{" "}
                 {isSubmitting ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : null}
@@ -465,23 +480,31 @@ export function NewVariantClient({
             <div className="flex flex-col gap-4 px-6 pb-6">
               <Card id="variant-details-card" className="scroll-mt-24">
                 <CardHeader>
-                  <CardTitle>Variant Details</CardTitle>
+                  <CardTitle>
+                    {t("marketplace.products.variants.new.variant-details")}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="grid gap-4">
                     <InputField
                       name="name"
-                      label="Name"
-                      inputProps={{ placeholder: "Variant name" }}
+                      label={t("common.name")}
+                      inputProps={{
+                        placeholder: t(
+                          "marketplace.products.variants.detail.variant-name-placeholder",
+                        ),
+                      }}
                     />
 
                     <div className="grid gap-2">
-                      <Label htmlFor="weight.value">Weight (kg)</Label>
+                      <Label htmlFor="weight.value">
+                        {t("marketplace.products.variants.detail.weight-label")}
+                      </Label>
                       <Input
                         id="weight.value"
                         type="number"
                         step="0.01"
-                        placeholder="0.00"
+                        placeholder={t("common.numeric-placeholder")}
                         {...form.register("weight.value")}
                       />
                     </div>
@@ -494,11 +517,15 @@ export function NewVariantClient({
                   <div className="border-t" />
 
                   <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Attributes</h3>
+                    <h3 className="text-lg font-medium">
+                      {t("common.attributes")}
+                    </h3>
 
                     <div className="space-y-3">
                       <h4 className="text-sm font-medium text-muted-foreground">
-                        Selection Attributes
+                        {t(
+                          "marketplace.products.variants.detail.selection-attributes",
+                        )}
                       </h4>
                       {selectionAttributes.map(({ attribute }) => {
                         const inputType = attribute.inputType;
@@ -529,7 +556,9 @@ export function NewVariantClient({
                               key={attribute.id}
                               name={fieldName}
                               label={
-                                attribute.name ?? attribute.slug ?? "Attribute"
+                                attribute.name ??
+                                attribute.slug ??
+                                t("common.attribute-fallback")
                               }
                             />
                           );
@@ -545,10 +574,12 @@ export function NewVariantClient({
                               key={attribute.id}
                               name={fieldName}
                               label={
-                                attribute.name ?? attribute.slug ?? "Attribute"
+                                attribute.name ??
+                                attribute.slug ??
+                                t("common.attribute-fallback")
                               }
                               options={choices}
-                              placeholder="Select value"
+                              placeholder={t("common.select-value")}
                             />
                           );
                         }
@@ -562,12 +593,22 @@ export function NewVariantClient({
                               key={attribute.id}
                               name={fieldName}
                               label={
-                                attribute.name ?? attribute.slug ?? "Attribute"
+                                attribute.name ??
+                                attribute.slug ??
+                                t("common.attribute-fallback")
                               }
                               options={choices}
                               isMulti
-                              placeholder="Select values"
-                              searchPlaceholder={`Search ${attribute.name ?? attribute.slug ?? "attribute"}`}
+                              placeholder={t("common.select-values")}
+                              searchPlaceholder={t(
+                                "marketplace.products.new.search-attribute",
+                                {
+                                  name:
+                                    attribute.name ??
+                                    attribute.slug ??
+                                    "attribute",
+                                },
+                              )}
                             />
                           );
                         }
@@ -577,7 +618,9 @@ export function NewVariantClient({
                             key={attribute.id}
                             name={fieldName}
                             label={
-                              attribute.name ?? attribute.slug ?? "Attribute"
+                              attribute.name ??
+                              attribute.slug ??
+                              t("common.attribute-fallback")
                             }
                           />
                         );
@@ -588,7 +631,9 @@ export function NewVariantClient({
 
                     <div className="space-y-3">
                       <h4 className="text-sm font-medium text-muted-foreground">
-                        Non-selection Attributes
+                        {t(
+                          "marketplace.products.variants.detail.non-selection-attributes",
+                        )}
                       </h4>
                       {nonSelectionAttributes.map(({ attribute }) => {
                         const inputType = attribute.inputType;
@@ -619,7 +664,9 @@ export function NewVariantClient({
                               key={attribute.id}
                               name={fieldName}
                               label={
-                                attribute.name ?? attribute.slug ?? "Attribute"
+                                attribute.name ??
+                                attribute.slug ??
+                                t("common.attribute-fallback")
                               }
                             />
                           );
@@ -635,10 +682,12 @@ export function NewVariantClient({
                               key={attribute.id}
                               name={fieldName}
                               label={
-                                attribute.name ?? attribute.slug ?? "Attribute"
+                                attribute.name ??
+                                attribute.slug ??
+                                t("common.attribute-fallback")
                               }
                               options={choices}
-                              placeholder="Select value"
+                              placeholder={t("common.select-value")}
                             />
                           );
                         }
@@ -652,12 +701,22 @@ export function NewVariantClient({
                               key={attribute.id}
                               name={fieldName}
                               label={
-                                attribute.name ?? attribute.slug ?? "Attribute"
+                                attribute.name ??
+                                attribute.slug ??
+                                t("common.attribute-fallback")
                               }
                               options={choices}
                               isMulti
-                              placeholder="Select values"
-                              searchPlaceholder={`Search ${attribute.name ?? attribute.slug ?? "attribute"}`}
+                              placeholder={t("common.select-values")}
+                              searchPlaceholder={t(
+                                "marketplace.products.new.search-attribute",
+                                {
+                                  name:
+                                    attribute.name ??
+                                    attribute.slug ??
+                                    "attribute",
+                                },
+                              )}
                             />
                           );
                         }
@@ -667,7 +726,9 @@ export function NewVariantClient({
                             key={attribute.id}
                             name={fieldName}
                             label={
-                              attribute.name ?? attribute.slug ?? "Attribute"
+                              attribute.name ??
+                              attribute.slug ??
+                              t("common.attribute-fallback")
                             }
                           />
                         );

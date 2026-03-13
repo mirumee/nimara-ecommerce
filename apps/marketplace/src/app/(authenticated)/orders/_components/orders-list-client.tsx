@@ -2,6 +2,7 @@
 
 import { ChevronDown, ChevronUp, Filter, Plus, Search } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "@nimara/ui/components/button";
@@ -61,13 +62,6 @@ import { formatDateTime, formatPrice } from "@/lib/utils";
 const DEFAULT_PAGE_SIZE = 15;
 const PAGE_SIZE_OPTIONS = [15, 25, 50];
 
-function formatEnumLabel(value: string): string {
-  return value
-    .split("_")
-    .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
-    .join(" ");
-}
-
 type Order = {
   created: string;
   id: string;
@@ -93,6 +87,7 @@ interface OrdersListClientProps {
 }
 
 export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
+  const t = useTranslations();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -267,14 +262,16 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
   return (
     <div className="grid gap-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-semibold">Orders</h2>
+        <h2 className="text-2xl font-semibold">
+          {t("marketplace.orders.list.title")}
+        </h2>
         <Button
           type="button"
           className="bg-stone-900 hover:bg-stone-800"
           onClick={() => router.push("/orders/new")}
         >
           <Plus className="mr-2 h-4 w-4" />
-          New order
+          {t("common.new-order")}
         </Button>
       </div>
 
@@ -284,7 +281,7 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder="Search orders..."
+                placeholder={t("marketplace.orders.list.search-placeholder")}
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
                 className="w-64 pl-9"
@@ -296,21 +293,27 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
             <div className="flex items-center gap-2">
               {activeFiltersCount.date > 0 && (
                 <DeletableChip
-                  label={`Date created (${activeFiltersCount.date})`}
+                  label={t("common.chip-date-created", {
+                    count: activeFiltersCount.date,
+                  })}
                   onDelete={() => handleDateRangeSelect(null)}
                 />
               )}
 
               {activeFiltersCount.paymentStatus > 0 && (
                 <DeletableChip
-                  label={`Payment status (${activeFiltersCount.paymentStatus})`}
+                  label={t("marketplace.orders.list.chip-payment-status", {
+                    count: activeFiltersCount.paymentStatus,
+                  })}
                   onDelete={() => updateSearchParams({ paymentStatus: [] })}
                 />
               )}
 
               {activeFiltersCount.fulfillmentStatus > 0 && (
                 <DeletableChip
-                  label={`Fulfillment status (${activeFiltersCount.fulfillmentStatus})`}
+                  label={t("marketplace.orders.list.chip-fulfillment-status", {
+                    count: activeFiltersCount.fulfillmentStatus,
+                  })}
                   onDelete={() => updateSearchParams({ status: [] })}
                 />
               )}
@@ -320,7 +323,7 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
               <PopoverTrigger asChild>
                 <Button variant="outline" className="ml-2 gap-2">
                   <Filter className="h-4 w-4" />
-                  Filters
+                  {t("common.filter-button")}
                   {activeFiltersCount.total > 0 && (
                     <span>({activeFiltersCount.total})</span>
                   )}
@@ -330,11 +333,13 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
                 <ScrollArea className="h-[400px]">
                   <div className="space-y-4">
                     <div>
-                      <h4 className="mb-2 font-medium">Date Range</h4>
+                      <h4 className="mb-2 font-medium">
+                        {t("common.filter-date-range")}
+                      </h4>
                       <div className="space-y-2">
                         {PRESET_DATE_RANGES.map((preset) => (
                           <Button
-                            key={preset.label}
+                            key={preset.labelKey}
                             variant="outline"
                             size="sm"
                             className="w-full justify-start"
@@ -345,7 +350,7 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
                               })
                             }
                           >
-                            {preset.label}
+                            {t(`common.${preset.labelKey}`)}
                           </Button>
                         ))}
                         {(createdGte || createdLte) && (
@@ -355,14 +360,16 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
                             className="w-full justify-start"
                             onClick={() => handleDateRangeSelect(null)}
                           >
-                            Clear date range
+                            {t("common.filter-date-clear")}
                           </Button>
                         )}
                       </div>
                     </div>
 
                     <div>
-                      <h4 className="mb-2 font-medium">Payment Status</h4>
+                      <h4 className="mb-2 font-medium">
+                        {t("marketplace.orders.list.filter-payment-status")}
+                      </h4>
                       <div className="space-y-2">
                         {PAYMENT_STATUS_OPTIONS.map((opt) => (
                           <div key={opt} className="flex items-center gap-2">
@@ -375,7 +382,9 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
                               htmlFor={`payment-${opt}`}
                               className="flex-1"
                             >
-                              {formatEnumLabel(opt)}
+                              {t(
+                                `marketplace.orders.list.payment-status-${opt}`,
+                              )}
                             </Label>
                           </div>
                         ))}
@@ -383,7 +392,9 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
                     </div>
 
                     <div>
-                      <h4 className="mb-2 font-medium">Fulfillment Status</h4>
+                      <h4 className="mb-2 font-medium">
+                        {t("marketplace.orders.list.filter-fulfillment-status")}
+                      </h4>
                       <div className="space-y-2">
                         {FULFILLMENT_STATUS_OPTIONS.map((opt) => (
                           <div key={opt} className="flex items-center gap-2">
@@ -393,7 +404,9 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
                               onCheckedChange={() => toggleStatus(opt)}
                             />
                             <Label htmlFor={`status-${opt}`} className="flex-1">
-                              {formatEnumLabel(opt)}
+                              {t(
+                                `marketplace.orders.list.fulfillment-status-${opt}`,
+                              )}
                             </Label>
                           </div>
                         ))}
@@ -406,7 +419,7 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
                         className="w-full"
                         onClick={clearFilters}
                       >
-                        Clear all filters
+                        {t("common.filter-clear-all")}
                       </Button>
                     )}
                   </div>
@@ -423,7 +436,7 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
                   onClick={() => handleSort("NUMBER")}
                 >
                   <div className="flex items-center gap-1">
-                    Order No.
+                    {t("marketplace.orders.list.table-order-no")}
                     {sortField === "NUMBER" &&
                       (sortDirection === "ASC" ? (
                         <ChevronUp className="h-4 w-4" />
@@ -437,7 +450,7 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
                   onClick={() => handleSort("CREATION_DATE")}
                 >
                   <div className="flex items-center gap-1">
-                    Date
+                    {t("common.date")}
                     {sortField === "CREATION_DATE" &&
                       (sortDirection === "ASC" ? (
                         <ChevronUp className="h-4 w-4" />
@@ -446,17 +459,21 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
                       ))}
                   </div>
                 </TableHead>
-                <TableHead>Customer</TableHead>
-                <TableHead>Total</TableHead>
-                <TableHead>Payment status</TableHead>
-                <TableHead>Fulfillment status</TableHead>
+                <TableHead>{t("common.customer")}</TableHead>
+                <TableHead>{t("common.total")}</TableHead>
+                <TableHead>
+                  {t("marketplace.orders.list.table-payment-status")}
+                </TableHead>
+                <TableHead>
+                  {t("marketplace.orders.list.table-fulfillment-status")}
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {orders.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center">
-                    No orders found
+                    {t("marketplace.orders.list.empty-list")}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -494,7 +511,7 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
           <div className="flex items-center justify-between border-t p-4">
             <div className="flex items-center gap-2">
               <span className="w-24 text-sm text-muted-foreground">
-                View items
+                {t("common.view-items")}
               </span>
               <Select
                 value={String(pageSize)}
@@ -517,7 +534,7 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
               <PaginationContent>
                 <PaginationItem>
                   <PaginationPrevious
-                    label="Previous"
+                    label={t("common.previous")}
                     onClick={handlePreviousPage}
                     className={
                       !hasPreviousPage
@@ -528,7 +545,7 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
                 </PaginationItem>
                 <PaginationItem>
                   <PaginationNext
-                    label="Next"
+                    label={t("common.next")}
                     onClick={handleNextPage}
                     className={
                       !hasNextPage

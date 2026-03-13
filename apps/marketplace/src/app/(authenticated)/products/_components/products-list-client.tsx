@@ -4,6 +4,7 @@ import { Filter, Plus, Search } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "@nimara/ui/components/button";
@@ -47,8 +48,8 @@ const DEFAULT_PAGE_SIZE = 15;
 const PAGE_SIZE_OPTIONS = [15, 25, 50];
 
 const PUBLISHED_FILTER_OPTIONS = [
-  { value: "published", label: "Published" },
-  { value: "draft", label: "Draft" },
+  { value: "published", labelKey: "status-published" },
+  { value: "draft", labelKey: "status-draft" },
 ] as const;
 
 type Product = {
@@ -86,6 +87,7 @@ export function ProductsListClient({
   products,
   pageInfo,
 }: ProductsListClientProps) {
+  const t = useTranslations();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -184,11 +186,13 @@ export function ProductsListClient({
   return (
     <div className="grid gap-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-semibold">Products</h2>
+        <h2 className="text-2xl font-semibold">
+          {t("marketplace.products.list.title")}
+        </h2>
         <Button asChild>
           <Link href="/products/new">
             <Plus className="mr-2 h-4 w-4" />
-            Add product
+            {t("marketplace.products.list.add-product")}
           </Link>
         </Button>
       </div>
@@ -199,7 +203,7 @@ export function ProductsListClient({
             <div className="relative">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
               <Input
-                placeholder="Search"
+                placeholder={t("common.search")}
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
                 className="w-64 pl-9"
@@ -210,7 +214,7 @@ export function ProductsListClient({
               <PopoverTrigger asChild>
                 <Button variant="outline" className="gap-2 bg-transparent">
                   <Filter className="h-4 w-4" />
-                  Filter
+                  {t("common.filter-button")}
                   {publishedFilter.length > 0 && (
                     <span className="text-muted-foreground">
                       ({publishedFilter.length})
@@ -221,18 +225,20 @@ export function ProductsListClient({
               <PopoverContent className="min-w-[240px]" align="end">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-medium">Filter</h3>
+                    <h3 className="font-medium">{t("common.filter-title")}</h3>
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={clearFilters}
                       className="h-auto py-1 text-xs"
                     >
-                      Clear all
+                      {t("common.filter-clear-all")}
                     </Button>
                   </div>
                   <div className="space-y-3">
-                    <h4 className="text-sm font-medium">Status</h4>
+                    <h4 className="text-sm font-medium">
+                      {t("common.status")}
+                    </h4>
                     <div className="space-y-2">
                       {PUBLISHED_FILTER_OPTIONS.map((opt) => (
                         <div
@@ -250,7 +256,7 @@ export function ProductsListClient({
                             htmlFor={`product-${opt.value}`}
                             className="cursor-pointer text-sm font-normal"
                           >
-                            {opt.label}
+                            {t(`marketplace.products.list.${opt.labelKey}`)}
                           </Label>
                         </div>
                       ))}
@@ -263,21 +269,31 @@ export function ProductsListClient({
 
           {products.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12">
-              <p className="text-muted-foreground">No products found</p>
+              <p className="text-muted-foreground">
+                {t("marketplace.products.list.empty-list")}
+              </p>
               <Button asChild variant="link" className="mt-2">
-                <Link href="/products/new">Create your first product</Link>
+                <Link href="/products/new">
+                  {t("marketplace.products.list.empty-cta")}
+                </Link>
               </Button>
             </div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow className="border-t px-6 py-4">
-                  <TableHead className="w-[80px]">Image</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Created At</TableHead>
+                  <TableHead className="w-[80px]">
+                    {t("marketplace.products.list.table-image")}
+                  </TableHead>
+                  <TableHead>{t("common.name")}</TableHead>
+                  <TableHead>{t("common.status")}</TableHead>
+                  <TableHead>{t("common.type")}</TableHead>
+                  <TableHead>
+                    {t("marketplace.products.list.table-category")}
+                  </TableHead>
+                  <TableHead>
+                    {t("marketplace.products.list.table-created-at")}
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -309,6 +325,11 @@ export function ProductsListClient({
                             ? "Published"
                             : "Draft"
                         }
+                        displayLabel={
+                          product.channelListings?.some((l) => l.isPublished)
+                            ? t("marketplace.products.list.status-published")
+                            : t("marketplace.products.list.status-draft")
+                        }
                       />
                     </TableCell>
                     <TableCell className="text-muted-foreground">
@@ -327,7 +348,7 @@ export function ProductsListClient({
           <div className="flex items-center justify-between border-t p-4">
             <div className="flex items-center gap-2">
               <span className="w-24 text-sm text-muted-foreground">
-                View items
+                {t("common.view-items")}
               </span>
               <Select
                 value={String(pageSize)}
@@ -350,7 +371,7 @@ export function ProductsListClient({
               <PaginationContent>
                 <PaginationItem>
                   <PaginationPrevious
-                    label="Previous"
+                    label={t("common.previous")}
                     onClick={handlePreviousPage}
                     className={
                       !hasPreviousPage
@@ -361,7 +382,7 @@ export function ProductsListClient({
                 </PaginationItem>
                 <PaginationItem>
                   <PaginationNext
-                    label="Next"
+                    label={t("common.next")}
                     onClick={handleNextPage}
                     className={
                       !hasNextPage

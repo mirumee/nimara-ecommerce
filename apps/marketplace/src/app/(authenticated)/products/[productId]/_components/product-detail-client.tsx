@@ -5,6 +5,7 @@ import { ArrowLeft, ImageIcon, Loader2, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import {
   FormProvider,
@@ -256,16 +257,19 @@ function AttributesSection({
     NonNullable<ProductDetail["product"]>["assignedAttributes"]
   >;
 }) {
+  const t = useTranslations();
   const { register } = useFormContext<ProductUpdateFormValues>();
 
   if (!assignedAttributes?.length) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Attributes</CardTitle>
+          <CardTitle>{t("common.attributes")}</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">No attributes</p>
+          <p className="text-sm text-muted-foreground">
+            {t("marketplace.products.new.no-attributes")}
+          </p>
         </CardContent>
       </Card>
     );
@@ -274,7 +278,7 @@ function AttributesSection({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Attributes</CardTitle>
+        <CardTitle>{t("common.attributes")}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {assignedAttributes.map((assigned) => {
@@ -305,19 +309,21 @@ function AttributesSection({
             <div key={attribute.id} className="grid gap-2">
               <div className="flex items-baseline justify-between gap-4">
                 <Label className="font-medium">
-                  {attribute.name ?? attribute.slug ?? "Attribute"}
+                  {attribute.name ??
+                    attribute.slug ??
+                    t("common.attribute-fallback")}
                 </Label>
               </div>
 
               {inputType === ("BOOLEAN" as AttributeInputTypeEnum) ? (
-                <CheckboxField name={fieldName} label="Enabled" />
+                <CheckboxField name={fieldName} label={t("common.enabled")} />
               ) : inputType === ("DROPDOWN" as AttributeInputTypeEnum) ||
                 inputType === ("SWATCH" as AttributeInputTypeEnum) ? (
                 <SelectField
                   name={fieldName}
                   label={undefined}
                   options={choices}
-                  placeholder="Select value"
+                  placeholder={t("common.select-value")}
                 />
               ) : inputType === ("MULTISELECT" as AttributeInputTypeEnum) ? (
                 <SelectField
@@ -325,8 +331,13 @@ function AttributesSection({
                   label={undefined}
                   options={choices}
                   isMulti
-                  placeholder="Select values"
-                  searchPlaceholder={`Search ${attribute.name ?? attribute.slug ?? "attribute"}`}
+                  placeholder={t("common.select-values")}
+                  searchPlaceholder={t(
+                    "marketplace.products.new.search-attribute",
+                    {
+                      name: attribute.name ?? attribute.slug ?? "attribute",
+                    },
+                  )}
                 />
               ) : inputType === ("DATE" as AttributeInputTypeEnum) ? (
                 <Input type="date" {...register(fieldName)} />
@@ -337,19 +348,26 @@ function AttributesSection({
               ) : inputType === ("RICH_TEXT" as AttributeInputTypeEnum) ? (
                 <Textarea
                   {...register(fieldName)}
-                  placeholder="Plain text will be converted to EditorJS JSON on save."
+                  placeholder={t(
+                    "marketplace.products.new.rich-text-placeholder",
+                  )}
                 />
               ) : (
-                <Input {...register(fieldName)} placeholder="Value" />
+                <Input
+                  {...register(fieldName)}
+                  placeholder={t("common.value")}
+                />
               )}
 
               {attribute.valueRequired ? (
-                <p className="text-xs text-muted-foreground">Required</p>
+                <p className="text-xs text-muted-foreground">
+                  {t("common.required")}
+                </p>
               ) : null}
 
               {inputType === ("FILE" as AttributeInputTypeEnum) ? (
                 <p className="text-xs text-muted-foreground">
-                  File attributes are read-only here.
+                  {t("marketplace.products.detail.file-attributes-readonly")}
                 </p>
               ) : null}
             </div>
@@ -368,6 +386,7 @@ export function ProductDetailClient({
   collections,
   productTypes,
 }: Props) {
+  const t = useTranslations();
   const router = useRouter();
   const { toast } = useToast();
 
@@ -545,11 +564,14 @@ export function ProductDetailClient({
 
       if (!result.ok) {
         const message = result.errors
-          .map((e: { message?: string | null }) => e.message || "Unknown error")
+          .map(
+            (e: { message?: string | null }) =>
+              e.message || t("common.toast-unknown-error"),
+          )
           .join(", ");
 
         toast({
-          title: "Failed to update product",
+          title: t("marketplace.products.detail.toast-update-failed"),
           description: message,
           variant: "destructive",
         });
@@ -561,12 +583,12 @@ export function ProductDetailClient({
 
       if (errors.length > 0) {
         toast({
-          title: "Failed to update product",
+          title: t("marketplace.products.detail.toast-update-failed"),
           description:
             errors
               .map((e) => e.message)
               .filter(Boolean)
-              .join(", ") || "Unknown error",
+              .join(", ") || t("common.toast-unknown-error"),
           variant: "destructive",
         });
 
@@ -593,16 +615,16 @@ export function ProductDetailClient({
         if (!del.ok || (del.data.productMediaDelete?.errors ?? []).length) {
           mediaHadErrors = true;
           toast({
-            title: "Product updated, but media delete failed",
+            title: t("marketplace.products.detail.toast-media-delete-failed"),
             description: del.ok
               ? del.data.productMediaDelete?.errors
                   .map((e: { message?: string | null }) => e.message)
                   .filter(Boolean)
-                  .join(", ") || "Unknown error"
+                  .join(", ") || t("common.toast-unknown-error")
               : del.errors
                   .map(
                     (e: { message?: string | null }) =>
-                      e.message || "Unknown error",
+                      e.message || t("common.toast-unknown-error"),
                   )
                   .join(", "),
             variant: "destructive",
@@ -614,8 +636,10 @@ export function ProductDetailClient({
       if (isAddMediaOpen && pendingMediaUrl.trim() && !normalizedPendingUrl) {
         mediaHadErrors = true;
         toast({
-          title: "Product updated, but media create failed",
-          description: `Invalid URL: ${pendingMediaUrl}`,
+          title: t("marketplace.products.detail.toast-media-create-failed"),
+          description: t("marketplace.products.detail.toast-invalid-url", {
+            url: pendingMediaUrl,
+          }),
           variant: "destructive",
         });
       }
@@ -640,16 +664,16 @@ export function ProductDetailClient({
         ) {
           mediaHadErrors = true;
           toast({
-            title: "Product updated, but media create failed",
+            title: t("marketplace.products.detail.toast-media-create-failed"),
             description: created.ok
               ? created.data.productMediaCreate?.errors
                   .map((e: { message?: string | null }) => e.message)
                   .filter(Boolean)
-                  .join(", ") || "Unknown error"
+                  .join(", ") || t("common.toast-unknown-error")
               : created.errors
                   .map(
                     (e: { message?: string | null }) =>
-                      e.message || "Unknown error",
+                      e.message || t("common.toast-unknown-error"),
                   )
                   .join(", "),
             variant: "destructive",
@@ -708,11 +732,14 @@ export function ProductDetailClient({
 
       if (!channelListingResult.ok) {
         const message = channelListingResult.errors
-          .map((e: { message?: string | null }) => e.message || "Unknown error")
+          .map(
+            (e: { message?: string | null }) =>
+              e.message || t("common.toast-unknown-error"),
+          )
           .join(", ");
 
         toast({
-          title: "Updated product, but channel listing update failed",
+          title: t("marketplace.products.detail.toast-channel-update-failed"),
           description: message,
           variant: "destructive",
         });
@@ -726,12 +753,12 @@ export function ProductDetailClient({
 
       if (channelErrors.length > 0) {
         toast({
-          title: "Updated product, but channel listing update failed",
+          title: t("marketplace.products.detail.toast-channel-update-failed"),
           description:
             channelErrors
               .map((e) => e.message)
               .filter(Boolean)
-              .join(", ") || "Unknown error",
+              .join(", ") || t("common.toast-unknown-error"),
           variant: "destructive",
         });
         router.refresh();
@@ -742,14 +769,17 @@ export function ProductDetailClient({
       toast(
         mediaHadErrors
           ? {
-              title: "Product updated with media errors",
-              description:
-                "Some media changes failed. Please review the Media section.",
+              title: t(
+                "marketplace.products.detail.toast-updated-media-errors",
+              ),
+              description: t(
+                "marketplace.products.detail.toast-updated-media-errors-desc",
+              ),
               variant: "destructive",
             }
           : {
-              title: "Product updated",
-              description: "Changes saved successfully.",
+              title: t("marketplace.products.detail.toast-updated"),
+              description: t("marketplace.shared.toast-updated-success"),
             },
       );
 
@@ -759,8 +789,11 @@ export function ProductDetailClient({
       router.refresh();
     } catch (error) {
       toast({
-        title: "Failed to update product",
-        description: error instanceof Error ? error.message : "Unknown error",
+        title: t("marketplace.products.detail.toast-update-failed"),
+        description:
+          error instanceof Error
+            ? error.message
+            : t("common.toast-unknown-error"),
         variant: "destructive",
       });
     }
@@ -773,12 +806,12 @@ export function ProductDetailClient({
 
       if (!result.ok) {
         toast({
-          title: "Failed to upload image",
+          title: t("marketplace.shared.media.toast-upload-failed"),
           description:
             result.errors
               .map((e: { message?: string }) => e.message)
               .filter(Boolean)
-              .join(", ") || "Failed to upload image",
+              .join(", ") || t("marketplace.shared.media.toast-upload-failed"),
           variant: "destructive",
         });
 
@@ -795,15 +828,17 @@ export function ProductDetailClient({
       }
 
       toast({
-        title: "Image uploaded",
-        description: "Image has been uploaded successfully.",
+        title: t("marketplace.shared.media.toast-upload-success"),
+        description: t("marketplace.products.detail.toast-upload-success-desc"),
       });
       router.refresh();
     } catch (error) {
       toast({
-        title: "Failed to upload image",
+        title: t("marketplace.shared.media.toast-upload-failed"),
         description:
-          error instanceof Error ? error.message : "Unknown error occurred",
+          error instanceof Error
+            ? error.message
+            : t("common.toast-unknown-error"),
         variant: "destructive",
       });
     } finally {
@@ -820,8 +855,8 @@ export function ProductDetailClient({
 
     if (!file.type.startsWith("image/")) {
       toast({
-        title: "Invalid file type",
-        description: "Please select an image file.",
+        title: t("marketplace.shared.media.toast-invalid-file"),
+        description: t("marketplace.shared.media.toast-invalid-file-desc"),
         variant: "destructive",
       });
 
@@ -832,8 +867,8 @@ export function ProductDetailClient({
 
     if (file.size > maxSize) {
       toast({
-        title: "File too large",
-        description: "Please select an image smaller than 10MB.",
+        title: t("marketplace.shared.media.toast-file-too-large"),
+        description: t("marketplace.shared.media.toast-file-too-large-desc"),
         variant: "destructive",
       });
 
@@ -846,8 +881,8 @@ export function ProductDetailClient({
   const handleSaveMediaUrl = async () => {
     if (!pendingMediaUrl.trim()) {
       toast({
-        title: "URL required",
-        description: "Please enter a media URL.",
+        title: t("marketplace.products.detail.toast-url-required"),
+        description: t("marketplace.products.detail.toast-url-required-desc"),
         variant: "destructive",
       });
 
@@ -858,8 +893,10 @@ export function ProductDetailClient({
 
     if (!normalizedUrl) {
       toast({
-        title: "Invalid URL",
-        description: "Please enter a valid URL.",
+        title: t("marketplace.products.detail.toast-invalid-url-desc"),
+        description: t(
+          "marketplace.products.detail.toast-invalid-url-desc-hint",
+        ),
         variant: "destructive",
       });
 
@@ -880,16 +917,16 @@ export function ProductDetailClient({
 
       if (!result.ok || (result.data.productMediaCreate?.errors ?? []).length) {
         toast({
-          title: "Failed to add media",
+          title: t("marketplace.products.detail.toast-add-media-failed"),
           description: result.ok
             ? result.data.productMediaCreate?.errors
                 .map((e: { message?: string | null }) => e.message)
                 .filter(Boolean)
-                .join(", ") || "Unknown error"
+                .join(", ") || t("common.toast-unknown-error")
             : result.errors
                 .map(
                   (e: { message?: string | null }) =>
-                    e.message || "Unknown error",
+                    e.message || t("common.toast-unknown-error"),
                 )
                 .join(", "),
           variant: "destructive",
@@ -908,15 +945,18 @@ export function ProductDetailClient({
         setPendingMediaUrl("");
         setIsAddMediaOpen(false);
         toast({
-          title: "Media added",
-          description: "Media URL has been added successfully.",
+          title: t("marketplace.products.detail.toast-media-added"),
+          description: t("marketplace.products.detail.toast-media-added-desc"),
         });
         router.refresh();
       }
     } catch (error) {
       toast({
-        title: "Failed to add media",
-        description: error instanceof Error ? error.message : "Unknown error",
+        title: t("marketplace.products.detail.toast-add-media-failed"),
+        description:
+          error instanceof Error
+            ? error.message
+            : t("common.toast-unknown-error"),
         variant: "destructive",
       });
     }
@@ -947,8 +987,10 @@ export function ProductDetailClient({
 
     if (!file.type.startsWith("image/")) {
       toast({
-        title: "Invalid file type",
-        description: "Please drop an image file.",
+        title: t("marketplace.shared.media.toast-invalid-file"),
+        description: t(
+          "marketplace.products.detail.toast-invalid-file-desc-drop",
+        ),
         variant: "destructive",
       });
 
@@ -959,8 +1001,10 @@ export function ProductDetailClient({
 
     if (file.size > maxSize) {
       toast({
-        title: "File too large",
-        description: "Please drop an image smaller than 10MB.",
+        title: t("marketplace.shared.media.toast-file-too-large"),
+        description: t(
+          "marketplace.products.detail.toast-file-too-large-desc-drop",
+        ),
         variant: "destructive",
       });
 
@@ -976,16 +1020,16 @@ export function ProductDetailClient({
 
       if (!result.ok || (result.data.productMediaDelete?.errors ?? []).length) {
         toast({
-          title: "Failed to delete media",
+          title: t("marketplace.products.detail.toast-delete-media-failed"),
           description: result.ok
             ? result.data.productMediaDelete?.errors
                 .map((e: { message?: string | null }) => e.message)
                 .filter(Boolean)
-                .join(", ") || "Unknown error"
+                .join(", ") || t("common.toast-unknown-error")
             : result.errors
                 .map(
                   (e: { message?: string | null }) =>
-                    e.message || "Unknown error",
+                    e.message || t("common.toast-unknown-error"),
                 )
                 .join(", "),
           variant: "destructive",
@@ -996,14 +1040,17 @@ export function ProductDetailClient({
 
       setMediaDraft((prev) => prev.filter((m) => m.id !== mediaId));
       toast({
-        title: "Media deleted",
-        description: "Media has been deleted successfully.",
+        title: t("marketplace.products.detail.toast-media-deleted"),
+        description: t("marketplace.products.detail.toast-media-deleted-desc"),
       });
       router.refresh();
     } catch (error) {
       toast({
-        title: "Failed to delete media",
-        description: error instanceof Error ? error.message : "Unknown error",
+        title: t("marketplace.products.detail.toast-delete-media-failed"),
+        description:
+          error instanceof Error
+            ? error.message
+            : t("common.toast-unknown-error"),
         variant: "destructive",
       });
     }
@@ -1071,10 +1118,11 @@ export function ProductDetailClient({
         // Revert on error
         setMediaDraft(previousOrder);
         toast({
-          title: "Failed to reorder media",
+          title: t("marketplace.products.detail.toast-reorder-failed"),
           description: result.errors
             .map(
-              (e: { message?: string | null }) => e.message || "Unknown error",
+              (e: { message?: string | null }) =>
+                e.message || t("common.toast-unknown-error"),
             )
             .join(", "),
           variant: "destructive",
@@ -1096,12 +1144,12 @@ export function ProductDetailClient({
         // Revert on error
         setMediaDraft(previousOrder);
         toast({
-          title: "Failed to reorder media",
+          title: t("marketplace.products.detail.toast-reorder-failed"),
           description:
             errors
               .map((e: { message?: string | null }) => e.message)
               .filter(Boolean)
-              .join(", ") || "Unknown error",
+              .join(", ") || t("common.toast-unknown-error"),
           variant: "destructive",
         });
 
@@ -1127,8 +1175,11 @@ export function ProductDetailClient({
       // Revert on error
       setMediaDraft(previousOrder);
       toast({
-        title: "Failed to reorder media",
-        description: error instanceof Error ? error.message : "Unknown error",
+        title: t("marketplace.products.detail.toast-reorder-failed"),
+        description:
+          error instanceof Error
+            ? error.message
+            : t("common.toast-unknown-error"),
         variant: "destructive",
       });
     } finally {
@@ -1138,7 +1189,8 @@ export function ProductDetailClient({
 
   const isSubmitting = form.formState.isSubmitting;
 
-  const productStatus = product.channelListings?.some((l) => l.isPublished)
+  const isPublished = product.channelListings?.some((l) => l.isPublished);
+  const productStatus: "Published" | "Draft" = isPublished
     ? "Published"
     : "Draft";
 
@@ -1149,9 +1201,9 @@ export function ProductDetailClient({
 
       if (!result.ok) {
         toast({
-          title: "Failed to delete product",
+          title: t("marketplace.products.detail.toast-delete-failed"),
           description: result.errors
-            .map((e) => e.message || "Unknown error")
+            .map((e) => e.message || t("common.toast-unknown-error"))
             .join(", "),
           variant: "destructive",
         });
@@ -1163,12 +1215,12 @@ export function ProductDetailClient({
 
       if (errors.length > 0) {
         toast({
-          title: "Failed to delete product",
+          title: t("marketplace.products.detail.toast-delete-failed"),
           description:
             errors
               .map((e: { message?: string | null }) => e.message)
               .filter(Boolean)
-              .join(", ") || "Unknown error",
+              .join(", ") || t("common.toast-unknown-error"),
           variant: "destructive",
         });
 
@@ -1177,15 +1229,18 @@ export function ProductDetailClient({
 
       setShowDeleteDialog(false);
       toast({
-        title: "Product deleted",
-        description: "The product has been deleted successfully.",
+        title: t("marketplace.products.detail.toast-deleted"),
+        description: t("marketplace.products.detail.toast-deleted-desc"),
       });
 
       router.replace("/products");
     } catch (error) {
       toast({
-        title: "Failed to delete product",
-        description: error instanceof Error ? error.message : "Unknown error",
+        title: t("marketplace.products.detail.toast-delete-failed"),
+        description:
+          error instanceof Error
+            ? error.message
+            : t("common.toast-unknown-error"),
         variant: "destructive",
       });
     } finally {
@@ -1204,13 +1259,21 @@ export function ProductDetailClient({
                 <Button asChild variant="ghost" size="sm" className="gap-2">
                   <Link href="/products">
                     <ArrowLeft className="h-4 w-4" />
-                    All products
+                    {t("marketplace.products.detail.back-to-products")}
                   </Link>
                 </Button>
                 <h1 className="text-2xl font-semibold">
-                  {product.name ?? "Product"}
+                  {product.name ??
+                    t("marketplace.products.detail.name-fallback")}
                 </h1>
-                <ColorBadge label={productStatus} />
+                <ColorBadge
+                  label={productStatus}
+                  displayLabel={
+                    isPublished
+                      ? t("marketplace.products.list.status-published")
+                      : t("marketplace.products.list.status-draft")
+                  }
+                />
               </div>
               <div className="flex items-center gap-2">
                 <Button
@@ -1219,10 +1282,10 @@ export function ProductDetailClient({
                   size="sm"
                   variant="destructive"
                 >
-                  Delete
+                  {t("common.delete")}
                 </Button>
                 <Button type="submit" size="sm" disabled={isSubmitting}>
-                  Save{" "}
+                  {t("common.save")}{" "}
                   {isSubmitting ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : null}
@@ -1245,16 +1308,25 @@ export function ProductDetailClient({
                 <div className="flex grow basis-2/3 flex-col gap-4">
                   <Card>
                     <CardHeader>
-                      <CardTitle>Product Information</CardTitle>
+                      <CardTitle>
+                        {t("marketplace.products.new.product-information")}
+                      </CardTitle>
                     </CardHeader>
 
                     <CardContent className="flex flex-col gap-4">
-                      <InputField label="Product Name" name="name" />
+                      <InputField
+                        label={t("marketplace.products.new.product-name")}
+                        name="name"
+                      />
                       <div className="grid gap-2">
-                        <Label>Product Description</Label>
+                        <Label>
+                          {t("marketplace.products.new.product-description")}
+                        </Label>
                         <Textarea
                           {...form.register("description")}
-                          placeholder="Enter product description"
+                          placeholder={t(
+                            "marketplace.products.new.product-description-placeholder",
+                          )}
                           disabled={isSubmitting}
                         />
                       </div>
@@ -1264,7 +1336,9 @@ export function ProductDetailClient({
                   <Card>
                     <CardHeader>
                       <div className="flex items-center justify-between">
-                        <CardTitle>Media</CardTitle>
+                        <CardTitle>
+                          {t("marketplace.products.detail.media")}
+                        </CardTitle>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button
@@ -1276,10 +1350,10 @@ export function ProductDetailClient({
                               {isUploadingImage ? (
                                 <>
                                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                  Uploading...
+                                  {t("marketplace.products.detail.uploading")}
                                 </>
                               ) : (
-                                <>Upload</>
+                                <>{t("marketplace.products.detail.upload")}</>
                               )}
                             </Button>
                           </DropdownMenuTrigger>
@@ -1303,13 +1377,13 @@ export function ProductDetailClient({
                               }}
                               disabled={isUploadingImage || isSubmitting}
                             >
-                              Upload Images
+                              {t("marketplace.products.detail.upload-images")}
                             </DropdownMenuItem>
                             <DropdownMenuItem
                               onClick={() => setIsAddMediaOpen(true)}
                               disabled={isUploadingImage || isSubmitting}
                             >
-                              Upload URL
+                              {t("marketplace.products.detail.upload-url")}
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -1350,7 +1424,9 @@ export function ProductDetailClient({
                                 className="absolute right-2 top-2 h-8 w-8 bg-destructive/90 opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100"
                                 onClick={() => handleDeleteMedia(m.id)}
                                 disabled={isSubmitting || isReordering}
-                                aria-label="Delete media"
+                                aria-label={t(
+                                  "marketplace.products.detail.delete-media-aria",
+                                )}
                               >
                                 <Trash2 className="h-4 w-4" />
                               </Button>
@@ -1362,7 +1438,7 @@ export function ProductDetailClient({
                       {isAddMediaOpen ? (
                         <div className="grid gap-3 rounded-lg border p-3">
                           <div className="text-sm font-medium">
-                            Add media URL
+                            {t("marketplace.products.detail.add-media-url")}
                           </div>
                           <div className="grid gap-2">
                             <Label>URL</Label>
@@ -1371,13 +1447,15 @@ export function ProductDetailClient({
                               onChange={(e) =>
                                 setPendingMediaUrl(e.target.value)
                               }
-                              placeholder="https://example.com/image.jpg"
+                              placeholder={t(
+                                "marketplace.products.detail.url-placeholder",
+                              )}
                               disabled={isSubmitting}
                             />
                           </div>
                           <div className="flex items-center justify-between gap-2">
                             <p className="text-xs text-muted-foreground">
-                              Enter a URL and click Save to add it.
+                              {t("marketplace.products.detail.add-media-hint")}
                             </p>
                             <div className="flex gap-2">
                               <Button
@@ -1389,7 +1467,7 @@ export function ProductDetailClient({
                                   setIsAddMediaOpen(false);
                                 }}
                               >
-                                Cancel
+                                {t("common.cancel")}
                               </Button>
                               <Button
                                 type="button"
@@ -1400,7 +1478,7 @@ export function ProductDetailClient({
                                   isSubmitting || !pendingMediaUrl.trim()
                                 }
                               >
-                                Save
+                                {t("common.save")}
                               </Button>
                             </div>
                           </div>
@@ -1447,10 +1525,12 @@ export function ProductDetailClient({
 
                   <Card>
                     <CardHeader className="flex flex-row items-center justify-between">
-                      <CardTitle>Variants</CardTitle>
+                      <CardTitle>
+                        {t("marketplace.products.detail.variants")}
+                      </CardTitle>
                       <Button variant="outline" size="sm" asChild>
                         <Link href={`/products/${productId}/variants/new`}>
-                          Add Variant
+                          {t("marketplace.products.detail.add-variant")}
                         </Link>
                       </Button>
                     </CardHeader>
@@ -1460,10 +1540,14 @@ export function ProductDetailClient({
                           <div className="space-y-2">
                             {/* Three-column header (Variant column wider for long names/SKUs) */}
                             <div className="grid grid-cols-[minmax(0,2fr)_1fr_1fr] gap-4 px-3 py-1.5 text-xs font-medium text-muted-foreground [&>div]:flex [&>div]:items-center">
-                              <div>Variant</div>
-                              <div>Channels</div>
+                              <div>
+                                {t("marketplace.products.detail.variant")}
+                              </div>
+                              <div>
+                                {t("common.channel-count", { count: 2 })}
+                              </div>
                               <div className="justify-end text-right">
-                                Stock
+                                {t("marketplace.products.detail.stock")}
                               </div>
                             </div>
                             {product.variants.map((variant) => {
@@ -1500,7 +1584,7 @@ export function ProductDetailClient({
                                         className="truncate text-sm text-muted-foreground"
                                         title={variant.sku ?? undefined}
                                       >
-                                        SKU: {variant.sku || "-"}
+                                        {t("common.sku")}: {variant.sku || "-"}
                                       </p>
                                     </div>
                                   </div>
@@ -1508,7 +1592,9 @@ export function ProductDetailClient({
                                   <div className="flex min-w-0 flex-col items-start justify-center gap-0.5 text-xs">
                                     {channelListings.length === 0 ? (
                                       <span className="text-xs font-medium text-destructive">
-                                        No channels
+                                        {t(
+                                          "marketplace.products.detail.no-channels",
+                                        )}
                                       </span>
                                     ) : channelListings.length <= maxVisible ? (
                                       channelListings.map((l) => {
@@ -1549,7 +1635,12 @@ export function ProductDetailClient({
                                                 : "text-green-600",
                                             )}
                                           >
-                                            {channelListings.length} channels
+                                            {t(
+                                              "marketplace.products.detail.channels-count",
+                                              {
+                                                count: channelListings.length,
+                                              },
+                                            )}
                                           </span>
                                         </TooltipTrigger>
                                         <TooltipContent>
@@ -1586,7 +1677,9 @@ export function ProductDetailClient({
                                   <div className="flex min-w-0 flex-col items-end justify-center gap-0.5 text-right text-xs">
                                     {stocks.length === 0 ? (
                                       <span className="text-xs font-medium text-destructive">
-                                        No stock
+                                        {t(
+                                          "marketplace.products.detail.no-stock",
+                                        )}
                                       </span>
                                     ) : stocks.length <= maxVisible ? (
                                       stocks.map((s) => (
@@ -1615,7 +1708,12 @@ export function ProductDetailClient({
                                                 : "text-green-600",
                                             )}
                                           >
-                                            {stocks.length} warehouses
+                                            {t(
+                                              "marketplace.products.detail.warehouses-count",
+                                              {
+                                                count: stocks.length,
+                                              },
+                                            )}
                                           </span>
                                         </TooltipTrigger>
                                         <TooltipContent>
@@ -1631,7 +1729,10 @@ export function ProductDetailClient({
                                                 <span className="font-medium">
                                                   {s.warehouse.name}
                                                 </span>
-                                                : {s.quantity} in stock
+                                                : {s.quantity}{" "}
+                                                {t(
+                                                  "marketplace.products.detail.in-stock",
+                                                )}
                                               </div>
                                             ))}
                                           </div>
@@ -1645,7 +1746,9 @@ export function ProductDetailClient({
                           </div>
                         </TooltipProvider>
                       ) : (
-                        <p className="text-muted-foreground">No variants</p>
+                        <p className="text-muted-foreground">
+                          {t("marketplace.products.detail.no-variants")}
+                        </p>
                       )}
                     </CardContent>
                   </Card>
@@ -1653,12 +1756,17 @@ export function ProductDetailClient({
                   {/* Search Engine Preview Section - at the bottom of left column */}
                   <Card>
                     <CardHeader>
-                      <CardTitle>Search Engine Preview</CardTitle>
+                      <CardTitle>
+                        {t("marketplace.products.new.search-engine-preview")}
+                      </CardTitle>
                     </CardHeader>
                     <CardContent className="flex flex-col gap-4">
-                      <InputField label="SEO Title" name="seo.title" />
                       <InputField
-                        label="SEO Description"
+                        label={t("marketplace.products.new.seo-title")}
+                        name="seo.title"
+                      />
+                      <InputField
+                        label={t("marketplace.products.new.seo-description")}
                         name="seo.description"
                       />
                     </CardContent>
@@ -1668,31 +1776,41 @@ export function ProductDetailClient({
                 <div className="flex grow basis-1/3 flex-col gap-4">
                   <Card>
                     <CardHeader>
-                      <CardTitle>Organize product</CardTitle>
+                      <CardTitle>
+                        {t("marketplace.products.new.organize-product")}
+                      </CardTitle>
                       <CardDescription>
-                        Select categories, collections, and product type.
+                        {t("marketplace.products.new.organize-product-desc")}
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col gap-4">
                       <SelectField
                         name="productTypeId"
-                        label="Product Type"
+                        label={t("marketplace.products.new.product-type")}
                         options={productTypeOptions}
                         disabled
-                        description="Changing product type is disabled."
+                        description={t(
+                          "marketplace.products.detail.product-type-disabled",
+                        )}
                       />
                       <SelectField
                         name="categoryId"
-                        label="Product Category"
+                        label={t("marketplace.products.new.product-category")}
                         options={categoryOptions}
-                        placeholder="Select category"
+                        placeholder={t(
+                          "marketplace.products.new.select-category",
+                        )}
                       />
 
                       <CollectionsField
                         name="collectionIds"
-                        label="Product Collections"
+                        label={t(
+                          "marketplace.products.new.product-collections",
+                        )}
                         options={collectionOptions}
-                        placeholder="Select collections"
+                        placeholder={t(
+                          "marketplace.products.new.select-collections",
+                        )}
                       />
                     </CardContent>
                   </Card>
@@ -1719,10 +1837,13 @@ export function ProductDetailClient({
       <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Product</DialogTitle>
+            <DialogTitle>
+              {t("marketplace.products.detail.delete-dialog-title")}
+            </DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete &ldquo;{product.name}&rdquo;? This
-              action cannot be undone.
+              {t("marketplace.products.detail.delete-dialog-description", {
+                name: product.name ?? "",
+              })}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -1732,7 +1853,7 @@ export function ProductDetailClient({
               onClick={() => setShowDeleteDialog(false)}
               disabled={isDeleting}
             >
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button
               type="button"
@@ -1743,10 +1864,10 @@ export function ProductDetailClient({
               {isDeleting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Deleting...
+                  {t("marketplace.collections.detail.deleting")}
                 </>
               ) : (
-                "Delete product"
+                t("marketplace.products.detail.delete-confirm")
               )}
             </Button>
           </DialogFooter>

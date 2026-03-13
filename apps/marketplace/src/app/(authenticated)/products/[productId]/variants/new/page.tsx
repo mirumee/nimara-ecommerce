@@ -1,3 +1,5 @@
+import { getTranslations } from "next-intl/server";
+
 import { Card, CardContent } from "@nimara/ui/components/card";
 
 import { getServerAuthToken } from "@/lib/auth/server";
@@ -10,6 +12,7 @@ export default async function NewVariantPage({
 }: {
   params: Promise<{ productId: string }>;
 }) {
+  const t = await getTranslations();
   const { productId: rawProductId } = await params;
   const productId = decodeURIComponent(rawProductId);
   const token = await getServerAuthToken();
@@ -28,8 +31,8 @@ export default async function NewVariantPage({
         <CardContent className="py-12 text-center">
           <p className="text-muted-foreground">
             {!productResult.ok || !product
-              ? "Failed to load product"
-              : "Product not found"}
+              ? t("common.failed-to-load")
+              : t("common.not-found")}
           </p>
         </CardContent>
       </Card>
@@ -57,7 +60,9 @@ export default async function NewVariantPage({
     return (
       <Card>
         <CardContent className="py-12 text-center">
-          <p className="text-muted-foreground">Failed to load product type</p>
+          <p className="text-muted-foreground">
+            {t("marketplace.shared.failed-to-load-product-type")}
+          </p>
         </CardContent>
       </Card>
     );

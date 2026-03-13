@@ -2,6 +2,7 @@
 
 import { useAppBridge } from "@saleor/app-sdk/app-bridge";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   createContext,
   type ReactNode,
@@ -120,6 +121,7 @@ export function AuthProvider({
   appBridgeState = null,
   children,
 }: AuthProviderProps) {
+  const t = useTranslations("marketplace.auth");
   const [user, setUser] = useState<User | null>(null);
   const [token, setTokenState] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -155,20 +157,21 @@ export function AuthProvider({
   }, []);
 
   // Fetch user data with given token
-  const fetchUser = useCallback(async (accessToken: string) => {
-    const saleorDomain = getSaleorDomainHeader();
+  const fetchUser = useCallback(
+    async (accessToken: string) => {
+      const saleorDomain = getSaleorDomainHeader();
 
-    for (let attempt = 1; attempt <= 3; attempt += 1) {
-      try {
-        const response = await fetch("/api/graphql", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-            ...saleorDomain,
-          },
-          body: JSON.stringify({
-            query: `
+      for (let attempt = 1; attempt <= 3; attempt += 1) {
+        try {
+          const response = await fetch("/api/graphql", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+              ...saleorDomain,
+            },
+            body: JSON.stringify({
+              query: `
               query Me {
                 me {
                   id
@@ -182,89 +185,87 @@ export function AuthProvider({
                 }
               }
             `,
-          }),
-        });
+            }),
+          });
 
-        type MeResponse = {
-          data?: {
-            me?: {
-              email?: string;
-              firstName?: string;
-              id: string;
-              lastName?: string;
-              metadata?: Array<{ key: string; value: string }>;
+          type MeResponse = {
+            data?: {
+              me?: {
+                email?: string;
+                firstName?: string;
+                id: string;
+                lastName?: string;
+                metadata?: Array<{ key: string; value: string }>;
+              };
             };
+            errors?: Array<{ message?: string }>;
+            message?: string;
+            type?: string;
           };
-          errors?: Array<{ message?: string }>;
-          message?: string;
-          type?: string;
-        };
 
-        let data: MeResponse | null = null;
+          let data: MeResponse | null = null;
 
-        try {
-          data = (await response.json()) as MeResponse;
-        } catch {
-          data = null;
-        }
-
-        const firstErrorMessage = data?.errors?.[0]?.message;
-        const responseMessage =
-          typeof data?.message === "string" ? data.message : undefined;
-        const message = firstErrorMessage || responseMessage;
-
-        if (!response.ok) {
-          if (response.status === 429 || isThrottledMessage(message)) {
-            throw createAuthError(
-              message ||
-                "Environment has been throttled. Try again in a moment",
-              THROTTLED_ERROR_CODE,
-            );
+          try {
+            data = (await response.json()) as MeResponse;
+          } catch {
+            data = null;
           }
 
-          throw new Error(
-            message || `Failed to fetch user (status=${response.status})`,
-          );
-        }
+          const firstErrorMessage = data?.errors?.[0]?.message;
+          const responseMessage =
+            typeof data?.message === "string" ? data.message : undefined;
+          const message = firstErrorMessage || responseMessage;
 
-        if (data?.errors?.length) {
-          const errorMessage =
-            data.errors[0]?.message || "Failed to fetch user";
+          if (!response.ok) {
+            if (response.status === 429 || isThrottledMessage(message)) {
+              throw createAuthError(
+                message || t("error-throttled"),
+                THROTTLED_ERROR_CODE,
+              );
+            }
 
-          if (isThrottledMessage(errorMessage)) {
-            throw createAuthError(errorMessage, THROTTLED_ERROR_CODE);
+            throw new Error(message || t("error-failed-fetch-user"));
           }
 
-          throw new Error(errorMessage);
-        }
+          if (data?.errors?.length) {
+            const errorMessage =
+              data.errors[0]?.message || "Failed to fetch user";
 
-        if (data?.data?.me) {
-          const me = data.data.me;
+            if (isThrottledMessage(errorMessage)) {
+              throw createAuthError(errorMessage, THROTTLED_ERROR_CODE);
+            }
 
-          const metadata = Array.isArray(me.metadata) ? me.metadata : [];
-          const metadataMap = metadata.reduce<Record<string, string>>(
-            (acc, item) => {
-              if (item?.key) {
-                acc[item.key] = item.value;
-              }
+            throw new Error(errorMessage);
+          }
 
-              return acc;
-            },
-            {},
-          );
+          if (data?.data?.me) {
+            const me = data.data.me;
 
-          const vendorPageId = metadataMap["vendor.id"] || "";
+            const metadata = Array.isArray(me.metadata) ? me.metadata : [];
+            const metadataMap = metadata.reduce<Record<string, string>>(
+              (acc, item) => {
+                if (item?.key) {
+                  acc[item.key] = item.value;
+                }
 
-          if (vendorPageId) {
-            const vendorResponse = await fetch("/api/graphql", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${accessToken}`,
-                ...saleorDomain,
+                return acc;
               },
-              body: JSON.stringify({
-                query: `
+              {},
+            );
+
+            const vendorPageId = metadataMap["vendor.id"] || "";
+            let paymentMetadata = getVendorPaymentMetadata(undefined);
+
+            if (vendorPageId) {
+              const vendorResponse = await fetch("/api/graphql", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${accessToken}`,
+                  ...saleorDomain,
+                },
+                body: JSON.stringify({
+                  query: `
                   query VendorPageStatus($id: ID!) {
                     page(id: $id) {
                       id
@@ -279,82 +280,83 @@ export function AuthProvider({
                     }
                   }
                 `,
-                variables: { id: vendorPageId },
-              }),
-            });
+                  variables: { id: vendorPageId },
+                }),
+              });
 
-            type VendorResponse = {
-              data?: {
-                page?: {
-                  attributes?: Array<{
-                    attribute?: { slug?: string | null } | null;
-                    values?: Array<{ name?: string | null } | null> | null;
-                  }> | null;
-                  metadata?: Array<{ key: string; value: string }> | null;
-                } | null;
+              type VendorResponse = {
+                data?: {
+                  page?: {
+                    attributes?: Array<{
+                      attribute?: { slug?: string | null } | null;
+                      values?: Array<{ name?: string | null } | null> | null;
+                    }> | null;
+                    metadata?: Array<{ key: string; value: string }> | null;
+                  } | null;
+                };
+                errors?: Array<{ message?: unknown }>;
+                message?: string;
               };
-              errors?: Array<{ message?: unknown }>;
-              message?: string;
-            };
 
-            let vendorData: VendorResponse | null = null;
+              let vendorData: VendorResponse | null = null;
 
-            try {
-              vendorData = (await vendorResponse.json()) as VendorResponse;
-            } catch {
-              vendorData = null;
-            }
+              try {
+                vendorData = (await vendorResponse.json()) as VendorResponse;
+              } catch {
+                vendorData = null;
+              }
 
-            const vendorResponseMessage =
-              typeof vendorData?.message === "string"
-                ? vendorData.message
-                : undefined;
+              const vendorResponseMessage =
+                typeof vendorData?.message === "string"
+                  ? vendorData.message
+                  : undefined;
 
-            if (!vendorResponse.ok) {
-              if (
-                vendorResponse.status === 429 ||
-                isThrottledMessage(vendorResponseMessage)
-              ) {
-                throw createAuthError(
+              if (!vendorResponse.ok) {
+                if (
+                  vendorResponse.status === 429 ||
+                  isThrottledMessage(vendorResponseMessage)
+                ) {
+                  throw createAuthError(
+                    vendorResponseMessage || t("error-throttled"),
+                    THROTTLED_ERROR_CODE,
+                  );
+                }
+
+                throw new Error(
                   vendorResponseMessage ||
-                    "Environment has been throttled. Try again in a moment",
-                  THROTTLED_ERROR_CODE,
+                    t("error-failed-fetch-vendor-status"),
                 );
               }
 
-              throw new Error(
-                vendorResponseMessage ||
-                  `Failed to fetch vendor status (status=${vendorResponse.status})`,
-              );
-            }
+              if (vendorData?.errors?.length) {
+                const msg = vendorData.errors
+                  .map((e) => (e.message != null ? String(e.message) : ""))
+                  .filter(Boolean)
+                  .join(", ");
 
-            if (vendorData?.errors?.length) {
-              const msg = vendorData.errors
-                .map((e) => (e.message != null ? String(e.message) : ""))
-                .filter(Boolean)
-                .join(", ");
+                if (isThrottledMessage(msg)) {
+                  throw createAuthError(msg, THROTTLED_ERROR_CODE);
+                }
 
-              if (isThrottledMessage(msg)) {
-                throw createAuthError(msg, THROTTLED_ERROR_CODE);
+                throw new Error(msg || t("error-failed-fetch-vendor-status"));
               }
 
-              throw new Error(msg || "Failed to fetch vendor status");
-            }
+              const attrs = vendorData?.data?.page?.attributes ?? [];
+              const statusAttr = attrs.find(
+                (a) => a?.attribute?.slug === "vendor-status",
+              );
+              const statusValue =
+                statusAttr?.values?.[0]?.name != null
+                  ? String(statusAttr.values[0]?.name)
+                  : "";
 
-            const attrs = vendorData?.data?.page?.attributes ?? [];
-            const statusAttr = attrs.find(
-              (a) => a?.attribute?.slug === "vendor-status",
-            );
-            const statusValue =
-              statusAttr?.values?.[0]?.name != null
-                ? String(statusAttr.values[0]?.name)
-                : "";
-            const paymentMetadata = getVendorPaymentMetadata(
-              vendorData?.data?.page?.metadata,
-            );
+              if (statusValue !== "active") {
+                throw new Error(t("error-account-not-active"));
+              }
 
-            if (statusValue !== "active") {
-              throw new Error("Your account is not yet active.");
+              const paymentMetadata = getVendorPaymentMetadata(
+                vendorData?.data?.page?.metadata,
+              );
             }
 
             setUser({
@@ -371,33 +373,24 @@ export function AuthProvider({
             return true;
           }
 
-          setUser({
-            email: me.email ?? "",
-            firstName: me.firstName,
-            id: me.id,
-            lastName: me.lastName,
-            ...(vendorPageId ? { vendorId: vendorPageId } : {}),
-          });
+          return false;
+        } catch (error) {
+          if (isThrottledError(error) && attempt < 3) {
+            await new Promise((resolve) => {
+              setTimeout(resolve, attempt * 500);
+            });
 
-          return true;
+            continue;
+          }
+
+          throw error;
         }
-
-        return false;
-      } catch (error) {
-        if (isThrottledError(error) && attempt < 3) {
-          await new Promise((resolve) => {
-            setTimeout(resolve, attempt * 500);
-          });
-
-          continue;
-        }
-
-        throw error;
       }
-    }
 
-    return false;
-  }, []);
+      return false;
+    },
+    [t],
+  );
 
   // Refresh access token using refresh token or HTTP-only cookie
   const refreshAccessToken = useCallback(async (): Promise<string | null> => {
@@ -663,7 +656,7 @@ export function AuthProvider({
             .filter(Boolean)
             .join(", ");
 
-          throw new Error(errorMessage || "Request failed");
+          throw new Error(errorMessage || t("error-login-failed"));
         }
 
         // Handle Saleor mutation errors
@@ -672,14 +665,14 @@ export function AuthProvider({
         if (tokenCreate?.errors?.length) {
           const msg = tokenCreate.errors[0]?.message;
 
-          throw new Error(msg != null ? String(msg) : "Login failed");
+          throw new Error(msg != null ? String(msg) : t("error-login-failed"));
         }
 
         // Check if we got a token
         const tokenValue = tokenCreate?.token;
 
         if (!tokenValue) {
-          throw new Error("Login failed: No token received");
+          throw new Error(t("error-login-failed-no-token"));
         }
 
         // Store access token
@@ -717,7 +710,7 @@ export function AuthProvider({
         setIsLoading(false);
       }
     },
-    [clearAuth, fetchUser, router, setToken],
+    [clearAuth, fetchUser, router, setToken, t],
   );
 
   const logout = useCallback(async () => {

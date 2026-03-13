@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 
 import { Button } from "@nimara/ui/components/button";
@@ -37,6 +38,7 @@ export function CustomerPickerDialog({
   open: boolean;
   selectedCustomerId?: string | null;
 }) {
+  const t = useTranslations();
   const [search, setSearch] = useState(initialSearch ?? "");
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState<CustomerNode[]>([]);
@@ -119,9 +121,11 @@ export function CustomerPickerDialog({
   return (
     <PickerDialogShell
       open={open}
-      title="Select customer"
+      title={t("marketplace.orders.dialogs.customer-picker.title")}
       onOpenChange={onOpenChange}
-      primaryLabel="Assign and save"
+      primaryLabel={t(
+        "marketplace.orders.dialogs.customer-picker.assign-and-save",
+      )}
       onPrimary={() => {
         if (picked) {
           onPick(picked);
@@ -131,14 +135,18 @@ export function CustomerPickerDialog({
       primaryDisabled={!picked}
       footerLeft={
         results.length > 0
-          ? `${results.length} result${results.length === 1 ? "" : "s"}`
+          ? t("marketplace.orders.dialogs.customer-picker.results-count", {
+              count: results.length,
+            })
           : ""
       }
     >
       <div className="grid gap-3">
         <div className="flex gap-2">
           <Input
-            placeholder="Search customers..."
+            placeholder={t(
+              "marketplace.orders.dialogs.customer-picker.search-placeholder",
+            )}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onKeyDown={(e) => {
@@ -153,7 +161,7 @@ export function CustomerPickerDialog({
             onClick={() => void handleSearch()}
             disabled={isLoading}
           >
-            {isLoading ? "Searching..." : "Search"}
+            {isLoading ? t("common.searching") : t("common.search")}
           </Button>
         </div>
 
@@ -162,7 +170,7 @@ export function CustomerPickerDialog({
             <div className="p-2">
               {results.length === 0 ? (
                 <div className="px-2 py-8 text-center text-sm text-muted-foreground">
-                  No results
+                  {t("marketplace.orders.dialogs.customer-picker.no-results")}
                 </div>
               ) : (
                 results.map((c) => (

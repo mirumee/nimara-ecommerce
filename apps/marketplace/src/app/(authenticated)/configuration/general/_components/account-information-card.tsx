@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Edit } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FormProvider, type SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -25,13 +26,11 @@ import type { Me_me_User } from "@/graphql/generated/client";
 
 import { updateAccount } from "../actions";
 
-const accountInfoSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-});
-
-type AccountInfoFormData = z.infer<typeof accountInfoSchema>;
+type AccountInfoFormData = {
+  firstName: string;
+  lastName: string;
+  name: string;
+};
 
 interface Vendor {
   name: string;
@@ -49,14 +48,35 @@ export function AccountInformationCard({
   isLoading = false,
   vendor,
 }: AccountInformationCardProps) {
+  const t = useTranslations();
   const router = useRouter();
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [isPending, setIsPending] = useState(false);
   const submittedDataRef = useRef<AccountInfoFormData | null>(null);
 
+  const accountInfoSchema = useMemo(
+    () =>
+      z.object({
+        name: z
+          .string()
+          .min(
+            1,
+            t("marketplace.configuration.general.validation-name-required"),
+          ),
+        firstName: z
+          .string()
+          .min(1, t("common.validation.first-name-required")),
+        lastName: z.string().min(1, t("common.validation.last-name-required")),
+      }),
+    [t],
+  );
+
   const vendorName =
-    vendor?.name || user?.firstName || user?.email || "Vendor name";
+    vendor?.name ||
+    user?.firstName ||
+    user?.email ||
+    t("marketplace.configuration.general.name-placeholder");
   const vendorUrl = vendor?.slug
     ? `marketplace.com/${vendor.slug}`
     : `marketplace.com/${String(vendorName).toLowerCase().replace(/\s+/g, "-")}`;
@@ -73,7 +93,7 @@ export function AccountInformationCard({
         lastName: user?.lastName || "",
       },
     }),
-    [vendor?.name, user?.firstName, user?.lastName],
+    [accountInfoSchema, vendor?.name, user?.firstName, user?.lastName],
   );
 
   const form = useForm<AccountInfoFormData>(formConfig);
@@ -119,11 +139,16 @@ export function AccountInformationCard({
 
       if (!result.ok) {
         const errorMessage = result.errors
-          .map((e: { message?: string | null }) => e.message || "Unknown error")
+          .map(
+            (e: { message?: string | null }) =>
+              e.message || t("common.toast-unknown-error"),
+          )
           .join(", ");
 
         toast({
-          title: "Failed to update account",
+          title: t(
+            "marketplace.configuration.general.toast-update-account-failed",
+          ),
           description: errorMessage,
           variant: "destructive",
         });
@@ -141,10 +166,12 @@ export function AccountInformationCard({
           errors
             .map((e: { message?: string | null }) => e.message)
             .filter(Boolean)
-            .join(", ") || "Unknown error";
+            .join(", ") || t("common.toast-unknown-error");
 
         toast({
-          title: "Failed to update account",
+          title: t(
+            "marketplace.configuration.general.toast-update-account-failed",
+          ),
           description: errorMessage,
           variant: "destructive",
         });
@@ -154,8 +181,10 @@ export function AccountInformationCard({
       }
 
       toast({
-        title: "Account updated",
-        description: "Account information has been updated successfully.",
+        title: t("marketplace.configuration.general.account-updated"),
+        description: t(
+          "marketplace.configuration.general.account-updated-desc",
+        ),
       });
 
       // Store submitted data to check when it appears in user data
@@ -165,8 +194,10 @@ export function AccountInformationCard({
       router.refresh();
     } catch (error) {
       toast({
-        title: "Failed to update account",
-        description: "Something went wrong. Please try again.",
+        title: t(
+          "marketplace.configuration.general.toast-update-account-failed",
+        ),
+        description: t("common.toast-something-wrong"),
         variant: "destructive",
       });
       setIsPending(false);
@@ -185,14 +216,16 @@ export function AccountInformationCard({
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Account Information</CardTitle>
+        <CardTitle>
+          {t("marketplace.configuration.general.account-information")}
+        </CardTitle>
         {!isEditing && (
           <Button
             variant="outline"
             onClick={() => setIsEditing(true)}
             disabled={isLoading || isPending}
           >
-            <Edit className="mr-2 h-4 w-4" /> Edit
+            <Edit className="mr-2 h-4 w-4" /> {t("common.edit")}
           </Button>
         )}
       </CardHeader>
@@ -203,19 +236,27 @@ export function AccountInformationCard({
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div className="space-y-4">
                   <InputField
-                    label="Name"
+                    label={t("common.name")}
                     name="name"
-                    inputProps={{ placeholder: "Vendor name" }}
+                    inputProps={{
+                      placeholder: t(
+                        "marketplace.configuration.general.name-placeholder",
+                      ),
+                    }}
                   />
                   <InputField
-                    label="First Name"
+                    label={t("common.first-name")}
                     name="firstName"
-                    inputProps={{ placeholder: "First name" }}
+                    inputProps={{
+                      placeholder: t("common.first-name"),
+                    }}
                   />
                   <InputField
-                    label="Last Name"
+                    label={t("common.last-name")}
                     name="lastName"
-                    inputProps={{ placeholder: "Last name" }}
+                    inputProps={{
+                      placeholder: t("common.last-name"),
+                    }}
                   />
                 </div>
                 <div className="space-y-4">
@@ -233,7 +274,7 @@ export function AccountInformationCard({
               </div>
               <div className="flex gap-2">
                 <Button type="submit" disabled={isPending}>
-                  {isPending ? "Saving..." : "Save"}
+                  {isPending ? t("common.saving") : t("common.save")}
                 </Button>
                 <Button
                   type="button"
@@ -241,7 +282,7 @@ export function AccountInformationCard({
                   onClick={handleCancel}
                   disabled={isPending}
                 >
-                  Cancel
+                  {t("common.cancel")}
                 </Button>
               </div>
             </form>
@@ -293,10 +334,10 @@ export function AccountInformationCard({
               ) : (
                 <>
                   <label className="text-sm font-medium text-gray-900">
-                    Email
+                    {t("common.email")}
                   </label>
                   <div className="mt-1 text-sm text-gray-600">
-                    {user?.email || "Not set"}
+                    {user?.email || t("common.not-set")}
                   </div>
                 </>
               )}

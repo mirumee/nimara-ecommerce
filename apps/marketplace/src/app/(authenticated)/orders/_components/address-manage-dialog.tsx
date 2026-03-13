@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { Input } from "@nimara/ui/components/input";
@@ -98,6 +99,7 @@ export function AddressManageDialog({
   selectedAddressId?: string;
   title: string;
 }) {
+  const t = useTranslations();
   const options = useMemo(
     () => (countryOptions ?? []).filter(Boolean),
     [countryOptions],
@@ -191,7 +193,7 @@ export function AddressManageDialog({
       open={open}
       title={title}
       onOpenChange={onOpenChange}
-      primaryLabel="Save"
+      primaryLabel={t("common.save")}
       primaryDisabled={mode === "saved" ? !canSaveSaved : !canSaveNew}
       onPrimary={() => {
         if (mode === "saved" && !picked) {
@@ -214,7 +216,9 @@ export function AddressManageDialog({
             onChange={() => setMode("saved")}
             disabled={addresses.length === 0}
           />
-          Use one of customer addresses
+          {t(
+            "marketplace.orders.dialogs.address-manage.use-customer-addresses",
+          )}
         </label>
 
         {mode === "saved" ? (
@@ -223,7 +227,9 @@ export function AddressManageDialog({
               <div className="p-2">
                 {addresses.length === 0 ? (
                   <div className="px-2 py-8 text-center text-sm text-muted-foreground">
-                    No saved addresses
+                    {t(
+                      "marketplace.orders.dialogs.address-manage.no-saved-addresses",
+                    )}
                   </div>
                 ) : (
                   addresses.map((a) => (
@@ -252,13 +258,13 @@ export function AddressManageDialog({
             checked={mode === "new"}
             onChange={() => setMode("new")}
           />
-          Add new address
+          {t("marketplace.orders.dialogs.address-manage.add-new-address")}
         </label>
 
         {mode === "new" ? (
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             <div className="space-y-1">
-              <Label>First name</Label>
+              <Label>{t("common.first-name")}</Label>
               <Input
                 value={draftAddress.firstName}
                 onChange={(e) =>
@@ -270,7 +276,7 @@ export function AddressManageDialog({
               />
             </div>
             <div className="space-y-1">
-              <Label>Last name</Label>
+              <Label>{t("common.last-name")}</Label>
               <Input
                 value={draftAddress.lastName}
                 onChange={(e) =>
@@ -282,7 +288,7 @@ export function AddressManageDialog({
               />
             </div>
             <div className="space-y-1 md:col-span-2">
-              <Label>Street address 1</Label>
+              <Label>{t("address.streetAddress1")}</Label>
               <Input
                 value={draftAddress.streetAddress1}
                 onChange={(e) =>
@@ -294,7 +300,11 @@ export function AddressManageDialog({
               />
             </div>
             <div className="space-y-1 md:col-span-2">
-              <Label>Street address 2 (optional)</Label>
+              <Label>
+                {t(
+                  "marketplace.orders.dialogs.address-manage.street-address-2-optional",
+                )}
+              </Label>
               <Input
                 value={draftAddress.streetAddress2 ?? ""}
                 onChange={(e) =>
@@ -318,7 +328,7 @@ export function AddressManageDialog({
               />
             </div>
             <div className="space-y-1">
-              <Label>City</Label>
+              <Label>{t("address.City")}</Label>
               <Input
                 value={draftAddress.city}
                 onChange={(e) =>
@@ -327,7 +337,9 @@ export function AddressManageDialog({
               />
             </div>
             <div className="space-y-1">
-              <Label>Phone (optional)</Label>
+              <Label>
+                {t("marketplace.orders.dialogs.address-manage.phone-optional")}
+              </Label>
               <Input
                 value={draftAddress.phone ?? ""}
                 onChange={(e) =>
@@ -339,7 +351,7 @@ export function AddressManageDialog({
               />
             </div>
             <div className="space-y-1">
-              <Label>Country</Label>
+              <Label>{t("address.country")}</Label>
               {options.length > 0 ? (
                 <Select
                   value={draftAddress.countryCode}
@@ -348,7 +360,11 @@ export function AddressManageDialog({
                   }
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select country" />
+                    <SelectValue
+                      placeholder={t(
+                        "marketplace.orders.dialogs.address-manage.select-country",
+                      )}
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     {options.map((c) => (

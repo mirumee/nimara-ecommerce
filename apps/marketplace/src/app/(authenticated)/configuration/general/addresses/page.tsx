@@ -1,5 +1,6 @@
 import { MoreVertical, Plus } from "lucide-react";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 import { Button } from "@nimara/ui/components/button";
 import { Card, CardContent } from "@nimara/ui/components/card";
@@ -14,13 +15,16 @@ import { getServerAuthToken } from "@/lib/auth/server";
 import { configurationService } from "@/services/configuration";
 
 export default async function AddressesPage() {
+  const t = await getTranslations();
   const token = await getServerAuthToken();
   const result = await configurationService.getMe(token);
 
   if (!result.ok) {
     return (
       <div className="flex items-center justify-center py-12">
-        <p className="text-muted-foreground">Failed to load user data</p>
+        <p className="text-muted-foreground">
+          {t("marketplace.configuration.general.failed-to-load-user-data")}
+        </p>
       </div>
     );
   }
@@ -29,8 +33,8 @@ export default async function AddressesPage() {
   const userName = user
     ? [user.firstName, user.lastName].filter(Boolean).join(" ") ||
       user.email ||
-      "User"
-    : "User";
+      t("marketplace.configuration.addresses.unknown-name")
+    : t("marketplace.configuration.addresses.unknown-name");
 
   const addresses = user?.addresses || [];
 
@@ -63,7 +67,7 @@ export default async function AddressesPage() {
   const getFullName = (address: (typeof addresses)[0]) => {
     return (
       [address.firstName, address.lastName].filter(Boolean).join(" ") ||
-      "Unknown"
+      t("marketplace.configuration.addresses.unknown-name")
     );
   };
 
@@ -72,20 +76,24 @@ export default async function AddressesPage() {
       {/* Breadcrumbs */}
       <div className="flex items-center gap-2 text-sm text-gray-600">
         <Link href="/configuration/general" className="hover:text-gray-900">
-          General
+          {t("marketplace.configuration.addresses.breadcrumbs-general")}
         </Link>
         <span>/</span>
-        <span className="text-gray-900">Address Book</span>
+        <span className="text-gray-900">
+          {t("marketplace.configuration.addresses.breadcrumbs-address-book")}
+        </span>
       </div>
 
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-gray-900">
-          {userName}&apos;s Address Book
+          {t("marketplace.configuration.addresses.page-title", {
+            name: userName,
+          })}
         </h1>
         <Button>
           <Plus className="mr-2 h-4 w-4" />
-          Add address
+          {t("marketplace.configuration.addresses.add-address-button")}
         </Button>
       </div>
 
@@ -98,7 +106,9 @@ export default async function AddressesPage() {
               <CardContent className="p-4">
                 <div className="mb-3 flex items-start justify-between">
                   <h2 className="text-sm font-semibold text-gray-900">
-                    Default Shipping Address
+                    {t(
+                      "marketplace.configuration.addresses.default-shipping-address",
+                    )}
                   </h2>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -167,8 +177,12 @@ export default async function AddressesPage() {
               <div className="mb-3 flex items-start justify-between">
                 <h2 className="text-sm font-semibold text-gray-900">
                   {shippingSameAsBilling
-                    ? "Default Shipping & Billing Address"
-                    : "Default Billing Address"}
+                    ? t(
+                        "marketplace.configuration.addresses.default-shipping-and-billing-address",
+                      )
+                    : t(
+                        "marketplace.configuration.addresses.default-billing-address",
+                      )}
                 </h2>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -296,7 +310,7 @@ export default async function AddressesPage() {
         {addresses.length === 0 && (
           <div className="col-span-full py-12 text-center">
             <p className="text-gray-500">
-              No addresses found. Add your first address to get started.
+              {t("marketplace.configuration.addresses.empty-state")}
             </p>
           </div>
         )}

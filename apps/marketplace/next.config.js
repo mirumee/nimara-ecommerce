@@ -2,8 +2,19 @@
 const allowedCorsOrigin =
   process.env.NEXT_PUBLIC_MARKETPLACE_STOREFRONT_URL || "http://localhost:3000";
 
-const nextConfig = {
-  transpilePackages: ["@nimara/ui", "@nimara/infrastructure", "@nimara/domain"],
+const createNextIntlPlugin = require("next-intl/plugin");
+
+const withNextIntl = createNextIntlPlugin({
+  requestConfig: "./src/foundation/i18n/request.ts",
+});
+
+const nextConfig = withNextIntl({
+  transpilePackages: [
+    "@nimara/ui",
+    "@nimara/infrastructure",
+    "@nimara/domain",
+    "@nimara/i18n",
+  ],
   images: {
     remotePatterns: [
       {
@@ -37,6 +48,6 @@ const nextConfig = {
     ];
   },
   output: "standalone",
-};
+});
 
 module.exports = nextConfig;
