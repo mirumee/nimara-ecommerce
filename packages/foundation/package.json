@@ -7,7 +7,7 @@
     "lint:staged": "lint-staged"
   },
   "dependencies": {
-    "@formatjs/intl-localematcher": "0.8.1",
+    "@formatjs/intl-localematcher": "0.8.2",
     "@hookform/resolvers": "5.2.2",
     "@sentry/nextjs": "^10.43.0",
     "@sentry/types": "^10.43.0",
