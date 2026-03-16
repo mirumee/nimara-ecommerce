@@ -13,6 +13,7 @@ import {
   Users,
 } from "lucide-react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
@@ -28,42 +29,17 @@ import {
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/providers/auth-provider";
 
-const APP_NAME = "Vendor Panel";
-
 const navigationLinks = [
-  {
-    name: "Dashboard",
-    href: "/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    name: "Products",
-    href: "/products",
-    icon: Package,
-  },
-  {
-    name: "Orders",
-    href: "/orders",
-    icon: ShoppingCart,
-  },
-  {
-    name: "Drafts",
-    href: "/drafts",
-    icon: FileText,
-  },
-  {
-    name: "Collections",
-    href: "/collections",
-    icon: LayoutList,
-  },
-  {
-    name: "Customers",
-    href: "/customers",
-    icon: Users,
-  },
-];
+  { key: "dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { key: "products", href: "/products", icon: Package },
+  { key: "orders", href: "/orders", icon: ShoppingCart },
+  { key: "drafts", href: "/drafts", icon: FileText },
+  { key: "collections", href: "/collections", icon: LayoutList },
+  { key: "customers", href: "/customers", icon: Users },
+] as const;
 
 export function TopNavigation() {
+  const t = useTranslations("marketplace.navigation");
   const { user, logout } = useAuth();
   const pathname = usePathname();
   const [isOpeningStripe, setIsOpeningStripe] = useState(false);
@@ -79,7 +55,7 @@ export function TopNavigation() {
   const vendorName =
     [user?.firstName, user?.lastName].filter(Boolean).join(" ") ||
     user?.email ||
-    "Vendor";
+    t("vendor-fallback");
   const hasStripeAccount = Boolean(user?.stripePaymentAccountId);
 
   const handleOpenStripe = async () => {
@@ -110,7 +86,7 @@ export function TopNavigation() {
         {/* Left side - Brand and Navigation */}
         <div className="flex items-center gap-8">
           <Link href="/dashboard" className="text-lg font-semibold">
-            {APP_NAME}
+            {t("app-name")}
           </Link>
 
           <nav className="flex items-center gap-1">
@@ -119,7 +95,7 @@ export function TopNavigation() {
 
               return (
                 <Link
-                  key={item.name}
+                  key={item.key}
                   href={item.href}
                   className={cn(
                     "flex items-center gap-2 rounded-full px-4 py-2 text-sm transition-colors",
@@ -136,7 +112,7 @@ export function TopNavigation() {
                   >
                     <item.icon className="h-3 w-3" />
                   </div>
-                  <span>{item.name}</span>
+                  <span>{t(item.key)}</span>
                 </Link>
               );
             })}
@@ -162,13 +138,13 @@ export function TopNavigation() {
             </div>
             <DropdownMenuItem className="cursor-pointer gap-2">
               <Users className="h-4 w-4" />
-              Invite co-workers
+              {t("invite-coworkers")}
             </DropdownMenuItem>
             <DropdownMenuItem className="cursor-pointer gap-2">
               <span className="flex h-4 w-4 items-center justify-center text-xs">
                 ?
               </span>
-              Support
+              {t("support")}
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link
@@ -176,7 +152,7 @@ export function TopNavigation() {
                 className="cursor-pointer gap-2"
               >
                 <Settings className="h-4 w-4" />
-                Configuration
+                {t("configuration")}
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem
@@ -185,19 +161,19 @@ export function TopNavigation() {
               disabled={!hasStripeAccount || isOpeningStripe}
             >
               <CircleDollarSign className="h-4 w-4" />
-              Go to Stripe
+              {t("go-to-stripe")}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="cursor-pointer gap-2">
               <Monitor className="h-4 w-4" />
-              Sign out from other devices
+              {t("sign-out-devices")}
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => logout()}
               className="cursor-pointer gap-2"
             >
               <LogOut className="h-4 w-4" />
-              Sign out
+              {t("sign-out")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

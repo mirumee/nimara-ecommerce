@@ -1,6 +1,7 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -13,6 +14,7 @@ import {
 import { useAuth } from "@/providers/auth-provider";
 
 export function StripeConnectGate() {
+  const t = useTranslations("marketplace.stripeConnect");
   const router = useRouter();
   const searchParams = useSearchParams();
   const { refreshVendorStripeState } = useAuth();
@@ -78,11 +80,8 @@ export function StripeConnectGate() {
     <div className="flex min-h-screen items-center justify-center px-6">
       <div className="w-full max-w-xl space-y-6 rounded-xl border bg-background p-8 shadow-sm">
         <div className="space-y-2">
-          <h1 className="text-2xl font-semibold">Stripe setup required</h1>
-          <p className="text-sm text-muted-foreground">
-            You need to finish Stripe Connect onboarding before using Vendor
-            Panel.
-          </p>
+          <h1 className="text-2xl font-semibold">{t("title")}</h1>
+          <p className="text-sm text-muted-foreground">{t("description")}</p>
         </div>
 
         {error ? (
@@ -96,10 +95,10 @@ export function StripeConnectGate() {
             {isSettingUp ? (
               <span className="inline-flex items-center gap-2">
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Redirecting...
+                {t("redirecting")}
               </span>
             ) : (
-              "Setup"
+              t("setup-button")
             )}
           </Button>
           <Button
@@ -110,10 +109,10 @@ export function StripeConnectGate() {
             {isSyncing ? (
               <span className="inline-flex items-center gap-2">
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Checking...
+                {t("checking")}
               </span>
             ) : (
-              "I've completed setup"
+              t("completed-setup-button")
             )}
           </Button>
         </div>
