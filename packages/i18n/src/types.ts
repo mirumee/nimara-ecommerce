@@ -43,20 +43,18 @@ type RemoveNamespacePrefix<
  * type Path = MessagePath<"account">;
  * // => "order-history" | "addresses" | "personal-data" | "privacy-settings" | "payment-methods"
  */
-export type MessagePath<
-  Namespace extends NamespaceKeys<Messages, NestedKeyOf<Messages>> | undefined =
-    undefined,
-> = Namespace extends undefined
-  ? MessageKeys<Messages, NestedKeyOf<Messages>>
-  : {
-      [K in MessageKeys<
+export type MessagePath<Namespace extends string | undefined = undefined> =
+  Namespace extends undefined
+    ? MessageKeys<Messages, NestedKeyOf<Messages>>
+    : {
+        [K in MessageKeys<
+          Messages,
+          KeysInNamespace<NestedKeyOf<Messages>, Namespace & string>
+        >]: RemoveNamespacePrefix<K, Namespace & string>;
+      }[MessageKeys<
         Messages,
         KeysInNamespace<NestedKeyOf<Messages>, Namespace & string>
-      >]: RemoveNamespacePrefix<K, Namespace & string>;
-    }[MessageKeys<
-      Messages,
-      KeysInNamespace<NestedKeyOf<Messages>, Namespace & string>
-    >];
+      >];
 
 /**
  * Translator function type.

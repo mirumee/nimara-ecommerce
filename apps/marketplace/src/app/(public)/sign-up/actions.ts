@@ -18,6 +18,7 @@ import {
   VendorPageCreateDocument,
   VendorPageDeleteDocument,
   VendorPageTypeDocument,
+  VendorPageUniquenessDocument,
 } from "@/graphql/generated/client";
 import { config } from "@/lib/config";
 import { sendNewVendorRegisteredEmailToSuperadmin } from "@/lib/email";
@@ -138,10 +139,118 @@ async function lookupCustomerIdByEmail(
     return exactMatch.node.id;
   }
 
-  const firstValidId = edges.find((edge) => isNonEmptyString(edge?.node?.id))
-    ?.node?.id;
+  return null;
+}
 
-  return isNonEmptyString(firstValidId) ? firstValidId : null;
+async function customerExistsByEmail(
+  saleor: ReturnType<typeof graphqlClient>,
+  email: string,
+): Promise<boolean | null> {
+  const lookup = await saleor.execute(CustomerByEmailDocument, {
+    operationName: "CustomerByEmailQuery",
+    variables: { search: email },
+    options: { cache: "no-store" },
+  });
+
+  if (!lookup.ok) {
+    return null;
+  }
+
+  const normalizedEmail = email.trim().toLowerCase();
+  const edges = lookup.data.customers?.edges ?? [];
+
+  return edges.some((edge) => {
+    const candidateEmail = edge?.node?.email;
+
+    return (
+      isNonEmptyString(candidateEmail) &&
+      candidateEmail.trim().toLowerCase() === normalizedEmail
+    );
+  });
+}
+
+async function vendorExistsBySlugOrName(
+  saleor: ReturnType<typeof graphqlClient>,
+  input: {
+    vendorName: string;
+    vendorPageTypeId: string;
+    vendorSlug: string;
+  },
+): Promise<boolean | null> {
+  const lookup = await saleor.execute(VendorPageUniquenessDocument, {
+    operationName: "VendorPageUniquenessQuery",
+    variables: {
+      pageTypeId: input.vendorPageTypeId,
+      search: input.vendorName,
+      slug: input.vendorSlug,
+    },
+    options: { cache: "no-store" },
+  });
+
+  if (!lookup.ok) {
+    return null;
+  }
+
+  const bySlugEdges = lookup.data.bySlug?.edges ?? [];
+
+  if (bySlugEdges.length > 0) {
+    return true;
+  }
+
+  const normalizedVendorName = input.vendorName.trim().toLowerCase();
+  const normalizedVendorSlug = input.vendorSlug.trim().toLowerCase();
+  const byNameEdges = lookup.data.byName?.edges ?? [];
+
+  return byNameEdges.some((edge) => {
+    const candidateTitle = edge?.node?.title;
+    const candidateSlug = edge?.node?.slug;
+
+    return (
+      (isNonEmptyString(candidateTitle) &&
+        candidateTitle.trim().toLowerCase() === normalizedVendorName) ||
+      (isNonEmptyString(candidateSlug) &&
+        candidateSlug.trim().toLowerCase() === normalizedVendorSlug)
+    );
+  });
+}
+
+async function waitForCustomerIdByEmail(
+  saleor: ReturnType<typeof graphqlClient>,
+  email: string,
+  opts?: {
+    initialDelayMs?: number;
+    maxDelayMs?: number;
+    timeoutMs?: number;
+  },
+): Promise<string | null> {
+  const timeoutMs = opts?.timeoutMs ?? 15_000;
+  const initialDelayMs = opts?.initialDelayMs ?? 200;
+  const maxDelayMs = opts?.maxDelayMs ?? 2_000;
+
+  const deadline = Date.now() + timeoutMs;
+  let attempt = 0;
+
+  while (Date.now() < deadline) {
+    const id = await lookupCustomerIdByEmail(saleor, email);
+
+    if (isNonEmptyString(id)) {
+      return id;
+    }
+
+    attempt += 1;
+
+    const baseDelay = Math.min(maxDelayMs, initialDelayMs * 2 ** (attempt - 1));
+    const jitter = Math.floor(Math.random() * 120);
+    const sleepMs = Math.min(baseDelay + jitter, deadline - Date.now());
+
+    if (sleepMs <= 0) {
+      break;
+    }
+
+    await wait(sleepMs);
+  }
+
+  return null;
 }
 
 function getSaleorDomainFromEnv(): string {
@@ -252,6 +361,23 @@ export async function registerAccount(input: {
       : `https://${saleorDomain}/graphql/`;
 
   const saleor = graphqlClient(apiUrl, appConfig.authToken);
+  const emailAlreadyExists = await customerExistsByEmail(saleor, input.email);
+
+  if (emailAlreadyExists == null) {
+    return failSetup("customer_email_uniqueness_check_failed", {
+      operationName: "CustomerByEmailQuery",
+      lookupEmail: input.email,
+    });
+  }
+
+  if (emailAlreadyExists) {
+    return err<AppError>([
+      {
+        code: "ACCOUNT_REGISTER_ERROR",
+        message: "An account with this email already exists.",
+      },
+    ]);
+  }
 
   const { companyName, vatId, vendorDescription, vendorName } = input;
 
@@ -304,6 +430,29 @@ export async function registerAccount(input: {
   const uniqueSuffix = crypto.randomUUID().slice(0, 8);
 
   const vendorSlug = `vendor-${slugify(vendorName)}`;
+  const vendorAlreadyExists = await vendorExistsBySlugOrName(saleor, {
+    vendorName,
+    vendorPageTypeId: vendorPageType.id,
+    vendorSlug,
+  });
+
+  if (vendorAlreadyExists == null) {
+    return failSetup("vendor_uniqueness_check_failed", {
+      operationName: "VendorPageUniquenessQuery",
+      vendorName,
+      vendorPageTypeId: vendorPageType.id,
+      vendorSlug,
+    });
+  }
+
+  if (vendorAlreadyExists) {
+    return err<AppError>([
+      {
+        code: "ACCOUNT_REGISTER_ERROR",
+        message: "A vendor with this name already exists.",
+      },
+    ]);
+  }
 
   const pageInput: any = {
     title: vendorName,
@@ -473,32 +622,13 @@ export async function registerAccount(input: {
       ? Boolean((payload as any).requiresConfirmation)
       : undefined;
 
-  const resolvedCustomerId = await (async () => {
-    if (isNonEmptyString(customerId)) {
-      return customerId;
-    }
-
-    // Some Saleor setups return user.id as empty string / null for accountRegister.
-    // Customer may appear with a small delay, so retry lookup with short backoff.
-    const maxAttempts = 5;
-
-    for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
-      const foundCustomerId = await lookupCustomerIdByEmail(
-        saleor,
-        input.email,
-      );
-
-      if (isNonEmptyString(foundCustomerId)) {
-        return foundCustomerId;
-      }
-
-      if (attempt < maxAttempts) {
-        await wait(attempt * 200);
-      }
-    }
-
-    return null;
-  })();
+  const resolvedCustomerId = isNonEmptyString(customerId)
+    ? customerId
+    : await waitForCustomerIdByEmail(saleor, input.email, {
+        timeoutMs: 15_000,
+        initialDelayMs: 200,
+        maxDelayMs: 2_000,
+      });
 
   if (!resolvedCustomerId) {
     await safeRollback({ saleor, vendorCollectionId, vendorPageId });

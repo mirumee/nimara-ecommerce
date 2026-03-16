@@ -4,8 +4,8 @@ import { PlusCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useState } from "react";
 
-import { type BaseError } from "@nimara/domain/objects/Error";
 import { type Cart } from "@nimara/domain/objects/Cart";
+import { type BaseError } from "@nimara/domain/objects/Error";
 import { LocalizedLink } from "@nimara/i18n/routing";
 import { type MessagePath } from "@nimara/i18n/types";
 import { Button } from "@nimara/ui/components/button";
@@ -64,6 +64,7 @@ export const AddToBag = ({
 
       if (vendorMix || vendorMismatch) {
         setShowVendorMismatchModal(true);
+
         return;
       }
     }
@@ -89,6 +90,7 @@ export const AddToBag = ({
       ) {
         setShowVendorMismatchModal(true);
         setIsProcessing(false);
+
         return;
       }
 

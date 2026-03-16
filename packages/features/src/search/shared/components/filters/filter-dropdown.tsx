@@ -19,7 +19,8 @@ export const FilterDropdown = async ({
   searchParams: Record<string, string>;
 }) => {
   const t = await getTranslations();
-  const filterName = name ?? t(messageKey as MessagePath);
+  const filterName =
+    (messageKey ? t(messageKey as MessagePath) : undefined) ?? name;
   const defaultValue = choices?.find(
     ({ value }) => value === searchParams[slug],
   )?.value;

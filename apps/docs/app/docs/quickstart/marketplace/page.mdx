@@ -73,6 +73,10 @@ The marketplace app provides the following vendor-facing features:
 - **Vendor Pages** - Manage vendor profile pages and page status
 - **Customer Management** - View and manage customers
 
+## i18n
+
+The marketplace app also uses the shared i18n package described in the [i18n architecture docs](/docs/i18n). It passes `app: "marketplace"` to `@nimara/i18n`’s `createRequestConfig`, so it receives the `common` + `marketplace` message bundles (with locale-specific overrides applied where defined).
+
 ## Environment Variables
 
 Key environment variables for the marketplace:
