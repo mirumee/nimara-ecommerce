@@ -13,8 +13,8 @@ import {
   Users,
 } from "lucide-react";
 import Link from "next/link";
-import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { createStripeConnectLoginSession } from "@/app/(authenticated)/_actions/stripe-connect";
