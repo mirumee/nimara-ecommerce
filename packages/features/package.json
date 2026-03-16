@@ -52,6 +52,6 @@
     "@types/react-dom": "^19.2.3",
     "eslint": "^8.57.0",
     "typescript": "^5.9.2",
-    "vitest": "^4.0.18"
+    "vitest": "^4.1.0"
   }
 }
