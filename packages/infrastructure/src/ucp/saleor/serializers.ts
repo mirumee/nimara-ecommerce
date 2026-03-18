@@ -5,6 +5,7 @@ import {
   type CheckoutWithFulfillmentResponse,
   type FulfillmentRequest,
   type LineItemResponse,
+  type LinkElement,
   type MethodElement,
   type OrderClass,
   type PostalAddress,
@@ -13,8 +14,11 @@ import {
 
 import { UCP_VERSION } from "#root/ucp/consts";
 import {
+  calculateCheckoutExpiration,
   calculateFulfillmentDate,
   formatDeliveryDays,
+  generateCheckoutLinks,
+  generateContinueUrl,
   toMinorCurrency,
 } from "#root/ucp/saleor/helpers";
 
@@ -26,15 +30,20 @@ type SaleorCheckout = CheckoutSessionFragment;
  * Internal checkout session model bridging Saleor and UCP CheckoutResponse.
  * Uses SDK types where possible. Custom parts:
  * - order.permalinkUrl: camelCase internal; SDK OrderClass uses permalink_url (snake_case).
+ * - continueUrl: For checkout handoff to business UI (will be converted to continue_url).
+ * - expiresAtISO: ISO 8601 string for checkout expiration (will be converted to expires_at).
  */
 export type UCPCheckoutSessionModel = {
   billingAddress?: PostalAddress;
   buyer?: BuyerClass;
+  continueUrl?: string;
   currency: string;
+  expiresAtISO?: string;
   fulfillment?: FulfillmentRequest;
   fulfillmentAddress?: PostalAddress;
   id: string;
   lineItems: LineItemResponse[];
+  links: LinkElement[];
   order?: Pick<OrderClass, "id"> & {
     permalinkUrl: OrderClass["permalink_url"];
   };
@@ -302,12 +311,28 @@ const toFulfillmentMethod = (
 
 /**
  * Converts Saleor checkout details into an internal UCP checkout session model.
+ *
+ * @param checkout - Saleor checkout fragment data
+ * @param order - Optional order confirmation (id and permalink URL)
+ * @param baseUrl - Base URL for generating links and continue_url (required)
+ * @param continueUrlConditions - Optional conditions to determine if continue_url is needed.
+ *                                 Example: { missingEmail: checkout.email === null }
+ *                                 If any condition is true, continue_url will be generated.
  */
 export const toUCPCheckoutSession = (
   checkout: SaleorCheckout,
   order?: { id: string; permalinkUrl: string },
+  baseUrl?: string,
+  continueUrlConditions?: Record<string, boolean>,
 ): UCPCheckoutSessionModel => {
   const fulfillmentMethod = toFulfillmentMethod(checkout);
+  const baseUrlForLinks = baseUrl || "https://example.com";
+
+  const continueUrl = generateContinueUrl(
+    checkout.id,
+    baseUrlForLinks,
+    continueUrlConditions,
+  );
 
   return {
     id: checkout.id,
@@ -323,6 +348,9 @@ export const toUCPCheckoutSession = (
         }
       : undefined,
     billingAddress: toUCPAddress(checkout.billingAddress),
+    links: generateCheckoutLinks(baseUrlForLinks),
+    expiresAtISO: calculateCheckoutExpiration(),
+    ...(continueUrl ? { continueUrl } : {}),
     ...(order ? { order } : {}),
   };
 };
@@ -388,6 +416,11 @@ export const sessionToCheckoutResponse = (
       handlers: paymentHandlers,
       instruments: [],
     } as unknown as CheckoutResponse["payment"],
+    links: session.links as unknown as CheckoutResponse["links"],
+    ...(session.expiresAtISO
+      ? { expires_at: new Date(session.expiresAtISO) }
+      : {}),
+    ...(session.continueUrl ? { continue_url: session.continueUrl } : {}),
     ...(session.order
       ? {
           order: {
@@ -402,14 +435,9 @@ export const sessionToCheckoutResponse = (
     ...(session.billingAddress
       ? { billing_address: session.billingAddress }
       : {}),
-    links: [] as unknown as CheckoutResponse["links"],
-  };
+  } satisfies CheckoutWithFulfillmentResponse;
 
   return {
     ...response,
-    ap2: {
-      merchant_authorization:
-        "eyJhbGciOiJFUzI1NiIsImtpZCI6InRlc3RfbWVyY2hhbnRfMjAyNSJ9..dGVzdF9zaWduYXR1cmVfZm9yX3Rlc3Rpbmdffm9ubHk",
-    },
-  } as unknown as CheckoutWithFulfillmentResponse;
+  } satisfies CheckoutWithFulfillmentResponse;
 };

@@ -3,6 +3,7 @@ import {
   type CheckoutResponse,
   type CheckoutUpdateRequest,
   type CompleteCheckoutRequestWithAp2,
+  type UcpDiscoveryProfile,
 } from "@ucp-js/sdk";
 
 import { type AsyncResult } from "@nimara/domain/objects/Result";
@@ -40,6 +41,12 @@ export type UCPService = {
   createCheckoutSession: (
     input: CheckoutCreateRequest,
   ) => AsyncResult<CheckoutResponse>;
+  /**
+   * Gets the discovery profile.
+   * @link https://ucp.dev/latest/specification/overview/#discovery-governance-and-negotiation
+   * @returns The discovery profile.
+   */
+  discoveryProfile: () => UcpDiscoveryProfile;
   /**
    * Gets a checkout session.
    * @link https://ucp.dev/latest/specification/checkout/#get-checkout

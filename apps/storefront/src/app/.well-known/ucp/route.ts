@@ -2,13 +2,8 @@ import { NextResponse } from "next/server";
 
 import { UcpDiscoveryProfile } from "@ucp-js/sdk";
 
-import { clientEnvs } from "@/envs/client";
-
-const UCP_VERSION = "2026-01-23";
-const UCP_API_ENDPOINT = new URL(
-  `/api/ucp/${clientEnvs.NEXT_PUBLIC_DEFAULT_CHANNEL}`,
-  clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
-).toString();
+import { UCP_VERSION, UCP_API_ENDPOINT } from "@/features/ucp/config";
+import { UCP_CAPABILITIES } from "@/features/ucp/capabilities";
 
 function ucpDiscoveryProfile(): UcpDiscoveryProfile {
   return {
@@ -24,20 +19,7 @@ function ucpDiscoveryProfile(): UcpDiscoveryProfile {
           },
         },
       },
-      capabilities: [
-        {
-          name: "dev.ucp.shopping.checkout",
-          version: UCP_VERSION,
-          spec: "https://ucp.dev/specification/checkout",
-          schema: "https://ucp.dev/schemas/shopping/checkout.json",
-        },
-        {
-          name: "dev.ucp.shopping.order",
-          version: UCP_VERSION,
-          spec: "https://ucp.dev/specification/order",
-          schema: "https://ucp.dev/schemas/shopping/order.json",
-        },
-      ],
+      capabilities: UCP_CAPABILITIES,
     },
     payment: {
       handlers: [
@@ -45,11 +27,10 @@ function ucpDiscoveryProfile(): UcpDiscoveryProfile {
           id: "gpay",
           name: "Google Pay",
           version: UCP_VERSION,
-          spec: "https://pay.google.com/gp/p/ucp/2026-01-11/",
-          config_schema:
-            "https://pay.google.com/gp/p/ucp/2026-01-11/schemas/config.json",
+          spec: `https://pay.google.com/gp/p/ucp/${UCP_VERSION}/`,
+          config_schema: `https://pay.google.com/gp/p/ucp/${UCP_VERSION}/schemas/config.json`,
           instrument_schemas: [
-            "https://pay.google.com/gp/p/ucp/2026-01-11/schemas/card_payment_instrument.json",
+            `https://pay.google.com/gp/p/ucp/${UCP_VERSION}/schemas/card_payment_instrument.json`,
           ],
           config: {
             api_version: 2,

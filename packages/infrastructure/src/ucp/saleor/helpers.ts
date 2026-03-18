@@ -1,4 +1,4 @@
-import { type CheckoutResponse, type PostalAddress } from "@ucp-js/sdk";
+import { type CheckoutResponse, type LinkElement, type PostalAddress } from "@ucp-js/sdk";
 
 import { type AddressInput } from "@nimara/codegen/schema";
 
@@ -181,3 +181,82 @@ export function validateCheckoutTermsDummy(
     errors: errors.length > 0 ? errors : undefined,
   };
 }
+
+/**
+ * Calculates checkout expiration date (RFC 3339).
+ * Default TTL: 6 hours from now.
+ * @param ttlSeconds - Optional TTL in seconds (default 6 hours = 21600s)
+ * @returns RFC 3339 formatted timestamp
+ */
+export const calculateCheckoutExpiration = (
+  ttlSeconds: number = 21600, // 6 hours
+): string => {
+  const expirationDate = new Date(Date.now() + ttlSeconds * 1000);
+  return expirationDate.toISOString();
+};
+
+/**
+ * Generates UCP-compliant well-known links for checkout.
+ * Links are required by spec for legal compliance (privacy policy, TOS, etc).
+ *
+ * @param baseUrl - Base URL for link construction (e.g., "https://example.com")
+ * @returns Array of LinkElement with well-known types
+ */
+export const generateCheckoutLinks = (baseUrl: string): LinkElement[] => {
+  return [
+    {
+      type: "privacy_policy",
+      url: `${baseUrl}/privacy-policy`,
+      title: "Privacy Policy",
+    },
+    {
+      type: "terms_of_service",
+      url: `${baseUrl}/terms-of-service`,
+      title: "Terms of Service",
+    },
+    {
+      type: "refund_policy",
+      url: `${baseUrl}/refund-policy`,
+      title: "Refund Policy",
+    },
+    {
+      type: "shipping_policy",
+      url: `${baseUrl}/shipping-policy`,
+      title: "Shipping Policy",
+    },
+  ];
+};
+
+/**
+ * Generates continue_url for checkout handoff to business UI.
+ * Spec: Server-side state approach (recommended) - opaque URL with checkout ID.
+ * Can be extended with custom conditions for when to trigger escalation.
+ *
+ * @param checkoutId - UCP checkout ID
+ * @param baseUrl - Business base URL
+ * @param conditions - Optional conditions that may trigger continue_url requirement
+ * @returns continue_url or undefined if not needed
+ *
+ * Example conditions you can check:
+ * - missingEmail: checkout.email === null
+ * - missingBillingAddress: !checkout.billingAddress
+ * - missingShippingAddress: !checkout.shippingAddress
+ * - missingDeliveryMethod: !checkout.deliveryMethod
+ * - customRequirement: your business logic
+ */
+export const generateContinueUrl = (
+  checkoutId: string,
+  baseUrl: string,
+  conditions?: Record<string, boolean>,
+): string | undefined => {
+  // If conditions are provided, only generate if any condition is true
+  if (conditions) {
+    const needsContinueUrl = Object.values(conditions).some((val) => val);
+    if (!needsContinueUrl) {
+      return undefined;
+    }
+  }
+
+  // Generate server-side state URL (recommended by spec)
+  return `${baseUrl}/checkout/${checkoutId}`;
+};

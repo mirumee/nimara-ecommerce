@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import {
   type NextFetchEvent,
   type NextRequest,
@@ -5,17 +6,17 @@ import {
 } from "next/server";
 
 import { type CustomMiddleware } from "@nimara/foundation/middleware/chain";
+
 import { type Logger } from "#root/logging/types";
-import { redirect } from "next/navigation";
 
 export interface UcpProxyConfig {
-  logger: Logger;
-  redirectEnabled: boolean;
   checkoutCookie: {
+    [key: string]: unknown;
     key: string;
     maxAge: number;
-    [key: string]: unknown;
   };
+  logger: Logger;
+  redirectEnabled: boolean;
 }
 
 /**
@@ -95,6 +96,7 @@ export const ucpProxyMiddleware =
       }
 
       response.cookies.set(cookieKey, checkoutID, cookieConfig);
+
       return next(request, event, response);
     }
 

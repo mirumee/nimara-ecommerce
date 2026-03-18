@@ -58,3 +58,12 @@ export type UCPUpdateRequestExtended = CheckoutUpdateRequest & {
     methods?: UCPFulfillmentMethod[];
   };
 };
+
+/** Conditions for determining if continue_url should be generated. */
+export type ContinueUrlConditions = {
+  missingEmail?: boolean;
+  missingBillingAddress?: boolean;
+  missingShippingAddress?: boolean;
+  missingDeliveryMethod?: boolean;
+  [key: string]: boolean | undefined;
+};

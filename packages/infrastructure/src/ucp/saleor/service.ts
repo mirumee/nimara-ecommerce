@@ -4,13 +4,14 @@ import {
   type CheckoutUpdateRequest,
   type CompleteCheckoutRequestWithAp2,
 } from "@ucp-js/sdk";
-import { never } from "zod";
 
 import { type LanguageCodeEnum } from "@nimara/codegen/schema";
 import { type AsyncResult, err, ok } from "@nimara/domain/objects/Result";
 
 import { graphqlClient } from "#root/graphql/client";
+import { UCP_VERSION } from "#root/ucp/consts";
 import { createErrorResponse } from "#root/ucp/error";
+import { getDiscoveryProfile } from "#root/ucp/profile";
 
 import { type UCPService } from "../types";
 import {
@@ -22,6 +23,7 @@ import {
 } from "./graphql/mutations/generated";
 import { CheckoutSessionGetDocument } from "./graphql/queries/generated";
 import {
+  calculateCheckoutExpiration,
   toSaleorAddress,
   validateCheckoutTermsDummy,
   verifyCheckoutMandateDummy,
@@ -88,17 +90,7 @@ export const saleorUCPService = ({
       });
 
       if (!result.ok) {
-        return {
-          error: createErrorResponse(
-            result.errors.map((error) => ({
-              code: error.code,
-              message: error.message,
-              severity: "error",
-              type: "error",
-            })),
-          ),
-          ok: false,
-        };
+        return err(result.errors);
       }
 
       const checkout = result.data.checkoutCreate?.checkout;
@@ -116,7 +108,7 @@ export const saleorUCPService = ({
         ]);
       }
 
-      const session = toUCPCheckoutSession(checkout);
+      const session = toUCPCheckoutSession(checkout, undefined, baseUrl);
       const paymentHandlers = toPaymentHandlers(checkout);
 
       return ok(sessionToCheckoutResponse(session, paymentHandlers));
@@ -129,6 +121,8 @@ export const saleorUCPService = ({
       ]);
     }
   },
+
+  discoveryProfile: () => getDiscoveryProfile(),
 
   getCheckoutSession: async (input: {
     id: string;
@@ -166,7 +160,11 @@ export const saleorUCPService = ({
         ]);
       }
 
-      const session = toUCPCheckoutSession(result.data.checkout);
+      const session = toUCPCheckoutSession(
+        result.data.checkout,
+        undefined,
+        baseUrl,
+      );
       const paymentHandlers = toPaymentHandlers(result.data.checkout);
 
       return ok(sessionToCheckoutResponse(session, paymentHandlers));
@@ -395,6 +393,8 @@ export const saleorUCPService = ({
 
       const session = toUCPCheckoutSession(
         refreshedCheckoutResult.data.checkout,
+        undefined,
+        baseUrl,
       );
       const paymentHandlers = toPaymentHandlers(
         refreshedCheckoutResult.data.checkout,
@@ -472,7 +472,11 @@ export const saleorUCPService = ({
       }
 
       const currentCheckout = sessionToCheckoutResponse(
-        toUCPCheckoutSession(currentCheckoutResult.data.checkout),
+        toUCPCheckoutSession(
+          currentCheckoutResult.data.checkout,
+          undefined,
+          baseUrl,
+        ),
         toPaymentHandlers(currentCheckoutResult.data.checkout),
       );
 
@@ -573,6 +577,8 @@ export const saleorUCPService = ({
           fulfillment: {},
           lineItems: [],
           totals: [{ type: "total", amount: 0 }],
+          links: [],
+          expiresAtISO: calculateCheckoutExpiration(),
           order: {
             id: order.id,
             permalinkUrl: `${baseUrl}/orders/${order.id}`,
@@ -584,7 +590,11 @@ export const saleorUCPService = ({
 
       const paymentHandlers = toPaymentHandlers(checkoutResult.data.checkout);
       const completedSession: UCPCheckoutSessionModel = {
-        ...toUCPCheckoutSession(checkoutResult.data.checkout),
+        ...toUCPCheckoutSession(
+          checkoutResult.data.checkout,
+          undefined,
+          baseUrl,
+        ),
         status: "completed",
         order: {
           id: order.id,
@@ -603,13 +613,34 @@ export const saleorUCPService = ({
     }
   },
 
+  /**
+   * Cancels a checkout session.
+   *
+   * Note: Saleor does not provide native checkout deletion/cancellation API.
+   * Checkouts are automatically expired by Saleor after a TTL (6h for empty,
+   * 30d for anonymous, 90d for user checkouts). See:
+   * https://docs.saleor.io/developer/checkout/lifecycle#checkout-expiration-and-deletion
+   *
+   * Workaround alternatives:
+   * 1. Remove all lines from checkout (leaves empty checkout, expires in 6h)
+   * 2. Mark checkout as "canceled" via metadata webhook
+   * 3. Let platform handle cancellation UI (user navigates away, timeout)
+   *
+   * Current: Returns error as per spec guidance for unsupported operations.
+   * Spec: "If the checkout session cannot be canceled (e.g. checkout session
+   *        is already canceled or completed), then businesses SHOULD send back
+   *        an error indicating the operation is not allowed."
+   */
   cancelCheckout: async (_input: {
     id: string;
   }): AsyncResult<CheckoutResponse> => {
     return err([
       {
         code: "BAD_REQUEST_ERROR",
-        message: "Checkout cancellation is not supported by Saleor.",
+        message:
+          "Checkout cancellation is not directly supported by Saleor. " +
+          "Checkouts expire automatically (6h empty, 30d anonymous, 90d user). " +
+          "To cancel, remove all lines or navigate away.",
       },
     ]);
   },
