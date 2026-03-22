@@ -3,6 +3,8 @@ import { type NextRequest, NextResponse } from "next/server";
 import type { TransactionCreateVariables } from "@/graphql/generated/client";
 import { getAppConfig } from "@/lib/saleor/app-config";
 import { verifyStripeWebhookSignature } from "@/lib/stripe/webhook-signature";
+import { checkoutService } from "@/services/checkouts";
+import { marketplaceLogger } from "@/services/logging";
 import { transactionsService } from "@/services/transactions";
 
 type StripePaymentIntentSucceededEvent = {
@@ -26,6 +28,11 @@ type FailedTransactionCreate = {
   errors: Array<{ code: string; message: string }>;
 };
 
+type ServiceError = {
+  code: string;
+  message: string;
+};
+
 type TransactionCreatePayload = {
   errors: Array<{ code: string; message: string | null }>;
   transaction: { id: string; name: string } | null;
@@ -39,6 +46,35 @@ type CheckoutTransactionsPayload = {
     }> | null;
   } | null;
 };
+
+type CheckoutCompletePayload = {
+  checkoutComplete: {
+    errors: Array<{ code: string; message: string | null }>;
+    order: { id: string } | null;
+  } | null;
+};
+
+const isCheckoutCompleteNotFoundError = (code: string) => code === "NOT_FOUND";
+
+const mapCheckoutCompleteErrors = (
+  errors: Array<{ code: string; message?: string | null }>,
+): ServiceError[] =>
+  errors
+    .filter((error) => !isCheckoutCompleteNotFoundError(error.code))
+    .map((error) => ({
+      code: error.code,
+      message: error.message ?? "checkoutComplete failed.",
+    }));
+
+const mapCheckoutCompleteRequestFailure = (error: unknown): ServiceError[] => [
+  {
+    code: "CHECKOUT_COMPLETE_REQUEST_FAILED",
+    message:
+      error instanceof Error
+        ? error.message
+        : "checkoutComplete request failed.",
+  },
+];
 
 const getSaleorDomainFromEnv = () => {
   const saleorUrl = process.env.NEXT_PUBLIC_SALEOR_URL;
@@ -181,6 +217,70 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const completeCheckout = async (
+    checkoutId: string,
+  ): Promise<ServiceError[]> => {
+    const checkoutCompleteResult = await checkoutService.completeCheckout(
+      { id: checkoutId },
+      config.authToken,
+    );
+
+    if (!checkoutCompleteResult.ok) {
+      const mappedCheckoutCompleteErrors = mapCheckoutCompleteErrors(
+        checkoutCompleteResult.errors,
+      );
+
+      if (
+        mappedCheckoutCompleteErrors.length === 0 &&
+        checkoutCompleteResult.errors.length > 0
+      ) {
+        return [];
+      }
+
+      if (mappedCheckoutCompleteErrors.length === 0) {
+        return [
+          {
+            code: "UNKNOWN_CHECKOUT_COMPLETE_ERROR",
+            message: "checkoutComplete failed without error details.",
+          },
+        ];
+      }
+
+      return mappedCheckoutCompleteErrors;
+    }
+
+    const checkoutCompleteResultData =
+      checkoutCompleteResult.data as CheckoutCompletePayload;
+    const rawCheckoutCompleteErrors =
+      checkoutCompleteResultData.checkoutComplete?.errors ?? [];
+    const mappedCheckoutCompleteErrors = mapCheckoutCompleteErrors(
+      rawCheckoutCompleteErrors,
+    );
+    const hasOnlyNotFoundErrors =
+      rawCheckoutCompleteErrors.length > 0 &&
+      rawCheckoutCompleteErrors.every((error) =>
+        isCheckoutCompleteNotFoundError(error.code),
+      );
+
+    if (mappedCheckoutCompleteErrors.length > 0) {
+      return mappedCheckoutCompleteErrors;
+    }
+
+    if (
+      checkoutCompleteResultData.checkoutComplete?.order ||
+      hasOnlyNotFoundErrors
+    ) {
+      return [];
+    }
+
+    return [
+      {
+        code: "UNKNOWN_CHECKOUT_COMPLETE_ERROR",
+        message: "checkoutComplete returned no order and no error details.",
+      },
+    ];
+  };
+
   const settled = await Promise.allSettled(
     checkoutIds.map(async (checkoutId) => {
       const amount = checkoutAmounts[checkoutId];
@@ -212,6 +312,31 @@ export async function POST(request: NextRequest) {
         }) ?? false;
 
       if (alreadyCharged) {
+        marketplaceLogger.warning(
+          "Stripe webhook recovery path: checkout already charged, retrying checkoutComplete.",
+          {
+            checkoutId,
+            eventId: event.id,
+            paymentIntentId,
+            saleorDomain,
+          },
+        );
+
+        let checkoutCompleteErrors: ServiceError[];
+
+        try {
+          checkoutCompleteErrors = await completeCheckout(checkoutId);
+        } catch (error) {
+          checkoutCompleteErrors = mapCheckoutCompleteRequestFailure(error);
+        }
+
+        if (checkoutCompleteErrors.length > 0) {
+          return {
+            transaction: null,
+            errors: checkoutCompleteErrors,
+          };
+        }
+
         return {
           transaction: {
             id: "already-processed",
@@ -241,8 +366,6 @@ export async function POST(request: NextRequest) {
           transactionVariables,
           config.authToken,
         );
-
-      // checkotu complete here
 
       if (!transactionCreateResult.ok) {
         return {
@@ -283,6 +406,21 @@ export async function POST(request: NextRequest) {
                       "transactionCreate returned no transaction and no error details.",
                   },
                 ],
+        };
+      }
+
+      let checkoutCompleteErrors: ServiceError[];
+
+      try {
+        checkoutCompleteErrors = await completeCheckout(checkoutId);
+      } catch (error) {
+        checkoutCompleteErrors = mapCheckoutCompleteRequestFailure(error);
+      }
+
+      if (checkoutCompleteErrors.length > 0) {
+        return {
+          transaction: null,
+          errors: checkoutCompleteErrors,
         };
       }
 

@@ -186,6 +186,7 @@ const OPERATION_AUTH_CONFIG: Record<string, GraphQLAuthLevel> = {
   vendorProfiles: GraphQLAuthLevel.APP_TOKEN_ONLY,
   VendorProfilesQuery: GraphQLAuthLevel.APP_TOKEN_ONLY,
   checkout: GraphQLAuthLevel.APP_TOKEN_ONLY,
+  checkoutComplete: GraphQLAuthLevel.APP_TOKEN_ONLY,
   transactionCreate: GraphQLAuthLevel.APP_TOKEN_ONLY,
 
   // Domain-only operations (require x-saleor-domain header but no auth token)

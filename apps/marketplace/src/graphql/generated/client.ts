@@ -32074,6 +32074,22 @@ export type AccountUpdateMutationVariables = Exact<{
 
 export type AccountUpdateMutation = AccountUpdateMutation_Mutation;
 
+export type CheckoutCompleteMutation_checkoutComplete_CheckoutComplete_order_Order = { id: string };
+
+export type CheckoutCompleteMutation_checkoutComplete_CheckoutComplete_errors_CheckoutError = { field: string | null, message: string | null, code: CheckoutErrorCode };
+
+export type CheckoutCompleteMutation_checkoutComplete_CheckoutComplete = { order: CheckoutCompleteMutation_checkoutComplete_CheckoutComplete_order_Order | null, errors: Array<CheckoutCompleteMutation_checkoutComplete_CheckoutComplete_errors_CheckoutError> };
+
+export type CheckoutCompleteMutation_Mutation = { checkoutComplete: CheckoutCompleteMutation_checkoutComplete_CheckoutComplete | null };
+
+
+export type CheckoutCompleteMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type CheckoutCompleteMutation = CheckoutCompleteMutation_Mutation;
+
 export type CollectionAddProductsMutation_collectionAddProducts_CollectionAddProducts_errors_CollectionError = { field: string | null, message: string | null, code: CollectionErrorCode };
 
 export type CollectionAddProductsMutation_collectionAddProducts_CollectionAddProducts_collection_Collection = { id: string, name: string };
@@ -33709,6 +33725,20 @@ export const AccountUpdateMutationDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<AccountUpdateMutation, AccountUpdateMutationVariables>;
+export const CheckoutCompleteMutationDocument = new TypedDocumentString(`
+    mutation CheckoutCompleteMutation($id: ID!) {
+  checkoutComplete(id: $id) {
+    order {
+      id
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<CheckoutCompleteMutation, CheckoutCompleteMutationVariables>;
 export const CollectionAddProductsMutationDocument = new TypedDocumentString(`
     mutation CollectionAddProductsMutation($collectionId: ID!, $products: [ID!]!) {
   collectionAddProducts(collectionId: $collectionId, products: $products) {

@@ -185,6 +185,7 @@ async function makeSaleorSchema() {
             "collectionDelete",
             "collectionAddProducts",
             "collectionRemoveProducts",
+            "checkoutComplete",
             "transactionCreate",
           ];
 
