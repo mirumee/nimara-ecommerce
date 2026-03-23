@@ -57,6 +57,7 @@ export async function GET(request: NextRequest) {
       "MANAGE_ORDERS",
       "MANAGE_SHIPPING",
       "MANAGE_CHANNELS",
+      "HANDLE_PAYMENTS",
     ],
     tokenTargetUrl: manifestUrl(baseUrl, "/api/saleor/register"),
     appUrl: manifestUrl(baseUrl, "/app"),

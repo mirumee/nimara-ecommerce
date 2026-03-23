@@ -19418,7 +19418,10 @@ export type Payment = Node & ObjectWithMetadata & {
   modified: Scalars['DateTime']['output'];
   /** Order associated with a payment. */
   order: Maybe<Order>;
-  /** Informs whether this is a partial payment. */
+  /**
+   * Informs whether this is a partial payment.
+   * @deprecated This field is reserved for the Adyen Gateway plugin. For other gateways, its value is always `false`. This field will be removed in 3.23 along with the plugin.
+   */
   partial: Scalars['Boolean']['output'];
   /** Type of method used for payment. */
   paymentMethodType: Scalars['String']['output'];
@@ -32071,6 +32074,22 @@ export type AccountUpdateMutationVariables = Exact<{
 
 export type AccountUpdateMutation = AccountUpdateMutation_Mutation;
 
+export type CheckoutCompleteMutation_checkoutComplete_CheckoutComplete_order_Order = { id: string };
+
+export type CheckoutCompleteMutation_checkoutComplete_CheckoutComplete_errors_CheckoutError = { field: string | null, message: string | null, code: CheckoutErrorCode };
+
+export type CheckoutCompleteMutation_checkoutComplete_CheckoutComplete = { order: CheckoutCompleteMutation_checkoutComplete_CheckoutComplete_order_Order | null, errors: Array<CheckoutCompleteMutation_checkoutComplete_CheckoutComplete_errors_CheckoutError> };
+
+export type CheckoutCompleteMutation_Mutation = { checkoutComplete: CheckoutCompleteMutation_checkoutComplete_CheckoutComplete | null };
+
+
+export type CheckoutCompleteMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type CheckoutCompleteMutation = CheckoutCompleteMutation_Mutation;
+
 export type CollectionAddProductsMutation_collectionAddProducts_CollectionAddProducts_errors_CollectionError = { field: string | null, message: string | null, code: CollectionErrorCode };
 
 export type CollectionAddProductsMutation_collectionAddProducts_CollectionAddProducts_collection_Collection = { id: string, name: string };
@@ -32734,6 +32753,24 @@ export type ProductVariantUpdateMutationVariables = Exact<{
 
 export type ProductVariantUpdateMutation = ProductVariantUpdateMutation_Mutation;
 
+export type TransactionCreate_transactionCreate_TransactionCreate_transaction_TransactionItem = { id: string, name: string };
+
+export type TransactionCreate_transactionCreate_TransactionCreate_errors_TransactionCreateError = { field: string | null, message: string | null, code: TransactionCreateErrorCode };
+
+export type TransactionCreate_transactionCreate_TransactionCreate = { transaction: TransactionCreate_transactionCreate_TransactionCreate_transaction_TransactionItem | null, errors: Array<TransactionCreate_transactionCreate_TransactionCreate_errors_TransactionCreateError> };
+
+export type TransactionCreate_Mutation = { transactionCreate: TransactionCreate_transactionCreate_TransactionCreate | null };
+
+
+export type TransactionCreateVariables = Exact<{
+  id: Scalars['ID']['input'];
+  transaction: TransactionCreateInput;
+  transactionEvent?: InputMaybe<TransactionEventInput>;
+}>;
+
+
+export type TransactionCreate = TransactionCreate_Mutation;
+
 export type VendorCollectionCreate_collectionCreate_CollectionCreate_collection_Collection = { id: string, name: string, slug: string };
 
 export type VendorCollectionCreate_collectionCreate_CollectionCreate_errors_CollectionError = { field: string | null, message: string | null, code: CollectionErrorCode };
@@ -32852,6 +32889,22 @@ export type ChannelsVariables = Exact<{ [key: string]: never; }>;
 
 
 export type Channels = Channels_Query;
+
+export type CheckoutTransactions_checkout_Checkout_transactions_TransactionItem_chargedAmount_Money = { amount: number };
+
+export type CheckoutTransactions_checkout_Checkout_transactions_TransactionItem = { id: string, pspReference: string, chargedAmount: CheckoutTransactions_checkout_Checkout_transactions_TransactionItem_chargedAmount_Money };
+
+export type CheckoutTransactions_checkout_Checkout = { id: string, transactions: Array<CheckoutTransactions_checkout_Checkout_transactions_TransactionItem> | null };
+
+export type CheckoutTransactions_Query = { checkout: CheckoutTransactions_checkout_Checkout | null };
+
+
+export type CheckoutTransactionsVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type CheckoutTransactions = CheckoutTransactions_Query;
 
 export type CollectionDetail_collection_Collection_backgroundImage_Image = { url: string, alt: string | null };
 
@@ -33239,19 +33292,7 @@ export type ProductDetail_product_Product_assignedAttributes_AssignedTextAttribu
   & { __typename: 'AssignedTextAttribute' }
 );
 
-export type ProductDetail_product_Product_assignedAttributes =
-  | ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute
-  | ProductDetail_product_Product_assignedAttributes_AssignedDateAttribute
-  | ProductDetail_product_Product_assignedAttributes_AssignedDateTimeAttribute
-  | ProductDetail_product_Product_assignedAttributes_AssignedFileAttribute
-  | ProductDetail_product_Product_assignedAttributes_EP9HcmmFCQqdoG7811YxTX6aNOeQ5zZmEGxiLqdpAO4
-  | ProductDetail_product_Product_assignedAttributes_AssignedMultiChoiceAttribute
-  | ProductDetail_product_Product_assignedAttributes_AssignedNumericAttribute
-  | ProductDetail_product_Product_assignedAttributes_AssignedPlainTextAttribute
-  | ProductDetail_product_Product_assignedAttributes_AssignedSingleChoiceAttribute
-  | ProductDetail_product_Product_assignedAttributes_AssignedSwatchAttribute
-  | ProductDetail_product_Product_assignedAttributes_AssignedTextAttribute
-;
+export type ProductDetail_product_Product_assignedAttributes = ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute | ProductDetail_product_Product_assignedAttributes_AssignedDateAttribute | ProductDetail_product_Product_assignedAttributes_AssignedDateTimeAttribute | ProductDetail_product_Product_assignedAttributes_AssignedFileAttribute | ProductDetail_product_Product_assignedAttributes_EP9HcmmFCQqdoG7811YxTX6aNOeQ5zZmEGxiLqdpAO4 | ProductDetail_product_Product_assignedAttributes_AssignedMultiChoiceAttribute | ProductDetail_product_Product_assignedAttributes_AssignedNumericAttribute | ProductDetail_product_Product_assignedAttributes_AssignedPlainTextAttribute | ProductDetail_product_Product_assignedAttributes_AssignedSingleChoiceAttribute | ProductDetail_product_Product_assignedAttributes_AssignedSwatchAttribute | ProductDetail_product_Product_assignedAttributes_AssignedTextAttribute;
 
 export type ProductDetail_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_gross_Money = { amount: number, currency: string };
 
@@ -33453,19 +33494,7 @@ export type ProductVariantDetail_productVariant_ProductVariant_assignedAttribute
   & { __typename: 'AssignedTextAttribute' }
 );
 
-export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes =
-  | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute
-  | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedDateAttribute
-  | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedDateTimeAttribute
-  | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedFileAttribute
-  | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_EP9HcmmFCQqdoG7811YxTX6aNOeQ5zZmEGxiLqdpAO4
-  | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedMultiChoiceAttribute
-  | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedNumericAttribute
-  | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedPlainTextAttribute
-  | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedSingleChoiceAttribute
-  | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedSwatchAttribute
-  | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedTextAttribute
-;
+export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes = ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedDateAttribute | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedDateTimeAttribute | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedFileAttribute | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_EP9HcmmFCQqdoG7811YxTX6aNOeQ5zZmEGxiLqdpAO4 | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedMultiChoiceAttribute | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedNumericAttribute | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedPlainTextAttribute | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedSingleChoiceAttribute | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedSwatchAttribute | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedTextAttribute;
 
 export type ProductVariantDetail_productVariant_ProductVariant_stocks_Stock_warehouse_Warehouse = { id: string, name: string };
 
@@ -33720,6 +33749,20 @@ export const AccountUpdateMutationDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<AccountUpdateMutation, AccountUpdateMutationVariables>;
+export const CheckoutCompleteMutationDocument = new TypedDocumentString(`
+    mutation CheckoutCompleteMutation($id: ID!) {
+  checkoutComplete(id: $id) {
+    order {
+      id
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<CheckoutCompleteMutation, CheckoutCompleteMutationVariables>;
 export const CollectionAddProductsMutationDocument = new TypedDocumentString(`
     mutation CollectionAddProductsMutation($collectionId: ID!, $products: [ID!]!) {
   collectionAddProducts(collectionId: $collectionId, products: $products) {
@@ -34426,6 +34469,25 @@ export const ProductVariantUpdateMutationDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<ProductVariantUpdateMutation, ProductVariantUpdateMutationVariables>;
+export const TransactionCreateDocument = new TypedDocumentString(`
+    mutation TransactionCreate($id: ID!, $transaction: TransactionCreateInput!, $transactionEvent: TransactionEventInput) {
+  transactionCreate(
+    id: $id
+    transaction: $transaction
+    transactionEvent: $transactionEvent
+  ) {
+    transaction {
+      id
+      name
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<TransactionCreate, TransactionCreateVariables>;
 export const VendorCollectionCreateDocument = new TypedDocumentString(`
     mutation VendorCollectionCreate($input: CollectionCreateInput!) {
   collectionCreate(input: $input) {
@@ -34550,6 +34612,20 @@ export const ChannelsDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<Channels, ChannelsVariables>;
+export const CheckoutTransactionsDocument = new TypedDocumentString(`
+    query CheckoutTransactions($id: ID!) {
+  checkout(id: $id) {
+    id
+    transactions {
+      id
+      pspReference
+      chargedAmount {
+        amount
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<CheckoutTransactions, CheckoutTransactionsVariables>;
 export const CollectionDetailDocument = new TypedDocumentString(`
     query CollectionDetail($id: ID!) {
   collection(id: $id) {
