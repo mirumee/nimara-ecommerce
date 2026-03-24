@@ -644,19 +644,13 @@ export function VariantSelectionDialog({
           >
             {t("common.back")}
           </Button>
-          {isSaving ? (
-            <div className="flex h-10 items-center justify-center gap-2 text-sm text-muted-foreground sm:min-w-[100px]">
-              <Loader2 className="h-4 w-4 animate-spin" />
-              {t("common.saving")}
-            </div>
-          ) : (
-            <Button
-              onClick={() => void handleConfirm()}
-              disabled={selectedVariantIds.size === 0}
-            >
-              {t("common.confirm")}
-            </Button>
-          )}
+          <Button
+            disabled={isSaving || selectedVariantIds.size === 0}
+            onClick={() => void handleConfirm()}
+          >
+            {t("common.confirm")}{" "}
+            {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
