@@ -1,6 +1,10 @@
 {
   "dependencies": {
     "@aws-sdk/client-secrets-manager": "^3.1005.0",
+    "@editorjs/editorjs": "2.31.5",
+    "@editorjs/header": "2.8.8",
+    "@editorjs/list": "2.0.9",
+    "@editorjs/paragraph": "2.11.7",
     "@graphql-tools/delegate": "^10.2.9",
     "@graphql-tools/executor-http": "^1.2.2",
     "@graphql-tools/schema": "^10.0.16",
