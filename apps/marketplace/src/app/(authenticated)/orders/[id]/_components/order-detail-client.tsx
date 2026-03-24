@@ -1340,7 +1340,7 @@ export function OrderDetailClient({
       }
     }
 
-    router.refresh();
+    await router.refresh();
   };
 
   return (
