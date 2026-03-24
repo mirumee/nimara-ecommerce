@@ -1340,7 +1340,8 @@ export function OrderDetailClient({
       }
     }
 
-    await router.refresh();
+    // Next.js types say void; runtime returns a Promise (cast via unknown for tsc).
+    await (router.refresh() as unknown as Promise<void>);
   };
 
   return (
