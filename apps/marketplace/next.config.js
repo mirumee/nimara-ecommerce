@@ -10,6 +10,10 @@ const withNextIntl = createNextIntlPlugin({
 
 const nextConfig = withNextIntl({
   transpilePackages: [
+    "@editorjs/editorjs",
+    "@editorjs/header",
+    "@editorjs/list",
+    "@editorjs/paragraph",
     "@nimara/ui",
     "@nimara/infrastructure",
     "@nimara/domain",

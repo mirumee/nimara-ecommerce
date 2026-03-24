@@ -316,6 +316,7 @@
         "toast-order-canceled-desc": "The order was canceled successfully.",
         "toast-order-finalized": "Order finalized",
         "toast-remove-discount-failed": "Failed to remove discount",
+        "toast-add-lines-failed": "Failed to add products to order",
         "toast-remove-item-failed": "Failed to remove item",
         "toast-update-billing-failed": "Failed to update billing address",
         "toast-update-customer-failed": "Failed to update customer",
