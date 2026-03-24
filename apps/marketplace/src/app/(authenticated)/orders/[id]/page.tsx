@@ -5,8 +5,13 @@ import { getTranslations } from "next-intl/server";
 import { Button } from "@nimara/ui/components/button";
 import { Card, CardContent } from "@nimara/ui/components/card";
 
+import type { Products } from "@/graphql/generated/client";
 import { getServerAuthToken } from "@/lib/auth/server";
-import { configurationService, ordersService } from "@/services";
+import {
+  configurationService,
+  ordersService,
+  productsService,
+} from "@/services";
 
 import { OrderDetailClient } from "./_components/order-detail-client";
 
@@ -69,7 +74,24 @@ export default async function OrderDetailPage({ params }: PageProps) {
       ? warehousesResult.data.warehouses.edges.map((edge) => edge.node)
       : [];
 
+  let draftProductsCatalog: Products["products"] | null = null;
+
+  if (result.data.order.status === "DRAFT") {
+    const catalogResult = await productsService.getProducts(
+      { first: 50 },
+      token,
+    );
+
+    if (catalogResult.ok) {
+      draftProductsCatalog = catalogResult.data.products ?? null;
+    }
+  }
+
   return (
-    <OrderDetailClient order={result.data.order} warehouses={warehouses} />
+    <OrderDetailClient
+      draftProductsCatalog={draftProductsCatalog}
+      order={result.data.order}
+      warehouses={warehouses}
+    />
   );
 }

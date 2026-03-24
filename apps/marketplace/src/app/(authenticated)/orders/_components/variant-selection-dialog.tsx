@@ -16,9 +16,10 @@ import {
 import { Input } from "@nimara/ui/components/input";
 import { ScrollArea } from "@nimara/ui/components/scroll-area";
 
+import type { Products } from "@/graphql/generated/client";
 import { formatPrice } from "@/lib/utils";
 
-import { getProductDetail, getProductsForOrder } from "../actions";
+import { getProductsForOrder } from "../actions";
 
 export type VariantLineDraft = {
   productName?: string;
@@ -53,10 +54,102 @@ type VariantMeta = {
   unitPrice: { amount: number; currency: string } | null;
 };
 
+type ProductNode = NonNullable<
+  NonNullable<NonNullable<Products["products"]>["edges"]>[number]["node"]
+>;
+
+function buildMetaFromInitialLines(
+  lines: VariantLineDraft[],
+): Record<string, VariantMeta> {
+  return lines.reduce<Record<string, VariantMeta>>((acc, l) => {
+    acc[l.variantId] = {
+      id: l.variantId,
+      name: l.variantName,
+      sku: l.sku,
+      unitPrice: l.unitPrice ?? null,
+      productName: l.productName,
+      thumbnail: l.thumbnail ?? null,
+    };
+
+    return acc;
+  }, {});
+}
+
+function mapProductsConnectionToState(
+  productsConnection: Products["products"] | null | undefined,
+  channelId: string | undefined,
+): {
+  metaPatch: Record<string, VariantMeta>;
+  products: ProductHit[];
+  variantsByProductId: Record<string, VariantRow[]>;
+} {
+  const edges = productsConnection?.edges ?? [];
+  const productHits: ProductHit[] = [];
+  const variantsByProductId: Record<string, VariantRow[]> = {};
+  const metaPatch: Record<string, VariantMeta> = {};
+
+  for (const edge of edges) {
+    const p = edge?.node;
+
+    if (!p) {
+      continue;
+    }
+
+    productHits.push({
+      id: p.id,
+      name: p.name,
+      thumbnail: p.thumbnail ?? null,
+    });
+
+    const rawVariants = p.variants ?? [];
+
+    const vs = rawVariants.filter(
+      (v): v is NonNullable<ProductNode["variants"]>[number] => Boolean(v),
+    );
+
+    const mapped: VariantRow[] = vs.map((v) => ({
+      id: v.id,
+      name: v.name,
+      sku: v.sku ?? "",
+      unitPrice: (() => {
+        const byChannel = channelId
+          ? v.channelListings?.find((cl) => cl.channel.id === channelId)?.price
+          : null;
+
+        if (byChannel) {
+          return { amount: byChannel.amount, currency: byChannel.currency };
+        }
+        const gross = v.pricing?.price?.gross ?? null;
+
+        return gross
+          ? { amount: gross.amount, currency: gross.currency }
+          : null;
+      })(),
+    }));
+
+    variantsByProductId[p.id] = mapped;
+
+    for (const variant of mapped) {
+      metaPatch[variant.id] = {
+        id: variant.id,
+        name: variant.name,
+        sku: variant.sku,
+        unitPrice: variant.unitPrice,
+        productId: p.id,
+        productName: p.name,
+        thumbnail: p.thumbnail ?? null,
+      };
+    }
+  }
+
+  return { metaPatch, products: productHits, variantsByProductId };
+}
+
 export function VariantSelectionDialog({
   channelName,
   channelId,
   initialLines,
+  initialProductCatalog,
   onOpenChange,
   onSave,
   open,
@@ -64,23 +157,22 @@ export function VariantSelectionDialog({
   channelId?: string;
   channelName?: string;
   initialLines: VariantLineDraft[];
+  initialProductCatalog?: Products["products"] | null;
   onOpenChange: (open: boolean) => void;
-  onSave: (lines: VariantLineDraft[]) => void;
+  onSave: (lines: VariantLineDraft[]) => void | Promise<void>;
   open: boolean;
 }) {
   const t = useTranslations();
   const [search, setSearch] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [isLoadingProducts, setIsLoadingProducts] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [products, setProducts] = useState<ProductHit[]>([]);
   const [expandedProductIds, setExpandedProductIds] = useState<Set<string>>(
     new Set(),
   );
   const [variantsByProductId, setVariantsByProductId] = useState<
     Record<string, VariantRow[]>
-  >({});
-  const [loadingVariantsByProductId, setLoadingVariantsByProductId] = useState<
-    Record<string, boolean>
   >({});
   const [selectedVariantIds, setSelectedVariantIds] = useState<Set<string>>(
     new Set(),
@@ -89,43 +181,58 @@ export function VariantSelectionDialog({
   const [meta, setMeta] = useState<Record<string, VariantMeta>>({});
 
   const prevOpenRef = useRef(false);
-  const variantsFetchSeq = useRef(0);
 
   const initialSelectedIds = useMemo(
     () => new Set(initialLines.map((l) => l.variantId)),
     [initialLines],
   );
 
-  const loadProducts = useCallback(async (searchTerm?: string) => {
-    setIsLoadingProducts(true);
-    try {
-      const res = await getProductsForOrder({
-        first: 50,
-        search: searchTerm?.trim() || undefined,
-      });
+  const applyCatalog = useCallback(
+    (
+      connection: Products["products"] | null | undefined,
+      lineMeta: Record<string, VariantMeta>,
+    ) => {
+      const {
+        metaPatch,
+        products: hits,
+        variantsByProductId: byPid,
+      } = mapProductsConnectionToState(connection, channelId);
 
-      if (!res.ok) {
-        setProducts([]);
+      setProducts(hits);
+      setVariantsByProductId(byPid);
+      setExpandedProductIds(new Set(hits.map((p) => p.id)));
+      setMeta({ ...metaPatch, ...lineMeta });
+    },
+    [channelId],
+  );
 
-        return;
+  const loadProducts = useCallback(
+    async (searchTerm?: string, lineMeta?: Record<string, VariantMeta>) => {
+      setIsLoadingProducts(true);
+      try {
+        const res = await getProductsForOrder({
+          first: 50,
+          search: searchTerm?.trim() || undefined,
+        });
+
+        if (!res.ok) {
+          setProducts([]);
+          setVariantsByProductId({});
+          setExpandedProductIds(new Set());
+
+          return;
+        }
+
+        applyCatalog(
+          res.data.products,
+          lineMeta ?? buildMetaFromInitialLines(initialLines),
+        );
+      } finally {
+        setIsLoadingProducts(false);
       }
-
-      const nodes =
-        res.data.products?.edges?.map((e) => e.node).filter(Boolean) ?? [];
-
-      const mapped = nodes.map((p) => ({
-        id: p.id,
-        name: p.name,
-        thumbnail: p.thumbnail ?? null,
-      }));
-
-      setProducts(mapped);
-      // By default show variants under each product (like screenshot)
-      setExpandedProductIds(new Set(mapped.map((p) => p.id)));
-    } finally {
-      setIsLoadingProducts(false);
-    }
-  }, []);
+    },
+    [applyCatalog, initialLines],
+  );
 
   useEffect(() => {
     if (!open) {
@@ -139,10 +246,11 @@ export function VariantSelectionDialog({
     prevOpenRef.current = true;
 
     setSearch("");
+    setIsSaving(false);
+
+    const lineMeta = buildMetaFromInitialLines(initialLines);
+
     setSelectedVariantIds(new Set(initialSelectedIds));
-    setExpandedProductIds(new Set());
-    setVariantsByProductId({});
-    setLoadingVariantsByProductId({});
     setQuantities(
       initialLines.reduce<Record<string, number>>((acc, l) => {
         acc[l.variantId] = Math.max(1, l.quantity ?? 1);
@@ -150,132 +258,35 @@ export function VariantSelectionDialog({
         return acc;
       }, {}),
     );
-    setMeta(
-      initialLines.reduce<Record<string, VariantMeta>>((acc, l) => {
-        acc[l.variantId] = {
-          id: l.variantId,
-          name: l.variantName,
-          sku: l.sku,
-          unitPrice: l.unitPrice ?? null,
-          productName: l.productName,
-          thumbnail: l.thumbnail ?? null,
-        };
 
-        return acc;
-      }, {}),
-    );
-    void loadProducts();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
+    const hasPrefetch =
+      Boolean(initialProductCatalog?.edges?.length) &&
+      initialProductCatalog?.edges?.some((e) => e?.node);
 
-  // Prefetch variants + prices for all products shown in the list.
-  useEffect(() => {
-    if (!open) {
+    if (hasPrefetch) {
+      applyCatalog(initialProductCatalog, lineMeta);
+    } else {
+      setProducts([]);
+      setVariantsByProductId({});
+      setExpandedProductIds(new Set());
+      setMeta(lineMeta);
+      void loadProducts(undefined, lineMeta);
+    }
+  }, [
+    open,
+    initialSelectedIds,
+    initialLines,
+    initialProductCatalog,
+    applyCatalog,
+    loadProducts,
+  ]);
+
+  const handleDialogOpenChange = (next: boolean) => {
+    if (!next && isSaving) {
       return;
     }
-    if (products.length === 0) {
-      return;
-    }
-
-    const seq = ++variantsFetchSeq.current;
-    let cancelled = false;
-
-    setLoadingVariantsByProductId(() => {
-      const next: Record<string, boolean> = {};
-
-      for (const p of products) {
-        next[p.id] = true;
-      }
-
-      return next;
-    });
-
-    const concurrency = 6;
-    let idx = 0;
-    const variantsUpdates: Record<string, VariantRow[]> = {};
-    const metaUpdates: Record<string, VariantMeta> = {};
-
-    const worker = async () => {
-      while (idx < products.length) {
-        const product = products[idx];
-
-        idx += 1;
-
-        const res = await getProductDetail(product.id);
-
-        if (!res.ok || !res.data.product) {
-          variantsUpdates[product.id] = [];
-          continue;
-        }
-
-        const p = res.data.product;
-        const vs = (p.variants ?? []).filter(Boolean);
-        const mapped: VariantRow[] = vs.map((v) => ({
-          id: v.id,
-          name: v.name,
-          sku: v.sku ?? "",
-          unitPrice: (() => {
-            const byChannel = channelId
-              ? v.channelListings?.find((cl) => cl.channel.id === channelId)
-                  ?.price
-              : null;
-
-            if (byChannel) {
-              return { amount: byChannel.amount, currency: byChannel.currency };
-            }
-            const gross = v.pricing?.price?.gross ?? null;
-
-            return gross
-              ? { amount: gross.amount, currency: gross.currency }
-              : null;
-          })(),
-        }));
-
-        variantsUpdates[product.id] = mapped;
-
-        for (const variant of mapped) {
-          metaUpdates[variant.id] = {
-            id: variant.id,
-            name: variant.name,
-            sku: variant.sku,
-            unitPrice: variant.unitPrice,
-            productId: product.id,
-            productName: p.name ?? product.name,
-            thumbnail: p.thumbnail ?? product.thumbnail ?? null,
-          };
-        }
-      }
-    };
-
-    void Promise.all(
-      Array.from({ length: Math.min(concurrency, products.length) }, () =>
-        worker(),
-      ),
-    ).then(() => {
-      if (cancelled) {
-        return;
-      }
-      if (seq !== variantsFetchSeq.current) {
-        return;
-      }
-
-      setVariantsByProductId(variantsUpdates);
-      setMeta((prev) => ({ ...prev, ...metaUpdates }));
-      setLoadingVariantsByProductId(() => {
-        const next: Record<string, boolean> = {};
-
-        for (const p of products) {
-          next[p.id] = false;
-        }
-
-        return next;
-      });
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [channelId, open, products]);
+    onOpenChange(next);
+  };
 
   const toggleVariant = (variantId: string) => {
     setSelectedVariantIds((prev) => {
@@ -299,8 +310,6 @@ export function VariantSelectionDialog({
     setQuantities((prev) => ({ ...prev, [variantId]: Math.max(1, qty) }));
   };
 
-  // Fix: read current expanded state BEFORE calling setExpandedProductIds so we
-  // never trigger a state update (expand) from inside a state updater function.
   const toggleExpandProduct = (product: ProductHit) => {
     const isCurrentlyExpanded = expandedProductIds.has(product.id);
 
@@ -358,7 +367,7 @@ export function VariantSelectionDialog({
     [selectedVariantIds, variantsByProductId],
   );
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     const lines: VariantLineDraft[] = [];
 
     for (const variantId of selectedVariantIds) {
@@ -377,21 +386,38 @@ export function VariantSelectionDialog({
       });
     }
 
-    onSave(lines);
-    onOpenChange(false);
+    setIsSaving(true);
+    try {
+      await onSave(lines);
+      onOpenChange(false);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleSearch = () => {
     setIsSearching(true);
     setExpandedProductIds(new Set());
-    setVariantsByProductId({});
-    setLoadingVariantsByProductId({});
-    void loadProducts(search).finally(() => setIsSearching(false));
+    const lineMeta = buildMetaFromInitialLines(initialLines);
+
+    void loadProducts(search, lineMeta).finally(() => setIsSearching(false));
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg">
+    <Dialog open={open} onOpenChange={handleDialogOpenChange}>
+      <DialogContent
+        className="max-w-lg"
+        onPointerDownOutside={(e) => {
+          if (isSaving) {
+            e.preventDefault();
+          }
+        }}
+        onEscapeKeyDown={(e) => {
+          if (isSaving) {
+            e.preventDefault();
+          }
+        }}
+      >
         <DialogHeader>
           <DialogTitle>
             {channelName
@@ -417,6 +443,7 @@ export function VariantSelectionDialog({
                 "marketplace.orders.dialogs.variant-selection.search-placeholder",
               )}
               value={search}
+              disabled={isSaving}
               onChange={(e) => setSearch(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
@@ -429,7 +456,7 @@ export function VariantSelectionDialog({
             type="button"
             variant="outline"
             onClick={handleSearch}
-            disabled={isSearching || isLoadingProducts}
+            disabled={isSearching || isLoadingProducts || isSaving}
           >
             {isSearching ? t("common.searching") : t("common.search")}
           </Button>
@@ -455,29 +482,24 @@ export function VariantSelectionDialog({
                 {products.map((product) => {
                   const expanded = expandedProductIds.has(product.id);
                   const variants = variantsByProductId[product.id] ?? [];
-                  const isLoadingVariants = Boolean(
-                    loadingVariantsByProductId[product.id],
-                  );
                   const { checked, indeterminate } = productSelectionState(
                     product.id,
                   );
 
                   return (
                     <div key={product.id}>
-                      {/* Product row */}
                       <div className="border-b">
                         <div className="flex w-full items-center gap-3 px-4 py-3 hover:bg-muted/50">
                           <ProductCheckbox
                             checked={checked}
                             indeterminate={indeterminate}
-                            disabled={
-                              isLoadingVariants || variants.length === 0
-                            }
+                            disabled={isSaving || variants.length === 0}
                             onChange={() => toggleProductSelection(product.id)}
                           />
                           <button
                             type="button"
                             className="flex min-w-0 flex-1 items-center gap-3 text-left"
+                            disabled={isSaving}
                             onClick={() => toggleExpandProduct(product)}
                           >
                             {product.thumbnail?.url ? (
@@ -500,6 +522,7 @@ export function VariantSelectionDialog({
                           <button
                             type="button"
                             className="rounded p-1 text-muted-foreground hover:bg-muted"
+                            disabled={isSaving}
                             onClick={() => toggleExpandProduct(product)}
                           >
                             {expanded ? (
@@ -512,14 +535,7 @@ export function VariantSelectionDialog({
 
                         {expanded ? (
                           <div className="bg-background">
-                            {isLoadingVariants ? (
-                              <div className="flex items-center gap-2 px-4 py-3 pl-16 text-sm text-muted-foreground">
-                                <Loader2 className="h-4 w-4 animate-spin" />
-                                {t(
-                                  "marketplace.orders.dialogs.variant-selection.loading-variants",
-                                )}
-                              </div>
-                            ) : variants.length === 0 ? (
+                            {variants.length === 0 ? (
                               <div className="px-4 py-3 pl-16 text-sm text-muted-foreground">
                                 {t(
                                   "marketplace.orders.dialogs.variant-selection.no-variants",
@@ -541,6 +557,7 @@ export function VariantSelectionDialog({
                                     <button
                                       type="button"
                                       className="flex min-w-0 flex-1 items-center gap-3 text-left"
+                                      disabled={isSaving}
                                       onClick={() => {
                                         if (!canSelect) {
                                           return;
@@ -552,7 +569,7 @@ export function VariantSelectionDialog({
                                         type="checkbox"
                                         className="h-4 w-4 rounded border-gray-300"
                                         checked={checkedVariant}
-                                        disabled={!canSelect}
+                                        disabled={!canSelect || isSaving}
                                         onChange={() =>
                                           toggleVariant(variant.id)
                                         }
@@ -584,7 +601,11 @@ export function VariantSelectionDialog({
                                         type="number"
                                         min={1}
                                         value={qty}
-                                        disabled={!checkedVariant || !canSelect}
+                                        disabled={
+                                          !checkedVariant ||
+                                          !canSelect ||
+                                          isSaving
+                                        }
                                         onChange={(e) => {
                                           const next = parseInt(
                                             e.target.value,
@@ -616,15 +637,26 @@ export function VariantSelectionDialog({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button
+            variant="outline"
+            disabled={isSaving}
+            onClick={() => onOpenChange(false)}
+          >
             {t("common.back")}
           </Button>
-          <Button
-            onClick={handleConfirm}
-            disabled={selectedVariantIds.size === 0}
-          >
-            {t("common.confirm")}
-          </Button>
+          {isSaving ? (
+            <div className="flex h-10 items-center justify-center gap-2 text-sm text-muted-foreground sm:min-w-[100px]">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              {t("common.saving")}
+            </div>
+          ) : (
+            <Button
+              onClick={() => void handleConfirm()}
+              disabled={selectedVariantIds.size === 0}
+            >
+              {t("common.confirm")}
+            </Button>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>
