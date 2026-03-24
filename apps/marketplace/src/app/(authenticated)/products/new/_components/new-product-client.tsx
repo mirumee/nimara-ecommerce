@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import {
+  Controller,
   type FieldPath,
   FormProvider,
   useForm,
@@ -32,7 +33,12 @@ import {
 import { Input } from "@nimara/ui/components/input";
 import { Label } from "@nimara/ui/components/label";
 import { useToast } from "@nimara/ui/hooks";
+import {
+  isEditorJsPayloadEffectivelyEmpty,
+  toEditorJsPayloadJson,
+} from "@nimara/ui/lib/richText";
 
+import { EditorJsFormField } from "@/components/editor-js-form-field";
 import { CheckboxField } from "@/components/fields/checkbox-field";
 import { CollectionsField } from "@/components/fields/collections-field";
 import { InputField } from "@/components/fields/input-field";
@@ -49,7 +55,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Textarea } from "@/components/ui/textarea";
 import type {
   AttributeInputTypeEnum,
   AttributeValueInput,
@@ -84,20 +89,6 @@ type Props = {
     slug: string;
   }>;
 };
-
-function toEditorJsJSONString(plainText: string): string {
-  const blocks = plainText
-    .split(/\n\s*\n/g)
-    .map((p) => p.trim())
-    .filter(Boolean)
-    .map((text) => ({ type: "paragraph", data: { text } }));
-
-  return JSON.stringify({
-    time: Date.now(),
-    blocks,
-    version: "2.28.2",
-  });
-}
 
 function buildAttributeValueInputs(
   productAttributes: NonNullable<
@@ -146,7 +137,7 @@ function buildAttributeValueInputs(
       case "RICH_TEXT" as AttributeInputTypeEnum: {
         inputs.push({
           id: attributeId,
-          richText: toEditorJsJSONString(String(value)),
+          richText: toEditorJsPayloadJson(String(value)),
         });
         break;
       }
@@ -287,7 +278,8 @@ function AttributesSection({
   const t = useTranslations();
   const {
     register,
-    formState: { errors },
+    control,
+    formState: { errors, isSubmitting },
   } = useFormContext<ProductCreateFormValues>();
 
   if (!productAttributes?.length) {
@@ -356,10 +348,7 @@ function AttributesSection({
               </div>
 
               {inputType === ("BOOLEAN" as AttributeInputTypeEnum) ? (
-                <CheckboxField
-                  name={fieldName}
-                  label={t("marketplace.products.new.enabled")}
-                />
+                <CheckboxField name={fieldName} label={t("common.enabled")} />
               ) : inputType === ("DROPDOWN" as AttributeInputTypeEnum) ||
                 inputType === ("SWATCH" as AttributeInputTypeEnum) ? (
                 <SelectField
@@ -414,14 +403,29 @@ function AttributesSection({
                   )}
                 />
               ) : inputType === ("RICH_TEXT" as AttributeInputTypeEnum) ? (
-                <Textarea
-                  {...register(fieldName)}
-                  placeholder={t(
-                    "marketplace.products.new.rich-text-placeholder",
-                  )}
-                  className={cn(
-                    fieldError &&
-                      "border-destructive focus-visible:ring-destructive",
+                <Controller
+                  name={fieldName}
+                  control={control}
+                  render={({ field }) => (
+                    <EditorJsFormField
+                      key={attribute.id}
+                      initialJson={
+                        typeof field.value === "string" ? field.value : ""
+                      }
+                      onChange={field.onChange}
+                      onBlur={field.onBlur}
+                      disabled={isSubmitting}
+                      className={
+                        fieldError
+                          ? "ring-2 ring-destructive ring-offset-2"
+                          : undefined
+                      }
+                      aria-label={
+                        attribute.name ??
+                        attribute.slug ??
+                        t("common.attribute-fallback")
+                      }
+                    />
                   )}
                 />
               ) : (
@@ -644,9 +648,9 @@ export function NewProductClient({
         input: {
           name: values.name,
           slug: values.slug || null,
-          description: values.description
-            ? toEditorJsJSONString(values.description)
-            : null,
+          description: isEditorJsPayloadEffectivelyEmpty(values.description)
+            ? null
+            : toEditorJsPayloadJson(values.description ?? ""),
           seo: {
             title: values.seo.title || null,
             description: values.seo.description || null,
@@ -883,12 +887,20 @@ export function NewProductClient({
                         <Label>
                           {t("marketplace.products.new.product-description")}
                         </Label>
-                        <Textarea
-                          {...form.register("description")}
-                          placeholder={t(
-                            "marketplace.products.new.product-description-placeholder",
+                        <Controller
+                          name="description"
+                          control={form.control}
+                          render={({ field }) => (
+                            <EditorJsFormField
+                              initialJson={field.value ?? ""}
+                              onChange={field.onChange}
+                              onBlur={field.onBlur}
+                              disabled={isSubmitting}
+                              aria-label={t(
+                                "marketplace.products.new.product-description",
+                              )}
+                            />
                           )}
-                          disabled={isSubmitting}
                         />
                       </div>
                     </CardContent>
