@@ -50,6 +50,16 @@ query Products(
           id
           name
           sku
+          channelListings {
+            channel {
+              id
+              name
+            }
+            price {
+              amount
+              currency
+            }
+          }
           pricing {
             price {
               gross {

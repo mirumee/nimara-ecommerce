@@ -50,6 +50,7 @@ import type {
   DiscountValueTypeEnum,
   FulfillOrder,
   OrderDetail,
+  Products,
 } from "@/graphql/generated/client";
 import { formatPrice } from "@/lib/utils";
 
@@ -254,11 +255,13 @@ function savedAddressToDraftAddress(address: {
 }
 
 interface OrderDetailClientProps {
+  draftProductsCatalog?: Products["products"] | null;
   order: NonNullable<OrderDetail["order"]>;
   warehouses: Array<{ id: string; name: string }>;
 }
 
 export function OrderDetailClient({
+  draftProductsCatalog = null,
   order,
   warehouses,
 }: OrderDetailClientProps) {
@@ -1257,15 +1260,88 @@ export function OrderDetailClient({
       })
       .filter((x): x is { lineId: string; quantity: number } => x !== null);
 
-    await Promise.all(toDelete.map((id) => deleteOrderLine(id)));
-    if (toAdd.length) {
-      await addOrderLines(order.id, toAdd);
-    }
-    await Promise.all(
-      toUpdate.map((u) => updateOrderLine(u.lineId, { quantity: u.quantity })),
-    );
+    const failToast = (titleKey: string, description: string) => {
+      toast({
+        title: t(titleKey),
+        description,
+        variant: "destructive",
+      });
+    };
 
-    router.refresh();
+    for (const id of toDelete) {
+      const res = await deleteOrderLine(id);
+
+      if (!res.ok) {
+        failToast(
+          "marketplace.orders.detail.toast-remove-item-failed",
+          res.errors.map((e) => e.message).join(", "),
+        );
+        throw new Error("deleteOrderLine failed");
+      }
+      const errs = res.data.orderLineDelete?.errors ?? [];
+
+      if (errs.length) {
+        failToast(
+          "marketplace.orders.detail.toast-remove-item-failed",
+          errs
+            .map((e) => e.message)
+            .filter(Boolean)
+            .join(", ") || t("common.toast-unknown-error"),
+        );
+        throw new Error("deleteOrderLine failed");
+      }
+    }
+
+    if (toAdd.length) {
+      const res = await addOrderLines(order.id, toAdd);
+
+      if (!res.ok) {
+        failToast(
+          "marketplace.orders.detail.toast-add-lines-failed",
+          res.errors.map((e) => e.message).join(", "),
+        );
+        throw new Error("addOrderLines failed");
+      }
+      const errs = res.data.orderLinesCreate?.errors ?? [];
+
+      if (errs.length) {
+        failToast(
+          "marketplace.orders.detail.toast-add-lines-failed",
+          errs
+            .map((e) => e.message)
+            .filter(Boolean)
+            .join(", ") || t("common.toast-unknown-error"),
+        );
+        throw new Error("addOrderLines failed");
+      }
+    }
+
+    for (const u of toUpdate) {
+      const res = await updateOrderLine(u.lineId, { quantity: u.quantity });
+
+      if (!res.ok) {
+        failToast(
+          "marketplace.orders.detail.toast-update-qty-failed",
+          res.errors.map((e) => e.message).join(", "),
+        );
+        throw new Error("updateOrderLine failed");
+      }
+      const errs = res.data.orderLineUpdate?.errors ?? [];
+
+      if (errs.length) {
+        failToast(
+          "marketplace.orders.detail.toast-update-qty-failed",
+          errs
+            .map((e) => e.message)
+            .filter(Boolean)
+            .join(", ") || t("common.toast-unknown-error"),
+        );
+        throw new Error("updateOrderLine failed");
+      }
+    }
+
+    // Next.js types say void; runtime returns a Promise (cast via unknown for tsc).
+    await (router.refresh() as unknown as Promise<void>);
   };
 
   return (
@@ -2172,12 +2248,13 @@ export function OrderDetailClient({
       />
 
       <VariantSelectionDialog
+        channelId={order.channel?.id ?? undefined}
+        channelName={order.channel?.name ?? undefined}
+        initialLines={draftVariantLines}
+        initialProductCatalog={draftProductsCatalog}
         open={isVariantDialogOpen}
         onOpenChange={setIsVariantDialogOpen}
-        channelName={order.channel?.name ?? undefined}
-        channelId={order.channel?.id ?? undefined}
-        initialLines={draftVariantLines}
-        onSave={(next) => void handleSaveDraftLinesFromDialog(next)}
+        onSave={(next) => handleSaveDraftLinesFromDialog(next)}
       />
 
       <ShippingMethodPickerDialog
