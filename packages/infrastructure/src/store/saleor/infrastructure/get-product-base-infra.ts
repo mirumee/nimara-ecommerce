@@ -5,6 +5,7 @@ import { ok } from "@nimara/domain/objects/Result";
 
 import { graphqlClient } from "#root/graphql/client";
 import { getTranslation } from "#root/lib/saleor";
+import { resolveProductVendorId } from "#root/store/saleor/serializers";
 
 import type { GetProductBaseInfra, StoreServiceConfig } from "../../types";
 import type { ProductBaseFragment } from "../graphql/fragments/generated";
@@ -24,7 +25,7 @@ const parseData = (data: ProductBaseFragment): ProductBase => {
       title: data.seoTitle ?? null,
       description: data.seoDescription ?? null,
     },
-    vendorId: data.vendorId,
+    vendorId: resolveProductVendorId(data),
   };
 };
 

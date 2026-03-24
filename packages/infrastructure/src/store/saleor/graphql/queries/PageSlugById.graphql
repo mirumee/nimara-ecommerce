@@ -1,0 +1,20 @@
+query PageSlugByIdQuery($id: ID!, $languageCode: LanguageCodeEnum!) {
+  page(id: $id) {
+    slug
+    title
+    translation(languageCode: $languageCode) {
+      title
+    }
+    pageType {
+      slug
+    }
+    attributes {
+      attribute {
+        slug
+      }
+      values {
+        name
+      }
+    }
+  }
+}
