@@ -662,6 +662,11 @@ export function OrderDetailClient({
   const customerPhone =
     order.shippingAddress?.phone ?? order.billingAddress?.phone ?? null;
 
+  const customerDisplayName = [order.user?.firstName, order.user?.lastName]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
+
   const itemCount = order.lines?.length ?? 0;
   const itemLabel =
     itemCount === 1
@@ -1423,8 +1428,8 @@ export function OrderDetailClient({
           {/* Customer information */}
           <Card>
             <CardContent className="p-6">
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
-                <div>
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                <div className="min-w-0">
                   <div className="mb-2 flex items-center justify-between gap-3">
                     <h3 className="text-sm font-medium text-muted-foreground">
                       {t("common.customer")}
@@ -1440,22 +1445,38 @@ export function OrderDetailClient({
                       </Button>
                     ) : null}
                   </div>
-                  <p className="font-medium">
-                    {[order.user?.firstName, order.user?.lastName]
-                      .filter(Boolean)
-                      .join(" ") ||
-                      order.userEmail ||
-                      t("common.not-set")}
-                  </p>
+                  <div className="space-y-2">
+                    {customerDisplayName ? (
+                      <>
+                        <p className="break-words font-medium">
+                          {customerDisplayName}
+                        </p>
+                        <div className="space-y-1 text-sm">
+                          <p className="break-all">{order.userEmail ?? "—"}</p>
+                          {customerPhone ? (
+                            <p className="break-words">{customerPhone}</p>
+                          ) : null}
+                        </div>
+                      </>
+                    ) : (
+                      <div className="space-y-1 text-sm">
+                        <p
+                          className={
+                            order.userEmail
+                              ? "break-all font-medium"
+                              : "text-muted-foreground"
+                          }
+                        >
+                          {order.userEmail ?? t("common.not-set")}
+                        </p>
+                        {customerPhone ? (
+                          <p className="break-words">{customerPhone}</p>
+                        ) : null}
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <h3 className="mb-2 text-sm font-medium text-muted-foreground">
-                    {t("marketplace.orders.detail.contact-information")}
-                  </h3>
-                  <p className="text-sm">{order.userEmail ?? "—"}</p>
-                  {customerPhone && <p className="text-sm">{customerPhone}</p>}
-                </div>
-                <div>
+                <div className="min-w-0">
                   <div className="mb-2 flex items-center justify-between gap-3">
                     <h3 className="text-sm font-medium text-muted-foreground">
                       {t("marketplace.orders.detail.shipping-address")}
@@ -1469,13 +1490,13 @@ export function OrderDetailClient({
                       {t("common.edit")}
                     </Button>
                   </div>
-                  <div className="text-sm">
+                  <div className="break-words text-sm">
                     {order.shippingAddress
                       ? formatAddress(order.shippingAddress, t)
                       : t("marketplace.orders.detail.no-shipping-address")}
                   </div>
                 </div>
-                <div>
+                <div className="min-w-0">
                   <div className="mb-2 flex items-center justify-between gap-3">
                     <h3 className="text-sm font-medium text-muted-foreground">
                       {t("marketplace.orders.detail.billing-address")}
@@ -1489,7 +1510,7 @@ export function OrderDetailClient({
                       {t("common.edit")}
                     </Button>
                   </div>
-                  <div className="text-sm text-muted-foreground">
+                  <div className="break-words text-sm text-muted-foreground">
                     {isSameAddress
                       ? t("marketplace.orders.detail.same-as-shipping")
                       : order.billingAddress
