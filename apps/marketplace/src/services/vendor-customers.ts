@@ -32,6 +32,7 @@ export type VendorCustomerWithOrders = {
   id: string;
   lastName: string;
   orders: VendorCustomerOrder[];
+  ordersCount: number;
 };
 
 class VendorCustomersService {
@@ -78,18 +79,23 @@ class VendorCustomersService {
     const ordersByCustomer = await Promise.all(
       customers.map(async (customer) => ({
         customerId: customer.id,
-        orders: await this.getCustomerOrders(customer.id, token),
+        ordersData: await this.getCustomerOrdersData(customer.id, token),
       })),
     );
 
     const orderMap = new Map(
-      ordersByCustomer.map((entry) => [entry.customerId, entry.orders]),
+      ordersByCustomer.map((entry) => [entry.customerId, entry.ordersData]),
     );
 
-    return customers.map((customer) => ({
-      ...customer,
-      orders: orderMap.get(customer.id) ?? [],
-    }));
+    return customers.map((customer) => {
+      const customerOrdersData = orderMap.get(customer.id);
+
+      return {
+        ...customer,
+        orders: customerOrdersData?.orders ?? [],
+        ordersCount: customerOrdersData?.totalCount ?? 0,
+      };
+    });
   }
 
   private async getCurrentVendorId(
@@ -139,15 +145,16 @@ class VendorCustomersService {
           firstName: customer.firstName ?? "",
           id: customer.id,
           lastName: customer.lastName ?? "",
+          ordersCount: 0,
           orders: [],
         })) ?? []
     );
   }
 
-  private async getCustomerOrders(
+  private async getCustomerOrdersData(
     customerId: string,
     token?: string | null,
-  ): Promise<VendorCustomerOrder[]> {
+  ): Promise<{ orders: VendorCustomerOrder[]; totalCount: number }> {
     const variables: CustomerOrdersVariables = {
       customer: customerId,
       first: 20,
@@ -158,10 +165,13 @@ class VendorCustomersService {
     >(CustomerOrdersDocument, "CustomerOrdersQuery", variables, token);
 
     if (!ordersResult.ok) {
-      return [];
+      return {
+        orders: [],
+        totalCount: 0,
+      };
     }
 
-    return (
+    const orders =
       ordersResult.data.orders?.edges
         ?.map((edge) => edge.node)
         .filter(Boolean)
@@ -177,8 +187,13 @@ class VendorCustomersService {
                 currency: order.total.gross.currency,
               }
             : null,
-        })) ?? []
-    );
+        })) ?? [];
+    const totalCount = ordersResult.data.orders?.totalCount ?? orders.length;
+
+    return {
+      orders,
+      totalCount,
+    };
   }
 }
 

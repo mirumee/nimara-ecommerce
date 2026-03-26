@@ -430,7 +430,7 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
 
           <Table>
             <TableHeader>
-              <TableRow>
+              <TableRow className="border-t px-6 py-4">
                 <TableHead
                   className="cursor-pointer select-none"
                   onClick={() => handleSort("NUMBER")}

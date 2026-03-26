@@ -216,7 +216,9 @@
     "customers": {
       "no-customers-found": "No customers found",
       "no-matching": "No matching customers",
-      "search-placeholder": "Search customers"
+      "search-placeholder": "Search customers",
+      "table-orders-count": "No. of Orders",
+      "title": "Customers"
     },
     "dashboard": {
       "title": "Dashboard"
@@ -296,6 +298,7 @@
         "subtotal": "Subtotal",
         "timeline": "Timeline",
         "toast-add-discount-failed": "Failed to add discount",
+        "toast-add-lines-failed": "Failed to add products to order",
         "toast-add-note-failed": "Failed to add note",
         "toast-cancel-fulfillment-failed": "Failed to cancel fulfillment",
         "toast-draft-cancel-failed": "Draft cancel failed",
@@ -316,7 +319,6 @@
         "toast-order-canceled-desc": "The order was canceled successfully.",
         "toast-order-finalized": "Order finalized",
         "toast-remove-discount-failed": "Failed to remove discount",
-        "toast-add-lines-failed": "Failed to add products to order",
         "toast-remove-item-failed": "Failed to remove item",
         "toast-update-billing-failed": "Failed to update billing address",
         "toast-update-customer-failed": "Failed to update customer",
