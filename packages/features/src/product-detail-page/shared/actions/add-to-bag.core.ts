@@ -1,4 +1,4 @@
-import { type AsyncResult, err } from "@nimara/domain/objects/Result";
+import { type AsyncResult } from "@nimara/domain/objects/Result";
 import { type User } from "@nimara/domain/objects/User";
 import type { Region } from "@nimara/foundation/regions/types";
 import type { ServiceRegistry } from "@nimara/infrastructure/types";
@@ -9,7 +9,6 @@ export type AddToBagCtx = {
     cart: number;
   };
   cartId: string | null;
-  marketplaceEnabled: boolean;
   region: Region;
 };
 
@@ -35,47 +34,10 @@ export async function addToBag(
   input: AddToBagInput,
   ctx: AddToBagCtx,
 ): Promise<AddToBagResult> {
-  const { variantId, quantity = 1, clientProductVendorId = null } = input;
-  const { region, cartId, accessToken, cacheTTL, marketplaceEnabled } = ctx;
+  const { variantId, quantity = 1 } = input;
+  const { region, cartId, accessToken, cacheTTL } = ctx;
 
   const cartService = await services.getCartService();
-
-  if (marketplaceEnabled && cartId) {
-    const cartResult = await cartService.cartGet({
-      cartId,
-      countryCode: region.market.countryCode,
-      languageCode: region.language.code,
-      options: {
-        next: {
-          revalidate: 0,
-          tags: [`CHECKOUT:${cartId}`],
-        },
-      },
-    });
-
-    if (cartResult.ok && cartResult.data.lines.length > 0) {
-      const cartVendorId =
-        cartResult.data.lines
-          .map((line) => line.product.vendorId)
-          .find((vendorId): vendorId is string => vendorId != null) ?? null;
-
-      const vendorMix =
-        (cartVendorId !== null && clientProductVendorId === null) ||
-        (cartVendorId === null && clientProductVendorId !== null);
-
-      if (vendorMix) {
-        return err([{ code: "VENDOR_MIX_NOT_ALLOWED_ERROR" }]);
-      }
-
-      if (
-        cartVendorId !== null &&
-        clientProductVendorId !== null &&
-        cartVendorId !== clientProductVendorId
-      ) {
-        return err([{ code: "VENDOR_MISMATCH_ERROR" }]);
-      }
-    }
-  }
 
   // Get user if access token is available
   let userData: User | null = null;

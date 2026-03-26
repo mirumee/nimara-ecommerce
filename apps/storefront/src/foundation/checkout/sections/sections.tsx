@@ -9,12 +9,14 @@ import { Card } from "@nimara/ui/components/card";
 import { Separator } from "@nimara/ui/components/separator";
 
 import { clientEnvs } from "@/envs/client";
+import { type MarketplaceCheckoutItem } from "@/features/checkout/types";
 import { Payment } from "@/foundation/checkout/sections/payment/payment";
 import { CheckoutPaymentSection } from "@/foundation/checkout/sections/payment/section";
 import { paths } from "@/foundation/routing/paths";
 
 import { type CheckoutStep } from "../steps";
 import { DeliveryMethodForm } from "./delivery-method/form";
+import { MarketplaceDeliveryMethodForm } from "./delivery-method/marketplace-form";
 import { CheckoutDeliveryMethodSection } from "./delivery-method/section";
 import { type PaymentSectionData } from "./payment/types";
 import { ShippingAddressForm } from "./shipping-address/form";
@@ -25,6 +27,7 @@ import { CheckoutUserDetailsSection } from "./user-details/section";
 
 interface Props {
   checkout: Checkout;
+  marketplaceCheckouts?: MarketplaceCheckoutItem[];
   paymentSectionData: PaymentSectionData | null;
   shippingAddressSectionData: ShippingAddressSectionData | null;
   step: CheckoutStep;
@@ -34,24 +37,68 @@ interface Props {
 export const CheckoutSections = ({
   step,
   checkout,
+  marketplaceCheckouts,
   paymentSectionData,
   shippingAddressSectionData,
   user,
 }: Props) => {
   const t = useTranslations();
   const router = useRouter();
+  const isMarketplaceFlow =
+    clientEnvs.NEXT_PUBLIC_MARKETPLACE_ENABLED &&
+    !!marketplaceCheckouts &&
+    marketplaceCheckouts.length > 0;
+  const checkoutCollection = isMarketplaceFlow
+    ? marketplaceCheckouts.map((item) => item.checkout)
+    : [checkout];
+  const emailProvidedForAll = checkoutCollection.every(
+    (entry) => entry.email !== null,
+  );
+  const shippingAddressProvidedForAll = checkoutCollection.every(
+    (entry) => !entry.isShippingRequired || entry.shippingAddress !== null,
+  );
+  const deliveryMethodProvidedForAll = checkoutCollection.every(
+    (entry) => !entry.isShippingRequired || entry.deliveryMethod !== null,
+  );
+  const isShippingRequiredForAny = checkoutCollection.some(
+    (entry) => entry.isShippingRequired,
+  );
+  const marketplaceShippingCheckouts = marketplaceCheckouts?.filter(
+    (item) => item.checkout.isShippingRequired,
+  );
+  const checkoutForSections: Checkout = {
+    ...checkout,
+    email: emailProvidedForAll
+      ? (checkout.email ??
+        checkoutCollection.find((entry) => entry.email !== null)?.email ??
+        null)
+      : null,
+    isShippingRequired: isShippingRequiredForAny,
+    shippingAddress: shippingAddressProvidedForAll
+      ? (checkout.shippingAddress ??
+        checkoutCollection.find((entry) => entry.shippingAddress !== null)
+          ?.shippingAddress ??
+        null)
+      : null,
+    deliveryMethod: deliveryMethodProvidedForAll
+      ? (checkout.deliveryMethod ??
+        checkoutCollection.find((entry) => entry.deliveryMethod !== null)
+          ?.deliveryMethod ??
+        null)
+      : null,
+  };
 
   return (
     <Card className="overflow-hidden">
       <CheckoutUserDetailsSection
-        checkout={checkout}
+        checkout={checkoutForSections}
         isOpen={step === "user-details"}
       >
         <UserDetailsForm
-          checkout={checkout}
+          checkout={checkoutForSections}
           user={user}
           onComplete={() => {
-            const nextStep = checkout.isShippingRequired
+            const nextStep = checkoutForSections.isShippingRequired
               ? "shipping-address"
               : "payment";
 
@@ -66,16 +113,16 @@ export const CheckoutSections = ({
 
       <Separator />
 
-      {checkout.isShippingRequired && shippingAddressSectionData && (
+      {checkoutForSections.isShippingRequired && shippingAddressSectionData && (
         <CheckoutShippingAddressSection
-          checkout={checkout}
+          checkout={checkoutForSections}
           formattedShippingAddress={
             shippingAddressSectionData.formattedShippingAddress
           }
           isOpen={step === "shipping-address"}
         >
           <ShippingAddressForm
-            checkout={checkout}
+            checkout={checkoutForSections}
             user={user}
             addresses={shippingAddressSectionData.addresses}
             countryCode={shippingAddressSectionData.countryCode}
@@ -85,39 +132,56 @@ export const CheckoutSections = ({
         </CheckoutShippingAddressSection>
       )}
 
-      {checkout.isShippingRequired && (
+      {checkoutForSections.isShippingRequired && (
         <>
           <Separator />
           <CheckoutDeliveryMethodSection
-            checkout={checkout}
+            checkout={checkoutForSections}
             isOpen={step === "delivery-method"}
           >
-            <DeliveryMethodForm
-              checkout={checkout}
-              onComplete={() => {
-                router.push(
-                  paths.checkout.asPath({
-                    query: { step: "payment" },
-                  }),
-                );
-              }}
-            />
+            {isMarketplaceFlow && marketplaceShippingCheckouts ? (
+              <MarketplaceDeliveryMethodForm
+                checkoutItems={marketplaceShippingCheckouts}
+                onComplete={() => {
+                  router.push(
+                    paths.checkout.asPath({
+                      query: { step: "payment" },
+                    }),
+                  );
+                }}
+              />
+            ) : (
+              <DeliveryMethodForm
+                checkout={checkoutForSections}
+                onComplete={() => {
+                  router.push(
+                    paths.checkout.asPath({
+                      query: { step: "payment" },
+                    }),
+                  );
+                }}
+              />
+            )}
           </CheckoutDeliveryMethodSection>
         </>
       )}
 
       <Separator />
 
-      <CheckoutPaymentSection checkout={checkout} isOpen={step === "payment"}>
+      <CheckoutPaymentSection
+        checkout={checkoutForSections}
+        isOpen={step === "payment"}
+      >
         {paymentSectionData ? (
           <Payment
-            checkout={checkout}
+            checkout={checkoutForSections}
             addressFormRows={paymentSectionData.addressFormRows}
             countries={paymentSectionData.countries}
             countryCode={paymentSectionData.countryCode}
             formattedAddresses={paymentSectionData.formattedAddresses}
             paymentGatewayCustomer={paymentSectionData.paymentGatewayCustomer}
             paymentGatewayMethods={paymentSectionData.paymentGatewayMethods}
+            marketplaceCheckouts={marketplaceCheckouts}
             storeUrl={paymentSectionData.storeUrl}
             user={user}
           />

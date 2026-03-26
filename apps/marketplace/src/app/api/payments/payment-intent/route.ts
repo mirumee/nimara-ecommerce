@@ -3,10 +3,11 @@ import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 import type { TransactionCreateVariables } from "@/graphql/generated/client";
-import { getAppConfig } from "@/lib/saleor/app-config";
 import { getServerAuthToken } from "@/lib/auth/server";
-import { getCentsFromAmount } from "@/lib/stripe/currency";
+import { getAppConfig } from "@/lib/saleor/app-config";
 import { getStripeClient } from "@/lib/stripe/client";
+import { getCentsFromAmount } from "@/lib/stripe/currency";
+import { marketplaceLogger } from "@/services/logging";
 import { transactionsService } from "@/services/transactions";
 
 const bodySchema = z
@@ -37,8 +38,8 @@ const bodySchema = z
   });
 
 type FailedTransactionCreate = {
-  errors: Array<{ code: string; message: string }>;
   checkoutId: string;
+  errors: Array<{ code: string; message: string }>;
 };
 
 type TransactionCreatePayload = {
@@ -46,8 +47,22 @@ type TransactionCreatePayload = {
   transaction: { id: string; name: string } | null;
 };
 
+type CheckoutTransactionsPayload = {
+  checkout: {
+    transactions: Array<{
+      pspReference: string | null;
+    }> | null;
+  } | null;
+};
+
+type CheckoutInitializationStatus = {
+  checkoutId: string;
+  errors: Array<{ code: string; message: string }>;
+  status: "created" | "failed" | "skipped_existing";
+};
+
 const buildIdempotencyKey = (
-  checkouts: { amount: number; currency: string; checkoutId: string }[],
+  checkouts: { amount: number; checkoutId: string; currency: string }[],
 ) => {
   const canonical = [...checkouts]
     .sort((a, b) => a.checkoutId.localeCompare(b.checkoutId))
@@ -108,7 +123,16 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const currency = currencies[0]!;
+  const currency = currencies[0];
+
+  if (!currency) {
+    return NextResponse.json(
+      {
+        error: "Unable to determine checkout currency.",
+      },
+      { status: 422 },
+    );
+  }
   const amount = checkouts.reduce(
     (sum, item) =>
       sum +
@@ -137,10 +161,126 @@ export async function POST(request: NextRequest) {
         marketplace_model: "separate_charges_transfers",
       },
     });
+
+    if (!paymentIntent.client_secret) {
+      marketplaceLogger.error("PaymentIntent created without client secret", {
+        paymentIntentId: paymentIntent.id,
+        saleorDomain,
+      });
+
+      return NextResponse.json(
+        {
+          error: "Missing client secret for created PaymentIntent.",
+          paymentIntentId: paymentIntent.id,
+        },
+        { status: 500 },
+      );
+    }
+
     const token = await getServerAuthToken();
+    const checkoutStatuses: CheckoutInitializationStatus[] = [];
+    const checkoutsToCreate: typeof checkouts = [];
+
+    const checkoutTransactionsSettled = await Promise.allSettled(
+      checkouts.map((checkout) =>
+        transactionsService.getCheckoutTransactions(
+          { id: checkout.checkoutId },
+          token,
+        ),
+      ),
+    );
+
+    checkoutTransactionsSettled.forEach((entry, index) => {
+      const checkout = checkouts[index];
+
+      if (!checkout) {
+        return;
+      }
+
+      const checkoutId = checkout.checkoutId;
+
+      if (entry.status === "rejected") {
+        const message =
+          entry.reason instanceof Error
+            ? entry.reason.message
+            : "checkout transactions request failed.";
+        const errors = [{ code: "REQUEST_FAILED", message }];
+
+        marketplaceLogger.error(
+          "Failed to read checkout transactions before transactionCreate",
+          {
+            checkoutId,
+            paymentIntentId: paymentIntent.id,
+            saleorDomain,
+            errors,
+          },
+        );
+
+        checkoutStatuses.push({
+          checkoutId,
+          errors,
+          status: "failed",
+        });
+
+        return;
+      }
+
+      if (!entry.value.ok) {
+        const errors = entry.value.errors.map((error) => ({
+          code: error.code,
+          message: error.message ?? "checkout transactions request failed.",
+        }));
+
+        marketplaceLogger.error(
+          "Checkout transactions query returned application errors",
+          {
+            checkoutId,
+            paymentIntentId: paymentIntent.id,
+            saleorDomain,
+            errors,
+          },
+        );
+
+        checkoutStatuses.push({
+          checkoutId,
+          errors,
+          status: "failed",
+        });
+
+        return;
+      }
+
+      const checkoutTransactionsData =
+        entry.value.data as CheckoutTransactionsPayload;
+      const hasExistingTransaction =
+        checkoutTransactionsData.checkout?.transactions?.some(
+          (transaction) => transaction.pspReference === paymentIntent.id,
+        ) ?? false;
+
+      if (hasExistingTransaction) {
+        marketplaceLogger.warning(
+          "Skipping transactionCreate for checkout because transaction already exists.",
+          {
+            checkoutId,
+            paymentIntentId: paymentIntent.id,
+            saleorDomain,
+          },
+        );
+
+        checkoutStatuses.push({
+          checkoutId,
+          errors: [],
+          status: "skipped_existing",
+        });
+
+        return;
+      }
+
+      checkoutsToCreate.push(checkout);
+    });
 
     const transactionCreateSettled = await Promise.allSettled(
-      checkouts.map((checkout) => {
+      checkoutsToCreate.map((checkout) => {
         const transactionVariables: TransactionCreateVariables = {
           id: checkout.checkoutId,
           transaction: {
@@ -165,35 +305,63 @@ export async function POST(request: NextRequest) {
     );
 
     const failedTransactionCreates: FailedTransactionCreate[] = [];
-    let createdTransactionsCount = 0;
 
     transactionCreateSettled.forEach((entry, index) => {
-      const checkoutId = checkouts[index]!.checkoutId;
+      const checkoutId = checkoutsToCreate[index]?.checkoutId;
+
+      if (!checkoutId) {
+        return;
+      }
 
       if (entry.status === "rejected") {
-        failedTransactionCreates.push({
+        const errors = [
+          {
+            code: "REQUEST_FAILED",
+            message:
+              entry.reason instanceof Error
+                ? entry.reason.message
+                : "transactionCreate failed.",
+          },
+        ];
+
+        marketplaceLogger.error("transactionCreate request failed", {
           checkoutId,
-          errors: [
-            {
-              code: "REQUEST_FAILED",
-              message:
-                entry.reason instanceof Error
-                  ? entry.reason.message
-                  : "transactionCreate failed.",
-            },
-          ],
+          paymentIntentId: paymentIntent.id,
+          saleorDomain,
+          errors,
+        });
+
+        failedTransactionCreates.push({ checkoutId, errors });
+        checkoutStatuses.push({
+          checkoutId,
+          errors,
+          status: "failed",
         });
 
         return;
       }
 
       if (!entry.value.ok) {
-        failedTransactionCreates.push({
+        const errors = entry.value.errors.map((error) => ({
+          code: error.code,
+          message: error.message ?? "transactionCreate failed.",
+        }));
+
+        marketplaceLogger.error(
+          "transactionCreate returned application errors",
+          {
+            checkoutId,
+            paymentIntentId: paymentIntent.id,
+            saleorDomain,
+            errors,
+          },
+        );
+
+        failedTransactionCreates.push({ checkoutId, errors });
+        checkoutStatuses.push({
           checkoutId,
-          errors: entry.value.errors.map((error) => ({
-            code: error.code,
-            message: error.message ?? "transactionCreate failed.",
-          })),
+          errors,
+          status: "failed",
         });
 
         return;
@@ -215,43 +383,58 @@ export async function POST(request: NextRequest) {
           code: error.code,
           message: error.message ?? "Unknown transactionCreate error.",
         }));
+        const errors =
+          mappedErrors && mappedErrors.length > 0
+            ? mappedErrors
+            : [
+                {
+                  code: "UNKNOWN_TRANSACTION_CREATE_ERROR",
+                  message:
+                    "transactionCreate returned no transaction and no error details.",
+                },
+              ];
 
-        failedTransactionCreates.push({
+        marketplaceLogger.error("transactionCreate returned invalid payload", {
           checkoutId,
-          errors:
-            mappedErrors && mappedErrors.length > 0
-              ? mappedErrors
-              : [
-                  {
-                    code: "UNKNOWN_TRANSACTION_CREATE_ERROR",
-                    message:
-                      "transactionCreate returned no transaction and no error details.",
-                  },
-                ],
+          paymentIntentId: paymentIntent.id,
+          saleorDomain,
+          errors,
+        });
+
+        failedTransactionCreates.push({ checkoutId, errors });
+        checkoutStatuses.push({
+          checkoutId,
+          errors,
+          status: "failed",
         });
 
         return;
       }
 
-      createdTransactionsCount += 1;
+      marketplaceLogger.warning("transactionCreate succeeded for checkout", {
+        checkoutId,
+        paymentIntentId: paymentIntent.id,
+        saleorDomain,
+      });
+
+      checkoutStatuses.push({
+        checkoutId,
+        errors: [],
+        status: "created",
+      });
     });
 
-    const hasAtLeastOneCreated = createdTransactionsCount > 0;
     const hasFailures = failedTransactionCreates.length > 0;
 
     if (hasFailures) {
-      const errorResponse = {
-        error: "Failed to create transaction for one or more orders.",
-        paymentIntentId: paymentIntent.id,
-        transferGroup,
-        failedTransactionCreates,
-      };
-
-      if (hasAtLeastOneCreated) {
-        return NextResponse.json(errorResponse, { status: 200 });
-      }
-
-      return NextResponse.json(errorResponse, { status: 500 });
+      marketplaceLogger.error(
+        "Payment intent initialized with transactionCreate failures",
+        {
+          paymentIntentId: paymentIntent.id,
+          saleorDomain,
+          failedTransactionCreates,
+        },
+      );
     }
 
     return NextResponse.json(
@@ -262,6 +445,9 @@ export async function POST(request: NextRequest) {
         currency: currency.toLowerCase(),
         amount,
         checkouts,
+        checkoutStatuses,
+        failedTransactionCreates,
+        hasFailures,
       },
       { status: 200 },
     );

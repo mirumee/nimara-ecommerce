@@ -179,7 +179,6 @@ export const VariantSelector = ({
       </div>
 
       <AddToBag
-        cart={marketplaceEnabled ? cart : null}
         cartPath={cartPath}
         productVendorId={marketplaceEnabled ? (product.vendorId ?? null) : null}
         variantId={
