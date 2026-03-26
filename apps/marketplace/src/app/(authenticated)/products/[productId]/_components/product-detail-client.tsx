@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import {
+  Controller,
   FormProvider,
   type Resolver,
   useForm,
@@ -39,7 +40,12 @@ import {
   TooltipTrigger,
 } from "@nimara/ui/components/tooltip";
 import { useToast } from "@nimara/ui/hooks";
+import {
+  normalizeToEditorJs,
+  toEditorJsPayloadJson,
+} from "@nimara/ui/lib/richText";
 
+import { EditorJsFormField } from "@/components/editor-js-form-field";
 import { CheckboxField } from "@/components/fields/checkbox-field";
 import { CollectionsField } from "@/components/fields/collections-field";
 import { InputField } from "@/components/fields/input-field";
@@ -56,7 +62,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Textarea } from "@/components/ui/textarea";
 import type {
   AttributeInputTypeEnum,
   AttributeValueInput,
@@ -111,50 +116,6 @@ function normalizeMaybeUrl(input: string): string | null {
   }
 }
 
-function tryExtractEditorJsPlainText(value?: string | null): string {
-  if (!value) {
-    return "";
-  }
-
-  try {
-    const parsed = JSON.parse(value) as {
-      blocks?: Array<{ data?: { text?: string }; type?: string }>;
-    };
-
-    if (
-      !parsed ||
-      typeof parsed !== "object" ||
-      !Array.isArray(parsed.blocks)
-    ) {
-      return value;
-    }
-
-    return parsed.blocks
-      .map((b) => (b?.data?.text ? String(b.data.text) : ""))
-      .filter((t) => t.trim().length > 0)
-      .join("\n\n");
-  } catch {
-    return value;
-  }
-}
-
-function toEditorJsJSONString(plainText: string): string {
-  const blocks = plainText
-    .split(/\n\s*\n/g)
-    .map((p) => p.trim())
-    .filter(Boolean)
-    .map((text) => ({
-      type: "paragraph",
-      data: { text },
-    }));
-
-  return JSON.stringify({
-    time: Date.now(),
-    blocks,
-    version: "2.28.2",
-  });
-}
-
 function buildAttributeValueInputs(
   assignedAttributes: NonNullable<
     NonNullable<ProductDetail["product"]>["assignedAttributes"]
@@ -202,7 +163,7 @@ function buildAttributeValueInputs(
       case "RICH_TEXT" as AttributeInputTypeEnum: {
         inputs.push({
           id: attributeId,
-          richText: toEditorJsJSONString(String(value)),
+          richText: toEditorJsPayloadJson(String(value)),
         });
         break;
       }
@@ -252,13 +213,19 @@ function buildAttributeValueInputs(
 
 function AttributesSection({
   assignedAttributes,
+  productId,
 }: {
   assignedAttributes: NonNullable<
     NonNullable<ProductDetail["product"]>["assignedAttributes"]
   >;
+  productId: string;
 }) {
   const t = useTranslations();
-  const { register } = useFormContext<ProductUpdateFormValues>();
+  const {
+    register,
+    control,
+    formState: { isSubmitting },
+  } = useFormContext<ProductUpdateFormValues>();
 
   if (!assignedAttributes?.length) {
     return (
@@ -346,10 +313,24 @@ function AttributesSection({
               ) : inputType === ("NUMERIC" as AttributeInputTypeEnum) ? (
                 <Input type="number" step="0.01" {...register(fieldName)} />
               ) : inputType === ("RICH_TEXT" as AttributeInputTypeEnum) ? (
-                <Textarea
-                  {...register(fieldName)}
-                  placeholder={t(
-                    "marketplace.products.new.rich-text-placeholder",
+                <Controller
+                  name={fieldName}
+                  control={control}
+                  render={({ field }) => (
+                    <EditorJsFormField
+                      key={`${productId}-${attribute.id}`}
+                      initialJson={
+                        typeof field.value === "string" ? field.value : ""
+                      }
+                      onChange={field.onChange}
+                      onBlur={field.onBlur}
+                      disabled={isSubmitting}
+                      aria-label={
+                        attribute.name ??
+                        attribute.slug ??
+                        t("common.attribute-fallback")
+                      }
+                    />
                   )}
                 />
               ) : (
@@ -479,12 +460,18 @@ export function ProductDetailClient({
         case "AssignedPlainTextAttribute":
           values[id] = assigned.plainTextValue ?? "";
           break;
-        case "AssignedTextAttribute":
+        case "AssignedTextAttribute": {
+          const tv = assigned.textValue;
+          const asString =
+            typeof tv === "string" ? tv : tv != null ? JSON.stringify(tv) : "";
+
           values[id] =
-            typeof assigned.textValue === "string"
-              ? assigned.textValue
-              : JSON.stringify(assigned.textValue ?? "", null, 2);
+            assigned.attribute.inputType ===
+            ("RICH_TEXT" as AttributeInputTypeEnum)
+              ? normalizeToEditorJs(asString)
+              : asString;
           break;
+        }
         case "AssignedSingleChoiceAttribute":
           values[id] = assigned.singleChoiceValue?.slug ?? "";
           break;
@@ -514,7 +501,7 @@ export function ProductDetailClient({
     ) as Resolver<ProductUpdateFormValues>,
     defaultValues: {
       name: product.name ?? "",
-      description: tryExtractEditorJsPlainText(product.description),
+      description: normalizeToEditorJs(product.description),
       seo: {
         title: product.seoTitle ?? "",
         description: product.seoDescription ?? "",
@@ -549,7 +536,7 @@ export function ProductDetailClient({
           input: {
             name: values.name,
             slug: product.slug || null,
-            description: toEditorJsJSONString(values.description ?? ""),
+            description: toEditorJsPayloadJson(values.description ?? ""),
             seo: {
               title: values.seo.title || null,
               description: values.seo.description || null,
@@ -1322,12 +1309,21 @@ export function ProductDetailClient({
                         <Label>
                           {t("marketplace.products.new.product-description")}
                         </Label>
-                        <Textarea
-                          {...form.register("description")}
-                          placeholder={t(
-                            "marketplace.products.new.product-description-placeholder",
+                        <Controller
+                          name="description"
+                          control={form.control}
+                          render={({ field }) => (
+                            <EditorJsFormField
+                              key={productId}
+                              initialJson={field.value ?? ""}
+                              onChange={field.onChange}
+                              onBlur={field.onBlur}
+                              disabled={isSubmitting}
+                              aria-label={t(
+                                "marketplace.products.new.product-description",
+                              )}
+                            />
                           )}
-                          disabled={isSubmitting}
                         />
                       </div>
                     </CardContent>
@@ -1521,6 +1517,7 @@ export function ProductDetailClient({
 
                   <AttributesSection
                     assignedAttributes={product.assignedAttributes ?? []}
+                    productId={productId}
                   />
 
                   <Card>

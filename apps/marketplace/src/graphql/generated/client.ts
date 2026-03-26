@@ -19418,7 +19418,10 @@ export type Payment = Node & ObjectWithMetadata & {
   modified: Scalars['DateTime']['output'];
   /** Order associated with a payment. */
   order: Maybe<Order>;
-  /** Informs whether this is a partial payment. */
+  /**
+   * Informs whether this is a partial payment.
+   * @deprecated This field is reserved for the Adyen Gateway plugin. For other gateways, its value is always `false`. This field will be removed in 3.23 along with the plugin.
+   */
   partial: Scalars['Boolean']['output'];
   /** Type of method used for payment. */
   paymentMethodType: Scalars['String']['output'];
@@ -33535,13 +33538,19 @@ export type Products_products_ProductCountableConnection_edges_ProductCountableE
 
 export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_channelListings_ProductChannelListing = { isPublished: boolean, channel: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_channelListings_ProductChannelListing_channel_Channel };
 
+export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_channelListings_ProductVariantChannelListing_channel_Channel = { id: string, name: string };
+
+export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_channelListings_ProductVariantChannelListing_price_Money = { amount: number, currency: string };
+
+export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_channelListings_ProductVariantChannelListing = { channel: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_channelListings_ProductVariantChannelListing_channel_Channel, price: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_channelListings_ProductVariantChannelListing_price_Money | null };
+
 export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney_gross_Money = { amount: number, currency: string };
 
 export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney = { gross: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney_gross_Money };
 
 export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_pricing_VariantPricingInfo = { price: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney | null };
 
-export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant = { id: string, name: string, sku: string | null, pricing: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_pricing_VariantPricingInfo | null };
+export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant = { id: string, name: string, sku: string | null, channelListings: Array<Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_channelListings_ProductVariantChannelListing> | null, pricing: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_pricing_VariantPricingInfo | null };
 
 export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product = { id: string, name: string, slug: string, created: string, thumbnail: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_thumbnail_Image | null, productType: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_productType_ProductType, category: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_category_Category | null, pricing: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo | null, channelListings: Array<Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_channelListings_ProductChannelListing> | null, variants: Array<Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant> | null };
 
@@ -35541,6 +35550,16 @@ export const ProductsDocument = new TypedDocumentString(`
           id
           name
           sku
+          channelListings {
+            channel {
+              id
+              name
+            }
+            price {
+              amount
+              currency
+            }
+          }
           pricing {
             price {
               gross {
