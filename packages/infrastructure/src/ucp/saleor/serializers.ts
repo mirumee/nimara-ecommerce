@@ -12,6 +12,7 @@ import {
   type OrderClass,
   type PostalAddress,
   type TotalResponse,
+  type UcpDiscoveryProfile,
 } from "@ucp-js/sdk";
 
 import { UCP_VERSION } from "#root/ucp/consts";
@@ -30,18 +31,33 @@ import {
 } from "./graphql/fragments/generated";
 
 /**
+ * Applied discount entry in the UCP checkout session model.
+ * Mirrors the UCP SDK DiscountsObject applied field shape.
+ */
+export type UCPAppliedDiscount = {
+  amount: number;
+  code?: string;
+  title: string;
+};
+
+/**
  * Internal checkout session model bridging Saleor and UCP CheckoutResponse.
  * Uses SDK types where possible. Custom parts:
  * - order.permalinkUrl: camelCase internal; SDK OrderClass uses permalink_url (snake_case).
  * - continueUrl: For checkout handoff to business UI (will be converted to continue_url).
  * - expiresAtISO: ISO 8601 string for checkout expiration (will be converted to expires_at).
  * - messages: Error/warning messages array for error handling (Phase 2).
+ * - discounts: Applied voucher codes and their discount amounts.
  */
 export type UCPCheckoutSessionModel = {
   billingAddress?: PostalAddress;
   buyer?: BuyerClass;
   continueUrl?: string;
   currency: string;
+  discounts?: {
+    applied?: UCPAppliedDiscount[];
+    codes?: string[];
+  };
   expiresAtISO?: string;
   fulfillment?: FulfillmentRequest;
   fulfillmentAddress?: PostalAddress;
@@ -84,21 +100,29 @@ const getCheckoutStatus = (
 
 /**
  * Maps Saleor monetary summary into UCP totals sections.
+ * Includes a "discount" entry when a voucher is applied.
  */
 const calculateTotals = (
   checkout: Pick<
     UcpCheckoutSessionFragment,
-    "subtotalPrice" | "totalPrice" | "shippingPrice"
+    | "subtotalPrice"
+    | "totalPrice"
+    | "shippingPrice"
+    | "discount"
+    | "displayGrossPrices"
   >,
 ): TotalResponse[] => {
-  const subtotal = checkout.subtotalPrice.gross.amount;
-  const total = checkout.totalPrice.gross.amount;
-  const shipping = checkout.shippingPrice.gross.amount;
-  const tax = total - subtotal;
+  const priceType = checkout.displayGrossPrices ? "gross" : "net";
+  const currency = checkout.totalPrice[priceType].currency;
 
-  const currency = checkout.totalPrice.gross.currency;
+  // Calculate totals
+  const subtotal = checkout.subtotalPrice[priceType].amount;
+  const total = checkout.totalPrice[priceType].amount;
+  const shipping = checkout.shippingPrice[priceType].amount;
+  const tax = checkout.totalPrice.tax.amount;
+  const discountAmount = checkout.discount?.amount ?? 0;
 
-  return [
+  const totals: TotalResponse[] = [
     {
       type: "fulfillment",
       amount: toMinorCurrency(shipping, currency),
@@ -116,6 +140,15 @@ const calculateTotals = (
       amount: toMinorCurrency(total, currency),
     },
   ];
+
+  if (discountAmount > 0) {
+    totals.push({
+      type: "discount",
+      amount: toMinorCurrency(discountAmount, currency),
+    } satisfies TotalResponse);
+  }
+
+  return totals;
 };
 
 /**
@@ -173,6 +206,9 @@ const normalizeBuyer = (
 
 /**
  * Converts Saleor checkout lines into an internal UCP line item shape.
+ *
+ * Saleor Money amounts are decimals (e.g., 12.99 for $12.99), so we convert
+ * them to minor units (cents) using toMinorCurrency().
  */
 const toUCPLineItems = (
   lines: UcpCheckoutSessionFragment["lines"],
@@ -184,7 +220,7 @@ const toUCPLineItems = (
 
     const currency = line.undiscountedTotalPrice.currency;
     const subtotal = line.totalPrice.gross.amount;
-    const tax = line.totalPrice.gross.amount - line.totalPrice.net.amount;
+    const tax = line.totalPrice.tax.amount;
     const total = line.totalPrice.gross.amount;
 
     return {
@@ -314,6 +350,36 @@ const toFulfillmentMethod = (
 };
 
 /**
+ * Converts Saleor voucher/discount info into the UCP discounts shape.
+ * Returns undefined when no voucher is applied.
+ */
+const toUCPDiscounts = (
+  checkout: Pick<UcpCheckoutSessionFragment, "voucherCode" | "discount">,
+): UCPCheckoutSessionModel["discounts"] => {
+  if (!checkout.voucherCode) {
+    return undefined;
+  }
+
+  const currency = checkout.discount?.currency ?? "USD";
+  const discountAmount = checkout.discount?.amount ?? 0;
+
+  return {
+    codes: [checkout.voucherCode],
+    ...(discountAmount > 0
+      ? {
+          applied: [
+            {
+              code: checkout.voucherCode,
+              title: checkout.voucherCode,
+              amount: toMinorCurrency(discountAmount, currency),
+            },
+          ],
+        }
+      : {}),
+  };
+};
+
+/**
  * Converts Saleor checkout details into an internal UCP checkout session model.
  *
  * @param checkout - Saleor checkout fragment data
@@ -338,6 +404,8 @@ export const toUCPCheckoutSession = (
     continueUrlConditions,
   );
 
+  const discounts = toUCPDiscounts(checkout);
+
   return {
     id: checkout.id,
     status: getCheckoutStatus(checkout),
@@ -354,6 +422,7 @@ export const toUCPCheckoutSession = (
     billingAddress: toUCPAddress(checkout.billingAddress),
     links: generateCheckoutLinks(baseUrlForLinks),
     expiresAtISO: calculateCheckoutExpiration(),
+    ...(discounts ? { discounts } : {}),
     ...(continueUrl ? { continueUrl } : {}),
     ...(order ? { order } : {}),
   };
@@ -380,9 +449,13 @@ export const toPaymentHandlers = (
 
 /**
  * Converts internal UCP checkout model into SDK CheckoutResponse format.
+ *
+ * Note: Values in UCPCheckoutSessionModel are already in minor units,
+ * so we pass them through directly without conversion.
  */
 export const sessionToCheckoutResponse = (
   session: UCPCheckoutSessionModel,
+  capabilities: UcpDiscoveryProfile["ucp"]["capabilities"] = [],
   paymentHandlers: ReturnType<typeof toPaymentHandlers> = [],
 ): CheckoutWithFulfillmentResponse => {
   const response = {
@@ -397,30 +470,29 @@ export const sessionToCheckoutResponse = (
       id: item.id,
       item: {
         id: item.item.id,
-        price: toMinorCurrency(item.item.price, session.currency),
+        price: item.item.price,
         title: item.item.title,
       },
       quantity: item.quantity,
       totals: item.totals.map((total) => ({
         type: total.type,
-        amount: toMinorCurrency(total.amount, session.currency),
+        amount: total.amount,
       })),
     })) as unknown as CheckoutResponse["line_items"],
     totals: session.totals.map((total) => ({
       type: total.type,
-      amount: toMinorCurrency(total.amount, session.currency),
+      amount: total.amount,
     })) as unknown as TotalResponse[],
     ucp: {
       version: UCP_VERSION,
-      capabilities: [
-        { name: "dev.ucp.shopping.checkout", version: UCP_VERSION },
-      ],
+      capabilities,
     },
     payment: {
       handlers: paymentHandlers,
       instruments: [],
     } as unknown as CheckoutResponse["payment"],
     links: session.links as unknown as CheckoutResponse["links"],
+    ...(session.discounts ? { discounts: session.discounts } : {}),
     ...(session.messages && session.messages.length > 0
       ? {
           messages: session.messages.map((msg) => ({
@@ -458,7 +530,11 @@ export const sessionToCheckoutResponse = (
   } satisfies CheckoutWithFulfillmentResponse;
 };
 
-export const orderToUCPOrder = (order: UcpOrderFragment) => {
+export const orderToUCPOrder = (
+  order: UcpOrderFragment,
+  capabilities: UcpDiscoveryProfile["ucp"]["capabilities"] = [],
+  baseUrl: string,
+) => {
   const priceType = order.displayGrossPrices ? "gross" : "net";
   const currency = order.lines[0]?.totalPrice[priceType].currency || "USD";
 
@@ -470,8 +546,7 @@ export const orderToUCPOrder = (order: UcpOrderFragment) => {
   return {
     id: order.id,
     checkout_id: order.checkoutId || "",
-    permalink_url:
-      "http://localhost:3000/order/confirmation/T3JkZXI6MDU0N2U4ZWQtZDdiOS00YjQ3LThkYjYtNzc0MGZlODNlYjQy",
+    permalink_url: `${baseUrl}/order/confirmation/${order.id}`,
     line_items: order.lines.map((line) => ({
       id: line.id,
       quantity: {
@@ -519,7 +594,7 @@ export const orderToUCPOrder = (order: UcpOrderFragment) => {
     ],
     ucp: {
       version: UCP_VERSION,
-      capabilities: [{ name: "dev.ucp.shopping.order", version: UCP_VERSION }],
+      capabilities,
     },
   } satisfies UcpOrder;
 };

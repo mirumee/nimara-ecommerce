@@ -3,6 +3,7 @@ import {
   type CheckoutUpdateRequest,
   type MethodElement,
   type PostalAddress,
+  type UcpDiscoveryProfile,
 } from "@ucp-js/sdk";
 
 import { type LanguageCodeEnum } from "@nimara/codegen/schema";
@@ -11,11 +12,37 @@ import { type Logger } from "#root/logging/types";
 
 /** Service configuration. */
 export type UCPSaleorServiceConfig = {
+  /**
+   * Saleor API URL.
+   */
   apiUrl: string;
+  /**
+   * Base URL to use for checkout sessions and orders.
+   */
   baseUrl: string;
+  /**
+   * Capabilities to use for checkout sessions and orders.
+   */
+  capabilities?: UcpDiscoveryProfile["ucp"]["capabilities"];
+  /**
+   * Channel to use for checkout sessions and orders.
+   */
   channel: string;
+  /**
+   * Default email to use for checkout sessions and orders.
+   */
+  defaultEmail: string;
+  /**
+   * Language code to use for checkout sessions and orders.
+   */
   languageCode?: LanguageCodeEnum;
+  /**
+   * Logger to use for logging.
+   */
   logger: Logger;
+  /**
+   * Whether to require AP2 mandate for checkout sessions and orders.
+   */
   requireAp2Mandate?: boolean;
 };
 
@@ -61,9 +88,9 @@ export type UCPUpdateRequestExtended = CheckoutUpdateRequest & {
 
 /** Conditions for determining if continue_url should be generated. */
 export type ContinueUrlConditions = {
-  missingEmail?: boolean;
-  missingBillingAddress?: boolean;
-  missingShippingAddress?: boolean;
-  missingDeliveryMethod?: boolean;
   [key: string]: boolean | undefined;
+  missingBillingAddress?: boolean;
+  missingDeliveryMethod?: boolean;
+  missingEmail?: boolean;
+  missingShippingAddress?: boolean;
 };

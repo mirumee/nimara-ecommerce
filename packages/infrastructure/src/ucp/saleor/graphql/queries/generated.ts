@@ -27,9 +27,11 @@ export type UcpCheckoutSessionGet_checkout_Checkout_availablePaymentGateways_Pay
 
 export type UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_net_Money = { currency: string, amount: number };
 
+export type UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_tax_Money = { currency: string, amount: number };
+
 export type UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_gross_Money = { currency: string, amount: number };
 
-export type UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney = { net: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_net_Money, gross: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_gross_Money };
+export type UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney = { net: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_net_Money, tax: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_tax_Money, gross: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_gross_Money };
 
 export type UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_undiscountedTotalPrice_Money = { amount: number, currency: string };
 
@@ -259,6 +261,9 @@ fragment CartLineFragment on CheckoutLine {
   quantity
   totalPrice {
     net {
+      ...MoneyFragment
+    }
+    tax {
       ...MoneyFragment
     }
     gross {

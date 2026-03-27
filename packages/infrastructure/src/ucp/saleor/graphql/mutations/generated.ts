@@ -17,6 +17,44 @@ export type UcpCheckoutCompleteMutationVariables = Types.Exact<{
 
 export type UcpCheckoutCompleteMutation = UcpCheckoutCompleteMutation_Mutation;
 
+export type UcpCheckoutAddPromoCode_checkoutAddPromoCode_CheckoutAddPromoCode_checkout_Checkout_discount_Money = { amount: number, currency: string };
+
+export type UcpCheckoutAddPromoCode_checkoutAddPromoCode_CheckoutAddPromoCode_checkout_Checkout = { voucherCode: string | null, discount: UcpCheckoutAddPromoCode_checkoutAddPromoCode_CheckoutAddPromoCode_checkout_Checkout_discount_Money | null };
+
+export type UcpCheckoutAddPromoCode_checkoutAddPromoCode_CheckoutAddPromoCode_errors_CheckoutError = { field: string | null, message: string | null, code: Types.CheckoutErrorCode };
+
+export type UcpCheckoutAddPromoCode_checkoutAddPromoCode_CheckoutAddPromoCode = { checkout: UcpCheckoutAddPromoCode_checkoutAddPromoCode_CheckoutAddPromoCode_checkout_Checkout | null, errors: Array<UcpCheckoutAddPromoCode_checkoutAddPromoCode_CheckoutAddPromoCode_errors_CheckoutError> };
+
+export type UcpCheckoutAddPromoCode_Mutation = { checkoutAddPromoCode: UcpCheckoutAddPromoCode_checkoutAddPromoCode_CheckoutAddPromoCode | null };
+
+
+export type UcpCheckoutAddPromoCodeVariables = Types.Exact<{
+  checkoutId: Types.Scalars['ID']['input'];
+  promoCode: Types.Scalars['String']['input'];
+}>;
+
+
+export type UcpCheckoutAddPromoCode = UcpCheckoutAddPromoCode_Mutation;
+
+export type UcpCheckoutRemovePromoCode_checkoutRemovePromoCode_CheckoutRemovePromoCode_checkout_Checkout_discount_Money = { amount: number, currency: string };
+
+export type UcpCheckoutRemovePromoCode_checkoutRemovePromoCode_CheckoutRemovePromoCode_checkout_Checkout = { voucherCode: string | null, discount: UcpCheckoutRemovePromoCode_checkoutRemovePromoCode_CheckoutRemovePromoCode_checkout_Checkout_discount_Money | null };
+
+export type UcpCheckoutRemovePromoCode_checkoutRemovePromoCode_CheckoutRemovePromoCode_errors_CheckoutError = { field: string | null, message: string | null, code: Types.CheckoutErrorCode };
+
+export type UcpCheckoutRemovePromoCode_checkoutRemovePromoCode_CheckoutRemovePromoCode = { checkout: UcpCheckoutRemovePromoCode_checkoutRemovePromoCode_CheckoutRemovePromoCode_checkout_Checkout | null, errors: Array<UcpCheckoutRemovePromoCode_checkoutRemovePromoCode_CheckoutRemovePromoCode_errors_CheckoutError> };
+
+export type UcpCheckoutRemovePromoCode_Mutation = { checkoutRemovePromoCode: UcpCheckoutRemovePromoCode_checkoutRemovePromoCode_CheckoutRemovePromoCode | null };
+
+
+export type UcpCheckoutRemovePromoCodeVariables = Types.Exact<{
+  checkoutId: Types.Scalars['ID']['input'];
+  promoCode: Types.Scalars['String']['input'];
+}>;
+
+
+export type UcpCheckoutRemovePromoCode = UcpCheckoutRemovePromoCode_Mutation;
+
 export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_discount_Money = { amount: number, currency: string };
 
 export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingMethods_ShippingMethod_price_Money = { amount: number, currency: string };
@@ -43,9 +81,11 @@ export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Chec
 
 export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_net_Money = { currency: string, amount: number };
 
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_tax_Money = { currency: string, amount: number };
+
 export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_gross_Money = { currency: string, amount: number };
 
-export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney = { net: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_net_Money, gross: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_gross_Money };
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney = { net: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_net_Money, tax: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_tax_Money, gross: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_gross_Money };
 
 export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_undiscountedTotalPrice_Money = { amount: number, currency: string };
 
@@ -231,6 +271,42 @@ export const UcpCheckoutCompleteMutationDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<UcpCheckoutCompleteMutation, UcpCheckoutCompleteMutationVariables>;
+export const UcpCheckoutAddPromoCodeDocument = new TypedDocumentString(`
+    mutation UCPCheckoutAddPromoCode($checkoutId: ID!, $promoCode: String!) {
+  checkoutAddPromoCode(id: $checkoutId, promoCode: $promoCode) {
+    checkout {
+      voucherCode
+      discount {
+        amount
+        currency
+      }
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<UcpCheckoutAddPromoCode, UcpCheckoutAddPromoCodeVariables>;
+export const UcpCheckoutRemovePromoCodeDocument = new TypedDocumentString(`
+    mutation UCPCheckoutRemovePromoCode($checkoutId: ID!, $promoCode: String!) {
+  checkoutRemovePromoCode(id: $checkoutId, promoCode: $promoCode) {
+    checkout {
+      voucherCode
+      discount {
+        amount
+        currency
+      }
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<UcpCheckoutRemovePromoCode, UcpCheckoutRemovePromoCodeVariables>;
 export const UcpCheckoutSessionCreateDocument = new TypedDocumentString(`
     mutation UCPCheckoutSessionCreate($input: CheckoutCreateInput!, $languageCode: LanguageCodeEnum!, $countryCode: CountryCode = US, $thumbnailSize: Int = 128, $thumbnailFormat: ThumbnailFormatEnum = WEBP, $isMarketplaceEnabled: Boolean = false) {
   checkoutCreate(input: $input) {
@@ -340,6 +416,9 @@ fragment CartLineFragment on CheckoutLine {
   quantity
   totalPrice {
     net {
+      ...MoneyFragment
+    }
+    tax {
       ...MoneyFragment
     }
     gross {

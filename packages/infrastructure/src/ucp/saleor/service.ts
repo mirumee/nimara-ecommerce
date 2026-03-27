@@ -1,9 +1,10 @@
 import {
-  CheckoutWithBuyerConsentCreateRequest,
   type CheckoutCreateRequest,
   type CheckoutResponse,
-  type CheckoutWithDiscountCreateRequest,
   type CheckoutUpdateRequest,
+  type CheckoutWithBuyerConsentCreateRequest,
+  type CheckoutWithDiscountCreateRequest,
+  type CheckoutWithDiscountUpdateRequest,
   type CompleteCheckoutRequestWithAp2,
   type Order as UcpOrder,
 } from "@ucp-js/sdk";
@@ -15,10 +16,13 @@ import { graphqlClient } from "#root/graphql/client";
 import { getDiscoveryProfile } from "#root/ucp/profile";
 
 import { type UCPService } from "../types";
+import { mapSaleorErrorToUCP } from "./error-mapping";
 import {
+  UcpCheckoutAddPromoCodeDocument,
+  UcpCheckoutCompleteMutationDocument,
+  UcpCheckoutRemovePromoCodeDocument,
   UcpCheckoutSessionCreateDocument,
   UcpCheckoutSessionItemUpdateDocument,
-  UcpCheckoutCompleteMutationDocument,
   UcpCheckoutSessionUpdateDocument,
   type UcpCheckoutSessionUpdateVariables,
 } from "./graphql/mutations/generated";
@@ -33,11 +37,6 @@ import {
   verifyCheckoutMandateDummy,
   verifyMerchantAuthorizationDummy,
 } from "./helpers";
-import { mapSaleorErrorToUCP } from "./error-mapping";
-import {
-  convertToMessageErrors,
-  deriveStatusFromErrors,
-} from "./error-response-converter";
 import {
   orderToUCPOrder,
   sessionToCheckoutResponse,
@@ -51,7 +50,6 @@ import type {
   UCPSaleorServiceConfig,
   UCPUpdateRequestExtended,
 } from "./types";
-import { id } from "zod/locales";
 
 const DEFAULT_LANGUAGE_CODE = "EN" satisfies LanguageCodeEnum;
 
@@ -117,39 +115,79 @@ const mapSaleorMutationErrors = (
   });
 };
 
+type GraphQLClient = NonNullable<ReturnType<typeof graphqlClient>>;
+
 /**
- * Enriches a checkout session with error messages derived from domain errors.
- * Phase 2: Converts errors to UCP-compliant message objects and updates status.
+ * Synchronises Saleor voucher state with the requested discount codes.
  *
- * @param session - The checkout session to enrich
- * @param errors - Domain errors from failed operations
- * @returns Enriched session with messages array and updated status
+ * Rules (per Saleor API: only one voucher code is active at a time):
+ * - If a code is provided and differs from the current one → add the new code.
+ * - If codes array is empty/undefined and a voucher is currently applied → remove it.
+ * - If the same code is already applied → no-op.
+ *
+ * Per UCP spec, unknown/invalid discount codes are silently ignored: the
+ * operation succeeds and no discount is applied. Only transport-level failures
+ * (network errors, unexpected GraphQL errors) are returned as errors.
+ *
+ * Returns an error array on transport failure, or an empty array otherwise.
  */
-const enrichSessionWithErrors = (
-  session: UCPCheckoutSessionModel,
-  errors: Array<{
-    code: string;
-    message?: string;
-    context?: Record<string, unknown>;
-  }>,
-): UCPCheckoutSessionModel => {
-  // Convert errors to message format
-  const messages = convertToMessageErrors(errors as any);
+const applyCheckoutDiscounts = async (
+  client: GraphQLClient,
+  checkoutId: string,
+  requestedCodes: string[] | undefined,
+  currentVoucherCode: string | null | undefined,
+): Promise<{ code: string; message: string }[]> => {
+  const newCode = requestedCodes?.[0];
 
-  // Derive status from error severities
-  const newStatus = deriveStatusFromErrors(messages, session.status);
+  if (newCode) {
+    if (newCode === currentVoucherCode) {
+      return [];
+    }
+    const result = await client.execute(UcpCheckoutAddPromoCodeDocument, {
+      variables: { checkoutId, promoCode: newCode },
+      operationName: "UCP:CheckoutAddPromoCodeMutation",
+      options: { cache: "no-store" },
+    });
 
-  return {
-    ...session,
-    messages,
-    status: newStatus,
-  };
+    if (!result.ok) {
+      return result.errors.map((e) => ({
+        code: "INVALID_VALUE_ERROR",
+        message: e.message ?? "Failed to apply discount code.",
+      }));
+    }
+
+    // Saleor mutation errors (e.g. unknown/expired code) are silently ignored
+    // per UCP spec: unknown codes must not fail the request.
+    return [];
+  }
+
+  if (!newCode && currentVoucherCode) {
+    const result = await client.execute(UcpCheckoutRemovePromoCodeDocument, {
+      variables: { checkoutId, promoCode: currentVoucherCode },
+      operationName: "UCP:CheckoutRemovePromoCodeMutation",
+      options: { cache: "no-store" },
+    });
+
+    if (!result.ok) {
+      return result.errors.map((e) => ({
+        code: "INVALID_VALUE_ERROR",
+        message: e.message ?? "Failed to remove discount code.",
+      }));
+    }
+
+    // Saleor mutation errors for removal are also silently ignored.
+    return [];
+  }
+
+  return [];
 };
 
 export const saleorUCPService = ({
   apiUrl,
   baseUrl,
   channel,
+  defaultEmail,
+  capabilities = [],
   languageCode = DEFAULT_LANGUAGE_CODE,
   requireAp2Mandate = false,
 }: UCPSaleorServiceConfig): UCPService => ({
@@ -169,6 +207,7 @@ export const saleorUCPService = ({
 
     try {
       const metadata = [];
+
       if (input.buyer) {
         const buyerConsent =
           input.buyer as CheckoutWithBuyerConsentCreateRequest["buyer"];
@@ -182,7 +221,7 @@ export const saleorUCPService = ({
       const result = await client.execute(UcpCheckoutSessionCreateDocument, {
         variables: {
           input: {
-            email: input.buyer?.email ?? "grzegorz.derdak+ucp@mirumee.com",
+            email: input.buyer?.email ?? defaultEmail,
             channel,
             lines: input.line_items.map((line) => ({
               variantId: line.item.id,
@@ -207,13 +246,57 @@ export const saleorUCPService = ({
       if (!checkout) {
         const saleorErrors = result.data.checkoutCreate?.errors;
         const errors = mapSaleorMutationErrors(saleorErrors);
+
         return err(errors as any);
+      }
+
+      const discountInput = (input as CheckoutWithDiscountCreateRequest)
+        .discounts;
+      const discountErrors = await applyCheckoutDiscounts(
+        client,
+        checkout.id,
+        discountInput?.codes,
+        null,
+      );
+
+      // Transport-level failures from discount application are still fatal.
+      // Saleor-level errors (unknown/expired codes) are already silently
+      // ignored inside applyCheckoutDiscounts per UCP spec.
+      if (discountErrors.length > 0) {
+        return err(discountErrors as any);
+      }
+
+      // Re-fetch to reflect any applied discount in the response
+      if (discountInput?.codes?.length) {
+        const refreshed = await client.execute(UcpCheckoutSessionGetDocument, {
+          variables: { id: checkout.id, languageCode },
+          operationName: "UCP:CheckoutSessionGetQuery",
+          options: { cache: "no-store" },
+        });
+
+        if (refreshed.ok && refreshed.data.checkout) {
+          const session = toUCPCheckoutSession(
+            refreshed.data.checkout,
+            undefined,
+            baseUrl,
+          );
+
+          return ok(
+            sessionToCheckoutResponse(
+              session,
+              capabilities,
+              toPaymentHandlers(refreshed.data.checkout),
+            ),
+          );
+        }
       }
 
       const session = toUCPCheckoutSession(checkout, undefined, baseUrl);
       const paymentHandlers = toPaymentHandlers(checkout);
 
-      return ok(sessionToCheckoutResponse(session, paymentHandlers));
+      return ok(
+        sessionToCheckoutResponse(session, capabilities, paymentHandlers),
+      );
     } catch (error) {
       return err([
         {
@@ -269,7 +352,9 @@ export const saleorUCPService = ({
       );
       const paymentHandlers = toPaymentHandlers(result.data.checkout);
 
-      return ok(sessionToCheckoutResponse(session, paymentHandlers));
+      return ok(
+        sessionToCheckoutResponse(session, capabilities, paymentHandlers),
+      );
     } catch {
       return err([
         {
@@ -313,7 +398,8 @@ export const saleorUCPService = ({
         ]);
       }
 
-      const order = orderToUCPOrder(result.data.order);
+      const order = orderToUCPOrder(result.data.order, capabilities, baseUrl);
+
       return ok(order);
     } catch {
       return err([
@@ -326,7 +412,7 @@ export const saleorUCPService = ({
   },
 
   updateCheckoutSession: async (
-    input: CheckoutUpdateRequest,
+    input: CheckoutUpdateRequest | CheckoutWithDiscountUpdateRequest,
   ): AsyncResult<CheckoutResponse> => {
     const client = graphqlClient(apiUrl);
 
@@ -432,6 +518,7 @@ export const saleorUCPService = ({
 
         if (itemUpdateErrors.length > 0) {
           const errors = mapSaleorMutationErrors(itemUpdateErrors);
+
           return err(errors as any);
         }
       }
@@ -493,7 +580,27 @@ export const saleorUCPService = ({
 
       if (allUpdateErrors.length > 0) {
         const errors = mapSaleorMutationErrors(allUpdateErrors);
+
         return err(errors as any);
+      }
+
+      const discountInput = (input as CheckoutWithDiscountUpdateRequest)
+        .discounts;
+
+      // discounts field present in request means caller wants to manage vouchers
+      if (discountInput !== undefined) {
+        const currentVoucherCode =
+          existingCheckoutResult.data.checkout.voucherCode;
+        const discountErrors = await applyCheckoutDiscounts(
+          client,
+          input.id,
+          discountInput.codes,
+          currentVoucherCode,
+        );
+
+        if (discountErrors.length > 0) {
+          return err(discountErrors as any);
+        }
       }
 
       const refreshedCheckoutResult = await client.execute(
@@ -532,7 +639,9 @@ export const saleorUCPService = ({
         refreshedCheckoutResult.data.checkout,
       );
 
-      return ok(sessionToCheckoutResponse(session, paymentHandlers));
+      return ok(
+        sessionToCheckoutResponse(session, capabilities, paymentHandlers),
+      );
     } catch {
       return err([
         {
@@ -609,6 +718,7 @@ export const saleorUCPService = ({
           undefined,
           baseUrl,
         ),
+        capabilities,
         toPaymentHandlers(currentCheckoutResult.data.checkout),
       );
 
@@ -670,6 +780,7 @@ export const saleorUCPService = ({
 
       if (completeErrors && completeErrors.length > 0) {
         const errors = mapSaleorMutationErrors(completeErrors);
+
         return err(errors as any);
       }
 
@@ -714,7 +825,7 @@ export const saleorUCPService = ({
           },
         };
 
-        return ok(sessionToCheckoutResponse(fallbackSession));
+        return ok(sessionToCheckoutResponse(fallbackSession, capabilities));
       }
 
       const paymentHandlers = toPaymentHandlers(checkoutResult.data.checkout);
@@ -731,7 +842,13 @@ export const saleorUCPService = ({
         },
       };
 
-      return ok(sessionToCheckoutResponse(completedSession, paymentHandlers));
+      return ok(
+        sessionToCheckoutResponse(
+          completedSession,
+          capabilities,
+          paymentHandlers,
+        ),
+      );
     } catch {
       return err([
         {

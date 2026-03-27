@@ -3,9 +3,11 @@ import type * as Types from '@nimara/codegen/schema';
 import type { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
 export type CartLineFragment_CheckoutLine_totalPrice_TaxedMoney_net_Money = { currency: string, amount: number };
 
+export type CartLineFragment_CheckoutLine_totalPrice_TaxedMoney_tax_Money = { currency: string, amount: number };
+
 export type CartLineFragment_CheckoutLine_totalPrice_TaxedMoney_gross_Money = { currency: string, amount: number };
 
-export type CartLineFragment_CheckoutLine_totalPrice_TaxedMoney = { net: CartLineFragment_CheckoutLine_totalPrice_TaxedMoney_net_Money, gross: CartLineFragment_CheckoutLine_totalPrice_TaxedMoney_gross_Money };
+export type CartLineFragment_CheckoutLine_totalPrice_TaxedMoney = { net: CartLineFragment_CheckoutLine_totalPrice_TaxedMoney_net_Money, tax: CartLineFragment_CheckoutLine_totalPrice_TaxedMoney_tax_Money, gross: CartLineFragment_CheckoutLine_totalPrice_TaxedMoney_gross_Money };
 
 export type CartLineFragment_CheckoutLine_undiscountedTotalPrice_Money = { amount: number, currency: string };
 
@@ -79,6 +81,9 @@ export const CartLineFragment = new TypedDocumentString(`
   quantity
   totalPrice {
     net {
+      ...MoneyFragment
+    }
+    tax {
       ...MoneyFragment
     }
     gross {

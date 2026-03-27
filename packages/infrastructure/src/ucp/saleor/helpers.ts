@@ -49,19 +49,48 @@ export function toSaleorAddress(
 }
 
 /**
- * Converts a currency amount to minor currency.
- * Example: 12.99 USD -> 1299
- * @param amount - The amount to convert to minor currency.
- * @param currency - The currency to convert to minor currency.
- * @returns The amount converted to minor currency.
+ * Converts a currency amount to its minor unit representation.
+ * Example: 12.99 USD -> 1299, 100 JPY -> 100
+ *
+ * Handles zero-decimal currencies (e.g., JPY, KRW) and common floating-point imprecision.
+ * See: https://stripe.com/docs/currencies#zero-decimal
+ *
+ * @param amount - The major unit amount (e.g. dollars, euros)
+ * @param currency - The ISO 4217 currency code (case-insensitive)
+ * @returns The amount in minor units (integer)
  */
 export const toMinorCurrency = (amount: number, currency: string): number => {
-  if (currency.toUpperCase() === "JPY") {
-    // JPY is a zero-decimal currency, so we don't need to multiply by 100
-    return amount;
+  // List of ISO 4217 zero-decimal currencies (no minor unit)
+  // Source: https://stripe.com/docs/currencies#zero-decimal
+  const ZERO_DECIMAL_CURRENCIES = new Set([
+    "BIF",
+    "CLP",
+    "DJF",
+    "GNF",
+    "JPY",
+    "KMF",
+    "KRW",
+    "MGA",
+    "PYG",
+    "RWF",
+    "UGX",
+    "VND",
+    "VUV",
+    "XAF",
+    "XOF",
+    "XPF",
+  ]);
+
+  const normalized = currency.trim().toUpperCase();
+
+  if (ZERO_DECIMAL_CURRENCIES.has(normalized)) {
+    // No conversion needed for zero-decimal currencies
+    return Math.round(amount);
   }
 
-  return Number((amount * 100).toFixed(0));
+  // For other currencies, multiply by 100 to get minor unit,
+  // and round to deal with floating point imprecision (e.g., 11.1 * 100 = 1110.0000000000002)
+  return Math.round(amount * 100);
 };
 
 /**
