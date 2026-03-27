@@ -9,6 +9,20 @@ import { useEffect, useState } from "react";
 import { Button } from "@nimara/ui/components/button";
 import { Card, CardContent } from "@nimara/ui/components/card";
 import { Input } from "@nimara/ui/components/input";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@nimara/ui/components/pagination";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@nimara/ui/components/select";
 
 import {
   Table,
@@ -19,6 +33,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useDebounce } from "@/hooks/use-debounce";
+
+const DEFAULT_PAGE_SIZE = 15;
+const PAGE_SIZE_OPTIONS = [15, 25, 50];
 
 type Collection = {
   backgroundImage: { alt: string | null; url: string } | null;
@@ -83,6 +100,53 @@ export function CollectionsListClient({
     searchParams.get("search") || "",
   );
   const debouncedSearch = useDebounce(searchValue, 300);
+  const pageSize = parseInt(
+    searchParams.get("pageSize") || String(DEFAULT_PAGE_SIZE),
+    10,
+  );
+  const normalizedPageSize = PAGE_SIZE_OPTIONS.includes(pageSize)
+    ? pageSize
+    : DEFAULT_PAGE_SIZE;
+  const page = parseInt(searchParams.get("page") || "1", 10);
+  const currentPage = Number.isNaN(page) || page < 1 ? 1 : page;
+  const totalPages = Math.max(
+    1,
+    Math.ceil(collections.length / normalizedPageSize),
+  );
+  const safeCurrentPage = Math.min(currentPage, totalPages);
+  const hasNextPage = safeCurrentPage < totalPages;
+  const hasPreviousPage = safeCurrentPage > 1;
+  const paginatedCollections = collections.slice(
+    (safeCurrentPage - 1) * normalizedPageSize,
+    safeCurrentPage * normalizedPageSize,
+  );
+
+  const updateSearchParams = (updates: {
+    page?: number | null;
+    pageSize?: number | null;
+    search?: string | null;
+  }) => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    Object.entries(updates).forEach(([key, value]) => {
+      params.delete(key);
+      if (value !== null && value !== undefined && value !== "") {
+        params.set(key, String(value));
+      }
+    });
+
+    if (params.get("page") === "1") {
+      params.delete("page");
+    }
+
+    if (params.get("pageSize") === String(DEFAULT_PAGE_SIZE)) {
+      params.delete("pageSize");
+    }
+
+    const query = params.toString();
+
+    router.replace(`${pathname}${query ? `?${query}` : ""}`);
+  };
 
   useEffect(() => {
     const currentSearch = searchParams.get("search") || "";
@@ -91,18 +155,38 @@ export function CollectionsListClient({
       return;
     }
 
-    const params = new URLSearchParams(searchParams.toString());
+    updateSearchParams({
+      page: 1,
+      search: debouncedSearch || null,
+    });
+  }, [debouncedSearch, searchParams]);
 
-    if (debouncedSearch) {
-      params.set("search", debouncedSearch);
-    } else {
-      params.delete("search");
+  const handlePageSizeChange = (newSize: string) => {
+    updateSearchParams({
+      page: 1,
+      pageSize: parseInt(newSize, 10),
+    });
+  };
+
+  const handleNextPage = () => {
+    if (!hasNextPage) {
+      return;
     }
 
-    const query = params.toString();
+    updateSearchParams({
+      page: safeCurrentPage + 1,
+    });
+  };
 
-    router.replace(`${pathname}${query ? `?${query}` : ""}`);
-  }, [debouncedSearch, pathname, router, searchParams]);
+  const handlePreviousPage = () => {
+    if (!hasPreviousPage) {
+      return;
+    }
+
+    updateSearchParams({
+      page: safeCurrentPage - 1,
+    });
+  };
 
   return (
     <div className="grid gap-4">
@@ -161,7 +245,7 @@ export function CollectionsListClient({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {collections.map((collection) => {
+                {paginatedCollections.map((collection) => {
                   const productCount = collection.products?.totalCount ?? 0;
                   const { label, variant } = getChannelBadgeProps(
                     collection,
@@ -203,6 +287,56 @@ export function CollectionsListClient({
               </TableBody>
             </Table>
           )}
+
+          <div className="flex items-center justify-between border-t p-4">
+            <div className="flex items-center gap-2">
+              <span className="w-24 text-sm text-muted-foreground">
+                {t("common.view-items")}
+              </span>
+              <Select
+                value={String(normalizedPageSize)}
+                onValueChange={handlePageSizeChange}
+              >
+                <SelectTrigger className="w-[70px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {PAGE_SIZE_OPTIONS.map((size) => (
+                    <SelectItem key={size} value={String(size)}>
+                      {size}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    label={t("common.previous")}
+                    onClick={handlePreviousPage}
+                    className={
+                      !hasPreviousPage
+                        ? "pointer-events-none opacity-50"
+                        : "cursor-pointer"
+                    }
+                  />
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationNext
+                    label={t("common.next")}
+                    onClick={handleNextPage}
+                    className={
+                      !hasNextPage
+                        ? "pointer-events-none opacity-50"
+                        : "cursor-pointer"
+                    }
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
         </CardContent>
       </Card>
     </div>

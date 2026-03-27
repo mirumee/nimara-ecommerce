@@ -32959,7 +32959,7 @@ export type CustomerOrders_orders_OrderCountableConnection_edges_OrderCountableE
 
 export type CustomerOrders_orders_OrderCountableConnection_edges_OrderCountableEdge = { node: CustomerOrders_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order };
 
-export type CustomerOrders_orders_OrderCountableConnection = { edges: Array<CustomerOrders_orders_OrderCountableConnection_edges_OrderCountableEdge> };
+export type CustomerOrders_orders_OrderCountableConnection = { totalCount: number | null, edges: Array<CustomerOrders_orders_OrderCountableConnection_edges_OrderCountableEdge> };
 
 export type CustomerOrders_Query = { orders: CustomerOrders_orders_OrderCountableConnection | null };
 
@@ -34719,6 +34719,7 @@ export const CustomerByEmailDocument = new TypedDocumentString(`
 export const CustomerOrdersDocument = new TypedDocumentString(`
     query CustomerOrders($customer: String!, $first: Int) {
   orders(first: $first, filter: {customer: $customer}) {
+    totalCount
     edges {
       node {
         id
