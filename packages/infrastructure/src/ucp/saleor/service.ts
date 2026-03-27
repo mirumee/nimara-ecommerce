@@ -1,27 +1,31 @@
 import {
+  CheckoutWithBuyerConsentCreateRequest,
   type CheckoutCreateRequest,
   type CheckoutResponse,
+  type CheckoutWithDiscountCreateRequest,
   type CheckoutUpdateRequest,
   type CompleteCheckoutRequestWithAp2,
+  type Order as UcpOrder,
 } from "@ucp-js/sdk";
 
 import { type LanguageCodeEnum } from "@nimara/codegen/schema";
 import { type AsyncResult, err, ok } from "@nimara/domain/objects/Result";
 
 import { graphqlClient } from "#root/graphql/client";
-import { UCP_VERSION } from "#root/ucp/consts";
-import { createErrorResponse } from "#root/ucp/error";
 import { getDiscoveryProfile } from "#root/ucp/profile";
 
 import { type UCPService } from "../types";
 import {
-  CheckoutSessionCreateDocument,
-  CheckoutSessionItemUpdateDocument,
+  UcpCheckoutSessionCreateDocument,
+  UcpCheckoutSessionItemUpdateDocument,
   UcpCheckoutCompleteMutationDocument,
   UcpCheckoutSessionUpdateDocument,
   type UcpCheckoutSessionUpdateVariables,
 } from "./graphql/mutations/generated";
-import { CheckoutSessionGetDocument } from "./graphql/queries/generated";
+import {
+  UcpCheckoutSessionGetDocument,
+  UcpOrderGetDocument,
+} from "./graphql/queries/generated";
 import {
   calculateCheckoutExpiration,
   toSaleorAddress,
@@ -29,7 +33,13 @@ import {
   verifyCheckoutMandateDummy,
   verifyMerchantAuthorizationDummy,
 } from "./helpers";
+import { mapSaleorErrorToUCP } from "./error-mapping";
 import {
+  convertToMessageErrors,
+  deriveStatusFromErrors,
+} from "./error-response-converter";
+import {
+  orderToUCPOrder,
   sessionToCheckoutResponse,
   toPaymentHandlers,
   toUCPCheckoutSession,
@@ -41,14 +51,100 @@ import type {
   UCPSaleorServiceConfig,
   UCPUpdateRequestExtended,
 } from "./types";
+import { id } from "zod/locales";
 
 const DEFAULT_LANGUAGE_CODE = "EN" satisfies LanguageCodeEnum;
 
-const getMutationErrors = (errors: GraphQLMutationError[] | undefined | null) =>
-  errors
-    ?.map((error) => error.message)
-    .filter(Boolean)
-    .join(", ");
+type CheckoutCreateInput =
+  | CheckoutWithBuyerConsentCreateRequest
+  | CheckoutCreateRequest
+  | CheckoutWithDiscountCreateRequest;
+/**
+ * Maps Saleor GraphQL mutation errors to domain-compliant error objects.
+ * Each error is mapped using the UCP error mapping to provide proper severity
+ * and error codes that platforms can understand.
+ *
+ * @param saleorErrors - Array of Saleor GraphQL errors
+ * @returns Array of domain BaseError objects with context for UCP error mapping
+ */
+const mapSaleorMutationErrors = (
+  saleorErrors: GraphQLMutationError[] | undefined | null,
+) => {
+  if (!saleorErrors || saleorErrors.length === 0) {
+    return [
+      {
+        code: "CHECKOUT_COMPLETE_ERROR" as const,
+        message: "Unknown checkout error occurred.",
+      },
+    ];
+  }
+
+  return saleorErrors.map((error) => {
+    // Extract Saleor error code if available
+    const saleorCode =
+      (error as Record<string, unknown>).code ??
+      error.message?.split(":")[0] ??
+      "INVALID";
+
+    // Map to UCP error for reference (phase 2 will use this in messages array)
+    const ucpMapping = mapSaleorErrorToUCP(
+      String(saleorCode),
+      error.message || "",
+    );
+
+    // Use appropriate domain error code based on severity
+    let domainErrorCode:
+      | "CHECKOUT_COMPLETE_ERROR"
+      | "CART_LINES_UPDATE_ERROR"
+      | "CART_CREATE_ERROR" = "CHECKOUT_COMPLETE_ERROR";
+
+    if (
+      ucpMapping.severity === "recoverable" &&
+      ucpMapping.code === "out_of_stock"
+    ) {
+      domainErrorCode = "CART_LINES_UPDATE_ERROR";
+    }
+
+    return {
+      code: domainErrorCode,
+      message: error.message || "Checkout operation failed",
+      context: {
+        saleorCode,
+        ucpCode: ucpMapping.code,
+        severity: ucpMapping.severity,
+      },
+    };
+  });
+};
+
+/**
+ * Enriches a checkout session with error messages derived from domain errors.
+ * Phase 2: Converts errors to UCP-compliant message objects and updates status.
+ *
+ * @param session - The checkout session to enrich
+ * @param errors - Domain errors from failed operations
+ * @returns Enriched session with messages array and updated status
+ */
+const enrichSessionWithErrors = (
+  session: UCPCheckoutSessionModel,
+  errors: Array<{
+    code: string;
+    message?: string;
+    context?: Record<string, unknown>;
+  }>,
+): UCPCheckoutSessionModel => {
+  // Convert errors to message format
+  const messages = convertToMessageErrors(errors as any);
+
+  // Derive status from error severities
+  const newStatus = deriveStatusFromErrors(messages, session.status);
+
+  return {
+    ...session,
+    messages,
+    status: newStatus,
+  };
+};
 
 export const saleorUCPService = ({
   apiUrl,
@@ -58,7 +154,7 @@ export const saleorUCPService = ({
   requireAp2Mandate = false,
 }: UCPSaleorServiceConfig): UCPService => ({
   createCheckoutSession: async (
-    input: CheckoutCreateRequest,
+    input: CheckoutCreateInput,
   ): AsyncResult<CheckoutResponse> => {
     const client = graphqlClient(apiUrl);
 
@@ -72,14 +168,27 @@ export const saleorUCPService = ({
     }
 
     try {
-      const result = await client.execute(CheckoutSessionCreateDocument, {
+      const metadata = [];
+      if (input.buyer) {
+        const buyerConsent =
+          input.buyer as CheckoutWithBuyerConsentCreateRequest["buyer"];
+
+        metadata.push({
+          key: "ucp.buyer.json",
+          value: JSON.stringify(buyerConsent ?? {}),
+        });
+      }
+
+      const result = await client.execute(UcpCheckoutSessionCreateDocument, {
         variables: {
           input: {
+            email: input.buyer?.email ?? "grzegorz.derdak+ucp@mirumee.com",
             channel,
             lines: input.line_items.map((line) => ({
               variantId: line.item.id,
               quantity: line.quantity,
             })),
+            metadata,
           },
           languageCode,
         },
@@ -96,16 +205,9 @@ export const saleorUCPService = ({
       const checkout = result.data.checkoutCreate?.checkout;
 
       if (!checkout) {
-        const createErrors = getMutationErrors(
-          result.data.checkoutCreate?.errors,
-        );
-
-        return err([
-          {
-            code: "CART_CREATE_ERROR",
-            message: createErrors || "Failed to create checkout session.",
-          },
-        ]);
+        const saleorErrors = result.data.checkoutCreate?.errors;
+        const errors = mapSaleorMutationErrors(saleorErrors);
+        return err(errors as any);
       }
 
       const session = toUCPCheckoutSession(checkout, undefined, baseUrl);
@@ -139,7 +241,7 @@ export const saleorUCPService = ({
     }
 
     try {
-      const result = await client.execute(CheckoutSessionGetDocument, {
+      const result = await client.execute(UcpCheckoutSessionGetDocument, {
         variables: {
           id: input.id,
           languageCode,
@@ -178,6 +280,51 @@ export const saleorUCPService = ({
     }
   },
 
+  getOrder: async (input: { id: string }): AsyncResult<UcpOrder> => {
+    const client = graphqlClient(apiUrl);
+
+    if (!client) {
+      return err([
+        {
+          code: "BAD_REQUEST_ERROR",
+          message: "Missing Saleor API URL.",
+        },
+      ]);
+    }
+
+    try {
+      const result = await client.execute(UcpOrderGetDocument, {
+        variables: {
+          id: input.id,
+        },
+        operationName: "UCP:OrderGetQuery",
+      });
+
+      if (!result.ok) {
+        return err(result.errors);
+      }
+
+      if (!result.data.order) {
+        return err([
+          {
+            code: "NOT_FOUND_ERROR",
+            message: "Order not found.",
+          },
+        ]);
+      }
+
+      const order = orderToUCPOrder(result.data.order);
+      return ok(order);
+    } catch {
+      return err([
+        {
+          code: "NOT_FOUND_ERROR",
+          message: "Order not found.",
+        },
+      ]);
+    }
+  },
+
   updateCheckoutSession: async (
     input: CheckoutUpdateRequest,
   ): AsyncResult<CheckoutResponse> => {
@@ -194,7 +341,7 @@ export const saleorUCPService = ({
 
     try {
       const existingCheckoutResult = await client.execute(
-        CheckoutSessionGetDocument,
+        UcpCheckoutSessionGetDocument,
         {
           variables: {
             id: input.id,
@@ -258,7 +405,7 @@ export const saleorUCPService = ({
 
       if (linesToAdd.length || linesToUpdate.length) {
         const itemsUpdateResult = await client.execute(
-          CheckoutSessionItemUpdateDocument,
+          UcpCheckoutSessionItemUpdateDocument,
           {
             variables: {
               checkoutId: input.id,
@@ -278,21 +425,14 @@ export const saleorUCPService = ({
           return err(itemsUpdateResult.errors);
         }
 
-        const itemMutationErrors = [
+        const itemUpdateErrors = [
           ...(itemsUpdateResult.data.checkoutLinesAdd?.errors || []),
           ...(itemsUpdateResult.data.checkoutLinesUpdate?.errors || []),
-        ]
-          .map((error) => error.message)
-          .filter(Boolean)
-          .join(", ");
+        ];
 
-        if (itemMutationErrors) {
-          return err([
-            {
-              code: "CART_LINES_UPDATE_ERROR",
-              message: itemMutationErrors,
-            },
-          ]);
+        if (itemUpdateErrors.length > 0) {
+          const errors = mapSaleorMutationErrors(itemUpdateErrors);
+          return err(errors as any);
         }
       }
 
@@ -309,10 +449,9 @@ export const saleorUCPService = ({
         buyerEmail:
           requestWithFulfillment.buyer?.email ||
           existingCheckoutResult.data.checkout.email ||
-          "unknown@example.com",
+          "not-provided@example.com",
         buyerJSON: JSON.stringify(requestWithFulfillment.buyer || {}),
         checkoutId: input.id,
-        fulfillmentAddressJSON: JSON.stringify(destination || {}),
         fulfillmentOptionID:
           requestWithFulfillment.fulfillment?.methods?.[0]?.groups?.[0]
             ?.selected_option_id || "",
@@ -344,28 +483,21 @@ export const saleorUCPService = ({
         return err(updateResult.errors);
       }
 
-      const updateErrors = [
+      const allUpdateErrors = [
         ...(updateResult.data.checkoutEmailUpdate?.errors || []),
         ...(updateResult.data.checkoutShippingAddressUpdate?.errors || []),
         ...(updateResult.data.checkoutBillingAddressUpdate?.errors || []),
         ...(updateResult.data.checkoutDeliveryMethodUpdate?.errors || []),
         ...(updateResult.data.updateMetadata?.errors || []),
-      ]
-        .map((error) => error.message)
-        .filter(Boolean)
-        .join(", ");
+      ];
 
-      if (updateErrors) {
-        return err([
-          {
-            code: "CART_LINES_UPDATE_ERROR",
-            message: updateErrors,
-          },
-        ]);
+      if (allUpdateErrors.length > 0) {
+        const errors = mapSaleorMutationErrors(allUpdateErrors);
+        return err(errors as any);
       }
 
       const refreshedCheckoutResult = await client.execute(
-        CheckoutSessionGetDocument,
+        UcpCheckoutSessionGetDocument,
         {
           variables: {
             id: input.id,
@@ -449,7 +581,7 @@ export const saleorUCPService = ({
       }
 
       const currentCheckoutResult = await client.execute(
-        CheckoutSessionGetDocument,
+        UcpCheckoutSessionGetDocument,
         {
           variables: {
             id: checkoutId,
@@ -534,17 +666,11 @@ export const saleorUCPService = ({
         return err(result.errors);
       }
 
-      const completionErrors = getMutationErrors(
-        result.data.checkoutComplete?.errors,
-      );
+      const completeErrors = result.data.checkoutComplete?.errors;
 
-      if (completionErrors) {
-        return err([
-          {
-            code: "CHECKOUT_COMPLETE_ERROR",
-            message: completionErrors,
-          },
-        ]);
+      if (completeErrors && completeErrors.length > 0) {
+        const errors = mapSaleorMutationErrors(completeErrors);
+        return err(errors as any);
       }
 
       const order = result.data.checkoutComplete?.order;
@@ -558,16 +684,19 @@ export const saleorUCPService = ({
         ]);
       }
 
-      const checkoutResult = await client.execute(CheckoutSessionGetDocument, {
-        variables: {
-          id: checkoutId,
-          languageCode,
+      const checkoutResult = await client.execute(
+        UcpCheckoutSessionGetDocument,
+        {
+          variables: {
+            id: checkoutId,
+            languageCode,
+          },
+          operationName: "UCP:CheckoutSessionGetQuery",
+          options: {
+            cache: "no-store",
+          },
         },
-        operationName: "UCP:CheckoutSessionGetQuery",
-        options: {
-          cache: "no-store",
-        },
-      });
+      );
 
       if (!checkoutResult.ok || !checkoutResult.data.checkout) {
         const fallbackSession: UCPCheckoutSessionModel = {

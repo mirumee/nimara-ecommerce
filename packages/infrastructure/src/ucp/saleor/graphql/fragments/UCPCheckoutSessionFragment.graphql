@@ -1,0 +1,6 @@
+fragment UCPCheckoutSessionFragment on Checkout {
+  ...CheckoutFragment
+
+  # Custom metadata fields
+  buyer: metafield(key: "ucp.buyer.json")
+}

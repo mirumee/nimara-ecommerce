@@ -1,8 +1,15 @@
 import { type CheckoutUpdateRequest } from "@ucp-js/sdk";
 import { type NextRequest, NextResponse } from "next/server";
 
+import {
+  convertToMessageErrors,
+  deriveStatusFromErrors,
+} from "@nimara/infrastructure/ucp/saleor/error-response-converter";
+
 import { idempotencyStorage } from "@/features/acp/acp";
+import { validateUCPVersion } from "@/features/ucp/version-negotiation";
 import { revalidateTag } from "@/foundation/cache/cache";
+import { getHttpStatusFromErrors } from "@/foundation/http/error-to-status";
 import { validateChannelParam } from "@/foundation/validate-channel-param";
 import { storefrontLogger } from "@/services/logging";
 import { getUCPService } from "@/services/ucp";
@@ -11,6 +18,12 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ channelSlug: string; id: string }> },
 ) {
+  const versionNegotiation = validateUCPVersion(request);
+
+  if (!versionNegotiation.ok) {
+    return versionNegotiation.errorResponse;
+  }
+
   const idempotencyKey = request.headers.get("Idempotency-Key");
   const requestId = request.headers.get("Request-Id") || "";
 
@@ -42,11 +55,32 @@ export async function GET(
   const result = await ucpService.getCheckoutSession({ id });
 
   if (!result.ok) {
+    const messages = convertToMessageErrors(result.errors);
+    const checkoutStatus = deriveStatusFromErrors(messages);
+    const httpStatus = getHttpStatusFromErrors(result.errors);
+
     storefrontLogger.error(
       `[UCP] Failed to fetch checkout session for id ${id}`,
+      {
+        errors: result.errors,
+        messages,
+        checkoutStatus,
+        httpStatus,
+      },
     );
 
-    return NextResponse.json(result.errors, { status: 500 });
+    return NextResponse.json(
+      {
+        messages,
+        status: checkoutStatus,
+      },
+      {
+        status: httpStatus,
+        headers: {
+          "Request-Id": requestId,
+        },
+      },
+    );
   }
 
   const responseData = result.data;
@@ -87,6 +121,12 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ channelSlug: string; id: string }> },
 ) {
+  const versionNegotiation = validateUCPVersion(request);
+
+  if (!versionNegotiation.ok) {
+    return versionNegotiation.errorResponse;
+  }
+
   const idempotencyKey = request.headers.get("Idempotency-Key");
   const requestId = request.headers.get("Request-Id") || "";
 
@@ -140,7 +180,32 @@ export async function PUT(
   });
 
   if (!result.ok) {
-    return NextResponse.json(result.errors, { status: 400 });
+    const messages = convertToMessageErrors(result.errors);
+    const checkoutStatus = deriveStatusFromErrors(messages);
+    const httpStatus = getHttpStatusFromErrors(result.errors);
+
+    storefrontLogger.error(
+      `[UCP] Failed to update checkout session for id ${id}`,
+      {
+        errors: result.errors,
+        messages,
+        checkoutStatus,
+        httpStatus,
+      },
+    );
+
+    return NextResponse.json(
+      {
+        messages,
+        status: checkoutStatus,
+      },
+      {
+        status: httpStatus,
+        headers: {
+          "Request-Id": requestId,
+        },
+      },
+    );
   }
 
   // Revalidate cache for this particular checkout session ID on update on success

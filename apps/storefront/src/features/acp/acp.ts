@@ -11,11 +11,34 @@ type CachedResponse = {
 const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 
 /**
- * Computes a simple hash of the request body for conflict detection.
+ * Computes a deterministic hash of the request body for conflict detection.
  * Used to detect if the same idempotency key is used with different request data.
+ * Ensures consistent hashing regardless of property order.
  */
 const computeRequestHash = (requestBody: unknown): string => {
-  return JSON.stringify(requestBody);
+  if (!requestBody) {
+    return "";
+  }
+
+  const stringified = JSON.stringify(requestBody, (key, value) => {
+    // Sort object keys for deterministic hashing
+    if (value !== null && typeof value === "object" && !Array.isArray(value)) {
+      return Object.keys(value as Record<string, unknown>)
+        .sort()
+        .reduce(
+          (acc, k) => {
+            acc[k] = value[k];
+
+            return acc;
+          },
+          {} as Record<string, unknown>,
+        );
+    }
+
+    return value;
+  });
+
+  return stringified;
 };
 
 /**
@@ -59,10 +82,10 @@ class IdempotencyStorage {
       return null;
     }
 
-    // Check if the request body matches the cached request
-    const conflict =
-      requestBody !== undefined &&
-      cached.requestHash !== computeRequestHash(requestBody);
+    // Check if the request body matches the cached request.
+    // Only check for conflicts if requestBody is provided (i.e., not a GET request).
+    const currentHash = computeRequestHash(requestBody);
+    const conflict = currentHash !== "" && cached.requestHash !== currentHash;
 
     return { cached, conflict };
   }

@@ -1,4 +1,4 @@
-mutation CheckoutSessionCreate(
+mutation UCPCheckoutSessionCreate(
   $input: CheckoutCreateInput!
   $languageCode: LanguageCodeEnum!
   $countryCode: CountryCode = US
@@ -8,7 +8,7 @@ mutation CheckoutSessionCreate(
 ) {
   checkoutCreate(input: $input) {
     checkout {
-      ...CheckoutSessionFragment
+      ...UCPCheckoutSessionFragment
     }
     errors {
       field

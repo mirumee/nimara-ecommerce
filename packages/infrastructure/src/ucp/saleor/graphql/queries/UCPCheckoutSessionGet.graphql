@@ -1,4 +1,4 @@
-query CheckoutSessionGet(
+query UCPCheckoutSessionGet(
   $id: ID!
   $languageCode: LanguageCodeEnum!
   $countryCode: CountryCode = US
@@ -7,6 +7,6 @@ query CheckoutSessionGet(
   $isMarketplaceEnabled: Boolean = false
 ) {
   checkout(id: $id) {
-    ...CheckoutSessionFragment
+    ...UCPCheckoutSessionFragment
   }
 }

@@ -14,7 +14,7 @@ function ucpDiscoveryProfile(): UcpDiscoveryProfile {
           version: UCP_VERSION,
           spec: "https://ucp.dev/specification/reference",
           rest: {
-            schema: "https://ucp.dev/services/shopping/rest.openapi.json",
+            schema: `https://ucp.dev/${UCP_VERSION}/services/shopping/openapi.json`,
             endpoint: UCP_API_ENDPOINT,
           },
         },
@@ -24,7 +24,7 @@ function ucpDiscoveryProfile(): UcpDiscoveryProfile {
     payment: {
       handlers: [
         {
-          id: "gpay",
+          id: "google_pay",
           name: "Google Pay",
           version: UCP_VERSION,
           spec: `https://pay.google.com/gp/p/ucp/${UCP_VERSION}/`,

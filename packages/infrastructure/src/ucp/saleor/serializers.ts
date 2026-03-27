@@ -1,5 +1,6 @@
 import {
   type BuyerClass,
+  type BuyerWithConsentResponse,
   type CheckoutResponse,
   type CheckoutResponseStatus,
   type CheckoutWithFulfillmentResponse,
@@ -7,6 +8,7 @@ import {
   type LineItemResponse,
   type LinkElement,
   type MethodElement,
+  type Order as UcpOrder,
   type OrderClass,
   type PostalAddress,
   type TotalResponse,
@@ -22,9 +24,10 @@ import {
   toMinorCurrency,
 } from "#root/ucp/saleor/helpers";
 
-import { type CheckoutSessionFragment } from "./graphql/fragments/generated";
-
-type SaleorCheckout = CheckoutSessionFragment;
+import {
+  type UcpCheckoutSessionFragment,
+  type UcpOrderFragment,
+} from "./graphql/fragments/generated";
 
 /**
  * Internal checkout session model bridging Saleor and UCP CheckoutResponse.
@@ -32,6 +35,7 @@ type SaleorCheckout = CheckoutSessionFragment;
  * - order.permalinkUrl: camelCase internal; SDK OrderClass uses permalink_url (snake_case).
  * - continueUrl: For checkout handoff to business UI (will be converted to continue_url).
  * - expiresAtISO: ISO 8601 string for checkout expiration (will be converted to expires_at).
+ * - messages: Error/warning messages array for error handling (Phase 2).
  */
 export type UCPCheckoutSessionModel = {
   billingAddress?: PostalAddress;
@@ -44,6 +48,14 @@ export type UCPCheckoutSessionModel = {
   id: string;
   lineItems: LineItemResponse[];
   links: LinkElement[];
+  messages?: Array<{
+    code: string;
+    content: string;
+    content_type?: "plain" | "markdown";
+    path?: string;
+    severity?: "recoverable" | "requires_buyer_input" | "requires_buyer_review";
+    type: "error" | "warning" | "info";
+  }>;
   order?: Pick<OrderClass, "id"> & {
     permalinkUrl: OrderClass["permalink_url"];
   };
@@ -55,7 +67,7 @@ export type UCPCheckoutSessionModel = {
  * Derives a UCP-compatible checkout status from Saleor checkout shape.
  */
 const getCheckoutStatus = (
-  checkout: SaleorCheckout,
+  checkout: UcpCheckoutSessionFragment,
 ): CheckoutResponseStatus => {
   if (checkout.authorizeStatus === "FULL") {
     return "completed";
@@ -75,7 +87,7 @@ const getCheckoutStatus = (
  */
 const calculateTotals = (
   checkout: Pick<
-    SaleorCheckout,
+    UcpCheckoutSessionFragment,
     "subtotalPrice" | "totalPrice" | "shippingPrice"
   >,
 ): TotalResponse[] => {
@@ -145,23 +157,15 @@ const toUCPAddress = (
 /**
  * Parses buyer metadata JSON stored on checkout.
  */
-const normalizeBuyer = (buyer: string | null): BuyerClass | undefined => {
+const normalizeBuyer = (
+  buyer: string | null,
+): BuyerWithConsentResponse | undefined => {
   if (!buyer) {
     return undefined;
   }
 
   try {
-    const parsed = JSON.parse(buyer) as {
-      email?: string;
-      first_name?: string;
-      last_name?: string;
-    };
-
-    return {
-      email: parsed.email,
-      first_name: parsed.first_name,
-      last_name: parsed.last_name,
-    };
+    return JSON.parse(buyer) as BuyerWithConsentResponse;
   } catch {
     return undefined;
   }
@@ -171,7 +175,7 @@ const normalizeBuyer = (buyer: string | null): BuyerClass | undefined => {
  * Converts Saleor checkout lines into an internal UCP line item shape.
  */
 const toUCPLineItems = (
-  lines: SaleorCheckout["lines"],
+  lines: UcpCheckoutSessionFragment["lines"],
 ): UCPCheckoutSessionModel["lineItems"] => {
   return lines.map((line) => {
     const unitPrice = line.quantity
@@ -204,7 +208,7 @@ const toUCPLineItems = (
  * Converts Saleor checkout shipping address into a UCP fulfillment destination.
  */
 const toFulfillmentDestination = (
-  checkout: Pick<SaleorCheckout, "id" | "shippingAddress">,
+  checkout: Pick<UcpCheckoutSessionFragment, "id" | "shippingAddress">,
 ): { address: PostalAddress; id: string } | null => {
   if (!checkout.shippingAddress) {
     return null;
@@ -240,7 +244,7 @@ const toFulfillmentDestination = (
  */
 const toFulfillmentMethod = (
   checkout: Pick<
-    SaleorCheckout,
+    UcpCheckoutSessionFragment,
     | "id"
     | "lines"
     | "shippingMethods"
@@ -320,7 +324,7 @@ const toFulfillmentMethod = (
  *                                 If any condition is true, continue_url will be generated.
  */
 export const toUCPCheckoutSession = (
-  checkout: SaleorCheckout,
+  checkout: UcpCheckoutSessionFragment,
   order?: { id: string; permalinkUrl: string },
   baseUrl?: string,
   continueUrlConditions?: Record<string, boolean>,
@@ -359,7 +363,7 @@ export const toUCPCheckoutSession = (
  * Builds UCP payment handlers from Saleor available gateways.
  */
 export const toPaymentHandlers = (
-  checkout: Pick<SaleorCheckout, "availablePaymentGateways">,
+  checkout: Pick<UcpCheckoutSessionFragment, "availablePaymentGateways">,
 ) => {
   return checkout.availablePaymentGateways.map((gateway) => ({
     id: gateway.id,
@@ -417,6 +421,18 @@ export const sessionToCheckoutResponse = (
       instruments: [],
     } as unknown as CheckoutResponse["payment"],
     links: session.links as unknown as CheckoutResponse["links"],
+    ...(session.messages && session.messages.length > 0
+      ? {
+          messages: session.messages.map((msg) => ({
+            type: msg.type,
+            code: msg.code,
+            content: msg.content,
+            ...(msg.severity ? { severity: msg.severity } : {}),
+            ...(msg.path ? { path: msg.path } : {}),
+            ...(msg.content_type ? { content_type: msg.content_type } : {}),
+          })),
+        }
+      : {}),
     ...(session.expiresAtISO
       ? { expires_at: new Date(session.expiresAtISO) }
       : {}),
@@ -440,4 +456,70 @@ export const sessionToCheckoutResponse = (
   return {
     ...response,
   } satisfies CheckoutWithFulfillmentResponse;
+};
+
+export const orderToUCPOrder = (order: UcpOrderFragment) => {
+  const priceType = order.displayGrossPrices ? "gross" : "net";
+  const currency = order.lines[0]?.totalPrice[priceType].currency || "USD";
+
+  // Calculate totals from line items
+  const subtotal = order.lines.reduce((sum, line) => {
+    return sum + line.totalPrice[priceType].amount;
+  }, 0);
+
+  return {
+    id: order.id,
+    checkout_id: order.checkoutId || "",
+    permalink_url:
+      "http://localhost:3000/order/confirmation/T3JkZXI6MDU0N2U4ZWQtZDdiOS00YjQ3LThkYjYtNzc0MGZlODNlYjQy",
+    line_items: order.lines.map((line) => ({
+      id: line.id,
+      quantity: {
+        fulfilled: line.quantityFulfilled,
+        total: line.quantity,
+      },
+      status:
+        line.quantityFulfilled === line.quantity
+          ? "fulfilled"
+          : line.quantityFulfilled > 0
+            ? "partial"
+            : "processing",
+      totals: [
+        {
+          type: "subtotal" as const,
+          amount: toMinorCurrency(line.totalPrice[priceType].amount, currency),
+        },
+      ],
+      item: {
+        id: line.productVariantId || "",
+        title: line.productName,
+        price: toMinorCurrency(line.unitPrice[priceType].amount, currency),
+      },
+    })),
+    fulfillment: {
+      events: order.fulfillments.map((fulfillment) => ({
+        type: fulfillment.status,
+        id: fulfillment.id,
+        line_items: order.lines.map((line) => ({
+          id: line.id,
+          quantity: line.quantityFulfilled,
+        })),
+        occurred_at: new Date(),
+      })),
+    },
+    totals: [
+      {
+        type: "subtotal" as const,
+        amount: toMinorCurrency(subtotal, currency),
+      },
+      {
+        type: "total" as const,
+        amount: toMinorCurrency(subtotal, currency),
+      },
+    ],
+    ucp: {
+      version: UCP_VERSION,
+      capabilities: [{ name: "dev.ucp.shopping.order", version: UCP_VERSION }],
+    },
+  } satisfies UcpOrder;
 };

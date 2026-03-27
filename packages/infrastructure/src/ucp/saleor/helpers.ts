@@ -1,9 +1,14 @@
-import { type CheckoutResponse, type LinkElement, type PostalAddress } from "@ucp-js/sdk";
+import {
+  type CheckoutResponse,
+  type LinkElement,
+  type PostalAddress,
+} from "@ucp-js/sdk";
 
 import { type AddressInput } from "@nimara/codegen/schema";
 
 import type { NameFallback } from "./types";
 
+const EMPTY_CHECKOUT_CANCEL_TIME = 21600; // 6 hours
 const EMPTY_ADDRESS: AddressInput = {
   city: "",
   companyName: "",
@@ -189,9 +194,10 @@ export function validateCheckoutTermsDummy(
  * @returns RFC 3339 formatted timestamp
  */
 export const calculateCheckoutExpiration = (
-  ttlSeconds: number = 21600, // 6 hours
+  ttlSeconds: number = EMPTY_CHECKOUT_CANCEL_TIME,
 ): string => {
   const expirationDate = new Date(Date.now() + ttlSeconds * 1000);
+
   return expirationDate.toISOString();
 };
 
@@ -252,6 +258,7 @@ export const generateContinueUrl = (
   // If conditions are provided, only generate if any condition is true
   if (conditions) {
     const needsContinueUrl = Object.values(conditions).some((val) => val);
+
     if (!needsContinueUrl) {
       return undefined;
     }

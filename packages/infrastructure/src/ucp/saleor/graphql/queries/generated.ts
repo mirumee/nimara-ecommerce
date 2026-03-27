@@ -1,105 +1,105 @@
 import type * as Types from '@nimara/codegen/schema';
 
 import type { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
-export type CheckoutSessionGet_checkout_Checkout_discount_Money = { amount: number, currency: string };
+export type UcpCheckoutSessionGet_checkout_Checkout_discount_Money = { amount: number, currency: string };
 
-export type CheckoutSessionGet_checkout_Checkout_shippingMethods_ShippingMethod_price_Money = { amount: number, currency: string };
+export type UcpCheckoutSessionGet_checkout_Checkout_shippingMethods_ShippingMethod_price_Money = { amount: number, currency: string };
 
-export type CheckoutSessionGet_checkout_Checkout_shippingMethods_ShippingMethod = (
-  { id: string, name: string, maximumDeliveryDays: number | null, minimumDeliveryDays: number | null, message: string | null, price: CheckoutSessionGet_checkout_Checkout_shippingMethods_ShippingMethod_price_Money }
+export type UcpCheckoutSessionGet_checkout_Checkout_shippingMethods_ShippingMethod = (
+  { id: string, name: string, maximumDeliveryDays: number | null, minimumDeliveryDays: number | null, message: string | null, price: UcpCheckoutSessionGet_checkout_Checkout_shippingMethods_ShippingMethod_price_Money }
   & { __typename: 'ShippingMethod' }
 );
 
-export type CheckoutSessionGet_checkout_Checkout_shippingAddress_Address_country_CountryDisplay = { country: string, code: string };
+export type UcpCheckoutSessionGet_checkout_Checkout_shippingAddress_Address_country_CountryDisplay = { country: string, code: string };
 
-export type CheckoutSessionGet_checkout_Checkout_shippingAddress_Address = { id: string, city: string, phone: string | null, postalCode: string, companyName: string, cityArea: string, streetAddress1: string, streetAddress2: string, countryArea: string, firstName: string, lastName: string, isDefaultShippingAddress: boolean | null, isDefaultBillingAddress: boolean | null, country: CheckoutSessionGet_checkout_Checkout_shippingAddress_Address_country_CountryDisplay };
+export type UcpCheckoutSessionGet_checkout_Checkout_shippingAddress_Address = { id: string, city: string, phone: string | null, postalCode: string, companyName: string, cityArea: string, streetAddress1: string, streetAddress2: string, countryArea: string, firstName: string, lastName: string, isDefaultShippingAddress: boolean | null, isDefaultBillingAddress: boolean | null, country: UcpCheckoutSessionGet_checkout_Checkout_shippingAddress_Address_country_CountryDisplay };
 
-export type CheckoutSessionGet_checkout_Checkout_billingAddress_Address = { id: string, city: string, phone: string | null, postalCode: string, companyName: string, cityArea: string, streetAddress1: string, streetAddress2: string, countryArea: string, firstName: string, lastName: string, isDefaultShippingAddress: boolean | null, isDefaultBillingAddress: boolean | null, country: CheckoutSessionGet_checkout_Checkout_shippingAddress_Address_country_CountryDisplay };
+export type UcpCheckoutSessionGet_checkout_Checkout_billingAddress_Address = { id: string, city: string, phone: string | null, postalCode: string, companyName: string, cityArea: string, streetAddress1: string, streetAddress2: string, countryArea: string, firstName: string, lastName: string, isDefaultShippingAddress: boolean | null, isDefaultBillingAddress: boolean | null, country: UcpCheckoutSessionGet_checkout_Checkout_shippingAddress_Address_country_CountryDisplay };
 
-export type CheckoutSessionGet_checkout_Checkout_deliveryMethod_ShippingMethod_Warehouse = (
+export type UcpCheckoutSessionGet_checkout_Checkout_deliveryMethod_ShippingMethod_Warehouse = (
   { id: string, name: string }
   & { __typename: 'ShippingMethod' | 'Warehouse' }
 );
 
-export type CheckoutSessionGet_checkout_Checkout_availablePaymentGateways_PaymentGateway_config_GatewayConfigLine = { field: string, value: string | null };
+export type UcpCheckoutSessionGet_checkout_Checkout_availablePaymentGateways_PaymentGateway_config_GatewayConfigLine = { field: string, value: string | null };
 
-export type CheckoutSessionGet_checkout_Checkout_availablePaymentGateways_PaymentGateway = { name: string, id: string, config: Array<CheckoutSessionGet_checkout_Checkout_availablePaymentGateways_PaymentGateway_config_GatewayConfigLine> };
+export type UcpCheckoutSessionGet_checkout_Checkout_availablePaymentGateways_PaymentGateway = { name: string, id: string, config: Array<UcpCheckoutSessionGet_checkout_Checkout_availablePaymentGateways_PaymentGateway_config_GatewayConfigLine> };
 
-export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_net_Money = { currency: string, amount: number };
+export type UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_net_Money = { currency: string, amount: number };
 
-export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_gross_Money = { currency: string, amount: number };
+export type UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_gross_Money = { currency: string, amount: number };
 
-export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney = { net: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_net_Money, gross: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_gross_Money };
+export type UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney = { net: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_net_Money, gross: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_gross_Money };
 
-export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_undiscountedTotalPrice_Money = { amount: number, currency: string };
+export type UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_undiscountedTotalPrice_Money = { amount: number, currency: string };
 
-export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_translation_ProductVariantTranslation = { name: string };
+export type UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_translation_ProductVariantTranslation = { name: string };
 
-export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_media_ProductMedia = { url: string, alt: string };
+export type UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_media_ProductMedia = { url: string, alt: string };
 
-export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation = { name: string };
+export type UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation = { name: string };
 
-export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute = { slug: string | null, inputType: Types.AttributeInputTypeEnum | null, name: string | null, translation: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation | null };
+export type UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute = { slug: string | null, inputType: Types.AttributeInputTypeEnum | null, name: string | null, translation: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation | null };
 
-export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation = { name: string, plainText: string | null, richText: string | null };
+export type UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation = { name: string, plainText: string | null, richText: string | null };
 
-export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_file_File = { url: string };
+export type UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_file_File = { url: string };
 
-export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue = { slug: string | null, name: string | null, plainText: string | null, richText: string | null, boolean: boolean | null, date: string | null, dateTime: string | null, reference: string | null, value: string | null, translation: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation | null, file: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_file_File | null };
+export type UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue = { slug: string | null, name: string | null, plainText: string | null, richText: string | null, boolean: boolean | null, date: string | null, dateTime: string | null, reference: string | null, value: string | null, translation: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation | null, file: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_file_File | null };
 
-export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute = { attribute: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute, values: Array<CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue> };
+export type UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute = { attribute: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute, values: Array<UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue> };
 
-export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_thumbnail_Image = { alt: string | null, url: string };
+export type UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_thumbnail_Image = { alt: string | null, url: string };
 
-export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation = { name: string | null };
+export type UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation = { name: string | null };
 
-export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product = { id: string, slug: string, name: string, vendorId?: string | null, thumbnail: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_thumbnail_Image | null, translation: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation | null };
+export type UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product = { id: string, slug: string, name: string, vendorId?: string | null, thumbnail: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_thumbnail_Image | null, translation: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation | null };
 
-export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money = { currency: string, amount: number };
+export type UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money = { currency: string, amount: number };
 
-export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_gross_Money = { currency: string, amount: number };
+export type UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_gross_Money = { currency: string, amount: number };
 
-export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_tax_Money = { currency: string, amount: number };
+export type UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_tax_Money = { currency: string, amount: number };
 
-export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney = { net: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money, gross: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_gross_Money, tax: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_tax_Money };
+export type UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney = { net: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money, gross: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_gross_Money, tax: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_tax_Money };
 
-export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo = { discount: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney | null };
+export type UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo = { discount: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney | null };
 
-export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant = { id: string, quantityAvailable: number | null, quantityLimitPerCustomer: number | null, name: string, sku: string | null, translation: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_translation_ProductVariantTranslation | null, media: Array<CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_media_ProductMedia> | null, selectionAttributes: Array<CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute>, product: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product, pricing: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo | null };
+export type UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant = { id: string, quantityAvailable: number | null, quantityLimitPerCustomer: number | null, name: string, sku: string | null, translation: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_translation_ProductVariantTranslation | null, media: Array<UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_media_ProductMedia> | null, selectionAttributes: Array<UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute>, product: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product, pricing: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo | null };
 
-export type CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine = { id: string, quantity: number, totalPrice: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney, undiscountedTotalPrice: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_undiscountedTotalPrice_Money, variant: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant };
+export type UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine = { id: string, quantity: number, totalPrice: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney, undiscountedTotalPrice: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_undiscountedTotalPrice_Money, variant: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant };
 
-export type CheckoutSessionGet_checkout_Checkout_totalPrice_TaxedMoney = { net: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money, gross: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_gross_Money, tax: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_tax_Money };
+export type UcpCheckoutSessionGet_checkout_Checkout_totalPrice_TaxedMoney = { net: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money, gross: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_gross_Money, tax: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_tax_Money };
 
-export type CheckoutSessionGet_checkout_Checkout_subtotalPrice_TaxedMoney = { net: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money, gross: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_gross_Money, tax: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_tax_Money };
+export type UcpCheckoutSessionGet_checkout_Checkout_subtotalPrice_TaxedMoney = { net: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money, gross: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_gross_Money, tax: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_tax_Money };
 
-export type CheckoutSessionGet_checkout_Checkout_shippingPrice_TaxedMoney = { net: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money, gross: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_gross_Money, tax: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_tax_Money };
+export type UcpCheckoutSessionGet_checkout_Checkout_shippingPrice_TaxedMoney = { net: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money, gross: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_gross_Money, tax: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_tax_Money };
 
-export type CheckoutSessionGet_checkout_Checkout_problems_CheckoutLineProblemInsufficientStock_line_CheckoutLine = { id: string, quantity: number, totalPrice: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney, undiscountedTotalPrice: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_undiscountedTotalPrice_Money, variant: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant };
+export type UcpCheckoutSessionGet_checkout_Checkout_problems_CheckoutLineProblemInsufficientStock_line_CheckoutLine = { id: string, quantity: number, totalPrice: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney, undiscountedTotalPrice: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_undiscountedTotalPrice_Money, variant: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant };
 
-export type CheckoutSessionGet_checkout_Checkout_problems_CheckoutLineProblemVariantNotAvailable_line_CheckoutLine = { id: string, quantity: number, totalPrice: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney, undiscountedTotalPrice: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_undiscountedTotalPrice_Money, variant: CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant };
+export type UcpCheckoutSessionGet_checkout_Checkout_problems_CheckoutLineProblemVariantNotAvailable_line_CheckoutLine = { id: string, quantity: number, totalPrice: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney, undiscountedTotalPrice: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_undiscountedTotalPrice_Money, variant: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant };
 
-export type CheckoutSessionGet_checkout_Checkout_problems_CheckoutLineProblemInsufficientStock = (
-  { availableQuantity: number | null, line: CheckoutSessionGet_checkout_Checkout_problems_CheckoutLineProblemInsufficientStock_line_CheckoutLine }
+export type UcpCheckoutSessionGet_checkout_Checkout_problems_CheckoutLineProblemInsufficientStock = (
+  { availableQuantity: number | null, line: UcpCheckoutSessionGet_checkout_Checkout_problems_CheckoutLineProblemInsufficientStock_line_CheckoutLine }
   & { __typename: 'CheckoutLineProblemInsufficientStock' }
 );
 
-export type CheckoutSessionGet_checkout_Checkout_problems_CheckoutLineProblemVariantNotAvailable = (
-  { line: CheckoutSessionGet_checkout_Checkout_problems_CheckoutLineProblemVariantNotAvailable_line_CheckoutLine }
+export type UcpCheckoutSessionGet_checkout_Checkout_problems_CheckoutLineProblemVariantNotAvailable = (
+  { line: UcpCheckoutSessionGet_checkout_Checkout_problems_CheckoutLineProblemVariantNotAvailable_line_CheckoutLine }
   & { __typename: 'CheckoutLineProblemVariantNotAvailable' }
 );
 
-export type CheckoutSessionGet_checkout_Checkout_problems =
-  | CheckoutSessionGet_checkout_Checkout_problems_CheckoutLineProblemInsufficientStock
-  | CheckoutSessionGet_checkout_Checkout_problems_CheckoutLineProblemVariantNotAvailable
+export type UcpCheckoutSessionGet_checkout_Checkout_problems =
+  | UcpCheckoutSessionGet_checkout_Checkout_problems_CheckoutLineProblemInsufficientStock
+  | UcpCheckoutSessionGet_checkout_Checkout_problems_CheckoutLineProblemVariantNotAvailable
 ;
 
-export type CheckoutSessionGet_checkout_Checkout = { id: string, email: string | null, displayGrossPrices: boolean, voucherCode: string | null, isShippingRequired: boolean, authorizeStatus: Types.CheckoutAuthorizeStatusEnum, chargeStatus: Types.CheckoutChargeStatusEnum, fulfillmentAddress: string | null, buyer: string | null, discount: CheckoutSessionGet_checkout_Checkout_discount_Money | null, shippingMethods: Array<CheckoutSessionGet_checkout_Checkout_shippingMethods_ShippingMethod>, shippingAddress: CheckoutSessionGet_checkout_Checkout_shippingAddress_Address | null, billingAddress: CheckoutSessionGet_checkout_Checkout_billingAddress_Address | null, deliveryMethod: CheckoutSessionGet_checkout_Checkout_deliveryMethod_ShippingMethod_Warehouse | null, availablePaymentGateways: Array<CheckoutSessionGet_checkout_Checkout_availablePaymentGateways_PaymentGateway>, lines: Array<CheckoutSessionGet_checkout_Checkout_lines_CheckoutLine>, totalPrice: CheckoutSessionGet_checkout_Checkout_totalPrice_TaxedMoney, subtotalPrice: CheckoutSessionGet_checkout_Checkout_subtotalPrice_TaxedMoney, shippingPrice: CheckoutSessionGet_checkout_Checkout_shippingPrice_TaxedMoney, problems: Array<CheckoutSessionGet_checkout_Checkout_problems> | null };
+export type UcpCheckoutSessionGet_checkout_Checkout = { id: string, email: string | null, displayGrossPrices: boolean, voucherCode: string | null, isShippingRequired: boolean, authorizeStatus: Types.CheckoutAuthorizeStatusEnum, chargeStatus: Types.CheckoutChargeStatusEnum, buyer: string | null, discount: UcpCheckoutSessionGet_checkout_Checkout_discount_Money | null, shippingMethods: Array<UcpCheckoutSessionGet_checkout_Checkout_shippingMethods_ShippingMethod>, shippingAddress: UcpCheckoutSessionGet_checkout_Checkout_shippingAddress_Address | null, billingAddress: UcpCheckoutSessionGet_checkout_Checkout_billingAddress_Address | null, deliveryMethod: UcpCheckoutSessionGet_checkout_Checkout_deliveryMethod_ShippingMethod_Warehouse | null, availablePaymentGateways: Array<UcpCheckoutSessionGet_checkout_Checkout_availablePaymentGateways_PaymentGateway>, lines: Array<UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine>, totalPrice: UcpCheckoutSessionGet_checkout_Checkout_totalPrice_TaxedMoney, subtotalPrice: UcpCheckoutSessionGet_checkout_Checkout_subtotalPrice_TaxedMoney, shippingPrice: UcpCheckoutSessionGet_checkout_Checkout_shippingPrice_TaxedMoney, problems: Array<UcpCheckoutSessionGet_checkout_Checkout_problems> | null };
 
-export type CheckoutSessionGet_Query = { checkout: CheckoutSessionGet_checkout_Checkout | null };
+export type UcpCheckoutSessionGet_Query = { checkout: UcpCheckoutSessionGet_checkout_Checkout | null };
 
 
-export type CheckoutSessionGetVariables = Types.Exact<{
+export type UcpCheckoutSessionGetVariables = Types.Exact<{
   id: Types.Scalars['ID']['input'];
   languageCode: Types.LanguageCodeEnum;
   countryCode?: Types.InputMaybe<Types.CountryCode>;
@@ -109,7 +109,37 @@ export type CheckoutSessionGetVariables = Types.Exact<{
 }>;
 
 
-export type CheckoutSessionGet = CheckoutSessionGet_Query;
+export type UcpCheckoutSessionGet = UcpCheckoutSessionGet_Query;
+
+export type UcpOrderGet_order_Order_metadata_MetadataItem = { key: string, value: string };
+
+export type UcpOrderGet_order_Order_fulfillments_Fulfillment = { id: string, status: Types.FulfillmentStatus };
+
+export type UcpOrderGet_order_Order_lines_OrderLine_discounts_OrderLineDiscount_total_Money = { currency: string, amount: number };
+
+export type UcpOrderGet_order_Order_lines_OrderLine_discounts_OrderLineDiscount = { total: UcpOrderGet_order_Order_lines_OrderLine_discounts_OrderLineDiscount_total_Money };
+
+export type UcpOrderGet_order_Order_lines_OrderLine_unitPrice_TaxedMoney = { net: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money, gross: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_gross_Money, tax: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_tax_Money };
+
+export type UcpOrderGet_order_Order_lines_OrderLine_totalPrice_TaxedMoney = { net: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money, gross: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_gross_Money, tax: UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_tax_Money };
+
+export type UcpOrderGet_order_Order_lines_OrderLine = { id: string, quantity: number, quantityFulfilled: number, productName: string, variantName: string, productVariantId: string | null, discounts: Array<UcpOrderGet_order_Order_lines_OrderLine_discounts_OrderLineDiscount> | null, unitPrice: UcpOrderGet_order_Order_lines_OrderLine_unitPrice_TaxedMoney, totalPrice: UcpOrderGet_order_Order_lines_OrderLine_totalPrice_TaxedMoney };
+
+export type UcpOrderGet_order_Order_shippingAddress_Address = { id: string, city: string, phone: string | null, postalCode: string, companyName: string, cityArea: string, streetAddress1: string, streetAddress2: string, countryArea: string, firstName: string, lastName: string, isDefaultShippingAddress: boolean | null, isDefaultBillingAddress: boolean | null, country: UcpCheckoutSessionGet_checkout_Checkout_shippingAddress_Address_country_CountryDisplay };
+
+export type UcpOrderGet_order_Order_billingAddress_Address = { id: string, city: string, phone: string | null, postalCode: string, companyName: string, cityArea: string, streetAddress1: string, streetAddress2: string, countryArea: string, firstName: string, lastName: string, isDefaultShippingAddress: boolean | null, isDefaultBillingAddress: boolean | null, country: UcpCheckoutSessionGet_checkout_Checkout_shippingAddress_Address_country_CountryDisplay };
+
+export type UcpOrderGet_order_Order = { id: string, checkoutId: string | null, created: string, status: Types.OrderStatus, paymentStatus: Types.PaymentChargeStatusEnum, displayGrossPrices: boolean, metadata: Array<UcpOrderGet_order_Order_metadata_MetadataItem>, fulfillments: Array<UcpOrderGet_order_Order_fulfillments_Fulfillment>, lines: Array<UcpOrderGet_order_Order_lines_OrderLine>, shippingAddress: UcpOrderGet_order_Order_shippingAddress_Address | null, billingAddress: UcpOrderGet_order_Order_billingAddress_Address | null };
+
+export type UcpOrderGet_Query = { order: UcpOrderGet_order_Order | null };
+
+
+export type UcpOrderGetVariables = Types.Exact<{
+  id: Types.Scalars['ID']['input'];
+}>;
+
+
+export type UcpOrderGet = UcpOrderGet_Query;
 
 export class TypedDocumentString<TResult, TVariables>
   extends String
@@ -130,16 +160,15 @@ export class TypedDocumentString<TResult, TVariables>
   }
 }
 
-export const CheckoutSessionGetDocument = new TypedDocumentString(`
-    query CheckoutSessionGet($id: ID!, $languageCode: LanguageCodeEnum!, $countryCode: CountryCode = US, $thumbnailSize: Int = 128, $thumbnailFormat: ThumbnailFormatEnum = WEBP, $isMarketplaceEnabled: Boolean = false) {
+export const UcpCheckoutSessionGetDocument = new TypedDocumentString(`
+    query UCPCheckoutSessionGet($id: ID!, $languageCode: LanguageCodeEnum!, $countryCode: CountryCode = US, $thumbnailSize: Int = 128, $thumbnailFormat: ThumbnailFormatEnum = WEBP, $isMarketplaceEnabled: Boolean = false) {
   checkout(id: $id) {
-    ...CheckoutSessionFragment
+    ...UCPCheckoutSessionFragment
   }
 }
-    fragment CheckoutSessionFragment on Checkout {
+    fragment UCPCheckoutSessionFragment on Checkout {
   ...CheckoutFragment
-  fulfillmentAddress: metafield(key: "acp.fulfillmentAddress.json")
-  buyer: metafield(key: "acp.buyer.json")
+  buyer: metafield(key: "ucp.buyer.json")
 }
 fragment CheckoutFragment on Checkout {
   id
@@ -340,4 +369,85 @@ fragment CheckoutProblemsFragment on CheckoutProblem {
       ...CartLineFragment
     }
   }
-}`) as unknown as TypedDocumentString<CheckoutSessionGet, CheckoutSessionGetVariables>;
+}`) as unknown as TypedDocumentString<UcpCheckoutSessionGet, UcpCheckoutSessionGetVariables>;
+export const UcpOrderGetDocument = new TypedDocumentString(`
+    query UCPOrderGet($id: ID!) {
+  order(id: $id) {
+    ...UCPOrderFragment
+  }
+}
+    fragment AddressFragment on Address {
+  id
+  city
+  phone
+  postalCode
+  companyName
+  cityArea
+  streetAddress1
+  streetAddress2
+  countryArea
+  country {
+    country
+    code
+  }
+  firstName
+  lastName
+  isDefaultShippingAddress
+  isDefaultBillingAddress
+}
+fragment MoneyFragment on Money {
+  currency
+  amount
+}
+fragment TaxedMoneyFragment on TaxedMoney {
+  net {
+    ...MoneyFragment
+  }
+  gross {
+    ...MoneyFragment
+  }
+  tax {
+    ...MoneyFragment
+  }
+}
+fragment UCPOrderFragment on Order {
+  id
+  checkoutId
+  created
+  status
+  paymentStatus
+  displayGrossPrices
+  metadata {
+    key
+    value
+  }
+  fulfillments {
+    id
+    status
+  }
+  lines {
+    id
+    quantity
+    quantityFulfilled
+    productName
+    variantName
+    productVariantId
+    discounts {
+      total {
+        ...MoneyFragment
+      }
+    }
+    unitPrice {
+      ...TaxedMoneyFragment
+    }
+    totalPrice {
+      ...TaxedMoneyFragment
+    }
+  }
+  shippingAddress {
+    ...AddressFragment
+  }
+  billingAddress {
+    ...AddressFragment
+  }
+}`) as unknown as TypedDocumentString<UcpOrderGet, UcpOrderGetVariables>;

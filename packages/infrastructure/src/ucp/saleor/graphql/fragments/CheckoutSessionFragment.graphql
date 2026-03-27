@@ -1,3 +1,0 @@
-fragment CheckoutSessionFragment on Checkout {
-  ...CheckoutFragment
-}

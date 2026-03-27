@@ -3,6 +3,7 @@ import {
   type CheckoutResponse,
   type CheckoutUpdateRequest,
   type CompleteCheckoutRequestWithAp2,
+  type Order as UcpOrder,
   type UcpDiscoveryProfile,
 } from "@ucp-js/sdk";
 
@@ -54,6 +55,13 @@ export type UCPService = {
    * @returns The result of the checkout session.
    */
   getCheckoutSession: (input: { id: string }) => AsyncResult<CheckoutResponse>;
+  /**
+   * Gets an order.
+   * @link https://ucp.dev/latest/specification/order/#get-order
+   * @param input - The input data for the get order.
+   * @returns The result of the order.
+   */
+  getOrder: (input: { id: string }) => AsyncResult<UcpOrder>;
   /**
    * Updates a checkout session.
    * @link https://ucp.dev/latest/specification/checkout/#update-checkout

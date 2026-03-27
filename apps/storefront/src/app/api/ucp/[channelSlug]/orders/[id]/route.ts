@@ -1,4 +1,3 @@
-import { type CheckoutCreateRequest } from "@ucp-js/sdk";
 import { type NextRequest, NextResponse } from "next/server";
 
 import {
@@ -13,9 +12,9 @@ import { validateChannelParam } from "@/foundation/validate-channel-param";
 import { storefrontLogger } from "@/services/logging";
 import { getUCPService } from "@/services/ucp";
 
-export async function POST(
+export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ channelSlug: string }> },
+  { params }: { params: Promise<{ channelSlug: string; id: string }> },
 ) {
   const versionNegotiation = validateUCPVersion(request);
 
@@ -23,72 +22,56 @@ export async function POST(
     return versionNegotiation.errorResponse;
   }
 
-  const authHeader = request.headers.get("Authorization");
   const idempotencyKey = request.headers.get("Idempotency-Key");
   const requestId = request.headers.get("Request-Id") || "";
-  const signature = request.headers.get("Signature");
-  const apiVersion = request.headers.get("Api-Version");
 
-  storefrontLogger.debug("Received request to create checkout session", {
-    authHeader,
-    idempotencyKey,
-    requestId,
-    signature,
-    apiVersion,
-  });
-
-  const { channelSlug } = await params;
+  const { channelSlug, id } = await params;
   const channelValidationResult = validateChannelParam(channelSlug);
 
   if (!channelValidationResult.ok) {
     return channelValidationResult.errorResponse;
   }
 
-  const body = (await request.json()) as CheckoutCreateRequest;
-
   if (idempotencyKey) {
-    const cached = idempotencyStorage.get(idempotencyKey, body);
+    const cached = idempotencyStorage.get(idempotencyKey);
 
     if (cached) {
-      if (cached.conflict) {
-        storefrontLogger.debug(
-          "Idempotency conflict - same key with different request body",
-          {
-            idempotencyKey,
-          },
-        );
+      storefrontLogger.debug(
+        "[UCP] Idempotent request - returning cached response",
+        {
+          idempotencyKey,
+        },
+      );
 
-        return idempotencyStorage.createConflictResponse();
-      }
-
-      storefrontLogger.debug("Idempotent request - returning cached response", {
-        idempotencyKey,
-      });
-
-      return idempotencyStorage.createResponse(cached?.cached);
+      return idempotencyStorage.createResponse(cached.cached);
     }
   }
 
-  const ucpService = await getUCPService({ channelSlug });
+  const ucpService = await getUCPService({
+    channelSlug,
+  });
 
-  const result = await ucpService.createCheckoutSession(body);
+  const result = await ucpService.getOrder({ id });
 
   if (!result.ok) {
     const messages = convertToMessageErrors(result.errors);
-    const checkoutStatus = deriveStatusFromErrors(messages);
+    const orderStatus = deriveStatusFromErrors(messages);
     const httpStatus = getHttpStatusFromErrors(result.errors);
 
-    storefrontLogger.error("Failed to create checkout session", {
-      errors: result.errors,
-      messages,
-      checkoutStatus,
-      httpStatus,
-    });
+    storefrontLogger.error(
+      `[UCP] Failed to fetch order for channel ${channelSlug} and id ${id}`,
+      {
+        errors: result.errors,
+        messages,
+        orderStatus,
+        httpStatus,
+      },
+    );
 
     return NextResponse.json(
       {
         messages,
-        status: checkoutStatus,
+        status: orderStatus,
       },
       {
         status: httpStatus,
@@ -100,14 +83,14 @@ export async function POST(
   }
 
   const responseData = result.data;
-  const responseStatus = 201;
+  const responseStatus = 200;
   const responseHeaders = {
     "Request-Id": requestId,
     "Idempotency-Key": idempotencyKey || "",
   };
 
   if (idempotencyKey) {
-    storefrontLogger.debug("Storing response for idempotency", {
+    storefrontLogger.debug("[UCP] Storing response for idempotency", {
       idempotencyKey,
       requestId,
     });
@@ -117,7 +100,6 @@ export async function POST(
       responseData,
       responseStatus,
       responseHeaders,
-      body,
     );
   }
 
@@ -125,4 +107,16 @@ export async function POST(
     status: responseStatus,
     headers: responseHeaders,
   });
+}
+
+export async function PUT() {
+  // Return 422 Unprocessable Entity error
+  // for malformed adjustments field on completed order.
+  return NextResponse.json(
+    {
+      messages: [],
+      status: "unprocessable_entity",
+    },
+    { status: 422 },
+  );
 }

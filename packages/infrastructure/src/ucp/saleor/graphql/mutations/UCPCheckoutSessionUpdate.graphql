@@ -11,7 +11,6 @@ mutation UCPCheckoutSessionUpdate(
   $buyerJSON: String!
   $shouldUpdateEmail: Boolean!
   # Fulfillment
-  $fulfillmentAddressJSON: String!
   $fulfillmentOptionID: ID!
   $shouldUpdateFulfillmentOption: Boolean!
 ) {
@@ -44,8 +43,10 @@ mutation UCPCheckoutSessionUpdate(
     }
   }
 
-  checkoutBillingAddressUpdate(id: $checkoutId, billingAddress: $billingAddress)
-    @include(if: $shouldUpdateBilling) {
+  checkoutBillingAddressUpdate(
+    id: $checkoutId
+    billingAddress: $billingAddress
+  ) @include(if: $shouldUpdateBilling) {
     errors {
       field
       message
@@ -67,10 +68,7 @@ mutation UCPCheckoutSessionUpdate(
 
   updateMetadata(
     id: $checkoutId
-    input: [
-      { key: "acp.fulfillmentAddress.json", value: $fulfillmentAddressJSON }
-      { key: "acp.buyer.json", value: $buyerJSON }
-    ]
+    input: [{ key: "ucp.buyer.json", value: $buyerJSON }]
   ) {
     errors {
       field

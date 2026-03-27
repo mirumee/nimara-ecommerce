@@ -1,4 +1,4 @@
-mutation CheckoutSessionItemUpdate(
+mutation UCPCheckoutSessionItemUpdate(
   $checkoutId: ID!
   $linesToAdd: [CheckoutLineInput!]!
   $shouldAddLines: Boolean!

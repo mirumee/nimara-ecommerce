@@ -2,12 +2,14 @@ import { type CompleteCheckoutRequestWithAp2 } from "@ucp-js/sdk";
 import { type NextRequest, NextResponse } from "next/server";
 
 import {
-  createErrorResponse,
-  createMessageError,
-} from "@nimara/infrastructure/ucp/error";
+  convertToMessageErrors,
+  deriveStatusFromErrors,
+} from "@nimara/infrastructure/ucp/saleor/error-response-converter";
 
 import { idempotencyStorage } from "@/features/acp/acp";
+import { validateUCPVersion } from "@/features/ucp/version-negotiation";
 import { revalidateTag } from "@/foundation/cache/cache";
+import { getHttpStatusFromErrors } from "@/foundation/http/error-to-status";
 import { validateChannelParam } from "@/foundation/validate-channel-param";
 import { storefrontLogger } from "@/services/logging";
 import { getUCPService } from "@/services/ucp";
@@ -16,6 +18,12 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ channelSlug: string; id: string }> },
 ) {
+  const versionNegotiation = validateUCPVersion(request);
+
+  if (!versionNegotiation.ok) {
+    return versionNegotiation.errorResponse;
+  }
+
   const idempotencyKey = request.headers.get("Idempotency-Key");
   const requestId = request.headers.get("Request-Id") || "";
 
@@ -59,19 +67,30 @@ export async function POST(
   } as CompleteCheckoutRequestWithAp2);
 
   if (!result.ok) {
-    return NextResponse.json(
-      createErrorResponse(
-        result.errors?.map((error) =>
-          createMessageError(
-            error.code as string,
-            error.message || "",
-            "recoverable",
-          ),
-        ) || [],
-      ),
+    const messages = convertToMessageErrors(result.errors);
+    const checkoutStatus = deriveStatusFromErrors(messages);
+    const httpStatus = getHttpStatusFromErrors(result.errors);
+
+    storefrontLogger.error(
+      `[UCP] Failed to complete checkout session for id ${id}`,
       {
-        status: 400,
-        statusText: "Failed to complete checkout session",
+        errors: result.errors,
+        messages,
+        checkoutStatus,
+        httpStatus,
+      },
+    );
+
+    return NextResponse.json(
+      {
+        messages,
+        status: checkoutStatus,
+      },
+      {
+        status: httpStatus,
+        headers: {
+          "Request-Id": requestId,
+        },
       },
     );
   }
