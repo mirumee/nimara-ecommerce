@@ -186,13 +186,11 @@ export function ProductsListClient({
   return (
     <div className="grid gap-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-semibold">
-          {t("marketplace.products.list.title")}
-        </h2>
+        <h2 className="text-2xl font-semibold">{t("common.products")}</h2>
         <Button asChild>
           <Link href="/products/new">
             <Plus className="mr-2 h-4 w-4" />
-            {t("marketplace.products.list.add-product")}
+            {t("common.add-product", { count: 1 })}
           </Link>
         </Button>
       </div>
@@ -288,9 +286,7 @@ export function ProductsListClient({
                   <TableHead>{t("common.name")}</TableHead>
                   <TableHead>{t("common.status")}</TableHead>
                   <TableHead>{t("common.type")}</TableHead>
-                  <TableHead>
-                    {t("marketplace.products.list.table-category")}
-                  </TableHead>
+                  <TableHead>{t("filters.category")}</TableHead>
                   <TableHead>
                     {t("marketplace.products.list.table-created-at")}
                   </TableHead>

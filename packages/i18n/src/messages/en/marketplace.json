@@ -110,8 +110,7 @@
         "search-placeholder": "Search collections",
         "table-availability": "Availability",
         "table-name": "Collection Name",
-        "table-products-count": "No. of Products",
-        "title": "Collections"
+        "table-products-count": "No. of Products"
       },
       "new": {
         "back-to-collections": "All collections",
@@ -216,18 +215,15 @@
     "customers": {
       "no-customers-found": "No customers found",
       "no-matching": "No matching customers",
-      "search-placeholder": "Search customers"
-    },
-    "dashboard": {
-      "title": "Dashboard"
+      "search-placeholder": "Search customers",
+      "table-orders-count": "No. of Orders"
     },
     "drafts": {
       "list": {
         "empty-list": "No drafts found",
         "failed-to-load": "Failed to load drafts",
         "search-placeholder": "Search drafts...",
-        "table-draft-no": "Draft No.",
-        "title": "Drafts"
+        "table-draft-no": "Draft No."
       }
     },
     "layout": {
@@ -296,6 +292,7 @@
         "subtotal": "Subtotal",
         "timeline": "Timeline",
         "toast-add-discount-failed": "Failed to add discount",
+        "toast-add-lines-failed": "Failed to add products to order",
         "toast-add-note-failed": "Failed to add note",
         "toast-cancel-fulfillment-failed": "Failed to cancel fulfillment",
         "toast-draft-cancel-failed": "Draft cancel failed",
@@ -316,7 +313,6 @@
         "toast-order-canceled-desc": "The order was canceled successfully.",
         "toast-order-finalized": "Order finalized",
         "toast-remove-discount-failed": "Failed to remove discount",
-        "toast-add-lines-failed": "Failed to add products to order",
         "toast-remove-item-failed": "Failed to remove item",
         "toast-update-billing-failed": "Failed to update billing address",
         "toast-update-customer-failed": "Failed to update customer",
@@ -388,7 +384,6 @@
           "variant-selected": "1 variant selected ({sku})"
         },
         "variant-selection": {
-          "add-product": "Add product",
           "add-product-from-channel": "Add product from {channel}",
           "channel-only-hint": "You can only add products available for the order's channel",
           "loading-products": "Loading products...",
@@ -418,8 +413,7 @@
         "search-placeholder": "Search orders...",
         "table-fulfillment-status": "Fulfillment status",
         "table-order-no": "Order No.",
-        "table-payment-status": "Payment status",
-        "title": "Orders"
+        "table-payment-status": "Payment status"
       }
     },
     "pages": {
@@ -499,16 +493,13 @@
         "warehouses-count": "{count} warehouses"
       },
       "list": {
-        "add-product": "Add product",
         "empty-cta": "Create your first product",
         "empty-list": "No products found",
         "failed-to-load": "Failed to load products",
         "status-draft": "Draft",
         "status-published": "Published",
-        "table-category": "Category",
         "table-created-at": "Created At",
-        "table-image": "Image",
-        "title": "Products"
+        "table-image": "Image"
       },
       "new": {
         "all-products": "All products",

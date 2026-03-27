@@ -201,9 +201,7 @@ export function DraftsListClient({ drafts, pageInfo }: DraftsListClientProps) {
   return (
     <div className="grid gap-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-semibold">
-          {t("marketplace.drafts.list.title")}
-        </h2>
+        <h2 className="text-2xl font-semibold">{t("common.drafts")}</h2>
         <Button
           type="button"
           className="bg-stone-900 hover:bg-stone-800"
@@ -304,7 +302,7 @@ export function DraftsListClient({ drafts, pageInfo }: DraftsListClientProps) {
 
           <Table>
             <TableHeader>
-              <TableRow>
+              <TableRow className="border-t px-6 py-4">
                 <TableHead
                   className="cursor-pointer select-none"
                   onClick={() => handleSort("NUMBER")}
