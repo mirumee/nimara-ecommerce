@@ -128,7 +128,7 @@ export async function GET(request: NextRequest) {
       transaction {
         id
         pspReference
-        sourceObject {
+        sourceObject: order {
           ... on Order {
             total {
               gross {
