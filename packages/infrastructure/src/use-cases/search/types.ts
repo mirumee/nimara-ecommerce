@@ -1,6 +1,9 @@
+import type { MetadataFilter } from "@nimara/codegen/schema";
 import { type AsyncResult, type Result } from "@nimara/domain/objects/Result";
 import { type SortByOption } from "@nimara/domain/objects/Search";
 import { type SearchProduct } from "@nimara/domain/objects/SearchProduct";
+
+export type { MetadataFilter as ProductSearchMetadataFilter };
 
 export type PageInfo =
   | {
@@ -40,6 +43,8 @@ export type SearchInfra = (
     limit: number;
     page?: string;
     productIds?: string[];
+    /** Merged into Saleor `ProductFilterInput.metadata` (e.g. vendor storefront). */
+    productMetadata?: MetadataFilter[];
     query?: string;
     sortBy?: string;
   },

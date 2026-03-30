@@ -32250,6 +32250,22 @@ export type DraftOrderUpdateMutationVariables = Exact<{
 
 export type DraftOrderUpdateMutation = DraftOrderUpdateMutation_Mutation;
 
+export type FileUploadMutation_fileUpload_FileUpload_errors_UploadError = { code: UploadErrorCode, message: string | null };
+
+export type FileUploadMutation_fileUpload_FileUpload_uploadedFile_File = { url: string };
+
+export type FileUploadMutation_fileUpload_FileUpload = { errors: Array<FileUploadMutation_fileUpload_FileUpload_errors_UploadError>, uploadedFile: FileUploadMutation_fileUpload_FileUpload_uploadedFile_File | null };
+
+export type FileUploadMutation_Mutation = { fileUpload: FileUploadMutation_fileUpload_FileUpload | null };
+
+
+export type FileUploadMutationVariables = Exact<{
+  file: Scalars['Upload']['input'];
+}>;
+
+
+export type FileUploadMutation = FileUploadMutation_Mutation;
+
 export type MetadataUpdate_updateMetadata_UpdateMetadata_errors_MetadataError = { field: string | null, message: string | null, code: MetadataErrorCode };
 
 export type MetadataUpdate_updateMetadata_UpdateMetadata = { errors: Array<MetadataUpdate_updateMetadata_UpdateMetadata_errors_MetadataError> };
@@ -33591,7 +33607,9 @@ export type VendorCustomerIds = VendorCustomerIds_Query;
 
 export type VendorPageStatus_page_Page_attributes_SelectedAttribute_attribute_Attribute = { id: string, slug: string | null };
 
-export type VendorPageStatus_page_Page_attributes_SelectedAttribute_values_AttributeValue = { name: string | null };
+export type VendorPageStatus_page_Page_attributes_SelectedAttribute_values_AttributeValue_file_File = { url: string };
+
+export type VendorPageStatus_page_Page_attributes_SelectedAttribute_values_AttributeValue = { name: string | null, file: VendorPageStatus_page_Page_attributes_SelectedAttribute_values_AttributeValue_file_File | null };
 
 export type VendorPageStatus_page_Page_attributes_SelectedAttribute = { attribute: VendorPageStatus_page_Page_attributes_SelectedAttribute_attribute_Attribute, values: Array<VendorPageStatus_page_Page_attributes_SelectedAttribute_values_AttributeValue> };
 
@@ -33907,6 +33925,19 @@ export const DraftOrderUpdateMutationDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<DraftOrderUpdateMutation, DraftOrderUpdateMutationVariables>;
+export const FileUploadMutationDocument = new TypedDocumentString(`
+    mutation FileUploadMutation($file: Upload!) {
+  fileUpload(file: $file) {
+    errors {
+      code
+      message
+    }
+    uploadedFile {
+      url
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<FileUploadMutation, FileUploadMutationVariables>;
 export const MetadataUpdateDocument = new TypedDocumentString(`
     mutation MetadataUpdate($id: ID!, $input: [MetadataInput!]!) {
   updateMetadata(id: $id, input: $input) {
@@ -35607,6 +35638,9 @@ export const VendorPageStatusDocument = new TypedDocumentString(`
       }
       values {
         name
+        file {
+          url
+        }
       }
     }
   }

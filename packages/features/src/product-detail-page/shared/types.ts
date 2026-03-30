@@ -18,12 +18,15 @@ export type AddToBagAction = (params: {
 export interface PDPViewProps {
   addToBagAction: AddToBagAction;
   checkoutId: string | null;
+  /** When true and product has `vendorSlug`, PDP can link to the vendor shop. */
+  marketplaceEnabled?: boolean;
   params: Promise<{ locale: Locale; slug: string }>;
   paths: {
     cart: string;
     home: string;
     product: (slug: string) => string;
     search: (query: { category: string }) => string;
+    vendor?: (vendorSlug: string) => string;
   };
   region: Region;
   services: ServiceRegistry;

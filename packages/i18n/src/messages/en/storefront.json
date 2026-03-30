@@ -261,5 +261,10 @@
     "email-update-success": "Email updated successfully",
     "signed-in-as": "Signed in as",
     "title": "Email"
+  },
+  "vendor": {
+    "no_products": "This vendor has no products listed yet.",
+    "pdp_visit_vendor_shop": "Visit vendor shop",
+    "pdp_visit_vendor_shop_named": "Visit {vendorName}"
   }
 }
