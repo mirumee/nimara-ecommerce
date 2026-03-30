@@ -59,10 +59,10 @@ export type ProductBase = {
     title?: string | null;
   };
   vendorId?: string | null;
-  /** Public vendor profile slug when marketplace resolves vendor page from `vendorId`. */
-  vendorSlug?: string | null;
   /** Display name from vendor profile page (`vendor-name` attribute or page title). */
   vendorName?: string | null;
+  /** Public vendor profile slug when marketplace resolves vendor page from `vendorId`. */
+  vendorSlug?: string | null;
 };
 
 export type RelatedProduct = SearchProduct;

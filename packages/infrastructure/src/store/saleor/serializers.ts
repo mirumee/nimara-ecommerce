@@ -16,10 +16,11 @@ import {
 const VENDOR_ID_METADATA_KEY = "vendor.id";
 
 export function resolveProductVendorId(fragment: {
-  vendorId: string | null;
   metadata?: ReadonlyArray<{ key: string; value: string }> | null;
+  vendorId: string | null;
 }): string | null {
   const fromMetafield = fragment.vendorId?.trim();
+
   if (fromMetafield) {
     return fromMetafield;
   }
