@@ -9,6 +9,7 @@ import type { ServiceRegistry } from "@nimara/infrastructure/types";
 import {
   type Facet,
   type PageInfo,
+  type ProductSearchMetadataFilter,
   type SearchContext,
 } from "@nimara/infrastructure/use-cases/search/types";
 
@@ -26,6 +27,8 @@ export interface SearchProviderData {
 export interface SearchProviderProps {
   defaultResultsPerPage: number;
   defaultSortBy: string;
+  /** When set, merged into Saleor product search metadata filter (vendor PLP). */
+  productMetadata?: ProductSearchMetadataFilter[];
   region: Region;
   render: (data: SearchProviderData) => React.ReactNode;
   searchParams: SearchParams;
@@ -38,6 +41,7 @@ export const SearchProvider = async ({
   services,
   defaultResultsPerPage,
   defaultSortBy,
+  productMetadata,
   region,
 }: SearchProviderProps) => {
   const searchContext = {
@@ -71,6 +75,7 @@ export const SearchProvider = async ({
         before,
         sortBy,
         filters,
+        productMetadata,
       },
       searchContext,
     ),

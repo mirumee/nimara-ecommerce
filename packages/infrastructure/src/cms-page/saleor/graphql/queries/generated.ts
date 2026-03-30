@@ -1,6 +1,8 @@
 import type * as Types from '@nimara/codegen/schema';
 
 import type { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
+export type Page_page_Page_pageType_PageType = { slug: string };
+
 export type Page_page_Page_attributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation = { name: string };
 
 export type Page_page_Page_attributes_SelectedAttribute_attribute_Attribute = { slug: string | null, inputType: Types.AttributeInputTypeEnum | null, name: string | null, translation: Page_page_Page_attributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation | null };
@@ -13,7 +15,7 @@ export type Page_page_Page_attributes_SelectedAttribute_values_AttributeValue = 
 
 export type Page_page_Page_attributes_SelectedAttribute = { attribute: Page_page_Page_attributes_SelectedAttribute_attribute_Attribute, values: Array<Page_page_Page_attributes_SelectedAttribute_values_AttributeValue> };
 
-export type Page_page_Page = { title: string, content: string | null, attributes: Array<Page_page_Page_attributes_SelectedAttribute> };
+export type Page_page_Page = { id: string, title: string, content: string | null, pageType: Page_page_Page_pageType_PageType, attributes: Array<Page_page_Page_attributes_SelectedAttribute> };
 
 export type Page_Query = { page: Page_page_Page | null };
 
@@ -48,6 +50,10 @@ export class TypedDocumentString<TResult, TVariables>
 export const PageDocument = new TypedDocumentString(`
     query Page($slug: String!, $languageCode: LanguageCodeEnum!) {
   page(slug: $slug) {
+    id
+    pageType {
+      slug
+    }
     attributes {
       attribute {
         ...AttributeFragment

@@ -22,6 +22,7 @@ export const createStoreServiceLoader = (logger: Logger) => {
     storeServiceInstance = saleorStoreService({
       apiURI: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
       logger,
+      marketplaceEnabled: clientEnvs.NEXT_PUBLIC_MARKETPLACE_ENABLED,
     });
 
     return storeServiceInstance;

@@ -4,6 +4,7 @@ import type { Locale } from "next-intl";
 import { type Region } from "@nimara/foundation/regions/types";
 import type { LocalePrefixes } from "@nimara/i18n/config";
 import type { ServiceRegistry } from "@nimara/infrastructure/types";
+import type { ProductSearchMetadataFilter } from "@nimara/infrastructure/use-cases/search/types";
 
 /**
  * Type definition for the search parameters accepted by the search view.
@@ -45,6 +46,23 @@ export interface SearchViewProps {
   searchParams: Promise<SearchParams>;
   services: ServiceRegistry;
 }
+
+/**
+ * Vendor storefront PLP: same behavior as {@link SearchViewProps} with a fixed metadata filter and custom listing path.
+ */
+export type VendorSearchViewProps = Omit<SearchViewProps, "paths"> & {
+  paths: {
+    home: string;
+    listing: string;
+    product: (slug: string) => string;
+  };
+  productMetadata: ProductSearchMetadataFilter[];
+  vendorBranding: {
+    backgroundImageUrl?: string;
+    displayTitle: string;
+    logoUrl?: string;
+  };
+};
 
 /**
  * Type definition for the properties of the search metadata generation.

@@ -147,6 +147,51 @@ class VendorsService {
       toString(): string;
     };
 
+    const normalized = value.toLowerCase();
+    const input: {
+      attributes: Array<{ dropdown: { value: string }; id: string }>;
+      isPublished?: boolean;
+    } = {
+      attributes: [
+        {
+          dropdown: { value },
+          id: attributeId,
+        },
+      ],
+    };
+
+    if (normalized === "active") {
+      input.isPublished = true;
+    } else if (normalized === "rejected") {
+      input.isPublished = false;
+    }
+
+    return executeGraphQL(
+      doc,
+      "PageUpdateMutation",
+      {
+        id: pageId,
+        input,
+      },
+      token,
+    );
+  }
+
+  async updateVendorFileAttribute(
+    pageId: string,
+    attributeId: string,
+    fileUrl: string,
+    token?: string | null,
+  ): AsyncResult<PageUpdateResponse> {
+    const doc = {
+      toString: () => PAGE_UPDATE_MUTATION,
+    } as DocumentTypeDecoration<
+      PageUpdateResponse,
+      { id: string; input: unknown }
+    > & {
+      toString(): string;
+    };
+
     return executeGraphQL(
       doc,
       "PageUpdateMutation",
@@ -155,8 +200,8 @@ class VendorsService {
         input: {
           attributes: [
             {
+              file: fileUrl,
               id: attributeId,
-              dropdown: { value },
             },
           ],
         },

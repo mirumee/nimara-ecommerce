@@ -100,6 +100,9 @@ export const paths = {
   ...url("/"),
   home: url("/"),
   search: url("/search"),
+  vendor: {
+    ...url<"vendorSlug">("/vendor/[vendorSlug]"),
+  },
   cart: url("/cart"),
   products: {
     ...url<"slug">("/products/[slug]"),

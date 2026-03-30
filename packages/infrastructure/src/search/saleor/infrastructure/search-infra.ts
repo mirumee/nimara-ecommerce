@@ -1,6 +1,7 @@
 import {
   type AttributeInput,
   type LanguageCodeEnum,
+  type MetadataFilter,
 } from "@nimara/codegen/schema";
 import { err, ok } from "@nimara/domain/objects/Result";
 
@@ -22,7 +23,16 @@ export const saleorSearchInfra =
     logger,
   }: SaleorSearchServiceConfig): SearchInfra =>
   async (
-    { query, after, before, sortBy, filters, limit, productIds },
+    {
+      query,
+      after,
+      before,
+      sortBy,
+      filters,
+      limit,
+      productIds,
+      productMetadata,
+    },
     context,
   ) => {
     // Last and first cannot be combined in the same query
@@ -62,6 +72,11 @@ export const saleorSearchInfra =
       logger,
     }).getCategoriesIDsBySlugs({ slugs: categorySlugs });
 
+    const metadataFilter: MetadataFilter[] | undefined =
+      productMetadata && productMetadata.length > 0
+        ? productMetadata
+        : undefined;
+
     try {
       logger.debug("Fetching the products from Saleor", {
         query,
@@ -82,6 +97,7 @@ export const saleorSearchInfra =
                     attributes: attributesFilter,
                     collections: collectionsResult.data,
                     categories: categoriesResult.data,
+                    ...(metadataFilter ? { metadata: metadataFilter } : {}),
                   },
                 }),
             languageCode: context.languageCode as LanguageCodeEnum,

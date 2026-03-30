@@ -17,7 +17,10 @@ export const algoliaSearchInfra =
     settings,
     logger,
   }: AlgoliaSearchServiceConfig): SearchInfra =>
-  async ({ page, filters, sortBy, query, limit }, { channel }) => {
+  async (
+    { page, filters, sortBy, query, limit, productMetadata: _productMetadata },
+    { channel },
+  ) => {
     const client = algoliasearch(credentials.appId, credentials.apiKey);
     const indexName = getIndexName(settings.indices, channel, logger, sortBy);
 

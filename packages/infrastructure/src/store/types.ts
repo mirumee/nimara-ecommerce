@@ -17,6 +17,10 @@ import type { Logger } from "#root/logging/types";
 export interface StoreServiceConfig {
   apiURI: string;
   logger: Logger;
+  /**
+   * When true, product details may include `vendorSlug` (extra Saleor query) for vendor storefront URLs.
+   */
+  marketplaceEnabled?: boolean;
 }
 
 export type WithFetchOptions = { options?: FetchOptions };

@@ -10,8 +10,10 @@ query VendorPageStatus($id: ID!) {
       }
       values {
         name
+        file {
+          url
+        }
       }
     }
   }
 }
-

@@ -205,6 +205,15 @@
         "account-information": "Account Information",
         "account-updated": "Account updated",
         "account-updated-desc": "Account information has been updated successfully.",
+        "branding": {
+          "appearance-intro": "When the marketplace is enabled, these images appear on your public vendor shop. The logo is shown in the shop hero; the background image sits behind your product listing.",
+          "appearance-settings-title": "Appearance settings",
+          "background-dimensions-help": "Recommended dimensions: 1920×512px.",
+          "logo-label": "Shop logo",
+          "toast-background-success-desc": "Background image has been updated.",
+          "toast-logo-success-desc": "Logo has been updated.",
+          "toast-upload-failed": "Could not upload image"
+        },
         "failed-to-load-user-data": "Failed to load user data",
         "heading": "General",
         "name-placeholder": "Vendor name",

@@ -4,6 +4,7 @@ import { getServerAuthToken } from "@/lib/auth/server";
 import { configurationService } from "@/services/configuration";
 
 import { AccountInformationCard } from "./_components/account-information-card";
+import { VendorBrandingCard } from "./_components/vendor-branding-card";
 
 export default async function ConfigurationGeneralPage() {
   const t = await getTranslations();
@@ -23,7 +24,12 @@ export default async function ConfigurationGeneralPage() {
   const vendorPageId = user?.metadata?.find(
     (m) => m.key === "vendor.id",
   )?.value;
-  let vendor: { name: string; slug: string } | null = null;
+  let vendor: {
+    backgroundUrl: string | null;
+    logoUrl: string | null;
+    name: string;
+    slug: string;
+  } | null = null;
 
   if (vendorPageId) {
     const vendorResult = await configurationService.getVendorProfile(
@@ -36,8 +42,16 @@ export default async function ConfigurationGeneralPage() {
       const vendorNameAttr = page.attributes.find(
         (attr) => attr.attribute.slug === "vendor-name",
       );
+      const logoAttr = page.attributes.find(
+        (attr) => attr.attribute.slug === "logo",
+      );
+      const backgroundAttr = page.attributes.find(
+        (attr) => attr.attribute.slug === "background-image",
+      );
 
       vendor = {
+        backgroundUrl: backgroundAttr?.values[0]?.file?.url ?? null,
+        logoUrl: logoAttr?.values[0]?.file?.url ?? null,
         name: vendorNameAttr?.values[0]?.name ?? page.title,
         slug: page.slug,
       };
@@ -52,6 +66,13 @@ export default async function ConfigurationGeneralPage() {
 
       {/* Account Information Card */}
       <AccountInformationCard user={user} vendor={vendor} />
+
+      {vendor ? (
+        <VendorBrandingCard
+          backgroundUrl={vendor.backgroundUrl}
+          logoUrl={vendor.logoUrl}
+        />
+      ) : null}
     </div>
   );
 }
