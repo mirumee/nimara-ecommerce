@@ -7,7 +7,7 @@ import type { CMSPage, PageField } from "@nimara/domain/objects/CMSPage";
 import { VendorSearchView } from "@nimara/features/search/shop-basic-plp/vendor-standard";
 import { DEFAULT_LOCALE, LOCALE_PREFIXES } from "@nimara/i18n/config";
 
-import { CACHE_TTL, DEFAULT_RESULTS_PER_PAGE, DEFAULT_SORT_BY } from "@/config";
+import { DEFAULT_RESULTS_PER_PAGE, DEFAULT_SORT_BY } from "@/config";
 import { clientEnvs } from "@/envs/client";
 import { serverEnvs } from "@/envs/server";
 import { getCurrentRegion } from "@/foundation/regions";
@@ -35,75 +35,48 @@ function fieldText(fields: PageField[], slug: string): string | undefined {
 }
 
 /**
- * Unpublished vendor pages are invisible to the anonymous `page` API. Retry with the app token
- * so active vendors are still reachable on the storefront (sign-up creates pages with isPublished: false).
+ * Vendor storefront visibility is gated on two conditions:
+ * 1. `NEXT_PUBLIC_MARKETPLACE_ENABLED=true`
+ * 2. `vendor-status=active`
+ * Saleor publish/draft state has no effect.
  */
-function isVendorVisibleOnStorefront(
-  fields: PageField[],
-  usedElevatedFetch: boolean,
-): boolean {
-  const status = fieldText(fields, VENDOR_STATUS_ATTR)?.toLowerCase();
-
-  if (status === "active") {
-    return true;
-  }
-
-  // Public, published page with no status attribute (legacy).
-  if (!usedElevatedFetch && (status == null || status === "")) {
-    return true;
-  }
-
-  return false;
+function isVendorActive(fields: PageField[]): boolean {
+  return fieldText(fields, VENDOR_STATUS_ATTR)?.toLowerCase() === "active";
 }
 
 const loadVendorProfilePage = cache(
   async (
     vendorSlug: string,
     languageCode: string,
-  ): Promise<{ page: CMSPage | null; usedElevatedFetch: boolean }> => {
+  ): Promise<{ page: CMSPage | null }> => {
     const services = await getServiceRegistry();
     const cmsService = await services.getCMSPageService();
-    const cmsTag = `CMS:${vendorSlug}` as RevalidateTag;
-    const options = {
-      next: {
-        tags: [cmsTag],
-        revalidate: CACHE_TTL.cms,
+
+    /**
+     * Always fetch with the app token (MANAGE_PAGES) so that vendor pages in "draft" state are
+     * still reachable. Publish/draft state is irrelevant — visibility is gated solely on
+     * vendor-status=active in assertValidVendorPage below.
+     */
+    const result = await cmsService.cmsPageGet({
+      slug: vendorSlug,
+      languageCode,
+      options: {
+        cache: "no-store",
       },
-    };
-
-    const publicResult = await cmsService.cmsPageGet({
-      slug: vendorSlug,
-      languageCode,
-      options,
-    });
-
-    if (publicResult.ok && publicResult.data) {
-      return { page: publicResult.data, usedElevatedFetch: false };
-    }
-
-    const staffResult = await cmsService.cmsPageGet({
-      slug: vendorSlug,
-      languageCode,
-      options,
       accessToken: serverEnvs.SALEOR_APP_TOKEN,
     });
 
-    if (staffResult.ok && staffResult.data) {
-      return { page: staffResult.data, usedElevatedFetch: true };
-    }
-
-    return { page: null, usedElevatedFetch: true };
+    return { page: result.ok ? (result.data ?? null) : null };
   },
 );
 
 function assertValidVendorPage(
   page: CMSPage | null,
-  usedElevatedFetch: boolean,
 ): asserts page is CMSPage & { id: string } {
   if (
     !page?.id ||
     page.pageTypeSlug !== VENDOR_PROFILE_PAGE_TYPE_SLUG ||
-    !isVendorVisibleOnStorefront(page.fields, usedElevatedFetch)
+    !isVendorActive(page.fields)
   ) {
     notFound();
   }
@@ -123,12 +96,12 @@ export async function generateMetadata(
 
   const { vendorSlug } = await props.params;
   const region = await getCurrentRegion();
-  const { page, usedElevatedFetch } = await loadVendorProfilePage(
+  const { page } = await loadVendorProfilePage(
     vendorSlug,
     region.language.code,
   );
 
-  assertValidVendorPage(page, usedElevatedFetch);
+  assertValidVendorPage(page);
 
   const displayTitle =
     fieldText(page.fields, VENDOR_PAGE_ATTR_NAME) ?? page.title;
@@ -149,12 +122,12 @@ export default async function Page(props: VendorPageProps) {
     getCurrentRegion(),
   ]);
 
-  const { page, usedElevatedFetch } = await loadVendorProfilePage(
+  const { page } = await loadVendorProfilePage(
     vendorSlug,
     region.language.code,
   );
 
-  assertValidVendorPage(page, usedElevatedFetch);
+  assertValidVendorPage(page);
 
   const displayTitle =
     fieldText(page.fields, VENDOR_PAGE_ATTR_NAME) ?? page.title;
