@@ -1,6 +1,7 @@
-import EditorJSHTML from "editorjs-html";
-
-import { parseEditorJSData } from "../../lib/richText";
+import {
+  createEditorJsHtmlParser,
+  parseEditorJSData,
+} from "../../lib/richText";
 import { cn } from "../../lib/utils";
 import { type RichTextRendererProps } from "./types";
 
@@ -11,7 +12,7 @@ export function EditorjsRenderer({
   ...props
 }: RichTextRendererProps) {
   const data = parseEditorJSData(contentData);
-  const editorHtml = EditorJSHTML();
+  const editorHtml = createEditorJsHtmlParser();
 
   if (!data) {
     return null;
@@ -26,7 +27,7 @@ export function EditorjsRenderer({
       )}
       {...props}
       dangerouslySetInnerHTML={{
-        __html: editorHtml.parse(data).join(""),
+        __html: editorHtml.parse(data as never).join(""),
       }}
     />
   );

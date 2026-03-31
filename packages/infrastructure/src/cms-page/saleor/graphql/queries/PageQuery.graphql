@@ -1,5 +1,9 @@
 query Page($slug: String!, $languageCode: LanguageCodeEnum!) {
   page(slug: $slug) {
+    id
+    pageType {
+      slug
+    }
     attributes {
       attribute {
         ...AttributeFragment

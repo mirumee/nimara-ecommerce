@@ -15,6 +15,7 @@ import { createRequestConfig } from "@nimara/i18n/request";
 import { storefrontLogger } from "@/services/logging";
 
 export default createRequestConfig({
+  app: "storefront",
   logger: storefrontLogger,
   onMissingTranslation: (locale) => {
     Sentry.captureMessage(`Missing translation file for: ${locale}`, {

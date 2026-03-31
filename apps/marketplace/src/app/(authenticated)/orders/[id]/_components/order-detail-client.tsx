@@ -50,6 +50,7 @@ import type {
   DiscountValueTypeEnum,
   FulfillOrder,
   OrderDetail,
+  Products,
 } from "@/graphql/generated/client";
 import { formatPrice } from "@/lib/utils";
 
@@ -254,11 +255,13 @@ function savedAddressToDraftAddress(address: {
 }
 
 interface OrderDetailClientProps {
+  draftProductsCatalog?: Products["products"] | null;
   order: NonNullable<OrderDetail["order"]>;
   warehouses: Array<{ id: string; name: string }>;
 }
 
 export function OrderDetailClient({
+  draftProductsCatalog = null,
   order,
   warehouses,
 }: OrderDetailClientProps) {
@@ -658,6 +661,11 @@ export function OrderDetailClient({
 
   const customerPhone =
     order.shippingAddress?.phone ?? order.billingAddress?.phone ?? null;
+
+  const customerDisplayName = [order.user?.firstName, order.user?.lastName]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
 
   const itemCount = order.lines?.length ?? 0;
   const itemLabel =
@@ -1257,15 +1265,88 @@ export function OrderDetailClient({
       })
       .filter((x): x is { lineId: string; quantity: number } => x !== null);
 
-    await Promise.all(toDelete.map((id) => deleteOrderLine(id)));
-    if (toAdd.length) {
-      await addOrderLines(order.id, toAdd);
-    }
-    await Promise.all(
-      toUpdate.map((u) => updateOrderLine(u.lineId, { quantity: u.quantity })),
-    );
+    const failToast = (titleKey: string, description: string) => {
+      toast({
+        title: t(titleKey),
+        description,
+        variant: "destructive",
+      });
+    };
 
-    router.refresh();
+    for (const id of toDelete) {
+      const res = await deleteOrderLine(id);
+
+      if (!res.ok) {
+        failToast(
+          "marketplace.orders.detail.toast-remove-item-failed",
+          res.errors.map((e) => e.message).join(", "),
+        );
+        throw new Error("deleteOrderLine failed");
+      }
+      const errs = res.data.orderLineDelete?.errors ?? [];
+
+      if (errs.length) {
+        failToast(
+          "marketplace.orders.detail.toast-remove-item-failed",
+          errs
+            .map((e) => e.message)
+            .filter(Boolean)
+            .join(", ") || t("common.toast-unknown-error"),
+        );
+        throw new Error("deleteOrderLine failed");
+      }
+    }
+
+    if (toAdd.length) {
+      const res = await addOrderLines(order.id, toAdd);
+
+      if (!res.ok) {
+        failToast(
+          "marketplace.orders.detail.toast-add-lines-failed",
+          res.errors.map((e) => e.message).join(", "),
+        );
+        throw new Error("addOrderLines failed");
+      }
+      const errs = res.data.orderLinesCreate?.errors ?? [];
+
+      if (errs.length) {
+        failToast(
+          "marketplace.orders.detail.toast-add-lines-failed",
+          errs
+            .map((e) => e.message)
+            .filter(Boolean)
+            .join(", ") || t("common.toast-unknown-error"),
+        );
+        throw new Error("addOrderLines failed");
+      }
+    }
+
+    for (const u of toUpdate) {
+      const res = await updateOrderLine(u.lineId, { quantity: u.quantity });
+
+      if (!res.ok) {
+        failToast(
+          "marketplace.orders.detail.toast-update-qty-failed",
+          res.errors.map((e) => e.message).join(", "),
+        );
+        throw new Error("updateOrderLine failed");
+      }
+      const errs = res.data.orderLineUpdate?.errors ?? [];
+
+      if (errs.length) {
+        failToast(
+          "marketplace.orders.detail.toast-update-qty-failed",
+          errs
+            .map((e) => e.message)
+            .filter(Boolean)
+            .join(", ") || t("common.toast-unknown-error"),
+        );
+        throw new Error("updateOrderLine failed");
+      }
+    }
+
+    // Next.js types say void; runtime returns a Promise (cast via unknown for tsc).
+    await (router.refresh() as unknown as Promise<void>);
   };
 
   return (
@@ -1347,8 +1428,8 @@ export function OrderDetailClient({
           {/* Customer information */}
           <Card>
             <CardContent className="p-6">
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
-                <div>
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                <div className="min-w-0">
                   <div className="mb-2 flex items-center justify-between gap-3">
                     <h3 className="text-sm font-medium text-muted-foreground">
                       {t("common.customer")}
@@ -1364,22 +1445,38 @@ export function OrderDetailClient({
                       </Button>
                     ) : null}
                   </div>
-                  <p className="font-medium">
-                    {[order.user?.firstName, order.user?.lastName]
-                      .filter(Boolean)
-                      .join(" ") ||
-                      order.userEmail ||
-                      t("common.not-set")}
-                  </p>
+                  <div className="space-y-2">
+                    {customerDisplayName ? (
+                      <>
+                        <p className="break-words font-medium">
+                          {customerDisplayName}
+                        </p>
+                        <div className="space-y-1 text-sm">
+                          <p className="break-all">{order.userEmail ?? "—"}</p>
+                          {customerPhone ? (
+                            <p className="break-words">{customerPhone}</p>
+                          ) : null}
+                        </div>
+                      </>
+                    ) : (
+                      <div className="space-y-1 text-sm">
+                        <p
+                          className={
+                            order.userEmail
+                              ? "break-all font-medium"
+                              : "text-muted-foreground"
+                          }
+                        >
+                          {order.userEmail ?? t("common.not-set")}
+                        </p>
+                        {customerPhone ? (
+                          <p className="break-words">{customerPhone}</p>
+                        ) : null}
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <h3 className="mb-2 text-sm font-medium text-muted-foreground">
-                    {t("marketplace.orders.detail.contact-information")}
-                  </h3>
-                  <p className="text-sm">{order.userEmail ?? "—"}</p>
-                  {customerPhone && <p className="text-sm">{customerPhone}</p>}
-                </div>
-                <div>
+                <div className="min-w-0">
                   <div className="mb-2 flex items-center justify-between gap-3">
                     <h3 className="text-sm font-medium text-muted-foreground">
                       {t("marketplace.orders.detail.shipping-address")}
@@ -1393,13 +1490,13 @@ export function OrderDetailClient({
                       {t("common.edit")}
                     </Button>
                   </div>
-                  <div className="text-sm">
+                  <div className="break-words text-sm">
                     {order.shippingAddress
                       ? formatAddress(order.shippingAddress, t)
                       : t("marketplace.orders.detail.no-shipping-address")}
                   </div>
                 </div>
-                <div>
+                <div className="min-w-0">
                   <div className="mb-2 flex items-center justify-between gap-3">
                     <h3 className="text-sm font-medium text-muted-foreground">
                       {t("marketplace.orders.detail.billing-address")}
@@ -1413,7 +1510,7 @@ export function OrderDetailClient({
                       {t("common.edit")}
                     </Button>
                   </div>
-                  <div className="text-sm text-muted-foreground">
+                  <div className="break-words text-sm text-muted-foreground">
                     {isSameAddress
                       ? t("marketplace.orders.detail.same-as-shipping")
                       : order.billingAddress
@@ -1441,7 +1538,7 @@ export function OrderDetailClient({
                     className="bg-stone-900 hover:bg-stone-800"
                     onClick={() => setIsVariantDialogOpen(true)}
                   >
-                    {t("common.add-products")}
+                    {t("common.add-product", { count: 2 })}
                   </Button>
                 </div>
 
@@ -2172,12 +2269,13 @@ export function OrderDetailClient({
       />
 
       <VariantSelectionDialog
+        channelId={order.channel?.id ?? undefined}
+        channelName={order.channel?.name ?? undefined}
+        initialLines={draftVariantLines}
+        initialProductCatalog={draftProductsCatalog}
         open={isVariantDialogOpen}
         onOpenChange={setIsVariantDialogOpen}
-        channelName={order.channel?.name ?? undefined}
-        channelId={order.channel?.id ?? undefined}
-        initialLines={draftVariantLines}
-        onSave={(next) => void handleSaveDraftLinesFromDialog(next)}
+        onSave={(next) => handleSaveDraftLinesFromDialog(next)}
       />
 
       <ShippingMethodPickerDialog

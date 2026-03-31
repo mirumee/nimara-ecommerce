@@ -1,4 +1,5 @@
 import { getTranslations } from "next-intl/server";
+import type { ReactNode } from "react";
 
 import { LocalizedLink } from "@nimara/i18n/routing";
 
@@ -56,7 +57,7 @@ export const Footer = async () => {
               </div>
               <p className="col-span-2 flex justify-center md:col-span-1 md:justify-start">
                 {t.rich("footer.demo-version", {
-                  link: (chunks) => (
+                  link: (chunks: ReactNode) => (
                     <LocalizedLink
                       href="https://github.com/mirumee/nimara-ecommerce"
                       className="hover:underline"
@@ -119,7 +120,7 @@ export const Footer = async () => {
           </span>
           <span className="flex-grow basis-full text-center sm:basis-1">
             {t.rich("footer.made-with", {
-              link: (chunks) => (
+              link: (chunks: ReactNode) => (
                 <LocalizedLink
                   href="https://mirumee.com"
                   className="hover:underline"
@@ -134,7 +135,7 @@ export const Footer = async () => {
           </span>
           <span className="flex-grow basis-full text-center sm:basis-1 sm:text-right">
             {t.rich("footer.open-source", {
-              link: (chunks) => (
+              link: (chunks: ReactNode) => (
                 <LocalizedLink
                   href="https://github.com/mirumee/nimara-ecommerce"
                   className="hover:underline"

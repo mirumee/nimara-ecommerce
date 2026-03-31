@@ -59,6 +59,10 @@ pnpm run dev:storefront
 
 </Steps>
 
+## 🈯️ i18n
+
+The storefront uses the shared i18n package and message composition system described in the [i18n architecture docs](/docs/i18n). It passes `app: "storefront"` to `@nimara/i18n`’s `createRequestConfig`, so it receives the `common` + `storefront` message bundles (with locale-specific overrides applied where defined).
+
 ## 🪝 Webhooks
 
 Webhooks in Saleor let you receive real-time notifications for events like product or page updates, allowing you to instantly reflect changes in your frontend. This keeps your Nimara storefront in sync with Saleor, enabling instant cache updates and smooth integration.

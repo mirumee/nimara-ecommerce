@@ -32250,6 +32250,22 @@ export type DraftOrderUpdateMutationVariables = Exact<{
 
 export type DraftOrderUpdateMutation = DraftOrderUpdateMutation_Mutation;
 
+export type FileUploadMutation_fileUpload_FileUpload_errors_UploadError = { code: UploadErrorCode, message: string | null };
+
+export type FileUploadMutation_fileUpload_FileUpload_uploadedFile_File = { url: string };
+
+export type FileUploadMutation_fileUpload_FileUpload = { errors: Array<FileUploadMutation_fileUpload_FileUpload_errors_UploadError>, uploadedFile: FileUploadMutation_fileUpload_FileUpload_uploadedFile_File | null };
+
+export type FileUploadMutation_Mutation = { fileUpload: FileUploadMutation_fileUpload_FileUpload | null };
+
+
+export type FileUploadMutationVariables = Exact<{
+  file: Scalars['Upload']['input'];
+}>;
+
+
+export type FileUploadMutation = FileUploadMutation_Mutation;
+
 export type MetadataUpdate_updateMetadata_UpdateMetadata_errors_MetadataError = { field: string | null, message: string | null, code: MetadataErrorCode };
 
 export type MetadataUpdate_updateMetadata_UpdateMetadata = { errors: Array<MetadataUpdate_updateMetadata_UpdateMetadata_errors_MetadataError> };
@@ -32959,7 +32975,7 @@ export type CustomerOrders_orders_OrderCountableConnection_edges_OrderCountableE
 
 export type CustomerOrders_orders_OrderCountableConnection_edges_OrderCountableEdge = { node: CustomerOrders_orders_OrderCountableConnection_edges_OrderCountableEdge_node_Order };
 
-export type CustomerOrders_orders_OrderCountableConnection = { edges: Array<CustomerOrders_orders_OrderCountableConnection_edges_OrderCountableEdge> };
+export type CustomerOrders_orders_OrderCountableConnection = { totalCount: number | null, edges: Array<CustomerOrders_orders_OrderCountableConnection_edges_OrderCountableEdge> };
 
 export type CustomerOrders_Query = { orders: CustomerOrders_orders_OrderCountableConnection | null };
 
@@ -33538,13 +33554,19 @@ export type Products_products_ProductCountableConnection_edges_ProductCountableE
 
 export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_channelListings_ProductChannelListing = { isPublished: boolean, channel: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_channelListings_ProductChannelListing_channel_Channel };
 
+export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_channelListings_ProductVariantChannelListing_channel_Channel = { id: string, name: string };
+
+export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_channelListings_ProductVariantChannelListing_price_Money = { amount: number, currency: string };
+
+export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_channelListings_ProductVariantChannelListing = { channel: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_channelListings_ProductVariantChannelListing_channel_Channel, price: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_channelListings_ProductVariantChannelListing_price_Money | null };
+
 export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney_gross_Money = { amount: number, currency: string };
 
 export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney = { gross: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney_gross_Money };
 
 export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_pricing_VariantPricingInfo = { price: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney | null };
 
-export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant = { id: string, name: string, sku: string | null, pricing: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_pricing_VariantPricingInfo | null };
+export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant = { id: string, name: string, sku: string | null, channelListings: Array<Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_channelListings_ProductVariantChannelListing> | null, pricing: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_pricing_VariantPricingInfo | null };
 
 export type Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product = { id: string, name: string, slug: string, created: string, thumbnail: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_thumbnail_Image | null, productType: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_productType_ProductType, category: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_category_Category | null, pricing: Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo | null, channelListings: Array<Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_channelListings_ProductChannelListing> | null, variants: Array<Products_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant> | null };
 
@@ -33585,7 +33607,9 @@ export type VendorCustomerIds = VendorCustomerIds_Query;
 
 export type VendorPageStatus_page_Page_attributes_SelectedAttribute_attribute_Attribute = { id: string, slug: string | null };
 
-export type VendorPageStatus_page_Page_attributes_SelectedAttribute_values_AttributeValue = { name: string | null };
+export type VendorPageStatus_page_Page_attributes_SelectedAttribute_values_AttributeValue_file_File = { url: string };
+
+export type VendorPageStatus_page_Page_attributes_SelectedAttribute_values_AttributeValue = { name: string | null, file: VendorPageStatus_page_Page_attributes_SelectedAttribute_values_AttributeValue_file_File | null };
 
 export type VendorPageStatus_page_Page_attributes_SelectedAttribute = { attribute: VendorPageStatus_page_Page_attributes_SelectedAttribute_attribute_Attribute, values: Array<VendorPageStatus_page_Page_attributes_SelectedAttribute_values_AttributeValue> };
 
@@ -33618,6 +33642,30 @@ export type VendorPageTypeVariables = Exact<{
 
 
 export type VendorPageType = VendorPageType_Query;
+
+export type VendorPageUniqueness_bySlug_PageCountableConnection_edges_PageCountableEdge_node_Page = { id: string, slug: string, title: string };
+
+export type VendorPageUniqueness_bySlug_PageCountableConnection_edges_PageCountableEdge = { node: VendorPageUniqueness_bySlug_PageCountableConnection_edges_PageCountableEdge_node_Page };
+
+export type VendorPageUniqueness_bySlug_PageCountableConnection = { edges: Array<VendorPageUniqueness_bySlug_PageCountableConnection_edges_PageCountableEdge> };
+
+export type VendorPageUniqueness_byName_PageCountableConnection_edges_PageCountableEdge_node_Page = { id: string, slug: string, title: string };
+
+export type VendorPageUniqueness_byName_PageCountableConnection_edges_PageCountableEdge = { node: VendorPageUniqueness_byName_PageCountableConnection_edges_PageCountableEdge_node_Page };
+
+export type VendorPageUniqueness_byName_PageCountableConnection = { edges: Array<VendorPageUniqueness_byName_PageCountableConnection_edges_PageCountableEdge> };
+
+export type VendorPageUniqueness_Query = { bySlug: VendorPageUniqueness_bySlug_PageCountableConnection | null, byName: VendorPageUniqueness_byName_PageCountableConnection | null };
+
+
+export type VendorPageUniquenessVariables = Exact<{
+  pageTypeId: Scalars['ID']['input'];
+  search: Scalars['String']['input'];
+  slug: Scalars['String']['input'];
+}>;
+
+
+export type VendorPageUniqueness = VendorPageUniqueness_Query;
 
 export type Warehouses_warehouses_WarehouseCountableConnection_edges_WarehouseCountableEdge_node_Warehouse_address_Address_country_CountryDisplay = { country: string, code: string };
 
@@ -33877,6 +33925,19 @@ export const DraftOrderUpdateMutationDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<DraftOrderUpdateMutation, DraftOrderUpdateMutationVariables>;
+export const FileUploadMutationDocument = new TypedDocumentString(`
+    mutation FileUploadMutation($file: Upload!) {
+  fileUpload(file: $file) {
+    errors {
+      code
+      message
+    }
+    uploadedFile {
+      url
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<FileUploadMutation, FileUploadMutationVariables>;
 export const MetadataUpdateDocument = new TypedDocumentString(`
     mutation MetadataUpdate($id: ID!, $input: [MetadataInput!]!) {
   updateMetadata(id: $id, input: $input) {
@@ -34689,6 +34750,7 @@ export const CustomerByEmailDocument = new TypedDocumentString(`
 export const CustomerOrdersDocument = new TypedDocumentString(`
     query CustomerOrders($customer: String!, $first: Int) {
   orders(first: $first, filter: {customer: $customer}) {
+    totalCount
     edges {
       node {
         id
@@ -35520,6 +35582,16 @@ export const ProductsDocument = new TypedDocumentString(`
           id
           name
           sku
+          channelListings {
+            channel {
+              id
+              name
+            }
+            price {
+              amount
+              currency
+            }
+          }
           pricing {
             price {
               gross {
@@ -35566,6 +35638,9 @@ export const VendorPageStatusDocument = new TypedDocumentString(`
       }
       values {
         name
+        file {
+          url
+        }
       }
     }
   }
@@ -35589,6 +35664,28 @@ export const VendorPageTypeDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<VendorPageType, VendorPageTypeVariables>;
+export const VendorPageUniquenessDocument = new TypedDocumentString(`
+    query VendorPageUniqueness($pageTypeId: ID!, $search: String!, $slug: String!) {
+  bySlug: pages(first: 1, filter: {pageTypes: [$pageTypeId], slugs: [$slug]}) {
+    edges {
+      node {
+        id
+        slug
+        title
+      }
+    }
+  }
+  byName: pages(first: 10, filter: {pageTypes: [$pageTypeId], search: $search}) {
+    edges {
+      node {
+        id
+        slug
+        title
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<VendorPageUniqueness, VendorPageUniquenessVariables>;
 export const WarehousesDocument = new TypedDocumentString(`
     query Warehouses {
   warehouses(first: 50) {

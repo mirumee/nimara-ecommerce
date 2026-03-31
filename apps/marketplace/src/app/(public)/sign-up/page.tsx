@@ -123,7 +123,7 @@ export default function SignUpPage() {
 
       toast({
         title: t("marketplace.auth.sign-up-button-label"),
-        description: t("marketplace.auth.sign-up-description"),
+        description: t("marketplace.auth.sign-up-description-confirmation"),
       });
 
       if (payload?.requiresConfirmation) {

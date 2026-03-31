@@ -12,6 +12,25 @@ import {
   type TaxedMoneyFragment,
 } from "#root/store/saleor/graphql/fragments/generated";
 
+/** Same key as marketplace product metadata — vendor PLP uses `MetadataFilter` on this key. */
+const VENDOR_ID_METADATA_KEY = "vendor.id";
+
+export function resolveProductVendorId(fragment: {
+  metadata?: ReadonlyArray<{ key: string; value: string }> | null;
+  vendorId: string | null;
+}): string | null {
+  const fromMetafield = fragment.vendorId?.trim();
+
+  if (fromMetafield) {
+    return fromMetafield;
+  }
+  const fromMetadata = fragment.metadata?.find(
+    (m) => m.key === VENDOR_ID_METADATA_KEY,
+  )?.value;
+
+  return fromMetadata?.trim() ? fromMetadata.trim() : null;
+}
+
 export const serializeMoney = (data: MoneyFragment): Price => ({
   amount: data.amount,
   currency: data.currency as AllCurrency,
@@ -51,7 +70,7 @@ export const serializeProduct = (data: ProductDetailsFragment): Product => {
       title: data.seoTitle ?? null,
       description: data.seoDescription ?? null,
     },
-    vendorId: data.vendorId,
+    vendorId: resolveProductVendorId(data),
     attributes: data.attributes.map(parseAttributeData),
     variants: variants.map(
       ({

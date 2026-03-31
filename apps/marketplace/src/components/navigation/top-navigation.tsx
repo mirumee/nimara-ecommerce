@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -29,38 +30,39 @@ const APP_NAME = "Vendor Panel";
 
 const navigationLinks = [
   {
-    name: "Dashboard",
+    labelKey: "common.dashboard",
     href: "/dashboard",
     icon: LayoutDashboard,
   },
   {
-    name: "Products",
+    labelKey: "common.products",
     href: "/products",
     icon: Package,
   },
   {
-    name: "Orders",
+    labelKey: "common.orders",
     href: "/orders",
     icon: ShoppingCart,
   },
   {
-    name: "Drafts",
+    labelKey: "common.drafts",
     href: "/drafts",
     icon: FileText,
   },
   {
-    name: "Collections",
+    labelKey: "common.collections",
     href: "/collections",
     icon: LayoutList,
   },
   {
-    name: "Customers",
+    labelKey: "common.customers",
     href: "/customers",
     icon: Users,
   },
 ];
 
 export function TopNavigation() {
+  const t = useTranslations();
   const { user, logout } = useAuth();
   const pathname = usePathname();
 
@@ -92,7 +94,7 @@ export function TopNavigation() {
 
               return (
                 <Link
-                  key={item.name}
+                  key={item.href}
                   href={item.href}
                   className={cn(
                     "flex items-center gap-2 rounded-full px-4 py-2 text-sm transition-colors",
@@ -109,7 +111,7 @@ export function TopNavigation() {
                   >
                     <item.icon className="h-3 w-3" />
                   </div>
-                  <span>{item.name}</span>
+                  <span>{t(item.labelKey)}</span>
                 </Link>
               );
             })}

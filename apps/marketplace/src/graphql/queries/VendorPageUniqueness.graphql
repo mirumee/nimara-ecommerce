@@ -1,0 +1,30 @@
+query VendorPageUniqueness(
+  $pageTypeId: ID!
+  $search: String!
+  $slug: String!
+) {
+  bySlug: pages(
+    first: 1
+    filter: { pageTypes: [$pageTypeId], slugs: [$slug] }
+  ) {
+    edges {
+      node {
+        id
+        slug
+        title
+      }
+    }
+  }
+  byName: pages(
+    first: 10
+    filter: { pageTypes: [$pageTypeId], search: $search }
+  ) {
+    edges {
+      node {
+        id
+        slug
+        title
+      }
+    }
+  }
+}

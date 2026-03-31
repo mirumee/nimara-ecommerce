@@ -289,9 +289,11 @@ export const parseDescription = (description: string | null | undefined) => {
   }
 
   try {
-    const desc = JSON.parse(description);
+    const desc = JSON.parse(description) as unknown;
 
-    const parsedHTML = EditorJSHTML().parse(desc).join(". ");
+    const parsedHTML = EditorJSHTML()
+      .parse(desc as never)
+      .join(". ");
     const strippedHTML = stripHtml(parsedHTML);
 
     return strippedHTML.result;

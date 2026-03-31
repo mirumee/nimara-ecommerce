@@ -1,16 +1,15 @@
-import edjsHTML from "editorjs-html";
 import xss from "xss";
 
 import { Skeleton } from "@nimara/ui/components/skeleton";
+import {
+  createEditorJsHtmlParser,
+  parseEditorJSData,
+} from "@nimara/ui/lib/richText";
 
 import { CMSPageProvider } from "../shared/providers/cms-page-provider";
 import { type CMSPageViewProps } from "../shared/types";
 
-const parser = edjsHTML();
-
-type EditorJSContent = {
-  blocks?: Array<string>;
-};
+const parser = createEditorJsHtmlParser();
 
 /**
  * Standard view for the CMS page.
@@ -31,10 +30,10 @@ export const StandardCMSPageView = async (props: CMSPageViewProps) => {
 
         if (content) {
           try {
-            const parsedContent = JSON.parse(content) as EditorJSContent;
+            const parsedContent = parseEditorJSData(content);
 
-            if (parsedContent && parsedContent.blocks) {
-              contentHtml = parser.parse(parsedContent);
+            if (parsedContent) {
+              contentHtml = parser.parse(parsedContent as never);
             }
           } catch (error) {
             contentHtml = [content];

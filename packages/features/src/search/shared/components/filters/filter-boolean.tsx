@@ -19,7 +19,8 @@ export const FilterBoolean = ({
   const isCheckedInitial = searchParams[slug] === "true";
   const [isChecked, setIsChecked] = useState(isCheckedInitial);
 
-  const labelText = name ?? t(messageKey as MessagePath) ?? slug;
+  const labelText =
+    (messageKey ? t(messageKey as MessagePath) : undefined) ?? name ?? slug;
   const checkboxId = `boolean-${slug}`;
 
   return (

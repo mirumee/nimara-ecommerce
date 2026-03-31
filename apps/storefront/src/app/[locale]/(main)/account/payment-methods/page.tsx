@@ -1,5 +1,6 @@
 import { type Locale } from "next-intl";
 import { getTranslations } from "next-intl/server";
+import type { ReactNode } from "react";
 
 import { LocalizedLink, redirect } from "@nimara/i18n/routing";
 
@@ -58,7 +59,7 @@ export default async function Page(props: PageProps) {
       redirect({ href: paths.account.paymentMethods.asPath(), locale });
     } else {
       error = t.rich("errors.GENERIC_PAYMENT_ERROR", {
-        link: (chunks) => (
+        link: (chunks: ReactNode) => (
           <LocalizedLink
             href={`mailto:${clientEnvs.NEXT_PUBLIC_DEFAULT_EMAIL}`}
             className="underline"
