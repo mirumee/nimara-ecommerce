@@ -2,6 +2,7 @@ import type { Logger } from "@nimara/infrastructure/logging/types";
 import type { StoreService } from "@nimara/infrastructure/store/types";
 
 import { clientEnvs } from "@/envs/client";
+import { serverEnvs } from "@/envs/server";
 
 /**
  * Creates a lazy loader function for the store service.
@@ -23,6 +24,7 @@ export const createStoreServiceLoader = (logger: Logger) => {
       apiURI: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
       logger,
       marketplaceEnabled: clientEnvs.NEXT_PUBLIC_MARKETPLACE_ENABLED,
+      saleorAppToken: serverEnvs.SALEOR_APP_TOKEN,
     });
 
     return storeServiceInstance;

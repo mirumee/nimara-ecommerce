@@ -3,9 +3,17 @@ import { getTranslations } from "next-intl/server";
 
 import { ProductsList } from "@nimara/features/shared/product-list/products-list";
 import { SearchPagination } from "@nimara/features/shared/product-list/search-pagination";
+import { LocalizedLink } from "@nimara/i18n/routing";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@nimara/ui/components/breadcrumb";
 import { Skeleton } from "@nimara/ui/components/skeleton";
 
-import { Breadcrumbs } from "../shared/components/breadcrumbs";
 import { FiltersContainer } from "../shared/components/filters/filters-container";
 import { SearchSortBy } from "../shared/components/listing/search-sort-by";
 import { SearchProvider } from "../shared/providers/search-provider";
@@ -116,20 +124,41 @@ export const VendorSearchView = async (props: VendorSearchViewProps) => {
     defaultSortBy,
   } = props;
   const searchParams = await searchParamsPromise;
+  const tHome = await getTranslations("home");
   const headerText = vendorBranding.displayTitle;
 
   return (
-    <SearchProvider
-      searchParams={searchParams}
-      services={services}
-      defaultResultsPerPage={defaultResultsPerPage}
-      defaultSortBy={defaultSortBy}
-      productMetadata={productMetadata}
-      region={region}
-      render={({ products, pageInfo, facets, sortByOptions, searchParams }) => (
-        <div className="w-full">
-          <Breadcrumbs pageName={headerText} homePath={paths.home} />
-          <VendorHero branding={vendorBranding} />
+    <div className="w-full">
+      <div className="hidden md:block">
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <LocalizedLink href={paths.home}>{tHome("home")}</LocalizedLink>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>{headerText}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+      </div>
+      <VendorHero branding={vendorBranding} />
+      <SearchProvider
+        searchParams={searchParams}
+        services={services}
+        defaultResultsPerPage={defaultResultsPerPage}
+        defaultSortBy={defaultSortBy}
+        productMetadata={productMetadata}
+        region={region}
+        render={({
+          products,
+          pageInfo,
+          facets,
+          sortByOptions,
+          searchParams,
+        }) => (
           <section className="mx-auto my-8 grid gap-8">
             <div className="flex items-center justify-between">
               <h2 className="sr-only">{headerText}</h2>
@@ -167,9 +196,9 @@ export const VendorSearchView = async (props: VendorSearchViewProps) => {
               />
             ) : null}
           </section>
-        </div>
-      )}
-    />
+        )}
+      />
+    </div>
   );
 };
 

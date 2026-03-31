@@ -18,7 +18,10 @@ export const parseSaleorDataToFields = (
     const firstValue = field.values?.[0];
 
     const text =
-      getTranslation("plainText", firstValue) || firstValue?.value || "";
+      getTranslation("plainText", firstValue) ||
+      firstValue?.value ||
+      getTranslation("name", firstValue) ||
+      "";
     const imageUrl = firstValue?.file?.url;
     const references = field.values
       ?.map((value) => value.reference)

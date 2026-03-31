@@ -7,7 +7,11 @@ export type PageSlugByIdQuery_page_Page_pageType_PageType = { slug: string };
 
 export type PageSlugByIdQuery_page_Page_attributes_SelectedAttribute_attribute_Attribute = { slug: string | null };
 
-export type PageSlugByIdQuery_page_Page_attributes_SelectedAttribute_values_AttributeValue = { name: string | null };
+export type PageSlugByIdQuery_page_Page_attributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation = { name: string, plainText: string | null, richText: string | null };
+
+export type PageSlugByIdQuery_page_Page_attributes_SelectedAttribute_values_AttributeValue_file_File = { url: string };
+
+export type PageSlugByIdQuery_page_Page_attributes_SelectedAttribute_values_AttributeValue = { slug: string | null, name: string | null, plainText: string | null, richText: string | null, boolean: boolean | null, date: string | null, dateTime: string | null, reference: string | null, value: string | null, translation: PageSlugByIdQuery_page_Page_attributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation | null, file: PageSlugByIdQuery_page_Page_attributes_SelectedAttribute_values_AttributeValue_file_File | null };
 
 export type PageSlugByIdQuery_page_Page_attributes_SelectedAttribute = { attribute: PageSlugByIdQuery_page_Page_attributes_SelectedAttribute_attribute_Attribute, values: Array<PageSlugByIdQuery_page_Page_attributes_SelectedAttribute_values_AttributeValue> };
 
@@ -88,11 +92,7 @@ export type ProductDetailsQuery_product_Product_variants_ProductVariant_selectio
 
 export type ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute = { slug: string | null, inputType: Types.AttributeInputTypeEnum | null, name: string | null, translation: ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation | null };
 
-export type ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation = { name: string, plainText: string | null, richText: string | null };
-
-export type ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_file_File = { url: string };
-
-export type ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue = { slug: string | null, name: string | null, plainText: string | null, richText: string | null, boolean: boolean | null, date: string | null, dateTime: string | null, reference: string | null, value: string | null, translation: ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation | null, file: ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_file_File | null };
+export type ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue = { slug: string | null, name: string | null, plainText: string | null, richText: string | null, boolean: boolean | null, date: string | null, dateTime: string | null, reference: string | null, value: string | null, translation: PageSlugByIdQuery_page_Page_attributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation | null, file: PageSlugByIdQuery_page_Page_attributes_SelectedAttribute_values_AttributeValue_file_File | null };
 
 export type ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute = { attribute: ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute, values: Array<ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue> };
 
@@ -102,7 +102,7 @@ export type ProductDetailsQuery_product_Product_variants_ProductVariant = { id: 
 
 export type ProductDetailsQuery_product_Product_attributes_SelectedAttribute_attribute_Attribute = { slug: string | null, inputType: Types.AttributeInputTypeEnum | null, name: string | null, translation: ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation | null };
 
-export type ProductDetailsQuery_product_Product_attributes_SelectedAttribute_values_AttributeValue = { slug: string | null, name: string | null, plainText: string | null, richText: string | null, boolean: boolean | null, date: string | null, dateTime: string | null, reference: string | null, value: string | null, translation: ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation | null, file: ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_file_File | null };
+export type ProductDetailsQuery_product_Product_attributes_SelectedAttribute_values_AttributeValue = { slug: string | null, name: string | null, plainText: string | null, richText: string | null, boolean: boolean | null, date: string | null, dateTime: string | null, reference: string | null, value: string | null, translation: PageSlugByIdQuery_page_Page_attributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation | null, file: PageSlugByIdQuery_page_Page_attributes_SelectedAttribute_values_AttributeValue_file_File | null };
 
 export type ProductDetailsQuery_product_Product_attributes_SelectedAttribute = { attribute: ProductDetailsQuery_product_Product_attributes_SelectedAttribute_attribute_Attribute, values: Array<ProductDetailsQuery_product_Product_attributes_SelectedAttribute_values_AttributeValue> };
 
@@ -220,12 +220,30 @@ export const PageSlugByIdQueryDocument = new TypedDocumentString(`
         slug
       }
       values {
-        name
+        ...AttributeValueFragment
       }
     }
   }
 }
-    `) as unknown as TypedDocumentString<PageSlugByIdQuery, PageSlugByIdQueryVariables>;
+    fragment AttributeValueFragment on AttributeValue {
+  slug
+  name
+  plainText
+  richText
+  boolean
+  date
+  dateTime
+  reference
+  value
+  translation(languageCode: $languageCode) {
+    name
+    plainText
+    richText
+  }
+  file {
+    url
+  }
+}`) as unknown as TypedDocumentString<PageSlugByIdQuery, PageSlugByIdQueryVariables>;
 export const ProductAvailabilityDetailsQueryDocument = new TypedDocumentString(`
     query ProductAvailabilityDetailsQuery($slug: String!, $channel: String!, $countryCode: CountryCode!) {
   product(slug: $slug, channel: $channel) {
@@ -307,7 +325,26 @@ export const ProductDetailsQueryDocument = new TypedDocumentString(`
     ...ProductBaseFragment
   }
 }
-    fragment ProductBaseFragment on Product {
+    fragment AttributeValueFragment on AttributeValue {
+  slug
+  name
+  plainText
+  richText
+  boolean
+  date
+  dateTime
+  reference
+  value
+  translation(languageCode: $languageCode) {
+    name
+    plainText
+    richText
+  }
+  file {
+    url
+  }
+}
+fragment ProductBaseFragment on Product {
   id
   name
   seoTitle
@@ -379,25 +416,6 @@ fragment AttributeFragment on Attribute {
   name
   translation(languageCode: $languageCode) {
     name
-  }
-}
-fragment AttributeValueFragment on AttributeValue {
-  slug
-  name
-  plainText
-  richText
-  boolean
-  date
-  dateTime
-  reference
-  value
-  translation(languageCode: $languageCode) {
-    name
-    plainText
-    richText
-  }
-  file {
-    url
   }
 }`) as unknown as TypedDocumentString<ProductDetailsQuery, ProductDetailsQueryVariables>;
 export const ProductRelatedProductsQueryDocument = new TypedDocumentString(`
