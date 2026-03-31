@@ -21,6 +21,10 @@ export interface StoreServiceConfig {
    * When true, product details may include `vendorSlug` (extra Saleor query) for vendor storefront URLs.
    */
   marketplaceEnabled?: boolean;
+  /**
+   * Used to resolve vendor profile pages that are not yet published (same as storefront vendor route).
+   */
+  saleorAppToken?: string | null;
 }
 
 export type WithFetchOptions = { options?: FetchOptions };
