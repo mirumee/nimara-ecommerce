@@ -44,9 +44,9 @@ export const Footer = async () => {
 
   const showMarketplaceFooter =
     clientEnvs.NEXT_PUBLIC_MARKETPLACE_ENABLED &&
-    Boolean(clientEnvs.NEXT_PUBLIC_MARKETPLACE_URL);
+    Boolean(clientEnvs.NEXT_PUBLIC_MARKETPLACE_VENDOR_URL);
 
-  const marketplaceBaseUrl = clientEnvs.NEXT_PUBLIC_MARKETPLACE_URL;
+  const marketplaceBaseUrl = clientEnvs.NEXT_PUBLIC_MARKETPLACE_VENDOR_URL;
   const marketplaceSignInUrl = marketplaceBaseUrl
     ? new URL("/sign-in", marketplaceBaseUrl).href
     : "";
