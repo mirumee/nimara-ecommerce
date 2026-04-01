@@ -31,6 +31,12 @@ const schema = z.object({
     .optional()
     .default("false")
     .transform((s) => s !== "false"),
+  // Public vendor portal URL (footer links). Empty/unset hides marketplace column.
+  NEXT_PUBLIC_MARKETPLACE_VENDOR_URL: z.preprocess(
+    (val) =>
+      typeof val === "string" && val.trim().length > 0 ? val.trim() : undefined,
+    z.url().optional(),
+  ),
 });
 
 export const clientEnvs = schema.parse({
@@ -52,4 +58,6 @@ export const clientEnvs = schema.parse({
   NEXT_PUBLIC_DEFAULT_IMAGE_FORMAT:
     process.env.NEXT_PUBLIC_DEFAULT_IMAGE_FORMAT,
   NEXT_PUBLIC_MARKETPLACE_ENABLED: process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED,
+  NEXT_PUBLIC_MARKETPLACE_VENDOR_URL:
+    process.env.NEXT_PUBLIC_MARKETPLACE_VENDOR_URL,
 });

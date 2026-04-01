@@ -143,6 +143,9 @@
     "demo-version": "<link>This is the demo version of Nimara Store.</link>",
     "help": "Help",
     "made-with": "Made with ❤️ by <link>Mirumee</link>",
+    "marketplace": "Marketplace",
+    "marketplace-sign-in": "Sign In",
+    "marketplace-sign-up": "Sign Up",
     "open-source": "<link>An open-source storefront for everyone</link>",
     "our-products": "Our products"
   },
