@@ -1,53 +1,32 @@
-import { getServerAuthToken } from "@/lib/auth/server";
-import { config } from "@/lib/config";
-import { buildVendorStorefrontUrl } from "@/lib/vendor-storefront-url";
-import { configurationService } from "@/services/configuration";
+import { Suspense } from "react";
 
-import { ConfigurationLayoutClient } from "./_components/configuration-layout-client";
+import { ConfigurationNavClient } from "./_components/configuration-nav-client";
+import { ConfigurationSidebarSkeleton } from "./_components/configuration-sidebar-skeleton";
+import { ConfigurationSidebarWithVendor } from "./_components/configuration-sidebar-with-vendor";
 
-export default async function ConfigurationLayout({
+export default function ConfigurationLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const token = await getServerAuthToken();
-  const result = await configurationService.getMe(token);
-
-  const user = result.ok ? result.data.me : null;
-
-  const vendorPageId = user?.metadata?.find(
-    (m) => m.key === "vendor.id",
-  )?.value;
-  let vendorName: string | undefined;
-  let vendorSlug: string | undefined;
-
-  if (vendorPageId) {
-    const vendorResult = await configurationService.getVendorProfile(
-      vendorPageId,
-      token,
-    );
-
-    if (vendorResult.ok && vendorResult.data.page) {
-      const vendorNameAttr = vendorResult.data.page.attributes.find(
-        (attr) => attr.attribute.slug === "vendor-name",
-      );
-
-      vendorName =
-        vendorNameAttr?.values[0]?.name ?? vendorResult.data.page.title;
-      vendorSlug = vendorResult.data.page.slug;
-    }
-  }
-
-  const displayName =
-    vendorName || user?.firstName || user?.email || "Vendor name";
-  const vendorUrl = buildVendorStorefrontUrl(config.urls.storefront, {
-    nameFallback: displayName,
-    slug: vendorSlug,
-  });
-
   return (
-    <ConfigurationLayoutClient vendorName={displayName} vendorUrl={vendorUrl}>
-      {children}
-    </ConfigurationLayoutClient>
+    <div className="-mx-6 -mt-4 flex min-h-screen">
+      <div className="sticky top-[4.5rem] flex h-[calc(100vh-4.5rem)] w-64 flex-col self-start border-r bg-gray-50">
+        <Suspense
+          fallback={
+            <>
+              <ConfigurationSidebarSkeleton />
+              <ConfigurationNavClient />
+            </>
+          }
+        >
+          <ConfigurationSidebarWithVendor />
+        </Suspense>
+      </div>
+
+      <div className="flex-1 bg-gray-50/30 p-8">
+        <div className="mx-auto max-w-4xl">{children}</div>
+      </div>
+    </div>
   );
 }
