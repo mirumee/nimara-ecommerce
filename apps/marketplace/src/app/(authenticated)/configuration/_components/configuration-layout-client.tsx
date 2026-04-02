@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
@@ -23,6 +24,7 @@ export function ConfigurationLayoutClient({
   vendorUrl,
 }: ConfigurationLayoutClientProps) {
   const pathname = usePathname();
+  const t = useTranslations();
 
   return (
     <div className="-mx-6 -mt-4 flex min-h-screen">
@@ -40,7 +42,16 @@ export function ConfigurationLayoutClient({
               <div className="text-sm font-semibold text-gray-900">
                 {vendorName}
               </div>
-              <div className="text-xs text-muted-foreground">{vendorUrl}</div>
+              <a
+                className="text-xs text-primary hover:underline"
+                href={vendorUrl}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                {t(
+                  "marketplace.configuration.general.storefront-vendor-page-link",
+                )}
+              </a>
             </div>
           </div>
         </div>

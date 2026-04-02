@@ -23,6 +23,7 @@ import { useToast } from "@nimara/ui/hooks";
 import { InputField } from "@/components/fields/input-field";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import type { Me_me_User } from "@/graphql/generated/client";
+import { buildVendorStorefrontUrl } from "@/lib/vendor-storefront-url";
 
 import { updateAccount } from "../actions";
 
@@ -39,6 +40,7 @@ interface Vendor {
 
 interface AccountInformationCardProps {
   isLoading?: boolean;
+  storefrontBaseUrl: string;
   user: Me_me_User | null;
   vendor: Vendor | null;
 }
@@ -46,6 +48,7 @@ interface AccountInformationCardProps {
 export function AccountInformationCard({
   user,
   isLoading = false,
+  storefrontBaseUrl,
   vendor,
 }: AccountInformationCardProps) {
   const t = useTranslations();
@@ -77,9 +80,10 @@ export function AccountInformationCard({
     user?.firstName ||
     user?.email ||
     t("marketplace.configuration.general.name-placeholder");
-  const vendorUrl = vendor?.slug
-    ? `marketplace.com/${vendor.slug}`
-    : `marketplace.com/${String(vendorName).toLowerCase().replace(/\s+/g, "-")}`;
+  const vendorUrl = buildVendorStorefrontUrl(storefrontBaseUrl, {
+    slug: vendor?.slug,
+    nameFallback: vendorName,
+  });
   const fullName = user
     ? [user.firstName, user.lastName].filter(Boolean).join(" ")
     : "";
@@ -311,9 +315,16 @@ export function AccountInformationCard({
                     <div className="text-xl font-semibold text-gray-900">
                       {vendorName}
                     </div>
-                    <div className="text-sm text-muted-foreground">
-                      {vendorUrl}
-                    </div>
+                    <a
+                      className="text-sm text-primary hover:underline"
+                      href={vendorUrl}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      {t(
+                        "marketplace.configuration.general.storefront-vendor-page-link",
+                      )}
+                    </a>
                     {fullName && (
                       <div className="mt-1 text-sm text-gray-600">
                         {fullName}

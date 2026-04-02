@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 
 import { getServerAuthToken } from "@/lib/auth/server";
+import { config } from "@/lib/config";
 import { configurationService } from "@/services/configuration";
 
 import { AccountInformationCard } from "./_components/account-information-card";
@@ -65,7 +66,11 @@ export default async function ConfigurationGeneralPage() {
       </h1>
 
       {/* Account Information Card */}
-      <AccountInformationCard user={user} vendor={vendor} />
+      <AccountInformationCard
+        storefrontBaseUrl={config.urls.storefront}
+        user={user}
+        vendor={vendor}
+      />
 
       {vendor ? (
         <VendorBrandingCard

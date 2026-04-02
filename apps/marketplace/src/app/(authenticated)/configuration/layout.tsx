@@ -1,4 +1,6 @@
 import { getServerAuthToken } from "@/lib/auth/server";
+import { config } from "@/lib/config";
+import { buildVendorStorefrontUrl } from "@/lib/vendor-storefront-url";
 import { configurationService } from "@/services/configuration";
 
 import { ConfigurationLayoutClient } from "./_components/configuration-layout-client";
@@ -38,9 +40,10 @@ export default async function ConfigurationLayout({
 
   const displayName =
     vendorName || user?.firstName || user?.email || "Vendor name";
-  const vendorUrl = vendorSlug
-    ? `marketplace.com/${vendorSlug}`
-    : `marketplace.com/${String(displayName).toLowerCase().replace(/\s+/g, "-")}`;
+  const vendorUrl = buildVendorStorefrontUrl(config.urls.storefront, {
+    slug: vendorSlug,
+    nameFallback: displayName,
+  });
 
   return (
     <ConfigurationLayoutClient vendorName={displayName} vendorUrl={vendorUrl}>
