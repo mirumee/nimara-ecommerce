@@ -3,81 +3,41 @@ import { notFound } from "next/navigation";
 import { type Locale } from "next-intl";
 import { cache } from "react";
 
-import type { CMSPage, PageField } from "@nimara/domain/objects/CMSPage";
+import type { VendorProfile } from "@nimara/domain/objects/VendorProfile";
 import { VendorSearchView } from "@nimara/features/search/shop-basic-plp/vendor-standard";
 import { DEFAULT_LOCALE, LOCALE_PREFIXES } from "@nimara/i18n/config";
 
 import { DEFAULT_RESULTS_PER_PAGE, DEFAULT_SORT_BY } from "@/config";
 import { clientEnvs } from "@/envs/client";
-import { serverEnvs } from "@/envs/server";
 import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
 import { getServiceRegistry } from "@/services/registry";
 
 import { handleVendorFiltersFormSubmit } from "./_actions/handle-vendor-filters-form-submit";
 
-const VENDOR_PROFILE_PAGE_TYPE_SLUG = "vendor-profile";
-const VENDOR_PAGE_ATTR_LOGO = "logo";
-const VENDOR_PAGE_ATTR_BACKGROUND = "background-image";
-const VENDOR_PAGE_ATTR_NAME = "vendor-name";
-const VENDOR_STATUS_ATTR = "vendor-status";
-
-function fieldImageUrl(fields: PageField[], slug: string): string | undefined {
-  const url = fields.find((f) => f.slug === slug)?.imageUrl;
-
-  return url?.trim() || undefined;
-}
-
-function fieldText(fields: PageField[], slug: string): string | undefined {
-  const text = fields.find((f) => f.slug === slug)?.text?.trim();
-
-  return text || undefined;
-}
-
-/**
- * Vendor storefront visibility is gated on two conditions:
- * 1. `NEXT_PUBLIC_MARKETPLACE_ENABLED=true`
- * 2. `vendor-status=active`
- * Saleor publish/draft state has no effect.
- */
-function isVendorActive(fields: PageField[]): boolean {
-  return fieldText(fields, VENDOR_STATUS_ATTR)?.toLowerCase() === "active";
-}
-
-const loadVendorProfilePage = cache(
+const loadVendorProfile = cache(
   async (
     vendorSlug: string,
     languageCode: string,
-  ): Promise<{ page: CMSPage | null }> => {
+  ): Promise<{ vendor: VendorProfile | null }> => {
     const services = await getServiceRegistry();
-    const cmsService = await services.getCMSPageService();
-
-    /**
-     * Always fetch with the app token (MANAGE_PAGES) so that vendor pages in "draft" state are
-     * still reachable. Publish/draft state is irrelevant — visibility is gated solely on
-     * vendor-status=active in assertValidVendorPage below.
-     */
-    const result = await cmsService.cmsPageGet({
-      slug: vendorSlug,
+    const storeService = await services.getStoreService();
+    const result = await storeService.getVendorProfileBySlug({
+      vendorSlug,
       languageCode,
       options: {
         cache: "no-store",
       },
-      accessToken: serverEnvs.SALEOR_APP_TOKEN,
     });
 
-    return { page: result.ok ? (result.data ?? null) : null };
+    return { vendor: result.ok ? (result.data.vendor ?? null) : null };
   },
 );
 
-function assertValidVendorPage(
-  page: CMSPage | null,
-): asserts page is CMSPage & { id: string } {
-  if (
-    !page?.id ||
-    page.pageTypeSlug !== VENDOR_PROFILE_PAGE_TYPE_SLUG ||
-    !isVendorActive(page.fields)
-  ) {
+function assertValidVendor(
+  vendor: VendorProfile | null,
+): asserts vendor is VendorProfile {
+  if (!vendor || !vendor.isActive) {
     notFound();
   }
 }
@@ -96,18 +56,12 @@ export async function generateMetadata(
 
   const { vendorSlug } = await props.params;
   const region = await getCurrentRegion();
-  const { page } = await loadVendorProfilePage(
-    vendorSlug,
-    region.language.code,
-  );
+  const { vendor } = await loadVendorProfile(vendorSlug, region.language.code);
 
-  assertValidVendorPage(page);
-
-  const displayTitle =
-    fieldText(page.fields, VENDOR_PAGE_ATTR_NAME) ?? page.title;
+  assertValidVendor(vendor);
 
   return {
-    title: `${displayTitle} | ${clientEnvs.NEXT_PUBLIC_DEFAULT_PAGE_TITLE}`,
+    title: `${vendor.displayName} | ${clientEnvs.NEXT_PUBLIC_DEFAULT_PAGE_TITLE}`,
   };
 }
 
@@ -122,15 +76,9 @@ export default async function Page(props: VendorPageProps) {
     getCurrentRegion(),
   ]);
 
-  const { page } = await loadVendorProfilePage(
-    vendorSlug,
-    region.language.code,
-  );
+  const { vendor } = await loadVendorProfile(vendorSlug, region.language.code);
 
-  assertValidVendorPage(page);
-
-  const displayTitle =
-    fieldText(page.fields, VENDOR_PAGE_ATTR_NAME) ?? page.title;
+  assertValidVendor(vendor);
 
   return (
     <VendorSearchView
@@ -150,14 +98,11 @@ export default async function Page(props: VendorPageProps) {
         null,
         vendorSlug,
       )}
-      productMetadata={[{ key: "vendor.id", value: page.id }]}
+      productMetadata={[{ key: "vendor.id", value: vendor.id }]}
       vendorBranding={{
-        displayTitle,
-        backgroundImageUrl: fieldImageUrl(
-          page.fields,
-          VENDOR_PAGE_ATTR_BACKGROUND,
-        ),
-        logoUrl: fieldImageUrl(page.fields, VENDOR_PAGE_ATTR_LOGO),
+        displayTitle: vendor.displayName,
+        backgroundImageUrl: vendor.backgroundImageUrl,
+        logoUrl: vendor.logoUrl,
       }}
     />
   );

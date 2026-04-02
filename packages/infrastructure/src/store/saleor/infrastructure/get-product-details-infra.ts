@@ -12,9 +12,9 @@ import {
   ProductDetailsQueryDocument,
 } from "../graphql/queries/generated";
 
-const VENDOR_PROFILE_PAGE_TYPE_SLUG = "vendor-profile";
 const VENDOR_NAME_ATTRIBUTE_SLUG = "vendor-name";
 const VENDOR_STATUS_ATTRIBUTE_SLUG = "vendor-status";
+const VENDOR_PROFILE_PAGE_TYPE_SLUG = "vendor-profile";
 
 function vendorDisplayNameFromVendorProfilePage(
   page: PageSlugByIdQuery_page_Page,
@@ -49,10 +49,15 @@ function vendorStatusIsActive(page: PageSlugByIdQuery_page_Page): boolean {
   const raw =
     getTranslation("plainText", firstValue)?.trim() ||
     firstValue?.value?.trim() ||
+    firstValue?.slug?.trim() ||
     firstValue?.name?.trim() ||
     "";
 
   return raw.toLowerCase() === "active";
+}
+
+function isVendorProfilePage(page: PageSlugByIdQuery_page_Page): boolean {
+  return page.pageType.slug === VENDOR_PROFILE_PAGE_TYPE_SLUG;
 }
 
 export const getProductDetailsInfra =
@@ -132,7 +137,7 @@ export const getProductDetailsInfra =
 
       if (
         vendorPage?.slug &&
-        vendorPage.pageType?.slug === VENDOR_PROFILE_PAGE_TYPE_SLUG &&
+        isVendorProfilePage(vendorPage) &&
         vendorStatusIsActive(vendorPage)
       ) {
         product = {

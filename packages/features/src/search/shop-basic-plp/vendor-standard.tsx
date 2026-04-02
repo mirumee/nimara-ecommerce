@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { ProductsList } from "@nimara/features/shared/product-list/products-list";
 import { SearchPagination } from "@nimara/features/shared/product-list/search-pagination";
 import { LocalizedLink } from "@nimara/i18n/routing";
+import type { MessagePath } from "@nimara/i18n/types";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -124,6 +125,7 @@ export const VendorSearchView = async (props: VendorSearchViewProps) => {
     defaultSortBy,
   } = props;
   const searchParams = await searchParamsPromise;
+  const t = await getTranslations();
   const tHome = await getTranslations("home");
   const headerText = vendorBranding.displayTitle;
 
@@ -168,6 +170,13 @@ export const VendorSearchView = async (props: VendorSearchViewProps) => {
                     options={sortByOptions}
                     searchParams={searchParams}
                     defaultSortBy={defaultSortBy}
+                    sortByLabel={t("search.sort-by")}
+                    optionLabels={Object.fromEntries(
+                      sortByOptions.map((option) => [
+                        option.value,
+                        t(option.messageKey as MessagePath),
+                      ]),
+                    )}
                   />
                 </div>
                 <FiltersContainer

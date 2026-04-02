@@ -47,6 +47,7 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body
+        suppressHydrationWarning
         className={cn(
           "min-h-[100dvh]",
           "flex flex-col",
