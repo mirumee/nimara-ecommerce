@@ -81,8 +81,8 @@ export function AccountInformationCard({
     user?.email ||
     t("marketplace.configuration.general.name-placeholder");
   const vendorUrl = buildVendorStorefrontUrl(storefrontBaseUrl, {
-    slug: vendor?.slug,
     nameFallback: vendorName,
+    slug: vendor?.slug,
   });
   const fullName = user
     ? [user.firstName, user.lastName].filter(Boolean).join(" ")

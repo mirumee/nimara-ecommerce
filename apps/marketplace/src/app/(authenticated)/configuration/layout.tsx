@@ -41,8 +41,8 @@ export default async function ConfigurationLayout({
   const displayName =
     vendorName || user?.firstName || user?.email || "Vendor name";
   const vendorUrl = buildVendorStorefrontUrl(config.urls.storefront, {
-    slug: vendorSlug,
     nameFallback: displayName,
+    slug: vendorSlug,
   });
 
   return (
