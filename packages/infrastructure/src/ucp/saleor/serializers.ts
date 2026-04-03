@@ -384,25 +384,24 @@ const toUCPDiscounts = (
  *
  * @param checkout - Saleor checkout fragment data
  * @param order - Optional order confirmation (id and permalink URL)
- * @param baseUrl - Base URL for generating links and continue_url (required)
+ * @param storefrontURL - Base URL for generating links and continue_url (required)
  * @param continueUrlConditions - Optional conditions to determine if continue_url is needed.
  *                                 Example: { missingEmail: checkout.email === null }
  *                                 If any condition is true, continue_url will be generated.
  */
 export const toUCPCheckoutSession = (
   checkout: UcpCheckoutSessionFragment,
+  storefrontURL: string,
   order?: { id: string; permalinkUrl: string },
-  baseUrl?: string,
   continueUrlConditions?: Record<string, boolean>,
 ): UCPCheckoutSessionModel => {
   const fulfillmentMethod = toFulfillmentMethod(checkout);
-  const baseUrlForLinks = baseUrl || "https://example.com";
-
-  const continueUrl = generateContinueUrl(
-    checkout.id,
-    baseUrlForLinks,
-    continueUrlConditions,
-  );
+  const continueUrl = generateContinueUrl({
+    checkoutId: checkout.id,
+    storefrontURL,
+    channelSlug: checkout.channel.slug,
+    conditions: continueUrlConditions,
+  });
 
   const discounts = toUCPDiscounts(checkout);
 
@@ -420,7 +419,7 @@ export const toUCPCheckoutSession = (
         }
       : undefined,
     billingAddress: toUCPAddress(checkout.billingAddress),
-    links: generateCheckoutLinks(baseUrlForLinks),
+    links: generateCheckoutLinks(storefrontURL),
     expiresAtISO: calculateCheckoutExpiration(),
     ...(discounts ? { discounts } : {}),
     ...(continueUrl ? { continueUrl } : {}),
@@ -431,21 +430,24 @@ export const toUCPCheckoutSession = (
 /**
  * Builds UCP payment handlers from Saleor available gateways.
  */
-export const toPaymentHandlers = (
-  checkout: Pick<UcpCheckoutSessionFragment, "availablePaymentGateways">,
-) => {
-  return checkout.availablePaymentGateways.map((gateway) => ({
+export const toPaymentHandlers = ({
+  version,
+  checkout,
+}: {
+  checkout: Pick<UcpCheckoutSessionFragment, "availablePaymentGateways">;
+  version: string;
+}) =>
+  checkout.availablePaymentGateways.map((gateway) => ({
     id: gateway.id,
     name: gateway.name,
-    version: UCP_VERSION,
-    spec: "https://ucp.dev/specs/payment-handler",
+    version,
+    spec: `https://ucp.dev/${version}/specification/payment-handler-guide/`,
     config_schema: "https://ucp.dev/schemas/payment-handler.json",
     instrument_schemas: [] as string[],
     config: Object.fromEntries(
       gateway.config.map((item) => [item.field, item.value]),
     ) as Record<string, string | null>,
   }));
-};
 
 /**
  * Converts internal UCP checkout model into SDK CheckoutResponse format.
@@ -453,11 +455,17 @@ export const toPaymentHandlers = (
  * Note: Values in UCPCheckoutSessionModel are already in minor units,
  * so we pass them through directly without conversion.
  */
-export const sessionToCheckoutResponse = (
-  session: UCPCheckoutSessionModel,
-  capabilities: UcpDiscoveryProfile["ucp"]["capabilities"] = [],
-  paymentHandlers: ReturnType<typeof toPaymentHandlers> = [],
-): CheckoutWithFulfillmentResponse => {
+export const sessionToCheckoutResponse = ({
+  version,
+  session,
+  capabilities,
+  paymentHandlers,
+}: {
+  capabilities: UcpDiscoveryProfile["ucp"]["capabilities"];
+  paymentHandlers: ReturnType<typeof toPaymentHandlers>;
+  session: UCPCheckoutSessionModel;
+  version: string;
+}): CheckoutWithFulfillmentResponse => {
   const response = {
     fulfillment: (session.fulfillment || {
       methods: [],
@@ -484,7 +492,7 @@ export const sessionToCheckoutResponse = (
       amount: total.amount,
     })) as unknown as TotalResponse[],
     ucp: {
-      version: UCP_VERSION,
+      version,
       capabilities,
     },
     payment: {
@@ -530,11 +538,15 @@ export const sessionToCheckoutResponse = (
   } satisfies CheckoutWithFulfillmentResponse;
 };
 
-export const orderToUCPOrder = (
-  order: UcpOrderFragment,
-  capabilities: UcpDiscoveryProfile["ucp"]["capabilities"] = [],
-  baseUrl: string,
-) => {
+export const orderToUCPOrder = ({
+  order,
+  capabilities = [],
+  storefrontURL,
+}: {
+  capabilities: UcpDiscoveryProfile["ucp"]["capabilities"];
+  order: UcpOrderFragment;
+  storefrontURL: string;
+}) => {
   const priceType = order.displayGrossPrices ? "gross" : "net";
   const currency = order.lines[0]?.totalPrice[priceType].currency || "USD";
 
@@ -543,10 +555,15 @@ export const orderToUCPOrder = (
     return sum + line.totalPrice[priceType].amount;
   }, 0);
 
+  const permalinkUrl = new URL(
+    `/order/confirmation/${order.id}`,
+    storefrontURL,
+  ).toString();
+
   return {
     id: order.id,
     checkout_id: order.checkoutId || "",
-    permalink_url: `${baseUrl}/order/confirmation/${order.id}`,
+    permalink_url: permalinkUrl,
     line_items: order.lines.map((line) => ({
       id: line.id,
       quantity: {

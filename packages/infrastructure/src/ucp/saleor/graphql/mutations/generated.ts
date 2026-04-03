@@ -55,6 +55,8 @@ export type UcpCheckoutRemovePromoCodeVariables = Types.Exact<{
 
 export type UcpCheckoutRemovePromoCode = UcpCheckoutRemovePromoCode_Mutation;
 
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_channel_Channel = { slug: string };
+
 export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_discount_Money = { amount: number, currency: string };
 
 export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingMethods_ShippingMethod_price_Money = { amount: number, currency: string };
@@ -150,7 +152,7 @@ export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Chec
   | UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_problems_CheckoutLineProblemVariantNotAvailable
 ;
 
-export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout = { id: string, email: string | null, displayGrossPrices: boolean, voucherCode: string | null, isShippingRequired: boolean, authorizeStatus: Types.CheckoutAuthorizeStatusEnum, chargeStatus: Types.CheckoutChargeStatusEnum, buyer: string | null, discount: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_discount_Money | null, shippingMethods: Array<UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingMethods_ShippingMethod>, shippingAddress: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingAddress_Address | null, billingAddress: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_billingAddress_Address | null, deliveryMethod: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_deliveryMethod_ShippingMethod_Warehouse | null, availablePaymentGateways: Array<UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_availablePaymentGateways_PaymentGateway>, lines: Array<UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine>, totalPrice: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_totalPrice_TaxedMoney, subtotalPrice: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_subtotalPrice_TaxedMoney, shippingPrice: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingPrice_TaxedMoney, problems: Array<UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_problems> | null };
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout = { id: string, email: string | null, displayGrossPrices: boolean, voucherCode: string | null, isShippingRequired: boolean, authorizeStatus: Types.CheckoutAuthorizeStatusEnum, chargeStatus: Types.CheckoutChargeStatusEnum, buyer: string | null, channel: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_channel_Channel, discount: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_discount_Money | null, shippingMethods: Array<UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingMethods_ShippingMethod>, shippingAddress: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingAddress_Address | null, billingAddress: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_billingAddress_Address | null, deliveryMethod: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_deliveryMethod_ShippingMethod_Warehouse | null, availablePaymentGateways: Array<UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_availablePaymentGateways_PaymentGateway>, lines: Array<UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine>, totalPrice: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_totalPrice_TaxedMoney, subtotalPrice: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_subtotalPrice_TaxedMoney, shippingPrice: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingPrice_TaxedMoney, problems: Array<UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_problems> | null };
 
 export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_errors_CheckoutError = { field: string | null, message: string | null, code: Types.CheckoutErrorCode, variants: Array<string> | null, lines: Array<string> | null, addressType: Types.AddressTypeEnum | null };
 
@@ -325,6 +327,9 @@ export const UcpCheckoutSessionCreateDocument = new TypedDocumentString(`
 }
     fragment UCPCheckoutSessionFragment on Checkout {
   ...CheckoutFragment
+  channel {
+    slug
+  }
   buyer: metafield(key: "ucp.buyer.json")
 }
 fragment CheckoutFragment on Checkout {

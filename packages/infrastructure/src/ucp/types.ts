@@ -7,14 +7,14 @@ import {
   type UcpDiscoveryProfile,
 } from "@ucp-js/sdk";
 
+import type { BaseError } from "@nimara/domain/objects/Error";
 import { type AsyncResult } from "@nimara/domain/objects/Result";
 
-import { type ErrorResponse } from "./error";
+export type UCPServiceError = BaseError & {
+  ucpCode?: string;
+};
 
-export type UCPResponse<TRes> = Promise<
-  | { data: never; error: ErrorResponse; ok: false }
-  | { data: TRes; errors?: never; ok: true }
->;
+export type UCPResponse<TRes> = AsyncResult<TRes, UCPServiceError>;
 
 export type UCPService = {
   /**
@@ -23,7 +23,7 @@ export type UCPService = {
    * @param input - The input data for the cancel checkout session.
    * @returns The result of the checkout session.
    */
-  cancelCheckout: (input: { id: string }) => AsyncResult<CheckoutResponse>;
+  cancelCheckout: (input: { id: string }) => UCPResponse<CheckoutResponse>;
   /**
    * Completes a checkout session.
    * @param input - The input data for the complete checkout session.
@@ -32,7 +32,7 @@ export type UCPService = {
    */
   completeCheckoutSession: (
     input: CompleteCheckoutRequestWithAp2,
-  ) => AsyncResult<CheckoutResponse>;
+  ) => UCPResponse<CheckoutResponse>;
   /**
    * Creates a checkout session.
    * @link https://ucp.dev/latest/specification/checkout/#create-checkout
@@ -41,7 +41,7 @@ export type UCPService = {
    */
   createCheckoutSession: (
     input: CheckoutCreateRequest,
-  ) => AsyncResult<CheckoutResponse>;
+  ) => UCPResponse<CheckoutResponse>;
   /**
    * Gets the discovery profile.
    * @link https://ucp.dev/latest/specification/overview/#discovery-governance-and-negotiation
@@ -54,14 +54,14 @@ export type UCPService = {
    * @param input - The input data for the get checkout session.
    * @returns The result of the checkout session.
    */
-  getCheckoutSession: (input: { id: string }) => AsyncResult<CheckoutResponse>;
+  getCheckoutSession: (input: { id: string }) => UCPResponse<CheckoutResponse>;
   /**
    * Gets an order.
    * @link https://ucp.dev/latest/specification/order/#get-order
    * @param input - The input data for the get order.
    * @returns The result of the order.
    */
-  getOrder: (input: { id: string }) => AsyncResult<UcpOrder>;
+  getOrder: (input: { id: string }) => UCPResponse<UcpOrder>;
   /**
    * Updates a checkout session.
    * @link https://ucp.dev/latest/specification/checkout/#update-checkout
@@ -70,5 +70,5 @@ export type UCPService = {
    */
   updateCheckoutSession: (
     input: CheckoutUpdateRequest,
-  ) => AsyncResult<CheckoutResponse>;
+  ) => UCPResponse<CheckoutResponse>;
 };

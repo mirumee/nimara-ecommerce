@@ -10,12 +10,17 @@ import {
 } from "@ucp-js/sdk";
 
 import { type LanguageCodeEnum } from "@nimara/codegen/schema";
-import { type AsyncResult, err, ok } from "@nimara/domain/objects/Result";
+import { err, ok } from "@nimara/domain/objects/Result";
+import type { NonEmptyArray } from "@nimara/domain/objects/types";
 
 import { graphqlClient } from "#root/graphql/client";
 import { getDiscoveryProfile } from "#root/ucp/profile";
 
-import { type UCPService } from "../types";
+import {
+  type UCPResponse,
+  type UCPService,
+  type UCPServiceError,
+} from "../types";
 import { mapSaleorErrorToUCP } from "./error-mapping";
 import {
   UcpCheckoutAddPromoCodeDocument,
@@ -32,6 +37,7 @@ import {
 } from "./graphql/queries/generated";
 import {
   calculateCheckoutExpiration,
+  lineItemsFromSaleorCheckoutLines,
   toSaleorAddress,
   validateCheckoutTermsDummy,
   verifyCheckoutMandateDummy,
@@ -67,7 +73,7 @@ type CheckoutCreateInput =
  */
 const mapSaleorMutationErrors = (
   saleorErrors: GraphQLMutationError[] | undefined | null,
-) => {
+): NonEmptyArray<UCPServiceError> => {
   if (!saleorErrors || saleorErrors.length === 0) {
     return [
       {
@@ -77,12 +83,9 @@ const mapSaleorMutationErrors = (
     ];
   }
 
-  return saleorErrors.map((error) => {
+  const toUcpServiceError = (error: GraphQLMutationError): UCPServiceError => {
     // Extract Saleor error code if available
-    const saleorCode =
-      (error as Record<string, unknown>).code ??
-      error.message?.split(":")[0] ??
-      "INVALID";
+    const saleorCode = error.code ?? error.message?.split(":")[0] ?? "INVALID";
 
     // Map to UCP error for reference (phase 2 will use this in messages array)
     const ucpMapping = mapSaleorErrorToUCP(
@@ -112,7 +115,30 @@ const mapSaleorMutationErrors = (
         severity: ucpMapping.severity,
       },
     };
-  });
+  };
+
+  const [firstError, ...restErrors] = saleorErrors;
+  const fallbackFirstError: GraphQLMutationError = {
+    code: "INVALID",
+    message: "Unknown checkout error occurred.",
+  };
+
+  return [
+    toUcpServiceError(firstError ?? fallbackFirstError),
+    ...restErrors.map(toUcpServiceError),
+  ];
+};
+
+const toNonEmptyErrors = (
+  errors: UCPServiceError[],
+): NonEmptyArray<UCPServiceError> | null => {
+  const [firstError, ...restErrors] = errors;
+
+  if (!firstError) {
+    return null;
+  }
+
+  return [firstError, ...restErrors];
 };
 
 type GraphQLClient = NonNullable<ReturnType<typeof graphqlClient>>;
@@ -136,7 +162,7 @@ const applyCheckoutDiscounts = async (
   checkoutId: string,
   requestedCodes: string[] | undefined,
   currentVoucherCode: string | null | undefined,
-): Promise<{ code: string; message: string }[]> => {
+): Promise<UCPServiceError[]> => {
   const newCode = requestedCodes?.[0];
 
   if (newCode) {
@@ -184,16 +210,17 @@ const applyCheckoutDiscounts = async (
 
 export const saleorUCPService = ({
   apiUrl,
-  baseUrl,
+  storefrontURL,
   channel,
   defaultEmail,
+  version,
   capabilities = [],
   languageCode = DEFAULT_LANGUAGE_CODE,
   requireAp2Mandate = false,
 }: UCPSaleorServiceConfig): UCPService => ({
   createCheckoutSession: async (
     input: CheckoutCreateInput,
-  ): AsyncResult<CheckoutResponse> => {
+  ): UCPResponse<CheckoutResponse> => {
     const client = graphqlClient(apiUrl);
 
     if (!client) {
@@ -247,7 +274,7 @@ export const saleorUCPService = ({
         const saleorErrors = result.data.checkoutCreate?.errors;
         const errors = mapSaleorMutationErrors(saleorErrors);
 
-        return err(errors as any);
+        return err(errors);
       }
 
       const discountInput = (input as CheckoutWithDiscountCreateRequest)
@@ -262,8 +289,10 @@ export const saleorUCPService = ({
       // Transport-level failures from discount application are still fatal.
       // Saleor-level errors (unknown/expired codes) are already silently
       // ignored inside applyCheckoutDiscounts per UCP spec.
-      if (discountErrors.length > 0) {
-        return err(discountErrors as any);
+      const nonEmptyDiscountErrors = toNonEmptyErrors(discountErrors);
+
+      if (nonEmptyDiscountErrors) {
+        return err(nonEmptyDiscountErrors);
       }
 
       // Re-fetch to reflect any applied discount in the response
@@ -277,25 +306,37 @@ export const saleorUCPService = ({
         if (refreshed.ok && refreshed.data.checkout) {
           const session = toUCPCheckoutSession(
             refreshed.data.checkout,
+            storefrontURL,
             undefined,
-            baseUrl,
           );
 
           return ok(
-            sessionToCheckoutResponse(
+            sessionToCheckoutResponse({
+              version,
               session,
               capabilities,
-              toPaymentHandlers(refreshed.data.checkout),
-            ),
+              paymentHandlers: toPaymentHandlers({
+                version,
+                checkout: refreshed.data.checkout,
+              }),
+            }),
           );
         }
       }
 
-      const session = toUCPCheckoutSession(checkout, undefined, baseUrl);
-      const paymentHandlers = toPaymentHandlers(checkout);
+      const session = toUCPCheckoutSession(checkout, storefrontURL, undefined);
+      const paymentHandlers = toPaymentHandlers({
+        version,
+        checkout,
+      });
 
       return ok(
-        sessionToCheckoutResponse(session, capabilities, paymentHandlers),
+        sessionToCheckoutResponse({
+          version,
+          session,
+          capabilities,
+          paymentHandlers,
+        }),
       );
     } catch (error) {
       return err([
@@ -311,7 +352,7 @@ export const saleorUCPService = ({
 
   getCheckoutSession: async (input: {
     id: string;
-  }): AsyncResult<CheckoutResponse> => {
+  }): UCPResponse<CheckoutResponse> => {
     const client = graphqlClient(apiUrl);
 
     if (!client) {
@@ -347,13 +388,21 @@ export const saleorUCPService = ({
 
       const session = toUCPCheckoutSession(
         result.data.checkout,
+        storefrontURL,
         undefined,
-        baseUrl,
       );
-      const paymentHandlers = toPaymentHandlers(result.data.checkout);
+      const paymentHandlers = toPaymentHandlers({
+        version,
+        checkout: result.data.checkout,
+      });
 
       return ok(
-        sessionToCheckoutResponse(session, capabilities, paymentHandlers),
+        sessionToCheckoutResponse({
+          version,
+          session,
+          capabilities,
+          paymentHandlers,
+        }),
       );
     } catch {
       return err([
@@ -365,7 +414,7 @@ export const saleorUCPService = ({
     }
   },
 
-  getOrder: async (input: { id: string }): AsyncResult<UcpOrder> => {
+  getOrder: async (input: { id: string }): UCPResponse<UcpOrder> => {
     const client = graphqlClient(apiUrl);
 
     if (!client) {
@@ -398,22 +447,25 @@ export const saleorUCPService = ({
         ]);
       }
 
-      const order = orderToUCPOrder(result.data.order, capabilities, baseUrl);
+      const order = orderToUCPOrder({
+        order: result.data.order,
+        storefrontURL,
+        capabilities,
+      });
 
       return ok(order);
-    } catch {
+    } catch (error) {
       return err([
         {
-          code: "NOT_FOUND_ERROR",
-          message: "Order not found.",
+          code: "NOT_AVAILABLE_ERROR",
+          message: "Failed to get order",
         },
       ]);
     }
   },
-
   updateCheckoutSession: async (
     input: CheckoutUpdateRequest | CheckoutWithDiscountUpdateRequest,
-  ): AsyncResult<CheckoutResponse> => {
+  ): UCPResponse<CheckoutResponse> => {
     const client = graphqlClient(apiUrl);
 
     if (!client) {
@@ -453,14 +505,16 @@ export const saleorUCPService = ({
         ]);
       }
 
-      const currentLinesByVariant = new Map(
-        existingCheckoutResult.data.checkout.lines.map((line) => [
-          line.variant.id,
-          line.quantity,
-        ]),
+      const checkoutEntity = existingCheckoutResult.data.checkout;
+      const incomingLineItems =
+        input.line_items ??
+        lineItemsFromSaleorCheckoutLines(checkoutEntity.lines);
+
+      const currentLinesByVariant = new Map<string, number>(
+        checkoutEntity.lines.map((line) => [line.variant.id, line.quantity]),
       );
-      const incomingLinesByVariant = new Map(
-        input.line_items.map((line) => [line.item.id, line.quantity]),
+      const incomingLinesByVariant = new Map<string, number>(
+        incomingLineItems.map((line) => [line.item.id, line.quantity]),
       );
       const allVariantIds = new Set([
         ...currentLinesByVariant.keys(),
@@ -519,7 +573,7 @@ export const saleorUCPService = ({
         if (itemUpdateErrors.length > 0) {
           const errors = mapSaleorMutationErrors(itemUpdateErrors);
 
-          return err(errors as any);
+          return err(errors);
         }
       }
 
@@ -581,7 +635,7 @@ export const saleorUCPService = ({
       if (allUpdateErrors.length > 0) {
         const errors = mapSaleorMutationErrors(allUpdateErrors);
 
-        return err(errors as any);
+        return err(errors);
       }
 
       const discountInput = (input as CheckoutWithDiscountUpdateRequest)
@@ -598,8 +652,10 @@ export const saleorUCPService = ({
           currentVoucherCode,
         );
 
-        if (discountErrors.length > 0) {
-          return err(discountErrors as any);
+        const nonEmptyDiscountErrors = toNonEmptyErrors(discountErrors);
+
+        if (nonEmptyDiscountErrors) {
+          return err(nonEmptyDiscountErrors);
         }
       }
 
@@ -632,15 +688,21 @@ export const saleorUCPService = ({
 
       const session = toUCPCheckoutSession(
         refreshedCheckoutResult.data.checkout,
+        storefrontURL,
         undefined,
-        baseUrl,
       );
-      const paymentHandlers = toPaymentHandlers(
-        refreshedCheckoutResult.data.checkout,
-      );
+      const paymentHandlers = toPaymentHandlers({
+        version,
+        checkout: refreshedCheckoutResult.data.checkout,
+      });
 
       return ok(
-        sessionToCheckoutResponse(session, capabilities, paymentHandlers),
+        sessionToCheckoutResponse({
+          version,
+          session,
+          capabilities,
+          paymentHandlers,
+        }),
       );
     } catch {
       return err([
@@ -654,7 +716,7 @@ export const saleorUCPService = ({
 
   completeCheckoutSession: async (
     input: CompleteCheckoutRequestWithAp2,
-  ): AsyncResult<CheckoutResponse> => {
+  ): UCPResponse<CheckoutResponse> => {
     const client = graphqlClient(apiUrl);
 
     if (!client) {
@@ -712,15 +774,19 @@ export const saleorUCPService = ({
         ]);
       }
 
-      const currentCheckout = sessionToCheckoutResponse(
-        toUCPCheckoutSession(
+      const currentCheckout = sessionToCheckoutResponse({
+        version,
+        session: toUCPCheckoutSession(
           currentCheckoutResult.data.checkout,
+          storefrontURL,
           undefined,
-          baseUrl,
         ),
         capabilities,
-        toPaymentHandlers(currentCheckoutResult.data.checkout),
-      );
+        paymentHandlers: toPaymentHandlers({
+          version,
+          checkout: currentCheckoutResult.data.checkout,
+        }),
+      });
 
       if (requireAp2Mandate && input.ap2?.checkout_mandate) {
         const authVerification =
@@ -781,7 +847,7 @@ export const saleorUCPService = ({
       if (completeErrors && completeErrors.length > 0) {
         const errors = mapSaleorMutationErrors(completeErrors);
 
-        return err(errors as any);
+        return err(errors);
       }
 
       const order = result.data.checkoutComplete?.order;
@@ -809,7 +875,7 @@ export const saleorUCPService = ({
         },
       );
 
-      if (!checkoutResult.ok || !checkoutResult.data.checkout) {
+      if (!checkoutResult.ok || !checkoutResult.data?.checkout) {
         const fallbackSession: UCPCheckoutSessionModel = {
           id: checkoutId,
           status: "completed",
@@ -821,33 +887,55 @@ export const saleorUCPService = ({
           expiresAtISO: calculateCheckoutExpiration(),
           order: {
             id: order.id,
-            permalinkUrl: `${baseUrl}/orders/${order.id}`,
+            permalinkUrl: new URL(
+              `/orders/${order.id}`,
+              storefrontURL,
+            ).toString(),
           },
         };
 
-        return ok(sessionToCheckoutResponse(fallbackSession, capabilities));
+        return ok(
+          sessionToCheckoutResponse({
+            version,
+            session: fallbackSession,
+            capabilities,
+            paymentHandlers: toPaymentHandlers({
+              version,
+              checkout: checkoutResult.data?.checkout ?? {
+                availablePaymentGateways: [],
+              },
+            }),
+          }),
+        );
       }
 
-      const paymentHandlers = toPaymentHandlers(checkoutResult.data.checkout);
+      const paymentHandlers = toPaymentHandlers({
+        version,
+        checkout: checkoutResult.data.checkout,
+      });
       const completedSession: UCPCheckoutSessionModel = {
         ...toUCPCheckoutSession(
           checkoutResult.data.checkout,
+          storefrontURL,
           undefined,
-          baseUrl,
         ),
         status: "completed",
         order: {
           id: order.id,
-          permalinkUrl: `${baseUrl}/orders/${order.id}`,
+          permalinkUrl: new URL(
+            `/orders/${order.id}`,
+            storefrontURL,
+          ).toString(),
         },
       };
 
       return ok(
-        sessionToCheckoutResponse(
-          completedSession,
+        sessionToCheckoutResponse({
+          version,
+          session: completedSession,
           capabilities,
           paymentHandlers,
-        ),
+        }),
       );
     } catch {
       return err([
@@ -860,34 +948,179 @@ export const saleorUCPService = ({
   },
 
   /**
-   * Cancels a checkout session.
+   * Cancels a checkout session per UCP by removing all cart lines.
    *
-   * Note: Saleor does not provide native checkout deletion/cancellation API.
-   * Checkouts are automatically expired by Saleor after a TTL (6h for empty,
-   * 30d for anonymous, 90d for user checkouts). See:
+   * Saleor has no dedicated “cancel checkout” mutation; empty checkouts expire
+   * sooner (e.g. 6h) than non-empty ones. See:
    * https://docs.saleor.io/developer/checkout/lifecycle#checkout-expiration-and-deletion
    *
-   * Workaround alternatives:
-   * 1. Remove all lines from checkout (leaves empty checkout, expires in 6h)
-   * 2. Mark checkout as "canceled" via metadata webhook
-   * 3. Let platform handle cancellation UI (user navigates away, timeout)
-   *
-   * Current: Returns error as per spec guidance for unsupported operations.
-   * Spec: "If the checkout session cannot be canceled (e.g. checkout session
-   *        is already canceled or completed), then businesses SHOULD send back
-   *        an error indicating the operation is not allowed."
+   * Completed checkouts (e.g. payment authorized / order placed) cannot be canceled.
    */
-  cancelCheckout: async (_input: {
+  cancelCheckout: async (input: {
     id: string;
-  }): AsyncResult<CheckoutResponse> => {
-    return err([
-      {
-        code: "BAD_REQUEST_ERROR",
-        message:
-          "Checkout cancellation is not directly supported by Saleor. " +
-          "Checkouts expire automatically (6h empty, 30d anonymous, 90d user). " +
-          "To cancel, remove all lines or navigate away.",
-      },
-    ]);
+  }): UCPResponse<CheckoutResponse> => {
+    const client = graphqlClient(apiUrl);
+
+    if (!client) {
+      return err([
+        {
+          code: "BAD_REQUEST_ERROR",
+          message: "Missing Saleor API URL.",
+        },
+      ]);
+    }
+
+    try {
+      const existingResult = await client.execute(
+        UcpCheckoutSessionGetDocument,
+        {
+          variables: {
+            id: input.id,
+            languageCode,
+          },
+          operationName: "UCP:CheckoutSessionGetQuery",
+          options: {
+            cache: "no-store",
+          },
+        },
+      );
+
+      if (!existingResult.ok) {
+        return err(existingResult.errors);
+      }
+
+      const checkout = existingResult.data.checkout;
+
+      if (!checkout) {
+        return err([
+          {
+            code: "CHECKOUT_NOT_FOUND_ERROR",
+            message: "Checkout session not found.",
+          },
+        ]);
+      }
+
+      if (checkout.authorizeStatus === "FULL") {
+        return err([
+          {
+            code: "CHECKOUT_COMPLETE_ERROR",
+            message:
+              "Checkout cannot be canceled because it is already completed or fully authorized.",
+          },
+        ]);
+      }
+
+      const buildCanceledResponse = () => {
+        const refreshed = existingResult.data.checkout!;
+
+        const session = toUCPCheckoutSession(
+          refreshed,
+          storefrontURL,
+          undefined,
+        );
+
+        return ok(
+          sessionToCheckoutResponse({
+            version,
+            session: { ...session, status: "canceled" },
+            capabilities,
+            paymentHandlers: toPaymentHandlers({
+              version,
+              checkout: refreshed,
+            }),
+          }),
+        );
+      };
+
+      if (checkout.lines.length === 0) {
+        return buildCanceledResponse();
+      }
+
+      const linesToUpdate: SaleorCheckoutLineInput[] = checkout.lines.map(
+        (line) => ({
+          variantId: line.variant.id,
+          quantity: 0,
+        }),
+      );
+
+      const itemsUpdateResult = await client.execute(
+        UcpCheckoutSessionItemUpdateDocument,
+        {
+          variables: {
+            checkoutId: input.id,
+            linesToAdd: [],
+            shouldAddLines: false,
+            linesToUpdate,
+            shouldUpdateLines: true,
+          },
+          operationName: "UCP:CheckoutSessionItemUpdateMutation",
+          options: {
+            cache: "no-store",
+          },
+        },
+      );
+
+      if (!itemsUpdateResult.ok) {
+        return err(itemsUpdateResult.errors);
+      }
+
+      const itemUpdateErrors = [
+        ...(itemsUpdateResult.data.checkoutLinesUpdate?.errors || []),
+      ];
+
+      if (itemUpdateErrors.length > 0) {
+        const errors = mapSaleorMutationErrors(itemUpdateErrors);
+
+        return err(errors);
+      }
+
+      const refreshedResult = await client.execute(
+        UcpCheckoutSessionGetDocument,
+        {
+          variables: {
+            id: input.id,
+            languageCode,
+          },
+          operationName: "UCP:CheckoutSessionGetQuery",
+          options: {
+            cache: "no-store",
+          },
+        },
+      );
+
+      if (!refreshedResult.ok || !refreshedResult.data.checkout) {
+        return err([
+          {
+            code: "CHECKOUT_NOT_FOUND_ERROR",
+            message: "Checkout session not found after cancel.",
+          },
+        ]);
+      }
+
+      const session = toUCPCheckoutSession(
+        refreshedResult.data.checkout,
+        storefrontURL,
+        undefined,
+      );
+
+      return ok(
+        sessionToCheckoutResponse({
+          version,
+          session: { ...session, status: "canceled" },
+          capabilities,
+          paymentHandlers: toPaymentHandlers({
+            version,
+            checkout: refreshedResult.data.checkout,
+          }),
+        }),
+      );
+    } catch {
+      return err([
+        {
+          code: "CHECKOUT_COMPLETE_ERROR",
+          message: "Failed to cancel checkout session",
+        },
+      ]);
+    }
   },
 });

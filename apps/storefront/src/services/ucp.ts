@@ -3,6 +3,7 @@ import { type UCPService } from "@nimara/infrastructure/ucp/types";
 
 import { clientEnvs } from "@/envs/client";
 import { UCP_CAPABILITIES } from "@/features/ucp/capabilities";
+import { UCP_VERSION } from "@/features/ucp/config";
 
 const serviceByChannel = new Map<string, UCPService>();
 
@@ -21,7 +22,8 @@ export const getUCPService = async (config: {
 
   const service = saleorUCPService({
     apiUrl: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
-    baseUrl: clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
+    storefrontURL: clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
+    version: UCP_VERSION,
     capabilities: UCP_CAPABILITIES,
     channel: config.channelSlug,
     logger: getLogger({ name: "ucp" }),

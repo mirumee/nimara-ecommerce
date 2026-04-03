@@ -17,10 +17,6 @@ export type UCPSaleorServiceConfig = {
    */
   apiUrl: string;
   /**
-   * Base URL to use for checkout sessions and orders.
-   */
-  baseUrl: string;
-  /**
    * Capabilities to use for checkout sessions and orders.
    */
   capabilities?: UcpDiscoveryProfile["ucp"]["capabilities"];
@@ -44,11 +40,20 @@ export type UCPSaleorServiceConfig = {
    * Whether to require AP2 mandate for checkout sessions and orders.
    */
   requireAp2Mandate?: boolean;
+  /**
+   * Base URL to use for checkout sessions and orders.
+   */
+  storefrontURL: string;
+  /**
+   * UCP version to use for checkout sessions and orders.
+   */
+  version: string;
 };
 
 /** GraphQL mutation error shape. */
 export type GraphQLMutationError = {
-  message: string | null;
+  code?: string | null;
+  message?: string | null;
 };
 
 /** UCP API error returned to the client. */

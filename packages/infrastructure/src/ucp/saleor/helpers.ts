@@ -1,5 +1,6 @@
 import {
   type CheckoutResponse,
+  type CheckoutUpdateRequest,
   type LinkElement,
   type PostalAddress,
 } from "@ucp-js/sdk";
@@ -47,6 +48,30 @@ export function toSaleorAddress(
     streetAddress2: "",
   };
 }
+
+type SaleorCheckoutLineLike = {
+  quantity: number;
+  variant: {
+    id: string;
+    name: string;
+  };
+};
+
+/**
+ * Builds UCP line_items payload from Saleor checkout lines.
+ * Used as a fallback when update request does not include line_items.
+ */
+export const lineItemsFromSaleorCheckoutLines = (
+  lines: SaleorCheckoutLineLike[],
+): NonNullable<CheckoutUpdateRequest["line_items"]> => {
+  return lines.map((line) => ({
+    item: {
+      id: line.variant.id,
+      title: line.variant.name,
+    },
+    quantity: line.quantity,
+  }));
+};
 
 /**
  * Converts a currency amount to its minor unit representation.
@@ -234,29 +259,29 @@ export const calculateCheckoutExpiration = (
  * Generates UCP-compliant well-known links for checkout.
  * Links are required by spec for legal compliance (privacy policy, TOS, etc).
  *
- * @param baseUrl - Base URL for link construction (e.g., "https://example.com")
+ * @param storefrontURL - Base URL for link construction (e.g., "https://example.com")
  * @returns Array of LinkElement with well-known types
  */
-export const generateCheckoutLinks = (baseUrl: string): LinkElement[] => {
+export const generateCheckoutLinks = (storefrontURL: string): LinkElement[] => {
   return [
     {
       type: "privacy_policy",
-      url: `${baseUrl}/privacy-policy`,
+      url: `${storefrontURL}/privacy-policy`,
       title: "Privacy Policy",
     },
     {
       type: "terms_of_service",
-      url: `${baseUrl}/terms-of-service`,
+      url: `${storefrontURL}/terms-of-service`,
       title: "Terms of Service",
     },
     {
       type: "refund_policy",
-      url: `${baseUrl}/refund-policy`,
+      url: `${storefrontURL}/refund-policy`,
       title: "Refund Policy",
     },
     {
       type: "shipping_policy",
-      url: `${baseUrl}/shipping-policy`,
+      url: `${storefrontURL}/shipping-policy`,
       title: "Shipping Policy",
     },
   ];
@@ -279,11 +304,17 @@ export const generateCheckoutLinks = (baseUrl: string): LinkElement[] => {
  * - missingDeliveryMethod: !checkout.deliveryMethod
  * - customRequirement: your business logic
  */
-export const generateContinueUrl = (
-  checkoutId: string,
-  baseUrl: string,
-  conditions?: Record<string, boolean>,
-): string | undefined => {
+export const generateContinueUrl = ({
+  checkoutId,
+  storefrontURL,
+  channelSlug,
+  conditions,
+}: {
+  checkoutId: string;
+  storefrontURL: string;
+  channelSlug: string;
+  conditions?: Record<string, boolean>;
+}): string | undefined => {
   // If conditions are provided, only generate if any condition is true
   if (conditions) {
     const needsContinueUrl = Object.values(conditions).some((val) => val);
@@ -293,6 +324,13 @@ export const generateContinueUrl = (
     }
   }
 
-  // Generate server-side state URL (recommended by spec)
-  return `${baseUrl}/checkout/${checkoutId}`;
+  const checkoutURL = new URL("checkout", storefrontURL);
+  const params = new URLSearchParams();
+
+  params.set("checkoutID", checkoutId);
+  params.set("redirectPath", `/${channelSlug}/checkout/`);
+
+  checkoutURL.search = params.toString();
+
+  return checkoutURL.toString();
 };

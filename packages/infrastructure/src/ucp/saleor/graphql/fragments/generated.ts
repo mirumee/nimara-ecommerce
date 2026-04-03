@@ -1,6 +1,8 @@
 import type * as Types from '@nimara/codegen/schema';
 
 import type { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
+export type UcpCheckoutSessionFragment_Checkout_channel_Channel = { slug: string };
+
 export type UcpCheckoutSessionFragment_Checkout_discount_Money = { amount: number, currency: string };
 
 export type UcpCheckoutSessionFragment_Checkout_shippingMethods_ShippingMethod_price_Money = { amount: number, currency: string };
@@ -96,7 +98,7 @@ export type UcpCheckoutSessionFragment_Checkout_problems =
   | UcpCheckoutSessionFragment_Checkout_problems_CheckoutLineProblemVariantNotAvailable
 ;
 
-export type UcpCheckoutSessionFragment = { id: string, email: string | null, displayGrossPrices: boolean, voucherCode: string | null, isShippingRequired: boolean, authorizeStatus: Types.CheckoutAuthorizeStatusEnum, chargeStatus: Types.CheckoutChargeStatusEnum, buyer: string | null, discount: UcpCheckoutSessionFragment_Checkout_discount_Money | null, shippingMethods: Array<UcpCheckoutSessionFragment_Checkout_shippingMethods_ShippingMethod>, shippingAddress: UcpCheckoutSessionFragment_Checkout_shippingAddress_Address | null, billingAddress: UcpCheckoutSessionFragment_Checkout_billingAddress_Address | null, deliveryMethod: UcpCheckoutSessionFragment_Checkout_deliveryMethod_ShippingMethod_Warehouse | null, availablePaymentGateways: Array<UcpCheckoutSessionFragment_Checkout_availablePaymentGateways_PaymentGateway>, lines: Array<UcpCheckoutSessionFragment_Checkout_lines_CheckoutLine>, totalPrice: UcpCheckoutSessionFragment_Checkout_totalPrice_TaxedMoney, subtotalPrice: UcpCheckoutSessionFragment_Checkout_subtotalPrice_TaxedMoney, shippingPrice: UcpCheckoutSessionFragment_Checkout_shippingPrice_TaxedMoney, problems: Array<UcpCheckoutSessionFragment_Checkout_problems> | null };
+export type UcpCheckoutSessionFragment = { id: string, email: string | null, displayGrossPrices: boolean, voucherCode: string | null, isShippingRequired: boolean, authorizeStatus: Types.CheckoutAuthorizeStatusEnum, chargeStatus: Types.CheckoutChargeStatusEnum, buyer: string | null, channel: UcpCheckoutSessionFragment_Checkout_channel_Channel, discount: UcpCheckoutSessionFragment_Checkout_discount_Money | null, shippingMethods: Array<UcpCheckoutSessionFragment_Checkout_shippingMethods_ShippingMethod>, shippingAddress: UcpCheckoutSessionFragment_Checkout_shippingAddress_Address | null, billingAddress: UcpCheckoutSessionFragment_Checkout_billingAddress_Address | null, deliveryMethod: UcpCheckoutSessionFragment_Checkout_deliveryMethod_ShippingMethod_Warehouse | null, availablePaymentGateways: Array<UcpCheckoutSessionFragment_Checkout_availablePaymentGateways_PaymentGateway>, lines: Array<UcpCheckoutSessionFragment_Checkout_lines_CheckoutLine>, totalPrice: UcpCheckoutSessionFragment_Checkout_totalPrice_TaxedMoney, subtotalPrice: UcpCheckoutSessionFragment_Checkout_subtotalPrice_TaxedMoney, shippingPrice: UcpCheckoutSessionFragment_Checkout_shippingPrice_TaxedMoney, problems: Array<UcpCheckoutSessionFragment_Checkout_problems> | null };
 
 export type UcpOrderFragment_Order_metadata_MetadataItem = { key: string, value: string };
 
@@ -139,6 +141,9 @@ export class TypedDocumentString<TResult, TVariables>
 export const UcpCheckoutSessionFragment = new TypedDocumentString(`
     fragment UCPCheckoutSessionFragment on Checkout {
   ...CheckoutFragment
+  channel {
+    slug
+  }
   buyer: metafield(key: "ucp.buyer.json")
 }
     fragment CheckoutFragment on Checkout {
