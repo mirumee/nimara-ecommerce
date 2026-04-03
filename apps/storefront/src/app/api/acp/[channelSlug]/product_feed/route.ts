@@ -19,7 +19,7 @@ export async function GET(
     if (idempotencyKey) {
       const cached = idempotencyStorage.get(idempotencyKey);
 
-      if (cached) {
+      if (cached?.cached) {
         storefrontLogger.debug(
           "Idempotent request - returning cached response",
           {
@@ -27,7 +27,7 @@ export async function GET(
           },
         );
 
-        return idempotencyStorage.createResponse(cached);
+        return idempotencyStorage.createResponse(cached.cached);
       }
     }
   }

@@ -23,6 +23,7 @@
     "@nimara/infrastructure": "workspace:*",
     "@nimara/ui": "workspace:*",
     "@opentelemetry/api": "1.9.0",
+    "@ucp-js/sdk": "0.1.0",
     "@sentry/nextjs": "^10.43.0",
     "@sentry/types": "^10.43.0",
     "@uidotdev/usehooks": "2.4.1",

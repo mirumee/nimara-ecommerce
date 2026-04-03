@@ -170,3 +170,41 @@ This page lists and explains all environment variables used by the Nimara storef
 - **Description**: Algolia search API key. Required if `NEXT_PUBLIC_SEARCH_SERVICE` is set to `ALGOLIA`.
 - **How to get it**: Algolia dashboard -> **API Keys** -> copy the `Search API key`.
 - **Example**: `your-algolia-search-api-key`
+
+---
+
+### UCP (Unified Commerce Protocol)
+
+Variables used by the UCP discovery endpoint at `/.well-known/ucp` for Google Pay and checkout capabilities.
+
+#### `NEXT_PUBLIC_GOOGLE_PAY_ENV`
+
+- **Description**: Google Pay environment (e.g. `TEST`, `PRODUCTION`).
+- **Example**: `TEST`
+
+#### `NEXT_PUBLIC_GOOGLE_PAY_MERCHANT_NAME`
+
+- **Description**: Merchant display name for Google Pay.
+- **Example**: `My Store`
+
+#### `NEXT_PUBLIC_GOOGLE_PAY_MERCHANT_ID`
+
+- **Description**: Google Pay merchant ID.
+
+#### `NEXT_PUBLIC_GOOGLE_PAY_MERCHANT_ORIGIN`
+
+- **Description**: Merchant origin URL for Google Pay (e.g. `https://my-store.com`).
+
+#### `NEXT_PUBLIC_GOOGLE_PAY_AUTH_JWT`
+
+- **Description**: JWT for Google Pay authentication.
+
+#### `NEXT_PUBLIC_GOOGLE_PAY_GATEWAY`
+
+- **Description**: Payment gateway identifier for Google Pay tokenization.
+
+#### `NEXT_PUBLIC_GOOGLE_PAY_GATEWAY_MERCHANT_ID`
+
+- **Description**: Gateway-specific merchant ID.
+
+**Note**: `NEXT_PUBLIC_STOREFRONT_URL` is used for the UCP checkout endpoint URL. Ensure it is set when using UCP.
