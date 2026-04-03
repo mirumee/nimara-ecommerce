@@ -217,6 +217,7 @@
         "failed-to-load-user-data": "Failed to load user data",
         "heading": "General",
         "name-placeholder": "Vendor name",
+        "storefront-vendor-page-link": "Storefront Vendor Page",
         "toast-update-account-failed": "Failed to update account",
         "validation-name-required": "Name is required"
       }
