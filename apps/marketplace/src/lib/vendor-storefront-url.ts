@@ -11,5 +11,5 @@ export function buildVendorStorefrontUrl(
     String(opts.nameFallback).toLowerCase().replace(/\s+/g, "-");
   const base = storefrontBaseUrl.replace(/\/$/, "");
 
-  return `${base}/vendor/${segment}`;
+  return new URL(`vendor/${segment}`, base).toString();
 }
