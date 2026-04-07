@@ -15,6 +15,7 @@ import { cn } from "@nimara/ui/lib/utils";
 
 export interface CartDetailsProps {
   cart: Cart;
+  lineCheckoutIdMap?: Record<string, string>;
   onCartUpdate: (cartId: string) => Promise<void>;
   onLineDelete: (params: {
     cartId: string;
@@ -35,6 +36,7 @@ export interface CartDetailsProps {
 export const CartDetails = ({
   cart,
   user,
+  lineCheckoutIdMap,
   onLineQuantityChange,
   onLineDelete,
   onCartUpdate,
@@ -57,18 +59,21 @@ export const CartDetails = ({
   ].length;
 
   const isDisabled = isProcessing || !isCartValid;
+  const resolveCheckoutIdForLine = (lineId: string): string =>
+    lineCheckoutIdMap?.[lineId] ?? cart.id;
 
   const handleLineQuantityChange = async (lineId: string, quantity: number) => {
     setIsProcessing(true);
+    const checkoutId = resolveCheckoutIdForLine(lineId);
 
     const result = await onLineQuantityChange({
-      cartId: cart.id,
+      cartId: checkoutId,
       lineId,
       quantity,
     });
 
     if (result.ok) {
-      await onCartUpdate(cart.id);
+      await onCartUpdate(checkoutId);
       setIsProcessing(false);
 
       return;
@@ -84,14 +89,15 @@ export const CartDetails = ({
 
   const handleLineDelete = async (lineId: string) => {
     setIsProcessing(true);
+    const checkoutId = resolveCheckoutIdForLine(lineId);
 
     const result = await onLineDelete({
-      cartId: cart.id,
+      cartId: checkoutId,
       lineId,
     });
 
     if (result.ok) {
-      await onCartUpdate(cart.id);
+      await onCartUpdate(checkoutId);
       router.refresh();
     } else {
       result.errors.forEach((error) => {

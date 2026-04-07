@@ -57,6 +57,7 @@ export async function GET(request: NextRequest) {
       "MANAGE_ORDERS",
       "MANAGE_SHIPPING",
       "MANAGE_CHANNELS",
+      "HANDLE_PAYMENTS",
     ],
     tokenTargetUrl: manifestUrl(baseUrl, "/api/saleor/register"),
     appUrl: manifestUrl(baseUrl, "/app"),
@@ -108,6 +109,38 @@ export async function GET(request: NextRequest) {
   }
 }`,
         syncEvents: [],
+      },
+      {
+        name: "Transaction refund requested",
+        targetUrl: manifestUrl(
+          baseUrl,
+          "/api/saleor/webhooks/transaction-refund-requested",
+        ),
+        asyncEvents: [],
+        syncEvents: ["TRANSACTION_REFUND_REQUESTED"],
+        query: `subscription TransactionRefundRequestedSubscription {
+  event {
+    ... on TransactionRefundRequested {
+      action {
+        actionType
+        amount
+      }
+      transaction {
+        id
+        pspReference
+        sourceObject: order {
+          ... on Order {
+            total {
+              gross {
+                currency
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}`,
       },
     ],
     brand: {

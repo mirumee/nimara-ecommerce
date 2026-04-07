@@ -10,6 +10,7 @@ interface SummaryProps {
     promoCode: string;
   }) => Promise<Result<{ success: boolean }>>;
   checkout: Checkout;
+  hidePromoCode?: boolean;
   removePromoCodeAction?: (params: {
     checkoutId: string;
     promoCode: string;
@@ -20,6 +21,7 @@ export const Summary = ({
   checkout,
   addPromoCodeAction,
   removePromoCodeAction,
+  hidePromoCode = false,
 }: SummaryProps) => {
   return (
     <ShoppingBag>
@@ -29,11 +31,13 @@ export const Summary = ({
         isLinesEditable={false}
         problems={checkout.problems}
       />
-      <ShoppingBag.DiscountCode
-        checkout={checkout}
-        addPromoCodeAction={addPromoCodeAction}
-        removePromoCodeAction={removePromoCodeAction}
-      />
+      {!hidePromoCode && (
+        <ShoppingBag.DiscountCode
+          checkout={checkout}
+          addPromoCodeAction={addPromoCodeAction}
+          removePromoCodeAction={removePromoCodeAction}
+        />
+      )}
       <ShoppingBag.Pricing>
         <ShoppingBag.Subtotal price={checkout.subtotalPrice.gross} />
         <ShoppingBag.Shipping
