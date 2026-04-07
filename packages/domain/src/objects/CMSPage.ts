@@ -1,6 +1,10 @@
 export type CMSPage = {
   content: string | null;
   fields: PageField[];
+  /** Saleor page global ID (e.g. for vendor profile product metadata). */
+  id?: string;
+  /** Saleor page type slug when loaded from Saleor. */
+  pageTypeSlug?: string | null;
   title: string;
 };
 

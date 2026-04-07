@@ -110,8 +110,7 @@
         "search-placeholder": "Search collections",
         "table-availability": "Availability",
         "table-name": "Collection Name",
-        "table-products-count": "No. of Products",
-        "title": "Collections"
+        "table-products-count": "No. of Products"
       },
       "new": {
         "back-to-collections": "All collections",
@@ -206,9 +205,19 @@
         "account-information": "Account Information",
         "account-updated": "Account updated",
         "account-updated-desc": "Account information has been updated successfully.",
+        "branding": {
+          "appearance-intro": "When the marketplace is enabled, these images appear on your public vendor shop. The logo is shown in the shop hero; the background image sits behind your product listing.",
+          "appearance-settings-title": "Appearance settings",
+          "background-dimensions-help": "Recommended dimensions: 1920×512px.",
+          "logo-label": "Shop logo",
+          "toast-background-success-desc": "Background image has been updated.",
+          "toast-logo-success-desc": "Logo has been updated.",
+          "toast-upload-failed": "Could not upload image"
+        },
         "failed-to-load-user-data": "Failed to load user data",
         "heading": "General",
         "name-placeholder": "Vendor name",
+        "storefront-vendor-page-link": "Storefront Vendor Page",
         "toast-update-account-failed": "Failed to update account",
         "validation-name-required": "Name is required"
       }
@@ -216,10 +225,8 @@
     "customers": {
       "no-customers-found": "No customers found",
       "no-matching": "No matching customers",
-      "search-placeholder": "Search customers"
-    },
-    "dashboard": {
-      "title": "Dashboard"
+      "search-placeholder": "Search customers",
+      "table-orders-count": "No. of Orders"
     },
     "stripeConnect": {
       "title": "Stripe setup required",
@@ -234,8 +241,7 @@
         "empty-list": "No drafts found",
         "failed-to-load": "Failed to load drafts",
         "search-placeholder": "Search drafts...",
-        "table-draft-no": "Draft No.",
-        "title": "Drafts"
+        "table-draft-no": "Draft No."
       }
     },
     "layout": {
@@ -320,6 +326,7 @@
         "subtotal": "Subtotal",
         "timeline": "Timeline",
         "toast-add-discount-failed": "Failed to add discount",
+        "toast-add-lines-failed": "Failed to add products to order",
         "toast-add-note-failed": "Failed to add note",
         "toast-cancel-fulfillment-failed": "Failed to cancel fulfillment",
         "toast-draft-cancel-failed": "Draft cancel failed",
@@ -340,7 +347,6 @@
         "toast-order-canceled-desc": "The order was canceled successfully.",
         "toast-order-finalized": "Order finalized",
         "toast-remove-discount-failed": "Failed to remove discount",
-        "toast-add-lines-failed": "Failed to add products to order",
         "toast-remove-item-failed": "Failed to remove item",
         "toast-update-billing-failed": "Failed to update billing address",
         "toast-update-customer-failed": "Failed to update customer",
@@ -412,7 +418,6 @@
           "variant-selected": "1 variant selected ({sku})"
         },
         "variant-selection": {
-          "add-product": "Add product",
           "add-product-from-channel": "Add product from {channel}",
           "channel-only-hint": "You can only add products available for the order's channel",
           "loading-products": "Loading products...",
@@ -442,8 +447,7 @@
         "search-placeholder": "Search orders...",
         "table-fulfillment-status": "Fulfillment status",
         "table-order-no": "Order No.",
-        "table-payment-status": "Payment status",
-        "title": "Orders"
+        "table-payment-status": "Payment status"
       }
     },
     "pages": {
@@ -523,16 +527,13 @@
         "warehouses-count": "{count} warehouses"
       },
       "list": {
-        "add-product": "Add product",
         "empty-cta": "Create your first product",
         "empty-list": "No products found",
         "failed-to-load": "Failed to load products",
         "status-draft": "Draft",
         "status-published": "Published",
-        "table-category": "Category",
         "table-created-at": "Created At",
-        "table-image": "Image",
-        "title": "Products"
+        "table-image": "Image"
       },
       "new": {
         "all-products": "All products",

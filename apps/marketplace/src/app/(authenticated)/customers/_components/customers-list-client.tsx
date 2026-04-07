@@ -1,42 +1,43 @@
 "use client";
 
 import { Search } from "lucide-react";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+
+import { Card, CardContent } from "@nimara/ui/components/card";
+import { Input } from "@nimara/ui/components/input";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@nimara/ui/components/pagination";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@nimara/ui/components/select";
 
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@nimara/ui/components/accordion";
-import { Input } from "@nimara/ui/components/input";
-
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import type { VendorCustomerWithOrders } from "@/services/vendor-customers";
+
+const DEFAULT_PAGE_SIZE = 15;
+const PAGE_SIZE_OPTIONS = [15, 25, 50];
 
 function getCustomerName(customer: VendorCustomerWithOrders): string {
   const name = `${customer.firstName} ${customer.lastName}`.trim();
 
   return name || customer.email;
-}
-
-function formatMoney(
-  money: VendorCustomerWithOrders["orders"][number]["total"],
-): string {
-  if (!money) {
-    return "-";
-  }
-
-  return `${money.amount.toFixed(2)} ${money.currency}`;
-}
-
-function formatDate(dateRaw: string | null): string {
-  if (!dateRaw) {
-    return "-";
-  }
-
-  return new Date(dateRaw).toLocaleString();
 }
 
 export function CustomersListClient({
@@ -46,6 +47,8 @@ export function CustomersListClient({
 }) {
   const t = useTranslations();
   const [searchValue, setSearchValue] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
   const normalizedSearch = searchValue.trim().toLowerCase();
   const filteredCustomers = useMemo(() => {
     if (!normalizedSearch) {
@@ -63,88 +66,157 @@ export function CustomersListClient({
       );
     });
   }, [customers, normalizedSearch]);
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredCustomers.length / pageSize),
+  );
+  const safeCurrentPage = Math.min(currentPage, totalPages);
+  const hasNextPage = safeCurrentPage < totalPages;
+  const hasPreviousPage = safeCurrentPage > 1;
+  const paginatedCustomers = filteredCustomers.slice(
+    (safeCurrentPage - 1) * pageSize,
+    safeCurrentPage * pageSize,
+  );
 
-  if (customers.length === 0) {
-    return <p>{t("marketplace.customers.no-customers-found")}</p>;
-  }
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [normalizedSearch]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
+  const handlePageSizeChange = (newSize: string) => {
+    setPageSize(parseInt(newSize, 10));
+    setCurrentPage(1);
+  };
+
+  const handleNextPage = () => {
+    if (!hasNextPage) {
+      return;
+    }
+
+    setCurrentPage((prev) => prev + 1);
+  };
+
+  const handlePreviousPage = () => {
+    if (!hasPreviousPage) {
+      return;
+    }
+
+    setCurrentPage((prev) => prev - 1);
+  };
 
   return (
     <div className="grid gap-4">
-      <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          placeholder={t("marketplace.customers.search-placeholder")}
-          value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
-          className="pl-9"
-        />
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-semibold">{t("common.customers")}</h2>
       </div>
 
-      {filteredCustomers.length === 0 ? (
-        <p className="text-sm text-muted-foreground">
-          {t("marketplace.customers.no-matching")}
-        </p>
-      ) : (
-        <Accordion type="multiple" className="w-full">
-          {filteredCustomers.map((customer) => (
-            <AccordionItem
-              key={customer.id}
-              value={customer.id}
-              className="mb-2 rounded-lg border px-4"
-            >
-              <AccordionTrigger className="hover:no-underline">
-                <div className="flex w-full flex-col items-start gap-1 text-left md:pr-4">
-                  <p className="font-medium">{getCustomerName(customer)}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {customer.email}
-                  </p>
-                </div>
-              </AccordionTrigger>
-              <AccordionContent>
-                {customer.orders.length > 0 && (
-                  <div className="overflow-x-auto pb-2">
-                    <table className="min-w-full text-sm">
-                      <thead className="text-left text-muted-foreground">
-                        <tr className="border-b">
-                          <th className="py-2 pr-4">{t("common.order")}</th>
-                          <th className="py-2 pr-4">{t("common.created")}</th>
-                          <th className="py-2 pr-4">{t("common.status")}</th>
-                          <th className="py-2 pr-4">{t("common.payment")}</th>
-                          <th className="py-2">{t("common.total")}</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {customer.orders.map((order) => (
-                          <tr key={order.id} className="border-b last:border-0">
-                            <td className="py-2 pr-4">
-                              <Link
-                                href={`/orders/${order.id}`}
-                                className="text-primary hover:underline"
-                              >
-                                #{order.number ?? "-"}
-                              </Link>
-                            </td>
-                            <td className="py-2 pr-4">
-                              {formatDate(order.created)}
-                            </td>
-                            <td className="py-2 pr-4">
-                              {order.statusDisplay ?? "-"}
-                            </td>
-                            <td className="py-2 pr-4">
-                              {order.paymentStatusDisplay ?? "-"}
-                            </td>
-                            <td className="py-2">{formatMoney(order.total)}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      )}
+      <Card>
+        <CardContent className="p-0">
+          <div className="flex p-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder={t("marketplace.customers.search-placeholder")}
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+                className="w-64 pl-9"
+              />
+            </div>
+          </div>
+
+          <Table>
+            <TableHeader>
+              <TableRow className="border-t px-6 py-4">
+                <TableHead>{t("common.name")}</TableHead>
+                <TableHead>{t("common.email")}</TableHead>
+                <TableHead>
+                  {t("marketplace.customers.table-orders-count")}
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {customers.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={3} className="text-center">
+                    {t("marketplace.customers.no-customers-found")}
+                  </TableCell>
+                </TableRow>
+              ) : filteredCustomers.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={3} className="text-center">
+                    {t("marketplace.customers.no-matching")}
+                  </TableCell>
+                </TableRow>
+              ) : (
+                paginatedCustomers.map((customer) => (
+                  <TableRow key={customer.id}>
+                    <TableCell>{getCustomerName(customer)}</TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {customer.email}
+                    </TableCell>
+                    <TableCell>{customer.ordersCount}</TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+
+          <div className="flex items-center justify-between border-t p-4">
+            <div className="flex items-center gap-2">
+              <span className="w-24 text-sm text-muted-foreground">
+                {t("common.view-items")}
+              </span>
+              <Select
+                value={String(pageSize)}
+                onValueChange={handlePageSizeChange}
+              >
+                <SelectTrigger className="w-[70px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {PAGE_SIZE_OPTIONS.map((size) => (
+                    <SelectItem key={size} value={String(size)}>
+                      {size}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    label={t("common.previous")}
+                    onClick={handlePreviousPage}
+                    className={
+                      !hasPreviousPage
+                        ? "pointer-events-none opacity-50"
+                        : "cursor-pointer"
+                    }
+                  />
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationNext
+                    label={t("common.next")}
+                    onClick={handleNextPage}
+                    className={
+                      !hasNextPage
+                        ? "pointer-events-none opacity-50"
+                        : "cursor-pointer"
+                    }
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

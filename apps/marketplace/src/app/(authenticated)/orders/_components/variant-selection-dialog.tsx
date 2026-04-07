@@ -425,7 +425,7 @@ export function VariantSelectionDialog({
                   "marketplace.orders.dialogs.variant-selection.add-product-from-channel",
                   { channel: channelName },
                 )
-              : t("marketplace.orders.dialogs.variant-selection.add-product")}
+              : t("common.add-product", { count: 1 })}
           </DialogTitle>
           <p className="text-sm text-muted-foreground">
             {t(

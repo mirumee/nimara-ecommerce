@@ -1538,7 +1538,7 @@ export function OrderDetailClient({
                     className="bg-stone-900 hover:bg-stone-800"
                     onClick={() => setIsVariantDialogOpen(true)}
                   >
-                    {t("common.add-products")}
+                    {t("common.add-product", { count: 2 })}
                   </Button>
                 </div>
 

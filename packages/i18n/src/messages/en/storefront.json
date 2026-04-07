@@ -143,6 +143,9 @@
     "demo-version": "<link>This is the demo version of Nimara Store.</link>",
     "help": "Help",
     "made-with": "Made with ❤️ by <link>Mirumee</link>",
+    "marketplace": "Marketplace",
+    "marketplace-sign-in": "Sign In",
+    "marketplace-sign-up": "Sign Up",
     "open-source": "<link>An open-source storefront for everyone</link>",
     "our-products": "Our products"
   },
@@ -261,5 +264,10 @@
     "email-update-success": "Email updated successfully",
     "signed-in-as": "Signed in as",
     "title": "Email"
+  },
+  "vendor": {
+    "no_products": "This vendor has no products listed yet.",
+    "pdp_visit_vendor_shop": "Visit vendor shop",
+    "pdp_visit_vendor_shop_named": "Visit {vendorName}"
   }
 }

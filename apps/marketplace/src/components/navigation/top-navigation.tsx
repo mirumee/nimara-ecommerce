@@ -30,16 +30,40 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/providers/auth-provider";
 
 const navigationLinks = [
-  { key: "dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { key: "products", href: "/products", icon: Package },
-  { key: "orders", href: "/orders", icon: ShoppingCart },
-  { key: "drafts", href: "/drafts", icon: FileText },
-  { key: "collections", href: "/collections", icon: LayoutList },
-  { key: "customers", href: "/customers", icon: Users },
-] as const;
+  {
+    labelKey: "common.dashboard",
+    href: "/dashboard",
+    icon: LayoutDashboard,
+  },
+  {
+    labelKey: "common.products",
+    href: "/products",
+    icon: Package,
+  },
+  {
+    labelKey: "common.orders",
+    href: "/orders",
+    icon: ShoppingCart,
+  },
+  {
+    labelKey: "common.drafts",
+    href: "/drafts",
+    icon: FileText,
+  },
+  {
+    labelKey: "common.collections",
+    href: "/collections",
+    icon: LayoutList,
+  },
+  {
+    labelKey: "common.customers",
+    href: "/customers",
+    icon: Users,
+  },
+];
 
 export function TopNavigation() {
-  const t = useTranslations("marketplace.navigation");
+  const t = useTranslations();
   const { user, logout } = useAuth();
   const pathname = usePathname();
   const [isOpeningStripe, setIsOpeningStripe] = useState(false);
@@ -55,7 +79,7 @@ export function TopNavigation() {
   const vendorName =
     [user?.firstName, user?.lastName].filter(Boolean).join(" ") ||
     user?.email ||
-    t("vendor-fallback");
+    t("marketplace.navigation.vendor-fallback");
   const hasStripeAccount = Boolean(user?.stripePaymentAccountId);
 
   const handleOpenStripe = async () => {
@@ -86,7 +110,7 @@ export function TopNavigation() {
         {/* Left side - Brand and Navigation */}
         <div className="flex items-center gap-8">
           <Link href="/dashboard" className="text-lg font-semibold">
-            {t("app-name")}
+            {t("marketplace.navigation.app-name")}
           </Link>
 
           <nav className="flex items-center gap-1">
@@ -95,7 +119,7 @@ export function TopNavigation() {
 
               return (
                 <Link
-                  key={item.key}
+                  key={item.href}
                   href={item.href}
                   className={cn(
                     "flex items-center gap-2 rounded-full px-4 py-2 text-sm transition-colors",
@@ -112,7 +136,7 @@ export function TopNavigation() {
                   >
                     <item.icon className="h-3 w-3" />
                   </div>
-                  <span>{t(item.key)}</span>
+                  <span>{t(item.labelKey)}</span>
                 </Link>
               );
             })}
@@ -138,13 +162,13 @@ export function TopNavigation() {
             </div>
             <DropdownMenuItem className="cursor-pointer gap-2">
               <Users className="h-4 w-4" />
-              {t("invite-coworkers")}
+              {t("marketplace.navigation.invite-coworkers")}
             </DropdownMenuItem>
             <DropdownMenuItem className="cursor-pointer gap-2">
               <span className="flex h-4 w-4 items-center justify-center text-xs">
                 ?
               </span>
-              {t("support")}
+              {t("marketplace.navigation.support")}
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link
@@ -152,7 +176,7 @@ export function TopNavigation() {
                 className="cursor-pointer gap-2"
               >
                 <Settings className="h-4 w-4" />
-                {t("configuration")}
+                {t("marketplace.navigation.configuration")}
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem
@@ -161,19 +185,19 @@ export function TopNavigation() {
               disabled={!hasStripeAccount || isOpeningStripe}
             >
               <CircleDollarSign className="h-4 w-4" />
-              {t("go-to-stripe")}
+              {t("marketplace.navigation.go-to-stripe")}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="cursor-pointer gap-2">
               <Monitor className="h-4 w-4" />
-              {t("sign-out-devices")}
+              {t("marketplace.navigation.sign-out-devices")}
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => logout()}
               className="cursor-pointer gap-2"
             >
               <LogOut className="h-4 w-4" />
-              {t("sign-out")}
+              {t("marketplace.navigation.sign-out")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

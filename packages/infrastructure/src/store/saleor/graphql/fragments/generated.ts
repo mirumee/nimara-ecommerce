@@ -37,7 +37,9 @@ export type ProductBaseFragment_Product_category_Category = { name: string, slug
 
 export type ProductBaseFragment_Product_translation_ProductTranslation = { name: string | null, description: string | null };
 
-export type ProductBaseFragment = { id: string, name: string, seoTitle: string | null, description: string | null, seoDescription: string | null, vendorId: string | null, category: ProductBaseFragment_Product_category_Category | null, translation: ProductBaseFragment_Product_translation_ProductTranslation | null };
+export type ProductBaseFragment_Product_metadata_MetadataItem = { key: string, value: string };
+
+export type ProductBaseFragment = { id: string, name: string, seoTitle: string | null, description: string | null, seoDescription: string | null, vendorId: string | null, category: ProductBaseFragment_Product_category_Category | null, translation: ProductBaseFragment_Product_translation_ProductTranslation | null, metadata: Array<ProductBaseFragment_Product_metadata_MetadataItem> };
 
 export type ProductDetailsFragment_Product_media_ProductMedia = { url: string, alt: string, type: Types.ProductMediaType };
 
@@ -61,7 +63,7 @@ export type ProductDetailsFragment_Product_attributes_SelectedAttribute_values_A
 
 export type ProductDetailsFragment_Product_attributes_SelectedAttribute = { attribute: ProductDetailsFragment_Product_attributes_SelectedAttribute_attribute_Attribute, values: Array<ProductDetailsFragment_Product_attributes_SelectedAttribute_values_AttributeValue> };
 
-export type ProductDetailsFragment = { id: string, name: string, seoTitle: string | null, description: string | null, seoDescription: string | null, vendorId: string | null, media: Array<ProductDetailsFragment_Product_media_ProductMedia> | null, variants: Array<ProductDetailsFragment_Product_variants_ProductVariant> | null, attributes: Array<ProductDetailsFragment_Product_attributes_SelectedAttribute>, category: ProductBaseFragment_Product_category_Category | null, translation: ProductBaseFragment_Product_translation_ProductTranslation | null };
+export type ProductDetailsFragment = { id: string, name: string, seoTitle: string | null, description: string | null, seoDescription: string | null, vendorId: string | null, media: Array<ProductDetailsFragment_Product_media_ProductMedia> | null, variants: Array<ProductDetailsFragment_Product_variants_ProductVariant> | null, attributes: Array<ProductDetailsFragment_Product_attributes_SelectedAttribute>, category: ProductBaseFragment_Product_category_Category | null, translation: ProductBaseFragment_Product_translation_ProductTranslation | null, metadata: Array<ProductBaseFragment_Product_metadata_MetadataItem> };
 
 export type ProductMediaFragment = { url: string, alt: string, type: Types.ProductMediaType };
 
@@ -218,6 +220,10 @@ fragment ProductBaseFragment on Product {
     description
   }
   vendorId: metafield(key: "vendor.id")
+  metadata {
+    key
+    value
+  }
 }
 fragment ProductMediaFragment on ProductMedia {
   url(size: $mediaSize, format: $mediaFormat)

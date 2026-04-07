@@ -1,5 +1,6 @@
 query CustomerOrders($customer: String!, $first: Int) {
   orders(first: $first, filter: { customer: $customer }) {
+    totalCount
     edges {
       node {
         id

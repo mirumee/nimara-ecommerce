@@ -1,5 +1,7 @@
+import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 
+import { LocalizedLink } from "@nimara/i18n/routing";
 import { Skeleton } from "@nimara/ui/components/skeleton";
 
 import { AttributesDropdown } from "../shared/components/attributes-dropdown";
@@ -27,8 +29,10 @@ export const StandardPDPView = async ({
   checkoutId,
   addToBagAction,
   region,
+  marketplaceEnabled = false,
 }: PDPViewProps) => {
   const { slug } = await params;
+  const tVendor = await getTranslations("vendor");
 
   return (
     <ProductProvider
@@ -72,6 +76,21 @@ export const StandardPDPView = async ({
 
                 <ProductHighlights product={product} />
                 <AttributesDropdown product={product} />
+
+                {marketplaceEnabled && paths.vendor && product.vendorSlug ? (
+                  <p className="text-muted-foreground mt-4 text-sm">
+                    <LocalizedLink
+                      href={paths.vendor(product.vendorSlug)}
+                      className="text-primary font-medium underline-offset-4 hover:underline"
+                    >
+                      {product.vendorName
+                        ? tVendor("pdp_visit_vendor_shop_named", {
+                            vendorName: product.vendorName,
+                          })
+                        : tVendor("pdp_visit_vendor_shop")}
+                    </LocalizedLink>
+                  </p>
+                ) : null}
               </section>
             </div>
           </div>

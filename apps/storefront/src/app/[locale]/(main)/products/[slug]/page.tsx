@@ -49,11 +49,13 @@ export default async function ProductPage(props: ProductPageProps) {
       services={services}
       checkoutId={checkoutId}
       region={region}
+      marketplaceEnabled={clientEnvs.NEXT_PUBLIC_MARKETPLACE_ENABLED}
       paths={{
         home: paths.home.asPath(),
         cart: paths.cart.asPath(),
         search: (query) => paths.search.asPath({ query }),
         product: (slug) => paths.products.asPath({ slug }),
+        vendor: (vendorSlug) => paths.vendor.asPath({ vendorSlug }),
       }}
       addToBagAction={addToBagAction}
     />
