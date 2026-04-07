@@ -22,47 +22,7 @@ function ucpDiscoveryProfile(): UcpDiscoveryProfile {
       capabilities: UCP_CAPABILITIES,
     },
     payment: {
-      handlers: [
-        {
-          id: "google_pay",
-          name: "Google Pay",
-          version: UCP_VERSION,
-          spec: `https://pay.google.com/gp/p/ucp/${UCP_VERSION}/`,
-          config_schema: `https://pay.google.com/gp/p/ucp/${UCP_VERSION}/schemas/config.json`,
-          instrument_schemas: [
-            `https://pay.google.com/gp/p/ucp/${UCP_VERSION}/schemas/card_payment_instrument.json`,
-          ],
-          config: {
-            api_version: 2,
-            api_version_minor: 0,
-            environment: process.env.NEXT_PUBLIC_GOOGLE_PAY_ENV,
-            merchant_info: {
-              merchant_name: process.env.NEXT_PUBLIC_GOOGLE_PAY_MERCHANT_NAME,
-              merchant_id: process.env.NEXT_PUBLIC_GOOGLE_PAY_MERCHANT_ID,
-              merchant_origin:
-                process.env.NEXT_PUBLIC_GOOGLE_PAY_MERCHANT_ORIGIN,
-              auth_jwt: process.env.NEXT_PUBLIC_GOOGLE_PAY_AUTH_JWT,
-            },
-            allowed_payment_methods: [
-              {
-                type: "CARD",
-                parameters: {
-                  allowed_auth_methods: ["PAN_ONLY", "CRYPTOGRAM_3DS"],
-                  allowed_card_networks: ["VISA", "MASTERCARD"],
-                },
-                tokenization_specification: {
-                  type: "PAYMENT_GATEWAY",
-                  parameters: {
-                    gateway: process.env.NEXT_PUBLIC_GOOGLE_PAY_GATEWAY,
-                    gatewayMerchantId:
-                      process.env.NEXT_PUBLIC_GOOGLE_PAY_GATEWAY_MERCHANT_ID,
-                  },
-                },
-              },
-            ],
-          },
-        },
-      ],
+      handlers: [],
     },
   };
 }
