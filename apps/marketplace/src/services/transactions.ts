@@ -1,8 +1,8 @@
 import {
   CheckoutTransactionsDocument,
   type CheckoutTransactionsVariables,
-  TransactionCreateDocument,
-  type TransactionCreateVariables,
+  TransactionCreateMutationDocument,
+  type TransactionCreateMutationVariables,
 } from "@/graphql/generated/client";
 import { executeGraphQL } from "@/lib/graphql/execute";
 
@@ -20,11 +20,11 @@ class TransactionsService {
   }
 
   async createTransaction(
-    variables?: TransactionCreateVariables,
+    variables?: TransactionCreateMutationVariables,
     token?: string | null,
   ) {
     return executeGraphQL(
-      TransactionCreateDocument,
+      TransactionCreateMutationDocument,
       "CreateTransactionMutation",
       variables,
       token,

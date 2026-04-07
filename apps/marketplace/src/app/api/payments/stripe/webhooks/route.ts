@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 
-import type { TransactionCreateVariables } from "@/graphql/generated/client";
+import type { TransactionCreateMutationVariables } from "@/graphql/generated/client";
 import { getAppConfig } from "@/lib/saleor/app-config";
 import { verifyStripeWebhookSignature } from "@/lib/stripe/webhook-signature";
 import { checkoutService } from "@/services/checkouts";
@@ -346,7 +346,7 @@ export async function POST(request: NextRequest) {
         };
       }
 
-      const transactionVariables: TransactionCreateVariables = {
+      const transactionVariables: TransactionCreateMutationVariables = {
         id: checkoutId,
         transaction: {
           name: "PaymentIntent Succeeded",

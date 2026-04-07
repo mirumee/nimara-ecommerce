@@ -83,7 +83,9 @@ describe("transaction-refund-requested webhook", () => {
   });
 
   it("returns REFUND_SUCCESS for succeeded Stripe refund", async () => {
-    const response = await POST(createWebhookRequest(refundEventPayload) as never);
+    const response = await POST(
+      createWebhookRequest(refundEventPayload) as never,
+    );
     const data = await response.json();
 
     expect(response.status).toBe(200);
@@ -111,7 +113,9 @@ describe("transaction-refund-requested webhook", () => {
       details: { message: "Invalid signature" },
     });
 
-    const response = await POST(createWebhookRequest(refundEventPayload) as never);
+    const response = await POST(
+      createWebhookRequest(refundEventPayload) as never,
+    );
     const data = await response.json();
 
     expect(response.status).toBe(400);
@@ -123,7 +127,9 @@ describe("transaction-refund-requested webhook", () => {
   });
 
   it("returns 422 for invalid webhook payload", async () => {
-    const response = await POST(createWebhookRequest({ invalid: true }) as never);
+    const response = await POST(
+      createWebhookRequest({ invalid: true }) as never,
+    );
     const data = await response.json();
 
     expect(response.status).toBe(422);
@@ -134,7 +140,9 @@ describe("transaction-refund-requested webhook", () => {
   it("returns 500 when Stripe refund creation fails", async () => {
     createRefundMock.mockRejectedValue(new Error("Stripe refund failed"));
 
-    const response = await POST(createWebhookRequest(refundEventPayload) as never);
+    const response = await POST(
+      createWebhookRequest(refundEventPayload) as never,
+    );
     const data = await response.json();
 
     expect(response.status).toBe(500);

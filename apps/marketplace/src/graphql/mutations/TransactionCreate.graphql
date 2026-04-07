@@ -1,4 +1,4 @@
-mutation TransactionCreate(
+mutation TransactionCreateMutation(
   $id: ID!
   $transaction: TransactionCreateInput!
   $transactionEvent: TransactionEventInput

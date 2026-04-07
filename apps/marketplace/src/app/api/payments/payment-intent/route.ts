@@ -2,7 +2,7 @@ import { createHash, randomUUID } from "crypto";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-import type { TransactionCreateVariables } from "@/graphql/generated/client";
+import type { TransactionCreateMutationVariables } from "@/graphql/generated/client";
 import { getServerAuthToken } from "@/lib/auth/server";
 import { getAppConfig } from "@/lib/saleor/app-config";
 import { getStripeClient } from "@/lib/stripe/client";
@@ -250,8 +250,8 @@ export async function POST(request: NextRequest) {
         return;
       }
 
-      const checkoutTransactionsData =
-        entry.value.data as CheckoutTransactionsPayload;
+      const checkoutTransactionsData = entry.value
+        .data as CheckoutTransactionsPayload;
       const hasExistingTransaction =
         checkoutTransactionsData.checkout?.transactions?.some(
           (transaction) => transaction.pspReference === paymentIntent.id,
@@ -281,7 +281,7 @@ export async function POST(request: NextRequest) {
 
     const transactionCreateSettled = await Promise.allSettled(
       checkoutsToCreate.map((checkout) => {
-        const transactionVariables: TransactionCreateVariables = {
+        const transactionVariables: TransactionCreateMutationVariables = {
           id: checkout.checkoutId,
           transaction: {
             name: "PaymentIntent created",

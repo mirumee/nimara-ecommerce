@@ -22756,6 +22756,30 @@ export type ProductVariantDeletedProductVariantArgs = {
   channel?: InputMaybe<Scalars['String']['input']>;
 };
 
+/**
+ * Event sent when product variant discounted price is recalculated.
+ *
+ * Added in Saleor 3.22.
+ */
+export type ProductVariantDiscountedPriceUpdated = Event & {
+  /** The channel where the price changed. */
+  channel: Channel;
+  /** Time of the event. */
+  issuedAt: Maybe<Scalars['DateTime']['output']>;
+  /** The user or application that triggered the event. */
+  issuingPrincipal: Maybe<IssuingPrincipal>;
+  /** The new discounted price. */
+  newPrice: Money;
+  /** The previous discounted price. */
+  previousPrice: Money;
+  /** The product variant the event relates to. */
+  productVariant: ProductVariant;
+  /** The application receiving the webhook. */
+  recipient: Maybe<App>;
+  /** Saleor version that triggered the event. */
+  version: Maybe<Scalars['String']['output']>;
+};
+
 export type ProductVariantFilterInput = {
   isPreorder?: InputMaybe<Scalars['Boolean']['input']>;
   metadata?: InputMaybe<Array<MetadataFilter>>;
@@ -27901,6 +27925,14 @@ export type Subscription = {
    * Note: this API is currently in Feature Preview and can be subject to changes at later point.
    */
   orderUpdated: Maybe<OrderUpdated>;
+  /**
+   * Event sent when product variant discounted price is recalculated.
+   *
+   * Added in Saleor 3.22.
+   *
+   * Note: this API is currently in Feature Preview and can be subject to changes at later point.
+   */
+  productVariantDiscountedPriceUpdated: Maybe<ProductVariantDiscountedPriceUpdated>;
 };
 
 
@@ -28000,6 +28032,11 @@ export type SubscriptionOrderRefundedArgs = {
 
 
 export type SubscriptionOrderUpdatedArgs = {
+  channels?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+
+export type SubscriptionProductVariantDiscountedPriceUpdatedArgs = {
   channels?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
@@ -31323,6 +31360,7 @@ export type WebhookEventTypeAsyncEnum =
   | 'PRODUCT_VARIANT_CREATED'
   /** A product variant is deleted. Warning: this event will not be executed when parent product has been deleted. Check PRODUCT_DELETED. */
   | 'PRODUCT_VARIANT_DELETED'
+  | 'PRODUCT_VARIANT_DISCOUNTED_PRICE_UPDATED'
   /** A product variant metadata is updated. */
   | 'PRODUCT_VARIANT_METADATA_UPDATED'
   /** A product variant is out of stock. */
@@ -31648,6 +31686,7 @@ export type WebhookEventTypeEnum =
   | 'PRODUCT_VARIANT_CREATED'
   /** A product variant is deleted. Warning: this event will not be executed when parent product has been deleted. Check PRODUCT_DELETED. */
   | 'PRODUCT_VARIANT_DELETED'
+  | 'PRODUCT_VARIANT_DISCOUNTED_PRICE_UPDATED'
   /** A product variant metadata is updated. */
   | 'PRODUCT_VARIANT_METADATA_UPDATED'
   /** A product variant is out of stock. */
@@ -31889,6 +31928,7 @@ export type WebhookSampleEventTypeEnum =
   | 'PRODUCT_VARIANT_BACK_IN_STOCK'
   | 'PRODUCT_VARIANT_CREATED'
   | 'PRODUCT_VARIANT_DELETED'
+  | 'PRODUCT_VARIANT_DISCOUNTED_PRICE_UPDATED'
   | 'PRODUCT_VARIANT_METADATA_UPDATED'
   | 'PRODUCT_VARIANT_OUT_OF_STOCK'
   | 'PRODUCT_VARIANT_STOCK_UPDATED'
@@ -32769,23 +32809,23 @@ export type ProductVariantUpdateMutationVariables = Exact<{
 
 export type ProductVariantUpdateMutation = ProductVariantUpdateMutation_Mutation;
 
-export type TransactionCreate_transactionCreate_TransactionCreate_transaction_TransactionItem = { id: string, name: string };
+export type TransactionCreateMutation_transactionCreate_TransactionCreate_transaction_TransactionItem = { id: string, name: string };
 
-export type TransactionCreate_transactionCreate_TransactionCreate_errors_TransactionCreateError = { field: string | null, message: string | null, code: TransactionCreateErrorCode };
+export type TransactionCreateMutation_transactionCreate_TransactionCreate_errors_TransactionCreateError = { field: string | null, message: string | null, code: TransactionCreateErrorCode };
 
-export type TransactionCreate_transactionCreate_TransactionCreate = { transaction: TransactionCreate_transactionCreate_TransactionCreate_transaction_TransactionItem | null, errors: Array<TransactionCreate_transactionCreate_TransactionCreate_errors_TransactionCreateError> };
+export type TransactionCreateMutation_transactionCreate_TransactionCreate = { transaction: TransactionCreateMutation_transactionCreate_TransactionCreate_transaction_TransactionItem | null, errors: Array<TransactionCreateMutation_transactionCreate_TransactionCreate_errors_TransactionCreateError> };
 
-export type TransactionCreate_Mutation = { transactionCreate: TransactionCreate_transactionCreate_TransactionCreate | null };
+export type TransactionCreateMutation_Mutation = { transactionCreate: TransactionCreateMutation_transactionCreate_TransactionCreate | null };
 
 
-export type TransactionCreateVariables = Exact<{
+export type TransactionCreateMutationVariables = Exact<{
   id: Scalars['ID']['input'];
   transaction: TransactionCreateInput;
   transactionEvent?: InputMaybe<TransactionEventInput>;
 }>;
 
 
-export type TransactionCreate = TransactionCreate_Mutation;
+export type TransactionCreateMutation = TransactionCreateMutation_Mutation;
 
 export type VendorCollectionCreate_collectionCreate_CollectionCreate_collection_Collection = { id: string, name: string, slug: string };
 
@@ -33308,7 +33348,19 @@ export type ProductDetail_product_Product_assignedAttributes_AssignedTextAttribu
   & { __typename: 'AssignedTextAttribute' }
 );
 
-export type ProductDetail_product_Product_assignedAttributes = ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute | ProductDetail_product_Product_assignedAttributes_AssignedDateAttribute | ProductDetail_product_Product_assignedAttributes_AssignedDateTimeAttribute | ProductDetail_product_Product_assignedAttributes_AssignedFileAttribute | ProductDetail_product_Product_assignedAttributes_EP9HcmmFCQqdoG7811YxTX6aNOeQ5zZmEGxiLqdpAO4 | ProductDetail_product_Product_assignedAttributes_AssignedMultiChoiceAttribute | ProductDetail_product_Product_assignedAttributes_AssignedNumericAttribute | ProductDetail_product_Product_assignedAttributes_AssignedPlainTextAttribute | ProductDetail_product_Product_assignedAttributes_AssignedSingleChoiceAttribute | ProductDetail_product_Product_assignedAttributes_AssignedSwatchAttribute | ProductDetail_product_Product_assignedAttributes_AssignedTextAttribute;
+export type ProductDetail_product_Product_assignedAttributes =
+  | ProductDetail_product_Product_assignedAttributes_AssignedBooleanAttribute
+  | ProductDetail_product_Product_assignedAttributes_AssignedDateAttribute
+  | ProductDetail_product_Product_assignedAttributes_AssignedDateTimeAttribute
+  | ProductDetail_product_Product_assignedAttributes_AssignedFileAttribute
+  | ProductDetail_product_Product_assignedAttributes_EP9HcmmFCQqdoG7811YxTX6aNOeQ5zZmEGxiLqdpAO4
+  | ProductDetail_product_Product_assignedAttributes_AssignedMultiChoiceAttribute
+  | ProductDetail_product_Product_assignedAttributes_AssignedNumericAttribute
+  | ProductDetail_product_Product_assignedAttributes_AssignedPlainTextAttribute
+  | ProductDetail_product_Product_assignedAttributes_AssignedSingleChoiceAttribute
+  | ProductDetail_product_Product_assignedAttributes_AssignedSwatchAttribute
+  | ProductDetail_product_Product_assignedAttributes_AssignedTextAttribute
+;
 
 export type ProductDetail_product_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_gross_Money = { amount: number, currency: string };
 
@@ -33510,7 +33562,19 @@ export type ProductVariantDetail_productVariant_ProductVariant_assignedAttribute
   & { __typename: 'AssignedTextAttribute' }
 );
 
-export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes = ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedDateAttribute | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedDateTimeAttribute | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedFileAttribute | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_EP9HcmmFCQqdoG7811YxTX6aNOeQ5zZmEGxiLqdpAO4 | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedMultiChoiceAttribute | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedNumericAttribute | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedPlainTextAttribute | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedSingleChoiceAttribute | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedSwatchAttribute | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedTextAttribute;
+export type ProductVariantDetail_productVariant_ProductVariant_assignedAttributes =
+  | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedBooleanAttribute
+  | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedDateAttribute
+  | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedDateTimeAttribute
+  | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedFileAttribute
+  | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_EP9HcmmFCQqdoG7811YxTX6aNOeQ5zZmEGxiLqdpAO4
+  | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedMultiChoiceAttribute
+  | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedNumericAttribute
+  | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedPlainTextAttribute
+  | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedSingleChoiceAttribute
+  | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedSwatchAttribute
+  | ProductVariantDetail_productVariant_ProductVariant_assignedAttributes_AssignedTextAttribute
+;
 
 export type ProductVariantDetail_productVariant_ProductVariant_stocks_Stock_warehouse_Warehouse = { id: string, name: string };
 
@@ -34506,8 +34570,8 @@ export const ProductVariantUpdateMutationDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<ProductVariantUpdateMutation, ProductVariantUpdateMutationVariables>;
-export const TransactionCreateDocument = new TypedDocumentString(`
-    mutation TransactionCreate($id: ID!, $transaction: TransactionCreateInput!, $transactionEvent: TransactionEventInput) {
+export const TransactionCreateMutationDocument = new TypedDocumentString(`
+    mutation TransactionCreateMutation($id: ID!, $transaction: TransactionCreateInput!, $transactionEvent: TransactionEventInput) {
   transactionCreate(
     id: $id
     transaction: $transaction
@@ -34524,7 +34588,7 @@ export const TransactionCreateDocument = new TypedDocumentString(`
     }
   }
 }
-    `) as unknown as TypedDocumentString<TransactionCreate, TransactionCreateVariables>;
+    `) as unknown as TypedDocumentString<TransactionCreateMutation, TransactionCreateMutationVariables>;
 export const VendorCollectionCreateDocument = new TypedDocumentString(`
     mutation VendorCollectionCreate($input: CollectionCreateInput!) {
   collectionCreate(input: $input) {

@@ -32,9 +32,7 @@ const bodySchema = z.union([
 ]);
 
 const getRefundDashboardUrl = ({ refundId }: { refundId: string }) => {
-  const prefix = process.env.STRIPE_SECRET_KEY?.includes("test")
-    ? "test/"
-    : "";
+  const prefix = process.env.STRIPE_SECRET_KEY?.includes("test") ? "test/" : "";
 
   return `https://dashboard.stripe.com/${prefix}refunds/${refundId}`;
 };
@@ -115,8 +113,10 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  const event = "event" in bodyParsed.data ? bodyParsed.data.event : bodyParsed.data;
-  const currency = event.transaction.sourceObject.total.gross.currency.toUpperCase();
+  const event =
+    "event" in bodyParsed.data ? bodyParsed.data.event : bodyParsed.data;
+  const currency =
+    event.transaction.sourceObject.total.gross.currency.toUpperCase();
   const amountInMinorUnits = getCentsFromAmount({
     amount: event.action.amount,
     currency,

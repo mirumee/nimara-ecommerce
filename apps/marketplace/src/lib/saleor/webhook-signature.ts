@@ -18,7 +18,10 @@ type VerifySaleorWebhookSignatureResult =
       success: false;
     };
 
-const jwksResolverCache = new Map<string, ReturnType<typeof createRemoteJWKSet>>();
+const jwksResolverCache = new Map<
+  string,
+  ReturnType<typeof createRemoteJWKSet>
+>();
 
 const detachedJwsSchema = z
   .string()
@@ -116,7 +119,9 @@ export const verifySaleorWebhookSignature = async ({
       details: {
         jwksUrl: jwksUrl.href,
         message:
-          error instanceof Error ? error.message : "Signature verification failed.",
+          error instanceof Error
+            ? error.message
+            : "Signature verification failed.",
       },
     };
   }
