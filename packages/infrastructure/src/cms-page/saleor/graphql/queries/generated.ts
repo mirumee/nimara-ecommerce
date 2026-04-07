@@ -28,32 +28,6 @@ export type PageVariables = Types.Exact<{
 
 export type Page = Page_Query;
 
-export type PagesBySlugs_pages_PageCountableConnection_edges_PageCountableEdge_node_Page_pageType_PageType = { slug: string };
-
-export type PagesBySlugs_pages_PageCountableConnection_edges_PageCountableEdge_node_Page_attributes_SelectedAttribute_attribute_Attribute = { slug: string | null, inputType: Types.AttributeInputTypeEnum | null, name: string | null, translation: Page_page_Page_attributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation | null };
-
-export type PagesBySlugs_pages_PageCountableConnection_edges_PageCountableEdge_node_Page_attributes_SelectedAttribute_values_AttributeValue = { slug: string | null, name: string | null, plainText: string | null, richText: string | null, boolean: boolean | null, date: string | null, dateTime: string | null, reference: string | null, value: string | null, translation: Page_page_Page_attributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation | null, file: Page_page_Page_attributes_SelectedAttribute_values_AttributeValue_file_File | null };
-
-export type PagesBySlugs_pages_PageCountableConnection_edges_PageCountableEdge_node_Page_attributes_SelectedAttribute = { attribute: PagesBySlugs_pages_PageCountableConnection_edges_PageCountableEdge_node_Page_attributes_SelectedAttribute_attribute_Attribute, values: Array<PagesBySlugs_pages_PageCountableConnection_edges_PageCountableEdge_node_Page_attributes_SelectedAttribute_values_AttributeValue> };
-
-export type PagesBySlugs_pages_PageCountableConnection_edges_PageCountableEdge_node_Page = { id: string, slug: string, title: string, content: string | null, pageType: PagesBySlugs_pages_PageCountableConnection_edges_PageCountableEdge_node_Page_pageType_PageType, attributes: Array<PagesBySlugs_pages_PageCountableConnection_edges_PageCountableEdge_node_Page_attributes_SelectedAttribute> };
-
-export type PagesBySlugs_pages_PageCountableConnection_edges_PageCountableEdge = { node: PagesBySlugs_pages_PageCountableConnection_edges_PageCountableEdge_node_Page };
-
-export type PagesBySlugs_pages_PageCountableConnection = { edges: Array<PagesBySlugs_pages_PageCountableConnection_edges_PageCountableEdge> };
-
-export type PagesBySlugs_Query = { pages: PagesBySlugs_pages_PageCountableConnection | null };
-
-
-export type PagesBySlugsVariables = Types.Exact<{
-  first: Types.Scalars['Int']['input'];
-  filter: Types.PageFilterInput;
-  languageCode: Types.LanguageCodeEnum;
-}>;
-
-
-export type PagesBySlugs = PagesBySlugs_Query;
-
 export class TypedDocumentString<TResult, TVariables>
   extends String
   implements DocumentTypeDecoration<TResult, TVariables>
@@ -119,54 +93,3 @@ fragment AttributeValueFragment on AttributeValue {
     url
   }
 }`) as unknown as TypedDocumentString<Page, PageVariables>;
-export const PagesBySlugsDocument = new TypedDocumentString(`
-    query PagesBySlugs($first: Int!, $filter: PageFilterInput!, $languageCode: LanguageCodeEnum!) {
-  pages(first: $first, filter: $filter) {
-    edges {
-      node {
-        id
-        slug
-        pageType {
-          slug
-        }
-        attributes {
-          attribute {
-            ...AttributeFragment
-          }
-          values {
-            ...AttributeValueFragment
-          }
-        }
-        title
-        content
-      }
-    }
-  }
-}
-    fragment AttributeFragment on Attribute {
-  slug
-  inputType
-  name
-  translation(languageCode: $languageCode) {
-    name
-  }
-}
-fragment AttributeValueFragment on AttributeValue {
-  slug
-  name
-  plainText
-  richText
-  boolean
-  date
-  dateTime
-  reference
-  value
-  translation(languageCode: $languageCode) {
-    name
-    plainText
-    richText
-  }
-  file {
-    url
-  }
-}`) as unknown as TypedDocumentString<PagesBySlugs, PagesBySlugsVariables>;

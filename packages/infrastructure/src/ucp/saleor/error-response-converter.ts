@@ -97,9 +97,7 @@ export function deriveStatusFromErrors(
   const hasRequiresBuyerReview = messages.some(
     (m) => m.severity === "requires_buyer_review",
   );
-  const hasRecoverable = messages.some(
-    (m) => m.severity === "recoverable",
-  );
+  const hasRecoverable = messages.some((m) => m.severity === "recoverable");
 
   // Priority: requires_escalation > incomplete > ready_for_complete
   if (hasRequiresBuyerInput || hasRequiresBuyerReview) {
@@ -150,7 +148,8 @@ export function processCheckoutErrors(
   return {
     messages,
     status,
-    shouldHandoff: buyerInputRequired.length > 0 || buyerReviewRequired.length > 0,
+    shouldHandoff:
+      buyerInputRequired.length > 0 || buyerReviewRequired.length > 0,
     hasRecoverableErrors: recoverables.length > 0,
   };
 }
