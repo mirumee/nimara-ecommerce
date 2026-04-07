@@ -1,3 +1,5 @@
+#import "../fragments/AttributeValueFragment.graphql"
+
 query PageSlugByIdQuery($id: ID!, $languageCode: LanguageCodeEnum!) {
   page(id: $id) {
     slug
@@ -13,7 +15,7 @@ query PageSlugByIdQuery($id: ID!, $languageCode: LanguageCodeEnum!) {
         slug
       }
       values {
-        name
+        ...AttributeValueFragment
       }
     }
   }
