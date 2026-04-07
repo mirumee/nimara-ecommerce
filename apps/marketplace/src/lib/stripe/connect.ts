@@ -26,7 +26,7 @@ function assertStripeSecretKey(): string {
   const secretKey = config.stripeConnect.secretKey;
 
   if (!secretKey) {
-    throw new Error("MARKETPLACE_STRIPE_SECRET_KEY is not set");
+    throw new Error("STRIPE_SECRET_KEY is not set");
   }
 
   return secretKey;

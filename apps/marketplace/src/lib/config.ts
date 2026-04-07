@@ -82,8 +82,8 @@ const envSchema = z.object({
   MARKETPLACE_EMAIL_FROM: z.string().optional(),
   MARKETPLACE_SUPERADMIN_EMAIL: z.string().optional(),
 
-  // Stripe Connect (marketplace vendor onboarding)
-  MARKETPLACE_STRIPE_SECRET_KEY: z.string().optional(),
+  // Stripe (shared with storefront payment flows; Connect onboarding / payouts)
+  STRIPE_SECRET_KEY: z.string().optional(),
   MARKETPLACE_STRIPE_CONNECT_WEBHOOK_SECRET: z.string().optional(),
   MARKETPLACE_STRIPE_CONNECT_DEFAULT_COUNTRY: z.string().default("US"),
 });
@@ -183,7 +183,7 @@ export const config = {
     superadminEmail: env.MARKETPLACE_SUPERADMIN_EMAIL,
   },
   stripeConnect: {
-    secretKey: env.MARKETPLACE_STRIPE_SECRET_KEY,
+    secretKey: env.STRIPE_SECRET_KEY,
     webhookSecret: env.MARKETPLACE_STRIPE_CONNECT_WEBHOOK_SECRET,
     defaultCountry: env.MARKETPLACE_STRIPE_CONNECT_DEFAULT_COUNTRY,
   },
