@@ -51,8 +51,12 @@ export const ucpProxyMiddleware =
     response: NextResponse,
   ) => {
     const url = new URL(request.url);
-    const checkoutID = url.searchParams.get("checkoutID");
-    const redirectPath = url.searchParams.get("redirectPath");
+    const checkoutID = decodeURIComponent(
+      url.searchParams.get("checkoutID") ?? "",
+    );
+    const redirectPath = decodeURIComponent(
+      url.searchParams.get("redirectPath") ?? "",
+    );
 
     logger.info("[UCP Proxy] Checkout handoff detected.", {
       context: {
@@ -63,7 +67,7 @@ export const ucpProxyMiddleware =
       },
     });
 
-    if (checkoutID) {
+    if (checkoutID !== "") {
       if (redirectEnabled && redirectPath) {
         logger.info("[UCP Proxy] Redirecting to provided `redirectPath`.", {
           context: {

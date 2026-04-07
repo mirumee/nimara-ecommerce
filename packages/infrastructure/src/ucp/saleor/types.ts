@@ -25,6 +25,11 @@ export type UCPSaleorServiceConfig = {
    */
   channel: string;
   /**
+   * Channel storefront prefix to use for checkout sessions and orders.
+   * @example "/gb", "/us" or "/" (for default channel) etc.
+   */
+  channelPrefix: `/${string | undefined}`;
+  /**
    * Default email to use for checkout sessions and orders.
    */
   defaultEmail: string;

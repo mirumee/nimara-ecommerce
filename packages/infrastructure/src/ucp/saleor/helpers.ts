@@ -293,7 +293,8 @@ export const generateCheckoutLinks = (storefrontURL: string): LinkElement[] => {
  * Can be extended with custom conditions for when to trigger escalation.
  *
  * @param checkoutId - UCP checkout ID
- * @param baseUrl - Business base URL
+ * @param storefrontURL - URL of the storefront, e.g. `https://www.example.com`
+ * @param channelPrefix - Channel storefront prefix, e.g. `/gb`, `/us` or `/` (for default channel) etc.
  * @param conditions - Optional conditions that may trigger continue_url requirement
  * @returns continue_url or undefined if not needed
  *
@@ -307,13 +308,13 @@ export const generateCheckoutLinks = (storefrontURL: string): LinkElement[] => {
 export const generateContinueUrl = ({
   checkoutId,
   storefrontURL,
-  channelSlug,
+  channelPrefix,
   conditions,
 }: {
+  channelPrefix: `/${string | undefined}`;
   checkoutId: string;
-  storefrontURL: string;
-  channelSlug: string;
   conditions?: Record<string, boolean>;
+  storefrontURL: string;
 }): string | undefined => {
   // If conditions are provided, only generate if any condition is true
   if (conditions) {
@@ -327,8 +328,8 @@ export const generateContinueUrl = ({
   const checkoutURL = new URL("checkout", storefrontURL);
   const params = new URLSearchParams();
 
-  params.set("checkoutID", checkoutId);
-  params.set("redirectPath", `/${channelSlug}/checkout/`);
+  params.set("checkoutID", encodeURIComponent(checkoutId));
+  params.set("redirectPath", encodeURIComponent(`${channelPrefix}/checkout/`));
 
   checkoutURL.search = params.toString();
 

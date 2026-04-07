@@ -21,7 +21,6 @@ import {
   calculateFulfillmentDate,
   formatDeliveryDays,
   generateCheckoutLinks,
-  generateContinueUrl,
   toMinorCurrency,
 } from "#root/ucp/saleor/helpers";
 
@@ -383,26 +382,22 @@ const toUCPDiscounts = (
  * Converts Saleor checkout details into an internal UCP checkout session model.
  *
  * @param checkout - Saleor checkout fragment data
+ * @param continueURL - Continue URL for checkout handoff to business UI
  * @param order - Optional order confirmation (id and permalink URL)
  * @param storefrontURL - Base URL for generating links and continue_url (required)
- * @param continueUrlConditions - Optional conditions to determine if continue_url is needed.
- *                                 Example: { missingEmail: checkout.email === null }
- *                                 If any condition is true, continue_url will be generated.
  */
-export const toUCPCheckoutSession = (
-  checkout: UcpCheckoutSessionFragment,
-  storefrontURL: string,
-  order?: { id: string; permalinkUrl: string },
-  continueUrlConditions?: Record<string, boolean>,
-): UCPCheckoutSessionModel => {
+export const toUCPCheckoutSession = ({
+  checkout,
+  continueURL,
+  order,
+  storefrontURL,
+}: {
+  checkout: UcpCheckoutSessionFragment;
+  continueURL?: string;
+  order?: { id: string; permalinkUrl: string };
+  storefrontURL: string;
+}): UCPCheckoutSessionModel => {
   const fulfillmentMethod = toFulfillmentMethod(checkout);
-  const continueUrl = generateContinueUrl({
-    checkoutId: checkout.id,
-    storefrontURL,
-    channelSlug: checkout.channel.slug,
-    conditions: continueUrlConditions,
-  });
-
   const discounts = toUCPDiscounts(checkout);
 
   return {
@@ -422,7 +417,7 @@ export const toUCPCheckoutSession = (
     links: generateCheckoutLinks(storefrontURL),
     expiresAtISO: calculateCheckoutExpiration(),
     ...(discounts ? { discounts } : {}),
-    ...(continueUrl ? { continueUrl } : {}),
+    ...(continueURL ? { continueUrl: continueURL } : {}),
     ...(order ? { order } : {}),
   };
 };

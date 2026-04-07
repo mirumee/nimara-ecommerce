@@ -37,6 +37,7 @@ import {
 } from "./graphql/queries/generated";
 import {
   calculateCheckoutExpiration,
+  generateContinueUrl,
   lineItemsFromSaleorCheckoutLines,
   toSaleorAddress,
   validateCheckoutTermsDummy,
@@ -211,6 +212,7 @@ const applyCheckoutDiscounts = async (
 export const saleorUCPService = ({
   apiUrl,
   storefrontURL,
+  channelPrefix,
   channel,
   defaultEmail,
   version,
@@ -277,6 +279,12 @@ export const saleorUCPService = ({
         return err(errors);
       }
 
+      const continueURL = generateContinueUrl({
+        checkoutId: checkout.id,
+        storefrontURL,
+        channelPrefix,
+      });
+
       const discountInput = (input as CheckoutWithDiscountCreateRequest)
         .discounts;
       const discountErrors = await applyCheckoutDiscounts(
@@ -304,11 +312,11 @@ export const saleorUCPService = ({
         });
 
         if (refreshed.ok && refreshed.data.checkout) {
-          const session = toUCPCheckoutSession(
-            refreshed.data.checkout,
+          const session = toUCPCheckoutSession({
+            checkout: refreshed.data.checkout,
+            continueURL,
             storefrontURL,
-            undefined,
-          );
+          });
 
           return ok(
             sessionToCheckoutResponse({
@@ -324,7 +332,12 @@ export const saleorUCPService = ({
         }
       }
 
-      const session = toUCPCheckoutSession(checkout, storefrontURL, undefined);
+      const session = toUCPCheckoutSession({
+        checkout,
+        continueURL,
+        storefrontURL,
+        order: undefined,
+      });
       const paymentHandlers = toPaymentHandlers({
         version,
         checkout,
@@ -386,11 +399,18 @@ export const saleorUCPService = ({
         ]);
       }
 
-      const session = toUCPCheckoutSession(
-        result.data.checkout,
+      const continueURL = generateContinueUrl({
+        checkoutId: result.data.checkout.id,
         storefrontURL,
-        undefined,
-      );
+        channelPrefix,
+      });
+
+      const session = toUCPCheckoutSession({
+        checkout: result.data.checkout,
+        continueURL,
+        storefrontURL,
+        order: undefined,
+      });
       const paymentHandlers = toPaymentHandlers({
         version,
         checkout: result.data.checkout,
@@ -686,11 +706,18 @@ export const saleorUCPService = ({
         ]);
       }
 
-      const session = toUCPCheckoutSession(
-        refreshedCheckoutResult.data.checkout,
+      const continueURL = generateContinueUrl({
+        checkoutId: refreshedCheckoutResult.data.checkout.id,
         storefrontURL,
-        undefined,
-      );
+        channelPrefix,
+      });
+
+      const session = toUCPCheckoutSession({
+        checkout: refreshedCheckoutResult.data.checkout,
+        continueURL,
+        storefrontURL,
+        order: undefined,
+      });
       const paymentHandlers = toPaymentHandlers({
         version,
         checkout: refreshedCheckoutResult.data.checkout,
@@ -774,13 +801,20 @@ export const saleorUCPService = ({
         ]);
       }
 
+      const continueURL = generateContinueUrl({
+        checkoutId: currentCheckoutResult.data.checkout.id,
+        storefrontURL,
+        channelPrefix,
+      });
+
       const currentCheckout = sessionToCheckoutResponse({
         version,
-        session: toUCPCheckoutSession(
-          currentCheckoutResult.data.checkout,
+        session: toUCPCheckoutSession({
+          checkout: currentCheckoutResult.data.checkout,
+          continueURL,
           storefrontURL,
-          undefined,
-        ),
+          order: undefined,
+        }),
         capabilities,
         paymentHandlers: toPaymentHandlers({
           version,
@@ -914,11 +948,12 @@ export const saleorUCPService = ({
         checkout: checkoutResult.data.checkout,
       });
       const completedSession: UCPCheckoutSessionModel = {
-        ...toUCPCheckoutSession(
-          checkoutResult.data.checkout,
+        ...toUCPCheckoutSession({
+          checkout: checkoutResult.data.checkout,
+          continueURL,
           storefrontURL,
-          undefined,
-        ),
+          order: undefined,
+        }),
         status: "completed",
         order: {
           id: order.id,
@@ -1013,11 +1048,18 @@ export const saleorUCPService = ({
       const buildCanceledResponse = () => {
         const refreshed = existingResult.data.checkout!;
 
-        const session = toUCPCheckoutSession(
-          refreshed,
+        const continueURL = generateContinueUrl({
+          checkoutId: refreshed.id,
           storefrontURL,
-          undefined,
-        );
+          channelPrefix,
+        });
+
+        const session = toUCPCheckoutSession({
+          checkout: refreshed,
+          continueURL,
+          storefrontURL,
+          order: undefined,
+        });
 
         return ok(
           sessionToCheckoutResponse({
@@ -1097,11 +1139,18 @@ export const saleorUCPService = ({
         ]);
       }
 
-      const session = toUCPCheckoutSession(
-        refreshedResult.data.checkout,
+      const continueURL = generateContinueUrl({
+        checkoutId: refreshedResult.data.checkout.id,
         storefrontURL,
-        undefined,
-      );
+        channelPrefix,
+      });
+
+      const session = toUCPCheckoutSession({
+        checkout: refreshedResult.data.checkout,
+        continueURL,
+        storefrontURL,
+        order: undefined,
+      });
 
       return ok(
         sessionToCheckoutResponse({

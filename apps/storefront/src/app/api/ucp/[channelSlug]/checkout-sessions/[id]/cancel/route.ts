@@ -77,7 +77,9 @@ export async function POST(
     }
   }
 
-  const ucpService = await getUCPService({ channelSlug });
+  const ucpService = await getUCPService({
+    channelSlug,
+  });
   const result = await ucpService.cancelCheckout({ id });
 
   if (!result.ok) {
