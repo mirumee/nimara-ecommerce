@@ -228,6 +228,14 @@
       "search-placeholder": "Search customers",
       "table-orders-count": "No. of Orders"
     },
+    "stripeConnect": {
+      "title": "Stripe setup required",
+      "description": "You need to finish Stripe Connect onboarding before using Vendor Panel.",
+      "redirecting": "Redirecting...",
+      "setup-button": "Setup",
+      "checking": "Checking...",
+      "completed-setup-button": "I've completed setup"
+    },
     "drafts": {
       "list": {
         "empty-list": "No drafts found",
@@ -239,6 +247,22 @@
     "layout": {
       "description": "Manage your marketplace vendor account",
       "title": "Marketplace Vendor Panel"
+    },
+    "navigation": {
+      "app-name": "Vendor Panel",
+      "dashboard": "Dashboard",
+      "products": "Products",
+      "orders": "Orders",
+      "drafts": "Drafts",
+      "collections": "Collections",
+      "customers": "Customers",
+      "vendor-fallback": "Vendor",
+      "invite-coworkers": "Invite co-workers",
+      "support": "Support",
+      "configuration": "Configuration",
+      "go-to-stripe": "Go to Stripe",
+      "sign-out-devices": "Sign out from other devices",
+      "sign-out": "Sign out"
     },
     "orders": {
       "detail": {

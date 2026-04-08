@@ -81,6 +81,11 @@ const envSchema = z.object({
   MARKETPLACE_SMTP_SECURE: booleanFromEnv.default(false),
   MARKETPLACE_EMAIL_FROM: z.string().optional(),
   MARKETPLACE_SUPERADMIN_EMAIL: z.string().optional(),
+
+  // Stripe (shared with storefront payment flows; Connect onboarding / payouts)
+  STRIPE_SECRET_KEY: z.string().optional(),
+  MARKETPLACE_STRIPE_CONNECT_WEBHOOK_SECRET: z.string().optional(),
+  MARKETPLACE_STRIPE_CONNECT_DEFAULT_COUNTRY: z.string().default("US"),
 });
 
 export type Env = z.infer<typeof envSchema>;
@@ -176,5 +181,10 @@ export const config = {
     },
     from: env.MARKETPLACE_EMAIL_FROM,
     superadminEmail: env.MARKETPLACE_SUPERADMIN_EMAIL,
+  },
+  stripeConnect: {
+    secretKey: env.STRIPE_SECRET_KEY,
+    webhookSecret: env.MARKETPLACE_STRIPE_CONNECT_WEBHOOK_SECRET,
+    defaultCountry: env.MARKETPLACE_STRIPE_CONNECT_DEFAULT_COUNTRY,
   },
 } as const;

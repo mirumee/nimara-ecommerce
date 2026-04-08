@@ -32114,6 +32114,22 @@ export type AccountUpdateMutationVariables = Exact<{
 
 export type AccountUpdateMutation = AccountUpdateMutation_Mutation;
 
+export type CheckoutCompleteMutation_checkoutComplete_CheckoutComplete_order_Order = { id: string };
+
+export type CheckoutCompleteMutation_checkoutComplete_CheckoutComplete_errors_CheckoutError = { field: string | null, message: string | null, code: CheckoutErrorCode };
+
+export type CheckoutCompleteMutation_checkoutComplete_CheckoutComplete = { order: CheckoutCompleteMutation_checkoutComplete_CheckoutComplete_order_Order | null, errors: Array<CheckoutCompleteMutation_checkoutComplete_CheckoutComplete_errors_CheckoutError> };
+
+export type CheckoutCompleteMutation_Mutation = { checkoutComplete: CheckoutCompleteMutation_checkoutComplete_CheckoutComplete | null };
+
+
+export type CheckoutCompleteMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type CheckoutCompleteMutation = CheckoutCompleteMutation_Mutation;
+
 export type CollectionAddProductsMutation_collectionAddProducts_CollectionAddProducts_errors_CollectionError = { field: string | null, message: string | null, code: CollectionErrorCode };
 
 export type CollectionAddProductsMutation_collectionAddProducts_CollectionAddProducts_collection_Collection = { id: string, name: string };
@@ -32793,6 +32809,24 @@ export type ProductVariantUpdateMutationVariables = Exact<{
 
 export type ProductVariantUpdateMutation = ProductVariantUpdateMutation_Mutation;
 
+export type TransactionCreateMutation_transactionCreate_TransactionCreate_transaction_TransactionItem = { id: string, name: string };
+
+export type TransactionCreateMutation_transactionCreate_TransactionCreate_errors_TransactionCreateError = { field: string | null, message: string | null, code: TransactionCreateErrorCode };
+
+export type TransactionCreateMutation_transactionCreate_TransactionCreate = { transaction: TransactionCreateMutation_transactionCreate_TransactionCreate_transaction_TransactionItem | null, errors: Array<TransactionCreateMutation_transactionCreate_TransactionCreate_errors_TransactionCreateError> };
+
+export type TransactionCreateMutation_Mutation = { transactionCreate: TransactionCreateMutation_transactionCreate_TransactionCreate | null };
+
+
+export type TransactionCreateMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+  transaction: TransactionCreateInput;
+  transactionEvent?: InputMaybe<TransactionEventInput>;
+}>;
+
+
+export type TransactionCreateMutation = TransactionCreateMutation_Mutation;
+
 export type VendorCollectionCreate_collectionCreate_CollectionCreate_collection_Collection = { id: string, name: string, slug: string };
 
 export type VendorCollectionCreate_collectionCreate_CollectionCreate_errors_CollectionError = { field: string | null, message: string | null, code: CollectionErrorCode };
@@ -32911,6 +32945,22 @@ export type ChannelsVariables = Exact<{ [key: string]: never; }>;
 
 
 export type Channels = Channels_Query;
+
+export type CheckoutTransactions_checkout_Checkout_transactions_TransactionItem_chargedAmount_Money = { amount: number };
+
+export type CheckoutTransactions_checkout_Checkout_transactions_TransactionItem = { id: string, pspReference: string, chargedAmount: CheckoutTransactions_checkout_Checkout_transactions_TransactionItem_chargedAmount_Money };
+
+export type CheckoutTransactions_checkout_Checkout = { id: string, transactions: Array<CheckoutTransactions_checkout_Checkout_transactions_TransactionItem> | null };
+
+export type CheckoutTransactions_Query = { checkout: CheckoutTransactions_checkout_Checkout | null };
+
+
+export type CheckoutTransactionsVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type CheckoutTransactions = CheckoutTransactions_Query;
 
 export type CollectionDetail_collection_Collection_backgroundImage_Image = { url: string, alt: string | null };
 
@@ -33787,6 +33837,20 @@ export const AccountUpdateMutationDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<AccountUpdateMutation, AccountUpdateMutationVariables>;
+export const CheckoutCompleteMutationDocument = new TypedDocumentString(`
+    mutation CheckoutCompleteMutation($id: ID!) {
+  checkoutComplete(id: $id) {
+    order {
+      id
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<CheckoutCompleteMutation, CheckoutCompleteMutationVariables>;
 export const CollectionAddProductsMutationDocument = new TypedDocumentString(`
     mutation CollectionAddProductsMutation($collectionId: ID!, $products: [ID!]!) {
   collectionAddProducts(collectionId: $collectionId, products: $products) {
@@ -34506,6 +34570,25 @@ export const ProductVariantUpdateMutationDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<ProductVariantUpdateMutation, ProductVariantUpdateMutationVariables>;
+export const TransactionCreateMutationDocument = new TypedDocumentString(`
+    mutation TransactionCreateMutation($id: ID!, $transaction: TransactionCreateInput!, $transactionEvent: TransactionEventInput) {
+  transactionCreate(
+    id: $id
+    transaction: $transaction
+    transactionEvent: $transactionEvent
+  ) {
+    transaction {
+      id
+      name
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<TransactionCreateMutation, TransactionCreateMutationVariables>;
 export const VendorCollectionCreateDocument = new TypedDocumentString(`
     mutation VendorCollectionCreate($input: CollectionCreateInput!) {
   collectionCreate(input: $input) {
@@ -34630,6 +34713,20 @@ export const ChannelsDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<Channels, ChannelsVariables>;
+export const CheckoutTransactionsDocument = new TypedDocumentString(`
+    query CheckoutTransactions($id: ID!) {
+  checkout(id: $id) {
+    id
+    transactions {
+      id
+      pspReference
+      chargedAmount {
+        amount
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<CheckoutTransactions, CheckoutTransactionsVariables>;
 export const CollectionDetailDocument = new TypedDocumentString(`
     query CollectionDetail($id: ID!) {
   collection(id: $id) {

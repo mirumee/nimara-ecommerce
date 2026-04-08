@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { LockIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { FormProvider, type SubmitHandler, useForm } from "react-hook-form";
 
 import { type AllCountryCode } from "@nimara/domain/consts";
@@ -37,7 +37,11 @@ import { cn } from "@nimara/ui/lib/utils";
 
 import { PAYMENT_ELEMENT_ID } from "@/features/checkout/consts";
 import { PaymentMethods } from "@/features/checkout/payment-methods";
-import { updateBillingAddress } from "@/foundation/checkout/sections/payment/actions";
+import { type MarketplaceCheckoutItem } from "@/features/checkout/types";
+import {
+  initializeMarketplacePaymentIntent,
+  updateBillingAddress,
+} from "@/foundation/checkout/sections/payment/actions";
 import {
   type BillingAddressPath,
   type BillingAddressValue,
@@ -63,11 +67,36 @@ type PaymentProps = {
   countryCode: AllCountryCode;
   errorCode?: AppErrorCode;
   formattedAddresses: FormattedAddress[];
+  marketplaceCheckouts?: MarketplaceCheckoutItem[];
   paymentGatewayCustomer: Maybe<string>;
   paymentGatewayMethods: PaymentMethod[];
   storeUrl: string;
   user: User | null;
 };
+
+type MarketplaceIntentCheckout = {
+  amount: number;
+  checkoutId: string;
+  currency: string;
+};
+
+const buildMarketplaceIntentKey = ({
+  buyerId,
+  checkouts,
+}: {
+  buyerId?: string;
+  checkouts: MarketplaceIntentCheckout[];
+}) =>
+  JSON.stringify({
+    buyerId: buyerId ?? null,
+    checkouts: [...checkouts]
+      .sort((a, b) => a.checkoutId.localeCompare(b.checkoutId))
+      .map((checkout) => ({
+        amount: checkout.amount,
+        checkoutId: checkout.checkoutId,
+        currency: checkout.currency.toUpperCase(),
+      })),
+  });
 
 export const Payment = ({
   checkout,
@@ -79,6 +108,7 @@ export const Payment = ({
   paymentGatewayMethods,
   paymentGatewayCustomer,
   formattedAddresses,
+  marketplaceCheckouts,
   user,
 }: PaymentProps) => {
   const t = useTranslations();
@@ -93,7 +123,12 @@ export const Payment = ({
   const [isInitialized, setIsInitialized] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [isCountryChanging, setIsCountryChanging] = useState(false);
-  const hasSavedPaymentMethods = paymentGatewayMethods.length > 0;
+  const isMarketplacePayment =
+    process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED !== "false" &&
+    !!marketplaceCheckouts &&
+    marketplaceCheckouts.length > 0;
+  const hasSavedPaymentMethods =
+    !isMarketplacePayment && paymentGatewayMethods.length > 0;
   const [paymentMethodTab, setPaymentMethodTab] = useState<TabName>(
     hasSavedPaymentMethods ? "saved" : "new",
   );
@@ -103,6 +138,10 @@ export const Payment = ({
   const [errors, setErrors] = useState<AppErrorCode[]>(
     errorCode ? [errorCode] : [],
   );
+  const [paymentElementSecret, setPaymentElementSecret] =
+    useState<Maybe<string>>(undefined);
+  const marketplaceIntentInFlightRef = useRef<string | null>(null);
+  const marketplaceIntentInitializedRef = useRef<string | null>(null);
 
   const defaultBillingAddress = formattedAddresses.find(
     ({ address }) => address.isDefaultBillingAddress,
@@ -124,6 +163,43 @@ export const Payment = ({
   const hasDefaultBillingAddressInCurrentChannel =
     supportedCountryCodesInChannel.includes(defaultBillingAddress?.country);
   const saveAddressForFutureUse = !!(user && addressActiveTab === "new");
+  const marketplaceIntentCheckouts = useMemo<
+    MarketplaceIntentCheckout[]
+  >(() => {
+    if (!isMarketplacePayment) {
+      return [];
+    }
+
+    return (
+      marketplaceCheckouts?.map((item) => ({
+        checkoutId: item.checkoutId,
+        amount: item.checkout.totalPrice.gross.amount,
+        currency: item.checkout.totalPrice.gross.currency,
+      })) ?? [
+        {
+          checkoutId: checkout.id,
+          amount: checkout.totalPrice.gross.amount,
+          currency: checkout.totalPrice.gross.currency,
+        },
+      ]
+    );
+  }, [
+    checkout.id,
+    checkout.totalPrice.gross.amount,
+    checkout.totalPrice.gross.currency,
+    isMarketplacePayment,
+    marketplaceCheckouts,
+  ]);
+  const marketplaceIntentKey = useMemo(() => {
+    if (!isMarketplacePayment || marketplaceIntentCheckouts.length === 0) {
+      return null;
+    }
+
+    return buildMarketplaceIntentKey({
+      buyerId: user?.id,
+      checkouts: marketplaceIntentCheckouts,
+    });
+  }, [isMarketplacePayment, marketplaceIntentCheckouts, user?.id]);
 
   const form = useForm<PaymentSchema>({
     resolver: zodResolver(paymentSchema({ t, addressFormRows })),
@@ -136,9 +212,10 @@ export const Payment = ({
         : false,
       saveAddressForFutureUse,
       saveForFutureUse: !!user,
-      paymentMethod:
-        paymentGatewayMethods.find(({ isDefault }) => isDefault)?.id ??
-        paymentGatewayMethods?.[0]?.id,
+      paymentMethod: isMarketplacePayment
+        ? undefined
+        : (paymentGatewayMethods.find(({ isDefault }) => isDefault)?.id ??
+          paymentGatewayMethods?.[0]?.id),
     },
   });
 
@@ -154,7 +231,11 @@ export const Payment = ({
   const isLoading = !isInitialized || isProcessing;
   const canProceed =
     !isLoading &&
-    (isAddingNewPaymentMethod ? isMounted : hasSelectedPaymentMethod);
+    (isMarketplacePayment
+      ? isMounted
+      : isAddingNewPaymentMethod
+        ? isMounted
+        : hasSelectedPaymentMethod);
 
   const isDark = resolvedTheme === "dark";
 
@@ -211,7 +292,7 @@ export const Payment = ({
      * paymentExecute.
      */
 
-    if (paymentMethod) {
+    if (!isMarketplacePayment && paymentMethod) {
       const result = await paymentService.paymentGatewayTransactionInitialize({
         id: checkout.id,
         amount: checkout.totalPrice.gross.amount,
@@ -249,26 +330,47 @@ export const Payment = ({
     void (async () => {
       const paymentService = await paymentServiceLoader();
 
+      if (isMarketplacePayment) {
+        await paymentService.paymentInitialize();
+        setIsInitialized(true);
+
+        return;
+      }
+
       const [result] = await Promise.all([
         paymentService.paymentGatewayInitialize({
           id: checkout.id,
           amount: checkout.totalPrice.gross.amount,
         }),
-        await paymentService.paymentInitialize(),
+        paymentService.paymentInitialize(),
       ]);
 
       if (!result.ok) {
         setErrors(result.errors.map(({ code }) => code));
-      } else {
-        setIsInitialized(true);
+
+        return;
       }
+
+      setIsInitialized(true);
     })();
-  }, []);
+  }, [checkout.id, checkout.totalPrice.gross.amount, isMarketplacePayment]);
 
   useEffect(() => {
-    if (!isInitialized) {
+    if (isAddingNewPaymentMethod) {
+      form.setValue("paymentMethod", undefined);
+
       return;
     }
+
+    setIsMounted(false);
+  }, [form, isAddingNewPaymentMethod]);
+
+  useEffect(() => {
+    if (!isInitialized || !isAddingNewPaymentMethod) {
+      return;
+    }
+
+    let isCancelled = false;
 
     void (async () => {
       const paymentService = await paymentServiceLoader();
@@ -277,59 +379,135 @@ export const Payment = ({
        * Using new payment method requires an new intent secret which is then passed
        * to paymentElementCreate.
        */
-      if (isAddingNewPaymentMethod) {
-        let secret: string;
-
-        {
-          const result =
-            await paymentService.paymentGatewayTransactionInitialize({
-              id: checkout.id,
-              amount: checkout.totalPrice.gross.amount,
-              customerId: paymentGatewayCustomer,
-              saveForFutureUse,
-            });
-
-          if (!result.ok) {
-            return setErrors(result.errors.map(({ code }) => code));
-          } else {
-            secret = result.data.clientSecret;
-          }
+      if (isMarketplacePayment) {
+        if (!marketplaceIntentKey || marketplaceIntentCheckouts.length === 0) {
+          return;
         }
 
-        const data = await paymentService.paymentElementCreate({
-          locale: region.language.locale,
-          secret,
-          appearance: {
-            theme: isDark ? "night" : "flat",
-            variables: {
-              borderRadius: "5px",
-            },
-          },
-          options: {
-            layout: {
-              type: "accordion",
-              paymentMethodLogoPosition: "start",
-              defaultCollapsed: false,
-            },
-          },
+        if (marketplaceIntentInitializedRef.current === marketplaceIntentKey) {
+          return;
+        }
+
+        if (marketplaceIntentInFlightRef.current === marketplaceIntentKey) {
+          return;
+        }
+
+        marketplaceIntentInFlightRef.current = marketplaceIntentKey;
+        setIsMounted(false);
+        setPaymentElementSecret(undefined);
+
+        const result = await initializeMarketplacePaymentIntent({
+          buyerId: user?.id,
+          checkouts: marketplaceIntentCheckouts,
         });
 
-        if (document.getElementById(PAYMENT_ELEMENT_ID)) {
-          data.mount(`#${PAYMENT_ELEMENT_ID}`);
-
-          setIsMounted(true);
+        if (marketplaceIntentInFlightRef.current === marketplaceIntentKey) {
+          marketplaceIntentInFlightRef.current = null;
         }
+
+        if (!result.ok) {
+          setErrors(result.errors.map(({ code }) => code));
+
+          return;
+        }
+
+        marketplaceIntentInitializedRef.current = marketplaceIntentKey;
+        setPaymentElementSecret(result.data.clientSecret);
+
+        return;
+      }
+
+      setIsMounted(false);
+      setPaymentElementSecret(undefined);
+
+      const result = await paymentService.paymentGatewayTransactionInitialize({
+        id: checkout.id,
+        amount: checkout.totalPrice.gross.amount,
+        customerId: paymentGatewayCustomer,
+        saveForFutureUse,
+      });
+
+      if (isCancelled) {
+        return;
+      }
+
+      if (!result.ok) {
+        setErrors(result.errors.map(({ code }) => code));
+
+        return;
+      }
+
+      setPaymentElementSecret(result.data.clientSecret);
+    })();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [
+    checkout.id,
+    checkout.totalPrice.gross.amount,
+    isInitialized,
+    isAddingNewPaymentMethod,
+    isMarketplacePayment,
+    marketplaceIntentCheckouts,
+    marketplaceIntentKey,
+    paymentGatewayCustomer,
+    saveForFutureUse,
+    user?.id,
+  ]);
+
+  useEffect(() => {
+    if (!isInitialized || !isAddingNewPaymentMethod || !paymentElementSecret) {
+      return;
+    }
+
+    let isCancelled = false;
+    let unmountPaymentElement: (() => void) | undefined;
+
+    setIsMounted(false);
+
+    void (async () => {
+      const paymentService = await paymentServiceLoader();
+      const data = await paymentService.paymentElementCreate({
+        locale: region.language.locale,
+        secret: paymentElementSecret,
+        appearance: {
+          theme: isDark ? "night" : "flat",
+          variables: {
+            borderRadius: "5px",
+          },
+        },
+        options: {
+          layout: {
+            type: "accordion",
+            paymentMethodLogoPosition: "start",
+            defaultCollapsed: false,
+          },
+        },
+      });
+
+      if (isCancelled) {
+        return;
+      }
+
+      if (document.getElementById(PAYMENT_ELEMENT_ID)) {
+        data.mount(`#${PAYMENT_ELEMENT_ID}`);
+        unmountPaymentElement = data.unmount;
+        setIsMounted(true);
       }
     })();
 
-    if (isAddingNewPaymentMethod) {
-      form.setValue("paymentMethod", undefined);
-    }
-  }, [paymentMethodTab, saveForFutureUse, isInitialized, resolvedTheme]);
-
-  useEffect(() => {
-    setIsMounted(false);
-  }, [saveForFutureUse, paymentMethodTab]);
+    return () => {
+      isCancelled = true;
+      unmountPaymentElement?.();
+    };
+  }, [
+    isAddingNewPaymentMethod,
+    isDark,
+    isInitialized,
+    paymentElementSecret,
+    region.language.locale,
+  ]);
 
   useEffect(() => {
     if (errorCode) {

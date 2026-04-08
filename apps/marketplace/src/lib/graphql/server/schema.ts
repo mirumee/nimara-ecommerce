@@ -115,6 +115,7 @@ async function makeSaleorSchema() {
             "categories",
             "channel",
             "channels",
+            "checkout",
             "collection",
             "collections",
             "customers",
@@ -184,6 +185,8 @@ async function makeSaleorSchema() {
             "collectionDelete",
             "collectionAddProducts",
             "collectionRemoveProducts",
+            "checkoutComplete",
+            "transactionCreate",
           ];
 
           return allowedMutations.includes(fieldName);
