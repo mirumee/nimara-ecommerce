@@ -15,7 +15,7 @@
     "@graphql-codegen/typescript-operations": "5.0.9",
     "@graphql-typed-document-node/core": "3.2.0",
     "@nimara/config": "workspace:*",
-    "@types/node": "^22.19.15",
+    "@types/node": "^22.19.17",
     "ts-log": "2.2.7",
     "typescript": "5.9.3"
   },
