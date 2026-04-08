@@ -29,9 +29,11 @@ export type CheckoutFragment_Checkout_availablePaymentGateways_PaymentGateway = 
 
 export type CheckoutFragment_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_net_Money = { currency: string, amount: number };
 
+export type CheckoutFragment_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_tax_Money = { currency: string, amount: number };
+
 export type CheckoutFragment_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_gross_Money = { currency: string, amount: number };
 
-export type CheckoutFragment_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney = { net: CheckoutFragment_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_net_Money, gross: CheckoutFragment_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_gross_Money };
+export type CheckoutFragment_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney = { net: CheckoutFragment_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_net_Money, tax: CheckoutFragment_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_tax_Money, gross: CheckoutFragment_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_gross_Money };
 
 export type CheckoutFragment_Checkout_lines_CheckoutLine_undiscountedTotalPrice_Money = { amount: number, currency: string };
 
@@ -246,6 +248,9 @@ fragment CartLineFragment on CheckoutLine {
   quantity
   totalPrice {
     net {
+      ...MoneyFragment
+    }
+    tax {
       ...MoneyFragment
     }
     gross {

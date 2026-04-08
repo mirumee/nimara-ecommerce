@@ -15,11 +15,11 @@ export type CollectionEventSubscriptionFragment_NzAgx5ipNwNrprvvHc2qLsxAIqOZxfb0
 
 export type CollectionEventSubscriptionFragment_1E3eTt7xP6B7Mkgmqq5X7sVIf5QtQseWfIxUecQwhV0 = { __typename: 'PageTypeCreated' | 'PageTypeDeleted' | 'PageTypeUpdated' | 'PageUpdated' | 'PaymentAuthorize' | 'PaymentCaptureEvent' | 'PaymentConfirmEvent' | 'PaymentGatewayInitializeSession' | 'PaymentGatewayInitializeTokenizationSession' | 'PaymentListGateways' | 'PaymentMethodInitializeTokenizationSession' | 'PaymentMethodProcessTokenizationSession' | 'PaymentProcessEvent' | 'PaymentRefundEvent' | 'PaymentVoidEvent' | 'PermissionGroupCreated' | 'PermissionGroupDeleted' | 'PermissionGroupUpdated' | 'ProductCreated' | 'ProductDeleted' };
 
-export type CollectionEventSubscriptionFragment_Z7rwgw8zu01Bnc5SgQqNwv0Lyp1jQ30oJz3Z8uvrhEw = { __typename: 'ProductExportCompleted' | 'ProductMediaCreated' | 'ProductMediaDeleted' | 'ProductMediaUpdated' | 'ProductMetadataUpdated' | 'ProductUpdated' | 'ProductVariantBackInStock' | 'ProductVariantCreated' | 'ProductVariantDeleted' | 'ProductVariantMetadataUpdated' | 'ProductVariantOutOfStock' | 'ProductVariantStockUpdated' | 'ProductVariantUpdated' | 'PromotionCreated' | 'PromotionDeleted' | 'PromotionEnded' | 'PromotionRuleCreated' | 'PromotionRuleDeleted' | 'PromotionRuleUpdated' | 'PromotionStarted' };
+export type CollectionEventSubscriptionFragment_VaNEf27jhQMii20zJvI0z7FmZ2UaHv3dIrHb6Xvvd4 = { __typename: 'ProductExportCompleted' | 'ProductMediaCreated' | 'ProductMediaDeleted' | 'ProductMediaUpdated' | 'ProductMetadataUpdated' | 'ProductUpdated' | 'ProductVariantBackInStock' | 'ProductVariantCreated' | 'ProductVariantDeleted' | 'ProductVariantDiscountedPriceUpdated' | 'ProductVariantMetadataUpdated' | 'ProductVariantOutOfStock' | 'ProductVariantStockUpdated' | 'ProductVariantUpdated' | 'PromotionCreated' | 'PromotionDeleted' | 'PromotionEnded' | 'PromotionRuleCreated' | 'PromotionRuleDeleted' | 'PromotionRuleUpdated' };
 
-export type CollectionEventSubscriptionFragment_FsCnoBef8jWxBeWLo55z4FkYvj19c9pK9ySq77aoQq = { __typename: 'PromotionUpdated' | 'SaleCreated' | 'SaleDeleted' | 'SaleToggle' | 'SaleUpdated' | 'ShippingListMethodsForCheckout' | 'ShippingPriceCreated' | 'ShippingPriceDeleted' | 'ShippingPriceUpdated' | 'ShippingZoneCreated' | 'ShippingZoneDeleted' | 'ShippingZoneMetadataUpdated' | 'ShippingZoneUpdated' | 'ShopMetadataUpdated' | 'StaffCreated' | 'StaffDeleted' | 'StaffSetPasswordRequested' | 'StaffUpdated' | 'StoredPaymentMethodDeleteRequested' | 'ThumbnailCreated' };
+export type CollectionEventSubscriptionFragment_Md8zs0I8HeprlIm0922DbYOqrfIxezBupbi88J9Cyo = { __typename: 'PromotionStarted' | 'PromotionUpdated' | 'SaleCreated' | 'SaleDeleted' | 'SaleToggle' | 'SaleUpdated' | 'ShippingListMethodsForCheckout' | 'ShippingPriceCreated' | 'ShippingPriceDeleted' | 'ShippingPriceUpdated' | 'ShippingZoneCreated' | 'ShippingZoneDeleted' | 'ShippingZoneMetadataUpdated' | 'ShippingZoneUpdated' | 'ShopMetadataUpdated' | 'StaffCreated' | 'StaffDeleted' | 'StaffSetPasswordRequested' | 'StaffUpdated' | 'StoredPaymentMethodDeleteRequested' };
 
-export type CollectionEventSubscriptionFragment_V8I7ofYZlQ6mRbyZppdZBtAVuVhCxrv4cl7r3Nc1xQ = { __typename: 'TransactionCancelationRequested' | 'TransactionChargeRequested' | 'TransactionInitializeSession' | 'TransactionItemMetadataUpdated' | 'TransactionProcessSession' | 'TransactionRefundRequested' | 'TranslationCreated' | 'TranslationUpdated' | 'VoucherCodeExportCompleted' | 'VoucherCodesCreated' | 'VoucherCodesDeleted' | 'VoucherCreated' | 'VoucherDeleted' | 'VoucherMetadataUpdated' | 'VoucherUpdated' | 'WarehouseCreated' | 'WarehouseDeleted' | 'WarehouseMetadataUpdated' | 'WarehouseUpdated' };
+export type CollectionEventSubscriptionFragment_Dp5dDbTdpxGfQktwrh3Py85k1XyXjuGj32jhqJ1ZhSs = { __typename: 'ThumbnailCreated' | 'TransactionCancelationRequested' | 'TransactionChargeRequested' | 'TransactionInitializeSession' | 'TransactionItemMetadataUpdated' | 'TransactionProcessSession' | 'TransactionRefundRequested' | 'TranslationCreated' | 'TranslationUpdated' | 'VoucherCodeExportCompleted' | 'VoucherCodesCreated' | 'VoucherCodesDeleted' | 'VoucherCreated' | 'VoucherDeleted' | 'VoucherMetadataUpdated' | 'VoucherUpdated' | 'WarehouseCreated' | 'WarehouseDeleted' | 'WarehouseMetadataUpdated' | 'WarehouseUpdated' };
 
 export type CollectionEventSubscriptionFragment_CollectionDeleted = (
   { collection: CollectionEventSubscriptionFragment_CollectionDeleted_collection_Collection | null }
@@ -37,9 +37,9 @@ export type CollectionEventSubscriptionFragment =
   | CollectionEventSubscriptionFragment_IOmIHgezj4BqSe0qBa27Ry4w4In3hD62xLNv1Dlw
   | CollectionEventSubscriptionFragment_NzAgx5ipNwNrprvvHc2qLsxAIqOZxfb0Ab5nlcQwU
   | CollectionEventSubscriptionFragment_1E3eTt7xP6B7Mkgmqq5X7sVIf5QtQseWfIxUecQwhV0
-  | CollectionEventSubscriptionFragment_Z7rwgw8zu01Bnc5SgQqNwv0Lyp1jQ30oJz3Z8uvrhEw
-  | CollectionEventSubscriptionFragment_FsCnoBef8jWxBeWLo55z4FkYvj19c9pK9ySq77aoQq
-  | CollectionEventSubscriptionFragment_V8I7ofYZlQ6mRbyZppdZBtAVuVhCxrv4cl7r3Nc1xQ
+  | CollectionEventSubscriptionFragment_VaNEf27jhQMii20zJvI0z7FmZ2UaHv3dIrHb6Xvvd4
+  | CollectionEventSubscriptionFragment_Md8zs0I8HeprlIm0922DbYOqrfIxezBupbi88J9Cyo
+  | CollectionEventSubscriptionFragment_Dp5dDbTdpxGfQktwrh3Py85k1XyXjuGj32jhqJ1ZhSs
   | CollectionEventSubscriptionFragment_CollectionDeleted
   | CollectionEventSubscriptionFragment_CollectionUpdated
 ;
@@ -72,11 +72,11 @@ export type MenuEventSubscriptionFragment_6SZv9znezpLhGpS69dQ1GbY5yDKa5XUxykJztq
 
 export type MenuEventSubscriptionFragment_6kRlk3To6sPpW0QQr52mUNjVn2CzSdpyN0o8Cy5kQ70 = { __typename: 'PaymentAuthorize' | 'PaymentCaptureEvent' | 'PaymentConfirmEvent' | 'PaymentGatewayInitializeSession' | 'PaymentGatewayInitializeTokenizationSession' | 'PaymentListGateways' | 'PaymentMethodInitializeTokenizationSession' | 'PaymentMethodProcessTokenizationSession' | 'PaymentProcessEvent' | 'PaymentRefundEvent' | 'PaymentVoidEvent' | 'PermissionGroupCreated' | 'PermissionGroupDeleted' | 'PermissionGroupUpdated' | 'ProductCreated' | 'ProductDeleted' | 'ProductExportCompleted' | 'ProductMediaCreated' | 'ProductMediaDeleted' | 'ProductMediaUpdated' };
 
-export type MenuEventSubscriptionFragment_Rhl3UnNk6nEi747MfPtEghacMvrlEq0zkU4BVjs = { __typename: 'ProductMetadataUpdated' | 'ProductUpdated' | 'ProductVariantBackInStock' | 'ProductVariantCreated' | 'ProductVariantDeleted' | 'ProductVariantMetadataUpdated' | 'ProductVariantOutOfStock' | 'ProductVariantStockUpdated' | 'ProductVariantUpdated' | 'PromotionCreated' | 'PromotionDeleted' | 'PromotionEnded' | 'PromotionRuleCreated' | 'PromotionRuleDeleted' | 'PromotionRuleUpdated' | 'PromotionStarted' | 'PromotionUpdated' | 'SaleCreated' | 'SaleDeleted' | 'SaleToggle' };
+export type MenuEventSubscriptionFragment_Vj0rLuHjNAcQ6LqPpibXk9LyMpl7ObVs0GDdoBpJh4 = { __typename: 'ProductMetadataUpdated' | 'ProductUpdated' | 'ProductVariantBackInStock' | 'ProductVariantCreated' | 'ProductVariantDeleted' | 'ProductVariantDiscountedPriceUpdated' | 'ProductVariantMetadataUpdated' | 'ProductVariantOutOfStock' | 'ProductVariantStockUpdated' | 'ProductVariantUpdated' | 'PromotionCreated' | 'PromotionDeleted' | 'PromotionEnded' | 'PromotionRuleCreated' | 'PromotionRuleDeleted' | 'PromotionRuleUpdated' | 'PromotionStarted' | 'PromotionUpdated' | 'SaleCreated' | 'SaleDeleted' };
 
-export type MenuEventSubscriptionFragment_W5T9u8Ze80BUkN79Oq6SmIzz96pnf5x7CafMXoKzjye = { __typename: 'SaleUpdated' | 'ShippingListMethodsForCheckout' | 'ShippingPriceCreated' | 'ShippingPriceDeleted' | 'ShippingPriceUpdated' | 'ShippingZoneCreated' | 'ShippingZoneDeleted' | 'ShippingZoneMetadataUpdated' | 'ShippingZoneUpdated' | 'ShopMetadataUpdated' | 'StaffCreated' | 'StaffDeleted' | 'StaffSetPasswordRequested' | 'StaffUpdated' | 'StoredPaymentMethodDeleteRequested' | 'ThumbnailCreated' | 'TransactionCancelationRequested' | 'TransactionChargeRequested' | 'TransactionInitializeSession' | 'TransactionItemMetadataUpdated' };
+export type MenuEventSubscriptionFragment_6CiRoIuh4Yp4Dw8YuZkIoAi7nacE1LspcEvEinZSlh0 = { __typename: 'SaleToggle' | 'SaleUpdated' | 'ShippingListMethodsForCheckout' | 'ShippingPriceCreated' | 'ShippingPriceDeleted' | 'ShippingPriceUpdated' | 'ShippingZoneCreated' | 'ShippingZoneDeleted' | 'ShippingZoneMetadataUpdated' | 'ShippingZoneUpdated' | 'ShopMetadataUpdated' | 'StaffCreated' | 'StaffDeleted' | 'StaffSetPasswordRequested' | 'StaffUpdated' | 'StoredPaymentMethodDeleteRequested' | 'ThumbnailCreated' | 'TransactionCancelationRequested' | 'TransactionChargeRequested' | 'TransactionInitializeSession' };
 
-export type MenuEventSubscriptionFragment_YvQxrNkoOvnbjiQk7JSzAwJglAbMml79KptInbPmJ50 = { __typename: 'TransactionProcessSession' | 'TransactionRefundRequested' | 'TranslationCreated' | 'TranslationUpdated' | 'VoucherCodeExportCompleted' | 'VoucherCodesCreated' | 'VoucherCodesDeleted' | 'VoucherCreated' | 'VoucherDeleted' | 'VoucherMetadataUpdated' | 'VoucherUpdated' | 'WarehouseCreated' | 'WarehouseDeleted' | 'WarehouseMetadataUpdated' | 'WarehouseUpdated' };
+export type MenuEventSubscriptionFragment_FzRpvXbZsLUnyQcwg2iTzgAMy1kmkcQ76jDvP0ZVoA = { __typename: 'TransactionItemMetadataUpdated' | 'TransactionProcessSession' | 'TransactionRefundRequested' | 'TranslationCreated' | 'TranslationUpdated' | 'VoucherCodeExportCompleted' | 'VoucherCodesCreated' | 'VoucherCodesDeleted' | 'VoucherCreated' | 'VoucherDeleted' | 'VoucherMetadataUpdated' | 'VoucherUpdated' | 'WarehouseCreated' | 'WarehouseDeleted' | 'WarehouseMetadataUpdated' | 'WarehouseUpdated' };
 
 export type MenuEventSubscriptionFragment_MenuCreated = (
   { menu: MenuEventSubscriptionFragment_MenuCreated_menu_Menu | null }
@@ -114,9 +114,9 @@ export type MenuEventSubscriptionFragment =
   | MenuEventSubscriptionFragment_XWulXk1GqeHNvK2Zjg39D81UqhO8ZykBvc7wuJEvA
   | MenuEventSubscriptionFragment_6SZv9znezpLhGpS69dQ1GbY5yDKa5XUxykJztqqTg6U
   | MenuEventSubscriptionFragment_6kRlk3To6sPpW0QQr52mUNjVn2CzSdpyN0o8Cy5kQ70
-  | MenuEventSubscriptionFragment_Rhl3UnNk6nEi747MfPtEghacMvrlEq0zkU4BVjs
-  | MenuEventSubscriptionFragment_W5T9u8Ze80BUkN79Oq6SmIzz96pnf5x7CafMXoKzjye
-  | MenuEventSubscriptionFragment_YvQxrNkoOvnbjiQk7JSzAwJglAbMml79KptInbPmJ50
+  | MenuEventSubscriptionFragment_Vj0rLuHjNAcQ6LqPpibXk9LyMpl7ObVs0GDdoBpJh4
+  | MenuEventSubscriptionFragment_6CiRoIuh4Yp4Dw8YuZkIoAi7nacE1LspcEvEinZSlh0
+  | MenuEventSubscriptionFragment_FzRpvXbZsLUnyQcwg2iTzgAMy1kmkcQ76jDvP0ZVoA
   | MenuEventSubscriptionFragment_MenuCreated
   | MenuEventSubscriptionFragment_MenuDeleted
   | MenuEventSubscriptionFragment_MenuItemCreated
@@ -149,11 +149,11 @@ export type PageEventSubscriptionFragment_Qo3grqPrpe4HInn1EwEhNaiRstQso5tTjYam1l
 
 export type PageEventSubscriptionFragment_6kRlk3To6sPpW0QQr52mUNjVn2CzSdpyN0o8Cy5kQ70 = { __typename: 'PaymentAuthorize' | 'PaymentCaptureEvent' | 'PaymentConfirmEvent' | 'PaymentGatewayInitializeSession' | 'PaymentGatewayInitializeTokenizationSession' | 'PaymentListGateways' | 'PaymentMethodInitializeTokenizationSession' | 'PaymentMethodProcessTokenizationSession' | 'PaymentProcessEvent' | 'PaymentRefundEvent' | 'PaymentVoidEvent' | 'PermissionGroupCreated' | 'PermissionGroupDeleted' | 'PermissionGroupUpdated' | 'ProductCreated' | 'ProductDeleted' | 'ProductExportCompleted' | 'ProductMediaCreated' | 'ProductMediaDeleted' | 'ProductMediaUpdated' };
 
-export type PageEventSubscriptionFragment_Rhl3UnNk6nEi747MfPtEghacMvrlEq0zkU4BVjs = { __typename: 'ProductMetadataUpdated' | 'ProductUpdated' | 'ProductVariantBackInStock' | 'ProductVariantCreated' | 'ProductVariantDeleted' | 'ProductVariantMetadataUpdated' | 'ProductVariantOutOfStock' | 'ProductVariantStockUpdated' | 'ProductVariantUpdated' | 'PromotionCreated' | 'PromotionDeleted' | 'PromotionEnded' | 'PromotionRuleCreated' | 'PromotionRuleDeleted' | 'PromotionRuleUpdated' | 'PromotionStarted' | 'PromotionUpdated' | 'SaleCreated' | 'SaleDeleted' | 'SaleToggle' };
+export type PageEventSubscriptionFragment_Vj0rLuHjNAcQ6LqPpibXk9LyMpl7ObVs0GDdoBpJh4 = { __typename: 'ProductMetadataUpdated' | 'ProductUpdated' | 'ProductVariantBackInStock' | 'ProductVariantCreated' | 'ProductVariantDeleted' | 'ProductVariantDiscountedPriceUpdated' | 'ProductVariantMetadataUpdated' | 'ProductVariantOutOfStock' | 'ProductVariantStockUpdated' | 'ProductVariantUpdated' | 'PromotionCreated' | 'PromotionDeleted' | 'PromotionEnded' | 'PromotionRuleCreated' | 'PromotionRuleDeleted' | 'PromotionRuleUpdated' | 'PromotionStarted' | 'PromotionUpdated' | 'SaleCreated' | 'SaleDeleted' };
 
-export type PageEventSubscriptionFragment_W5T9u8Ze80BUkN79Oq6SmIzz96pnf5x7CafMXoKzjye = { __typename: 'SaleUpdated' | 'ShippingListMethodsForCheckout' | 'ShippingPriceCreated' | 'ShippingPriceDeleted' | 'ShippingPriceUpdated' | 'ShippingZoneCreated' | 'ShippingZoneDeleted' | 'ShippingZoneMetadataUpdated' | 'ShippingZoneUpdated' | 'ShopMetadataUpdated' | 'StaffCreated' | 'StaffDeleted' | 'StaffSetPasswordRequested' | 'StaffUpdated' | 'StoredPaymentMethodDeleteRequested' | 'ThumbnailCreated' | 'TransactionCancelationRequested' | 'TransactionChargeRequested' | 'TransactionInitializeSession' | 'TransactionItemMetadataUpdated' };
+export type PageEventSubscriptionFragment_6CiRoIuh4Yp4Dw8YuZkIoAi7nacE1LspcEvEinZSlh0 = { __typename: 'SaleToggle' | 'SaleUpdated' | 'ShippingListMethodsForCheckout' | 'ShippingPriceCreated' | 'ShippingPriceDeleted' | 'ShippingPriceUpdated' | 'ShippingZoneCreated' | 'ShippingZoneDeleted' | 'ShippingZoneMetadataUpdated' | 'ShippingZoneUpdated' | 'ShopMetadataUpdated' | 'StaffCreated' | 'StaffDeleted' | 'StaffSetPasswordRequested' | 'StaffUpdated' | 'StoredPaymentMethodDeleteRequested' | 'ThumbnailCreated' | 'TransactionCancelationRequested' | 'TransactionChargeRequested' | 'TransactionInitializeSession' };
 
-export type PageEventSubscriptionFragment_YvQxrNkoOvnbjiQk7JSzAwJglAbMml79KptInbPmJ50 = { __typename: 'TransactionProcessSession' | 'TransactionRefundRequested' | 'TranslationCreated' | 'TranslationUpdated' | 'VoucherCodeExportCompleted' | 'VoucherCodesCreated' | 'VoucherCodesDeleted' | 'VoucherCreated' | 'VoucherDeleted' | 'VoucherMetadataUpdated' | 'VoucherUpdated' | 'WarehouseCreated' | 'WarehouseDeleted' | 'WarehouseMetadataUpdated' | 'WarehouseUpdated' };
+export type PageEventSubscriptionFragment_FzRpvXbZsLUnyQcwg2iTzgAMy1kmkcQ76jDvP0ZVoA = { __typename: 'TransactionItemMetadataUpdated' | 'TransactionProcessSession' | 'TransactionRefundRequested' | 'TranslationCreated' | 'TranslationUpdated' | 'VoucherCodeExportCompleted' | 'VoucherCodesCreated' | 'VoucherCodesDeleted' | 'VoucherCreated' | 'VoucherDeleted' | 'VoucherMetadataUpdated' | 'VoucherUpdated' | 'WarehouseCreated' | 'WarehouseDeleted' | 'WarehouseMetadataUpdated' | 'WarehouseUpdated' };
 
 export type PageEventSubscriptionFragment_PageCreated = (
   { page: PageEventSubscriptionFragment_PageCreated_page_Page | null }
@@ -191,9 +191,9 @@ export type PageEventSubscriptionFragment =
   | PageEventSubscriptionFragment_XWulXk1GqeHNvK2Zjg39D81UqhO8ZykBvc7wuJEvA
   | PageEventSubscriptionFragment_Qo3grqPrpe4HInn1EwEhNaiRstQso5tTjYam1lLlKa
   | PageEventSubscriptionFragment_6kRlk3To6sPpW0QQr52mUNjVn2CzSdpyN0o8Cy5kQ70
-  | PageEventSubscriptionFragment_Rhl3UnNk6nEi747MfPtEghacMvrlEq0zkU4BVjs
-  | PageEventSubscriptionFragment_W5T9u8Ze80BUkN79Oq6SmIzz96pnf5x7CafMXoKzjye
-  | PageEventSubscriptionFragment_YvQxrNkoOvnbjiQk7JSzAwJglAbMml79KptInbPmJ50
+  | PageEventSubscriptionFragment_Vj0rLuHjNAcQ6LqPpibXk9LyMpl7ObVs0GDdoBpJh4
+  | PageEventSubscriptionFragment_6CiRoIuh4Yp4Dw8YuZkIoAi7nacE1LspcEvEinZSlh0
+  | PageEventSubscriptionFragment_FzRpvXbZsLUnyQcwg2iTzgAMy1kmkcQ76jDvP0ZVoA
   | PageEventSubscriptionFragment_PageCreated
   | PageEventSubscriptionFragment_PageDeleted
   | PageEventSubscriptionFragment_PageTypeCreated
@@ -252,11 +252,11 @@ export type ProductEventSubscriptionFragment_Qo3grqPrpe4HInn1EwEhNaiRstQso5tTjYa
 
 export type ProductEventSubscriptionFragment_0Hg7UwAf5qDqrfrBkEq72AxaObrB0w2l4xizB32wmho = { __typename: 'PageCreated' | 'PageDeleted' | 'PageTypeCreated' | 'PageTypeDeleted' | 'PageTypeUpdated' | 'PageUpdated' | 'PaymentAuthorize' | 'PaymentCaptureEvent' | 'PaymentConfirmEvent' | 'PaymentGatewayInitializeSession' | 'PaymentGatewayInitializeTokenizationSession' | 'PaymentListGateways' | 'PaymentMethodInitializeTokenizationSession' | 'PaymentMethodProcessTokenizationSession' | 'PaymentProcessEvent' | 'PaymentRefundEvent' | 'PaymentVoidEvent' | 'PermissionGroupCreated' | 'PermissionGroupDeleted' | 'PermissionGroupUpdated' };
 
-export type ProductEventSubscriptionFragment_GaRpV5WgLmyYwzvOncnidjvA9BqsuLaqkK8MskS5QAk = { __typename: 'ProductCreated' | 'ProductExportCompleted' | 'PromotionCreated' | 'PromotionDeleted' | 'PromotionEnded' | 'PromotionRuleCreated' | 'PromotionRuleDeleted' | 'PromotionRuleUpdated' | 'PromotionStarted' | 'PromotionUpdated' | 'SaleCreated' | 'SaleDeleted' | 'SaleToggle' | 'SaleUpdated' | 'ShippingListMethodsForCheckout' | 'ShippingPriceCreated' | 'ShippingPriceDeleted' | 'ShippingPriceUpdated' | 'ShippingZoneCreated' | 'ShippingZoneDeleted' };
+export type ProductEventSubscriptionFragment_8vnEs7OoSiff0XfWWmMcVlo7I5RldGpA4Gzu0Yf0 = { __typename: 'ProductCreated' | 'ProductExportCompleted' | 'ProductVariantDiscountedPriceUpdated' | 'PromotionCreated' | 'PromotionDeleted' | 'PromotionEnded' | 'PromotionRuleCreated' | 'PromotionRuleDeleted' | 'PromotionRuleUpdated' | 'PromotionStarted' | 'PromotionUpdated' | 'SaleCreated' | 'SaleDeleted' | 'SaleToggle' | 'SaleUpdated' | 'ShippingListMethodsForCheckout' | 'ShippingPriceCreated' | 'ShippingPriceDeleted' | 'ShippingPriceUpdated' | 'ShippingZoneCreated' };
 
-export type ProductEventSubscriptionFragment_HwOxxNnVYeYl4jbk7puxZvo4KTvQJnkcex833Wfg = { __typename: 'ShippingZoneMetadataUpdated' | 'ShippingZoneUpdated' | 'ShopMetadataUpdated' | 'StaffCreated' | 'StaffDeleted' | 'StaffSetPasswordRequested' | 'StaffUpdated' | 'StoredPaymentMethodDeleteRequested' | 'ThumbnailCreated' | 'TransactionCancelationRequested' | 'TransactionChargeRequested' | 'TransactionInitializeSession' | 'TransactionItemMetadataUpdated' | 'TransactionProcessSession' | 'TransactionRefundRequested' | 'TranslationCreated' | 'TranslationUpdated' | 'VoucherCodeExportCompleted' | 'VoucherCodesCreated' | 'VoucherCodesDeleted' };
+export type ProductEventSubscriptionFragment_UGfT5W4pN8hUpJmdIVnWUjEHvpe0Yu0P6Z3bGk3l2aY = { __typename: 'ShippingZoneDeleted' | 'ShippingZoneMetadataUpdated' | 'ShippingZoneUpdated' | 'ShopMetadataUpdated' | 'StaffCreated' | 'StaffDeleted' | 'StaffSetPasswordRequested' | 'StaffUpdated' | 'StoredPaymentMethodDeleteRequested' | 'ThumbnailCreated' | 'TransactionCancelationRequested' | 'TransactionChargeRequested' | 'TransactionInitializeSession' | 'TransactionItemMetadataUpdated' | 'TransactionProcessSession' | 'TransactionRefundRequested' | 'TranslationCreated' | 'TranslationUpdated' | 'VoucherCodeExportCompleted' | 'VoucherCodesCreated' };
 
-export type ProductEventSubscriptionFragment_90suajkXt8hiTAxfKMvbNnr0Zjq2loXudhjMa1vc = { __typename: 'VoucherCreated' | 'VoucherDeleted' | 'VoucherMetadataUpdated' | 'VoucherUpdated' | 'WarehouseCreated' | 'WarehouseDeleted' | 'WarehouseMetadataUpdated' | 'WarehouseUpdated' };
+export type ProductEventSubscriptionFragment_NEkHKuNaPv7LMkfTm0zqQlkVvSmdwmdm3Po4HHoTe = { __typename: 'VoucherCodesDeleted' | 'VoucherCreated' | 'VoucherDeleted' | 'VoucherMetadataUpdated' | 'VoucherUpdated' | 'WarehouseCreated' | 'WarehouseDeleted' | 'WarehouseMetadataUpdated' | 'WarehouseUpdated' };
 
 export type ProductEventSubscriptionFragment_ProductDeleted = (
   { product: ProductEventSubscriptionFragment_ProductDeleted_product_Product | null }
@@ -329,9 +329,9 @@ export type ProductEventSubscriptionFragment =
   | ProductEventSubscriptionFragment_XWulXk1GqeHNvK2Zjg39D81UqhO8ZykBvc7wuJEvA
   | ProductEventSubscriptionFragment_Qo3grqPrpe4HInn1EwEhNaiRstQso5tTjYam1lLlKa
   | ProductEventSubscriptionFragment_0Hg7UwAf5qDqrfrBkEq72AxaObrB0w2l4xizB32wmho
-  | ProductEventSubscriptionFragment_GaRpV5WgLmyYwzvOncnidjvA9BqsuLaqkK8MskS5QAk
-  | ProductEventSubscriptionFragment_HwOxxNnVYeYl4jbk7puxZvo4KTvQJnkcex833Wfg
-  | ProductEventSubscriptionFragment_90suajkXt8hiTAxfKMvbNnr0Zjq2loXudhjMa1vc
+  | ProductEventSubscriptionFragment_8vnEs7OoSiff0XfWWmMcVlo7I5RldGpA4Gzu0Yf0
+  | ProductEventSubscriptionFragment_UGfT5W4pN8hUpJmdIVnWUjEHvpe0Yu0P6Z3bGk3l2aY
+  | ProductEventSubscriptionFragment_NEkHKuNaPv7LMkfTm0zqQlkVvSmdwmdm3Po4HHoTe
   | ProductEventSubscriptionFragment_ProductDeleted
   | ProductEventSubscriptionFragment_ProductMediaCreated
   | ProductEventSubscriptionFragment_ProductMediaDeleted

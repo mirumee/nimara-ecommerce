@@ -5,6 +5,9 @@ fragment CartLineFragment on CheckoutLine {
     net {
       ...MoneyFragment
     }
+    tax {
+      ...MoneyFragment
+    }
     gross {
       ...MoneyFragment
     }

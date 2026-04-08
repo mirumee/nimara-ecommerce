@@ -1,0 +1,12 @@
+query UCPCheckoutSessionGet(
+  $id: ID!
+  $languageCode: LanguageCodeEnum!
+  $countryCode: CountryCode = US
+  $thumbnailSize: Int = 128
+  $thumbnailFormat: ThumbnailFormatEnum = WEBP
+  $isMarketplaceEnabled: Boolean = false
+) {
+  checkout(id: $id) {
+    ...UCPCheckoutSessionFragment
+  }
+}

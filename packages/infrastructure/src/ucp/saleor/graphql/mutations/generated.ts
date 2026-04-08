@@ -1,0 +1,633 @@
+import type * as Types from '@nimara/codegen/schema';
+
+import type { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
+export type UcpCheckoutCompleteMutation_checkoutComplete_CheckoutComplete_order_Order = { id: string };
+
+export type UcpCheckoutCompleteMutation_checkoutComplete_CheckoutComplete_errors_CheckoutError = { field: string | null, message: string | null, code: Types.CheckoutErrorCode };
+
+export type UcpCheckoutCompleteMutation_checkoutComplete_CheckoutComplete = { order: UcpCheckoutCompleteMutation_checkoutComplete_CheckoutComplete_order_Order | null, errors: Array<UcpCheckoutCompleteMutation_checkoutComplete_CheckoutComplete_errors_CheckoutError> };
+
+export type UcpCheckoutCompleteMutation_Mutation = { checkoutComplete: UcpCheckoutCompleteMutation_checkoutComplete_CheckoutComplete | null };
+
+
+export type UcpCheckoutCompleteMutationVariables = Types.Exact<{
+  id: Types.Scalars['ID']['input'];
+}>;
+
+
+export type UcpCheckoutCompleteMutation = UcpCheckoutCompleteMutation_Mutation;
+
+export type UcpCheckoutAddPromoCode_checkoutAddPromoCode_CheckoutAddPromoCode_checkout_Checkout_discount_Money = { amount: number, currency: string };
+
+export type UcpCheckoutAddPromoCode_checkoutAddPromoCode_CheckoutAddPromoCode_checkout_Checkout = { voucherCode: string | null, discount: UcpCheckoutAddPromoCode_checkoutAddPromoCode_CheckoutAddPromoCode_checkout_Checkout_discount_Money | null };
+
+export type UcpCheckoutAddPromoCode_checkoutAddPromoCode_CheckoutAddPromoCode_errors_CheckoutError = { field: string | null, message: string | null, code: Types.CheckoutErrorCode };
+
+export type UcpCheckoutAddPromoCode_checkoutAddPromoCode_CheckoutAddPromoCode = { checkout: UcpCheckoutAddPromoCode_checkoutAddPromoCode_CheckoutAddPromoCode_checkout_Checkout | null, errors: Array<UcpCheckoutAddPromoCode_checkoutAddPromoCode_CheckoutAddPromoCode_errors_CheckoutError> };
+
+export type UcpCheckoutAddPromoCode_Mutation = { checkoutAddPromoCode: UcpCheckoutAddPromoCode_checkoutAddPromoCode_CheckoutAddPromoCode | null };
+
+
+export type UcpCheckoutAddPromoCodeVariables = Types.Exact<{
+  checkoutId: Types.Scalars['ID']['input'];
+  promoCode: Types.Scalars['String']['input'];
+}>;
+
+
+export type UcpCheckoutAddPromoCode = UcpCheckoutAddPromoCode_Mutation;
+
+export type UcpCheckoutRemovePromoCode_checkoutRemovePromoCode_CheckoutRemovePromoCode_checkout_Checkout_discount_Money = { amount: number, currency: string };
+
+export type UcpCheckoutRemovePromoCode_checkoutRemovePromoCode_CheckoutRemovePromoCode_checkout_Checkout = { voucherCode: string | null, discount: UcpCheckoutRemovePromoCode_checkoutRemovePromoCode_CheckoutRemovePromoCode_checkout_Checkout_discount_Money | null };
+
+export type UcpCheckoutRemovePromoCode_checkoutRemovePromoCode_CheckoutRemovePromoCode_errors_CheckoutError = { field: string | null, message: string | null, code: Types.CheckoutErrorCode };
+
+export type UcpCheckoutRemovePromoCode_checkoutRemovePromoCode_CheckoutRemovePromoCode = { checkout: UcpCheckoutRemovePromoCode_checkoutRemovePromoCode_CheckoutRemovePromoCode_checkout_Checkout | null, errors: Array<UcpCheckoutRemovePromoCode_checkoutRemovePromoCode_CheckoutRemovePromoCode_errors_CheckoutError> };
+
+export type UcpCheckoutRemovePromoCode_Mutation = { checkoutRemovePromoCode: UcpCheckoutRemovePromoCode_checkoutRemovePromoCode_CheckoutRemovePromoCode | null };
+
+
+export type UcpCheckoutRemovePromoCodeVariables = Types.Exact<{
+  checkoutId: Types.Scalars['ID']['input'];
+  promoCode: Types.Scalars['String']['input'];
+}>;
+
+
+export type UcpCheckoutRemovePromoCode = UcpCheckoutRemovePromoCode_Mutation;
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_channel_Channel = { slug: string };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_discount_Money = { amount: number, currency: string };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingMethods_ShippingMethod_price_Money = { amount: number, currency: string };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingMethods_ShippingMethod = (
+  { id: string, name: string, maximumDeliveryDays: number | null, minimumDeliveryDays: number | null, message: string | null, price: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingMethods_ShippingMethod_price_Money }
+  & { __typename: 'ShippingMethod' }
+);
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingAddress_Address_country_CountryDisplay = { country: string, code: string };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingAddress_Address = { id: string, city: string, phone: string | null, postalCode: string, companyName: string, cityArea: string, streetAddress1: string, streetAddress2: string, countryArea: string, firstName: string, lastName: string, isDefaultShippingAddress: boolean | null, isDefaultBillingAddress: boolean | null, country: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingAddress_Address_country_CountryDisplay };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_billingAddress_Address = { id: string, city: string, phone: string | null, postalCode: string, companyName: string, cityArea: string, streetAddress1: string, streetAddress2: string, countryArea: string, firstName: string, lastName: string, isDefaultShippingAddress: boolean | null, isDefaultBillingAddress: boolean | null, country: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingAddress_Address_country_CountryDisplay };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_deliveryMethod_ShippingMethod_Warehouse = (
+  { id: string, name: string }
+  & { __typename: 'ShippingMethod' | 'Warehouse' }
+);
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_availablePaymentGateways_PaymentGateway_config_GatewayConfigLine = { field: string, value: string | null };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_availablePaymentGateways_PaymentGateway = { name: string, id: string, config: Array<UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_availablePaymentGateways_PaymentGateway_config_GatewayConfigLine> };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_net_Money = { currency: string, amount: number };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_tax_Money = { currency: string, amount: number };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_gross_Money = { currency: string, amount: number };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney = { net: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_net_Money, tax: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_tax_Money, gross: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_gross_Money };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_undiscountedTotalPrice_Money = { amount: number, currency: string };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_translation_ProductVariantTranslation = { name: string };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_media_ProductMedia = { url: string, alt: string };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation = { name: string };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute = { slug: string | null, inputType: Types.AttributeInputTypeEnum | null, name: string | null, translation: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation | null };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation = { name: string, plainText: string | null, richText: string | null };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_file_File = { url: string };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue = { slug: string | null, name: string | null, plainText: string | null, richText: string | null, boolean: boolean | null, date: string | null, dateTime: string | null, reference: string | null, value: string | null, translation: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation | null, file: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_file_File | null };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute = { attribute: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute, values: Array<UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue> };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_thumbnail_Image = { alt: string | null, url: string };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation = { name: string | null };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product = { id: string, slug: string, name: string, vendorId?: string | null, thumbnail: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_thumbnail_Image | null, translation: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product_translation_ProductTranslation | null };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money = { currency: string, amount: number };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_gross_Money = { currency: string, amount: number };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_tax_Money = { currency: string, amount: number };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney = { net: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money, gross: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_gross_Money, tax: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_tax_Money };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo = { discount: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney | null };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant = { id: string, quantityAvailable: number | null, quantityLimitPerCustomer: number | null, name: string, sku: string | null, translation: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_translation_ProductVariantTranslation | null, media: Array<UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_media_ProductMedia> | null, selectionAttributes: Array<UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute>, product: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_product_Product, pricing: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo | null };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine = { id: string, quantity: number, totalPrice: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney, undiscountedTotalPrice: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_undiscountedTotalPrice_Money, variant: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_totalPrice_TaxedMoney = { net: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money, gross: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_gross_Money, tax: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_tax_Money };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_subtotalPrice_TaxedMoney = { net: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money, gross: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_gross_Money, tax: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_tax_Money };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingPrice_TaxedMoney = { net: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_net_Money, gross: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_gross_Money, tax: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant_pricing_VariantPricingInfo_discount_TaxedMoney_tax_Money };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_problems_CheckoutLineProblemInsufficientStock_line_CheckoutLine = { id: string, quantity: number, totalPrice: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney, undiscountedTotalPrice: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_undiscountedTotalPrice_Money, variant: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_problems_CheckoutLineProblemVariantNotAvailable_line_CheckoutLine = { id: string, quantity: number, totalPrice: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney, undiscountedTotalPrice: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_undiscountedTotalPrice_Money, variant: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine_variant_ProductVariant };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_problems_CheckoutLineProblemInsufficientStock = (
+  { availableQuantity: number | null, line: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_problems_CheckoutLineProblemInsufficientStock_line_CheckoutLine }
+  & { __typename: 'CheckoutLineProblemInsufficientStock' }
+);
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_problems_CheckoutLineProblemVariantNotAvailable = (
+  { line: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_problems_CheckoutLineProblemVariantNotAvailable_line_CheckoutLine }
+  & { __typename: 'CheckoutLineProblemVariantNotAvailable' }
+);
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_problems =
+  | UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_problems_CheckoutLineProblemInsufficientStock
+  | UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_problems_CheckoutLineProblemVariantNotAvailable
+;
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout = { id: string, email: string | null, displayGrossPrices: boolean, voucherCode: string | null, isShippingRequired: boolean, authorizeStatus: Types.CheckoutAuthorizeStatusEnum, chargeStatus: Types.CheckoutChargeStatusEnum, buyer: string | null, channel: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_channel_Channel, discount: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_discount_Money | null, shippingMethods: Array<UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingMethods_ShippingMethod>, shippingAddress: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingAddress_Address | null, billingAddress: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_billingAddress_Address | null, deliveryMethod: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_deliveryMethod_ShippingMethod_Warehouse | null, availablePaymentGateways: Array<UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_availablePaymentGateways_PaymentGateway>, lines: Array<UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine>, totalPrice: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_totalPrice_TaxedMoney, subtotalPrice: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_subtotalPrice_TaxedMoney, shippingPrice: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingPrice_TaxedMoney, problems: Array<UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_problems> | null };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_errors_CheckoutError = { field: string | null, message: string | null, code: Types.CheckoutErrorCode, variants: Array<string> | null, lines: Array<string> | null, addressType: Types.AddressTypeEnum | null };
+
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate = { checkout: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout | null, errors: Array<UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_errors_CheckoutError> };
+
+export type UcpCheckoutSessionCreate_Mutation = { checkoutCreate: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate | null };
+
+
+export type UcpCheckoutSessionCreateVariables = Types.Exact<{
+  input: Types.CheckoutCreateInput;
+  languageCode: Types.LanguageCodeEnum;
+  countryCode?: Types.InputMaybe<Types.CountryCode>;
+  thumbnailSize?: Types.InputMaybe<Types.Scalars['Int']['input']>;
+  thumbnailFormat?: Types.InputMaybe<Types.ThumbnailFormatEnum>;
+  isMarketplaceEnabled?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
+}>;
+
+
+export type UcpCheckoutSessionCreate = UcpCheckoutSessionCreate_Mutation;
+
+export type UcpCheckoutSessionItemUpdate_checkoutLinesAdd_CheckoutLinesAdd_errors_CheckoutError = { field: string | null, message: string | null, code: Types.CheckoutErrorCode, variants: Array<string> | null };
+
+export type UcpCheckoutSessionItemUpdate_checkoutLinesAdd_CheckoutLinesAdd = { errors: Array<UcpCheckoutSessionItemUpdate_checkoutLinesAdd_CheckoutLinesAdd_errors_CheckoutError> };
+
+export type UcpCheckoutSessionItemUpdate_checkoutLinesUpdate_CheckoutLinesUpdate_errors_CheckoutError = { field: string | null, message: string | null, code: Types.CheckoutErrorCode, variants: Array<string> | null };
+
+export type UcpCheckoutSessionItemUpdate_checkoutLinesUpdate_CheckoutLinesUpdate = { errors: Array<UcpCheckoutSessionItemUpdate_checkoutLinesUpdate_CheckoutLinesUpdate_errors_CheckoutError> };
+
+export type UcpCheckoutSessionItemUpdate_Mutation = { checkoutLinesAdd?: UcpCheckoutSessionItemUpdate_checkoutLinesAdd_CheckoutLinesAdd | null, checkoutLinesUpdate?: UcpCheckoutSessionItemUpdate_checkoutLinesUpdate_CheckoutLinesUpdate | null };
+
+
+export type UcpCheckoutSessionItemUpdateVariables = Types.Exact<{
+  checkoutId: Types.Scalars['ID']['input'];
+  linesToAdd: Array<Types.CheckoutLineInput> | Types.CheckoutLineInput;
+  shouldAddLines: Types.Scalars['Boolean']['input'];
+  linesToUpdate: Array<Types.CheckoutLineUpdateInput> | Types.CheckoutLineUpdateInput;
+  shouldUpdateLines: Types.Scalars['Boolean']['input'];
+}>;
+
+
+export type UcpCheckoutSessionItemUpdate = UcpCheckoutSessionItemUpdate_Mutation;
+
+export type UcpCheckoutSessionUpdate_checkoutEmailUpdate_CheckoutEmailUpdate_checkout_Checkout = { email: string | null };
+
+export type UcpCheckoutSessionUpdate_checkoutEmailUpdate_CheckoutEmailUpdate_errors_CheckoutError = { field: string | null, message: string | null, code: Types.CheckoutErrorCode };
+
+export type UcpCheckoutSessionUpdate_checkoutEmailUpdate_CheckoutEmailUpdate = { checkout: UcpCheckoutSessionUpdate_checkoutEmailUpdate_CheckoutEmailUpdate_checkout_Checkout | null, errors: Array<UcpCheckoutSessionUpdate_checkoutEmailUpdate_CheckoutEmailUpdate_errors_CheckoutError> };
+
+export type UcpCheckoutSessionUpdate_checkoutShippingAddressUpdate_CheckoutShippingAddressUpdate_checkout_Checkout_shippingAddress_Address = { id: string, city: string, phone: string | null, postalCode: string, companyName: string, cityArea: string, streetAddress1: string, streetAddress2: string, countryArea: string, firstName: string, lastName: string, isDefaultShippingAddress: boolean | null, isDefaultBillingAddress: boolean | null, country: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingAddress_Address_country_CountryDisplay };
+
+export type UcpCheckoutSessionUpdate_checkoutShippingAddressUpdate_CheckoutShippingAddressUpdate_checkout_Checkout = { shippingAddress: UcpCheckoutSessionUpdate_checkoutShippingAddressUpdate_CheckoutShippingAddressUpdate_checkout_Checkout_shippingAddress_Address | null };
+
+export type UcpCheckoutSessionUpdate_checkoutShippingAddressUpdate_CheckoutShippingAddressUpdate_errors_CheckoutError = { field: string | null, message: string | null, code: Types.CheckoutErrorCode, addressType: Types.AddressTypeEnum | null };
+
+export type UcpCheckoutSessionUpdate_checkoutShippingAddressUpdate_CheckoutShippingAddressUpdate = { checkout: UcpCheckoutSessionUpdate_checkoutShippingAddressUpdate_CheckoutShippingAddressUpdate_checkout_Checkout | null, errors: Array<UcpCheckoutSessionUpdate_checkoutShippingAddressUpdate_CheckoutShippingAddressUpdate_errors_CheckoutError> };
+
+export type UcpCheckoutSessionUpdate_checkoutBillingAddressUpdate_CheckoutBillingAddressUpdate_errors_CheckoutError = { field: string | null, message: string | null, code: Types.CheckoutErrorCode, addressType: Types.AddressTypeEnum | null };
+
+export type UcpCheckoutSessionUpdate_checkoutBillingAddressUpdate_CheckoutBillingAddressUpdate = { errors: Array<UcpCheckoutSessionUpdate_checkoutBillingAddressUpdate_CheckoutBillingAddressUpdate_errors_CheckoutError> };
+
+export type UcpCheckoutSessionUpdate_checkoutDeliveryMethodUpdate_CheckoutDeliveryMethodUpdate_errors_CheckoutError = { field: string | null, message: string | null, code: Types.CheckoutErrorCode };
+
+export type UcpCheckoutSessionUpdate_checkoutDeliveryMethodUpdate_CheckoutDeliveryMethodUpdate = { errors: Array<UcpCheckoutSessionUpdate_checkoutDeliveryMethodUpdate_CheckoutDeliveryMethodUpdate_errors_CheckoutError> };
+
+export type UcpCheckoutSessionUpdate_updateMetadata_UpdateMetadata_errors_MetadataError = { field: string | null, message: string | null, code: Types.MetadataErrorCode };
+
+export type UcpCheckoutSessionUpdate_updateMetadata_UpdateMetadata = { errors: Array<UcpCheckoutSessionUpdate_updateMetadata_UpdateMetadata_errors_MetadataError> };
+
+export type UcpCheckoutSessionUpdate_Mutation = { checkoutEmailUpdate?: UcpCheckoutSessionUpdate_checkoutEmailUpdate_CheckoutEmailUpdate | null, checkoutShippingAddressUpdate?: UcpCheckoutSessionUpdate_checkoutShippingAddressUpdate_CheckoutShippingAddressUpdate | null, checkoutBillingAddressUpdate?: UcpCheckoutSessionUpdate_checkoutBillingAddressUpdate_CheckoutBillingAddressUpdate | null, checkoutDeliveryMethodUpdate?: UcpCheckoutSessionUpdate_checkoutDeliveryMethodUpdate_CheckoutDeliveryMethodUpdate | null, updateMetadata: UcpCheckoutSessionUpdate_updateMetadata_UpdateMetadata | null };
+
+
+export type UcpCheckoutSessionUpdateVariables = Types.Exact<{
+  checkoutId: Types.Scalars['ID']['input'];
+  shippingAddress: Types.AddressInput;
+  shouldUpdateShipping: Types.Scalars['Boolean']['input'];
+  billingAddress: Types.AddressInput;
+  shouldUpdateBilling: Types.Scalars['Boolean']['input'];
+  buyerEmail: Types.Scalars['String']['input'];
+  buyerJSON: Types.Scalars['String']['input'];
+  shouldUpdateEmail: Types.Scalars['Boolean']['input'];
+  fulfillmentOptionID: Types.Scalars['ID']['input'];
+  shouldUpdateFulfillmentOption: Types.Scalars['Boolean']['input'];
+}>;
+
+
+export type UcpCheckoutSessionUpdate = UcpCheckoutSessionUpdate_Mutation;
+
+export class TypedDocumentString<TResult, TVariables>
+  extends String
+  implements DocumentTypeDecoration<TResult, TVariables>
+{
+  __apiType?: NonNullable<DocumentTypeDecoration<TResult, TVariables>['__apiType']>;
+  private value: string;
+  public __meta__?: Record<string, any> | undefined;
+
+  constructor(value: string, __meta__?: Record<string, any> | undefined) {
+    super(value);
+    this.value = value;
+    this.__meta__ = __meta__;
+  }
+
+  override toString(): string & DocumentTypeDecoration<TResult, TVariables> {
+    return this.value;
+  }
+}
+
+export const UcpCheckoutCompleteMutationDocument = new TypedDocumentString(`
+    mutation UCPCheckoutCompleteMutation($id: ID!) {
+  checkoutComplete(id: $id) {
+    order {
+      id
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<UcpCheckoutCompleteMutation, UcpCheckoutCompleteMutationVariables>;
+export const UcpCheckoutAddPromoCodeDocument = new TypedDocumentString(`
+    mutation UCPCheckoutAddPromoCode($checkoutId: ID!, $promoCode: String!) {
+  checkoutAddPromoCode(id: $checkoutId, promoCode: $promoCode) {
+    checkout {
+      voucherCode
+      discount {
+        amount
+        currency
+      }
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<UcpCheckoutAddPromoCode, UcpCheckoutAddPromoCodeVariables>;
+export const UcpCheckoutRemovePromoCodeDocument = new TypedDocumentString(`
+    mutation UCPCheckoutRemovePromoCode($checkoutId: ID!, $promoCode: String!) {
+  checkoutRemovePromoCode(id: $checkoutId, promoCode: $promoCode) {
+    checkout {
+      voucherCode
+      discount {
+        amount
+        currency
+      }
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<UcpCheckoutRemovePromoCode, UcpCheckoutRemovePromoCodeVariables>;
+export const UcpCheckoutSessionCreateDocument = new TypedDocumentString(`
+    mutation UCPCheckoutSessionCreate($input: CheckoutCreateInput!, $languageCode: LanguageCodeEnum!, $countryCode: CountryCode = US, $thumbnailSize: Int = 128, $thumbnailFormat: ThumbnailFormatEnum = WEBP, $isMarketplaceEnabled: Boolean = false) {
+  checkoutCreate(input: $input) {
+    checkout {
+      ...UCPCheckoutSessionFragment
+    }
+    errors {
+      field
+      message
+      code
+      variants
+      lines
+      addressType
+    }
+  }
+}
+    fragment UCPCheckoutSessionFragment on Checkout {
+  ...CheckoutFragment
+  channel {
+    slug
+  }
+  buyer: metafield(key: "ucp.buyer.json")
+}
+fragment CheckoutFragment on Checkout {
+  id
+  email
+  displayGrossPrices
+  discount {
+    amount
+    currency
+  }
+  voucherCode
+  shippingMethods {
+    __typename
+    id
+    name
+    maximumDeliveryDays
+    minimumDeliveryDays
+    message
+    price {
+      amount
+      currency
+    }
+  }
+  shippingAddress {
+    ...AddressFragment
+  }
+  billingAddress {
+    ...AddressFragment
+  }
+  deliveryMethod {
+    __typename
+    ... on Warehouse {
+      id
+      name
+    }
+    ... on ShippingMethod {
+      id
+      name
+    }
+  }
+  availablePaymentGateways {
+    name
+    id
+    config {
+      field
+      value
+    }
+  }
+  lines {
+    ...CartLineFragment
+  }
+  totalPrice {
+    ...TaxedMoneyFragment
+  }
+  subtotalPrice {
+    ...TaxedMoneyFragment
+  }
+  shippingPrice {
+    ...TaxedMoneyFragment
+  }
+  isShippingRequired
+  authorizeStatus
+  chargeStatus
+  problems {
+    ...CheckoutProblemsFragment
+  }
+}
+fragment AddressFragment on Address {
+  id
+  city
+  phone
+  postalCode
+  companyName
+  cityArea
+  streetAddress1
+  streetAddress2
+  countryArea
+  country {
+    country
+    code
+  }
+  firstName
+  lastName
+  isDefaultShippingAddress
+  isDefaultBillingAddress
+}
+fragment CartLineFragment on CheckoutLine {
+  id
+  quantity
+  totalPrice {
+    net {
+      ...MoneyFragment
+    }
+    tax {
+      ...MoneyFragment
+    }
+    gross {
+      ...MoneyFragment
+    }
+  }
+  undiscountedTotalPrice {
+    amount
+    currency
+  }
+  variant {
+    id
+    quantityAvailable(countryCode: $countryCode)
+    quantityLimitPerCustomer
+    name
+    sku
+    translation(languageCode: $languageCode) {
+      name
+    }
+    media {
+      url(size: $thumbnailSize, format: $thumbnailFormat)
+      alt
+    }
+    selectionAttributes: attributes(variantSelection: VARIANT_SELECTION) {
+      ...SelectionAttributeFragment
+    }
+    product {
+      id
+      slug
+      thumbnail(size: $thumbnailSize, format: $thumbnailFormat) {
+        alt
+        url
+      }
+      name
+      translation(languageCode: $languageCode) {
+        name
+      }
+      vendorId: metafield(key: "vendor.id") @include(if: $isMarketplaceEnabled)
+    }
+    pricing {
+      discount {
+        ...TaxedMoneyFragment
+      }
+    }
+  }
+}
+fragment MoneyFragment on Money {
+  currency
+  amount
+}
+fragment SelectionAttributeFragment on SelectedAttribute {
+  attribute {
+    ...AttributeFragment
+  }
+  values {
+    ...AttributeValueFragment
+  }
+}
+fragment AttributeFragment on Attribute {
+  slug
+  inputType
+  name
+  translation(languageCode: $languageCode) {
+    name
+  }
+}
+fragment AttributeValueFragment on AttributeValue {
+  slug
+  name
+  plainText
+  richText
+  boolean
+  date
+  dateTime
+  reference
+  value
+  translation(languageCode: $languageCode) {
+    name
+    plainText
+    richText
+  }
+  file {
+    url
+  }
+}
+fragment TaxedMoneyFragment on TaxedMoney {
+  net {
+    ...MoneyFragment
+  }
+  gross {
+    ...MoneyFragment
+  }
+  tax {
+    ...MoneyFragment
+  }
+}
+fragment CheckoutProblemsFragment on CheckoutProblem {
+  ... on CheckoutLineProblemInsufficientStock {
+    __typename
+    availableQuantity
+    line {
+      ...CartLineFragment
+    }
+  }
+  ... on CheckoutLineProblemVariantNotAvailable {
+    __typename
+    line {
+      ...CartLineFragment
+    }
+  }
+}`) as unknown as TypedDocumentString<UcpCheckoutSessionCreate, UcpCheckoutSessionCreateVariables>;
+export const UcpCheckoutSessionItemUpdateDocument = new TypedDocumentString(`
+    mutation UCPCheckoutSessionItemUpdate($checkoutId: ID!, $linesToAdd: [CheckoutLineInput!]!, $shouldAddLines: Boolean!, $linesToUpdate: [CheckoutLineUpdateInput!]!, $shouldUpdateLines: Boolean!) {
+  checkoutLinesAdd(checkoutId: $checkoutId, lines: $linesToAdd) @include(if: $shouldAddLines) {
+    errors {
+      field
+      message
+      code
+      variants
+    }
+  }
+  checkoutLinesUpdate(id: $checkoutId, lines: $linesToUpdate) @include(if: $shouldUpdateLines) {
+    errors {
+      field
+      message
+      code
+      variants
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<UcpCheckoutSessionItemUpdate, UcpCheckoutSessionItemUpdateVariables>;
+export const UcpCheckoutSessionUpdateDocument = new TypedDocumentString(`
+    mutation UCPCheckoutSessionUpdate($checkoutId: ID!, $shippingAddress: AddressInput!, $shouldUpdateShipping: Boolean!, $billingAddress: AddressInput!, $shouldUpdateBilling: Boolean!, $buyerEmail: String!, $buyerJSON: String!, $shouldUpdateEmail: Boolean!, $fulfillmentOptionID: ID!, $shouldUpdateFulfillmentOption: Boolean!) {
+  checkoutEmailUpdate(checkoutId: $checkoutId, email: $buyerEmail) @include(if: $shouldUpdateEmail) {
+    checkout {
+      email
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+  checkoutShippingAddressUpdate(
+    checkoutId: $checkoutId
+    shippingAddress: $shippingAddress
+  ) @include(if: $shouldUpdateShipping) {
+    checkout {
+      shippingAddress {
+        ...AddressFragment
+      }
+    }
+    errors {
+      field
+      message
+      code
+      addressType
+    }
+  }
+  checkoutBillingAddressUpdate(id: $checkoutId, billingAddress: $billingAddress) @include(if: $shouldUpdateBilling) {
+    errors {
+      field
+      message
+      code
+      addressType
+    }
+  }
+  checkoutDeliveryMethodUpdate(
+    deliveryMethodId: $fulfillmentOptionID
+    id: $checkoutId
+  ) @include(if: $shouldUpdateFulfillmentOption) {
+    errors {
+      field
+      message
+      code
+    }
+  }
+  updateMetadata(
+    id: $checkoutId
+    input: [{key: "ucp.buyer.json", value: $buyerJSON}]
+  ) {
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+    fragment AddressFragment on Address {
+  id
+  city
+  phone
+  postalCode
+  companyName
+  cityArea
+  streetAddress1
+  streetAddress2
+  countryArea
+  country {
+    country
+    code
+  }
+  firstName
+  lastName
+  isDefaultShippingAddress
+  isDefaultBillingAddress
+}`) as unknown as TypedDocumentString<UcpCheckoutSessionUpdate, UcpCheckoutSessionUpdateVariables>;

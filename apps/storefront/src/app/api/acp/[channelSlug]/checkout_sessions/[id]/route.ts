@@ -28,7 +28,7 @@ export async function GET(
           },
         );
 
-        return idempotencyStorage.createResponse(cached);
+        return idempotencyStorage.createResponse(cached.cached);
       }
     }
   }
@@ -101,7 +101,7 @@ export async function POST(
     if (idempotencyKey) {
       const cached = idempotencyStorage.get(idempotencyKey);
 
-      if (cached) {
+      if (cached?.cached) {
         storefrontLogger.debug(
           "Idempotent request - returning cached response",
           {
@@ -109,7 +109,7 @@ export async function POST(
           },
         );
 
-        return idempotencyStorage.createResponse(cached);
+        return idempotencyStorage.createResponse(cached.cached);
       }
     }
   }

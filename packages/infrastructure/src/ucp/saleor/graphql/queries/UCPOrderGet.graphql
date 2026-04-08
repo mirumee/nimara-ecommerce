@@ -1,0 +1,5 @@
+query UCPOrderGet($id: ID!) {
+  order(id: $id) {
+    ...UCPOrderFragment
+  }
+}

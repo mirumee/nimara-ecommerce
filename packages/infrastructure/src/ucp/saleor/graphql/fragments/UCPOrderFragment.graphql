@@ -1,0 +1,47 @@
+fragment UCPOrderFragment on Order {
+  id
+  checkoutId
+  created
+  status
+  paymentStatus
+  displayGrossPrices
+  metadata {
+    key
+    value
+  }
+  fulfillments {
+    id
+    status
+  }
+  lines {
+    id
+    quantity
+    quantityFulfilled
+    productName
+    variantName
+    productVariantId
+    discounts {
+      total {
+        ...MoneyFragment
+      }
+    }
+    unitPrice {
+      ...TaxedMoneyFragment
+    }
+    totalPrice {
+      ...TaxedMoneyFragment
+    }
+  }
+  shippingAddress {
+    ...AddressFragment
+  }
+  billingAddress {
+    ...AddressFragment
+  }
+}
+
+# query Order {
+#   order(id: "T3JkZXI6MDU0N2U4ZWQtZDdiOS00YjQ3LThkYjYtNzc0MGZlODNlYjQy") {
+#     ...UCPOrderFragment
+#   }
+# }

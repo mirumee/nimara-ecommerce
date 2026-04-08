@@ -69,6 +69,7 @@ type RevalidateTag =
   | "SEARCH"
   | `ACP:CHECKOUT_SESSION:${Id}`
   | `ACP:PRODUCT_FEED:${Id}`
+  | `UCP:CHECKOUT_SESSION:${Id}`
   | `ADDRESS_VALIDATION_RULES:${string}`
   | `CHECKOUT:${Id}`
   | `CMS:${Slug}`
