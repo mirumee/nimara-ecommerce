@@ -1,5 +1,9 @@
-.next
+# Dependencies
 node_modules
 
-# Pagefind index files
-/public/_pagefind/
+# Production
+build
+
+# Generated files
+.docusaurus
+.cache-loader

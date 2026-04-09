@@ -1,0 +1,15 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "inputs": [
+        "./src/**/*.[tsx|ts|md|mdx|json|css|scss|html]",
+        "./versioned_docs/**/*.[md|mdx]",
+        "./versioned_sidebars/**.[json|yaml|yml]",
+        "./versions.json",
+        "./docusaurus.config.ts"
+      ],
+      "outputs": ["build"]
+    }
+  }
+}
