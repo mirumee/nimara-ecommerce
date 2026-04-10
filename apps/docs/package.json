@@ -1,26 +1,28 @@
 {
-  "dependencies": {
-    "next": "^16.1.6",
-    "nextra": "4.6.1",
-    "nextra-theme-docs": "4.6.1",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3"
-  },
-  "devDependencies": {
-    "@nimara/config": "workspace:*",
-    "@nimara/ui": "workspace:*",
-    "@svgr/webpack": "8.1.0",
-    "eslint": "^8.57.0",
-    "pagefind": "1.5.0",
-    "typescript": "^5.9.3"
-  },
   "name": "docs",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
-    "build": "next build --webpack",
-    "dev": "next dev",
-    "postbuild": "pagefind --site .next/server/app --output-path public/_pagefind",
-    "start": "next start"
+    "build": "docusaurus build",
+    "clear": "docusaurus clear",
+    "dev": "docusaurus start",
+    "start": "docusaurus serve",
+    "typecheck": "tsc --noEmit"
   },
-  "version": "0.0.1"
+  "dependencies": {
+    "@docusaurus/core": "3.7.0",
+    "@docusaurus/preset-classic": "3.7.0",
+    "@docusaurus/theme-mermaid": "3.7.0",
+    "@mdx-js/react": "3.1.0",
+    "clsx": "2.1.1",
+    "prism-react-renderer": "2.4.1",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@docusaurus/module-type-aliases": "3.7.0",
+    "@docusaurus/tsconfig": "3.7.0",
+    "@docusaurus/types": "3.7.0",
+    "typescript": "^5.9.3"
+  }
 }
