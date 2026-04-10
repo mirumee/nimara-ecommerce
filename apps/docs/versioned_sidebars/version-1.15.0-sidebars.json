@@ -1,0 +1,28 @@
+{
+  "docs": [
+    {
+      "type": "doc",
+      "id": "intro",
+      "label": "Overview"
+    },
+    {
+      "type": "category",
+      "label": "Quickstart",
+      "collapsed": false,
+      "items": [
+        "running-locally",
+        "storefront",
+        "environment-variables",
+        "stripe-integration",
+        "saleor-cms",
+        "add-new-channel"
+      ]
+    },
+    {
+      "type": "category",
+      "label": "Advanced",
+      "collapsed": false,
+      "items": ["marketplace", "using-terraform"]
+    }
+  ]
+}
