@@ -30,7 +30,7 @@
     "graphql-yoga": "^5.18.1",
     "jose": "^6.2.1",
     "lucide-react": "^0.577.0",
-    "next": "^16.1.6",
+    "next": "^16.2.3",
     "next-intl": "4.8.3",
     "nodemailer": "8.0.2",
     "react": "^19.2.3",
