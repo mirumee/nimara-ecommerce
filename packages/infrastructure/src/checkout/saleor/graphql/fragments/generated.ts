@@ -41,7 +41,7 @@ export type CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_
 
 export type CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation = { name: string };
 
-export type CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute = { slug: string | null, inputType: Types.AttributeInputTypeEnum | null, name: string | null, translation: CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation | null };
+export type CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute = { slug: string, inputType: Types.AttributeInputTypeEnum | null, name: string, translation: CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation | null };
 
 export type CheckoutFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation = { name: string, plainText: string | null, richText: string | null };
 
@@ -108,9 +108,12 @@ export type CheckoutProblemsFragment_CheckoutLineProblemVariantNotAvailable = (
   & { __typename: 'CheckoutLineProblemVariantNotAvailable' }
 );
 
+export type CheckoutProblemsFragment_CheckoutProblemDeliveryMethodInvalid_CheckoutProblemDeliveryMethodStale = Record<PropertyKey, never>;
+
 export type CheckoutProblemsFragment =
   | CheckoutProblemsFragment_CheckoutLineProblemInsufficientStock
   | CheckoutProblemsFragment_CheckoutLineProblemVariantNotAvailable
+  | CheckoutProblemsFragment_CheckoutProblemDeliveryMethodInvalid_CheckoutProblemDeliveryMethodStale
 ;
 
 export class TypedDocumentString<TResult, TVariables>

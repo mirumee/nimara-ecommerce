@@ -1,9 +1,14 @@
 import { chain } from "@nimara/foundation/middleware/chain";
 
 import { authMiddleware } from "@/foundation/auth/authMiddleware";
+import { orderPlacedCleanupMiddleware } from "@/foundation/checkout/order-placed-cleanup-middleware";
 import { i18nMiddleware } from "@/foundation/i18n/middleware";
 
-export default chain([i18nMiddleware, authMiddleware]);
+export default chain([
+  orderPlacedCleanupMiddleware,
+  i18nMiddleware,
+  authMiddleware,
+]);
 
 export const config = {
   matcher: [

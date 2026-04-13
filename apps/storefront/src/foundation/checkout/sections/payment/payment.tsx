@@ -263,6 +263,7 @@ export const Payment = ({
           saveAddressForFutureUse,
           billingAddress,
         },
+        revalidateCheckout: false,
       });
 
       if (!result.ok) {
@@ -304,6 +305,7 @@ export const Payment = ({
       if (!result.ok) {
         setErrors(result.errors.map(({ code }) => code));
         setIsProcessing(false);
+        router.refresh();
 
         return;
       }
@@ -323,6 +325,7 @@ export const Payment = ({
     if (!result.ok) {
       setErrors(result.errors.map(({ code }) => code));
       setIsProcessing(false);
+      router.refresh();
     }
   };
 

@@ -1,7 +1,5 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-
 import { type AllCountryCode } from "@nimara/domain/consts";
 import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { type AsyncResult, err, ok } from "@nimara/domain/objects/Result";
@@ -10,7 +8,6 @@ import { schemaToAddress } from "@nimara/foundation/address/address";
 import { clientEnvs } from "@/envs/client";
 import { createAddressAction } from "@/foundation/address/create-address-action";
 import { updateCheckoutAddressAction } from "@/foundation/checkout/actions/update-checkout-address-action";
-import { paths } from "@/foundation/routing/paths";
 import { storefrontLogger } from "@/services/logging";
 import { getServiceRegistry } from "@/services/registry";
 import { getAccessToken } from "@/services/tokens";
@@ -20,12 +17,19 @@ import { type PaymentSchema } from "./schema";
 export async function updateBillingAddress({
   checkout,
   input: { sameAsShippingAddress, billingAddress, saveAddressForFutureUse },
+  /**
+   * When false, skips revalidatePath after a successful update. Use before Stripe
+   * confirmPayment + redirect so RSC refetch does not race with navigation (Next.js
+   * "Error in input stream"). Call router.refresh() on the client if payment fails.
+   */
+  revalidateCheckout = true,
 }: {
   checkout: Checkout;
   input: Pick<
     PaymentSchema,
     "sameAsShippingAddress" | "billingAddress" | "saveAddressForFutureUse"
   >;
+  revalidateCheckout?: boolean;
 }) {
   const result = await updateCheckoutAddressAction({
     id: checkout.id,
@@ -33,6 +37,7 @@ export async function updateBillingAddress({
       ? checkout.shippingAddress!
       : schemaToAddress(billingAddress!),
     type: "BILLING",
+    revalidateCheckout,
   });
 
   if (saveAddressForFutureUse) {
@@ -52,10 +57,6 @@ export async function updateBillingAddress({
         "Access token not found while creating checkout billing address. Skipping address creation.",
       );
     }
-  }
-
-  if (result.ok) {
-    revalidatePath(paths.checkout.asPath());
   }
 
   return result;

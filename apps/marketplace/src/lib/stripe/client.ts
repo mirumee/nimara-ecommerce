@@ -1,5 +1,3 @@
-import { APP_CONFIG } from "@/lib/saleor/consts";
-
 interface PaymentIntentCreateInput {
   amount: number;
   automatic_payment_methods: {

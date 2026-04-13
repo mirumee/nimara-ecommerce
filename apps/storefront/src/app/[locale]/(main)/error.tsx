@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 
+import { isTransientRscNavigationError } from "@/foundation/errors/is-transient-rsc-navigation-error";
+import { RscStreamInterruptedFallback } from "@/foundation/errors/rsc-stream-interrupted-fallback";
 import { errorService } from "@/services/error";
 import { storefrontLogger } from "@/services/logging";
 
@@ -15,10 +17,23 @@ export default function Error({
   const [traceId, setTraceId] = useState<string | null>(null);
 
   useEffect(() => {
+    if (isTransientRscNavigationError(error)) {
+      storefrontLogger.debug(
+        "RSC stream aborted (usually harmless; navigation in flight)",
+        { message: error.message },
+      );
+
+      return;
+    }
+
     storefrontLogger.error("Unexpected error", { error });
 
     setTraceId(errorService.logError(error));
   }, [error]);
+
+  if (isTransientRscNavigationError(error)) {
+    return <RscStreamInterruptedFallback />;
+  }
 
   return (
     <div className="bg-white">

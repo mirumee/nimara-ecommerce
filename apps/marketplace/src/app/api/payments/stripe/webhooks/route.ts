@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 
 import type { TransactionCreateMutationVariables } from "@/graphql/generated/client";
 import { getAppConfig } from "@/lib/saleor/app-config";
-import { verifyStripeWebhookSignature } from "@/lib/stripe/webhook-signature";
+import { verifyStripeWebhookSignatureDetailed } from "@/lib/stripe/webhook-signature";
 import { checkoutService } from "@/services/checkouts";
 import { marketplaceLogger } from "@/services/logging";
 import { transactionsService } from "@/services/transactions";
@@ -54,6 +54,19 @@ type CheckoutCompletePayload = {
   } | null;
 };
 
+/**
+ * Include `debug` in JSON error responses (visible in Stripe Dashboard → webhook delivery).
+ * Opt-in only: set `STRIPE_WEBHOOK_DEBUG=true` or `1`. Otherwise never attached.
+ */
+const stripeWebhookDebugInResponse = (): boolean => {
+  const v = process.env.STRIPE_WEBHOOK_DEBUG?.toLowerCase();
+
+  return v === "true" || v === "1";
+};
+
+const truncateForLog = (text: string, maxChars: number): string =>
+  text.length <= maxChars ? text : `${text.slice(0, maxChars)}…[truncated]`;
+
 const isCheckoutCompleteNotFoundError = (code: string) => code === "NOT_FOUND";
 
 const mapCheckoutCompleteErrors = (
@@ -92,23 +105,59 @@ const getSaleorDomainFromEnv = () => {
 
 export async function POST(request: NextRequest) {
   const stripeSignature = request.headers.get("stripe-signature");
+  const rawPayload = await request.text();
+
+  const baseDebug = {
+    bodyByteLength: Buffer.byteLength(rawPayload, "utf8"),
+    hasStripeSignatureHeader: Boolean(stripeSignature),
+    stripeSignatureHeaderLength: stripeSignature?.length ?? 0,
+    hasWebhookSigningSecret: Boolean(process.env.STRIPE_WEBHOOK_SIGNING_SECRET),
+  };
 
   if (!stripeSignature) {
+    const debug = {
+      ...baseDebug,
+      step: "missing_stripe_signature_header" as const,
+    };
+
+    marketplaceLogger.error(
+      "Stripe webhook rejected: missing stripe-signature",
+      {
+        ...debug,
+        rawBodyPreview: truncateForLog(rawPayload, 600),
+      },
+    );
+
     return NextResponse.json(
-      { error: "Missing stripe-signature header." },
+      stripeWebhookDebugInResponse()
+        ? { error: "Missing stripe-signature header.", debug }
+        : { error: "Missing stripe-signature header." },
       { status: 400 },
     );
   }
 
-  const rawPayload = await request.text();
-  const isValidSignature = verifyStripeWebhookSignature({
+  const signatureResult = verifyStripeWebhookSignatureDetailed({
     payload: rawPayload,
     stripeSignature,
   });
 
-  if (!isValidSignature) {
+  if (!signatureResult.ok) {
+    const debug = {
+      ...baseDebug,
+      step: "signature_verification_failed" as const,
+      verifyReason: signatureResult.reason,
+      clockSkewSeconds: signatureResult.clockSkewSeconds,
+    };
+
+    marketplaceLogger.error("Stripe webhook rejected: invalid signature", {
+      ...debug,
+      rawBodyPreview: truncateForLog(rawPayload, 600),
+    });
+
     return NextResponse.json(
-      { error: "Invalid Stripe webhook signature." },
+      stripeWebhookDebugInResponse()
+        ? { error: "Invalid Stripe webhook signature.", debug }
+        : { error: "Invalid Stripe webhook signature." },
       { status: 400 },
     );
   }
@@ -117,9 +166,24 @@ export async function POST(request: NextRequest) {
 
   try {
     event = JSON.parse(rawPayload) as StripePaymentIntentSucceededEvent;
-  } catch {
+  } catch (parseError) {
+    const debug = {
+      ...baseDebug,
+      step: "json_parse_failed" as const,
+      parseError:
+        parseError instanceof Error ? parseError.message : String(parseError),
+      rawBodyPreview: truncateForLog(rawPayload, 800),
+    };
+
+    marketplaceLogger.error(
+      "Stripe webhook rejected: JSON parse failed",
+      debug,
+    );
+
     return NextResponse.json(
-      { error: "Invalid Stripe payload." },
+      stripeWebhookDebugInResponse()
+        ? { error: "Invalid Stripe payload.", debug }
+        : { error: "Invalid Stripe payload." },
       { status: 400 },
     );
   }

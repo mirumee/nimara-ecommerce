@@ -22,10 +22,16 @@ import { getServiceRegistry } from "@/services/registry";
  */
 export const updateCheckoutAddressAction = async ({
   type,
+  revalidateCheckout = true,
   ...values
 }: {
   address: Partial<AddressCreateInput>;
   id: Checkout["id"];
+  /**
+   * When false, skips revalidatePath (e.g. immediately before Stripe redirect).
+   * @see updateBillingAddress in payment/actions.ts
+   */
+  revalidateCheckout?: boolean;
   type: AddressType;
 }): AsyncResult<{
   success: true;
@@ -64,7 +70,9 @@ export const updateCheckoutAddressAction = async ({
     }
   }
 
-  revalidatePath(paths.checkout.asPath());
+  if (revalidateCheckout) {
+    revalidatePath(paths.checkout.asPath());
+  }
 
   return ok({ success: true });
 };

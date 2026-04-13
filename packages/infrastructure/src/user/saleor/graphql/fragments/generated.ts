@@ -17,7 +17,7 @@ export type OrderFragment_Order_lines_OrderLine_thumbnail_Image = { url: string,
 
 export type OrderFragment_Order_lines_OrderLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation = { name: string };
 
-export type OrderFragment_Order_lines_OrderLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute = { slug: string | null, inputType: Types.AttributeInputTypeEnum | null, name: string | null, translation: OrderFragment_Order_lines_OrderLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation | null };
+export type OrderFragment_Order_lines_OrderLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute = { slug: string, inputType: Types.AttributeInputTypeEnum | null, name: string, translation: OrderFragment_Order_lines_OrderLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation | null };
 
 export type OrderFragment_Order_lines_OrderLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation = { name: string, plainText: string | null, richText: string | null };
 

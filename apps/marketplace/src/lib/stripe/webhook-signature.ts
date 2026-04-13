@@ -15,38 +15,60 @@ const parseStripeSignature = (signature: string) => {
   };
 };
 
-export const verifyStripeWebhookSignature = ({
+export type StripeWebhookVerifyFailureReason =
+  | "malformed_header_missing_timestamp_or_v1"
+  | "invalid_timestamp_number"
+  | "timestamp_outside_tolerance"
+  | "missing_signing_secret"
+  | "signature_mismatch";
+
+export type StripeWebhookVerifyResult =
+  | { ok: true }
+  | {
+      /** Seconds between Stripe header timestamp and server time (absolute), if parsed */
+      clockSkewSeconds?: number;
+      ok: false;
+      reason: StripeWebhookVerifyFailureReason;
+    };
+
+/**
+ * Same as verifyStripeWebhookSignature but returns why verification failed (for debugging).
+ */
+export const verifyStripeWebhookSignatureDetailed = ({
   payload,
   stripeSignature,
 }: {
   payload: string;
   stripeSignature: string;
-}) => {
+}): StripeWebhookVerifyResult => {
   const { timestamp, signatures } = parseStripeSignature(stripeSignature);
 
   if (!timestamp || signatures.length === 0) {
-    return false;
+    return { ok: false, reason: "malformed_header_missing_timestamp_or_v1" };
   }
 
   const timestampNumber = Number(timestamp);
 
   if (!Number.isFinite(timestampNumber)) {
-    return false;
+    return { ok: false, reason: "invalid_timestamp_number" };
   }
 
   const currentTimestamp = Math.floor(Date.now() / 1000);
+  const clockSkewSeconds = Math.abs(currentTimestamp - timestampNumber);
 
-  if (
-    Math.abs(currentTimestamp - timestampNumber) > WEBHOOK_TOLERANCE_SECONDS
-  ) {
-    return false;
+  if (clockSkewSeconds > WEBHOOK_TOLERANCE_SECONDS) {
+    return {
+      clockSkewSeconds,
+      ok: false,
+      reason: "timestamp_outside_tolerance",
+    };
   }
 
   const signedPayload = `${timestamp}.${payload}`;
   const secret = process.env.STRIPE_WEBHOOK_SIGNING_SECRET;
 
   if (!secret) {
-    throw new Error("Missing STRIPE_WEBHOOK_SIGNING_SECRET");
+    return { ok: false, reason: "missing_signing_secret" };
   }
 
   const expectedSignature = createHmac("sha256", secret)
@@ -55,7 +77,7 @@ export const verifyStripeWebhookSignature = ({
 
   const expectedBuffer = Buffer.from(expectedSignature, "hex");
 
-  return signatures.some((signature) => {
+  const matched = signatures.some((signature) => {
     try {
       const signatureBuffer = Buffer.from(signature, "hex");
 
@@ -68,4 +90,29 @@ export const verifyStripeWebhookSignature = ({
       return false;
     }
   });
+
+  if (!matched) {
+    return {
+      clockSkewSeconds,
+      ok: false,
+      reason: "signature_mismatch",
+    };
+  }
+
+  return { ok: true };
+};
+
+export const verifyStripeWebhookSignature = ({
+  payload,
+  stripeSignature,
+}: {
+  payload: string;
+  stripeSignature: string;
+}) => {
+  const result = verifyStripeWebhookSignatureDetailed({
+    payload,
+    stripeSignature,
+  });
+
+  return result.ok;
 };
