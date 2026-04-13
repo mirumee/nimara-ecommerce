@@ -8,11 +8,11 @@
     "codegen": "pnpm codegen:saleor && pnpm codegen:marketplace && pnpm codegen:stripe"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "6.2.1",
+    "@graphql-codegen/cli": "6.3.0",
     "@graphql-codegen/near-operation-file-preset": "4.0.0",
-    "@graphql-codegen/typed-document-node": "6.1.7",
-    "@graphql-codegen/typescript": "5.0.9",
-    "@graphql-codegen/typescript-operations": "5.0.9",
+    "@graphql-codegen/typed-document-node": "6.1.8",
+    "@graphql-codegen/typescript": "5.0.10",
+    "@graphql-codegen/typescript-operations": "5.1.0",
     "@graphql-typed-document-node/core": "3.2.0",
     "@nimara/config": "workspace:*",
     "@types/node": "^22.19.17",

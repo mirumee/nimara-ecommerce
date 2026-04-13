@@ -48,11 +48,11 @@
     "eslint": "^8.57.0",
     "eslint-config-custom": "workspace:*",
     "eslint-config-next": "^15.5.12",
-    "postcss": "^8.5.8",
+    "postcss": "^8.5.9",
     "tailwindcss": "^3.4.19",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.9.3",
-    "vitest": "4.1.2"
+    "vitest": "4.1.4"
   },
   "name": "marketplace",
   "private": true,
