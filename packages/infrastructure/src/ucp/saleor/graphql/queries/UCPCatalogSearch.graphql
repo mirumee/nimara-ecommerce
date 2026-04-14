@@ -1,0 +1,28 @@
+query UCPCatalogSearch(
+  $first: Int!
+  $channel: String!
+  $search: String
+  $filter: ProductFilterInput
+  $after: String
+) {
+  products(
+    first: $first
+    channel: $channel
+    search: $search
+    filter: $filter
+    after: $after
+    sortBy: { field: RANK, direction: DESC }
+  ) {
+    edges {
+      node {
+        ...UCPCatalogProductFragment
+      }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+    totalCount
+  }
+}

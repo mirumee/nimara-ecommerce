@@ -8,7 +8,7 @@ mutation UCPCheckoutSessionUpdate(
   $shouldUpdateBilling: Boolean!
   # Buyer
   $buyerEmail: String!
-  $buyerJSON: String!
+  $metadata: [MetadataInput!]!
   $shouldUpdateEmail: Boolean!
   # Fulfillment
   $fulfillmentOptionID: ID!
@@ -66,10 +66,7 @@ mutation UCPCheckoutSessionUpdate(
     }
   }
 
-  updateMetadata(
-    id: $checkoutId
-    input: [{ key: "ucp.buyer.json", value: $buyerJSON }]
-  ) {
+  updateMetadata(id: $checkoutId, input: $metadata) {
     errors {
       field
       message

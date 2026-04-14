@@ -1,0 +1,5 @@
+query UCPCatalogProduct($id: ID!, $channel: String!) {
+  product(id: $id, channel: $channel) {
+    ...UCPCatalogProductFragment
+  }
+}
