@@ -648,7 +648,9 @@ function toUcpMedia(
   media: Array<{ alt: string; type?: string; url: string }>,
 ): UcpMedia[] {
   return media.map((m) => ({
-    type: (m.type?.toLowerCase() === "video" ? "video" : "image") as UcpMedia["type"],
+    type: (m.type?.toLowerCase() === "video"
+      ? "video"
+      : "image") as UcpMedia["type"],
     url: m.url,
     alt_text: m.alt || undefined,
   }));
@@ -671,7 +673,9 @@ export function saleorVariantToUcp(variant: SaleorCatalogVariant): UcpVariant {
     title: variant.name || "Default",
     description: { plain: variant.name || "" },
     sku: variant.sku ?? undefined,
-    price: price ? toUcpPrice(price.amount, price.currency) : { amount: 0, currency },
+    price: price
+      ? toUcpPrice(price.amount, price.currency)
+      : { amount: 0, currency },
     availability: {
       available: (variant.quantityAvailable ?? 0) > 0,
     },
@@ -696,9 +700,7 @@ export function saleorProductToUcp(
   const listPriceRange = product.pricing?.priceRangeUndiscounted;
   const currency = priceRange?.start?.gross.currency ?? "USD";
 
-  const variants = (product.variants ?? []).map((v) =>
-    saleorVariantToUcp(v),
-  );
+  const variants = (product.variants ?? []).map((v) => saleorVariantToUcp(v));
 
   const categories = product.category
     ? [{ value: product.category.slug }]
@@ -723,9 +725,7 @@ export function saleorProductToUcp(
   }
 
   const options = product.productType?.variantAttributes
-    ?.filter(
-      (attr) => attr.choices && attr.choices.edges.length > 0,
-    )
+    ?.filter((attr) => attr.choices && attr.choices.edges.length > 0)
     .map((attr) => ({
       name: attr.name ?? attr.slug ?? "",
       values: attr.choices!.edges.map((edge) => ({
@@ -759,7 +759,7 @@ export function saleorProductToUcp(
     listPriceRange?.start?.gross &&
     listPriceRange?.stop?.gross &&
     priceRange?.start?.gross &&
-    (listPriceRange.start.gross.amount !== priceRange.start.gross.amount)
+    listPriceRange.start.gross.amount !== priceRange.start.gross.amount
   ) {
     ucpProduct.list_price_range = {
       min: toUcpPrice(listPriceRange.start.gross.amount, currency),

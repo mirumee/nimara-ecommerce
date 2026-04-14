@@ -216,10 +216,10 @@ All UCP endpoints expect the following headers:
 | ----------------- | -------- | ---------------------------------------------------------------------------------------------------- |
 | `Content-Type`    | Yes      | Must be `application/json` for all POST/PUT requests                                                 |
 | `UCP-Agent`       | Yes      | Platform profile URL, e.g. `profile="https://platform.example/.well-known/ucp"`                      |
-| `Idempotency-Key` | No       | Unique key for safe retries on checkout-session create. Same key + same body returns cached response  |
+| `Idempotency-Key` | No       | Unique key for safe retries on checkout-session create. Same key + same body returns cached response |
 | `Request-Id`      | No       | Correlation ID echoed back in the response for request tracing                                       |
-| `Authorization`   | No       | Reserved for future use. Not currently validated (see Known Limitations)                              |
-| `Signature`       | No       | Reserved for future use. Not currently validated (see Known Limitations)                              |
+| `Authorization`   | No       | Reserved for future use. Not currently validated (see Known Limitations)                             |
+| `Signature`       | No       | Reserved for future use. Not currently validated (see Known Limitations)                             |
 | `Api-Version`     | No       | Reserved for future use. Version is negotiated via the `UCP-Agent` profile                           |
 
 ## Known Limitations

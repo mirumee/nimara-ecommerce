@@ -95,9 +95,7 @@ export function deriveStatusFromErrors(
   }
 
   // Get highest severity
-  const hasUnrecoverable = messages.some(
-    (m) => m.severity === "unrecoverable",
-  );
+  const hasUnrecoverable = messages.some((m) => m.severity === "unrecoverable");
   const hasRequiresBuyerInput = messages.some(
     (m) => m.severity === "requires_buyer_input",
   );

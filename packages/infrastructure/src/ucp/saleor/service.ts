@@ -541,7 +541,8 @@ export const saleorUCPService = ({
         return err([
           {
             code: "CHECKOUT_CANCELLED_ERROR",
-            message: "Checkout session has been canceled and cannot be updated.",
+            message:
+              "Checkout session has been canceled and cannot be updated.",
           },
         ]);
       }
@@ -1115,8 +1116,7 @@ export const saleorUCPService = ({
         return err(metadataResult.errors);
       }
 
-      const metadataErrors =
-        metadataResult.data.updateMetadata?.errors ?? [];
+      const metadataErrors = metadataResult.data.updateMetadata?.errors ?? [];
 
       if (metadataErrors.length > 0) {
         const errors = mapSaleorMutationErrors(metadataErrors);
