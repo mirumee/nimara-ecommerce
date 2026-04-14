@@ -1,0 +1,85 @@
+fragment UCPCatalogProductFragment on Product {
+  id
+  name
+  slug
+  description
+  category {
+    name
+    slug
+  }
+  media {
+    alt
+    url
+    type
+  }
+  pricing {
+    priceRange {
+      start {
+        gross {
+          ...MoneyFragment
+        }
+      }
+      stop {
+        gross {
+          ...MoneyFragment
+        }
+      }
+    }
+    priceRangeUndiscounted {
+      start {
+        gross {
+          ...MoneyFragment
+        }
+      }
+      stop {
+        gross {
+          ...MoneyFragment
+        }
+      }
+    }
+  }
+  variants {
+    id
+    name
+    sku
+    pricing {
+      price {
+        gross {
+          ...MoneyFragment
+        }
+      }
+      priceUndiscounted {
+        gross {
+          ...MoneyFragment
+        }
+      }
+    }
+    quantityAvailable
+    media {
+      alt
+      url
+    }
+    attributes {
+      attribute {
+        name
+        slug
+      }
+      values {
+        name
+      }
+    }
+  }
+  productType {
+    variantAttributes {
+      name
+      slug
+      choices(first: 50) {
+        edges {
+          node {
+            name
+          }
+        }
+      }
+    }
+  }
+}

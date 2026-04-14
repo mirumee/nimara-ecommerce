@@ -17,11 +17,12 @@ To get started with Nimara, explore the **Quickstart** section which contains st
 
 - **[Running locally](running-locally)** - Set up Nimara on your local development environment
 - **[Storefront](storefront)** - Deploy your storefront to production
-- **[Marketplace](marketplace)** - Set up the vendor marketplace app
 - **[Environment variables](environment-variables)** - Configure your application settings
-- **[Stripe integration](stripe-integration)** - Set up payment processing
 - **[Saleor CMS](saleor-cms)** - Manage your content with Saleor's CMS features
 - **[Add new channel](add-new-channel)** - Add locales, languages, and markets
+- **[UCP integration](ucp-integration)** - Universal Commerce Protocol for AI agents and platforms
+- **[Stripe integration](stripe-integration)** - Set up payment processing
+- **[Marketplace](marketplace)** - Set up the vendor marketplace app
 - **[Terraform](using-terraform)** - Infrastructure as code deployment
 
 Choose a guide from the menu to begin!

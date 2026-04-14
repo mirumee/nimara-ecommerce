@@ -1,6 +1,114 @@
 import type * as Types from '@nimara/codegen/schema';
 
 import type { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
+export type UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_category_Category = { name: string, slug: string };
+
+export type UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_media_ProductMedia = { alt: string, url: string, type: Types.ProductMediaType };
+
+export type UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_gross_Money = { currency: string, amount: number };
+
+export type UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney = { gross: UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_gross_Money };
+
+export type UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_stop_TaxedMoney_gross_Money = { currency: string, amount: number };
+
+export type UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_stop_TaxedMoney = { gross: UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_stop_TaxedMoney_gross_Money };
+
+export type UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange = { start: UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney | null, stop: UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_stop_TaxedMoney | null };
+
+export type UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRangeUndiscounted_TaxedMoneyRange_start_TaxedMoney_gross_Money = { currency: string, amount: number };
+
+export type UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRangeUndiscounted_TaxedMoneyRange_start_TaxedMoney = { gross: UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRangeUndiscounted_TaxedMoneyRange_start_TaxedMoney_gross_Money };
+
+export type UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRangeUndiscounted_TaxedMoneyRange_stop_TaxedMoney_gross_Money = { currency: string, amount: number };
+
+export type UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRangeUndiscounted_TaxedMoneyRange_stop_TaxedMoney = { gross: UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRangeUndiscounted_TaxedMoneyRange_stop_TaxedMoney_gross_Money };
+
+export type UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRangeUndiscounted_TaxedMoneyRange = { start: UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRangeUndiscounted_TaxedMoneyRange_start_TaxedMoney | null, stop: UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRangeUndiscounted_TaxedMoneyRange_stop_TaxedMoney | null };
+
+export type UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo = { priceRange: UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange | null, priceRangeUndiscounted: UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo_priceRangeUndiscounted_TaxedMoneyRange | null };
+
+export type UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney_gross_Money = { currency: string, amount: number };
+
+export type UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney = { gross: UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney_gross_Money };
+
+export type UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_pricing_VariantPricingInfo_priceUndiscounted_TaxedMoney_gross_Money = { currency: string, amount: number };
+
+export type UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_pricing_VariantPricingInfo_priceUndiscounted_TaxedMoney = { gross: UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_pricing_VariantPricingInfo_priceUndiscounted_TaxedMoney_gross_Money };
+
+export type UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_pricing_VariantPricingInfo = { price: UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney | null, priceUndiscounted: UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_pricing_VariantPricingInfo_priceUndiscounted_TaxedMoney | null };
+
+export type UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_media_ProductMedia = { alt: string, url: string };
+
+export type UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_attributes_SelectedAttribute_attribute_Attribute = { name: string | null, slug: string | null };
+
+export type UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_attributes_SelectedAttribute_values_AttributeValue = { name: string | null };
+
+export type UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_attributes_SelectedAttribute = { attribute: UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_attributes_SelectedAttribute_attribute_Attribute, values: Array<UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_attributes_SelectedAttribute_values_AttributeValue> };
+
+export type UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant = { id: string, name: string, sku: string | null, quantityAvailable: number | null, pricing: UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_pricing_VariantPricingInfo | null, media: Array<UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_media_ProductMedia> | null, attributes: Array<UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant_attributes_SelectedAttribute> };
+
+export type UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_productType_ProductType_variantAttributes_Attribute_choices_AttributeValueCountableConnection_edges_AttributeValueCountableEdge_node_AttributeValue = { name: string | null };
+
+export type UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_productType_ProductType_variantAttributes_Attribute_choices_AttributeValueCountableConnection_edges_AttributeValueCountableEdge = { node: UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_productType_ProductType_variantAttributes_Attribute_choices_AttributeValueCountableConnection_edges_AttributeValueCountableEdge_node_AttributeValue };
+
+export type UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_productType_ProductType_variantAttributes_Attribute_choices_AttributeValueCountableConnection = { edges: Array<UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_productType_ProductType_variantAttributes_Attribute_choices_AttributeValueCountableConnection_edges_AttributeValueCountableEdge> };
+
+export type UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_productType_ProductType_variantAttributes_Attribute = { name: string | null, slug: string | null, choices: UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_productType_ProductType_variantAttributes_Attribute_choices_AttributeValueCountableConnection | null };
+
+export type UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_productType_ProductType = { variantAttributes: Array<UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_productType_ProductType_variantAttributes_Attribute> | null };
+
+export type UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product = { id: string, name: string, slug: string, description: string | null, category: UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_category_Category | null, media: Array<UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_media_ProductMedia> | null, pricing: UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo | null, variants: Array<UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant> | null, productType: UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_productType_ProductType };
+
+export type UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge = { node: UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product };
+
+export type UcpCatalogLookup_products_ProductCountableConnection = { edges: Array<UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge> };
+
+export type UcpCatalogLookup_Query = { products: UcpCatalogLookup_products_ProductCountableConnection | null };
+
+
+export type UcpCatalogLookupVariables = Types.Exact<{
+  ids: Array<Types.Scalars['ID']['input']> | Types.Scalars['ID']['input'];
+  channel: Types.Scalars['String']['input'];
+}>;
+
+
+export type UcpCatalogLookup = UcpCatalogLookup_Query;
+
+export type UcpCatalogProduct_product_Product = { id: string, name: string, slug: string, description: string | null, category: UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_category_Category | null, media: Array<UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_media_ProductMedia> | null, pricing: UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo | null, variants: Array<UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant> | null, productType: UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_productType_ProductType };
+
+export type UcpCatalogProduct_Query = { product: UcpCatalogProduct_product_Product | null };
+
+
+export type UcpCatalogProductVariables = Types.Exact<{
+  id: Types.Scalars['ID']['input'];
+  channel: Types.Scalars['String']['input'];
+}>;
+
+
+export type UcpCatalogProduct = UcpCatalogProduct_Query;
+
+export type UcpCatalogSearch_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product = { id: string, name: string, slug: string, description: string | null, category: UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_category_Category | null, media: Array<UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_media_ProductMedia> | null, pricing: UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_pricing_ProductPricingInfo | null, variants: Array<UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant> | null, productType: UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_productType_ProductType };
+
+export type UcpCatalogSearch_products_ProductCountableConnection_edges_ProductCountableEdge = { cursor: string, node: UcpCatalogSearch_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product };
+
+export type UcpCatalogSearch_products_ProductCountableConnection_pageInfo_PageInfo = { hasNextPage: boolean, endCursor: string | null };
+
+export type UcpCatalogSearch_products_ProductCountableConnection = { totalCount: number | null, edges: Array<UcpCatalogSearch_products_ProductCountableConnection_edges_ProductCountableEdge>, pageInfo: UcpCatalogSearch_products_ProductCountableConnection_pageInfo_PageInfo };
+
+export type UcpCatalogSearch_Query = { products: UcpCatalogSearch_products_ProductCountableConnection | null };
+
+
+export type UcpCatalogSearchVariables = Types.Exact<{
+  first: Types.Scalars['Int']['input'];
+  channel: Types.Scalars['String']['input'];
+  search?: Types.InputMaybe<Types.Scalars['String']['input']>;
+  filter?: Types.InputMaybe<Types.ProductFilterInput>;
+  after?: Types.InputMaybe<Types.Scalars['String']['input']>;
+}>;
+
+
+export type UcpCatalogSearch = UcpCatalogSearch_Query;
+
 export type UcpCheckoutSessionGet_checkout_Checkout_channel_Channel = { slug: string };
 
 export type UcpCheckoutSessionGet_checkout_Checkout_discount_Money = { amount: number, currency: string };
@@ -98,7 +206,7 @@ export type UcpCheckoutSessionGet_checkout_Checkout_problems =
   | UcpCheckoutSessionGet_checkout_Checkout_problems_CheckoutLineProblemVariantNotAvailable
 ;
 
-export type UcpCheckoutSessionGet_checkout_Checkout = { id: string, email: string | null, displayGrossPrices: boolean, voucherCode: string | null, isShippingRequired: boolean, authorizeStatus: Types.CheckoutAuthorizeStatusEnum, chargeStatus: Types.CheckoutChargeStatusEnum, buyer: string | null, channel: UcpCheckoutSessionGet_checkout_Checkout_channel_Channel, discount: UcpCheckoutSessionGet_checkout_Checkout_discount_Money | null, shippingMethods: Array<UcpCheckoutSessionGet_checkout_Checkout_shippingMethods_ShippingMethod>, shippingAddress: UcpCheckoutSessionGet_checkout_Checkout_shippingAddress_Address | null, billingAddress: UcpCheckoutSessionGet_checkout_Checkout_billingAddress_Address | null, deliveryMethod: UcpCheckoutSessionGet_checkout_Checkout_deliveryMethod_ShippingMethod_Warehouse | null, availablePaymentGateways: Array<UcpCheckoutSessionGet_checkout_Checkout_availablePaymentGateways_PaymentGateway>, lines: Array<UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine>, totalPrice: UcpCheckoutSessionGet_checkout_Checkout_totalPrice_TaxedMoney, subtotalPrice: UcpCheckoutSessionGet_checkout_Checkout_subtotalPrice_TaxedMoney, shippingPrice: UcpCheckoutSessionGet_checkout_Checkout_shippingPrice_TaxedMoney, problems: Array<UcpCheckoutSessionGet_checkout_Checkout_problems> | null };
+export type UcpCheckoutSessionGet_checkout_Checkout = { id: string, email: string | null, displayGrossPrices: boolean, voucherCode: string | null, isShippingRequired: boolean, authorizeStatus: Types.CheckoutAuthorizeStatusEnum, chargeStatus: Types.CheckoutChargeStatusEnum, buyer: string | null, cancelled: string | null, channel: UcpCheckoutSessionGet_checkout_Checkout_channel_Channel, discount: UcpCheckoutSessionGet_checkout_Checkout_discount_Money | null, shippingMethods: Array<UcpCheckoutSessionGet_checkout_Checkout_shippingMethods_ShippingMethod>, shippingAddress: UcpCheckoutSessionGet_checkout_Checkout_shippingAddress_Address | null, billingAddress: UcpCheckoutSessionGet_checkout_Checkout_billingAddress_Address | null, deliveryMethod: UcpCheckoutSessionGet_checkout_Checkout_deliveryMethod_ShippingMethod_Warehouse | null, availablePaymentGateways: Array<UcpCheckoutSessionGet_checkout_Checkout_availablePaymentGateways_PaymentGateway>, lines: Array<UcpCheckoutSessionGet_checkout_Checkout_lines_CheckoutLine>, totalPrice: UcpCheckoutSessionGet_checkout_Checkout_totalPrice_TaxedMoney, subtotalPrice: UcpCheckoutSessionGet_checkout_Checkout_subtotalPrice_TaxedMoney, shippingPrice: UcpCheckoutSessionGet_checkout_Checkout_shippingPrice_TaxedMoney, problems: Array<UcpCheckoutSessionGet_checkout_Checkout_problems> | null };
 
 export type UcpCheckoutSessionGet_Query = { checkout: UcpCheckoutSessionGet_checkout_Checkout | null };
 
@@ -164,18 +272,329 @@ export class TypedDocumentString<TResult, TVariables>
   }
 }
 
+export const UcpCatalogLookupDocument = new TypedDocumentString(`
+    query UCPCatalogLookup($ids: [ID!]!, $channel: String!) {
+  products(first: 50, channel: $channel, filter: {ids: $ids}) {
+    edges {
+      node {
+        ...UCPCatalogProductFragment
+      }
+    }
+  }
+}
+    fragment UCPCatalogProductFragment on Product {
+  id
+  name
+  slug
+  description
+  category {
+    name
+    slug
+  }
+  media {
+    alt
+    url
+    type
+  }
+  pricing {
+    priceRange {
+      start {
+        gross {
+          ...MoneyFragment
+        }
+      }
+      stop {
+        gross {
+          ...MoneyFragment
+        }
+      }
+    }
+    priceRangeUndiscounted {
+      start {
+        gross {
+          ...MoneyFragment
+        }
+      }
+      stop {
+        gross {
+          ...MoneyFragment
+        }
+      }
+    }
+  }
+  variants {
+    id
+    name
+    sku
+    pricing {
+      price {
+        gross {
+          ...MoneyFragment
+        }
+      }
+      priceUndiscounted {
+        gross {
+          ...MoneyFragment
+        }
+      }
+    }
+    quantityAvailable
+    media {
+      alt
+      url
+    }
+    attributes {
+      attribute {
+        name
+        slug
+      }
+      values {
+        name
+      }
+    }
+  }
+  productType {
+    variantAttributes {
+      name
+      slug
+      choices(first: 50) {
+        edges {
+          node {
+            name
+          }
+        }
+      }
+    }
+  }
+}
+fragment MoneyFragment on Money {
+  currency
+  amount
+}`) as unknown as TypedDocumentString<UcpCatalogLookup, UcpCatalogLookupVariables>;
+export const UcpCatalogProductDocument = new TypedDocumentString(`
+    query UCPCatalogProduct($id: ID!, $channel: String!) {
+  product(id: $id, channel: $channel) {
+    ...UCPCatalogProductFragment
+  }
+}
+    fragment UCPCatalogProductFragment on Product {
+  id
+  name
+  slug
+  description
+  category {
+    name
+    slug
+  }
+  media {
+    alt
+    url
+    type
+  }
+  pricing {
+    priceRange {
+      start {
+        gross {
+          ...MoneyFragment
+        }
+      }
+      stop {
+        gross {
+          ...MoneyFragment
+        }
+      }
+    }
+    priceRangeUndiscounted {
+      start {
+        gross {
+          ...MoneyFragment
+        }
+      }
+      stop {
+        gross {
+          ...MoneyFragment
+        }
+      }
+    }
+  }
+  variants {
+    id
+    name
+    sku
+    pricing {
+      price {
+        gross {
+          ...MoneyFragment
+        }
+      }
+      priceUndiscounted {
+        gross {
+          ...MoneyFragment
+        }
+      }
+    }
+    quantityAvailable
+    media {
+      alt
+      url
+    }
+    attributes {
+      attribute {
+        name
+        slug
+      }
+      values {
+        name
+      }
+    }
+  }
+  productType {
+    variantAttributes {
+      name
+      slug
+      choices(first: 50) {
+        edges {
+          node {
+            name
+          }
+        }
+      }
+    }
+  }
+}
+fragment MoneyFragment on Money {
+  currency
+  amount
+}`) as unknown as TypedDocumentString<UcpCatalogProduct, UcpCatalogProductVariables>;
+export const UcpCatalogSearchDocument = new TypedDocumentString(`
+    query UCPCatalogSearch($first: Int!, $channel: String!, $search: String, $filter: ProductFilterInput, $after: String) {
+  products(
+    first: $first
+    channel: $channel
+    search: $search
+    filter: $filter
+    after: $after
+    sortBy: {field: RANK, direction: DESC}
+  ) {
+    edges {
+      node {
+        ...UCPCatalogProductFragment
+      }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+    totalCount
+  }
+}
+    fragment UCPCatalogProductFragment on Product {
+  id
+  name
+  slug
+  description
+  category {
+    name
+    slug
+  }
+  media {
+    alt
+    url
+    type
+  }
+  pricing {
+    priceRange {
+      start {
+        gross {
+          ...MoneyFragment
+        }
+      }
+      stop {
+        gross {
+          ...MoneyFragment
+        }
+      }
+    }
+    priceRangeUndiscounted {
+      start {
+        gross {
+          ...MoneyFragment
+        }
+      }
+      stop {
+        gross {
+          ...MoneyFragment
+        }
+      }
+    }
+  }
+  variants {
+    id
+    name
+    sku
+    pricing {
+      price {
+        gross {
+          ...MoneyFragment
+        }
+      }
+      priceUndiscounted {
+        gross {
+          ...MoneyFragment
+        }
+      }
+    }
+    quantityAvailable
+    media {
+      alt
+      url
+    }
+    attributes {
+      attribute {
+        name
+        slug
+      }
+      values {
+        name
+      }
+    }
+  }
+  productType {
+    variantAttributes {
+      name
+      slug
+      choices(first: 50) {
+        edges {
+          node {
+            name
+          }
+        }
+      }
+    }
+  }
+}
+fragment MoneyFragment on Money {
+  currency
+  amount
+}`) as unknown as TypedDocumentString<UcpCatalogSearch, UcpCatalogSearchVariables>;
 export const UcpCheckoutSessionGetDocument = new TypedDocumentString(`
     query UCPCheckoutSessionGet($id: ID!, $languageCode: LanguageCodeEnum!, $countryCode: CountryCode = US, $thumbnailSize: Int = 128, $thumbnailFormat: ThumbnailFormatEnum = WEBP, $isMarketplaceEnabled: Boolean = false) {
   checkout(id: $id) {
     ...UCPCheckoutSessionFragment
   }
 }
-    fragment UCPCheckoutSessionFragment on Checkout {
+    fragment MoneyFragment on Money {
+  currency
+  amount
+}
+fragment UCPCheckoutSessionFragment on Checkout {
   ...CheckoutFragment
   channel {
     slug
   }
   buyer: metafield(key: "ucp.buyer.json")
+  cancelled: metafield(key: "ucp.cancelled")
 }
 fragment CheckoutFragment on Checkout {
   id
@@ -315,10 +734,6 @@ fragment CartLineFragment on CheckoutLine {
     }
   }
 }
-fragment MoneyFragment on Money {
-  currency
-  amount
-}
 fragment SelectionAttributeFragment on SelectedAttribute {
   attribute {
     ...AttributeFragment
@@ -386,7 +801,11 @@ export const UcpOrderGetDocument = new TypedDocumentString(`
     ...UCPOrderFragment
   }
 }
-    fragment AddressFragment on Address {
+    fragment MoneyFragment on Money {
+  currency
+  amount
+}
+fragment AddressFragment on Address {
   id
   city
   phone
@@ -404,10 +823,6 @@ export const UcpOrderGetDocument = new TypedDocumentString(`
   lastName
   isDefaultShippingAddress
   isDefaultBillingAddress
-}
-fragment MoneyFragment on Money {
-  currency
-  amount
 }
 fragment TaxedMoneyFragment on TaxedMoney {
   net {

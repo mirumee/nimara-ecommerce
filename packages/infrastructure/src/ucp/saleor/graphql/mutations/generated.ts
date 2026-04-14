@@ -55,6 +55,21 @@ export type UcpCheckoutRemovePromoCodeVariables = Types.Exact<{
 
 export type UcpCheckoutRemovePromoCode = UcpCheckoutRemovePromoCode_Mutation;
 
+export type UcpCheckoutMetadataUpdate_updateMetadata_UpdateMetadata_errors_MetadataError = { field: string | null, message: string | null, code: Types.MetadataErrorCode };
+
+export type UcpCheckoutMetadataUpdate_updateMetadata_UpdateMetadata = { errors: Array<UcpCheckoutMetadataUpdate_updateMetadata_UpdateMetadata_errors_MetadataError> };
+
+export type UcpCheckoutMetadataUpdate_Mutation = { updateMetadata: UcpCheckoutMetadataUpdate_updateMetadata_UpdateMetadata | null };
+
+
+export type UcpCheckoutMetadataUpdateVariables = Types.Exact<{
+  id: Types.Scalars['ID']['input'];
+  input: Array<Types.MetadataInput> | Types.MetadataInput;
+}>;
+
+
+export type UcpCheckoutMetadataUpdate = UcpCheckoutMetadataUpdate_Mutation;
+
 export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_channel_Channel = { slug: string };
 
 export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_discount_Money = { amount: number, currency: string };
@@ -152,7 +167,7 @@ export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Chec
   | UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_problems_CheckoutLineProblemVariantNotAvailable
 ;
 
-export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout = { id: string, email: string | null, displayGrossPrices: boolean, voucherCode: string | null, isShippingRequired: boolean, authorizeStatus: Types.CheckoutAuthorizeStatusEnum, chargeStatus: Types.CheckoutChargeStatusEnum, buyer: string | null, channel: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_channel_Channel, discount: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_discount_Money | null, shippingMethods: Array<UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingMethods_ShippingMethod>, shippingAddress: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingAddress_Address | null, billingAddress: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_billingAddress_Address | null, deliveryMethod: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_deliveryMethod_ShippingMethod_Warehouse | null, availablePaymentGateways: Array<UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_availablePaymentGateways_PaymentGateway>, lines: Array<UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine>, totalPrice: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_totalPrice_TaxedMoney, subtotalPrice: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_subtotalPrice_TaxedMoney, shippingPrice: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingPrice_TaxedMoney, problems: Array<UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_problems> | null };
+export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout = { id: string, email: string | null, displayGrossPrices: boolean, voucherCode: string | null, isShippingRequired: boolean, authorizeStatus: Types.CheckoutAuthorizeStatusEnum, chargeStatus: Types.CheckoutChargeStatusEnum, buyer: string | null, cancelled: string | null, channel: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_channel_Channel, discount: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_discount_Money | null, shippingMethods: Array<UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingMethods_ShippingMethod>, shippingAddress: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingAddress_Address | null, billingAddress: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_billingAddress_Address | null, deliveryMethod: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_deliveryMethod_ShippingMethod_Warehouse | null, availablePaymentGateways: Array<UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_availablePaymentGateways_PaymentGateway>, lines: Array<UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine>, totalPrice: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_totalPrice_TaxedMoney, subtotalPrice: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_subtotalPrice_TaxedMoney, shippingPrice: UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingPrice_TaxedMoney, problems: Array<UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_problems> | null };
 
 export type UcpCheckoutSessionCreate_checkoutCreate_CheckoutCreate_errors_CheckoutError = { field: string | null, message: string | null, code: Types.CheckoutErrorCode, variants: Array<string> | null, lines: Array<string> | null, addressType: Types.AddressTypeEnum | null };
 
@@ -231,7 +246,7 @@ export type UcpCheckoutSessionUpdateVariables = Types.Exact<{
   billingAddress: Types.AddressInput;
   shouldUpdateBilling: Types.Scalars['Boolean']['input'];
   buyerEmail: Types.Scalars['String']['input'];
-  buyerJSON: Types.Scalars['String']['input'];
+  metadata: Array<Types.MetadataInput> | Types.MetadataInput;
   shouldUpdateEmail: Types.Scalars['Boolean']['input'];
   fulfillmentOptionID: Types.Scalars['ID']['input'];
   shouldUpdateFulfillmentOption: Types.Scalars['Boolean']['input'];
@@ -309,6 +324,17 @@ export const UcpCheckoutRemovePromoCodeDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<UcpCheckoutRemovePromoCode, UcpCheckoutRemovePromoCodeVariables>;
+export const UcpCheckoutMetadataUpdateDocument = new TypedDocumentString(`
+    mutation UCPCheckoutMetadataUpdate($id: ID!, $input: [MetadataInput!]!) {
+  updateMetadata(id: $id, input: $input) {
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<UcpCheckoutMetadataUpdate, UcpCheckoutMetadataUpdateVariables>;
 export const UcpCheckoutSessionCreateDocument = new TypedDocumentString(`
     mutation UCPCheckoutSessionCreate($input: CheckoutCreateInput!, $languageCode: LanguageCodeEnum!, $countryCode: CountryCode = US, $thumbnailSize: Int = 128, $thumbnailFormat: ThumbnailFormatEnum = WEBP, $isMarketplaceEnabled: Boolean = false) {
   checkoutCreate(input: $input) {
@@ -331,6 +357,7 @@ export const UcpCheckoutSessionCreateDocument = new TypedDocumentString(`
     slug
   }
   buyer: metafield(key: "ucp.buyer.json")
+  cancelled: metafield(key: "ucp.cancelled")
 }
 fragment CheckoutFragment on Checkout {
   id
@@ -556,7 +583,7 @@ export const UcpCheckoutSessionItemUpdateDocument = new TypedDocumentString(`
 }
     `) as unknown as TypedDocumentString<UcpCheckoutSessionItemUpdate, UcpCheckoutSessionItemUpdateVariables>;
 export const UcpCheckoutSessionUpdateDocument = new TypedDocumentString(`
-    mutation UCPCheckoutSessionUpdate($checkoutId: ID!, $shippingAddress: AddressInput!, $shouldUpdateShipping: Boolean!, $billingAddress: AddressInput!, $shouldUpdateBilling: Boolean!, $buyerEmail: String!, $buyerJSON: String!, $shouldUpdateEmail: Boolean!, $fulfillmentOptionID: ID!, $shouldUpdateFulfillmentOption: Boolean!) {
+    mutation UCPCheckoutSessionUpdate($checkoutId: ID!, $shippingAddress: AddressInput!, $shouldUpdateShipping: Boolean!, $billingAddress: AddressInput!, $shouldUpdateBilling: Boolean!, $buyerEmail: String!, $metadata: [MetadataInput!]!, $shouldUpdateEmail: Boolean!, $fulfillmentOptionID: ID!, $shouldUpdateFulfillmentOption: Boolean!) {
   checkoutEmailUpdate(checkoutId: $checkoutId, email: $buyerEmail) @include(if: $shouldUpdateEmail) {
     checkout {
       email
@@ -601,10 +628,7 @@ export const UcpCheckoutSessionUpdateDocument = new TypedDocumentString(`
       code
     }
   }
-  updateMetadata(
-    id: $checkoutId
-    input: [{key: "ucp.buyer.json", value: $buyerJSON}]
-  ) {
+  updateMetadata(id: $checkoutId, input: $metadata) {
     errors {
       field
       message

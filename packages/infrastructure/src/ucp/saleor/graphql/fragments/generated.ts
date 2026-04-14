@@ -1,6 +1,64 @@
 import type * as Types from '@nimara/codegen/schema';
 
 import type { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
+export type UcpCatalogProductFragment_Product_category_Category = { name: string, slug: string };
+
+export type UcpCatalogProductFragment_Product_media_ProductMedia = { alt: string, url: string, type: Types.ProductMediaType };
+
+export type UcpCatalogProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_gross_Money = { currency: string, amount: number };
+
+export type UcpCatalogProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney = { gross: UcpCatalogProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney_gross_Money };
+
+export type UcpCatalogProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_stop_TaxedMoney_gross_Money = { currency: string, amount: number };
+
+export type UcpCatalogProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_stop_TaxedMoney = { gross: UcpCatalogProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_stop_TaxedMoney_gross_Money };
+
+export type UcpCatalogProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange = { start: UcpCatalogProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_start_TaxedMoney | null, stop: UcpCatalogProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange_stop_TaxedMoney | null };
+
+export type UcpCatalogProductFragment_Product_pricing_ProductPricingInfo_priceRangeUndiscounted_TaxedMoneyRange_start_TaxedMoney_gross_Money = { currency: string, amount: number };
+
+export type UcpCatalogProductFragment_Product_pricing_ProductPricingInfo_priceRangeUndiscounted_TaxedMoneyRange_start_TaxedMoney = { gross: UcpCatalogProductFragment_Product_pricing_ProductPricingInfo_priceRangeUndiscounted_TaxedMoneyRange_start_TaxedMoney_gross_Money };
+
+export type UcpCatalogProductFragment_Product_pricing_ProductPricingInfo_priceRangeUndiscounted_TaxedMoneyRange_stop_TaxedMoney_gross_Money = { currency: string, amount: number };
+
+export type UcpCatalogProductFragment_Product_pricing_ProductPricingInfo_priceRangeUndiscounted_TaxedMoneyRange_stop_TaxedMoney = { gross: UcpCatalogProductFragment_Product_pricing_ProductPricingInfo_priceRangeUndiscounted_TaxedMoneyRange_stop_TaxedMoney_gross_Money };
+
+export type UcpCatalogProductFragment_Product_pricing_ProductPricingInfo_priceRangeUndiscounted_TaxedMoneyRange = { start: UcpCatalogProductFragment_Product_pricing_ProductPricingInfo_priceRangeUndiscounted_TaxedMoneyRange_start_TaxedMoney | null, stop: UcpCatalogProductFragment_Product_pricing_ProductPricingInfo_priceRangeUndiscounted_TaxedMoneyRange_stop_TaxedMoney | null };
+
+export type UcpCatalogProductFragment_Product_pricing_ProductPricingInfo = { priceRange: UcpCatalogProductFragment_Product_pricing_ProductPricingInfo_priceRange_TaxedMoneyRange | null, priceRangeUndiscounted: UcpCatalogProductFragment_Product_pricing_ProductPricingInfo_priceRangeUndiscounted_TaxedMoneyRange | null };
+
+export type UcpCatalogProductFragment_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney_gross_Money = { currency: string, amount: number };
+
+export type UcpCatalogProductFragment_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney = { gross: UcpCatalogProductFragment_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney_gross_Money };
+
+export type UcpCatalogProductFragment_Product_variants_ProductVariant_pricing_VariantPricingInfo_priceUndiscounted_TaxedMoney_gross_Money = { currency: string, amount: number };
+
+export type UcpCatalogProductFragment_Product_variants_ProductVariant_pricing_VariantPricingInfo_priceUndiscounted_TaxedMoney = { gross: UcpCatalogProductFragment_Product_variants_ProductVariant_pricing_VariantPricingInfo_priceUndiscounted_TaxedMoney_gross_Money };
+
+export type UcpCatalogProductFragment_Product_variants_ProductVariant_pricing_VariantPricingInfo = { price: UcpCatalogProductFragment_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney | null, priceUndiscounted: UcpCatalogProductFragment_Product_variants_ProductVariant_pricing_VariantPricingInfo_priceUndiscounted_TaxedMoney | null };
+
+export type UcpCatalogProductFragment_Product_variants_ProductVariant_media_ProductMedia = { alt: string, url: string };
+
+export type UcpCatalogProductFragment_Product_variants_ProductVariant_attributes_SelectedAttribute_attribute_Attribute = { name: string | null, slug: string | null };
+
+export type UcpCatalogProductFragment_Product_variants_ProductVariant_attributes_SelectedAttribute_values_AttributeValue = { name: string | null };
+
+export type UcpCatalogProductFragment_Product_variants_ProductVariant_attributes_SelectedAttribute = { attribute: UcpCatalogProductFragment_Product_variants_ProductVariant_attributes_SelectedAttribute_attribute_Attribute, values: Array<UcpCatalogProductFragment_Product_variants_ProductVariant_attributes_SelectedAttribute_values_AttributeValue> };
+
+export type UcpCatalogProductFragment_Product_variants_ProductVariant = { id: string, name: string, sku: string | null, quantityAvailable: number | null, pricing: UcpCatalogProductFragment_Product_variants_ProductVariant_pricing_VariantPricingInfo | null, media: Array<UcpCatalogProductFragment_Product_variants_ProductVariant_media_ProductMedia> | null, attributes: Array<UcpCatalogProductFragment_Product_variants_ProductVariant_attributes_SelectedAttribute> };
+
+export type UcpCatalogProductFragment_Product_productType_ProductType_variantAttributes_Attribute_choices_AttributeValueCountableConnection_edges_AttributeValueCountableEdge_node_AttributeValue = { name: string | null };
+
+export type UcpCatalogProductFragment_Product_productType_ProductType_variantAttributes_Attribute_choices_AttributeValueCountableConnection_edges_AttributeValueCountableEdge = { node: UcpCatalogProductFragment_Product_productType_ProductType_variantAttributes_Attribute_choices_AttributeValueCountableConnection_edges_AttributeValueCountableEdge_node_AttributeValue };
+
+export type UcpCatalogProductFragment_Product_productType_ProductType_variantAttributes_Attribute_choices_AttributeValueCountableConnection = { edges: Array<UcpCatalogProductFragment_Product_productType_ProductType_variantAttributes_Attribute_choices_AttributeValueCountableConnection_edges_AttributeValueCountableEdge> };
+
+export type UcpCatalogProductFragment_Product_productType_ProductType_variantAttributes_Attribute = { name: string | null, slug: string | null, choices: UcpCatalogProductFragment_Product_productType_ProductType_variantAttributes_Attribute_choices_AttributeValueCountableConnection | null };
+
+export type UcpCatalogProductFragment_Product_productType_ProductType = { variantAttributes: Array<UcpCatalogProductFragment_Product_productType_ProductType_variantAttributes_Attribute> | null };
+
+export type UcpCatalogProductFragment = { id: string, name: string, slug: string, description: string | null, category: UcpCatalogProductFragment_Product_category_Category | null, media: Array<UcpCatalogProductFragment_Product_media_ProductMedia> | null, pricing: UcpCatalogProductFragment_Product_pricing_ProductPricingInfo | null, variants: Array<UcpCatalogProductFragment_Product_variants_ProductVariant> | null, productType: UcpCatalogProductFragment_Product_productType_ProductType };
+
 export type UcpCheckoutSessionFragment_Checkout_channel_Channel = { slug: string };
 
 export type UcpCheckoutSessionFragment_Checkout_discount_Money = { amount: number, currency: string };
@@ -98,7 +156,7 @@ export type UcpCheckoutSessionFragment_Checkout_problems =
   | UcpCheckoutSessionFragment_Checkout_problems_CheckoutLineProblemVariantNotAvailable
 ;
 
-export type UcpCheckoutSessionFragment = { id: string, email: string | null, displayGrossPrices: boolean, voucherCode: string | null, isShippingRequired: boolean, authorizeStatus: Types.CheckoutAuthorizeStatusEnum, chargeStatus: Types.CheckoutChargeStatusEnum, buyer: string | null, channel: UcpCheckoutSessionFragment_Checkout_channel_Channel, discount: UcpCheckoutSessionFragment_Checkout_discount_Money | null, shippingMethods: Array<UcpCheckoutSessionFragment_Checkout_shippingMethods_ShippingMethod>, shippingAddress: UcpCheckoutSessionFragment_Checkout_shippingAddress_Address | null, billingAddress: UcpCheckoutSessionFragment_Checkout_billingAddress_Address | null, deliveryMethod: UcpCheckoutSessionFragment_Checkout_deliveryMethod_ShippingMethod_Warehouse | null, availablePaymentGateways: Array<UcpCheckoutSessionFragment_Checkout_availablePaymentGateways_PaymentGateway>, lines: Array<UcpCheckoutSessionFragment_Checkout_lines_CheckoutLine>, totalPrice: UcpCheckoutSessionFragment_Checkout_totalPrice_TaxedMoney, subtotalPrice: UcpCheckoutSessionFragment_Checkout_subtotalPrice_TaxedMoney, shippingPrice: UcpCheckoutSessionFragment_Checkout_shippingPrice_TaxedMoney, problems: Array<UcpCheckoutSessionFragment_Checkout_problems> | null };
+export type UcpCheckoutSessionFragment = { id: string, email: string | null, displayGrossPrices: boolean, voucherCode: string | null, isShippingRequired: boolean, authorizeStatus: Types.CheckoutAuthorizeStatusEnum, chargeStatus: Types.CheckoutChargeStatusEnum, buyer: string | null, cancelled: string | null, channel: UcpCheckoutSessionFragment_Checkout_channel_Channel, discount: UcpCheckoutSessionFragment_Checkout_discount_Money | null, shippingMethods: Array<UcpCheckoutSessionFragment_Checkout_shippingMethods_ShippingMethod>, shippingAddress: UcpCheckoutSessionFragment_Checkout_shippingAddress_Address | null, billingAddress: UcpCheckoutSessionFragment_Checkout_billingAddress_Address | null, deliveryMethod: UcpCheckoutSessionFragment_Checkout_deliveryMethod_ShippingMethod_Warehouse | null, availablePaymentGateways: Array<UcpCheckoutSessionFragment_Checkout_availablePaymentGateways_PaymentGateway>, lines: Array<UcpCheckoutSessionFragment_Checkout_lines_CheckoutLine>, totalPrice: UcpCheckoutSessionFragment_Checkout_totalPrice_TaxedMoney, subtotalPrice: UcpCheckoutSessionFragment_Checkout_subtotalPrice_TaxedMoney, shippingPrice: UcpCheckoutSessionFragment_Checkout_shippingPrice_TaxedMoney, problems: Array<UcpCheckoutSessionFragment_Checkout_problems> | null };
 
 export type UcpOrderFragment_Order_metadata_MetadataItem = { key: string, value: string };
 
@@ -138,6 +196,96 @@ export class TypedDocumentString<TResult, TVariables>
     return this.value;
   }
 }
+export const UcpCatalogProductFragment = new TypedDocumentString(`
+    fragment UCPCatalogProductFragment on Product {
+  id
+  name
+  slug
+  description
+  category {
+    name
+    slug
+  }
+  media {
+    alt
+    url
+    type
+  }
+  pricing {
+    priceRange {
+      start {
+        gross {
+          ...MoneyFragment
+        }
+      }
+      stop {
+        gross {
+          ...MoneyFragment
+        }
+      }
+    }
+    priceRangeUndiscounted {
+      start {
+        gross {
+          ...MoneyFragment
+        }
+      }
+      stop {
+        gross {
+          ...MoneyFragment
+        }
+      }
+    }
+  }
+  variants {
+    id
+    name
+    sku
+    pricing {
+      price {
+        gross {
+          ...MoneyFragment
+        }
+      }
+      priceUndiscounted {
+        gross {
+          ...MoneyFragment
+        }
+      }
+    }
+    quantityAvailable
+    media {
+      alt
+      url
+    }
+    attributes {
+      attribute {
+        name
+        slug
+      }
+      values {
+        name
+      }
+    }
+  }
+  productType {
+    variantAttributes {
+      name
+      slug
+      choices(first: 50) {
+        edges {
+          node {
+            name
+          }
+        }
+      }
+    }
+  }
+}
+    fragment MoneyFragment on Money {
+  currency
+  amount
+}`, {"fragmentName":"UCPCatalogProductFragment"}) as unknown as TypedDocumentString<UcpCatalogProductFragment, unknown>;
 export const UcpCheckoutSessionFragment = new TypedDocumentString(`
     fragment UCPCheckoutSessionFragment on Checkout {
   ...CheckoutFragment
@@ -145,8 +293,13 @@ export const UcpCheckoutSessionFragment = new TypedDocumentString(`
     slug
   }
   buyer: metafield(key: "ucp.buyer.json")
+  cancelled: metafield(key: "ucp.cancelled")
 }
-    fragment CheckoutFragment on Checkout {
+    fragment MoneyFragment on Money {
+  currency
+  amount
+}
+fragment CheckoutFragment on Checkout {
   id
   email
   displayGrossPrices
@@ -284,10 +437,6 @@ fragment CartLineFragment on CheckoutLine {
     }
   }
 }
-fragment MoneyFragment on Money {
-  currency
-  amount
-}
 fragment SelectionAttributeFragment on SelectedAttribute {
   attribute {
     ...AttributeFragment
@@ -391,7 +540,11 @@ export const UcpOrderFragment = new TypedDocumentString(`
     ...AddressFragment
   }
 }
-    fragment AddressFragment on Address {
+    fragment MoneyFragment on Money {
+  currency
+  amount
+}
+fragment AddressFragment on Address {
   id
   city
   phone
@@ -409,10 +562,6 @@ export const UcpOrderFragment = new TypedDocumentString(`
   lastName
   isDefaultShippingAddress
   isDefaultBillingAddress
-}
-fragment MoneyFragment on Money {
-  currency
-  amount
 }
 fragment TaxedMoneyFragment on TaxedMoney {
   net {

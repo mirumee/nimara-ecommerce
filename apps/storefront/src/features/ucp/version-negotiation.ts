@@ -1,6 +1,13 @@
 import { type NextRequest, NextResponse } from "next/server";
 
+import { UCP_CAPABILITY_REGISTRY } from "./capabilities";
 import { UCP_VERSION } from "./config";
+import {
+  extractProfileUrlFromUcpAgentHeader,
+  isValidUcpProfileUrl,
+  negotiateCapabilities,
+  type UcpCapabilityRegistry,
+} from "./helpers/negotiation";
 
 /**
  * Result of UCP version negotiation.
@@ -9,46 +16,87 @@ import { UCP_VERSION } from "./config";
  */
 export interface VersionNegotiationResult {
   errorResponse?: NextResponse;
+  negotiatedCapabilities?: UcpCapabilityRegistry;
   ok: boolean;
 }
 
-/**
- * Parses the UCP-Agent header to extract the version string.
- *
- * Expected format: 'profile="..."; version="YYYY-MM-DD"'
- *
- * @param ucpAgentHeader - The UCP-Agent header value
- * @returns The version string, or null if not found or invalid
- *
- * @example
- * parseUCPAgentVersion('profile="..."; version="2026-01-23"')
- * // Returns: "2026-01-23"
- */
-function parseUCPAgentVersion(ucpAgentHeader: string | null): string | null {
-  if (!ucpAgentHeader) {
+const PROFILE_FETCH_TIMEOUT_MS = 3000;
+
+function createDiscoveryErrorResponse({
+  code,
+  content,
+  status,
+}: {
+  code:
+    | "invalid_profile_url"
+    | "profile_malformed"
+    | "profile_unreachable"
+    | "version_unsupported";
+  content: string;
+  status: number;
+}) {
+  return NextResponse.json(
+    {
+      code,
+      content,
+    },
+    { status },
+  );
+}
+
+function toUcpCapabilityRegistry(value: unknown): UcpCapabilityRegistry | null {
+  if (!value || typeof value !== "object") {
     return null;
   }
 
-  const versionMatch = ucpAgentHeader.match(/version="([^"]+)"/);
+  const asRecord = value as Record<string, unknown>;
+  const registry: UcpCapabilityRegistry = {};
 
-  return versionMatch?.[1] ?? null;
-}
+  for (const [capabilityName, entries] of Object.entries(asRecord)) {
+    if (!Array.isArray(entries)) {
+      continue;
+    }
 
-/**
- * Checks if the requested version is compatible with the supported version.
- *
- * Currently, only exact version matches are supported.
- * Future implementations may support version ranges or compatibility windows.
- *
- * @param requestedVersion - The version from the UCP-Agent header
- * @param supportedVersion - The version supported by this server
- * @returns true if versions are compatible
- */
-function isVersionCompatible(
-  requestedVersion: string,
-  supportedVersion: string,
-): boolean {
-  return requestedVersion === supportedVersion;
+    const validEntries = entries
+      .map((entry) => {
+        if (!entry || typeof entry !== "object") {
+          return null;
+        }
+
+        const typedEntry = entry as Record<string, unknown>;
+
+        if (typeof typedEntry.version !== "string") {
+          return null;
+        }
+
+        const extendsValue = typedEntry.extends;
+
+        if (
+          typeof extendsValue !== "undefined" &&
+          typeof extendsValue !== "string" &&
+          !Array.isArray(extendsValue)
+        ) {
+          return null;
+        }
+
+        return {
+          version: typedEntry.version,
+          ...(typeof extendsValue !== "undefined"
+            ? { extends: extendsValue as string | string[] }
+            : {}),
+        };
+      })
+      .filter(
+        (entry): entry is { extends?: string | string[]; version: string } =>
+          Boolean(entry),
+      );
+
+    if (validEntries.length > 0) {
+      registry[capabilityName] = validEntries;
+    }
+  }
+
+  return registry;
 }
 
 /**
@@ -69,31 +117,145 @@ function isVersionCompatible(
  *   // Continue with request processing
  * }
  */
-export function validateUCPVersion(
+export async function validateUCPVersion(
   request: NextRequest,
-): VersionNegotiationResult {
+): Promise<VersionNegotiationResult> {
   const ucpAgentHeader = request.headers.get("UCP-Agent");
-  const requestedVersion = parseUCPAgentVersion(ucpAgentHeader);
+  const profileUrl = extractProfileUrlFromUcpAgentHeader(ucpAgentHeader);
 
-  if (requestedVersion === null) {
-    return { ok: true };
+  if (!profileUrl || !isValidUcpProfileUrl(profileUrl)) {
+    return {
+      ok: false,
+      errorResponse: createDiscoveryErrorResponse({
+        code: "invalid_profile_url",
+        content:
+          "UCP-Agent header must include a valid HTTPS profile URL ending with /.well-known/ucp.",
+        status: 400,
+      }),
+    };
   }
 
-  if (!isVersionCompatible(requestedVersion, UCP_VERSION)) {
+  let profileResponse: Response;
+
+  try {
+    profileResponse = await fetch(profileUrl, {
+      redirect: "error",
+      signal: AbortSignal.timeout(PROFILE_FETCH_TIMEOUT_MS),
+    });
+  } catch {
+    return {
+      ok: false,
+      errorResponse: createDiscoveryErrorResponse({
+        code: "profile_unreachable",
+        content: "Failed to fetch platform UCP profile.",
+        status: 424,
+      }),
+    };
+  }
+
+  if (!profileResponse.ok) {
+    return {
+      ok: false,
+      errorResponse: createDiscoveryErrorResponse({
+        code: "profile_unreachable",
+        content: "Failed to fetch platform UCP profile.",
+        status: 424,
+      }),
+    };
+  }
+
+  let profileJSON: unknown;
+
+  try {
+    profileJSON = await profileResponse.json();
+  } catch {
+    return {
+      ok: false,
+      errorResponse: createDiscoveryErrorResponse({
+        code: "profile_malformed",
+        content: "Platform profile is not valid JSON.",
+        status: 422,
+      }),
+    };
+  }
+
+  const profile = profileJSON as {
+    ucp?: {
+      capabilities?: unknown;
+      version?: unknown;
+    };
+  };
+
+  if (typeof profile.ucp?.version !== "string") {
+    return {
+      ok: false,
+      errorResponse: createDiscoveryErrorResponse({
+        code: "profile_malformed",
+        content: "Platform profile does not include a valid ucp.version.",
+        status: 422,
+      }),
+    };
+  }
+
+  if (profile.ucp.version !== UCP_VERSION) {
+    return {
+      ok: false,
+      errorResponse: createDiscoveryErrorResponse({
+        code: "version_unsupported",
+        content: `Unsupported UCP version: ${profile.ucp.version}. Supported version: ${UCP_VERSION}.`,
+        status: 422,
+      }),
+    };
+  }
+
+  const platformCapabilities = toUcpCapabilityRegistry(
+    profile.ucp.capabilities,
+  );
+
+  if (!platformCapabilities) {
+    return {
+      ok: false,
+      errorResponse: createDiscoveryErrorResponse({
+        code: "profile_malformed",
+        content:
+          "Platform profile does not include a valid capabilities registry.",
+        status: 422,
+      }),
+    };
+  }
+
+  const negotiatedCapabilities = negotiateCapabilities({
+    businessCapabilities: UCP_CAPABILITY_REGISTRY,
+    platformCapabilities,
+  });
+
+  if (Object.keys(negotiatedCapabilities).length === 0) {
     return {
       ok: false,
       errorResponse: NextResponse.json(
         {
-          error: "Unsupported protocol version",
-          requested: requestedVersion,
-          supported: UCP_VERSION,
+          ucp: {
+            version: UCP_VERSION,
+            status: "error",
+            capabilities: {},
+          },
+          messages: [
+            {
+              type: "error",
+              code: "capabilities_incompatible",
+              content:
+                "No compatible capabilities were negotiated between platform and business.",
+              severity: "unrecoverable",
+            },
+          ],
         },
-        {
-          status: 400,
-        },
+        { status: 200 },
       ),
     };
   }
 
-  return { ok: true };
+  return {
+    ok: true,
+    negotiatedCapabilities,
+  };
 }

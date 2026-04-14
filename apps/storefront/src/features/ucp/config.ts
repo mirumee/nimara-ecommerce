@@ -3,7 +3,7 @@ import { clientEnvs } from "@/envs/client";
 /**
  * UCP version used by the storefront.
  */
-export const UCP_VERSION = "2026-01-23";
+export const UCP_VERSION = "2026-04-08";
 
 /**
  * UCP API endpoint used by the storefront.

@@ -13,10 +13,15 @@
         "running-locally",
         "storefront",
         "environment-variables",
-        "stripe-integration",
         "saleor-cms",
         "add-new-channel"
       ]
+    },
+    {
+      "type": "category",
+      "label": "Integrations",
+      "collapsed": false,
+      "items": ["ucp-integration", "stripe-integration"]
     },
     {
       "type": "category",

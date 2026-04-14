@@ -5,7 +5,14 @@ import {
   deriveStatusFromErrors,
 } from "@nimara/infrastructure/ucp/saleor/error-response-converter";
 
+import { clientEnvs } from "@/envs/client";
 import { idempotencyStorage } from "@/features/acp/acp";
+import {
+  getResponseCapabilities,
+  toUcpErrorResponseBody,
+  UCP_ROOT_CAPABILITIES,
+  withUcpSuccessMetadata,
+} from "@/features/ucp/helpers/response";
 import { validateUCPVersion } from "@/features/ucp/version-negotiation";
 import { revalidateTag } from "@/foundation/cache/cache";
 import { getHttpStatusFromErrors } from "@/foundation/http/error-to-status";
@@ -33,11 +40,15 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ channelSlug: string; id: string }> },
 ) {
-  const versionNegotiation = validateUCPVersion(request);
+  const versionNegotiation = await validateUCPVersion(request);
 
   if (!versionNegotiation.ok) {
     return versionNegotiation.errorResponse;
   }
+  const responseCapabilities = getResponseCapabilities({
+    negotiatedCapabilities: versionNegotiation.negotiatedCapabilities,
+    rootCapability: UCP_ROOT_CAPABILITIES.checkout,
+  });
 
   const idempotencyKey = request.headers.get("Idempotency-Key");
   const requestId = request.headers.get("Request-Id") || "";
@@ -98,10 +109,19 @@ export async function POST(
     );
 
     return NextResponse.json(
-      {
+      toUcpErrorResponseBody({
+        capabilities: responseCapabilities,
         messages,
         status: checkoutStatus,
-      },
+        includePaymentHandlers: true,
+        continueUrl:
+          checkoutStatus === "requires_escalation"
+            ? new URL(
+                "/checkout",
+                clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
+              ).toString()
+            : undefined,
+      }),
       {
         status: httpStatus,
         headers: {
@@ -113,7 +133,11 @@ export async function POST(
 
   revalidateTag(`UCP:CHECKOUT_SESSION:${id}`);
 
-  const responseData = result.data;
+  const responseData = withUcpSuccessMetadata({
+    payload: result.data as Record<string, unknown>,
+    capabilities: responseCapabilities,
+    includePaymentHandlers: true,
+  });
   const responseStatus = 200;
   const responseHeaders = {
     "Request-Id": requestId,

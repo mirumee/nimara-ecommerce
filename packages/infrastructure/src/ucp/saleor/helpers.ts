@@ -9,6 +9,11 @@ import { type AddressInput } from "@nimara/codegen/schema";
 
 import type { NameFallback } from "./types";
 
+type MetadataEntry = {
+  key: string;
+  value: string;
+};
+
 const EMPTY_CHECKOUT_CANCEL_TIME = 21600; // 6 hours
 const EMPTY_ADDRESS: AddressInput = {
   city: "",
@@ -72,6 +77,49 @@ export const lineItemsFromSaleorCheckoutLines = (
     quantity: line.quantity,
   }));
 };
+
+const toMetadataEntry = (key: string, value: unknown): MetadataEntry | null => {
+  if (typeof value === "undefined") {
+    return null;
+  }
+
+  return {
+    key,
+    value: JSON.stringify(value),
+  };
+};
+
+export function buildCreateCheckoutMetadata({
+  buyer,
+  context,
+  signals,
+}: {
+  buyer?: unknown;
+  context?: unknown;
+  signals?: unknown;
+}): MetadataEntry[] {
+  return [
+    toMetadataEntry("ucp.buyer.json", buyer),
+    toMetadataEntry("ucp.context.json", context),
+    toMetadataEntry("ucp.signals.json", signals),
+  ].filter((entry): entry is MetadataEntry => entry !== null);
+}
+
+export function buildUpdateCheckoutMetadata({
+  buyer,
+  context,
+  signals,
+}: {
+  buyer?: CheckoutUpdateRequest["buyer"];
+  context?: unknown;
+  signals?: unknown;
+}): MetadataEntry[] {
+  return [
+    toMetadataEntry("ucp.buyer.json", buyer),
+    toMetadataEntry("ucp.context.json", context),
+    toMetadataEntry("ucp.signals.json", signals),
+  ].filter((entry): entry is MetadataEntry => entry !== null);
+}
 
 /**
  * Converts a currency amount to its minor unit representation.
@@ -328,8 +376,8 @@ export const generateContinueUrl = ({
   const checkoutURL = new URL("checkout", storefrontURL);
   const params = new URLSearchParams();
 
-  params.set("checkoutID", encodeURIComponent(checkoutId));
-  params.set("redirectPath", encodeURIComponent(`${channelPrefix}/checkout/`));
+  params.set("checkoutID", checkoutId);
+  params.set("redirectPath", `${channelPrefix}/checkout/`);
 
   checkoutURL.search = params.toString();
 

@@ -12,6 +12,13 @@ const ERROR_CODE_TO_STATUS_MAP: Record<string, number> = {
   CART_NOT_FOUND_ERROR: 404,
   PAYMENT_METHOD_NOT_FOUND_ERROR: 404,
   CUSTOMER_NOT_FOUND_ERROR: 404,
+  NOT_FOUND_ERROR: 404,
+
+  // Service Unavailable / Not Available (503)
+  NOT_AVAILABLE_ERROR: 503,
+
+  // Gone (410) - resource no longer available
+  CHECKOUT_CANCELLED_ERROR: 410,
 
   // Bad Request (400)
   BAD_REQUEST_ERROR: 400,

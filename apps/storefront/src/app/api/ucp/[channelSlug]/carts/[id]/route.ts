@@ -7,7 +7,6 @@ import {
 } from "@nimara/infrastructure/ucp/saleor/error-response-converter";
 
 import { clientEnvs } from "@/envs/client";
-import { idempotencyStorage } from "@/features/acp/acp";
 import {
   getResponseCapabilities,
   toUcpErrorResponseBody,
@@ -15,7 +14,6 @@ import {
   withUcpSuccessMetadata,
 } from "@/features/ucp/helpers/response";
 import { validateUCPVersion } from "@/features/ucp/version-negotiation";
-import { revalidateTag } from "@/foundation/cache/cache";
 import { getHttpStatusFromErrors } from "@/foundation/http/error-to-status";
 import { validateChannelParam } from "@/foundation/validate-channel-param";
 import { storefrontLogger } from "@/services/logging";
@@ -30,12 +28,12 @@ export async function GET(
   if (!versionNegotiation.ok) {
     return versionNegotiation.errorResponse;
   }
+
   const responseCapabilities = getResponseCapabilities({
     negotiatedCapabilities: versionNegotiation.negotiatedCapabilities,
-    rootCapability: UCP_ROOT_CAPABILITIES.checkout,
+    rootCapability: UCP_ROOT_CAPABILITIES.cart,
   });
 
-  const idempotencyKey = request.headers.get("Idempotency-Key");
   const requestId = request.headers.get("Request-Id") || "";
 
   const { channelSlug, id } = await params;
@@ -45,24 +43,7 @@ export async function GET(
     return channelValidationResult.errorResponse;
   }
 
-  if (idempotencyKey) {
-    const cached = idempotencyStorage.get(idempotencyKey);
-
-    if (cached) {
-      storefrontLogger.debug(
-        "[UCP] Idempotent request - returning cached response",
-        {
-          idempotencyKey,
-        },
-      );
-
-      return idempotencyStorage.createResponse(cached.cached);
-    }
-  }
-
   const ucpService = await getUCPService({ channelSlug });
-
-  // TODO: Validate if ID is checkout type or order type after checkout is completed.
   const result = await ucpService.getCheckoutSession({ id });
 
   if (!result.ok) {
@@ -70,35 +51,27 @@ export async function GET(
     const checkoutStatus = deriveStatusFromErrors(messages);
     const httpStatus = getHttpStatusFromErrors(result.errors);
 
-    storefrontLogger.error(
-      `[UCP] Failed to fetch checkout session for id ${id}`,
-      {
-        errors: result.errors,
-        messages,
-        checkoutStatus,
-        httpStatus,
-      },
-    );
+    storefrontLogger.error(`[UCP] Failed to fetch cart for id ${id}`, {
+      errors: result.errors,
+      messages,
+      checkoutStatus,
+      httpStatus,
+    });
 
     return NextResponse.json(
       toUcpErrorResponseBody({
         capabilities: responseCapabilities,
         messages,
         status: checkoutStatus,
-        includePaymentHandlers: true,
-        continueUrl:
-          checkoutStatus === "requires_escalation"
-            ? new URL(
-                "/checkout",
-                clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
-              ).toString()
-            : undefined,
+        includePaymentHandlers: false,
+        continueUrl: new URL(
+          "/",
+          clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
+        ).toString(),
       }),
       {
         status: httpStatus,
-        headers: {
-          "Request-Id": requestId,
-        },
+        headers: { "Request-Id": requestId },
       },
     );
   }
@@ -106,39 +79,13 @@ export async function GET(
   const responseData = withUcpSuccessMetadata({
     payload: result.data as Record<string, unknown>,
     capabilities: responseCapabilities,
-    includePaymentHandlers: true,
+    includePaymentHandlers: false,
   });
-  const responseStatus = 200;
-  const responseHeaders = {
-    "Request-Id": requestId,
-    "Idempotency-Key": idempotencyKey || "",
-  };
-
-  if (idempotencyKey) {
-    storefrontLogger.debug("[UCP] Storing response for idempotency", {
-      idempotencyKey,
-      requestId,
-    });
-
-    idempotencyStorage.set(
-      idempotencyKey,
-      responseData,
-      responseStatus,
-      responseHeaders,
-    );
-  }
 
   return NextResponse.json(responseData, {
-    status: responseStatus,
-    headers: responseHeaders,
+    status: 200,
+    headers: { "Request-Id": requestId },
   });
-}
-
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ channelSlug: string; id: string }> },
-) {
-  return PUT(request, { params });
 }
 
 export async function PUT(
@@ -150,12 +97,12 @@ export async function PUT(
   if (!versionNegotiation.ok) {
     return versionNegotiation.errorResponse;
   }
+
   const responseCapabilities = getResponseCapabilities({
     negotiatedCapabilities: versionNegotiation.negotiatedCapabilities,
-    rootCapability: UCP_ROOT_CAPABILITIES.checkout,
+    rootCapability: UCP_ROOT_CAPABILITIES.cart,
   });
 
-  const idempotencyKey = request.headers.get("Idempotency-Key");
   const requestId = request.headers.get("Request-Id") || "";
 
   const { channelSlug, id } = await params;
@@ -169,35 +116,21 @@ export async function PUT(
 
   if (Object.keys(body).length === 0) {
     return NextResponse.json(
-      [{ code: "BAD_REQUEST_ERROR", message: "Request body is required." }],
-      { status: 400 },
-    );
-  }
-
-  if (idempotencyKey) {
-    const cached = idempotencyStorage.get(idempotencyKey, body);
-
-    if (cached) {
-      if (cached.conflict) {
-        storefrontLogger.debug(
-          "[UCP] Idempotency conflict - same key with different request body",
+      toUcpErrorResponseBody({
+        capabilities: responseCapabilities,
+        messages: [
           {
-            idempotencyKey,
+            type: "error",
+            code: "invalid",
+            content: "Request body is required",
+            severity: "recoverable",
           },
-        );
-
-        return idempotencyStorage.createConflictResponse();
-      }
-
-      storefrontLogger.debug(
-        "[UCP] Idempotent request - returning cached response",
-        {
-          idempotencyKey,
-        },
-      );
-
-      return idempotencyStorage.createResponse(cached.cached);
-    }
+        ],
+        status: "incomplete",
+        includePaymentHandlers: false,
+      }),
+      { status: 400, headers: { "Request-Id": requestId } },
+    );
   }
 
   const ucpService = await getUCPService({ channelSlug });
@@ -212,65 +145,39 @@ export async function PUT(
     const checkoutStatus = deriveStatusFromErrors(messages);
     const httpStatus = getHttpStatusFromErrors(result.errors);
 
-    storefrontLogger.error(
-      `[UCP] Failed to update checkout session for id ${id}`,
-      {
-        errors: result.errors,
-        messages,
-        checkoutStatus,
-        httpStatus,
-      },
-    );
+    storefrontLogger.error(`[UCP] Failed to update cart for id ${id}`, {
+      errors: result.errors,
+      messages,
+      checkoutStatus,
+      httpStatus,
+    });
 
     return NextResponse.json(
       toUcpErrorResponseBody({
         capabilities: responseCapabilities,
         messages,
         status: checkoutStatus,
-        includePaymentHandlers: true,
-        continueUrl:
-          checkoutStatus === "requires_escalation"
-            ? new URL(
-                "/checkout",
-                clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
-              ).toString()
-            : undefined,
+        includePaymentHandlers: false,
+        continueUrl: new URL(
+          "/",
+          clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
+        ).toString(),
       }),
       {
         status: httpStatus,
-        headers: {
-          "Request-Id": requestId,
-        },
+        headers: { "Request-Id": requestId },
       },
     );
   }
 
-  // Revalidate cache for this particular checkout session ID on update on success
-  revalidateTag(`UCP:CHECKOUT_SESSION:${id}`);
-
   const responseData = withUcpSuccessMetadata({
     payload: result.data as Record<string, unknown>,
     capabilities: responseCapabilities,
-    includePaymentHandlers: true,
+    includePaymentHandlers: false,
   });
-  const responseStatus = 200;
-  const responseHeaders = {
-    "Request-Id": requestId,
-    "Idempotency-Key": idempotencyKey || "",
-  };
-
-  if (idempotencyKey) {
-    idempotencyStorage.set(
-      idempotencyKey,
-      responseData,
-      responseStatus,
-      responseHeaders,
-      body,
-    );
-  }
 
   return NextResponse.json(responseData, {
-    status: responseStatus,
-    headers: responseHeaders,
+    status: 200,
+    headers: { "Request-Id": requestId },
   });
 }
