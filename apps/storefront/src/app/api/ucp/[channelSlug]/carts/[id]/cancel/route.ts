@@ -5,7 +5,7 @@ import {
   deriveStatusFromErrors,
 } from "@nimara/infrastructure/ucp/saleor/error-response-converter";
 
-import { idempotencyStorage } from "@/features/acp/acp";
+import { clientEnvs } from "@/envs/client";
 import {
   getResponseCapabilities,
   toUcpErrorResponseBody,
@@ -18,7 +18,7 @@ import { validateChannelParam } from "@/foundation/validate-channel-param";
 import { storefrontLogger } from "@/services/logging";
 import { getUCPService } from "@/services/ucp";
 
-export async function GET(
+export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ channelSlug: string; id: string }> },
 ) {
@@ -27,12 +27,12 @@ export async function GET(
   if (!versionNegotiation.ok) {
     return versionNegotiation.errorResponse;
   }
+
   const responseCapabilities = getResponseCapabilities({
     negotiatedCapabilities: versionNegotiation.negotiatedCapabilities,
-    rootCapability: UCP_ROOT_CAPABILITIES.order,
+    rootCapability: UCP_ROOT_CAPABILITIES.cart,
   });
 
-  const idempotencyKey = request.headers.get("Idempotency-Key");
   const requestId = request.headers.get("Request-Id") || "";
 
   const { channelSlug, id } = await params;
@@ -42,53 +42,35 @@ export async function GET(
     return channelValidationResult.errorResponse;
   }
 
-  if (idempotencyKey) {
-    const cached = idempotencyStorage.get(idempotencyKey);
-
-    if (cached) {
-      storefrontLogger.debug(
-        "[UCP] Idempotent request - returning cached response",
-        {
-          idempotencyKey,
-        },
-      );
-
-      return idempotencyStorage.createResponse(cached.cached);
-    }
-  }
-
-  const ucpService = await getUCPService({
-    channelSlug,
-  });
-
-  const result = await ucpService.getOrder({ id });
+  const ucpService = await getUCPService({ channelSlug });
+  const result = await ucpService.cancelCheckout({ id });
 
   if (!result.ok) {
     const messages = convertToMessageErrors(result.errors);
-    const orderStatus = deriveStatusFromErrors(messages);
+    const checkoutStatus = deriveStatusFromErrors(messages);
     const httpStatus = getHttpStatusFromErrors(result.errors);
 
-    storefrontLogger.error(
-      `[UCP] Failed to fetch order for channel ${channelSlug} and id ${id}`,
-      {
-        errors: result.errors,
-        messages,
-        orderStatus,
-        httpStatus,
-      },
-    );
+    storefrontLogger.error(`[UCP] Failed to cancel cart for id ${id}`, {
+      errors: result.errors,
+      messages,
+      checkoutStatus,
+      httpStatus,
+    });
 
     return NextResponse.json(
       toUcpErrorResponseBody({
         capabilities: responseCapabilities,
         messages,
-        status: orderStatus,
+        status: checkoutStatus,
+        includePaymentHandlers: false,
+        continueUrl: new URL(
+          "/",
+          clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
+        ).toString(),
       }),
       {
         status: httpStatus,
-        headers: {
-          "Request-Id": requestId,
-        },
+        headers: { "Request-Id": requestId },
       },
     );
   }
@@ -96,42 +78,11 @@ export async function GET(
   const responseData = withUcpSuccessMetadata({
     payload: result.data as Record<string, unknown>,
     capabilities: responseCapabilities,
+    includePaymentHandlers: false,
   });
-  const responseStatus = 200;
-  const responseHeaders = {
-    "Request-Id": requestId,
-    "Idempotency-Key": idempotencyKey || "",
-  };
-
-  if (idempotencyKey) {
-    storefrontLogger.debug("[UCP] Storing response for idempotency", {
-      idempotencyKey,
-      requestId,
-    });
-
-    idempotencyStorage.set(
-      idempotencyKey,
-      responseData,
-      responseStatus,
-      responseHeaders,
-    );
-  }
 
   return NextResponse.json(responseData, {
-    status: responseStatus,
-    headers: responseHeaders,
+    status: 200,
+    headers: { "Request-Id": requestId },
   });
-}
-
-export async function PUT() {
-  // Return 422 Unprocessable Entity error
-  // for malformed adjustments field on completed order.
-  return NextResponse.json(
-    toUcpErrorResponseBody({
-      capabilities: {},
-      messages: [],
-      status: "unprocessable_entity",
-    }),
-    { status: 422 },
-  );
 }

@@ -1,29 +1,37 @@
 import { NextResponse } from "next/server";
 
-import { UcpDiscoveryProfile } from "@ucp-js/sdk";
-
 import { UCP_VERSION, UCP_API_ENDPOINT } from "@/features/ucp/config";
-import { UCP_CAPABILITIES } from "@/features/ucp/capabilities";
+import { UCP_CAPABILITY_REGISTRY } from "@/features/ucp/capabilities";
 
-function ucpDiscoveryProfile(): UcpDiscoveryProfile {
+type UcpDiscoveryProfileV20260408 = {
+  signing_keys: unknown[];
+  ucp: {
+    capabilities: Record<string, Array<Record<string, unknown>>>;
+    payment_handlers: Record<string, Array<Record<string, unknown>>>;
+    services: Record<string, Array<Record<string, unknown>>>;
+    version: string;
+  };
+};
+
+function ucpDiscoveryProfile(): UcpDiscoveryProfileV20260408 {
   return {
     ucp: {
       version: UCP_VERSION,
       services: {
-        "dev.ucp.shopping": {
-          version: UCP_VERSION,
-          spec: "https://ucp.dev/specification/reference",
-          rest: {
+        "dev.ucp.shopping": [
+          {
+            version: UCP_VERSION,
+            spec: `https://ucp.dev/${UCP_VERSION}/specification/overview/`,
+            transport: "rest",
             schema: `https://ucp.dev/${UCP_VERSION}/services/shopping/openapi.json`,
             endpoint: UCP_API_ENDPOINT,
           },
-        },
+        ],
       },
-      capabilities: UCP_CAPABILITIES,
+      capabilities: UCP_CAPABILITY_REGISTRY,
+      payment_handlers: {},
     },
-    payment: {
-      handlers: [],
-    },
+    signing_keys: [],
   };
 }
 

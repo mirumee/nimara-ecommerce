@@ -4,14 +4,18 @@ import { mapSaleorErrorToUCP } from "./error-mapping";
 
 /**
  * UCP-compliant message error object
- * Spec: https://ucp.dev/2026-01-23/specification/checkout/#message-error
+ * Spec: https://ucp.dev/2026-04-08/specification/checkout/#message-error
  */
 export type MessageError = {
   code: string;
   content: string;
   content_type?: "plain" | "markdown";
   path?: string; // RFC 9535 JSONPath
-  severity?: "recoverable" | "requires_buyer_input" | "requires_buyer_review";
+  severity?:
+    | "recoverable"
+    | "requires_buyer_input"
+    | "requires_buyer_review"
+    | "unrecoverable";
   type: "error" | "warning" | "info";
 };
 
@@ -61,7 +65,7 @@ export function convertToMessageErrors(errors: BaseError[]): MessageError[] {
 
 /**
  * Derives checkout status from error severities.
- * Per UCP spec: https://ucp.dev/2026-01-23/specification/checkout/#error-handling
+ * Per UCP spec: https://ucp.dev/2026-04-08/specification/checkout/#error-handling
  *
  * @param messages - Array of error messages
  * @returns Appropriate checkout status
@@ -91,6 +95,7 @@ export function deriveStatusFromErrors(
   }
 
   // Get highest severity
+  const hasUnrecoverable = messages.some((m) => m.severity === "unrecoverable");
   const hasRequiresBuyerInput = messages.some(
     (m) => m.severity === "requires_buyer_input",
   );
@@ -99,7 +104,10 @@ export function deriveStatusFromErrors(
   );
   const hasRecoverable = messages.some((m) => m.severity === "recoverable");
 
-  // Priority: requires_escalation > incomplete > ready_for_complete
+  if (hasUnrecoverable) {
+    return "canceled";
+  }
+
   if (hasRequiresBuyerInput || hasRequiresBuyerReview) {
     return "requires_escalation";
   }
@@ -108,13 +116,12 @@ export function deriveStatusFromErrors(
     return "incomplete";
   }
 
-  // No errors
   return currentStatus ?? "ready_for_complete";
 }
 
 /**
  * Implements the UCP error processing algorithm.
- * Per spec: https://ucp.dev/2026-01-23/specification/checkout/#error-processing-algorithm
+ * Per spec: https://ucp.dev/2026-04-08/specification/checkout/#error-processing-algorithm
  *
  * Algorithm:
  * 1. Collect errors and partition by severity
@@ -164,6 +171,7 @@ export function groupErrorsBySeverity(messages: MessageError[]): {
   recoverable: MessageError[];
   requiresBuyerInput: MessageError[];
   requiresBuyerReview: MessageError[];
+  unrecoverable: MessageError[];
 } {
   return {
     recoverable: messages.filter((m) => m.severity === "recoverable"),
@@ -173,5 +181,6 @@ export function groupErrorsBySeverity(messages: MessageError[]): {
     requiresBuyerReview: messages.filter(
       (m) => m.severity === "requires_buyer_review",
     ),
+    unrecoverable: messages.filter((m) => m.severity === "unrecoverable"),
   };
 }

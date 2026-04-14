@@ -1,0 +1,9 @@
+query UCPCatalogLookup($ids: [ID!]!, $channel: String!) {
+  products(first: 50, channel: $channel, filter: { ids: $ids }) {
+    edges {
+      node {
+        ...UCPCatalogProductFragment
+      }
+    }
+  }
+}

@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import {
   type NextFetchEvent,
   type NextRequest,
@@ -50,6 +49,11 @@ export const ucpProxyMiddleware =
     event: NextFetchEvent,
     response: NextResponse,
   ) => {
+    // Execute this proxy only on specific paths
+    if (!request.nextUrl.pathname.includes("/checkout")) {
+      return next(request, event, response);
+    }
+
     const url = new URL(request.url);
     const checkoutID = decodeURIComponent(
       url.searchParams.get("checkoutID") ?? "",
@@ -61,7 +65,7 @@ export const ucpProxyMiddleware =
     logger.info("[UCP Proxy] Checkout handoff detected.", {
       context: {
         requestURL: request.url,
-        redirectEnabled: redirect,
+        redirectEnabled,
         redirectPath,
         checkoutID,
       },

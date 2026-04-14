@@ -23,11 +23,21 @@ import {
   generateCheckoutLinks,
   toMinorCurrency,
 } from "#root/ucp/saleor/helpers";
+import type {
+  UcpMedia,
+  UcpPrice,
+  UcpProduct,
+  UcpVariant,
+} from "#root/ucp/types";
 
 import {
   type UcpCheckoutSessionFragment,
   type UcpOrderFragment,
 } from "./graphql/fragments/generated";
+import type {
+  UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product as SaleorCatalogProduct,
+  UcpCatalogLookup_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_variants_ProductVariant as SaleorCatalogVariant,
+} from "./graphql/queries/generated";
 
 /**
  * Applied discount entry in the UCP checkout session model.
@@ -68,7 +78,11 @@ export type UCPCheckoutSessionModel = {
     content: string;
     content_type?: "plain" | "markdown";
     path?: string;
-    severity?: "recoverable" | "requires_buyer_input" | "requires_buyer_review";
+    severity?:
+      | "recoverable"
+      | "unrecoverable"
+      | "requires_buyer_input"
+      | "requires_buyer_review";
     type: "error" | "warning" | "info";
   }>;
   order?: Pick<OrderClass, "id"> & {
@@ -84,6 +98,10 @@ export type UCPCheckoutSessionModel = {
 const getCheckoutStatus = (
   checkout: UcpCheckoutSessionFragment,
 ): CheckoutResponseStatus => {
+  if (checkout.cancelled === "true") {
+    return "canceled";
+  }
+
   if (checkout.authorizeStatus === "FULL") {
     return "completed";
   }
@@ -99,7 +117,7 @@ const getCheckoutStatus = (
 
 /**
  * Maps Saleor monetary summary into UCP totals sections.
- * Includes a "discount" entry when a voucher is applied.
+ * Includes an "items_discount" entry (negative amount) when a voucher is applied.
  */
 const calculateTotals = (
   checkout: Pick<
@@ -142,8 +160,8 @@ const calculateTotals = (
 
   if (discountAmount > 0) {
     totals.push({
-      type: "discount",
-      amount: toMinorCurrency(discountAmount, currency),
+      type: "items_discount",
+      amount: -toMinorCurrency(discountAmount, currency),
     } satisfies TotalResponse);
   }
 
@@ -488,8 +506,10 @@ export const sessionToCheckoutResponse = ({
     })) as unknown as TotalResponse[],
     ucp: {
       version,
+      status: "success",
       capabilities,
-    },
+      payment_handlers: {},
+    } as CheckoutWithFulfillmentResponse["ucp"],
     payment: {
       handlers: paymentHandlers,
       instruments: [],
@@ -505,7 +525,7 @@ export const sessionToCheckoutResponse = ({
             ...(msg.severity ? { severity: msg.severity } : {}),
             ...(msg.path ? { path: msg.path } : {}),
             ...(msg.content_type ? { content_type: msg.content_type } : {}),
-          })),
+          })) as NonNullable<CheckoutWithFulfillmentResponse["messages"]>,
         }
       : {}),
     ...(session.expiresAtISO
@@ -559,6 +579,8 @@ export const orderToUCPOrder = ({
     id: order.id,
     checkout_id: order.checkoutId || "",
     permalink_url: permalinkUrl,
+    currency,
+    adjustments: [],
     line_items: order.lines.map((line) => ({
       id: line.id,
       quantity: {
@@ -584,6 +606,7 @@ export const orderToUCPOrder = ({
       },
     })),
     fulfillment: {
+      expectations: [],
       events: order.fulfillments.map((fulfillment) => ({
         type: fulfillment.status,
         id: fulfillment.id,
@@ -606,7 +629,143 @@ export const orderToUCPOrder = ({
     ],
     ucp: {
       version: UCP_VERSION,
+      status: "success",
       capabilities,
     },
-  } satisfies UcpOrder;
+  } as UcpOrder;
 };
+
+// ── Catalog serializers ──────────────────────────────────────────
+
+function toUcpPrice(amount: number, currency: string): UcpPrice {
+  return {
+    amount: toMinorCurrency(amount, currency),
+    currency,
+  };
+}
+
+function toUcpMedia(
+  media: Array<{ alt: string; type?: string; url: string }>,
+): UcpMedia[] {
+  return media.map((m) => ({
+    type: (m.type?.toLowerCase() === "video"
+      ? "video"
+      : "image") as UcpMedia["type"],
+    url: m.url,
+    alt_text: m.alt || undefined,
+  }));
+}
+
+export function saleorVariantToUcp(variant: SaleorCatalogVariant): UcpVariant {
+  const price = variant.pricing?.price?.gross;
+  const listPrice = variant.pricing?.priceUndiscounted?.gross;
+  const currency = price?.currency ?? "USD";
+
+  const options = variant.attributes
+    ?.filter((attr) => attr.values.length > 0 && attr.values[0]?.name)
+    .map((attr) => ({
+      name: attr.attribute.name ?? attr.attribute.slug ?? "",
+      label: attr.values[0]?.name ?? "",
+    }));
+
+  const result: UcpVariant = {
+    id: variant.id,
+    title: variant.name || "Default",
+    description: { plain: variant.name || "" },
+    sku: variant.sku ?? undefined,
+    price: price
+      ? toUcpPrice(price.amount, price.currency)
+      : { amount: 0, currency },
+    availability: {
+      available: (variant.quantityAvailable ?? 0) > 0,
+    },
+    ...(options && options.length > 0 ? { options } : {}),
+    ...(variant.media && variant.media.length > 0
+      ? { media: toUcpMedia(variant.media) }
+      : {}),
+  };
+
+  if (listPrice && price && listPrice.amount !== price.amount) {
+    result.list_price = toUcpPrice(listPrice.amount, listPrice.currency);
+  }
+
+  return result;
+}
+
+export function saleorProductToUcp(
+  product: SaleorCatalogProduct,
+  storefrontURL: string,
+): UcpProduct {
+  const priceRange = product.pricing?.priceRange;
+  const listPriceRange = product.pricing?.priceRangeUndiscounted;
+  const currency = priceRange?.start?.gross.currency ?? "USD";
+
+  const variants = (product.variants ?? []).map((v) => saleorVariantToUcp(v));
+
+  const categories = product.category
+    ? [{ value: product.category.slug }]
+    : undefined;
+
+  let descriptionText = "";
+
+  if (product.description) {
+    try {
+      const parsed = JSON.parse(product.description) as {
+        blocks?: Array<{ data?: { text?: string } }>;
+      };
+
+      descriptionText =
+        parsed?.blocks
+          ?.map((b) => b.data?.text ?? "")
+          .filter(Boolean)
+          .join(" ") ?? "";
+    } catch {
+      descriptionText = product.description;
+    }
+  }
+
+  const options = product.productType?.variantAttributes
+    ?.filter((attr) => attr.choices && attr.choices.edges.length > 0)
+    .map((attr) => ({
+      name: attr.name ?? attr.slug ?? "",
+      values: attr.choices!.edges.map((edge) => ({
+        label: edge.node.name ?? "",
+      })),
+    }));
+
+  const ucpProduct: UcpProduct = {
+    id: product.id,
+    handle: product.slug,
+    title: product.name,
+    description: { plain: descriptionText },
+    url: new URL(`/products/${product.slug}`, storefrontURL).toString(),
+    price_range: {
+      min: priceRange?.start?.gross
+        ? toUcpPrice(priceRange.start.gross.amount, currency)
+        : { amount: 0, currency },
+      max: priceRange?.stop?.gross
+        ? toUcpPrice(priceRange.stop.gross.amount, currency)
+        : { amount: 0, currency },
+    },
+    variants,
+    ...(categories ? { categories } : {}),
+    ...(product.media && product.media.length > 0
+      ? { media: toUcpMedia(product.media) }
+      : {}),
+    ...(options && options.length > 0 ? { options } : {}),
+  };
+
+  if (
+    listPriceRange?.start?.gross &&
+    listPriceRange?.stop?.gross &&
+    priceRange?.start?.gross &&
+    listPriceRange.start.gross.amount !== priceRange.start.gross.amount
+  ) {
+    ucpProduct.list_price_range = {
+      min: toUcpPrice(listPriceRange.start.gross.amount, currency),
+      max: toUcpPrice(listPriceRange.stop.gross.amount, currency),
+    };
+  }
+
+  return ucpProduct;
+}

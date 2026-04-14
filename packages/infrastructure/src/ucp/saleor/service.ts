@@ -17,6 +17,12 @@ import { graphqlClient } from "#root/graphql/client";
 import { getDiscoveryProfile } from "#root/ucp/profile";
 
 import {
+  type CatalogGetProductInput,
+  type CatalogGetProductResult,
+  type CatalogLookupInput,
+  type CatalogLookupResult,
+  type CatalogSearchInput,
+  type CatalogSearchResult,
   type UCPResponse,
   type UCPService,
   type UCPServiceError,
@@ -25,6 +31,7 @@ import { mapSaleorErrorToUCP } from "./error-mapping";
 import {
   UcpCheckoutAddPromoCodeDocument,
   UcpCheckoutCompleteMutationDocument,
+  UcpCheckoutMetadataUpdateDocument,
   UcpCheckoutRemovePromoCodeDocument,
   UcpCheckoutSessionCreateDocument,
   UcpCheckoutSessionItemUpdateDocument,
@@ -32,10 +39,15 @@ import {
   type UcpCheckoutSessionUpdateVariables,
 } from "./graphql/mutations/generated";
 import {
+  UcpCatalogLookupDocument,
+  UcpCatalogProductDocument,
+  UcpCatalogSearchDocument,
   UcpCheckoutSessionGetDocument,
   UcpOrderGetDocument,
 } from "./graphql/queries/generated";
 import {
+  buildCreateCheckoutMetadata,
+  buildUpdateCheckoutMetadata,
   calculateCheckoutExpiration,
   generateContinueUrl,
   lineItemsFromSaleorCheckoutLines,
@@ -46,6 +58,7 @@ import {
 } from "./helpers";
 import {
   orderToUCPOrder,
+  saleorProductToUcp,
   sessionToCheckoutResponse,
   toPaymentHandlers,
   toUCPCheckoutSession,
@@ -235,17 +248,14 @@ export const saleorUCPService = ({
     }
 
     try {
-      const metadata = [];
-
-      if (input.buyer) {
-        const buyerConsent =
-          input.buyer as CheckoutWithBuyerConsentCreateRequest["buyer"];
-
-        metadata.push({
-          key: "ucp.buyer.json",
-          value: JSON.stringify(buyerConsent ?? {}),
-        });
-      }
+      const buyerConsent =
+        input.buyer as CheckoutWithBuyerConsentCreateRequest["buyer"];
+      const extendedCreateInput = input as Record<string, unknown>;
+      const metadata = buildCreateCheckoutMetadata({
+        buyer: buyerConsent,
+        context: extendedCreateInput.context,
+        signals: extendedCreateInput.signals,
+      });
 
       const result = await client.execute(UcpCheckoutSessionCreateDocument, {
         variables: {
@@ -526,6 +536,17 @@ export const saleorUCPService = ({
       }
 
       const checkoutEntity = existingCheckoutResult.data.checkout;
+
+      if (checkoutEntity.cancelled === "true") {
+        return err([
+          {
+            code: "CHECKOUT_CANCELLED_ERROR",
+            message:
+              "Checkout session has been canceled and cannot be updated.",
+          },
+        ]);
+      }
+
       const incomingLineItems =
         input.line_items ??
         lineItemsFromSaleorCheckoutLines(checkoutEntity.lines);
@@ -601,6 +622,11 @@ export const saleorUCPService = ({
       const destination =
         requestWithFulfillment.fulfillment?.methods?.[0]?.destinations?.[0];
       const billingAddr = requestWithFulfillment.billing_address;
+      const metadata = buildUpdateCheckoutMetadata({
+        buyer: requestWithFulfillment.buyer,
+        context: (requestWithFulfillment as Record<string, unknown>).context,
+        signals: (requestWithFulfillment as Record<string, unknown>).signals,
+      });
 
       const updateVariables: UcpCheckoutSessionUpdateVariables = {
         billingAddress: toSaleorAddress(
@@ -611,8 +637,8 @@ export const saleorUCPService = ({
           requestWithFulfillment.buyer?.email ||
           existingCheckoutResult.data.checkout.email ||
           "not-provided@example.com",
-        buyerJSON: JSON.stringify(requestWithFulfillment.buyer || {}),
         checkoutId: input.id,
+        metadata,
         fulfillmentOptionID:
           requestWithFulfillment.fulfillment?.methods?.[0]?.groups?.[0]
             ?.selected_option_id || "",
@@ -801,6 +827,16 @@ export const saleorUCPService = ({
         ]);
       }
 
+      if (currentCheckoutResult.data.checkout.cancelled === "true") {
+        return err([
+          {
+            code: "CHECKOUT_CANCELLED_ERROR",
+            message:
+              "Checkout session has been canceled and cannot be completed.",
+          },
+        ]);
+      }
+
       const continueURL = generateContinueUrl({
         checkoutId: currentCheckoutResult.data.checkout.id,
         storefrontURL,
@@ -983,7 +1019,7 @@ export const saleorUCPService = ({
   },
 
   /**
-   * Cancels a checkout session per UCP by removing all cart lines.
+   * Cancels a checkout session per UCP by setting `ucp.cancelled` metadata and removing all cart lines.
    *
    * Saleor has no dedicated “cancel checkout” mutation; empty checkouts expire
    * sooner (e.g. 6h) than non-empty ones. See:
@@ -1045,18 +1081,9 @@ export const saleorUCPService = ({
         ]);
       }
 
-      const buildCanceledResponse = () => {
-        const refreshed = existingResult.data.checkout!;
-
-        const continueURL = generateContinueUrl({
-          checkoutId: refreshed.id,
-          storefrontURL,
-          channelPrefix,
-        });
-
+      if (checkout.cancelled === "true") {
         const session = toUCPCheckoutSession({
-          checkout: refreshed,
-          continueURL,
+          checkout,
           storefrontURL,
           order: undefined,
         });
@@ -1064,56 +1091,70 @@ export const saleorUCPService = ({
         return ok(
           sessionToCheckoutResponse({
             version,
-            session: { ...session, status: "canceled" },
+            session,
             capabilities,
-            paymentHandlers: toPaymentHandlers({
-              version,
-              checkout: refreshed,
-            }),
+            paymentHandlers: toPaymentHandlers({ version, checkout }),
           }),
         );
-      };
-
-      if (checkout.lines.length === 0) {
-        return buildCanceledResponse();
       }
 
-      const linesToUpdate: SaleorCheckoutLineInput[] = checkout.lines.map(
-        (line) => ({
-          variantId: line.variant.id,
-          quantity: 0,
-        }),
-      );
-
-      const itemsUpdateResult = await client.execute(
-        UcpCheckoutSessionItemUpdateDocument,
+      const metadataResult = await client.execute(
+        UcpCheckoutMetadataUpdateDocument,
         {
           variables: {
-            checkoutId: input.id,
-            linesToAdd: [],
-            shouldAddLines: false,
-            linesToUpdate,
-            shouldUpdateLines: true,
+            id: input.id,
+            input: [{ key: "ucp.cancelled", value: "true" }],
           },
-          operationName: "UCP:CheckoutSessionItemUpdateMutation",
+          operationName: "UCP:CheckoutMetadataUpdateMutation",
           options: {
             cache: "no-store",
           },
         },
       );
 
-      if (!itemsUpdateResult.ok) {
-        return err(itemsUpdateResult.errors);
+      if (!metadataResult.ok) {
+        return err(metadataResult.errors);
       }
 
-      const itemUpdateErrors = [
-        ...(itemsUpdateResult.data.checkoutLinesUpdate?.errors || []),
-      ];
+      const metadataErrors = metadataResult.data.updateMetadata?.errors ?? [];
 
-      if (itemUpdateErrors.length > 0) {
-        const errors = mapSaleorMutationErrors(itemUpdateErrors);
+      if (metadataErrors.length > 0) {
+        const errors = mapSaleorMutationErrors(metadataErrors);
 
         return err(errors);
+      }
+
+      if (checkout.lines.length > 0) {
+        const linesToUpdate: SaleorCheckoutLineInput[] = checkout.lines.map(
+          (line) => ({
+            variantId: line.variant.id,
+            quantity: 0,
+          }),
+        );
+
+        const lineRemovalResult = await client.execute(
+          UcpCheckoutSessionItemUpdateDocument,
+          {
+            variables: {
+              checkoutId: input.id,
+              linesToAdd: [],
+              shouldAddLines: false,
+              linesToUpdate,
+              shouldUpdateLines: true,
+            },
+            operationName: "UCP:CheckoutSessionItemUpdateMutation",
+            options: {
+              cache: "no-store",
+            },
+          },
+        );
+
+        if (!lineRemovalResult.ok) {
+          console.warn(
+            "[UCP] Line removal failed during checkout cancellation, metadata already marked as cancelled.",
+            { checkoutId: input.id, errors: lineRemovalResult.errors },
+          );
+        }
       }
 
       const refreshedResult = await client.execute(
@@ -1139,15 +1180,10 @@ export const saleorUCPService = ({
         ]);
       }
 
-      const continueURL = generateContinueUrl({
-        checkoutId: refreshedResult.data.checkout.id,
-        storefrontURL,
-        channelPrefix,
-      });
+      const refreshedCheckout = refreshedResult.data.checkout;
 
       const session = toUCPCheckoutSession({
-        checkout: refreshedResult.data.checkout,
-        continueURL,
+        checkout: refreshedCheckout,
         storefrontURL,
         order: undefined,
       });
@@ -1155,11 +1191,11 @@ export const saleorUCPService = ({
       return ok(
         sessionToCheckoutResponse({
           version,
-          session: { ...session, status: "canceled" },
+          session,
           capabilities,
           paymentHandlers: toPaymentHandlers({
             version,
-            checkout: refreshedResult.data.checkout,
+            checkout: refreshedCheckout,
           }),
         }),
       );
@@ -1171,5 +1207,189 @@ export const saleorUCPService = ({
         },
       ]);
     }
+  },
+
+  // ── Catalog ────────────────────────────────────────────────
+
+  async catalogSearch(input: CatalogSearchInput): Promise<CatalogSearchResult> {
+    const DEFAULT_PAGE_SIZE = 20;
+    const MAX_PAGE_SIZE = 50;
+
+    const client = graphqlClient(apiUrl);
+
+    if (!client) {
+      return { products: [] };
+    }
+
+    const limit = Math.min(
+      input.pagination?.limit ?? DEFAULT_PAGE_SIZE,
+      MAX_PAGE_SIZE,
+    );
+
+    const filter: Record<string, unknown> = {};
+
+    if (input.filters?.categories?.length) {
+      filter.categories = input.filters.categories;
+    }
+
+    if (input.filters?.price) {
+      const currency = String(input.context?.currency ?? "USD");
+      const fractionDigits =
+        new Intl.NumberFormat("en", {
+          style: "currency",
+          currency,
+        }).resolvedOptions().maximumFractionDigits ?? 2;
+      const divisor = Math.pow(10, fractionDigits);
+
+      filter.price = {
+        ...(input.filters.price.min != null
+          ? { gte: input.filters.price.min / divisor }
+          : {}),
+        ...(input.filters.price.max != null
+          ? { lte: input.filters.price.max / divisor }
+          : {}),
+      };
+    }
+
+    const result = await client.execute(UcpCatalogSearchDocument, {
+      variables: {
+        first: limit,
+        channel,
+        ...(input.query ? { search: input.query } : {}),
+        ...(Object.keys(filter).length > 0 ? { filter } : {}),
+        ...(input.pagination?.cursor ? { after: input.pagination.cursor } : {}),
+      },
+      operationName: "UCP:CatalogSearchQuery",
+      options: { cache: "no-store" },
+    });
+
+    if (!result.ok) {
+      return { products: [] };
+    }
+
+    const products = (result.data.products?.edges ?? []).map((edge) =>
+      saleorProductToUcp(edge.node, storefrontURL),
+    );
+
+    return {
+      products,
+      pagination: {
+        has_next_page: result.data.products?.pageInfo.hasNextPage ?? false,
+        cursor: result.data.products?.pageInfo.endCursor ?? undefined,
+        total_count: result.data.products?.totalCount ?? undefined,
+      },
+    };
+  },
+
+  async catalogLookup(input: CatalogLookupInput): Promise<CatalogLookupResult> {
+    const client = graphqlClient(apiUrl);
+
+    if (!client) {
+      return { products: [] };
+    }
+
+    const uniqueIds = [...new Set(input.ids)];
+
+    const result = await client.execute(UcpCatalogLookupDocument, {
+      variables: {
+        ids: uniqueIds,
+        channel,
+      },
+      operationName: "UCP:CatalogLookupQuery",
+      options: { cache: "no-store" },
+    });
+
+    if (!result.ok) {
+      return { products: [] };
+    }
+
+    const products = (result.data.products?.edges ?? []).map((edge) =>
+      saleorProductToUcp(edge.node, storefrontURL),
+    );
+
+    for (const product of products) {
+      for (const variant of product.variants) {
+        const matchingInputs: NonNullable<typeof variant.inputs> = [];
+
+        if (uniqueIds.includes(product.id)) {
+          matchingInputs.push({ id: product.id, match: "featured" });
+        }
+
+        if (uniqueIds.includes(variant.id)) {
+          matchingInputs.push({ id: variant.id, match: "exact" });
+        }
+
+        if (matchingInputs.length > 0) {
+          variant.inputs = matchingInputs;
+        }
+      }
+    }
+
+    const foundIds = new Set(products.map((p) => p.id));
+    const foundVariantIds = new Set(
+      products.flatMap((p) => p.variants.map((v) => v.id)),
+    );
+    const notFoundIds = uniqueIds.filter(
+      (id) => !foundIds.has(id) && !foundVariantIds.has(id),
+    );
+
+    const messages =
+      notFoundIds.length > 0
+        ? notFoundIds.map((id) => ({
+            type: "info" as const,
+            code: "not_found",
+            content: id,
+          }))
+        : undefined;
+
+    return {
+      products,
+      ...(messages ? { messages } : {}),
+    };
+  },
+
+  async catalogGetProduct(
+    input: CatalogGetProductInput,
+  ): Promise<CatalogGetProductResult> {
+    const client = graphqlClient(apiUrl);
+
+    if (!client) {
+      return null;
+    }
+
+    const result = await client.execute(UcpCatalogProductDocument, {
+      variables: {
+        id: input.id,
+        channel,
+      },
+      operationName: "UCP:CatalogProductQuery",
+      options: { cache: "no-store" },
+    });
+
+    if (!result.ok || !result.data.product) {
+      return null;
+    }
+
+    const product = saleorProductToUcp(result.data.product, storefrontURL);
+
+    if (input.selected && input.selected.length > 0) {
+      product.selected = input.selected;
+
+      const filteredVariants = product.variants.filter((variant) =>
+        input.selected!.every((sel) =>
+          variant.options?.some(
+            (opt) =>
+              opt.name.toLowerCase() === sel.name.toLowerCase() &&
+              opt.label.toLowerCase() === sel.label.toLowerCase(),
+          ),
+        ),
+      );
+
+      if (filteredVariants.length > 0) {
+        product.variants = filteredVariants;
+      }
+    }
+
+    return { product };
   },
 });
