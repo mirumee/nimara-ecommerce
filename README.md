@@ -198,6 +198,6 @@ For detailed contributing guidelines, please see [Contributing Guide](./docs/CON
 
 <div align="center"> <strong>Crafted with ❤️ by Mirumee Software</strong>
 
-[hello@mirumee.com](mailto:hello@mirumee.com)
+[nimara@mirumee.com](mailto:nimara@mirumee.com)
 
 </div>
