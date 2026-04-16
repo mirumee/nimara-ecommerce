@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 
 import type { TransactionCreateMutationVariables } from "@/graphql/generated/client";
+import { linkOrdersToStripeChargeFromPaymentIntent } from "@/lib/ledger/link-orders-stripe-charge";
 import { getAppConfig } from "@/lib/saleor/app-config";
 import { verifyStripeWebhookSignatureDetailed } from "@/lib/stripe/webhook-signature";
 import { checkoutService } from "@/services/checkouts";
@@ -31,6 +32,12 @@ type FailedTransactionCreate = {
 type ServiceError = {
   code: string;
   message: string;
+};
+
+type CheckoutStripeProcessingResult = {
+  errors: ServiceError[];
+  orderId: string | null;
+  transaction: { id: string; name: string } | null;
 };
 
 type TransactionCreatePayload = {
@@ -283,7 +290,7 @@ export async function POST(request: NextRequest) {
 
   const completeCheckout = async (
     checkoutId: string,
-  ): Promise<ServiceError[]> => {
+  ): Promise<{ errors: ServiceError[]; orderId: string | null }> => {
     const checkoutCompleteResult = await checkoutService.completeCheckout(
       { id: checkoutId },
       config.authToken,
@@ -298,19 +305,22 @@ export async function POST(request: NextRequest) {
         mappedCheckoutCompleteErrors.length === 0 &&
         checkoutCompleteResult.errors.length > 0
       ) {
-        return [];
+        return { errors: [], orderId: null };
       }
 
       if (mappedCheckoutCompleteErrors.length === 0) {
-        return [
-          {
-            code: "UNKNOWN_CHECKOUT_COMPLETE_ERROR",
-            message: "checkoutComplete failed without error details.",
-          },
-        ];
+        return {
+          errors: [
+            {
+              code: "UNKNOWN_CHECKOUT_COMPLETE_ERROR",
+              message: "checkoutComplete failed without error details.",
+            },
+          ],
+          orderId: null,
+        };
       }
 
-      return mappedCheckoutCompleteErrors;
+      return { errors: mappedCheckoutCompleteErrors, orderId: null };
     }
 
     const checkoutCompleteResultData =
@@ -325,178 +335,209 @@ export async function POST(request: NextRequest) {
       rawCheckoutCompleteErrors.every((error) =>
         isCheckoutCompleteNotFoundError(error.code),
       );
+    const orderId =
+      checkoutCompleteResultData.checkoutComplete?.order?.id ?? null;
 
     if (mappedCheckoutCompleteErrors.length > 0) {
-      return mappedCheckoutCompleteErrors;
+      return { errors: mappedCheckoutCompleteErrors, orderId: null };
     }
 
     if (
       checkoutCompleteResultData.checkoutComplete?.order ||
       hasOnlyNotFoundErrors
     ) {
-      return [];
+      return { errors: [], orderId };
     }
 
-    return [
-      {
-        code: "UNKNOWN_CHECKOUT_COMPLETE_ERROR",
-        message: "checkoutComplete returned no order and no error details.",
-      },
-    ];
+    return {
+      errors: [
+        {
+          code: "UNKNOWN_CHECKOUT_COMPLETE_ERROR",
+          message: "checkoutComplete returned no order and no error details.",
+        },
+      ],
+      orderId: null,
+    };
   };
 
   const settled = await Promise.allSettled(
-    checkoutIds.map(async (checkoutId) => {
-      const amount = checkoutAmounts[checkoutId];
-      const checkoutTransactionsResult =
-        await transactionsService.getCheckoutTransactions(
-          { id: checkoutId },
-          config.authToken,
-        );
+    checkoutIds.map(
+      async (checkoutId): Promise<CheckoutStripeProcessingResult> => {
+        const amount = checkoutAmounts[checkoutId];
+        const checkoutTransactionsResult =
+          await transactionsService.getCheckoutTransactions(
+            { id: checkoutId },
+            config.authToken,
+          );
 
-      if (!checkoutTransactionsResult.ok) {
-        return {
-          transaction: null,
-          errors: checkoutTransactionsResult.errors.map((error) => ({
-            code: error.code,
-            message: error.message ?? "checkout query failed.",
-          })),
-        };
-      }
-
-      const checkoutTransactionsData =
-        checkoutTransactionsResult.data as CheckoutTransactionsPayload;
-      const alreadyCharged =
-        checkoutTransactionsData.checkout?.transactions?.some((transaction) => {
-          if (transaction.pspReference !== paymentIntentId) {
-            return false;
-          }
-
-          return (transaction.chargedAmount?.amount ?? 0) > 0;
-        }) ?? false;
-
-      if (alreadyCharged) {
-        marketplaceLogger.warning(
-          "Stripe webhook recovery path: checkout already charged, retrying checkoutComplete.",
-          {
-            checkoutId,
-            eventId: event.id,
-            paymentIntentId,
-            saleorDomain,
-          },
-        );
-
-        let checkoutCompleteErrors: ServiceError[];
-
-        try {
-          checkoutCompleteErrors = await completeCheckout(checkoutId);
-        } catch (error) {
-          checkoutCompleteErrors = mapCheckoutCompleteRequestFailure(error);
-        }
-
-        if (checkoutCompleteErrors.length > 0) {
+        if (!checkoutTransactionsResult.ok) {
           return {
             transaction: null,
-            errors: checkoutCompleteErrors,
+            errors: checkoutTransactionsResult.errors.map((error) => ({
+              code: error.code,
+              message: error.message ?? "checkout query failed.",
+            })),
+            orderId: null,
+          };
+        }
+
+        const checkoutTransactionsData =
+          checkoutTransactionsResult.data as CheckoutTransactionsPayload;
+        const alreadyCharged =
+          checkoutTransactionsData.checkout?.transactions?.some(
+            (transaction) => {
+              if (transaction.pspReference !== paymentIntentId) {
+                return false;
+              }
+
+              return (transaction.chargedAmount?.amount ?? 0) > 0;
+            },
+          ) ?? false;
+
+        if (alreadyCharged) {
+          marketplaceLogger.warning(
+            "Stripe webhook recovery path: checkout already charged, retrying checkoutComplete.",
+            {
+              checkoutId,
+              eventId: event.id,
+              paymentIntentId,
+              saleorDomain,
+            },
+          );
+
+          let checkoutCompleteOutcome: Awaited<
+            ReturnType<typeof completeCheckout>
+          >;
+
+          try {
+            checkoutCompleteOutcome = await completeCheckout(checkoutId);
+          } catch (error) {
+            return {
+              transaction: null,
+              errors: mapCheckoutCompleteRequestFailure(error),
+              orderId: null,
+            };
+          }
+
+          if (checkoutCompleteOutcome.errors.length > 0) {
+            return {
+              transaction: null,
+              errors: checkoutCompleteOutcome.errors,
+              orderId: null,
+            };
+          }
+
+          return {
+            transaction: {
+              id: "already-processed",
+              name: "PaymentIntent Succeeded",
+            },
+            errors: [],
+            orderId: checkoutCompleteOutcome.orderId,
+          };
+        }
+
+        const transactionVariables: TransactionCreateMutationVariables = {
+          id: checkoutId,
+          transaction: {
+            name: "PaymentIntent Succeeded",
+            amountCharged: {
+              amount,
+              currency,
+            },
+            pspReference: paymentIntentId,
+          },
+          transactionEvent: {
+            pspReference: paymentIntentId,
+            message: "Payment successful",
+          },
+        };
+        const transactionCreateResult =
+          await transactionsService.createTransaction(
+            transactionVariables,
+            config.authToken,
+          );
+
+        if (!transactionCreateResult.ok) {
+          return {
+            transaction: null,
+            errors: transactionCreateResult.errors.map((error) => ({
+              code: error.code,
+              message: error.message ?? "transactionCreate failed.",
+            })),
+            orderId: null,
+          };
+        }
+
+        const transactionCreateResultData = transactionCreateResult.data as
+          | TransactionCreatePayload
+          | { transactionCreate: TransactionCreatePayload | null };
+        const transactionCreatePayload =
+          "transactionCreate" in transactionCreateResultData
+            ? transactionCreateResultData.transactionCreate
+            : transactionCreateResultData;
+
+        if (
+          !transactionCreatePayload?.transaction ||
+          transactionCreatePayload.errors.length > 0
+        ) {
+          const mappedErrors = transactionCreatePayload?.errors.map(
+            (error) => ({
+              code: error.code,
+              message: error.message ?? "Unknown transactionCreate error.",
+            }),
+          );
+
+          return {
+            transaction: null,
+            errors:
+              mappedErrors && mappedErrors.length > 0
+                ? mappedErrors
+                : [
+                    {
+                      code: "UNKNOWN_TRANSACTION_CREATE_ERROR",
+                      message:
+                        "transactionCreate returned no transaction and no error details.",
+                    },
+                  ],
+            orderId: null,
+          };
+        }
+
+        let checkoutCompleteOutcome: Awaited<
+          ReturnType<typeof completeCheckout>
+        >;
+
+        try {
+          checkoutCompleteOutcome = await completeCheckout(checkoutId);
+        } catch (error) {
+          return {
+            transaction: null,
+            errors: mapCheckoutCompleteRequestFailure(error),
+            orderId: null,
+          };
+        }
+
+        if (checkoutCompleteOutcome.errors.length > 0) {
+          return {
+            transaction: null,
+            errors: checkoutCompleteOutcome.errors,
+            orderId: null,
           };
         }
 
         return {
-          transaction: {
-            id: "already-processed",
-            name: "PaymentIntent Succeeded",
-          },
+          transaction: transactionCreatePayload.transaction,
           errors: [],
+          orderId: checkoutCompleteOutcome.orderId,
         };
-      }
-
-      const transactionVariables: TransactionCreateMutationVariables = {
-        id: checkoutId,
-        transaction: {
-          name: "PaymentIntent Succeeded",
-          amountCharged: {
-            amount,
-            currency,
-          },
-          pspReference: paymentIntentId,
-        },
-        transactionEvent: {
-          pspReference: paymentIntentId,
-          message: "Payment successful",
-        },
-      };
-      const transactionCreateResult =
-        await transactionsService.createTransaction(
-          transactionVariables,
-          config.authToken,
-        );
-
-      if (!transactionCreateResult.ok) {
-        return {
-          transaction: null,
-          errors: transactionCreateResult.errors.map((error) => ({
-            code: error.code,
-            message: error.message ?? "transactionCreate failed.",
-          })),
-        };
-      }
-
-      const transactionCreateResultData = transactionCreateResult.data as
-        | TransactionCreatePayload
-        | { transactionCreate: TransactionCreatePayload | null };
-      const transactionCreatePayload =
-        "transactionCreate" in transactionCreateResultData
-          ? transactionCreateResultData.transactionCreate
-          : transactionCreateResultData;
-
-      if (
-        !transactionCreatePayload?.transaction ||
-        transactionCreatePayload.errors.length > 0
-      ) {
-        const mappedErrors = transactionCreatePayload?.errors.map((error) => ({
-          code: error.code,
-          message: error.message ?? "Unknown transactionCreate error.",
-        }));
-
-        return {
-          transaction: null,
-          errors:
-            mappedErrors && mappedErrors.length > 0
-              ? mappedErrors
-              : [
-                  {
-                    code: "UNKNOWN_TRANSACTION_CREATE_ERROR",
-                    message:
-                      "transactionCreate returned no transaction and no error details.",
-                  },
-                ],
-        };
-      }
-
-      let checkoutCompleteErrors: ServiceError[];
-
-      try {
-        checkoutCompleteErrors = await completeCheckout(checkoutId);
-      } catch (error) {
-        checkoutCompleteErrors = mapCheckoutCompleteRequestFailure(error);
-      }
-
-      if (checkoutCompleteErrors.length > 0) {
-        return {
-          transaction: null,
-          errors: checkoutCompleteErrors,
-        };
-      }
-
-      return {
-        transaction: transactionCreatePayload.transaction,
-        errors: [],
-      };
-    }),
+      },
+    ),
   );
 
   const failedTransactionCreates: FailedTransactionCreate[] = [];
   let createdTransactionsCount = 0;
+  const orderIdsForStripeCharge: string[] = [];
 
   settled.forEach((entry, index) => {
     const checkoutId = checkoutIds[index];
@@ -534,8 +575,30 @@ export async function POST(request: NextRequest) {
       return;
     }
 
+    if (entry.value.orderId) {
+      orderIdsForStripeCharge.push(entry.value.orderId);
+    }
     createdTransactionsCount += 1;
   });
+
+  if (orderIdsForStripeCharge.length > 0) {
+    try {
+      await linkOrdersToStripeChargeFromPaymentIntent({
+        authToken: config.authToken,
+        orderIds: orderIdsForStripeCharge,
+        paymentIntentId,
+      });
+    } catch (error) {
+      marketplaceLogger.error(
+        "[stripe] linkOrdersToStripeChargeFromPaymentIntent failed",
+        {
+          paymentIntentId,
+          saleorDomain,
+          error: error instanceof Error ? error.message : String(error),
+        },
+      );
+    }
+  }
 
   const hasAtLeastOneCreated = createdTransactionsCount > 0;
   const hasFailures = failedTransactionCreates.length > 0;

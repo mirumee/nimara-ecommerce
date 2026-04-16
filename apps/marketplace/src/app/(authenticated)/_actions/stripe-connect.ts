@@ -2,6 +2,8 @@
 
 import { getServerAuthToken, getServerVendorId } from "@/lib/auth/server";
 import { config } from "@/lib/config";
+import { getLedgerPool } from "@/lib/ledger/pool";
+import { upsertVendorStripeAccount } from "@/lib/ledger/repository";
 import { METADATA_KEYS } from "@/lib/saleor/consts";
 import {
   getVendorPageMetadata,
@@ -109,6 +111,23 @@ export async function createStripeConnectOnboardingSession(): Promise<ActionResu
           },
         ]),
       });
+
+      const pool = getLedgerPool();
+
+      if (pool) {
+        const defaultCurrency =
+          typeof account.default_currency === "string"
+            ? account.default_currency
+            : "usd";
+
+        await upsertVendorStripeAccount(pool, {
+          defaultCurrency,
+          onboardingCompleted: false,
+          payoutsEnabled: Boolean(account.payouts_enabled),
+          stripeAccountId: paymentAccountId,
+          vendorId: vendorPageId,
+        });
+      }
     }
 
     const redirectUrls = getStripeRedirectUrls();
@@ -206,6 +225,23 @@ export async function syncStripeConnectStatus(): Promise<SyncResult> {
         },
       ]),
     });
+
+    const pool = getLedgerPool();
+
+    if (pool) {
+      const defaultCurrency =
+        typeof account.default_currency === "string"
+          ? account.default_currency
+          : "usd";
+
+      await upsertVendorStripeAccount(pool, {
+        defaultCurrency,
+        onboardingCompleted: connected,
+        payoutsEnabled: Boolean(account.payouts_enabled),
+        stripeAccountId: paymentMetadata.paymentAccountId,
+        vendorId: vendorPageId,
+      });
+    }
 
     return {
       ok: true,

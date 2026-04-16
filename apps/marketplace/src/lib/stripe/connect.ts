@@ -16,9 +16,11 @@ type StripeRequirements = {
 };
 
 export type StripeConnectAccount = {
+  default_currency?: string;
   details_submitted?: boolean;
   id: string;
   metadata?: Record<string, string>;
+  payouts_enabled?: boolean;
   requirements?: StripeRequirements;
 };
 

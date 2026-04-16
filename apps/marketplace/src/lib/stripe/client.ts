@@ -91,7 +91,49 @@ const parseStripeError = (data: unknown, fallbackMessage: string) => {
   return fallbackMessage;
 };
 
+type PaymentIntentRetrieveOutput = {
+  id: string;
+  latest_charge?: null | string | { id: string };
+};
+
 const paymentIntents = {
+  /**
+   * GET PaymentIntent with optional expand (e.g. latest_charge for ch_ id).
+   */
+  retrieve: async (
+    id: string,
+    options?: { expand?: string[] },
+  ): Promise<PaymentIntentRetrieveOutput> => {
+    const expand = options?.expand ?? [];
+    const qs =
+      expand.length > 0
+        ? `?${expand.map((e) => `expand[]=${encodeURIComponent(e)}`).join("&")}`
+        : "";
+    const response = await fetch(
+      `https://api.stripe.com/v1/payment_intents/${encodeURIComponent(id)}${qs}`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.STRIPE_SECRET_KEY}`,
+        },
+        method: "GET",
+      },
+    );
+
+    const data = (await response.json()) as unknown;
+
+    if (!response.ok) {
+      throw new Error(
+        parseStripeError(data, "Stripe payment intent retrieve failed."),
+      );
+    }
+
+    if (typeof data !== "object" || data === null || !("id" in data)) {
+      throw new Error("Invalid Stripe payment intent retrieve response.");
+    }
+
+    return data as PaymentIntentRetrieveOutput;
+  },
+
   create: async (
     input: PaymentIntentCreateInput,
   ): Promise<PaymentIntentCreateOutput> => {

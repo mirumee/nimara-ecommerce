@@ -294,6 +294,117 @@ export async function getStitchedSchema() {
             });
           },
         },
+        draftOrderUpdate: {
+          resolve(_source, args, context: ServerContext, info) {
+            const vendorId = requireVendorID(context);
+            const input = args?.input
+              ? withVendorMetadata(args.input, vendorId)
+              : args?.input;
+
+            return delegateToSchema({
+              schema: saleorSchema,
+              operation: OperationTypeNode.MUTATION,
+              fieldName: "draftOrderUpdate",
+              args: { ...args, input },
+              context,
+              info,
+            });
+          },
+        },
+        draftOrderComplete: {
+          resolve: async (_source, args, context: ServerContext, info) => {
+            const vendorId = requireVendorID(context);
+
+            const result = (await delegateToSchema({
+              schema: saleorSchema,
+              operation: OperationTypeNode.MUTATION,
+              fieldName: "draftOrderComplete",
+              args,
+              context,
+              info,
+            })) as {
+              data?: {
+                draftOrderComplete?: {
+                  errors?: Array<{ message?: string | null }>;
+                  order?: { id?: string } | null;
+                };
+              };
+              errors?: ReadonlyArray<{ message?: string }>;
+            };
+
+            if (result.errors?.length) {
+              return result;
+            }
+
+            const payload = result.data?.draftOrderComplete;
+
+            if (!payload?.order?.id || (payload.errors?.length ?? 0) > 0) {
+              return result;
+            }
+
+            const updateMetaDoc = parse(`
+              mutation EnsureOrderVendorMetadata($id: ID!, $input: [MetadataInput!]!) {
+                updateMetadata(id: $id, input: $input) {
+                  errors {
+                    field
+                    message
+                    code
+                  }
+                }
+              }
+            `);
+
+            const metaResult = (await saleorSchema.executor!({
+              document: updateMetaDoc,
+              variables: {
+                id: payload.order.id,
+                input: [{ key: METADATA_KEYS.VENDOR_ID, value: vendorId }],
+              },
+              context,
+            })) as {
+              data?: {
+                updateMetadata?: {
+                  errors?: Array<{ message?: string | null }>;
+                };
+              };
+              errors?: ReadonlyArray<{ message?: string }>;
+            };
+
+            if (
+              metaResult.errors?.length ||
+              (metaResult.data?.updateMetadata?.errors?.length ?? 0) > 0
+            ) {
+              console.error(
+                "[draftOrderComplete] Failed to set vendor.id on order (order-created webhook can still fix)",
+                {
+                  errors:
+                    metaResult.errors ??
+                    metaResult.data?.updateMetadata?.errors,
+                  orderId: payload.order.id,
+                },
+              );
+            }
+
+            return result;
+          },
+        },
+        orderUpdate: {
+          resolve(_source, args, context: ServerContext, info) {
+            const vendorId = requireVendorID(context);
+            const input = args?.input
+              ? withVendorMetadata(args.input, vendorId)
+              : args?.input;
+
+            return delegateToSchema({
+              schema: saleorSchema,
+              operation: OperationTypeNode.MUTATION,
+              fieldName: "orderUpdate",
+              args: { ...args, input },
+              context,
+              info,
+            });
+          },
+        },
         productBulkCreate: {
           resolve(_source, args, context: ServerContext, info) {
             const vendorId = requireVendorID(context);

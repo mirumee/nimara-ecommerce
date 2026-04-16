@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+import { getLedgerPool } from "@/lib/ledger/pool";
+import { upsertVendorStripeAccount } from "@/lib/ledger/repository";
 import { METADATA_KEYS } from "@/lib/saleor/consts";
 import {
   getVendorPageMetadata,
@@ -10,20 +12,30 @@ import {
   isStripeConnectOnboardingCompleted,
   verifyStripeWebhookSignature,
 } from "@/lib/stripe/connect";
+import {
+  finalizeStripeWebhookInbox,
+  isLedgerStripeEventType,
+  processLedgerStripeSideEffects,
+  type StripeWebhookEventEnvelope,
+  tryRecordStripeWebhookInbox,
+} from "@/lib/stripe/process-ledger-stripe-webhook";
 
-type StripeAccountUpdatedEvent = {
-  data?: {
-    object?: {
-      details_submitted?: boolean;
-      id?: string;
-      metadata?: Record<string, string>;
-      requirements?: {
-        currently_due?: string[];
-      };
-    };
-  };
+type StripeAccountObject = {
+  default_currency?: string;
+  details_submitted?: boolean;
   id?: string;
-  type?: string;
+  metadata?: Record<string, string>;
+  payouts_enabled?: boolean;
+  requirements?: {
+    currently_due?: string[];
+  };
+};
+
+type StripeIncomingEvent = {
+  data?: { object?: StripeAccountObject };
+  id: string;
+  livemode: boolean;
+  type: string;
 };
 
 function resolveDefaultSaleorDomain(): string | null {
@@ -61,71 +73,142 @@ export async function POST(request: Request) {
       );
     }
 
-    const event = JSON.parse(payload) as StripeAccountUpdatedEvent;
+    const event = JSON.parse(payload) as StripeIncomingEvent;
 
-    if (event.type !== "account.updated") {
-      return NextResponse.json({ status: "ignored", type: event.type ?? null });
-    }
+    if (event.type === "account.updated") {
+      const account = event.data?.object;
 
-    const account = event.data?.object;
+      if (!account?.id) {
+        return NextResponse.json(
+          { error: "Missing account id in Stripe event" },
+          { status: 400 },
+        );
+      }
 
-    if (!account?.id) {
-      return NextResponse.json(
-        { error: "Missing account id in Stripe event" },
-        { status: 400 },
-      );
-    }
+      const vendorPageId = account.metadata?.vendor_id?.trim();
 
-    const vendorPageId = account.metadata?.vendor_id?.trim();
+      if (!vendorPageId) {
+        return NextResponse.json({
+          status: "skipped",
+          reason: "missing_vendor_id",
+        });
+      }
 
-    if (!vendorPageId) {
+      const saleorDomainFromMetadata = account.metadata?.saleor_domain?.trim();
+      const saleorDomain =
+        saleorDomainFromMetadata || resolveDefaultSaleorDomain();
+
+      if (!saleorDomain) {
+        return NextResponse.json(
+          { error: "Cannot resolve Saleor domain for webhook update" },
+          { status: 500 },
+        );
+      }
+
+      const connected = isStripeConnectOnboardingCompleted({
+        details_submitted: account.details_submitted,
+        requirements: account.requirements,
+      });
+      const currentMetadata = await getVendorPageMetadata({
+        saleorDomain,
+        vendorPageId,
+      });
+
+      await updateVendorPageMetadata({
+        saleorDomain,
+        vendorPageId,
+        metadata: mergeMetadata(currentMetadata, [
+          {
+            key: METADATA_KEYS.PAYMENT_ACCOUNT_ID,
+            value: account.id,
+          },
+          {
+            key: METADATA_KEYS.PAYMENT_ACCOUNT_CONNECTED,
+            value: connected ? "true" : "false",
+          },
+        ]),
+      });
+
+      const pool = getLedgerPool();
+
+      if (pool) {
+        const defaultCurrency =
+          typeof account.default_currency === "string"
+            ? account.default_currency
+            : "usd";
+
+        await upsertVendorStripeAccount(pool, {
+          defaultCurrency,
+          onboardingCompleted: connected,
+          payoutsEnabled: Boolean(account.payouts_enabled),
+          stripeAccountId: account.id,
+          vendorId: vendorPageId,
+        });
+      }
+
       return NextResponse.json({
-        status: "skipped",
-        reason: "missing_vendor_id",
+        status: "processed",
+        connected,
+        stripeAccountId: account.id,
+        vendorPageId,
       });
     }
 
-    const saleorDomainFromMetadata = account.metadata?.saleor_domain?.trim();
-    const saleorDomain =
-      saleorDomainFromMetadata || resolveDefaultSaleorDomain();
+    const pool = getLedgerPool();
 
-    if (!saleorDomain) {
-      return NextResponse.json(
-        { error: "Cannot resolve Saleor domain for webhook update" },
-        { status: 500 },
+    if (pool && isLedgerStripeEventType(event.type)) {
+      const envelope: StripeWebhookEventEnvelope = {
+        data: event.data,
+        id: event.id,
+        livemode: event.livemode,
+        type: event.type,
+      };
+
+      const inserted = await tryRecordStripeWebhookInbox(
+        pool,
+        payload,
+        envelope,
       );
+
+      if (!inserted) {
+        return NextResponse.json({
+          eventId: event.id,
+          status: "duplicate",
+        });
+      }
+
+      try {
+        await processLedgerStripeSideEffects(pool, envelope);
+        await finalizeStripeWebhookInbox(pool, event.id, "ok");
+      } catch (error) {
+        await finalizeStripeWebhookInbox(
+          pool,
+          event.id,
+          error instanceof Error ? error.message : "error",
+        );
+        console.error(
+          "[stripe-connect] Ledger webhook processing failed",
+          error,
+        );
+
+        return NextResponse.json(
+          {
+            error:
+              error instanceof Error
+                ? error.message
+                : "Ledger webhook processing failed",
+          },
+          { status: 500 },
+        );
+      }
+
+      return NextResponse.json({
+        ledger: true,
+        status: "processed",
+      });
     }
 
-    const connected = isStripeConnectOnboardingCompleted({
-      details_submitted: account.details_submitted,
-      requirements: account.requirements,
-    });
-    const currentMetadata = await getVendorPageMetadata({
-      saleorDomain,
-      vendorPageId,
-    });
-
-    await updateVendorPageMetadata({
-      saleorDomain,
-      vendorPageId,
-      metadata: mergeMetadata(currentMetadata, [
-        {
-          key: METADATA_KEYS.PAYMENT_ACCOUNT_ID,
-          value: account.id,
-        },
-        {
-          key: METADATA_KEYS.PAYMENT_ACCOUNT_CONNECTED,
-          value: connected ? "true" : "false",
-        },
-      ]),
-    });
-
-    return NextResponse.json({
-      status: "processed",
-      connected,
-      vendorPageId,
-      stripeAccountId: account.id,
-    });
+    return NextResponse.json({ status: "ignored", type: event.type });
   } catch (error) {
     console.error("[stripe-connect] Failed to process webhook", error);
 

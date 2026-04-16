@@ -111,6 +111,31 @@ export async function GET(request: NextRequest) {
         syncEvents: [],
       },
       {
+        name: "Order paid (ledger ingest)",
+        targetUrl: manifestUrl(baseUrl, "/api/saleor/webhooks/order-paid"),
+        asyncEvents: ["ORDER_PAID"],
+        query: `subscription OrderPaidLedgerSubscription {
+  event {
+    ... on OrderPaid {
+      order {
+        id
+        metadata {
+          key
+          value
+        }
+        total {
+          gross {
+            amount
+            currency
+          }
+        }
+      }
+    }
+  }
+}`,
+        syncEvents: [],
+      },
+      {
         name: "Transaction refund requested",
         targetUrl: manifestUrl(
           baseUrl,

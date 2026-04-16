@@ -5,8 +5,10 @@ import {
   Settings,
   ShoppingCart,
   Users,
+  Wallet,
   Warehouse,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import {
   Card,
@@ -23,18 +25,23 @@ import {
 } from "@nimara/ui/components/tabs";
 
 import { AppOptionsTab } from "@/app/app/_components/app-options-tab";
+import { AppPayoutsOverviewTab } from "@/app/app/_components/app-payouts-overview-tab";
 import { AppVendorsTab } from "@/app/app/_components/app-vendors-tab";
 import { APP_CONFIG } from "@/lib/saleor/consts";
 import { useAuth } from "@/providers/auth-provider";
 
 export function AppPageClient() {
   const { isAuthenticated, isLoading } = useAuth();
+  const t = useTranslations();
 
   return (
     <div className="flex min-h-screen items-start justify-center bg-gradient-to-b from-background to-muted/20 p-4">
       <Tabs defaultValue="vendors" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-2 gap-1 sm:grid-cols-4">
           <TabsTrigger value="vendors">Vendors</TabsTrigger>
+          <TabsTrigger value="payouts">
+            {t("marketplace.payouts.tab-label")}
+          </TabsTrigger>
           <TabsTrigger value="options">Options</TabsTrigger>
           <TabsTrigger value="about">About</TabsTrigger>
         </TabsList>
@@ -95,6 +102,25 @@ export function AppPageClient() {
             </CardHeader>
             <CardContent>
               <AppVendorsTab
+                isAuthenticated={isAuthenticated}
+                isLoading={isLoading}
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="payouts" className="mt-4">
+          <Card className="w-full">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Wallet className="h-5 w-5" />
+                {t("marketplace.payouts.title")}
+              </CardTitle>
+              <CardDescription>
+                {t("marketplace.payouts.description")}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <AppPayoutsOverviewTab
                 isAuthenticated={isAuthenticated}
                 isLoading={isLoading}
               />

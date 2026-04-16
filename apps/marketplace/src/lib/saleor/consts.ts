@@ -13,6 +13,8 @@ export const METADATA_KEYS = {
   PAYMENT_ACCOUNT_ID: "payment_account_id",
   /** Stripe Connect onboarding completion flag for vendor profile */
   PAYMENT_ACCOUNT_CONNECTED: "payment_account_connected",
+  /** Stripe Charge id on the order (settlement / ledger linkage) */
+  STRIPE_CHARGE_ID: "stripe_charge_id",
   /** Vendor-owned customer ids (stored in vendor page metadata as JSON array) */
   VENDOR_CUSTOMERS: "meta.customers",
   /** Default collection flag (stored in collection metadata) */

@@ -39,6 +39,11 @@ interface User {
 }
 
 interface AuthContextType {
+  /**
+   * JWT for same-origin API routes: vendor session cookie token or Saleor App Bridge token.
+   * Prefer `Authorization: Bearer` from the client when cookies are unreliable (iframe).
+   */
+  apiAccessToken: string | null;
   /** True when opened from dashboard with saleorApiUrl in URL (uses app token) */
   dashboardContext: boolean;
   isAuthenticated: boolean;
@@ -761,6 +766,12 @@ export function AuthProvider({
   // Authenticated: Saleor Cloud user token (App Bridge/login) OR dashboard context (saleorApiUrl in URL)
   const isAuthenticated =
     !!token || (dashboardContext && !!getAppBridgeDomain());
+  const apiAccessToken =
+    typeof token === "string" && token.length > 0
+      ? token
+      : typeof appBridgeToken === "string" && appBridgeToken.length > 0
+        ? appBridgeToken
+        : null;
   const stripeConnectRequired =
     Boolean(user?.vendorId) &&
     (!user?.stripePaymentAccountId || !user?.stripePaymentAccountConnected);
@@ -768,6 +779,7 @@ export function AuthProvider({
   return (
     <AuthContext.Provider
       value={{
+        apiAccessToken,
         user,
         dashboardContext: dashboardContext && !!getAppBridgeDomain(),
         isAuthenticated,
