@@ -368,6 +368,7 @@ apps (storefront, stripe)
    ```
 
 4. **App:** Use in checkout page
+
    ```typescript
    // apps/storefront/src/app/[locale]/(checkout)/payment/page.tsx
    import { PaymentForm } from '@nimara/features';

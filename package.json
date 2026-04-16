@@ -1,7 +1,7 @@
 {
   "name": "nimara-ecommerce",
   "license": "BSD-3-Clause",
-  "version": "1.0.0",
+  "version": "1.15.0",
   "author": {
     "name": "Mirumee Labs",
     "email": "hello@mirumee.com",
@@ -55,7 +55,7 @@
     "lint-staged": "^16.4.0",
     "prettier": "3.8.1",
     "prettier-plugin-tailwindcss": "^0.7.2",
-    "turbo": "2.8.21"
+    "turbo": "2.9.4"
   },
   "config": {
     "commitizen": {

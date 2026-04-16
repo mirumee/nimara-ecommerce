@@ -13,9 +13,11 @@ export type CartQuery_checkout_Checkout_totalPrice_TaxedMoney = { net: CartQuery
 
 export type CartQuery_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_net_Money = { currency: string, amount: number };
 
+export type CartQuery_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_tax_Money = { currency: string, amount: number };
+
 export type CartQuery_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_gross_Money = { currency: string, amount: number };
 
-export type CartQuery_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney = { net: CartQuery_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_net_Money, gross: CartQuery_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_gross_Money };
+export type CartQuery_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney = { net: CartQuery_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_net_Money, tax: CartQuery_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_tax_Money, gross: CartQuery_checkout_Checkout_lines_CheckoutLine_totalPrice_TaxedMoney_gross_Money };
 
 export type CartQuery_checkout_Checkout_lines_CheckoutLine_undiscountedTotalPrice_Money = { amount: number, currency: string };
 
@@ -146,6 +148,9 @@ fragment CartLineFragment on CheckoutLine {
   quantity
   totalPrice {
     net {
+      ...MoneyFragment
+    }
+    tax {
       ...MoneyFragment
     }
     gross {

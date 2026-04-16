@@ -1,0 +1,9 @@
+fragment UCPCheckoutSessionFragment on Checkout {
+  ...CheckoutFragment
+  channel {
+    slug
+  }
+  # Custom metadata fields
+  buyer: metafield(key: "ucp.buyer.json")
+  cancelled: metafield(key: "ucp.cancelled")
+}
