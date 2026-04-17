@@ -68,6 +68,7 @@
     "localstack:up": "docker-compose up -d localstack",
     "db-ledger:up": "docker-compose up -d db-ledger",
     "db-ledger:down": "docker-compose stop db-ledger",
+    "migrate:ledger": "node ./scripts/migrate-ledger.mjs",
     "start": "next start --port 3001",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",

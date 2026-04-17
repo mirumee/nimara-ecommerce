@@ -95,7 +95,7 @@ For decision tree and detailed scenarios, see `.agents/skills/project-guidelines
 ### Marketplace (`apps/marketplace`)
 
 - **Role:** Multi-vendor operations UI (products, orders, configuration) against Saleor via stitched GraphQL; vendors authenticate with JWT (`src/lib/auth/`, `src/providers/auth-provider.tsx`).
-- **Ledger & payouts (Postgres):** Optional `DATABASE_URL`. Apply schema with `node apps/marketplace/scripts/migrate-ledger.mjs` (runs all `apps/marketplace/db/migrations/*.sql` in order). Core tables: `ledger_entries` (idempotent lines, `consumed_in_batch_id` ties lines to a closed batch), `payout_batches` / `payout_batch_items`, `stripe_transfers` (Stripe **Transfer** to Connect per batch line). Settlement stops at Transfers; **Stripe Payout** objects (bank withdrawal from Connect) are not persisted.
+- **Ledger & payouts (Postgres):** Optional `DATABASE_URL`. Apply schema with `pnpm migrate:ledger` from repo root (`dotenv` loads root `.env`) or `pnpm migrate:ledger` inside `apps/marketplace` with `DATABASE_URL` set (runs all `apps/marketplace/db/migrations/*.sql` in order). Core tables: `ledger_entries` (idempotent lines, `consumed_in_batch_id` ties lines to a closed batch), `payout_batches` / `payout_batch_items`, `stripe_transfers` (Stripe **Transfer** to Connect per batch line). Settlement stops at Transfers; **Stripe Payout** objects (bank withdrawal from Connect) are not persisted.
 - **APIs:** Stripe Connect webhooks, payment/PI routes, Saleor webhooks (e.g. order-paid → ledger ingest), payout overview / close / execute batch — see `src/app/api/` and `src/lib/ledger/`.
 - **Storefront coupling:** Marketplace checkout flow uses vendor metadata and Stripe Connect; see storefront checkout/cart changes that reference marketplace payment URLs when configured.
 
@@ -225,7 +225,7 @@ For decision tree and detailed scenarios, see `.agents/skills/project-guidelines
    - Storefront and Stripe use Sentry; config in `sentry.*.config.ts`. Error service in storefront sets user context on server and passes minimal user info to client for reporting.
 
 5. **Marketplace ledger (Postgres)**
-   - Requires `DATABASE_URL` (see root / `apps/marketplace` `.env.example`). Apply migrations: `node apps/marketplace/scripts/migrate-ledger.mjs` from repo root with env loaded. Schema lives in `apps/marketplace/db/migrations/` (typically a single init file for greenfield; idempotent `create if not exists` where appropriate).
+   - Requires `DATABASE_URL` (see root / `apps/marketplace` `.env.example`). Apply migrations: `pnpm migrate:ledger` from repo root (or `pnpm --filter marketplace migrate:ledger`). Schema lives in `apps/marketplace/db/migrations/` (typically a single init file for greenfield; idempotent `create if not exists` where appropriate).
 
 ---
 
