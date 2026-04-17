@@ -88,6 +88,57 @@ pnpm run codegen
 
 The app is now running at `http://localhost:3000`.
 
+## 🧪 Running Tests
+
+Nimara includes automated E2E tests powered by [Playwright](https://playwright.dev/).
+
+### Quick Start
+
+```bash
+# Install Playwright browsers (first time only)
+cd apps/automated-tests
+npx playwright install
+cd ../..
+
+# Start the application
+pnpm run dev:storefront
+
+# In a new terminal, run tests
+cd apps/automated-tests
+npx playwright test
+```
+
+### Available Commands
+
+```bash
+# Run all tests (headless)
+npx playwright test
+
+# Run tests with browser visible
+npx playwright test --headed
+
+# Run specific test suite
+npx playwright test checkout-guest-refactored.spec.ts
+
+# Run specific test by ID
+npx playwright test -g "CHE-01001"
+
+# Debug mode (interactive)
+npx playwright test --debug
+
+# UI mode (recommended for development)
+npx playwright test --ui
+```
+
+### Test Suites
+
+- **Checkout Tests**: Guest checkout flow with various scenarios
+  - Same billing address (CHE-01001-v2)
+  - Different billing address (CHE-01002)
+  - Alternative delivery method (CHE-01003)
+
+For detailed documentation, see [`apps/automated-tests/README.md`](apps/automated-tests/README.md).
+
 ## 🚀 Daily Workflow and Releasing
 
 This project follows a simple Git workflow based on three core branches: `develop`, `staging`, and `main`. Each branch is linked to a separate Vercel environment.
