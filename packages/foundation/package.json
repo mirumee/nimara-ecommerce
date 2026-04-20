@@ -33,11 +33,11 @@
     "@types/react-dom": "^19.2.3",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
-    "dotenv": "17.4.1",
+    "dotenv": "17.4.2",
     "eslint": "^8.57.0",
     "typescript": "^5.9.2",
     "vite-tsconfig-paths": "6.1.1",
-    "vitest": "4.1.2"
+    "vitest": "4.1.4"
   },
   "lint-staged": {
     "*.{js,cjs,ts,tsx}": "eslint --fix",

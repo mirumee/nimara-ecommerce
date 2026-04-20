@@ -10,9 +10,9 @@
     "@nimara/config": "workspace:*",
     "@playwright/test": "^1.59.1",
     "@types/node": "^22.19.17",
-    "dotenv": "17.4.1",
+    "dotenv": "17.4.2",
     "eslint": "^8.57.0",
-    "eslint-plugin-playwright": "^2.10.1",
+    "eslint-plugin-playwright": "^2.10.2",
     "lint-staged": "^16.4.0"
   },
   "lint-staged": {
