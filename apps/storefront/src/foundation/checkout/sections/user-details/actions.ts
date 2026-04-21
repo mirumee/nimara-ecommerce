@@ -3,8 +3,10 @@
 import { revalidatePath } from "next/cache";
 
 import { type Checkout } from "@nimara/domain/objects/Checkout";
+import { ok } from "@nimara/domain/objects/Result";
 
 import { serverEnvs } from "@/envs/server";
+import { getCheckoutIds } from "@/features/checkout/cart";
 import { paths } from "@/foundation/routing/paths";
 import { getServiceRegistry } from "@/services/registry";
 
@@ -45,13 +47,43 @@ export const updateCheckoutUserDetailsAction = async (
   payload: UpdateCheckoutUserDetailsPayload,
   opts: UpdateCheckoutUserDetailsOpts = {},
 ) => {
+  const isMarketplaceEnabled =
+    process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED !== "false";
   const services = await getServiceRegistry();
   const checkoutService = await services.getCheckoutService();
-  const result = await checkoutService.checkoutEmailUpdate(payload);
 
-  if (opts.revalidateCheckoutPathOnSuccess && result.ok) {
+  if (isMarketplaceEnabled) {
+    const checkoutIds = await getCheckoutIds();
+    const targetCheckoutIds = checkoutIds.length
+      ? checkoutIds
+      : [payload.checkout.id];
+    const results = await Promise.all(
+      targetCheckoutIds.map((checkoutId) =>
+        checkoutService.checkoutEmailUpdate({
+          ...payload,
+          checkout: {
+            ...payload.checkout,
+            id: checkoutId,
+          },
+        }),
+      ),
+    );
+    const failedResult = results.find((result) => !result.ok);
+
+    if (failedResult && !failedResult.ok) {
+      return failedResult;
+    }
+  } else {
+    const result = await checkoutService.checkoutEmailUpdate(payload);
+
+    if (!result.ok) {
+      return result;
+    }
+  }
+
+  if (opts.revalidateCheckoutPathOnSuccess) {
     revalidatePath(paths.checkout.asPath());
   }
 
-  return result;
+  return ok({ success: true });
 };

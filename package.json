@@ -42,7 +42,10 @@
     "format:check": "pnpm prettier --check '**/*.{js,ts,tsx,json,md}'",
     "localstack:up": "docker compose -f apps/marketplace/docker-compose.yml up -d localstack",
     "localstack:down": "docker compose -f apps/marketplace/docker-compose.yml down",
-    "localstack:export-secret": "docker compose -f apps/marketplace/docker-compose.yml exec localstack bash /opt/localstack/export-secret.sh"
+    "localstack:export-secret": "docker compose -f apps/marketplace/docker-compose.yml exec localstack bash /opt/localstack/export-secret.sh",
+    "db-ledger:up": "docker compose -f apps/marketplace/docker-compose.yml up -d db-ledger",
+    "db-ledger:down": "docker compose -f apps/marketplace/docker-compose.yml stop db-ledger",
+    "migrate:ledger": "dotenv -- node apps/marketplace/scripts/migrate-ledger.mjs"
   },
   "devDependencies": {
     "@nimara/config": "workspace:*",

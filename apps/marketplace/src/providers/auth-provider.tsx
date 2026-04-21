@@ -20,6 +20,7 @@ import {
   initDomainFromUrl,
   setAppBridgeDomain,
 } from "@/lib/saleor/app-bridge-domain";
+import { getVendorPaymentMetadata } from "@/lib/saleor/vendor-payment-metadata";
 
 // Storage keys for auth tokens
 const AUTH_ACCESS_TOKEN_KEY = "auth_token";
@@ -32,10 +33,17 @@ interface User {
   firstName?: string;
   id: string;
   lastName?: string;
+  stripePaymentAccountConnected?: boolean;
+  stripePaymentAccountId?: string | null;
   vendorId?: string;
 }
 
 interface AuthContextType {
+  /**
+   * JWT for same-origin API routes: vendor session cookie token or Saleor App Bridge token.
+   * Prefer `Authorization: Bearer` from the client when cookies are unreliable (iframe).
+   */
+  apiAccessToken: string | null;
   /** True when opened from dashboard with saleorApiUrl in URL (uses app token) */
   dashboardContext: boolean;
   isAuthenticated: boolean;
@@ -43,7 +51,9 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshAccessToken: () => Promise<string | null>;
+  refreshVendorStripeState: () => Promise<void>;
   setToken: (token: string) => void;
+  stripeConnectRequired: boolean;
   token: string | null;
   user: User | null;
 }
@@ -249,6 +259,7 @@ export function AuthProvider({
             );
 
             const vendorPageId = metadataMap["vendor.id"] || "";
+            let paymentMetadata = getVendorPaymentMetadata(undefined);
 
             if (vendorPageId) {
               const vendorResponse = await fetch("/api/graphql", {
@@ -263,6 +274,10 @@ export function AuthProvider({
                   query VendorPageStatus($id: ID!) {
                     page(id: $id) {
                       id
+                      metadata {
+                        key
+                        value
+                      }
                       attributes {
                         attribute { slug }
                         values { name }
@@ -281,6 +296,7 @@ export function AuthProvider({
                       attribute?: { slug?: string | null } | null;
                       values?: Array<{ name?: string | null } | null> | null;
                     }> | null;
+                    metadata?: Array<{ key: string; value: string }> | null;
                   } | null;
                 };
                 errors?: Array<{ message?: unknown }>;
@@ -342,6 +358,10 @@ export function AuthProvider({
               if (statusValue !== "active") {
                 throw new Error(t("error-account-not-active"));
               }
+
+              paymentMetadata = getVendorPaymentMetadata(
+                vendorData?.data?.page?.metadata,
+              );
             }
 
             setUser({
@@ -349,6 +369,9 @@ export function AuthProvider({
               firstName: me.firstName,
               id: me.id,
               lastName: me.lastName,
+              stripePaymentAccountConnected:
+                paymentMetadata.paymentAccountConnected,
+              stripePaymentAccountId: paymentMetadata.paymentAccountId,
               ...(vendorPageId ? { vendorId: vendorPageId } : {}),
             });
 
@@ -700,6 +723,14 @@ export function AuthProvider({
     router.push("/sign-in");
   }, [clearAuth, router]);
 
+  const refreshVendorStripeState = useCallback(async () => {
+    if (!token) {
+      return;
+    }
+
+    await fetchUser(token);
+  }, [fetchUser, token]);
+
   // Periodic token refresh - check every minute if token needs refresh
   useEffect(() => {
     if (!token || !user) {
@@ -735,17 +766,29 @@ export function AuthProvider({
   // Authenticated: Saleor Cloud user token (App Bridge/login) OR dashboard context (saleorApiUrl in URL)
   const isAuthenticated =
     !!token || (dashboardContext && !!getAppBridgeDomain());
+  const apiAccessToken =
+    typeof token === "string" && token.length > 0
+      ? token
+      : typeof appBridgeToken === "string" && appBridgeToken.length > 0
+        ? appBridgeToken
+        : null;
+  const stripeConnectRequired =
+    Boolean(user?.vendorId) &&
+    (!user?.stripePaymentAccountId || !user?.stripePaymentAccountConnected);
 
   return (
     <AuthContext.Provider
       value={{
+        apiAccessToken,
         user,
         dashboardContext: dashboardContext && !!getAppBridgeDomain(),
         isAuthenticated,
         isLoading,
         token,
+        stripeConnectRequired,
         login,
         logout,
+        refreshVendorStripeState,
         setToken,
         refreshAccessToken,
       }}

@@ -1,15 +1,13 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-
 import { type AllCountryCode } from "@nimara/domain/consts";
 import { type Checkout } from "@nimara/domain/objects/Checkout";
-import { type AsyncResult } from "@nimara/domain/objects/Result";
+import { type AsyncResult, err, ok } from "@nimara/domain/objects/Result";
 import { schemaToAddress } from "@nimara/foundation/address/address";
 
+import { clientEnvs } from "@/envs/client";
 import { createAddressAction } from "@/foundation/address/create-address-action";
 import { updateCheckoutAddressAction } from "@/foundation/checkout/actions/update-checkout-address-action";
-import { paths } from "@/foundation/routing/paths";
 import { storefrontLogger } from "@/services/logging";
 import { getServiceRegistry } from "@/services/registry";
 import { getAccessToken } from "@/services/tokens";
@@ -19,12 +17,19 @@ import { type PaymentSchema } from "./schema";
 export async function updateBillingAddress({
   checkout,
   input: { sameAsShippingAddress, billingAddress, saveAddressForFutureUse },
+  /**
+   * When false, skips revalidatePath after a successful update. Use before Stripe
+   * confirmPayment + redirect so RSC refetch does not race with navigation (Next.js
+   * "Error in input stream"). Call router.refresh() on the client if payment fails.
+   */
+  revalidateCheckout = true,
 }: {
   checkout: Checkout;
   input: Pick<
     PaymentSchema,
     "sameAsShippingAddress" | "billingAddress" | "saveAddressForFutureUse"
   >;
+  revalidateCheckout?: boolean;
 }) {
   const result = await updateCheckoutAddressAction({
     id: checkout.id,
@@ -32,6 +37,7 @@ export async function updateBillingAddress({
       ? checkout.shippingAddress!
       : schemaToAddress(billingAddress!),
     type: "BILLING",
+    revalidateCheckout,
   });
 
   if (saveAddressForFutureUse) {
@@ -51,10 +57,6 @@ export async function updateBillingAddress({
         "Access token not found while creating checkout billing address. Skipping address creation.",
       );
     }
-  }
-
-  if (result.ok) {
-    revalidatePath(paths.checkout.asPath());
   }
 
   return result;
@@ -103,4 +105,87 @@ export const initializePaymentTransaction = async ({
     paymentMethod,
     saveForFutureUse,
   });
+};
+
+export const initializeMarketplacePaymentIntent = async ({
+  buyerId,
+  checkouts,
+}: {
+  buyerId?: string;
+  checkouts: Array<{
+    amount: number;
+    checkoutId: string;
+    currency: string;
+  }>;
+}): AsyncResult<{ clientSecret: string }> => {
+  const marketplaceVendorUrl = process.env.NEXT_PUBLIC_MARKETPLACE_VENDOR_URL;
+
+  if (!marketplaceVendorUrl) {
+    return err([{ code: "GENERIC_PAYMENT_ERROR" }]);
+  }
+
+  const normalizedBaseUrl = marketplaceVendorUrl.startsWith("http")
+    ? marketplaceVendorUrl
+    : `https://${marketplaceVendorUrl}`;
+
+  let saleorDomain: string;
+
+  try {
+    saleorDomain = new URL(clientEnvs.NEXT_PUBLIC_SALEOR_API_URL).hostname;
+  } catch {
+    return err([{ code: "GENERIC_PAYMENT_ERROR" }]);
+  }
+
+  try {
+    const response = await fetch(
+      `${normalizedBaseUrl.replace(/\/$/, "")}/api/payments/payment-intent`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-saleor-domain": saleorDomain,
+        },
+        body: JSON.stringify({
+          checkouts,
+          buyerId,
+        }),
+        cache: "no-store",
+      },
+    );
+
+    if (!response.ok) {
+      let responseBody = "";
+
+      try {
+        responseBody = await response.text();
+      } catch {
+        responseBody = "";
+      }
+
+      storefrontLogger.error(
+        "Marketplace payment intent initialization failed",
+        {
+          checkoutsCount: checkouts.length,
+          responseBodyPreview: responseBody.slice(0, 600),
+          saleorDomain,
+          status: response.status,
+          statusText: response.statusText,
+        },
+      );
+
+      return err([{ code: "GENERIC_PAYMENT_ERROR" }]);
+    }
+
+    const payload = (await response.json()) as { clientSecret?: string };
+
+    if (!payload.clientSecret) {
+      return err([{ code: "GENERIC_PAYMENT_ERROR" }]);
+    }
+
+    return ok({
+      clientSecret: payload.clientSecret,
+    });
+  } catch {
+    return err([{ code: "GENERIC_PAYMENT_ERROR" }]);
+  }
 };

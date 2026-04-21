@@ -14,16 +14,40 @@ import {
   deleteLineAction,
   updateLineQuantityAction,
 } from "./_actions/cart-actions";
+import { MarketplaceCartView } from "./_components/marketplace-cart-view";
 
 export const generateMetadata = generateStandardCartMetadata;
 
 export default async function Page(props: any) {
+  const isMarketplaceEnabled =
+    process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED !== "false";
   const [services, region, accessToken, checkoutId] = await Promise.all([
     getServiceRegistry(),
     getCurrentRegion(),
     getAccessToken(),
     getCheckoutId(),
   ]);
+
+  if (isMarketplaceEnabled) {
+    return (
+      <MarketplaceCartView
+        {...props}
+        services={services}
+        checkoutId={checkoutId}
+        accessToken={accessToken}
+        onCartUpdate={revalidateCart}
+        region={region}
+        logger={storefrontLogger}
+        onLineQuantityChange={updateLineQuantityAction}
+        onLineDelete={deleteLineAction}
+        paths={{
+          home: paths.home.asPath(),
+          checkout: paths.checkout.asPath(),
+          checkoutSignIn: paths.checkout.signIn.asPath(),
+        }}
+      />
+    );
+  }
 
   return (
     <StandardCartView
