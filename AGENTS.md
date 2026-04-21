@@ -56,7 +56,8 @@ Nimara uses a **layered monorepo** with strict dependency boundaries to keep cod
 ```
 apps/
 ├── storefront/              # Next.js 16 customer storefront
-├── stripe/                  # Stripe payment integration app
+├── marketplace/             # Vendor dashboard; Postgres ledger, Stripe Connect, payout batches
+├── stripe/                  # Stripe payment integration app (Saleor Payment Gateway)
 └── automated-tests/         # Playwright E2E tests
 
 packages/
@@ -91,6 +92,13 @@ ui (leaf)       ├→ features ──→ apps
 
 For decision tree and detailed scenarios, see `.agents/skills/project-guidelines/SKILL.md`.
 
+### Marketplace (`apps/marketplace`)
+
+- **Role:** Multi-vendor operations UI (products, orders, configuration) against Saleor via stitched GraphQL; vendors authenticate with JWT (`src/lib/auth/`, `src/providers/auth-provider.tsx`).
+- **Ledger & payouts (Postgres):** Optional `DATABASE_URL`. Apply schema with `pnpm migrate:ledger` from repo root (`dotenv` loads root `.env`) or `pnpm migrate:ledger` inside `apps/marketplace` with `DATABASE_URL` set (runs all `apps/marketplace/db/migrations/*.sql` in order). Core tables: `ledger_entries` (idempotent lines, `consumed_in_batch_id` ties lines to a closed batch), `payout_batches` / `payout_batch_items`, `stripe_transfers` (Stripe **Transfer** to Connect per batch line). Settlement stops at Transfers; **Stripe Payout** objects (bank withdrawal from Connect) are not persisted.
+- **APIs:** Stripe Connect webhooks, payment/PI routes, Saleor webhooks (e.g. order-paid → ledger ingest), payout overview / close / execute batch — see `src/app/api/` and `src/lib/ledger/`.
+- **Storefront coupling:** Marketplace checkout flow uses vendor metadata and Stripe Connect; see storefront checkout/cart changes that reference marketplace payment URLs when configured.
+
 ---
 
 ## 1. Lead Developer
@@ -109,6 +117,7 @@ For decision tree and detailed scenarios, see `.agents/skills/project-guidelines
 
 1. **Monorepo layout**
    - `apps/storefront` — Next.js 16 storefront (main app).
+   - `apps/marketplace` — Vendor dashboard; Saleor GraphQL stitching, Stripe Connect, optional Postgres ledger and batched Connect Transfers (`src/lib/ledger/`).
    - `apps/stripe` — Next.js Stripe payment app (Saleor Payment Gateway).
    - `apps/docs` — Nextra docs; `apps/automated-tests` — Playwright e2e.
    - `packages/domain` — shared types/objects/consts only (leaf package).
@@ -214,6 +223,9 @@ For decision tree and detailed scenarios, see `.agents/skills/project-guidelines
 
 4. **Sentry**
    - Storefront and Stripe use Sentry; config in `sentry.*.config.ts`. Error service in storefront sets user context on server and passes minimal user info to client for reporting.
+
+5. **Marketplace ledger (Postgres)**
+   - Requires `DATABASE_URL` (see root / `apps/marketplace` `.env.example`). Apply migrations: `pnpm migrate:ledger` from repo root (or `pnpm --filter marketplace migrate:ledger`). Schema lives in `apps/marketplace/db/migrations/` (typically a single init file for greenfield; idempotent `create if not exists` where appropriate).
 
 ---
 

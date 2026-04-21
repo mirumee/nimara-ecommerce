@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { type ReactNode, useEffect } from "react";
 
 import { TopNavigation } from "@/components/navigation/top-navigation";
+import { StripeConnectGate } from "@/components/stripe/stripe-connect-gate";
 import { useAuth } from "@/providers/auth-provider";
 
 interface AuthenticatedLayoutProps {
@@ -14,7 +15,7 @@ interface AuthenticatedLayoutProps {
 export default function AuthenticatedLayout({
   children,
 }: AuthenticatedLayoutProps) {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, stripeConnectRequired } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -33,6 +34,10 @@ export default function AuthenticatedLayout({
 
   if (!isAuthenticated) {
     return null;
+  }
+
+  if (stripeConnectRequired) {
+    return <StripeConnectGate />;
   }
 
   return (

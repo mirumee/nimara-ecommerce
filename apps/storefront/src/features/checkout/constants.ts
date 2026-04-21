@@ -1,0 +1,1 @@
+export const MARKETPLACE_NO_VENDOR_BUCKET = "__NO_VENDOR__";

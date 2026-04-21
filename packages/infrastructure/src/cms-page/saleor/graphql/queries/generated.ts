@@ -5,7 +5,7 @@ export type Page_page_Page_pageType_PageType = { slug: string };
 
 export type Page_page_Page_attributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation = { name: string };
 
-export type Page_page_Page_attributes_SelectedAttribute_attribute_Attribute = { slug: string | null, inputType: Types.AttributeInputTypeEnum | null, name: string | null, translation: Page_page_Page_attributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation | null };
+export type Page_page_Page_attributes_SelectedAttribute_attribute_Attribute = { slug: string, inputType: Types.AttributeInputTypeEnum | null, name: string, translation: Page_page_Page_attributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation | null };
 
 export type Page_page_Page_attributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation = { name: string, plainText: string | null, richText: string | null };
 

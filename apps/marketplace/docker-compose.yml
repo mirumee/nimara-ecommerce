@@ -1,4 +1,21 @@
 services:
+  db-ledger:
+    container_name: marketplace-db-ledger
+    image: postgres:16-alpine
+    ports:
+      - "127.0.0.1:5434:5432"
+    environment:
+      - POSTGRES_USER=marketplace
+      - POSTGRES_PASSWORD=marketplace
+      - POSTGRES_DB=marketplace_ledger
+    volumes:
+      - marketplace-ledger-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U marketplace -d marketplace_ledger"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   # LocalStack for AWS Services
   localstack:
     container_name: marketplace-localstack
@@ -25,3 +42,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+volumes:
+  marketplace-ledger-data:

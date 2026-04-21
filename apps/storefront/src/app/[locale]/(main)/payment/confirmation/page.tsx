@@ -15,6 +15,37 @@ type PageProps = {
 };
 
 export default async function Page(props: PageProps) {
+  const isMarketplaceEnabled =
+    process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED !== "false";
+
+  if (isMarketplaceEnabled) {
+    const [{ locale }, searchParams] = await Promise.all([
+      props.params,
+      props.searchParams,
+    ]);
+    const redirectStatus = searchParams["redirect_status"];
+
+    if (redirectStatus && redirectStatus !== "succeeded") {
+      redirect({
+        href: paths.checkout.asPath({
+          query: {
+            step: "payment",
+            [QUERY_PARAMS.errorCode]: "GENERIC_PAYMENT_ERROR",
+          },
+        }),
+        locale,
+      });
+    }
+
+    redirect({
+      href: paths.order.confirmation.asPath({
+        id: "marketplace",
+        query: { [QUERY_PARAMS.orderPlaced]: "true" },
+      }),
+      locale,
+    });
+  }
+
   const [{ locale }, searchParams, checkout, services] = await Promise.all([
     props.params,
     props.searchParams,

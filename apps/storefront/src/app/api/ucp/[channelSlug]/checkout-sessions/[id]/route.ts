@@ -167,7 +167,7 @@ export async function PUT(
 
   const body = (await request.json()) as CheckoutUpdateRequest;
 
-  if (Object.keys(body).length === 0) {
+  if (Object.keys(body as Record<string, unknown>).length === 0) {
     return NextResponse.json(
       [{ code: "BAD_REQUEST_ERROR", message: "Request body is required." }],
       { status: 400 },

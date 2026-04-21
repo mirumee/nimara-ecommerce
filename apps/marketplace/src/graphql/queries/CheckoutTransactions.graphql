@@ -1,0 +1,12 @@
+query CheckoutTransactions($id: ID!) {
+  checkout(id: $id) {
+    id
+    transactions {
+      id
+      pspReference
+      chargedAmount {
+        amount
+      }
+    }
+  }
+}

@@ -228,6 +228,14 @@
       "search-placeholder": "Search customers",
       "table-orders-count": "No. of Orders"
     },
+    "stripeConnect": {
+      "title": "Stripe setup required",
+      "description": "You need to finish Stripe Connect onboarding before using Vendor Panel.",
+      "redirecting": "Redirecting...",
+      "setup-button": "Setup",
+      "checking": "Checking...",
+      "completed-setup-button": "I've completed setup"
+    },
     "drafts": {
       "list": {
         "empty-list": "No drafts found",
@@ -239,6 +247,22 @@
     "layout": {
       "description": "Manage your marketplace vendor account",
       "title": "Marketplace Vendor Panel"
+    },
+    "navigation": {
+      "app-name": "Vendor Panel",
+      "dashboard": "Dashboard",
+      "products": "Products",
+      "orders": "Orders",
+      "drafts": "Drafts",
+      "collections": "Collections",
+      "customers": "Customers",
+      "vendor-fallback": "Vendor",
+      "invite-coworkers": "Invite co-workers",
+      "support": "Support",
+      "configuration": "Configuration",
+      "go-to-stripe": "Go to Stripe",
+      "sign-out-devices": "Sign out from other devices",
+      "sign-out": "Sign out"
     },
     "orders": {
       "detail": {
@@ -637,6 +661,82 @@
         "vendor-name": "Vendor Name"
       },
       "total-count": "{count} total"
+    },
+    "payouts": {
+      "batch": {
+        "fees": "Fees",
+        "gross": "Gross",
+        "net": "Net",
+        "transfer-initiated": "Transfer initiated (UTC)",
+        "vendor-id": "Vendor ID"
+      },
+      "batches-paid-title": "Processed batches",
+      "batches-pending-title": "Pending batches",
+      "close-period": {
+        "currency-label": "Currency (ISO)",
+        "description": "Lock a date range and currency: eligible available lines are summed per vendor into a batch. You can close the same period again later to include vendors or orders that were not in an earlier batch. Then run “Execute transfers” on each batch.",
+        "end-label": "Period end",
+        "error": "Could not close period.",
+        "error-422": "No eligible lines: need available funds (order_gross, not already in a batch) in this period.",
+        "start-label": "Period start",
+        "submit": "Close period & create batch",
+        "success": "Batch created. Expand the row to review lines, then execute transfers if ready.",
+        "title": "Close payout period"
+      },
+      "sync-stripe": {
+        "busy": "Syncing…",
+        "description": "Re-fetch Stripe balance transactions for unconsumed order lines (unique charges, up to 500 per run). Then promote ledger rows to “available” when available_on is already in the past. Use if the ledger lags webhooks or before closing a period.",
+        "error": "Stripe sync failed.",
+        "partial": "{count, plural, one {# charge failed (see response).} other {# charges failed (see response).}}",
+        "submit": "Sync from Stripe",
+        "success": "Updated {charges} charge(s); {promoted} row(s) promoted by date.",
+        "title": "Refresh settlement from Stripe"
+      },
+      "description": "Payout batches from the marketplace ledger: close a period, review vendor lines, run Stripe Connect transfers.",
+      "execute": {
+        "busy": "Executing…",
+        "button": "Execute Stripe transfers",
+        "error": "Execute failed.",
+        "hint": "Requires platform balance in Stripe and batch lines in status “ready”.",
+        "success": "Transfers submitted. Refreshing…"
+      },
+      "failed-to-load": "Failed to load payout overview.",
+      "failed-to-load-batch": "Failed to load batch details.",
+      "ledgerLines": {
+        "availableUnknown": "Pending",
+        "colAmount": "Amount",
+        "colAvailable": "Funds available (UTC)",
+        "colBatch": "In payout batch",
+        "colCharge": "Stripe charge",
+        "colOccurred": "Occurred",
+        "colOrder": "Order",
+        "colOrderPlaced": "Order created",
+        "colStatus": "Funds status",
+        "colType": "Type",
+        "colVendor": "Vendor",
+        "description": "Per-order amounts still to pay out: pending Stripe settlement, available for the next period close, or held. Excludes refunded/reversed.",
+        "empty": "Nothing to pay out in this queue (or all lines are refunded/reversed, or already in a batch).",
+        "title": "Queued vendor payoffs"
+      },
+      "no-batches": "No payout batches yet.",
+      "not-configured": "Ledger database is not configured. Set DATABASE_URL (or the ledger pool env) to enable this view.",
+      "open-from-dashboard": "Open the app from the Saleor dashboard to use this view.",
+      "sign-in-to-view": "Sign in to view payout data.",
+      "tab-label": "Payouts",
+      "table": {
+        "created": "Created",
+        "currency": "Currency",
+        "id": "Batch ID",
+        "period": "Period",
+        "status": "Status",
+        "transferInitiated": "First transfer (UTC)"
+      },
+      "title": "Payout batches",
+      "toggle-details": "Show or hide batch line items",
+      "unauthorized": "You are not authorized to view payout data.",
+      "vendor-available": "Available (ledger)",
+      "vendor-pending": "Pending (Stripe)",
+      "vendor-summary-title": "Your vendor ledger (when signed in as vendor)"
     }
   }
 }

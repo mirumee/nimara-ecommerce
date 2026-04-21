@@ -4,13 +4,10 @@ import { getTranslations } from "next-intl/server";
 import { LocalizedLink } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
 
-import { paths, type QUERY_PARAMS } from "@/foundation/routing/paths";
-
-import { CheckoutRemover } from "./components/checkout-remover";
+import { paths } from "@/foundation/routing/paths";
 
 type PageProps = {
   params: Promise<{ id: string; locale: Locale }>;
-  searchParams: Promise<{ [QUERY_PARAMS.orderPlaced]: string }>;
 };
 
 export async function generateMetadata() {
@@ -21,7 +18,7 @@ export async function generateMetadata() {
   };
 }
 
-export default async function Page({ params, searchParams }: PageProps) {
+export default async function Page(_props: PageProps) {
   const t = await getTranslations();
 
   return (
@@ -37,7 +34,6 @@ export default async function Page({ params, searchParams }: PageProps) {
           {t("common.back-to-homepage")}
         </LocalizedLink>
       </Button>
-      <CheckoutRemover params={params} searchParams={searchParams} />
     </div>
   );
 }

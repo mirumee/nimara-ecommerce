@@ -3,10 +3,12 @@ import { ucpProxyMiddleware } from "@nimara/infrastructure/ucp/proxy";
 
 import { COOKIE_KEY, COOKIE_MAX_AGE } from "@/config";
 import { authMiddleware } from "@/foundation/auth/authMiddleware";
+import { orderPlacedCleanupMiddleware } from "@/foundation/checkout/order-placed-cleanup-middleware";
 import { i18nMiddleware } from "@/foundation/i18n/middleware";
 import { storefrontLogger } from "@/services/logging";
 
 export default chain([
+  orderPlacedCleanupMiddleware,
   i18nMiddleware,
   authMiddleware,
   ucpProxyMiddleware({

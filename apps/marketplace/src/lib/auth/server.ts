@@ -1,5 +1,5 @@
 import * as jose from "jose";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 
 import { getAppConfig } from "@/lib/saleor/app-config";
 import { METADATA_KEYS } from "@/lib/saleor/consts";
@@ -15,17 +15,30 @@ export async function getServerAuthToken(): Promise<string | null> {
 }
 
 /**
- * Get vendor ID for the current server session.
- * Used when Server Actions need vendor context (e.g. updateMetadata fallback).
- * Requires: auth token in cookies, app config for Saleor domain, user metadata with vendor.id.
+ * Bearer header (client fetch from App Bridge / iframe) then cookie.
+ * Use in Route Handlers where `credentials: include` may not send cookies reliably.
  */
-export async function getServerVendorId(): Promise<string | null> {
-  const token = await getServerAuthToken();
+export async function getApiRouteAuthToken(): Promise<string | null> {
+  const headerList = await headers();
+  const authorization = headerList.get("authorization");
 
-  if (!token) {
-    return null;
+  if (authorization?.toLowerCase().startsWith("bearer ")) {
+    const value = authorization.slice(7).trim();
+
+    if (value) {
+      return value;
+    }
   }
 
+  return getServerAuthToken();
+}
+
+/**
+ * Resolve vendor profile id from a Saleor user JWT (vendor dashboard session or App Bridge).
+ */
+export async function getVendorIdFromAccessToken(
+  accessToken: string,
+): Promise<string | null> {
   let saleorDomain: string | null = null;
   const url = process.env.NEXT_PUBLIC_SALEOR_URL;
 
@@ -39,10 +52,10 @@ export async function getServerVendorId(): Promise<string | null> {
 
   if (!saleorDomain) {
     try {
-      const decoded = jose.decodeJwt(token) as { iss?: string };
+      const decodedIss = jose.decodeJwt(accessToken) as { iss?: string };
 
-      if (decoded.iss) {
-        saleorDomain = new URL(decoded.iss).host;
+      if (decodedIss.iss) {
+        saleorDomain = new URL(decodedIss.iss).host;
       }
     } catch {
       // ignore
@@ -59,7 +72,7 @@ export async function getServerVendorId(): Promise<string | null> {
     return null;
   }
 
-  const decoded = jose.decodeJwt(token) as { user_id?: string };
+  const decoded = jose.decodeJwt(accessToken) as { user_id?: string };
   const userId = decoded.user_id;
 
   if (!userId) {
@@ -92,4 +105,19 @@ export async function getServerVendorId(): Promise<string | null> {
     metadata.find((m) => m.key === METADATA_KEYS.VENDOR_ID)?.value ?? null;
 
   return vendorId || null;
+}
+
+/**
+ * Get vendor ID for the current server session.
+ * Used when Server Actions need vendor context (e.g. updateMetadata fallback).
+ * Requires: auth token in cookies, app config for Saleor domain, user metadata with vendor.id.
+ */
+export async function getServerVendorId(): Promise<string | null> {
+  const token = await getServerAuthToken();
+
+  if (!token) {
+    return null;
+  }
+
+  return getVendorIdFromAccessToken(token);
 }

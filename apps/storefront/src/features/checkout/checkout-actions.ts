@@ -4,8 +4,16 @@ import { getLocale } from "next-intl/server";
 import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { redirect } from "@nimara/i18n/routing";
 
-import { getCheckoutId } from "@/features/checkout/cart";
+import { aggregateMarketplaceCheckouts } from "@/features/checkout/aggregations";
+import {
+  clearCheckoutCookie,
+  getCheckoutId,
+  getCheckoutIdsByVendor,
+  setMarketplaceCheckoutIdsCookie,
+} from "@/features/checkout/cart";
 import { deleteCheckoutIdCookie } from "@/features/checkout/checkout";
+import { MARKETPLACE_NO_VENDOR_BUCKET } from "@/features/checkout/constants";
+import { type MarketplaceCheckoutItem } from "@/features/checkout/types";
 import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
 import { getServiceRegistry } from "@/services/registry";
@@ -38,6 +46,108 @@ export const getCheckoutOrRedirect = async (): Promise<Checkout> | never => {
 
   return resultCheckout.data.checkout;
 };
+
+const getVendorDisplayName = (
+  checkout: Checkout,
+  vendorKey: string,
+): string => {
+  const vendorFromLines = checkout.lines
+    .map((line) => line.product.vendorId)
+    .find((vendorId): vendorId is string => !!vendorId);
+
+  if (vendorFromLines) {
+    return vendorFromLines;
+  }
+
+  if (vendorKey === MARKETPLACE_NO_VENDOR_BUCKET) {
+    return "No vendor";
+  }
+
+  return vendorKey;
+};
+
+export const getMarketplaceCheckoutsOrRedirect = async ():
+  | Promise<MarketplaceCheckoutItem[]>
+  | never => {
+  const [checkoutIdsByVendor, locale, region, services] = await Promise.all([
+    getCheckoutIdsByVendor(),
+    getLocale(),
+    getCurrentRegion(),
+    getServiceRegistry(),
+  ]);
+
+  const checkoutIds = [...new Set(Object.values(checkoutIdsByVendor))];
+
+  if (!checkoutIds.length) {
+    redirect({ href: paths.cart.asPath(), locale });
+  }
+
+  const checkoutService = await services.getCheckoutService();
+  const checkoutIdToVendorKey = new Map<string, string>(
+    Object.entries(checkoutIdsByVendor).map(([vendorKey, checkoutId]) => [
+      checkoutId,
+      vendorKey,
+    ]),
+  );
+  const resultCheckouts = await Promise.all(
+    checkoutIds.map(async (checkoutId) => {
+      const result = await checkoutService.checkoutGet({
+        checkoutId,
+        languageCode: region.language.code,
+        countryCode: region.market.countryCode,
+      });
+
+      if (!result.ok) {
+        return null;
+      }
+
+      const vendorKey =
+        checkoutIdToVendorKey.get(checkoutId) ?? MARKETPLACE_NO_VENDOR_BUCKET;
+      const checkout = result.data.checkout;
+
+      await validateCheckoutLinesAction({ checkout, locale });
+
+      return {
+        checkout,
+        checkoutId,
+        vendorKey,
+        vendorDisplayName: getVendorDisplayName(checkout, vendorKey),
+      } satisfies MarketplaceCheckoutItem;
+    }),
+  );
+
+  const validCheckoutItems = resultCheckouts.filter(
+    (entry): entry is MarketplaceCheckoutItem =>
+      entry !== null && entry.checkout.lines.length > 0,
+  );
+
+  if (!validCheckoutItems.length) {
+    await clearCheckoutCookie();
+    redirect({ href: paths.cart.asPath(), locale });
+  }
+
+  const validCheckoutIds = new Set(
+    validCheckoutItems.map((item) => item.checkoutId),
+  );
+  const filteredCheckoutIdsByVendor = Object.fromEntries(
+    Object.entries(checkoutIdsByVendor).filter(([, checkoutId]) =>
+      validCheckoutIds.has(checkoutId),
+    ),
+  );
+
+  if (
+    Object.keys(filteredCheckoutIdsByVendor).length !==
+    Object.keys(checkoutIdsByVendor).length
+  ) {
+    await setMarketplaceCheckoutIdsCookie(filteredCheckoutIdsByVendor);
+  }
+
+  return validCheckoutItems;
+};
+
+export const getMarketplaceCheckoutSummary = (
+  checkoutItems: MarketplaceCheckoutItem[],
+): Checkout => aggregateMarketplaceCheckouts(checkoutItems);
 
 /**
  * Validates checkout lines and redirects to the cart page if there are issues.

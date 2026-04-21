@@ -81,6 +81,14 @@ const envSchema = z.object({
   MARKETPLACE_SMTP_SECURE: booleanFromEnv.default(false),
   MARKETPLACE_EMAIL_FROM: z.string().optional(),
   MARKETPLACE_SUPERADMIN_EMAIL: z.string().optional(),
+
+  // Stripe (shared with storefront payment flows; Connect onboarding / payouts)
+  STRIPE_SECRET_KEY: z.string().optional(),
+  MARKETPLACE_STRIPE_CONNECT_WEBHOOK_SECRET: z.string().optional(),
+  MARKETPLACE_STRIPE_CONNECT_DEFAULT_COUNTRY: z.string().default("US"),
+
+  /** Postgres URL for ledger + payout tables (see db/migrations/001_init_ledger.sql) */
+  DATABASE_URL: z.string().optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;
@@ -128,6 +136,23 @@ function resolveVendorUrl(): string {
   return `http://localhost:${port}`;
 }
 
+/**
+ * Base URL for Saleor Dashboard (models, orders). Derived from `{NEXT_PUBLIC_SALEOR_URL origin}/dashboard`.
+ */
+function resolveSaleorDashboardBaseUrl(): string | null {
+  const saleorUrl = env.NEXT_PUBLIC_SALEOR_URL;
+
+  if (!saleorUrl) {
+    return null;
+  }
+
+  try {
+    return `${new URL(saleorUrl).origin}/dashboard`;
+  } catch {
+    return null;
+  }
+}
+
 export const config = {
   isDev: env.MARKETPLACE_NODE_ENV === "development",
   isProd: env.MARKETPLACE_NODE_ENV === "production",
@@ -155,6 +180,9 @@ export const config = {
     },
   },
   saleor: {
+    get dashboardBaseUrl(): string | null {
+      return resolveSaleorDashboardBaseUrl();
+    },
     url: env.NEXT_PUBLIC_SALEOR_URL,
     channelSlug: env.NEXT_PUBLIC_SALEOR_MARKETPLACE_CHANNEL_SLUG,
     graphqlUrl: env.NEXT_PUBLIC_GRAPHQL_URL,
@@ -176,5 +204,13 @@ export const config = {
     },
     from: env.MARKETPLACE_EMAIL_FROM,
     superadminEmail: env.MARKETPLACE_SUPERADMIN_EMAIL,
+  },
+  stripeConnect: {
+    secretKey: env.STRIPE_SECRET_KEY,
+    webhookSecret: env.MARKETPLACE_STRIPE_CONNECT_WEBHOOK_SECRET,
+    defaultCountry: env.MARKETPLACE_STRIPE_CONNECT_DEFAULT_COUNTRY,
+  },
+  ledger: {
+    databaseUrl: env.DATABASE_URL,
   },
 } as const;

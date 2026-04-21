@@ -4,13 +4,21 @@ import { revalidatePath } from "next/cache";
 
 import { addToBag } from "@nimara/features/product-detail-page/shared/actions/add-to-bag.core";
 
-import { getCheckoutId, setCheckoutIdCookie } from "@/features/checkout/cart";
+import {
+  getCheckoutId,
+  getCheckoutIdForVendor,
+  setCheckoutIdCookie,
+  setCheckoutIdForVendor,
+} from "@/features/checkout/cart";
 import { revalidateTag } from "@/foundation/cache/cache";
 import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
 import { storefrontLogger } from "@/services/logging";
 import { getServiceRegistry } from "@/services/registry";
 import { getAccessToken } from "@/services/tokens";
+
+const marketplaceEnabled =
+  process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED !== "false";
 
 /**
  * Server action wrapper for adding items to the cart.
@@ -25,12 +33,14 @@ export const addToBagAction = async ({
   quantity?: number;
   variantId: string;
 }) => {
-  const [services, cartId, region, accessToken] = await Promise.all([
+  const [services, region, accessToken] = await Promise.all([
     getServiceRegistry(),
-    getCheckoutId(),
     getCurrentRegion(),
     getAccessToken(),
   ]);
+  const cartId = marketplaceEnabled
+    ? await getCheckoutIdForVendor(clientProductVendorId)
+    : await getCheckoutId();
 
   // Call the pure function with services and context
   const result = await addToBag(
@@ -40,8 +50,6 @@ export const addToBagAction = async ({
       region,
       cartId,
       accessToken: accessToken ?? null,
-      marketplaceEnabled:
-        process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED !== "false",
       cacheTTL: {
         cart: services.config.cacheTTL.cart,
       },
@@ -50,13 +58,17 @@ export const addToBagAction = async ({
 
   // Handle Next.js-specific side effects (cookies, revalidation)
   if (result.ok) {
-    if (!cartId) {
+    if (marketplaceEnabled) {
+      await setCheckoutIdForVendor(clientProductVendorId, result.data.cartId);
+    } else if (!cartId) {
       // Save the cartId in the cookie for future requests
       await setCheckoutIdCookie(result.data.cartId);
     }
 
     revalidateTag(`CHECKOUT:${cartId ?? result.data.cartId}`, "max");
     revalidatePath(paths.cart.asPath());
+
+    return result;
   }
 
   storefrontLogger.error("Failed to add item to bag", {

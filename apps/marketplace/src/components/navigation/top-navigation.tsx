@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  CircleDollarSign,
   FileText,
   LayoutDashboard,
   LayoutList,
@@ -14,7 +15,9 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { useState } from "react";
 
+import { createStripeConnectLoginSession } from "@/app/(authenticated)/_actions/stripe-connect";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -25,8 +28,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/providers/auth-provider";
-
-const APP_NAME = "Vendor Panel";
 
 const navigationLinks = [
   {
@@ -65,6 +66,7 @@ export function TopNavigation() {
   const t = useTranslations();
   const { user, logout } = useAuth();
   const pathname = usePathname();
+  const [isOpeningStripe, setIsOpeningStripe] = useState(false);
 
   const isActive = (href: string) => {
     if (href === "/dashboard") {
@@ -77,7 +79,30 @@ export function TopNavigation() {
   const vendorName =
     [user?.firstName, user?.lastName].filter(Boolean).join(" ") ||
     user?.email ||
-    "Vendor";
+    t("marketplace.navigation.vendor-fallback");
+  const hasStripeAccount = Boolean(user?.stripePaymentAccountId);
+
+  const handleOpenStripe = async () => {
+    if (!hasStripeAccount || isOpeningStripe) {
+      return;
+    }
+
+    setIsOpeningStripe(true);
+
+    try {
+      const result = await createStripeConnectLoginSession();
+
+      if (!result.ok) {
+        console.error("[stripe-connect] Failed to open Stripe:", result.error);
+
+        return;
+      }
+
+      window.open(result.url, "_blank", "noopener,noreferrer");
+    } finally {
+      setIsOpeningStripe(false);
+    }
+  };
 
   return (
     <header className="sticky left-0 right-0 top-0 z-50 w-full border-b bg-background">
@@ -85,7 +110,7 @@ export function TopNavigation() {
         {/* Left side - Brand and Navigation */}
         <div className="flex items-center gap-8">
           <Link href="/dashboard" className="text-lg font-semibold">
-            {APP_NAME}
+            {t("marketplace.navigation.app-name")}
           </Link>
 
           <nav className="flex items-center gap-1">
@@ -137,13 +162,13 @@ export function TopNavigation() {
             </div>
             <DropdownMenuItem className="cursor-pointer gap-2">
               <Users className="h-4 w-4" />
-              Invite co-workers
+              {t("marketplace.navigation.invite-coworkers")}
             </DropdownMenuItem>
             <DropdownMenuItem className="cursor-pointer gap-2">
               <span className="flex h-4 w-4 items-center justify-center text-xs">
                 ?
               </span>
-              Support
+              {t("marketplace.navigation.support")}
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link
@@ -151,20 +176,28 @@ export function TopNavigation() {
                 className="cursor-pointer gap-2"
               >
                 <Settings className="h-4 w-4" />
-                Configuration
+                {t("marketplace.navigation.configuration")}
               </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="cursor-pointer gap-2"
+              onClick={() => void handleOpenStripe()}
+              disabled={!hasStripeAccount || isOpeningStripe}
+            >
+              <CircleDollarSign className="h-4 w-4" />
+              {t("marketplace.navigation.go-to-stripe")}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="cursor-pointer gap-2">
               <Monitor className="h-4 w-4" />
-              Sign out from other devices
+              {t("marketplace.navigation.sign-out-devices")}
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => logout()}
               className="cursor-pointer gap-2"
             >
               <LogOut className="h-4 w-4" />
-              Sign out
+              {t("marketplace.navigation.sign-out")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

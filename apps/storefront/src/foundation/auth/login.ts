@@ -5,7 +5,12 @@ import { AuthError } from "next-auth";
 
 import { signIn } from "@/auth";
 import { CACHE_TTL } from "@/config";
-import { getCheckoutId, setCheckoutIdCookie } from "@/features/checkout/cart";
+import {
+  getCheckoutId,
+  getCheckoutIds,
+  setCheckoutIdCookie,
+  setCheckoutIdForVendor,
+} from "@/features/checkout/cart";
 import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
 import { errorService } from "@/services/error";
@@ -22,15 +27,19 @@ export async function login({
   redirectUrl?: string;
 }) {
   try {
+    const isMarketplaceEnabled =
+      process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED !== "false";
+
     await signIn("credentials", {
       email,
       password,
       redirect: false,
     });
 
-    const [accessToken, checkoutId, services] = await Promise.all([
+    const [accessToken, checkoutId, checkoutIds, services] = await Promise.all([
       getAccessToken(),
       getCheckoutId(),
+      getCheckoutIds(),
       getServiceRegistry(),
     ]);
     const [checkoutService, userService] = await Promise.all([
@@ -41,7 +50,20 @@ export async function login({
     const resultUserGet = await userService.userGet(accessToken);
     const user = resultUserGet.ok ? resultUserGet.data : null;
 
-    if (user?.checkoutIds.length) {
+    if (isMarketplaceEnabled) {
+      if (checkoutIds.length > 0) {
+        await Promise.all(
+          checkoutIds.map((checkoutId) =>
+            checkoutService.checkoutCustomerAttach({
+              accessToken,
+              id: checkoutId,
+            }),
+          ),
+        );
+      } else if (user?.checkoutIds.length) {
+        await setCheckoutIdForVendor(null, user.checkoutIds[0]);
+      }
+    } else if (user?.checkoutIds.length) {
       const userLatestCheckoutId = user.checkoutIds[0];
 
       await setCheckoutIdCookie(userLatestCheckoutId);
