@@ -75,7 +75,6 @@
     "db:studio": "drizzle-kit studio",
     "db:check": "drizzle-kit check",
     "db:drop": "drizzle-kit drop",
-    "db:mark-baseline-applied": "node ./scripts/mark-ledger-baseline-applied.mjs",
     "migrate:ledger": "pnpm db:migrate",
     "start": "next start --port 3001",
     "test": "vitest run",
