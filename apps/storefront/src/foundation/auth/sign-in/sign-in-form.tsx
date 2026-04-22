@@ -72,7 +72,7 @@ export function SignInForm({ redirectUrl }: { redirectUrl?: string }) {
 
   return (
     <>
-      <h1 className="pb-8 text-2xl font-normal leading-8 text-primary">
+      <h1 className="pb-8 text-2xl font-normal leading-tight text-primary">
         {t("auth.sign-in")}
       </h1>
 

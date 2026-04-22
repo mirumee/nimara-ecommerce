@@ -29,7 +29,7 @@ export default async function ConfigurationChannelsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold text-gray-900">
+      <h1 className="text-2xl font-semibold text-stone-900">
         Channels & Warehouses
       </h1>
 
@@ -53,7 +53,7 @@ export default async function ConfigurationChannelsPage() {
                         Active
                       </span>
                     ) : (
-                      <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700">
+                      <span className="inline-flex items-center rounded-full bg-stone-100 px-2 py-1 text-xs font-medium text-stone-700">
                         Inactive
                       </span>
                     )}

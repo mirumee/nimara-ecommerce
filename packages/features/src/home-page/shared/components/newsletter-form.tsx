@@ -48,11 +48,11 @@ export const Newsletter = () => {
     <section className="bg-muted px-4 py-12 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-3xl">
         <div className="text-center">
-          <Mail className="mx-auto h-12 w-12 text-gray-400" />
+          <Mail className="mx-auto h-12 w-12 text-stone-400" />
           <h2 className="text-foreground mt-2 text-3xl font-semibold sm:text-4xl">
             {t("newsletter.subscribe-title")}
           </h2>
-          <p className="mt-4 text-lg text-gray-600 dark:text-gray-400">
+          <p className="mt-4 text-lg text-stone-600 dark:text-stone-400">
             {t("newsletter.subscribe-description")}
           </p>
         </div>

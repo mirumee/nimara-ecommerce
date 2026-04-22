@@ -567,7 +567,7 @@ export function VariantSelectionDialog({
                                     >
                                       <input
                                         type="checkbox"
-                                        className="h-4 w-4 rounded border-gray-300"
+                                        className="h-4 w-4 rounded border-stone-300"
                                         checked={checkedVariant}
                                         disabled={!canSelect || isSaving}
                                         onChange={() =>
@@ -680,7 +680,7 @@ function ProductCheckbox({
     <input
       ref={ref}
       type="checkbox"
-      className="h-4 w-4 rounded border-gray-300"
+      className="h-4 w-4 rounded border-stone-300"
       checked={checked}
       disabled={disabled}
       onChange={onChange}

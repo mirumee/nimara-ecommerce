@@ -308,14 +308,14 @@ export function AccountInformationCard({
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <div className="text-xl font-semibold text-gray-900">
+                    <div className="text-xl font-semibold text-stone-900">
                       {vendorName}
                     </div>
                     <div className="text-sm text-muted-foreground">
                       {vendorUrl}
                     </div>
                     {fullName && (
-                      <div className="mt-1 text-sm text-gray-600">
+                      <div className="mt-1 text-sm text-stone-600">
                         {fullName}
                       </div>
                     )}
@@ -333,10 +333,10 @@ export function AccountInformationCard({
                 </>
               ) : (
                 <>
-                  <label className="text-sm font-medium text-gray-900">
+                  <label className="text-sm font-medium text-stone-900">
                     {t("common.email")}
                   </label>
-                  <div className="mt-1 text-sm text-gray-600">
+                  <div className="mt-1 text-sm text-stone-600">
                     {user?.email || t("common.not-set")}
                   </div>
                 </>

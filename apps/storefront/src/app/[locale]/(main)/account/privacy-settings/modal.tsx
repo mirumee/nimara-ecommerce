@@ -77,7 +77,7 @@ export function DeleteAccountModal() {
                   contactUs: () => (
                     <LocalizedLink
                       href={`mailto:${clientEnvs.NEXT_PUBLIC_DEFAULT_EMAIL}`}
-                      className="underline decoration-gray-400 underline-offset-2 dark:decoration-gray-300"
+                      className="underline decoration-stone-400 underline-offset-2 dark:decoration-stone-300"
                       target="_blank"
                     >
                       {t("common.contact-us")}
@@ -86,7 +86,7 @@ export function DeleteAccountModal() {
                   privacyPolicy: () => (
                     <LocalizedLink
                       href={paths.privacyPolicy.asPath()}
-                      className="underline decoration-gray-400 underline-offset-2 dark:decoration-gray-300"
+                      className="underline decoration-stone-400 underline-offset-2 dark:decoration-stone-300"
                     >
                       {t("common.privacy-policy")}
                     </LocalizedLink>

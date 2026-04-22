@@ -11,6 +11,6 @@ export const Spinner = ({
 }) => (
   <Loader2
     size={size}
-    className={cn("animate-spin text-gray-500", className)}
+    className={cn("animate-spin text-stone-500", className)}
   />
 );

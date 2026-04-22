@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
+    "dev:turbo": "next dev --turbopack",
     "dev:inspect": "NODE_OPTIONS='--inspect' next dev",
     "build": "next build --webpack",
     "start": "next start",

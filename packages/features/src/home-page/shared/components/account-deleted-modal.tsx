@@ -42,7 +42,7 @@ export function AccountDeletedModal({
             contactUs: () => (
               <LocalizedLink
                 href={`mailto:${mailTo}`}
-                className="underline decoration-gray-400 underline-offset-2"
+                className="underline decoration-stone-400 underline-offset-2"
                 target="_blank"
               >
                 {t("common.contact-us")}
@@ -51,7 +51,7 @@ export function AccountDeletedModal({
             privacyPolicy: () => (
               <LocalizedLink
                 href={paths.privacyPolicy}
-                className="underline decoration-gray-400 underline-offset-2"
+                className="underline decoration-stone-400 underline-offset-2"
               >
                 {t("common.privacy-policy")}
               </LocalizedLink>

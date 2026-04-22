@@ -48,7 +48,7 @@ export const CheckoutSection = ({
           <CheckCircle2
             className={cn(
               "h-5 w-5",
-              isComplete ? "text-green-500" : "text-gray-400",
+              isComplete ? "text-green-500" : "text-stone-400",
             )}
           />
         </CardHeader>

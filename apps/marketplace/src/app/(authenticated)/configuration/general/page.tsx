@@ -46,7 +46,7 @@ export default async function ConfigurationGeneralPage() {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-2xl font-semibold text-gray-900">
+      <h1 className="text-2xl font-semibold text-stone-900">
         {t("marketplace.configuration.general.heading")}
       </h1>
 

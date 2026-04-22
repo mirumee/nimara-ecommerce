@@ -24,6 +24,7 @@ export interface HomeViewProps {
  */
 export interface StandardHomeViewProps extends HomeViewProps {
   accessToken: string | null;
+  heroBannerProductSlug?: string;
   mailTo: string;
   paths: {
     home: string;

@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "storefront",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["pnpm", "dev:storefront"],
+      "port": 3000
+    }
+  ]
+}

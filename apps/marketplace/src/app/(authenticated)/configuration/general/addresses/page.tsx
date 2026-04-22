@@ -74,19 +74,19 @@ export default async function AddressesPage() {
   return (
     <div className="space-y-6">
       {/* Breadcrumbs */}
-      <div className="flex items-center gap-2 text-sm text-gray-600">
-        <Link href="/configuration/general" className="hover:text-gray-900">
+      <div className="flex items-center gap-2 text-sm text-stone-600">
+        <Link href="/configuration/general" className="hover:text-stone-900">
           {t("marketplace.configuration.addresses.breadcrumbs-general")}
         </Link>
         <span>/</span>
-        <span className="text-gray-900">
+        <span className="text-stone-900">
           {t("marketplace.configuration.addresses.breadcrumbs-address-book")}
         </span>
       </div>
 
       {/* Page Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-gray-900">
+        <h1 className="text-2xl font-semibold text-stone-900">
           {t("marketplace.configuration.addresses.page-title", {
             name: userName,
           })}
@@ -105,14 +105,14 @@ export default async function AddressesPage() {
             <Card>
               <CardContent className="p-4">
                 <div className="mb-3 flex items-start justify-between">
-                  <h2 className="text-sm font-semibold text-gray-900">
+                  <h2 className="text-sm font-semibold text-stone-900">
                     {t(
                       "marketplace.configuration.addresses.default-shipping-address",
                     )}
                   </h2>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <button className="text-gray-400 hover:text-gray-600">
+                      <button className="text-stone-400 hover:text-stone-600">
                         <MoreVertical className="h-4 w-4" />
                       </button>
                     </DropdownMenuTrigger>
@@ -131,30 +131,30 @@ export default async function AddressesPage() {
                   </DropdownMenu>
                 </div>
                 <div className="space-y-1">
-                  <div className="font-medium text-gray-900">
+                  <div className="font-medium text-stone-900">
                     {getFullName(defaultShippingAddress)}
                   </div>
                   {defaultShippingAddress.companyName && (
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-stone-600">
                       {defaultShippingAddress.companyName}
                     </div>
                   )}
                   {defaultShippingAddress.phone && (
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-stone-600">
                       {defaultShippingAddress.phone}
                     </div>
                   )}
                   {defaultShippingAddress.streetAddress1 && (
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-stone-600">
                       {defaultShippingAddress.streetAddress1}
                     </div>
                   )}
                   {defaultShippingAddress.streetAddress2 && (
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-stone-600">
                       {defaultShippingAddress.streetAddress2}
                     </div>
                   )}
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-stone-600">
                     {[
                       defaultShippingAddress.city,
                       defaultShippingAddress.countryArea,
@@ -175,7 +175,7 @@ export default async function AddressesPage() {
           <Card>
             <CardContent className="p-4">
               <div className="mb-3 flex items-start justify-between">
-                <h2 className="text-sm font-semibold text-gray-900">
+                <h2 className="text-sm font-semibold text-stone-900">
                   {shippingSameAsBilling
                     ? t(
                         "marketplace.configuration.addresses.default-shipping-and-billing-address",
@@ -186,7 +186,7 @@ export default async function AddressesPage() {
                 </h2>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="text-gray-400 hover:text-gray-600">
+                    <button className="text-stone-400 hover:text-stone-600">
                       <MoreVertical className="h-4 w-4" />
                     </button>
                   </DropdownMenuTrigger>
@@ -205,30 +205,30 @@ export default async function AddressesPage() {
                 </DropdownMenu>
               </div>
               <div className="space-y-1">
-                <div className="font-medium text-gray-900">
+                <div className="font-medium text-stone-900">
                   {getFullName(defaultBillingAddress)}
                 </div>
                 {defaultBillingAddress.companyName && (
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-stone-600">
                     {defaultBillingAddress.companyName}
                   </div>
                 )}
                 {defaultBillingAddress.phone && (
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-stone-600">
                     {defaultBillingAddress.phone}
                   </div>
                 )}
                 {defaultBillingAddress.streetAddress1 && (
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-stone-600">
                     {defaultBillingAddress.streetAddress1}
                   </div>
                 )}
                 {defaultBillingAddress.streetAddress2 && (
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-stone-600">
                     {defaultBillingAddress.streetAddress2}
                   </div>
                 )}
-                <div className="text-sm text-gray-600">
+                <div className="text-sm text-stone-600">
                   {[
                     defaultBillingAddress.city,
                     defaultBillingAddress.countryArea,
@@ -252,7 +252,7 @@ export default async function AddressesPage() {
                 <div className="flex-1" />
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="text-gray-400 hover:text-gray-600">
+                    <button className="text-stone-400 hover:text-stone-600">
                       <MoreVertical className="h-4 w-4" />
                     </button>
                   </DropdownMenuTrigger>
@@ -274,28 +274,28 @@ export default async function AddressesPage() {
                 </DropdownMenu>
               </div>
               <div className="space-y-1">
-                <div className="font-medium text-gray-900">
+                <div className="font-medium text-stone-900">
                   {getFullName(address)}
                 </div>
                 {address.companyName && (
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-stone-600">
                     {address.companyName}
                   </div>
                 )}
                 {address.phone && (
-                  <div className="text-sm text-gray-600">{address.phone}</div>
+                  <div className="text-sm text-stone-600">{address.phone}</div>
                 )}
                 {address.streetAddress1 && (
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-stone-600">
                     {address.streetAddress1}
                   </div>
                 )}
                 {address.streetAddress2 && (
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-stone-600">
                     {address.streetAddress2}
                   </div>
                 )}
-                <div className="text-sm text-gray-600">
+                <div className="text-sm text-stone-600">
                   {[address.city, address.countryArea, address.postalCode]
                     .filter(Boolean)
                     .join(", ")}
@@ -309,7 +309,7 @@ export default async function AddressesPage() {
         {/* Empty State */}
         {addresses.length === 0 && (
           <div className="col-span-full py-12 text-center">
-            <p className="text-gray-500">
+            <p className="text-stone-500">
               {t("marketplace.configuration.addresses.empty-state")}
             </p>
           </div>

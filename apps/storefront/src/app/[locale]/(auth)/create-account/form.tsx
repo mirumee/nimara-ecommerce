@@ -111,7 +111,7 @@ export function SignUpForm() {
               termsOfUse: () => (
                 <LocalizedLink
                   href={paths.termsOfUse.asPath()}
-                  className="underline decoration-gray-400 underline-offset-2 dark:decoration-gray-300"
+                  className="underline decoration-stone-400 underline-offset-2 dark:decoration-stone-300"
                 >
                   {t("common.terms-of-use")}
                 </LocalizedLink>
@@ -119,7 +119,7 @@ export function SignUpForm() {
               privacyPolicy: () => (
                 <LocalizedLink
                   href={paths.privacyPolicy.asPath()}
-                  className="underline decoration-gray-400 underline-offset-2 dark:decoration-gray-300"
+                  className="underline decoration-stone-400 underline-offset-2 dark:decoration-stone-300"
                 >
                   {t("common.privacy-policy")}
                 </LocalizedLink>

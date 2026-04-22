@@ -17,13 +17,13 @@ export function VendorAcceptedEmail({
 
   return (
     <EmailLayout preview="Your vendor account has been approved">
-      <Text className="m-0 mb-4 text-base leading-6 text-slate-600">
+      <Text className="m-0 mb-4 text-base leading-6 text-stone-600">
         Hello {greeting},
       </Text>
-      <Text className="m-0 mb-4 text-base leading-6 text-slate-600">
+      <Text className="m-0 mb-4 text-base leading-6 text-stone-600">
         Your Nimara marketplace vendor account has been approved.
       </Text>
-      <Text className="m-0 mb-4 text-base leading-6 text-slate-600">
+      <Text className="m-0 mb-4 text-base leading-6 text-stone-600">
         You can now sign in and start using the marketplace.
       </Text>
       {signInUrl ? (

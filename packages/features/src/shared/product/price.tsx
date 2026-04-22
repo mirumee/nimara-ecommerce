@@ -73,7 +73,7 @@ export const Price = ({
     return (
       <span className={cn("flex flex-row flex-wrap gap-1", className)}>
         {hasDiscount && oldPrice && (
-          <span className="text-gray-500 line-through dark:text-gray-400">
+          <span className="text-stone-500 line-through dark:text-stone-400">
             {renderPrice(oldPrice)}
           </span>
         )}

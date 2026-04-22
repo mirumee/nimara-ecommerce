@@ -33,7 +33,7 @@ export const ProcessingInfo = ({
         <>
           <p className="text-lg">{t("payment.paymentProcessing")}...</p>
           {isTimeExceeded && (
-            <p className="text-gray-500">
+            <p className="text-stone-500">
               {t("payment.thisTakesLongerThanUsual")}
             </p>
           )}

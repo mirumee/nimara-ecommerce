@@ -27,7 +27,7 @@ export function ConfigurationLayoutClient({
   return (
     <div className="-mx-6 -mt-4 flex min-h-screen">
       {/* Left sidebar */}
-      <div className="sticky top-[4.5rem] flex h-[calc(100vh-4.5rem)] w-64 flex-col self-start border-r bg-gray-50">
+      <div className="sticky top-[4.5rem] flex h-[calc(100vh-4.5rem)] w-64 flex-col self-start border-r bg-stone-50">
         {/* Vendor info header */}
         <div className="flex-shrink-0 border-b bg-white p-6">
           <div className="flex items-center gap-3">
@@ -37,7 +37,7 @@ export function ConfigurationLayoutClient({
               </AvatarFallback>
             </Avatar>
             <div className="min-w-0">
-              <div className="text-sm font-semibold text-gray-900">
+              <div className="text-sm font-semibold text-stone-900">
                 {vendorName}
               </div>
               <div className="text-xs text-muted-foreground">{vendorUrl}</div>
@@ -57,8 +57,8 @@ export function ConfigurationLayoutClient({
                   className={cn(
                     "flex w-full items-center rounded-md px-3 py-2 text-left text-sm transition-colors",
                     isActive
-                      ? "bg-gray-200 font-medium text-gray-900"
-                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900",
+                      ? "bg-stone-200 font-medium text-stone-900"
+                      : "text-stone-600 hover:bg-stone-100 hover:text-stone-900",
                   )}
                 >
                   {item.name}
@@ -70,7 +70,7 @@ export function ConfigurationLayoutClient({
       </div>
 
       {/* Main content */}
-      <div className="flex-1 bg-gray-50/30 p-8">
+      <div className="flex-1 bg-stone-50/30 p-8">
         <div className="mx-auto max-w-4xl">{children}</div>
       </div>
     </div>

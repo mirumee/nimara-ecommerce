@@ -18,7 +18,7 @@ export default async function Page() {
           })}
         />
       </div>
-      <hr className="h-auto w-px bg-gray-300" />
+      <hr className="h-auto w-px bg-stone-300" />
       <div className="w-full sm:w-1/2 sm:pl-12 md:pl-16">
         <div className="pb-4 sm:pb-10">
           <h2 className="text-2xl font-normal leading-8 text-foreground">

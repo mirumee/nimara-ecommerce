@@ -26,6 +26,7 @@ export default async function Page(props: HomeViewProps) {
       {...props}
       services={services}
       accessToken={accessToken || null}
+      heroBannerProductSlug="paint"
       mailTo={clientEnvs.NEXT_PUBLIC_DEFAULT_EMAIL}
       region={region}
       revalidateTime={services.config.cacheTTL.cms}

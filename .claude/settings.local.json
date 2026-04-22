@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(kill 23952)",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "WebFetch(domain:nimara-633fa9.webflow.io)",
+      "Bash(curl -s \"https://nimara-633fa9.webflow.io\")",
+      "Bash(curl -s \"https://cdn.prod.website-files.com/69413ec9f85c0e7557f07fb9/css/nimara-633fa9.webflow.shared.65ad4d90c.css\")",
+      "mcp__82672038-cbd2-4e1d-9f13-6a386dac238a__whoami",
+      "mcp__82672038-cbd2-4e1d-9f13-6a386dac238a__use_figma",
+      "mcp__82672038-cbd2-4e1d-9f13-6a386dac238a__get_metadata",
+      "mcp__82672038-cbd2-4e1d-9f13-6a386dac238a__get_design_context",
+      "Bash(/Users/piotrflis/Library/pnpm/.tools/pnpm/9.15.9/bin/pnpm install:*)",
+      "Bash(npm --version)",
+      "Read(//opt/homebrew/bin/**)",
+      "Read(//usr/local/bin/**)",
+      "Read(//Users/piotrflis/**)",
+      "Bash(grep -r \"paint\" /Users/piotrflis/Desktop/nimara-ecommerce-main --include=\"*.tsx\" --include=\"*.ts\" ! -path \"*/node_modules/*\" ! -path \"*/.next/*\")",
+      "Bash(grep -r \"Paint\\\\|paint\" /Users/piotrflis/Desktop/nimara-ecommerce-main/packages --include=\"*.tsx\" --include=\"*.ts\" --include=\"*.json\" ! -path \"*/node_modules/*\")",
+      "Bash(grep -r \"carousel-products\\\\|homepage-grid\" /Users/piotrflis/Desktop/nimara-ecommerce-main --include=\"*.tsx\" --include=\"*.ts\" ! -path \"*/node_modules/*\")",
+      "Bash(grep -l \"carousel-products\" /Users/piotrflis/Desktop/nimara-ecommerce-main/packages/features/src/home-page/shared/*.ts)",
+      "mcp__82672038-cbd2-4e1d-9f13-6a386dac238a__get_screenshot",
+      "Bash(xargs cat:*)",
+      "Bash(xargs ls:*)",
+      "Bash(grep -r \"rounded\" /Users/piotrflis/Desktop/nimara-ecommerce-main/packages/ui/src/components/*.tsx)",
+      "mcp__6d38b5a6-aaaf-4ebc-b203-58b4038d812f__data_sites_tool",
+      "mcp__6d38b5a6-aaaf-4ebc-b203-58b4038d812f__element_tool",
+      "mcp__6d38b5a6-aaaf-4ebc-b203-58b4038d812f__style_tool",
+      "mcp__6d38b5a6-aaaf-4ebc-b203-58b4038d812f__variable_tool"
+    ]
+  }
+}

@@ -17,18 +17,18 @@ export function VendorRejectedEmail({
 
   return (
     <EmailLayout preview="Your vendor account application">
-      <Text className="m-0 mb-4 text-base leading-6 text-slate-600">
+      <Text className="m-0 mb-4 text-base leading-6 text-stone-600">
         Hello {greeting},
       </Text>
-      <Text className="m-0 mb-4 text-base leading-6 text-slate-600">
+      <Text className="m-0 mb-4 text-base leading-6 text-stone-600">
         Thank you for your interest in the Nimara marketplace.
       </Text>
-      <Text className="m-0 mb-4 text-base leading-6 text-slate-600">
+      <Text className="m-0 mb-4 text-base leading-6 text-stone-600">
         After reviewing your application, we are unable to approve your vendor
         account at this time.
       </Text>
       {superadminEmail ? (
-        <Text className="m-0 mb-4 text-base leading-6 text-slate-600">
+        <Text className="m-0 mb-4 text-base leading-6 text-stone-600">
           If you need more details, please contact the marketplace administrator
           at:{" "}
           <a
