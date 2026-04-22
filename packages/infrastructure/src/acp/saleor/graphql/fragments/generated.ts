@@ -41,7 +41,7 @@ export type CheckoutSessionFragment_Checkout_lines_CheckoutLine_variant_ProductV
 
 export type CheckoutSessionFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation = { name: string };
 
-export type CheckoutSessionFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute = { slug: string, inputType: Types.AttributeInputTypeEnum | null, name: string, translation: CheckoutSessionFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation | null };
+export type CheckoutSessionFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute = { slug: string | null, inputType: Types.AttributeInputTypeEnum | null, name: string | null, translation: CheckoutSessionFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation | null };
 
 export type CheckoutSessionFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation = { name: string, plainText: string | null, richText: string | null };
 
@@ -100,7 +100,7 @@ export type CheckoutSessionFragment = { id: string, email: string | null, displa
 
 export type ProductFeedFragment_Product_media_ProductMedia = { url: string };
 
-export type ProductFeedFragment_Product_attributes_SelectedAttribute_attribute_Attribute = { id: string, name: string };
+export type ProductFeedFragment_Product_attributes_SelectedAttribute_attribute_Attribute = { id: string, name: string | null };
 
 export type ProductFeedFragment_Product_attributes_SelectedAttribute_values_AttributeValue = { id: string, name: string | null, value: string | null };
 
@@ -112,7 +112,7 @@ export type ProductFeedFragment_Product_variants_ProductVariant_pricing_VariantP
 
 export type ProductFeedFragment_Product_variants_ProductVariant_pricing_VariantPricingInfo = { price: ProductFeedFragment_Product_variants_ProductVariant_pricing_VariantPricingInfo_price_TaxedMoney | null };
 
-export type ProductFeedFragment_Product_variants_ProductVariant_attributes_SelectedAttribute_attribute_Attribute = { id: string, name: string };
+export type ProductFeedFragment_Product_variants_ProductVariant_attributes_SelectedAttribute_attribute_Attribute = { id: string, name: string | null };
 
 export type ProductFeedFragment_Product_variants_ProductVariant_attributes_SelectedAttribute_values_AttributeValue = { id: string, name: string | null, value: string | null };
 

@@ -16,6 +16,7 @@ import { MARKETPLACE_NO_VENDOR_BUCKET } from "@/features/checkout/constants";
 import { type MarketplaceCheckoutItem } from "@/features/checkout/types";
 import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
+import { getMarketplaceService } from "@/services/marketplace";
 import { getServiceRegistry } from "@/services/registry";
 
 export const getCheckoutOrRedirect = async (): Promise<Checkout> | never => {
@@ -60,7 +61,7 @@ const getVendorDisplayName = (
   }
 
   if (vendorKey === MARKETPLACE_NO_VENDOR_BUCKET) {
-    return "No vendor";
+    return "Marketplace";
   }
 
   return vendorKey;
@@ -105,13 +106,25 @@ export const getMarketplaceCheckoutsOrRedirect = async ():
         checkoutIdToVendorKey.get(checkoutId) ?? MARKETPLACE_NO_VENDOR_BUCKET;
       const checkout = result.data.checkout;
 
+      let displayName = "Marketplace";
+
+      if (vendorKey !== MARKETPLACE_NO_VENDOR_BUCKET) {
+        const marketplaceService = await services.getMarketplaceService();
+        const vendorProfileResult =
+          await marketplaceService.vendorGetByID(vendorKey);
+
+        if (vendorProfileResult.ok) {
+          displayName = vendorProfileResult.data.name;
+        }
+      }
+
       await validateCheckoutLinesAction({ checkout, locale });
 
       return {
         checkout,
         checkoutId,
         vendorKey,
-        vendorDisplayName: getVendorDisplayName(checkout, vendorKey),
+        vendorDisplayName: displayName,
       } satisfies MarketplaceCheckoutItem;
     }),
   );

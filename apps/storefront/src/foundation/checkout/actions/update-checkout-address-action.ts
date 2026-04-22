@@ -9,6 +9,7 @@ import {
 import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { type AsyncResult, ok } from "@nimara/domain/objects/Result";
 
+import { clientEnvs } from "@/envs/client";
 import { getCheckoutIds } from "@/features/checkout/cart";
 import { paths } from "@/foundation/routing/paths";
 import { getServiceRegistry } from "@/services/registry";
@@ -36,8 +37,7 @@ export const updateCheckoutAddressAction = async ({
 }): AsyncResult<{
   success: true;
 }> => {
-  const isMarketplaceEnabled =
-    process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED !== "false";
+  const isMarketplaceEnabled = clientEnvs.NEXT_PUBLIC_MARKETPLACE_ENABLED;
   const services = await getServiceRegistry();
   const checkoutService = await services.getCheckoutService();
 

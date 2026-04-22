@@ -5,6 +5,7 @@ import { AuthError } from "next-auth";
 
 import { signIn } from "@/auth";
 import { CACHE_TTL } from "@/config";
+import { clientEnvs } from "@/envs/client";
 import {
   getCheckoutId,
   getCheckoutIds,
@@ -27,8 +28,7 @@ export async function login({
   redirectUrl?: string;
 }) {
   try {
-    const isMarketplaceEnabled =
-      process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED !== "false";
+    const isMarketplaceEnabled = clientEnvs.NEXT_PUBLIC_MARKETPLACE_ENABLED;
 
     await signIn("credentials", {
       email,

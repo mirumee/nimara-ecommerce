@@ -28,4 +28,5 @@ export const MIN_PASSWORD_LENGTH = 8;
 
 export const CHANGE_EMAIL_TOKEN_VALIDITY_IN_HOURS = 72;
 
-// TODO: group this somehow to make more logical
+// Marketplace config
+export const MARKETPLACE_VENDOR_PROFILE_CACHE_TTL = 7 * DAY;

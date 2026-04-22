@@ -26,7 +26,7 @@ export const CheckoutShippingAddressSection = ({
       step="shipping-address"
       title={t("shipping-address.title")}
       isOpen={isOpen}
-      closedContent={
+      collapsedSummary={
         checkout.shippingAddress && formattedShippingAddress ? (
           <div className="text-sm text-muted-foreground">
             {displayFormattedAddressLines({

@@ -38,14 +38,14 @@ export const updateLineQuantityAction = async ({
   // Handle Next.js-specific side effects (revalidation)
   if (result.ok) {
     void revalidateCart(cartId);
+  } else {
+    storefrontLogger.error("Failed to update line quantity", {
+      cartId,
+      lineId,
+      quantity,
+      errors: result.errors,
+    });
   }
-
-  storefrontLogger.error("Failed to update line quantity", {
-    cartId,
-    lineId,
-    quantity,
-    errors: result.errors,
-  });
 
   return result;
 };
@@ -69,13 +69,13 @@ export const deleteLineAction = async ({
   // Handle Next.js-specific side effects (revalidation)
   if (result.ok) {
     void revalidateCart(cartId);
+  } else {
+    storefrontLogger.error("Failed to delete line", {
+      cartId,
+      lineId,
+      errors: result.errors,
+    });
   }
-
-  storefrontLogger.error("Failed to delete line", {
-    cartId,
-    lineId,
-    errors: result.errors,
-  });
 
   return result;
 };

@@ -7,6 +7,8 @@ import { useEffect, useRef, useState } from "react";
 import { type Cart } from "@nimara/domain/objects/Cart";
 import type { AsyncResult } from "@nimara/domain/objects/Result";
 import { type User } from "@nimara/domain/objects/User";
+import { Line } from "@nimara/features/shared/shopping-bag/components/line";
+import { groupLinesByVendorId } from "@nimara/features/shared/shopping-bag/helpers";
 import { ShoppingBag } from "@nimara/features/shared/shopping-bag/shopping-bag";
 import { LocalizedLink, useRouter } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
@@ -15,6 +17,7 @@ import { cn } from "@nimara/ui/lib/utils";
 
 export interface CartDetailsProps {
   cart: Cart;
+  isMarketplaceEnabled?: boolean;
   lineCheckoutIdMap?: Record<string, string>;
   onCartUpdate: (cartId: string) => Promise<void>;
   onLineDelete: (params: {
@@ -31,11 +34,14 @@ export interface CartDetailsProps {
     checkoutSignIn: string;
   };
   user: User | null;
+  vendorIdNames?: Record<string, string>;
 }
 
 export const CartDetails = ({
   cart,
+  isMarketplaceEnabled,
   user,
+  vendorIdNames,
   lineCheckoutIdMap,
   onLineQuantityChange,
   onLineDelete,
@@ -136,12 +142,17 @@ export const CartDetails = ({
       <ShoppingBag>
         <ShoppingBag.Header />
         <ShoppingBag.Lines
+          isMarketplaceEnabled={isMarketplaceEnabled}
           onLineQuantityChange={handleLineQuantityChange}
           onLineDelete={handleLineDelete}
           problems={cart.problems}
+          vendorIdNames={vendorIdNames}
           lines={cart.lines}
           isDisabled={isProcessing}
         />
+
+        <hr className="border-stone-200" />
+
         <ShoppingBag.Pricing>
           <ShoppingBag.Subtotal price={cart.subtotal} />
         </ShoppingBag.Pricing>
