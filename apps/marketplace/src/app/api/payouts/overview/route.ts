@@ -5,7 +5,7 @@ import {
   getVendorIdFromAccessToken,
 } from "@/lib/auth/server";
 import { config } from "@/lib/config";
-import { getLedgerPool } from "@/lib/ledger/pool";
+import { getLedgerDb } from "@/lib/ledger/db/client";
 import {
   getVendorLedgerSummary,
   listAllLedgerLines,
@@ -23,9 +23,9 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const pool = getLedgerPool();
+  const db = getLedgerDb();
 
-  if (!pool) {
+  if (!db) {
     return NextResponse.json({
       batches: [],
       configured: false,
@@ -37,7 +37,7 @@ export async function GET() {
   const vendorIdPromise = getVendorIdFromAccessToken(token);
 
   const [batches, vendorId] = await Promise.all([
-    listRecentPayoutBatches(pool, 20),
+    listRecentPayoutBatches(db, 20),
     vendorIdPromise,
   ]);
 
@@ -48,8 +48,8 @@ export async function GET() {
 
   if (vendorId) {
     const [summary, lines] = await Promise.all([
-      getVendorLedgerSummary(pool, vendorId),
-      listVendorLedgerLines(pool, vendorId, {
+      getVendorLedgerSummary(db, vendorId),
+      listVendorLedgerLines(db, vendorId, {
         limit: LEDGER_LINES_LIMIT,
       }),
     ]);
@@ -58,7 +58,7 @@ export async function GET() {
     ledgerLinesRaw = lines;
   } else {
     vendorSummaryRaw = null;
-    ledgerLinesRaw = await listAllLedgerLines(pool, {
+    ledgerLinesRaw = await listAllLedgerLines(db, {
       limit: LEDGER_LINES_LIMIT,
     });
   }

@@ -1,4 +1,7 @@
-import { getLedgerPool } from "@/lib/ledger/pool";
+import { sql } from "drizzle-orm";
+
+import { getLedgerDb } from "@/lib/ledger/db/client";
+import { payoutBatches } from "@/lib/ledger/db/schema";
 import {
   countPayoutBatchItemsByStatus,
   insertStripeTransferRecord,
@@ -20,18 +23,19 @@ export type ExecutePayoutBatchResult = {
 export async function executePayoutBatchTransfers(
   batchId: string,
 ): Promise<ExecutePayoutBatchResult> {
-  const pool = getLedgerPool();
+  const db = getLedgerDb();
 
-  if (!pool) {
+  if (!db) {
     throw new Error("Ledger database not configured");
   }
 
-  const batchRow = await pool.query<{ status: string }>(
-    `select status::text as status from payout_batches where id = $1::uuid`,
-    [batchId],
-  );
+  const batchRow = await db
+    .select({ status: sql<string>`${payoutBatches.status}::text` })
+    .from(payoutBatches)
+    .where(sql`${payoutBatches.id} = ${batchId}::uuid`)
+    .limit(1);
 
-  const batchStatus = batchRow.rows[0]?.status;
+  const batchStatus = batchRow[0]?.status;
 
   if (
     batchStatus !== "locked" &&
@@ -43,12 +47,12 @@ export async function executePayoutBatchTransfers(
     );
   }
 
-  await setPayoutBatchStatus(pool, { batchId, status: "executing" });
+  await setPayoutBatchStatus(db, { batchId, status: "executing" });
 
-  const items = await listPayoutBatchItemsForExecution(pool, batchId);
+  const items = await listPayoutBatchItemsForExecution(db, batchId);
 
   if (items.length === 0) {
-    await setPayoutBatchStatus(pool, {
+    await setPayoutBatchStatus(db, {
       batchId,
       executedAt: new Date(),
       status: "paid",
@@ -82,7 +86,7 @@ export async function executePayoutBatchTransfers(
         transferGroup: `payout:${batchId}`,
       });
 
-      await insertStripeTransferRecord(pool, {
+      await insertStripeTransferRecord(db, {
         amountMinor: netMinor,
         currency: item.currency,
         destinationAccount: item.destination_account,
@@ -91,7 +95,7 @@ export async function executePayoutBatchTransfers(
         stripeTransferId: transfer.id,
         transferGroup: `payout:${batchId}`,
       });
-      await updatePayoutBatchItemStatus(pool, {
+      await updatePayoutBatchItemStatus(db, {
         itemId: item.id,
         status: "paid",
       });
@@ -100,7 +104,7 @@ export async function executePayoutBatchTransfers(
       const message = error instanceof Error ? error.message : String(error);
 
       errors.push({ itemId: item.id, message });
-      await updatePayoutBatchItemStatus(pool, {
+      await updatePayoutBatchItemStatus(db, {
         failureReason: message,
         itemId: item.id,
         status: "failed",
@@ -108,7 +112,7 @@ export async function executePayoutBatchTransfers(
     }
   }
 
-  const counts = await countPayoutBatchItemsByStatus(pool, batchId);
+  const counts = await countPayoutBatchItemsByStatus(db, batchId);
   let finalBatchStatus = "paid";
 
   if (counts.failed > 0) {
@@ -117,7 +121,7 @@ export async function executePayoutBatchTransfers(
     finalBatchStatus = "executing";
   }
 
-  await setPayoutBatchStatus(pool, {
+  await setPayoutBatchStatus(db, {
     batchId,
     executedAt: new Date(),
     status: finalBatchStatus,
