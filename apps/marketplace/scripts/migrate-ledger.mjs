@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -13,6 +13,15 @@ if (!connectionString) {
 }
 
 const migrationsDir = join(__dirname, "../db/migrations");
+
+if (!existsSync(migrationsDir)) {
+  console.error(
+    `Ledger migrations directory missing: ${migrationsDir}\n` +
+      "Ensure SQL files are committed (Vercel clones git; untracked db/migrations are not deployed).",
+  );
+  process.exit(1);
+}
+
 const files = readdirSync(migrationsDir)
   .filter((f) => f.endsWith(".sql"))
   .sort();
