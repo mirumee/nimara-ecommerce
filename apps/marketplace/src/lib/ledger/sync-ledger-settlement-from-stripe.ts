@@ -1,4 +1,4 @@
-import { getLedgerPool } from "@/lib/ledger/pool";
+import { getLedgerDb } from "@/lib/ledger/db/client";
 import {
   listDistinctStripeChargeIdsForSync,
   promoteOrderGrossPendingWhenAvailableOnReached,
@@ -53,16 +53,16 @@ async function settlementFromCharge(chargeId: string): Promise<{
 async function updateLedgerSettlementFromStripeCharge(
   chargeId: string,
 ): Promise<void> {
-  const pool = getLedgerPool();
+  const db = getLedgerDb();
 
-  if (!pool) {
+  if (!db) {
     return;
   }
 
   const { availableOn, balanceTransactionId } =
     await settlementFromCharge(chargeId);
 
-  await updateLedgerSettlementForCharge(pool, {
+  await updateLedgerSettlementForCharge(db, {
     availableOn,
     balanceTransactionId,
     stripeChargeId: chargeId,
@@ -77,13 +77,13 @@ export async function applySettlementForCharge(
   chargeId: string,
 ): Promise<void> {
   await updateLedgerSettlementFromStripeCharge(chargeId);
-  const pool = getLedgerPool();
+  const db = getLedgerDb();
 
-  if (!pool) {
+  if (!db) {
     return;
   }
 
-  await promoteOrderGrossPendingWhenAvailableOnReached(pool);
+  await promoteOrderGrossPendingWhenAvailableOnReached(db);
 }
 
 /**
@@ -93,14 +93,14 @@ export async function applySettlementForCharge(
 export async function syncLedgerSettlementFromStripe(input?: {
   chargeLimit?: number;
 }): Promise<SyncLedgerStripeSettlementResult> {
-  const pool = getLedgerPool();
+  const db = getLedgerDb();
 
-  if (!pool) {
+  if (!db) {
     return { ok: false, reason: "no_database" };
   }
 
   const limit = input?.chargeLimit ?? DEFAULT_CHARGE_LIMIT;
-  const chargeIds = await listDistinctStripeChargeIdsForSync(pool, { limit });
+  const chargeIds = await listDistinctStripeChargeIdsForSync(db, { limit });
   const chargeErrors: Array<{ chargeId: string; message: string }> = [];
   let chargesSynced = 0;
 
@@ -117,7 +117,7 @@ export async function syncLedgerSettlementFromStripe(input?: {
   }
 
   const promotedByDateCount =
-    await promoteOrderGrossPendingWhenAvailableOnReached(pool);
+    await promoteOrderGrossPendingWhenAvailableOnReached(db);
 
   return {
     chargeErrors,

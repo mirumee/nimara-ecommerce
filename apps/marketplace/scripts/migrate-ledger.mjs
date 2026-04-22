@@ -1,7 +1,8 @@
-import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { drizzle } from "drizzle-orm/node-postgres";
+import { migrate } from "drizzle-orm/node-postgres/migrator";
 import pg from "pg";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -12,32 +13,21 @@ if (!connectionString) {
   process.exit(1);
 }
 
-const migrationsDir = join(__dirname, "../db/migrations");
-
-if (!existsSync(migrationsDir)) {
-  console.error(
-    `Ledger migrations directory missing: ${migrationsDir}\n` +
-      "Ensure SQL files are committed (Vercel clones git; untracked db/migrations are not deployed).",
-  );
-  process.exit(1);
-}
-
-const files = readdirSync(migrationsDir)
-  .filter((f) => f.endsWith(".sql"))
-  .sort();
+const migrationsFolder = join(__dirname, "../db/drizzle");
 
 const client = new pg.Client({ connectionString });
 
 await client.connect();
 
 try {
-  for (const file of files) {
-    const sqlPath = join(migrationsDir, file);
-    const sql = readFileSync(sqlPath, "utf8");
+  const db = drizzle(client);
 
-    await client.query(sql);
-    console.log("Ledger migration applied:", sqlPath);
-  }
+  await migrate(db, {
+    migrationsFolder,
+    migrationsTable: "__drizzle_migrations",
+    migrationsSchema: "public",
+  });
+  console.log("Ledger migrations applied from", migrationsFolder);
 } finally {
   await client.end();
 }

@@ -1,4 +1,4 @@
-import { getLedgerPool } from "@/lib/ledger/pool";
+import { getLedgerDb } from "@/lib/ledger/db/client";
 import { closePayoutBatchAndCreateItems } from "@/lib/ledger/repository";
 
 export type ClosePayoutBatchInput = {
@@ -25,14 +25,14 @@ export type ClosePayoutBatchResult =
 export async function closePayoutBatchForPeriod(
   input: ClosePayoutBatchInput,
 ): Promise<ClosePayoutBatchResult> {
-  const pool = getLedgerPool();
+  const db = getLedgerDb();
 
-  if (!pool) {
+  if (!db) {
     return { ok: false, reason: "no_database" };
   }
 
   const cutoff = new Date();
-  const created = await closePayoutBatchAndCreateItems(pool, {
+  const created = await closePayoutBatchAndCreateItems(db, {
     createdBy: input.createdBy,
     currency: input.currency,
     cutoff,

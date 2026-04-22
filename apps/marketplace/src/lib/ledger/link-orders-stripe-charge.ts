@@ -1,6 +1,6 @@
 import { MetadataUpdateDocument } from "@/graphql/generated/client";
 import { executeGraphQL } from "@/lib/graphql/execute";
-import { getLedgerPool } from "@/lib/ledger/pool";
+import { getLedgerDb } from "@/lib/ledger/db/client";
 import { updateLedgerStripeChargeForOrders } from "@/lib/ledger/repository";
 import { METADATA_KEYS } from "@/lib/saleor/consts";
 import { getStripeClient } from "@/lib/stripe/client";
@@ -53,10 +53,10 @@ export async function linkOrdersToStripeChargeFromPaymentIntent(input: {
     return null;
   }
 
-  const pool = getLedgerPool();
+  const db = getLedgerDb();
 
-  if (pool) {
-    await updateLedgerStripeChargeForOrders(pool, {
+  if (db) {
+    await updateLedgerStripeChargeForOrders(db, {
       chargeId,
       orderIds: uniqueOrderIds,
     });

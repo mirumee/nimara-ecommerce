@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { getLedgerPool } from "@/lib/ledger/pool";
+import { getLedgerDb } from "@/lib/ledger/db/client";
 import { upsertVendorStripeAccount } from "@/lib/ledger/repository";
 import { METADATA_KEYS } from "@/lib/saleor/consts";
 import {
@@ -129,15 +129,15 @@ export async function POST(request: Request) {
         ]),
       });
 
-      const pool = getLedgerPool();
+      const db = getLedgerDb();
 
-      if (pool) {
+      if (db) {
         const defaultCurrency =
           typeof account.default_currency === "string"
             ? account.default_currency
             : "usd";
 
-        await upsertVendorStripeAccount(pool, {
+        await upsertVendorStripeAccount(db, {
           defaultCurrency,
           onboardingCompleted: connected,
           payoutsEnabled: Boolean(account.payouts_enabled),
@@ -154,9 +154,9 @@ export async function POST(request: Request) {
       });
     }
 
-    const pool = getLedgerPool();
+    const db = getLedgerDb();
 
-    if (pool && isLedgerStripeEventType(event.type)) {
+    if (db && isLedgerStripeEventType(event.type)) {
       const envelope: StripeWebhookEventEnvelope = {
         data: event.data,
         id: event.id,
@@ -164,11 +164,7 @@ export async function POST(request: Request) {
         type: event.type,
       };
 
-      const inserted = await tryRecordStripeWebhookInbox(
-        pool,
-        payload,
-        envelope,
-      );
+      const inserted = await tryRecordStripeWebhookInbox(db, payload, envelope);
 
       if (!inserted) {
         return NextResponse.json({
@@ -178,11 +174,11 @@ export async function POST(request: Request) {
       }
 
       try {
-        await processLedgerStripeSideEffects(pool, envelope);
-        await finalizeStripeWebhookInbox(pool, event.id, "ok");
+        await processLedgerStripeSideEffects(db, envelope);
+        await finalizeStripeWebhookInbox(db, event.id, "ok");
       } catch (error) {
         await finalizeStripeWebhookInbox(
-          pool,
+          db,
           event.id,
           error instanceof Error ? error.message : "error",
         );

@@ -1,4 +1,4 @@
-import { getLedgerPool } from "@/lib/ledger/pool";
+import { getLedgerDb } from "@/lib/ledger/db/client";
 import { insertOrderGrossLedgerEntry } from "@/lib/ledger/repository";
 
 /**
@@ -26,15 +26,15 @@ export type IngestOrderPaidInput = {
 export async function ingestOrderPaidToLedger(
   input: IngestOrderPaidInput,
 ): Promise<{ reason?: string; status: "recorded" | "skipped" }> {
-  const pool = getLedgerPool();
+  const db = getLedgerDb();
 
-  if (!pool) {
+  if (!db) {
     return { reason: "DATABASE_URL not configured", status: "skipped" };
   }
 
   const amountMinor = saleorGrossToMinorUnits(input.grossAmount);
 
-  await insertOrderGrossLedgerEntry(pool, {
+  await insertOrderGrossLedgerEntry(db, {
     amountMinor,
     currency: input.currency,
     occurredAt: input.occurredAt,
