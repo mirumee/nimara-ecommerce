@@ -1,0 +1,12 @@
+fragment VendorProfileFragment on Page {
+  id
+  title
+  content
+  slug
+  assignedAttributes {
+    attribute {
+      id
+      slug
+    }
+  }
+}

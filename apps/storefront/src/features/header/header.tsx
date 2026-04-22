@@ -6,6 +6,7 @@ import { LocalizedLink } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
 
 import { CACHE_TTL } from "@/config";
+import { clientEnvs } from "@/envs/client";
 import { getCheckoutId, getCheckoutIds } from "@/features/checkout/cart";
 import { LocaleSwitch } from "@/features/header/locale-switch";
 import { getCurrentRegion } from "@/foundation/regions";
@@ -46,8 +47,7 @@ export const Header = async () => {
   const resultUserGet = await userService.userGet(accessToken);
   const user = resultUserGet.ok ? resultUserGet.data : null;
 
-  const isMarketplaceEnabled =
-    process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED !== "false";
+  const isMarketplaceEnabled = clientEnvs.NEXT_PUBLIC_MARKETPLACE_ENABLED;
   let checkoutLinesCount = 0;
   const checkoutIds = isMarketplaceEnabled
     ? await getCheckoutIds()

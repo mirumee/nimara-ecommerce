@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
 import { COOKIE_KEY, COOKIE_MAX_AGE } from "@/config";
+import { clientEnvs } from "@/envs/client";
 import { MARKETPLACE_NO_VENDOR_BUCKET } from "@/features/checkout/constants";
 import { revalidateTag } from "@/foundation/cache/cache";
 import { paths } from "@/foundation/routing/paths";
@@ -16,8 +17,7 @@ type MarketplaceCheckoutCookieV1 = {
   v: number;
 };
 
-const isMarketplaceEnabled =
-  process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED !== "false";
+const isMarketplaceEnabled = clientEnvs.NEXT_PUBLIC_MARKETPLACE_ENABLED;
 
 const sanitizeCheckoutId = (value: unknown): string | null => {
   if (typeof value !== "string") {

@@ -1,0 +1,5 @@
+query VendorGetByID($id: ID!) {
+  page(id: $id) {
+    ...VendorProfileFragment
+  }
+}

@@ -47,25 +47,6 @@ export const getCheckoutOrRedirect = async (): Promise<Checkout> | never => {
   return resultCheckout.data.checkout;
 };
 
-const getVendorDisplayName = (
-  checkout: Checkout,
-  vendorKey: string,
-): string => {
-  const vendorFromLines = checkout.lines
-    .map((line) => line.product.vendorId)
-    .find((vendorId): vendorId is string => !!vendorId);
-
-  if (vendorFromLines) {
-    return vendorFromLines;
-  }
-
-  if (vendorKey === MARKETPLACE_NO_VENDOR_BUCKET) {
-    return "No vendor";
-  }
-
-  return vendorKey;
-};
-
 export const getMarketplaceCheckoutsOrRedirect = async ():
   | Promise<MarketplaceCheckoutItem[]>
   | never => {
@@ -105,13 +86,25 @@ export const getMarketplaceCheckoutsOrRedirect = async ():
         checkoutIdToVendorKey.get(checkoutId) ?? MARKETPLACE_NO_VENDOR_BUCKET;
       const checkout = result.data.checkout;
 
+      let displayName = "Marketplace";
+
+      if (vendorKey !== MARKETPLACE_NO_VENDOR_BUCKET) {
+        const marketplaceService = await services.getMarketplaceService();
+        const vendorProfileResult =
+          await marketplaceService.vendorGetByID(vendorKey);
+
+        if (vendorProfileResult.ok) {
+          displayName = vendorProfileResult.data.name;
+        }
+      }
+
       await validateCheckoutLinesAction({ checkout, locale });
 
       return {
         checkout,
         checkoutId,
         vendorKey,
-        vendorDisplayName: getVendorDisplayName(checkout, vendorKey),
+        vendorDisplayName: displayName,
       } satisfies MarketplaceCheckoutItem;
     }),
   );

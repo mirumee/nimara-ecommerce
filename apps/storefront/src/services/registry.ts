@@ -4,6 +4,7 @@ import type { ServiceRegistry } from "@nimara/infrastructure/types";
 import { CACHE_TTL } from "@/config";
 import { createAddressServiceLoader } from "@/services/lazy-loaders/address";
 import { createCheckoutServiceLoader } from "@/services/lazy-loaders/checkout";
+import { createMarketplaceServiceLoader } from "@/services/lazy-loaders/marketplace";
 import { createPaymentServiceLoader } from "@/services/lazy-loaders/payment";
 
 import { createCartServiceLoader } from "./lazy-loaders/cart";
@@ -44,6 +45,7 @@ export const getServiceRegistry = async (): Promise<ServiceRegistry> => {
   const getSearchService = createSearchServiceLoader(logger);
   const getStoreService = createStoreServiceLoader(logger);
   const getUserService = createUserServiceLoader(logger);
+  const getMarketplaceService = createMarketplaceServiceLoader(logger);
 
   serviceRegistryInstance = {
     config,
@@ -57,6 +59,7 @@ export const getServiceRegistry = async (): Promise<ServiceRegistry> => {
     getStoreService,
     getUserService,
     getPaymentService,
+    getMarketplaceService,
   };
 
   return serviceRegistryInstance;

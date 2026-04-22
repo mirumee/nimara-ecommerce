@@ -11,10 +11,17 @@ interface SummaryProps {
   }) => Promise<Result<{ success: boolean }>>;
   checkout: Checkout;
   hidePromoCode?: boolean;
+  /**
+   * The mode of the checkout. Determines which summary UI to display.
+   * - "standard": Single checkout with promo code support
+   * - "marketplace": Aggregated multi-vendor checkout
+   */
+  mode?: "standard" | "marketplace";
   removePromoCodeAction?: (params: {
     checkoutId: string;
     promoCode: string;
   }) => Promise<Result<{ success: boolean }>>;
+  vendorIdNames?: Record<string, string>;
 }
 
 export const Summary = ({
@@ -22,14 +29,18 @@ export const Summary = ({
   addPromoCodeAction,
   removePromoCodeAction,
   hidePromoCode = false,
+  mode = "standard",
+  vendorIdNames,
 }: SummaryProps) => {
   return (
     <ShoppingBag>
       <ShoppingBag.Header totalPrice={checkout.totalPrice.gross} />
       <ShoppingBag.Lines
+        vendorIdNames={vendorIdNames}
         lines={checkout.lines}
         isLinesEditable={false}
         problems={checkout.problems}
+        isMarketplaceEnabled={mode === "marketplace"}
       />
       {!hidePromoCode && (
         <ShoppingBag.DiscountCode

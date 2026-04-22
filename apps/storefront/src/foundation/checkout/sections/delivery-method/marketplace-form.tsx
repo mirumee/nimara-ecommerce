@@ -77,15 +77,20 @@ export const MarketplaceDeliveryMethodForm = ({
   return (
     <FormProvider {...form}>
       <form
-        className="space-y-8"
+        className="space-y-4"
         onSubmit={form.handleSubmit(onSubmit)}
         noValidate
       >
         {checkoutItems.map(({ checkout, checkoutId, vendorDisplayName }) => (
-          <div key={checkoutId} className="space-y-3">
-            <p className="text-sm font-medium text-muted-foreground">
-              Vendor: {vendorDisplayName}
-            </p>
+          <div key={checkoutId} className="rounded-md bg-muted p-4">
+            <div className="grid">
+              <span className="text-xs leading-4 text-muted-foreground">
+                Sells and delivered by
+              </span>
+              <span className="text-sm font-semibold text-primary">
+                {vendorDisplayName}
+              </span>
+            </div>
             <RadioFormGroup
               label={t("delivery-method.delivery-method")}
               name={`deliveryMethod-${checkoutId}`}
@@ -102,7 +107,7 @@ export const MarketplaceDeliveryMethodForm = ({
               {checkout.shippingMethods.map((method) => (
                 <div key={method.id} className="flex w-full">
                   <p className="w-1/2">{method.name}</p>
-                  <p className="w-1/2 text-end text-muted-foreground">
+                  <p className="w-1/2 text-end text-primary">
                     {formatter.number(method.price.amount, {
                       style: "currency",
                       currency: method.price.currency,

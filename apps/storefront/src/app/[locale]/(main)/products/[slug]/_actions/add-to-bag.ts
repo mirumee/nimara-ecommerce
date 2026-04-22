@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { addToBag } from "@nimara/features/product-detail-page/shared/actions/add-to-bag.core";
 
+import { clientEnvs } from "@/envs/client";
 import {
   getCheckoutId,
   getCheckoutIdForVendor,
@@ -17,8 +18,7 @@ import { storefrontLogger } from "@/services/logging";
 import { getServiceRegistry } from "@/services/registry";
 import { getAccessToken } from "@/services/tokens";
 
-const marketplaceEnabled =
-  process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED !== "false";
+const marketplaceEnabled = clientEnvs.NEXT_PUBLIC_MARKETPLACE_ENABLED;
 
 /**
  * Server action wrapper for adding items to the cart.
