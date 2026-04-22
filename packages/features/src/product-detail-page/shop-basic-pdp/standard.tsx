@@ -71,7 +71,6 @@ export const StandardPDPView = async ({
                   checkoutId={checkoutId}
                   cartPath={paths.cart}
                   region={region}
-                  isMarketplaceEnabled={marketplaceEnabled}
                   addToBagAction={addToBagAction}
                 />
 
