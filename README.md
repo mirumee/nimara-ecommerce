@@ -162,7 +162,7 @@ git pull origin main
 
 ## Deploying the app to Vercel using a Terraform
 
-A guide how to deploy the app to Vercel using a Terraform can be found here: [Using Terraform - Nimara Docs](https://docs.nimara.store/quickstart/using-terraform).
+A guide how to deploy the app to Vercel using a Terraform can be found here: [Using Terraform - Nimara Docs](https://docs.nimara.store/docs/quickstart/using-terraform).
 
 ## 📚 Documentation
 
