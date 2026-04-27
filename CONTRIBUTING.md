@@ -23,7 +23,7 @@ We welcome all contributions, whether they be code, documentation, bug reports, 
    - Add the original repository as a remote to keep your fork in sync:
 
      ```bash
-     git remote add upstream https://github.com/mirumee/nimara-storefront.git
+     git remote add upstream git@github.com:mirumee/nimara-ecommerce.git
      git fetch upstream
      ```
 
