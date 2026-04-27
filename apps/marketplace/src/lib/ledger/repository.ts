@@ -1,6 +1,19 @@
 import crypto from "node:crypto";
 
-import { and, desc, eq, gt, inArray, isNull, sql } from "drizzle-orm";
+import {
+  and,
+  desc,
+  eq,
+  gt,
+  gte,
+  ilike,
+  inArray,
+  isNotNull,
+  isNull,
+  lt,
+  lte,
+  sql,
+} from "drizzle-orm";
 
 import {
   balanceSnapshots,
@@ -159,7 +172,7 @@ export async function listDistinctStripeChargeIdsForSync(
     .where(
       and(
         eq(ledgerEntries.entryType, "order_gross"),
-        sql`${ledgerEntries.stripeChargeId} is not null`,
+        isNotNull(ledgerEntries.stripeChargeId),
         isNull(ledgerEntries.consumedInBatchId),
       ),
     )
@@ -184,8 +197,8 @@ export async function promoteOrderGrossPendingWhenAvailableOnReached(
       and(
         eq(ledgerEntries.entryType, "order_gross"),
         eq(ledgerEntries.fundsStatus, "pending_stripe"),
-        sql`${ledgerEntries.availableOn} is not null`,
-        sql`${ledgerEntries.availableOn} <= now()`,
+        isNotNull(ledgerEntries.availableOn),
+        lte(ledgerEntries.availableOn, sql`now()`),
       ),
     );
 
@@ -318,6 +331,11 @@ export async function ensureLedgerEntriesConsumedForBatch(
     return;
   }
 
+  const periodStartAt = new Date(`${row.periodStart}T00:00:00.000Z`);
+  const periodEndEAt = new Date(`${row.periodEnd}T00:00:00.000Z`);
+
+  periodEndEAt.setUTCDate(periodEndEAt.getUTCDate() + 1);
+
   const batchVendorIds = db
     .select({ vendorId: payoutBatchItems.vendorId })
     .from(payoutBatchItems)
@@ -331,9 +349,9 @@ export async function ensureLedgerEntriesConsumedForBatch(
         isNull(ledgerEntries.consumedInBatchId),
         eq(ledgerEntries.entryType, "order_gross"),
         eq(ledgerEntries.fundsStatus, "available"),
-        sql`lower(${ledgerEntries.currency}) = lower(${row.currency})`,
-        sql`${ledgerEntries.occurredAt}::date >= ${row.periodStart}::date`,
-        sql`${ledgerEntries.occurredAt}::date <= ${row.periodEnd}::date`,
+        ilike(ledgerEntries.currency, row.currency),
+        gte(ledgerEntries.occurredAt, periodStartAt),
+        lt(ledgerEntries.occurredAt, periodEndEAt),
         inArray(ledgerEntries.vendorId, batchVendorIds),
       ),
     );
