@@ -2,9 +2,9 @@ import { type NextRequest, NextResponse } from "next/server";
 
 import { MetadataUpdateDocument } from "@/graphql/generated/client";
 import { executeGraphQL } from "@/lib/graphql/execute";
+import { getLedgerDb } from "@/lib/ledger/db/client";
 import { ingestOrderPaidToLedger } from "@/lib/ledger/ingest-order-paid";
 import { getChargeIdFromPaymentIntentId } from "@/lib/ledger/link-orders-stripe-charge";
-import { getLedgerPool } from "@/lib/ledger/pool";
 import { updateLedgerStripeChargeForOrders } from "@/lib/ledger/repository";
 import { applySettlementForCharge } from "@/lib/ledger/sync-ledger-settlement-from-stripe";
 import { getAppConfig } from "@/lib/saleor/app-config";
@@ -287,10 +287,10 @@ export async function POST(request: NextRequest) {
       vendorId,
     });
 
-    const pool = getLedgerPool();
+    const db = getLedgerDb();
 
-    if (stripeChargeId && pool) {
-      await updateLedgerStripeChargeForOrders(pool, {
+    if (stripeChargeId && db) {
+      await updateLedgerStripeChargeForOrders(db, {
         chargeId: stripeChargeId,
         orderIds: [orderFromWebhook.id],
       });

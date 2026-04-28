@@ -1,5 +1,4 @@
-import type { Pool } from "pg";
-
+import type { LedgerExecutor } from "@/lib/ledger/db/client";
 import {
   insertPlatformBalanceSnapshot,
   markStripeWebhookProcessed,
@@ -32,7 +31,7 @@ export function isLedgerStripeEventType(type: string): boolean {
 }
 
 export async function tryRecordStripeWebhookInbox(
-  pool: Pool,
+  db: LedgerExecutor,
   payloadRaw: string,
   event: StripeWebhookEventEnvelope,
 ): Promise<boolean> {
@@ -44,7 +43,7 @@ export async function tryRecordStripeWebhookInbox(
     payloadJson = { parseError: true };
   }
 
-  const row = await tryInsertStripeWebhookEvent(pool, {
+  const row = await tryInsertStripeWebhookEvent(db, {
     eventType: event.type,
     livemode: event.livemode,
     payloadJson,
@@ -56,20 +55,20 @@ export async function tryRecordStripeWebhookInbox(
 }
 
 export async function processLedgerStripeSideEffects(
-  pool: Pool,
+  db: LedgerExecutor,
   event: StripeWebhookEventEnvelope,
 ): Promise<void> {
   switch (event.type) {
     case "charge.succeeded":
-      await handleChargeSucceeded(pool, event.data?.object);
+      await handleChargeSucceeded(db, event.data?.object);
       break;
     case "balance.available":
-      await handleBalanceAvailable(pool);
+      await handleBalanceAvailable(db);
       break;
     case "transfer.created":
     case "transfer.updated":
     case "transfer.reversed":
-      await handleTransferEvent(pool, event.data?.object);
+      await handleTransferEvent(db, event.data?.object);
       break;
     default:
       break;
@@ -77,7 +76,7 @@ export async function processLedgerStripeSideEffects(
 }
 
 async function handleChargeSucceeded(
-  pool: Pool,
+  db: LedgerExecutor,
   charge: Record<string, unknown> | undefined,
 ): Promise<void> {
   if (!charge?.id || typeof charge.id !== "string") {
@@ -111,14 +110,14 @@ async function handleChargeSucceeded(
     }
   }
 
-  await updateLedgerSettlementForCharge(pool, {
+  await updateLedgerSettlementForCharge(db, {
     availableOn,
     balanceTransactionId,
     stripeChargeId: chargeId,
   });
 }
 
-async function handleBalanceAvailable(pool: Pool): Promise<void> {
+async function handleBalanceAvailable(db: LedgerExecutor): Promise<void> {
   const bal = await getStripePlatformBalance();
   const currencies = new Set<string>();
 
@@ -142,7 +141,7 @@ async function handleBalanceAvailable(pool: Pool): Promise<void> {
         .reduce((sum, r) => sum + r.amount, 0),
     );
 
-    await insertPlatformBalanceSnapshot(pool, {
+    await insertPlatformBalanceSnapshot(db, {
       availableMinor,
       currency,
       pendingMinor,
@@ -152,7 +151,7 @@ async function handleBalanceAvailable(pool: Pool): Promise<void> {
 }
 
 async function handleTransferEvent(
-  pool: Pool,
+  db: LedgerExecutor,
   obj: Record<string, unknown> | undefined,
 ): Promise<void> {
   const id = typeof obj?.id === "string" ? obj.id : null;
@@ -162,18 +161,18 @@ async function handleTransferEvent(
     return;
   }
 
-  await updateStripeTransferRowStatus(pool, {
+  await updateStripeTransferRowStatus(db, {
     stripeStatus: status,
     stripeTransferId: id,
   });
 }
 
 export async function finalizeStripeWebhookInbox(
-  pool: Pool,
+  db: LedgerExecutor,
   eventId: string,
   result: string,
 ): Promise<void> {
-  await markStripeWebhookProcessed(pool, {
+  await markStripeWebhookProcessed(db, {
     result,
     stripeEventId: eventId,
   });
