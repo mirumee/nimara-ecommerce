@@ -7,7 +7,7 @@ import { Button } from "@nimara/ui/components/button";
 
 import { CACHE_TTL } from "@/config";
 import { clientEnvs } from "@/envs/client";
-import { getAllCheckoutIds,getCheckoutId } from "@/features/checkout/server";
+import { getAllCheckoutIds, getCheckoutId } from "@/features/checkout/server";
 import { LocaleSwitch } from "@/features/header/locale-switch";
 import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";

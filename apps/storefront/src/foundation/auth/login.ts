@@ -6,8 +6,10 @@ import { AuthError } from "next-auth";
 import { signIn } from "@/auth";
 import { CACHE_TTL } from "@/config";
 import { clientEnvs } from "@/envs/client";
-import {   getAllCheckoutIds,
-getCheckoutId, setCheckoutIdCookie ,
+import {
+  getAllCheckoutIds,
+  getCheckoutId,
+  setCheckoutIdCookie,
   setCheckoutIdForVendor,
 } from "@/features/checkout/server";
 import { getCurrentRegion } from "@/foundation/regions";

@@ -6,8 +6,9 @@ import {
   updateLineQuantity,
 } from "@nimara/features/cart/shared/actions/cart-actions.core";
 
-import {   getAllCheckoutIds,
-revalidateCart ,
+import {
+  getAllCheckoutIds,
+  revalidateCart,
   setMarketplaceCheckoutIdsCookie,
 } from "@/features/checkout/server";
 import { getCurrentRegion } from "@/foundation/regions";
