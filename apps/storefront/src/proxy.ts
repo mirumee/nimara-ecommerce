@@ -14,7 +14,7 @@ export default chain([
   ucpProxyMiddleware({
     redirectEnabled: true,
     checkoutCookie: {
-      key: COOKIE_KEY.checkoutId,
+      key: COOKIE_KEY.checkout,
       maxAge: COOKIE_MAX_AGE.checkout,
       path: "/",
       httpOnly: true,

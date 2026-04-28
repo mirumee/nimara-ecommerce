@@ -4,10 +4,12 @@ import { CartShell } from "@nimara/features/cart/shared/components/cart-shell";
 import { EmptyCart } from "@nimara/features/cart/shared/components/empty-cart";
 import { type CartViewProps } from "@nimara/features/cart/shared/types";
 
+import {
+  MARKETPLACE_DEFAULT_VENDOR_DISPLAY_NAME,
+  MARKETPLACE_NO_VENDOR_BUCKET,
+} from "@/config";
 import { aggregateCarts } from "@/features/checkout/aggregations";
-import { getCheckoutIdsByVendor } from "@/features/checkout/cart";
-import { MARKETPLACE_NO_VENDOR_BUCKET } from "@/features/checkout/constants";
-import { paths } from "@/foundation/routing/paths";
+import { getAllCheckoutIds } from "@/features/checkout/server";
 
 export const MarketplaceCartView = async (props: CartViewProps) => {
   const {
@@ -21,8 +23,8 @@ export const MarketplaceCartView = async (props: CartViewProps) => {
     logger,
   } = props;
 
-  const checkoutIdsByVendor = await getCheckoutIdsByVendor();
-  const checkoutIds = [...new Set(Object.values(checkoutIdsByVendor))];
+  const checkoutIdsByVendor = await getAllCheckoutIds();
+  const checkoutIds = Object.values(checkoutIdsByVendor ?? {}).filter(Boolean);
 
   if (!checkoutIds.length) {
     return (
@@ -83,9 +85,9 @@ export const MarketplaceCartView = async (props: CartViewProps) => {
   const marketplaceService = await services.getMarketplaceService();
   const vendorIdNames: Record<string, string> = {};
 
-  for (const [vendorId, _] of Object.entries(checkoutIdsByVendor)) {
+  for (const [vendorId, _] of Object.entries({})) {
     if (vendorId === MARKETPLACE_NO_VENDOR_BUCKET) {
-      vendorIdNames[vendorId] = "Marketplace";
+      vendorIdNames[vendorId] = MARKETPLACE_DEFAULT_VENDOR_DISPLAY_NAME;
     } else {
       const result = await marketplaceService.vendorGetByID(vendorId);
 

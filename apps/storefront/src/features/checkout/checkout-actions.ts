@@ -4,20 +4,27 @@ import { getLocale } from "next-intl/server";
 import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { redirect } from "@nimara/i18n/routing";
 
+import {
+  MARKETPLACE_DEFAULT_VENDOR_DISPLAY_NAME,
+  MARKETPLACE_NO_VENDOR_BUCKET,
+} from "@/config";
 import { aggregateMarketplaceCheckouts } from "@/features/checkout/aggregations";
 import {
-  clearCheckoutCookie,
+  deleteCheckoutIdCookie,
+  getAllCheckoutIds,
   getCheckoutId,
-  getCheckoutIdsByVendor,
-  setMarketplaceCheckoutIdsCookie,
-} from "@/features/checkout/cart";
-import { deleteCheckoutIdCookie } from "@/features/checkout/checkout";
-import { MARKETPLACE_NO_VENDOR_BUCKET } from "@/features/checkout/constants";
+} from "@/features/checkout/server";
 import { type MarketplaceCheckoutItem } from "@/features/checkout/types";
 import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
 import { getServiceRegistry } from "@/services/registry";
 
+/**
+ * Retrieves the current checkout for the user or redirects to the cart page if not found or invalid.
+ *
+ * @returns {Promise<Checkout>} The current valid checkout object.
+ * @throws Redirects to the cart page on error or missing/invalid checkout.
+ */
 export const getCheckoutOrRedirect = async (): Promise<Checkout> | never => {
   const checkoutId = await getCheckoutId();
   const [locale, region] = await Promise.all([getLocale(), getCurrentRegion()]);
@@ -51,13 +58,13 @@ export const getMarketplaceCheckoutsOrRedirect = async ():
   | Promise<MarketplaceCheckoutItem[]>
   | never => {
   const [checkoutIdsByVendor, locale, region, services] = await Promise.all([
-    getCheckoutIdsByVendor(),
+    getAllCheckoutIds(),
     getLocale(),
     getCurrentRegion(),
     getServiceRegistry(),
   ]);
 
-  const checkoutIds = [...new Set(Object.values(checkoutIdsByVendor))];
+  const checkoutIds = [...new Set(Object.values(checkoutIdsByVendor ?? {}))];
 
   if (!checkoutIds.length) {
     redirect({ href: paths.cart.asPath(), locale });
@@ -65,7 +72,7 @@ export const getMarketplaceCheckoutsOrRedirect = async ():
 
   const checkoutService = await services.getCheckoutService();
   const checkoutIdToVendorKey = new Map<string, string>(
-    Object.entries(checkoutIdsByVendor).map(([vendorKey, checkoutId]) => [
+    Object.entries(checkoutIdsByVendor ?? {}).map(([vendorKey, checkoutId]) => [
       checkoutId,
       vendorKey,
     ]),
@@ -86,7 +93,7 @@ export const getMarketplaceCheckoutsOrRedirect = async ():
         checkoutIdToVendorKey.get(checkoutId) ?? MARKETPLACE_NO_VENDOR_BUCKET;
       const checkout = result.data.checkout;
 
-      let displayName = "Marketplace";
+      let displayName = MARKETPLACE_DEFAULT_VENDOR_DISPLAY_NAME;
 
       if (vendorKey !== MARKETPLACE_NO_VENDOR_BUCKET) {
         const marketplaceService = await services.getMarketplaceService();
@@ -115,24 +122,8 @@ export const getMarketplaceCheckoutsOrRedirect = async ():
   );
 
   if (!validCheckoutItems.length) {
-    await clearCheckoutCookie();
+    await deleteCheckoutIdCookie();
     redirect({ href: paths.cart.asPath(), locale });
-  }
-
-  const validCheckoutIds = new Set(
-    validCheckoutItems.map((item) => item.checkoutId),
-  );
-  const filteredCheckoutIdsByVendor = Object.fromEntries(
-    Object.entries(checkoutIdsByVendor).filter(([, checkoutId]) =>
-      validCheckoutIds.has(checkoutId),
-    ),
-  );
-
-  if (
-    Object.keys(filteredCheckoutIdsByVendor).length !==
-    Object.keys(checkoutIdsByVendor).length
-  ) {
-    await setMarketplaceCheckoutIdsCookie(filteredCheckoutIdsByVendor);
   }
 
   return validCheckoutItems;

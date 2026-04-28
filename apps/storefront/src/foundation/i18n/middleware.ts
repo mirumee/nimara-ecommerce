@@ -19,7 +19,7 @@ import { storefrontLogger } from "@/services/logging";
 export const i18nMiddleware: (next: CustomMiddleware) => CustomMiddleware =
   createI18nMiddleware({
     localeCookieKey: COOKIE_KEY.locale,
-    checkoutIdCookieKey: COOKIE_KEY.checkoutId,
+    checkoutCookieKey: COOKIE_KEY.checkout,
     localeCookieMaxAge: COOKIE_MAX_AGE.locale,
     logger: storefrontLogger,
     onLocaleChange: (from, to) => {

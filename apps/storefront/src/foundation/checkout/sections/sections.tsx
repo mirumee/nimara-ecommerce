@@ -88,6 +88,7 @@ export const CheckoutSections = ({
         null)
       : null,
   };
+  const isDeliverySelected = checkoutForSections.deliveryMethod !== null;
 
   const submitDeliveryMethod = () => {
     router.push(
@@ -147,18 +148,22 @@ export const CheckoutSections = ({
           <CheckoutDeliveryMethodSection
             checkout={checkoutForSections}
             isOpen={step === "delivery-method"}
-            collapsedSummary={checkoutsWithShippingRequired.map(
-              ({ checkout, vendorDisplayName }) => (
-                <div
-                  key={checkout.id}
-                  className="muted-foreground flex items-center gap-1 text-sm text-muted-foreground"
-                >
-                  <span>{checkout.deliveryMethod?.name}</span>
-                  <span>-</span>
-                  <span>{vendorDisplayName}</span>
-                </div>
-              ),
-            )}
+            collapsedSummary={
+              isDeliverySelected
+                ? checkoutsWithShippingRequired.map(
+                    ({ checkout, vendorDisplayName }) => (
+                      <div
+                        key={checkout.id}
+                        className="muted-foreground flex items-center gap-1 text-sm text-muted-foreground"
+                      >
+                        <span>
+                          {vendorDisplayName} - {checkout.deliveryMethod?.name}
+                        </span>
+                      </div>
+                    ),
+                  )
+                : null
+            }
           >
             <MarketplaceDeliveryMethodForm
               checkoutItems={checkoutsWithShippingRequired}

@@ -7,8 +7,6 @@ import { useEffect, useRef, useState } from "react";
 import { type Cart } from "@nimara/domain/objects/Cart";
 import type { AsyncResult } from "@nimara/domain/objects/Result";
 import { type User } from "@nimara/domain/objects/User";
-import { Line } from "@nimara/features/shared/shopping-bag/components/line";
-import { groupLinesByVendorId } from "@nimara/features/shared/shopping-bag/helpers";
 import { ShoppingBag } from "@nimara/features/shared/shopping-bag/shopping-bag";
 import { LocalizedLink, useRouter } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";

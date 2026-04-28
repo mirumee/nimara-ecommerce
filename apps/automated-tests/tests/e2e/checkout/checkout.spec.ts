@@ -6,7 +6,7 @@ test.describe("Logged-in user checkout", () => {
   test.beforeEach(async ({ productPage, cartPage, checkoutLoginPage }) => {
     await productPage.goto(product.url);
 
-    // Add to bag mutation must finished and set checkoutId cookie, thus
+    // Add to bag mutation must finished and set checkout cookie, thus
     // navigation to cart page is required - the cookie will be set by the time the page loads
     await productPage.addProductToBagAndGoToCart();
 

@@ -7,7 +7,7 @@ import { Button } from "@nimara/ui/components/button";
 
 import { CACHE_TTL } from "@/config";
 import { clientEnvs } from "@/envs/client";
-import { getCheckoutId, getCheckoutIds } from "@/features/checkout/cart";
+import { getAllCheckoutIds,getCheckoutId } from "@/features/checkout/server";
 import { LocaleSwitch } from "@/features/header/locale-switch";
 import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
@@ -49,11 +49,13 @@ export const Header = async () => {
 
   const isMarketplaceEnabled = clientEnvs.NEXT_PUBLIC_MARKETPLACE_ENABLED;
   let checkoutLinesCount = 0;
+
+  const checkoutIdsByVendor = isMarketplaceEnabled
+    ? await getAllCheckoutIds()
+    : null;
   const checkoutIds = isMarketplaceEnabled
-    ? await getCheckoutIds()
-    : [await getCheckoutId()].filter(
-        (checkoutId): checkoutId is string => !!checkoutId,
-      );
+    ? Object.values(checkoutIdsByVendor ?? {})
+    : [await getCheckoutId()].filter(Boolean);
 
   if (checkoutIds.length) {
     const cartService = await services.getCartService();

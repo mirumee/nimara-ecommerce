@@ -85,7 +85,7 @@ export const MarketplaceDeliveryMethodForm = ({
           <div key={checkoutId} className="rounded-md bg-muted p-4">
             <div className="grid">
               <span className="text-xs leading-4 text-muted-foreground">
-                Sells and delivered by
+                {t("vendor.checkout-label")}
               </span>
               <span className="text-sm font-semibold text-primary">
                 {vendorDisplayName}

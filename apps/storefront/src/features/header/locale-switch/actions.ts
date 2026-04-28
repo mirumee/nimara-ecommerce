@@ -13,7 +13,7 @@ export const handleLocaleChange = async (locale: Locale) => {
   const cookieStore = await cookies();
 
   cookieStore.set(COOKIE_KEY.locale, locale);
-  cookieStore.delete(COOKIE_KEY.checkoutId);
+  cookieStore.delete(COOKIE_KEY.checkout);
   revalidatePath("/");
 
   redirect(locale === DEFAULT_LOCALE ? "/" : LOCALE_PREFIXES[locale]);

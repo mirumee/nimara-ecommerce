@@ -34,9 +34,10 @@ export const splitLinesByProblems = (
  */
 export const groupLinesByVendorId = (
   lines: Line[],
+  noVendorId: string = "__DEFAULT__",
 ): Record<string, Line[]> => {
   return lines.reduce<Record<string, Line[]>>((acc, line) => {
-    const vendorId = line.product.vendorId;
+    const vendorId = line.product.vendorId ?? noVendorId;
 
     if (!vendorId) {
       return acc;

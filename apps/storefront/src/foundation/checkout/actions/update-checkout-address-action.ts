@@ -10,7 +10,7 @@ import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { type AsyncResult, ok } from "@nimara/domain/objects/Result";
 
 import { clientEnvs } from "@/envs/client";
-import { getCheckoutIds } from "@/features/checkout/cart";
+import { getAllCheckoutIds } from "@/features/checkout/server";
 import { paths } from "@/foundation/routing/paths";
 import { getServiceRegistry } from "@/services/registry";
 
@@ -47,7 +47,10 @@ export const updateCheckoutAddressAction = async ({
       : checkoutService.checkoutBillingAddressUpdate;
 
   if (isMarketplaceEnabled) {
-    const checkoutIds = await getCheckoutIds();
+    const checkoutIdsByVendor = await getAllCheckoutIds();
+    const checkoutIds = Object.values(checkoutIdsByVendor ?? {}).filter(
+      Boolean,
+    );
     const targetCheckoutIds = checkoutIds.length ? checkoutIds : [values.id];
     const results = await Promise.all(
       targetCheckoutIds.map((id) =>

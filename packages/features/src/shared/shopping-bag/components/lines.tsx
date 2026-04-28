@@ -54,16 +54,19 @@ export const Lines = ({
             <div key={vendorId} className="grid gap-4">
               <div className="flex w-full items-start justify-between gap-2">
                 <div className="grid">
-                  <span className="text-muted-foreground">
-                    Sells and delivered by
+                  <span className="text-muted-foreground text-xs">
+                    {t("vendor.checkout-label")}
                   </span>
-                  <span className="text-primary font-medium">
+                  <span className="text-primary text-sm font-semibold">
                     {vendorIdNames?.[vendorId] ?? vendorId}
                   </span>
                 </div>
 
                 <div className="border-full bg-primary text-secondary rounded-full border-stone-200 px-2 py-1 text-xs">
-                  Order {index + 1} of {vendorIds.length}
+                  {t("vendor.orders-chip", {
+                    index: index + 1,
+                    total: vendorIds.length,
+                  })}
                 </div>
               </div>
 

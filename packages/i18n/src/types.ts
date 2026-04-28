@@ -81,11 +81,11 @@ export type CurrencyCode =
 
 export interface I18nMiddlewareOptions {
   /**
-   * Cookie key name for storing the checkout ID (optional).
-   * If provided, the checkout ID cookie will be deleted when locale changes.
-   * Default is "checkoutId".
+   * Cookie key name for storing the checkout (optional).
+   * If provided, the checkout cookie will be deleted when locale changes.
+   * Default is "checkout".
    */
-  checkoutIdCookieKey?: string;
+  checkoutCookieKey?: string;
   /**
    * Cookie key name for storing the locale.
    * Default is "NEXT_LOCALE".

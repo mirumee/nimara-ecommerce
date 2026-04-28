@@ -15,22 +15,38 @@ import { VariantSelectorWrapper } from "../shared/components/variant-selector-wr
 import { ProductProvider } from "../shared/providers/product-provider";
 import { type PDPViewProps } from "../shared/types";
 
+interface MarketplacePDPViewProps extends PDPViewProps {
+  /**
+   * The paths for the marketplace view.
+   */
+  paths: PDPViewProps["paths"] & {
+    vendor: (vendorSlug: string) => string;
+  };
+  /** The vendor ID of the product for marketplace mode. Used to route to correct vendor checkout. */
+  vendorId?: string | null;
+  /**
+   * A component to render a link to the vendor page. Used to link to the vendor page for marketplace mode.
+   */
+  vendorPageLinkComponent?: React.ReactNode;
+}
+
 /**
- * Standard view for the product details page.
- * @param param0 - The properties for the base view.
- * @param param0.productDescription - Optional description of the product to display or component to render.
- * @param param0.productName - Name of the product to display or component to render.
- * @returns A React component rendering the base view of the product details page.
+ * Marketplace view for the product details page.
+ * @param param0 - The properties for the marketplace view.
+ * @param param0.vendorId - The vendor ID of the product for marketplace mode. Used to route to correct vendor checkout.
+ * @param param0.vendorPageLinkComponent - A component to render a link to the vendor page. Used to link to the vendor page for marketplace mode.
+ * @returns A React component rendering the marketplace view of the product details page.
  */
-export const StandardPDPView = async ({
+export const MarketplacePDPView = async ({
   params,
   services,
   paths,
   checkoutId,
   addToBagAction,
   region,
-}: PDPViewProps) => {
+}: MarketplacePDPViewProps) => {
   const { slug } = await params;
+  const tVendor = await getTranslations("vendor");
 
   return (
     <ProductProvider
@@ -74,6 +90,21 @@ export const StandardPDPView = async ({
 
                 <ProductHighlights product={product} />
                 <AttributesDropdown product={product} />
+
+                {product.vendorSlug ? (
+                  <p className="text-muted-foreground mt-4 text-sm">
+                    <LocalizedLink
+                      href={paths.vendor(product.vendorSlug)}
+                      className="text-primary font-medium underline-offset-4 hover:underline"
+                    >
+                      {product.vendorName
+                        ? tVendor("pdp_visit_vendor_shop_named", {
+                            vendorName: product.vendorName,
+                          })
+                        : tVendor("pdp_visit_vendor_shop")}
+                    </LocalizedLink>
+                  </p>
+                ) : null}
               </section>
             </div>
           </div>
@@ -97,7 +128,7 @@ export const StandardPDPView = async ({
  * This component is used to display a loading state while the product data is being fetched.
  * @returns A skeleton component for the standard PDP view.
  */
-export const StandardPDPViewSkeleton = () => (
+export const MarketplacePDPViewSkeleton = () => (
   <div className="relative grid w-full gap-4">
     <Skeleton className="h-8 w-1/4" />
 

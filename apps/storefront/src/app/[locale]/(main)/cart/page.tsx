@@ -4,7 +4,7 @@ import {
 } from "@nimara/features/cart/shop-basic-cart/standard";
 
 import { clientEnvs } from "@/envs/client";
-import { getCheckoutId, revalidateCart } from "@/features/checkout/cart";
+import { getCheckoutId, revalidateCart } from "@/features/checkout/server";
 import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
 import { storefrontLogger } from "@/services/logging";
@@ -13,6 +13,7 @@ import { getAccessToken } from "@/services/tokens";
 
 import {
   deleteLineAction,
+  deleteLineMarketplaceAction,
   updateLineQuantityAction,
 } from "./_actions/cart-actions";
 import { MarketplaceCartView } from "./_components/marketplace-cart-view";
@@ -20,12 +21,10 @@ import { MarketplaceCartView } from "./_components/marketplace-cart-view";
 export const generateMetadata = generateStandardCartMetadata;
 
 export default async function Page(props: any) {
-  const isMarketplaceEnabled = clientEnvs.NEXT_PUBLIC_MARKETPLACE_ENABLED;
-  const [services, region, accessToken, checkoutId] = await Promise.all([
+  const [services, region, accessToken] = await Promise.all([
     getServiceRegistry(),
     getCurrentRegion(),
     getAccessToken(),
-    getCheckoutId(),
   ]);
 
   const sharedProps = {
@@ -36,7 +35,6 @@ export default async function Page(props: any) {
     region,
     logger: storefrontLogger,
     onLineQuantityChange: updateLineQuantityAction,
-    onLineDelete: deleteLineAction,
     paths: {
       home: paths.home.asPath(),
       checkout: paths.checkout.asPath(),
@@ -44,21 +42,22 @@ export default async function Page(props: any) {
     },
   };
 
-  if (isMarketplaceEnabled) {
+  if (clientEnvs.NEXT_PUBLIC_MARKETPLACE_ENABLED) {
     return (
       <MarketplaceCartView
         {...sharedProps}
-        checkoutIds={[]}
-        isMarketplaceEnabled={true}
+        onLineDelete={deleteLineMarketplaceAction}
       />
     );
   }
 
+  const checkoutId = await getCheckoutId();
+
   return (
     <StandardCartView
       {...sharedProps}
-      checkoutIds={checkoutId ? [checkoutId] : []}
-      isMarketplaceEnabled={false}
+      onLineDelete={deleteLineAction}
+      checkoutId={checkoutId}
     />
   );
 }

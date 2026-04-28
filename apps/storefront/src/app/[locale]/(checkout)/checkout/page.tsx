@@ -5,13 +5,16 @@ import { type AllCountryCode } from "@nimara/domain/consts";
 import { type AppErrorCode } from "@nimara/domain/objects/Error";
 import { redirect } from "@nimara/i18n/routing";
 
+import {
+  MARKETPLACE_DEFAULT_VENDOR_DISPLAY_NAME,
+  MARKETPLACE_NO_VENDOR_BUCKET,
+} from "@/config";
 import { clientEnvs } from "@/envs/client";
 import {
   getCheckoutOrRedirect,
   getMarketplaceCheckoutsOrRedirect,
   getMarketplaceCheckoutSummary,
 } from "@/features/checkout/checkout-actions";
-import { MARKETPLACE_NO_VENDOR_BUCKET } from "@/features/checkout/constants";
 import { Summary } from "@/features/checkout/summary";
 import {
   CHECKOUT_STEPS_MAP,
@@ -25,6 +28,7 @@ import { getCheckoutPaymentSectionData } from "@/foundation/checkout/sections/pa
 import { paths } from "@/foundation/routing/paths";
 import { getServiceRegistry } from "@/services/registry";
 import { getAccessToken } from "@/services/tokens";
+
 interface PageProps {
   params: Promise<{ locale: Locale }>;
   searchParams: Promise<{
@@ -112,7 +116,10 @@ export default async function Page(props: PageProps) {
         })
       : null;
 
-  const vendorIdNames: Record<string, string> = {};
+  const vendorIdNames: Record<string, string> = {
+    // Default vendor name for marketplace checkouts
+    [MARKETPLACE_NO_VENDOR_BUCKET]: MARKETPLACE_DEFAULT_VENDOR_DISPLAY_NAME,
+  };
 
   if (isMarketplaceEnabled) {
     const marketplaceService = await services.getMarketplaceService();
@@ -122,14 +129,10 @@ export default async function Page(props: PageProps) {
 
     await Promise.all(
       vendorIds.map(async (vendorId) => {
-        if (vendorId === MARKETPLACE_NO_VENDOR_BUCKET) {
-          vendorIdNames[vendorId] = "Marketplace";
-        } else {
-          const result = await marketplaceService.vendorGetByID(vendorId);
+        const result = await marketplaceService.vendorGetByID(vendorId);
 
-          if (result.ok) {
-            vendorIdNames[vendorId] = result.data.name;
-          }
+        if (result.ok) {
+          vendorIdNames[vendorId] = result.data.name;
         }
       }),
     );
@@ -158,98 +161,3 @@ export default async function Page(props: PageProps) {
     </CheckoutWrapper>
   );
 }
-
-const renderMarketplaceCheckoutPage = async (props: PageProps) => {
-  const [{ locale }, searchParams, checkoutItems, accessToken, services] =
-    await Promise.all([
-      props.params,
-      props.searchParams,
-      getMarketplaceCheckoutsOrRedirect(),
-      getAccessToken(),
-      getServiceRegistry(),
-    ]);
-
-  const checkoutSummary = getMarketplaceCheckoutSummary(checkoutItems);
-  const primaryCheckout =
-    checkoutItems.find((item) => item.checkout.isShippingRequired)?.checkout ??
-    checkoutItems[0].checkout;
-
-  const currentStep = searchParams.step;
-
-  if (!currentStep) {
-    let step: CheckoutStep | null = null;
-
-    const requiresEmail = checkoutItems.some(
-      (item) => item.checkout.email === null,
-    );
-    const requiresShipping = checkoutItems.some(
-      (item) => item.checkout.isShippingRequired,
-    );
-    const requiresShippingAddress = checkoutItems.some(
-      (item) =>
-        item.checkout.isShippingRequired &&
-        item.checkout.shippingAddress === null,
-    );
-    const requiresDeliveryMethod = checkoutItems.some(
-      (item) =>
-        item.checkout.isShippingRequired &&
-        item.checkout.deliveryMethod === null,
-    );
-
-    if (requiresEmail) {
-      step = CHECKOUT_STEPS_MAP.USER_DETAILS;
-    } else if (!requiresShipping) {
-      step = CHECKOUT_STEPS_MAP.PAYMENT;
-    } else if (requiresShippingAddress) {
-      step = CHECKOUT_STEPS_MAP.SHIPPING_ADDRESS;
-    } else if (requiresDeliveryMethod) {
-      step = CHECKOUT_STEPS_MAP.DELIVERY_METHOD;
-    } else {
-      step = CHECKOUT_STEPS_MAP.PAYMENT;
-    }
-
-    redirect({
-      href: paths.checkout.asPath({ query: { step } }),
-      locale,
-    });
-  }
-
-  const userService = await services.getUserService();
-  const resultUserGet = await userService.userGet(accessToken);
-  const user = resultUserGet.ok ? resultUserGet.data : null;
-  const shippingAddressSectionData = checkoutSummary.isShippingRequired
-    ? await getCheckoutShippingAddressSectionData({
-        accessToken,
-        checkout: primaryCheckout,
-        country: searchParams.country,
-        locale,
-        user,
-      })
-    : null;
-  const paymentSectionData =
-    currentStep === CHECKOUT_STEPS_MAP.PAYMENT
-      ? await getCheckoutPaymentSectionData({
-          accessToken,
-          checkout: primaryCheckout,
-          country: searchParams.country,
-          errorCode: searchParams.errorCode,
-          locale,
-          user,
-        })
-      : null;
-
-  return (
-    <CheckoutWrapper
-      summary={<Summary checkout={checkoutSummary} hidePromoCode={true} />}
-    >
-      <CheckoutSections
-        step={currentStep}
-        checkout={primaryCheckout}
-        marketplaceCheckouts={checkoutItems}
-        paymentSectionData={paymentSectionData}
-        shippingAddressSectionData={shippingAddressSectionData}
-        user={user}
-      />
-    </CheckoutWrapper>
-  );
-};
