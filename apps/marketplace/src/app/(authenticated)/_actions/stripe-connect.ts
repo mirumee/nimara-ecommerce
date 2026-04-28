@@ -2,7 +2,7 @@
 
 import { getServerAuthToken, getServerVendorId } from "@/lib/auth/server";
 import { config } from "@/lib/config";
-import { getLedgerPool } from "@/lib/ledger/pool";
+import { getLedgerDb } from "@/lib/ledger/db/client";
 import { upsertVendorStripeAccount } from "@/lib/ledger/repository";
 import { METADATA_KEYS } from "@/lib/saleor/consts";
 import {
@@ -112,15 +112,15 @@ export async function createStripeConnectOnboardingSession(): Promise<ActionResu
         ]),
       });
 
-      const pool = getLedgerPool();
+      const db = getLedgerDb();
 
-      if (pool) {
+      if (db) {
         const defaultCurrency =
           typeof account.default_currency === "string"
             ? account.default_currency
             : "usd";
 
-        await upsertVendorStripeAccount(pool, {
+        await upsertVendorStripeAccount(db, {
           defaultCurrency,
           onboardingCompleted: false,
           payoutsEnabled: Boolean(account.payouts_enabled),
@@ -226,15 +226,15 @@ export async function syncStripeConnectStatus(): Promise<SyncResult> {
       ]),
     });
 
-    const pool = getLedgerPool();
+    const db = getLedgerDb();
 
-    if (pool) {
+    if (db) {
       const defaultCurrency =
         typeof account.default_currency === "string"
           ? account.default_currency
           : "usd";
 
-      await upsertVendorStripeAccount(pool, {
+      await upsertVendorStripeAccount(db, {
         defaultCurrency,
         onboardingCompleted: connected,
         payoutsEnabled: Boolean(account.payouts_enabled),
