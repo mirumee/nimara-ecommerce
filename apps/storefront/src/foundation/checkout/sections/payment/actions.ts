@@ -137,21 +137,23 @@ export const initializeMarketplacePaymentIntent = async ({
   }
 
   try {
-    const response = await fetch(
-      `${normalizedBaseUrl.replace(/\/$/, "")}/api/payments/payment-intent`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-saleor-domain": saleorDomain,
-        },
-        body: JSON.stringify({
-          checkouts,
-          buyerId,
-        }),
-        cache: "no-store",
+    const paymentIntentUrl = new URL(
+      "/api/payments/payment-intent",
+      normalizedBaseUrl,
+    ).toString();
+
+    const response = await fetch(paymentIntentUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-saleor-domain": saleorDomain,
       },
-    );
+      body: JSON.stringify({
+        checkouts,
+        buyerId,
+      }),
+      cache: "no-store",
+    });
 
     if (!response.ok) {
       let responseBody = "";
