@@ -128,7 +128,7 @@ export const deleteLineMarketplaceAction = async ({
       // Cart is now empty, find and remove this checkout ID from the marketplace cookie
       const allCheckoutIds = await getAllCheckoutIds();
 
-      if (allCheckoutIds) {
+      if (Object.keys(allCheckoutIds).length > 0) {
         // Find the vendor key that maps to this cartId
         const vendorKeyToRemove = Object.entries(allCheckoutIds).find(
           ([_, checkoutId]) => checkoutId === cartId,

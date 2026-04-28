@@ -50,8 +50,8 @@ export async function login({
     const user = resultUserGet.ok ? resultUserGet.data : null;
 
     if (isMarketplaceEnabled) {
-      const vendorCheckoutIds = await getAllCheckoutIds();
-      const checkoutIds = Object.values(vendorCheckoutIds ?? {});
+      const allCheckoutIds = await getAllCheckoutIds();
+      const checkoutIds = Object.values(allCheckoutIds);
 
       if (checkoutIds.length > 0) {
         await Promise.all(

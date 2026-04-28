@@ -148,20 +148,17 @@ export const getCheckoutId = async (
  * const allCheckouts = await getAllCheckoutIds();
  * // Returns: { "vendor-1": "chkt_123", "vendor-2": "chkt_456" }
  */
-export const getAllCheckoutIds = async (): Promise<Record<
-  string,
-  string
-> | null> => {
+export const getAllCheckoutIds = async (): Promise<Record<string, string>> => {
   const cookieValue = await readCheckoutCookie();
 
   if (!cookieValue) {
-    return null;
+    return {};
   }
 
   try {
     const parsed = JSON.parse(cookieValue) as CheckoutCookiePayload | null;
 
-    return parsed?.checkouts ?? null;
+    return parsed?.checkouts ?? {};
   } catch {
     // Graceful fallback for legacy string format
     return { [MARKETPLACE_NO_VENDOR_BUCKET]: cookieValue };

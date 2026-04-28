@@ -53,10 +53,8 @@ export const updateCheckoutUserDetailsAction = async (
   const checkoutService = await services.getCheckoutService();
 
   if (isMarketplaceEnabled) {
-    const checkoutIdsByVendor = await getAllCheckoutIds();
-    const checkoutIds = Object.values(checkoutIdsByVendor ?? {}).filter(
-      Boolean,
-    );
+    const allCheckoutIds = await getAllCheckoutIds();
+    const checkoutIds = Object.values(allCheckoutIds);
     const targetCheckoutIds = checkoutIds.length
       ? checkoutIds
       : [payload.checkout.id];

@@ -47,10 +47,8 @@ export const updateCheckoutAddressAction = async ({
       : checkoutService.checkoutBillingAddressUpdate;
 
   if (isMarketplaceEnabled) {
-    const checkoutIdsByVendor = await getAllCheckoutIds();
-    const checkoutIds = Object.values(checkoutIdsByVendor ?? {}).filter(
-      Boolean,
-    );
+    const allCheckoutIds = await getAllCheckoutIds();
+    const checkoutIds = Object.values(allCheckoutIds).filter(Boolean);
     const targetCheckoutIds = checkoutIds.length ? checkoutIds : [values.id];
     const results = await Promise.all(
       targetCheckoutIds.map((id) =>

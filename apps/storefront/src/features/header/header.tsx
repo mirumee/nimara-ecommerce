@@ -52,9 +52,9 @@ export const Header = async () => {
 
   const checkoutIdsByVendor = isMarketplaceEnabled
     ? await getAllCheckoutIds()
-    : null;
+    : {};
   const checkoutIds = isMarketplaceEnabled
-    ? Object.values(checkoutIdsByVendor ?? {})
+    ? Object.values(checkoutIdsByVendor)
     : [await getCheckoutId()].filter(Boolean);
 
   if (checkoutIds.length) {

@@ -64,7 +64,7 @@ export const getMarketplaceCheckoutsOrRedirect = async ():
     getServiceRegistry(),
   ]);
 
-  const checkoutIds = [...new Set(Object.values(checkoutIdsByVendor ?? {}))];
+  const checkoutIds = [...new Set(Object.values(checkoutIdsByVendor))];
 
   if (!checkoutIds.length) {
     redirect({ href: paths.cart.asPath(), locale });
@@ -72,7 +72,7 @@ export const getMarketplaceCheckoutsOrRedirect = async ():
 
   const checkoutService = await services.getCheckoutService();
   const checkoutIdToVendorKey = new Map<string, string>(
-    Object.entries(checkoutIdsByVendor ?? {}).map(([vendorKey, checkoutId]) => [
+    Object.entries(checkoutIdsByVendor).map(([vendorKey, checkoutId]) => [
       checkoutId,
       vendorKey,
     ]),

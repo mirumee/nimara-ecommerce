@@ -23,8 +23,8 @@ export const MarketplaceCartView = async (props: CartViewProps) => {
     logger,
   } = props;
 
-  const checkoutIdsByVendor = await getAllCheckoutIds();
-  const checkoutIds = Object.values(checkoutIdsByVendor ?? {}).filter(Boolean);
+  const allCheckoutIds = await getAllCheckoutIds();
+  const checkoutIds = Object.values(allCheckoutIds);
 
   if (!checkoutIds.length) {
     return (
@@ -85,7 +85,7 @@ export const MarketplaceCartView = async (props: CartViewProps) => {
   const marketplaceService = await services.getMarketplaceService();
   const vendorIdNames: Record<string, string> = {};
 
-  for (const [vendorId, _] of Object.entries({})) {
+  for (const [vendorId, _] of Object.entries(allCheckoutIds)) {
     if (vendorId === MARKETPLACE_NO_VENDOR_BUCKET) {
       vendorIdNames[vendorId] = MARKETPLACE_DEFAULT_VENDOR_DISPLAY_NAME;
     } else {
