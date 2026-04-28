@@ -18,7 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { cn, formatDateTime } from "@/lib/utils";
+import { cn, formatDateTime, formatPrice } from "@/lib/utils";
 import { useAuth } from "@/providers/auth-provider";
 
 type Props = {
@@ -98,12 +98,8 @@ type BatchDetailResponse = {
 function formatMinorAmount(amountMinorStr: string, currency: string): string {
   try {
     const minor = BigInt(amountMinorStr);
-    const major = Number(minor) / 100;
 
-    return new Intl.NumberFormat(undefined, {
-      currency: currency.toUpperCase(),
-      style: "currency",
-    }).format(major);
+    return formatPrice(Number(minor) / 100, currency.toUpperCase());
   } catch {
     return amountMinorStr;
   }

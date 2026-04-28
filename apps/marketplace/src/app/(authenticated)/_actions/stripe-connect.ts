@@ -63,12 +63,17 @@ async function getCurrentVendorContext() {
 }
 
 function getStripeRedirectUrls() {
-  const baseUrl = config.urls.vendor.replace(/\/$/, "");
-  const dashboardUrl = `${baseUrl}/dashboard`;
+  const refreshUrl = new URL("/dashboard", config.urls.vendor);
+
+  refreshUrl.search = new URLSearchParams({ stripe: "refresh" }).toString();
+
+  const returnUrl = new URL("/dashboard", config.urls.vendor);
+
+  returnUrl.search = new URLSearchParams({ stripe: "return" }).toString();
 
   return {
-    refreshUrl: `${dashboardUrl}?stripe=refresh`,
-    returnUrl: `${dashboardUrl}?stripe=return`,
+    refreshUrl: refreshUrl.toString(),
+    returnUrl: returnUrl.toString(),
   };
 }
 
