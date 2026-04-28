@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import { getApiRouteAuthToken } from "@/lib/auth/server";
 import { config } from "@/lib/config";
-import { getLedgerPool } from "@/lib/ledger/pool";
+import { getLedgerDb } from "@/lib/ledger/db/client";
 import { getPayoutBatchWithItems } from "@/lib/ledger/repository";
 import { fetchVendorTitlesByIds } from "@/lib/saleor/fetch-vendor-page-titles";
 
@@ -17,16 +17,16 @@ export async function GET(
   }
 
   const { id } = await context.params;
-  const pool = getLedgerPool();
+  const db = getLedgerDb();
 
-  if (!pool) {
+  if (!db) {
     return NextResponse.json(
       { error: "Ledger database not configured" },
       { status: 503 },
     );
   }
 
-  const data = await getPayoutBatchWithItems(pool, id);
+  const data = await getPayoutBatchWithItems(db, id);
 
   if (!data.batch) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
