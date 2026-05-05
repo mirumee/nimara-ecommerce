@@ -100,7 +100,7 @@ export const getMarketplaceCheckoutsOrRedirect = async ():
         const vendorProfileResult =
           await marketplaceService.vendorGetByID(vendorKey);
 
-        if (vendorProfileResult.ok) {
+        if (vendorProfileResult.ok && vendorProfileResult.data) {
           displayName = vendorProfileResult.data.name;
         }
       }

@@ -11,7 +11,7 @@ export interface MarketplaceService {
    * @param id - ID of the vendor.
    * @returns A promise that resolves to the vendor profile.
    */
-  vendorGetByID: (id: string) => AsyncResult<VendorProfile>;
+  vendorGetByID: (id: string) => AsyncResult<VendorProfile | null>;
   /**
    * Gets a vendor profile by slug.
    * @param slug - Slug of the vendor.

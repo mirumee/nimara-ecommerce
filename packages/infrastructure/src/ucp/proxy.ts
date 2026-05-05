@@ -99,16 +99,5 @@ export const ucpProxyMiddleware =
       return next(request, event, response);
     }
 
-    logger.warning(
-      "[UCP Proxy] No `checkoutID` query parameter provided, passing through.",
-      {
-        context: {
-          checkoutID,
-          redirectEnabled,
-          redirectPath,
-        },
-      },
-    );
-
     return next(request, event, response);
   };

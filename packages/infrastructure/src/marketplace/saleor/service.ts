@@ -38,16 +38,27 @@ export const saleorMarketplaceService = (
       );
 
       if (!result.ok) {
-        config.logger.error("Failed to get vendor by ID", {
-          id,
-          errors: result.errors,
-        });
+        config.logger.error(
+          "[Marketplace] Failed to get vendor by ID. Error fetching vendor page.",
+          {
+            id,
+            errors: result.errors,
+          },
+        );
 
         return result;
       }
 
       if (!result.data.page) {
-        return err([{ code: "NOT_FOUND_ERROR", message: "Vendor not found" }]);
+        config.logger.warning(
+          "[Marketplace] Failed to get vendor by ID. Vendor does not exist or is not visible.",
+          {
+            id,
+            errors: result.errors,
+          },
+        );
+
+        return ok(null);
       }
 
       return ok(vendorPageToProfile(result.data.page));
@@ -68,7 +79,7 @@ export const saleorMarketplaceService = (
       );
 
       if (!result.ok) {
-        config.logger.error("Failed to get vendor by slug", {
+        config.logger.error("[Marketplace] Failed to get vendor by slug", {
           slug,
           errors: result.errors,
         });

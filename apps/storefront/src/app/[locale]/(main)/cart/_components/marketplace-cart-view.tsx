@@ -91,7 +91,7 @@ export const MarketplaceCartView = async (props: CartViewProps) => {
     } else {
       const result = await marketplaceService.vendorGetByID(vendorId);
 
-      if (result.ok) {
+      if (result.ok && result.data) {
         vendorIdNames[vendorId] = result.data.name;
       }
     }

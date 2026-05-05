@@ -131,7 +131,7 @@ export default async function Page(props: PageProps) {
       vendorIds.map(async (vendorId) => {
         const result = await marketplaceService.vendorGetByID(vendorId);
 
-        if (result.ok) {
+        if (result.ok && result.data) {
           vendorIdNames[vendorId] = result.data.name;
         }
       }),
