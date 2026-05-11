@@ -1,8 +1,8 @@
 <div align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="apps/docs/images/logo-light.svg">
-    <source media="(prefers-color-scheme: light)" srcset="apps/docs/images/logo.svg">
-    <img width="200" alt="nimara logo" src="apps/docs/images/logo.svg">
+    <source media="(prefers-color-scheme: dark)" srcset="apps/docs/static/images/logo-light.svg">
+    <source media="(prefers-color-scheme: light)" srcset="apps/docs/static/images/logo.svg">
+    <img width="200" alt="nimara logo" src="apps/docs/static/images/logo.svg">
   </picture>
 </div>
 
@@ -34,11 +34,11 @@
 
 - **Headless Architecture:** Nimara's headless architecture provides a flexible, easy-to-maintain, and ready-to-deploy solution for online businesses.
 
-- **Next.js 15:** App router, React Server Components (RSC), Server Actions, Caching and Static Site Generation (SSG) support with Typescript setup.
+- **Next.js 16:** App router, React Server Components (RSC), Server Actions, Caching and Static Site Generation (SSG) support with Typescript setup.
 
 - **Shadcn UI/Tailwind CSS:** Nimara's UI uses [Shadcn UI](https://ui.shadcn.com/) and [Tailwind CSS](https://tailwindcss.com/), providing a modern and customizable design system.
 
-- **Turborepo:** Nimara's monorepo is powered by [Turborepo](https://turbo.build/repo/docs/getting-started/introduction), a fast and scalable build system for monorepos. Automated tests with [Playwright](https://playwright.dev/) and setup for [Docs](https://nextra.site/) are included.
+- **Turborepo:** Nimara's monorepo is powered by [Turborepo](https://turbo.build/repo/docs/getting-started/introduction), a fast and scalable build system for monorepos. Automated tests with [Playwright](https://playwright.dev/) and a [Docusaurus](https://docusaurus.io/) docs site are included.
 
 - **Stripe Integration:** Nimara's storefront uses Stripe [Payment Element](https://docs.stripe.com/payments/payment-element) for secure payment processing.
 
@@ -162,18 +162,25 @@ git pull origin main
 
 ## Deploying the app to Vercel using a Terraform
 
-A guide how to deploy the app to Vercel using a Terraform can be found here: [Using Terraform - Nimara Docs](https://docs.nimara.store/docs/quickstart/using-terraform).
+A guide how to deploy the app to Vercel using Terraform can be found here: [Using Terraform - Nimara Docs](https://docs.nimara.store/docs/quickstart/using-terraform).
 
 ## 📚 Documentation
 
-Comprehensive documentation is available in the `docs/` folder:
+The public documentation site is built with Docusaurus from `apps/docs` and published at [docs.nimara.store](https://docs.nimara.store).
 
-- **[Getting Started](./docs/HOW_TO_USE.md)** - Setup, installation, and basic usage
-- **[Contributing Guide](./docs/CONTRIBUTING.md)** - How to contribute to the project
-- **[Customization Guide](./docs/CUSTOMIZATION.md)** - Adapt Nimara for your needs
-- **[Code Style Guide](./docs/CODE_STYLE_GUIDE.md)** - Coding standards and conventions
-- **[Vision & Roadmap](./docs/VISION_AND_ROADMAP.md)** - Future plans and direction
-- **[Contributors](./docs/CONTRIBUTORS.md)** - Community and contribution information
+Start with these docs:
+
+- **[Overview](https://docs.nimara.store)** - Nimara documentation homepage
+- **[Running Locally](https://docs.nimara.store/docs/quickstart/running-locally)** - Setup, installation, and local development
+- **[Storefront](https://docs.nimara.store/docs/quickstart/storefront)** - Deploy the storefront to production
+- **[Environment Variables](https://docs.nimara.store/docs/quickstart/environment-variables)** - Configure required and optional environment variables
+- **[Using Terraform](https://docs.nimara.store/docs/quickstart/using-terraform)** - Deploy the app to Vercel using Terraform
+
+### Docs Versioning
+
+The Docusaurus docs site uses `apps/docs/versions.json` as the source of truth for published documentation versions. `apps/docs/docusaurus.config.ts` derives `lastVersion` and the version dropdown from that file, so do not update versions in the config manually.
+
+When releasing a new docs version, add the new version to the beginning of `apps/docs/versions.json` and make sure the matching `apps/docs/versioned_docs/version-<version>/` and `apps/docs/versioned_sidebars/version-<version>-sidebars.json` files are included.
 
 ## ❤️ Community & Contribution
 
@@ -186,7 +193,7 @@ You can also contribute to Nimara in various ways:
 - Share your experiences or projects related to Nimara with the broader community through talks or blog posts.
 - Support [popular feature requests](https://github.com/mirumee/nimara-ecommerce/issues?q=sort%3Aupdated-desc+is%3Aissue+is%3Aopen) by upvoting them.
 
-For detailed contributing guidelines, please see [Contributing Guide](/CONTRIBUTING.md)
+For detailed contributing guidelines, please see [Contributing Guide](./CONTRIBUTING.md)
 
 ### This wouldn't have been possible without your support
 
