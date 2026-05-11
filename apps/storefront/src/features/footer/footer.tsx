@@ -48,13 +48,52 @@ export const Footer = async () => {
     <footer className="mt-8 border-t border-border bg-background text-sm text-primary transition-[background-color]">
       <div className="container relative overflow-hidden">
         {/* Visual grid columns */}
-        <div className="absolute inset-x-4 inset-y-0 flex" style={{ boxShadow: `1px 0 0 0 ${border}` }}>
-          <div className="hidden h-full flex-1 lg:block" style={{ backgroundImage: `linear-gradient(0deg, ${border}, ${background} 40%)`, boxShadow: `inset 1px 0 0 0 ${border}` }} />
-          <div className="h-full flex-1" style={{ backgroundImage: `linear-gradient(0deg, ${border}, ${background} 70%)`, boxShadow: `inset 1px 0 0 0 ${border}` }} />
-          <div className="h-full flex-1" style={{ backgroundImage: `linear-gradient(180deg, ${background}, ${border})`, boxShadow: `inset 1px 0 0 0 ${border}` }} />
-          <div className="h-full flex-1" style={{ backgroundImage: `linear-gradient(180deg, ${background}, ${border})`, boxShadow: `inset 1px 0 0 0 ${border}` }} />
-          <div className="h-full flex-1" style={{ backgroundImage: `linear-gradient(0deg, ${border}, ${background} 70%)`, boxShadow: `inset 1px 0 0 0 ${border}` }} />
-          <div className="hidden h-full flex-1 lg:block" style={{ backgroundImage: `linear-gradient(0deg, ${border}, ${background} 40%)`, boxShadow: `inset 1px 0 0 0 ${border}` }} />
+        <div
+          className="absolute inset-x-4 inset-y-0 flex"
+          style={{ boxShadow: `1px 0 0 0 ${border}` }}
+        >
+          <div
+            className="hidden h-full flex-1 lg:block"
+            style={{
+              backgroundImage: `linear-gradient(0deg, ${border}, ${background} 40%)`,
+              boxShadow: `inset 1px 0 0 0 ${border}`,
+            }}
+          />
+          <div
+            className="h-full flex-1"
+            style={{
+              backgroundImage: `linear-gradient(0deg, ${border}, ${background} 70%)`,
+              boxShadow: `inset 1px 0 0 0 ${border}`,
+            }}
+          />
+          <div
+            className="h-full flex-1"
+            style={{
+              backgroundImage: `linear-gradient(180deg, ${background}, ${border})`,
+              boxShadow: `inset 1px 0 0 0 ${border}`,
+            }}
+          />
+          <div
+            className="h-full flex-1"
+            style={{
+              backgroundImage: `linear-gradient(180deg, ${background}, ${border})`,
+              boxShadow: `inset 1px 0 0 0 ${border}`,
+            }}
+          />
+          <div
+            className="h-full flex-1"
+            style={{
+              backgroundImage: `linear-gradient(0deg, ${border}, ${background} 70%)`,
+              boxShadow: `inset 1px 0 0 0 ${border}`,
+            }}
+          />
+          <div
+            className="hidden h-full flex-1 lg:block"
+            style={{
+              backgroundImage: `linear-gradient(0deg, ${border}, ${background} 40%)`,
+              boxShadow: `inset 1px 0 0 0 ${border}`,
+            }}
+          />
         </div>
 
         <div className="relative z-10">

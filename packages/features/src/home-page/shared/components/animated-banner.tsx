@@ -46,14 +46,14 @@ export const AnimatedBanner = () => {
   const exit = isDesktop ? { y: 10, opacity: 0 } : { x: 10, opacity: 0 };
 
   return (
-    <div className="mb-12 flex items-center bg-border">
+    <div className="bg-border mb-12 flex items-center">
       {/*
         Padding lives on the outer wrapper only on the sides that don't clip the animation.
         Desktop (y-animation ±10px): keep left/right on outer, move top/bottom to motion.p margins.
         Mobile (x-animation ±10px): keep right/bottom on outer, move top/left to respective margins.
       */}
-      <div className="flex w-full max-w-[1024px] flex-col gap-1 pb-8 pr-8 sm:flex-row sm:items-center sm:gap-2 sm:px-8 sm:py-0">
-        <p className="ml-8 mt-8 shrink-0 text-2xl font-normal leading-none text-muted-foreground sm:ml-0 sm:mt-0 sm:whitespace-nowrap">
+      <div className="flex w-full max-w-[1024px] flex-col gap-1 pr-8 pb-8 sm:flex-row sm:items-center sm:gap-2 sm:px-8 sm:py-0">
+        <p className="text-muted-foreground mt-8 ml-8 shrink-0 text-2xl leading-none font-normal sm:mt-0 sm:ml-0 sm:whitespace-nowrap">
           Nimara is
         </p>
         <div className="relative w-full overflow-hidden sm:min-w-0 sm:flex-1">
@@ -64,7 +64,7 @@ export const AnimatedBanner = () => {
               animate={animate}
               exit={exit}
               transition={{ duration: 0.45, ease: [0.25, 0.1, 0.25, 1] }}
-              className="ml-8 text-2xl font-normal leading-none text-foreground sm:ml-0 sm:my-8"
+              className="text-foreground ml-8 text-2xl leading-none font-normal sm:my-8 sm:ml-0"
             >
               {phases[index].sentence}
             </motion.p>

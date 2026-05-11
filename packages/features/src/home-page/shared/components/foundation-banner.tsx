@@ -34,8 +34,8 @@ const SaleorIcon = () => (
 
 export const FoundationBanner = () => (
   <div className="my-12">
-    <div className="flex flex-col gap-8 border border-border bg-background p-8 sm:flex-row sm:items-center">
-      <p className="min-w-0 flex-1 text-3xl font-normal leading-none text-muted-foreground">
+    <div className="border-border bg-background flex flex-col gap-8 border p-8 sm:flex-row sm:items-center">
+      <p className="text-muted-foreground min-w-0 flex-1 text-3xl leading-none font-normal">
         <span className="text-foreground">
           The open-source storefront built on Next.js and Saleor
         </span>

@@ -14,7 +14,7 @@ import productPlaceholder from "@/assets/product_placeholder.svg?url";
 import { ProductImagePlaceholder } from "./product-image-placeholder";
 
 export const ProductName = ({ children }: PropsWithChildren) => (
-  <h2 className="line-clamp-1 overflow-hidden text-left text-ellipsis text-sm font-medium leading-5">
+  <h2 className="line-clamp-1 overflow-hidden text-left text-sm leading-5 font-medium text-ellipsis">
     {children}
   </h2>
 );
@@ -68,7 +68,11 @@ export const SearchProductCard = ({
 
         <div>
           <ProductName>{name}</ProductName>
-          <Price price={price} undiscountedPrice={undiscountedPrice} className="text-sm leading-5" />
+          <Price
+            price={price}
+            undiscountedPrice={undiscountedPrice}
+            className="text-sm leading-5"
+          />
         </div>
       </LocalizedLink>
     </article>

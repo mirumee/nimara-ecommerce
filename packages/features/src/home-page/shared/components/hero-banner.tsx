@@ -24,7 +24,7 @@ export const HeroBanner = ({
   const fieldsMap: FieldsMap = createFieldsMap(fields);
 
   return (
-    <div className="relative flex h-[27rem] items-center justify-center overflow-hidden border border-border bg-background transition-colors">
+    <div className="border-border bg-background relative flex h-[27rem] items-center justify-center overflow-hidden border transition-colors">
       {/* Background product image with 50% white overlay */}
       {backgroundImageUrl && (
         <div className="absolute inset-0" aria-hidden="true">
@@ -33,7 +33,7 @@ export const HeroBanner = ({
             src={backgroundImageUrl}
             className="absolute inset-0 size-full object-cover"
           />
-          <div className="absolute inset-0 bg-background/50" />
+          <div className="bg-background/50 absolute inset-0" />
         </div>
       )}
 
@@ -44,41 +44,41 @@ export const HeroBanner = ({
       >
         {/* is_gradientsm + is_displayeddesktop */}
         <div
-          className="hidden h-full flex-1 bg-gradient-to-t from-[5%] from-border to-[40%] to-transparent lg:block"
+          className="from-border hidden h-full flex-1 bg-gradient-to-t from-[5%] to-transparent to-[40%] lg:block"
           style={{ boxShadow: "inset 1px 0 0 0 hsl(var(--border))" }}
         />
         {/* is_gradientmd */}
         <div
-          className="h-full flex-1 bg-gradient-to-t from-[10%] from-border to-[70%] to-transparent"
+          className="from-border h-full flex-1 bg-gradient-to-t from-[10%] to-transparent to-[70%]"
           style={{ boxShadow: "inset 1px 0 0 0 hsl(var(--border))" }}
         />
         {/* is_gradientfull */}
         <div
-          className="h-full flex-1 bg-gradient-to-b from-transparent to-[85%] to-border"
+          className="to-border h-full flex-1 bg-gradient-to-b from-transparent to-[85%]"
           style={{ boxShadow: "inset 1px 0 0 0 hsl(var(--border))" }}
         />
         {/* is_gradientfull */}
         <div
-          className="h-full flex-1 bg-gradient-to-b from-transparent to-[85%] to-border"
+          className="to-border h-full flex-1 bg-gradient-to-b from-transparent to-[85%]"
           style={{ boxShadow: "inset 1px 0 0 0 hsl(var(--border))" }}
         />
         {/* is_gradientmd */}
         <div
-          className="h-full flex-1 bg-gradient-to-t from-[10%] from-border to-[70%] to-transparent"
+          className="from-border h-full flex-1 bg-gradient-to-t from-[10%] to-transparent to-[70%]"
           style={{ boxShadow: "inset 1px 0 0 0 hsl(var(--border))" }}
         />
         {/* is_gradientsm + is_displayeddesktop */}
         <div
-          className="hidden h-full flex-1 bg-gradient-to-t from-[5%] from-border to-[40%] to-transparent lg:block"
+          className="from-border hidden h-full flex-1 bg-gradient-to-t from-[5%] to-transparent to-[40%] lg:block"
           style={{ boxShadow: "inset 1px 0 0 0 hsl(var(--border))" }}
         />
       </div>
 
       <div className="relative z-10 p-8 text-center lg:p-16">
-        <h6 className="pb-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+        <h6 className="text-muted-foreground pb-3 text-xs font-semibold tracking-widest uppercase">
           OPEN-SOURCE STOREFRONT
         </h6>
-        <h1 className="mx-auto max-w-[720px] pb-4 text-3xl font-normal leading-tight text-foreground lg:text-5xl">
+        <h1 className="text-foreground mx-auto max-w-[720px] pb-4 text-3xl leading-tight font-normal lg:text-5xl">
           The Marketplace-Ready Storefront Blueprint
         </h1>
         <div className="flex justify-center gap-3">

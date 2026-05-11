@@ -73,8 +73,7 @@ export const SearchPagination = ({
               label={t("previous")}
               aria-label={t("go-to-next-page")}
               className={cn({
-                "pointer-events-none text-stone-400":
-                  !pageInfo.hasPreviousPage,
+                "pointer-events-none text-stone-400": !pageInfo.hasPreviousPage,
               })}
               href={getPathName("previous")}
             />
