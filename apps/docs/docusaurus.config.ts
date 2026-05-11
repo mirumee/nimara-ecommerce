@@ -1,5 +1,28 @@
 import type { Config } from "@docusaurus/types";
 import type * as Preset from "@docusaurus/preset-classic";
+import type { VersionOptions } from "@docusaurus/plugin-content-docs";
+
+import docsVersionsList from "./versions.json";
+import { pluginLlmsTxt } from "./src/plugins/llms-txt";
+
+const [latestDocsVersion] = docsVersionsList;
+
+if (!latestDocsVersion) {
+  throw new Error("versions.json must contain at least one docs version.");
+}
+
+const docsVersions = Object.fromEntries(
+  docsVersionsList.map((version, index) => [
+    version,
+    index === 0
+      ? { label: version }
+      : {
+          label: version,
+          path: version,
+          banner: "unmaintained" as const,
+        },
+  ]),
+) satisfies { [versionName: string]: VersionOptions };
 
 const config: Config = {
   title: "Nimara",
@@ -35,18 +58,9 @@ const config: Config = {
           editUrl:
             "https://github.com/mirumee/nimara-ecommerce/tree/main/apps/docs/",
           routeBasePath: "/",
-          lastVersion: "1.15.0",
+          lastVersion: latestDocsVersion,
           includeCurrentVersion: false,
-          versions: {
-            "1.15.0": {
-              label: "1.15.0",
-            },
-            "1.14.0": {
-              label: "1.14.0",
-              path: "1.14.0",
-              banner: "unmaintained",
-            },
-          },
+          versions: docsVersions,
         },
         blog: false,
         theme: {
@@ -55,6 +69,8 @@ const config: Config = {
       } satisfies Preset.Options,
     ],
   ],
+
+  plugins: [pluginLlmsTxt],
 
   themeConfig: {
     image: "img/nimara-social.png",
