@@ -76,7 +76,7 @@ export const HeroBanner = ({
 
       <div className="relative z-10 p-8 text-center lg:p-16">
         <h6 className="pb-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-          NIMARA DEMO STORE
+          OPEN-SOURCE STOREFRONT
         </h6>
         <h1 className="mx-auto max-w-[720px] pb-4 text-3xl font-normal leading-tight text-foreground lg:text-5xl">
           The Marketplace-Ready Storefront Blueprint

@@ -7,17 +7,17 @@ const phases = [
   {
     id: 0,
     sentence:
-      "Architected to scale from a single brand to a multi-vendor platform",
+      "architected to scale from a single brand to a multi-vendor platform",
     duration: 3850,
   },
   {
     id: 1,
-    sentence: "The open-source storefront built on Next.js and Saleor",
+    sentence: "the open-source storefront built on Next.js and Saleor",
     duration: 3150,
   },
   {
     id: 2,
-    sentence: "Fast, composable, and engineered to grow with your business",
+    sentence: "fast, composable, and engineered to grow with your business",
     duration: 3150,
   },
 ];

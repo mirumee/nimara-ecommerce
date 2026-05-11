@@ -28,7 +28,12 @@
       "mcp__6d38b5a6-aaaf-4ebc-b203-58b4038d812f__data_sites_tool",
       "mcp__6d38b5a6-aaaf-4ebc-b203-58b4038d812f__element_tool",
       "mcp__6d38b5a6-aaaf-4ebc-b203-58b4038d812f__style_tool",
-      "mcp__6d38b5a6-aaaf-4ebc-b203-58b4038d812f__variable_tool"
+      "mcp__6d38b5a6-aaaf-4ebc-b203-58b4038d812f__variable_tool",
+      "Bash(kill 52506)",
+      "Bash(kill -9 52506)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/en)",
+      "Bash(node -e \"require\\('child_process'\\).execSync\\('pnpm --version', {stdio:'inherit'}\\)\")",
+      "Bash(kill -9 94463)"
     ]
   }
 }

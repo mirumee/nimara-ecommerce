@@ -59,9 +59,9 @@ export const Footer = async () => {
 
         <div className="relative z-10">
           <div className="flex flex-wrap justify-between gap-8 py-8">
-            <div className="grid w-full grid-cols-2 grid-rows-[max-content,max-content] place-items-start justify-start gap-6 md:grid-cols-3">
-              <div className="col-span-2 row-span-2 grid grid-cols-subgrid grid-rows-subgrid md:col-span-1">
-                <div className="col-span-2 flex justify-center md:col-span-1 md:justify-start">
+            <div className="grid w-full grid-cols-2 grid-rows-[max-content,max-content] place-items-start justify-start md:grid-cols-3">
+              <div className="col-span-2 row-span-2 grid grid-cols-subgrid grid-rows-subgrid px-4 md:col-span-1">
+                <div className="col-span-2 mb-4 flex justify-center md:col-span-1 md:justify-start">
                   <LocalizedLink
                     href={paths.home.asPath()}
                     title={t("common.go-to-homepage")}
@@ -69,7 +69,7 @@ export const Footer = async () => {
                     <BrandLogo height={36} className="fill-primary" />
                   </LocalizedLink>
                 </div>
-                <p className="col-span-2 flex justify-center md:col-span-1 md:justify-start">
+                <p className="col-span-2 mb-4 flex justify-center md:col-span-1 md:mb-0 md:justify-start">
                   {t.rich("footer.demo-version", {
                     link: (chunks: ReactNode) => (
                       <LocalizedLink
@@ -86,11 +86,11 @@ export const Footer = async () => {
                 </p>
               </div>
 
-              <div className="row-span-2 grid grid-cols-subgrid grid-rows-subgrid md:col-span-1">
-                <span className="flex items-center text-primary">
+              <div className="row-span-2 grid grid-cols-subgrid grid-rows-subgrid px-4 md:col-span-1">
+                <span className="mb-4 flex items-center text-muted-foreground">
                   {t("footer.our-products")}
                 </span>
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-2">
                   {resultCategories.data?.menu.items.map((item) => (
                     <span key={item.id} className="inline">
                       <LocalizedLink
@@ -105,11 +105,11 @@ export const Footer = async () => {
                 </div>
               </div>
 
-              <div className="row-span-2 grid grid-cols-subgrid grid-rows-subgrid md:col-span-1">
-                <span className="flex items-center text-primary">
+              <div className="row-span-2 grid grid-cols-subgrid grid-rows-subgrid px-4 md:col-span-1">
+                <span className="mb-4 flex items-center text-muted-foreground">
                   {t("footer.help")}
                 </span>
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-2">
                   {resultMenu.data?.menu?.items.map((item) => (
                     <span key={item.id} className="inline">
                       <LocalizedLink
@@ -126,24 +126,12 @@ export const Footer = async () => {
             </div>
           </div>
 
-          <div className="flex flex-wrap justify-between gap-4 border-t border-muted-foreground/50 py-8 text-muted-foreground">
+          <div className="flex flex-wrap justify-between gap-4 border-t border-border px-4 py-8 text-muted-foreground">
             <span className="flex-grow basis-full text-center sm:basis-1 sm:text-left">
               &#xa9; Mirumee {new Date().getFullYear()}
             </span>
             <span className="flex-grow basis-full text-center sm:basis-1">
-              {t.rich("footer.made-with", {
-                link: (chunks: ReactNode) => (
-                  <LocalizedLink
-                    href="https://mirumee.com"
-                    className="hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    prefetch={false}
-                  >
-                    {chunks}
-                  </LocalizedLink>
-                ),
-              })}
+              {t("footer.made-with")}
             </span>
             <span className="flex-grow basis-full text-center sm:basis-1 sm:text-right">
               {t.rich("footer.open-source", {
