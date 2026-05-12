@@ -32895,6 +32895,23 @@ export type VendorPageDeleteVariables = Exact<{
 
 export type VendorPageDelete = VendorPageDelete_Mutation;
 
+export type VendorPagePublish_pageUpdate_PageUpdate_page_Page = { id: string, isPublished: boolean, publishedAt: string | null };
+
+export type VendorPagePublish_pageUpdate_PageUpdate_errors_PageError = { field: string | null, message: string | null, code: PageErrorCode };
+
+export type VendorPagePublish_pageUpdate_PageUpdate = { page: VendorPagePublish_pageUpdate_PageUpdate_page_Page | null, errors: Array<VendorPagePublish_pageUpdate_PageUpdate_errors_PageError> };
+
+export type VendorPagePublish_Mutation = { pageUpdate: VendorPagePublish_pageUpdate_PageUpdate | null };
+
+
+export type VendorPagePublishVariables = Exact<{
+  id: Scalars['ID']['input'];
+  input: PageInput;
+}>;
+
+
+export type VendorPagePublish = VendorPagePublish_Mutation;
+
 export type CategoriesList_categories_CategoryCountableConnection_edges_CategoryCountableEdge_node_Category = { id: string, name: string, slug: string };
 
 export type CategoriesList_categories_CategoryCountableConnection_edges_CategoryCountableEdge = { cursor: string, node: CategoriesList_categories_CategoryCountableConnection_edges_CategoryCountableEdge_node_Category };
@@ -33032,6 +33049,8 @@ export type CollectionsListVariables = Exact<{
 
 export type CollectionsList = CollectionsList_Query;
 
+export type CustomerByEmail_customers_UserCountableConnection_edges_UserCountableEdge_node_User_metadata_MetadataItem = { key: string, value: string };
+
 export type CustomerByEmail_customers_UserCountableConnection_edges_UserCountableEdge_node_User_addresses_Address_country_CountryDisplay = { code: string, country: string };
 
 export type CustomerByEmail_customers_UserCountableConnection_edges_UserCountableEdge_node_User_addresses_Address = { id: string, firstName: string, lastName: string, companyName: string, streetAddress1: string, streetAddress2: string, city: string, cityArea: string, countryArea: string, postalCode: string, phone: string | null, country: CustomerByEmail_customers_UserCountableConnection_edges_UserCountableEdge_node_User_addresses_Address_country_CountryDisplay };
@@ -33044,7 +33063,7 @@ export type CustomerByEmail_customers_UserCountableConnection_edges_UserCountabl
 
 export type CustomerByEmail_customers_UserCountableConnection_edges_UserCountableEdge_node_User_defaultShippingAddress_Address = { id: string, firstName: string, lastName: string, companyName: string, streetAddress1: string, streetAddress2: string, city: string, cityArea: string, countryArea: string, postalCode: string, phone: string | null, country: CustomerByEmail_customers_UserCountableConnection_edges_UserCountableEdge_node_User_defaultShippingAddress_Address_country_CountryDisplay };
 
-export type CustomerByEmail_customers_UserCountableConnection_edges_UserCountableEdge_node_User = { id: string, firstName: string, lastName: string, email: string, addresses: Array<CustomerByEmail_customers_UserCountableConnection_edges_UserCountableEdge_node_User_addresses_Address>, defaultBillingAddress: CustomerByEmail_customers_UserCountableConnection_edges_UserCountableEdge_node_User_defaultBillingAddress_Address | null, defaultShippingAddress: CustomerByEmail_customers_UserCountableConnection_edges_UserCountableEdge_node_User_defaultShippingAddress_Address | null };
+export type CustomerByEmail_customers_UserCountableConnection_edges_UserCountableEdge_node_User = { id: string, firstName: string, lastName: string, email: string, metadata: Array<CustomerByEmail_customers_UserCountableConnection_edges_UserCountableEdge_node_User_metadata_MetadataItem>, addresses: Array<CustomerByEmail_customers_UserCountableConnection_edges_UserCountableEdge_node_User_addresses_Address>, defaultBillingAddress: CustomerByEmail_customers_UserCountableConnection_edges_UserCountableEdge_node_User_defaultBillingAddress_Address | null, defaultShippingAddress: CustomerByEmail_customers_UserCountableConnection_edges_UserCountableEdge_node_User_defaultShippingAddress_Address | null };
 
 export type CustomerByEmail_customers_UserCountableConnection_edges_UserCountableEdge = { node: CustomerByEmail_customers_UserCountableConnection_edges_UserCountableEdge_node_User };
 
@@ -34653,6 +34672,22 @@ export const VendorPageDeleteDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<VendorPageDelete, VendorPageDeleteVariables>;
+export const VendorPagePublishDocument = new TypedDocumentString(`
+    mutation VendorPagePublish($id: ID!, $input: PageInput!) {
+  pageUpdate(id: $id, input: $input) {
+    page {
+      id
+      isPublished
+      publishedAt
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<VendorPagePublish, VendorPagePublishVariables>;
 export const CategoriesListDocument = new TypedDocumentString(`
     query CategoriesList($first: Int = 100, $after: String, $filter: CategoryFilterInput) {
   categories(first: $first, after: $after, filter: $filter) {
@@ -34832,6 +34867,10 @@ export const CustomerByEmailDocument = new TypedDocumentString(`
         firstName
         lastName
         email
+        metadata {
+          key
+          value
+        }
         addresses {
           id
           firstName

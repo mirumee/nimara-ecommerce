@@ -6,6 +6,10 @@ query CustomerByEmail($search: String!, $ids: [ID!]) {
         firstName
         lastName
         email
+        metadata {
+          key
+          value
+        }
         addresses {
           id
           firstName

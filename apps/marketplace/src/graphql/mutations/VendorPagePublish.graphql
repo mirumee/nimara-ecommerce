@@ -1,0 +1,14 @@
+mutation VendorPagePublish($id: ID!, $input: PageInput!) {
+  pageUpdate(id: $id, input: $input) {
+    page {
+      id
+      isPublished
+      publishedAt
+    }
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
