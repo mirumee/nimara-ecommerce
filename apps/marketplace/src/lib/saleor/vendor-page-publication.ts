@@ -1,9 +1,9 @@
 import type { BaseError } from "@nimara/domain/objects/Error";
 import {
   type AsyncResult,
-  type Result,
   err,
   ok,
+  type Result,
 } from "@nimara/domain/objects/Result";
 import { graphqlClient } from "@nimara/infrastructure/graphql/client";
 
@@ -13,6 +13,7 @@ import {
 } from "@/graphql/generated/client";
 import { config } from "@/lib/config";
 import { METADATA_KEYS } from "@/lib/saleor/consts";
+import { marketplaceLogger } from "@/services/logging";
 
 import { getAppConfig } from "./app-config";
 
@@ -22,9 +23,9 @@ function fail(
   stage: string,
   details?: Record<string, unknown>,
 ): Result<{ vendorPageId: string }, VendorPagePublicationError> {
-  console.error("[account-confirm] Failed to publish vendor page", {
+  marketplaceLogger.error("Failed to publish vendor page", {
     stage,
-    ...(details ?? {}),
+    ...details,
   });
 
   return err<VendorPagePublicationError>([
