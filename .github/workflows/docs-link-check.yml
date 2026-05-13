@@ -57,8 +57,10 @@ jobs:
       - name: Check external links with lychee
         uses: lycheeverse/lychee-action@v2
         with:
+          lycheeVersion: v0.24.2
           args: >-
             --config apps/docs/lychee.toml
+            --root-dir ${{ github.workspace }}/apps/docs/build
             --no-progress
             'apps/docs/build/**/*.html'
           fail: true

@@ -24,6 +24,16 @@ The static output is written to `apps/docs/build/`. The build fails on broken in
 
 Internal links and anchors are validated by the Docusaurus build itself. External `http(s)` links are checked in CI by [lychee](https://github.com/lycheeverse/lychee) on every PR that touches `apps/docs/**` — see `.github/workflows/docs-link-check.yml` and `apps/docs/lychee.toml`.
 
+To reproduce the CI check locally (requires `brew install lychee`), from the repo root:
+
+```bash
+pnpm build:docs
+lychee --config apps/docs/lychee.toml \
+  --root-dir "$(pwd)/apps/docs/build" \
+  --no-progress \
+  'apps/docs/build/**/*.html'
+```
+
 ## Deployment
 
 Pushes to `main`, `staging`, or `develop` that touch `apps/docs/**` trigger `.github/workflows/docs-deploy.yml`, which publishes the site to GitHub Pages.

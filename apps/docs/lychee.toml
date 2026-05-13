@@ -1,21 +1,13 @@
 # Lychee config for the Nimara docs link checker.
 
-# Resolve root-relative links (e.g. "/", "/running-locally", "/img/logo.svg")
-# against the built docs directory. Lychee checks the corresponding file
-# exists on disk, which also validates static assets that Docusaurus itself
-# does not check.
-base = "apps/docs/build"
+# Note: --root-dir is passed as a CLI flag (it requires an absolute path, so
+# it cannot live in this checked-in config). The CI workflow passes
+# `${{ github.workspace }}/apps/docs/build`; locally pass
+# `$(pwd)/apps/docs/build`.
 
 # GitHub Pages serves "/foo" by returning "foo.html". Tell lychee to try the
-# same fallback when resolving local files.
+# same fallback when resolving local files via --root-dir.
 fallback_extensions = ["html"]
-
-# Validate canonical/og:url/sitemap links against the build produced in this
-# PR rather than the currently-deployed production site. Without this, every
-# canonical URL emitted by Docusaurus 404s until the PR is merged & deployed.
-remap = [
-  "https://docs.nimara.store/(.*) apps/docs/build/$1",
-]
 
 accept = ["200..=204", "206", "429"]
 
@@ -28,6 +20,13 @@ cache = true
 max_cache_age = "1d"
 
 exclude = [
+  # Internal canonical / og:url / sitemap URLs emitted by Docusaurus from the
+  # `url` config. The corresponding pages are validated by the Docusaurus
+  # build (onBrokenLinks: "throw") plus the local-file checks above, so the
+  # remote HTTP check would only fail until the PR is merged & deployed.
+  "^https?://docs\\.nimara\\.store/",
+
+  # Local / placeholder hosts.
   "^http://localhost",
   "^https?://127\\.0\\.0\\.1",
   "^https?://0\\.0\\.0\\.0",
