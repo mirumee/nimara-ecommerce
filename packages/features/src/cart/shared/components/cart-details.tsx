@@ -15,6 +15,7 @@ import { cn } from "@nimara/ui/lib/utils";
 
 export interface CartDetailsProps {
   cart: Cart;
+  isMarketplaceEnabled?: boolean;
   lineCheckoutIdMap?: Record<string, string>;
   onCartUpdate: (cartId: string) => Promise<void>;
   onLineDelete: (params: {
@@ -31,11 +32,14 @@ export interface CartDetailsProps {
     checkoutSignIn: string;
   };
   user: User | null;
+  vendorIdNames?: Record<string, string>;
 }
 
 export const CartDetails = ({
   cart,
+  isMarketplaceEnabled,
   user,
+  vendorIdNames,
   lineCheckoutIdMap,
   onLineQuantityChange,
   onLineDelete,
@@ -136,12 +140,17 @@ export const CartDetails = ({
       <ShoppingBag>
         <ShoppingBag.Header />
         <ShoppingBag.Lines
+          isMarketplaceEnabled={isMarketplaceEnabled}
           onLineQuantityChange={handleLineQuantityChange}
           onLineDelete={handleLineDelete}
           problems={cart.problems}
+          vendorIdNames={vendorIdNames}
           lines={cart.lines}
           isDisabled={isProcessing}
         />
+
+        <hr className="border-stone-200" />
+
         <ShoppingBag.Pricing>
           <ShoppingBag.Subtotal price={cart.subtotal} />
         </ShoppingBag.Pricing>

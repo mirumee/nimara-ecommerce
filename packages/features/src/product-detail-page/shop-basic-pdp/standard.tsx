@@ -29,10 +29,8 @@ export const StandardPDPView = async ({
   checkoutId,
   addToBagAction,
   region,
-  marketplaceEnabled = false,
 }: PDPViewProps) => {
   const { slug } = await params;
-  const tVendor = await getTranslations("vendor");
 
   return (
     <ProductProvider
@@ -68,7 +66,7 @@ export const StandardPDPView = async ({
                   availability={availability}
                   product={product}
                   services={services}
-                  checkoutId={checkoutId}
+                  checkoutId={null}
                   cartPath={paths.cart}
                   region={region}
                   addToBagAction={addToBagAction}
@@ -76,21 +74,6 @@ export const StandardPDPView = async ({
 
                 <ProductHighlights product={product} />
                 <AttributesDropdown product={product} />
-
-                {marketplaceEnabled && paths.vendor && product.vendorSlug ? (
-                  <p className="text-muted-foreground mt-4 text-sm">
-                    <LocalizedLink
-                      href={paths.vendor(product.vendorSlug)}
-                      className="text-primary font-medium underline-offset-4 hover:underline"
-                    >
-                      {product.vendorName
-                        ? tVendor("pdp_visit_vendor_shop_named", {
-                            vendorName: product.vendorName,
-                          })
-                        : tVendor("pdp_visit_vendor_shop")}
-                    </LocalizedLink>
-                  </p>
-                ) : null}
               </section>
             </div>
           </div>

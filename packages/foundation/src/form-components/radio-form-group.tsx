@@ -78,7 +78,7 @@ export const RadioFormGroup = ({
               {Children.map(children, (child, index) => (
                 <FormItem
                   className={cn(
-                    "mb-0 flex space-y-0 space-x-3 rounded-none border border-b-0 border-stone-200 p-4 text-sm first-of-type:rounded-t last-of-type:rounded-b last-of-type:border-b",
+                    "bg-background mb-0 flex space-y-0 space-x-3 rounded-none border border-b-0 p-4 text-sm first-of-type:rounded-t last-of-type:rounded-b last-of-type:border-b",
                     error && "bg-red-50 ring-red-300",
                     className,
                   )}

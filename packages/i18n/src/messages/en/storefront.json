@@ -268,6 +268,8 @@
   "vendor": {
     "no_products": "This vendor has no products listed yet.",
     "pdp_visit_vendor_shop": "Visit vendor shop",
-    "pdp_visit_vendor_shop_named": "Visit {vendorName}"
+    "pdp_visit_vendor_shop_named": "Visit {vendorName}",
+    "checkout-label": "Sells and delivered by",
+    "orders-chip": "Order {index} of {total}"
   }
 }

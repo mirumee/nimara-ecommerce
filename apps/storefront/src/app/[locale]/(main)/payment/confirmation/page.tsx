@@ -3,6 +3,7 @@ import { type Locale } from "next-intl";
 import { type AppErrorCode } from "@nimara/domain/objects/Error";
 import { redirect } from "@nimara/i18n/routing";
 
+import { clientEnvs } from "@/envs/client";
 import { getCheckoutOrRedirect } from "@/features/checkout/checkout-actions";
 import { paths, QUERY_PARAMS } from "@/foundation/routing/paths";
 import { getServiceRegistry } from "@/services/registry";
@@ -15,8 +16,7 @@ type PageProps = {
 };
 
 export default async function Page(props: PageProps) {
-  const isMarketplaceEnabled =
-    process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED !== "false";
+  const isMarketplaceEnabled = clientEnvs.NEXT_PUBLIC_MARKETPLACE_ENABLED;
 
   if (isMarketplaceEnabled) {
     const [{ locale }, searchParams] = await Promise.all([

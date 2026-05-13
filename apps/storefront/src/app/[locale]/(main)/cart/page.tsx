@@ -3,7 +3,8 @@ import {
   StandardCartView,
 } from "@nimara/features/cart/shop-basic-cart/standard";
 
-import { getCheckoutId, revalidateCart } from "@/features/checkout/cart";
+import { clientEnvs } from "@/envs/client";
+import { getCheckoutId, revalidateCart } from "@/features/checkout/server";
 import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
 import { storefrontLogger } from "@/services/logging";
@@ -12,6 +13,7 @@ import { getAccessToken } from "@/services/tokens";
 
 import {
   deleteLineAction,
+  deleteLineMarketplaceAction,
   updateLineQuantityAction,
 } from "./_actions/cart-actions";
 import { MarketplaceCartView } from "./_components/marketplace-cart-view";
@@ -19,52 +21,43 @@ import { MarketplaceCartView } from "./_components/marketplace-cart-view";
 export const generateMetadata = generateStandardCartMetadata;
 
 export default async function Page(props: any) {
-  const isMarketplaceEnabled =
-    process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED !== "false";
-  const [services, region, accessToken, checkoutId] = await Promise.all([
+  const [services, region, accessToken] = await Promise.all([
     getServiceRegistry(),
     getCurrentRegion(),
     getAccessToken(),
-    getCheckoutId(),
   ]);
 
-  if (isMarketplaceEnabled) {
+  const sharedProps = {
+    ...props,
+    services,
+    accessToken,
+    onCartUpdate: revalidateCart,
+    region,
+    logger: storefrontLogger,
+    onLineQuantityChange: updateLineQuantityAction,
+    paths: {
+      home: paths.home.asPath(),
+      checkout: paths.checkout.asPath(),
+      checkoutSignIn: paths.checkout.signIn.asPath(),
+    },
+  };
+
+  if (clientEnvs.NEXT_PUBLIC_MARKETPLACE_ENABLED) {
     return (
       <MarketplaceCartView
-        {...props}
-        services={services}
-        checkoutId={checkoutId}
-        accessToken={accessToken}
-        onCartUpdate={revalidateCart}
-        region={region}
-        logger={storefrontLogger}
-        onLineQuantityChange={updateLineQuantityAction}
-        onLineDelete={deleteLineAction}
-        paths={{
-          home: paths.home.asPath(),
-          checkout: paths.checkout.asPath(),
-          checkoutSignIn: paths.checkout.signIn.asPath(),
-        }}
+        {...sharedProps}
+        onLineDelete={deleteLineMarketplaceAction}
       />
     );
   }
 
+  const checkoutId = await getCheckoutId();
+
   return (
     <StandardCartView
-      {...props}
-      services={services}
-      checkoutId={checkoutId}
-      accessToken={accessToken}
-      onCartUpdate={revalidateCart}
-      region={region}
-      logger={storefrontLogger}
-      onLineQuantityChange={updateLineQuantityAction}
+      {...sharedProps}
       onLineDelete={deleteLineAction}
-      paths={{
-        home: paths.home.asPath(),
-        checkout: paths.checkout.asPath(),
-        checkoutSignIn: paths.checkout.signIn.asPath(),
-      }}
+      checkoutId={checkoutId}
     />
   );
 }

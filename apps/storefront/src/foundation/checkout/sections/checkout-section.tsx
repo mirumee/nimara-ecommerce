@@ -12,7 +12,7 @@ import { type CheckoutStep } from "@/foundation/checkout/steps";
 import { paths } from "@/foundation/routing/paths";
 
 interface Props {
-  closedContent?: React.ReactNode;
+  collapsedSummary?: React.ReactNode;
   disabled?: boolean;
   isComplete: boolean;
   isOpen: boolean;
@@ -26,7 +26,7 @@ export const CheckoutSection = ({
   children,
   isOpen,
   isComplete,
-  closedContent,
+  collapsedSummary,
   disabled,
 }: PropsWithChildren<Props>) => {
   return (
@@ -65,7 +65,7 @@ export const CheckoutSection = ({
             <CardContent>{children}</CardContent>
           </motion.div>
         ) : (
-          closedContent && <CardContent>{closedContent}</CardContent>
+          collapsedSummary && <CardContent>{collapsedSummary}</CardContent>
         )}
       </AnimatePresence>
     </>

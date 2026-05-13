@@ -45,11 +45,11 @@ export const CheckoutSections = ({
 }: Props) => {
   const t = useTranslations();
   const router = useRouter();
-  const isMarketplaceFlow =
+  const isMarketplaceMode =
     clientEnvs.NEXT_PUBLIC_MARKETPLACE_ENABLED &&
     !!marketplaceCheckouts &&
     marketplaceCheckouts.length > 0;
-  const checkoutCollection = isMarketplaceFlow
+  const checkoutCollection = isMarketplaceMode
     ? marketplaceCheckouts.map((item) => item.checkout)
     : [checkout];
   const emailProvidedForAll = checkoutCollection.every(
@@ -64,7 +64,7 @@ export const CheckoutSections = ({
   const isShippingRequiredForAny = checkoutCollection.some(
     (entry) => entry.isShippingRequired,
   );
-  const marketplaceShippingCheckouts = marketplaceCheckouts?.filter(
+  const checkoutsWithShippingRequired = marketplaceCheckouts?.filter(
     (item) => item.checkout.isShippingRequired,
   );
   const checkoutForSections: Checkout = {
@@ -87,6 +87,15 @@ export const CheckoutSections = ({
           ?.deliveryMethod ??
         null)
       : null,
+  };
+  const isDeliverySelected = checkoutForSections.deliveryMethod !== null;
+
+  const submitDeliveryMethod = () => {
+    router.push(
+      paths.checkout.asPath({
+        query: { step: "payment" },
+      }),
+    );
   };
 
   return (
@@ -133,36 +142,55 @@ export const CheckoutSections = ({
         </CheckoutShippingAddressSection>
       )}
 
-      {checkoutForSections.isShippingRequired && (
+      {isMarketplaceMode && checkoutsWithShippingRequired && (
         <>
           <Separator />
           <CheckoutDeliveryMethodSection
             checkout={checkoutForSections}
             isOpen={step === "delivery-method"}
+            collapsedSummary={
+              isDeliverySelected
+                ? checkoutsWithShippingRequired.map(
+                    ({ checkout, vendorDisplayName }) => (
+                      <div
+                        key={checkout.id}
+                        className="muted-foreground flex items-center gap-1 text-sm text-muted-foreground"
+                      >
+                        <span>
+                          {vendorDisplayName} - {checkout.deliveryMethod?.name}
+                        </span>
+                      </div>
+                    ),
+                  )
+                : null
+            }
           >
-            {isMarketplaceFlow && marketplaceShippingCheckouts ? (
-              <MarketplaceDeliveryMethodForm
-                checkoutItems={marketplaceShippingCheckouts}
-                onComplete={() => {
-                  router.push(
-                    paths.checkout.asPath({
-                      query: { step: "payment" },
-                    }),
-                  );
-                }}
-              />
-            ) : (
-              <DeliveryMethodForm
-                checkout={checkoutForSections}
-                onComplete={() => {
-                  router.push(
-                    paths.checkout.asPath({
-                      query: { step: "payment" },
-                    }),
-                  );
-                }}
-              />
-            )}
+            <MarketplaceDeliveryMethodForm
+              checkoutItems={checkoutsWithShippingRequired}
+              onComplete={submitDeliveryMethod}
+            />
+          </CheckoutDeliveryMethodSection>
+        </>
+      )}
+
+      {!isMarketplaceMode && checkoutForSections.isShippingRequired && (
+        <>
+          <Separator />
+          <CheckoutDeliveryMethodSection
+            checkout={checkoutForSections}
+            isOpen={step === "delivery-method"}
+            collapsedSummary={
+              checkoutForSections.deliveryMethod ? (
+                <p className="text-sm text-muted-foreground">
+                  {checkoutForSections.deliveryMethod.name}
+                </p>
+              ) : null
+            }
+          >
+            <DeliveryMethodForm
+              checkout={checkoutForSections}
+              onComplete={submitDeliveryMethod}
+            />
           </CheckoutDeliveryMethodSection>
         </>
       )}

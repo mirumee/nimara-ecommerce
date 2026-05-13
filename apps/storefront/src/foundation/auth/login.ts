@@ -5,12 +5,13 @@ import { AuthError } from "next-auth";
 
 import { signIn } from "@/auth";
 import { CACHE_TTL } from "@/config";
+import { clientEnvs } from "@/envs/client";
 import {
+  getAllCheckoutIds,
   getCheckoutId,
-  getCheckoutIds,
   setCheckoutIdCookie,
   setCheckoutIdForVendor,
-} from "@/features/checkout/cart";
+} from "@/features/checkout/server";
 import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
 import { errorService } from "@/services/error";
@@ -27,8 +28,7 @@ export async function login({
   redirectUrl?: string;
 }) {
   try {
-    const isMarketplaceEnabled =
-      process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED !== "false";
+    const isMarketplaceEnabled = clientEnvs.NEXT_PUBLIC_MARKETPLACE_ENABLED;
 
     await signIn("credentials", {
       email,
@@ -36,10 +36,9 @@ export async function login({
       redirect: false,
     });
 
-    const [accessToken, checkoutId, checkoutIds, services] = await Promise.all([
+    const [accessToken, checkoutId, services] = await Promise.all([
       getAccessToken(),
       getCheckoutId(),
-      getCheckoutIds(),
       getServiceRegistry(),
     ]);
     const [checkoutService, userService] = await Promise.all([
@@ -51,6 +50,9 @@ export async function login({
     const user = resultUserGet.ok ? resultUserGet.data : null;
 
     if (isMarketplaceEnabled) {
+      const allCheckoutIds = await getAllCheckoutIds();
+      const checkoutIds = Object.values(allCheckoutIds);
+
       if (checkoutIds.length > 0) {
         await Promise.all(
           checkoutIds.map((checkoutId) =>
@@ -61,7 +63,10 @@ export async function login({
           ),
         );
       } else if (user?.checkoutIds.length) {
-        await setCheckoutIdForVendor(null, user.checkoutIds[0]);
+        await setCheckoutIdForVendor({
+          checkoutId: user.checkoutIds[0],
+          vendorKey: null,
+        });
       }
     } else if (user?.checkoutIds.length) {
       const userLatestCheckoutId = user.checkoutIds[0];

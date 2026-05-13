@@ -77,6 +77,12 @@ The marketplace app provides the following vendor-facing features:
 - **Vendor Pages** - Manage vendor profile pages and page status
 - **Customer Management** - View and manage customers
 
+## Vendor onboarding flow
+
+During public vendor sign-up, the marketplace app creates the Saleor vendor profile page and default vendor collection before registering the customer account. The vendor page is created as a draft with `isPublished: false`, then the customer account is linked to that page through the `vendor.id` customer metadata key.
+
+The vendor page is published only after the vendor confirms their Saleor account from the account confirmation link. When confirmation succeeds and Saleor returns an active user, the marketplace app reads the customer's `vendor.id` metadata and updates the linked vendor page with `isPublished: true`.
+
 ## i18n
 
 The marketplace app also uses the shared i18n package described in the [i18n architecture docs](/i18n). It passes `app: "marketplace"` to `@nimara/i18n`'s `createRequestConfig`, so it receives the `common` + `marketplace` message bundles (with locale-specific overrides applied where defined).

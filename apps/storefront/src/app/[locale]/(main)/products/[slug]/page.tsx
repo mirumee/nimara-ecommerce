@@ -2,14 +2,17 @@ import type { Metadata } from "next";
 import { type Locale } from "next-intl";
 
 import { generateStandardPDPMetadata } from "@nimara/features/product-detail-page/shared/metadata/standard-metadata";
+import { type PDPViewProps } from "@nimara/features/product-detail-page/shared/types";
 import { StandardPDPView } from "@nimara/features/product-detail-page/shop-basic-pdp/standard";
+import { MarketplacePDPView } from "@nimara/features/product-detail-page/shop-marketplace-pdp/marketplace";
 
-import { addToBagAction } from "@/app/[locale]/(main)/products/[slug]/_actions/add-to-bag";
 import { clientEnvs } from "@/envs/client";
-import { getCheckoutId } from "@/features/checkout/cart";
+import { getCheckoutId } from "@/features/checkout/server";
 import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
 import { getServiceRegistry } from "@/services/registry";
+
+import { addToBagAction } from "./_actions/add-to-bag";
 
 type ProductPageProps = {
   params: Promise<{ locale: Locale; slug: string }>;
@@ -37,27 +40,37 @@ export async function generateMetadata({
 }
 
 export default async function ProductPage(props: ProductPageProps) {
-  const services = await getServiceRegistry();
-  const [checkoutId, region] = await Promise.all([
+  const [checkoutId, services, region] = await Promise.all([
     getCheckoutId(),
+    getServiceRegistry(),
     getCurrentRegion(),
   ]);
 
-  return (
-    <StandardPDPView
-      {...props}
-      services={services}
-      checkoutId={checkoutId}
-      region={region}
-      marketplaceEnabled={clientEnvs.NEXT_PUBLIC_MARKETPLACE_ENABLED}
-      paths={{
-        home: paths.home.asPath(),
-        cart: paths.cart.asPath(),
-        search: (query) => paths.search.asPath({ query }),
-        product: (slug) => paths.products.asPath({ slug }),
-        vendor: (vendorSlug) => paths.vendor.asPath({ vendorSlug }),
-      }}
-      addToBagAction={addToBagAction}
-    />
-  );
+  const standardProps = {
+    ...props,
+    services,
+    checkoutId,
+    region,
+    paths: {
+      home: paths.home.asPath(),
+      cart: paths.cart.asPath(),
+      search: (query) => paths.search.asPath({ query }),
+      product: (slug) => paths.products.asPath({ slug }),
+    },
+    addToBagAction,
+  } satisfies PDPViewProps;
+
+  if (clientEnvs.NEXT_PUBLIC_MARKETPLACE_ENABLED) {
+    return (
+      <MarketplacePDPView
+        {...standardProps}
+        paths={{
+          ...standardProps.paths,
+          vendor: (vendorSlug) => paths.vendor.asPath({ vendorSlug }),
+        }}
+      />
+    );
+  }
+
+  return <StandardPDPView {...standardProps} />;
 }

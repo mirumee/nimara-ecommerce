@@ -1,0 +1,5 @@
+query VendorGetBySlug($slug: String!) {
+  page(slug: $slug) {
+    ...VendorProfileFragment
+  }
+}

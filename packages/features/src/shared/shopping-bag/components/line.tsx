@@ -132,8 +132,8 @@ export const Line = ({
   }, [width]);
 
   return (
-    <div className="grid grid-cols-12 grid-rows-2 items-start gap-2 md:grid-rows-1 md:items-center [&>*]:transition-colors">
-      <div className="col-span-2 row-span-2 h-full p-[5px] md:row-span-1">
+    <div className="flex w-full items-center justify-between gap-4 [&>*]:transition-colors">
+      <div className="w-[56px] overflow-hidden">
         <LocalizedLink title={name} href={href}>
           {thumbnail ? (
             <Image
@@ -151,17 +151,13 @@ export const Line = ({
             <ProductImagePlaceholder
               height={56}
               width={42}
-              className={cn(isOutOfStock && "grayscale")}
+              className={cn("h-[56px] w-[42px]", isOutOfStock && "grayscale")}
             />
           )}
         </LocalizedLink>
       </div>
 
-      <div
-        className={cn("col-span-9 md:col-span-5", {
-          "md:col-span-6": !isLineEditable,
-        })}
-      >
+      <div className="grow">
         <LocalizedLink title={name} href={href} className="grow">
           <p
             className={cn("text-foreground text-sm", {
@@ -173,7 +169,7 @@ export const Line = ({
         </LocalizedLink>
       </div>
 
-      <div className="col-span-5 row-span-2 flex hidden items-center gap-2 md:col-span-2 md:row-span-1 md:flex">
+      <div className="flex hidden min-w-[40px] items-center justify-center gap-2 md:flex">
         {isLineEditable ? (
           <>
             <Label
@@ -289,7 +285,7 @@ export const Line = ({
         )}
       </div>
 
-      <div className="col-span-5 row-span-1 md:col-span-2">
+      <div className="col-span-5 row-span-1 min-w-[70px] md:col-span-2">
         <p
           className={cn("flex justify-end text-stone-700 dark:text-stone-300", {
             "text-stone-400": isOutOfStock,

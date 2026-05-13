@@ -12,7 +12,7 @@ export const DEFAULT_SORT_BY = "price-asc";
 export const DEFAULT_RESULTS_PER_PAGE = 16;
 
 export const COOKIE_KEY = {
-  checkoutId: "checkoutId",
+  checkout: "checkout",
   accessToken: "accessToken",
   refreshToken: "refreshToken",
   searchProvider: "searchProvider",
@@ -28,4 +28,7 @@ export const MIN_PASSWORD_LENGTH = 8;
 
 export const CHANGE_EMAIL_TOKEN_VALIDITY_IN_HOURS = 72;
 
-// TODO: group this somehow to make more logical
+// Marketplace config
+export const MARKETPLACE_VENDOR_PROFILE_CACHE_TTL = 7 * DAY;
+export const MARKETPLACE_NO_VENDOR_BUCKET = "__DEFAULT__";
+export const MARKETPLACE_DEFAULT_VENDOR_DISPLAY_NAME = "Marketplace";

@@ -56,7 +56,7 @@ function getLocale(
 
 export function createI18nMiddleware({
   localeCookieKey = "NEXT_LOCALE",
-  checkoutIdCookieKey = "checkoutId",
+  checkoutCookieKey = "checkout",
   localeCookieMaxAge,
   logger,
   onLocaleChange,
@@ -150,7 +150,7 @@ export function createI18nMiddleware({
 
       if (localeFromCookie && localeFromRequest !== localeFromCookie) {
         logger?.debug(
-          `Locale changed from ${localeFromCookie} to ${localeFromRequest}. Removing the checkoutId cookie.`,
+          `Locale changed from ${localeFromCookie} to ${localeFromRequest}. Removing the checkout cookie.`,
           {
             requestUrl: request.url,
             nextUrl: request.nextUrl.toString(),
@@ -159,8 +159,8 @@ export function createI18nMiddleware({
 
         onLocaleChange?.(localeFromCookie, localeFromRequest);
 
-        if (checkoutIdCookieKey) {
-          response.cookies.delete(checkoutIdCookieKey);
+        if (checkoutCookieKey) {
+          response.cookies.delete(checkoutCookieKey);
         }
       }
 
