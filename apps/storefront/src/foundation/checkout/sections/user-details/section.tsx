@@ -23,7 +23,7 @@ export const CheckoutUserDetailsSection = ({
       step="user-details"
       title={t("user-details.title")}
       isOpen={isOpen}
-      closedContent={
+      collapsedSummary={
         checkout.email ? (
           <p className="text-sm text-muted-foreground">{checkout.email}</p>
         ) : null

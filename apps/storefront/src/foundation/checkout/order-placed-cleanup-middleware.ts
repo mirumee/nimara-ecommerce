@@ -42,7 +42,7 @@ export function orderPlacedCleanupMiddleware(
 
     const response = NextResponse.redirect(url);
 
-    response.cookies.delete(COOKIE_KEY.checkoutId);
+    response.cookies.delete(COOKIE_KEY.checkout);
 
     return response;
   };

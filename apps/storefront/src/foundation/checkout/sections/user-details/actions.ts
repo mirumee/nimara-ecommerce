@@ -5,8 +5,9 @@ import { revalidatePath } from "next/cache";
 import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { ok } from "@nimara/domain/objects/Result";
 
+import { clientEnvs } from "@/envs/client";
 import { serverEnvs } from "@/envs/server";
-import { getCheckoutIds } from "@/features/checkout/cart";
+import { getAllCheckoutIds } from "@/features/checkout/server";
 import { paths } from "@/foundation/routing/paths";
 import { getServiceRegistry } from "@/services/registry";
 
@@ -47,13 +48,13 @@ export const updateCheckoutUserDetailsAction = async (
   payload: UpdateCheckoutUserDetailsPayload,
   opts: UpdateCheckoutUserDetailsOpts = {},
 ) => {
-  const isMarketplaceEnabled =
-    process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED !== "false";
+  const isMarketplaceEnabled = clientEnvs.NEXT_PUBLIC_MARKETPLACE_ENABLED;
   const services = await getServiceRegistry();
   const checkoutService = await services.getCheckoutService();
 
   if (isMarketplaceEnabled) {
-    const checkoutIds = await getCheckoutIds();
+    const allCheckoutIds = await getAllCheckoutIds();
+    const checkoutIds = Object.values(allCheckoutIds);
     const targetCheckoutIds = checkoutIds.length
       ? checkoutIds
       : [payload.checkout.id];

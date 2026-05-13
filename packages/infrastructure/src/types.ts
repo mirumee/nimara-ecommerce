@@ -2,6 +2,7 @@ import type { AddressService } from "./address/types";
 import type { CartService } from "./cart/types";
 import type { CheckoutService } from "./checkout/types";
 import type { CollectionService } from "./collection/types";
+import type { MarketplaceService } from "./marketplace/types";
 import type { StripePaymentService } from "./payment/providers";
 import type { StoreService } from "./store/types";
 import type { CMSMenuService } from "./use-cases/cms-menu/types";
@@ -57,6 +58,12 @@ export interface ServiceRegistry {
    * @returns A promise that resolves to the collection service instance
    */
   getCollectionService(): Promise<CollectionService>;
+  /**
+   * Gets the marketplace service, initializing it lazily on first access.
+   * The service is cached after first initialization.
+   * @returns A promise that resolves to the marketplace service instance
+   */
+  getMarketplaceService(): Promise<MarketplaceService>;
   /**
    * Gets the payment service, initializing it lazily on first access.
    * The service is cached after first initialization.

@@ -12,12 +12,15 @@ describe("createI18nMiddleware", () => {
 
   const TEST_COOKIE_KEY = {
     locale: "TEST_LOCALE",
-    checkoutId: "TEST_CHECKOUT_ID",
+    checkout: JSON.stringify({
+      checkouts: { __DEFAULT__: "TEST_CHECKOUT_ID" },
+      v: "1",
+    }),
   };
 
   const i18nMiddleware = createI18nMiddleware({
     localeCookieKey: TEST_COOKIE_KEY.locale,
-    checkoutIdCookieKey: TEST_COOKIE_KEY.checkoutId,
+    checkoutCookieKey: TEST_COOKIE_KEY.checkout,
     localeCookieMaxAge: 360 * 24 * 60 * 60, // 360 days
   });
 
@@ -86,7 +89,10 @@ describe("createI18nMiddleware", () => {
     const initialResponse = new NextResponse();
 
     initialRequest.cookies.set(TEST_COOKIE_KEY.locale, "en-US");
-    initialRequest.cookies.set(TEST_COOKIE_KEY.checkoutId, "321");
+    initialRequest.cookies.set(
+      TEST_COOKIE_KEY.checkout,
+      TEST_COOKIE_KEY.checkout,
+    );
 
     const resp = await i18nMiddleware(mockNextMiddleware)(
       initialRequest,
@@ -98,7 +104,7 @@ describe("createI18nMiddleware", () => {
 
     expect(resp?.status).toBe(200);
     expect(cookiesHeader).includes(`${TEST_COOKIE_KEY.locale}=en-GB;`);
-    expect(cookiesHeader).includes(`${TEST_COOKIE_KEY.checkoutId}=;`);
+    expect(cookiesHeader).includes(`${TEST_COOKIE_KEY.checkout}=;`);
   });
 
   it("remove the checkout cookie on locale change from / to /gb", async () => {
@@ -108,7 +114,10 @@ describe("createI18nMiddleware", () => {
     const initialResponse = new NextResponse();
 
     initialRequest.cookies.set(TEST_COOKIE_KEY.locale, "en-GB");
-    initialRequest.cookies.set(TEST_COOKIE_KEY.checkoutId, "321");
+    initialRequest.cookies.set(
+      TEST_COOKIE_KEY.checkout,
+      TEST_COOKIE_KEY.checkout,
+    );
 
     const resp = await i18nMiddleware(mockNextMiddleware)(
       initialRequest,
@@ -120,7 +129,7 @@ describe("createI18nMiddleware", () => {
 
     expect(resp?.status).toBe(200);
     expect(cookiesHeader).includes(`${TEST_COOKIE_KEY.locale}=en-US;`);
-    expect(cookiesHeader).includes(`${TEST_COOKIE_KEY.checkoutId}=;`);
+    expect(cookiesHeader).includes(`${TEST_COOKIE_KEY.checkout}=;`);
   });
 
   it.each([
@@ -135,7 +144,10 @@ describe("createI18nMiddleware", () => {
       const initialResponse = new NextResponse();
 
       initialRequest.cookies.set(TEST_COOKIE_KEY.locale, locale);
-      initialRequest.cookies.set(TEST_COOKIE_KEY.checkoutId, "321");
+      initialRequest.cookies.set(
+        TEST_COOKIE_KEY.checkout,
+        TEST_COOKIE_KEY.checkout,
+      );
 
       const resp = await i18nMiddleware(mockNextMiddleware)(
         initialRequest,
@@ -147,7 +159,7 @@ describe("createI18nMiddleware", () => {
 
       expect(resp?.status).toBe(200);
       expect(cookiesHeader).includes(`${TEST_COOKIE_KEY.locale}=${locale};`);
-      expect(cookiesHeader).not.includes(`${TEST_COOKIE_KEY.checkoutId};`);
+      expect(cookiesHeader).not.includes(`${TEST_COOKIE_KEY.checkout};`);
     },
   );
 });

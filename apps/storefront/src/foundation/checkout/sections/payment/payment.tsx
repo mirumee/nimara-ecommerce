@@ -35,6 +35,7 @@ import {
 import { useToast } from "@nimara/ui/hooks";
 import { cn } from "@nimara/ui/lib/utils";
 
+import { clientEnvs } from "@/envs/client";
 import { PAYMENT_ELEMENT_ID } from "@/features/checkout/consts";
 import { PaymentMethods } from "@/features/checkout/payment-methods";
 import { type MarketplaceCheckoutItem } from "@/features/checkout/types";
@@ -124,7 +125,7 @@ export const Payment = ({
   const [isMounted, setIsMounted] = useState(false);
   const [isCountryChanging, setIsCountryChanging] = useState(false);
   const isMarketplacePayment =
-    process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED !== "false" &&
+    clientEnvs.NEXT_PUBLIC_MARKETPLACE_ENABLED &&
     !!marketplaceCheckouts &&
     marketplaceCheckouts.length > 0;
   const hasSavedPaymentMethods =

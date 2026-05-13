@@ -18,6 +18,6 @@ export const deleteCheckoutIdCookie = async () => {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ cookieKey: COOKIE_KEY.checkoutId }),
+    body: JSON.stringify({ cookieKey: COOKIE_KEY.checkout }),
   });
 };

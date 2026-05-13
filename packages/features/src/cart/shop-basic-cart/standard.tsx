@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 
+import { CartShell } from "@nimara/features/cart/shared/components/cart-shell";
 import { ShoppingBagSkeleton } from "@nimara/features/shared/shopping-bag/shopping-bag-skeleton";
 
 import { CartDetails } from "../shared/components/cart-details";
@@ -28,33 +29,31 @@ export const StandardCartView = async (props: CartViewProps) => {
   } = props;
 
   return (
-    <div className="mx-auto flex justify-center">
-      <div className="max-w-[616px] flex-1 basis-full py-8">
-        <Suspense fallback={<ShoppingBagSkeleton hasHeader />}>
-          <CartProvider
-            services={services}
-            checkoutId={checkoutId}
-            accessToken={accessToken}
-            region={region}
-            logger={logger}
-            emptyCartRender={() => <EmptyCart paths={{ home: paths.home }} />}
-            render={({ cart, user }) => (
-              <CartDetails
-                cart={cart}
-                user={user}
-                onLineQuantityChange={onLineQuantityChange}
-                onLineDelete={onLineDelete}
-                onCartUpdate={onCartUpdate}
-                paths={{
-                  checkout: paths.checkout,
-                  checkoutSignIn: paths.checkoutSignIn,
-                }}
-              />
-            )}
-          />
-        </Suspense>
-      </div>
-    </div>
+    <CartShell>
+      <Suspense fallback={<ShoppingBagSkeleton hasHeader />}>
+        <CartProvider
+          services={services}
+          checkoutId={checkoutId}
+          accessToken={accessToken}
+          region={region}
+          logger={logger}
+          emptyCartRender={() => <EmptyCart paths={{ home: paths.home }} />}
+          render={({ cart, user }) => (
+            <CartDetails
+              cart={cart}
+              user={user}
+              onLineQuantityChange={onLineQuantityChange}
+              onLineDelete={onLineDelete}
+              onCartUpdate={onCartUpdate}
+              paths={{
+                checkout: paths.checkout,
+                checkoutSignIn: paths.checkoutSignIn,
+              }}
+            />
+          )}
+        />
+      </Suspense>
+    </CartShell>
   );
 };
 
