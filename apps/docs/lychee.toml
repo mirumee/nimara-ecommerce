@@ -1,0 +1,22 @@
+# Lychee config for the Nimara docs link checker.
+# Internal links and anchors are already validated by Docusaurus build
+# (onBrokenLinks: "throw"), so here we only check external HTTP(S) URLs.
+
+scheme = ["https", "http"]
+
+accept = ["200..=204", "206", "429"]
+
+max_retries = 2
+retry_wait_time = 2
+timeout = 20
+max_concurrency = 8
+
+cache = true
+max_cache_age = "1d"
+
+exclude = [
+  "^http://localhost",
+  "^https?://127\\.0\\.0\\.1",
+  "^https?://0\\.0\\.0\\.0",
+  "^https?://example\\.com",
+]

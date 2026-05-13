@@ -38,7 +38,7 @@
 
 - **Shadcn UI/Tailwind CSS:** Nimara's UI uses [Shadcn UI](https://ui.shadcn.com/) and [Tailwind CSS](https://tailwindcss.com/), providing a modern and customizable design system.
 
-- **Turborepo:** Nimara's monorepo is powered by [Turborepo](https://turbo.build/repo/docs/getting-started/introduction), a fast and scalable build system for monorepos. Automated tests with [Playwright](https://playwright.dev/) and a [Docusaurus](https://docusaurus.io/) docs site are included.
+- **Turborepo:** Nimara's monorepo is powered by [Turborepo](https://turborepo.dev/), a fast and scalable build system for monorepos. Automated tests with [Playwright](https://playwright.dev/) and a [Docusaurus](https://docusaurus.io/) docs site are included.
 
 - **Stripe Integration:** Nimara's storefront uses Stripe [Payment Element](https://docs.stripe.com/payments/payment-element) for secure payment processing.
 
@@ -176,11 +176,7 @@ Start with these docs:
 - **[Environment Variables](https://docs.nimara.store/docs/quickstart/environment-variables)** - Configure required and optional environment variables
 - **[Using Terraform](https://docs.nimara.store/docs/quickstart/using-terraform)** - Deploy the app to Vercel using Terraform
 
-### Docs Versioning
-
-The Docusaurus docs site uses `apps/docs/versions.json` as the source of truth for published documentation versions. `apps/docs/docusaurus.config.ts` derives `lastVersion` and the version dropdown from that file, so do not update versions in the config manually.
-
-When releasing a new docs version, add the new version to the beginning of `apps/docs/versions.json` and make sure the matching `apps/docs/versioned_docs/version-<version>/` and `apps/docs/versioned_sidebars/version-<version>-sidebars.json` files are included.
+For local development, build, deployment, and versioning of the docs site itself, see [`apps/docs/README.md`](./apps/docs/README.md).
 
 ## ❤️ Community & Contribution
 

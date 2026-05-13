@@ -1,0 +1,65 @@
+name: Docs Link Check
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+    paths:
+      - "apps/docs/**"
+      - ".github/workflows/docs-link-check.yml"
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: docs-link-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  link-check:
+    name: Build docs and check links
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install dependencies
+        working-directory: apps/docs
+        run: pnpm install --frozen-lockfile
+
+      # Internal links and anchors are validated here:
+      # docusaurus.config.ts sets onBrokenLinks / onBrokenMarkdownLinks /
+      # onBrokenAnchors to "throw", so this step fails on any broken
+      # internal reference.
+      - name: Build docs (validates internal links)
+        working-directory: apps/docs
+        run: pnpm build
+
+      - name: Restore lychee cache
+        uses: actions/cache@v4
+        with:
+          path: .lycheecache
+          key: cache-lychee-${{ github.sha }}
+          restore-keys: cache-lychee-
+
+      - name: Check external links with lychee
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --config apps/docs/lychee.toml
+            --no-progress
+            'apps/docs/build/**/*.html'
+          fail: true
+          token: ${{ secrets.GITHUB_TOKEN }}

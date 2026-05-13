@@ -36,8 +36,9 @@ const config: Config = {
   projectName: "nimara-ecommerce",
   trailingSlash: false,
 
-  onBrokenLinks: "warn",
-  onBrokenMarkdownLinks: "warn",
+  onBrokenLinks: "throw",
+  onBrokenMarkdownLinks: "throw",
+  onBrokenAnchors: "throw",
 
   i18n: {
     defaultLocale: "en",
