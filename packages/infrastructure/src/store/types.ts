@@ -10,6 +10,7 @@ import type {
   RelatedProduct,
 } from "@nimara/domain/objects/Product";
 import { type AsyncResult } from "@nimara/domain/objects/Result";
+import type { VendorProfile } from "@nimara/domain/objects/VendorProfile";
 
 import type { FetchOptions } from "#root/graphql/client";
 import type { Logger } from "#root/logging/types";
@@ -70,8 +71,20 @@ export type GetProductBaseUseCase = GetProductBaseInfra;
 
 export type GetProductRelatedProductsUseCase = GetProductRelatedProductsInfra;
 
+type VendorProfileOptions = {
+  languageCode: string;
+  vendorSlug: string;
+} & WithFetchOptions;
+
+export type GetVendorProfileBySlugInfra = (
+  opts: VendorProfileOptions,
+) => AsyncResult<{ vendor: VendorProfile | null }>;
+
+export type GetVendorProfileBySlugUseCase = GetVendorProfileBySlugInfra;
+
 export type StoreService = {
   getProductBase: GetProductBaseUseCase;
   getProductDetails: GetProductDetailsUseCase;
   getProductRelatedProducts: GetProductRelatedProductsUseCase;
+  getVendorProfileBySlug: GetVendorProfileBySlugUseCase;
 };

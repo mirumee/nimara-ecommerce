@@ -1,10 +1,7 @@
 "use client";
 
-import { useTranslations } from "next-intl";
-
 import type { SortByOption } from "@nimara/domain/objects/Search";
 import { usePathname, useRouter } from "@nimara/i18n/routing";
-import type { MessagePath } from "@nimara/i18n/types";
 import {
   Select,
   SelectContent,
@@ -18,18 +15,21 @@ export const SearchSortBy = ({
   options,
   searchParams,
   defaultSortBy,
+  sortByLabel,
+  optionLabels,
 }: {
   defaultSortBy: string;
+  optionLabels: Record<string, string>;
   options: Array<SortByOption>;
   searchParams: Record<string, string>;
+  sortByLabel: string;
 }) => {
-  const t = useTranslations();
   const router = useRouter();
   const pathname = usePathname();
+  const selectedSortBy = searchParams["sortBy"] ?? defaultSortBy;
 
   const defaultValue = options.find(
-    (option) =>
-      option.value === searchParams["sortBy"] || option.value === defaultSortBy,
+    (option) => option.value === selectedSortBy,
   )?.value;
 
   const handleValueChange = (value: string) => {
@@ -51,21 +51,21 @@ export const SearchSortBy = ({
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-sm font-medium">{t("search.sort-by")}</span>
+      <span className="text-sm font-medium">{sortByLabel}</span>
 
       <div>
         <Select defaultValue={defaultValue} onValueChange={handleValueChange}>
           <SelectTrigger
             className="min-w-40 transition-colors"
-            aria-label={t("search.sort-by")}
+            aria-label={sortByLabel}
           >
-            <SelectValue placeholder={t("search.sort-by")} />
+            <SelectValue placeholder={sortByLabel} />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
               {options.map(({ value, messageKey }) => (
                 <SelectItem value={value} key={value}>
-                  {t(messageKey as MessagePath)}
+                  {optionLabels[value] ?? messageKey}
                 </SelectItem>
               ))}
             </SelectGroup>

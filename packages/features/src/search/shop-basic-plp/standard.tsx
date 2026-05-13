@@ -1,5 +1,8 @@
+import { getTranslations } from "next-intl/server";
+
 import { ProductsList } from "@nimara/features/shared/product-list/products-list";
 import { SearchPagination } from "@nimara/features/shared/product-list/search-pagination";
+import type { MessagePath } from "@nimara/i18n/types";
 import { Skeleton } from "@nimara/ui/components/skeleton";
 
 import { Breadcrumbs } from "../shared/components/breadcrumbs";
@@ -27,6 +30,7 @@ export const StandardSearchView = async (props: SearchViewProps) => {
     region,
   } = props;
   const searchParams = await searchParamsPromise;
+  const t = await getTranslations();
   const headerText = await SearchHeader(searchParams);
 
   return (
@@ -48,6 +52,13 @@ export const StandardSearchView = async (props: SearchViewProps) => {
                     options={sortByOptions}
                     searchParams={searchParams}
                     defaultSortBy={props.defaultSortBy}
+                    sortByLabel={t("search.sort-by")}
+                    optionLabels={Object.fromEntries(
+                      sortByOptions.map((option) => [
+                        option.value,
+                        t(option.messageKey as MessagePath),
+                      ]),
+                    )}
                   />
                 </div>
                 <FiltersContainer
