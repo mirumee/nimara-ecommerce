@@ -54,14 +54,24 @@ jobs:
           key: cache-lychee-${{ github.sha }}
           restore-keys: cache-lychee-
 
+      # Install lychee directly — `lycheeverse/lychee-action@v2` defaults to
+      # v0.23.0 (we need v0.24+ for the `--root-dir` flag) and is currently
+      # broken with v0.24+ tarball layout.
+      - name: Install lychee
+        env:
+          LYCHEE_VERSION: v0.24.2
+        run: |
+          curl -sSfL "https://github.com/lycheeverse/lychee/releases/download/lychee-${LYCHEE_VERSION}/lychee-x86_64-unknown-linux-gnu.tar.gz" \
+            | tar -xz -C /tmp lychee-x86_64-unknown-linux-gnu/lychee --strip-components=1
+          sudo install -m 0755 /tmp/lychee /usr/local/bin/lychee
+          lychee --version
+
       - name: Check external links with lychee
-        uses: lycheeverse/lychee-action@v2
-        with:
-          lycheeVersion: v0.24.2
-          args: >-
-            --config apps/docs/lychee.toml
-            --root-dir ${{ github.workspace }}/apps/docs/build
-            --no-progress
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          lychee \
+            --config apps/docs/lychee.toml \
+            --root-dir "${GITHUB_WORKSPACE}/apps/docs/build" \
+            --no-progress \
             'apps/docs/build/**/*.html'
-          fail: true
-          token: ${{ secrets.GITHUB_TOKEN }}
