@@ -29,7 +29,7 @@ const config: Config = {
   tagline: "Modern headless e-commerce platform built on Saleor",
   favicon: "img/favicon.svg",
 
-  url: "https://mirumee.github.io",
+  url: "https://docs.nimara.store",
   baseUrl: "/",
 
   organizationName: "mirumee",
@@ -57,7 +57,7 @@ const config: Config = {
       {
         docs: {
           editUrl:
-            "https://github.com/mirumee/nimara-ecommerce/tree/main/apps/docs/",
+            "https://github.com/mirumee/nimara-ecommerce/edit/main/apps/docs/",
           routeBasePath: "/",
           lastVersion: latestDocsVersion,
           includeCurrentVersion: false,
