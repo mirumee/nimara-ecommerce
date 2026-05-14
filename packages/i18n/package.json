@@ -30,7 +30,7 @@
     "vitest": "^4.1.2"
   },
   "engines": {
-    "node": "22.x"
+    "node": "24.x"
   },
   "exports": {
     "./*": "./src/*",

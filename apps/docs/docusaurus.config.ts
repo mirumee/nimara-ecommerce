@@ -1,9 +1,9 @@
-import type { Config } from "@docusaurus/types";
-import type * as Preset from "@docusaurus/preset-classic";
 import type { VersionOptions } from "@docusaurus/plugin-content-docs";
+import type * as Preset from "@docusaurus/preset-classic";
+import type { Config } from "@docusaurus/types";
 
-import docsVersionsList from "./versions.json";
 import { pluginLlmsTxt } from "./src/plugins/llms-txt";
+import docsVersionsList from "./versions.json";
 
 const [latestDocsVersion] = docsVersionsList;
 

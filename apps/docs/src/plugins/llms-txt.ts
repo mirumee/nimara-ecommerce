@@ -4,11 +4,12 @@ import path from "node:path";
 import type { LoadContext, Plugin } from "@docusaurus/types";
 
 import {
-  DOCS_PLUGIN_NAME,
   buildDocsIndex,
+  DOCS_PLUGIN_NAME,
+  type DocsRouteRecord,
   getLatestDocsContent,
+  type LatestDocsContent,
 } from "../lib/llms-txt";
-import type { DocsRouteRecord, LatestDocsContent } from "../lib/llms-txt";
 
 export async function pluginLlmsTxt(
   context: LoadContext,
@@ -22,6 +23,7 @@ export async function pluginLlmsTxt(
       const { allMdx, latestDocsVersion, latestSidebar } = content;
 
       const concatenatedPath = path.join(outDir, "llms-full.txt");
+
       await fs.promises.writeFile(concatenatedPath, allMdx.join("\n\n---\n\n"));
 
       const docsPluginRouteConfig = routes.find(
@@ -50,6 +52,7 @@ export async function pluginLlmsTxt(
         version: latestDocsVersion,
       });
       const llmsTxtPath = path.join(outDir, "llms.txt");
+
       await fs.promises.writeFile(llmsTxtPath, llmsTxt);
     },
   };
