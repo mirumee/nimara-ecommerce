@@ -14,9 +14,9 @@ export const LEDGER_FUNDS_STATUSES = [
 export type LedgerFundsStatus = (typeof LEDGER_FUNDS_STATUSES)[number];
 
 export type LedgerTransferEligibilityInput = {
-  fundsStatus: LedgerFundsStatus;
   /** Stripe BalanceTransaction.available_on (UTC), if known */
   availableOn: Date | null;
+  fundsStatus: LedgerFundsStatus;
 };
 
 /**
@@ -33,5 +33,6 @@ export function isLedgerTransferEligible(
   if (entry.availableOn !== null && entry.availableOn > asOf) {
     return false;
   }
+
   return true;
 }

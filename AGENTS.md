@@ -213,7 +213,7 @@ For decision tree and detailed scenarios, see `.agents/skills/project-guidelines
 **Repo-specific instructions:**
 
 1. **Tooling**
-   - Node **22.x**; package manager **pnpm**; `turbo` for runs. Root scripts: `build`, `dev`, `test`, `format`, `format:check`, `codegen`. Per-app scripts (e.g. `dev:storefront`, `build:storefront`) use `pnpm run … --filter=storefront`.
+   - Node **24.x**; package manager **pnpm**; `turbo` for runs. Root scripts: `build`, `dev`, `test`, `format`, `format:check`, `codegen`. Per-app scripts (e.g. `dev:storefront`, `build:storefront`) use `pnpm run … --filter=storefront`.
 
 2. **CI (GitHub Actions)**
    - Main workflow: lint (ESLint on changed `.ts`/`.tsx` for PRs, all on push), Prettier check, tests. Use `pnpm install --frozen-lockfile`.
