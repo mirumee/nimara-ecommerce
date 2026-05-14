@@ -22,7 +22,7 @@ The static output is written to `apps/docs/build/`. The build fails on broken in
 
 ## Link checking
 
-Internal links and anchors are validated by the Docusaurus build itself. External `http(s)` links are checked in CI by [lychee](https://github.com/lycheeverse/lychee) on every PR that touches `apps/docs/**` — see `.github/workflows/docs-link-check.yml` and `apps/docs/lychee.toml`.
+Internal links and anchors are validated by the Docusaurus build itself. External `http(s)` links are checked in CI by [lychee](https://github.com/lycheeverse/lychee) on a daily schedule — see `.github/workflows/docs-link-check.yml` and `apps/docs/lychee.toml`. When the build or lychee detects a broken link, the workflow opens (or updates) a GitHub issue labeled `docs`, `link-check`, `automated`. The workflow can also be triggered manually from the Actions tab.
 
 To reproduce the CI check locally (requires `brew install lychee`), from the repo root:
 

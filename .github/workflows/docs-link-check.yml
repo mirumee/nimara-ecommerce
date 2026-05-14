@@ -1,20 +1,14 @@
 name: Docs Link Check
 
 on:
-  pull_request:
-    types:
-      - opened
-      - synchronize
-    paths:
-      - "apps/docs/**"
-      - ".github/workflows/docs-link-check.yml"
+  schedule:
+    # Daily at 06:00 UTC.
+    - cron: "0 6 * * *"
+  workflow_dispatch:
 
 permissions:
   contents: read
-
-concurrency:
-  group: docs-link-check-${{ github.ref }}
-  cancel-in-progress: true
+  issues: write
 
 jobs:
   link-check:
@@ -43,16 +37,16 @@ jobs:
       # onBrokenAnchors to "throw", so this step fails on any broken
       # internal reference.
       - name: Build docs (validates internal links)
+        id: build
         working-directory: apps/docs
         run: pnpm build
 
       - name: Restore lychee cache
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: .lycheecache
-          key: cache-lychee-${{ hashFiles('apps/docs/lychee.toml') }}
-          restore-keys: cache-lychee-
-          save-always: true
+          key: cache-lychee-${{ hashFiles('apps/docs/lychee.toml') }}-${{ github.run_id }}
+          restore-keys: cache-lychee-${{ hashFiles('apps/docs/lychee.toml') }}-
 
       # Install lychee directly — `lycheeverse/lychee-action@v2` defaults to
       # v0.23.0 (we need v0.24+ for the `--root-dir` flag) and is currently
@@ -67,6 +61,7 @@ jobs:
           lychee --version
 
       - name: Check external links with lychee
+        id: lychee
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -74,4 +69,60 @@ jobs:
             --config apps/docs/lychee.toml \
             --root-dir "${GITHUB_WORKSPACE}/apps/docs/build" \
             --no-progress \
+            --format markdown \
+            --output ./lychee-report.md \
             'apps/docs/build/**/*.html'
+
+      # Save the cache even when lychee finds broken links (failure path), so
+      # subsequent runs don't re-check every URL from scratch.
+      - name: Save lychee cache
+        if: always() && steps.lychee.outcome != 'skipped'
+        uses: actions/cache/save@v4
+        with:
+          path: .lycheecache
+          key: cache-lychee-${{ hashFiles('apps/docs/lychee.toml') }}-${{ github.run_id }}
+
+      # Assemble a single markdown report covering whichever step failed.
+      - name: Prepare failure report
+        if: failure()
+        run: |
+          {
+            echo "Automated docs link check failed at $(date -u +%Y-%m-%dT%H:%M:%SZ)."
+            echo ""
+            echo "**Workflow run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            echo ""
+            if [[ "${{ steps.build.outcome }}" == "failure" ]]; then
+              echo "## Internal link check failed"
+              echo ""
+              echo "Docusaurus build failed — likely a broken internal link or anchor. Inspect the workflow logs for the exact reference."
+              echo ""
+            fi
+            if [[ "${{ steps.lychee.outcome }}" == "failure" && -f ./lychee-report.md ]]; then
+              echo "## External link check failed"
+              echo ""
+              cat ./lychee-report.md
+            fi
+          } > ./issue-report.md
+
+      - name: Find existing link-check issue
+        if: failure()
+        id: find_issue
+        uses: micalevisk/last-issue-action@v2
+        with:
+          state: open
+          labels: |
+            docs
+            link-check
+            automated
+
+      - name: Create or update broken-link issue
+        if: failure()
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: Docs link check failed
+          issue-number: ${{ steps.find_issue.outputs.issue-number }}
+          content-filepath: ./issue-report.md
+          labels: |
+            docs
+            link-check
+            automated
