@@ -11,7 +11,6 @@ on:
 
 permissions:
   contents: read
-  issues: write
 
 concurrency:
   group: docs-link-check-${{ github.ref }}
@@ -51,8 +50,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .lycheecache
-          key: cache-lychee-${{ github.sha }}
+          key: cache-lychee-${{ hashFiles('apps/docs/lychee.toml') }}
           restore-keys: cache-lychee-
+          save-always: true
 
       # Install lychee directly — `lycheeverse/lychee-action@v2` defaults to
       # v0.23.0 (we need v0.24+ for the `--root-dir` flag) and is currently
