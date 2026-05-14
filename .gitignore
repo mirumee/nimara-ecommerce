@@ -46,6 +46,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# lychee link checker cache (managed by actions/cache in CI)
+.lycheecache
+
 # Infra files
 # Local .terraform directories
 .terraform/
