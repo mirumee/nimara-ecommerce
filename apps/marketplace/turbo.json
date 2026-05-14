@@ -1,0 +1,61 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^codegen", "^build", "lint"],
+      "outputs": [".next/**", "!.next/cache/**"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env",
+        ".env.production",
+        ".env.development",
+        "!.env*.local",
+        "!.next/**"
+      ],
+      "env": [
+        "NEXT_PUBLIC_SALEOR_URL",
+        "NEXT_PUBLIC_SALEOR_API_URL",
+        "NEXT_PUBLIC_SALEOR_UI_APP_TOKEN",
+        "NEXT_PUBLIC_SALEOR_MARKETPLACE_CHANNEL_SLUG",
+        "NEXT_PUBLIC_GRAPHQL_URL",
+        "NEXT_PUBLIC_MARKETPLACE_STOREFRONT_URL",
+        "MARKETPLACE_NODE_ENV"
+      ],
+      "passThroughEnv": [
+        "DATABASE_URL",
+        "MARKETPLACE_APP_CONFIG_PROVIDER",
+        "MARKETPLACE_APP_CONFIG_EDGE_KEY",
+        "MARKETPLACE_BASE_PATH",
+        "MARKETPLACE_CORS_ORIGINS",
+        "MARKETPLACE_PORT",
+        "MARKETPLACE_EDGE_CONFIG",
+        "MARKETPLACE_SMTP_HOST",
+        "MARKETPLACE_SMTP_PORT",
+        "MARKETPLACE_SMTP_USER",
+        "MARKETPLACE_SMTP_PASSWORD",
+        "MARKETPLACE_SMTP_SECURE",
+        "MARKETPLACE_EMAIL_FROM",
+        "MARKETPLACE_SUPERADMIN_EMAIL",
+        "MARKETPLACE_STRIPE_CONNECT_WEBHOOK_SECRET",
+        "MARKETPLACE_STRIPE_CONNECT_DEFAULT_COUNTRY",
+        "SECRET_MANAGER_APP_CONFIG_PATH",
+        "STRIPE_SECRET_KEY",
+        "STRIPE_WEBHOOK_SIGNING_SECRET",
+        "ALLOWED_SALEOR_DOMAINS",
+        "AWS_ACCESS_KEY_ID",
+        "AWS_SECRET_ACCESS_KEY",
+        "AWS_SESSION_TOKEN",
+        "AWS_REGION",
+        "AWS_ENDPOINT_URL",
+        "VERCEL_ACCESS_TOKEN",
+        "VERCEL_TEAM_ID",
+        "VERCEL_EDGE_CONFIG_ID"
+      ]
+    },
+    "db:generate": {
+      "outputs": ["db/migrations/**"],
+      "inputs": ["src/**/schema.ts", "drizzle.config.ts"]
+    }
+  }
+}
