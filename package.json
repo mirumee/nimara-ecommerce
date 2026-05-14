@@ -55,8 +55,8 @@
     "husky": "9.1.7",
     "lint-staged": "^16.4.0",
     "prettier": "3.8.1",
-    "prettier-plugin-tailwindcss": "^0.7.2",
-    "turbo": "2.9.4"
+    "prettier-plugin-tailwindcss": "^0.8.0",
+    "turbo": "2.9.12"
   },
   "config": {
     "commitizen": {
