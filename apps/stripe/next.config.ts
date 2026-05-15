@@ -23,26 +23,28 @@ const nextConfig: NextConfig = {
   transpilePackages: ["@nimara/ui"],
 };
 
-const configWithSentry = withSentryConfig(nextConfig, {
-  silent: true,
-  authToken: process.env.SENTRY_AUTH_TOKEN,
-  org: process.env.SENTRY_ORG,
-  project: process.env.SENTRY_PROJECT,
+const configWithSentry = isSentryAvailable
+  ? withSentryConfig(nextConfig, {
+      silent: true,
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+      org: process.env.SENTRY_ORG,
+      project: process.env.SENTRY_PROJECT,
 
-  release: {
-    name: APP_SEMVER_NAME,
-    deploy: {
-      env: process.env.NEXT_PUBLIC_ENVIRONMENT!,
-    },
-  },
-  widenClientFileUpload: true,
-  tunnelRoute: "/monitoring",
-  webpack: {
-    automaticVercelMonitors: true,
-    treeshake: {
-      removeDebugLogging: true,
-    },
-  },
-});
+      release: {
+        name: APP_SEMVER_NAME,
+        deploy: {
+          env: process.env.NEXT_PUBLIC_ENVIRONMENT!,
+        },
+      },
+      widenClientFileUpload: true,
+      tunnelRoute: "/monitoring",
+      webpack: {
+        automaticVercelMonitors: true,
+        treeshake: {
+          removeDebugLogging: true,
+        },
+      },
+    })
+  : nextConfig;
 
-export default isSentryAvailable ? configWithSentry : nextConfig;
+export default configWithSentry;
