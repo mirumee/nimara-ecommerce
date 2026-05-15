@@ -1,7 +1,7 @@
 import { type Logger } from "@nimara/foundation/logging/types";
 import { type AddressService } from "@nimara/infrastructure/address/types";
 
-import { clientEnvs } from "@/envs/client";
+import { getRequiredSaleorApiUrl } from "./required-env";
 
 /**
  * Creates a lazy loader function for the address service.
@@ -22,7 +22,7 @@ export const createAddressServiceLoader = (logger: Logger) => {
       await import("@nimara/infrastructure/address/index");
 
     addressServiceInstance = saleorAddressService({
-      apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
+      apiURL: getRequiredSaleorApiUrl("address service"),
       logger,
     });
 

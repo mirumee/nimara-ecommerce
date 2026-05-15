@@ -40,10 +40,16 @@ export const baseCodegenConfig: CodegenConfig["config"] = {
   },
 };
 
-invariant(
-  process.env.NEXT_PUBLIC_SALEOR_API_URL,
-  `NEXT_PUBLIC_SALEOR_API_URL not set!`,
-);
+// chce skip a nie crach
+// invariant(
+//   process.env.NEXT_PUBLIC_SALEOR_API_URL,
+//   `NEXT_PUBLIC_SALEOR_API_URL not set!`,
+// );
+
+if (!process.env.NEXT_PUBLIC_SALEOR_API_URL) {
+  console.log("Skipping Saleor codegen: NEXT_PUBLIC_SALEOR_API_URL is not set");
+  process.exit(0);
+}
 
 const nearOperationFileConfig = {
   config: baseCodegenConfig,

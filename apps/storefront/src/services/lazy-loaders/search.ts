@@ -2,7 +2,7 @@ import type { Logger } from "@nimara/infrastructure/logging/types";
 import type { SaleorSearchServiceConfig } from "@nimara/infrastructure/search/saleor/types";
 import type { SearchService } from "@nimara/infrastructure/use-cases/search/types";
 
-import { clientEnvs } from "@/envs/client";
+import { getRequiredSaleorApiUrl } from "./required-env";
 
 /**
  * Creates a lazy loader function for the search service.
@@ -14,7 +14,7 @@ export const createSearchServiceLoader = (logger: Logger) => {
 
   const saleorSearchServiceConfig = (): SaleorSearchServiceConfig =>
     ({
-      apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
+      apiURL: getRequiredSaleorApiUrl("search service"),
       settings: {
         sorting: [
           {

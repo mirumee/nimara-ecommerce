@@ -27,10 +27,15 @@ export const config = {
         const { email, password } = await signInSchema({ t }).parseAsync(
           credentials,
         );
+        const saleorApiUrl = clientEnvs.NEXT_PUBLIC_SALEOR_API_URL;
+
+        if (!saleorApiUrl) {
+          return null;
+        }
 
         const { data } = await (
           await createSaleorAuthClientFromConfig({
-            saleorApiUrl: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
+            saleorApiUrl,
           })
         ).signIn({ email, password });
 

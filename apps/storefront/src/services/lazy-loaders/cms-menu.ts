@@ -1,7 +1,7 @@
 import type { Logger } from "@nimara/infrastructure/logging/types";
 import type { CMSMenuService } from "@nimara/infrastructure/use-cases/cms-menu/types";
 
-import { clientEnvs } from "@/envs/client";
+import { getRequiredSaleorApiUrl } from "./required-env";
 
 /**
  * Creates a lazy loader function for the CMS menu service.
@@ -20,7 +20,7 @@ export const createCMSMenuServiceLoader = (logger: Logger) => {
       await import("@nimara/infrastructure/cms-menu/providers");
 
     cmsMenuServiceInstance = saleorCMSMenuService({
-      apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
+      apiURL: getRequiredSaleorApiUrl("CMS menu service"),
       logger,
     });
 

@@ -19,9 +19,16 @@ export const getAuthService = async (): Promise<AuthService> => {
     import("@nimara/infrastructure/auth/index"),
     getStorefrontLogger(),
   ]);
+  const saleorApiUrl = clientEnvs.NEXT_PUBLIC_SALEOR_API_URL;
+
+  if (!saleorApiUrl) {
+    throw new Error(
+      "Please set NEXT_PUBLIC_SALEOR_API_URL to use auth service.",
+    );
+  }
 
   loadedService = saleorAuthService({
-    apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
+    apiURL: saleorApiUrl,
     logger: storefrontLogger,
   });
 

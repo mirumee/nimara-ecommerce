@@ -2,6 +2,7 @@ import { type Locale } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 
+import { type PaymentMethod } from "@nimara/domain/objects/Payment";
 import { LocalizedLink, redirect } from "@nimara/i18n/routing";
 
 import { clientEnvs } from "@/envs/client";
@@ -31,7 +32,6 @@ export default async function Page(props: PageProps) {
     ]);
   const userService = await services.getUserService();
   const resultUserGet = await userService.userGet(accessToken);
-  const paymentService = await services.getPaymentService();
 
   const user = resultUserGet.ok ? resultUserGet.data : null;
 
@@ -39,53 +39,63 @@ export default async function Page(props: PageProps) {
     redirect({ href: paths.signIn.asPath(), locale });
   }
 
-  const region = await getCurrentRegion();
-  const resultCustomerGet = await paymentService.customerGet({
-    user: user,
-    channel: region.market.channel,
-    environment: clientEnvs.ENVIRONMENT,
-    accessToken: serverEnvs.SALEOR_APP_TOKEN,
-  });
+  const saleorAppToken = serverEnvs.SALEOR_APP_TOKEN;
+  let customerId: string | null = null;
+  let error: ReactNode = null;
+  let paymentMethods: PaymentMethod[] = [];
 
-  let error = null;
-
-  if (Object.keys(searchParams).length) {
-    const resultPaymentMethodSave =
-      await paymentService.paymentMethodSaveProcess({
-        searchParams,
-      });
-
-    if (resultPaymentMethodSave.ok) {
-      redirect({ href: paths.account.paymentMethods.asPath(), locale });
-    } else {
-      error = t.rich("errors.GENERIC_PAYMENT_ERROR", {
-        link: (chunks: ReactNode) => (
-          <LocalizedLink
-            href={`mailto:${clientEnvs.NEXT_PUBLIC_DEFAULT_EMAIL}`}
-            className="underline"
-            target="_blank"
-          >
-            {chunks}
-          </LocalizedLink>
-        ),
-      });
-    }
-  }
-
-  if (!resultCustomerGet.ok) {
-    throw new Error("Could not create gateway customer.");
-  }
-
-  const { customerId } = resultCustomerGet.data;
-  const resultCustomerPaymentMethods =
-    await paymentService.customerPaymentMethodsList({
-      customerId,
+  if (saleorAppToken) {
+    const [paymentService, region] = await Promise.all([
+      services.getPaymentService(),
+      getCurrentRegion(),
+    ]);
+    const resultCustomerGet = await paymentService.customerGet({
+      user: user,
+      channel: region.market.channel,
+      environment: clientEnvs.ENVIRONMENT,
+      accessToken: saleorAppToken,
     });
 
-  const storeUrl = await getStoreUrl();
-  const paymentMethods = resultCustomerPaymentMethods.ok
-    ? resultCustomerPaymentMethods.data
-    : [];
+    if (Object.keys(searchParams).length) {
+      const resultPaymentMethodSave =
+        await paymentService.paymentMethodSaveProcess({
+          searchParams,
+        });
+
+      if (resultPaymentMethodSave.ok) {
+        redirect({ href: paths.account.paymentMethods.asPath(), locale });
+      } else {
+        error = t.rich("errors.GENERIC_PAYMENT_ERROR", {
+          link: (chunks: ReactNode) => (
+            <LocalizedLink
+              href={`mailto:${clientEnvs.NEXT_PUBLIC_DEFAULT_EMAIL}`}
+              className="underline"
+              target="_blank"
+            >
+              {chunks}
+            </LocalizedLink>
+          ),
+        });
+      }
+    }
+
+    if (!resultCustomerGet.ok) {
+      throw new Error("Could not create gateway customer.");
+    }
+
+    customerId = resultCustomerGet.data.customerId;
+
+    const resultCustomerPaymentMethods =
+      await paymentService.customerPaymentMethodsList({
+        customerId,
+      });
+
+    paymentMethods = resultCustomerPaymentMethods.ok
+      ? resultCustomerPaymentMethods.data
+      : [];
+  }
+
+  const storeUrl = customerId ? await getStoreUrl() : null;
   const hasPaymentMethods = paymentMethods.length > 0;
 
   return (
@@ -95,7 +105,7 @@ export default async function Page(props: PageProps) {
           {t("payment.payment-methods")}
         </h2>
 
-        {hasPaymentMethods && (
+        {hasPaymentMethods && customerId && storeUrl && (
           <AddNewPaymentTrigger
             storeUrl={storeUrl}
             customerId={customerId}
@@ -107,7 +117,7 @@ export default async function Page(props: PageProps) {
       <hr />
 
       <div>
-        {hasPaymentMethods ? (
+        {hasPaymentMethods && customerId ? (
           <PaymentMethodsList
             customerId={customerId}
             methods={paymentMethods}
@@ -117,13 +127,15 @@ export default async function Page(props: PageProps) {
             <p className="text-sm text-stone-500 dark:text-muted-foreground">
               {t("payment.no-payment-methods")}
             </p>
-            <div>
-              <AddNewPaymentTrigger
-                storeUrl={storeUrl}
-                customerId={customerId}
-                variant="default"
-              />
-            </div>
+            {customerId && storeUrl && (
+              <div>
+                <AddNewPaymentTrigger
+                  storeUrl={storeUrl}
+                  customerId={customerId}
+                  variant="default"
+                />
+              </div>
+            )}
           </div>
         )}
 

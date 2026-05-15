@@ -30,12 +30,18 @@ interface UpdateCheckoutUserDetailsOpts {
 }
 
 export const checkIfUserHasAnAccount = async (email: string) => {
+  const saleorAppToken = serverEnvs.SALEOR_APP_TOKEN;
+
+  if (!saleorAppToken) {
+    return ok({ user: null });
+  }
+
   const services = await getServiceRegistry();
   const userService = await services.getUserService();
 
   return userService.userFind({
     email,
-    saleorAppToken: serverEnvs.SALEOR_APP_TOKEN,
+    saleorAppToken,
   });
 };
 

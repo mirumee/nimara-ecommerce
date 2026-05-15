@@ -1,7 +1,7 @@
 import type { Logger } from "@nimara/infrastructure/logging/types";
 import type { UserService } from "@nimara/infrastructure/user/types";
 
-import { clientEnvs } from "@/envs/client";
+import { getRequiredSaleorApiUrl } from "./required-env";
 
 /**
  * Creates a lazy loader function for the user service.
@@ -20,7 +20,7 @@ export const createUserServiceLoader = (logger: Logger) => {
       await import("@nimara/infrastructure/user/index");
 
     userServiceInstance = saleorUserService({
-      apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
+      apiURL: getRequiredSaleorApiUrl("user service"),
       logger,
     });
 
