@@ -1,10 +1,18 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 import type { PageField } from "@nimara/domain/objects/CMSPage";
 import { LocalizedLink } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
 
 import { createFieldsMap, type FieldsMap } from "../utils/create-fields-map";
+
+const ANIMATED_PHRASES = [
+  "open-source storefront",
+  "built on Next.js & Saleor",
+  "architected to scale",
+] as const;
 
 export interface HeroBannerProps {
   backgroundImageUrl?: string;
@@ -17,6 +25,21 @@ export const HeroBanner = ({
   fields,
   searchPath,
 }: HeroBannerProps) => {
+  const [phraseIndex, setPhraseIndex] = useState(0);
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setVisible(false);
+      setTimeout(() => {
+        setPhraseIndex((i) => (i + 1) % ANIMATED_PHRASES.length);
+        setVisible(true);
+      }, 350);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   if (!fields || fields.length === 0) {
     return null;
   }
@@ -75,11 +98,17 @@ export const HeroBanner = ({
       </div>
 
       <div className="relative z-10 p-8 text-center lg:p-16">
-        <h6 className="text-muted-foreground pb-3 text-xs font-semibold tracking-widest uppercase">
-          OPEN-SOURCE STOREFRONT
-        </h6>
         <h1 className="text-foreground mx-auto max-w-[720px] pb-4 text-3xl leading-tight font-normal lg:text-5xl">
-          The Marketplace-Ready Storefront Blueprint
+          <span>Nimara is </span>
+          <span
+            className="inline-block transition-all duration-300"
+            style={{
+              opacity: visible ? 1 : 0,
+              transform: visible ? "translateY(0)" : "translateY(-8px)",
+            }}
+          >
+            {ANIMATED_PHRASES[phraseIndex]}
+          </span>
         </h1>
         <div className="flex justify-center gap-3">
           <Button asChild>
@@ -94,6 +123,26 @@ export const HeroBanner = ({
               Get the source code
             </a>
           </Button>
+        </div>
+      </div>
+
+      {/* Bottom banner strip */}
+      <div className="bg-border absolute bottom-0 left-0 right-0 z-10 flex items-center">
+        <div className="flex w-full flex-col gap-1 pb-8 pr-8 sm:flex-row sm:items-center sm:gap-2 sm:px-8 sm:py-0">
+          <p className="text-muted-foreground ml-8 mt-8 shrink-0 text-2xl font-normal leading-none sm:ml-0 sm:mt-0 sm:whitespace-nowrap">
+            Nimara is
+          </p>
+          <div className="relative w-full overflow-hidden sm:min-w-0 sm:flex-1">
+            <p
+              className="text-foreground ml-8 text-2xl font-normal leading-none transition-all duration-300 sm:my-8 sm:ml-0"
+              style={{
+                opacity: visible ? 1 : 0,
+                transform: visible ? "translateY(0)" : "translateY(-8px)",
+              }}
+            >
+              {ANIMATED_PHRASES[phraseIndex]}
+            </p>
+          </div>
         </div>
       </div>
     </div>
