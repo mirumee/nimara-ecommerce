@@ -81,7 +81,7 @@ export const PaymentMethodDeleteModal = ({
             {t("common.delete")} {t(TYPE_MESSAGE_MAPPING[type])}
           </DialogTitle>
 
-          <DialogDescription className="text-stone-700 dark:text-muted-foreground">
+          <DialogDescription className="text-foreground">
             {t("account.payment-method-delete-info")}
           </DialogDescription>
         </DialogHeader>

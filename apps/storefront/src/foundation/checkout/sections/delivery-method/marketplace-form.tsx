@@ -122,7 +122,7 @@ export const MarketplaceDeliveryMethodForm = ({
         {globalErrors.length > 0 && (
           <div className="space-y-1">
             {globalErrors.map((errorCode, index) => (
-              <p key={`${errorCode}-${index}`} className="text-red-600">
+              <p key={`${errorCode}-${index}`} className="text-destructive">
                 {t(`errors.${errorCode}`)}
               </p>
             ))}

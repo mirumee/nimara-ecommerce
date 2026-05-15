@@ -36,19 +36,19 @@ export default function Error({
   }
 
   return (
-    <div className="bg-white">
+    <div className="bg-background">
       <div className="mx-auto max-w-7xl px-6 py-12">
-        <h1 className="text-2xl font-bold leading-10 tracking-tight text-neutral-800">
+        <h1 className="text-2xl font-bold leading-10 tracking-tight text-foreground">
           Something went wrong
         </h1>
-        <p className="mt-6 max-w-2xl text-base leading-7 text-neutral-600">
+        <p className="mt-6 max-w-2xl text-base leading-7 text-muted-foreground">
           <code>{error.message}</code>
         </p>
-        <p className="mt-6 max-w-2xl text-base leading-7 text-neutral-600">
+        <p className="mt-6 max-w-2xl text-base leading-7 text-muted-foreground">
           <code>Trace id: {traceId}</code>
         </p>
         <button
-          className="mt-8 h-10 rounded-md bg-red-500 px-6 font-semibold text-white"
+          className="mt-8 h-10 rounded-md bg-destructive px-6 font-semibold text-destructive-foreground"
           onClick={() => reset()}
         >
           Try again

@@ -17,7 +17,7 @@ export const MarkdownRenderer = ({
     <article
       className={cn(
         { prose: !disableProse },
-        "dark:[&_blockquote]:text-stone-200 dark:[&_h1]:text-stone-200 dark:[&_h2]:text-stone-200 dark:[&_h3]:text-stone-200 dark:[&_li]:text-stone-200 dark:[&_ol>li]:marker:text-stone-200 dark:[&_p]:text-stone-200 dark:[&_ul>li]:marker:text-stone-200",
+        "dark:[&_blockquote]:text-foreground dark:[&_h1]:text-foreground dark:[&_h2]:text-foreground dark:[&_h3]:text-foreground dark:[&_li]:text-foreground dark:[&_ol>li]:marker:text-foreground dark:[&_p]:text-foreground dark:[&_ul>li]:marker:text-foreground",
         className,
       )}
       {...props}

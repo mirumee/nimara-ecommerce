@@ -79,7 +79,7 @@ export function UpdateEmailForm({ oldEmail }: { oldEmail: string }) {
 
       {isEmailSent ? (
         <div className="space-y-10">
-          <p className="text-sm text-stone-500">
+          <p className="text-sm text-muted-foreground">
             {t("account.confirm-new-email-description", {
               timeRemaining: CHANGE_EMAIL_TOKEN_VALIDITY_IN_HOURS,
             })}

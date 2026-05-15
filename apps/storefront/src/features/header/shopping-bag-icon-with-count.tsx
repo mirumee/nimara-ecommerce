@@ -15,7 +15,7 @@ export const ShoppingBagIconWithCount = async ({
         <p
           className={`absolute -top-1 ${
             count > 99 ? "-right-4 px-2" : "-right-0 w-5"
-          } flex h-5 items-center justify-center rounded-full bg-red-600 text-xs text-white`}
+          } flex h-5 items-center justify-center rounded-full bg-destructive text-xs text-destructive-foreground`}
         >
           {count}
         </p>

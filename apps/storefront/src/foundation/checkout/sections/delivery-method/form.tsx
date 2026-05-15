@@ -120,7 +120,7 @@ export const DeliveryMethodForm = ({
           </div>
         </div>
         {serverErrorCode ? (
-          <p className="text-red-600">{t(serverErrorCode)}</p>
+          <p className="text-destructive">{t(serverErrorCode)}</p>
         ) : null}
         <Button
           type="submit"

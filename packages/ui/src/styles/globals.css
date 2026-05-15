@@ -4,49 +4,49 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 60, 5.6%, 96.1%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
+    /* stone-50 */ --background: 60 9% 98%;
+    /* stone-900 */ --foreground: 24 10% 10%;
+    /* stone-50 */ --card: 60 9% 98%;
+    /* stone-900 */ --card-foreground: 24 10% 10%;
+    /* stone-50 */ --popover: 60 9% 98%;
+    /* stone-900 */ --popover-foreground: 24 10% 10%;
+    /* stone-900 */ --primary: 24 10% 10%;
+    /* stone-50 */ --primary-foreground: 60 9% 98%;
+    /* stone-100 */ --secondary: 60 5% 96%;
+    /* stone-900 */ --secondary-foreground: 24 10% 10%;
+    /* stone-100 */ --muted: 60 5% 96%;
+    /* stone-500 */ --muted-foreground: 25 6% 45%;
+    /* stone-100 */ --accent: 60 5% 96%;
+    /* stone-900 */ --accent-foreground: 24 10% 10%;
     --destructive: 0 72.22% 50.59%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
+    /* stone-50 */ --destructive-foreground: 60 9% 98%;
+    /* stone-200 */ --border: 20 6% 90%;
     --error: 0 84% 60%;
-    --input: 240 5.9% 90%;
-    --ring: 240 5% 64.9%;
+    /* stone-200 */ --input: 20 6% 90%;
+    /* stone-400 */ --ring: 24 5% 64%;
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 12, 6%, 15%;
-    --foreground: 20, 7.1%, 90.2%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0, 0%, 100%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 24, 11.1%, 10%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 24, 6.3%, 25.1%;
-    --accent-foreground: 0 0% 98%;
+    /* stone-950 */ --background: 20 14% 4%;
+    /* stone-50 */  --foreground: 60 9% 98%;
+    /* stone-900 */ --card: 24 10% 10%;
+    /* stone-50 */  --card-foreground: 60 9% 98%;
+    /* stone-900 */ --popover: 24 10% 10%;
+    /* stone-50 */  --popover-foreground: 60 9% 98%;
+    /* stone-50 */  --primary: 60 9% 98%;
+    /* stone-900 */ --primary-foreground: 24 10% 10%;
+    /* stone-800 */ --secondary: 12 6% 15%;
+    /* stone-50 */  --secondary-foreground: 60 9% 98%;
+    /* stone-800 */ --muted: 12 6% 15%;
+    /* stone-400 */ --muted-foreground: 24 5% 64%;
+    /* stone-700 */ --accent: 30 6% 25%;
+    /* stone-50 */  --accent-foreground: 60 9% 98%;
     --destructive: 0 72.22% 50.59%;
     --destructive-foreground: 0 85.7% 97.3%;
     --error: 0 84% 60%;
-    --border: 240 3.7% 15.9%;
-    --input: 30, 6.1%, 32.2%;
-    --ring: 240 4.9% 83.9%;
+    /* stone-800 */ --border: 12 6% 15%;
+    /* stone-700 */ --input: 30 6% 25%;
+    /* stone-600 */ --ring: 33 5% 32%;
   }
 }

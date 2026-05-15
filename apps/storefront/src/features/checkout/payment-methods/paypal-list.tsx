@@ -9,7 +9,9 @@ export const PaypalList = ({ items }: { items: PaypalPaymentMethod[] }) => {
 
   return items.length ? (
     <div>
-      <p className="mb-6 text-stone-500">{t("payment.paypal-accounts")}</p>
+      <p className="mb-6 text-muted-foreground">
+        {t("payment.paypal-accounts")}
+      </p>
       <div>
         {items.map(({ id, paymentMethod }) => (
           <MethodFormItem key={id} value={id}>

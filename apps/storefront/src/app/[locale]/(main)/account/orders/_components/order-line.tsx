@@ -41,25 +41,21 @@ export const OrderLine = async ({
       <div className="col-span-3 block sm:hidden">
         <p className="text-primary">{lineName}</p>
         <span className="flex gap-2">
-          <p className="w-1/3 text-stone-500 dark:text-stone-400">
-            {quantityLabel}
-          </p>
+          <p className="w-1/3 text-muted-foreground">{quantityLabel}</p>
           <p className="w-1/3 text-center font-bold text-primary">
             {returnStatus || ""}
           </p>
-          <p className="w-1/3 text-end text-stone-500 dark:text-stone-400">
-            {priceLabel}
-          </p>
+          <p className="w-1/3 text-end text-muted-foreground">{priceLabel}</p>
         </span>
       </div>
       <p className="col-span-5 hidden text-primary sm:block">{lineName}</p>
       <p className="col-span-2 hidden text-center text-sm font-bold text-primary sm:block">
         {returnStatus || ""}
       </p>
-      <p className="col-span-2 hidden text-end text-stone-500 dark:text-muted-foreground sm:block">
+      <p className="col-span-2 hidden text-end text-muted-foreground sm:block">
         {quantityLabel}
       </p>
-      <p className="col-span-2 hidden text-end text-stone-500 dark:text-muted-foreground sm:block">
+      <p className="col-span-2 hidden text-end text-muted-foreground sm:block">
         {priceLabel}
       </p>
     </>

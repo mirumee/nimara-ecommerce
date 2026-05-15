@@ -4,6 +4,7 @@ import { AccountNotifications } from "../shared/components/account-notifications
 import { AnimatedPhraseBanner } from "../shared/components/animated-phrase-banner";
 import { HeroBanner } from "../shared/components/hero-banner";
 import { Newsletter } from "../shared/components/newsletter-form";
+import { TechStackBanner } from "../shared/components/tech-stack-banner";
 import {
   ProductsGrid,
   ProductsGridSkeleton,
@@ -68,6 +69,7 @@ export const StandardHomeView = async ({
               paths={{ home: paths.home, privacyPolicy: paths.privacyPolicy }}
             />
           </div>
+          <TechStackBanner />
           <div className="mb-8">
             <Newsletter />
           </div>

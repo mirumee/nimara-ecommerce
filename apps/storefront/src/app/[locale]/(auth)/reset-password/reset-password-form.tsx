@@ -57,7 +57,7 @@ export function ResetPasswordForm() {
             {t("auth.reset-password-link-sent")}
           </h1>
           <div>
-            <p className="text-sm text-stone-700 dark:text-stone-300">
+            <p className="text-sm text-foreground">
               {t("auth.reset-password-link-sent-description")}
             </p>
             <Button className="my-6 w-full" asChild>
@@ -96,7 +96,7 @@ export function ResetPasswordForm() {
                 />
               </div>
 
-              <p className="text-sm text-stone-700 dark:text-stone-300">
+              <p className="text-sm text-foreground">
                 {t("auth.reset-password-description")}
               </p>
               <Button className="my-4 w-full" type="submit" form="sign-in-form">

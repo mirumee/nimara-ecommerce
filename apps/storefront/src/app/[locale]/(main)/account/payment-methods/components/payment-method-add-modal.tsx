@@ -101,7 +101,7 @@ export const PaymentMethodAddModal = ({
         className={cn("gap-6", { "pointer-events-none": !isMounted })}
       >
         <DialogHeader>
-          <DialogTitle className="mb-2 text-stone-700 dark:text-stone-200">
+          <DialogTitle className="mb-2 text-foreground">
             {t("payment.add-new-method")}
           </DialogTitle>
         </DialogHeader>

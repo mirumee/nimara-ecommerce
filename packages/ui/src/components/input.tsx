@@ -21,7 +21,7 @@ const Input = ({ className, error, type = "text", ...props }: InputProps) => {
       className={cn(
         "border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
         error &&
-          "border-red-300 bg-red-50 autofill:!bg-red-50 focus-visible:ring-red-300 dark:border-red-600 dark:bg-red-900/30 dark:autofill:!bg-red-900/30 dark:focus-visible:ring-red-500",
+          "border-error bg-destructive/5 autofill:!bg-destructive/5 focus-visible:ring-error dark:border-error dark:bg-destructive/10 dark:autofill:!bg-destructive/10 dark:focus-visible:ring-error",
         className,
       )}
     />
@@ -49,7 +49,7 @@ const PasswordInput = ({ className, error, ...props }: InputProps) => {
         className={cn(
           "bg-background placeholder:text-muted-foreground flex h-10 w-full rounded-md px-3 py-2 text-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
           error &&
-            "bg-red-50 autofill:!bg-red-50 dark:bg-red-900/30 dark:autofill:!bg-red-900/30",
+            "bg-destructive/5 autofill:!bg-destructive/5 dark:bg-destructive/10 dark:autofill:!bg-destructive/10",
           className,
         )}
         autoComplete="on"
@@ -63,7 +63,7 @@ const PasswordInput = ({ className, error, ...props }: InputProps) => {
           type="button"
           className={cn(
             "hover:bg-muted",
-            error && "hover:bg-red-100 dark:hover:bg-red-800",
+            error && "hover:bg-destructive/10 dark:hover:bg-destructive/20",
           )}
           tabIndex={-1}
         >

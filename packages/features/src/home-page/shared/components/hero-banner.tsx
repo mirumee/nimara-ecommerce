@@ -73,11 +73,8 @@ export const HeroBanner = ({
       </div>
 
       <div className="relative z-10 px-8 py-10 text-center lg:px-16">
-        <p className="text-muted-foreground pb-3 text-[12px] font-semibold uppercase tracking-widest">
-          NIMARA OPEN-SOURCE DEMO STOREFRONT
-        </p>
         <h1 className="text-foreground mx-auto max-w-[720px] pb-4 text-3xl leading-tight font-normal lg:text-5xl">
-          The Marketplace-Ready Storefront Blueprint
+          The Marketplace-Ready Storefront
         </h1>
         <div className="flex justify-center gap-3">
           <Button asChild>

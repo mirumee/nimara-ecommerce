@@ -25,7 +25,7 @@ export default async function Page() {
       <hr />
       <div className="grid grid-cols-12">
         <div className="col-span-8 sm:col-span-11">
-          <h3 className="text-stone-500 dark:text-muted-foreground">
+          <h3 className="text-muted-foreground">
             {t("account.first-and-last-name")}
           </h3>
           <p className="text-primary">
@@ -39,9 +39,7 @@ export default async function Page() {
       <hr />
       <div className="grid grid-cols-12">
         <div className="col-span-8 sm:col-span-11">
-          <h3 className="text-stone-500 dark:text-muted-foreground">
-            {t("common.email")}
-          </h3>
+          <h3 className="text-muted-foreground">{t("common.email")}</h3>
           <p className="text-primary">{user?.email}</p>
         </div>
         {user && (
@@ -53,9 +51,7 @@ export default async function Page() {
       <hr />
       <div className="grid grid-cols-12">
         <div className="col-span-8 sm:col-span-11">
-          <h3 className="text-stone-500 dark:text-muted-foreground">
-            {t("common.password")}
-          </h3>
+          <h3 className="text-muted-foreground">{t("common.password")}</h3>
           <p className="text-primary">•••••••••••••</p>
         </div>
         <div className="col-span-4 flex justify-end sm:col-span-1">

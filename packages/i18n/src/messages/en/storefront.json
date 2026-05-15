@@ -140,9 +140,10 @@
     "title": "Delivery"
   },
   "footer": {
-    "demo-version": "<link>This is the demo version of Nimara Store.</link>",
+    "book-a-demo": "Book a free demo",
+    "demo-version": "We will walk you through the Nimara Storefront",
     "help": "Help",
-    "made-with": "Made with ❤️ by <link>Mirumee</link>",
+    "made-with": "Next-Gen Storefront, Marketplace-Ready",
     "marketplace": "Marketplace",
     "marketplace-sign-in": "Sign In",
     "marketplace-sign-up": "Sign Up",

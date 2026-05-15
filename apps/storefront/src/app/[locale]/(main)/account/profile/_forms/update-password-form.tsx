@@ -69,7 +69,7 @@ export function UpdatePasswordForm({
         id="update-user-password-form"
         noValidate
       >
-        <div className="mt-3 text-sm text-stone-500">
+        <div className="mt-3 text-sm text-muted-foreground">
           <p>{t("account.new-password-requirements")}</p>
           <ul className="list-inside list-disc">
             <li>

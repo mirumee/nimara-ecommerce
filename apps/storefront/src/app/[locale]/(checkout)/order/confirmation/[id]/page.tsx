@@ -26,7 +26,7 @@ export default async function Page(_props: PageProps) {
       <h2 className="text-2xl font-normal">
         {t("order-confirmation.heading")}
       </h2>
-      <p className="text-center text-gray-500 dark:text-muted-foreground">
+      <p className="text-center text-muted-foreground">
         {t.rich("order-confirmation.paragraph", { br: () => <br /> })}
       </p>
       <Button className="justify-self-center" asChild>

@@ -89,7 +89,7 @@ export function EditAddressModal({
         <DialogHeader>
           <DialogTitle>{t("address.delete-address")}</DialogTitle>
         </DialogHeader>
-        <p className="pb-6 text-sm text-stone-700 dark:text-muted-foreground">
+        <p className="pb-6 text-sm text-foreground">
           {t("address.delete-address-description")}
         </p>
         <div className="flex justify-end gap-4">

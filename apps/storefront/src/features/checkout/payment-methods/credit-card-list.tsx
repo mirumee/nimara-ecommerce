@@ -11,7 +11,7 @@ export const CreditCardList = ({ items }: { items: CardPaymentMethod[] }) => {
 
   return items.length ? (
     <div>
-      <p className="mb-6 text-stone-500">{t("payment.credit-cards")}</p>
+      <p className="mb-6 text-muted-foreground">{t("payment.credit-cards")}</p>
       <div>
         {items.map(({ id, paymentMethod }) => (
           <MethodFormItem key={id} value={id}>

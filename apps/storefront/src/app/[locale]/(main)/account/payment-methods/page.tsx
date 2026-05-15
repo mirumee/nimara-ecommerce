@@ -114,7 +114,7 @@ export default async function Page(props: PageProps) {
           />
         ) : (
           <div className="grid gap-6">
-            <p className="text-sm text-stone-500 dark:text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               {t("payment.no-payment-methods")}
             </p>
             <div>

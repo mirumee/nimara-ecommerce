@@ -82,8 +82,8 @@ export default function config(app: AppName) {
             foreground: "hsl(var(--secondary-foreground))",
           },
           destructive: {
-            DEFAULT: "hsl(var(--destructive))",
-            foreground: "hsl(var(--destructive-foreground))",
+            DEFAULT: "hsl(var(--destructive) / <alpha-value>)",
+            foreground: "hsl(var(--destructive-foreground) / <alpha-value>)",
           },
           muted: {
             DEFAULT: "hsl(var(--muted))",
@@ -101,7 +101,7 @@ export default function config(app: AppName) {
             DEFAULT: "hsl(var(--card))",
             foreground: "hsl(var(--card-foreground))",
           },
-          error: "hsl(var(--error))",
+          error: "hsl(var(--error) / <alpha-value>)",
         },
         borderRadius: {
           DEFAULT: "var(--radius)",

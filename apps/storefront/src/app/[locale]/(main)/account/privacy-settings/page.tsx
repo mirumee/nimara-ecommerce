@@ -14,7 +14,7 @@ export default async function Page() {
           <h3 className="font-medium text-primary">
             {t("account.delete-account-and-all-your-data-permanently")}
           </h3>
-          <p className="text-stone-500 dark:text-muted-foreground">
+          <p className="text-muted-foreground">
             {t("account.delete-account-description")}
           </p>
         </div>

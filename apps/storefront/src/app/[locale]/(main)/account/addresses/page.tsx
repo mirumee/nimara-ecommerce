@@ -142,7 +142,7 @@ export default async function Page(props: PageProps) {
       {noAddresses && (
         <div className="space-y-8">
           <hr />
-          <p className="text-stone-500 dark:text-muted-foreground">
+          <p className="text-muted-foreground">
             {t("address.sorry-you-dont-have-any-addresses")}
           </p>
           <AddNewAddressModal
