@@ -22,7 +22,7 @@ export const HeroBanner = ({
   const fieldsMap: FieldsMap = createFieldsMap(fields);
 
   return (
-    <div className="border-border bg-background relative flex h-[27rem] items-center justify-center overflow-hidden border transition-colors">
+    <div className="border-border bg-background relative flex h-[27rem] items-center justify-center overflow-hidden border transition-colors lg:h-80">
       {/* Background product image with 50% white overlay */}
       {backgroundImageUrl && (
         <div className="absolute inset-0" aria-hidden="true">
@@ -72,7 +72,7 @@ export const HeroBanner = ({
         />
       </div>
 
-      <div className="relative z-10 p-8 text-center lg:p-16">
+      <div className="relative z-10 px-8 py-10 text-center lg:px-16">
         <p className="text-muted-foreground pb-3 text-[12px] font-semibold uppercase tracking-widest">
           NIMARA OPEN-SOURCE DEMO STOREFRONT
         </p>
