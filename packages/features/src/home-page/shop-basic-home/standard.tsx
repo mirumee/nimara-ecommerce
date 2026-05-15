@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 
 import { AccountNotifications } from "../shared/components/account-notifications";
+import { AnimatedPhraseBanner } from "../shared/components/animated-phrase-banner";
 import { HeroBanner } from "../shared/components/hero-banner";
 import { Newsletter } from "../shared/components/newsletter-form";
 import {
@@ -23,6 +24,20 @@ export const StandardHomeView = async ({
   revalidateTime,
   region,
 }: StandardHomeViewProps) => {
+  const searchContext = {
+    channel: region.market.channel,
+    languageCode: region.language.code,
+    currency: region.market.currency,
+  };
+  const searchService = await services.getSearchService();
+  const paintResult = await searchService.search(
+    { query: "paint", limit: 1 },
+    searchContext,
+  );
+  const paintImageUrl = paintResult.ok
+    ? (paintResult.data.results[0]?.thumbnail?.url ?? undefined)
+    : undefined;
+
   return (
     <HomeProvider
       region={region}
@@ -31,7 +46,12 @@ export const StandardHomeView = async ({
       accessToken={accessToken}
       render={({ user, fields }) => (
         <section className="grid w-full content-start">
-          <HeroBanner fields={fields} searchPath={paths.search} />
+          <HeroBanner
+            fields={fields}
+            searchPath={paths.search}
+            backgroundImageUrl={paintImageUrl}
+          />
+          <AnimatedPhraseBanner />
           <Suspense fallback={<ProductsGridSkeleton />}>
             <ProductsGrid
               region={region}
