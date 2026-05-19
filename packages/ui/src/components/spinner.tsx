@@ -11,6 +11,6 @@ export const Spinner = ({
 }) => (
   <Loader2
     size={size}
-    className={cn("animate-spin text-muted-foreground", className)}
+    className={cn("text-muted-foreground animate-spin", className)}
   />
 );

@@ -8,8 +8,6 @@
       "Bash(/usr/local/lib/node_modules/corepack/shims/pnpm --version)",
       "Bash(export PATH=\"/usr/local/lib/node_modules/corepack/shims:$PATH\")"
     ],
-    "additionalDirectories": [
-      "/Users/piotrflis"
-    ]
+    "additionalDirectories": ["/Users/piotrflis"]
   }
 }

@@ -26,13 +26,13 @@ export const AnimatedPhraseBanner = () => {
 
   return (
     <div className="bg-border mb-14 flex items-center">
-      <div className="flex w-full flex-col gap-1 pb-8 pr-8 sm:flex-row sm:items-center sm:gap-2 sm:px-8 sm:py-0">
-        <p className="text-muted-foreground ml-8 mt-8 shrink-0 text-2xl font-normal leading-none sm:ml-0 sm:mt-0 sm:whitespace-nowrap">
+      <div className="flex w-full flex-col gap-1 pr-8 pb-8 sm:flex-row sm:items-center sm:gap-2 sm:px-8 sm:py-0">
+        <p className="text-muted-foreground mt-8 ml-8 shrink-0 text-2xl leading-none font-normal sm:mt-0 sm:ml-0 sm:whitespace-nowrap">
           Nimara is
         </p>
         <div className="relative w-full overflow-hidden sm:min-w-0 sm:flex-1">
           <p
-            className="text-foreground ml-8 text-2xl font-normal leading-none transition-all duration-300 sm:my-8 sm:ml-0"
+            className="text-foreground ml-8 text-2xl leading-none font-normal transition-all duration-300 sm:my-8 sm:ml-0"
             style={{
               opacity: visible ? 1 : 0,
               transform: visible ? "translateY(0)" : "translateY(-8px)",
