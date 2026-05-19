@@ -23,7 +23,7 @@ const nextConfig: NextConfig = {
   transpilePackages: ["@nimara/ui"],
 };
 
-const configWithSentry = isSentryAvailable
+const config = isSentryAvailable
   ? withSentryConfig(nextConfig, {
       silent: true,
       authToken: process.env.SENTRY_AUTH_TOKEN,
@@ -47,4 +47,4 @@ const configWithSentry = isSentryAvailable
     })
   : nextConfig;
 
-export default configWithSentry;
+export default config;
