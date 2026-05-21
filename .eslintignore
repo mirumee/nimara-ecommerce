@@ -1,0 +1,7 @@
+# Generated code and build output are not linted directly.
+**/graphql/generated/**
+**/graphql/generated.ts
+**/graphql/**/generated.ts
+**/.next/**
+**/build/**
+**/dist/**

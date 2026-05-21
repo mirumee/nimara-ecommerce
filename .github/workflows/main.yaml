@@ -77,7 +77,23 @@ jobs:
             echo "No relevant files changed in this PR for ESLint."
           else
             echo "Linting all files for push event (develop, staging, tags)."
-            pnpm eslint --ext ".ts,.tsx" --cache --cache-location .eslintcache .
+            for eslint_target in \
+              apps/automated-tests \
+              apps/docs \
+              apps/marketplace \
+              apps/storefront \
+              apps/stripe \
+              packages/codegen \
+              packages/domain \
+              packages/features \
+              packages/foundation \
+              packages/i18n \
+              packages/infrastructure \
+              packages/ui
+            do
+              echo "Linting ${eslint_target}"
+              pnpm eslint --ext ".ts,.tsx" --cache --cache-location .eslintcache "${eslint_target}"
+            done
           fi
 
       - name: Run Prettier Check
