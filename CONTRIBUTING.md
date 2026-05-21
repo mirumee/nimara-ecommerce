@@ -1,6 +1,6 @@
-# Contributing to nimara-storefront
+# Contributing to nimara-ecommerce!
 
-Thank you for considering contributing to nimara-storefront!
+Thank you for considering contributing to nimara-ecommerce!
 
 We welcome all contributions, whether they be code, documentation, bug reports, or any other help you can provide.
 
@@ -10,13 +10,13 @@ We welcome all contributions, whether they be code, documentation, bug reports, 
    - Click the "Fork" button at the top of this repository and clone your fork locally:
 
      ```bash
-     git clone https://github.com/{YOUR_USERNAME}/nimara-storefront.git
+     git clone https://github.com/{YOUR_USERNAME}/nimara-ecommerce.git
      ```
 
    - Navigate to your local repository:
 
      ```bash
-     cd nimara-storefront
+     cd nimara-ecommerce
      ```
 
 2. **Set Upstream**:
@@ -67,7 +67,7 @@ We welcome all contributions, whether they be code, documentation, bug reports, 
      ```
 
 2. **Create a Pull Request (PR)**:
-   - Go to the [Pull Requests](https://github.com/mirumee/nimara-storefront/pulls) section of the original repository.
+   - Go to the [Pull Requests](https://github.com/mirumee/nimara-ecommerce/pulls) section of the original repository.
    - Click "New Pull Request".
    - Select your branch and provide a clear, descriptive title and a summary of your changes.
 
@@ -77,7 +77,7 @@ We welcome all contributions, whether they be code, documentation, bug reports, 
 
 ## Reporting Issues
 
-- If you encounter a bug or have a feature request, please [open an issue](https://github.com/mirumee/nimara-storefront/issues).
+- If you encounter a bug or have a feature request, please [open an issue](https://github.com/mirumee/nimara-ecommerce/issues).
 - Provide as much information as possible, including steps to reproduce the issue, environment details, and any other relevant information.
 
 ## Code of Conduct

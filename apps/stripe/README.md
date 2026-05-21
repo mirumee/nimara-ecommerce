@@ -50,7 +50,7 @@ To install it on [Saleor Cloud](https://cloud.saleor.io) you can:
 - Use the following link, just remember to replace the Saleor domain & app domain accordingly:
   [https://YOUR-SALEOR-CLOUD-DOMAIN.eu.saleor.cloud/dashboard/apps/install?manifestUrl=https://YOUR-APP-DOMAIN/api/saleor/manifest](https://YOUR-CLOUD-DOMAIN.eu.saleor.cloud/dashboard/apps/install?manifestUrl=https://YOUR-APP-DOMAIN/api/saleor/manifest)
 
-- Go to the [apps dashboard](https://YOUR-SALEOR-CLOUD-DOMAIN..eu.saleor.cloud/dashboard/apps/) and click `Install external app`. There just provide the manifest URL of the app.
+- Go to the [apps dashboard](https://YOUR-SALEOR-CLOUD-DOMAIN.eu.saleor.cloud/dashboard/apps/) and click `Install external app`. There just provide the manifest URL of the app.
 
 Once successfully installed, just provide correct private & public keys from your Stripe account.
 <br />

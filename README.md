@@ -180,7 +180,7 @@ For local development, build, deployment, and versioning of the docs site itself
 
 ## ❤️ Community & Contribution
 
-Join Nimara community on [GitHub Discussions](https://github.com/mirumee/nimara-ecommerce/discussions) and [Discord server](https://discord.gg/w4V3PZxGDj). You can ask questions, report bugs, participate in discussions, share ideas or make feature requests.
+Join Nimara community on [Discord server](https://discord.gg/w4V3PZxGDj). You can ask questions, report bugs, participate in discussions, share ideas or make feature requests.
 
 You can also contribute to Nimara in various ways:
 
