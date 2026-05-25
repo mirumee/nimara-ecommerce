@@ -24,7 +24,7 @@
     "next-intl": "^4.7.0"
   },
   "dependencies": {
-    "@hookform/resolvers": "5.2.2",
+    "@hookform/resolvers": "5.4.0",
     "@nimara/domain": "workspace:*",
     "@nimara/foundation": "workspace:*",
     "@nimara/i18n": "workspace:*",
@@ -32,18 +32,18 @@
     "@nimara/ui": "workspace:*",
     "@uidotdev/usehooks": "2.4.1",
     "editorjs-html": "3.4.3",
-    "lodash": "4.17.23",
+    "lodash": "4.18.1",
     "lucide-react": "^0.577.0",
-    "next": "^16.1.6",
-    "next-intl": "^4.8.3",
+    "next": "^16.2.6",
+    "next-intl": "^4.12.0",
     "nuqs": "^2.8.9",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
-    "react-hook-form": "^7.71.2",
+    "react-hook-form": "^7.76.1",
     "schema-dts": "1.1.5",
     "usehooks-ts": "^3.0.0",
     "xss": "1.0.15",
-    "zod": "^4.3.5"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@nimara/config": "workspace:*",
