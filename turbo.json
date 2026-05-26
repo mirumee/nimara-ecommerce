@@ -17,7 +17,13 @@
     "build": {
       "dependsOn": ["^codegen", "^build"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"],
-      "inputs": ["$TURBO_DEFAULT$", ".env", ".env.*", "!.env*.local", "!.next/**"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env",
+        ".env.*",
+        "!.env*.local",
+        "!.next/**"
+      ],
       "env": ["ANALYZE"]
     },
     "codegen": {
