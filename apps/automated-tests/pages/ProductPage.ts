@@ -37,7 +37,27 @@ export class ProductPage {
   }
 
   async checkCart() {
-    await expect(this.bagIcon).not.toHaveText("");
+    // Wait for cart badge to update - check aria-label contains a number > 0
+    await this.page.waitForFunction(
+      () => {
+        const cartLink = document.querySelector(
+          'a[aria-label^="Items in cart:"]',
+        );
+
+        if (!cartLink) {return false;}
+        const ariaLabel = cartLink.getAttribute("aria-label");
+
+        if (!ariaLabel) {return false;}
+        const match = ariaLabel.match(/Items in cart: (\d+)/);
+
+        if (!match) {return false;}
+        const count = parseInt(match[1], 10);
+
+        
+return count > 0;
+      },
+      { timeout: 10000 },
+    );
   }
 
   async goToCartPage() {

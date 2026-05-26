@@ -52,10 +52,36 @@ export const user = {
   name: "John",
   lastName: "Doe",
   companyName: "Mirumee",
-  phone: "20 8759 9036",
-  streetAddress: "17 Wern Ddu Lane",
-  postCode: "PE8 6FZ",
-  city: "Lutton",
+  phone: "070 5598 4918",
+  streetAddress: "55 Cunnery Rd",
+  postCode: "KT4 9JG",
+  city: "Malden",
+};
+
+// US user for Stripe payment testing (verified working address)
+export const userUS = {
+  email: "test@mirumee.com",
+  name: "John",
+  lastName: "Doe",
+  companyName: "Test Company Inc",
+  phone: "212-507-9836",
+  streetAddress: "4165 Godfrey Road",
+  postCode: "10005",
+  city: "New York",
+  state: "NY",
+};
+
+// Alternative US billing address for different billing address tests
+export const billingAddressUS = {
+  email: "test@mirumee.com",
+  name: "Jane",
+  lastName: "Smith",
+  companyName: "Billing Corp",
+  phone: "415-555-0199",
+  streetAddress: "123 Market Street",
+  postCode: "94102",
+  city: "San Francisco",
+  state: "CA",
 };
 
 export type User = typeof user;
@@ -65,7 +91,7 @@ export const userPassword = process.env.USER_PASSWORD ?? "";
 
 export const paymentDetails = {
   cardNumber: "4242424242424242",
-  expiryDate: `12/${(new Date().getFullYear() + 1).toString().substring(2)}`,
+  expiryDate: "12/29", // Verified working expiry date
   cvc: "123",
 };
 
