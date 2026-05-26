@@ -22,25 +22,28 @@ import { type ParamsOf } from "@/lib/types";
 
 import { fetchDataAction } from "./actions/fetch-data-action";
 import { saveDataAction } from "./actions/save-data-action";
+import { getSaleorDomainFromApiUrl } from "./saleor-domain";
 import { type Schema, schema } from "./schema";
 
 export const ConfigForm = () => {
   const { appBridgeState } = useAppBridge();
   const { toast } = useToast();
+  const accessToken = appBridgeState!.token!;
+  const saleorDomain = getSaleorDomainFromApiUrl(appBridgeState!.saleorApiUrl);
 
   const form = useForm({
     resolver: zodResolver(schema),
     defaultValues: getDefaultValues({
-      accessToken: appBridgeState!.token!,
-      domain: appBridgeState!.saleorApiUrl,
+      accessToken,
+      domain: saleorDomain,
     }),
   });
 
   const handleSubmit: SubmitHandler<Schema> = async (data) => {
     const error = await saveDataAction({
       data,
-      accessToken: appBridgeState!.token!,
-      saleorDomain: appBridgeState!.saleorApiUrl,
+      accessToken,
+      saleorDomain,
     });
 
     if (error) {
@@ -50,8 +53,8 @@ export const ConfigForm = () => {
 
       form.reset(
         await getDefaultValues({
-          accessToken: appBridgeState!.token!,
-          domain: appBridgeState!.saleorApiUrl,
+          accessToken,
+          domain: saleorDomain,
         })(),
       );
     }
