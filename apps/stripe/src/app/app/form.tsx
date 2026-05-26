@@ -32,7 +32,7 @@ export const ConfigForm = () => {
     resolver: zodResolver(schema),
     defaultValues: getDefaultValues({
       accessToken: appBridgeState!.token!,
-      domain: appBridgeState!.saleorApiUrl,
+      domain: new URL(appBridgeState!.saleorApiUrl).host,
     }),
   });
 
