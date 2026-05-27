@@ -1,6 +1,7 @@
 import type { Logger } from "@nimara/infrastructure/logging/types";
 import type { CMSPageService } from "@nimara/infrastructure/use-cases/cms-page/types";
 
+import { emptyCMSPageService, isSaleorConfigured } from "./empty-services";
 import { getRequiredSaleorApiUrl } from "./required-env";
 
 /**
@@ -13,6 +14,12 @@ export const createCMSPageServiceLoader = (logger: Logger) => {
 
   return async (): Promise<CMSPageService> => {
     if (cmsServiceInstance) {
+      return cmsServiceInstance;
+    }
+
+    if (!isSaleorConfigured) {
+      cmsServiceInstance = emptyCMSPageService;
+
       return cmsServiceInstance;
     }
 

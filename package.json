@@ -29,6 +29,7 @@
     "codegen:saleor": "dotenv -e apps/storefront/.env -- pnpm --filter @nimara/codegen codegen:saleor",
     "codegen:marketplace": "dotenv -e apps/storefront/.env -- pnpm --filter @nimara/codegen codegen:marketplace",
     "codegen:stripe": "dotenv -e apps/storefront/.env -- pnpm --filter @nimara/codegen codegen:stripe",
+    "preflight": "node apps/storefront/scripts/preflight.mjs",
     "dev": "turbo run dev",
     "dev:storefront": "turbo run dev --filter=storefront",
     "dev:marketplace": "turbo run dev --filter=marketplace",

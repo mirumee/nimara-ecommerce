@@ -4,6 +4,7 @@ import type { StoreService } from "@nimara/infrastructure/store/types";
 import { clientEnvs } from "@/envs/client";
 import { serverEnvs } from "@/envs/server";
 
+import { emptyStoreService, isSaleorConfigured } from "./empty-services";
 import { getRequiredSaleorApiUrl } from "./required-env";
 
 /**
@@ -16,6 +17,12 @@ export const createStoreServiceLoader = (logger: Logger) => {
 
   return async (): Promise<StoreService> => {
     if (storeServiceInstance) {
+      return storeServiceInstance;
+    }
+
+    if (!isSaleorConfigured) {
+      storeServiceInstance = emptyStoreService;
+
       return storeServiceInstance;
     }
 

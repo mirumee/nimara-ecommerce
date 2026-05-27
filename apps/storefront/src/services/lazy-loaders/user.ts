@@ -1,6 +1,7 @@
 import type { Logger } from "@nimara/infrastructure/logging/types";
 import type { UserService } from "@nimara/infrastructure/user/types";
 
+import { emptyUserService, isSaleorConfigured } from "./empty-services";
 import { getRequiredSaleorApiUrl } from "./required-env";
 
 /**
@@ -13,6 +14,12 @@ export const createUserServiceLoader = (logger: Logger) => {
 
   return async (): Promise<UserService> => {
     if (userServiceInstance) {
+      return userServiceInstance;
+    }
+
+    if (!isSaleorConfigured) {
+      userServiceInstance = emptyUserService;
+
       return userServiceInstance;
     }
 

@@ -3,6 +3,7 @@ import type { Logger } from "@nimara/infrastructure/logging/types";
 
 import { clientEnvs } from "@/envs/client";
 
+import { emptyCartService, isSaleorConfigured } from "./empty-services";
 import { getRequiredSaleorApiUrl } from "./required-env";
 
 /**
@@ -15,6 +16,12 @@ export const createCartServiceLoader = (logger: Logger) => {
 
   return async (): Promise<CartService> => {
     if (cartServiceInstance) {
+      return cartServiceInstance;
+    }
+
+    if (!isSaleorConfigured) {
+      cartServiceInstance = emptyCartService;
+
       return cartServiceInstance;
     }
 

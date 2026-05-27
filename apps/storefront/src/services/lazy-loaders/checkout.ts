@@ -3,6 +3,7 @@ import { type CheckoutService } from "@nimara/infrastructure/checkout/types";
 
 import { clientEnvs } from "@/envs/client";
 
+import { emptyCheckoutService, isSaleorConfigured } from "./empty-services";
 import { getRequiredSaleorApiUrl } from "./required-env";
 
 /**
@@ -17,6 +18,12 @@ export const createCheckoutServiceLoader = (logger: Logger) => {
 
   return async (): Promise<CheckoutService> => {
     if (checkoutServiceInstance) {
+      return checkoutServiceInstance;
+    }
+
+    if (!isSaleorConfigured) {
+      checkoutServiceInstance = emptyCheckoutService;
+
       return checkoutServiceInstance;
     }
 

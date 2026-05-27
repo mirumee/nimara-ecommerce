@@ -2,6 +2,7 @@ import type { Logger } from "@nimara/infrastructure/logging/types";
 import type { SaleorSearchServiceConfig } from "@nimara/infrastructure/search/saleor/types";
 import type { SearchService } from "@nimara/infrastructure/use-cases/search/types";
 
+import { emptySearchService, isSaleorConfigured } from "./empty-services";
 import { getRequiredSaleorApiUrl } from "./required-env";
 
 /**
@@ -48,6 +49,12 @@ export const createSearchServiceLoader = (logger: Logger) => {
 
   return async (): Promise<SearchService> => {
     if (searchServiceInstance) {
+      return searchServiceInstance;
+    }
+
+    if (!isSaleorConfigured) {
+      searchServiceInstance = emptySearchService;
+
       return searchServiceInstance;
     }
 

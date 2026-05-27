@@ -3,6 +3,7 @@ import { type MarketplaceService } from "@nimara/infrastructure/marketplace/type
 
 import { MARKETPLACE_VENDOR_PROFILE_CACHE_TTL } from "@/config";
 
+import { emptyMarketplaceService, isSaleorConfigured } from "./empty-services";
 import { getRequiredSaleorApiUrl } from "./required-env";
 
 /**
@@ -17,6 +18,12 @@ export const createMarketplaceServiceLoader = (logger: Logger) => {
 
   return async (): Promise<MarketplaceService> => {
     if (marketplaceServiceInstance) {
+      return marketplaceServiceInstance;
+    }
+
+    if (!isSaleorConfigured) {
+      marketplaceServiceInstance = emptyMarketplaceService;
+
       return marketplaceServiceInstance;
     }
 

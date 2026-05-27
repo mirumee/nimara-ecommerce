@@ -1,6 +1,7 @@
 import type { Logger } from "@nimara/infrastructure/logging/types";
 import type { CMSMenuService } from "@nimara/infrastructure/use-cases/cms-menu/types";
 
+import { emptyCMSMenuService, isSaleorConfigured } from "./empty-services";
 import { getRequiredSaleorApiUrl } from "./required-env";
 
 /**
@@ -13,6 +14,12 @@ export const createCMSMenuServiceLoader = (logger: Logger) => {
 
   return async (): Promise<CMSMenuService> => {
     if (cmsMenuServiceInstance) {
+      return cmsMenuServiceInstance;
+    }
+
+    if (!isSaleorConfigured) {
+      cmsMenuServiceInstance = emptyCMSMenuService;
+
       return cmsMenuServiceInstance;
     }
 

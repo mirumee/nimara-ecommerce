@@ -1,6 +1,7 @@
 import type { CollectionService } from "@nimara/infrastructure/collection/types";
 import type { Logger } from "@nimara/infrastructure/logging/types";
 
+import { emptyCollectionService, isSaleorConfigured } from "./empty-services";
 import { getRequiredSaleorApiUrl } from "./required-env";
 
 /**
@@ -13,6 +14,12 @@ export const createCollectionServiceLoader = (logger: Logger) => {
 
   return async (): Promise<CollectionService> => {
     if (collectionServiceInstance) {
+      return collectionServiceInstance;
+    }
+
+    if (!isSaleorConfigured) {
+      collectionServiceInstance = emptyCollectionService;
+
       return collectionServiceInstance;
     }
 

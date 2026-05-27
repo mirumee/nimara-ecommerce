@@ -1,6 +1,7 @@
 import { type Logger } from "@nimara/foundation/logging/types";
 import { type AddressService } from "@nimara/infrastructure/address/types";
 
+import { emptyAddressService, isSaleorConfigured } from "./empty-services";
 import { getRequiredSaleorApiUrl } from "./required-env";
 
 /**
@@ -15,6 +16,12 @@ export const createAddressServiceLoader = (logger: Logger) => {
 
   return async (): Promise<AddressService> => {
     if (addressServiceInstance) {
+      return addressServiceInstance;
+    }
+
+    if (!isSaleorConfigured) {
+      addressServiceInstance = emptyAddressService;
+
       return addressServiceInstance;
     }
 

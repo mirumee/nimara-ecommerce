@@ -60,33 +60,40 @@ pnpm install turbo --global
 
 ## ⚡ Quickstart
 
-Clone this repository and copy `.env.example` to `.env`:
-
-```bash
-cp .env.example .env
-```
-
-Edit `.env` file and provide required variables.
-
-Then, [install `pnpm`](https://pnpm.io/installation) and run the following command to install all dependencies in the repo:
+Clone this repository, [install `pnpm`](https://pnpm.io/installation) and install all dependencies in the repo:
 
 ```bash
 pnpm i
 ```
 
-To start just the development server for storefront, run this
+Start the storefront development server:
 
 ```bash
 pnpm run dev:storefront
 ```
 
-To generate a new types, run this:
+The app is now running at `http://localhost:3000`.
+
+> **Zero-config:** the storefront boots with no environment variables — every
+> page renders with empty data (no products, no menu, checkout hidden). You only
+> need a `.env` to connect a real backend.
+
+To connect Saleor and other services, copy the storefront env template and fill in
+what you need:
+
+```bash
+cp apps/storefront/.env.example apps/storefront/.env
+```
+
+Every variable is optional and documented inline. Run `pnpm preflight` at any time
+to see which features are currently enabled and which env vars to set to turn the
+rest on.
+
+To generate GraphQL types (requires `NEXT_PUBLIC_SALEOR_API_URL` in `apps/storefront/.env`), run:
 
 ```bash
 pnpm run codegen
 ```
-
-The app is now running at `http://localhost:3000`.
 
 ## 🚀 Daily Workflow and Releasing
 
