@@ -49,7 +49,7 @@ const schema = z.object({
   ),
   NEXT_PUBLIC_STOREFRONT_URL: z.preprocess(
     (val) => normalizePublicUrl(val) ?? defaultStorefrontUrl,
-    z.string(),
+    z.url(),
   ),
   PAYMENT_APP_ID: z.preprocess(emptyStringToUndefined, z.string().optional()),
   STRIPE_PUBLIC_KEY: z.string().trim().optional(),
@@ -76,6 +76,7 @@ export const clientEnvs = schema.parse({
   ENVIRONMENT: process.env.NEXT_PUBLIC_ENVIRONMENT,
   NEXT_PUBLIC_DEFAULT_CHANNEL: process.env.NEXT_PUBLIC_DEFAULT_CHANNEL,
   NEXT_PUBLIC_DEFAULT_EMAIL: process.env.NEXT_PUBLIC_DEFAULT_EMAIL,
+  NEXT_PUBLIC_DEFAULT_PAGE_TITLE: process.env.NEXT_PUBLIC_DEFAULT_PAGE_TITLE,
   NEXT_PUBLIC_SALEOR_API_URL: process.env.NEXT_PUBLIC_SALEOR_API_URL,
   NEXT_PUBLIC_STOREFRONT_URL: process.env.NEXT_PUBLIC_STOREFRONT_URL,
   PAYMENT_APP_ID: process.env.NEXT_PUBLIC_PAYMENT_APP_ID,
