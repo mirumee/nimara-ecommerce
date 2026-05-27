@@ -25,7 +25,15 @@
         "!.env*.local",
         "!.next/**"
       ],
-      "env": ["ANALYZE"]
+      "env": ["ANALYZE"],
+      "passThroughEnv": [
+        "APP_SEMVER_NAME",
+        "SENTRY_AUTH_TOKEN",
+        "SENTRY_DEBUG",
+        "SENTRY_DSN",
+        "SENTRY_ORG",
+        "SENTRY_PROJECT"
+      ]
     },
     "codegen": {
       "dependsOn": ["^codegen"],
