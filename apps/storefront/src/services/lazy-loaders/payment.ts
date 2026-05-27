@@ -2,7 +2,13 @@ import type { Logger } from "@nimara/infrastructure/logging/types";
 import { type StripePaymentService } from "@nimara/infrastructure/payment/providers";
 
 import { clientEnvs } from "@/envs/client";
-import { serverEnvs } from "@/envs/server";
+
+import {
+  getRequiredPaymentAppId,
+  getRequiredSaleorApiUrl,
+  getRequiredStripePublicKey,
+  getRequiredStripeSecretKey,
+} from "./required-env";
 
 let paymentServiceInstance: StripePaymentService | null = null;
 
@@ -22,11 +28,11 @@ export const createPaymentServiceLoader = (logger: Logger) => {
       await import("@nimara/infrastructure/payment/providers");
 
     paymentServiceInstance = stripePaymentService({
-      apiURI: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
-      secretKey: serverEnvs.STRIPE_SECRET_KEY,
-      publicKey: clientEnvs.STRIPE_PUBLIC_KEY,
+      apiURI: getRequiredSaleorApiUrl("payment service"),
+      secretKey: getRequiredStripeSecretKey("payment service"),
+      publicKey: getRequiredStripePublicKey("payment service"),
       environment: clientEnvs.ENVIRONMENT,
-      gatewayAppId: clientEnvs.PAYMENT_APP_ID,
+      gatewayAppId: getRequiredPaymentAppId("payment service"),
       logger,
     });
 

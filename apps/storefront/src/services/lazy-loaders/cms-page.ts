@@ -1,7 +1,8 @@
 import type { Logger } from "@nimara/infrastructure/logging/types";
 import type { CMSPageService } from "@nimara/infrastructure/use-cases/cms-page/types";
 
-import { clientEnvs } from "@/envs/client";
+import { emptyCMSPageService, isSaleorConfigured } from "./empty-services";
+import { getRequiredSaleorApiUrl } from "./required-env";
 
 /**
  * Creates a lazy loader function for the CMS page service.
@@ -16,11 +17,17 @@ export const createCMSPageServiceLoader = (logger: Logger) => {
       return cmsServiceInstance;
     }
 
+    if (!isSaleorConfigured) {
+      cmsServiceInstance = emptyCMSPageService;
+
+      return cmsServiceInstance;
+    }
+
     const { saleorCMSPageService } =
       await import("@nimara/infrastructure/cms-page/providers");
 
     cmsServiceInstance = saleorCMSPageService({
-      apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
+      apiURL: getRequiredSaleorApiUrl("CMS page service"),
       logger,
     });
 

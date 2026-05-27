@@ -3,6 +3,9 @@ import type { Logger } from "@nimara/infrastructure/logging/types";
 
 import { clientEnvs } from "@/envs/client";
 
+import { emptyCartService, isSaleorConfigured } from "./empty-services";
+import { getRequiredSaleorApiUrl } from "./required-env";
+
 /**
  * Creates a lazy loader function for the cart service.
  * This function is only used by the service registry.
@@ -16,11 +19,17 @@ export const createCartServiceLoader = (logger: Logger) => {
       return cartServiceInstance;
     }
 
+    if (!isSaleorConfigured) {
+      cartServiceInstance = emptyCartService;
+
+      return cartServiceInstance;
+    }
+
     const { saleorCartService } =
       await import("@nimara/infrastructure/cart/providers");
 
     cartServiceInstance = saleorCartService({
-      apiURI: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
+      apiURI: getRequiredSaleorApiUrl("cart service"),
       isMarketplaceEnabled: clientEnvs.NEXT_PUBLIC_MARKETPLACE_ENABLED,
       logger,
       thumbnailFormat: clientEnvs.NEXT_PUBLIC_DEFAULT_IMAGE_FORMAT as

@@ -2,7 +2,9 @@ import { type Logger } from "@nimara/foundation/logging/types";
 import { type MarketplaceService } from "@nimara/infrastructure/marketplace/types";
 
 import { MARKETPLACE_VENDOR_PROFILE_CACHE_TTL } from "@/config";
-import { clientEnvs } from "@/envs/client";
+
+import { emptyMarketplaceService, isSaleorConfigured } from "./empty-services";
+import { getRequiredSaleorApiUrl } from "./required-env";
 
 /**
  * Creates a lazy loader function for the checkout service.
@@ -19,11 +21,17 @@ export const createMarketplaceServiceLoader = (logger: Logger) => {
       return marketplaceServiceInstance;
     }
 
+    if (!isSaleorConfigured) {
+      marketplaceServiceInstance = emptyMarketplaceService;
+
+      return marketplaceServiceInstance;
+    }
+
     const { saleorMarketplaceService } =
       await import("@nimara/infrastructure/marketplace/saleor/service");
 
     marketplaceServiceInstance = saleorMarketplaceService({
-      apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
+      apiURL: getRequiredSaleorApiUrl("marketplace service"),
       logger,
       cacheTTL: {
         vendorProfile: MARKETPLACE_VENDOR_PROFILE_CACHE_TTL,

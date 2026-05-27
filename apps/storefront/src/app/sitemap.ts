@@ -8,6 +8,17 @@ import { getServiceRegistry } from "@/services/registry";
 type Item = MetadataRoute.Sitemap[number];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const homeUrl = {
+    url: clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
+    lastModified: new Date(),
+    changeFrequency: "always",
+    priority: 1,
+  } satisfies Item;
+
+  if (!clientEnvs.NEXT_PUBLIC_SALEOR_API_URL) {
+    return [homeUrl];
+  }
+
   // TODO: Make this contextual
   const searchContext = {
     currency: "USD",
@@ -40,13 +51,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       }) satisfies Item,
   );
 
-  return [
-    {
-      url: clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
-      lastModified: new Date(),
-      changeFrequency: "always",
-      priority: 1,
-    },
-    ...productUrls,
-  ];
+  return [homeUrl, ...productUrls];
 }

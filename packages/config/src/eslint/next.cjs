@@ -3,6 +3,16 @@ module.exports = {
   extends: ["next/core-web-vitals", "./base.cjs"],
   rules: {
     "@next/next/no-html-link-for-pages": ["error", "apps/storefront/src"],
+    "turbo/no-undeclared-env-vars": [
+      "error",
+      {
+        allowList: [
+          "^APP_SEMVER_NAME$",
+          "^NEXT_RUNTIME$",
+          "^npm_package_(name|version)$",
+        ],
+      },
+    ],
   },
   overrides: [
     {

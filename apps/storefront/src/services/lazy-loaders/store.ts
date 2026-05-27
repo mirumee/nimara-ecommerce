@@ -4,6 +4,9 @@ import type { StoreService } from "@nimara/infrastructure/store/types";
 import { clientEnvs } from "@/envs/client";
 import { serverEnvs } from "@/envs/server";
 
+import { emptyStoreService, isSaleorConfigured } from "./empty-services";
+import { getRequiredSaleorApiUrl } from "./required-env";
+
 /**
  * Creates a lazy loader function for the store service.
  * This function is only used by the service registry.
@@ -17,11 +20,17 @@ export const createStoreServiceLoader = (logger: Logger) => {
       return storeServiceInstance;
     }
 
+    if (!isSaleorConfigured) {
+      storeServiceInstance = emptyStoreService;
+
+      return storeServiceInstance;
+    }
+
     const { saleorStoreService } =
       await import("@nimara/infrastructure/store/index");
 
     storeServiceInstance = saleorStoreService({
-      apiURI: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
+      apiURI: getRequiredSaleorApiUrl("store service"),
       logger,
       marketplaceEnabled: clientEnvs.NEXT_PUBLIC_MARKETPLACE_ENABLED,
       saleorAppToken: serverEnvs.SALEOR_APP_TOKEN,

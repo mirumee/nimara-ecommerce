@@ -1,0 +1,50 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^codegen", "^build"],
+      "outputs": [".next/**", "!.next/cache/**"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env",
+        ".env.production",
+        ".env.development",
+        "!.env*.local",
+        "!.next/**"
+      ],
+      "env": [
+        "ANALYZE",
+        "NEXT_PUBLIC_SALEOR_API_URL",
+        "NEXT_PUBLIC_DEFAULT_CHANNEL",
+        "NEXT_PUBLIC_STOREFRONT_URL",
+        "NEXT_PUBLIC_ENVIRONMENT",
+        "NEXT_PUBLIC_PAYMENT_APP_ID",
+        "NEXT_PUBLIC_STRIPE_PUBLIC_KEY",
+        "NEXT_PUBLIC_CMS_SERVICE",
+        "NEXT_PUBLIC_SEARCH_SERVICE",
+        "NEXT_PUBLIC_DEFAULT_IMAGE_FORMAT",
+        "NEXT_PUBLIC_DEFAULT_EMAIL",
+        "NEXT_PUBLIC_DEFAULT_PAGE_TITLE",
+        "NEXT_PUBLIC_ALGOLIA_APP_ID",
+        "NEXT_PUBLIC_ALGOLIA_API_KEY",
+        "NEXT_PUBLIC_BUTTER_CMS_API_KEY",
+        "NEXT_PUBLIC_MARKETPLACE_ENABLED",
+        "NEXT_PUBLIC_MARKETPLACE_VENDOR_URL",
+        "SENTRY_DSN",
+        "SENTRY_ORG",
+        "SENTRY_PROJECT",
+        "SENTRY_DEBUG"
+      ],
+      "passThroughEnv": [
+        "AUTH_SECRET",
+        "AUTH_URL",
+        "SALEOR_APP_TOKEN",
+        "STRIPE_SECRET_KEY",
+        "SENTRY_AUTH_TOKEN",
+        "LOG_LEVEL",
+        "OTEL_SERVICE_NAME"
+      ]
+    }
+  }
+}

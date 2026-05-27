@@ -124,6 +124,12 @@ export const initializeMarketplacePaymentIntent = async ({
     return err([{ code: "GENERIC_PAYMENT_ERROR" }]);
   }
 
+  const saleorApiUrl = clientEnvs.NEXT_PUBLIC_SALEOR_API_URL;
+
+  if (!saleorApiUrl) {
+    return err([{ code: "GENERIC_PAYMENT_ERROR" }]);
+  }
+
   const normalizedBaseUrl = marketplaceVendorUrl.startsWith("http")
     ? marketplaceVendorUrl
     : `https://${marketplaceVendorUrl}`;
@@ -131,7 +137,7 @@ export const initializeMarketplacePaymentIntent = async ({
   let saleorDomain: string;
 
   try {
-    saleorDomain = new URL(clientEnvs.NEXT_PUBLIC_SALEOR_API_URL).hostname;
+    saleorDomain = new URL(saleorApiUrl).hostname;
   } catch {
     return err([{ code: "GENERIC_PAYMENT_ERROR" }]);
   }

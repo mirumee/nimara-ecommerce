@@ -5,8 +5,13 @@ import { graphqlClient } from "@nimara/infrastructure/graphql/client";
 import { clientEnvs } from "@/envs/client";
 import { serverEnvs } from "@/envs/server";
 
-export const saleorClient = () =>
-  graphqlClient(clientEnvs.NEXT_PUBLIC_SALEOR_API_URL);
+export const saleorClient = () => {
+  const saleorApiUrl = clientEnvs.NEXT_PUBLIC_SALEOR_API_URL;
+
+  invariant(saleorApiUrl, "Please set NEXT_PUBLIC_SALEOR_API_URL.");
+
+  return graphqlClient(saleorApiUrl);
+};
 
 export const secureSaleorClient = () => {
   const client = saleorClient();

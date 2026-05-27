@@ -1,7 +1,8 @@
 import type { CollectionService } from "@nimara/infrastructure/collection/types";
 import type { Logger } from "@nimara/infrastructure/logging/types";
 
-import { clientEnvs } from "@/envs/client";
+import { emptyCollectionService, isSaleorConfigured } from "./empty-services";
+import { getRequiredSaleorApiUrl } from "./required-env";
 
 /**
  * Creates a lazy loader function for the collection service.
@@ -16,11 +17,17 @@ export const createCollectionServiceLoader = (logger: Logger) => {
       return collectionServiceInstance;
     }
 
+    if (!isSaleorConfigured) {
+      collectionServiceInstance = emptyCollectionService;
+
+      return collectionServiceInstance;
+    }
+
     const { saleorCollectionService } =
       await import("@nimara/infrastructure/collection/providers");
 
     collectionServiceInstance = saleorCollectionService({
-      apiURI: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
+      apiURI: getRequiredSaleorApiUrl("collection service"),
       logger,
     });
 
