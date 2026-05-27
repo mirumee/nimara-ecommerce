@@ -20,7 +20,8 @@
         "VERCEL_EDGE_CONFIG_ID",
         "SENTRY_DSN",
         "SENTRY_ORG",
-        "SENTRY_PROJECT"
+        "SENTRY_PROJECT",
+        "SENTRY_DEBUG"
       ],
       "passThroughEnv": [
         "STRIPE_SECRET_KEY",

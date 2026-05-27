@@ -8,7 +8,8 @@
     "VERCEL_ENV",
     "VERCEL_URL",
     "VERCEL_BRANCH_URL",
-    "NEXT_PUBLIC_VERCEL_ENV"
+    "NEXT_PUBLIC_VERCEL_ENV",
+    "LOG_LEVEL"
   ],
   "remoteCache": {
     "enabled": true
