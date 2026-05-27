@@ -75,6 +75,13 @@ const config: Config = {
 
   themeConfig: {
     image: "img/nimara-social.png",
+    algolia: {
+      appId: "KP6AWCIO17",
+      // Search-only API key - safe to commit (public).
+      apiKey: "60042e9e402626bdaa52abb4d5cce430",
+      indexName: "crawler-nimara-docs",
+      contextualSearch: true,
+    },
     navbar: {
       title: "Nimara",
       logo: {
