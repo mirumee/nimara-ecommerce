@@ -20,7 +20,7 @@ This skill helps you navigate Nimara's **layered monorepo architecture** and mak
 
 ```
 apps/                          # User-facing applications
-├── storefront/                # Next.js 15 customer-facing storefront
+├── storefront/                # Next.js customer-facing storefront
 ├── stripe/                    # Stripe payment integration app
 └── automated-tests/           # Playwright E2E tests
 

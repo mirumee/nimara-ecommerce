@@ -1,0 +1,38 @@
+{
+  "docs": [
+    {
+      "type": "doc",
+      "id": "intro",
+      "label": "Overview"
+    },
+    {
+      "type": "doc",
+      "id": "onboarding",
+      "label": "Developer Onboarding"
+    },
+    {
+      "type": "category",
+      "label": "Quickstart",
+      "collapsed": false,
+      "items": [
+        "running-locally",
+        "storefront",
+        "environment-variables",
+        "saleor-cms",
+        "add-new-channel"
+      ]
+    },
+    {
+      "type": "category",
+      "label": "Integrations",
+      "collapsed": false,
+      "items": ["ucp-integration", "stripe-integration"]
+    },
+    {
+      "type": "category",
+      "label": "Advanced",
+      "collapsed": false,
+      "items": ["marketplace", "using-terraform"]
+    }
+  ]
+}
