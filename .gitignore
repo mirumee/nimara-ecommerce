@@ -88,3 +88,4 @@ override.tf.json
 terraform.rc
 
 .omx/
+.env*.local

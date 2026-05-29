@@ -7,11 +7,12 @@ title: Overview
 
 # Nimara Documentation
 
-Welcome to the Nimara documentation! This guide will help you set up and deploy your e-commerce storefront using Nimara, a modern headless e-commerce platform built on top of [Saleor](https://github.com/saleor/saleor).
-
-Made with the latest version of Next.js, TypeScript and React Server Components, Nimara is a modern and performant e-commerce storefront.
+Welcome to the Nimara documentation.
+This guide will help you set up and deploy your e-commerce storefront using Nimara, a modern headless e-commerce platform built on top of [Saleor](https://github.com/saleor/saleor).
 
 ## Getting Started
+
+New to the codebase? Start with the **[Developer Onboarding](onboarding)** guide for a tour of the architecture, repository layout, development workflow, and conventions.
 
 To get started with Nimara, explore the **Quickstart** section which contains step-by-step guides for:
 
