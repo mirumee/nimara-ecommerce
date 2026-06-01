@@ -32,19 +32,47 @@
 
 ## Features
 
-- **Headless Architecture:** Nimara's headless architecture provides a flexible, easy-to-maintain, and ready-to-deploy solution for online businesses.
+- **Full commerce experience:** Product catalog, search, cart, checkout, and customer accounts - everything a storefront needs to start selling, ready out of the box.
 
-- **Next.js 16:** App router, React Server Components (RSC), Server Actions, Caching and Static Site Generation (SSG) support with Typescript setup.
+- **Multi-region & global brands:** Sell across multiple channels, currencies, languages, and markets from a single storefront, with localized content and pricing.
 
-- **Shadcn UI/Tailwind CSS:** Nimara's UI uses [Shadcn UI](https://ui.shadcn.com/) and [Tailwind CSS](https://tailwindcss.com/), providing a modern and customizable design system.
 
-- **Turborepo:** Nimara's monorepo is powered by [Turborepo](https://turborepo.dev/), a fast and scalable build system for monorepos. Automated tests with [Playwright](https://playwright.dev/) and a [Docusaurus](https://docusaurus.io/) docs site are included.
+- **Swap any integration:** Commerce backend, CMS, search, and payments each sit behind a typed contract, so you can change providers without rewriting the app. Ships with [Saleor](https://saleor.io/) as the default backend, plus [ButterCMS](https://buttercms.com/) and [Algolia](https://www.algolia.com/) as drop-in alternatives.
 
-- **Stripe Integration:** Nimara's storefront uses Stripe [Payment Element](https://docs.stripe.com/payments/payment-element) for secure payment processing.
+- **Secure payments:** Integrated [Stripe](https://stripe.com/) checkout for reliable, PCI-compliant payment processing, ready to extend to other gateways.
 
-- **Customizable infrastructure:** Nimara's infrastructure is highly customizable, allowing you to tailor it to your specific needs and requirements. Extend it by providing the setup to any third-party service.
+- **Marketplace ready:** Built-in support for vendor-aware, multi-seller marketplaces alongside standard single-brand stores.
 
-- **Tooling included:** Comes with ESLint, Prettier, Husky, Lint Staged, and Codegen preconfigured.
+- **AI & agent commerce:** Universal Commerce Protocol (UCP) integration exposes your catalog and checkout to AI agents and external platforms.
+
+- **Start in minutes, own everything:** Zero-config storefront boots without any setup, and you own every line of code - no closed core, no required upgrades, no lock-in.
+
+## Built with developers' favorite tools
+
+The tech behind the features - a modern, fully typed stack we love working with:
+
+<div align="center">
+
+![Next.js](https://img.shields.io/badge/Next.js%2016-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
+![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-000000?style=for-the-badge&logo=shadcnui&logoColor=white)
+![Radix UI](https://img.shields.io/badge/Radix%20UI-161618?style=for-the-badge&logo=radixui&logoColor=white)
+![Turborepo](https://img.shields.io/badge/Turborepo-EF4444?style=for-the-badge&logo=turborepo&logoColor=white)
+![pnpm](https://img.shields.io/badge/pnpm-F69220?style=for-the-badge&logo=pnpm&logoColor=white)
+![GraphQL](https://img.shields.io/badge/GraphQL-E10098?style=for-the-badge&logo=graphql&logoColor=white)
+![Zod](https://img.shields.io/badge/Zod-3E67B1?style=for-the-badge&logo=zod&logoColor=white)
+![React Hook Form](https://img.shields.io/badge/React%20Hook%20Form-EC5990?style=for-the-badge&logo=reacthookform&logoColor=white)
+![next-intl](https://img.shields.io/badge/next--intl-EC4899?style=for-the-badge&logo=i18next&logoColor=white)
+![Vitest](https://img.shields.io/badge/Vitest-6E9F18?style=for-the-badge&logo=vitest&logoColor=white)
+![Playwright](https://img.shields.io/badge/Playwright-2EAD33?style=for-the-badge&logo=playwright&logoColor=white)
+![Docusaurus](https://img.shields.io/badge/Docusaurus-3ECC5F?style=for-the-badge&logo=docusaurus&logoColor=white)
+![ESLint](https://img.shields.io/badge/ESLint-4B32C3?style=for-the-badge&logo=eslint&logoColor=white)
+![Prettier](https://img.shields.io/badge/Prettier-F7B93E?style=for-the-badge&logo=prettier&logoColor=black)
+![Stripe](https://img.shields.io/badge/Stripe-635BFF?style=for-the-badge&logo=stripe&logoColor=white)
+
+</div>
 
 ## Prerequisites
 
@@ -74,7 +102,7 @@ pnpm run dev:storefront
 
 The app is now running at `http://localhost:3000`.
 
-> **Zero-config:** the storefront boots with no environment variables — every
+> **Zero-config:** the storefront boots with no environment variables - every
 > page renders with empty data (no products, no menu, checkout hidden). You only
 > need a `.env` to connect a real backend.
 
@@ -124,7 +152,7 @@ Join Nimara community on [Discord server](https://discord.gg/w4V3PZxGDj). You ca
 You can also contribute to Nimara in various ways:
 
 - Report [issues](https://github.com/mirumee/nimara-ecommerce/issues/new?assignees=srinivaspendem%2Cpushya22&labels=%F0%9F%90%9Bbug&projects=&template=--bug-report.yaml&title=%5Bbug%5D%3A+) and suggest [new features](https://github.com/mirumee/nimara-ecommerce/issues/new?assignees=srinivaspendem%2Cpushya22&labels=%E2%9C%A8feature&projects=&template=--feature-request.yaml&title=%5Bfeature%5D%3A+).
-- Review [documentation](https://docs.nimara.store) and submit [pull requests](https://github.com/mirumee/nimara-ecommerce/pulls)—whether it's fixing typos or adding new features.
+- Review [documentation](https://docs.nimara.store) and submit [pull requests](https://github.com/mirumee/nimara-ecommerce/pulls)-whether it's fixing typos or adding new features.
 - Share your experiences or projects related to Nimara with the broader community through talks or blog posts.
 - Support [popular feature requests](https://github.com/mirumee/nimara-ecommerce/issues?q=sort%3Aupdated-desc+is%3Aissue+is%3Aopen) by upvoting them.
 
