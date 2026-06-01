@@ -279,10 +279,10 @@ For decision tree and detailed scenarios, see `.agents/skills/project-guidelines
 
 6. **Skills and rules**
    - For **architecture and layers:** See `.agents/skills/project-guidelines/SKILL.md` (decision tree, common scenarios).
-   - For **React/Next.js patterns:** Follow `.agents/skills/vercel-react-best-practices` and `.agents/skills/vercel-react-best-practices`.
+   - For **React/Next.js patterns:** Follow `.agents/skills/vercel-react-best-practices` and `.agents/skills/vercel-composition-patterns`.
    - For **composition patterns:** See `.agents/skills/vercel-composition-patterns` (avoid boolean props, use compound components).
    - For **UI/accessibility:** See `.agents/skills/web-design-guidelines` when relevant.
-   - Use the **SKILLS.md** in this repo for a concise catalog of technical standards and patterns.
+   - Browse `.agents/skills/` for the full catalog of repo skills (each `SKILL.md` lists its triggers).
 
 ---
 
@@ -295,4 +295,4 @@ For decision tree and detailed scenarios, see `.agents/skills/project-guidelines
 | Optimize React component     | `.agents/skills/vercel-react-best-practices/SKILL.md`                   | Performance patterns                 |
 | Refactor component props     | `.agents/skills/vercel-composition-patterns/SKILL.md`                   | Avoid boolean props, use composition |
 | Review UI/design             | `.agents/skills/web-design-guidelines/SKILL.md`                         | Accessibility, usability             |
-| Understand architecture      | `.AGENTS.md` (this file) + `.agents/skills/project-guidelines/SKILL.md` | Overall structure + details          |
+| Understand architecture      | `AGENTS.md` (this file) + `.agents/skills/project-guidelines/SKILL.md`  | Overall structure + details          |
