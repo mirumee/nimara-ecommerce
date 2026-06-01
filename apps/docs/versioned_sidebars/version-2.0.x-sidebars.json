@@ -11,6 +11,11 @@
       "label": "Developer Onboarding"
     },
     {
+      "type": "doc",
+      "id": "release-workflow",
+      "label": "Daily Workflow & Releasing"
+    },
+    {
       "type": "category",
       "label": "Quickstart",
       "collapsed": false,
