@@ -1,3 +1,4 @@
+import { createServiceSelector } from "#root/lib/create-service-selector";
 import { type Logger } from "#root/logging/types";
 import { type CMSProviderId } from "#root/providers-catalog";
 import { type CMSMenuService } from "#root/use-cases/cms-menu/types";
@@ -18,50 +19,39 @@ export type CMSMenuServiceConfig = {
 };
 
 /**
- * Resolves and instantiates the CMS menu service for the selected provider.
- * The provider catalog and wiring live here; apps only pass the selected id
- * plus config. The exhaustive `switch` makes adding an id to
- * {@link CMSProviderId} a compile error until a branch is added.
+ * Resolves and instantiates the CMS menu service for the selected provider. The
+ * provider catalog and wiring live here; apps only pass the selected id plus
+ * config.
  */
-export const createCMSMenuService = async (
-  provider: CMSProviderId,
-  config: CMSMenuServiceConfig,
-): Promise<CMSMenuService> => {
-  switch (provider) {
-    case "saleor": {
-      if (!config.saleor) {
-        throw new Error(
-          "CMS provider 'saleor' is selected but its configuration is missing.",
-        );
-      }
-
-      const { saleorCMSMenuService } = await import("./providers");
-
-      return saleorCMSMenuService({ ...config.saleor, logger: config.logger });
+export const createCMSMenuService = createServiceSelector<
+  CMSMenuService,
+  CMSMenuServiceConfig,
+  CMSProviderId
+>({
+  saleor: async (config) => {
+    if (!config.saleor) {
+      return null;
     }
-    case "butter-cms": {
-      if (!config.butterCMS) {
-        throw new Error(
-          "CMS provider 'butter-cms' is selected but its token is not configured.",
-        );
-      }
 
-      const { butterCMSMenuService } = await import("./providers");
+    const { saleorCMSMenuService } = await import("./providers");
 
-      return butterCMSMenuService({
-        ...config.butterCMS,
-        logger: config.logger,
-      });
+    return saleorCMSMenuService({ ...config.saleor, logger: config.logger });
+  },
+  "butter-cms": async (config) => {
+    if (!config.butterCMS) {
+      return null;
     }
-    case "dummy": {
-      const { dummyCMSMenuService } = await import("./providers");
 
-      return dummyCMSMenuService({ logger: config.logger });
-    }
-    default: {
-      const _exhaustive: never = provider;
+    const { butterCMSMenuService } = await import("./providers");
 
-      throw new Error(`Unknown CMS provider: ${String(_exhaustive)}`);
-    }
-  }
-};
+    return butterCMSMenuService({
+      ...config.butterCMS,
+      logger: config.logger,
+    });
+  },
+  dummy: async (config) => {
+    const { dummyCMSMenuService } = await import("./providers");
+
+    return dummyCMSMenuService({ logger: config.logger });
+  },
+});

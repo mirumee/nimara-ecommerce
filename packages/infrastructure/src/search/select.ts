@@ -1,3 +1,4 @@
+import { createServiceSelector } from "#root/lib/create-service-selector";
 import { type Logger } from "#root/logging/types";
 import { type SearchProviderId } from "#root/providers-catalog";
 import { type AlgoliaSearchServiceConfig } from "#root/search/algolia/types";
@@ -16,50 +17,36 @@ export type SearchServiceConfig = {
 };
 
 /**
- * Resolves and instantiates the search service for the selected provider.
- *
- * This is the single place that knows the provider catalog and how to load each
- * implementation — apps only pass the selected id plus config. The dynamic
- * `import()`s keep each provider in its own lazily-loaded chunk, so unused
- * providers are never bundled. The exhaustive `switch` makes adding an id to
- * {@link SearchProviderId} a compile error until a branch is added here.
+ * Resolves and instantiates the search service for the selected provider. The
+ * provider catalog and wiring live here; apps only pass the selected id plus
+ * config.
  */
-export const createSearchService = async (
-  provider: SearchProviderId,
-  config: SearchServiceConfig,
-): Promise<SearchService> => {
-  switch (provider) {
-    case "saleor": {
-      if (!config.saleor) {
-        throw new Error(
-          "Search provider 'saleor' is selected but its configuration is missing.",
-        );
-      }
-
-      const { saleorSearchService } = await import("./saleor/provider");
-
-      return saleorSearchService({ ...config.saleor, logger: config.logger });
+export const createSearchService = createServiceSelector<
+  SearchService,
+  SearchServiceConfig,
+  SearchProviderId
+>({
+  saleor: async (config) => {
+    if (!config.saleor) {
+      return null;
     }
-    case "algolia": {
-      if (!config.algolia) {
-        throw new Error(
-          "Search provider 'algolia' is selected but its credentials/indices are not configured.",
-        );
-      }
 
-      const { algoliaSearchService } = await import("./algolia/provider");
+    const { saleorSearchService } = await import("./saleor/provider");
 
-      return algoliaSearchService({ ...config.algolia, logger: config.logger });
+    return saleorSearchService({ ...config.saleor, logger: config.logger });
+  },
+  algolia: async (config) => {
+    if (!config.algolia) {
+      return null;
     }
-    case "dummy": {
-      const { dummySearchService } = await import("./dummy/provider");
 
-      return dummySearchService({ logger: config.logger });
-    }
-    default: {
-      const _exhaustive: never = provider;
+    const { algoliaSearchService } = await import("./algolia/provider");
 
-      throw new Error(`Unknown search provider: ${String(_exhaustive)}`);
-    }
-  }
-};
+    return algoliaSearchService({ ...config.algolia, logger: config.logger });
+  },
+  dummy: async (config) => {
+    const { dummySearchService } = await import("./dummy/provider");
+
+    return dummySearchService({ logger: config.logger });
+  },
+});
