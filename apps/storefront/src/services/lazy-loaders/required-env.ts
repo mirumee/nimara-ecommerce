@@ -40,3 +40,24 @@ export const getRequiredStripeSecretKey = (serviceName: string) =>
     "STRIPE_SECRET_KEY",
     serviceName,
   );
+
+export const getRequiredAlgoliaAppId = (serviceName: string) =>
+  getRequiredEnv(
+    clientEnvs.ALGOLIA_APP_ID,
+    "NEXT_PUBLIC_ALGOLIA_APP_ID",
+    serviceName,
+  );
+
+export const getRequiredAlgoliaApiKey = (serviceName: string) =>
+  getRequiredEnv(
+    clientEnvs.ALGOLIA_API_KEY,
+    "NEXT_PUBLIC_ALGOLIA_API_KEY",
+    serviceName,
+  );
+
+export const getRequiredButterCMSApiKey = (serviceName: string) =>
+  getRequiredEnv(
+    clientEnvs.BUTTER_CMS_API_KEY,
+    "NEXT_PUBLIC_BUTTER_CMS_API_KEY",
+    serviceName,
+  );

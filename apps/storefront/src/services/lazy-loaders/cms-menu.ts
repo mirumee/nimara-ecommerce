@@ -1,36 +1,23 @@
 import type { Logger } from "@nimara/infrastructure/logging/types";
-import type { CMSMenuService } from "@nimara/infrastructure/use-cases/cms-menu/types";
 
-import { emptyCMSMenuService, isSaleorConfigured } from "./empty-services";
-import { getRequiredSaleorApiUrl } from "./required-env";
+import {
+  CMS_MENU_PROVIDERS,
+  resolveCMSMenuProvider,
+} from "@/services/integrations/cms-menu";
+import { createServiceLoader } from "@/services/integrations/create-loader";
+
+import { emptyCMSMenuService } from "./empty-services";
 
 /**
- * Creates a lazy loader function for the CMS menu service.
+ * Creates a lazy loader for the CMS menu service. The active provider
+ * (Saleor, ButterCMS, …) is selected at build time via `CMS_MENU_PROVIDER`.
  * This function is only used by the service registry.
  * @internal
  */
-export const createCMSMenuServiceLoader = (logger: Logger) => {
-  let cmsMenuServiceInstance: CMSMenuService | null = null;
-
-  return async (): Promise<CMSMenuService> => {
-    if (cmsMenuServiceInstance) {
-      return cmsMenuServiceInstance;
-    }
-
-    if (!isSaleorConfigured) {
-      cmsMenuServiceInstance = emptyCMSMenuService;
-
-      return cmsMenuServiceInstance;
-    }
-
-    const { saleorCMSMenuService } =
-      await import("@nimara/infrastructure/cms-menu/providers");
-
-    cmsMenuServiceInstance = saleorCMSMenuService({
-      apiURL: getRequiredSaleorApiUrl("CMS menu service"),
-      logger,
-    });
-
-    return cmsMenuServiceInstance;
-  };
-};
+export const createCMSMenuServiceLoader = (logger: Logger) =>
+  createServiceLoader({
+    providers: CMS_MENU_PROVIDERS,
+    resolveProvider: resolveCMSMenuProvider,
+    emptyService: emptyCMSMenuService,
+    logger,
+  });

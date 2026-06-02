@@ -70,6 +70,26 @@ const schema = z.object({
     normalizePublicUrl,
     z.url().optional(),
   ),
+
+  // --- Integrations (provider selection, build-time) ------------------------
+  // Each capability is served by one swappable provider. Defaults to "saleor".
+  // The selected provider's credentials below become required at first use.
+  SEARCH_SERVICE: z.preprocess(
+    emptyStringToUndefined,
+    z.enum(["saleor", "algolia"]).default("saleor"),
+  ),
+  CMS_SERVICE: z.preprocess(
+    emptyStringToUndefined,
+    z.enum(["saleor", "butter-cms"]).default("saleor"),
+  ),
+  // Algolia (used when SEARCH_SERVICE=algolia)
+  ALGOLIA_APP_ID: z.preprocess(emptyStringToUndefined, z.string().optional()),
+  ALGOLIA_API_KEY: z.preprocess(emptyStringToUndefined, z.string().optional()),
+  // ButterCMS (used when CMS_SERVICE=butter-cms)
+  BUTTER_CMS_API_KEY: z.preprocess(
+    emptyStringToUndefined,
+    z.string().optional(),
+  ),
 });
 
 export const clientEnvs = schema.parse({
@@ -86,4 +106,9 @@ export const clientEnvs = schema.parse({
   NEXT_PUBLIC_MARKETPLACE_ENABLED: process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED,
   NEXT_PUBLIC_MARKETPLACE_VENDOR_URL:
     process.env.NEXT_PUBLIC_MARKETPLACE_VENDOR_URL,
+  SEARCH_SERVICE: process.env.NEXT_PUBLIC_SEARCH_SERVICE,
+  CMS_SERVICE: process.env.NEXT_PUBLIC_CMS_SERVICE,
+  ALGOLIA_APP_ID: process.env.NEXT_PUBLIC_ALGOLIA_APP_ID,
+  ALGOLIA_API_KEY: process.env.NEXT_PUBLIC_ALGOLIA_API_KEY,
+  BUTTER_CMS_API_KEY: process.env.NEXT_PUBLIC_BUTTER_CMS_API_KEY,
 });
