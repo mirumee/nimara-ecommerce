@@ -1,3 +1,4 @@
+import { type CMSProviderId } from "@nimara/infrastructure/providers-catalog";
 import type { CMSMenuService } from "@nimara/infrastructure/use-cases/cms-menu/types";
 
 import { clientEnvs } from "@/envs/client";
@@ -7,7 +8,7 @@ import {
   getRequiredSaleorApiUrl,
 } from "@/services/lazy-loaders/required-env";
 
-import type { ProviderRegistry, ProviderResolver } from "./types";
+import type { ProviderFactory, ProviderResolver } from "./types";
 
 export const CMS_MENU_PROVIDERS = {
   saleor: async (logger) => {
@@ -28,15 +29,23 @@ export const CMS_MENU_PROVIDERS = {
       logger,
     });
   },
-} satisfies ProviderRegistry<CMSMenuService>;
+  dummy: async (logger) => {
+    const { dummyCMSMenuService } =
+      await import("@nimara/infrastructure/cms-menu/providers");
+
+    return dummyCMSMenuService({ logger });
+  },
+} satisfies Record<CMSProviderId, ProviderFactory<CMSMenuService>>;
 
 export const resolveCMSMenuProvider: ProviderResolver<
   typeof CMS_MENU_PROVIDERS
 > = () => {
   const provider = clientEnvs.CMS_SERVICE;
 
+  // Nothing real configured: serve dummy data out of the box, except in
+  // production where we fall back to the empty service (null).
   if (provider === "saleor" && !isSaleorConfigured) {
-    return null;
+    return clientEnvs.ENVIRONMENT === "PRODUCTION" ? null : "dummy";
   }
 
   return provider;

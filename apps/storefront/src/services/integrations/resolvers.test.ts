@@ -2,7 +2,11 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { Logger } from "@nimara/infrastructure/logging/types";
 
-const envMock = { SEARCH_SERVICE: "saleor", CMS_SERVICE: "saleor" };
+const envMock = {
+  SEARCH_SERVICE: "saleor",
+  CMS_SERVICE: "saleor",
+  ENVIRONMENT: "LOCAL",
+};
 const saleorMock = { configured: true };
 
 vi.mock("@/envs/client", () => ({ clientEnvs: envMock }));
@@ -28,6 +32,7 @@ describe("integration resolvers", () => {
   beforeEach(() => {
     envMock.SEARCH_SERVICE = "saleor";
     envMock.CMS_SERVICE = "saleor";
+    envMock.ENVIRONMENT = "LOCAL";
     saleorMock.configured = true;
   });
 
@@ -46,8 +51,17 @@ describe("integration resolvers", () => {
     expect(resolveCMSMenuProvider()).toBe("butter-cms");
   });
 
-  it("falls back to empty (null) when saleor is selected but unconfigured", () => {
+  it("falls back to dummy when saleor is unconfigured outside production", () => {
     saleorMock.configured = false;
+
+    expect(resolveSearchProvider()).toBe("dummy");
+    expect(resolveCMSPageProvider()).toBe("dummy");
+    expect(resolveCMSMenuProvider()).toBe("dummy");
+  });
+
+  it("falls back to empty (null) when saleor is unconfigured in production", () => {
+    saleorMock.configured = false;
+    envMock.ENVIRONMENT = "PRODUCTION";
 
     expect(resolveSearchProvider()).toBeNull();
     expect(resolveCMSPageProvider()).toBeNull();

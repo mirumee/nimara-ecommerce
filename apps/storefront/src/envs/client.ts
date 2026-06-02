@@ -1,5 +1,10 @@
 import { z } from "zod";
 
+import {
+  CMS_PROVIDER_IDS,
+  SEARCH_PROVIDER_IDS,
+} from "@nimara/infrastructure/providers-catalog";
+
 const emptyStringToUndefined = (val: unknown) => {
   if (typeof val !== "string") {
     return val;
@@ -76,11 +81,11 @@ const schema = z.object({
   // The selected provider's credentials below become required at first use.
   SEARCH_SERVICE: z.preprocess(
     emptyStringToUndefined,
-    z.enum(["saleor", "algolia"]).default("saleor"),
+    z.enum(SEARCH_PROVIDER_IDS).default("saleor"),
   ),
   CMS_SERVICE: z.preprocess(
     emptyStringToUndefined,
-    z.enum(["saleor", "butter-cms"]).default("saleor"),
+    z.enum(CMS_PROVIDER_IDS).default("saleor"),
   ),
   // Algolia (used when SEARCH_SERVICE=algolia)
   ALGOLIA_APP_ID: z.preprocess(emptyStringToUndefined, z.string().optional()),

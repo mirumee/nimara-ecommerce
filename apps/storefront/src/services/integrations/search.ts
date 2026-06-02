@@ -1,3 +1,4 @@
+import { type SearchProviderId } from "@nimara/infrastructure/providers-catalog";
 import type { SaleorSearchServiceConfig } from "@nimara/infrastructure/search/saleor/types";
 import type { SearchService } from "@nimara/infrastructure/use-cases/search/types";
 
@@ -10,7 +11,7 @@ import {
 } from "@/services/lazy-loaders/required-env";
 
 import { ALGOLIA_INDICES } from "./algolia-indices";
-import type { ProviderRegistry, ProviderResolver } from "./types";
+import type { ProviderFactory, ProviderResolver } from "./types";
 
 const SALEOR_SORTING = [
   {
@@ -60,15 +61,24 @@ export const SEARCH_PROVIDERS = {
       logger,
     });
   },
-} satisfies ProviderRegistry<SearchService>;
+  dummy: async (logger) => {
+    const { dummySearchService } =
+      await import("@nimara/infrastructure/search/dummy/provider");
+
+    return dummySearchService({ logger });
+  },
+} satisfies Record<SearchProviderId, ProviderFactory<SearchService>>;
 
 export const resolveSearchProvider: ProviderResolver<
   typeof SEARCH_PROVIDERS
 > = () => {
   const provider = clientEnvs.SEARCH_SERVICE;
 
+  // Nothing real configured: serve dummy data out of the box, except in
+  // production where we fall back to the empty service (null) so demo data
+  // never leaks into a live deployment.
   if (provider === "saleor" && !isSaleorConfigured) {
-    return null;
+    return clientEnvs.ENVIRONMENT === "PRODUCTION" ? null : "dummy";
   }
 
   return provider;
