@@ -1,52 +1,51 @@
 import { createServiceSelector } from "#root/lib/create-service-selector";
 import { type Logger } from "#root/logging/types";
 import { type SearchProviderId } from "#root/providers-catalog";
-import { type AlgoliaSearchServiceConfig } from "#root/search/algolia/types";
-import { type SaleorSearchServiceConfig } from "#root/search/saleor/types";
 import { type SearchService } from "#root/use-cases/search/types";
 
 /**
- * Configuration bag for the search service. Each provider reads only the section
- * it needs; the consuming app supplies the values it owns (Saleor URL, Algolia
- * credentials/indices) without enumerating providers itself.
+ * Input for the search selector. The app forwards the (server-side) env record
+ * and a logger; each provider validates only the env it needs via its own
+ * co-located schema, so unused providers' variables are never read.
  */
-export type SearchServiceConfig = {
-  algolia?: Pick<AlgoliaSearchServiceConfig, "credentials" | "settings">;
+export type SearchSelectInput = {
+  env: Record<string, string | undefined>;
   logger: Logger;
-  saleor?: Pick<SaleorSearchServiceConfig, "apiURL" | "settings">;
 };
 
 /**
  * Resolves and instantiates the search service for the selected provider. The
- * provider catalog and wiring live here; apps only pass the selected id plus
- * config.
+ * provider catalog, wiring, and per-provider config contracts all live in
+ * infrastructure; the app only passes the selected id, env, and logger.
  */
 export const createSearchService = createServiceSelector<
   SearchService,
-  SearchServiceConfig,
+  SearchSelectInput,
   SearchProviderId
 >({
-  saleor: async (config) => {
-    if (!config.saleor) {
-      return null;
-    }
+  saleor: async ({ env, logger }) => {
+    const [{ saleorSearchService }, { toSaleorSearchConfig }] =
+      await Promise.all([
+        import("./saleor/provider"),
+        import("./saleor/config"),
+      ]);
 
-    const { saleorSearchService } = await import("./saleor/provider");
-
-    return saleorSearchService({ ...config.saleor, logger: config.logger });
+    return saleorSearchService(toSaleorSearchConfig(env, logger));
   },
-  algolia: async (config) => {
-    if (!config.algolia) {
-      return null;
-    }
+  algolia: async ({ env, logger }) => {
+    const [{ algoliaSearchService }, { toAlgoliaSearchConfig }] =
+      await Promise.all([
+        import("./algolia/provider"),
+        import("./algolia/config"),
+      ]);
 
-    const { algoliaSearchService } = await import("./algolia/provider");
-
-    return algoliaSearchService({ ...config.algolia, logger: config.logger });
+    return algoliaSearchService(toAlgoliaSearchConfig(env, logger));
   },
-  dummy: async (config) => {
-    const { dummySearchService } = await import("./dummy/provider");
+  dummy: async ({ env, logger }) => {
+    const [{ dummySearchService }, { toDummySearchConfig }] = await Promise.all(
+      [import("./dummy/provider"), import("./dummy/config")],
+    );
 
-    return dummySearchService({ logger: config.logger });
+    return dummySearchService(toDummySearchConfig(env, logger));
   },
 });

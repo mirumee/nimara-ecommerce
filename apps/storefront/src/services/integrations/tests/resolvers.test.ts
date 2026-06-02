@@ -79,13 +79,13 @@ describe("createSearchService", () => {
     // Algolia ships unconfigured by default — selecting it without credentials
     // must fail fast rather than return an empty service.
     await expect(
-      createSearchService("algolia", { logger: fakeLogger }),
+      createSearchService("algolia", { env: {}, logger: fakeLogger }),
     ).rejects.toThrow(/algolia/i);
   });
 
   it("builds the dummy provider with no extra config", async () => {
     await expect(
-      createSearchService("dummy", { logger: fakeLogger }),
+      createSearchService("dummy", { env: {}, logger: fakeLogger }),
     ).resolves.toBeTruthy();
   });
 });

@@ -87,10 +87,10 @@ const schema = z.object({
     emptyStringToUndefined,
     z.enum(CMS_PROVIDER_IDS).default("saleor"),
   ),
-  // Algolia (used when SEARCH_SERVICE=algolia)
-  ALGOLIA_APP_ID: z.preprocess(emptyStringToUndefined, z.string().optional()),
-  ALGOLIA_API_KEY: z.preprocess(emptyStringToUndefined, z.string().optional()),
-  // ButterCMS (used when CMS_SERVICE=butter-cms)
+  // Provider credentials are NOT validated here. Each provider owns its config
+  // contract and validates only its own (server-side, namespaced) env when
+  // selected — see infrastructure/<capability>/<provider>/config.ts.
+  // ButterCMS (used when CMS_SERVICE=butter-cms) — CMS not yet migrated.
   BUTTER_CMS_API_KEY: z.preprocess(
     emptyStringToUndefined,
     z.string().optional(),
@@ -113,7 +113,5 @@ export const clientEnvs = schema.parse({
     process.env.NEXT_PUBLIC_MARKETPLACE_VENDOR_URL,
   SEARCH_SERVICE: process.env.NEXT_PUBLIC_SEARCH_SERVICE,
   CMS_SERVICE: process.env.NEXT_PUBLIC_CMS_SERVICE,
-  ALGOLIA_APP_ID: process.env.NEXT_PUBLIC_ALGOLIA_APP_ID,
-  ALGOLIA_API_KEY: process.env.NEXT_PUBLIC_ALGOLIA_API_KEY,
   BUTTER_CMS_API_KEY: process.env.NEXT_PUBLIC_BUTTER_CMS_API_KEY,
 });
