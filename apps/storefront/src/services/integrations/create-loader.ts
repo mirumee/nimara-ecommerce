@@ -1,31 +1,29 @@
 import type { Logger } from "@nimara/infrastructure/logging/types";
 
-import type { ProviderRegistry } from "./types";
-
 /**
  * Builds a lazy, cached loader for a single capability (search, CMS page, …).
  *
- * Selection is build-time and env-driven: `resolveProvider` returns the chosen
- * provider id (or `null`), the registry yields the matching factory, and the
- * service is instantiated once and memoized. When no provider is selected — or
- * an unknown id is configured — the loader falls back to `emptyService` so the
+ * Selection is build-time and env-driven: `resolve` returns the chosen provider
+ * id (or `null`), `build` instantiates the service for that id (delegating to
+ * the infrastructure `create*Service` entry point), and the result is memoized.
+ * When no provider is selected the loader returns `emptyService` so the
  * storefront keeps rendering instead of crashing.
  *
- * Consumers keep calling `registry.getSearchService()`; they never learn which
- * provider answered.
+ * The provider catalog and wiring live in infrastructure — this helper only owns
+ * the lazy/cache/empty-fallback lifecycle.
  *
  * @internal Only the service registry should call the returned loader.
  */
-export const createServiceLoader = <TService>({
-  providers,
-  resolveProvider,
+export const createServiceLoader = <TService, TId extends string>({
+  resolve,
+  build,
   emptyService,
   logger,
 }: {
+  build: (provider: TId, logger: Logger) => Promise<TService>;
   emptyService: TService;
   logger: Logger;
-  providers: ProviderRegistry<TService>;
-  resolveProvider: () => string | null;
+  resolve: () => TId | null;
 }) => {
   let instance: TService | null = null;
 
@@ -34,7 +32,7 @@ export const createServiceLoader = <TService>({
       return instance;
     }
 
-    const provider = resolveProvider();
+    const provider = resolve();
 
     if (!provider) {
       instance = emptyService;
@@ -42,18 +40,7 @@ export const createServiceLoader = <TService>({
       return instance;
     }
 
-    const factory = providers[provider];
-
-    if (!factory) {
-      logger.warning(
-        `Unknown integration provider "${provider}". Falling back to the empty service.`,
-      );
-      instance = emptyService;
-
-      return instance;
-    }
-
-    instance = await factory(logger);
+    instance = await build(provider, logger);
 
     return instance;
   };

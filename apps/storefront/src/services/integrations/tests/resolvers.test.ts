@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { Logger } from "@nimara/infrastructure/logging/types";
+import { createSearchService } from "@nimara/infrastructure/search/select";
 
 const envMock = {
   SEARCH_SERVICE: "saleor",
@@ -16,9 +17,8 @@ vi.mock("@/services/lazy-loaders/empty-services", () => ({
   },
 }));
 
-const { resolveSearchProvider, SEARCH_PROVIDERS } = await import("./search");
-const { resolveCMSPageProvider } = await import("./cms-page");
-const { resolveCMSMenuProvider } = await import("./cms-menu");
+const { resolveSearchProvider, resolveCMSProvider } =
+  await import("../resolve");
 
 const fakeLogger = {
   debug: vi.fn(),
@@ -38,8 +38,7 @@ describe("integration resolvers", () => {
 
   it("defaults to saleor when it is configured", () => {
     expect(resolveSearchProvider()).toBe("saleor");
-    expect(resolveCMSPageProvider()).toBe("saleor");
-    expect(resolveCMSMenuProvider()).toBe("saleor");
+    expect(resolveCMSProvider()).toBe("saleor");
   });
 
   it("returns the selected non-default provider", () => {
@@ -47,16 +46,14 @@ describe("integration resolvers", () => {
     envMock.CMS_SERVICE = "butter-cms";
 
     expect(resolveSearchProvider()).toBe("algolia");
-    expect(resolveCMSPageProvider()).toBe("butter-cms");
-    expect(resolveCMSMenuProvider()).toBe("butter-cms");
+    expect(resolveCMSProvider()).toBe("butter-cms");
   });
 
   it("falls back to dummy when saleor is unconfigured outside production", () => {
     saleorMock.configured = false;
 
     expect(resolveSearchProvider()).toBe("dummy");
-    expect(resolveCMSPageProvider()).toBe("dummy");
-    expect(resolveCMSMenuProvider()).toBe("dummy");
+    expect(resolveCMSProvider()).toBe("dummy");
   });
 
   it("falls back to empty (null) when saleor is unconfigured in production", () => {
@@ -64,8 +61,7 @@ describe("integration resolvers", () => {
     envMock.ENVIRONMENT = "PRODUCTION";
 
     expect(resolveSearchProvider()).toBeNull();
-    expect(resolveCMSPageProvider()).toBeNull();
-    expect(resolveCMSMenuProvider()).toBeNull();
+    expect(resolveCMSProvider()).toBeNull();
   });
 
   it("keeps a non-saleor provider even when saleor is unconfigured", () => {
@@ -74,16 +70,22 @@ describe("integration resolvers", () => {
     envMock.CMS_SERVICE = "butter-cms";
 
     expect(resolveSearchProvider()).toBe("algolia");
-    expect(resolveCMSPageProvider()).toBe("butter-cms");
+    expect(resolveCMSProvider()).toBe("butter-cms");
   });
 });
 
-describe("algolia search provider", () => {
-  it("rejects with a clear error when no indices are configured", async () => {
-    // ALGOLIA_INDICES ships empty by default — selecting Algolia without
-    // configuring indices must fail fast rather than return an empty service.
-    await expect(SEARCH_PROVIDERS.algolia(fakeLogger)).rejects.toThrow(
-      /indices/i,
-    );
+describe("createSearchService", () => {
+  it("rejects when the selected provider's config is missing", async () => {
+    // Algolia ships unconfigured by default — selecting it without credentials
+    // must fail fast rather than return an empty service.
+    await expect(
+      createSearchService("algolia", { logger: fakeLogger }),
+    ).rejects.toThrow(/algolia/i);
+  });
+
+  it("builds the dummy provider with no extra config", async () => {
+    await expect(
+      createSearchService("dummy", { logger: fakeLogger }),
+    ).resolves.toBeTruthy();
   });
 });

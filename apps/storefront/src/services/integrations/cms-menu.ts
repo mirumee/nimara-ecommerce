@@ -1,52 +1,19 @@
-import { type CMSProviderId } from "@nimara/infrastructure/providers-catalog";
-import type { CMSMenuService } from "@nimara/infrastructure/use-cases/cms-menu/types";
+import { type CMSMenuServiceConfig } from "@nimara/infrastructure/cms-menu/select";
+import type { Logger } from "@nimara/infrastructure/logging/types";
 
 import { clientEnvs } from "@/envs/client";
-import { isSaleorConfigured } from "@/services/lazy-loaders/empty-services";
-import {
-  getRequiredButterCMSApiKey,
-  getRequiredSaleorApiUrl,
-} from "@/services/lazy-loaders/required-env";
 
-import type { ProviderFactory, ProviderResolver } from "./types";
-
-export const CMS_MENU_PROVIDERS = {
-  saleor: async (logger) => {
-    const { saleorCMSMenuService } =
-      await import("@nimara/infrastructure/cms-menu/providers");
-
-    return saleorCMSMenuService({
-      apiURL: getRequiredSaleorApiUrl("CMS menu service"),
-      logger,
-    });
-  },
-  "butter-cms": async (logger) => {
-    const { butterCMSMenuService } =
-      await import("@nimara/infrastructure/cms-menu/providers");
-
-    return butterCMSMenuService({
-      token: getRequiredButterCMSApiKey("CMS menu service"),
-      logger,
-    });
-  },
-  dummy: async (logger) => {
-    const { dummyCMSMenuService } =
-      await import("@nimara/infrastructure/cms-menu/providers");
-
-    return dummyCMSMenuService({ logger });
-  },
-} satisfies Record<CMSProviderId, ProviderFactory<CMSMenuService>>;
-
-export const resolveCMSMenuProvider: ProviderResolver<
-  typeof CMS_MENU_PROVIDERS
-> = () => {
-  const provider = clientEnvs.CMS_SERVICE;
-
-  // Nothing real configured: serve dummy data out of the box, except in
-  // production where we fall back to the empty service (null).
-  if (provider === "saleor" && !isSaleorConfigured) {
-    return clientEnvs.ENVIRONMENT === "PRODUCTION" ? null : "dummy";
-  }
-
-  return provider;
-};
+/**
+ * App-owned configuration passed to the infrastructure CMS menu factory. Each
+ * section is included only when its data is present; the selected provider's
+ * section is validated by `createCMSMenuService`.
+ */
+export const buildCMSMenuConfig = (logger: Logger): CMSMenuServiceConfig => ({
+  logger,
+  butterCMS: clientEnvs.BUTTER_CMS_API_KEY
+    ? { token: clientEnvs.BUTTER_CMS_API_KEY }
+    : undefined,
+  saleor: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL
+    ? { apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL }
+    : undefined,
+});
