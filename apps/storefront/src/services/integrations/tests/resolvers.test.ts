@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { createCMSMenuService } from "@nimara/infrastructure/cms-menu/select";
+import { createCMSPageService } from "@nimara/infrastructure/cms-page/select";
 import type { Logger } from "@nimara/infrastructure/logging/types";
 import { createSearchService } from "@nimara/infrastructure/search/select";
 
@@ -86,6 +88,26 @@ describe("createSearchService", () => {
   it("builds the dummy provider with no extra config", async () => {
     await expect(
       createSearchService("dummy", { env: {}, logger: fakeLogger }),
+    ).resolves.toBeTruthy();
+  });
+});
+
+describe("createCMSPageService / createCMSMenuService", () => {
+  it("rejects when butter-cms is selected without a token", async () => {
+    await expect(
+      createCMSPageService("butter-cms", { env: {}, logger: fakeLogger }),
+    ).rejects.toThrow(/butter/i);
+    await expect(
+      createCMSMenuService("butter-cms", { env: {}, logger: fakeLogger }),
+    ).rejects.toThrow(/butter/i);
+  });
+
+  it("builds the dummy CMS providers with no extra config", async () => {
+    await expect(
+      createCMSPageService("dummy", { env: {}, logger: fakeLogger }),
+    ).resolves.toBeTruthy();
+    await expect(
+      createCMSMenuService("dummy", { env: {}, logger: fakeLogger }),
     ).resolves.toBeTruthy();
   });
 });

@@ -40,10 +40,3 @@ export const getRequiredStripeSecretKey = (serviceName: string) =>
     "STRIPE_SECRET_KEY",
     serviceName,
   );
-
-export const getRequiredButterCMSApiKey = (serviceName: string) =>
-  getRequiredEnv(
-    clientEnvs.BUTTER_CMS_API_KEY,
-    "NEXT_PUBLIC_BUTTER_CMS_API_KEY",
-    serviceName,
-  );

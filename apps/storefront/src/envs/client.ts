@@ -77,8 +77,10 @@ const schema = z.object({
   ),
 
   // --- Integrations (provider selection, build-time) ------------------------
-  // Each capability is served by one swappable provider. Defaults to "saleor".
-  // The selected provider's credentials below become required at first use.
+  // Only the provider *selection* lives here. Provider credentials are NOT
+  // validated centrally: each provider owns its config contract and validates
+  // its own (server-side, namespaced) env when selected — see
+  // infrastructure/<capability>/<provider>/config.ts.
   SEARCH_SERVICE: z.preprocess(
     emptyStringToUndefined,
     z.enum(SEARCH_PROVIDER_IDS).default("saleor"),
@@ -86,14 +88,6 @@ const schema = z.object({
   CMS_SERVICE: z.preprocess(
     emptyStringToUndefined,
     z.enum(CMS_PROVIDER_IDS).default("saleor"),
-  ),
-  // Provider credentials are NOT validated here. Each provider owns its config
-  // contract and validates only its own (server-side, namespaced) env when
-  // selected — see infrastructure/<capability>/<provider>/config.ts.
-  // ButterCMS (used when CMS_SERVICE=butter-cms) — CMS not yet migrated.
-  BUTTER_CMS_API_KEY: z.preprocess(
-    emptyStringToUndefined,
-    z.string().optional(),
   ),
 });
 
@@ -113,5 +107,4 @@ export const clientEnvs = schema.parse({
     process.env.NEXT_PUBLIC_MARKETPLACE_VENDOR_URL,
   SEARCH_SERVICE: process.env.NEXT_PUBLIC_SEARCH_SERVICE,
   CMS_SERVICE: process.env.NEXT_PUBLIC_CMS_SERVICE,
-  BUTTER_CMS_API_KEY: process.env.NEXT_PUBLIC_BUTTER_CMS_API_KEY,
 });
