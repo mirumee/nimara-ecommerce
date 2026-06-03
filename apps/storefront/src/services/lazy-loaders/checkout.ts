@@ -7,7 +7,7 @@ import {
   emptyCheckoutService,
   isSaleorConfigured,
 } from "../utils/empty-services";
-import { getRequiredSaleorApiUrl } from "./required-env";
+import { getRequiredSaleorApiUrl } from "../utils/required-env";
 
 /**
  * Creates a lazy loader for the checkout service (Saleor-backed, with an empty

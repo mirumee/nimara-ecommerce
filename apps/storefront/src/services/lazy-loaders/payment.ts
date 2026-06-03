@@ -8,7 +8,7 @@ import {
   getRequiredSaleorApiUrl,
   getRequiredStripePublicKey,
   getRequiredStripeSecretKey,
-} from "./required-env";
+} from "../utils/required-env";
 
 let paymentServiceInstance: StripePaymentService | null = null;
 
