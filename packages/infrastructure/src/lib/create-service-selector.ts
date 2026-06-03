@@ -1,31 +1,48 @@
-/**
- * Generic provider-selection helper shared by swappable capabilities
- * (search, CMS page, CMS menu, …).
- *
- * Each capability supplies a registry mapping every provider id to an async
- * builder that returns the configured service — or `null` when the selected
- * provider's config section is absent. Keying the registry by the capability's
- * id union makes a missing provider a compile error, and the literal `import()`
- * inside each builder keeps every provider in its own lazily-loaded chunk.
- */
-export const createServiceSelector =
-  <TService, TConfig, TId extends string>(
-    registry: Record<TId, (config: TConfig) => Promise<TService | null>>,
-  ) =>
-  async (provider: TId, config: TConfig): Promise<TService> => {
-    const build = registry[provider];
+import type { Logger } from "#root/logging/types";
 
-    if (!build) {
+/**
+ * Input every provider builder receives: the (server-side) env record forwarded
+ * by the app plus a logger. Each provider validates only the env it needs.
+ */
+export type ProviderSelectInput = {
+  env: Record<string, string | undefined>;
+  logger: Logger;
+};
+
+/**
+ * A provider's self-contained definition for a capability. `create` lazily
+ * `import()`s the heavy factory (preserving per-provider code-splitting) and
+ * validates its own namespaced env.
+ */
+export type ProviderManifest<TService, TId extends string> = {
+  create: (input: ProviderSelectInput) => Promise<TService>;
+  id: TId;
+};
+
+/**
+ * Builds a capability's selector from its provider manifests. Returns the
+ * `create(id, input)` resolver plus the `ids` tuple derived from the manifests —
+ * the catalog is the manifests, so there is no separate id list to keep in sync.
+ * Adding a provider is one manifest entry.
+ */
+export const createServiceSelector = <TService, TId extends string>(
+  manifests: readonly ProviderManifest<TService, TId>[],
+) => {
+  const byId = new Map(manifests.map((manifest) => [manifest.id, manifest]));
+  const ids = manifests.map((manifest) => manifest.id) as [TId, ...TId[]];
+
+  const create = async (
+    provider: TId,
+    input: ProviderSelectInput,
+  ): Promise<TService> => {
+    const manifest = byId.get(provider);
+
+    if (!manifest) {
       throw new Error(`Unknown provider: ${provider}`);
     }
 
-    const service = await build(config);
-
-    if (!service) {
-      throw new Error(
-        `Provider '${provider}' is selected but its configuration is missing.`,
-      );
-    }
-
-    return service;
+    return manifest.create(input);
   };
+
+  return { create, ids };
+};

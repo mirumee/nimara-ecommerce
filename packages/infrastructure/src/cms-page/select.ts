@@ -1,44 +1,49 @@
-import { createServiceSelector } from "#root/lib/create-service-selector";
-import { type Logger } from "#root/logging/types";
-import { type CMSProviderId } from "#root/providers-catalog";
+import {
+  createServiceSelector,
+  type ProviderManifest,
+} from "#root/lib/create-service-selector";
 import { type CMSPageService } from "#root/use-cases/cms-page/types";
 
 /**
- * Input for the CMS page selector. The app forwards the (server-side) env record
- * and a logger; each provider validates only the env it needs via its own
- * co-located schema.
+ * Provider manifests for CMS pages. The CMS provider id catalog
+ * ({@link CMS_PROVIDER_IDS}) is derived here and shared with CMS menus and the
+ * storefront selection enum.
  */
-export type CMSPageSelectInput = {
-  env: Record<string, string | undefined>;
-  logger: Logger;
-};
+const MANIFESTS = [
+  {
+    id: "saleor",
+    create: async ({ env, logger }) => {
+      const [{ saleorCMSPageService }, { toSaleorCMSPageConfig }] =
+        await Promise.all([import("./providers"), import("./saleor/config")]);
 
-/**
- * Resolves and instantiates the CMS page service for the selected provider. The
- * provider catalog, wiring, and per-provider config contracts all live in
- * infrastructure; the app only passes the selected id, env, and logger.
- */
-export const createCMSPageService = createServiceSelector<
-  CMSPageService,
-  CMSPageSelectInput,
-  CMSProviderId
->({
-  saleor: async ({ env, logger }) => {
-    const [{ saleorCMSPageService }, { toSaleorCMSPageConfig }] =
-      await Promise.all([import("./providers"), import("./saleor/config")]);
-
-    return saleorCMSPageService(toSaleorCMSPageConfig(env, logger));
+      return saleorCMSPageService(toSaleorCMSPageConfig(env, logger));
+    },
   },
-  "butter-cms": async ({ env, logger }) => {
-    const [{ butterCMSPageService }, { toButterCMSPageConfig }] =
-      await Promise.all([import("./providers"), import("./butter-cms/config")]);
+  {
+    id: "butter-cms",
+    create: async ({ env, logger }) => {
+      const [{ butterCMSPageService }, { toButterCMSPageConfig }] =
+        await Promise.all([
+          import("./providers"),
+          import("./butter-cms/config"),
+        ]);
 
-    return butterCMSPageService(toButterCMSPageConfig(env, logger));
+      return butterCMSPageService(toButterCMSPageConfig(env, logger));
+    },
   },
-  dummy: async ({ env, logger }) => {
-    const [{ dummyCMSPageService }, { toDummyCMSPageConfig }] =
-      await Promise.all([import("./providers"), import("./dummy/config")]);
+  {
+    id: "dummy",
+    create: async ({ env, logger }) => {
+      const [{ dummyCMSPageService }, { toDummyCMSPageConfig }] =
+        await Promise.all([import("./providers"), import("./dummy/config")]);
 
-    return dummyCMSPageService(toDummyCMSPageConfig(env, logger));
+      return dummyCMSPageService(toDummyCMSPageConfig(env, logger));
+    },
   },
-});
+] as const satisfies readonly ProviderManifest<CMSPageService, string>[];
+
+const selector = createServiceSelector(MANIFESTS);
+
+export const createCMSPageService = selector.create;
+export const CMS_PROVIDER_IDS = selector.ids;
+export type CMSProviderId = (typeof CMS_PROVIDER_IDS)[number];

@@ -1,10 +1,5 @@
 import { z } from "zod";
 
-import {
-  CMS_PROVIDER_IDS,
-  SEARCH_PROVIDER_IDS,
-} from "@nimara/infrastructure/providers-catalog";
-
 const emptyStringToUndefined = (val: unknown) => {
   if (typeof val !== "string") {
     return val;
@@ -75,20 +70,6 @@ const schema = z.object({
     normalizePublicUrl,
     z.url().optional(),
   ),
-
-  // --- Integrations (provider selection, build-time) ------------------------
-  // Only the provider *selection* lives here. Provider credentials are NOT
-  // validated centrally: each provider owns its config contract and validates
-  // its own (server-side, namespaced) env when selected — see
-  // infrastructure/<capability>/<provider>/config.ts.
-  SEARCH_SERVICE: z.preprocess(
-    emptyStringToUndefined,
-    z.enum(SEARCH_PROVIDER_IDS).default("saleor"),
-  ),
-  CMS_SERVICE: z.preprocess(
-    emptyStringToUndefined,
-    z.enum(CMS_PROVIDER_IDS).default("saleor"),
-  ),
 });
 
 export const clientEnvs = schema.parse({
@@ -105,6 +86,4 @@ export const clientEnvs = schema.parse({
   NEXT_PUBLIC_MARKETPLACE_ENABLED: process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED,
   NEXT_PUBLIC_MARKETPLACE_VENDOR_URL:
     process.env.NEXT_PUBLIC_MARKETPLACE_VENDOR_URL,
-  SEARCH_SERVICE: process.env.NEXT_PUBLIC_SEARCH_SERVICE,
-  CMS_SERVICE: process.env.NEXT_PUBLIC_CMS_SERVICE,
 });

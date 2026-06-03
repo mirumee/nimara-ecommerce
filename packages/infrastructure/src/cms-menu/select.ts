@@ -1,44 +1,47 @@
-import { createServiceSelector } from "#root/lib/create-service-selector";
-import { type Logger } from "#root/logging/types";
-import { type CMSProviderId } from "#root/providers-catalog";
+import {
+  createServiceSelector,
+  type ProviderManifest,
+} from "#root/lib/create-service-selector";
 import { type CMSMenuService } from "#root/use-cases/cms-menu/types";
 
 /**
- * Input for the CMS menu selector. The app forwards the (server-side) env record
- * and a logger; each provider validates only the env it needs via its own
- * co-located schema.
+ * Provider manifests for CMS menus. Shares the CMS provider taxonomy with CMS
+ * pages (selected by the same `CMS_SERVICE`); the canonical id catalog is
+ * exported from `cms-page/select`.
  */
-export type CMSMenuSelectInput = {
-  env: Record<string, string | undefined>;
-  logger: Logger;
-};
+const MANIFESTS = [
+  {
+    id: "saleor",
+    create: async ({ env, logger }) => {
+      const [{ saleorCMSMenuService }, { toSaleorCMSMenuConfig }] =
+        await Promise.all([import("./providers"), import("./saleor/config")]);
 
-/**
- * Resolves and instantiates the CMS menu service for the selected provider. The
- * provider catalog, wiring, and per-provider config contracts all live in
- * infrastructure; the app only passes the selected id, env, and logger.
- */
-export const createCMSMenuService = createServiceSelector<
-  CMSMenuService,
-  CMSMenuSelectInput,
-  CMSProviderId
->({
-  saleor: async ({ env, logger }) => {
-    const [{ saleorCMSMenuService }, { toSaleorCMSMenuConfig }] =
-      await Promise.all([import("./providers"), import("./saleor/config")]);
-
-    return saleorCMSMenuService(toSaleorCMSMenuConfig(env, logger));
+      return saleorCMSMenuService(toSaleorCMSMenuConfig(env, logger));
+    },
   },
-  "butter-cms": async ({ env, logger }) => {
-    const [{ butterCMSMenuService }, { toButterCMSMenuConfig }] =
-      await Promise.all([import("./providers"), import("./butter-cms/config")]);
+  {
+    id: "butter-cms",
+    create: async ({ env, logger }) => {
+      const [{ butterCMSMenuService }, { toButterCMSMenuConfig }] =
+        await Promise.all([
+          import("./providers"),
+          import("./butter-cms/config"),
+        ]);
 
-    return butterCMSMenuService(toButterCMSMenuConfig(env, logger));
+      return butterCMSMenuService(toButterCMSMenuConfig(env, logger));
+    },
   },
-  dummy: async ({ env, logger }) => {
-    const [{ dummyCMSMenuService }, { toDummyCMSMenuConfig }] =
-      await Promise.all([import("./providers"), import("./dummy/config")]);
+  {
+    id: "dummy",
+    create: async ({ env, logger }) => {
+      const [{ dummyCMSMenuService }, { toDummyCMSMenuConfig }] =
+        await Promise.all([import("./providers"), import("./dummy/config")]);
 
-    return dummyCMSMenuService(toDummyCMSMenuConfig(env, logger));
+      return dummyCMSMenuService(toDummyCMSMenuConfig(env, logger));
+    },
   },
-});
+] as const satisfies readonly ProviderManifest<CMSMenuService, string>[];
+
+const selector = createServiceSelector(MANIFESTS);
+
+export const createCMSMenuService = selector.create;

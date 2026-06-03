@@ -13,6 +13,7 @@ const envMock = {
 const saleorMock = { configured: true };
 
 vi.mock("@/envs/client", () => ({ clientEnvs: envMock }));
+vi.mock("@/envs/server", () => ({ serverEnvs: envMock }));
 vi.mock("@/services/lazy-loaders/empty-services", () => ({
   get isSaleorConfigured() {
     return saleorMock.configured;

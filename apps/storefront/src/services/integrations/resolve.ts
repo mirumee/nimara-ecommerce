@@ -1,9 +1,8 @@
-import type {
-  CMSProviderId,
-  SearchProviderId,
-} from "@nimara/infrastructure/providers-catalog";
+import type { CMSProviderId } from "@nimara/infrastructure/cms-page/select";
+import type { SearchProviderId } from "@nimara/infrastructure/search/select";
 
 import { clientEnvs } from "@/envs/client";
+import { serverEnvs } from "@/envs/server";
 import { isSaleorConfigured } from "@/services/lazy-loaders/empty-services";
 
 /**
@@ -23,7 +22,7 @@ const withSaleorFallback = <TId extends string>(
 };
 
 export const resolveSearchProvider = (): SearchProviderId | null =>
-  withSaleorFallback(clientEnvs.SEARCH_SERVICE);
+  withSaleorFallback(serverEnvs.SEARCH_SERVICE);
 
 export const resolveCMSProvider = (): CMSProviderId | null =>
-  withSaleorFallback(clientEnvs.CMS_SERVICE);
+  withSaleorFallback(serverEnvs.CMS_SERVICE);

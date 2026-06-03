@@ -1,5 +1,9 @@
 import { getLogger } from "@nimara/infrastructure/logging/service";
-import type { ServiceRegistry } from "@nimara/infrastructure/types";
+import type { Logger } from "@nimara/infrastructure/logging/types";
+import type {
+  CapabilityServices,
+  ServiceRegistry,
+} from "@nimara/infrastructure/types";
 
 import { CACHE_TTL } from "@/config";
 import { createAddressServiceLoader } from "@/services/lazy-loaders/address";
@@ -18,48 +22,48 @@ import { createUserServiceLoader } from "./lazy-loaders/user";
 let serviceRegistryInstance: ServiceRegistry | null = null;
 
 /**
- * Initializes and returns the service registry singleton.
- * This should be called once at application startup or on-demand.
- * The registry is cached after first initialization.
- * Services are lazy-loaded and only initialized when accessed.
- *
- * @returns A promise that resolves to the service registry instance
+ * Maps each registry getter to the loader that builds it. This is the single
+ * place to register a capability's loader — both the assembly below and the
+ * `ServiceRegistry` type ({@link CapabilityServices}) are derived from it.
+ */
+const SERVICE_LOADERS = {
+  getAddressService: createAddressServiceLoader,
+  getCMSMenuService: createCMSMenuServiceLoader,
+  getCMSPageService: createCMSPageServiceLoader,
+  getCartService: createCartServiceLoader,
+  getCheckoutService: createCheckoutServiceLoader,
+  getCollectionService: createCollectionServiceLoader,
+  getMarketplaceService: createMarketplaceServiceLoader,
+  getPaymentService: createPaymentServiceLoader,
+  getSearchService: createSearchServiceLoader,
+  getStoreService: createStoreServiceLoader,
+  getUserService: createUserServiceLoader,
+} satisfies {
+  [K in keyof CapabilityServices]: (logger: Logger) => ServiceRegistry[K];
+};
+
+/**
+ * Initializes and returns the service registry singleton. The registry is
+ * cached after first initialization; services are lazy-loaded and only
+ * initialized when accessed.
  */
 export const getServiceRegistry = async (): Promise<ServiceRegistry> => {
   if (serviceRegistryInstance) {
     return serviceRegistryInstance;
   }
 
-  const config = {
-    cacheTTL: CACHE_TTL,
-  };
   const logger = getLogger({ name: "storefront" });
 
-  const getAddressService = createAddressServiceLoader(logger);
-  const getCartService = createCartServiceLoader(logger);
-  const getCheckoutService = createCheckoutServiceLoader(logger);
-  const getCMSMenuService = createCMSMenuServiceLoader(logger);
-  const getCMSPageService = createCMSPageServiceLoader(logger);
-  const getCollectionService = createCollectionServiceLoader(logger);
-  const getPaymentService = createPaymentServiceLoader(logger);
-  const getSearchService = createSearchServiceLoader(logger);
-  const getStoreService = createStoreServiceLoader(logger);
-  const getUserService = createUserServiceLoader(logger);
-  const getMarketplaceService = createMarketplaceServiceLoader(logger);
+  const getters = Object.fromEntries(
+    Object.entries(SERVICE_LOADERS).map(([key, createLoader]) => [
+      key,
+      createLoader(logger),
+    ]),
+  ) as Omit<ServiceRegistry, "config">;
 
   serviceRegistryInstance = {
-    config,
-    getAddressService,
-    getCartService,
-    getCheckoutService,
-    getCMSMenuService,
-    getCMSPageService,
-    getCollectionService,
-    getSearchService,
-    getStoreService,
-    getUserService,
-    getPaymentService,
-    getMarketplaceService,
+    config: { cacheTTL: CACHE_TTL },
+    ...getters,
   };
 
   return serviceRegistryInstance;
