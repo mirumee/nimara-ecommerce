@@ -4,29 +4,34 @@ import {
 } from "#root/lib/create-service-selector";
 import { type CMSMenuService } from "#root/use-cases/cms-menu/types";
 
+import {
+  butterCMSMenuEnvSchema,
+  toButterCMSMenuConfig,
+} from "./butter-cms/config";
+import { toDummyCMSMenuConfig } from "./dummy/config";
+import { saleorCMSMenuEnvSchema, toSaleorCMSMenuConfig } from "./saleor/config";
+
 /**
  * Provider manifests for CMS menus. Shares the CMS provider taxonomy with CMS
  * pages (selected by the same `CMS_SERVICE`); the canonical id catalog is
- * exported from `cms-page/select`.
+ * exported from `cms-page/select`. {@link cmsMenuProviders} is the describe-list
+ * used by the integration preflight.
  */
 const MANIFESTS = [
   {
     id: "saleor",
+    configSchema: saleorCMSMenuEnvSchema,
     create: async ({ env, logger }) => {
-      const [{ saleorCMSMenuService }, { toSaleorCMSMenuConfig }] =
-        await Promise.all([import("./providers"), import("./saleor/config")]);
+      const { saleorCMSMenuService } = await import("./providers");
 
       return saleorCMSMenuService(toSaleorCMSMenuConfig(env, logger));
     },
   },
   {
     id: "butter-cms",
+    configSchema: butterCMSMenuEnvSchema,
     create: async ({ env, logger }) => {
-      const [{ butterCMSMenuService }, { toButterCMSMenuConfig }] =
-        await Promise.all([
-          import("./providers"),
-          import("./butter-cms/config"),
-        ]);
+      const { butterCMSMenuService } = await import("./providers");
 
       return butterCMSMenuService(toButterCMSMenuConfig(env, logger));
     },
@@ -34,8 +39,7 @@ const MANIFESTS = [
   {
     id: "dummy",
     create: async ({ env, logger }) => {
-      const [{ dummyCMSMenuService }, { toDummyCMSMenuConfig }] =
-        await Promise.all([import("./providers"), import("./dummy/config")]);
+      const { dummyCMSMenuService } = await import("./providers");
 
       return dummyCMSMenuService(toDummyCMSMenuConfig(env, logger));
     },
@@ -45,3 +49,4 @@ const MANIFESTS = [
 const selector = createServiceSelector(MANIFESTS);
 
 export const createCMSMenuService = selector.create;
+export const cmsMenuProviders = selector.providers;

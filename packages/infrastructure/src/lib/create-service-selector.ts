@@ -1,3 +1,5 @@
+import type { ZodType } from "zod";
+
 import type { Logger } from "#root/logging/types";
 
 /**
@@ -15,6 +17,12 @@ export type ProviderSelectInput = {
  * validates its own namespaced env.
  */
 export type ProviderManifest<TService, TId extends string> = {
+  /**
+   * Zod schema of the provider's (namespaced) env. Optional — providers without
+   * env (e.g. dummy) omit it. Introspected by the integration preflight/doctor
+   * to report required vs. missing keys for the selected provider.
+   */
+  configSchema?: ZodType;
   create: (input: ProviderSelectInput) => Promise<TService>;
   id: TId;
 };
@@ -44,5 +52,5 @@ export const createServiceSelector = <TService, TId extends string>(
     return manifest.create(input);
   };
 
-  return { create, ids };
+  return { create, ids, providers: manifests };
 };

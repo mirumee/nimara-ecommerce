@@ -29,7 +29,7 @@
     "codegen:saleor": "dotenv -e apps/storefront/.env -- pnpm --filter @nimara/codegen codegen:saleor",
     "codegen:marketplace": "dotenv -e apps/storefront/.env -- pnpm --filter @nimara/codegen codegen:marketplace",
     "codegen:stripe": "dotenv -e apps/storefront/.env -- pnpm --filter @nimara/codegen codegen:stripe",
-    "preflight": "node apps/storefront/scripts/preflight.mjs",
+    "preflight": "tsx apps/storefront/scripts/preflight.mts",
     "dev": "turbo run dev",
     "dev:storefront": "turbo run dev --filter=storefront",
     "dev:marketplace": "turbo run dev --filter=marketplace",
@@ -50,6 +50,7 @@
     "graph": "turbo run build --graph=graph.mermaid"
   },
   "devDependencies": {
+    "@clack/prompts": "1.5.1",
     "@nimara/config": "workspace:*",
     "commitizen": "4.3.1",
     "dotenv-cli": "11.0.0",
@@ -58,6 +59,7 @@
     "lint-staged": "^16.4.0",
     "prettier": "3.8.1",
     "prettier-plugin-tailwindcss": "^0.7.2",
+    "tsx": "4.22.4",
     "turbo": "2.9.4"
   },
   "config": {

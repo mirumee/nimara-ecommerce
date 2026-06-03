@@ -5,7 +5,7 @@ import { serverEnvs } from "@/envs/server";
 import { createServiceLoader } from "@/services/utils/create-loader";
 
 import { emptyStoreService, isSaleorConfigured } from "../utils/empty-services";
-import { getRequiredSaleorApiUrl } from "./required-env";
+import { getRequiredSaleorApiUrl } from "../utils/required-env";
 
 /**
  * Creates a lazy loader for the store service (Saleor-backed, with an empty

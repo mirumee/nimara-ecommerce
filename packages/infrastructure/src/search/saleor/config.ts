@@ -4,7 +4,7 @@ import { type Logger } from "#root/logging/types";
 
 import { type SaleorSearchServiceConfig } from "./types";
 
-const envSchema = z.object({
+export const saleorSearchEnvSchema = z.object({
   NEXT_PUBLIC_SALEOR_API_URL: z
     .string()
     .min(1, "NEXT_PUBLIC_SALEOR_API_URL is required for Saleor search."),
@@ -36,7 +36,7 @@ export const toSaleorSearchConfig = (
   env: Record<string, string | undefined>,
   logger: Logger,
 ): SaleorSearchServiceConfig => {
-  const { NEXT_PUBLIC_SALEOR_API_URL } = envSchema.parse(env);
+  const { NEXT_PUBLIC_SALEOR_API_URL } = saleorSearchEnvSchema.parse(env);
 
   return {
     apiURL: NEXT_PUBLIC_SALEOR_API_URL,

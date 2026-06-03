@@ -4,29 +4,33 @@ import {
 } from "#root/lib/create-service-selector";
 import { type CMSPageService } from "#root/use-cases/cms-page/types";
 
+import {
+  butterCMSPageEnvSchema,
+  toButterCMSPageConfig,
+} from "./butter-cms/config";
+import { toDummyCMSPageConfig } from "./dummy/config";
+import { saleorCMSPageEnvSchema, toSaleorCMSPageConfig } from "./saleor/config";
+
 /**
  * Provider manifests for CMS pages. The CMS provider id catalog
- * ({@link CMS_PROVIDER_IDS}) is derived here and shared with CMS menus and the
- * storefront selection enum.
+ * ({@link CMS_PROVIDER_IDS}) and {@link cmsPageProviders} describe-list are
+ * derived here and shared with CMS menus and the storefront selection enum.
  */
 const MANIFESTS = [
   {
     id: "saleor",
+    configSchema: saleorCMSPageEnvSchema,
     create: async ({ env, logger }) => {
-      const [{ saleorCMSPageService }, { toSaleorCMSPageConfig }] =
-        await Promise.all([import("./providers"), import("./saleor/config")]);
+      const { saleorCMSPageService } = await import("./providers");
 
       return saleorCMSPageService(toSaleorCMSPageConfig(env, logger));
     },
   },
   {
     id: "butter-cms",
+    configSchema: butterCMSPageEnvSchema,
     create: async ({ env, logger }) => {
-      const [{ butterCMSPageService }, { toButterCMSPageConfig }] =
-        await Promise.all([
-          import("./providers"),
-          import("./butter-cms/config"),
-        ]);
+      const { butterCMSPageService } = await import("./providers");
 
       return butterCMSPageService(toButterCMSPageConfig(env, logger));
     },
@@ -34,8 +38,7 @@ const MANIFESTS = [
   {
     id: "dummy",
     create: async ({ env, logger }) => {
-      const [{ dummyCMSPageService }, { toDummyCMSPageConfig }] =
-        await Promise.all([import("./providers"), import("./dummy/config")]);
+      const { dummyCMSPageService } = await import("./providers");
 
       return dummyCMSPageService(toDummyCMSPageConfig(env, logger));
     },
@@ -46,4 +49,5 @@ const selector = createServiceSelector(MANIFESTS);
 
 export const createCMSPageService = selector.create;
 export const CMS_PROVIDER_IDS = selector.ids;
+export const cmsPageProviders = selector.providers;
 export type CMSProviderId = (typeof CMS_PROVIDER_IDS)[number];

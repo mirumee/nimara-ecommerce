@@ -45,7 +45,7 @@ const indicesSchema = z
   .array(indexSettingsSchema)
   .min(1, "At least one Algolia index must be configured.");
 
-const envSchema = z.object({
+export const algoliaSearchEnvSchema = z.object({
   SEARCH_ALGOLIA_API_KEY: z.string().min(1),
   SEARCH_ALGOLIA_APP_ID: z.string().min(1),
   SEARCH_ALGOLIA_INDICES: z
@@ -69,7 +69,7 @@ export const toAlgoliaSearchConfig = (
   env: Record<string, string | undefined>,
   logger: Logger,
 ): AlgoliaSearchServiceConfig => {
-  const parsed = envSchema.parse(env);
+  const parsed = algoliaSearchEnvSchema.parse(env);
 
   return {
     credentials: {

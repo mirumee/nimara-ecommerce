@@ -3,7 +3,7 @@ import type { Logger } from "@nimara/infrastructure/logging/types";
 import { createServiceLoader } from "@/services/utils/create-loader";
 
 import { emptyUserService, isSaleorConfigured } from "../utils/empty-services";
-import { getRequiredSaleorApiUrl } from "./required-env";
+import { getRequiredSaleorApiUrl } from "../utils/required-env";
 
 /**
  * Creates a lazy loader for the user service (Saleor-backed, with an empty
