@@ -1,10 +1,10 @@
 import { createCMSMenuService } from "@nimara/infrastructure/cms-menu/select";
 import type { Logger } from "@nimara/infrastructure/logging/types";
 
-import { createServiceLoader } from "@/services/integrations/create-loader";
 import { resolveCMSProvider } from "@/services/integrations/resolve";
+import { createServiceLoader } from "@/services/utils/create-loader";
 
-import { emptyCMSMenuService } from "./empty-services";
+import { emptyCMSMenuService } from "../utils/empty-services";
 
 /**
  * Creates a lazy loader for the CMS menu service. The storefront only selects

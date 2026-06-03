@@ -3,7 +3,7 @@ import type { SearchProviderId } from "@nimara/infrastructure/search/select";
 
 import { clientEnvs } from "@/envs/client";
 import { serverEnvs } from "@/envs/server";
-import { isSaleorConfigured } from "@/services/lazy-loaders/empty-services";
+import { isSaleorConfigured } from "@/services/utils/empty-services";
 
 /**
  * Shared build-time selection policy. When Saleor is the selected provider but

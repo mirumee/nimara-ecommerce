@@ -2,9 +2,9 @@ import type { Logger } from "@nimara/infrastructure/logging/types";
 
 import { clientEnvs } from "@/envs/client";
 import { serverEnvs } from "@/envs/server";
-import { createServiceLoader } from "@/services/integrations/create-loader";
+import { createServiceLoader } from "@/services/utils/create-loader";
 
-import { emptyStoreService, isSaleorConfigured } from "./empty-services";
+import { emptyStoreService, isSaleorConfigured } from "../utils/empty-services";
 import { getRequiredSaleorApiUrl } from "./required-env";
 
 /**

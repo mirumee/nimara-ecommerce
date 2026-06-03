@@ -1,9 +1,12 @@
 import { type Logger } from "@nimara/foundation/logging/types";
 
 import { MARKETPLACE_VENDOR_PROFILE_CACHE_TTL } from "@/config";
-import { createServiceLoader } from "@/services/integrations/create-loader";
+import { createServiceLoader } from "@/services/utils/create-loader";
 
-import { emptyMarketplaceService, isSaleorConfigured } from "./empty-services";
+import {
+  emptyMarketplaceService,
+  isSaleorConfigured,
+} from "../utils/empty-services";
 import { getRequiredSaleorApiUrl } from "./required-env";
 
 /**

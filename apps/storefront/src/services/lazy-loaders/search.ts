@@ -1,10 +1,10 @@
 import type { Logger } from "@nimara/infrastructure/logging/types";
 import { createSearchService } from "@nimara/infrastructure/search/select";
 
-import { createServiceLoader } from "@/services/integrations/create-loader";
 import { resolveSearchProvider } from "@/services/integrations/resolve";
+import { createServiceLoader } from "@/services/utils/create-loader";
 
-import { emptySearchService } from "./empty-services";
+import { emptySearchService } from "../utils/empty-services";
 
 /**
  * Creates a lazy loader for the search service. The storefront only selects the

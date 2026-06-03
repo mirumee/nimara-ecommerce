@@ -1,8 +1,11 @@
 import type { Logger } from "@nimara/infrastructure/logging/types";
 
-import { createServiceLoader } from "@/services/integrations/create-loader";
+import { createServiceLoader } from "@/services/utils/create-loader";
 
-import { emptyAddressService, isSaleorConfigured } from "./empty-services";
+import {
+  emptyAddressService,
+  isSaleorConfigured,
+} from "../utils/empty-services";
 import { getRequiredSaleorApiUrl } from "./required-env";
 
 /**

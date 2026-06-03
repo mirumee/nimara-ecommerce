@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import type { Logger } from "@nimara/infrastructure/logging/types";
 
-import { createServiceLoader } from "../create-loader";
+import { createServiceLoader } from "../../utils/create-loader";
 
 type FakeService = { name: string };
 

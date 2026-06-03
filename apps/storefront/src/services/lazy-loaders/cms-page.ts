@@ -1,10 +1,10 @@
 import { createCMSPageService } from "@nimara/infrastructure/cms-page/select";
 import type { Logger } from "@nimara/infrastructure/logging/types";
 
-import { createServiceLoader } from "@/services/integrations/create-loader";
 import { resolveCMSProvider } from "@/services/integrations/resolve";
+import { createServiceLoader } from "@/services/utils/create-loader";
 
-import { emptyCMSPageService } from "./empty-services";
+import { emptyCMSPageService } from "../utils/empty-services";
 
 /**
  * Creates a lazy loader for the CMS page service. The storefront only selects
