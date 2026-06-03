@@ -1,45 +1,33 @@
-import { type Logger } from "@nimara/foundation/logging/types";
-import { type CheckoutService } from "@nimara/infrastructure/checkout/types";
+import type { Logger } from "@nimara/infrastructure/logging/types";
 
 import { clientEnvs } from "@/envs/client";
+import { createServiceLoader } from "@/services/integrations/create-loader";
 
 import { emptyCheckoutService, isSaleorConfigured } from "./empty-services";
 import { getRequiredSaleorApiUrl } from "./required-env";
 
 /**
- * Creates a lazy loader function for the checkout service.
- * This function is only used by the service registry.
+ * Creates a lazy loader for the checkout service (Saleor-backed, with an empty
+ * zero-config fallback). This function is only used by the service registry.
  * @internal
- * @param logger - The logger to use for the checkout service.
- * @returns A promise that resolves to the checkout service.
  */
-export const createCheckoutServiceLoader = (logger: Logger) => {
-  let checkoutServiceInstance: CheckoutService | null = null;
+export const createCheckoutServiceLoader = (logger: Logger) =>
+  createServiceLoader({
+    resolve: () => (isSaleorConfigured ? "saleor" : null),
+    build: async () => {
+      const { saleorCheckoutService } =
+        await import("@nimara/infrastructure/checkout/service");
 
-  return async (): Promise<CheckoutService> => {
-    if (checkoutServiceInstance) {
-      return checkoutServiceInstance;
-    }
-
-    if (!isSaleorConfigured) {
-      checkoutServiceInstance = emptyCheckoutService;
-
-      return checkoutServiceInstance;
-    }
-
-    const { saleorCheckoutService } =
-      await import("@nimara/infrastructure/checkout/service");
-
-    checkoutServiceInstance = saleorCheckoutService({
-      apiURL: getRequiredSaleorApiUrl("checkout service"),
-      isMarketplaceEnabled: clientEnvs.NEXT_PUBLIC_MARKETPLACE_ENABLED,
-      logger,
-      thumbnailFormat: clientEnvs.NEXT_PUBLIC_DEFAULT_IMAGE_FORMAT as
-        | "AVIF"
-        | "WEBP"
-        | "ORIGINAL",
-    });
-
-    return checkoutServiceInstance;
-  };
-};
+      return saleorCheckoutService({
+        apiURL: getRequiredSaleorApiUrl("checkout service"),
+        isMarketplaceEnabled: clientEnvs.NEXT_PUBLIC_MARKETPLACE_ENABLED,
+        logger,
+        thumbnailFormat: clientEnvs.NEXT_PUBLIC_DEFAULT_IMAGE_FORMAT as
+          | "AVIF"
+          | "WEBP"
+          | "ORIGINAL",
+      });
+    },
+    emptyService: emptyCheckoutService,
+    logger,
+  });
