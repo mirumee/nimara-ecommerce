@@ -4,7 +4,7 @@ import { clientEnvs } from "@/envs/client";
 import { createServiceLoader } from "@/services/utils/create-loader";
 
 import { emptyCartService, isSaleorConfigured } from "../utils/empty-services";
-import { getRequiredSaleorApiUrl } from "./required-env";
+import { getRequiredSaleorApiUrl } from "../utils/required-env";
 
 /**
  * Creates a lazy loader for the cart service (Saleor-backed, with an empty
