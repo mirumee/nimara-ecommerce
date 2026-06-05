@@ -290,7 +290,7 @@ export const Payment = ({
 
     await trackAddPaymentInfo({
       checkout,
-      paymentType: isAddingNewPaymentMethod ? "new" : "saved",
+      paymentType: isAddingNewPaymentMethod ? paymentMethod : "saved",
     });
 
     let paymentSecret: Maybe<string> = undefined;
