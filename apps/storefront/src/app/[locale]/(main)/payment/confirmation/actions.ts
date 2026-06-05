@@ -21,7 +21,11 @@ export const processPaymentAction = async ({
 }): Promise<ProcessPaymentResult> => {
   const [locale, checkout, services] = await Promise.all([
     getLocale(),
-    getCheckoutOrRedirect(),
+    /**
+     * Fetch a fresh checkout on every (re)poll — a cached one would keep
+     * reporting the payment as unpaid until the cache TTL expires.
+     */
+    getCheckoutOrRedirect({ cache: "no-store" }),
     getServiceRegistry(),
   ]);
 

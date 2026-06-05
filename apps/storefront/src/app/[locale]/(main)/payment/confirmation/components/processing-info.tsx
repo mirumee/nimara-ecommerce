@@ -16,7 +16,7 @@ import { processPaymentAction, type ProcessPaymentResult } from "../actions";
 
 const trackingServiceLoader = createTrackingServiceLoader();
 
-const POLL_INTERVAL_MS = 3500;
+const POLL_DELAY_MS = 750;
 const TIME_EXCEEDED_MS = 30 * 1000;
 
 export const ProcessingInfo = ({
@@ -56,7 +56,7 @@ export const ProcessingInfo = ({
       }
 
       if ("isProcessing" in result) {
-        pollRef.current = setTimeout(tick, POLL_INTERVAL_MS);
+        pollRef.current = setTimeout(tick, POLL_DELAY_MS);
 
         return;
       }
