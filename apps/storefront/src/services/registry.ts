@@ -13,6 +13,7 @@ import { createCMSPageServiceLoader } from "./lazy-loaders/cms-page";
 import { createCollectionServiceLoader } from "./lazy-loaders/collection";
 import { createSearchServiceLoader } from "./lazy-loaders/search";
 import { createStoreServiceLoader } from "./lazy-loaders/store";
+import { createTrackingServiceLoader } from "./lazy-loaders/tracking";
 import { createUserServiceLoader } from "./lazy-loaders/user";
 
 let serviceRegistryInstance: ServiceRegistry | null = null;
@@ -44,6 +45,7 @@ export const getServiceRegistry = async (): Promise<ServiceRegistry> => {
   const getPaymentService = createPaymentServiceLoader(logger);
   const getSearchService = createSearchServiceLoader(logger);
   const getStoreService = createStoreServiceLoader(logger);
+  const getTrackingService = createTrackingServiceLoader();
   const getUserService = createUserServiceLoader(logger);
   const getMarketplaceService = createMarketplaceServiceLoader(logger);
 
@@ -60,6 +62,7 @@ export const getServiceRegistry = async (): Promise<ServiceRegistry> => {
     getUserService,
     getPaymentService,
     getMarketplaceService,
+    getTrackingService,
   };
 
   return serviceRegistryInstance;

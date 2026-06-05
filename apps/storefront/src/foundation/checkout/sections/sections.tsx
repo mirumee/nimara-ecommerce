@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import type { ReactNode } from "react";
+import { type ReactNode, useEffect } from "react";
 
 import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { type User } from "@nimara/domain/objects/User";
@@ -14,6 +14,7 @@ import { type MarketplaceCheckoutItem } from "@/features/checkout/types";
 import { Payment } from "@/foundation/checkout/sections/payment/payment";
 import { CheckoutPaymentSection } from "@/foundation/checkout/sections/payment/section";
 import { paths } from "@/foundation/routing/paths";
+import { createTrackingServiceLoader } from "@/services/lazy-loaders/tracking";
 
 import { type CheckoutStep } from "../steps";
 import { DeliveryMethodForm } from "./delivery-method/form";
@@ -25,6 +26,8 @@ import { CheckoutShippingAddressSection } from "./shipping-address/section";
 import { type ShippingAddressSectionData } from "./shipping-address/types";
 import { UserDetailsForm } from "./user-details/form";
 import { CheckoutUserDetailsSection } from "./user-details/section";
+
+const trackingServiceLoader = createTrackingServiceLoader();
 
 interface Props {
   checkout: Checkout;
@@ -91,12 +94,25 @@ export const CheckoutSections = ({
   const isDeliverySelected = checkoutForSections.deliveryMethod !== null;
 
   const submitDeliveryMethod = () => {
-    router.push(
-      paths.checkout.asPath({
-        query: { step: "payment" },
-      }),
-    );
+    void (async () => {
+      const { trackAddShippingInfo } = await trackingServiceLoader();
+
+      await trackAddShippingInfo({ checkout: checkoutForSections });
+      router.push(
+        paths.checkout.asPath({
+          query: { step: "payment" },
+        }),
+      );
+    })();
   };
+
+  useEffect(() => {
+    void (async () => {
+      const { trackBeginCheckout } = await trackingServiceLoader();
+
+      await trackBeginCheckout({ checkout });
+    })();
+  }, []);
 
   return (
     <Card className="overflow-hidden">

@@ -12,9 +12,12 @@ import { useToast } from "@nimara/ui/hooks";
 
 import { login } from "@/foundation/auth/login";
 import { useRouterWithState } from "@/foundation/use-router-with-state";
+import { createTrackingServiceLoader } from "@/services/lazy-loaders/tracking";
 
 import { ResetPasswordLink } from "../reset-password-link";
 import { type SignInSchema, signInSchema } from "./schema";
+
+const trackingServiceLoader = createTrackingServiceLoader();
 
 export function SignInForm({ redirectUrl }: { redirectUrl?: string }) {
   const t = useTranslations();
@@ -39,6 +42,9 @@ export function SignInForm({ redirectUrl }: { redirectUrl?: string }) {
     const data = await login({ ...values, redirectUrl });
 
     if (data.redirectUrl) {
+      const { trackLogin } = await trackingServiceLoader();
+
+      await trackLogin({ method: "password" });
       push(data.redirectUrl);
     }
 

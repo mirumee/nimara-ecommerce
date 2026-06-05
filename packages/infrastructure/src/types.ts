@@ -5,6 +5,7 @@ import type { CollectionService } from "./collection/types";
 import type { MarketplaceService } from "./marketplace/types";
 import type { StripePaymentService } from "./payment/providers";
 import type { StoreService } from "./store/types";
+import type { TrackingService } from "./tracking/service";
 import type { CMSMenuService } from "./use-cases/cms-menu/types";
 import type { CMSPageService } from "./use-cases/cms-page/types";
 import type { SearchService } from "./use-cases/search/types";
@@ -82,6 +83,12 @@ export interface ServiceRegistry {
    * @returns A promise that resolves to the store service instance
    */
   getStoreService(): Promise<StoreService>;
+  /**
+   * Gets the tracking service, initializing it lazily on first access.
+   * The service is cached after first initialization.
+   * @returns A promise that resolves to the tracking service instance
+   */
+  getTrackingService(): Promise<TrackingService>;
   /**
    * Gets the user service, initializing it lazily on first access.
    * The service is cached after first initialization.

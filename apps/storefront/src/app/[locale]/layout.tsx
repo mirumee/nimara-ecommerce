@@ -6,7 +6,6 @@ import { notFound } from "next/navigation";
 import Script from "next/script";
 import { hasLocale } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
-import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 import { aspekta } from "@nimara/foundation/fonts";
 import { cn } from "@nimara/foundation/lib/cn";
@@ -81,16 +80,14 @@ export default async function LocaleLayout({
         )}
         <I18nProvider locale={locale} messages={messages}>
           <ClientThemeProvider>
-            <NuqsAdapter>
-              {children}
-              {initialConsentCategories.analytics && <SpeedInsights />}
-              <Toaster />
-              <ErrorServiceServer />
-              <CookieConsent
-                initialCategories={initialConsentCategories}
-                isConsentAccepted={isConsentAccepted}
-              />
-            </NuqsAdapter>
+            {children}
+            {initialConsentCategories.analytics && <SpeedInsights />}
+            <Toaster />
+            <ErrorServiceServer />
+            <CookieConsent
+              initialCategories={initialConsentCategories}
+              isConsentAccepted={isConsentAccepted}
+            />
           </ClientThemeProvider>
         </I18nProvider>
       </body>

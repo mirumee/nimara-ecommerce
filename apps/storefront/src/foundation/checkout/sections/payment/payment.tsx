@@ -53,6 +53,7 @@ import { isGlobalError } from "@/foundation/errors/errors";
 import { useCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
 import { createPaymentServiceLoader } from "@/services/lazy-loaders/payment";
+import { createTrackingServiceLoader } from "@/services/lazy-loaders/tracking";
 import { storefrontLogger } from "@/services/logging";
 
 import { AddressTab } from "./tabs/address-tab";
@@ -60,6 +61,7 @@ import { AddressTab } from "./tabs/address-tab";
 export type TabName = "new" | "saved";
 
 const paymentServiceLoader = createPaymentServiceLoader(storefrontLogger);
+const trackingServiceLoader = createTrackingServiceLoader();
 
 type PaymentProps = {
   addressFormRows: readonly AddressFormRow[];
@@ -283,6 +285,13 @@ export const Payment = ({
         return;
       }
     }
+
+    const { trackAddPaymentInfo } = await trackingServiceLoader();
+
+    await trackAddPaymentInfo({
+      checkout,
+      paymentType: isAddingNewPaymentMethod ? "new" : "saved",
+    });
 
     let paymentSecret: Maybe<string> = undefined;
     const redirectUrl = `${storeUrl}${paths.payment.confirmation.asPath()}`;

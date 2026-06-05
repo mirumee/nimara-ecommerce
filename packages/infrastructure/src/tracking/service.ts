@@ -1,19 +1,19 @@
-import { gtmTrackingProvider } from "@nimara/infrastructure/tracking/google/provider";
-import { createTrackingUseCase } from "@nimara/infrastructure/use-cases/tracking/create-tracking-use-case";
-import type { TrackAddPaymentInfoInput } from "@nimara/infrastructure/use-cases/tracking/types/add-payment-info";
-import type { TrackAddShippingInfoInput } from "@nimara/infrastructure/use-cases/tracking/types/add-shipping-info";
-import type { TrackAddToCartInput } from "@nimara/infrastructure/use-cases/tracking/types/add-to-cart";
-import type { TrackBeginCheckoutInput } from "@nimara/infrastructure/use-cases/tracking/types/begin-checkout";
-import type { TrackLoginInput } from "@nimara/infrastructure/use-cases/tracking/types/login";
-import type { TrackPurchaseInput } from "@nimara/infrastructure/use-cases/tracking/types/purchase";
-import type { TrackRemoveFromCartInput } from "@nimara/infrastructure/use-cases/tracking/types/remove-from-cart";
-import type { TrackSearchInput } from "@nimara/infrastructure/use-cases/tracking/types/search";
-import type { TrackSelectItemInput } from "@nimara/infrastructure/use-cases/tracking/types/select-item";
-import type { TrackSignUpInput } from "@nimara/infrastructure/use-cases/tracking/types/sign-up";
-import type { UpdateConsentInput } from "@nimara/infrastructure/use-cases/tracking/types/update-consent";
-import type { TrackViewCartInput } from "@nimara/infrastructure/use-cases/tracking/types/view-cart";
-import type { TrackViewItemInput } from "@nimara/infrastructure/use-cases/tracking/types/view-item";
-import type { TrackViewListItemInput } from "@nimara/infrastructure/use-cases/tracking/types/view-list-item";
+import { gtmTrackingProvider } from "#root/tracking/google/provider";
+import { createTrackingUseCase } from "#root/use-cases/tracking/create-tracking-use-case";
+import type { TrackAddPaymentInfoInput } from "#root/use-cases/tracking/types/add-payment-info";
+import type { TrackAddShippingInfoInput } from "#root/use-cases/tracking/types/add-shipping-info";
+import type { TrackAddToCartInput } from "#root/use-cases/tracking/types/add-to-cart";
+import type { TrackBeginCheckoutInput } from "#root/use-cases/tracking/types/begin-checkout";
+import type { TrackLoginInput } from "#root/use-cases/tracking/types/login";
+import type { TrackPurchaseInput } from "#root/use-cases/tracking/types/purchase";
+import type { TrackRemoveFromCartInput } from "#root/use-cases/tracking/types/remove-from-cart";
+import type { TrackSearchInput } from "#root/use-cases/tracking/types/search";
+import type { TrackSelectItemInput } from "#root/use-cases/tracking/types/select-item";
+import type { TrackSignUpInput } from "#root/use-cases/tracking/types/sign-up";
+import type { UpdateConsentInput } from "#root/use-cases/tracking/types/update-consent";
+import type { TrackViewCartInput } from "#root/use-cases/tracking/types/view-cart";
+import type { TrackViewItemInput } from "#root/use-cases/tracking/types/view-item";
+import type { TrackViewListItemInput } from "#root/use-cases/tracking/types/view-list-item";
 
 /**
  * Composes per-event tracking use-cases bound to the GTM provider.
@@ -25,7 +25,7 @@ import type { TrackViewListItemInput } from "@nimara/infrastructure/use-cases/tr
  *
  * Additional providers (e.g. Algolia Insights for search attribution) can be
  * added per event — see the routing note in
- * `@nimara/infrastructure/use-cases/tracking/types/provider`.
+ * `./../use-cases/tracking/types/provider`.
  */
 export const getTrackingService = () => {
   const gtm = gtmTrackingProvider();
@@ -119,3 +119,5 @@ export const getTrackingService = () => {
     }),
   };
 };
+
+export type TrackingService = ReturnType<typeof getTrackingService>;
