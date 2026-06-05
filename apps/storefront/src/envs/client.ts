@@ -70,6 +70,19 @@ const schema = z.object({
     normalizePublicUrl,
     z.url().optional(),
   ),
+
+  NEXT_PUBLIC_GTM_ID: z.preprocess(
+    emptyStringToUndefined,
+    z.string().optional(),
+  ),
+  NEXT_PUBLIC_GTM_AUTH: z.preprocess(
+    emptyStringToUndefined,
+    z.string().optional(),
+  ),
+  NEXT_PUBLIC_GTM_PREVIEW: z.preprocess(
+    emptyStringToUndefined,
+    z.string().optional(),
+  ),
 });
 
 export const clientEnvs = schema.parse({
@@ -86,4 +99,7 @@ export const clientEnvs = schema.parse({
   NEXT_PUBLIC_MARKETPLACE_ENABLED: process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED,
   NEXT_PUBLIC_MARKETPLACE_VENDOR_URL:
     process.env.NEXT_PUBLIC_MARKETPLACE_VENDOR_URL,
+  NEXT_PUBLIC_GTM_ID: process.env.NEXT_PUBLIC_GTM_ID,
+  NEXT_PUBLIC_GTM_AUTH: process.env.NEXT_PUBLIC_GTM_AUTH,
+  NEXT_PUBLIC_GTM_PREVIEW: process.env.NEXT_PUBLIC_GTM_PREVIEW,
 });
