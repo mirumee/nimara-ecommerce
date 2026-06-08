@@ -1,7 +1,5 @@
-import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 
-import { LocalizedLink } from "@nimara/i18n/routing";
 import { Skeleton } from "@nimara/ui/components/skeleton";
 
 import { AttributesDropdown } from "../shared/components/attributes-dropdown";
