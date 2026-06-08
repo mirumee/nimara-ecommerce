@@ -28,9 +28,7 @@ type Schema = z.infer<typeof schema>;
 
 export const serverEnvs = isSsr
   ? schema.parse({
-      // Czy saleor powinien byc default?
       SALEOR_APP_TOKEN: process.env.SALEOR_APP_TOKEN,
-      // Czy stripe powinien byc default?
       STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
       SEARCH_SERVICE: process.env.SEARCH_SERVICE,
       CMS_SERVICE: process.env.CMS_SERVICE,

@@ -1,6 +1,5 @@
 import { type CodegenConfig } from "@graphql-codegen/cli";
 import { type IGraphQLConfig } from "graphql-config";
-import { invariant } from "ts-invariant";
 
 export const baseCodegenConfig: CodegenConfig["config"] = {
   documentMode: "string",
@@ -40,12 +39,7 @@ export const baseCodegenConfig: CodegenConfig["config"] = {
   },
 };
 
-// chce skip a nie crach
-// invariant(
-//   process.env.NEXT_PUBLIC_SALEOR_API_URL,
-//   `NEXT_PUBLIC_SALEOR_API_URL not set!`,
-// );
-
+// Skip codegen instead of crashing when Saleor is not configured (zero-config).
 if (!process.env.NEXT_PUBLIC_SALEOR_API_URL) {
   console.log("Skipping Saleor codegen: NEXT_PUBLIC_SALEOR_API_URL is not set");
   process.exit(0);
