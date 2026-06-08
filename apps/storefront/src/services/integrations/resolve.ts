@@ -1,4 +1,4 @@
-import type { CMSProviderId } from "@nimara/infrastructure/cms-page/select";
+import type { CMSProviderId } from "@nimara/infrastructure/providers/cms";
 import type { SearchProviderId } from "@nimara/infrastructure/search/select";
 
 import { clientEnvs } from "@/envs/client";

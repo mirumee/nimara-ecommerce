@@ -1,7 +1,5 @@
-import {
-  createServiceSelector,
-  type ProviderManifest,
-} from "#root/lib/create-service-selector";
+import { createKeyedServiceSelector } from "#root/lib/create-service-selector";
+import { CMS_PROVIDER_IDS } from "#root/providers/cms";
 import { type CMSMenuService } from "#root/use-cases/cms-menu/types";
 
 import {
@@ -12,14 +10,17 @@ import { toDummyCMSMenuConfig } from "./dummy/config";
 import { saleorCMSMenuEnvSchema, toSaleorCMSMenuConfig } from "./saleor/config";
 
 /**
- * Provider manifests for CMS menus. Shares the CMS provider taxonomy with CMS
- * pages (selected by the same `CMS_SERVICE`); the canonical id catalog is
- * exported from `cms-page/select`. {@link cmsMenuProviders} is the describe-list
- * used by the integration preflight.
+ * Provider manifests for CMS menus, keyed by the canonical CMS provider catalog
+ * ({@link CMS_PROVIDER_IDS}) shared with CMS pages — both are selected by one
+ * `CMS_SERVICE` env, so keying by the catalog makes drift between the two a
+ * compile error. {@link cmsMenuProviders} is the describe-list used by the
+ * integration preflight.
  */
-const MANIFESTS = [
-  {
-    id: "saleor",
+const selector = createKeyedServiceSelector<
+  CMSMenuService,
+  typeof CMS_PROVIDER_IDS
+>(CMS_PROVIDER_IDS, {
+  saleor: {
     configSchema: saleorCMSMenuEnvSchema,
     create: async ({ env, logger }) => {
       const { saleorCMSMenuService } = await import("./providers");
@@ -27,8 +28,7 @@ const MANIFESTS = [
       return saleorCMSMenuService(toSaleorCMSMenuConfig(env, logger));
     },
   },
-  {
-    id: "butter-cms",
+  "butter-cms": {
     configSchema: butterCMSMenuEnvSchema,
     create: async ({ env, logger }) => {
       const { butterCMSMenuService } = await import("./providers");
@@ -36,17 +36,14 @@ const MANIFESTS = [
       return butterCMSMenuService(toButterCMSMenuConfig(env, logger));
     },
   },
-  {
-    id: "dummy",
+  dummy: {
     create: async ({ env, logger }) => {
       const { dummyCMSMenuService } = await import("./providers");
 
       return dummyCMSMenuService(toDummyCMSMenuConfig(env, logger));
     },
   },
-] as const satisfies readonly ProviderManifest<CMSMenuService, string>[];
-
-const selector = createServiceSelector(MANIFESTS);
+});
 
 export const createCMSMenuService = selector.create;
 export const cmsMenuProviders = selector.providers;

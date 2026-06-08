@@ -54,3 +54,26 @@ export const createServiceSelector = <TService, TId extends string>(
 
   return { create, ids, providers: manifests };
 };
+
+/**
+ * Selector variant keyed by a canonical id tuple. The `manifests` argument is a
+ * total record over `TIds`, so a capability that omits a provider — or adds an
+ * unknown one — is a compile error. Used where one selection must cover several
+ * capabilities in lockstep (e.g. CMS pages + menus share one `CMS_SERVICE`).
+ * Catalog order is preserved.
+ */
+export const createKeyedServiceSelector = <
+  TService,
+  const TIds extends readonly [string, ...string[]],
+>(
+  ids: TIds,
+  manifests: {
+    [K in TIds[number]]: Omit<ProviderManifest<TService, K>, "id">;
+  },
+) =>
+  createServiceSelector(
+    ids.map((id) => ({
+      id,
+      ...manifests[id as TIds[number]],
+    })) as readonly ProviderManifest<TService, TIds[number]>[],
+  );

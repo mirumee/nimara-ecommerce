@@ -1,7 +1,5 @@
-import {
-  createServiceSelector,
-  type ProviderManifest,
-} from "#root/lib/create-service-selector";
+import { CMS_PROVIDER_IDS } from "#root/providers/cms";
+import { createKeyedServiceSelector } from "#root/lib/create-service-selector";
 import { type CMSPageService } from "#root/use-cases/cms-page/types";
 
 import {
@@ -12,13 +10,17 @@ import { toDummyCMSPageConfig } from "./dummy/config";
 import { saleorCMSPageEnvSchema, toSaleorCMSPageConfig } from "./saleor/config";
 
 /**
- * Provider manifests for CMS pages. The CMS provider id catalog
- * ({@link CMS_PROVIDER_IDS}) and {@link cmsPageProviders} describe-list are
- * derived here and shared with CMS menus and the storefront selection enum.
+ * Provider manifests for CMS pages, keyed by the canonical CMS provider catalog
+ * ({@link CMS_PROVIDER_IDS}). Keying by the catalog forces this capability to
+ * cover exactly the same providers as CMS menus — both are selected by one
+ * `CMS_SERVICE` env. {@link cmsPageProviders} is the describe-list used by the
+ * integration preflight.
  */
-const MANIFESTS = [
-  {
-    id: "saleor",
+const selector = createKeyedServiceSelector<
+  CMSPageService,
+  typeof CMS_PROVIDER_IDS
+>(CMS_PROVIDER_IDS, {
+  saleor: {
     configSchema: saleorCMSPageEnvSchema,
     create: async ({ env, logger }) => {
       const { saleorCMSPageService } = await import("./providers");
@@ -26,8 +28,7 @@ const MANIFESTS = [
       return saleorCMSPageService(toSaleorCMSPageConfig(env, logger));
     },
   },
-  {
-    id: "butter-cms",
+  "butter-cms": {
     configSchema: butterCMSPageEnvSchema,
     create: async ({ env, logger }) => {
       const { butterCMSPageService } = await import("./providers");
@@ -35,19 +36,15 @@ const MANIFESTS = [
       return butterCMSPageService(toButterCMSPageConfig(env, logger));
     },
   },
-  {
-    id: "dummy",
+  dummy: {
     create: async ({ env, logger }) => {
       const { dummyCMSPageService } = await import("./providers");
 
       return dummyCMSPageService(toDummyCMSPageConfig(env, logger));
     },
   },
-] as const satisfies readonly ProviderManifest<CMSPageService, string>[];
-
-const selector = createServiceSelector(MANIFESTS);
+});
 
 export const createCMSPageService = selector.create;
-export const CMS_PROVIDER_IDS = selector.ids;
 export const cmsPageProviders = selector.providers;
-export type CMSProviderId = (typeof CMS_PROVIDER_IDS)[number];
+export { CMS_PROVIDER_IDS, type CMSProviderId } from "#root/providers/cms";

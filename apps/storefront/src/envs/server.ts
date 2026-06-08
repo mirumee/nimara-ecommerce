@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-import { CMS_PROVIDER_IDS } from "@nimara/infrastructure/cms-page/select";
 import { isSsr } from "@nimara/infrastructure/config";
+import { CMS_PROVIDER_IDS } from "@nimara/infrastructure/providers/cms";
 import { SEARCH_PROVIDER_IDS } from "@nimara/infrastructure/search/select";
 
 const emptyStringToUndefined = (value: unknown) =>
