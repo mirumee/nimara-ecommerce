@@ -180,6 +180,8 @@ export const VariantSelector = ({
 
       <AddToBag
         cartPath={cartPath}
+        product={product}
+        price={chosenVariantAvailability?.price}
         productVendorId={marketplaceEnabled ? (product.vendorId ?? null) : null}
         variantId={
           matchingVariants?.length > 1
