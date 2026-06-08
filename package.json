@@ -50,7 +50,6 @@
     "graph": "turbo run build --graph=graph.mermaid"
   },
   "devDependencies": {
-    "@clack/prompts": "1.5.1",
     "@nimara/config": "workspace:*",
     "commitizen": "4.3.1",
     "dotenv-cli": "11.0.0",
