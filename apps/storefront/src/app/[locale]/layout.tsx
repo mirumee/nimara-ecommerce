@@ -51,7 +51,8 @@ export default async function LocaleLayout({
     notFound();
   }
 
-  const isConsentAccepted = consentRecord !== null;
+  const isConsentAccepted =
+    consentRecord !== null || process.env.NODE_ENV === "development";
   const initialConsentCategories = consentRecord?.categories ?? DEFAULT_CONSENT;
 
   return (

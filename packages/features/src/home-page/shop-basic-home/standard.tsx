@@ -39,6 +39,8 @@ export const StandardHomeView = async ({
               services={services}
               productPath={paths.product}
               searchPath={paths.search}
+              listId="home-products"
+              listName="Home products"
             />
           </Suspense>
           <div>

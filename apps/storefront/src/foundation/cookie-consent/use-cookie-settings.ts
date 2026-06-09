@@ -6,8 +6,7 @@ const COOKIE_SETTINGS_QUERY_KEY = "cookie-settings";
 
 /**
  * Reads/writes the `?cookie-settings=true` query param that drives the cookie
- * settings dialog. URL-backed, so the dialog is deep-linkable and the footer
- * trigger and the banner stay in sync without any shared React state.
+ * settings dialog.
  */
 export const useCookieSettings = () => {
   const router = useRouter();
