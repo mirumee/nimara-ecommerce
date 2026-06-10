@@ -16,6 +16,7 @@
   "dependencies": {
     "@formatjs/intl-localematcher": "0.8.1",
     "@hookform/resolvers": "5.2.2",
+    "@next/third-parties": "16.2.7",
     "@nimara/domain": "workspace:*",
     "@nimara/features": "workspace:*",
     "@nimara/foundation": "workspace:*",

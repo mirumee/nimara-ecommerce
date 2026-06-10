@@ -48,11 +48,13 @@ export type CheckoutRemovePromoCodeInfra = (
 
 export type CheckoutRemovePromoCodeUseCase = CheckoutRemovePromoCodeInfra;
 
-export type CheckoutGetInfra = (opts: {
-  checkoutId: string;
-  countryCode: string;
-  languageCode: string;
-}) => AsyncResult<{
+export type CheckoutGetInfra = (
+  opts: {
+    checkoutId: string;
+    countryCode: string;
+    languageCode: string;
+  } & WithFetchOptions,
+) => AsyncResult<{
   checkout: Checkout;
 }>;
 export type CheckoutGetUseCase = CheckoutGetInfra;

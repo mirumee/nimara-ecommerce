@@ -6,6 +6,7 @@ import { LocalizedLink } from "@nimara/i18n/routing";
 import BrandLogo from "@/assets/brand-logo-dark.svg";
 import { CACHE_TTL } from "@/config";
 import { clientEnvs } from "@/envs/client";
+import { CookieSettingsTrigger } from "@/foundation/cookie-consent";
 import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
 import { getServiceRegistry } from "@/services/registry";
@@ -150,6 +151,9 @@ export const Footer = async () => {
                     </LocalizedLink>
                   </span>
                 ))}
+                <span className="inline">
+                  <CookieSettingsTrigger />
+                </span>
               </div>
             </div>
           </div>

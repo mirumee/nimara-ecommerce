@@ -5,6 +5,7 @@ import type { CollectionService } from "./collection/types";
 import type { MarketplaceService } from "./marketplace/types";
 import type { StripePaymentService } from "./payment/providers";
 import type { StoreService } from "./store/types";
+import type { TrackingService } from "./tracking/service";
 import type { CMSMenuService } from "./use-cases/cms-menu/types";
 import type { CMSPageService } from "./use-cases/cms-page/types";
 import type { SearchService } from "./use-cases/search/types";
@@ -27,6 +28,7 @@ export type CapabilityServices = {
   getPaymentService: StripePaymentService;
   getSearchService: SearchService;
   getStoreService: StoreService;
+  getTrackingService: TrackingService;
   getUserService: UserService;
 };
 

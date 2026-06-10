@@ -4,19 +4,26 @@ import { PlusCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useState } from "react";
 
+import { type Price } from "@nimara/domain/objects/common";
 import { type BaseError } from "@nimara/domain/objects/Error";
+import { type Product } from "@nimara/domain/objects/Product";
 import { LocalizedLink } from "@nimara/i18n/routing";
 import { type MessagePath } from "@nimara/i18n/types";
+import { getTrackingService } from "@nimara/infrastructure/tracking/service";
 import { Button } from "@nimara/ui/components/button";
 import { ToastAction } from "@nimara/ui/components/toast";
 import { useToast } from "@nimara/ui/hooks";
 
 import { type AddToBagAction } from "../types";
 
+const tracking = getTrackingService();
+
 type AddToBagProps = {
   addToBagAction: AddToBagAction;
   cartPath: string;
   isVariantAvailable: boolean;
+  price?: Price;
+  product: Pick<Product, "id" | "name">;
   productVendorId: string | null;
   variantId: string;
 };
@@ -27,6 +34,8 @@ export const AddToBag = ({
   productVendorId,
   cartPath,
   addToBagAction,
+  product,
+  price,
 }: AddToBagProps) => {
   const t = useTranslations();
   const { toast } = useToast();
@@ -55,6 +64,10 @@ export const AddToBag = ({
         }
       });
     } else {
+      if (price) {
+        void tracking.trackAddToCart({ product, price, quantity: 1 });
+      }
+
       toast({
         description: t("common.product-added"),
         action: (

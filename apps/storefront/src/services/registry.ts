@@ -17,6 +17,7 @@ import { createCMSPageServiceLoader } from "./lazy-loaders/cms-page";
 import { createCollectionServiceLoader } from "./lazy-loaders/collection";
 import { createSearchServiceLoader } from "./lazy-loaders/search";
 import { createStoreServiceLoader } from "./lazy-loaders/store";
+import { createTrackingServiceLoader } from "./lazy-loaders/tracking";
 import { createUserServiceLoader } from "./lazy-loaders/user";
 
 let serviceRegistryInstance: ServiceRegistry | null = null;
@@ -37,6 +38,7 @@ const SERVICE_LOADERS = {
   getPaymentService: createPaymentServiceLoader,
   getSearchService: createSearchServiceLoader,
   getStoreService: createStoreServiceLoader,
+  getTrackingService: createTrackingServiceLoader,
   getUserService: createUserServiceLoader,
 } satisfies {
   [K in keyof CapabilityServices]: (logger: Logger) => ServiceRegistry[K];

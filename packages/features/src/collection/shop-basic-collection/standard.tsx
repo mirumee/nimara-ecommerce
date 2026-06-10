@@ -57,6 +57,8 @@ export const StandardCollectionView = async (
             <ProductsList
               products={collection.products}
               productPath={props.paths.product}
+              listId={`collection-${slug}`}
+              listName={collection.name}
             />
             {pageInfo && (
               <SearchPagination
