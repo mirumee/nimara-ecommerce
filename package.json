@@ -48,6 +48,7 @@
     "db-ledger:down": "docker compose -f apps/marketplace/docker-compose.yml stop db-ledger",
     "migrate:ledger": "dotenv -- node apps/marketplace/scripts/migrate-ledger.mjs",
     "fallow": "fallow --format json -c ./packages/config/src/.fallowrc.json > fallow.json",
+    "boundary-violations": "fallow dead-code --boundary-violations --format json -c ./packages/config/src/.fallowrc.ca.json > boundary-violations.json",
     "graph": "turbo run build --graph=graph.mermaid"
   },
   "devDependencies": {

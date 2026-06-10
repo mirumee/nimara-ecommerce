@@ -22,35 +22,49 @@
   "boundaries": {
     "zones": [
       { "name": "domain", "patterns": ["packages/domain/**"] },
+      {
+        "name": "application",
+        "patterns": ["packages/infrastructure/src/use-cases/**"]
+      },
+      { "name": "adapters", "patterns": ["packages/infrastructure/**"] },
+      { "name": "codegen", "patterns": ["packages/codegen/**"] },
       { "name": "config", "patterns": ["packages/config/**"] },
       { "name": "i18n", "patterns": ["packages/i18n/**"] },
-      { "name": "codegen", "patterns": ["packages/codegen/**"] },
       { "name": "ui", "patterns": ["packages/ui/**"] },
       { "name": "foundation", "patterns": ["packages/foundation/**"] },
-      { "name": "infrastructure", "patterns": ["packages/infrastructure/**"] },
       { "name": "features", "patterns": ["packages/features/**"] },
+      {
+        "name": "storefront-composition",
+        "patterns": ["apps/storefront/src/services/**"]
+      },
       { "name": "storefront", "patterns": ["apps/storefront/**"] },
       { "name": "marketplace", "patterns": ["apps/marketplace/**"] },
       { "name": "stripe", "patterns": ["apps/stripe/**"] }
     ],
     "rules": [
       { "from": "domain", "allow": [] },
-      { "from": "config", "allow": [] },
-      { "from": "i18n", "allow": ["config"] },
-      { "from": "ui", "allow": ["config"] },
-      { "from": "codegen", "allow": ["config"] },
-      { "from": "foundation", "allow": ["domain", "i18n", "ui", "config"] },
+      { "from": "application", "allow": ["domain"] },
       {
-        "from": "infrastructure",
-        "allow": ["domain", "foundation", "codegen", "config"]
+        "from": "adapters",
+        "allow": ["application", "domain", "codegen", "config"]
       },
       {
         "from": "features",
+        "allow": ["domain", "application", "ui", "i18n", "foundation", "config"]
+      },
+      { "from": "ui", "allow": ["config"] },
+      { "from": "i18n", "allow": ["config"] },
+      { "from": "codegen", "allow": ["config"] },
+      { "from": "config", "allow": [] },
+      { "from": "foundation", "allow": ["domain", "config"] },
+      {
+        "from": "storefront-composition",
         "allow": [
+          "storefront",
+          "adapters",
+          "application",
           "domain",
           "foundation",
-          "infrastructure",
-          "ui",
           "i18n",
           "config"
         ]
@@ -58,8 +72,8 @@
       {
         "from": "storefront",
         "allow": [
+          "storefront-composition",
           "features",
-          "infrastructure",
           "ui",
           "foundation",
           "domain",
@@ -69,9 +83,9 @@
       },
       {
         "from": "marketplace",
-        "allow": ["infrastructure", "ui", "domain", "i18n", "config"]
+        "allow": ["features", "ui", "domain", "i18n", "config"]
       },
-      { "from": "stripe", "allow": ["infrastructure", "ui", "config"] }
+      { "from": "stripe", "allow": ["ui", "domain", "config"] }
     ]
   },
   "rules": {}
