@@ -20,6 +20,8 @@ type ProductsGridClientProps = {
   header: string | undefined;
   headerFontColor: string | undefined;
   image: string | undefined;
+  listId: string;
+  listName: string;
   products: ProductWithPath[];
   searchPath: string;
   subheader: string | undefined;
@@ -35,6 +37,8 @@ export const ProductsGridClient = ({
   headerFontColor,
   subheaderFontColor,
   searchPath,
+  listId,
+  listName,
 }: ProductsGridClientProps) => {
   const t = useTranslations();
 
@@ -86,6 +90,8 @@ export const ProductsGridClient = ({
             <SearchProductCard
               product={product}
               productPath={product.path}
+              listId={listId}
+              listName={listName}
               sizes="(max-width: 720px) 1vw, (max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
             />
           </div>
@@ -98,6 +104,8 @@ export const ProductsGridClient = ({
                 <SearchProductCard
                   product={product}
                   productPath={product.path}
+                  listId={listId}
+                  listName={listName}
                   sizes="(max-width: 360px) 195px, (max-width: 720px) 379px, 1vw"
                   height={200}
                   width={200}

@@ -1,4 +1,5 @@
 import type { PageField } from "@nimara/domain/objects/CMSPage";
+import { ViewListItemTracker } from "@nimara/features/shared/product-list/view-list-item-tracker";
 import { type Region } from "@nimara/foundation/regions/types";
 import type { ServiceRegistry } from "@nimara/infrastructure/types";
 import type { SearchContext } from "@nimara/infrastructure/use-cases/search/types";
@@ -14,6 +15,8 @@ import { ProductsGridClient } from "./products-grid-client";
 
 export interface ProductsGridProps {
   fields: PageField[] | undefined;
+  listId: string;
+  listName: string;
   productPath: (slug: string) => string;
   region: Region;
   searchPath: string;
@@ -26,6 +29,8 @@ export const ProductsGrid = async ({
   productPath,
   searchPath,
   region,
+  listId,
+  listName,
 }: ProductsGridProps) => {
   const searchContext = {
     currency: region.market.currency,
@@ -69,16 +74,26 @@ export const ProductsGrid = async ({
   }));
 
   return (
-    <ProductsGridClient
-      products={productsWithPaths}
-      header={header}
-      subheader={subheader}
-      image={image}
-      buttonText={buttonText}
-      headerFontColor={headerFontColor}
-      subheaderFontColor={subheaderFontColor}
-      searchPath={searchPath}
-    />
+    <>
+      <ViewListItemTracker
+        items={productsWithPaths}
+        listId={listId}
+        listName={listName}
+      />
+
+      <ProductsGridClient
+        products={productsWithPaths}
+        header={header}
+        subheader={subheader}
+        image={image}
+        buttonText={buttonText}
+        headerFontColor={headerFontColor}
+        subheaderFontColor={subheaderFontColor}
+        searchPath={searchPath}
+        listId={listId}
+        listName={listName}
+      />
+    </>
   );
 };
 

@@ -8,10 +8,13 @@ import type { SearchProduct } from "@nimara/domain/objects/SearchProduct";
 import { DiscountBadge } from "@nimara/features/shared/product/discount-badge";
 import { getDiscountInfo, Price } from "@nimara/features/shared/product/price";
 import { LocalizedLink } from "@nimara/i18n/routing";
+import { getTrackingService } from "@nimara/infrastructure/tracking/service";
 
 import productPlaceholder from "@/assets/product_placeholder.svg?url";
 
 import { ProductImagePlaceholder } from "./product-image-placeholder";
+
+const tracking = getTrackingService();
 
 export const ProductName = ({ children }: PropsWithChildren) => (
   <h2 className="line-clamp-1 overflow-hidden text-left text-ellipsis">
@@ -26,18 +29,31 @@ export const ProductThumbnail = ({ alt, ...props }: ImageProps) => (
 );
 
 type Props = {
+  listId?: string;
+  listName?: string;
   product: SearchProduct;
   productPath: string;
 } & Pick<ImageProps, "height" | "width" | "sizes">;
 
 export const SearchProductCard = ({
-  product: { thumbnail, name, price, undiscountedPrice },
+  product,
   sizes,
   productPath,
+  listId,
+  listName,
 }: Props) => {
   const t = useTranslations();
 
+  const { thumbnail, name, price, undiscountedPrice } = product;
   const { discountPercent } = getDiscountInfo(price, undiscountedPrice);
+
+  const handleClick = () => {
+    if (!listId || !listName) {
+      return;
+    }
+
+    void tracking.trackSelectItem({ product, listId, listName });
+  };
 
   return (
     <article className="row-span-3">
@@ -45,6 +61,7 @@ export const SearchProductCard = ({
         className="grid gap-2"
         title={t(`search.go-to-product`, { name })}
         href={productPath}
+        onClick={handleClick}
       >
         <div className="relative">
           {thumbnail ? (
