@@ -1,0 +1,178 @@
+---
+id: environment-variables
+sidebar_position: 4
+title: Environment Variables
+---
+
+# Environment Variables
+
+This page lists and explains all environment variables used by the Nimara storefront. Use this to correctly set up your `.env` file.
+
+---
+
+## Required Variables
+
+### Saleor
+
+#### `NEXT_PUBLIC_SALEOR_API_URL`
+
+- **Description**: URL of the Saleor GraphQL API endpoint.
+- **How to get it**: Saleor Cloud → **Projects** → select the relevant project → **Environment Details**.
+- **Note**: Must end with a trailing slash `/graphql/`.
+- **Example**: `https://your-domain.saleor.cloud/graphql/`
+
+#### `NEXT_PUBLIC_DEFAULT_CHANNEL`
+
+- **Description**: A Saleor channel slug that will be used as a default channel on the storefront.
+- **How to get it**: Saleor dashboard → **Configuration** → **Channels** → copy the slug of the channel to be used as the default.
+- **Example**: `default-channel`
+
+#### `SALEOR_APP_TOKEN`
+
+- **Description**: Token to authenticate requests to Saleor.
+- **How to get it**: Saleor dashboard → **Extensions** → click **Add extension** → select **Provide details manually** → add name and assign the necessary permissions for your app: **Handle checkouts** and **Manage Customers** → click **Save**.
+
+---
+
+### Auth
+
+#### `AUTH_SECRET`
+
+- **Description**: Secret for session encryption (used by Auth.js).
+- **How to get it**: Generate a random secure string.
+
+#### `AUTH_URL`
+
+- **Description**: Auth.js base URL for callback handling.
+- **Notes**: Required when **not** deploying on Vercel.
+- **Example**: `https://my-new-store.com`
+
+---
+
+### Environment
+
+#### `NEXT_PUBLIC_ENVIRONMENT`
+
+- **Description**: Environment type for error reporting and logging.
+- **Example**: `LOCAL`, `STAGING`, `PRODUCTION`, etc.
+
+---
+
+### Stripe
+
+**Note**: See the [Nimara Stripe integration section](./stripe-integration) for detailed instructions on setting up these variables.
+
+---
+
+### Marketplace
+
+#### `NEXT_PUBLIC_MARKETPLACE_ENABLED`
+
+- **Description**: Enable marketplace features in the storefront.
+- **Options**: `true`, `false`
+- **Default**: `false`
+- **Note**: When enabled, the storefront displays marketplace-specific UI elements and functionality.
+
+#### `NEXT_PUBLIC_MARKETPLACE_VENDOR_URL`
+
+- **Description**: Public URL of the marketplace vendor portal. Used by the marketplace for manifest / resolved vendor URL and by the storefront for footer links when `NEXT_PUBLIC_MARKETPLACE_ENABLED` is true.
+- **Example**: `http://localhost:3001`
+
+#### `NEXT_PUBLIC_MARKETPLACE_STOREFRONT_URL`
+
+- **Description**: Public URL of the storefront (for marketplace-to-storefront communication).
+- **Example**: `http://localhost:3000`
+
+#### `NEXT_PUBLIC_SALEOR_MARKETPLACE_CHANNEL_SLUG`
+
+- **Description**: Saleor channel slug used for marketplace-specific data.
+- **Example**: `default-channel`
+
+---
+
+## Optional Variables
+
+### General
+
+#### `NEXT_PUBLIC_STOREFRONT_URL`
+
+- **Description**: Public URL of your storefront, used for generating absolute URLs in sitemap.xml, OpenGraph, etc. If not set, it defaults to the Vercel build URL, or localhost.
+- **Example**: `https://my-new-store.com`
+
+---
+
+### Testing (Playwright)
+
+#### `TEST_ENV_URL`
+
+- **Description**: URL used for end-to-end tests.
+- **Example**: `https://localhost:3000`
+
+#### `USER_EMAIL`, `USER_PASSWORD`
+
+- **Description**: Credentials for testing login during E2E tests.
+
+---
+
+### Logging
+
+#### `LOG_LEVEL`
+
+- **Description**: Logging level for application output.
+- **Options**: `debug`, `info`, `warn`, `error`, `critical`
+- **Default**: `debug`
+
+---
+
+### Sentry (Error Monitoring)
+
+#### `SENTRY_DSN`
+
+- **Description**: Sentry project DSN.
+
+#### `SENTRY_AUTH_TOKEN`
+
+- **Description**: Auth token for uploading source maps.
+
+#### `SENTRY_ORG`
+
+- **Description**: Your Sentry organization name.
+
+#### `SENTRY_PROJECT`
+
+- **Description**: Your Sentry project name.
+
+#### `SENTRY_DEBUG`
+
+- **Description**: Enable Sentry debug logging (set to `true` or `false`).
+
+---
+
+### Images
+
+#### `NEXT_PUBLIC_DEFAULT_IMAGE_FORMAT`
+
+- **Description**: Preferred image format served from Saleor.
+- **Example**: `AVIF`, `WEBP`
+
+---
+
+### Search
+
+#### `NEXT_PUBLIC_SEARCH_SERVICE`
+
+- **Description**: Search service to use for the storefront.
+- **Options**: `SALEOR`, `ALGOLIA`
+- **Default**: `SALEOR`
+
+#### `NEXT_PUBLIC_ALGOLIA_APP_ID`
+
+- **Description**: Algolia application ID. Required if `NEXT_PUBLIC_SEARCH_SERVICE` is set to `ALGOLIA`.
+- **How to get it**: Algolia dashboard → **API Keys** → copy the `Application ID`.
+- **Example**: `your-algolia-app-id`
+
+#### `NEXT_PUBLIC_ALGOLIA_API_KEY`
+
+- **Description**: Algolia search API key. Required if `NEXT_PUBLIC_SEARCH_SERVICE` is set to `ALGOLIA`.
+- **How to get it**: Algolia dashboard → **API Keys** → copy the `Search API key`.
+- **Example**: `your-algolia-search-api-key`

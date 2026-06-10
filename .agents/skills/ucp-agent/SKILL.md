@@ -1,5 +1,11 @@
+---
+name: ucp-agent
+description: |
+  UCP Definition and goals
+metadata:
+  version: 2.9.12
+---
 # Skill: UCP Commerce Agent
-
 ## What is UCP?
 
 Universal Commerce Protocol (UCP) is an open standard for agentic commerce -- a common language for AI agents, platforms, and businesses. It defines building blocks for the full commerce lifecycle: discovery, catalog browsing, cart building, checkout, payment, and post-purchase (orders, returns).
@@ -16,7 +22,6 @@ Current version used in this storefront: **`2026-04-08`**
 
 Reference: <https://ucp.dev/2026-04-08/specification/overview/>
 
----
 
 ## Goal
 
@@ -24,7 +29,6 @@ Assist the user in discovering products, building a cart, and completing a check
 
 The agent must guide the user conversationally and perform API calls when required.
 
----
 
 ## Capabilities
 
@@ -43,7 +47,6 @@ Capabilities must be discovered by calling the Discovery Endpoint. This storefro
 
 Every capability includes `schema` and `spec` fields. Use these to gather more information about a particular capability.
 
----
 
 ## Discovery Endpoint
 
@@ -104,7 +107,6 @@ Response:
 
 Use the `endpoint` value from the service entry as the base URL for all subsequent API calls.
 
----
 
 ## API Base URL
 
@@ -116,7 +118,6 @@ Default channel slug: `default-channel` (unless `NEXT_PUBLIC_DEFAULT_CHANNEL` en
 
 Example base URL: `http://localhost:3000/api/ucp/default-channel`
 
----
 
 ## Required Request Headers
 
@@ -132,7 +133,6 @@ All UCP API requests must include:
 
 The `UCP-Agent` header must contain a `profile` parameter pointing to the platform's own `/.well-known/ucp` endpoint. The business fetches this profile to perform capability negotiation.
 
----
 
 ## UCP Response Envelope
 
@@ -184,7 +184,6 @@ Error responses use the same envelope:
 | `requires_buyer_review` | Buyer must authorize (policy, regulatory, entitlement rules)  |
 | `unrecoverable`         | No valid resource exists; start over with new resource/inputs |
 
----
 
 ## API: Catalog
 
@@ -244,7 +243,7 @@ Use when: user asks to search or browse products. At least one of `query` or `fi
 
 Prices are in ISO 4217 **minor units** (e.g., 12900 = $129.00 USD).
 
----
+
 
 ### Lookup Products by ID
 
@@ -264,7 +263,7 @@ Response (HTTP 200): same shape as search but with `inputs` on each variant for 
 
 Use when: you have product/variant IDs and need to retrieve their details.
 
----
+
 
 ### Get Product Detail
 
@@ -285,7 +284,7 @@ Response (HTTP 200): single `product` object with full detail, filtered variants
 
 Use when: user has selected a specific product and needs full detail with option selection.
 
----
+
 
 ## API: Cart
 
@@ -331,7 +330,7 @@ POST /carts/{id}/cancel
 
 Returns cart state before deletion. Subsequent operations return `not_found`.
 
----
+
 
 ## API: Checkout
 
@@ -389,7 +388,7 @@ To create a checkout from a cart, pass `cart_id`:
 
 Use when: user has confirmed product selection and provided their email, or is converting a cart.
 
----
+
 
 ### 2. Get Checkout Session
 
@@ -401,7 +400,7 @@ Response: `CheckoutResponse`
 
 Use when: need to refresh state or retrieve existing session.
 
----
+
 
 ### 3. Update Checkout Session
 
@@ -443,7 +442,7 @@ Response: `CheckoutResponse`
 
 Use when: user provides or updates shipping address, selects fulfillment method, or applies a discount.
 
----
+
 
 ### 4. Cancel Checkout
 
@@ -453,7 +452,7 @@ POST /checkout-sessions/{id}/cancel
 
 Response: `CheckoutResponse` with cancelled state.
 
----
+
 
 ### 5. Complete Checkout
 
@@ -475,7 +474,7 @@ Response: `CheckoutResponse` with `status: "completed"` and `order` object.
 
 Use when: all required data is collected and payment instrument is available.
 
----
+
 
 ## API: Order
 
@@ -506,7 +505,7 @@ Response:
 
 Use when: user asks about order status or tracking after checkout is completed.
 
----
+
 
 ## Checkout Session Status Values
 
@@ -519,7 +518,7 @@ Use when: user asks about order status or tracking after checkout is completed.
 | `canceled`             | Session was cancelled                                  |
 | `requires_escalation`  | Errors require buyer input/review (use `continue_url`) |
 
----
+
 
 ## State
 
@@ -536,7 +535,7 @@ Track and update the following variables:
 
 Never assume values. Only use confirmed or API-returned data.
 
----
+
 
 ## Conversation Flow
 
@@ -585,7 +584,7 @@ Never assume values. Only use confirmed or API-returned data.
    -> call `POST /checkout-sessions/{id}/complete`
    -> return order confirmation
 
----
+
 
 ## Decision Logic
 
@@ -613,7 +612,7 @@ IF status = "completed":
   -> return order details / checkout URL
 ```
 
----
+
 
 ## Data Collection Rules
 
@@ -624,7 +623,7 @@ IF status = "completed":
 - Keep questions short
 - Present product prices converted from minor units (e.g., 12900 cents = $129.00)
 
----
+
 
 ## Rules
 
@@ -639,7 +638,7 @@ IF status = "completed":
 - Check `ucp.status` in every response to determine success vs error
 - Handle `messages[]` array in error responses -- present relevant errors to the user
 
----
+
 
 ## Output Modes
 
@@ -653,7 +652,7 @@ Use when:
 
 Format: Plain natural language only
 
----
+
 
 ### 2. API Call
 
@@ -675,7 +674,7 @@ Return ONLY JSON:
 }
 ```
 
----
+
 
 ## Examples
 
@@ -692,7 +691,7 @@ Agent:
 }
 ```
 
----
+
 
 ### Example 2: Search Products
 
@@ -717,7 +716,7 @@ Agent:
 }
 ```
 
----
+
 
 ### Example 3: Create Cart
 
@@ -742,7 +741,7 @@ Agent:
 }
 ```
 
----
+
 
 ### Example 4: Create Checkout Session
 
@@ -770,7 +769,7 @@ Agent:
 }
 ```
 
----
+
 
 ### Example 5: Update Shipping Address
 
@@ -812,7 +811,7 @@ Agent:
 }
 ```
 
----
+
 
 ### Example 6: Complete Checkout
 
@@ -835,14 +834,11 @@ Agent:
 }
 ```
 
----
-
 ### Example 7: Final Response
 
 Agent:
 Your order has been placed. Order ID: order_123456789
 
----
 
 ## Tone
 

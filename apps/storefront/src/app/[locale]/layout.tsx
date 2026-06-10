@@ -16,7 +16,11 @@ import { routing } from "@nimara/i18n/routing";
 import { Toaster } from "@nimara/ui/components/toaster";
 
 import { clientEnvs } from "@/envs/client";
+import { DEFAULT_CONSENT } from "@/foundation/consent";
+import { readServerConsent } from "@/foundation/consent/server";
+import { CookieConsent } from "@/foundation/cookie-consent";
 import { ErrorServiceServer } from "@/foundation/errors/error-service/error-service-server";
+import { GoogleTagManager } from "@/foundation/google-tag-manager";
 
 export const metadata: Metadata = {
   metadataBase: new URL(clientEnvs.NEXT_PUBLIC_STOREFRONT_URL),
@@ -38,11 +42,18 @@ export default async function LocaleLayout({
 
   setRequestLocale(locale);
 
-  const messages = await getMessages({ locale });
+  const [consentRecord, messages] = await Promise.all([
+    readServerConsent(),
+    getMessages({ locale }),
+  ]);
 
   if (!messages) {
     notFound();
   }
+
+  const isConsentAccepted =
+    consentRecord !== null || process.env.NODE_ENV === "development";
+  const initialConsentCategories = consentRecord?.categories ?? DEFAULT_CONSENT;
 
   return (
     <html lang={locale} suppressHydrationWarning>
@@ -60,12 +71,24 @@ export default async function LocaleLayout({
           strategy="beforeInteractive"
           dangerouslySetInnerHTML={{ __html: themePreloadScript }}
         />
+        {clientEnvs.NEXT_PUBLIC_GTM_ID && (
+          <GoogleTagManager
+            auth={clientEnvs.NEXT_PUBLIC_GTM_AUTH}
+            categories={initialConsentCategories}
+            gtmId={clientEnvs.NEXT_PUBLIC_GTM_ID}
+            preview={clientEnvs.NEXT_PUBLIC_GTM_PREVIEW}
+          />
+        )}
         <I18nProvider locale={locale} messages={messages}>
           <ClientThemeProvider>
             {children}
-            <SpeedInsights />
+            {initialConsentCategories.analytics && <SpeedInsights />}
             <Toaster />
             <ErrorServiceServer />
+            <CookieConsent
+              initialCategories={initialConsentCategories}
+              isConsentAccepted={isConsentAccepted}
+            />
           </ClientThemeProvider>
         </I18nProvider>
       </body>

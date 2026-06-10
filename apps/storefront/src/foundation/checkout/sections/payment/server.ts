@@ -124,13 +124,14 @@ export const getCheckoutPaymentSectionData = async ({
 
   let paymentGatewayCustomer: string | null = null;
   let paymentGatewayMethods: PaymentMethod[] = [];
+  const saleorAppToken = serverEnvs.SALEOR_APP_TOKEN;
 
-  if (user) {
+  if (user && saleorAppToken) {
     const resultPaymentGatewayCustomer = await paymentService.customerGet({
       user,
       channel: region.market.channel,
       environment: clientEnvs.ENVIRONMENT,
-      accessToken: serverEnvs.SALEOR_APP_TOKEN,
+      accessToken: saleorAppToken,
     });
 
     if (resultPaymentGatewayCustomer.ok) {

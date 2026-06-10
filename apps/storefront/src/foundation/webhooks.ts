@@ -3,12 +3,23 @@ import { createRemoteJWKSet, flattenedVerify } from "jose";
 import { clientEnvs } from "@/envs/client";
 import { storefrontLogger } from "@/services/logging";
 
-const JWKS = createRemoteJWKSet(
-  new URL(
-    new URL(clientEnvs.NEXT_PUBLIC_SALEOR_API_URL).origin +
-      "/.well-known/jwks.json",
-  ),
-);
+let saleorJwks: ReturnType<typeof createRemoteJWKSet> | null = null;
+
+const getSaleorJwks = () => {
+  const saleorApiUrl = clientEnvs.NEXT_PUBLIC_SALEOR_API_URL;
+
+  if (!saleorApiUrl) {
+    throw new Error("Please set NEXT_PUBLIC_SALEOR_API_URL.");
+  }
+
+  if (!saleorJwks) {
+    saleorJwks = createRemoteJWKSet(
+      new URL("/.well-known/jwks.json", new URL(saleorApiUrl).origin),
+    );
+  }
+
+  return saleorJwks;
+};
 
 // https://docs.saleor.io/docs/3.x/developer/extending/webhooks/payload-signature#validating-signature
 export const verifySaleorWebhookSignature = async (request: Request) => {
@@ -24,7 +35,7 @@ export const verifySaleorWebhookSignature = async (request: Request) => {
         payload: buffer.toString("utf-8"),
         signature,
       },
-      JWKS,
+      getSaleorJwks(),
     );
   } catch (e) {
     storefrontLogger.error("Saleor webhook signature verification failed.");

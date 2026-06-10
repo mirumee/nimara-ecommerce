@@ -4,6 +4,8 @@ import { type StripePaymentService } from "@nimara/infrastructure/payment/provid
 import { clientEnvs } from "@/envs/client";
 import { serverEnvs } from "@/envs/server";
 
+import { getRequiredSaleorApiUrl } from "../utils/required-env";
+
 let paymentServiceInstance: StripePaymentService | null = null;
 
 /**
@@ -22,7 +24,7 @@ export const createPaymentServiceLoader = (logger: Logger) => {
       await import("@nimara/infrastructure/payment/providers");
 
     paymentServiceInstance = stripePaymentService({
-      apiURI: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
+      apiURI: getRequiredSaleorApiUrl("payment service"),
       secretKey: serverEnvs.STRIPE_SECRET_KEY,
       publicKey: clientEnvs.STRIPE_PUBLIC_KEY,
       environment: clientEnvs.ENVIRONMENT,

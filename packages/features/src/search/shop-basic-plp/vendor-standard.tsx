@@ -181,7 +181,12 @@ export const VendorSearchView = async (props: VendorSearchViewProps) => {
             </div>
 
             {products.length ? (
-              <ProductsList products={products} productPath={paths.product} />
+              <ProductsList
+                products={products}
+                productPath={paths.product}
+                listId="vendor_search_results"
+                listName="Vendor search results"
+              />
             ) : (
               <VendorNoProducts />
             )}

@@ -1,29 +1,24 @@
+import { createCMSPageService } from "@nimara/infrastructure/cms-page/select";
 import type { Logger } from "@nimara/infrastructure/logging/types";
-import type { CMSPageService } from "@nimara/infrastructure/use-cases/cms-page/types";
 
-import { clientEnvs } from "@/envs/client";
+import { resolveCMSProvider } from "@/services/integrations/resolve";
+import { createServiceLoader } from "@/services/utils/create-loader";
+
+import { emptyCMSPageService } from "../utils/empty-services";
 
 /**
- * Creates a lazy loader function for the CMS page service.
+ * Creates a lazy loader for the CMS page service. The storefront only selects
+ * the provider (via env) and forwards the env record — the provider catalog,
+ * wiring and per-provider config contracts live in
+ * `@nimara/infrastructure/cms-page/select`.
  * This function is only used by the service registry.
  * @internal
  */
-export const createCMSPageServiceLoader = (logger: Logger) => {
-  let cmsServiceInstance: CMSPageService | null = null;
-
-  return async (): Promise<CMSPageService> => {
-    if (cmsServiceInstance) {
-      return cmsServiceInstance;
-    }
-
-    const { saleorCMSPageService } =
-      await import("@nimara/infrastructure/cms-page/providers");
-
-    cmsServiceInstance = saleorCMSPageService({
-      apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
-      logger,
-    });
-
-    return cmsServiceInstance;
-  };
-};
+export const createCMSPageServiceLoader = (logger: Logger) =>
+  createServiceLoader({
+    resolve: resolveCMSProvider,
+    build: (provider, log) =>
+      createCMSPageService(provider, { env: process.env, logger: log }),
+    emptyService: emptyCMSPageService,
+    logger,
+  });

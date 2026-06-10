@@ -3,6 +3,7 @@ import { getLocale } from "next-intl/server";
 
 import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { redirect } from "@nimara/i18n/routing";
+import { type FetchOptions } from "@nimara/infrastructure/graphql/client";
 
 import {
   MARKETPLACE_DEFAULT_VENDOR_DISPLAY_NAME,
@@ -25,7 +26,9 @@ import { getServiceRegistry } from "@/services/registry";
  * @returns {Promise<Checkout>} The current valid checkout object.
  * @throws Redirects to the cart page on error or missing/invalid checkout.
  */
-export const getCheckoutOrRedirect = async (): Promise<Checkout> | never => {
+export const getCheckoutOrRedirect = async (
+  options?: FetchOptions,
+): Promise<Checkout> | never => {
   const checkoutId = await getCheckoutId();
   const [locale, region] = await Promise.all([getLocale(), getCurrentRegion()]);
 
@@ -39,6 +42,7 @@ export const getCheckoutOrRedirect = async (): Promise<Checkout> | never => {
     checkoutId,
     languageCode: region.language.code,
     countryCode: region.market.countryCode,
+    options,
   });
 
   if (!resultCheckout.ok) {

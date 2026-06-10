@@ -9,9 +9,12 @@ import type { AsyncResult } from "@nimara/domain/objects/Result";
 import { type User } from "@nimara/domain/objects/User";
 import { ShoppingBag } from "@nimara/features/shared/shopping-bag/shopping-bag";
 import { LocalizedLink, useRouter } from "@nimara/i18n/routing";
+import { getTrackingService } from "@nimara/infrastructure/tracking/service";
 import { Button } from "@nimara/ui/components/button";
 import { useToast } from "@nimara/ui/hooks";
 import { cn } from "@nimara/ui/lib/utils";
+
+const tracking = getTrackingService();
 
 export interface CartDetailsProps {
   cart: Cart;
@@ -69,6 +72,7 @@ export const CartDetails = ({
   const handleLineQuantityChange = async (lineId: string, quantity: number) => {
     setIsProcessing(true);
     const checkoutId = resolveCheckoutIdForLine(lineId);
+    const line = cart.lines.find((entry) => entry.id === lineId);
 
     const result = await onLineQuantityChange({
       cartId: checkoutId,
@@ -77,6 +81,28 @@ export const CartDetails = ({
     });
 
     if (result.ok) {
+      if (line && quantity !== line.quantity) {
+        const isQuantityAdd = quantity > line.quantity;
+        const changedQuantity = Math.abs(quantity - line.quantity);
+        const unitAmount = line.total.amount / line.quantity;
+
+        if (isQuantityAdd) {
+          void tracking.trackAddToCart({
+            product: line.product,
+            price: { amount: unitAmount, currency: line.total.currency },
+            quantity: changedQuantity,
+          });
+        } else {
+          void tracking.trackRemoveFromCart({
+            line: {
+              ...line,
+              quantity: changedQuantity,
+              total: { ...line.total, amount: unitAmount * changedQuantity },
+            },
+          });
+        }
+      }
+
       await onCartUpdate(checkoutId);
       setIsProcessing(false);
 
@@ -94,6 +120,7 @@ export const CartDetails = ({
   const handleLineDelete = async (lineId: string) => {
     setIsProcessing(true);
     const checkoutId = resolveCheckoutIdForLine(lineId);
+    const deletedLine = cart.lines.find((line) => line.id === lineId);
 
     const result = await onLineDelete({
       cartId: checkoutId,
@@ -101,6 +128,10 @@ export const CartDetails = ({
     });
 
     if (result.ok) {
+      if (deletedLine) {
+        void tracking.trackRemoveFromCart({ line: deletedLine });
+      }
+
       await onCartUpdate(checkoutId);
       router.refresh();
     } else {
@@ -113,6 +144,10 @@ export const CartDetails = ({
       setIsProcessing(false);
     }
   };
+
+  useEffect(() => {
+    void tracking.trackViewCart({ cart });
+  }, []);
 
   // Unblock UI when cart updates
   useEffect(() => {

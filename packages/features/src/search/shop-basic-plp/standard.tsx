@@ -61,7 +61,12 @@ export const StandardSearchView = async (props: SearchViewProps) => {
             </div>
 
             {products.length ? (
-              <ProductsList products={products} productPath={paths.product} />
+              <ProductsList
+                products={products}
+                productPath={paths.product}
+                listId="search_results"
+                listName="Search results"
+              />
             ) : (
               <NoResults />
             )}

@@ -11,9 +11,12 @@ import { Button } from "@nimara/ui/components/button";
 import { MIN_PASSWORD_LENGTH } from "@/config";
 import { paths } from "@/foundation/routing/paths";
 import { useRouterWithState } from "@/foundation/use-router-with-state";
+import { createTrackingServiceLoader } from "@/services/lazy-loaders/tracking";
 
 import { registerAccount } from "./actions";
 import { type FormSchema, formSchema } from "./schema";
+
+const trackingServiceLoader = createTrackingServiceLoader();
 
 export function SignUpForm() {
   const t = useTranslations();
@@ -36,6 +39,9 @@ export function SignUpForm() {
     const result = await registerAccount(values);
 
     if (result.ok) {
+      const { trackSignUp } = await trackingServiceLoader();
+
+      await trackSignUp({ method: "password" });
       push(paths.createAccount.asPath({ query: { success: "true" } }));
 
       return;
