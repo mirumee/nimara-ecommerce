@@ -8,6 +8,7 @@
   },
   "exports": {
     "./postcss": "./src/postcss.config.cjs",
+    "./fallow": "./src/.fallowrc.json",
     "./tailwind": "./src/tailwind.config.ts",
     "./eslint/base": "./src/eslint/base.cjs",
     "./eslint/next": "./src/eslint/next.cjs",

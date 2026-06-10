@@ -47,6 +47,8 @@
     "db-ledger:up": "docker compose -f apps/marketplace/docker-compose.yml up -d db-ledger",
     "db-ledger:down": "docker compose -f apps/marketplace/docker-compose.yml stop db-ledger",
     "migrate:ledger": "dotenv -- node apps/marketplace/scripts/migrate-ledger.mjs",
+    "fallow": "fallow --format json -c ./packages/config/src/.fallowrc.json > fallow.json",
+    "boundary-violations": "fallow dead-code --boundary-violations --format json -c ./packages/config/src/.fallowrc.ca.json > boundary-violations.json",
     "graph": "turbo run build --graph=graph.mermaid"
   },
   "devDependencies": {
@@ -54,6 +56,7 @@
     "commitizen": "4.3.1",
     "dotenv-cli": "11.0.0",
     "eslint": "^8.57.0",
+    "fallow": "2.88.0",
     "husky": "9.1.7",
     "lint-staged": "^16.4.0",
     "prettier": "3.8.1",
