@@ -10,89 +10,43 @@ import type { CMSMenuService } from "./use-cases/cms-menu/types";
 import type { CMSPageService } from "./use-cases/cms-page/types";
 import type { SearchService } from "./use-cases/search/types";
 import type { UserService } from "./user/types";
+
 /**
- * Service registry interface that contains all services available to features.
- * Services are initialized by the storefront and passed to features via dependency injection.
- * Services are lazy-loaded and only initialized when accessed.
+ * The single source of truth for the services the registry exposes: each lazy
+ * getter mapped to the service it resolves. Add a capability here once — the
+ * {@link ServiceRegistry} getters and the storefront's loader table are derived
+ * from this map, so there is no separate interface to keep in sync.
  */
-export interface ServiceRegistry {
-  config: {
-    cacheTTL: {
-      cart: number;
-      cms: number;
-      pdp: number;
-    };
+export type CapabilityServices = {
+  getAddressService: AddressService;
+  getCMSMenuService: CMSMenuService;
+  getCMSPageService: CMSPageService;
+  getCartService: CartService;
+  getCheckoutService: CheckoutService;
+  getCollectionService: CollectionService;
+  getMarketplaceService: MarketplaceService;
+  getPaymentService: StripePaymentService;
+  getSearchService: SearchService;
+  getStoreService: StoreService;
+  getTrackingService: TrackingService;
+  getUserService: UserService;
+};
+
+export type ServiceRegistryConfig = {
+  cacheTTL: {
+    cart: number;
+    cms: number;
+    pdp: number;
   };
-  /**
-   * Gets the address service, initializing it lazily on first access.
-   * The service is cached after first initialization.
-   * @returns A promise that resolves to the address service instance
-   */
-  getAddressService(): Promise<AddressService>;
-  /**
-   * Gets the CMS menu service, initializing it lazily on first access.
-   * The service is cached after first initialization.
-   * @returns A promise that resolves to the CMS menu service instance
-   */
-  getCMSMenuService(): Promise<CMSMenuService>;
-  /**
-   * Gets the CMS page service, initializing it lazily on first access.
-   * The service is cached after first initialization.
-   * @returns A promise that resolves to the CMS page service instance
-   */
-  getCMSPageService(): Promise<CMSPageService>;
-  /**
-   * Gets the cart service, initializing it lazily on first access.
-   * The service is cached after first initialization.
-   * @returns A promise that resolves to the cart service instance
-   */
-  getCartService(): Promise<CartService>;
-  /**
-   * Gets the checkout service, initializing it lazily on first access.
-   * The service is cached after first initialization.
-   * @returns A promise that resolves to the checkout service instance
-   */
-  getCheckoutService(): Promise<CheckoutService>;
-  /**
-   * Gets the collection service, initializing it lazily on first access.
-   * The service is cached after first initialization.
-   * @returns A promise that resolves to the collection service instance
-   */
-  getCollectionService(): Promise<CollectionService>;
-  /**
-   * Gets the marketplace service, initializing it lazily on first access.
-   * The service is cached after first initialization.
-   * @returns A promise that resolves to the marketplace service instance
-   */
-  getMarketplaceService(): Promise<MarketplaceService>;
-  /**
-   * Gets the payment service, initializing it lazily on first access.
-   * The service is cached after first initialization.
-   * @returns A promise that resolves to the payment service instance
-   */
-  getPaymentService(): Promise<StripePaymentService>;
-  /**
-   * Gets the search service, initializing it lazily on first access.
-   * The service is cached after first initialization.
-   * @returns A promise that resolves to the search service instance
-   */
-  getSearchService(): Promise<SearchService>;
-  /**
-   * Gets the store service, initializing it lazily on first access.
-   * The service is cached after first initialization.
-   * @returns A promise that resolves to the store service instance
-   */
-  getStoreService(): Promise<StoreService>;
-  /**
-   * Gets the tracking service, initializing it lazily on first access.
-   * The service is cached after first initialization.
-   * @returns A promise that resolves to the tracking service instance
-   */
-  getTrackingService(): Promise<TrackingService>;
-  /**
-   * Gets the user service, initializing it lazily on first access.
-   * The service is cached after first initialization.
-   * @returns A promise that resolves to the user service instance
-   */
-  getUserService(): Promise<UserService>;
-}
+};
+
+/**
+ * Service registry passed to features via dependency injection. Services are
+ * lazy-loaded and cached on first access. The getters are derived from
+ * {@link CapabilityServices}.
+ */
+export type ServiceRegistry = {
+  config: ServiceRegistryConfig;
+} & {
+  [K in keyof CapabilityServices]: () => Promise<CapabilityServices[K]>;
+};
