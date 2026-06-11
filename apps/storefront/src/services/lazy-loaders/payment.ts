@@ -30,9 +30,6 @@ export const createPaymentServiceLoader = (logger: Logger) => {
     const publicKey = clientEnvs.STRIPE_PUBLIC_KEY;
     const gatewayAppId = clientEnvs.PAYMENT_APP_ID;
 
-    console.log("apiURI", apiURI);
-    console.log("publicKey", publicKey);
-    console.log("gatewayAppId", gatewayAppId);
     if (!apiURI || !publicKey || !gatewayAppId) {
       logger.warning(
         "Payment is not configured. Set NEXT_PUBLIC_SALEOR_API_URL, NEXT_PUBLIC_STRIPE_PUBLIC_KEY and NEXT_PUBLIC_PAYMENT_APP_ID to enable it.",
