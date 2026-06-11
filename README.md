@@ -36,6 +36,7 @@
 
 - **Multi-region & global brands:** Sell across multiple channels, currencies, languages, and markets from a single storefront, with localized content and pricing.
 
+- **Privacy-first analytics:** Google Tag Manager and GA4 e-commerce tracking (product views, cart, checkout, purchase) built in, gated by Google Consent Mode v2 with a ready-made cookie consent banner. Enable it with a single env var, or plug in your own tracking provider.
 
 - **Swap any integration:** Commerce backend, CMS, search, and payments each sit behind a typed contract, so you can change providers without rewriting the app. Ships with [Saleor](https://saleor.io/) as the default backend, plus [ButterCMS](https://buttercms.com/) and [Algolia](https://www.algolia.com/) as drop-in alternatives.
 
