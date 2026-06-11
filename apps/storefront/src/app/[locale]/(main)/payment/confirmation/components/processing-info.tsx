@@ -16,6 +16,10 @@ import { processPaymentAction, type ProcessPaymentResult } from "../actions";
 
 const trackingServiceLoader = createTrackingServiceLoader();
 
+// GA4 purchase events must fire once per order — a remount (or a poll racing
+// `router.replace`) would otherwise duplicate the conversion.
+const trackedPurchases = new Set<string>();
+
 const POLL_DELAY_MS = 750;
 const TIME_EXCEEDED_MS = 30 * 1000;
 
@@ -41,9 +45,13 @@ export const ProcessingInfo = ({
       });
 
       if ("orderId" in result) {
-        const { trackPurchase } = await trackingServiceLoader();
+        if (!trackedPurchases.has(result.orderId)) {
+          trackedPurchases.add(result.orderId);
 
-        await trackPurchase({ checkout, orderId: result.orderId });
+          const { trackPurchase } = await trackingServiceLoader();
+
+          await trackPurchase({ checkout, orderId: result.orderId });
+        }
 
         router.replace(
           paths.order.confirmation.asPath({
