@@ -10,7 +10,7 @@ const emptyStringToUndefined = (value: unknown) =>
 const schema = z.object({
   // Saleor envs
   SALEOR_APP_TOKEN: z.string().optional(),
-  STRIPE_SECRET_KEY: z.string(),
+  STRIPE_SECRET_KEY: z.string().optional(),
 
   // Integration selection (build-time, server-side). The allowed values are
   // derived from each capability's provider manifests.

@@ -51,8 +51,8 @@ const schema = z.object({
     (val) => normalizePublicUrl(val) ?? defaultStorefrontUrl,
     z.url(),
   ),
-  PAYMENT_APP_ID: z.preprocess(emptyStringToUndefined, z.string()),
-  STRIPE_PUBLIC_KEY: z.string().trim(),
+  PAYMENT_APP_ID: z.preprocess(emptyStringToUndefined, z.string().optional()),
+  STRIPE_PUBLIC_KEY: z.string().trim().optional(),
   NEXT_PUBLIC_DEFAULT_IMAGE_FORMAT: z.preprocess(
     emptyStringToUndefined,
     z.enum(["AVIF", "WEBP", "ORIGINAL"]).default("AVIF"),
