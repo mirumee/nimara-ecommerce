@@ -135,11 +135,35 @@
     "associated-products": "Associated products",
     "collection-image": "Collection image"
   },
+  "cookie-consent": {
+    "accept-all": "Accept all",
+    "aria-label": "Cookie consent",
+    "description": "We use necessary cookies to make our site work. With your consent, we also use analytics cookies to understand how the site is used and improve it. See our <termsLink>Terms of Use</termsLink> and <privacyLink>Privacy Policy</privacyLink>.",
+    "reject-all": "Reject all",
+    "settings": "Settings",
+    "title": "We use cookies"
+  },
+  "cookie-settings": {
+    "accept-all": "Accept all",
+    "analytics": {
+      "description": "Helps us understand how visitors use the site so we can improve it. Includes Google Analytics via Google Tag Manager.",
+      "title": "Analytics"
+    },
+    "description": "Manage which categories of cookies you allow. Necessary cookies cannot be disabled because the site cannot function without them.",
+    "necessary": {
+      "description": "Required for core site functionality: authentication, cart, region, language preference, and your cookie choice itself. Always on.",
+      "title": "Necessary"
+    },
+    "reject-all": "Reject all",
+    "save": "Save preferences",
+    "title": "Cookie settings"
+  },
   "delivery-method": {
     "delivery-method": "Delivery method",
     "title": "Delivery"
   },
   "footer": {
+    "cookie-settings": "Cookie settings",
     "demo-version": "<link>This is the demo version of Nimara Store.</link>",
     "help": "Help",
     "made-with": "Made with ❤️ by <link>Mirumee</link>",

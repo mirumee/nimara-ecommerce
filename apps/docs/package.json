@@ -5,7 +5,7 @@
   "scripts": {
     "build": "docusaurus build",
     "clear": "docusaurus clear",
-    "dev": "docusaurus start",
+    "dev": "docusaurus start --port 5000",
     "start": "docusaurus serve",
     "typecheck": "tsc --noEmit"
   },

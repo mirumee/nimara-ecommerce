@@ -61,7 +61,7 @@
   "name": "marketplace",
   "private": true,
   "scripts": {
-    "build": "pnpm lint && next build",
+    "build": "next build",
     "dev": "next dev --port 3001 --turbopack",
     "dev:docker": "docker-compose up -d && next dev --port 3001 --turbopack",
     "lint": "eslint . --ext .js,.ts,.tsx",

@@ -8,6 +8,7 @@ module.exports = {
     "sort-keys-fix",
   ],
   extends: [
+    "turbo",
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "plugin:import/recommended",

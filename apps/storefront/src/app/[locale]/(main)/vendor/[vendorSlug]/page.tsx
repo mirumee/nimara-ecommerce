@@ -107,7 +107,7 @@ export async function generateMetadata(
     fieldText(page.fields, VENDOR_PAGE_ATTR_NAME) ?? page.title;
 
   return {
-    title: `${displayTitle} | ${clientEnvs.NEXT_PUBLIC_DEFAULT_PAGE_TITLE}`,
+    title: displayTitle,
   };
 }
 

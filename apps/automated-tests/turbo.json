@@ -3,6 +3,8 @@
   "tasks": {
     "test:e2e": {
       "dependsOn": ["test"],
+      "env": ["TEST_ENV_URL"],
+      "passThroughEnv": ["USER_EMAIL", "USER_PASSWORD"],
       "inputs": [
         "./tests/e2e/**/*.test.ts",
         "./pages/*.ts",

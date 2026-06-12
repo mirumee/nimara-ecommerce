@@ -1,29 +1,86 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useState } from "react";
-import { useInterval } from "usehooks-ts";
+import { useEffect, useRef, useState } from "react";
+import { useTimeout } from "usehooks-ts";
 
+import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { type AppErrorCode } from "@nimara/domain/objects/Error";
 import { useRouter } from "@nimara/i18n/routing";
 import { Spinner } from "@nimara/ui/components/spinner";
 
+import { paths, QUERY_PARAMS } from "@/foundation/routing/paths";
+import { createTrackingServiceLoader } from "@/services/lazy-loaders/tracking";
+
+import { processPaymentAction, type ProcessPaymentResult } from "../actions";
+
+const trackingServiceLoader = createTrackingServiceLoader();
+
+// GA4 purchase events must fire once per order — a remount (or a poll racing
+// `router.replace`) would otherwise duplicate the conversion.
+const trackedPurchases = new Set<string>();
+
+const POLL_DELAY_MS = 750;
+const TIME_EXCEEDED_MS = 30 * 1000;
+
 export const ProcessingInfo = ({
-  errors,
+  checkout,
+  searchParams,
 }: {
-  errors: { code: AppErrorCode }[];
+  checkout: Checkout;
+  searchParams: Record<string, string>;
 }) => {
-  const [isTimeExceeded, setIsTimeExceeded] = useState(false);
   const t = useTranslations();
   const router = useRouter();
+  const [errors, setErrors] = useState<{ code: AppErrorCode }[]>([]);
+  const [isTimeExceeded, setIsTimeExceeded] = useState(false);
+  const pollRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useInterval(() => {
-    setIsTimeExceeded(true);
-  }, 30 * 1000);
+  useTimeout(() => setIsTimeExceeded(true), TIME_EXCEEDED_MS);
 
-  useInterval(() => {
-    router.refresh();
-  }, 3500);
+  useEffect(() => {
+    const tick = async () => {
+      const result: ProcessPaymentResult = await processPaymentAction({
+        searchParams,
+      });
+
+      if ("orderId" in result) {
+        if (!trackedPurchases.has(result.orderId)) {
+          trackedPurchases.add(result.orderId);
+
+          const { trackPurchase } = await trackingServiceLoader();
+
+          await trackPurchase({ checkout, orderId: result.orderId });
+        }
+
+        router.replace(
+          paths.order.confirmation.asPath({
+            id: result.orderId,
+            query: { [QUERY_PARAMS.orderPlaced]: "true" },
+          }),
+        );
+
+        return;
+      }
+
+      if ("isProcessing" in result) {
+        pollRef.current = setTimeout(tick, POLL_DELAY_MS);
+
+        return;
+      }
+
+      setErrors(result.errors);
+    };
+
+    void tick();
+
+    return () => {
+      if (pollRef.current) {
+        clearTimeout(pollRef.current);
+        pollRef.current = null;
+      }
+    };
+  }, []);
 
   return (
     <div className="py-32 leading-10">

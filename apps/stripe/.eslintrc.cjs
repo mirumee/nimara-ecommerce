@@ -7,4 +7,13 @@ module.exports = {
     tsconfigRootDir: __dirname,
     sourceType: "module",
   },
+  overrides: [
+    {
+      files: ["src/lib/zod/util.test.ts"],
+      rules: {
+        // This key is created by the test and is not a Turbo task input.
+        "turbo/no-undeclared-env-vars": ["error", { allowList: ["^ENV_KEY$"] }],
+      },
+    },
+  ],
 };

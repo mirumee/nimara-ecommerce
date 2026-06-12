@@ -29,9 +29,16 @@ export const getUCPService = async (config: {
 
   const { saleorUCPService } =
     await import("@nimara/infrastructure/ucp/saleor/service");
+  const saleorApiUrl = clientEnvs.NEXT_PUBLIC_SALEOR_API_URL;
+
+  if (!saleorApiUrl) {
+    throw new Error(
+      "Please set NEXT_PUBLIC_SALEOR_API_URL to use UCP service.",
+    );
+  }
 
   const service = saleorUCPService({
-    apiUrl: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
+    apiUrl: saleorApiUrl,
     storefrontURL: clientEnvs.NEXT_PUBLIC_STOREFRONT_URL,
     version: UCP_VERSION,
     capabilities: UCP_CAPABILITIES,

@@ -19,6 +19,7 @@ import { useVariantSelection } from "../hooks/useVariantSelection";
 import { type AddToBagAction } from "../types";
 import { AddToBag } from "./add-to-bag";
 import { VariantDropdown } from "./variant-dropdown";
+import { ViewItemTracker } from "./view-item-tracker";
 
 type VariantSelectorProps = {
   addToBagAction: AddToBagAction;
@@ -60,6 +61,11 @@ export const VariantSelector = ({
 
   return (
     <>
+      <ViewItemTracker
+        product={product}
+        price={chosenVariantAvailability?.price ?? startPrice}
+      />
+
       <p className="py-4 text-center text-lg md:text-left">
         <Price
           price={chosenVariantAvailability?.price}
@@ -180,6 +186,8 @@ export const VariantSelector = ({
 
       <AddToBag
         cartPath={cartPath}
+        product={product}
+        price={chosenVariantAvailability?.price}
         productVendorId={marketplaceEnabled ? (product.vendorId ?? null) : null}
         variantId={
           matchingVariants?.length > 1

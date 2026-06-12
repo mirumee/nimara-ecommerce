@@ -1,0 +1,92 @@
+{
+  "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
+  "entry": ["src/index.{js,jsx,mjs}", "src/main.{js,jsx,mjs}"],
+  "ignorePatterns": [
+    "**/generated/**",
+    "**/generated/**/*",
+    "**/generated.*",
+    "packages/codegen/schema.ts",
+    "**/*.d.ts",
+    "apps/docs/**",
+    "**/schema.graphql",
+    "**/*.graphql",
+    "**/.graphqlrc.ts"
+  ],
+  "workspaces": {
+    "packages": ["apps/*", "packages/*"]
+  },
+  "duplicates": {
+    "mode": "semantic",
+    "minOccurrences": 3
+  },
+  "boundaries": {
+    "zones": [
+      { "name": "domain", "patterns": ["packages/domain/**"] },
+      {
+        "name": "application",
+        "patterns": ["packages/infrastructure/src/use-cases/**"]
+      },
+      { "name": "adapters", "patterns": ["packages/infrastructure/**"] },
+      { "name": "codegen", "patterns": ["packages/codegen/**"] },
+      { "name": "config", "patterns": ["packages/config/**"] },
+      { "name": "i18n", "patterns": ["packages/i18n/**"] },
+      { "name": "ui", "patterns": ["packages/ui/**"] },
+      { "name": "foundation", "patterns": ["packages/foundation/**"] },
+      { "name": "features", "patterns": ["packages/features/**"] },
+      {
+        "name": "storefront-composition",
+        "patterns": ["apps/storefront/src/services/**"]
+      },
+      { "name": "storefront", "patterns": ["apps/storefront/**"] },
+      { "name": "marketplace", "patterns": ["apps/marketplace/**"] },
+      { "name": "stripe", "patterns": ["apps/stripe/**"] }
+    ],
+    "rules": [
+      { "from": "domain", "allow": [] },
+      { "from": "application", "allow": ["domain"] },
+      {
+        "from": "adapters",
+        "allow": ["application", "domain", "codegen", "config"]
+      },
+      {
+        "from": "features",
+        "allow": ["domain", "application", "ui", "i18n", "foundation", "config"]
+      },
+      { "from": "ui", "allow": ["config"] },
+      { "from": "i18n", "allow": ["config"] },
+      { "from": "codegen", "allow": ["config"] },
+      { "from": "config", "allow": [] },
+      { "from": "foundation", "allow": ["domain", "config"] },
+      {
+        "from": "storefront-composition",
+        "allow": [
+          "storefront",
+          "adapters",
+          "application",
+          "domain",
+          "foundation",
+          "i18n",
+          "config"
+        ]
+      },
+      {
+        "from": "storefront",
+        "allow": [
+          "storefront-composition",
+          "features",
+          "ui",
+          "foundation",
+          "domain",
+          "i18n",
+          "config"
+        ]
+      },
+      {
+        "from": "marketplace",
+        "allow": ["features", "ui", "domain", "i18n", "config"]
+      },
+      { "from": "stripe", "allow": ["ui", "domain", "config"] }
+    ]
+  },
+  "rules": {}
+}

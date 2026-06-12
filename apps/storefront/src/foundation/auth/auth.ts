@@ -10,11 +10,15 @@ import { clientEnvs } from "@/envs/client";
 import { storefrontLogger } from "@/services/logging";
 
 export async function handleLogout() {
-  (
-    await createSaleorAuthClientFromConfig({
-      saleorApiUrl: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
-    })
-  ).signOut();
+  const saleorApiUrl = clientEnvs.NEXT_PUBLIC_SALEOR_API_URL;
+
+  if (saleorApiUrl) {
+    (
+      await createSaleorAuthClientFromConfig({
+        saleorApiUrl,
+      })
+    ).signOut();
+  }
 
   Sentry.setUser(null);
 

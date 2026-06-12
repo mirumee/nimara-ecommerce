@@ -1,0 +1,78 @@
+{
+  "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
+  "entry": ["src/index.{js,jsx,mjs}", "src/main.{js,jsx,mjs}"],
+  "ignorePatterns": [
+    "**/generated/**",
+    "**/generated/**/*",
+    "**/generated.*",
+    "packages/codegen/schema.ts",
+    "**/*.d.ts",
+    "apps/docs/**",
+    "**/schema.graphql",
+    "**/*.graphql",
+    "**/.graphqlrc.ts"
+  ],
+  "workspaces": {
+    "packages": ["apps/*", "packages/*"]
+  },
+  "duplicates": {
+    "mode": "semantic",
+    "minOccurrences": 3
+  },
+  "boundaries": {
+    "zones": [
+      { "name": "domain", "patterns": ["packages/domain/**"] },
+      { "name": "config", "patterns": ["packages/config/**"] },
+      { "name": "i18n", "patterns": ["packages/i18n/**"] },
+      { "name": "codegen", "patterns": ["packages/codegen/**"] },
+      { "name": "ui", "patterns": ["packages/ui/**"] },
+      { "name": "foundation", "patterns": ["packages/foundation/**"] },
+      { "name": "infrastructure", "patterns": ["packages/infrastructure/**"] },
+      { "name": "features", "patterns": ["packages/features/**"] },
+      { "name": "storefront", "patterns": ["apps/storefront/**"] },
+      { "name": "marketplace", "patterns": ["apps/marketplace/**"] },
+      { "name": "stripe", "patterns": ["apps/stripe/**"] }
+    ],
+    "rules": [
+      { "from": "domain", "allow": [] },
+      { "from": "config", "allow": [] },
+      { "from": "i18n", "allow": ["config"] },
+      { "from": "ui", "allow": ["config"] },
+      { "from": "codegen", "allow": ["config"] },
+      { "from": "foundation", "allow": ["domain", "i18n", "ui", "config"] },
+      {
+        "from": "infrastructure",
+        "allow": ["domain", "foundation", "codegen", "config"]
+      },
+      {
+        "from": "features",
+        "allow": [
+          "domain",
+          "foundation",
+          "infrastructure",
+          "ui",
+          "i18n",
+          "config"
+        ]
+      },
+      {
+        "from": "storefront",
+        "allow": [
+          "features",
+          "infrastructure",
+          "ui",
+          "foundation",
+          "domain",
+          "i18n",
+          "config"
+        ]
+      },
+      {
+        "from": "marketplace",
+        "allow": ["infrastructure", "ui", "domain", "i18n", "config"]
+      },
+      { "from": "stripe", "allow": ["infrastructure", "ui", "config"] }
+    ]
+  },
+  "rules": {}
+}

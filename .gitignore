@@ -33,12 +33,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# local env files
+# local env files — env lives in apps/*/.env (see apps/*/.env.example)
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*
+!.env.example
 
 # turbo
 .turbo
@@ -88,3 +86,7 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+.fallow/
+
+.omx/
+.env*.local

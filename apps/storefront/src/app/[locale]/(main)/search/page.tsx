@@ -13,6 +13,7 @@ import { paths } from "@/foundation/routing/paths";
 import { getServiceRegistry } from "@/services/registry";
 
 import { handleFiltersFormSubmit } from "./_actions/handle-filters-form-submit";
+import { SearchTracker } from "./_components/search-tracker";
 
 type SearchPageProps = {
   params: Promise<{ locale: Locale }>;
@@ -41,26 +42,30 @@ export async function generateMetadata(
 }
 
 export default async function Page(props: SearchPageProps) {
-  const [services, region] = await Promise.all([
+  const [services, region, searchParams] = await Promise.all([
     getServiceRegistry(),
     getCurrentRegion(),
+    props.searchParams,
   ]);
 
   return (
-    <StandardSearchView
-      {...props}
-      region={region}
-      services={services}
-      paths={{
-        home: paths.home.asPath(),
-        search: paths.search.asPath(),
-        product: (slug) => paths.products.asPath({ slug }),
-      }}
-      localePrefixes={LOCALE_PREFIXES}
-      defaultLocale={DEFAULT_LOCALE}
-      defaultResultsPerPage={DEFAULT_RESULTS_PER_PAGE}
-      defaultSortBy={DEFAULT_SORT_BY}
-      handleFiltersFormSubmit={handleFiltersFormSubmit}
-    />
+    <>
+      {searchParams.q && <SearchTracker searchTerm={searchParams.q} />}
+      <StandardSearchView
+        {...props}
+        region={region}
+        services={services}
+        paths={{
+          home: paths.home.asPath(),
+          search: paths.search.asPath(),
+          product: (slug) => paths.products.asPath({ slug }),
+        }}
+        localePrefixes={LOCALE_PREFIXES}
+        defaultLocale={DEFAULT_LOCALE}
+        defaultResultsPerPage={DEFAULT_RESULTS_PER_PAGE}
+        defaultSortBy={DEFAULT_SORT_BY}
+        handleFiltersFormSubmit={handleFiltersFormSubmit}
+      />
+    </>
   );
 }
