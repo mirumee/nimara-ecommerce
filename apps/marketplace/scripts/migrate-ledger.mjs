@@ -9,8 +9,10 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const connectionString = process.env.DATABASE_URL?.trim();
 
 if (!connectionString) {
-  console.error("DATABASE_URL is required (see apps/marketplace/.env.example)");
-  process.exit(1);
+  console.warn(
+    "DATABASE_URL not set — skipping ledger migrations (the Postgres ledger is optional; see apps/marketplace/.env.example).",
+  );
+  process.exit(0);
 }
 
 const migrationsFolder = join(__dirname, "../db/drizzle");
