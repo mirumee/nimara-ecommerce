@@ -90,3 +90,4 @@ terraform.rc
 
 .omx/
 .env*.local
+.env*

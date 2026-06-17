@@ -1,45 +1,48 @@
-import { z } from "zod";
+import { type Logger } from "@nimara/infrastructure/logging/types";
+import {
+  type AlgoliaSearchServiceConfig,
+  type AvailableFacets,
+} from "@nimara/infrastructure/search/algolia/types";
+import { type SaleorSearchServiceConfig } from "@nimara/infrastructure/search/saleor/types";
+import { type SearchService } from "@nimara/infrastructure/use-cases/search/types";
 
-import { type Logger } from "#root/logging/types";
+import { clientEnvs } from "@/envs/client";
 
-import { type AlgoliaSearchServiceConfig, type AvailableFacets } from "./types";
+import { getStorefrontLogger } from "./lazy-logging";
 
-const facetType = z.enum([
-  "BOOLEAN",
-  "DATE",
-  "DATE_TIME",
-  "DROPDOWN",
-  "FILE",
-  "MULTISELECT",
-  "NUMERIC",
-  "PLAIN_TEXT",
-  "REFERENCE",
-  "RICH_TEXT",
-  "SWATCH",
-]);
-
-const availableFacetSchema = z.object({
-  messageKey: z.string().optional(),
-  name: z.string().optional(),
-  slug: z.string(),
-  type: facetType,
-});
-
-const virtualReplicaSchema = z.object({
-  indexName: z.string(),
-  messageKey: z.string(),
-  queryParamValue: z.string(),
-});
-
-const indexSettingsSchema = z.object({
-  availableFacets: z.record(z.string(), availableFacetSchema),
-  channel: z.string(),
-  currency: z.string().optional(),
-  entity: z.string().optional(),
-  indexName: z.string(),
-  languageCode: z.string().optional(),
-  virtualReplicas: z.array(virtualReplicaSchema),
-});
+export const SALEOR_SEARCH_SERVICE_CONFIG = (logger: Logger) =>
+  ({
+    apiURL: clientEnvs.NEXT_PUBLIC_SALEOR_API_URL,
+    settings: {
+      sorting: [
+        {
+          saleorValue: {
+            field: "NAME",
+            direction: "ASC",
+          },
+          queryParamValue: "name-asc",
+          messageKey: "search.name-asc",
+        },
+        {
+          saleorValue: {
+            field: "PRICE",
+            direction: "DESC",
+          },
+          queryParamValue: "price-desc",
+          messageKey: "search.price-desc",
+        },
+        {
+          saleorValue: {
+            field: "PRICE",
+            direction: "ASC",
+          },
+          queryParamValue: "price-asc",
+          messageKey: "search.price-asc",
+        },
+      ],
+    },
+    logger: logger,
+  }) as const satisfies SaleorSearchServiceConfig;
 
 const commonFacets = {
   "attributes.Category": {
@@ -89,51 +92,15 @@ const commonFacets = {
   },
 } satisfies AvailableFacets;
 
-const indicesSchema = z
-  .array(indexSettingsSchema)
-  .min(1, "At least one Algolia index must be configured.");
-
-export const algoliaSearchEnvSchema = z.object({
-  NEXT_PUBLIC_ALGOLIA_API_KEY: z.string().min(1),
-  NEXT_PUBLIC_ALGOLIA_APP_ID: z.string().min(1),
-  NEXT_PUBLIC_SEARCH_ALGOLIA_INDICES: z.string(),
-});
-
-export const toAlgoliaSearchConfig = (
-  env: Record<string, string | undefined>,
-  logger: Logger,
-): AlgoliaSearchServiceConfig => {
-  const parsed = algoliaSearchEnvSchema.parse(env);
-
-  return {
+export const ALGOLIA_SEARCH_SERVICE_CONFIG = (logger: Logger) =>
+  ({
     credentials: {
-      appId: parsed.NEXT_PUBLIC_ALGOLIA_APP_ID,
-      apiKey: parsed.NEXT_PUBLIC_ALGOLIA_API_KEY,
+      apiKey: clientEnvs.NEXT_PUBLIC_ALGOLIA_API_KEY,
+      appId: clientEnvs.NEXT_PUBLIC_ALGOLIA_APP_ID,
     },
+    logger: logger,
     settings: {
       indices: [
-        {
-          availableFacets: commonFacets,
-          channel: "default-channel",
-          indexName: "channel-uk.GBP.products",
-          virtualReplicas: [
-            {
-              indexName: "channel-uk.GBP.products.name_asc",
-              messageKey: "search.name-asc",
-              queryParamValue: "alpha-asc",
-            },
-            {
-              indexName: "channel-uk.GBP.products.grossPrice_asc",
-              messageKey: "search.price-asc",
-              queryParamValue: "price-asc",
-            },
-            {
-              indexName: "channel-uk.GBP.products.grossPrice_desc",
-              messageKey: "search.price-desc",
-              queryParamValue: "price-desc",
-            },
-          ],
-        },
         {
           availableFacets: commonFacets,
           channel: "channel-uk",
@@ -180,6 +147,36 @@ export const toAlgoliaSearchConfig = (
         },
       ],
     },
-    logger,
-  };
+  }) as const satisfies AlgoliaSearchServiceConfig;
+
+let loadedService: SearchService | null = null;
+
+/**
+ * Loads the Saleor AddressService instance.
+ * @returns A promise that resolves to the AddressService instance.
+ */
+export const getSearchService = async (): Promise<SearchService> => {
+  if (loadedService) {
+    return loadedService;
+  }
+
+  const storefrontLogger = await getStorefrontLogger();
+
+  if (clientEnvs.NEXT_PUBLIC_SEARCH_SERVICE === "ALGOLIA") {
+    const { algoliaSearchService } =
+      await import("@nimara/infrastructure/search/algolia/provider");
+
+    loadedService = algoliaSearchService(
+      ALGOLIA_SEARCH_SERVICE_CONFIG(storefrontLogger),
+    );
+  } else {
+    const { saleorSearchService } =
+      await import("@nimara/infrastructure/search/saleor/provider");
+
+    loadedService = saleorSearchService(
+      SALEOR_SEARCH_SERVICE_CONFIG(storefrontLogger),
+    );
+  }
+
+  return loadedService;
 };

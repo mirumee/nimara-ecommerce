@@ -5,16 +5,16 @@ import { type Logger } from "#root/logging/types";
 import { type ButterCMSPageServiceConfig } from "../types";
 
 export const butterCMSPageEnvSchema = z.object({
-  CMS_BUTTER_TOKEN: z
+  NEXT_PUBLIC_BUTTER_CMS_API_KEY: z
     .string()
-    .min(1, "CMS_BUTTER_TOKEN is required for ButterCMS pages."),
+    .min(1, "NEXT_PUBLIC_BUTTER_CMS_API_KEY is required for ButterCMS pages."),
 });
 
 export const toButterCMSPageConfig = (
   env: Record<string, string | undefined>,
   logger: Logger,
 ): ButterCMSPageServiceConfig => {
-  const { CMS_BUTTER_TOKEN } = butterCMSPageEnvSchema.parse(env);
+  const { NEXT_PUBLIC_BUTTER_CMS_API_KEY } = butterCMSPageEnvSchema.parse(env);
 
-  return { token: CMS_BUTTER_TOKEN, logger };
+  return { token: NEXT_PUBLIC_BUTTER_CMS_API_KEY, logger };
 };

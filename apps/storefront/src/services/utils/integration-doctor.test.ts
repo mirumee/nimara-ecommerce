@@ -60,13 +60,17 @@ describe("buildIntegrationReport", () => {
     expect(search).toMatchObject({ ok: true, missing: [], selected: "saleor" });
   });
 
-  it("flags missing CMS_BUTTER_TOKEN for butter-cms (pages + menus)", () => {
+  it("flags missing NEXT_PUBLIC_BUTTER_CMS_API_KEY for butter-cms (pages + menus)", () => {
     envMock.CMS_SERVICE = "butter-cms";
 
     const rows = buildIntegrationReport({});
 
-    expect(rowFor(rows, "cms-page").missing).toContain("CMS_BUTTER_TOKEN");
-    expect(rowFor(rows, "cms-menu").missing).toContain("CMS_BUTTER_TOKEN");
+    expect(rowFor(rows, "cms-page").missing).toContain(
+      "NEXT_PUBLIC_BUTTER_CMS_API_KEY",
+    );
+    expect(rowFor(rows, "cms-menu").missing).toContain(
+      "NEXT_PUBLIC_BUTTER_CMS_API_KEY",
+    );
   });
 
   it("treats dummy as configured (no env required)", () => {
