@@ -1,9 +1,13 @@
+import * as dotenv from "dotenv";
+
 import type { VersionOptions } from "@docusaurus/plugin-content-docs";
 import type * as Preset from "@docusaurus/preset-classic";
 import type { Config } from "@docusaurus/types";
 
 import { pluginLlmsTxt } from "./src/plugins/llms-txt";
 import docsVersionsList from "./versions.json";
+
+dotenv.config();
 
 const [latestDocsVersion] = docsVersionsList;
 
@@ -24,6 +28,14 @@ const docsVersions = Object.fromEntries(
   ]),
 ) satisfies { [versionName: string]: VersionOptions };
 
+const algoliaSiteVerification = process.env.ALGOLIA_SITE_VERIFICATION;
+const algoliaPublicApiKey = process.env.ALGOLIA_PUBLIC_API_KEY;
+const algoliaAppId = process.env.ALGOLIA_APP_ID;
+const algoliaCrawlerName = process.env.ALGOLIA_CRAWLER_NAME;
+
+const isAlgolia = Boolean(
+  algoliaPublicApiKey && algoliaAppId && algoliaCrawlerName,
+);
 const config: Config = {
   title: "Nimara",
   tagline: "Modern headless e-commerce platform built on Saleor",
@@ -75,13 +87,24 @@ const config: Config = {
 
   themeConfig: {
     image: "img/nimara-social.png",
-    algolia: {
-      appId: "KP6AWCIO17",
-      // Search-only API key - safe to commit (public).
-      apiKey: "60042e9e402626bdaa52abb4d5cce430",
-      indexName: "crawler-nimara-docs",
-      contextualSearch: true,
-    },
+    metadata: algoliaSiteVerification
+      ? [
+          {
+            name: "algolia-site-verification",
+            content: algoliaSiteVerification,
+          },
+        ]
+      : [],
+    ...(isAlgolia
+      ? {
+          algolia: {
+            appId: algoliaAppId,
+            apiKey: algoliaPublicApiKey,
+            indexName: algoliaCrawlerName,
+            contextualSearch: true,
+          },
+        }
+      : {}),
     navbar: {
       title: "Nimara",
       logo: {
