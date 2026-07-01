@@ -2,6 +2,12 @@
   "extends": ["//"],
   "tasks": {
     "build": {
+      "env": [
+        "ALGOLIA_APP_ID",
+        "ALGOLIA_PUBLIC_API_KEY",
+        "ALGOLIA_CRAWLER_NAME",
+        "ALGOLIA_SITE_VERIFICATION"
+      ],
       "inputs": [
         "./src/**/*.[tsx|ts|md|mdx|json|css|scss|html]",
         "./versioned_docs/**/*.[md|mdx]",
