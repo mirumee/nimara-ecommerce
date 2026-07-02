@@ -15,14 +15,14 @@ Made with the latest version of Next.js, TypeScript and React Server Components,
 
 To get started with Nimara, explore the **Quickstart** section which contains step-by-step guides for:
 
-- **[Running locally](running-locally)** - Set up Nimara on your local development environment
-- **[Storefront](storefront)** - Deploy your storefront to production
-- **[Environment variables](environment-variables)** - Configure your application settings
-- **[Saleor CMS](saleor-cms)** - Manage your content with Saleor's CMS features
-- **[Add new channel](add-new-channel)** - Add locales, languages, and markets
-- **[UCP integration](ucp-integration)** - Universal Commerce Protocol for AI agents and platforms
-- **[Stripe integration](stripe-integration)** - Set up payment processing
-- **[Marketplace](marketplace)** - Set up the vendor marketplace app
-- **[Terraform](using-terraform)** - Infrastructure as code deployment
+- **[Running locally](./running-locally.md)** - Set up Nimara on your local development environment
+- **[Storefront](./storefront.mdx)** - Deploy your storefront to production
+- **[Environment variables](./environment-variables.md)** - Configure your application settings
+- **[Saleor CMS](./saleor-cms.mdx)** - Manage your content with Saleor's CMS features
+- **[Add new channel](./add-new-channel.mdx)** - Add locales, languages, and markets
+- **[UCP integration](./ucp-integration.md)** - Universal Commerce Protocol for AI agents and platforms
+- **[Stripe integration](./stripe-integration.mdx)** - Set up payment processing
+- **[Marketplace](./marketplace.mdx)** - Set up the vendor marketplace app
+- **[Terraform](./using-terraform.mdx)** - Infrastructure as code deployment
 
 Choose a guide from the menu to begin!
