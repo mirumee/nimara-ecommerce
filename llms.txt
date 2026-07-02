@@ -1,0 +1,32 @@
+# Nimara
+> Modern headless e-commerce storefront built on Saleor
+
+Nimara is an open-source headless e-commerce platform built with Next.js, TypeScript, and React Server Components on top of Saleor. It supports multi-channel, multi-currency storefronts, Universal Commerce Protocol (UCP) for agentic commerce, Stripe payments, a vendor marketplace, and Terraform-based infrastructure deployment.
+
+Source: https://github.com/mirumee/nimara-ecommerce
+Docs: https://docs.nimara.store
+
+## Docs
+
+- [Overview](docs/01-Intro.md): Introduction to Nimara, architecture, and feature index
+- [Developer Onboarding](docs/02-Onboarding.md): Onboarding guide for new developers
+- [Daily Workflow & Releasing](docs/03-Release-workflow.md): Development workflow and release process
+
+## Quickstart
+
+- [Running Locally](docs/04-Quickstart/01-Running-locally.md): Local dev setup with Saleor Cloud or local Saleor
+- [Storefront](docs/04-Quickstart/02-Storefront.md): Production deployment to Vercel, webhook setup
+- [Environment Variables](docs/04-Quickstart/03-Environment-variables.md): All env vars with descriptions and examples
+- [Saleor CMS](docs/04-Quickstart/04-Saleor-cms.md): Homepage, navigation, and static page setup via Saleor dashboard
+- [Add New Channel](docs/04-Quickstart/05-Add-new-channel.md): Multi-locale, multi-language, multi-market configuration
+
+## Integrations
+
+- [UCP Integration](docs/05-Integrations/01-Ucp-integration.md): Universal Commerce Protocol — agentic commerce REST API for AI agents and platforms
+- [Stripe Integration](docs/05-Integrations/02-Stripe-integration.md): Stripe payment processing via Python or TypeScript app
+
+## Advanced
+
+- [Marketplace](docs/06-Advanced/01-Marketplace.md): Vendor marketplace app — setup, features, and deployment
+- [Terraform](docs/06-Advanced/02-Using-terraform.md): Infrastructure as code deployment to Vercel
+- [i18n](docs/06-Advanced/03-I18n.md): Internationalization architecture, locale overrides, message composition
