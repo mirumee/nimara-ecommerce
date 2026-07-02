@@ -16,6 +16,9 @@
         "./docusaurus.config.ts"
       ],
       "outputs": ["build"]
+    },
+    "version": {
+      "cache": false
     }
   }
 }

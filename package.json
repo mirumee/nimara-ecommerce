@@ -35,6 +35,7 @@
     "dev:marketplace": "turbo run dev --filter=marketplace",
     "dev:stripe": "turbo run dev --filter=stripe",
     "dev:docs": "turbo run dev --filter=docs",
+    "version:docs": "turbo run version --filter=docs --",
     "test": "turbo run test",
     "test:watch": "turbo run test:watch",
     "test:e2e": "turbo run test:e2e",
