@@ -9,7 +9,9 @@ export type DocFile = { content: string; relPath: string };
 const parseFrontmatter = (content: string) => {
   const match = content.match(/^---\n([\s\S]*?)\n---/);
 
-  if (!match) return {};
+  if (!match) {
+    return {};
+  }
 
   const title = match[1].match(/^title:\s*(.+)$/m)?.[1]?.trim();
   const description = match[1].match(/^description:\s*(.+)$/m)?.[1]?.trim();
