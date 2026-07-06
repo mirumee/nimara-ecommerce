@@ -1,0 +1,497 @@
+{
+  "document": "Technical Solution",
+  "epic": "LLM Product Discovery",
+  "version": "1.0",
+  "date": "2026-07-06",
+  "status": "Proposal for review",
+  "stack": {
+    "ecommerce_engine": "Saleor Cloud (GraphQL API, webhooks, Saleor Apps, channels, product metadata)",
+    "frontend": "Next.js (App Router) on Vercel — SSR/ISR storefront, Polish locale",
+    "cloud_provider": "AWS, region eu-central-1 (Frankfurt) — closest region to Poland with in-region Amazon Bedrock and EU data residency",
+    "ai_platform": "Amazon Bedrock (EU cross-region inference profiles keep traffic within EU regions)"
+  },
+  "architecture_overview": {
+    "summary": "Saleor Cloud remains the single source of truth for catalog, pricing, availability, and partner status. A dedicated AI Search service on AWS indexes the catalog into Amazon OpenSearch (hybrid BM25 + vector) and orchestrates retrieval-augmented suggestion generation with Claude on Amazon Bedrock. The Next.js storefront on Vercel calls the AI Search API server-side; classic search and catalog browsing query OpenSearch directly through the same API layer. Admin curation lives in a Saleor App embedded in the Saleor Dashboard, backed by DynamoDB. Hallucination is structurally prevented: the LLM can only rank and explain products retrieved from the index — it never generates product data.",
+    "diagram_ascii": "Customer -> Next.js (Vercel) -> API Gateway + WAF (AWS eu-central-1) -> Lambda Orchestrator -> [Guardrails -> DynamoDB rules/exclusions -> OpenSearch hybrid retrieval -> Bedrock Claude Haiku 4.5 (EU profile)] ; Saleor Cloud -> webhooks -> EventBridge/SQS -> Lambda Indexer -> (Bedrock embeddings) -> OpenSearch ; Admin -> Saleor App (Dashboard) -> DynamoDB + Athena analytics"
+  },
+  "key_architecture_decisions": [
+    {
+      "id": "ADR-1",
+      "decision": "RAG over fine-tuning: hybrid retrieval (BM25 + k-NN vector) from OpenSearch, then Claude Haiku 4.5 ranks the retrieved candidates and writes fit explanations",
+      "rationale": "Catalog changes daily; retrieval grounds every suggestion in real, currently available products. The LLM receives only candidate product IDs + attributes and must answer with IDs from that set — fabricated products are impossible by construction (invalid IDs are dropped at validation).",
+      "alternatives_rejected": [
+        "Fine-tuned model (stale catalog, high maintenance)",
+        "Pure vector search without LLM (no natural-language explanations, weaker intent understanding)",
+        "Bedrock Knowledge Bases (less control over Saleor-specific filtering: partner suspension, seasonal availability, exclusion lists)"
+      ]
+    },
+    {
+      "id": "ADR-2",
+      "decision": "LLM: Anthropic Claude Haiku 4.5 on Bedrock via EU cross-region inference profile eu.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "rationale": "Available in eu-central-1 with EU-geo routing (GDPR-friendly, data stays in EU regions); strong Polish quality; low per-token cost and low latency fit a high-volume consumer search box. Verified via AWS docs: Claude Haiku 4.5 is available in Frankfurt in-region and through the EU geo profile.",
+      "alternatives_rejected": [
+        "Claude Sonnet 4.5 (2-3x cost, unnecessary for rank-and-explain over <=30 candidates; keep as escalation option for quality issues)",
+        "Amazon Nova Lite (cheaper but weaker Polish fluency — re-evaluate after PoC benchmark)"
+      ]
+    },
+    {
+      "id": "ADR-3",
+      "decision": "Embeddings: Cohere Embed Multilingual on Bedrock as primary candidate; Amazon Titan Text Embeddings V2 (1024 dims) as fallback — final pick decided by a Polish retrieval-quality spike",
+      "rationale": "Polish is a first-class language in Cohere's multilingual embed models (100+ languages). Titan V2 lists multilingual support as preview, so it must be benchmarked before production use. Hybrid search with a Polish analyzer (stempel/morfologik) on the BM25 side compensates for embedding weaknesses either way.",
+      "verification_required": "Confirm in-region availability of the chosen embedding model in eu-central-1 at implementation time; avoid the global.cohere-embed-v4.0 profile if EU-only data routing is required."
+    },
+    {
+      "id": "ADR-4",
+      "decision": "One search engine for everything: Amazon OpenSearch serves AI vector retrieval, classic search (typo tolerance, search-as-you-type), and catalog facet counts",
+      "rationale": "Single index, single sync pipeline, consistent availability filtering across AI and classic surfaces, and the classic search doubles as the always-on fallback. Start with a small provisioned Multi-AZ domain (predictable ~low-hundreds USD/month at MVP catalog size, supports the stempel Polish analysis plugin); OpenSearch Serverless (NextGen, scale-to-zero OCUs) is the zero-ops alternative if operational simplicity outweighs cost predictability.",
+      "alternatives_rejected": [
+        "Aurora/RDS pgvector (weaker typo tolerance, no facet counts out of the box)",
+        "Algolia + separate vector DB (second vendor, second sync pipeline, higher TCO)",
+        "Saleor built-in search (insufficient for fuzzy matching, facets, and vectors)"
+      ]
+    },
+    {
+      "id": "ADR-5",
+      "decision": "Moderation and abuse control: Bedrock Guardrails (Standard tier) + AWS WAF + per-visitor quotas + query cache",
+      "rationale": "Guardrails Standard tier lists Polish as 'optimized and supported' for content filters and prompt-attack detection (requires cross-region inference, satisfied by the EU profile). WAF rate-limits by IP; DynamoDB counters enforce per-visitor daily limits; a normalized-query answer cache cuts repeat-query LLM cost significantly."
+    },
+    {
+      "id": "ADR-6",
+      "decision": "Admin curation as a Saleor App embedded in the Saleor Dashboard",
+      "rationale": "Administrators stay in one tool. The app (Next.js, deployed on Vercel) manages the AI exclusion list, manual rules, and the discovery analytics dashboard via a small internal API to DynamoDB and Athena. Saleor app tokens + dashboard SSO handle auth."
+    }
+  ],
+  "components": [
+    {
+      "name": "Storefront AI Search (Next.js on Vercel)",
+      "responsibilities": [
+        "Homepage hero: natural-language input (Polish), submits to /api/ai-search route handler (server-side — no AWS credentials in browser)",
+        "Renders 3-5 suggestion cards: photo, name, location, price, rating, exclusivity badge, 1-2 sentence fit explanation, link to standard product page",
+        "'Show more suggestions' sends the session cursor to fetch the next distinct 3-5 matches",
+        "Graceful fallback: on AI API error/timeout (client budget 6 s), the query is passed to classic search with a friendly notice — no dead end",
+        "Classic search UI: debounced search-as-you-type suggestions, typo-tolerant results, filters (price, category, location, attributes) with per-filter result counts, sorting"
+      ],
+      "tech": "Next.js App Router, React Server Components, Vercel Edge Network; AI-search feature flag via environment/config for instant kill-switch"
+    },
+    {
+      "name": "AI Search API (AWS)",
+      "responsibilities": [
+        "API Gateway (HTTP API) fronted by AWS WAF: IP rate limiting, bot control, max payload size",
+        "Lambda Orchestrator (TypeScript): the AI query pipeline (see data_flows.ai_search_query)",
+        "Search Proxy Lambda: classic search, autocomplete, and faceted catalog queries against OpenSearch",
+        "Per-visitor quota check (anonymous visitor ID cookie -> DynamoDB atomic counters, e.g. 15 AI queries/day, configurable)",
+        "Normalized query cache (DynamoDB with TTL): identical recent queries return cached suggestions without invoking Bedrock"
+      ],
+      "tech": "API Gateway + WAF + Lambda + DynamoDB, all eu-central-1; infrastructure as code with AWS CDK"
+    },
+    {
+      "name": "Search Index (Amazon OpenSearch)",
+      "responsibilities": [
+        "Single product index: name, description, category path, partner, location, tags, price, rating, image URL, exclusivity flag, availability flags (partner_active, seasonally_available, published, in_stock), dense vector field (k-NN)",
+        "Polish text analysis (stempel plugin) + edge n-grams/completion suggester for search-as-you-type + fuzziness:AUTO for typo tolerance",
+        "Hybrid query: BM25 + k-NN with score normalization; hard filter clause always applied: partner_active AND seasonally_available AND published AND NOT excluded_from_ai (AI path only)",
+        "Aggregations power facet counts on catalog browsing"
+      ],
+      "tech": "OpenSearch provisioned domain, 3 data nodes Multi-AZ (MVP sizing; catalog of tens of thousands of products is small for OpenSearch)"
+    },
+    {
+      "name": "Catalog Sync Pipeline (Saleor -> OpenSearch)",
+      "responsibilities": [
+        "Saleor webhooks (PRODUCT_CREATED/UPDATED/DELETED, PRODUCT_VARIANT_*, channel/listing changes) -> API Gateway -> SQS (buffering, retry, DLQ) -> Indexer Lambda",
+        "Indexer fetches full product via Saleor GraphQL, builds the embedding text (name + description + category + tags + attributes), calls Bedrock embeddings, upserts the OpenSearch document",
+        "Partner suspension and seasonal availability read from Saleor channel listings / product metadata and stored as filterable booleans — suspended or unavailable products drop out of AI suggestions on the next sync event (target < 5 min)",
+        "Nightly full reconciliation (EventBridge Scheduler -> Step Functions): re-walks the Saleor catalog to heal missed webhooks; re-embeds only when content hash changed (cost control)"
+      ],
+      "tech": "SQS, Lambda, Step Functions, EventBridge Scheduler, Saleor GraphQL API + webhooks (registered by the Saleor App)"
+    },
+    {
+      "name": "Suggestion Engine (Bedrock)",
+      "responsibilities": [
+        "Guardrails (Standard tier, Polish-optimized) screen input for abuse/off-topic/prompt injection and screen output before it reaches the customer",
+        "Manual-rules matcher: admin rules ('for requests like X, suggest Y') are embedded; if cosine similarity of the query to a rule exceeds threshold, pinned products are injected at the top of the candidate set",
+        "Retrieval: top ~25 candidates from OpenSearch hybrid query (after hard filters); exclusive products get a retrieval-score boost",
+        "Claude Haiku 4.5 prompt: system rules (Polish output, honesty, favor exclusives only when genuinely fitting, never invent) + user query + candidate list (id, name, category, price, location, key attributes, exclusive flag); structured JSON output: chosen ids (3-5), per-product 1-2 sentence explanation, match_confidence",
+        "Post-validation: every returned id must exist in the candidate set, else dropped; low match_confidence or empty result triggers the honest 'not available' response with closest alternatives and logs an unmatched-demand event",
+        "'Show more': cursor stored in DynamoDB (TTL 30 min) tracks already-shown ids; next invocation excludes them from candidates"
+      ],
+      "tech": "Amazon Bedrock: eu.anthropic.claude-haiku-4-5 inference profile, Bedrock Guardrails Standard tier, embedding model per ADR-3"
+    },
+    {
+      "name": "Admin Curation & Analytics (Saleor App)",
+      "responsibilities": [
+        "Exclusion list: products the AI must never suggest (DynamoDB; also mirrored as excluded_from_ai flag in OpenSearch on save — takes effect immediately)",
+        "Manual rules CRUD: phrase/intent -> pinned products; stored with embeddings in DynamoDB",
+        "Dashboard: anonymized query log, suggestion click-through rate, unmatched requests (demand insights), AI usage volume and estimated cost",
+        "Anonymization: no customer identifiers stored; visitor ID hashed with rotating salt; queries retained 12 months for demand analysis"
+      ],
+      "tech": "Saleor App (embedded Next.js on Vercel) -> internal API (API Gateway + Lambda, IAM auth) -> DynamoDB; events stream via Kinesis Data Firehose -> S3 -> Athena for the dashboard queries"
+    },
+    {
+      "name": "Observability & Cost Control",
+      "responsibilities": [
+        "CloudWatch dashboards: p95 latency per pipeline stage, Bedrock token consumption, cache hit rate, quota rejections, fallback activations",
+        "Alarms: error-rate and latency SLO breaches, daily Bedrock spend threshold, AWS Budgets alert at 80% of monthly AI budget",
+        "Kill switch: feature flag disables AI search storefront-wide within minutes, storefront silently degrades to classic search",
+        "Offline quality harness: curated set of ~200 Polish test queries with expected products; run before every prompt/model/index change (LLM-as-judge + human spot check)"
+      ],
+      "tech": "CloudWatch, X-Ray, AWS Budgets, Bedrock invocation logging (to S3, EU-only)"
+    }
+  ],
+  "data_flows": {
+    "ai_search_query": {
+      "steps": [
+        "1. Customer submits Polish free-text query in homepage hero",
+        "2. Next.js route handler -> API Gateway (WAF: IP rate limit) -> Orchestrator Lambda",
+        "3. Quota check (DynamoDB) -> reject politely with classic-search redirect if exceeded",
+        "4. Cache check (normalized query) -> return cached suggestions on hit",
+        "5. Guardrails input screen -> blocked queries get a safe refusal in Polish",
+        "6. Manual-rule semantic match -> pinned products collected",
+        "7. Query embedded -> OpenSearch hybrid retrieval (top ~25, hard availability/exclusion filters, exclusive boost)",
+        "8. Claude Haiku 4.5 ranks candidates, returns 3-5 ids + explanations as JSON",
+        "9. Post-validation against candidate set; Guardrails output screen",
+        "10. Zero-fit path: honest 'not in our offer' + closest alternatives + unmatched-demand event to Firehose",
+        "11. Response to storefront; impression + later click events logged (anonymized) for CTR analytics"
+      ],
+      "target_latency": "p95 <= 4 s end-to-end; hard timeout 6 s triggers classic-search fallback"
+    },
+    "show_more": "Storefront sends session cursor -> orchestrator excludes already-shown ids -> steps 7-11 rerun -> next 3-5 distinct suggestions",
+    "classic_search_and_catalog": "Storefront -> Search Proxy Lambda -> OpenSearch: completion suggester (as-you-type), fuzzy multi-field match (typos), filters + aggregations (facet counts), sort options; no LLM involved — always available",
+    "catalog_sync": "Saleor webhook -> SQS -> Indexer Lambda -> Saleor GraphQL fetch -> embed (if content changed) -> OpenSearch upsert; nightly reconciliation heals drift",
+    "admin_change": "Admin saves exclusion/rule in Saleor App -> DynamoDB write + OpenSearch flag update -> effective for all subsequent queries (cache entries for affected products invalidated)"
+  },
+  "filtering_and_caching": {
+    "off_topic_query_filtering": {
+      "strategy": "Three layers ordered by cost — cheapest checks run first so most junk never reaches the LLM",
+      "layers": [
+        {
+          "layer": 1,
+          "name": "Input constraints",
+          "cost": "free",
+          "details": "Max query length ~300 chars, single-turn only, WAF rate limits and per-visitor quotas upstream"
+        },
+        {
+          "layer": 2,
+          "name": "Retrieval-score gate",
+          "cost": "~negligible (one embedding call)",
+          "details": "Embed query and run OpenSearch hybrid search BEFORE any LLM call; if top-hit normalized score is below a threshold (tuned on the offline eval set), the query is off-topic or a genuine no-match -> return the honest 'not in our offer' path without invoking Claude. Primary cost saver: embedding is ~1000x cheaper than a generation"
+        },
+        {
+          "layer": 3,
+          "name": "Guardrails + in-call classification",
+          "cost": "included in main call",
+          "details": "Bedrock Guardrails (Standard tier, Polish-optimized) blocks abuse and prompt attacks; denied topics for never-engage categories (medical/legal advice, politics). For soft off-topic cases that pass the score gate, the Haiku prompt returns {\"off_topic\": true} when the request is not product discovery — no extra LLM call; orchestrator maps it to a polite Polish redirect. Off-topic events logged separately from unmatched demand"
+        }
+      ]
+    },
+    "llm_response_caching": {
+      "strategy": "Three complementary layers; cache stores chosen product IDs + explanations only, never rendered card data",
+      "layers": [
+        {
+          "layer": 1,
+          "name": "Exact-match cache",
+          "store": "DynamoDB with TTL 6-24h",
+          "details": "Query normalized (lowercase, trim, strip diacritics/punctuation) then hashed as key. At serve time, product IDs are re-fetched from OpenSearch (single mget) and re-checked against hard filters — price changes, suspensions, and exclusions invalidate automatically"
+        },
+        {
+          "layer": 2,
+          "name": "Semantic cache",
+          "store": "OpenSearch (query vectors already computed)",
+          "details": "Cached query embeddings stored with pointer to response; new query with cosine similarity >= ~0.95 reuses the cached result (e.g. 'czerwona sukienka na wesele' ~= 'sukienka czerwona wesele'). Main source of hit rate in free-text search"
+        },
+        {
+          "layer": 3,
+          "name": "Bedrock prompt caching",
+          "store": "Bedrock-native",
+          "details": "Static system prompt marked as cache prefix; cache reads ~90% cheaper than regular input tokens. Candidates differ per query so only the prefix benefits — low impact, zero risk, config-level change"
+        }
+      ],
+      "invalidation_rules": [
+        "Serve-time revalidation: cached product IDs re-checked against current availability/exclusion filters; stale IDs dropped",
+        "Global cache-version key bumped on any admin edit to exclusions or manual rules — instantly invalidates all entries",
+        "'Show more' responses are not cached (session cursor makes them user-specific); alternatively include shown-IDs hash in the key",
+        "TTL bounds staleness even without events"
+      ]
+    }
+  },
+  "requirements_traceability": [
+    {
+      "requirement": "AI search in hero, 3-5 suggestions with explanations",
+      "covered_by": [
+        "Storefront AI Search",
+        "Suggestion Engine",
+        "data_flows.ai_search_query"
+      ]
+    },
+    {
+      "requirement": "Show more suggestions -> further distinct set",
+      "covered_by": ["data_flows.show_more (cursor in DynamoDB)"]
+    },
+    {
+      "requirement": "Exclusive products favored + badge",
+      "covered_by": [
+        "Retrieval boost + prompt rule + post-validation; badge flag indexed and rendered on all product cards"
+      ]
+    },
+    {
+      "requirement": "Honest handling of unavailable products, no invention, demand insight",
+      "covered_by": [
+        "Candidate-set grounding (ADR-1)",
+        "zero-fit path",
+        "unmatched-demand events -> admin dashboard"
+      ]
+    },
+    {
+      "requirement": "Never suggest suspended partners / seasonally unavailable products",
+      "covered_by": [
+        "Hard filter clause in every OpenSearch query + sync pipeline flags (target propagation < 5 min)"
+      ]
+    },
+    {
+      "requirement": "Graceful fallback to classic search",
+      "covered_by": [
+        "Client timeout budget, kill-switch feature flag, classic search is LLM-independent"
+      ]
+    },
+    {
+      "requirement": "Classic search: as-you-type, typo tolerance, name/partner/category/location/tags",
+      "covered_by": [
+        "OpenSearch completion suggester, fuzziness, multi-field mapping with Polish analyzer"
+      ]
+    },
+    {
+      "requirement": "Catalog filters with result counts + sorting",
+      "covered_by": ["OpenSearch aggregations via Search Proxy"]
+    },
+    {
+      "requirement": "Admin exclusion list + manual rules, effective immediately",
+      "covered_by": [
+        "Admin Curation Saleor App -> DynamoDB + index flag + cache invalidation"
+      ]
+    },
+    {
+      "requirement": "Admin review: anonymized queries, CTR, unmatched requests",
+      "covered_by": ["Firehose -> S3 -> Athena dashboard in Saleor App"]
+    },
+    {
+      "requirement": "Usage limits to keep costs predictable",
+      "covered_by": [
+        "WAF rate limits, per-visitor quotas, query cache, Guardrails, budget alarms"
+      ]
+    }
+  ],
+  "security_and_compliance": {
+    "data_residency": "All AWS resources in eu-central-1; Bedrock EU-geo inference profiles route only within EU regions; Bedrock does not use customer data for model training",
+    "gdpr": "Search queries stored anonymized (no account linkage; hashed rotating visitor ID); 12-month retention with documented purpose (demand analysis); DPA with AWS in place via standard terms",
+    "secrets": "Saleor app token and API keys in AWS Secrets Manager / Vercel encrypted env vars; storefront never holds AWS credentials",
+    "prompt_injection": "Guardrails prompt-attack filter + strict system prompt + structured-output validation + candidate-set grounding limit blast radius to wrong-but-real product suggestions",
+    "waf": "AWS WAF managed rules + rate-based rules on the AI endpoint"
+  },
+  "cost_projection_12_months": {
+    "disclaimer": "Indicative estimates in USD, based on AWS list prices checked via AWS documentation on 2026-07-06 where available; unit prices (especially Bedrock EU-region and Guardrails per-text-unit rates) must be re-verified in the AWS Pricing Calculator before contract commitment. Excludes Saleor Cloud and Vercel subscriptions (separate line items) and one-off development effort.",
+    "traffic_assumptions": {
+      "month_1_3": "60k visits/mo, 8% try AI search, 1.6 requests/session avg -> ~8k AI generations/mo",
+      "month_4_8": "120k visits/mo, 12% adoption -> ~23k AI generations/mo",
+      "month_9_12": "200k visits/mo, 15% adoption -> ~48k AI generations/mo",
+      "cache_hit_rate": "20% of queries served from cache (rising over time), already netted out of the generation counts above"
+    },
+    "unit_cost_model_per_ai_query": {
+      "llm_claude_haiku_4_5": "~2,500 input tokens (prompt + 25 candidates) x $1.00/M + ~400 output tokens x $5.00/M = ~$0.0045",
+      "guardrails_standard": "~2-3 text units per query, estimated ~$0.001-0.002 (verify rate)",
+      "embeddings": "<$0.0001 (query embedding is ~50 tokens)",
+      "total_estimate": "~$0.006-0.008 per AI query; planning figure $0.01 gives ~30% headroom"
+    },
+    "monthly_costs_usd": [
+      {
+        "item": "Bedrock LLM + Guardrails + embeddings (AI queries)",
+        "m1_3": 80,
+        "m4_8": 230,
+        "m9_12": 480
+      },
+      {
+        "item": "Bedrock embeddings — indexing (initial ~50k products then deltas)",
+        "m1_3": 15,
+        "m4_8": 10,
+        "m9_12": 10
+      },
+      {
+        "item": "OpenSearch provisioned domain (3 nodes Multi-AZ + storage; scale up in m9)",
+        "m1_3": 120,
+        "m4_8": 150,
+        "m9_12": 280
+      },
+      {
+        "item": "Lambda + API Gateway + SQS + Step Functions",
+        "m1_3": 15,
+        "m4_8": 30,
+        "m9_12": 60
+      },
+      {
+        "item": "DynamoDB (quotas, cache, rules, cursors)",
+        "m1_3": 10,
+        "m4_8": 20,
+        "m9_12": 35
+      },
+      { "item": "WAF", "m1_3": 15, "m4_8": 20, "m9_12": 25 },
+      {
+        "item": "Firehose + S3 + Athena (analytics)",
+        "m1_3": 10,
+        "m4_8": 20,
+        "m9_12": 35
+      },
+      {
+        "item": "CloudWatch + X-Ray + Secrets Manager",
+        "m1_3": 30,
+        "m4_8": 45,
+        "m9_12": 60
+      },
+      { "item": "Monthly subtotal", "m1_3": 295, "m4_8": 525, "m9_12": 985 }
+    ],
+    "twelve_month_total_usd": {
+      "base_case": "3x295 + 5x525 + 4x985 = ~7,450",
+      "with_30_percent_growth_buffer": "~9,700",
+      "recommended_annual_aws_budget": "10,000 USD with AWS Budgets alarm at 80%"
+    },
+    "cost_controls": [
+      "Per-visitor daily quota and WAF rate limiting cap worst-case Bedrock spend",
+      "Normalized-query cache removes repeat-query LLM cost",
+      "Content-hash check avoids re-embedding unchanged products",
+      "Haiku-class model chosen over Sonnet-class (~3x cheaper) — quality gate via offline eval harness",
+      "Daily Bedrock spend alarm + automatic kill switch to classic search if budget breached",
+      "If sustained volume grows 5x beyond plan: evaluate Bedrock Flex/batch tiers and OpenSearch reserved instances"
+    ]
+  },
+  "answers_to_epic_open_questions": [
+    {
+      "question": "Lowest ongoing operating/maintenance cost approach + 12-month projection",
+      "answer": "Serverless RAG on Bedrock (Haiku-class model, pay-per-token, no GPU or model ops) + one shared OpenSearch cluster for all search surfaces. Projection above: ~$7.5k base / $10k budgeted for year one, dominated by OpenSearch baseline and Bedrock per-query cost, both individually capped."
+    },
+    {
+      "question": "Minimum product information for accurate suggestions",
+      "answer": "Required at offer onboarding: Polish name, >=300-character description, category, location, price, >=3 tags/attributes, photo. Enforce via Saleor attribute validation + indexer 'content completeness score'; products below threshold are indexed for classic search but down-weighted in AI retrieval; admin dashboard lists low-quality offers."
+    },
+    {
+      "question": "English query on Polish site",
+      "answer": "MVP: detect language (Claude handles this in the same call), answer in Polish against the Polish catalog with a note the site is Polish-language; embeddings are multilingual so retrieval still works. Revisit language switching when the English storefront ships."
+    },
+    {
+      "question": "'Notify me when available' for unmatched requests",
+      "answer": "Not in MVP scope, but the unmatched-demand event schema includes an optional contact-consent field so the feature can be added without pipeline changes; follow-up owner should be the assortment/partnership team via the admin dashboard export."
+    },
+    {
+      "question": "Two search entry points on one page",
+      "answer": "Yes, with distinct affordances: hero = conversational prompt ('Opisz, czego szukasz...'), header = compact classic search with autocomplete. AI results screen cross-links to classic results for the same query. Validate with usability testing in the design phase; A/B test hero variants post-launch."
+    },
+    {
+      "question": "Success metrics for first months",
+      "answer": "Instrumented from day one: AI-search adoption (share of visitors), suggestion CTR, suggestion->product-page->cart conversion vs. classic-search baseline, zero-result/unmatched rate, cost per AI query, fallback activation rate. Targets to be agreed at kickoff; dashboard ships with MVP."
+    }
+  ],
+  "risks_and_mitigations": [
+    {
+      "risk": "AI cost grows with traffic",
+      "mitigation": "Quotas, cache, cheap model class, budget alarms with kill switch, cost-per-query on the admin dashboard (epic risk #1 addressed by design)"
+    },
+    {
+      "risk": "Irrelevant/fabricated suggestions",
+      "mitigation": "Candidate-set grounding makes fabrication structurally impossible; offline eval harness gates every change; admin exclusions and manual rules give day-one curation"
+    },
+    {
+      "risk": "Poor partner data quality",
+      "mitigation": "Onboarding validation + completeness scoring + low-quality report for admins"
+    },
+    {
+      "risk": "Unproven adoption on Polish market",
+      "mitigation": "Full funnel instrumentation and A/B capability from launch; success metrics reviewed monthly"
+    },
+    {
+      "risk": "Abuse/off-topic use",
+      "mitigation": "Guardrails (Polish-optimized), WAF, per-visitor quotas, max input length, no free-form conversation (single-turn by design)"
+    },
+    {
+      "risk": "Vendor/model deprecation on Bedrock",
+      "mitigation": "Model ID isolated in config; eval harness makes model swaps a one-week exercise; Bedrock offers multiple EU-available model families"
+    },
+    {
+      "risk": "Webhook loss causing stale availability",
+      "mitigation": "SQS retries + DLQ + nightly full reconciliation; hard filters evaluated at query time against freshest index"
+    }
+  ],
+  "implementation_phases": [
+    {
+      "phase": 1,
+      "name": "Foundations & spike",
+      "duration_weeks": 3,
+      "scope": "CDK infra skeleton, Saleor webhook -> OpenSearch pipeline, embedding model benchmark on Polish catalog sample (ADR-3 decision), classic search index with Polish analyzer"
+    },
+    {
+      "phase": 2,
+      "name": "Classic search & catalog",
+      "duration_weeks": 3,
+      "scope": "Search-as-you-type, typo tolerance, filters with counts, sorting, product cards with badge — shippable independently and serves as AI fallback"
+    },
+    {
+      "phase": 3,
+      "name": "AI suggestion engine",
+      "duration_weeks": 4,
+      "scope": "Orchestrator pipeline, Guardrails, prompt + structured output, show-more cursor, honest no-match path, quotas + cache + WAF, fallback wiring"
+    },
+    {
+      "phase": 4,
+      "name": "Admin app & analytics",
+      "duration_weeks": 3,
+      "scope": "Saleor App: exclusions, manual rules, dashboard (queries, CTR, unmatched); Firehose/Athena pipeline; anonymization"
+    },
+    {
+      "phase": 5,
+      "name": "Hardening & launch",
+      "duration_weeks": 2,
+      "scope": "Load test, offline quality eval sign-off, budget alarms, runbooks, pentest of AI endpoint, go-live with feature flag ramp-up"
+    }
+  ],
+  "aws_services_used": [
+    {
+      "service": "Amazon Bedrock",
+      "purpose": "Claude Haiku 4.5 (EU profile) for suggestion generation; Guardrails Standard tier for Polish moderation; embedding model for semantic retrieval"
+    },
+    {
+      "service": "Amazon OpenSearch Service",
+      "purpose": "Hybrid vector + keyword index for AI retrieval, classic search, and catalog facets"
+    },
+    {
+      "service": "AWS Lambda",
+      "purpose": "Orchestrator, search proxy, indexer, analytics functions"
+    },
+    {
+      "service": "Amazon API Gateway + AWS WAF",
+      "purpose": "Public API for storefront and Saleor webhooks; rate limiting and bot control"
+    },
+    {
+      "service": "Amazon DynamoDB",
+      "purpose": "Quotas, query cache, exclusion list, manual rules, show-more cursors"
+    },
+    {
+      "service": "Amazon SQS / EventBridge / Step Functions",
+      "purpose": "Webhook buffering, scheduled reconciliation, sync orchestration"
+    },
+    {
+      "service": "Kinesis Data Firehose + S3 + Athena",
+      "purpose": "Anonymized event analytics for the admin dashboard"
+    },
+    {
+      "service": "CloudWatch, X-Ray, AWS Budgets, Secrets Manager",
+      "purpose": "Observability, tracing, cost alarms, secret storage"
+    },
+    {
+      "service": "AWS CDK",
+      "purpose": "Infrastructure as code for the entire stack"
+    }
+  ],
+  "sources": [
+    "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-haiku-4-5.html",
+    "https://aws.amazon.com/blogs/alps/unlocking-ai-flexibility-in-switzerland-a-guide-to-cross-region-inference-for-eu-data-processing-and-model-access/",
+    "https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-supported-languages.html",
+    "https://docs.aws.amazon.com/bedrock/latest/userguide/titan-embedding-models.html",
+    "https://aws.amazon.com/opensearch-service/pricing/",
+    "https://aws.amazon.com/bedrock/pricing/"
+  ]
+}
