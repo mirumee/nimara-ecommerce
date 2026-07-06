@@ -1,0 +1,598 @@
+{
+  "document": "Developer Task Breakdown",
+  "epic": {
+    "name": "LLM Product Discovery",
+    "projectKeyPlaceholder": "LPD",
+    "epicSummary": "AI-powered natural-language product discovery with classic search fallback — Saleor Cloud + Next.js/Vercel + AWS (eu-central-1)",
+    "reference": "technical-solution-llm-product-discovery.json v1.0"
+  },
+  "conventions": {
+    "issueTypes": ["Task", "Story", "Spike"],
+    "storyPoints": "Fibonacci (1,2,3,5,8); Jira story-points custom field ID varies per instance — map on import",
+    "dependsOn": "Jira issue links of type 'Blocks' (listed task must finish first)",
+    "labels_glossary": {
+      "infra": "CDK / AWS infrastructure",
+      "backend": "Lambda / API work",
+      "frontend": "Next.js storefront",
+      "ai": "Bedrock / prompts / embeddings",
+      "search": "OpenSearch",
+      "sync": "Saleor integration",
+      "admin": "Saleor App / curation",
+      "qa": "testing / evaluation",
+      "security": "security & compliance"
+    }
+  },
+  "summary": {
+    "total_tasks": 53,
+    "total_story_points": 229,
+    "phases": [
+      {
+        "phase": 1,
+        "name": "Foundations & spike",
+        "duration_weeks": 3,
+        "tasks": 11,
+        "story_points": 47
+      },
+      {
+        "phase": 2,
+        "name": "Classic search & catalog",
+        "duration_weeks": 3,
+        "tasks": 9,
+        "story_points": 42
+      },
+      {
+        "phase": 3,
+        "name": "AI suggestion engine",
+        "duration_weeks": 4,
+        "tasks": 19,
+        "story_points": 82
+      },
+      {
+        "phase": 4,
+        "name": "Admin app & analytics",
+        "duration_weeks": 3,
+        "tasks": 8,
+        "story_points": 34
+      },
+      {
+        "phase": 5,
+        "name": "Hardening & launch",
+        "duration_weeks": 2,
+        "tasks": 6,
+        "story_points": 24
+      }
+    ]
+  },
+  "tasks": [
+    {
+      "key": "LPD-001",
+      "phase": 1,
+      "issueType": "Task",
+      "summary": "Set up CDK project skeleton with dev/prod environments and CI/CD pipeline",
+      "description": "Infrastructure-as-code repo (AWS CDK, TypeScript), stack layout per component, GitHub Actions deploy pipeline, environment config for dev and prod in eu-central-1.",
+      "labels": ["infra"],
+      "storyPoints": 5,
+      "dependsOn": []
+    },
+    {
+      "key": "LPD-002",
+      "phase": 1,
+      "issueType": "Task",
+      "summary": "Provision OpenSearch domain (Multi-AZ, stempel Polish plugin) via CDK",
+      "description": "3 data nodes Multi-AZ, EBS sizing for catalog scale, stempel analysis plugin enabled, fine-grained access control, VPC/IAM policies.",
+      "labels": ["infra", "search"],
+      "storyPoints": 3,
+      "dependsOn": ["LPD-001"]
+    },
+    {
+      "key": "LPD-003",
+      "phase": 1,
+      "issueType": "Task",
+      "summary": "Design and create product index mapping (Polish analyzer, k-NN vector, availability flags)",
+      "description": "Fields: name, description, category path, partner, location, tags, price, rating, image URL, exclusivity flag, partner_active, seasonally_available, published, in_stock, excluded_from_ai, dense vector (k-NN). Polish analyzer + edge n-grams + completion suggester subfields.",
+      "labels": ["search"],
+      "storyPoints": 5,
+      "dependsOn": ["LPD-002"]
+    },
+    {
+      "key": "LPD-004",
+      "phase": 1,
+      "issueType": "Task",
+      "summary": "Scaffold Saleor App and register catalog webhooks",
+      "description": "Saleor App with app token auth; subscribe to PRODUCT_CREATED/UPDATED/DELETED, PRODUCT_VARIANT_*, channel listing change events; app installation flow on Saleor Cloud.",
+      "labels": ["sync", "backend"],
+      "storyPoints": 5,
+      "dependsOn": ["LPD-001"]
+    },
+    {
+      "key": "LPD-005",
+      "phase": 1,
+      "issueType": "Task",
+      "summary": "Build webhook ingestion endpoint: API Gateway -> SQS with DLQ",
+      "description": "Signature verification of Saleor webhooks, buffering queue, retry policy, dead-letter queue with alarm.",
+      "labels": ["backend", "sync", "infra"],
+      "storyPoints": 3,
+      "dependsOn": ["LPD-001", "LPD-004"]
+    },
+    {
+      "key": "LPD-006",
+      "phase": 1,
+      "issueType": "Task",
+      "summary": "Implement Indexer Lambda: Saleor GraphQL fetch and document mapping",
+      "description": "On queue message, fetch full product via Saleor GraphQL, transform to index document including availability flags, upsert/delete in OpenSearch.",
+      "labels": ["backend", "sync", "search"],
+      "storyPoints": 5,
+      "dependsOn": ["LPD-003", "LPD-005"]
+    },
+    {
+      "key": "LPD-007",
+      "phase": 1,
+      "issueType": "Task",
+      "summary": "Add embedding generation to indexer with content-hash change detection",
+      "description": "Build embedding text (name + description + category + tags + attributes), call Bedrock embedding model, skip re-embedding when content hash unchanged (cost control).",
+      "labels": ["backend", "ai", "sync"],
+      "storyPoints": 3,
+      "dependsOn": ["LPD-006", "LPD-008"]
+    },
+    {
+      "key": "LPD-008",
+      "phase": 1,
+      "issueType": "Spike",
+      "summary": "Spike: benchmark Cohere Embed Multilingual vs Titan Text Embeddings V2 on Polish catalog (ADR-3)",
+      "description": "Retrieval-quality benchmark on a representative Polish catalog sample with ~100 test queries; measure recall@10/MRR; confirm eu-central-1 availability and EU-only routing; decision documented as ADR update. Timeboxed to 1 week.",
+      "labels": ["ai", "qa"],
+      "storyPoints": 8,
+      "dependsOn": ["LPD-002"]
+    },
+    {
+      "key": "LPD-009",
+      "phase": 1,
+      "issueType": "Task",
+      "summary": "Build nightly full reconciliation job (EventBridge Scheduler + Step Functions)",
+      "description": "Walk full Saleor catalog nightly, diff against index, heal missed webhooks; re-embed only changed content; completion metric + alarm on drift threshold.",
+      "labels": ["backend", "sync", "infra"],
+      "storyPoints": 5,
+      "dependsOn": ["LPD-006"]
+    },
+    {
+      "key": "LPD-010",
+      "phase": 1,
+      "issueType": "Task",
+      "summary": "Sync partner suspension and seasonal availability flags",
+      "description": "Read partner status and seasonal availability from Saleor channel listings/metadata; map to partner_active and seasonally_available booleans; propagation target < 5 min from webhook.",
+      "labels": ["sync", "backend"],
+      "storyPoints": 3,
+      "dependsOn": ["LPD-006"]
+    },
+    {
+      "key": "LPD-011",
+      "phase": 1,
+      "issueType": "Task",
+      "summary": "Establish secrets management and least-privilege IAM baseline",
+      "description": "Saleor app token and API keys in Secrets Manager; per-Lambda IAM roles scoped to minimum; Vercel encrypted env vars for storefront-side config.",
+      "labels": ["security", "infra"],
+      "storyPoints": 2,
+      "dependsOn": ["LPD-001"]
+    },
+    {
+      "key": "LPD-012",
+      "phase": 2,
+      "issueType": "Task",
+      "summary": "Build Search Proxy Lambda with API Gateway routes",
+      "description": "Endpoints: /search, /suggest, /catalog (filters + facets + sort); request validation; response shaping for storefront consumption.",
+      "labels": ["backend", "search"],
+      "storyPoints": 3,
+      "dependsOn": ["LPD-003"]
+    },
+    {
+      "key": "LPD-013",
+      "phase": 2,
+      "issueType": "Story",
+      "summary": "Implement search-as-you-type suggestions (completion suggester + edge n-grams)",
+      "description": "As-you-type suggestions across product name, partner, category; debounce-friendly latency (<150 ms server-side).",
+      "labels": ["backend", "search"],
+      "storyPoints": 5,
+      "dependsOn": ["LPD-012"]
+    },
+    {
+      "key": "LPD-014",
+      "phase": 2,
+      "issueType": "Story",
+      "summary": "Implement typo-tolerant multi-field search",
+      "description": "fuzziness:AUTO across name, partner, category, location, tags with Polish analysis; field boosting; acceptance: misspelled queries still return relevant results.",
+      "labels": ["backend", "search"],
+      "storyPoints": 5,
+      "dependsOn": ["LPD-012"]
+    },
+    {
+      "key": "LPD-015",
+      "phase": 2,
+      "issueType": "Story",
+      "summary": "Implement catalog filters with per-filter result counts and sorting",
+      "description": "Aggregations for price ranges, category, location, attributes; result counts per facet value; sort by price/rating/newest; filters compose correctly.",
+      "labels": ["backend", "search"],
+      "storyPoints": 5,
+      "dependsOn": ["LPD-012"]
+    },
+    {
+      "key": "LPD-016",
+      "phase": 2,
+      "issueType": "Story",
+      "summary": "Storefront: classic search UI with debounced autocomplete",
+      "description": "Header search box, debounced suggest calls, keyboard navigation, results page; Polish UI copy.",
+      "labels": ["frontend"],
+      "storyPoints": 5,
+      "dependsOn": ["LPD-013", "LPD-014"]
+    },
+    {
+      "key": "LPD-017",
+      "phase": 2,
+      "issueType": "Story",
+      "summary": "Storefront: catalog browsing page with filters, sorting, and result counts",
+      "description": "Filter sidebar with live counts, sort dropdown, URL-synced filter state, pagination/infinite scroll, SSR/ISR-friendly.",
+      "labels": ["frontend"],
+      "storyPoints": 8,
+      "dependsOn": ["LPD-015"]
+    },
+    {
+      "key": "LPD-018",
+      "phase": 2,
+      "issueType": "Task",
+      "summary": "Build shared product card component",
+      "description": "Photo, name, location, price, customer rating, exclusivity badge; used across AI suggestions, classic results, and catalog; links to standard product page.",
+      "labels": ["frontend"],
+      "storyPoints": 3,
+      "dependsOn": []
+    },
+    {
+      "key": "LPD-019",
+      "phase": 2,
+      "issueType": "Task",
+      "summary": "Tune search relevance and validate Polish analysis on real catalog data",
+      "description": "Field boosts, synonym list seed, stemming verification on real product data; sign-off checklist with sample query set.",
+      "labels": ["search", "qa"],
+      "storyPoints": 5,
+      "dependsOn": ["LPD-014", "LPD-015"]
+    },
+    {
+      "key": "LPD-020",
+      "phase": 2,
+      "issueType": "Task",
+      "summary": "Load test classic search and review index sizing",
+      "description": "Throughput and latency test at 3x projected peak; confirm node sizing; document scale-up plan.",
+      "labels": ["qa", "search", "infra"],
+      "storyPoints": 3,
+      "dependsOn": ["LPD-016", "LPD-017"]
+    },
+    {
+      "key": "LPD-021",
+      "phase": 3,
+      "issueType": "Task",
+      "summary": "Build Orchestrator Lambda skeleton with pipeline stages",
+      "description": "Stage wiring per technical solution: quota -> cache -> guardrails -> rules -> retrieval gate -> retrieval -> LLM -> validation -> response; structured logging + X-Ray per stage.",
+      "labels": ["backend", "ai"],
+      "storyPoints": 5,
+      "dependsOn": ["LPD-001", "LPD-003"]
+    },
+    {
+      "key": "LPD-022",
+      "phase": 3,
+      "issueType": "Task",
+      "summary": "Configure Bedrock Guardrails (Standard tier, Polish) with denied topics",
+      "description": "Content filters + prompt-attack detection on input, output screening; denied topics: medical/legal advice, politics; blocked-response copy in Polish; wired to EU cross-region profile.",
+      "labels": ["ai", "security"],
+      "storyPoints": 3,
+      "dependsOn": ["LPD-021"]
+    },
+    {
+      "key": "LPD-023",
+      "phase": 3,
+      "issueType": "Task",
+      "summary": "Implement retrieval-score gate (pre-LLM off-topic filter)",
+      "description": "Embed query, run hybrid search, short-circuit to no-match path when top-hit normalized score below threshold; threshold tuned on eval set; saves LLM cost on off-topic queries.",
+      "labels": ["backend", "ai", "search"],
+      "storyPoints": 3,
+      "dependsOn": ["LPD-021", "LPD-024"]
+    },
+    {
+      "key": "LPD-024",
+      "phase": 3,
+      "issueType": "Task",
+      "summary": "Implement hybrid retrieval query (BM25 + k-NN, hard filters, exclusive boost)",
+      "description": "Score-normalized hybrid query returning top ~25 candidates; hard filter clause (partner_active AND seasonally_available AND published AND NOT excluded_from_ai); retrieval boost for exclusive products.",
+      "labels": ["backend", "search", "ai"],
+      "storyPoints": 5,
+      "dependsOn": ["LPD-003", "LPD-007"]
+    },
+    {
+      "key": "LPD-025",
+      "phase": 3,
+      "issueType": "Story",
+      "summary": "Prompt engineering: Claude Haiku 4.5 structured suggestion output",
+      "description": "System prompt (Polish output, honesty rules, favor exclusives only when fitting, never invent, off_topic flag); candidate list format; JSON schema output: 3-5 ids, 1-2 sentence explanation each, match_confidence; iterate against eval harness.",
+      "labels": ["ai"],
+      "storyPoints": 8,
+      "dependsOn": ["LPD-021", "LPD-024"]
+    },
+    {
+      "key": "LPD-026",
+      "phase": 3,
+      "issueType": "Task",
+      "summary": "Implement post-validation: candidate-set grounding and confidence handling",
+      "description": "Drop any returned id not in candidate set; low match_confidence or empty result routes to no-match path; malformed LLM output triggers one retry then fallback.",
+      "labels": ["backend", "ai"],
+      "storyPoints": 3,
+      "dependsOn": ["LPD-025"]
+    },
+    {
+      "key": "LPD-027",
+      "phase": 3,
+      "issueType": "Story",
+      "summary": "Implement honest no-match path with closest alternatives and demand-signal event",
+      "description": "Polish 'not in our offer' response + closest alternatives from retrieval; unmatched-demand event emitted to analytics pipeline; never presents non-existent products.",
+      "labels": ["backend", "ai"],
+      "storyPoints": 3,
+      "dependsOn": ["LPD-026"]
+    },
+    {
+      "key": "LPD-028",
+      "phase": 3,
+      "issueType": "Story",
+      "summary": "Implement manual-rules matcher with pinned product injection",
+      "description": "Admin rules embedded at save; cosine similarity of query to rule above threshold injects pinned products at top of candidate set; rules evaluated before retrieval.",
+      "labels": ["backend", "ai"],
+      "storyPoints": 5,
+      "dependsOn": ["LPD-021"]
+    },
+    {
+      "key": "LPD-029",
+      "phase": 3,
+      "issueType": "Task",
+      "summary": "Enforce AI exclusion list end to end",
+      "description": "excluded_from_ai flag written to index on admin save; hard filter in AI retrieval only (classic search unaffected); acceptance: excluded product never appears in suggestions from save onward.",
+      "labels": ["backend", "search"],
+      "storyPoints": 2,
+      "dependsOn": ["LPD-024"]
+    },
+    {
+      "key": "LPD-030",
+      "phase": 3,
+      "issueType": "Story",
+      "summary": "Implement 'show more suggestions' cursor",
+      "description": "DynamoDB session cursor (TTL 30 min) tracking shown ids; next invocation excludes them; returns 3-5 distinct new suggestions.",
+      "labels": ["backend"],
+      "storyPoints": 3,
+      "dependsOn": ["LPD-026"]
+    },
+    {
+      "key": "LPD-031",
+      "phase": 3,
+      "issueType": "Task",
+      "summary": "Implement per-visitor usage quotas",
+      "description": "Anonymous visitor ID cookie; DynamoDB atomic counters; configurable daily limit (default 15 AI queries); polite Polish limit message with classic-search redirect.",
+      "labels": ["backend", "security"],
+      "storyPoints": 3,
+      "dependsOn": ["LPD-021"]
+    },
+    {
+      "key": "LPD-032",
+      "phase": 3,
+      "issueType": "Task",
+      "summary": "Configure AWS WAF on AI endpoint",
+      "description": "Rate-based rules per IP, AWS managed rule sets, max payload size, bot control evaluation.",
+      "labels": ["security", "infra"],
+      "storyPoints": 2,
+      "dependsOn": ["LPD-001"]
+    },
+    {
+      "key": "LPD-033",
+      "phase": 3,
+      "issueType": "Story",
+      "summary": "Implement exact-match response cache with serve-time revalidation",
+      "description": "Query normalization (lowercase, trim, diacritics, punctuation) -> hash key -> DynamoDB TTL 6-24h; cache stores product ids + explanations only; serve-time mget re-checks availability filters and drops stale ids.",
+      "labels": ["backend"],
+      "storyPoints": 5,
+      "dependsOn": ["LPD-026"]
+    },
+    {
+      "key": "LPD-034",
+      "phase": 3,
+      "issueType": "Story",
+      "summary": "Implement semantic cache over query embeddings",
+      "description": "Cached query vectors in OpenSearch with response pointers; cosine similarity >= ~0.95 reuses cached result; hit-rate metric emitted; global cache-version key respected.",
+      "labels": ["backend", "ai", "search"],
+      "storyPoints": 5,
+      "dependsOn": ["LPD-033"]
+    },
+    {
+      "key": "LPD-035",
+      "phase": 3,
+      "issueType": "Task",
+      "summary": "Enable Bedrock prompt caching for static system prefix",
+      "description": "Mark system prompt as cache prefix in Bedrock calls; verify cache-read pricing takes effect via invocation logs.",
+      "labels": ["ai"],
+      "storyPoints": 1,
+      "dependsOn": ["LPD-025"]
+    },
+    {
+      "key": "LPD-036",
+      "phase": 3,
+      "issueType": "Story",
+      "summary": "Storefront: homepage hero AI search with suggestion cards",
+      "description": "Natural-language input ('Opisz, czego szukasz...'), loading state, 3-5 suggestion cards with fit explanations reusing product card component, links to product pages; server-side API calls only.",
+      "labels": ["frontend"],
+      "storyPoints": 8,
+      "dependsOn": ["LPD-018", "LPD-026"]
+    },
+    {
+      "key": "LPD-037",
+      "phase": 3,
+      "issueType": "Story",
+      "summary": "Storefront: show-more and graceful fallback to classic search",
+      "description": "'Show more' wired to cursor; 6 s client timeout budget; on error/timeout/kill-switch, query passed to classic search with friendly notice — no dead end; feature flag for instant disable.",
+      "labels": ["frontend"],
+      "storyPoints": 5,
+      "dependsOn": ["LPD-030", "LPD-036", "LPD-016"]
+    },
+    {
+      "key": "LPD-038",
+      "phase": 3,
+      "issueType": "Task",
+      "summary": "Build offline quality eval harness (~200 Polish queries)",
+      "description": "Curated query set with expected products; LLM-as-judge scoring + human spot-check protocol; run gates every prompt/model/index change; report artifact in CI.",
+      "labels": ["qa", "ai"],
+      "storyPoints": 8,
+      "dependsOn": ["LPD-025"]
+    },
+    {
+      "key": "LPD-039",
+      "phase": 3,
+      "issueType": "Task",
+      "summary": "AI path latency optimization to p95 <= 4 s",
+      "description": "Stage-level profiling (X-Ray), parallelize guardrails/retrieval where safe, tune candidate count and output length; document final latency budget per stage.",
+      "labels": ["backend", "ai", "qa"],
+      "storyPoints": 5,
+      "dependsOn": ["LPD-036", "LPD-038"]
+    },
+    {
+      "key": "LPD-040",
+      "phase": 4,
+      "issueType": "Story",
+      "summary": "Saleor App UI: AI exclusion list management",
+      "description": "Product search + add/remove from exclusion list; writes DynamoDB + index flag; effective immediately with cache invalidation.",
+      "labels": ["admin", "frontend"],
+      "storyPoints": 3,
+      "dependsOn": ["LPD-029", "LPD-042"]
+    },
+    {
+      "key": "LPD-041",
+      "phase": 4,
+      "issueType": "Story",
+      "summary": "Saleor App UI: manual suggestion rules with test preview",
+      "description": "CRUD for 'for requests like X, suggest Y' rules; live preview runs the rule against the matcher; rule embeddings generated on save.",
+      "labels": ["admin", "frontend"],
+      "storyPoints": 5,
+      "dependsOn": ["LPD-028", "LPD-042"]
+    },
+    {
+      "key": "LPD-042",
+      "phase": 4,
+      "issueType": "Task",
+      "summary": "Build internal admin API (IAM-auth API Gateway + Lambda + DynamoDB)",
+      "description": "Endpoints for exclusions, rules, and analytics queries; authorized for the Saleor App only; audit log of admin changes.",
+      "labels": ["backend", "admin", "security"],
+      "storyPoints": 3,
+      "dependsOn": ["LPD-011"]
+    },
+    {
+      "key": "LPD-043",
+      "phase": 4,
+      "issueType": "Task",
+      "summary": "Build analytics event pipeline with anonymization",
+      "description": "Impression, click, unmatched-demand, off-topic events -> Kinesis Firehose -> S3; hashed rotating visitor ID; no PII; partitioned storage for Athena.",
+      "labels": ["backend", "infra", "security"],
+      "storyPoints": 5,
+      "dependsOn": ["LPD-027"]
+    },
+    {
+      "key": "LPD-044",
+      "phase": 4,
+      "issueType": "Task",
+      "summary": "Create Athena tables and dashboard queries",
+      "description": "Queries for: anonymized query log, suggestion CTR, unmatched requests, AI usage volume, estimated cost per query; scheduled materialization if needed for dashboard latency.",
+      "labels": ["backend", "admin"],
+      "storyPoints": 5,
+      "dependsOn": ["LPD-043"]
+    },
+    {
+      "key": "LPD-045",
+      "phase": 4,
+      "issueType": "Story",
+      "summary": "Saleor App UI: discovery analytics dashboard",
+      "description": "Views: query log (anonymized), CTR trends, unmatched-demand list with export, usage and cost; date-range filtering.",
+      "labels": ["admin", "frontend"],
+      "storyPoints": 8,
+      "dependsOn": ["LPD-044"]
+    },
+    {
+      "key": "LPD-046",
+      "phase": 4,
+      "issueType": "Task",
+      "summary": "Implement global cache-version invalidation on admin edits",
+      "description": "Version key bumped on exclusion/rule changes; exact-match and semantic caches check version; stale entries lazily evicted.",
+      "labels": ["backend"],
+      "storyPoints": 2,
+      "dependsOn": ["LPD-033", "LPD-034", "LPD-042"]
+    },
+    {
+      "key": "LPD-047",
+      "phase": 4,
+      "issueType": "Task",
+      "summary": "Implement data retention and anonymization jobs",
+      "description": "Rotating salt for visitor hashing; 12-month purge of query data (S3 lifecycle + Athena partition drop); documented GDPR purpose limitation.",
+      "labels": ["security", "backend"],
+      "storyPoints": 3,
+      "dependsOn": ["LPD-043"]
+    },
+    {
+      "key": "LPD-048",
+      "phase": 5,
+      "issueType": "Task",
+      "summary": "Build CloudWatch dashboards and SLO alarms",
+      "description": "p95 latency per stage, error rates, Bedrock token consumption, cache hit rate, quota rejections, fallback activation rate; alarms to on-call channel.",
+      "labels": ["infra", "qa"],
+      "storyPoints": 5,
+      "dependsOn": ["LPD-039"]
+    },
+    {
+      "key": "LPD-049",
+      "phase": 5,
+      "issueType": "Task",
+      "summary": "Set up AWS Budgets and daily Bedrock spend alarm with auto kill-switch",
+      "description": "Monthly budget alarm at 80%; daily Bedrock spend threshold triggers automatic feature-flag disable of AI search (storefront degrades to classic search).",
+      "labels": ["infra", "backend"],
+      "storyPoints": 3,
+      "dependsOn": ["LPD-048", "LPD-037"]
+    },
+    {
+      "key": "LPD-050",
+      "phase": 5,
+      "issueType": "Task",
+      "summary": "Load test AI path and chaos-test fallback",
+      "description": "3x projected peak on AI endpoint; induced Bedrock/OpenSearch failures verify seamless classic-search fallback and no dead ends.",
+      "labels": ["qa"],
+      "storyPoints": 5,
+      "dependsOn": ["LPD-039", "LPD-037"]
+    },
+    {
+      "key": "LPD-051",
+      "phase": 5,
+      "issueType": "Task",
+      "summary": "Security review / pentest of AI endpoint",
+      "description": "Prompt injection attempts, quota bypass, WAF evasion, data exfiltration via responses; findings triaged and blockers fixed before launch.",
+      "labels": ["security", "qa"],
+      "storyPoints": 5,
+      "dependsOn": ["LPD-039"]
+    },
+    {
+      "key": "LPD-052",
+      "phase": 5,
+      "issueType": "Task",
+      "summary": "Write runbooks and launch ramp-up plan",
+      "description": "On-call runbooks (index drift, Bedrock errors, cost spike, kill switch); feature-flag ramp-up plan (internal -> 10% -> 50% -> 100%); rollback procedure.",
+      "labels": ["infra", "qa"],
+      "storyPoints": 3,
+      "dependsOn": ["LPD-048"]
+    },
+    {
+      "key": "LPD-053",
+      "phase": 5,
+      "issueType": "Task",
+      "summary": "Go-live: staged rollout with monitoring sign-off",
+      "description": "Execute ramp-up plan; monitor SLOs, cost per query, CTR at each stage; launch review with success-metric baseline captured.",
+      "labels": ["infra", "qa"],
+      "storyPoints": 3,
+      "dependsOn": ["LPD-049", "LPD-050", "LPD-051", "LPD-052"]
+    }
+  ]
+}

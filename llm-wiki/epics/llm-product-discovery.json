@@ -1,0 +1,67 @@
+{
+  "name": "LLM Product Discovery",
+  "business_goal": "Make finding the right product effortless: a customer describes what they need in their own words and immediately receives a curated shortlist of fitting products, backed by classic search and catalog browsing for customers who already know what they want. AI-powered search is the portal's headline differentiator — no comparable Polish marketplace offers it today.",
+  "business_value": "Higher conversion by shortening the path from need to a confident choice; a marketable differentiator that positions the portal as the most helpful place to shop in its category; increased visibility of own exclusive products within suggestions; and a stream of customer demand insights — what people ask for that the catalog doesn't yet offer — to guide assortment and partner acquisition decisions.",
+  "primary_personas": [
+    "Customer (B2C)",
+    "Portal administrator (curates and monitors the discovery experience)"
+  ],
+  "scope": [
+    "AI search in the homepage hero: customer describes what they are looking for in natural language and receives 3-5 product suggestions, each with a short explanation of why it fits",
+    "'Show more suggestions' option that produces a further set of matches, with each suggestion leading directly to the standard product page",
+    "Own exclusive products favored in suggestions when they genuinely fit the request, and clearly marked with a dedicated badge",
+    "Honest handling of requests for products outside the offer: the assistant openly says the product is not available, proposes the closest alternatives, and the request is recorded as demand insight — it never invents products",
+    "Suggestions never include offers from suspended partners or seasonally unavailable products",
+    "Graceful fallback: if AI search is unavailable, the customer is seamlessly directed to the classic search",
+    "Classic search for customers who know what they want: suggestions while typing, tolerance for typos, and searching by product name, partner, category, location, and tags",
+    "Catalog browsing with filters (price, category, location, and other relevant attributes), sorting options, and visible result counts per filter",
+    "Product cards across discovery surfaces showing photo, name, location, price, customer rating, and the exclusivity badge where applicable",
+    "Administrator controls to keep suggestions trustworthy: exclusion list of products the AI must not suggest, manual rules ('for requests like X, suggest Y'), and review of anonymized customer queries, suggestion click-through, and unmatched requests",
+    "Protection against misuse of the free-text search (e.g. usage limits per visitor) so operating costs stay predictable"
+  ],
+  "out_of_scope": [
+    "Shopping cart, checkout, and payments (separate epic)",
+    "SEO, URL structure, and site performance optimization (separate epic)",
+    "Multi-language storefront — Polish only at launch; English and Ukrainian deferred to post-MVP",
+    "Voice-enabled AI search (post-MVP)",
+    "Conversational, multi-turn AI assistant — launch version is a single question with a single set of suggestions",
+    "Customer reviews and ratings submission (separate epic; ratings are only displayed on discovery surfaces)"
+  ],
+  "user_stories": [
+    "As a customer, I want to describe what I'm looking for in my own words, so that I get a shortlist of fitting products without browsing the whole catalog",
+    "As a customer, I want each suggestion to come with a short explanation of why it fits my request, so that I can quickly decide which product to explore",
+    "As a customer, I want more suggestions on demand when the first set doesn't convince me, so that I don't have to rephrase my request from scratch",
+    "As a customer asking about something the portal doesn't offer, I want an honest answer with the closest alternatives, so that I can trust the suggestions I do receive",
+    "As a customer who knows what I'm looking for, I want a classic search that forgives typos and suggests results as I type, so that I can get to a specific product fast",
+    "As a customer, I want to browse the catalog with filters and sorting that match how I shop (price, category), so that I can narrow down options on my own terms",
+    "As a portal administrator, I want to exclude specific products from AI suggestions and define manual rules for sensitive requests, so that suggestions always stay on-brand and appropriate",
+    "As a portal administrator, I want to see anonymized customer requests, which suggestions get clicked, and which requests found no match, so that I can improve the offer and measure whether AI search earns its keep"
+  ],
+  "acceptance_criteria": [
+    "Given a customer describes their need in the AI search, when they submit the request, then they receive 3-5 relevant product suggestions, each with a 1-2 sentence explanation of the match, and each leading to the standard product page",
+    "Given the first set of suggestions doesn't fit, when the customer asks for more, then a further set of 3-5 different suggestions is shown",
+    "Given a customer asks about a product outside the portal's offer, then the response openly states it is not available, offers the closest alternatives, and never presents a non-existent product",
+    "Given a partner is suspended or a product is seasonally unavailable, then that product never appears in AI suggestions",
+    "Given own exclusive products genuinely match the customer's request, then they are favored in the suggestions and carry the exclusivity badge",
+    "Given AI search is temporarily unavailable, then the customer can continue with the classic search without a dead end",
+    "Given a customer uses the classic search with a typo, then relevant results are still found and suggestions appear while typing",
+    "Given a customer applies catalog filters, then the results update immediately and each filter shows how many results it leads to",
+    "Given an administrator adds a product to the exclusion list or defines a manual suggestion rule, then AI suggestions respect it from that point on",
+    "Given administrators review the discovery dashboard, then they can see anonymized queries, suggestion click-through, and requests with no matching products"
+  ],
+  "risks": [
+    "Ongoing cost of AI-powered search grows with traffic; without cost projections, usage limits, and monitoring, the flagship feature could become disproportionately expensive to run",
+    "Irrelevant or fabricated suggestions would undermine trust in the portal's headline differentiator — quality assurance and admin curation are essential from day one",
+    "Suggestion quality depends directly on how complete and well-described partner offers are; gaps in product information will surface as poor recommendations",
+    "There is no benchmark on the Polish market — customer adoption of AI search is unproven, so its real contribution to conversion needs to be measured rather than assumed",
+    "The free-text search can attract off-topic or abusive use, driving up costs and risking inappropriate responses if not limited and moderated"
+  ],
+  "open_questions": [
+    "Which approach to AI search offers the lowest ongoing operating and maintenance cost, and what are realistic 12-month cost projections with a buffer for traffic growth? (agency recommendation expected)",
+    "What is the minimum product information partners must provide for suggestions to be accurate, and how do we enforce it during offer onboarding?",
+    "How should the assistant behave when a customer writes in English on the Polish site — respond in English against the Polish catalog, or propose switching site language once English is supported?",
+    "Should customers be able to flag 'notify me when something similar is available' for unmatched requests, and who follows up on that demand signal?",
+    "Is it sensible to present two search entry points (AI search and classic search) on the same page, and how do we make their roles obvious to customers?",
+    "Which measures of success do we commit to for the first months (e.g. share of visitors using AI search, click-through on suggestions, conversion from suggestion to purchase)?"
+  ]
+}
