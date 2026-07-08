@@ -1,0 +1,75 @@
+{
+  "name": "User Reviews",
+  "business_goal": "Let shoppers make confident buying decisions through trustworthy reviews: only customers who actually purchased and received a product can rate it. Defaults are chosen to 'fail alive' — reviews publish and stay visible even in stores that never staff a moderation queue.",
+  "business_value": "Reviews are table stakes: every mature storefront has them, and their absence loses adopters before Nimara's differentiators get evaluated. This epic closes that credibility gap and doubles as a reference implementation of the provider-swap architecture — the contract the primary Storefront Developer persona judges Nimara by. Verified social proof lifts product-page conversion, review structured data improves organic visibility, and rating aggregates give store operators direct quality feedback about their catalog.",
+  "primary_personas": [
+    "Customer (verified buyer) — invited to review products after their order is fulfilled",
+    "Shopper (guest or logged-in) — reads reviews while deciding on a purchase",
+    "Store administrator — monitors published reviews, handles reports, moderates the queue when pre-moderation is enabled",
+    "Developer — adopts Nimara and needs to enable, configure, theme, and extend the reviews feature without forking"
+  ],
+  "scope": [
+    "ReviewProvider interface in the storefront: all review reads/writes go through a documented provider contract, so the default implementation can be swapped (e.g. for a SaaS review service) and survives a commerce-engine swap",
+    "Default implementation: a Nimara-owned reviews module with its own storage — engine-agnostic, supporting moderation queues, filtering, and rating aggregation (deliberately not commerce-engine metadata)",
+    "Review submission: 1–5 star rating and text comment, available only to customers whose fully fulfilled order contains the product (verified purchase); one review per product per order",
+    "Review invitation email sent after order fulfillment with a configurable delay (default 3 days); submission window configurable (default 30 days from fulfillment); email sent through a pluggable email-provider adapter — the invitation is the only notification in v1",
+    "Moderation modes, both shipped in v1: auto-publish with post-moderation (default — reviews publish immediately, reports pull them back into the queue, admins can unpublish) and pre-moderation (nothing public before approval) as a configuration switch",
+    "Standalone admin app for moderation: pending/reported queue, approve / reject / unpublish, filtering by rating and product, bulk actions",
+    "Reporting a published review as inappropriate — the review returns to the moderation queue",
+    "Product page: average rating, review count, paginated list of published reviews, filtering by star rating",
+    "Rating and review count displayed on product cards across catalog and discovery surfaces",
+    "Vendor-attributable schema: reviews carry an optional seller/vendor reference (populated when order lines have vendor attribution) and aggregates can group by vendor — no marketplace UX in this epic, but no schema migration when the marketplace initiative needs per-vendor ratings",
+    "Review structured data (schema markup) on product pages for SEO",
+    "Audit trail of all moderation actions",
+    "Configuration via environment/code (not hidden in UIs), documented: enable/disable, moderation mode, invitation delay, review window"
+  ],
+  "out_of_scope": [
+    "Photo attachments — deliberate fast-follow; deferring removes the upload pipeline, object-storage adapter, image compression, image moderation, and the associated privacy (GDPR) surface from v1",
+    "Reminder emails and moderation-outcome notifications (approved/rejected) — fast-follow once the core loop is proven",
+    "Automated content screening (profanity, spam detection) — future enhancement",
+    "Marketplace UX: per-vendor rating display, vendor dashboards, vendor replies (schema readiness only — see scope)",
+    "Merchant/store public replies to reviews",
+    "Importing or syndicating reviews from external platforms (Google, Trustpilot)",
+    "Incentives or rewards for writing reviews",
+    "Carrier-confirmed delivery as the verification trigger — fulfillment + delay is the deliberate proxy; tracking integrations are out"
+  ],
+  "user_stories": [
+    "As a customer, a few days after my order is fulfilled I receive an email inviting me to review the products I bought, so I can share my experience while it's fresh.",
+    "As a customer, I want to have ability to browse my reviews",
+    "As a customer, I can rate a product 1–5 stars and write a comment, and (by default) see it published immediately, so contributing feels worthwhile.",
+    "As a shopper, I see the average rating, number of reviews, and a paginated, filterable review list on the product page, so I can make an informed decision.",
+    "As a shopper, I can report an inappropriate review, so harmful content gets pulled back for re-checking.",
+    "As a store administrator, I can unpublish any review and work a queue of reported (or, in pre-moderation mode, pending) reviews with filters and bulk actions.",
+    "As a store administrator, I see rating summaries per product, so I can spot quality issues in the catalog.",
+    "As a developer, I can enable or disable reviews and adjust settings (moderation mode, invitation delay, review window) through documented configuration, so I can fit the feature to my store without forking the code.",
+    "As a developer, review UI components are composable and themeable, and all review data flows through the ReviewProvider contract, so I can restyle the experience or swap the backing implementation."
+  ],
+  "acceptance_criteria": [
+    "A review can be submitted only by a customer whose fully fulfilled order contains the product; one review per product per order.",
+    "The invitation email is sent automatically after the configured delay from fulfillment; submission is possible only within the configured window, counted from fulfillment.",
+    "In auto-publish mode (default), a submitted review is publicly visible immediately; in pre-moderation mode, no review is visible before approval — switching modes is a single configuration change.",
+    "Reporting a published review returns it to the moderation queue without deleting it; an administrator's unpublish takes effect immediately.",
+    "The moderation queue supports approve, reject, unpublish, filtering by rating and product, and bulk actions.",
+    "The product page shows average rating, review count, and a paginated list with star-rating filtering; product cards across the storefront show average rating and count.",
+    "All storefront review reads/writes go through the ReviewProvider interface; the default module is the only component with direct access to review storage.",
+    "Review records store an optional vendor/seller reference when order lines carry vendor attribution, and aggregates can be computed per vendor.",
+    "Published reviews are exposed as review structured data on product pages.",
+    "Every moderation action is recorded in the audit trail.",
+    "Enable/disable and all settings (moderation mode, invitation delay, review window) are configurable via environment/code and documented; invitation email template is customizable."
+  ],
+  "risks": [
+    "The reviews module is the first stateful component in an otherwise stateless storefront stack — it adds a database and migrations to the Zero-to-Deploy story, the roadmap's #1 priority; the deploy path must absorb it invisibly.",
+    "A standalone admin app is heavy for a single workflow: it carries its own auth, deployment, and maintenance, and risks becoming a dead-end tool if the broader console question (see open questions) is answered differently later.",
+    "Stores that opt into pre-moderation but never staff the queue silently kill the feature — reviews pile up unpublished; mitigated by the auto-publish default, but the pre-moderation path needs queue-size visibility.",
+    "Auto-publish default means an occasional bad review is public before an admin reacts — recoverable via report/unpublish, but stores must know the switch exists.",
+    "Low review volume (single invitation email, no reminders or incentives in v1) → weak social proof, especially on new products.",
+    "Review invitations depend on stores reliably marking orders fulfilled — stores with sloppy fulfillment data get distorted invitation timing and windows."
+  ],
+  "open_questions": [
+    "Standalone admin app: is it the seed of a general Nimara operator console (auth, roles, navigation designed for reuse by future workflows like invoicing and branding) or a reviews-only tool? Deliberately deferred — must be decided before implementation starts, not implicitly by the first commit.",
+    "Photo fast-follow: target release, storage-provider abstraction, and image-moderation approach when photos are added.",
+    "Should v1 ship a second ReviewProvider adapter (e.g. a SaaS review service) to prove the contract, or is the interface + default module enough?",
+    "What queue-size visibility or alerting do pre-moderation stores need so an unstaffed queue is noticed?",
+    "GDPR: how are reviews handled when a customer requests account deletion — anonymize (keep content) or delete?"
+  ]
+}
