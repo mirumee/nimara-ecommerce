@@ -17,7 +17,7 @@ Nimara is a self-hosted, composable, code-first stack. Serving no-code merchants
 When they ask "how do I install this without a terminal," the answer is a polite pointer to hosted alternatives, not a roadmap item.
 
 ### Note on end shoppers
-End shoppers (buyers) are deliberately not a persona either — their experience is the quality bar the [[Storefront Developer]] and [[Ecommerce Manager]] personas are responsible for, not a segment Nimara sells to. Shopper-facing issues (checkout, search, channels) should be treated as threats to the developer's trust and the manager's revenue.
+End shoppers (buyers) are not an adoption segment — Nimara does not sell to them. They are documented as experience personas ([[Shopper]] pre-purchase, [[Customer]] post-purchase) because storefront epics need them as a quality bar, but their experience remains the responsibility of the [[Storefront Developer]] and [[Ecommerce Manager]] personas. Shopper-facing issues (checkout, search, reviews, channels) should be treated as threats to the developer's trust and the manager's revenue.
 
 ## Related Notes
 [[Storefront Developer]]
