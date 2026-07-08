@@ -1,32 +1,11 @@
 import * as dotenv from "dotenv";
 
-import type { VersionOptions } from "@docusaurus/plugin-content-docs";
 import type * as Preset from "@docusaurus/preset-classic";
 import type { Config } from "@docusaurus/types";
 
 import { pluginLlmsTxt } from "./src/plugins/llms-txt";
-import docsVersionsList from "./versions.json";
 
 dotenv.config();
-
-const [latestDocsVersion] = docsVersionsList;
-
-if (!latestDocsVersion) {
-  throw new Error("versions.json must contain at least one docs version.");
-}
-
-const docsVersions = Object.fromEntries(
-  docsVersionsList.map((version, index) => [
-    version,
-    index === 0
-      ? { label: version }
-      : {
-          label: version,
-          path: version,
-          banner: "unmaintained" as const,
-        },
-  ]),
-) satisfies { [versionName: string]: VersionOptions };
 
 const algoliaSiteVerification = process.env.ALGOLIA_SITE_VERIFICATION;
 const algoliaPublicApiKey = process.env.ALGOLIA_PUBLIC_API_KEY;
@@ -36,6 +15,7 @@ const algoliaCrawlerName = process.env.ALGOLIA_CRAWLER_NAME;
 const isAlgolia = Boolean(
   algoliaPublicApiKey && algoliaAppId && algoliaCrawlerName,
 );
+
 const config: Config = {
   title: "Nimara",
   tagline: "Modern headless e-commerce platform built on Saleor",
@@ -68,12 +48,9 @@ const config: Config = {
       "classic",
       {
         docs: {
-          editUrl:
-            "https://github.com/mirumee/nimara-ecommerce/edit/main/apps/docs/",
+          path: "../../docs",
+          sidebarPath: "./sidebars.ts",
           routeBasePath: "/",
-          lastVersion: latestDocsVersion,
-          includeCurrentVersion: false,
-          versions: docsVersions,
         },
         blog: false,
         theme: {
@@ -147,7 +124,7 @@ const config: Config = {
             },
             {
               label: "Quickstart",
-              to: "/running-locally",
+              to: "/Quickstart/running-locally",
             },
           ],
         },

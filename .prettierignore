@@ -13,3 +13,6 @@ packages/codegen/schema.ts
 
 apps/docs/pages/quickstart/storefront.mdx
 apps/docs/public/_pagefind/
+apps/docs/.docusaurus/
+
+llm-wiki/.obsidian/

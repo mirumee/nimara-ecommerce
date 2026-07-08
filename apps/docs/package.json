@@ -7,7 +7,8 @@
     "clear": "docusaurus clear",
     "dev": "docusaurus start --port 5000",
     "start": "docusaurus serve",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "version": "docusaurus docs:version"
   },
   "dependencies": {
     "@docusaurus/core": "3.10.1",
@@ -24,6 +25,7 @@
     "@docusaurus/module-type-aliases": "3.10.1",
     "@docusaurus/tsconfig": "3.10.1",
     "@docusaurus/types": "3.10.1",
+    "dotenv": "^17.4.2",
     "typescript": "^5.9.3"
   }
 }

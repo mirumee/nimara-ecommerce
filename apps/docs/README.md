@@ -10,7 +10,7 @@ Run from the repo root:
 pnpm dev:docs
 ```
 
-The site is served at `http://localhost:3000`. Hot reload picks up changes in `versioned_docs/`, `src/`, and `docusaurus.config.ts`.
+The site is served at `http://localhost:3000`. Hot reload picks up changes in `docs/` (repo root), `versioned_docs/`, `src/`, and `docusaurus.config.ts`.
 
 ## Build
 
@@ -40,6 +40,32 @@ Pushes to `main`, `staging`, or `develop` that touch `apps/docs/**` trigger `.gi
 
 ## Docs Versioning
 
-The Docusaurus docs site uses `apps/docs/versions.json` as the source of truth for published documentation versions. `apps/docs/docusaurus.config.ts` derives `lastVersion` and the version dropdown from that file, so do not update versions in the config manually.
+The live, editable source of truth is `/docs/` at the repo root. Versioned snapshots live in `apps/docs/versioned_docs/`. `apps/docs/versions.json` is the authoritative list of published versions — do not update it or `docusaurus.config.ts` manually.
 
-When releasing a new docs version, add the new version to the beginning of `apps/docs/versions.json` and make sure the matching `apps/docs/versioned_docs/version-<version>/` and `apps/docs/versioned_sidebars/version-<version>-sidebars.json` files are included.
+### Editing docs
+
+Edit files directly in `/docs/` (repo root). The site picks them up as the `latest` version. Folder structure drives the sidebar — no manual sidebar config needed.
+
+### Cutting a new version
+
+When ready to snapshot the current `/docs/` as a named release:
+
+```bash
+pnpm version:docs <version>
+# example: pnpm version:docs 2.1.0
+```
+
+Run from the repo root. This command:
+
+1. Copies `/docs/` → `apps/docs/versioned_docs/version-<version>/`
+2. Creates `apps/docs/versioned_sidebars/version-<version>-sidebars.json`
+3. Prepends `<version>` to `apps/docs/versions.json`
+
+The new version immediately becomes the default shown in the version dropdown. The previous latest is demoted to a versioned path (e.g. `/2.0.0/`). Older versions get an "unmaintained" banner.
+
+After cutting, commit all changed files:
+
+```bash
+git add docs/ apps/docs/versioned_docs/ apps/docs/versioned_sidebars/ apps/docs/versions.json
+git commit -m "docs: release version <version>"
+```
