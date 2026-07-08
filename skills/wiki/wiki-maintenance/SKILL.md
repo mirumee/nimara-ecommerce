@@ -1,6 +1,6 @@
 ---
 name: wiki-maintenance
-description: Maintain the llm-wiki knowledge base — ingest a new source into interlinked notes, lint/audit the graph (orphans, dangling links, uncited claims, format drift), or answer a question from the wiki and file the answer back so knowledge compounds. Use this skill whenever the user wants to add/ingest a document or research into the wiki, audit/lint/clean up the wiki, check for broken [[links]] or orphan notes, or ask a question that the wiki should answer (and save the answer). Follows the schema in llm-wiki/README.md. Do NOT use to write an epic (use epic-definition) or to run QA (use the skills/qa/* skills).
+description: Maintain the llm-wiki knowledge base — ingest a new source into interlinked notes, lint/audit the graph (orphans, dangling links, uncited claims, format drift), record an architecture decision as an ADR, or answer a question from the wiki and file the answer back so knowledge compounds. Use this skill whenever the user wants to add/ingest a document or research into the wiki, audit/lint/clean up the wiki, check for broken [[links]] or orphan notes, record/document an architecture decision (ADR), or ask a question that the wiki should answer (and save the answer). Follows the schema in llm-wiki/README.md. Do NOT use to write an epic (use epic-definition) or to run QA (use the skills/qa/* skills).
 ---
 
 # Wiki Maintenance
@@ -25,6 +25,9 @@ Three modes. Pick by what the user asked.
 4. **Discuss before writing.** Especially on ingest — surface takeaways and the proposed
    note set to the user before creating files. A single source may touch many notes.
 5. **Never fabricate.** Missing source, ambiguous claim, or no home folder → ASK.
+6. **Decisions are ADRs.** A significant, hard-to-reverse technical decision is never left
+   inline in prose — it becomes an ADR in `decisions/` from `_templates/ADR.md` (see the
+   ADR mode below).
 
 ---
 
@@ -80,9 +83,28 @@ Use when the user asks a question the wiki should cover.
    a new note (or extending an existing one) so the next reader gets it for free. On yes,
    switch to INGEST mode for that answer.
 
+## Mode: ADR — record an architecture decision
+
+Use when the user makes (or asks you to document) a significant, hard-to-reverse technical
+decision: choice of framework/datastore/protocol, a cross-cutting pattern, a trade-off that
+future readers will ask "why did we do it this way?" about.
+
+1. **CONFIRM it's ADR-worthy.** Trivial or easily-reversed choices don't need one. If in
+   doubt, ask. Capturing the *decision*, not routine implementation detail.
+2. **COPY `_templates/ADR.md`** into `decisions/` as `ADR-NNNN <Title>.md` — next unused
+   zero-padded number (check `[[Decisions MOC]]` for the highest so far), Title Case.
+3. **FILL** the Nygard sections — `**Status**` (usually `Accepted`, or `Proposed` if still
+   under review), then Context (value-neutral forces) → Decision ("We will …") →
+   Consequences (positive *and* negative trade-offs). One decision per note.
+4. **LINK** back to the `solution/` or `epics/` note it supports, and add its `## Related Notes`.
+5. **REGISTER** it in `[[Decisions MOC]]`'s register (one line) in the same change.
+6. **Superseding, not editing.** To change a decided ADR, write a new one and set the old
+   `**Status**` to `Superseded by [[ADR-NNNN …]]` — never rewrite an Accepted ADR in place.
+
 ---
 
 ## References
 - `llm-wiki/README.md` — the schema this skill enforces.
+- `llm-wiki/_templates/ADR.md` · `[[Decisions MOC]]` — the ADR template and its register.
 - `[[Product Strategy 2026 (MOC)]]` · `[[Quality & Testing (MOC)]]` — the domain indexes.
 - `[[Works Cited]]` — provenance record for research claims.
