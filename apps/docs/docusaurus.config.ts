@@ -1,7 +1,11 @@
+import * as dotenv from "dotenv";
+
 import type * as Preset from "@docusaurus/preset-classic";
 import type { Config } from "@docusaurus/types";
 
 import { pluginLlmsTxt } from "./src/plugins/llms-txt";
+
+dotenv.config();
 
 const algoliaSiteVerification = process.env.ALGOLIA_SITE_VERIFICATION;
 const algoliaPublicApiKey = process.env.ALGOLIA_PUBLIC_API_KEY;
