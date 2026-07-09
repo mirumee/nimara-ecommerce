@@ -97,11 +97,6 @@ one decision per note, using the **Michael Nygard template** (`_templates/ADR.md
 - Every ADR is registered in `[[ADR MOC]]` and links back to the `product/solution/` or
   `product/epics/` note it supports.
 
-> The `key_architecture_decisions` array inside `product/solution/*.json` is a per-epic *summary*
-> of decisions; a full ADR in `tech/ADR/` is the durable, standalone record. When a
-> solution-level decision is significant enough to outlive the epic, promote it to an ADR in
-> `tech/ADR/`.
-
 ## Naming & linking
 
 - **File names are Title Case with spaces**, matching the note's title. This is deliberate: Obsidian resolves `[[links]]`
@@ -148,8 +143,5 @@ These are conscious choices, not gaps — revisit only if the trade-off changes:
 - **Notes use `**Summary**` / `**Tags**` pseudo-fields, not YAML frontmatter.** Karpathy
   suggests YAML frontmatter to unlock Obsidian Dataview/Properties; we keep the existing bold
   fields. Consequence: Dataview queries won't work until (if ever) we migrate.
-- **`product/epics/`, `product/tasks/`, `product/solution/` are JSON, not markdown notes.** These are a structured
-  data layer, not synthesised knowledge — they don't appear in the Obsidian graph, `index.md`,
-  or `[[wikilinks]]`.
 - **No CLI search engine (e.g. qmd).** At current scale `index.md` + `grep` is enough; add
   on-device search only when the wiki outgrows it.
