@@ -26,7 +26,7 @@ Three modes. Pick by what the user asked.
    note set to the user before creating files. A single source may touch many notes.
 5. **Never fabricate.** Missing source, ambiguous claim, or no home folder → ASK.
 6. **Decisions are ADRs.** A significant, hard-to-reverse technical decision is never left
-   inline in prose — it becomes an ADR in `decisions/` from `_templates/ADR.md` (see the
+   inline in prose — it becomes an ADR in `tech/ADR` from `_templates/ADR.md` (see the
    ADR mode below).
 7. **Three layers, and keep the bookkeeping current.** Raw inputs live immutably in
    `sources/`; the notes are the wiki; `AGENTS.md` is the schema. Every mode ends by updating
