@@ -16,12 +16,19 @@ this file.
 
 ## Folder structure
 
-Content is grouped by **type**, not by a `raw/` + `wiki/` split. There is no global
-`index.md`; each domain has a **Map of Content (MOC)** note that indexes it.
+Content is grouped by **type**, not by a `raw/` + `wiki/` split. The three layers of
+Karpathy's model map here as: **raw** = `sources/` (immutable source documents), **wiki** =
+the typed note folders below, **schema** = this file (`AGENTS.md`). `index.md` is the global
+content catalogue (every note + a one-line summary), read first when answering a query; each
+domain additionally has a **Map of Content (MOC)** note that curates navigation within it.
 
 ```
 llm-wiki/
+  AGENTS.md       -- this file: the wiki schema (conventions, naming, rules)
+  index.md        -- global content catalogue (every note + one-line summary)
+  log.md          -- append-only chronicle of wiki operations (ingest/query/lint/adr)
   _templates/     -- Obsidian note templates (not content)
+  sources/        -- raw, immutable source documents the notes synthesise (never rewritten)
   personas/       -- who we build for (primary/secondary/anti-personas)
   market/         -- external research: competitors, trends, market sizing
   strategy/       -- product strategy, roadmap, initiatives, non-goals
@@ -30,9 +37,13 @@ llm-wiki/
   decisions/      -- architecture decision records (ADRs)   (.md, one per decision)
   references/     -- source lists (Works Cited) backing the research notes
   epics/          -- structured epic definitions            (.json, one per initiative)
-  solution/       -- technical solution per epic             (.json)
+  solution/       -- technical solution per epic             (.json, created per epic as needed)
   tasks/          -- developer task breakdown per epic        (.json)
 ```
+
+> `index.md` and `log.md` are machine-maintained navigation/bookkeeping files, not notes —
+> they are exempt from the note format below. `solution/` is created per epic when a technical
+> solution is written; it may be absent until then.
 
 ## Note format (`.md` pages)
 
@@ -97,17 +108,27 @@ one decision per note, using the **Michael Nygard template** (`_templates/ADR.md
 
 Don't hand-maintain — invoke the skill:
 
-- **Ingest** a new source into notes → `skills/wiki/wiki-maintenance` (ingest mode).
+- **Ingest** a new source into notes → `skills/wiki/wiki-maintenance` (ingest mode). On
+  ingest the raw source is archived under `sources/`, `index.md` gains the new/changed notes,
+  and `log.md` gets an entry.
 - **Lint / audit** the graph (orphans, dangling links, format drift, uncited claims) →
   same skill (lint mode).
-- **Answer a question and file the answer back** as a note → same skill (answer mode).
+- **Answer a question and file the answer back** as a note → same skill (answer mode). The
+  answer starts by reading `index.md` to locate relevant notes.
+
+Every skill operation appends one line to `log.md` (`## [YYYY-MM-DD] <mode> | Title`), so the
+wiki keeps a chronological record of how it evolved.
 
 ## Rules
 
-- **Never rewrite research sources.** `references/Works Cited.md` is the provenance
-  record — append, don't silently alter cited claims.
+- **Never rewrite sources.** Documents under `sources/` are immutable raw inputs — append new
+  sources, never edit an archived one. `references/Works Cited.md` is the provenance record —
+  append, don't silently alter cited claims; link a citation to its `sources/` copy when one exists.
+- **Keep `index.md` and `log.md` current.** Adding, renaming, or removing a note updates
+  `index.md` in the same change; every skill operation appends a line to `log.md`.
 - **Keep MOCs current.** Adding or removing a note means updating its domain MOC in the
-  same change; the MOC is the index.
+  same change. `index.md` is the exhaustive catalogue; MOCs are curated navigation hubs — both
+  are maintained, they are not redundant.
 - **One idea per note.** If a note grows two topics, split it and cross-link.
 - **Record decisions as ADRs.** A significant, hard-to-reverse technical decision goes in
   `decisions/` using `_templates/ADR.md` — never buried inline in prose. ADRs are immutable
@@ -115,3 +136,16 @@ Don't hand-maintain — invoke the skill:
 - **Match the house style.** New notes use the format above; new skills follow the
   `skills/**/SKILL.md` convention and cite the notes they rely on.
 - **When unsure how to categorise something, ask** rather than inventing a new folder.
+
+## Deliberate deviations from Karpathy's pattern
+
+These are conscious choices, not gaps — revisit only if the trade-off changes:
+
+- **Notes use `**Summary**` / `**Tags**` pseudo-fields, not YAML frontmatter.** Karpathy
+  suggests YAML frontmatter to unlock Obsidian Dataview/Properties; we keep the existing bold
+  fields. Consequence: Dataview queries won't work until (if ever) we migrate.
+- **`epics/`, `tasks/`, `solution/` are JSON, not markdown notes.** These are a structured
+  data layer, not synthesised knowledge — they don't appear in the Obsidian graph, `index.md`,
+  or `[[wikilinks]]`.
+- **No CLI search engine (e.g. qmd).** At current scale `index.md` + `grep` is enough; add
+  on-device search only when the wiki outgrows it.
