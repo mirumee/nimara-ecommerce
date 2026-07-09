@@ -34,13 +34,13 @@ timestamp: "2026-07-08T00:00:00+00:00"
 > "No reviews, no stars, nothing? I'm not spending 200 zł to find out first."
 
 ### Product Implications
-- Their experience is the [Storefront Developer](/product/personas/Storefront%20Developer.md)'s trust and the [Ecommerce Manager](/product/personas/Ecommerce%20Manager.md)'s revenue — shopper-facing gaps (performance, search, reviews display, checkout) are defects of the highest order, not enhancements.
+- Their experience is the [Storefront Developer](product/personas/Storefront%20Developer.md)'s trust and the [Ecommerce Manager](product/personas/Ecommerce%20Manager.md)'s revenue — shopper-facing gaps (performance, search, reviews display, checkout) are defects of the highest order, not enhancements.
 - Social proof is a conversion mechanism: ratings and review counts must be visible on product cards and product pages by default (see the User Reviews epic).
 - Discovery must serve both modes: describing a need in natural language and classic search/filter for shoppers who know what they want (see the LLM Product Discovery epic).
 - Guest-first flows and mobile performance are defaults, not options — every barrier is measured in silent abandonment.
 
 ## Related Notes
-[Customer](/product/personas/Customer.md)
-[Storefront Developer](/product/personas/Storefront%20Developer.md)
-[Ecommerce Manager](/product/personas/Ecommerce%20Manager.md)
-[Anti-Persona - No-Code Solo Merchant](/product/personas/Anti-Persona%20-%20No-Code%20Solo%20Merchant.md)
+[Customer](product/personas/Customer.md)
+[Storefront Developer](product/personas/Storefront%20Developer.md)
+[Ecommerce Manager](product/personas/Ecommerce%20Manager.md)
+[Anti-Persona - No-Code Solo Merchant](product/personas/Anti-Persona%20-%20No-Code%20Solo%20Merchant.md)

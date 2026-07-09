@@ -26,7 +26,7 @@ timestamp: "2026-06-30T00:00:00+00:00"
 ### Known-flaky storefront behaviours (don't over-trust a single run)
 - **GB delivery methods sometimes fail to load** on the delivery step ("Failed to update delivery method" / empty radiogroup). Reload or proceed; not the same as a full-shell crash.
 - **Stripe Element** can be slow/fail to load on second mount or under heavy throttle; only initialises after a delivery method/amount is set.
-- **Cache/channel leaks** (MS-807-class): intermittent by nature — failing to reproduce is not proof of a fix (see [Verdict & Evidence Policy](/quality/Verdict%20%26%20Evidence%20Policy.md)).
+- **Cache/channel leaks** (MS-807-class): intermittent by nature — failing to reproduce is not proof of a fix (see [Verdict & Evidence Policy](quality/Verdict%20%26%20Evidence%20Policy.md)).
 
 ### Not-the-storefront
 - `nimara.store` is a marketing/landing page (no `/search`, `/products`). Don't test it as the store.
@@ -35,6 +35,6 @@ timestamp: "2026-06-30T00:00:00+00:00"
 Leave the ticket in place, mark `blocked_needs_human` in `worklist.json`, comment what's needed (env URL, creds in code blocks, dashboard access, a decision), ASK, and move on. Batch requests so one human pass unblocks many.
 
 ## Related Notes
-[Quality & Testing (MOC)](/quality/Quality%20%26%20Testing%20%28MOC%29.md)
-[Environments & Access Matrix](/quality/Environments%20%26%20Access%20Matrix.md)
-[Verdict & Evidence Policy](/quality/Verdict%20%26%20Evidence%20Policy.md)
+[Quality & Testing (MOC)](quality/Quality%20%26%20Testing%20%28MOC%29.md)
+[Environments & Access Matrix](quality/Environments%20%26%20Access%20Matrix.md)
+[Verdict & Evidence Policy](quality/Verdict%20%26%20Evidence%20Policy.md)

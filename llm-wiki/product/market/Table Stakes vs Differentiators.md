@@ -24,11 +24,11 @@ timestamp: "2026-06-16T00:00:00+00:00"
 
 ### How to read this
 - The left column is the credibility floor — missing any of it loses adopters before they evaluate the differentiators.
-- The right column maps directly to the [Initiative Prioritization](/product/strategy/initiatives/Initiative%20Prioritization.md) list. Each differentiator is the rationale behind a prioritized initiative.
+- The right column maps directly to the [Initiative Prioritization](product/strategy/initiatives/Initiative%20Prioritization.md) list. Each differentiator is the rationale behind a prioritized initiative.
 
 ## Related Notes
-[Competitor Landscape](/product/market/Competitor%20Landscape.md)
-[Emerging Trends 2026](/product/market/Emerging%20Trends%202026.md)
-[Initiative Prioritization](/product/strategy/initiatives/Initiative%20Prioritization.md)
-[Product Strategy 2026 (MOC)](/product/strategy/Product%20Strategy%202026%20%28MOC%29.md)
-[Works Cited](/references/Works%20Cited.md)
+[Competitor Landscape](product/market/Competitor%20Landscape.md)
+[Emerging Trends 2026](product/market/Emerging%20Trends%202026.md)
+[Initiative Prioritization](product/strategy/initiatives/Initiative%20Prioritization.md)
+[Product Strategy 2026 (MOC)](product/strategy/Product%20Strategy%202026%20%28MOC%29.md)
+[Works Cited](references/Works%20Cited.md)

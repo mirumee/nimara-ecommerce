@@ -38,6 +38,6 @@ timestamp: "2026-06-11T00:00:00+00:00"
 - Don't expect them to read technical docs; their surface is the dashboard.
 
 ## Related Notes
-[Storefront Developer](/product/personas/Storefront%20Developer.md)
-[Marketplace Vendor](/product/personas/Marketplace%20Vendor.md)
-[Anti-Persona - No-Code Solo Merchant](/product/personas/Anti-Persona%20-%20No-Code%20Solo%20Merchant.md)
+[Storefront Developer](product/personas/Storefront%20Developer.md)
+[Marketplace Vendor](product/personas/Marketplace%20Vendor.md)
+[Anti-Persona - No-Code Solo Merchant](product/personas/Anti-Persona%20-%20No-Code%20Solo%20Merchant.md)

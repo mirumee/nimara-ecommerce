@@ -7,7 +7,7 @@ tags:
   - "topic"
 created: "2026-06-16T00:00:00+00:00"
 timestamp: "2026-06-16T00:00:00+00:00"
-status: "Proposed <!-- Proposed | Accepted | Rejected | Deprecated | Superseded by [ADR-NNNN Title](/tech/ADR/ADR-NNNN%20Title.md) -->"
+status: "Proposed"
 ---
 
 ## Context
@@ -28,5 +28,5 @@ why the codebase looks the way it does.
 
 ## Related Notes
 
-[Decisions MOC](/tech/ADR/ADR%20MOC.md)
-[Related solution or epic note](/Related%20solution%20or%20epic%20note.md)
+[ADR MOC](tech/ADR/ADR%20MOC.md)
+Replace this line with a real epic, solution, or task link before use.

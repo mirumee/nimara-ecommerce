@@ -19,15 +19,15 @@ is one standalone note following the [Michael Nygard template](https://github.co
 - **One decision per note.** File name is `ADR-NNNN <Title>` (zero-padded, monotonically
   increasing, never reused) — e.g. `ADR-0001 Use RAG over fine-tuning`.
 - **ADRs are immutable once Accepted.** Don't rewrite a decision — supersede it: create a
-  new ADR and set the old one's `**Status**` to `Superseded by [ADR-NNNN …](/tech/ADR/ADR-NNNN%20%E2%80%A6.md)`.
+  new ADR and set the old one's `status` frontmatter to `Superseded by ADR-NNNN Title`.
 - Register every new ADR in the register below in the same change.
 
 ## Register
 
-<!-- Newest last. Format: - [ADR-NNNN Title](/tech/ADR/ADR-NNNN%20Title.md) — Status — one-line summary -->
+<!-- Newest last. Format: - ADR-NNNN Title - Status - one-line summary -->
 
 _No ADRs recorded yet._
 
 ## Related Notes
 
-[Product Strategy 2026 (MOC)](/product/strategy/Product%20Strategy%202026%20%28MOC%29.md)
+[Product Strategy 2026 (MOC)](product/strategy/Product%20Strategy%202026%20%28MOC%29.md)

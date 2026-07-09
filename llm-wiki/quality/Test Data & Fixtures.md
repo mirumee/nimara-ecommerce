@@ -36,13 +36,13 @@ timestamp: "2026-06-30T00:00:00+00:00"
 Per country `require` (S = admin area), `sub_isoids`, `sub_names`, `state_name_type`:
 - `S` in `require` → field shown + required, else hidden.
 - alphabetic `sub_isoids` → sorted, validated `<select>`; numeric/empty → free text, no validation.
-- See the equivalence classes and the live test sweep in [Coverage Maps](/quality/Coverage%20Maps.md) (and tickets MS-1238 / MS-1239 / MS-1240).
+- See the equivalence classes and the live test sweep in [Coverage Maps](quality/Coverage%20Maps.md) (and tickets MS-1238 / MS-1239 / MS-1240).
 
 ### Accounts
 - No standing storefront/admin test account is reliably available to agents — request per task (and confirm the **environment** the account belongs to; an email containing "stage" does not guarantee it works on `stage.nimara.store`).
 
 ## Related Notes
-[Quality & Testing (MOC)](/quality/Quality%20%26%20Testing%20%28MOC%29.md)
-[Coverage Maps](/quality/Coverage%20Maps.md)
-[Test Method Playbooks](/quality/Test%20Method%20Playbooks.md)
-[Environments & Access Matrix](/quality/Environments%20%26%20Access%20Matrix.md)
+[Quality & Testing (MOC)](quality/Quality%20%26%20Testing%20%28MOC%29.md)
+[Coverage Maps](quality/Coverage%20Maps.md)
+[Test Method Playbooks](quality/Test%20Method%20Playbooks.md)
+[Environments & Access Matrix](quality/Environments%20%26%20Access%20Matrix.md)
