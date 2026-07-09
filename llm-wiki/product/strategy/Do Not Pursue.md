@@ -1,19 +1,25 @@
-**Summary**: Initiatives Nimara should explicitly avoid — distractions and traps that would dilute its code-first, composable, open-source positioning.
-
-**Tags**: #strategy #antipattern #scope #donotpursue
-**Created**: 2026-06-16T00:00:00+00:00
-**Last Updated**: 2026-06-16T00:00:00+00:00
-
 ---
+type: "Strategy Note"
+title: "Do Not Pursue"
+description: "Initiatives Nimara should explicitly avoid — distractions and traps that would dilute its code-first, composable, open-source positioning."
+tags:
+  - "strategy"
+  - "antipattern"
+  - "scope"
+  - "donotpursue"
+created: "2026-06-16T00:00:00+00:00"
+timestamp: "2026-06-16T00:00:00+00:00"
+---
+
 ## Content
 
-- **Drag-and-drop visual theme editor** — pulls Nimara into direct competition with hosted Shopify-style setups and Alokai's visual editors, violates the code-first persona, and adds heavy monorepo tech debt. (See [[Anti-Persona - No-Code Solo Merchant]].)
+- **Drag-and-drop visual theme editor** — pulls Nimara into direct competition with hosted Shopify-style setups and Alokai's visual editors, violates the code-first persona, and adds heavy monorepo tech debt. (See [Anti-Persona - No-Code Solo Merchant](/product/personas/Anti-Persona%20-%20No-Code%20Solo%20Merchant.md).)
 - **Bi-directional vendor store catalog sync engines** — real-time sync to external platforms (Shopify, WooCommerce) is highly complex due to API drift; should stay an enterprise-tier plugin / custom integration concern.
-- **Proprietary search indexing & storage engine** — inefficient to build and maintain; Medusa v2's search-module removal shows the unsustainable overhead. Adopters expect clean integrations with Algolia/Meilisearch (see [[Developer Pain Points]]).
+- **Proprietary search indexing & storage engine** — inefficient to build and maintain; Medusa v2's search-module removal shows the unsustainable overhead. Adopters expect clean integrations with Algolia/Meilisearch (see [Developer Pain Points](/product/market/Developer%20Pain%20Points.md)).
 - **Closed-source marketplace gateway or enterprise add-ons** — gating multi-vendor behind a paid license is counterproductive at this growth phase. Open-source accessibility is the top-of-funnel engine; monetize via managed deployment infrastructure and SLA-backed support instead.
 
 ## Related Notes
-[[Anti-Persona - No-Code Solo Merchant]]
-[[Developer Pain Points]]
-[[Initiative Prioritization]]
-[[Product Strategy 2026 (MOC)]]
+[Anti-Persona - No-Code Solo Merchant](/product/personas/Anti-Persona%20-%20No-Code%20Solo%20Merchant.md)
+[Developer Pain Points](/product/market/Developer%20Pain%20Points.md)
+[Initiative Prioritization](/product/strategy/initiatives/Initiative%20Prioritization.md)
+[Product Strategy 2026 (MOC)](/product/strategy/Product%20Strategy%202026%20%28MOC%29.md)

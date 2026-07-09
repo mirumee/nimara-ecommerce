@@ -1,10 +1,16 @@
-**Summary**: SECONDARY persona — the business operator of a Nimara-powered store who manages catalog, channels, content, taxes, and orders day-to-day through dashboards, not code.
-
-**Tags**: #persona #secondary #store-owner #operations
-**Created**: 2026-06-11T00:00:00+00:00
-**Last Updated**: 2026-06-11T00:00:00+00:00
-
 ---
+type: "Persona"
+title: "Ecommerce Manager"
+description: "SECONDARY persona — the business operator of a Nimara-powered store who manages catalog, channels, content, taxes, and orders day-to-day through dashboards, not code."
+tags:
+  - "persona"
+  - "secondary"
+  - "store-owner"
+  - "operations"
+created: "2026-06-11T00:00:00+00:00"
+timestamp: "2026-06-11T00:00:00+00:00"
+---
+
 ## Content
 
 ### Goals
@@ -32,6 +38,6 @@
 - Don't expect them to read technical docs; their surface is the dashboard.
 
 ## Related Notes
-[[Storefront Developer]]
-[[Marketplace Vendor]]
-[[Anti-Persona - No-Code Solo Merchant]]
+[Storefront Developer](/product/personas/Storefront%20Developer.md)
+[Marketplace Vendor](/product/personas/Marketplace%20Vendor.md)
+[Anti-Persona - No-Code Solo Merchant](/product/personas/Anti-Persona%20-%20No-Code%20Solo%20Merchant.md)

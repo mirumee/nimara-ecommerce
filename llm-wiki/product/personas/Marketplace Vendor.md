@@ -1,10 +1,16 @@
-**Summary**: SECONDARY persona — a third-party seller on a Nimara-powered marketplace who manages their own products, orders, and fulfillment through the Vendor Panel.
-
-**Tags**: #persona #secondary #vendor #marketplace
-**Created**: 2026-06-11T00:00:00+00:00
-**Last Updated**: 2026-06-11T00:00:00+00:00
-
 ---
+type: "Persona"
+title: "Marketplace Vendor"
+description: "SECONDARY persona — a third-party seller on a Nimara-powered marketplace who manages their own products, orders, and fulfillment through the Vendor Panel."
+tags:
+  - "persona"
+  - "secondary"
+  - "vendor"
+  - "marketplace"
+created: "2026-06-11T00:00:00+00:00"
+timestamp: "2026-06-11T00:00:00+00:00"
+---
+
 ## Content
 
 ### Goals
@@ -31,6 +37,6 @@
 - Keep the panel task-oriented and simple (orders, products, payouts, reports); resist exposing the commerce engine's full complexity to vendors.
 
 ## Related Notes
-[[Storefront Developer]]
-[[Ecommerce Manager]]
-[[Anti-Persona - No-Code Solo Merchant]]
+[Storefront Developer](/product/personas/Storefront%20Developer.md)
+[Ecommerce Manager](/product/personas/Ecommerce%20Manager.md)
+[Anti-Persona - No-Code Solo Merchant](/product/personas/Anti-Persona%20-%20No-Code%20Solo%20Merchant.md)

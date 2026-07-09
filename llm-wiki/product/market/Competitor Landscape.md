@@ -1,10 +1,16 @@
-**Summary**: 2026 positioning, architecture, momentum, and developer experience of the platforms Nimara competes with in headless/composable commerce.
-
-**Tags**: #market #competitors #composable #strategy
-**Created**: 2026-06-16T00:00:00+00:00
-**Last Updated**: 2026-06-16T00:00:00+00:00
-
 ---
+type: "Market Research"
+title: "Competitor Landscape"
+description: "2026 positioning, architecture, momentum, and developer experience of the platforms Nimara competes with in headless/composable commerce."
+tags:
+  - "market"
+  - "competitors"
+  - "composable"
+  - "strategy"
+created: "2026-06-16T00:00:00+00:00"
+timestamp: "2026-06-16T00:00:00+00:00"
+---
+
 ## Content
 
 | Platform | Core Positioning | Architectural Model | Market Momentum | Developer Experience (DX) |
@@ -21,11 +27,11 @@
 
 ### Where Nimara fits
 - Nimara sits on top of **Saleor**, directly closing Saleor's biggest DX gap (no first-class storefront) while staying fully open-source — unlike commercetools/Alokai (cost + setup friction) and the managed-backend players (Swell, Your Next Store).
-- The differentiation thesis is detailed in [[Table Stakes vs Differentiators]].
+- The differentiation thesis is detailed in [Table Stakes vs Differentiators](/product/market/Table%20Stakes%20vs%20Differentiators.md).
 
 ## Related Notes
-[[Composable Commerce Market]]
-[[Table Stakes vs Differentiators]]
-[[Developer Pain Points]]
-[[Product Strategy 2026 (MOC)]]
-[[Works Cited]]
+[Composable Commerce Market](/product/market/Composable%20Commerce%20Market.md)
+[Table Stakes vs Differentiators](/product/market/Table%20Stakes%20vs%20Differentiators.md)
+[Developer Pain Points](/product/market/Developer%20Pain%20Points.md)
+[Product Strategy 2026 (MOC)](/product/strategy/Product%20Strategy%202026%20%28MOC%29.md)
+[Works Cited](/references/Works%20Cited.md)

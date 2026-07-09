@@ -1,10 +1,17 @@
-**Summary**: The rules for reaching a defensible verdict — evidence only, "could not reproduce" is not "fixed", use controls and caveats, and never fabricate or force a result.
-
-**Tags**: #qa #verdict #evidence #policy #integrity
-**Created**: 2026-06-30T00:00:00+00:00
-**Last Updated**: 2026-06-30T00:00:00+00:00
-
 ---
+type: "QA Policy"
+title: "Verdict & Evidence Policy"
+description: "The rules for reaching a defensible verdict — evidence only, \"could not reproduce\" is not \"fixed\", use controls and caveats, and never fabricate or force a result."
+tags:
+  - "qa"
+  - "verdict"
+  - "evidence"
+  - "policy"
+  - "integrity"
+created: "2026-06-30T00:00:00+00:00"
+timestamp: "2026-06-30T00:00:00+00:00"
+---
+
 ## Content
 
 ### Core principles
@@ -33,6 +40,6 @@ Factual, one or two lines, **no AI/automation/tool references**. Examples:
 `fixed` · `still_reproduces` · `still_reproduces_partial` · `blocked_needs_human` · `routed_to_dev` · `inconclusive` · `pending`.
 
 ## Related Notes
-[[Quality & Testing (MOC)]]
-[[Bug Retest & Triage Process]]
-[[Known Flaky, Blocked & Backend-Only]]
+[Quality & Testing (MOC)](/quality/Quality%20%26%20Testing%20%28MOC%29.md)
+[Bug Retest & Triage Process](/quality/Bug%20Retest%20%26%20Triage%20Process.md)
+[Known Flaky, Blocked & Backend-Only](/quality/Known%20Flaky%2C%20Blocked%20%26%20Backend-Only.md)

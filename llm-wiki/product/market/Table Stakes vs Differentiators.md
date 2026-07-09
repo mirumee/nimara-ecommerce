@@ -1,10 +1,16 @@
-**Summary**: What has become commoditized (table stakes Nimara must have to be credible) versus the genuine differentiators that are Nimara's opportunity in the 2026 market.
-
-**Tags**: #market #strategy #differentiation #composable
-**Created**: 2026-06-16T00:00:00+00:00
-**Last Updated**: 2026-06-16T00:00:00+00:00
-
 ---
+type: "Market Research"
+title: "Table Stakes vs Differentiators"
+description: "What has become commoditized (table stakes Nimara must have to be credible) versus the genuine differentiators that are Nimara's opportunity in the 2026 market."
+tags:
+  - "market"
+  - "strategy"
+  - "differentiation"
+  - "composable"
+created: "2026-06-16T00:00:00+00:00"
+timestamp: "2026-06-16T00:00:00+00:00"
+---
+
 ## Content
 
 | Capability Area | Commoditized (Table Stakes) | Genuine Differentiator (Nimara's Opportunity) |
@@ -18,11 +24,11 @@
 
 ### How to read this
 - The left column is the credibility floor — missing any of it loses adopters before they evaluate the differentiators.
-- The right column maps directly to the [[Initiative Prioritization]] list. Each differentiator is the rationale behind a prioritized initiative.
+- The right column maps directly to the [Initiative Prioritization](/product/strategy/initiatives/Initiative%20Prioritization.md) list. Each differentiator is the rationale behind a prioritized initiative.
 
 ## Related Notes
-[[Competitor Landscape]]
-[[Emerging Trends 2026]]
-[[Initiative Prioritization]]
-[[Product Strategy 2026 (MOC)]]
-[[Works Cited]]
+[Competitor Landscape](/product/market/Competitor%20Landscape.md)
+[Emerging Trends 2026](/product/market/Emerging%20Trends%202026.md)
+[Initiative Prioritization](/product/strategy/initiatives/Initiative%20Prioritization.md)
+[Product Strategy 2026 (MOC)](/product/strategy/Product%20Strategy%202026%20%28MOC%29.md)
+[Works Cited](/references/Works%20Cited.md)

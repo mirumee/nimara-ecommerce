@@ -1,10 +1,17 @@
-**Summary**: Equivalence partitions for key Nimara surfaces so agents test *classes* of behaviour (no gaps), not random cases — checkout flows, channels, and the address administrative-area field.
-
-**Tags**: #qa #coverage #equivalence #checkout #addresses
-**Created**: 2026-06-30T00:00:00+00:00
-**Last Updated**: 2026-06-30T00:00:00+00:00
-
 ---
+type: "QA Reference"
+title: "Coverage Maps"
+description: "Equivalence partitions for key Nimara surfaces so agents test *classes* of behaviour (no gaps), not random cases — checkout flows, channels, and the address administrative-area field."
+tags:
+  - "qa"
+  - "coverage"
+  - "equivalence"
+  - "checkout"
+  - "addresses"
+created: "2026-06-30T00:00:00+00:00"
+timestamp: "2026-06-30T00:00:00+00:00"
+---
+
 ## Content
 
 Design tests by **equivalence partitioning**: enumerate the distinct behaviour classes, then cover each with a representative. This is how the address sweep found bugs the ad-hoc pass missed.
@@ -33,7 +40,7 @@ Per page type (Home, PLP, PDP, CMS `/page/*`): meta/OG tags, sitemap inclusion, 
 Per env (dev/stage/demo) × page type (Home/PLP/PDP), mobile + desktop Lighthouse.
 
 ## Related Notes
-[[Quality & Testing (MOC)]]
-[[Test Data & Fixtures]]
-[[Test Method Playbooks]]
-[[Defect Taxonomy & Severity]]
+[Quality & Testing (MOC)](/quality/Quality%20%26%20Testing%20%28MOC%29.md)
+[Test Data & Fixtures](/quality/Test%20Data%20%26%20Fixtures.md)
+[Test Method Playbooks](/quality/Test%20Method%20Playbooks.md)
+[Defect Taxonomy & Severity](/quality/Defect%20Taxonomy%20%26%20Severity.md)

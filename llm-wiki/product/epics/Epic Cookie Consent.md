@@ -1,13 +1,22 @@
-# EPIC HYPOTHESIS STATEMENT
-
-**Epic Name:** Cookie Consent & Google Consent Mode v2
-**Epic Owner:** Michał Ociepka
-**Type:** Business epic
-**Date / State:** 2026-07-08 / Analyzing
+---
+type: "Epic"
+title: "Cookie Consent & Google Consent Mode v2"
+description: "Epic hypothesis statement for Cookie Consent and Google Consent Mode v2 in the Nimara storefront."
+tags:
+  - "epic"
+  - "cookie-consent"
+  - "gtm"
+  - "compliance"
+created: "2026-07-08T00:00:00+00:00"
+timestamp: "2026-07-08T00:00:00+00:00"
+status: "analyzing"
+owner: "Michał Ociepka"
+epic_type: "Business epic"
+---
 
 ## Value Statement
 
-**For** [[Ecommerce Manager]] running Nimara stores in consent-regulated markets (EEA/UK)
+**For** [Ecommerce Manager](/product/personas/Ecommerce%20Manager.md) running Nimara stores in consent-regulated markets (EEA/UK)
 **who** must run GTM tracking legally (GDPR/ePrivacy) and keep Google Ads signal alive under Consent Mode v2
 **the** Cookie Consent epic
 **is a** built-in consent management layer (banner + Consent Mode v2 wiring) in the Nimara storefront

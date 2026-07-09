@@ -1,13 +1,13 @@
 ---
-id: EPIC-000
-type: epic
-status: draft            # draft | analyzing | ready | in-progress | done | dropped
-owner: ""
-epic_type: business      # business | enabler
-personas:
-  - ""                    # [[Persona]] once it exists
-created: YYYY-MM-DD
-updated: YYYY-MM-DD
+type: "Template"
+title: "Epic Template"
+description: "Reusable template for drafting OKF-compatible Nimara epic hypothesis statements."
+tags:
+  - "template"
+  - "epic"
+created: "2026-07-09T00:00:00+00:00"
+timestamp: "2026-07-09T00:00:00+00:00"
+template_for: "Epic"
 ---
 
 # Epic Name
@@ -54,4 +54,4 @@ The smallest slice that tests the hypothesis, and the evidence that would make u
 
 
 ## Related Notes
-[[Initiative Note]]
+[Initiative Note](/product/strategy/initiatives/Initiative%20Note.md)
