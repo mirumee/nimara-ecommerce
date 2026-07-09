@@ -32,6 +32,9 @@ Three modes. Pick by what the user asked.
    `sources/`; the notes are the wiki; `AGENTS.md` is the schema. Every mode ends by updating
    the two bookkeeping files: `index.md` (the global catalogue) when notes change, and
    `log.md` (append one line per operation, format `## [YYYY-MM-DD] <mode> | Title`).
+8. **Use QMD for discovery when available.** The repo exposes `pnpm wiki:qmd:*` wrappers for
+   local markdown retrieval. QMD is rebuilt from files and is not source-of-truth state; use it
+   to find candidate notes, then read the actual markdown files before answering or editing.
 
 ---
 
@@ -89,8 +92,9 @@ After reporting, **LOG** the pass: append `## [YYYY-MM-DD] lint | <scope>` to `l
 
 Use when the user asks a question the wiki should cover.
 
-1. **READ `index.md` first**, then the relevant MOC (`strategy/…(MOC)` or `qa/…(MOC)`) to
-   locate the right notes, then read those notes.
+1. **DISCOVER candidate notes** with QMD when available, then fall back to `index.md`. Use:
+   `pnpm wiki:qmd:query "<question>" -- --json -n 10`. Then read the relevant MOC
+   (`strategy/…(MOC)` or `qa/…(MOC)`) and the actual markdown notes before answering.
 2. **SYNTHESISE** an answer, **citing the specific notes** you drew from (`[[Note]]`).
 3. **If the wiki doesn't cover it, say so plainly** — don't invent.
 4. **OFFER TO FILE IT BACK** — if the answer is durable and reusable, propose saving it as
@@ -122,9 +126,10 @@ future readers will ask "why did we do it this way?" about.
 
 ## References
 - `llm-wiki/AGENTS.md` — the schema this skill enforces.
-- `llm-wiki/index.md` — global content catalogue (read first on query; update on every ingest).
+- `llm-wiki/index.md` — fallback global content catalogue; update on every ingest.
 - `llm-wiki/log.md` — append-only operation log (one line per mode run).
 - `llm-wiki/sources/` — raw, immutable source documents the notes synthesise from.
+- `llm-wiki/sources/LLM Wiki.md` — upstream LLM-wiki pattern that motivates the local schema.
 - `llm-wiki/_templates/ADR.md` · `[[Decisions MOC]]` — the ADR template and its register.
 - `[[Product Strategy 2026 (MOC)]]` · `[[Quality & Testing (MOC)]]` — the domain indexes.
 - `[[Works Cited]]` — provenance record for research claims.

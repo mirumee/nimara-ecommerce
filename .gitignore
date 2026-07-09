@@ -3,6 +3,9 @@
 # obsydiand
 llm-wiki/.obsidian
 
+# qmd local indexes
+.qmd/
+
 # dependencies
 node_modules
 .pnp
