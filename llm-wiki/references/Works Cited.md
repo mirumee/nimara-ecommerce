@@ -7,7 +7,8 @@
 ---
 ## Content
 
-All sources accessed June 16, 2026.
+All sources accessed June 16, 2026. These are the external references cited by the upstream
+report — the raw report itself is archived at [[Strategic Product Report - Nimara.store (Gemini Deep Research)]].
 
 1. Headless Commerce in 2026: A Complete Guide for Enterprise Buyers — https://spreecommerce.org/headless-commerce-2026-complete-guide/
 2. How do complex developer tools actually get adoption? (r/webdev) — https://www.reddit.com/r/webdev/comments/1sjnb8s/how_do_complex_developer_tools_actually_get/
@@ -48,6 +49,7 @@ All sources accessed June 16, 2026.
 37. Alokai Review: My Verdict for 2025, Ecommerce-Platforms.com — https://ecommerce-platforms.com/articles/alokai-review
 
 ## Related Notes
+[[Strategic Product Report - Nimara.store (Gemini Deep Research)]]
 [[Composable Commerce Market]]
 [[Competitor Landscape]]
 [[Emerging Trends 2026]]
