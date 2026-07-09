@@ -3,7 +3,7 @@
 
 **Tags**: #adr #moc
 **Created**: 2026-07-08T00:00:00+00:00
-**Last Updated**: 2026-07-08T00:00:00+00:00
+**Last Updated**: 2026-07-09T00:00:00+00:00
 
 ---
 ## Content
@@ -23,7 +23,7 @@ is one standalone note following the [Michael Nygard template](https://github.co
 
 <!-- Newest last. Format: - [[ADR-NNNN Title]] — Status — one-line summary -->
 
-- [[ADR-0001 Standalone Reviews Service with a Stateless Storefront]] — Accepted — reviews live in a standalone service with its own Postgres; the storefront stays stateless and reaches them only through the ReviewProvider contract over HTTP.
+_No ADRs recorded yet._
 
 ## Related Notes
 

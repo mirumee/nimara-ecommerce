@@ -16,34 +16,37 @@ this file.
 
 ## Folder structure
 
-Content is grouped by **type**, not by a `raw/` + `wiki/` split. The three layers of
-Karpathy's model map here as: **raw** = `sources/` (immutable source documents), **wiki** =
-the typed note folders below, **schema** = this file (`AGENTS.md`). `index.md` is the global
-content catalogue (every note + a one-line summary), read first when answering a query; each
-domain additionally has a **Map of Content (MOC)** note that curates navigation within it.
+Content is grouped by **domain** — `product/`, `quality/`, `tech/` — with typed sub-folders
+inside each; not by a `raw/` + `wiki/` split. The three layers of Karpathy's model map here
+as: **raw** = `sources/` (immutable source documents), **wiki** = the typed note folders below,
+**schema** = this file (`AGENTS.md`). `index.md` is the global content catalogue (every note +
+a one-line summary), read first when answering a query; each domain additionally has a **Map of
+Content (MOC)** note that curates navigation within it.
 
 ```
 llm-wiki/
-  AGENTS.md       -- this file: the wiki schema (conventions, naming, rules)
-  index.md        -- global content catalogue (every note + one-line summary)
-  log.md          -- append-only chronicle of wiki operations (ingest/query/lint/adr)
-  _templates/     -- Obsidian note templates (not content)
-  sources/        -- raw, immutable source documents the notes synthesise (never rewritten)
-  personas/       -- who we build for (primary/secondary/anti-personas)
-  market/         -- external research: competitors, trends, market sizing
-  strategy/       -- product strategy, roadmap, initiatives, non-goals
-    initiatives/  -- one note per prioritised initiative
-  qa/             -- QA operating knowledge: environments, board, methods, policy
-  decisions/      -- architecture decision records (ADRs)   (.md, one per decision)
-  references/     -- source lists (Works Cited) backing the research notes
-  epics/          -- structured epic definitions            (.json, one per initiative)
-  solution/       -- technical solution per epic             (.json, created per epic as needed)
-  tasks/          -- developer task breakdown per epic        (.json)
+  AGENTS.md         -- this file: the wiki schema (conventions, naming, rules)
+  index.md          -- global content catalogue (every note + one-line summary)
+  log.md            -- append-only chronicle of wiki operations (ingest/query/lint/adr)
+  _templates/       -- Obsidian note templates (not content)
+  sources/          -- raw, immutable source documents the notes synthesise (never rewritten)
+  references/       -- source lists (Works Cited) backing the research notes
+  product/          -- what we build & who for: personas, market, strategy, epic→task data layer
+    personas/       -- who we build for (primary/secondary/anti-personas)
+    market/         -- external research: competitors, trends, market sizing
+    strategy/       -- product strategy, roadmap, initiatives, non-goals
+      initiatives/  -- one note per prioritised initiative
+    epics/          -- structured epic definitions            (.json, one per initiative)
+    solution/       -- technical solution per epic             (.json, created per epic as needed)
+    tasks/          -- developer task breakdown per epic        (.json)
+  quality/          -- QA operating knowledge: environments, board, methods, policy
+  tech/             -- technical knowledge
+    ADR/            -- architecture decision records (ADRs)   (.md, one per decision)
 ```
 
 > `index.md` and `log.md` are machine-maintained navigation/bookkeeping files, not notes —
-> they are exempt from the note format below. `solution/` is created per epic when a technical
-> solution is written; it may be absent until then.
+> they are exempt from the note format below. `product/solution/` is created per epic when a
+> technical solution is written; it may be absent until then.
 
 ## Note format (`.md` pages)
 
@@ -76,7 +79,7 @@ using [[Note Title]] wikilinks throughout the text.
 
 ## Architecture Decision Records (ADRs)
 
-Significant technical decisions are recorded as **standalone `.md` notes in `decisions/`**,
+Significant technical decisions are recorded as **standalone `.md` notes in `tech/ADR/`**,
 one decision per note, using the **Michael Nygard template** (`_templates/ADR.md`):
 
 ```markdown
@@ -91,12 +94,13 @@ one decision per note, using the **Michael Nygard template** (`_templates/ADR.md
   never reused (e.g. `ADR-0001 Use RAG over fine-tuning`). Wikilink is `[[ADR-0001 Use RAG over fine-tuning]]`.
 - **Immutable once Accepted.** Don't edit a decided ADR — supersede it: write a new ADR and
   set the old one's `**Status**` to `Superseded by [[ADR-NNNN …]]`.
-- Every ADR is registered in `[[Decisions MOC]]` and links back to the `solution/` or
-  `epics/` note it supports.
+- Every ADR is registered in `[[ADR MOC]]` and links back to the `product/solution/` or
+  `product/epics/` note it supports.
 
-> The `key_architecture_decisions` array inside `solution/*.json` is a per-epic *summary*
-> of decisions; a full ADR in `decisions/` is the durable, standalone record. When a
-> solution-level decision is significant enough to outlive the epic, promote it to an ADR.
+> The `key_architecture_decisions` array inside `product/solution/*.json` is a per-epic *summary*
+> of decisions; a full ADR in `tech/ADR/` is the durable, standalone record. When a
+> solution-level decision is significant enough to outlive the epic, promote it to an ADR in
+> `tech/ADR/`.
 
 ## Naming & linking
 
@@ -131,7 +135,7 @@ wiki keeps a chronological record of how it evolved.
   are maintained, they are not redundant.
 - **One idea per note.** If a note grows two topics, split it and cross-link.
 - **Record decisions as ADRs.** A significant, hard-to-reverse technical decision goes in
-  `decisions/` using `_templates/ADR.md` — never buried inline in prose. ADRs are immutable
+  `tech/ADR/` using `_templates/ADR.md` — never buried inline in prose. ADRs are immutable
   once Accepted; supersede rather than rewrite.
 - **Match the house style.** New notes use the format above; new skills follow the
   `skills/**/SKILL.md` convention and cite the notes they rely on.
@@ -144,7 +148,7 @@ These are conscious choices, not gaps — revisit only if the trade-off changes:
 - **Notes use `**Summary**` / `**Tags**` pseudo-fields, not YAML frontmatter.** Karpathy
   suggests YAML frontmatter to unlock Obsidian Dataview/Properties; we keep the existing bold
   fields. Consequence: Dataview queries won't work until (if ever) we migrate.
-- **`epics/`, `tasks/`, `solution/` are JSON, not markdown notes.** These are a structured
+- **`product/epics/`, `product/tasks/`, `product/solution/` are JSON, not markdown notes.** These are a structured
   data layer, not synthesised knowledge — they don't appear in the Obsidian graph, `index.md`,
   or `[[wikilinks]]`.
 - **No CLI search engine (e.g. qmd).** At current scale `index.md` + `grep` is enough; add
