@@ -36,9 +36,9 @@ llm-wiki/
     market/         -- external research: competitors, trends, market sizing
     strategy/       -- product strategy, roadmap, initiatives, non-goals
       initiatives/  -- one note per prioritised initiative
-    epics/          -- structured epic definitions            (.json, one per initiative)
-    solution/       -- technical solution per epic             (.json, created per epic as needed)
-    tasks/          -- developer task breakdown per epic        (.json)
+    epics/          -- structured epic definitions
+    solution/       -- technical solution per epic
+    tasks/          -- developer task breakdown per epic
   quality/          -- QA operating knowledge: environments, board, methods, policy
   tech/             -- technical knowledge
     ADR/            -- architecture decision records (ADRs)   (.md, one per decision)
