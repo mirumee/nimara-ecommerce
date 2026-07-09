@@ -68,11 +68,11 @@ timestamp: "2026-07-09T00:00:00+00:00"
 
 Main content. Use clear headings, short paragraphs, tables, and lists.
 Link related concepts with standard Markdown links:
-[Related Concept](/product/strategy/Related%20Concept.md).
+[Product Strategy 2026 (MOC)](product/strategy/Product%20Strategy%202026%20%28MOC%29.md).
 
 # Related Notes
 
-[Another Note](/product/strategy/Another%20Note.md)
+[Initiative Prioritization](product/strategy/initiatives/Initiative%20Prioritization.md)
 ```
 
 Required:
@@ -95,14 +95,14 @@ Local extensions currently used:
 
 # Links
 
-Use standard Markdown links only. Prefer absolute bundle-relative links beginning with `/`
-inside concept bodies because OKF treats the bundle root as the link base:
+Use standard Markdown links only. Local links are relative to the `llm-wiki/` bundle root
+and must not include the `llm-wiki/` prefix:
 
 ```markdown
-[Storefront Developer](/product/personas/Storefront%20Developer.md)
+[Storefront Developer](product/personas/Storefront%20Developer.md)
 ```
 
-Use relative links in `index.md` entries when listing local contents:
+Use the same bundle-relative form in `index.md` entries:
 
 ```markdown
 * [Storefront Developer](product/personas/Storefront%20Developer.md) - primary adopter persona.
@@ -157,7 +157,7 @@ Rules:
 * Type: `Architecture Decision Record`.
 * Status lives in frontmatter as `status`.
 * Accepted ADRs are immutable. Supersede them with a new ADR and link both documents.
-* Register every ADR in [ADR MOC](/tech/ADR/ADR%20MOC.md) and link it back to the relevant
+* Register every ADR in [ADR MOC](tech/ADR/ADR%20MOC.md) and link it back to the relevant
   epic, solution, or task note.
 
 # Maintaining The Wiki
@@ -197,7 +197,7 @@ pnpm wiki:qmd:mcp
 
 Operational rules:
 
-* Use [LLM Wiki](/sources/LLM%20Wiki.md) for the upstream pattern and this file for Nimara's
+* Use [LLM Wiki](sources/LLM%20Wiki.md) for the upstream pattern and this file for Nimara's
   local OKF schema.
 * Run `pnpm wiki:qmd:update` after Markdown changes and `pnpm wiki:qmd:embed` when semantic
   search should reflect those changes.
@@ -218,6 +218,6 @@ Operational rules:
 
 # Related Notes
 
-[LLM Wiki](/sources/LLM%20Wiki.md)
-[ADR MOC](/tech/ADR/ADR%20MOC.md)
-[Product Strategy 2026 (MOC)](/product/strategy/Product%20Strategy%202026%20%28MOC%29.md)
+[LLM Wiki](sources/LLM%20Wiki.md)
+[ADR MOC](tech/ADR/ADR%20MOC.md)
+[Product Strategy 2026 (MOC)](product/strategy/Product%20Strategy%202026%20%28MOC%29.md)

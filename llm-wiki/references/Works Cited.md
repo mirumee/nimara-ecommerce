@@ -14,7 +14,7 @@ timestamp: "2026-06-16T00:00:00+00:00"
 ## Content
 
 All sources accessed June 16, 2026. These are the external references cited by the upstream
-report — the raw report itself is archived at [Strategic Product Report - Nimara.store (Gemini Deep Research)](/sources/Strategic%20Product%20Report%20-%20Nimara.store%20%28Gemini%20Deep%20Research%29.md).
+report — the raw report itself is archived at [Strategic Product Report - Nimara.store (Gemini Deep Research)](sources/Strategic%20Product%20Report%20-%20Nimara.store%20%28Gemini%20Deep%20Research%29.md).
 
 1. Headless Commerce in 2026: A Complete Guide for Enterprise Buyers — https://spreecommerce.org/headless-commerce-2026-complete-guide/
 2. How do complex developer tools actually get adoption? (r/webdev) — https://www.reddit.com/r/webdev/comments/1sjnb8s/how_do_complex_developer_tools_actually_get/
@@ -55,9 +55,9 @@ report — the raw report itself is archived at [Strategic Product Report - Nima
 37. Alokai Review: My Verdict for 2025, Ecommerce-Platforms.com — https://ecommerce-platforms.com/articles/alokai-review
 
 ## Related Notes
-[Strategic Product Report - Nimara.store (Gemini Deep Research)](/sources/Strategic%20Product%20Report%20-%20Nimara.store%20%28Gemini%20Deep%20Research%29.md)
-[Composable Commerce Market](/product/market/Composable%20Commerce%20Market.md)
-[Competitor Landscape](/product/market/Competitor%20Landscape.md)
-[Emerging Trends 2026](/product/market/Emerging%20Trends%202026.md)
-[Developer Pain Points](/product/market/Developer%20Pain%20Points.md)
-[Product Strategy 2026 (MOC)](/product/strategy/Product%20Strategy%202026%20%28MOC%29.md)
+[Strategic Product Report - Nimara.store (Gemini Deep Research)](sources/Strategic%20Product%20Report%20-%20Nimara.store%20%28Gemini%20Deep%20Research%29.md)
+[Composable Commerce Market](product/market/Composable%20Commerce%20Market.md)
+[Competitor Landscape](product/market/Competitor%20Landscape.md)
+[Emerging Trends 2026](product/market/Emerging%20Trends%202026.md)
+[Developer Pain Points](product/market/Developer%20Pain%20Points.md)
+[Product Strategy 2026 (MOC)](product/strategy/Product%20Strategy%202026%20%28MOC%29.md)

@@ -38,6 +38,6 @@ timestamp: "2026-06-11T00:00:00+00:00"
 - Don't hide configuration in UIs; they want env vars, code, and infrastructure-as-code they can read.
 
 ## Related Notes
-[Ecommerce Manager](/product/personas/Ecommerce%20Manager.md)
-[Marketplace Vendor](/product/personas/Marketplace%20Vendor.md)
-[Anti-Persona - No-Code Solo Merchant](/product/personas/Anti-Persona%20-%20No-Code%20Solo%20Merchant.md)
+[Ecommerce Manager](product/personas/Ecommerce%20Manager.md)
+[Marketplace Vendor](product/personas/Marketplace%20Vendor.md)
+[Anti-Persona - No-Code Solo Merchant](product/personas/Anti-Persona%20-%20No-Code%20Solo%20Merchant.md)

@@ -36,11 +36,11 @@ timestamp: "2026-07-08T00:00:00+00:00"
 ### Product Implications
 - The verified-review loop lives on this persona: invitation timed from fulfillment (configurable delay), a submission window, and fail-alive publishing defaults so feedback never disappears into an unwatched queue (see the User Reviews epic).
 - Transactional email is the product surface here — reliable order and fulfillment notifications through the email-provider adapter are the credibility floor.
-- Reliable fulfillment data is a prerequisite: invitation timing and review windows inherit their accuracy from stores marking orders fulfilled (an [Ecommerce Manager](/product/personas/Ecommerce%20Manager.md) workflow).
+- Reliable fulfillment data is a prerequisite: invitation timing and review windows inherit their accuracy from stores marking orders fulfilled (an [Ecommerce Manager](product/personas/Ecommerce%20Manager.md) workflow).
 - GDPR flows (data export, account deletion, review anonymization vs. deletion) must be designed, not improvised — this persona is where those requests come from.
 
 ## Related Notes
-[Shopper](/product/personas/Shopper.md)
-[Storefront Developer](/product/personas/Storefront%20Developer.md)
-[Ecommerce Manager](/product/personas/Ecommerce%20Manager.md)
-[Anti-Persona - No-Code Solo Merchant](/product/personas/Anti-Persona%20-%20No-Code%20Solo%20Merchant.md)
+[Shopper](product/personas/Shopper.md)
+[Storefront Developer](product/personas/Storefront%20Developer.md)
+[Ecommerce Manager](product/personas/Ecommerce%20Manager.md)
+[Anti-Persona - No-Code Solo Merchant](product/personas/Anti-Persona%20-%20No-Code%20Solo%20Merchant.md)

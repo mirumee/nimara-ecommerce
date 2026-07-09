@@ -40,6 +40,6 @@ Factual, one or two lines, **no AI/automation/tool references**. Examples:
 `fixed` · `still_reproduces` · `still_reproduces_partial` · `blocked_needs_human` · `routed_to_dev` · `inconclusive` · `pending`.
 
 ## Related Notes
-[Quality & Testing (MOC)](/quality/Quality%20%26%20Testing%20%28MOC%29.md)
-[Bug Retest & Triage Process](/quality/Bug%20Retest%20%26%20Triage%20Process.md)
-[Known Flaky, Blocked & Backend-Only](/quality/Known%20Flaky%2C%20Blocked%20%26%20Backend-Only.md)
+[Quality & Testing (MOC)](quality/Quality%20%26%20Testing%20%28MOC%29.md)
+[Bug Retest & Triage Process](quality/Bug%20Retest%20%26%20Triage%20Process.md)
+[Known Flaky, Blocked & Backend-Only](quality/Known%20Flaky%2C%20Blocked%20%26%20Backend-Only.md)

@@ -39,10 +39,10 @@ The channel is the path prefix, and it scopes **currency, available countries, a
 
 ### Rule of thumb for agents
 - **Storefront-observable** (checkout, cart, search, address forms, SEO/meta, sitemap, perf) → you can test.
-- **Backend-only** (Saleor order/transaction internals, ERP fulfilment/stock, `checkout.user` field) → you **cannot** verdict it; route to a developer (see [Known Flaky, Blocked & Backend-Only](/quality/Known%20Flaky%2C%20Blocked%20%26%20Backend-Only.md)).
+- **Backend-only** (Saleor order/transaction internals, ERP fulfilment/stock, `checkout.user` field) → you **cannot** verdict it; route to a developer (see [Known Flaky, Blocked & Backend-Only](quality/Known%20Flaky%2C%20Blocked%20%26%20Backend-Only.md)).
 - If access is missing, **STOP and ASK** — do not fabricate data. Batch all access requests at once in machine-safe form (code blocks for secrets, explicit env URLs).
 
 ## Related Notes
-[Quality & Testing (MOC)](/quality/Quality%20%26%20Testing%20%28MOC%29.md)
-[Known Flaky, Blocked & Backend-Only](/quality/Known%20Flaky%2C%20Blocked%20%26%20Backend-Only.md)
-[Test Data & Fixtures](/quality/Test%20Data%20%26%20Fixtures.md)
+[Quality & Testing (MOC)](quality/Quality%20%26%20Testing%20%28MOC%29.md)
+[Known Flaky, Blocked & Backend-Only](quality/Known%20Flaky%2C%20Blocked%20%26%20Backend-Only.md)
+[Test Data & Fixtures](quality/Test%20Data%20%26%20Fixtures.md)

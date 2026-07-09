@@ -40,7 +40,7 @@ Per page type (Home, PLP, PDP, CMS `/page/*`): meta/OG tags, sitemap inclusion, 
 Per env (dev/stage/demo) × page type (Home/PLP/PDP), mobile + desktop Lighthouse.
 
 ## Related Notes
-[Quality & Testing (MOC)](/quality/Quality%20%26%20Testing%20%28MOC%29.md)
-[Test Data & Fixtures](/quality/Test%20Data%20%26%20Fixtures.md)
-[Test Method Playbooks](/quality/Test%20Method%20Playbooks.md)
-[Defect Taxonomy & Severity](/quality/Defect%20Taxonomy%20%26%20Severity.md)
+[Quality & Testing (MOC)](quality/Quality%20%26%20Testing%20%28MOC%29.md)
+[Test Data & Fixtures](quality/Test%20Data%20%26%20Fixtures.md)
+[Test Method Playbooks](quality/Test%20Method%20Playbooks.md)
+[Defect Taxonomy & Severity](quality/Defect%20Taxonomy%20%26%20Severity.md)

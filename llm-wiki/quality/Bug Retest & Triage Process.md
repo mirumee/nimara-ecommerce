@@ -29,7 +29,7 @@ The board changes in real time. **Re-query before every ticket; never trust a ca
 2. **PLAN** — write `qa/triage/plans/<KEY>.md`: preconditions (env URL, channel, account, test data), the steps, explicit decision criteria.
 3. **PREREQ CHECK — ASK IF BLOCKED.** Confirm you have env/credentials/data. If anything is missing or the repro is ambiguous → STOP and ASK, listing exactly what you need. Never fabricate.
 4. **CLAIM** — re-fetch to confirm still unassigned + status, then transition to `In testing` (id 25). Claim happens only after prereqs pass.
-5. **EXECUTE** — drive the real app (see [Test Method Playbooks](/quality/Test%20Method%20Playbooks.md)). Capture decisive evidence → `qa/triage/evidence/<KEY>/`.
+5. **EXECUTE** — drive the real app (see [Test Method Playbooks](quality/Test%20Method%20Playbooks.md)). Capture decisive evidence → `qa/triage/evidence/<KEY>/`.
 6. **CONCLUDE — on evidence only** — Done (fixed) / Open (reproduces) / leave In testing + ASK (inconclusive). Add a short factual comment (no AI/automation wording).
 7. **LOG** — append `qa/triage/jira-actions.json`; set state in `qa/triage/worklist.json`. Report, then next ticket.
 
@@ -40,10 +40,10 @@ The board changes in real time. **Re-query before every ticket; never trust a ca
 - `qa/triage/jira-actions.json` — append-only log of transitions/comments/timestamps.
 
 ### Blocked handling
-On a precondition you can't satisfy: leave the ticket where it is, mark `blocked_needs_human` in `worklist.json`, comment what's needed (mentioning the QA owner), ASK, and move on. Batch access asks. See [Known Flaky, Blocked & Backend-Only](/quality/Known%20Flaky%2C%20Blocked%20%26%20Backend-Only.md).
+On a precondition you can't satisfy: leave the ticket where it is, mark `blocked_needs_human` in `worklist.json`, comment what's needed (mentioning the QA owner), ASK, and move on. Batch access asks. See [Known Flaky, Blocked & Backend-Only](quality/Known%20Flaky%2C%20Blocked%20%26%20Backend-Only.md).
 
 ## Related Notes
-[Quality & Testing (MOC)](/quality/Quality%20%26%20Testing%20%28MOC%29.md)
-[Jira & Board 74 Operating Manual](/quality/Jira%20%26%20Board%2074%20Operating%20Manual.md)
-[Verdict & Evidence Policy](/quality/Verdict%20%26%20Evidence%20Policy.md)
-[Test Method Playbooks](/quality/Test%20Method%20Playbooks.md)
+[Quality & Testing (MOC)](quality/Quality%20%26%20Testing%20%28MOC%29.md)
+[Jira & Board 74 Operating Manual](quality/Jira%20%26%20Board%2074%20Operating%20Manual.md)
+[Verdict & Evidence Policy](quality/Verdict%20%26%20Evidence%20Policy.md)
+[Test Method Playbooks](quality/Test%20Method%20Playbooks.md)

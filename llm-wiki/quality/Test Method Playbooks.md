@@ -39,16 +39,16 @@ Pick the **cheapest reliable** method per bug class. All of these are proven on 
 - These are stripped in production builds, so the deployed console won't show them. Verify by **code inspection** (`grep`/read the component). Caveat: repo HEAD may differ from the deployed build — state that in the verdict.
 
 ### Backend signals (e.g. `checkout.user`, order transactions, ERP state)
-- Need Saleor GraphQL / dashboard / ERP access. Usually **not available** → route to a developer (see [Known Flaky, Blocked & Backend-Only](/quality/Known%20Flaky%2C%20Blocked%20%26%20Backend-Only.md)).
+- Need Saleor GraphQL / dashboard / ERP access. Usually **not available** → route to a developer (see [Known Flaky, Blocked & Backend-Only](quality/Known%20Flaky%2C%20Blocked%20%26%20Backend-Only.md)).
 
 ### Multi-country / data-driven UI (e.g. address fields)
-- Equivalence-partition against the data source (see [Coverage Maps](/quality/Coverage%20Maps.md) and [Test Data & Fixtures](/quality/Test%20Data%20%26%20Fixtures.md)); inspect the rendered control per representative (select vs text, required, sorted).
+- Equivalence-partition against the data source (see [Coverage Maps](quality/Coverage%20Maps.md) and [Test Data & Fixtures](quality/Test%20Data%20%26%20Fixtures.md)); inspect the rendered control per representative (select vs text, required, sorted).
 
 ### Tooling available to agents
 Playwright MCP (navigate/snapshot/click/type/fill_form/screenshot/navigate_back/**run_code_unsafe** for CDP + DOM eval), Jira MCP, Bash+curl, local Lighthouse, repo grep/read.
 
 ## Related Notes
-[Quality & Testing (MOC)](/quality/Quality%20%26%20Testing%20%28MOC%29.md)
-[Coverage Maps](/quality/Coverage%20Maps.md)
-[Test Data & Fixtures](/quality/Test%20Data%20%26%20Fixtures.md)
-[Verdict & Evidence Policy](/quality/Verdict%20%26%20Evidence%20Policy.md)
+[Quality & Testing (MOC)](quality/Quality%20%26%20Testing%20%28MOC%29.md)
+[Coverage Maps](quality/Coverage%20Maps.md)
+[Test Data & Fixtures](quality/Test%20Data%20%26%20Fixtures.md)
+[Verdict & Evidence Policy](quality/Verdict%20%26%20Evidence%20Policy.md)

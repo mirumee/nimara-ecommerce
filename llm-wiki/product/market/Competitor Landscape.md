@@ -27,11 +27,11 @@ timestamp: "2026-06-16T00:00:00+00:00"
 
 ### Where Nimara fits
 - Nimara sits on top of **Saleor**, directly closing Saleor's biggest DX gap (no first-class storefront) while staying fully open-source — unlike commercetools/Alokai (cost + setup friction) and the managed-backend players (Swell, Your Next Store).
-- The differentiation thesis is detailed in [Table Stakes vs Differentiators](/product/market/Table%20Stakes%20vs%20Differentiators.md).
+- The differentiation thesis is detailed in [Table Stakes vs Differentiators](product/market/Table%20Stakes%20vs%20Differentiators.md).
 
 ## Related Notes
-[Composable Commerce Market](/product/market/Composable%20Commerce%20Market.md)
-[Table Stakes vs Differentiators](/product/market/Table%20Stakes%20vs%20Differentiators.md)
-[Developer Pain Points](/product/market/Developer%20Pain%20Points.md)
-[Product Strategy 2026 (MOC)](/product/strategy/Product%20Strategy%202026%20%28MOC%29.md)
-[Works Cited](/references/Works%20Cited.md)
+[Composable Commerce Market](product/market/Composable%20Commerce%20Market.md)
+[Table Stakes vs Differentiators](product/market/Table%20Stakes%20vs%20Differentiators.md)
+[Developer Pain Points](product/market/Developer%20Pain%20Points.md)
+[Product Strategy 2026 (MOC)](product/strategy/Product%20Strategy%202026%20%28MOC%29.md)
+[Works Cited](references/Works%20Cited.md)

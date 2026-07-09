@@ -44,9 +44,9 @@ Project key: **MS** (Nimara Legacy). Bugs live on **board 74**. Use `jira_get_bo
 ### Status semantics for retest verdicts
 - Defect still reproduces → `Open` (To Fix).
 - Defect no longer reproduces → `Done` (Fixed).
-- Blocked / inconclusive / needs input → leave in `In testing`, ASK, flag for review. Never force a verdict. (See [Verdict & Evidence Policy](/quality/Verdict%20%26%20Evidence%20Policy.md).)
+- Blocked / inconclusive / needs input → leave in `In testing`, ASK, flag for review. Never force a verdict. (See [Verdict & Evidence Policy](quality/Verdict%20%26%20Evidence%20Policy.md).)
 
 ## Related Notes
-[Quality & Testing (MOC)](/quality/Quality%20%26%20Testing%20%28MOC%29.md)
-[Bug Retest & Triage Process](/quality/Bug%20Retest%20%26%20Triage%20Process.md)
-[Verdict & Evidence Policy](/quality/Verdict%20%26%20Evidence%20Policy.md)
+[Quality & Testing (MOC)](quality/Quality%20%26%20Testing%20%28MOC%29.md)
+[Bug Retest & Triage Process](quality/Bug%20Retest%20%26%20Triage%20Process.md)
+[Verdict & Evidence Policy](quality/Verdict%20%26%20Evidence%20Policy.md)

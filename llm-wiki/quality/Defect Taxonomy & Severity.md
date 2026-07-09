@@ -32,6 +32,6 @@ Component/area · environment(s) (`customfield_10044`) · clear repro steps · a
 If a bug recurs across inputs, file the **class**, not one instance (e.g. "address admin-area missing for all S-required countries Saleor lacks choices for", not just "Russia").
 
 ## Related Notes
-[Quality & Testing (MOC)](/quality/Quality%20%26%20Testing%20%28MOC%29.md)
-[Coverage Maps](/quality/Coverage%20Maps.md)
-[Jira & Board 74 Operating Manual](/quality/Jira%20%26%20Board%2074%20Operating%20Manual.md)
+[Quality & Testing (MOC)](quality/Quality%20%26%20Testing%20%28MOC%29.md)
+[Coverage Maps](quality/Coverage%20Maps.md)
+[Jira & Board 74 Operating Manual](quality/Jira%20%26%20Board%2074%20Operating%20Manual.md)
