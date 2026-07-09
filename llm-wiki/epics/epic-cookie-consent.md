@@ -7,7 +7,7 @@
 
 ## Value Statement
 
-**For** Ecommerce Managers running Nimara stores in consent-regulated markets (EEA/UK)
+**For** [[Ecommerce Manager]] running Nimara stores in consent-regulated markets (EEA/UK)
 **who** must run GTM tracking legally (GDPR/ePrivacy) and keep Google Ads signal alive under Consent Mode v2
 **the** Cookie Consent epic
 **is a** built-in consent management layer (banner + Consent Mode v2 wiring) in the Nimara storefront
