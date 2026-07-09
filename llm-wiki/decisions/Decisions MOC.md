@@ -23,7 +23,7 @@ is one standalone note following the [Michael Nygard template](https://github.co
 
 <!-- Newest last. Format: - [[ADR-NNNN Title]] — Status — one-line summary -->
 
-_No ADRs recorded yet._
+- [[ADR-0001 Standalone Reviews Service with a Stateless Storefront]] — Accepted — reviews live in a standalone service with its own Postgres; the storefront stays stateless and reaches them only through the ReviewProvider contract over HTTP.
 
 ## Related Notes
 
