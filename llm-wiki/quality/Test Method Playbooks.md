@@ -1,10 +1,17 @@
-**Summary**: For a given class of defect, the cheapest reliable technique to verify it — throttling for races, response inspection for API contracts, geometry for visual bugs, Lighthouse for perf, code inspection for dev-only warnings.
-
-**Tags**: #qa #methods #playbook #techniques #agents
-**Created**: 2026-06-30T00:00:00+00:00
-**Last Updated**: 2026-06-30T00:00:00+00:00
-
 ---
+type: "QA Playbook"
+title: "Test Method Playbooks"
+description: "For a given class of defect, the cheapest reliable technique to verify it — throttling for races, response inspection for API contracts, geometry for visual bugs, Lighthouse for perf, code inspection for dev-only warnings."
+tags:
+  - "qa"
+  - "methods"
+  - "playbook"
+  - "techniques"
+  - "agents"
+created: "2026-06-30T00:00:00+00:00"
+timestamp: "2026-06-30T00:00:00+00:00"
+---
+
 ## Content
 
 Pick the **cheapest reliable** method per bug class. All of these are proven on Nimara.
@@ -32,16 +39,16 @@ Pick the **cheapest reliable** method per bug class. All of these are proven on 
 - These are stripped in production builds, so the deployed console won't show them. Verify by **code inspection** (`grep`/read the component). Caveat: repo HEAD may differ from the deployed build — state that in the verdict.
 
 ### Backend signals (e.g. `checkout.user`, order transactions, ERP state)
-- Need Saleor GraphQL / dashboard / ERP access. Usually **not available** → route to a developer (see [[Known Flaky, Blocked & Backend-Only]]).
+- Need Saleor GraphQL / dashboard / ERP access. Usually **not available** → route to a developer (see [Known Flaky, Blocked & Backend-Only](/quality/Known%20Flaky%2C%20Blocked%20%26%20Backend-Only.md)).
 
 ### Multi-country / data-driven UI (e.g. address fields)
-- Equivalence-partition against the data source (see [[Coverage Maps]] and [[Test Data & Fixtures]]); inspect the rendered control per representative (select vs text, required, sorted).
+- Equivalence-partition against the data source (see [Coverage Maps](/quality/Coverage%20Maps.md) and [Test Data & Fixtures](/quality/Test%20Data%20%26%20Fixtures.md)); inspect the rendered control per representative (select vs text, required, sorted).
 
 ### Tooling available to agents
 Playwright MCP (navigate/snapshot/click/type/fill_form/screenshot/navigate_back/**run_code_unsafe** for CDP + DOM eval), Jira MCP, Bash+curl, local Lighthouse, repo grep/read.
 
 ## Related Notes
-[[Quality & Testing (MOC)]]
-[[Coverage Maps]]
-[[Test Data & Fixtures]]
-[[Verdict & Evidence Policy]]
+[Quality & Testing (MOC)](/quality/Quality%20%26%20Testing%20%28MOC%29.md)
+[Coverage Maps](/quality/Coverage%20Maps.md)
+[Test Data & Fixtures](/quality/Test%20Data%20%26%20Fixtures.md)
+[Verdict & Evidence Policy](/quality/Verdict%20%26%20Evidence%20Policy.md)

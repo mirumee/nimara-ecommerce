@@ -1,10 +1,17 @@
-**Summary**: The single most useful QA reference — which environments and channels exist, what's reachable, what needs credentials, and what is backend-only / not observable from the storefront.
-
-**Tags**: #qa #environments #access #channels #agents
-**Created**: 2026-06-30T00:00:00+00:00
-**Last Updated**: 2026-06-30T00:00:00+00:00
-
 ---
+type: "QA Reference"
+title: "Environments & Access Matrix"
+description: "The single most useful QA reference — which environments and channels exist, what's reachable, what needs credentials, and what is backend-only / not observable from the storefront."
+tags:
+  - "qa"
+  - "environments"
+  - "access"
+  - "channels"
+  - "agents"
+created: "2026-06-30T00:00:00+00:00"
+timestamp: "2026-06-30T00:00:00+00:00"
+---
+
 ## Content
 
 ### Storefronts (publicly reachable, no login for guest flows)
@@ -32,10 +39,10 @@ The channel is the path prefix, and it scopes **currency, available countries, a
 
 ### Rule of thumb for agents
 - **Storefront-observable** (checkout, cart, search, address forms, SEO/meta, sitemap, perf) → you can test.
-- **Backend-only** (Saleor order/transaction internals, ERP fulfilment/stock, `checkout.user` field) → you **cannot** verdict it; route to a developer (see [[Known Flaky, Blocked & Backend-Only]]).
+- **Backend-only** (Saleor order/transaction internals, ERP fulfilment/stock, `checkout.user` field) → you **cannot** verdict it; route to a developer (see [Known Flaky, Blocked & Backend-Only](/quality/Known%20Flaky%2C%20Blocked%20%26%20Backend-Only.md)).
 - If access is missing, **STOP and ASK** — do not fabricate data. Batch all access requests at once in machine-safe form (code blocks for secrets, explicit env URLs).
 
 ## Related Notes
-[[Quality & Testing (MOC)]]
-[[Known Flaky, Blocked & Backend-Only]]
-[[Test Data & Fixtures]]
+[Quality & Testing (MOC)](/quality/Quality%20%26%20Testing%20%28MOC%29.md)
+[Known Flaky, Blocked & Backend-Only](/quality/Known%20Flaky%2C%20Blocked%20%26%20Backend-Only.md)
+[Test Data & Fixtures](/quality/Test%20Data%20%26%20Fixtures.md)

@@ -1,10 +1,16 @@
-**Summary**: A shared vocabulary for classifying defects (type + area) and assigning severity, so reports and tickets are consistent and prioritisable.
-
-**Tags**: #qa #taxonomy #severity #triage
-**Created**: 2026-06-30T00:00:00+00:00
-**Last Updated**: 2026-06-30T00:00:00+00:00
-
 ---
+type: "QA Taxonomy"
+title: "Defect Taxonomy & Severity"
+description: "A shared vocabulary for classifying defects (type + area) and assigning severity, so reports and tickets are consistent and prioritisable."
+tags:
+  - "qa"
+  - "taxonomy"
+  - "severity"
+  - "triage"
+created: "2026-06-30T00:00:00+00:00"
+timestamp: "2026-06-30T00:00:00+00:00"
+---
+
 ## Content
 
 ### Defect type
@@ -26,6 +32,6 @@ Component/area · environment(s) (`customfield_10044`) · clear repro steps · a
 If a bug recurs across inputs, file the **class**, not one instance (e.g. "address admin-area missing for all S-required countries Saleor lacks choices for", not just "Russia").
 
 ## Related Notes
-[[Quality & Testing (MOC)]]
-[[Coverage Maps]]
-[[Jira & Board 74 Operating Manual]]
+[Quality & Testing (MOC)](/quality/Quality%20%26%20Testing%20%28MOC%29.md)
+[Coverage Maps](/quality/Coverage%20Maps.md)
+[Jira & Board 74 Operating Manual](/quality/Jira%20%26%20Board%2074%20Operating%20Manual.md)

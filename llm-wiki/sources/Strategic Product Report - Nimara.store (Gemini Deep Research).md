@@ -1,16 +1,17 @@
-**Summary**: Raw source — the Gemini Deep Research report that the entire 2026 product strategy and market research was synthesised from. Full text is NOT yet archived; this note holds its provenance and must be filled with the verbatim report.
-
-**Tags**: #source #raw #strategy #research #deep-research
-**Created**: 2026-07-09T00:00:00+00:00
-**Last Updated**: 2026-07-09T00:00:00+00:00
-
-**Kind**: raw source (immutable once filled)
-**Origin**: Gemini Deep Research
-**Title**: "Strategic Product Report: Nimara.store Roadmapping, Competitive Positioning, and Composable Market Assessment"
-**Date produced**: 2026-06-16
-**Accessed**: 2026-06-16
-
 ---
+type: "Source Material"
+title: "Strategic Product Report - Nimara.store (Gemini Deep Research)"
+description: "Raw source — the Gemini Deep Research report that the entire 2026 product strategy and market research was synthesised from. Full text is NOT yet archived; this note holds its provenance and must be filled with the verbatim report."
+tags:
+  - "source"
+  - "raw"
+  - "strategy"
+  - "research"
+  - "deep-research"
+created: "2026-07-09T00:00:00+00:00"
+timestamp: "2026-07-09T00:00:00+00:00"
+---
+
 ## Content
 
 > [!warning] Raw text pending
@@ -25,16 +26,16 @@
 ### Provenance (known without the full text)
 
 - The report is the single upstream source for the 2026 strategy corpus. It is referenced in
-  [[Product Strategy 2026 (MOC)]] and its web citations are catalogued in [[Works Cited]].
+  [Product Strategy 2026 (MOC)](/product/strategy/Product%20Strategy%202026%20%28MOC%29.md) and its web citations are catalogued in [Works Cited](/references/Works%20Cited.md).
 - Notes synthesised from this report (the "wiki" layer over this raw source):
-  - Strategy: [[Product Strategy 2026 (MOC)]], [[Initiative Prioritization]],
-    [[Marketplace & Agentic Commerce Bets]], [[Top-of-Funnel Adoption Moves]],
-    [[Do Not Pursue]], [[Open Questions & Assumptions]]
-  - Market: [[Composable Commerce Market]], [[Competitor Landscape]],
-    [[Table Stakes vs Differentiators]], [[Emerging Trends 2026]], [[Developer Pain Points]]
-- The report's own external references (37 web sources) are listed in [[Works Cited]].
+  - Strategy: [Product Strategy 2026 (MOC)](/product/strategy/Product%20Strategy%202026%20%28MOC%29.md), [Initiative Prioritization](/product/strategy/initiatives/Initiative%20Prioritization.md),
+    [Marketplace & Agentic Commerce Bets](/product/strategy/Marketplace%20%26%20Agentic%20Commerce%20Bets.md), [Top-of-Funnel Adoption Moves](/product/strategy/Top-of-Funnel%20Adoption%20Moves.md),
+    [Do Not Pursue](/product/strategy/Do%20Not%20Pursue.md), [Open Questions & Assumptions](/product/strategy/Open%20Questions%20%26%20Assumptions.md)
+  - Market: [Composable Commerce Market](/product/market/Composable%20Commerce%20Market.md), [Competitor Landscape](/product/market/Competitor%20Landscape.md),
+    [Table Stakes vs Differentiators](/product/market/Table%20Stakes%20vs%20Differentiators.md), [Emerging Trends 2026](/product/market/Emerging%20Trends%202026.md), [Developer Pain Points](/product/market/Developer%20Pain%20Points.md)
+- The report's own external references (37 web sources) are listed in [Works Cited](/references/Works%20Cited.md).
 
 ## Related Notes
 
-[[Product Strategy 2026 (MOC)]]
-[[Works Cited]]
+[Product Strategy 2026 (MOC)](/product/strategy/Product%20Strategy%202026%20%28MOC%29.md)
+[Works Cited](/references/Works%20Cited.md)

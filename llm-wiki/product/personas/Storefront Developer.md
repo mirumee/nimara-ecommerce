@@ -1,10 +1,16 @@
-**Summary**: PRIMARY persona — a TypeScript/Next.js developer (in-house or agency) who adopts Nimara to ship a production Saleor storefront without building checkout, search, and integrations from scratch.
-
-**Tags**: #persona #primary #developer #adoption
-**Created**: 2026-06-11T00:00:00+00:00
-**Last Updated**: 2026-06-11T00:00:00+00:00
-
 ---
+type: "Persona"
+title: "Storefront Developer"
+description: "PRIMARY persona — a TypeScript/Next.js developer (in-house or agency) who adopts Nimara to ship a production Saleor storefront without building checkout, search, and integrations from scratch."
+tags:
+  - "persona"
+  - "primary"
+  - "developer"
+  - "adoption"
+created: "2026-06-11T00:00:00+00:00"
+timestamp: "2026-06-11T00:00:00+00:00"
+---
+
 ## Content
 
 ### Goals
@@ -32,6 +38,6 @@
 - Don't hide configuration in UIs; they want env vars, code, and infrastructure-as-code they can read.
 
 ## Related Notes
-[[Ecommerce Manager]]
-[[Marketplace Vendor]]
-[[Anti-Persona - No-Code Solo Merchant]]
+[Ecommerce Manager](/product/personas/Ecommerce%20Manager.md)
+[Marketplace Vendor](/product/personas/Marketplace%20Vendor.md)
+[Anti-Persona - No-Code Solo Merchant](/product/personas/Anti-Persona%20-%20No-Code%20Solo%20Merchant.md)

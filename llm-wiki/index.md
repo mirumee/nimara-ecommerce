@@ -1,52 +1,62 @@
-# Wiki index
+---
+okf_version: "0.1"
+---
 
-Global content catalogue — every markdown note in the wiki, grouped by domain, with a
-one-line summary. **Read this first when answering a query** to locate relevant notes, then
-drill into them. Machine-maintained: the `wiki-maintenance` skill updates it on every ingest
-(see `AGENTS.md`). Per-domain MOCs (`… (MOC)`) curate navigation *within* a domain; this file
-is the exhaustive catalogue *across* domains.
+# Root
+* [Agent Instructions](AGENTS.md) - OKF schema, naming rules, maintenance workflow, and operating conventions for this bundle.
 
-## sources/ — raw, immutable inputs
-- [[Strategic Product Report - Nimara.store (Gemini Deep Research)]] — the Deep Research report the 2026 strategy/market corpus was synthesised from (full text pending archival).
+# Templates
+* [ADR Template](_templates/ADR.md) - Reusable template for architecture decision records.
+* [Epic Template](_templates/epic.md) - Reusable template for drafting Nimara epic hypothesis statements.
+* [Undefined Template](_templates/Undefined.md) - Generic template for a new OKF concept document.
 
-## product/strategy/
-- [[Product Strategy 2026 (MOC)]] — MOC + executive summary for the 2026 product strategy; entry point for all strategy notes.
-- [[Initiative Prioritization]] — ranked scoring of the five recommended initiatives across impact, fit, timing, and effort/risk; master index for the initiative notes.
-- [[Marketplace & Agentic Commerce Bets]] — evaluation of the two 2026 bets (marketplace, agentic commerce), credible v1s, and failure modes.
-- [[Top-of-Funnel Adoption Moves]] — smallest set of high-leverage moves to accelerate open-source developer adoption.
-- [[Do Not Pursue]] — initiatives Nimara should explicitly avoid to protect its code-first, composable, open-source positioning.
-- [[Open Questions & Assumptions]] — assumptions the strategy rests on and the evidence that would change the recommendations.
+# Sources
+* [LLM Wiki](sources/LLM%20Wiki.md) - Upstream LLM-wiki pattern describing raw sources, maintained wiki notes, schema files, indexing, and logs.
+* [Strategic Product Report - Nimara.store (Gemini Deep Research)](sources/Strategic%20Product%20Report%20-%20Nimara.store%20%28Gemini%20Deep%20Research%29.md) - Raw source stub for the Deep Research report used by the 2026 strategy and market corpus.
 
-## product/market/ — external research
-- [[Composable Commerce Market]] — sector maturity and the self-hosted open-source economics above the ~$2–10M revenue threshold.
-- [[Competitor Landscape]] — 2026 positioning, architecture, momentum, and DX of platforms Nimara competes with.
-- [[Table Stakes vs Differentiators]] — what is commoditized versus Nimara's genuine 2026 differentiators.
-- [[Emerging Trends 2026]] — agentic commerce & UCP/MCP, multi-vendor marketplaces, and "deploy in minutes" DX.
-- [[Developer Pain Points]] — community/GitHub evidence of ecosystem dissatisfaction Nimara can capture.
+# Product Strategy
+* [Product Strategy 2026 (MOC)](product/strategy/Product%20Strategy%202026%20%28MOC%29.md) - Entry point and executive summary for 2026 product strategy.
+* [Initiative Prioritization](product/strategy/initiatives/Initiative%20Prioritization.md) - Ranked scoring of recommended initiatives across impact, fit, timing, and effort/risk.
+* [3 - UCP-MCP Agentic Discovery](product/strategy/initiatives/3%20-%20UCP-MCP%20Agentic%20Discovery.md) - Next-tier agentic-commerce discovery initiative for UCP and MCP compatibility.
+* [Marketplace & Agentic Commerce Bets](product/strategy/Marketplace%20%26%20Agentic%20Commerce%20Bets.md) - Evaluation of the marketplace and agentic-commerce bets.
+* [Top-of-Funnel Adoption Moves](product/strategy/Top-of-Funnel%20Adoption%20Moves.md) - High-leverage moves to accelerate open-source developer adoption.
+* [Do Not Pursue](product/strategy/Do%20Not%20Pursue.md) - Strategic non-goals and distractions to avoid.
+* [Open Questions & Assumptions](product/strategy/Open%20Questions%20%26%20Assumptions.md) - Assumptions behind the strategy and evidence that could change it.
 
-## product/personas/
-- [[Storefront Developer]] — PRIMARY: TypeScript/Next.js developer adopting Nimara to ship a production Saleor storefront.
-- [[Ecommerce Manager]] — SECONDARY: business operator managing catalog, channels, content, taxes, orders via dashboards.
-- [[Marketplace Vendor]] — SECONDARY: third-party seller managing products, orders, fulfillment via the Vendor Panel.
-- [[Shopper]] — EXPERIENCE: end buyer browsing a Nimara store pre-purchase; the storefront quality bar.
-- [[Customer]] — EXPERIENCE: end buyer post-purchase; the quality bar for fulfillment comms, reviews, account features.
-- [[QA Engineer (Test Agent)]] — the QA persona this wiki serves; verifies on evidence and never fabricates a result.
-- [[Anti-Persona - No-Code Solo Merchant]] — ANTI-PERSONA: no-code solo merchant Nimara explicitly does not build for.
+# Product Epics
+* [Epic Cookie Consent](product/epics/Epic%20Cookie%20Consent.md) - Epic hypothesis for Cookie Consent and Google Consent Mode v2.
+* [Epic User Reviews](product/epics/Epic%20User%20Reviews.md) - Epic hypothesis for verified-purchase user reviews.
 
-## quality/ — quality & testing
-- [[Quality & Testing (MOC)]] — MOC and entry point for QA; how agents test, retest, and report defects. Start here.
-- [[Bug Retest & Triage Process]] — canonical per-ticket retest flow on a live shared board, plus the live-queue selection loop.
-- [[Jira & Board 74 Operating Manual]] — how to operate Jira board 74 (project MS): status mapping, transitions, fields, gotchas.
-- [[Environments & Access Matrix]] — which environments/channels exist, what's reachable, what needs credentials, what is backend-only.
-- [[Coverage Maps]] — equivalence partitions for key surfaces so agents test classes of behaviour, not random cases.
-- [[Defect Taxonomy & Severity]] — shared vocabulary for classifying defects (type + area) and assigning severity.
-- [[Test Data & Fixtures]] — reusable verified test data: Stripe cards, addresses, postcodes, per-channel products, i18n-address rules.
-- [[Test Method Playbooks]] — cheapest reliable technique per defect class (races, API contracts, visual, perf, dev-only warnings).
-- [[Verdict & Evidence Policy]] — rules for a defensible verdict: evidence only, controls and caveats, never force a result.
-- [[Known Flaky, Blocked & Backend-Only]] — where not to burn cycles or force a verdict: flaky areas, no-access, backend-only defects.
+# Product Market
+* [Composable Commerce Market](product/market/Composable%20Commerce%20Market.md) - Sector maturity and self-hosted open-source economics above the ~$2-10M revenue threshold.
+* [Competitor Landscape](product/market/Competitor%20Landscape.md) - 2026 positioning, architecture, momentum, and DX of competing platforms.
+* [Table Stakes vs Differentiators](product/market/Table%20Stakes%20vs%20Differentiators.md) - Commoditized requirements versus Nimara's genuine differentiators.
+* [Emerging Trends 2026](product/market/Emerging%20Trends%202026.md) - Agentic commerce, UCP/MCP, marketplaces, and deploy-in-minutes DX.
+* [Developer Pain Points](product/market/Developer%20Pain%20Points.md) - Community and GitHub evidence of ecosystem dissatisfaction.
 
-## tech/ADR/ — architecture decision records
-- [[ADR MOC]] — MOC and chronological register of ADRs and their rationale.
+# Product Personas
+* [Storefront Developer](product/personas/Storefront%20Developer.md) - Primary developer persona adopting Nimara to ship a production Saleor storefront.
+* [Ecommerce Manager](product/personas/Ecommerce%20Manager.md) - Secondary business-operator persona managing commerce operations through dashboards.
+* [Marketplace Vendor](product/personas/Marketplace%20Vendor.md) - Secondary third-party seller persona for vendor-panel workflows.
+* [Shopper](product/personas/Shopper.md) - Pre-purchase buyer experience persona.
+* [Customer](product/personas/Customer.md) - Post-purchase buyer experience persona.
+* [QA Engineer (Test Agent)](product/personas/QA%20Engineer%20%28Test%20Agent%29.md) - QA agent persona that verifies behavior from evidence.
+* [Anti-Persona - No-Code Solo Merchant](product/personas/Anti-Persona%20-%20No-Code%20Solo%20Merchant.md) - Excluded no-code solo merchant segment.
 
-## references/ — provenance
-- [[Works Cited]] — source list for the 2026 product strategy research (Gemini Deep Research, accessed 2026-06-16).
+# Quality
+* [Quality & Testing (MOC)](quality/Quality%20%26%20Testing%20%28MOC%29.md) - QA map of content and entry point.
+* [Bug Retest & Triage Process](quality/Bug%20Retest%20%26%20Triage%20Process.md) - Canonical live-board retest and triage flow.
+* [Jira & Board 74 Operating Manual](quality/Jira%20%26%20Board%2074%20Operating%20Manual.md) - Jira board 74 status mapping, transitions, fields, and gotchas.
+* [Environments & Access Matrix](quality/Environments%20%26%20Access%20Matrix.md) - Reachable environments, channels, credentials, and backend-only limits.
+* [Coverage Maps](quality/Coverage%20Maps.md) - Equivalence partitions for important Nimara test surfaces.
+* [Defect Taxonomy & Severity](quality/Defect%20Taxonomy%20%26%20Severity.md) - Shared vocabulary for defect type, area, and severity.
+* [Test Data & Fixtures](quality/Test%20Data%20%26%20Fixtures.md) - Reusable verified test data and address rules.
+* [Test Method Playbooks](quality/Test%20Method%20Playbooks.md) - Cheapest reliable verification technique by defect class.
+* [Verdict & Evidence Policy](quality/Verdict%20%26%20Evidence%20Policy.md) - Evidence rules for defensible QA verdicts.
+* [Known Flaky, Blocked & Backend-Only](quality/Known%20Flaky%2C%20Blocked%20%26%20Backend-Only.md) - Areas where agents should not force a verdict.
+
+# Technology ADR
+* [ADR MOC](tech/ADR/ADR%20MOC.md) - Map of content and chronological register for architecture decision records.
+
+# References
+* [Works Cited](references/Works%20Cited.md) - Source list for the 2026 product strategy research.

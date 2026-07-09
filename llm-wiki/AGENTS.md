@@ -1,130 +1,188 @@
-# LLM Wiki — conventions & schema
+---
+type: "Agent Instructions"
+title: "LLM Wiki OKF Conventions"
+description: "Schema and operating rules for the Nimara LLM wiki as an OKF v0.1 bundle."
+tags:
+  - "agents"
+  - "okf"
+  - "llm-wiki"
+  - "schema"
+created: "2026-07-09T00:00:00+00:00"
+timestamp: "2026-07-09T00:00:00+00:00"
+---
 
-An interlinked knowledge base for **planning and building Nimara**, maintained by
-agents (Claude Code) and curated by the team. Inspired by Andrej Karpathy's "LLM wiki"
-pattern, adapted to how this repo actually works — content organised **by type**, an
-Obsidian-style link graph, and executable **skills** that cite the notes.
+# Content
 
-This file is the _declarative_ schema (what a good page looks like, how things are
-named and linked). The _executable_ maintenance workflows — ingest, lint,
-answer-and-file-back — live in the skill **`skills/wiki/wiki-maintenance`**, which cites
-this file.
+This directory is an interlinked knowledge base for planning, testing, and building Nimara.
+It follows the Open Knowledge Format (OKF) v0.1 shape: a directory of Markdown files with
+YAML frontmatter, standard Markdown cross-links, reserved `index.md` files for progressive
+disclosure, and reserved `log.md` files for chronological updates.
 
-> Naming & format here describe what the corpus already uses. If you change a rule,
-> you are committing to migrating every existing note and every `[[link]]` — don't
-> change lightly.
+Use the OKF specification as the interoperability contract:
+[Open Knowledge Format v0.1](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md).
 
-## Folder structure
+# Folder Structure
 
-Content is grouped by **domain** — `product/`, `quality/`, `tech/` — with typed sub-folders
-inside each; not by a `raw/` + `wiki/` split. The three layers of Karpathy's model map here
-as: **raw** = `sources/` (immutable source documents), **wiki** = the typed note folders below,
-**schema** = this file (`AGENTS.md`). `index.md` is the global content catalogue (every note +
-a one-line summary), read first when answering a query; each domain additionally has a **Map of
-Content (MOC)** note that curates navigation within it.
+Content is grouped by domain:
 
-```
+```text
 llm-wiki/
-  AGENTS.md         -- this file: the wiki schema (conventions, naming, rules)
-  index.md          -- global content catalogue (every note + one-line summary)
-  log.md            -- append-only chronicle of wiki operations (ingest/query/lint/adr)
-  _templates/       -- Obsidian note templates (not content)
-  sources/          -- raw, immutable source documents the notes synthesise (never rewritten)
-  references/       -- source lists (Works Cited) backing the research notes
-  product/          -- what we build & who for: personas, market, strategy, epic→task data layer
-    personas/       -- who we build for (primary/secondary/anti-personas)
-    market/         -- external research: competitors, trends, market sizing
-    strategy/       -- product strategy, roadmap, initiatives, non-goals
-      initiatives/  -- one note per prioritised initiative
-    epics/          -- structured epic definitions
-    solution/       -- technical solution per epic
-    tasks/          -- developer task breakdown per epic
-  quality/          -- QA operating knowledge: environments, board, methods, policy
-  tech/             -- technical knowledge
-    ADR/            -- architecture decision records (ADRs)   (.md, one per decision)
+  AGENTS.md         # this file: bundle schema and operating rules
+  index.md          # root OKF index; exhaustive catalogue of concepts
+  log.md            # root OKF update log
+  _templates/       # reusable document templates
+  sources/          # raw or near-raw source material the notes synthesize
+  references/       # source lists and bibliographies
+  product/          # personas, market research, strategy, epics
+    personas/
+    market/
+    strategy/
+      initiatives/
+    epics/
+    solution/       # created per epic when a technical solution exists
+    tasks/          # created per epic when implementation tasks exist
+  quality/          # QA operating knowledge
+  tech/
+    ADR/            # architecture decision records
 ```
 
-> `index.md` and `log.md` are machine-maintained navigation/bookkeeping files, not notes —
-> they are exempt from the note format below. `product/solution/` is created per epic when a
-> technical solution is written; it may be absent until then.
+`index.md` and `log.md` are OKF reserved filenames. All other `.md` files are concept
+documents and must have parseable YAML frontmatter with a non-empty `type` field.
 
-## Note format (`.md` pages)
+# Concept Document Format
 
-Every markdown note follows this shape (see `_templates/Undefined.md`):
+Use this shape for every normal Markdown page:
 
 ```markdown
-**Summary**: One or two sentences describing this note.
-
-**Tags**: #topic1 #topic2
-**Created**: 2026-06-16T00:00:00+00:00
-**Last Updated**: 2026-06-16T00:00:00+00:00
-
+---
+type: "Strategy Note"
+title: "Example Concept"
+description: "One sentence describing the concept."
+tags:
+  - "strategy"
+created: "2026-07-09T00:00:00+00:00"
+timestamp: "2026-07-09T00:00:00+00:00"
 ---
 
-## Content
+# Content
 
-Main content. Clear headings, short paragraphs. Link related concepts inline
-using [[Note Title]] wikilinks throughout the text.
+Main content. Use clear headings, short paragraphs, tables, and lists.
+Link related concepts with standard Markdown links:
+[Related Concept](/product/strategy/Related%20Concept.md).
 
-## Related Notes
+# Related Notes
 
-[[Another Note]]
-[[Yet Another Note]]
+[Another Note](/product/strategy/Another%20Note.md)
 ```
 
-- `**Summary**` is mandatory — it's what a reader (or an agent scanning the graph) uses
-  to decide relevance without opening the note.
-- Bump `**Last Updated**` on every edit. Use ISO-8601 with offset.
-- Close with a `## Related Notes` block so the graph stays navigable.
+Required:
 
-## Architecture Decision Records (ADRs)
+* `type` - short, human-readable concept kind. Consumers must tolerate unknown values.
 
-Significant technical decisions are recorded as **standalone `.md` notes in `tech/ADR/`**,
-one decision per note, using the **Michael Nygard template** (`_templates/ADR.md`):
+Recommended:
+
+* `title` - display name.
+* `description` - one-sentence summary used by indexes and search snippets.
+* `resource` - URI for the underlying asset when the concept describes one.
+* `tags` - YAML list of short strings without `#`.
+* `timestamp` - ISO 8601 last meaningful update time.
+
+Local extensions currently used:
+
+* `created` - original creation time for the concept.
+* `status`, `owner`, `epic_type`, `template_for` - domain-specific fields on epics,
+  ADR templates, or other structured notes.
+
+# Links
+
+Use standard Markdown links only. Prefer absolute bundle-relative links beginning with `/`
+inside concept bodies because OKF treats the bundle root as the link base:
 
 ```markdown
-**Status**: Proposed | Accepted | Rejected | Deprecated | Superseded by [[ADR-NNNN Title]]
----
-## Context      -- the forces motivating the decision (value-neutral)
-## Decision     -- the change we are making ("We will …")
-## Consequences -- what becomes easier / harder as a result (the trade-offs)
+[Storefront Developer](/product/personas/Storefront%20Developer.md)
 ```
 
-- **File name / title**: `ADR-NNNN <Title>` — zero-padded, monotonically increasing,
-  never reused (e.g. `ADR-0001 Use RAG over fine-tuning`). Wikilink is `[[ADR-0001 Use RAG over fine-tuning]]`.
-- **Immutable once Accepted.** Don't edit a decided ADR — supersede it: write a new ADR and
-  set the old one's `**Status**` to `Superseded by [[ADR-NNNN …]]`.
-- Every ADR is registered in `[[ADR MOC]]` and links back to the `product/solution/` or
-  `product/epics/` note it supports.
+Use relative links in `index.md` entries when listing local contents:
 
-## Naming & linking
+```markdown
+* [Storefront Developer](product/personas/Storefront%20Developer.md) - primary adopter persona.
+```
 
-- **File names are Title Case with spaces**, matching the note's title. This is deliberate: Obsidian resolves `[[links]]`
-  by title, so filename == title == link target.
-- **Wikilinks** use the title without extension: `[[Competitor Landscape]]`.
+Do not add Obsidian-style bracket links. If old bracket-style links appear, migrate them to
+Markdown links in the same change.
 
-## Maintaining the wiki
+# Index Files
 
-Use the repo-local **`llm-wiki`** skill as the entrypoint for discovery and wiki work. For
-maintenance modes, it delegates to the executable runbook below:
+`index.md` supports progressive disclosure. The root `index.md` is the exhaustive catalogue
+for this bundle and may declare:
 
-- **Ingest** a new source into notes → `skills/wiki/wiki-maintenance` (ingest mode). On
-  ingest the raw source is archived under `sources/`, `index.md` gains the new/changed notes,
-  and `log.md` gets an entry.
-- **Lint / audit** the graph (orphans, dangling links, format drift, uncited claims) →
-  same skill (lint mode).
-- **Answer a question and file the answer back** as a note → same skill (answer mode). The
-  answer starts by using the local QMD index when available, then falls back to `index.md`
-  to locate relevant notes.
+```yaml
+---
+okf_version: "0.1"
+---
+```
 
-Every skill operation appends one line to `log.md` (`## [YYYY-MM-DD] <mode> | Title`), so the
-wiki keeps a chronological record of how it evolved.
+After that optional root frontmatter, index files should use section headings and bullets:
 
-## QMD retrieval
+```markdown
+# Product Strategy
+* [Product Strategy 2026 (MOC)](product/strategy/Product%20Strategy%202026%20%28MOC%29.md) - entry point for strategy notes.
+```
 
-`qmd` is the preferred local retrieval layer for this wiki once configured. It indexes the
-markdown corpus, while the markdown files remain the source of truth. The generated QMD
-SQLite index is local developer state and is never committed.
+Update the relevant index whenever adding, removing, renaming, or materially changing a
+concept description.
+
+# Log Files
+
+`log.md` is a flat date-grouped update history, newest first:
+
+```markdown
+# Directory Update Log
+
+## 2026-07-09
+* **Update**: Added a new concept document for ...
+* **Lint**: Repaired broken Markdown links in ...
+```
+
+Date headings must use `YYYY-MM-DD`.
+
+# Architecture Decision Records
+
+Significant technical decisions are standalone concept documents in `tech/ADR/`, one decision
+per file, using the Michael Nygard structure from `_templates/ADR.md`.
+
+Rules:
+
+* File name: `ADR-NNNN Title.md`, zero-padded and monotonically increasing.
+* Type: `Architecture Decision Record`.
+* Status lives in frontmatter as `status`.
+* Accepted ADRs are immutable. Supersede them with a new ADR and link both documents.
+* Register every ADR in [ADR MOC](/tech/ADR/ADR%20MOC.md) and link it back to the relevant
+  epic, solution, or task note.
+
+# Maintaining The Wiki
+
+Use the repo-local `llm-wiki` skill as the entrypoint for discovery and wiki work. For
+maintenance modes, it delegates to `skills/wiki/wiki-maintenance`.
+
+Expected operations:
+
+* Ingest a new source: add or update source material, update synthesized notes, update
+  `index.md`, and append to `log.md`.
+* Lint or audit: check frontmatter, links, orphans, MOC coverage, stale claims, and source
+  coverage.
+* Answer and file back: answer from existing concepts first, then add durable insights as
+  concept documents when they should persist.
+
+Sources under `sources/` should preserve the source body. Prefer appending metadata,
+provenance, or citations over rewriting the raw source text unless the user explicitly asks
+for a migration or correction.
+
+# QMD Retrieval
+
+`qmd` is the preferred local retrieval layer once configured. The Markdown files remain the
+source of truth; the generated QMD SQLite index is local developer state and is never
+committed.
 
 Project wrapper commands:
 
@@ -137,49 +195,29 @@ pnpm wiki:qmd:get "#abc123" -- --full
 pnpm wiki:qmd:mcp
 ```
 
-The wrapper uses `qmd --index nimara-wiki`, so QMD stores data outside the repo under
-`~/.cache/qmd/nimara-wiki.sqlite`. Install QMD locally before first use:
-
-```bash
-npm install -g @tobilu/qmd
-```
-
 Operational rules:
 
-- Use `llm-wiki/sources/LLM Wiki.md` for the upstream LLM-wiki pattern and this file for
-  Nimara's local schema.
-- Run `pnpm wiki:qmd:update` after markdown changes and `pnpm wiki:qmd:embed` when semantic
+* Use [LLM Wiki](/sources/LLM%20Wiki.md) for the upstream pattern and this file for Nimara's
+  local OKF schema.
+* Run `pnpm wiki:qmd:update` after Markdown changes and `pnpm wiki:qmd:embed` when semantic
   search should reflect those changes.
-- Use `qmd search` / `qmd query` results to get a `docid` or `qmd://...` URI before calling
-  `qmd get`; QMD may normalize filenames with spaces into URI-safe names.
-- Do not treat QMD results as validation. Link integrity, source integrity, MOC coverage, and
-  JSON-vs-markdown drift still require the wiki-maintenance lint pass.
+* Use `qmd search` or `qmd query` to get a `docid` or `qmd://...` URI before calling
+  `qmd get`.
+* Do not treat QMD results as validation. Link integrity, frontmatter, source integrity, MOC
+  coverage, and index coverage still require a wiki-maintenance lint pass.
 
-## Rules
+# Rules
 
-- **Never rewrite sources.** Documents under `sources/` are immutable raw inputs — append new
-  sources, never edit an archived one. `references/Works Cited.md` is the provenance record —
-  append, don't silently alter cited claims; link a citation to its `sources/` copy when one exists.
-- **Keep `index.md` and `log.md` current.** Adding, renaming, or removing a note updates
-  `index.md` in the same change; every skill operation appends a line to `log.md`.
-- **Keep MOCs current.** Adding or removing a note means updating its domain MOC in the
-  same change. `index.md` is the exhaustive catalogue; MOCs are curated navigation hubs — both
-  are maintained, they are not redundant.
-- **One idea per note.** If a note grows two topics, split it and cross-link.
-- **Record decisions as ADRs.** A significant, hard-to-reverse technical decision goes in
-  `tech/ADR/` using `_templates/ADR.md` — never buried inline in prose. ADRs are immutable
-  once Accepted; supersede rather than rewrite.
-- **Match the house style.** New notes use the format above; new skills follow the
-  `skills/**/SKILL.md` convention and cite the notes they rely on.
-- **When unsure how to categorise something, ask** rather than inventing a new folder.
+* Keep this bundle OKF-conformant: every non-reserved `.md` file starts with frontmatter and
+  has non-empty `type`.
+* Keep `index.md`, `log.md`, and domain MOCs current in the same change as concept edits.
+* Keep one idea per note. Split mixed topics and cross-link them.
+* Record durable technical decisions as ADRs.
+* Match the house style: short descriptions, structured headings, and Markdown links.
+* When unsure how to categorize something, ask rather than inventing a new folder.
 
-## Deliberate deviations from Karpathy's pattern
+# Related Notes
 
-These are conscious choices, not gaps — revisit only if the trade-off changes:
-
-- **Notes use `**Summary**` / `**Tags**` pseudo-fields, not YAML frontmatter.** Karpathy
-  suggests YAML frontmatter to unlock Obsidian Dataview/Properties; we keep the existing bold
-  fields. Consequence: Dataview queries won't work until (if ever) we migrate.
-- **QMD is a local retrieval layer, not source control state.** The QMD index and embeddings
-  live in the user's cache, are rebuilt from markdown, and are not committed. Keep curated MOCs
-  and lint checks because QMD does not prove graph or source integrity.
+[LLM Wiki](/sources/LLM%20Wiki.md)
+[ADR MOC](/tech/ADR/ADR%20MOC.md)
+[Product Strategy 2026 (MOC)](/product/strategy/Product%20Strategy%202026%20%28MOC%29.md)

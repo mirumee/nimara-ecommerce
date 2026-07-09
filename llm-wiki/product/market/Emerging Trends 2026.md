@@ -1,10 +1,18 @@
-**Summary**: The 12–24 month market shifts shaping Nimara's roadmap — agentic commerce and UCP/MCP, multi-vendor marketplaces, and "deploy in minutes" developer experience.
-
-**Tags**: #market #trends #agentic #marketplace #ucp #mcp
-**Created**: 2026-06-16T00:00:00+00:00
-**Last Updated**: 2026-06-16T00:00:00+00:00
-
 ---
+type: "Market Research"
+title: "Emerging Trends 2026"
+description: "The 12–24 month market shifts shaping Nimara's roadmap — agentic commerce and UCP/MCP, multi-vendor marketplaces, and \"deploy in minutes\" developer experience."
+tags:
+  - "market"
+  - "trends"
+  - "agentic"
+  - "marketplace"
+  - "ucp"
+  - "mcp"
+created: "2026-06-16T00:00:00+00:00"
+timestamp: "2026-06-16T00:00:00+00:00"
+---
+
 ## Content
 
 ### Agentic commerce moves discovery upstream
@@ -12,21 +20,21 @@
 - Consumers increasingly direct **AI shopping agents** (Google Search AI Mode, Gemini) to execute purchases inside natural-language interfaces instead of navigating individual sites.
 - The merchant's job shifts from optimizing visual layouts to **exposing high-fidelity, real-time, machine-readable data feeds**.
 - **Generative Engine Optimization (GEO)** and secure trust protocols are replacing traditional SEO as the primary discovery vector.
-- Roadmap consequence: see [[3 - UCP-MCP Agentic Discovery]].
+- Roadmap consequence: see [3 - UCP-MCP Agentic Discovery](/product/strategy/initiatives/3%20-%20UCP-MCP%20Agentic%20Discovery.md).
 
 ### Multi-vendor marketplaces as a dominant feature
 - B2B organizations and DTC brands increasingly launch vendor networks to aggregate inventory **without inventory risk**.
 - Operating these networks requires sophisticated **financial splitting** (per-vendor payouts, platform commissions).
-- Roadmap consequence: see [[2 - Stripe Connect Split Payments]] and [[Marketplace & Agentic Commerce Bets]].
+- Roadmap consequence: see [2 - Stripe Connect Split Payments](/product/strategy/initiatives/2%20-%20Stripe%20Connect%20Split%20Payments.md) and [Marketplace & Agentic Commerce Bets](/product/strategy/Marketplace%20%26%20Agentic%20Commerce%20Bets.md).
 
 ### "Deploy in minutes" as a DX standard
 - Engineering teams reject heavy multi-month proof-of-concept setups and favour platforms delivering functional, pre-integrated storefronts on day one.
 - CLI-driven instant setup is becoming the expected baseline.
-- Roadmap consequence: see [[1 - Zero-to-Deploy CLI]].
+- Roadmap consequence: see [1 - Zero-to-Deploy CLI](/product/strategy/initiatives/1%20-%20Zero-to-Deploy%20CLI.md).
 
 ## Related Notes
-[[Composable Commerce Market]]
-[[Table Stakes vs Differentiators]]
-[[Developer Pain Points]]
-[[Marketplace & Agentic Commerce Bets]]
-[[Works Cited]]
+[Composable Commerce Market](/product/market/Composable%20Commerce%20Market.md)
+[Table Stakes vs Differentiators](/product/market/Table%20Stakes%20vs%20Differentiators.md)
+[Developer Pain Points](/product/market/Developer%20Pain%20Points.md)
+[Marketplace & Agentic Commerce Bets](/product/strategy/Marketplace%20%26%20Agentic%20Commerce%20Bets.md)
+[Works Cited](/references/Works%20Cited.md)

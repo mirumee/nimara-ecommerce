@@ -1,13 +1,15 @@
-
-**Summary**: One sentence — the decision and its status (e.g. "Use RAG over fine-tuning for product discovery — Accepted").
-
-**Tags**: #adr #topic
-**Created**: 2026-06-16T00:00:00+00:00
-**Last Updated**: 2026-06-16T00:00:00+00:00
-
-**Status**: Proposed <!-- Proposed | Accepted | Rejected | Deprecated | Superseded by [[ADR-NNNN Title]] -->
-
 ---
+type: "Template"
+title: "ADR"
+description: "One sentence — the decision and its status (e.g. \"Use RAG over fine-tuning for product discovery — Accepted\")."
+tags:
+  - "adr"
+  - "topic"
+created: "2026-06-16T00:00:00+00:00"
+timestamp: "2026-06-16T00:00:00+00:00"
+status: "Proposed <!-- Proposed | Accepted | Rejected | Deprecated | Superseded by [ADR-NNNN Title](/tech/ADR/ADR-NNNN%20Title.md) -->"
+---
+
 ## Context
 
 What is the issue that is motivating this decision or change? Describe the forces at
@@ -26,5 +28,5 @@ why the codebase looks the way it does.
 
 ## Related Notes
 
-[[Decisions MOC]]
-[[Related solution or epic note]]
+[Decisions MOC](/tech/ADR/ADR%20MOC.md)
+[Related solution or epic note](/Related%20solution%20or%20epic%20note.md)

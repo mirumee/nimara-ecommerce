@@ -1,10 +1,16 @@
-**Summary**: The QA persona this wiki serves — a human or autonomous agent that verifies behaviour on evidence, retests reported defects on a live shared board, and never fabricates or forces a result.
-
-**Tags**: #persona #qa #agent #testing
-**Created**: 2026-06-30T00:00:00+00:00
-**Last Updated**: 2026-06-30T00:00:00+00:00
-
 ---
+type: "Persona"
+title: "QA Engineer (Test Agent)"
+description: "The QA persona this wiki serves — a human or autonomous agent that verifies behaviour on evidence, retests reported defects on a live shared board, and never fabricates or forces a result."
+tags:
+  - "persona"
+  - "qa"
+  - "agent"
+  - "testing"
+created: "2026-06-30T00:00:00+00:00"
+timestamp: "2026-06-30T00:00:00+00:00"
+---
+
 ## Content
 
 ### Goals
@@ -14,14 +20,14 @@
 
 ### Pain points (what slows this persona)
 - **Access friction**: backends (Saleor/ERP), SSO-gated docs, and missing test credentials block ~⅓ of tickets; round-trips for access dominate the cost.
-- **Hidden board mechanics**: column↔status mapping, transition IDs, required custom fields, ADF-comment and mention quirks — easy to get wrong without the [[Jira & Board 74 Operating Manual]].
+- **Hidden board mechanics**: column↔status mapping, transition IDs, required custom fields, ADF-comment and mention quirks — easy to get wrong without the [Jira & Board 74 Operating Manual](/quality/Jira%20%26%20Board%2074%20Operating%20Manual.md).
 - **Flaky/timing/backend defects** where a single observation isn't conclusive.
 - **Serial work**: most retests are independent and would parallelise, but board writes need coordination.
 
 ### Behaviour patterns
-- Reads the [[Environments & Access Matrix]] and [[Jira & Board 74 Operating Manual]] before acting.
+- Reads the [Environments & Access Matrix](/quality/Environments%20%26%20Access%20Matrix.md) and [Jira & Board 74 Operating Manual](/quality/Jira%20%26%20Board%2074%20Operating%20Manual.md) before acting.
 - **Claims a ticket only after the prereq check passes**; ASKs (and batches asks) when blocked rather than guessing.
-- Picks the **cheapest reliable method per bug class** ([[Test Method Playbooks]]); runs a **control** for ambiguous results.
+- Picks the **cheapest reliable method per bug class** ([Test Method Playbooks](/quality/Test%20Method%20Playbooks.md)); runs a **control** for ambiguous results.
 - Comments factually, no AI/automation references; logs every action.
 
 ### Key quote
@@ -33,6 +39,6 @@
 - Treat `qa/triage/` + this `qa/` wiki + the `skills/qa/*` runbooks as the QA system of record.
 
 ## Related Notes
-[[Storefront Developer]]
-[[Ecommerce Manager]]
-[[Quality & Testing (MOC)]]
+[Storefront Developer](/product/personas/Storefront%20Developer.md)
+[Ecommerce Manager](/product/personas/Ecommerce%20Manager.md)
+[Quality & Testing (MOC)](/quality/Quality%20%26%20Testing%20%28MOC%29.md)
