@@ -105,7 +105,8 @@ one decision per note, using the **Michael Nygard template** (`_templates/ADR.md
 
 ## Maintaining the wiki
 
-Don't hand-maintain — invoke the skill:
+Use the repo-local **`llm-wiki`** skill as the entrypoint for discovery and wiki work. For
+maintenance modes, it delegates to the executable runbook below:
 
 - **Ingest** a new source into notes → `skills/wiki/wiki-maintenance` (ingest mode). On
   ingest the raw source is archived under `sources/`, `index.md` gains the new/changed notes,
@@ -113,10 +114,46 @@ Don't hand-maintain — invoke the skill:
 - **Lint / audit** the graph (orphans, dangling links, format drift, uncited claims) →
   same skill (lint mode).
 - **Answer a question and file the answer back** as a note → same skill (answer mode). The
-  answer starts by reading `index.md` to locate relevant notes.
+  answer starts by using the local QMD index when available, then falls back to `index.md`
+  to locate relevant notes.
 
 Every skill operation appends one line to `log.md` (`## [YYYY-MM-DD] <mode> | Title`), so the
 wiki keeps a chronological record of how it evolved.
+
+## QMD retrieval
+
+`qmd` is the preferred local retrieval layer for this wiki once configured. It indexes the
+markdown corpus, while the markdown files remain the source of truth. The generated QMD
+SQLite index is local developer state and is never committed.
+
+Project wrapper commands:
+
+```bash
+pnpm wiki:qmd:setup
+pnpm wiki:qmd:embed
+pnpm wiki:qmd:query "what contradicts the user reviews epic?"
+pnpm wiki:qmd:search "ADR MOC" -- --json -n 10
+pnpm wiki:qmd:get "#abc123" -- --full
+pnpm wiki:qmd:mcp
+```
+
+The wrapper uses `qmd --index nimara-wiki`, so QMD stores data outside the repo under
+`~/.cache/qmd/nimara-wiki.sqlite`. Install QMD locally before first use:
+
+```bash
+npm install -g @tobilu/qmd
+```
+
+Operational rules:
+
+- Use `llm-wiki/sources/LLM Wiki.md` for the upstream LLM-wiki pattern and this file for
+  Nimara's local schema.
+- Run `pnpm wiki:qmd:update` after markdown changes and `pnpm wiki:qmd:embed` when semantic
+  search should reflect those changes.
+- Use `qmd search` / `qmd query` results to get a `docid` or `qmd://...` URI before calling
+  `qmd get`; QMD may normalize filenames with spaces into URI-safe names.
+- Do not treat QMD results as validation. Link integrity, source integrity, MOC coverage, and
+  JSON-vs-markdown drift still require the wiki-maintenance lint pass.
 
 ## Rules
 
@@ -143,5 +180,6 @@ These are conscious choices, not gaps — revisit only if the trade-off changes:
 - **Notes use `**Summary**` / `**Tags**` pseudo-fields, not YAML frontmatter.** Karpathy
   suggests YAML frontmatter to unlock Obsidian Dataview/Properties; we keep the existing bold
   fields. Consequence: Dataview queries won't work until (if ever) we migrate.
-- **No CLI search engine (e.g. qmd).** At current scale `index.md` + `grep` is enough; add
-  on-device search only when the wiki outgrows it.
+- **QMD is a local retrieval layer, not source control state.** The QMD index and embeddings
+  live in the user's cache, are rebuilt from markdown, and are not committed. Keep curated MOCs
+  and lint checks because QMD does not prove graph or source integrity.
