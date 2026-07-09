@@ -6,10 +6,6 @@ drill into them. Machine-maintained: the `wiki-maintenance` skill updates it on 
 (see `AGENTS.md`). Per-domain MOCs (`… (MOC)`) curate navigation *within* a domain; this file
 is the exhaustive catalogue *across* domains.
 
-> JSON data (`product/epics/`, `product/tasks/`, `product/solution/`) is a structured data
-> layer, not synthesised notes, and is intentionally not catalogued here (see `AGENTS.md` →
-> Deliberate deviations).
-
 ## sources/ — raw, immutable inputs
 - [[Strategic Product Report - Nimara.store (Gemini Deep Research)]] — the Deep Research report the 2026 strategy/market corpus was synthesised from (full text pending archival).
 
