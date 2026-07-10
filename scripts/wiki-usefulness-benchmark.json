@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "questions": [
+    {
+      "id": "layer-boundary",
+      "question": "Where is the boundary between Nimara features and external-provider infrastructure?",
+      "expectedConcepts": [
+        "tech/Technical Architecture (MOC).md",
+        "product/strategy/initiatives/5 - Provider-Agnostic Interface.md",
+        "tech/flows/Storefront Data Flow.md"
+      ]
+    },
+    {
+      "id": "marketplace-payment-orders",
+      "question": "How does a marketplace customer payment become one or more Saleor orders?",
+      "expectedConcepts": [
+        "tech/flows/Checkout and Payment Flow.md",
+        "product/solution/Stripe Connect Split Payments Solution.md"
+      ]
+    },
+    {
+      "id": "ledger-transfer-eligibility",
+      "question": "When is a vendor ledger line eligible for a Stripe Transfer?",
+      "expectedConcepts": [
+        "tech/flows/Marketplace Ledger and Payout Flow.md",
+        "tech/ADR/ADR-0001 Use Separate Charges and Transfers for Marketplace Settlement.md"
+      ]
+    },
+    {
+      "id": "marketplace-vendor-identity",
+      "question": "How is vendor identity established for marketplace GraphQL operations?",
+      "expectedConcepts": ["tech/flows/Marketplace Authentication Flow.md"]
+    },
+    {
+      "id": "storefront-cache-invalidation",
+      "question": "Which storefront data is cached and how does Saleor invalidate it?",
+      "expectedConcepts": [
+        "tech/flows/Cache and Webhook Invalidation Flow.md",
+        "tech/flows/Storefront Data Flow.md"
+      ]
+    }
+  ]
+}

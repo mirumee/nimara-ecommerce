@@ -15,6 +15,7 @@ review_on: "2026-08-10"
 source_refs:
   - "wiki:AGENTS.md"
   - "repo:scripts/wiki-lint.mjs"
+  - "repo:scripts/wiki-usefulness-benchmark.json"
 ---
 
 # Content
@@ -38,16 +39,16 @@ Recorded on 2026-07-10:
 | Registered ADRs                   |        0 |
 | Complete initiative-to-QA tracers |        0 |
 
-## Canonical questions
+## Canonical benchmark
 
-At the start and end of the month, ask a developer or agent to answer these questions using
-the wiki and verify the answer against repository sources:
+The five stable benchmark questions and their acceptable routing targets live in
+`scripts/wiki-usefulness-benchmark.json`, outside the indexed Markdown bundle. Keeping the
+queries outside the wiki prevents the measurement plan from matching its own question text and
+artificially displacing the concepts under evaluation.
 
-1. Where is the boundary between Nimara features and external-provider infrastructure?
-2. How does a marketplace customer payment become one or more Saleor orders?
-3. When is a vendor ledger line eligible for a Stripe Transfer?
-4. How is vendor identity established for marketplace GraphQL operations?
-5. Which storefront data is cached and how does Saleor invalidate it?
+At the start and end of the month, ask a developer or agent to answer every fixture question
+using the wiki, then verify the answer against the repository sources declared by the matched
+concepts.
 
 ## Initial iteration checkpoint
 
@@ -62,11 +63,21 @@ Recorded after the first operational-wiki iteration on 2026-07-10:
 | Registered ADRs                                               |          1 |
 | Complete initiative-to-QA tracers                             |          1 |
 
-QMD routed the ledger-eligibility question to
-[Marketplace Ledger and Payout Flow](tech/flows/Marketplace%20Ledger%20and%20Payout%20Flow.md)
-as its first result. The vendor-identity question returned
-[Marketplace Authentication Flow](tech/flows/Marketplace%20Authentication%20Flow.md) within
-the top two results. These are setup checks, not the one-month outcome measurement.
+The post-iteration retrieval benchmark is recorded below after rebuilding QMD. These setup
+checks establish the comparison point; they are not the one-month outcome measurement.
+
+| Benchmark ID                    | First acceptable concept rank | QMD query wall time |
+| ------------------------------- | ----------------------------: | ------------------: |
+| `layer-boundary`                |                             1 |              6.11 s |
+| `marketplace-payment-orders`    |                             1 |              5.54 s |
+| `ledger-transfer-eligibility`   |                             1 |              5.12 s |
+| `marketplace-vendor-identity`   |                             1 |              4.94 s |
+| `storefront-cache-invalidation` |                             2 |              4.70 s |
+
+Initial routing result: 5/5 questions returned an acceptable concept in the top four, 4/5
+ranked an acceptable concept first, and median QMD wall time was 5.12 seconds. Query wall time
+measures retrieval latency only; the one-month review must separately time a source-verified
+answer.
 
 ## Metrics to collect
 
