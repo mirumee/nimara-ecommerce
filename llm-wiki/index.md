@@ -14,6 +14,7 @@ okf_version: "0.1"
 # Sources
 * [LLM Wiki](sources/LLM%20Wiki.md) - Upstream LLM-wiki pattern describing raw sources, maintained wiki notes, schema files, indexing, and logs.
 * [Strategic Product Report - Nimara.store (Gemini Deep Research)](sources/Strategic%20Product%20Report%20-%20Nimara.store%20%28Gemini%20Deep%20Research%29.md) - Raw source stub for the Deep Research report used by the 2026 strategy and market corpus.
+* [Saleor GraphQL Schema](sources/saleor/schema.graphql) - Full Saleor GraphQL API schema (immutable source, **Saleor 3.23.17**) synthesized by the Saleor API reference notes.
 
 # Product Strategy
 * [Product Strategy 2026 (MOC)](product/strategy/Product%20Strategy%202026%20%28MOC%29.md) - Entry point and executive summary for 2026 product strategy.
@@ -62,6 +63,26 @@ okf_version: "0.1"
 
 # Technology ADR
 * [ADR MOC](tech/ADR/ADR%20MOC.md) - Map of content and chronological register for architecture decision records.
+
+# Technology — Saleor GraphQL API (Saleor 3.23.17)
+* [Saleor GraphQL API (MOC)](tech/saleor/Saleor%20GraphQL%20API%20%28MOC%29.md) - Map of content and entry point for the Saleor API reference.
+* [Saleor API Overview](tech/saleor/Saleor%20API%20Overview.md) - Shape, scale, roots, and cross-cutting conventions of the Saleor GraphQL API.
+* [Products & Variants](tech/saleor/Products%20%26%20Variants.md) - Products, purchasable variants, product types, media, and per-channel pricing.
+* [Attributes](tech/saleor/Attributes.md) - Typed metadata definitions and values assigned to products, variants, and pages.
+* [Categories & Collections](tech/saleor/Categories%20%26%20Collections.md) - The category tree and curated, per-channel-published collections.
+* [Checkout](tech/saleor/Checkout.md) - The cart/session that converts into an order via checkoutComplete.
+* [Orders & Fulfillment](tech/saleor/Orders%20%26%20Fulfillment.md) - Orders, draft orders, fulfillments, and invoices.
+* [Payments & Transactions](tech/saleor/Payments%20%26%20Transactions.md) - Legacy payments and the modern app-driven transaction API.
+* [Accounts & Permissions](tech/saleor/Accounts%20%26%20Permissions.md) - Users, addresses, staff, permission groups, and auth/token flows.
+* [Channels](tech/saleor/Channels.md) - The multi-market / multi-currency axis everything sellable hangs off.
+* [Warehouses & Stock](tech/saleor/Warehouses%20%26%20Stock.md) - Inventory locations, stock, and allocation.
+* [Shipping](tech/saleor/Shipping.md) - Zones, methods, per-channel prices, and postal-code rules.
+* [Taxes](tech/saleor/Taxes.md) - Per-channel/per-country tax configuration and classes.
+* [Discounts](tech/saleor/Discounts.md) - Vouchers, the legacy Sale model, and the Promotion/PromotionRule model.
+* [Gift Cards](tech/saleor/Gift%20Cards.md) - Prepaid store-credit instruments and their events/settings.
+* [Content & Navigation](tech/saleor/Content%20%26%20Navigation.md) - CMS pages, page types, and navigation menus.
+* [Apps, Webhooks & Extensibility](tech/saleor/Apps%20Webhooks%20%26%20Extensibility.md) - Apps, tokens, dashboard extensions, webhooks, and plugins.
+* [Translations](tech/saleor/Translations.md) - Multi-language content and the *Translate mutation family.
 
 # References
 * [Works Cited](references/Works%20Cited.md) - Source list for the 2026 product strategy research.

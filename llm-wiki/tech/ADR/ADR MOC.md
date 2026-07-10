@@ -16,6 +16,12 @@ is one standalone note following the [Michael Nygard template](https://github.co
 **Status → Context → Decision → Consequences** (see `_templates/ADR.md`).
 
 **Conventions**
+- **Confirm the base system before writing.** Before drafting any ADR, always ask the user
+  which system the application, feature, or provider is built on — for example Saleor,
+  Algolia, or a completely new greenfield app from scratch. The agent must not assume or
+  guess this; without it the decision context is unanchored and the ADR risks hallucinating
+  constraints or capabilities. Record the confirmed answer in the ADR's **Context** as the
+  **Base system** line.
 - **One decision per note.** File name is `ADR-NNNN <Title>` (zero-padded, monotonically
   increasing, never reused) — e.g. `ADR-0001 Use RAG over fine-tuning`.
 - **ADRs are immutable once Accepted.** Don't rewrite a decision — supersede it: create a

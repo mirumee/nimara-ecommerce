@@ -78,23 +78,26 @@ Link related concepts with standard Markdown links:
 
 Required:
 
-* `type` - short, human-readable concept kind. Consumers must tolerate unknown values.
+- `type` - short, human-readable concept kind. Consumers must tolerate unknown values.
 
 Recommended:
 
-* `title` - display name.
-* `description` - one-sentence summary used by indexes and search snippets.
-* `resource` - URI for the underlying asset when the concept describes one.
-* `tags` - YAML list of short strings without `#`.
-* `timestamp` - ISO 8601 last meaningful update time.
+- `title` - display name.
+- `description` - one-sentence summary used by indexes and search snippets.
+- `resource` - URI for the underlying asset when the concept describes one.
+- `tags` - YAML list of short strings without `#`.
+- `timestamp` - ISO 8601 last meaningful update time.
 
 Local extensions currently used:
 
-* `created` - original creation time for the concept.
-* `status`, `owner`, `epic_type`, `template_for` - domain-specific fields on epics,
+- `created` - original creation time for the concept.
+- `status`, `owner`, `epic_type`, `template_for` - domain-specific fields on epics,
   ADR templates, or other structured notes.
-* `epic_id`, `epic_title`, `session_status` - identity and lifecycle fields on epic
+- `epic_id`, `epic_title`, `session_status` - identity and lifecycle fields on epic
   grilling logs.
+- `saleor_version` - the exact Saleor release a source-derived note was synthesized from
+  (e.g. `"3.23.17"`), mirrored by a one-line **Saleor version:** callout in the body. See
+  [Source-Derived Reference Notes](#source-derived-reference-notes).
 
 # Links
 
@@ -108,7 +111,7 @@ and must not include the `llm-wiki/` prefix:
 Use the same bundle-relative form in `index.md` entries:
 
 ```markdown
-* [Storefront Developer](product/personas/Storefront%20Developer.md) - primary adopter persona.
+- [Storefront Developer](product/personas/Storefront%20Developer.md) - primary adopter persona.
 ```
 
 Do not add Obsidian-style bracket links. If old bracket-style links appear, migrate them to
@@ -129,7 +132,8 @@ After that optional root frontmatter, index files should use section headings an
 
 ```markdown
 # Product Strategy
-* [Product Strategy 2026 (MOC)](product/strategy/Product%20Strategy%202026%20%28MOC%29.md) - entry point for strategy notes.
+
+- [Product Strategy 2026 (MOC)](product/strategy/Product%20Strategy%202026%20%28MOC%29.md) - entry point for strategy notes.
 ```
 
 Update the relevant index whenever adding, removing, renaming, or materially changing a
@@ -143,8 +147,9 @@ concept description.
 # Directory Update Log
 
 ## 2026-07-09
-* **Update**: Added a new concept document for ...
-* **Lint**: Repaired broken Markdown links in ...
+
+- **Update**: Added a new concept document for ...
+- **Lint**: Repaired broken Markdown links in ...
 ```
 
 Date headings must use `YYYY-MM-DD`.
@@ -156,11 +161,15 @@ per file, using the Michael Nygard structure from `_templates/ADR.md`.
 
 Rules:
 
-* File name: `ADR-NNNN Title.md`, zero-padded and monotonically increasing.
-* Type: `Architecture Decision Record`.
-* Status lives in frontmatter as `status`.
-* Accepted ADRs are immutable. Supersede them with a new ADR and link both documents.
-* Register every ADR in [ADR MOC](tech/ADR/ADR%20MOC.md) and link it back to the relevant
+- **Before writing an ADR, always ask the user which system the application, feature, or
+  provider is built on** — e.g. Saleor, Algolia, or a greenfield app from scratch. Do not
+  assume or infer it; the answer anchors the decision context and prevents hallucinated
+  constraints. Capture it as the **Base system** line in the ADR's Context.
+- File name: `ADR-NNNN Title.md`, zero-padded and monotonically increasing.
+- Type: `Architecture Decision Record`.
+- Status lives in frontmatter as `status`.
+- Accepted ADRs are immutable. Supersede them with a new ADR and link both documents.
+- Register every ADR in [ADR MOC](tech/ADR/ADR%20MOC.md) and link it back to the relevant
   epic, solution, or task note.
 
 # Epic Grilling Logs
@@ -169,18 +178,44 @@ Business grilling is preserved as a decision record rather than a raw chat trans
 
 Rules:
 
-* Store one log per epic in `product/epics/grilling/` as
+- Store one log per epic in `product/epics/grilling/` as
   `EPIC-NNN <Epic Name> - Grilling Log.md`.
-* Create new logs from `_templates/epic-grilling-log.md`. Append later sessions to the same
+- Create new logs from `_templates/epic-grilling-log.md`. Append later sessions to the same
   file and continue the `G-*` decision numbering.
-* Record each user-visible question, recommendation, answer, and resulting decision. Include
+- Record each user-visible question, recommendation, answer, and resulting decision. Include
   rejected metrics or scope, unresolved branches, and decisions deferred to solution design.
-* Summarize rather than expose hidden reasoning. Never copy secrets, personal data, or a
+- Summarize rather than expose hidden reasoning. Never copy secrets, personal data, or a
   confidential source body into the log; record only the evidence used and its limitations.
-* Link the epic and grilling log in both directions. Register the log in `index.md` and the
+- Link the epic and grilling log in both directions. Register the log in `index.md` and the
   creation or update in `log.md`.
-* When an epic is renamed, rename its grilling log and update all inbound links in the same
+- When an epic is renamed, rename its grilling log and update all inbound links in the same
   change.
+
+# Source-Derived Reference Notes
+
+Notes synthesized from a **versioned external source** (currently the Saleor GraphQL API
+notes under `tech/saleor/`, synthesized from `sources/saleor/schema.graphql`) must pin the
+exact source version they describe, so a reader — human or agent — can tell whether a note
+still matches the live backend.
+
+Rules:
+
+- **Record the version in two places, kept identical:**
+  - a `saleor_version: "<x.y.z>"` frontmatter field, and
+  - a one-line body callout immediately under the `## Content` heading, e.g.
+    `> **Saleor version:** 3.23.17 — these notes are synthesized from the archived
+[schema.graphql](/sources/saleor/schema.graphql) at this version. Re-synthesize them if
+the schema is bumped to a different Saleor version.`
+- **Determine the version from the source, do not guess.** A GraphQL schema does not embed
+  its release number statically (`Shop.version`/`schemaVersion` are runtime fields), so
+  confirm the version with the user or the source's provenance (release tag / commit) before
+  writing it. Use the same version string across every note in the bundle.
+- **When the source version changes** (a new `schema.graphql` is ingested): treat the notes
+  as stale. Re-synthesize the affected notes against the new schema, update every
+  `saleor_version` field and body callout to the new version, and note the version bump in
+  `log.md`. Do not leave a note claiming an old version alongside re-derived content.
+- Generalize the same pattern (`<source>_version` frontmatter + body callout) to any future
+  source-derived reference bundle.
 
 # Maintaining The Wiki
 
@@ -189,11 +224,11 @@ maintenance modes, it delegates to `skills/wiki/wiki-maintenance`.
 
 Expected operations:
 
-* Ingest a new source: add or update source material, update synthesized notes, update
+- Ingest a new source: add or update source material, update synthesized notes, update
   `index.md`, and append to `log.md`.
-* Lint or audit: check frontmatter, links, orphans, MOC coverage, stale claims, and source
+- Lint or audit: check frontmatter, links, orphans, MOC coverage, stale claims, and source
   coverage.
-* Answer and file back: answer from existing concepts first, then add durable insights as
+- Answer and file back: answer from existing concepts first, then add durable insights as
   concept documents when they should persist.
 
 Sources under `sources/` should preserve the source body. Prefer appending metadata,
@@ -219,24 +254,24 @@ pnpm wiki:qmd:mcp
 
 Operational rules:
 
-* Use [LLM Wiki](sources/LLM%20Wiki.md) for the upstream pattern and this file for Nimara's
+- Use [LLM Wiki](sources/LLM%20Wiki.md) for the upstream pattern and this file for Nimara's
   local OKF schema.
-* Run `pnpm wiki:qmd:update` after Markdown changes and `pnpm wiki:qmd:embed` when semantic
+- Run `pnpm wiki:qmd:update` after Markdown changes and `pnpm wiki:qmd:embed` when semantic
   search should reflect those changes.
-* Use `qmd search` or `qmd query` to get a `docid` or `qmd://...` URI before calling
+- Use `qmd search` or `qmd query` to get a `docid` or `qmd://...` URI before calling
   `qmd get`.
-* Do not treat QMD results as validation. Link integrity, frontmatter, source integrity, MOC
+- Do not treat QMD results as validation. Link integrity, frontmatter, source integrity, MOC
   coverage, and index coverage still require a wiki-maintenance lint pass.
 
 # Rules
 
-* Keep this bundle OKF-conformant: every non-reserved `.md` file starts with frontmatter and
+- Keep this bundle OKF-conformant: every non-reserved `.md` file starts with frontmatter and
   has non-empty `type`.
-* Keep `index.md`, `log.md`, and domain MOCs current in the same change as concept edits.
-* Keep one idea per note. Split mixed topics and cross-link them.
-* Record durable technical decisions as ADRs.
-* Match the house style: short descriptions, structured headings, and Markdown links.
-* When unsure how to categorize something, ask rather than inventing a new folder.
+- Keep `index.md`, `log.md`, and domain MOCs current in the same change as concept edits.
+- Keep one idea per note. Split mixed topics and cross-link them.
+- Record durable technical decisions as ADRs.
+- Match the house style: short descriptions, structured headings, and Markdown links.
+- When unsure how to categorize something, ask rather than inventing a new folder.
 
 # Related Notes
 

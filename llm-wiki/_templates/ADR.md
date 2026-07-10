@@ -12,6 +12,10 @@ status: "Proposed"
 
 ## Context
 
+**Base system:** State which system this application, feature, or provider is built on
+(e.g. Saleor, Algolia, or a greenfield app from scratch). This must be confirmed with the
+user before the ADR is written — see the prerequisite in [ADR MOC](tech/ADR/ADR%20MOC.md).
+
 What is the issue that is motivating this decision or change? Describe the forces at
 play — technical, business, team — in value-neutral terms. State facts, not the choice.
 
