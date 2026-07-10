@@ -1,11 +1,11 @@
 ---
 id: EPIC-000
-type: epic
-status: draft            # draft | analyzing | ready | in-progress | done | dropped
+type: Epic
+status: draft
 owner: ""
-epic_type: business      # business | enabler
+epic_type: business
 personas:
-  - ""                    # [[Persona]] once it exists
+  - ""
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 ---
@@ -14,44 +14,57 @@ updated: YYYY-MM-DD
 
 ## Value Hypothesis
 
-**For** \<persona\> **who** \<need/pain\>, **the** \<epic name\> **is a** \<what it is\> **that** \<key benefit\>, **unlike** \<current alternative\>, **our solution** \<differentiator\>.
+**For** <specific segment> **who** <business need or risk>, **the** <epic name> **is a** <solution category> **that** <business benefit>, **unlike** <current state or alternative>, **our solution** <primary business differentiation>.
+
+## Evidence & Assumptions
+
+- E-1: evidence and what it proves or does not prove
+- A-1 `[ASSUMPTION]`: unproven claim the epic will test
 
 ## Business Goal & Value
 
-Why this epic exists and what business value it returns. Prose, 1–2 paragraphs.
+Explain the primary outcome, the path from end-user value to adopter/product value, the strategic role, and why now.
 
-## Success Metrics
+## Business Outcomes
 
-- M-1: metric — target — how/where measured
+- BO-1: outcome — target population — target — timeframe — measurement source and owner
+
+## Leading Indicators
+
+- LI-1: early signal — target — measurement source
 
 ## MVP & Falsification
 
-The smallest slice that tests the hypothesis, and the evidence that would make us stop (kill criteria).
+Describe the smallest learning slice, rollout, validation-clock start, negative result, action after failure, and treatment of insufficient evidence.
+
+## Nonfunctional Requirements
+
+- NFR-1: business-relevant trust, privacy, accessibility, performance, compliance, or ownership constraint
 
 ## Scope
 
-- S-1: …
+- S-1: capability-level behavior
 
 ## Out of Scope
 
-- deferred item — why, and where it goes (fast-follow / separate epic)
+- deferred item — why it is excluded and where it belongs
 
 ## User Stories
 
-- US-1 (\<persona\>): As a …, I want …, so that …
+- US-1 (<persona>): As a …, I want …, so that …
 
 ## Acceptance Criteria
 
-- AC-1 (US-1): Given … when … then …
+- AC-1 (US-1): Given …, when …, then …
 
 ## Risks
 
-- R-1: risk — mitigation
+- R-1: risk to the business hypothesis — mitigation or accepted
 
 ## Open Questions
 
-- Q-1: question — owner — must be answered before \<stage\>
-
+- Q-1: unresolved decision — owner — must be answered before <stage>
 
 ## Related Notes
-[[Initiative Note]]
+
+[Seeding Strategy or Initiative](path/to/note.md)

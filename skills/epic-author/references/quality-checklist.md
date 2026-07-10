@@ -1,33 +1,56 @@
-# Epic quality checklist (Definition of Ready for review)
+# Epic Quality Checklist
 
-Run every check before presenting the draft. Fix silently what needs no new information; everything else becomes an Open Question or is reported to the user.
+Run every check before presenting or filing the epic. Fix issues that require no decision; report the rest as owned Open Questions.
 
-## Frontmatter & identity
-- [ ] `id` follows `EPIC-NNN` and is unique in `epics/`
-- [ ] `status: draft`, `owner`, `epic_type`, `created`/`updated` filled
-- [ ] every persona in `personas:` is a wikilink resolving to an existing persona note
+## Business grilling gate
 
-## Value & measurement
-- [ ] Value hypothesis fills all seven slots (For / who / the / is a / that / unlike / our solution)
-- [ ] At least one success metric with target and measurement source — and no invented numbers: if a target wasn't given by sources or the user, it's an open question
-- [ ] Kill criterion present: what evidence stops or pivots this epic
+- [ ] The interview asked one question per turn, included a recommendation, and waited for the answer.
+- [ ] Discoverable facts were explored instead of put to the user as decisions.
+- [ ] The user confirmed the shared understanding before drafting or editing.
+- [ ] Technical design choices were deferred unless they materially changed the business bet.
 
-## Scope
-- [ ] Every scope item has an `S-n` ID
-- [ ] Every out-of-scope item says why it's deferred and where it goes
-- [ ] No scope item duplicates or contradicts another epic (check `epics/`)
+## Identity and audience
 
-## Stories & criteria
-- [ ] Every story has `US-n` ID, persona, want, and benefit clause (INVEST spot-check: is it independently valuable and testable?)
-- [ ] Every AC has `AC-n` ID, maps to a story `(US-m)`, and is Given/When/Then
-- [ ] Every story is covered by at least one AC; no AC references a missing story
+- [ ] `id` is a unique `EPIC-NNN`; status, owner, epic type, personas, and dates are filled.
+- [ ] The name describes the value or problem space and survives a change in implementation.
+- [ ] The primary segment is specific; adopter/buyer value is distinguished from end-user experience value.
+- [ ] Persona references follow the wiki's local link convention and resolve.
 
-## Risks & questions
-- [ ] Every risk has a mitigation or an explicit "accepted"
-- [ ] Every open question has an owner and a "needed before <stage>" deadline
+## Evidence and value
 
-## Wiki hygiene
-- [ ] Filename `EPIC-NNN <Name>.md` in `epics/`
-- [ ] Related Notes links the seeding initiative/strategy note when one exists
-- [ ] `index.md` / `log.md` updated if they exist
-- [ ] Persona notes back-link to this epic
+- [ ] Evidence states what it proves and does not overclaim attribution.
+- [ ] Every unproven value claim is labeled `[ASSUMPTION]`.
+- [ ] The seven-part value hypothesis is complete.
+- [ ] The epic's strategic role is explicit: parity, differentiation, risk, revenue, retention, adoption, or cost.
+- [ ] The value path reaches a business outcome rather than stopping at activity, output, or UX.
+
+## Measurement and falsification
+
+- [ ] At least one business outcome has a population, target, timeframe, source, and owner, or the user's explicit decision not to set one is recorded.
+- [ ] Leading indicators are separate from lagging business outcomes.
+- [ ] Vanity metrics are diagnostic only unless their value path is explicit.
+- [ ] Falsification names a negative result, validation window, and stop/pivot action.
+- [ ] Insufficient evidence is distinguished from a negative result or remains an owned Open Question.
+
+## MVP and scope
+
+- [ ] MVP is the smallest credible test of value, with rollout and learning stated.
+- [ ] Appetite is recorded when the user considers it relevant; otherwise its exclusion is explicit.
+- [ ] Every scope item has an `S-*` ID and stays at capability/behavior level.
+- [ ] Every out-of-scope item says why it is deferred and where it belongs.
+- [ ] Scope does not duplicate or contradict another epic.
+- [ ] Provider, API, schema, package, infrastructure, library, and hosting decisions remain in solution design.
+
+## Stories and criteria
+
+- [ ] Every story has a `US-*` ID, persona, want, and benefit.
+- [ ] Every criterion has an `AC-*` ID, maps to a story, and uses Given/When/Then.
+- [ ] Every story has coverage and no criterion references a missing story.
+- [ ] Stories and criteria describe approved user/business behavior rather than technical design.
+
+## Risks, questions, and wiki hygiene
+
+- [ ] Every risk threatens the hypothesis and has a mitigation or explicit acceptance.
+- [ ] Every open question has an owner and a `before <stage>` gate.
+- [ ] Filename, index, log, Related Notes, persona backlinks, and renamed inbound links are current.
+- [ ] Sources were preserved and stale downstream artifacts were reported rather than silently rewritten.

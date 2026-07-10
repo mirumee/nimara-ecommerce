@@ -1,71 +1,92 @@
 ---
 name: epic-author
-description: Draft complete, high-quality project epics inside an LLM-wiki product workspace (a markdown/Obsidian wiki with epics/, personas/, strategy/ folders). Use this skill whenever the user asks to create, draft, or write an epic, turn an initiative, idea, or feature brief into an epic, or wants a feature specification with business goal, scope, user stories and acceptance criteria — even if they never say the word "epic". Epic authoring only — do not decompose into tasks, estimate, or export to Jira.
+description: Define and draft business epics inside an LLM-wiki product workspace. Use when the user wants to create, rewrite, refine, or stress-test an epic, initiative, feature brief, or epic hypothesis. Run a business-value-first, one-question-at-a-time grilling before drafting; stop at an approved epic and do not design the technical solution, decompose tasks, estimate, or export to Jira.
 ---
 
 # Epic Author
 
-Turn an initiative, idea, or brief into one complete epic document in the product wiki. The epic is the contract a human approves before any downstream work (solution design, task breakdown) starts — so its job is to make the bet explicit: what we believe, how we'll know we were right, and what would make us stop.
+Turn an initiative or feature idea into an explicit, falsifiable business bet that a human approves before solution design and task breakdown begin.
 
-Work through the six stages below in order. The interview and the self-lint are the two stages that most improve quality — don't skip them.
+Follow these six stages in order. The business grilling and self-lint are mandatory.
 
-## Stage 1 — Context pull
+## Stage 1 — Pull context and facts
 
-Locate the wiki root: the folder containing `epics/` (usually alongside `personas/`, `strategy/`, `market/`). If no such folder is evident, ask the user where the wiki lives.
+Locate the wiki root containing `epics/`, `personas/`, and `strategy/`. Read:
 
-Read before writing, so the epic is grounded in what the team already knows:
+- the current epic or seeding initiative;
+- every relevant persona;
+- market and strategy notes for the problem area;
+- raw sources named by the user;
+- related epics that could overlap.
 
-- the initiative or strategy note that seeds this epic, if one exists
-- the persona notes for every persona the epic will serve
-- market/strategy notes that mention the feature area
-- any raw sources the user points at (briefs, transcripts, agency recommendations)
+Use repository or source exploration to answer factual questions. Treat sources as evidence, never edit them, and separate what they prove from what is merely inferred. Never invent demand, attribution, metrics, competitor claims, targets, or constraints.
 
-Treat sources as ground truth you may quote, never edit. Anything the sources don't answer is a candidate for the interview or an open question — never invent facts, metrics, competitor claims, or constraints. A fabricated number in an epic silently becomes a commitment.
+Completion criterion: the known facts, evidence gaps, existing strategic position, and plausible overlap with other epics are identified before questioning the user.
 
-## Stage 2 — Interview
+## Stage 2 — Run business grilling
 
-Ask the user one round of at most 7 targeted questions — only the ones the sources didn't answer. Prioritize, in this order:
+Read `references/business-grilling.md` and follow it completely.
 
-1. **Success metrics** — how will we measure that this worked, with what target?
-2. **Kill criteria** — what evidence would make us stop or pivot? (falsification)
-3. **Scope edges** — the 2–3 most ambiguous inclusion/exclusion calls you found
-4. **Out of scope** — what is deliberately deferred, and where does it go (fast-follow vs. separate epic)?
-5. **Appetite** — how much are we willing to spend on this (time/team), Shape Up style, if the user thinks in those terms
+Ask exactly one question per turn. Each question must:
 
-If the user is unavailable or answers "don't know", don't block and don't guess: record the question verbatim in Open Questions with an owner and the stage it must be answered before.
+1. resolve one business decision or challenge one vague value claim;
+2. include a recommended answer and short rationale;
+3. wait for the user's answer before advancing.
 
-## Stage 3 — Draft
+Keep the grilling at epic altitude: problem, evidence, target segment, business value, strategic role, outcomes, leading indicators, falsification, MVP learning, scope, rollout, ownership, and business constraints. Defer provider, API, package, schema, infrastructure, library, and architecture decisions to solution design unless a technical constraint changes the business bet itself.
 
-Write the epic using `references/epic-template.md` for structure and `references/example-epic.md` as the quality bar — read both first. Conventions that matter:
+If the user says a target does not matter, record that as an explicit decision rather than manufacturing precision. If the user stops the questions, summarize decisions and unresolved branches. Do not draft or edit the epic until the user confirms shared understanding; a new request to apply the summarized decisions after the grilling also counts as confirmation. The original request to "write an epic" does not bypass this gate.
 
-- **IDs everywhere**: scope items `S-1…`, stories `US-1…`, criteria `AC-1…`. Downstream artifacts (tasks, QA coverage) will reference these IDs, so they must be stable and unique within the epic.
-- **Stories follow INVEST** and always carry persona, want, and benefit ("As a …, I want …, so that …"). A story without a benefit clause is a task in disguise.
-- **Acceptance criteria are Given/When/Then** and each maps to a story: `AC-3 (US-2): Given … when … then …`. Every story needs at least one AC.
-- **Value hypothesis** fills all seven slots (For / who / the / is a / that / unlike / our solution). If you can't fill "unlike", the differentiation is unclear — flag it.
-- **Success metrics are a first-class section**, not open questions. Each metric: name, target, where it's measured. If targets are genuinely undecided, list the metric with the target as an open question — but never invent a number.
-- **Out of scope items say why** and where the deferred thing goes. This is the Shape Up "no-gos" idea: explicit non-goals prevent scope creep more than any process.
-- Personas are wikilinks (`[[Shopper]]`) that resolve to real persona notes.
+Completion criterion: every branch in the business-grilling completion gate is answered, deliberately deferred with an owner and gate, or explicitly rejected by the user; the user has confirmed the shared understanding.
+
+## Stage 3 — Draft the epic
+
+Read `references/epic-template.md` and `references/example-epic.md`. Follow the wiki's local schema and link convention.
+
+Draft in this order:
+
+1. value hypothesis;
+2. evidence and assumptions;
+3. business goal and value path;
+4. quantified business outcomes and leading indicators;
+5. MVP and falsification;
+6. business-level NFRs, scope, risks, and open questions;
+7. user stories and acceptance criteria derived from the approved business behavior.
+
+Rules:
+
+- Give scope items `S-*`, stories `US-*`, criteria `AC-*`, risks `R-*`, and questions `Q-*` stable IDs.
+- Mark unproven claims as `[ASSUMPTION]`; never convert a proxy or output into a business outcome.
+- State the solution category and capability boundaries without freezing technical design.
+- Write INVEST stories with persona, want, and benefit. Write Given/When/Then criteria mapped to stories.
+- Keep technical choices out of stories and criteria. Put unresolved solution decisions in Open Questions with an owner and a `before <stage>` gate.
+- Explain why every out-of-scope item is deferred and where it belongs.
+
+Completion criterion: the document expresses the approved business bet without introducing decisions the user did not make.
 
 ## Stage 4 — Self-lint
 
-Before showing the draft, run every check in `references/quality-checklist.md`. Fix what you can fix without new information; anything needing a human decision goes to Open Questions. Report unfixed items to the user rather than hiding them.
+Run every check in `references/quality-checklist.md`. Fix issues that require no new decision. Put genuine unknowns in Open Questions and report any failed checks rather than hiding them.
+
+Completion criterion: every checklist item passes or is reported as an explicit, owned gap.
 
 ## Stage 5 — Bookkeeping
 
-File the epic so the wiki stays navigable:
+- Save as `epics/EPIC-NNN <Name>.md` using the next free ID, or preserve the ID when rewriting an existing epic.
+- Update the wiki index and log when present.
+- Add or update persona backlinks.
+- Update all inbound links when renaming an epic.
+- Preserve sources and downstream task artifacts; report stale downstream artifacts instead of silently rewriting them.
 
-- Save as `epics/EPIC-NNN <Name>.md` using the next free number (scan existing epics).
-- If `index.md` exists at the wiki root, add the epic with status and a one-liner. If `log.md` exists, append an entry (`## [YYYY-MM-DD] epic-draft | EPIC-NNN <Name>`). If neither exists, offer to create them — don't create unasked.
-- Add a back-reference in each persona note this epic serves (one line under Related Notes / relevant section), so the graph links both ways.
+Completion criterion: the epic is navigable from the wiki and no changed link points to its old name.
 
 ## Stage 6 — Gate
 
-The epic is born with `status: draft`. Propose the transition to `analyzing` (or whatever the wiki's lifecycle uses) — the transition itself is the human's call, never yours. State the proposal in your closing summary (and in `log.md` if the wiki keeps one).
-
-Close by telling the user, briefly: where the epic was filed, which checks passed, what remains open, and the proposed next step.
+New epics start as `draft`. A rewritten epic changes status only when the user explicitly approves the transition. Close with the file location, passed checks, open decisions, stale downstream artifacts, and proposed next lifecycle step.
 
 ## References
 
-- `references/epic-template.md` — the epic structure; copy it, don't reinvent it
-- `references/quality-checklist.md` — the self-lint checks for Stage 4
-- `references/example-epic.md` — a real epic at the expected quality bar
+- `references/business-grilling.md` — mandatory sequential business interview and completion gate.
+- `references/epic-template.md` — canonical epic structure.
+- `references/quality-checklist.md` — Definition of Ready for review.
+- `references/example-epic.md` — business-first quality bar.
