@@ -88,6 +88,7 @@ If at least 4 qualified assessments occur but fewer than 4 accept the capability
 
 ## Related Notes
 
+[EPIC-002 Verified User Reviews - Grilling Log](product/epics/grilling/EPIC-002%20Verified%20User%20Reviews%20-%20Grilling%20Log.md)
 [Table Stakes vs Differentiators](product/market/Table%20Stakes%20vs%20Differentiators.md)
 [Storefront Developer](product/personas/Storefront%20Developer.md)
 [Shopper](product/personas/Shopper.md)

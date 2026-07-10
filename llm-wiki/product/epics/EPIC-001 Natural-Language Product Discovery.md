@@ -135,6 +135,7 @@ The hypothesis is falsified if at least 3 qualified evaluations occur during the
 
 ## Related Notes
 
+[EPIC-001 Natural-Language Product Discovery - Grilling Log](product/epics/grilling/EPIC-001%20Natural-Language%20Product%20Discovery%20-%20Grilling%20Log.md)
 [Table Stakes vs Differentiators](product/market/Table%20Stakes%20vs%20Differentiators.md)
 [Product Strategy 2026 (MOC)](product/strategy/Product%20Strategy%202026%20%28MOC%29.md)
 [Top-of-Funnel Adoption Moves](product/strategy/Top-of-Funnel%20Adoption%20Moves.md)

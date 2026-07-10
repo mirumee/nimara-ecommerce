@@ -2,6 +2,14 @@
 
 Use this protocol before drafting or rewriting an epic. Its purpose is to expose whether the proposed initiative is a real business bet, a weak assumption, or a solution looking for a problem.
 
+## Contents
+
+- [Conversation contract](#conversation-contract)
+- [Decision tree](#decision-tree)
+- [Question shape](#question-shape)
+- [Handling stops and uncertainty](#handling-stops-and-uncertainty)
+- [Completion gate](#completion-gate)
+
 ## Conversation contract
 
 - Ask one question per turn and wait.
@@ -11,6 +19,7 @@ Use this protocol before drafting or rewriting an epic. Its purpose is to expose
 - Challenge vague claims until they have a population, evidence status, measure, and timeframe, or are explicitly rejected as irrelevant.
 - Treat "keep up with the market", "improve UX", "increase adoption", and "differentiate" as starting claims, not accepted value.
 - Keep technical solution branches parked for solution design. Record them; do not grill them during epic definition.
+- Maintain a structured in-memory ledger for every question: `G-*` ID, branch, question, recommendation, answer, and decision. The ledger becomes the wiki grilling log only after shared understanding is confirmed.
 
 ## Decision tree
 
@@ -144,4 +153,5 @@ The grilling is complete only when the shared understanding contains:
 - explicit in-scope and out-of-scope boundaries;
 - business NFRs, ownership, risks, and lifecycle gate;
 - a list of technical decisions deferred to solution design;
+- a complete decision ledger ready to file from the wiki grilling-log template;
 - explicit user confirmation of shared understanding.

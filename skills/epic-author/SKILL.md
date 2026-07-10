@@ -1,6 +1,6 @@
 ---
 name: epic-author
-description: Define and draft business epics inside an LLM-wiki product workspace. Use when the user wants to create, rewrite, refine, or stress-test an epic, initiative, feature brief, or epic hypothesis. Run a business-value-first, one-question-at-a-time grilling before drafting; stop at an approved epic and do not design the technical solution, decompose tasks, estimate, or export to Jira.
+description: Define and draft business epics inside an LLM-wiki product workspace. Use when the user wants to create, rewrite, refine, or stress-test an epic, initiative, feature brief, or epic hypothesis. Run a business-value-first, one-question-at-a-time grilling, preserve its decision log in the wiki, and stop at an approved epic without designing the technical solution, decomposing tasks, estimating, or exporting to Jira.
 ---
 
 # Epic Author
@@ -26,6 +26,8 @@ Completion criterion: the known facts, evidence gaps, existing strategic positio
 ## Stage 2 — Run business grilling
 
 Read `references/business-grilling.md` and follow it completely.
+
+Maintain an in-memory session ledger as the grilling proceeds. For every question capture its `G-*` ID, business branch, user-visible question, recommendation, user answer, and resulting decision. Also capture rejected measures, excluded scope, unresolved branches, and technical questions deferred to solution design. Do not write the wiki log before the shared-understanding gate.
 
 Ask exactly one question per turn. Each question must:
 
@@ -76,13 +78,16 @@ Completion criterion: every checklist item passes or is reported as an explicit,
 - Update the wiki index and log when present.
 - Add or update persona backlinks.
 - Update all inbound links when renaming an epic.
+- Create or update the epic's grilling log from `_templates/epic-grilling-log.md` after the shared understanding is confirmed. Store one log per epic at `product/epics/grilling/EPIC-NNN <Name> - Grilling Log.md`; append later sessions and continue the `G-*` sequence.
+- Record the user-visible decision trail, not hidden reasoning. Summarize confidential evidence without copying source bodies, secrets, personal data, or unnecessary verbatim conversation.
+- Link the epic and grilling log in both directions and register the log in the wiki index and root update log.
 - Preserve sources and downstream task artifacts; report stale downstream artifacts instead of silently rewriting them.
 
-Completion criterion: the epic is navigable from the wiki and no changed link points to its old name.
+Completion criterion: the epic and grilling log are mutually linked and navigable from the wiki; every grilling decision is represented once; no changed link points to an old name.
 
 ## Stage 6 — Gate
 
-New epics start as `draft`. A rewritten epic changes status only when the user explicitly approves the transition. Close with the file location, passed checks, open decisions, stale downstream artifacts, and proposed next lifecycle step.
+New epics start as `draft`. A rewritten epic changes status only when the user explicitly approves the transition. Close with both file locations, passed checks, open decisions, stale downstream artifacts, and proposed next lifecycle step.
 
 ## References
 
@@ -90,3 +95,4 @@ New epics start as `draft`. A rewritten epic changes status only when the user e
 - `references/epic-template.md` — canonical epic structure.
 - `references/quality-checklist.md` — Definition of Ready for review.
 - `references/example-epic.md` — business-first quality bar.
+- `_templates/epic-grilling-log.md` in the target wiki — canonical decision-log structure; do not duplicate it inside the skill.

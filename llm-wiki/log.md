@@ -1,6 +1,7 @@
 # Directory Update Log
 
 ## 2026-07-10
+* **Grilling log**: Added the decision record and reusable template for [EPIC-001 Natural-Language Product Discovery](product/epics/EPIC-001%20Natural-Language%20Product%20Discovery.md), including the business interview, exclusions, deferred technical branches, and unresolved decisions.
 * **Epic refinement**: Renamed [EPIC-001 Natural-Language Product Discovery](product/epics/EPIC-001%20Natural-Language%20Product%20Discovery.md), promoted it to `analyzing`, and replaced the client-delivery framing with the agreed market-parity hypothesis, validation thresholds, falsification, and MVP boundaries.
 
 ## 2026-07-09

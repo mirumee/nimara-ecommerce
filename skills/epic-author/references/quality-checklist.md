@@ -8,6 +8,7 @@ Run every check before presenting or filing the epic. Fix issues that require no
 - [ ] Discoverable facts were explored instead of put to the user as decisions.
 - [ ] The user confirmed the shared understanding before drafting or editing.
 - [ ] Technical design choices were deferred unless they materially changed the business bet.
+- [ ] Every question has one `G-*` ledger entry with branch, question, recommendation, user answer, and resulting decision.
 
 ## Identity and audience
 
@@ -53,4 +54,6 @@ Run every check before presenting or filing the epic. Fix issues that require no
 - [ ] Every risk threatens the hypothesis and has a mitigation or explicit acceptance.
 - [ ] Every open question has an owner and a `before <stage>` gate.
 - [ ] Filename, index, log, Related Notes, persona backlinks, and renamed inbound links are current.
+- [ ] The epic grilling log was created or appended from the wiki template, continues stable `G-*` IDs, and links to the epic in both directions.
+- [ ] The grilling log contains user-visible decisions only; confidential sources, secrets, personal data, and hidden reasoning were not copied.
 - [ ] Sources were preserved and stale downstream artifacts were reported rather than silently rewritten.

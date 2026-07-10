@@ -7,6 +7,7 @@ okf_version: "0.1"
 
 # Templates
 * [ADR Template](_templates/ADR.md) - Reusable template for architecture decision records.
+* [Epic Grilling Log Template](_templates/epic-grilling-log.md) - Reusable structure for preserving the business decisions behind an epic.
 * [Epic Template](_templates/epic.md) - Reusable template for drafting Nimara epic hypothesis statements.
 * [Undefined Template](_templates/Undefined.md) - Generic template for a new OKF concept document.
 
@@ -27,6 +28,9 @@ okf_version: "0.1"
 * [Epic Cookie Consent](product/epics/Epic%20Cookie%20Consent.md) - Epic hypothesis for Cookie Consent and Google Consent Mode v2.
 * [EPIC-001 Natural-Language Product Discovery](product/epics/EPIC-001%20Natural-Language%20Product%20Discovery.md) - Analyzing a reusable open-source table-stake capability that keeps Nimara credible for intent-heavy storefront catalogs.
 * [Epic User Reviews](product/epics/Epic%20User%20Reviews.md) - Epic hypothesis for verified-purchase user reviews.
+
+# Product Epic Grilling Logs
+* [EPIC-001 Natural-Language Product Discovery - Grilling Log](product/epics/grilling/EPIC-001%20Natural-Language%20Product%20Discovery%20-%20Grilling%20Log.md) - Business questions, recommendations, answers, decisions, and unresolved branches behind EPIC-001.
 
 # Product Market
 * [Composable Commerce Market](product/market/Composable%20Commerce%20Market.md) - Sector maturity and self-hosted open-source economics above the ~$2-10M revenue threshold.

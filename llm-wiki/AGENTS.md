@@ -8,7 +8,7 @@ tags:
   - "llm-wiki"
   - "schema"
 created: "2026-07-09T00:00:00+00:00"
-timestamp: "2026-07-09T00:00:00+00:00"
+timestamp: "2026-07-10T00:00:00+00:00"
 ---
 
 # Content
@@ -39,6 +39,7 @@ llm-wiki/
     strategy/
       initiatives/
     epics/
+      grilling/     # one durable business-grilling decision log per epic
     solution/       # created per epic when a technical solution exists
     tasks/          # created per epic when implementation tasks exist
   quality/          # QA operating knowledge
@@ -92,6 +93,8 @@ Local extensions currently used:
 * `created` - original creation time for the concept.
 * `status`, `owner`, `epic_type`, `template_for` - domain-specific fields on epics,
   ADR templates, or other structured notes.
+* `epic_id`, `epic_title`, `session_status` - identity and lifecycle fields on epic
+  grilling logs.
 
 # Links
 
@@ -159,6 +162,25 @@ Rules:
 * Accepted ADRs are immutable. Supersede them with a new ADR and link both documents.
 * Register every ADR in [ADR MOC](tech/ADR/ADR%20MOC.md) and link it back to the relevant
   epic, solution, or task note.
+
+# Epic Grilling Logs
+
+Business grilling is preserved as a decision record rather than a raw chat transcript.
+
+Rules:
+
+* Store one log per epic in `product/epics/grilling/` as
+  `EPIC-NNN <Epic Name> - Grilling Log.md`.
+* Create new logs from `_templates/epic-grilling-log.md`. Append later sessions to the same
+  file and continue the `G-*` decision numbering.
+* Record each user-visible question, recommendation, answer, and resulting decision. Include
+  rejected metrics or scope, unresolved branches, and decisions deferred to solution design.
+* Summarize rather than expose hidden reasoning. Never copy secrets, personal data, or a
+  confidential source body into the log; record only the evidence used and its limitations.
+* Link the epic and grilling log in both directions. Register the log in `index.md` and the
+  creation or update in `log.md`.
+* When an epic is renamed, rename its grilling log and update all inbound links in the same
+  change.
 
 # Maintaining The Wiki
 

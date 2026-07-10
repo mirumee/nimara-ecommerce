@@ -67,4 +67,5 @@ Describe the smallest learning slice, rollout, validation-clock start, negative 
 
 ## Related Notes
 
+[Epic Grilling Log](path/to/epic-grilling-log.md)
 [Seeding Strategy or Initiative](path/to/note.md)
