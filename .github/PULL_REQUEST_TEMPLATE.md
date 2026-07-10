@@ -2,6 +2,16 @@ I want to merge this change because...
 
 <!-- Please mention all relevant issue numbers. -->
 
+## LLM Wiki Impact
+
+Wiki impact: <!-- choose exactly one: none | update | ADR -->
+
+<!--
+none   — no durable behavior, invariant, operating knowledge, or architecture decision changed
+update — update existing llm-wiki concepts/MOCs/index/log in this PR
+ADR    — add or supersede an ADR and link it to the relevant solution/flow in this PR
+-->
+
 # Pull Request Checklist
 
 <!-- Please keep this section. It will make the maintainer's life easier. -->

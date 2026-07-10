@@ -43,6 +43,8 @@
     "prepare": "husky",
     "format": "pnpm prettier --write '**/*.{js,ts,tsx,json,md}'",
     "format:check": "pnpm prettier --check '**/*.{js,ts,tsx,json,md}'",
+    "wiki:lint": "node scripts/wiki-lint.mjs",
+    "wiki:lint:test": "node --test scripts/wiki-lint.test.mjs",
     "wiki:qmd:setup": "node scripts/wiki-qmd.mjs setup",
     "wiki:qmd:update": "node scripts/wiki-qmd.mjs update",
     "wiki:qmd:embed": "node scripts/wiki-qmd.mjs embed",

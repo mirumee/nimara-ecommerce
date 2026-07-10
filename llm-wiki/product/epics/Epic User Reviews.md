@@ -79,3 +79,9 @@ Buys: evidence that invited verified buyers actually submit reviews (volume) and
 - Review import/syndication (Google, Trustpilot)
 - Review incentives or rewards
 - Carrier-confirmed delivery as verification trigger
+
+## Related Notes
+
+[Customer](product/personas/Customer.md)
+[Storefront Data Flow](tech/flows/Storefront%20Data%20Flow.md)
+[Product Strategy 2026 (MOC)](product/strategy/Product%20Strategy%202026%20%28MOC%29.md)

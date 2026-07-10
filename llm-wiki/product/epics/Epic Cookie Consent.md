@@ -77,3 +77,9 @@ If compliance risks of maintaining a custom CMP outweigh its benefit versus a Sa
 - SaaS CMP integrations
 - Direct (non-GTM) pixel integrations
 - Consent analytics dashboard
+
+## Related Notes
+
+[Ecommerce Manager](product/personas/Ecommerce%20Manager.md)
+[Product Strategy 2026 (MOC)](product/strategy/Product%20Strategy%202026%20%28MOC%29.md)
+[ADR MOC](tech/ADR/ADR%20MOC.md)

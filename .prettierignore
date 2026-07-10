@@ -16,3 +16,6 @@ apps/docs/public/_pagefind/
 apps/docs/.docusaurus/
 
 llm-wiki/.obsidian/
+
+# Raw LLM-wiki sources are immutable; formatting would rewrite archived bodies.
+llm-wiki/sources/**/*.md
