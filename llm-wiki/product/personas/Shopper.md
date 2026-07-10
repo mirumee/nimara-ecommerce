@@ -9,7 +9,7 @@ tags:
   - "storefront"
   - "pre-purchase"
 created: "2026-07-08T00:00:00+00:00"
-timestamp: "2026-07-08T00:00:00+00:00"
+timestamp: "2026-07-10T00:00:00+00:00"
 ---
 
 ## Content
@@ -36,10 +36,11 @@ timestamp: "2026-07-08T00:00:00+00:00"
 ### Product Implications
 - Their experience is the [Storefront Developer](product/personas/Storefront%20Developer.md)'s trust and the [Ecommerce Manager](product/personas/Ecommerce%20Manager.md)'s revenue — shopper-facing gaps (performance, search, reviews display, checkout) are defects of the highest order, not enhancements.
 - Social proof is a conversion mechanism: ratings and review counts must be visible on product cards and product pages by default (see the User Reviews epic).
-- Discovery must serve both modes: describing a need in natural language and classic search/filter for shoppers who know what they want (see the LLM Product Discovery epic).
+- Discovery must serve both modes: describing a need in natural language through the reusable [Natural-Language Product Discovery](product/epics/EPIC-001%20Natural-Language%20Product%20Discovery.md) capability and classic search/filter for shoppers who know what they want.
 - Guest-first flows and mobile performance are defaults, not options — every barrier is measured in silent abandonment.
 
 ## Related Notes
+[EPIC-001 Natural-Language Product Discovery](product/epics/EPIC-001%20Natural-Language%20Product%20Discovery.md)
 [Customer](product/personas/Customer.md)
 [Storefront Developer](product/personas/Storefront%20Developer.md)
 [Ecommerce Manager](product/personas/Ecommerce%20Manager.md)

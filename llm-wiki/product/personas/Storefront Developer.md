@@ -8,7 +8,7 @@ tags:
   - "developer"
   - "adoption"
 created: "2026-06-11T00:00:00+00:00"
-timestamp: "2026-06-11T00:00:00+00:00"
+timestamp: "2026-07-10T00:00:00+00:00"
 ---
 
 ## Content
@@ -38,6 +38,7 @@ timestamp: "2026-06-11T00:00:00+00:00"
 - Don't hide configuration in UIs; they want env vars, code, and infrastructure-as-code they can read.
 
 ## Related Notes
+[EPIC-001 Natural-Language Product Discovery](product/epics/EPIC-001%20Natural-Language%20Product%20Discovery.md)
 [Ecommerce Manager](product/personas/Ecommerce%20Manager.md)
 [Marketplace Vendor](product/personas/Marketplace%20Vendor.md)
 [Anti-Persona - No-Code Solo Merchant](product/personas/Anti-Persona%20-%20No-Code%20Solo%20Merchant.md)

@@ -25,6 +25,7 @@ okf_version: "0.1"
 
 # Product Epics
 * [Epic Cookie Consent](product/epics/Epic%20Cookie%20Consent.md) - Epic hypothesis for Cookie Consent and Google Consent Mode v2.
+* [EPIC-001 Natural-Language Product Discovery](product/epics/EPIC-001%20Natural-Language%20Product%20Discovery.md) - Analyzing a reusable open-source table-stake capability that keeps Nimara credible for intent-heavy storefront catalogs.
 * [Epic User Reviews](product/epics/Epic%20User%20Reviews.md) - Epic hypothesis for verified-purchase user reviews.
 
 # Product Market
