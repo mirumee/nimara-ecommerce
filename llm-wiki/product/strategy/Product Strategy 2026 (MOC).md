@@ -54,6 +54,7 @@ The core recommendation: prioritize an automated **"Zero-to-Deploy" setup CLI** 
 ### Epics and solutions
 
 - [Epic Cookie Consent](product/epics/Epic%20Cookie%20Consent.md) — consent-management hypothesis under analysis.
+- [Epic LLM Product Discovery](product/epics/Epic%20LLM%20Product%20Discovery.md) — AI-assisted product-discovery hypothesis under analysis.
 - [Epic User Reviews](product/epics/Epic%20User%20Reviews.md) — verified-purchase reviews hypothesis under analysis.
 - [Stripe Connect Split Payments Solution](product/solution/Stripe%20Connect%20Split%20Payments%20Solution.md) — implementation tracer for the active marketplace-settlement initiative.
 

@@ -34,6 +34,7 @@ okf_version: "0.1"
 # Product Epics
 
 - [Epic Cookie Consent](product/epics/Epic%20Cookie%20Consent.md) - Epic hypothesis for Cookie Consent and Google Consent Mode v2.
+- [Epic LLM Product Discovery](product/epics/Epic%20LLM%20Product%20Discovery.md) - Epic hypothesis for AI-powered natural-language product discovery backed by classic search and catalog browsing.
 - [Epic User Reviews](product/epics/Epic%20User%20Reviews.md) - Epic hypothesis for verified-purchase user reviews.
 
 # Product Solutions

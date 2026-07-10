@@ -113,3 +113,9 @@ If AI search operating cost grows disproportionately to conversion lift, or sugg
 - Should customers be able to flag "notify me when something similar is available" for unmatched requests, and who follows up?
 - Is presenting two search entry points (AI + classic) on one page sensible, and how do we make their roles obvious?
 - Which success measures do we commit to for the first months (share of visitors using AI search, click-through, suggestion-to-purchase conversion)?
+
+## Related Notes
+
+[Product Strategy 2026 (MOC)](product/strategy/Product%20Strategy%202026%20%28MOC%29.md)
+[Customer](product/personas/Customer.md)
+[3 - UCP-MCP Agentic Discovery](product/strategy/initiatives/3%20-%20UCP-MCP%20Agentic%20Discovery.md)
