@@ -18,7 +18,8 @@ play — technical, business, team — in value-neutral terms. State facts, not 
 ## Decision
 
 What is the change we are proposing and/or doing? State it in full sentences, active
-voice ("We will …"). One decision per note.
+voice ("We will …"). One decision per note. When the decision resolves a DERBY design
+proposal, name the accepted DERBY here.
 
 ## Consequences
 
@@ -29,4 +30,6 @@ why the codebase looks the way it does.
 ## Related Notes
 
 [ADR MOC](tech/ADR/ADR%20MOC.md)
-Replace this line with a real epic, solution, or task link before use.
+[DERBY MOC](tech/DERBY/DERBY%20MOC.md)
+Link the DERBY proposal(s) this decision resolves — the accepted design and any rejected alternatives.
+Replace this line with the epic it belongs to, e.g. [Epic Name](product/epics/Epic%20Name.md).
