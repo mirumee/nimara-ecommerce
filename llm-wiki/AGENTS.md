@@ -157,7 +157,7 @@ Date headings must use `YYYY-MM-DD`.
 # Architecture Decision Records
 
 Significant technical decisions are standalone concept documents in `tech/ADR/`, one decision
-per file, using the Michael Nygard structure from `_templates/ADR.md`.
+per file, using the MADR-style structure from `_templates/ADR.md`.
 
 Rules:
 
@@ -166,11 +166,34 @@ Rules:
   assume or infer it; the answer anchors the decision context and prevents hallucinated
   constraints. Capture it as the **Base system** line in the ADR's Context.
 - File name: `ADR-NNNN Title.md`, zero-padded and monotonically increasing.
-- Type: `Architecture Decision Record`.
 - Status lives in frontmatter as `status`.
 - Accepted ADRs are immutable. Supersede them with a new ADR and link both documents.
 - Register every ADR in [ADR MOC](tech/ADR/ADR%20MOC.md) and link it back to the relevant
   epic, solution, or task note.
+
+**Quality bar — an ADR records a *decision*, not a proposal for one option:**
+
+- **Decision Drivers + ≥2 Considered Options + a Decision Outcome tied to the drivers.**
+  An ADR that describes a single option with no weighed alternatives is rejected — that is
+  the difference between a decision record and a press release.
+- **Every rejected option states why it was rejected**, naming the deciding driver. "We
+  also considered X and Y; X rejected because …, Y rejected because …" is the point of the
+  document.
+- **Each ADR is self-contained.** Rejected alternatives and their reasons live inside the
+  one file. Do not assume the reader has seen sibling ADRs, and do not cross-link ADRs as
+  each other's "alternatives" — each ADR stands alone.
+- **Implementation Notes are mandatory and concrete:** an interface / DTO sketch (pseudo-TS
+  is fine), storage mapping, real monorepo paths (`packages/domain/…`,
+  `packages/infrastructure/<capability>/<provider>/`, the consuming service),
+  an env schema (variable names + Zod validation), and the `Result<T, E>` convention. No
+  hand-waving like "persist through metadata / an app-owned surface" without saying which.
+- **Context is a short problem statement, not an essay.** Link the driving epic/solution
+  instead of paraphrasing its requirements; state only what this decision adds.
+- **The bar is machine-checked.** Run `pnpm wiki:adr:lint` (all ADRs) or
+  `pnpm wiki:adr:lint "<path>"` (one ADR) — it fails any ADR missing the MADR sections, the
+  `**Base system:**` line, ≥2 considered options, a "Rejected because" reason per non-chosen
+  option, a Decision Outcome verdict, or a register entry, and warns on thin Implementation
+  Notes. Fix every ERROR before an ADR is considered done.
 
 # Epic Grilling Logs
 
@@ -190,6 +213,29 @@ Rules:
   creation or update in `log.md`.
 - When an epic is renamed, rename its grilling log and update all inbound links in the same
   change.
+
+# Solution Design & Technical Grilling
+
+Architecture decisions are grilled before they are recorded. The business grilling
+(`epic-author`) settles the *value bet* and defers technical choices to solution design; the
+`solution-author` skill runs the *technical* grilling that produces an ADR.
+
+Rules:
+
+- **Confirm the base system first** (same gate as the ADR rules below) — it anchors every
+  driver, and `solution-author` asks it as the first grilling question.
+- The technical grilling produces two artifacts: the **ADR** in `tech/ADR/` (the polished
+  decision) and a **Solution Grilling Log** in `product/solution/<Epic Name>/` (the
+  user-visible decision trail), created from `_templates/solution-grilling-log.md` with
+  `D-*` decision IDs — the technical counterpart to the epic grilling log.
+- Keep the grilling at **architecture altitude**: base system, decision drivers, considered
+  options and why the rejected ones lost, interface/data/env shape, cross-cutting NFRs, and
+  reversibility. Defer line-level implementation (function names, tests, minor libraries) to
+  the build phase, recording it as deferred rather than dropping it.
+- Link the ADR, the solution grilling log, and the epic in all directions. Register the ADR
+  in [ADR MOC](tech/ADR/ADR%20MOC.md), and the log in `index.md` and `log.md`.
+- Summarize rather than expose hidden reasoning. Never copy secrets, personal data, or a
+  confidential source body into the log.
 
 # Source-Derived Reference Notes
 

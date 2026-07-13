@@ -32,7 +32,7 @@ is one standalone note following the [Michael Nygard template](https://github.co
 
 <!-- Newest last. Format: - ADR-NNNN Title - Status - one-line summary -->
 
-_No ADRs recorded yet._
+- [ADR-0001 Default ReviewProvider Stores Reviews as Saleor Models](ADR-0001%20Default%20ReviewProvider%20Stores%20Reviews%20as%20Saleor%20Models.md) - Proposed - the default reviews provider persists verified reviews as Saleor Models (`Page`/`PageType`) with Saleor as the system of record; Postgres and raw metadata rejected. Note: unrelated to the code-docs register's `0001-integration-provider-architecture.md` (separate register, different subject — the numbers do not collide).
 
 ## Related Notes
 

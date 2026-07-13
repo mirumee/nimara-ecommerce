@@ -83,8 +83,15 @@ Check, across `llm-wiki/**`:
 7. **Source integrity** — notes in `sources/` that were edited after archiving (they must be
    immutable); citations in research notes with no matching `sources/` copy or Works Cited entry.
 8. **Stale-vs-source** — claims contradicted by a newer ingested source (flag, don't guess).
+9. **ADR MADR quality** — run `pnpm wiki:adr:lint` (or `node scripts/wiki-adr-lint.mjs`). It
+   fails any ADR that lacks the MADR sections, a `**Base system:**` line, ≥2 considered
+   options, a "Rejected because" reason per non-chosen option, a Decision Outcome verdict, or
+   a register entry — and warns on thin Implementation Notes. Report its ERRORs as lint
+   findings; the run exits non-zero when an ADR fails.
 
 Method: prefer `grep`/`Glob` for links, headings, and filenames — deterministic, no flake.
+For ADR structure, the `wiki:adr:lint` script is the deterministic check — use it instead of
+eyeballing sections.
 
 After reporting, **LOG** the pass: append `## [YYYY-MM-DD] lint | <scope>` to `log.md`.
 
@@ -108,18 +115,30 @@ Use when the user makes (or asks you to document) a significant, hard-to-reverse
 decision: choice of framework/datastore/protocol, a cross-cutting pattern, a trade-off that
 future readers will ask "why did we do it this way?" about.
 
+0. **CONFIRM the base system first.** Before drafting, ask the user which system the app,
+   feature, or provider is built on (Saleor, Algolia, greenfield, …). Never guess — it
+   anchors the whole decision. Record it as the **Base system** line in Context.
 1. **CONFIRM it's ADR-worthy.** Trivial or easily-reversed choices don't need one. If in
    doubt, ask. Capturing the *decision*, not routine implementation detail.
-2. **COPY `_templates/ADR.md`** into `decisions/` as `ADR-NNNN <Title>.md` — next unused
-   zero-padded number (check `[[Decisions MOC]]` for the highest so far), Title Case.
-3. **FILL** the Nygard sections — `**Status**` (usually `Accepted`, or `Proposed` if still
-   under review), then Context (value-neutral forces) → Decision ("We will …") →
-   Consequences (positive *and* negative trade-offs). One decision per note.
+2. **COPY `_templates/ADR.md`** into `tech/ADR/` as `ADR-NNNN <Title>.md` — next unused
+   zero-padded number (check the [ADR MOC](../../../llm-wiki/tech/ADR/ADR%20MOC.md) register
+   for the highest so far), Title Case.
+3. **FILL the MADR sections** — `status` in frontmatter (usually `Accepted`, or `Proposed`
+   if still under review), then Context and Problem Statement (short — link the epic, don't
+   paraphrase it) → **Decision Drivers** (the criteria) → **Considered Options** (≥2 real
+   options) → **Decision Outcome** ("We will …", justified against the drivers) → **Pros and
+   Cons of the Options** (each rejected option states *why*, tied to a driver) →
+   **Implementation Notes** (concrete: interface/DTO sketch, storage mapping, monorepo file
+   paths, env schema, `Result<T, E>`) → Consequences. One decision per note; each ADR is
+   self-contained (don't lean on sibling ADRs). **Before registering, run
+   `pnpm wiki:adr:lint "<path to the new ADR>"` and fix every ERROR** — it mechanically
+   enforces this structure.
 4. **LINK** back to the `solution/` or `epics/` note it supports, and add its `## Related Notes`.
-5. **REGISTER** it in `[[Decisions MOC]]`'s register (one line) in the same change.
+5. **REGISTER** it in the [ADR MOC](../../../llm-wiki/tech/ADR/ADR%20MOC.md) register (one
+   line) in the same change.
 6. **Superseding, not editing.** To change a decided ADR, write a new one and set the old
-   `**Status**` to `Superseded by [[ADR-NNNN …]]` — never rewrite an Accepted ADR in place.
-7. **UPDATE `index.md`** (add the ADR under `decisions/`) and **LOG** — append
+   `status` to `Superseded by ADR-NNNN …` — never rewrite an Accepted ADR in place.
+7. **UPDATE `index.md`** (add the ADR under the Technology ADR section) and **LOG** — append
    `## [YYYY-MM-DD] adr | ADR-NNNN <Title>` to `log.md`.
 
 ---
@@ -130,6 +149,6 @@ future readers will ask "why did we do it this way?" about.
 - `llm-wiki/log.md` — append-only operation log (one line per mode run).
 - `llm-wiki/sources/` — raw, immutable source documents the notes synthesise from.
 - `llm-wiki/sources/LLM Wiki.md` — upstream LLM-wiki pattern that motivates the local schema.
-- `llm-wiki/_templates/ADR.md` · `[[Decisions MOC]]` — the ADR template and its register.
+- `llm-wiki/_templates/ADR.md` · `llm-wiki/tech/ADR/ADR MOC.md` — the ADR template and its register.
 - `[[Product Strategy 2026 (MOC)]]` · `[[Quality & Testing (MOC)]]` — the domain indexes.
 - `[[Works Cited]]` — provenance record for research claims.

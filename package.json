@@ -53,6 +53,7 @@
     "wiki:qmd:query": "node scripts/wiki-qmd.mjs query",
     "wiki:qmd:get": "node scripts/wiki-qmd.mjs get",
     "wiki:qmd:mcp": "node scripts/wiki-qmd.mjs mcp",
+    "wiki:adr:lint": "node scripts/wiki-adr-lint.mjs",
     "localstack:up": "docker compose -f apps/marketplace/docker-compose.yml up -d localstack",
     "localstack:down": "docker compose -f apps/marketplace/docker-compose.yml down",
     "localstack:export-secret": "docker compose -f apps/marketplace/docker-compose.yml exec localstack bash /opt/localstack/export-secret.sh",

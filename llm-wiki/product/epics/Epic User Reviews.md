@@ -79,3 +79,8 @@ Buys: evidence that invited verified buyers actually submit reviews (volume) and
 - Review import/syndication (Google, Trustpilot)
 - Review incentives or rewards
 - Carrier-confirmed delivery as verification trigger
+
+## Related Notes
+
+- [ADR-0001 Default ReviewProvider Stores Reviews as Saleor Models](../../tech/ADR/ADR-0001%20Default%20ReviewProvider%20Stores%20Reviews%20as%20Saleor%20Models.md) — the storage/system-of-record decision for the default provider.
+- [Verified User Reviews — Solution Grilling Log](../solution/Verified%20User%20Reviews/Solution%20Grilling%20Log.md) — the technical decision trail behind the ADR.

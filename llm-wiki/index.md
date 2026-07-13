@@ -9,12 +9,14 @@ okf_version: "0.1"
 * [ADR Template](_templates/ADR.md) - Reusable template for architecture decision records.
 * [Epic Grilling Log Template](_templates/epic-grilling-log.md) - Reusable structure for preserving the business decisions behind an epic.
 * [Epic Template](_templates/epic.md) - Reusable template for drafting Nimara epic hypothesis statements.
+* [Solution Grilling Log Template](_templates/solution-grilling-log.md) - Reusable structure for preserving the technical decisions behind an ADR (solution-design grilling).
 * [Undefined Template](_templates/Undefined.md) - Generic template for a new OKF concept document.
 
 # Sources
 * [LLM Wiki](sources/LLM%20Wiki.md) - Upstream LLM-wiki pattern describing raw sources, maintained wiki notes, schema files, indexing, and logs.
 * [Strategic Product Report - Nimara.store (Gemini Deep Research)](sources/Strategic%20Product%20Report%20-%20Nimara.store%20%28Gemini%20Deep%20Research%29.md) - Raw source stub for the Deep Research report used by the 2026 strategy and market corpus.
 * [Saleor GraphQL Schema](sources/saleor/schema.graphql) - Full Saleor GraphQL API schema (immutable source, **Saleor 3.23.17**) synthesized by the Saleor API reference notes.
+* [Nimara Docs (source bundle)](sources/nimara-docs/intro.md) - Archived copy of the Nimara platform docs from `apps/docs` (**version 2.0.x**) synthesized by the Nimara platform reference notes.
 
 # Product Strategy
 * [Product Strategy 2026 (MOC)](product/strategy/Product%20Strategy%202026%20%28MOC%29.md) - Entry point and executive summary for 2026 product strategy.
@@ -32,6 +34,9 @@ okf_version: "0.1"
 
 # Product Epic Grilling Logs
 * [EPIC-001 Natural-Language Product Discovery - Grilling Log](product/epics/grilling/EPIC-001%20Natural-Language%20Product%20Discovery%20-%20Grilling%20Log.md) - Business questions, recommendations, answers, decisions, and unresolved branches behind EPIC-001.
+
+# Product Solution Grilling Logs
+* [Verified User Reviews - Solution Grilling Log](product/solution/Verified%20User%20Reviews/Solution%20Grilling%20Log.md) - Technical decision trail behind ADR-0001 (default ReviewProvider storage): drivers, options, and why Postgres and raw metadata lost.
 
 # Product Market
 * [Composable Commerce Market](product/market/Composable%20Commerce%20Market.md) - Sector maturity and self-hosted open-source economics above the ~$2-10M revenue threshold.
@@ -83,6 +88,21 @@ okf_version: "0.1"
 * [Content & Navigation](tech/saleor/Content%20%26%20Navigation.md) - CMS pages, page types, and navigation menus.
 * [Apps, Webhooks & Extensibility](tech/saleor/Apps%20Webhooks%20%26%20Extensibility.md) - Apps, tokens, dashboard extensions, webhooks, and plugins.
 * [Translations](tech/saleor/Translations.md) - Multi-language content and the *Translate mutation family.
+
+# Technology — Nimara Platform (version 2.0.x)
+* [Nimara Platform (MOC)](tech/nimara/Nimara%20Platform%20%28MOC%29.md) - Map of content and entry point for the Nimara platform docs reference.
+* [Platform Overview](tech/nimara/Platform%20Overview.md) - What Nimara is for, the layered monorepo, swap-anything integrations, and zero-config boot.
+* [Local Development & Workflow](tech/nimara/Local%20Development%20%26%20Workflow.md) - Prerequisites, fork/install/run, day-to-day commands, and code/branch conventions.
+* [Storefront](tech/nimara/Storefront.md) - Storefront local setup, the four Saleor webhooks, and Vercel deployment.
+* [Environment Variables](tech/nimara/Environment%20Variables.md) - Required and optional storefront variables and how features light up.
+* [Internationalization (i18n)](tech/nimara/Internationalization%20%28i18n%29.md) - The shared @nimara/i18n package and message composition.
+* [Channels & Markets](tech/nimara/Channels%20%26%20Markets.md) - Adding a new locale, language, and market/channel.
+* [Saleor CMS](tech/nimara/Saleor%20CMS.md) - Homepage, navigation, footer, and static pages via Saleor content.
+* [Stripe Integration](tech/nimara/Stripe%20Integration.md) - The Python and TypeScript Stripe payment apps (Saleor Apps).
+* [UCP Integration](tech/nimara/UCP%20Integration.md) - The built-in Universal Commerce Protocol (2026-04-08) implementation.
+* [Marketplace](tech/nimara/Marketplace.md) - The vendor portal app, its features, and the vendor onboarding flow.
+* [Release Workflow](tech/nimara/Release%20Workflow.md) - The develop → staging → main branch and release flow.
+* [Terraform Deployment](tech/nimara/Terraform%20Deployment.md) - Deploying the storefront to Vercel as infrastructure-as-code.
 
 # References
 * [Works Cited](references/Works%20Cited.md) - Source list for the 2026 product strategy research.
