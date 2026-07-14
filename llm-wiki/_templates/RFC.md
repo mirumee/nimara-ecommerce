@@ -1,10 +1,10 @@
 ---
 type: "Template"
-title: "DERBY Design Doc"
-description: "Template for a Nimara DERBY design document — a proposal covering problem, requirements, proposed solution, and cross-cutting considerations."
+title: "RFC Design Doc"
+description: "Template for a Nimara RFC design document — a proposal covering problem, requirements, proposed solution, and cross-cutting considerations."
 tags:
   - "template"
-  - "derby"
+  - "rfc"
   - "design-doc"
 created: "2026-07-13T00:00:00+00:00"
 timestamp: "2026-07-13T00:00:00+00:00"
@@ -15,7 +15,7 @@ template_for: "Design Doc"
 
 # Design Title
 
-> A DERBY is a proposal — a full design page for a non-trivial change. It does not
+> An RFC is a proposal — a full design page for a non-trivial change. It does not
 > record the verdict or the result: the decision and its outcome are captured in an
 > [ADR](_templates/ADR.md). `status` moves Draft → In Review → Final. Keep Nimara
 > designs OSS provider-agnostic: layer over existing provider abstractions, do not
@@ -74,7 +74,7 @@ Expected failure scenarios and their resolutions.
 
 ### Alternative solutions
 
-Pros and cons for every viable alternative considered, including why it was not chosen. An alternative may also be a separate DERBY proposing a different approach — link it here.
+Pros and cons for every viable alternative considered, including why it was not chosen. An alternative may also be a separate RFC proposing a different approach — link it here.
 
 ### Dependencies
 

@@ -4,8 +4,8 @@
 * **PRD terminology**: Standardized the product-document model as PRD (Product Requirements Document), including `PRD-*` identifiers, `product/prds/` paths, templates, grilling logs, links, and authoring skills.
 
 ## 2026-07-13
-* **Template**: Added [DERBY Design Doc Template](_templates/DERBY.md) — a port of the Mirumee DERBY design page (problem, requirements, proposed solution, cross-cutting considerations). DERBY is a proposal only; the verdict and outcome live in an ADR. Registered it under Templates in `index.md`; kept the Nygard [ADR Template](_templates/ADR.md) separate.
-* **Structure**: Added the `tech/DERBY/` folder and [DERBY MOC](tech/DERBY/DERBY%20MOC.md) as the register for DERBY proposals, mirroring `tech/ADR/`. Cross-linked ADR and DERBY: the [ADR Template](_templates/ADR.md) now names the DERBY it resolves and links both MOCs. Updated the folder tree in `AGENTS.md` and the `index.md` catalogue.
+* **Template**: Added [RFC Design Doc Template](_templates/RFC.md) — a port of the Mirumee RFC design page (problem, requirements, proposed solution, cross-cutting considerations). RFC is a proposal only; the verdict and outcome live in an ADR. Registered it under Templates in `index.md`; kept the Nygard [ADR Template](_templates/ADR.md) separate.
+* **Structure**: Added the `tech/RFC/` folder and [RFC MOC](tech/RFC/RFC%20MOC.md) as the register for RFC proposals, mirroring `tech/ADR/`. Cross-linked ADR and RFC: the [ADR Template](_templates/ADR.md) now names the RFC it resolves and links both MOCs. Updated the folder tree in `AGENTS.md` and the `index.md` catalogue.
 
 ## 2026-07-10
 * **Grilling log**: Added the decision record and reusable template for [PRD-001 Natural-Language Product Discovery](product/prds/PRD-001%20Natural-Language%20Product%20Discovery.md), including the business interview, exclusions, deferred technical branches, and unresolved decisions.
