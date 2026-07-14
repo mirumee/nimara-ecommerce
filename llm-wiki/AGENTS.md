@@ -46,6 +46,7 @@ llm-wiki/
   tech/
     ADR/            # architecture decision records
     RFC/          # RFC design proposals + register
+    saleor/         # version-stamped notes on the Saleor GraphQL schema
 ```
 
 `index.md` and `log.md` are OKF reserved filenames. All other `.md` files are concept
@@ -96,6 +97,8 @@ Local extensions currently used:
   ADR templates, or other structured notes.
 * `prd_id`, `prd_title`, `session_status` - identity and lifecycle fields on PRD
   grilling logs.
+* `saleor_schema_hash`, `saleor_schema_generated` - version stamp on Saleor schema notes
+  (see "Saleor Schema Notes").
 
 # Links
 
@@ -182,6 +185,27 @@ Rules:
   creation or update in `log.md`.
 * When a PRD is renamed, rename its grilling log and update all inbound links in the same
   change.
+
+# Saleor Schema Notes
+
+Curated notes on the Saleor GraphQL API live in `tech/saleor/`, registered in
+[Saleor Schema (MOC)](tech/saleor/Saleor%20Schema%20%28MOC%29.md). They are version-stamped
+because Nimara does not pin a Saleor version: it connects only through
+`NEXT_PUBLIC_SALEOR_API_URL`, and `pnpm codegen` fetches the schema live from that URL into
+`packages/codegen/schema.ts`. That committed file is the de-facto pin.
+
+Rules:
+
+* Type: `Saleor Schema Note`. Create from `_templates/saleor-schema-note.md`. Keep notes
+  curated and one-idea-per-note (per domain), not an auto-generated per-type dump.
+* Every note carries `saleor_schema_hash` - the short sha256 of `packages/codegen/schema.ts`
+  it was written against - plus `saleor_schema_generated`.
+* Stamp with `pnpm wiki:saleor:hash`. Verify with `pnpm wiki:saleor:check` before citing a
+  Saleor note. `OK` = matches the current schema; `STALE` = the schema was regenerated and the
+  note needs review, then restamp.
+* A `STALE` result is expected after `pnpm codegen` (see the `codegen-check` skill) changes
+  `packages/codegen/schema.ts`. The stamp is whole-schema, so any regeneration flags every
+  Saleor note - a conservative, intentionally simple freshness gate.
 
 # Maintaining The Wiki
 

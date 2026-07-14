@@ -11,6 +11,7 @@ okf_version: "0.1"
 * [PRD Grilling Log Template](_templates/prd-grilling-log.md) - Reusable structure for preserving the business decisions behind a PRD.
 * [PRD Template](_templates/prd.md) - Reusable template for drafting Nimara Product Requirements Documents.
 * [Undefined Template](_templates/Undefined.md) - Generic template for a new OKF concept document.
+* [Saleor Schema Note Template](_templates/saleor-schema-note.md) - Template for a version-stamped
 
 # Sources
 * [LLM Wiki](sources/LLM%20Wiki.md) - Upstream LLM-wiki pattern describing raw sources, maintained wiki notes, schema files, indexing, and logs.
@@ -64,6 +65,15 @@ okf_version: "0.1"
 # Technology ADR
 * [ADR MOC](tech/ADR/ADR%20MOC.md) - Map of content and chronological register for architecture decision records.
 * [RFC MOC](tech/RFC/RFC%20MOC.md) - Map of content and register for RFC design proposals that precede an accepting or rejecting ADR.
+
+# Technology Saleor Schema
+* [Saleor Schema (MOC)](tech/saleor/Saleor%20Schema%20%28MOC%29.md) - Register and freshness workflow for version-stamped Saleor GraphQL schema notes.
+* [Products & Variants](tech/saleor/Products%20%26%20Variants.md) - Catalog types: Product, ProductVariant, pricing, availability.
+* [Checkout & Payments](tech/saleor/Checkout%20%26%20Payments.md) - Checkout type, lines, payment gateways, and the Transactions API.
+* [Orders & Fulfillment](tech/saleor/Orders%20%26%20Fulfillment.md) - Order type, status/charge enums, fulfillments, payment status.
+* [Account & Auth](tech/saleor/Account%20%26%20Auth.md) - User and Address types plus JWT token mutations.
+* [Shop, Channels & Warehouses](tech/saleor/Shop%2C%20Channels%20%26%20Warehouses.md) - Shop (incl. version), Channel, Warehouse, and the Money model.
+* [Attributes & Metadata](tech/saleor/Attributes%20%26%20Metadata.md) - Attribute input types and the
 
 # References
 * [Works Cited](references/Works%20Cited.md) - Source list for the 2026 product strategy research.
