@@ -8,8 +8,8 @@ okf_version: "0.1"
 # Templates
 * [ADR Template](_templates/ADR.md) - Reusable template for architecture decision records.
 * [DERBY Design Doc Template](_templates/DERBY.md) - Reusable template for a DERBY design proposal: problem, requirements, proposed solution, and cross-cutting considerations.
-* [Epic Grilling Log Template](_templates/epic-grilling-log.md) - Reusable structure for preserving the business decisions behind an epic.
-* [Epic Template](_templates/epic.md) - Reusable template for drafting Nimara epic hypothesis statements.
+* [PRD Grilling Log Template](_templates/prd-grilling-log.md) - Reusable structure for preserving the business decisions behind a PRD.
+* [PRD Template](_templates/prd.md) - Reusable template for drafting Nimara Product Requirements Documents.
 * [Undefined Template](_templates/Undefined.md) - Generic template for a new OKF concept document.
 
 # Sources
@@ -25,13 +25,13 @@ okf_version: "0.1"
 * [Do Not Pursue](product/strategy/Do%20Not%20Pursue.md) - Strategic non-goals and distractions to avoid.
 * [Open Questions & Assumptions](product/strategy/Open%20Questions%20%26%20Assumptions.md) - Assumptions behind the strategy and evidence that could change it.
 
-# Product Epics
-* [Epic Cookie Consent](product/epics/Epic%20Cookie%20Consent.md) - Epic hypothesis for Cookie Consent and Google Consent Mode v2.
-* [EPIC-001 Natural-Language Product Discovery](product/epics/EPIC-001%20Natural-Language%20Product%20Discovery.md) - Analyzing a reusable open-source table-stake capability that keeps Nimara credible for intent-heavy storefront catalogs.
-* [Epic User Reviews](product/epics/Epic%20User%20Reviews.md) - Epic hypothesis for verified-purchase user reviews.
+# Product PRDs
+* [PRD Cookie Consent](product/prds/PRD%20Cookie%20Consent.md) - Product requirements for Cookie Consent and Google Consent Mode v2.
+* [PRD-001 Natural-Language Product Discovery](product/prds/PRD-001%20Natural-Language%20Product%20Discovery.md) - Analyzing a reusable open-source table-stake capability that keeps Nimara credible for intent-heavy storefront catalogs.
+* [PRD User Reviews](product/prds/PRD%20User%20Reviews.md) - Product requirements for verified-purchase user reviews.
 
-# Product Epic Grilling Logs
-* [EPIC-001 Natural-Language Product Discovery - Grilling Log](product/epics/grilling/EPIC-001%20Natural-Language%20Product%20Discovery%20-%20Grilling%20Log.md) - Business questions, recommendations, answers, decisions, and unresolved branches behind EPIC-001.
+# Product PRD Grilling Logs
+* [PRD-001 Natural-Language Product Discovery - Grilling Log](product/prds/grilling/PRD-001%20Natural-Language%20Product%20Discovery%20-%20Grilling%20Log.md) - Business questions, recommendations, answers, decisions, and unresolved branches behind PRD-001.
 
 # Product Market
 * [Composable Commerce Market](product/market/Composable%20Commerce%20Market.md) - Sector maturity and self-hosted open-source economics above the ~$2-10M revenue threshold.

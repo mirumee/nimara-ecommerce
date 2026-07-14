@@ -1,9 +1,9 @@
 ---
-type: "Epic"
+type: "Product Requirements Document"
 title: "Cookie Consent & Google Consent Mode v2"
-description: "Epic hypothesis statement for Cookie Consent and Google Consent Mode v2 in the Nimara storefront."
+description: "Product Requirements Document for Cookie Consent and Google Consent Mode v2 in the Nimara storefront."
 tags:
-  - "epic"
+  - "prd"
   - "cookie-consent"
   - "gtm"
   - "compliance"
@@ -11,14 +11,14 @@ created: "2026-07-08T00:00:00+00:00"
 timestamp: "2026-07-08T00:00:00+00:00"
 status: "analyzing"
 owner: "Michał Ociepka"
-epic_type: "Business epic"
+prd_type: "business"
 ---
 
 ## Value Statement
 
 **For** [Ecommerce Manager](product/personas/Ecommerce%20Manager.md) running Nimara stores in consent-regulated markets (EEA/UK)
 **who** must run GTM tracking legally (GDPR/ePrivacy) and keep Google Ads signal alive under Consent Mode v2
-**the** Cookie Consent epic
+**the** Cookie Consent capability
 **is a** built-in consent management layer (banner + Consent Mode v2 wiring) in the Nimara storefront
 **that** blocks tracking until lawful consent, preserves remarketing/measurement via v2 signals, and is configurable per country within channel
 **unlike** SaaS CMPs (Cookiebot, OneTrust, Usercentrics) that cost a subscription per store plus integration work

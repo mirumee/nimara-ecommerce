@@ -1,10 +1,10 @@
 ---
-id: "EPIC-001"
-type: "Epic"
+id: "PRD-001"
+type: "Product Requirements Document"
 title: "Natural-Language Product Discovery"
-description: "Business epic hypothesis for closing Nimara's natural-language discovery gap with a reusable, open-source storefront capability."
+description: "Product Requirements Document for closing Nimara's natural-language discovery gap with a reusable, open-source storefront capability."
 tags:
-  - "epic"
+  - "prd"
   - "product-discovery"
   - "natural-language"
   - "open-source"
@@ -15,7 +15,7 @@ updated: "2026-07-10T00:00:00+00:00"
 timestamp: "2026-07-10T00:00:00+00:00"
 status: "analyzing"
 owner: "Łukasz Szewczyk"
-epic_type: "business"
+prd_type: "business"
 personas:
   - "[Storefront Developer](product/personas/Storefront%20Developer.md)"
   - "[Shopper](product/personas/Shopper.md)"
@@ -25,7 +25,7 @@ personas:
 
 ## Value Hypothesis
 
-**For** [Storefront Developers](product/personas/Storefront%20Developer.md) and agencies evaluating Nimara for storefronts whose catalogs are difficult to navigate with exact keywords **who** may reject Nimara when modern natural-language discovery would otherwise need to be built separately for every project, **the** Natural-Language Product Discovery epic **is a** fully open-source, shopper-facing guided-discovery capability **that** keeps Nimara credible during platform evaluation and lets adopters reach a working, grounded experience within one business day, **unlike** commercial commerce platforms with bundled AI discovery or bespoke integrations rebuilt for each store, **our solution** provides an adopter-owned, opt-in reference experience with one maintained adapter, a swappable provider boundary, catalog validation, classic-search fallback, and reusable documentation.
+**For** [Storefront Developers](product/personas/Storefront%20Developer.md) and agencies evaluating Nimara for storefronts whose catalogs are difficult to navigate with exact keywords **who** may reject Nimara when modern natural-language discovery would otherwise need to be built separately for every project, **the** Natural-Language Product Discovery capability **is a** fully open-source, shopper-facing guided-discovery capability **that** keeps Nimara credible during platform evaluation and lets adopters reach a working, grounded experience within one business day, **unlike** commercial commerce platforms with bundled AI discovery or bespoke integrations rebuilt for each store, **our solution** provides an adopter-owned, opt-in reference experience with one maintained adapter, a swappable provider boundary, catalog validation, classic-search fallback, and reusable documentation.
 
 ## Evidence & Assumptions
 
@@ -37,16 +37,16 @@ personas:
 
 This is a defensive market-parity bet, not a claim that on-site AI discovery is unique. Its purpose is to prevent an increasingly expected capability from disqualifying Nimara before teams can evaluate its genuine advantages: open-source ownership, composability, and replaceable integrations.
 
-The primary business outcome belongs to Nimara: qualified evaluators accept the capability and independent teams deploy it without maintaining a fork. [Shopper](product/personas/Shopper.md) usefulness is the experience quality bar, but store-level conversion, revenue uplift, and catalog-specific relevance targets remain the responsibility of each deployment. No historical adoption baseline is used for this epic.
+The primary business outcome belongs to Nimara: qualified evaluators accept the capability and independent teams deploy it without maintaining a fork. [Shopper](product/personas/Shopper.md) usefulness is the experience quality bar, but store-level conversion, revenue uplift, and catalog-specific relevance targets remain the responsibility of each deployment. No historical adoption baseline is used for this PRD.
 
 ## Success Metrics
 
-- M-1 (business outcome): Qualified-evaluation acceptance — within six months of the public `ready for adoption` release, at least 3 qualified RFPs or solution assessments provide written confirmation that the reference capability satisfies the natural-language discovery requirement — recorded by the epic owner. Silence or absence of an objection does not count.
+- M-1 (business outcome): Qualified-evaluation acceptance — within six months of the public `ready for adoption` release, at least 3 qualified RFPs or solution assessments provide written confirmation that the reference capability satisfies the natural-language discovery requirement — recorded by the PRD owner. Silence or absence of an objection does not count.
 - M-2 (business outcome): Independent adoption — within the same six-month window, at least 2 external teams run a public or customer-facing pilot using their own catalog and provider account without forking the module — confirmed through release feedback or deployment review. Internal demos and multiple storefronts owned by one team count as one proof at most.
 - M-3 (leading indicator): Developer activation — a developer starting with a working Nimara storefront, a discovery-ready catalog, and provider credentials reaches the first grounded result within one business day — measured through the documented onboarding validation.
 - M-4 (quality gate): Catalog validity — 100% of products displayed by the reference experience resolve to products that currently exist and satisfy the deployment's eligibility rules — enforced by the evaluation suite and runtime validation.
 
-GitHub stars, demo traffic, raw query volume, hero clicks, and store-level conversion may be observed diagnostically but do not determine epic success.
+GitHub stars, demo traffic, raw query volume, hero clicks, and store-level conversion may be observed diagnostically but do not determine PRD success.
 
 ## MVP & Falsification
 
@@ -64,7 +64,7 @@ The hypothesis is falsified if at least 3 qualified evaluations occur during the
 - NFR-4: Anonymous shoppers can use the capability without creating an account. Abuse and cost are controlled through configurable limits rather than mandatory authentication.
 - NFR-5: The experience clearly identifies suggestions as AI-assisted and does not present them as objective advice.
 - NFR-6: Raw natural-language queries are not persisted by default. Any deployment that enables raw-query analytics owns its consent, redaction, retention, deletion, and provider-data-transfer policy.
-- NFR-7: Universal latency and cost targets are not set by this epic; every deployment must be able to observe and set its own limits with a safe fallback.
+- NFR-7: Universal latency and cost targets are not set by this PRD; every deployment must be able to observe and set its own limits with a safe fallback.
 
 ## Scope
 
@@ -89,9 +89,9 @@ The hypothesis is falsified if at least 3 qualified evaluations occur during the
 - A core-supported self-hosted model, multiple first-party provider adapters, or validation across multiple commerce engines — future or community work; the MVP maintains one adapter and validates the Saleor reference path.
 - Cart, checkout, or purchasing inside the AI experience — responsibility ends at the standard product page.
 - Ecommerce Manager or merchandiser documentation — deferred until a corresponding operator workflow exists.
-- Recruiting a design partner — explicitly outside the epic; validation relies on future qualified evaluations and independent adopters.
-- Store-level conversion experiments and revenue guarantees — measured by individual deployments, not used as Nimara's epic outcome.
-- Implementation task breakdown, estimates, provider selection, hosting topology, or concrete API signatures — downstream solution design and planning after the epic is accepted.
+- Recruiting a design partner — explicitly outside the PRD; validation relies on future qualified evaluations and independent adopters.
+- Store-level conversion experiments and revenue guarantees — measured by individual deployments, not used as Nimara's PRD outcome.
+- Implementation task breakdown, estimates, provider selection, hosting topology, or concrete API signatures — downstream solution design and planning after the PRD is accepted.
 
 ## User Stories
 
@@ -122,7 +122,7 @@ The hypothesis is falsified if at least 3 qualified evaluations occur during the
 - R-3: Catalog quality varies and may make a valid module appear irrelevant — mitigation: define and validate minimum catalog readiness before counting an adoption attempt; Nimara does not promise to repair merchant content.
 - R-4: Provider cost, latency, or outages may make deployments operationally unattractive — mitigation: adopter-owned accounts, configurable limits, non-blocking behavior, observable usage, and required classic-search fallback.
 - R-5: Queries may contain personal or sensitive information — mitigation: no raw-query persistence by default, explicit data-transfer documentation, and deployment-owned privacy controls for any opt-in analytics.
-- R-6: Customer-specific requests may expand the epic into a search platform, admin product, or conversational assistant — mitigation: enforce the explicit out-of-scope boundaries and require separate evidence for follow-up epics.
+- R-6: Customer-specific requests may expand the PRD into a search platform, admin product, or conversational assistant — mitigation: enforce the explicit out-of-scope boundaries and require separate evidence for follow-up PRDs.
 - R-7: A public demo can create unbounded project cost or abuse exposure — mitigation: use an isolated provider account, a defined operating budget, rate limits, and automatic fallback.
 - R-8: Supporting many providers would create an open-ended maintenance obligation — mitigation: core maintains one reference adapter and a stable extension boundary; additional adapters are future or community work.
 
@@ -135,7 +135,7 @@ The hypothesis is falsified if at least 3 qualified evaluations occur during the
 
 ## Related Notes
 
-[EPIC-001 Natural-Language Product Discovery - Grilling Log](product/epics/grilling/EPIC-001%20Natural-Language%20Product%20Discovery%20-%20Grilling%20Log.md)
+[PRD-001 Natural-Language Product Discovery - Grilling Log](product/prds/grilling/PRD-001%20Natural-Language%20Product%20Discovery%20-%20Grilling%20Log.md)
 [Table Stakes vs Differentiators](product/market/Table%20Stakes%20vs%20Differentiators.md)
 [Product Strategy 2026 (MOC)](product/strategy/Product%20Strategy%202026%20%28MOC%29.md)
 [Top-of-Funnel Adoption Moves](product/strategy/Top-of-Funnel%20Adoption%20Moves.md)

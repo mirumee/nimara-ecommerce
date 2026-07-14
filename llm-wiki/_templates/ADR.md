@@ -32,4 +32,4 @@ why the codebase looks the way it does.
 [ADR MOC](tech/ADR/ADR%20MOC.md)
 [DERBY MOC](tech/DERBY/DERBY%20MOC.md)
 Link the DERBY proposal(s) this decision resolves — the accepted design and any rejected alternatives.
-Replace this line with the epic it belongs to, e.g. [Epic Name](product/epics/Epic%20Name.md).
+Replace this line with the PRD it belongs to, e.g. [PRD Name](product/prds/PRD%20Name.md).

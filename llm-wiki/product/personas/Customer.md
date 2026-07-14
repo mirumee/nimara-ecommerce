@@ -34,7 +34,7 @@ timestamp: "2026-07-08T00:00:00+00:00"
 > "The email asked me to review it — I did, three weeks ago. Where is it?"
 
 ### Product Implications
-- The verified-review loop lives on this persona: invitation timed from fulfillment (configurable delay), a submission window, and fail-alive publishing defaults so feedback never disappears into an unwatched queue (see the User Reviews epic).
+- The verified-review loop lives on this persona: invitation timed from fulfillment (configurable delay), a submission window, and fail-alive publishing defaults so feedback never disappears into an unwatched queue (see the User Reviews PRD).
 - Transactional email is the product surface here — reliable order and fulfillment notifications through the email-provider adapter are the credibility floor.
 - Reliable fulfillment data is a prerequisite: invitation timing and review windows inherit their accuracy from stores marking orders fulfilled (an [Ecommerce Manager](product/personas/Ecommerce%20Manager.md) workflow).
 - GDPR flows (data export, account deletion, review anonymization vs. deletion) must be designed, not improvised — this persona is where those requests come from.

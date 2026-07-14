@@ -1,14 +1,14 @@
-# Business-first epic example
+# Business-first Product Requirements Document example
 
 This is a fictional quality example. Its numbers illustrate the required specificity; never reuse them without evidence and user confirmation.
 
 ```markdown
 ---
-id: EPIC-002
-type: Epic
+id: PRD-002
+type: Product Requirements Document
 status: analyzing
 owner: "Product"
-epic_type: business
+prd_type: business
 personas:
   - "[Storefront Developer](product/personas/Storefront%20Developer.md)"
   - "[Shopper](product/personas/Shopper.md)"
@@ -20,7 +20,7 @@ updated: 2026-07-01
 
 ## Value Hypothesis
 
-**For** teams evaluating Nimara for consumer storefronts **who** expect credible social proof without buying and integrating another SaaS product, **the** Verified User Reviews epic **is a** built-in verified-purchase review capability **that** prevents a table-stake gap from disqualifying Nimara and gives shoppers trustworthy purchase evidence, **unlike** shipping no reviews or rebuilding a third-party integration per store, **our solution** is open-source, adopter-owned, and usable without a permanently staffed moderation operation.
+**For** teams evaluating Nimara for consumer storefronts **who** expect credible social proof without buying and integrating another SaaS product, **the** Verified User Reviews capability **is a** built-in verified-purchase review capability **that** prevents a table-stake gap from disqualifying Nimara and gives shoppers trustworthy purchase evidence, **unlike** shipping no reviews or rebuilding a third-party integration per store, **our solution** is open-source, adopter-owned, and usable without a permanently staffed moderation operation.
 
 ## Evidence & Assumptions
 
@@ -63,7 +63,7 @@ If at least 4 qualified assessments occur but fewer than 4 accept the capability
 ## Out of Scope
 
 - Photo reviews — fast-follow after the core contribution loop is validated because uploads add storage, moderation, and privacy scope.
-- Vendor ratings and replies — separate marketplace epic because the buyer, workflow, and value differ.
+- Vendor ratings and replies — separate marketplace PRD because the buyer, workflow, and value differ.
 - Review imports and incentives — separate future bets requiring their own evidence.
 
 ## User Stories
@@ -88,7 +88,7 @@ If at least 4 qualified assessments occur but fewer than 4 accept the capability
 
 ## Related Notes
 
-[EPIC-002 Verified User Reviews - Grilling Log](product/epics/grilling/EPIC-002%20Verified%20User%20Reviews%20-%20Grilling%20Log.md)
+[PRD-002 Verified User Reviews - Grilling Log](product/prds/grilling/PRD-002%20Verified%20User%20Reviews%20-%20Grilling%20Log.md)
 [Table Stakes vs Differentiators](product/market/Table%20Stakes%20vs%20Differentiators.md)
 [Storefront Developer](product/personas/Storefront%20Developer.md)
 [Shopper](product/personas/Shopper.md)

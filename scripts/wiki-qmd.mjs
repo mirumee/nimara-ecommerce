@@ -5,12 +5,15 @@ import { existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const repoRoot = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "..",
+);
 const wikiDir = path.join(repoRoot, "llm-wiki");
 const collectionName = "nimara-wiki";
 const indexName = process.env.QMD_INDEX || "nimara-wiki";
 const context =
-  "Nimara LLM wiki: product strategy, QA process, ADRs, epics, source notes. Use llm-wiki/sources/LLM Wiki.md for the pattern and llm-wiki/AGENTS.md for the local schema.";
+  "Nimara LLM wiki: product strategy, QA process, ADRs, PRDs, source notes. Use llm-wiki/sources/LLM Wiki.md for the pattern and llm-wiki/AGENTS.md for the local schema.";
 
 const command = process.argv[2] || "help";
 const rest = process.argv.slice(3).filter((arg) => arg !== "--");
@@ -93,7 +96,15 @@ function setup() {
   if (hasCollection()) {
     console.log(`qmd collection already configured: ${collectionName}`);
   } else {
-    run(["collection", "add", wikiDir, "--name", collectionName, "--mask", "**/*.md"]);
+    run([
+      "collection",
+      "add",
+      wikiDir,
+      "--name",
+      collectionName,
+      "--mask",
+      "**/*.md",
+    ]);
   }
 
   if (hasContext()) {
@@ -103,7 +114,9 @@ function setup() {
   }
 
   run(["status"]);
-  console.log("\nNext: run `pnpm wiki:qmd:embed` to generate vector embeddings.");
+  console.log(
+    "\nNext: run `pnpm wiki:qmd:embed` to generate vector embeddings.",
+  );
 }
 
 function withCollection(args) {
@@ -140,7 +153,10 @@ switch (command) {
     run(withCollection(["search", ...rest]));
     break;
   case "query":
-    requireArgs(rest, 'pnpm wiki:qmd:query "what contradicts the reviews epic?"');
+    requireArgs(
+      rest,
+      'pnpm wiki:qmd:query "what contradicts the reviews PRD?"',
+    );
     run(withCollection(["query", ...rest]));
     break;
   case "get":

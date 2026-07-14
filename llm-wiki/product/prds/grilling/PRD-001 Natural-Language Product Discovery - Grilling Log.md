@@ -1,38 +1,38 @@
 ---
-type: "Epic Grilling Log"
-title: "EPIC-001 Natural-Language Product Discovery - Grilling Log"
-description: "Decision record from the business grilling that reframed EPIC-001 as an open-source market-parity bet for Nimara."
+type: "PRD Grilling Log"
+title: "PRD-001 Natural-Language Product Discovery - Grilling Log"
+description: "Decision record from the business grilling that reframed PRD-001 as an open-source market-parity bet for Nimara."
 tags:
-  - "epic"
+  - "prd"
   - "grilling"
   - "decision-log"
   - "product-discovery"
 created: "2026-07-10T00:00:00+00:00"
 timestamp: "2026-07-10T00:00:00+00:00"
-epic_id: "EPIC-001"
-epic_title: "Natural-Language Product Discovery"
+prd_id: "PRD-001"
+prd_title: "Natural-Language Product Discovery"
 session_status: "applied-with-open-questions"
 ---
 
-# EPIC-001 Natural-Language Product Discovery — Grilling Log
+# PRD-001 Natural-Language Product Discovery — Grilling Log
 
 ## Purpose
 
-This document preserves the user-visible business grilling that shaped [EPIC-001 Natural-Language Product Discovery](product/epics/EPIC-001%20Natural-Language%20Product%20Discovery.md). Questions, recommendations, answers, and resulting decisions are paraphrased for durability. This is not a raw transcript or hidden reasoning trace.
+This document preserves the user-visible business grilling that shaped [PRD-001 Natural-Language Product Discovery](product/prds/PRD-001%20Natural-Language%20Product%20Discovery.md). Questions, recommendations, answers, and resulting decisions are paraphrased for durability. This is not a raw transcript or hidden reasoning trace.
 
 ## Session 1 — 2026-07-10
 
 ### Session Context
 
-- Trigger: The existing LLM Product Discovery epic described delivery for one Polish voucher marketplace instead of development of Nimara as a reusable open-source product.
+- Trigger: The existing LLM Product Discovery PRD described delivery for one Polish voucher marketplace instead of development of Nimara as a reusable open-source product.
 - Starting evidence: one confidential 2026 client requirements document identified AI Search as a `MUST` and a primary UX differentiator. The proposal was lost as a whole; no evidence attributes the loss to this single requirement. The confidential source remains outside the wiki and its body was not copied.
 - Strategic context: [Table Stakes vs Differentiators](product/market/Table%20Stakes%20vs%20Differentiators.md) treats shopper-facing AI recommendations as market parity and UCP/MCP as the separate strategic differentiator.
-- Facilitators: `grilling`, `epic-definition`, and `epic-author` business protocol.
+- Facilitators: `grilling` and the `prd-author` business protocol.
 - Outcome: the user stopped the questions at G-071, accepted the summarized understanding by requesting its application, and then requested this durable log.
 
 ### Discarded Technical Prelude
 
-Two early questions explored a separate discovery service and disabled-by-default registration. The user explicitly redirected the session to business-epic grilling. Those answers are not treated as epic decisions and remain deferred to solution design.
+Two early questions explored a separate discovery service and disabled-by-default registration. The user explicitly redirected the session to business PRD grilling. Those answers are not treated as PRD decisions and remain deferred to solution design.
 
 ### Decision Log
 
@@ -42,16 +42,16 @@ Two early questions explored a separate discovery service and disabled-by-defaul
 | G-002 | Evidence               | Did the missing capability cause the lost proposal?                     | Treat the requirements document as demand evidence, not causal proof.                                                 | Only the requirement and overall proposal loss are known.                       | Record one demand signal and explicitly reject causal attribution.                 |
 | G-003 | Segment                | Which adopters feel the need most strongly?                             | Target developers and agencies building intent-heavy or difficult-to-browse catalogs.                                 | Approved.                                                                       | Primary segment narrowed to technical evaluators of those storefronts.             |
 | G-004 | Value hierarchy        | Which business result is primary?                                       | Make qualified evaluation-to-deployment conversion primary; activation is leading and differentiation is a mechanism. | Approved.                                                                       | Adoption outcome takes precedence over generic differentiation.                    |
-| G-005 | Measurement            | What historical opportunity baseline applies?                           | Use a tracked baseline if available.                                                                                  | Skip the baseline; assume the capability lets Nimara keep pace with the market. | No historical baseline; the epic is a strategic market-parity assumption.          |
-| G-006 | Strategic role         | Is this a differentiator or credibility gap?                            | Reframe as a defensive table stake; UCP/MCP remains the differentiator.                                               | Approved.                                                                       | Epic positioned as market parity, not a unique claim.                              |
+| G-005 | Measurement            | What historical opportunity baseline applies?                           | Use a tracked baseline if available.                                                                                  | Skip the baseline; assume the capability lets Nimara keep pace with the market. | No historical baseline; the PRD is a strategic market-parity assumption.          |
+| G-006 | Strategic role         | Is this a differentiator or credibility gap?                            | Reframe as a defensive table stake; UCP/MCP remains the differentiator.                                               | Approved.                                                                       | PRD positioned as market parity, not a unique claim.                              |
 | G-007 | Business outcomes      | What evidence proves the gap is closed?                                 | Require 3 positive qualified evaluations and 2 independent deployments within 6 months.                               | Approved.                                                                       | These thresholds became the primary validation outcomes.                           |
 | G-008 | Falsification          | What happens when the thresholds are missed?                            | Stop expanding the built-in module and retain an integration seam and guidance.                                       | Approved.                                                                       | Negative evidence triggers a narrow/stop decision.                                 |
 | G-009 | Value boundary         | Is shopper conversion a Nimara success criterion?                       | Keep conversion deployment-specific; use shopper experience as a quality bar.                                         | Approved.                                                                       | Nimara does not claim universal conversion uplift.                                 |
 | G-010 | MVP scope              | Does MVP require an operator moderation dashboard?                      | Exclude it until adoption proves operator demand.                                                                     | Approved.                                                                       | Operator dashboard remains outside MVP.                                            |
-| G-011 | Capability boundary    | Does the epic own all product discovery?                                | Limit it to natural-language discovery; classic search and catalog remain existing dependencies.                      | Natural-language layer only.                                                    | Classic search, filters, and catalog are excluded.                                 |
+| G-011 | Capability boundary    | Does the PRD own all product discovery?                                | Limit it to natural-language discovery; classic search and catalog remain existing dependencies.                      | Natural-language layer only.                                                    | Classic search, filters, and catalog are excluded.                                 |
 | G-012 | Product readiness      | Is documentation alone sufficient?                                      | Require a working reference experience, not only an integration contract.                                             | Approved.                                                                       | Publicly demonstrable capability is part of MVP.                                   |
 | G-013 | Appetite               | What fixed time or team limit applies?                                  | Use a small fixed appetite if it matters to portfolio decisions.                                                      | It does not matter.                                                             | No artificial timebox; keep the smallest credible learning scope.                  |
-| G-014 | Portfolio boundary     | How does this relate to UCP/MCP?                                        | Treat them as independent bets with different consumers and value.                                                    | Approved.                                                                       | Neither epic blocks or subsumes the other.                                         |
+| G-014 | Portfolio boundary     | How does this relate to UCP/MCP?                                        | Treat them as independent bets with different consumers and value.                                                    | Approved.                                                                       | Neither PRD blocks nor subsumes the other.                                        |
 | G-015 | Product promise        | Is provider replaceability business value?                              | Make adopter ownership and lack of lock-in part of the promise; maintain one reference adapter.                       | Approved.                                                                       | Swappability is a business constraint, not multi-provider scope.                   |
 | G-016 | Trust                  | Which failure is unacceptable?                                          | Set zero tolerance for displaying nonexistent or currently ineligible products.                                       | Approved.                                                                       | Catalog validity is a hard gate.                                                   |
 | G-017 | Quality measurement    | Should Nimara set one universal relevance threshold?                    | Initially recommend a human-rated relevance threshold.                                                                | The universal threshold does not matter.                                        | Each deployment sets relevance thresholds; catalog validity stays universal.       |
@@ -66,10 +66,10 @@ Two early questions explored a separate discovery service and disabled-by-defaul
 | G-026 | Adoption proof         | What counts as an independent deployment?                               | External team, own catalog and provider account, customer-facing pilot or production, no fork.                        | Approved.                                                                       | Internal demos and duplicate storefronts do not inflate the count.                 |
 | G-027 | Evaluation proof       | What counts as passing an RFP or assessment?                            | Require written positive confirmation; silence does not count.                                                        | Approved.                                                                       | Qualified evaluation acceptance is explicit evidence.                              |
 | G-028 | Validation window      | When does the six-month clock start?                                    | Start at public `ready for adoption`, not preview.                                                                    | Approved.                                                                       | Preview does not consume validation time.                                          |
-| G-029 | Governance             | Who owns evidence collection and the stop decision?                     | Assign the epic owner; the session named Michał Ociepka.                                                              | Approved in session.                                                            | Current epic frontmatter names Łukasz Szewczyk; ownership discrepancy remains U-2. |
-| G-030 | Priority               | Where does this sit relative to Zero-to-Deploy?                         | `Next`, after the foundational adoption path.                                                                         | Approved.                                                                       | Epic must not displace Zero-to-Deploy.                                             |
+| G-029 | Governance             | Who owns evidence collection and the stop decision?                     | Assign the PRD owner; the session named Michał Ociepka.                                                              | Approved in session.                                                            | Current PRD frontmatter names Łukasz Szewczyk; ownership discrepancy remains U-2. |
+| G-030 | Priority               | Where does this sit relative to Zero-to-Deploy?                         | `Next`, after the foundational adoption path.                                                                         | Approved.                                                                       | PRD must not displace Zero-to-Deploy.                                             |
 | G-031 | Naming                 | Should the name remain implementation-led?                              | Rename to Natural-Language Product Discovery.                                                                         | Approved.                                                                       | Name now survives provider or implementation changes.                              |
-| G-032 | Classification         | Is this a business or enabler epic?                                     | Keep `business`; technical work is a means to adoption.                                                               | Approved.                                                                       | Epic type remains business.                                                        |
+| G-032 | Classification         | Is this a business or enabler PRD?                                     | Keep `business`; technical work is a means to adoption.                                                               | Approved.                                                                       | PRD type remains business.                                                        |
 | G-033 | Metrics                | Do stars, demo traffic, query volume, or hero clicks determine success? | Treat them as diagnostics, not outcomes.                                                                              | Approved.                                                                       | Vanity metrics do not determine continue/stop.                                     |
 | G-034 | Catalog responsibility | Must Nimara work regardless of catalog quality?                         | Define readiness and expose missing data; do not promise content repair.                                              | Approved.                                                                       | Unready catalogs do not count as valid adoption tests.                             |
 | G-035 | Performance            | May the module degrade the base storefront?                             | Disabled means no impact; enabled remains non-blocking with fallback.                                                 | Approved.                                                                       | Storefront performance and classic search are protected.                           |
@@ -91,8 +91,8 @@ Two early questions explored a separate discovery service and disabled-by-defaul
 | G-051 | Evidence integrity     | Is adoption impact a fact or assumption?                                | Label it `[ASSUMPTION]`.                                                                                              | Approved.                                                                       | One RFP and market evidence do not prove adoption uplift.                          |
 | G-052 | Primary persona        | Create a new procurement persona or use Storefront Developer?           | Use Storefront Developer, including agency evaluators.                                                                | Approved.                                                                       | Existing primary persona is retained and narrowed by segment.                      |
 | G-053 | Shopper role           | Is Shopper the business buyer?                                          | Treat Shopper as the experience quality persona.                                                                      | Approved.                                                                       | Business success belongs to adopter evaluation and deployment.                     |
-| G-054 | Lifecycle              | What status follows applied grilling decisions?                         | Move from `draft` to `analyzing`.                                                                                     | Approved.                                                                       | Epic status is `analyzing`.                                                        |
-| G-055 | Operating thresholds   | Does the epic set universal latency and cost limits?                    | Let deployments set them; require visibility, limits, and fallback.                                                   | Approved.                                                                       | No universal latency or unit-cost target.                                          |
+| G-054 | Lifecycle              | What status follows applied grilling decisions?                         | Move from `draft` to `analyzing`.                                                                                     | Approved.                                                                       | PRD status is `analyzing`.                                                        |
+| G-055 | Operating thresholds   | Does the PRD set universal latency and cost limits?                    | Let deployments set them; require visibility, limits, and fallback.                                                   | Approved.                                                                       | No universal latency or unit-cost target.                                          |
 | G-056 | Segment threshold      | Is a minimum catalog size required?                                     | Describe complexity qualitatively rather than by SKU count.                                                           | Approved.                                                                       | No numeric catalog-size gate.                                                      |
 | G-057 | UI ownership           | Does reference UI dictate layout and branding?                          | Demonstrate a complete accessible flow but allow composition and theming.                                             | Approved.                                                                       | Client-specific hero and cards are not core.                                       |
 | G-058 | Result count           | Is 3–5 suggestions a universal business rule?                           | Use it only as a configurable demo default.                                                                           | Approved.                                                                       | Shortlist length is deployment-configurable.                                       |
@@ -108,13 +108,13 @@ Two early questions explored a separate discovery service and disabled-by-defaul
 | G-068 | Demand insight         | Is unmatched-query analysis part of the value hypothesis?               | Report aggregate no-match only; defer content analytics and workflows.                                                | Approved.                                                                       | Demand insights removed from MVP value.                                            |
 | G-069 | Commerce engines       | Must MVP prove multiple backends?                                       | Validate Saleor without store-specific assumptions.                                                                   | Approved.                                                                       | Additional commerce-engine validation is future work.                              |
 | G-070 | Demo catalog           | Can the confidential voucher catalog shape the public demo?             | Use a neutral, public, intent-rich Nimara catalog.                                                                    | Approved.                                                                       | Demo does not imply a gift-market vertical or reuse confidential content.          |
-| G-071 | Falsification nuance   | What if too few RFPs or adoption attempts occur in six months?          | Treat it as insufficient evidence and freeze expansion without claiming a negative result.                            | User ended the questions.                                                       | Unresolved as U-1 and preserved in the epic Open Questions.                        |
+| G-071 | Falsification nuance   | What if too few RFPs or adoption attempts occur in six months?          | Treat it as insufficient evidence and freeze expansion without claiming a negative result.                            | User ended the questions.                                                       | Unresolved as U-1 and preserved in the PRD Open Questions.                        |
 
 ### Rejected or Deliberately Excluded
 
 - Historical adoption baseline — explicitly skipped in favor of a forward-looking market-parity validation.
-- Universal relevance, latency, cost, and catalog-size targets — delegated to deployments or explicitly judged irrelevant at epic level.
-- Store-level conversion, revenue uplift, GitHub stars, traffic, raw query volume, and hero clicks — diagnostic only, not epic success criteria.
+- Universal relevance, latency, cost, and catalog-size targets — delegated to deployments or explicitly judged irrelevant at PRD level.
+- Store-level conversion, revenue uplift, GitHub stars, traffic, raw query volume, and hero clicks — diagnostic only, not PRD success criteria.
 - Operator dashboard, demand insights, multi-turn conversation, required `show more`, direct feedback, personalization, voice, SEO output, conversational checkout, and design-partner recruitment — outside MVP.
 - Client-specific assumptions from the voucher marketplace — not part of Nimara core or the public demo.
 
@@ -128,31 +128,31 @@ Two early questions explored a separate discovery service and disabled-by-defaul
 ### Unresolved Branches
 
 - U-1: If too few qualified evaluations or adoption attempts occur during the six-month window, decide whether the result is inconclusive with investment frozen or receives the same stop decision as negative evidence — Product — before `ready`.
-- U-2: The grilling session approved Michał Ociepka as outcome owner, while the applied epic frontmatter names Łukasz Szewczyk — Product — reconcile before `ready`.
+- U-2: The grilling session approved Michał Ociepka as outcome owner, while the applied PRD frontmatter names Łukasz Szewczyk — Product — reconcile before `ready`.
 - U-3: Set the public-demo operating budget — Product — before preview.
 - U-4: Choose the core-maintained reference adapter — Architecture — before solution design approval.
 - U-5: Define minimum discovery-ready catalog content and eligibility semantics — Product and Architecture — before solution design approval.
 
 ### Shared Understanding
 
-Natural-Language Product Discovery is a `Next`-priority business epic that closes a market-parity gap for developers and agencies evaluating Nimara for intent-heavy catalogs. The evidence proves one real requirement and wider market movement, not that the missing feature caused a lost proposal. The adoption effect remains an explicit assumption.
+Natural-Language Product Discovery is a `Next`-priority business PRD that closes a market-parity gap for developers and agencies evaluating Nimara for intent-heavy catalogs. The evidence proves one real requirement and wider market movement, not that the missing feature caused a lost proposal. The adoption effect remains an explicit assumption.
 
 Success means 3 positive written qualified evaluations and 2 independent customer-facing deployments without a fork within 6 months of the public ready release; a developer should reach the first grounded result within one business day. Shopper conversion is deployment-specific. The universal quality gate is zero displayed products that do not exist or fail current eligibility.
 
 MVP is fully open-source, opt-in, single-turn, prominent in the public demo, provider-replaceable with one maintained adapter, anonymous-first, locale-aware, accessible, non-blocking, rate-limited, privacy-conscious, and backed by classic-search fallback. It ends at the product page. UCP/MCP, full classic discovery, operator tooling, personalization, demand insights, SEO, self-hosted support, multi-engine validation, cart, and checkout remain separate.
 
-### Resulting Epic Changes
+### Resulting PRD Changes
 
-- Renamed the epic from LLM Product Discovery to Natural-Language Product Discovery.
+- Renamed the PRD from LLM Product Discovery to Natural-Language Product Discovery.
 - Replaced client-delivery framing with an open-source market-parity hypothesis.
 - Added evidence limitations and the adoption `[ASSUMPTION]`.
 - Added quantified evaluation, deployment, activation, and catalog-validity measures.
 - Added negative falsification, rollout, business NFRs, MVP boundaries, risks, and open questions.
-- Moved the epic to `analyzing` after explicit user approval.
+- Moved the PRD to `analyzing` after explicit user approval.
 
 ## Related Notes
 
-[EPIC-001 Natural-Language Product Discovery](product/epics/EPIC-001%20Natural-Language%20Product%20Discovery.md)
+[PRD-001 Natural-Language Product Discovery](product/prds/PRD-001%20Natural-Language%20Product%20Discovery.md)
 [Table Stakes vs Differentiators](product/market/Table%20Stakes%20vs%20Differentiators.md)
 [Storefront Developer](product/personas/Storefront%20Developer.md)
 [Shopper](product/personas/Shopper.md)
