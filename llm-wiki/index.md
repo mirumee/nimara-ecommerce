@@ -7,6 +7,7 @@ okf_version: "0.1"
 
 # Templates
 * [ADR Template](_templates/ADR.md) - Reusable template for architecture decision records.
+* [DERBY Design Doc Template](_templates/DERBY.md) - Reusable template for a DERBY design proposal: problem, requirements, proposed solution, and cross-cutting considerations.
 * [Epic Grilling Log Template](_templates/epic-grilling-log.md) - Reusable structure for preserving the business decisions behind an epic.
 * [Epic Template](_templates/epic.md) - Reusable template for drafting Nimara epic hypothesis statements.
 * [Undefined Template](_templates/Undefined.md) - Generic template for a new OKF concept document.
@@ -62,6 +63,7 @@ okf_version: "0.1"
 
 # Technology ADR
 * [ADR MOC](tech/ADR/ADR%20MOC.md) - Map of content and chronological register for architecture decision records.
+* [DERBY MOC](tech/DERBY/DERBY%20MOC.md) - Map of content and register for DERBY design proposals that precede an accepting or rejecting ADR.
 
 # References
 * [Works Cited](references/Works%20Cited.md) - Source list for the 2026 product strategy research.
