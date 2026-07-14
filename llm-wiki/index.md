@@ -7,7 +7,7 @@ okf_version: "0.1"
 
 # Templates
 * [ADR Template](_templates/ADR.md) - Reusable template for architecture decision records.
-* [DERBY Design Doc Template](_templates/DERBY.md) - Reusable template for a DERBY design proposal: problem, requirements, proposed solution, and cross-cutting considerations.
+* [RFC Design Doc Template](_templates/RFC.md) - Reusable template for an RFC design proposal: problem, requirements, proposed solution, and cross-cutting considerations.
 * [PRD Grilling Log Template](_templates/prd-grilling-log.md) - Reusable structure for preserving the business decisions behind a PRD.
 * [PRD Template](_templates/prd.md) - Reusable template for drafting Nimara Product Requirements Documents.
 * [Undefined Template](_templates/Undefined.md) - Generic template for a new OKF concept document.
@@ -63,7 +63,7 @@ okf_version: "0.1"
 
 # Technology ADR
 * [ADR MOC](tech/ADR/ADR%20MOC.md) - Map of content and chronological register for architecture decision records.
-* [DERBY MOC](tech/DERBY/DERBY%20MOC.md) - Map of content and register for DERBY design proposals that precede an accepting or rejecting ADR.
+* [RFC MOC](tech/RFC/RFC%20MOC.md) - Map of content and register for RFC design proposals that precede an accepting or rejecting ADR.
 
 # References
 * [Works Cited](references/Works%20Cited.md) - Source list for the 2026 product strategy research.

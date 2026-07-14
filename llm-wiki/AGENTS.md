@@ -45,7 +45,7 @@ llm-wiki/
   quality/          # QA operating knowledge
   tech/
     ADR/            # architecture decision records
-    DERBY/          # DERBY design proposals + register
+    RFC/          # RFC design proposals + register
 ```
 
 `index.md` and `log.md` are OKF reserved filenames. All other `.md` files are concept
