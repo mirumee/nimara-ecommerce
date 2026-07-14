@@ -85,7 +85,7 @@ Decide where the chosen option lives and how it respects the architecture:
 
 ### 6. Interface and data shape
 
-Extract enough to write concrete Implementation Notes:
+Extract enough to write a concrete Proposed solution:
 
 - the interface / DTO sketch (key method signatures, pagination, error shape);
 - the storage mapping (which tables / metadata keys / SaaS entities; public vs private;
@@ -159,7 +159,7 @@ The grilling is complete only when the shared understanding contains:
 - at least two real considered options;
 - one chosen option justified against the drivers, and a driver-tied rejection reason for
   every option not chosen;
-- an interface/data/env shape concrete enough to write Implementation Notes;
+- an interface/data/env shape concrete enough to write the Proposed solution;
 - cross-cutting NFR posture and a reversibility/blast-radius judgement;
 - a status decision and any deferred sub-decisions with owners and gates;
 - a complete `D-*` decision ledger ready to file from the solution grilling-log template;

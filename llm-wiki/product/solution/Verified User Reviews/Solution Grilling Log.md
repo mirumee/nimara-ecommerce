@@ -102,6 +102,100 @@ aggregation outgrows Saleor Models.
 
 - [ADR-0001 Default ReviewProvider Stores Reviews as Saleor Models](tech/ADR/ADR-0001%20Default%20ReviewProvider%20Stores%20Reviews%20as%20Saleor%20Models.md) — Proposed
 
+## Session 2 — 2026-07-14
+
+### Session Context
+
+- Epic: [Verified User Reviews](product/epics/Epic%20User%20Reviews.md)
+- Trigger: the user asked for a **completely new ADR built from the epic**, explicitly *not*
+  taking cues from the existing ADR-0001 — a fresh, whole-system design run (not just storage).
+- Base system: **Saleor + `apps/storefront`**; email via the installed **nimara-mailer** Saleor
+  app. Reviews as a new swappable `reviews` capability.
+- Starting facts (read before grilling; ADR-0001 body deliberately *not* re-read to avoid
+  anchoring): the epic and scope; `apps/docs/adr/0001-integration-provider-architecture.md`
+  (reviews reserved as a future swappable capability); `tech/saleor/Content & Navigation.md`
+  and `tech/saleor/Attributes.md` (Page/PageType + attribute capabilities, Saleor 3.23.17);
+  the storefront placeholder `product-reviews.tsx`; existing email path (Saleor sends
+  transactional mail; no in-repo mailer) corrected by the user to the **nimara-mailer** repo
+  (`github.com/mirumee/nimara-mailer` — serverless TS app, Saleor + custom events, React Email,
+  SES/SMTP). Wiki register held ADR-0001 → next number **ADR-0002**.
+- Facilitator: `solution-author`
+- Outcome: `shared-understanding-confirmed`
+
+### Decision Drivers
+
+Ranked; the dominant driver marked.
+
+1. **No SaaS cost / in-repo — DOMINANT (breaks ties).**
+2. SSR performance on hot paths (PDP/PLP) — must-have.
+3. Swappable-provider & layer fit (`Result<T, E>`, no `@nimara/codegen` in app) — must-have.
+4. Data lifecycle / GDPR + audit trail — baseline must-have.
+5. Security / authorization at the write boundary — baseline must-have.
+
+### Decision Log
+
+| ID    | Decision branch | Question | Recommendation | User answer | Resulting decision |
+| :---- | :-------------- | :------- | :------------- | :---------- | :----------------- |
+| D-006 | Base system / SoR (gate) | What is the base system and system of record for reviews? | Dedicated Postgres store, Saleor consulted only for purchase verification | **Saleor as SoR** | Base system = Nimara storefront on Saleor; **Saleor is the system of record** for review data. |
+| D-007 | Decision drivers | Which drivers dominate (break ties)? | No-cost/in-repo, time-to-value, SSR-perf | **No-cost / in-repo** | No-cost/in-repo is the sole dominant tie-breaker; SSR-perf, GDPR, swappable-fit remain must-haves. |
+| D-008 | Saleor mapping | Which Saleor primitive maps a single review? | Review = Saleor Page (`Review` PageType, attributes + metadata) | **Saleor Page (Review PageType)** | Each review is a Page typed `review`; rating/status/product as attributes, author + order-line ref in metadata; `isPublished` = moderation state. Metadata-blob rejected. |
+| D-009 | Aggregate storage | Where does the per-product average + count live? | Hybrid — bucket `DROPDOWN` attribute (filter) + precise avg/count in product metadata | **Product attributes only** | Aggregate = product attributes `review-rating-avg` + `review-count` (native filter/sort). `AttributeValue` churn/reindex accepted as known risk; rounding mitigation deferred. Metadata-only and hybrid rejected. |
+| D-010 | Write path / authz | How are privileged Page/attribute writes done (customer token lacks `MANAGE_*`)? | Server Action + Saleor app token (service account) | **Server Action + app token** | Storefront Server Action verifies identity + fulfilled-order purchase, then an app token (server-side in `infrastructure`) performs `pageCreate` and aggregate writes. Direct-customer-write and a separate Saleor App rejected. |
+| D-011 | Capability scope (epic open Q) | Full swappable capability, second adapter, or single loader? | Full capability scaffold + single `saleor` provider | **Scaffold + only `saleor`** | Full manifest/registry/env-selector convention with the sole default provider `saleor`; a second (SaaS) adapter deferred. |
+| D-012 | Invitation email | How is the delayed invitation triggered/sent, reusing existing infra? | Vercel Cron scan + in-repo pluggable email adapter | **Extend nimara-mailer** | Saleor `ORDER_FULFILLED` webhook → nimara-mailer, which owns the multi-day delay (AWS-native: EventBridge Scheduler / Step Functions `wait`) and sends a `review_invitation` React Email template via its transport. Epic's "pluggable email-provider adapter" = the mailer's `EMAIL_PROVIDER`. Storefront cron + in-repo adapter rejected. |
+
+### Considered Options and Why Rejected
+
+- **Saleor Pages + product-attribute aggregate + app-token writes + extended nimara-mailer** —
+  **chosen**: stays entirely in the base system and installed infra (dominant no-cost/in-repo),
+  native pagination/filter/sort/moderation via Pages + attributes, privileged writes contained
+  server-side, invitations reuse nimara-mailer.
+- **Dedicated Nimara-owned Postgres store** — rejected because it fails **no-cost / in-repo**:
+  new datastore, migrations, backups, on-call before pilot evidence.
+- **Reviews as a Product-metadata blob** — rejected because it fails **SSR-perf** and moderation:
+  no server-side pagination/filter, unqueryable queue, concurrent-write clobber.
+- **Aggregate in metadata / bucket+metadata hybrid** — rejected in favour of attributes for
+  native catalog-surface filter/sort (user decision); churn accepted + mitigated.
+- **Direct customer write of the review Page** — rejected: impossible under Saleor permissions
+  and a security hole (customer could set `isPublished`/`rating`).
+- **Storefront Vercel Cron + new in-repo email adapter** — rejected because it duplicates
+  scheduling/email that nimara-mailer already provides (reuse).
+- **Second SaaS ReviewProvider in v1** — rejected on cost / time-to-value; the scaffold already
+  proves swappability.
+
+### Deferred to Implementation
+
+- Exact delay mechanism inside nimara-mailer (EventBridge Scheduler vs Step Functions `wait`) —
+  owner: nimara-mailer maintainer — before the invitation build.
+- Average-rounding strategy to bound `AttributeValue` churn/reindex — owner: implementer —
+  before the aggregate build.
+- Attribute/PageType slugs, comment format (plain text vs EditorJS), pagination size — owner:
+  implementer — build phase.
+
+### Unresolved Sub-Decisions
+
+- **U-4** — GDPR on account deletion: anonymize vs delete review Pages. Owner: Lead Developer —
+  before GA.
+- **U-5** — Pre-moderation queue-size alerting. Owner: DevOps — before enabling pre-moderation.
+- **U-6** — Standalone moderation/admin app (vs operator console). Owner: Lead Developer —
+  a separate ADR, before the full (non-MVP) build.
+
+### Chosen Architecture (Session 2)
+
+Reviews = a swappable `reviews` capability with the single default provider `saleor`. Each
+review is a Saleor `Page` (`Review` PageType; rating/status/product attributes, author +
+order-line ref in metadata; `isPublished` = moderation). Per-product aggregate stored as product
+attributes `review-rating-avg` + `review-count` (native filter/sort; churn mitigated by
+rounding). Privileged writes via a storefront Server Action + Saleor app token after
+fulfilled-purchase verification; all fallible ops return `Result<T, E>`. Invitations owned by an
+extended nimara-mailer (`ORDER_FULFILLED` → AWS-native delay → `review_invitation` template,
+SES/SMTP). No new database; audit trail in each review Page's private metadata. Reversibility
+seam = the `ReviewProvider` contract.
+
+### Resulting ADR(s)
+
+- [ADR-0002 Verified User Reviews on Saleor with nimara-mailer Invitations](tech/ADR/ADR-0002%20Verified%20User%20Reviews%20on%20Saleor%20with%20nimara-mailer%20Invitations.md) — Proposed
+
 ## Related Notes
 
 [Verified User Reviews](product/epics/Epic%20User%20Reviews.md)

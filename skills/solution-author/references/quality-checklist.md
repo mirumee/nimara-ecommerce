@@ -18,18 +18,19 @@ checks catch what a regex cannot (are the drivers real, is the rejection reason 
 
 ## Decision integrity
 
-- [ ] **Context** names the **Base system** and states the problem in a few sentences; the epic is linked, not paraphrased.
-- [ ] **Decision Drivers** are explicit and are the same criteria used to score the options.
-- [ ] **Considered Options** lists at least two real options (no strawmen).
-- [ ] **Decision Outcome** names the chosen option and justifies it against the drivers; if not final, it says "Recommended, pending <condition>".
-- [ ] **Every rejected option** has a "Rejected because" reason naming the deciding driver.
+- [ ] **Problem** opens with the **Base system:** line and states the problem in a few sentences; the epic is linked, not paraphrased.
+- [ ] **Requirements** (functional + non-functional) are explicit; the non-functional ones are the same criteria used to score the alternatives.
+- [ ] **Proposed solution** names the chosen design and justifies it against the Requirements.
+- [ ] **Recommendation** is left as the placeholder while `status: Proposed`; it is filled (implementation link + Outcome) only when the ADR is Final (`status: Accepted`).
+- [ ] **Alternative solutions** weighs at least one real alternative besides the proposed design (no strawmen).
+- [ ] **Every alternative** has a "Rejected because" reason naming the deciding requirement/driver.
 - [ ] The ADR is **self-contained**: it does not rely on sibling ADRs to explain its alternatives.
 
-## Implementation concreteness
+## Implementation concreteness (Proposed solution)
 
-- [ ] **Implementation Notes** include an interface/DTO sketch (pseudo-TS acceptable).
-- [ ] A **storage mapping** is stated (tables / metadata keys / SaaS entities; public vs private; how aggregates are computed).
-- [ ] **Real monorepo paths** are named (`packages/domain/…`, `packages/infrastructure/<capability>/<provider>/`, the consuming service).
+- [ ] Includes an interface/DTO sketch (pseudo-TS acceptable).
+- [ ] A **storage / Database change** is stated (tables / metadata keys / SaaS entities; public vs private; back-compat + migration; how aggregates are computed).
+- [ ] **Real monorepo paths** are named under Component changes (`packages/domain/…`, `packages/infrastructure/<capability>/<provider>/`, the consuming service).
 - [ ] An **env schema** is given (selector variable + per-provider namespaced config + where validated).
 - [ ] The `Result<T, E>` convention and layer boundaries are respected; app/component code does not import `@nimara/codegen`.
 - [ ] "What to build first" (a thin vertical slice) is stated.

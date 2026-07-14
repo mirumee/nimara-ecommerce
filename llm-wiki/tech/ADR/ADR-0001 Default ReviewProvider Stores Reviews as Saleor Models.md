@@ -9,7 +9,15 @@ tags:
 created: "2026-07-13T00:00:00+00:00"
 timestamp: "2026-07-13T00:00:00+00:00"
 status: "Proposed"
+adr_format: "MADR-legacy"
 ---
+
+<!--
+  Legacy MADR-style ADR — predates the DERBY-style template. Kept verbatim as a legacy record
+  and linted against the MADR ruleset (`adr_format: "MADR-legacy"`). New ADRs use the
+  DERBY structure in `_templates/ADR.md`.
+-->
+
 
 ## Context and Problem Statement
 

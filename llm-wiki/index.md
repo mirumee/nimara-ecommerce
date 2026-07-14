@@ -36,7 +36,7 @@ okf_version: "0.1"
 * [EPIC-001 Natural-Language Product Discovery - Grilling Log](product/epics/grilling/EPIC-001%20Natural-Language%20Product%20Discovery%20-%20Grilling%20Log.md) - Business questions, recommendations, answers, decisions, and unresolved branches behind EPIC-001.
 
 # Product Solution Grilling Logs
-* [Verified User Reviews - Solution Grilling Log](product/solution/Verified%20User%20Reviews/Solution%20Grilling%20Log.md) - Technical decision trail behind ADR-0001 (default ReviewProvider storage): drivers, options, and why Postgres and raw metadata lost.
+* [Verified User Reviews - Solution Grilling Log](product/solution/Verified%20User%20Reviews/Solution%20Grilling%20Log.md) - Technical decision trail behind the Verified User Reviews ADRs: Session 1 (ADR-0001, default ReviewProvider storage) and Session 2 (ADR-0002, whole-system design — Saleor Pages, product-attribute aggregate, app-token writes, nimara-mailer invitations).
 
 # Product Market
 * [Composable Commerce Market](product/market/Composable%20Commerce%20Market.md) - Sector maturity and self-hosted open-source economics above the ~$2-10M revenue threshold.

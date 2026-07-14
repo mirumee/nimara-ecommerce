@@ -83,11 +83,13 @@ Check, across `llm-wiki/**`:
 7. **Source integrity** — notes in `sources/` that were edited after archiving (they must be
    immutable); citations in research notes with no matching `sources/` copy or Works Cited entry.
 8. **Stale-vs-source** — claims contradicted by a newer ingested source (flag, don't guess).
-9. **ADR MADR quality** — run `pnpm wiki:adr:lint` (or `node scripts/wiki-adr-lint.mjs`). It
-   fails any ADR that lacks the MADR sections, a `**Base system:**` line, ≥2 considered
-   options, a "Rejected because" reason per non-chosen option, a Decision Outcome verdict, or
-   a register entry — and warns on thin Implementation Notes. Report its ERRORs as lint
-   findings; the run exits non-zero when an ADR fails.
+9. **ADR DERBY quality** — run `pnpm wiki:adr:lint` (or `node scripts/wiki-adr-lint.mjs`). It
+   fails any ADR that lacks the DERBY sections (Recommendation / Problem / Requirements /
+   Proposed solution / Cross-cutting considerations), a `**Base system:**` line in Problem, a
+   weighed Alternative solution, a "Rejected because" reason per alternative, or a register
+   entry — and warns on a thin Proposed solution. (MADR-legacy ADRs, flagged
+   `adr_format: "MADR-legacy"`, are checked against the old ruleset.) Report its ERRORs as
+   lint findings; the run exits non-zero when an ADR fails.
 
 Method: prefer `grep`/`Glob` for links, headings, and filenames — deterministic, no flake.
 For ADR structure, the `wiki:adr:lint` script is the deterministic check — use it instead of
@@ -117,22 +119,24 @@ future readers will ask "why did we do it this way?" about.
 
 0. **CONFIRM the base system first.** Before drafting, ask the user which system the app,
    feature, or provider is built on (Saleor, Algolia, greenfield, …). Never guess — it
-   anchors the whole decision. Record it as the **Base system** line in Context.
+   anchors the whole decision. Record it as the **Base system** line in the Problem section.
 1. **CONFIRM it's ADR-worthy.** Trivial or easily-reversed choices don't need one. If in
    doubt, ask. Capturing the *decision*, not routine implementation detail.
 2. **COPY `_templates/ADR.md`** into `tech/ADR/` as `ADR-NNNN <Title>.md` — next unused
    zero-padded number (check the [ADR MOC](../../../llm-wiki/tech/ADR/ADR%20MOC.md) register
    for the highest so far), Title Case.
-3. **FILL the MADR sections** — `status` in frontmatter (usually `Accepted`, or `Proposed`
-   if still under review), then Context and Problem Statement (short — link the epic, don't
-   paraphrase it) → **Decision Drivers** (the criteria) → **Considered Options** (≥2 real
-   options) → **Decision Outcome** ("We will …", justified against the drivers) → **Pros and
-   Cons of the Options** (each rejected option states *why*, tied to a driver) →
-   **Implementation Notes** (concrete: interface/DTO sketch, storage mapping, monorepo file
-   paths, env schema, `Result<T, E>`) → Consequences. One decision per note; each ADR is
-   self-contained (don't lean on sibling ADRs). **Before registering, run
-   `pnpm wiki:adr:lint "<path to the new ADR>"` and fix every ERROR** — it mechanically
-   enforces this structure.
+3. **FILL the DERBY sections** — `status` in frontmatter (usually `Accepted`, or `Proposed`
+   if still under review), then **Recommendation** (placeholder until Final) → **Problem**
+   (short — **Base system:** line, link the epic, don't paraphrase it) → **Requirements**
+   (functional + non-functional; the non-functional ones are the drivers) → **Proposed
+   solution** (the chosen design justified against the requirements — concrete: interface/DTO
+   sketch, Component changes with monorepo paths, API changes, Database changes, env schema,
+   `Result<T, E>`) → **Cross-cutting considerations** (Security, Monitoring, Failure cases,
+   **Alternative solutions** with ≥1 weighed alternative each stating *why* it was rejected
+   tied to a requirement/driver, Dependencies, System Impacts, Documentation, QA Validation,
+   DevOps). One decision per note; each ADR is self-contained (don't lean on sibling ADRs).
+   **Before registering, run `pnpm wiki:adr:lint "<path to the new ADR>"` and fix every
+   ERROR** — it mechanically enforces this structure.
 4. **LINK** back to the `solution/` or `epics/` note it supports, and add its `## Related Notes`.
 5. **REGISTER** it in the [ADR MOC](../../../llm-wiki/tech/ADR/ADR%20MOC.md) register (one
    line) in the same change.

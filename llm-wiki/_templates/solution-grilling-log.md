@@ -35,7 +35,7 @@ by the `solution-author` skill and pairs with the epic's business grilling log.
 ### Decision Drivers
 
 List the criteria the options were judged on, ranked, with the two or three that dominated
-this decision marked.
+this decision marked. These become the ADR's **Requirements** (functional + non-functional).
 
 ### Decision Log
 
@@ -46,6 +46,9 @@ this decision marked.
 | D-003 | Options            | …        | …              | …           | …                  |
 
 ### Considered Options and Why Rejected
+
+The chosen option becomes the ADR's **Proposed solution**; each rejected option becomes an
+entry under the ADR's **Cross-cutting considerations → Alternative solutions**.
 
 - **Option A** — chosen / rejected because … (deciding driver)
 - **Option B** — rejected because … (deciding driver)
@@ -62,7 +65,8 @@ this decision marked.
 ### Chosen Architecture
 
 Summarize the confirmed base system, chosen option, interface/data/env shape, cross-cutting
-NFR posture, and reversibility judgement.
+NFR posture, and reversibility judgement — the raw material for the DERBY ADR's Proposed
+solution and Cross-cutting considerations.
 
 ### Resulting ADR(s)
 

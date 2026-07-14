@@ -1,6 +1,6 @@
 ---
 name: solution-author
-description: Drive a technical solution-design decision to a recorded ADR inside an LLM-wiki. Use when moving from an approved epic to an architecture decision — choosing a provider, datastore, protocol, service boundary, or cross-cutting pattern — or when the user says "help me decide X", "we don't know which approach yet", "which option is best", or "write an ADR but I haven't decided". Runs an architecture-altitude, one-question-at-a-time grilling toward a chosen option, preserves the decision trail as a solution grilling log, then writes a MADR-style ADR. Pairs with epic-author (business grilling) upstream and wiki-maintenance (ADR filing) for bookkeeping. Stops at an approved ADR; does not write code, decompose tasks, or estimate.
+description: Drive a technical solution-design decision to a recorded ADR inside an LLM-wiki. Use when moving from an approved epic to an architecture decision — choosing a provider, datastore, protocol, service boundary, or cross-cutting pattern — or when the user says "help me decide X", "we don't know which approach yet", "which option is best", or "write an ADR but I haven't decided". Runs an architecture-altitude, one-question-at-a-time grilling toward a chosen option, preserves the decision trail as a solution grilling log, then writes a DERBY-style design ADR. Pairs with epic-author (business grilling) upstream and wiki-maintenance (ADR filing) for bookkeeping. Stops at an approved ADR; does not write code, decompose tasks, or estimate.
 ---
 
 # Solution Author
@@ -48,23 +48,22 @@ Ask exactly one question per turn. Each question must:
 2. include a recommended answer and a short rationale tied to a driver;
 3. wait for the user's answer before advancing.
 
-Keep it at architecture altitude: base system, decision drivers, candidate options, per-option rejection reasons, layer/boundary fit, interface and data shape (enough to fill Implementation Notes), cross-cutting NFRs (performance on hot paths, security/authz, data lifecycle/GDPR, observability, failure/degradation), reversibility and blast radius, and status. Defer line-level implementation to the build phase unless it changes the decision.
+Keep it at architecture altitude: base system, decision drivers, candidate options, per-option rejection reasons, layer/boundary fit, interface and data shape (enough to fill the Proposed solution), cross-cutting NFRs (performance on hot paths, security/authz, data lifecycle/GDPR, observability, failure/degradation), reversibility and blast radius, and status. Defer line-level implementation to the build phase unless it changes the decision.
 
 If the user stops the questions, summarize the chosen direction, rejected options, and unresolved sub-decisions, and make no edits. The original request does not bypass the shared-understanding gate.
 
-Completion criterion: base system confirmed; drivers agreed; at least two real options on the table with one chosen and every rejected option carrying a driver-tied reason; interface/data/env shape sufficient for concrete Implementation Notes; NFRs and reversibility covered; the user has confirmed the shared understanding.
+Completion criterion: base system confirmed; drivers agreed; at least two real options on the table with one chosen and every rejected option carrying a driver-tied reason; interface/data/env shape sufficient for a concrete Proposed solution; NFRs and reversibility covered; the user has confirmed the shared understanding.
 
 ## Stage 4 — Draft the ADR
 
-Copy `_templates/ADR.md` (MADR-style) into `tech/ADR/` as `ADR-NNNN <Title>.md` — next free zero-padded number from the wiki register. Obey the ADR quality bar in `llm-wiki/AGENTS.md`. Fill in this order:
+Copy `_templates/ADR.md` (DERBY-style) into `tech/ADR/` as `ADR-NNNN <Title>.md` — next free zero-padded number from the wiki register. Obey the ADR quality bar in `llm-wiki/AGENTS.md`. Fill in this order (DERBY sections, H2 in this wiki):
 
-1. **Context and Problem Statement** — Base system line + a short problem (2–4 sentences). Link the epic; do not paraphrase its requirements.
-2. **Decision Drivers** — the criteria from the grilling, stated once.
-3. **Considered Options** — the real candidates (≥2).
-4. **Decision Outcome** — the chosen option, justified against the drivers ("We will …"). If not final, "Recommended, pending <what resolves it>".
-5. **Pros and Cons of the Options** — each option scored against the drivers; every rejected option has a "Rejected because" line naming the deciding driver.
-6. **Implementation Notes** — concrete: interface/DTO sketch (pseudo-TS), storage mapping, real monorepo paths, env schema (variable names + Zod validation), the `Result<T, E>` convention, and what to build first.
-7. **Consequences** — positive/negative/neutral of the chosen option.
+1. **Recommendation** — leave the placeholder while `status: Proposed`; fill it (implementation link + Outcome) only once the ADR is Final (`status: Accepted`).
+2. **Problem** — **Base system:** line + a short problem (2–4 sentences). Link the epic; do not paraphrase its requirements.
+3. **Requirements** — functional and non-functional. The non-functional requirements double as the drivers the alternatives are scored against.
+4. **Proposed solution** — the chosen design, justified against the Requirements. Concrete: interface/DTO sketch (pseudo-TS), Component changes (existing/new, real monorepo paths), API changes, Database/storage changes (public vs private, back-compat/migration), env schema (variable names + Zod validation), the `Result<T, E>` convention, and what to build first.
+5. **Cross-cutting considerations** — Security, Monitoring and alerting, Failure cases and remediation, **Alternative solutions** (≥1 real alternative, each with pros/cons and a "Rejected because" line naming the deciding requirement/driver), Dependencies, System Impacts, Documentation Changes, QA Validation, DevOps / Infrastructure.
+6. **Related Notes** — link the epic and solution grilling log.
 
 Completion criterion: the ADR expresses the approved decision and its rejected alternatives, and stands alone without reference to other ADRs.
 
@@ -73,7 +72,7 @@ Completion criterion: the ADR expresses the approved decision and its rejected a
 Run the mechanical linter first: `pnpm wiki:adr:lint "<path to the new ADR>"` (or
 `node scripts/wiki-adr-lint.mjs "<path>"`). Fix every ERROR it reports before continuing.
 Then run every check in `references/quality-checklist.md` — the manual checks catch what the
-regex cannot (are the drivers real, is each rejection reason honest). Fix what needs no new
+regex cannot (are the requirements/drivers real, is each rejection reason honest). Fix what needs no new
 decision; put genuine unknowns in an owned open sub-decision and report failed checks rather
 than hiding them. `references/example-adr.md` is the quality bar.
 
@@ -89,5 +88,5 @@ than hiding them. `references/example-adr.md` is the quality bar.
 
 - `references/technical-grilling.md` — the mandatory architecture-altitude interview and its completion gate.
 - `references/quality-checklist.md` — Definition of Ready for an ADR.
-- `references/example-adr.md` — a worked MADR ADR that sets the quality bar.
+- `references/example-adr.md` — a worked DERBY ADR that sets the quality bar.
 - `_templates/ADR.md` and `_templates/solution-grilling-log.md` in the target wiki — canonical structures; do not duplicate them inside the skill.

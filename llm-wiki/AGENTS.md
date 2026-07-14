@@ -157,43 +157,51 @@ Date headings must use `YYYY-MM-DD`.
 # Architecture Decision Records
 
 Significant technical decisions are standalone concept documents in `tech/ADR/`, one decision
-per file, using the MADR-style structure from `_templates/ADR.md`.
+per file, using the **DERBY-style design ADR** structure from `_templates/ADR.md`:
+**Recommendation → Problem → Requirements → Proposed solution → Cross-cutting considerations**
+(the last carries Security, Monitoring, Failure cases, **Alternative solutions**, Dependencies,
+System Impacts, Documentation, QA Validation, and DevOps). DERBY's H1 sections map to H2 in
+this wiki so the note title stays in frontmatter and the linter can parse sections.
 
 Rules:
 
 - **Before writing an ADR, always ask the user which system the application, feature, or
   provider is built on** — e.g. Saleor, Algolia, or a greenfield app from scratch. Do not
   assume or infer it; the answer anchors the decision context and prevents hallucinated
-  constraints. Capture it as the **Base system** line in the ADR's Context.
+  constraints. Capture it as the **Base system** line at the top of the **Problem** section.
 - File name: `ADR-NNNN Title.md`, zero-padded and monotonically increasing.
-- Status lives in frontmatter as `status`.
+- Status lives in frontmatter as `status`. The **Recommendation** section is filled only once
+  the ADR reaches its Final state (`status: Accepted`).
 - Accepted ADRs are immutable. Supersede them with a new ADR and link both documents.
 - Register every ADR in [ADR MOC](tech/ADR/ADR%20MOC.md) and link it back to the relevant
   epic, solution, or task note.
+- **Legacy MADR ADRs** (pre-DERBY) keep their structure and opt into the old ruleset with
+  `adr_format: "MADR-legacy"` in frontmatter. Do not migrate them; new ADRs use DERBY.
 
 **Quality bar — an ADR records a *decision*, not a proposal for one option:**
 
-- **Decision Drivers + ≥2 Considered Options + a Decision Outcome tied to the drivers.**
-  An ADR that describes a single option with no weighed alternatives is rejected — that is
-  the difference between a decision record and a press release.
-- **Every rejected option states why it was rejected**, naming the deciding driver. "We
-  also considered X and Y; X rejected because …, Y rejected because …" is the point of the
-  document.
+- **≥1 weighed Alternative solution + a Proposed solution justified against the Requirements.**
+  A design that weighs no alternative is rejected — that is the difference between a decision
+  record and a press release. Requirements (functional + non-functional) double as the
+  drivers the alternatives are scored against.
+- **Every alternative states why it was rejected**, naming the deciding requirement/driver,
+  under **Cross-cutting considerations → Alternative solutions**. "We also considered X and Y;
+  X rejected because …, Y rejected because …" is the point of the document.
 - **Each ADR is self-contained.** Rejected alternatives and their reasons live inside the
   one file. Do not assume the reader has seen sibling ADRs, and do not cross-link ADRs as
   each other's "alternatives" — each ADR stands alone.
-- **Implementation Notes are mandatory and concrete:** an interface / DTO sketch (pseudo-TS
-  is fine), storage mapping, real monorepo paths (`packages/domain/…`,
+- **Proposed solution is mandatory and concrete:** an interface / DTO sketch (pseudo-TS
+  is fine), storage/database mapping, real monorepo paths (`packages/domain/…`,
   `packages/infrastructure/<capability>/<provider>/`, the consuming service),
   an env schema (variable names + Zod validation), and the `Result<T, E>` convention. No
   hand-waving like "persist through metadata / an app-owned surface" without saying which.
-- **Context is a short problem statement, not an essay.** Link the driving epic/solution
+- **Problem is a short problem statement, not an essay.** Link the driving epic/solution
   instead of paraphrasing its requirements; state only what this decision adds.
 - **The bar is machine-checked.** Run `pnpm wiki:adr:lint` (all ADRs) or
-  `pnpm wiki:adr:lint "<path>"` (one ADR) — it fails any ADR missing the MADR sections, the
-  `**Base system:**` line, ≥2 considered options, a "Rejected because" reason per non-chosen
-  option, a Decision Outcome verdict, or a register entry, and warns on thin Implementation
-  Notes. Fix every ERROR before an ADR is considered done.
+  `pnpm wiki:adr:lint "<path>"` (one ADR) — it fails any ADR missing the DERBY sections, the
+  `**Base system:**` line, a weighed Alternative solution, a "Rejected because" reason per
+  alternative, or a register entry, and warns on a thin Proposed solution. (MADR-legacy ADRs
+  are checked against the old ruleset.) Fix every ERROR before an ADR is considered done.
 
 # Epic Grilling Logs
 
