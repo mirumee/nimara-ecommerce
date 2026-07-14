@@ -1,6 +1,6 @@
 ---
 name: llm-wiki
-description: Work with llm-wiki knowledge base using QMD-backed retrieval and source-file verification. Use when answering questions from llm-wiki, finding relevant notes, auditing wiki consistency, ingesting or filing durable knowledge back into llm-wiki, updating wiki conventions, or helping agents use the llm-wiki/sources/LLM Wiki.md pattern. Use for product strategy, QA process, ADR, persona, PRD, source, and wiki-maintenance questions that should cite or update llm-wiki.
+description: Work with llm-wiki knowledge base using QMD-backed retrieval and source-file verification. Use when answering questions from llm-wiki, finding relevant notes, auditing wiki consistency, ingesting or filing durable knowledge back into llm-wiki, updating wiki conventions, or helping agents use the llm-wiki/sources/LLM Wiki.md pattern. Use for product strategy, QA process, ADR, persona, epic, source, and wiki-maintenance questions that should cite or update llm-wiki. Also use for any Saleor GraphQL schema question — types, fields, enums, mutations, queries (e.g. Checkout, Order, Product, ProductVariant, Payment, Attribute, Shop, Channel) — because those answers live in version-stamped notes under llm-wiki/tech/saleor/ that must be checked for freshness with `pnpm wiki:saleor:check` before being cited.
 ---
 
 # LLM Wiki
@@ -63,7 +63,6 @@ node scripts/wiki-qmd.mjs query "question" --json --no-rerank -n 10
    QMD may normalize spaces in filenames, so prefer `docid` from search results.
 
 3. Read the relevant MOC when the topic is domain-specific:
-
    - Product strategy: `llm-wiki/product/strategy/Product Strategy 2026 (MOC).md`
    - QA/testing: `llm-wiki/quality/Quality & Testing (MOC).md`
    - ADRs: `llm-wiki/tech/ADR/ADR MOC.md`
@@ -71,6 +70,16 @@ node scripts/wiki-qmd.mjs query "question" --json --no-rerank -n 10
 4. Answer with specific file references. If the wiki does not contain the answer, say that plainly and name the gap.
 
 5. If the answer is durable knowledge, offer to file it back into the wiki. Do not edit sources under `llm-wiki/sources/` except to add a new immutable source document.
+
+## Saleor Schema Notes
+
+Notes under `llm-wiki/tech/saleor/` describe the Saleor GraphQL API and are **version-stamped**. Nimara does not pin a Saleor version — `pnpm codegen` fetches the schema live from `NEXT_PUBLIC_SALEOR_API_URL` into `packages/codegen/schema.ts`, so a note can drift from the schema the code actually uses.
+
+- **Before citing** any `tech/saleor/` note, run `pnpm wiki:saleor:check`. `OK` = the note matches the current schema; `STALE` = it was written against a different schema. On `STALE`, warn the user, verify the specifics against `packages/codegen/schema.ts`, and offer to update and restamp the note rather than citing it as-is.
+- **When authoring/updating** a Saleor note, follow `llm-wiki/_templates/saleor-schema-note.md` and stamp `saleor_schema_hash` with `pnpm wiki:saleor:hash`.
+- After `pnpm codegen` regenerates the schema (see the `codegen-check` skill), expect Saleor notes to go `STALE` — review them against the new schema, then restamp.
+
+Start from [Saleor Schema (MOC)](../../llm-wiki/tech/saleor/Saleor%20Schema%20%28MOC%29.md).
 
 ## Maintenance Workflow
 
