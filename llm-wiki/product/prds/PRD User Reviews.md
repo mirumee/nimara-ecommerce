@@ -1,9 +1,9 @@
 ---
-type: "Epic"
+type: "Product Requirements Document"
 title: "Verified User Reviews"
-description: "Epic hypothesis statement for a verified-purchase user reviews system in Nimara."
+description: "Product Requirements Document for a verified-purchase user reviews system in Nimara."
 tags:
-  - "epic"
+  - "prd"
   - "reviews"
   - "customer"
   - "conversion"
@@ -11,14 +11,14 @@ created: "2026-07-09T00:00:00+00:00"
 timestamp: "2026-07-09T00:00:00+00:00"
 status: "analyzing"
 owner: "Michał Ociepka"
-epic_type: "Business epic"
+prd_type: "business"
 ---
 
 ## Value Statement
 
 **For** [Customer](product/personas/Customer.md)
 **who** lack the social proof shoppers expect — no ratings on product pages costs conversion, organic visibility, and catalog quality feedback
-**the** Verified User Reviews epic
+**the** Verified User Reviews capability
 **is a** built-in verified-purchase review system
 **that** publishes trustworthy reviews from confirmed buyers
 **unlike** SaaS review services (Yotpo, Judge.me, Trustpilot) that cost a per-store subscription and integration work, or shipping no reviews at all

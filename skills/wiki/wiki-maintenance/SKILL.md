@@ -1,6 +1,6 @@
 ---
 name: wiki-maintenance
-description: Maintain the llm-wiki knowledge base — ingest a new source into interlinked notes, lint/audit the graph (orphans, dangling links, uncited claims, format drift), record an architecture decision as an ADR, or answer a question from the wiki and file the answer back so knowledge compounds. Use this skill whenever the user wants to add/ingest a document or research into the wiki, audit/lint/clean up the wiki, check for broken [[links]] or orphan notes, record/document an architecture decision (ADR), or ask a question that the wiki should answer (and save the answer). Follows the schema in llm-wiki/AGENTS.md. Do NOT use to write an epic (use epic-definition) or to run QA (use the skills/qa/* skills).
+description: Maintain the llm-wiki knowledge base — ingest a new source into interlinked notes, lint/audit the graph (orphans, dangling links, uncited claims, format drift), record an architecture decision as an ADR, or answer a question from the wiki and file the answer back so knowledge compounds. Use this skill whenever the user wants to add/ingest a document or research into the wiki, audit/lint/clean up the wiki, check for broken [[links]] or orphan notes, record/document an architecture decision (ADR), or ask a question that the wiki should answer (and save the answer). Follows the schema in llm-wiki/AGENTS.md. Do NOT use to write a PRD (use prd-author) or to run QA (use the skills/qa/* skills).
 ---
 
 # Wiki Maintenance
@@ -115,7 +115,7 @@ future readers will ask "why did we do it this way?" about.
 3. **FILL** the Nygard sections — `**Status**` (usually `Accepted`, or `Proposed` if still
    under review), then Context (value-neutral forces) → Decision ("We will …") →
    Consequences (positive *and* negative trade-offs). One decision per note.
-4. **LINK** back to the `solution/` or `epics/` note it supports, and add its `## Related Notes`.
+4. **LINK** back to the `solution/` or `prds/` note it supports, and add its `## Related Notes`.
 5. **REGISTER** it in `[[Decisions MOC]]`'s register (one line) in the same change.
 6. **Superseding, not editing.** To change a decided ADR, write a new one and set the old
    `**Status**` to `Superseded by [[ADR-NNNN …]]` — never rewrite an Accepted ADR in place.

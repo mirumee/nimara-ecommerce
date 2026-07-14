@@ -1,27 +1,27 @@
 ---
-name: epic-author
-description: Define and draft business epics inside an LLM-wiki product workspace. Use when the user wants to create, rewrite, refine, or stress-test an epic, initiative, feature brief, or epic hypothesis. Run a business-value-first, one-question-at-a-time grilling, preserve its decision log in the wiki, and stop at an approved epic without designing the technical solution, decomposing tasks, estimating, or exporting to Jira.
+name: prd-author
+description: Define and draft Product Requirements Documents (PRDs) inside an LLM-wiki product workspace. Use when the user wants to create, rewrite, refine, or stress-test a PRD or Product Requirements Document, or turn an initiative or feature brief into product requirements. Run a business-value-first, one-question-at-a-time grilling, preserve its decision log in the wiki, and stop at an approved PRD without designing the technical solution, decomposing tasks, estimating, or exporting to Jira.
 ---
 
-# Epic Author
+# PRD Author
 
-Turn an initiative or feature idea into an explicit, falsifiable business bet that a human approves before solution design and task breakdown begin.
+Turn an initiative or feature idea into an explicit, falsifiable Product Requirements Document that a human approves before solution design and task breakdown begin.
 
 Follow these six stages in order. The business grilling and self-lint are mandatory.
 
 ## Stage 1 — Pull context and facts
 
-Locate the wiki root containing `epics/`, `personas/`, and `strategy/`. Read:
+Locate the wiki root containing `prds/`, `personas/`, and `strategy/`. Read:
 
-- the current epic or seeding initiative;
+- the current PRD or seeding initiative;
 - every relevant persona;
 - market and strategy notes for the problem area;
 - raw sources named by the user;
-- related epics that could overlap.
+- related PRDs that could overlap.
 
 Use repository or source exploration to answer factual questions. Treat sources as evidence, never edit them, and separate what they prove from what is merely inferred. Never invent demand, attribution, metrics, competitor claims, targets, or constraints.
 
-Completion criterion: the known facts, evidence gaps, existing strategic position, and plausible overlap with other epics are identified before questioning the user.
+Completion criterion: the known facts, evidence gaps, existing strategic position, and plausible overlap with other PRDs are identified before questioning the user.
 
 ## Stage 2 — Run business grilling
 
@@ -35,15 +35,15 @@ Ask exactly one question per turn. Each question must:
 2. include a recommended answer and short rationale;
 3. wait for the user's answer before advancing.
 
-Keep the grilling at epic altitude: problem, evidence, target segment, business value, strategic role, outcomes, leading indicators, falsification, MVP learning, scope, rollout, ownership, and business constraints. Defer provider, API, package, schema, infrastructure, library, and architecture decisions to solution design unless a technical constraint changes the business bet itself.
+Keep the grilling at product-requirements level: problem, evidence, target segment, business value, strategic role, outcomes, leading indicators, falsification, MVP learning, scope, rollout, ownership, and business constraints. Defer provider, API, package, schema, infrastructure, library, and architecture decisions to solution design unless a technical constraint changes the business bet itself.
 
-If the user says a target does not matter, record that as an explicit decision rather than manufacturing precision. If the user stops the questions, summarize decisions and unresolved branches. Do not draft or edit the epic until the user confirms shared understanding; a new request to apply the summarized decisions after the grilling also counts as confirmation. The original request to "write an epic" does not bypass this gate.
+If the user says a target does not matter, record that as an explicit decision rather than manufacturing precision. If the user stops the questions, summarize decisions and unresolved branches. Do not draft or edit the PRD until the user confirms shared understanding; a new request to apply the summarized decisions after the grilling also counts as confirmation. The original request to "write a PRD" does not bypass this gate.
 
 Completion criterion: every branch in the business-grilling completion gate is answered, deliberately deferred with an owner and gate, or explicitly rejected by the user; the user has confirmed the shared understanding.
 
-## Stage 3 — Draft the epic
+## Stage 3 — Draft the PRD
 
-Read `references/epic-template.md` and `references/example-epic.md`. Follow the wiki's local schema and link convention.
+Read `references/prd-template.md` and `references/example-prd.md`. Follow the wiki's local schema and link convention.
 
 Draft in this order:
 
@@ -74,25 +74,25 @@ Completion criterion: every checklist item passes or is reported as an explicit,
 
 ## Stage 5 — Bookkeeping
 
-- Save as `epics/EPIC-NNN <Name>.md` using the next free ID, or preserve the ID when rewriting an existing epic.
+- Save as `prds/PRD-NNN <Name>.md` using the next free ID, or preserve the ID when rewriting an existing PRD.
 - Update the wiki index and log when present.
 - Add or update persona backlinks.
-- Update all inbound links when renaming an epic.
-- Create or update the epic's grilling log from `_templates/epic-grilling-log.md` after the shared understanding is confirmed. Store one log per epic at `product/epics/grilling/EPIC-NNN <Name> - Grilling Log.md`; append later sessions and continue the `G-*` sequence.
+- Update all inbound links when renaming a PRD.
+- Create or update the PRD's grilling log from `_templates/prd-grilling-log.md` after the shared understanding is confirmed. Store one log per PRD at `product/prds/grilling/PRD-NNN <Name> - Grilling Log.md`; append later sessions and continue the `G-*` sequence.
 - Record the user-visible decision trail, not hidden reasoning. Summarize confidential evidence without copying source bodies, secrets, personal data, or unnecessary verbatim conversation.
-- Link the epic and grilling log in both directions and register the log in the wiki index and root update log.
+- Link the PRD and grilling log in both directions and register the log in the wiki index and root update log.
 - Preserve sources and downstream task artifacts; report stale downstream artifacts instead of silently rewriting them.
 
-Completion criterion: the epic and grilling log are mutually linked and navigable from the wiki; every grilling decision is represented once; no changed link points to an old name.
+Completion criterion: the PRD and grilling log are mutually linked and navigable from the wiki; every grilling decision is represented once; no changed link points to an old name.
 
 ## Stage 6 — Gate
 
-New epics start as `draft`. A rewritten epic changes status only when the user explicitly approves the transition. Close with both file locations, passed checks, open decisions, stale downstream artifacts, and proposed next lifecycle step.
+New PRDs start as `draft`. A rewritten PRD changes status only when the user explicitly approves the transition. Close with both file locations, passed checks, open decisions, stale downstream artifacts, and proposed next lifecycle step.
 
 ## References
 
 - `references/business-grilling.md` — mandatory sequential business interview and completion gate.
-- `references/epic-template.md` — canonical epic structure.
+- `references/prd-template.md` — canonical PRD structure.
 - `references/quality-checklist.md` — Definition of Ready for review.
-- `references/example-epic.md` — business-first quality bar.
-- `_templates/epic-grilling-log.md` in the target wiki — canonical decision-log structure; do not duplicate it inside the skill.
+- `references/example-prd.md` — business-first quality bar.
+- `_templates/prd-grilling-log.md` in the target wiki — canonical decision-log structure; do not duplicate it inside the skill.

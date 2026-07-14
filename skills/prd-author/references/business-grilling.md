@@ -1,6 +1,6 @@
 # Business Grilling Protocol
 
-Use this protocol before drafting or rewriting an epic. Its purpose is to expose whether the proposed initiative is a real business bet, a weak assumption, or a solution looking for a problem.
+Use this protocol before drafting or rewriting a PRD. Its purpose is to expose whether the proposed initiative is a real business bet, a weak assumption, or a solution looking for a problem.
 
 ## Contents
 
@@ -18,7 +18,7 @@ Use this protocol before drafting or rewriting an epic. Its purpose is to expose
 - Look up discoverable facts before asking. Decisions belong to the user; facts do not.
 - Challenge vague claims until they have a population, evidence status, measure, and timeframe, or are explicitly rejected as irrelevant.
 - Treat "keep up with the market", "improve UX", "increase adoption", and "differentiate" as starting claims, not accepted value.
-- Keep technical solution branches parked for solution design. Record them; do not grill them during epic definition.
+- Keep technical solution branches parked for solution design. Record them; do not grill them during PRD definition.
 - Maintain a structured in-memory ledger for every question: `G-*` ID, branch, question, recommendation, answer, and decision. The ledger becomes the wiki grilling log only after shared understanding is confirmed.
 
 ## Decision tree
@@ -51,7 +51,7 @@ Avoid "users", "customers", or a persona that is broader than the evidence.
 
 ### 3. Strategic role and urgency
 
-Decide whether the epic is:
+Decide whether the PRD is:
 
 - market parity or table stakes;
 - a genuine differentiator;
@@ -103,7 +103,7 @@ Resolve one boundary at a time:
 - default behavior versus deployment-specific configuration;
 - primary journey start and end;
 - explicitly deferred experiences and operator workflows;
-- separate epics that must remain independent.
+- separate PRDs that must remain independent.
 
 Every exclusion needs a reason and destination.
 
@@ -144,7 +144,7 @@ The grilling is complete only when the shared understanding contains:
 
 - a specific target segment and primary persona;
 - a problem statement with evidence separated from assumptions;
-- the epic's strategic role and urgency;
+- the PRD's strategic role and urgency;
 - one primary business outcome and its value path;
 - quantified validation evidence or an explicitly accepted lack of a target;
 - leading indicators distinct from business outcomes;

@@ -1,9 +1,9 @@
 {
   "document": "Developer Task Breakdown",
-  "epic": {
+  "prd": {
     "name": "LLM Product Discovery",
     "projectKeyPlaceholder": "LPD",
-    "epicSummary": "AI-powered natural-language product discovery with classic search fallback — Saleor Cloud + Next.js/Vercel + AWS (eu-central-1)",
+    "prdSummary": "AI-powered natural-language product discovery with classic search fallback — Saleor Cloud + Next.js/Vercel + AWS (eu-central-1)",
     "reference": "technical-solution-llm-product-discovery.json v1.0"
   },
   "conventions": {

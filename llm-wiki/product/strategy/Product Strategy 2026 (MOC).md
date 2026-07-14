@@ -28,7 +28,7 @@ The core recommendation: prioritize an automated **"Zero-to-Deploy" setup CLI** 
 - [Emerging Trends 2026](product/market/Emerging%20Trends%202026.md) — agentic commerce, UCP/MCP, marketplaces, deploy-in-minutes DX
 - [Developer Pain Points](product/market/Developer%20Pain%20Points.md) — community feedback and competitor stability/security gaps
 
-### Prioritized roadmap (seed for epics)
+### Prioritized roadmap (seed for PRDs)
 - [Initiative Prioritization](product/strategy/initiatives/Initiative%20Prioritization.md) — the ranked scoring table
   1. [1 - Zero-to-Deploy CLI](product/strategy/initiatives/1%20-%20Zero-to-Deploy%20CLI.md) — *Now*
   2. [2 - Stripe Connect Split Payments](product/strategy/initiatives/2%20-%20Stripe%20Connect%20Split%20Payments.md) — *Now*

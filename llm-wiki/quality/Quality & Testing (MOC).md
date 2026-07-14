@@ -17,7 +17,7 @@ timestamp: "2026-06-30T00:00:00+00:00"
 ### What this section is for
 This is the QA brain for **agents working on Nimara**. Read it before touching a test or a Jira ticket so you don't rediscover the environment, the board mechanics, or the verdict rules the hard way. Knowledge lives in these notes; the executable runbooks live as skills under `skills/qa/`.
 
-> Pairing convention (same as the rest of this wiki): notes = read-context, **skills = runbooks** that cite them. The QA skills read these notes the way `epic-definition` reads `[Storefront Developer](product/personas/Storefront%20Developer.md)`.
+> Pairing convention (same as the rest of this wiki): notes = read-context, **skills = runbooks** that cite them. The QA skills read these notes the way `prd-author` reads `[Storefront Developer](product/personas/Storefront%20Developer.md)`.
 
 ### Read-me-first (the 80%)
 1. [Environments & Access Matrix](quality/Environments%20%26%20Access%20Matrix.md) — which env, which channel, what you can/can't reach. **Biggest source of wasted effort if skipped.**

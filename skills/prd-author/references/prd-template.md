@@ -1,25 +1,25 @@
 ---
-id: EPIC-000
-type: Epic
+id: PRD-000
+type: Product Requirements Document
 status: draft
 owner: ""
-epic_type: business
+prd_type: business
 personas:
   - ""
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 ---
 
-# Epic Name
+# PRD Name
 
 ## Value Hypothesis
 
-**For** <specific segment> **who** <business need or risk>, **the** <epic name> **is a** <solution category> **that** <business benefit>, **unlike** <current state or alternative>, **our solution** <primary business differentiation>.
+**For** <specific segment> **who** <business need or risk>, **the** <product or capability name> **is a** <solution category> **that** <business benefit>, **unlike** <current state or alternative>, **our solution** <primary business differentiation>.
 
 ## Evidence & Assumptions
 
 - E-1: evidence and what it proves or does not prove
-- A-1 `[ASSUMPTION]`: unproven claim the epic will test
+- A-1 `[ASSUMPTION]`: unproven claim the PRD will test
 
 ## Business Goal & Value
 
@@ -67,5 +67,5 @@ Describe the smallest learning slice, rollout, validation-clock start, negative 
 
 ## Related Notes
 
-[Epic Grilling Log](path/to/epic-grilling-log.md)
+[PRD Grilling Log](path/to/prd-grilling-log.md)
 [Seeding Strategy or Initiative](path/to/note.md)

@@ -1,24 +1,24 @@
 ---
 type: "Template"
-title: "Epic Template"
-description: "Reusable template for drafting OKF-compatible Nimara epic hypothesis statements."
+title: "PRD Template"
+description: "Reusable template for drafting OKF-compatible Nimara Product Requirements Documents."
 tags:
   - "template"
-  - "epic"
+  - "prd"
 created: "2026-07-09T00:00:00+00:00"
 timestamp: "2026-07-09T00:00:00+00:00"
-template_for: "Epic"
+template_for: "Product Requirements Document"
 ---
 
-# Epic Name
+# PRD Name
 
 ## Value Hypothesis
 
-**For** \<persona\> **who** \<need/pain\>, **the** \<epic name\> **is a** \<what it is\> **that** \<key benefit\>, **unlike** \<current alternative\>, **our solution** \<differentiator\>.
+**For** \<persona\> **who** \<need/pain\>, **the** \<product or capability name\> **is a** \<what it is\> **that** \<key benefit\>, **unlike** \<current alternative\>, **our solution** \<differentiator\>.
 
 ## Business Goal & Value
 
-Why this epic exists and what business value it returns. Prose, 1–2 paragraphs.
+Why this PRD exists and what business value it returns. Prose, 1–2 paragraphs.
 
 ## Success Metrics
 
@@ -34,7 +34,7 @@ The smallest slice that tests the hypothesis, and the evidence that would make u
 
 ## Out of Scope
 
-- deferred item — why, and where it goes (fast-follow / separate epic)
+- deferred item — why, and where it goes (fast-follow / separate PRD)
 
 ## User Stories
 

@@ -1,6 +1,6 @@
-# Epic Quality Checklist
+# PRD Quality Checklist
 
-Run every check before presenting or filing the epic. Fix issues that require no decision; report the rest as owned Open Questions.
+Run every check before presenting or filing the PRD. Fix issues that require no decision; report the rest as owned Open Questions.
 
 ## Business grilling gate
 
@@ -12,7 +12,7 @@ Run every check before presenting or filing the epic. Fix issues that require no
 
 ## Identity and audience
 
-- [ ] `id` is a unique `EPIC-NNN`; status, owner, epic type, personas, and dates are filled.
+- [ ] `id` is a unique `PRD-NNN`; status, owner, PRD type, personas, and dates are filled.
 - [ ] The name describes the value or problem space and survives a change in implementation.
 - [ ] The primary segment is specific; adopter/buyer value is distinguished from end-user experience value.
 - [ ] Persona references follow the wiki's local link convention and resolve.
@@ -22,7 +22,7 @@ Run every check before presenting or filing the epic. Fix issues that require no
 - [ ] Evidence states what it proves and does not overclaim attribution.
 - [ ] Every unproven value claim is labeled `[ASSUMPTION]`.
 - [ ] The seven-part value hypothesis is complete.
-- [ ] The epic's strategic role is explicit: parity, differentiation, risk, revenue, retention, adoption, or cost.
+- [ ] The PRD's strategic role is explicit: parity, differentiation, risk, revenue, retention, adoption, or cost.
 - [ ] The value path reaches a business outcome rather than stopping at activity, output, or UX.
 
 ## Measurement and falsification
@@ -39,7 +39,7 @@ Run every check before presenting or filing the epic. Fix issues that require no
 - [ ] Appetite is recorded when the user considers it relevant; otherwise its exclusion is explicit.
 - [ ] Every scope item has an `S-*` ID and stays at capability/behavior level.
 - [ ] Every out-of-scope item says why it is deferred and where it belongs.
-- [ ] Scope does not duplicate or contradict another epic.
+- [ ] Scope does not duplicate or contradict another PRD.
 - [ ] Provider, API, schema, package, infrastructure, library, and hosting decisions remain in solution design.
 
 ## Stories and criteria
@@ -54,6 +54,6 @@ Run every check before presenting or filing the epic. Fix issues that require no
 - [ ] Every risk threatens the hypothesis and has a mitigation or explicit acceptance.
 - [ ] Every open question has an owner and a `before <stage>` gate.
 - [ ] Filename, index, log, Related Notes, persona backlinks, and renamed inbound links are current.
-- [ ] The epic grilling log was created or appended from the wiki template, continues stable `G-*` IDs, and links to the epic in both directions.
+- [ ] The PRD grilling log was created or appended from the wiki template, continues stable `G-*` IDs, and links to the PRD in both directions.
 - [ ] The grilling log contains user-visible decisions only; confidential sources, secrets, personal data, and hidden reasoning were not copied.
 - [ ] Sources were preserved and stale downstream artifacts were reported rather than silently rewritten.

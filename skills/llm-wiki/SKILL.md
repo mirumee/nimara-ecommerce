@@ -1,6 +1,6 @@
 ---
 name: llm-wiki
-description: Work with llm-wiki knowledge base using QMD-backed retrieval and source-file verification. Use when answering questions from llm-wiki, finding relevant notes, auditing wiki consistency, ingesting or filing durable knowledge back into llm-wiki, updating wiki conventions, or helping agents use the llm-wiki/sources/LLM Wiki.md pattern. Use for product strategy, QA process, ADR, persona, epic, source, and wiki-maintenance questions that should cite or update llm-wiki.
+description: Work with llm-wiki knowledge base using QMD-backed retrieval and source-file verification. Use when answering questions from llm-wiki, finding relevant notes, auditing wiki consistency, ingesting or filing durable knowledge back into llm-wiki, updating wiki conventions, or helping agents use the llm-wiki/sources/LLM Wiki.md pattern. Use for product strategy, QA process, ADR, persona, PRD, source, and wiki-maintenance questions that should cite or update llm-wiki.
 ---
 
 # LLM Wiki
@@ -84,7 +84,7 @@ For lint, ingest, ADR, or answer-and-file-back work, also read `skills/wiki/wiki
 ## Useful Probes
 
 ```bash
-pnpm wiki:qmd:query "what contradicts the user reviews epic?" -- --json --no-rerank -n 10
+pnpm wiki:qmd:query "what contradicts the user reviews PRD?" -- --json --no-rerank -n 10
 pnpm wiki:qmd:search "moderation" -- --json -n 5
 pnpm wiki:qmd:query "where does LLM Wiki discuss index.md?" -- --json --no-rerank -n 5
 pnpm wiki:qmd:ls

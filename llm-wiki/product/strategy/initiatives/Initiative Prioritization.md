@@ -23,10 +23,10 @@ Scores are 1–5 (higher = stronger), except Effort/Risk where higher = more eff
 | [4 - Auto-Invoicing & Regional Tax](product/strategy/initiatives/4%20-%20Auto-Invoicing%20%26%20Regional%20Tax.md) | [Ecommerce Manager](product/personas/Ecommerce%20Manager.md) | 3 | 3 | 4 | 2 (Low) | **Next** |
 | [5 - Provider-Agnostic Interface](product/strategy/initiatives/5%20-%20Provider-Agnostic%20Interface.md) | [Storefront Developer](product/personas/Storefront%20Developer.md) | 3 | 4 | 3 | 4 (High) | **Later** |
 
-### How to use this for epics
-- Each row links to a full initiative note containing Outcome, rationale, success criteria, in/out of scope, and risks — ready to seed an epic.
+### How to use this for PRDs
+- Each row links to a full initiative note containing Outcome, rationale, success criteria, in/out of scope, and risks — ready to seed a PRD.
 - "Now" tier = the two bets to staff immediately; "Next"/"Later" = sequence behind them.
-- Pair this with the epic template conventions when drafting epics.
+- Pair this with the PRD template conventions when drafting PRDs.
 
 ## Related Notes
 [1 - Zero-to-Deploy CLI](product/strategy/initiatives/1%20-%20Zero-to-Deploy%20CLI.md)
