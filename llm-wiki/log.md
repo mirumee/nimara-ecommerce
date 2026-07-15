@@ -6,6 +6,7 @@
 
 ## 2026-07-14
 
+- **RFC**: Added [RFC-0001 Natural-Language Product Discovery](tech/RFC/RFC-0001%20Natural-Language%20Product%20Discovery.md) (`status: Draft`) — an opt-in, provider-agnostic NL discovery layer that composes the existing `SearchService` with a separate swappable `LLMProvider` boundary; hybrid LLM query-plan + grounded re-rank grounded in the real catalog; reference adapter AWS Bedrock (Llama 4 Scout), swappable. Registered it in the [RFC MOC](tech/RFC/RFC%20MOC.md) and `index.md`, and cross-linked it with [PRD-001](prd/PRD-001%20Natural-Language%20Product%20Discovery.md) in both directions. Resolving ADR pending.
 - **PRD terminology**: Standardized the product-document model as PRD (Product Requirements Document), including `PRD-*` identifiers, `product/prds/` paths, templates, grilling logs, links, and authoring skills.
 - **Structure**: Added `tech/saleor/` with [Saleor Schema (MOC)](tech/saleor/Saleor%20Schema%20%28MOC%29.md) and six curated, version-stamped notes (Products & Variants, Checkout & Payments, Orders & Fulfillment, Account & Auth, Shop/Channels/Warehouses, Attributes & Metadata). Registered them in `index.md` and documented the `Saleor Schema Note` type in `AGENTS.md`.
 - **Tooling**: Notes carry a `saleor_schema_hash` stamp (short sha256 of `packages/codegen/schema.ts`, the de-facto Saleor version pin). Added `pnpm wiki:saleor:hash` / `pnpm wiki:saleor:check` (`scripts/wiki-saleor-check.mjs`) and a freshness rule in the `llm-wiki` skill: verify before citing, restamp after `pnpm codegen`.

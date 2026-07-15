@@ -82,6 +82,7 @@ okf_version: "0.1"
 # Technology RFC
 
 - [RFC MOC](tech/RFC/RFC%20MOC.md) - Map of content and register for RFC design proposals that precede an accepting or rejecting ADR.
+- [RFC-0001 Natural-Language Product Discovery](tech/RFC/RFC-0001%20Natural-Language%20Product%20Discovery.md) - Draft proposal for an opt-in, provider-agnostic NL discovery layer over SearchService (hybrid query-plan + grounded re-rank); serves PRD-001.
 
 # Technology Saleor Schema
 
