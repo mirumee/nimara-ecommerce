@@ -1,7 +1,7 @@
 ---
 type: "Template"
 title: "ADR"
-description: "One sentence — the decision and its status (e.g. \"Use RAG over fine-tuning for product discovery — Accepted\")."
+description: 'One sentence — the decision and its status (e.g. "Use RAG over fine-tuning for product discovery — Accepted").'
 tags:
   - "adr"
   - "topic"
@@ -29,7 +29,7 @@ why the codebase looks the way it does.
 
 ## Related Notes
 
-[ADR MOC](tech/ADR/ADR%20MOC.md)
-[RFC MOC](tech/RFC/RFC%20MOC.md)
+[ADR MOC](../tech/ADR/ADR%20MOC.md)
+[RFC MOC](../tech/RFC/RFC%20MOC.md)
 Link the RFC proposal(s) this decision resolves — the accepted design and any rejected alternatives.
 Replace this line with the PRD it belongs to, e.g. [PRD Name](product/prds/PRD%20Name.md).

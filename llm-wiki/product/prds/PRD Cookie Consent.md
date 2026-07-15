@@ -8,15 +8,30 @@ tags:
   - "gtm"
   - "compliance"
 created: "2026-07-08T00:00:00+00:00"
-timestamp: "2026-07-08T00:00:00+00:00"
+timestamp: "2026-07-15T11:10:59+02:00"
 status: "analyzing"
 owner: "Michał Ociepka"
 prd_type: "business"
+knowledge_status: "mixed"
+implementation_status: "partial"
+direction_status: "planned"
+verified_at: "2026-07-15T09:50:07+00:00"
+code_branch: "main"
+code_commit: "e32732ea85f7e6cfb807b462c7bbc47e6f569603"
+scope_paths:
+  - "apps/storefront/src/foundation/cookie-consent"
+  - "apps/storefront/src/foundation/consent"
+  - "apps/storefront/src/foundation/google-tag-manager"
+  - "packages/infrastructure/src/tracking"
 ---
+
+> **Evidence status:** this PRD remains directional and its broader tracking/consent strategy is
+> still being refined. Recorded `main` already contains a functional consent surface and Consent
+> Mode v2 wiring, but that does not prove every requirement below is complete.
 
 ## Value Statement
 
-**For** [Ecommerce Manager](product/personas/Ecommerce%20Manager.md) running Nimara stores in consent-regulated markets (EEA/UK)
+**For** [Ecommerce Manager](../personas/Ecommerce%20Manager.md) running Nimara stores in consent-regulated markets (EEA/UK)
 **who** must run GTM tracking legally (GDPR/ePrivacy) and keep Google Ads signal alive under Consent Mode v2
 **the** Cookie Consent capability
 **is a** built-in consent management layer (banner + Consent Mode v2 wiring) in the Nimara storefront
@@ -29,6 +44,14 @@ prd_type: "business"
 - Avoided SaaS CMP cost per store: ~€40–150/mo license + integration effort
 - Compliance: zero tracking cookies set before consent in opt-in mode, verified by cookie scanner; 100% of GTM tags fire only per consent state
 - EEA remarketing + conversion modeling preserved via v2 signals (`ad_user_data`, `ad_personalization`) — versus signal loss with no/v1 consent
+
+## Current Implementation Evidence
+
+The storefront currently includes a cookie banner, settings UI, consent cookie/server actions,
+Google Consent Mode v2 default and update handling, optional GTM loading, and consent-gated
+tracking. The PRD still says `analyzing`, the broader direction is `planned`, and no runtime
+evidence proves legal or acceptance completion. See
+[Tracking Consent And Observability](../../system/capabilities/Tracking%20Consent%20And%20Observability.md).
 
 ## MVP
 

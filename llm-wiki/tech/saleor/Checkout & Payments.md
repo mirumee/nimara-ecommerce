@@ -38,7 +38,7 @@ which produces an `Order`.
 **Transactions API** (`TransactionItem`, created/updated via `transactionInitialize`,
 `transactionProcess`, and app webhooks). `Checkout.authorizeStatus`/`chargeStatus` summarize
 transaction state (`NONE` / `PARTIAL` / `FULL`). Prefer transactions for new work; see
-[Orders & Fulfillment](tech/saleor/Orders%20%26%20Fulfillment.md) for the post-completion view.
+[Orders & Fulfillment](./Orders%20%26%20Fulfillment.md) for the post-completion view.
 
 **Nimara usage**
 
@@ -48,6 +48,6 @@ wiring in `payment/saleor/`. The marketplace app extends this with Stripe Connec
 
 ## Related Notes
 
-[Saleor Schema (MOC)](tech/saleor/Saleor%20Schema%20%28MOC%29.md)
-[Orders & Fulfillment](tech/saleor/Orders%20%26%20Fulfillment.md)
-[Account & Auth](tech/saleor/Account%20%26%20Auth.md)
+[Saleor Schema (MOC)](./Saleor%20Schema%20%28MOC%29.md)
+[Orders & Fulfillment](./Orders%20%26%20Fulfillment.md)
+[Account & Auth](./Account%20%26%20Auth.md)

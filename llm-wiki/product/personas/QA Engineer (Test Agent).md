@@ -1,7 +1,7 @@
 ---
 type: "Persona"
 title: "QA Engineer (Test Agent)"
-description: "The QA persona this wiki serves — a human or autonomous agent that verifies behaviour on evidence, retests reported defects on a live shared board, and never fabricates or forces a result."
+description: "A human or autonomous QA persona that verifies behaviour from evidence, handles uncertain results explicitly, and never fabricates or forces a conclusion."
 tags:
   - "persona"
   - "qa"
@@ -9,36 +9,44 @@ tags:
   - "testing"
 created: "2026-06-30T00:00:00+00:00"
 timestamp: "2026-06-30T00:00:00+00:00"
+knowledge_status: "reference"
+source_status: "research_derived"
 ---
 
 ## Content
 
 ### Goals
-- Give every reported defect a **defensible, evidence-backed verdict** (still reproduces → Open, or fixed → Done) — fast, and without re-discovering the environment or board mechanics each time.
-- Keep the board honest and the audit trail complete (`qa/triage/` plans, evidence, ledgers).
+
+- Give every reported defect a **defensible, evidence-backed verdict** without rediscovering the environment or test method each time.
+- Keep the verification trail complete through reproducible steps, observations, artifacts, and environment context.
 - Surface systemic issues as classes, and hand backend-only work to developers cleanly.
 
 ### Pain points (what slows this persona)
-- **Access friction**: backends (Saleor/ERP), SSO-gated docs, and missing test credentials block ~⅓ of tickets; round-trips for access dominate the cost.
-- **Hidden board mechanics**: column↔status mapping, transition IDs, required custom fields, ADF-comment and mention quirks — easy to get wrong without the [Jira & Board 74 Operating Manual](quality/Jira%20%26%20Board%2074%20Operating%20Manual.md).
+
+- **Access friction**: Saleor, ERP, SSO-gated documentation, and missing test credentials can block verification; round-trips for access dominate the cost.
+- **Missing context**: environment, channel, build, fixture, and expected backend state must be explicit before verification starts.
 - **Flaky/timing/backend defects** where a single observation isn't conclusive.
-- **Serial work**: most retests are independent and would parallelise, but board writes need coordination.
+- **Serial work**: many independent checks can run in parallel, but shared environments and mutable fixtures require coordination.
 
 ### Behaviour patterns
-- Reads the [Environments & Access Matrix](quality/Environments%20%26%20Access%20Matrix.md) and [Jira & Board 74 Operating Manual](quality/Jira%20%26%20Board%2074%20Operating%20Manual.md) before acting.
-- **Claims a ticket only after the prereq check passes**; ASKs (and batches asks) when blocked rather than guessing.
-- Picks the **cheapest reliable method per bug class** ([Test Method Playbooks](quality/Test%20Method%20Playbooks.md)); runs a **control** for ambiguous results.
-- Comments factually, no AI/automation references; logs every action.
+
+- Reads the [Environments & Access Matrix](../../quality/Environments%20%26%20Access%20Matrix.md) and [Verdict & Evidence Policy](../../quality/Verdict%20%26%20Evidence%20Policy.md) before acting.
+- Begins verification only after prerequisites pass; batches requests for missing input instead of guessing.
+- Picks the **cheapest reliable method per bug class** ([Test Method Playbooks](../../quality/Test%20Method%20Playbooks.md)); runs a **control** for ambiguous results.
+- Records factual results with the method, environment, observations, and evidence.
 
 ### Key quote
-> "I don't close a ticket because I couldn't make it fail — I close it because I have evidence the fix holds."
+
+> "I don't call it fixed because I couldn't make it fail — I call it fixed when the evidence shows the fix holds."
 
 ### Product implications
-- Invest in machine-deterministic QA context (env URLs, transition IDs, field IDs, channel prefixes) so agents — and an orchestrator fanning out workers — don't re-learn them.
-- Make backend signals observable to QA (a read-only Saleor/GraphQL token, a working ERP/stage) to unblock the backend-only tickets.
-- Treat `qa/triage/` + this `qa/` wiki + the `skills/qa/*` runbooks as the QA system of record.
+
+- Invest in deterministic QA context: environment URLs, channel identifiers, build versions, fixtures, and expected states.
+- Make backend signals observable to QA through safe read-only Saleor/GraphQL access and working ERP/stage environments.
+- Treat this wiki and maintained test runbooks as the durable source of QA knowledge; keep individual execution artifacts transient.
 
 ## Related Notes
-[Storefront Developer](product/personas/Storefront%20Developer.md)
-[Ecommerce Manager](product/personas/Ecommerce%20Manager.md)
-[Quality & Testing (MOC)](quality/Quality%20%26%20Testing%20%28MOC%29.md)
+
+[Storefront Developer](./Storefront%20Developer.md)
+[Ecommerce Manager](./Ecommerce%20Manager.md)
+[Quality & Testing (MOC)](../../quality/Quality%20%26%20Testing%20%28MOC%29.md)

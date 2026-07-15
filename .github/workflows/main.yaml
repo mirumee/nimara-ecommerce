@@ -96,6 +96,11 @@ jobs:
             done
           fi
 
+      - name: Check Nimara Wiki
+        run: |
+          pnpm wiki:check
+          pnpm wiki:saleor:check
+
       - name: Run Prettier Check
         run: pnpm format:check
 

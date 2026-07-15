@@ -1,135 +1,108 @@
 ---
 name: wiki-maintenance
-description: Maintain the llm-wiki knowledge base — ingest a new source into interlinked notes, lint/audit the graph (orphans, dangling links, uncited claims, format drift), record an architecture decision as an ADR, or answer a question from the wiki and file the answer back so knowledge compounds. Use this skill whenever the user wants to add/ingest a document or research into the wiki, audit/lint/clean up the wiki, check for broken [[links]] or orphan notes, record/document an architecture decision (ADR), or ask a question that the wiki should answer (and save the answer). Follows the schema in llm-wiki/AGENTS.md. Do NOT use to write a PRD (use prd-author) or to run QA (use the skills/qa/* skills).
+description: Maintain the Nimara llm-wiki knowledge base: ingest sources, audit links and provenance, record ADRs, or answer and file durable knowledge back into the encyclopedia. Use for llm-wiki ingest, lint, cleanup, freshness, source reconciliation, ADR work, and durable answers. Do not use to author PRDs or execute QA runs.
 ---
 
 # Wiki Maintenance
 
-Keep `llm-wiki/` coherent and compounding. This skill is the executable runbook for the
-schema in `llm-wiki/AGENTS.md` — read that first; it defines the folder layout, the note
-format, naming/linking, and the scoped citation rules this skill enforces.
+Maintain `llm-wiki/` as the current, evidence-backed encyclopedia of Nimara. Read
+`llm-wiki/AGENTS.md` completely before acting; it is the schema and overrides examples here.
+QMD discovers candidate notes, while Markdown and cited sources determine the verdict.
 
-Three modes. Pick by what the user asked.
+## Operating Principles
 
-## Operating principles
+1. **Schema is law.** Use OKF frontmatter and document-relative Markdown links. Never create
+   Obsidian wikilinks.
+2. **Evidence is typed.** Code on `main` proves implementation; product knowledge describes
+   direction; PRDs/ADRs prove expected behavior and rationale; runtime evidence proves
+   deployment. Do not let one evidence type impersonate another.
+3. **Preserve conflicts.** When direction and code differ, record both on the relevant
+   application or capability page under `Current implementation`, `Direction and gaps`, and
+   `Evidence`.
+4. **Keep the graph navigable.** Every new concept is registered in the root `index.md`, its
+   domain MOC, and `log.md` in the same change.
+5. **No delivery-history encyclopedias.** Operational trackers are temporary analysis inputs. Create a
+   note only for a durable concept, decision, or major cross-cutting discrepancy. Never create a
+   `delivery/` directory or persist source-specific work-item identifiers.
+6. **Protect operational inputs.** Never archive tracker exports in the wiki. After synthesis,
+   delete the input and retain only source-neutral knowledge without comments, worklogs,
+   attachments, personal data, secrets, or confidential text.
+7. **Decisions are ADRs.** Significant, hard-to-reverse technical decisions live in
+   `tech/ADR/` and are not buried in prose.
+8. **Never fabricate.** Mark uncertain claims `unknown` and state the missing evidence.
 
-1. **Schema is law.** Every note you create or edit matches the format in
-   `llm-wiki/AGENTS.md` (Summary + Tags + Created/Last Updated → Content → Related Notes),
-   Title-Case filenames, `[[Title]]` wikilinks.
-2. **Provenance scoped by kind.** Research notes (`market/`, `references/`) need hard
-   citations to `references/Works Cited.md`; operational notes (`qa/`, `personas/`,
-   `strategy/`) use soft provenance + `[ASSUMPTION]` tags. Never state AI-generated
-   research as verified fact.
-3. **Keep the graph navigable.** Every new note lands in a domain **MOC** and carries a
-   `## Related Notes` block. Update the MOC in the same change.
-4. **Discuss before writing.** Especially on ingest — surface takeaways and the proposed
-   note set to the user before creating files. A single source may touch many notes.
-5. **Never fabricate.** Missing source, ambiguous claim, or no home folder → ASK.
-6. **Decisions are ADRs.** A significant, hard-to-reverse technical decision is never left
-   inline in prose — it becomes an ADR in `tech/ADR` from `_templates/ADR.md` (see the
-   ADR mode below).
-7. **Three layers, and keep the bookkeeping current.** Raw inputs live immutably in
-   `sources/`; the notes are the wiki; `AGENTS.md` is the schema. Every mode ends by updating
-   the two bookkeeping files: `index.md` (the global catalogue) when notes change, and
-   `log.md` (append one line per operation, format `## [YYYY-MM-DD] <mode> | Title`).
-8. **Use QMD for discovery when available.** The repo exposes `pnpm wiki:qmd:*` wrappers for
-   local markdown retrieval. QMD is rebuilt from files and is not source-of-truth state; use it
-   to find candidate notes, then read the actual markdown files before answering or editing.
+## Mode: INGEST
 
----
+Use for a new report, operational export, or other source.
 
-## Mode: INGEST — turn a source into notes
+1. Read the complete source and inspect its scope before synthesis.
+2. Archive only durable sources that are independently useful and safe for Git. Operational
+   tracker exports remain temporary and are deleted after analysis; do not create manifests for
+   them inside the wiki.
+3. Propose the affected concepts before broad changes. Prefer updating applications and
+   capabilities over creating source-shaped pages.
+4. Write or update concepts using the schema and evidence fields in `llm-wiki/AGENTS.md`.
+5. Add document-relative links, update the relevant MOCs and root index, and append a dated
+   entry to `log.md`.
+6. Run `pnpm wiki:check`, then `pnpm wiki:qmd:rebuild` after Markdown changes.
 
-Use when the user gives you a document, research dump, or URL to fold into the wiki.
+## Mode: CODEBASE REFRESH
 
-1. **READ** the full source. Don't skim. If the source can be stored locally (a report, a
-   clipped article, a transcript), **archive it verbatim under `sources/`** as an immutable
-   note *before* summarising — the notes you write synthesise from this raw copy.
-2. **DISCUSS** key takeaways with the user and propose the note set (which existing notes
-   get updated, which new ones get created, which folder each belongs to) *before* writing.
-3. **WRITE / UPDATE notes** per the schema:
-   - A per-source summary note when the source is external research → goes in `market/`
-     or `references/` with hard citations `(source: …)`.
-   - Concept/entity notes for each major idea → the folder matching its kind.
-   - Bump `**Last Updated**`; add `**Created**` on new notes.
-4. **LINK** — add `[[wikilinks]]` inline where concepts connect, and fill each note's
-   `## Related Notes`. Stub links to not-yet-written notes are fine.
-5. **UPDATE the MOC** for each domain touched (add the note + a one-line description).
-6. **UPDATE `index.md`** — add every new note (and fix renamed/removed ones) with a one-line
-   summary under its domain heading; if you archived a source, list it under `sources/` too.
-7. **LOG** — append one line to `log.md`: `## [YYYY-MM-DD] ingest | <source title>`.
-8. **REPORT** what changed: notes created/updated, sources archived, links added, any stubs
-   left, any claim you couldn't source (flag as needs-verification).
+Use when the Nimara current-state pages must follow a newer `main`.
 
-## Mode: LINT — audit the graph
+1. Record the local `main` SHA, commit date, and verification time in a new immutable manifest
+   under `llm-wiki/sources/codebase/`.
+2. Inspect routes, service registries, provider manifests, schemas/migrations, app/package
+   manifests, tests, and CI at that exact commit. File presence without wiring is
+   `implemented_unwired`, not `wired`.
+3. Update affected application, capability, architecture, and integration pages. Refresh
+   `verified_at`, `code_commit`, and `scope_paths` only after reading the cited paths.
+4. Preserve current product direction separately. A code refresh must not silently change
+   direction claims.
+5. Update MOCs, root index, and log; run `pnpm wiki:check` and rebuild QMD.
 
-Use when the user asks to lint, audit, or clean up the wiki. Report findings as a
-numbered list with a suggested fix per item; **don't auto-edit unless asked.**
+## Mode: LINT
 
-Check, across `llm-wiki/**`:
+Use for audits and cleanup. Report before editing unless the user explicitly asked for fixes.
 
-1. **Dangling links** — `[[targets]]` with no matching note file. (This is how the missing
-   `initiatives/1..5` notes surface.)
-2. **Orphans** — notes with no inbound `[[link]]` from any other note or MOC.
-3. **Missing concept pages** — entities/ideas referenced repeatedly across notes that lack
-   their own note.
-4. **Format drift** — notes missing `**Summary**`, `**Tags**`, `**Last Updated**`, the
-   `---` separator, or a `## Related Notes` block; filenames not matching their title.
-5. **Uncited claims** — in `market/`/`references/`, factual claims (stats, CVEs, sizes) with
-   no `(source: …)` and no entry in `references/Works Cited.md`; anywhere, a strong claim
-   with neither source nor `[ASSUMPTION]`.
-6. **MOC & index coverage** — notes not indexed by any MOC or missing from `index.md`; MOC
-   or `index.md` entries pointing at deleted/renamed notes.
-7. **Source integrity** — notes in `sources/` that were edited after archiving (they must be
-   immutable); citations in research notes with no matching `sources/` copy or Works Cited entry.
-8. **Stale-vs-source** — claims contradicted by a newer ingested source (flag, don't guess).
+Check:
 
-Method: prefer `grep`/`Glob` for links, headings, and filenames — deterministic, no flake.
+- parseable frontmatter and required `type`;
+- document-relative local links and dangling targets;
+- root-index and MOC coverage;
+- current-state evidence fields and valid `scope_paths` at the recorded commit;
+- operational tracker exports or source-specific work-item identifiers persisted in the wiki;
+- stale code stamps compared with local `main`;
+- source integrity, uncited research claims, and contradictory newer evidence;
+- concepts repeatedly referenced but not represented by a page.
 
-After reporting, **LOG** the pass: append `## [YYYY-MM-DD] lint | <scope>` to `log.md`.
+QMD is not a linter. Use deterministic file and Git checks. Log a lint operation only when the
+wiki files themselves are changed or the user explicitly requests a durable audit record.
 
-## Mode: ANSWER-AND-FILE-BACK — answer, then compound
+## Mode: ANSWER AND FILE BACK
 
-Use when the user asks a question the wiki should cover.
+1. Run `pnpm wiki:qmd:query "<question>" -- --json --no-rerank -n 10` and read the relevant
+   MOC plus the full Markdown candidates.
+2. Verify current-state claims against their evidence stamps. Recheck `main` when freshness is
+   uncertain.
+3. Answer with specific wiki references and name gaps plainly.
+4. If the answer is durable, update the smallest relevant application, capability, architecture,
+   or integration concept. Update indexes and the log, run `pnpm wiki:check`, then rebuild QMD.
 
-1. **DISCOVER candidate notes** with QMD when available, then fall back to `index.md`. Use:
-   `pnpm wiki:qmd:query "<question>" -- --json -n 10`. Then read the relevant MOC
-   (`strategy/…(MOC)` or `qa/…(MOC)`) and the actual markdown notes before answering.
-2. **SYNTHESISE** an answer, **citing the specific notes** you drew from (`[[Note]]`).
-3. **If the wiki doesn't cover it, say so plainly** — don't invent.
-4. **OFFER TO FILE IT BACK** — if the answer is durable and reusable, propose saving it as
-   a new note (or extending an existing one) so the next reader gets it for free. On yes,
-   switch to INGEST mode for that answer (which updates `index.md` and `log.md`).
-5. **LOG** — append `## [YYYY-MM-DD] query | <question>` to `log.md`.
+## Mode: ADR
 
-## Mode: ADR — record an architecture decision
-
-Use when the user makes (or asks you to document) a significant, hard-to-reverse technical
-decision: choice of framework/datastore/protocol, a cross-cutting pattern, a trade-off that
-future readers will ask "why did we do it this way?" about.
-
-1. **CONFIRM it's ADR-worthy.** Trivial or easily-reversed choices don't need one. If in
-   doubt, ask. Capturing the *decision*, not routine implementation detail.
-2. **COPY `_templates/ADR.md`** into `decisions/` as `ADR-NNNN <Title>.md` — next unused
-   zero-padded number (check `[[Decisions MOC]]` for the highest so far), Title Case.
-3. **FILL** the Nygard sections — `**Status**` (usually `Accepted`, or `Proposed` if still
-   under review), then Context (value-neutral forces) → Decision ("We will …") →
-   Consequences (positive *and* negative trade-offs). One decision per note.
-4. **LINK** back to the `solution/` or `prds/` note it supports, and add its `## Related Notes`.
-5. **REGISTER** it in `[[Decisions MOC]]`'s register (one line) in the same change.
-6. **Superseding, not editing.** To change a decided ADR, write a new one and set the old
-   `**Status**` to `Superseded by [[ADR-NNNN …]]` — never rewrite an Accepted ADR in place.
-7. **UPDATE `index.md`** (add the ADR under `decisions/`) and **LOG** — append
-   `## [YYYY-MM-DD] adr | ADR-NNNN <Title>` to `log.md`.
-
----
+1. Confirm the choice is significant and hard to reverse.
+2. Copy `_templates/ADR.md` to `tech/ADR/ADR-NNNN Title.md` using the next unused number.
+3. Fill status, context, decision, and positive/negative consequences. One decision per note.
+4. Link the relevant RFC, PRD, capability, or architecture concept in both directions.
+5. Register it in `tech/ADR/ADR MOC.md`, root `index.md`, and `log.md`.
+6. Supersede accepted ADRs with a new ADR rather than rewriting their decision.
+7. Run `pnpm wiki:check` and rebuild QMD.
 
 ## References
-- `llm-wiki/AGENTS.md` — the schema this skill enforces.
-- `llm-wiki/index.md` — fallback global content catalogue; update on every ingest.
-- `llm-wiki/log.md` — append-only operation log (one line per mode run).
-- `llm-wiki/sources/` — raw, immutable source documents the notes synthesise from.
-- `llm-wiki/sources/LLM Wiki.md` — upstream LLM-wiki pattern that motivates the local schema.
-- `llm-wiki/_templates/ADR.md` · `[[Decisions MOC]]` — the ADR template and its register.
-- `[[Product Strategy 2026 (MOC)]]` · `[[Quality & Testing (MOC)]]` — the domain indexes.
-- `[[Works Cited]]` — provenance record for research claims.
+
+- `llm-wiki/AGENTS.md` - canonical schema and evidence model.
+- `llm-wiki/index.md` - exhaustive catalogue.
+- `llm-wiki/log.md` - chronological update history.
+- `llm-wiki/system/` - current Nimara encyclopedia.
+- `llm-wiki/sources/` - immutable, safe-to-commit source manifests.

@@ -52,6 +52,6 @@ The smallest slice that tests the hypothesis, and the evidence that would make u
 
 - Q-1: question — owner — must be answered before \<stage\>
 
-
 ## Related Notes
-[Initiative Prioritization](product/strategy/initiatives/Initiative%20Prioritization.md)
+
+[Initiative Prioritization](../product/strategy/initiatives/Initiative%20Prioritization.md)

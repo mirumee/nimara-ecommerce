@@ -53,6 +53,7 @@
     "wiki:qmd:query": "node scripts/wiki-qmd.mjs query",
     "wiki:qmd:get": "node scripts/wiki-qmd.mjs get",
     "wiki:qmd:mcp": "node scripts/wiki-qmd.mjs mcp",
+    "wiki:check": "node scripts/wiki-check.mjs",
     "wiki:saleor:hash": "node scripts/wiki-saleor-check.mjs hash",
     "wiki:saleor:check": "node scripts/wiki-saleor-check.mjs check",
     "localstack:up": "docker compose -f apps/marketplace/docker-compose.yml up -d localstack",

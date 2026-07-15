@@ -30,12 +30,12 @@ and availability only resolve when a query passes a `channel` slug.
   `name`, `pricing` (`VariantPricingInfo`), `quantityAvailable`, `attributes`, and stock.
 - `ProductPricingInfo` / `VariantPricingInfo` — `priceRange`/`price` as `TaxedMoney`, plus
   `onSale` and `discount`. Money is always `TaxedMoney` (`net`, `gross`, `tax`) — see
-  [Shop, Channels & Warehouses](tech/saleor/Shop%2C%20Channels%20%26%20Warehouses.md).
+  [Shop, Channels & Warehouses](./Shop%2C%20Channels%20%26%20Warehouses.md).
 - `ProductType` — defines whether the product has variants and which attributes apply.
 - `Category` / `Collection` — taxonomy; collections are channel-scoped for listing.
 
 **Attributes** on products/variants use `SelectedAttribute` (an `Attribute` plus its
-`AttributeValue[]`). See [Attributes & Metadata](tech/saleor/Attributes%20%26%20Metadata.md).
+`AttributeValue[]`). See [Attributes & Metadata](./Attributes%20%26%20Metadata.md).
 
 **Nimara usage**
 
@@ -45,6 +45,6 @@ price without one.
 
 ## Related Notes
 
-[Saleor Schema (MOC)](tech/saleor/Saleor%20Schema%20%28MOC%29.md)
-[Attributes & Metadata](tech/saleor/Attributes%20%26%20Metadata.md)
-[Shop, Channels & Warehouses](tech/saleor/Shop%2C%20Channels%20%26%20Warehouses.md)
+[Saleor Schema (MOC)](./Saleor%20Schema%20%28MOC%29.md)
+[Attributes & Metadata](./Attributes%20%26%20Metadata.md)
+[Shop, Channels & Warehouses](./Shop%2C%20Channels%20%26%20Warehouses.md)

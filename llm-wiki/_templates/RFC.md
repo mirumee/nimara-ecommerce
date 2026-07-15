@@ -17,7 +17,7 @@ template_for: "Design Doc"
 
 > An RFC is a proposal — a full design page for a non-trivial change. It does not
 > record the verdict or the result: the decision and its outcome are captured in an
-> [ADR](_templates/ADR.md). `status` moves Draft → In Review → Final. Keep Nimara
+> [ADR](./ADR.md). `status` moves Draft → In Review → Final. Keep Nimara
 > designs OSS provider-agnostic: layer over existing provider abstractions, do not
 > mandate a vendor.
 

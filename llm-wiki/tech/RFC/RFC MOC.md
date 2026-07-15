@@ -18,6 +18,7 @@ does not record the verdict: the decision to accept or reject it, and the eventu
 outcome, live in an [ADR](../ADR/ADR%20MOC.md).
 
 **Conventions**
+
 - File name is `RFC-NNNN <Title>` (zero-padded, monotonically increasing, never reused).
 - Competing approaches may be separate RFCs; cross-link them under Alternative solutions.
 - `status` in frontmatter moves `Draft → In Review → Final`.

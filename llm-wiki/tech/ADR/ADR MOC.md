@@ -16,6 +16,7 @@ is one standalone note following the [Michael Nygard template](https://github.co
 **Status → Context → Decision → Consequences** (see `_templates/ADR.md`).
 
 **Conventions**
+
 - **One decision per note.** File name is `ADR-NNNN <Title>` (zero-padded, monotonically
   increasing, never reused) — e.g. `ADR-0001 Use RAG over fine-tuning`.
 - **ADRs are immutable once Accepted.** Don't rewrite a decision — supersede it: create a
@@ -30,4 +31,4 @@ _No ADRs recorded yet._
 
 ## Related Notes
 
-[Product Strategy 2026 (MOC)](product/strategy/Product%20Strategy%202026%20%28MOC%29.md)
+[Product Strategy 2026 (MOC)](../../product/strategy/Product%20Strategy%202026%20%28MOC%29.md)

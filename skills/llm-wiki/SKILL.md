@@ -1,11 +1,13 @@
 ---
 name: llm-wiki
-description: Work with llm-wiki knowledge base using QMD-backed retrieval and source-file verification. Use when answering questions from llm-wiki, finding relevant notes, auditing wiki consistency, ingesting or filing durable knowledge back into llm-wiki, updating wiki conventions, or helping agents use the llm-wiki/sources/LLM Wiki.md pattern. Use for product strategy, QA process, ADR, persona, PRD, source, and wiki-maintenance questions that should cite or update llm-wiki. Also use for any Saleor GraphQL schema question — types, fields, enums, mutations, queries (e.g. Checkout, Order, Product, ProductVariant, Payment, Attribute, Shop, Channel) — because those answers live in version-stamped notes under llm-wiki/tech/saleor/ that must be checked for freshness with `pnpm wiki:saleor:check` before being cited.
+description: Work with Nimara's llm-wiki encyclopedia using QMD-backed retrieval and source verification. Use when answering what Nimara is or implements, finding or maintaining application/capability/architecture/integration notes, reconciling product direction with code reality, auditing wiki consistency, ingesting sources, or filing durable knowledge back into llm-wiki. Also use for Saleor GraphQL schema questions, whose version-stamped notes must pass `pnpm wiki:saleor:check` before citation.
 ---
 
 # LLM Wiki
 
-Use this skill to work with `llm-wiki/` as a maintained knowledge base, not as a loose folder of Markdown. QMD is the discovery layer; Markdown files remain the source of truth.
+Use this skill to work with `llm-wiki/` as the maintained encyclopedia of Nimara, not as a
+loose folder of Markdown. QMD is the discovery layer; Markdown files and their cited evidence
+remain the source of truth.
 
 ## Ground Rules
 
@@ -13,7 +15,10 @@ Use this skill to work with `llm-wiki/` as a maintained knowledge base, not as a
 2. Read `llm-wiki/sources/LLM Wiki.md` when the user asks about the upstream LLM-wiki pattern or why this wiki is structured this way.
 3. Use QMD to find candidate notes, then read the actual Markdown before answering or editing. Do not answer from snippets alone.
 4. Treat `qmd` output as retrieval, not validation. It does not prove link integrity, source integrity, MOC coverage, or JSON-vs-Markdown consistency.
-5. Keep QMD local state out of git. The project wrapper uses `qmd --index nimara-wiki`, stored under `~/.cache/qmd/nimara-wiki.sqlite`.
+5. Current implementation claims come from local `main` at a recorded SHA. Product direction is
+   stored as source-neutral, durable knowledge and never overrides observed code.
+6. Operational tracker exports are temporary analysis inputs and never become wiki content.
+   Keep QMD state out of Git; the wrapper chooses a branch-specific index under `~/.cache/qmd/`.
 
 ## Setup Check
 
@@ -30,11 +35,12 @@ pnpm wiki:qmd:setup
 pnpm wiki:qmd:embed
 ```
 
-After wiki Markdown changes, refresh retrieval:
+After wiki Markdown changes, refresh retrieval. Prefer `rebuild` after adds, moves, or deletes:
 
 ```bash
 pnpm wiki:qmd:update
 pnpm wiki:qmd:embed
+pnpm wiki:qmd:rebuild
 ```
 
 If `pnpm` on the local machine misbehaves, use the wrapper directly:
@@ -63,13 +69,19 @@ node scripts/wiki-qmd.mjs query "question" --json --no-rerank -n 10
    QMD may normalize spaces in filenames, so prefer `docid` from search results.
 
 3. Read the relevant MOC when the topic is domain-specific:
+   - Nimara/current system: `llm-wiki/system/Nimara.md`
+   - Applications: `llm-wiki/system/applications/Applications (MOC).md`
+   - Capabilities: `llm-wiki/system/capabilities/Capabilities (MOC).md`
+   - Architecture: `llm-wiki/tech/architecture/Architecture (MOC).md`
+   - Integrations: `llm-wiki/tech/integrations/Integrations (MOC).md`
    - Product strategy: `llm-wiki/product/strategy/Product Strategy 2026 (MOC).md`
    - QA/testing: `llm-wiki/quality/Quality & Testing (MOC).md`
    - ADRs: `llm-wiki/tech/ADR/ADR MOC.md`
 
 4. Answer with specific file references. If the wiki does not contain the answer, say that plainly and name the gap.
 
-5. If the answer is durable knowledge, offer to file it back into the wiki. Do not edit sources under `llm-wiki/sources/` except to add a new immutable source document.
+5. If the answer is durable knowledge, update the smallest relevant concept. Do not edit
+   immutable codebase manifests under `llm-wiki/sources/`; add a new snapshot instead.
 
 ## Saleor Schema Notes
 
@@ -88,6 +100,9 @@ For lint, ingest, ADR, or answer-and-file-back work, also read `skills/wiki/wiki
 - report lint findings with suggested fixes before editing unless the user asked for cleanup;
 - update `llm-wiki/log.md` for wiki operations;
 - update MOCs and `index.md` when adding, renaming, or removing notes;
+- keep current-state evidence stamped to `main`;
+- synthesize temporary operational inputs into source-neutral concepts, never work-item pages or
+  `delivery/`;
 - record significant technical decisions as ADRs instead of burying them in prose.
 
 ## Useful Probes
@@ -104,4 +119,5 @@ pnpm wiki:qmd:ls
 - Long natural-language `wiki:qmd:search` queries can return nothing. Use `wiki:qmd:query` for semantic questions.
 - QMD snippets are not enough for a verdict. Fetch full files and cite those.
 - QMD includes templates unless filtered by the question. Ignore `_templates/` results unless template behavior is relevant.
+- Run `pnpm wiki:check` for deterministic validation; QMD cannot validate evidence or links.
 - Existing `index.md` can drift. Prefer QMD for discovery, but still maintain `index.md` until the schema says otherwise.

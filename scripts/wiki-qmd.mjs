@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { spawnSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -11,9 +12,20 @@ const repoRoot = path.resolve(
 );
 const wikiDir = path.join(repoRoot, "llm-wiki");
 const collectionName = "nimara-wiki";
-const indexName = process.env.QMD_INDEX || "nimara-wiki";
+const branchResult = spawnSync("git", ["branch", "--show-current"], {
+  cwd: repoRoot,
+  encoding: "utf8",
+});
+const branchName = (branchResult.stdout || "").trim() || "detached";
+const branchSlug = branchName.replace(/[^a-zA-Z0-9._-]+/g, "-");
+const worktreeSlug = createHash("sha256")
+  .update(repoRoot)
+  .digest("hex")
+  .slice(0, 8);
+const indexName =
+  process.env.QMD_INDEX || `nimara-wiki-${branchSlug}-${worktreeSlug}`;
 const context =
-  "Nimara LLM wiki: product strategy, QA process, ADRs, PRDs, source notes. Use llm-wiki/sources/LLM Wiki.md for the pattern and llm-wiki/AGENTS.md for the local schema.";
+  "Nimara encyclopedia: current system, applications, capabilities, architecture, integrations, product direction, QA, ADRs, PRDs, and source manifests. Current implementation is verified against main at a recorded commit. Start with llm-wiki/system/Nimara.md and use llm-wiki/AGENTS.md for the evidence model.";
 
 const command = process.argv[2] || "help";
 const rest = process.argv.slice(3).filter((arg) => arg !== "--");
@@ -30,8 +42,9 @@ const usage = `Usage:
   pnpm wiki:qmd:get "<docid|uri>"  Retrieve a document from qmd
   pnpm wiki:qmd:mcp [args...]      Start qmd MCP against the project index
 
-This wrapper uses qmd --index ${indexName}, so local data is stored outside git
-under ~/.cache/qmd/${indexName}.sqlite. Install qmd first:
+This wrapper uses qmd --index ${indexName}, isolated by branch and worktree, so
+local data is stored outside git under ~/.cache/qmd/${indexName}.sqlite.
+Override with QMD_INDEX when a shared local index is intentional. Install qmd first:
 
   npm install -g @tobilu/qmd
 `;

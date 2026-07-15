@@ -8,15 +8,28 @@ tags:
   - "customer"
   - "conversion"
 created: "2026-07-09T00:00:00+00:00"
-timestamp: "2026-07-09T00:00:00+00:00"
+timestamp: "2026-07-15T11:10:59+02:00"
 status: "analyzing"
 owner: "Michał Ociepka"
 prd_type: "business"
+knowledge_status: "mixed"
+implementation_status: "partial"
+direction_status: "planned"
+verified_at: "2026-07-15T09:50:07+00:00"
+code_branch: "main"
+code_commit: "e32732ea85f7e6cfb807b462c7bbc47e6f569603"
+scope_paths:
+  - "packages/features/src/product-detail-page/shared/components/product-reviews.tsx"
+  - "packages/features/src/product-detail-page/shop-custom-pdp/custom.tsx"
 ---
+
+> **Evidence status:** this PRD is directional and the verified-review capability is planned.
+> `main` contains only a hard-coded, delayed review placeholder in one custom PDP variant, not
+> the verified-purchase system specified below.
 
 ## Value Statement
 
-**For** [Customer](product/personas/Customer.md)
+**For** [Customer](../personas/Customer.md)
 **who** lack the social proof shoppers expect — no ratings on product pages costs conversion, organic visibility, and catalog quality feedback
 **the** Verified User Reviews capability
 **is a** built-in verified-purchase review system
@@ -27,6 +40,14 @@ prd_type: "business"
 ## Business Outcomes
 
 - No cost for SaaS solutions,
+
+## Current Implementation Evidence
+
+The custom PDP renders eight hard-coded example reviews after an artificial two-second delay.
+There is no observed provider, storage, verified-purchase submission, invitation, aggregation,
+moderation, reporting, or administration implementation. See
+[Product Reviews](../../system/capabilities/Product%20Reviews.md).
+Current product direction is `planned`, not active or delivered.
 
 ## MVP
 
