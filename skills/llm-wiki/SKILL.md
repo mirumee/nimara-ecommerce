@@ -63,7 +63,6 @@ node scripts/wiki-qmd.mjs query "question" --json --no-rerank -n 10
    QMD may normalize spaces in filenames, so prefer `docid` from search results.
 
 3. Read the relevant MOC when the topic is domain-specific:
-
    - Product strategy: `llm-wiki/product/strategy/Product Strategy 2026 (MOC).md`
    - QA/testing: `llm-wiki/quality/Quality & Testing (MOC).md`
    - ADRs: `llm-wiki/tech/ADR/ADR MOC.md`

@@ -27,7 +27,7 @@ outcome, live in an [ADR](../ADR/ADR%20MOC.md).
 
 <!-- Newest last. Format: - RFC-NNNN Title - Status - resolving ADR - one-line summary -->
 
-_No RFCs recorded yet._
+- [RFC-0001 Natural-Language Product Discovery](tech/RFC/RFC-0001%20Natural-Language%20Product%20Discovery.md) — Draft — resolving ADR: _pending_ — opt-in, provider-agnostic NL discovery layer over `SearchService`; hybrid LLM query-plan + grounded re-rank; reference adapter AWS Bedrock (Llama 4 Scout), swappable. Serves [PRD-001](product/prds/PRD-001%20Natural-Language%20Product%20Discovery.md).
 
 ## Related Notes
 

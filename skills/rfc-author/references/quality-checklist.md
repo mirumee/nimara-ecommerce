@@ -1,0 +1,48 @@
+# RFC Quality Checklist
+
+Run every check before presenting or filing the RFC. Fix issues that require no decision; report the rest as owned deferred decisions.
+
+## Research and approach gate
+
+- [ ] The RFC is anchored to exactly one PRD; the PRD exists in `llm-wiki/product/prds/`.
+- [ ] 2–3 distinct approaches were researched against primary sources and the repo's real structure — or a single viable approach was confirmed with reasons.
+- [ ] Every approach is OSS provider-agnostic; no vendor is mandated as the only option.
+- [ ] The chosen approach is recorded; rejected approaches are captured as Alternative solutions with reasons.
+
+## Technical grilling gate
+
+- [ ] The interview asked one question per turn, included a recommendation, and waited for the answer.
+- [ ] Discoverable facts (layers, services, schema, config) were explored instead of put to the user as decisions.
+- [ ] The user confirmed the shared understanding before drafting or editing.
+- [ ] The business bet was not re-litigated; acceptance was left to the ADR.
+- [ ] Every question has one `D-*` ledger entry with branch, question, recommendation, user answer, and resulting decision.
+
+## Design content
+
+- [ ] The RFC stays at solution altitude — architectural principles, boundaries, and gotchas, not line-level implementation; package placement appears at most as a one-line, non-binding suggestion.
+- [ ] Problem states facts and forces, not the chosen solution.
+- [ ] Functional and non-functional requirements trace to the PRD's outcomes and NFRs.
+- [ ] Component changes sit in the correct layer and respect the dependency direction.
+- [ ] API changes are exposed through infrastructure use-cases and services, not the raw Saleor schema; fallible operations use `Result<T, E>`.
+- [ ] Database changes state backward-compatibility and a migration/rollback strategy.
+- [ ] Every new package dependency is flagged for explicit approval, not assumed.
+
+## Cross-cutting
+
+- [ ] Security covers sensitive data, auth changes, and unacceptable failure modes.
+- [ ] Monitoring, alerting, expected failures, and remediation are stated.
+- [ ] System impacts name the affected services and any external-system impact.
+- [ ] Documentation, QA validation (with automatability), and DevOps/infrastructure changes are covered.
+- [ ] Genuinely unresolved decisions are deferred with an owner and a `before <stage>` gate — not fabricated.
+
+## Proposal boundary
+
+- [ ] The RFC records a proposal, not a verdict; it does not decide acceptance.
+- [ ] The proposed next step is an ADR that accepts or rejects this RFC and links back to it.
+
+## Wiki hygiene
+
+- [ ] Filename is `RFC-NNNN <Title>` with the next free ID; status is `Draft` unless the user approved a transition.
+- [ ] The RFC is registered in `RFC MOC.md` and linked to its PRD in both directions.
+- [ ] `index.md`, `log.md`, and Related Notes are current; renamed inbound links are updated.
+- [ ] Sources were preserved and stale downstream artifacts were reported rather than silently rewritten.
