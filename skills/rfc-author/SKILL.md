@@ -13,6 +13,21 @@ Follow these seven stages in order. The deep research, the technical grilling, a
 
 An RFC is a _solution proposal_, not an implementation plan. Describe the **shape** of the solution: the load-bearing architectural principles (what layers over what, which boundaries are swappable, the dependency direction), the key decisions, and the important implementation gotchas and risks that could sink the design. Do **not** specify exact package or folder paths, file or function names, type signatures, or line-level structure — that belongs in implementation tickets and PRs. Concrete package placement may appear at most as a one-line, non-binding suggestion. When in doubt, ask "does a reviewer need this to judge the approach?" — if not, it is too low, and it constrains the implementer without earning its place.
 
+## Clear technical prose — cut ornament, keep the register
+
+Write the RFC as **clear, dense technical prose** for engineers — not a lay explainer. The register stays professional and precise; the goal is only to remove what makes writing hard to read, not to simplify the content:
+
+- **Cut ornamental / pretentious jargon and convoluted sentences.** Drop words like "orthogonal", "load-bearing", "by construction", "idiomatic", "compose over", "degrade gracefully", "first-class" when a plainer word says the same thing. Untangle a sentence that has to be re-read.
+- **Avoid double negatives; frame positively.** State what something does, not a chain of "never … that has not …". Prefer "the LLM can only surface products the search returned" over "the LLM never emits a product that has not been validated". A positive assertion is read once; a stacked negation is read twice.
+- **State each fact once; do not restate requirements in other sections.** A requirement already captured in Problem / Requirements / an NFR does not get repeated in Component changes, API, etc. Each section states only what is new to it — Component changes describes the structural change, not the NFRs it satisfies. Repetition reads as padding.
+- **Keep the full technical vocabulary.** Standard, ubiquitous terms — `SearchService`, "provider", "LLM", "stateless", "boundary", "endpoint", "fallback", "Result", "injected" — stay exactly as they are. Do **not** replace them with folksy paraphrases ("the search Nimara already has", "supplier", "swap point", "the feature stores nothing"); that adds words, loses precision, and insults the reader. Engineers know these terms.
+- **Explain only the genuinely obscure**, once, on first use — do not gloss the everyday.
+- **Name things so they explain themselves; do not coin jargon.** A heading or item that needs a gloss is the wrong name — "No invented products" beats "Grounding gate". Reserve coined terms for the one place a mechanism is defined, and do not spawn near-identical variants of them ("guard" vs "gate") for different things.
+- **Match the source's actual words.** When a sentence cites a PRD or grilling id, say what that source says — do not drift in paraphrase (G-017 "each adopter sets relevance thresholds" is not "each deployment judges the ordering"). Re-read the line before citing it.
+- **Drop research-phase labels once a direction is chosen.** The winning option is "the design", not "Approach C" — the letters only meant something while the alternatives were side by side.
+
+Cutting ornament does not lower the altitude, and it does not mean writing for a non-specialist: it means a precise sentence with no wasted or pretentious words.
+
 ## Stage 1 — Resolve the PRD and pull context
 
 An RFC is always anchored to one PRD. Resolve it before anything else.
@@ -79,10 +94,18 @@ Draft in this order:
 Rules:
 
 - Keep the draft at solution altitude (see Altitude): principles, boundaries, decisions, and gotchas — not exact package/folder paths, file/function names, or signatures. Package placement is at most a one-line, non-binding suggestion.
+- Do not copy the template's explanatory blockquote (what an RFC is, the `Draft → In Review → Final` flow, generic provider-agnostic reminder) into the authored RFC — that meta lives in the RFC MOC and template. Open the instance with its own context (the PRD it serves); express real design constraints in the body, not as boilerplate.
+- In Component changes, open with a **one-to-two-sentence scope note** — the repo and which app(s)/layers the change lands in, plus the plan in a line. Not a per-package breakdown, and no file-level layout.
+- Describe what's new as **services / capabilities, concisely (often a single item)** — the new moving parts and their boundaries — not an inventory of literal "components" (the word reads as UI components; usually it is services). Group tightly-related new parts into one item rather than splitting each into its own bullet.
+- Write clear, dense technical prose (see Clear technical prose): cut ornamental jargon and convoluted sentences, but keep the full technical vocabulary — it is for engineers, not a lay explainer.
 - Put the rejected approaches under Alternative solutions with pros, cons, and why not chosen; cross-link any that becomes its own RFC.
 - Keep the design provider-agnostic and route API/data changes through services, not the raw Saleor schema.
-- Never add a package dependency in the design without flagging it under Dependencies for explicit approval.
-- Leave genuinely unresolved decisions as deferred items with an owner and a gate — do not fabricate a resolution.
+- **Dependencies lists actual new dependencies only** — a package or an external account the design would add. Something Nimara owns and writes itself is not a dependency; do not list it to fill the section. Present each as a **recommendation with its alternatives**, and do not write "pending approval" or "awaiting sign-off" in the RFC body: the whole RFC is a proposal, and the ADR is the approval. State the fact (new to this app; already used elsewhere in the monorepo) and stop.
+- **Deferred decisions carry only this RFC's own unresolved items** — with an owner and a gate. If the PRD already tracks an open question, it stays tracked there; restating it in the RFC is duplication. Do not fabricate a resolution, and do not invent a gate: when citing a PRD open question, use the gate the PRD actually sets.
+- **QA validation lists the test scenarios, not their automatability** — whether each is automatable is the QA team's call, not the RFC's.
+- **Numbers carry their source** — any figure a reader could act on (pricing, latency, limits) links the primary source it came from, with the capture date and a "re-verify at implementation time" note. A number without a traceable source is an invented number.
+- When a template section does not apply, say so in one sentence (or "None" / "N/A") and stop — do not pad it to look substantial. An honestly empty section beats invented detail.
+- **Do not invent — verify before naming.** Never name a concrete tool, library, vendor, service, or capability that the repo does not already use and the user has not chosen. Grep the repo first; "it is the standard tool" is not grounding. If something is genuinely needed, it is a dependency: flag it for approval — do not slip it in as an example or a parenthetical. The same applies to constraints, current behavior, numbers, and defaults: if it was not established by repo exploration, by research with a cited source, or by a user decision, it does not go in the RFC. Padding a sentence with a plausible specific is the easiest way to put a lie in a design doc.
 
 Completion criterion: the RFC expresses the chosen proposal and its alternatives without introducing decisions the user did not make, and without recording a verdict.
 
@@ -95,6 +118,7 @@ Completion criterion: every checklist item passes or is reported as an explicit,
 ## Stage 6 — Bookkeeping
 
 - Save as `llm-wiki/tech/RFC/RFC-NNNN <Title>.md` using the next free ID from the RFC register; preserve the ID when rewriting an existing RFC.
+- Set `owner` to the RFC's author (the person creating this design), not inherited from the PRD — the PRD owner is the business owner; the RFC owner is the design author. Use the git author identity when the user does not name one.
 - Register the RFC in `llm-wiki/tech/RFC/RFC MOC.md`, and link the PRD it serves.
 - Link the PRD and the RFC in both directions (PRD Related Notes ↔ RFC).
 - Update `llm-wiki/index.md` and append to `llm-wiki/log.md`.

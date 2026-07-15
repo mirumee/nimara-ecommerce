@@ -91,7 +91,7 @@ Documents that need changes, how and where. Note any new documents required.
 
 ### QA validation
 
-Test scenarios that validate the solution. Note whether each is automatable.
+Test scenarios that validate the solution. Whether each is automatable is the QA team's call, not the RFC's.
 
 ### DevOps / infrastructure
 

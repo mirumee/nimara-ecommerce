@@ -20,19 +20,23 @@ Run every check before presenting or filing the RFC. Fix issues that require no 
 ## Design content
 
 - [ ] The RFC stays at solution altitude — architectural principles, boundaries, and gotchas, not line-level implementation; package placement appears at most as a one-line, non-binding suggestion.
+- [ ] Nothing is invented: every tool, library, vendor, capability, number, and default named in the RFC is grounded in the repo (verified, not assumed), in research with a cited source, or in an explicit user decision. Anything new is flagged as a dependency for approval, not slipped in as an example.
 - [ ] Problem states facts and forces, not the chosen solution.
 - [ ] Functional and non-functional requirements trace to the PRD's outcomes and NFRs.
 - [ ] Component changes sit in the correct layer and respect the dependency direction.
 - [ ] API changes are exposed through infrastructure use-cases and services, not the raw Saleor schema; fallible operations use `Result<T, E>`.
 - [ ] Database changes state backward-compatibility and a migration/rollback strategy.
-- [ ] Every new package dependency is flagged for explicit approval, not assumed.
+- [ ] Dependencies lists only actual new dependencies, each as a recommendation with alternatives — no "pending approval" phrasing, and nothing Nimara writes itself listed as a dependency.
+- [ ] Every figure a reader could act on links its primary source, with a capture date and a re-verify note.
+- [ ] Deferred decisions hold only this RFC's own open items (with owner and gate); PRD open questions are not restated here.
+- [ ] No coined jargon that needs a gloss, no research-phase labels ("Approach C") for the chosen design, and every cited PRD/grilling id says what the source actually says.
 
 ## Cross-cutting
 
 - [ ] Security covers sensitive data, auth changes, and unacceptable failure modes.
 - [ ] Monitoring, alerting, expected failures, and remediation are stated.
 - [ ] System impacts name the affected services and any external-system impact.
-- [ ] Documentation, QA validation (with automatability), and DevOps/infrastructure changes are covered.
+- [ ] Documentation, QA validation (scenarios only — automatability is the QA team's call), and DevOps/infrastructure changes are covered.
 - [ ] Genuinely unresolved decisions are deferred with an owner and a `before <stage>` gate — not fabricated.
 
 ## Proposal boundary
