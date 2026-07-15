@@ -33,6 +33,8 @@ Confirm the design problem restated from the PRD, the functional requirements th
 
 Decide the solution's structure at the level of **principles and boundaries**, not files: which new capability layers over which existing one, what is a new swappable boundary versus something reused wholesale, and how the pieces compose — all respecting the dependency direction (domain / foundation / infrastructure / features / app). Reject a structure that violates the boundaries. Name the architectural roles and why, not exact package/folder paths, file names, or signatures — those are implementation. Concrete placement is at most a one-line, non-binding suggestion.
 
+**State the scope in one or two sentences.** Name the repo and which app(s)/layers the change lands in, plus the plan in a line (e.g. "a new capability in the shared packages, consumed by `apps/storefront`; other apps untouched"). Do not enumerate every package with its own rationale, and do not give the file/folder layout — that is the blast radius, not a breakdown.
+
 ### 3. API surface
 
 Define the internal and external API changes. Expose them through infrastructure use-cases and services, not the raw Saleor schema. Decide contract shape, versioning/compat, and error modes. For anything fallible, confirm the `Result<T, E>` shape rather than thrown business errors.
@@ -51,11 +53,11 @@ Decide what must be observable, the alert rules, the expected failure scenarios,
 
 ### 7. Dependencies and system impacts
 
-List the dependencies the design relies on. Any new package is a proposal requiring explicit approval — never assume it. Identify the services affected and any impact on external systems.
+List the actual new dependencies the design would add — a package or an external account. Never assume one: present it as a recommendation with its alternatives, and leave the approval to the ADR and implementation rather than writing "pending approval" into the RFC. Something Nimara writes itself is not a dependency. Identify the services affected and any impact on external systems.
 
 ### 8. Documentation, QA, and DevOps
 
-Decide the documents that must change, the test scenarios that validate the design (and which can be automated), and the infrastructure changes required (env vars, Terraform, CI task-graph, firewall).
+Decide the documents that must change, the test scenarios that validate the design (the scenarios only — automatability is the QA team's call), and the infrastructure changes required (env vars, Terraform, CI task-graph, firewall).
 
 ## Question shape
 
