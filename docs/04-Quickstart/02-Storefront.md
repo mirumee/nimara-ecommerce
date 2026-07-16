@@ -28,15 +28,21 @@ cd nimara-ecommerce
 pnpm install
 ```
 
-### Copy variables
+### Set up environment variables
 
-Copy environment variables from **.env.example** to **.env**:
+The recommended way is to run the interactive preflight wizard from the repo root. It lets you pick providers (Search, CMS) and optional features (auth, Stripe, marketplace, Sentry), shows exactly which env vars each choice requires, and writes the env file for you (defaults to `apps/storefront/.env.local`):
 
 ```bash
-cp .env.example .env
+pnpm preflight
 ```
 
-### Add backend URL and set up environment variables
+Alternatively, copy **.env.example** to **.env** by hand and fill it in yourself (the file lives in `apps/storefront`, so run this from the repo root):
+
+```bash
+cp apps/storefront/.env.example apps/storefront/.env
+```
+
+### Add backend URL
 
 Use a free developer account at Saleor Cloud to start quickly with the backend. Alternatively, you can run Saleor locally using Docker.
 
@@ -80,27 +86,218 @@ Go to your Saleor dashboard → **Extensions** → click **Add Extension** → s
 
 In the **Webhooks & Events** section click **Create Webhook**.
 
-You will need to create four webhooks, one for each of the following:
+You will need to create four webhooks, one for each of the following.
 
 **Product Webhook**
 
 - Target URL: `https://<your-domain-url>/api/webhooks/saleor/products`
 - Events: select all events related to the `Product` object, except `Export completed`.
+- Payload's Subscription Query:
+
+  ```graphql
+  subscription {
+    event {
+      __typename
+      ... on ProductUpdated {
+        product {
+          slug
+        }
+      }
+      ... on ProductDeleted {
+        product {
+          slug
+        }
+      }
+      ... on ProductMetadataUpdated {
+        product {
+          slug
+        }
+      }
+      ... on ProductMediaCreated {
+        productMedia {
+          productId
+        }
+      }
+      ... on ProductMediaUpdated {
+        productMedia {
+          productId
+        }
+      }
+      ... on ProductMediaDeleted {
+        productMedia {
+          productId
+        }
+      }
+      ... on ProductVariantCreated {
+        productVariant {
+          product {
+            slug
+          }
+        }
+      }
+      ... on ProductVariantUpdated {
+        productVariant {
+          product {
+            slug
+          }
+        }
+      }
+      ... on ProductVariantDeleted {
+        productVariant {
+          product {
+            slug
+          }
+        }
+      }
+      ... on ProductVariantBackInStock {
+        productVariant {
+          product {
+            slug
+          }
+        }
+      }
+      ... on ProductVariantOutOfStock {
+        productVariant {
+          product {
+            slug
+          }
+        }
+      }
+      ... on ProductVariantMetadataUpdated {
+        productVariant {
+          product {
+            slug
+          }
+        }
+      }
+      ... on ProductVariantStockUpdated {
+        productVariant {
+          product {
+            slug
+          }
+        }
+      }
+    }
+  }
+  ```
 
 **Menu Webhook**
 
 - Target URL: `https://<your-domain-url>/api/webhooks/saleor/menu`
 - Events: select all events related to the `Menu` object.
+- Payload's Subscription Query:
+
+  ```graphql
+  subscription {
+    event {
+      __typename
+      ... on MenuCreated {
+        menu {
+          slug
+        }
+      }
+      ... on MenuUpdated {
+        menu {
+          slug
+        }
+      }
+      ... on MenuDeleted {
+        menu {
+          slug
+        }
+      }
+      ... on MenuItemCreated {
+        menuItem {
+          menu {
+            slug
+          }
+        }
+      }
+      ... on MenuItemUpdated {
+        menuItem {
+          menu {
+            slug
+          }
+        }
+      }
+      ... on MenuItemDeleted {
+        menuItem {
+          menu {
+            slug
+          }
+        }
+      }
+    }
+  }
+  ```
 
 **Page Webhook**
 
 - Target URL: `https://<your-domain-url>/api/webhooks/saleor/page`
 - Events: select all events related to the `Page` object.
+- Payload's Subscription Query:
+
+  ```graphql
+  subscription {
+    event {
+      __typename
+      ... on PageCreated {
+        page {
+          slug
+        }
+      }
+      ... on PageUpdated {
+        page {
+          slug
+        }
+      }
+      ... on PageDeleted {
+        page {
+          slug
+        }
+      }
+      ... on PageTypeCreated {
+        pageType {
+          slug
+        }
+      }
+      ... on PageTypeUpdated {
+        pageType {
+          slug
+        }
+      }
+      ... on PageTypeDeleted {
+        pageType {
+          slug
+        }
+      }
+    }
+  }
+  ```
 
 **Collection Webhook**
 
 - Target URL: `https://<your-domain-url>/api/webhooks/saleor/collections`
 - Events: select `Deleted` and `Updated` events related to `Collection` object.
+- Payload's Subscription Query:
+
+  ```graphql
+  subscription {
+    event {
+      __typename
+      ... on CollectionUpdated {
+        collection {
+          slug
+        }
+      }
+      ... on CollectionDeleted {
+        collection {
+          slug
+        }
+      }
+    }
+  }
+  ```
 
 ## Deployment
 
@@ -124,7 +321,9 @@ Vercel does not use your local **.env** file so you must define all required var
 
 ![Environment variables on Vercel](../images/storefront/vercel_env_vars.png)
 
-**Note:** See the [Environment Variables section](./environment-variables) for detailed instructions on setting up these variables.
+:::note
+See the [Environment Variables section](./environment-variables) for detailed instructions on setting up these variables.
+:::
 
 ### Deploy
 
@@ -135,7 +334,7 @@ Click **Deploy** to deploy your project.
 After successful deployment, click **Continue to Dashboard** to manage your deployed Nimara project.
 
 :::warning
-Node.js version 22 or higher is required. Set the Node.js version in your Vercel project settings.
+Node.js version 24.x is required. Set the Node.js version in your Vercel project settings.
 :::
 
 From the **Vercel dashboard**, you can manage and customize your storefront project:

@@ -75,30 +75,67 @@ export const LOCALE_PREFIXES = {
 >;
 ```
 
+:::note
+`LOCALE_LABELS` and `MESSAGES_PATH_MAP` exist to satisfy the `Record<SupportedLocale, string>` type — adding your locale to them keeps the type checker happy, but they are **not** what loads translations at runtime. The actual message loading happens in `packages/i18n/src/loadMessages.ts` (see [Register the locale's messages in the loader](#register-the-locales-messages-in-the-loader) below). `LOCALES`, `LOCALE_PREFIXES`, and `DEFAULT_LOCALE` are the config values that routing and middleware read.
+:::
+
 ### Add translations for the new locale
 
-Create a new translation file with all required messages.
+Translations live in **per-locale directories** under `packages/i18n/src/messages/`, each split into three files:
+
+- `common.json` — messages shared across all apps
+- `storefront.json` — storefront-only messages
+- `marketplace.json` — marketplace-only messages
+
+Create a directory for the new locale and add the three files (seed them from the base locale, then translate):
 
 ```bash
-# Copy an existing locale as a template
-cp packages/i18n/src/messages/en-GB.json packages/i18n/src/messages/es-ES.json
+mkdir -p packages/i18n/src/messages/es-ES
+cp packages/i18n/src/messages/en/common.json packages/i18n/src/messages/es-ES/common.json
+cp packages/i18n/src/messages/en/storefront.json packages/i18n/src/messages/es-ES/storefront.json
+cp packages/i18n/src/messages/en/marketplace.json packages/i18n/src/messages/es-ES/marketplace.json
 ```
 
-Then translate the messages in `packages/i18n/src/messages/es-ES.json` to Spanish.
+Each file mirrors the base structure — top-level namespaces with translation keys. For example, `common.json`:
 
-The structure should mirror existing files:
-
-```json title="packages/i18n/src/messages/es-ES.json"
+```json title="packages/i18n/src/messages/es-ES/common.json"
 {
-  "common": {
-    "locale_name": "Español (España)",
-    "cart": "Carrito",
-    "checkout": "Pagar"
+  "checkout-errors": {
+    "INSUFFICIENT_STOCK": "El producto no tiene stock suficiente."
   },
-  "errors": {
-    "not_found": "No encontrado"
+  "filters": {
+    "color": "Color"
   }
 }
+```
+
+### Register the locale's messages in the loader
+
+`packages/i18n/src/loadMessages.ts` wires the message files up with **static imports** — this is what actually loads translations at runtime. Add imports for the new locale and register them in `LOCALE_SHARED` (the `common.json`) and `LOCALE_APP` (the per-app files):
+
+```ts title="packages/i18n/src/loadMessages.ts"
+// ...existing imports
+import esSharedCommon from "./messages/es-ES/common.json";
+import esMarketplace from "./messages/es-ES/marketplace.json";
+import esStorefront from "./messages/es-ES/storefront.json";
+
+const LOCALE_SHARED: Partial<Record<SupportedLocale, AnyMessages>> = {
+  "en-GB": enGbSharedCommon as AnyMessages,
+  "es-ES": esSharedCommon as AnyMessages,
+};
+
+const LOCALE_APP: Partial<
+  Record<SupportedLocale, Partial<Record<AppId, AnyMessages>>>
+> = {
+  "en-GB": {
+    storefront: enGbStorefront as AnyMessages,
+    marketplace: enGbMarketplace as AnyMessages,
+  },
+  "es-ES": {
+    storefront: esStorefront as AnyMessages,
+    marketplace: esMarketplace as AnyMessages,
+  },
+};
 ```
 
 ### Configure the market/region in the storefront
@@ -129,6 +166,14 @@ export const SUPPORTED_CHANNELS = [
   "channel-us",
   "channel-uk",
   "channel-es",
+] as const;
+
+// Keep this list in sync when a market uses a continent not already listed.
+// Spain is in Europe, which is already present, so no change is needed here.
+export const SUPPORTED_CONTINENTS = [
+  "Asia Pacific",
+  "Europe",
+  "North America",
 ] as const;
 
 export const LANGUAGES = {
@@ -195,15 +240,6 @@ export const REGIONS_CONFIG = {
 } as const;
 ```
 
-### Environment variables
-
-Ensure your `.env.local` includes the Saleor channel configuration:
-
-```bash
-# Your default channel (should match a channel slug in Saleor)
-NEXT_PUBLIC_DEFAULT_CHANNEL=channel-es
-```
-
 When the storefront loads, it uses the current locale's channel map to fetch products and configurations for that market.
 
 ### Test the new locale
@@ -245,8 +281,9 @@ Adding a new locale involves:
 
 1. Create channel in Saleor
 2. Add locale to `@nimara/i18n/config.ts` (`LOCALES`, `LOCALE_LABELS`, `MESSAGES_PATH_MAP`, `LOCALE_PREFIXES`)
-3. Create translation file: `packages/i18n/src/messages/es-ES.json`
-4. Map locale to market in storefront: `apps/storefront/src/foundation/regions/config.ts`
-5. Test across all locales
+3. Create translation files in the locale directory: `packages/i18n/src/messages/es-ES/{common,storefront,marketplace}.json`
+4. Register the messages in `packages/i18n/src/loadMessages.ts` (`LOCALE_SHARED`, `LOCALE_APP`)
+5. Map locale to market in storefront: `apps/storefront/src/foundation/regions/config.ts`
+6. Test across all locales
 
 This modular approach keeps Nimara scalable and international-ready.
