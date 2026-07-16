@@ -27,7 +27,8 @@ outcome, live in an [ADR](../ADR/ADR%20MOC.md).
 
 <!-- Newest last. Format: - RFC-NNNN Title - Status - resolving ADR - one-line summary -->
 
-- [RFC-0001 Natural-Language Product Discovery](tech/RFC/RFC-0001%20Natural-Language%20Product%20Discovery.md) — Draft — resolving ADR: _pending_ — opt-in, provider-agnostic NL discovery layer over `SearchService`; hybrid LLM query-plan + grounded re-rank; reference adapter AWS Bedrock (Llama 4 Scout), swappable. Serves [PRD-001](product/prds/PRD-001%20Natural-Language%20Product%20Discovery.md).
+- [RFC-0001 Natural-Language Product Discovery](tech/RFC/RFC-0001%20Natural-Language%20Product%20Discovery.md) — Draft — resolving ADR: _pending_ — opt-in, provider-agnostic NL discovery layer over `SearchService`; hybrid LLM query-plan + grounded re-rank; reference adapter AWS Bedrock (Llama 4 Scout), swappable. Serves [PRD-001](product/prds/PRD-001%20Natural-Language%20Product%20Discovery.md). Competes with RFC-0002.
+- [RFC-0002 Provider-Native Natural-Language Product Discovery](tech/RFC/RFC-0002%20Provider-Native%20Natural-Language%20Product%20Discovery.md) — Draft — resolving ADR: _pending_ — discovery as an optional capability of the search provider (Algolia Agent Studio); agent returns ids + reasons, storefront joins to real records; no new dependency or infrastructure. Serves [PRD-001](product/prds/PRD-001%20Natural-Language%20Product%20Discovery.md). Competes with RFC-0001 — one ADR should resolve both.
 
 ## Related Notes
 
