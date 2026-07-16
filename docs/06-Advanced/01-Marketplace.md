@@ -62,6 +62,58 @@ pnpm dev:marketplace
 
 The marketplace app runs on **port 3001** by default.
 
+### Install the app in Saleor
+
+The marketplace is a Saleor App and **must be installed** before it works — installation is what stores the app's auth token (used for all server-side Saleor calls) in the app-config store. Running the dev server alone is not enough.
+
+1. **Start the app-config store (LocalStack).** With the default `MARKETPLACE_APP_CONFIG_PROVIDER=aws`, the auth token is read from / written to AWS Secrets Manager, which runs locally as LocalStack:
+
+   ```bash
+   cd apps/marketplace && pnpm localstack:up
+   ```
+
+2. **Expose the app publicly — only when Saleor cannot reach your machine.** Saleor Cloud (and any remote Saleor) must call back to the app's `tokenTargetUrl` during installation, so `http://localhost:3001` will not work. Open a tunnel to port `3001` (e.g. ngrok) and set the public origin so the manifest URLs are reachable:
+
+   ```properties
+   NEXT_PUBLIC_MARKETPLACE_VENDOR_URL=https://{your-tunnel}.ngrok.app
+   ```
+
+   Restart the dev server after changing it (`NEXT_PUBLIC_*` vars are read at startup). For a fully local Saleor on the same host, you can skip this step.
+
+3. **Install from the manifest.** In the Saleor Dashboard go to **Apps → Install external app** and use the manifest URL:
+
+   ```
+   https://{your-tunnel}.ngrok.app/api/saleor/manifest
+   ```
+
+   (Use `http://localhost:3001/api/saleor/manifest` only if Saleor runs on the same host.) Install with an account that holds all the permissions the app requests — you can only grant permissions you have yourself.
+
+On success the app appears in the Saleor app list as **Marketplace Vendor Panel**, and the auth token is persisted for your Saleor domain.
+
+### Catch marketplace emails locally (Mailpit)
+
+The marketplace app sends its own emails (e.g. the new-vendor notification to the super-admin, and vendor accepted/rejected messages) over SMTP. For local development you don't need a real SMTP provider — run **Mailpit**, a catch-all SMTP server with a web inbox, the same way you run LocalStack:
+
+```bash
+cd apps/marketplace && pnpm mailpit:up
+```
+
+Mailpit listens for SMTP on port `1025` and serves a web inbox at **http://localhost:8025**. Point the app at it in `apps/marketplace/.env` (no auth needed — leave user/password empty):
+
+```properties
+MARKETPLACE_SMTP_HOST=localhost
+MARKETPLACE_SMTP_PORT=1025
+MARKETPLACE_SMTP_SECURE=false
+MARKETPLACE_SMTP_USER=
+MARKETPLACE_SMTP_PASSWORD=
+MARKETPLACE_EMAIL_FROM="Nimara Dev <dev@nimara.local>"
+MARKETPLACE_SUPERADMIN_EMAIL=admin@nimara.local
+```
+
+Restart the dev server after editing `.env`. Every email the marketplace sends now appears at http://localhost:8025 instead of a real inbox. Stop the container with `pnpm mailpit:down`.
+
+> **Note:** Mailpit only captures emails sent by the marketplace app itself. The vendor **account confirmation** email is sent by Saleor, not by this app, so it will not appear in Mailpit — see [Vendor onboarding flow](#vendor-onboarding-flow).
+
 ## Features
 
 The marketplace app provides the following vendor-facing features:
@@ -100,57 +152,60 @@ Key environment variables for the marketplace. See [apps/marketplace/.env.exampl
 
 **Saleor**
 
-| Variable                                      | Description                                              |
-| --------------------------------------------- | ------------------------------------------------------- |
-| `NEXT_PUBLIC_SALEOR_URL`                      | Saleor instance URL                                     |
-| `NEXT_PUBLIC_SALEOR_API_URL`                  | Saleor GraphQL API endpoint                             |
-| `NEXT_PUBLIC_SALEOR_UI_APP_TOKEN`            | Saleor app token used by the marketplace UI             |
-| `NEXT_PUBLIC_SALEOR_MARKETPLACE_CHANNEL_SLUG` | Channel slug used by the marketplace (e.g. `default-channel`) |
-| `NEXT_PUBLIC_GRAPHQL_URL`                     | Marketplace GraphQL endpoint (default: `http://localhost:3001/api/graphql`) |
-| `NEXT_PUBLIC_MARKETPLACE_STOREFRONT_URL`      | Storefront URL the marketplace links to                 |
+| Variable                                      | Description                                                                                                                                                                                                 |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_SALEOR_URL`                      | Saleor instance URL                                                                                                                                                                                         |
+| `NEXT_PUBLIC_SALEOR_API_URL`                  | Saleor GraphQL API endpoint                                                                                                                                                                                 |
+| `NEXT_PUBLIC_SALEOR_UI_APP_TOKEN`             | Saleor app token used by the marketplace UI                                                                                                                                                                 |
+| `NEXT_PUBLIC_SALEOR_MARKETPLACE_CHANNEL_SLUG` | Channel slug used by the marketplace (e.g. `default-channel`)                                                                                                                                               |
+| `NEXT_PUBLIC_GRAPHQL_URL`                     | Marketplace GraphQL endpoint (default: `http://localhost:3001/api/graphql`)                                                                                                                                 |
+| `NEXT_PUBLIC_MARKETPLACE_STOREFRONT_URL`      | Storefront URL the marketplace links to                                                                                                                                                                     |
+| `NEXT_PUBLIC_MARKETPLACE_VENDOR_URL`          | Public origin of this app. Set to your tunnel URL (e.g. ngrok) when installing from a remote Saleor so the manifest's `tokenTargetUrl`/`appUrl`/webhooks are reachable. Leave unset for pure localhost dev. |
 
 **App config**
 
-| Variable                          | Description                                              |
-| --------------------------------- | ------------------------------------------------------- |
-| `MARKETPLACE_PORT`                | Port the app runs on (default: `3001`)                  |
-| `MARKETPLACE_CORS_ORIGINS`        | Comma-separated allowed CORS origins                    |
-| `MARKETPLACE_APP_CONFIG_PROVIDER` | App config provider: `aws` or `edge`                    |
-| `SECRET_MANAGER_APP_CONFIG_PATH`  | Secrets Manager path for app config (AWS provider)      |
+| Variable                          | Description                                        |
+| --------------------------------- | -------------------------------------------------- |
+| `MARKETPLACE_PORT`                | Port the app runs on (default: `3001`)             |
+| `MARKETPLACE_CORS_ORIGINS`        | Comma-separated allowed CORS origins               |
+| `MARKETPLACE_APP_CONFIG_PROVIDER` | App config provider: `aws` or `edge`               |
+| `SECRET_MANAGER_APP_CONFIG_PATH`  | Secrets Manager path for app config (AWS provider) |
 
 **Ledger (Postgres)**
 
-| Variable       | Description                                                                       |
-| -------------- | -------------------------------------------------------------------------------- |
+| Variable       | Description                                                                        |
+| -------------- | ---------------------------------------------------------------------------------- |
 | `DATABASE_URL` | Postgres connection string for the ledger and payout tables (required for payouts) |
 
 **Stripe Connect (payouts)**
 
 | Variable                                     | Description                                              |
-| -------------------------------------------- | ------------------------------------------------------- |
-| `STRIPE_SECRET_KEY`                          | Stripe secret key                                       |
-| `STRIPE_WEBHOOK_SIGNING_SECRET`              | Stripe webhook signing secret                           |
-| `MARKETPLACE_STRIPE_CONNECT_WEBHOOK_SECRET`  | Signing secret for Stripe Connect webhooks              |
+| -------------------------------------------- | -------------------------------------------------------- |
+| `STRIPE_SECRET_KEY`                          | Stripe secret key                                        |
+| `STRIPE_WEBHOOK_SIGNING_SECRET`              | Stripe webhook signing secret                            |
+| `MARKETPLACE_STRIPE_CONNECT_WEBHOOK_SECRET`  | Signing secret for Stripe Connect webhooks               |
 | `MARKETPLACE_STRIPE_CONNECT_DEFAULT_COUNTRY` | Default country for new Connect accounts (default: `US`) |
 
 **Email (SMTP)**
 
-| Variable                       | Description                                                          |
-| ------------------------------ | -------------------------------------------------------------------- |
-| `MARKETPLACE_SMTP_HOST`        | SMTP host used for sending marketplace emails                        |
-| `MARKETPLACE_SMTP_PORT`        | SMTP port (default: `587`)                                           |
-| `MARKETPLACE_SMTP_USER`        | SMTP username (optional, if your SMTP server requires auth)          |
-| `MARKETPLACE_SMTP_PASSWORD`    | SMTP password (optional, if your SMTP server requires auth)          |
-| `MARKETPLACE_SMTP_SECURE`      | Use TLS from the start (default: `false`)                            |
-| `MARKETPLACE_EMAIL_FROM`       | From address, e.g. `"Nimara Marketplace <no-reply@example.com>"`     |
-| `MARKETPLACE_SUPERADMIN_EMAIL` | Email that receives new vendor registration notifications            |
+For local development, point these at Mailpit instead of a real provider — see [Catch marketplace emails locally (Mailpit)](#catch-marketplace-emails-locally-mailpit).
+
+| Variable                       | Description                                                      |
+| ------------------------------ | ---------------------------------------------------------------- |
+| `MARKETPLACE_SMTP_HOST`        | SMTP host used for sending marketplace emails                    |
+| `MARKETPLACE_SMTP_PORT`        | SMTP port (default: `587`)                                       |
+| `MARKETPLACE_SMTP_USER`        | SMTP username (optional, if your SMTP server requires auth)      |
+| `MARKETPLACE_SMTP_PASSWORD`    | SMTP password (optional, if your SMTP server requires auth)      |
+| `MARKETPLACE_SMTP_SECURE`      | Use TLS from the start (default: `false`)                        |
+| `MARKETPLACE_EMAIL_FROM`       | From address, e.g. `"Nimara Marketplace <no-reply@example.com>"` |
+| `MARKETPLACE_SUPERADMIN_EMAIL` | Email that receives new vendor registration notifications        |
 
 **AWS (LocalStack for local development)**
 
-| Variable            | Description                                              |
-| ------------------- | ------------------------------------------------------- |
-| `AWS_REGION`        | AWS region                                              |
-| `AWS_ENDPOINT_URL`  | AWS endpoint (for local development with LocalStack)    |
+| Variable           | Description                                          |
+| ------------------ | ---------------------------------------------------- |
+| `AWS_REGION`       | AWS region                                           |
+| `AWS_ENDPOINT_URL` | AWS endpoint (for local development with LocalStack) |
 
 ## Deployment
 
