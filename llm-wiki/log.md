@@ -4,6 +4,10 @@
 
 - **Index maintenance**: Reconciled `index.md` with the current wiki tree: updated PRD paths and titles, registered the record templates and product task artifact, separated ADR and RFC catalogues, completed truncated descriptions, and removed entries for deleted notes.
 
+## 2026-07-16
+
+- **RFC**: Added [RFC-0002 Provider-Native Natural-Language Product Discovery](tech/RFC/RFC-0002%20Provider-Native%20Natural-Language%20Product%20Discovery.md) (`status: Draft`) — a competing approach to [RFC-0001](tech/RFC/RFC-0001%20Natural-Language%20Product%20Discovery.md) serving the same [PRD-001](prd/PRD-001%20Natural-Language%20Product%20Discovery.md): discovery as an optional capability of the search provider (Algolia Agent Studio holds the prompt, model, and limits), with the agent returning product ids plus reasons and the storefront joining them to real records. No new dependency or infrastructure. Registered in the [RFC MOC](tech/RFC/RFC%20MOC.md) and `index.md`; cross-linked with RFC-0001 and PRD-001 in both directions. The two RFCs are mutually exclusive — one ADR should resolve both.
+
 ## 2026-07-14
 
 - **RFC**: Added [RFC-0001 Natural-Language Product Discovery](tech/RFC/RFC-0001%20Natural-Language%20Product%20Discovery.md) (`status: Draft`) — an opt-in, provider-agnostic NL discovery layer that composes the existing `SearchService` with a separate swappable `LLMProvider` boundary; hybrid LLM query-plan + grounded re-rank grounded in the real catalog; reference adapter AWS Bedrock (Llama 4 Scout), swappable. Registered it in the [RFC MOC](tech/RFC/RFC%20MOC.md) and `index.md`, and cross-linked it with [PRD-001](prd/PRD-001%20Natural-Language%20Product%20Discovery.md) in both directions. Resolving ADR pending.

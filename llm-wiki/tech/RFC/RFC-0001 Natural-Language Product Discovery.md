@@ -154,7 +154,9 @@ Every failure path degrades safely to classic search or an honest no-match — n
 
 ### Alternative solutions
 
-_Deferred to separate RFCs._ The solution space is too large to carry in one document; each alternative that warrants a decision gets its own RFC, cross-linked here. TBD.
+_Deferred to separate RFCs._ The solution space is too large to carry in one document; each alternative that warrants a decision gets its own RFC, cross-linked here.
+
+- **[RFC-0002 Provider-Native Natural-Language Product Discovery](tech/RFC/RFC-0002%20Provider-Native%20Natural-Language%20Product%20Discovery.md)** — competing approach serving the same PRD: discovery as an optional capability of the search provider (Algolia Agent Studio holds the prompt, model, and limits) instead of a pipeline built in Nimara. The two are mutually exclusive; RFC-0002 carries the side-by-side comparison.
 
 ### Dependencies
 
@@ -184,6 +186,7 @@ Developer-facing only (G-050): setup and one-business-day activation (M-3); **pr
 
 ## Related Notes
 
+[RFC-0002 Provider-Native Natural-Language Product Discovery](tech/RFC/RFC-0002%20Provider-Native%20Natural-Language%20Product%20Discovery.md)
 [PRD-001 Natural-Language Product Discovery](product/prds/PRD-001%20Natural-Language%20Product%20Discovery.md)
 [PRD-001 Natural-Language Product Discovery - Grilling Log](product/prds/grilling/PRD-001%20Natural-Language%20Product%20Discovery%20-%20Grilling%20Log.md)
 [Do Not Pursue](product/strategy/Do%20Not%20Pursue.md)
