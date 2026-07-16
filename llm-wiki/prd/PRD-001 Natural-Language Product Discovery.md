@@ -1,10 +1,10 @@
 ---
-id: "PRD-001"
+id: "BRFC-001"
 type: "Product Requirements Document"
 title: "Natural-Language Product Discovery"
 description: "Product Requirements Document for closing Nimara's natural-language discovery gap with a reusable, open-source storefront capability."
 tags:
-  - "prd"
+  - "brfc"
   - "product-discovery"
   - "natural-language"
   - "open-source"

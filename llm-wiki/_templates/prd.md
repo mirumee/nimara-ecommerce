@@ -1,13 +1,14 @@
 ---
+id: "unique_number"
 type: "Template"
-title: "PRD Template"
-description: "Reusable template for drafting OKF-compatible Nimara Product Requirements Documents."
+title: "Name of the PRD"
+description: "Reusable template for Nimara Product Requirements Documents."
 tags:
   - "template"
   - "prd"
-created: "2026-07-09T00:00:00+00:00"
-timestamp: "2026-07-09T00:00:00+00:00"
-template_for: "Product Requirements Document"
+  - ""
+created: ""
+timestamp: ""
 ---
 
 # PRD Name
