@@ -83,7 +83,7 @@ Start from [Saleor Schema (MOC)](../../llm-wiki/tech/saleor/Saleor%20Schema%20%2
 
 ## Maintenance Workflow
 
-For lint, ingest, ADR, or answer-and-file-back work, also read `skills/wiki/wiki-maintenance/SKILL.md`. Follow its mode rules, especially:
+For lint, ingest, ADR, or answer-and-file-back work, also read `.agents/skills/wiki-maintenance/SKILL.md`. Follow its mode rules, especially:
 
 - report lint findings with suggested fixes before editing unless the user asked for cleanup;
 - update `llm-wiki/log.md` for wiki operations;

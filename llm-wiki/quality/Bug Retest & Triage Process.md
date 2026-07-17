@@ -14,7 +14,7 @@ timestamp: "2026-06-30T00:00:00+00:00"
 
 ## Content
 
-The authoritative copy of this process is in repo `CLAUDE.md` (Phase 2.0 + Phase 2). This note summarises it for the wiki; the executable version is the skill `skills/qa/bug-retest-triage`.
+The authoritative copy of this process is in repo `CLAUDE.md` (Phase 2.0 + Phase 2). This note summarises it for the wiki; the executable version is the skill `.agents/skills/bug-retest-triage`.
 
 ### Phase 2.0 — pick the next task (LIVE board, shared with human QA)
 The board changes in real time. **Re-query before every ticket; never trust a cached list.**

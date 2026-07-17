@@ -15,7 +15,7 @@ timestamp: "2026-06-30T00:00:00+00:00"
 ## Content
 
 ### What this section is for
-This is the QA brain for **agents working on Nimara**. Read it before touching a test or a Jira ticket so you don't rediscover the environment, the board mechanics, or the verdict rules the hard way. Knowledge lives in these notes; the executable runbooks live as skills under `skills/qa/`.
+This is the QA brain for **agents working on Nimara**. Read it before touching a test or a Jira ticket so you don't rediscover the environment, the board mechanics, or the verdict rules the hard way. Knowledge lives in these notes; the executable runbooks live under `.agents/skills/`.
 
 > Pairing convention (same as the rest of this wiki): notes = read-context, **skills = runbooks** that cite them. The QA skills read these notes the way `prd-author` reads `[Storefront Developer](product/personas/Storefront%20Developer.md)`.
 
@@ -38,9 +38,9 @@ This is the QA brain for **agents working on Nimara**. Read it before touching a
 - [QA Engineer (Test Agent)](product/personas/QA%20Engineer%20%28Test%20Agent%29.md) — the persona this section serves.
 
 ### Skills (runbooks)
-- `skills/qa/bug-retest-triage` — one ticket, full retest flow.
-- `skills/qa/test-case-design` — equivalence-partition a feature into a covering test set.
-- `skills/qa/regression-sweep` — broad health check across a surface (SEO, perf, page-type matrix).
+- `.agents/skills/bug-retest-triage` — one ticket, full retest flow.
+- `.agents/skills/test-case-design` — equivalence-partition a feature into a covering test set.
+- `.agents/skills/regression-sweep` — broad health check across a surface (SEO, perf, page-type matrix).
 
 ### Where the work is recorded
 Live QA artifacts sit in the repo at `qa/triage/`: `plans/<KEY>.md`, `evidence/<KEY>/`, `worklist.json` (per-ticket state), `jira-actions.json` (append-only action log). The retest protocol is also encoded in repo `CLAUDE.md`. Prior E2E findings live in the agent memory `MEMORY.md`.

@@ -36,7 +36,7 @@ timestamp: "2026-06-30T00:00:00+00:00"
 ### Product implications
 - Invest in machine-deterministic QA context (env URLs, transition IDs, field IDs, channel prefixes) so agents — and an orchestrator fanning out workers — don't re-learn them.
 - Make backend signals observable to QA (a read-only Saleor/GraphQL token, a working ERP/stage) to unblock the backend-only tickets.
-- Treat `qa/triage/` + this `qa/` wiki + the `skills/qa/*` runbooks as the QA system of record.
+- Treat `qa/triage/` + this `qa/` wiki + the `.agents/skills/*` QA runbooks as the QA system of record.
 
 ## Related Notes
 [Storefront Developer](product/personas/Storefront%20Developer.md)

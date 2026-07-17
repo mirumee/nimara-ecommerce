@@ -1,6 +1,6 @@
 ---
 name: wiki-maintenance
-description: Maintain the llm-wiki knowledge base — ingest a new source into interlinked notes, lint/audit the graph (orphans, dangling links, uncited claims, format drift), record an architecture decision as an ADR, or answer a question from the wiki and file the answer back so knowledge compounds. Use this skill whenever the user wants to add/ingest a document or research into the wiki, audit/lint/clean up the wiki, check for broken [[links]] or orphan notes, record/document an architecture decision (ADR), or ask a question that the wiki should answer (and save the answer). Follows the schema in llm-wiki/AGENTS.md. Do NOT use to write a PRD (use prd-author) or to run QA (use the skills/qa/* skills).
+description: Maintain the llm-wiki knowledge base — ingest a new source into interlinked notes, lint/audit the graph (orphans, dangling links, uncited claims, format drift), record an architecture decision as an ADR, or answer a question from the wiki and file the answer back so knowledge compounds. Use this skill whenever the user wants to add/ingest a document or research into the wiki, audit/lint/clean up the wiki, check for broken [[links]] or orphan notes, record/document an architecture decision (ADR), or ask a question that the wiki should answer (and save the answer). Follows the schema in llm-wiki/AGENTS.md. Do NOT use to write a PRD (use prd-author) or to run QA (use the .agents/skills/* QA skills).
 ---
 
 # Wiki Maintenance
