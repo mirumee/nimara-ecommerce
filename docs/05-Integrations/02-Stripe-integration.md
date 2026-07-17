@@ -14,10 +14,6 @@ It supports:
 - Stripe Tax calculation
 - Webhook setup via Stripe keys
 
-## Use the TypeScript Stripe App
-
-The Nimara Stripe App is a serverless TypeScript-based integration built with Next.js and intended for deployment on Vercel.
-
 ### Prerequisites
 
 Before proceeding, ensure you have:

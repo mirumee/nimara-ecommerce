@@ -15,17 +15,18 @@
       ],
       "env": [
         "NEXT_PUBLIC_SALEOR_API_URL",
-        "ENVIRONMENT",
+        "NEXT_PUBLIC_ENVIRONMENT",
         "CONFIG_KEY",
-        "VERCEL_EDGE_CONFIG_ID",
+        "NEXT_PUBLIC_SENTRY_DSN",
         "SENTRY_DSN",
         "SENTRY_ORG",
         "SENTRY_PROJECT",
         "SENTRY_DEBUG"
       ],
       "passThroughEnv": [
-        "STRIPE_SECRET_KEY",
-        "SALEOR_APP_TOKEN",
+        "VERCEL_EDGE_CONFIG_ID",
+        "VERCEL_TEAM_ID",
+        "VERCEL_ACCESS_TOKEN",
         "SENTRY_AUTH_TOKEN"
       ]
     }
