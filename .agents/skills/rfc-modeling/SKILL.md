@@ -5,7 +5,7 @@ description: Turn an approved PRD into an RFC design proposal inside the LLM-wik
 
 # RFC Author
 
-Turn an approved PRD into an explicit, reviewable **RFC** — a technical design _proposal_ for a non-trivial change. An RFC proposes; it does not decide. The verdict and outcome are captured later in an [ADR](../../../llm-wiki/tech/RFC/RFC%20MOC.md). Stop at a filed proposal; do not implement.
+Turn an approved PRD into an explicit, reviewable **RFC** — a technical design _proposal_ for a non-trivial change. An RFC proposes; it does not decide. The verdict and outcome are captured later in an [ADR](../../../llm-wiki/tech/ADR/ADR%20MOC.md). Stop at a filed proposal; do not implement.
 
 Follow these seven stages in order. The deep research, the technical grilling, and the self-lint are mandatory.
 
@@ -33,7 +33,7 @@ Cutting ornament does not lower the altitude, and it does not mean writing for a
 An RFC is always anchored to one PRD. Resolve it before anything else.
 
 - If the user named a PRD, load it.
-- If they did not, list the PRDs under `llm-wiki/product/prds/` and make the user pick one. Do not invent a PRD, and do not design against a loose feature idea — an RFC without a PRD has nothing to be falsified against.
+- If they did not, list the PRDs under `llm-wiki/prd/` and make the user pick one. Do not invent a PRD, and do not design against a loose feature idea — an RFC without a PRD has nothing to be falsified against.
 
 Then read, before questioning the user:
 

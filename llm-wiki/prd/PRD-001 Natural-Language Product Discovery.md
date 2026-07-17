@@ -17,27 +17,27 @@ status: "analyzing"
 owner: "Łukasz Szewczyk"
 prd_type: "business"
 personas:
-  - "[Storefront Developer](product/personas/Storefront%20Developer.md)"
-  - "[Shopper](product/personas/Shopper.md)"
+  - "[Storefront Developer](../market/personas/Storefront%20Developer.md)"
+  - "[Shopper](../market/personas/Shopper.md)"
 ---
 
 # Natural-Language Product Discovery
 
 ## Value Hypothesis
 
-**For** [Storefront Developers](product/personas/Storefront%20Developer.md) and agencies evaluating Nimara for storefronts whose catalogs are difficult to navigate with exact keywords **who** may reject Nimara when modern natural-language discovery would otherwise need to be built separately for every project, **the** Natural-Language Product Discovery capability **is a** fully open-source, shopper-facing guided-discovery capability **that** keeps Nimara credible during platform evaluation and lets adopters reach a working, grounded experience within one business day, **unlike** commercial commerce platforms with bundled AI discovery or bespoke integrations rebuilt for each store, **our solution** provides an adopter-owned, opt-in reference experience with one maintained adapter, a swappable provider boundary, catalog validation, classic-search fallback, and reusable documentation.
+**For** [Storefront Developers](../market/personas/Storefront%20Developer.md) and agencies evaluating Nimara for storefronts whose catalogs are difficult to navigate with exact keywords **who** may reject Nimara when modern natural-language discovery would otherwise need to be built separately for every project, **the** Natural-Language Product Discovery capability **is a** fully open-source, shopper-facing guided-discovery capability **that** keeps Nimara credible during platform evaluation and lets adopters reach a working, grounded experience within one business day, **unlike** commercial commerce platforms with bundled AI discovery or bespoke integrations rebuilt for each store, **our solution** provides an adopter-owned, opt-in reference experience with one maintained adapter, a swappable provider boundary, catalog validation, classic-search fallback, and reusable documentation.
 
 ## Evidence & Assumptions
 
 - E-1: One lost 2026 proposal specified shopper-facing AI Search as a `MUST` requirement and a primary UX differentiator. The proposal was rejected as a whole; there is no evidence that this single capability caused the loss.
-- E-2: Nimara's [Table Stakes vs Differentiators](product/market/Table%20Stakes%20vs%20Differentiators.md) analysis classifies AI-assisted shopper recommendations as a credibility-floor capability, while UCP/MCP remains the separate strategic differentiator.
+- E-2: Nimara's [Table Stakes vs Differentiators](../market/research/Table%20Stakes%20vs%20Differentiators.md) analysis classifies AI-assisted shopper recommendations as a credibility-floor capability, while UCP/MCP remains the separate strategic differentiator.
 - A-1 `[ASSUMPTION]`: Closing this gap will help Nimara remain on the shortlist for intent-heavy catalogs and convert qualified technical evaluations into deployments. The six-month validation window tests this assumption.
 
 ## Business Goal & Value
 
 This is a defensive market-parity bet, not a claim that on-site AI discovery is unique. Its purpose is to prevent an increasingly expected capability from disqualifying Nimara before teams can evaluate its genuine advantages: open-source ownership, composability, and replaceable integrations.
 
-The primary business outcome belongs to Nimara: qualified evaluators accept the capability and independent teams deploy it without maintaining a fork. [Shopper](product/personas/Shopper.md) usefulness is the experience quality bar, but store-level conversion, revenue uplift, and catalog-specific relevance targets remain the responsibility of each deployment. No historical adoption baseline is used for this PRD.
+The primary business outcome belongs to Nimara: qualified evaluators accept the capability and independent teams deploy it without maintaining a fork. [Shopper](../market/personas/Shopper.md) usefulness is the experience quality bar, but store-level conversion, revenue uplift, and catalog-specific relevance targets remain the responsibility of each deployment. No historical adoption baseline is used for this PRD.
 
 ## Success Metrics
 
@@ -95,12 +95,12 @@ The hypothesis is falsified if at least 3 qualified evaluations occur during the
 
 ## User Stories
 
-- US-1 ([Storefront Developer](product/personas/Storefront%20Developer.md)): As a developer or agency evaluating Nimara, I want to see working natural-language discovery in the public demo, so that I can judge whether Nimara meets this modern storefront expectation before selecting it.
-- US-2 ([Storefront Developer](product/personas/Storefront%20Developer.md)): As a storefront developer, I want to enable the reference capability with my own catalog and provider account within one business day, so that I can validate it without building the full experience or maintaining a fork.
-- US-3 ([Storefront Developer](product/personas/Storefront%20Developer.md)): As a storefront developer, I want to replace the provider and adapt placement, presentation, locale, eligibility, and ranking through supported extension points, so that the capability fits different storefronts while remaining upgradeable.
-- US-4 ([Shopper](product/personas/Shopper.md)): As a shopper, I want to describe my need in natural language and receive a concise list of current products with understandable reasons, so that I can reach relevant product pages without knowing the catalog's terminology.
-- US-5 ([Shopper](product/personas/Shopper.md)): As a shopper, I want an honest no-match response and a useful classic-search fallback when guided discovery cannot help, so that I never reach a dead end or see an invented product.
-- US-6 ([Storefront Developer](product/personas/Storefront%20Developer.md)): As a storefront developer, I want standard visibility into outcomes, failures, latency, provider usage, and cost, so that I can operate the capability within my deployment's budget and privacy policy.
+- US-1 ([Storefront Developer](../market/personas/Storefront%20Developer.md)): As a developer or agency evaluating Nimara, I want to see working natural-language discovery in the public demo, so that I can judge whether Nimara meets this modern storefront expectation before selecting it.
+- US-2 ([Storefront Developer](../market/personas/Storefront%20Developer.md)): As a storefront developer, I want to enable the reference capability with my own catalog and provider account within one business day, so that I can validate it without building the full experience or maintaining a fork.
+- US-3 ([Storefront Developer](../market/personas/Storefront%20Developer.md)): As a storefront developer, I want to replace the provider and adapt placement, presentation, locale, eligibility, and ranking through supported extension points, so that the capability fits different storefronts while remaining upgradeable.
+- US-4 ([Shopper](../market/personas/Shopper.md)): As a shopper, I want to describe my need in natural language and receive a concise list of current products with understandable reasons, so that I can reach relevant product pages without knowing the catalog's terminology.
+- US-5 ([Shopper](../market/personas/Shopper.md)): As a shopper, I want an honest no-match response and a useful classic-search fallback when guided discovery cannot help, so that I never reach a dead end or see an invented product.
+- US-6 ([Storefront Developer](../market/personas/Storefront%20Developer.md)): As a storefront developer, I want standard visibility into outcomes, failures, latency, provider usage, and cost, so that I can operate the capability within my deployment's budget and privacy policy.
 
 ## Acceptance Criteria
 
@@ -135,12 +135,9 @@ The hypothesis is falsified if at least 3 qualified evaluations occur during the
 
 ## Related Notes
 
-[RFC-0001 Natural-Language Product Discovery](tech/RFC/RFC-0001%20Natural-Language%20Product%20Discovery.md)
-[RFC-0002 Provider-Native Natural-Language Product Discovery](tech/RFC/RFC-0002%20Provider-Native%20Natural-Language%20Product%20Discovery.md)
-[PRD-001 Natural-Language Product Discovery - Grilling Log](product/prds/grilling/PRD-001%20Natural-Language%20Product%20Discovery%20-%20Grilling%20Log.md)
-[Table Stakes vs Differentiators](product/market/Table%20Stakes%20vs%20Differentiators.md)
-[Product Strategy 2026 (MOC)](product/strategy/Product%20Strategy%202026%20%28MOC%29.md)
-[Top-of-Funnel Adoption Moves](product/strategy/Top-of-Funnel%20Adoption%20Moves.md)
-[Marketplace & Agentic Commerce Bets](product/strategy/Marketplace%20%26%20Agentic%20Commerce%20Bets.md)
-[Storefront Developer](product/personas/Storefront%20Developer.md)
-[Shopper](product/personas/Shopper.md)
+[Table Stakes vs Differentiators](../market/research/Table%20Stakes%20vs%20Differentiators.md)
+[Product Strategy 2026 (MOC)](../market/strategy/Product%20Strategy%202026%20%28MOC%29.md)
+[Top-of-Funnel Adoption Moves](../market/strategy/Top-of-Funnel%20Adoption%20Moves.md)
+[Marketplace & Agentic Commerce Bets](../market/strategy/Marketplace%20%26%20Agentic%20Commerce%20Bets.md)
+[Storefront Developer](../market/personas/Storefront%20Developer.md)
+[Shopper](../market/personas/Shopper.md)

@@ -47,6 +47,6 @@ own JWT layer (`apps/marketplace/src/lib/auth/`) for vendors.
 
 ## Related Notes
 
-[Saleor Schema (MOC)](tech/saleor/Saleor%20Schema%20%28MOC%29.md)
-[Shop, Channels & Warehouses](tech/saleor/Shop%2C%20Channels%20%26%20Warehouses.md)
-[Orders & Fulfillment](tech/saleor/Orders%20%26%20Fulfillment.md)
+[Saleor Schema (MOC)](Saleor%20Schema%20%28MOC%29.md)
+[Shop, Channels & Warehouses](Shop%2C%20Channels%20%26%20Warehouses.md)
+[Orders & Fulfillment](Orders%20%26%20Fulfillment.md)

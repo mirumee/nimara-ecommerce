@@ -10,6 +10,7 @@ timestamp: "2026-04-06T00:00:00+00:00" #ISO 8601 last meaningful update time.
 ---
 
 ## Content
+
 Write the main content here.
 
 ##
@@ -21,4 +22,4 @@ Write the main content here.
 ## Related Notes
 
 <!--Replace this line with real related-note links before use. Use standard Markdown links-->
-<!-- [Storefront Developer](product/personas/example.md) -->
+<!-- [Storefront Developer](../market/personas/Storefront%20Developer.md) -->

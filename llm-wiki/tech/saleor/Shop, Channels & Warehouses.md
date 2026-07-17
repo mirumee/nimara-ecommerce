@@ -26,7 +26,7 @@ prices, availability, and shipping against it.
   `defaultCountry`, `channelCurrencies`, `permissions`, `domain`, and **`version: String!`**.
   `Shop.version` is the running Saleor server version — the authoritative _runtime_ version.
   Nimara does not currently query it (compatibility is enforced by the generated types, whose
-  stamp these notes carry — see [Saleor Schema (MOC)](tech/saleor/Saleor%20Schema%20%28MOC%29.md)).
+  stamp these notes carry — see [Saleor Schema (MOC)](Saleor%20Schema%20%28MOC%29.md)).
 - `Channel` (`Node & ObjectWithMetadata`) — `slug`, `name`, `currencyCode`, `defaultCountry`,
   `isActive`, `countries`.
 - `Warehouse` (`Node & ObjectWithMetadata`) — stock location backing availability and shipping
@@ -44,6 +44,6 @@ the Saleor instance; unset = zero-config empty mode.
 
 ## Related Notes
 
-[Saleor Schema (MOC)](tech/saleor/Saleor%20Schema%20%28MOC%29.md)
-[Products & Variants](tech/saleor/Products%20%26%20Variants.md)
-[Checkout & Payments](tech/saleor/Checkout%20%26%20Payments.md)
+[Saleor Schema (MOC)](Saleor%20Schema%20%28MOC%29.md)
+[Products & Variants](Products%20%26%20Variants.md)
+[Checkout & Payments](Checkout%20%26%20Payments.md)

@@ -43,14 +43,14 @@ even domains that did not change. This is intentional — a conservative, simple
 
 ## Register
 
-- [Products & Variants](tech/saleor/Products%20%26%20Variants.md) — catalog: `Product`, `ProductVariant`, pricing, availability.
-- [Checkout & Payments](tech/saleor/Checkout%20%26%20Payments.md) — `Checkout`, lines, gateways, and the Transactions API.
-- [Orders & Fulfillment](tech/saleor/Orders%20%26%20Fulfillment.md) — `Order`, status enums, `Fulfillment`, payment status.
-- [Account & Auth](tech/saleor/Account%20%26%20Auth.md) — `User`, `Address`, JWT token mutations.
-- [Shop, Channels & Warehouses](tech/saleor/Shop%2C%20Channels%20%26%20Warehouses.md) — `Shop` (incl. `version`), `Channel`, `Warehouse`.
-- [Attributes & Metadata](tech/saleor/Attributes%20%26%20Metadata.md) — `Attribute` input types and the `metadata` pattern.
+- [Products & Variants](Products%20%26%20Variants.md) — catalog: `Product`, `ProductVariant`, pricing, availability.
+- [Checkout & Payments](Checkout%20%26%20Payments.md) — `Checkout`, lines, gateways, and the Transactions API.
+- [Orders & Fulfillment](Orders%20%26%20Fulfillment.md) — `Order`, status enums, `Fulfillment`, payment status.
+- [Account & Auth](Account%20%26%20Auth.md) — `User`, `Address`, JWT token mutations.
+- [Shop, Channels & Warehouses](Shop%2C%20Channels%20%26%20Warehouses.md) — `Shop` (incl. `version`), `Channel`, `Warehouse`.
+- [Attributes & Metadata](Attributes%20%26%20Metadata.md) — `Attribute` input types and the `metadata` pattern.
 
 ## Related Notes
 
-[Agent Instructions](AGENTS.md)
-[ADR MOC](tech/ADR/ADR%20MOC.md)
+[Agent Instructions](../../AGENTS.md)
+[ADR MOC](../ADR/ADR%20MOC.md)

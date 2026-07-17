@@ -16,7 +16,7 @@ prd_type: "business"
 
 ## Value Statement
 
-**For** [Customer](product/personas/Customer.md)
+**For** [Customer](../market/personas/Customer.md)
 **who** lack the social proof shoppers expect — no ratings on product pages costs conversion, organic visibility, and catalog quality feedback
 **the** Verified User Reviews capability
 **is a** built-in verified-purchase review system

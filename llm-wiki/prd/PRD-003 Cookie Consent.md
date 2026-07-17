@@ -16,7 +16,7 @@ prd_type: "business"
 
 ## Value Statement
 
-**For** [Ecommerce Manager](product/personas/Ecommerce%20Manager.md) running Nimara stores in consent-regulated markets (EEA/UK)
+**For** [Ecommerce Manager](../market/personas/Ecommerce%20Manager.md) running Nimara stores in consent-regulated markets (EEA/UK)
 **who** must run GTM tracking legally (GDPR/ePrivacy) and keep Google Ads signal alive under Consent Mode v2
 **the** Cookie Consent capability
 **is a** built-in consent management layer (banner + Consent Mode v2 wiring) in the Nimara storefront

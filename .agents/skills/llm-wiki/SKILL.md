@@ -63,7 +63,7 @@ node scripts/wiki-qmd.mjs query "question" --json --no-rerank -n 10
    QMD may normalize spaces in filenames, so prefer `docid` from search results.
 
 3. Read the relevant MOC when the topic is domain-specific:
-   - Product strategy: `llm-wiki/product/strategy/Product Strategy 2026 (MOC).md`
+   - Product strategy: `llm-wiki/market/strategy/Product Strategy 2026 (MOC).md`
    - QA/testing: `llm-wiki/quality/Quality & Testing (MOC).md`
    - ADRs: `llm-wiki/tech/ADR/ADR MOC.md`
 
@@ -79,7 +79,7 @@ Notes under `llm-wiki/tech/saleor/` describe the Saleor GraphQL API and are **ve
 - **When authoring/updating** a Saleor note, follow `llm-wiki/_templates/saleor-schema-note.md` and stamp `saleor_schema_hash` with `pnpm wiki:saleor:hash`.
 - After `pnpm codegen` regenerates the schema (see the `codegen-check` skill), expect Saleor notes to go `STALE` — review them against the new schema, then restamp.
 
-Start from [Saleor Schema (MOC)](../../llm-wiki/tech/saleor/Saleor%20Schema%20%28MOC%29.md).
+Start from [Saleor Schema (MOC)](../../../llm-wiki/tech/saleor/Saleor%20Schema%20%28MOC%29.md).
 
 ## Maintenance Workflow
 

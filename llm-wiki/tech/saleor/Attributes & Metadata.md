@@ -50,5 +50,5 @@ CMS references). Treat `Metadata` values as strings — serialize/parse structur
 
 ## Related Notes
 
-[Saleor Schema (MOC)](tech/saleor/Saleor%20Schema%20%28MOC%29.md)
-[Products & Variants](tech/saleor/Products%20%26%20Variants.md)
+[Saleor Schema (MOC)](Saleor%20Schema%20%28MOC%29.md)
+[Products & Variants](Products%20%26%20Variants.md)

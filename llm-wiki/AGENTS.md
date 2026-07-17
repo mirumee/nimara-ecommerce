@@ -17,12 +17,14 @@ This directory is an interlinked knowledge base for planning, testing, and build
 It follows the llm-wiki shape: a directory of Markdown files with YAML frontmatter, standard Markdown cross-links, reserved `index.md` files for progressive disclosure, and reserved `log.md` files for chronological updates.
 
 ## Source of truth
+
 - The wiki view is the complete `llm-wiki/` tree at one exact Git commit.
 - `main` is the canonical development branch.
 - A branch name is a movable alias; provenance always includes the resolved commit SHA.
 - A `vX.Y.Z` tag is the immutable release snapshot.
 - There are no per-branch directories. Git already versions branch-specific state.
 -
+
 # Folder Structure
 
 Content is grouped by domain:
@@ -53,25 +55,26 @@ llm-wiki/
     └── saleor/       # version-stamped notes on the Saleor GraphQL schema
 ```
 
-
 ## Knowledge model - glossary
-| Record           | Responsibility                                                 |
-| ---------------- | -------------------------------------------------------------- |
-| PRD              | Why and what are product requrements                           |
-| RFC              | A proposed technical solution and considered alternatives      |
-| ADR              | A durable architecture decision                                |
-| IMP              | What was implemented and how it was verified                   |
-| CAP              | Current product capability                                     |
-| INT              | Current integration contract                                   |
-| FLOW             | Current end-to-end product flow                                |
-| QA               | Verification plan and acceptance evidence                      |
-| OPS              | Operational knowledge, runbook, rollback, or incident guidance |
 
+| Record | Responsibility                                                 |
+| ------ | -------------------------------------------------------------- |
+| PRD    | Why and what are product requrements                           |
+| RFC    | A proposed technical solution and considered alternatives      |
+| ADR    | A durable architecture decision                                |
+| IMP    | What was implemented and how it was verified                   |
+| CAP    | Current product capability                                     |
+| INT    | Current integration contract                                   |
+| FLOW   | Current end-to-end product flow                                |
+| QA     | Verification plan and acceptance evidence                      |
+| OPS    | Operational knowledge, runbook, rollback, or incident guidance |
 
 ## Concept Document Format
+
 [Template](_templates/Undefined.md).
 
 ## Index and log
+
 `index.md` and `log.md` are llm-wiki reserved filenames.
 
 - `index.md` is content-oriented. It lists every validated record once, grouped by record type,
@@ -83,8 +86,9 @@ llm-wiki/
 # Directory Update Log
 
 ## 2026-07-09
-* **Update**: Added a new concept document for ...
-* **Lint**: Repaired broken Markdown links in ...
+
+- **Update**: Added a new concept document for ...
+- **Lint**: Repaired broken Markdown links in ...
 ```
 
 # Saleor Schema Notes
@@ -97,14 +101,14 @@ because Nimara does not pin a Saleor version: it connects only through
 
 Rules:
 
-* Type: `Saleor Schema Note`. Create from `_templates/saleor-schema-note.md`. Keep notes
+- Type: `Saleor Schema Note`. Create from `_templates/saleor-schema-note.md`. Keep notes
   curated and one-idea-per-note (per domain), not an auto-generated per-type dump.
-* Every note carries `saleor_schema_hash` - the short sha256 of `packages/codegen/schema.ts`
+- Every note carries `saleor_schema_hash` - the short sha256 of `packages/codegen/schema.ts`
   it was written against - plus `saleor_schema_generated`.
-* Stamp with `pnpm wiki:saleor:hash`. Verify with `pnpm wiki:saleor:check` before citing a
+- Stamp with `pnpm wiki:saleor:hash`. Verify with `pnpm wiki:saleor:check` before citing a
   Saleor note. `OK` = matches the current schema; `STALE` = the schema was regenerated and the
   note needs review, then restamp.
-* A `STALE` result is expected after `pnpm codegen` (see the `codegen-check` skill) changes
+- A `STALE` result is expected after `pnpm codegen` (see the `codegen-check` skill) changes
   `packages/codegen/schema.ts`. The stamp is whole-schema, so any regeneration flags every
   Saleor note - a conservative, intentionally simple freshness gate.
 
@@ -114,10 +118,10 @@ Use the repo-local `llm-wiki` skill as the entrypoint for discovery and wiki wor
 
 Expected operations:
 
-* Ingest a new source: update synthesized notes, update `index.md`, and append to `log.md`.
-* Lint or audit: check frontmatter, links, orphans, MOC coverage, stale claims, and source
+- Ingest a new source: update synthesized notes, update `index.md`, and append to `log.md`.
+- Lint or audit: check frontmatter, links, orphans, MOC coverage, stale claims, and source
   coverage.
-* Answer and file back: answer from existing concepts first, then add durable insights as
+- Answer and file back: answer from existing concepts first, then add durable insights as
   concept documents when they should persist.
 
 Sources under `sources/` should preserve the source body. Prefer appending metadata,
@@ -143,17 +147,17 @@ pnpm wiki:qmd:mcp
 
 Operational rules:
 
-* Use [LLM Wiki](sources/LLM%20Wiki.md) for the upstream pattern and this file for Nimara's
+- Use [LLM Wiki](sources/LLM%20Wiki.md) for the upstream pattern and this file for Nimara's
   local schema.
-* Run `pnpm wiki:qmd:update` after Markdown changes and `pnpm wiki:qmd:embed` when semantic
+- Run `pnpm wiki:qmd:update` after Markdown changes and `pnpm wiki:qmd:embed` when semantic
   search should reflect those changes.
-* Use `qmd search` or `qmd query` to get a `docid` or `qmd://...` URI before calling
+- Use `qmd search` or `qmd query` to get a `docid` or `qmd://...` URI before calling
   `qmd get`.
-* Do not treat QMD results as validation. Link integrity, frontmatter, source integrity, MOC
+- Do not treat QMD results as validation. Link integrity, frontmatter, source integrity, MOC
   coverage, and index coverage still require a wiki-maintenance lint pass.
 
 # Related Notes
 
 [LLM Wiki](sources/LLM%20Wiki.md)
 [ADR MOC](tech/ADR/ADR%20MOC.md)
-[Product Strategy 2026 (MOC)](product/strategy/Product%20Strategy%202026%20%28MOC%29.md)
+[Product Strategy 2026 (MOC)](market/strategy/Product%20Strategy%202026%20%28MOC%29.md)

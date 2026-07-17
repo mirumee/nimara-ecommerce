@@ -44,6 +44,6 @@ feeds the Postgres ledger (`apps/marketplace/src/lib/ledger/`).
 
 ## Related Notes
 
-[Saleor Schema (MOC)](tech/saleor/Saleor%20Schema%20%28MOC%29.md)
-[Checkout & Payments](tech/saleor/Checkout%20%26%20Payments.md)
-[Account & Auth](tech/saleor/Account%20%26%20Auth.md)
+[Saleor Schema (MOC)](Saleor%20Schema%20%28MOC%29.md)
+[Checkout & Payments](Checkout%20%26%20Payments.md)
+[Account & Auth](Account%20%26%20Auth.md)

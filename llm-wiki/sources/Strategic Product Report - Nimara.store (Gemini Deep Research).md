@@ -26,16 +26,16 @@ timestamp: "2026-07-09T00:00:00+00:00"
 ### Provenance (known without the full text)
 
 - The report is the single upstream source for the 2026 strategy corpus. It is referenced in
-  [Product Strategy 2026 (MOC)](product/strategy/Product%20Strategy%202026%20%28MOC%29.md) and its web citations are catalogued in [Works Cited](references/Works%20Cited.md).
+  [Product Strategy 2026 (MOC)](../market/strategy/Product%20Strategy%202026%20%28MOC%29.md) and its web citations are catalogued in [Works Cited](../references/Works%20Cited.md).
 - Notes synthesised from this report (the "wiki" layer over this raw source):
-  - Strategy: [Product Strategy 2026 (MOC)](product/strategy/Product%20Strategy%202026%20%28MOC%29.md), [Initiative Prioritization](product/strategy/initiatives/Initiative%20Prioritization.md),
-    [Marketplace & Agentic Commerce Bets](product/strategy/Marketplace%20%26%20Agentic%20Commerce%20Bets.md), [Top-of-Funnel Adoption Moves](product/strategy/Top-of-Funnel%20Adoption%20Moves.md),
-    [Do Not Pursue](product/strategy/Do%20Not%20Pursue.md), [Open Questions & Assumptions](product/strategy/Open%20Questions%20%26%20Assumptions.md)
-  - Market: [Composable Commerce Market](product/market/Composable%20Commerce%20Market.md), [Competitor Landscape](product/market/Competitor%20Landscape.md),
-    [Table Stakes vs Differentiators](product/market/Table%20Stakes%20vs%20Differentiators.md), [Emerging Trends 2026](product/market/Emerging%20Trends%202026.md), [Developer Pain Points](product/market/Developer%20Pain%20Points.md)
-- The report's own external references (37 web sources) are listed in [Works Cited](references/Works%20Cited.md).
+  - Strategy: [Product Strategy 2026 (MOC)](../market/strategy/Product%20Strategy%202026%20%28MOC%29.md), [Initiative Prioritization](../market/strategy/initiatives/Initiative%20Prioritization.md),
+    [Marketplace & Agentic Commerce Bets](../market/strategy/Marketplace%20%26%20Agentic%20Commerce%20Bets.md), [Top-of-Funnel Adoption Moves](../market/strategy/Top-of-Funnel%20Adoption%20Moves.md),
+    [Do Not Pursue](../market/strategy/Do%20Not%20Pursue.md), [Open Questions & Assumptions](../market/strategy/Open%20Questions%20%26%20Assumptions.md)
+  - Market: [Composable Commerce Market](../market/research/Composable%20Commerce%20Market.md), [Competitor Landscape](../market/research/Competitor%20Landscape.md),
+    [Table Stakes vs Differentiators](../market/research/Table%20Stakes%20vs%20Differentiators.md), [Emerging Trends 2026](../market/research/Emerging%20Trends%202026.md), [Developer Pain Points](../market/research/Developer%20Pain%20Points.md)
+- The report's own external references (37 web sources) are listed in [Works Cited](../references/Works%20Cited.md).
 
 ## Related Notes
 
-[Product Strategy 2026 (MOC)](product/strategy/Product%20Strategy%202026%20%28MOC%29.md)
-[Works Cited](references/Works%20Cited.md)
+[Product Strategy 2026 (MOC)](../market/strategy/Product%20Strategy%202026%20%28MOC%29.md)
+[Works Cited](../references/Works%20Cited.md)

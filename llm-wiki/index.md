@@ -33,34 +33,30 @@ okf_version: "0.1"
 
 # Product Strategy
 
-- [Product Strategy 2026 (MOC)](product/strategy/Product%20Strategy%202026%20%28MOC%29.md) - Entry point and executive summary for 2026 product strategy.
-- [Initiative Prioritization](product/strategy/initiatives/Initiative%20Prioritization.md) - Ranked scoring of recommended initiatives across impact, fit, timing, and effort/risk.
-- [Marketplace & Agentic Commerce Bets](product/strategy/Marketplace%20%26%20Agentic%20Commerce%20Bets.md) - Evaluation of the marketplace and agentic-commerce bets.
-- [Top-of-Funnel Adoption Moves](product/strategy/Top-of-Funnel%20Adoption%20Moves.md) - High-leverage moves to accelerate open-source developer adoption.
-- [Do Not Pursue](product/strategy/Do%20Not%20Pursue.md) - Strategic non-goals and distractions to avoid.
-- [Open Questions & Assumptions](product/strategy/Open%20Questions%20%26%20Assumptions.md) - Assumptions behind the strategy and evidence that could change it.
+- [Product Strategy 2026 (MOC)](market/strategy/Product%20Strategy%202026%20%28MOC%29.md) - Entry point and executive summary for 2026 product strategy.
+- [Initiative Prioritization](market/strategy/initiatives/Initiative%20Prioritization.md) - Ranked scoring of recommended initiatives across impact, fit, timing, and effort/risk.
+- [Marketplace & Agentic Commerce Bets](market/strategy/Marketplace%20%26%20Agentic%20Commerce%20Bets.md) - Evaluation of the marketplace and agentic-commerce bets.
+- [Top-of-Funnel Adoption Moves](market/strategy/Top-of-Funnel%20Adoption%20Moves.md) - High-leverage moves to accelerate open-source developer adoption.
+- [Do Not Pursue](market/strategy/Do%20Not%20Pursue.md) - Strategic non-goals and distractions to avoid.
+- [Open Questions & Assumptions](market/strategy/Open%20Questions%20%26%20Assumptions.md) - Assumptions behind the strategy and evidence that could change it.
 
 # Product Market
 
-- [Composable Commerce Market](product/market/Composable%20Commerce%20Market.md) - Sector maturity and self-hosted open-source economics above the ~$2-10M revenue threshold.
-- [Competitor Landscape](product/market/Competitor%20Landscape.md) - 2026 positioning, architecture, momentum, and DX of competing platforms.
-- [Table Stakes vs Differentiators](product/market/Table%20Stakes%20vs%20Differentiators.md) - Commoditized requirements versus Nimara's genuine differentiators.
-- [Emerging Trends 2026](product/market/Emerging%20Trends%202026.md) - Agentic commerce, UCP/MCP, marketplaces, and deploy-in-minutes DX.
-- [Developer Pain Points](product/market/Developer%20Pain%20Points.md) - Community and GitHub evidence of ecosystem dissatisfaction.
+- [Composable Commerce Market](market/research/Composable%20Commerce%20Market.md) - Sector maturity and self-hosted open-source economics above the ~$2-10M revenue threshold.
+- [Competitor Landscape](market/research/Competitor%20Landscape.md) - 2026 positioning, architecture, momentum, and DX of competing platforms.
+- [Table Stakes vs Differentiators](market/research/Table%20Stakes%20vs%20Differentiators.md) - Commoditized requirements versus Nimara's genuine differentiators.
+- [Emerging Trends 2026](market/research/Emerging%20Trends%202026.md) - Agentic commerce, UCP/MCP, marketplaces, and deploy-in-minutes DX.
+- [Developer Pain Points](market/research/Developer%20Pain%20Points.md) - Community and GitHub evidence of ecosystem dissatisfaction.
 
 # Product Personas
 
-- [Storefront Developer](product/personas/Storefront%20Developer.md) - Primary developer persona adopting Nimara to ship a production Saleor storefront.
-- [Ecommerce Manager](product/personas/Ecommerce%20Manager.md) - Secondary business-operator persona managing commerce operations through dashboards.
-- [Marketplace Vendor](product/personas/Marketplace%20Vendor.md) - Secondary third-party seller persona for vendor-panel workflows.
-- [Shopper](product/personas/Shopper.md) - Pre-purchase buyer experience persona.
-- [Customer](product/personas/Customer.md) - Post-purchase buyer experience persona.
-- [QA Engineer (Test Agent)](product/personas/QA%20Engineer%20%28Test%20Agent%29.md) - QA agent persona that verifies behavior from evidence.
-- [Anti-Persona - No-Code Solo Merchant](product/personas/Anti-Persona%20-%20No-Code%20Solo%20Merchant.md) - Excluded no-code solo merchant segment.
-
-# Product Tasks
-
-- [LLM Product Discovery - Developer Task Breakdown](product/tasks/llm-product-discovery.json) - Implementation backlog containing 53 tasks across discovery foundations, classic search, AI suggestions, administration, analytics, and launch hardening.
+- [Storefront Developer](market/personas/Storefront%20Developer.md) - Primary developer persona adopting Nimara to ship a production Saleor storefront.
+- [Ecommerce Manager](market/personas/Ecommerce%20Manager.md) - Secondary business-operator persona managing commerce operations through dashboards.
+- [Marketplace Vendor](market/personas/Marketplace%20Vendor.md) - Secondary third-party seller persona for vendor-panel workflows.
+- [Shopper](market/personas/Shopper.md) - Pre-purchase buyer experience persona.
+- [Customer](market/personas/Customer.md) - Post-purchase buyer experience persona.
+- [QA Engineer (Test Agent)](market/personas/QA%20Engineer%20%28Test%20Agent%29.md) - QA agent persona that verifies behavior from evidence.
+- [Anti-Persona - No-Code Solo Merchant](market/personas/Anti-Persona%20-%20No-Code%20Solo%20Merchant.md) - Excluded no-code solo merchant segment.
 
 # Quality
 
@@ -82,8 +78,6 @@ okf_version: "0.1"
 # Technology RFC
 
 - [RFC MOC](tech/RFC/RFC%20MOC.md) - Map of content and register for RFC design proposals that precede an accepting or rejecting ADR.
-- [RFC-0001 Natural-Language Product Discovery](tech/RFC/RFC-0001%20Natural-Language%20Product%20Discovery.md) - Draft proposal for an opt-in, provider-agnostic NL discovery layer over SearchService (hybrid query-plan + grounded re-rank); serves PRD-001.
-- [RFC-0002 Provider-Native Natural-Language Product Discovery](tech/RFC/RFC-0002%20Provider-Native%20Natural-Language%20Product%20Discovery.md) - Draft proposal for discovery as an optional search-provider capability using Algolia Agent Studio; competing approach to RFC-0001, same PRD.
 
 # Technology Saleor Schema
 

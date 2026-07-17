@@ -4,7 +4,7 @@ Run every check before presenting or filing the RFC. Fix issues that require no 
 
 ## Research and approach gate
 
-- [ ] The RFC is anchored to exactly one PRD; the PRD exists in `llm-wiki/product/prds/`.
+- [ ] The RFC is anchored to exactly one PRD; the PRD exists in `llm-wiki/prd/`.
 - [ ] 2–3 distinct approaches were researched against primary sources and the repo's real structure — or a single viable approach was confirmed with reasons.
 - [ ] Every approach is OSS provider-agnostic; no vendor is mandated as the only option.
 - [ ] The chosen approach is recorded; rejected approaches are captured as Alternative solutions with reasons.

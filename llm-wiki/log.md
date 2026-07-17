@@ -2,15 +2,17 @@
 
 ## 2026-07-17
 
+- **Link maintenance**: Repaired the wiki for GitHub-relative Markdown resolution: all 327 local links now resolve, `index.md` exactly covers all 55 non-reserved Markdown records, renamed market/PRD paths use their current locations, and active entries for the deleted task artifact and absent RFC documents were removed. Historical mentions of missing artifacts were preserved as text.
+- **Lint**: Audited the full wiki graph, schema, related skills, QMD retrieval, Git/GitHub integration, source provenance, and developer-harness coverage. Findings and prioritized recommendations are recorded in the [LLM Wiki Review](../LLM_WIKI_REVIEW.md); no reported wiki defects were auto-fixed.
 - **Index maintenance**: Reconciled `index.md` with the current wiki tree: updated PRD paths and titles, registered the record templates and product task artifact, separated ADR and RFC catalogues, completed truncated descriptions, and removed entries for deleted notes.
 
 ## 2026-07-16
 
-- **RFC**: Added [RFC-0002 Provider-Native Natural-Language Product Discovery](tech/RFC/RFC-0002%20Provider-Native%20Natural-Language%20Product%20Discovery.md) (`status: Draft`) — a competing approach to [RFC-0001](tech/RFC/RFC-0001%20Natural-Language%20Product%20Discovery.md) serving the same [PRD-001](prd/PRD-001%20Natural-Language%20Product%20Discovery.md): discovery as an optional capability of the search provider (Algolia Agent Studio holds the prompt, model, and limits), with the agent returning product ids plus reasons and the storefront joining them to real records. No new dependency or infrastructure. Registered in the [RFC MOC](tech/RFC/RFC%20MOC.md) and `index.md`; cross-linked with RFC-0001 and PRD-001 in both directions. The two RFCs are mutually exclusive — one ADR should resolve both.
+- **RFC**: Added `RFC-0002 Provider-Native Natural-Language Product Discovery` (`status: Draft`) — a competing approach to `RFC-0001` serving the same [PRD-001](prd/PRD-001%20Natural-Language%20Product%20Discovery.md): discovery as an optional capability of the search provider (Algolia Agent Studio holds the prompt, model, and limits), with the agent returning product ids plus reasons and the storefront joining them to real records. No new dependency or infrastructure. Registered in the [RFC MOC](tech/RFC/RFC%20MOC.md) and `index.md`; cross-linked with RFC-0001 and PRD-001 in both directions. The two RFCs are mutually exclusive — one ADR should resolve both.
 
 ## 2026-07-14
 
-- **RFC**: Added [RFC-0001 Natural-Language Product Discovery](tech/RFC/RFC-0001%20Natural-Language%20Product%20Discovery.md) (`status: Draft`) — an opt-in, provider-agnostic NL discovery layer that composes the existing `SearchService` with a separate swappable `LLMProvider` boundary; hybrid LLM query-plan + grounded re-rank grounded in the real catalog; reference adapter AWS Bedrock (Llama 4 Scout), swappable. Registered it in the [RFC MOC](tech/RFC/RFC%20MOC.md) and `index.md`, and cross-linked it with [PRD-001](prd/PRD-001%20Natural-Language%20Product%20Discovery.md) in both directions. Resolving ADR pending.
+- **RFC**: Added `RFC-0001 Natural-Language Product Discovery` (`status: Draft`) — an opt-in, provider-agnostic NL discovery layer that composes the existing `SearchService` with a separate swappable `LLMProvider` boundary; hybrid LLM query-plan + grounded re-rank grounded in the real catalog; reference adapter AWS Bedrock (Llama 4 Scout), swappable. Registered it in the [RFC MOC](tech/RFC/RFC%20MOC.md) and `index.md`, and cross-linked it with [PRD-001](prd/PRD-001%20Natural-Language%20Product%20Discovery.md) in both directions. Resolving ADR pending.
 - **PRD terminology**: Standardized the product-document model as PRD (Product Requirements Document), including `PRD-*` identifiers, `product/prds/` paths, templates, grilling logs, links, and authoring skills.
 - **Structure**: Added `tech/saleor/` with [Saleor Schema (MOC)](tech/saleor/Saleor%20Schema%20%28MOC%29.md) and six curated, version-stamped notes (Products & Variants, Checkout & Payments, Orders & Fulfillment, Account & Auth, Shop/Channels/Warehouses, Attributes & Metadata). Registered them in `index.md` and documented the `Saleor Schema Note` type in `AGENTS.md`.
 - **Tooling**: Notes carry a `saleor_schema_hash` stamp (short sha256 of `packages/codegen/schema.ts`, the de-facto Saleor version pin). Added `pnpm wiki:saleor:hash` / `pnpm wiki:saleor:check` (`scripts/wiki-saleor-check.mjs`) and a freshness rule in the `llm-wiki` skill: verify before citing, restamp after `pnpm codegen`.
@@ -23,11 +25,11 @@
 
 ## 2026-07-10
 
-- **Grilling log**: Added the decision record and reusable template for [PRD-001 Natural-Language Product Discovery](product/prds/PRD-001%20Natural-Language%20Product%20Discovery.md), including the business interview, exclusions, deferred technical branches, and unresolved decisions.
-- **PRD refinement**: Renamed [PRD-001 Natural-Language Product Discovery](product/prds/PRD-001%20Natural-Language%20Product%20Discovery.md), promoted it to `analyzing`, and replaced the client-delivery framing with the agreed market-parity hypothesis, validation thresholds, falsification, and MVP boundaries.
+- **Grilling log**: Added the decision record and reusable template for [PRD-001 Natural-Language Product Discovery](prd/PRD-001%20Natural-Language%20Product%20Discovery.md), including the business interview, exclusions, deferred technical branches, and unresolved decisions.
+- **PRD refinement**: Renamed [PRD-001 Natural-Language Product Discovery](prd/PRD-001%20Natural-Language%20Product%20Discovery.md), promoted it to `analyzing`, and replaced the client-delivery framing with the agreed market-parity hypothesis, validation thresholds, falsification, and MVP boundaries.
 
 ## 2026-07-09
 
-- **Creation**: Added an OKF placeholder for [3 - UCP-MCP Agentic Discovery](product/strategy/initiatives/3%20-%20UCP-MCP%20Agentic%20Discovery.md), which was referenced by the initiative index.
+- **Creation**: Added an OKF placeholder for `3 - UCP-MCP Agentic Discovery`, which was referenced by the initiative index.
 - **Update**: Reworked `llm-wiki/` into OKF v0.1-style documents: YAML frontmatter for concept files, standard Markdown cross-links, and OKF reserved-file structure for `index.md` and `log.md`.
 - **Lint**: Renamed `README.md` to `AGENTS.md`, added `index.md`, `log.md`, and `sources/`, and updated the wiki-maintenance conventions for the LLM-wiki pattern.
