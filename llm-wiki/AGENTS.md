@@ -35,8 +35,8 @@ llm-wiki/
 ├── _templates/       # reusable document templates
 ├── sources/          # raw or near-raw source material the notes synthesize
 ├── references/       # source lists and bibliographies
-├── prd/              # product requirement documents
-|-- product/          # Current product state. Represents whats real, not planned
+├── prd/              # product requirement documents - planned, implemented, blocked
+|-- product/          # Current product state. Represents what's real, not planned
 |   ├── capabilities/
 |   ├── flows/
 |   ├── integrations/
