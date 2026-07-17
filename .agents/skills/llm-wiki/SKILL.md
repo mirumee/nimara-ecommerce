@@ -83,9 +83,9 @@ Start from [Saleor Schema (MOC)](../../../llm-wiki/tech/saleor/Saleor%20Schema%2
 
 ## Bookkeeping Workflow
 
-For ingest, audit, graph repair, ADR, or answer-and-file-back work, also use the `bookkeeping`
-skill. It derives the current schema and locations from the wiki's governing `AGENTS.md`.
-Follow its process, especially:
+For ingest, audit, graph repair, ADR, or answer-and-file-back work, also use the
+`llm-wiki-bookkeeping` skill. It derives the current schema and locations from the wiki's
+governing `AGENTS.md`. Follow its process, especially:
 
 - report lint findings with suggested fixes before editing unless the user asked for cleanup;
 - update `llm-wiki/log.md` for wiki operations;

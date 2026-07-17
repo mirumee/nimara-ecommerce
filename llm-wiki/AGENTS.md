@@ -165,7 +165,7 @@ Operational rules:
 - Use `qmd search` or `qmd query` to get a `docid` or `qmd://...` URI before calling
   `qmd get`.
 - Do not treat QMD results as validation. Link integrity, frontmatter, source integrity, MOC
-  coverage, and index coverage still require a bookkeeping audit.
+  coverage, and index coverage still require an `llm-wiki-bookkeeping` audit.
 
 # Related Notes
 
