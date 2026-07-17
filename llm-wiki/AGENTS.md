@@ -42,7 +42,6 @@ llm-wiki/
 │   ├── market/
 │   ├── strategy/
 │   │   └── initiatives/
-│   └── tasks/        # implementation task artifacts
 ├── quality/          # QA operating knowledge
 └── tech/
     ├── ADR/          # architecture decision records
