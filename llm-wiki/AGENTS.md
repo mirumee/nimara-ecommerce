@@ -33,11 +33,15 @@ llm-wiki/
 ├── index.md          # root index; exhaustive catalogue of concepts
 ├── log.md            # root update log
 ├── _templates/       # reusable document templates
-├── schemas/          # machine-readable schemas for wiki records
 ├── sources/          # raw or near-raw source material the notes synthesize
 ├── references/       # source lists and bibliographies
 ├── prd/              # product requirement documents
-├── market/           # market related to the product discovery and strategy
+|-- product/          # Current product state. Represents whats real, not planned
+|   ├── capabilities/
+|   ├── flows/
+|   ├── integrations/
+|   └── overview/
+├── market/           # market related to the product discovery and strategy. Hypothetical scenarior
 │   ├── personas/
 │   ├── research/
 │   ├── strategy/
@@ -49,7 +53,8 @@ llm-wiki/
     └── saleor/       # version-stamped notes on the Saleor GraphQL schema
 ```
 
-## Knowledge model
+
+## Knowledge model - glossary
 | Record           | Responsibility                                                 |
 | ---------------- | -------------------------------------------------------------- |
 | PRD              | Why and what are product requrements                           |
