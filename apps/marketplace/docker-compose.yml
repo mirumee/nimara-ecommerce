@@ -16,24 +16,6 @@ services:
       timeout: 5s
       retries: 10
 
-  # Mailpit: local SMTP catch-all for dev. SMTP on 1025, web UI on 8025.
-  # No auth; leave MARKETPLACE_SMTP_USER/PASSWORD empty. View mail at
-  # http://localhost:8025.
-  mailpit:
-    container_name: marketplace-mailpit
-    image: axllent/mailpit:latest
-    ports:
-      - "127.0.0.1:1025:1025"
-      - "127.0.0.1:8025:8025"
-    environment:
-      - MP_SMTP_AUTH_ACCEPT_ANY=1
-      - MP_SMTP_AUTH_ALLOW_INSECURE=1
-    healthcheck:
-      test: ["CMD", "wget", "-q", "-O", "-", "http://localhost:8025/readyz"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-
   # LocalStack for AWS Services
   localstack:
     container_name: marketplace-localstack

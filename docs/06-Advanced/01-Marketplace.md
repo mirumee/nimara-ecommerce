@@ -90,30 +90,6 @@ The marketplace is a Saleor App and **must be installed** before it works — in
 
 On success the app appears in the Saleor app list as **Marketplace Vendor Panel**, and the auth token is persisted for your Saleor domain.
 
-### Catch marketplace emails locally (Mailpit)
-
-The marketplace app sends its own emails (e.g. the new-vendor notification to the super-admin, and vendor accepted/rejected messages) over SMTP. For local development you don't need a real SMTP provider — run **Mailpit**, a catch-all SMTP server with a web inbox, the same way you run LocalStack:
-
-```bash
-cd apps/marketplace && pnpm mailpit:up
-```
-
-Mailpit listens for SMTP on port `1025` and serves a web inbox at **http://localhost:8025**. Point the app at it in `apps/marketplace/.env` (no auth needed — leave user/password empty):
-
-```properties
-MARKETPLACE_SMTP_HOST=localhost
-MARKETPLACE_SMTP_PORT=1025
-MARKETPLACE_SMTP_SECURE=false
-MARKETPLACE_SMTP_USER=
-MARKETPLACE_SMTP_PASSWORD=
-MARKETPLACE_EMAIL_FROM="Nimara Dev <dev@nimara.local>"
-MARKETPLACE_SUPERADMIN_EMAIL=admin@nimara.local
-```
-
-Restart the dev server after editing `.env`. Every email the marketplace sends now appears at http://localhost:8025 instead of a real inbox. Stop the container with `pnpm mailpit:down`.
-
-> **Note:** Mailpit only captures emails sent by the marketplace app itself. The vendor **account confirmation** email is sent by Saleor, not by this app, so it will not appear in Mailpit — see [Vendor onboarding flow](#vendor-onboarding-flow).
-
 ## Features
 
 The marketplace app provides the following vendor-facing features:
@@ -187,8 +163,6 @@ Key environment variables for the marketplace. See [apps/marketplace/.env.exampl
 | `MARKETPLACE_STRIPE_CONNECT_DEFAULT_COUNTRY` | Default country for new Connect accounts (default: `US`) |
 
 **Email (SMTP)**
-
-For local development, point these at Mailpit instead of a real provider — see [Catch marketplace emails locally (Mailpit)](#catch-marketplace-emails-locally-mailpit).
 
 | Variable                       | Description                                                      |
 | ------------------------------ | ---------------------------------------------------------------- |
