@@ -51,8 +51,11 @@ llm-wiki/
 └── tech/
     ├── ADR/          # architecture decision records
     ├── RFC/          # RFC design proposals and register
+    │   └── <PRD Name>/  # one folder per PRD; its RFCs and their grilling logs, side by side
     └── saleor/       # version-stamped notes on the Saleor GraphQL schema
 ```
+
+RFCs are grouped by the PRD they serve: `tech/RFC/<PRD Name>/` holds each `RFC-NNNN <Title>.md` next to its `RFC-NNNN <Title> - Grilling Log.md` (the durable `D-*` decision trail, from `_templates/rfc-grilling-log.md`). RFC ids are monotonic across the whole register, not per PRD. Competing approaches to one PRD are separate RFCs in the same folder, cross-linked under Alternative solutions; the resolving ADR pulls their content inline. Register every RFC in [RFC MOC](tech/RFC/RFC%20MOC.md) and link it to its PRD both ways.
 
 ## Knowledge model - glossary
 

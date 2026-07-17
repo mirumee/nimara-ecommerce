@@ -54,6 +54,8 @@ Spin up a **background research agent** (see the `research` pattern) so the main
 
 Return **2–3 candidate approaches**, each with: what it is, how it maps onto Nimara's layers, trade-offs, cost/complexity, and risks. Keep every approach **OSS provider-agnostic** — layer over existing provider abstractions; never mandate a vendor or lock the design to one SaaS.
 
+**Name the decision drivers, and rank them.** Before presenting the approaches, state the criteria the choice is judged on — the ones that trace to the PRD's outcomes and NFRs (catalog validity, works-on-the-OSS-default, cost, latency, lock-in, operational burden, layer fit, …) — and mark the **two or three that dominate**; those break ties. Present each approach **scored against these ranked drivers**, not as a loose list of trade-offs. The dominant drivers are what make the eventual pick defensible rather than a matter of taste, and they become the RFC's non-functional requirements.
+
 Then let the user choose the direction:
 
 - The user generally picks the approach before the grilling starts.
@@ -74,7 +76,7 @@ Ask exactly one question per turn. Each question must:
 2. include a recommended answer and short rationale;
 3. wait for the user's answer before advancing.
 
-Keep the grilling at **solution altitude** (see Altitude above): architectural principles, boundaries, and gotchas — not exact package/folder paths, file or function names, or signatures. Cover component changes as roles and boundaries, API surface (exposed through infrastructure use-cases and services, not the raw Saleor schema), data model and migration, security, monitoring and alerting, failure cases and remediation, dependencies, system impacts, documentation, QA validation, and DevOps/infrastructure. Do not re-litigate the business bet — that was settled in the PRD. Do not decide acceptance — that is the ADR.
+Keep the grilling at **solution altitude** (see Altitude above): architectural principles, boundaries, and gotchas — not exact package/folder paths, file or function names, or signatures. Cover the base system and system of record, the ranked decision drivers, component changes as roles and boundaries, API surface (exposed through infrastructure use-cases and services, not the raw Saleor schema), data model and migration, security, monitoring and alerting, failure cases and remediation, dependencies, system impacts, documentation, QA validation, DevOps/infrastructure, and reversibility/blast radius. Do not re-litigate the business bet — that was settled in the PRD. Do not decide acceptance — that is the ADR.
 
 If the user says a concern does not apply, record that as an explicit decision rather than inventing detail. If the user stops the questions, summarize decisions and unresolved branches and make no edits. Do not draft the RFC until the user confirms shared understanding; the original request to "write an RFC" does not bypass this gate.
 
@@ -105,6 +107,7 @@ Rules:
 - **QA validation lists the test scenarios, not their automatability** — whether each is automatable is the QA team's call, not the RFC's.
 - **Numbers carry their source** — any figure a reader could act on (pricing, latency, limits) links the primary source it came from, with the capture date and a "re-verify at implementation time" note. A number without a traceable source is an invented number.
 - When a template section does not apply, say so in one sentence (or "None" / "N/A") and stop — do not pad it to look substantial. An honestly empty section beats invented detail.
+- **The template is a guide, not a form.** Its sections are the usual shape of an RFC, not a mandatory checklist. Drop a section that does not apply, merge tightly-related ones, and add a section the design genuinely needs (e.g. a "For the ADR" list of acceptance questions, or an "Assumptions" block). What must survive is the content — problem, requirements, the proposed design, and the cross-cutting risks — not the exact headings.
 - **Do not invent — verify before naming.** Never name a concrete tool, library, vendor, service, or capability that the repo does not already use and the user has not chosen. Grep the repo first; "it is the standard tool" is not grounding. If something is genuinely needed, it is a dependency: flag it for approval — do not slip it in as an example or a parenthetical. The same applies to constraints, current behavior, numbers, and defaults: if it was not established by repo exploration, by research with a cited source, or by a user decision, it does not go in the RFC. Padding a sentence with a plausible specific is the easiest way to put a lie in a design doc.
 
 Completion criterion: the RFC expresses the chosen proposal and its alternatives without introducing decisions the user did not make, and without recording a verdict.
@@ -117,7 +120,8 @@ Completion criterion: every checklist item passes or is reported as an explicit,
 
 ## Stage 6 — Bookkeeping
 
-- Save as `llm-wiki/tech/RFC/RFC-NNNN <Title>.md` using the next free ID from the RFC register; preserve the ID when rewriting an existing RFC.
+- Save as `llm-wiki/tech/RFC/<PRD Name>/RFC-NNNN <Title>.md` — one folder per PRD, holding its RFCs and their grilling logs side by side. Use the next free ID from the RFC register (monotonic across the whole register, not per PRD); preserve the ID when rewriting an existing RFC.
+- **Write the grilling log.** Save the `D-*` ledger to `llm-wiki/tech/RFC/<PRD Name>/RFC-NNNN <Title> - Grilling Log.md`, created from `_templates/rfc-grilling-log.md` — the durable, user-visible decision trail (session context, base system + system of record, ranked drivers, the `D-*` table, chosen approach + rejected alternatives with their deciding driver, deferred items and owned open decisions, reversibility judgement, and the acceptance questions left for the ADR). It carries its own `D-*` numbering. Record decisions only — never hidden reasoning, secrets, or a confidential source body. Link it and its RFC to each other.
 - Set `owner` to the RFC's author (the person creating this design), not inherited from the PRD — the PRD owner is the business owner; the RFC owner is the design author. Use the git author identity when the user does not name one.
 - Register the RFC in `llm-wiki/tech/RFC/RFC MOC.md`, and link the PRD it serves.
 - Link the PRD and the RFC in both directions (PRD Related Notes ↔ RFC).
@@ -128,7 +132,7 @@ Completion criterion: the RFC and its PRD are mutually linked and navigable from
 
 ## Stage 7 — Gate
 
-New RFCs start as `status: Draft`. A rewritten RFC changes status only when the user explicitly approves the transition (Draft → In Review → Final). Close with the file location, passed checks, open decisions, rejected alternatives, and the proposed next step: an ADR that accepts or rejects this RFC and links back to it.
+New RFCs start as `status: Draft`. A rewritten RFC changes status only when the user explicitly approves the transition (Draft → In Review → Final). Close with the file location, passed checks, open decisions, rejected alternatives, and the proposed next step: an ADR that accepts or rejects this RFC (and any competing RFCs for the same PRD) and links back to it. The ADR is self-contained — it pulls the RFCs' content inline as weighed alternatives rather than linking them — so it takes the RFCs and their grilling logs as input, and its own decision log continues the `D-*` sequence.
 
 ## References
 
@@ -136,3 +140,4 @@ New RFCs start as `status: Draft`. A rewritten RFC changes status only when the 
 - `references/technical-grilling.md` — mandatory sequential design interview and completion gate.
 - `references/quality-checklist.md` — RFC Definition of Ready.
 - `llm-wiki/_templates/RFC.md` in the target wiki — canonical RFC structure; do not duplicate it inside the skill.
+- `llm-wiki/_templates/rfc-grilling-log.md` in the target wiki — the durable decision-trail structure filed beside each RFC.

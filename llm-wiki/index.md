@@ -17,6 +17,7 @@ okf_version: "0.1"
 - [PRD Template](_templates/prd.md) - Reusable template for drafting Nimara Product Requirements Documents.
 - [Quality Template](_templates/QA.md) - Reusable template for verification plans and acceptance evidence.
 - [RFC Design Doc Template](_templates/RFC.md) - Reusable template for an RFC design proposal: problem, requirements, proposed solution, and cross-cutting considerations.
+- [RFC Grilling Log Template](_templates/rfc-grilling-log.md) - Reusable structure for the durable D-* decision trail filed beside each RFC.
 - [Undefined Template](_templates/Undefined.md) - Generic template for a new concept document.
 - [Saleor Schema Note Template](_templates/saleor-schema-note.md) - Reusable template for a version-stamped Saleor GraphQL schema note.
 
