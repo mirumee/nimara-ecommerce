@@ -29,7 +29,9 @@ Run every check before presenting or filing the RFC. Fix issues that require no 
 - [ ] Dependencies lists only actual new dependencies, each as a recommendation with alternatives — no "pending approval" phrasing, and nothing Nimara writes itself listed as a dependency.
 - [ ] Every figure a reader could act on links its primary source, with a capture date and a re-verify note.
 - [ ] Deferred decisions hold only this RFC's own open items (with owner and gate); PRD open questions are not restated here.
-- [ ] No coined jargon that needs a gloss, no research-phase labels ("Approach C") for the chosen design, and every cited PRD/grilling id says what the source actually says.
+- [ ] No coined jargon that needs a gloss, no research-phase labels ("Approach C") for the
+      chosen design, and every cited PRD section or requirement ID says what the source
+      actually says.
 
 ## Cross-cutting
 
