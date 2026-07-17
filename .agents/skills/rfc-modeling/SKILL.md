@@ -1,11 +1,11 @@
 ---
-name: rfc-author
+name: rfc-modeling
 description: Turn an approved PRD into an RFC design proposal inside the LLM-wiki. Use when the user wants to design, draft, refine, or stress-test the technical solution for a PRD — an RFC, design doc, solution design, or "how do we build this". Deep-research the solution space, propose approaches, run a technical grilling one question at a time, and file an RFC that stops at a proposal — it does not make the decision (an ADR does) or write code.
 ---
 
 # RFC Author
 
-Turn an approved PRD into an explicit, reviewable **RFC** — a technical design _proposal_ for a non-trivial change. An RFC proposes; it does not decide. The verdict and outcome are captured later in an [ADR](../../llm-wiki/tech/RFC/RFC%20MOC.md). Stop at a filed proposal; do not implement.
+Turn an approved PRD into an explicit, reviewable **RFC** — a technical design _proposal_ for a non-trivial change. An RFC proposes; it does not decide. The verdict and outcome are captured later in an [ADR](../../../llm-wiki/tech/RFC/RFC%20MOC.md). Stop at a filed proposal; do not implement.
 
 Follow these seven stages in order. The deep research, the technical grilling, and the self-lint are mandatory.
 
