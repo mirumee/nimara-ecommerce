@@ -1,6 +1,6 @@
 ---
 id: "RFC-0002"
-type: "Design Doc"
+type: "Request for Comments"
 title: "Provider-Native Natural-Language Product Discovery"
 description: "RFC design proposal for natural-language product discovery as an optional capability of the search provider, using Algolia Agent Studio as the reference, with grounding by joining returned ids to real catalog records."
 tags:

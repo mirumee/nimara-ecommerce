@@ -1,6 +1,6 @@
 ---
 id: "RFC-0001"
-type: "Design Doc"
+type: "Request for Comments"
 title: "Natural-Language Product Discovery"
 description: "RFC design proposal for an opt-in, provider-agnostic natural-language product-discovery layer over Nimara's existing SearchService, grounded in the real catalog."
 tags:

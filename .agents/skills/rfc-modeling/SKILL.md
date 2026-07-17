@@ -23,7 +23,9 @@ Write the RFC as **clear, dense technical prose** for engineers — not a lay ex
 - **Keep the full technical vocabulary.** Standard, ubiquitous terms — `SearchService`, "provider", "LLM", "stateless", "boundary", "endpoint", "fallback", "Result", "injected" — stay exactly as they are. Do **not** replace them with folksy paraphrases ("the search Nimara already has", "supplier", "swap point", "the feature stores nothing"); that adds words, loses precision, and insults the reader. Engineers know these terms.
 - **Explain only the genuinely obscure**, once, on first use — do not gloss the everyday.
 - **Name things so they explain themselves; do not coin jargon.** A heading or item that needs a gloss is the wrong name — "No invented products" beats "Grounding gate". Reserve coined terms for the one place a mechanism is defined, and do not spawn near-identical variants of them ("guard" vs "gate") for different things.
-- **Match the source's actual words.** When a sentence cites a PRD or grilling id, say what that source says — do not drift in paraphrase (G-017 "each adopter sets relevance thresholds" is not "each deployment judges the ordering"). Re-read the line before citing it.
+- **Match the source's actual words.** When a sentence cites a PRD section or requirement ID,
+  say what that source says rather than drifting in paraphrase. Re-read the referenced passage
+  before citing it.
 - **Drop research-phase labels once a direction is chosen.** The winning option is "the design", not "Approach C" — the letters only meant something while the alternatives were side by side.
 
 Cutting ornament does not lower the altitude, and it does not mean writing for a non-specialist: it means a precise sentence with no wasted or pretentious words.
@@ -37,7 +39,7 @@ An RFC is always anchored to one PRD. Resolve it before anything else.
 
 Then read, before questioning the user:
 
-- the PRD and its grilling log (the business bet, deferred technical branches, open questions);
+- the PRD, especially its business bet, deferred technical decisions, and open questions;
 - relevant personas, strategy, and market notes;
 - existing ADRs and RFCs that overlap or constrain this design;
 - the actual code and infrastructure the design touches — packages, layers, services, schema, config.
