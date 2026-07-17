@@ -70,6 +70,8 @@
     "localstack:up": "docker-compose up -d localstack",
     "db-ledger:up": "docker-compose up -d db-ledger",
     "db-ledger:down": "docker-compose stop db-ledger",
+    "mailpit:up": "docker-compose up -d mailpit",
+    "mailpit:down": "docker-compose stop mailpit",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "node ./scripts/migrate-ledger.mjs",
     "db:studio": "drizzle-kit studio",
