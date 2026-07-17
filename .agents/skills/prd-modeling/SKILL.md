@@ -25,7 +25,7 @@ Completion criterion: the known facts, evidence gaps, existing strategic positio
 
 ## Stage 2 — Run business grilling
 
-Run a `/grilling` session that which does not go beyond the scope of the BRFC definition.
+Run a `/grilling` session that which does not go beyond the scope of the PRD definition.
 
 Read `references/business-protocol.md` and follow it completely.
 

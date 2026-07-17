@@ -1,17 +1,18 @@
 ---
 name: llm-wiki
-description: Work with llm-wiki knowledge base using QMD-backed retrieval and source-file verification. Use when answering questions from llm-wiki, finding relevant notes, auditing wiki consistency, ingesting or filing durable knowledge back into llm-wiki, updating wiki conventions, or helping agents use the llm-wiki/sources/LLM Wiki.md pattern. Use for product strategy, QA process, ADR, persona, PRD, source, and bookkeeping questions that should cite or update llm-wiki. Also use for any Saleor GraphQL schema question — types, fields, enums, mutations, queries (e.g. Checkout, Order, Product, ProductVariant, Payment, Attribute, Shop, Channel) — because those answers live in version-stamped notes under llm-wiki/tech/saleor/ that must be checked for freshness with `pnpm wiki:saleor:check` before being cited.
+description: Retrieve and verify existing project knowledge from llm-wiki. Use when the user asks to find, explain, compare, or cite existing strategy, persona, product, quality, PRD, RFC, ADR, or source notes.. Use QMD only for discovery, verify the full Markdown source.
 ---
 
 # LLM Wiki
 
-Use this skill to work with `llm-wiki/` as a maintained knowledge base, not as a loose folder of Markdown. QMD is the discovery layer; Markdown files remain the source of truth.
+Use this skill to retrieve and answer from `llm-wiki/`. QMD is the discovery layer;
+Markdown files remain the source of truth.
 
 ## Ground Rules
 
 1. Read `llm-wiki/AGENTS.md` when schema, naming, folder placement, ADR rules, or maintenance rules matter.
 2. Read `llm-wiki/sources/LLM Wiki.md` when the user asks about the upstream LLM-wiki pattern or why this wiki is structured this way.
-3. Use QMD to find candidate notes, then read the actual Markdown before answering or editing. Do not answer from snippets alone.
+3. Use QMD to find candidate notes, then read the actual Markdown before answering. Do not answer from snippets alone.
 4. Treat `qmd` output as retrieval, not validation. It does not prove link integrity, source integrity, MOC coverage, or JSON-vs-Markdown consistency.
 5. Keep QMD local state out of git. The project wrapper uses `qmd --index nimara-wiki`, stored under `~/.cache/qmd/nimara-wiki.sqlite`.
 
@@ -69,7 +70,8 @@ node scripts/wiki-qmd.mjs query "question" --json --no-rerank -n 10
 
 4. Answer with specific file references. If the wiki does not contain the answer, say that plainly and name the gap.
 
-5. If the answer is durable knowledge, offer to file it back into the wiki. Do not edit sources under `llm-wiki/sources/` except to add a new immutable source document.
+5. If the answer should become durable knowledge, route the mutation to
+   `llm-wiki-bookkeeping`.
 
 ## Saleor Schema Notes
 
@@ -77,20 +79,22 @@ Notes under `llm-wiki/tech/saleor/` describe the Saleor GraphQL API and are **ve
 
 - **Before citing** any `tech/saleor/` note, run `pnpm wiki:saleor:check`. `OK` = the note matches the current schema; `STALE` = it was written against a different schema. On `STALE`, warn the user, verify the specifics against `packages/codegen/schema.ts`, and offer to update and restamp the note rather than citing it as-is.
 - **When authoring/updating** a Saleor note, follow `llm-wiki/_templates/saleor-schema-note.md` and stamp `saleor_schema_hash` with `pnpm wiki:saleor:hash`.
-- After `pnpm codegen` regenerates the schema (see the `codegen-check` skill), expect Saleor notes to go `STALE` — review them against the new schema, then restamp.
+- After `pnpm codegen` regenerates the schema, expect Saleor notes to go `STALE` — review them against the new schema, then restamp.
 
 Start from [Saleor Schema (MOC)](../../../llm-wiki/tech/saleor/Saleor%20Schema%20%28MOC%29.md).
 
-## Bookkeeping Workflow
+## Route Authoring and Mutations
 
-For ingest, audit, graph repair, ADR, or answer-and-file-back work, also use the
-`llm-wiki-bookkeeping` skill. It derives the current schema and locations from the wiki's
-governing `AGENTS.md`. Follow its process, especially:
+Give each operation one owner:
 
-- report lint findings with suggested fixes before editing unless the user asked for cleanup;
-- update `llm-wiki/log.md` for wiki operations;
-- update MOCs and `index.md` when adding, renaming, or removing notes;
-- record significant technical decisions as ADRs instead of burying them in prose.
+- `llm-wiki-bookkeeping` — ingest, audit, graph repair, durable file-back, and architecture
+  decisions;
+- `prd-author` — create, rewrite, refine, or stress-test a PRD;
+- `rfc-modeling` — create, rewrite, refine, or stress-test an RFC;
+- the task-specific QA skill — design test cases, retest a reported defect, or run a broad
+  regression sweep.
+
+Use this skill only to supply verified wiki context to those workflows.
 
 ## Useful Probes
 

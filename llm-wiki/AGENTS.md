@@ -119,13 +119,15 @@ Rules:
 - Stamp with `pnpm wiki:saleor:hash`. Verify with `pnpm wiki:saleor:check` before citing a
   Saleor note. `OK` = matches the current schema; `STALE` = the schema was regenerated and the
   note needs review, then restamp.
-- A `STALE` result is expected after `pnpm codegen` (see the `codegen-check` skill) changes
-  `packages/codegen/schema.ts`. The stamp is whole-schema, so any regeneration flags every
+- A `STALE` result is expected after `pnpm codegen` changes `packages/codegen/schema.ts`.
+  The stamp is whole-schema, so any regeneration flags every
   Saleor note - a conservative, intentionally simple freshness gate.
 
 # Maintaining The Wiki
 
-Use the repo-local `llm-wiki` skill as the entrypoint for discovery and wiki work. For maintenance modes
+Use the repo-local `llm-wiki` skill for discovery and verified answers. Use
+`llm-wiki-bookkeeping` for ingest, audit, graph repair, durable file-back, and architecture
+decisions. PRD, RFC, and QA authoring remain owned by their specialized skills.
 
 Expected operations:
 
