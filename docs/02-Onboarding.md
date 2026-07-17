@@ -20,7 +20,7 @@ Nimara is an **open, composable commerce platform** for teams who want SaaS-leve
 - **Swap any integration** — commerce backend, CMS, search, payments — without rewriting the app.
 - **Grow from one storefront** into a multi-app monorepo (vendor panel, admin, internal tools) on the same foundation.
 
-If a piece of the codebase ever feels over-engineered, ask *"could I swap this for something else next year?"* That's usually the reason.
+If a piece of the codebase ever feels over-engineered, ask _"could I swap this for something else next year?"_ That's usually the reason.
 
 ## Prerequisites
 
@@ -63,7 +63,7 @@ The storefront is **zero-config** — skip this step and it still boots with emp
 NEXT_PUBLIC_SALEOR_API_URL=https://{your_domain}.saleor.cloud/graphql/
 ```
 
-Each extra variable turns on another capability (payments, marketplace, server-only resources). Run `pnpm preflight` at any time to see what's currently on or off.
+Each extra variable turns on another capability (payments, marketplace, server-only resources). Run `pnpm preflight --report` at any time to see what's currently on or off.
 
 ### Run it
 
@@ -106,13 +106,13 @@ If you want to see exactly how this is wired in code, the cleanest example is th
 
 The storefront boots **empty by default** and lights up as you add environment variables. One switch turns on most of the commerce surface; payment and marketplace are independent.
 
-| When you set…                                                                       | You get…                                                                                |
-| ----------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| Nothing                                                                             | Every page renders with empty data — great for design work or showing teammates.        |
-| `NEXT_PUBLIC_SALEOR_API_URL`                                                        | The full commerce surface — cart, checkout, products, search, account.                  |
-| `NEXT_PUBLIC_MARKETPLACE_ENABLED=true`                                              | Vendor-aware behaviour for marketplaces.                                                |
-| `STRIPE_SECRET_KEY` + `NEXT_PUBLIC_STRIPE_PUBLIC_KEY` + `NEXT_PUBLIC_PAYMENT_APP_ID` | Payments.                                                                               |
-| `SALEOR_APP_TOKEN`                                                                  | Server-side access to resources hidden from anonymous users (e.g. unpublished pages).   |
+| When you set…                                                                        | You get…                                                                              |
+| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------- |
+| Nothing                                                                              | Every page renders with empty data — great for design work or showing teammates.      |
+| `NEXT_PUBLIC_SALEOR_API_URL`                                                         | The full commerce surface — cart, checkout, products, search, account.                |
+| `NEXT_PUBLIC_MARKETPLACE_ENABLED=true`                                               | Vendor-aware behaviour for marketplaces.                                              |
+| `STRIPE_SECRET_KEY` + `NEXT_PUBLIC_STRIPE_PUBLIC_KEY` + `NEXT_PUBLIC_PAYMENT_APP_ID` | Payments.                                                                             |
+| `SALEOR_APP_TOKEN`                                                                   | Server-side access to resources hidden from anonymous users (e.g. unpublished pages). |
 
 Run `pnpm preflight` to see what's currently on. The full list of variables is in [Environment Variables](/Quickstart/environment-variables).
 

@@ -119,7 +119,7 @@ For decision tree and detailed scenarios, see `.agents/skills/project-guidelines
    - `apps/storefront` — Next.js 16 storefront (main app).
    - `apps/marketplace` — Vendor dashboard; Saleor GraphQL stitching, Stripe Connect, optional Postgres ledger and batched Connect Transfers (`src/lib/ledger/`).
    - `apps/stripe` — Next.js Stripe payment app (Saleor Payment Gateway).
-   - `apps/docs` — Nextra docs; `apps/automated-tests` — Playwright e2e.
+   - `apps/docs` — Docusaurus docs; `apps/automated-tests` — Playwright e2e.
    - `packages/domain` — shared types/objects/consts only (leaf package).
    - `packages/foundation` — utilities, hooks, helpers (leaf package).
    - `packages/infrastructure` — use-cases, GraphQL, providers (Saleor, ButterCMS, Algolia, etc.).

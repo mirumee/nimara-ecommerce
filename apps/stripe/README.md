@@ -37,7 +37,7 @@ Edit .env file and provide required variables:
 
 - `NEXT_PUBLIC_SALEOR_API_URL` - Your Saleor API URL.
 
-Now in [**nimara storefront**](../storefront) environment variables set `NEXT_PUBLIC_PAYMENT_APP_ID` to `LOCAL.nimara-ts-stripe` in your `.env` file.
+Now in [**nimara storefront**](../storefront) environment variables set `NEXT_PUBLIC_PAYMENT_APP_ID` to `LOCAL.stripe` in your `.env` file.
 
 **Note** that the `LOCAL` environment prefix may change depending on your `NEXT_PUBLIC_ENVIRONMENT` environment variable.
 

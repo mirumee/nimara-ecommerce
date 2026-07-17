@@ -13,7 +13,7 @@ Saleor CMS relies on attributes to organize content and specific attributes are 
 
 ### Create required attributes
 
-Navigate to Saleor dashboard → **Configuration** → **Attributes and Product Types** and select **Attributes**.
+Navigate to Saleor dashboard → **Configuration** → and select **Model Attributes**.
 
 Create the following attributes:
 
@@ -57,39 +57,39 @@ Create the following attributes:
 
 ![Grid item subheader font color attribute](../images/cms/homepage/grid-item-subheader-font-color.png)
 
-### Create Homepage page type
+### Create Homepage Model Type
 
-To set up the homepage, you need to create a **Page Type** and assign appropriate attributes.
+To set up the homepage, you need to create a **Model Type** and assign appropriate attributes.
 
-#### Navigate to Page Types
+#### Navigate to Model Types
 
-Go to Saleor dashboard → **Configuration** → **Content Management** and select **Page Types**.
+Go to Saleor dashboard → **Configuration** → **Model Types**.
 
-#### Create new Page Type
+#### Create new Model Type
 
-Click on **Create page type**.
+Click on **Create model type**.
 
 Enter the name **Homepage** for Content Type Name and click **Save**.
 
 #### Assign attributes
 
-Assign all required attributes to **Homepage Page Type**:
+Assign all required attributes to **Homepage model Type**:
 
-![Homepage page type attribute](../images/cms/homepage/homepage-page-type.png)
+![Homepage model type attribute](../images/cms/homepage/homepage-page-type.png)
 
 ### Create an actual homepage
 
-Once **Homepage Page Type** is set up, you can create the actual homepage content by following these steps:
+Once **Homepage Model Type** is set up, you can create the actual homepage content by following these steps:
 
 #### Navigate to Content management
 
-Go to Saleor dashboard → **Content** and click **Create content**.
+Go to Saleor dashboard → **Modeling** and click **Models**.
 
-#### Select Page Type
+#### Select Model Type
 
 In the dropdown, select **Homepage**.
 
-This ensures that attributes assigned to **Homepage Page Type** are available for editing.
+This ensures that attributes assigned to **Homepage Model Type** are available for editing.
 
 #### Fill in attributes
 
