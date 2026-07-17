@@ -1,4 +1,5 @@
 ---
+id: "PRD-002"
 type: "Product Requirements Document"
 title: "Verified User Reviews"
 description: "Product Requirements Document for a verified-purchase user reviews system in Nimara."
@@ -8,10 +9,12 @@ tags:
   - "customer"
   - "conversion"
 created: "2026-07-09T00:00:00+00:00"
-timestamp: "2026-07-09T00:00:00+00:00"
+timestamp: "2026-07-17T00:00:00+00:00"
 status: "analyzing"
 owner: "Michał Ociepka"
 prd_type: "business"
+personas:
+  - "[Customer](../market/personas/Customer.md)"
 ---
 
 ## Value Statement
@@ -79,3 +82,7 @@ Buys: evidence that invited verified buyers actually submit reviews (volume) and
 - Review import/syndication (Google, Trustpilot)
 - Review incentives or rewards
 - Carrier-confirmed delivery as verification trigger
+
+## Related Notes
+
+[Customer](../market/personas/Customer.md)

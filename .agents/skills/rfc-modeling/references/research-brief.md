@@ -15,7 +15,8 @@ Use this before proposing approaches. The goal is a small set of well-grounded, 
 - Run the research in a **background agent** so the main thread keeps moving.
 - Go to **primary sources**: official docs, source code, specs, first-party APIs, RFCs. Follow every claim back to the source that owns it. A secondary blog post is a lead, not evidence.
 - Ground the design in **this repository**: read the layers, services, schema, and config the design would touch. An approach that ignores Nimara's actual boundaries is not a candidate.
-- Read the PRD and its grilling log for the deferred technical branches — those are research questions, not new decisions.
+- Read the PRD for its deferred technical decisions — those are research questions, not new
+  decisions.
 - Separate what a source proves from what is inferred. Cite each non-obvious claim with its source.
 
 ## What to produce

@@ -8,7 +8,7 @@ tags:
   - "schema"
   - "rules"
 created: "2026-07-09T00:00:00+00:00"
-timestamp: "2026-07-10T00:00:00+00:00"
+timestamp: "2026-07-17T00:00:00+00:00"
 ---
 
 # Content
@@ -55,13 +55,11 @@ llm-wiki/
     └── saleor/       # version-stamped notes on the Saleor GraphQL schema
 ```
 
-RFCs are grouped by the PRD they serve: `tech/RFC/<PRD Name>/` holds each `RFC-NNNN <Title>.md` next to its `RFC-NNNN <Title> - Grilling Log.md` (the durable `D-*` decision trail, from `_templates/rfc-grilling-log.md`). RFC ids are monotonic across the whole register, not per PRD. Competing approaches to one PRD are separate RFCs in the same folder, cross-linked under Alternative solutions; the resolving ADR pulls their content inline. Register every RFC in [RFC MOC](tech/RFC/RFC%20MOC.md) and link it to its PRD both ways.
-
 ## Knowledge model - glossary
 
 | Record | Responsibility                                                 |
 | ------ | -------------------------------------------------------------- |
-| PRD    | Why and what are product requrements                           |
+| PRD    | Why and what are product requirements                          |
 | RFC    | A proposed technical solution and considered alternatives      |
 | ADR    | A durable architecture decision                                |
 | IMP    | What was implemented and how it was verified                   |
@@ -70,7 +68,6 @@ RFCs are grouped by the PRD they serve: `tech/RFC/<PRD Name>/` holds each `RFC-N
 | FLOW   | Current end-to-end product flow                                |
 | QA     | Verification plan and acceptance evidence                      |
 | OPS    | Operational knowledge, runbook, rollback, or incident guidance |
-
 
 ## Workflow
 
@@ -85,7 +82,76 @@ flowchart LR
 
 ## Concept Document Format
 
-[Template](_templates/Undefined.md).
+Generic concepts use the [Undefined template](_templates/Undefined.md). Specialized records
+use the contracts and templates below.
+
+## Record Schema
+
+Every authored record begins with YAML frontmatter. These common fields are required:
+
+| Field         | Rule                                                                 |
+| ------------- | -------------------------------------------------------------------- |
+| `type`        | Exact record type from the specialized contract or selected template |
+| `title`       | Human-readable record title                                          |
+| `description` | One-sentence summary used by indexes and retrieval                   |
+| `tags`        | YAML list of short strings without `#`                               |
+| `created`     | ISO 8601 creation time                                               |
+| `timestamp`   | ISO 8601 time of the last meaningful record change                   |
+
+Additional frontmatter is allowed when its record contract or template defines it. Consumers
+must tolerate unknown fields. `timestamp` is the canonical last-change field; legacy
+`updated` fields may remain but do not replace it.
+
+Reserved `index.md` and `log.md` files and immutable source documents follow the formats
+defined by their own sections; they are not specialized authored records.
+
+Files under `_templates/` are reusable sources, not authored records. Their frontmatter may
+use `type: "Template"` and `template_for`. When creating a record, replace template-only
+metadata and every placeholder with the authored record's contract values.
+
+All record links use standard relative Markdown links. Identifiers are monotonically
+increasing, never reused, and must match the filename prefix.
+
+### PRD — Product Requirements Document
+
+- **Location and template:** `prd/`, created from `_templates/prd.md`.
+- **Filename and ID:** `PRD-NNN <Title>.md` and matching `id: "PRD-NNN"`.
+- **Type:** `Product Requirements Document`.
+- **Required additions:** `id`, `status`, `owner`, `prd_type`, and `personas`.
+- **Personas:** a YAML list of relative Markdown links; every link must resolve.
+- **Lifecycle:** new records start as `draft`. Supported states are `draft`, `analyzing`,
+  `approved`, `implemented`, and `blocked`. A status transition requires explicit user
+  approval.
+- **Relationships:** register the PRD in `index.md`; link its personas and any downstream RFC
+  under `Related Notes`; link each PRD and RFC in both directions.
+
+### RFC — Request for Comments
+
+- **Location and template:** `tech/RFC/<PRD Name>/`, created from `_templates/RFC.md`. Group RFCs by the PRD they serve — one folder per PRD holds its RFCs and their grilling logs side by side.
+- **Filename and ID:** `RFC-NNNN <Title>.md` and matching `id: "RFC-NNNN"`. IDs are monotonic across the whole register, not per PRD.
+- **Grilling log:** each RFC has a durable decision trail beside it, `RFC-NNNN <Title> - Grilling Log.md`, created from `_templates/rfc-grilling-log.md` (ranked drivers, the `D-*` table, rejected alternatives, and the acceptance questions left for the ADR).
+- **Competing approaches:** separate RFCs in the same PRD folder, cross-linked under Alternative solutions; the resolving ADR pulls their content inline rather than linking them.
+- **Type:** `Request for Comments`.
+- **Required additions:** `id`, `status`, `owner`, and `prd`.
+- **PRD relation:** `prd` contains exactly one relative Markdown link to the PRD this proposal
+  serves. Repeat that relationship under `Related Notes` and link the PRD back to the RFC.
+- **Lifecycle:** new records start as `Draft`, then move through `In Review` to `Final` only
+  with explicit user approval. `Final` means the proposal is complete; an ADR records
+  acceptance or rejection.
+- **Relationships:** register every RFC in `tech/RFC/RFC MOC.md` and `index.md`; link the ADR
+  that resolves it when one exists.
+
+### ADR — Architecture Decision Record
+
+- **Location and template:** `tech/ADR/`, created from `_templates/ADR.md`.
+- **Filename and ID:** `ADR-NNNN <Title>.md` and matching `id: "ADR-NNNN"`.
+- **Type:** `Architecture Decision Record`.
+- **Required additions:** `id` and `status`.
+- **Lifecycle:** new records start as `Proposed`. Supported states are `Proposed`, `Accepted`,
+  `Rejected`, and `Superseded by ADR-NNNN <Title>`. Accepted ADRs are immutable; replace a
+  decision by creating a new ADR and superseding the old one.
+- **Relationships:** register every ADR in `tech/ADR/ADR MOC.md` and `index.md`. Link the PRD
+  and RFC proposals it resolves under `Related Notes`.
 
 ## Index and log
 
