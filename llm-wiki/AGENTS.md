@@ -37,9 +37,9 @@ llm-wiki/
 ├── sources/          # raw or near-raw source material the notes synthesize
 ├── references/       # source lists and bibliographies
 ├── prd/              # product requirement documents
-├── product/          # product discovery and strategy
+├── market/           # market related to the product discovery and strategy
 │   ├── personas/
-│   ├── market/
+│   ├── research/
 │   ├── strategy/
 │   │   └── initiatives/
 ├── quality/          # QA operating knowledge
