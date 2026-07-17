@@ -1,25 +1,7 @@
-# Business Grilling Protocol
+# Business Protocol
 
 Use this protocol before drafting or rewriting a PRD. Its purpose is to expose whether the proposed initiative is a real business bet, a weak assumption, or a solution looking for a problem.
 
-## Contents
-
-- [Conversation contract](#conversation-contract)
-- [Decision tree](#decision-tree)
-- [Question shape](#question-shape)
-- [Handling stops and uncertainty](#handling-stops-and-uncertainty)
-- [Completion gate](#completion-gate)
-
-## Conversation contract
-
-- Ask one question per turn and wait.
-- Begin each turn by reflecting the decision just made when that context matters.
-- Ask one business decision, then give the recommended answer and why.
-- Look up discoverable facts before asking. Decisions belong to the user; facts do not.
-- Challenge vague claims until they have a population, evidence status, measure, and timeframe, or are explicitly rejected as irrelevant.
-- Treat "keep up with the market", "improve UX", "increase adoption", and "differentiate" as starting claims, not accepted value.
-- Keep technical solution branches parked for solution design. Record them; do not grill them during PRD definition.
-- Maintain a structured in-memory ledger for every question: `G-*` ID, branch, question, recommendation, answer, and decision. The ledger becomes the wiki grilling log only after shared understanding is confirmed.
 
 ## Decision tree
 
@@ -118,40 +100,3 @@ Cover only constraints that affect the bet:
 - rollout ownership, evidence collection, lifecycle state, and decision gate.
 
 Defer concrete provider, API, schema, package, infrastructure, and implementation choices.
-
-## Question shape
-
-Use this structure:
-
-> **Decision context:** one sentence reflecting what is known or just decided.
->
-> **Question:** one decision only.
->
-> **Recommendation:** the preferred answer and its business rationale.
-
-Never bundle decisions into a questionnaire or present several branches at once.
-
-## Handling stops and uncertainty
-
-- If the user says "I don't know", recommend a default. If they still cannot decide, create an owned Open Question with a lifecycle gate.
-- If the user says a measure "does not matter", record the exclusion and remove it from success criteria.
-- If the user says "enough questions", stop immediately, summarize agreed decisions and unresolved branches, and make no edits.
-- Resume drafting only after the user confirms the summary or makes a new request to apply the summarized decisions. The request that originally triggered the skill is not confirmation.
-
-## Completion gate
-
-The grilling is complete only when the shared understanding contains:
-
-- a specific target segment and primary persona;
-- a problem statement with evidence separated from assumptions;
-- the PRD's strategic role and urgency;
-- one primary business outcome and its value path;
-- quantified validation evidence or an explicitly accepted lack of a target;
-- leading indicators distinct from business outcomes;
-- a negative falsification result and treatment of insufficient evidence;
-- the smallest learning MVP, rollout, and appetite decision;
-- explicit in-scope and out-of-scope boundaries;
-- business NFRs, ownership, risks, and lifecycle gate;
-- a list of technical decisions deferred to solution design;
-- a complete decision ledger ready to file from the wiki grilling-log template;
-- explicit user confirmation of shared understanding.
