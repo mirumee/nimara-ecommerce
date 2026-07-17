@@ -10,6 +10,7 @@ llm-wiki/.obsidian
 node_modules
 .pnp
 .pnp.js
+.playwright-mcp
 
 # testing
 coverage
