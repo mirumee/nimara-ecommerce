@@ -29,6 +29,8 @@ Walk the branches in order because later decisions depend on earlier ones.
 
 Confirm the design problem restated from the PRD, the functional requirements the design must meet, and the non-functional requirements (performance, scale, cost) that constrain it. State facts and forces, not the solution.
 
+Also confirm the **base system and system of record**: which system this builds on (Saleor, Algolia, a greenfield service, …), and — for the data this design concerns — what is the authoritative source of truth versus what is merely consulted. This is often where the real decision hides (e.g. "does the catalog live in Saleor or in a provider index?"). Look it up; do not guess it.
+
 ### 2. Component changes
 
 Decide the solution's structure at the level of **principles and boundaries**, not files: which new capability layers over which existing one, what is a new swappable boundary versus something reused wholesale, and how the pieces compose — all respecting the dependency direction (domain / foundation / infrastructure / features / app). Reject a structure that violates the boundaries. Name the architectural roles and why, not exact package/folder paths, file names, or signatures — those are implementation. Concrete placement is at most a one-line, non-binding suggestion.
@@ -59,6 +61,10 @@ List the actual new dependencies the design would add — a package or an extern
 
 Decide the documents that must change, the test scenarios that validate the design (the scenarios only — automatability is the QA team's call), and the infrastructure changes required (env vars, Terraform, CI task-graph, firewall).
 
+### 9. Reversibility and blast radius
+
+Judge how hard the proposed design is to undo: is it a one-way door or easily reversed, what seam contains the blast radius (a contract, an adapter, a feature flag), and what evidence or failure would make a later ADR supersede this direction. This is a property of the proposal worth stating — one or two sentences — not a decision to grill to death.
+
 ## Question shape
 
 Use this structure:
@@ -82,6 +88,8 @@ Never bundle decisions into a questionnaire or present several branches at once.
 
 The grilling is complete only when the shared understanding contains:
 
+- a confirmed base system and system of record;
+- the ranked decision drivers (with the dominant two or three marked) that the chosen approach was scored against;
 - a design problem and the functional/non-functional requirements it must meet;
 - component changes stated as roles and boundaries in the correct layers (solution altitude, not file-level) without violating dependency direction;
 - an API surface exposed through services, with contract, compatibility, and error modes;
@@ -91,5 +99,6 @@ The grilling is complete only when the shared understanding contains:
 - dependencies (new ones flagged for approval) and system/external impacts;
 - documentation, QA validation, and DevOps/infrastructure changes;
 - rejected options captured as Alternative solutions and decisions deferred to the ADR;
-- a complete `D-*` decision ledger;
+- a reversibility / blast-radius judgement and the seam that contains it;
+- a complete `D-*` decision ledger, ready to file as the RFC grilling log;
 - explicit user confirmation of shared understanding.

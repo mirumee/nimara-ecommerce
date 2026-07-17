@@ -27,13 +27,15 @@ Use this before proposing approaches. The goal is a small set of well-grounded, 
 
 ## Approach comparison shape
 
-Present approaches side by side so the choice is legible:
+First name the **decision drivers** and rank them — the criteria that trace to the PRD's outcomes and NFRs — and mark the two or three that dominate (they break ties). Then present the approaches **scored against those drivers**, side by side, so the choice is defensible rather than a matter of taste:
 
-> **Approach A — <name>.** What it is. Layer mapping. Pros / cons. Cost. Risks.
+> **Drivers (ranked):** 1. <driver> — DOMINANT · 2. <driver> — DOMINANT · 3. <driver> · …
+>
+> **Approach A — <name>.** What it is. Layer mapping. How it scores on each dominant driver. Cost. Risks.
 >
 > **Approach B — <name>.** …
 >
-> **Recommendation:** A, because … The rest become Alternative solutions in the RFC.
+> **Recommendation:** A, because it wins the dominant drivers (…). The rest become Alternative solutions in the RFC. The ranked drivers become the RFC's non-functional requirements.
 
 ## Provider-agnostic rule
 

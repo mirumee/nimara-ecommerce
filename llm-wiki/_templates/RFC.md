@@ -19,7 +19,8 @@ template_for: "Design Doc"
 > record the verdict or the result: the decision and its outcome are captured in an
 > [ADR](_templates/ADR.md). `status` moves Draft → In Review → Final. Keep Nimara
 > designs OSS provider-agnostic: layer over existing provider abstractions, do not
-> mandate a vendor.
+> mandate a vendor. These sections are a guide, not a form — drop, merge, or add
+> sections as the design needs; keep the content, not the exact headings.
 
 ## Problem
 

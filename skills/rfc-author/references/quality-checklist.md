@@ -16,6 +16,8 @@ Run every check before presenting or filing the RFC. Fix issues that require no 
 - [ ] The user confirmed the shared understanding before drafting or editing.
 - [ ] The business bet was not re-litigated; acceptance was left to the ADR.
 - [ ] Every question has one `D-*` ledger entry with branch, question, recommendation, user answer, and resulting decision.
+- [ ] The base system and system of record were confirmed; the decision drivers were named and ranked, with the dominant two or three marked, and the chosen approach scored against them.
+- [ ] The `D-*` ledger was filed as an RFC grilling log beside the RFC (`tech/RFC/<PRD Name>/RFC-NNNN <Title> - Grilling Log.md`), decisions only — no hidden reasoning or secrets.
 
 ## Design content
 
@@ -38,15 +40,16 @@ Run every check before presenting or filing the RFC. Fix issues that require no 
 - [ ] System impacts name the affected services and any external-system impact.
 - [ ] Documentation, QA validation (scenarios only — automatability is the QA team's call), and DevOps/infrastructure changes are covered.
 - [ ] Genuinely unresolved decisions are deferred with an owner and a `before <stage>` gate — not fabricated.
+- [ ] Reversibility / blast radius is judged and the containing seam named.
 
 ## Proposal boundary
 
 - [ ] The RFC records a proposal, not a verdict; it does not decide acceptance.
-- [ ] The proposed next step is an ADR that accepts or rejects this RFC and links back to it.
+- [ ] The proposed next step hands off to `solution-author` on the same PRD to write the ADR that accepts or rejects this RFC.
 
 ## Wiki hygiene
 
-- [ ] Filename is `RFC-NNNN <Title>` with the next free ID; status is `Draft` unless the user approved a transition.
+- [ ] The RFC lives in `tech/RFC/<PRD Name>/`, filename `RFC-NNNN <Title>`, next free ID; its grilling log sits beside it as `RFC-NNNN <Title> - Grilling Log.md`. Status is `Draft` unless the user approved a transition.
 - [ ] The RFC is registered in `RFC MOC.md` and linked to its PRD in both directions.
 - [ ] `index.md`, `log.md`, and Related Notes are current; renamed inbound links are updated.
 - [ ] Sources were preserved and stale downstream artifacts were reported rather than silently rewritten.

@@ -45,7 +45,8 @@ llm-wiki/
   quality/          # QA operating knowledge
   tech/
     ADR/            # architecture decision records
-    RFC/          # RFC design proposals + register
+    RFC/            # RFC design proposals + register
+      <PRD Name>/   # one folder per PRD; holds its RFCs and their grilling logs
 ```
 
 `index.md` and `log.md` are OKF reserved filenames. All other `.md` files are concept
@@ -163,6 +164,27 @@ Rules:
 * Accepted ADRs are immutable. Supersede them with a new ADR and link both documents.
 * Register every ADR in [ADR MOC](tech/ADR/ADR%20MOC.md) and link it back to the relevant
   PRD, solution, or task note.
+
+# RFC Design Proposals
+
+An RFC is a technical design **proposal** for a non-trivial change — it proposes a solution but
+does not record the verdict; the decision to accept or reject it lives in a downstream ADR. RFCs
+are produced by the `rfc-author` skill.
+
+Rules:
+
+* Group RFCs by the PRD they serve: `tech/RFC/<PRD Name>/`. Each RFC and its grilling log live
+  **side by side** in that folder — `RFC-NNNN <Title>.md` and `RFC-NNNN <Title> - Grilling Log.md`.
+* File name: `RFC-NNNN <Title>.md`, zero-padded and monotonically increasing across the whole
+  register (not per PRD).
+* Status lives in frontmatter as `status` (`Draft → In Review → Final`).
+* Each RFC's grilling log is created from `_templates/rfc-grilling-log.md`, carries its own `D-*`
+  decision numbering, and records the user-visible decision trail — drivers, chosen approach,
+  rejected alternatives, deferred items, and the acceptance questions left for the ADR.
+* Register every RFC in [RFC MOC](tech/RFC/RFC%20MOC.md) and link it to its PRD in both directions.
+* Competing approaches to one PRD are separate RFCs in the same PRD folder, cross-linked under
+  Alternative solutions; the resolving ADR pulls their content inline (an ADR is self-contained).
+* When a PRD is renamed, rename its RFC folder and update all inbound links in the same change.
 
 # PRD Grilling Logs
 
