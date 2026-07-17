@@ -23,7 +23,6 @@ It follows the llm-wiki shape: a directory of Markdown files with YAML frontmatt
 - A branch name is a movable alias; provenance always includes the resolved commit SHA.
 - A `vX.Y.Z` tag is the immutable release snapshot.
 - There are no per-branch directories. Git already versions branch-specific state.
--
 
 # Folder Structure
 
@@ -68,6 +67,18 @@ llm-wiki/
 | FLOW   | Current end-to-end product flow                                |
 | QA     | Verification plan and acceptance evidence                      |
 | OPS    | Operational knowledge, runbook, rollback, or incident guidance |
+
+
+## Workflow
+
+```mermaid
+flowchart LR
+    S["Sources<br/>immutable evidence"] --> P["Plans and decisions<br/>PRD → RFC → ADR"]
+    P --> I["Implementation evidence<br/>IMP + PR/commit + verification"]
+    I --> C["Current project reality<br/>CAP + FLOW + INT + OPS"]
+    C --> Q["Quality knowledge<br/>QA plans and evidence"]
+    Q --> C
+```
 
 ## Concept Document Format
 
@@ -154,7 +165,7 @@ Operational rules:
 - Use `qmd search` or `qmd query` to get a `docid` or `qmd://...` URI before calling
   `qmd get`.
 - Do not treat QMD results as validation. Link integrity, frontmatter, source integrity, MOC
-  coverage, and index coverage still require a wiki-maintenance lint pass.
+  coverage, and index coverage still require a bookkeeping audit.
 
 # Related Notes
 

@@ -45,7 +45,6 @@ The grilling is complete only when the shared understanding contains:
 - explicit in-scope and out-of-scope boundaries;
 - business NFRs, ownership, risks, and lifecycle gate;
 - a list of technical decisions deferred to solution design;
-- a complete decision ledger ready to file from the wiki grilling-log template;
 - explicit user confirmation of shared understanding.
 
 ## Stage 3 — Draft the PRD

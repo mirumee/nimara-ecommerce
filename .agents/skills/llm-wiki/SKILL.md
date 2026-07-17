@@ -1,6 +1,6 @@
 ---
 name: llm-wiki
-description: Work with llm-wiki knowledge base using QMD-backed retrieval and source-file verification. Use when answering questions from llm-wiki, finding relevant notes, auditing wiki consistency, ingesting or filing durable knowledge back into llm-wiki, updating wiki conventions, or helping agents use the llm-wiki/sources/LLM Wiki.md pattern. Use for product strategy, QA process, ADR, persona, PRD, source, and wiki-maintenance questions that should cite or update llm-wiki. Also use for any Saleor GraphQL schema question — types, fields, enums, mutations, queries (e.g. Checkout, Order, Product, ProductVariant, Payment, Attribute, Shop, Channel) — because those answers live in version-stamped notes under llm-wiki/tech/saleor/ that must be checked for freshness with `pnpm wiki:saleor:check` before being cited.
+description: Work with llm-wiki knowledge base using QMD-backed retrieval and source-file verification. Use when answering questions from llm-wiki, finding relevant notes, auditing wiki consistency, ingesting or filing durable knowledge back into llm-wiki, updating wiki conventions, or helping agents use the llm-wiki/sources/LLM Wiki.md pattern. Use for product strategy, QA process, ADR, persona, PRD, source, and bookkeeping questions that should cite or update llm-wiki. Also use for any Saleor GraphQL schema question — types, fields, enums, mutations, queries (e.g. Checkout, Order, Product, ProductVariant, Payment, Attribute, Shop, Channel) — because those answers live in version-stamped notes under llm-wiki/tech/saleor/ that must be checked for freshness with `pnpm wiki:saleor:check` before being cited.
 ---
 
 # LLM Wiki
@@ -81,9 +81,11 @@ Notes under `llm-wiki/tech/saleor/` describe the Saleor GraphQL API and are **ve
 
 Start from [Saleor Schema (MOC)](../../../llm-wiki/tech/saleor/Saleor%20Schema%20%28MOC%29.md).
 
-## Maintenance Workflow
+## Bookkeeping Workflow
 
-For lint, ingest, ADR, or answer-and-file-back work, also read `.agents/skills/wiki-maintenance/SKILL.md`. Follow its mode rules, especially:
+For ingest, audit, graph repair, ADR, or answer-and-file-back work, also use the `bookkeeping`
+skill. It derives the current schema and locations from the wiki's governing `AGENTS.md`.
+Follow its process, especially:
 
 - report lint findings with suggested fixes before editing unless the user asked for cleanup;
 - update `llm-wiki/log.md` for wiki operations;
