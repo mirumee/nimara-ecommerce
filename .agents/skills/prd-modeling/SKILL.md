@@ -1,6 +1,6 @@
 ---
 name: prd-author
-description: Define and draft Product Requirements Documents (PRDs) inside an LLM-wiki product workspace. Use when the user wants to create, rewrite, refine, or stress-test a PRD or Product Requirements Document, or turn an initiative or feature brief into product requirements. Run a business-value-first, one-question-at-a-time grilling, preserve its decision log in the wiki, and stop at an approved PRD without designing the technical solution, decomposing tasks, estimating.
+description: Define and draft Product Requirements Documents (PRDs) inside an LLM-wiki product workspace. Use when the user wants to create, rewrite, refine, or stress-test a PRD or Product Requirements Document, or turn an initiative or feature brief into product requirements. Run a business-value-first, one-question-at-a-time grilling, capture confirmed decisions in the PRD, and stop at an approved PRD without designing the technical solution, decomposing tasks, estimating.
 ---
 
 # PRD Author
@@ -62,14 +62,14 @@ Completion criterion: every checklist item passes or is reported as an explicit,
 - Save as `llm-wiki/prd/PRD-NNN <Name>.md` using the next free ID, or preserve the ID when rewriting an existing PRD.
 - Update the wiki index and log when present.
 - Update all inbound links when renaming a PRD.
-- Record the user-visible decision trail, not hidden reasoning. Summarize confidential evidence without copying source bodies, secrets, personal data, or unnecessary verbatim conversation.
+- Represent confirmed user-visible decisions in the PRD without hidden reasoning. Summarize confidential evidence without copying source bodies, secrets, personal data, or unnecessary verbatim conversation.
 - Preserve sources and downstream task artifacts; report stale downstream artifacts instead of silently rewriting them.
 
 Completion criterion: the PRD is mutually linked and navigable from the wiki; every grilling decision is represented once; no changed link points to an old name.
 
 ## Stage 6 — Gate
 
-New PRDs start as `draft`. A rewritten PRD changes status only when the user explicitly approves the transition. Close with both file locations, passed checks, open decisions, stale downstream artifacts, and proposed next lifecycle step.
+New PRDs start as `draft`. A rewritten PRD changes status only when the user explicitly approves the transition. Close with the PRD file location, passed checks, open decisions, stale downstream artifacts, and proposed next lifecycle step.
 
 ## Stage 7 — Handoff
 
