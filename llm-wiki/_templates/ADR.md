@@ -33,7 +33,10 @@ why the codebase looks the way it does.
 
 ## Related Notes
 
-[ADR MOC](../tech/ADR/ADR%20MOC.md)
-[RFC MOC](../tech/RFC/RFC%20MOC.md)
-Link the RFC proposal(s) this decision resolves — the accepted design and any rejected alternatives.
-Replace this line with the PRD it belongs to, using a path such as `../prd/PRD-NNN Name.md`.
+[ADR MOC](ADR%20MOC.md)
+[RFC MOC](../RFC/RFC%20MOC.md)
+
+Replace this line with the RFC proposal(s) this decision resolves, using paths such as
+`../RFC/RFC-NNNN%20Title.md`.
+Replace this line with the PRD it belongs to, using a path such as
+`../../prd/PRD-NNN%20Title.md`.

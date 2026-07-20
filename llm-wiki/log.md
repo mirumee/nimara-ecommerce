@@ -11,6 +11,9 @@
   `timestamp`, lower-case `snake_case` statuses, and `PRD` relation names and references.
   Added the required authored-record placeholders to PRD, RFC, and ADR templates and aligned
   the RFC authoring skill and ADR/RFC registers with the canonical lifecycle vocabulary.
+- **Template link repair**: Made active template links resolve from each record's authored
+  location, converted record-specific ADR/RFC/PRD examples to non-clickable paths, and
+  aligned RFC authoring guidance with the one-way RFC-to-PRD relation.
 
 ## 2026-07-17
 

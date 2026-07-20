@@ -124,9 +124,16 @@ Files under `_templates/` are reusable sources, not authored records. Their fron
 use `type: "Template"` and `template_for`. When creating a record, replace template-only
 metadata and every placeholder with the authored record's contract values.
 
-All record links use standard relative Markdown links. Identifiers are monotonically
-increasing, never reused, and must match the filename prefix. The authored location is the
-base for every relative link stored in frontmatter.
+All record links use standard relative Markdown links. Relative links embedded in a
+specialized template resolve from the authored location declared by that record's contract,
+not from `_templates/`. A template link must never work only because the template remains in
+`_templates/`. When a destination is record-specific and no validator-enforced placeholder
+exists, show its authored-location-correct path as inline code or an HTML comment, never as a
+clickable example link.
+
+Identifiers are monotonically increasing, never reused, and must match the filename prefix.
+The authored location is the base for every relative link stored in frontmatter or the
+record body.
 
 Relations point from the newer or more specific record to its inputs and outputs. For the
 six delivery and current-state records below, the canonical directions are:
