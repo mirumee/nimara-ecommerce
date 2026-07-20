@@ -96,7 +96,7 @@ Draft in this order:
 Rules:
 
 - Keep the draft at solution altitude (see Altitude): principles, boundaries, decisions, and gotchas — not exact package/folder paths, file/function names, or signatures. Package placement is at most a one-line, non-binding suggestion.
-- Do not copy the template's explanatory blockquote (what an RFC is, the `Draft → In Review → Final` flow, generic provider-agnostic reminder) into the authored RFC — that meta lives in the RFC MOC and template. Open the instance with its own context (the PRD it serves); express real design constraints in the body, not as boilerplate.
+- Do not copy the template's explanatory blockquote (what an RFC is, the `draft → in_review → final` flow, generic provider-agnostic reminder) into the authored RFC — that meta lives in the RFC MOC and template. Open the instance with its own context (the PRD it serves); express real design constraints in the body, not as boilerplate.
 - In Component changes, open with a **one-to-two-sentence scope note** — the repo and which app(s)/layers the change lands in, plus the plan in a line. Not a per-package breakdown, and no file-level layout.
 - Describe what's new as **services / capabilities, concisely (often a single item)** — the new moving parts and their boundaries — not an inventory of literal "components" (the word reads as UI components; usually it is services). Group tightly-related new parts into one item rather than splitting each into its own bullet.
 - Write clear, dense technical prose (see Clear technical prose): cut ornamental jargon and convoluted sentences, but keep the full technical vocabulary — it is for engineers, not a lay explainer.
@@ -130,7 +130,7 @@ Completion criterion: the RFC and its PRD are mutually linked and navigable from
 
 ## Stage 7 — Gate
 
-New RFCs start as `status: Draft`. A rewritten RFC changes status only when the user explicitly approves the transition (Draft → In Review → Final). Close with the file location, passed checks, open decisions, rejected alternatives, and the proposed next step: an ADR that accepts or rejects this RFC and links back to it.
+New RFCs start as `status: draft`. A rewritten RFC changes status only when the user explicitly approves the transition (`draft → in_review → final`). Close with the file location, passed checks, open decisions, rejected alternatives, and the proposed next step: an ADR that accepts or rejects this RFC and links back to it.
 
 ## References
 

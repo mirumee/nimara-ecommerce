@@ -1,5 +1,13 @@
 # Directory Update Log
 
+## 2026-07-20
+
+- **Schema repair**: Unified specialized record templates with the governing contract:
+  human-readable record types, singular accountable `owner`, ISO 8601 `created` and
+  `timestamp`, lower-case `snake_case` statuses, and `PRD` relation names and references.
+  Added the required authored-record placeholders to PRD, RFC, and ADR templates and aligned
+  the RFC authoring skill and ADR/RFC registers with the canonical lifecycle vocabulary.
+
 ## 2026-07-17
 
 - **Schema**: Defined canonical common frontmatter and specialized PRD, RFC, and ADR contracts

@@ -1,13 +1,17 @@
 ---
 type: "Template"
-title: "ADR"
-description: 'One sentence — the decision and its status (e.g. "Use RAG over fine-tuning for product discovery — Accepted").'
+title: "ADR Template"
+description: 'Reusable template for a durable architecture decision and its status (e.g. "Use RAG over fine-tuning for product discovery — accepted").'
 tags:
+  - "template"
   - "adr"
-  - "topic"
 created: "2026-06-16T00:00:00+00:00"
-timestamp: "2026-06-16T00:00:00+00:00"
-status: "Proposed"
+timestamp: "2026-07-20T00:00:00+00:00"
+template_for: "Architecture Decision Record"
+id: "ADR-0000"
+status: "proposed"
+owner: "github-user-or-team"
+superseded_by: null
 ---
 
 ## Context

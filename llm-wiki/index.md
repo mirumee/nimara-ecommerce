@@ -9,13 +9,13 @@ okf_version: "0.1"
 # Templates
 
 - [ADR Template](_templates/ADR.md) - Reusable template for architecture decision records.
-- [Capability Template](_templates/CAP.md) - Reusable template for documenting a current product capability.
-- [Flow Template](_templates/FLOW.md) - Reusable template for documenting an end-to-end product flow.
-- [Implementation Template](_templates/IMP.md) - Reusable template for implementation details and verification evidence.
-- [Integration Template](_templates/INT.md) - Reusable template for an integration contract.
-- [Operations Template](_templates/OPS.md) - Reusable template for runbooks and other operational knowledge.
+- [CAP Template](_templates/CAP.md) - Reusable template for documenting a current product capability.
+- [FLOW Template](_templates/FLOW.md) - Reusable template for documenting an end-to-end product flow.
+- [IMP Template](_templates/IMP.md) - Reusable template for implementation details and verification evidence.
+- [INT Template](_templates/INT.md) - Reusable template for an integration contract.
+- [OPS Template](_templates/OPS.md) - Reusable template for runbooks and other operational knowledge.
 - [PRD Template](_templates/prd.md) - Reusable template for drafting Nimara Product Requirements Documents.
-- [Quality Template](_templates/QA.md) - Reusable template for verification plans and acceptance evidence.
+- [QA Template](_templates/QA.md) - Reusable template for verification plans and acceptance evidence.
 - [RFC Design Doc Template](_templates/RFC.md) - Reusable template for an RFC design proposal: problem, requirements, proposed solution, and cross-cutting considerations.
 - [Undefined Template](_templates/Undefined.md) - Generic template for a new concept document.
 - [Saleor Schema Note Template](_templates/saleor-schema-note.md) - Reusable template for a version-stamped Saleor GraphQL schema note.

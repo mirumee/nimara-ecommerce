@@ -8,7 +8,7 @@ tags:
   - "schema"
   - "rules"
 created: "2026-07-09T00:00:00+00:00"
-timestamp: "2026-07-17T00:00:00+00:00"
+timestamp: "2026-07-20T00:00:00+00:00"
 ---
 
 # Content
@@ -101,6 +101,18 @@ Additional frontmatter is allowed when its record contract or template defines i
 must tolerate unknown fields. `timestamp` is the canonical last-change field; legacy
 `updated` fields may remain but do not replace it.
 
+The canonical specialized-record vocabulary is:
+
+- `type` is the human-readable value in the table below; the upper-case code is reserved for
+  identifiers and filenames.
+- `owner` names one accountable person or team. Do not use `owners`; list non-accountable
+  contributors in the document body.
+- `created` and `timestamp` are the only creation and last-change fields. Do not use
+  `created_at` or `updated_at`.
+- `status` values are lower-case `snake_case`.
+- relation keys use the record acronym plus `s` (`prds`, `rfcs`, `adrs`); use `PRD`, never
+  `PDR`, in keys, IDs, and acceptance-criterion references.
+
 Reserved `index.md` and `log.md` files and immutable source documents follow the formats
 defined by their own sections; they are not specialized authored records.
 
@@ -110,6 +122,18 @@ metadata and every placeholder with the authored record's contract values.
 
 All record links use standard relative Markdown links. Identifiers are monotonically
 increasing, never reused, and must match the filename prefix.
+
+| Record | Authored `type`                 | Template `template_for`         | Initial `status` |
+| ------ | ------------------------------- | ------------------------------- | ---------------- |
+| PRD    | `Product Requirements Document` | `Product Requirements Document` | `draft`          |
+| RFC    | `Request for Comments`          | `Request for Comments`          | `draft`          |
+| ADR    | `Architecture Decision Record`  | `Architecture Decision Record`  | `proposed`       |
+| IMP    | `Implementation Record`         | `Implementation Record`         | `planned`        |
+| CAP    | `Product Capability`            | `Product Capability`            | `candidate`      |
+| INT    | `Integration Contract`          | `Integration Contract`          | `candidate`      |
+| FLOW   | `Product Flow`                  | `Product Flow`                  | `candidate`      |
+| QA     | `Quality Assurance Record`      | `Quality Assurance Record`      | `draft`          |
+| OPS    | `Operational Record`            | `Operational Record`            | `draft`          |
 
 ### PRD — Product Requirements Document
 
@@ -132,8 +156,8 @@ increasing, never reused, and must match the filename prefix.
 - **Required additions:** `id`, `status`, `owner`, and `prd`.
 - **PRD relation:** `prd` contains exactly one relative Markdown link to the PRD this proposal
   serves. Repeat that relationship under `Related Notes` and link the PRD back to the RFC.
-- **Lifecycle:** new records start as `Draft`, then move through `In Review` to `Final` only
-  with explicit user approval. `Final` means the proposal is complete; an ADR records
+- **Lifecycle:** new records start as `draft`, then move through `in_review` to `final` only
+  with explicit user approval. `final` means the proposal is complete; an ADR records
   acceptance or rejection.
 - **Relationships:** register every RFC in `tech/RFC/RFC MOC.md` and `index.md`; link the ADR
   that resolves it when one exists.
@@ -143,10 +167,13 @@ increasing, never reused, and must match the filename prefix.
 - **Location and template:** `tech/ADR/`, created from `_templates/ADR.md`.
 - **Filename and ID:** `ADR-NNNN <Title>.md` and matching `id: "ADR-NNNN"`.
 - **Type:** `Architecture Decision Record`.
-- **Required additions:** `id` and `status`.
-- **Lifecycle:** new records start as `Proposed`. Supported states are `Proposed`, `Accepted`,
-  `Rejected`, and `Superseded by ADR-NNNN <Title>`. Accepted ADRs are immutable; replace a
-  decision by creating a new ADR and superseding the old one.
+- **Required additions:** `id`, `status`, and `owner`.
+- **Lifecycle:** new records start as `proposed`. Supported states are `proposed`, `accepted`,
+  `rejected`, and `superseded`. Accepted ADRs are immutable; replace a decision by creating a
+  new ADR, setting the old record to `superseded`, and linking the replacing ADR in
+  `superseded_by`.
+- **Supersession:** `superseded_by` is `null` unless `status` is `superseded`; then it contains
+  exactly one relative Markdown link to the replacing ADR.
 - **Relationships:** register every ADR in `tech/ADR/ADR MOC.md` and `index.md`. Link the PRD
   and RFC proposals it resolves under `Related Notes`.
 
@@ -218,7 +245,7 @@ Project wrapper commands:
 ```bash
 pnpm wiki:qmd:setup
 pnpm wiki:qmd:embed
-pnpm wiki:qmd:query "what contradicts the user reviews PDR?"
+pnpm wiki:qmd:query "what contradicts the user reviews PRD?"
 pnpm wiki:qmd:search "ADR MOC" -- --json -n 10
 pnpm wiki:qmd:get "#abc123" -- --full
 pnpm wiki:qmd:mcp

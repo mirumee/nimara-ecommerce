@@ -6,7 +6,7 @@ tags:
   - "adr"
   - "moc"
 created: "2026-07-08T00:00:00+00:00"
-timestamp: "2026-07-09T00:00:00+00:00"
+timestamp: "2026-07-20T00:00:00+00:00"
 ---
 
 ## Content
@@ -19,8 +19,9 @@ is one standalone note following the [Michael Nygard template](https://github.co
 
 - **One decision per note.** File name is `ADR-NNNN <Title>` (zero-padded, monotonically
   increasing, never reused) — e.g. `ADR-0001 Use RAG over fine-tuning`.
-- **ADRs are immutable once Accepted.** Don't rewrite a decision — supersede it: create a
-  new ADR and set the old one's `status` frontmatter to `Superseded by ADR-NNNN Title`.
+- **ADRs are immutable once `accepted`.** Don't rewrite a decision — supersede it: create a
+  new ADR, set the old one's `status` to `superseded`, and link the new ADR in
+  `superseded_by`.
 - Register every new ADR in the register below in the same change.
 
 ## Register

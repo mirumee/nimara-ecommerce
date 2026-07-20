@@ -6,8 +6,13 @@ tags:
   - "template"
   - "prd"
 created: "2026-07-09T00:00:00+00:00"
-timestamp: "2026-07-09T00:00:00+00:00"
+timestamp: "2026-07-20T00:00:00+00:00"
 template_for: "Product Requirements Document"
+id: "PRD-000"
+status: "draft"
+owner: "github-user-or-team"
+prd_type: "business"
+personas: []
 ---
 
 # PRD Name
