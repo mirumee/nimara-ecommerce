@@ -13,10 +13,9 @@ status: "candidate"
 owner: "github-user-or-team"
 relations:
   integrations: []
-  flows: []
-  verified_by: []
 availability:
   since: null
+  deprecated_since: null
 ---
 
 # Behavior

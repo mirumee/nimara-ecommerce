@@ -11,19 +11,20 @@ template_for: "Implementation Record"
 id: "IMP-0000"
 status: "planned"
 owner: "github-user-or-team"
+work_item:
+  id: "ISSUE-000"
+  url: null
 relations:
-  prds:
-    - PRD-000
-  rfcs:
-    - RFC-0000
-  adrs:
-    - ADR-0000
+  prds: []
+  rfcs: []
+  adrs: []
   product_records: []
+  rolled_back_by: null
 code:
   paths: []
   pull_requests: []
 verification:
-  - criterion: PRD-000#AC-01
+  - criterion: "ISSUE-000#AC-01"
     tests:
       - path/to/test-file.ts
 rollout:

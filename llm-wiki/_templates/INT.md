@@ -11,12 +11,9 @@ template_for: "Integration Contract"
 id: "INT-0000"
 status: "candidate"
 owner: "github-user-or-team"
-relations:
-  capabilities: []
-  flows: []
-  verified_by: []
 availability:
   since: null
+  deprecated_since: null
 ---
 
 # Purpose

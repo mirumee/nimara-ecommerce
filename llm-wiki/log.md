@@ -2,6 +2,10 @@
 
 ## 2026-07-20
 
+- **Record contracts**: Added complete location, filename, lifecycle, relationship,
+  immutability, review-owner, and registration contracts for IMP, CAP, FLOW, INT, QA, and
+  OPS. Added their MOCs and empty locations without creating content records, and aligned
+  templates and retrieval navigation with the new model.
 - **Schema repair**: Unified specialized record templates with the governing contract:
   human-readable record types, singular accountable `owner`, ISO 8601 `created` and
   `timestamp`, lower-case `snake_case` statuses, and `PRD` relation names and references.

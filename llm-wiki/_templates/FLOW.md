@@ -14,9 +14,9 @@ owner: "github-user-or-team"
 relations:
   capabilities: []
   integrations: []
-  verified_by: []
 availability:
   since: null
+  deprecated_since: null
 actors: []
 ---
 

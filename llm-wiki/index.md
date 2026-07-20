@@ -31,6 +31,14 @@ okf_version: "0.1"
 - [PRD-002 Verified User Reviews](prd/PRD-002%20User%20Reviews.md) - Product requirements for a verified-purchase user reviews system in Nimara.
 - [PRD-003 Cookie Consent & Google Consent Mode v2](prd/PRD-003%20Cookie%20Consent.md) - Product requirements for Cookie Consent and Google Consent Mode v2 in the Nimara storefront.
 
+# Implementation Evidence
+
+- [Implementation (MOC)](implementation/Implementation%20%28MOC%29.md) - Register for implementation records that connect work items and requirements to code, tests, and current product state.
+
+# Current Product State
+
+- [Product (MOC)](product/Product%20%28MOC%29.md) - Current capabilities, flows, and integration contracts at the selected Git ref.
+
 # Product Strategy
 
 - [Product Strategy 2026 (MOC)](market/strategy/Product%20Strategy%202026%20%28MOC%29.md) - Entry point and executive summary for 2026 product strategy.
@@ -70,6 +78,10 @@ okf_version: "0.1"
 - [Test Method Playbooks](quality/Test%20Method%20Playbooks.md) - Cheapest reliable verification technique by defect class.
 - [Verdict & Evidence Policy](quality/Verdict%20%26%20Evidence%20Policy.md) - Evidence rules for defensible QA verdicts.
 - [Known Flaky, Blocked & Backend-Only](quality/Known%20Flaky%2C%20Blocked%20%26%20Backend-Only.md) - Areas where agents should not force a verdict.
+
+# Operations
+
+- [Operations (MOC)](operations/Operations%20%28MOC%29.md) - Register for current runbooks, rollback procedures, and incident-response guidance.
 
 # Technology ADR
 
