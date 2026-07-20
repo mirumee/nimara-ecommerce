@@ -15,7 +15,7 @@ export const butterCMSMenuGetInfra =
   async ({ languageCode, slug }) => {
     invariant(
       token,
-      "ButterCMS token is required but was not provided. Set NEXT_PUBLIC_BUTTER_CMS_API_KEY in the environment variables.",
+      "ButterCMS token is required but was not provided. Set CMS_BUTTER_TOKEN in the environment variables.",
     );
     const locale = convertLanguageCode(languageCode);
     let menu;
