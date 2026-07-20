@@ -36,8 +36,9 @@ The provider pattern applies where multiple implementations genuinely exist:
 Providers are chosen via server-side env (`SEARCH_SERVICE`, `CMS_SERVICE`,
 `PAYMENT_SERVICE`). No runtime/per-tenant config source. Per-provider credentials are
 namespaced (`SEARCH_<PROVIDER>_*`, `CMS_<PROVIDER>_*`, `PAYMENT_<PROVIDER>_*`) and validated
-lazily — only the selected provider's schema runs. `turbo.json` passes them via `SEARCH_*`,
-`CMS_*`, `PAYMENT_*` wildcards.
+lazily — only the selected provider's schema runs. For example, `CMS_SERVICE=butter-cms`
+requires `CMS_BUTTER_TOKEN` (ButterCMS read token, used for both pages and menus).
+`turbo.json` passes them via `SEARCH_*`, `CMS_*`, `PAYMENT_*` wildcards.
 
 ### 3. `ServiceRegistry` is derived, not hand-maintained
 
