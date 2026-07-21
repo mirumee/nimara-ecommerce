@@ -7,19 +7,21 @@ tags:
   - "rfc"
   - "design-doc"
 created: "2026-07-13T00:00:00+00:00"
-timestamp: "2026-07-13T00:00:00+00:00"
-status: "Draft"
-owner: ""
-template_for: "Design Doc"
+timestamp: "2026-07-20T00:00:00+00:00"
+template_for: "Request for Comments"
+id: "RFC-0000"
+status: "draft"
+owner: "github-user-or-team"
+prd: ""
 ---
 
 # Design Title
 
 > An RFC is a proposal — a full design page for a non-trivial change. It does not
 > record the verdict or the result: the decision and its outcome are captured in an
-> [ADR](ADR.md). `status` moves Draft → In Review → Final. Keep Nimara
-> designs OSS provider-agnostic: layer over existing provider abstractions, do not
-> mandate a vendor.
+> ADR; see the [ADR MOC](../ADR/ADR%20MOC.md). `status` moves `draft` → `in_review`
+> → `final`. Keep Nimara designs OSS provider-agnostic: layer over existing provider
+> abstractions, do not mandate a vendor.
 
 ## Problem
 
@@ -96,3 +98,10 @@ Test scenarios that validate the solution. Whether each is automatable is the QA
 ### DevOps / infrastructure
 
 Infrastructure changes required (firewall rules, env vars, Terraform, CI task-graph).
+
+## Related Notes
+
+Replace this line with the PRD this proposal serves, using a path such as
+`../../prd/PRD-NNN%20Title.md`.
+When an ADR resolves this proposal, replace this line with it using a path such as
+`../ADR/ADR-NNNN%20Title.md`.

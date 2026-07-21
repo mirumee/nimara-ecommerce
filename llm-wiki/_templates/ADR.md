@@ -1,13 +1,17 @@
 ---
 type: "Template"
-title: "ADR"
-description: 'One sentence — the decision and its status (e.g. "Use RAG over fine-tuning for product discovery — Accepted").'
+title: "ADR Template"
+description: 'Reusable template for a durable architecture decision and its status (e.g. "Use RAG over fine-tuning for product discovery — accepted").'
 tags:
+  - "template"
   - "adr"
-  - "topic"
 created: "2026-06-16T00:00:00+00:00"
-timestamp: "2026-06-16T00:00:00+00:00"
-status: "Proposed"
+timestamp: "2026-07-20T00:00:00+00:00"
+template_for: "Architecture Decision Record"
+id: "ADR-0000"
+status: "proposed"
+owner: "github-user-or-team"
+superseded_by: null
 ---
 
 ## Context
@@ -29,7 +33,10 @@ why the codebase looks the way it does.
 
 ## Related Notes
 
-[ADR MOC](../tech/ADR/ADR%20MOC.md)
-[RFC MOC](../tech/RFC/RFC%20MOC.md)
-Link the RFC proposal(s) this decision resolves — the accepted design and any rejected alternatives.
-Replace this line with the PRD it belongs to, using a path such as `../prd/PRD-NNN Name.md`.
+[ADR MOC](ADR%20MOC.md)
+[RFC MOC](../RFC/RFC%20MOC.md)
+
+Replace this line with the RFC proposal(s) this decision resolves, using paths such as
+`../RFC/RFC-NNNN%20Title.md`.
+Replace this line with the PRD it belongs to, using a path such as
+`../../prd/PRD-NNN%20Title.md`.

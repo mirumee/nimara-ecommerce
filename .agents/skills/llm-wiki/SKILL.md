@@ -63,10 +63,16 @@ node scripts/wiki-qmd.mjs query "question" --json --no-rerank -n 10
 
    QMD may normalize spaces in filenames, so prefer `docid` from search results.
 
-3. Read the relevant MOC when the topic is domain-specific:
-   - Product strategy: `llm-wiki/market/strategy/Product Strategy 2026 (MOC).md`
-   - QA/testing: `llm-wiki/quality/Quality & Testing (MOC).md`
-   - ADRs: `llm-wiki/tech/ADR/ADR MOC.md`
+3. Read `llm-wiki/index.md` as the navigation router, then read the relevant MOC when the
+   topic is domain-specific:
+   - current product state: `llm-wiki/product/Product (MOC).md`;
+   - implementation evidence: `llm-wiki/implementation/Implementation (MOC).md`;
+   - operations: `llm-wiki/operations/Operations (MOC).md`;
+   - QA/testing: `llm-wiki/quality/Quality & Testing (MOC).md`;
+   - product strategy: `llm-wiki/market/strategy/Product Strategy 2026 (MOC).md`;
+   - RFCs: `llm-wiki/tech/RFC/RFC MOC.md`;
+   - ADRs: `llm-wiki/tech/ADR/ADR MOC.md`;
+   - Saleor schema: `llm-wiki/tech/saleor/Saleor Schema (MOC).md`.
 
 4. Answer with specific file references. If the wiki does not contain the answer, say that plainly and name the gap.
 

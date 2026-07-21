@@ -48,7 +48,7 @@ Run every check before presenting or filing the RFC. Fix issues that require no 
 
 ## Wiki hygiene
 
-- [ ] Filename is `RFC-NNNN <Title>` with the next free ID; status is `Draft` unless the user approved a transition.
-- [ ] The RFC is registered in `RFC MOC.md` and linked to its PRD in both directions.
+- [ ] Filename is `RFC-NNNN <Title>` with the next free ID; status is `draft` unless the user approved a transition.
+- [ ] The RFC is registered in `RFC MOC.md`; `prd` and Related Notes point to the same single PRD using links resolved from `tech/RFC/`, with no handwritten RFC backlink added to the PRD.
 - [ ] `index.md`, `log.md`, and Related Notes are current; renamed inbound links are updated.
 - [ ] Sources were preserved and stale downstream artifacts were reported rather than silently rewritten.

@@ -7,7 +7,7 @@ tags:
   - "design-doc"
   - "moc"
 created: "2026-07-13T00:00:00+00:00"
-timestamp: "2026-07-13T00:00:00+00:00"
+timestamp: "2026-07-20T00:00:00+00:00"
 ---
 
 ## Content
@@ -21,7 +21,7 @@ outcome, live in an [ADR](../ADR/ADR%20MOC.md).
 
 - File name is `RFC-NNNN <Title>` (zero-padded, monotonically increasing, never reused).
 - Competing approaches may be separate RFCs; cross-link them under Alternative solutions.
-- `status` in frontmatter moves `Draft → In Review → Final`.
+- `status` in frontmatter moves `draft → in_review → final`.
 - Register every new RFC below in the same change, and link the ADR that resolves it.
 
 ## Register

@@ -1,5 +1,20 @@
 # Directory Update Log
 
+## 2026-07-20
+
+- **Record contracts**: Added complete location, filename, lifecycle, relationship,
+  immutability, review-owner, and registration contracts for IMP, CAP, FLOW, INT, QA, and
+  OPS. Added their MOCs and empty locations without creating content records, and aligned
+  templates and retrieval navigation with the new model.
+- **Schema repair**: Unified specialized record templates with the governing contract:
+  human-readable record types, singular accountable `owner`, ISO 8601 `created` and
+  `timestamp`, lower-case `snake_case` statuses, and `PRD` relation names and references.
+  Added the required authored-record placeholders to PRD, RFC, and ADR templates and aligned
+  the RFC authoring skill and ADR/RFC registers with the canonical lifecycle vocabulary.
+- **Template link repair**: Made active template links resolve from each record's authored
+  location, converted record-specific ADR/RFC/PRD examples to non-clickable paths, and
+  aligned RFC authoring guidance with the one-way RFC-to-PRD relation.
+
 ## 2026-07-17
 
 - **Schema**: Defined canonical common frontmatter and specialized PRD, RFC, and ADR contracts
