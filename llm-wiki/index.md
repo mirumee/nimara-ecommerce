@@ -108,6 +108,14 @@ okf_version: "0.1"
 # Operations
 
 - [Operations (MOC)](operations/Operations%20%28MOC%29.md) - Register for current runbooks, rollback procedures, and incident-response guidance.
+- [OPS-0001 Storefront Deployment and Configuration Validation](operations/OPS-0001%20Storefront%20Deployment%20and%20Configuration%20Validation.md) - Storefront configuration validation, Vercel planning, immutable deployment, verification, and rollback boundary.
+- [OPS-0002 Stripe Payment Application Installation and Key Rotation](operations/OPS-0002%20Stripe%20Payment%20Application%20Installation%20and%20Key%20Rotation.md) - Payment-application installation, per-channel keys, Stripe webhook rotation, and standard-checkout verification.
+- [OPS-0003 Marketplace Ledger Migration and Settlement Reconciliation](operations/OPS-0003%20Marketplace%20Ledger%20Migration%20and%20Settlement%20Reconciliation.md) - Optional-ledger migration, order-proceeds ingest verification, and Stripe settlement reconciliation.
+- [OPS-0004 Marketplace Payout Batch Execution and Recovery](operations/OPS-0004%20Marketplace%20Payout%20Batch%20Execution%20and%20Recovery.md) - Payable-period close, connected-account Transfer execution, verification, and partial-batch recovery limits.
+- [OPS-0005 Marketplace Payment Completion Incident Response](operations/OPS-0005%20Marketplace%20Payment%20Completion%20Incident%20Response.md) - Incident response for successful payments with missing, partial, or vendor-invisible marketplace orders.
+- [OPS-0006 Storefront Provider Change and Rollback](operations/OPS-0006%20Storefront%20Provider%20Change%20and%20Rollback.md) - Controlled search/content provider change and rebuild-based rollback to a known-good deployment.
+- [OPS-0007 Saleor Schema Regeneration and Compatibility Check](operations/OPS-0007%20Saleor%20Schema%20Regeneration%20and%20Compatibility%20Check.md) - Saleor GraphQL regeneration, compatibility review, test gates, and schema-note refresh.
+- [OPS-0008 Release Promotion and Production Rollback](operations/OPS-0008%20Release%20Promotion%20and%20Production%20Rollback.md) - Protected-branch release promotion, semantic-release verification, production checks, and immutable deployment rollback.
 
 # Technology ADR
 
