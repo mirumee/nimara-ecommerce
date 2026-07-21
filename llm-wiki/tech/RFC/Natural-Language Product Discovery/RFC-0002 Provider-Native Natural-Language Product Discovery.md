@@ -14,7 +14,7 @@ tags:
 created: "2026-07-16T00:00:00+00:00"
 updated: "2026-07-16T00:00:00+00:00"
 timestamp: "2026-07-16T00:00:00+00:00"
-status: "Draft"
+status: "draft"
 owner: "Piotr Grundas"
 prd: "[PRD-001 Natural-Language Product Discovery](../../../prd/PRD-001%20Natural-Language%20Product%20Discovery.md)"
 ---
