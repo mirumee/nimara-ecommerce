@@ -32,6 +32,7 @@ Read `references/business-protocol.md` and follow it completely.
 If the user says a target does not matter, record that as an explicit decision rather than manufacturing precision. If the user stops the questions, summarize decisions and unresolved branches. Do not draft or edit the PRD until the user confirms shared understanding; a new request to apply the summarized decisions after the grilling also counts as confirmation. The original request to "write a PRD" does not bypass this gate.
 
 ### Completion gate
+
 The grilling is complete only when the shared understanding contains:
 
 - a specific target segment and personas;
@@ -73,7 +74,7 @@ New PRDs start as `draft`. A rewritten PRD changes status only when the user exp
 
 ## Stage 7 — Handoff
 
-Use `/handoff`  skill to write up a conversation summary for future agents. Save it near PRD.
+Use `/handoff` skill to write up a conversation summary for future agents. Save it near PRD.
 
 ## References
 

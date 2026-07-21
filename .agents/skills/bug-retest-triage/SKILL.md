@@ -15,9 +15,11 @@ Retest reported defects on the **live** board and reach a defensible verdict, on
 4. **Don't force a verdict.** Ambiguous/blocked → leave In testing, ASK, flag for review.
 
 ## Before you start
+
 Read [[Environments & Access Matrix]] and [[Jira & Board 74 Operating Manual]] (column↔status map, transition IDs, required `customfield_10044`, comment rules). Set `READ_ONLY_MODE=false` for board writes.
 
 ## Workflow (per ticket)
+
 1. **UNDERSTAND** — `jira_get_issue` (full: description, repro, expected vs actual, environment, comments, attachments). State in your own words what the defect is and what "still reproduces" vs "fixed" concretely looks like. Gaps in repro/expected = ASK trigger.
 2. **PLAN** — write `qa/triage/plans/<KEY>.md`: preconditions (env URL, account, data, cart state), steps, and explicit decision criteria (which observation → Open, which → Done).
 3. **CHECK PREREQS — ASK IF BLOCKED.** Confirm env URL, credentials, specific data before opening the browser. If anything is missing/inaccessible/ambiguous: STOP and ASK, listing exactly what you need. Batch asks across tickets.
@@ -27,4 +29,5 @@ Read [[Environments & Access Matrix]] and [[Jira & Board 74 Operating Manual]] (
 7. **LOG** — append `qa/triage/jira-actions.json` and set `retest_status` in `qa/triage/worklist.json`. Report, then next ticket.
 
 ## References
+
 [[Bug Retest & Triage Process]] · [[Jira & Board 74 Operating Manual]] · [[Known Flaky, Blocked & Backend-Only]] · [[Test Method Playbooks]] · [[Verdict & Evidence Policy]]

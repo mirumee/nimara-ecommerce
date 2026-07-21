@@ -15,6 +15,7 @@ Run a broad, repeatable health check across a surface and report — breadth ove
 4. **Report findings, don't auto-file.** Summarise pass/fail with evidence; only open tickets when the user asks, generalising to classes.
 
 ## Workflow
+
 1. **PICK SURFACE & AXES** — e.g. SEO across {Home, PLP, PDP, CMS} × {US, GB}; or perf across {dev, stage, demo} × {Home, PLP, PDP} × {mobile, desktop}; or checkout smoke across {US, GB} × {guest, logged-in}.
 2. **BASELINE (if any)** — note prior scores/expected values to compare against.
 3. **SWEEP** — run each cell with its method; capture evidence under `qa/triage/evidence/<sweep-name>/`. Independent cells parallelise well.
@@ -22,4 +23,5 @@ Run a broad, repeatable health check across a surface and report — breadth ove
 5. **HANDOFF (if asked)** — turn confirmed regressions into bugs via [[Defect Taxonomy & Severity]] + [[Jira & Board 74 Operating Manual]].
 
 ## References
+
 [[Coverage Maps]] · [[Test Method Playbooks]] · [[Environments & Access Matrix]] · [[Known Flaky, Blocked & Backend-Only]]

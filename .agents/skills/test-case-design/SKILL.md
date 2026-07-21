@@ -15,6 +15,7 @@ Convert a requirement into a **complete** set of test cases — covering every d
 4. **Reuse known behaviour.** Field-level validation behaviours are already documented in `MEMORY.md` and [[Test Data & Fixtures]] — don't re-derive.
 
 ## Workflow
+
 1. **SCOPE** — restate the requirement; identify the behaviour-driving variables (channel, auth, country, payment outcome, field state…).
 2. **PARTITION** — build the equivalence-class table: class → rule → expected behaviour → representatives (+ boundary/negative cases). Write it to `qa/triage/plans/<NAME>-tests.md`.
 3. **PICK DATA** — choose verified fixtures per representative from [[Test Data & Fixtures]]; request any missing data/accounts (ASK, never fabricate).
@@ -23,4 +24,5 @@ Convert a requirement into a **complete** set of test cases — covering every d
 6. **FILE (if asked)** — generalise failures into **classes** and file bugs + a `[DEV]` spec ticket that `Blocks` them, per [[Defect Taxonomy & Severity]] and [[Jira & Board 74 Operating Manual]].
 
 ## References
+
 [[Coverage Maps]] · [[Test Data & Fixtures]] · [[Test Method Playbooks]] · [[Defect Taxonomy & Severity]]

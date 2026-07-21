@@ -2,7 +2,6 @@
 
 Use this protocol before drafting or rewriting a PRD. Its purpose is to expose whether the proposed initiative is a real business bet, a weak assumption, or a solution looking for a problem.
 
-
 ## Decision tree
 
 Walk the branches in order because later decisions depend on earlier ones.

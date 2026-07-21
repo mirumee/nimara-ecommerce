@@ -282,11 +282,11 @@ For decision tree and detailed scenarios, see `.agents/skills/project-guidelines
 
 ## Quick Reference: When to Use Each Skill
 
-| Task                         | Skill                                                                   | Why                                  |
-| ---------------------------- | ----------------------------------------------------------------------- | ------------------------------------ |
-| Where does this code belong? | `.agents/skills/project-guidelines/SKILL.md`                            | Decision tree + layers explanation   |
-| Add new dependency           | `.agents/skills/project-guidelines/SKILL.md`                            | Approval workflow (NEVER automatic)  |
-| Optimize React component     | `.agents/skills/vercel-react-best-practices/SKILL.md`                   | Performance patterns                 |
-| Refactor component props     | `.agents/skills/vercel-composition-patterns/SKILL.md`                   | Avoid boolean props, use composition |
-| Review UI/design             | `.agents/skills/web-design-guidelines/SKILL.md`                         | Accessibility, usability             |
-| Understand architecture      | `AGENTS.md` (this file) + `.agents/skills/project-guidelines/SKILL.md`  | Overall structure + details          |
+| Task                         | Skill                                                                  | Why                                  |
+| ---------------------------- | ---------------------------------------------------------------------- | ------------------------------------ |
+| Where does this code belong? | `.agents/skills/project-guidelines/SKILL.md`                           | Decision tree + layers explanation   |
+| Add new dependency           | `.agents/skills/project-guidelines/SKILL.md`                           | Approval workflow (NEVER automatic)  |
+| Optimize React component     | `.agents/skills/vercel-react-best-practices/SKILL.md`                  | Performance patterns                 |
+| Refactor component props     | `.agents/skills/vercel-composition-patterns/SKILL.md`                  | Avoid boolean props, use composition |
+| Review UI/design             | `.agents/skills/web-design-guidelines/SKILL.md`                        | Accessibility, usability             |
+| Understand architecture      | `AGENTS.md` (this file) + `.agents/skills/project-guidelines/SKILL.md` | Overall structure + details          |
