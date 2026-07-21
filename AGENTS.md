@@ -136,15 +136,12 @@ For decision tree and detailed scenarios, see `.agents/skills/project-guidelines
 3. **Default exports**
    - Base ESLint disallows default exports. Next.js app routes/pages/layouts are exempt via `eslint-config-custom/next.js`. Use named exports everywhere else (including `packages/ui` unless a file is explicitly exempt).
 
-4. **Branch workflow**
-   - Feature work from `develop`; merge to `staging` for QA; production via `main`. PRs target `develop` unless hotfix.
-
-5. **When adding a new use-case**
+4. **When adding a new use-case**
    - Define types in `packages/domain` or under the feature in `packages/infrastructure/use-cases`.
    - Implement in `packages/infrastructure` (e.g. `saleor/`, `butter-cms/`) with GraphQL/infra; expose via providers. Consume in apps via services (e.g. `getUserService()`, `cmsPageService`).
    - Wrap operations in `Result<T, E>` for proper error handling.
 
-6. **Dependency approval workflow**
+5. **Dependency approval workflow**
    - Before adding any new dependency: ask for approval and provide alternatives.
    - Explain why the dependency is needed and which package it goes to.
    - Wait for explicit confirmation before running `pnpm add`.
@@ -266,18 +263,15 @@ For decision tree and detailed scenarios, see `.agents/skills/project-guidelines
    - Prefer `Promise.all` for independent async work. In try/catch, use `return await` (ESLint `@typescript-eslint/return-await` in try-catch).
    - Use **Result** from domain for expected failures; throw only for truly unexpected cases. In Server Actions, return Result-like objects so the client can show field errors or messages.
 
-3. **Files and naming**
-   - **Conventional Commits** for commits (e.g. `feat:`, `fix:`, `docs:`). Use `contrib/` or `feat/` branch prefix as in CONTRIBUTING.
-
-4. **Dependencies (CRITICAL)**
+3. **Dependencies (CRITICAL)**
    - **NEVER automatically add dependencies.** Always ask for approval first with alternatives.
    - See `.agents/skills/project-guidelines/SKILL.md` "Dependency Management" section for approval workflow.
    - After approval, verify installation: check `package.json`, verify `pnpm.lock` changes.
 
-5. **Documentation**
+4. **Documentation**
    - When adding env vars or deployment steps, update `.env.example` or docs in `apps/docs` as appropriate. Keep README and CONTRIBUTING accurate.
 
-6. **Skills and rules**
+5. **Skills and rules**
    - For **architecture and layers:** See `.agents/skills/project-guidelines/SKILL.md` (decision tree, common scenarios).
    - For **React/Next.js patterns:** Follow `.agents/skills/vercel-react-best-practices` and `.agents/skills/vercel-composition-patterns`.
    - For **composition patterns:** See `.agents/skills/vercel-composition-patterns` (avoid boolean props, use compound components).
@@ -288,11 +282,11 @@ For decision tree and detailed scenarios, see `.agents/skills/project-guidelines
 
 ## Quick Reference: When to Use Each Skill
 
-| Task                         | Skill                                                                   | Why                                  |
-| ---------------------------- | ----------------------------------------------------------------------- | ------------------------------------ |
-| Where does this code belong? | `.agents/skills/project-guidelines/SKILL.md`                            | Decision tree + layers explanation   |
-| Add new dependency           | `.agents/skills/project-guidelines/SKILL.md`                            | Approval workflow (NEVER automatic)  |
-| Optimize React component     | `.agents/skills/vercel-react-best-practices/SKILL.md`                   | Performance patterns                 |
-| Refactor component props     | `.agents/skills/vercel-composition-patterns/SKILL.md`                   | Avoid boolean props, use composition |
-| Review UI/design             | `.agents/skills/web-design-guidelines/SKILL.md`                         | Accessibility, usability             |
-| Understand architecture      | `AGENTS.md` (this file) + `.agents/skills/project-guidelines/SKILL.md`  | Overall structure + details          |
+| Task                         | Skill                                                                  | Why                                  |
+| ---------------------------- | ---------------------------------------------------------------------- | ------------------------------------ |
+| Where does this code belong? | `.agents/skills/project-guidelines/SKILL.md`                           | Decision tree + layers explanation   |
+| Add new dependency           | `.agents/skills/project-guidelines/SKILL.md`                           | Approval workflow (NEVER automatic)  |
+| Optimize React component     | `.agents/skills/vercel-react-best-practices/SKILL.md`                  | Performance patterns                 |
+| Refactor component props     | `.agents/skills/vercel-composition-patterns/SKILL.md`                  | Avoid boolean props, use composition |
+| Review UI/design             | `.agents/skills/web-design-guidelines/SKILL.md`                        | Accessibility, usability             |
+| Understand architecture      | `AGENTS.md` (this file) + `.agents/skills/project-guidelines/SKILL.md` | Overall structure + details          |

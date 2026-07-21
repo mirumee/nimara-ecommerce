@@ -1,0 +1,79 @@
+---
+type: "Map of Content"
+title: "Quality & Testing (MOC)"
+description: "Map-of-content and entry point for Quality Assurance — how agents (and people) test, retest, and report defects on Nimara. Start here."
+tags:
+  - "qa"
+  - "testing"
+  - "moc"
+  - "index"
+  - "agents"
+created: "2026-06-30T00:00:00+00:00"
+timestamp: "2026-07-21T00:00:00+00:00"
+---
+
+## Content
+
+### What this section is for
+
+This is the QA brain for **agents working on Nimara**. Read it before testing or retesting so
+the environment, evidence requirements, and verdict rules are applied consistently.
+Knowledge lives in these notes; executable runbooks live under `.agents/skills/`.
+
+> Pairing convention (same as the rest of this wiki): notes = read-context, **skills = runbooks** that cite them. The QA skills read these notes the way `prd-author` reads `[Storefront Developer](../market/personas/Storefront%20Developer.md)`.
+
+### Read-me-first (the 80%)
+
+1. [Environments & Access Matrix](Environments%20%26%20Access%20Matrix.md) — which env, which channel, what you can/can't reach. **Biggest source of wasted effort if skipped.**
+2. [Bug Retest & Triage Process](Bug%20Retest%20%26%20Triage%20Process.md) — the canonical
+   evidence-first retest flow.
+3. [Verdict & Evidence Policy](Verdict%20%26%20Evidence%20Policy.md) — the minimum proof for
+   a terminal conclusion.
+
+### Methods & data
+
+- [Test Method Playbooks](Test%20Method%20Playbooks.md) — for bug class X, use technique Y (throttling, response inspection, geometry, Lighthouse, code inspection…).
+- [Test Data & Fixtures](Test%20Data%20%26%20Fixtures.md) — Stripe cards, addresses, postcodes, known products, i18n address rules.
+- [Coverage Maps](Coverage%20Maps.md) — equivalence partitions so you test _classes_, not random cases.
+
+### Discipline
+
+- [Verdict & Evidence Policy](Verdict%20%26%20Evidence%20Policy.md) — evidence-only; "could not reproduce" ≠ "fixed".
+- [Defect Taxonomy & Severity](Defect%20Taxonomy%20%26%20Severity.md) — how to classify and prioritise what you find.
+- [Known Flaky, Blocked & Backend-Only](Known%20Flaky%2C%20Blocked%20%26%20Backend-Only.md) — where NOT to force a verdict.
+
+### Who does this
+
+- [QA Engineer (Test Agent)](../market/personas/QA%20Engineer%20%28Test%20Agent%29.md) — the persona this section serves.
+
+### Skills (runbooks)
+
+- `.agents/skills/test-case-design` — equivalence-partition a feature into a covering test set.
+- `.agents/skills/regression-sweep` — broad health check across a surface (SEO, perf, page-type matrix).
+
+### Durable verification records
+
+QA records under `records/` preserve plans and terminal verdicts for an exact Git SHA or
+immutable artifact. Large screenshots, traces, and logs remain in their external evidence
+store; each completed QA record links that evidence.
+
+<!-- Newest last. Format: - QA-NNNN Title - completed/result - tested SHA - one-line summary -->
+
+_No durable QA records are present in the current tree._
+
+### Evidence location
+
+Executable browser coverage lives under `apps/automated-tests/`; unit and integration tests
+live beside their application or package code. Durable verification records belong under
+`quality/records/` only when they can identify the exact Git SHA or immutable artifact and
+link the supporting evidence.
+
+## Related Notes
+
+[Environments & Access Matrix](Environments%20%26%20Access%20Matrix.md)
+[Bug Retest & Triage Process](Bug%20Retest%20%26%20Triage%20Process.md)
+[QA Engineer (Test Agent)](../market/personas/QA%20Engineer%20%28Test%20Agent%29.md)
+[Product Strategy 2026 (MOC)](../market/strategy/Product%20Strategy%202026%20%28MOC%29.md)
+[Implementation (MOC)](../tech/implementation/Implementation%20%28MOC%29.md)
+[Product (MOC)](../product/Product%20%28MOC%29.md)
+[Operations (MOC)](../operations/Operations%20%28MOC%29.md)

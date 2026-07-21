@@ -48,14 +48,14 @@ packages/
 
 ## Where to look
 
-| Need | Read |
-| --- | --- |
+| Need                                  | Read                                         |
+| ------------------------------------- | -------------------------------------------- |
 | Layers, where code belongs, data flow | `.agents/skills/project-guidelines/SKILL.md` |
-| React/Next performance | `.agents/skills/vercel-react-best-practices` |
-| Component composition | `.agents/skills/vercel-composition-patterns` |
-| UI / accessibility | `.agents/skills/web-design-guidelines` |
-| Turborepo / build system | `.agents/skills/turborepo` |
-| Roles, conventions, full guidance | `AGENTS.md` |
+| React/Next performance                | `.agents/skills/vercel-react-best-practices` |
+| Component composition                 | `.agents/skills/vercel-composition-patterns` |
+| UI / accessibility                    | `.agents/skills/web-design-guidelines`       |
+| Turborepo / build system              | `.agents/skills/turborepo`                   |
+| Roles, conventions, full guidance     | `AGENTS.md`                                  |
 
 ## Commands
 
