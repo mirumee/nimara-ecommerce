@@ -36,4 +36,4 @@ timestamp: "2026-06-16T00:00:00+00:00"
 [Emerging Trends 2026](Emerging%20Trends%202026.md)
 [Developer Pain Points](Developer%20Pain%20Points.md)
 [Product Strategy 2026 (MOC)](../strategy/Product%20Strategy%202026%20%28MOC%29.md)
-[Works Cited](../../references/Works%20Cited.md)
+[Works Cited](../Works%20Cited.md)

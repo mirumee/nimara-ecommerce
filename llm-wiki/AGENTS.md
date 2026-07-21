@@ -33,10 +33,8 @@ llm-wiki/
 ├── AGENTS.md         # this file: bundle schema and operating rules
 ├── index.md          # root index; exhaustive catalogue of concepts
 ├── log.md            # root update log
-├── _templates/       # reusable document templates
 ├── sources/          # raw or near-raw source material the notes synthesize
-├── references/       # source lists and bibliographies
-├── implementation/   # IMP implementation evidence and register
+
 ├── operations/       # OPS operational records and register
 ├── prd/              # product requirement documents - planned, implemented, blocked
 ├── product/          # current product state at this Git ref
@@ -53,9 +51,10 @@ llm-wiki/
 ├── quality/          # QA operating knowledge
 │   └── records/      # durable QA records; large evidence remains external
 └── tech/
-    ├── ADR/          # architecture decision records
-    ├── RFC/          # RFC design proposals and register
-    └── saleor/       # version-stamped notes on the Saleor GraphQL schema
+    ├── ADR/              # architecture decision records
+    ├── RFC/              # RFC design proposals and register
+    ├── implementation/   # IMP implementation evidence and register
+    └── saleor/           # version-stamped notes on the Saleor GraphQL schema
 ```
 
 ## Knowledge model - glossary
@@ -69,17 +68,16 @@ llm-wiki/
 | CAP    | Current product capability                                     |
 | INT    | Current integration contract                                   |
 | FLOW   | Current end-to-end product flow                                |
-| QA     | Verification plan and acceptance evidence                      |
 | OPS    | Operational knowledge, runbook, rollback, or incident guidance |
 
 ## Workflow
 
 ```mermaid
 flowchart LR
-    S["Sources<br/>immutable evidence"] --> P["Plans and decisions<br/>PRD → RFC → ADR"]
-    P --> I["Implementation evidence<br/>IMP + issue + PR/commit + tests"]
+    S["Sources<br/>immutable evidence, Harness conversation"] --> P["Plans and decisions<br/>PRD → RFC → ADR"]
+    P --> I["Implementation evidence<br/>IMP + + PR/commit + tests"]
     I --> C["Current project reality<br/>CAP + FLOW + INT + OPS"]
-    C --> Q["Quality knowledge<br/>QA on exact SHA/artifact"]
+    C --> Q["product - Quality knowledge"]
     I --> Q
 ```
 
@@ -88,82 +86,9 @@ flowchart LR
 Generic concepts use the [Undefined template](_templates/Undefined.md). Specialized records
 use the contracts and templates below.
 
-## Record Schema
-
-Every authored record begins with YAML frontmatter. These common fields are required:
-
-| Field         | Rule                                                                 |
-| ------------- | -------------------------------------------------------------------- |
-| `type`        | Exact record type from the specialized contract or selected template |
-| `title`       | Human-readable record title                                          |
-| `description` | One-sentence summary used by indexes and retrieval                   |
-| `tags`        | YAML list of short strings without `#`                               |
-| `created`     | ISO 8601 creation time                                               |
-| `timestamp`   | ISO 8601 time of the last meaningful record change                   |
-
-Additional frontmatter is allowed when its record contract or template defines it. Consumers
-must tolerate unknown fields. `timestamp` is the canonical last-change field; legacy
-`updated` fields may remain but do not replace it.
-
-The canonical specialized-record vocabulary is:
-
-- `type` is the human-readable value in the table below; the upper-case code is reserved for
-  identifiers and filenames.
-- `owner` names one accountable person or team. Do not use `owners`; list non-accountable
-  contributors in the document body.
-- `created` and `timestamp` are the only creation and last-change fields. Do not use
-  `created_at` or `updated_at`.
-- `status` values are lower-case `snake_case`.
-- relation keys use the record acronym plus `s` (`prds`, `rfcs`, `adrs`); use `PRD`, never
-  `PDR`, in keys, IDs, and acceptance-criterion references.
-
-Reserved `index.md` and `log.md` files and immutable source documents follow the formats
-defined by their own sections; they are not specialized authored records.
-
-Files under `_templates/` are reusable sources, not authored records. Their frontmatter may
-use `type: "Template"` and `template_for`. When creating a record, replace template-only
-metadata and every placeholder with the authored record's contract values.
-
-All record links use standard relative Markdown links. Relative links embedded in a
-specialized template resolve from the authored location declared by that record's contract,
-not from `_templates/`. A template link must never work only because the template remains in
-`_templates/`. When a destination is record-specific and no validator-enforced placeholder
-exists, show its authored-location-correct path as inline code or an HTML comment, never as a
-clickable example link.
-
-Identifiers are monotonically increasing, never reused, and must match the filename prefix.
-The authored location is the base for every relative link stored in frontmatter or the
-record body.
-
-Relations point from the newer or more specific record to its inputs and outputs. For the
-six delivery and current-state records below, the canonical directions are:
-
-```text
-IMP  → work item + PRD/acceptance criteria + RFC + ADR + changed CAP/FLOW/INT/OPS
-QA   → tested IMP + PRD/acceptance criteria + CAP/FLOW/INT/OPS
-FLOW → CAP + INT
-CAP  → INT
-OPS  → IMP + CAP/FLOW/INT
-```
-
-Do not add handwritten backlinks for these relations. Use search/QMD to discover inbound
-relations until generated backlinks exist.
-
-| Record | Authored `type`                 | Template `template_for`         | Initial `status` |
-| ------ | ------------------------------- | ------------------------------- | ---------------- |
-| PRD    | `Product Requirements Document` | `Product Requirements Document` | `draft`          |
-| RFC    | `Request for Comments`          | `Request for Comments`          | `draft`          |
-| ADR    | `Architecture Decision Record`  | `Architecture Decision Record`  | `proposed`       |
-| IMP    | `Implementation Record`         | `Implementation Record`         | `planned`        |
-| CAP    | `Product Capability`            | `Product Capability`            | `candidate`      |
-| INT    | `Integration Contract`          | `Integration Contract`          | `candidate`      |
-| FLOW   | `Product Flow`                  | `Product Flow`                  | `candidate`      |
-| QA     | `Quality Assurance Record`      | `Quality Assurance Record`      | `draft`          |
-| OPS    | `Operational Record`            | `Operational Record`            | `draft`          |
-
 ### PRD — Product Requirements Document
 
-- **Location and template:** `prd/`, created from `_templates/prd.md`.
+- **Location and template:** `prd/`, created from `_templates/PRD.md`.
 - **Filename and ID:** `PRD-NNN <Title>.md` and matching `id: "PRD-NNN"`.
 - **Type:** `Product Requirements Document`.
 - **Required additions:** `id`, `status`, `owner`, `prd_type`, and `personas`.
@@ -206,7 +131,7 @@ relations until generated backlinks exist.
 
 ### IMP — Implementation Record
 
-- **Location and template:** `implementation/`, created from `_templates/IMP.md`.
+- **Location and template:** `tech/implementation/`, created from `_templates/IMP.md`.
 - **Filename and ID:** `IMP-NNNN <Title>.md` and matching `id: "IMP-NNNN"`.
 - **Type:** `Implementation Record`.
 - **Required additions:** `id`, `status`, `owner`, `work_item`, `relations`, `code`,
@@ -224,12 +149,10 @@ relations until generated backlinks exist.
 - **Lifecycle:** `planned` → `in_progress` → `implemented`. A later code-revert change may
   transition it from `implemented` to `rolled_back` and must set `rolled_back_by` to the IMP
   for that revert. No other transition from `implemented` is allowed.
-- **Verification state:** QA does not change IMP to `verified`; verification is derived from
-  a completed QA record for an exact SHA or artifact.
 - **Immutability and review:** after `implemented`, the record is immutable except for the
   `rolled_back` transition and `rolled_back_by`. Engineering reviews creation and every
   transition.
-- **Registration:** register every IMP in `implementation/Implementation (MOC).md` and
+- **Registration:** register every IMP in `tech/implementation/Implementation (MOC).md` and
   `index.md`; append create, status-transition, and rollback events to `log.md`.
 
 ### CAP — Product Capability
@@ -239,7 +162,7 @@ relations until generated backlinks exist.
 - **Type:** `Product Capability`.
 - **Required additions:** `id`, `status`, `owner`, `relations`, and `availability`.
 - **Relationships:** `relations.integrations` contains relative Markdown links to INT records
-  required by the capability. Do not add FLOW or QA backlinks.
+  required by the capability. Do not add FLOW backlinks.
 - **Availability:** `availability.since` and `availability.deprecated_since` are `null` for a
   candidate. `since` becomes the first release tag or exact 40-character SHA where the
   record became active. `deprecated_since` is `null` while active and records the tag or SHA
@@ -261,7 +184,7 @@ relations until generated backlinks exist.
 - **Type:** `Product Flow`.
 - **Required additions:** `id`, `status`, `owner`, `relations`, `availability`, and `actors`.
 - **Relationships:** `relations.capabilities` and `relations.integrations` contain relative
-  Markdown links to every CAP and INT used by the flow. Do not add QA backlinks.
+  Markdown links to every CAP and INT used by the flow.
 - **Lifecycle:** `candidate` → `active` ↔ `deprecated`, with the same branch, merge, deletion,
   and ID-retention rules as CAP.
 - **Mutation and review:** update FLOW atomically with behavior changes or in a separate
@@ -277,7 +200,7 @@ relations until generated backlinks exist.
 - **Type:** `Integration Contract`.
 - **Required additions:** `id`, `status`, `owner`, and `availability`.
 - **Relationships:** INT has no required outbound record relation. CAP and FLOW point to the
-  integrations they use; do not add CAP, FLOW, or QA backlinks.
+  integrations they use; do not add CAP or FLOW backlinks.
 - **Lifecycle:** `candidate` → `active` ↔ `deprecated`, with the same branch, merge, deletion,
   and ID-retention rules as CAP.
 - **Mutation and review:** update INT atomically with contract changes or in a separate
@@ -285,33 +208,6 @@ relations until generated backlinks exist.
   transitions.
 - **Registration:** register every INT under Integrations in `product/Product (MOC).md` and
   `index.md`; append create, status-transition, and delete events to `log.md`.
-
-### QA — Quality Assurance Record
-
-- **Location and template:** `quality/records/`, created from `_templates/QA.md`.
-- **Filename and ID:** `QA-NNNN <Title>.md` and matching `id: "QA-NNNN"`.
-- **Type:** `Quality Assurance Record`.
-- **Required additions:** `id`, `status`, `owner`, `result`, `tested`, `relations`,
-  `test_cases`, and `evidence`.
-- **Lifecycle:** `draft` → `ready` → `completed`. `result` is `null` before completion and
-  exactly one of `passed`, `failed`, `blocked`, or `inconclusive` when completed.
-- **Test target:** `tested.source_sha` is the exact 40-character Git SHA. When an immutable
-  artifact is tested, record its digest in `tested.artifact_digest`; otherwise use `null`.
-  `tested.environment`, `tested.configuration_hash`, and `tested.executed_at` describe the
-  actual run and use explicit `null` only when not applicable.
-- **Relationships and cases:** `prds`, `implementations`, and `product_records` are YAML lists
-  of relative Markdown links. At least one implementation or product record is required.
-  Every test case has an ID, its PRD/work-item criteria, expected result, actual result,
-  verdict, and evidence references. A case result is `null` before completion and then uses
-  the same result vocabulary as the record.
-- **Completion gate:** a completed QA record requires a source SHA, environment, execution
-  time, non-null result, at least one test case, and at least one immutable evidence URI.
-  Large screenshots, traces, and logs remain outside the wiki.
-- **Immutability and review:** QA approves `ready` and `completed`. A completed record is
-  immutable; a retest of another SHA or artifact creates a new QA record.
-- **Registration:** register every QA under Durable verification records in
-  `quality/Quality & Testing (MOC).md` and `index.md`; append create and lifecycle events to
-  `log.md`.
 
 ### OPS — Operational Record
 
@@ -375,7 +271,7 @@ Rules:
 
 Use the repo-local `llm-wiki` skill for discovery and verified answers. Use
 `llm-wiki-bookkeeping` for ingest, audit, graph repair, durable file-back, and architecture
-decisions. PRD, RFC, and QA authoring remain owned by their specialized skills.
+decisions. PRD and RFC authoring remain owned by their specialized skills.
 
 Expected operations:
 

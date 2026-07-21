@@ -13,9 +13,7 @@ okf_version: "0.1"
 - [FLOW Template](_templates/FLOW.md) - Reusable template for documenting an end-to-end product flow.
 - [IMP Template](_templates/IMP.md) - Reusable template for implementation details and verification evidence.
 - [INT Template](_templates/INT.md) - Reusable template for an integration contract.
-- [OPS Template](_templates/OPS.md) - Reusable template for runbooks and other operational knowledge.
 - [PRD Template](_templates/prd.md) - Reusable template for drafting Nimara Product Requirements Documents.
-- [QA Template](_templates/QA.md) - Reusable template for verification plans and acceptance evidence.
 - [RFC Design Doc Template](_templates/RFC.md) - Reusable template for an RFC design proposal: problem, requirements, proposed solution, and cross-cutting considerations.
 - [Undefined Template](_templates/Undefined.md) - Generic template for a new concept document.
 - [Saleor Schema Note Template](_templates/saleor-schema-note.md) - Reusable template for a version-stamped Saleor GraphQL schema note.
@@ -33,7 +31,7 @@ okf_version: "0.1"
 
 # Implementation Evidence
 
-- [Implementation (MOC)](implementation/Implementation%20%28MOC%29.md) - Register for implementation records that connect work items and requirements to code, tests, and current product state.
+- [Implementation (MOC)](tech/implementation/Implementation%20%28MOC%29.md) - Register for implementation records that connect work items and requirements to code, tests, and current product state.
 
 # Current Product State
 
@@ -103,4 +101,4 @@ okf_version: "0.1"
 
 # References
 
-- [Works Cited](references/Works%20Cited.md) - Source list for the 2026 product strategy research.
+- [Works Cited](market/Works%20Cited.md) - Source list for the 2026 product strategy research.

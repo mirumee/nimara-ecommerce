@@ -1,7 +1,7 @@
 ---
 type: "Template"
 title: "PRD Template"
-description: "Reusable template for drafting OKF-compatible Nimara Product Requirements Documents."
+description: "Reusable template for drafting Product Requirements Documents."
 tags:
   - "template"
   - "prd"
@@ -12,7 +12,6 @@ id: "PRD-000"
 status: "draft"
 owner: "github-user-or-team"
 prd_type: "business"
-personas: []
 ---
 
 # PRD Name

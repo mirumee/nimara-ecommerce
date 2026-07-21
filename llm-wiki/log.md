@@ -1,5 +1,16 @@
 # Directory Update Log
 
+## 2026-07-21
+
+- **Lint**: Repaired broken Markdown links after the working-tree reorg. Repointed links to
+  the relocated `Implementation (MOC)` (`implementation/` → `tech/implementation/`) and
+  `Works Cited` (`references/` → `market/`) across `index.md`, the Product/Quality/Operations
+  MOCs, `sources/`, and `market/research`/`market/strategy`; fixed the moved
+  `tech/implementation/Implementation (MOC).md` outbound links for its deeper location;
+  removed the `index.md` entries for the deleted `OPS`/`QA` templates; and preserved the
+  missing `LLM Wiki Review` mention as text. Template links were left resolving from each
+  record's authored location per the schema contract.
+
 ## 2026-07-20
 
 - **Record contracts**: Added complete location, filename, lifecycle, relationship,
@@ -21,7 +32,7 @@
   in `AGENTS.md`, including identifiers, lifecycle states, template instantiation, and
   relationship rules. Backfilled deterministic IDs and persona links for PRD-002 and PRD-003.
 - **Link maintenance**: Repaired the wiki for GitHub-relative Markdown resolution: all 327 local links now resolve, `index.md` exactly covers all 55 non-reserved Markdown records, renamed market/PRD paths use their current locations, and active entries for the deleted task artifact and absent RFC documents were removed. Historical mentions of missing artifacts were preserved as text.
-- **Lint**: Audited the full wiki graph, schema, related skills, QMD retrieval, Git/GitHub integration, source provenance, and developer-harness coverage. Findings and prioritized recommendations are recorded in the [LLM Wiki Review](../LLM_WIKI_REVIEW.md); no reported wiki defects were auto-fixed.
+- **Lint**: Audited the full wiki graph, schema, related skills, QMD retrieval, Git/GitHub integration, source provenance, and developer-harness coverage. Findings and prioritized recommendations are recorded in the LLM Wiki Review; no reported wiki defects were auto-fixed.
 - **Index maintenance**: Reconciled `index.md` with the current wiki tree: updated PRD paths and titles, registered the record templates and product task artifact, separated ADR and RFC catalogues, completed truncated descriptions, and removed entries for deleted notes.
 
 ## 2026-07-16

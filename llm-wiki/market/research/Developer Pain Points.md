@@ -40,4 +40,4 @@ timestamp: "2026-06-16T00:00:00+00:00"
 [Composable Commerce Market](Composable%20Commerce%20Market.md)
 [Top-of-Funnel Adoption Moves](../strategy/Top-of-Funnel%20Adoption%20Moves.md)
 [Storefront Developer](../personas/Storefront%20Developer.md)
-[Works Cited](../../references/Works%20Cited.md)
+[Works Cited](../Works%20Cited.md)

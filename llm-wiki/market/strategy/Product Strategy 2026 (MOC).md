@@ -20,7 +20,7 @@ The headless commerce landscape is in a critical transition — mainstream enter
 
 The core recommendation: prioritize an automated **"Zero-to-Deploy" setup CLI** alongside a production-grade, open-source **Stripe Connect split-payment engine**, then establish early compatibility with emerging AI-agent standards (**MCP** and **UCP**). By also addressing store-operator compliance needs and keeping the core fully open-source, Nimara captures share from expensive gated enterprise platforms and complex self-hosted alternatives — converting developer adoption directly into transactional value.
 
-> Source: Gemini Deep Research, "Strategic Product Report: Nimara.store Roadmapping, Competitive Positioning, and Composable Market Assessment" (June 16, 2026). Full sources in [Works Cited](../../references/Works%20Cited.md).
+> Source: Gemini Deep Research, "Strategic Product Report: Nimara.store Roadmapping, Competitive Positioning, and Composable Market Assessment" (June 16, 2026). Full sources in [Works Cited](../Works%20Cited.md).
 
 ### Market & competitive findings
 
@@ -54,4 +54,4 @@ The core recommendation: prioritize an automated **"Zero-to-Deploy" setup CLI** 
 
 [Initiative Prioritization](initiatives/Initiative%20Prioritization.md)
 [Composable Commerce Market](../research/Composable%20Commerce%20Market.md)
-[Works Cited](../../references/Works%20Cited.md)
+[Works Cited](../Works%20Cited.md)

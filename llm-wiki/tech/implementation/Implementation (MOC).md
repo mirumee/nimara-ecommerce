@@ -24,6 +24,6 @@ _No implementation records are present in the current tree._
 
 ## Related Notes
 
-[Product (MOC)](../product/Product%20%28MOC%29.md)
-[Quality & Testing (MOC)](../quality/Quality%20%26%20Testing%20%28MOC%29.md)
-[Operations (MOC)](../operations/Operations%20%28MOC%29.md)
+[Product (MOC)](../../product/Product%20%28MOC%29.md)
+[Quality & Testing (MOC)](../../quality/Quality%20%26%20Testing%20%28MOC%29.md)
+[Operations (MOC)](../../operations/Operations%20%28MOC%29.md)

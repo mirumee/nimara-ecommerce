@@ -41,4 +41,4 @@ timestamp: "2026-06-16T00:00:00+00:00"
 [Table Stakes vs Differentiators](Table%20Stakes%20vs%20Differentiators.md)
 [Developer Pain Points](Developer%20Pain%20Points.md)
 [Marketplace & Agentic Commerce Bets](../strategy/Marketplace%20%26%20Agentic%20Commerce%20Bets.md)
-[Works Cited](../../references/Works%20Cited.md)
+[Works Cited](../Works%20Cited.md)

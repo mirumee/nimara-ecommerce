@@ -37,6 +37,6 @@ _No integration records are present in the current tree._
 
 ## Related Notes
 
-[Implementation (MOC)](../implementation/Implementation%20%28MOC%29.md)
+[Implementation (MOC)](../tech/implementation/Implementation%20%28MOC%29.md)
 [Quality & Testing (MOC)](../quality/Quality%20%26%20Testing%20%28MOC%29.md)
 [Operations (MOC)](../operations/Operations%20%28MOC%29.md)

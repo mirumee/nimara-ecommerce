@@ -69,6 +69,6 @@ Live QA artifacts sit in the repo at `qa/triage/`: `plans/<KEY>.md`, `evidence/<
 [Bug Retest & Triage Process](Bug%20Retest%20%26%20Triage%20Process.md)
 [QA Engineer (Test Agent)](../market/personas/QA%20Engineer%20%28Test%20Agent%29.md)
 [Product Strategy 2026 (MOC)](../market/strategy/Product%20Strategy%202026%20%28MOC%29.md)
-[Implementation (MOC)](../implementation/Implementation%20%28MOC%29.md)
+[Implementation (MOC)](../tech/implementation/Implementation%20%28MOC%29.md)
 [Product (MOC)](../product/Product%20%28MOC%29.md)
 [Operations (MOC)](../operations/Operations%20%28MOC%29.md)

@@ -24,6 +24,6 @@ _No operational records are present in the current tree._
 
 ## Related Notes
 
-[Implementation (MOC)](../implementation/Implementation%20%28MOC%29.md)
+[Implementation (MOC)](../tech/implementation/Implementation%20%28MOC%29.md)
 [Product (MOC)](../product/Product%20%28MOC%29.md)
 [Quality & Testing (MOC)](../quality/Quality%20%26%20Testing%20%28MOC%29.md)
