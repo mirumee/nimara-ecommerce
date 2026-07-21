@@ -32,4 +32,4 @@ Where this maps in the codebase — e.g. `packages/infrastructure/src/<domain>/s
 
 ## Related Notes
 
-[Saleor Schema (MOC)](../tech/saleor/Saleor%20Schema%20%28MOC%29.md)
+[Saleor Schema (MOC)](Saleor%20Schema%20%28MOC%29.md)

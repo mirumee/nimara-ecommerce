@@ -9,7 +9,7 @@ tags:
   - "index"
   - "agents"
 created: "2026-06-30T00:00:00+00:00"
-timestamp: "2026-06-30T00:00:00+00:00"
+timestamp: "2026-07-20T00:00:00+00:00"
 ---
 
 ## Content
@@ -48,6 +48,16 @@ This is the QA brain for **agents working on Nimara**. Read it before touching a
 - `.agents/skills/test-case-design` — equivalence-partition a feature into a covering test set.
 - `.agents/skills/regression-sweep` — broad health check across a surface (SEO, perf, page-type matrix).
 
+### Durable verification records
+
+QA records under `records/` preserve plans and terminal verdicts for an exact Git SHA or
+immutable artifact. Large screenshots, traces, and logs remain in their external evidence
+store; each completed QA record links that evidence.
+
+<!-- Newest last. Format: - QA-NNNN Title - completed/result - tested SHA - one-line summary -->
+
+_No durable QA records are present in the current tree._
+
 ### Where the work is recorded
 
 Live QA artifacts sit in the repo at `qa/triage/`: `plans/<KEY>.md`, `evidence/<KEY>/`, `worklist.json` (per-ticket state), `jira-actions.json` (append-only action log). The retest protocol is also encoded in repo `CLAUDE.md`. Prior E2E findings live in the agent memory `MEMORY.md`.
@@ -59,3 +69,6 @@ Live QA artifacts sit in the repo at `qa/triage/`: `plans/<KEY>.md`, `evidence/<
 [Bug Retest & Triage Process](Bug%20Retest%20%26%20Triage%20Process.md)
 [QA Engineer (Test Agent)](../market/personas/QA%20Engineer%20%28Test%20Agent%29.md)
 [Product Strategy 2026 (MOC)](../market/strategy/Product%20Strategy%202026%20%28MOC%29.md)
+[Implementation (MOC)](../implementation/Implementation%20%28MOC%29.md)
+[Product (MOC)](../product/Product%20%28MOC%29.md)
+[Operations (MOC)](../operations/Operations%20%28MOC%29.md)

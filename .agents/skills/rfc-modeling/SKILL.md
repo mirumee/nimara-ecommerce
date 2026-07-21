@@ -98,7 +98,8 @@ Draft in this order:
 Rules:
 
 - Keep the draft at solution altitude (see Altitude): principles, boundaries, decisions, and gotchas — not exact package/folder paths, file/function names, or signatures. Package placement is at most a one-line, non-binding suggestion.
-- Do not copy the template's explanatory blockquote (what an RFC is, the `Draft → In Review → Final` flow, generic provider-agnostic reminder) into the authored RFC — that meta lives in the RFC MOC and template. Open the instance with its own context (the PRD it serves); express real design constraints in the body, not as boilerplate.
+- Resolve every template and record link from the authored RFC location, `llm-wiki/tech/RFC/`, rather than from `llm-wiki/_templates/`. Keep record-specific path examples non-clickable until they are replaced with the real relation.
+- Do not copy the template's explanatory blockquote (what an RFC is, the `draft → in_review → final` flow, generic provider-agnostic reminder) into the authored RFC — that meta lives in the RFC MOC and template. Open the instance with its own context (the PRD it serves); express real design constraints in the body, not as boilerplate.
 - In Component changes, open with a **one-to-two-sentence scope note** — the repo and which app(s)/layers the change lands in, plus the plan in a line. Not a per-package breakdown, and no file-level layout.
 - Describe what's new as **services / capabilities, concisely (often a single item)** — the new moving parts and their boundaries — not an inventory of literal "components" (the word reads as UI components; usually it is services). Group tightly-related new parts into one item rather than splitting each into its own bullet.
 - Write clear, dense technical prose (see Clear technical prose): cut ornamental jargon and convoluted sentences, but keep the full technical vocabulary — it is for engineers, not a lay explainer.
@@ -125,16 +126,16 @@ Completion criterion: every checklist item passes or is reported as an explicit,
 - Save as `llm-wiki/tech/RFC/<PRD Name>/RFC-NNNN <Title>.md` — one folder per PRD, holding its RFCs and their grilling logs side by side. Use the next free ID from the RFC register (monotonic across the whole register, not per PRD); preserve the ID when rewriting an existing RFC.
 - **Write the grilling log.** Save the `D-*` ledger to `llm-wiki/tech/RFC/<PRD Name>/RFC-NNNN <Title> - Grilling Log.md`, created from `_templates/rfc-grilling-log.md` — the durable, user-visible decision trail (session context, base system + system of record, ranked drivers, the `D-*` table, chosen approach + rejected alternatives with their deciding driver, deferred items and owned open decisions, reversibility judgement, and the acceptance questions left for the ADR). It carries its own `D-*` numbering. Record decisions only — never hidden reasoning, secrets, or a confidential source body. Link it and its RFC to each other.
 - Set `owner` to the RFC's author (the person creating this design), not inherited from the PRD — the PRD owner is the business owner; the RFC owner is the design author. Use the git author identity when the user does not name one.
-- Register the RFC in `llm-wiki/tech/RFC/RFC MOC.md`, and link the PRD it serves.
-- Link the PRD and the RFC in both directions (PRD Related Notes ↔ RFC).
+- Register the RFC in `llm-wiki/tech/RFC/RFC MOC.md`.
+- Set `prd` and the matching Related Notes entry to the same relative Markdown link, resolved from the RFC's authored location (`llm-wiki/tech/RFC/<PRD Name>/`), to the one PRD this RFC serves. Do not add a handwritten RFC backlink to the PRD.
 - Update `llm-wiki/index.md` and append to `llm-wiki/log.md`.
 - Preserve sources and downstream artifacts; report stale ones rather than silently rewriting them.
 
-Completion criterion: the RFC and its PRD are mutually linked and navigable from the wiki; the RFC is in the register; no changed link points to an old name.
+Completion criterion: the RFC links to its PRD from frontmatter and Related Notes, is in the register and root index, and no changed link points to an old name or resolves relative to `_templates/`.
 
 ## Stage 7 — Gate
 
-New RFCs start as `status: Draft`. A rewritten RFC changes status only when the user explicitly approves the transition (Draft → In Review → Final). Close with the file location, passed checks, open decisions, rejected alternatives, and the proposed next step: an ADR that accepts or rejects this RFC (and any competing RFCs for the same PRD) and links back to it. The ADR is self-contained — it pulls the RFCs' content inline as weighed alternatives rather than linking them — so it takes the RFCs and their grilling logs as input, and its own decision log continues the `D-*` sequence.
+New RFCs start as `status: draft`. A rewritten RFC changes status only when the user explicitly approves the transition (`draft → in_review → final`). Close with the file location, passed checks, open decisions, rejected alternatives, and the proposed next step: an ADR that accepts or rejects this RFC (and any competing RFCs for the same PRD) and links back to it. The ADR is self-contained — it pulls the RFCs' content inline as weighed alternatives rather than linking them — so it takes the RFCs and their grilling logs as input, and its own decision log continues the `D-*` sequence.
 
 ## References
 

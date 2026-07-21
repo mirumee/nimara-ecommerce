@@ -22,7 +22,7 @@ Durable record of the user-visible technical grilling that shaped this RFC. It c
 
 ### Session Context
 
-- PRD: [PRD-NNN PRD Name](prd/PRD-NNN%20PRD%20Name.md)
+- PRD: link to the PRD this RFC serves — `../../../prd/PRD-NNN <PRD Name>.md` from this record's authored location
 - Trigger: which decision(s) forced this RFC session
 - Base system / system of record: the confirmed system this builds on, and what is authoritative vs merely consulted
 - Starting facts: research findings, reference notes, existing RFCs/ADRs, and code read before grilling
@@ -64,6 +64,8 @@ Questions this RFC does not answer, because they decide acceptance (owned by the
 
 ## Related Notes
 
-[RFC-NNNN Title](tech/RFC/<PRD%20Name>/RFC-NNNN%20Title.md)
-[PRD-NNN PRD Name](prd/PRD-NNN%20PRD%20Name.md)
-[RFC MOC](tech/RFC/RFC%20MOC.md)
+Link the RFC this log belongs to — `RFC-NNNN <Title>.md`, beside this file — and the PRD it
+serves — `../../../prd/PRD-NNN <PRD Name>.md`. Both paths resolve from this record's authored
+location, `tech/RFC/<PRD Name>/`.
+
+[RFC MOC](../RFC%20MOC.md)

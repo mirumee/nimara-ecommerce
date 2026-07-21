@@ -1,5 +1,5 @@
 ---
-name: prd-author
+name: prd-modeling
 description: Define and draft Product Requirements Documents (PRDs) inside an LLM-wiki product workspace. Use when the user wants to create, rewrite, refine, or stress-test a PRD or Product Requirements Document, or turn an initiative or feature brief into product requirements. Run a business-value-first, one-question-at-a-time grilling, capture confirmed decisions in the PRD, and stop at an approved PRD without designing the technical solution, decomposing tasks, estimating.
 ---
 

@@ -9,13 +9,13 @@ okf_version: "0.1"
 # Templates
 
 - [ADR Template](_templates/ADR.md) - Reusable template for architecture decision records.
-- [Capability Template](_templates/CAP.md) - Reusable template for documenting a current product capability.
-- [Flow Template](_templates/FLOW.md) - Reusable template for documenting an end-to-end product flow.
-- [Implementation Template](_templates/IMP.md) - Reusable template for implementation details and verification evidence.
-- [Integration Template](_templates/INT.md) - Reusable template for an integration contract.
-- [Operations Template](_templates/OPS.md) - Reusable template for runbooks and other operational knowledge.
+- [CAP Template](_templates/CAP.md) - Reusable template for documenting a current product capability.
+- [FLOW Template](_templates/FLOW.md) - Reusable template for documenting an end-to-end product flow.
+- [IMP Template](_templates/IMP.md) - Reusable template for implementation details and verification evidence.
+- [INT Template](_templates/INT.md) - Reusable template for an integration contract.
+- [OPS Template](_templates/OPS.md) - Reusable template for runbooks and other operational knowledge.
 - [PRD Template](_templates/prd.md) - Reusable template for drafting Nimara Product Requirements Documents.
-- [Quality Template](_templates/QA.md) - Reusable template for verification plans and acceptance evidence.
+- [QA Template](_templates/QA.md) - Reusable template for verification plans and acceptance evidence.
 - [RFC Design Doc Template](_templates/RFC.md) - Reusable template for an RFC design proposal: problem, requirements, proposed solution, and cross-cutting considerations.
 - [RFC Grilling Log Template](_templates/rfc-grilling-log.md) - Reusable structure for the durable D-* decision trail filed beside each RFC.
 - [Undefined Template](_templates/Undefined.md) - Generic template for a new concept document.
@@ -31,6 +31,14 @@ okf_version: "0.1"
 - [PRD-001 Natural-Language Product Discovery](prd/PRD-001%20Natural-Language%20Product%20Discovery.md) - Product requirements for closing Nimara's natural-language discovery gap with a reusable, open-source storefront capability.
 - [PRD-002 Verified User Reviews](prd/PRD-002%20User%20Reviews.md) - Product requirements for a verified-purchase user reviews system in Nimara.
 - [PRD-003 Cookie Consent & Google Consent Mode v2](prd/PRD-003%20Cookie%20Consent.md) - Product requirements for Cookie Consent and Google Consent Mode v2 in the Nimara storefront.
+
+# Implementation Evidence
+
+- [Implementation (MOC)](implementation/Implementation%20%28MOC%29.md) - Register for implementation records that connect work items and requirements to code, tests, and current product state.
+
+# Current Product State
+
+- [Product (MOC)](product/Product%20%28MOC%29.md) - Current capabilities, flows, and integration contracts at the selected Git ref.
 
 # Product Strategy
 
@@ -71,6 +79,10 @@ okf_version: "0.1"
 - [Test Method Playbooks](quality/Test%20Method%20Playbooks.md) - Cheapest reliable verification technique by defect class.
 - [Verdict & Evidence Policy](quality/Verdict%20%26%20Evidence%20Policy.md) - Evidence rules for defensible QA verdicts.
 - [Known Flaky, Blocked & Backend-Only](quality/Known%20Flaky%2C%20Blocked%20%26%20Backend-Only.md) - Areas where agents should not force a verdict.
+
+# Operations
+
+- [Operations (MOC)](operations/Operations%20%28MOC%29.md) - Register for current runbooks, rollback procedures, and incident-response guidance.
 
 # Technology ADR
 
