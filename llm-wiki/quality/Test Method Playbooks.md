@@ -1,7 +1,7 @@
 ---
 type: "QA Playbook"
 title: "Test Method Playbooks"
-description: "For a given class of defect, the cheapest reliable technique to verify it — throttling for races, response inspection for API contracts, geometry for visual bugs, Lighthouse for perf, code inspection for dev-only warnings."
+description: "Code-grounded guidance for choosing the least expensive method that directly observes the behavior under test and records its limitations."
 tags:
   - "qa"
   - "methods"
@@ -9,52 +9,105 @@ tags:
   - "techniques"
   - "agents"
 created: "2026-06-30T00:00:00+00:00"
-timestamp: "2026-06-30T00:00:00+00:00"
+timestamp: "2026-07-21T00:00:00+00:00"
 ---
 
 ## Content
 
-Pick the **cheapest reliable** method per bug class. All of these are proven on Nimara.
+Pick the least expensive method that can directly observe the disputed boundary. Escalate
+from source inspection to unit, route, browser, persistence, or external-service evidence
+only as the assertion requires.
+
+### Pure logic and service behavior
+
+Use the repository's colocated unit tests for deterministic logic, serializers, use cases,
+route handlers, webhook validation, and security boundaries. Existing examples live beside
+code in `apps/storefront/src/services`, `apps/marketplace/src`, `apps/stripe/src/lib`,
+`packages/features/src`, and `packages/i18n/src`.
+
+Assert both success and expected failure paths. For operations returning a domain `Result`,
+assert its success flag and data or errors rather than relying only on thrown exceptions.
+
+### Browser journeys
+
+Use the Playwright suite in `apps/automated-tests` when the contract crosses rendered UI,
+navigation, cookies, browser storage, embedded payment UI, or several application steps.
+Prefer role, label, and test-id locators already used by the page objects. Identify the
+specific browser project and environment in the result.
+
+The committed configuration records traces on first retry, video on failure, and screenshots
+on failure. Preserve the relevant artifact together with the expected and actual result.
 
 ### Timing / race conditions (e.g. lost add-to-cart, slow updates)
 
-- Throttle with CDP: `Network.emulateNetworkConditions` via a Playwright CDP session (slow-3G/4G + high latency) to widen the race window.
-- **Always run a control**: the "fast/aggressive" path AND a "wait-for-completion" path. If the control succeeds but the fast path fails, it's a real race — not a broken feature.
-- Probe permanence: after a failed fast path, wait + reload — distinguishes a dropped write from a stale read.
+- Use controlled latency or delayed responses to widen the suspected ordering window.
+- Run both the suspected fast path and a wait-for-completion control.
+- After an apparent failure, wait and reload to distinguish a dropped mutation from a stale
+  read or delayed render.
+- Record the delay profile, attempt count, and whether the failure signature is stable.
+
+Playwright page objects currently use explicit URL and visibility waits around checkout and
+cart transitions (`apps/automated-tests/pages`). Preserve or strengthen those synchronization
+points when isolating a race.
 
 ### API / server-action contract (e.g. wrong HTTP status)
 
-- Attach a Playwright `response` listener; capture the POST/server-action **status + body**. (Next.js server actions are POSTs to the route.)
+- At the browser boundary, capture the relevant request, response status, response body when
+  safe, and correlation information.
+- At the route boundary, call the handler with controlled inputs and assert authentication,
+  validation, response, idempotency, and side effects. Marketplace and payment webhook tests
+  under `apps/marketplace/src/app/api` and `apps/stripe/src/lib` provide current examples.
+- Do not infer persistence or an external side effect from a successful HTTP response unless
+  that is the defined contract.
 
 ### Visual / layout (e.g. misalignment, overlap)
 
-- Measure `getBoundingClientRect()` of the elements; compare top/left numerically. Turn "looks off" into a px delta + a clear threshold.
+- Use a screenshot for human-readable context and geometry assertions for measurable overlap,
+  clipping, or alignment.
+- Exercise viewport and content-size partitions rather than one desktop width.
+- For interaction defects, add focus, keyboard, accessible-name, and disabled-state assertions;
+  the existing browser suite already favors role and label locators.
 
 ### SEO / structural (meta tags, sitemap, robots)
 
-- `curl` the server-rendered HTML and grep — e.g. `<meta property="og:*">`, `/sitemap.xml`. Deterministic, no browser flake. Verify generated assets resolve (e.g. og:image endpoint returns an image).
+- Inspect the server response for status, canonical and social metadata, robots directives,
+  structured data, and sitemap entries.
+- Verify every referenced asset resolves with the expected content type.
+- Use a browser only when client navigation is part of the contract; source-response checks
+  are cheaper for server-rendered metadata.
 
 ### Performance (mobile/desktop scores)
 
-- Run **local Lighthouse** (`npx lighthouse <url> --form-factor=mobile`) using the system Chrome (`CHROME_PATH`). Default mobile profile = throttled mobile, which is what perf tickets mean.
-- The **PageSpeed Insights public API has a keyless daily quota** that runs out (429) — keep local Lighthouse as the default.
-- nimara.store is a landing page — measure the real storefronts (dev/stage/demo), Home + PLP + PDP.
+- Define the user journey, device, runner, network profile, cache state, sample count, and
+  metric before measuring.
+- Preserve raw measurements and report distribution or variance, not only the best run.
+- Compare like with like on an identified revision. The repository does not currently declare
+  a dedicated performance-test dependency or committed performance suite, so a measurement
+  tool and reproducible invocation must be documented with the result.
 
 ### Dev-only console warnings / code patterns (e.g. RSC `params` misuse)
 
-- These are stripped in production builds, so the deployed console won't show them. Verify by **code inspection** (`grep`/read the component). Caveat: repo HEAD may differ from the deployed build — state that in the verdict.
+- Source inspection can prove that a pattern exists in the inspected revision. It cannot
+  prove runtime behavior or that the inspected revision is deployed.
+- Record the exact revision and paths inspected. Use a build or runtime check when compiler,
+  bundler, environment, or framework behavior is part of the assertion.
 
 ### Backend signals (e.g. `checkout.user`, order transactions, ERP state)
 
-- Need Saleor GraphQL / dashboard / ERP access. Usually **not available** → route to a developer (see [Known Flaky, Blocked & Backend-Only](Known%20Flaky%2C%20Blocked%20%26%20Backend-Only.md)).
+- Identify whether the decisive observation is available through an API, read-only database
+  query, application log, webhook event, or external provider record.
+- Use the least privileged authorized read path and redact secrets and customer data.
+- When the boundary is unavailable, report the result as requiring service-level verification;
+  see [Known Flaky, Blocked & Backend-Only](Known%20Flaky%2C%20Blocked%20%26%20Backend-Only.md).
 
 ### Multi-country / data-driven UI (e.g. address fields)
 
-- Equivalence-partition against the data source (see [Coverage Maps](Coverage%20Maps.md) and [Test Data & Fixtures](Test%20Data%20%26%20Fixtures.md)); inspect the rendered control per representative (select vs text, required, sorted).
-
-### Tooling available to agents
-
-Playwright MCP (navigate/snapshot/click/type/fill_form/screenshot/navigate_back/**run_code_unsafe** for CDP + DOM eval), Jira MCP, Bash+curl, local Lighthouse, repo grep/read.
+- Partition against the rules actually returned by the target API and the implementation
+  branches documented in [Coverage Maps](Coverage%20Maps.md).
+- For each representative, assert field presence, control type, label, required behavior,
+  options where applicable, and valid and invalid submission.
+- Re-evaluate the generated form after a country change; do not reuse assumptions from the
+  previous country. See [Test Data & Fixtures](Test%20Data%20%26%20Fixtures.md).
 
 ## Related Notes
 

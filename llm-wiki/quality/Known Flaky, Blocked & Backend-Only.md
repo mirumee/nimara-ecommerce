@@ -1,7 +1,7 @@
 ---
 type: "QA Note"
 title: "Known Flaky, Blocked & Backend-Only"
-description: "Where NOT to burn cycles or force a verdict — known-flaky areas, things behind access agents don't have, and defects only verifiable in the backend."
+description: "How to distinguish intermittent failures, missing prerequisites, and service-boundary verification without preserving unverified environment-specific assertions."
 tags:
   - "qa"
   - "blocked"
@@ -9,35 +9,61 @@ tags:
   - "backend"
   - "agents"
 created: "2026-06-30T00:00:00+00:00"
-timestamp: "2026-06-30T00:00:00+00:00"
+timestamp: "2026-07-21T00:00:00+00:00"
 ---
 
 ## Content
 
-### Backend-only — cannot be verdicted from the storefront (route to a developer)
+## Current evidence boundary
 
-- **Saleor internals**: order/transaction counts (MS-308), `checkout.user` attachment (MS-1096), channel-specific attributes query (MS-1065). Need Saleor dashboard/GraphQL.
-- **ERP**: fulfilment sync (MS-750), stock calculations (MS-790), order entry status (MS-765). ERP envs are often **disabled/inactive**; route to dev/PO.
-- Pattern: if the expected result lives in Saleor/ERP records, not the UI → mark `routed_to_dev`, add `dev_verify` label, move to `Open`/To Fix.
+The repository does not contain durable evidence that any named product behavior is a
+confirmed current flake. Do not carry historical environment observations forward as a
+"known flaky" list without a reproducible scenario, execution evidence, affected revisions,
+and a review owner.
 
-### Access-blocked
+The Playwright configuration retries failures twice in CI and records trace, video, and
+screenshot artifacts under configured conditions (`apps/automated-tests/playwright.config.ts`).
+A passing retry is evidence of inconsistency, not proof that the product is flaky: fixture,
+environment, and test-code causes must also be considered.
 
-- **Docs site** (`dev.docs.nimara.store`): Vercel SSO → un-testable without Vercel access / bypass token / public URL (MS-1092).
-- **Saleor dashboard setup** for preconditions (unpublish a product on one channel → MS-807; toggle a discount → MS-1102; mark a product unavailable → MS-1097). Need dashboard access or a pre-made fixture.
+### Common prerequisite boundaries
 
-### Known-flaky storefront behaviours (don't over-trust a single run)
+- Browser tests require `TEST_ENV_URL`.
+- Authenticated tests require environment-provided credentials and suitable saved account
+  state.
+- Checkout tests depend on mutable remote catalog, channel, delivery, pricing, and payment
+  configuration described in [Test Data & Fixtures](Test%20Data%20%26%20Fixtures.md).
+- Scenarios that mutate external systems may require authorized setup and cleanup that is not
+  available from the storefront.
 
-- **GB delivery methods sometimes fail to load** on the delivery step ("Failed to update delivery method" / empty radiogroup). Reload or proceed; not the same as a full-shell crash.
-- **Stripe Element** can be slow/fail to load on second mount or under heavy throttle; only initialises after a delivery method/amount is set.
-- **Cache/channel leaks** (MS-807-class): intermittent by nature — failing to reproduce is not proof of a fix (see [Verdict & Evidence Policy](Verdict%20%26%20Evidence%20Policy.md)).
+When one of these prerequisites is missing, identify it precisely and report the result as
+blocked. Never place credentials or private data in a request for access or in evidence.
 
-### Not-the-storefront
+### Service-boundary verification
 
-- `nimara.store` is a marketing/landing page (no `/search`, `/products`). Don't test it as the store.
+A UI observation cannot prove every server-side effect. Examples in the current codebase
+include webhook handling, ledger ingestion, payout execution, connected-account operations,
+and payment events. These have route or unit tests under `apps/marketplace/src` and
+`apps/stripe/src`, but a deployed end-to-end result may require authorized service logs,
+database-safe queries, or provider-side event inspection.
 
-### What to do when blocked
+Classify the required observation before testing:
 
-Leave the ticket in place, mark `blocked_needs_human` in `worklist.json`, comment what's needed (env URL, creds in code blocks, dashboard access, a decision), ASK, and move on. Batch requests so one human pass unblocks many.
+- **UI-visible:** browser state and network evidence may be sufficient.
+- **API-visible:** capture the request, response, and authenticated scope.
+- **Persistence-visible:** inspect the stored result through an authorized read-only path.
+- **External-side-effect-visible:** inspect the receiving service or event record.
+
+If the decisive layer is unavailable, preserve the UI observations and use the outcome
+"service-level verification required" from
+[Verdict & Evidence Policy](Verdict%20%26%20Evidence%20Policy.md).
+
+### Establishing a known flake
+
+Record the exact scenario, frequency over a stated sample, affected environment and revision,
+failure signature, controls, retained artifacts, suspected boundary, owner, and review date.
+Remove the entry when current evidence no longer supports it. Do not use retries to hide a
+deterministic product defect.
 
 ## Related Notes
 

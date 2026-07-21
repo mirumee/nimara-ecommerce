@@ -13,7 +13,8 @@ okf_version: "0.1"
 - [FLOW Template](_templates/FLOW.md) - Reusable template for documenting an end-to-end product flow.
 - [IMP Template](_templates/IMP.md) - Reusable template for implementation details and verification evidence.
 - [INT Template](_templates/INT.md) - Reusable template for an integration contract.
-- [PRD Template](_templates/prd.md) - Reusable template for drafting Nimara Product Requirements Documents.
+- [OPS Template](_templates/OPS.md) - Reusable template for operational runbooks, rollback procedures, and incident guidance.
+- [PRD Template](_templates/PRD.md) - Reusable template for drafting Nimara Product Requirements Documents.
 - [RFC Design Doc Template](_templates/RFC.md) - Reusable template for an RFC design proposal: problem, requirements, proposed solution, and cross-cutting considerations.
 - [Undefined Template](_templates/Undefined.md) - Generic template for a new concept document.
 - [Saleor Schema Note Template](_templates/saleor-schema-note.md) - Reusable template for a version-stamped Saleor GraphQL schema note.
@@ -36,6 +37,34 @@ okf_version: "0.1"
 # Current Product State
 
 - [Product (MOC)](product/Product%20%28MOC%29.md) - Current capabilities, flows, and integration contracts at the selected Git ref.
+- [Nimara Product Overview](product/overview/Product%20Overview.md) - Code-grounded map of actors, app surfaces, architecture, behavior, integrations, and current limitations.
+
+# Product Capabilities
+
+- [CAP-0001 Swappable Storefront Search and Content Providers](product/capabilities/CAP-0001%20Swappable%20Storefront%20Search%20and%20Content%20Providers.md) - Build-time selection of search and content implementations behind stable storefront services.
+- [CAP-0002 Marketplace Payable Ledger and Payout Batching](product/capabilities/CAP-0002%20Marketplace%20Payable%20Ledger%20and%20Payout%20Batching.md) - Vendor-proceeds ledger, payable-period closing, and idempotent connected-account Transfers.
+- [CAP-0003 Guided Storefront Checkout](product/capabilities/CAP-0003%20Guided%20Storefront%20Checkout.md) - Shared guidance for standard and marketplace checkout, payment, and confirmation state.
+- [CAP-0004 Marketplace Vendor Operations](product/capabilities/CAP-0004%20Marketplace%20Vendor%20Operations.md) - Vendor-isolated catalog, customer, order, configuration, and connected-account operations.
+- [CAP-0005 Agent-Compatible Commerce](product/capabilities/CAP-0005%20Agent-Compatible%20Commerce.md) - Discoverable, negotiated catalog, cart, checkout-session, and order operations for agents.
+- [CAP-0006 Storefront Discovery and Cart](product/capabilities/CAP-0006%20Storefront%20Discovery%20and%20Cart.md) - Regional search, collections, product and vendor pages, and standard or vendor-aware carts.
+- [CAP-0007 Customer Account Self-Service](product/capabilities/CAP-0007%20Customer%20Account%20Self-Service.md) - Account, profile, address, order, return, saved-payment, and privacy operations.
+
+# Product Flows
+
+- [FLOW-0001 Cart to Confirmed Order](product/flows/FLOW-0001%20Cart%20to%20Confirmed%20Order.md) - Standard checkout through payment, order creation, confirmation, and checkout cleanup.
+- [FLOW-0002 Paid Order to Vendor Transfer](product/flows/FLOW-0002%20Paid%20Order%20to%20Vendor%20Transfer.md) - Paid vendor proceeds through ledger settlement, payout batching, and connected-account Transfer.
+- [FLOW-0003 Agent Catalog to Checkout Session](product/flows/FLOW-0003%20Agent%20Catalog%20to%20Checkout%20Session.md) - Negotiated catalog discovery through a channel-specific checkout session and buyer handoff.
+- [FLOW-0004 Marketplace Checkout to Vendor Orders](product/flows/FLOW-0004%20Marketplace%20Checkout%20to%20Vendor%20Orders.md) - One marketplace payment followed by asynchronous completion of vendor-specific orders.
+
+# Integration Contracts
+
+- [INT-0001 Search Provider Selection](product/integrations/INT-0001%20Search%20Provider%20Selection.md) - Build-time search-provider selection and configuration validation.
+- [INT-0002 Content Provider Selection](product/integrations/INT-0002%20Content%20Provider%20Selection.md) - Shared build-time provider selection for storefront pages and menus.
+- [INT-0003 Stripe Connect Vendor Accounts and Transfers](product/integrations/INT-0003%20Stripe%20Connect%20Vendor%20Accounts%20and%20Transfers.md) - Vendor account onboarding, signed events, and idempotent Transfers.
+- [INT-0004 Agent-Compatible Storefront API](product/integrations/INT-0004%20Agent-Compatible%20Storefront%20API.md) - Negotiated, channel-aware catalog, cart, checkout, and order operations.
+- [INT-0005 Stripe Payment Application](product/integrations/INT-0005%20Stripe%20Payment%20Application.md) - Standard-checkout PaymentIntent configuration, transaction webhooks, and asynchronous state reporting.
+- [INT-0006 Saleor Commerce Backend](product/integrations/INT-0006%20Saleor%20Commerce%20Backend.md) - Core commerce state through GraphQL, application, and webhook contracts.
+- [INT-0007 Marketplace Checkout Payment Orchestration](product/integrations/INT-0007%20Marketplace%20Checkout%20Payment%20Orchestration.md) - One platform payment across multiple vendor checkouts with asynchronous order completion.
 
 # Product Strategy
 
@@ -67,8 +96,7 @@ okf_version: "0.1"
 # Quality
 
 - [Quality & Testing (MOC)](quality/Quality%20%26%20Testing%20%28MOC%29.md) - QA map of content and entry point.
-- [Bug Retest & Triage Process](quality/Bug%20Retest%20%26%20Triage%20Process.md) - Canonical live-board retest and triage flow.
-- [Jira & Board 74 Operating Manual](quality/Jira%20%26%20Board%2074%20Operating%20Manual.md) - Jira board 74 status mapping, transitions, fields, and gotchas.
+- [Bug Retest & Triage Process](quality/Bug%20Retest%20%26%20Triage%20Process.md) - Evidence-first process for understanding, reproducing, and concluding reported defects.
 - [Environments & Access Matrix](quality/Environments%20%26%20Access%20Matrix.md) - Reachable environments, channels, credentials, and backend-only limits.
 - [Coverage Maps](quality/Coverage%20Maps.md) - Equivalence partitions for important Nimara test surfaces.
 - [Defect Taxonomy & Severity](quality/Defect%20Taxonomy%20%26%20Severity.md) - Shared vocabulary for defect type, area, and severity.

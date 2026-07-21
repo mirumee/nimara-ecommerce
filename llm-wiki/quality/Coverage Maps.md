@@ -1,7 +1,7 @@
 ---
 type: "QA Reference"
 title: "Coverage Maps"
-description: "Equivalence partitions for key Nimara surfaces so agents test *classes* of behaviour (no gaps), not random cases — checkout flows, channels, and the address administrative-area field."
+description: "A code-grounded map of current automated coverage and high-value equivalence partitions for the storefront, marketplace, payment app, and shared packages."
 tags:
   - "qa"
   - "coverage"
@@ -9,40 +9,71 @@ tags:
   - "checkout"
   - "addresses"
 created: "2026-06-30T00:00:00+00:00"
-timestamp: "2026-06-30T00:00:00+00:00"
+timestamp: "2026-07-21T00:00:00+00:00"
 ---
 
 ## Content
 
-Design tests by **equivalence partitioning**: enumerate the distinct behaviour classes, then cover each with a representative. This is how the address sweep found bugs the ad-hoc pass missed.
+Design tests by equivalence partitioning: enumerate the implementation branches and product
+contracts, select a representative for each, then state what remains uncovered. Test source
+proves intended coverage; only execution results prove that a revision passed.
 
-### Address administrative-area field (5 classes — full sweep done)
+### Current browser coverage
 
-Source of truth: google-i18n-address `all.json`.
-| Class | Rule | Expected field | Representatives |
-|---|---|---|---|
-| A | S required + alphabetic ids | required **select**, sorted, validated | US, RU, MX, BR, IT, IN, AE, CO, CA, AU |
-| B | S required + numeric ids | required **text**, no validation | CN, JP, KR, JM |
-| C | S required + empty ids | required **text**, no validation | ES, HK, IQ, CR |
-| D | S not required + has subs | **hidden** | IE, TH, AR, UA, TR |
-| E | S not required + no subs | **hidden** | PL, GB, FR, DE |
-Test plan: `qa/triage/plans/ADDR-state-field-tests.md`; results: `qa/triage/evidence/ADDR-state-field/results.md`. Findings → MS-1238 / MS-1239 / MS-1240.
+The Playwright suite under `apps/automated-tests/tests/e2e` currently contains:
 
-### Checkout — the main flow surface
+| Surface                | Covered representatives                                                                               | Material gaps visible in the suite                                                        |
+| ---------------------- | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Homepage               | section visibility and navigation to search                                                           | responsive layout, locale variation, metadata, failure states                             |
+| Authentication         | page UI, password visibility, sign-in, account creation and reset navigation                          | invalid credentials, expired session, authorization boundaries                            |
+| Guest checkout         | one configured product, address, delivery option, card payment, same billing address, order placement | invalid inputs, declined or challenged payment, different billing address, other channels |
+| Authenticated checkout | saved address and saved payment happy path                                                            | missing or stale saved data, new address or payment, authorization expiry                 |
 
-Partition by: **channel** (US `/`, GB `/gb`), **auth** (guest vs logged-in), **cart** (single-vendor vs multi-vendor), **payment outcome** (success / declined / 3DS), and **step** (email → shipping → delivery → payment → confirmation). Cover at least: guest+US+success, guest+GB+success, logged-in attach, back-navigation, and an invalid-input per field.
+`apps/automated-tests/playwright.config.ts` defines desktop Chrome, Firefox, and Safari-like
+projects. It does not define a mobile project. The checkout routes and data default to one
+channel in `apps/automated-tests/utils/constants.ts`; configured projects do not create
+channel or locale coverage by themselves.
 
-### Validation surfaces (per field)
+### Checkout partitions
 
-Email, phone, postal, required vs silently-required fields, card number / expiry / CVC (Stripe iframe). Each has a documented behaviour in `MEMORY.md` — reuse rather than re-derive.
+Build a coverage matrix across these independent dimensions:
 
-### SEO / structural
+- guest versus authenticated account;
+- empty, single-line, multi-line, and multi-vendor cart where supported;
+- physical versus non-shipping-required product;
+- same, new, and saved billing address;
+- successful, declined, challenged, unavailable, and interrupted payment;
+- each configured channel, currency, and locale;
+- forward progression, back-navigation, refresh, duplicate submission, and session expiry.
 
-Per page type (Home, PLP, PDP, CMS `/page/*`): meta/OG tags, sitemap inclusion, status codes.
+The current two checkout specifications cover only the happy-path guest and saved-account
+representatives. Do not infer the other cells from those runs.
 
-### Performance
+### Address-form partitions
 
-Per env (dev/stage/demo) × page type (Home/PLP/PDP), mobile + desktop Lighthouse.
+Current implementation branches are defined in
+`packages/infrastructure/src/address/saleor/address-form/parse-address-form-rows.ts` and the
+field helpers beside it:
+
+- supported versus ignored address-format tokens;
+- allowed versus omitted fields;
+- required versus optional fields;
+- country-area validation enabled for the explicit country allowlist versus disabled;
+- country-area choices present, empty, or containing incomplete values;
+- postal matchers absent, one matcher, or multiple matchers;
+- valid, invalid, empty-required, and empty-optional values;
+- country changes that replace the generated field set and validation schema.
+
+Select representatives from the validation data returned by the target API at test time.
+The repository contains no execution record proving a complete multi-country sweep.
+
+### Other repository surfaces
+
+The current unit-test inventory covers selected storefront integration resolution, search
+filter handling, localization utilities, marketplace webhooks and connected-account actions,
+and payment-app utilities, security, API, and webhook helpers. There is no committed browser
+specification for marketplace workflows or the payment application. Use this inventory to
+prioritize risk-based additions, not as proof that unlisted behavior is defective.
 
 ## Related Notes
 

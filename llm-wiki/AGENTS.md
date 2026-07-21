@@ -8,7 +8,7 @@ tags:
   - "schema"
   - "rules"
 created: "2026-07-09T00:00:00+00:00"
-timestamp: "2026-07-20T00:00:00+00:00"
+timestamp: "2026-07-21T00:00:00+00:00"
 ---
 
 # Content
@@ -43,7 +43,7 @@ llm-wiki/
 │   ├── flows/
 │   ├── integrations/
 │   └── overview/
-├── market/           # market related to the product discovery and strategy. Hypothetical scenarior
+├── market/           # market related to the product discovery and strategy. Hypothetical scenarior. It does not reflect the current status of the project.
 │   ├── personas/
 │   ├── research/
 │   ├── strategy/
@@ -136,8 +136,9 @@ use the contracts and templates below.
 - **Type:** `Implementation Record`.
 - **Required additions:** `id`, `status`, `owner`, `work_item`, `relations`, `code`,
   `verification`, `rollout`, and `rollback`.
-- **Work item:** `work_item.id` is a non-empty Jira or GitHub issue identifier;
-  `work_item.url` is its stable URL, or `null` only when the tracker has no stable URL.
+- **Work item:** `work_item.id` is either a non-empty public GitHub issue or pull-request
+  identifier, or an exact 40-character Git commit SHA. `work_item.url` is the stable public
+  URL for an issue or pull request and is `null` only when `id` is a commit SHA.
 - **Relationships:** `prds`, `rfcs`, `adrs`, and `product_records` are YAML lists of relative
   Markdown links. The first three may be empty when the work legitimately required no such
   artifact. `product_records` lists every CAP, FLOW, INT, or OPS record changed by the

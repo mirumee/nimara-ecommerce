@@ -33,10 +33,6 @@ why the codebase looks the way it does.
 
 ## Related Notes
 
-[ADR MOC](ADR%20MOC.md)
-[RFC MOC](../RFC/RFC%20MOC.md)
-
-Replace this line with the RFC proposal(s) this decision resolves, using paths such as
-`../RFC/RFC-NNNN%20Title.md`.
-Replace this line with the PRD it belongs to, using a path such as
-`../../prd/PRD-NNN%20Title.md`.
+After copying this template into `tech/ADR/`, replace this paragraph with links to the ADR
+MOC, the RFC proposal(s) this decision resolves, and the related PRD. Resolve every link from
+the created record's location.

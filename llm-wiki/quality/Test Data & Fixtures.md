@@ -1,7 +1,7 @@
 ---
 type: "QA Reference"
 title: "Test Data & Fixtures"
-description: "Reusable, verified test data — Stripe test cards, addresses, postcodes, known products per channel, and the google-i18n-address rules for the state/province field."
+description: "The committed sources, dependencies, and handling rules for reusable browser-test fixtures without treating mutable remote data or credentials as durable facts."
 tags:
   - "qa"
   - "testdata"
@@ -9,44 +9,63 @@ tags:
   - "checkout"
   - "addresses"
 created: "2026-06-30T00:00:00+00:00"
-timestamp: "2026-06-30T00:00:00+00:00"
+timestamp: "2026-07-21T00:00:00+00:00"
 ---
 
 ## Content
 
-### Stripe test cards (Saleor/Stripe test mode)
+### Committed browser fixtures
 
-- ✅ Success: `4242 4242 4242 4242`, exp `12/29`, CVC `123`. ZIP `92859` (US ZIP accepted for all, incl. UK addresses via Stripe Link).
-- ❌ Declined: `4000 0000 0000 0002` · Insufficient funds: `4000 0000 0000 9995` · 3DS: `4000 0025 0000 3155` (complex).
-- The Stripe payment Element only initialises once a **delivery method/amount is set** — reach a fully-configured checkout first.
+`apps/automated-tests/utils/constants.ts` is the current source for the browser suite's
+channel routes, product, delivery option, customer address, and payment input. Reference that
+file rather than duplicating its values here: the remote catalog and pricing can change
+independently of this wiki.
 
-### Addresses
+Before a checkout run, verify that the configured product is published in the target
+channel, its selected variant is available, and the configured delivery option and prices
+still match. A mismatch is a fixture failure until the product behavior itself is the subject
+of the test.
 
-- **UK (shipping):** 55 Cunnery Rd, Malden, Postal `KT4 9JG`, Phone `070 5598 4918` (normalises to `+44…`).
-- **UK (billing, different):** 95 Tadcaster Rd, Pinchbeck, `PE11 5UJ`, Phone `077 4034 7844`.
-- **China (Beijing):** Street `59 W Dawang Rd`, City `朝阳区` (Chaoyang), Province `Beijing Shi`, Postal `100000`, Phone `010 5862 0976`. (City `北京市` is rejected — use the district `朝阳区`.)
-- Postal validation is database-driven, not pure format; `KT4 9JG` is known-good; clearly-malformed codes (`SW1`, `ZZ99 9ZZ`) show "Wrong code format".
+### Environment and account inputs
 
-### Known products / handles
+- `TEST_ENV_URL` is mandatory; `apps/automated-tests/playwright.config.ts` rejects a run when
+  it is absent.
+- Authenticated scenarios read `USER_EMAIL` and `USER_PASSWORD` from the environment through
+  `apps/automated-tests/utils/constants.ts` and declare them as pass-through variables in
+  `apps/automated-tests/turbo.json`.
+- Never copy credentials, session tokens, or private customer data into the wiki, test source,
+  screenshots, traces, or result notes.
+- Confirm that an account belongs to the target environment and has the state required by the
+  scenario, such as a saved address or payment method.
 
-- dev `/`: `black-sand`, `ambient-horizon`, `blm`, `automated-test-product-ocean-waves` (music; need a format variant CD/MP3/Vinyl before Add to bag).
-- demo: `colors`, `bi-polar` (published on **GB but not US** — useful for channel-publication tests).
+### Address inputs
 
-### Checkout form field names (DOM)
+The storefront does not have one static address shape. It requests validation rules per
+country and builds rows from the returned format in
+`packages/infrastructure/src/address/saleor/address-form/parse-address-form-rows.ts`.
+Required fields and postal-code matchers are enforced by
+`packages/foundation/src/address/address-form/schema.ts`.
 
-`firstName, lastName, companyName, phone, streetAddress1, streetAddress2, postalCode, city`; the administrative-area control is a separate combobox (State/Province/…) or — per spec — should be a text input. Country/State are custom comboboxes (`role=combobox`), not native `<select>`.
+Choose an address only after observing the rules for the selected country. For a reusable
+fixture, record the country, all required fields, why the postal code is valid for that rule
+set, and the date or revision at which it was verified. Do not infer country-wide rules from
+one successful address.
 
-### Address administrative-area rules (google-i18n-address `all.json`)
+### Payment and checkout dependencies
 
-Per country `require` (S = admin area), `sub_isoids`, `sub_names`, `state_name_type`:
+The committed guest checkout proceeds through customer details, shipping address, delivery,
+payment, billing choice, order summary, and placement. Its payment value is suitable only for
+the test integration configured by that suite. The flow in
+`apps/automated-tests/tests/e2e/checkout/checkout-guest.spec.ts` selects a delivery option
+before entering payment details, so tests should preserve that prerequisite unless they are
+explicitly checking out-of-order behavior.
 
-- `S` in `require` → field shown + required, else hidden.
-- alphabetic `sub_isoids` → sorted, validated `<select>`; numeric/empty → free text, no validation.
-- See the equivalence classes and the live test sweep in [Coverage Maps](Coverage%20Maps.md) (and tickets MS-1238 / MS-1239 / MS-1240).
+### Fixture maintenance
 
-### Accounts
-
-- No standing storefront/admin test account is reliably available to agents — request per task (and confirm the **environment** the account belongs to; an email containing "stage" does not guarantee it works on `stage.nimara.store`).
+Treat remote products, prices, delivery options, saved account state, and service-side test
+data as mutable. A fixture change should identify its consumer scenarios and update the
+source and assertions together. Prefer dedicated, non-production data with deterministic
+reset or cleanup behavior.
 
 ## Related Notes
 

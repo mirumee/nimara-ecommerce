@@ -1,43 +1,69 @@
 ---
 type: "QA Taxonomy"
 title: "Defect Taxonomy & Severity"
-description: "A shared vocabulary for classifying defects (type + area) and assigning severity, so reports and tickets are consistent and prioritisable."
+description: "A tracker-neutral vocabulary for classifying defects by behavior and product surface and for assigning severity from user and system impact."
 tags:
   - "qa"
   - "taxonomy"
   - "severity"
   - "triage"
 created: "2026-06-30T00:00:00+00:00"
-timestamp: "2026-06-30T00:00:00+00:00"
+timestamp: "2026-07-21T00:00:00+00:00"
 ---
 
 ## Content
 
 ### Defect type
 
-`functional` · `validation` · `visual/layout` · `performance` · `SEO/metadata` · `accessibility` · `data/contract (API/HTTP)` · `race/timing` · `i18n/localization` · `security` · `backend/integration (Saleor/ERP)`.
+- **Functional** — behavior contradicts the product contract.
+- **Validation** — valid input is rejected, invalid input is accepted, or feedback is wrong.
+- **Visual or layout** — presentation, spacing, clipping, overlap, or responsive behavior.
+- **Accessibility** — semantics, keyboard operation, focus, contrast, or assistive output.
+- **Performance** — user-visible latency, excessive work, or resource use.
+- **Metadata or discovery** — page metadata, indexing, sitemap, or share-card behavior.
+- **Data or protocol contract** — request, response, serialization, or status semantics.
+- **Race or timing** — behavior depends incorrectly on ordering or latency.
+- **Internationalization** — locale, translation, currency, address, or regional behavior.
+- **Security or privacy** — authorization, integrity, disclosure, or unsafe trust boundary.
+- **Integration** — failure at an external service, webhook, or synchronization boundary.
 
-### Area (maps to labels/components)
+### Product surface
 
-`checkout` (`BC:checkout`) · `cart` · `product/PLP/PDP` · `search` · `account/auth` · `address/i18n` · `payments/Stripe` · `marketplace` · `ERP` (`BC:erp`,`BE`) · `Saleor` · `docs`. Frontend defects: label `FE`.
+Use the narrowest durable surface from the current repository structure:
+
+- storefront shell, catalog, search, cart, checkout, account, content, or metadata;
+- marketplace catalog, orders, configuration, ledger, payouts, or connected accounts;
+- payment application;
+- shared domain, foundation, infrastructure, feature, or UI package;
+- documentation, build, deployment, or automated tests.
 
 ### Severity rubric
 
-- **Critical** — blocks a core path for many users with no workaround (e.g. checkout shell crash MS-1229). Map to High/Highest priority.
-- **High** — significant UX/loss path with a workaround, or money/data correctness risk (billing country limited MS-1120; discounts cache MS-1102).
-- **Medium** — degrades UX, narrow population, or has a workaround (most retest tickets).
-- **Low** — cosmetic / edge (input misalignment MS-1166).
+- **Critical** — a core path is broadly unavailable, security is compromised, or money/data
+  integrity is at immediate risk with no safe workaround.
+- **High** — substantial user or operational impact, including a blocked core path for a
+  meaningful segment or a correctness risk with a limited workaround.
+- **Medium** — degraded behavior with bounded scope or a practical workaround.
+- **Low** — cosmetic or narrow edge behavior with negligible task impact.
+
+Severity describes impact, not implementation effort, age, or ownership. Raise it when the
+blast radius, likelihood, or integrity risk increases; lower it only when evidence narrows
+those factors.
 
 ### When filing a bug, include
 
-Component/area · environment(s) (`customfield_10044`) · clear repro steps · actual vs expected · affected scope (which countries/channels/pages) · evidence path · related tickets (link `Blocks`/`Relates to`). For systemic findings, file the **bug(s)** + a **`[DEV]` spec ticket** that `Blocks` them and states what/how + acceptance criteria (pattern used for MS-1238/1239/1240).
+Include the defect type, product surface, severity rationale, environment and revision when
+known, preconditions, minimal reproduction, expected and actual behavior, affected scope,
+and durable evidence. Separate observed facts from hypotheses about the cause. Link related
+requirements or implementation evidence when stable public links exist.
 
 ### Generalise before filing
 
-If a bug recurs across inputs, file the **class**, not one instance (e.g. "address admin-area missing for all S-required countries Saleor lacks choices for", not just "Russia").
+If the same behavior recurs across inputs, describe the equivalence class and use specific
+inputs as representatives. Do not generalize beyond the representatives unless the governing
+rule or implementation proves the wider scope.
 
 ## Related Notes
 
 [Quality & Testing (MOC)](Quality%20%26%20Testing%20%28MOC%29.md)
 [Coverage Maps](Coverage%20Maps.md)
-[Jira & Board 74 Operating Manual](Jira%20%26%20Board%2074%20Operating%20Manual.md)

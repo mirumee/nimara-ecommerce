@@ -32,4 +32,5 @@ Where this maps in the codebase — e.g. `packages/infrastructure/src/<domain>/s
 
 ## Related Notes
 
-[Saleor Schema (MOC)](Saleor%20Schema%20%28MOC%29.md)
+After copying this template into `tech/saleor/`, replace this paragraph with a link to the
+Saleor Schema MOC and any related schema notes.

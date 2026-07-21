@@ -1,7 +1,7 @@
 ---
 type: "QA Playbook"
 title: "Bug Retest & Triage Process"
-description: "The canonical per-ticket retest flow for a live, shared board — understand → plan → prereq/ASK → claim → execute → conclude (evidence-only) → log — plus the live-queue selection loop."
+description: "A tracker-neutral process for understanding, reproducing, and verifying reported defects with explicit prerequisites, decision criteria, and durable evidence."
 tags:
   - "qa"
   - "process"
@@ -9,47 +9,61 @@ tags:
   - "triage"
   - "runbook"
 created: "2026-06-30T00:00:00+00:00"
-timestamp: "2026-06-30T00:00:00+00:00"
+timestamp: "2026-07-21T00:00:00+00:00"
 ---
 
 ## Content
 
-The authoritative copy of this process is in repo `CLAUDE.md` (Phase 2.0 + Phase 2). This note summarises it for the wiki; the executable version is the skill `.agents/skills/bug-retest-triage`.
+Use this process for one reported defect at a time. The purpose is to produce a defensible
+observation, not to force every report into a pass/fail result.
 
-### Phase 2.0 — pick the next task (LIVE board, shared with human QA)
+### Retest flow
 
-The board changes in real time. **Re-query before every ticket; never trust a cached list.**
+1. **Understand the report.** Restate the affected behavior, original preconditions, actions,
+   expected result, and observed result. If any of these are missing, record the gap rather
+   than inferring it.
+2. **Define the decision criteria.** Say what observation would prove that the defect still
+   reproduces, what would support a fix, and what would remain inconclusive. Split reports
+   containing multiple behaviors so each can be evaluated independently.
+3. **Check prerequisites.** Confirm the exact application URL, deployed revision when known,
+   channel or locale, account permissions, test data, and integration availability. Stop and
+   request the missing prerequisite when it materially changes the result.
+4. **Choose the method.** Prefer the lowest-cost method that can observe the disputed
+   behavior directly. See [Test Method Playbooks](Test%20Method%20Playbooks.md).
+5. **Execute with a control.** Follow the reported path exactly, then run a nearby known-good
+   or deliberately different path when it helps distinguish the defect from an invalid
+   environment or fixture.
+6. **Capture evidence.** Record the inputs, timestamp, environment, revision when known,
+   expected and actual behavior, and the smallest decisive artifact. Do not record secrets.
+7. **Conclude conservatively.** Apply [Verdict & Evidence Policy](Verdict%20%26%20Evidence%20Policy.md).
+   A missing prerequisite, inaccessible service boundary, or ambiguous observation is an
+   inconclusive result, not a fix.
 
-1. Refresh: query the target column's status (e.g. `status = "To refine" AND assignee IS EMPTY ORDER BY created ASC`). Intersect with `qa/triage/worklist.json`; skip `retestable:false` or already `blocked_needs_human`.
-2. If empty → stop, report "queue clear".
-3. Pick the top candidate; **re-fetch it** to confirm still unassigned + same status (a human may have grabbed it). If changed, skip and re-query.
-4. Run the per-ticket flow. **Do not claim here** — the claim happens inside, after the prereq check, so un-doable tickets stay available for humans.
-5. Return to step 1.
+### Minimum retest note
 
-### Per-ticket flow
+A durable retest note should contain:
 
-1. **UNDERSTAND** — `jira_get_issue` (full + comments). Restate the defect and what "reproduces vs fixed" concretely looks like. If repro/expected is missing, do NOT invent it — that's an ASK trigger.
-2. **PLAN** — write `qa/triage/plans/<KEY>.md`: preconditions (env URL, channel, account, test data), the steps, explicit decision criteria.
-3. **PREREQ CHECK — ASK IF BLOCKED.** Confirm you have env/credentials/data. If anything is missing or the repro is ambiguous → STOP and ASK, listing exactly what you need. Never fabricate.
-4. **CLAIM** — re-fetch to confirm still unassigned + status, then transition to `In testing` (id 25). Claim happens only after prereqs pass.
-5. **EXECUTE** — drive the real app (see [Test Method Playbooks](Test%20Method%20Playbooks.md)). Capture decisive evidence → `qa/triage/evidence/<KEY>/`.
-6. **CONCLUDE — on evidence only** — Done (fixed) / Open (reproduces) / leave In testing + ASK (inconclusive). Add a short factual comment (no AI/automation wording).
-7. **LOG** — append `qa/triage/jira-actions.json`; set state in `qa/triage/worklist.json`. Report, then next ticket.
+- the behavior and scope tested;
+- environment, channel or locale, and revision when available;
+- prerequisites and fixture identifiers that are safe to disclose;
+- exact steps and number of attempts;
+- expected and actual results;
+- links or paths to evidence that will survive the test session;
+- the outcome and any caveat or untested part.
 
-### Artifacts (the audit trail)
-
-- `qa/triage/plans/<KEY>.md` — plan per ticket.
-- `qa/triage/evidence/<KEY>/` — screenshots, `results.md`, raw tool output (e.g. Lighthouse JSON).
-- `qa/triage/worklist.json` — per-ticket `current_status`, `retestable`, `retest_status`, `evidence_path`, `notes`.
-- `qa/triage/jira-actions.json` — append-only log of transitions/comments/timestamps.
+The repository's browser suite is configured to retain a trace on first retry and retain
+video and screenshots for failures (`apps/automated-tests/playwright.config.ts`). Those
+artifacts can support a result, but the report must still explain what they demonstrate.
 
 ### Blocked handling
 
-On a precondition you can't satisfy: leave the ticket where it is, mark `blocked_needs_human` in `worklist.json`, comment what's needed (mentioning the QA owner), ASK, and move on. Batch access asks. See [Known Flaky, Blocked & Backend-Only](Known%20Flaky%2C%20Blocked%20%26%20Backend-Only.md).
+State the missing input precisely: for example an environment URL, suitable account, seeded
+product, service access, or expected behavior. Preserve the observations already made and do
+not substitute a different scenario without labeling it as a control. See
+[Known Flaky, Blocked & Backend-Only](Known%20Flaky%2C%20Blocked%20%26%20Backend-Only.md).
 
 ## Related Notes
 
 [Quality & Testing (MOC)](Quality%20%26%20Testing%20%28MOC%29.md)
-[Jira & Board 74 Operating Manual](Jira%20%26%20Board%2074%20Operating%20Manual.md)
 [Verdict & Evidence Policy](Verdict%20%26%20Evidence%20Policy.md)
 [Test Method Playbooks](Test%20Method%20Playbooks.md)

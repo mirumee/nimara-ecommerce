@@ -9,22 +9,26 @@ tags:
   - "index"
   - "agents"
 created: "2026-06-30T00:00:00+00:00"
-timestamp: "2026-07-20T00:00:00+00:00"
+timestamp: "2026-07-21T00:00:00+00:00"
 ---
 
 ## Content
 
 ### What this section is for
 
-This is the QA brain for **agents working on Nimara**. Read it before touching a test or a Jira ticket so you don't rediscover the environment, the board mechanics, or the verdict rules the hard way. Knowledge lives in these notes; the executable runbooks live under `.agents/skills/`.
+This is the QA brain for **agents working on Nimara**. Read it before testing or retesting so
+the environment, evidence requirements, and verdict rules are applied consistently.
+Knowledge lives in these notes; executable runbooks live under `.agents/skills/`.
 
 > Pairing convention (same as the rest of this wiki): notes = read-context, **skills = runbooks** that cite them. The QA skills read these notes the way `prd-author` reads `[Storefront Developer](../market/personas/Storefront%20Developer.md)`.
 
 ### Read-me-first (the 80%)
 
 1. [Environments & Access Matrix](Environments%20%26%20Access%20Matrix.md) — which env, which channel, what you can/can't reach. **Biggest source of wasted effort if skipped.**
-2. [Jira & Board 74 Operating Manual](Jira%20%26%20Board%2074%20Operating%20Manual.md) — column↔status mapping, transition IDs, required fields, comment rules.
-3. [Bug Retest & Triage Process](Bug%20Retest%20%26%20Triage%20Process.md) — the canonical retest flow (claim only after prereqs, evidence-only verdicts).
+2. [Bug Retest & Triage Process](Bug%20Retest%20%26%20Triage%20Process.md) — the canonical
+   evidence-first retest flow.
+3. [Verdict & Evidence Policy](Verdict%20%26%20Evidence%20Policy.md) — the minimum proof for
+   a terminal conclusion.
 
 ### Methods & data
 
@@ -44,7 +48,6 @@ This is the QA brain for **agents working on Nimara**. Read it before touching a
 
 ### Skills (runbooks)
 
-- `.agents/skills/bug-retest-triage` — one ticket, full retest flow.
 - `.agents/skills/test-case-design` — equivalence-partition a feature into a covering test set.
 - `.agents/skills/regression-sweep` — broad health check across a surface (SEO, perf, page-type matrix).
 
@@ -58,14 +61,16 @@ store; each completed QA record links that evidence.
 
 _No durable QA records are present in the current tree._
 
-### Where the work is recorded
+### Evidence location
 
-Live QA artifacts sit in the repo at `qa/triage/`: `plans/<KEY>.md`, `evidence/<KEY>/`, `worklist.json` (per-ticket state), `jira-actions.json` (append-only action log). The retest protocol is also encoded in repo `CLAUDE.md`. Prior E2E findings live in the agent memory `MEMORY.md`.
+Executable browser coverage lives under `apps/automated-tests/`; unit and integration tests
+live beside their application or package code. Durable verification records belong under
+`quality/records/` only when they can identify the exact Git SHA or immutable artifact and
+link the supporting evidence.
 
 ## Related Notes
 
 [Environments & Access Matrix](Environments%20%26%20Access%20Matrix.md)
-[Jira & Board 74 Operating Manual](Jira%20%26%20Board%2074%20Operating%20Manual.md)
 [Bug Retest & Triage Process](Bug%20Retest%20%26%20Triage%20Process.md)
 [QA Engineer (Test Agent)](../market/personas/QA%20Engineer%20%28Test%20Agent%29.md)
 [Product Strategy 2026 (MOC)](../market/strategy/Product%20Strategy%202026%20%28MOC%29.md)

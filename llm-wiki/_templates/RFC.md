@@ -19,7 +19,7 @@ prd: ""
 
 > An RFC is a proposal — a full design page for a non-trivial change. It does not
 > record the verdict or the result: the decision and its outcome are captured in an
-> ADR; see the [ADR MOC](../ADR/ADR%20MOC.md). `status` moves `draft` → `in_review`
+> ADR and registered in the ADR MOC. `status` moves `draft` → `in_review`
 > → `final`. Keep Nimara designs OSS provider-agnostic: layer over existing provider
 > abstractions, do not mandate a vendor.
 
