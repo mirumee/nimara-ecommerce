@@ -29,6 +29,8 @@ Walk the branches in order because later decisions depend on earlier ones.
 
 Confirm the design problem restated from the PRD, the functional requirements the design must meet, and the non-functional requirements (performance, scale, cost) that constrain it. State facts and forces, not the solution.
 
+Also confirm the **base system and system of record**: which system this builds on (Saleor, Algolia, a greenfield service, …), and — for the data this design concerns — what is the authoritative source of truth versus what is merely consulted. This is often where the real decision hides (e.g. "does the catalog live in Saleor or in a provider index?"). Look it up; do not guess it.
+
 ### 2. Component changes
 
 Decide the solution's structure at the level of **principles and boundaries**, not files: which new capability layers over which existing one, what is a new swappable boundary versus something reused wholesale, and how the pieces compose — all respecting the dependency direction (domain / foundation / infrastructure / features / app). Reject a structure that violates the boundaries. Name the architectural roles and why, not exact package/folder paths, file names, or signatures — those are implementation. Concrete placement is at most a one-line, non-binding suggestion.

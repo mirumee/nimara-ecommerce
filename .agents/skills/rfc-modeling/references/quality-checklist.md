@@ -16,6 +16,7 @@ Run every check before presenting or filing the RFC. Fix issues that require no 
 - [ ] The user confirmed the shared understanding before drafting or editing.
 - [ ] The business bet was not re-litigated; acceptance was left to the ADR.
 - [ ] Every question has one `D-*` ledger entry with branch, question, recommendation, user answer, and resulting decision.
+- [ ] The base system and system of record were confirmed; the decision drivers were named and ranked, with the dominant two or three marked, and the chosen approach scored against them.
 
 ## Design content
 
