@@ -34,5 +34,6 @@ export interface GenerateStandardPDPMetadataProps {
   productPath: string;
   region: Region;
   services: ServiceRegistry;
+  siteName: string;
   storefrontUrl: string;
 }

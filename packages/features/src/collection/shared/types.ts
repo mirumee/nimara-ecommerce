@@ -55,5 +55,6 @@ export interface StandardCollectionViewMetadataProps extends CollectionViewProps
   defaultResultsPerPage: number;
   languageCode: string;
   services: ServiceRegistry;
+  siteName: string;
   storefrontUrl: string;
 }

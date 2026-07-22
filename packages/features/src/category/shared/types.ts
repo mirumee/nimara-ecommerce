@@ -44,5 +44,6 @@ export interface StandardCategoryViewProps extends CategoryViewProps {
 export interface StandardCategoryViewMetadataProps extends CategoryViewProps {
   categoryPath: string;
   services: ServiceRegistry;
+  siteName: string;
   storefrontUrl: string;
 }

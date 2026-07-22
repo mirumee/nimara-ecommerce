@@ -11,7 +11,10 @@ import { getAccessToken } from "@/services/tokens";
 export async function generateMetadata() {
   const storefrontUrl = clientEnvs.NEXT_PUBLIC_STOREFRONT_URL;
 
-  return generateStandardHomeMetadata({ storefrontUrl });
+  return generateStandardHomeMetadata({
+    storefrontUrl,
+    siteName: clientEnvs.NEXT_PUBLIC_DEFAULT_PAGE_TITLE,
+  });
 }
 
 export default async function Page(props: HomeViewProps) {

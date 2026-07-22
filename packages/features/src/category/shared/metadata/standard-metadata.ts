@@ -44,9 +44,10 @@ export async function generateStandardCategoryMetadata(
   return {
     title: category.seoTitle || category.name,
     description:
-      category.seoDescription || parsedDescription?.length
-        ? parsedDescription?.slice(0, 200)
-        : category.name,
+      category.seoDescription ??
+      (parsedDescription?.length
+        ? parsedDescription.slice(0, 200)
+        : category.name),
     alternates: {
       canonical: canonicalUrl,
     },
@@ -60,7 +61,7 @@ export async function generateStandardCategoryMetadata(
         },
       ],
       url: canonicalUrl,
-      siteName: "Nimara Store",
+      siteName: props.siteName,
     },
   };
 }

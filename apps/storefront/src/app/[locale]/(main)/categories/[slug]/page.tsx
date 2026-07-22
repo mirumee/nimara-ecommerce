@@ -22,6 +22,7 @@ export async function generateMetadata(props: CategoryViewProps) {
     services,
     storefrontUrl,
     categoryPath,
+    siteName: clientEnvs.NEXT_PUBLIC_DEFAULT_PAGE_TITLE,
   });
 }
 

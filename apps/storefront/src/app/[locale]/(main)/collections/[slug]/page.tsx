@@ -26,6 +26,7 @@ export async function generateMetadata(props: CollectionViewProps) {
     channel: region.market.channel,
     languageCode: region.language.code,
     defaultResultsPerPage: DEFAULT_RESULTS_PER_PAGE,
+    siteName: clientEnvs.NEXT_PUBLIC_DEFAULT_PAGE_TITLE,
   });
 }
 

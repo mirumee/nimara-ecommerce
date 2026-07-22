@@ -36,6 +36,7 @@ export async function generateMetadata({
     storefrontUrl,
     productPath,
     region,
+    siteName: clientEnvs.NEXT_PUBLIC_DEFAULT_PAGE_TITLE,
   });
 }
 
