@@ -24,4 +24,4 @@ Core responsibilities:
 - Marketplace ledger: `pnpm migrate:ledger` (root or `pnpm --filter marketplace`); schema
   in `apps/marketplace/db/migrations/`.
 
-Branches: `develop` → `staging` → `main`.
+Default branch flow: short-lived branch → PR to `main`.
