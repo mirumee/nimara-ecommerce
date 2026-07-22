@@ -44,7 +44,7 @@ Nimara uses a **layered monorepo** with strict dependency boundaries to keep cod
 
 ```
 apps/
-├── storefront/              # Next.js 16 customer storefront
+├── storefront/              # Next.js customer storefront
 ├── marketplace/             # Vendor dashboard; Postgres ledger, Stripe Connect, payout batches
 ├── stripe/                  # Stripe payment integration app (Saleor Payment Gateway)
 └── automated-tests/         # Playwright E2E tests
