@@ -31,6 +31,10 @@ build
 # !.cursor/rules/
 .cursor/plans/
 
+# Claude Code personal configuration
+.claude/settings.local.json
+CLAUDE.local.md
+
 # misc
 .DS_Store
 *.pem
