@@ -1,5 +1,6 @@
 import type { AddressService } from "./address/types";
 import type { CartService } from "./cart/types";
+import type { CategoryService } from "./category/types";
 import type { CheckoutService } from "./checkout/types";
 import type { CollectionService } from "./collection/types";
 import type { MarketplaceService } from "./marketplace/types";
@@ -22,6 +23,7 @@ export type CapabilityServices = {
   getCMSMenuService: CMSMenuService;
   getCMSPageService: CMSPageService;
   getCartService: CartService;
+  getCategoryService: CategoryService;
   getCheckoutService: CheckoutService;
   getCollectionService: CollectionService;
   getMarketplaceService: MarketplaceService;

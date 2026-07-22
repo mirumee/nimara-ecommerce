@@ -54,7 +54,7 @@ export default async function ProductPage(props: ProductPageProps) {
     paths: {
       home: paths.home.asPath(),
       cart: paths.cart.asPath(),
-      search: (query) => paths.search.asPath({ query }),
+      category: (slug) => paths.categories.asPath({ slug }),
       product: (slug) => paths.products.asPath({ slug }),
     },
     addToBagAction,

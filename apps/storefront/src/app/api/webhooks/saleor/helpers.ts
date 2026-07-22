@@ -1,6 +1,7 @@
 import { revalidateTag } from "@/foundation/cache/cache";
 import { verifySaleorWebhookSignature } from "@/foundation/webhooks";
 import type {
+  CategoryEventSubscriptionFragment,
   CollectionEventSubscriptionFragment,
   MenuEventSubscriptionFragment,
   PageEventSubscriptionFragment,
@@ -12,14 +13,15 @@ type EventSubscriptionFragment =
   | MenuEventSubscriptionFragment
   | ProductEventSubscriptionFragment
   | PageEventSubscriptionFragment
-  | CollectionEventSubscriptionFragment;
+  | CollectionEventSubscriptionFragment
+  | CategoryEventSubscriptionFragment;
 
 export const handleWebhookPostRequest = async <
   T extends EventSubscriptionFragment,
 >(
   request: Request,
   extractSlugFromPayload: (json: T) => Promise<string | undefined>,
-  prefix: "CMS" | "PRODUCT" | "COLLECTION",
+  prefix: "CMS" | "PRODUCT" | "COLLECTION" | "CATEGORY",
 ) => {
   await verifySaleorWebhookSignature(request);
 

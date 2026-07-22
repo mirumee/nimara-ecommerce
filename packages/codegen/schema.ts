@@ -252,6 +252,7 @@ export type AccountErrorCode =
   | 'DELETE_OWN_ACCOUNT'
   | 'DELETE_STAFF_ACCOUNT'
   | 'DELETE_SUPERUSER_ACCOUNT'
+  | 'DISABLED_AUTHENTICATION_METHOD'
   | 'DUPLICATED_INPUT_ITEM'
   | 'FILE_SIZE_LIMIT_EXCEEDED'
   | 'GRAPHQL_ERROR'
@@ -748,6 +749,32 @@ export type AllocationStrategyEnum =
   | 'PRIORITIZE_HIGH_STOCK'
   | 'PRIORITIZE_SORTING_ORDER';
 
+/** Lists current announcements that the user should see. */
+export type Announcement = {
+  /** The date & time at which this announcement was created. */
+  createdAt: Scalars['DateTime']['output'];
+  /** Additional information about this announcement. */
+  extra: Scalars['Metadata']['output'];
+  /** Determine the how critical the announcement is. UNSET if no severity level was defined for this announcement. */
+  importance: AnnouncementImportanceEnum;
+  /** The announcement's description, may contain HTML formatting. */
+  messageHtml: Scalars['String']['output'];
+  /** The announcement's title. */
+  title: Scalars['String']['output'];
+  /** The announcement's type, for example "CUSTOM". Used to programatically distinguish between message types thus allowing to render the message differently, and allows to know the expected shape for the `extra` field. */
+  type: Scalars['String']['output'];
+  /** The date & time at which this announcement was last updated. */
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+/** Defines a shop-level announcement's level/severity. */
+export type AnnouncementImportanceEnum =
+  | 'CRITICAL'
+  | 'HIGH'
+  | 'LOW'
+  | 'MODERATE'
+  | 'UNSET';
+
 /** Represents app data. */
 export type App = Node & ObjectWithMetadata & {
   /** Description of this app. */
@@ -1016,6 +1043,7 @@ export type AppError = {
 };
 
 export type AppErrorCode =
+  | 'DUPLICATED_EXTENSION_IDENTIFIER'
   | 'FORBIDDEN'
   | 'GRAPHQL_ERROR'
   | 'INVALID'
@@ -1040,41 +1068,30 @@ export type AppExtension = Node & {
   app: App;
   /** The ID of the app extension. */
   id: Scalars['ID']['output'];
+  /**
+   * Extension identifier, unique per app. Null when the app does not declare one.
+   *
+   * Added in Saleor 3.23.
+   */
+  identifier: Maybe<Scalars['String']['output']>;
   /** Label of the extension to show in the dashboard. */
   label: Scalars['String']['output'];
   /**
-   * Place where given extension will be mounted.
-   * @deprecated Use `mountName` instead.
-   */
-  mount: AppExtensionMountEnum;
-  /**
-   * Name of the extension mount point in the dashboard. Replaces `mount`
+   * Name of the extension mount point in the dashboard. Value returned in UPPERCASE.
    *
    * Added in Saleor 3.22.
    */
   mountName: Scalars['String']['output'];
-  /**
-   * App extension options.
-   *
-   * Added in Saleor 3.22.
-   * @deprecated Use `settings` field instead.
-   */
-  options: Maybe<AppExtensionPossibleOptions>;
   /** List of the app extension's permissions. */
   permissions: Array<Permission>;
   /**
-   * App extension settings. Replaces `options` field.
+   * App extension settings.
    *
    * Added in Saleor 3.22.
    */
   settings: Scalars['JSON']['output'];
   /**
-   * Type of way how app extension will be opened.
-   * @deprecated Use `targetName` instead.
-   */
-  target: AppExtensionTargetEnum;
-  /**
-   * Name of the extension target in the dashboard. Replaces `target`
+   * Name of the extension target in the dashboard. Value returned in UPPERCASE.
    *
    * Added in Saleor 3.22.
    */
@@ -1100,23 +1117,11 @@ export type AppExtensionCountableEdge = {
 
 export type AppExtensionFilterInput = {
   /**
-   * DEPRECATED: Use `mountName` instead.
-   *
-   * DEPRECATED: this field will be removed.
-   */
-  mount?: InputMaybe<Array<AppExtensionMountEnum>>;
-  /**
    * Plain-text mount name (case insensitive)
    *
    * Added in Saleor 3.22.
    */
   mountName?: InputMaybe<Array<Scalars['String']['input']>>;
-  /**
-   * DEPRECATED: Use `targetName` instead.
-   *
-   * DEPRECATED: this field will be removed.
-   */
-  target?: InputMaybe<AppExtensionTargetEnum>;
   /**
    * Plain-text target name (case insensitive)
    *
@@ -1124,92 +1129,6 @@ export type AppExtensionFilterInput = {
    */
   targetName?: InputMaybe<Scalars['String']['input']>;
 };
-
-/** All places where app extension can be mounted. */
-export type AppExtensionMountEnum =
-  | 'CATEGORY_DETAILS_MORE_ACTIONS'
-  | 'CATEGORY_OVERVIEW_CREATE'
-  | 'CATEGORY_OVERVIEW_MORE_ACTIONS'
-  | 'COLLECTION_DETAILS_MORE_ACTIONS'
-  | 'COLLECTION_DETAILS_WIDGETS'
-  | 'COLLECTION_OVERVIEW_CREATE'
-  | 'COLLECTION_OVERVIEW_MORE_ACTIONS'
-  | 'CUSTOMER_DETAILS_MORE_ACTIONS'
-  | 'CUSTOMER_DETAILS_WIDGETS'
-  | 'CUSTOMER_OVERVIEW_CREATE'
-  | 'CUSTOMER_OVERVIEW_MORE_ACTIONS'
-  | 'DISCOUNT_DETAILS_MORE_ACTIONS'
-  | 'DISCOUNT_OVERVIEW_CREATE'
-  | 'DISCOUNT_OVERVIEW_MORE_ACTIONS'
-  | 'DRAFT_ORDER_DETAILS_MORE_ACTIONS'
-  | 'DRAFT_ORDER_DETAILS_WIDGETS'
-  | 'DRAFT_ORDER_OVERVIEW_CREATE'
-  | 'DRAFT_ORDER_OVERVIEW_MORE_ACTIONS'
-  | 'GIFT_CARD_DETAILS_MORE_ACTIONS'
-  | 'GIFT_CARD_DETAILS_WIDGETS'
-  | 'GIFT_CARD_OVERVIEW_CREATE'
-  | 'GIFT_CARD_OVERVIEW_MORE_ACTIONS'
-  | 'MENU_DETAILS_MORE_ACTIONS'
-  | 'MENU_OVERVIEW_CREATE'
-  | 'MENU_OVERVIEW_MORE_ACTIONS'
-  | 'NAVIGATION_CATALOG'
-  | 'NAVIGATION_CUSTOMERS'
-  | 'NAVIGATION_DISCOUNTS'
-  | 'NAVIGATION_ORDERS'
-  | 'NAVIGATION_PAGES'
-  | 'NAVIGATION_TRANSLATIONS'
-  | 'ORDER_DETAILS_MORE_ACTIONS'
-  | 'ORDER_DETAILS_WIDGETS'
-  | 'ORDER_OVERVIEW_CREATE'
-  | 'ORDER_OVERVIEW_MORE_ACTIONS'
-  | 'PAGE_DETAILS_MORE_ACTIONS'
-  | 'PAGE_OVERVIEW_CREATE'
-  | 'PAGE_OVERVIEW_MORE_ACTIONS'
-  | 'PAGE_TYPE_DETAILS_MORE_ACTIONS'
-  | 'PAGE_TYPE_OVERVIEW_CREATE'
-  | 'PAGE_TYPE_OVERVIEW_MORE_ACTIONS'
-  | 'PRODUCT_DETAILS_MORE_ACTIONS'
-  | 'PRODUCT_DETAILS_WIDGETS'
-  | 'PRODUCT_OVERVIEW_CREATE'
-  | 'PRODUCT_OVERVIEW_MORE_ACTIONS'
-  | 'TRANSLATIONS_MORE_ACTIONS'
-  | 'VOUCHER_DETAILS_MORE_ACTIONS'
-  | 'VOUCHER_DETAILS_WIDGETS'
-  | 'VOUCHER_OVERVIEW_CREATE'
-  | 'VOUCHER_OVERVIEW_MORE_ACTIONS';
-
-/** Represents the options for an app extension. */
-export type AppExtensionOptionsNewTab = {
-  /**
-   * Options controlling behavior of the NEW_TAB extension target
-   * @deprecated Use `settings` field directly.
-   */
-  newTabTarget: Maybe<NewTabTargetOptions>;
-};
-
-/** Represents the options for an app extension. */
-export type AppExtensionOptionsWidget = {
-  /**
-   * Options for displaying a Widget
-   * @deprecated Use `settings` field directly.
-   */
-  widgetTarget: Maybe<WidgetTargetOptions>;
-};
-
-export type AppExtensionPossibleOptions = AppExtensionOptionsNewTab | AppExtensionOptionsWidget;
-
-/**
- * All available ways of opening an app extension.
- *
- *     POPUP - app's extension will be mounted as a popup window
- *     APP_PAGE - redirect to app's page
- *
- */
-export type AppExtensionTargetEnum =
-  | 'APP_PAGE'
-  | 'NEW_TAB'
-  | 'POPUP'
-  | 'WIDGET';
 
 /**
  * Fetch and validate manifest.
@@ -1255,9 +1174,9 @@ export type AppInstallInput = {
   /** Determine if app will be set active or not. */
   activateAfterInstallation?: InputMaybe<Scalars['Boolean']['input']>;
   /** Name of the app to install. */
-  appName?: InputMaybe<Scalars['String']['input']>;
+  appName: Scalars['String']['input'];
   /** URL to app's manifest in JSON format. */
-  manifestUrl?: InputMaybe<Scalars['String']['input']>;
+  manifestUrl: Scalars['String']['input'];
   /** List of permission code names to assign to this app. */
   permissions?: InputMaybe<Array<PermissionEnum>>;
 };
@@ -1316,15 +1235,16 @@ export type AppManifestBrandLogoDefaultArgs = {
 };
 
 export type AppManifestExtension = {
+  /**
+   * Extension identifier, unique per app. Null when the app does not declare one.
+   *
+   * Added in Saleor 3.23.
+   */
+  identifier: Maybe<Scalars['String']['output']>;
   /** Label of the extension to show in the dashboard. */
   label: Scalars['String']['output'];
   /**
-   * Place where given extension will be mounted.
-   * @deprecated Use `mountName` instead.
-   */
-  mount: AppExtensionMountEnum;
-  /**
-   * Name of the extension mount point in the dashboard. Replaces `mount`
+   * Name of the extension mount point in the dashboard. Value returned in UPPERCASE.
    *
    * Added in Saleor 3.22.
    */
@@ -1332,18 +1252,13 @@ export type AppManifestExtension = {
   /** List of the app extension's permissions. */
   permissions: Array<Permission>;
   /**
-   * JSON object with settings for this extension.
+   * App extension settings.
    *
    * Added in Saleor 3.22.
    */
   settings: Scalars['JSON']['output'];
   /**
-   * Type of way how app extension will be opened.
-   * @deprecated Use `targetName` instead.
-   */
-  target: AppExtensionTargetEnum;
-  /**
-   * Name of the extension target in the dashboard. Replaces `target`
+   * Name of the extension target in the dashboard. Value returned in UPPERCASE.
    *
    * Added in Saleor 3.22.
    */
@@ -2117,6 +2032,22 @@ export type AssignedSwatchAttributeValue = {
   name: Maybe<Scalars['String']['output']>;
   /** Slug of the selected swatch value. */
   slug: Maybe<Scalars['String']['output']>;
+  /**
+   * Translation of the name.
+   *
+   * Added in Saleor 3.22.
+   */
+  translation: Maybe<Scalars['String']['output']>;
+};
+
+
+/**
+ * Represents a single swatch value.
+ *
+ * Added in Saleor 3.22.
+ */
+export type AssignedSwatchAttributeValueTranslationArgs = {
+  languageCode: LanguageCodeEnum;
 };
 
 /**
@@ -2186,7 +2117,7 @@ export type Attribute = Node & ObjectWithMetadata & {
   /** Public metadata. Use `keys` to control which fields you want to include. The default is to include everything. */
   metafields: Maybe<Scalars['Metadata']['output']>;
   /** Name of an attribute displayed in the interface. */
-  name: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
   /** List of private metadata items. Requires staff permissions to access. */
   privateMetadata: Array<MetadataItem>;
   /**
@@ -2208,7 +2139,7 @@ export type Attribute = Node & ObjectWithMetadata & {
    */
   referenceTypes: Maybe<Array<ReferenceType>>;
   /** Internal representation of an attribute name. */
-  slug: Maybe<Scalars['String']['output']>;
+  slug: Scalars['String']['output'];
   /**
    * The position of the attribute in the storefront navigation (0 by default). Requires one of the following permissions: MANAGE_PAGES, MANAGE_PAGE_TYPES_AND_ATTRIBUTES, MANAGE_PRODUCTS, MANAGE_PRODUCT_TYPES_AND_ATTRIBUTES.
    * @deprecated No longer supported
@@ -2217,7 +2148,7 @@ export type Attribute = Node & ObjectWithMetadata & {
   /** Returns translated attribute fields for the given language code. */
   translation: Maybe<AttributeTranslation>;
   /** The attribute type. */
-  type: Maybe<AttributeTypeEnum>;
+  type: AttributeTypeEnum;
   /** The unit of attribute values. */
   unit: Maybe<MeasurementUnitsEnum>;
   /** Whether the attribute requires values to be passed or not. Requires one of the following permissions: MANAGE_PAGES, MANAGE_PAGE_TYPES_AND_ATTRIBUTES, MANAGE_PRODUCTS, MANAGE_PRODUCT_TYPES_AND_ATTRIBUTES. */
@@ -3425,6 +3356,11 @@ export type CalculateTaxes = Event & {
   version: Maybe<Scalars['String']['output']>;
 };
 
+/**
+ * Card data used to check a payment balance.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type CardInput = {
   /** Payment method nonce, a token returned by the appropriate provider's SDK. */
   code: Scalars['String']['input'];
@@ -4322,6 +4258,7 @@ export type Checkout = Node & ObjectWithMetadata & {
    *
    * Triggers the following webhook events:
    * - PAYMENT_LIST_GATEWAYS (sync): Fetch payment gateways available for checkout.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
    */
   availablePaymentGateways: Array<PaymentGateway>;
   /**
@@ -4355,9 +4292,16 @@ export type Checkout = Node & ObjectWithMetadata & {
   /**
    * The delivery method selected for this checkout.
    *
+   * Added in Saleor 3.23.
+   */
+  delivery: Maybe<Delivery>;
+  /**
+   * The delivery method selected for this checkout.
+   *
    * Triggers the following webhook events:
    * - SHIPPING_LIST_METHODS_FOR_CHECKOUT (sync): Optionally triggered when cached external shipping methods are invalid.
    * - CHECKOUT_FILTER_SHIPPING_METHODS (sync): Optionally triggered when cached filtered shipping methods are invalid.
+   * @deprecated Use `delivery` instead.
    */
   deliveryMethod: Maybe<DeliveryMethod>;
   /** The total discount applied to the checkout. Note: Only discount created via voucher are included in this field. */
@@ -4417,7 +4361,7 @@ export type Checkout = Node & ObjectWithMetadata & {
    * Triggers the following webhook events:
    * - SHIPPING_LIST_METHODS_FOR_CHECKOUT (sync): Optionally triggered when cached external shipping methods are invalid.
    * - CHECKOUT_FILTER_SHIPPING_METHODS (sync): Optionally triggered when cached filtered shipping methods are invalid.
-   * @deprecated Use `deliveryMethod` instead.
+   * @deprecated Use `delivery` instead.
    */
   shippingMethod: Maybe<ShippingMethod>;
   /**
@@ -4819,10 +4763,31 @@ export type CheckoutCustomerNoteUpdate = {
 };
 
 /**
+ * Deletes a checkout.
+ *
+ * Added in Saleor 3.23.
+ *
+ * Requires one of the following permissions: MANAGE_CHECKOUTS.
+ */
+export type CheckoutDelete = {
+  errors: Array<CheckoutDeleteError>;
+};
+
+export type CheckoutDeleteError = {
+  /** The error code. */
+  code: CheckoutErrorCode;
+  /** Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field. */
+  field: Maybe<Scalars['String']['output']>;
+  /** The error message. */
+  message: Maybe<Scalars['String']['output']>;
+};
+
+/**
  * Updates the delivery method (shipping method or pick up point) of the checkout. Updates the checkout shipping_address for click and collect delivery for a warehouse address.
  *
  * Triggers the following webhook events:
  * - SHIPPING_LIST_METHODS_FOR_CHECKOUT (sync): Triggered when updating the checkout delivery method with the external one.
+ * - CHECKOUT_FILTER_SHIPPING_METHODS (sync): Optionally triggered when cached filtered shipping methods are invalid.
  * - CHECKOUT_UPDATED (async): A checkout was updated.
  */
 export type CheckoutDeliveryMethodUpdate = {
@@ -4879,6 +4844,7 @@ export type CheckoutErrorCode =
   | 'NOT_FOUND'
   | 'NO_LINES'
   | 'PAYMENT_ERROR'
+  | 'PRICE_OVERRIDE_REASON_WITHOUT_OVERRIDE'
   | 'PRODUCT_NOT_PUBLISHED'
   | 'PRODUCT_UNAVAILABLE_FOR_PURCHASE'
   | 'QUANTITY_GREATER_THAN_LIMIT'
@@ -4994,6 +4960,14 @@ export type CheckoutLine = Node & ObjectWithMetadata & {
   /** Public metadata. Use `keys` to control which fields you want to include. The default is to include everything. */
   metafields: Maybe<Scalars['Metadata']['output']>;
   /**
+   * Reason explaining why a custom price was set on the line, provided by the app that set the price override.
+   *
+   * Added in Saleor 3.23.
+   *
+   * Requires one of the following permissions: MANAGE_CHECKOUTS, HANDLE_CHECKOUTS.
+   */
+  priceOverrideReason: Maybe<Scalars['String']['output']>;
+  /**
    * The sum of the checkout line price prior to promotion.
    *
    * Added in Saleor 3.21.
@@ -5107,6 +5081,12 @@ export type CheckoutLineInput = {
   metadata?: InputMaybe<Array<MetadataInput>>;
   /** Custom price of the item. Can be set only by apps with `HANDLE_CHECKOUTS` permission. When the line with the same variant will be provided multiple times, the last price will be used. */
   price?: InputMaybe<Scalars['PositiveDecimal']['input']>;
+  /**
+   * Reason explaining why a custom `price` was set on the line, for debugging and auditing. Can be set only by apps with `HANDLE_CHECKOUTS` permission and only when the line has a `price` override. Setting a new `price` without a reason clears the previous reason. Blank values are stored as no reason. Limited to 255 characters; longer values are truncated.
+   *
+   * Added in Saleor 3.23.
+   */
+  priceOverrideReason?: InputMaybe<Scalars['String']['input']>;
   /** The number of items purchased. */
   quantity: Scalars['Int']['input'];
   /** ID of the product variant. */
@@ -5145,6 +5125,12 @@ export type CheckoutLineUpdateInput = {
   metadata?: InputMaybe<Array<MetadataInput>>;
   /** Custom price of the item. Can be set only by apps with `HANDLE_CHECKOUTS` permission. When the line with the same variant will be provided multiple times, the last price will be used. */
   price?: InputMaybe<Scalars['PositiveDecimal']['input']>;
+  /**
+   * Reason explaining why a custom `price` was set on the line, for debugging and auditing. Can be set only by apps with `HANDLE_CHECKOUTS` permission and only when the line has a `price` override. Setting a new `price` without a reason clears the previous reason. Blank values are stored as no reason. Limited to 255 characters; longer values are truncated.
+   *
+   * Added in Saleor 3.23.
+   */
+  priceOverrideReason?: InputMaybe<Scalars['String']['input']>;
   /** The number of items purchased. Optional for apps, required for any other users. */
   quantity?: InputMaybe<Scalars['Int']['input']>;
   /**
@@ -5221,7 +5207,25 @@ export type CheckoutPaymentCreate = {
 };
 
 /** Represents an problem in the checkout. */
-export type CheckoutProblem = CheckoutLineProblemInsufficientStock | CheckoutLineProblemVariantNotAvailable;
+export type CheckoutProblem = CheckoutLineProblemInsufficientStock | CheckoutLineProblemVariantNotAvailable | CheckoutProblemDeliveryMethodInvalid | CheckoutProblemDeliveryMethodStale;
+
+/**
+ * Indicates that the selected delivery method is invalid.
+ *
+ * Added in Saleor 3.23.
+ */
+export type CheckoutProblemDeliveryMethodInvalid = {
+  delivery: Delivery;
+};
+
+/**
+ * Indicates that the delivery methods are stale.
+ *
+ * Added in Saleor 3.23.
+ */
+export type CheckoutProblemDeliveryMethodStale = {
+  delivery: Delivery;
+};
 
 /**
  * Remove a gift card or a voucher from a checkout.
@@ -5239,6 +5243,12 @@ export type CheckoutRemovePromoCode = {
 
 /** Represents the channel-specific checkout settings. */
 export type CheckoutSettings = {
+  /**
+   * Default to `true`. Determines whether gift cards can be attached to a Checkout via `addPromoCode` mutation. Usage of this mutation with gift cards is deprecated.
+   *
+   * Added in Saleor 3.23.
+   */
+  allowLegacyGiftCardUse: Scalars['Boolean']['output'];
   /**
    * The date time defines the earliest checkout creation date on which fully paid checkouts can begin to be automatically completed.
    *
@@ -5266,6 +5276,12 @@ export type CheckoutSettings = {
 };
 
 export type CheckoutSettingsInput = {
+  /**
+   * Default to `true`. Determines whether gift cards can be attached to a Checkout via `addPromoCode` mutation. Usage of this mutation with gift cards is deprecated.
+   *
+   * Added in Saleor 3.23.
+   */
+  allowLegacyGiftCardUse?: InputMaybe<Scalars['Boolean']['input']>;
   /**
    * Settings for automatic completion of fully paid checkouts.
    *
@@ -5307,6 +5323,7 @@ export type CheckoutShippingAddressUpdate = {
  *
  * Triggers the following webhook events:
  * - SHIPPING_LIST_METHODS_FOR_CHECKOUT (sync): Triggered when updating the checkout shipping method with the external one.
+ * - CHECKOUT_FILTER_SHIPPING_METHODS (sync): Optionally triggered when cached filtered shipping methods are invalid.
  * - CHECKOUT_UPDATED (async): A checkout was updated.
  */
 export type CheckoutShippingMethodUpdate = {
@@ -5323,7 +5340,9 @@ export type CheckoutSortField =
   /** Sort checkouts by customer. */
   | 'CUSTOMER'
   /** Sort checkouts by payment. */
-  | 'PAYMENT';
+  | 'PAYMENT'
+  /** Sort checkouts by rank. Note: This option is available only with the `search` filter. */
+  | 'RANK';
 
 export type CheckoutSortingInput = {
   /** Specifies the direction in which to sort checkouts. */
@@ -6734,6 +6753,24 @@ export type CustomerDelete = {
   user: Maybe<User>;
 };
 
+/**
+ * Event sent when customer user is deleted.
+ *
+ * Added in Saleor 3.23.
+ */
+export type CustomerDeleted = Event & {
+  /** Time of the event. */
+  issuedAt: Maybe<Scalars['DateTime']['output']>;
+  /** The user or application that triggered the event. */
+  issuingPrincipal: Maybe<IssuingPrincipal>;
+  /** The application receiving the webhook. */
+  recipient: Maybe<App>;
+  /** The user the event relates to. */
+  user: Maybe<User>;
+  /** Saleor version that triggered the event. */
+  version: Maybe<Scalars['String']['output']>;
+};
+
 /** History log of the customer. */
 export type CustomerEvent = Node & {
   /** App that performed the action. */
@@ -6748,8 +6785,6 @@ export type CustomerEvent = Node & {
   message: Maybe<Scalars['String']['output']>;
   /** The concerned order. */
   order: Maybe<Order>;
-  /** The concerned order line. */
-  orderLine: Maybe<OrderLine>;
   /** Customer event type. */
   type: Maybe<CustomerEventsEnum>;
   /** User who performed the action. */
@@ -7015,207 +7050,49 @@ export type DeletePrivateMetadata = {
   metadataErrors: Array<MetadataError>;
 };
 
+/**
+ * Represents a delivery option for the checkout.
+ *
+ * Added in Saleor 3.23.
+ */
+export type Delivery = {
+  /** The ID of the delivery. */
+  id: Scalars['ID']['output'];
+  /** Shipping method represented by the delivery. */
+  shippingMethod: Maybe<ShippingMethod>;
+};
+
 /** Represents a delivery method chosen for the checkout. `Warehouse` type is used when checkout is marked as "click and collect" and `ShippingMethod` otherwise. */
 export type DeliveryMethod = ShippingMethod | Warehouse;
 
-/** Represents digital content associated with a product variant. */
-export type DigitalContent = Node & ObjectWithMetadata & {
-  /** Indicator for automatic fulfillment of digital content. */
-  automaticFulfillment: Scalars['Boolean']['output'];
-  /** File associated with digital content. */
-  contentFile: Scalars['String']['output'];
-  /** The ID of the digital content. */
-  id: Scalars['ID']['output'];
-  /** Maximum number of allowed downloads for the digital content. */
-  maxDownloads: Maybe<Scalars['Int']['output']>;
-  /** List of public metadata items. Can be accessed without permissions. */
-  metadata: Array<MetadataItem>;
-  /**
-   * A single key from public metadata.
-   *
-   * Tip: Use GraphQL aliases to fetch multiple keys.
-   */
-  metafield: Maybe<Scalars['String']['output']>;
-  /** Public metadata. Use `keys` to control which fields you want to include. The default is to include everything. */
-  metafields: Maybe<Scalars['Metadata']['output']>;
-  /** List of private metadata items. Requires staff permissions to access. */
-  privateMetadata: Array<MetadataItem>;
-  /**
-   * A single key from private metadata. Requires staff permissions to access.
-   *
-   * Tip: Use GraphQL aliases to fetch multiple keys.
-   */
-  privateMetafield: Maybe<Scalars['String']['output']>;
-  /** Private metadata. Requires staff permissions to access. Use `keys` to control which fields you want to include. The default is to include everything. */
-  privateMetafields: Maybe<Scalars['Metadata']['output']>;
-  /** Product variant assigned to digital content. */
-  productVariant: ProductVariant;
-  /** Number of days the URL for the digital content remains valid. */
-  urlValidDays: Maybe<Scalars['Int']['output']>;
-  /** List of URLs for the digital variant. */
-  urls: Maybe<Array<DigitalContentUrl>>;
-  /** Default settings indicator for digital content. */
-  useDefaultSettings: Scalars['Boolean']['output'];
-};
-
-
-/** Represents digital content associated with a product variant. */
-export type DigitalContentMetafieldArgs = {
-  key: Scalars['String']['input'];
-};
-
-
-/** Represents digital content associated with a product variant. */
-export type DigitalContentMetafieldsArgs = {
-  keys?: InputMaybe<Array<Scalars['String']['input']>>;
-};
-
-
-/** Represents digital content associated with a product variant. */
-export type DigitalContentPrivateMetafieldArgs = {
-  key: Scalars['String']['input'];
-};
-
-
-/** Represents digital content associated with a product variant. */
-export type DigitalContentPrivateMetafieldsArgs = {
-  keys?: InputMaybe<Array<Scalars['String']['input']>>;
-};
-
-/** A connection to a list of digital content items. */
-export type DigitalContentCountableConnection = {
-  edges: Array<DigitalContentCountableEdge>;
-  /** Pagination data for this connection. */
-  pageInfo: PageInfo;
-  /** A total count of items in the collection. */
-  totalCount: Maybe<Scalars['Int']['output']>;
-};
-
-export type DigitalContentCountableEdge = {
-  /** A cursor for use in pagination. */
-  cursor: Scalars['String']['output'];
-  /** The item at the end of the edge. */
-  node: DigitalContent;
-};
-
 /**
- * Create new digital content. This mutation must be sent as a `multipart` request. More detailed specs of the upload format can be found here: https://github.com/jaydenseric/graphql-multipart-request-spec
+ * Calculates available delivery options for a checkout.
  *
- * Requires one of the following permissions: MANAGE_PRODUCTS.
- */
-export type DigitalContentCreate = {
-  content: Maybe<DigitalContent>;
-  errors: Array<ProductError>;
-  /** @deprecated Use `errors` field instead. */
-  productErrors: Array<ProductError>;
-  variant: Maybe<ProductVariant>;
-};
-
-/**
- * Remove digital content assigned to given variant.
+ * Added in Saleor 3.23.
  *
- * Requires one of the following permissions: MANAGE_PRODUCTS.
+ * Triggers the following webhook events:
+ * - SHIPPING_LIST_METHODS_FOR_CHECKOUT (sync): Triggered to fetch external shipping methods.
+ * - CHECKOUT_FILTER_SHIPPING_METHODS (sync): Triggered to filter shipping methods.
  */
-export type DigitalContentDelete = {
-  errors: Array<ProductError>;
-  /** @deprecated Use `errors` field instead. */
-  productErrors: Array<ProductError>;
-  variant: Maybe<ProductVariant>;
+export type DeliveryOptionsCalculate = {
+  /** List of the available deliveries. */
+  deliveries: Array<Delivery>;
+  errors: Array<DeliveryOptionsCalculateError>;
 };
 
-export type DigitalContentInput = {
-  /** Overwrite default automatic_fulfillment setting for variant. */
-  automaticFulfillment?: InputMaybe<Scalars['Boolean']['input']>;
-  /** Determines how many times a download link can be accessed by a customer. */
-  maxDownloads?: InputMaybe<Scalars['Int']['input']>;
-  /**
-   * Fields required to update the digital content metadata. Can be read by any API client authorized to read the object it's attached to.
-   *
-   * Warning: never store sensitive information, including financial data such as credit card details.
-   */
-  metadata?: InputMaybe<Array<MetadataInput>>;
-  /**
-   * Fields required to update the digital content private metadata. Requires permissions to modify and to read the metadata of the object it's attached to.
-   *
-   * Warning: never store sensitive information, including financial data such as credit card details.
-   */
-  privateMetadata?: InputMaybe<Array<MetadataInput>>;
-  /** Determines for how many days a download link is active since it was generated. */
-  urlValidDays?: InputMaybe<Scalars['Int']['input']>;
-  /** Use default digital content settings for this product. */
-  useDefaultSettings: Scalars['Boolean']['input'];
+export type DeliveryOptionsCalculateError = {
+  /** The error code. */
+  code: DeliveryOptionsCalculateErrorCode;
+  /** Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field. */
+  field: Maybe<Scalars['String']['output']>;
+  /** The error message. */
+  message: Maybe<Scalars['String']['output']>;
 };
 
-/**
- * Updates digital content.
- *
- * Requires one of the following permissions: MANAGE_PRODUCTS.
- */
-export type DigitalContentUpdate = {
-  content: Maybe<DigitalContent>;
-  errors: Array<ProductError>;
-  /** @deprecated Use `errors` field instead. */
-  productErrors: Array<ProductError>;
-  variant: Maybe<ProductVariant>;
-};
-
-export type DigitalContentUploadInput = {
-  /** Overwrite default automatic_fulfillment setting for variant. */
-  automaticFulfillment?: InputMaybe<Scalars['Boolean']['input']>;
-  /** Represents an file in a multipart request. */
-  contentFile: Scalars['Upload']['input'];
-  /** Determines how many times a download link can be accessed by a customer. */
-  maxDownloads?: InputMaybe<Scalars['Int']['input']>;
-  /**
-   * Fields required to update the digital content metadata. Can be read by any API client authorized to read the object it's attached to.
-   *
-   * Warning: never store sensitive information, including financial data such as credit card details.
-   */
-  metadata?: InputMaybe<Array<MetadataInput>>;
-  /**
-   * Fields required to update the digital content private metadata. Requires permissions to modify and to read the metadata of the object it's attached to.
-   *
-   * Warning: never store sensitive information, including financial data such as credit card details.
-   */
-  privateMetadata?: InputMaybe<Array<MetadataInput>>;
-  /** Determines for how many days a download link is active since it was generated. */
-  urlValidDays?: InputMaybe<Scalars['Int']['input']>;
-  /** Use default digital content settings for this product. */
-  useDefaultSettings: Scalars['Boolean']['input'];
-};
-
-/** Represents a URL for digital content. */
-export type DigitalContentUrl = Node & {
-  /** Digital content associated with the URL. */
-  content: DigitalContent;
-  /** Date and time when the digital content URL was created. */
-  created: Scalars['DateTime']['output'];
-  /** Number of times digital content has been downloaded. */
-  downloadNum: Scalars['Int']['output'];
-  /** The ID of the digital content URL. */
-  id: Scalars['ID']['output'];
-  /** UUID of digital content. */
-  token: Scalars['UUID']['output'];
-  /** URL for digital content. */
-  url: Maybe<Scalars['String']['output']>;
-};
-
-/**
- * Generate new URL to digital content.
- *
- * Requires one of the following permissions: MANAGE_PRODUCTS.
- */
-export type DigitalContentUrlCreate = {
-  digitalContentUrl: Maybe<DigitalContentUrl>;
-  errors: Array<ProductError>;
-  /** @deprecated Use `errors` field instead. */
-  productErrors: Array<ProductError>;
-};
-
-export type DigitalContentUrlCreateInput = {
-  /** Digital content ID which URL will belong to. */
-  content: Scalars['ID']['input'];
-};
+export type DeliveryOptionsCalculateErrorCode =
+  | 'GRAPHQL_ERROR'
+  | 'INVALID'
+  | 'NOT_FOUND';
 
 export type DiscountError = {
   /** List of channels IDs which causes the error. */
@@ -7386,7 +7263,11 @@ export type DraftOrderCreateInput = {
   user?: InputMaybe<Scalars['ID']['input']>;
   /** Email address of the customer. */
   userEmail?: InputMaybe<Scalars['String']['input']>;
-  /** ID of the voucher associated with the order. */
+  /**
+   * ID of the voucher associated with the order.
+   *
+   * DEPRECATED: this field will be removed. Use `voucherCode` instead.
+   */
   voucher?: InputMaybe<Scalars['ID']['input']>;
   /**
    * A code of the voucher associated with the order.
@@ -7495,7 +7376,11 @@ export type DraftOrderInput = {
   user?: InputMaybe<Scalars['ID']['input']>;
   /** Email address of the customer. */
   userEmail?: InputMaybe<Scalars['String']['input']>;
-  /** ID of the voucher associated with the order. */
+  /**
+   * ID of the voucher associated with the order.
+   *
+   * DEPRECATED: this field will be removed. Use `voucherCode` instead.
+   */
   voucher?: InputMaybe<Scalars['ID']['input']>;
   /**
    * A code of the voucher associated with the order.
@@ -7909,8 +7794,6 @@ export type ExportScope =
  *
  * Added in Saleor 3.18.
  *
- * Note: this API is currently in Feature Preview and can be subject to changes at later point.
- *
  * Requires one of the following permissions: MANAGE_DISCOUNTS.
  *
  * Triggers the following webhook events:
@@ -8082,6 +7965,18 @@ export type Fulfillment = Node & ObjectWithMetadata & {
   privateMetafield: Maybe<Scalars['String']['output']>;
   /** Private metadata. Requires staff permissions to access. Use `keys` to control which fields you want to include. The default is to include everything. */
   privateMetafields: Maybe<Scalars['Metadata']['output']>;
+  /**
+   * Reason for returning this fulfillment.
+   *
+   * Added in Saleor 3.23.
+   */
+  reason: Maybe<Scalars['String']['output']>;
+  /**
+   * Reason Model (Page) reference for this fulfillment.
+   *
+   * Added in Saleor 3.23.
+   */
+  reasonReference: Maybe<Page>;
   /** Amount of refunded shipping price. */
   shippingRefundedAmount: Maybe<Money>;
   /** Status of fulfillment. */
@@ -8228,6 +8123,18 @@ export type FulfillmentLine = Node & {
   orderLine: Maybe<OrderLine>;
   /** The number of items included in the fulfillment line. */
   quantity: Scalars['Int']['output'];
+  /**
+   * Reason for returning this fulfillment line.
+   *
+   * Added in Saleor 3.23.
+   */
+  reason: Maybe<Scalars['String']['output']>;
+  /**
+   * Reason Model (Page) reference for this fulfillment line.
+   *
+   * Added in Saleor 3.23.
+   */
+  reasonReference: Maybe<Page>;
 };
 
 /** Event sent when fulfillment metadata is updated. */
@@ -8364,6 +8271,22 @@ export type GiftCard = Node & ObjectWithMetadata & {
    * Requires one of the following permissions: MANAGE_APPS, OWNER.
    */
   app: Maybe<App>;
+  /**
+   * The customer the gift card usage is restricted to.
+   *
+   * Requires one of the following permissions: MANAGE_USERS, OWNER.
+   *
+   * Added in Saleor 3.23.
+   */
+  assignedTo: Maybe<User>;
+  /**
+   * Email of the customer the gift card is restricted to.
+   *
+   * Requires one of the following permissions: MANAGE_GIFT_CARD, OWNER.
+   *
+   * Added in Saleor 3.23.
+   */
+  assignedToEmail: Maybe<Scalars['String']['output']>;
   /** Slug of the channel where the gift card was bought. */
   boughtInChannel: Maybe<Scalars['String']['output']>;
   /**
@@ -8391,7 +8314,7 @@ export type GiftCard = Node & ObjectWithMetadata & {
    */
   endDate: Maybe<Scalars['DateTime']['output']>;
   /**
-   * List of events associated with the gift card. Requires MANAGE_GIFT_CARD permission to access all events. Users with MANAGE_ORDERS permission can access only USED_IN_ORDER events.
+   * List of events associated with the gift card. Requires MANAGE_GIFT_CARD permission to access all events. Users with MANAGE_ORDERS permission can access only USED_IN_ORDER and REFUNDED_IN_ORDER events.
    *
    * Requires one of the following permissions: MANAGE_GIFT_CARD, MANAGE_ORDERS.
    */
@@ -8524,6 +8447,42 @@ export type GiftCardAddNoteInput = {
 };
 
 /**
+ * Restrict a gift card so only the given customer can use it.
+ *
+ * Added in Saleor 3.23.
+ *
+ * Requires one of the following permissions: MANAGE_GIFT_CARD.
+ *
+ * Triggers the following webhook events:
+ * - GIFT_CARD_UPDATED (async): A gift card was updated.
+ */
+export type GiftCardAssignUser = {
+  errors: Array<GiftCardError>;
+  /** The assigned gift card. */
+  giftCard: Maybe<GiftCard>;
+  /** @deprecated Use `errors` field instead. */
+  giftCardErrors: Array<GiftCardError>;
+};
+
+/**
+ * Adjust a gift card's balance by a delta.
+ *
+ * Added in Saleor 3.23.
+ *
+ * Requires one of the following permissions: MANAGE_GIFT_CARD.
+ *
+ * Triggers the following webhook events:
+ * - GIFT_CARD_UPDATED (async): A gift card was updated.
+ */
+export type GiftCardBalanceAdjust = {
+  errors: Array<GiftCardError>;
+  /** The adjusted gift card. */
+  giftCard: Maybe<GiftCard>;
+  /** @deprecated Use `errors` field instead. */
+  giftCardErrors: Array<GiftCardError>;
+};
+
+/**
  * Activate gift cards.
  *
  * Requires one of the following permissions: MANAGE_GIFT_CARD.
@@ -8629,6 +8588,12 @@ export type GiftCardCreate = {
 export type GiftCardCreateInput = {
   /** The gift card tags to add. */
   addTags?: InputMaybe<Array<Scalars['String']['input']>>;
+  /**
+   * ID of the customer the gift card is restricted to.
+   *
+   * Added in Saleor 3.23.
+   */
+  assignedTo?: InputMaybe<Scalars['ID']['input']>;
   /** Balance of the gift card. */
   balance: PriceInput;
   /** Slug of a channel from which the email should be sent. */
@@ -8749,6 +8714,7 @@ export type GiftCardError = {
 
 export type GiftCardErrorCode =
   | 'ALREADY_EXISTS'
+  | 'CANNOT_ASSIGN'
   | 'DUPLICATED_INPUT_ITEM'
   | 'EXPIRED_GIFT_CARD'
   | 'GRAPHQL_ERROR'
@@ -8761,6 +8727,12 @@ export type GiftCardErrorCode =
 export type GiftCardEvent = Node & {
   /** App that performed the action. Requires one of the following permissions: MANAGE_APPS, OWNER. */
   app: Maybe<App>;
+  /**
+   * The customer assignment change recorded by the event. Only set for ASSIGNED_TO_USER and UNASSIGNED_FROM_USER events.
+   *
+   * Added in Saleor 3.23.
+   */
+  assignedTo: Maybe<GiftCardEventAssignment>;
   /** The gift card balance. */
   balance: Maybe<GiftCardEventBalance>;
   /** Date when event happened at in ISO 8601 format. */
@@ -8789,6 +8761,25 @@ export type GiftCardEvent = Node & {
   user: Maybe<User>;
 };
 
+export type GiftCardEventAssignment = {
+  /**
+   * The customer the gift card is assigned to after this event.
+   *
+   * Requires one of the following permissions: MANAGE_USERS, MANAGE_STAFF, OWNER.
+   */
+  currentAssignedTo: Maybe<User>;
+  /** Email of the customer the gift card is assigned to after this event. */
+  currentAssignedToEmail: Maybe<Scalars['String']['output']>;
+  /**
+   * The customer the gift card was assigned to before this event.
+   *
+   * Requires one of the following permissions: MANAGE_USERS, MANAGE_STAFF, OWNER.
+   */
+  oldAssignedTo: Maybe<User>;
+  /** Email of the customer the gift card was assigned to before this event. */
+  oldAssignedToEmail: Maybe<Scalars['String']['output']>;
+};
+
 export type GiftCardEventBalance = {
   /** Current balance of the gift card. */
   currentBalance: Money;
@@ -8807,15 +8798,19 @@ export type GiftCardEventFilterInput = {
 
 export type GiftCardEventsEnum =
   | 'ACTIVATED'
+  | 'ASSIGNED_TO_USER'
+  | 'BALANCE_ADJUSTED'
   | 'BALANCE_RESET'
   | 'BOUGHT'
   | 'DEACTIVATED'
   | 'EXPIRY_DATE_UPDATED'
   | 'ISSUED'
   | 'NOTE_ADDED'
+  | 'REFUNDED_IN_ORDER'
   | 'RESENT'
   | 'SENT_TO_CUSTOMER'
   | 'TAGS_UPDATED'
+  | 'UNASSIGNED_FROM_USER'
   | 'UPDATED'
   | 'USED_IN_ORDER';
 
@@ -8834,6 +8829,12 @@ export type GiftCardExportCompleted = Event & {
 };
 
 export type GiftCardFilterInput = {
+  /**
+   * Filter by the customer the gift card usage is restricted to.
+   *
+   * Added in Saleor 3.23.
+   */
+  assignedTo?: InputMaybe<Array<Scalars['ID']['input']>>;
   code?: InputMaybe<Scalars['String']['input']>;
   createdByEmail?: InputMaybe<Scalars['String']['input']>;
   currency?: InputMaybe<Scalars['String']['input']>;
@@ -8844,6 +8845,11 @@ export type GiftCardFilterInput = {
   products?: InputMaybe<Array<Scalars['ID']['input']>>;
   tags?: InputMaybe<Array<Scalars['String']['input']>>;
   used?: InputMaybe<Scalars['Boolean']['input']>;
+  /**
+   * Filter by the customer who used a gift card.
+   *
+   * DEPRECATED: this field will be removed.
+   */
   usedBy?: InputMaybe<Array<Scalars['ID']['input']>>;
 };
 
@@ -8859,6 +8865,55 @@ export type GiftCardMetadataUpdated = Event & {
   recipient: Maybe<App>;
   /** Saleor version that triggered the event. */
   version: Maybe<Scalars['String']['output']>;
+};
+
+/**
+ * Represents a gift card payment method used for a transaction.
+ *
+ * Added in Saleor 3.23.
+ */
+export type GiftCardPaymentMethodDetails = PaymentMethodDetails & {
+  /**
+   * Brand of the gift card.
+   *
+   * Added in Saleor 3.23.
+   */
+  brand: Maybe<Scalars['String']['output']>;
+  /**
+   * Indicates whether the gift card is a built-in Saleor gift card.
+   *
+   * Added in Saleor 3.23.
+   */
+  isSaleorGiftcard: Scalars['Boolean']['output'];
+  /**
+   * Last characters of the gift card code. Max 4 characters.
+   *
+   * Added in Saleor 3.23.
+   */
+  lastChars: Maybe<Scalars['String']['output']>;
+  /** Name of the gift card. */
+  name: Scalars['String']['output'];
+};
+
+export type GiftCardPaymentMethodDetailsInput = {
+  /**
+   * Brand of the gift card used for the transaction. Max length is 40 characters.
+   *
+   * Added in Saleor 3.23.
+   */
+  brand?: InputMaybe<Scalars['String']['input']>;
+  /**
+   * Last characters of the gift card used for the transaction. Max length is 4 characters.
+   *
+   * Added in Saleor 3.23.
+   */
+  lastChars?: InputMaybe<Scalars['String']['input']>;
+  /**
+   * Name of the payment method used for the transaction. Max length is 256 characters.
+   *
+   * Added in Saleor 3.23.
+   */
+  name: Scalars['String']['input'];
 };
 
 /**
@@ -8953,6 +9008,8 @@ export type GiftCardSortField =
   | 'CURRENT_BALANCE'
   /** Sort gift cards by product. */
   | 'PRODUCT'
+  /** Sort gift cards by rank. Note: This option is available only with the `search` filter. */
+  | 'RANK'
   /** Sort gift cards by used by. */
   | 'USED_BY';
 
@@ -9002,6 +9059,24 @@ export type GiftCardTagCountableEdge = {
 
 export type GiftCardTagFilterInput = {
   search?: InputMaybe<Scalars['String']['input']>;
+};
+
+/**
+ * Remove a customer restriction from a gift card.
+ *
+ * Added in Saleor 3.23.
+ *
+ * Requires one of the following permissions: MANAGE_GIFT_CARD.
+ *
+ * Triggers the following webhook events:
+ * - GIFT_CARD_UPDATED (async): A gift card was updated.
+ */
+export type GiftCardUnassignUser = {
+  errors: Array<GiftCardError>;
+  /** The unassigned gift card. */
+  giftCard: Maybe<GiftCard>;
+  /** @deprecated Use `errors` field instead. */
+  giftCardErrors: Array<GiftCardError>;
 };
 
 /**
@@ -9116,10 +9191,6 @@ export type GroupCountableEdge = {
   /** The item at the end of the edge. */
   node: Group;
 };
-
-export type HttpMethod =
-  | 'GET'
-  | 'POST';
 
 /** Thumbnail formats for icon images. */
 export type IconThumbnailFormatEnum =
@@ -12340,10 +12411,19 @@ export type Mutation = {
    */
   checkoutCustomerNoteUpdate: Maybe<CheckoutCustomerNoteUpdate>;
   /**
+   * Deletes a checkout.
+   *
+   * Added in Saleor 3.23.
+   *
+   * Requires one of the following permissions: MANAGE_CHECKOUTS.
+   */
+  checkoutDelete: Maybe<CheckoutDelete>;
+  /**
    * Updates the delivery method (shipping method or pick up point) of the checkout. Updates the checkout shipping_address for click and collect delivery for a warehouse address.
    *
    * Triggers the following webhook events:
    * - SHIPPING_LIST_METHODS_FOR_CHECKOUT (sync): Triggered when updating the checkout delivery method with the external one.
+   * - CHECKOUT_FILTER_SHIPPING_METHODS (sync): Optionally triggered when cached filtered shipping methods are invalid.
    * - CHECKOUT_UPDATED (async): A checkout was updated.
    */
   checkoutDeliveryMethodUpdate: Maybe<CheckoutDeliveryMethodUpdate>;
@@ -12390,7 +12470,10 @@ export type Mutation = {
    * - CHECKOUT_UPDATED (async): A checkout was updated.
    */
   checkoutLinesUpdate: Maybe<CheckoutLinesUpdate>;
-  /** Creates a new payment for given checkout. */
+  /**
+   * Creates a new payment for given checkout.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+   */
   checkoutPaymentCreate: Maybe<CheckoutPaymentCreate>;
   /**
    * Remove a gift card or a voucher from a checkout.
@@ -12411,6 +12494,7 @@ export type Mutation = {
    *
    * Triggers the following webhook events:
    * - SHIPPING_LIST_METHODS_FOR_CHECKOUT (sync): Triggered when updating the checkout shipping method with the external one.
+   * - CHECKOUT_FILTER_SHIPPING_METHODS (sync): Optionally triggered when cached filtered shipping methods are invalid.
    * - CHECKOUT_UPDATED (async): A checkout was updated.
    * @deprecated Use `checkoutDeliveryMethodUpdate` instead.
    */
@@ -12551,36 +12635,28 @@ export type Mutation = {
    * Deletes selected warehouse.
    *
    * Requires one of the following permissions: MANAGE_PRODUCTS.
+   *
+   * Triggers the following webhook events:
+   * - WAREHOUSE_DELETED (async): A warehouse is deleted.
+   * - PRODUCT_VARIANT_OUT_OF_STOCK (async): A product variant stock is removed together with the deleted warehouse.
+   * - PRODUCT_VARIANT_OUT_OF_STOCK_IN_CHANNEL (async): A product variant is out of stock in a channel (non click-and-collect warehouses).
+   *
+   * Note: Triggered only when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
+   * - PRODUCT_VARIANT_OUT_OF_STOCK_FOR_CLICK_AND_COLLECT (async): A product variant is out of stock in a channel (click-and-collect warehouses).
+   *
+   * Note: Triggered only when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
    */
   deleteWarehouse: Maybe<WarehouseDelete>;
   /**
-   * Create new digital content. This mutation must be sent as a `multipart` request. More detailed specs of the upload format can be found here: https://github.com/jaydenseric/graphql-multipart-request-spec
+   * Calculates available delivery options for a checkout.
    *
-   * Requires one of the following permissions: MANAGE_PRODUCTS.
-   * @deprecated Support for Digital Content is deprecated and will be removed in Saleor v3.23.0. This functionality is legacy and undocumented, and is not part of the supported API. Users should not rely on this behavior.
-   */
-  digitalContentCreate: Maybe<DigitalContentCreate>;
-  /**
-   * Remove digital content assigned to given variant.
+   * Added in Saleor 3.23.
    *
-   * Requires one of the following permissions: MANAGE_PRODUCTS.
-   * @deprecated Support for Digital Content is deprecated and will be removed in Saleor v3.23.0. This functionality is legacy and undocumented, and is not part of the supported API. Users should not rely on this behavior.
+   * Triggers the following webhook events:
+   * - SHIPPING_LIST_METHODS_FOR_CHECKOUT (sync): Triggered to fetch external shipping methods.
+   * - CHECKOUT_FILTER_SHIPPING_METHODS (sync): Triggered to filter shipping methods.
    */
-  digitalContentDelete: Maybe<DigitalContentDelete>;
-  /**
-   * Updates digital content.
-   *
-   * Requires one of the following permissions: MANAGE_PRODUCTS.
-   * @deprecated Support for Digital Content is deprecated and will be removed in Saleor v3.23.0. This functionality is legacy and undocumented, and is not part of the supported API. Users should not rely on this behavior.
-   */
-  digitalContentUpdate: Maybe<DigitalContentUpdate>;
-  /**
-   * Generate new URL to digital content.
-   *
-   * Requires one of the following permissions: MANAGE_PRODUCTS.
-   * @deprecated Support for Digital Content is deprecated and will be removed in Saleor v3.23.0. This functionality is legacy and undocumented, and is not part of the supported API. Users should not rely on this behavior.
-   */
-  digitalContentUrlCreate: Maybe<DigitalContentUrlCreate>;
+  deliveryOptionsCalculate: Maybe<DeliveryOptionsCalculate>;
   /**
    * Deletes draft orders.
    *
@@ -12632,6 +12708,7 @@ export type Mutation = {
    * Triggers the following webhook events:
    * - NOTIFY_USER (async): A notification for the exported file.
    * - GIFT_CARD_EXPORT_COMPLETED (async): A notification for the exported file.
+   * @deprecated Export functionality is deprecated and will be removed. All data can be fetched via the GraphQL API and parsed into the desired format by apps or external tools.
    */
   exportGiftCards: Maybe<ExportGiftCards>;
   /**
@@ -12642,6 +12719,7 @@ export type Mutation = {
    * Triggers the following webhook events:
    * - NOTIFY_USER (async): A notification for the exported file.
    * - PRODUCT_EXPORT_COMPLETED (async): A notification for the exported file.
+   * @deprecated Export functionality is deprecated and will be removed. All data can be fetched via the GraphQL API and parsed into the desired format by apps or external tools.
    */
   exportProducts: Maybe<ExportProducts>;
   /**
@@ -12649,12 +12727,11 @@ export type Mutation = {
    *
    * Added in Saleor 3.18.
    *
-   * Note: this API is currently in Feature Preview and can be subject to changes at later point.
-   *
    * Requires one of the following permissions: MANAGE_DISCOUNTS.
    *
    * Triggers the following webhook events:
    * - VOUCHER_CODE_EXPORT_COMPLETED (async): A notification for the exported file.
+   * @deprecated Export functionality is deprecated and will be removed. All data can be fetched via the GraphQL API and parsed into the desired format by apps or external tools.
    */
   exportVoucherCodes: Maybe<ExportVoucherCodes>;
   /** Prepare external authentication URL for user by custom plugin. */
@@ -12696,6 +12773,28 @@ export type Mutation = {
    * - GIFT_CARD_UPDATED (async): A gift card was updated.
    */
   giftCardAddNote: Maybe<GiftCardAddNote>;
+  /**
+   * Restrict a gift card so only the given customer can use it.
+   *
+   * Added in Saleor 3.23.
+   *
+   * Requires one of the following permissions: MANAGE_GIFT_CARD.
+   *
+   * Triggers the following webhook events:
+   * - GIFT_CARD_UPDATED (async): A gift card was updated.
+   */
+  giftCardAssignUser: Maybe<GiftCardAssignUser>;
+  /**
+   * Adjust a gift card's balance by a delta.
+   *
+   * Added in Saleor 3.23.
+   *
+   * Requires one of the following permissions: MANAGE_GIFT_CARD.
+   *
+   * Triggers the following webhook events:
+   * - GIFT_CARD_UPDATED (async): A gift card was updated.
+   */
+  giftCardBalanceAdjust: Maybe<GiftCardBalanceAdjust>;
   /**
    * Activate gift cards.
    *
@@ -12776,6 +12875,17 @@ export type Mutation = {
    * Requires one of the following permissions: MANAGE_GIFT_CARD.
    */
   giftCardSettingsUpdate: Maybe<GiftCardSettingsUpdate>;
+  /**
+   * Remove a customer restriction from a gift card.
+   *
+   * Added in Saleor 3.23.
+   *
+   * Requires one of the following permissions: MANAGE_GIFT_CARD.
+   *
+   * Triggers the following webhook events:
+   * - GIFT_CARD_UPDATED (async): A gift card was updated.
+   */
+  giftCardUnassignUser: Maybe<GiftCardUnassignUser>;
   /**
    * Update a gift card.
    *
@@ -12947,6 +13057,7 @@ export type Mutation = {
    * Capture an order.
    *
    * Requires one of the following permissions: MANAGE_ORDERS.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
    */
   orderCapture: Maybe<OrderCapture>;
   /**
@@ -13101,6 +13212,7 @@ export type Mutation = {
    * Refund an order.
    *
    * Requires one of the following permissions: MANAGE_ORDERS.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
    */
   orderRefund: Maybe<OrderRefund>;
   /**
@@ -13126,6 +13238,7 @@ export type Mutation = {
    * Void an order.
    *
    * Requires one of the following permissions: MANAGE_ORDERS.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
    */
   orderVoid: Maybe<OrderVoid>;
   /**
@@ -13222,9 +13335,13 @@ export type Mutation = {
    * Captures the authorized payment amount.
    *
    * Requires one of the following permissions: MANAGE_ORDERS.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
    */
   paymentCapture: Maybe<PaymentCapture>;
-  /** Check payment balance. */
+  /**
+   * Check payment balance.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+   */
   paymentCheckBalance: Maybe<PaymentCheckBalance>;
   /** Initializes a payment gateway session. It triggers the webhook `PAYMENT_GATEWAY_INITIALIZE_SESSION`, to the requested `paymentGateways`. If `paymentGateways` is not provided, the webhook will be send to all subscribed payment gateways. There is a limit of 100 transaction items per checkout / order. */
   paymentGatewayInitialize: Maybe<PaymentGatewayInitialize>;
@@ -13237,7 +13354,10 @@ export type Mutation = {
    * - PAYMENT_GATEWAY_INITIALIZE_TOKENIZATION_SESSION (sync): The customer requested to initialize payment gateway for tokenization.
    */
   paymentGatewayInitializeTokenization: Maybe<PaymentGatewayInitializeTokenization>;
-  /** Initializes payment process when it is required by gateway. */
+  /**
+   * Initializes payment process when it is required by gateway.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+   */
   paymentInitialize: Maybe<PaymentInitialize>;
   /**
    * Tokenize payment method.
@@ -13261,12 +13381,14 @@ export type Mutation = {
    * Refunds the captured payment amount.
    *
    * Requires one of the following permissions: MANAGE_ORDERS.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
    */
   paymentRefund: Maybe<PaymentRefund>;
   /**
    * Voids the authorized payment.
    *
    * Requires one of the following permissions: MANAGE_ORDERS.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
    */
   paymentVoid: Maybe<PaymentVoid>;
   /**
@@ -13512,18 +13634,53 @@ export type Mutation = {
    * Creates stocks for product variant.
    *
    * Requires one of the following permissions: MANAGE_PRODUCTS.
+   *
+   * Triggers the following webhook events:
+   * - PRODUCT_VARIANT_BACK_IN_STOCK (async): A product variant stock is created in a warehouse.
+   * - PRODUCT_VARIANT_BACK_IN_STOCK_IN_CHANNEL (async): A product variant is back in stock in a channel (non click-and-collect warehouses).
+   *
+   * Note: Triggered only when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
+   * - PRODUCT_VARIANT_BACK_IN_STOCK_FOR_CLICK_AND_COLLECT (async): A product variant is back in stock in a channel (click-and-collect warehouses).
+   *
+   * Note: Triggered only when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
    */
   productVariantStocksCreate: Maybe<ProductVariantStocksCreate>;
   /**
    * Deletes stocks from product variant.
    *
    * Requires one of the following permissions: MANAGE_PRODUCTS.
+   *
+   * Triggers the following webhook events:
+   * - PRODUCT_VARIANT_OUT_OF_STOCK (async): A product variant stock is deleted from a warehouse.
+   * - PRODUCT_VARIANT_OUT_OF_STOCK_IN_CHANNEL (async): A product variant is out of stock in a channel (non click-and-collect warehouses).
+   *
+   * Note: Triggered only when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
+   * - PRODUCT_VARIANT_OUT_OF_STOCK_FOR_CLICK_AND_COLLECT (async): A product variant is out of stock in a channel (click-and-collect warehouses).
+   *
+   * Note: Triggered only when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
    */
   productVariantStocksDelete: Maybe<ProductVariantStocksDelete>;
   /**
    * Updates stocks for product variant.
    *
    * Requires one of the following permissions: MANAGE_PRODUCTS.
+   *
+   * Triggers the following webhook events:
+   * - PRODUCT_VARIANT_STOCK_UPDATED (async): A product variant stock is updated.
+   * - PRODUCT_VARIANT_BACK_IN_STOCK (async): A product variant stock transitioned from no availability to available quantity.
+   * - PRODUCT_VARIANT_OUT_OF_STOCK (async): A product variant stock transitioned from available quantity to no availability.
+   * - PRODUCT_VARIANT_BACK_IN_STOCK_IN_CHANNEL (async): A product variant is back in stock in a channel (non click-and-collect warehouses).
+   *
+   * Note: Triggered only when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
+   * - PRODUCT_VARIANT_OUT_OF_STOCK_IN_CHANNEL (async): A product variant is out of stock in a channel (non click-and-collect warehouses).
+   *
+   * Note: Triggered only when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
+   * - PRODUCT_VARIANT_BACK_IN_STOCK_FOR_CLICK_AND_COLLECT (async): A product variant is back in stock in a channel (click-and-collect warehouses).
+   *
+   * Note: Triggered only when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
+   * - PRODUCT_VARIANT_OUT_OF_STOCK_FOR_CLICK_AND_COLLECT (async): A product variant is out of stock in a channel (click-and-collect warehouses).
+   *
+   * Note: Triggered only when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
    */
   productVariantStocksUpdate: Maybe<ProductVariantStocksUpdate>;
   /**
@@ -13651,6 +13808,22 @@ export type Mutation = {
    * - STAFF_SET_PASSWORD_REQUESTED (async): Setting a new password for the staff account is requested.
    */
   requestPasswordReset: Maybe<RequestPasswordReset>;
+  /**
+   * Updates ReturnSettings. The `Page` (Model) Type will be cleared from `reasonReferenceType`. When it's cleared, passing reason reference to return mutations is no longer accepted and will raise error.
+   *
+   * Added in Saleor 3.23.
+   *
+   * Requires one of the following permissions: MANAGE_SETTINGS.
+   */
+  returnReasonReferenceClear: Maybe<ReturnReasonReferenceTypeClear>;
+  /**
+   * Update return settings across all channels.
+   *
+   * Added in Saleor 3.23.
+   *
+   * Requires one of the following permissions: MANAGE_SETTINGS.
+   */
+  returnSettingsUpdate: Maybe<ReturnSettingsUpdate>;
   /**
    * Deletes sales.
    *
@@ -14552,6 +14725,11 @@ export type MutationCheckoutCustomerNoteUpdateArgs = {
 };
 
 
+export type MutationCheckoutDeleteArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationCheckoutDeliveryMethodUpdateArgs = {
   deliveryMethodId?: InputMaybe<Scalars['ID']['input']>;
   id?: InputMaybe<Scalars['ID']['input']>;
@@ -14756,25 +14934,8 @@ export type MutationDeleteWarehouseArgs = {
 };
 
 
-export type MutationDigitalContentCreateArgs = {
-  input: DigitalContentUploadInput;
-  variantId: Scalars['ID']['input'];
-};
-
-
-export type MutationDigitalContentDeleteArgs = {
-  variantId: Scalars['ID']['input'];
-};
-
-
-export type MutationDigitalContentUpdateArgs = {
-  input: DigitalContentInput;
-  variantId: Scalars['ID']['input'];
-};
-
-
-export type MutationDigitalContentUrlCreateArgs = {
-  input: DigitalContentUrlCreateInput;
+export type MutationDeliveryOptionsCalculateArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -14884,6 +15045,18 @@ export type MutationGiftCardAddNoteArgs = {
 };
 
 
+export type MutationGiftCardAssignUserArgs = {
+  id: Scalars['ID']['input'];
+  userId: Scalars['ID']['input'];
+};
+
+
+export type MutationGiftCardBalanceAdjustArgs = {
+  amount: Scalars['Decimal']['input'];
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationGiftCardBulkActivateArgs = {
   ids: Array<Scalars['ID']['input']>;
 };
@@ -14926,6 +15099,11 @@ export type MutationGiftCardResendArgs = {
 
 export type MutationGiftCardSettingsUpdateArgs = {
   input: GiftCardSettingsUpdateInput;
+};
+
+
+export type MutationGiftCardUnassignUserArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -15676,6 +15854,11 @@ export type MutationRequestPasswordResetArgs = {
 };
 
 
+export type MutationReturnSettingsUpdateArgs = {
+  input: ReturnSettingsUpdateInput;
+};
+
+
 export type MutationSaleBulkDeleteArgs = {
   ids: Array<Scalars['ID']['input']>;
 };
@@ -16131,15 +16314,6 @@ export type NavigationType =
   /** Secondary storefront navigation. */
   | 'SECONDARY';
 
-/** Represents the NEW_TAB target options for an app extension. */
-export type NewTabTargetOptions = {
-  /**
-   * HTTP method for New Tab target (GET or POST)
-   * @deprecated Use `settings` field directly.
-   */
-  method: HttpMethod;
-};
-
 /** An object with an ID */
 export type Node = {
   /** The ID of the object. */
@@ -16328,7 +16502,10 @@ export type Order = Node & ObjectWithMetadata & {
   paymentStatus: PaymentChargeStatusEnum;
   /** User-friendly payment status. */
   paymentStatusDisplay: Scalars['String']['output'];
-  /** List of payments for the order. */
+  /**
+   * List of payments for the order.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+   */
   payments: Array<Payment>;
   /** List of private metadata items. Requires staff permissions to access. */
   privateMetadata: Array<MetadataItem>;
@@ -17421,6 +17598,11 @@ export type OrderFilterInput = {
   isPreorder?: InputMaybe<Scalars['Boolean']['input']>;
   metadata?: InputMaybe<Array<MetadataFilter>>;
   numbers?: InputMaybe<Array<Scalars['String']['input']>>;
+  /**
+   * Filter orders by payment charge status.
+   *
+   * DEPRECATED: this field will be removed. The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+   */
   paymentStatus?: InputMaybe<Array<PaymentChargeStatusEnum>>;
   search?: InputMaybe<Scalars['String']['input']>;
   status?: InputMaybe<Array<OrderStatusFilter>>;
@@ -17559,6 +17741,7 @@ export type OrderGrantRefundCreateErrorCode =
   | 'AMOUNT_GREATER_THAN_AVAILABLE'
   | 'GRAPHQL_ERROR'
   | 'INVALID'
+  | 'NOT_CONFIGURED'
   | 'NOT_FOUND'
   | 'REQUIRED'
   | 'SHIPPING_COSTS_ALREADY_GRANTED';
@@ -17601,6 +17784,8 @@ export type OrderGrantRefundCreateLineError = {
 
 export type OrderGrantRefundCreateLineErrorCode =
   | 'GRAPHQL_ERROR'
+  | 'INVALID'
+  | 'NOT_CONFIGURED'
   | 'NOT_FOUND'
   | 'QUANTITY_GREATER_THAN_AVAILABLE';
 
@@ -17611,6 +17796,12 @@ export type OrderGrantRefundCreateLineInput = {
   quantity: Scalars['Int']['input'];
   /** Reason of the granted refund for the line. */
   reason?: InputMaybe<Scalars['String']['input']>;
+  /**
+   * ID of a `Page` (Model) to reference in reason for the line.
+   *
+   * Added in Saleor 3.23.
+   */
+  reasonReference?: InputMaybe<Scalars['ID']['input']>;
 };
 
 /**
@@ -17643,6 +17834,7 @@ export type OrderGrantRefundUpdateErrorCode =
   | 'AMOUNT_GREATER_THAN_AVAILABLE'
   | 'GRAPHQL_ERROR'
   | 'INVALID'
+  | 'NOT_CONFIGURED'
   | 'NOT_FOUND'
   | 'REQUIRED'
   | 'SHIPPING_COSTS_ALREADY_GRANTED';
@@ -17681,6 +17873,12 @@ export type OrderGrantRefundUpdateLineAddInput = {
   quantity: Scalars['Int']['input'];
   /** Reason of the granted refund for the line. */
   reason?: InputMaybe<Scalars['String']['input']>;
+  /**
+   * ID of a `Page` (Model) to reference in reason for the line.
+   *
+   * Added in Saleor 3.23.
+   */
+  reasonReference?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export type OrderGrantRefundUpdateLineError = {
@@ -17696,6 +17894,8 @@ export type OrderGrantRefundUpdateLineError = {
 
 export type OrderGrantRefundUpdateLineErrorCode =
   | 'GRAPHQL_ERROR'
+  | 'INVALID'
+  | 'NOT_CONFIGURED'
   | 'NOT_FOUND'
   | 'QUANTITY_GREATER_THAN_AVAILABLE';
 
@@ -17757,6 +17957,12 @@ export type OrderGrantedRefundLine = {
   quantity: Scalars['Int']['output'];
   /** Reason for refunding the line. */
   reason: Maybe<Scalars['String']['output']>;
+  /**
+   * Reason Model (Page) reference for this refund line.
+   *
+   * Added in Saleor 3.23.
+   */
+  reasonReference: Maybe<Page>;
 };
 
 /**
@@ -17782,7 +17988,6 @@ export type OrderLine = Node & ObjectWithMetadata & {
    * Requires one of the following permissions: MANAGE_PRODUCTS, MANAGE_ORDERS.
    */
   allocations: Maybe<Array<Allocation>>;
-  digitalContentUrl: Maybe<DigitalContentUrl>;
   /**
    * List of applied discounts
    *
@@ -17813,6 +18018,14 @@ export type OrderLine = Node & ObjectWithMetadata & {
   metafield: Maybe<Scalars['String']['output']>;
   /** Public metadata. Use `keys` to control which fields you want to include. The default is to include everything. */
   metafields: Maybe<Scalars['Metadata']['output']>;
+  /**
+   * Reason explaining why a custom price was set on the line, copied from the checkout line when the order was created from a checkout.
+   *
+   * Added in Saleor 3.23.
+   *
+   * Requires one of the following permissions: MANAGE_ORDERS.
+   */
+  priceOverrideReason: Maybe<Scalars['String']['output']>;
   /** List of private metadata items. Requires staff permissions to access. */
   privateMetadata: Array<MetadataItem>;
   /**
@@ -18200,6 +18413,18 @@ export type OrderReturnFulfillmentLineInput = {
   fulfillmentLineId: Scalars['ID']['input'];
   /** The number of items to be returned. */
   quantity: Scalars['Int']['input'];
+  /**
+   * Reason for returning this fulfillment line.
+   *
+   * Added in Saleor 3.23.
+   */
+  reason?: InputMaybe<Scalars['String']['input']>;
+  /**
+   * ID of a `Page` (Model) to reference in reason for this fulfillment line.
+   *
+   * Added in Saleor 3.23.
+   */
+  reasonReference?: InputMaybe<Scalars['ID']['input']>;
   /** Determines, if the line should be added to replace order. */
   replace?: InputMaybe<Scalars['Boolean']['input']>;
 };
@@ -18209,6 +18434,18 @@ export type OrderReturnLineInput = {
   orderLineId: Scalars['ID']['input'];
   /** The number of items to be returned. */
   quantity: Scalars['Int']['input'];
+  /**
+   * Reason for returning this line.
+   *
+   * Added in Saleor 3.23.
+   */
+  reason?: InputMaybe<Scalars['String']['input']>;
+  /**
+   * ID of a `Page` (Model) to reference in reason for this line.
+   *
+   * Added in Saleor 3.23.
+   */
+  reasonReference?: InputMaybe<Scalars['ID']['input']>;
   /** Determines, if the line should be added to replace order. */
   replace?: InputMaybe<Scalars['Boolean']['input']>;
 };
@@ -18222,6 +18459,18 @@ export type OrderReturnProductsInput = {
   includeShippingCosts?: InputMaybe<Scalars['Boolean']['input']>;
   /** List of unfulfilled lines to return. */
   orderLines?: InputMaybe<Array<OrderReturnLineInput>>;
+  /**
+   * Reason for returning this order.
+   *
+   * Added in Saleor 3.23.
+   */
+  reason?: InputMaybe<Scalars['String']['input']>;
+  /**
+   * ID of a `Page` (Model) to reference in reason for this return.
+   *
+   * Added in Saleor 3.23.
+   */
+  reasonReference?: InputMaybe<Scalars['ID']['input']>;
   /** If true, Saleor will call refund action for all lines. */
   refund?: InputMaybe<Scalars['Boolean']['input']>;
 };
@@ -18947,6 +19196,8 @@ export type PageSortField =
   | 'PUBLICATION_DATE'
   /** Sort pages by publication date. */
   | 'PUBLISHED_AT'
+  /** Sort pages by rank. Note: This option is available only with the `search` filter. */
+  | 'RANK'
   /** Sort pages by slug. */
   | 'SLUG'
   /** Sort pages by title. */
@@ -19286,7 +19537,7 @@ export type PageTypeUpdateInput = {
   addAttributes?: InputMaybe<Array<Scalars['ID']['input']>>;
   /** Name of the page type. */
   name?: InputMaybe<Scalars['String']['input']>;
-  /** List of attribute IDs to be assigned to the page type. */
+  /** List of attribute IDs to be unassigned from the page type. */
   removeAttributes?: InputMaybe<Array<Scalars['ID']['input']>>;
   /** Page type slug. */
   slug?: InputMaybe<Scalars['String']['input']>;
@@ -19361,7 +19612,26 @@ export type PasswordChange = {
   user: Maybe<User>;
 };
 
-/** Represents a payment of a given type. */
+/**
+ * Controls whether password-based authentication is allowed.
+ *
+ *     ENABLED - any user can log in with a password. This is the default behavior.
+ *     CUSTOMERS_ONLY - only customer users can log in with a password.
+ *         If a staff user logs in with a password, they will be treated as a customer
+ *         — the issued token will not contain any staff permissions.
+ *     DISABLED - no user can log in with a password.
+ *
+ */
+export type PasswordLoginModeEnum =
+  | 'CUSTOMERS_ONLY'
+  | 'DISABLED'
+  | 'ENABLED';
+
+/**
+ * Represents a payment of a given type.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type Payment = Node & ObjectWithMetadata & {
   /**
    * List of actions that can be performed in the current state of a payment.
@@ -19417,11 +19687,6 @@ export type Payment = Node & ObjectWithMetadata & {
   modified: Scalars['DateTime']['output'];
   /** Order associated with a payment. */
   order: Maybe<Order>;
-  /**
-   * Informs whether this is a partial payment.
-   * @deprecated This field is reserved for the Adyen Gateway plugin. For other gateways, its value is always `false`. This field will be removed in 3.23 along with the plugin.
-   */
-  partial: Scalars['Boolean']['output'];
   /** Type of method used for payment. */
   paymentMethodType: Scalars['String']['output'];
   /** List of private metadata items. Requires staff permissions to access. */
@@ -19449,36 +19714,59 @@ export type Payment = Node & ObjectWithMetadata & {
 };
 
 
-/** Represents a payment of a given type. */
+/**
+ * Represents a payment of a given type.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type PaymentMetafieldArgs = {
   key: Scalars['String']['input'];
 };
 
 
-/** Represents a payment of a given type. */
+/**
+ * Represents a payment of a given type.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type PaymentMetafieldsArgs = {
   keys?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
 
-/** Represents a payment of a given type. */
+/**
+ * Represents a payment of a given type.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type PaymentPrivateMetafieldArgs = {
   key: Scalars['String']['input'];
 };
 
 
-/** Represents a payment of a given type. */
+/**
+ * Represents a payment of a given type.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type PaymentPrivateMetafieldsArgs = {
   keys?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
-/** Authorize payment. */
+/**
+ * Authorize payment.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type PaymentAuthorize = Event & {
   /** Time of the event. */
   issuedAt: Maybe<Scalars['DateTime']['output']>;
   /** The user or application that triggered the event. */
   issuingPrincipal: Maybe<IssuingPrincipal>;
-  /** Look up a payment. */
+  /**
+   * Look up a payment.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+   */
   payment: Maybe<Payment>;
   /** The application receiving the webhook. */
   recipient: Maybe<App>;
@@ -19499,13 +19787,20 @@ export type PaymentCapture = {
   paymentErrors: Array<PaymentError>;
 };
 
-/** Capture payment. */
+/**
+ * Capture payment.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type PaymentCaptureEvent = Event & {
   /** Time of the event. */
   issuedAt: Maybe<Scalars['DateTime']['output']>;
   /** The user or application that triggered the event. */
   issuingPrincipal: Maybe<IssuingPrincipal>;
-  /** Look up a payment. */
+  /**
+   * Look up a payment.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+   */
   payment: Maybe<Payment>;
   /** The application receiving the webhook. */
   recipient: Maybe<App>;
@@ -19532,6 +19827,11 @@ export type PaymentCheckBalance = {
   paymentErrors: Array<PaymentError>;
 };
 
+/**
+ * Fields required to check a payment balance.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type PaymentCheckBalanceInput = {
   /** Information about card. */
   card: CardInput;
@@ -19543,13 +19843,20 @@ export type PaymentCheckBalanceInput = {
   method: Scalars['String']['input'];
 };
 
-/** Confirm payment. */
+/**
+ * Confirm payment.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type PaymentConfirmEvent = Event & {
   /** Time of the event. */
   issuedAt: Maybe<Scalars['DateTime']['output']>;
   /** The user or application that triggered the event. */
   issuingPrincipal: Maybe<IssuingPrincipal>;
-  /** Look up a payment. */
+  /**
+   * Look up a payment.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+   */
   payment: Maybe<Payment>;
   /** The application receiving the webhook. */
   recipient: Maybe<App>;
@@ -19604,6 +19911,11 @@ export type PaymentErrorCode =
   | 'UNAVAILABLE_VARIANT_IN_CHANNEL'
   | 'UNIQUE';
 
+/**
+ * Filtering options for payments.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type PaymentFilterInput = {
   checkouts?: InputMaybe<Array<Scalars['ID']['input']>>;
   /** Filter by ids. */
@@ -19763,7 +20075,11 @@ export type PaymentInitialize = {
   paymentErrors: Array<PaymentError>;
 };
 
-/** Server-side data generated by a payment gateway. Optional step when the payment provider requires an additional action to initialize payment session. */
+/**
+ * Server-side data generated by a payment gateway. Optional step when the payment provider requires an additional action to initialize payment session.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type PaymentInitialized = {
   /** Initialized data by gateway. */
   data: Maybe<Scalars['JSONString']['output']>;
@@ -19773,6 +20089,11 @@ export type PaymentInitialized = {
   name: Scalars['String']['output'];
 };
 
+/**
+ * Fields required to create a payment.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type PaymentInput = {
   /** Total amount of the transaction, including all taxes and discounts. If no amount is provided, the checkout total will be used. */
   amount?: InputMaybe<Scalars['PositiveDecimal']['input']>;
@@ -19792,7 +20113,11 @@ export type PaymentInput = {
   token?: InputMaybe<Scalars['String']['input']>;
 };
 
-/** List payment gateways. */
+/**
+ * List payment gateways.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type PaymentListGateways = Event & {
   /** The checkout the event relates to. */
   checkout: Maybe<Checkout>;
@@ -19829,13 +20154,19 @@ export type PaymentMethodDetailsFilterInput = {
 };
 
 /**
- * Details of the payment method used for the transaction. One of `card` or `other` is required.
+ * Details of the payment method used for the transaction. One of `card`, `other`, or `giftCard` is required.
  *
  * Added in Saleor 3.22.
  */
 export type PaymentMethodDetailsInput = {
   /** Details of the card payment method used for the transaction. */
   card?: InputMaybe<CardPaymentMethodDetailsInput>;
+  /**
+   * Details of the gift card payment method used for the transaction.
+   *
+   * Added in Saleor 3.23.
+   */
+  giftCard?: InputMaybe<GiftCardPaymentMethodDetailsInput>;
   /** Details of the non-card payment method used for this transaction. */
   other?: InputMaybe<OtherPaymentMethodDetailsInput>;
 };
@@ -19981,11 +20312,13 @@ export type PaymentMethodTokenizationResult =
  *     The following types are possible:
  *     CARD - represents a card payment method.
  *     OTHER - represents any payment method that is not a card payment.
+ *     GIFT_CARD - represents a gift card payment method.
  *
  *
  */
 export type PaymentMethodTypeEnum =
   | 'CARD'
+  | 'GIFT_CARD'
   | 'OTHER';
 
 export type PaymentMethodTypeEnumFilterInput = {
@@ -19995,13 +20328,20 @@ export type PaymentMethodTypeEnumFilterInput = {
   oneOf?: InputMaybe<Array<PaymentMethodTypeEnum>>;
 };
 
-/** Process payment. */
+/**
+ * Process payment.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type PaymentProcessEvent = Event & {
   /** Time of the event. */
   issuedAt: Maybe<Scalars['DateTime']['output']>;
   /** The user or application that triggered the event. */
   issuingPrincipal: Maybe<IssuingPrincipal>;
-  /** Look up a payment. */
+  /**
+   * Look up a payment.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+   */
   payment: Maybe<Payment>;
   /** The application receiving the webhook. */
   recipient: Maybe<App>;
@@ -20022,13 +20362,20 @@ export type PaymentRefund = {
   paymentErrors: Array<PaymentError>;
 };
 
-/** Refund payment. */
+/**
+ * Refund payment.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type PaymentRefundEvent = Event & {
   /** Time of the event. */
   issuedAt: Maybe<Scalars['DateTime']['output']>;
   /** The user or application that triggered the event. */
   issuingPrincipal: Maybe<IssuingPrincipal>;
-  /** Look up a payment. */
+  /**
+   * Look up a payment.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+   */
   payment: Maybe<Payment>;
   /** The application receiving the webhook. */
   recipient: Maybe<App>;
@@ -20083,7 +20430,11 @@ export type PaymentSettingsInput = {
   releaseFundsForExpiredCheckouts?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-/** Represents a payment source stored for user in payment gateway, such as credit card. */
+/**
+ * Represents a payment source stored for user in payment gateway, such as credit card.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type PaymentSource = {
   /** Stored credit card details if available. */
   creditCardInfo: Maybe<CreditCard>;
@@ -20112,13 +20463,20 @@ export type PaymentVoid = {
   paymentErrors: Array<PaymentError>;
 };
 
-/** Void payment. */
+/**
+ * Void payment.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type PaymentVoidEvent = Event & {
   /** Time of the event. */
   issuedAt: Maybe<Scalars['DateTime']['output']>;
   /** The user or application that triggered the event. */
   issuingPrincipal: Maybe<IssuingPrincipal>;
-  /** Look up a payment. */
+  /**
+   * Look up a payment.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+   */
   payment: Maybe<Payment>;
   /** The application receiving the webhook. */
   recipient: Maybe<App>;
@@ -21271,8 +21629,7 @@ export type ProductErrorCode =
   | 'REQUIRED'
   | 'UNIQUE'
   | 'UNSUPPORTED_MEDIA_PROVIDER'
-  | 'UNSUPPORTED_MIME_TYPE'
-  | 'VARIANT_NO_DIGITAL_CONTENT';
+  | 'UNSUPPORTED_MIME_TYPE';
 
 /** Event sent when product export is completed. */
 export type ProductExportCompleted = Event & {
@@ -21867,11 +22224,17 @@ export type ProductType = Node & ObjectWithMetadata & {
    * Requires one of the following permissions: MANAGE_PRODUCTS.
    */
   availableAttributes: Maybe<AttributeCountableConnection>;
-  /** Whether the product type has variants. */
+  /**
+   * Whether the product type has variants.
+   * @deprecated This is a leftover from the past Simple/Configurable product distinction. Products can have multiple variants regardless of this setting.
+   */
   hasVariants: Scalars['Boolean']['output'];
   /** The ID of the product type. */
   id: Scalars['ID']['output'];
-  /** Whether the product type is digital. */
+  /**
+   * Whether the product type is digital - doesn't have any effect, it's present for backward-compatibility.
+   * @deprecated Will be removed in v3.24.0, use metadata or attributes instead.
+   */
   isDigital: Scalars['Boolean']['output'];
   /** Whether shipping is required for this product type. */
   isShippingRequired: Scalars['Boolean']['output'];
@@ -22047,6 +22410,11 @@ export type ProductTypeEnum =
   | 'SHIPPABLE';
 
 export type ProductTypeFilterInput = {
+  /**
+   *
+   *
+   * DEPRECATED: this field will be removed. The field has no effect on the API behavior. This is a leftover from the past Simple/Configurable product distinction. Products can have multiple variants regardless of this setting.
+   */
   configurable?: InputMaybe<ProductTypeConfigurable>;
   ids?: InputMaybe<Array<Scalars['ID']['input']>>;
   kind?: InputMaybe<ProductTypeKindEnum>;
@@ -22057,9 +22425,13 @@ export type ProductTypeFilterInput = {
 };
 
 export type ProductTypeInput = {
-  /** Determines if product of this type has multiple variants. This option mainly simplifies product management in the dashboard. There is always at least one variant created under the hood. */
+  /**
+   * Determines if product of this type has multiple variants. This option mainly simplifies product management in the dashboard. There is always at least one variant created under the hood.
+   *
+   * DEPRECATED: this field will be removed. The field has no effect on the API behavior. This is a leftover from the past Simple/Configurable product distinction. Products can have multiple variants regardless of this setting.
+   */
   hasVariants?: InputMaybe<Scalars['Boolean']['input']>;
-  /** Determines if products are digital. */
+  /** Determines if products are digital - doesn't have any effect, it's present for backward-compatibility. */
   isDigital?: InputMaybe<Scalars['Boolean']['input']>;
   /** Determines if shipping is required for products of this variant. */
   isShippingRequired?: InputMaybe<Scalars['Boolean']['input']>;
@@ -22192,12 +22564,6 @@ export type ProductVariant = Node & ObjectWithAttributes & ObjectWithMetadata & 
   channelListings: Maybe<Array<ProductVariantChannelListing>>;
   /** The date and time when the product variant was created. */
   created: Scalars['DateTime']['output'];
-  /**
-   * Digital content for the product variant.
-   *
-   * Requires one of the following permissions: MANAGE_PRODUCTS.
-   */
-  digitalContent: Maybe<DigitalContent>;
   /** External ID of this product. */
   externalReference: Maybe<Scalars['String']['output']>;
   /** The ID of the product variant. */
@@ -22367,6 +22733,50 @@ export type ProductVariantBackInStock = Event & {
 /** Event sent when product variant is back in stock. */
 export type ProductVariantBackInStockProductVariantArgs = {
   channel?: InputMaybe<Scalars['String']['input']>;
+};
+
+/**
+ * Event sent when a product variant becomes available again across click-and-collect warehouses in a channel.
+ *
+ * Note: Only triggered when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
+ *
+ * Added in Saleor 3.23.
+ */
+export type ProductVariantBackInStockForClickAndCollect = Event & {
+  /** The channel the stock availability changed in. */
+  channel: Channel;
+  /** Time of the event. */
+  issuedAt: Maybe<Scalars['DateTime']['output']>;
+  /** The user or application that triggered the event. */
+  issuingPrincipal: Maybe<IssuingPrincipal>;
+  /** The product variant the event relates to. */
+  productVariant: ProductVariant;
+  /** The application receiving the webhook. */
+  recipient: Maybe<App>;
+  /** Saleor version that triggered the event. */
+  version: Maybe<Scalars['String']['output']>;
+};
+
+/**
+ * Event sent when a product variant becomes available again across non click-and-collect warehouses in a channel.
+ *
+ * Note: Only triggered when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
+ *
+ * Added in Saleor 3.23.
+ */
+export type ProductVariantBackInStockInChannel = Event & {
+  /** The channel the stock availability changed in. */
+  channel: Channel;
+  /** Time of the event. */
+  issuedAt: Maybe<Scalars['DateTime']['output']>;
+  /** The user or application that triggered the event. */
+  issuingPrincipal: Maybe<IssuingPrincipal>;
+  /** The product variant the event relates to. */
+  productVariant: ProductVariant;
+  /** The application receiving the webhook. */
+  recipient: Maybe<App>;
+  /** Saleor version that triggered the event. */
+  version: Maybe<Scalars['String']['output']>;
 };
 
 /**
@@ -22597,7 +23007,9 @@ export type ProductVariantChannelListing = Node & {
   /** The price of the variant. */
   price: Maybe<Money>;
   /**
-   * Prior price of the variant used for discount calculations.
+   * Previous price of the variant in channel. Useful for providing promotion information required by customer protection laws such as EU Omnibus directive.
+   *
+   *  Warning: This field is not updated automatically. Use Channel Listings mutation to update it manually.
    *
    * Added in Saleor 3.21.
    */
@@ -22863,6 +23275,50 @@ export type ProductVariantOutOfStockProductVariantArgs = {
 };
 
 /**
+ * Event sent when a product variant becomes out of stock across all click-and-collect warehouses in a channel.
+ *
+ * Note: Only triggered when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
+ *
+ * Added in Saleor 3.23.
+ */
+export type ProductVariantOutOfStockForClickAndCollect = Event & {
+  /** The channel the stock availability changed in. */
+  channel: Channel;
+  /** Time of the event. */
+  issuedAt: Maybe<Scalars['DateTime']['output']>;
+  /** The user or application that triggered the event. */
+  issuingPrincipal: Maybe<IssuingPrincipal>;
+  /** The product variant the event relates to. */
+  productVariant: ProductVariant;
+  /** The application receiving the webhook. */
+  recipient: Maybe<App>;
+  /** Saleor version that triggered the event. */
+  version: Maybe<Scalars['String']['output']>;
+};
+
+/**
+ * Event sent when a product variant becomes out of stock across all non click-and-collect warehouses in a channel.
+ *
+ * Note: Only triggered when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
+ *
+ * Added in Saleor 3.23.
+ */
+export type ProductVariantOutOfStockInChannel = Event & {
+  /** The channel the stock availability changed in. */
+  channel: Channel;
+  /** Time of the event. */
+  issuedAt: Maybe<Scalars['DateTime']['output']>;
+  /** The user or application that triggered the event. */
+  issuingPrincipal: Maybe<IssuingPrincipal>;
+  /** The product variant the event relates to. */
+  productVariant: ProductVariant;
+  /** The application receiving the webhook. */
+  recipient: Maybe<App>;
+  /** Saleor version that triggered the event. */
+  version: Maybe<Scalars['String']['output']>;
+};
+
+/**
  * Deactivates product variant preorder. It changes all preorder allocation into regular allocation.
  *
  * Requires one of the following permissions: MANAGE_PRODUCTS.
@@ -22947,6 +23403,15 @@ export type ProductVariantStockUpdatedProductVariantArgs = {
  * Creates stocks for product variant.
  *
  * Requires one of the following permissions: MANAGE_PRODUCTS.
+ *
+ * Triggers the following webhook events:
+ * - PRODUCT_VARIANT_BACK_IN_STOCK (async): A product variant stock is created in a warehouse.
+ * - PRODUCT_VARIANT_BACK_IN_STOCK_IN_CHANNEL (async): A product variant is back in stock in a channel (non click-and-collect warehouses).
+ *
+ * Note: Triggered only when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
+ * - PRODUCT_VARIANT_BACK_IN_STOCK_FOR_CLICK_AND_COLLECT (async): A product variant is back in stock in a channel (click-and-collect warehouses).
+ *
+ * Note: Triggered only when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
  */
 export type ProductVariantStocksCreate = {
   /** @deprecated Use `errors` field instead. */
@@ -22960,6 +23425,15 @@ export type ProductVariantStocksCreate = {
  * Deletes stocks from product variant.
  *
  * Requires one of the following permissions: MANAGE_PRODUCTS.
+ *
+ * Triggers the following webhook events:
+ * - PRODUCT_VARIANT_OUT_OF_STOCK (async): A product variant stock is deleted from a warehouse.
+ * - PRODUCT_VARIANT_OUT_OF_STOCK_IN_CHANNEL (async): A product variant is out of stock in a channel (non click-and-collect warehouses).
+ *
+ * Note: Triggered only when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
+ * - PRODUCT_VARIANT_OUT_OF_STOCK_FOR_CLICK_AND_COLLECT (async): A product variant is out of stock in a channel (click-and-collect warehouses).
+ *
+ * Note: Triggered only when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
  */
 export type ProductVariantStocksDelete = {
   errors: Array<StockError>;
@@ -22973,6 +23447,23 @@ export type ProductVariantStocksDelete = {
  * Updates stocks for product variant.
  *
  * Requires one of the following permissions: MANAGE_PRODUCTS.
+ *
+ * Triggers the following webhook events:
+ * - PRODUCT_VARIANT_STOCK_UPDATED (async): A product variant stock is updated.
+ * - PRODUCT_VARIANT_BACK_IN_STOCK (async): A product variant stock transitioned from no availability to available quantity.
+ * - PRODUCT_VARIANT_OUT_OF_STOCK (async): A product variant stock transitioned from available quantity to no availability.
+ * - PRODUCT_VARIANT_BACK_IN_STOCK_IN_CHANNEL (async): A product variant is back in stock in a channel (non click-and-collect warehouses).
+ *
+ * Note: Triggered only when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
+ * - PRODUCT_VARIANT_OUT_OF_STOCK_IN_CHANNEL (async): A product variant is out of stock in a channel (non click-and-collect warehouses).
+ *
+ * Note: Triggered only when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
+ * - PRODUCT_VARIANT_BACK_IN_STOCK_FOR_CLICK_AND_COLLECT (async): A product variant is back in stock in a channel (click-and-collect warehouses).
+ *
+ * Note: Triggered only when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
+ * - PRODUCT_VARIANT_OUT_OF_STOCK_FOR_CLICK_AND_COLLECT (async): A product variant is out of stock in a channel (click-and-collect warehouses).
+ *
+ * Note: Triggered only when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
  */
 export type ProductVariantStocksUpdate = {
   /** @deprecated Use `errors` field instead. */
@@ -24223,20 +24714,6 @@ export type Query = {
    */
   customers: Maybe<UserCountableConnection>;
   /**
-   * Look up digital content by ID.
-   *
-   * Requires one of the following permissions: MANAGE_PRODUCTS.
-   * @deprecated Support for Digital Content is deprecated and will be removed in Saleor v3.23.0. This functionality is legacy and undocumented, and is not part of the supported API. Users should not rely on this behavior.
-   */
-  digitalContent: Maybe<DigitalContent>;
-  /**
-   * List of digital content.
-   *
-   * Requires one of the following permissions: MANAGE_PRODUCTS.
-   * @deprecated Support for Digital Content is deprecated and will be removed in Saleor v3.23.0. This functionality is legacy and undocumented, and is not part of the supported API. Users should not rely on this behavior.
-   */
-  digitalContents: Maybe<DigitalContentCountableConnection>;
-  /**
    * List of draft orders. The query will not initiate any external requests, including filtering available shipping methods, or performing external tax calculations.
    *
    * Requires one of the following permissions: MANAGE_ORDERS.
@@ -24340,12 +24817,14 @@ export type Query = {
    * Look up a payment by ID.
    *
    * Requires one of the following permissions: MANAGE_ORDERS.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
    */
   payment: Maybe<Payment>;
   /**
    * List of payments.
    *
    * Requires one of the following permissions: MANAGE_ORDERS.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
    */
   payments: Maybe<PaymentCountableConnection>;
   /**
@@ -24405,6 +24884,8 @@ export type Query = {
    * @deprecated No longer supported
    */
   reportProductSales: Maybe<ProductVariantCountableConnection>;
+  /** Returns related settings. Returns `ReturnSettings` configuration, global for the entire shop. */
+  returnSettings: ReturnSettings;
   /**
    * Look up a sale by ID.
    *
@@ -24563,7 +25044,7 @@ export type Query = {
 
 
 export type Query_EntitiesArgs = {
-  representations?: InputMaybe<Array<InputMaybe<Scalars['_Any']['input']>>>;
+  representations: Array<Scalars['_Any']['input']>;
 };
 
 
@@ -24708,19 +25189,6 @@ export type QueryCustomersArgs = {
   search?: InputMaybe<Scalars['String']['input']>;
   sortBy?: InputMaybe<UserSortingInput>;
   where?: InputMaybe<CustomerWhereInput>;
-};
-
-
-export type QueryDigitalContentArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type QueryDigitalContentsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -25117,6 +25585,7 @@ export type QueryTransactionsArgs = {
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
+  sortBy?: InputMaybe<TransactionSortingInput>;
   where?: InputMaybe<TransactionWhereInput>;
 };
 
@@ -25261,7 +25730,7 @@ export type RefundSettingsErrorCode =
 export type RefundSettingsUpdate = {
   errors: Array<RefundSettingsUpdateError>;
   /** Refund settings. */
-  refundSettings: RefundSettings;
+  refundSettings: Maybe<RefundSettings>;
   /** @deprecated Use `errors` field instead. */
   refundSettingsErrors: Array<RefundSettingsUpdateError>;
 };
@@ -25324,6 +25793,83 @@ export type RequestPasswordReset = {
   /** @deprecated Use `errors` field instead. */
   accountErrors: Array<AccountError>;
   errors: Array<AccountError>;
+};
+
+/**
+ * Updates ReturnSettings. The `Page` (Model) Type will be cleared from `reasonReferenceType`. When it's cleared, passing reason reference to return mutations is no longer accepted and will raise error.
+ *
+ * Added in Saleor 3.23.
+ *
+ * Requires one of the following permissions: MANAGE_SETTINGS.
+ */
+export type ReturnReasonReferenceTypeClear = {
+  errors: Array<ReturnReasonReferenceTypeClearError>;
+  /** Return settings. */
+  returnSettings: Maybe<ReturnSettings>;
+  /** @deprecated Use `errors` field instead. */
+  returnSettingsErrors: Array<ReturnReasonReferenceTypeClearError>;
+};
+
+export type ReturnReasonReferenceTypeClearError = {
+  /** Failed to clear return reason reference type */
+  code: ReturnSettingsErrorCode;
+  /** Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field. */
+  field: Maybe<Scalars['String']['output']>;
+  /** The error message. */
+  message: Maybe<Scalars['String']['output']>;
+};
+
+/**
+ * Return related settings from site settings.
+ *
+ * Added in Saleor 3.23.
+ */
+export type ReturnSettings = {
+  /**
+   * Model type used for return reasons.
+   *
+   * Added in Saleor 3.23.
+   */
+  reasonReferenceType: Maybe<PageType>;
+};
+
+export type ReturnSettingsErrorCode =
+  | 'GRAPHQL_ERROR'
+  | 'INVALID'
+  | 'NOT_FOUND'
+  | 'REQUIRED';
+
+/**
+ * Update return settings across all channels.
+ *
+ * Added in Saleor 3.23.
+ *
+ * Requires one of the following permissions: MANAGE_SETTINGS.
+ */
+export type ReturnSettingsUpdate = {
+  errors: Array<ReturnSettingsUpdateError>;
+  /** Return settings. */
+  returnSettings: Maybe<ReturnSettings>;
+  /** @deprecated Use `errors` field instead. */
+  returnSettingsErrors: Array<ReturnSettingsUpdateError>;
+};
+
+export type ReturnSettingsUpdateError = {
+  /** Failed to update Return Settings */
+  code: ReturnSettingsErrorCode;
+  /** Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field. */
+  field: Maybe<Scalars['String']['output']>;
+  /** The error message. */
+  message: Maybe<Scalars['String']['output']>;
+};
+
+export type ReturnSettingsUpdateInput = {
+  /**
+   * The ID of a model type, that will be used to reference return reasons. All models of this type will be accepted as return reasons.
+   *
+   * Added in Saleor 3.23.
+   */
+  returnReasonReferenceType: Scalars['ID']['input'];
 };
 
 export type RewardTypeEnum =
@@ -26012,7 +26558,10 @@ export type ShippingMethod = Node & ObjectWithMetadata & {
   id: Scalars['ID']['output'];
   /** Maximum delivery days for this shipping method. */
   maximumDeliveryDays: Maybe<Scalars['Int']['output']>;
-  /** Maximum order price for this shipping method. */
+  /**
+   * Maximum order price for this shipping method.
+   * @deprecated No longer supported
+   */
   maximumOrderPrice: Maybe<Money>;
   /**
    * Maximum order weight for this shipping method.
@@ -26033,7 +26582,10 @@ export type ShippingMethod = Node & ObjectWithMetadata & {
   metafields: Maybe<Scalars['Metadata']['output']>;
   /** Minimum delivery days for this shipping method. */
   minimumDeliveryDays: Maybe<Scalars['Int']['output']>;
-  /** Minimal order price for this shipping method. */
+  /**
+   * Minimal order price for this shipping method.
+   * @deprecated No longer supported
+   */
   minimumOrderPrice: Maybe<Money>;
   /**
    * Minimum order weight for this shipping method.
@@ -26805,14 +27357,17 @@ export type Shop = ObjectWithMetadata & {
    */
   allowLoginWithoutConfirmation: Maybe<Scalars['Boolean']['output']>;
   /**
-   * Enable automatic fulfillment for all digital products.
+   * List of announcements for this shop.
    *
-   * Requires one of the following permissions: MANAGE_SETTINGS.
+   * Requires one of the following permissions: AUTHENTICATED_STAFF_USER.
    */
-  automaticFulfillmentDigitalProducts: Maybe<Scalars['Boolean']['output']>;
+  announcements: Array<Announcement>;
   /** List of available external authentications. */
   availableExternalAuthentications: Array<ExternalAuthentication>;
-  /** List of available payment gateways. */
+  /**
+   * List of available payment gateways.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+   */
   availablePaymentGateways: Array<PaymentGateway>;
   /** Shipping methods that are available for the shop. */
   availableShippingMethods: Maybe<Array<ShippingMethod>>;
@@ -26843,18 +27398,6 @@ export type Shop = ObjectWithMetadata & {
   customerSetPasswordUrl: Maybe<Scalars['String']['output']>;
   /** Shop's default country. */
   defaultCountry: Maybe<CountryDisplay>;
-  /**
-   * Default number of max downloads per digital content URL.
-   *
-   * Requires one of the following permissions: MANAGE_SETTINGS.
-   */
-  defaultDigitalMaxDownloads: Maybe<Scalars['Int']['output']>;
-  /**
-   * Default number of days which digital content URL will be valid.
-   *
-   * Requires one of the following permissions: MANAGE_SETTINGS.
-   */
-  defaultDigitalUrlValidDays: Maybe<Scalars['Int']['output']>;
   /**
    * Default shop's email sender's address.
    *
@@ -26924,6 +27467,12 @@ export type Shop = ObjectWithMetadata & {
   metafields: Maybe<Scalars['Metadata']['output']>;
   /** Shop's name. */
   name: Scalars['String']['output'];
+  /**
+   * Controls whether password-based authentication is allowed.
+   *
+   * Added in Saleor 3.23.
+   */
+  passwordLoginMode: PasswordLoginModeEnum;
   /** List of available permissions. */
   permissions: Array<Permission>;
   /** List of possible phone prefixes. */
@@ -26970,6 +27519,12 @@ export type Shop = ObjectWithMetadata & {
   trackInventoryByDefault: Maybe<Scalars['Boolean']['output']>;
   /** Returns translated shop fields for the given language code. */
   translation: Maybe<ShopTranslation>;
+  /**
+   * When enabled, stock availability is filtered by shipping zones and the destination address (legacy behavior). When disabled, stock availability is determined only by the direct warehouse-channel link, ignoring shipping zones.
+   *
+   * Added in Saleor 3.23.
+   */
+  useLegacyShippingZoneStockAvailability: Scalars['Boolean']['output'];
   /**
    * Use legacy update webhook emission. When enabled, update webhooks (e.g. `customerUpdated`,`productVariantUpdated`) are sent even when only metadata changes. When disabled, update webhooks are not sent for metadata-only changes; only metadata-specific webhooks (e.g., `customerMetadataUpdated`, `productVariantMetadataUpdated`) are sent.
    *
@@ -27077,6 +27632,7 @@ export type ShopErrorCode =
   | 'GRAPHQL_ERROR'
   | 'INVALID'
   | 'NOT_FOUND'
+  | 'PASSWORD_AUTH_RESTRICTION'
   | 'REQUIRED'
   | 'UNIQUE';
 
@@ -27110,8 +27666,6 @@ export type ShopMetadataUpdated = Event & {
 export type ShopSettingsInput = {
   /** Enable possibility to login without account confirmation. */
   allowLoginWithoutConfirmation?: InputMaybe<Scalars['Boolean']['input']>;
-  /** Enable automatic fulfillment for all digital products. */
-  automaticFulfillmentDigitalProducts?: InputMaybe<Scalars['Boolean']['input']>;
   /**
    * Charge taxes on shipping.
    *
@@ -27120,10 +27674,6 @@ export type ShopSettingsInput = {
   chargeTaxesOnShipping?: InputMaybe<Scalars['Boolean']['input']>;
   /** URL of a view where customers can set their password. */
   customerSetPasswordUrl?: InputMaybe<Scalars['String']['input']>;
-  /** Default number of max downloads per digital content URL. */
-  defaultDigitalMaxDownloads?: InputMaybe<Scalars['Int']['input']>;
-  /** Default number of days which digital content URL will be valid. */
-  defaultDigitalUrlValidDays?: InputMaybe<Scalars['Int']['input']>;
   /** Default email sender's address. */
   defaultMailSenderAddress?: InputMaybe<Scalars['String']['input']>;
   /** Default email sender's name. */
@@ -27161,6 +27711,18 @@ export type ShopSettingsInput = {
    */
   metadata?: InputMaybe<Array<MetadataInput>>;
   /**
+   * Shop's name.
+   *
+   * Added in Saleor 3.23.
+   */
+  name?: InputMaybe<Scalars['String']['input']>;
+  /**
+   * Controls whether password-based authentication is allowed.
+   *
+   * Added in Saleor 3.23.
+   */
+  passwordLoginMode?: InputMaybe<PasswordLoginModeEnum>;
+  /**
    * When enabled, address fields that are not valid for a given country (according to Google's i18n address data) will be preserved instead of being removed during validation. Validation errors are still returned.
    *
    * Added in Saleor 3.22.
@@ -27178,6 +27740,12 @@ export type ShopSettingsInput = {
   reserveStockDurationAuthenticatedUser?: InputMaybe<Scalars['Int']['input']>;
   /** This field is used as a default value for `ProductVariant.trackInventory`. */
   trackInventoryByDefault?: InputMaybe<Scalars['Boolean']['input']>;
+  /**
+   * When enabled, stock availability is filtered by shipping zones and the destination address (legacy behavior). When disabled, stock availability is determined only by the direct warehouse-channel link, ignoring shipping zones.
+   *
+   * Added in Saleor 3.23.
+   */
+  useLegacyShippingZoneStockAvailability?: InputMaybe<Scalars['Boolean']['input']>;
   /**
    * Use legacy update webhook emission. When enabled, update webhooks (e.g. `customerUpdated`,`productVariantUpdated`) are sent even when only metadata changes. When disabled, update webhooks are not sent for metadata-only changes; only metadata-specific webhooks (e.g., `customerMetadataUpdated`, `productVariantMetadataUpdated`) are sent.
    *
@@ -27927,6 +28495,26 @@ export type Subscription = {
    */
   orderUpdated: Maybe<OrderUpdated>;
   /**
+   * Event sent when a product variant becomes available again across click-and-collect warehouses in a channel.
+   *
+   * Note: Only triggered when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
+   *
+   * Added in Saleor 3.23.
+   *
+   * Note: this API is currently in Feature Preview and can be subject to changes at later point.
+   */
+  productVariantBackInStockForClickAndCollect: Maybe<ProductVariantBackInStockForClickAndCollect>;
+  /**
+   * Event sent when a product variant becomes available again across non click-and-collect warehouses in a channel.
+   *
+   * Note: Only triggered when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
+   *
+   * Added in Saleor 3.23.
+   *
+   * Note: this API is currently in Feature Preview and can be subject to changes at later point.
+   */
+  productVariantBackInStockInChannel: Maybe<ProductVariantBackInStockInChannel>;
+  /**
    * Event sent when product variant discounted price is recalculated.
    *
    * Added in Saleor 3.22.
@@ -27934,6 +28522,26 @@ export type Subscription = {
    * Note: this API is currently in Feature Preview and can be subject to changes at later point.
    */
   productVariantDiscountedPriceUpdated: Maybe<ProductVariantDiscountedPriceUpdated>;
+  /**
+   * Event sent when a product variant becomes out of stock across all click-and-collect warehouses in a channel.
+   *
+   * Note: Only triggered when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
+   *
+   * Added in Saleor 3.23.
+   *
+   * Note: this API is currently in Feature Preview and can be subject to changes at later point.
+   */
+  productVariantOutOfStockForClickAndCollect: Maybe<ProductVariantOutOfStockForClickAndCollect>;
+  /**
+   * Event sent when a product variant becomes out of stock across all non click-and-collect warehouses in a channel.
+   *
+   * Note: Only triggered when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
+   *
+   * Added in Saleor 3.23.
+   *
+   * Note: this API is currently in Feature Preview and can be subject to changes at later point.
+   */
+  productVariantOutOfStockInChannel: Maybe<ProductVariantOutOfStockInChannel>;
 };
 
 
@@ -28037,7 +28645,27 @@ export type SubscriptionOrderUpdatedArgs = {
 };
 
 
+export type SubscriptionProductVariantBackInStockForClickAndCollectArgs = {
+  channels?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+
+export type SubscriptionProductVariantBackInStockInChannelArgs = {
+  channels?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+
 export type SubscriptionProductVariantDiscountedPriceUpdatedArgs = {
+  channels?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+
+export type SubscriptionProductVariantOutOfStockForClickAndCollectArgs = {
+  channels?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+
+export type SubscriptionProductVariantOutOfStockInChannelArgs = {
   channels?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
@@ -28671,7 +29299,11 @@ export type TimePeriodTypeEnum =
 export type TokenizedPaymentFlowEnum =
   | 'INTERACTIVE';
 
-/** An object representing a single payment. */
+/**
+ * An object representing a single payment.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type Transaction = Node & {
   /** Total amount of the transaction. */
   amount: Maybe<Money>;
@@ -28681,7 +29313,7 @@ export type Transaction = Node & {
   error: Maybe<Scalars['String']['output']>;
   /**
    * Response returned by payment gateway.
-   * @deprecated This field is a part of a legacy Payments API. Please use apps instead.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
    */
   gatewayResponse: Scalars['JSONString']['output'];
   /** ID of the transaction. */
@@ -28860,6 +29492,26 @@ export type TransactionEvent = Node & {
   type: Maybe<TransactionEventTypeEnum>;
 };
 
+/**
+ * Filter input for transaction events data.
+ *
+ * Added in Saleor 3.23.
+ */
+export type TransactionEventFilterInput = {
+  /**
+   * Filter transaction events by created at date.
+   *
+   * Added in Saleor 3.23.
+   */
+  createdAt?: InputMaybe<DateTimeRangeInput>;
+  /**
+   * Filter transaction events by type.
+   *
+   * Added in Saleor 3.23.
+   */
+  type?: InputMaybe<TransactionEventTypeEnumFilterInput>;
+};
+
 export type TransactionEventInput = {
   /** The message related to the event. */
   message?: InputMaybe<Scalars['String']['input']>;
@@ -28951,6 +29603,13 @@ export type TransactionEventTypeEnum =
   | 'REFUND_REQUEST'
   | 'REFUND_REVERSE'
   | 'REFUND_SUCCESS';
+
+export type TransactionEventTypeEnumFilterInput = {
+  /** The value equal to. */
+  eq?: InputMaybe<TransactionEventTypeEnum>;
+  /** The value included in. */
+  oneOf?: InputMaybe<Array<TransactionEventTypeEnum>>;
+};
 
 /** Filter input for transactions. */
 export type TransactionFilterInput = {
@@ -29301,6 +29960,27 @@ export type TransactionRequestRefundForGrantedRefundErrorCode =
   | 'REFUND_ALREADY_PROCESSED'
   | 'REFUND_IS_PENDING';
 
+export type TransactionSortField =
+  /**
+   * Sort transactions by creation date.
+   *
+   * Added in Saleor 3.23.
+   */
+  | 'CREATED_AT'
+  /**
+   * Sort transactions by modification date.
+   *
+   * Added in Saleor 3.23.
+   */
+  | 'MODIFIED_AT';
+
+export type TransactionSortingInput = {
+  /** Specifies the direction in which to sort transactions. */
+  direction: OrderDirection;
+  /** Sort transactions by the selected field. */
+  field: TransactionSortField;
+};
+
 /**
  * Update transaction.
  *
@@ -29374,7 +30054,25 @@ export type TransactionWhereInput = {
   OR?: InputMaybe<Array<TransactionWhereInput>>;
   /** Filter by app identifier. */
   appIdentifier?: InputMaybe<StringFilterInput>;
+  /**
+   * Filter transactions by created at date.
+   *
+   * Added in Saleor 3.23.
+   */
+  createdAt?: InputMaybe<DateTimeRangeInput>;
+  /**
+   * Filter by transaction events. Each list item represents conditions that must be satisfied by a single event. The filter matches transactions that have related events meeting all specified groups of conditions.
+   *
+   * Added in Saleor 3.23.
+   */
+  events?: InputMaybe<Array<TransactionEventFilterInput>>;
   ids?: InputMaybe<Array<Scalars['ID']['input']>>;
+  /**
+   * Filter transactions by modified at date.
+   *
+   * Added in Saleor 3.23.
+   */
+  modifiedAt?: InputMaybe<DateTimeRangeInput>;
   /** Filter by PSP reference. */
   pspReference?: InputMaybe<StringFilterInput>;
 };
@@ -29627,7 +30325,10 @@ export type User = Node & ObjectWithMetadata & {
   restrictedAccessToChannels: Scalars['Boolean']['output'];
   /** Returns a list of user's stored payment methods that can be used in provided channel. The field returns a list of stored payment methods by payment apps. When `amount` is not provided, 0 will be used as default value. */
   storedPaymentMethods: Maybe<Array<StoredPaymentMethod>>;
-  /** List of stored payment sources. The field returns a list of payment sources stored for payment plugins. */
+  /**
+   * List of stored payment sources. The field returns a list of payment sources stored for payment plugins.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+   */
   storedPaymentSources: Maybe<Array<PaymentSource>>;
   /** The data when the user last update the account information. */
   updatedAt: Scalars['DateTime']['output'];
@@ -29848,7 +30549,9 @@ export type UserSortField =
   /** Sort users by last name. */
   | 'LAST_NAME'
   /** Sort users by order count. */
-  | 'ORDER_COUNT';
+  | 'ORDER_COUNT'
+  /** Sort users by rank. Note: This option is available only with the `search` filter. */
+  | 'RANK';
 
 export type UserSortingInput = {
   /** Specifies the direction in which to sort users. */
@@ -30831,6 +31534,16 @@ export type WarehouseCreated = Event & {
  * Deletes selected warehouse.
  *
  * Requires one of the following permissions: MANAGE_PRODUCTS.
+ *
+ * Triggers the following webhook events:
+ * - WAREHOUSE_DELETED (async): A warehouse is deleted.
+ * - PRODUCT_VARIANT_OUT_OF_STOCK (async): A product variant stock is removed together with the deleted warehouse.
+ * - PRODUCT_VARIANT_OUT_OF_STOCK_IN_CHANNEL (async): A product variant is out of stock in a channel (non click-and-collect warehouses).
+ *
+ * Note: Triggered only when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
+ * - PRODUCT_VARIANT_OUT_OF_STOCK_FOR_CLICK_AND_COLLECT (async): A product variant is out of stock in a channel (click-and-collect warehouses).
+ *
+ * Note: Triggered only when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
  */
 export type WarehouseDelete = {
   errors: Array<WarehouseError>;
@@ -31357,6 +32070,18 @@ export type WebhookEventTypeAsyncEnum =
   | 'PRODUCT_UPDATED'
   /** A product variant is back in stock. */
   | 'PRODUCT_VARIANT_BACK_IN_STOCK'
+  /**
+   * A product variant becomes available again across click-and-collect warehouses in a channel.
+   *
+   * Note: Only triggered when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
+   */
+  | 'PRODUCT_VARIANT_BACK_IN_STOCK_FOR_CLICK_AND_COLLECT'
+  /**
+   * A product variant becomes available again across non click-and-collect warehouses in a channel.
+   *
+   * Note: Only triggered when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
+   */
+  | 'PRODUCT_VARIANT_BACK_IN_STOCK_IN_CHANNEL'
   /** A new product variant is created. */
   | 'PRODUCT_VARIANT_CREATED'
   /** A product variant is deleted. Warning: this event will not be executed when parent product has been deleted. Check PRODUCT_DELETED. */
@@ -31366,6 +32091,18 @@ export type WebhookEventTypeAsyncEnum =
   | 'PRODUCT_VARIANT_METADATA_UPDATED'
   /** A product variant is out of stock. */
   | 'PRODUCT_VARIANT_OUT_OF_STOCK'
+  /**
+   * A product variant becomes out of stock across all click-and-collect warehouses in a channel.
+   *
+   * Note: Only triggered when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
+   */
+  | 'PRODUCT_VARIANT_OUT_OF_STOCK_FOR_CLICK_AND_COLLECT'
+  /**
+   * A product variant becomes out of stock across all non click-and-collect warehouses in a channel.
+   *
+   * Note: Only triggered when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
+   */
+  | 'PRODUCT_VARIANT_OUT_OF_STOCK_IN_CHANNEL'
   /** A product variant stock is updated */
   | 'PRODUCT_VARIANT_STOCK_UPDATED'
   /** A product variant is updated. */
@@ -31683,6 +32420,18 @@ export type WebhookEventTypeEnum =
   | 'PRODUCT_UPDATED'
   /** A product variant is back in stock. */
   | 'PRODUCT_VARIANT_BACK_IN_STOCK'
+  /**
+   * A product variant becomes available again across click-and-collect warehouses in a channel.
+   *
+   * Note: Only triggered when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
+   */
+  | 'PRODUCT_VARIANT_BACK_IN_STOCK_FOR_CLICK_AND_COLLECT'
+  /**
+   * A product variant becomes available again across non click-and-collect warehouses in a channel.
+   *
+   * Note: Only triggered when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
+   */
+  | 'PRODUCT_VARIANT_BACK_IN_STOCK_IN_CHANNEL'
   /** A new product variant is created. */
   | 'PRODUCT_VARIANT_CREATED'
   /** A product variant is deleted. Warning: this event will not be executed when parent product has been deleted. Check PRODUCT_DELETED. */
@@ -31692,6 +32441,18 @@ export type WebhookEventTypeEnum =
   | 'PRODUCT_VARIANT_METADATA_UPDATED'
   /** A product variant is out of stock. */
   | 'PRODUCT_VARIANT_OUT_OF_STOCK'
+  /**
+   * A product variant becomes out of stock across all click-and-collect warehouses in a channel.
+   *
+   * Note: Only triggered when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
+   */
+  | 'PRODUCT_VARIANT_OUT_OF_STOCK_FOR_CLICK_AND_COLLECT'
+  /**
+   * A product variant becomes out of stock across all non click-and-collect warehouses in a channel.
+   *
+   * Note: Only triggered when the `useLegacyShippingZoneStockAvailability` shop setting is disabled.
+   */
+  | 'PRODUCT_VARIANT_OUT_OF_STOCK_IN_CHANNEL'
   /** A product variant stock is updated */
   | 'PRODUCT_VARIANT_STOCK_UPDATED'
   /** A product variant is updated. */
@@ -31927,11 +32688,15 @@ export type WebhookSampleEventTypeEnum =
   | 'PRODUCT_METADATA_UPDATED'
   | 'PRODUCT_UPDATED'
   | 'PRODUCT_VARIANT_BACK_IN_STOCK'
+  | 'PRODUCT_VARIANT_BACK_IN_STOCK_FOR_CLICK_AND_COLLECT'
+  | 'PRODUCT_VARIANT_BACK_IN_STOCK_IN_CHANNEL'
   | 'PRODUCT_VARIANT_CREATED'
   | 'PRODUCT_VARIANT_DELETED'
   | 'PRODUCT_VARIANT_DISCOUNTED_PRICE_UPDATED'
   | 'PRODUCT_VARIANT_METADATA_UPDATED'
   | 'PRODUCT_VARIANT_OUT_OF_STOCK'
+  | 'PRODUCT_VARIANT_OUT_OF_STOCK_FOR_CLICK_AND_COLLECT'
+  | 'PRODUCT_VARIANT_OUT_OF_STOCK_IN_CHANNEL'
   | 'PRODUCT_VARIANT_STOCK_UPDATED'
   | 'PRODUCT_VARIANT_UPDATED'
   | 'PROMOTION_CREATED'
@@ -32062,15 +32827,6 @@ export type WeightUnitsEnum =
   | 'LB'
   | 'OZ'
   | 'TONNE';
-
-/** Represents the WIDGET target options for an app extension. */
-export type WidgetTargetOptions = {
-  /**
-   * HTTP method for Widget target (GET or POST)
-   * @deprecated Use `settings` field directly.
-   */
-  method: HttpMethod;
-};
 
 /** _Entity union as defined by Federation spec. */
 export type _Entity = Address | App | Category | Collection | Group | Order | PageType | Product | ProductMedia | ProductType | ProductVariant | User;

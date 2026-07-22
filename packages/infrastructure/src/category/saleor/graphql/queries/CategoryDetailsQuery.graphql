@@ -1,0 +1,5 @@
+query CategoryDetailsQuery($slug: String) {
+  category(slug: $slug) {
+    ...CategoryFragment
+  }
+}

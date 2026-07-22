@@ -1,0 +1,12 @@
+fragment CategoryFragment on Category {
+  id
+  name
+  slug
+  description
+  seoTitle
+  seoDescription
+  backgroundImage {
+    url
+    alt
+  }
+}

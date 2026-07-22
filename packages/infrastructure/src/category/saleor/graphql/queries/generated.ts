@@ -18,6 +18,20 @@ export type CategoriesIDsBySlugsVariables = Types.Exact<{
 
 export type CategoriesIDsBySlugs = CategoriesIDsBySlugs_Query;
 
+export type CategoryDetailsQuery_category_Category_backgroundImage_Image = { url: string, alt: string | null };
+
+export type CategoryDetailsQuery_category_Category = { id: string, name: string, slug: string, description: string | null, seoTitle: string | null, seoDescription: string | null, backgroundImage: CategoryDetailsQuery_category_Category_backgroundImage_Image | null };
+
+export type CategoryDetailsQuery_Query = { category: CategoryDetailsQuery_category_Category | null };
+
+
+export type CategoryDetailsQueryVariables = Types.Exact<{
+  slug?: Types.InputMaybe<Types.Scalars['String']['input']>;
+}>;
+
+
+export type CategoryDetailsQuery = CategoryDetailsQuery_Query;
+
 export class TypedDocumentString<TResult, TVariables>
   extends String
   implements DocumentTypeDecoration<TResult, TVariables>
@@ -48,3 +62,21 @@ export const CategoriesIDsBySlugsDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<CategoriesIDsBySlugs, CategoriesIDsBySlugsVariables>;
+export const CategoryDetailsQueryDocument = new TypedDocumentString(`
+    query CategoryDetailsQuery($slug: String) {
+  category(slug: $slug) {
+    ...CategoryFragment
+  }
+}
+    fragment CategoryFragment on Category {
+  id
+  name
+  slug
+  description
+  seoTitle
+  seoDescription
+  backgroundImage {
+    url
+    alt
+  }
+}`) as unknown as TypedDocumentString<CategoryDetailsQuery, CategoryDetailsQueryVariables>;

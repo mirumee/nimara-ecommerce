@@ -59,7 +59,7 @@ export const MarketplacePDPView = async ({
             category={product.category}
             productName={product.name}
             homePath={paths.home}
-            searchPath={paths.search}
+            categoryPath={paths.category}
           />
 
           <div className="grid gap-8 md:grid-cols-2 md:gap-28">
