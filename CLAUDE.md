@@ -1,42 +1,63 @@
-# Nimara — Claude Code memory
+# Nimara E‑commerce
 
-Nimara is a Saleor-based, layered Turborepo/pnpm monorepo for storefronts and
-marketplaces. The canonical guidance lives in `AGENTS.md` and the skills under
-`.agents/skills/` — this file loads them and pins the always-on rules.
+## Abstract
 
-@AGENTS.md
+Nimara is a Node.js monorepo for composable commerce. It is an open-source, composable commerce ecosystem for engineering teams who want:
 
-## Always-on rules
+- **SaaS-level speed to start** - Get up and running quickly
+- **Full ownership and control** - Own your code, no vendor lock-in
+- **Modular architecture** - Replaceable integrations and features
+- **Clean monorepo structure** - Enable multiple frontends and backend components
 
-- **Server Components first.** Add `"use client"` only for interactivity, hooks, or
-  browser APIs. Use Server Actions (`"use server"`) for mutations + `revalidatePath`/
-  `revalidateTag`.
-- **Result pattern.** Wrap fallible operations in `Result<T, E>` from
-  `@nimara/domain/objects/Result`; don't throw for expected business errors. Server
-  Actions return Result-like objects.
-- **Layer boundaries.** `domain`/`foundation` are leaf packages; `infrastructure` depends
-  only on them; `features` composes everything; apps consume features/infra/ui. Never
-  import `@nimara/codegen` from app or component code — go through services.
-- **Named exports only** (Next.js route/page/layout files are exempt).
-- **Codegen.** Run `pnpm codegen` after any `.graphql` change; never hand-write generated
-  GraphQL types.
-- **Dependencies (CRITICAL).** NEVER add a dependency automatically — propose it with
-  alternatives and wait for approval.
+---
 
-## Verify before done
+## Global rules
 
-```bash
-turbo run lint:staged   # lint changed files
-pnpm format:check       # Prettier (must stay clean)
-pnpm test               # Vitest
-pnpm codegen            # regenerate + check no diff after .graphql edits
+- Target `main` for ordinary pull requests. Use release branches only for explicitly
+  requested promotion work.
+- Never add or remove a dependency without explicit user approval.
+- Never read, expose, or commit local secrets.
+- Never hand-edit generated GraphQL files. Run `pnpm codegen` after `.graphql` changes.
+
+---
+
+## The North Star
+
+A developer should be able to:
+
+1. **Create a new project quickly** - Minimal setup, maximum productivity
+2. **Add storefront and integrations incrementally** - Start simple, grow as needed
+3. **Run locally with minimal config** - Dummy profiles work out of the box
+4. **Override only what they need** - No forking required
+5. **Deploy with predictable infra scripts** - Terraform modules included
+6. **Expand into multi-app monorepo** - Vendor panel, admin panel, services, integrations
+
+---
+
+## Architecture Overview
+
+Nimara uses a **layered monorepo** with strict dependency boundaries to keep code maintainable and reusable.
+
+**For detailed guidance on package layers, dependency direction, and architectural decisions, see the `/project-guidelines` skill.**
+
+### Layers
+
+```
+apps/
+├── storefront/              # Next.js 16 customer storefront
+├── marketplace/             # Vendor dashboard; Postgres ledger, Stripe Connect, payout batches
+├── stripe/                  # Stripe payment integration app (Saleor Payment Gateway)
+└── automated-tests/         # Playwright E2E tests
+
+packages/
+├── domain/                  # Pure business logic (types, consts, entities)
+├── foundation/              # Utilities, hooks, helpers
+├── infrastructure/          # External API integrations (Saleor, ButterCMS, etc.)
+├── features/                # Feature implementations (UI + logic + state)
+├── ui/                      # Shared UI components (Shadcn-style)
+└── config/                  # Shared configs (Tailwind, ESLint, PostCSS)
 ```
 
-## Workflow layer
+### Dependency Flow
 
-- Subagents (`.claude/agents/`): `lead-developer`, `frontend-expert`, `devops-infra`,
-  `qa-testing` — see `AGENTS.md` for each role's charter.
-- SDLC commands (`.claude/commands/`): `/feature`, `/new-use-case`, `/codegen-check`,
-  `/arch-review`, `/ship`.
-- Architecture decisions → `.agents/skills/project-guidelines/SKILL.md`. React/Next →
-  `vercel-react-best-practices`, `vercel-composition-patterns`. Build system → `turborepo`.
+The project follows the principles of Clean Architecture
