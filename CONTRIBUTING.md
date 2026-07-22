@@ -34,6 +34,13 @@ We welcome all contributions, whether they be code, documentation, bug reports, 
      git checkout -b contrib/your-feature-name
      ```
 
+## Claude Code
+
+The repository enables the official `typescript-lsp` plugin for TypeScript code
+intelligence. Claude Code users must install `typescript-language-server` on their machine
+using the team's approved tooling and ensure the binary is available on `PATH`. It is a
+machine prerequisite, not a repository dependency.
+
 ## Making Changes
 
 1. **Code Standards**:
