@@ -11,11 +11,11 @@
     "version": "docusaurus docs:version"
   },
   "dependencies": {
-    "@docusaurus/core": "3.10.1",
-    "@docusaurus/preset-classic": "3.10.1",
-    "@docusaurus/theme-mermaid": "3.10.1",
-    "@mdx-js/react": "3.1.0",
-    "@mermaid-js/layout-elk": "0.2.1",
+    "@docusaurus/core": "3.10.2",
+    "@docusaurus/preset-classic": "3.10.2",
+    "@docusaurus/theme-mermaid": "3.10.2",
+    "@mdx-js/react": "3.1.1",
+    "@mermaid-js/layout-elk": "0.2.2",
     "clsx": "2.1.1",
     "prism-react-renderer": "2.4.1",
     "react": "18.3.1",
