@@ -16,6 +16,7 @@ export const URLS = (channel: Channel = "gb") =>
     CREATE_ACCOUNT: `${channel}/create-account`,
     PRODUCTS_PAGE: `${channel}/search`,
     PRODUCT_PAGE: `${channel}/products`,
+    CATEGORY_PAGE: `${channel}/categories`,
   }) as const;
 
 export const product = {
@@ -46,6 +47,13 @@ export const storeParagraphs = {
     "Subscribe to our newsletter and be the first to get updates on new products and promotions.",
 };
 export type Product = typeof product;
+
+export const category = {
+  slug: "music",
+  name: "Music",
+};
+
+export type Category = typeof category;
 
 export const user = {
   email: "test@mirumee.com",

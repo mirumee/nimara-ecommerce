@@ -71,7 +71,7 @@ export const SearchPagination = ({
           <PaginationItem>
             <PaginationPrevious
               label={t("previous")}
-              aria-label={t("go-to-next-page")}
+              aria-label={t("go-to-previous-page")}
               className={cn({
                 "pointer-events-none text-neutral-400":
                   !pageInfo.hasPreviousPage,
@@ -82,7 +82,7 @@ export const SearchPagination = ({
           <PaginationItem>
             <PaginationNext
               label={t("next")}
-              aria-label={t("go-to-previous-page")}
+              aria-label={t("go-to-next-page")}
               className={cn({
                 "pointer-events-none text-neutral-400": !pageInfo.hasNextPage,
               })}
