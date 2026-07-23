@@ -36,7 +36,9 @@ lychee --config apps/docs/lychee.toml \
 
 ## Deployment
 
-Pushes to `main`, `staging`, or `develop` that touch `apps/docs/**` trigger `.github/workflows/docs-deploy.yml`, which publishes the site to GitHub Pages.
+After `main` passes CI and the Release workflow completes, `.github/workflows/docs-deploy.yml`
+publishes the documentation from that exact commit to GitHub Pages. Manually pushed version tags
+and manual workflow runs can also publish the site.
 
 ## Docs Versioning
 

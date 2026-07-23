@@ -126,7 +126,9 @@ pnpm run codegen
 
 ## Daily Workflow and Releasing
 
-The Git branching strategy (`develop` → `staging` → `main`) and the day-to-day and release process are documented here: [Daily Workflow & Releasing - Nimara Docs](https://docs.nimara.store/release-workflow).
+Nimara uses trunk-based development: short-lived change branches merge into `main`, the only
+long-lived branch. The day-to-day and release process is documented here:
+[Daily Workflow & Releasing - Nimara Docs](https://docs.nimara.store/release-workflow).
 
 ## Deploying the app to Vercel using a Terraform
 

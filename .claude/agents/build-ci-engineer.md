@@ -16,6 +16,8 @@ Responsibilities:
 - preserve correct task dependencies and generated-code ordering in `turbo.json`;
 - use repository-local Turbo through root scripts or `pnpm exec turbo`;
 - keep cache inputs, outputs, and environment declarations accurate;
+- preserve the stable `Linters & Tests` check on pull requests to `main` and pushes to `main`;
+- chain post-merge release work to the successful CI run and its exact triggering SHA;
 - ensure new or renamed workspaces participate in relevant CI checks;
 - prefer the smallest task-graph change that expresses the real dependency.
 

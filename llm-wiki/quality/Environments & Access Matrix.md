@@ -9,7 +9,7 @@ tags:
   - "channels"
   - "agents"
 created: "2026-06-30T00:00:00+00:00"
-timestamp: "2026-06-30T00:00:00+00:00"
+timestamp: "2026-07-23T00:00:00+00:00"
 ---
 
 ## Content
@@ -19,7 +19,7 @@ timestamp: "2026-06-30T00:00:00+00:00"
 | Host                                                        | Role                                       | Notes                                                                                    |
 | ----------------------------------------------------------- | ------------------------------------------ | ---------------------------------------------------------------------------------------- |
 | `dev.nimara.store`                                          | primary dev storefront                     | active `NEXT_PUBLIC_STOREFRONT_URL`; default for retests                                 |
-| `stage.nimara.store`                                        | staging storefront                         | backend = Saleor `marina-stg`                                                            |
+| `stage.nimara.store`                                        | persistent QA storefront                   | backend = Saleor `marina-stg`; identify tests by deployed commit SHA, not a Git branch   |
 | `demo.nimara.store`                                         | public demo store                          | closest-to-prod public storefront                                                        |
 | `nimara.store`                                              | **marketing / landing page — NOT a store** | no `/search`, no `/products` (`/search` → 404). Never measure/test it as the storefront. |
 | `marketplace.dev.nimara.store` / `marketplace.nimara.store` | vendor app (sign-up, vendor panel)         | separate Next.js app                                                                     |

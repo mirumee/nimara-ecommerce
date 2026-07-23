@@ -67,4 +67,6 @@ pnpm format:check     # Prettier
 turbo run lint:staged # lint changed files
 ```
 
-Git flow: feature branch → `develop` → `staging` (QA) → `main` (prod). Conventional Commits.
+Git flow: short-lived change branch → PR → `main` (trunk and production). Keep branches under
+two working days, use Conventional Commit PR titles, and hide incomplete work behind a
+short-lived feature flag or branch-by-abstraction seam.

@@ -2,15 +2,18 @@ name: Linters & Tests
 
 on:
   pull_request:
+    branches:
+      - main
     types:
       - opened
+      - reopened
+      - ready_for_review
       - synchronize
   push:
     tags:
       - "*"
     branches:
-      - develop
-      - staging
+      - main
 
 jobs:
   job:
@@ -76,7 +79,7 @@ jobs:
           elif [[ "${{ github.event_name }}" == "pull_request" && "${{ steps.changed-files.outputs.any_changed }}" != "true" ]]; then
             echo "No relevant files changed in this PR for ESLint."
           else
-            echo "Linting all files for push event (develop, staging, tags)."
+            echo "Linting all files for push event (main or tags)."
             for eslint_target in \
               apps/automated-tests \
               apps/docs \

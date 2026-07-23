@@ -25,3 +25,8 @@
 - **Lint**: Verified 85 Markdown files, 453 local links, and all 8 OPS schemas and registrations with no graph or source-anonymization failures.
 - **Lint**: Verified all 32 immutable OPS provenance links and all 7 Saleor schema notes without a failed or stale result.
 - **Index**: Refreshed and embedded the QMD collection after the operations ingest.
+
+## 2026-07-23
+
+- **Update**: Replaced branch-promotion guidance in OPS-0008 with the CI-gated release-from-trunk and production rollback procedure anchored to implementation commit `241c4bbfa932f0a672b9422aed98489aaba76d1c`.
+- **Maintenance**: Reconciled the operations register, root index, and QA environment matrix with `main` as the only long-lived development branch.

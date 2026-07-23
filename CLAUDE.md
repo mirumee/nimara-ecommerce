@@ -13,8 +13,19 @@ Nimara is a Node.js monorepo for composable commerce. It is an open-source, comp
 
 ## Global rules
 
-- Target `main` for ordinary pull requests. Use release branches only for explicitly
-  requested promotion work.
+- `main` is the only long-lived branch and is always releasable. Start focused change branches
+  from the latest `main`, target squash-merged pull requests back to `main`, and aim to merge
+  within two working days.
+- Use a Conventional Commit pull-request title because the squash title drives semantic-release.
+  Required checks are `Linters & Tests`, `Vercel – nimara-docs`,
+  `Vercel – nimara-ecommerce`, `Vercel – nimara-ecommerce-stripe`, and
+  `Vercel – nimara-marketplace`.
+- Split longer work into releasable slices. Keep incomplete behavior behind a short-lived,
+  default-off feature flag or branch-by-abstraction seam, test meaningful states, and remove the
+  flag after rollout.
+- Vercel deploys accepted `main` changes to production. For a regression, restore the previous
+  Vercel deployment and submit a revert or fix-forward pull request; never rewrite `main` or
+  published tags.
 - Never add or remove a dependency without explicit user approval.
 - Never read, expose, or commit local secrets.
 - Never hand-edit generated GraphQL files. Run `pnpm codegen` after `.graphql` changes.

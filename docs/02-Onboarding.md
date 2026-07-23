@@ -132,9 +132,15 @@ pnpm format:check          # what CI checks
 
 ### Branches and commits
 
-- **Branch:** one per change, prefix with `contrib/` or `feat/`.
-- **Internal flow:** `develop` → `staging` (QA) → `main` (production). External contributors open PRs from a fork.
-- **Commits:** [Conventional Commits](https://www.conventionalcommits.org/). Husky runs `lint-staged` on commit, so formatting is automatic. Run `pnpm exec cz` for a guided prompt.
+- **Trunk:** `main` is the only long-lived branch and is always expected to be releasable.
+- **Change branches:** create one from the latest `main`, keep it focused, and aim to merge it
+  within two working days. External contributors use the same flow from a fork.
+- **Incomplete work:** split larger changes into releasable slices. Use a short-lived feature flag
+  or branch-by-abstraction seam when incomplete behavior must be merged, and remove the flag after
+  rollout.
+- **Commits and PRs:** use a [Conventional Commit](https://www.conventionalcommits.org/) PR title
+  because the squash title drives semantic-release. Husky runs `lint-staged` on commit, so
+  formatting is automatic. Run `pnpm exec cz` for a guided prompt.
 
 ### Before opening a PR
 
@@ -179,7 +185,10 @@ pnpm format
 
 ### Open a PR
 
-Push, open a PR against `develop`, give it a Conventional Commit title and a clear description. A maintainer takes it from there.
+Push, open a PR against `main`, give it a Conventional Commit title, and include testing evidence.
+`Linters & Tests` and all four Vercel project statuses (`nimara-docs`, `nimara-ecommerce`,
+`nimara-ecommerce-stripe`, and `nimara-marketplace`) must pass before the PR can be squash-merged.
+A maintainer takes it from there.
 
 ## Where to go next
 

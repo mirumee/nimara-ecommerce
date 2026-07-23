@@ -9,7 +9,7 @@ updates:
       time: "10:00"
     commit-message:
       prefix: "chore(deps)"
-    target-branch: "develop"
+    target-branch: "main"
     groups:
       production-dependencies:
         dependency-type: "production"

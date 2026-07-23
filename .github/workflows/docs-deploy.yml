@@ -12,14 +12,8 @@ on:
     types:
       - completed
   push:
-    # Pages serves a single site and the github-pages environment only permits
-    # the main branch to deploy, so we only build/deploy docs from main.
-    branches:
-      - main
-    paths:
-      - "apps/docs/**"
-    # Manually pushed version tags still trigger a build (GITHUB_TOKEN tags are
-    # handled by the workflow_run trigger above).
+    # Manually pushed version tags still trigger a build. Main-branch changes
+    # deploy only through the CI -> Release -> Docs chain above.
     tags:
       - "v*"
   workflow_dispatch:
@@ -45,6 +39,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # A workflow_run must publish the commit that completed Release, not
+          # whichever commit happens to be at the tip of main when this job starts.
+          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4

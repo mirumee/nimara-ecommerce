@@ -115,7 +115,7 @@ okf_version: "0.1"
 - [OPS-0005 Marketplace Payment Completion Incident Response](operations/OPS-0005%20Marketplace%20Payment%20Completion%20Incident%20Response.md) - Incident response for successful payments with missing, partial, or vendor-invisible marketplace orders.
 - [OPS-0006 Storefront Provider Change and Rollback](operations/OPS-0006%20Storefront%20Provider%20Change%20and%20Rollback.md) - Controlled search/content provider change and rebuild-based rollback to a known-good deployment.
 - [OPS-0007 Saleor Schema Regeneration and Compatibility Check](operations/OPS-0007%20Saleor%20Schema%20Regeneration%20and%20Compatibility%20Check.md) - Saleor GraphQL regeneration, compatibility review, test gates, and schema-note refresh.
-- [OPS-0008 Release Promotion and Production Rollback](operations/OPS-0008%20Release%20Promotion%20and%20Production%20Rollback.md) - Protected-branch release promotion, semantic-release verification, production checks, and immutable deployment rollback.
+- [OPS-0008 Trunk Release and Production Rollback](operations/OPS-0008%20Trunk%20Release%20and%20Production%20Rollback.md) - CI-gated release from `main`, semantic-release and production verification, and immutable deployment rollback.
 
 # Technology ADR
 
