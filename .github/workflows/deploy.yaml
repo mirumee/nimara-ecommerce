@@ -39,7 +39,7 @@ on:
         options:
           - "SALEOR"
           - "BUTTER_CMS"
-        default: "saleor"
+        default: "SALEOR"
 
 jobs:
   deploy:
