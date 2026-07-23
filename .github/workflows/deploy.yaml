@@ -65,7 +65,7 @@ jobs:
         uses: amondnet/vercel-action@v25.2.0
         with:
           alias-domains: ${{ env.ALIAS_DOMAINS }}
-          scope: ${{ secrets.VERCEL_ORG_ID }}
+          scope: mirumee
           vercel-args: |
             -b NEXT_PUBLIC_CMS_SERVICE=${{ github.event.inputs.cms_service }}
             -b NEXT_PUBLIC_PAYMENT_APP_ID=${{ github.event.inputs.payment_app }}
@@ -79,6 +79,7 @@ jobs:
           vercel-version: "44.2.13"
 
       - name: "Summary"
+        if: always()
         run: |
           echo "Deployment URL: ${{ env.STOREFRONT_URL }}"
           echo "Instance Name: ${{ env.INSTANCE_NAME }}"
