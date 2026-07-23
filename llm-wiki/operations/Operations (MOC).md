@@ -7,7 +7,7 @@ tags:
   - "moc"
   - "index"
 created: "2026-07-20T00:00:00+00:00"
-timestamp: "2026-07-21T00:00:00+00:00"
+timestamp: "2026-07-23T00:00:00+00:00"
 ---
 
 ## Content
@@ -27,7 +27,7 @@ and product-state records they support.
 - [OPS-0005 Marketplace Payment Completion Incident Response](OPS-0005%20Marketplace%20Payment%20Completion%20Incident%20Response.md) - incident_response - active - Reconciles successful marketplace payments with missing, partial, or vendor-invisible orders.
 - [OPS-0006 Storefront Provider Change and Rollback](OPS-0006%20Storefront%20Provider%20Change%20and%20Rollback.md) - rollback - active - Changes build-time search or content providers and restores a known-good provider deployment.
 - [OPS-0007 Saleor Schema Regeneration and Compatibility Check](OPS-0007%20Saleor%20Schema%20Regeneration%20and%20Compatibility%20Check.md) - runbook - active - Regenerates GraphQL clients, reviews compatibility, and refreshes schema-note evidence.
-- [OPS-0008 Release Promotion and Production Rollback](OPS-0008%20Release%20Promotion%20and%20Production%20Rollback.md) - rollback - active - Promotes a verified release through protected branches and restores the prior immutable deployment when production regresses.
+- [OPS-0008 Trunk Release and Production Rollback](OPS-0008%20Trunk%20Release%20and%20Production%20Rollback.md) - rollback - active - Verifies CI-gated releases from `main` and restores the prior immutable deployment when production regresses.
 
 ## Related Notes
 
