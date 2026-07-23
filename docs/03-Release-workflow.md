@@ -43,8 +43,10 @@ Before merging:
 - Bring the branch up to date with `main`.
 - Complete risk-appropriate testing against the preview deployment.
 
-GitHub squash-merges the change and deletes the branch. Do not commit directly to `main` except
-through the documented break-glass incident procedure.
+GitHub squash-merges the change and deletes the branch. Direct pushes to `main` have no bypass.
+During an active incident, only a member of the GitHub `Admins` team may use the ruleset's
+pull-request-only bypass. Keep the change in a PR, use a squash merge, and record the actor, reason,
+exact SHA, skipped requirements, and recovery owner in the incident record.
 
 ## Additional QA
 
