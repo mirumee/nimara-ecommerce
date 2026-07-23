@@ -13,7 +13,7 @@ export const paymentMethodDeleteAction = async ({
   paymentMethodId: string;
 }) => {
   const services = await getServiceRegistry();
-  const paymentService = await services.getPaymentService();
+  const paymentService = await services.getLegacyPaymentService();
   const result = await paymentService.customerPaymentMethodDelete({
     customerId,
     paymentMethodId,
@@ -32,7 +32,7 @@ export const generateSecretAction = async ({
   customerId: string;
 }) => {
   const services = await getServiceRegistry();
-  const paymentService = await services.getPaymentService();
+  const paymentService = await services.getLegacyPaymentService();
 
   return paymentService.paymentMethodSaveInitialize({
     customerId,

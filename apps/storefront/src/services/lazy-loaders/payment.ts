@@ -2,7 +2,6 @@ import type { Logger } from "@nimara/infrastructure/logging/types";
 import { type StripePaymentService } from "@nimara/infrastructure/payment/providers";
 
 import { clientEnvs } from "@/envs/client";
-import { serverEnvs } from "@/envs/server";
 
 import { emptyPaymentService } from "../utils/empty-services";
 
@@ -14,9 +13,8 @@ let paymentServiceInstance: StripePaymentService | null = null;
  *
  * Falls back to {@link emptyPaymentService} when the payment envs are not
  * configured, so the storefront keeps rendering without a payment gateway.
- * Only the public envs are checked — `STRIPE_SECRET_KEY` lives in
- * `serverEnvs`, which is empty in the browser where the client-side payment
- * flows (initialize / element / execute) still need the real service.
+ * The service is browser-safe by construction — its config takes only
+ * public envs, no secret key.
  * @internal
  */
 
@@ -45,9 +43,7 @@ export const createPaymentServiceLoader = (logger: Logger) => {
 
     paymentServiceInstance = stripePaymentService({
       apiURI,
-      secretKey: serverEnvs.STRIPE_SECRET_KEY || "",
       publicKey,
-      environment: clientEnvs.ENVIRONMENT,
       gatewayAppId,
       logger,
     });

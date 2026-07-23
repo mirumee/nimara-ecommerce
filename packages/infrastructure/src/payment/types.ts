@@ -6,10 +6,59 @@ import type {
   StripePaymentElementOptions,
 } from "@stripe/stripe-js";
 
-import type { Checkout } from "@nimara/domain/objects/Checkout";
+import type { Address } from "@nimara/domain/objects/Address";
 import type { PaymentMethod } from "@nimara/domain/objects/Payment";
 import { type AsyncResult, type Result } from "@nimara/domain/objects/Result";
 import type { User } from "@nimara/domain/objects/User";
+
+export type { StripeElements } from "@stripe/stripe-js";
+
+export type InitializeData = {
+  sdk: StripeClient;
+};
+
+export type TransactionData = {
+  clientSecret: string;
+  /**
+   * Missing when the client secret does not originate from a Saleor
+   * transaction (e.g. marketplace payment intents).
+   */
+  transaction?: {
+    id: string;
+  };
+};
+
+export type BillingDetails = Pick<
+  Address,
+  | "city"
+  | "country"
+  | "countryArea"
+  | "firstName"
+  | "lastName"
+  | "postalCode"
+  | "streetAddress1"
+  | "streetAddress2"
+>;
+
+export type ExecuteData = {
+  billingDetails?: BillingDetails;
+  /**
+   * Present when paying with a newly entered payment method (mounted payment
+   * element). Absent when confirming with a tokenized saved method — the
+   * confirmation then runs against `TransactionData.clientSecret` alone.
+   */
+  elements?: StripeElements;
+  email: string;
+  redirectUrl: string;
+};
+
+export type ProcessData = {
+  /** Optional context forwarded to the payment app with the process event. */
+  data?: unknown;
+  transaction: {
+    id: string;
+  };
+};
 
 import type { Maybe } from "#root/lib/types";
 import { type Logger } from "#root/logging/types";
@@ -24,12 +73,19 @@ export type StripeServiceState = PaymentServiceState<{
   transactionId: string;
 }>;
 
+/**
+ * Config of the stateless payment service. Browser-safe — no secret key; the
+ * service runs on Saleor mutations and the client-side Stripe SDK only.
+ */
 export type PaymentServiceConfig = {
   apiURI: string;
-  environment: string;
   gatewayAppId: string;
   logger: Logger;
   publicKey: string;
+};
+
+export type LegacyPaymentServiceConfig = PaymentServiceConfig & {
+  environment: string;
   secretKey: string;
 };
 
@@ -38,30 +94,6 @@ export type PaymentServiceState<S extends object> = Partial<
 >;
 
 export type PaymentInitializeUseCase = () => Promise<void>;
-
-export type PaymentGatewayInitializeInfra = (opts: {
-  amount: number;
-  id: string;
-}) => AsyncResult<{ success: true }>;
-
-export type PaymentGatewayInitializeUseCase = PaymentGatewayInitializeInfra;
-
-export type TransactionInitializeInfra = (opts: {
-  amount: number;
-  customerId?: Maybe<string>;
-  id: string;
-  paymentMethod?: Maybe<string>;
-  saveForFutureUse?: Maybe<boolean>;
-  sharedPaymentToken?: Maybe<string>;
-}) => AsyncResult<{ clientSecret: string; transactionId: string }>;
-
-export type PaymentExecuteInfra = (opts: {
-  billingDetails: BillingDetails;
-  paymentSecret?: Maybe<string>;
-  redirectUrl: string;
-}) => AsyncResult<{ success: true }>;
-
-export type PaymentExecuteUseCase = PaymentExecuteInfra;
 
 export type PaymentElementCreateInfra = (opts: {
   appearance?: Appearance;
@@ -76,29 +108,6 @@ export type PaymentElementCreateInfra = (opts: {
 export type PaymentElementCreateUseCase = PaymentElementCreateInfra;
 
 export type ClientInitializeInfra = () => Promise<void>;
-
-export type PaymentProcessUseCase = (opts: {
-  checkout: Checkout;
-  searchParams: Record<string, string>;
-}) => AsyncResult<{ success: boolean }>;
-
-export type PaymentResultProcessInfra = (opts: {
-  checkout: Checkout;
-}) => AsyncResult<{ isCheckoutPaid: boolean }>;
-
-export type TransactionProcessInfra = (opts: {
-  searchParams: Record<string, string>;
-}) => AsyncResult<{ success: boolean }>;
-
-export type BillingDetails = Partial<{
-  country: string;
-  email: string;
-  name: string;
-  postalCode: string;
-  state: string;
-  streetAddress1: string;
-  streetAddress2: string;
-}>;
 
 export type GatewayUser = {
   defaultPaymentMethodId: string | null;

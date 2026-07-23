@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LockIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useTheme } from "next-themes";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FormProvider, type SubmitHandler, useForm } from "react-hook-form";
 
@@ -18,14 +17,20 @@ import { type AppErrorCode } from "@nimara/domain/objects/Error";
 import { type Maybe } from "@nimara/domain/objects/Maybe";
 import { type PaymentMethod } from "@nimara/domain/objects/Payment";
 import { type User } from "@nimara/domain/objects/User";
-import { addressToSchema } from "@nimara/foundation/address/address";
+import {
+  addressToSchema,
+  schemaToAddress,
+} from "@nimara/foundation/address/address";
 import { AddressForm } from "@nimara/foundation/address/address-form/address-form";
 import type { FormattedAddress } from "@nimara/foundation/address/types";
 import { CheckboxField } from "@nimara/foundation/form-components/checkbox-field";
 import { usePathname, useRouter } from "@nimara/i18n/routing";
 import { ADDRESS_DEFAULT_VALUES } from "@nimara/infrastructure/consts";
+import type {
+  StripeElements,
+  TransactionData,
+} from "@nimara/infrastructure/payment/types";
 import { Button } from "@nimara/ui/components/button";
-import { Spinner } from "@nimara/ui/components/spinner";
 import {
   Tabs,
   TabsContent,
@@ -36,19 +41,20 @@ import { useToast } from "@nimara/ui/hooks";
 import { cn } from "@nimara/ui/lib/utils";
 
 import { clientEnvs } from "@/envs/client";
-import { PAYMENT_ELEMENT_ID } from "@/features/checkout/consts";
 import { PaymentMethods } from "@/features/checkout/payment-methods";
 import { type MarketplaceCheckoutItem } from "@/features/checkout/types";
 import {
   initializeMarketplacePaymentIntent,
   updateBillingAddress,
-} from "@/foundation/checkout/sections/payment/actions";
+} from "@/features/payment/checkout/actions";
 import {
   type BillingAddressPath,
   type BillingAddressValue,
   type PaymentSchema,
   paymentSchema,
-} from "@/foundation/checkout/sections/payment/schema";
+} from "@/features/payment/checkout/schema";
+import { PaymentElement } from "@/features/payment/components/payment-element";
+import { usePaymentData } from "@/features/payment/hooks/use-payment-data";
 import { isGlobalError } from "@/foundation/errors/errors";
 import { useCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
@@ -70,6 +76,7 @@ type PaymentProps = {
   countryCode: AllCountryCode;
   errorCode?: AppErrorCode;
   formattedAddresses: FormattedAddress[];
+  initialTransactionData?: Maybe<TransactionData>;
   marketplaceCheckouts?: MarketplaceCheckoutItem[];
   paymentGatewayCustomer: Maybe<string>;
   paymentGatewayMethods: PaymentMethod[];
@@ -108,6 +115,7 @@ export const Payment = ({
   addressFormRows,
   countries,
   countryCode,
+  initialTransactionData,
   paymentGatewayMethods,
   paymentGatewayCustomer,
   formattedAddresses,
@@ -120,10 +128,8 @@ export const Payment = ({
   const pathname = usePathname();
   const { toast } = useToast();
   const region = useCurrentRegion();
-  const { resolvedTheme } = useTheme();
 
   const [isProcessing, setIsProcessing] = useState(false);
-  const [isInitialized, setIsInitialized] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [isCountryChanging, setIsCountryChanging] = useState(false);
   const isMarketplacePayment =
@@ -141,8 +147,17 @@ export const Payment = ({
   const [errors, setErrors] = useState<AppErrorCode[]>(
     errorCode ? [errorCode] : [],
   );
-  const [paymentElementSecret, setPaymentElementSecret] =
-    useState<Maybe<string>>(undefined);
+  const {
+    initializeData,
+    initializeTransaction,
+    setTransactionData,
+    transactionData,
+  } = usePaymentData({
+    initialTransactionData,
+    onErrors: setErrors,
+  });
+  const elementsRef = useRef<StripeElements | null>(null);
+  const initialTransactionRef = useRef(!!initialTransactionData);
   const marketplaceIntentInFlightRef = useRef<string | null>(null);
   const marketplaceIntentInitializedRef = useRef<string | null>(null);
 
@@ -231,6 +246,7 @@ export const Payment = ({
   ]);
   const hasSelectedPaymentMethod = !!paymentMethod;
   const isAddingNewPaymentMethod = paymentMethodTab === "new";
+  const isInitialized = !!initializeData;
   const isLoading = !isInitialized || isProcessing;
   const canProceed =
     !isLoading &&
@@ -240,7 +256,12 @@ export const Payment = ({
         ? isMounted
         : hasSelectedPaymentMethod);
 
-  const isDark = resolvedTheme === "dark";
+  const fullNameSource = checkout.billingAddress ?? checkout.shippingAddress;
+  const fullName = fullNameSource
+    ? [fullNameSource.firstName, fullNameSource.lastName]
+        .filter(Boolean)
+        .join(" ") || undefined
+    : undefined;
 
   const handlePlaceOrder: SubmitHandler<PaymentSchema> = async ({
     paymentMethod,
@@ -293,18 +314,25 @@ export const Payment = ({
       paymentType: isAddingNewPaymentMethod ? paymentMethod : "saved",
     });
 
-    let paymentSecret: Maybe<string> = undefined;
     const redirectUrl = `${storeUrl}${paths.payment.confirmation.asPath()}`;
     const paymentService = await paymentServiceLoader();
 
-    /**
-     * Using existing payment method requires passing it to the stripe app to
-     * tokenize it and obtain a secret, which needs to be passed to
-     * paymentExecute.
-     */
+    if (!initializeData) {
+      setIsProcessing(false);
 
-    if (!isMarketplacePayment && paymentMethod) {
-      const result = await paymentService.paymentGatewayTransactionInitialize({
+      return;
+    }
+
+    let activeTransactionData = transactionData;
+
+    /**
+     * Using an existing payment method requires passing it to the stripe app
+     * to tokenize it and obtain a fresh intent secret, which the payment is
+     * then confirmed against. The intent is confirmed directly — it is not
+     * stored, so the mounted payment element keeps its transaction.
+     */
+    if (!isMarketplacePayment && !isAddingNewPaymentMethod && paymentMethod) {
+      const data = await initializeTransaction({
         id: checkout.id,
         amount: checkout.totalPrice.gross.amount,
         paymentMethod,
@@ -312,61 +340,87 @@ export const Payment = ({
         saveForFutureUse,
       });
 
-      if (!result.ok) {
-        setErrors(result.errors.map(({ code }) => code));
+      if (!data) {
         setIsProcessing(false);
         router.refresh();
 
         return;
       }
 
-      paymentSecret = result.data.clientSecret;
+      activeTransactionData = data;
     }
 
-    const result = await paymentService.paymentExecute({
-      billingDetails: {
-        ...checkout.billingAddress,
-        country: checkout.billingAddress?.country,
+    if (!activeTransactionData) {
+      setIsProcessing(false);
+
+      return;
+    }
+
+    const billingSource = sameAsShippingAddress
+      ? checkout.shippingAddress
+      : billingAddress
+        ? schemaToAddress(billingAddress)
+        : checkout.billingAddress;
+
+    const result = await paymentService.execute({
+      data: {
+        billingDetails: billingSource
+          ? {
+              city: billingSource.city ?? "",
+              country: (billingSource.country ?? "") as AllCountryCode,
+              countryArea: billingSource.countryArea ?? "",
+              firstName: billingSource.firstName ?? "",
+              lastName: billingSource.lastName ?? "",
+              postalCode: billingSource.postalCode ?? "",
+              streetAddress1: billingSource.streetAddress1 ?? "",
+              streetAddress2: billingSource.streetAddress2 ?? "",
+            }
+          : undefined,
+        elements:
+          isMarketplacePayment || isAddingNewPaymentMethod
+            ? (elementsRef.current ?? undefined)
+            : undefined,
+        email: checkout.email!,
+        redirectUrl,
       },
-      paymentSecret,
-      redirectUrl,
+      initializeData,
+      transactionData: activeTransactionData,
     });
 
     if (!result.ok) {
       setErrors(result.errors.map(({ code }) => code));
       setIsProcessing(false);
+
+      /**
+       * A failed confirmation may leave the intent unusable, so remount the
+       * payment element against a fresh one. Validation errors are exempt —
+       * the shopper fixes the input in place and retries the same intent.
+       */
+      if (
+        !isMarketplacePayment &&
+        isAddingNewPaymentMethod &&
+        !result.errors.some(({ code }) => code === "PAYMENT_VALIDATION_ERROR")
+      ) {
+        setIsMounted(false);
+        setTransactionData(undefined);
+
+        const data = await initializeTransaction({
+          id: checkout.id,
+          amount: checkout.totalPrice.gross.amount,
+          customerId: paymentGatewayCustomer,
+          saveForFutureUse,
+        });
+
+        if (data) {
+          setTransactionData(data);
+        }
+
+        return;
+      }
+
       router.refresh();
     }
   };
-
-  useEffect(() => {
-    void (async () => {
-      const paymentService = await paymentServiceLoader();
-
-      if (isMarketplacePayment) {
-        await paymentService.paymentInitialize();
-        setIsInitialized(true);
-
-        return;
-      }
-
-      const [result] = await Promise.all([
-        paymentService.paymentGatewayInitialize({
-          id: checkout.id,
-          amount: checkout.totalPrice.gross.amount,
-        }),
-        paymentService.paymentInitialize(),
-      ]);
-
-      if (!result.ok) {
-        setErrors(result.errors.map(({ code }) => code));
-
-        return;
-      }
-
-      setIsInitialized(true);
-    })();
-  }, [checkout.id, checkout.totalPrice.gross.amount, isMarketplacePayment]);
 
   useEffect(() => {
     if (isAddingNewPaymentMethod) {
@@ -375,8 +429,17 @@ export const Payment = ({
       return;
     }
 
+    /**
+     * The payment element writes the picked method type into `paymentMethod`,
+     * so restore the saved-method selection when switching back to the tab.
+     */
+    form.setValue(
+      "paymentMethod",
+      paymentGatewayMethods.find(({ isDefault }) => isDefault)?.id ??
+        paymentGatewayMethods?.[0]?.id,
+    );
     setIsMounted(false);
-  }, [form, isAddingNewPaymentMethod]);
+  }, [form, isAddingNewPaymentMethod, paymentGatewayMethods]);
 
   useEffect(() => {
     if (!isInitialized || !isAddingNewPaymentMethod) {
@@ -386,11 +449,9 @@ export const Payment = ({
     let isCancelled = false;
 
     void (async () => {
-      const paymentService = await paymentServiceLoader();
-
       /**
-       * Using new payment method requires an new intent secret which is then passed
-       * to paymentElementCreate.
+       * Using a new payment method requires a new intent secret which the
+       * payment element is then created against.
        */
       if (isMarketplacePayment) {
         if (!marketplaceIntentKey || marketplaceIntentCheckouts.length === 0) {
@@ -407,7 +468,7 @@ export const Payment = ({
 
         marketplaceIntentInFlightRef.current = marketplaceIntentKey;
         setIsMounted(false);
-        setPaymentElementSecret(undefined);
+        setTransactionData(undefined);
 
         const result = await initializeMarketplacePaymentIntent({
           buyerId: user?.id,
@@ -425,32 +486,36 @@ export const Payment = ({
         }
 
         marketplaceIntentInitializedRef.current = marketplaceIntentKey;
-        setPaymentElementSecret(result.data.clientSecret);
+        setTransactionData({ clientSecret: result.data.clientSecret });
+
+        return;
+      }
+
+      /**
+       * The first activation consumes the intent pre-initialized on the
+       * server — no client fetch needed.
+       */
+      if (initialTransactionRef.current) {
+        initialTransactionRef.current = false;
 
         return;
       }
 
       setIsMounted(false);
-      setPaymentElementSecret(undefined);
+      setTransactionData(undefined);
 
-      const result = await paymentService.paymentGatewayTransactionInitialize({
+      const data = await initializeTransaction({
         id: checkout.id,
         amount: checkout.totalPrice.gross.amount,
         customerId: paymentGatewayCustomer,
         saveForFutureUse,
       });
 
-      if (isCancelled) {
+      if (isCancelled || !data) {
         return;
       }
 
-      if (!result.ok) {
-        setErrors(result.errors.map(({ code }) => code));
-
-        return;
-      }
-
-      setPaymentElementSecret(result.data.clientSecret);
+      setTransactionData(data);
     })();
 
     return () => {
@@ -467,59 +532,6 @@ export const Payment = ({
     paymentGatewayCustomer,
     saveForFutureUse,
     user?.id,
-  ]);
-
-  useEffect(() => {
-    if (!isInitialized || !isAddingNewPaymentMethod || !paymentElementSecret) {
-      return;
-    }
-
-    let isCancelled = false;
-    let unmountPaymentElement: (() => void) | undefined;
-
-    setIsMounted(false);
-
-    void (async () => {
-      const paymentService = await paymentServiceLoader();
-      const data = await paymentService.paymentElementCreate({
-        locale: region.language.locale,
-        secret: paymentElementSecret,
-        appearance: {
-          theme: isDark ? "night" : "flat",
-          variables: {
-            borderRadius: "5px",
-          },
-        },
-        options: {
-          layout: {
-            type: "accordion",
-            paymentMethodLogoPosition: "start",
-            defaultCollapsed: false,
-          },
-        },
-      });
-
-      if (isCancelled) {
-        return;
-      }
-
-      if (document.getElementById(PAYMENT_ELEMENT_ID)) {
-        data.mount(`#${PAYMENT_ELEMENT_ID}`);
-        unmountPaymentElement = data.unmount;
-        setIsMounted(true);
-      }
-    })();
-
-    return () => {
-      isCancelled = true;
-      unmountPaymentElement?.();
-    };
-  }, [
-    isAddingNewPaymentMethod,
-    isDark,
-    isInitialized,
-    paymentElementSecret,
-    region.language.locale,
   ]);
 
   useEffect(() => {
@@ -592,16 +604,17 @@ export const Payment = ({
             </TabsContent>
 
             <TabsContent value="new">
-              {!isMounted && (
-                <div className={cn("flex w-full justify-center py-16")}>
-                  <Spinner />
-                </div>
-              )}
               <div className={cn({ "pointer-events-none": !isMounted })}>
-                {/* THIS IS THE PLACE WHERE THE PAYMENT ELEMENT IS MOUNTED */}
-                <div
-                  className={cn({ hidden: !isMounted })}
-                  id={PAYMENT_ELEMENT_ID}
+                <PaymentElement
+                  email={checkout.email}
+                  fullName={fullName}
+                  initializeData={initializeData}
+                  isDisabled={isProcessing}
+                  isMounted={isMounted}
+                  locale={region.language.locale}
+                  onReady={() => setIsMounted(true)}
+                  ref={elementsRef}
+                  transactionData={transactionData}
                 />
 
                 {user && (

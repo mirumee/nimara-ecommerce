@@ -102,3 +102,6 @@ terraform.rc
 
 .omx/
 .env*.local
+
+.obsidian/
+.playwright-mcp/

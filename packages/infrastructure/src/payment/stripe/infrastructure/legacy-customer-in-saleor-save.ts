@@ -7,11 +7,11 @@ import { MetadataUpdateMutationDocument } from "#root/graphql/mutations/generate
 import { getGatewayCustomerMetaKey } from "../../helpers";
 import type {
   CustomerInSaleorSaveInfra,
-  PaymentServiceConfig,
+  LegacyPaymentServiceConfig,
 } from "../../types";
 
 export const customerInSaleorSave =
-  ({ apiURI, logger }: PaymentServiceConfig): CustomerInSaleorSaveInfra =>
+  ({ apiURI, logger }: LegacyPaymentServiceConfig): CustomerInSaleorSaveInfra =>
   async ({ gatewayCustomerId, channel, saleorCustomerId, accessToken }) => {
     const metadataKey = getGatewayCustomerMetaKey({
       gateway: "stripe",

@@ -11,8 +11,9 @@ import { Separator } from "@nimara/ui/components/separator";
 
 import { clientEnvs } from "@/envs/client";
 import { type MarketplaceCheckoutItem } from "@/features/checkout/types";
-import { Payment } from "@/foundation/checkout/sections/payment/payment";
+import { Payment } from "@/features/payment/checkout/payment";
 import { CheckoutPaymentSection } from "@/foundation/checkout/sections/payment/section";
+import { type PaymentSectionData } from "@/foundation/checkout/sections/payment/types";
 import { paths } from "@/foundation/routing/paths";
 import { createTrackingServiceLoader } from "@/services/lazy-loaders/tracking";
 
@@ -20,7 +21,6 @@ import { type CheckoutStep } from "../steps";
 import { DeliveryMethodForm } from "./delivery-method/form";
 import { MarketplaceDeliveryMethodForm } from "./delivery-method/marketplace-form";
 import { CheckoutDeliveryMethodSection } from "./delivery-method/section";
-import { type PaymentSectionData } from "./payment/types";
 import { ShippingAddressForm } from "./shipping-address/form";
 import { CheckoutShippingAddressSection } from "./shipping-address/section";
 import { type ShippingAddressSectionData } from "./shipping-address/types";
@@ -224,6 +224,7 @@ export const CheckoutSections = ({
             countries={paymentSectionData.countries}
             countryCode={paymentSectionData.countryCode}
             formattedAddresses={paymentSectionData.formattedAddresses}
+            initialTransactionData={paymentSectionData.transactionData}
             paymentGatewayCustomer={paymentSectionData.paymentGatewayCustomer}
             paymentGatewayMethods={paymentSectionData.paymentGatewayMethods}
             marketplaceCheckouts={marketplaceCheckouts}

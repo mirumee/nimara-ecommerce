@@ -1,5 +1,4 @@
 import { type LanguageCodeEnum } from "@nimara/codegen/schema";
-import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { ok } from "@nimara/domain/objects/Result";
 
 import { AcpCheckoutCompleteMutationDocument } from "#root/acp/saleor/graphql/mutations/generated";
@@ -77,17 +76,17 @@ export const checkoutSessionCompleteInfra = async ({
     };
   }
 
-  const transaction =
-    await deps.paymentService.paymentGatewayTransactionInitialize({
-      id: result.data.checkout.id,
-      amount: result.data.checkout.totalPrice.gross.amount,
-      sharedPaymentToken: input.checkoutSessionComplete.payment_data.token,
-    });
+  const resultTransaction = await deps.paymentService.initializeTransaction({
+    id: result.data.checkout.id,
+    amount: result.data.checkout.totalPrice.gross.amount,
+    sharedPaymentToken: input.checkoutSessionComplete.payment_data.token,
+  });
 
-  if (!transaction) {
-    deps.logger.error(
-      "Failed to initialize payment transaction for checkout session ${input.checkoutSessionId}.",
-    );
+  if (!resultTransaction.ok || !resultTransaction.data.transaction) {
+    deps.logger.error("Failed to initialize payment transaction.", {
+      checkoutSessionId: input.checkoutSessionId,
+      errors: resultTransaction.ok ? [] : resultTransaction.errors,
+    });
 
     return {
       ok: false,
@@ -100,30 +99,8 @@ export const checkoutSessionCompleteInfra = async ({
     };
   }
 
-  const transactionId = transaction.data?.transactionId;
-
-  // Map Saleor checkout to domain Checkout type
-  const mapSaleorCheckoutToDomain = (saleorCheckout: any): Checkout => ({
-    ...saleorCheckout,
-    billingAddress: saleorCheckout.billingAddress
-      ? {
-          ...saleorCheckout.billingAddress,
-          country: saleorCheckout.billingAddress.country.code, // Ensure country is a string code
-        }
-      : null,
-    shippingAddress: saleorCheckout.shippingAddress
-      ? {
-          ...saleorCheckout.shippingAddress,
-          country: saleorCheckout.shippingAddress.country.code,
-        }
-      : null,
-  });
-
-  const domainCheckout = mapSaleorCheckoutToDomain(result.data.checkout);
-
-  const paymentResult = await deps.paymentService.paymentResultProcess({
-    checkout: domainCheckout,
-    searchParams: { transactionId: transactionId! },
+  const paymentResult = await deps.paymentService.process({
+    transaction: { id: resultTransaction.data.transaction.id },
   });
 
   if (!paymentResult.ok) {
@@ -146,7 +123,7 @@ export const checkoutSessionCompleteInfra = async ({
     };
   }
 
-  if (!paymentResult.data.success) {
+  if (paymentResult.data.actionRequired) {
     deps.logger.critical("Failed to complete payment for checkout session.", {
       checkoutSessionId: input.checkoutSessionId,
     });

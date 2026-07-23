@@ -198,6 +198,7 @@
     "PAYMENT_METHOD_NOT_FOUND_ERROR": "Payment method not found.",
     "PAYMENT_METHOD_SAVE_ERROR": "Failed to save payment method.",
     "PAYMENT_PROCESSING_ERROR": "Failed to process payment. Please try again.",
+    "PAYMENT_VALIDATION_ERROR": "Please check your payment details and try again.",
     "REQUIRED_ERROR": "This field is required.",
     "TOKEN_REFRESH_ERROR": "Failed to refresh token.",
     "TOO_MANY_REQUESTS_ERROR": "Too many requests. Please try again later.",

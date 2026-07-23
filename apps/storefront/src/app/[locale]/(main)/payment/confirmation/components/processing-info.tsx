@@ -16,10 +16,6 @@ import { processPaymentAction, type ProcessPaymentResult } from "../actions";
 
 const trackingServiceLoader = createTrackingServiceLoader();
 
-// GA4 purchase events must fire once per order — a remount (or a poll racing
-// `router.replace`) would otherwise duplicate the conversion.
-const trackedPurchases = new Set<string>();
-
 const POLL_DELAY_MS = 750;
 const TIME_EXCEEDED_MS = 30 * 1000;
 
@@ -39,19 +35,26 @@ export const ProcessingInfo = ({
   useTimeout(() => setIsTimeExceeded(true), TIME_EXCEEDED_MS);
 
   useEffect(() => {
+    /**
+     * A stale tick must neither poll, navigate, nor track — GA4 purchase
+     * events fire once per order, and a chain surviving unmount (Strict Mode
+     * double-effect, remount mid-request) would duplicate the conversion.
+     */
+    let isCancelled = false;
+
     const tick = async () => {
       const result: ProcessPaymentResult = await processPaymentAction({
         searchParams,
       });
 
+      if (isCancelled) {
+        return;
+      }
+
       if ("orderId" in result) {
-        if (!trackedPurchases.has(result.orderId)) {
-          trackedPurchases.add(result.orderId);
+        const { trackPurchase } = await trackingServiceLoader();
 
-          const { trackPurchase } = await trackingServiceLoader();
-
-          await trackPurchase({ checkout, orderId: result.orderId });
-        }
+        await trackPurchase({ checkout, orderId: result.orderId });
 
         router.replace(
           paths.order.confirmation.asPath({
@@ -75,6 +78,8 @@ export const ProcessingInfo = ({
     void tick();
 
     return () => {
+      isCancelled = true;
+
       if (pollRef.current) {
         clearTimeout(pollRef.current);
         pollRef.current = null;
