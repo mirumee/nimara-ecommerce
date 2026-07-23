@@ -12,14 +12,8 @@ on:
     types:
       - completed
   push:
-    # Pages serves a single site and the github-pages environment only permits
-    # the main branch to deploy, so we only build/deploy docs from main.
-    branches:
-      - main
-    paths:
-      - "apps/docs/**"
-    # Manually pushed version tags still trigger a build (GITHUB_TOKEN tags are
-    # handled by the workflow_run trigger above).
+    # Manually pushed version tags still trigger a build. Main-branch changes
+    # deploy only through the CI -> Release -> Docs chain above.
     tags:
       - "v*"
   workflow_dispatch:

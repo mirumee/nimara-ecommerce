@@ -37,7 +37,9 @@ pull requests, so this title becomes the commit semantic-release evaluates.
 Before merging:
 
 - Obtain the required approval and resolve review conversations.
-- Pass `Linters & Tests` and all affected Vercel preview deployments.
+- Pass `Linters & Tests` and the four Vercel project statuses:
+  `Vercel – nimara-docs`, `Vercel – nimara-ecommerce`,
+  `Vercel – nimara-ecommerce-stripe`, and `Vercel – nimara-marketplace`.
 - Bring the branch up to date with `main`.
 - Complete risk-appropriate testing against the preview deployment.
 
@@ -50,8 +52,9 @@ Vercel preview deployments replace branch-based development environments. For hi
 use the **QA Deploy** workflow to deploy the exact commit SHA to `qa-1` or `qa-2`, then record that
 SHA with the test evidence.
 
-The QA environment is an additional validation surface, not a release branch or a place to
-accumulate changes.
+The workflow defaults to `main` for convenience and always reports the resolved deployed SHA. The
+QA environment is an additional validation surface, not a release branch or a place to accumulate
+changes.
 
 ## Releasing
 
