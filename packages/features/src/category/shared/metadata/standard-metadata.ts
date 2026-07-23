@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 import { editorJSDataToString } from "@nimara/ui/lib/richText";
 
@@ -32,10 +33,7 @@ export async function generateStandardCategoryMetadata(
   const category = getCategoryResult.data;
 
   if (!category) {
-    return {
-      title: "Category",
-      description: "Category details",
-    };
+    notFound();
   }
 
   const rawDescription = category.description;
