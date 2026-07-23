@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 
 import { CACHE_TTL } from "@/config";
 import { clientEnvs } from "@/envs/client";
+import { getCurrentRegion } from "@/foundation/regions";
 import { getServiceRegistry } from "@/services/registry";
 
 const size = {
@@ -18,14 +19,16 @@ export async function GET(
 ) {
   const { slug } = await context.params;
 
-  const [services, t] = await Promise.all([
+  const [services, region, t] = await Promise.all([
     getServiceRegistry(),
+    getCurrentRegion(),
     getTranslations(),
   ]);
   const categoryService = await services.getCategoryService();
 
   const getCategoryResult = await categoryService.getCategoryDetails({
     slug,
+    languageCode: region.language.code,
     options: {
       next: {
         revalidate: CACHE_TTL.pdp,

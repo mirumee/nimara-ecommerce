@@ -12,8 +12,11 @@ import { getServiceRegistry } from "@/services/registry";
 import { handleCategoryFiltersFormSubmit } from "./_actions/handle-category-filters-form-submit";
 
 export async function generateMetadata(props: CategoryViewProps) {
-  const services = await getServiceRegistry();
-  const { slug } = await props.params;
+  const [services, region, { slug }] = await Promise.all([
+    getServiceRegistry(),
+    getCurrentRegion(),
+    props.params,
+  ]);
   const storefrontUrl = clientEnvs.NEXT_PUBLIC_STOREFRONT_URL;
   const categoryPath = paths.categories.asPath({ slug });
 
@@ -22,6 +25,7 @@ export async function generateMetadata(props: CategoryViewProps) {
     services,
     storefrontUrl,
     categoryPath,
+    languageCode: region.language.code,
     siteName: clientEnvs.NEXT_PUBLIC_DEFAULT_PAGE_TITLE,
   });
 }

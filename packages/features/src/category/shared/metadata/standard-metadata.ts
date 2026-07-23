@@ -20,6 +20,7 @@ export async function generateStandardCategoryMetadata(
   const categoryService = await props.services.getCategoryService();
   const getCategoryResult = await categoryService.getCategoryDetails({
     slug,
+    languageCode: props.languageCode,
     options: {
       next: {
         revalidate: props.services.config.cacheTTL.pdp,

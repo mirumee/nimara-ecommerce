@@ -1,3 +1,4 @@
+import { type LanguageCodeEnum } from "@nimara/codegen/schema";
 import { err, ok } from "@nimara/domain/objects/Result";
 
 import type {
@@ -11,14 +12,14 @@ import { categorySerializer } from "./serializers";
 
 export const getCategoryDetailsInfra =
   ({ apiURI, logger }: SaleorCategoryServiceConfig): GetCategoryDetailsInfra =>
-  async ({ slug, options }) => {
+  async ({ slug, languageCode, options }) => {
     try {
       logger.debug("Fetching the category from Saleor", { slug });
 
       const result = await graphqlClient(apiURI).execute(
         CategoryDetailsQueryDocument,
         {
-          variables: { slug },
+          variables: { slug, languageCode: languageCode as LanguageCodeEnum },
           operationName: "CategoryDetailsQuery",
           options,
         },

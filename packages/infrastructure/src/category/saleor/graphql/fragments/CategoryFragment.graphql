@@ -9,4 +9,10 @@ fragment CategoryFragment on Category {
     url
     alt
   }
+  translation(languageCode: $languageCode) {
+    name
+    description
+    seoTitle
+    seoDescription
+  }
 }

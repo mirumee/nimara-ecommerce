@@ -28,6 +28,7 @@ export const StandardCategoryView = async (
   return (
     <CategoryProvider
       slug={slug}
+      languageCode={props.region.language.code}
       services={props.services}
       render={({ category }) => (
         <div className="mb-8 grid w-full gap-8">

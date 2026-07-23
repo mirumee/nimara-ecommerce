@@ -21,6 +21,7 @@ export type GetCategoriesIDsBySlugsInfra = (
 ) => AsyncResult<SaleorCategory["id"][] | null>;
 
 type CategoryDetailsOptions = {
+  languageCode: string;
   slug: string;
 } & WithFetchOptions;
 

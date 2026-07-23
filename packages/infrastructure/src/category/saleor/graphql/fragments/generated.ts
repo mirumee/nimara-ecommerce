@@ -3,7 +3,9 @@ import type * as Types from '@nimara/codegen/schema';
 import type { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
 export type CategoryFragment_Category_backgroundImage_Image = { url: string, alt: string | null };
 
-export type CategoryFragment = { id: string, name: string, slug: string, description: string | null, seoTitle: string | null, seoDescription: string | null, backgroundImage: CategoryFragment_Category_backgroundImage_Image | null };
+export type CategoryFragment_Category_translation_CategoryTranslation = { name: string | null, description: string | null, seoTitle: string | null, seoDescription: string | null };
+
+export type CategoryFragment = { id: string, name: string, slug: string, description: string | null, seoTitle: string | null, seoDescription: string | null, backgroundImage: CategoryFragment_Category_backgroundImage_Image | null, translation: CategoryFragment_Category_translation_CategoryTranslation | null };
 
 export class TypedDocumentString<TResult, TVariables>
   extends String
@@ -34,6 +36,12 @@ export const CategoryFragment = new TypedDocumentString(`
   backgroundImage {
     url
     alt
+  }
+  translation(languageCode: $languageCode) {
+    name
+    description
+    seoTitle
+    seoDescription
   }
 }
     `, {"fragmentName":"CategoryFragment"}) as unknown as TypedDocumentString<CategoryFragment, unknown>;
