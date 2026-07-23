@@ -5,72 +5,76 @@ title: Daily Workflow & Releasing
 
 # Daily Workflow & Releasing
 
-This project follows a simple Git workflow based on three core branches: `develop`, `staging`, and `main`. Each branch is linked to a separate Vercel environment.
+Nimara uses trunk-based development. `main` is the only long-lived branch, the source of releases,
+and the Vercel production branch. Every commit on `main` must be safe to release.
 
-- `develop` is our primary working branch for new features and bug fixes.
-- `staging` is used for quality assurance (QA) and testing before a release.
-- `main` represents the production environment and stable, released code.
+## Daily development
 
-## 1. Daily Development
-
-To start working, always make sure you're on the `develop` branch. Pull the latest changes to stay in sync with the team.
+Start each change from the latest `main`:
 
 ```bash
-git checkout develop
-git pull origin develop
+git switch main
+git pull --ff-only origin main
+git switch -c feat/my-new-feature
 ```
 
-When you start a new task, create a feature branch directly from `develop`. Use a clear naming convention, e.g., `feat/my-new-feature` or `fix/button-bug`.
+Keep the branch focused on one releasable change and aim to merge it within two working days.
+Several pull requests can serve one issue or story. Do not use a shared feature branch as an
+integration branch.
 
-```bash
-git checkout -b feat/my-new-feature
-```
+For work that cannot be completed in that window:
 
-Commit your changes frequently and push your feature branch to GitHub.
+- Split it into backward-compatible slices.
+- Hide incomplete behavior behind a short-lived, default-off feature flag.
+- Use branch by abstraction for a longer replacement or migration.
+- Give every flag an owner and removal condition, and test each meaningful state.
 
-```bash
-git add .
-git commit -m "feat: my new feature"
-git push origin feat/my-new-feature
-```
+## Pull requests
 
-When your feature is complete, open a Pull Request (PR) from your feature branch to `develop`.
+Open every pull request against `main` and use a Conventional Commit title. Nimara squash-merges
+pull requests, so this title becomes the commit semantic-release evaluates.
 
-## 2. Releasing to Staging
+Before merging:
 
-When the `develop` branch is ready for testing (e.g., all new features for a release cycle are merged), you should merge it into `staging`. This will trigger a new deployment on the Vercel staging environment.
+- Obtain the required approval and resolve review conversations.
+- Pass `Linters & Tests` and all affected Vercel preview deployments.
+- Bring the branch up to date with `main`.
+- Complete risk-appropriate testing against the preview deployment.
 
-First, make sure your local `staging` branch is up to date:
+GitHub squash-merges the change and deletes the branch. Do not commit directly to `main` except
+through the documented break-glass incident procedure.
 
-```bash
-git checkout staging
-git pull origin staging
-```
+## Additional QA
 
-Then, merge `develop` into `staging` and push the changes:
+Vercel preview deployments replace branch-based development environments. For high-risk changes,
+use the **QA Deploy** workflow to deploy the exact commit SHA to `qa-1` or `qa-2`, then record that
+SHA with the test evidence.
 
-```bash
-git merge develop
-git push origin staging
-```
+The QA environment is an additional validation surface, not a release branch or a place to
+accumulate changes.
 
-The team can now perform full QA and regression testing on the staging environment.
+## Releasing
 
-## 3. Releasing to Production
+After a `main` push passes the full CI workflow:
 
-Once the `staging` environment is stable and all tests have passed, it's time to release to production.
+- The Release workflow checks out that exact successful commit and runs semantic-release.
+- Semantic-release determines whether the Conventional Commit history requires a version, tag, and
+  GitHub release.
+- Vercel independently builds each affected application from `main` and updates its production
+  domain after a successful build.
+- Documentation is published from the same commit after the Release workflow succeeds.
 
-To do this, you will create a Pull Request on GitHub to merge `staging` into `main`.
+There is no release branch and no later promotion merge. A `main` commit that does not require a new
+semantic version can still deploy.
 
-**GitHub Actions will automatically:**
+## Production recovery
 
-- Tag the latest commit on `main` with a new version (e.g., `v1.2.3`).
-- Create a new **GitHub Release** based on that tag.
-- Deploy the production-ready code to the Vercel production environment.
+For an application regression:
 
-After the release is complete, remember to pull the latest changes from `main` back into `develop` to ensure your development branch is up-to-date with all hotfixes and production changes.
+1. Restore or promote the previous known-good Vercel deployment.
+2. Open a revert or fix-forward pull request against `main`.
+3. Run the normal required checks and release a new immutable version when applicable.
 
-```bash
-git checkout develop
-git pull origin main
-```
+Never force-push `main`, move a published tag, or treat a deployment rollback as a rollback of
+database migrations, Saleor changes, Stripe actions, provider data, or environment changes. Those
+stateful changes require their own approved compensating procedure.

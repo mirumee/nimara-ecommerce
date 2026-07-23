@@ -128,7 +128,7 @@ Cache problems?
 ```
 Run only what changed?
 ├─ Changed packages + dependents (RECOMMENDED) → turbo run build --affected
-├─ Custom base branch → --affected --affected-base=origin/develop
+├─ Custom base branch → --affected --affected-base=origin/main
 ├─ Manual git comparison → --filter=...[origin/main]
 └─ See all filter options → references/filtering/RULE.md
 ```

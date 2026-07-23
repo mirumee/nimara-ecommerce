@@ -28,11 +28,16 @@ We welcome all contributions, whether they be code, documentation, bug reports, 
      ```
 
 3. **Create a Branch**:
-   - Always create a new branch for your work:
+   - Start from the latest upstream `main` and create a short-lived branch for one small change:
 
      ```bash
-     git checkout -b contrib/your-feature-name
+     git fetch upstream
+     git switch -c contrib/your-feature-name upstream/main
      ```
+
+   - Aim to merge within two working days. Split larger work into independently releasable
+     changes, using a short-lived feature flag or branch-by-abstraction seam when incomplete
+     behavior must reach `main`.
 
 ## Claude Code
 
@@ -70,17 +75,23 @@ machine prerequisite, not a repository dependency.
    - Push your branch to your forked repository:
 
      ```bash
-     git push origin feature/your-feature-name
+     git push origin contrib/your-feature-name
      ```
 
 2. **Create a Pull Request (PR)**:
    - Go to the [Pull Requests](https://github.com/mirumee/nimara-ecommerce/pulls) section of the original repository.
    - Click "New Pull Request".
-   - Select your branch and provide a clear, descriptive title and a summary of your changes.
+   - Target `main`, use a Conventional Commit title, and provide a clear summary and testing
+     evidence.
+   - Wait for the required checks and affected Vercel preview deployments to pass. Bring the
+     branch up to date with `main` when GitHub requests it.
 
 3. **Review Process**:
    - A project maintainer will review your PR and may ask for changes.
-   - Once your PR is approved, it will be merged into the main branch.
+   - Once approved, the PR is squash-merged into `main` and its branch is deleted.
+   - `main` is always expected to be releasable. If a production regression occurs, restore the
+     previous Vercel deployment and submit a revert or fix-forward PR; do not rewrite `main` or
+     published tags.
 
 ## Reporting Issues
 

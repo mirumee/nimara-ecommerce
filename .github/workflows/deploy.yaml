@@ -12,10 +12,10 @@ on:
           - "qa-2"
         default: "qa-1"
       commit_ref:
-        description: "Branch, tag, or commit SHA to deploy"
+        description: "Commit SHA to deploy (a branch or tag is accepted for recovery)"
         required: true
         type: string
-        default: "develop"
+        default: "main"
       search_engine:
         description: "Search engine to use"
         type: choice
@@ -57,6 +57,10 @@ jobs:
         with:
           ref: ${{ github.event.inputs.commit_ref }}
 
+      - name: "Resolve deployed commit"
+        id: source
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
       - name: "Build and deploy the environment"
         uses: amondnet/vercel-action@v25.2.0
         with:
@@ -78,7 +82,8 @@ jobs:
         run: |
           echo "Deployment URL: ${{ env.STOREFRONT_URL }}"
           echo "Instance Name: ${{ env.INSTANCE_NAME }}"
-          echo "Commit Ref: ${{ github.event.inputs.commit_ref }}"
+          echo "Requested Ref: ${{ github.event.inputs.commit_ref }}"
+          echo "Deployed Commit: ${{ steps.source.outputs.sha }}"
           echo "Search Engine: ${{ github.event.inputs.search_engine }}"
           echo "Payment App: ${{ github.event.inputs.payment_app }}"
           echo "CMS Service: ${{ github.event.inputs.cms_service }}"
