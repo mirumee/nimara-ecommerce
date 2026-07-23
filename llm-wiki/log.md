@@ -28,5 +28,5 @@
 
 ## 2026-07-23
 
-- **Update**: Replaced branch-promotion guidance in OPS-0008 with the CI-gated release-from-trunk and production rollback procedure anchored to implementation commit `d15ef48f7cfde764c1210febba244e83604f8c83`.
+- **Update**: Replaced branch-promotion guidance in OPS-0008 with the CI-gated release-from-trunk and production rollback procedure anchored to implementation commit `b0dc33010619df91335b76f78d1095ac2abcb35b`.
 - **Maintenance**: Reconciled the operations register, root index, and QA environment matrix with `main` as the only long-lived development branch.

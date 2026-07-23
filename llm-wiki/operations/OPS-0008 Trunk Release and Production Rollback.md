@@ -95,10 +95,10 @@ deployment without rewriting published Git history.
 # Provenance
 
 - This trunk release and rollback contract is anchored at exact implementation commit
-  [`d15ef48f7cfde764c1210febba244e83604f8c83`](https://github.com/mirumee/nimara-ecommerce/tree/d15ef48f7cfde764c1210febba244e83604f8c83),
+  [`b0dc33010619df91335b76f78d1095ac2abcb35b`](https://github.com/mirumee/nimara-ecommerce/tree/b0dc33010619df91335b76f78d1095ac2abcb35b),
   including the
-  [documented trunk workflow](https://github.com/mirumee/nimara-ecommerce/blob/d15ef48f7cfde764c1210febba244e83604f8c83/docs/03-Release-workflow.md),
-  [main CI workflow](https://github.com/mirumee/nimara-ecommerce/blob/d15ef48f7cfde764c1210febba244e83604f8c83/.github/workflows/main.yaml),
-  [CI-gated semantic-release workflow](https://github.com/mirumee/nimara-ecommerce/blob/d15ef48f7cfde764c1210febba244e83604f8c83/.github/workflows/release.yaml),
+  [documented trunk workflow](https://github.com/mirumee/nimara-ecommerce/blob/b0dc33010619df91335b76f78d1095ac2abcb35b/docs/03-Release-workflow.md),
+  [main CI workflow](https://github.com/mirumee/nimara-ecommerce/blob/b0dc33010619df91335b76f78d1095ac2abcb35b/.github/workflows/main.yaml),
+  [CI-gated semantic-release workflow](https://github.com/mirumee/nimara-ecommerce/blob/b0dc33010619df91335b76f78d1095ac2abcb35b/.github/workflows/release.yaml),
   and
-  [commit-aware QA deployment](https://github.com/mirumee/nimara-ecommerce/blob/d15ef48f7cfde764c1210febba244e83604f8c83/.github/workflows/deploy.yaml).
+  [commit-aware QA deployment](https://github.com/mirumee/nimara-ecommerce/blob/b0dc33010619df91335b76f78d1095ac2abcb35b/.github/workflows/deploy.yaml).
