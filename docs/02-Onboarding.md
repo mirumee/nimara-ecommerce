@@ -186,8 +186,9 @@ pnpm format
 ### Open a PR
 
 Push, open a PR against `main`, give it a Conventional Commit title, and include testing evidence.
-Required CI and affected Vercel previews must pass before the PR can be squash-merged. A maintainer
-takes it from there.
+`Linters & Tests` and all four Vercel project statuses (`nimara-docs`, `nimara-ecommerce`,
+`nimara-ecommerce-stripe`, and `nimara-marketplace`) must pass before the PR can be squash-merged.
+A maintainer takes it from there.
 
 ## Where to go next
 

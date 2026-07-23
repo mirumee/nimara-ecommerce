@@ -83,7 +83,8 @@ machine prerequisite, not a repository dependency.
    - Click "New Pull Request".
    - Target `main`, use a Conventional Commit title, and provide a clear summary and testing
      evidence.
-   - Wait for the required checks and affected Vercel preview deployments to pass. Bring the
+   - Wait for `Linters & Tests` and all four Vercel project statuses (`nimara-docs`,
+     `nimara-ecommerce`, `nimara-ecommerce-stripe`, and `nimara-marketplace`) to pass. Bring the
      branch up to date with `main` when GitHub requests it.
 
 3. **Review Process**:

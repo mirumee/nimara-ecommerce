@@ -36,7 +36,8 @@ deployment without rewriting published Git history.
 
 - Select the exact candidate commit and confirm it reached `main` through a reviewed, squash-merged
   pull request from a short-lived change branch.
-- Confirm the pull request passed `Linters & Tests`, the affected Vercel preview deployments, and
+- Confirm the pull request passed `Linters & Tests`, all four Vercel project statuses
+  (`nimara-docs`, `nimara-ecommerce`, `nimara-ecommerce-stripe`, and `nimara-marketplace`), and
   risk-appropriate testing. For additional QA, retain results against an exact SHA deployed to
   `qa-1` or `qa-2`.
 - Record the candidate SHA, the previous known-good release tag and Vercel deployment,

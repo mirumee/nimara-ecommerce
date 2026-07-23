@@ -9,7 +9,8 @@ I want to merge this change because...
 - [ ] Target `main` from a short-lived change branch and use a Conventional Commit PR title.
 - [ ] Test the changes locally to ensure they work as expected.
 - [ ] Document the testing process and results in the pull request description. (Screen recording, screenshot etc)
-- [ ] Verify the affected Vercel preview deployments.
+- [ ] Verify all four Vercel project statuses: `nimara-docs`, `nimara-ecommerce`,
+      `nimara-ecommerce-stripe`, and `nimara-marketplace`.
 - [ ] Include new tests for any new functionality or significant changes.
 - [ ] Ensure that tests cover edge cases and potential failure points.
 - [ ] Keep incomplete behavior disabled with a short-lived feature flag or branch-by-abstraction seam.
