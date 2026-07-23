@@ -77,8 +77,10 @@ deployment without rewriting published Git history.
 
 # Escalation
 
-- A direct or bypass push to `main` is a break-glass event. Confirm the actor, reason, exact SHA,
-  checks, and recovery owner, then preserve that evidence in the incident record.
+- Direct pushes to `main` have no bypass. During an active incident, only a member of the GitHub
+  `Admins` team may use the ruleset's pull-request-only bypass. Keep the change in a PR, use a
+  squash merge, and preserve the actor, reason, exact SHA, skipped requirements, and recovery owner
+  in the incident record.
 - The workflow runs `pnpm dlx semantic-release` without a repository-pinned semantic-release
   version. Investigate unexpected versioning or plugin behavior before retrying a failed release.
 - Vercel can begin processing a `main` deployment independently of the post-merge GitHub workflow.
@@ -96,10 +98,10 @@ deployment without rewriting published Git history.
 # Provenance
 
 - This trunk release and rollback contract is anchored at exact implementation commit
-  [`241c4bbfa932f0a672b9422aed98489aaba76d1c`](https://github.com/mirumee/nimara-ecommerce/tree/241c4bbfa932f0a672b9422aed98489aaba76d1c),
+  [`407da55cabebee44ec910d1a96261934b4cab963`](https://github.com/mirumee/nimara-ecommerce/tree/407da55cabebee44ec910d1a96261934b4cab963),
   including the
-  [documented trunk workflow](https://github.com/mirumee/nimara-ecommerce/blob/241c4bbfa932f0a672b9422aed98489aaba76d1c/docs/03-Release-workflow.md),
-  [main CI workflow](https://github.com/mirumee/nimara-ecommerce/blob/241c4bbfa932f0a672b9422aed98489aaba76d1c/.github/workflows/main.yaml),
-  [CI-gated semantic-release workflow](https://github.com/mirumee/nimara-ecommerce/blob/241c4bbfa932f0a672b9422aed98489aaba76d1c/.github/workflows/release.yaml),
+  [documented trunk workflow](https://github.com/mirumee/nimara-ecommerce/blob/407da55cabebee44ec910d1a96261934b4cab963/docs/03-Release-workflow.md),
+  [main CI workflow](https://github.com/mirumee/nimara-ecommerce/blob/407da55cabebee44ec910d1a96261934b4cab963/.github/workflows/main.yaml),
+  [CI-gated semantic-release workflow](https://github.com/mirumee/nimara-ecommerce/blob/407da55cabebee44ec910d1a96261934b4cab963/.github/workflows/release.yaml),
   and
-  [commit-aware QA deployment](https://github.com/mirumee/nimara-ecommerce/blob/241c4bbfa932f0a672b9422aed98489aaba76d1c/.github/workflows/deploy.yaml).
+  [commit-aware QA deployment](https://github.com/mirumee/nimara-ecommerce/blob/407da55cabebee44ec910d1a96261934b4cab963/.github/workflows/deploy.yaml).
