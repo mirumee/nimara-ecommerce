@@ -1,8 +1,13 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { type Result } from "@nimara/domain/objects/Result";
 import { ShoppingBag } from "@nimara/features/shared/shopping-bag/shopping-bag";
+import { LocalizedLink } from "@nimara/i18n/routing";
+
+import { paths } from "@/foundation/routing/paths";
 
 interface SummaryProps {
   addPromoCodeAction?: (params: {
@@ -32,9 +37,18 @@ export const Summary = ({
   mode = "standard",
   vendorIdNames,
 }: SummaryProps) => {
+  const t = useTranslations();
+
   return (
     <ShoppingBag>
-      <ShoppingBag.Header totalPrice={checkout.totalPrice.gross} />
+      <ShoppingBag.Header
+        header={
+          <LocalizedLink className="hover:underline" href={paths.cart.asPath()}>
+            {t("cart.your-bag")}
+          </LocalizedLink>
+        }
+        totalPrice={checkout.totalPrice.gross}
+      />
       <ShoppingBag.Lines
         vendorIdNames={vendorIdNames}
         lines={checkout.lines}
