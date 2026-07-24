@@ -53,7 +53,9 @@ export type ExecuteData = {
 };
 
 export type ProcessData = {
-  /** Optional context forwarded to the payment app with the process event. */
+  /**
+   * Optional context forwarded to the payment app with the process event.
+   */
   data?: unknown;
   transaction: {
     id: string;
@@ -73,10 +75,6 @@ export type StripeServiceState = PaymentServiceState<{
   transactionId: string;
 }>;
 
-/**
- * Config of the stateless payment service. Browser-safe — no secret key; the
- * service runs on Saleor mutations and the client-side Stripe SDK only.
- */
 export type PaymentServiceConfig = {
   apiURI: string;
   gatewayAppId: string;

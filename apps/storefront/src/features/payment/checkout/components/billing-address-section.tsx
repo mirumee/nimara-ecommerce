@@ -20,11 +20,6 @@ type BillingAddressSectionProps = {
   formattedAddresses: FormattedAddress[];
   isProcessing: boolean;
   isShippingRequired: boolean;
-  /**
-   * Fired by the guest address form when the billing country changes —
-   * variants wire it to their processing lock so the form stays disabled
-   * while the country-change redirect reloads the payment step.
-   */
   onCountryChange: (isChanging: boolean) => void;
   sameAsShippingAddress: boolean;
   setActiveTab: (tab: TabName) => void;
@@ -32,10 +27,6 @@ type BillingAddressSectionProps = {
   user: User | null;
 };
 
-/**
- * The billing address block: same-as-shipping toggle, then either the
- * saved-addresses tabs (signed-in) or a bare address form (guest).
- */
 export const BillingAddressSection = ({
   activeTab,
   addressFormRows,

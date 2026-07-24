@@ -25,7 +25,7 @@ import {
 } from "@nimara/ui/components/tabs";
 
 import { useCurrentRegion } from "@/foundation/regions";
-import { paths } from "@/foundation/routing/paths";
+import { paths, QUERY_PARAMS } from "@/foundation/routing/paths";
 
 import { type PaymentSchema } from "../schema";
 
@@ -85,9 +85,12 @@ export const AddressTab = ({
     }
 
     setIsCountryChanging?.(true);
-    router.push(paths.checkout.asPath({ query: { step: "payment" } }), {
-      scroll: false,
-    });
+    router.push(
+      paths.checkout.asPath({ query: { [QUERY_PARAMS.step]: "payment" } }),
+      {
+        scroll: false,
+      },
+    );
   };
 
   const handleCountryChange = (value: string) => {

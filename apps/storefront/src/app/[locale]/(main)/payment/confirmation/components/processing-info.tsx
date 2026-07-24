@@ -35,11 +35,6 @@ export const ProcessingInfo = ({
   useTimeout(() => setIsTimeExceeded(true), TIME_EXCEEDED_MS);
 
   useEffect(() => {
-    /**
-     * A stale tick must neither poll, navigate, nor track — GA4 purchase
-     * events fire once per order, and a chain surviving unmount (Strict Mode
-     * double-effect, remount mid-request) would duplicate the conversion.
-     */
     let isCancelled = false;
 
     const tick = async () => {

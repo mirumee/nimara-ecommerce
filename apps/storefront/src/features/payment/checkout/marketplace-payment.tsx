@@ -124,9 +124,7 @@ export const MarketplacePayment = ({
     initializeData,
     isAddingNewPaymentMethod: true,
     isProcessing,
-    onExecuteFailure: () => {
-      router.refresh();
-    },
+    onExecuteFailure: () => router.refresh(),
     resolveTransactionData: async () => transactionData,
     setErrors,
     setIsProcessing,

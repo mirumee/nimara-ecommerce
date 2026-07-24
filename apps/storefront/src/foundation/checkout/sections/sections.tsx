@@ -14,7 +14,7 @@ import { type MarketplaceCheckoutItem } from "@/features/checkout/types";
 import { Payment } from "@/features/payment/checkout/payment";
 import { CheckoutPaymentSection } from "@/foundation/checkout/sections/payment/section";
 import { type PaymentSectionData } from "@/foundation/checkout/sections/payment/types";
-import { paths } from "@/foundation/routing/paths";
+import { paths, QUERY_PARAMS } from "@/foundation/routing/paths";
 import { createTrackingServiceLoader } from "@/services/lazy-loaders/tracking";
 
 import { type CheckoutStep } from "../steps";
@@ -100,7 +100,7 @@ export const CheckoutSections = ({
       await trackAddShippingInfo({ checkout: checkoutForSections });
       router.push(
         paths.checkout.asPath({
-          query: { step: "payment" },
+          query: { [QUERY_PARAMS.step]: "payment" },
         }),
       );
     })();
@@ -130,7 +130,7 @@ export const CheckoutSections = ({
 
             router.push(
               paths.checkout.asPath({
-                query: { step: nextStep },
+                query: { [QUERY_PARAMS.step]: nextStep },
               }),
             );
           }}

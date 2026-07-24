@@ -26,9 +26,8 @@ export type ProcessPaymentResult =
  * shows a generic thank-you, so a placeholder stands in for the order id.
  */
 const MARKETPLACE_ORDER_PLACEHOLDER_ID = "marketplace";
-
 /**
- * Stripe redirect statuses that mean the payment definitively failed. *
+ * Stripe redirect statuses that mean the payment definitively failed.
  */
 const FAILED_REDIRECT_STATUSES = ["failed", "requires_payment_method"];
 
@@ -42,7 +41,7 @@ const redirectToPaymentStep = ({
   redirect({
     href: paths.checkout.asPath({
       query: {
-        step: "payment",
+        [QUERY_PARAMS.step]: "payment",
         [QUERY_PARAMS.errorCode]: errorCode,
       },
     }),

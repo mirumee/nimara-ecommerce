@@ -38,14 +38,13 @@ type UsePaymentSubmitProps = {
   initializeData: Maybe<InitializeData>;
   isAddingNewPaymentMethod: boolean;
   isProcessing: boolean;
-  /** Ran after a failed confirmation — the variant decides how to recover. */
   onExecuteFailure: (
     errors: BaseError[],
     values: PaymentSchema,
   ) => Promise<void> | void;
   /**
    * Supplies the intent the payment is confirmed against. Resolving to
-   * nothing aborts the submit (the variant handles any recovery itself).
+   * nothing aborts the submit.
    */
   resolveTransactionData: (
     values: PaymentSchema,
@@ -55,11 +54,6 @@ type UsePaymentSubmitProps = {
   storeUrl: string;
 };
 
-/**
- * The submit pipeline shared by every payment variant: billing address
- * update (with field-error mapping), payment-info tracking, then the
- * confirmation against the variant-resolved intent.
- */
 export const usePaymentSubmit = ({
   checkout,
   elementsRef,

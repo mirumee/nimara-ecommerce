@@ -4,6 +4,7 @@ import { type ComponentProps, type RefObject, useEffect, useRef } from "react";
 import { useFormContext } from "react-hook-form";
 
 import { type Maybe } from "@nimara/domain/objects/Maybe";
+import { type SupportedLocale } from "@nimara/i18n/config";
 import type {
   Appearance,
   InitializeData,
@@ -15,7 +16,9 @@ import { cn } from "@nimara/ui/lib/utils";
 
 import { PAYMENT_ELEMENT_ID } from "../../consts";
 
-const STRIPE_LOCALE_OVERRIDES: Record<string, string> = {
+const STRIPE_LOCALE_OVERRIDES: Partial<
+  Record<SupportedLocale, StripeElementLocale>
+> = {
   "en-US": "en",
 };
 
@@ -50,8 +53,9 @@ export const StripePaymentElement = ({
     const elements = initializeData.sdk.elements({
       appearance,
       clientSecret: transactionData.clientSecret,
-      locale: (STRIPE_LOCALE_OVERRIDES[locale] ??
-        locale) as StripeElementLocale,
+      locale:
+        STRIPE_LOCALE_OVERRIDES[locale as SupportedLocale] ??
+        (locale as StripeElementLocale),
     });
 
     ref.current = elements;

@@ -4,7 +4,10 @@ import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { FormProvider } from "react-hook-form";
 
-import { type AppErrorCode } from "@nimara/domain/objects/Error";
+import {
+  type AppErrorCode,
+  type BaseError,
+} from "@nimara/domain/objects/Error";
 import { type Maybe } from "@nimara/domain/objects/Maybe";
 import { type PaymentMethod } from "@nimara/domain/objects/Payment";
 import { useRouter } from "@nimara/i18n/routing";
@@ -25,6 +28,7 @@ import { NewPaymentMethodSection } from "./components/new-payment-method-section
 import { PlaceOrderButton } from "./components/place-order-button";
 import { usePaymentForm } from "./hooks/use-payment-form";
 import { usePaymentSubmit } from "./hooks/use-payment-submit";
+import { type PaymentSchema } from "./schema";
 import { type TabName } from "./tabs/address-tab";
 import { type CommonPaymentProps } from "./types";
 
@@ -107,6 +111,70 @@ export const CheckoutPayment = ({
     !isLoading &&
     (isAddingNewPaymentMethod ? isMounted : hasSelectedPaymentMethod);
 
+  /**
+   * Using an existing payment method requires passing it to the stripe app
+   * to tokenize it and obtain a fresh intent secret, which the payment is
+   * then confirmed against. The intent is confirmed directly — it is not
+   * stored, so the mounted payment element keeps its transaction.
+   */
+  const resolveTransactionData = async ({
+    paymentMethod,
+    saveForFutureUse,
+  }: PaymentSchema) => {
+    if (!isAddingNewPaymentMethod && paymentMethod) {
+      const data = await initializeTransaction({
+        id: checkout.id,
+        amount: checkout.totalPrice.gross.amount,
+        paymentMethod,
+        customerId: paymentGatewayCustomer,
+        saveForFutureUse,
+      });
+
+      if (!data) {
+        router.refresh();
+
+        return undefined;
+      }
+
+      return data;
+    }
+
+    return transactionData;
+  };
+
+  /**
+   * A failed confirmation may leave the intent unusable, so remount the
+   * payment element against a fresh one. Validation errors are exempt —
+   * the shopper fixes the input in place and retries the same intent.
+   */
+  const handleExecuteFailure = async (
+    executeErrors: BaseError[],
+    { saveForFutureUse }: PaymentSchema,
+  ) => {
+    if (
+      isAddingNewPaymentMethod &&
+      !executeErrors.some(({ code }) => code === "PAYMENT_VALIDATION_ERROR")
+    ) {
+      setIsMounted(false);
+      setTransactionData(undefined);
+
+      const data = await initializeTransaction({
+        id: checkout.id,
+        amount: checkout.totalPrice.gross.amount,
+        customerId: paymentGatewayCustomer,
+        saveForFutureUse,
+      });
+
+      if (data) {
+        setTransactionData(data);
+      }
+
+      return;
+    }
+
+    router.refresh();
+  };
+
   const handlePlaceOrder = usePaymentSubmit({
     checkout,
     elementsRef,
@@ -114,62 +182,8 @@ export const CheckoutPayment = ({
     initializeData,
     isAddingNewPaymentMethod,
     isProcessing,
-    /**
-     * A failed confirmation may leave the intent unusable, so remount the
-     * payment element against a fresh one. Validation errors are exempt —
-     * the shopper fixes the input in place and retries the same intent.
-     */
-    onExecuteFailure: async (executeErrors, { saveForFutureUse }) => {
-      if (
-        isAddingNewPaymentMethod &&
-        !executeErrors.some(({ code }) => code === "PAYMENT_VALIDATION_ERROR")
-      ) {
-        setIsMounted(false);
-        setTransactionData(undefined);
-
-        const data = await initializeTransaction({
-          id: checkout.id,
-          amount: checkout.totalPrice.gross.amount,
-          customerId: paymentGatewayCustomer,
-          saveForFutureUse,
-        });
-
-        if (data) {
-          setTransactionData(data);
-        }
-
-        return;
-      }
-
-      router.refresh();
-    },
-    /**
-     * Using an existing payment method requires passing it to the stripe app
-     * to tokenize it and obtain a fresh intent secret, which the payment is
-     * then confirmed against. The intent is confirmed directly — it is not
-     * stored, so the mounted payment element keeps its transaction.
-     */
-    resolveTransactionData: async ({ paymentMethod, saveForFutureUse }) => {
-      if (!isAddingNewPaymentMethod && paymentMethod) {
-        const data = await initializeTransaction({
-          id: checkout.id,
-          amount: checkout.totalPrice.gross.amount,
-          paymentMethod,
-          customerId: paymentGatewayCustomer,
-          saveForFutureUse,
-        });
-
-        if (!data) {
-          router.refresh();
-
-          return undefined;
-        }
-
-        return data;
-      }
-
-      return transactionData;
-    },
+    onExecuteFailure: handleExecuteFailure,
+    resolveTransactionData,
     setErrors,
     setIsProcessing,
     storeUrl,

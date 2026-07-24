@@ -9,7 +9,7 @@ import { CardContent, CardHeader } from "@nimara/ui/components/card";
 import { cn } from "@nimara/ui/lib/utils";
 
 import { type CheckoutStep } from "@/foundation/checkout/steps";
-import { paths } from "@/foundation/routing/paths";
+import { paths, QUERY_PARAMS } from "@/foundation/routing/paths";
 
 interface Props {
   collapsedSummary?: React.ReactNode;
@@ -32,7 +32,11 @@ export const CheckoutSection = ({
   return (
     <>
       <LocalizedLink
-        href={disabled ? "#" : paths.checkout.asPath({ query: { step } })}
+        href={
+          disabled
+            ? "#"
+            : paths.checkout.asPath({ query: { [QUERY_PARAMS.step]: step } })
+        }
         className={cn({
           "pointer-events-none": disabled,
         })}

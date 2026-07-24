@@ -45,7 +45,9 @@ export const paymentProcessInfra =
     const orderId = result.data.transactionProcess?.transaction?.order?.id;
     const eventType = result.data.transactionProcess?.transactionEvent?.type;
 
-    /** Saleor already completed the checkout — the order is ready. */
+    /**
+     *  Saleor already completed the checkout — the order is placed.
+     */
     if (orderId) {
       return ok({ actionRequired: false, orderId });
     }

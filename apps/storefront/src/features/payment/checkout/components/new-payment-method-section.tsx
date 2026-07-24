@@ -26,10 +26,6 @@ type NewPaymentMethodSectionProps = {
   transactionData: Maybe<TransactionData>;
 };
 
-/**
- * The new-payment-method block: the provider payment element plus the
- * save-for-future-use checkbox, locked while the element is not mounted.
- */
 export const NewPaymentMethodSection = ({
   checkout,
   initializeData,

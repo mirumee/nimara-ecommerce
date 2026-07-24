@@ -28,7 +28,7 @@ export const usePaymentData = ({
     useState<Maybe<InitializeData>>(undefined);
   const [transactionData, setTransactionData] = useState<
     Maybe<TransactionData>
-  >(initialTransactionData ?? undefined);
+  >(initialTransactionData);
 
   useEffect(() => {
     void (async () => {

@@ -43,7 +43,7 @@ export const Summary = ({
     <ShoppingBag>
       <ShoppingBag.Header
         header={
-          <LocalizedLink className="hover:underline" href={paths.cart.asPath()}>
+          <LocalizedLink href={paths.cart.asPath()}>
             {t("cart.your-bag")}
           </LocalizedLink>
         }

@@ -23,7 +23,7 @@ import {
   type PaymentSchema,
   paymentSchema,
 } from "@/features/payment/checkout/schema";
-import { paths } from "@/foundation/routing/paths";
+import { paths, QUERY_PARAMS } from "@/foundation/routing/paths";
 
 import { type TabName } from "../tabs/address-tab";
 
@@ -38,11 +38,6 @@ type UsePaymentFormProps = {
   user: User | null;
 };
 
-/**
- * Owns the payment form and the billing-address concerns shared by every
- * payment variant: schema wiring, billing defaults, the saved/new address
- * tab, the same-as-shipping resets and the billing-country channel redirect.
- */
 export const usePaymentForm = ({
   addressFormRows,
   checkout,
@@ -138,7 +133,10 @@ export const usePaymentForm = ({
     if (billingAddressCountry && billingAddressCountry !== countryCode) {
       router.push(
         paths.checkout.asPath({
-          query: { step: "payment", country: billingAddressCountry },
+          query: {
+            [QUERY_PARAMS.step]: "payment",
+            [QUERY_PARAMS.country]: billingAddressCountry,
+          },
         }),
         { scroll: false },
       );
