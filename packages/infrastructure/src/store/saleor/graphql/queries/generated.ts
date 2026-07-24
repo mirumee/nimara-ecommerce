@@ -5,7 +5,7 @@ export type PageSlugByIdQuery_page_Page_translation_PageTranslation = { title: s
 
 export type PageSlugByIdQuery_page_Page_pageType_PageType = { slug: string };
 
-export type PageSlugByIdQuery_page_Page_attributes_SelectedAttribute_attribute_Attribute = { slug: string };
+export type PageSlugByIdQuery_page_Page_attributes_SelectedAttribute_attribute_Attribute = { slug: string | null };
 
 export type PageSlugByIdQuery_page_Page_attributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation = { name: string, plainText: string | null, richText: string | null };
 
@@ -90,7 +90,7 @@ export type ProductDetailsQuery_product_Product_variants_ProductVariant_media_Pr
 
 export type ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation = { name: string };
 
-export type ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute = { slug: string, inputType: Types.AttributeInputTypeEnum | null, name: string, translation: ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation | null };
+export type ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute = { slug: string | null, inputType: Types.AttributeInputTypeEnum | null, name: string | null, translation: ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation | null };
 
 export type ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue = { slug: string | null, name: string | null, plainText: string | null, richText: string | null, boolean: boolean | null, date: string | null, dateTime: string | null, reference: string | null, value: string | null, translation: PageSlugByIdQuery_page_Page_attributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation | null, file: PageSlugByIdQuery_page_Page_attributes_SelectedAttribute_values_AttributeValue_file_File | null };
 
@@ -100,7 +100,7 @@ export type ProductDetailsQuery_product_Product_variants_ProductVariant_nonSelec
 
 export type ProductDetailsQuery_product_Product_variants_ProductVariant = { id: string, name: string, translation: ProductDetailsQuery_product_Product_variants_ProductVariant_translation_ProductVariantTranslation | null, media: Array<ProductDetailsQuery_product_Product_variants_ProductVariant_media_ProductMedia> | null, selectionAttributes: Array<ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute>, nonSelectionAttributes: Array<ProductDetailsQuery_product_Product_variants_ProductVariant_nonSelectionAttributes_SelectedAttribute> };
 
-export type ProductDetailsQuery_product_Product_attributes_SelectedAttribute_attribute_Attribute = { slug: string, inputType: Types.AttributeInputTypeEnum | null, name: string, translation: ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation | null };
+export type ProductDetailsQuery_product_Product_attributes_SelectedAttribute_attribute_Attribute = { slug: string | null, inputType: Types.AttributeInputTypeEnum | null, name: string | null, translation: ProductDetailsQuery_product_Product_variants_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation | null };
 
 export type ProductDetailsQuery_product_Product_attributes_SelectedAttribute_values_AttributeValue = { slug: string | null, name: string | null, plainText: string | null, richText: string | null, boolean: boolean | null, date: string | null, dateTime: string | null, reference: string | null, value: string | null, translation: PageSlugByIdQuery_page_Page_attributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation | null, file: PageSlugByIdQuery_page_Page_attributes_SelectedAttribute_values_AttributeValue_file_File | null };
 

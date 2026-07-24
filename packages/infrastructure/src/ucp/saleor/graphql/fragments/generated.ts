@@ -39,7 +39,7 @@ export type UcpCatalogProductFragment_Product_variants_ProductVariant_pricing_Va
 
 export type UcpCatalogProductFragment_Product_variants_ProductVariant_media_ProductMedia = { alt: string, url: string };
 
-export type UcpCatalogProductFragment_Product_variants_ProductVariant_attributes_SelectedAttribute_attribute_Attribute = { name: string, slug: string };
+export type UcpCatalogProductFragment_Product_variants_ProductVariant_attributes_SelectedAttribute_attribute_Attribute = { name: string | null, slug: string | null };
 
 export type UcpCatalogProductFragment_Product_variants_ProductVariant_attributes_SelectedAttribute_values_AttributeValue = { name: string | null };
 
@@ -53,7 +53,7 @@ export type UcpCatalogProductFragment_Product_productType_ProductType_variantAtt
 
 export type UcpCatalogProductFragment_Product_productType_ProductType_variantAttributes_Attribute_choices_AttributeValueCountableConnection = { edges: Array<UcpCatalogProductFragment_Product_productType_ProductType_variantAttributes_Attribute_choices_AttributeValueCountableConnection_edges_AttributeValueCountableEdge> };
 
-export type UcpCatalogProductFragment_Product_productType_ProductType_variantAttributes_Attribute = { name: string, slug: string, choices: UcpCatalogProductFragment_Product_productType_ProductType_variantAttributes_Attribute_choices_AttributeValueCountableConnection | null };
+export type UcpCatalogProductFragment_Product_productType_ProductType_variantAttributes_Attribute = { name: string | null, slug: string | null, choices: UcpCatalogProductFragment_Product_productType_ProductType_variantAttributes_Attribute_choices_AttributeValueCountableConnection | null };
 
 export type UcpCatalogProductFragment_Product_productType_ProductType = { variantAttributes: Array<UcpCatalogProductFragment_Product_productType_ProductType_variantAttributes_Attribute> | null };
 
@@ -101,7 +101,7 @@ export type UcpCheckoutSessionFragment_Checkout_lines_CheckoutLine_variant_Produ
 
 export type UcpCheckoutSessionFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation = { name: string };
 
-export type UcpCheckoutSessionFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute = { slug: string, inputType: Types.AttributeInputTypeEnum | null, name: string, translation: UcpCheckoutSessionFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation | null };
+export type UcpCheckoutSessionFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute = { slug: string | null, inputType: Types.AttributeInputTypeEnum | null, name: string | null, translation: UcpCheckoutSessionFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_attribute_Attribute_translation_AttributeTranslation | null };
 
 export type UcpCheckoutSessionFragment_Checkout_lines_CheckoutLine_variant_ProductVariant_selectionAttributes_SelectedAttribute_values_AttributeValue_translation_AttributeValueTranslation = { name: string, plainText: string | null, richText: string | null };
 

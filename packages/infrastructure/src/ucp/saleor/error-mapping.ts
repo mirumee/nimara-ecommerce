@@ -71,10 +71,6 @@ export const SALEOR_TO_UCP_ERROR_MAP: Record<
     code: "payment_declined",
     severity: "requires_buyer_review",
   },
-  PRICE_OVERRIDE_REASON_WITHOUT_OVERRIDE: {
-    code: "invalid",
-    severity: "recoverable",
-  },
   CHECKOUT_NOT_FULLY_PAID: {
     code: "payment_declined",
     severity: "requires_buyer_review",
