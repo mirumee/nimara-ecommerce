@@ -6,7 +6,7 @@ import { TRANSACTION_EVENT_TYPE } from "./const";
  * https://docs.saleor.io/developer/extending/webhooks/synchronous-events/transaction
  *
  * {
- *   "pspReference": "[Optional for some results, see details below] <psp reference recieved from payment provider>",
+ *   "pspReference": "[Optional for some results, see details below] <psp reference received from payment provider>",
  *   "result": <[Optional] TransactionEventTypeEnum>,
  *   "amount": "<Decimal amount of the processed action>",
  *   "data": "<[Optional] JSON data tha will be returned to storefront>",
