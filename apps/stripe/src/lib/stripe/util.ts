@@ -1,6 +1,7 @@
 import type Stripe from "stripe";
 
 import {
+  type PaymentMethodDetailsInput,
   type TransactionActionEnum,
   type TransactionEventTypeEnum,
   type TransactionFlowStrategyEnum,
@@ -65,6 +66,72 @@ export const mapStatusToActionType = ({
   return mappedStatus;
 };
 
+export const humanize = (str: string) =>
+  (str.charAt(0).toUpperCase() + str.slice(1))
+    .replaceAll("_", " ")
+    .replaceAll("-", " ");
+
+export const extractPaymentMethodDetails = (
+  paymentMethod: string | Stripe.PaymentMethod | null | undefined,
+): PaymentMethodDetailsInput | undefined => {
+  if (!paymentMethod || typeof paymentMethod === "string") {
+    return undefined;
+  }
+
+  if (paymentMethod.type === "card" && paymentMethod.card) {
+    const card = paymentMethod.card;
+
+    return {
+      card: {
+        name: humanize(card.brand ?? "Card"),
+        brand: card.brand ?? undefined,
+        lastDigits: card.last4 ?? undefined,
+        expMonth: card.exp_month ?? undefined,
+        expYear: card.exp_year ?? undefined,
+      },
+    };
+  }
+
+  return {
+    other: {
+      name: humanize(paymentMethod.type ?? "Unknown"),
+    },
+  };
+};
+
+export const fetchPaymentMethodDetails = async (
+  api: Stripe,
+  paymentMethod: string | Stripe.PaymentMethod | null | undefined,
+): Promise<PaymentMethodDetailsInput | undefined> => {
+  if (!paymentMethod) {
+    return undefined;
+  }
+
+  if (typeof paymentMethod === "string") {
+    return extractPaymentMethodDetails(
+      await api.paymentMethods.retrieve(paymentMethod),
+    );
+  }
+
+  return extractPaymentMethodDetails(paymentMethod);
+};
+
+/**
+ * Resolves the amount a payment intent event is reported with: the captured
+ * amount once succeeded, the capturable amount while awaiting capture, and
+ * the intent amount for pending/action states.
+ */
+export const getPaymentIntentReportAmount = (intent: Stripe.PaymentIntent) => {
+  switch (intent.status) {
+    case "requires_capture":
+      return intent.amount_capturable;
+    case "succeeded":
+      return intent.amount_received;
+    default:
+      return intent.amount;
+  }
+};
+
 export const getIntentDashboardUrl = ({
   paymentId,
   secretKey,
@@ -95,52 +162,49 @@ const getRefundUpdatedEventType = (
   status: Stripe.Refund["status"],
 ): TransactionEventTypeEnum | undefined => {
   switch (status) {
-    case "canceled":
-      return "REFUND_FAILURE";
-    case "processing":
-    case "requires_action":
-      return "REFUND_REQUEST";
     case "succeeded":
       return "REFUND_SUCCESS";
+    case "pending":
+    case "requires_action":
+      return "REFUND_REQUEST";
+    case "canceled":
+    case "failed":
+      return "REFUND_FAILURE";
   }
 };
 
+/**
+ * Maps a Stripe event to the Saleor transaction event that should be reported
+ * as.
+ * Returns `null` for event types the app does not handle (e.g. stale
+ * subscriptions still configured on the Stripe webhook endpoint) — callers
+ * acknowledge those without reporting.
+ */
 export const mapStripeEventToSaleorEvent = (
   event: SupportedStripeWebhookEvent,
 ): {
   availableActions: TransactionActionEnum[];
   type: TransactionEventTypeEnum;
-} => {
-  const stripeObject = event.data.object as
-    | Stripe.PaymentIntent
-    | Stripe.Refund;
+} | null => {
+  const stripeObject = event.data.object;
   // @ts-expect-error Refund has no capture_method
   const isManualCapture = stripeObject?.capture_method === "manual";
 
   const eventTypeMapping: Partial<
     Record<SupportedStripeWebhookEventType, TransactionEventTypeEnum>
   > = {
-    "payment_intent.succeeded": isManualCapture
-      ? "AUTHORIZATION_SUCCESS"
-      : "CHARGE_SUCCESS",
+    "payment_intent.succeeded": "CHARGE_SUCCESS",
     "payment_intent.processing": isManualCapture
       ? "AUTHORIZATION_REQUEST"
       : "CHARGE_REQUEST",
     "payment_intent.payment_failed": isManualCapture
       ? "AUTHORIZATION_FAILURE"
       : "CHARGE_FAILURE",
-    "payment_intent.created": isManualCapture
-      ? "AUTHORIZATION_ACTION_REQUIRED"
-      : "CHARGE_ACTION_REQUIRED",
-    "payment_intent.canceled": isManualCapture
-      ? "AUTHORIZATION_FAILURE"
-      : "CHARGE_FAILURE",
-    "payment_intent.partially_funded": "INFO",
+    "payment_intent.canceled": "CANCEL_SUCCESS",
     "payment_intent.amount_capturable_updated": "AUTHORIZATION_ADJUSTMENT",
     "payment_intent.requires_action": isManualCapture
       ? "AUTHORIZATION_ACTION_REQUIRED"
       : "CHARGE_ACTION_REQUIRED",
-    "charge.refunded": "REFUND_SUCCESS",
     "charge.refund.updated": getRefundUpdatedEventType(stripeObject.status),
   };
 
@@ -148,7 +212,7 @@ export const mapStripeEventToSaleorEvent = (
     eventTypeMapping[event.type as SupportedStripeWebhookEventType];
 
   if (!resolvedEventType) {
-    throw new Error(`Unhandled event type: ${event.type}`);
+    return null;
   }
 
   const availableActions = getAvailableActionsForType(resolvedEventType);

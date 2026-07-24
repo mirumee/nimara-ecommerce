@@ -8,6 +8,7 @@ import { verifySaleorWebhookRoute } from "@/lib/saleor/webhooks/api";
 import { getStripeApi, stripeRouteErrorsHandler } from "@/lib/stripe/api";
 import {
   getIntentDashboardUrl,
+  getPaymentIntentReportAmount,
   mapStatusToActionType,
 } from "@/lib/stripe/util";
 import { getConfigProvider } from "@/providers/config";
@@ -75,9 +76,15 @@ export const POST = stripeRouteErrorsHandler(
         data = {
           ...data,
           result,
+          /**
+           * `amount_received` via the resolver — after a partial capture the
+           * intent keeps the original total in `amount`, and the async
+           * `payment_intent.succeeded` report must match this amount for
+           * Saleor to deduplicate both reports.
+           */
           amount: getAmountFromCents({
             currency: intent.currency,
-            amount: intent.amount,
+            amount: getPaymentIntentReportAmount(intent),
           }),
           externalUrl: getIntentDashboardUrl({
             paymentId: intent.id,

@@ -7,7 +7,9 @@ import {
   type SupportedStripeWebhookEvent,
 } from "@/lib/stripe/const";
 import {
+  fetchPaymentMethodDetails,
   getIntentDashboardUrl,
+  getPaymentIntentReportAmount,
   isAppEvent,
   mapStripeEventToSaleorEvent,
 } from "@/lib/stripe/util";
@@ -39,27 +41,16 @@ export const POST = stripeRouteErrorsHandler(
     } = unverifiedEvent.data?.object?.metadata ?? {};
 
     /**
-     * Metadata missing — the tenant cannot be resolved, so the signature
-     * cannot be checked either.
+     * Metadata missing — not an event issued by this app (e.g. manual
+     * dashboard activity on the same account). Acknowledge it so Stripe
+     * does not retry.
      */
     if (!all([transactionId, saleorDomain, channelSlug])) {
-      logger.error("Stripe webhook missing one of required metadata.", {
+      logger.info("Received Stripe webhook without app metadata, skipping.", {
         id: unverifiedEvent.id,
       });
 
-      const errors = Object.entries({
-        transactionId,
-        saleorDomain,
-        channelSlug,
-      })
-        .filter(([_, value]) => !value)
-        .map(([key]) => ({ message: `${key} is required` }));
-
-      return responseError({
-        description: "Missing required metadata in Stripe event.",
-        errors,
-        status: 422,
-      });
+      return responseSuccess({ description: "Skipped." });
     }
 
     const configProvider = getConfigProvider({ saleorDomain });
@@ -141,11 +132,35 @@ export const POST = stripeRouteErrorsHandler(
      */
     const eventData = mapStripeEventToSaleorEvent(event);
 
+    if (!eventData) {
+      logger.info("Unsupported Stripe event type, skipping.", {
+        id: event.id,
+        type: event.type,
+      });
+
+      return responseSuccess({ description: "Skipped." });
+    }
+
+    let paymentMethodDetails;
+
+    if ("payment_method" in stripeObject) {
+      paymentMethodDetails = await fetchPaymentMethodDetails(
+        api,
+        stripeObject.payment_method,
+      );
+    }
+
+    const reportAmount =
+      stripeObject.object === "payment_intent"
+        ? getPaymentIntentReportAmount(stripeObject)
+        : stripeObject.amount;
+
     await saleorClient.transactionReport({
       transactionId,
+      paymentMethodDetails,
       amount: getAmountFromCents({
         currency: stripeObject.currency,
-        amount: stripeObject.amount,
+        amount: reportAmount,
       }),
       message:
         "last_payment_error" in stripeObject
