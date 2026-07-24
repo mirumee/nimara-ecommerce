@@ -1,0 +1,18 @@
+fragment CategoryFragment on Category {
+  id
+  name
+  slug
+  description
+  seoTitle
+  seoDescription
+  backgroundImage {
+    url
+    alt
+  }
+  translation(languageCode: $languageCode) {
+    name
+    description
+    seoTitle
+    seoDescription
+  }
+}

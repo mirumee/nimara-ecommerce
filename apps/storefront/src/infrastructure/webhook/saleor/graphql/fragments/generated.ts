@@ -1,6 +1,239 @@
 import type * as Types from "@nimara/codegen/schema";
 
 import type { DocumentTypeDecoration } from "@graphql-typed-document-node/core";
+export type CategoryEventSubscriptionFragment_CategoryCreated_category_Category =
+  { slug: string };
+
+export type CategoryEventSubscriptionFragment_CategoryDeleted_category_Category =
+  { slug: string };
+
+export type CategoryEventSubscriptionFragment_CategoryUpdated_category_Category =
+  { slug: string };
+
+export type CategoryEventSubscriptionFragment_Uchm3Qz7YjEsQhTMfPIk01DEzLiWluHMnX4k1L6Dt0s =
+  {
+    __typename:
+      | "AccountChangeEmailRequested"
+      | "AccountConfirmationRequested"
+      | "AccountConfirmed"
+      | "AccountDeleteRequested"
+      | "AccountDeleted"
+      | "AccountEmailChanged"
+      | "AccountSetPasswordRequested"
+      | "AddressCreated"
+      | "AddressDeleted"
+      | "AddressUpdated"
+      | "AppDeleted"
+      | "AppInstalled"
+      | "AppStatusChanged"
+      | "AppUpdated"
+      | "AttributeCreated"
+      | "AttributeDeleted"
+      | "AttributeUpdated"
+      | "AttributeValueCreated"
+      | "AttributeValueDeleted"
+      | "AttributeValueUpdated";
+  };
+
+export type CategoryEventSubscriptionFragment_JujDz7YkOBmFmNik51oKhIsB9xOqT4ak7YgPfisMrI =
+  {
+    __typename:
+      | "CalculateTaxes"
+      | "ChannelCreated"
+      | "ChannelDeleted"
+      | "ChannelMetadataUpdated"
+      | "ChannelStatusChanged"
+      | "ChannelUpdated"
+      | "CheckoutCreated"
+      | "CheckoutFilterShippingMethods"
+      | "CheckoutFullyAuthorized"
+      | "CheckoutFullyPaid"
+      | "CheckoutMetadataUpdated"
+      | "CheckoutUpdated"
+      | "CollectionCreated"
+      | "CollectionDeleted"
+      | "CollectionMetadataUpdated"
+      | "CollectionUpdated"
+      | "CustomerCreated"
+      | "CustomerMetadataUpdated"
+      | "CustomerUpdated"
+      | "DraftOrderCreated";
+  };
+
+export type CategoryEventSubscriptionFragment_Ip1SjPiZq1LzLiTdONri3wgNngr1YqQzJ3kumOd5iDu =
+  {
+    __typename:
+      | "DraftOrderDeleted"
+      | "DraftOrderUpdated"
+      | "FulfillmentApproved"
+      | "FulfillmentCanceled"
+      | "FulfillmentCreated"
+      | "FulfillmentMetadataUpdated"
+      | "FulfillmentTrackingNumberUpdated"
+      | "GiftCardCreated"
+      | "GiftCardDeleted"
+      | "GiftCardExportCompleted"
+      | "GiftCardMetadataUpdated"
+      | "GiftCardSent"
+      | "GiftCardStatusChanged"
+      | "GiftCardUpdated"
+      | "InvoiceDeleted"
+      | "InvoiceRequested"
+      | "InvoiceSent"
+      | "ListStoredPaymentMethods"
+      | "MenuCreated"
+      | "MenuDeleted";
+  };
+
+export type CategoryEventSubscriptionFragment_BoMAxh6xlBeUhut2N9UOrYh2snKnXwHumt5TgGbWvc =
+  {
+    __typename:
+      | "MenuItemCreated"
+      | "MenuItemDeleted"
+      | "MenuItemUpdated"
+      | "MenuUpdated"
+      | "OrderBulkCreated"
+      | "OrderCancelled"
+      | "OrderConfirmed"
+      | "OrderCreated"
+      | "OrderExpired"
+      | "OrderFilterShippingMethods"
+      | "OrderFulfilled"
+      | "OrderFullyPaid"
+      | "OrderFullyRefunded"
+      | "OrderMetadataUpdated"
+      | "OrderPaid"
+      | "OrderRefunded"
+      | "OrderUpdated"
+      | "PageCreated"
+      | "PageDeleted"
+      | "PageTypeCreated";
+  };
+
+export type CategoryEventSubscriptionFragment_DOrUsyaEljxCw7Zq2xJQhD6nLxmrnkw3sGlUtkLrgQw =
+  {
+    __typename:
+      | "PageTypeDeleted"
+      | "PageTypeUpdated"
+      | "PageUpdated"
+      | "PaymentAuthorize"
+      | "PaymentCaptureEvent"
+      | "PaymentConfirmEvent"
+      | "PaymentGatewayInitializeSession"
+      | "PaymentGatewayInitializeTokenizationSession"
+      | "PaymentListGateways"
+      | "PaymentMethodInitializeTokenizationSession"
+      | "PaymentMethodProcessTokenizationSession"
+      | "PaymentProcessEvent"
+      | "PaymentRefundEvent"
+      | "PaymentVoidEvent"
+      | "PermissionGroupCreated"
+      | "PermissionGroupDeleted"
+      | "PermissionGroupUpdated"
+      | "ProductCreated"
+      | "ProductDeleted"
+      | "ProductExportCompleted";
+  };
+
+export type CategoryEventSubscriptionFragment_94v87CfdKokzpPr6Lo1t8Cua3KBtefrnu79jscakvA =
+  {
+    __typename:
+      | "ProductMediaCreated"
+      | "ProductMediaDeleted"
+      | "ProductMediaUpdated"
+      | "ProductMetadataUpdated"
+      | "ProductUpdated"
+      | "ProductVariantBackInStock"
+      | "ProductVariantCreated"
+      | "ProductVariantDeleted"
+      | "ProductVariantDiscountedPriceUpdated"
+      | "ProductVariantMetadataUpdated"
+      | "ProductVariantOutOfStock"
+      | "ProductVariantStockUpdated"
+      | "ProductVariantUpdated"
+      | "PromotionCreated"
+      | "PromotionDeleted"
+      | "PromotionEnded"
+      | "PromotionRuleCreated"
+      | "PromotionRuleDeleted"
+      | "PromotionRuleUpdated"
+      | "PromotionStarted";
+  };
+
+export type CategoryEventSubscriptionFragment_FsCnoBef8jWxBeWLo55z4FkYvj19c9pK9ySq77aoQq =
+  {
+    __typename:
+      | "PromotionUpdated"
+      | "SaleCreated"
+      | "SaleDeleted"
+      | "SaleToggle"
+      | "SaleUpdated"
+      | "ShippingListMethodsForCheckout"
+      | "ShippingPriceCreated"
+      | "ShippingPriceDeleted"
+      | "ShippingPriceUpdated"
+      | "ShippingZoneCreated"
+      | "ShippingZoneDeleted"
+      | "ShippingZoneMetadataUpdated"
+      | "ShippingZoneUpdated"
+      | "ShopMetadataUpdated"
+      | "StaffCreated"
+      | "StaffDeleted"
+      | "StaffSetPasswordRequested"
+      | "StaffUpdated"
+      | "StoredPaymentMethodDeleteRequested"
+      | "ThumbnailCreated";
+  };
+
+export type CategoryEventSubscriptionFragment_V8I7ofYZlQ6mRbyZppdZBtAVuVhCxrv4cl7r3Nc1xQ =
+  {
+    __typename:
+      | "TransactionCancelationRequested"
+      | "TransactionChargeRequested"
+      | "TransactionInitializeSession"
+      | "TransactionItemMetadataUpdated"
+      | "TransactionProcessSession"
+      | "TransactionRefundRequested"
+      | "TranslationCreated"
+      | "TranslationUpdated"
+      | "VoucherCodeExportCompleted"
+      | "VoucherCodesCreated"
+      | "VoucherCodesDeleted"
+      | "VoucherCreated"
+      | "VoucherDeleted"
+      | "VoucherMetadataUpdated"
+      | "VoucherUpdated"
+      | "WarehouseCreated"
+      | "WarehouseDeleted"
+      | "WarehouseMetadataUpdated"
+      | "WarehouseUpdated";
+  };
+
+export type CategoryEventSubscriptionFragment_CategoryCreated = {
+  category: CategoryEventSubscriptionFragment_CategoryCreated_category_Category | null;
+} & { __typename: "CategoryCreated" };
+
+export type CategoryEventSubscriptionFragment_CategoryDeleted = {
+  category: CategoryEventSubscriptionFragment_CategoryDeleted_category_Category | null;
+} & { __typename: "CategoryDeleted" };
+
+export type CategoryEventSubscriptionFragment_CategoryUpdated = {
+  category: CategoryEventSubscriptionFragment_CategoryUpdated_category_Category | null;
+} & { __typename: "CategoryUpdated" };
+
+export type CategoryEventSubscriptionFragment =
+  | CategoryEventSubscriptionFragment_Uchm3Qz7YjEsQhTMfPIk01DEzLiWluHMnX4k1L6Dt0s
+  | CategoryEventSubscriptionFragment_JujDz7YkOBmFmNik51oKhIsB9xOqT4ak7YgPfisMrI
+  | CategoryEventSubscriptionFragment_Ip1SjPiZq1LzLiTdONri3wgNngr1YqQzJ3kumOd5iDu
+  | CategoryEventSubscriptionFragment_BoMAxh6xlBeUhut2N9UOrYh2snKnXwHumt5TgGbWvc
+  | CategoryEventSubscriptionFragment_DOrUsyaEljxCw7Zq2xJQhD6nLxmrnkw3sGlUtkLrgQw
+  | CategoryEventSubscriptionFragment_94v87CfdKokzpPr6Lo1t8Cua3KBtefrnu79jscakvA
+  | CategoryEventSubscriptionFragment_FsCnoBef8jWxBeWLo55z4FkYvj19c9pK9ySq77aoQq
+  | CategoryEventSubscriptionFragment_V8I7ofYZlQ6mRbyZppdZBtAVuVhCxrv4cl7r3Nc1xQ
+  | CategoryEventSubscriptionFragment_CategoryCreated
+  | CategoryEventSubscriptionFragment_CategoryDeleted
+  | CategoryEventSubscriptionFragment_CategoryUpdated;
+
 export type CollectionEventSubscriptionFragment_CollectionDeleted_collection_Collection =
   { slug: string };
 
@@ -1139,6 +1372,29 @@ export class TypedDocumentString<TResult, TVariables>
     return this.value;
   }
 }
+export const CategoryEventSubscriptionFragment = new TypedDocumentString(
+  `
+    fragment CategoryEventSubscriptionFragment on Event {
+  __typename
+  ... on CategoryCreated {
+    category {
+      slug
+    }
+  }
+  ... on CategoryUpdated {
+    category {
+      slug
+    }
+  }
+  ... on CategoryDeleted {
+    category {
+      slug
+    }
+  }
+}
+    `,
+  { fragmentName: "CategoryEventSubscriptionFragment" },
+) as unknown as TypedDocumentString<CategoryEventSubscriptionFragment, unknown>;
 export const CollectionEventSubscriptionFragment = new TypedDocumentString(
   `
     fragment CollectionEventSubscriptionFragment on Event {

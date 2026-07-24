@@ -18,6 +18,23 @@ export type CategoriesIDsBySlugsVariables = Types.Exact<{
 
 export type CategoriesIDsBySlugs = CategoriesIDsBySlugs_Query;
 
+export type CategoryDetailsQuery_category_Category_backgroundImage_Image = { url: string, alt: string | null };
+
+export type CategoryDetailsQuery_category_Category_translation_CategoryTranslation = { name: string | null, description: string | null, seoTitle: string | null, seoDescription: string | null };
+
+export type CategoryDetailsQuery_category_Category = { id: string, name: string, slug: string, description: string | null, seoTitle: string | null, seoDescription: string | null, backgroundImage: CategoryDetailsQuery_category_Category_backgroundImage_Image | null, translation: CategoryDetailsQuery_category_Category_translation_CategoryTranslation | null };
+
+export type CategoryDetailsQuery_Query = { category: CategoryDetailsQuery_category_Category | null };
+
+
+export type CategoryDetailsQueryVariables = Types.Exact<{
+  slug?: Types.InputMaybe<Types.Scalars['String']['input']>;
+  languageCode: Types.LanguageCodeEnum;
+}>;
+
+
+export type CategoryDetailsQuery = CategoryDetailsQuery_Query;
+
 export class TypedDocumentString<TResult, TVariables>
   extends String
   implements DocumentTypeDecoration<TResult, TVariables>
@@ -48,3 +65,27 @@ export const CategoriesIDsBySlugsDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<CategoriesIDsBySlugs, CategoriesIDsBySlugsVariables>;
+export const CategoryDetailsQueryDocument = new TypedDocumentString(`
+    query CategoryDetailsQuery($slug: String, $languageCode: LanguageCodeEnum!) {
+  category(slug: $slug) {
+    ...CategoryFragment
+  }
+}
+    fragment CategoryFragment on Category {
+  id
+  name
+  slug
+  description
+  seoTitle
+  seoDescription
+  backgroundImage {
+    url
+    alt
+  }
+  translation(languageCode: $languageCode) {
+    name
+    description
+    seoTitle
+    seoDescription
+  }
+}`) as unknown as TypedDocumentString<CategoryDetailsQuery, CategoryDetailsQueryVariables>;

@@ -2,6 +2,7 @@ import { type AppErrorCode } from "@nimara/domain/objects/Error";
 import { err, ok } from "@nimara/domain/objects/Result";
 import type { AddressService } from "@nimara/infrastructure/address/types";
 import type { CartService } from "@nimara/infrastructure/cart/types";
+import type { CategoryService } from "@nimara/infrastructure/category/types";
 import type { CheckoutService } from "@nimara/infrastructure/checkout/types";
 import type { CollectionService } from "@nimara/infrastructure/collection/types";
 import type { MarketplaceService } from "@nimara/infrastructure/marketplace/types";
@@ -69,6 +70,11 @@ export const emptyCollectionService = {
     ok({ pageInfo: emptyCursorPageInfo, results: null }),
   getCollectionsIDsBySlugs: async () => ok([]),
 } satisfies CollectionService;
+
+export const emptyCategoryService = {
+  getCategoriesIDsBySlugs: async () => ok([]),
+  getCategoryDetails: async () => ok(null),
+} satisfies CategoryService;
 
 export const emptyCartService = {
   cartGet: async () => notConfigured("CART_NOT_FOUND_ERROR"),

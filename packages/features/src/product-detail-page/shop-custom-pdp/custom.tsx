@@ -41,7 +41,7 @@ export const CustomPDPView = async ({
             category={product.category}
             productName={product.name}
             homePath={paths.home}
-            searchPath={paths.search}
+            categoryPath={paths.category}
           />
 
           <div className="flex flex-wrap justify-center gap-8 md:flex-nowrap md:justify-between">

@@ -5,8 +5,8 @@ import { SearchPagination } from "@nimara/features/shared/product-list/search-pa
 import { Breadcrumbs } from "@nimara/foundation/navigation/breadcrumbs";
 import { Skeleton } from "@nimara/ui/components/skeleton";
 
-import { CollectionDescription } from "../shared/components/collection-description";
-import { CollectionHeader } from "../shared/components/collection-header";
+import { ListingDescription } from "../../shared/components/listing-description";
+import { ListingHeader } from "../../shared/components/listing-header";
 import { CollectionProvider } from "../shared/providers/collection-provider";
 import { type StandardCollectionViewProps } from "../shared/types";
 
@@ -44,11 +44,11 @@ export const StandardCollectionView = async (
               pageName={collection.name}
               homePath={props.paths.home}
             />
-            <CollectionHeader
+            <ListingHeader
               name={collection.name}
               thumbnail={collection.thumbnail}
             />
-            <CollectionDescription description={collection.description} />
+            <ListingDescription description={collection.description} />
 
             <hr />
 
@@ -87,7 +87,7 @@ export const StandardCollectionViewSkeleton = () => (
     <div className="grid basis-full items-center justify-center gap-4 md:flex">
       <Skeleton className="h-8 w-1/3" />
     </div>
-    <Skeleton className="mx-auto aspect-[4/3] w-full max-w-2xl" />
+    <Skeleton className="aspect-[4/3] w-full" />
     <Skeleton className="h-24 w-full" />
     <hr />
     <Skeleton className="h-8 w-1/3" />

@@ -748,6 +748,32 @@ export type AllocationStrategyEnum =
   | 'PRIORITIZE_HIGH_STOCK'
   | 'PRIORITIZE_SORTING_ORDER';
 
+/** Lists current announcements that the user should see. */
+export type Announcement = {
+  /** The date & time at which this announcement was created. */
+  createdAt: Scalars['DateTime']['output'];
+  /** Additional information about this announcement. */
+  extra: Scalars['Metadata']['output'];
+  /** Determine the how critical the announcement is. UNSET if no severity level was defined for this announcement. */
+  importance: AnnouncementImportanceEnum;
+  /** The announcement's description, may contain HTML formatting. */
+  messageHtml: Scalars['String']['output'];
+  /** The announcement's title. */
+  title: Scalars['String']['output'];
+  /** The announcement's type, for example "CUSTOM". Used to programatically distinguish between message types thus allowing to render the message differently, and allows to know the expected shape for the `extra` field. */
+  type: Scalars['String']['output'];
+  /** The date & time at which this announcement was last updated. */
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+/** Defines a shop-level announcement's level/severity. */
+export type AnnouncementImportanceEnum =
+  | 'CRITICAL'
+  | 'HIGH'
+  | 'LOW'
+  | 'MODERATE'
+  | 'UNSET';
+
 /** Represents app data. */
 export type App = Node & ObjectWithMetadata & {
   /** Description of this app. */
@@ -2117,6 +2143,22 @@ export type AssignedSwatchAttributeValue = {
   name: Maybe<Scalars['String']['output']>;
   /** Slug of the selected swatch value. */
   slug: Maybe<Scalars['String']['output']>;
+  /**
+   * Translation of the name.
+   *
+   * Added in Saleor 3.22.
+   */
+  translation: Maybe<Scalars['String']['output']>;
+};
+
+
+/**
+ * Represents a single swatch value.
+ *
+ * Added in Saleor 3.22.
+ */
+export type AssignedSwatchAttributeValueTranslationArgs = {
+  languageCode: LanguageCodeEnum;
 };
 
 /**
@@ -2561,7 +2603,7 @@ export type AttributeCreated = Event & {
 /**
  * Deletes an attribute.
  *
- * Requires one of the following permissions: MANAGE_PRODUCT_TYPES_AND_ATTRIBUTES.
+ * Requires one of the following permissions, depending on the attribute type: MANAGE_PRODUCT_TYPES_AND_ATTRIBUTES for `PRODUCT_TYPE` attributes, MANAGE_PAGE_TYPES_AND_ATTRIBUTES for `PAGE_TYPE` attributes.
  *
  * Triggers the following webhook events:
  * - ATTRIBUTE_DELETED (async): An attribute was deleted.
@@ -2809,7 +2851,7 @@ export type AttributeTypeEnumFilterInput = {
 /**
  * Updates attribute.
  *
- * Requires one of the following permissions: MANAGE_PRODUCT_TYPES_AND_ATTRIBUTES.
+ * Requires one of the following permissions, depending on the attribute type: MANAGE_PRODUCT_TYPES_AND_ATTRIBUTES for `PRODUCT_TYPE` attributes, MANAGE_PAGE_TYPES_AND_ATTRIBUTES for `PAGE_TYPE` attributes.
  *
  * Triggers the following webhook events:
  * - ATTRIBUTE_UPDATED (async): An attribute was updated.
@@ -3425,6 +3467,11 @@ export type CalculateTaxes = Event & {
   version: Maybe<Scalars['String']['output']>;
 };
 
+/**
+ * Card data used to check a payment balance.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type CardInput = {
   /** Payment method nonce, a token returned by the appropriate provider's SDK. */
   code: Scalars['String']['input'];
@@ -4322,6 +4369,7 @@ export type Checkout = Node & ObjectWithMetadata & {
    *
    * Triggers the following webhook events:
    * - PAYMENT_LIST_GATEWAYS (sync): Fetch payment gateways available for checkout.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
    */
   availablePaymentGateways: Array<PaymentGateway>;
   /**
@@ -12103,7 +12151,7 @@ export type Mutation = {
   /**
    * Deletes an attribute.
    *
-   * Requires one of the following permissions: MANAGE_PRODUCT_TYPES_AND_ATTRIBUTES.
+   * Requires one of the following permissions, depending on the attribute type: MANAGE_PRODUCT_TYPES_AND_ATTRIBUTES for `PRODUCT_TYPE` attributes, MANAGE_PAGE_TYPES_AND_ATTRIBUTES for `PAGE_TYPE` attributes.
    *
    * Triggers the following webhook events:
    * - ATTRIBUTE_DELETED (async): An attribute was deleted.
@@ -12128,7 +12176,7 @@ export type Mutation = {
   /**
    * Updates attribute.
    *
-   * Requires one of the following permissions: MANAGE_PRODUCT_TYPES_AND_ATTRIBUTES.
+   * Requires one of the following permissions, depending on the attribute type: MANAGE_PRODUCT_TYPES_AND_ATTRIBUTES for `PRODUCT_TYPE` attributes, MANAGE_PAGE_TYPES_AND_ATTRIBUTES for `PAGE_TYPE` attributes.
    *
    * Triggers the following webhook events:
    * - ATTRIBUTE_UPDATED (async): An attribute was updated.
@@ -12390,7 +12438,10 @@ export type Mutation = {
    * - CHECKOUT_UPDATED (async): A checkout was updated.
    */
   checkoutLinesUpdate: Maybe<CheckoutLinesUpdate>;
-  /** Creates a new payment for given checkout. */
+  /**
+   * Creates a new payment for given checkout.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+   */
   checkoutPaymentCreate: Maybe<CheckoutPaymentCreate>;
   /**
    * Remove a gift card or a voucher from a checkout.
@@ -12947,6 +12998,7 @@ export type Mutation = {
    * Capture an order.
    *
    * Requires one of the following permissions: MANAGE_ORDERS.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
    */
   orderCapture: Maybe<OrderCapture>;
   /**
@@ -13101,6 +13153,7 @@ export type Mutation = {
    * Refund an order.
    *
    * Requires one of the following permissions: MANAGE_ORDERS.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
    */
   orderRefund: Maybe<OrderRefund>;
   /**
@@ -13126,6 +13179,7 @@ export type Mutation = {
    * Void an order.
    *
    * Requires one of the following permissions: MANAGE_ORDERS.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
    */
   orderVoid: Maybe<OrderVoid>;
   /**
@@ -13222,9 +13276,13 @@ export type Mutation = {
    * Captures the authorized payment amount.
    *
    * Requires one of the following permissions: MANAGE_ORDERS.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
    */
   paymentCapture: Maybe<PaymentCapture>;
-  /** Check payment balance. */
+  /**
+   * Check payment balance.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+   */
   paymentCheckBalance: Maybe<PaymentCheckBalance>;
   /** Initializes a payment gateway session. It triggers the webhook `PAYMENT_GATEWAY_INITIALIZE_SESSION`, to the requested `paymentGateways`. If `paymentGateways` is not provided, the webhook will be send to all subscribed payment gateways. There is a limit of 100 transaction items per checkout / order. */
   paymentGatewayInitialize: Maybe<PaymentGatewayInitialize>;
@@ -13237,7 +13295,10 @@ export type Mutation = {
    * - PAYMENT_GATEWAY_INITIALIZE_TOKENIZATION_SESSION (sync): The customer requested to initialize payment gateway for tokenization.
    */
   paymentGatewayInitializeTokenization: Maybe<PaymentGatewayInitializeTokenization>;
-  /** Initializes payment process when it is required by gateway. */
+  /**
+   * Initializes payment process when it is required by gateway.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+   */
   paymentInitialize: Maybe<PaymentInitialize>;
   /**
    * Tokenize payment method.
@@ -13261,12 +13322,14 @@ export type Mutation = {
    * Refunds the captured payment amount.
    *
    * Requires one of the following permissions: MANAGE_ORDERS.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
    */
   paymentRefund: Maybe<PaymentRefund>;
   /**
    * Voids the authorized payment.
    *
    * Requires one of the following permissions: MANAGE_ORDERS.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
    */
   paymentVoid: Maybe<PaymentVoid>;
   /**
@@ -16328,7 +16391,10 @@ export type Order = Node & ObjectWithMetadata & {
   paymentStatus: PaymentChargeStatusEnum;
   /** User-friendly payment status. */
   paymentStatusDisplay: Scalars['String']['output'];
-  /** List of payments for the order. */
+  /**
+   * List of payments for the order.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+   */
   payments: Array<Payment>;
   /** List of private metadata items. Requires staff permissions to access. */
   privateMetadata: Array<MetadataItem>;
@@ -17421,6 +17487,11 @@ export type OrderFilterInput = {
   isPreorder?: InputMaybe<Scalars['Boolean']['input']>;
   metadata?: InputMaybe<Array<MetadataFilter>>;
   numbers?: InputMaybe<Array<Scalars['String']['input']>>;
+  /**
+   * Filter orders by payment charge status.
+   *
+   * DEPRECATED: this field will be removed. The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+   */
   paymentStatus?: InputMaybe<Array<PaymentChargeStatusEnum>>;
   search?: InputMaybe<Scalars['String']['input']>;
   status?: InputMaybe<Array<OrderStatusFilter>>;
@@ -19361,7 +19432,11 @@ export type PasswordChange = {
   user: Maybe<User>;
 };
 
-/** Represents a payment of a given type. */
+/**
+ * Represents a payment of a given type.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type Payment = Node & ObjectWithMetadata & {
   /**
    * List of actions that can be performed in the current state of a payment.
@@ -19449,36 +19524,59 @@ export type Payment = Node & ObjectWithMetadata & {
 };
 
 
-/** Represents a payment of a given type. */
+/**
+ * Represents a payment of a given type.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type PaymentMetafieldArgs = {
   key: Scalars['String']['input'];
 };
 
 
-/** Represents a payment of a given type. */
+/**
+ * Represents a payment of a given type.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type PaymentMetafieldsArgs = {
   keys?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
 
-/** Represents a payment of a given type. */
+/**
+ * Represents a payment of a given type.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type PaymentPrivateMetafieldArgs = {
   key: Scalars['String']['input'];
 };
 
 
-/** Represents a payment of a given type. */
+/**
+ * Represents a payment of a given type.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type PaymentPrivateMetafieldsArgs = {
   keys?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
-/** Authorize payment. */
+/**
+ * Authorize payment.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type PaymentAuthorize = Event & {
   /** Time of the event. */
   issuedAt: Maybe<Scalars['DateTime']['output']>;
   /** The user or application that triggered the event. */
   issuingPrincipal: Maybe<IssuingPrincipal>;
-  /** Look up a payment. */
+  /**
+   * Look up a payment.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+   */
   payment: Maybe<Payment>;
   /** The application receiving the webhook. */
   recipient: Maybe<App>;
@@ -19499,13 +19597,20 @@ export type PaymentCapture = {
   paymentErrors: Array<PaymentError>;
 };
 
-/** Capture payment. */
+/**
+ * Capture payment.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type PaymentCaptureEvent = Event & {
   /** Time of the event. */
   issuedAt: Maybe<Scalars['DateTime']['output']>;
   /** The user or application that triggered the event. */
   issuingPrincipal: Maybe<IssuingPrincipal>;
-  /** Look up a payment. */
+  /**
+   * Look up a payment.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+   */
   payment: Maybe<Payment>;
   /** The application receiving the webhook. */
   recipient: Maybe<App>;
@@ -19532,6 +19637,11 @@ export type PaymentCheckBalance = {
   paymentErrors: Array<PaymentError>;
 };
 
+/**
+ * Fields required to check a payment balance.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type PaymentCheckBalanceInput = {
   /** Information about card. */
   card: CardInput;
@@ -19543,13 +19653,20 @@ export type PaymentCheckBalanceInput = {
   method: Scalars['String']['input'];
 };
 
-/** Confirm payment. */
+/**
+ * Confirm payment.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type PaymentConfirmEvent = Event & {
   /** Time of the event. */
   issuedAt: Maybe<Scalars['DateTime']['output']>;
   /** The user or application that triggered the event. */
   issuingPrincipal: Maybe<IssuingPrincipal>;
-  /** Look up a payment. */
+  /**
+   * Look up a payment.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+   */
   payment: Maybe<Payment>;
   /** The application receiving the webhook. */
   recipient: Maybe<App>;
@@ -19604,6 +19721,11 @@ export type PaymentErrorCode =
   | 'UNAVAILABLE_VARIANT_IN_CHANNEL'
   | 'UNIQUE';
 
+/**
+ * Filtering options for payments.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type PaymentFilterInput = {
   checkouts?: InputMaybe<Array<Scalars['ID']['input']>>;
   /** Filter by ids. */
@@ -19763,7 +19885,11 @@ export type PaymentInitialize = {
   paymentErrors: Array<PaymentError>;
 };
 
-/** Server-side data generated by a payment gateway. Optional step when the payment provider requires an additional action to initialize payment session. */
+/**
+ * Server-side data generated by a payment gateway. Optional step when the payment provider requires an additional action to initialize payment session.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type PaymentInitialized = {
   /** Initialized data by gateway. */
   data: Maybe<Scalars['JSONString']['output']>;
@@ -19773,6 +19899,11 @@ export type PaymentInitialized = {
   name: Scalars['String']['output'];
 };
 
+/**
+ * Fields required to create a payment.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type PaymentInput = {
   /** Total amount of the transaction, including all taxes and discounts. If no amount is provided, the checkout total will be used. */
   amount?: InputMaybe<Scalars['PositiveDecimal']['input']>;
@@ -19792,7 +19923,11 @@ export type PaymentInput = {
   token?: InputMaybe<Scalars['String']['input']>;
 };
 
-/** List payment gateways. */
+/**
+ * List payment gateways.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type PaymentListGateways = Event & {
   /** The checkout the event relates to. */
   checkout: Maybe<Checkout>;
@@ -19995,13 +20130,20 @@ export type PaymentMethodTypeEnumFilterInput = {
   oneOf?: InputMaybe<Array<PaymentMethodTypeEnum>>;
 };
 
-/** Process payment. */
+/**
+ * Process payment.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type PaymentProcessEvent = Event & {
   /** Time of the event. */
   issuedAt: Maybe<Scalars['DateTime']['output']>;
   /** The user or application that triggered the event. */
   issuingPrincipal: Maybe<IssuingPrincipal>;
-  /** Look up a payment. */
+  /**
+   * Look up a payment.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+   */
   payment: Maybe<Payment>;
   /** The application receiving the webhook. */
   recipient: Maybe<App>;
@@ -20022,13 +20164,20 @@ export type PaymentRefund = {
   paymentErrors: Array<PaymentError>;
 };
 
-/** Refund payment. */
+/**
+ * Refund payment.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type PaymentRefundEvent = Event & {
   /** Time of the event. */
   issuedAt: Maybe<Scalars['DateTime']['output']>;
   /** The user or application that triggered the event. */
   issuingPrincipal: Maybe<IssuingPrincipal>;
-  /** Look up a payment. */
+  /**
+   * Look up a payment.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+   */
   payment: Maybe<Payment>;
   /** The application receiving the webhook. */
   recipient: Maybe<App>;
@@ -20083,7 +20232,11 @@ export type PaymentSettingsInput = {
   releaseFundsForExpiredCheckouts?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-/** Represents a payment source stored for user in payment gateway, such as credit card. */
+/**
+ * Represents a payment source stored for user in payment gateway, such as credit card.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type PaymentSource = {
   /** Stored credit card details if available. */
   creditCardInfo: Maybe<CreditCard>;
@@ -20112,13 +20265,20 @@ export type PaymentVoid = {
   paymentErrors: Array<PaymentError>;
 };
 
-/** Void payment. */
+/**
+ * Void payment.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type PaymentVoidEvent = Event & {
   /** Time of the event. */
   issuedAt: Maybe<Scalars['DateTime']['output']>;
   /** The user or application that triggered the event. */
   issuingPrincipal: Maybe<IssuingPrincipal>;
-  /** Look up a payment. */
+  /**
+   * Look up a payment.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+   */
   payment: Maybe<Payment>;
   /** The application receiving the webhook. */
   recipient: Maybe<App>;
@@ -24340,12 +24500,14 @@ export type Query = {
    * Look up a payment by ID.
    *
    * Requires one of the following permissions: MANAGE_ORDERS.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
    */
   payment: Maybe<Payment>;
   /**
    * List of payments.
    *
    * Requires one of the following permissions: MANAGE_ORDERS.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
    */
   payments: Maybe<PaymentCountableConnection>;
   /**
@@ -26805,6 +26967,12 @@ export type Shop = ObjectWithMetadata & {
    */
   allowLoginWithoutConfirmation: Maybe<Scalars['Boolean']['output']>;
   /**
+   * List of announcements for this shop.
+   *
+   * Requires one of the following permissions: AUTHENTICATED_STAFF_USER.
+   */
+  announcements: Array<Announcement>;
+  /**
    * Enable automatic fulfillment for all digital products.
    *
    * Requires one of the following permissions: MANAGE_SETTINGS.
@@ -26812,7 +26980,10 @@ export type Shop = ObjectWithMetadata & {
   automaticFulfillmentDigitalProducts: Maybe<Scalars['Boolean']['output']>;
   /** List of available external authentications. */
   availableExternalAuthentications: Array<ExternalAuthentication>;
-  /** List of available payment gateways. */
+  /**
+   * List of available payment gateways.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+   */
   availablePaymentGateways: Array<PaymentGateway>;
   /** Shipping methods that are available for the shop. */
   availableShippingMethods: Maybe<Array<ShippingMethod>>;
@@ -28671,7 +28842,11 @@ export type TimePeriodTypeEnum =
 export type TokenizedPaymentFlowEnum =
   | 'INTERACTIVE';
 
-/** An object representing a single payment. */
+/**
+ * An object representing a single payment.
+ *
+ * The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+ */
 export type Transaction = Node & {
   /** Total amount of the transaction. */
   amount: Maybe<Money>;
@@ -28681,7 +28856,7 @@ export type Transaction = Node & {
   error: Maybe<Scalars['String']['output']>;
   /**
    * Response returned by payment gateway.
-   * @deprecated This field is a part of a legacy Payments API. Please use apps instead.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
    */
   gatewayResponse: Scalars['JSONString']['output'];
   /** ID of the transaction. */
@@ -29627,7 +29802,10 @@ export type User = Node & ObjectWithMetadata & {
   restrictedAccessToChannels: Scalars['Boolean']['output'];
   /** Returns a list of user's stored payment methods that can be used in provided channel. The field returns a list of stored payment methods by payment apps. When `amount` is not provided, 0 will be used as default value. */
   storedPaymentMethods: Maybe<Array<StoredPaymentMethod>>;
-  /** List of stored payment sources. The field returns a list of payment sources stored for payment plugins. */
+  /**
+   * List of stored payment sources. The field returns a list of payment sources stored for payment plugins.
+   * @deprecated The legacy Payments API is deprecated and will be removed. Use the Transactions API instead.
+   */
   storedPaymentSources: Maybe<Array<PaymentSource>>;
   /** The data when the user last update the account information. */
   updatedAt: Scalars['DateTime']['output'];

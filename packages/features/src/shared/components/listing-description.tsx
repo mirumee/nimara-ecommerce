@@ -4,14 +4,15 @@ type Props = {
   description?: unknown;
 };
 
-export const CollectionDescription = ({ description }: Props) => {
+export const ListingDescription = ({ description }: Props) => {
   if (!description) {
     return null;
   }
 
   return (
-    <div>
+    <div className="w-full">
       <RichText
+        className="max-w-none"
         contentData={
           description as Parameters<typeof RichText>[0]["contentData"]
         }

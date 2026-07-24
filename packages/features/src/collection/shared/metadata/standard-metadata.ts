@@ -47,9 +47,10 @@ export async function generateStandardCollectionMetadata(
   return {
     title: collection.seoTitle || collection.name,
     description:
-      collection.seoDescription || parsedDescription?.length
-        ? parsedDescription?.slice(0, 200)
-        : collection.name,
+      collection.seoDescription ??
+      (parsedDescription?.length
+        ? parsedDescription.slice(0, 200)
+        : collection.name),
     alternates: {
       canonical: canonicalUrl,
     },
@@ -63,7 +64,7 @@ export async function generateStandardCollectionMetadata(
         },
       ],
       url: canonicalUrl,
-      siteName: "Nimara Store",
+      siteName: props.siteName,
     },
   };
 }

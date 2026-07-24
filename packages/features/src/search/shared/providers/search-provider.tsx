@@ -25,6 +25,8 @@ export interface SearchProviderData {
 }
 
 export interface SearchProviderProps {
+  /** When set, merged into the `category` filter server-side, scoping results to one category without polluting the URL/searchParams (category PLP). */
+  categorySlug?: string;
   defaultResultsPerPage: number;
   defaultSortBy: string;
   /** When set, merged into Saleor product search metadata filter (vendor PLP). */
@@ -42,6 +44,7 @@ export const SearchProvider = async ({
   defaultResultsPerPage,
   defaultSortBy,
   productMetadata,
+  categorySlug,
   region,
 }: SearchProviderProps) => {
   const searchContext = {
@@ -60,9 +63,12 @@ export const SearchProvider = async ({
     ...rest
   } = searchParams;
 
-  const filters = Object.fromEntries(
-    Object.entries(rest).filter(([_, value]) => value !== undefined),
-  ) as Record<string, string>;
+  const filters = {
+    ...Object.fromEntries(
+      Object.entries(rest).filter(([_, value]) => value !== undefined),
+    ),
+    ...(categorySlug ? { category: categorySlug } : {}),
+  } as Record<string, string>;
 
   const searchService = await services.getSearchService();
   const [resultSearch, getFacetsResult, resultOptions] = await Promise.all([

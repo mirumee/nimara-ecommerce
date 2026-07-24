@@ -1,0 +1,5 @@
+query CategoryDetailsQuery($slug: String, $languageCode: LanguageCodeEnum!) {
+  category(slug: $slug) {
+    ...CategoryFragment
+  }
+}

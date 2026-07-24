@@ -110,6 +110,9 @@ export const paths = {
   collections: {
     ...url<"slug">("/collections/[slug]"),
   },
+  categories: {
+    ...url<"slug">("/categories/[slug]"),
+  },
   checkout: {
     ...url("/checkout"),
     signIn: url("/checkout/sign-in"),

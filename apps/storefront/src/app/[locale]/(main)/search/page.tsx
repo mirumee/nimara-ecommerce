@@ -38,6 +38,7 @@ export async function generateMetadata(
     title: q ? t("search-for", { query: q }) : t("all-products"),
     description: t("description"),
     ogImageAlt: t("search-preview"),
+    siteName: clientEnvs.NEXT_PUBLIC_DEFAULT_PAGE_TITLE,
   });
 }
 

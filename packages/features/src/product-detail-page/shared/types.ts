@@ -21,9 +21,9 @@ export interface PDPViewProps {
   params: Promise<{ locale: Locale; slug: string }>;
   paths: {
     cart: string;
+    category: (slug: string) => string;
     home: string;
     product: (slug: string) => string;
-    search: (query: { category: string }) => string;
   };
   region: Region;
   services: ServiceRegistry;
@@ -34,5 +34,6 @@ export interface GenerateStandardPDPMetadataProps {
   productPath: string;
   region: Region;
   services: ServiceRegistry;
+  siteName: string;
   storefrontUrl: string;
 }

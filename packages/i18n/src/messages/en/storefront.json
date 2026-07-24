@@ -126,6 +126,9 @@
     "vendor-restriction-title": "Can't add to bag",
     "your-bag": "Your bag"
   },
+  "categories": {
+    "category-image": "Category image"
+  },
   "checkout": {
     "hello-again": "Hello again!",
     "sign-in-to-finalize-order": "Sign in to finalize order",

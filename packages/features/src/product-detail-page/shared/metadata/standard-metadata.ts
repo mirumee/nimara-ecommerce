@@ -19,6 +19,7 @@ export async function generateStandardPDPMetadata({
   storefrontUrl,
   productPath,
   region,
+  siteName,
 }: GenerateStandardPDPMetadataProps): Promise<Metadata> {
   const [{ slug }, t] = await Promise.all([
     params,
@@ -71,7 +72,7 @@ export async function generateStandardPDPMetadata({
         },
       ],
       url: canonicalUrl,
-      siteName: "Nimara Store",
+      siteName,
     },
   };
 }

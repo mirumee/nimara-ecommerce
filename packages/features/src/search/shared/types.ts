@@ -87,8 +87,7 @@ export interface GenerateStandardSearchMetadataProps extends Metadata {
   services: ServiceRegistry;
   /**
    * The site name.
-   * @default "Nimara Store"
    */
-  siteName?: string;
+  siteName: string;
   storefrontUrl: string;
 }

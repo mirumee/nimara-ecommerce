@@ -1,0 +1,18 @@
+fragment CategoryEventSubscriptionFragment on Event {
+  __typename
+  ... on CategoryCreated {
+    category {
+      slug
+    }
+  }
+  ... on CategoryUpdated {
+    category {
+      slug
+    }
+  }
+  ... on CategoryDeleted {
+    category {
+      slug
+    }
+  }
+}

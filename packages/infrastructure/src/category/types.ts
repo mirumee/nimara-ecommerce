@@ -1,4 +1,5 @@
-import { type Category } from "@nimara/codegen/schema";
+import { type Category as SaleorCategory } from "@nimara/codegen/schema";
+import { type Category } from "@nimara/domain/objects/Category";
 import { type AsyncResult } from "@nimara/domain/objects/Result";
 
 import { type FetchOptions } from "#root/graphql/client";
@@ -17,8 +18,20 @@ type CollectionsIDsBySlugsOptions = {
 
 export type GetCategoriesIDsBySlugsInfra = (
   opts: CollectionsIDsBySlugsOptions,
-) => AsyncResult<Category["id"][] | null>;
+) => AsyncResult<SaleorCategory["id"][] | null>;
+
+type CategoryDetailsOptions = {
+  languageCode: string;
+  slug: string;
+} & WithFetchOptions;
+
+export type GetCategoryDetailsInfra = (
+  opts: CategoryDetailsOptions,
+) => AsyncResult<Category | null>;
+
+export type GetCategoryDetailsUseCase = GetCategoryDetailsInfra;
 
 export type CategoryService = {
   getCategoriesIDsBySlugs: GetCategoriesIDsBySlugsInfra;
+  getCategoryDetails: GetCategoryDetailsUseCase;
 };

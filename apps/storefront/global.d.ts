@@ -62,6 +62,7 @@ type RevalidateTag =
   | "ADDRESS_VALIDATION_RULES"
   | "COLLECTIONS"
   | `COUNTRIES:${Slug}`
+  | "DETAIL-PAGE:CATEGORY"
   | "DETAIL-PAGE:COLLECTION"
   | "DETAIL-PAGE:PRODUCT"
   | "PRODUCTS"
@@ -73,6 +74,7 @@ type RevalidateTag =
   | `ADDRESS_VALIDATION_RULES:${string}`
   | `CHECKOUT:${Id}`
   | `CMS:${Slug}`
+  | `CATEGORY:${Slug}`
   | `COLLECTION:${Slug}`
   | `PRODUCT:${Slug}`
   | `SEARCH:${Slug}`

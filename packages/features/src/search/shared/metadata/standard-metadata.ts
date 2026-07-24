@@ -27,7 +27,7 @@ export async function generateStandardSearchMetadata({
         },
       ],
       url: canonicalUrl,
-      siteName: siteName || "Nimara Store",
+      siteName,
     },
     alternates: {
       canonical: canonicalUrl,
