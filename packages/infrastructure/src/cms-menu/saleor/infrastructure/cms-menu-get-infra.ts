@@ -9,7 +9,7 @@ import { MenuGetDocument } from "../graphql/queries/generated";
 
 export const saleorCMSMenuGetInfra =
   ({ apiURL, logger }: SaleorCMSMenuServiceConfig): CMSMenuGetInfra =>
-  async ({ channel, languageCode, slug, id, options, locale }) => {
+  async ({ channel, languageCode, slug, id, options }) => {
     const result = await graphqlClient(apiURL).execute(MenuGetDocument, {
       options,
       variables: {
@@ -56,6 +56,6 @@ export const saleorCMSMenuGetInfra =
     }
 
     return ok({
-      menu: serializeSaleorMenu(result.data.menu.items ?? [], locale),
+      menu: serializeSaleorMenu(result.data.menu.items ?? []),
     });
   };
