@@ -14,7 +14,7 @@ import { AddressForm } from "@nimara/foundation/address/address-form/address-for
 import { useRouter } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
 
-import { paths } from "@/foundation/routing/paths";
+import { paths, QUERY_PARAMS } from "@/foundation/routing/paths";
 import { storefrontLogger } from "@/services/logging";
 
 import { accountAddressUpdateAction } from "../actions";
@@ -65,12 +65,20 @@ export const UpdateShippingAddressForm = ({
     }
 
     setEditedAddress(null);
-    router.push(paths.checkout.asPath({ query: { step: "shipping-address" } }));
+    router.push(
+      paths.checkout.asPath({
+        query: { [QUERY_PARAMS.step]: "shipping-address" },
+      }),
+    );
   };
 
   const handleFormCancel = () => {
     setEditedAddress(null);
-    router.push(paths.checkout.asPath({ query: { step: "shipping-address" } }));
+    router.push(
+      paths.checkout.asPath({
+        query: { [QUERY_PARAMS.step]: "shipping-address" },
+      }),
+    );
   };
 
   return (

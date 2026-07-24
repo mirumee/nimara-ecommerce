@@ -14,7 +14,7 @@ import { useToast } from "@nimara/ui/hooks";
 
 import { updateCheckoutAddressAction } from "@/foundation/checkout/actions/update-checkout-address-action";
 import { isGlobalError } from "@/foundation/errors/errors";
-import { paths } from "@/foundation/routing/paths";
+import { paths, QUERY_PARAMS } from "@/foundation/routing/paths";
 
 import type { SavedAddressFormSchema } from "../schema";
 
@@ -61,7 +61,9 @@ export const SavedAddresses = ({
 
     if (result.ok) {
       void router.push(
-        paths.checkout.asPath({ query: { step: "delivery-method" } }),
+        paths.checkout.asPath({
+          query: { [QUERY_PARAMS.step]: "delivery-method" },
+        }),
       );
 
       return;
@@ -83,14 +85,19 @@ export const SavedAddresses = ({
 
     void router.push(
       paths.checkout.asPath({
-        query: { step: "shipping-address", country: address.country },
+        query: {
+          [QUERY_PARAMS.step]: "shipping-address",
+          [QUERY_PARAMS.country]: address.country,
+        },
       }),
     );
   };
 
   const handleCancel = () => {
     void router.push(
-      paths.checkout.asPath({ query: { step: "delivery-method" } }),
+      paths.checkout.asPath({
+        query: { [QUERY_PARAMS.step]: "delivery-method" },
+      }),
     );
   };
 

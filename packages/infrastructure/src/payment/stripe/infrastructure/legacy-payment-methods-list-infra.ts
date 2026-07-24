@@ -9,8 +9,8 @@ import { ok } from "@nimara/domain/objects/Result";
 
 import { API_VERSION } from "../../consts";
 import type {
+  LegacyPaymentServiceConfig,
   PaymentMethodsListInfra,
-  PaymentServiceConfig,
 } from "../../types";
 
 const serializeCreditCard = (data: Stripe.PaymentMethod.Card): CreditCard => ({
@@ -32,7 +32,10 @@ const SERIALIZERS = {
 const FETCH_LIMIT = 20;
 
 export const paymentMethodsListInfra =
-  ({ secretKey, logger }: PaymentServiceConfig): PaymentMethodsListInfra =>
+  ({
+    secretKey,
+    logger,
+  }: LegacyPaymentServiceConfig): PaymentMethodsListInfra =>
   async ({ customerId }) => {
     const stripe = new Stripe(secretKey, { apiVersion: API_VERSION });
 

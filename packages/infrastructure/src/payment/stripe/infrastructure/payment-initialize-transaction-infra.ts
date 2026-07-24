@@ -5,12 +5,9 @@ import { err, ok } from "@nimara/domain/objects/Result";
 import { graphqlClient } from "#root/graphql/client";
 
 import { PAYMENT_USAGE } from "../../consts";
-import type {
-  PaymentServiceConfig,
-  StripeServiceState,
-  TransactionInitializeInfra,
-} from "../../types";
+import type { PaymentServiceConfig } from "../../types";
 import { TransactionInitializeMutationDocument } from "../graphql/mutations/generated";
+import type { PaymentInitializeTransactionInfra } from "../types";
 
 type PaymentInitializeData = {
   paymentIntent: {
@@ -19,17 +16,18 @@ type PaymentInitializeData = {
   };
 };
 
-export const transactionInitializeInfra =
-  (
-    { apiURI, gatewayAppId, logger }: PaymentServiceConfig,
-    state: StripeServiceState,
-  ): TransactionInitializeInfra =>
+export const paymentInitializeTransactionInfra =
+  ({
+    apiURI,
+    gatewayAppId,
+    logger,
+  }: PaymentServiceConfig): PaymentInitializeTransactionInfra =>
   async ({
-    paymentMethod,
-    customerId,
-    saveForFutureUse,
-    id,
     amount,
+    customerId,
+    id,
+    paymentMethod,
+    saveForFutureUse,
     sharedPaymentToken,
   }) => {
     const result = await graphqlClient(apiURI).execute(
@@ -75,11 +73,7 @@ export const transactionInitializeInfra =
         amount,
       });
 
-      return err([
-        {
-          code: "TRANSACTION_INITIALIZE_ERROR",
-        },
-      ]);
+      return err([{ code: "TRANSACTION_INITIALIZE_ERROR" }]);
     }
 
     invariant(
@@ -91,12 +85,12 @@ export const transactionInitializeInfra =
       "Unexpected state. Mutation successful but transaction data not returned.",
     );
 
-    state.transactionId = result.data.transactionInitialize.transaction.id;
-
     return ok({
-      transactionId: result.data.transactionInitialize.transaction.id,
       clientSecret: (
         result.data.transactionInitialize.data as PaymentInitializeData
       ).paymentIntent.clientSecret,
+      transaction: {
+        id: result.data.transactionInitialize.transaction.id,
+      },
     });
   };

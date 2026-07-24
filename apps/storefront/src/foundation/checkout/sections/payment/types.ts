@@ -4,6 +4,7 @@ import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import { type AppErrorCode } from "@nimara/domain/objects/Error";
 import { type PaymentMethod } from "@nimara/domain/objects/Payment";
 import type { FormattedAddress } from "@nimara/foundation/address/types";
+import type { TransactionData } from "@nimara/infrastructure/payment/types";
 
 export interface PaymentSectionData {
   addressFormRows: readonly AddressFormRow[];
@@ -14,4 +15,9 @@ export interface PaymentSectionData {
   paymentGatewayCustomer: string | null;
   paymentGatewayMethods: PaymentMethod[];
   storeUrl: string;
+  /**
+   * Intent pre-initialized on the server, when available — seeds the client
+   * payment data so the payment element mounts without a client round trip.
+   */
+  transactionData: TransactionData | null;
 }

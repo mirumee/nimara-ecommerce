@@ -1,4 +1,5 @@
 export enum QUERY_PARAMS {
+  REDIRECT_STATUS = "redirect_status",
   SAVE_FOR_FUTURE_USE = "saveForFutureUse",
   SETUP_INTENT = "setup_intent",
   TRANSACTION_ID = "transactionId",

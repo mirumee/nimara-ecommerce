@@ -26,6 +26,10 @@ export const isTransactionSuccessful = (
 export const isTransactionFailed = (eventType: EventType | null | undefined) =>
   !!eventType?.endsWith("FAILURE");
 
+export const isTransactionActionRequired = (
+  eventType: EventType | null | undefined,
+) => !!eventType?.endsWith("ACTION_REQUIRED");
+
 export const getGatewayCustomerMetaKey = ({
   gateway,
   channel,
@@ -35,27 +39,32 @@ export const getGatewayCustomerMetaKey = ({
 }) => `${gateway}.customer.${channel}`;
 
 /**
- * This function maps Stripe error codes to App error codes.
- * @param code - The Stripe error code to be mapped.
- * @returns The mapped App error code.
+ * Maps a Stripe error to an App error code, by the error type first and the
+ * detailed error code within it.
  */
 export const mapStripeErrorCode = (error: StripeError): AppErrorCode => {
-  switch (error.code) {
-    case "expired_card":
-    case "incorrect_cvc":
-    case "card_declined":
+  switch (error.type) {
+    case "validation_error":
+      return "PAYMENT_VALIDATION_ERROR";
+
+    case "invalid_request_error":
+      switch (error.code) {
+        case "payment_intent_authentication_failure":
+          return "PAYMENT_PROCESSING_ERROR";
+        case "expired_card":
+        case "invalid_expiry_month":
+        case "invalid_expiry_year":
+        case "invalid_cvc":
+          return "PAYMENT_VALIDATION_ERROR";
+      }
+
+      return "PAYMENT_EXECUTE_ERROR";
+
+    case "card_error":
       return "GENERIC_CARD_ERROR";
 
-    case "processing_error":
-      return "PAYMENT_PROCESSING_ERROR";
-
     default:
-      console.warn(
-        "Unhandled Stripe error code, defaulting to UNKNOWN_ERROR",
-        error.code,
-      );
-
-      return "GENERIC_PAYMENT_ERROR";
+      return "PAYMENT_EXECUTE_ERROR";
   }
 };
 

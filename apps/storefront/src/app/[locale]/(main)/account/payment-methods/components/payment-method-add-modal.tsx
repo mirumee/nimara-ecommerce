@@ -50,7 +50,7 @@ export const PaymentMethodAddModal = ({
     setIsProcessing(true);
 
     const services = await getServiceRegistry();
-    const paymentService = await services.getPaymentService();
+    const paymentService = await services.getLegacyPaymentService();
 
     const result = await paymentService.paymentMethodSaveExecute({
       redirectUrl,
@@ -67,7 +67,7 @@ export const PaymentMethodAddModal = ({
   useEffect(() => {
     void (async () => {
       const services = await getServiceRegistry();
-      const paymentService = await services.getPaymentService();
+      const paymentService = await services.getLegacyPaymentService();
 
       await paymentService.paymentInitialize();
 

@@ -28,12 +28,15 @@ export const CustomPDPView = async ({
   services,
   paths,
   checkoutId,
+  addToBagAction,
+  region,
 }: PDPViewProps) => {
   const { slug } = await params;
 
   return (
     <ProductProvider
       slug={slug}
+      region={region}
       services={services}
       render={(product, availability) => (
         <div className="relative grid w-full gap-8">
@@ -47,6 +50,7 @@ export const CustomPDPView = async ({
           <div className="flex flex-wrap justify-center gap-8 md:flex-nowrap md:justify-between">
             <div className="w-full lg:w-1/2">
               <ProductMediaWrapper
+                region={region}
                 product={product}
                 availability={availability}
                 services={services}
@@ -65,6 +69,8 @@ export const CustomPDPView = async ({
                   services={services}
                   checkoutId={checkoutId}
                   cartPath={paths.cart}
+                  region={region}
+                  addToBagAction={addToBagAction}
                 />
               </Suspense>
             </div>
@@ -83,6 +89,7 @@ export const CustomPDPView = async ({
               slug={slug}
               services={services}
               productPath={paths.product}
+              region={region}
             />
           </Suspense>
         </div>

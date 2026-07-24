@@ -9,7 +9,6 @@ import { clientEnvs } from "@/envs/client";
 import { createAddressAction } from "@/foundation/address/create-address-action";
 import { updateCheckoutAddressAction } from "@/foundation/checkout/actions/update-checkout-address-action";
 import { storefrontLogger } from "@/services/logging";
-import { getServiceRegistry } from "@/services/registry";
 import { getAccessToken } from "@/services/tokens";
 
 import { type PaymentSchema } from "./schema";
@@ -61,51 +60,6 @@ export async function updateBillingAddress({
 
   return result;
 }
-
-interface InitializePaymentGatewayPayload {
-  amount: number;
-  id: Checkout["id"];
-}
-
-export const initializePaymentGateway = async ({
-  amount,
-  id,
-}: InitializePaymentGatewayPayload): AsyncResult<{ success: boolean }> => {
-  const services = await getServiceRegistry();
-  const paymentService = await services.getPaymentService();
-
-  return paymentService.paymentGatewayInitialize({
-    amount,
-    id,
-  });
-};
-
-interface InitializePaymentTransactionPayload {
-  amount: number;
-  customerId?: string | null;
-  id: Checkout["id"];
-  paymentMethod?: string;
-  saveForFutureUse?: boolean;
-}
-
-export const initializePaymentTransaction = async ({
-  amount,
-  customerId,
-  id,
-  paymentMethod,
-  saveForFutureUse,
-}: InitializePaymentTransactionPayload) => {
-  const services = await getServiceRegistry();
-  const paymentService = await services.getPaymentService();
-
-  return paymentService.paymentGatewayTransactionInitialize({
-    amount,
-    customerId: customerId ?? undefined,
-    id,
-    paymentMethod,
-    saveForFutureUse,
-  });
-};
 
 export const initializeMarketplacePaymentIntent = async ({
   buyerId,
