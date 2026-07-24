@@ -17,9 +17,7 @@ const createMenuItemUrl = (
   page?: { slug: string } | null,
   locale?: string,
 ): string => {
-  const baseUrl = locale
-    ? `${process.env.NEXT_PUBLIC_STOREFRONT_URL}${locale}`
-    : process.env.NEXT_PUBLIC_STOREFRONT_URL;
+  const baseUrl = locale ?? "";
 
   if (page?.slug) {
     return `${baseUrl}/page/${page.slug}`;
