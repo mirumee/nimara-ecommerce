@@ -46,7 +46,7 @@ export default async function Page(props: PageProps) {
 
   if (saleorAppToken) {
     const [paymentService, region] = await Promise.all([
-      services.getPaymentService(),
+      services.getLegacyPaymentService(),
       getCurrentRegion(),
     ]);
     const resultCustomerGet = await paymentService.customerGet({

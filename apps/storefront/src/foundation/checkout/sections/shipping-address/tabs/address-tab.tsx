@@ -20,7 +20,7 @@ import {
 } from "@nimara/ui/components/tabs";
 
 import { useCurrentRegion } from "@/foundation/regions";
-import { paths } from "@/foundation/routing/paths";
+import { paths, QUERY_PARAMS } from "@/foundation/routing/paths";
 
 import { CreateShippingAddressForm } from "../forms/create-form";
 import { UpdateShippingAddressForm } from "../forms/update-form";
@@ -57,7 +57,9 @@ export const AddressTab = ({
 
     if (value === "new") {
       router.replace(
-        paths.checkout.asPath({ query: { step: "shipping-address" } }),
+        paths.checkout.asPath({
+          query: { [QUERY_PARAMS.step]: "shipping-address" },
+        }),
         {
           scroll: false,
         },
@@ -70,7 +72,10 @@ export const AddressTab = ({
       if (savedAddressCountry) {
         router.replace(
           paths.checkout.asPath({
-            query: { step: "shipping-address", country: savedAddressCountry },
+            query: {
+              [QUERY_PARAMS.step]: "shipping-address",
+              [QUERY_PARAMS.country]: savedAddressCountry,
+            },
           }),
           { scroll: false },
         );

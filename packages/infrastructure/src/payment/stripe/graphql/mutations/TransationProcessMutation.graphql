@@ -1,7 +1,10 @@
-mutation TransactionProcessMutation($id: ID!) {
-  transactionProcess(id: $id) {
+mutation TransactionProcessMutation($id: ID!, $data: JSON) {
+  transactionProcess(id: $id, data: $data) {
     transaction {
       id
+      order {
+        id
+      }
     }
     transactionEvent {
       id

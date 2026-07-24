@@ -10,7 +10,7 @@ import { Button } from "@nimara/ui/components/button";
 
 import { login } from "@/foundation/auth/login";
 import { ResetPasswordLink } from "@/foundation/auth/reset-password-link";
-import { paths } from "@/foundation/routing/paths";
+import { paths, QUERY_PARAMS } from "@/foundation/routing/paths";
 import { useRouterWithState } from "@/foundation/use-router-with-state";
 
 import {
@@ -47,7 +47,7 @@ export const UserDetailsPasswordForm = ({
       email: userAccountEmail,
       password,
       redirectUrl: paths.checkout.asPath({
-        query: { step: redirectStep },
+        query: { [QUERY_PARAMS.step]: redirectStep },
       }),
     });
 

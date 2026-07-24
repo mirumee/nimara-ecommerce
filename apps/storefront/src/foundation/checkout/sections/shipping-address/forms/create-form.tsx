@@ -15,7 +15,7 @@ import { Button } from "@nimara/ui/components/button";
 import { useToast } from "@nimara/ui/hooks";
 
 import { isGlobalError } from "@/foundation/errors/errors";
-import { paths } from "@/foundation/routing/paths";
+import { paths, QUERY_PARAMS } from "@/foundation/routing/paths";
 import { useRouterWithState } from "@/foundation/use-router-with-state";
 
 import { createCheckoutShippingAddress } from "../actions";
@@ -70,7 +70,11 @@ export const CreateShippingAddressForm = ({
     });
 
     if (result.ok) {
-      push(paths.checkout.asPath({ query: { step: "delivery-method" } }));
+      push(
+        paths.checkout.asPath({
+          query: { [QUERY_PARAMS.step]: "delivery-method" },
+        }),
+      );
 
       return;
     }

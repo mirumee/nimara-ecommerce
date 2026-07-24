@@ -1,5 +1,6 @@
 import { type ACPService } from "@nimara/infrastructure/acp/types";
 
+import { createPaymentServiceLoader } from "@/services/lazy-loaders/payment";
 import { getStorefrontLogger } from "@/services/lazy-logging";
 
 export const CHECKOUT_SESSION_CACHE = 60 * 60; // 1 hour
@@ -24,6 +25,7 @@ export const getACPService = async (config: {
     logger: storefrontLogger,
     channel: config.channelSlug,
     storefrontUrl: process.env.NEXT_PUBLIC_STOREFRONT_URL!,
+    paymentService: createPaymentServiceLoader(storefrontLogger),
     cacheTTL: {
       checkoutSession: CHECKOUT_SESSION_CACHE,
       productFeed: PRODUCT_FEED_CACHE,

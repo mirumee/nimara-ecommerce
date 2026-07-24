@@ -5,11 +5,14 @@ import { err, ok } from "@nimara/domain/objects/Result";
 import { API_VERSION, META_KEY } from "../../consts";
 import type {
   CustomerFromGatewayGetInfra,
-  PaymentServiceConfig,
+  LegacyPaymentServiceConfig,
 } from "../../types";
 
 export const customerFromGatewayGetInfra =
-  ({ secretKey, logger }: PaymentServiceConfig): CustomerFromGatewayGetInfra =>
+  ({
+    secretKey,
+    logger,
+  }: LegacyPaymentServiceConfig): CustomerFromGatewayGetInfra =>
   async (opts) => {
     let customer;
 

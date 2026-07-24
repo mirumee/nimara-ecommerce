@@ -5,11 +5,11 @@ import { ok } from "@nimara/domain/objects/Result";
 import { API_VERSION, META_KEY } from "../../consts";
 import type {
   CustomerInGatewayCreateInfra,
-  PaymentServiceConfig,
+  LegacyPaymentServiceConfig,
 } from "../../types";
 
 export const customerInGatewayCreateInfra =
-  ({ secretKey }: PaymentServiceConfig): CustomerInGatewayCreateInfra =>
+  ({ secretKey }: LegacyPaymentServiceConfig): CustomerInGatewayCreateInfra =>
   async ({ user, environment }) => {
     const stripe = new Stripe(secretKey, { apiVersion: API_VERSION });
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useFormatter, useTranslations } from "next-intl";
+import { type ReactNode } from "react";
 
 import { type Price } from "@nimara/domain/objects/common";
 import { cn } from "@nimara/ui/lib/utils";
@@ -9,7 +10,7 @@ export const Header = ({
   header,
   totalPrice,
 }: {
-  header?: string;
+  header?: ReactNode;
   totalPrice?: Price;
 }) => {
   const t = useTranslations();

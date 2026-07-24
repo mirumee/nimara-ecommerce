@@ -58,9 +58,9 @@ export const getCheckoutOrRedirect = async (
   return resultCheckout.data.checkout;
 };
 
-export const getMarketplaceCheckoutsOrRedirect = async ():
-  | Promise<MarketplaceCheckoutItem[]>
-  | never => {
+export const getMarketplaceCheckoutsOrRedirect = async (
+  options?: FetchOptions,
+): Promise<MarketplaceCheckoutItem[]> | never => {
   const [checkoutIdsByVendor, locale, region, services] = await Promise.all([
     getAllCheckoutIds(),
     getLocale(),
@@ -87,6 +87,7 @@ export const getMarketplaceCheckoutsOrRedirect = async ():
         checkoutId,
         languageCode: region.language.code,
         countryCode: region.market.countryCode,
+        options,
       });
 
       if (!result.ok) {

@@ -4,7 +4,10 @@ import type { CategoryService } from "./category/types";
 import type { CheckoutService } from "./checkout/types";
 import type { CollectionService } from "./collection/types";
 import type { MarketplaceService } from "./marketplace/types";
-import type { StripePaymentService } from "./payment/providers";
+import type {
+  LegacyStripePaymentService,
+  StripePaymentService,
+} from "./payment/providers";
 import type { StoreService } from "./store/types";
 import type { TrackingService } from "./tracking/service";
 import type { CMSMenuService } from "./use-cases/cms-menu/types";
@@ -26,6 +29,7 @@ export type CapabilityServices = {
   getCategoryService: CategoryService;
   getCheckoutService: CheckoutService;
   getCollectionService: CollectionService;
+  getLegacyPaymentService: LegacyStripePaymentService;
   getMarketplaceService: MarketplaceService;
   getPaymentService: StripePaymentService;
   getSearchService: SearchService;

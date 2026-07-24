@@ -4,12 +4,12 @@ import { err, ok } from "@nimara/domain/objects/Result";
 
 import { API_VERSION, QUERY_PARAMS } from "../../consts";
 import type {
+  LegacyPaymentServiceConfig,
   PaymentMethodSaveProcessInfra,
-  PaymentServiceConfig,
 } from "../../types";
 
 export const paymentMethodSaveProcessInfra =
-  ({ secretKey }: PaymentServiceConfig): PaymentMethodSaveProcessInfra =>
+  ({ secretKey }: LegacyPaymentServiceConfig): PaymentMethodSaveProcessInfra =>
   async ({ searchParams }) => {
     const stripe = new Stripe(secretKey, { apiVersion: API_VERSION });
 

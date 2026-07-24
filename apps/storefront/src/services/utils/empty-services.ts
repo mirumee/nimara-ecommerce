@@ -6,7 +6,10 @@ import type { CategoryService } from "@nimara/infrastructure/category/types";
 import type { CheckoutService } from "@nimara/infrastructure/checkout/types";
 import type { CollectionService } from "@nimara/infrastructure/collection/types";
 import type { MarketplaceService } from "@nimara/infrastructure/marketplace/types";
-import type { StripePaymentService } from "@nimara/infrastructure/payment/providers";
+import type {
+  LegacyStripePaymentService,
+  StripePaymentService,
+} from "@nimara/infrastructure/payment/providers";
 import type { StoreService } from "@nimara/infrastructure/store/types";
 import type { CMSMenuService } from "@nimara/infrastructure/use-cases/cms-menu/types";
 import type { CMSPageService } from "@nimara/infrastructure/use-cases/cms-page/types";
@@ -131,6 +134,15 @@ export const emptyMarketplaceService = {
 } satisfies MarketplaceService;
 
 export const emptyPaymentService = {
+  execute: async () => notConfigured("PAYMENT_EXECUTE_ERROR"),
+  initializeGateway: async () =>
+    notConfigured("PAYMENT_GATEWAY_INITIALIZE_ERROR"),
+  initializeTransaction: async () =>
+    notConfigured("TRANSACTION_INITIALIZE_ERROR"),
+  process: async () => notConfigured("PAYMENT_PROCESSING_ERROR"),
+} satisfies StripePaymentService;
+
+export const emptyLegacyPaymentService = {
   customerGet: async () => notConfigured("CHECKOUT_GATEWAY_CUSTOMER_GET_ERROR"),
   customerPaymentMethodDelete: async () =>
     notConfigured("PAYMENT_METHOD_NOT_FOUND_ERROR"),
@@ -140,11 +152,6 @@ export const emptyPaymentService = {
     mount: () => {},
     unmount: () => {},
   }),
-  paymentExecute: async () => notConfigured("PAYMENT_EXECUTE_ERROR"),
-  paymentGatewayInitialize: async () =>
-    notConfigured("PAYMENT_GATEWAY_INITIALIZE_ERROR"),
-  paymentGatewayTransactionInitialize: async () =>
-    notConfigured("PAYMENT_GATEWAY_INITIALIZE_ERROR"),
   // Void by contract — nothing to initialize without a gateway.
   paymentInitialize: async () => {},
   paymentMethodSaveExecute: async () =>
@@ -153,5 +160,4 @@ export const emptyPaymentService = {
     notConfigured("PAYMENT_METHOD_SAVE_ERROR"),
   paymentMethodSaveProcess: async () =>
     notConfigured("PAYMENT_METHOD_SAVE_ERROR"),
-  paymentResultProcess: async () => notConfigured("PAYMENT_PROCESSING_ERROR"),
-} satisfies StripePaymentService;
+} satisfies LegacyStripePaymentService;

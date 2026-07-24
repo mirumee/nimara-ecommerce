@@ -20,7 +20,7 @@ import { useToast } from "@nimara/ui/hooks";
 
 import { updateCheckoutAddressAction } from "@/foundation/checkout/actions/update-checkout-address-action";
 import { isGlobalError } from "@/foundation/errors/errors";
-import { paths } from "@/foundation/routing/paths";
+import { paths, QUERY_PARAMS } from "@/foundation/routing/paths";
 import { useRouterWithState } from "@/foundation/use-router-with-state";
 
 import { getAddressFormDefaultValues } from "../helpers/get-address-form-default-values";
@@ -62,7 +62,11 @@ export const GuestShippingAddressForm = ({
     });
 
     if (result.ok) {
-      push(paths.checkout.asPath({ query: { step: "delivery-method" } }));
+      push(
+        paths.checkout.asPath({
+          query: { [QUERY_PARAMS.step]: "delivery-method" },
+        }),
+      );
 
       return;
     }

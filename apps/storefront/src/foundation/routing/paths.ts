@@ -153,6 +153,8 @@ export const paths = {
 };
 
 export const QUERY_PARAMS = {
-  orderPlaced: "orderPlaced",
+  country: "country",
   errorCode: "errorCode",
+  orderPlaced: "orderPlaced",
+  step: "step",
 } as const;

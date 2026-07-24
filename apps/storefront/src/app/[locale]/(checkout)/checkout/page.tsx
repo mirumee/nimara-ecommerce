@@ -25,7 +25,7 @@ import {
 } from "@/foundation/checkout";
 import * as foundationActions from "@/foundation/checkout";
 import { getCheckoutPaymentSectionData } from "@/foundation/checkout/sections/payment/server";
-import { paths } from "@/foundation/routing/paths";
+import { paths, QUERY_PARAMS } from "@/foundation/routing/paths";
 import { getServiceRegistry } from "@/services/registry";
 import { getAccessToken } from "@/services/tokens";
 
@@ -86,7 +86,7 @@ export default async function Page(props: PageProps) {
     }
 
     redirect({
-      href: paths.checkout.asPath({ query: { step } }),
+      href: paths.checkout.asPath({ query: { [QUERY_PARAMS.step]: step } }),
       locale,
     });
   }

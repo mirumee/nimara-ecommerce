@@ -1,27 +1,6 @@
 import type * as Types from '@nimara/codegen/schema';
 
 import type { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
-export type PaymentGatewayInitializeMutation_paymentGatewayInitialize_PaymentGatewayInitialize_gatewayConfigs_PaymentGatewayConfig_errors_PaymentGatewayConfigError = { field: string | null, message: string | null, code: Types.PaymentGatewayConfigErrorCode };
-
-export type PaymentGatewayInitializeMutation_paymentGatewayInitialize_PaymentGatewayInitialize_gatewayConfigs_PaymentGatewayConfig = { id: string, data: unknown | null, errors: Array<PaymentGatewayInitializeMutation_paymentGatewayInitialize_PaymentGatewayInitialize_gatewayConfigs_PaymentGatewayConfig_errors_PaymentGatewayConfigError> | null };
-
-export type PaymentGatewayInitializeMutation_paymentGatewayInitialize_PaymentGatewayInitialize_errors_PaymentGatewayInitializeError = { field: string | null, message: string | null, code: Types.PaymentGatewayInitializeErrorCode };
-
-export type PaymentGatewayInitializeMutation_paymentGatewayInitialize_PaymentGatewayInitialize = { gatewayConfigs: Array<PaymentGatewayInitializeMutation_paymentGatewayInitialize_PaymentGatewayInitialize_gatewayConfigs_PaymentGatewayConfig> | null, errors: Array<PaymentGatewayInitializeMutation_paymentGatewayInitialize_PaymentGatewayInitialize_errors_PaymentGatewayInitializeError> };
-
-export type PaymentGatewayInitializeMutation_Mutation = { paymentGatewayInitialize: PaymentGatewayInitializeMutation_paymentGatewayInitialize_PaymentGatewayInitialize | null };
-
-
-export type PaymentGatewayInitializeMutationVariables = Types.Exact<{
-  id: Types.Scalars['ID']['input'];
-  amount?: Types.InputMaybe<Types.Scalars['PositiveDecimal']['input']>;
-  gatewayAppId: Types.Scalars['String']['input'];
-  gatewayData?: Types.InputMaybe<Types.Scalars['JSON']['input']>;
-}>;
-
-
-export type PaymentGatewayInitializeMutation = PaymentGatewayInitializeMutation_Mutation;
-
 export type TransactionInitializeMutation_transactionInitialize_TransactionInitialize_transaction_TransactionItem = { id: string };
 
 export type TransactionInitializeMutation_transactionInitialize_TransactionInitialize_transactionEvent_TransactionEvent = { id: string, type: Types.TransactionEventTypeEnum | null, message: string };
@@ -43,7 +22,9 @@ export type TransactionInitializeMutationVariables = Types.Exact<{
 
 export type TransactionInitializeMutation = TransactionInitializeMutation_Mutation;
 
-export type TransactionProcessMutation_transactionProcess_TransactionProcess_transaction_TransactionItem = { id: string };
+export type TransactionProcessMutation_transactionProcess_TransactionProcess_transaction_TransactionItem_order_Order = { id: string };
+
+export type TransactionProcessMutation_transactionProcess_TransactionProcess_transaction_TransactionItem = { id: string, order: TransactionProcessMutation_transactionProcess_TransactionProcess_transaction_TransactionItem_order_Order | null };
 
 export type TransactionProcessMutation_transactionProcess_TransactionProcess_transactionEvent_TransactionEvent = { id: string, type: Types.TransactionEventTypeEnum | null, message: string };
 
@@ -56,6 +37,7 @@ export type TransactionProcessMutation_Mutation = { transactionProcess: Transact
 
 export type TransactionProcessMutationVariables = Types.Exact<{
   id: Types.Scalars['ID']['input'];
+  data?: Types.InputMaybe<Types.Scalars['JSON']['input']>;
 }>;
 
 
@@ -80,32 +62,6 @@ export class TypedDocumentString<TResult, TVariables>
   }
 }
 
-export const PaymentGatewayInitializeMutationDocument = new TypedDocumentString(`
-    mutation PaymentGatewayInitializeMutation($id: ID!, $amount: PositiveDecimal, $gatewayAppId: String!, $gatewayData: JSON) {
-  paymentGatewayInitialize(
-    id: $id
-    amount: $amount
-    paymentGateways: [{id: $gatewayAppId, data: $gatewayData}]
-  ) {
-    gatewayConfigs {
-      ...PaymentGatewayConfigFragment
-    }
-    errors {
-      field
-      message
-      code
-    }
-  }
-}
-    fragment PaymentGatewayConfigFragment on PaymentGatewayConfig {
-  id
-  data
-  errors {
-    field
-    message
-    code
-  }
-}`) as unknown as TypedDocumentString<PaymentGatewayInitializeMutation, PaymentGatewayInitializeMutationVariables>;
 export const TransactionInitializeMutationDocument = new TypedDocumentString(`
     mutation TransactionInitializeMutation($id: ID!, $data: JSON, $amount: PositiveDecimal, $gatewayAppId: String!) {
   transactionInitialize(
@@ -131,10 +87,13 @@ export const TransactionInitializeMutationDocument = new TypedDocumentString(`
 }
     `) as unknown as TypedDocumentString<TransactionInitializeMutation, TransactionInitializeMutationVariables>;
 export const TransactionProcessMutationDocument = new TypedDocumentString(`
-    mutation TransactionProcessMutation($id: ID!) {
-  transactionProcess(id: $id) {
+    mutation TransactionProcessMutation($id: ID!, $data: JSON) {
+  transactionProcess(id: $id, data: $data) {
     transaction {
       id
+      order {
+        id
+      }
     }
     transactionEvent {
       id

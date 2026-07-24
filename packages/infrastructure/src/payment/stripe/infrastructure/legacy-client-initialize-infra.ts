@@ -3,13 +3,13 @@ import { invariant } from "graphql/jsutils/invariant";
 
 import type {
   ClientInitializeInfra,
-  PaymentServiceConfig,
+  LegacyPaymentServiceConfig,
   StripeServiceState,
 } from "../../types";
 
 export const clientInitializeInfra =
   (
-    { publicKey }: PaymentServiceConfig,
+    { publicKey }: LegacyPaymentServiceConfig,
     state: StripeServiceState,
   ): ClientInitializeInfra =>
   async () => {
