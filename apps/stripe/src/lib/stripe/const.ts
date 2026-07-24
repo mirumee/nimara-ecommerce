@@ -1,5 +1,11 @@
 import { type Stripe } from "stripe";
 
+/**
+ * Pinned Stripe API version — must match the version the `stripe` SDK ships
+ * with, so behavior does not drift with the Stripe account's default version.
+ */
+export const STRIPE_API_VERSION = "2026-01-28.clover";
+
 export const StripeWebhookEvent = {
   PAYMENT_INTENT_SUCCEEDED: "payment_intent.succeeded",
   PAYMENT_INTENT_PROCESSING: "payment_intent.processing",

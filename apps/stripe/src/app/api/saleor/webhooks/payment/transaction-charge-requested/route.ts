@@ -55,9 +55,10 @@ export const POST = stripeRouteErrorsHandler(
       const intent = await stripe.paymentIntents.capture(
         event.transaction.pspReference,
         {
-          amount_to_capture: getCentsFromAmount(
-            event.transaction.sourceObject.total.gross,
-          ),
+          amount_to_capture: getCentsFromAmount({
+            amount: event.action.amount,
+            currency: event.action.currency,
+          }),
         },
       );
 

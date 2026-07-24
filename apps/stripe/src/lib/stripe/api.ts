@@ -4,17 +4,20 @@ import { responseError } from "@/lib/api/util";
 import { isError } from "@/lib/error";
 import { getLoggingProvider } from "@/providers/logging";
 
-import { type SupportedStripeWebhookEvent } from "./const";
+import { STRIPE_API_VERSION, type SupportedStripeWebhookEvent } from "./const";
 
-export const getStripeApi = (apiKey: string) => new Stripe(apiKey);
+export const getStripeApi = (apiKey: string) =>
+  new Stripe(apiKey, { apiVersion: STRIPE_API_VERSION });
 
 export const stripeRouteErrorsHandler =
-  (handler: (request: Request, opts?: any) => Promise<Response>): any =>
-  async (request: Request, opts?: any): Promise<Response> => {
+  <TArgs extends unknown[]>(
+    handler: (request: Request, ...args: TArgs) => Promise<Response>,
+  ) =>
+  async (request: Request, ...args: TArgs): Promise<Response> => {
     const logger = getLoggingProvider();
 
     try {
-      return await handler(request, opts);
+      return await handler(request, ...args);
     } catch (err) {
       if (isError(err, Stripe.errors.StripeError)) {
         const json = await request.clone().json();

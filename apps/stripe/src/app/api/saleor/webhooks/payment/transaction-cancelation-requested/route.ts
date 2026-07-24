@@ -1,3 +1,5 @@
+import Stripe from "stripe";
+
 import { type TransactionCancelationRequestedSubscription } from "@/graphql/subscriptions/generated";
 import { responseError } from "@/lib/api/util";
 import { getAmountFromCents } from "@/lib/currency";
@@ -49,9 +51,32 @@ export const POST = stripeRouteErrorsHandler(
 
       const stripe = getStripeApi(gatewayConfig.secretKey);
 
-      const intent = await stripe.paymentIntents.retrieve(
-        event.transaction.pspReference,
-      );
+      let intent;
+
+      try {
+        intent = await stripe.paymentIntents.cancel(
+          event.transaction.pspReference,
+        );
+      } catch (err) {
+        if (!isError(err, Stripe.errors.StripeError)) {
+          throw err;
+        }
+
+        logger.error("Failed to cancel the payment intent.", {
+          pspReference: event.transaction.pspReference,
+          originalError: { code: err.code, message: err.message },
+        });
+
+        return constructTransactionEventResponse({
+          data: {
+            pspReference: event.transaction.pspReference,
+            result: "CANCEL_FAILURE",
+            message: err.message,
+          },
+          logger,
+          type: "TransactionCancelationRequested",
+        });
+      }
 
       let data: TransactionEventSchema = {
         pspReference: intent.id,

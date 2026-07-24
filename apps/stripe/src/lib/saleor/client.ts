@@ -27,12 +27,23 @@ export const saleorClient = ({
     return app?.id ?? null;
   };
 
-  const transactionReport = async (
-    opts: TransactionEventReportMutationVariables,
-  ) => {
+  const transactionReport = async ({
+    amount,
+    ...opts
+  }: Omit<TransactionEventReportMutationVariables, "amount"> & {
+    /**
+     * Saleor expects the Decimal scalar serialized as a string.
+     */
+    amount: string;
+  }) => {
     const { transactionEventReport } = await client.execute(
       TransactionEventReportMutationDocument,
-      { variables: opts },
+      {
+        variables: {
+          ...opts,
+          amount: amount as unknown as number,
+        },
+      },
     );
 
     return transactionEventReport;
