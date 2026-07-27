@@ -9,6 +9,7 @@ import { clientEnvs } from "@/envs/client";
 import { serverEnvs } from "@/envs/server";
 import { getAllCheckoutIds } from "@/features/checkout/server";
 import { paths } from "@/foundation/routing/paths";
+import { getLocalizedPath } from "@/foundation/server";
 import { getServiceRegistry } from "@/services/registry";
 
 /**
@@ -89,7 +90,7 @@ export const updateCheckoutUserDetailsAction = async (
   }
 
   if (opts.revalidateCheckoutPathOnSuccess) {
-    revalidatePath(paths.checkout.asPath());
+    revalidatePath(await getLocalizedPath(paths.checkout.asPath()));
   }
 
   return ok({ success: true });

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { paths } from "@/foundation/routing/paths";
+import { getLocalizedPath } from "@/foundation/server";
 import { getServiceRegistry } from "@/services/registry";
 
 export const paymentMethodDeleteAction = async ({
@@ -20,7 +21,9 @@ export const paymentMethodDeleteAction = async ({
   });
 
   if (result.ok) {
-    revalidatePath(paths.account.paymentMethods.asPath());
+    revalidatePath(
+      await getLocalizedPath(paths.account.paymentMethods.asPath()),
+    );
   }
 
   return result;

@@ -9,6 +9,7 @@ import { schemaToAddress } from "@nimara/foundation/address/address";
 import { createAddressAction } from "@/foundation/address/create-address-action";
 import { updateCheckoutAddressAction } from "@/foundation/checkout/actions/update-checkout-address-action";
 import { paths } from "@/foundation/routing/paths";
+import { getLocalizedPath } from "@/foundation/server";
 import { storefrontLogger } from "@/services/logging";
 import { getServiceRegistry } from "@/services/registry";
 import { getAccessToken } from "@/services/tokens";
@@ -44,7 +45,7 @@ export async function accountAddressUpdateAction({
   });
 
   if (data.ok) {
-    revalidatePath(paths.checkout.asPath());
+    revalidatePath(await getLocalizedPath(paths.checkout.asPath()));
   }
 
   return data;

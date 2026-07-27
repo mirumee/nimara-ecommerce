@@ -219,14 +219,16 @@ export class CheckoutPage {
   async fillPaymentByCardForm(paymentDetails: PaymentDetails) {
     const iframeName = "Secure payment input frame";
 
-    const stripeIframe = this.page.locator(`iframe[title='${iframeName}']`);
+    const stripeIframe = this.page.locator(
+      `iframe[title='${iframeName}']:visible`,
+    );
 
     await stripeIframe.waitFor({ state: "visible" });
 
     await this.page.frame(iframeName)?.waitForLoadState("load");
 
     const stripePaymentElement = this.page.frameLocator(
-      `[title='${iframeName}']`,
+      `[title='${iframeName}']:visible`,
     );
 
     await stripePaymentElement
@@ -268,7 +270,9 @@ export class CheckoutPage {
     await this.page.waitForURL(URLS().ORDER_CONFIRMATION_PAGE);
 
     await expect(
-      this.page.getByText("Your order has been successfully placed"),
+      this.page.getByRole("heading", {
+        name: "Your order has been successfully placed",
+      }),
     ).toBeVisible();
   }
 }

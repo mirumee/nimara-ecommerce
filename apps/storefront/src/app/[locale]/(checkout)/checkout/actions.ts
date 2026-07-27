@@ -6,6 +6,7 @@ import { type AddressCreateInput } from "@nimara/domain/objects/Address";
 
 import * as foundationActions from "@/foundation/checkout/actions";
 import { paths } from "@/foundation/routing/paths";
+import { getLocalizedPath } from "@/foundation/server";
 
 export const updateCheckoutAddressAction = async ({
   id,
@@ -21,7 +22,7 @@ export const updateCheckoutAddressAction = async ({
   });
 
   if (result.ok) {
-    revalidatePath(paths.checkout.asPath());
+    revalidatePath(await getLocalizedPath(paths.checkout.asPath()));
   }
 
   return result;

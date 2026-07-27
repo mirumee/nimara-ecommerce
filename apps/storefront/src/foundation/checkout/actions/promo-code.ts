@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { paths } from "@/foundation/routing/paths";
+import { getLocalizedPath } from "@/foundation/server";
 import { getServiceRegistry } from "@/services/registry";
 
 /**
@@ -24,7 +25,7 @@ export const addPromoCodeAction = async ({
   });
 
   if (result.ok) {
-    revalidatePath(paths.checkout.asPath());
+    revalidatePath(await getLocalizedPath(paths.checkout.asPath()));
   }
 
   return result;
@@ -49,7 +50,7 @@ export const removePromoCodeAction = async ({
   });
 
   if (result.ok) {
-    revalidatePath(paths.checkout.asPath());
+    revalidatePath(await getLocalizedPath(paths.checkout.asPath()));
   }
 
   return result;

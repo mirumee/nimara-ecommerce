@@ -10,6 +10,7 @@ import {
 } from "@/config";
 import { revalidateTag } from "@/foundation/cache/cache";
 import { paths } from "@/foundation/routing/paths";
+import { getLocalizedPath } from "@/foundation/server";
 
 const CHECKOUT_COOKIE_VERSION = "1";
 
@@ -372,8 +373,8 @@ export const removeCheckoutIdForVendor = async (
  */
 export const revalidateCart = async (checkoutId: string): Promise<void> => {
   revalidateTag(`CHECKOUT:${checkoutId}`);
-  revalidatePath(paths.cart.asPath());
-  revalidatePath(paths.checkout.asPath());
+  revalidatePath(await getLocalizedPath(paths.cart.asPath()));
+  revalidatePath(await getLocalizedPath(paths.checkout.asPath()));
 };
 
 // =============================================================================

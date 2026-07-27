@@ -11,7 +11,9 @@ import { type AsyncResult, ok } from "@nimara/domain/objects/Result";
 
 import { clientEnvs } from "@/envs/client";
 import { getAllCheckoutIds } from "@/features/checkout/server";
+import { revalidateTag } from "@/foundation/cache/cache";
 import { paths } from "@/foundation/routing/paths";
+import { getLocalizedPath } from "@/foundation/server";
 import { getServiceRegistry } from "@/services/registry";
 
 /**
@@ -46,12 +48,16 @@ export const updateCheckoutAddressAction = async ({
       ? checkoutService.checkoutShippingAddressUpdate
       : checkoutService.checkoutBillingAddressUpdate;
 
+  let updatedCheckoutIds = [values.id];
+
   if (isMarketplaceEnabled) {
     const allCheckoutIds = await getAllCheckoutIds();
     const checkoutIds = Object.values(allCheckoutIds).filter(Boolean);
-    const targetCheckoutIds = checkoutIds.length ? checkoutIds : [values.id];
+
+    updatedCheckoutIds = checkoutIds.length ? checkoutIds : [values.id];
+
     const results = await Promise.all(
-      targetCheckoutIds.map((id) =>
+      updatedCheckoutIds.map((id) =>
         updateFn({
           ...values,
           id,
@@ -72,7 +78,8 @@ export const updateCheckoutAddressAction = async ({
   }
 
   if (revalidateCheckout) {
-    revalidatePath(paths.checkout.asPath());
+    updatedCheckoutIds.forEach((id) => revalidateTag(`CHECKOUT:${id}`));
+    revalidatePath(await getLocalizedPath(paths.checkout.asPath()));
   }
 
   return ok({ success: true });
