@@ -3,10 +3,10 @@ type Channel = "gb" | "us";
 export const URLS = (channel: Channel = "gb") =>
   ({
     CART_PAGE: `${channel}/cart`,
-    CHECKOUT_PAGE_USER_DETAILS: `${channel}/checkout/user-details`,
-    CHECKOUT_PAGE_SHIPPING_ADDRESS: `${channel}/checkout/shipping-address`,
-    CHECKOUT_PAGE_DELIVERY_METHOD: `${channel}/checkout/delivery-method`,
-    CHECKOUT_PAGE_PAYMENT: `${channel}/checkout/payment`,
+    CHECKOUT_PAGE_USER_DETAILS: `${channel}/checkout?step=user-details`,
+    CHECKOUT_PAGE_SHIPPING_ADDRESS: `${channel}/checkout?step=shipping-address`,
+    CHECKOUT_PAGE_DELIVERY_METHOD: `${channel}/checkout?step=delivery-method`,
+    CHECKOUT_PAGE_PAYMENT: `${channel}/checkout?step=payment`,
     ORDER_CONFIRMATION_PAGE: `${channel}/order/confirmation/*`,
     CHECKOUT_PAGE_SIGN_IN: `${channel}/checkout/sign-in`,
     HOME_PAGE: `${channel}`,
@@ -34,7 +34,7 @@ export const product = {
 };
 
 export const storeHeaders = {
-  heroBanner: "Welcome to Nimara Store",
+  heroBanner: "Power your store with Nimara",
   productsCarousel: "Nimara's products",
   productsCarouselDescription:
     "See what Nimara Store has to offer in the storefront demo version.",

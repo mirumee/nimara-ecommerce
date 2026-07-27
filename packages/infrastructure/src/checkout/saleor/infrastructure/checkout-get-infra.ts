@@ -84,7 +84,7 @@ export const saleorCheckoutGetInfra =
           ...options,
           next: {
             tags: [`CHECKOUT:${checkoutId}`],
-            revalidate: 60, // 1 minute
+            revalidate: 0, // TEMP: disabled to verify stale-shipping-methods hypothesis
             ...options?.next,
           },
         };

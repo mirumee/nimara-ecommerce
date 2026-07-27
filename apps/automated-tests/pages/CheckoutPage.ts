@@ -36,7 +36,7 @@ export class CheckoutPage {
   constructor(page: Page) {
     this.page = page;
     this.emailInput = page.getByLabel("Email");
-    this.continueButton = page.getByRole("button", { name: "Continue" });
+    this.continueButton = page.getByRole("button", { name: "Continue" }).last();
     this.firstNameInput = page.getByLabel("First Name");
     this.lastNameInput = page.getByLabel("Last Name");
     this.companyNameInput = page.getByLabel("Company Name");
@@ -83,18 +83,19 @@ export class CheckoutPage {
   }
 
   async assertUserDetails(user: User, userEmail: string) {
+    await expect(this.page.getByText(userEmail)).toBeVisible();
     await expect(
-      this.page.getByText(`${user.name} ${user.lastName}, ${userEmail}`),
+      this.page.getByText(`${user.name} ${user.lastName}`),
     ).toBeVisible();
   }
 
   async assertPageSections(checkoutType: CheckoutType) {
     if (checkoutType === "guest") {
       await expect(
-        this.page.getByRole("heading", { name: "Email" }),
+        this.page.locator("section").getByRole("heading", { name: "Email" }),
       ).toBeVisible();
     } else {
-      await expect(this.page.getByText("Signed in as")).toBeVisible();
+      await expect(this.emailInput).toBeHidden();
     }
 
     await expect(
