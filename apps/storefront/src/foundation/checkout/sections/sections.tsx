@@ -224,7 +224,6 @@ export const CheckoutSections = ({
             countries={paymentSectionData.countries}
             countryCode={paymentSectionData.countryCode}
             formattedAddresses={paymentSectionData.formattedAddresses}
-            initialTransactionData={paymentSectionData.transactionData}
             paymentGatewayCustomer={paymentSectionData.paymentGatewayCustomer}
             paymentGatewayMethods={paymentSectionData.paymentGatewayMethods}
             marketplaceCheckouts={marketplaceCheckouts}

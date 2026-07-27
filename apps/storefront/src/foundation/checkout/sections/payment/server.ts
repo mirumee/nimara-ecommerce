@@ -9,7 +9,6 @@ import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { type AppErrorCode } from "@nimara/domain/objects/Error";
 import { type PaymentMethod } from "@nimara/domain/objects/Payment";
 import { type User } from "@nimara/domain/objects/User";
-import type { TransactionData } from "@nimara/infrastructure/payment/types";
 
 import { clientEnvs } from "@/envs/client";
 import { serverEnvs } from "@/envs/server";
@@ -151,34 +150,6 @@ export const getCheckoutPaymentSectionData = async ({
     }
   }
 
-  /**
-   * Pre-initialize the transaction on the server so the payment element can
-   * mount without a client round trip — only when the new-method tab is the
-   * landing tab (no saved methods); otherwise the intent is created on
-   * demand and the pre-initialized one would dangle on the checkout.
-   * Marketplace payments run on marketplace payment intents, not Saleor
-   * transactions, so no transaction is pre-initialized there either.
-   */
-  let transactionData: TransactionData | null = null;
-
-  if (
-    !clientEnvs.NEXT_PUBLIC_MARKETPLACE_ENABLED &&
-    paymentGatewayMethods.length === 0
-  ) {
-    const newPaymentService = await services.getPaymentService();
-
-    const resultTransaction = await newPaymentService.initializeTransaction({
-      id: checkout.id,
-      amount: checkout.totalPrice.gross.amount,
-      customerId: paymentGatewayCustomer,
-      saveForFutureUse: !!user,
-    });
-
-    if (resultTransaction.ok) {
-      transactionData = resultTransaction.data;
-    }
-  }
-
   return {
     addressFormRows: resultAddressRows.data,
     countries: resultCountries.data,
@@ -188,6 +159,5 @@ export const getCheckoutPaymentSectionData = async ({
     paymentGatewayCustomer,
     paymentGatewayMethods,
     storeUrl,
-    transactionData,
   };
 };
