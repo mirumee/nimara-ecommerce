@@ -1,7 +1,5 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-
 import {
   type AddressCreateInput,
   type AddressType,
@@ -11,9 +9,8 @@ import { type AsyncResult, ok } from "@nimara/domain/objects/Result";
 
 import { clientEnvs } from "@/envs/client";
 import { getAllCheckoutIds } from "@/features/checkout/server";
-import { revalidateTag } from "@/foundation/cache/cache";
+import { revalidatePath, revalidateTag } from "@/foundation/cache/cache";
 import { paths } from "@/foundation/routing/paths";
-import { getLocalizedPath } from "@/foundation/server";
 import { getServiceRegistry } from "@/services/registry";
 
 /**
@@ -79,7 +76,7 @@ export const updateCheckoutAddressAction = async ({
 
   if (revalidateCheckout) {
     updatedCheckoutIds.forEach((id) => revalidateTag(`CHECKOUT:${id}`));
-    revalidatePath(await getLocalizedPath(paths.checkout.asPath()));
+    await revalidatePath(paths.checkout.asPath());
   }
 
   return ok({ success: true });

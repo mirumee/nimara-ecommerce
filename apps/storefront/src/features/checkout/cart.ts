@@ -1,12 +1,10 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
 import { COOKIE_KEY, COOKIE_MAX_AGE } from "@/config";
-import { revalidateTag } from "@/foundation/cache/cache";
+import { revalidatePath, revalidateTag } from "@/foundation/cache/cache";
 import { paths } from "@/foundation/routing/paths";
-import { getLocalizedPath } from "@/foundation/server";
 import { getStorefrontLogger } from "@/services/lazy-logging";
 
 /**
@@ -37,6 +35,6 @@ export const setCheckoutIdCookie = async (id: string): Promise<void> => {
  */
 export const revalidateCart = async (id: string): Promise<void> => {
   revalidateTag(`CHECKOUT:${id}`);
-  revalidatePath(await getLocalizedPath(paths.cart.asPath()));
-  revalidatePath(await getLocalizedPath(paths.checkout.asPath()));
+  await revalidatePath(paths.cart.asPath());
+  await revalidatePath(paths.checkout.asPath());
 };

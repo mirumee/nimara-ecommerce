@@ -1,15 +1,13 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-
 import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { ok } from "@nimara/domain/objects/Result";
 
 import { clientEnvs } from "@/envs/client";
 import { serverEnvs } from "@/envs/server";
 import { getAllCheckoutIds } from "@/features/checkout/server";
+import { revalidatePath } from "@/foundation/cache/cache";
 import { paths } from "@/foundation/routing/paths";
-import { getLocalizedPath } from "@/foundation/server";
 import { getServiceRegistry } from "@/services/registry";
 
 /**
@@ -90,7 +88,7 @@ export const updateCheckoutUserDetailsAction = async (
   }
 
   if (opts.revalidateCheckoutPathOnSuccess) {
-    revalidatePath(await getLocalizedPath(paths.checkout.asPath()));
+    await revalidatePath(paths.checkout.asPath());
   }
 
   return ok({ success: true });
