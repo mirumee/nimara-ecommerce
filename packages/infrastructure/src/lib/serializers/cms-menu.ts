@@ -15,12 +15,9 @@ const createMenuItemUrl = (
   category?: { slug: string } | null,
   collection?: { slug: string } | null,
   page?: { slug: string } | null,
-  locale?: string,
 ): string => {
-  const baseUrl = locale ?? "";
-
   if (page?.slug) {
-    return `${baseUrl}/page/${page.slug}`;
+    return `/page/${page.slug}`;
   }
   const queryParams = new URLSearchParams();
 
@@ -29,20 +26,20 @@ const createMenuItemUrl = (
   }
 
   if (collection?.slug) {
-    return `${baseUrl}/collections/${collection.slug}`;
+    return `/collections/${collection.slug}`;
   }
 
-  return `${baseUrl}/search?${queryParams.toString()}`;
+  return `/search?${queryParams.toString()}`;
 };
 
 const serializeSaleorMenuItemChild = (
   child: MenuGet_menu_Menu_items_MenuItem_children_MenuItem,
-  locale?: string,
 ): MenuItemChild => {
   const { id, name, translation, url, collection, category, page } = child;
 
   // INFO: Links in Saleor CMS cannot be relative links, they must be absolute URLs,
-  // so to preserve locale prefixes we need to cut the domain to make them relatives
+  // so localized navigation can apply the locale prefix, cut the domain to make
+  // storefront URLs relative.
   const formattedUrl = url?.replace(
     process.env.NEXT_PUBLIC_STOREFRONT_URL ?? "",
     "",
@@ -51,7 +48,7 @@ const serializeSaleorMenuItemChild = (
   return {
     id,
     label: translation?.name || name,
-    url: formattedUrl ?? createMenuItemUrl(category, collection, page, locale),
+    url: formattedUrl ?? createMenuItemUrl(category, collection, page),
     description:
       collection?.translation?.description ||
       collection?.description ||
@@ -65,13 +62,13 @@ const serializeSaleorMenuItemChild = (
 
 const serializeSaleorMenuItem = (
   item: MenuGet_menu_Menu_items_MenuItem,
-  locale?: string,
 ): MenuItem => {
   const { id, name, translation, url, children, category, collection, page } =
     item;
 
   // INFO: Links in Saleor CMS cannot be relative links, they must be absolute URLs,
-  // so to preserve locale prefixes we need to cut the domain to make them relatives
+  // so localized navigation can apply the locale prefix, cut the domain to make
+  // storefront URLs relative.
   const formattedUrl = url?.replace(
     process.env.NEXT_PUBLIC_STOREFRONT_URL ?? "",
     "",
@@ -80,20 +77,19 @@ const serializeSaleorMenuItem = (
   return {
     id,
     label: translation?.name || name,
-    url: formattedUrl ?? createMenuItemUrl(category, collection, page, locale),
+    url: formattedUrl ?? createMenuItemUrl(category, collection, page),
     children:
       children
         ?.filter((child) => child.collection || child.category || child.page)
-        .map((child) => serializeSaleorMenuItemChild(child, locale)) || [],
+        .map(serializeSaleorMenuItemChild) || [],
   };
 };
 
 export const serializeSaleorMenu = (
   items: MenuGet_menu_Menu_items_MenuItem[],
-  locale?: string,
 ): Menu => {
   return {
-    items: items.map((item) => serializeSaleorMenuItem(item, locale)),
+    items: items.map(serializeSaleorMenuItem),
   };
 };
 
