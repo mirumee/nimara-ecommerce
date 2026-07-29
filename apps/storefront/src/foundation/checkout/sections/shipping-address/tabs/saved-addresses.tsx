@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { FormProvider, useForm } from "react-hook-form";
 
@@ -9,6 +8,7 @@ import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { displayFormattedAddressLines } from "@nimara/foundation/address/address";
 import type { FormattedAddress } from "@nimara/foundation/address/types";
 import { RadioFormGroup } from "@nimara/foundation/form-components/radio-form-group";
+import { useRouter } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
 import { useToast } from "@nimara/ui/hooks";
 

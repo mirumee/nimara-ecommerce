@@ -1,7 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-
+import { revalidateLocalizedPath } from "@/foundation/cache/cache";
 import { paths } from "@/foundation/routing/paths";
 import { getServiceRegistry } from "@/services/registry";
 
@@ -24,7 +23,7 @@ export const addPromoCodeAction = async ({
   });
 
   if (result.ok) {
-    revalidatePath(paths.checkout.asPath());
+    await revalidateLocalizedPath(paths.checkout.asPath());
   }
 
   return result;
@@ -49,7 +48,7 @@ export const removePromoCodeAction = async ({
   });
 
   if (result.ok) {
-    revalidatePath(paths.checkout.asPath());
+    await revalidateLocalizedPath(paths.checkout.asPath());
   }
 
   return result;

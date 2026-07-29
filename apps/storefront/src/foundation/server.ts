@@ -24,6 +24,13 @@ export const getLocalePrefix = async (): Promise<string> => {
   return LOCALE_PREFIXES[locale] ?? "";
 };
 
+/**
+ * Prefixes a path with the current locale (e.g. "/gb") so that
+ * `revalidatePath` targets the actual rendered route for non-default locales.
+ */
+export const getLocalizedPath = async (path: string): Promise<string> =>
+  `${await getLocalePrefix()}${path}`;
+
 // builds a full URL by joining a relative path to the store base URL avoiding incorrect slash handling.
 export const getStoreUrlWithPath = (base: string, path: string): string => {
   const normalizedBase = base.replace(/\/$/, "") + "/";

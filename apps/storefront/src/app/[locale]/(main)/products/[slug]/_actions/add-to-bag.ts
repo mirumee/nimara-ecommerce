@@ -1,11 +1,12 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-
 import { addToBag } from "@nimara/features/product-detail-page/shared/actions/add-to-bag.core";
 
 import { getCheckoutId, setCheckoutId } from "@/features/checkout/server";
-import { revalidateTag } from "@/foundation/cache/cache";
+import {
+  revalidateLocalizedPath,
+  revalidateTag,
+} from "@/foundation/cache/cache";
 import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
 import { storefrontLogger } from "@/services/logging";
@@ -55,7 +56,7 @@ export const addToBagAction = async ({
     });
 
     revalidateTag(`CHECKOUT:${cartId ?? result.data.cartId}`, "max");
-    revalidatePath(paths.cart.asPath());
+    await revalidateLocalizedPath(paths.cart.asPath());
 
     return result;
   }

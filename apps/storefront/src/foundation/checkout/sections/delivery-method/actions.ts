@@ -1,10 +1,9 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-
 import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { type AsyncResult, ok } from "@nimara/domain/objects/Result";
 
+import { revalidateLocalizedPath } from "@/foundation/cache/cache";
 import { updateDeliveryMethodAction } from "@/foundation/checkout/actions/update-delivery-method-action";
 import { paths, QUERY_PARAMS } from "@/foundation/routing/paths";
 
@@ -28,7 +27,7 @@ export const updateCheckoutDeliveryMethod = async ({
     return result;
   }
 
-  revalidatePath(paths.checkout.asPath());
+  await revalidateLocalizedPath(paths.checkout.asPath());
 
   return ok({
     redirectUrl: paths.checkout.asPath({
@@ -71,7 +70,7 @@ export const updateMarketplaceDeliveryMethods = async ({
     return failedResult;
   }
 
-  revalidatePath(paths.checkout.asPath());
+  await revalidateLocalizedPath(paths.checkout.asPath());
 
   return ok({
     redirectUrl: paths.checkout.asPath({
