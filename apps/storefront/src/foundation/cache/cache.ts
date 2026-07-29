@@ -1,7 +1,4 @@
-import {
-  revalidatePath as nextRevalidatePath,
-  revalidateTag as nextRevalidateTag,
-} from "next/cache";
+import { revalidatePath, revalidateTag as nextRevalidateTag } from "next/cache";
 
 import { getLocalizedPath } from "@/foundation/server";
 
@@ -16,5 +13,7 @@ export const revalidateTag = (
  * Revalidates a path, prefixing it with the current locale so non-default
  * channels (e.g. "/gb") revalidate the route they actually rendered.
  */
-export const revalidatePath = async (path: string): Promise<void> =>
-  nextRevalidatePath(await getLocalizedPath(path));
+export const revalidateLocalizedPath = async (
+  path: string,
+  type?: Parameters<typeof revalidatePath>[1],
+): Promise<void> => revalidatePath(await getLocalizedPath(path), type);

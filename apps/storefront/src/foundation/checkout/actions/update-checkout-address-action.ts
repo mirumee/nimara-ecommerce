@@ -9,7 +9,10 @@ import { type AsyncResult, ok } from "@nimara/domain/objects/Result";
 
 import { clientEnvs } from "@/envs/client";
 import { getAllCheckoutIds } from "@/features/checkout/server";
-import { revalidatePath, revalidateTag } from "@/foundation/cache/cache";
+import {
+  revalidateLocalizedPath,
+  revalidateTag,
+} from "@/foundation/cache/cache";
 import { paths } from "@/foundation/routing/paths";
 import { getServiceRegistry } from "@/services/registry";
 
@@ -28,7 +31,7 @@ export const updateCheckoutAddressAction = async ({
   address: Partial<AddressCreateInput>;
   id: Checkout["id"];
   /**
-   * When false, skips revalidatePath (e.g. immediately before Stripe redirect).
+   * When false, skips revalidateLocalizedPath (e.g. immediately before Stripe redirect).
    * @see updateBillingAddress in payment/actions.ts
    */
   revalidateCheckout?: boolean;
@@ -76,7 +79,7 @@ export const updateCheckoutAddressAction = async ({
 
   if (revalidateCheckout) {
     updatedCheckoutIds.forEach((id) => revalidateTag(`CHECKOUT:${id}`));
-    await revalidatePath(paths.checkout.asPath());
+    await revalidateLocalizedPath(paths.checkout.asPath());
   }
 
   return ok({ success: true });

@@ -3,9 +3,11 @@
 import { cookies } from "next/headers";
 
 import { COOKIE_KEY, COOKIE_MAX_AGE } from "@/config";
-import { revalidatePath, revalidateTag } from "@/foundation/cache/cache";
+import {
+  revalidateLocalizedPath,
+  revalidateTag,
+} from "@/foundation/cache/cache";
 import { paths } from "@/foundation/routing/paths";
-import { getStorefrontLogger } from "@/services/lazy-logging";
 
 /**
  * Stores the given checkout ID in an HTTP-only cookie for the current user session.
@@ -35,6 +37,6 @@ export const setCheckoutIdCookie = async (id: string): Promise<void> => {
  */
 export const revalidateCart = async (id: string): Promise<void> => {
   revalidateTag(`CHECKOUT:${id}`);
-  await revalidatePath(paths.cart.asPath());
-  await revalidatePath(paths.checkout.asPath());
+  await revalidateLocalizedPath(paths.cart.asPath());
+  await revalidateLocalizedPath(paths.checkout.asPath());
 };

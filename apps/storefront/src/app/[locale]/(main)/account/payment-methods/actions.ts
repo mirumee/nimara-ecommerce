@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "@/foundation/cache/cache";
+import { revalidateLocalizedPath } from "@/foundation/cache/cache";
 import { paths } from "@/foundation/routing/paths";
 import { getServiceRegistry } from "@/services/registry";
 
@@ -19,7 +19,7 @@ export const paymentMethodDeleteAction = async ({
   });
 
   if (result.ok) {
-    await revalidatePath(paths.account.paymentMethods.asPath());
+    await revalidateLocalizedPath(paths.account.paymentMethods.asPath());
   }
 
   return result;
