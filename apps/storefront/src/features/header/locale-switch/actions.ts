@@ -14,7 +14,13 @@ export const handleLocaleChange = async (locale: Locale) => {
 
   cookieStore.set(COOKIE_KEY.locale, locale);
   cookieStore.delete(COOKIE_KEY.checkout);
-  revalidatePath("/");
 
-  redirect(locale === DEFAULT_LOCALE ? "/" : LOCALE_PREFIXES[locale]);
+  const targetPath = locale === DEFAULT_LOCALE ? "/" : LOCALE_PREFIXES[locale];
+
+  // Revalidate the locale we are switching *to*, not the current one. Using
+  // `revalidateLocalizedPath` here would resolve the outgoing locale, because
+  // the request still carries it.
+  revalidatePath(targetPath);
+
+  redirect(targetPath);
 };

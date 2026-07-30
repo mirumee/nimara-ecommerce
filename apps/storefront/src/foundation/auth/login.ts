@@ -1,6 +1,5 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { AuthError } from "next-auth";
 
 import { signIn } from "@/auth";
@@ -12,6 +11,7 @@ import {
   setCheckoutIdCookie,
   setCheckoutIdForVendor,
 } from "@/features/checkout/server";
+import { revalidateLocalizedPath } from "@/foundation/cache/cache";
 import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
 import { errorService } from "@/services/error";
@@ -142,7 +142,7 @@ export async function login({
     return { error: true };
   }
 
-  revalidatePath(paths.home.asPath());
+  await revalidateLocalizedPath(paths.home.asPath());
 
   return {
     redirectUrl:
