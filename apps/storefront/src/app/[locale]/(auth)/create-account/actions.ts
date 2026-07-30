@@ -1,7 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-
+import { revalidateLocalizedPath } from "@/foundation/cache/cache";
 import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
 import { getStoreUrl, getStoreUrlWithPath } from "@/foundation/server";
@@ -29,7 +28,7 @@ export async function registerAccount(values: FormSchema) {
   });
 
   if (result.ok) {
-    revalidatePath(paths.createAccount.asPath());
+    await revalidateLocalizedPath(paths.createAccount.asPath());
   }
 
   return result;

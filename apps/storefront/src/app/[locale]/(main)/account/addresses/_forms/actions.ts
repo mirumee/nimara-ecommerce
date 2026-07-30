@@ -1,9 +1,8 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-
 import { type AllCountryCode } from "@nimara/domain/consts";
 
+import { revalidateLocalizedPath } from "@/foundation/cache/cache";
 import { paths } from "@/foundation/routing/paths";
 import { getServiceRegistry } from "@/services/registry";
 import { getAccessToken } from "@/services/tokens";
@@ -40,7 +39,7 @@ export async function createNewAddress({
     }
   }
 
-  revalidatePath(paths.account.addresses.asPath());
+  await revalidateLocalizedPath(paths.account.addresses.asPath());
 
   return result;
 }
@@ -80,7 +79,7 @@ export async function updateAddress({
     });
   }
 
-  revalidatePath(paths.account.addresses.asPath());
+  await revalidateLocalizedPath(paths.account.addresses.asPath());
 
   return data;
 }
@@ -97,7 +96,7 @@ export async function deleteAddress(id: string) {
     id,
   });
 
-  revalidatePath(paths.account.addresses.asPath());
+  await revalidateLocalizedPath(paths.account.addresses.asPath());
 
   return data;
 }

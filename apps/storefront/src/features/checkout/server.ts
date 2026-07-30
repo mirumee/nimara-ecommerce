@@ -1,6 +1,5 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
 import {
@@ -8,7 +7,10 @@ import {
   COOKIE_MAX_AGE,
   MARKETPLACE_NO_VENDOR_BUCKET,
 } from "@/config";
-import { revalidateTag } from "@/foundation/cache/cache";
+import {
+  revalidateLocalizedPath,
+  revalidateTag,
+} from "@/foundation/cache/cache";
 import { paths } from "@/foundation/routing/paths";
 
 const CHECKOUT_COOKIE_VERSION = "1";
@@ -372,8 +374,8 @@ export const removeCheckoutIdForVendor = async (
  */
 export const revalidateCart = async (checkoutId: string): Promise<void> => {
   revalidateTag(`CHECKOUT:${checkoutId}`);
-  revalidatePath(paths.cart.asPath());
-  revalidatePath(paths.checkout.asPath());
+  await revalidateLocalizedPath(paths.cart.asPath());
+  await revalidateLocalizedPath(paths.checkout.asPath());
 };
 
 // =============================================================================

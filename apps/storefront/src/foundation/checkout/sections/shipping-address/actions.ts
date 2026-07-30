@@ -1,12 +1,11 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-
 import { type AllCountryCode } from "@nimara/domain/consts";
 import type { Checkout } from "@nimara/domain/objects/Checkout";
 import { schemaToAddress } from "@nimara/foundation/address/address";
 
 import { createAddressAction } from "@/foundation/address/create-address-action";
+import { revalidateLocalizedPath } from "@/foundation/cache/cache";
 import { updateCheckoutAddressAction } from "@/foundation/checkout/actions/update-checkout-address-action";
 import { paths } from "@/foundation/routing/paths";
 import { storefrontLogger } from "@/services/logging";
@@ -44,7 +43,7 @@ export async function accountAddressUpdateAction({
   });
 
   if (data.ok) {
-    revalidatePath(paths.checkout.asPath());
+    await revalidateLocalizedPath(paths.checkout.asPath());
   }
 
   return data;
@@ -90,8 +89,6 @@ export async function createCheckoutShippingAddress({
       );
     }
   }
-
-  revalidatePath(paths.checkout.asPath());
 
   return result;
 }
