@@ -1,12 +1,12 @@
 import { type TransactionRefundRequestedSubscription } from "@/graphql/subscriptions/generated";
 import { responseError } from "@/lib/api/util";
-import { getAmountFromCents } from "@/lib/currency";
+import { getAmountFromCents, getCentsFromAmount } from "@/lib/currency";
 import { isError } from "@/lib/error";
 import { type TransactionEventSchema } from "@/lib/saleor/transaction/schema";
 import { constructTransactionEventResponse } from "@/lib/saleor/transaction/util";
 import { verifySaleorWebhookRoute } from "@/lib/saleor/webhooks/api";
 import { getStripeApi, stripeRouteErrorsHandler } from "@/lib/stripe/api";
-import { getIntentDashboardUrl } from "@/lib/stripe/util";
+import { getGatewayMetadata, getIntentDashboardUrl } from "@/lib/stripe/util";
 import { getConfigProvider } from "@/providers/config";
 import { getLoggingProvider } from "@/providers/logging";
 
@@ -49,24 +49,33 @@ export const POST = stripeRouteErrorsHandler(
 
       const stripe = getStripeApi(gatewayConfig.secretKey);
 
-      const intent = await stripe.paymentIntents.retrieve(
-        event.transaction.pspReference,
-      );
+      const refund = await stripe.refunds.create({
+        payment_intent: event.transaction.pspReference,
+        amount: getCentsFromAmount({
+          amount: event.action.amount,
+          currency: event.action.currency,
+        }),
+        metadata: getGatewayMetadata({
+          saleorDomain,
+          transactionId: event.transaction.id,
+          channelSlug: event.transaction.sourceObject.channel.slug,
+        }),
+      });
 
       let data: TransactionEventSchema = {
-        pspReference: intent.id,
+        pspReference: refund.id,
       };
 
-      if (intent.status === "succeeded") {
+      if (refund.status === "succeeded") {
         data = {
           ...data,
           amount: getAmountFromCents({
-            currency: intent.currency,
-            amount: intent.amount,
+            currency: refund.currency,
+            amount: refund.amount,
           }),
           result: "REFUND_SUCCESS",
           externalUrl: getIntentDashboardUrl({
-            paymentId: intent.id,
+            paymentId: refund.id,
             secretKey: gatewayConfig.secretKey,
           }),
         };

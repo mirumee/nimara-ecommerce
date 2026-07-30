@@ -105,3 +105,6 @@ terraform.rc
 
 .obsidian/
 .playwright-mcp/
+
+# TypeScript incremental build cache
+*.tsbuildinfo

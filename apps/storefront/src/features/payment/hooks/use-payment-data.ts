@@ -18,17 +18,14 @@ type InitializeTransactionInput = Parameters<
 >[0];
 
 export const usePaymentData = ({
-  initialTransactionData,
   onErrors,
 }: {
-  initialTransactionData?: Maybe<TransactionData>;
   onErrors: (codes: AppErrorCode[]) => void;
 }) => {
   const [initializeData, setInitializeData] =
     useState<Maybe<InitializeData>>(undefined);
-  const [transactionData, setTransactionData] = useState<
-    Maybe<TransactionData>
-  >(initialTransactionData);
+  const [transactionData, setTransactionData] =
+    useState<Maybe<TransactionData>>(undefined);
 
   useEffect(() => {
     void (async () => {

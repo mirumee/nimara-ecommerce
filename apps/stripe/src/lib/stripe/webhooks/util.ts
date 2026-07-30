@@ -5,7 +5,11 @@ import { type PaymentGatewayConfig } from "@/lib/saleor/config/schema";
 import { isLocalDomain } from "@/lib/util";
 
 import { getStripeApi } from "../api";
-import { StripeMetaKey, StripeWebhookEvent } from "../const";
+import {
+  STRIPE_API_VERSION,
+  StripeMetaKey,
+  StripeWebhookEvent,
+} from "../const";
 import { getGatewayMetadata } from "../util";
 
 export const installWebhook = async ({
@@ -33,12 +37,19 @@ export const installWebhook = async ({
     return;
   }
 
+  // TODO: Make a single webhook for multiple channels
   const url = `${appUrl}/api/stripe/${channel}/webhooks`;
   const stripe = getStripeApi(configuration.secretKey);
 
   const result = await stripe.webhookEndpoints.create({
     url,
+    description: `Created by the Nimara Stripe ts app, channel: ${channel}`,
     enabled_events: Object.values(StripeWebhookEvent),
+    /**
+     * Pins the payload shape of delivered events — without it, Stripe sends
+     * events in the account's default API version.
+     */
+    api_version: STRIPE_API_VERSION,
     metadata: getGatewayMetadata({ saleorDomain }),
   });
 

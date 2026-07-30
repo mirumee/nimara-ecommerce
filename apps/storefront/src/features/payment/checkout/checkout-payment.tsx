@@ -11,7 +11,6 @@ import {
 import { type Maybe } from "@nimara/domain/objects/Maybe";
 import { type PaymentMethod } from "@nimara/domain/objects/Payment";
 import { useRouter } from "@nimara/i18n/routing";
-import type { TransactionData } from "@nimara/infrastructure/payment/types";
 import {
   Tabs,
   TabsContent,
@@ -33,7 +32,6 @@ import { type TabName } from "./tabs/address-tab";
 import { type CommonPaymentProps } from "./types";
 
 type CheckoutPaymentProps = CommonPaymentProps & {
-  initialTransactionData?: Maybe<TransactionData>;
   paymentGatewayCustomer: Maybe<string>;
   paymentGatewayMethods: PaymentMethod[];
 };
@@ -49,7 +47,6 @@ export const CheckoutPayment = ({
   countryCode,
   errorCode,
   formattedAddresses,
-  initialTransactionData,
   paymentGatewayCustomer,
   paymentGatewayMethods,
   storeUrl,
@@ -73,11 +70,9 @@ export const CheckoutPayment = ({
     setTransactionData,
     transactionData,
   } = usePaymentData({
-    initialTransactionData,
     onErrors: setErrors,
   });
   const elementsRef = useRef<unknown>(null);
-  const initialTransactionRef = useRef(!!initialTransactionData);
 
   const defaultPaymentMethod =
     paymentGatewayMethods.find(({ isDefault }) => isDefault)?.id ??
@@ -216,16 +211,6 @@ export const CheckoutPayment = ({
     let isCancelled = false;
 
     void (async () => {
-      /**
-       * The first activation consumes the intent pre-initialized on the
-       * server — no client fetch needed.
-       */
-      if (initialTransactionRef.current) {
-        initialTransactionRef.current = false;
-
-        return;
-      }
-
       setIsMounted(false);
       setTransactionData(undefined);
 

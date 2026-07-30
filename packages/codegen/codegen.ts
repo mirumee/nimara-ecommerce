@@ -70,25 +70,22 @@ const singleFileConfig = {
   config: baseCodegenConfig,
 } as const;
 
-const APP_SHARED_DOCUMENTS: Record<string, string[]> = {
-  stripe: [
-    "../../packages/infrastructure/src/graphql/fragments/MoneyFragment.graphql",
-  ],
+const APP_PROJECT_GENERATES: Record<string, CodegenConfig["generates"]> = {
+  marketplace: {
+    "../../apps/marketplace/src/graphql/generated/client.ts": singleFileConfig,
+  },
+  stripe: {
+    "../../apps/stripe/src/": nearOperationFileConfig,
+  },
 };
 
 const createAppProject = (appName: string) => ({
   schema: process.env.NEXT_PUBLIC_SALEOR_API_URL,
-  documents: [
-    `../../apps/${appName}/src/**/*.graphql`,
-    ...(APP_SHARED_DOCUMENTS[appName] ?? []),
-  ],
+  documents: [`../../apps/${appName}/src/**/*.graphql`],
   extensions: {
     codegen: {
       overwrite: true,
-      generates: {
-        [`../../apps/${appName}/src/graphql/generated/client.ts`]:
-          singleFileConfig,
-      },
+      generates: APP_PROJECT_GENERATES[appName],
     },
   },
 });
