@@ -73,17 +73,19 @@ and stored in Vercel Edge Config — which is why the `VERCEL_*` variables below
 
 ### Configure the Nimara Storefront
 
-To enable checkout, the storefront needs all three payment variables set together
-(see `apps/storefront/.env.example`). In your Nimara storefront, update the **.env** with:
+To enable checkout, point the storefront at the installed app (see
+`apps/storefront/.env.example`). In your Nimara storefront, update the **.env** with:
 
 ```properties
 # Must match the app id from the Stripe app's manifest: `<ENVIRONMENT>.stripe`.
 NEXT_PUBLIC_PAYMENT_APP_ID=LOCAL.stripe
-# Your Stripe publishable key (pk_...).
-NEXT_PUBLIC_STRIPE_PUBLIC_KEY=
-# Your Stripe secret key (sk_...), server-only.
-STRIPE_SECRET_KEY=
 ```
+
+:::note
+The storefront holds no Stripe key. The app reports the publishable key for the
+channel being paid in with every payment or card-saving session it opens, so
+per-channel Stripe accounts work without rebuilding the storefront.
+:::
 
 :::note
 The app id is built as `<NEXT_PUBLIC_ENVIRONMENT>.stripe` (the `stripe` part
@@ -107,6 +109,11 @@ You can install the app via the manifest URL:
 
 - From the Saleor Dashboard → **Extensions** → click **Add Extension** → select **Install From Manifest**.
 
+The app requests `HANDLE_PAYMENTS` and `MANAGE_USERS`. It needs `MANAGE_USERS`
+for [stored payment methods](https://docs.saleor.io/developer/payments/stored-payments):
+it reads the customer a payment event belongs to and keeps the Saleor user ↔
+Stripe customer mapping in the user's private metadata.
+
 ### Provide Stripe Keys
 
 Once the app is installed, open it from the Saleor Dashboard and, for each channel,
@@ -117,9 +124,9 @@ The Stripe webhooks are installed automatically when the keys are saved —
 you do not need to configure them manually in Stripe.
 :::
 
-After the keys are saved, make sure the storefront's `NEXT_PUBLIC_PAYMENT_APP_ID`,
-`NEXT_PUBLIC_STRIPE_PUBLIC_KEY` and `STRIPE_SECRET_KEY` are set (see
-[Configure the Nimara Storefront](#configure-the-nimara-storefront)) and restart it.
+After the keys are saved, make sure the storefront's `NEXT_PUBLIC_PAYMENT_APP_ID`
+is set (see [Configure the Nimara Storefront](#configure-the-nimara-storefront))
+and restart it.
 
 :::note
 For detailed setup instructions, see the official docs:

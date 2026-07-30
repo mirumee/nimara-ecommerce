@@ -1,13 +1,11 @@
-import { invariant } from "graphql/jsutils/invariant";
-
 import { err, ok } from "@nimara/domain/objects/Result";
 
 import { graphqlClient } from "#root/graphql/client";
 
-import { PAYMENT_USAGE } from "../../consts";
+import { isTransactionFailed } from "../../helpers";
 import type { PaymentServiceConfig } from "../../types";
 import { TransactionInitializeMutationDocument } from "../graphql/mutations/generated";
-import type { PaymentInitializeTransactionInfra } from "../types";
+import type { StripePaymentInitializeInfra } from "../types";
 
 type PaymentInitializeData = {
   paymentIntent: {
@@ -21,12 +19,11 @@ export const paymentInitializeTransactionInfra =
     apiURI,
     gatewayAppId,
     logger,
-  }: PaymentServiceConfig): PaymentInitializeTransactionInfra =>
+  }: PaymentServiceConfig): StripePaymentInitializeInfra =>
   async ({
     amount,
-    customerId,
     id,
-    paymentMethod,
+    paymentMethodId,
     saveForFutureUse,
     sharedPaymentToken,
   }) => {
@@ -37,20 +34,15 @@ export const paymentInitializeTransactionInfra =
           amount,
           id,
           gatewayAppId,
+          /**
+           * Intent options are named, not passed through: the payment app
+           * decides what reaches Stripe.
+           */
           data: {
-            automatic_payment_methods: {
-              enabled: true,
-            },
-            ...(customerId && { customer: customerId }),
-            ...(paymentMethod && { payment_method: paymentMethod }),
-            ...(saveForFutureUse && { setup_future_usage: PAYMENT_USAGE }),
-            ...(sharedPaymentToken && {
-              shared_payment_token: sharedPaymentToken,
-            }),
+            ...(paymentMethodId && { paymentMethodId }),
+            ...(saveForFutureUse && { saveForFutureUse }),
+            ...(sharedPaymentToken && { sharedPaymentToken }),
           },
-        },
-        options: {
-          cache: "no-store",
         },
         operationName: "TransactionInitializeMutation",
       },
@@ -76,21 +68,56 @@ export const paymentInitializeTransactionInfra =
       return err([{ code: "TRANSACTION_INITIALIZE_ERROR" }]);
     }
 
-    invariant(
-      result.data.transactionInitialize?.transaction?.id,
-      "Unexpected state. Mutation successful but transaction id not returned.",
-    );
-    invariant(
-      result.data.transactionInitialize.data,
-      "Unexpected state. Mutation successful but transaction data not returned.",
-    );
+    const initialize = result.data.transactionInitialize;
+
+    if (!initialize?.transaction?.id || !initialize.transactionEvent?.id) {
+      logger.error("Transaction initialization returned no transaction.", {
+        amount,
+        id,
+      });
+
+      return err([{ code: "TRANSACTION_INITIALIZE_ERROR" }]);
+    }
+
+    /**
+     * A decline arrives as a failure event, not a mutation error, and carries
+     * no session to confirm against.
+     */
+    if (isTransactionFailed(initialize.transactionEvent.type)) {
+      logger.error("Transaction initialization was refused.", {
+        amount,
+        id,
+        message: initialize.transactionEvent.message,
+        type: initialize.transactionEvent.type,
+      });
+
+      return err([{ code: "TRANSACTION_INITIALIZE_ERROR" }]);
+    }
+
+    const { paymentIntent } = (initialize.data ??
+      {}) as Partial<PaymentInitializeData>;
+
+    if (!paymentIntent?.clientSecret || !paymentIntent.publishableKey) {
+      logger.error("Transaction initialization returned no session data.", {
+        amount,
+        id,
+      });
+
+      return err([{ code: "TRANSACTION_INITIALIZE_ERROR" }]);
+    }
 
     return ok({
-      clientSecret: (
-        result.data.transactionInitialize.data as PaymentInitializeData
-      ).paymentIntent.clientSecret,
+      gatewayConfig: { publishableKey: paymentIntent.publishableKey },
+      providerData: {
+        clientSecret: paymentIntent.clientSecret,
+      },
+      /**
+       * The event id is unique per initialization, so it identifies this
+       * session without carrying the client secret around as an id.
+       */
+      sessionId: initialize.transactionEvent.id,
       transaction: {
-        id: result.data.transactionInitialize.transaction.id,
+        id: initialize.transaction.id,
       },
     });
   };

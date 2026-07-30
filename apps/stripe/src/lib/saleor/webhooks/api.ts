@@ -16,8 +16,9 @@ export const verifySaleorWebhookRoute =
   ) =>
   async (request: Request): Promise<Response> => {
     const logger = getLoggingProvider();
+    const { pathname } = new URL(request.url);
 
-    logger.info(`Received Saleor webhook at ${new URL(request.url).pathname}.`);
+    logger.info(`Received Saleor webhook at ${pathname}.`);
 
     const { headers, errors, context } = await verifySaleorWebhookSignature({
       headers: request.headers,
@@ -33,6 +34,8 @@ export const verifySaleorWebhookRoute =
     }
 
     const event = (await request.clone().json()) as WebhookData<T>;
+
+    logger.debug(`Verified Saleor webhook at ${pathname}.`, { event });
 
     return handler({ event, headers, request });
   };

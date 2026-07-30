@@ -22,8 +22,6 @@ export const POST = stripeRouteErrorsHandler(
       const configProvider = getConfigProvider({ saleorDomain });
       let gatewayConfig;
 
-      logger.debug("TransactionProcessSessionSubscription", { event });
-
       try {
         gatewayConfig = await configProvider.getPaymentGatewayConfigForChannel({
           saleorDomain: headers["saleor-domain"],

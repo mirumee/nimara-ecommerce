@@ -4,10 +4,8 @@ import type { CategoryService } from "./category/types";
 import type { CheckoutService } from "./checkout/types";
 import type { CollectionService } from "./collection/types";
 import type { MarketplaceService } from "./marketplace/types";
-import type {
-  LegacyStripePaymentService,
-  StripePaymentService,
-} from "./payment/providers";
+import type { StripeProvider } from "./payment/stripe/types";
+import type { PaymentProviderContract, PaymentService } from "./payment/types";
 import type { StoreService } from "./store/types";
 import type { TrackingService } from "./tracking/service";
 import type { CMSMenuService } from "./use-cases/cms-menu/types";
@@ -21,7 +19,9 @@ import type { UserService } from "./user/types";
  * {@link ServiceRegistry} getters and the storefront's loader table are derived
  * from this map, so there is no separate interface to keep in sync.
  */
-export type CapabilityServices = {
+export type CapabilityServices<
+  TPaymentProvider extends PaymentProviderContract = StripeProvider,
+> = {
   getAddressService: AddressService;
   getCMSMenuService: CMSMenuService;
   getCMSPageService: CMSPageService;
@@ -29,9 +29,8 @@ export type CapabilityServices = {
   getCategoryService: CategoryService;
   getCheckoutService: CheckoutService;
   getCollectionService: CollectionService;
-  getLegacyPaymentService: LegacyStripePaymentService;
   getMarketplaceService: MarketplaceService;
-  getPaymentService: StripePaymentService;
+  getPaymentService: PaymentService<TPaymentProvider>;
   getSearchService: SearchService;
   getStoreService: StoreService;
   getTrackingService: TrackingService;
@@ -51,8 +50,12 @@ export type ServiceRegistryConfig = {
  * lazy-loaded and cached on first access. The getters are derived from
  * {@link CapabilityServices}.
  */
-export type ServiceRegistry = {
+export type ServiceRegistry<
+  TPaymentProvider extends PaymentProviderContract = StripeProvider,
+> = {
   config: ServiceRegistryConfig;
 } & {
-  [K in keyof CapabilityServices]: () => Promise<CapabilityServices[K]>;
+  [K in keyof CapabilityServices<TPaymentProvider>]: () => Promise<
+    CapabilityServices<TPaymentProvider>[K]
+  >;
 };

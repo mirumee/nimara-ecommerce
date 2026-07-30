@@ -17,6 +17,8 @@ export type AcpCheckoutCompleteMutationVariables = Types.Exact<{
 
 export type AcpCheckoutCompleteMutation = AcpCheckoutCompleteMutation_Mutation;
 
+export type CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_channel_Channel = { slug: string };
+
 export type CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_discount_Money = { amount: number, currency: string };
 
 export type CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingMethods_ShippingMethod_price_Money = { amount: number, currency: string };
@@ -112,7 +114,7 @@ export type CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkou
   | CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_problems_CheckoutLineProblemVariantNotAvailable
 ;
 
-export type CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout = { id: string, email: string | null, displayGrossPrices: boolean, voucherCode: string | null, isShippingRequired: boolean, authorizeStatus: Types.CheckoutAuthorizeStatusEnum, chargeStatus: Types.CheckoutChargeStatusEnum, fulfillmentAddress: string | null, buyer: string | null, discount: CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_discount_Money | null, shippingMethods: Array<CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingMethods_ShippingMethod>, shippingAddress: CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingAddress_Address | null, billingAddress: CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_billingAddress_Address | null, deliveryMethod: CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_deliveryMethod_ShippingMethod_Warehouse | null, availablePaymentGateways: Array<CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_availablePaymentGateways_PaymentGateway>, lines: Array<CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine>, totalPrice: CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_totalPrice_TaxedMoney, subtotalPrice: CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_subtotalPrice_TaxedMoney, shippingPrice: CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingPrice_TaxedMoney, problems: Array<CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_problems> | null };
+export type CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout = { id: string, email: string | null, displayGrossPrices: boolean, voucherCode: string | null, isShippingRequired: boolean, authorizeStatus: Types.CheckoutAuthorizeStatusEnum, chargeStatus: Types.CheckoutChargeStatusEnum, fulfillmentAddress: string | null, buyer: string | null, channel: CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_channel_Channel, discount: CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_discount_Money | null, shippingMethods: Array<CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingMethods_ShippingMethod>, shippingAddress: CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingAddress_Address | null, billingAddress: CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_billingAddress_Address | null, deliveryMethod: CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_deliveryMethod_ShippingMethod_Warehouse | null, availablePaymentGateways: Array<CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_availablePaymentGateways_PaymentGateway>, lines: Array<CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_lines_CheckoutLine>, totalPrice: CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_totalPrice_TaxedMoney, subtotalPrice: CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_subtotalPrice_TaxedMoney, shippingPrice: CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_shippingPrice_TaxedMoney, problems: Array<CheckoutSessionCreate_checkoutCreate_CheckoutCreate_checkout_Checkout_problems> | null };
 
 export type CheckoutSessionCreate_checkoutCreate_CheckoutCreate_errors_CheckoutError = { field: string | null, message: string | null, code: Types.CheckoutErrorCode, variants: Array<string> | null, lines: Array<string> | null, addressType: Types.AddressTypeEnum | null };
 
@@ -252,6 +254,9 @@ export const CheckoutSessionCreateDocument = new TypedDocumentString(`
 fragment CheckoutFragment on Checkout {
   id
   email
+  channel {
+    slug
+  }
   displayGrossPrices
   discount {
     amount

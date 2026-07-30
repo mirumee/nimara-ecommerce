@@ -1,32 +1,62 @@
-import type {
-  Appearance,
-  Stripe as StripeClient,
-  StripeElements,
-  StripePaymentElement,
-  StripePaymentElementOptions,
-} from "@stripe/stripe-js";
-
 import type { Address } from "@nimara/domain/objects/Address";
 import type { PaymentMethod } from "@nimara/domain/objects/Payment";
-import { type AsyncResult, type Result } from "@nimara/domain/objects/Result";
-import type { User } from "@nimara/domain/objects/User";
+import { type AsyncResult } from "@nimara/domain/objects/Result";
 
-export type { StripeElements } from "@stripe/stripe-js";
+import { type FetchOptions } from "#root/graphql/client";
+import type { Maybe } from "#root/lib/types";
+import { type Logger } from "#root/logging/types";
 
-export type InitializeData = {
-  sdk: StripeClient;
-};
+// =============================================================================
+// PROVIDER CONTRACT
+// =============================================================================
 
-export type TransactionData = {
-  clientSecret: string;
+/**
+ * A provider fills this in, and every contract below is expressed in terms of
+ * it, so no provider SDK is named in this module.
+ */
+export type PaymentProviderContract = {
+  element: unknown;
+  gateway: unknown;
   /**
-   * Missing when the client secret does not originate from a Saleor
-   * transaction (e.g. marketplace payment intents).
+   * Reported with every session, so the storefront holds no gateway keys and a
+   * per-channel account works without redeploying it.
    */
-  transaction?: {
-    id: string;
-  };
+  gatewayConfig: unknown;
+  methodSession: unknown;
+  paymentSession: unknown;
 };
+
+// =============================================================================
+// SESSIONS
+// =============================================================================
+
+export type Transaction = {
+  id: string;
+};
+
+export type PaymentSessionData<TProvider extends PaymentProviderContract> = {
+  gatewayConfig: TProvider["gatewayConfig"];
+  providerData: TProvider["paymentSession"];
+  /**
+   * Changes per session so neutral UI can remount on it. Never a credential.
+   */
+  sessionId: string;
+  /**
+   * Missing for sessions that are not Saleor transactions, such as marketplace
+   * payment intents.
+   */
+  transaction?: Transaction;
+};
+
+export type MethodSessionData<TProvider extends PaymentProviderContract> = {
+  gatewayConfig: TProvider["gatewayConfig"];
+  id: string;
+  providerData: TProvider["methodSession"];
+};
+
+// =============================================================================
+// OPERATION DATA
+// =============================================================================
 
 export type BillingDetails = Pick<
   Address,
@@ -40,162 +70,132 @@ export type BillingDetails = Pick<
   | "streetAddress2"
 >;
 
-export type ExecuteData = {
+export type PaymentDetails = {
   billingDetails?: BillingDetails;
-  /**
-   * Present when paying with a newly entered payment method (mounted payment
-   * element). Absent when confirming with a tokenized saved method — the
-   * confirmation then runs against `TransactionData.clientSecret` alone.
-   */
-  elements?: StripeElements;
   email: string;
-  redirectUrl: string;
+  saveForFutureUse?: boolean;
 };
 
 export type ProcessData = {
-  /**
-   * Optional context forwarded to the payment app with the process event.
-   */
   data?: unknown;
-  transaction: {
-    id: string;
-  };
+  transaction: Transaction;
 };
 
-import type { Maybe } from "#root/lib/types";
-import { type Logger } from "#root/logging/types";
-
-export type StripeServiceState = PaymentServiceState<{
+export type PaymentInitializeOpts = {
   amount: number;
-  clientSDK: StripeClient;
-  customerId: Maybe<string>;
-  elements: StripeElements;
   id: string;
-  paymentElement: StripePaymentElement;
-  transactionId: string;
-}>;
+  paymentMethodId?: Maybe<string>;
+  saveForFutureUse?: Maybe<boolean>;
+  sharedPaymentToken?: Maybe<string>;
+};
 
+export type MethodOpts = {
+  accessToken: string;
+  channel: string;
+  options?: FetchOptions;
+};
+
+/**
+ * `null` means the provider settled the confirmation itself, including driving
+ * its own redirect. A url means the caller has to navigate.
+ */
+export type PaymentOutcome = {
+  nextAction: { redirectUrl: string } | null;
+};
+
+// =============================================================================
+// PAYMENT OPERATIONS
+// =============================================================================
+export type PaymentGatewayInitializeInfra<
+  TProvider extends PaymentProviderContract,
+> = (opts: {
+  gatewayConfig: TProvider["gatewayConfig"];
+}) => AsyncResult<TProvider["gateway"]>;
+
+export type PaymentInitializeInfra<TProvider extends PaymentProviderContract> =
+  (opts: PaymentInitializeOpts) => AsyncResult<PaymentSessionData<TProvider>>;
+
+export type PaymentExecuteInfra<TProvider extends PaymentProviderContract> =
+  (opts: {
+    details: PaymentDetails;
+    initializeData: TProvider["gateway"];
+    /**
+     * Absent when paying with a stored method: nothing is mounted.
+     */
+    paymentElement?: TProvider["element"];
+    redirectUrl: string;
+    transactionData: PaymentSessionData<TProvider>;
+  }) => AsyncResult<PaymentOutcome>;
+
+export type PaymentProcessInfra = (
+  opts: ProcessData,
+) => AsyncResult<{ actionRequired: boolean; orderId?: string }>;
+
+// =============================================================================
+// PAYMENT METHOD OPERATIONS
+// =============================================================================
+export type PaymentMethodListInfra = (
+  opts: MethodOpts,
+) => AsyncResult<PaymentMethod[]>;
+
+export type PaymentMethodDeleteInfra = (
+  opts: { id: string } & MethodOpts,
+) => AsyncResult<{ success: true }>;
+
+export type PaymentMethodInitializeInfra<
+  TProvider extends PaymentProviderContract,
+> = (
+  opts: { data?: unknown } & MethodOpts,
+) => AsyncResult<MethodSessionData<TProvider>>;
+
+export type PaymentMethodExecuteInfra<
+  TProvider extends PaymentProviderContract,
+> = (opts: {
+  initializeData: TProvider["gateway"];
+  methodSession: MethodSessionData<TProvider>;
+  paymentElement: TProvider["element"];
+  redirectUrl: string;
+}) => AsyncResult<PaymentOutcome>;
+
+export type PaymentMethodProcessInfra = (
+  opts: {
+    data?: unknown;
+    id: string;
+  } & MethodOpts,
+) => AsyncResult<{ id: string }>;
+
+// =============================================================================
+// SERVICES
+// =============================================================================
 export type PaymentServiceConfig = {
   apiURI: string;
   gatewayAppId: string;
   logger: Logger;
-  publicKey: string;
 };
 
-export type LegacyPaymentServiceConfig = PaymentServiceConfig & {
-  environment: string;
-  secretKey: string;
+/**
+ * The half of the service that touches no provider UI, so server-side flows can
+ * depend on it without naming a gateway.
+ */
+export type PaymentServerService = {
+  paymentInitialize: (
+    opts: PaymentInitializeOpts,
+  ) => AsyncResult<{ transaction?: Transaction }>;
+  paymentProcess: PaymentProcessInfra;
 };
 
-export type PaymentServiceState<S extends object> = Partial<
-  S & { amount: number; id: string }
->;
-
-export type PaymentInitializeUseCase = () => Promise<void>;
-
-export type PaymentElementCreateInfra = (opts: {
-  appearance?: Appearance;
-  locale?: string;
-  options?: StripePaymentElementOptions;
-  secret: string;
-}) => Promise<{
-  mount: (targetSelector: string) => void;
-  unmount: () => void;
-}>;
-
-export type PaymentElementCreateUseCase = PaymentElementCreateInfra;
-
-export type ClientInitializeInfra = () => Promise<void>;
-
-export type GatewayUser = {
-  defaultPaymentMethodId: string | null;
-  id: string;
+/**
+ * Apps depend on this rather than a concrete provider, so adding a gateway is a
+ * new implementation instead of an app-layer change.
+ */
+export type PaymentService<TProvider extends PaymentProviderContract> = {
+  gatewayInitialize: PaymentGatewayInitializeInfra<TProvider>;
+  methodDelete: PaymentMethodDeleteInfra;
+  methodExecute: PaymentMethodExecuteInfra<TProvider>;
+  methodInitialize: PaymentMethodInitializeInfra<TProvider>;
+  methodList: PaymentMethodListInfra;
+  methodProcess: PaymentMethodProcessInfra;
+  paymentExecute: PaymentExecuteInfra<TProvider>;
+  paymentInitialize: PaymentInitializeInfra<TProvider>;
+  paymentProcess: PaymentProcessInfra;
 };
-
-export type CustomerFromGatewayGetInfra = (
-  opts:
-    | {
-        environment: string;
-        gatewayId?: never;
-        user: User;
-      }
-    | {
-        environment?: never;
-        gatewayId: string;
-        user?: never;
-      },
-) => AsyncResult<GatewayUser>;
-
-export type CustomerFromSaleorGetInfra = (opts: {
-  channel: string;
-  user: User;
-}) => Result<string | null>;
-
-export type CustomerInGatewayCreateInfra = (opts: {
-  environment: string;
-  user: User;
-}) => AsyncResult<GatewayUser>;
-
-export type CustomerInSaleorSaveInfra = (opts: {
-  accessToken: string;
-  channel: string;
-  gatewayCustomerId: string;
-  saleorCustomerId: string;
-}) => AsyncResult<{ success: true }>;
-
-export type CustomerGetUseCase = (opts: {
-  accessToken: string;
-  channel: string;
-  environment: string;
-  user: User;
-}) => AsyncResult<{ customerId: string }>;
-
-export type PaymentMethodsListInfra = (opts: {
-  customerId: string;
-}) => AsyncResult<PaymentMethod[]>;
-
-export type CustomerPaymentMethodsListUseCase = PaymentMethodsListInfra;
-
-export type PaymentMethodDetachInfra = (opts: {
-  paymentMethodId: string;
-}) => AsyncResult<{ success: true }>;
-
-export type CustomerPaymentMethodValidate = (opts: {
-  customerId: string;
-  paymentMethodId: string;
-}) => AsyncResult<{ isCustomerPaymentMethod: boolean }>;
-
-export type CustomerPaymentMethodDeleteUseCase = (opts: {
-  customerId: string;
-  paymentMethodId: string;
-}) => AsyncResult<{ success: true }>;
-
-export type PaymentSaveInitializeInfra = (opts: {
-  customerId: string;
-}) => AsyncResult<{ secret: string }>;
-
-export type PaymentSaveInitializeUseCase = PaymentSaveInitializeInfra;
-
-export type PaymentMethodSaveProcessInfra = ({
-  searchParams,
-}: {
-  searchParams: Record<string, string>;
-}) => AsyncResult<{ customerId: string; paymentMethodId: string }>;
-
-export type PaymentMethodSaveProcessUseCase = ({
-  searchParams,
-}: {
-  searchParams: Record<string, string>;
-}) => AsyncResult<{ success: true }>;
-
-export type PaymentMethodSetDefaultInfra = (opts: {
-  customerId: string;
-  paymentMethodId: string;
-}) => AsyncResult<{ success: true }>;
-
-export type PaymentMethodSaveExecuteInfra = (opts: {
-  redirectUrl: string;
-  saveForFutureUse?: boolean;
-}) => AsyncResult<{ success: true }>;
-
-export type PaymentMethodSaveExecuteUseCase = PaymentMethodSaveExecuteInfra;

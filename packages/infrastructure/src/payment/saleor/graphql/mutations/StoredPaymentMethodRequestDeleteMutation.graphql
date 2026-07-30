@@ -1,0 +1,10 @@
+mutation StoredPaymentMethodRequestDeleteMutation($id: ID!, $channel: String!) {
+  storedPaymentMethodRequestDelete(id: $id, channel: $channel) {
+    result
+    errors {
+      code
+      field
+      message
+    }
+  }
+}

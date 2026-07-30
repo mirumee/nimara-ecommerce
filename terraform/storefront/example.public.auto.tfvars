@@ -50,15 +50,6 @@ public_environment_variables = {
       }
     ]
   }
-  "NEXT_PUBLIC_STRIPE_PUBLIC_KEY" = {
-    comment = "Public Stripe key for the storefront"
-    envs_values = [
-      {
-        value = "CHANGE_ME"
-        target = ["production", "preview", "development"]
-      }
-    ]
-  },
   "NEXT_PUBLIC_PAYMENT_APP_ID": {
     comment = "Public ID of the payment app for the storefront"
     envs_values = [

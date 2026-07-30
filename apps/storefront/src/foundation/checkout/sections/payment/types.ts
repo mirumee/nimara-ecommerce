@@ -12,7 +12,6 @@ export interface PaymentSectionData {
   countryCode: AllCountryCode;
   errorCode?: AppErrorCode;
   formattedAddresses: FormattedAddress[];
-  paymentGatewayCustomer: string | null;
   paymentGatewayMethods: PaymentMethod[];
   storeUrl: string;
 }

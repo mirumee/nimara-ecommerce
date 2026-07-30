@@ -441,6 +441,7 @@ export async function POST(request: NextRequest) {
       {
         clientSecret: paymentIntent.client_secret,
         paymentIntentId: paymentIntent.id,
+        publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
         transferGroup,
         currency: currency.toLowerCase(),
         amount,

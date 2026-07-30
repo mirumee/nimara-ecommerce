@@ -25,6 +25,7 @@ import { paymentMethodDeleteAction } from "../actions";
 
 const TYPE_MESSAGE_MAPPING: Record<PaymentMethodType, MessagePath> = {
   card: "payment.credit-card",
+  other: "payment.method",
   paypal: "payment.paypal-account",
 };
 
@@ -32,15 +33,14 @@ export const PaymentMethodDeleteModal = ({
   method: { type, id },
   method,
   onClose,
-  customerId,
 }: {
-  customerId: string;
   method: PaymentMethod;
   onClose: () => void;
 }) => {
   const t = useTranslations();
   const router = useRouter();
   const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleClose = () => {
     if (isProcessing) {
@@ -57,13 +57,10 @@ export const PaymentMethodDeleteModal = ({
 
     setIsProcessing(true);
 
-    const result = await paymentMethodDeleteAction({
-      customerId,
-      paymentMethodId: id,
-    });
+    const result = await paymentMethodDeleteAction({ id });
 
     if (!result.ok) {
-      alert("Could not delete method");
+      setError(t(`errors.${result.errors[0].code}`));
     } else {
       router.refresh();
       await delay();
@@ -89,6 +86,10 @@ export const PaymentMethodDeleteModal = ({
         <p className="whitespace-pre-wrap text-sm leading-5 text-primary">
           {renderPaymentMethod({ method })}
         </p>
+
+        {error && (
+          <p className="text-sm font-medium text-destructive">{error}</p>
+        )}
 
         <div className="flex w-full justify-end gap-4">
           <Button

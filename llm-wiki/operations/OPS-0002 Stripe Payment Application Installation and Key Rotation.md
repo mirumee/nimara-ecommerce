@@ -9,13 +9,14 @@ tags:
   - "saleor-app"
   - "key-rotation"
 created: "2026-07-21T00:00:00+00:00"
-timestamp: "2026-07-21T00:00:00+00:00"
+timestamp: "2026-07-28T00:00:00+00:00"
 id: "OPS-0002"
 status: "active"
 owner: "payments-engineering"
 kind: "runbook"
 relations:
-  implementations: []
+  implementations:
+    - "[Saleor Stored Payment Methods](../tech/implementation/IMP-0001%20Saleor%20Stored%20Payment%20Methods.md)"
   product_records:
     - "[Guided Storefront Checkout](../product/capabilities/CAP-0003%20Guided%20Storefront%20Checkout.md)"
     - "[Cart to Confirmed Order](../product/flows/FLOW-0001%20Cart%20to%20Confirmed%20Order.md)"
@@ -25,8 +26,9 @@ relations:
 # Trigger
 
 Use this runbook when deploying and installing the repository's TypeScript Stripe application,
-adding a Saleor channel, changing Stripe public or secret keys, or recovering missing Stripe
-webhook subscriptions for standard storefront checkout.
+adding a Saleor channel, changing Stripe public or secret keys, recovering missing Stripe webhook
+subscriptions for standard storefront checkout, or reinstalling the application after its
+requested permissions change.
 
 # Preconditions
 
@@ -47,21 +49,26 @@ webhook subscriptions for standard storefront checkout.
 
 # Procedure
 
-1. Verify `GET /api/saleor/manifest` returns the expected application ID, version, `HANDLE_PAYMENTS`
-   permission, registration URL, application URL, and all advertised synchronous transaction
-   webhooks.
+1. Verify `GET /api/saleor/manifest` returns the expected application ID, version, the
+   `HANDLE_PAYMENTS` and `MANAGE_USERS` permissions, registration URL, application URL, and all
+   advertised synchronous transaction and stored-payment-method webhooks.
 2. Install the application from that manifest in the intended Saleor environment. Registration
    stores the installation token and application ID for the Saleor domain and refreshes signing
    keys.
-3. Open the installed application from Saleor so its signed application context can load the
+3. Compare the granted permissions of an existing installation against the manifest. Saleor grants
+   permissions at install time and does not widen them when a manifest changes, so an installation
+   that predates the stored-payment-method contract holds only `HANDLE_PAYMENTS` and silently
+   returns no saved methods. Reinstall it to pick up `MANAGE_USERS`, then reconfigure channel keys,
+   because reinstallation issues a new installation token and application ID.
+4. Open the installed application from Saleor so its signed application context can load the
    configuration form. Configure the Stripe public and secret key for each channel.
-4. Save once. The save action verifies the Saleor JWT, removes Stripe webhook endpoints created by
+5. Save once. The save action verifies the Saleor JWT, removes Stripe webhook endpoints created by
    the same application issuer and environment, creates one new channel-specific endpoint, records
    its signing secret, and then persists the updated channel configuration.
-5. Set the storefront's `NEXT_PUBLIC_PAYMENT_APP_ID` to the installed application ID and supply the
+6. Set the storefront's `NEXT_PUBLIC_PAYMENT_APP_ID` to the installed application ID and supply the
    storefront payment keys required by its checkout configuration. Rebuild and deploy the
    storefront because the public application ID is build-time configuration.
-6. During key rotation, keep the prior credentials available until a new webhook endpoint and a
+7. During key rotation, keep the prior credentials available until a new webhook endpoint and a
    successful test transaction are verified. Rotate one environment at a time; never mix test and
    live keys across the public and secret halves.
 
@@ -76,6 +83,14 @@ webhook subscriptions for standard storefront checkout.
   advances, and the storefront reaches a real order confirmation.
 - Confirm invalid Saleor and Stripe signatures are rejected and that logs contain the Saleor domain,
   channel, event type, and provider reference without exposing secrets.
+- As a signed-in customer, add a card from the account area and confirm it appears in the saved
+  list and at checkout. An empty list after a successful save usually means the installation was
+  never granted `MANAGE_USERS`.
+- On an environment upgraded from a storefront-owned Stripe integration, expect existing customers
+  to have no saved cards at all and to be issued a new provider customer on their next payment or
+  card save. This is the intended upgrade behaviour, not an incident: the old mapping lived in
+  shopper-writable metadata and is deliberately not honoured. Tell support in advance that carried
+  over shoppers re-enter their card once.
 
 # Escalation
 
@@ -105,3 +120,9 @@ webhook subscriptions for standard storefront checkout.
   [configuration save action](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/stripe/src/app/app/actions/save-data-action.tsx),
   and
   [webhook rotation utility](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/stripe/src/lib/stripe/webhooks/util.ts).
+- The stored-payment-method reinstallation step is anchored at exact commit
+  [`ebc9e3b8044dc48532d9c32902c584a7589ea6e9`](https://github.com/mirumee/nimara-ecommerce/tree/ebc9e3b8044dc48532d9c32902c584a7589ea6e9)
+  in the
+  [application manifest](https://github.com/mirumee/nimara-ecommerce/blob/ebc9e3b8044dc48532d9c32902c584a7589ea6e9/apps/stripe/src/app/api/saleor/manifest/route.ts).
+  That commit is the tip of unmerged branch `feat/saleor-stored-payment-methods`; re-anchor on the
+  squash-merge commit once it lands.

@@ -1,6 +1,5 @@
 "use client";
 
-import { type Maybe } from "@nimara/domain/objects/Maybe";
 import { type PaymentMethod } from "@nimara/domain/objects/Payment";
 
 import { clientEnvs } from "@/envs/client";
@@ -12,7 +11,6 @@ import { type CommonPaymentProps } from "./types";
 
 type PaymentProps = CommonPaymentProps & {
   marketplaceCheckouts?: MarketplaceCheckoutItem[];
-  paymentGatewayCustomer: Maybe<string>;
   paymentGatewayMethods: PaymentMethod[];
 };
 
@@ -28,7 +26,6 @@ export const Payment = ({
   errorCode,
   formattedAddresses,
   marketplaceCheckouts,
-  paymentGatewayCustomer,
   paymentGatewayMethods,
   storeUrl,
   user,
@@ -62,7 +59,6 @@ export const Payment = ({
       countryCode={countryCode}
       errorCode={errorCode}
       formattedAddresses={formattedAddresses}
-      paymentGatewayCustomer={paymentGatewayCustomer}
       paymentGatewayMethods={paymentGatewayMethods}
       storeUrl={storeUrl}
       user={user}

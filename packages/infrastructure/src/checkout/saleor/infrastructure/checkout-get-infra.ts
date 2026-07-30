@@ -50,6 +50,7 @@ const serializeCheckout = (checkout: CheckoutFragment): Checkout => {
 
   return {
     ...checkout,
+    channel: checkout.channel.slug,
     isShippingRequired: checkout.isShippingRequired,
     billingAddress: checkout.billingAddress
       ? serializeAddress(checkout.billingAddress)

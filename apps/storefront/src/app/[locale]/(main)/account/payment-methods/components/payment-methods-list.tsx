@@ -28,9 +28,7 @@ const PaymentMethodDeleteModal = dynamic(
 
 export const PaymentMethodsList = ({
   methods,
-  customerId,
 }: {
-  customerId: string;
   methods: PaymentMethod[];
 }) => {
   const t = useTranslations();
@@ -82,7 +80,6 @@ export const PaymentMethodsList = ({
 
       {selectedMethod && (
         <PaymentMethodDeleteModal
-          customerId={customerId}
           method={selectedMethod}
           onClose={handleDeleteModalClose}
         />

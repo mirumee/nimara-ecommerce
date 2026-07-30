@@ -15,7 +15,9 @@ import { groupPaymentMethods } from "@/features/checkout/payment";
 import { CreditCardList } from "./credit-card-list";
 import { PaypalList } from "./paypal-list";
 
-const COMPONENTS_MAP: Record<PaymentMethodType, any> = {
+type SerializedPaymentMethodType = Exclude<PaymentMethodType, "other">;
+
+const COMPONENTS_MAP: Partial<Record<SerializedPaymentMethodType, any>> = {
   card: CreditCardList,
   paypal: PaypalList,
 };
@@ -41,7 +43,8 @@ export const PaymentMethods = ({ methods }: { methods: TPaymentMethods[] }) => {
             >
               {Object.entries(groupedMethods).map(([type, items]) => {
                 if (type in COMPONENTS_MAP) {
-                  const Component = COMPONENTS_MAP[type as PaymentMethodType];
+                  const Component =
+                    COMPONENTS_MAP[type as SerializedPaymentMethodType];
 
                   return <Component key={type} items={items} />;
                 }

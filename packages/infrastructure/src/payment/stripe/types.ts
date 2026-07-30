@@ -1,17 +1,19 @@
-import { type AsyncResult } from "@nimara/domain/objects/Result";
-
-import type { Maybe } from "#root/lib/types";
+import { type Stripe, type StripeElements } from "@stripe/stripe-js";
 
 import type {
-  ExecuteData,
-  InitializeData,
-  ProcessData,
-  TransactionData,
+  MethodSessionData,
+  PaymentExecuteInfra,
+  PaymentGatewayInitializeInfra,
+  PaymentInitializeInfra,
+  PaymentMethodExecuteInfra,
+  PaymentMethodInitializeInfra,
+  PaymentService,
+  PaymentSessionData,
 } from "../types";
 
 /**
- * Stripe types re-exported for app code. Apps consume Stripe through the
- * infrastructure layer and do not depend on `@stripe/stripe-js` directly.
+ * Apps reach Stripe through this layer rather than depending on
+ * `@stripe/stripe-js` directly.
  */
 export type {
   Appearance,
@@ -22,35 +24,55 @@ export type {
   StripePaymentElementOptions,
 } from "@stripe/stripe-js";
 
-/**
- * Shared payment data contracts live in the provider-neutral
- * `#root/payment/types` module; re-exported here for stripe-scoped consumers.
- */
 export type {
   BillingDetails,
-  ExecuteData,
-  InitializeData,
+  PaymentDetails,
+  PaymentOutcome,
   ProcessData,
-  TransactionData,
 } from "../types";
 
-export type PaymentInitializeGatewayInfra = () => AsyncResult<InitializeData>;
+export type StripeGateway = {
+  sdk: Stripe;
+};
 
-export type PaymentInitializeTransactionInfra = (opts: {
-  amount: number;
-  customerId?: Maybe<string>;
-  id: string;
-  paymentMethod?: Maybe<string>;
-  saveForFutureUse?: Maybe<boolean>;
-  sharedPaymentToken?: Maybe<string>;
-}) => AsyncResult<TransactionData>;
+export type StripeGatewayConfig = {
+  publishableKey: string;
+};
 
-export type PaymentExecuteInfra = (opts: {
-  data: ExecuteData;
-  initializeData: InitializeData;
-  transactionData: TransactionData;
-}) => AsyncResult<{ success: true }>;
+export type StripePaymentSession = {
+  clientSecret: string;
+};
 
-export type PaymentProcessInfra = (
-  opts: ProcessData,
-) => AsyncResult<{ actionRequired: boolean; orderId?: string }>;
+export type StripeMethodSession = {
+  setupIntent: {
+    clientSecret: string;
+  };
+};
+
+export type StripeProvider = {
+  element: StripeElements;
+  gateway: StripeGateway;
+  gatewayConfig: StripeGatewayConfig;
+  methodSession: StripeMethodSession;
+  paymentSession: StripePaymentSession;
+};
+
+export type StripePaymentSessionData = PaymentSessionData<StripeProvider>;
+
+export type StripeMethodSessionData = MethodSessionData<StripeProvider>;
+
+export type StripePaymentService = PaymentService<StripeProvider>;
+
+export type StripePaymentGatewayInitializeInfra =
+  PaymentGatewayInitializeInfra<StripeProvider>;
+
+export type StripePaymentInitializeInfra =
+  PaymentInitializeInfra<StripeProvider>;
+
+export type StripePaymentExecuteInfra = PaymentExecuteInfra<StripeProvider>;
+
+export type StripePaymentMethodInitializeInfra =
+  PaymentMethodInitializeInfra<StripeProvider>;
+
+export type StripePaymentMethodExecuteInfra =
+  PaymentMethodExecuteInfra<StripeProvider>;

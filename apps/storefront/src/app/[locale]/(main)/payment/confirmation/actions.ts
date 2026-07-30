@@ -72,7 +72,7 @@ const processCheckoutPayment = async ({
   if (transactionId) {
     const paymentService = await services.getPaymentService();
 
-    const resultProcess = await paymentService.process({
+    const resultProcess = await paymentService.paymentProcess({
       transaction: { id: transactionId },
     });
 

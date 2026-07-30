@@ -1,0 +1,21 @@
+mutation PaymentMethodInitializeTokenizationMutation(
+  $gatewayAppId: String!
+  $channel: String!
+  $data: JSON
+) {
+  paymentMethodInitializeTokenization(
+    id: $gatewayAppId
+    channel: $channel
+    data: $data
+    paymentFlowToSupport: INTERACTIVE
+  ) {
+    id
+    result
+    data
+    errors {
+      code
+      field
+      message
+    }
+  }
+}

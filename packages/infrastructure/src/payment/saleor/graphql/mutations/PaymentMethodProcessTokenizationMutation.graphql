@@ -1,0 +1,16 @@
+mutation PaymentMethodProcessTokenizationMutation(
+  $id: String!
+  $channel: String!
+  $data: JSON
+) {
+  paymentMethodProcessTokenization(id: $id, channel: $channel, data: $data) {
+    id
+    result
+    data
+    errors {
+      code
+      field
+      message
+    }
+  }
+}

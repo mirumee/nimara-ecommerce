@@ -3,6 +3,8 @@ import type * as Types from '@nimara/codegen/schema';
 import type { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
 export type CheckoutErrorFragment = { addressType: Types.AddressTypeEnum | null, code: Types.CheckoutErrorCode, field: string | null, lines: Array<string> | null, message: string | null, variants: Array<string> | null };
 
+export type CheckoutFragment_Checkout_channel_Channel = { slug: string };
+
 export type CheckoutFragment_Checkout_discount_Money = { amount: number, currency: string };
 
 export type CheckoutFragment_Checkout_shippingMethods_ShippingMethod_price_Money = { amount: number, currency: string };
@@ -98,7 +100,7 @@ export type CheckoutFragment_Checkout_problems =
   | CheckoutFragment_Checkout_problems_CheckoutLineProblemVariantNotAvailable
 ;
 
-export type CheckoutFragment = { id: string, email: string | null, displayGrossPrices: boolean, voucherCode: string | null, isShippingRequired: boolean, authorizeStatus: Types.CheckoutAuthorizeStatusEnum, chargeStatus: Types.CheckoutChargeStatusEnum, discount: CheckoutFragment_Checkout_discount_Money | null, shippingMethods: Array<CheckoutFragment_Checkout_shippingMethods_ShippingMethod>, shippingAddress: CheckoutFragment_Checkout_shippingAddress_Address | null, billingAddress: CheckoutFragment_Checkout_billingAddress_Address | null, deliveryMethod: CheckoutFragment_Checkout_deliveryMethod_ShippingMethod_Warehouse | null, availablePaymentGateways: Array<CheckoutFragment_Checkout_availablePaymentGateways_PaymentGateway>, lines: Array<CheckoutFragment_Checkout_lines_CheckoutLine>, totalPrice: CheckoutFragment_Checkout_totalPrice_TaxedMoney, subtotalPrice: CheckoutFragment_Checkout_subtotalPrice_TaxedMoney, shippingPrice: CheckoutFragment_Checkout_shippingPrice_TaxedMoney, problems: Array<CheckoutFragment_Checkout_problems> | null };
+export type CheckoutFragment = { id: string, email: string | null, displayGrossPrices: boolean, voucherCode: string | null, isShippingRequired: boolean, authorizeStatus: Types.CheckoutAuthorizeStatusEnum, chargeStatus: Types.CheckoutChargeStatusEnum, channel: CheckoutFragment_Checkout_channel_Channel, discount: CheckoutFragment_Checkout_discount_Money | null, shippingMethods: Array<CheckoutFragment_Checkout_shippingMethods_ShippingMethod>, shippingAddress: CheckoutFragment_Checkout_shippingAddress_Address | null, billingAddress: CheckoutFragment_Checkout_billingAddress_Address | null, deliveryMethod: CheckoutFragment_Checkout_deliveryMethod_ShippingMethod_Warehouse | null, availablePaymentGateways: Array<CheckoutFragment_Checkout_availablePaymentGateways_PaymentGateway>, lines: Array<CheckoutFragment_Checkout_lines_CheckoutLine>, totalPrice: CheckoutFragment_Checkout_totalPrice_TaxedMoney, subtotalPrice: CheckoutFragment_Checkout_subtotalPrice_TaxedMoney, shippingPrice: CheckoutFragment_Checkout_shippingPrice_TaxedMoney, problems: Array<CheckoutFragment_Checkout_problems> | null };
 
 export type CheckoutProblemsFragment_CheckoutLineProblemInsufficientStock = (
   { availableQuantity: number | null, line: CheckoutFragment_Checkout_problems_CheckoutLineProblemInsufficientStock_line_CheckoutLine }
@@ -147,6 +149,9 @@ export const CheckoutFragment = new TypedDocumentString(`
     fragment CheckoutFragment on Checkout {
   id
   email
+  channel {
+    slug
+  }
   displayGrossPrices
   discount {
     amount
