@@ -76,7 +76,7 @@
     "prettier": "3.8.1",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "tsx": "4.22.4",
-    "turbo": "2.9.4"
+    "turbo": "2.9.14"
   },
   "config": {
     "commitizen": {
