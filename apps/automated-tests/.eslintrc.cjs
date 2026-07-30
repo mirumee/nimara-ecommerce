@@ -13,6 +13,19 @@ module.exports = {
   },
   overrides: [
     {
+      // CodeceptJS trial. The playwright plugin's rules assume Playwright's
+      // test/expect API and misfire on Feature()/Scenario() files.
+      // See docs/adr/0001-codeceptjs-spike.md.
+      files: ["codecept/**/*.ts", "codecept.conf.ts"],
+      extends: [require.resolve("@nimara/config/eslint/base")],
+      rules: {
+        "playwright/no-standalone-expect": "off",
+        "playwright/expect-expect": "off",
+        "playwright/no-conditional-in-test": "off",
+        "import/no-default-export": "off",
+      },
+    },
+    {
       files: ["tests/e2e/**/*.spec.{ts,tsx}"],
       rules: {
         // Both rules are disabled temporarily, since we're preparing the infra for the tests
