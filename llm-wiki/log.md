@@ -87,6 +87,12 @@
   restamped, because restamping asserts a review against the current schema that has not been done.
 - **Not recorded**: The provider-neutral payment service contract is described in IMP-0001 only.
   It is an architecture decision with no ADR, by the same standing request as the protocol move.
+- **Update**: Recorded in FLOW-0001 that an empty checkout clears the stale identifier and returns
+  the shopper to the cart, alongside the unreadable-checkout case it already described.
+- **Provenance gap**: That claim comes from an uncommitted working-tree change and has no anchor.
+  The stored-payment-method anchors added earlier today point at `ebc9e3b8…`, which no longer
+  exists after the branch was amended and rebased onto `54ed3a03`; the current tip is `3395b6bc`.
+  Re-anchor every stored-payment-method link, and IMP-0001's `work_item.id`, on the merge commit.
 
 ## 2026-07-31
 

@@ -50,7 +50,9 @@ type StripeMock = Stripe & {
   };
 };
 
-const buildStripe = ({ createdId = "cus_created" }: { createdId?: string } = {}) =>
+const buildStripe = ({
+  createdId = "cus_created",
+}: { createdId?: string } = {}) =>
   ({
     customers: {
       create: vi.fn().mockResolvedValue({ id: createdId }),

@@ -39,10 +39,15 @@ export const getCheckoutOrRedirect = async (
     checkoutId,
     languageCode: region.language.code,
     countryCode: region.market.countryCode,
-    options,
+    options: { ...options, cache: "no-store" },
   });
 
   if (!resultCheckout.ok) {
+    await deleteCheckoutIdCookie();
+    redirect({ href: paths.cart.asPath(), locale });
+  }
+
+  if (!resultCheckout.data.checkout.lines.length) {
     await deleteCheckoutIdCookie();
     redirect({ href: paths.cart.asPath(), locale });
   }
@@ -84,7 +89,7 @@ export const getMarketplaceCheckoutsOrRedirect = async (
         checkoutId,
         languageCode: region.language.code,
         countryCode: region.market.countryCode,
-        options,
+        options: { ...options, cache: "no-store" },
       });
 
       if (!result.ok) {

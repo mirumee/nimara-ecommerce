@@ -67,8 +67,8 @@ actors:
 
 # Failure paths
 
-- A missing checkout identifier redirects directly to the cart. An unreadable checkout also clears
-  the stale identifier before redirecting.
+- A missing checkout identifier redirects directly to the cart. An unreadable or empty checkout
+  also clears the stale identifier before redirecting.
 - Insufficient stock or an unavailable variant returns the shopper to the cart with the detected
   reason.
 - Contact, address, delivery, billing, and checkout-completion errors remain structured so the

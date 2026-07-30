@@ -8,9 +8,7 @@ import {
   serializeStoredPaymentMethod,
 } from "./payment-method";
 
-const buildCardPaymentMethod = (
-  id = "pm_card",
-): Stripe.PaymentMethod =>
+const buildCardPaymentMethod = (id = "pm_card"): Stripe.PaymentMethod =>
   ({
     id,
     allow_redisplay: "always",

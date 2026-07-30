@@ -25,8 +25,9 @@ export const parseTokenizationData = (
 export const tokenizationResponse = (data: PaymentMethodTokenizationSchema) =>
   Response.json(paymentMethodTokenizationSchema.parse(data));
 
-export const listResponse = (paymentMethods: StoredPaymentMethodSchema[] = []) =>
-  Response.json(listStoredPaymentMethodsSchema.parse({ paymentMethods }));
+export const listResponse = (
+  paymentMethods: StoredPaymentMethodSchema[] = [],
+) => Response.json(listStoredPaymentMethodsSchema.parse({ paymentMethods }));
 
 export const deleteResponse = (data: StoredPaymentMethodDeleteSchema) =>
   Response.json(storedPaymentMethodDeleteSchema.parse(data));

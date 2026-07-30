@@ -6,12 +6,8 @@ import {
   isTransactionActionRequired,
   isTransactionSuccessful,
 } from "../../helpers";
-import type {
-  PaymentProcessInfra,
-  PaymentServiceConfig,
-} from "../../types";
+import type { PaymentProcessInfra, PaymentServiceConfig } from "../../types";
 import { TransactionProcessMutationDocument } from "../graphql/mutations/generated";
-
 
 export const paymentProcessInfra =
   ({ apiURI, logger }: PaymentServiceConfig): PaymentProcessInfra =>
