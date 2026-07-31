@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
 
 import { config } from "@/lib/config";
+import { assertStripeSecretKey } from "@/lib/stripe/secret-key";
 
 type StripeApiError = {
   error?: {
@@ -23,16 +24,6 @@ export type StripeConnectAccount = {
   payouts_enabled?: boolean;
   requirements?: StripeRequirements;
 };
-
-function assertStripeSecretKey(): string {
-  const secretKey = config.stripeConnect.secretKey;
-
-  if (!secretKey) {
-    throw new Error("STRIPE_SECRET_KEY is not set");
-  }
-
-  return secretKey;
-}
 
 function toFormBody(
   payload: Record<string, string | number | boolean | null | undefined>,

@@ -6,6 +6,8 @@ import { useTranslations } from "next-intl";
 import { type AppErrorCode } from "@nimara/domain/objects/Error";
 import { Button } from "@nimara/ui/components/button";
 
+import { AppErrorMessage } from "@/foundation/errors/components/app-error-message";
+
 type PlaceOrderButtonProps = {
   errors: AppErrorCode[];
   isDisabled: boolean;
@@ -38,7 +40,7 @@ export const PlaceOrderButton = ({
           key={`${code}-${index}`}
           className="text-sm font-medium text-destructive"
         >
-          {t(`errors.${code}`)}
+          <AppErrorMessage code={code} />
         </p>
       ))}
     </div>
