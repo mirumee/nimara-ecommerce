@@ -32,3 +32,8 @@
 - **Maintenance**: Reconciled the operations register, root index, and QA environment matrix with `main` as the only long-lived development branch.
 - **Provenance correction**: Re-anchored OPS-0008 from the deleted migration branch to durable release commit `407da55cabebee44ec910d1a96261934b4cab963`.
 - **Maintenance**: Documented the `Admins` team pull-request-only break-glass path; direct pushes to `main` have no bypass.
+
+## 2026-07-31
+
+- **Create**: Added ADR-0001 as a proposed decision to disable promo codes in the storefront checkout while marketplace mode is enabled, anchored to implementation commits `445fbf993b29d90cd87f9e66b5b56a66e4b6f897` and `76e367e4a26e17c7a2e8270cab34a30a6701ea22` on an unmerged change branch.
+- **Update**: Registered ADR-0001 in the ADR register and the root index, opening the previously empty ADR branch of the wiki.

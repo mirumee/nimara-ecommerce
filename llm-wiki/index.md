@@ -120,6 +120,7 @@ okf_version: "0.1"
 # Technology ADR
 
 - [ADR MOC](tech/ADR/ADR%20MOC.md) - Map of content and chronological register for architecture decision records.
+- [ADR-0001 Vouchers Are Disabled In Marketplace Checkout](tech/ADR/ADR-0001%20Vouchers%20Are%20Disabled%20In%20Marketplace%20Checkout.md) - Why promo codes are hidden in marketplace mode and what answering the platform-versus-vendor discount question would require.
 
 # Technology RFC
 
