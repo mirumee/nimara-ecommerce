@@ -8,7 +8,6 @@ export const installApp = async ({
   configProvider,
   saleorClient,
   saleorAuthToken,
-  saleorUrl,
   saleorDomain,
   jwksProvider,
 }: {
@@ -17,7 +16,6 @@ export const installApp = async ({
   saleorAuthToken: string;
   saleorClient: SaleorClient;
   saleorDomain: string;
-  saleorUrl: string;
 }) => {
   const saleorAppId = await saleorClient.getAppId();
 
@@ -33,7 +31,7 @@ export const installApp = async ({
   });
 
   await jwksProvider.get({
-    issuer: saleorUrl,
+    issuer: saleorDomain,
     forceRefresh: true,
   });
 };

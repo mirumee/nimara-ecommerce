@@ -2,11 +2,12 @@
 
 import { headers } from "next/headers";
 
-import { verifyJWTSignature } from "@/lib/saleor/auth/jwt";
+import { isError } from "@/lib/error";
+import { resolveDashboardTenant } from "@/lib/saleor/config/context";
 import { type SaleorAppConfig } from "@/lib/saleor/config/schema";
+import { SaleorDomainNotAllowedError } from "@/lib/saleor/error";
 import { installWebhook, uninstallWebhooks } from "@/lib/stripe/webhooks/util";
 import { getConfigProvider } from "@/providers/config";
-import { getJWKSProvider } from "@/providers/jwks";
 import { getLoggingProvider } from "@/providers/logging";
 
 import { type Schema } from "../schema";
@@ -14,22 +15,27 @@ import { type Schema } from "../schema";
 export const saveDataAction = async ({
   data,
   accessToken,
-  saleorDomain,
+  saleorApiUrl,
 }: {
   accessToken: string;
   data: Schema;
-  saleorDomain: string;
+  saleorApiUrl: string;
 }) => {
-  const jwksProvider = getJWKSProvider();
+  let saleorDomain: string;
 
   try {
-    await verifyJWTSignature({ jwksProvider, jwt: accessToken });
-  } catch {
-    return "Failed to verify JWT signature.";
+    ({ saleorDomain } = await resolveDashboardTenant({
+      accessToken,
+      saleorApiUrl,
+    }));
+  } catch (err) {
+    return isError(err, SaleorDomainNotAllowedError)
+      ? err.message
+      : "Failed to verify JWT signature.";
   }
 
   const appUrl = (await headers()).get("origin");
-  const configProvider = getConfigProvider({ saleorDomain });
+  const configProvider = getConfigProvider();
   const appConfig = await configProvider.getBySaleorDomain({
     saleorDomain,
   });
@@ -57,6 +63,7 @@ export const saveDataAction = async ({
           configuration: config,
           appUrl,
           logger,
+          saleorDomain,
         }),
       ),
     );

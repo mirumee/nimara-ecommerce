@@ -63,10 +63,12 @@ export const uninstallWebhooks = async ({
   configuration,
   appUrl,
   logger,
+  saleorDomain,
 }: {
   appUrl: string;
   configuration: PaymentGatewayConfig[string];
   logger: Logger;
+  saleorDomain: string;
 }) => {
   if (!isLocalDomain(appUrl)) {
     const stripe = getStripeApi(configuration.secretKey);
@@ -74,14 +76,20 @@ export const uninstallWebhooks = async ({
     try {
       const webhooks = await stripe.webhookEndpoints.list({ limit: 100 });
 
-      // Filter webhooks by issuer and environment to avoid orphans upon reinstallations.
+      /**
+       * Filter by issuer, environment and tenant to avoid orphans upon
+       * reinstallations — several Saleor domains may share one Stripe account,
+       * and each owns only the endpoints carrying its own domain.
+       */
       const webhooksToDelete = webhooks.data.filter((webhook) => {
         const isIssuedWebhook =
           webhook.metadata[StripeMetaKey.ISSUER] === CONFIG.APP_ID;
         const isSameEnvironment =
           webhook.metadata[StripeMetaKey.ENVIRONMENT] === CONFIG.ENVIRONMENT;
+        const isSameTenant =
+          webhook.metadata[StripeMetaKey.SALEOR_DOMAIN] === saleorDomain;
 
-        return isIssuedWebhook && isSameEnvironment;
+        return isIssuedWebhook && isSameEnvironment && isSameTenant;
       });
 
       await Promise.all(

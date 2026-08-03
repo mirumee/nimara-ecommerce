@@ -35,13 +35,15 @@ Edit .env file and provide required variables:
 
 - `VERCEL_EDGE_CONFIG_ID` - Your Vercel Edge config database ID. If you don't have an Edge config database you need to create one. This can be found in your Vercel dashboard project > Storage tab.![alt text](docs/edge-config.png)
 
-- `NEXT_PUBLIC_SALEOR_API_URL` - Your Saleor API URL.
+- `ALLOWED_DOMAINS` - Comma separated list of Saleor domains allowed to install the app, e.g. `nimara-*.eu.saleor.cloud,demo.nimara.store`, where `*` acts as a wildcard. Unset, every installation is refused, so set it before deploying. A bare `*` allows any Saleor and belongs in local development only.
 
 Now in [**nimara storefront**](../storefront) environment variables set `NEXT_PUBLIC_PAYMENT_APP_ID` to `LOCAL.stripe` in your `.env` file.
 
 **Note** that the `LOCAL` environment prefix may change depending on your `NEXT_PUBLIC_ENVIRONMENT` environment variable.
 
 ## ⚙️ Installation
+
+One deployment serves any number of Saleor instances. Each installation stores its own auth token and per-channel Stripe keys under its Saleor domain, and every request is routed to the right tenant by the `saleor-api-url` header Saleor sends. `ALLOWED_DOMAINS` decides which Saleor instances may install it; until it is set, all of them are refused.
 
 Once everything is set up and the App is running, the manifest can be found under `/api/saleor/manifest`.
 

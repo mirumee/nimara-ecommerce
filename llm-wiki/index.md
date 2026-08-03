@@ -34,6 +34,7 @@ okf_version: "0.1"
 
 - [Implementation (MOC)](tech/implementation/Implementation%20%28MOC%29.md) - Register for implementation records that connect work items and requirements to code, tests, and current product state.
 - [IMP-0001 Saleor Stored Payment Methods](tech/implementation/IMP-0001%20Saleor%20Stored%20Payment%20Methods.md) - Saved payment methods move onto Saleor's stored payment methods protocol behind a provider-neutral payment service.
+- [IMP-0002 Stripe Payment Application Multi-Tenancy](tech/implementation/IMP-0002%20Stripe%20Payment%20Application%20Multi-Tenancy.md) - One payment-application deployment serves many Saleor installations, keyed by domain and gated by a fail-closed allowlist.
 
 # Current Product State
 

@@ -8,8 +8,10 @@ const configSchema = z.object({
   NAME: z.string().default(packageJson.name),
   VERSION: z.string().default(packageJson.version),
   ENVIRONMENT: z.string(),
-  SALEOR_URL: z.string().url(),
-  SALEOR_DOMAIN: z.string(),
+  ALLOWED_DOMAINS: z
+    .array(z.string())
+    .default([])
+    .describe("Saleor domains allowed to install the app. Supports wildcards."),
   FETCH_TIMEOUT: z
     .number()
     .default(10000)
@@ -28,8 +30,9 @@ const parsed = prepareConfig({
   schema: configSchema,
   input: {
     ENVIRONMENT: process.env.NEXT_PUBLIC_ENVIRONMENT,
-    SALEOR_URL: new URL(process.env.NEXT_PUBLIC_SALEOR_API_URL ?? "").origin,
-    SALEOR_DOMAIN: new URL(process.env.NEXT_PUBLIC_SALEOR_API_URL ?? "").host,
+    ALLOWED_DOMAINS: process.env.ALLOWED_DOMAINS?.split(",")
+      .map((domain) => domain.trim())
+      .filter(Boolean),
   },
   serverOnly: true,
 });

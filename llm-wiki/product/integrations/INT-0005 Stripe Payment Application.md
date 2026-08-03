@@ -9,7 +9,7 @@ tags:
   - "saleor-app"
   - "stored-payment-methods"
 created: "2026-07-21T00:00:00+00:00"
-timestamp: "2026-07-28T00:00:00+00:00"
+timestamp: "2026-08-03T00:00:00+00:00"
 id: "INT-0005"
 status: "active"
 owner: "engineering"
@@ -29,19 +29,35 @@ transaction. It is also the sole owner of the customer's stored payment methods:
 gateway credentials, resolves the gateway customer for a Saleor user, and serves Saleor's stored
 payment methods protocol.
 
+# Tenancy
+
+- One deployment serves any number of commerce installations. Each installation is stored under its
+  own commerce domain, holding its own installation token, application ID, and per-channel gateway
+  keys, and no request can read or write another installation's configuration.
+- Every request names its tenant by commerce domain. Both the signing keys used to authenticate the
+  caller and the commerce API the application calls back are addressed from that domain, so a
+  caller cannot direct the deployment at a server of its own choosing.
+- An allowlist of permitted commerce domains gates installation. It accepts a comma-separated list
+  with `*` as a wildcard, and defaults to empty. An unconfigured deployment therefore refuses every
+  installation and every webhook rather than serving an unknown commerce instance.
+
 # Authentication and permissions
 
 - The manifest requests `HANDLE_PAYMENTS` and `MANAGE_USERS`, and advertises the registration and
   synchronous payment-webhook endpoints. `MANAGE_USERS` is required to read the customer named in a
   payment event and to own the Saleor-user-to-gateway-customer mapping in that user's private
   metadata.
-- Registration accepts the installation token and commerce-domain headers, resolves the installed
-  application ID, stores the token in the domain-specific configuration, and primes the signing-key
-  provider.
-- Every synchronous Saleor payment webhook verifies the signed payload against the signing keys for
-  the declared API issuer before processing its event.
+- Registration accepts the installation token and commerce-domain headers, refuses a domain outside
+  the allowlist, resolves the installed application ID, and stores the token under that domain.
+- Every synchronous Saleor payment webhook rejects a commerce domain outside the allowlist, then
+  verifies the signed payload against the signing keys published by that domain. Neither the signing
+  keys nor the callback target are taken from a caller-declared API URL: a valid signature proves
+  only that the sender controls the commerce instance it names, so trusting a declared issuer would
+  let any commerce instance authenticate as an allowed tenant.
 - The embedded configuration action verifies the supplied application JWT before changing
-  channel-specific keys or replacing Stripe webhook registrations.
+  channel-specific keys or replacing Stripe webhook registrations. It verifies against the named
+  tenant's keys and ignores the token's own issuer claim, so a token minted by another commerce
+  instance cannot be replayed against this tenant.
 - Each Stripe webhook verifies `stripe-signature` over the raw request body with the secret assigned
   to its route's channel before reporting an event to Saleor.
 
@@ -63,7 +79,9 @@ payment methods protocol.
 5. Stripe PaymentIntent and refund webhooks map supported provider events into Saleor transaction
    reports, including available next actions and the provider reference.
 6. Channel configuration installs one Stripe webhook endpoint per configured channel and stores its
-   provider webhook ID and signing secret with that channel's keys.
+   provider webhook ID and signing secret with that channel's keys. Replacing endpoints removes only
+   those carrying this application, environment, and commerce domain, so installations sharing one
+   provider account do not remove each other's endpoints.
 7. `LIST_STORED_PAYMENT_METHODS` returns the customer's saved methods for the channel. It reads the
    recorded gateway customer without creating or looking one up, reads the methods in a single call,
    and reports card and wallet methods only. A method is listed only when the provider records an
@@ -117,8 +135,16 @@ payment methods protocol.
 - `TRANSACTION_REFUND_REQUESTED` only retrieves the PaymentIntent and reports `REFUND_SUCCESS` when
   that intent is in `succeeded` state. It does not create a Stripe Refund, and an intent being
   succeeded is not evidence that the requested refund occurred.
-- Channel configuration and installation tokens are stored through Vercel Edge Config, so a working
-  deployment requires the corresponding Vercel access, team, and database configuration.
+- Channel configuration and installation tokens are stored through Vercel Edge Config, keyed by
+  commerce domain, so a working deployment requires the corresponding Vercel access, team, and
+  database configuration. Every installation shares one stored value, which is read, modified, and
+  written whole: concurrent configuration saves for different installations are last-write-wins.
+- Configuration written before the application became multi-installation is read as a single-entry
+  map, so an existing installation keeps working without a migration. The reverse does not hold —
+  once a second installation exists, the stored value can no longer be read by application code that
+  predates multi-installation support.
+- An unconfigured allowlist refuses every installation and webhook. This is deliberate, but it means
+  the deployment is inert until an operator names the commerce domains it serves.
 - The application handles PaymentIntent-backed Saleor transactions only; it is separate from the
   marketplace's Stripe Connect account and Transfer contract.
 - Stored payment methods require a Saleor release that implements the stored payment methods
@@ -167,3 +193,17 @@ payment methods protocol.
   That commit is the tip of unmerged branch `feat/saleor-stored-payment-methods`; re-anchor on the
   squash-merge commit once it lands. See
   [IMP-0001 Saleor Stored Payment Methods](../../tech/implementation/IMP-0001%20Saleor%20Stored%20Payment%20Methods.md).
+- Multi-installation tenancy, the domain allowlist, the domain-addressed signing keys, and the
+  per-installation endpoint cleanup are anchored at exact commit
+  [`9e9f0ad1b0d10ea2f2a0773a2736d9344843df2f`](https://github.com/mirumee/nimara-ecommerce/tree/9e9f0ad1b0d10ea2f2a0773a2736d9344843df2f)
+  in the
+  [runtime configuration schema](https://github.com/mirumee/nimara-ecommerce/blob/9e9f0ad1b0d10ea2f2a0773a2736d9344843df2f/apps/stripe/src/config.ts),
+  [tenant resolution](https://github.com/mirumee/nimara-ecommerce/blob/9e9f0ad1b0d10ea2f2a0773a2736d9344843df2f/apps/stripe/src/lib/saleor/config/context.ts),
+  [stored configuration provider](https://github.com/mirumee/nimara-ecommerce/blob/9e9f0ad1b0d10ea2f2a0773a2736d9344843df2f/apps/stripe/src/lib/saleor/config/edge.ts),
+  [signed webhook adapter](https://github.com/mirumee/nimara-ecommerce/blob/9e9f0ad1b0d10ea2f2a0773a2736d9344843df2f/apps/stripe/src/lib/saleor/webhooks/util.ts),
+  and
+  [webhook rotation utility](https://github.com/mirumee/nimara-ecommerce/blob/9e9f0ad1b0d10ea2f2a0773a2736d9344843df2f/apps/stripe/src/lib/stripe/webhooks/util.ts).
+  That commit is the tip of unmerged branch `feat/saleor-stripe-app-multi-tenant`
+  ([PR 741](https://github.com/mirumee/nimara-ecommerce/pull/741)); re-anchor on the squash-merge
+  commit once it lands. See
+  [IMP-0002 Stripe Payment Application Multi-Tenancy](../../tech/implementation/IMP-0002%20Stripe%20Payment%20Application%20Multi-Tenancy.md).

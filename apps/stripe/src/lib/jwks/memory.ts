@@ -29,7 +29,7 @@ export const JWKSMemoryProvider: JWKSProviderFactory = ({ remoteUrl }) => {
 
     if (!jwks || forceRefresh) {
       jwks = await _fetchJwks();
-      set({ issuer, jwks: await _fetchJwks() });
+      set({ issuer, jwks });
     }
 
     return jwks;
