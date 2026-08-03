@@ -1,11 +1,11 @@
 /// <reference types='codeceptjs' />
-type logInPage = typeof import("./codecept/pages/logIn").default;
+type homepage = typeof import("./codecept/pages/homepage").default;
 
 declare namespace CodeceptJS {
   interface SupportObject {
     I: I;
     current: any;
-    logInPage: logInPage;
+    homepage: homepage;
   }
   interface Methods extends Playwright {}
   interface I extends WithTranslation<Methods> {}

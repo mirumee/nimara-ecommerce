@@ -3,65 +3,52 @@ status: proposed
 review-by: 2026-08-13
 ---
 
-# Trial CodeceptJS alongside Playwright for one E2E journey
+# Trial CodeceptJS alongside Playwright with a homepage smoke test
 
 `apps/automated-tests` carries 5 Playwright specs served by 9 class-based page objects, and the
-selector/fixture boilerplate is a meaningful share of that code. To find out whether CodeceptJS
-would reduce it, we ported one journey — the `logIn` flow — to CodeceptJS and left the other four
-specs on Playwright. This is a time-boxed trial, not a migration: by **2026-08-13** we either
-migrate the remaining specs or delete `codecept/`, `codecept.conf.ts`, `steps.d.ts`, and the three
-devDependencies. Leaving it undecided is the one outcome we explicitly rejected, because
-maintaining two runners permanently costs more than either runner alone.
+selector/fixture boilerplate is a meaningful share of that code. To find out whether CodeceptJS is
+worth adopting, we added a working CodeceptJS setup with a single homepage smoke test and left all 5
+Playwright specs untouched. This is a time-boxed trial, not a migration: by **2026-08-13** we either
+migrate the Playwright specs or delete `codecept/`, `codecept.conf.ts`, `steps.d.ts`, and the three
+devDependencies. Leaving it undecided is the one outcome we explicitly rejected, because maintaining
+two runners permanently costs more than either runner alone.
 
 ## Considered Options
 
-- **Trial one journey, then decide** (chosen). Ships a reversible evaluation and keeps `main`
+- **Minimal working trial, then decide** (chosen). Ships a reversible evaluation and keeps `main`
   releasable.
 - **Migrate all 5 specs at once.** Rejected: commits to rewriting 9 page objects before the
   ergonomics have been felt, and a regression means reverting the whole suite.
 - **Permanent coexistence**, CodeceptJS for new areas only. Rejected: two runners, two configs,
   two selector idioms, and two flake surfaces, forever.
 
-## The criterion
+## What the trial demonstrates
 
-Authoring cost for the same 5 scenarios and the same assertions:
+`codecept/homepage_test.ts` covers two scenarios against the storefront homepage — the page loads
+with its product carousel, and the hero CTA opens the product listing — through the page object in
+`codecept/pages/homepage.ts`. It **passes against a deployed environment** (2 passed, verified twice
+for stability), which is the point: the setup is proven end to end, not just proven to load.
 
-|                                                                                   | Lines   |
-| --------------------------------------------------------------------------------- | ------- |
-| Playwright: `logIn.spec.ts` (57) + `LogInPage.ts` (71) + `fixtures.ts` wiring (4) | **132** |
-| CodeceptJS: `logIn_test.ts` (40) + `pages/logIn.ts` (51)                          | **91**  |
+**There is no like-for-like authoring-cost measurement in this trial, and no such claim should be
+read into it.** An earlier iteration ported the `logIn` journey scenario-for-scenario and measured
+132 → 91 lines (−31%), but that port was removed as unnecessary, so the number is not reproducible
+from this repository and is recorded here only as a discarded observation. The committed homepage
+test covers 2 scenarios against Playwright's 6 homepage tests, so comparing their line counts would
+be measuring different amounts of coverage. Anyone wanting a defensible authoring-cost number must
+port a journey scenario-for-scenario first.
 
-**−41 lines (−31%).** Config counterparts (`playwright.config.ts` 59, `codecept.conf.ts` 33) are
-excluded from both sides as infrastructure rather than per-journey cost. `BasePage.ts` (24) is also
-excluded — it is shared across all 9 page objects, so charging it to one journey would overstate
-the saving.
-
-The measurement carries a **known confound**, recorded here rather than hidden: the CodeceptJS
-version is written in idiomatic CodeceptJS style (plain object, inline ARIA locators) while the
-Playwright version is class-based with declared `Locator` fields, so the delta reflects both
-framework and authoring style. The portion that is genuinely framework-forced, and not available
-by restyling the Playwright code, is:
-
-- the 4 lines of `fixtures.ts` registration per page object, replaced by one entry in the config's
-  `include` map;
-- the `Page` constructor plumbing and `readonly Locator` declarations, which CodeceptJS has no
-  equivalent of;
-- explicit `expect(...).toBeVisible()` calls, which collapse into auto-waiting `I.seeElement`.
-
-Against that, CodeceptJS adds a generated `steps.d.ts` that must be committed and regenerated when
-page objects change (`pnpm test:codecept:def`) — roughly cancelling the fixture-wiring saving.
+What the trial does establish qualitatively: CodeceptJS needs no `fixtures.ts` registration (one
+entry in the config's `include` map replaces it), no `Page` constructor plumbing or `readonly
+Locator` declarations, and no explicit `expect(...).toBeVisible()` calls, since `I.seeElement`
+auto-waits. Against that, it adds a generated `steps.d.ts` that must be committed and regenerated
+whenever a page object changes (`pnpm test:codecept:def`).
 
 ## Consequences
 
-- **The trial is unverified against a live environment.** The scaffold is confirmed working up to
-  the first navigation — config loads, `tsx/esm` transpiles, the page object injects, ARIA locators
-  resolve, all 5 scenarios are collected. The assertions have never run green, because
-  `TEST_ENV_URL` points at `localhost:3000` locally. The existing Playwright suite fails identically
-  for the same reason, so this is a pre-existing constraint, not a CodeceptJS one.
-- **It is deliberately not in CI.** `e2e.yaml` is untouched. Since the criterion is read off the
-  source, a browser run adds nothing to the decision, and a duplicated `logIn` assertion would
-  double the flake surface for zero added coverage. The files are still covered by the required
-  `Linters & Tests` check via ESLint and Prettier.
+- **It is deliberately not in CI.** `e2e.yaml` is untouched, so the trial never gates a workflow and
+  never adds flake surface to a required check. The files are still covered by the required
+  `Linters & Tests` check via ESLint and Prettier. The cost is that nobody finds out from CI if the
+  trial breaks; it is run manually with `pnpm test:codecept`.
 - **`playwright` is pinned to an exact `1.59.1`** to match `@playwright/test`. A caret range
   resolves to 1.62.0, which would install a second `playwright-core` and download a second set of
   browser binaries in CI.
@@ -76,16 +63,28 @@ page objects change (`pnpm test:codecept:def`) — roughly cancelling the fixtur
   dependency), the `@cucumber/*` Gherkin stack whether or not BDD is used, plus `axios`, `multer`,
   `mocha`, `monocart-coverage-reports`, `zod`, and `cheerio`. All of it is dev-only — none reaches a
   production bundle or the Vercel runtime — and the trial is time-boxed, so the exposure is
-  temporary by construction. Whoever makes the migrate-or-delete call on 2026-08-13 should weigh
-  this cost against the −31% authoring saving: adopting CodeceptJS permanently means accepting an
-  AI SDK, an MCP server SDK, and a beta package in the repo's dev tree indefinitely.
+  temporary by construction. Whoever makes the migrate-or-delete call on 2026-08-13 must weigh this
+  cost against a benefit that is, as of now, only qualitative: adopting CodeceptJS permanently means
+  accepting an AI SDK, an MCP server SDK, and a beta package in the repo's dev tree indefinitely.
+- **`noGlobals: true` is set**, which is the v4 default for new projects and silences a deprecation
+  warning on every run. `Feature`/`Scenario`/`Before` and `inject()` still work unimported, but
+  `within`, `session`, `secret`, `locate`, `actor`, `dataTable`, and the `Helper` base class must be
+  imported if a future test needs them.
 - **Playwright's `testMatch` is now pinned** to `**/*.spec.ts` so it can never collect the
   CodeceptJS `*_test.ts` files.
 - **`.claude/rules/testing.md` says "use Playwright for end-to-end tests", which this trial
   contradicts.** The rule is intentionally left unchanged — Playwright remains the standard until
   this ADR is resolved. Whichever way the decision goes on 2026-08-13, that rule must be updated
   or the trial removed.
-- **Not addressed here:** `apps/automated-tests/turbo.json` declares `test:e2e` inputs of
-  `./tests/e2e/**/*.test.ts` and `playwright.config.json`, neither of which matches reality
-  (`*.spec.ts`, `playwright.config.ts`), so that task's cache keys do not track its inputs. A
-  pre-existing bug, out of scope, worth its own change.
+
+## Incidental findings, not addressed here
+
+- **`storeHeaders.heroBanner` does not match the deployed demo storefront.** `utils/constants.ts`
+  expects "Power your store with Nimara"; the environment renders "Welcome to Nimara Demo Store".
+  Consequently the existing Playwright test `Homepage › Hero banner elements are present @CI` fails
+  there (verified: 5 passed, 1 failed on `homepage.spec.ts`). The CodeceptJS smoke test deliberately
+  asserts `storeHeaders.productsCarousel` instead, which does match. Whether the constant or the
+  environment content is wrong is a separate question.
+- **`apps/automated-tests/turbo.json`** declares `test:e2e` inputs of `./tests/e2e/**/*.test.ts` and
+  `playwright.config.json`, neither of which matches reality (`*.spec.ts`, `playwright.config.ts`),
+  so that task's cache keys do not track its inputs. A pre-existing bug, worth its own change.

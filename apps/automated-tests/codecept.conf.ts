@@ -28,6 +28,6 @@ export const config = {
     },
   },
   include: {
-    logInPage: "./codecept/pages/logIn.ts",
+    homepage: "./codecept/pages/homepage.ts",
   },
 };
