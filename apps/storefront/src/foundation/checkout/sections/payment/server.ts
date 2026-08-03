@@ -45,12 +45,16 @@ export const getCheckoutPaymentSectionData = async ({
       getStoreUrl(),
     ]);
 
-  const resultCountries = await addressService.countriesGet({
-    channelSlug: region.market.channel,
-    locale,
-  });
+  const [resultCountries, resultAllCountries] = await Promise.all([
+    addressService.countriesGet({
+      channelSlug: region.market.channel,
+      locale,
+    }),
 
-  if (!resultCountries.ok) {
+    addressService.countriesAllGet({ locale }),
+  ]);
+
+  if (!resultCountries.ok || !resultAllCountries.ok) {
     throw new Error("Failed to fetch the countries list.");
   }
 
@@ -154,6 +158,7 @@ export const getCheckoutPaymentSectionData = async ({
     addressFormRows: resultAddressRows.data,
     countries: resultCountries.data,
     countryCode,
+    allCountries: resultAllCountries.data,
     errorCode,
     formattedAddresses: sortedAddresses,
     paymentGatewayCustomer,

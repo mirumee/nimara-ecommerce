@@ -7,6 +7,7 @@ import type { FormattedAddress } from "@nimara/foundation/address/types";
 
 export interface PaymentSectionData {
   addressFormRows: readonly AddressFormRow[];
+  allCountries: CountryOption[];
   countries: CountryOption[];
   countryCode: AllCountryCode;
   errorCode?: AppErrorCode;
