@@ -10,15 +10,15 @@
   },
   "devDependencies": {
     "@nimara/config": "workspace:*",
-    "@playwright/test": "^1.59.1",
-    "@types/node": "^24.12.4",
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^24.13.3",
     "codeceptjs": "4.1.0",
-    "dotenv": "17.4.1",
+    "dotenv": "17.4.2",
     "eslint": "^8.57.0",
-    "eslint-plugin-playwright": "^2.10.1",
+    "eslint-plugin-playwright": "^2.11.0",
     "lint-staged": "^16.4.0",
-    "playwright": "1.59.1",
-    "tsx": "4.22.4"
+    "playwright": "1.62.1",
+    "tsx": "4.23.1"
   },
   "lint-staged": {
     "*.{js,cjs,ts,tsx}": "eslint --fix",
