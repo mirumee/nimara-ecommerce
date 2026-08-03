@@ -221,7 +221,7 @@ export const CheckoutSections = ({
           <Payment
             checkout={checkoutForSections}
             addressFormRows={paymentSectionData.addressFormRows}
-            countries={paymentSectionData.countries}
+            countries={paymentSectionData.allCountries}
             countryCode={paymentSectionData.countryCode}
             formattedAddresses={paymentSectionData.formattedAddresses}
             paymentGatewayCustomer={paymentSectionData.paymentGatewayCustomer}
