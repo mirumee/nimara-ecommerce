@@ -6,29 +6,46 @@ import { isLocalDomain } from "@/lib/util";
 
 import { getStripeApi } from "../api";
 import {
+  getStripeWebhookUrl,
   STRIPE_API_VERSION,
   StripeMetaKey,
   StripeWebhookEvent,
 } from "../const";
 import { getGatewayMetadata } from "../util";
 
-export const installWebhook = async ({
-  configuration,
+/**
+ * Endpoints belong to a Stripe account, not to a channel, so channels sharing a
+ * secret key share one endpoint and each carries its signing secret.
+ */
+const configurationsBySecretKey = (
+  paymentGatewayConfig: PaymentGatewayConfig,
+) =>
+  Object.values(paymentGatewayConfig).reduce<
+    Map<string, PaymentGatewayConfig[string][]>
+  >((configurations, configuration) => {
+    if (!configuration.secretKey) {
+      return configurations;
+    }
+
+    const shared = configurations.get(configuration.secretKey) ?? [];
+
+    return configurations.set(configuration.secretKey, [
+      ...shared,
+      configuration,
+    ]);
+  }, new Map());
+
+export const installWebhooks = async ({
+  paymentGatewayConfig,
   appUrl,
   logger,
   saleorDomain,
-  channel,
 }: {
   appUrl: string;
-  channel: string;
-  configuration: PaymentGatewayConfig[string];
   logger: Logger;
+  paymentGatewayConfig: PaymentGatewayConfig;
   saleorDomain: string;
 }) => {
-  if (!configuration.secretKey) {
-    return;
-  }
-
   if (isLocalDomain(appUrl)) {
     logger.warning(
       "Unable to subscribe localhost domain. Stripe webhooks require domain which will be accessible from the network. Skipping.",
@@ -37,73 +54,90 @@ export const installWebhook = async ({
     return;
   }
 
-  // TODO: Make a single webhook for multiple channels
-  const url = `${appUrl}/api/stripe/${channel}/webhooks`;
-  const stripe = getStripeApi(configuration.secretKey);
+  const url = getStripeWebhookUrl({ appUrl, saleorDomain });
 
-  const result = await stripe.webhookEndpoints.create({
-    url,
-    description: `Created by the Nimara Stripe ts app, channel: ${channel}`,
-    enabled_events: Object.values(StripeWebhookEvent),
-    /**
-     * Pins the payload shape of delivered events — without it, Stripe sends
-     * events in the account's default API version.
-     */
-    api_version: STRIPE_API_VERSION,
-    metadata: getGatewayMetadata({ saleorDomain }),
-  });
+  await Promise.all(
+    [...configurationsBySecretKey(paymentGatewayConfig)].map(
+      async ([secretKey, configurations]) => {
+        const result = await getStripeApi(secretKey).webhookEndpoints.create({
+          url,
+          description: "Created by the Nimara Stripe ts app.",
+          enabled_events: Object.values(StripeWebhookEvent),
+          /**
+           * Pins the payload shape of delivered events — without it, Stripe sends
+           * events in the account's default API version.
+           */
+          api_version: STRIPE_API_VERSION,
+          metadata: getGatewayMetadata({ saleorDomain }),
+        });
 
-  if (result) {
-    configuration.webhookId = result.id;
-    configuration.webhookSecretKey = result.secret;
-  }
+        if (result) {
+          configurations.forEach((configuration) => {
+            configuration.webhookId = result.id;
+            configuration.webhookSecretKey = result.secret;
+          });
+        }
+      },
+    ),
+  );
 };
 
 export const uninstallWebhooks = async ({
-  configuration,
+  paymentGatewayConfig,
   appUrl,
   logger,
   saleorDomain,
 }: {
   appUrl: string;
-  configuration: PaymentGatewayConfig[string];
   logger: Logger;
+  paymentGatewayConfig: PaymentGatewayConfig;
   saleorDomain: string;
 }) => {
   if (!isLocalDomain(appUrl)) {
-    const stripe = getStripeApi(configuration.secretKey);
+    await Promise.all(
+      [...configurationsBySecretKey(paymentGatewayConfig)].map(
+        async ([secretKey, configurations]) => {
+          const stripe = getStripeApi(secretKey);
 
-    try {
-      const webhooks = await stripe.webhookEndpoints.list({ limit: 100 });
+          try {
+            const webhooks = await stripe.webhookEndpoints.list({ limit: 100 });
 
-      /**
-       * Filter by issuer, environment and tenant to avoid orphans upon
-       * reinstallations — several Saleor domains may share one Stripe account,
-       * and each owns only the endpoints carrying its own domain.
-       */
-      const webhooksToDelete = webhooks.data.filter((webhook) => {
-        const isIssuedWebhook =
-          webhook.metadata[StripeMetaKey.ISSUER] === CONFIG.APP_ID;
-        const isSameEnvironment =
-          webhook.metadata[StripeMetaKey.ENVIRONMENT] === CONFIG.ENVIRONMENT;
-        const isSameTenant =
-          webhook.metadata[StripeMetaKey.SALEOR_DOMAIN] === saleorDomain;
+            /**
+             * Filter by issuer, environment and tenant to avoid orphans upon
+             * reinstallations — several Saleor domains may share one Stripe account,
+             * and each owns only the endpoints carrying its own domain.
+             */
+            const webhooksToDelete = webhooks.data.filter((webhook) => {
+              const isIssuedWebhook =
+                webhook.metadata[StripeMetaKey.ISSUER] === CONFIG.APP_ID;
+              const isSameEnvironment =
+                webhook.metadata[StripeMetaKey.ENVIRONMENT] ===
+                CONFIG.ENVIRONMENT;
+              const isSameTenant =
+                webhook.metadata[StripeMetaKey.SALEOR_DOMAIN] === saleorDomain;
 
-        return isIssuedWebhook && isSameEnvironment && isSameTenant;
-      });
+              return isIssuedWebhook && isSameEnvironment && isSameTenant;
+            });
 
-      await Promise.all(
-        webhooksToDelete.map(async (webhook) =>
-          stripe.webhookEndpoints.del(webhook.id),
-        ),
-      );
-    } catch {
-      logger.error("Could not delete stripe webhook", {
-        webhookId: configuration.webhookId,
-      });
-    }
+            await Promise.all(
+              webhooksToDelete.map(async (webhook) =>
+                stripe.webhookEndpoints.del(webhook.id),
+              ),
+            );
+          } catch {
+            logger.error("Could not delete stripe webhook", {
+              webhookIds: configurations.map(
+                (configuration) => configuration.webhookId,
+              ),
+            });
+          }
+        },
+      ),
+    );
   }
 
-  configuration.webhookId = undefined;
-  configuration.webhookSecretKey = undefined;
+  Object.values(paymentGatewayConfig).forEach((configuration) => {
+    configuration.webhookId = undefined;
+    configuration.webhookSecretKey = undefined;
+  });
 };

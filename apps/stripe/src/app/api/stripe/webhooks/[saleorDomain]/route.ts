@@ -20,18 +20,18 @@ import { getSaleorClient } from "@/providers/saleor";
 export const POST = stripeRouteErrorsHandler(
   async (
     request: Request,
-    { params }: { params: Promise<{ channel: string }> },
+    { params }: { params: Promise<{ saleorDomain: string }> },
   ) => {
     const logger = getLoggingProvider();
-    const [body, { channel }] = await Promise.all([
+    const [body, { saleorDomain: tenant }] = await Promise.all([
       request.clone().text(),
       params,
     ]);
 
     /**
-     * The payload is parsed before verification only to resolve the tenant
-     * (saleor domain) holding the webhook secret — nothing from it is
-     * trusted until `constructEvent` validates the signature below.
+     * The payload is parsed before verification only to resolve the channel
+     * holding the webhook secret — nothing from it is trusted until
+     * `constructEvent` validates the signature below.
      */
     const unverifiedEvent = JSON.parse(body) as SupportedStripeWebhookEvent;
     const {
@@ -53,21 +53,44 @@ export const POST = stripeRouteErrorsHandler(
       return responseSuccess({ description: "Skipped." });
     }
 
+    /**
+     * Stripe delivers an account's events to every endpoint subscribed on it,
+     * so an installation sharing its Stripe account with another one also
+     * receives that one's events. Only the endpoint named by the event owns it;
+     * the rest acknowledge and stop. Verifying first would fail instead, since
+     * each endpoint is signed with its own secret.
+     */
+    if (saleorDomain !== tenant) {
+      logger.info(
+        "Received Stripe webhook for another installation, skipping.",
+        {
+          eventSaleorDomain: saleorDomain,
+          id: unverifiedEvent.id,
+          tenant,
+        },
+      );
+
+      return responseSuccess({ description: "Skipped." });
+    }
+
     const configProvider = getConfigProvider();
     /**
-     * The secret is resolved for the channel this endpoint serves (from the
-     * URL), not the channel the unverified payload claims.
+     * The secret is resolved for the installation this endpoint serves (from
+     * the URL, fixed when the endpoint was created), and for the channel the
+     * event names. A forged payload can name any channel; it only selects which
+     * secret the signature is checked against, and a signature it cannot
+     * produce still fails.
      */
     const gatewayConfig =
       await configProvider.getPaymentGatewayConfigForChannel({
-        saleorDomain,
-        channelSlug: channel,
+        saleorDomain: tenant,
+        channelSlug,
       });
 
     if (!gatewayConfig.webhookSecretKey) {
       logger.error("Stripe webhook secret is not configured for the channel.", {
-        channelSlug: channel,
-        saleorDomain,
+        channelSlug,
+        saleorDomain: tenant,
       });
 
       return responseError({
@@ -107,23 +130,12 @@ export const POST = stripeRouteErrorsHandler(
       return responseSuccess({ description: "Skipped." });
     }
 
-    /**
-     * When using same api key for different channels, Stripe will fire duplicated webhooks, each
-     * for one channel causing errors - thus skip such events.
-     */
-    if (channel !== channelSlug) {
-      logger.info("Received object from different channel, skipping.", {
-        routeChannel: channel,
-        stripeObjectChannel: channelSlug,
-      });
-
-      return responseSuccess({ description: "Skipped." });
-    }
-
-    const config = await configProvider.getBySaleorDomain({ saleorDomain });
+    const config = await configProvider.getBySaleorDomain({
+      saleorDomain: tenant,
+    });
     const saleorClient = getSaleorClient({
       authToken: config?.authToken,
-      saleorDomain,
+      saleorDomain: tenant,
       logger,
     });
 

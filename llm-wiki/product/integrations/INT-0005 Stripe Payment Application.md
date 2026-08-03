@@ -78,8 +78,11 @@ payment methods protocol.
    result when Stripe reaches a terminal charge state.
 5. Stripe PaymentIntent and refund webhooks map supported provider events into Saleor transaction
    reports, including available next actions and the provider reference.
-6. Channel configuration installs one Stripe webhook endpoint per configured channel and stores its
-   provider webhook ID and signing secret with that channel's keys. Replacing endpoints removes only
+6. Channel configuration installs one Stripe webhook endpoint per provider account, not per channel.
+   Channels configured with the same provider secret key share that endpoint and each stores its
+   provider webhook ID and signing secret; an installation whose channels span two provider accounts
+   gets one endpoint per account. The endpoint address carries the commerce domain, while the
+   channel an event belongs to travels in the event's metadata. Replacing endpoints removes only
    those carrying this application, environment, and commerce domain, so installations sharing one
    provider account do not remove each other's endpoints.
 7. `LIST_STORED_PAYMENT_METHODS` returns the customer's saved methods for the channel. It reads the
@@ -120,8 +123,13 @@ payment methods protocol.
   Invalid Saleor or Stripe signatures are rejected, and Stripe API errors are converted to error
   responses and logged.
 - Provider events lacking the required transaction, commerce-domain, or channel metadata are
-  rejected. Events carrying another application issuer, environment, or channel are acknowledged as
-  skipped rather than applied to the wrong transaction.
+  rejected. Events carrying another application issuer or environment are acknowledged as skipped
+  rather than applied to the wrong transaction.
+- A provider account delivers its events to every endpoint subscribed on it, and each endpoint is
+  signed with its own secret. An installation sharing a provider account therefore also receives the
+  other installation's events, signed with a secret it does not hold. Because the endpoint address
+  names the installation that owns it, such an event is acknowledged as skipped before its signature
+  is checked; checking first would fail for a legitimate delivery no matter the order.
 - PaymentIntent creation and capture do not send explicit Stripe idempotency keys, and the
   application does not persist a webhook-event inbox. Duplicate-delivery safety therefore depends
   on the upstream transaction contract and the provider operations rather than a local deduplication
@@ -195,15 +203,20 @@ payment methods protocol.
   [IMP-0001 Saleor Stored Payment Methods](../../tech/implementation/IMP-0001%20Saleor%20Stored%20Payment%20Methods.md).
 - Multi-installation tenancy, the domain allowlist, the domain-addressed signing keys, and the
   per-installation endpoint cleanup are anchored at exact commit
-  [`9e9f0ad1b0d10ea2f2a0773a2736d9344843df2f`](https://github.com/mirumee/nimara-ecommerce/tree/9e9f0ad1b0d10ea2f2a0773a2736d9344843df2f)
+  [`e0dee7b3baf55684917217e69533964bb0bbb499`](https://github.com/mirumee/nimara-ecommerce/tree/e0dee7b3baf55684917217e69533964bb0bbb499)
   in the
-  [runtime configuration schema](https://github.com/mirumee/nimara-ecommerce/blob/9e9f0ad1b0d10ea2f2a0773a2736d9344843df2f/apps/stripe/src/config.ts),
-  [tenant resolution](https://github.com/mirumee/nimara-ecommerce/blob/9e9f0ad1b0d10ea2f2a0773a2736d9344843df2f/apps/stripe/src/lib/saleor/config/context.ts),
-  [stored configuration provider](https://github.com/mirumee/nimara-ecommerce/blob/9e9f0ad1b0d10ea2f2a0773a2736d9344843df2f/apps/stripe/src/lib/saleor/config/edge.ts),
-  [signed webhook adapter](https://github.com/mirumee/nimara-ecommerce/blob/9e9f0ad1b0d10ea2f2a0773a2736d9344843df2f/apps/stripe/src/lib/saleor/webhooks/util.ts),
+  [runtime configuration schema](https://github.com/mirumee/nimara-ecommerce/blob/e0dee7b3baf55684917217e69533964bb0bbb499/apps/stripe/src/config.ts),
+  [tenant resolution](https://github.com/mirumee/nimara-ecommerce/blob/e0dee7b3baf55684917217e69533964bb0bbb499/apps/stripe/src/lib/saleor/config/context.ts),
+  [stored configuration provider](https://github.com/mirumee/nimara-ecommerce/blob/e0dee7b3baf55684917217e69533964bb0bbb499/apps/stripe/src/lib/saleor/config/edge.ts),
+  [signed webhook adapter](https://github.com/mirumee/nimara-ecommerce/blob/e0dee7b3baf55684917217e69533964bb0bbb499/apps/stripe/src/lib/saleor/webhooks/util.ts),
   and
-  [webhook rotation utility](https://github.com/mirumee/nimara-ecommerce/blob/9e9f0ad1b0d10ea2f2a0773a2736d9344843df2f/apps/stripe/src/lib/stripe/webhooks/util.ts).
-  That commit is the tip of unmerged branch `feat/saleor-stripe-app-multi-tenant`
-  ([PR 741](https://github.com/mirumee/nimara-ecommerce/pull/741)); re-anchor on the squash-merge
-  commit once it lands. See
+  [webhook rotation utility](https://github.com/mirumee/nimara-ecommerce/blob/e0dee7b3baf55684917217e69533964bb0bbb499/apps/stripe/src/lib/stripe/webhooks/util.ts).
+  That commit is the squash-merge of
+  [PR 741](https://github.com/mirumee/nimara-ecommerce/pull/741) on `main`. See
   [IMP-0002 Stripe Payment Application Multi-Tenancy](../../tech/implementation/IMP-0002%20Stripe%20Payment%20Application%20Multi-Tenancy.md).
+- **Pending change.** One endpoint per provider account, the commerce domain in the endpoint
+  address, the channel taken from event metadata, and the skip for an event belonging to another
+  installation are not yet committed. They are read from the working tree at
+  `apps/stripe/src/app/api/stripe/webhooks/[saleorDomain]/route.ts`,
+  `apps/stripe/src/lib/stripe/webhooks/util.ts`, and `apps/stripe/src/lib/stripe/const.ts`, and carry
+  no commit permalink until that work lands.
