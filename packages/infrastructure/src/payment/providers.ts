@@ -1,100 +1,29 @@
-import { createPaymentElementUseCase } from "#root/use-cases/payment/create-payment-element-use-case";
-import { customerGetUseCase } from "#root/use-cases/payment/customer-get-use-case";
-import { customerPaymentMethodDeleteUseCase } from "#root/use-cases/payment/customer-payment-method-delete-use-case";
-import { paymentInitializeUseCase } from "#root/use-cases/payment/payment-initialize-use-case";
-import { paymentMethodSaveExecuteUseCase } from "#root/use-cases/payment/payment-method-save-execute-use-case";
-import { paymentMethodSaveProcessUseCase } from "#root/use-cases/payment/payment-method-save-process-use-case";
-import { customerPaymentMethodsListUseCase } from "#root/use-cases/payment/payment-methods-list-use-case";
-import { paymentSaveInitializeUseCase } from "#root/use-cases/payment/payment-save-initialize-use-case";
-
-import { clientInitializeInfra } from "./stripe/infrastructure/legacy-client-initialize-infra";
-import { customerFromGatewayGetInfra } from "./stripe/infrastructure/legacy-customer-from-gateway-get-infra";
-import { customerFromSaleorGetInfra } from "./stripe/infrastructure/legacy-customer-from-saleor-get-infra";
-import { customerInGatewayCreateInfra } from "./stripe/infrastructure/legacy-customer-in-gateway-create-infra";
-import { customerInSaleorSave } from "./stripe/infrastructure/legacy-customer-in-saleor-save";
-import { customerPaymentMethodValidateInfra } from "./stripe/infrastructure/legacy-customer-payment-method-validate-infra";
-import { paymentElementCreateInfra } from "./stripe/infrastructure/legacy-payment-element-create-infra";
-import { paymentMethodDetachInfra } from "./stripe/infrastructure/legacy-payment-method-detach-infra";
-import { paymentMethodSaveExecuteInfra } from "./stripe/infrastructure/legacy-payment-method-save-execute-infra";
-import { paymentSaveInitializeInfra } from "./stripe/infrastructure/legacy-payment-method-save-initialize-infra";
-import { paymentMethodSaveProcessInfra } from "./stripe/infrastructure/legacy-payment-method-save-process-infra";
-import { paymentMethodSetDefaultInfra } from "./stripe/infrastructure/legacy-payment-method-set-default";
-import { paymentMethodsListInfra } from "./stripe/infrastructure/legacy-payment-methods-list-infra";
+import { paymentMethodDeleteInfra } from "./saleor/infrastructure/payment-method-delete-infra";
+import { paymentMethodListInfra } from "./saleor/infrastructure/payment-method-list-infra";
 import { paymentExecuteInfra } from "./stripe/infrastructure/payment-execute-infra";
 import { paymentInitializeGatewayInfra } from "./stripe/infrastructure/payment-initialize-gateway-infra";
 import { paymentInitializeTransactionInfra } from "./stripe/infrastructure/payment-initialize-transaction-infra";
+import { paymentMethodExecuteInfra } from "./stripe/infrastructure/payment-method-execute-infra";
+import { paymentMethodInitializeInfra } from "./stripe/infrastructure/payment-method-initialize-infra";
+import { paymentMethodProcessInfra } from "./stripe/infrastructure/payment-method-process-infra";
 import { paymentProcessInfra } from "./stripe/infrastructure/payment-process-infra";
-import {
-  type LegacyPaymentServiceConfig,
-  type PaymentServiceConfig,
-} from "./types";
-
-export const stripePaymentService = (config: PaymentServiceConfig) => ({
-  execute: paymentExecuteInfra(config),
-  initializeGateway: paymentInitializeGatewayInfra(config),
-  initializeTransaction: paymentInitializeTransactionInfra(config),
-  process: paymentProcessInfra(config),
-});
-
-export type StripePaymentService = ReturnType<typeof stripePaymentService>;
-
-export type LegacyStripePaymentService = {
-  customerGet: ReturnType<typeof customerGetUseCase>;
-  customerPaymentMethodDelete: ReturnType<
-    typeof customerPaymentMethodDeleteUseCase
-  >;
-  customerPaymentMethodsList: ReturnType<
-    typeof customerPaymentMethodsListUseCase
-  >;
-  paymentElementCreate: ReturnType<typeof createPaymentElementUseCase>;
-  paymentInitialize: ReturnType<typeof paymentInitializeUseCase>;
-  paymentMethodSaveExecute: ReturnType<typeof paymentMethodSaveExecuteUseCase>;
-  paymentMethodSaveInitialize: ReturnType<typeof paymentSaveInitializeUseCase>;
-  paymentMethodSaveProcess: ReturnType<typeof paymentMethodSaveProcessUseCase>;
-};
+import { type StripePaymentService } from "./stripe/types";
+import { type PaymentServiceConfig } from "./types";
 
 /**
- * Legacy stateful Stripe service. The core payment flow (initialize / element
- * create / execute) is superseded by {@link stripePaymentService}; the
- * customer and saved-payment-method use-cases still live here.
- *
- * To use different Stripe account per channel, provide different keys for each channel.
+ * Gateway secrets stay with the payment app, so this service holds no keys and
+ * is safe to load in the browser.
  */
-export const legacyStripePaymentService = (
-  config: LegacyPaymentServiceConfig,
-) => {
-  const state = {};
-
-  return {
-    paymentInitialize: paymentInitializeUseCase({
-      initializeClient: clientInitializeInfra(config, state),
-    }),
-    paymentElementCreate: createPaymentElementUseCase({
-      paymentElementCreate: paymentElementCreateInfra(state),
-    }),
-    paymentMethodSaveInitialize: paymentSaveInitializeUseCase({
-      paymentMethodSaveInitialize: paymentSaveInitializeInfra(config),
-    }),
-    paymentMethodSaveExecute: paymentMethodSaveExecuteUseCase({
-      paymentMethodSaveExecute: paymentMethodSaveExecuteInfra(state),
-    }),
-    paymentMethodSaveProcess: paymentMethodSaveProcessUseCase({
-      paymentMethodSaveProcess: paymentMethodSaveProcessInfra(config),
-      paymentMethodSetDefault: paymentMethodSetDefaultInfra(config),
-    }),
-    customerGet: customerGetUseCase({
-      logger: config.logger,
-      customerFromGatewayGetInfra: customerFromGatewayGetInfra(config),
-      customerInGatewayCreateInfra: customerInGatewayCreateInfra(config),
-      customerInSaleorSave: customerInSaleorSave(config),
-      customerFromSaleorGetInfra: customerFromSaleorGetInfra,
-    }),
-    customerPaymentMethodsList: customerPaymentMethodsListUseCase({
-      paymentMethodsList: paymentMethodsListInfra(config),
-    }),
-    customerPaymentMethodDelete: customerPaymentMethodDeleteUseCase({
-      paymentMethodDetach: paymentMethodDetachInfra(config),
-      customerPaymentMethodValidate: customerPaymentMethodValidateInfra(config),
-    }),
-  } satisfies LegacyStripePaymentService;
-};
+export const stripePaymentService = (
+  config: PaymentServiceConfig,
+): StripePaymentService => ({
+  gatewayInitialize: paymentInitializeGatewayInfra(config),
+  methodDelete: paymentMethodDeleteInfra(config),
+  methodExecute: paymentMethodExecuteInfra(config),
+  methodInitialize: paymentMethodInitializeInfra(config),
+  methodList: paymentMethodListInfra(config),
+  methodProcess: paymentMethodProcessInfra(config),
+  paymentExecute: paymentExecuteInfra(config),
+  paymentInitialize: paymentInitializeTransactionInfra(config),
+  paymentProcess: paymentProcessInfra(config),
+});

@@ -1,6 +1,7 @@
 "use server";
 
 import { ChannelsQueryDocument } from "@/graphql/queries/generated";
+import { resolveDashboardTenant } from "@/lib/saleor/config/context";
 import { type PaymentGatewayConfig } from "@/lib/saleor/config/schema";
 import { maskString } from "@/lib/security";
 import { getConfigProvider } from "@/providers/config";
@@ -10,19 +11,23 @@ import { type Schema } from "../schema";
 
 export const fetchDataAction = async ({
   accessToken,
-  domain,
+  saleorApiUrl,
 }: {
   accessToken: string;
-  domain: string;
+  saleorApiUrl: string;
 }) => {
-  const configProvider = getConfigProvider({ saleorDomain: domain });
+  const { saleorDomain } = await resolveDashboardTenant({
+    accessToken,
+    saleorApiUrl,
+  });
+  const configProvider = getConfigProvider();
 
   const data = await getSaleorClient({
-    saleorDomain: domain,
+    saleorDomain,
     authToken: accessToken,
   }).execute(ChannelsQueryDocument);
   const config = await configProvider.getBySaleorDomain({
-    saleorDomain: domain,
+    saleorDomain,
   });
 
   return data.channels?.reduce<Schema>((acc, { currencyCode, name, slug }) => {

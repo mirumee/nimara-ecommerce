@@ -30,14 +30,6 @@ export const isTransactionActionRequired = (
   eventType: EventType | null | undefined,
 ) => !!eventType?.endsWith("ACTION_REQUIRED");
 
-export const getGatewayCustomerMetaKey = ({
-  gateway,
-  channel,
-}: {
-  channel: string;
-  gateway: "stripe";
-}) => `${gateway}.customer.${channel}`;
-
 /**
  * Maps a Stripe error to an App error code, by the error type first and the
  * detailed error code within it.

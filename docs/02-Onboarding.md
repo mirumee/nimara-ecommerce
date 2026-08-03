@@ -106,13 +106,13 @@ If you want to see exactly how this is wired in code, the cleanest example is th
 
 The storefront boots **empty by default** and lights up as you add environment variables. One switch turns on most of the commerce surface; payment and marketplace are independent.
 
-| When you set…                                                                        | You get…                                                                              |
-| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------- |
-| Nothing                                                                              | Every page renders with empty data — great for design work or showing teammates.      |
-| `NEXT_PUBLIC_SALEOR_API_URL`                                                         | The full commerce surface — cart, checkout, products, search, account.                |
-| `NEXT_PUBLIC_MARKETPLACE_ENABLED=true`                                               | Vendor-aware behaviour for marketplaces.                                              |
-| `STRIPE_SECRET_KEY` + `NEXT_PUBLIC_STRIPE_PUBLIC_KEY` + `NEXT_PUBLIC_PAYMENT_APP_ID` | Payments.                                                                             |
-| `SALEOR_APP_TOKEN`                                                                   | Server-side access to resources hidden from anonymous users (e.g. unpublished pages). |
+| When you set…                          | You get…                                                                              |
+| -------------------------------------- | ------------------------------------------------------------------------------------- |
+| Nothing                                | Every page renders with empty data — great for design work or showing teammates.      |
+| `NEXT_PUBLIC_SALEOR_API_URL`           | The full commerce surface — cart, checkout, products, search, account.                |
+| `NEXT_PUBLIC_MARKETPLACE_ENABLED=true` | Vendor-aware behaviour for marketplaces.                                              |
+| `NEXT_PUBLIC_PAYMENT_APP_ID`           | Payments.                                                                             |
+| `SALEOR_APP_TOKEN`                     | Server-side access to resources hidden from anonymous users (e.g. unpublished pages). |
 
 Run `pnpm preflight` to see what's currently on. The full list of variables is in [Environment Variables](/Quickstart/environment-variables).
 

@@ -68,10 +68,14 @@ export const MarketplacePayment = ({
   const [errors, setErrors] = useState<AppErrorCode[]>(
     errorCode ? [errorCode] : [],
   );
-  const { initializeData, setTransactionData, transactionData } =
-    usePaymentData({
-      onErrors: setErrors,
-    });
+  const {
+    initializeData,
+    initializeGateway,
+    setTransactionData,
+    transactionData,
+  } = usePaymentData({
+    onErrors: setErrors,
+  });
   const elementsRef = useRef<unknown>(null);
   const intentInFlightRef = useRef<string | null>(null);
   const intentInitializedRef = useRef<string | null>(null);
@@ -93,8 +97,7 @@ export const MarketplacePayment = ({
     user,
   });
 
-  const isInitialized = !!initializeData;
-  const isLoading = !isInitialized || isProcessing;
+  const isLoading = !initializeData || isProcessing;
   const canProceed = !isLoading && isMounted;
 
   const intentCheckouts = useMemo<MarketplaceIntentCheckout[]>(
@@ -121,7 +124,7 @@ export const MarketplacePayment = ({
     checkout,
     elementsRef,
     form,
-    initializeData,
+    initializeGateway,
     isAddingNewPaymentMethod: true,
     isProcessing,
     onExecuteFailure: () => router.refresh(),
@@ -137,10 +140,6 @@ export const MarketplacePayment = ({
    * re-render never spawns a second intent for the same checkouts.
    */
   useEffect(() => {
-    if (!isInitialized) {
-      return;
-    }
-
     void (async () => {
       if (!intentKey) {
         return;
@@ -173,10 +172,24 @@ export const MarketplacePayment = ({
         return;
       }
 
+      const gatewayConfig = { publishableKey: result.data.publishableKey };
+
+      if (!(await initializeGateway(gatewayConfig))) {
+        return;
+      }
+
       intentInitializedRef.current = intentKey;
-      setTransactionData({ clientSecret: result.data.clientSecret });
+      setTransactionData({
+        gatewayConfig,
+        providerData: { clientSecret: result.data.clientSecret },
+        /**
+         * Marketplace intents are not Saleor transactions, so the key the
+         * intent was requested under identifies the session.
+         */
+        sessionId: intentKey,
+      });
     })();
-  }, [intentCheckouts, intentKey, isInitialized, user?.id]);
+  }, [intentCheckouts, intentKey, user?.id]);
 
   return (
     <FormProvider {...form}>
@@ -199,6 +212,7 @@ export const MarketplacePayment = ({
             countries={countries}
             countryCode={countryCode}
             formattedAddresses={formattedAddresses}
+            hasShippingAddress={!!checkout.shippingAddress}
             isProcessing={isProcessing}
             isShippingRequired={checkout.isShippingRequired}
             onCountryChange={setIsProcessing}

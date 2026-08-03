@@ -1,0 +1,15 @@
+subscription ListStoredPaymentMethodsSubscription {
+  event {
+    ... on ListStoredPaymentMethods {
+      recipient {
+        ...PaymentGatewayRecipientFragment
+      }
+      channel {
+        ...ChannelFragment
+      }
+      user {
+        ...UserFragment
+      }
+    }
+  }
+}

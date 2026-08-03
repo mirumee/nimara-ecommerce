@@ -84,6 +84,7 @@ const envSchema = z.object({
 
   // Stripe (shared with storefront payment flows; Connect onboarding / payouts)
   STRIPE_SECRET_KEY: z.string().optional(),
+  STRIPE_PUBLIC_KEY: z.string().optional(),
   MARKETPLACE_STRIPE_CONNECT_WEBHOOK_SECRET: z.string().optional(),
   MARKETPLACE_STRIPE_CONNECT_DEFAULT_COUNTRY: z.string().default("US"),
 
@@ -207,6 +208,7 @@ export const config = {
   },
   stripeConnect: {
     secretKey: env.STRIPE_SECRET_KEY,
+    publicKey: env.STRIPE_PUBLIC_KEY,
     webhookSecret: env.MARKETPLACE_STRIPE_CONNECT_WEBHOOK_SECRET,
     defaultCountry: env.MARKETPLACE_STRIPE_CONNECT_DEFAULT_COUNTRY,
   },

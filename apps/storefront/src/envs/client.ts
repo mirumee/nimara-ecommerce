@@ -52,7 +52,6 @@ const schema = z.object({
     z.url(),
   ),
   PAYMENT_APP_ID: z.preprocess(emptyStringToUndefined, z.string().optional()),
-  STRIPE_PUBLIC_KEY: z.string().trim().optional(),
   NEXT_PUBLIC_DEFAULT_IMAGE_FORMAT: z.preprocess(
     emptyStringToUndefined,
     z.enum(["AVIF", "WEBP", "ORIGINAL"]).default("AVIF"),
@@ -93,7 +92,6 @@ export const clientEnvs = schema.parse({
   NEXT_PUBLIC_SALEOR_API_URL: process.env.NEXT_PUBLIC_SALEOR_API_URL,
   NEXT_PUBLIC_STOREFRONT_URL: process.env.NEXT_PUBLIC_STOREFRONT_URL,
   PAYMENT_APP_ID: process.env.NEXT_PUBLIC_PAYMENT_APP_ID,
-  STRIPE_PUBLIC_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY,
   NEXT_PUBLIC_DEFAULT_IMAGE_FORMAT:
     process.env.NEXT_PUBLIC_DEFAULT_IMAGE_FORMAT,
   NEXT_PUBLIC_MARKETPLACE_ENABLED: process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED,

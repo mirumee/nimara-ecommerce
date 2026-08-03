@@ -13,8 +13,8 @@ export const CreditCardList = ({ items }: { items: CardPaymentMethod[] }) => {
     <div>
       <p className="mb-6 text-stone-500">{t("payment.credit-cards")}</p>
       <div>
-        {items.map(({ id, paymentMethod }) => (
-          <MethodFormItem key={id} value={id}>
+        {items.map(({ id, paymentMethod, token }) => (
+          <MethodFormItem key={id} value={token}>
             <span>
               {paymentMethod.brand.toUpperCase()} {t("payment.credit-card")} (
               {paymentMethod.last4})

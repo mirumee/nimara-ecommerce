@@ -7,10 +7,10 @@ import { type Maybe } from "@nimara/domain/objects/Maybe";
 import { type SupportedLocale } from "@nimara/i18n/config";
 import type {
   Appearance,
-  InitializeData,
   StripeElementLocale,
+  StripeGateway,
   StripePaymentElement as TStripePaymentElement,
-  TransactionData,
+  StripePaymentSessionData,
 } from "@nimara/infrastructure/payment/stripe/types";
 import { cn } from "@nimara/ui/lib/utils";
 
@@ -26,12 +26,12 @@ type StripePaymentElementProps = Omit<ComponentProps<"div">, "ref"> & {
   appearance?: Appearance;
   email: Maybe<string>;
   fullName?: string;
-  initializeData: InitializeData;
+  initializeData: StripeGateway;
   isDisabled?: boolean;
   locale?: string;
   onReady?: () => void;
   ref: RefObject<unknown>;
-  transactionData: TransactionData;
+  transactionData: StripePaymentSessionData;
 };
 
 export const StripePaymentElement = ({
@@ -52,7 +52,7 @@ export const StripePaymentElement = ({
   useEffect(() => {
     const elements = initializeData.sdk.elements({
       appearance,
-      clientSecret: transactionData.clientSecret,
+      clientSecret: transactionData.providerData.clientSecret,
       locale:
         STRIPE_LOCALE_OVERRIDES[locale as SupportedLocale] ??
         (locale as StripeElementLocale),

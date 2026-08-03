@@ -1,11 +1,10 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-
 import { type BaseError } from "@nimara/domain/objects/Error";
 import { err } from "@nimara/domain/objects/Result";
 
 import { auth, update } from "@/auth";
+import { revalidateLocalizedPath } from "@/foundation/cache/cache";
 import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
 import { getStoreUrl, getStoreUrlWithPath } from "@/foundation/server";
@@ -59,7 +58,7 @@ export async function updateUserName({
     },
   });
 
-  revalidatePath(paths.account.profile.asPath());
+  await revalidateLocalizedPath(paths.account.profile.asPath());
 
   return result;
 }
@@ -97,7 +96,7 @@ export async function updateUserEmail({
   });
 
   if (result.ok) {
-    revalidatePath(paths.account.profile.asPath());
+    await revalidateLocalizedPath(paths.account.profile.asPath());
   }
 
   return result;
@@ -127,7 +126,7 @@ export async function updateUserPassword({
   });
 
   if (result.ok) {
-    revalidatePath(paths.account.profile.asPath());
+    await revalidateLocalizedPath(paths.account.profile.asPath());
   }
 
   return result;

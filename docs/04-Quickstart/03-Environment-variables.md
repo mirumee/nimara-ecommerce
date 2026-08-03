@@ -128,19 +128,12 @@ Per-provider config is namespaced (`SEARCH_<PROVIDER>_*` / `CMS_<PROVIDER>_*`) a
 
 ## Payments (Stripe)
 
-All three variables must be set together to enable checkout. See the [Nimara Stripe integration section](../Integrations/stripe-integration) for detailed instructions on setting them up.
+See the [Nimara Stripe integration section](../Integrations/stripe-integration) for detailed instructions on setting it up.
 
 #### `NEXT_PUBLIC_PAYMENT_APP_ID`
 
-- **Description**: Identifier of the Saleor payment app used at checkout.
-
-#### `NEXT_PUBLIC_STRIPE_PUBLIC_KEY`
-
-- **Description**: Stripe publishable key used by the client-side payment form.
-
-#### `STRIPE_SECRET_KEY`
-
-- **Description**: Stripe secret key (server-only).
+- **Description**: Identifier of the Saleor payment app used at checkout. The app reports its
+  own publishable key per channel, so the storefront holds no Stripe key.
 
 ---
 

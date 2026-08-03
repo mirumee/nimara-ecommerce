@@ -20,6 +20,9 @@ coverage
 out/
 build
 
+# typescript incremental build cache
+*.tsbuildinfo
+
 # IDE
 .idea
 .vscode
@@ -105,3 +108,6 @@ terraform.rc
 
 .obsidian/
 .playwright-mcp/
+
+# TypeScript incremental build cache
+*.tsbuildinfo

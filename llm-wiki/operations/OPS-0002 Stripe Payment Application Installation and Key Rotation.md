@@ -9,13 +9,15 @@ tags:
   - "saleor-app"
   - "key-rotation"
 created: "2026-07-21T00:00:00+00:00"
-timestamp: "2026-07-21T00:00:00+00:00"
+timestamp: "2026-08-03T00:00:00+00:00"
 id: "OPS-0002"
 status: "active"
 owner: "payments-engineering"
 kind: "runbook"
 relations:
-  implementations: []
+  implementations:
+    - "[Saleor Stored Payment Methods](../tech/implementation/IMP-0001%20Saleor%20Stored%20Payment%20Methods.md)"
+    - "[Stripe Payment Application Multi-Tenancy](../tech/implementation/IMP-0002%20Stripe%20Payment%20Application%20Multi-Tenancy.md)"
   product_records:
     - "[Guided Storefront Checkout](../product/capabilities/CAP-0003%20Guided%20Storefront%20Checkout.md)"
     - "[Cart to Confirmed Order](../product/flows/FLOW-0001%20Cart%20to%20Confirmed%20Order.md)"
@@ -25,8 +27,9 @@ relations:
 # Trigger
 
 Use this runbook when deploying and installing the repository's TypeScript Stripe application,
-adding a Saleor channel, changing Stripe public or secret keys, or recovering missing Stripe
-webhook subscriptions for standard storefront checkout.
+adding a Saleor channel, changing Stripe public or secret keys, recovering missing Stripe webhook
+subscriptions for standard storefront checkout, or reinstalling the application after its
+requested permissions change.
 
 # Preconditions
 
@@ -34,12 +37,20 @@ webhook subscriptions for standard storefront checkout.
   channel should use.
 - Deploy `apps/stripe` at a stable HTTPS origin. Localhost can serve the application but the code
   deliberately skips Stripe webhook installation for local origins.
-- Configure the Saleor API URL, `NEXT_PUBLIC_ENVIRONMENT`, Vercel team/access/Edge Config values,
-  and a stable `CONFIG_KEY`. The runtime schema requires Vercel access and team values even though
-  the current application `.env.example` does not list all of them and uses the older `ENVIRONMENT`
-  name. Validate against `apps/stripe/src/config.ts`, not the example file alone.
+- Set `ALLOWED_DOMAINS` to the Saleor domains this deployment serves, as a comma-separated list
+  where `*` is a wildcard, for example `nimara-*.eu.saleor.cloud,demo.nimara.store`. It has no
+  default and the application fails closed: with it unset, every installation and every webhook is
+  refused, including installations that already exist. Set it before deploying, not after.
+- Configure `NEXT_PUBLIC_ENVIRONMENT`, Vercel team/access/Edge Config values, and a stable
+  `CONFIG_KEY`. The runtime schema requires Vercel access and team values even though the current
+  application `.env.example` does not list all of them and uses the older `ENVIRONMENT` name.
+  Validate against `apps/stripe/src/config.ts`, not the example file alone.
+- Do not configure a Saleor API URL for the running application. It no longer reads one: each
+  request names its own Saleor domain, and `NEXT_PUBLIC_SALEOR_API_URL` now only feeds code
+  generation.
 - The application persists installation tokens, channel keys, webhook IDs, and webhook secrets in
-  Vercel Edge Config.
+  Vercel Edge Config, keyed by Saleor domain. One deployment serves many Saleor installations, and
+  all of them share a single stored value.
 - Confirm access to the Saleor Extensions UI, the Stripe webhook dashboard, Vercel logs, and a
   low-risk checkout in the target channel.
 - Record the current application ID, channel configuration, webhook endpoint IDs, and previous key
@@ -47,21 +58,31 @@ webhook subscriptions for standard storefront checkout.
 
 # Procedure
 
-1. Verify `GET /api/saleor/manifest` returns the expected application ID, version, `HANDLE_PAYMENTS`
-   permission, registration URL, application URL, and all advertised synchronous transaction
-   webhooks.
+1. Verify `GET /api/saleor/manifest` returns the expected application ID, version, the
+   `HANDLE_PAYMENTS` and `MANAGE_USERS` permissions, registration URL, application URL, and all
+   advertised synchronous transaction and stored-payment-method webhooks.
 2. Install the application from that manifest in the intended Saleor environment. Registration
    stores the installation token and application ID for the Saleor domain and refreshes signing
-   keys.
-3. Open the installed application from Saleor so its signed application context can load the
+   keys. A domain outside `ALLOWED_DOMAINS` is refused with a message naming the domain, or naming
+   the `ALLOWED_DOMAINS` setting itself when nothing is allowlisted; correct the setting and
+   redeploy before retrying, because it is read at startup.
+3. Compare the granted permissions of an existing installation against the manifest. Saleor grants
+   permissions at install time and does not widen them when a manifest changes, so an installation
+   that predates the stored-payment-method contract holds only `HANDLE_PAYMENTS` and silently
+   returns no saved methods. Reinstall it to pick up `MANAGE_USERS`, then reconfigure channel keys,
+   because reinstallation issues a new installation token and application ID.
+4. Open the installed application from Saleor so its signed application context can load the
    configuration form. Configure the Stripe public and secret key for each channel.
-4. Save once. The save action verifies the Saleor JWT, removes Stripe webhook endpoints created by
-   the same application issuer and environment, creates one new channel-specific endpoint, records
-   its signing secret, and then persists the updated channel configuration.
-5. Set the storefront's `NEXT_PUBLIC_PAYMENT_APP_ID` to the installed application ID and supply the
+5. Save once. The save action verifies the Saleor JWT, removes Stripe webhook endpoints created by
+   the same application issuer, environment, and Saleor domain, creates one new channel-specific
+   endpoint, records its signing secret, and then persists the updated channel configuration.
+   Endpoints belonging to another Saleor domain are left alone, so two installations may share one
+   Stripe account. Avoid saving configuration for two installations at the same moment: all
+   installations share one stored value and the later write wins.
+6. Set the storefront's `NEXT_PUBLIC_PAYMENT_APP_ID` to the installed application ID and supply the
    storefront payment keys required by its checkout configuration. Rebuild and deploy the
    storefront because the public application ID is build-time configuration.
-6. During key rotation, keep the prior credentials available until a new webhook endpoint and a
+7. During key rotation, keep the prior credentials available until a new webhook endpoint and a
    successful test transaction are verified. Rotate one environment at a time; never mix test and
    live keys across the public and secret halves.
 
@@ -76,6 +97,17 @@ webhook subscriptions for standard storefront checkout.
   advances, and the storefront reaches a real order confirmation.
 - Confirm invalid Saleor and Stripe signatures are rejected and that logs contain the Saleor domain,
   channel, event type, and provider reference without exposing secrets.
+- On a deployment serving more than one Saleor installation, confirm each installation still resolves
+  its own channel keys and that a configuration save for one leaves the other's channel keys and
+  Stripe endpoints untouched.
+- As a signed-in customer, add a card from the account area and confirm it appears in the saved
+  list and at checkout. An empty list after a successful save usually means the installation was
+  never granted `MANAGE_USERS`.
+- On an environment upgraded from a storefront-owned Stripe integration, expect existing customers
+  to have no saved cards at all and to be issued a new provider customer on their next payment or
+  card save. This is the intended upgrade behaviour, not an incident: the old mapping lived in
+  shopper-writable metadata and is deliberately not honoured. Tell support in advance that carried
+  over shoppers re-enter their card once.
 
 # Escalation
 
@@ -91,6 +123,14 @@ webhook subscriptions for standard storefront checkout.
 - Do not treat the advertised cancellation and refund routes as operational cancellation/refund
   controls. The current handlers inspect PaymentIntent state but do not initiate cancellation or a
   Stripe Refund; perform and reconcile those actions through an approved external procedure.
+- A deployment that refuses every installation and webhook at once is normally an unset or
+  mistyped `ALLOWED_DOMAINS`, not a Saleor or Stripe fault. Check it before touching keys or
+  reinstalling, and remember a wildcard pattern must cover the whole domain, including its region
+  segment.
+- Rolling the application back to a release that predates multi-installation support is safe only
+  while exactly one Saleor installation exists. With two or more installed, the stored configuration
+  cannot be read by the older code; remove the additional installations from the stored value first,
+  or roll forward instead.
 - Escalate missing Edge Config state, cross-channel webhook delivery, mixed live/test mode, or any
   rotation that leaves both old and new endpoints active unexpectedly.
 
@@ -105,3 +145,23 @@ webhook subscriptions for standard storefront checkout.
   [configuration save action](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/stripe/src/app/app/actions/save-data-action.tsx),
   and
   [webhook rotation utility](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/stripe/src/lib/stripe/webhooks/util.ts).
+- The stored-payment-method reinstallation step is anchored at exact commit
+  [`ebc9e3b8044dc48532d9c32902c584a7589ea6e9`](https://github.com/mirumee/nimara-ecommerce/tree/ebc9e3b8044dc48532d9c32902c584a7589ea6e9)
+  in the
+  [application manifest](https://github.com/mirumee/nimara-ecommerce/blob/ebc9e3b8044dc48532d9c32902c584a7589ea6e9/apps/stripe/src/app/api/saleor/manifest/route.ts).
+  That commit is the tip of unmerged branch `feat/saleor-stored-payment-methods`; re-anchor on the
+  squash-merge commit once it lands.
+- The allowlist precondition, the refused-installation step, the domain-scoped endpoint replacement,
+  and the rollback constraint are anchored at exact commit
+  [`9e9f0ad1b0d10ea2f2a0773a2736d9344843df2f`](https://github.com/mirumee/nimara-ecommerce/tree/9e9f0ad1b0d10ea2f2a0773a2736d9344843df2f)
+  in the
+  [runtime configuration schema](https://github.com/mirumee/nimara-ecommerce/blob/9e9f0ad1b0d10ea2f2a0773a2736d9344843df2f/apps/stripe/src/config.ts),
+  [installation handler](https://github.com/mirumee/nimara-ecommerce/blob/9e9f0ad1b0d10ea2f2a0773a2736d9344843df2f/apps/stripe/src/app/api/saleor/register/route.ts),
+  [tenant resolution](https://github.com/mirumee/nimara-ecommerce/blob/9e9f0ad1b0d10ea2f2a0773a2736d9344843df2f/apps/stripe/src/lib/saleor/config/context.ts),
+  [stored configuration provider](https://github.com/mirumee/nimara-ecommerce/blob/9e9f0ad1b0d10ea2f2a0773a2736d9344843df2f/apps/stripe/src/lib/saleor/config/edge.ts),
+  [configuration save action](https://github.com/mirumee/nimara-ecommerce/blob/9e9f0ad1b0d10ea2f2a0773a2736d9344843df2f/apps/stripe/src/app/app/actions/save-data-action.tsx),
+  and
+  [webhook rotation utility](https://github.com/mirumee/nimara-ecommerce/blob/9e9f0ad1b0d10ea2f2a0773a2736d9344843df2f/apps/stripe/src/lib/stripe/webhooks/util.ts).
+  That commit is the tip of unmerged branch `feat/saleor-stripe-app-multi-tenant`
+  ([PR 741](https://github.com/mirumee/nimara-ecommerce/pull/741)); re-anchor on the squash-merge
+  commit once it lands.

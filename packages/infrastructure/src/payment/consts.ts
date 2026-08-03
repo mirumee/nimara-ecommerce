@@ -1,17 +1,8 @@
 export enum QUERY_PARAMS {
   REDIRECT_STATUS = "redirect_status",
-  SAVE_FOR_FUTURE_USE = "saveForFutureUse",
-  SETUP_INTENT = "setup_intent",
+  SET_AS_DEFAULT = "setAsDefault",
+  TOKENIZATION_ID = "tokenizationId",
   TRANSACTION_ID = "transactionId",
 }
-
-export enum META_KEY {
-  ENVIRONMENT = "ENVIRONMENT",
-  SALEOR_ID = "SALEOR_ID",
-}
-
-export const API_VERSION = "2026-01-28.clover";
-
-export const PAYMENT_USAGE: "off_session" | "on_session" = "on_session";
 
 export const PAYMENT_REDIRECT: "always" | "if_required" = "always";

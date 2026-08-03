@@ -9,13 +9,14 @@ tags:
   - "orders"
   - "privacy"
 created: "2026-07-21T00:00:00+00:00"
-timestamp: "2026-07-21T00:00:00+00:00"
+timestamp: "2026-07-28T00:00:00+00:00"
 id: "CAP-0007"
 status: "active"
 owner: "product-and-engineering"
 relations:
   integrations:
     - "[Saleor Commerce Backend](../integrations/INT-0006%20Saleor%20Commerce%20Backend.md)"
+    - "[Stripe Payment Application](../integrations/INT-0005%20Stripe%20Payment%20Application.md)"
 availability:
   since: "v1.3.0"
   deprecated_since: null
@@ -37,10 +38,13 @@ Order history shows order status, totals, lines, and previously returned lines. 
 partially returned order can submit any still-returnable lines to the backend return operation. The
 current form returns each selected fulfillment line's full fulfilled quantity.
 
-When privileged backend and payment-provider configuration is present, the payment-method surface
-finds or creates the customer's payment-provider record, lists saved methods, adds a method through
-a setup flow, chooses the resulting default method, and removes a method after validating its
-ownership. Privacy settings start an email-confirmed account-deletion flow; a valid deletion token
+The payment-method surface reads, adds, and removes saved methods entirely through the commerce
+backend's stored payment methods protocol, authenticated as the customer. The payment application
+owns the provider customer and credentials; the storefront never names or creates a provider
+customer. Adding a method opens a tokenization session, collects the card in a mounted element,
+and completes the session in place — only methods that genuinely redirect leave the page, and they
+return to the account surface to finish. The default-method choice is carried into the same
+session. Privacy settings start an email-confirmed account-deletion flow; a valid deletion token
 removes the backend account, clears the storefront session, and returns the customer to the home
 page.
 
@@ -62,8 +66,8 @@ page.
   billing or shipping addresses.
 - Order queries return the authenticated customer's localized order history; a return submission
   maps selected order lines to fulfillment-line identifiers and quantities.
-- Payment-method operations use the authenticated customer, channel, environment, customer
-  metadata, and provider setup result to produce a saved-method list.
+- Payment-method operations use the authenticated customer's access token and channel to list and
+  delete stored methods, and a tokenization session identifier plus the collected card to add one.
 - Account deletion uses a request email followed by a confirmation token and produces a logged-out,
   deleted-account state on success.
 
@@ -79,12 +83,21 @@ page.
 - Return submission is not a partial-quantity interface: selecting a line submits its entire
   fulfilled quantity. The return service also uses the configured privileged application token,
   rather than the customer's access token.
-- Saved payment methods require the privileged commerce application token plus valid payment
-  service credentials. Without the application token the page remains available but cannot create
-  a provider customer or add methods; provider-list failures currently appear as an empty list.
-- Payment-method state is split between provider customer data and a channel-specific customer
-  metadata reference in the commerce backend; either side being unavailable prevents reliable
-  self-service.
+- Saved payment methods require an installed payment application that was granted user-management
+  permission, and a commerce release that implements the stored payment methods protocol. An
+  installation predating that contract returns no saved methods until it is reinstalled. Listing
+  failures still render the same empty list as an account with no saved methods.
+- Payment-method state lives with the payment application. The storefront holds no provider
+  credentials and cannot reach the provider if the application is unavailable or unconfigured for
+  the channel.
+- Saved methods belong to one commerce channel. A gateway customer is created per channel, so a
+  list read for a different channel than the one the method was saved under is empty rather than
+  partial. At checkout the channel comes from the checkout itself, not from the region the URL
+  resolves to, because the two can disagree.
+- A method is only offered back to the customer when consent to reuse it was recorded as the method
+  was stored — adding one from the account area, or ticking save-for-future-use at checkout. A
+  method captured any other way stays usable for the payment it was taken for and never appears in
+  the saved list.
 - Account deletion is a two-step email and token flow. A missing customer session or unsuccessful
   backend deletion leaves the account intact.
 
@@ -105,3 +118,11 @@ page.
   [order-history page](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/storefront/src/app/%5Blocale%5D/%28main%29/account/orders/page.tsx),
   and
   [payment-method page](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/storefront/src/app/%5Blocale%5D/%28main%29/account/payment-methods/page.tsx).
+- The saved-payment-method behavior, inputs, and constraints above are anchored at exact commit
+  [`ebc9e3b8044dc48532d9c32902c584a7589ea6e9`](https://github.com/mirumee/nimara-ecommerce/tree/ebc9e3b8044dc48532d9c32902c584a7589ea6e9)
+  in the
+  [saved-method listing](https://github.com/mirumee/nimara-ecommerce/blob/ebc9e3b8044dc48532d9c32902c584a7589ea6e9/apps/storefront/src/foundation/checkout/sections/payment/server.ts)
+  and
+  [redisplay-consent filter](https://github.com/mirumee/nimara-ecommerce/blob/ebc9e3b8044dc48532d9c32902c584a7589ea6e9/apps/stripe/src/lib/stripe/payment-method.ts).
+  That commit is the tip of unmerged branch `feat/saleor-stored-payment-methods`; re-anchor these
+  links to the squash-merge commit once it lands, since a rebase of that branch would strand them.

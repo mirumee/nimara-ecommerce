@@ -1,6 +1,9 @@
 fragment OrderSourceObjectFragment on Order {
   id
   languageCodeEnum
+  user {
+    ...UserFragment
+  }
   userEmail
   channel {
     ...ChannelFragment

@@ -1,3 +1,5 @@
+import { assertStripeSecretKey } from "@/lib/stripe/secret-key";
+
 interface PaymentIntentCreateInput {
   amount: number;
   automatic_payment_methods: {
@@ -104,6 +106,7 @@ const paymentIntents = {
     id: string,
     options?: { expand?: string[] },
   ): Promise<PaymentIntentRetrieveOutput> => {
+    const secretKey = assertStripeSecretKey();
     const expand = options?.expand ?? [];
     const qs =
       expand.length > 0
@@ -113,7 +116,7 @@ const paymentIntents = {
       `https://api.stripe.com/v1/payment_intents/${encodeURIComponent(id)}${qs}`,
       {
         headers: {
-          Authorization: `Bearer ${process.env.STRIPE_SECRET_KEY}`,
+          Authorization: `Bearer ${secretKey}`,
         },
         method: "GET",
       },
@@ -137,10 +140,11 @@ const paymentIntents = {
   create: async (
     input: PaymentIntentCreateInput,
   ): Promise<PaymentIntentCreateOutput> => {
+    const secretKey = assertStripeSecretKey();
     const response = await fetch("https://api.stripe.com/v1/payment_intents", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${process.env.STRIPE_SECRET_KEY}`,
+        Authorization: `Bearer ${secretKey}`,
         "Content-Type": "application/x-www-form-urlencoded",
         ...(input.idempotencyKey
           ? { "Idempotency-Key": input.idempotencyKey }
@@ -172,10 +176,11 @@ const paymentIntents = {
 
 const refunds = {
   create: async (input: RefundCreateInput): Promise<RefundCreateOutput> => {
+    const secretKey = assertStripeSecretKey();
     const response = await fetch("https://api.stripe.com/v1/refunds", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${process.env.STRIPE_SECRET_KEY}`,
+        Authorization: `Bearer ${secretKey}`,
         "Content-Type": "application/x-www-form-urlencoded",
         ...(input.idempotencyKey
           ? { "Idempotency-Key": input.idempotencyKey }

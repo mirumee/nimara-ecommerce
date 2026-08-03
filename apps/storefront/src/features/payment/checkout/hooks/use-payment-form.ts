@@ -84,9 +84,10 @@ export const usePaymentForm = ({
       billingAddress: hasDefaultBillingAddress
         ? formattedToSchemaDefaultBillingAddress
         : defaultEmptyBillingAddress,
-      sameAsShippingAddress: checkout.isShippingRequired
-        ? !hasDefaultBillingAddressInCurrentChannel
-        : false,
+      sameAsShippingAddress:
+        checkout.isShippingRequired && !!checkout.shippingAddress
+          ? !hasDefaultBillingAddressInCurrentChannel
+          : false,
       saveAddressForFutureUse,
       saveForFutureUse: !!user,
       paymentMethod: defaultPaymentMethod,

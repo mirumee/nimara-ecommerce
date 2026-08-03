@@ -19,14 +19,12 @@ export const POST = stripeRouteErrorsHandler(
     async ({ event, headers }) => {
       const logger = getLoggingProvider();
       const saleorDomain = headers["saleor-domain"];
-      const configProvider = getConfigProvider({ saleorDomain });
+      const configProvider = getConfigProvider();
       let gatewayConfig;
-
-      logger.debug("TransactionProcessSessionSubscription", { event });
 
       try {
         gatewayConfig = await configProvider.getPaymentGatewayConfigForChannel({
-          saleorDomain: headers["saleor-domain"],
+          saleorDomain,
           channelSlug: event.sourceObject.channel.slug,
         });
       } catch (err) {

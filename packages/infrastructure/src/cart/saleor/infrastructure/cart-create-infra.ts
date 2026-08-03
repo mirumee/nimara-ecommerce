@@ -8,8 +8,8 @@ import { CartCreateMutationDocument } from "../graphql/generated";
 
 export const saleorCartCreateInfra =
   ({ apiURI, logger }: CartServiceConfig): CartCreateInfra =>
-  async ({ lines, email, options, channel, languageCode }) => {
-    const result = await graphqlClient(apiURI).execute(
+  async ({ accessToken, lines, email, options, channel, languageCode }) => {
+    const result = await graphqlClient(apiURI, accessToken).execute(
       CartCreateMutationDocument,
       {
         variables: {

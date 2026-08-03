@@ -9,10 +9,7 @@ import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { type AppErrorCode } from "@nimara/domain/objects/Error";
 import { type PaymentMethod } from "@nimara/domain/objects/Payment";
 import { type User } from "@nimara/domain/objects/User";
-import type { TransactionData } from "@nimara/infrastructure/payment/types";
 
-import { clientEnvs } from "@/envs/client";
-import { serverEnvs } from "@/envs/server";
 import { getCurrentRegion } from "@/foundation/regions";
 import { getStoreUrl } from "@/foundation/server";
 import { getServiceRegistry } from "@/services/registry";
@@ -42,16 +39,20 @@ export const getCheckoutPaymentSectionData = async ({
       getCurrentRegion(),
       services.getAddressService(),
       services.getUserService(),
-      services.getLegacyPaymentService(),
+      services.getPaymentService(),
       getStoreUrl(),
     ]);
 
-  const resultCountries = await addressService.countriesGet({
-    channelSlug: region.market.channel,
-    locale,
-  });
+  const [resultCountries, resultAllCountries] = await Promise.all([
+    addressService.countriesGet({
+      channelSlug: region.market.channel,
+      locale,
+    }),
 
-  if (!resultCountries.ok) {
+    addressService.countriesAllGet({ locale }),
+  ]);
+
+  if (!resultCountries.ok || !resultAllCountries.ok) {
     throw new Error("Failed to fetch the countries list.");
   }
 
@@ -123,59 +124,16 @@ export const getCheckoutPaymentSectionData = async ({
         Number(a.address.isDefaultBillingAddress),
     );
 
-  let paymentGatewayCustomer: string | null = null;
   let paymentGatewayMethods: PaymentMethod[] = [];
-  const saleorAppToken = serverEnvs.SALEOR_APP_TOKEN;
 
-  if (user && saleorAppToken) {
-    const resultPaymentGatewayCustomer = await paymentService.customerGet({
-      user,
-      channel: region.market.channel,
-      environment: clientEnvs.ENVIRONMENT,
-      accessToken: saleorAppToken,
+  if (user && accessToken) {
+    const resultPaymentGatewayMethods = await paymentService.methodList({
+      accessToken,
+      channel: checkout.channel,
     });
 
-    if (resultPaymentGatewayCustomer.ok) {
-      paymentGatewayCustomer = resultPaymentGatewayCustomer.data.customerId;
-    }
-
-    if (paymentGatewayCustomer) {
-      const resultPaymentGatewayMethods =
-        await paymentService.customerPaymentMethodsList({
-          customerId: paymentGatewayCustomer,
-        });
-
-      if (resultPaymentGatewayMethods.ok) {
-        paymentGatewayMethods = resultPaymentGatewayMethods.data;
-      }
-    }
-  }
-
-  /**
-   * Pre-initialize the transaction on the server so the payment element can
-   * mount without a client round trip — only when the new-method tab is the
-   * landing tab (no saved methods); otherwise the intent is created on
-   * demand and the pre-initialized one would dangle on the checkout.
-   * Marketplace payments run on marketplace payment intents, not Saleor
-   * transactions, so no transaction is pre-initialized there either.
-   */
-  let transactionData: TransactionData | null = null;
-
-  if (
-    !clientEnvs.NEXT_PUBLIC_MARKETPLACE_ENABLED &&
-    paymentGatewayMethods.length === 0
-  ) {
-    const newPaymentService = await services.getPaymentService();
-
-    const resultTransaction = await newPaymentService.initializeTransaction({
-      id: checkout.id,
-      amount: checkout.totalPrice.gross.amount,
-      customerId: paymentGatewayCustomer,
-      saveForFutureUse: !!user,
-    });
-
-    if (resultTransaction.ok) {
-      transactionData = resultTransaction.data;
+    if (resultPaymentGatewayMethods.ok) {
+      paymentGatewayMethods = resultPaymentGatewayMethods.data;
     }
   }
 
@@ -183,11 +141,10 @@ export const getCheckoutPaymentSectionData = async ({
     addressFormRows: resultAddressRows.data,
     countries: resultCountries.data,
     countryCode,
+    allCountries: resultAllCountries.data,
     errorCode,
     formattedAddresses: sortedAddresses,
-    paymentGatewayCustomer,
     paymentGatewayMethods,
     storeUrl,
-    transactionData,
   };
 };

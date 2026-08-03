@@ -11,7 +11,7 @@ import {
 import { type ACPResponse } from "#root/acp/types";
 import { type GraphqlClient } from "#root/graphql/client";
 import { type Logger } from "#root/logging/types";
-import { type StripePaymentService } from "#root/payment/providers";
+import { type PaymentServerService } from "#root/payment/types";
 
 export const checkoutSessionCompleteInfra = async ({
   deps,
@@ -22,7 +22,7 @@ export const checkoutSessionCompleteInfra = async ({
     graphqlClient: GraphqlClient;
     languageCode: LanguageCodeEnum;
     logger: Logger;
-    paymentService: StripePaymentService;
+    paymentService: PaymentServerService;
     storefrontUrl: string;
   };
   input: {
@@ -76,7 +76,7 @@ export const checkoutSessionCompleteInfra = async ({
     };
   }
 
-  const resultTransaction = await deps.paymentService.initializeTransaction({
+  const resultTransaction = await deps.paymentService.paymentInitialize({
     id: result.data.checkout.id,
     amount: result.data.checkout.totalPrice.gross.amount,
     sharedPaymentToken: input.checkoutSessionComplete.payment_data.token,
@@ -99,7 +99,7 @@ export const checkoutSessionCompleteInfra = async ({
     };
   }
 
-  const paymentResult = await deps.paymentService.process({
+  const paymentResult = await deps.paymentService.paymentProcess({
     transaction: { id: resultTransaction.data.transaction.id },
   });
 

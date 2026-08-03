@@ -10,11 +10,8 @@ import {
   MARKETPLACE_NO_VENDOR_BUCKET,
 } from "@/config";
 import { aggregateMarketplaceCheckouts } from "@/features/checkout/aggregations";
-import {
-  deleteCheckoutIdCookie,
-  getAllCheckoutIds,
-  getCheckoutId,
-} from "@/features/checkout/server";
+import { deleteCheckoutIdCookie } from "@/features/checkout/checkout";
+import { getAllCheckoutIds, getCheckoutId } from "@/features/checkout/server";
 import { type MarketplaceCheckoutItem } from "@/features/checkout/types";
 import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
@@ -42,10 +39,15 @@ export const getCheckoutOrRedirect = async (
     checkoutId,
     languageCode: region.language.code,
     countryCode: region.market.countryCode,
-    options,
+    options: { ...options, cache: "no-store" },
   });
 
   if (!resultCheckout.ok) {
+    await deleteCheckoutIdCookie();
+    redirect({ href: paths.cart.asPath(), locale });
+  }
+
+  if (!resultCheckout.data.checkout.lines.length) {
     await deleteCheckoutIdCookie();
     redirect({ href: paths.cart.asPath(), locale });
   }
@@ -87,7 +89,7 @@ export const getMarketplaceCheckoutsOrRedirect = async (
         checkoutId,
         languageCode: region.language.code,
         countryCode: region.market.countryCode,
-        options,
+        options: { ...options, cache: "no-store" },
       });
 
       if (!result.ok) {

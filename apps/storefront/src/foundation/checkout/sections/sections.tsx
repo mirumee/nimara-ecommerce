@@ -1,11 +1,10 @@
 "use client";
 
-import { useTranslations } from "next-intl";
-import { type ReactNode, useEffect } from "react";
+import { useEffect } from "react";
 
 import { type Checkout } from "@nimara/domain/objects/Checkout";
 import { type User } from "@nimara/domain/objects/User";
-import { LocalizedLink, useRouter } from "@nimara/i18n/routing";
+import { useRouter } from "@nimara/i18n/routing";
 import { Card } from "@nimara/ui/components/card";
 import { Separator } from "@nimara/ui/components/separator";
 
@@ -14,6 +13,7 @@ import { type MarketplaceCheckoutItem } from "@/features/checkout/types";
 import { Payment } from "@/features/payment/checkout/payment";
 import { CheckoutPaymentSection } from "@/foundation/checkout/sections/payment/section";
 import { type PaymentSectionData } from "@/foundation/checkout/sections/payment/types";
+import { AppErrorMessage } from "@/foundation/errors/components/app-error-message";
 import { paths, QUERY_PARAMS } from "@/foundation/routing/paths";
 import { createTrackingServiceLoader } from "@/services/lazy-loaders/tracking";
 
@@ -46,7 +46,6 @@ export const CheckoutSections = ({
   shippingAddressSectionData,
   user,
 }: Props) => {
-  const t = useTranslations();
   const router = useRouter();
   const isMarketplaceMode =
     clientEnvs.NEXT_PUBLIC_MARKETPLACE_ENABLED &&
@@ -221,11 +220,9 @@ export const CheckoutSections = ({
           <Payment
             checkout={checkoutForSections}
             addressFormRows={paymentSectionData.addressFormRows}
-            countries={paymentSectionData.countries}
+            countries={paymentSectionData.allCountries}
             countryCode={paymentSectionData.countryCode}
             formattedAddresses={paymentSectionData.formattedAddresses}
-            initialTransactionData={paymentSectionData.transactionData}
-            paymentGatewayCustomer={paymentSectionData.paymentGatewayCustomer}
             paymentGatewayMethods={paymentSectionData.paymentGatewayMethods}
             marketplaceCheckouts={marketplaceCheckouts}
             storeUrl={paymentSectionData.storeUrl}
@@ -233,17 +230,7 @@ export const CheckoutSections = ({
           />
         ) : (
           <p className="text-sm text-muted-foreground">
-            {t.rich("errors.GENERIC_PAYMENT_ERROR", {
-              link: (chunks: ReactNode) => (
-                <LocalizedLink
-                  href={`mailto:${clientEnvs.NEXT_PUBLIC_DEFAULT_EMAIL}`}
-                  className="underline"
-                  target="_blank"
-                >
-                  {chunks}
-                </LocalizedLink>
-              ),
-            })}
+            <AppErrorMessage code="GENERIC_PAYMENT_ERROR" />
           </p>
         )}
       </CheckoutPaymentSection>

@@ -131,7 +131,7 @@ export const MarketplaceDeliveryMethodForm = ({
 
         <Button
           type="submit"
-          className="ml-auto mt-4"
+          className="ml-auto mt-4 flex"
           disabled={isDisabled}
           loading={isDisabled}
         >

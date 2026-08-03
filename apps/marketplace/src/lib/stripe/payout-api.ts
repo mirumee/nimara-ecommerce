@@ -1,18 +1,8 @@
-import { config } from "@/lib/config";
+import { assertStripeSecretKey } from "@/lib/stripe/secret-key";
 
 type StripeApiError = {
   error?: { message?: string };
 };
-
-function assertStripeSecretKey(): string {
-  const secretKey = config.stripeConnect.secretKey;
-
-  if (!secretKey) {
-    throw new Error("STRIPE_SECRET_KEY is not set");
-  }
-
-  return secretKey;
-}
 
 export type StripeBalancePayload = {
   available: Array<{ amount: number; currency: string }>;

@@ -8,6 +8,7 @@ import { verifySaleorWebhookRoute } from "@/lib/saleor/webhooks/api";
 import { getStripeApi, stripeRouteErrorsHandler } from "@/lib/stripe/api";
 import {
   getIntentDashboardUrl,
+  getPaymentIntentReportAmount,
   mapStatusToActionType,
 } from "@/lib/stripe/util";
 import { getConfigProvider } from "@/providers/config";
@@ -18,10 +19,8 @@ export const POST = stripeRouteErrorsHandler(
     async ({ event, headers }) => {
       const logger = getLoggingProvider();
       const saleorDomain = headers["saleor-domain"];
-      const configProvider = getConfigProvider({ saleorDomain });
+      const configProvider = getConfigProvider();
       let gatewayConfig;
-
-      logger.debug("TransactionChargeRequestedSubscription", { event });
 
       if (!event.transaction?.sourceObject) {
         logger.error(
@@ -37,7 +36,7 @@ export const POST = stripeRouteErrorsHandler(
 
       try {
         gatewayConfig = await configProvider.getPaymentGatewayConfigForChannel({
-          saleorDomain: headers["saleor-domain"],
+          saleorDomain,
           channelSlug: event.transaction.sourceObject.channel.slug,
         });
       } catch (err) {
@@ -55,9 +54,10 @@ export const POST = stripeRouteErrorsHandler(
       const intent = await stripe.paymentIntents.capture(
         event.transaction.pspReference,
         {
-          amount_to_capture: getCentsFromAmount(
-            event.transaction.sourceObject.total.gross,
-          ),
+          amount_to_capture: getCentsFromAmount({
+            amount: event.action.amount,
+            currency: event.action.currency,
+          }),
         },
       );
 
@@ -74,9 +74,15 @@ export const POST = stripeRouteErrorsHandler(
         data = {
           ...data,
           result,
+          /**
+           * `amount_received` via the resolver — after a partial capture the
+           * intent keeps the original total in `amount`, and the async
+           * `payment_intent.succeeded` report must match this amount for
+           * Saleor to deduplicate both reports.
+           */
           amount: getAmountFromCents({
             currency: intent.currency,
-            amount: intent.amount,
+            amount: getPaymentIntentReportAmount(intent),
           }),
           externalUrl: getIntentDashboardUrl({
             paymentId: intent.id,

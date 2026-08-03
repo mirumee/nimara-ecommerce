@@ -8,7 +8,7 @@ tags:
   - "schema"
   - "rules"
 created: "2026-07-09T00:00:00+00:00"
-timestamp: "2026-07-21T00:00:00+00:00"
+timestamp: "2026-08-03T00:00:00+00:00"
 ---
 
 # Content
@@ -153,8 +153,9 @@ use the contracts and templates below.
 - **Immutability and review:** after `implemented`, the record is immutable except for the
   `rolled_back` transition and `rolled_back_by`. Engineering reviews creation and every
   transition.
-- **Registration:** register every IMP in `tech/implementation/Implementation (MOC).md` and
-  `index.md`; append create, status-transition, and rollback events to `log.md`.
+- **Registration:** register every IMP in `index.md`; append create, status-transition, and
+  rollback events to `log.md`. `tech/implementation/Implementation (MOC).md` is an unmaintained
+  placeholder: do not add, update, or remove records there.
 
 ### CAP — Product Capability
 

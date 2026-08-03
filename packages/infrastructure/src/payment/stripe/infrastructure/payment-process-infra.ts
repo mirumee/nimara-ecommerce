@@ -6,9 +6,8 @@ import {
   isTransactionActionRequired,
   isTransactionSuccessful,
 } from "../../helpers";
-import type { PaymentServiceConfig } from "../../types";
+import type { PaymentProcessInfra, PaymentServiceConfig } from "../../types";
 import { TransactionProcessMutationDocument } from "../graphql/mutations/generated";
-import type { PaymentProcessInfra } from "../types";
 
 export const paymentProcessInfra =
   ({ apiURI, logger }: PaymentServiceConfig): PaymentProcessInfra =>
@@ -17,9 +16,6 @@ export const paymentProcessInfra =
       TransactionProcessMutationDocument,
       {
         variables: { id: transaction.id, data },
-        options: {
-          cache: "no-store",
-        },
         operationName: "TransactionProcessMutation",
       },
     );

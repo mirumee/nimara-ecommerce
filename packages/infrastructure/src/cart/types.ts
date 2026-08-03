@@ -29,6 +29,7 @@ export type CartGetUseCase = CartGetInfra;
 
 export type CartCreateInfra = (
   opts: {
+    accessToken?: string;
     channel: string;
     email?: string;
     languageCode: string;
@@ -73,6 +74,11 @@ export type LinesAddInfra = (
 
 export type LinesAddUseCase = (
   opts: {
+    /**
+     * Passed on when a cart has to be created, so it belongs to the shopper
+     * from the start.
+     */
+    accessToken?: string;
     cartId: string | null;
     channel: string;
     email?: string;

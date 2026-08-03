@@ -8,10 +8,8 @@ import {
   type AppErrorCode,
   type BaseError,
 } from "@nimara/domain/objects/Error";
-import { type Maybe } from "@nimara/domain/objects/Maybe";
 import { type PaymentMethod } from "@nimara/domain/objects/Payment";
 import { useRouter } from "@nimara/i18n/routing";
-import type { TransactionData } from "@nimara/infrastructure/payment/types";
 import {
   Tabs,
   TabsContent,
@@ -33,8 +31,6 @@ import { type TabName } from "./tabs/address-tab";
 import { type CommonPaymentProps } from "./types";
 
 type CheckoutPaymentProps = CommonPaymentProps & {
-  initialTransactionData?: Maybe<TransactionData>;
-  paymentGatewayCustomer: Maybe<string>;
   paymentGatewayMethods: PaymentMethod[];
 };
 
@@ -49,8 +45,6 @@ export const CheckoutPayment = ({
   countryCode,
   errorCode,
   formattedAddresses,
-  initialTransactionData,
-  paymentGatewayCustomer,
   paymentGatewayMethods,
   storeUrl,
   user,
@@ -69,19 +63,18 @@ export const CheckoutPayment = ({
   );
   const {
     initializeData,
+    initializeGateway,
     initializeTransaction,
     setTransactionData,
     transactionData,
   } = usePaymentData({
-    initialTransactionData,
     onErrors: setErrors,
   });
   const elementsRef = useRef<unknown>(null);
-  const initialTransactionRef = useRef(!!initialTransactionData);
 
   const defaultPaymentMethod =
-    paymentGatewayMethods.find(({ isDefault }) => isDefault)?.id ??
-    paymentGatewayMethods[0]?.id;
+    paymentGatewayMethods.find(({ isDefault }) => isDefault)?.token ??
+    paymentGatewayMethods[0]?.token;
 
   const {
     addressActiveTab,
@@ -105,17 +98,20 @@ export const CheckoutPayment = ({
 
   const hasSelectedPaymentMethod = !!paymentMethod;
   const isAddingNewPaymentMethod = paymentMethodTab === "new";
-  const isInitialized = !!initializeData;
-  const isLoading = !isInitialized || isProcessing;
+  /**
+   * The gateway SDK is booted from a session, so paying with a stored method —
+   * which opens its session on submit — is ready before the SDK exists.
+   */
+  const isReady = isAddingNewPaymentMethod ? !!initializeData : true;
+  const isLoading = !isReady || isProcessing;
   const canProceed =
     !isLoading &&
     (isAddingNewPaymentMethod ? isMounted : hasSelectedPaymentMethod);
 
   /**
-   * Using an existing payment method requires passing it to the stripe app
-   * to tokenize it and obtain a fresh intent secret, which the payment is
-   * then confirmed against. The intent is confirmed directly — it is not
-   * stored, so the mounted payment element keeps its transaction.
+   * Paying with a stored method asks the payment app for an intent bound to
+   * that method, which the payment is then confirmed against. The intent is
+   * confirmed directly, so the mounted payment element keeps its own.
    */
   const resolveTransactionData = async ({
     paymentMethod,
@@ -125,8 +121,7 @@ export const CheckoutPayment = ({
       const data = await initializeTransaction({
         id: checkout.id,
         amount: checkout.totalPrice.gross.amount,
-        paymentMethod,
-        customerId: paymentGatewayCustomer,
+        paymentMethodId: paymentMethod,
         saveForFutureUse,
       });
 
@@ -161,7 +156,6 @@ export const CheckoutPayment = ({
       const data = await initializeTransaction({
         id: checkout.id,
         amount: checkout.totalPrice.gross.amount,
-        customerId: paymentGatewayCustomer,
         saveForFutureUse,
       });
 
@@ -179,7 +173,7 @@ export const CheckoutPayment = ({
     checkout,
     elementsRef,
     form,
-    initializeData,
+    initializeGateway,
     isAddingNewPaymentMethod,
     isProcessing,
     onExecuteFailure: handleExecuteFailure,
@@ -209,30 +203,19 @@ export const CheckoutPayment = ({
    * payment element is then created against.
    */
   useEffect(() => {
-    if (!isInitialized || !isAddingNewPaymentMethod) {
+    if (!isAddingNewPaymentMethod) {
       return;
     }
 
     let isCancelled = false;
 
     void (async () => {
-      /**
-       * The first activation consumes the intent pre-initialized on the
-       * server — no client fetch needed.
-       */
-      if (initialTransactionRef.current) {
-        initialTransactionRef.current = false;
-
-        return;
-      }
-
       setIsMounted(false);
       setTransactionData(undefined);
 
       const data = await initializeTransaction({
         id: checkout.id,
         amount: checkout.totalPrice.gross.amount,
-        customerId: paymentGatewayCustomer,
         saveForFutureUse,
       });
 
@@ -249,9 +232,7 @@ export const CheckoutPayment = ({
   }, [
     checkout.id,
     checkout.totalPrice.gross.amount,
-    isInitialized,
     isAddingNewPaymentMethod,
-    paymentGatewayCustomer,
     saveForFutureUse,
   ]);
 
@@ -301,6 +282,7 @@ export const CheckoutPayment = ({
             countries={countries}
             countryCode={countryCode}
             formattedAddresses={formattedAddresses}
+            hasShippingAddress={!!checkout.shippingAddress}
             isProcessing={isProcessing}
             isShippingRequired={checkout.isShippingRequired}
             onCountryChange={setIsProcessing}

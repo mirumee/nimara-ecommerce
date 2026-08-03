@@ -1,28 +1,26 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { type RefObject } from "react";
+import { type ComponentProps, type RefObject } from "react";
 
 import { type Maybe } from "@nimara/domain/objects/Maybe";
-import type {
-  InitializeData,
-  TransactionData,
-} from "@nimara/infrastructure/payment/types";
 import { Spinner } from "@nimara/ui/components/spinner";
 import { cn } from "@nimara/ui/lib/utils";
 
-import { StripePaymentElement } from "@/features/payment/providers/stripe/stripe-payment-element";
+import { ActivePaymentElement } from "@/features/payment/providers/active";
+
+type ActiveProps = ComponentProps<typeof ActivePaymentElement>;
 
 type PaymentElementProps = {
   email: Maybe<string>;
   fullName?: string;
-  initializeData: Maybe<InitializeData>;
+  initializeData: Maybe<ActiveProps["initializeData"]>;
   isDisabled: boolean;
   isMounted: boolean;
   locale: string;
   onReady: () => void;
   ref: RefObject<unknown>;
-  transactionData: Maybe<TransactionData>;
+  transactionData: Maybe<ActiveProps["transactionData"]>;
 };
 
 /**
@@ -52,8 +50,8 @@ export const PaymentElement = ({
   return (
     <>
       {!isMounted && spinner}
-      <StripePaymentElement
-        key={`${transactionData.clientSecret}-${resolvedTheme}`}
+      <ActivePaymentElement
+        key={`${transactionData.sessionId}-${resolvedTheme}`}
         appearance={{
           theme: isDark ? "night" : "flat",
           variables: {

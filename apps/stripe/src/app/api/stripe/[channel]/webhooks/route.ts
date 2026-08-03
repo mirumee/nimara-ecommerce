@@ -7,7 +7,9 @@ import {
   type SupportedStripeWebhookEvent,
 } from "@/lib/stripe/const";
 import {
+  fetchPaymentMethodDetails,
   getIntentDashboardUrl,
+  getPaymentIntentReportAmount,
   isAppEvent,
   mapStripeEventToSaleorEvent,
 } from "@/lib/stripe/util";
@@ -21,47 +23,77 @@ export const POST = stripeRouteErrorsHandler(
     { params }: { params: Promise<{ channel: string }> },
   ) => {
     const logger = getLoggingProvider();
-    const [body, event, { channel }] = await Promise.all([
+    const [body, { channel }] = await Promise.all([
       request.clone().text(),
-      request.json() as Promise<SupportedStripeWebhookEvent>,
       params,
     ]);
-    const stripeObject = event.data.object;
+
+    /**
+     * The payload is parsed before verification only to resolve the tenant
+     * (saleor domain) holding the webhook secret — nothing from it is
+     * trusted until `constructEvent` validates the signature below.
+     */
+    const unverifiedEvent = JSON.parse(body) as SupportedStripeWebhookEvent;
     const {
       [StripeMetaKey.SALEOR_DOMAIN]: saleorDomain,
       [StripeMetaKey.CHANNEL_SLUG]: channelSlug,
       [StripeMetaKey.TRANSACTION_ID]: transactionId,
-    } = stripeObject.metadata ?? {};
+    } = unverifiedEvent.data?.object?.metadata ?? {};
+
+    /**
+     * Metadata missing — not an event issued by this app (e.g. manual
+     * dashboard activity on the same account). Acknowledge it so Stripe
+     * does not retry.
+     */
+    if (!all([transactionId, saleorDomain, channelSlug])) {
+      logger.info("Received Stripe webhook without app metadata, skipping.", {
+        id: unverifiedEvent.id,
+      });
+
+      return responseSuccess({ description: "Skipped." });
+    }
+
+    const configProvider = getConfigProvider();
+    /**
+     * The secret is resolved for the channel this endpoint serves (from the
+     * URL), not the channel the unverified payload claims.
+     */
+    const gatewayConfig =
+      await configProvider.getPaymentGatewayConfigForChannel({
+        saleorDomain,
+        channelSlug: channel,
+      });
+
+    if (!gatewayConfig.webhookSecretKey) {
+      logger.error("Stripe webhook secret is not configured for the channel.", {
+        channelSlug: channel,
+        saleorDomain,
+      });
+
+      return responseError({
+        description: "Stripe webhook secret is not configured for the channel.",
+        errors: [{ message: "webhookSecretKey is missing in the app config" }],
+        status: 500,
+      });
+    }
+
+    const api = getStripeApi(gatewayConfig.secretKey);
+
+    /**
+     * Webhook verification — everything below runs on the verified event.
+     */
+    const event = api.webhooks.constructEvent(
+      body,
+      request.headers.get("stripe-signature") ?? "",
+      gatewayConfig.webhookSecretKey,
+    ) as SupportedStripeWebhookEvent;
+    const stripeObject = event.data.object;
 
     logger.info("Received Stripe webhook.", {
       id: event.id,
       stripeObjectId: stripeObject.id,
       type: event.type,
     });
-
-    /**
-     * Metadata missing.
-     */
-    if (!all([transactionId, saleorDomain, channelSlug])) {
-      logger.error("Stripe webhook missing one of required metadata.", {
-        id: event.id,
-        metadata: stripeObject.metadata,
-      });
-
-      const errors = Object.entries({
-        transactionId,
-        saleorDomain,
-        channelSlug,
-      })
-        .filter(([_, value]) => !value)
-        .map(([key]) => ({ message: `${key} is required` }));
-
-      return responseError({
-        description: "Missing required metadata in Stripe event.",
-        errors,
-        status: 422,
-      });
-    }
 
     /**
      * Metadata miss-match.
@@ -88,44 +120,52 @@ export const POST = stripeRouteErrorsHandler(
       return responseSuccess({ description: "Skipped." });
     }
 
-    const configProvider = getConfigProvider({ saleorDomain });
     const config = await configProvider.getBySaleorDomain({ saleorDomain });
-    const gatewayConfig =
-      await configProvider.getPaymentGatewayConfigForChannel({
-        saleorDomain,
-        channelSlug,
-      });
     const saleorClient = getSaleorClient({
       authToken: config?.authToken,
       saleorDomain,
       logger,
     });
-    const api = getStripeApi(gatewayConfig.secretKey);
-
-    /**
-     * Webhook verification.
-     */
-    api.webhooks.constructEvent(
-      // @ts-expect-error https://nodejs.org/api/buffer.html#buftostringencoding-start-end
-      body.toString("utf-8"),
-      request.headers.get("stripe-signature") ?? "",
-      gatewayConfig.webhookSecretKey ?? "",
-    );
 
     /**
      * Saleor transaction report.
      */
     const eventData = mapStripeEventToSaleorEvent(event);
 
+    if (!eventData) {
+      logger.info("Unsupported Stripe event type, skipping.", {
+        id: event.id,
+        type: event.type,
+      });
+
+      return responseSuccess({ description: "Skipped." });
+    }
+
+    let paymentMethodDetails;
+
+    if ("payment_method" in stripeObject) {
+      paymentMethodDetails = await fetchPaymentMethodDetails(
+        api,
+        stripeObject.payment_method,
+      );
+    }
+
+    const reportAmount =
+      stripeObject.object === "payment_intent"
+        ? getPaymentIntentReportAmount(stripeObject)
+        : stripeObject.amount;
+
     await saleorClient.transactionReport({
       transactionId,
-      // @ts-expect-error: decimal must be a string
+      paymentMethodDetails,
       amount: getAmountFromCents({
         currency: stripeObject.currency,
-        amount: stripeObject.amount,
+        amount: reportAmount,
       }),
-      // @ts-expect-error Charge won't have last_payment_error.
-      message: stripeObject?.last_payment_error?.code ?? null,
+      message:
+        "last_payment_error" in stripeObject
+          ? (stripeObject.last_payment_error?.code ?? null)
+          : null,
       externalUrl: getIntentDashboardUrl({
         paymentId: event.data.object.id,
         secretKey: gatewayConfig.secretKey,

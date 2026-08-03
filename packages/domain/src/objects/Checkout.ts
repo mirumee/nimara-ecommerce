@@ -5,6 +5,7 @@ export type Checkout = {
   authorizeStatus: CheckoutAuthorizeStatusEnum;
   availablePaymentGateways: PaymentGateway[];
   billingAddress: Address | null;
+  channel: string;
   chargeStatus: CheckoutChargeStatusEnum;
   deliveryMethod: DeliveryMethod | null;
   discount: Price | null;

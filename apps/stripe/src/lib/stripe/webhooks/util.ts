@@ -5,7 +5,11 @@ import { type PaymentGatewayConfig } from "@/lib/saleor/config/schema";
 import { isLocalDomain } from "@/lib/util";
 
 import { getStripeApi } from "../api";
-import { StripeMetaKey, StripeWebhookEvent } from "../const";
+import {
+  STRIPE_API_VERSION,
+  StripeMetaKey,
+  StripeWebhookEvent,
+} from "../const";
 import { getGatewayMetadata } from "../util";
 
 export const installWebhook = async ({
@@ -33,12 +37,19 @@ export const installWebhook = async ({
     return;
   }
 
+  // TODO: Make a single webhook for multiple channels
   const url = `${appUrl}/api/stripe/${channel}/webhooks`;
   const stripe = getStripeApi(configuration.secretKey);
 
   const result = await stripe.webhookEndpoints.create({
     url,
+    description: `Created by the Nimara Stripe ts app, channel: ${channel}`,
     enabled_events: Object.values(StripeWebhookEvent),
+    /**
+     * Pins the payload shape of delivered events — without it, Stripe sends
+     * events in the account's default API version.
+     */
+    api_version: STRIPE_API_VERSION,
     metadata: getGatewayMetadata({ saleorDomain }),
   });
 
@@ -52,10 +63,12 @@ export const uninstallWebhooks = async ({
   configuration,
   appUrl,
   logger,
+  saleorDomain,
 }: {
   appUrl: string;
   configuration: PaymentGatewayConfig[string];
   logger: Logger;
+  saleorDomain: string;
 }) => {
   if (!isLocalDomain(appUrl)) {
     const stripe = getStripeApi(configuration.secretKey);
@@ -63,14 +76,20 @@ export const uninstallWebhooks = async ({
     try {
       const webhooks = await stripe.webhookEndpoints.list({ limit: 100 });
 
-      // Filter webhooks by issuer and environment to avoid orphans upon reinstallations.
+      /**
+       * Filter by issuer, environment and tenant to avoid orphans upon
+       * reinstallations — several Saleor domains may share one Stripe account,
+       * and each owns only the endpoints carrying its own domain.
+       */
       const webhooksToDelete = webhooks.data.filter((webhook) => {
         const isIssuedWebhook =
           webhook.metadata[StripeMetaKey.ISSUER] === CONFIG.APP_ID;
         const isSameEnvironment =
           webhook.metadata[StripeMetaKey.ENVIRONMENT] === CONFIG.ENVIRONMENT;
+        const isSameTenant =
+          webhook.metadata[StripeMetaKey.SALEOR_DOMAIN] === saleorDomain;
 
-        return isIssuedWebhook && isSameEnvironment;
+        return isIssuedWebhook && isSameEnvironment && isSameTenant;
       });
 
       await Promise.all(

@@ -146,6 +146,7 @@ export default async function Page(props: PageProps) {
           vendorIdNames={vendorIdNames}
           addPromoCodeAction={foundationActions.addPromoCodeAction}
           removePromoCodeAction={foundationActions.removePromoCodeAction}
+          hidePromoCode={isMarketplaceEnabled}
           mode={isMarketplaceEnabled ? "marketplace" : "standard"}
         />
       }

@@ -9,6 +9,7 @@ import { type AppErrorCode } from "@nimara/domain/objects/Error";
 import { useRouter } from "@nimara/i18n/routing";
 import { Spinner } from "@nimara/ui/components/spinner";
 
+import { AppErrorMessage } from "@/foundation/errors/components/app-error-message";
 import { paths, QUERY_PARAMS } from "@/foundation/routing/paths";
 import { createTrackingServiceLoader } from "@/services/lazy-loaders/tracking";
 
@@ -85,7 +86,11 @@ export const ProcessingInfo = ({
   return (
     <div className="py-32 leading-10">
       {errors.length ? (
-        errors.map(({ code }, i) => <p key={i}>{t(`errors.${code}`)}</p>)
+        errors.map(({ code }, i) => (
+          <p key={i}>
+            <AppErrorMessage code={code} />
+          </p>
+        ))
       ) : (
         <>
           <p className="text-lg">{t("payment.paymentProcessing")}...</p>

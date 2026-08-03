@@ -1,8 +1,8 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 
+import { revalidateLocalizedPath } from "@/foundation/cache/cache";
 import { paths } from "@/foundation/routing/paths";
 import { getAuthService } from "@/services/auth";
 
@@ -17,7 +17,7 @@ export async function setPassword({ password }: NewPasswordFormSchema) {
   const result = await authService.passwordSet({ email, password, token });
 
   if (result.ok) {
-    revalidatePath(paths.newPassword.asPath());
+    await revalidateLocalizedPath(paths.newPassword.asPath());
   }
 
   const redirectUrl = !result.ok

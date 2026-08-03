@@ -17,10 +17,26 @@ export type TransactionEventReportMutationVariables = Types.Exact<{
   pspReference: Types.Scalars['String']['input'];
   time: Types.Scalars['DateTime']['input'];
   type: Types.TransactionEventTypeEnum;
+  paymentMethodDetails?: Types.InputMaybe<Types.PaymentMethodDetailsInput>;
 }>;
 
 
 export type TransactionEventReportMutation = TransactionEventReportMutation_Mutation;
+
+export type UserPrivateMetadataUpdateMutation_updatePrivateMetadata_UpdatePrivateMetadata_errors_MetadataError = { code: Types.MetadataErrorCode, field: string | null, message: string | null };
+
+export type UserPrivateMetadataUpdateMutation_updatePrivateMetadata_UpdatePrivateMetadata = { errors: Array<UserPrivateMetadataUpdateMutation_updatePrivateMetadata_UpdatePrivateMetadata_errors_MetadataError> };
+
+export type UserPrivateMetadataUpdateMutation_Mutation = { updatePrivateMetadata: UserPrivateMetadataUpdateMutation_updatePrivateMetadata_UpdatePrivateMetadata | null };
+
+
+export type UserPrivateMetadataUpdateMutationVariables = Types.Exact<{
+  id: Types.Scalars['ID']['input'];
+  input: Array<Types.MetadataInput> | Types.MetadataInput;
+}>;
+
+
+export type UserPrivateMetadataUpdateMutation = UserPrivateMetadataUpdateMutation_Mutation;
 
 export class TypedDocumentString<TResult, TVariables>
   extends String
@@ -42,7 +58,7 @@ export class TypedDocumentString<TResult, TVariables>
 }
 
 export const TransactionEventReportMutationDocument = new TypedDocumentString(`
-    mutation TransactionEventReportMutation($transactionId: ID!, $amount: PositiveDecimal!, $availableActions: [TransactionActionEnum!]!, $externalUrl: String!, $message: String, $pspReference: String!, $time: DateTime!, $type: TransactionEventTypeEnum!) {
+    mutation TransactionEventReportMutation($transactionId: ID!, $amount: PositiveDecimal!, $availableActions: [TransactionActionEnum!]!, $externalUrl: String!, $message: String, $pspReference: String!, $time: DateTime!, $type: TransactionEventTypeEnum!, $paymentMethodDetails: PaymentMethodDetailsInput) {
   transactionEventReport(
     id: $transactionId
     amount: $amount
@@ -52,6 +68,7 @@ export const TransactionEventReportMutationDocument = new TypedDocumentString(`
     pspReference: $pspReference
     time: $time
     type: $type
+    paymentMethodDetails: $paymentMethodDetails
   ) {
     alreadyProcessed
     errors {
@@ -62,3 +79,14 @@ export const TransactionEventReportMutationDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<TransactionEventReportMutation, TransactionEventReportMutationVariables>;
+export const UserPrivateMetadataUpdateMutationDocument = new TypedDocumentString(`
+    mutation UserPrivateMetadataUpdateMutation($id: ID!, $input: [MetadataInput!]!) {
+  updatePrivateMetadata(id: $id, input: $input) {
+    errors {
+      code
+      field
+      message
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<UserPrivateMetadataUpdateMutation, UserPrivateMetadataUpdateMutationVariables>;

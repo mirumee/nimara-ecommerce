@@ -8,7 +8,7 @@ tags:
   - "checkout"
   - "order"
 created: "2026-07-21T00:00:00+00:00"
-timestamp: "2026-07-21T00:00:00+00:00"
+timestamp: "2026-07-28T00:00:00+00:00"
 id: "FLOW-0001"
 status: "active"
 owner: "product-engineering-and-qa"
@@ -35,7 +35,15 @@ actors:
 - The shopper's browser has a checkout identifier for a non-empty checkout whose product variants
   remain available and sufficiently stocked.
 - The active commerce channel can supply the required countries and delivery methods.
-- The Stripe payment application is installed and configured for the active channel.
+- The Stripe payment application is installed and configured for the active channel. Offering saved
+  payment methods additionally requires an authenticated shopper and an installation granted
+  user-management permission, because the saved methods are served by the application through the
+  commerce backend's stored payment methods protocol.
+- The checkout is owned by the shopper who pays for it. A cart created while signed in is attached
+  to the customer as it is created, and a guest cart is attached when the shopper signs in. A
+  checkout that reaches payment unattached charges as a guest and is offered no saved methods.
+  The storefront cannot verify ownership by reading the checkout: the customer field on it is
+  permission-gated to staff or the owner, and the storefront reads checkouts anonymously.
 
 # Main flow
 
@@ -46,7 +54,9 @@ actors:
 3. The shopper confirms the billing address and chooses a saved payment method or mounts a new
    Payment Element.
 4. The storefront initializes a commerce transaction through the payment application and confirms
-   the corresponding PaymentIntent with the payment provider. The browser returns to the storefront
+   the corresponding PaymentIntent with the payment provider. A saved method is named by its
+   provider identifier only; the application resolves the owning provider customer itself and
+   refuses a method belonging to anyone else. The browser returns to the storefront
    payment-confirmation route.
 5. The confirmation route fetches uncached checkout state. It accepts an already paid checkout or
    processes the returned transaction state; while processing continues, the client polls again.
@@ -57,8 +67,8 @@ actors:
 
 # Failure paths
 
-- A missing checkout identifier redirects directly to the cart. An unreadable checkout also clears
-  the stale identifier before redirecting.
+- A missing checkout identifier redirects directly to the cart. An unreadable or empty checkout
+  also clears the stale identifier before redirecting.
 - Insufficient stock or an unavailable variant returns the shopper to the cart with the detected
   reason.
 - Contact, address, delivery, billing, and checkout-completion errors remain structured so the
@@ -87,3 +97,11 @@ confirmation, and the browser no longer carries the completed standard-checkout 
   [polling client](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/storefront/src/app/%5Blocale%5D/%28main%29/payment/confirmation/components/processing-info.tsx),
   and
   [checkout cleanup middleware](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/storefront/src/foundation/checkout/order-placed-cleanup-middleware.ts).
+- Checkout ownership is anchored at exact commit
+  [`ebc9e3b8044dc48532d9c32902c584a7589ea6e9`](https://github.com/mirumee/nimara-ecommerce/tree/ebc9e3b8044dc48532d9c32902c584a7589ea6e9)
+  in the
+  [cart creation use-case](https://github.com/mirumee/nimara-ecommerce/blob/ebc9e3b8044dc48532d9c32902c584a7589ea6e9/packages/infrastructure/src/use-cases/cart/lines-add-use-case.ts)
+  and
+  [sign-in action](https://github.com/mirumee/nimara-ecommerce/blob/ebc9e3b8044dc48532d9c32902c584a7589ea6e9/apps/storefront/src/foundation/auth/login.ts).
+  That commit is the tip of unmerged branch `feat/saleor-stored-payment-methods`; re-anchor on the
+  squash-merge commit once it lands.

@@ -1,9 +1,8 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-
 import type { Order } from "@nimara/domain/objects/Order";
 
+import { revalidateLocalizedPath } from "@/foundation/cache/cache";
 import { paths } from "@/foundation/routing/paths";
 import { fulfillmentService } from "@/services/fulfillment";
 
@@ -31,7 +30,7 @@ export async function returnProducts(data: FormSchema, order: Order) {
     input: { fulfillmentLines },
   });
 
-  revalidatePath(paths.account.orders.asPath());
+  await revalidateLocalizedPath(paths.account.orders.asPath());
 
   return resultFulfillment;
 }

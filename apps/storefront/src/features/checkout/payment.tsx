@@ -34,14 +34,14 @@ export const FormattedPayPal = ({
   return email;
 };
 
-export const renderPaymentMethod = ({
-  method: { type, paymentMethod },
-}: {
-  method: PaymentMethod;
-}) => {
-  if (type === "card") {
-    return <FormattedCreditCard {...paymentMethod} />;
+export const renderPaymentMethod = ({ method }: { method: PaymentMethod }) => {
+  if (method.type === "card") {
+    return <FormattedCreditCard {...method.paymentMethod} />;
   }
 
-  return <FormattedPayPal {...paymentMethod} />;
+  if (method.type === "paypal") {
+    return <FormattedPayPal {...method.paymentMethod} />;
+  }
+
+  return method.name;
 };

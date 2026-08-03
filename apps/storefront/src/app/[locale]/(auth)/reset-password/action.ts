@@ -1,7 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-
+import { revalidateLocalizedPath } from "@/foundation/cache/cache";
 import { paths } from "@/foundation/routing/paths";
 import { getStoreUrl, getStoreUrlWithPath } from "@/foundation/server";
 import { getAuthService } from "@/services/auth";
@@ -23,7 +22,7 @@ export const requestPasswordResetAction = async ({
     ),
   });
 
-  revalidatePath(paths.resetPassword.asPath());
+  await revalidateLocalizedPath(paths.resetPassword.asPath());
 
   return response;
 };

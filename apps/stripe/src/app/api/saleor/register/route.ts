@@ -1,9 +1,10 @@
-import { isError } from "lodash";
 import { z } from "zod";
 
-import { CONFIG } from "@/config";
 import { responseError } from "@/lib/api/util";
+import { isError } from "@/lib/error";
 import { installApp } from "@/lib/saleor/app/install";
+import { assertDomainAllowed } from "@/lib/saleor/config/context";
+import { SaleorDomainNotAllowedError } from "@/lib/saleor/error";
 import { saleorHeaders } from "@/lib/saleor/headers";
 import { getConfigProvider } from "@/providers/config";
 import { getJWKSProvider } from "@/providers/jwks";
@@ -40,19 +41,34 @@ export async function POST(request: Request) {
   const saleorDomain = headers.data["saleor-domain"];
 
   const logger = getLoggingProvider();
-  const jwksProvider = getJWKSProvider();
+
+  try {
+    assertDomainAllowed(saleorDomain);
+  } catch (err) {
+    logger.warning(`Rejected installation for ${saleorDomain}.`);
+
+    return responseError({
+      description: "Saleor domain is not allowed to install this app.",
+      context: "domain",
+      errors: isError(err, SaleorDomainNotAllowedError)
+        ? [{ message: err.message }]
+        : [],
+      status: 403,
+    });
+  }
+
+  const jwksProvider = getJWKSProvider({ saleorDomain });
   const saleorClient = getSaleorClient({
     saleorDomain,
     authToken: saleorAuthToken,
     logger,
   });
-  const configProvider = getConfigProvider({ saleorDomain });
+  const configProvider = getConfigProvider();
 
   logger.info(`Installing app for ${saleorDomain}.`);
 
   try {
     await installApp({
-      saleorUrl: CONFIG.SALEOR_URL,
       jwksProvider,
       saleorClient,
       saleorDomain,

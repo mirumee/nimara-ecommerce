@@ -1,0 +1,13 @@
+subscription StoredPaymentMethodDeleteRequestedSubscription {
+  event {
+    ... on StoredPaymentMethodDeleteRequested {
+      channel {
+        ...ChannelFragment
+      }
+      user {
+        ...UserFragment
+      }
+      paymentMethodId
+    }
+  }
+}

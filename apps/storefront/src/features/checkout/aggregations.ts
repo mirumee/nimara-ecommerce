@@ -143,6 +143,7 @@ export const aggregateMarketplaceCheckouts = (
       ? (checkouts.find((checkout) => checkout.deliveryMethod)
           ?.deliveryMethod ?? null)
       : null,
-    voucherCode: null,
+    voucherCode:
+      checkouts.find((checkout) => checkout.voucherCode)?.voucherCode ?? null,
   };
 };
