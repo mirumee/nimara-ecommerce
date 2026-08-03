@@ -9,7 +9,7 @@ export const POST =
   verifySaleorWebhookRoute<PaymentGatewayInitializeSessionSubscription>(
     async ({ event, headers }) => {
       const saleorDomain = headers["saleor-domain"];
-      const configProvider = getConfigProvider({ saleorDomain });
+      const configProvider = getConfigProvider();
       let gatewayConfig;
 
       try {

@@ -10,6 +10,10 @@ describe("util", () => {
       getJWKSProvider: vi.fn(() => ({})),
     }));
 
+    vi.mock("@/config", () => ({
+      CONFIG: { ALLOWED_DOMAINS: ["saleor.example.com"] },
+    }));
+
     vi.mock("../auth/jwt", () => ({
       verifyWebhookSignature: vi.fn(),
     }));
@@ -24,7 +28,8 @@ describe("util", () => {
       // given
       const data = {
         "saleor-signature": "valid_signature",
-        "saleor-api-url": "https://saleor.example.com",
+        "saleor-api-url": "https://saleor.example.com/graphql/",
+        "saleor-domain": "saleor.example.com",
       };
       const headers = new Headers(data);
 
@@ -66,11 +71,39 @@ describe("util", () => {
       expect(result.errors).toEqual(issues);
     });
 
+    it("returns error when the domain is outside the allowlist", async () => {
+      // given
+      const data = {
+        "saleor-signature": "valid_signature",
+        "saleor-api-url": "https://evil.example.com/graphql/",
+        "saleor-domain": "evil.example.com",
+      };
+      const headers = new Headers(data);
+
+      (saleorWebhookHeaders.safeParse as Mock).mockReturnValue({
+        success: true,
+        data,
+      });
+      (verifyWebhookSignature as Mock).mockClear();
+
+      // when
+      const result = await verifySaleorWebhookSignature({
+        headers,
+        payload: "test_payload",
+      });
+
+      // then
+      expect(result.headers).toBeNull();
+      expect(result.context).toEqual("domain");
+      expect(verifyWebhookSignature).not.toHaveBeenCalled();
+    });
+
     it("returns error when signature verification fails", async () => {
       // given
       const data = {
         "saleor-signature": "invalid_signature",
-        "saleor-api-url": "https://saleor.example.com",
+        "saleor-api-url": "https://saleor.example.com/graphql/",
+        "saleor-domain": "saleor.example.com",
       };
       const headers = new Headers(data);
 

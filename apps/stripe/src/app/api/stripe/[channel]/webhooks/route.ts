@@ -53,7 +53,7 @@ export const POST = stripeRouteErrorsHandler(
       return responseSuccess({ description: "Skipped." });
     }
 
-    const configProvider = getConfigProvider({ saleorDomain });
+    const configProvider = getConfigProvider();
     /**
      * The secret is resolved for the channel this endpoint serves (from the
      * URL), not the channel the unverified payload claims.

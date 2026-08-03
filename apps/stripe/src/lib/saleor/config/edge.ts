@@ -1,15 +1,16 @@
 import merge from "lodash/merge";
 
 import {
+  parseStoredConfig,
   paymentGatewayConfig,
   type SaleorAppConfig,
   saleorAppConfig,
+  type SaleorMultiTenantAppConfig,
 } from "./schema";
 import type {
   SaleorAppConfigProviderFactory,
   SaleorAppConfigProviderFactoryMethods,
 } from "./types";
-import { validateDomain } from "./util";
 
 const VERCEL_API_URL_BASE = `https://api.vercel.com/v1/edge-config`;
 
@@ -19,20 +20,13 @@ type ConfigProviderMethods = SaleorAppConfigProviderFactoryMethods<Config>;
 export const SaleorEdgeConfigProvider: SaleorAppConfigProviderFactory<
   {
     configKey: string;
-    saleorDomain: string;
     vercelAccessToken: string;
     vercelEdgeDatabaseId: string;
     vercelTeamId: string;
   },
   Config
-> = ({
-  vercelEdgeDatabaseId,
-  vercelAccessToken,
-  configKey,
-  vercelTeamId,
-  saleorDomain,
-}) => {
-  const __extractData = async (): Promise<SaleorAppConfig | null> => {
+> = ({ vercelEdgeDatabaseId, vercelAccessToken, configKey, vercelTeamId }) => {
+  const __extractData = async (): Promise<SaleorMultiTenantAppConfig> => {
     const result = await fetch(
       `${VERCEL_API_URL_BASE}/${vercelEdgeDatabaseId}/item/${configKey}?teamId=${vercelTeamId}`,
       {
@@ -43,16 +37,16 @@ export const SaleorEdgeConfigProvider: SaleorAppConfigProviderFactory<
 
     if (result.ok) {
       if (result.status === 204) {
-        return null;
+        return {};
       }
 
       const data = (await result.json()).value;
 
       if (data) {
-        return saleorAppConfig.parse(data);
+        return parseStoredConfig(data);
       }
 
-      return null;
+      return {};
     }
 
     throw new Error("Failed to fetch edge config.", {
@@ -60,7 +54,11 @@ export const SaleorEdgeConfigProvider: SaleorAppConfigProviderFactory<
     });
   };
 
-  const __upsertData = async ({ config }: { config: SaleorAppConfig }) => {
+  const __upsertData = async ({
+    configs,
+  }: {
+    configs: SaleorMultiTenantAppConfig;
+  }) => {
     const result = await fetch(
       `${VERCEL_API_URL_BASE}/${vercelEdgeDatabaseId}/items?teamId=${vercelTeamId}`,
       {
@@ -75,7 +73,7 @@ export const SaleorEdgeConfigProvider: SaleorAppConfigProviderFactory<
             {
               operation: "upsert",
               key: configKey,
-              value: config,
+              value: configs,
             },
           ],
         }),
@@ -92,63 +90,51 @@ export const SaleorEdgeConfigProvider: SaleorAppConfigProviderFactory<
   const getBySaleorAppId: ConfigProviderMethods["getBySaleorAppId"] = async ({
     saleorAppId,
   }) => {
-    const data = await __extractData();
+    const configs = await __extractData();
 
-    if (data && data.saleorAppId === saleorAppId) {
-      return data;
-    }
-
-    return null;
+    return (
+      Object.values(configs).find(
+        (config) => config.saleorAppId === saleorAppId,
+      ) ?? null
+    );
   };
 
   const getBySaleorDomain: ConfigProviderMethods["getBySaleorDomain"] = async ({
     saleorDomain,
   }) => {
-    validateDomain({
-      saleorDomain,
-      allowedSaleorDomain: saleorDomain,
-    });
+    const configs = await __extractData();
 
-    return __extractData();
+    return configs[saleorDomain] ?? null;
   };
 
   const createOrUpdate: ConfigProviderMethods["createOrUpdate"] = async (
     opts,
   ) => {
-    validateDomain({
-      saleorDomain: opts.saleorDomain,
-      allowedSaleorDomain: saleorDomain,
+    const configs = await __extractData();
+    const current = configs[opts.saleorDomain];
+    const config = saleorAppConfig.parse(
+      current
+        ? {
+            ...opts,
+            paymentGatewayConfig: merge(
+              current.paymentGatewayConfig,
+              opts.paymentGatewayConfig,
+            ),
+          }
+        : opts,
+    );
+
+    await __upsertData({
+      configs: { ...configs, [opts.saleorDomain]: config },
     });
-
-    let config = await getBySaleorDomain({ saleorDomain: opts.saleorDomain });
-
-    if (config) {
-      config = saleorAppConfig.parse({
-        authToken: opts.authToken,
-        saleorAppId: opts.saleorAppId,
-        saleorDomain: opts.saleorDomain,
-        paymentGatewayConfig: merge(
-          config.paymentGatewayConfig,
-          opts.paymentGatewayConfig,
-        ),
-      });
-    } else {
-      config = saleorAppConfig.parse(opts);
-    }
-
-    await __upsertData({ config });
 
     return config;
   };
 
   const updatePaymentGatewayConfig: ConfigProviderMethods["updatePaymentGatewayConfig"] =
     async ({ saleorDomain, data }) => {
-      validateDomain({
-        saleorDomain: saleorDomain,
-        allowedSaleorDomain: saleorDomain,
-      });
-
-      const config = await getBySaleorDomain({ saleorDomain: saleorDomain });
+      const configs = await __extractData();
+      const config = configs[saleorDomain];
 
       if (!config) {
         throw new Error(`Missing config for ${saleorDomain} domain.`);
@@ -156,33 +142,26 @@ export const SaleorEdgeConfigProvider: SaleorAppConfigProviderFactory<
 
       config.paymentGatewayConfig = paymentGatewayConfig.parse(data);
 
-      await __upsertData({ config });
+      await __upsertData({ configs: { ...configs, [saleorDomain]: config } });
 
-      return data;
+      return config.paymentGatewayConfig;
     };
 
   const getPaymentGatewayConfigForChannel: ConfigProviderMethods["getPaymentGatewayConfigForChannel"] =
     async ({ saleorDomain, channelSlug }) => {
-      validateDomain({
-        saleorDomain: saleorDomain,
-        allowedSaleorDomain: saleorDomain,
-      });
-
-      const config = await getBySaleorDomain({ saleorDomain: saleorDomain });
+      const config = await getBySaleorDomain({ saleorDomain });
 
       if (!config) {
-        throw new Error(
-          `Missing config for ${saleorDomain} - ${channelSlug}..`,
-        );
+        throw new Error(`Missing config for ${saleorDomain} domain.`);
       }
 
-      const paymentGatewayConfig = config["paymentGatewayConfig"][channelSlug];
+      const gatewayConfig = config.paymentGatewayConfig[channelSlug];
 
-      if (!paymentGatewayConfig) {
+      if (!gatewayConfig) {
         throw new Error(`Missing config for ${saleorDomain} - ${channelSlug}.`);
       }
 
-      return paymentGatewayConfig;
+      return gatewayConfig;
     };
 
   return {
