@@ -40,6 +40,8 @@
     "test": "turbo run test",
     "test:watch": "turbo run test:watch",
     "test:e2e": "turbo run test:e2e",
+    "test:codecept": "pnpm --filter automated-tests test:codecept",
+    "test:codecept:def": "pnpm --filter automated-tests test:codecept:def",
     "prepare": "husky",
     "format": "pnpm prettier --write '**/*.{js,ts,tsx,json,md}'",
     "format:check": "pnpm prettier --check '**/*.{js,ts,tsx,json,md}'",
