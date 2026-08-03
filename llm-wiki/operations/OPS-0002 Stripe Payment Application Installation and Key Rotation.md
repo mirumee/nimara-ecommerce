@@ -175,10 +175,16 @@ requested permissions change.
   [webhook rotation utility](https://github.com/mirumee/nimara-ecommerce/blob/e0dee7b3baf55684917217e69533964bb0bbb499/apps/stripe/src/lib/stripe/webhooks/util.ts).
   That commit is the squash-merge of
   [PR 741](https://github.com/mirumee/nimara-ecommerce/pull/741) on `main`.
-- **Pending change.** The endpoint-per-account arrangement, the endpoint address carrying the Saleor
-  domain, the re-save required to retire per-channel endpoints, and the shared-account
-  acknowledgement behaviour are not yet committed. They are read from the working tree at
-  `apps/stripe/src/app/api/stripe/webhooks/[saleorDomain]/route.ts`,
-  `apps/stripe/src/lib/stripe/webhooks/util.ts`, `apps/stripe/src/lib/stripe/const.ts`, and
-  `apps/stripe/src/app/app/actions/save-data-action.tsx`, and carry no commit permalink until that
-  work lands.
+- The endpoint-per-account arrangement, the endpoint address carrying the Saleor domain, the re-save
+  required to retire per-channel endpoints, and the shared-account acknowledgement behaviour are
+  anchored at exact commit
+  [`75be94ef01917a6952c1c32e9dd9da8577402d5f`](https://github.com/mirumee/nimara-ecommerce/tree/75be94ef01917a6952c1c32e9dd9da8577402d5f)
+  in the
+  [signed provider event reporter](https://github.com/mirumee/nimara-ecommerce/blob/75be94ef01917a6952c1c32e9dd9da8577402d5f/apps/stripe/src/app/api/stripe/webhooks/%5BsaleorDomain%5D/route.ts),
+  [webhook rotation utility](https://github.com/mirumee/nimara-ecommerce/blob/75be94ef01917a6952c1c32e9dd9da8577402d5f/apps/stripe/src/lib/stripe/webhooks/util.ts),
+  [endpoint address helper](https://github.com/mirumee/nimara-ecommerce/blob/75be94ef01917a6952c1c32e9dd9da8577402d5f/apps/stripe/src/lib/stripe/const.ts),
+  and
+  [configuration save action](https://github.com/mirumee/nimara-ecommerce/blob/75be94ef01917a6952c1c32e9dd9da8577402d5f/apps/stripe/src/app/app/actions/save-data-action.tsx).
+  That commit is the tip of unmerged branch `feat/consolidate-stripe-webhook-endpoints-per-domain`
+  ([PR 743](https://github.com/mirumee/nimara-ecommerce/pull/743)); re-anchor on the squash-merge
+  commit once it lands.

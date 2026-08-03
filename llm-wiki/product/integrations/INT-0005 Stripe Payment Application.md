@@ -214,9 +214,15 @@ payment methods protocol.
   That commit is the squash-merge of
   [PR 741](https://github.com/mirumee/nimara-ecommerce/pull/741) on `main`. See
   [IMP-0002 Stripe Payment Application Multi-Tenancy](../../tech/implementation/IMP-0002%20Stripe%20Payment%20Application%20Multi-Tenancy.md).
-- **Pending change.** One endpoint per provider account, the commerce domain in the endpoint
-  address, the channel taken from event metadata, and the skip for an event belonging to another
-  installation are not yet committed. They are read from the working tree at
-  `apps/stripe/src/app/api/stripe/webhooks/[saleorDomain]/route.ts`,
-  `apps/stripe/src/lib/stripe/webhooks/util.ts`, and `apps/stripe/src/lib/stripe/const.ts`, and carry
-  no commit permalink until that work lands.
+- One endpoint per provider account, the commerce domain in the endpoint address, the channel taken
+  from event metadata, and the skip for an event belonging to another installation are anchored at
+  exact commit
+  [`75be94ef01917a6952c1c32e9dd9da8577402d5f`](https://github.com/mirumee/nimara-ecommerce/tree/75be94ef01917a6952c1c32e9dd9da8577402d5f)
+  in the
+  [signed provider event reporter](https://github.com/mirumee/nimara-ecommerce/blob/75be94ef01917a6952c1c32e9dd9da8577402d5f/apps/stripe/src/app/api/stripe/webhooks/%5BsaleorDomain%5D/route.ts),
+  [webhook rotation utility](https://github.com/mirumee/nimara-ecommerce/blob/75be94ef01917a6952c1c32e9dd9da8577402d5f/apps/stripe/src/lib/stripe/webhooks/util.ts),
+  and
+  [endpoint address helper](https://github.com/mirumee/nimara-ecommerce/blob/75be94ef01917a6952c1c32e9dd9da8577402d5f/apps/stripe/src/lib/stripe/const.ts).
+  That commit is the tip of unmerged branch `feat/consolidate-stripe-webhook-endpoints-per-domain`
+  ([PR 743](https://github.com/mirumee/nimara-ecommerce/pull/743)); re-anchor on the squash-merge
+  commit once it lands.
