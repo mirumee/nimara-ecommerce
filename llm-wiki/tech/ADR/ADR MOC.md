@@ -28,7 +28,7 @@ is one standalone note following the [Michael Nygard template](https://github.co
 
 <!-- Newest last. Format: - ADR-NNNN Title - Status - one-line summary -->
 
-_No ADRs recorded yet._
+- [ADR-0001 Vouchers Are Disabled In Marketplace Checkout](ADR-0001%20Vouchers%20Are%20Disabled%20In%20Marketplace%20Checkout.md) - proposed - Promo codes are hidden in the storefront checkout when marketplace mode is enabled, because a per-vendor checkout split cannot express a cart-wide Saleor voucher.
 
 ## Related Notes
 
