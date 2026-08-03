@@ -4,16 +4,21 @@
   "private": true,
   "scripts": {
     "test:e2e": "playwright test",
+    "test:codecept": "codeceptjs run --steps",
+    "test:codecept:def": "codeceptjs def",
     "lint:staged": "lint-staged"
   },
   "devDependencies": {
     "@nimara/config": "workspace:*",
     "@playwright/test": "^1.59.1",
     "@types/node": "^24.12.4",
+    "codeceptjs": "4.1.0",
     "dotenv": "17.4.1",
     "eslint": "^8.57.0",
     "eslint-plugin-playwright": "^2.10.1",
-    "lint-staged": "^16.4.0"
+    "lint-staged": "^16.4.0",
+    "playwright": "1.59.1",
+    "tsx": "4.22.4"
   },
   "lint-staged": {
     "*.{js,cjs,ts,tsx}": "eslint --fix",

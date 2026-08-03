@@ -12,6 +12,9 @@ if (process.env.TEST_ENV_URL === undefined) {
  */
 const config = defineConfig({
   testDir: "./tests",
+  // Pinned so Playwright can never collect the CodeceptJS `*_test.ts` trial in
+  // `codecept/`. See docs/adr/0001-codeceptjs-spike.md.
+  testMatch: "**/*.spec.ts",
   timeout: 60 * 1000,
   expect: {
     timeout: 5 * 1000,

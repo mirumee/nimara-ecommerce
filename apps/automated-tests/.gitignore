@@ -40,6 +40,9 @@ next-env.d.ts
 /playwright-report/
 /playwright/.cache/
 
+# codeceptjs artifacts
+/output/
+
 .env*
 .flaskenv*
 !.env.project
