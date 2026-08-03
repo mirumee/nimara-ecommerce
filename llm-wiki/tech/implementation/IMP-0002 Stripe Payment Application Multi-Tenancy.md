@@ -38,7 +38,7 @@ code:
     - "apps/stripe/src/providers/"
     - "apps/stripe/src/app/api/saleor/register/route.ts"
     - "apps/stripe/src/app/api/saleor/webhooks/payment/"
-    - "apps/stripe/src/app/api/stripe/[channel]/webhooks/route.ts"
+    - "apps/stripe/src/app/api/stripe/webhooks/[saleorDomain]/route.ts"
     - "apps/stripe/src/app/app/actions/"
     - "apps/stripe/turbo.json"
   pull_requests:
@@ -101,6 +101,14 @@ being single-tenant:
   pinned suffix. This is recorded as expected behavior in the pattern tests.
 - All installations share a single stored value that is read, modified, and written whole, so
   concurrent configuration saves across installations are last-write-wins. No locking was added.
+- A follow-up replaced the per-channel webhook endpoints with one endpoint per provider account and
+  moved the installation into the endpoint address, as
+  [PR 743](https://github.com/mirumee/nimara-ecommerce/pull/743). Without it, two installations
+  sharing a provider account fail each other's deliveries permanently, because each endpoint signs
+  with its own secret. That work is open at the time of writing and carries its own record.
+- Provider accounts are distinguished by secret key rather than by account identity, so two keys
+  issued by one account produce two endpoints. That costs a redundant endpoint and never misroutes
+  an event.
 
 # Verification evidence
 

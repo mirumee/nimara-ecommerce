@@ -13,8 +13,8 @@ id: "IMP-0001"
 status: "in_progress"
 owner: "engineering"
 work_item:
-  id: "ebc9e3b8044dc48532d9c32902c584a7589ea6e9"
-  url: null
+  id: "736"
+  url: "https://github.com/mirumee/nimara-ecommerce/pull/736"
 relations:
   prds: []
   rfcs: []
@@ -35,7 +35,8 @@ code:
     - "apps/storefront/src/features/payment/"
     - "apps/storefront/src/app/[locale]/(main)/account/payment-methods/"
     - "apps/storefront/src/foundation/checkout/sections/payment/server.ts"
-  pull_requests: []
+  pull_requests:
+    - "https://github.com/mirumee/nimara-ecommerce/pull/736"
 verification:
   - criterion: "A stored method is mapped to the right gateway customer and cannot be reached by another shopper."
     tests:
@@ -74,8 +75,10 @@ Three consequences of that arrangement are load-bearing:
 - No ADR was filed for the move onto the stored payment methods protocol, by request. The
   current-state records describe the resulting contract; the rationale and the rejected
   alternatives have no durable home.
-- No pull request exists. `work_item.id` is the branch commit and `code.pull_requests` is empty,
-  which is why this record is `in_progress` rather than `implemented`.
+- The record stays `in_progress` after merge because browser verification of the checkout and
+  account surfaces is still incomplete, not because evidence is missing: the work landed as
+  [PR 736](https://github.com/mirumee/nimara-ecommerce/pull/736), squash-merged to `main` as
+  `f346b80465337bb5f7c5e900eb93748991dc9506`.
 - There is no migration for customers of the storefront-owned integration that preceded this
   work. A carried-over shopper is issued a new gateway customer and re-enters a card once.
 

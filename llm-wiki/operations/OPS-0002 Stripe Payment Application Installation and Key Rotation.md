@@ -74,11 +74,13 @@ requested permissions change.
 4. Open the installed application from Saleor so its signed application context can load the
    configuration form. Configure the Stripe public and secret key for each channel.
 5. Save once. The save action verifies the Saleor JWT, removes Stripe webhook endpoints created by
-   the same application issuer, environment, and Saleor domain, creates one new channel-specific
-   endpoint, records its signing secret, and then persists the updated channel configuration.
-   Endpoints belonging to another Saleor domain are left alone, so two installations may share one
-   Stripe account. Avoid saving configuration for two installations at the same moment: all
-   installations share one stored value and the later write wins.
+   the same application issuer, environment, and Saleor domain, creates one new endpoint per
+   distinct Stripe secret key, records its signing secret against every channel using that key, and
+   then persists the updated channel configuration. Channels sharing a key share one endpoint, so
+   the endpoint count follows Stripe accounts rather than channels. Endpoints belonging to another
+   Saleor domain are left alone, so two installations may share one Stripe account. Avoid saving
+   configuration for two installations at the same moment: all installations share one stored value
+   and the later write wins.
 6. Set the storefront's `NEXT_PUBLIC_PAYMENT_APP_ID` to the installed application ID and supply the
    storefront payment keys required by its checkout configuration. Rebuild and deploy the
    storefront because the public application ID is build-time configuration.
@@ -90,8 +92,10 @@ requested permissions change.
 
 - Reload the embedded configuration and confirm each expected Saleor channel has the correct
   currency and masked key state.
-- In Stripe, verify exactly one intended endpoint per channel and environment at
-  `/api/stripe/{channel}/webhooks`, with the PaymentIntent and refund events selected by the app.
+- In Stripe, verify exactly one intended endpoint per account and environment at
+  `/api/stripe/webhooks/{saleor-domain}`, with the PaymentIntent and refund events selected by the
+  app. Channels sharing a secret key share that endpoint; a leftover endpoint addressed per channel
+  belongs to a release before this one and should be retired.
 - Run a low-value test checkout. Verify gateway initialization returns the public key, transaction
   initialization creates a PaymentIntent, the Stripe event is accepted, Saleor transaction state
   advances, and the storefront reaches a real order confirmation.
@@ -117,6 +121,13 @@ requested permissions change.
   rather than repeatedly saving blind.
 - A secret-key change to another Stripe account cannot remove endpoints from the former account;
   inspect and retire those endpoints explicitly after the new account is verified.
+- Endpoints registered before the endpoint address changed still point at the per-channel address
+  and answer 404. Saving configuration once per installation replaces them. Until that is done the
+  provider retries and transaction reports do not arrive, so plan the re-save with the release
+  rather than after an incident.
+- Two installations sharing one Stripe account each receive the other's events, and each
+  acknowledges what is not addressed to it. Deliveries recorded as succeeded on both endpoints are
+  therefore expected, and are not evidence of double processing.
 - Roll back a rotation by restoring still-valid prior keys through the signed application form,
   saving once, and verifying the newly re-created endpoint before re-enabling checkout. If the old
   secret has already been revoked, issue a fresh key pair instead of restoring it.
@@ -153,15 +164,27 @@ requested permissions change.
   squash-merge commit once it lands.
 - The allowlist precondition, the refused-installation step, the domain-scoped endpoint replacement,
   and the rollback constraint are anchored at exact commit
-  [`9e9f0ad1b0d10ea2f2a0773a2736d9344843df2f`](https://github.com/mirumee/nimara-ecommerce/tree/9e9f0ad1b0d10ea2f2a0773a2736d9344843df2f)
+  [`e0dee7b3baf55684917217e69533964bb0bbb499`](https://github.com/mirumee/nimara-ecommerce/tree/e0dee7b3baf55684917217e69533964bb0bbb499)
   in the
-  [runtime configuration schema](https://github.com/mirumee/nimara-ecommerce/blob/9e9f0ad1b0d10ea2f2a0773a2736d9344843df2f/apps/stripe/src/config.ts),
-  [installation handler](https://github.com/mirumee/nimara-ecommerce/blob/9e9f0ad1b0d10ea2f2a0773a2736d9344843df2f/apps/stripe/src/app/api/saleor/register/route.ts),
-  [tenant resolution](https://github.com/mirumee/nimara-ecommerce/blob/9e9f0ad1b0d10ea2f2a0773a2736d9344843df2f/apps/stripe/src/lib/saleor/config/context.ts),
-  [stored configuration provider](https://github.com/mirumee/nimara-ecommerce/blob/9e9f0ad1b0d10ea2f2a0773a2736d9344843df2f/apps/stripe/src/lib/saleor/config/edge.ts),
-  [configuration save action](https://github.com/mirumee/nimara-ecommerce/blob/9e9f0ad1b0d10ea2f2a0773a2736d9344843df2f/apps/stripe/src/app/app/actions/save-data-action.tsx),
+  [runtime configuration schema](https://github.com/mirumee/nimara-ecommerce/blob/e0dee7b3baf55684917217e69533964bb0bbb499/apps/stripe/src/config.ts),
+  [installation handler](https://github.com/mirumee/nimara-ecommerce/blob/e0dee7b3baf55684917217e69533964bb0bbb499/apps/stripe/src/app/api/saleor/register/route.ts),
+  [tenant resolution](https://github.com/mirumee/nimara-ecommerce/blob/e0dee7b3baf55684917217e69533964bb0bbb499/apps/stripe/src/lib/saleor/config/context.ts),
+  [stored configuration provider](https://github.com/mirumee/nimara-ecommerce/blob/e0dee7b3baf55684917217e69533964bb0bbb499/apps/stripe/src/lib/saleor/config/edge.ts),
+  [configuration save action](https://github.com/mirumee/nimara-ecommerce/blob/e0dee7b3baf55684917217e69533964bb0bbb499/apps/stripe/src/app/app/actions/save-data-action.tsx),
   and
-  [webhook rotation utility](https://github.com/mirumee/nimara-ecommerce/blob/9e9f0ad1b0d10ea2f2a0773a2736d9344843df2f/apps/stripe/src/lib/stripe/webhooks/util.ts).
-  That commit is the tip of unmerged branch `feat/saleor-stripe-app-multi-tenant`
-  ([PR 741](https://github.com/mirumee/nimara-ecommerce/pull/741)); re-anchor on the squash-merge
+  [webhook rotation utility](https://github.com/mirumee/nimara-ecommerce/blob/e0dee7b3baf55684917217e69533964bb0bbb499/apps/stripe/src/lib/stripe/webhooks/util.ts).
+  That commit is the squash-merge of
+  [PR 741](https://github.com/mirumee/nimara-ecommerce/pull/741) on `main`.
+- The endpoint-per-account arrangement, the endpoint address carrying the Saleor domain, the re-save
+  required to retire per-channel endpoints, and the shared-account acknowledgement behaviour are
+  anchored at exact commit
+  [`75be94ef01917a6952c1c32e9dd9da8577402d5f`](https://github.com/mirumee/nimara-ecommerce/tree/75be94ef01917a6952c1c32e9dd9da8577402d5f)
+  in the
+  [signed provider event reporter](https://github.com/mirumee/nimara-ecommerce/blob/75be94ef01917a6952c1c32e9dd9da8577402d5f/apps/stripe/src/app/api/stripe/webhooks/%5BsaleorDomain%5D/route.ts),
+  [webhook rotation utility](https://github.com/mirumee/nimara-ecommerce/blob/75be94ef01917a6952c1c32e9dd9da8577402d5f/apps/stripe/src/lib/stripe/webhooks/util.ts),
+  [endpoint address helper](https://github.com/mirumee/nimara-ecommerce/blob/75be94ef01917a6952c1c32e9dd9da8577402d5f/apps/stripe/src/lib/stripe/const.ts),
+  and
+  [configuration save action](https://github.com/mirumee/nimara-ecommerce/blob/75be94ef01917a6952c1c32e9dd9da8577402d5f/apps/stripe/src/app/app/actions/save-data-action.tsx).
+  That commit is the tip of unmerged branch `feat/consolidate-stripe-webhook-endpoints-per-domain`
+  ([PR 743](https://github.com/mirumee/nimara-ecommerce/pull/743)); re-anchor on the squash-merge
   commit once it lands.

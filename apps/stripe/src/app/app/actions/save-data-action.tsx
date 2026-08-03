@@ -6,7 +6,7 @@ import { isError } from "@/lib/error";
 import { resolveDashboardTenant } from "@/lib/saleor/config/context";
 import { type SaleorAppConfig } from "@/lib/saleor/config/schema";
 import { SaleorDomainNotAllowedError } from "@/lib/saleor/error";
-import { installWebhook, uninstallWebhooks } from "@/lib/stripe/webhooks/util";
+import { installWebhooks, uninstallWebhooks } from "@/lib/stripe/webhooks/util";
 import { getConfigProvider } from "@/providers/config";
 import { getLoggingProvider } from "@/providers/logging";
 
@@ -57,29 +57,19 @@ export const saveDataAction = async ({
 
   if (appUrl) {
     // Remove old webhooks in case of configuration change.
-    await Promise.all(
-      Object.values(updatedPaymentGatewayConfig).map(async (config) =>
-        uninstallWebhooks({
-          configuration: config,
-          appUrl,
-          logger,
-          saleorDomain,
-        }),
-      ),
-    );
-    // Install new webhooks.
-    await Promise.all(
-      Object.entries(updatedPaymentGatewayConfig).map(
-        async ([channel, config]) =>
-          installWebhook({
-            channel,
-            configuration: config,
-            appUrl,
-            saleorDomain,
-            logger,
-          }),
-      ),
-    );
+    await uninstallWebhooks({
+      paymentGatewayConfig: updatedPaymentGatewayConfig,
+      appUrl,
+      logger,
+      saleorDomain,
+    });
+    // Install one webhook per Stripe account, shared by its channels.
+    await installWebhooks({
+      paymentGatewayConfig: updatedPaymentGatewayConfig,
+      appUrl,
+      logger,
+      saleorDomain,
+    });
   }
 
   try {
