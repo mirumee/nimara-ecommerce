@@ -1,0 +1,14 @@
+subscription PaymentMethodInitializeTokenizationSessionSubscription {
+  event {
+    ... on PaymentMethodInitializeTokenizationSession {
+      channel {
+        ...ChannelFragment
+      }
+      user {
+        ...UserFragment
+      }
+      paymentFlowToSupport
+      data
+    }
+  }
+}

@@ -5,13 +5,19 @@ export type ChannelFragment = { id: string, slug: string, name: string, currency
 
 export type CheckoutSourceObjectFragment_Checkout_channel_Channel = { id: string, slug: string, name: string, currencyCode: string };
 
+export type CheckoutSourceObjectFragment_Checkout_user_User_privateMetadata_MetadataItem = { key: string, value: string };
+
+export type CheckoutSourceObjectFragment_Checkout_user_User = { id: string, email: string, firstName: string, lastName: string, privateMetadata: Array<CheckoutSourceObjectFragment_Checkout_user_User_privateMetadata_MetadataItem> };
+
 export type CheckoutSourceObjectFragment_Checkout_total_TaxedMoney_gross_Money = { currency: string, amount: number };
 
 export type CheckoutSourceObjectFragment_Checkout_total_TaxedMoney = { gross: CheckoutSourceObjectFragment_Checkout_total_TaxedMoney_gross_Money };
 
-export type CheckoutSourceObjectFragment = { id: string, languageCode: Types.LanguageCodeEnum, userEmail: string | null, channel: CheckoutSourceObjectFragment_Checkout_channel_Channel, total: CheckoutSourceObjectFragment_Checkout_total_TaxedMoney };
+export type CheckoutSourceObjectFragment = { id: string, languageCode: Types.LanguageCodeEnum, userEmail: string | null, channel: CheckoutSourceObjectFragment_Checkout_channel_Channel, user: CheckoutSourceObjectFragment_Checkout_user_User | null, total: CheckoutSourceObjectFragment_Checkout_total_TaxedMoney };
 
 export type MoneyFragment = { currency: string, amount: number };
+
+export type OrderSourceObjectFragment_Order_user_User = { id: string, email: string, firstName: string, lastName: string, privateMetadata: Array<CheckoutSourceObjectFragment_Checkout_user_User_privateMetadata_MetadataItem> };
 
 export type OrderSourceObjectFragment_Order_channel_Channel = { id: string, slug: string, name: string, currencyCode: string };
 
@@ -19,11 +25,11 @@ export type OrderSourceObjectFragment_Order_total_TaxedMoney_gross_Money = { cur
 
 export type OrderSourceObjectFragment_Order_total_TaxedMoney = { gross: OrderSourceObjectFragment_Order_total_TaxedMoney_gross_Money };
 
-export type OrderSourceObjectFragment = { id: string, languageCodeEnum: Types.LanguageCodeEnum, userEmail: string | null, channel: OrderSourceObjectFragment_Order_channel_Channel, total: OrderSourceObjectFragment_Order_total_TaxedMoney };
+export type OrderSourceObjectFragment = { id: string, languageCodeEnum: Types.LanguageCodeEnum, userEmail: string | null, user: OrderSourceObjectFragment_Order_user_User | null, channel: OrderSourceObjectFragment_Order_channel_Channel, total: OrderSourceObjectFragment_Order_total_TaxedMoney };
 
-export type OrderOrCheckoutSourceObjectFragment_Checkout = { id: string, languageCode: Types.LanguageCodeEnum, userEmail: string | null, channel: CheckoutSourceObjectFragment_Checkout_channel_Channel, total: CheckoutSourceObjectFragment_Checkout_total_TaxedMoney };
+export type OrderOrCheckoutSourceObjectFragment_Checkout = { id: string, languageCode: Types.LanguageCodeEnum, userEmail: string | null, channel: CheckoutSourceObjectFragment_Checkout_channel_Channel, user: CheckoutSourceObjectFragment_Checkout_user_User | null, total: CheckoutSourceObjectFragment_Checkout_total_TaxedMoney };
 
-export type OrderOrCheckoutSourceObjectFragment_Order = { id: string, languageCodeEnum: Types.LanguageCodeEnum, userEmail: string | null, channel: OrderSourceObjectFragment_Order_channel_Channel, total: OrderSourceObjectFragment_Order_total_TaxedMoney };
+export type OrderOrCheckoutSourceObjectFragment_Order = { id: string, languageCodeEnum: Types.LanguageCodeEnum, userEmail: string | null, user: OrderSourceObjectFragment_Order_user_User | null, channel: OrderSourceObjectFragment_Order_channel_Channel, total: OrderSourceObjectFragment_Order_total_TaxedMoney };
 
 export type OrderOrCheckoutSourceObjectFragment =
   | OrderOrCheckoutSourceObjectFragment_Checkout
@@ -49,6 +55,8 @@ export type TransactionActionFragment = { actionType: Types.TransactionActionEnu
 export type TransactionItemFragment = { id: string, pspReference: string };
 
 export type TransactionProcessActionFragment = { amount: number, currency: string, actionType: Types.TransactionFlowStrategyEnum };
+
+export type UserFragment = { id: string, email: string, firstName: string, lastName: string, privateMetadata: Array<CheckoutSourceObjectFragment_Checkout_user_User_privateMetadata_MetadataItem> };
 
 export class TypedDocumentString<TResult, TVariables>
   extends String
@@ -89,6 +97,9 @@ fragment CheckoutSourceObjectFragment on Checkout {
   channel {
     ...ChannelFragment
   }
+  user {
+    ...UserFragment
+  }
   userEmail: email
   total: totalPrice {
     gross {
@@ -103,6 +114,9 @@ fragment MoneyFragment on Money {
 fragment OrderSourceObjectFragment on Order {
   id
   languageCodeEnum
+  user {
+    ...UserFragment
+  }
   userEmail
   channel {
     ...ChannelFragment
@@ -111,6 +125,16 @@ fragment OrderSourceObjectFragment on Order {
     gross {
       ...MoneyFragment
     }
+  }
+}
+fragment UserFragment on User {
+  id
+  email
+  firstName
+  lastName
+  privateMetadata {
+    key
+    value
   }
 }`, {"fragmentName":"OrderOrCheckoutSourceObjectFragment"}) as unknown as TypedDocumentString<OrderOrCheckoutSourceObjectFragment, unknown>;
 export const PaymentGatewayRecipientFragment = new TypedDocumentString(`

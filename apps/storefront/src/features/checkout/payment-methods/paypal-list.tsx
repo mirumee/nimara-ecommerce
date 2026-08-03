@@ -11,8 +11,8 @@ export const PaypalList = ({ items }: { items: PaypalPaymentMethod[] }) => {
     <div>
       <p className="mb-6 text-stone-500">{t("payment.paypal-accounts")}</p>
       <div>
-        {items.map(({ id, paymentMethod }) => (
-          <MethodFormItem key={id} value={id}>
+        {items.map(({ id, paymentMethod, token }) => (
+          <MethodFormItem key={id} value={token}>
             <span>{paymentMethod.email}</span>
           </MethodFormItem>
         ))}

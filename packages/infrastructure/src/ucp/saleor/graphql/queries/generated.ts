@@ -599,6 +599,9 @@ fragment UCPCheckoutSessionFragment on Checkout {
 fragment CheckoutFragment on Checkout {
   id
   email
+  channel {
+    slug
+  }
   displayGrossPrices
   discount {
     amount

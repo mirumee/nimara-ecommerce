@@ -6,10 +6,7 @@ import type { CategoryService } from "@nimara/infrastructure/category/types";
 import type { CheckoutService } from "@nimara/infrastructure/checkout/types";
 import type { CollectionService } from "@nimara/infrastructure/collection/types";
 import type { MarketplaceService } from "@nimara/infrastructure/marketplace/types";
-import type {
-  LegacyStripePaymentService,
-  StripePaymentService,
-} from "@nimara/infrastructure/payment/providers";
+import type { StripePaymentService } from "@nimara/infrastructure/payment/stripe/types";
 import type { StoreService } from "@nimara/infrastructure/store/types";
 import type { CMSMenuService } from "@nimara/infrastructure/use-cases/cms-menu/types";
 import type { CMSPageService } from "@nimara/infrastructure/use-cases/cms-page/types";
@@ -35,7 +32,9 @@ export const isSaleorConfigured = Boolean(
 const NOT_CONFIGURED_MESSAGE =
   "Saleor API is not configured. Set NEXT_PUBLIC_SALEOR_API_URL to enable this feature.";
 
-/** Builds an error Result used by mutations / fetches that have no empty payload. */
+/**
+ * Builds an error Result used by mutations / fetches that have no empty payload.
+ */
 const notConfigured = (code: AppErrorCode) =>
   err([{ code, message: NOT_CONFIGURED_MESSAGE }]);
 
@@ -134,30 +133,15 @@ export const emptyMarketplaceService = {
 } satisfies MarketplaceService;
 
 export const emptyPaymentService = {
-  execute: async () => notConfigured("PAYMENT_EXECUTE_ERROR"),
-  initializeGateway: async () =>
+  gatewayInitialize: async () =>
     notConfigured("PAYMENT_GATEWAY_INITIALIZE_ERROR"),
-  initializeTransaction: async () =>
-    notConfigured("TRANSACTION_INITIALIZE_ERROR"),
-  process: async () => notConfigured("PAYMENT_PROCESSING_ERROR"),
+  methodDelete: async () => notConfigured("PAYMENT_METHOD_DELETE_ERROR"),
+  methodExecute: async () => notConfigured("PAYMENT_METHOD_SAVE_ERROR"),
+  methodInitialize: async () =>
+    notConfigured("PAYMENT_METHOD_INITIALIZE_ERROR"),
+  methodList: async () => ok([]),
+  methodProcess: async () => notConfigured("PAYMENT_METHOD_PROCESS_ERROR"),
+  paymentExecute: async () => notConfigured("PAYMENT_EXECUTE_ERROR"),
+  paymentInitialize: async () => notConfigured("TRANSACTION_INITIALIZE_ERROR"),
+  paymentProcess: async () => notConfigured("PAYMENT_PROCESSING_ERROR"),
 } satisfies StripePaymentService;
-
-export const emptyLegacyPaymentService = {
-  customerGet: async () => notConfigured("CHECKOUT_GATEWAY_CUSTOMER_GET_ERROR"),
-  customerPaymentMethodDelete: async () =>
-    notConfigured("PAYMENT_METHOD_NOT_FOUND_ERROR"),
-  customerPaymentMethodsList: async () => ok([]),
-  // Not Result-based by contract — returns a detached element handle.
-  paymentElementCreate: async () => ({
-    mount: () => {},
-    unmount: () => {},
-  }),
-  // Void by contract — nothing to initialize without a gateway.
-  paymentInitialize: async () => {},
-  paymentMethodSaveExecute: async () =>
-    notConfigured("PAYMENT_METHOD_SAVE_ERROR"),
-  paymentMethodSaveInitialize: async () =>
-    notConfigured("PAYMENT_METHOD_SAVE_ERROR"),
-  paymentMethodSaveProcess: async () =>
-    notConfigured("PAYMENT_METHOD_SAVE_ERROR"),
-} satisfies LegacyStripePaymentService;

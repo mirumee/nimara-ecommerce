@@ -4,6 +4,9 @@ fragment CheckoutSourceObjectFragment on Checkout {
   channel {
     ...ChannelFragment
   }
+  user {
+    ...UserFragment
+  }
   userEmail: email
   total: totalPrice {
     gross {

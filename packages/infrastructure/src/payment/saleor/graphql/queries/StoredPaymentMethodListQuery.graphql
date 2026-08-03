@@ -1,0 +1,18 @@
+query StoredPaymentMethodListQuery($channel: String!) {
+  me {
+    storedPaymentMethods(channel: $channel) {
+      id
+      paymentMethodId
+      name
+      type
+      data
+      creditCardInfo {
+        brand
+        firstDigits
+        lastDigits
+        expMonth
+        expYear
+      }
+    }
+  }
+}

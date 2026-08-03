@@ -1,11 +1,12 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useTheme } from "next-themes";
-import { type ReactNode, useEffect, useState } from "react";
+import { type ComponentProps, useEffect, useRef, useState } from "react";
 
+import { type AppErrorCode } from "@nimara/domain/objects/Error";
 import { cn } from "@nimara/foundation/lib/cn";
-import { usePathname } from "@nimara/i18n/routing";
+import { usePathname, useRouter } from "@nimara/i18n/routing";
+import { QUERY_PARAMS as PAYMENT_QUERY_PARAMS } from "@nimara/infrastructure/payment/consts";
 import { Button } from "@nimara/ui/components/button";
 import { Checkbox } from "@nimara/ui/components/checkbox";
 import {
@@ -15,84 +16,148 @@ import {
   DialogTitle,
 } from "@nimara/ui/components/dialog";
 import { Label } from "@nimara/ui/components/label";
-import { Spinner } from "@nimara/ui/components/spinner";
 
-import { PAYMENT_ELEMENT_ID } from "@/features/checkout/consts";
+import { SetupElement } from "@/features/payment/components/setup-element";
+import { type PaymentElementHandle } from "@/features/payment/types";
 import { useCurrentRegion } from "@/foundation/regions";
 import { getServiceRegistry } from "@/services/registry";
 
+import {
+  paymentMethodInitializeAction,
+  paymentMethodProcessAction,
+} from "../actions";
+
+type SetupElementProps = ComponentProps<typeof SetupElement>;
+
 export const PaymentMethodAddModal = ({
-  secret,
   storeUrl,
   onClose,
 }: {
   onClose: () => void;
-  secret: string;
   storeUrl: string;
 }) => {
   const t = useTranslations();
   const pathname = usePathname();
+  const router = useRouter();
   const region = useCurrentRegion();
-
-  const redirectUrl = `${storeUrl}${pathname}`;
 
   const [isDefault, setIsDefault] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [errors, setErrors] = useState<(string | ReactNode)[]>([]);
-  const { resolvedTheme } = useTheme();
+  const [errors, setErrors] = useState<AppErrorCode[]>([]);
+  const [gateway, setGateway] =
+    useState<SetupElementProps["initializeData"]>(undefined);
+  const [methodSession, setMethodSession] =
+    useState<SetupElementProps["methodSession"]>(undefined);
+
+  const paymentElementRef = useRef<unknown>(null);
 
   const isLoading = !isMounted || isProcessing;
 
-  const isDark = resolvedTheme === "dark";
-
   const handlePaymentSave = async () => {
-    setIsProcessing(true);
+    const paymentElement = paymentElementRef.current;
 
-    const services = await getServiceRegistry();
-    const paymentService = await services.getLegacyPaymentService();
-
-    const result = await paymentService.paymentMethodSaveExecute({
-      redirectUrl,
-      saveForFutureUse: isDefault,
-    });
-
-    if (!result.ok) {
-      setErrors(result.errors.map(({ code }) => code));
+    if (!paymentElement || !gateway || !methodSession) {
+      return;
     }
 
-    setIsProcessing(false);
+    setIsProcessing(true);
+    setErrors([]);
+
+    const services = await getServiceRegistry();
+    const paymentService = await services.getPaymentService();
+
+    /**
+     * Carried through the provider redirect: the account page finishes the
+     * tokenization from these params.
+     */
+    const searchParams = new URLSearchParams({
+      [PAYMENT_QUERY_PARAMS.TOKENIZATION_ID]: methodSession.id,
+      [PAYMENT_QUERY_PARAMS.SET_AS_DEFAULT]: isDefault.toString(),
+    });
+    const returnUrl = new URL(
+      `${pathname}?${searchParams.toString()}`,
+      storeUrl,
+    );
+
+    const resultExecute = await paymentService.methodExecute({
+      initializeData: gateway,
+      methodSession,
+      paymentElement: paymentElement as PaymentElementHandle,
+      redirectUrl: returnUrl.toString(),
+    });
+
+    if (!resultExecute.ok) {
+      setErrors(resultExecute.errors.map(({ code }) => code));
+      setIsProcessing(false);
+
+      return;
+    }
+
+    const nextAction = resultExecute.data.nextAction;
+
+    if (nextAction) {
+      if (nextAction.redirectUrl) {
+        window.location.assign(nextAction.redirectUrl);
+
+        return;
+      }
+      throw new Error("Unhandled nextAction");
+    }
+
+    const resultProcess = await paymentMethodProcessAction({
+      id: methodSession.id,
+      setAsDefault: isDefault,
+    });
+
+    if (!resultProcess.ok) {
+      setErrors(resultProcess.errors.map(({ code }) => code));
+      setIsProcessing(false);
+
+      return;
+    }
+
+    router.refresh();
+    onClose();
   };
 
   useEffect(() => {
+    let isCancelled = false;
+
     void (async () => {
-      const services = await getServiceRegistry();
-      const paymentService = await services.getLegacyPaymentService();
+      const [resultInitialize, services] = await Promise.all([
+        paymentMethodInitializeAction(),
+        getServiceRegistry(),
+      ]);
 
-      await paymentService.paymentInitialize();
+      if (!resultInitialize.ok) {
+        setErrors(resultInitialize.errors.map(({ code }) => code));
 
-      const { mount } = await paymentService.paymentElementCreate({
-        locale: region.language.locale,
-        secret,
-        appearance: {
-          theme: isDark ? "night" : "flat",
-          variables: {
-            borderRadius: "5px",
-          },
-        },
-        options: {
-          layout: {
-            type: "accordion",
-            paymentMethodLogoPosition: "start",
-            defaultCollapsed: false,
-          },
-        },
+        return;
+      }
+
+      const paymentService = await services.getPaymentService();
+      const resultGateway = await paymentService.gatewayInitialize({
+        gatewayConfig: resultInitialize.data.gatewayConfig,
       });
 
-      mount(`#${PAYMENT_ELEMENT_ID}`);
+      if (!resultGateway.ok) {
+        setErrors(resultGateway.errors.map(({ code }) => code));
 
-      setIsMounted(true);
+        return;
+      }
+
+      if (isCancelled) {
+        return;
+      }
+
+      setGateway(resultGateway.data);
+      setMethodSession(resultInitialize.data);
     })();
+
+    return () => {
+      isCancelled = true;
+    };
   }, []);
 
   return (
@@ -106,13 +171,14 @@ export const PaymentMethodAddModal = ({
           </DialogTitle>
         </DialogHeader>
 
-        {!isMounted && (
-          <div className={cn("flex w-full justify-center py-16")}>
-            <Spinner />
-          </div>
-        )}
-
-        <div id={PAYMENT_ELEMENT_ID} className={cn({ hidden: !isMounted })} />
+        <SetupElement
+          initializeData={gateway}
+          isMounted={isMounted}
+          locale={region.language.locale}
+          methodSession={methodSession}
+          onReady={() => setIsMounted(true)}
+          ref={paymentElementRef}
+        />
 
         <Label className="flex items-center gap-2 text-sm leading-5">
           <Checkbox
@@ -123,9 +189,9 @@ export const PaymentMethodAddModal = ({
           {t("payment.set-as-default")}
         </Label>
 
-        {errors.map((message, i) => (
-          <p key={i} className="text-sm font-medium text-destructive">
-            {message}
+        {errors.map((code) => (
+          <p key={code} className="text-sm font-medium text-destructive">
+            {t(`errors.${code}`)}
           </p>
         ))}
 

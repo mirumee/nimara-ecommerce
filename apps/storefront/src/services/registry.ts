@@ -8,7 +8,6 @@ import type {
 import { CACHE_TTL } from "@/config";
 import { createAddressServiceLoader } from "@/services/lazy-loaders/address";
 import { createCheckoutServiceLoader } from "@/services/lazy-loaders/checkout";
-import { createLegacyPaymentServiceLoader } from "@/services/lazy-loaders/legacy-payment";
 import { createMarketplaceServiceLoader } from "@/services/lazy-loaders/marketplace";
 import { createPaymentServiceLoader } from "@/services/lazy-loaders/payment";
 
@@ -37,7 +36,6 @@ const SERVICE_LOADERS = {
   getCategoryService: createCategoryServiceLoader,
   getCheckoutService: createCheckoutServiceLoader,
   getCollectionService: createCollectionServiceLoader,
-  getLegacyPaymentService: createLegacyPaymentServiceLoader,
   getMarketplaceService: createMarketplaceServiceLoader,
   getPaymentService: createPaymentServiceLoader,
   getSearchService: createSearchServiceLoader,

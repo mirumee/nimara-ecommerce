@@ -10,8 +10,6 @@ import { type AppErrorCode } from "@nimara/domain/objects/Error";
 import { type PaymentMethod } from "@nimara/domain/objects/Payment";
 import { type User } from "@nimara/domain/objects/User";
 
-import { clientEnvs } from "@/envs/client";
-import { serverEnvs } from "@/envs/server";
 import { getCurrentRegion } from "@/foundation/regions";
 import { getStoreUrl } from "@/foundation/server";
 import { getServiceRegistry } from "@/services/registry";
@@ -41,7 +39,7 @@ export const getCheckoutPaymentSectionData = async ({
       getCurrentRegion(),
       services.getAddressService(),
       services.getUserService(),
-      services.getLegacyPaymentService(),
+      services.getPaymentService(),
       getStoreUrl(),
     ]);
 
@@ -126,31 +124,16 @@ export const getCheckoutPaymentSectionData = async ({
         Number(a.address.isDefaultBillingAddress),
     );
 
-  let paymentGatewayCustomer: string | null = null;
   let paymentGatewayMethods: PaymentMethod[] = [];
-  const saleorAppToken = serverEnvs.SALEOR_APP_TOKEN;
 
-  if (user && saleorAppToken) {
-    const resultPaymentGatewayCustomer = await paymentService.customerGet({
-      user,
-      channel: region.market.channel,
-      environment: clientEnvs.ENVIRONMENT,
-      accessToken: saleorAppToken,
+  if (user && accessToken) {
+    const resultPaymentGatewayMethods = await paymentService.methodList({
+      accessToken,
+      channel: checkout.channel,
     });
 
-    if (resultPaymentGatewayCustomer.ok) {
-      paymentGatewayCustomer = resultPaymentGatewayCustomer.data.customerId;
-    }
-
-    if (paymentGatewayCustomer) {
-      const resultPaymentGatewayMethods =
-        await paymentService.customerPaymentMethodsList({
-          customerId: paymentGatewayCustomer,
-        });
-
-      if (resultPaymentGatewayMethods.ok) {
-        paymentGatewayMethods = resultPaymentGatewayMethods.data;
-      }
+    if (resultPaymentGatewayMethods.ok) {
+      paymentGatewayMethods = resultPaymentGatewayMethods.data;
     }
   }
 
@@ -161,7 +144,6 @@ export const getCheckoutPaymentSectionData = async ({
     allCountries: resultAllCountries.data,
     errorCode,
     formattedAddresses: sortedAddresses,
-    paymentGatewayCustomer,
     paymentGatewayMethods,
     storeUrl,
   };

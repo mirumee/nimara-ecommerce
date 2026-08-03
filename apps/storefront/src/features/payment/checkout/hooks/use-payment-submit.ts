@@ -10,11 +10,6 @@ import {
 } from "@nimara/domain/objects/Error";
 import { type Maybe } from "@nimara/domain/objects/Maybe";
 import { schemaToAddress } from "@nimara/foundation/address/address";
-import type {
-  ExecuteData,
-  InitializeData,
-  TransactionData,
-} from "@nimara/infrastructure/payment/types";
 import { useToast } from "@nimara/ui/hooks";
 
 import { updateBillingAddress } from "@/features/payment/checkout/actions";
@@ -22,6 +17,12 @@ import {
   type BillingAddressPath,
   type PaymentSchema,
 } from "@/features/payment/checkout/schema";
+import {
+  type PaymentElementHandle,
+  type PaymentGateway,
+  type PaymentGatewayConfig,
+  type PaymentSessionData,
+} from "@/features/payment/types";
 import { isGlobalError } from "@/foundation/errors/errors";
 import { paths } from "@/foundation/routing/paths";
 import { createPaymentServiceLoader } from "@/services/lazy-loaders/payment";
@@ -35,7 +36,9 @@ type UsePaymentSubmitProps = {
   checkout: Checkout;
   elementsRef: RefObject<unknown>;
   form: UseFormReturn<PaymentSchema>;
-  initializeData: Maybe<InitializeData>;
+  initializeGateway: (
+    gatewayConfig: PaymentGatewayConfig,
+  ) => Promise<Maybe<PaymentGateway>>;
   isAddingNewPaymentMethod: boolean;
   isProcessing: boolean;
   onExecuteFailure: (
@@ -43,12 +46,11 @@ type UsePaymentSubmitProps = {
     values: PaymentSchema,
   ) => Promise<void> | void;
   /**
-   * Supplies the intent the payment is confirmed against. Resolving to
-   * nothing aborts the submit.
+   * Resolving to nothing aborts the submit.
    */
   resolveTransactionData: (
     values: PaymentSchema,
-  ) => Promise<Maybe<TransactionData>>;
+  ) => Promise<Maybe<PaymentSessionData>>;
   setErrors: (codes: AppErrorCode[]) => void;
   setIsProcessing: (value: boolean) => void;
   storeUrl: string;
@@ -58,7 +60,7 @@ export const usePaymentSubmit = ({
   checkout,
   elementsRef,
   form,
-  initializeData,
+  initializeGateway,
   isAddingNewPaymentMethod,
   isProcessing,
   onExecuteFailure,
@@ -125,15 +127,23 @@ export const usePaymentSubmit = ({
     const redirectUrl = `${storeUrl}${paths.payment.confirmation.asPath()}`;
     const paymentService = await paymentServiceLoader();
 
-    if (!initializeData) {
+    const activeTransactionData = await resolveTransactionData(values);
+
+    if (!activeTransactionData) {
       setIsProcessing(false);
 
       return;
     }
 
-    const activeTransactionData = await resolveTransactionData(values);
+    /**
+     * Paying with a stored method opens its session here, so the gateway is
+     * loaded from that session rather than assumed to be up already.
+     */
+    const initializeData = await initializeGateway(
+      activeTransactionData.gatewayConfig,
+    );
 
-    if (!activeTransactionData) {
+    if (!initializeData) {
       setIsProcessing(false);
 
       return;
@@ -145,8 +155,8 @@ export const usePaymentSubmit = ({
         ? schemaToAddress(billingAddress)
         : checkout.billingAddress;
 
-    const result = await paymentService.execute({
-      data: {
+    const result = await paymentService.paymentExecute({
+      details: {
         billingDetails: billingSource
           ? {
               city: billingSource.city ?? "",
@@ -159,13 +169,16 @@ export const usePaymentSubmit = ({
               streetAddress2: billingSource.streetAddress2 ?? "",
             }
           : undefined,
-        elements: isAddingNewPaymentMethod
-          ? ((elementsRef.current ?? undefined) as ExecuteData["elements"])
-          : undefined,
         email: checkout.email!,
-        redirectUrl,
+        saveForFutureUse: values.saveForFutureUse,
       },
       initializeData,
+      paymentElement: isAddingNewPaymentMethod
+        ? ((elementsRef.current ?? undefined) as
+            | PaymentElementHandle
+            | undefined)
+        : undefined,
+      redirectUrl,
       transactionData: activeTransactionData,
     });
 
@@ -174,6 +187,12 @@ export const usePaymentSubmit = ({
       setIsProcessing(false);
 
       await onExecuteFailure(result.errors, values);
+
+      return;
+    }
+
+    if (result.data.nextAction) {
+      window.location.assign(result.data.nextAction.redirectUrl);
     }
   };
 };

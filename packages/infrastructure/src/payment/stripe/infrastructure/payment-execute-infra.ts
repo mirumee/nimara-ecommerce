@@ -3,12 +3,19 @@ import { err, ok } from "@nimara/domain/objects/Result";
 import { PAYMENT_REDIRECT, QUERY_PARAMS } from "../../consts";
 import { handleStripeErrors } from "../../helpers";
 import type { PaymentServiceConfig } from "../../types";
-import type { PaymentExecuteInfra } from "../types";
+import { STRIPE_REDISPLAY_CONSENT } from "../consts";
+import type { StripePaymentExecuteInfra } from "../types";
 
 export const paymentExecuteInfra =
-  ({ logger }: PaymentServiceConfig): PaymentExecuteInfra =>
-  async ({ data, initializeData, transactionData }) => {
-    const returnUrl = new URL(data.redirectUrl);
+  ({ logger }: PaymentServiceConfig): StripePaymentExecuteInfra =>
+  async ({
+    details,
+    initializeData,
+    paymentElement,
+    redirectUrl,
+    transactionData,
+  }) => {
+    const returnUrl = new URL(redirectUrl);
 
     if (transactionData.transaction) {
       returnUrl.searchParams.append(
@@ -17,8 +24,8 @@ export const paymentExecuteInfra =
       );
     }
 
-    if (data.elements) {
-      const { error } = await data.elements.submit();
+    if (paymentElement) {
+      const { error } = await paymentElement.submit();
 
       if (error) {
         logger.warning("Payment elements submit failed.", {
@@ -34,42 +41,54 @@ export const paymentExecuteInfra =
       }
     }
 
+    /**
+     * Ticking "save for future use" on a newly entered method is the consent
+     * {@link STRIPE_REDISPLAY_CONSENT} records. A stored method already carries
+     * its own, so the value is not resent when paying with one.
+     */
+    const isSavingNewMethod = !!paymentElement && !!details.saveForFutureUse;
+
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     const { error } = await initializeData.sdk.confirmPayment({
       redirect: PAYMENT_REDIRECT,
       confirmParams: {
         return_url: returnUrl.toString(),
-        ...(data.billingDetails && {
+        ...((details.billingDetails || isSavingNewMethod) && {
           payment_method_data: {
-            billing_details: {
-              address: {
-                city: data.billingDetails.city,
-                country: data.billingDetails.country,
-                line1: data.billingDetails.streetAddress1,
-                line2: data.billingDetails.streetAddress2,
-                postal_code: data.billingDetails.postalCode,
-                state: data.billingDetails.countryArea,
+            ...(details.billingDetails && {
+              billing_details: {
+                address: {
+                  city: details.billingDetails.city,
+                  country: details.billingDetails.country,
+                  line1: details.billingDetails.streetAddress1,
+                  line2: details.billingDetails.streetAddress2,
+                  postal_code: details.billingDetails.postalCode,
+                  state: details.billingDetails.countryArea,
+                },
+                email: details.email,
+                name: [
+                  details.billingDetails.firstName,
+                  details.billingDetails.lastName,
+                ]
+                  .filter(Boolean)
+                  .join(" "),
               },
-              email: data.email,
-              name: [
-                data.billingDetails.firstName,
-                data.billingDetails.lastName,
-              ]
-                .filter(Boolean)
-                .join(" "),
-            },
+            }),
+            ...(isSavingNewMethod && {
+              allow_redisplay: STRIPE_REDISPLAY_CONSENT,
+            }),
           },
         }),
       },
       /**
        * Confirm with the mounted payment element when paying with a new
-       * method; fall back to the intent secret alone when confirming a
+       * method; fall back to the session secret alone when confirming a
        * tokenized saved method.
        */
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ...((data.elements
-        ? { elements: data.elements }
-        : { clientSecret: transactionData.clientSecret }) as any),
+      ...((paymentElement
+        ? { elements: paymentElement }
+        : { clientSecret: transactionData.providerData.clientSecret }) as any),
     });
 
     if (error) {
@@ -79,12 +98,16 @@ export const paymentExecuteInfra =
           message: error.message,
           type: error.type,
         },
-        redirectUrl: data.redirectUrl,
+        redirectUrl,
         transactionId: transactionData.transaction?.id ?? null,
       });
 
       return err(handleStripeErrors(error));
     }
 
-    return ok({ success: true });
+    /**
+     * Stripe.js owns navigation for this integration, so a confirmation that
+     * returns at all has nothing left for the caller to do.
+     */
+    return ok({ nextAction: null });
   };

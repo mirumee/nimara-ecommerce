@@ -1,9 +1,10 @@
-import { createHash, randomUUID } from "crypto";
+import { createHash } from "crypto";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 import type { TransactionCreateMutationVariables } from "@/graphql/generated/client";
 import { getServerAuthToken } from "@/lib/auth/server";
+import { config } from "@/lib/config";
 import { getAppConfig } from "@/lib/saleor/app-config";
 import { getStripeClient } from "@/lib/stripe/client";
 import { getCentsFromAmount } from "@/lib/stripe/currency";
@@ -61,16 +62,26 @@ type CheckoutInitializationStatus = {
   status: "created" | "failed" | "skipped_existing";
 };
 
-const buildIdempotencyKey = (
-  checkouts: { amount: number; checkoutId: string; currency: string }[],
-) => {
-  const canonical = [...checkouts]
-    .sort((a, b) => a.checkoutId.localeCompare(b.checkoutId))
-    .map((checkout) => ({
-      checkoutId: checkout.checkoutId,
-      amount: checkout.amount,
-      currency: checkout.currency.toUpperCase(),
-    }));
+const buildIdempotencyKey = ({
+  buyerId,
+  checkouts,
+  saleorDomain,
+}: {
+  buyerId: string | undefined;
+  checkouts: { amount: number; checkoutId: string; currency: string }[];
+  saleorDomain: string;
+}) => {
+  const canonical = {
+    buyerId: buyerId ?? "",
+    saleorDomain,
+    checkouts: [...checkouts]
+      .sort((a, b) => a.checkoutId.localeCompare(b.checkoutId))
+      .map((checkout) => ({
+        checkoutId: checkout.checkoutId,
+        amount: checkout.amount,
+        currency: checkout.currency.toUpperCase(),
+      })),
+  };
 
   const hash = createHash("sha256")
     .update(JSON.stringify(canonical), "utf8")
@@ -112,14 +123,28 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const config = await getAppConfig(saleorDomain);
+  const appConfig = await getAppConfig(saleorDomain);
 
-  if (!config) {
+  if (!appConfig) {
     return NextResponse.json(
       {
         error: `Missing app config for domain ${saleorDomain}`,
       },
       { status: 404 },
+    );
+  }
+
+  const publicKey = config.stripeConnect.publicKey;
+
+  if (!publicKey) {
+    marketplaceLogger.error(
+      "Missing STRIPE_PUBLIC_KEY, refusing to create a PaymentIntent the storefront cannot mount.",
+      { saleorDomain },
+    );
+
+    return NextResponse.json(
+      { error: "Missing Stripe public key." },
+      { status: 500 },
     );
   }
 
@@ -139,7 +164,12 @@ export async function POST(request: NextRequest) {
       getCentsFromAmount({ amount: item.amount, currency: item.currency }),
     0,
   );
-  const transferGroup = `tg_${Date.now()}_${randomUUID()}`;
+  const idempotencyKey = buildIdempotencyKey({
+    buyerId,
+    checkouts,
+    saleorDomain,
+  });
+  const transferGroup = `tg_${idempotencyKey}`;
 
   try {
     const stripe = getStripeClient();
@@ -148,7 +178,7 @@ export async function POST(request: NextRequest) {
       currency: currency.toLowerCase(),
       automatic_payment_methods: { enabled: true },
       transfer_group: transferGroup,
-      idempotencyKey: buildIdempotencyKey(checkouts),
+      idempotencyKey,
       metadata: {
         subcheckouts: JSON.stringify(checkouts.map((item) => item.checkoutId)),
         checkout_amounts: JSON.stringify(
@@ -441,6 +471,7 @@ export async function POST(request: NextRequest) {
       {
         clientSecret: paymentIntent.client_secret,
         paymentIntentId: paymentIntent.id,
+        publishableKey: publicKey,
         transferGroup,
         currency: currency.toLowerCase(),
         amount,

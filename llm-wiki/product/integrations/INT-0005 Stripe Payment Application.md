@@ -1,14 +1,15 @@
 ---
 type: "Integration Contract"
 title: "Stripe Payment Application"
-description: "Installable Saleor payment application contract for channel-specific Stripe PaymentIntent configuration, transaction webhooks, and asynchronous status reporting."
+description: "Installable Saleor payment application contract for channel-specific Stripe PaymentIntent configuration, transaction webhooks, stored payment methods, and asynchronous status reporting."
 tags:
   - "integration"
   - "payments"
   - "stripe"
   - "saleor-app"
+  - "stored-payment-methods"
 created: "2026-07-21T00:00:00+00:00"
-timestamp: "2026-07-21T00:00:00+00:00"
+timestamp: "2026-07-28T00:00:00+00:00"
 id: "INT-0005"
 status: "active"
 owner: "engineering"
@@ -19,16 +20,21 @@ availability:
 
 # Purpose
 
-The Stripe application installs into a Saleor deployment with payment-handling permission and
-connects Saleor transactions to Stripe PaymentIntents. Operators configure public and secret keys
-per commerce channel. The application exposes the public key to storefront initialization, creates
-or updates PaymentIntents for transaction sessions, captures authorized funds on request, and
-reports asynchronous Stripe state changes back to the originating Saleor transaction.
+The Stripe application installs into a Saleor deployment with payment-handling and user-management
+permission and connects Saleor transactions to Stripe PaymentIntents. Operators configure public
+and secret keys per commerce channel. The application exposes the public key to storefront
+initialization, creates or updates PaymentIntents for transaction sessions, captures authorized
+funds on request, and reports asynchronous Stripe state changes back to the originating Saleor
+transaction. It is also the sole owner of the customer's stored payment methods: it holds the
+gateway credentials, resolves the gateway customer for a Saleor user, and serves Saleor's stored
+payment methods protocol.
 
 # Authentication and permissions
 
-- The manifest requests only the `HANDLE_PAYMENTS` permission and advertises the registration and
-  synchronous payment-webhook endpoints.
+- The manifest requests `HANDLE_PAYMENTS` and `MANAGE_USERS`, and advertises the registration and
+  synchronous payment-webhook endpoints. `MANAGE_USERS` is required to read the customer named in a
+  payment event and to own the Saleor-user-to-gateway-customer mapping in that user's private
+  metadata.
 - Registration accepts the installation token and commerce-domain headers, resolves the installed
   application ID, stores the token in the domain-specific configuration, and primes the signing-key
   provider.
@@ -45,7 +51,11 @@ reports asynchronous Stripe state changes back to the originating Saleor transac
    checkout channel.
 2. `TRANSACTION_INITIALIZE_SESSION` creates a PaymentIntent for the exact checkout or order amount
    and currency. A charge action uses automatic capture; other strategies use manual capture. The
-   response includes the client secret and provider-dashboard URL.
+   response includes the client secret and provider-dashboard URL. Event data is not forwarded to
+   the provider: the application accepts a stored payment method identifier, a save-for-future-use
+   flag, a shared payment token, and extra metadata, and discards everything else. It resolves the
+   gateway customer from the Saleor user on the source object — never from caller input — and
+   rejects a stored payment method that belongs to a different customer.
 3. `TRANSACTION_PROCESS_SESSION` updates an existing PaymentIntent when event data is present or
    retrieves it otherwise, then maps provider state to Saleor's requested action.
 4. `TRANSACTION_CHARGE_REQUESTED` captures a manually authorized PaymentIntent and returns a charge
@@ -54,6 +64,37 @@ reports asynchronous Stripe state changes back to the originating Saleor transac
    reports, including available next actions and the provider reference.
 6. Channel configuration installs one Stripe webhook endpoint per configured channel and stores its
    provider webhook ID and signing secret with that channel's keys.
+7. `LIST_STORED_PAYMENT_METHODS` returns the customer's saved methods for the channel. It reads the
+   recorded gateway customer without creating or looking one up, reads the methods in a single call,
+   and reports card and wallet methods only. A method is listed only when the provider records an
+   explicit redisplay consent against it; methods kept for a single transaction, or stored outside
+   this application, are withheld. The default-method flag travels in the free-form `data` object
+   because Saleor's stored payment method type has no such field.
+8. `STORED_PAYMENT_METHOD_DELETE_REQUESTED` detaches a saved method after confirming it belongs to
+   the requesting customer's gateway customer, and answers `SUCCESSFULLY_DELETED` or
+   `FAILED_TO_DELETE`.
+9. `PAYMENT_METHOD_INITIALIZE_TOKENIZATION_SESSION` ensures a gateway customer exists and opens a
+   setup intent for it, answering `ADDITIONAL_ACTION_REQUIRED` with the client secret and
+   publishable key the storefront collects the card against.
+10. `PAYMENT_METHOD_PROCESS_TOKENIZATION_SESSION` reads the setup intent named by the storefront,
+    accepts it only when this application created it for this same Saleor user, and maps its state
+    onto a tokenization result. A successful result returns the stored method identifier and, when
+    the caller asked for it, marks the method as the customer's default.
+
+# Customer identity mapping
+
+- The application stores the gateway customer identifier in the Saleor user's **private** metadata
+  under a channel-specific key, and reads no other mapping. Saleor permits a customer to write
+  their own public metadata, so the identically named public key that earlier storefront releases
+  wrote is shopper-controlled input and is ignored outright.
+- A user with no mapping gets a new gateway customer. The application never searches the provider
+  for a customer that might already represent that user, so nothing is inherited from an earlier
+  integration and no lookup can attach one shopper to another's saved methods.
+- Creating a gateway customer uses a provider idempotency key derived from the application,
+  commerce domain, channel, and Saleor user, so concurrent events converge on one customer.
+- Every transaction for a signed-in shopper is attached to that shopper's gateway customer,
+  creating it on first use, so the provider keeps one payment history per shopper. Guest
+  transactions carry no customer and therefore cannot keep or reuse a payment method.
 
 # Failure handling and idempotency
 
@@ -80,6 +121,23 @@ reports asynchronous Stripe state changes back to the originating Saleor transac
   deployment requires the corresponding Vercel access, team, and database configuration.
 - The application handles PaymentIntent-backed Saleor transactions only; it is separate from the
   marketplace's Stripe Connect account and Transfer contract.
+- Stored payment methods require a Saleor release that implements the stored payment methods
+  protocol, and an installation that was granted `MANAGE_USERS`. Saleor grants permissions at
+  install time, so an installation predating this contract keeps only `HANDLE_PAYMENTS` and returns
+  no saved methods until it is reinstalled.
+- Listing runs as a synchronous webhook on every query of the customer's or checkout's stored
+  payment methods, so it sits on the latency path of account and checkout rendering.
+- There is no migration path from the storefront-owned integration that preceded this contract.
+  Customers carried over from it have no private-metadata mapping and are not matched against the
+  provider, so they start with a new gateway customer and an empty saved-method list; methods saved
+  under the old integration stay attached to the old customer and are never listed again.
+- Methods saved by an integration that did not record a redisplay consent are never listed, even
+  when they belong to the mapped customer.
+- The provider SDK loaded in the browser decides its own API version. It rejects a caller-supplied
+  version outright, so the storefront cannot pin one and the application's server-side version is
+  the only one under operator control.
+- A session that reports no gateway key or no client secret fails where it is opened, not where
+  the SDK is loaded. Consumers of a session treat both as present.
 
 # Provenance
 
@@ -97,3 +155,15 @@ reports asynchronous Stripe state changes back to the originating Saleor transac
   [cancellation-request route](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/stripe/src/app/api/saleor/webhooks/payment/transaction-cancelation-requested/route.ts),
   and
   [refund-request route](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/stripe/src/app/api/saleor/webhooks/payment/transaction-refund-requested/route.ts).
+- The stored-payment-method contract, the private-metadata customer mapping, and the
+  session-reported gateway key are anchored at exact commit
+  [`ebc9e3b8044dc48532d9c32902c584a7589ea6e9`](https://github.com/mirumee/nimara-ecommerce/tree/ebc9e3b8044dc48532d9c32902c584a7589ea6e9)
+  in the
+  [gateway customer resolver](https://github.com/mirumee/nimara-ecommerce/blob/ebc9e3b8044dc48532d9c32902c584a7589ea6e9/apps/stripe/src/lib/stripe/customer.ts),
+  [payment service contract](https://github.com/mirumee/nimara-ecommerce/blob/ebc9e3b8044dc48532d9c32902c584a7589ea6e9/packages/infrastructure/src/payment/types.ts),
+  [session initialization](https://github.com/mirumee/nimara-ecommerce/blob/ebc9e3b8044dc48532d9c32902c584a7589ea6e9/packages/infrastructure/src/payment/stripe/infrastructure/payment-initialize-transaction-infra.ts),
+  and
+  [SDK loader](https://github.com/mirumee/nimara-ecommerce/blob/ebc9e3b8044dc48532d9c32902c584a7589ea6e9/packages/infrastructure/src/payment/stripe/utils.ts).
+  That commit is the tip of unmerged branch `feat/saleor-stored-payment-methods`; re-anchor on the
+  squash-merge commit once it lands. See
+  [IMP-0001 Saleor Stored Payment Methods](../../tech/implementation/IMP-0001%20Saleor%20Stored%20Payment%20Methods.md).

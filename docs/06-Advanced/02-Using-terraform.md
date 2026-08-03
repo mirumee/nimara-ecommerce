@@ -92,16 +92,6 @@ private_environment_variables = {
         target = ["production", "preview"]
       }
     ]
-  },
-  "STRIPE_SECRET_KEY": {
-    comment = "Required. Secret key for Stripe payments."
-    sensitive = true
-    envs_values = [
-      {
-        value = "CHANGE_ME"
-        target = ["production", "preview"]
-      }
-    ]
   }
 }
 ```
@@ -156,15 +146,6 @@ public_environment_variables = {
     envs_values = [
       {
         value = "https://{YOUR_STOREFRONT_DOMAIN}"
-        target = ["production", "preview", "development"]
-      }
-    ]
-  },
-  "NEXT_PUBLIC_STRIPE_PUBLIC_KEY" = {
-    comment = "Public Stripe key for the storefront"
-    envs_values = [
-      {
-        value = "CHANGE_ME"
         target = ["production", "preview", "development"]
       }
     ]

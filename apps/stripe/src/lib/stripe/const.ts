@@ -1,10 +1,6 @@
 import { type Stripe } from "stripe";
 
-/**
- * Pinned Stripe API version — must match the version the `stripe` SDK ships
- * with, so behavior does not drift with the Stripe account's default version.
- */
-export const STRIPE_API_VERSION = "2026-01-28.clover";
+export const STRIPE_API_VERSION: Stripe.LatestApiVersion = "2026-01-28.clover";
 
 export const StripeWebhookEvent = {
   PAYMENT_INTENT_SUCCEEDED: "payment_intent.succeeded",
@@ -29,10 +25,18 @@ export type SupportedStripeWebhookEvent =
   | Stripe.PaymentIntentRequiresActionEvent
   | Stripe.ChargeRefundUpdatedEvent;
 
+/**
+ * Saved methods are charged with the shopper present in the storefront, never
+ * unattended, so setup intents are created for on-session reuse.
+ */
+export const STRIPE_SETUP_USAGE =
+  "on_session" satisfies Stripe.SetupIntentCreateParams["usage"];
+
 export const StripeMetaKey = {
   SALEOR_DOMAIN: "saleorDomain",
   ISSUER: "issuer",
   ENVIRONMENT: "environment",
   TRANSACTION_ID: "transactionId",
   CHANNEL_SLUG: "channelSlug",
+  SALEOR_USER_ID: "saleorUserId",
 } as const;

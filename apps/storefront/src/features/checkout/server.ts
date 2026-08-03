@@ -304,20 +304,13 @@ export const setMarketplaceCheckoutIdsCookie = async (
 };
 
 /**
- * Deletes the checkout ID cookie.
+ * Deletes the checkout ID cookie by writing to the cookie store directly.
  *
- * This is a low-level setter. Prefer using API route handlers for deletion
- * to avoid server action overhead.
- *
- * @example
- * // Via server action (less ideal)
- * await deleteCheckoutIdCookie();
- *
- * @example
- * // Via API route handler (preferred)
- * // POST /api/cookies/delete with body: { cookieKey: "checkout" }
+ * Only callable from a Server Action or Route Handler. A page render is
+ * neither, so calling it there throws before the caller can recover; use
+ * `deleteCheckoutIdCookie` from `@/features/checkout/checkout` instead.
  */
-export const deleteCheckoutIdCookie = async (): Promise<void> => {
+export const deleteCheckoutIdCookieServer = async (): Promise<void> => {
   const cookieStorage = await cookies();
 
   cookieStorage.delete(COOKIE_KEY.checkout);

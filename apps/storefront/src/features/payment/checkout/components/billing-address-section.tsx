@@ -18,6 +18,7 @@ type BillingAddressSectionProps = {
   countries: CountryOption[];
   countryCode: AllCountryCode;
   formattedAddresses: FormattedAddress[];
+  hasShippingAddress: boolean;
   isProcessing: boolean;
   isShippingRequired: boolean;
   onCountryChange: (isChanging: boolean) => void;
@@ -33,6 +34,7 @@ export const BillingAddressSection = ({
   countries,
   countryCode,
   formattedAddresses,
+  hasShippingAddress,
   isProcessing,
   isShippingRequired,
   onCountryChange,
@@ -49,7 +51,7 @@ export const BillingAddressSection = ({
         {t("payment.billing-address")}
       </h3>
 
-      {isShippingRequired && (
+      {isShippingRequired && hasShippingAddress && (
         <div className="flex w-full items-center gap-2 rounded-md border border-input bg-background px-4">
           <CheckboxField
             label={t("payment.same-as-shipping-address")}

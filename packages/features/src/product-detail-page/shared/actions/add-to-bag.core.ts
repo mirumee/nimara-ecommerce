@@ -53,6 +53,7 @@ export async function addToBag(
 
   // Add item to cart
   const result = await cartService.linesAdd({
+    accessToken: accessToken ?? undefined,
     email: userData?.email,
     channel: region.market.channel,
     languageCode: region.language.code,

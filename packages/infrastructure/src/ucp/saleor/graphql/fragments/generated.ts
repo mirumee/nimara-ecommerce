@@ -302,6 +302,9 @@ export const UcpCheckoutSessionFragment = new TypedDocumentString(`
 fragment CheckoutFragment on Checkout {
   id
   email
+  channel {
+    slug
+  }
   displayGrossPrices
   discount {
     amount

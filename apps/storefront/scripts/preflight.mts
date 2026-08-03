@@ -192,17 +192,13 @@ const FEATURE_GROUPS: FeatureGroup[] = [
   },
   {
     name: "Checkout (Stripe)",
-    isOn: () =>
-      has("NEXT_PUBLIC_PAYMENT_APP_ID") &&
-      has("NEXT_PUBLIC_STRIPE_PUBLIC_KEY") &&
-      has("STRIPE_SECRET_KEY"),
+    isOn: () => has("NEXT_PUBLIC_PAYMENT_APP_ID"),
     vars: [
       {
         key: "NEXT_PUBLIC_PAYMENT_APP_ID",
-        comment: "Stripe payment app id. All three keys are required together.",
+        comment:
+          "Stripe payment app id. The app reports its publishable key per channel, so the storefront needs no Stripe key.",
       },
-      { key: "NEXT_PUBLIC_STRIPE_PUBLIC_KEY" },
-      { key: "STRIPE_SECRET_KEY" },
     ],
   },
   {

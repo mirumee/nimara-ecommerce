@@ -3,7 +3,7 @@ import { type LanguageCodeEnum } from "@nimara/codegen/schema";
 import { type ACPService } from "#root/acp/types";
 import { graphqlClient } from "#root/graphql/client";
 import { type Logger } from "#root/logging/types";
-import { type StripePaymentService } from "#root/payment/providers";
+import { type PaymentServerService } from "#root/payment/types";
 
 import { checkoutSessionCompleteInfra } from "./infrastructure/checkout-session-complete-infra";
 import { checkoutSessionCreateInfra } from "./infrastructure/checkout-session-create-infra";
@@ -23,7 +23,7 @@ type Config = {
   channel: string;
   languageCode?: LanguageCodeEnum;
   logger: Logger;
-  paymentService?: () => Promise<StripePaymentService>;
+  paymentService?: () => Promise<PaymentServerService>;
   storefrontUrl: string;
 };
 

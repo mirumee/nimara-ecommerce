@@ -29,12 +29,25 @@ export async function updateBillingAddress({
     "sameAsShippingAddress" | "billingAddress" | "saveAddressForFutureUse"
   >;
   revalidateCheckout?: boolean;
-}) {
+}): AsyncResult<{ success: true }> {
+  const address = sameAsShippingAddress
+    ? checkout.shippingAddress
+    : billingAddress
+      ? schemaToAddress(billingAddress)
+      : null;
+
+  if (!address) {
+    storefrontLogger.error("No address to bill the checkout to.", {
+      checkoutId: checkout.id,
+      sameAsShippingAddress,
+    });
+
+    return err([{ code: "CHECKOUT_BILLING_ADDRESS_UPDATE_ERROR" }]);
+  }
+
   const result = await updateCheckoutAddressAction({
     id: checkout.id,
-    address: sameAsShippingAddress
-      ? checkout.shippingAddress!
-      : schemaToAddress(billingAddress!),
+    address,
     type: "BILLING",
     revalidateCheckout,
   });
@@ -71,7 +84,7 @@ export const initializeMarketplacePaymentIntent = async ({
     checkoutId: string;
     currency: string;
   }>;
-}): AsyncResult<{ clientSecret: string }> => {
+}): AsyncResult<{ clientSecret: string; publishableKey: string }> => {
   const marketplaceVendorUrl = process.env.NEXT_PUBLIC_MARKETPLACE_VENDOR_URL;
 
   if (!marketplaceVendorUrl) {
@@ -112,7 +125,6 @@ export const initializeMarketplacePaymentIntent = async ({
         checkouts,
         buyerId,
       }),
-      cache: "no-store",
     });
 
     if (!response.ok) {
@@ -138,14 +150,24 @@ export const initializeMarketplacePaymentIntent = async ({
       return err([{ code: "GENERIC_PAYMENT_ERROR" }]);
     }
 
-    const payload = (await response.json()) as { clientSecret?: string };
+    const payload = (await response.json()) as {
+      clientSecret?: string;
+      publishableKey?: string;
+    };
 
-    if (!payload.clientSecret) {
+    if (!payload.clientSecret || !payload.publishableKey) {
+      storefrontLogger.error("Marketplace payment intent is incomplete", {
+        hasClientSecret: !!payload.clientSecret,
+        hasPublishableKey: !!payload.publishableKey,
+        saleorDomain,
+      });
+
       return err([{ code: "GENERIC_PAYMENT_ERROR" }]);
     }
 
     return ok({
       clientSecret: payload.clientSecret,
+      publishableKey: payload.publishableKey,
     });
   } catch {
     return err([{ code: "GENERIC_PAYMENT_ERROR" }]);

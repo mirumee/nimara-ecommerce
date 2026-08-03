@@ -1,29 +1,26 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { type RefObject } from "react";
+import { type ComponentProps, type RefObject } from "react";
 
 import { type Checkout } from "@nimara/domain/objects/Checkout";
-import { type Maybe } from "@nimara/domain/objects/Maybe";
 import { CheckboxField } from "@nimara/foundation/form-components/checkbox-field";
-import type {
-  InitializeData,
-  TransactionData,
-} from "@nimara/infrastructure/payment/types";
 import { cn } from "@nimara/ui/lib/utils";
 
 import { PaymentElement } from "@/features/payment/components/payment-element";
 import { useCurrentRegion } from "@/foundation/regions";
 
+type PaymentElementProps = ComponentProps<typeof PaymentElement>;
+
 type NewPaymentMethodSectionProps = {
   checkout: Checkout;
-  initializeData: Maybe<InitializeData>;
+  initializeData: PaymentElementProps["initializeData"];
   isMounted: boolean;
   isProcessing: boolean;
   onReady: () => void;
   ref: RefObject<unknown>;
   showSaveForFutureUse: boolean;
-  transactionData: Maybe<TransactionData>;
+  transactionData: PaymentElementProps["transactionData"];
 };
 
 export const NewPaymentMethodSection = ({

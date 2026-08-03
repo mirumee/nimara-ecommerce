@@ -17,6 +17,29 @@ import { TRANSACTION_EVENT_TYPE } from "./const";
  * }
  */
 
+export const transactionInitializeDataSchema = z.object({
+  metadata: z.record(z.string(), z.string()).optional(),
+  paymentMethodId: z.string().optional(),
+  saveForFutureUse: z.boolean().optional(),
+  /**
+   * Agent-granted credential the agentic checkout flow pays with. Named here
+   * rather than forwarded blindly, like every other intent option.
+   */
+  sharedPaymentToken: z.string().optional(),
+});
+
+export type TransactionInitializeDataSchema = z.infer<
+  typeof transactionInitializeDataSchema
+>;
+
+export const parseTransactionInitializeData = (
+  data: unknown,
+): TransactionInitializeDataSchema => {
+  const result = transactionInitializeDataSchema.safeParse(data ?? {});
+
+  return result.success ? result.data : {};
+};
+
 export const transactionEventSchema = z.object({
   pspReference: z.string().nullable().optional(),
   result: z.enum(TRANSACTION_EVENT_TYPE).optional(),
