@@ -98,3 +98,14 @@
 
 - **Create**: Added ADR-0001 as a proposed decision to disable promo codes in the storefront checkout while marketplace mode is enabled, anchored to implementation commits `445fbf993b29d90cd87f9e66b5b56a66e4b6f897` and `76e367e4a26e17c7a2e8270cab34a30a6701ea22` on an unmerged change branch.
 - **Update**: Registered ADR-0001 in the ADR register and the root index, opening the previously empty ADR branch of the wiki.
+
+## 2026-08-03
+
+- **Create**: Added IMP-0002 for payment-application multi-tenancy, anchored to commit `9e9f0ad1b0d10ea2f2a0773a2736d9344843df2f` on unmerged branch `feat/saleor-stripe-app-multi-tenant` (PR 741), at `in_progress` because the pull request is open and the two-installation acceptance criterion is unverified.
+- **Update**: Recorded the tenancy model in INT-0005 — one deployment serves many commerce installations keyed by commerce domain, gated by a fail-closed domain allowlist.
+- **Correction**: INT-0005 previously stated that synchronous payment webhooks verify against the signing keys for the declared API issuer. Keys and callbacks are addressed from the commerce domain instead; a caller-declared API URL is no longer an input to verification, and the token issuer claim is not consulted.
+- **Update**: Recorded in INT-0005 that stored configuration is keyed by commerce domain, that a single-installation value is read as a one-entry map, that the shared stored value makes concurrent saves last-write-wins, and that provider endpoint cleanup is scoped per installation.
+- **Update**: Replaced the Saleor-API-URL precondition in OPS-0002 with the required `ALLOWED_DOMAINS` allowlist and its fail-closed behavior, and added the refused-installation step, the domain-scoped endpoint replacement, the two-installation verification, and the rollback constraint.
+- **Schema change**: Removed the implementation-register requirement from the IMP contract in `AGENTS.md`. `tech/implementation/Implementation (MOC).md` is an unmaintained placeholder, so IMP records are registered in `index.md` only. The CAP, FLOW, INT, OPS, and ADR registers stay required and remain populated.
+- **Provenance gap**: The multi-tenancy claims in INT-0005, OPS-0002, and IMP-0002 come from unmerged branch `feat/saleor-stripe-app-multi-tenant` and must be re-anchored on the squash-merge commit once PR 741 lands.
+- **Index**: Refreshed and embedded the QMD collection after the multi-tenancy file-back.
