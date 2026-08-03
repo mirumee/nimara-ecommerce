@@ -1,27 +1,39 @@
 "use server";
 
+import { ok } from "@nimara/domain/objects/Result";
+
 import { revalidateLocalizedPath } from "@/foundation/cache/cache";
 import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
 import { getServiceRegistry } from "@/services/registry";
-import { getAccessToken } from "@/services/tokens";
+import { requireAccessToken } from "@/services/tokens";
 
 const getPaymentContext = async () => {
-  const [services, region, accessToken] = await Promise.all([
+  const [services, region, resultAccessToken] = await Promise.all([
     getServiceRegistry(),
     getCurrentRegion(),
-    getAccessToken(),
+    requireAccessToken(),
   ]);
 
-  return {
-    accessToken: accessToken ?? "",
+  if (!resultAccessToken.ok) {
+    return resultAccessToken;
+  }
+
+  return ok({
+    accessToken: resultAccessToken.data,
     channel: region.market.channel,
     paymentService: await services.getPaymentService(),
-  };
+  });
 };
 
 export const paymentMethodDeleteAction = async ({ id }: { id: string }) => {
-  const { accessToken, channel, paymentService } = await getPaymentContext();
+  const context = await getPaymentContext();
+
+  if (!context.ok) {
+    return context;
+  }
+
+  const { accessToken, channel, paymentService } = context.data;
   const result = await paymentService.methodDelete({
     accessToken,
     channel,
@@ -36,7 +48,13 @@ export const paymentMethodDeleteAction = async ({ id }: { id: string }) => {
 };
 
 export const paymentMethodInitializeAction = async () => {
-  const { accessToken, channel, paymentService } = await getPaymentContext();
+  const context = await getPaymentContext();
+
+  if (!context.ok) {
+    return context;
+  }
+
+  const { accessToken, channel, paymentService } = context.data;
 
   return paymentService.methodInitialize({ accessToken, channel });
 };
@@ -48,7 +66,13 @@ export const paymentMethodProcessAction = async ({
   id: string;
   setAsDefault?: boolean;
 }) => {
-  const { accessToken, channel, paymentService } = await getPaymentContext();
+  const context = await getPaymentContext();
+
+  if (!context.ok) {
+    return context;
+  }
+
+  const { accessToken, channel, paymentService } = context.data;
   const result = await paymentService.methodProcess({
     accessToken,
     channel,
