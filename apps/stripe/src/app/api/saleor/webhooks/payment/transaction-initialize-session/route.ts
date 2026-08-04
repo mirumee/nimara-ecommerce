@@ -13,6 +13,7 @@ import {
 } from "@/lib/saleor/transaction/schema";
 import { constructTransactionEventResponse } from "@/lib/saleor/transaction/util";
 import { verifySaleorWebhookRoute } from "@/lib/saleor/webhooks/api";
+import { resolveStripeAccountId } from "@/lib/stripe/account";
 import { getStripeApi, stripeRouteErrorsHandler } from "@/lib/stripe/api";
 import { STRIPE_SETUP_USAGE } from "@/lib/stripe/const";
 import { resolveGatewayCustomerId } from "@/lib/stripe/customer";
@@ -89,6 +90,7 @@ export const POST = stripeRouteErrorsHandler(
        */
       if (user) {
         customerId = await resolveGatewayCustomerId({
+          accountId: await resolveStripeAccountId({ gatewayConfig, stripe }),
           channelSlug,
           logger,
           saleorClient: getSaleorClient({ authToken, logger, saleorDomain }),

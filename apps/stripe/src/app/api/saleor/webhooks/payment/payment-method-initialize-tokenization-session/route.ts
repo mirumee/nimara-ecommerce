@@ -2,6 +2,7 @@ import { type PaymentMethodInitializeTokenizationSessionSubscription } from "@/g
 import { resolveAppConfigForChannel } from "@/lib/saleor/config/context";
 import { tokenizationResponse } from "@/lib/saleor/payment-method/util";
 import { verifySaleorWebhookRoute } from "@/lib/saleor/webhooks/api";
+import { resolveStripeAccountId } from "@/lib/stripe/account";
 import { getStripeApi, stripeRouteErrorsHandler } from "@/lib/stripe/api";
 import { STRIPE_SETUP_USAGE } from "@/lib/stripe/const";
 import { resolveGatewayCustomerId } from "@/lib/stripe/customer";
@@ -29,6 +30,7 @@ export const POST = stripeRouteErrorsHandler(
       const stripe = getStripeApi(gatewayConfig.secretKey);
 
       const customerId = await resolveGatewayCustomerId({
+        accountId: await resolveStripeAccountId({ gatewayConfig, stripe }),
         channelSlug,
         logger,
         saleorClient: getSaleorClient({ authToken, logger, saleorDomain }),
