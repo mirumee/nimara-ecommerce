@@ -212,6 +212,17 @@
   pull request, criterion, and test. All three records are `in_progress`, so none was immutable.
   With `paths` gone, `code` held one key, so it was flattened away: the field is now
   `pull_requests` at the top level of the frontmatter, in the slot `code` occupied.
+- **Schema change**: The `id` field is gone from every record and every template — 34 records and 8
+  templates. The filename carries the identifier, so the field was a second copy of it kept in sync
+  by hand. Nothing resolved a record by `id`: every relation, every register line, and every
+  cross-link is a relative Markdown path. `work_item.id` in an IMP is unaffected — it names a
+  GitHub issue or pull request, not the record.
+- **Not affected**: References like `INT-0005` in earlier `log.md` entries still resolve, because
+  the identifier stayed in the filename. Only the frontmatter copy was removed.
+- **Consequence**: A record can no longer be found by grepping for its identifier in frontmatter
+  after a rename — the filename is the single point of identity, so a rename is now the one
+  operation that can orphan inbound links. That raises the value of a link lint and lowers the
+  value of an ID lint: filename-versus-field drift is no longer possible.
 - **Rename**: `_templates/prd.md` → `_templates/PRD.md`. `index.md`, `AGENTS.md`, and the
   `prd-modeling` skill all already spelled it `PRD.md`; only the file on disk did not. The
   `index.md` link resolved on a case-insensitive macOS filesystem and would have failed on Linux.

@@ -1,5 +1,4 @@
 ---
-id: "PRD-002"
 type: "Product Requirements Document"
 title: "Verified User Reviews"
 description: "Product Requirements Document for a verified-purchase user reviews system in Nimara."

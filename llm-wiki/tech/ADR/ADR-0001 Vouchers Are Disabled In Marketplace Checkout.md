@@ -10,7 +10,6 @@ tags:
   - "saleor"
 created: "2026-07-31T00:00:00+00:00"
 timestamp: "2026-07-31T00:00:00+00:00"
-id: "ADR-0001"
 status: "proposed"
 owner: "product-and-engineering"
 superseded_by: null

@@ -8,9 +8,8 @@ tags:
 created: "2026-07-17T14:13:11+02:00"
 timestamp: "2026-07-20T00:00:00+00:00"
 # The created record's `type`. It lives in `tech/implementation/`, named
-# `IMP-NNNN <Title>.md`, with `id` matching the filename.
+# `IMP-NNNN <Title>.md`. The filename is the record's identity; there is no `id` field.
 template_for: "Implementation Record"
-id: "IMP-0000"
 # `planned` → `in_progress` → `implemented`. A later code-revert change may move it from
 # `implemented` to `rolled_back` and must set `relations.rolled_back_by`; no other transition
 # out of `implemented` is allowed. After `implemented` the record is immutable except for

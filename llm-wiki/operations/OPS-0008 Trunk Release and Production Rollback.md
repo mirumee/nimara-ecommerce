@@ -10,7 +10,6 @@ tags:
   - "production"
 created: "2026-07-21T00:00:00+00:00"
 timestamp: "2026-07-23T00:00:00+00:00"
-id: "OPS-0008"
 status: "active"
 owner: "release-engineering"
 kind: "rollback"

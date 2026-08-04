@@ -8,9 +8,8 @@ tags:
 created: "2026-07-17T14:13:11+02:00"
 timestamp: "2026-07-20T00:00:00+00:00"
 # The created record's `type`. It lives in `product/integrations/`, named
-# `INT-NNNN <Title>.md`, with `id` matching the filename.
+# `INT-NNNN <Title>.md`. The filename is the record's identity; there is no `id` field.
 template_for: "Integration Contract"
-id: "INT-0000"
 # No `relations` field: CAP and FLOW link the integrations they use. Do not add a CAP or
 # FLOW backlink.
 # `candidate` → `active` ↔ `deprecated`. `candidate` may exist only on an unmerged change

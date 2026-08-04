@@ -8,9 +8,8 @@ tags:
 created: "2026-07-17T14:13:11+02:00"
 timestamp: "2026-07-20T00:00:00+00:00"
 # The created record's `type`. It lives in `product/flows/`, named
-# `FLOW-NNNN <Title>.md`, with `id` matching the filename.
+# `FLOW-NNNN <Title>.md`. The filename is the record's identity; there is no `id` field.
 template_for: "Product Flow"
-id: "FLOW-0000"
 relations:
   # Relative Markdown links to every CAP and INT record the flow uses.
   capabilities: []

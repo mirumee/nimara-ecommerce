@@ -7,10 +7,9 @@ tags:
   - "operations"
 created: "2026-07-17T14:13:11+02:00"
 timestamp: "2026-07-20T00:00:00+00:00"
-# The created record's `type`. It lives in `operations/`, named `OPS-NNNN <Title>.md`, with
-# `id` matching the filename.
+# The created record's `type`. It lives in `operations/`, named `OPS-NNNN <Title>.md`. The
+# filename is the record's identity; there is no `id` field.
 template_for: "Operational Record"
-id: "OPS-0000"
 # `draft` → `active` ↔ `deprecated`. Merge `active` guidance with, or before, the code that
 # requires it. Delete the record when it no longer applies; Git keeps the history and the ID
 # is never reused. Register in `operations/Operations (MOC).md` and `index.md`; append

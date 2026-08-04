@@ -11,7 +11,6 @@ tags:
   - "developer-experience"
 created: "2026-08-04T00:00:00+00:00"
 timestamp: "2026-08-04T00:00:00+00:00"
-id: "ADR-0002"
 status: "proposed"
 owner: "engineering"
 superseded_by: null

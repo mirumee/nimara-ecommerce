@@ -7,10 +7,9 @@ tags:
   - "prd"
 created: "2026-07-09T00:00:00+00:00"
 timestamp: "2026-07-20T00:00:00+00:00"
-# The created record's `type`. It lives in `prd/`, named `PRD-NNN <Title>.md`, with `id`
-# matching the filename.
+# The created record's `type`. It lives in `prd/`, named `PRD-NNN <Title>.md`. The filename is
+# the record's identity; there is no `id` field.
 template_for: "Product Requirements Document"
-id: "PRD-000"
 # `draft`, `analyzing`, `approved`, `implemented`, or `blocked`. New records start as `draft`
 # and every transition requires explicit user approval. Register the PRD in `index.md`.
 status: "draft"

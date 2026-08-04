@@ -8,9 +8,8 @@ tags:
 created: "2026-07-17T14:13:11+02:00"
 timestamp: "2026-07-20T00:00:00+00:00"
 # The created record's `type`. It lives in `product/capabilities/`, named
-# `CAP-NNNN <Title>.md`, with `id` matching the filename.
+# `CAP-NNNN <Title>.md`. The filename is the record's identity; there is no `id` field.
 template_for: "Product Capability"
-id: "CAP-0000"
 relations:
   # Relative Markdown links to every INT record the capability requires. Do not add a FLOW
   # backlink; a FLOW links the capabilities it uses.

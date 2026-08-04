@@ -9,7 +9,6 @@ tags:
   - "stored-payment-methods"
 created: "2026-07-30T00:00:00+00:00"
 timestamp: "2026-07-30T00:00:00+00:00"
-id: "IMP-0001"
 status: "in_progress"
 owner: "engineering"
 work_item:

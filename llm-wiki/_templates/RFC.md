@@ -8,10 +8,9 @@ tags:
   - "design-doc"
 created: "2026-07-13T00:00:00+00:00"
 timestamp: "2026-07-20T00:00:00+00:00"
-# The created record's `type`. It lives in `tech/RFC/`, named `RFC-NNNN <Title>.md`, with `id`
-# matching the filename.
+# The created record's `type`. It lives in `tech/RFC/`, named `RFC-NNNN <Title>.md`. The
+# filename is the record's identity; there is no `id` field.
 template_for: "Request for Comments"
-id: "RFC-0000"
 # `draft` → `in_review` → `final`, and each transition requires explicit user approval.
 # `final` means the proposal is complete, not accepted — an ADR records the verdict. Register
 # in `tech/RFC/RFC MOC.md` and `index.md`, and link the ADR that resolves it once one exists.

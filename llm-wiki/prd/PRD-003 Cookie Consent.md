@@ -1,5 +1,4 @@
 ---
-id: "PRD-003"
 type: "Product Requirements Document"
 title: "Cookie Consent & Google Consent Mode v2"
 description: "Product Requirements Document for Cookie Consent and Google Consent Mode v2 in the Nimara storefront."
