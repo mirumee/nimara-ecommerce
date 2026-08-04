@@ -205,6 +205,13 @@
   template before today started out incomplete.
 - **Dropped**: The `Required additions` bullet is gone from all eight contracts. It listed the
   fields the record must carry, which the template now carries literally.
+- **Schema change**: `code.paths` was removed from the IMP contract and from IMP-0001, IMP-0002,
+  and IMP-0003, deleting 32 path entries. `code` now holds `pull_requests` only. A path list
+  duplicates what the pull request already records and rots on the next rename or move, which is
+  the same failure the `Provenance` sections had. An `implemented` record now needs at least one
+  pull request, criterion, and test. All three records are `in_progress`, so none was immutable.
+  With `paths` gone, `code` held one key, so it was flattened away: the field is now
+  `pull_requests` at the top level of the frontmatter, in the slot `code` occupied.
 - **Rename**: `_templates/prd.md` → `_templates/PRD.md`. `index.md`, `AGENTS.md`, and the
   `prd-modeling` skill all already spelled it `PRD.md`; only the file on disk did not. The
   `index.md` link resolved on a case-insensitive macOS filesystem and would have failed on Linux.

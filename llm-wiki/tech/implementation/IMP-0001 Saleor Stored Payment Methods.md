@@ -25,18 +25,8 @@ relations:
     - "[Cart to Confirmed Order](../../product/flows/FLOW-0001%20Cart%20to%20Confirmed%20Order.md)"
     - "[Stripe Payment Application Installation and Key Rotation](../../operations/OPS-0002%20Stripe%20Payment%20Application%20Installation%20and%20Key%20Rotation.md)"
   rolled_back_by: null
-code:
-  paths:
-    - "apps/stripe/src/lib/stripe/customer.ts"
-    - "apps/stripe/src/lib/stripe/payment-method.ts"
-    - "apps/stripe/src/app/api/saleor/webhooks/payment/"
-    - "packages/infrastructure/src/payment/"
-    - "packages/domain/src/objects/Payment.ts"
-    - "apps/storefront/src/features/payment/"
-    - "apps/storefront/src/app/[locale]/(main)/account/payment-methods/"
-    - "apps/storefront/src/foundation/checkout/sections/payment/server.ts"
-  pull_requests:
-    - "https://github.com/mirumee/nimara-ecommerce/pull/736"
+pull_requests:
+  - "https://github.com/mirumee/nimara-ecommerce/pull/736"
 verification:
   - criterion: "A stored method is mapped to the right gateway customer and cannot be reached by another shopper."
     tests:

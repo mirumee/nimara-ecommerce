@@ -37,14 +37,12 @@ relations:
   product_records: []
   # `null` unless a later IMP performs a code rollback of this one.
   rolled_back_by: null
-code:
-  # Repository paths the implementation touched.
-  paths: []
-  # Stable public pull-request URLs.
-  pull_requests: []
+# Stable public pull-request URLs. The pull request is the record of which files changed — do
+# not restate them here, because a path list goes stale on the next refactor while the pull
+# request stays accurate.
+pull_requests: []
 # One entry per acceptance criterion from the PRD or work item, each naming the test paths
-# that cover it. An `implemented` record needs at least one code path, pull request,
-# criterion, and test.
+# that cover it. An `implemented` record needs at least one pull request, criterion, and test.
 verification:
   - criterion: ""
     tests: []
