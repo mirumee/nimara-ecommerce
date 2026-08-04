@@ -119,3 +119,51 @@
 - **Provenance correction**: IMP-0001 recorded that no pull request existed and anchored its work item to branch commit `ebc9e3b8044dc48532d9c32902c584a7589ea6e9`. That work landed as [PR 736](https://github.com/mirumee/nimara-ecommerce/pull/736), squash-merged as `f346b80465337bb5f7c5e900eb93748991dc9506`; the work item, pull-request list, and the deviation explaining its status were corrected. It stays `in_progress` because browser verification remains incomplete.
 - **Update**: Recorded in IMP-0002 that the webhook-endpoint follow-up is open as PR 743 rather than uncommitted.
 - **Index**: Refreshed and embedded the QMD collection after the webhook-endpoint file-back.
+
+## 2026-08-04
+
+- **Create**: Added ADR-0002 as a proposed decision that the payment application selects where it
+  stores the configuration of every installed commerce instance: a hosted store, which stays the
+  default and the only option for a deployment, or an on-disk file for a developer machine. Anchored
+  to commit `2680feabd8fc0cc5efdd680a2d78fed778c6ed8b` on unmerged branch
+  `NIM-56-stripe-app-file-config-provider`, tracked as NIM-56.
+- **Create**: Added IMP-0003 for that work at `in_progress`, anchored to the same commit with a null
+  pull-request URL because no pull request exists yet. It stays below `implemented` because the
+  schema requires a test path against an acceptance criterion and every criterion lists none.
+- **Update**: Recorded in INT-0005 that stored configuration is reached through a selected backend
+  rather than through Vercel Edge Config unconditionally, that the on-disk option cannot serve a
+  deployment because a serverless filesystem is per-instance and does not survive, and that nothing
+  in the application refuses that selection. The shared stored value and its last-write-wins
+  property are unchanged and now hold for either backend.
+- **Update**: Replaced the Vercel-values precondition in OPS-0002 with the storage selection and its
+  startup failure, added an explicit prohibition on the on-disk backend for deployments, and added
+  escalation paths for installations that vanish after succeeding and for a forbidden read or write
+  against the hosted store.
+- **Correction**: OPS-0002 claimed that the application `.env.example` omits required Vercel values
+  and uses the older `ENVIRONMENT` name. That commit rewrote the example file, so the remark and its
+  instruction to validate against the schema instead of the example were removed.
+- **Provenance**: Discharged the endpoint-per-account re-anchor obligation recorded on 2026-08-03.
+  PR 743 merged as squash commit `46b0c275332d5abd58d773cfc70ee2933020fa75` on `main`, so the eight
+  permalinks in INT-0005 and OPS-0002 moved off pre-merge commit
+  `75be94ef01917a6952c1c32e9dd9da8577402d5f` and the pending-change notes were removed. The four
+  anchored paths were verified to exist at the merge commit.
+- **Provenance gap**: The storage-selection claims in ADR-0002, IMP-0003, INT-0005, and OPS-0002 come
+  from unmerged branch `NIM-56-stripe-app-file-config-provider` and must be re-anchored on the
+  squash-merge commit once it lands, along with IMP-0003's `work_item` and its empty pull-request
+  list.
+- **Gap**: The change ships no unit test. The tenant rules that decide whether one installation can
+  read another's credentials were moved from the Edge Config backend into a shared core with no test
+  asserting they still hold, and neither backend is exercised. Recorded as a deviation in IMP-0003
+  and as a consequence in ADR-0002; it is the blocker for `implemented`.
+- **Lint**: Verified 91 Markdown files and 502 local links with no unresolved target, and confirmed
+  no record still anchors the retired pre-merge commit `75be94ef…`.
+- **Index**: The QMD collection was not refreshed for this checkout. `nimara-wiki` resolves to
+  `/Users/lukasz/.codex/worktrees/61df/nimara-ecommerce/llm-wiki`, an unrelated worktree, so
+  `wiki:qmd:update` indexed nothing and QMD retrieval does not reflect this wiki. Local developer
+  state only; re-run `wiki:qmd:setup` from this checkout, then `wiki:qmd:embed`.
+- **Provenance gap**: Thirteen anchors in INT-0005, CAP-0007, FLOW-0001, and OPS-0002 still point at
+  `ebc9e3b8044dc48532d9c32902c584a7589ea6e9`, which no longer exists in the repository, as recorded
+  on 2026-07-30. That work landed as [PR 736](https://github.com/mirumee/nimara-ecommerce/pull/736),
+  squash-merged as `f346b80465337bb5f7c5e900eb93748991dc9506`. The permalinks are dead and the
+  re-anchor was not performed here: it touches records outside this change and each anchored path
+  needs verifying at the merge commit.

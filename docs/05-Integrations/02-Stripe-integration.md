@@ -99,10 +99,10 @@ ALLOWED_DOMAINS=*
 The app stores, per installed Saleor, the Saleor auth token and the per-channel
 Stripe keys. `CONFIG_PROVIDER` selects where:
 
-| Provider | Backing store         | Use for                                                 |
-| -------- | --------------------- | ------------------------------------------------------- |
-| `file`   | Local JSON file       | Local development. No Vercel account required.          |
-| `edge`   | Vercel Edge Config    | Any deployment. Default when `CONFIG_PROVIDER` is unset. |
+| Provider | Backing store      | Use for                                                  |
+| -------- | ------------------ | -------------------------------------------------------- |
+| `file`   | Local JSON file    | Local development. No Vercel account required.           |
+| `edge`   | Vercel Edge Config | Any deployment. Default when `CONFIG_PROVIDER` is unset. |
 
 :::warning
 Do not deploy with `CONFIG_PROVIDER=file`. A serverless filesystem is ephemeral and
