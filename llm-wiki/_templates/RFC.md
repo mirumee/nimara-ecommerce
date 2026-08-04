@@ -8,10 +8,17 @@ tags:
   - "design-doc"
 created: "2026-07-13T00:00:00+00:00"
 timestamp: "2026-07-20T00:00:00+00:00"
+# The created record's `type`. It lives in `tech/RFC/`, named `RFC-NNNN <Title>.md`, with `id`
+# matching the filename.
 template_for: "Request for Comments"
 id: "RFC-0000"
+# `draft` → `in_review` → `final`, and each transition requires explicit user approval.
+# `final` means the proposal is complete, not accepted — an ADR records the verdict. Register
+# in `tech/RFC/RFC MOC.md` and `index.md`, and link the ADR that resolves it once one exists.
 status: "draft"
 owner: "github-user-or-team"
+# Exactly one relative Markdown link to the PRD this proposal serves, resolved from
+# `tech/RFC/`. Repeat it under `Related Notes`. Do not write a backlink into the PRD.
 prd: ""
 ---
 
@@ -19,9 +26,8 @@ prd: ""
 
 > An RFC is a proposal — a full design page for a non-trivial change. It does not
 > record the verdict or the result: the decision and its outcome are captured in an
-> ADR and registered in the ADR MOC. `status` moves `draft` → `in_review`
-> → `final`. Keep Nimara designs OSS provider-agnostic: layer over existing provider
-> abstractions, do not mandate a vendor.
+> ADR and registered in the ADR MOC. Keep Nimara designs OSS provider-agnostic: layer over
+> existing provider abstractions, do not mandate a vendor.
 
 ## Problem
 

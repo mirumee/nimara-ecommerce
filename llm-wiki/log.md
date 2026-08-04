@@ -167,3 +167,49 @@
   squash-merged as `f346b80465337bb5f7c5e900eb93748991dc9506`. The permalinks are dead and the
   re-anchor was not performed here: it touches records outside this change and each anchored path
   needs verifying at the merge commit.
+- **Schema change**: Current-state records no longer carry provenance. The `Provenance` section was
+  removed from all 23 records that had one — CAP-0002 through CAP-0007, INT-0003 through INT-0007,
+  FLOW-0001 through FLOW-0004, and OPS-0001 through OPS-0008 — deleting 417 lines and every commit
+  permalink in them. A record describes what is true at the commit that contains it, so an embedded
+  permalink was a second copy of that answer with its own decay: five re-anchor obligations were
+  opened and discharged across four days, thirteen anchors went dead when a branch was rewritten,
+  and one snapshot commit had to be maintained across twenty records. The rule is now in
+  `AGENTS.md` under Source of truth. The sections were never part of `_templates/`.
+- **Accepted loss**: `availability.since` is now the only code anchor on a current-state record.
+  Two claim layers in INT-0005 had no other home — the `v1.7.1` base at
+  `b500390914b794015e8db37975ce4cbbb27cb6e6` and the recheck at
+  `75d6bc55edddf431adcc348009a1c226f77cc005` — and no IMP covers them. Layers with an IMP keep it:
+  IMP-0001, IMP-0002, and IMP-0003 hold the stored-payment-method, multi-tenancy, and
+  storage-selection anchors and are reachable from `index.md`.
+- **Provenance gap**: The obligations recorded on 2026-07-29, 2026-08-03, and earlier today for
+  CAP, FLOW, INT, and OPS are discharged by deletion, not by re-anchoring. The dead `ebc9e3b8…`
+  anchors are gone with them. IMP-0003's `work_item` and empty pull-request list still point at
+  unmerged branch `NIM-56-stripe-app-file-config-provider` and still need re-anchoring on merge;
+  ADR-0002 keeps its anchor, as both record types are meant to.
+- **Not changed**: `product/overview/Product Overview.md` is not one of the four contract types and
+  keeps ten commit permalinks, eight of them at `75d6bc55…`. It is now the only current-state prose
+  in the wiki that anchors code, and the last reader of that snapshot commit.
+- **Schema change**: The record contracts moved out of `AGENTS.md` into the templates. Its
+  `Concept Document Format` section was eight `###` blocks restating what each record type
+  requires; it is now a table linking each record type to its template. The 144 lines of rules
+  became YAML comments on the fields they govern in `_templates/PRD.md`, `RFC.md`, `ADR.md`,
+  `IMP.md`, `CAP.md`, `FLOW.md`, `INT.md`, and `OPS.md` — location and filename on
+  `template_for`, allowed statuses and registration on `status`, approvers on `owner`, link shape
+  on the relation field, following the commented style `Undefined.md` already used. A rule stated
+  in two places drifts; an agent creating a record opens the template anyway, so the template is
+  where the contract is read and `AGENTS.md` keeps only what spans record types.
+- **Correction**: Two templates were missing fields their own contract required, which the move
+  exposed because every rule now has to attach to a field. `IMP.md` had no `work_item`, `code`,
+  `verification`, `rollout`, or `rollback`; `PRD.md` had no `personas`. Both were filled in with
+  empty scaffolding matching the shape the existing records use. A record created from either
+  template before today started out incomplete.
+- **Dropped**: The `Required additions` bullet is gone from all eight contracts. It listed the
+  fields the record must carry, which the template now carries literally.
+- **Rename**: `_templates/prd.md` → `_templates/PRD.md`. `index.md`, `AGENTS.md`, and the
+  `prd-modeling` skill all already spelled it `PRD.md`; only the file on disk did not. The
+  `index.md` link resolved on a case-insensitive macOS filesystem and would have failed on Linux.
+- **Edit**: The RFC template's opening note said `status` moves `draft` → `in_review` → `final`,
+  which the contract block now states together with the approval requirement. The duplicate clause
+  was dropped from the note; the rest of it, on what an RFC is and on provider neutrality, stands.
+- **Lint**: Verified 91 Markdown files and every local link with no unresolved target, and
+  confirmed no record carries a `Provenance` section.
