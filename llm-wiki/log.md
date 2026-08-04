@@ -223,6 +223,18 @@
   after a rename — the filename is the single point of identity, so a rename is now the one
   operation that can orphan inbound links. That raises the value of a link lint and lowers the
   value of an ID lint: filename-versus-field drift is no longer possible.
+- **Schema change**: The `timestamp` field is gone from all 88 notes that carried it, the whole
+  wiki rather than the records alone. It claimed when a note last changed and had to be updated by
+  hand, so it did not: it disagreed with the last commit touching its file in 27 of 34 records —
+  seven OPS records still read `2026-07-21` after edits on `2026-08-04`.
+  `git log -1 --format=%cs -- <path>` answers the same question exactly and for free.
+- **Kept**: `created` stays. It disagreed with Git in 6 of 34 records, but in the informative
+  direction — PRD-001 was authored `2026-07-10` and committed `2026-07-21`, and Git cannot know
+  the earlier date. It is written once and never maintained, unlike the field that was removed.
+- **Registered**: Both rules are now in `AGENTS.md` under Source of truth, so neither field is
+  reintroduced by the next agent that notices its absence.
+- **Lint**: Verified 91 Markdown files, 506 local links with no unresolved target, and frontmatter
+  parsing on every file after the field removals.
 - **Rename**: `_templates/prd.md` → `_templates/PRD.md`. `index.md`, `AGENTS.md`, and the
   `prd-modeling` skill all already spelled it `PRD.md`; only the file on disk did not. The
   `index.md` link resolved on a case-insensitive macOS filesystem and would have failed on Linux.

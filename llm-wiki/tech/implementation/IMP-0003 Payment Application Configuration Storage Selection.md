@@ -10,7 +10,6 @@ tags:
   - "configuration"
   - "developer-experience"
 created: "2026-08-04T00:00:00+00:00"
-timestamp: "2026-08-04T00:00:00+00:00"
 status: "in_progress"
 owner: "engineering"
 work_item:

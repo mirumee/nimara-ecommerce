@@ -7,7 +7,6 @@ tags:
   - "rfc"
   - "design-doc"
 created: "2026-07-13T00:00:00+00:00"
-timestamp: "2026-07-20T00:00:00+00:00"
 # The created record's `type`. It lives in `tech/RFC/`, named `RFC-NNNN <Title>.md`. The
 # filename is the record's identity; there is no `id` field.
 template_for: "Request for Comments"

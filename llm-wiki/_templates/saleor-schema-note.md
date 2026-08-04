@@ -9,7 +9,6 @@ tags:
 saleor_schema_hash: "REPLACE_WITH_pnpm_wiki:saleor:hash"
 saleor_schema_generated: "2026-04-06T00:00:00+00:00"
 created: "2026-04-06T00:00:00+00:00"
-timestamp: "2026-04-06T00:00:00+00:00"
 ---
 
 ## Content

@@ -9,7 +9,6 @@ tags:
   - "discounts"
   - "saleor"
 created: "2026-07-31T00:00:00+00:00"
-timestamp: "2026-07-31T00:00:00+00:00"
 status: "proposed"
 owner: "product-and-engineering"
 superseded_by: null

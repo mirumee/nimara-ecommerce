@@ -8,7 +8,6 @@ tags:
   - "schema"
   - "rules"
 created: "2026-07-09T00:00:00+00:00"
-timestamp: "2026-08-03T00:00:00+00:00"
 ---
 
 # Content
@@ -27,6 +26,8 @@ It follows the llm-wiki shape: a directory of Markdown files with YAML frontmatt
   one is a second, separately rotting copy of that answer. Implementation evidence belongs to IMP.
 - A `vX.Y.Z` tag is the immutable release snapshot.
 - There are no per-branch directories. Git already versions branch-specific state.
+- When a note last changed comes from Git — `git log -1 --format=%cs -- <path>`
+- A record's identity is its filename.
 
 # Folder Structure
 

@@ -8,7 +8,6 @@ tags:
   - "checkout"
   - "order"
 created: "2026-07-21T00:00:00+00:00"
-timestamp: "2026-07-28T00:00:00+00:00"
 status: "active"
 owner: "product-engineering-and-qa"
 relations:
