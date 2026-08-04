@@ -19,6 +19,7 @@ import {
 import type { SelectOptions } from "./types";
 
 export interface SelectFormFieldProps {
+  autoComplete?: string;
   isRequired?: boolean;
   label: string;
   name: string;
@@ -34,6 +35,7 @@ export const SelectFormField = ({
   placeholder,
   onChange,
   options,
+  autoComplete,
 }: SelectFormFieldProps) => {
   const { control } = useFormContext();
 
@@ -49,13 +51,17 @@ export const SelectFormField = ({
             {isRequired && "*"}
           </FormLabel>
           <Select
-            key={field.value}
+            name={name}
+            autoComplete={autoComplete}
+            value={field.value || undefined}
             onValueChange={(value) => {
+              if (!value || value === field.value) {
+                return;
+              }
+
               field.onChange(value);
               onChange?.(value);
             }}
-            name={label}
-            defaultValue={field.value}
           >
             <FormControl>
               <SelectTrigger error={fieldState.invalid} aria-label={label}>
@@ -63,8 +69,8 @@ export const SelectFormField = ({
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              {options?.map(({ value, label }) => (
-                <SelectItem key={value} value={value}>
+              {options?.map(({ value, label }, index) => (
+                <SelectItem key={`${value}-${index}`} value={value}>
                   {label}
                 </SelectItem>
               ))}

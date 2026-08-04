@@ -24,6 +24,7 @@ export const getStreetAddressFields = ({
       {
         name: STREET_ADDRES_1,
         type: "text" as FieldType,
+        autoComplete: "address-line1",
         isRequired: isRequired({
           name: STREET_ADDRES_1,
           addressValidationRules,
@@ -34,6 +35,7 @@ export const getStreetAddressFields = ({
       {
         name: STREET_ADDRES_2,
         type: "text" as FieldType,
+        autoComplete: "address-line2",
         isRequired: isRequired({
           name: STREET_ADDRES_2,
           addressValidationRules,
