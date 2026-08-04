@@ -1,7 +1,7 @@
 ---
 type: "Agent Instructions"
 title: "Branch-aware, git-versioned LLM Wiki"
-description: "What is and what is not llm-wiki for this project. Schemas, templates, rules, glossary and operations"
+description: "What is and what is not llm-wiki for this project. Schemas, templates, rules, knowledge model and operations"
 tags:
   - "agents"
   - "llm-wiki"
@@ -12,7 +12,7 @@ created: "2026-07-09T00:00:00+00:00"
 
 # Content
 
-This directory is an interlinked knowledge base for planning, testing, and building Nimara.
+This directory is an interlinked knowledge base for planning, testing, and building this project.
 It follows the llm-wiki shape: a directory of Markdown files with YAML frontmatter, standard Markdown cross-links, reserved `index.md` files for progressive disclosure, and reserved `log.md` files for chronological updates.
 
 ## Source of truth
@@ -62,56 +62,44 @@ llm-wiki/
     └── saleor/           # version-stamped notes on the Saleor GraphQL schema
 ```
 
-## Knowledge model - glossary
+## Knowledge model
 
-| Record | Responsibility                                                 |
-| ------ | -------------------------------------------------------------- |
-| PRD    | Why and what are product requirements                          |
-| RFC    | A proposed technical solution and considered alternatives      |
-| ADR    | A durable architecture decision                                |
-| IMP    | What was implemented and how it was verified                   |
-| CAP    | Current product capability                                     |
-| INT    | Current integration contract                                   |
-| FLOW   | Current end-to-end product flow                                |
-| OPS    | Operational knowledge, runbook, rollback, or incident guidance |
+Every record is created from its template, and the template is the contract: its frontmatter
+carries every required field, and each field is commented with the rule that governs it —
+location and filename, allowed statuses and who approves a transition, link shape, and where the
+record is registered. Read the template before creating or changing a record of that type. The
+rules are not repeated here, so this file cannot drift from them.
+
+| Record             | Responsibility                                                    | Template                                               |
+| ------------------ | ----------------------------------------------------------------- | ------------------------------------------------------ |
+| PRD                | Why and what are product requirements                             | [PRD Template](_templates/PRD.md)                      |
+| RFC                | A proposed technical solution and considered alternatives         | [RFC Design Doc](_templates/RFC.md)                    |
+| ADR                | A durable architecture decision                                   | [ADR Template](_templates/ADR.md)                      |
+| IMP                | What was implemented and how it was verified                      | [IMP Template](_templates/IMP.md)                      |
+| CAP                | Current product capability                                        | [CAP Template](_templates/CAP.md)                      |
+| INT                | Current integration contract                                      | [INT Template](_templates/INT.md)                      |
+| FLOW               | Current end-to-end product flow                                   | [FLOW Template](_templates/FLOW.md)                    |
+| OPS                | Operational knowledge, runbook, rollback, or incident guidance    | [OPS Template](_templates/OPS.md)                      |
+| Saleor schema note | One domain of the Saleor GraphQL schema, stamped with its version | [Saleor Schema Note](_templates/saleor-schema-note.md) |
+| Anything else      | A generic concept with no record contract                         | [Undefined Template](_templates/Undefined.md)          |
+
+A Saleor schema note additionally obeys the version-stamp rules in
+[Saleor Schema Notes](#saleor-schema-notes), because those depend on repository tooling rather
+than on the record's own shape.
+
+The field comments are guidance for the author: strip them once the fields are filled in. A
+created record carries values, not the rules that produced them.
 
 ## Workflow
 
 ```mermaid
 flowchart LR
-    S["Sources<br/>immutable evidence, Harness conversation"] --> P["Plans and decisions<br/>PRD → RFC → ADR"]
+    S["Sources<br/>immutable evidence, Harness conversation, Developer Ideas"] --> P["Plans and decisions<br/>PRD → RFC → ADR"]
     P --> I["Implementation evidence<br/>IMP + + PR/commit + tests"]
     I --> C["Current project reality<br/>CAP + FLOW + INT + OPS"]
     C --> Q["product - Quality knowledge"]
     I --> Q
 ```
-
-## Concept Document Format
-
-Every specialized record is created from its template, and the template is the contract. Its
-frontmatter carries every required field, and each field is commented with the rule that governs
-it: location and filename, allowed statuses and who approves a transition, link shape, and where
-the record is registered. Read the template before creating or changing a record of that type —
-the rules are not repeated here, so this file cannot drift from them.
-
-| Record            | Template                                               |
-| ----------------- | ------------------------------------------------------ |
-| PRD               | [PRD Template](_templates/PRD.md)                      |
-| RFC               | [RFC Design Doc](_templates/RFC.md)                    |
-| ADR               | [ADR Template](_templates/ADR.md)                      |
-| IMP               | [IMP Template](_templates/IMP.md)                      |
-| CAP               | [CAP Template](_templates/CAP.md)                      |
-| INT               | [INT Template](_templates/INT.md)                      |
-| FLOW              | [FLOW Template](_templates/FLOW.md)                    |
-| OPS               | [OPS Template](_templates/OPS.md)                      |
-| Saleor schema note | [Saleor Schema Note](_templates/saleor-schema-note.md) |
-
-A Saleor schema note also obeys the version-stamp rules in [Saleor Schema Notes](#saleor-schema-notes)
-below, because those depend on repository tooling rather than on the record's own shape. A generic
-concept that is none of the above uses the [Undefined template](_templates/Undefined.md).
-
-The comments are guidance for the author: strip them once the fields are filled in. A created
-record carries values, not the rules that produced them.
 
 ## Index and log
 

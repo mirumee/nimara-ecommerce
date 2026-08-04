@@ -283,3 +283,13 @@
   carries them, so the duplicate is suppressed by target rather than by skipping frontmatter.
 - **Lint**: `pnpm wiki:lint` reports 0 violations across 91 files; `pnpm wiki:index:sync` reports
   all 6 registers already in sync.
+- **Maintenance**: `AGENTS.md` had two tables listing the record types — a glossary of what each
+  one is for, and a map from each one to its template. Adding a type meant editing both. They are
+  now one `Knowledge model` table with Record, Responsibility, and Template, and the
+  `Concept Document Format` section is gone. Two rows were added so the table answers the question
+  by itself: the Saleor schema note, and `Anything else` for a generic concept, both of which were
+  loose prose under the old template table. No `Directory` column: the folder tree above and the
+  `template_for` comment in each template already carry it, and a third copy would be the first to
+  drift. Row order still follows the Workflow diagram below it rather than the alphabet. The
+  frontmatter `description` said "glossary", which no longer names a section, and now says
+  "knowledge model".
