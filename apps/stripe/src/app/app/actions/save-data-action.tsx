@@ -6,6 +6,7 @@ import { isError } from "@/lib/error";
 import { resolveDashboardTenant } from "@/lib/saleor/config/context";
 import { type SaleorAppConfig } from "@/lib/saleor/config/schema";
 import { SaleorDomainNotAllowedError } from "@/lib/saleor/error";
+import { getStripeApi } from "@/lib/stripe/api";
 import { installWebhooks, uninstallWebhooks } from "@/lib/stripe/webhooks/util";
 import { getConfigProvider } from "@/providers/config";
 import { getLoggingProvider } from "@/providers/logging";
@@ -42,18 +43,42 @@ export const saveDataAction = async ({
   const logger = getLoggingProvider();
 
   const storedPaymentGatewayConfig = appConfig?.paymentGatewayConfig ?? {};
-  const updatedPaymentGatewayConfig = Object.entries(data).reduce<
-    SaleorAppConfig["paymentGatewayConfig"]
-  >((acc, [channelSlug, config]) => {
-    acc[channelSlug] = {
+  const updatedPaymentGatewayConfig: SaleorAppConfig["paymentGatewayConfig"] =
+    {};
+
+  /*
+    Read once per key, since channels sharing a key share the account. A key
+    without permission to read it leaves the id out; the webhooks then ask
+    Stripe themselves.
+  */
+  const accountIds = new Map<string, string | undefined>();
+  const resolveAccountId = async (secretKey: string) => {
+    if (!accountIds.has(secretKey)) {
+      try {
+        accountIds.set(
+          secretKey,
+          (await getStripeApi(secretKey).accounts.retrieve()).id,
+        );
+      } catch (err) {
+        logger.warning("Failed to read the Stripe account id.", {
+          errors: isError(err) ? [{ message: err.message }] : [],
+        });
+        accountIds.set(secretKey, undefined);
+      }
+    }
+
+    return accountIds.get(secretKey);
+  };
+
+  for (const [channelSlug, config] of Object.entries(data)) {
+    updatedPaymentGatewayConfig[channelSlug] = {
       ...storedPaymentGatewayConfig[channelSlug],
+      accountId: await resolveAccountId(config.secretKey),
       currency: config.currency,
       secretKey: config.secretKey,
       publicKey: config.publicKey,
     };
-
-    return acc;
-  }, {});
+  }
 
   if (appUrl) {
     // Remove old webhooks in case of configuration change.
