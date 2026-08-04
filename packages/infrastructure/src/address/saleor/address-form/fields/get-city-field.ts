@@ -23,6 +23,7 @@ export const getCityField = ({
     {
       name: CITY,
       type: "text" as FieldType,
+      autoComplete: "address-level2",
       label: camelizeLabel(addressValidationRules.cityType),
       isRequired: isRequired({ name: CITY, addressValidationRules }),
     },

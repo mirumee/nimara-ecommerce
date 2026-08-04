@@ -23,6 +23,7 @@ export const getPostalCodeField = ({
     {
       name: POSTAL_AREA,
       type: "text" as FieldType,
+      autoComplete: "postal-code",
       label: camelizeLabel(addressValidationRules.postalCodeType),
       isRequired: isRequired({ name: POSTAL_AREA, addressValidationRules }),
       placeholder: addressValidationRules.postalCodeExamples[0],
