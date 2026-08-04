@@ -3,6 +3,7 @@ import { z } from "zod";
 export const paymentGatewayConfig = z.record(
   z.string(),
   z.object({
+    accountId: z.string().optional(),
     currency: z.string(),
     publicKey: z.string(),
     secretKey: z.string(),

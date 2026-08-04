@@ -23,25 +23,29 @@ export type SaleorWebhookUser = {
 };
 
 type CustomerResolveOpts = {
+  accountId: string;
   channelSlug: string;
   user: SaleorWebhookUser;
 };
 
 export const findGatewayCustomerId = ({
+  accountId,
   channelSlug,
   user,
 }: CustomerResolveOpts): string | null =>
   serializeMetadataItems(user.privateMetadata)[
-    getGatewayCustomerMetadataKey(channelSlug)
+    getGatewayCustomerMetadataKey({ accountId, channelSlug })
   ] ?? null;
 
 const persistCustomerId = async ({
+  accountId,
   channelSlug,
   customerId,
   logger,
   saleorClient,
   userId,
 }: {
+  accountId: string;
   channelSlug: string;
   customerId: string;
   logger: Logger;
@@ -55,7 +59,7 @@ const persistCustomerId = async ({
         id: userId,
         input: [
           {
-            key: getGatewayCustomerMetadataKey(channelSlug),
+            key: getGatewayCustomerMetadataKey({ accountId, channelSlug }),
             value: customerId,
           },
         ],
@@ -76,6 +80,7 @@ const persistCustomerId = async ({
 };
 
 export const resolveGatewayCustomerId = async ({
+  accountId,
   channelSlug,
   logger,
   saleorClient,
@@ -88,7 +93,11 @@ export const resolveGatewayCustomerId = async ({
   saleorDomain: string;
   stripe: Stripe;
 }): Promise<string> => {
-  const ownedCustomerId = findGatewayCustomerId({ channelSlug, user });
+  const ownedCustomerId = findGatewayCustomerId({
+    accountId,
+    channelSlug,
+    user,
+  });
 
   if (ownedCustomerId) {
     return ownedCustomerId;
@@ -110,6 +119,7 @@ export const resolveGatewayCustomerId = async ({
   );
 
   await persistCustomerId({
+    accountId,
     channelSlug,
     customerId: customer.id,
     logger,
