@@ -20,7 +20,8 @@ Before proceeding, ensure you have:
 
 - Access to your **Stripe account** (with API keys)
 - Access to your **Saleor Dashboard**
-- Access to your **Vercel account**
+- Access to your **Vercel account** — needed to _deploy_ the app. Running it
+  locally does not require one; see [App Settings Storage](#app-settings-storage).
 
 ### Set Environment Variables
 
@@ -35,8 +36,15 @@ cp apps/stripe/.env.example apps/stripe/.env
 :::note
 Your **Stripe keys are not set here.** They are entered per channel in the
 app's dashboard UI _after_ installation (see [Install the App in Saleor](#install-the-app-in-saleor))
-and stored in Vercel Edge Config — which is why the `VERCEL_*` variables below are required.
+and persisted through the configured store (see [App Settings Storage](#app-settings-storage)).
 :::
+
+For local development against your own Saleor Cloud, two variables are enough:
+
+```properties
+CONFIG_PROVIDER=file
+ALLOWED_DOMAINS=*
+```
 
 **`NEXT_PUBLIC_ENVIRONMENT`**
 
@@ -50,26 +58,72 @@ and stored in Vercel Edge Config — which is why the `VERCEL_*` variables below
 - **Note**: Must end with a trailing slash `/graphql/`.
 - **Example**: `https://your-domain.saleor.cloud/graphql/`
 
+**`ALLOWED_DOMAINS`**
+
+- **Description**: Comma separated list of Saleor domains allowed to install the app. `*` acts as a wildcard, so a whole Saleor Cloud space can be allowed with one entry. While unset, **every** installation is refused.
+- **Example**: `nimara-*.eu.saleor.cloud,demo.nimara.store`. A bare `*` allows any Saleor and belongs in local development only.
+
+**`CONFIG_PROVIDER`**
+
+- **Description**: Where the app persists its settings. `file` writes them to a local JSON file; `edge` uses Vercel Edge Config. Defaults to `edge`.
+- **Example**: `file`
+
+**`CONFIG_FILE_PATH`**
+
+- **Description**: `file` provider only. Path of the config file, relative to `apps/stripe`. Gitignored, and created owner-readable because it holds Stripe secret keys.
+- **Default**: `.saleor-app-config.json`
+
 **`VERCEL_TEAM_ID`**
 
-- **Description**: The unique identifier of your Vercel team account.
+- **Description**: The unique identifier of your Vercel team account. Required only when `CONFIG_PROVIDER=edge`.
 - **How to get it**: Vercel Dashboard → **Settings** → **General** → copy the **Team ID**.
 
 **`VERCEL_ACCESS_TOKEN`**
 
-- **Description**: Personal Vercel API token used to authenticate automated deployments or API calls.
+- **Description**: Personal Vercel API token used to read and write the Edge Config. Required only when `CONFIG_PROVIDER=edge`.
 - **How to get it**: Vercel Dashboard → click your avatar and select **Account Settings** → select **Tokens** → **Create Token**.
 
 **`VERCEL_EDGE_CONFIG_ID`**
 
-- **Description**: ID of the Edge Config database where dynamic settings are stored.
+- **Description**: ID of the Edge Config database where dynamic settings are stored. Required only when `CONFIG_PROVIDER=edge`.
 - **How to get it**: Vercel Dashboard → open your project → **Storage** → click **Create Database** → select an **Edge Config** → copy its ID.
 
 **`CONFIG_KEY`**
 
-- **Description**: Key used to identify and store app-specific configuration in Edge Config.
+- **Description**: Key used to identify and store app-specific configuration in Edge Config. `edge` provider only.
 - **How to get it**: Set this manually. It should be unique and descriptive.
 - **Example**: `nimara-config`
+
+### App Settings Storage
+
+The app stores, per installed Saleor, the Saleor auth token and the per-channel
+Stripe keys. `CONFIG_PROVIDER` selects where:
+
+| Provider | Backing store         | Use for                                                 |
+| -------- | --------------------- | ------------------------------------------------------- |
+| `file`   | Local JSON file       | Local development. No Vercel account required.          |
+| `edge`   | Vercel Edge Config    | Any deployment. Default when `CONFIG_PROVIDER` is unset. |
+
+:::warning
+Do not deploy with `CONFIG_PROVIDER=file`. A serverless filesystem is ephemeral and
+is not shared between instances, so installations would be lost between requests.
+:::
+
+### Running the App Locally
+
+Saleor pushes the payment webhooks to the app, so it has to be reachable over the
+public internet — your Saleor Cloud cannot call `localhost:4000`. Start the dev
+server and expose it with a tunnel:
+
+```bash
+pnpm dev:stripe
+# then, in another shell, point any tunnel of your choice
+# (cloudflared, ngrok, untun, …) at port 4000
+```
+
+Install the app from the tunnel's URL, and keep the tunnel running while you test:
+Saleor stores the app's URL at installation time, so a new tunnel URL means
+reinstalling the app.
 
 ### Configure the Nimara Storefront
 
