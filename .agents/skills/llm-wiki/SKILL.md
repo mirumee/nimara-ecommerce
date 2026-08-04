@@ -66,7 +66,9 @@ node scripts/wiki-qmd.mjs query "question" --json --no-rerank -n 10
 3. Read `llm-wiki/index.md` as the navigation router, then read the relevant MOC when the
    topic is domain-specific:
    - current product state: `llm-wiki/product/Product (MOC).md`;
-   - implementation evidence: `llm-wiki/implementation/Implementation (MOC).md`;
+   - implementation evidence: `llm-wiki/index.md` under Implementation Evidence.
+     `llm-wiki/tech/implementation/Implementation (MOC).md` is an unmaintained placeholder that
+     still reports an empty register, so it answers wrongly rather than not at all;
    - operations: `llm-wiki/operations/Operations (MOC).md`;
    - QA/testing: `llm-wiki/quality/Quality & Testing (MOC).md`;
    - product strategy: `llm-wiki/market/strategy/Product Strategy 2026 (MOC).md`;
@@ -75,6 +77,10 @@ node scripts/wiki-qmd.mjs query "question" --json --no-rerank -n 10
    - Saleor schema: `llm-wiki/tech/saleor/Saleor Schema (MOC).md`.
 
 4. Answer with specific file references. If the wiki does not contain the answer, say that plainly and name the gap.
+
+   Asked what backs a claim, do not expect a commit permalink in the record: CAP, FLOW, INT, and
+   OPS carry none. The evidence sits in the IMP records that list the record under
+   `relations.product_records`, in the ADR that decided it, or in the code itself.
 
 5. If the answer should become durable knowledge, route the mutation to
    `llm-wiki-bookkeeping`.
@@ -95,10 +101,11 @@ Give each operation one owner:
 
 - `llm-wiki-bookkeeping` — ingest, audit, graph repair, durable file-back, and architecture
   decisions;
-- `prd-author` — create, rewrite, refine, or stress-test a PRD;
+- `prd-modeling` — create, rewrite, refine, or stress-test a PRD;
 - `rfc-modeling` — create, rewrite, refine, or stress-test an RFC;
 - the task-specific QA skill — design test cases, retest a reported defect, or run a broad
-  regression sweep.
+  regression sweep. These work against the live board and the running application; they write no
+  records into the wiki.
 
 Use this skill only to supply verified wiki context to those workflows.
 

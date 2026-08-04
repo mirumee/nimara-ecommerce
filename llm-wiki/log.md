@@ -293,3 +293,28 @@
   drift. Row order still follows the Workflow diagram below it rather than the alphabet. The
   frontmatter `description` said "glossary", which no longer names a section, and now says
   "knowledge model".
+- **Maintenance**: Added a `Skills` section to `AGENTS.md` naming the four repo-local skills that
+  work on this directory, what each owns, and what it may write to. It replaces the opening
+  paragraph of `Maintaining The Wiki`, which said the same thing in prose for two of them and
+  deferred the other two to "their specialized skills" without naming them.
+- **Recorded**: The QA skills hold no references to `llm-wiki` at all, so they write no records
+  here. That is now stated, because the `llm-wiki` skill's routing list implies otherwise.
+- **Recorded**: `prd-modeling` and `rfc-modeling` both allocate the next free ID from their
+  directory, so two branches can pick the same number without a Git conflict — the files differ in
+  title. The section says to check the directory against `main` before merging. No tooling
+  enforces it; filename-ID uniqueness was scoped out of the linter's first version.
+- **Correction**: The `llm-wiki` skill routed implementation-evidence lookups to
+  `llm-wiki/implementation/Implementation (MOC).md`, a path that does not exist — the register is
+  under `tech/`. Correcting the path alone would have been worse than leaving it: that file is the
+  unmaintained placeholder and still reports an empty register while three IMP records exist, so it
+  answers wrongly rather than not at all. The skill now routes to `index.md` and says why.
+- **Correction**: The same skill routed PRD authoring to `prd-author`, a skill that does not exist.
+  It is `prd-modeling`. Its QA entry also implied the QA skills write records here; they hold no
+  reference to this directory at all, and the entry now says so.
+- **Correction**: The `llm-wiki` skill assumed a record could be asked what backs its claims. Since
+  the `Provenance` sections were removed earlier today, CAP, FLOW, INT, and OPS carry no permalink,
+  so the skill now points at the IMP records that list them, the deciding ADR, or the code.
+- **Correction**: `llm-wiki-bookkeeping` told an agent to treat `AGENTS.md` as the single source of
+  truth for record frontmatter and templates. That stopped being sufficient when the contracts
+  moved into the templates and `_schema.json`: reading only `AGENTS.md` now yields a table of links
+  and no rules. The skill now states that the governing instructions are the set `AGENTS.md` names.

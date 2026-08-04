@@ -19,6 +19,10 @@ changing records. Treat that file as the single source of truth for:
 - indexes, registers, logs, and lifecycle rules;
 - repository-defined validation and retrieval-refresh commands.
 
+`AGENTS.md` may delegate rather than restate. Where it points at a template, a schema file, or a
+command as the authority for a record type, read that too: the governing instructions are the set
+it names, not the one file.
+
 Derive these rules from the current checkout. Do not retain or infer them from this skill,
 another branch, or prior runs. If the governing instructions are missing, incomplete, or
 contradict the requested operation, report the gap before mutating the wiki.

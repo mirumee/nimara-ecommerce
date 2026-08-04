@@ -140,11 +140,26 @@ Rules:
   The stamp is whole-schema, so any regeneration flags every
   Saleor note - a conservative, intentionally simple freshness gate.
 
-# Maintaining The Wiki
+# Skills
 
-Use the repo-local `llm-wiki` skill for discovery and verified answers. Use
-`llm-wiki-bookkeeping` for ingest, audit, graph repair, durable file-back, and architecture
-decisions. PRD and RFC authoring remain owned by their specialized skills.
+Four repo-local skills work on this directory. Give every operation exactly one owner: a skill
+outside its column does not mutate that area.
+
+| Skill                  | Use it for                                                                                                                                     | Writes to                        |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
+| `llm-wiki`             | Finding, explaining, comparing, or citing what the wiki already holds. Discovery through QMD, then verification against the full Markdown.     | nothing — read only              |
+| `llm-wiki-bookkeeping` | Ingesting a source, filing durable knowledge, auditing or repairing the graph, reconciling the index and log after a change, recording an ADR. | any record, `index.md`, `log.md` |
+| `prd-modeling`         | Creating, rewriting, or stress-testing a PRD. Stops at an approved PRD: it does not design the solution or decompose the work.                 | `prd/`                           |
+| `rfc-modeling`         | Turning an approved PRD into an RFC design proposal. Stops at a proposal: an ADR records the verdict.                                          | `tech/RFC/`                      |
+
+The `llm-wiki-steward` agent bundles the first two for delegated research and repair. It never
+commits, pushes, or opens a pull request.
+
+Both authoring skills take the next free ID from their directory. Two branches can therefore pick
+the same number without Git noticing, because the files differ in title — check the directory
+against `main` before merging.
+
+# Maintaining The Wiki
 
 Expected operations:
 
