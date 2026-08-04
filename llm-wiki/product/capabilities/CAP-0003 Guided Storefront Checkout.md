@@ -73,20 +73,3 @@ navigation clears the completed checkout state from the browser cookie in either
 - The standard confirmation view currently acknowledges success but does not render order details
   from its order identifier. Marketplace confirmation does not wait for asynchronous completion or
   prove that every vendor checkout produced an order.
-
-# Provenance
-
-- Availability is anchored in the public
-  [`v1.0.0` release snapshot](https://github.com/mirumee/nimara-ecommerce/tree/26aa9e6d319334f0fd3610911edea46e841c8ef5),
-  which contains the initial
-  [guided checkout router](https://github.com/mirumee/nimara-ecommerce/blob/26aa9e6d319334f0fd3610911edea46e841c8ef5/apps/storefront/src/app/%5Blocale%5D/%28checkout%29/checkout/page.tsx)
-  and
-  [guest purchase coverage](https://github.com/mirumee/nimara-ecommerce/blob/26aa9e6d319334f0fd3610911edea46e841c8ef5/apps/automated-tests/tests/e2e/checkout/guest-checkout.spec.ts).
-- Current step selection and both payment modes were rechecked at exact commit
-  [`75d6bc55edddf431adcc348009a1c226f77cc005`](https://github.com/mirumee/nimara-ecommerce/tree/75d6bc55edddf431adcc348009a1c226f77cc005)
-  in the
-  [checkout page](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/storefront/src/app/%5Blocale%5D/%28checkout%29/checkout/page.tsx)
-  and
-  [payment-result action](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/storefront/src/app/%5Blocale%5D/%28main%29/payment/confirmation/actions.ts).
-  Marketplace-mode initialization is implemented by the
-  [marketplace payment adapter](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/storefront/src/foundation/checkout/sections/payment/actions.ts).

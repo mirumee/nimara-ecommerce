@@ -81,27 +81,3 @@ actors:
 
 The commerce backend has created an order for the paid checkout, the shopper sees an order
 confirmation, and the browser no longer carries the completed standard-checkout identifier.
-
-# Provenance
-
-- Availability is anchored in the public
-  [`v1.7.1` release snapshot](https://github.com/mirumee/nimara-ecommerce/tree/b500390914b794015e8db37975ce4cbbb27cb6e6),
-  the first release that combines the existing
-  [guest cart-to-purchase flow](https://github.com/mirumee/nimara-ecommerce/blob/b500390914b794015e8db37975ce4cbbb27cb6e6/apps/automated-tests/tests/e2e/checkout/guest-checkout.spec.ts)
-  with the Stripe payment application and the
-  [checkout completion adapter](https://github.com/mirumee/nimara-ecommerce/blob/b500390914b794015e8db37975ce4cbbb27cb6e6/packages/infrastructure/src/public/saleor/checkout/infrastructure/order-create-infra.ts).
-- The current payment-to-order sequence was rechecked at exact commit
-  [`75d6bc55edddf431adcc348009a1c226f77cc005`](https://github.com/mirumee/nimara-ecommerce/tree/75d6bc55edddf431adcc348009a1c226f77cc005)
-  in the
-  [payment-result action](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/storefront/src/app/%5Blocale%5D/%28main%29/payment/confirmation/actions.ts),
-  [polling client](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/storefront/src/app/%5Blocale%5D/%28main%29/payment/confirmation/components/processing-info.tsx),
-  and
-  [checkout cleanup middleware](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/storefront/src/foundation/checkout/order-placed-cleanup-middleware.ts).
-- Checkout ownership is anchored at exact commit
-  [`ebc9e3b8044dc48532d9c32902c584a7589ea6e9`](https://github.com/mirumee/nimara-ecommerce/tree/ebc9e3b8044dc48532d9c32902c584a7589ea6e9)
-  in the
-  [cart creation use-case](https://github.com/mirumee/nimara-ecommerce/blob/ebc9e3b8044dc48532d9c32902c584a7589ea6e9/packages/infrastructure/src/use-cases/cart/lines-add-use-case.ts)
-  and
-  [sign-in action](https://github.com/mirumee/nimara-ecommerce/blob/ebc9e3b8044dc48532d9c32902c584a7589ea6e9/apps/storefront/src/foundation/auth/login.ts).
-  That commit is the tip of unmerged branch `feat/saleor-stored-payment-methods`; re-anchor on the
-  squash-merge commit once it lands.

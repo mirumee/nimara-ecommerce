@@ -88,14 +88,3 @@ to this deployment procedure.
   separate state; a Vercel rollback does not undo them.
 - Escalate any deployment that serves sample data in production, exposes configuration diagnostics,
   or reaches a different Saleor domain or channel than the reviewed plan.
-
-# Provenance
-
-- The current deployment inputs and Terraform behavior are anchored at exact commit
-  [`75d6bc55edddf431adcc348009a1c226f77cc005`](https://github.com/mirumee/nimara-ecommerce/tree/75d6bc55edddf431adcc348009a1c226f77cc005),
-  including the
-  [storefront environment contract](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/storefront/.env.example),
-  [configuration preflight](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/storefront/scripts/preflight.mts),
-  [Vercel resources](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/terraform/storefront/resources.tf),
-  and
-  [manual QA deployment workflow](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/.github/workflows/deploy.yaml).

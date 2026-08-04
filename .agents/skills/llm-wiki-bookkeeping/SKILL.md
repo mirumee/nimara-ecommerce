@@ -78,7 +78,6 @@ verify:
 - every modified record follows the current schema;
 - every affected internal link resolves from its source file;
 - every required index, register, MOC, or log entry is consistent;
-- provenance and source-integrity obligations are satisfied;
 - renamed or removed targets have no stale inbound links;
 - no unrelated files changed.
 

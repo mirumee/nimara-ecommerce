@@ -104,20 +104,3 @@ later ledger and payout-batch operations.
   transaction-session route.
 - The two marketplace payment routes do not currently have scoped automated tests. Existing payment
   application and Stripe Connect tests do not exercise this orchestration contract.
-
-# Provenance
-
-- Availability is anchored in the public
-  [`v2.0.0` release snapshot](https://github.com/mirumee/nimara-ecommerce/tree/1fd1a16558bac1cfebd9a2356ff79061f8627da9),
-  which contains the
-  [marketplace PaymentIntent endpoint](https://github.com/mirumee/nimara-ecommerce/blob/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/marketplace/src/app/api/payments/payment-intent/route.ts),
-  [signed Stripe completion webhook](https://github.com/mirumee/nimara-ecommerce/blob/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/marketplace/src/app/api/payments/stripe/webhooks/route.ts),
-  and
-  [storefront marketplace payment adapter](https://github.com/mirumee/nimara-ecommerce/blob/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/storefront/src/foundation/checkout/sections/payment/actions.ts)
-  described above.
-- Current failure and confirmation boundaries were rechecked at exact commit
-  [`75d6bc55edddf431adcc348009a1c226f77cc005`](https://github.com/mirumee/nimara-ecommerce/tree/75d6bc55edddf431adcc348009a1c226f77cc005)
-  in the
-  [payment UI](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/storefront/src/foundation/checkout/sections/payment/payment.tsx)
-  and
-  [marketplace confirmation route](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/storefront/src/app/%5Blocale%5D/%28main%29/payment/confirmation/page.tsx).

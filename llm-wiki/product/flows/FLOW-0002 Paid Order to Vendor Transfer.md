@@ -91,15 +91,3 @@ executed ready batch item, and the marketplace retains the source ledger lines, 
 and provider Transfer state needed to explain the operation. This flow ends at the connected-account
 Transfer; it does not create, persist, or reconcile the later bank payout, so a `paid` marketplace
 item does not prove that funds reached the vendor's bank.
-
-# Provenance
-
-- Availability is anchored in the public
-  [`v2.0.0` release snapshot](https://github.com/mirumee/nimara-ecommerce/tree/1fd1a16558bac1cfebd9a2356ff79061f8627da9).
-- The immutable snapshot contains the
-  [order-paid event handler](https://github.com/mirumee/nimara-ecommerce/blob/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/marketplace/src/app/api/saleor/webhooks/order-paid/route.ts),
-  [settlement synchronization](https://github.com/mirumee/nimara-ecommerce/blob/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/marketplace/src/lib/ledger/sync-ledger-settlement-from-stripe.ts),
-  [atomic batch close](https://github.com/mirumee/nimara-ecommerce/blob/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/marketplace/src/lib/ledger/close-payout-batch.ts),
-  and
-  [idempotent Transfer execution](https://github.com/mirumee/nimara-ecommerce/blob/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/marketplace/src/lib/ledger/execute-payout-batch.ts)
-  described above.

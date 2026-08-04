@@ -88,14 +88,3 @@ must be reconciled before closing a payout period.
   callers or payloads before trusting newly ingested lines.
 - Escalate zero-decimal or non-two-decimal currencies, inconsistent vendor metadata, duplicate source
   references, or any mismatch between ledger gross and the canonical commerce order.
-
-# Provenance
-
-- This procedure is anchored at exact commit
-  [`75d6bc55edddf431adcc348009a1c226f77cc005`](https://github.com/mirumee/nimara-ecommerce/tree/75d6bc55edddf431adcc348009a1c226f77cc005),
-  including the
-  [ledger migration runner](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/marketplace/scripts/migrate-ledger.mjs),
-  [order-paid ingest route](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/marketplace/src/app/api/saleor/webhooks/order-paid/route.ts),
-  [settlement synchronization](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/marketplace/src/lib/ledger/sync-ledger-settlement-from-stripe.ts),
-  and
-  [authenticated overview](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/marketplace/src/app/api/payouts/overview/route.ts).

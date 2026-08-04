@@ -76,15 +76,3 @@ persisted. Item failures are recorded independently, allowing the batch to finis
 - Execution stops at provider Transfers from the platform account to connected accounts. Bank
   withdrawal objects from connected accounts are neither created nor persisted, so `paid` batch or
   item status does not prove that funds reached a vendor's bank.
-
-# Provenance
-
-- Availability is anchored in the public
-  [`v2.0.0` release snapshot](https://github.com/mirumee/nimara-ecommerce/tree/1fd1a16558bac1cfebd9a2356ff79061f8627da9).
-- The immutable snapshot contains the
-  [order-gross ingest](https://github.com/mirumee/nimara-ecommerce/blob/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/marketplace/src/lib/ledger/ingest-order-paid.ts),
-  [ledger repository](https://github.com/mirumee/nimara-ecommerce/blob/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/marketplace/src/lib/ledger/repository.ts),
-  [batch close](https://github.com/mirumee/nimara-ecommerce/blob/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/marketplace/src/lib/ledger/close-payout-batch.ts),
-  and
-  [Transfer execution](https://github.com/mirumee/nimara-ecommerce/blob/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/marketplace/src/lib/ledger/execute-payout-batch.ts)
-  implementations described above.

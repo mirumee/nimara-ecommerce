@@ -94,14 +94,3 @@ deployment without rewriting published Git history.
   compensating plan for each stateful system.
 - After restoring service, ship the corrective code through a reviewed pull request and create a
   new release when applicable; do not silently mutate a prior release artifact.
-
-# Provenance
-
-- This trunk release and rollback contract is anchored at exact implementation commit
-  [`407da55cabebee44ec910d1a96261934b4cab963`](https://github.com/mirumee/nimara-ecommerce/tree/407da55cabebee44ec910d1a96261934b4cab963),
-  including the
-  [documented trunk workflow](https://github.com/mirumee/nimara-ecommerce/blob/407da55cabebee44ec910d1a96261934b4cab963/docs/03-Release-workflow.md),
-  [main CI workflow](https://github.com/mirumee/nimara-ecommerce/blob/407da55cabebee44ec910d1a96261934b4cab963/.github/workflows/main.yaml),
-  [CI-gated semantic-release workflow](https://github.com/mirumee/nimara-ecommerce/blob/407da55cabebee44ec910d1a96261934b4cab963/.github/workflows/release.yaml),
-  and
-  [commit-aware QA deployment](https://github.com/mirumee/nimara-ecommerce/blob/407da55cabebee44ec910d1a96261934b4cab963/.github/workflows/deploy.yaml).

@@ -20,7 +20,11 @@ It follows the llm-wiki shape: a directory of Markdown files with YAML frontmatt
 
 - The wiki view is the complete `llm-wiki/` tree at one exact Git commit.
 - `main` is the canonical development branch.
-- A branch name is a movable alias; provenance always includes the resolved commit SHA.
+- A branch name is a movable alias. Where a record anchors code at all, it resolves that alias
+  to a release tag or an exact 40-character commit SHA.
+- Current-state records — CAP, FLOW, INT, OPS — carry no `Provenance` section and no commit
+  permalinks. They describe what is true at the commit that contains them, so a permalink inside
+  one is a second, separately rotting copy of that answer. Implementation evidence belongs to IMP.
 - A `vX.Y.Z` tag is the immutable release snapshot.
 - There are no per-branch directories. Git already versions branch-specific state.
 

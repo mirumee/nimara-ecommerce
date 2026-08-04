@@ -79,15 +79,3 @@ checks ownership before sensitive single-object reads and mutations.
 - Failure of a commerce mutation leaves its object unchanged but does not roll back earlier,
   separately completed setup or notification work unless that workflow explicitly performs its
   best-effort cleanup.
-
-# Provenance
-
-- Availability is anchored in the public
-  [`v2.0.0` release snapshot](https://github.com/mirumee/nimara-ecommerce/tree/1fd1a16558bac1cfebd9a2356ff79061f8627da9).
-- The immutable snapshot contains the
-  [vendor-isolating GraphQL boundary](https://github.com/mirumee/nimara-ecommerce/blob/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/marketplace/src/lib/graphql/server/schema.ts),
-  [vendor authentication context](https://github.com/mirumee/nimara-ecommerce/blob/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/marketplace/src/lib/graphql/server/auth.ts),
-  [authenticated marketplace workspace](https://github.com/mirumee/nimara-ecommerce/tree/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/marketplace/src/app/%28authenticated%29),
-  and
-  [connected-account actions](https://github.com/mirumee/nimara-ecommerce/blob/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/marketplace/src/app/%28authenticated%29/_actions/stripe-connect.ts)
-  described above.

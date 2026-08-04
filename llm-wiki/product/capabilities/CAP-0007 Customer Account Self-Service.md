@@ -100,29 +100,3 @@ page.
   the saved list.
 - Account deletion is a two-step email and token flow. A missing customer session or unsuccessful
   backend deletion leaves the account intact.
-
-# Provenance
-
-- Availability is anchored in the public
-  [`v1.3.0` release snapshot](https://github.com/mirumee/nimara-ecommerce/tree/5d29850c4dfc8e4225409ca741dc9437db88cf78),
-  the first release where the existing account, profile, address, payment-method, privacy, and
-  order-history surfaces also include the
-  [customer return action](https://github.com/mirumee/nimara-ecommerce/blob/5d29850c4dfc8e4225409ca741dc9437db88cf78/apps/storefront/src/app/%5Blocale%5D/%28main%29/account/orders/_forms/actions.ts)
-  and
-  [return interface](https://github.com/mirumee/nimara-ecommerce/blob/5d29850c4dfc8e4225409ca741dc9437db88cf78/apps/storefront/src/app/%5Blocale%5D/%28main%29/account/orders/_components/return-products-modal.tsx).
-- Current behavior and limitations were rechecked at exact commit
-  [`75d6bc55edddf431adcc348009a1c226f77cc005`](https://github.com/mirumee/nimara-ecommerce/tree/75d6bc55edddf431adcc348009a1c226f77cc005)
-  in the
-  [account navigation](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/storefront/src/features/account/account-menu/side-links.tsx),
-  [profile actions](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/storefront/src/app/%5Blocale%5D/%28main%29/account/profile/_forms/actions.ts),
-  [order-history page](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/storefront/src/app/%5Blocale%5D/%28main%29/account/orders/page.tsx),
-  and
-  [payment-method page](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/storefront/src/app/%5Blocale%5D/%28main%29/account/payment-methods/page.tsx).
-- The saved-payment-method behavior, inputs, and constraints above are anchored at exact commit
-  [`ebc9e3b8044dc48532d9c32902c584a7589ea6e9`](https://github.com/mirumee/nimara-ecommerce/tree/ebc9e3b8044dc48532d9c32902c584a7589ea6e9)
-  in the
-  [saved-method listing](https://github.com/mirumee/nimara-ecommerce/blob/ebc9e3b8044dc48532d9c32902c584a7589ea6e9/apps/storefront/src/foundation/checkout/sections/payment/server.ts)
-  and
-  [redisplay-consent filter](https://github.com/mirumee/nimara-ecommerce/blob/ebc9e3b8044dc48532d9c32902c584a7589ea6e9/apps/stripe/src/lib/stripe/payment-method.ts).
-  That commit is the tip of unmerged branch `feat/saleor-stored-payment-methods`; re-anchor these
-  links to the squash-merge commit once it lands, since a rebase of that branch would strand them.

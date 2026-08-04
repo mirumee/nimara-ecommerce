@@ -79,20 +79,3 @@ reachable Saleor deployment.
   checkout, customer, order, marketplace, or payment behavior.
 - Availability and correctness depend on channel configuration, permissions, app installation,
   webhook registration, and credentials outside this repository.
-
-# Provenance
-
-- Availability starts with the public
-  [`v1.0.0` release snapshot](https://github.com/mirumee/nimara-ecommerce/tree/26aa9e6d319334f0fd3610911edea46e841c8ef5),
-  which already contains the
-  [shared GraphQL client](https://github.com/mirumee/nimara-ecommerce/blob/26aa9e6d319334f0fd3610911edea46e841c8ef5/packages/infrastructure/src/graphql/client.ts)
-  and Saleor-backed storefront commerce paths.
-- The current public snapshot
-  [`75d6bc55edddf431adcc348009a1c226f77cc005`](https://github.com/mirumee/nimara-ecommerce/tree/75d6bc55edddf431adcc348009a1c226f77cc005)
-  contains the
-  [storefront infrastructure services](https://github.com/mirumee/nimara-ecommerce/tree/75d6bc55edddf431adcc348009a1c226f77cc005/packages/infrastructure/src),
-  [marketplace GraphQL boundary](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/marketplace/src/lib/graphql/client.ts),
-  [payment-app manifest](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/stripe/src/app/api/saleor/manifest/route.ts),
-  and
-  [generated schema snapshot](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/packages/codegen/schema.ts)
-  described by this contract.

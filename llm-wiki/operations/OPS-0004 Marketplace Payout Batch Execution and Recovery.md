@@ -85,14 +85,3 @@ state differs from Stripe.
 - The repository does not automate Transfer reversals. Suspected wrong-destination, wrong-amount,
   duplicate, or compromised-account events require immediate payment-platform incident handling and
   finance approval.
-
-# Provenance
-
-- This procedure is anchored at exact commit
-  [`75d6bc55edddf431adcc348009a1c226f77cc005`](https://github.com/mirumee/nimara-ecommerce/tree/75d6bc55edddf431adcc348009a1c226f77cc005),
-  including the
-  [batch close route](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/marketplace/src/app/api/payouts/batches/close/route.ts),
-  [atomic close implementation](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/marketplace/src/lib/ledger/close-payout-batch.ts),
-  [execution route](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/marketplace/src/app/api/payouts/batches/%5Bid%5D/execute/route.ts),
-  and
-  [idempotent Transfer executor](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/marketplace/src/lib/ledger/execute-payout-batch.ts).

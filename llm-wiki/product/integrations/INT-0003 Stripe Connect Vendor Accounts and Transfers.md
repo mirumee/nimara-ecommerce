@@ -78,15 +78,3 @@ for batch eligibility.
 - Without `DATABASE_URL`, vendor-profile onboarding and connection metadata still work, but the
   ledger account mapping, webhook inbox, Transfer records, and payout-batch execution state are not
   available.
-
-# Provenance
-
-- Availability is anchored in the public
-  [`v2.0.0` release snapshot](https://github.com/mirumee/nimara-ecommerce/tree/1fd1a16558bac1cfebd9a2356ff79061f8627da9).
-- The immutable snapshot contains the
-  [Express account and signature contract](https://github.com/mirumee/nimara-ecommerce/blob/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/marketplace/src/lib/stripe/connect.ts),
-  [authenticated onboarding actions](https://github.com/mirumee/nimara-ecommerce/blob/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/marketplace/src/app/%28authenticated%29/_actions/stripe-connect.ts),
-  [Connect webhook route](https://github.com/mirumee/nimara-ecommerce/blob/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/marketplace/src/app/api/stripe/connect/webhook/route.ts),
-  and
-  [Transfer client](https://github.com/mirumee/nimara-ecommerce/blob/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/marketplace/src/lib/stripe/payout-api.ts)
-  described above.
