@@ -1,5 +1,8 @@
 ---
-type: "Saleor Schema Note"
+type: "Template"
+# The created note's `type`. It lives in `tech/saleor/`, named after the schema domain it
+# covers, and is registered in `tech/saleor/Saleor Schema (MOC).md`.
+template_for: "Saleor Schema Note"
 title: "Saleor Domain"
 description: "One sentence describing which part of the Saleor GraphQL schema this note covers."
 tags:

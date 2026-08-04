@@ -72,8 +72,10 @@ supersession rules discovered from the governing instructions.
 
 ## Validate and report
 
-Run the repository-defined checks relevant to the operation. Inspect the final diff and
-verify:
+Run the repository-defined checks relevant to the operation. In Nimara's `llm-wiki/` those are
+`pnpm wiki:lint` — which must end at zero violations — `pnpm wiki:index:sync` after adding or
+removing a note, and `pnpm wiki:saleor:check` before citing a Saleor schema note. Inspect the
+final diff and verify:
 
 - every modified record follows the current schema;
 - every affected internal link resolves from its source file;

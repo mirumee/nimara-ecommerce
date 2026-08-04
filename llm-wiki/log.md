@@ -243,3 +243,43 @@
   was dropped from the note; the rest of it, on what an RFC is and on provider neutrality, stands.
 - **Lint**: Verified 91 Markdown files and every local link with no unresolved target, and
   confirmed no record carries a `Provenance` section.
+- **Tooling**: Added `pnpm wiki:lint` and `pnpm wiki:index:sync`, both in
+  `scripts/wiki-lint.mjs`, driven by the new [`_schema.json`](_schema.json). Twelve rules cover
+  frontmatter against the record contracts, link and anchor integrity, orphans, and register
+  coverage. Every violation is an error and the only way to silence one is an `except` entry
+  carrying a reason. Deliberately not wired into CI: it runs by hand, so `AGENTS.md` and the
+  `llm-wiki-bookkeeping` skill now name it as the step that closes a wiki change.
+- **Rationale**: The rules were unenforced, and the wiki had already proved they rot. This run
+  found what the previous four days found by hand: a case-sensitive link break, a register
+  claiming to be empty while three records existed, thirteen dead anchors, two templates missing
+  fields their own contract required, and a field that disagreed with Git in 27 of 34 records.
+  `_schema.json` is the machine-readable half of the contracts in `_templates/`; both must change
+  together, which is a second copy accepted on purpose so that a template missing a field fails
+  rather than redefining the requirement.
+- **Correction**: `_templates/saleor-schema-note.md` declared `type: "Saleor Schema Note"` and no
+  `template_for`, unlike the other nine templates. It read as a real note rather than a template.
+  Now `type: "Template"` with `template_for: "Saleor Schema Note"`. This was the only violation
+  the first clean run reported.
+- **Dependency**: `yaml@2.8.3` added to root `devDependencies`, pinned to the version already in
+  `pnpm-lock.yaml` so the store gains nothing — `pnpm add yaml` had resolved `2.9.0` and rewritten
+  116 lockfile lines by re-keying the Tailwind and Vite peer chains. Approved for this purpose:
+  the tool that judges every other file must not misparse them, and the wiki's frontmatter uses
+  single-quote escaping and inline comments that a hand-rolled parser gets wrong.
+- **Deferred**: No rule yet enforces the `Provenance` ban recorded earlier today, and the 15 commit
+  SHAs in 6 files are unchecked for reachability. Cross-record consistency — IMP relation targets,
+  ADR supersession, filename-ID uniqueness — is also unimplemented. Both were scoped out of the
+  first version.
+- **Verification**: The linter was then exercised against throwaway fixture wikis — a `--root`
+  flag was added for it, so no test mutates `llm-wiki/`. Forty-one assertions cover every rule
+  firing, every rule staying silent on a clean tree, and the register sync inserting, pruning,
+  preserving order, and staying idempotent. The suite is not committed; it lives outside the repo,
+  so nothing repeats the proof automatically. The output reports how many files each rule
+  examined, so a rule that quietly stops matching is still visible.
+- **Fixed while testing**: three defects the real wiki could not surface. A register named in the
+  schema but absent from the tree crashed with an unhandled `ENOENT` instead of reporting; a note
+  registered twice was accepted silently and would have been collapsed by the next sync without a
+  word; and an unresolved relation link was reported twice, once as `bad-relation-link` and once
+  as `link-unresolved`. Frontmatter is still scanned for links, because an IMP's `rollback` prose
+  carries them, so the duplicate is suppressed by target rather than by skipping frontmatter.
+- **Lint**: `pnpm wiki:lint` reports 0 violations across 91 files; `pnpm wiki:index:sync` reports
+  all 6 registers already in sync.

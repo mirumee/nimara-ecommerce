@@ -160,11 +160,26 @@ decisions. PRD and RFC authoring remain owned by their specialized skills.
 
 Expected operations:
 
-- Ingest a new source: update synthesized notes, update `index.md`, and append to `log.md`.
-- Lint or audit: check frontmatter, links, orphans, MOC coverage, stale claims, and source
-  coverage.
+- Ingest a new source: update synthesized notes, run `pnpm wiki:index:sync`, and append to
+  `log.md`.
+- Lint or audit: run `pnpm wiki:lint`, then check what it cannot — stale claims, source
+  coverage, and contradictions between records.
 - Answer and file back: answer from existing concepts first, then add durable insights as
   concept documents when they should persist.
+
+Finish every change to this directory with `pnpm wiki:lint`, and leave it at zero violations.
+
+- `pnpm wiki:lint` checks frontmatter against [`_schema.json`](_schema.json), link and anchor
+  integrity, orphans, and register coverage. Every violation is an error. For machine-readable
+  output use `pnpm --silent wiki:lint -- --json`; without `--silent`, pnpm's banner breaks the
+  JSON. It is deliberately not wired into CI, so nothing else will run it.
+- `pnpm wiki:index:sync` adds and removes rows in `index.md` and the MOC registers. It keeps
+  existing rows verbatim and appends new ones at the end of their section — several sections
+  are ordered by hand, so move an inserted row if the section has a reading order, and shorten
+  the hook it copied from the note's `description`.
+- `_schema.json` is the machine-readable half of the record contracts in `_templates/`. When a
+  contract changes, change both. Silencing a rule means adding an `except` entry with a
+  reason.
 
 Sources under `sources/` should preserve the source body. Prefer appending metadata,
 provenance, or citations over rewriting the raw source text unless the user explicitly asks
