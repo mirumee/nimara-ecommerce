@@ -29,7 +29,9 @@
       "prefix": "PRD",
       "digits": 3,
       "required": ["status", "owner", "prd_type", "personas"],
-      "enum": { "status": ["draft", "analyzing", "approved", "implemented", "blocked"] },
+      "enum": {
+        "status": ["draft", "analyzing", "approved", "implemented", "blocked"]
+      },
       "linkFields": ["personas"]
     },
     "Request for Comments": {
@@ -63,7 +65,9 @@
         "rollout",
         "rollback"
       ],
-      "enum": { "status": ["planned", "in_progress", "implemented", "rolled_back"] },
+      "enum": {
+        "status": ["planned", "in_progress", "implemented", "rolled_back"]
+      },
       "linkFields": [
         "relations.prds",
         "relations.rfcs",
@@ -147,7 +151,10 @@
         "Product Capabilities": ["product/capabilities/*.md"],
         "Product Flows": ["product/flows/*.md"],
         "Integration Contracts": ["product/integrations/*.md"],
-        "Product Strategy": ["market/strategy/*.md", "market/strategy/initiatives/*.md"],
+        "Product Strategy": [
+          "market/strategy/*.md",
+          "market/strategy/initiatives/*.md"
+        ],
         "Product Market": ["market/research/*.md"],
         "Product Personas": ["market/personas/*.md"],
         "Quality": ["quality/*.md"],
