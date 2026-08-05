@@ -329,6 +329,20 @@
   untyped body links, and states that the graph is directed on purpose: a CAP names the integrations
   it needs and the INT names nothing back, so links answer "what does this rely on?" and never the
   reverse.
+- **Maintenance**: `README.md` lost `Saleor Schema Notes` and `Maintaining The Wiki`, and is down to
+  149 lines describing what this directory is rather than how to operate it. The Saleor stamping
+  rules became `bookkeeping/references/saleor-schema-notes.md`, where the review-not-restamp point
+  is now stated: clearing a `STALE` result means reading the note against the current schema, since
+  restamping an unread note turns a known-stale claim into an unknown-stale one. The tooling
+  semantics — what the linter checks, why `--silent` is needed for JSON, that the sync keeps rows
+  verbatim and appends, that a contract change touches both a template and `_schema.json` — moved
+  into the `bookkeeping` skill, as did the rule that `sources/` keeps its body. `README.md` keeps
+  one line under `Index and log` naming the two commands, so a reader of that file alone still
+  learns the registers are not maintained by hand.
+- **Fixed**: removing a section left `README.md` linking `(#saleor-schema-notes)`, and the linter
+  passed. Its link rule skipped any target that was empty, so a same-file anchor was never checked —
+  the one kind of anchor a section removal always breaks. It now resolves an empty target against
+  the file itself, which immediately reported the dead link.
 - **Maintenance**: The repository's root instructions now mention this directory, which they never
   did — zero occurrences of "wiki" in `CLAUDE.md`, the file every agent reads first, while a
   92-file knowledge base sat beside the code. Added a `Global rules` bullet, a line in the layer

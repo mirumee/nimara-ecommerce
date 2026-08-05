@@ -622,10 +622,13 @@ for (const note of notes.values()) {
   const dir = path.posix.dirname(note.relPath);
   for (const link of extractLinks(note.raw)) {
     if (/^(https?:|mailto:)/.test(link.target)) continue;
-    if (link.target === "") continue;
-    const resolved = path.posix.normalize(
-      path.posix.join(dir, decodeURIComponent(link.target)),
-    );
+    /* `(#section)` with no path is an anchor into this same file. */
+    const resolved =
+      link.target === ""
+        ? note.relPath
+        : path.posix.normalize(
+            path.posix.join(dir, decodeURIComponent(link.target)),
+          );
     if (!notes.has(resolved)) {
       /*
        * A link may point outside the linted set and still resolve: `_schema.json`, or a skill

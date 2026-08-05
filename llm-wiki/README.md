@@ -88,9 +88,10 @@ rules are not repeated here, so this file cannot drift from them.
 | Saleor schema note | One domain of the Saleor GraphQL schema, stamped with its version | [Saleor Schema Note](_templates/saleor-schema-note.md) |
 | Anything else      | A generic concept with no record contract                         | [Undefined Template](_templates/Undefined.md)          |
 
-A Saleor schema note additionally obeys the version-stamp rules in
-[Saleor Schema Notes](#saleor-schema-notes), because those depend on repository tooling rather
-than on the record's own shape.
+A Saleor schema note additionally carries a freshness stamp, because the project does not pin a
+Saleor version. Those rules depend on repository tooling rather than on the record's own shape, so
+they live with the skill that writes them:
+[saleor-schema-notes](.claude/skills/bookkeeping/references/saleor-schema-notes.md).
 
 The field comments are guidance for the author: strip them once the fields are filled in. A
 created record carries values, not the rules that produced them.
@@ -115,6 +116,10 @@ flowchart LR
 - `log.md` is chronological and append-only. It records maintenance, ingest, query, lint, and
   release operations using parseable dated headings. Date headings must use `YYYY-MM-DD`.
 
+Both are kept in step by `_scripts/`, not by hand: `pnpm wiki:index:sync` maintains the registers
+and `pnpm wiki:lint` enforces this file's rules against `_schema.json`. How and when to run them
+belongs to the `bookkeeping` skill.
+
 ```markdown
 # Directory Update Log
 
@@ -123,27 +128,6 @@ flowchart LR
 - **Update**: Added a new concept document for ...
 - **Lint**: Repaired broken Markdown links in ...
 ```
-
-# Saleor Schema Notes
-
-Curated notes on the Saleor GraphQL API live in `tech/saleor/`, registered in
-[Saleor Schema (MOC)](tech/saleor/Saleor%20Schema%20%28MOC%29.md). They are version-stamped
-because Nimara does not pin a Saleor version: it connects only through
-`NEXT_PUBLIC_SALEOR_API_URL`, and `pnpm codegen` fetches the schema live from that URL into
-`packages/codegen/schema.ts`. That committed file is the de-facto pin.
-
-Rules:
-
-- Type: `Saleor Schema Note`. Create from `_templates/saleor-schema-note.md`. Keep notes
-  curated and one-idea-per-note (per domain), not an auto-generated per-type dump.
-- Every note carries `saleor_schema_hash` - the short sha256 of `packages/codegen/schema.ts`
-  it was written against - plus `saleor_schema_generated`.
-- Stamp with `pnpm wiki:saleor:hash`. Verify with `pnpm wiki:saleor:check` before citing a
-  Saleor note. `OK` = matches the current schema; `STALE` = the schema was regenerated and the
-  note needs review, then restamp.
-- A `STALE` result is expected after `pnpm codegen` changes `packages/codegen/schema.ts`.
-  The stamp is whole-schema, so any regeneration flags every
-  Saleor note - a conservative, intentionally simple freshness gate.
 
 # Skills
 
@@ -157,35 +141,6 @@ Skills live inside this directory, under `.claude/skills/`.
 | `rfc-modeling`                               | Turning an approved PRD into an RFC design proposal. Stops at a proposal: an ADR records the verdict.                                                                                | `tech/RFC/`                      |
 | `grilling`                                   | Stress-testing a plan or design one question at a time. `prd-modeling` runs it as its business-grilling stage.                                                                       | nothing — asks questions         |
 | `handoff`                                    | Compacting a conversation into a document another agent can pick up. `prd-modeling` runs it to close a session.                                                                      | wherever it is told to write     |
-
-# Maintaining The Wiki
-
-Expected operations:
-
-- Ingest a new source: update synthesized notes, run `pnpm wiki:index:sync`, and append to
-  `log.md`.
-- Lint or audit: run `pnpm wiki:lint`, then check what it cannot — stale claims, source
-  coverage, and contradictions between records.
-- Answer and file back: answer from existing concepts first, then add durable insights as
-  concept documents when they should persist.
-
-Finish every change to this directory with `pnpm wiki:lint`, and leave it at zero violations.
-
-- `pnpm wiki:lint` checks frontmatter against [`_schema.json`](_schema.json), link and anchor
-  integrity, orphans, and register coverage. Every violation is an error. For machine-readable
-  output use `pnpm --silent wiki:lint -- --json`; without `--silent`, pnpm's banner breaks the
-  JSON. It is deliberately not wired into CI, so nothing else will run it.
-- `pnpm wiki:index:sync` adds and removes rows in `index.md` and the MOC registers. It keeps
-  existing rows verbatim and appends new ones at the end of their section — several sections
-  are ordered by hand, so move an inserted row if the section has a reading order, and shorten
-  the hook it copied from the note's `description`.
-- `_schema.json` is the machine-readable half of the record contracts in `_templates/`. When a
-  contract changes, change both. Silencing a rule means adding an `except` entry with a
-  reason.
-
-Sources under `sources/` should preserve the source body. Prefer appending metadata,
-provenance, or citations over rewriting the raw source text unless the user explicitly asks
-for a migration or correction.
 
 # Related Notes
 

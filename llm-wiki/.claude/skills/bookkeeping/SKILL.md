@@ -55,6 +55,11 @@ assumptions, synthesize the durable records, and register them using the current
 Discuss the proposed record set with the user before writing when filing choices require
 product or editorial judgment.
 
+In Nimara's wiki, material under `sources/` keeps its body. Append metadata, provenance, or
+citations rather than rewriting the raw text, unless the user asked for a migration or a
+correction. A `Saleor Schema Note` additionally carries a freshness stamp — see
+`references/saleor-schema-notes.md`.
+
 ### Reconcile a content change
 
 After creating, editing, renaming, moving, or removing records, update every affected link
@@ -76,10 +81,22 @@ supersession rules discovered from the governing instructions.
 
 ## Validate and report
 
-Run the repository-defined checks relevant to the operation. In Nimara's `llm-wiki/` those are
-`pnpm wiki:lint` — which must end at zero violations — `pnpm wiki:index:sync` after adding or
-removing a note, and `pnpm wiki:saleor:check` before citing a Saleor schema note. Inspect the
-final diff and verify:
+Run the repository-defined checks relevant to the operation. In Nimara's `llm-wiki/`:
+
+- **`pnpm wiki:lint`** must end at zero violations, and it closes every change to the directory.
+  It checks frontmatter against `_schema.json`, link and anchor integrity, orphans, and register
+  coverage. Every violation is an error; there is no warning tier. Machine-readable output is
+  `pnpm --silent wiki:lint -- --json` — without `--silent`, pnpm's banner breaks the JSON. It is
+  deliberately not wired into CI, so nothing else will run it.
+- **`pnpm wiki:index:sync`** after adding, renaming, or removing a note. It adds and removes rows
+  in `index.md` and the MOC registers, keeps existing rows verbatim, and appends new ones at the
+  end of their section. Several sections are ordered by hand, so move an inserted row when the
+  section has a reading order, and shorten the hook it copied from the note's `description`.
+- **`pnpm wiki:saleor:check`** before citing or restamping a Saleor schema note.
+- **`_schema.json` is the machine-readable half of the contracts in `_templates/`.** A contract
+  change means changing both. Silencing a rule means adding an `except` entry that states why.
+
+Inspect the final diff and verify:
 
 - every modified record follows the current schema;
 - every affected internal link resolves from its source file;
