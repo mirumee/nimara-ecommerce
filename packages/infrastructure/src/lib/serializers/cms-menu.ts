@@ -19,17 +19,16 @@ const createMenuItemUrl = (
   if (page?.slug) {
     return `/page/${page.slug}`;
   }
-  const queryParams = new URLSearchParams();
-
-  if (category?.slug) {
-    queryParams.append("category", category.slug);
-  }
 
   if (collection?.slug) {
     return `/collections/${collection.slug}`;
   }
 
-  return `/search?${queryParams.toString()}`;
+  if (category?.slug) {
+    return `/categories/${category.slug}`;
+  }
+
+  return "/search";
 };
 
 const serializeSaleorMenuItemChild = (
