@@ -1,126 +1,39 @@
 ---
 name: explore
-description: Retrieve and verify existing project knowledge from llm-wiki. Use when the user asks to find, explain, compare, or cite existing strategy, persona, product, quality, PRD, RFC, ADR, or source notes. Use QMD only for discovery, verify the full Markdown source.
+description: Ways to explore llm-wiki and answer from it. Use when the user asks to find, explain, compare, or cite anything the wiki already holds — product state, flows, integrations, operations, PRDs, RFCs, ADRs, implementation evidence, strategy, personas, QA knowledge, or source notes. Read-only: it never writes to the wiki.
 ---
 
-# LLM Wiki
+# Explore
 
-Use this skill to retrieve and answer from `llm-wiki/`. QMD is the discovery layer;
-Markdown files remain the source of truth.
+Three ways in, in the order that usually costs least, and a fourth for moving between records
+once you are already holding one. Read-only throughout: this skill answers questions and cites
+files.
 
-## Ground Rules
+## 1. The router
 
-1. Read `llm-wiki/AGENTS.md` when schema, naming, folder placement, ADR rules, or maintenance rules matter. It is a loader: the rules live in `llm-wiki/README.md`, and the record contracts live in `llm-wiki/_templates/` and `llm-wiki/_schema.json`.
-2. Read `llm-wiki/sources/LLM Wiki.md` when the user asks about the upstream LLM-wiki pattern or why this wiki is structured this way.
-3. Use QMD to find candidate notes, then read the actual Markdown before answering. Do not answer from snippets alone.
-4. Treat `qmd` output as retrieval, not validation. It does not prove link integrity, source integrity, MOC coverage, or JSON-vs-Markdown consistency.
-5. Keep QMD local state out of git. The project wrapper uses `qmd --index nimara-wiki`, stored under `~/.cache/qmd/nimara-wiki.sqlite`.
+`llm-wiki/index.md` lists every note once, grouped by record type, with a one-line hook. Start
+here when you know roughly what kind of thing you are after. It is the only file guaranteed to
+mention everything.
 
-## Setup Check
+## 2. Crosslinks
 
-Before using QMD, run:
+Concepts here reference each other with ordinary Markdown links.
+Once you hold one record, following its links is cheaper than searching again: its neighbourhood is already declared.
 
-```bash
-pnpm wiki:qmd:status
-```
+## 3. Semantic search
 
-If QMD has no collection or missing embeddings, use:
+`qmd` is a local index over the same Markdown. Reach for it when the question is a phrase rather
+than a location, and you do not know which record would hold the answer.
 
-```bash
-pnpm wiki:qmd:setup
-pnpm wiki:qmd:embed
-```
+Read `references/semantic-search.md` before using it. It covers checking that the index describes
+this checkout — a stale one silently answers about another worktree — plus which of `query`,
+`search`, and `get` fits, and the failure modes that make a miss look like an absence.
 
-After wiki Markdown changes, refresh retrieval:
+## 4. Plain search
 
-```bash
-pnpm wiki:qmd:update
-pnpm wiki:qmd:embed
-```
+Grep and glob still beat everything for an exact token: a record ID, a field name, a commit SHA,
+an env var. The tree is 90-odd files; reading three of them in full is often cheaper than one
+semantic round trip.
 
-If `pnpm` on the local machine misbehaves, use the wrapper directly:
 
-```bash
-node scripts/wiki-qmd.mjs status
-node scripts/wiki-qmd.mjs query "question" --json --no-rerank -n 10
-```
-
-## Answer Workflow
-
-1. Search with QMD:
-
-   ```bash
-   pnpm wiki:qmd:query "the user's question" -- --json --no-rerank -n 10
-   ```
-
-   Use `wiki:qmd:search` for short keyword probes such as `reviews`, `ADR`, or `moderation`.
-
-2. Fetch the full notes by `docid` or `qmd://...` URI:
-
-   ```bash
-   pnpm wiki:qmd:get "#abc123" -- --full
-   ```
-
-   QMD may normalize spaces in filenames, so prefer `docid` from search results.
-
-3. Read `llm-wiki/index.md` as the navigation router, then read the relevant MOC when the
-   topic is domain-specific:
-   - current product state: `llm-wiki/product/Product (MOC).md`;
-   - implementation evidence: `llm-wiki/index.md` under Implementation Evidence.
-     `llm-wiki/tech/implementation/Implementation (MOC).md` is an unmaintained placeholder that
-     still reports an empty register, so it answers wrongly rather than not at all;
-   - operations: `llm-wiki/operations/Operations (MOC).md`;
-   - QA/testing: `llm-wiki/quality/Quality & Testing (MOC).md`;
-   - product strategy: `llm-wiki/market/strategy/Product Strategy 2026 (MOC).md`;
-   - RFCs: `llm-wiki/tech/RFC/RFC MOC.md`;
-   - ADRs: `llm-wiki/tech/ADR/ADR MOC.md`;
-   - Saleor schema: `llm-wiki/tech/saleor/Saleor Schema (MOC).md`.
-
-4. Answer with specific file references. If the wiki does not contain the answer, say that plainly and name the gap.
-
-   Asked what backs a claim, do not expect a commit permalink in the record: CAP, FLOW, INT, and
-   OPS carry none. The evidence sits in the IMP records that list the record under
-   `relations.product_records`, in the ADR that decided it, or in the code itself.
-
-5. If the answer should become durable knowledge, route the mutation to
-   `bookkeeping`.
-
-## Saleor Schema Notes
-
-Notes under `llm-wiki/tech/saleor/` describe the Saleor GraphQL API and are **version-stamped**. Nimara does not pin a Saleor version — `pnpm codegen` fetches the schema live from `NEXT_PUBLIC_SALEOR_API_URL` into `packages/codegen/schema.ts`, so a note can drift from the schema the code actually uses.
-
-- **Before citing** any `tech/saleor/` note, run `pnpm wiki:saleor:check`. `OK` = the note matches the current schema; `STALE` = it was written against a different schema. On `STALE`, warn the user, verify the specifics against `packages/codegen/schema.ts`, and offer to update and restamp the note rather than citing it as-is.
-- **When authoring/updating** a Saleor note, follow `llm-wiki/_templates/saleor-schema-note.md` and stamp `saleor_schema_hash` with `pnpm wiki:saleor:hash`.
-- After `pnpm codegen` regenerates the schema, expect Saleor notes to go `STALE` — review them against the new schema, then restamp.
-
-Start from [Saleor Schema (MOC)](../../../tech/saleor/Saleor%20Schema%20%28MOC%29.md).
-
-## Route Authoring and Mutations
-
-Give each operation one owner:
-
-- `bookkeeping` — ingest, audit, graph repair, durable file-back, and architecture
-  decisions;
-- `prd-modeling` — create, rewrite, refine, or stress-test a PRD;
-- `rfc-modeling` — create, rewrite, refine, or stress-test an RFC;
-- the task-specific QA skill — design test cases, retest a reported defect, or run a broad
-  regression sweep. These work against the live board and the running application; they write no
-  records into the wiki.
-
-Use this skill only to supply verified wiki context to those workflows.
-
-## Useful Probes
-
-```bash
-pnpm wiki:qmd:query "what contradicts the user reviews PRD?" -- --json --no-rerank -n 10
-pnpm wiki:qmd:search "moderation" -- --json -n 5
-pnpm wiki:qmd:query "where does LLM Wiki discuss index.md?" -- --json --no-rerank -n 5
-pnpm wiki:qmd:ls
-```
-
-## Common Failure Modes
-
-- Long natural-language `wiki:qmd:search` queries can return nothing. Use `wiki:qmd:query` for semantic questions.
-- QMD snippets are not enough for a verdict. Fetch full files and cite those.
-- QMD includes templates unless filtered by the question. Ignore `_templates/` results unless template behavior is relevant.
-- Existing `index.md` can drift. Prefer QMD for discovery, but still maintain `index.md` until the schema says otherwise.
+Start from [index.md](../../../index.md).

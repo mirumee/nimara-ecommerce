@@ -142,34 +142,17 @@ Rules:
 
 # Skills
 
-Six skills live inside this directory, under `.claude/skills/`. They are Claude Code only —
-nothing else reads that path. Give every operation exactly one owner: a skill outside its column
-does not mutate that area.
+Skills live inside this directory, under `.claude/skills/`.
 
-Because they are nested below the repository root, Claude Code loads them lazily: they appear the
-first time Claude reads or edits a file under `llm-wiki/`, not at session start, and they carry a
-directory-qualified name — `llm-wiki:explore`, `llm-wiki:bookkeeping`, and so on. To reach one
-before touching the directory, read any file here first, or start Claude Code in `llm-wiki/`.
 
-| Skill                  | Use it for                                                                                                                                     | Writes to                        |
-| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
-| `explore`              | Finding, explaining, comparing, or citing what the wiki already holds. Discovery through QMD, then verification against the full Markdown.     | nothing — read only              |
-| `bookkeeping`          | Ingesting a source, filing durable knowledge, auditing or repairing the graph, reconciling the index and log after a change, recording an ADR. | any record, `index.md`, `log.md` |
-| `prd-modeling`         | Creating, rewriting, or stress-testing a PRD. Stops at an approved PRD: it does not design the solution or decompose the work.                 | `prd/`                           |
-| `rfc-modeling`         | Turning an approved PRD into an RFC design proposal. Stops at a proposal: an ADR records the verdict.                                          | `tech/RFC/`                      |
-| `grilling`             | Stress-testing a plan or design one question at a time. `prd-modeling` runs it as its business-grilling stage.                                 | nothing — asks questions         |
-| `handoff`              | Compacting a conversation into a document another agent can pick up. `prd-modeling` runs it to close a session.                               | wherever it is told to write     |
-
-The `llm-wiki-steward` agent bundles `explore` and `bookkeeping` for delegated research and
-repair. It never commits, pushes, or opens a pull request.
-
-`grilling` and `handoff` are general-purpose and live here only because the authoring skills call
-them. Lazy loading therefore costs more for them than for the rest: after a session that never
-touched this directory, `/llm-wiki:handoff` does not exist. Read a file here first if you need it.
-
-Both authoring skills take the next free ID from their directory. Two branches can therefore pick
-the same number without Git noticing, because the files differ in title — check the directory
-against `main` before merging.
+| Skill                                        | Use it for                                                                                                                                                                           | Writes to                        |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------- |
+| [`explore`](.claude/skills/explore/SKILL.md) | Every way into this directory — the index, the MOCs, `qmd` semantic search, plain grep — and how to answer from what you find. Read that skill instead of reinventing a search here. | nothing — read only              |
+| `bookkeeping`                                | Ingesting a source, filing durable knowledge, auditing or repairing the graph, reconciling the index and log after a change, recording an ADR.                                       | any record, `index.md`, `log.md` |
+| `prd-modeling`                               | Creating, rewriting, or stress-testing a PRD. Stops at an approved PRD: it does not design the solution or decompose the work.                                                       | `prd/`                           |
+| `rfc-modeling`                               | Turning an approved PRD into an RFC design proposal. Stops at a proposal: an ADR records the verdict.                                                                                | `tech/RFC/`                      |
+| `grilling`                                   | Stress-testing a plan or design one question at a time. `prd-modeling` runs it as its business-grilling stage.                                                                       | nothing — asks questions         |
+| `handoff`                                    | Compacting a conversation into a document another agent can pick up. `prd-modeling` runs it to close a session.                                                                      | wherever it is told to write     |
 
 # Maintaining The Wiki
 
@@ -199,34 +182,6 @@ Finish every change to this directory with `pnpm wiki:lint`, and leave it at zer
 Sources under `sources/` should preserve the source body. Prefer appending metadata,
 provenance, or citations over rewriting the raw source text unless the user explicitly asks
 for a migration or correction.
-
-# QMD Retrieval
-
-`qmd` is the preferred local retrieval layer once configured. The Markdown files remain the
-source of truth; the generated QMD SQLite index is local developer state and is never
-committed.
-
-Project wrapper commands:
-
-```bash
-pnpm wiki:qmd:setup
-pnpm wiki:qmd:embed
-pnpm wiki:qmd:query "what contradicts the user reviews PRD?"
-pnpm wiki:qmd:search "ADR MOC" -- --json -n 10
-pnpm wiki:qmd:get "#abc123" -- --full
-pnpm wiki:qmd:mcp
-```
-
-Operational rules:
-
-- Use [LLM Wiki](sources/LLM%20Wiki.md) for the upstream pattern and this file for Nimara's
-  local schema.
-- Run `pnpm wiki:qmd:update` after Markdown changes and `pnpm wiki:qmd:embed` when semantic
-  search should reflect those changes.
-- Use `qmd search` or `qmd query` to get a `docid` or `qmd://...` URI before calling
-  `qmd get`.
-- Do not treat QMD results as validation. Link integrity, frontmatter, source integrity, MOC
-  coverage, and index coverage still require a `bookkeeping` audit.
 
 # Related Notes
 

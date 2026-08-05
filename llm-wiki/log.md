@@ -323,6 +323,61 @@
   edits a file under `llm-wiki/`, not at session start, and cannot be invoked by name before that.
   For the retrieval skill, whose job is finding something here, that is a chicken-and-egg cost:
   read any file in the directory first, or start the session inside it. Recorded in `Skills`.
+- **Update**: `explore` gained a fifth route: crosslinks. OKF expresses relationships as ordinary
+  Markdown links, and once a record is open, following its links is cheaper than searching again.
+  The skill tabulates which frontmatter field carries which edge, separates those typed edges from
+  untyped body links, and states that the graph is directed on purpose: a CAP names the integrations
+  it needs and the INT names nothing back, so links answer "what does this rely on?" and never the
+  reverse.
+- **Correction**: Every claim in `explore/references/semantic-search.md` was checked against
+  qmd 2.5.3, and three were wrong. `pnpm wiki:qmd:setup` was described as the fix for an index
+  pointing at the wrong directory; it is not — it only adds a missing collection and prints
+  `already configured` otherwise, so repointing needs `qmd collection remove` first. `--json` was
+  documented as the JSON flag; `qmd --help` documents `--format json` and `--json` is an undocumented
+  alias. Result paths were described as merely space-normalized; qmd slugifies and drops a leading
+  underscore, so `_templates/OPS.md` appears as `templates/OPS.md` and filtering on `_templates`
+  matches nothing. Added that unknown flags are silently ignored, which is how a typo'd option looks
+  like a working one.
+- **Correction**: a fourth claim was overstated. `index.md` and `log.md` were described as matching
+  almost everything and crowding a broad result set; measured, they appear at most once in ten hits
+  under `query` and not at all under `search` across four probes. What is true is narrower: when a
+  sentence handed to `search` matches a single thing, that thing is often `log.md`, because the log
+  holds more prose than any record — a symptom of the wrong tool rather than a separate problem.
+- **Confirmed**: the claim that a sentence handed to `search` returns nothing — two of three
+  sentence-shaped probes returned zero hits, and the question `query` answers with CAP-0002 and
+  FLOW-0002 gives `search` none. Also confirmed: `get` accepts a `docid` with its leading `#`, and
+  the index path, the install command, and the `query`/`search` split.
+- **Index**: The QMD collection pointed at `/Users/lukasz/.codex/worktrees/61df/…`, which is why it
+  reported zero files while holding 1012 vectors, as recorded on 2026-08-04. Removed and re-added
+  against this checkout, then reindexed and embedded: 92 files, 1231 vectors. Local developer state
+  only.
+- **Update**: `explore` lost its `The maps of content` and `Answering` sections, leaving three ways
+  in plus crosslinks. Two things went with them and are recorded nowhere else: that
+  `tech/implementation/Implementation (MOC).md` answers wrongly rather than not at all, and that a
+  `tech/saleor/` note needs `pnpm wiki:saleor:check` before it is cited. Both remain true.
+- **Recorded**: `index.md` declares `okf_version: "0.1"`, and the published OKF v0.1 field set is
+  `type` as the only required field plus optional `title`, `description`, `resource`, `tags`, and
+  `timestamp`. This wiki now diverges twice: it forbids `timestamp`, which is standardized, and
+  requires `created`, which is not. The reason stands — the removed field disagreed with Git in 27
+  of 34 records — but the conformance claim is no longer whole, and nothing in the tree says so.
+  Left for a decision: document the departure, or drop the claim.
+- **Update**: The qmd instructions moved out of `explore/SKILL.md` into
+  `explore/references/semantic-search.md`, following the layout `prd-modeling` and `rfc-modeling`
+  already use. The skill keeps a pointer and the reason to read it; the reference holds index
+  health, the difference between `query`, `search`, and `get`, and the failure modes that make a
+  miss read as an absence.
+- **Rewrite**: The `explore` skill is now a guide to the ways into this directory rather than a
+  QMD manual: the index, the MOCs per domain, semantic search, plain grep — in the order that
+  usually costs least — plus how to answer from what it finds. It states that it is read-only and
+  routes every mutation elsewhere. Authoring guidance for Saleor notes moved out of it; only the
+  read-side gate stayed, which is running `wiki:saleor:check` before citing one.
+- **Maintenance**: The `QMD Retrieval` section left `README.md`. Retrieval is what the skill is
+  for, and the wrapper commands were listed in both places. `README.md` now points at the skill
+  from the `Skills` table.
+- **Fixed**: `wiki:lint` reported that link as unresolved. The rule only accepted a target outside
+  the linted set when it was not Markdown, so a link to a skill under `.claude/` failed even
+  though the file is there. It now accepts any target that exists on disk and skips only the
+  anchor check. Verified that a genuinely missing target still fails.
 - **Maintenance**: `grilling` and `handoff` moved in as well, because `prd-modeling` invokes both
   — as its business-grilling stage and to close a session. Their invocations now use the
   directory-qualified names. Neither is wiki-specific, so lazy loading costs more here than
