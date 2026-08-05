@@ -1,4 +1,4 @@
----
+/---
 type: "Operational Record"
 title: "Stripe Payment Application Installation and Key Rotation"
 description: "Runbook for installing the TypeScript Stripe payment application, configuring channel keys, rotating its Stripe webhooks, and verifying standard checkout."
