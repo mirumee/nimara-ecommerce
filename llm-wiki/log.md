@@ -329,7 +329,11 @@
   untyped body links, and states that the graph is directed on purpose: a CAP names the integrations
   it needs and the INT names nothing back, so links answer "what does this rely on?" and never the
   reverse.
-- **Maintenance**: `README.md` lost `Saleor Schema Notes` and `Maintaining The Wiki`, and is down to
+- **Maintenance**: `AGENTS.md` was a one-line loader; it now also links all six skills and both
+  reference files. The reason is that the skills sit under `.claude/skills/`, which only Claude Code
+  reads, while `AGENTS.md` is the entry point for every other agent — and since the operating rules
+  moved out of `README.md` into those skills, an agent that cannot load them had no path to the
+  rules at all. The links make them readable as plain Markdown. All eight resolve.
   149 lines describing what this directory is rather than how to operate it. The Saleor stamping
   rules became `bookkeeping/references/saleor-schema-notes.md`, where the review-not-restamp point
   is now stated: clearing a `STALE` result means reading the note against the current schema, since
