@@ -35,5 +35,4 @@ Grep and glob still beat everything for an exact token: a record ID, a field nam
 an env var. The tree is 90-odd files; reading three of them in full is often cheaper than one
 semantic round trip.
 
-
 Start from [index.md](../../../index.md).

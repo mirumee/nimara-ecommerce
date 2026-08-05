@@ -329,6 +329,19 @@
   untyped body links, and states that the graph is directed on purpose: a CAP names the integrations
   it needs and the INT names nothing back, so links answer "what does this rely on?" and never the
   reverse.
+- **Maintenance**: The wiki's tooling moved into the wiki. `scripts/` held nothing but the three
+  wiki scripts, so the whole directory became `llm-wiki/_scripts/` — underscored like `_templates/`
+  and `_schema.json`, which is how this bundle already marks material that is not a concept. All
+  three computed their roots by walking one level up from themselves, so each was re-based: the
+  linter now derives `wikiRoot` from its own directory and no longer needs a repo root at all.
+  Fourteen `package.json` entries, the `_schema.json` comment, and the direct wrapper invocation in
+  the `explore` reference were repointed. Verified from the new location: `wiki:lint`,
+  `wiki:index:sync`, `wiki:saleor:hash`, `wiki:saleor:check`, `wiki:qmd:status`, the `--root` flag
+  against a throwaway fixture, and the wrapper called directly. The entry above dated 2026-08-04
+  still says `scripts/wiki-lint.mjs`, which is where it was then.
+- **Maintenance**: The folder tree in `README.md` was missing `_templates/`, the directory that now
+  holds every record contract, and gained `_schema.json`, `_scripts/`, `.claude/skills/`, and
+  `README.md` itself. It also still described `AGENTS.md` as the file holding the rules.
 - **Correction**: Every claim in `explore/references/semantic-search.md` was checked against
   qmd 2.5.3, and three were wrong. `pnpm wiki:qmd:setup` was described as the fix for an index
   pointing at the wrong directory; it is not — it only adds a missing collection and prints

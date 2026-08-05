@@ -35,9 +35,14 @@ Content is grouped by domain:
 
 ```text
 llm-wiki/
-├── AGENTS.md         # this file: bundle schema and operating rules
+├── AGENTS.md         # loader; the rules live in README.md
+├── README.md         # this file: bundle schema and operating rules
 ├── index.md          # root index; exhaustive catalogue of concepts
 ├── log.md            # root update log
+├── _schema.json      # the same record contracts, machine-readable
+├── _templates/       # one template per record type; each is its type's contract
+├── _scripts/         # wiki tooling: the linter, the register sync, qmd and Saleor wrappers
+├── .claude/skills/   # the skills that work on this directory, Claude Code only
 ├── sources/          # raw or near-raw source material the notes synthesize
 
 ├── operations/       # OPS operational records and register
@@ -143,7 +148,6 @@ Rules:
 # Skills
 
 Skills live inside this directory, under `.claude/skills/`.
-
 
 | Skill                                        | Use it for                                                                                                                                                                           | Writes to                        |
 | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------- |

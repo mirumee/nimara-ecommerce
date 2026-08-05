@@ -1,6 +1,6 @@
 {
   "$comment": [
-    "Machine-readable contract for this wiki, enforced by scripts/wiki-lint.mjs.",
+    "Machine-readable contract for this wiki, enforced by _scripts/wiki-lint.mjs.",
     "AGENTS.md and the files in _templates/ are the human-readable form of the same rules.",
     "Every `except` entry must carry a reason: silencing a rule is a recorded decision."
   ],

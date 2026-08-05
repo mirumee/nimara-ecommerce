@@ -62,7 +62,7 @@ pnpm wiki:qmd:ls
 If `pnpm` misbehaves, the wrapper works directly, and it does not need the `--` separator:
 
 ```bash
-node scripts/wiki-qmd.mjs query "question" --format json --no-rerank -n 10
+node llm-wiki/_scripts/wiki-qmd.mjs query "question" --format json --no-rerank -n 10
 ```
 
 `pnpm wiki:qmd:mcp` exposes the same index over MCP, for a client that would rather call tools than

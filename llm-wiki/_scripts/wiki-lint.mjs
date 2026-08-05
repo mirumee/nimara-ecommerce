@@ -19,14 +19,11 @@ import { fileURLToPath } from "node:url";
 
 import { parse as parseYaml } from "yaml";
 
-const repoRoot = path.resolve(
-  path.dirname(fileURLToPath(import.meta.url)),
-  "..",
-);
+const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const rootArg = process.argv.indexOf("--root");
 const wikiRoot =
   rootArg === -1
-    ? path.join(repoRoot, "llm-wiki")
+    ? path.resolve(scriptDir, "..")
     : path.resolve(process.argv[rootArg + 1]);
 const schemaFile = path.join(wikiRoot, "_schema.json");
 
