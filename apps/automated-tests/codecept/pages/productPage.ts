@@ -15,10 +15,8 @@ export default {
     I.waitForElement('a[data-radix-toast-announce-alt="Go to bag"]', timeout);
     I.click("Go to bag");
   },
-  /* DO POPRAWKI
   go_to_bag(timeout: number) {
-    I.click(locate('a').withText('Items in cart'));
-    I.waitInUrl('/cart', timeout);
+    I.click(locate("a").withText("Items in cart"));
+    I.waitInUrl("/cart", timeout);
   },
-  */
 };
