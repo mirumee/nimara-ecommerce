@@ -1,0 +1,93 @@
+import { locate } from "codeceptjs";
+
+import customerData from "../data/guest_checkout_data.json";
+
+const { I } = inject();
+const card = customerData.card;
+const customer = customerData.customer;
+
+export default {
+  continue_as_guest(timeout: number) {
+    I.waitForElement(locate("a").withText("Continue as a guest"), timeout);
+    I.click({ role: "link", name: "Continue as a guest" });
+    I.waitInUrl("/checkout?step=user-details", timeout);
+  },
+
+  guest_step1_email(timeout: number) {
+    I.waitForElement('input[aria-label="Email"]', timeout);
+    I.fillField({ role: "textbox", name: "Email" }, customer.email);
+    I.click({ role: "button", name: "Continue" });
+    I.waitToHide('input[aria-label="Email"]', timeout);
+  },
+  async guest_step2_continue_as_guest(timeout: number) {
+    const count = await I.grabNumberOfVisibleElements(
+      "h3.text-2xl.tracking-tight",
+    );
+
+    if (count > 0) {
+      console.log(
+        "Guest checkout step 2: Continue as guest button is visible, clicking it.",
+      );
+      I.click("Continue as a guest");
+    }
+  },
+  guest_step3_shipping_address(timeout: number) {
+    I.waitInUrl("/checkout?step=shipping-address", timeout);
+    I.waitForElement('input[aria-label="First Name"]', timeout);
+    I.fillField({ role: "textbox", name: "First Name" }, customer.firstName);
+    I.fillField({ role: "textbox", name: "Last Name" }, customer.lastName);
+    I.fillField(
+      { role: "textbox", name: "Company name" },
+      customer.companyName,
+    );
+    I.fillField(
+      { role: "textbox", name: "Street address" },
+      customer.streetAddress,
+    );
+    I.fillField({ role: "textbox", name: "City" }, customer.city);
+    I.fillField({ role: "textbox", name: "Zip" }, customer.zip);
+    I.fillField({ role: "textbox", name: "Phone" }, customer.phone);
+    I.scrollPageToBottom();
+    I.click({ role: "combobox", name: "State" });
+    I.click(customer.state);
+    I.click("Continue");
+  },
+  guest_step4_shipping_method_dhl_normal(timeout: number) {
+    I.waitInUrl("/checkout?step=delivery-method", timeout);
+    const dhlNormalOption = locate("label").withText("DHL Normal");
+
+    I.waitForVisible(dhlNormalOption, timeout);
+    I.click(dhlNormalOption);
+    I.click("Continue");
+  },
+
+  guest_step5_payment_details(
+    card_characteristics:
+      | "valid"
+      | "invalid"
+      | "stolen"
+      | "declined"
+      | "expired",
+    timeout: number,
+  ) {
+    I.waitInUrl("/checkout?step=payment", timeout);
+    I.scrollPageToBottom();
+    I.waitForElement(
+      locate('iframe[title*="Secure payment input frame"]').first(),
+      timeout,
+    );
+    I.switchTo(locate('iframe[title*="Secure payment input frame"]').first());
+    I.waitForVisible('div[class="p-PaymentAccordionButtonView"]', timeout);
+    const cardNumber = card.number[card_characteristics] || card.number.valid;
+
+    I.fillField("Card number", cardNumber);
+    I.fillField("MM / YY", card.expiration);
+    I.fillField("Security code", card.CVC);
+    I.switchTo();
+  },
+
+  click_place_order(timeout: number) {
+    I.waitForClickable({ role: "button", name: "Place order" }, timeout);
+    I.click({ role: "button", name: "Place order" });
+  },
+};
