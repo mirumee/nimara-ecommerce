@@ -25,7 +25,7 @@ Completion criterion: the known facts, evidence gaps, existing strategic positio
 
 ## Stage 2 — Run business grilling
 
-Run a `/grilling` session that which does not go beyond the scope of the PRD definition.
+Run a `/llm-wiki:grilling` session that which does not go beyond the scope of the PRD definition.
 
 Read `references/business-protocol.md` and follow it completely.
 
@@ -74,7 +74,7 @@ New PRDs start as `draft`. A rewritten PRD changes status only when the user exp
 
 ## Stage 7 — Handoff
 
-Use `/handoff` skill to write up a conversation summary for future agents. Save it near PRD.
+Use `/llm-wiki:handoff` skill to write up a conversation summary for future agents. Save it near PRD.
 
 ## References
 

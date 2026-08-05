@@ -1,6 +1,6 @@
 ---
-name: llm-wiki
-description: Retrieve and verify existing project knowledge from llm-wiki. Use when the user asks to find, explain, compare, or cite existing strategy, persona, product, quality, PRD, RFC, ADR, or source notes.. Use QMD only for discovery, verify the full Markdown source.
+name: explore
+description: Retrieve and verify existing project knowledge from llm-wiki. Use when the user asks to find, explain, compare, or cite existing strategy, persona, product, quality, PRD, RFC, ADR, or source notes. Use QMD only for discovery, verify the full Markdown source.
 ---
 
 # LLM Wiki
@@ -10,7 +10,7 @@ Markdown files remain the source of truth.
 
 ## Ground Rules
 
-1. Read `llm-wiki/AGENTS.md` when schema, naming, folder placement, ADR rules, or maintenance rules matter.
+1. Read `llm-wiki/AGENTS.md` when schema, naming, folder placement, ADR rules, or maintenance rules matter. It is a loader: the rules live in `llm-wiki/README.md`, and the record contracts live in `llm-wiki/_templates/` and `llm-wiki/_schema.json`.
 2. Read `llm-wiki/sources/LLM Wiki.md` when the user asks about the upstream LLM-wiki pattern or why this wiki is structured this way.
 3. Use QMD to find candidate notes, then read the actual Markdown before answering. Do not answer from snippets alone.
 4. Treat `qmd` output as retrieval, not validation. It does not prove link integrity, source integrity, MOC coverage, or JSON-vs-Markdown consistency.
@@ -83,7 +83,7 @@ node scripts/wiki-qmd.mjs query "question" --json --no-rerank -n 10
    `relations.product_records`, in the ADR that decided it, or in the code itself.
 
 5. If the answer should become durable knowledge, route the mutation to
-   `llm-wiki-bookkeeping`.
+   `bookkeeping`.
 
 ## Saleor Schema Notes
 
@@ -93,13 +93,13 @@ Notes under `llm-wiki/tech/saleor/` describe the Saleor GraphQL API and are **ve
 - **When authoring/updating** a Saleor note, follow `llm-wiki/_templates/saleor-schema-note.md` and stamp `saleor_schema_hash` with `pnpm wiki:saleor:hash`.
 - After `pnpm codegen` regenerates the schema, expect Saleor notes to go `STALE` — review them against the new schema, then restamp.
 
-Start from [Saleor Schema (MOC)](../../../llm-wiki/tech/saleor/Saleor%20Schema%20%28MOC%29.md).
+Start from [Saleor Schema (MOC)](../../../tech/saleor/Saleor%20Schema%20%28MOC%29.md).
 
 ## Route Authoring and Mutations
 
 Give each operation one owner:
 
-- `llm-wiki-bookkeeping` — ingest, audit, graph repair, durable file-back, and architecture
+- `bookkeeping` — ingest, audit, graph repair, durable file-back, and architecture
   decisions;
 - `prd-modeling` — create, rewrite, refine, or stress-test a PRD;
 - `rfc-modeling` — create, rewrite, refine, or stress-test an RFC;

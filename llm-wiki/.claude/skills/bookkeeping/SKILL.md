@@ -1,5 +1,5 @@
 ---
-name: llm-wiki-bookkeeping
+name: bookkeeping
 description: Keep an LLM-wiki coherent while ingesting sources, filing durable knowledge, auditing or repairing its graph, reconciling indexes and logs after content changes, or recording architecture decisions. Use the target wiki's AGENTS.md as the sole authority for its schema, locations, templates, links, provenance, and bookkeeping rules.
 ---
 

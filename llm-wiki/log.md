@@ -314,7 +314,33 @@
 - **Correction**: The `llm-wiki` skill assumed a record could be asked what backs its claims. Since
   the `Provenance` sections were removed earlier today, CAP, FLOW, INT, and OPS carry no permalink,
   so the skill now points at the IMP records that list them, the deciding ADR, or the code.
+- **Maintenance**: The four skills that work on this directory moved into it, from
+  `.agents/skills/` to `llm-wiki/.claude/skills/`, and the symlinks under the repository's
+  `.claude/skills/` are gone. They are Claude Code only now: nothing else reads that path. Two
+  relative links inside them were re-based, and `llm-wiki-steward` refers to them by their
+  directory-qualified names.
+- **Consequence**: Claude Code loads nested skills lazily. They appear the first time it reads or
+  edits a file under `llm-wiki/`, not at session start, and cannot be invoked by name before that.
+  For the retrieval skill, whose job is finding something here, that is a chicken-and-egg cost:
+  read any file in the directory first, or start the session inside it. Recorded in `Skills`.
+- **Maintenance**: `grilling` and `handoff` moved in as well, because `prd-modeling` invokes both
+  — as its business-grilling stage and to close a session. Their invocations now use the
+  directory-qualified names. Neither is wiki-specific, so lazy loading costs more here than
+  elsewhere: after a session that never touched this directory, `/llm-wiki:handoff` does not
+  exist, which is exactly when a handoff is wanted. Recorded in `Skills`.
+- **Rename**: `llm-wiki` → `explore` and `llm-wiki-bookkeeping` → `bookkeeping`. The directory
+  qualifier already says which wiki they serve, so the old names stuttered: `llm-wiki:llm-wiki`.
+  Updated in both skills' `name`, the cross-reference from `explore`, the `Skills` table, the QMD
+  rule that names the audit, and `llm-wiki-steward`'s `skills` list. Entries above this one keep
+  the old names because they describe what was true when written.
 - **Correction**: `llm-wiki-bookkeeping` told an agent to treat `AGENTS.md` as the single source of
   truth for record frontmatter and templates. That stopped being sufficient when the contracts
   moved into the templates and `_schema.json`: reading only `AGENTS.md` now yields a table of links
   and no rules. The skill now states that the governing instructions are the set `AGENTS.md` names.
+- **Repair**: `pnpm wiki:lint` reported 8 violations left by the `AGENTS.md` → `README.md`
+  restructure, and this is the first time the linter found anything nobody had noticed. OPS-0002
+  began with `/---` instead of `---`, one stray character that disabled its whole frontmatter.
+  `index.md` and `README.md` linked `_templates/PRD.md` while the file on disk is `prd.md`, which
+  resolves on macOS and fails on Linux. `AGENTS.md` is now a loader with no frontmatter, and
+  `README.md` was registered nowhere. The schema gained an `except` for the loader and `README.md`
+  in the `Root` register scope; the links were pointed at the name on disk. Back to 0 violations.

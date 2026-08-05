@@ -11,7 +11,8 @@
     "except": {
       "index.md": "Reserved llm-wiki router. Carries okf_version only; whether it should hold base frontmatter is undecided.",
       "log.md": "Reserved append-only log. Has no frontmatter by design.",
-      "CLAUDE.md": "Loader that includes AGENTS.md. Has no frontmatter."
+      "AGENTS.md": "Loader that includes README.md, where the rules now live. Has no frontmatter.",
+      "CLAUDE.md": "Loader that includes README.md. Has no frontmatter."
     }
   },
 
@@ -142,7 +143,7 @@
       "headingLevel": 1,
       "separator": "-",
       "sections": {
-        "Root": ["AGENTS.md"],
+        "Root": ["AGENTS.md", "README.md"],
         "Templates": ["_templates/*.md"],
         "Sources": ["sources/*.md"],
         "Product Requirements": ["prd/*.md"],
