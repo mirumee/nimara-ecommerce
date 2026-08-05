@@ -29,6 +29,8 @@ Nimara is a Node.js monorepo for composable commerce. It is an open-source, comp
 - Never add or remove a dependency without explicit user approval.
 - Never read, expose, or commit local secrets.
 - Never hand-edit generated GraphQL files. Run `pnpm codegen` after `.graphql` changes.
+- Durable project knowledge lives in `llm-wiki/`. Read it before deriving from the code what is
+  already written down, and finish any change to it with `pnpm wiki:lint` at zero violations.
 
 ---
 
@@ -67,8 +69,27 @@ packages/
 ├── features/                # Feature implementations (UI + logic + state)
 ├── ui/                      # Shared UI components (Shadcn-style)
 └── config/                  # Shared configs (Tailwind, ESLint, PostCSS)
+
+llm-wiki/                    # Versioned knowledge base; not code, not built, not shipped
 ```
 
 ### Dependency Flow
 
 The project follows the principles of Clean Architecture
+
+---
+
+## Knowledge Base
+
+`llm-wiki/` is a Git-versioned knowledge base: what the product currently does, why it was decided,
+what was implemented and how it was verified, how it is operated, and what QA knows. It describes
+the tree at the commit that contains it, so a record is as reviewable as the code beside it.
+
+- **Read it first.** Before reconstructing behavior from code, check whether a capability, flow,
+  integration contract, or runbook already states it. `llm-wiki/README.md` holds the schema and
+  `llm-wiki/index.md` lists every record.
+- **Keep it true with the code.** Current-state records — CAP, FLOW, INT, OPS — are updated in the
+  same change as the behavior they describe, and an implementation record captures what shipped.
+- **Close every change with `pnpm wiki:lint`,** at zero violations. It is not wired into CI, so
+  nothing else will run it. `pnpm wiki:index:sync` maintains the registers.
+- Skills for working on it live in `llm-wiki/.claude/skills/` and load once a file there is read.

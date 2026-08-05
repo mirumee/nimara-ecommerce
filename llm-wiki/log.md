@@ -329,6 +329,13 @@
   untyped body links, and states that the graph is directed on purpose: a CAP names the integrations
   it needs and the INT names nothing back, so links answer "what does this rely on?" and never the
   reverse.
+- **Maintenance**: The repository's root instructions now mention this directory, which they never
+  did — zero occurrences of "wiki" in `CLAUDE.md`, the file every agent reads first, while a
+  92-file knowledge base sat beside the code. Added a `Global rules` bullet, a line in the layer
+  tree marking `llm-wiki/` as versioned knowledge rather than code, and a `Knowledge Base` section
+  covering what it holds, reading it before deriving the same thing from code, updating
+  current-state records in the same change as the behavior, and closing with `pnpm wiki:lint`.
+  Root `AGENTS.md` is a symlink to `CLAUDE.md`, so both carry it.
 - **Maintenance**: The wiki's tooling moved into the wiki. `scripts/` held nothing but the three
   wiki scripts, so the whole directory became `llm-wiki/_scripts/` — underscored like `_templates/`
   and `_schema.json`, which is how this bundle already marks material that is not a concept. All
