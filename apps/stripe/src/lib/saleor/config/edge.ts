@@ -1,9 +1,9 @@
+import { createSaleorAppConfigProvider } from "./provider";
 import {
   parseStoredConfig,
   type SaleorAppConfig,
   type SaleorMultiTenantAppConfig,
 } from "./schema";
-import { createSaleorAppConfigProvider } from "./store";
 import type { SaleorAppConfigProviderFactory } from "./types";
 
 const VERCEL_API_URL_BASE = `https://api.vercel.com/v1/edge-config`;

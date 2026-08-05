@@ -30,7 +30,7 @@ code:
   paths:
     - "apps/stripe/src/config.ts"
     - "apps/stripe/src/providers/config.ts"
-    - "apps/stripe/src/lib/saleor/config/store.ts"
+    - "apps/stripe/src/lib/saleor/config/provider.ts"
     - "apps/stripe/src/lib/saleor/config/file.ts"
     - "apps/stripe/src/lib/saleor/config/edge.ts"
     - "apps/stripe/turbo.json"

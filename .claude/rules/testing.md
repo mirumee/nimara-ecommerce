@@ -12,7 +12,7 @@ paths:
 
 # Testing
 
-- Write test only when asked
+- Write test only for complex functions, core functionalities, not components.
 - Use Vitest for unit tests and Playwright for end-to-end tests.
 - Keep unit tests next to the code using the repository's existing `*.test.ts` or
   `*.test.tsx` style.

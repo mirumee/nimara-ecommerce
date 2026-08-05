@@ -1,12 +1,12 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
 
+import { createSaleorAppConfigProvider } from "./provider";
 import {
   parseStoredConfig,
   type SaleorAppConfig,
   type SaleorMultiTenantAppConfig,
 } from "./schema";
-import { createSaleorAppConfigProvider } from "./store";
 import type { SaleorAppConfigProviderFactory } from "./types";
 
 type Config = SaleorAppConfig;
