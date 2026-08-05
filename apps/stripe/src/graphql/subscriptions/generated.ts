@@ -144,9 +144,15 @@ export type TransactionInitializeSessionSubscription_event_TransactionInitialize
 
 export type TransactionInitializeSessionSubscription_event_TransactionInitializeSession_transaction_TransactionItem = { id: string, pspReference: string };
 
-export type TransactionInitializeSessionSubscription_event_TransactionInitializeSession_sourceObject_Checkout = { id: string, languageCode: Types.LanguageCodeEnum, userEmail: string | null, channel: PaymentGatewayInitializeSessionSubscription_event_PaymentGatewayInitializeSession_sourceObject_Checkout_channel_Channel, user: PaymentGatewayInitializeSessionSubscription_event_PaymentGatewayInitializeSession_sourceObject_Checkout_user_User | null, total: PaymentGatewayInitializeSessionSubscription_event_PaymentGatewayInitializeSession_sourceObject_Checkout_total_TaxedMoney };
+export type TransactionInitializeSessionSubscription_event_TransactionInitializeSession_sourceObject_Checkout_shippingAddress_Address_country_CountryDisplay = { code: string };
 
-export type TransactionInitializeSessionSubscription_event_TransactionInitializeSession_sourceObject_Order = { id: string, languageCodeEnum: Types.LanguageCodeEnum, userEmail: string | null, user: PaymentGatewayInitializeSessionSubscription_event_PaymentGatewayInitializeSession_sourceObject_Order_user_User | null, channel: PaymentGatewayInitializeSessionSubscription_event_PaymentGatewayInitializeSession_sourceObject_Order_channel_Channel, total: PaymentGatewayInitializeSessionSubscription_event_PaymentGatewayInitializeSession_sourceObject_Order_total_TaxedMoney };
+export type TransactionInitializeSessionSubscription_event_TransactionInitializeSession_sourceObject_Checkout_shippingAddress_Address = { firstName: string, lastName: string, streetAddress1: string, streetAddress2: string, city: string, postalCode: string, countryArea: string, phone: string | null, country: TransactionInitializeSessionSubscription_event_TransactionInitializeSession_sourceObject_Checkout_shippingAddress_Address_country_CountryDisplay };
+
+export type TransactionInitializeSessionSubscription_event_TransactionInitializeSession_sourceObject_Order_shippingAddress_Address = { firstName: string, lastName: string, streetAddress1: string, streetAddress2: string, city: string, postalCode: string, countryArea: string, phone: string | null, country: TransactionInitializeSessionSubscription_event_TransactionInitializeSession_sourceObject_Checkout_shippingAddress_Address_country_CountryDisplay };
+
+export type TransactionInitializeSessionSubscription_event_TransactionInitializeSession_sourceObject_Checkout = { id: string, languageCode: Types.LanguageCodeEnum, userEmail: string | null, shippingAddress: TransactionInitializeSessionSubscription_event_TransactionInitializeSession_sourceObject_Checkout_shippingAddress_Address | null, channel: PaymentGatewayInitializeSessionSubscription_event_PaymentGatewayInitializeSession_sourceObject_Checkout_channel_Channel, user: PaymentGatewayInitializeSessionSubscription_event_PaymentGatewayInitializeSession_sourceObject_Checkout_user_User | null, total: PaymentGatewayInitializeSessionSubscription_event_PaymentGatewayInitializeSession_sourceObject_Checkout_total_TaxedMoney };
+
+export type TransactionInitializeSessionSubscription_event_TransactionInitializeSession_sourceObject_Order = { id: string, languageCodeEnum: Types.LanguageCodeEnum, userEmail: string | null, shippingAddress: TransactionInitializeSessionSubscription_event_TransactionInitializeSession_sourceObject_Order_shippingAddress_Address | null, user: PaymentGatewayInitializeSessionSubscription_event_PaymentGatewayInitializeSession_sourceObject_Order_user_User | null, channel: PaymentGatewayInitializeSessionSubscription_event_PaymentGatewayInitializeSession_sourceObject_Order_channel_Channel, total: PaymentGatewayInitializeSessionSubscription_event_PaymentGatewayInitializeSession_sourceObject_Order_total_TaxedMoney };
 
 export type TransactionInitializeSessionSubscription_event_TransactionInitializeSession_sourceObject =
   | TransactionInitializeSessionSubscription_event_TransactionInitializeSession_sourceObject_Checkout
@@ -610,7 +616,7 @@ export const TransactionInitializeSessionSubscriptionDocument = new TypedDocumen
         ...TransactionItemFragment
       }
       sourceObject {
-        ...OrderOrCheckoutSourceObjectFragment
+        ...TransactionInitializeSourceObjectFragment
       }
     }
   }
@@ -640,14 +646,6 @@ fragment UserFragment on User {
   privateMetadata {
     key
     value
-  }
-}
-fragment OrderOrCheckoutSourceObjectFragment on OrderOrCheckout {
-  ... on Checkout {
-    ...CheckoutSourceObjectFragment
-  }
-  ... on Order {
-    ...OrderSourceObjectFragment
   }
 }
 fragment CheckoutSourceObjectFragment on Checkout {
@@ -694,6 +692,33 @@ fragment TransactionProcessActionFragment on TransactionProcessAction {
   amount
   currency
   actionType
+}
+fragment TransactionInitializeSourceObjectFragment on OrderOrCheckout {
+  ... on Checkout {
+    ...CheckoutSourceObjectFragment
+    shippingAddress {
+      ...AddressFragment
+    }
+  }
+  ... on Order {
+    ...OrderSourceObjectFragment
+    shippingAddress {
+      ...AddressFragment
+    }
+  }
+}
+fragment AddressFragment on Address {
+  firstName
+  lastName
+  streetAddress1
+  streetAddress2
+  city
+  postalCode
+  countryArea
+  phone
+  country {
+    code
+  }
 }`) as unknown as TypedDocumentString<TransactionInitializeSessionSubscription, TransactionInitializeSessionSubscriptionVariables>;
 export const TransactionProcessSessionSubscriptionDocument = new TypedDocumentString(`
     subscription TransactionProcessSessionSubscription {

@@ -1,0 +1,14 @@
+fragment TransactionInitializeSourceObjectFragment on OrderOrCheckout {
+  ... on Checkout {
+    ...CheckoutSourceObjectFragment
+    shippingAddress {
+      ...AddressFragment
+    }
+  }
+  ... on Order {
+    ...OrderSourceObjectFragment
+    shippingAddress {
+      ...AddressFragment
+    }
+  }
+}
