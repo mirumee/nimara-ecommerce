@@ -33,7 +33,7 @@
     "lucide-react": "^0.577.0",
     "next": "^16.1.6",
     "next-intl": "4.8.3",
-    "nodemailer": "8.0.2",
+    "nodemailer": "9.0.1",
     "pg": "^8.16.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
