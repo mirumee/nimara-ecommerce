@@ -2,6 +2,17 @@ import { type Stripe } from "stripe";
 
 export const STRIPE_API_VERSION: Stripe.LatestApiVersion = "2026-01-28.clover";
 
+/**
+ * One endpoint per installation serves every channel.
+ */
+export const getStripeWebhookUrl = ({
+  appUrl,
+  saleorDomain,
+}: {
+  appUrl: string;
+  saleorDomain: string;
+}) => `${appUrl}/api/stripe/webhooks/${encodeURIComponent(saleorDomain)}`;
+
 export const StripeWebhookEvent = {
   PAYMENT_INTENT_SUCCEEDED: "payment_intent.succeeded",
   PAYMENT_INTENT_PROCESSING: "payment_intent.processing",

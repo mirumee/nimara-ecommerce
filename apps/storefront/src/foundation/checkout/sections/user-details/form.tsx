@@ -175,6 +175,7 @@ export const UserDetailsForm = ({ checkout, user, onComplete }: Props) => {
                     isRequired
                     name="email"
                     type="email"
+                    autoComplete="email"
                     label={t("user-details.email")}
                   />
                 </div>

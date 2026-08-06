@@ -7,24 +7,24 @@ export const SAMPLE_MENUS: Record<"navbar" | "footer", Menu> = {
       {
         id: "dummy-nav-apparel",
         label: "Apparel",
-        url: "/search?category=apparel",
+        url: "/categories/apparel",
         children: [
           {
             id: "dummy-nav-tees",
             label: "Tees",
-            url: "/search?category=apparel",
+            url: "/categories/apparel",
           },
           {
             id: "dummy-nav-hoodies",
             label: "Hoodies",
-            url: "/search?category=apparel",
+            url: "/categories/apparel",
           },
         ],
       },
       {
         id: "dummy-nav-accessories",
         label: "Accessories",
-        url: "/search?category=accessories",
+        url: "/categories/accessories",
       },
     ],
   },

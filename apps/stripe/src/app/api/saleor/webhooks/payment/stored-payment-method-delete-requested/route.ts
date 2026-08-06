@@ -5,6 +5,7 @@ import { isError } from "@/lib/error";
 import { resolveAppConfigForChannel } from "@/lib/saleor/config/context";
 import { deleteResponse } from "@/lib/saleor/payment-method/util";
 import { verifySaleorWebhookRoute } from "@/lib/saleor/webhooks/api";
+import { resolveStripeAccountId } from "@/lib/stripe/account";
 import { getStripeApi, stripeRouteErrorsHandler } from "@/lib/stripe/api";
 import { findGatewayCustomerId } from "@/lib/stripe/customer";
 import { getExpandableId } from "@/lib/stripe/payment-method";
@@ -30,6 +31,7 @@ export const POST = stripeRouteErrorsHandler(
       const { gatewayConfig } = config;
       const stripe = getStripeApi(gatewayConfig.secretKey);
       const customerId = findGatewayCustomerId({
+        accountId: await resolveStripeAccountId({ gatewayConfig, stripe }),
         channelSlug,
         user: event.user,
       });

@@ -183,6 +183,7 @@
     "INPUT_ERROR": "Input error.",
     "INSUFFICIENT_STOCK_ERROR": "Insufficient stock.",
     "INVALID_JSON_ERROR": "Received invalid data from the server.",
+    "INVALID_PASSWORD_ERROR": "The password you entered is incorrect.",
     "INVALID_RESPONSE_ERROR": "Received an invalid response from the server.",
     "INVALID_VALUE_ERROR": "Invalid value.",
     "JWT_INVALID_TOKEN_ERROR": "Your session has expired or is invalid. Please log in again.",

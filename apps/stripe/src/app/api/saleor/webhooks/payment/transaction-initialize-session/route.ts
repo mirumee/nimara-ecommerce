@@ -13,6 +13,7 @@ import {
 } from "@/lib/saleor/transaction/schema";
 import { constructTransactionEventResponse } from "@/lib/saleor/transaction/util";
 import { verifySaleorWebhookRoute } from "@/lib/saleor/webhooks/api";
+import { resolveStripeAccountId } from "@/lib/stripe/account";
 import { getStripeApi, stripeRouteErrorsHandler } from "@/lib/stripe/api";
 import { STRIPE_SETUP_USAGE } from "@/lib/stripe/const";
 import { resolveGatewayCustomerId } from "@/lib/stripe/customer";
@@ -20,6 +21,7 @@ import { getExpandableId } from "@/lib/stripe/payment-method";
 import {
   getGatewayMetadata,
   getIntentDashboardUrl,
+  getIntentShipping,
   mapStatusToActionType,
 } from "@/lib/stripe/util";
 import { getLoggingProvider } from "@/providers/logging";
@@ -89,6 +91,7 @@ export const POST = stripeRouteErrorsHandler(
        */
       if (user) {
         customerId = await resolveGatewayCustomerId({
+          accountId: await resolveStripeAccountId({ gatewayConfig, stripe }),
           channelSlug,
           logger,
           saleorClient: getSaleorClient({ authToken, logger, saleorDomain }),
@@ -149,11 +152,14 @@ export const POST = stripeRouteErrorsHandler(
         }
       }
 
+      const shipping = getIntentShipping(event.sourceObject.shippingAddress);
+
       const intent = await stripe.paymentIntents.create({
         amount: getCentsFromAmount(event.sourceObject.total.gross),
         automatic_payment_methods: { enabled: true },
         capture_method: actionType === "CHARGE" ? "automatic" : "manual",
         currency: event.sourceObject.total.gross.currency,
+        ...(shipping && { shipping }),
         metadata: getGatewayMetadata({
           ...data.metadata,
           channelSlug,

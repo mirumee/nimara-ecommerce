@@ -24,6 +24,8 @@ export const mapSaleorErrorCode = (code: SaleorErrorCode): AppErrorCode => {
       return "HTTP_ERROR";
     case "INVALID":
       return "INVALID_VALUE_ERROR";
+    case "INVALID_CREDENTIALS":
+      return "INVALID_PASSWORD_ERROR";
     case "JWT_INVALID_TOKEN":
       return "JWT_INVALID_TOKEN_ERROR";
     case "JWT_SIGNATURE_EXPIRED":
