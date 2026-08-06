@@ -77,7 +77,7 @@ rules are not repeated here, so this file cannot drift from them.
 
 | Record             | Responsibility                                                    | Template                                               |
 | ------------------ | ----------------------------------------------------------------- | ------------------------------------------------------ |
-| PRD                | Why and what are product requirements                             | [PRD Template](_templates/prd.md)                      |
+| PRD                | Why and what are product requirements                             | [PRD Template](_templates/PRD.md)                      |
 | RFC                | A proposed technical solution and considered alternatives         | [RFC Design Doc](_templates/RFC.md)                    |
 | ADR                | A durable architecture decision                                   | [ADR Template](_templates/ADR.md)                      |
 | IMP                | What was implemented and how it was verified                      | [IMP Template](_templates/IMP.md)                      |

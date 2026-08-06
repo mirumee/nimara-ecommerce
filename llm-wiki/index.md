@@ -15,7 +15,7 @@ okf_version: "0.1"
 - [IMP Template](_templates/IMP.md) - Reusable template for implementation details and verification evidence.
 - [INT Template](_templates/INT.md) - Reusable template for an integration contract.
 - [OPS Template](_templates/OPS.md) - Reusable template for operational runbooks, rollback procedures, and incident guidance.
-- [PRD Template](_templates/prd.md) - Reusable template for drafting Nimara Product Requirements Documents.
+- [PRD Template](_templates/PRD.md) - Reusable template for drafting Nimara Product Requirements Documents.
 - [RFC Design Doc Template](_templates/RFC.md) - Reusable template for an RFC design proposal: problem, requirements, proposed solution, and cross-cutting considerations.
 - [Undefined Template](_templates/Undefined.md) - Generic template for a new concept document.
 - [Saleor Schema Note Template](_templates/saleor-schema-note.md) - Reusable template for a version-stamped Saleor GraphQL schema note.
