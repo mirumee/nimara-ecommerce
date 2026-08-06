@@ -66,6 +66,47 @@ export const mapStatusToActionType = ({
   return mappedStatus;
 };
 
+type SourceObjectAddress = {
+  city: string;
+  country: { code: string };
+  countryArea: string;
+  firstName: string;
+  lastName: string;
+  phone?: string | null;
+  postalCode: string;
+  streetAddress1: string;
+  streetAddress2: string;
+};
+
+/**
+ * Stripe picks the payment methods it offers by customer country, which it
+ * takes from the intent shipping address and only then from the client IP.
+ */
+export const getIntentShipping = (
+  address: SourceObjectAddress | null | undefined,
+): Stripe.PaymentIntentCreateParams["shipping"] | undefined => {
+  const name = [address?.firstName, address?.lastName]
+    .filter(Boolean)
+    .join(" ");
+
+  if (!address || !name) {
+    return undefined;
+  }
+
+  return {
+    address: {
+      city: address.city,
+      country: address.country.code,
+      line1: address.streetAddress1,
+      line2: address.streetAddress2,
+      postal_code: address.postalCode,
+      state: address.countryArea,
+    },
+    name,
+    ...(address.phone && { phone: address.phone }),
+  };
+};
+
 export const humanize = (str: string) =>
   (str.charAt(0).toUpperCase() + str.slice(1))
     .replaceAll("_", " ")

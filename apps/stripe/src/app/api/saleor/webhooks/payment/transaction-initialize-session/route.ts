@@ -21,6 +21,7 @@ import { getExpandableId } from "@/lib/stripe/payment-method";
 import {
   getGatewayMetadata,
   getIntentDashboardUrl,
+  getIntentShipping,
   mapStatusToActionType,
 } from "@/lib/stripe/util";
 import { getLoggingProvider } from "@/providers/logging";
@@ -151,11 +152,14 @@ export const POST = stripeRouteErrorsHandler(
         }
       }
 
+      const shipping = getIntentShipping(event.sourceObject.shippingAddress);
+
       const intent = await stripe.paymentIntents.create({
         amount: getCentsFromAmount(event.sourceObject.total.gross),
         automatic_payment_methods: { enabled: true },
         capture_method: actionType === "CHARGE" ? "automatic" : "manual",
         currency: event.sourceObject.total.gross.currency,
+        ...(shipping && { shipping }),
         metadata: getGatewayMetadata({
           ...data.metadata,
           channelSlug,

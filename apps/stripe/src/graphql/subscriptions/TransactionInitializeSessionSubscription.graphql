@@ -13,7 +13,7 @@ subscription TransactionInitializeSessionSubscription {
         ...TransactionItemFragment
       }
       sourceObject {
-        ...OrderOrCheckoutSourceObjectFragment
+        ...TransactionInitializeSourceObjectFragment
       }
     }
   }

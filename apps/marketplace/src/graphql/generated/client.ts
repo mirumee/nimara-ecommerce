@@ -105,6 +105,25 @@ export type AccountChangeEmailRequested = Event & {
   version: Maybe<Scalars['String']['output']>;
 };
 
+/**
+ * AccountConfirmMode set the account merging mode for anonymous objects.
+ *
+ *     This dictates the behavior of the `confirmAccount()` mutation for
+ *     password-based authentication when attempting to merge orders & giftcard
+ *     that aren't associated to a user account.
+ *
+ *     Modes:
+ *
+ *     - MERGE_DISABLED disables merging only when the authentication method
+ *       is password (i.e., when not using OIDC)
+ *     - REQUIRE_PASSWORD enables account merging who accounts that use password
+ *       authentication but it requires the user to enter their password
+ *
+ */
+export type AccountConfirmModeEnum =
+  | 'MERGE_DISABLED'
+  | 'REQUIRE_PASSWORD';
+
 /** Event sent when account confirmation requested. This event is always sent. enableAccountConfirmationByEmail flag set to True is not required. */
 export type AccountConfirmationRequested = Event & {
   /** The channel data. */
@@ -14761,6 +14780,7 @@ export type MutationCollectionUpdateArgs = {
 
 export type MutationConfirmAccountArgs = {
   email: Scalars['String']['input'];
+  password?: InputMaybe<Scalars['String']['input']>;
   token: Scalars['String']['input'];
 };
 
@@ -26963,6 +26983,8 @@ export type ShippingZoneUpdatedShippingZoneArgs = {
 
 /** Represents a shop resource containing general shop data and configuration. */
 export type Shop = ObjectWithMetadata & {
+  /** Controls the method used for merging existing orders and giftcards when password-based authentication is used. Learn more at https://docs.saleor.io/upgrade-guides/core/migrate-account-merging */
+  accountConfirmMergeMode: AccountConfirmModeEnum;
   /**
    * Determines if user can login without confirmation when `enableAccountConfirmation` is enabled.
    *
@@ -27282,6 +27304,8 @@ export type ShopMetadataUpdated = Event & {
 };
 
 export type ShopSettingsInput = {
+  /** Controls the method used for merging existing orders and giftcards when password-based authentication is used. Learn more at https://docs.saleor.io/upgrade-guides/core/migrate-account-merging */
+  accountConfirmMergeMode?: InputMaybe<AccountConfirmModeEnum>;
   /** Enable possibility to login without account confirmation. */
   allowLoginWithoutConfirmation?: InputMaybe<Scalars['Boolean']['input']>;
   /** Enable automatic fulfillment for all digital products. */
@@ -33145,6 +33169,22 @@ export type ChannelsVariables = Exact<{ [key: string]: never; }>;
 
 export type Channels = Channels_Query;
 
+export type CheckoutShippingAddress_checkout_Checkout_shippingAddress_Address_country_CountryDisplay = { code: string };
+
+export type CheckoutShippingAddress_checkout_Checkout_shippingAddress_Address = { firstName: string, lastName: string, streetAddress1: string, streetAddress2: string, city: string, postalCode: string, countryArea: string, phone: string | null, country: CheckoutShippingAddress_checkout_Checkout_shippingAddress_Address_country_CountryDisplay };
+
+export type CheckoutShippingAddress_checkout_Checkout = { id: string, shippingAddress: CheckoutShippingAddress_checkout_Checkout_shippingAddress_Address | null };
+
+export type CheckoutShippingAddress_Query = { checkout: CheckoutShippingAddress_checkout_Checkout | null };
+
+
+export type CheckoutShippingAddressVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type CheckoutShippingAddress = CheckoutShippingAddress_Query;
+
 export type CheckoutTransactions_checkout_Checkout_transactions_TransactionItem_chargedAmount_Money = { amount: number };
 
 export type CheckoutTransactions_checkout_Checkout_transactions_TransactionItem = { id: string, pspReference: string, chargedAmount: CheckoutTransactions_checkout_Checkout_transactions_TransactionItem_chargedAmount_Money };
@@ -34930,6 +34970,26 @@ export const ChannelsDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<Channels, ChannelsVariables>;
+export const CheckoutShippingAddressDocument = new TypedDocumentString(`
+    query CheckoutShippingAddress($id: ID!) {
+  checkout(id: $id) {
+    id
+    shippingAddress {
+      firstName
+      lastName
+      streetAddress1
+      streetAddress2
+      city
+      postalCode
+      countryArea
+      phone
+      country {
+        code
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<CheckoutShippingAddress, CheckoutShippingAddressVariables>;
 export const CheckoutTransactionsDocument = new TypedDocumentString(`
     query CheckoutTransactions($id: ID!) {
   checkout(id: $id) {
