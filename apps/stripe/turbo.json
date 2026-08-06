@@ -18,6 +18,8 @@
         "NEXT_PUBLIC_ENVIRONMENT",
         "ALLOWED_DOMAINS",
         "CONFIG_KEY",
+        "CONFIG_PROVIDER",
+        "CONFIG_FILE_PATH",
         "NEXT_PUBLIC_SENTRY_DSN",
         "SENTRY_DSN",
         "SENTRY_ORG",

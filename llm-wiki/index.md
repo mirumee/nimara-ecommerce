@@ -35,6 +35,7 @@ okf_version: "0.1"
 - [Implementation (MOC)](tech/implementation/Implementation%20%28MOC%29.md) - Register for implementation records that connect work items and requirements to code, tests, and current product state.
 - [IMP-0001 Saleor Stored Payment Methods](tech/implementation/IMP-0001%20Saleor%20Stored%20Payment%20Methods.md) - Saved payment methods move onto Saleor's stored payment methods protocol behind a provider-neutral payment service.
 - [IMP-0002 Stripe Payment Application Multi-Tenancy](tech/implementation/IMP-0002%20Stripe%20Payment%20Application%20Multi-Tenancy.md) - One payment-application deployment serves many Saleor installations, keyed by domain and gated by a fail-closed allowlist.
+- [IMP-0003 Payment Application Configuration Storage Selection](tech/implementation/IMP-0003%20Payment%20Application%20Configuration%20Storage%20Selection.md) - A storage-agnostic provider core with selectable backends, adding an on-disk store so the application runs without a hosted configuration service.
 
 # Current Product State
 
@@ -123,6 +124,7 @@ okf_version: "0.1"
 
 - [ADR MOC](tech/ADR/ADR%20MOC.md) - Map of content and chronological register for architecture decision records.
 - [ADR-0001 Vouchers Are Disabled In Marketplace Checkout](tech/ADR/ADR-0001%20Vouchers%20Are%20Disabled%20In%20Marketplace%20Checkout.md) - Why promo codes are hidden in marketplace mode and what answering the platform-versus-vendor discount question would require.
+- [ADR-0002 Payment Application Configuration Storage Is Selectable](tech/ADR/ADR-0002%20Payment%20Application%20Configuration%20Storage%20Is%20Selectable.md) - Why storage sits behind one seam, why a deployment keeps the hosted store, and what accepting an on-disk developer store costs.
 
 # Technology RFC
 
