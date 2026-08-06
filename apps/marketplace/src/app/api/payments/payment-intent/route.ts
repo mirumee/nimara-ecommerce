@@ -6,8 +6,12 @@ import type { TransactionCreateMutationVariables } from "@/graphql/generated/cli
 import { getServerAuthToken } from "@/lib/auth/server";
 import { config } from "@/lib/config";
 import { getAppConfig } from "@/lib/saleor/app-config";
-import { getStripeClient } from "@/lib/stripe/client";
+import {
+  getStripeClient,
+  type PaymentIntentShipping,
+} from "@/lib/stripe/client";
 import { getCentsFromAmount } from "@/lib/stripe/currency";
+import { resolveIntentShipping } from "@/lib/stripe/shipping";
 import { marketplaceLogger } from "@/services/logging";
 import { transactionsService } from "@/services/transactions";
 
@@ -66,14 +70,17 @@ const buildIdempotencyKey = ({
   buyerId,
   checkouts,
   saleorDomain,
+  shipping,
 }: {
   buyerId: string | undefined;
   checkouts: { amount: number; checkoutId: string; currency: string }[];
   saleorDomain: string;
+  shipping: PaymentIntentShipping | undefined;
 }) => {
   const canonical = {
     buyerId: buyerId ?? "",
     saleorDomain,
+    shipping: shipping ?? null,
     checkouts: [...checkouts]
       .sort((a, b) => a.checkoutId.localeCompare(b.checkoutId))
       .map((checkout) => ({
@@ -164,10 +171,17 @@ export async function POST(request: NextRequest) {
       getCentsFromAmount({ amount: item.amount, currency: item.currency }),
     0,
   );
+  const token = await getServerAuthToken();
+  const firstCheckoutId = checkouts[0]?.checkoutId;
+  const shipping = firstCheckoutId
+    ? await resolveIntentShipping({ checkoutId: firstCheckoutId, token })
+    : undefined;
+
   const idempotencyKey = buildIdempotencyKey({
     buyerId,
     checkouts,
     saleorDomain,
+    shipping,
   });
   const transferGroup = `tg_${idempotencyKey}`;
 
@@ -179,6 +193,7 @@ export async function POST(request: NextRequest) {
       automatic_payment_methods: { enabled: true },
       transfer_group: transferGroup,
       idempotencyKey,
+      ...(shipping && { shipping }),
       metadata: {
         subcheckouts: JSON.stringify(checkouts.map((item) => item.checkoutId)),
         checkout_amounts: JSON.stringify(
@@ -207,7 +222,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const token = await getServerAuthToken();
     const checkoutStatuses: CheckoutInitializationStatus[] = [];
     const checkoutsToCreate: typeof checkouts = [];
 

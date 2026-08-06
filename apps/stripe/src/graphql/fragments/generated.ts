@@ -1,6 +1,10 @@
 import type * as Types from '@nimara/codegen/schema';
 
 import type { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
+export type AddressFragment_Address_country_CountryDisplay = { code: string };
+
+export type AddressFragment = { firstName: string, lastName: string, streetAddress1: string, streetAddress2: string, city: string, postalCode: string, countryArea: string, phone: string | null, country: AddressFragment_Address_country_CountryDisplay };
+
 export type ChannelFragment = { id: string, slug: string, name: string, currencyCode: string };
 
 export type CheckoutSourceObjectFragment_Checkout_channel_Channel = { id: string, slug: string, name: string, currencyCode: string };
@@ -51,6 +55,19 @@ export type TaxedMoneyFragment_TaxedMoney_tax_Money = { currency: string, amount
 export type TaxedMoneyFragment = { net: TaxedMoneyFragment_TaxedMoney_net_Money, gross: TaxedMoneyFragment_TaxedMoney_gross_Money, tax: TaxedMoneyFragment_TaxedMoney_tax_Money };
 
 export type TransactionActionFragment = { actionType: Types.TransactionActionEnum, amount: number, currency: string };
+
+export type TransactionInitializeSourceObjectFragment_Checkout_shippingAddress_Address = { firstName: string, lastName: string, streetAddress1: string, streetAddress2: string, city: string, postalCode: string, countryArea: string, phone: string | null, country: AddressFragment_Address_country_CountryDisplay };
+
+export type TransactionInitializeSourceObjectFragment_Order_shippingAddress_Address = { firstName: string, lastName: string, streetAddress1: string, streetAddress2: string, city: string, postalCode: string, countryArea: string, phone: string | null, country: AddressFragment_Address_country_CountryDisplay };
+
+export type TransactionInitializeSourceObjectFragment_Checkout = { id: string, languageCode: Types.LanguageCodeEnum, userEmail: string | null, shippingAddress: TransactionInitializeSourceObjectFragment_Checkout_shippingAddress_Address | null, channel: CheckoutSourceObjectFragment_Checkout_channel_Channel, user: CheckoutSourceObjectFragment_Checkout_user_User | null, total: CheckoutSourceObjectFragment_Checkout_total_TaxedMoney };
+
+export type TransactionInitializeSourceObjectFragment_Order = { id: string, languageCodeEnum: Types.LanguageCodeEnum, userEmail: string | null, shippingAddress: TransactionInitializeSourceObjectFragment_Order_shippingAddress_Address | null, user: OrderSourceObjectFragment_Order_user_User | null, channel: OrderSourceObjectFragment_Order_channel_Channel, total: OrderSourceObjectFragment_Order_total_TaxedMoney };
+
+export type TransactionInitializeSourceObjectFragment =
+  | TransactionInitializeSourceObjectFragment_Checkout
+  | TransactionInitializeSourceObjectFragment_Order
+;
 
 export type TransactionItemFragment = { id: string, pspReference: string };
 
@@ -173,6 +190,86 @@ export const TransactionActionFragment = new TypedDocumentString(`
   currency
 }
     `, {"fragmentName":"TransactionActionFragment"}) as unknown as TypedDocumentString<TransactionActionFragment, unknown>;
+export const TransactionInitializeSourceObjectFragment = new TypedDocumentString(`
+    fragment TransactionInitializeSourceObjectFragment on OrderOrCheckout {
+  ... on Checkout {
+    ...CheckoutSourceObjectFragment
+    shippingAddress {
+      ...AddressFragment
+    }
+  }
+  ... on Order {
+    ...OrderSourceObjectFragment
+    shippingAddress {
+      ...AddressFragment
+    }
+  }
+}
+    fragment AddressFragment on Address {
+  firstName
+  lastName
+  streetAddress1
+  streetAddress2
+  city
+  postalCode
+  countryArea
+  phone
+  country {
+    code
+  }
+}
+fragment ChannelFragment on Channel {
+  id
+  slug
+  name
+  currencyCode
+}
+fragment CheckoutSourceObjectFragment on Checkout {
+  id
+  languageCode
+  channel {
+    ...ChannelFragment
+  }
+  user {
+    ...UserFragment
+  }
+  userEmail: email
+  total: totalPrice {
+    gross {
+      ...MoneyFragment
+    }
+  }
+}
+fragment MoneyFragment on Money {
+  currency
+  amount
+}
+fragment OrderSourceObjectFragment on Order {
+  id
+  languageCodeEnum
+  user {
+    ...UserFragment
+  }
+  userEmail
+  channel {
+    ...ChannelFragment
+  }
+  total {
+    gross {
+      ...MoneyFragment
+    }
+  }
+}
+fragment UserFragment on User {
+  id
+  email
+  firstName
+  lastName
+  privateMetadata {
+    key
+    value
+  }
+}`, {"fragmentName":"TransactionInitializeSourceObjectFragment"}) as unknown as TypedDocumentString<TransactionInitializeSourceObjectFragment, unknown>;
 export const TransactionItemFragment = new TypedDocumentString(`
     fragment TransactionItemFragment on TransactionItem {
   id
