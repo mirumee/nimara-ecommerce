@@ -13,7 +13,8 @@ import {
 const CHANNEL_SLUG = "default-channel";
 const SALEOR_DOMAIN = "shop.saleor.cloud";
 const ENVIRONMENT = "production";
-const METADATA_KEY = `stripe.customer.${CHANNEL_SLUG}`;
+const ACCOUNT_ID = "acct_123";
+const METADATA_KEY = `stripe.customer.${CHANNEL_SLUG}.${ACCOUNT_ID}`;
 const USER_ID = "VXNlcjox";
 
 const buildUser = ({
@@ -67,7 +68,11 @@ describe("customer", () => {
 
   describe("findGatewayCustomerId", () => {
     const find = (user: SaleorWebhookUser) =>
-      findGatewayCustomerId({ channelSlug: CHANNEL_SLUG, user });
+      findGatewayCustomerId({
+        accountId: ACCOUNT_ID,
+        channelSlug: CHANNEL_SLUG,
+        user,
+      });
 
     it("should return the customer the app owns", () => {
       // given
@@ -87,6 +92,24 @@ describe("customer", () => {
       const user = buildUser({
         privateMetadata: [
           { key: "stripe.customer.other-channel", value: "cus_other" },
+        ],
+      });
+
+      // when
+      const result = find(user);
+
+      // then
+      expect(result).toBeNull();
+    });
+
+    it("should ignore a mapping made for another Stripe account", () => {
+      // given
+      const user = buildUser({
+        privateMetadata: [
+          {
+            key: `stripe.customer.${CHANNEL_SLUG}.acct_previous`,
+            value: "cus_previous",
+          },
         ],
       });
 
@@ -131,6 +154,7 @@ describe("customer", () => {
       saleorClient: ReturnType<typeof buildSaleorClient>,
     ) =>
       resolveGatewayCustomerId({
+        accountId: ACCOUNT_ID,
         channelSlug: CHANNEL_SLUG,
         logger: buildLogger(),
         saleorClient,
@@ -154,6 +178,36 @@ describe("customer", () => {
       expect(result).toBe("cus_owned");
       expect(stripe.customers.create).not.toHaveBeenCalled();
       expect(saleorClient.execute).not.toHaveBeenCalled();
+    });
+
+    /**
+     * A customer created in a different Stripe account no longer exists for
+     * the key in use, so reusing its id would fail every payment.
+     */
+    it("should create a customer when the mapping belongs to another account", async () => {
+      // given
+      const stripe = buildStripe();
+      const saleorClient = buildSaleorClient();
+      const user = buildUser({
+        privateMetadata: [
+          {
+            key: `stripe.customer.${CHANNEL_SLUG}.acct_previous`,
+            value: "cus_previous",
+          },
+        ],
+      });
+
+      // when
+      const result = await resolve(user, stripe, saleorClient);
+
+      // then
+      expect(result).toBe("cus_created");
+      expect(saleorClient.execute).toHaveBeenCalledWith(expect.anything(), {
+        variables: {
+          id: USER_ID,
+          input: [{ key: METADATA_KEY, value: "cus_created" }],
+        },
+      });
     });
 
     /**

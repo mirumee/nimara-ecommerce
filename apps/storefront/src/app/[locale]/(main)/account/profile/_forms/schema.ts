@@ -35,7 +35,10 @@ export const updateEmailFormSchema = ({ t }: { t: GetTranslations }) =>
 export const updatePasswordFormSchema = ({ t }: { t: GetTranslations }) =>
   z
     .object({
-      oldPassword: z.string().trim(),
+      oldPassword: z
+        .string()
+        .min(1, { message: t("form-validation.required") })
+        .trim(),
       newPassword: z
         .string()
         .min(MIN_PASSWORD_LENGTH, {

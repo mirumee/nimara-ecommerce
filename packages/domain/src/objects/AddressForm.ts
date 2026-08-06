@@ -6,6 +6,7 @@ export type SelectOptions = {
 }[];
 
 export type AddressFormField = {
+  autoComplete?: string;
   isRequired?: boolean;
   isSrOnlyLabel?: boolean;
   label?: string;

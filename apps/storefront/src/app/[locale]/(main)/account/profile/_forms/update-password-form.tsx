@@ -30,6 +30,7 @@ export function UpdatePasswordForm({
     defaultValues: {
       confirm: "",
       newPassword: "",
+      oldPassword: "",
     },
   });
   const formError = form.formState.errors?.root;

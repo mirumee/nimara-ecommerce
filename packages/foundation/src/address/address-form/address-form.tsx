@@ -6,10 +6,7 @@ import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
 import { type AllCountryCode } from "@nimara/domain/consts";
-import {
-  type Address,
-  type CountryOption,
-} from "@nimara/domain/objects/Address";
+import { type CountryOption } from "@nimara/domain/objects/Address";
 import {
   type AddressFormRow,
   type FieldType,
@@ -18,25 +15,20 @@ import { usePathname, useRouter } from "@nimara/i18n/routing";
 
 import { AddressFormGenerator } from "./address-form-generator";
 
-const dynamicFields: Array<keyof Address> = [
-  "city",
-  "postalCode",
-  "cityArea",
-  "streetAddress1",
-  "streetAddress2",
-  "countryArea",
-];
+const COUNTRY_AREA = "countryArea";
 
 const nameFormRow = [
   {
     name: "firstName",
     type: "text" as FieldType,
     isRequired: false,
+    autoComplete: "given-name",
   },
   {
     name: "lastName",
     type: "text" as FieldType,
     isRequired: false,
+    autoComplete: "family-name",
   },
 ];
 
@@ -46,6 +38,7 @@ const phoneCodeRow = [
     type: "text" as FieldType,
     isRequired: false,
     inputMode: "tel",
+    autoComplete: "tel",
   },
 ];
 
@@ -54,6 +47,7 @@ const companyNameRow = [
     name: "companyName",
     type: "text" as FieldType,
     isRequired: false,
+    autoComplete: "organization",
   },
 ];
 
@@ -79,19 +73,35 @@ export const AddressForm = ({
   const form = useFormContext();
   const [isChangingCountry, setIsChangingCountry] = useState(false);
 
+  const countryAreaFieldName = schemaPrefix
+    ? `${schemaPrefix}.${COUNTRY_AREA}`
+    : COUNTRY_AREA;
+
   useEffect(() => {
-    if (isChangingCountry && addressFormRows.length > 0) {
-      setIsChangingCountry(false);
-      onCountryChange?.(false);
+    if (!isChangingCountry || addressFormRows.length === 0) {
+      return;
+    }
+
+    setIsChangingCountry(false);
+    onCountryChange?.(false);
+
+    const countryArea = form.getValues(countryAreaFieldName);
+    const isStillSelectable = addressFormRows
+      .flat()
+      .find((field) => field.name === COUNTRY_AREA)
+      ?.options?.some(({ value }) => value === countryArea);
+
+    if (countryArea && !isStillSelectable) {
+      form.resetField(countryAreaFieldName, {
+        defaultValue: "",
+        keepError: false,
+      });
     }
   }, [addressFormRows]);
 
   const handleChangeCountry = (countryCode: AllCountryCode) => {
     setIsChangingCountry(true);
     onCountryChange?.(true);
-    dynamicFields.forEach((fieldName) =>
-      form.resetField(fieldName, { defaultValue: "", keepError: false }),
-    );
 
     const params = new URLSearchParams(searchParams);
 
@@ -104,6 +114,7 @@ export const AddressForm = ({
       name: "country",
       type: "select" as FieldType,
       isRequired: true,
+      autoComplete: "country",
       onChange: handleChangeCountry,
       options: countries.map((country) => ({
         value: country.value,
@@ -155,7 +166,7 @@ export const AddressForm = ({
   return (
     <>
       <AddressFormGenerator
-        isDisabled={isChangingCountry || isDisabled}
+        isDisabled={isDisabled}
         schemaPrefix={schemaPrefix}
         addressFormRows={[
           nameFormRow,
@@ -164,15 +175,12 @@ export const AddressForm = ({
           phoneCodeRow,
         ]}
       />
-      {isChangingCountry ? (
-        <p>{t("shipping-address.loading-fields")}</p>
-      ) : (
-        <AddressFormGenerator
-          isDisabled={isChangingCountry || isDisabled}
-          schemaPrefix={schemaPrefix}
-          addressFormRows={formattedAddressFormRows}
-        />
-      )}
+      {isChangingCountry && <p>{t("shipping-address.loading-fields")}</p>}
+      <AddressFormGenerator
+        isDisabled={isDisabled}
+        schemaPrefix={schemaPrefix}
+        addressFormRows={formattedAddressFormRows}
+      />
     </>
   );
 };

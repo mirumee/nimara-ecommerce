@@ -1,5 +1,18 @@
 import { assertStripeSecretKey } from "@/lib/stripe/secret-key";
 
+export interface PaymentIntentShipping {
+  address: {
+    city: string;
+    country: string;
+    line1: string;
+    line2: string;
+    postal_code: string;
+    state: string;
+  };
+  name: string;
+  phone?: string;
+}
+
 interface PaymentIntentCreateInput {
   amount: number;
   automatic_payment_methods: {
@@ -8,6 +21,7 @@ interface PaymentIntentCreateInput {
   currency: string;
   idempotencyKey?: string;
   metadata?: Record<string, string>;
+  shipping?: PaymentIntentShipping;
   transfer_group?: string;
 }
 
@@ -52,6 +66,20 @@ const toPaymentIntentFormBody = (
 
   if (input.transfer_group) {
     form.set("transfer_group", input.transfer_group);
+  }
+
+  if (input.shipping) {
+    form.set("shipping[name]", input.shipping.name);
+
+    if (input.shipping.phone) {
+      form.set("shipping[phone]", input.shipping.phone);
+    }
+
+    Object.entries(input.shipping.address).forEach(([key, value]) => {
+      if (value) {
+        form.set(`shipping[address][${key}]`, value);
+      }
+    });
   }
 
   Object.entries(input.metadata ?? {}).forEach(([key, value]) => {

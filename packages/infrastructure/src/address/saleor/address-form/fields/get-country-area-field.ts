@@ -26,6 +26,7 @@ export const getCountryAreaField = ({
     {
       name: COUNTRY_AREA,
       type: "select" as FieldType,
+      autoComplete: "address-level1",
       label: camelizeLabel(addressValidationRules.countryAreaType),
       isRequired: isRequired({ name: COUNTRY_AREA, addressValidationRules }),
       options: addressValidationRules.countryAreaChoices.map(
