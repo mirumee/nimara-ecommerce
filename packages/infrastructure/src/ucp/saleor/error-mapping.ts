@@ -155,6 +155,15 @@ export const SALEOR_TO_UCP_ERROR_MAP: Record<
     severity: "recoverable",
     path: "$.line_items[*].quantity",
   },
+  /*
+   * Only an app can send a price override reason, so the buyer has nothing to
+   * correct here.
+   */
+  PRICE_OVERRIDE_REASON_WITHOUT_OVERRIDE: {
+    code: "invalid",
+    severity: "recoverable",
+    path: "$.line_items",
+  },
 
   // Other errors
   TAX_ERROR: {

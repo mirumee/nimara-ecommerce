@@ -1,7 +1,7 @@
 import type * as Types from '@nimara/codegen/schema';
 
 import type { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
-export type VendorGetById_page_Page_assignedAttributes_AssignedAttribute_attribute_Attribute = { id: string, slug: string | null };
+export type VendorGetById_page_Page_assignedAttributes_AssignedAttribute_attribute_Attribute = { id: string, slug: string };
 
 export type VendorGetById_page_Page_assignedAttributes_f6lry4i9i0ZvmDcChJIzOZEbYSxnLm5kAXyhZyRRkE = { attribute: VendorGetById_page_Page_assignedAttributes_AssignedAttribute_attribute_Attribute };
 
