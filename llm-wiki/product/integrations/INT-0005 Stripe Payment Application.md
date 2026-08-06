@@ -9,7 +9,7 @@ tags:
   - "saleor-app"
   - "stored-payment-methods"
 created: "2026-07-21T00:00:00+00:00"
-timestamp: "2026-08-03T00:00:00+00:00"
+timestamp: "2026-08-04T00:00:00+00:00"
 id: "INT-0005"
 status: "active"
 owner: "engineering"
@@ -143,10 +143,14 @@ payment methods protocol.
 - `TRANSACTION_REFUND_REQUESTED` only retrieves the PaymentIntent and reports `REFUND_SUCCESS` when
   that intent is in `succeeded` state. It does not create a Stripe Refund, and an intent being
   succeeded is not evidence that the requested refund occurred.
-- Channel configuration and installation tokens are stored through Vercel Edge Config, keyed by
-  commerce domain, so a working deployment requires the corresponding Vercel access, team, and
-  database configuration. Every installation shares one stored value, which is read, modified, and
-  written whole: concurrent configuration saves for different installations are last-write-wins.
+- Channel configuration and installation tokens are stored through a selected storage backend, keyed
+  by commerce domain. A deployment uses the hosted store and therefore requires the corresponding
+  Vercel access, team, and database configuration; a developer machine may select an on-disk file
+  instead. The on-disk option is not usable for a deployment: a serverless filesystem is
+  per-instance and does not survive, so installations would appear to succeed and then disappear.
+  Nothing in the application refuses that selection. Whichever backend is selected, every
+  installation shares one stored value, which is read, modified, and written whole: concurrent
+  configuration saves for different installations are last-write-wins.
 - Configuration written before the application became multi-installation is read as a single-entry
   map, so an existing installation keeps working without a migration. The reverse does not hold —
   once a second installation exists, the stored value can no longer be read by application code that
@@ -217,12 +221,24 @@ payment methods protocol.
 - One endpoint per provider account, the commerce domain in the endpoint address, the channel taken
   from event metadata, and the skip for an event belonging to another installation are anchored at
   exact commit
-  [`75be94ef01917a6952c1c32e9dd9da8577402d5f`](https://github.com/mirumee/nimara-ecommerce/tree/75be94ef01917a6952c1c32e9dd9da8577402d5f)
+  [`46b0c275332d5abd58d773cfc70ee2933020fa75`](https://github.com/mirumee/nimara-ecommerce/tree/46b0c275332d5abd58d773cfc70ee2933020fa75)
   in the
-  [signed provider event reporter](https://github.com/mirumee/nimara-ecommerce/blob/75be94ef01917a6952c1c32e9dd9da8577402d5f/apps/stripe/src/app/api/stripe/webhooks/%5BsaleorDomain%5D/route.ts),
-  [webhook rotation utility](https://github.com/mirumee/nimara-ecommerce/blob/75be94ef01917a6952c1c32e9dd9da8577402d5f/apps/stripe/src/lib/stripe/webhooks/util.ts),
+  [signed provider event reporter](https://github.com/mirumee/nimara-ecommerce/blob/46b0c275332d5abd58d773cfc70ee2933020fa75/apps/stripe/src/app/api/stripe/webhooks/%5BsaleorDomain%5D/route.ts),
+  [webhook rotation utility](https://github.com/mirumee/nimara-ecommerce/blob/46b0c275332d5abd58d773cfc70ee2933020fa75/apps/stripe/src/lib/stripe/webhooks/util.ts),
   and
-  [endpoint address helper](https://github.com/mirumee/nimara-ecommerce/blob/75be94ef01917a6952c1c32e9dd9da8577402d5f/apps/stripe/src/lib/stripe/const.ts).
-  That commit is the tip of unmerged branch `feat/consolidate-stripe-webhook-endpoints-per-domain`
-  ([PR 743](https://github.com/mirumee/nimara-ecommerce/pull/743)); re-anchor on the squash-merge
-  commit once it lands.
+  [endpoint address helper](https://github.com/mirumee/nimara-ecommerce/blob/46b0c275332d5abd58d773cfc70ee2933020fa75/apps/stripe/src/lib/stripe/const.ts).
+  That commit is the squash-merge of
+  [PR 743](https://github.com/mirumee/nimara-ecommerce/pull/743) on `main`.
+- Selectable configuration storage is anchored at exact commit
+  [`2680feabd8fc0cc5efdd680a2d78fed778c6ed8b`](https://github.com/mirumee/nimara-ecommerce/tree/2680feabd8fc0cc5efdd680a2d78fed778c6ed8b)
+  in the
+  [runtime configuration schema](https://github.com/mirumee/nimara-ecommerce/blob/2680feabd8fc0cc5efdd680a2d78fed778c6ed8b/apps/stripe/src/config.ts),
+  [storage selection](https://github.com/mirumee/nimara-ecommerce/blob/2680feabd8fc0cc5efdd680a2d78fed778c6ed8b/apps/stripe/src/providers/config.ts),
+  [storage-agnostic provider core](https://github.com/mirumee/nimara-ecommerce/blob/2680feabd8fc0cc5efdd680a2d78fed778c6ed8b/apps/stripe/src/lib/saleor/config/store.ts),
+  and
+  [on-disk configuration backend](https://github.com/mirumee/nimara-ecommerce/blob/2680feabd8fc0cc5efdd680a2d78fed778c6ed8b/apps/stripe/src/lib/saleor/config/file.ts).
+  That commit is the tip of unmerged branch `NIM-56-stripe-app-file-config-provider`; re-anchor on
+  the squash-merge commit once it lands. See
+  [IMP-0003 Payment Application Configuration Storage Selection](../../tech/implementation/IMP-0003%20Payment%20Application%20Configuration%20Storage%20Selection.md)
+  and
+  [ADR-0002 Payment Application Configuration Storage Is Selectable](../../tech/ADR/ADR-0002%20Payment%20Application%20Configuration%20Storage%20Is%20Selectable.md).

@@ -16,7 +16,7 @@
 
 - You need to have a [Stripe](https://stripe.com/) account.
 
-- You need to have a [Vercel](https://vercel.com/) account.
+- You need to have a [Vercel](https://vercel.com/) account **to deploy**. Running the app locally does not require one.
 
 ## ⚡ Quickstart
 
@@ -26,7 +26,22 @@ Copy `.env.example` to `.env`:
 cp .env.example .env
 ```
 
-Edit .env file and provide required variables:
+For local development that is almost all you need — two variables:
+
+```properties
+# Store the app's settings in a local, gitignored JSON file instead of Vercel Edge Config.
+CONFIG_PROVIDER=file
+# Allow any Saleor to install the app. Local development only.
+ALLOWED_DOMAINS=*
+```
+
+- `CONFIG_PROVIDER` - Where the app persists its settings (per installed Saleor: the auth token and the per-channel Stripe keys). `file` writes them to `CONFIG_FILE_PATH` (`.saleor-app-config.json` by default), so no Vercel account is needed. `edge` uses Vercel Edge Config and is required for any deployment, because a serverless filesystem is ephemeral and not shared between instances. Defaults to `edge`.
+
+- `ALLOWED_DOMAINS` - Comma separated list of Saleor domains allowed to install the app, e.g. `nimara-*.eu.saleor.cloud,demo.nimara.store`, where `*` acts as a wildcard. Unset, every installation is refused, so set it before deploying. A bare `*` allows any Saleor and belongs in local development only.
+
+### Deploying (`CONFIG_PROVIDER=edge`)
+
+These three are required when, and only when, `CONFIG_PROVIDER=edge`:
 
 - `VERCEL_TEAM_ID` - Your Vercel Team ID which can be found in your Vercel dashboard project > Settings tab.<br />
   ![alt text](docs/team-id.png)
@@ -35,7 +50,17 @@ Edit .env file and provide required variables:
 
 - `VERCEL_EDGE_CONFIG_ID` - Your Vercel Edge config database ID. If you don't have an Edge config database you need to create one. This can be found in your Vercel dashboard project > Storage tab.![alt text](docs/edge-config.png)
 
-- `ALLOWED_DOMAINS` - Comma separated list of Saleor domains allowed to install the app, e.g. `nimara-*.eu.saleor.cloud,demo.nimara.store`, where `*` acts as a wildcard. Unset, every installation is refused, so set it before deploying. A bare `*` allows any Saleor and belongs in local development only.
+### Reaching a locally running app from Saleor
+
+Saleor pushes the payment webhooks to the app, so it has to reach it over the
+public internet — a hosted Saleor cannot call `localhost:4000`. Expose the dev
+server with a tunnel and install the app from the tunnel's URL:
+
+```bash
+pnpm dev:stripe
+# then, in another shell, point any tunnel of your choice
+# (cloudflared, ngrok, untun, …) at port 4000
+```
 
 Now in [**nimara storefront**](../storefront) environment variables set `NEXT_PUBLIC_PAYMENT_APP_ID` to `LOCAL.stripe` in your `.env` file.
 
