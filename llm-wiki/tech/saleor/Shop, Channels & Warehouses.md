@@ -11,7 +11,6 @@ tags:
 saleor_schema_hash: "496fcbeb16ea"
 saleor_schema_generated: "2026-07-14T00:00:00+00:00"
 created: "2026-07-14T00:00:00+00:00"
-timestamp: "2026-07-14T00:00:00+00:00"
 ---
 
 ## Content

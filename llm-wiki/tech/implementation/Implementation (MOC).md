@@ -7,7 +7,6 @@ tags:
   - "moc"
   - "index"
 created: "2026-07-20T00:00:00+00:00"
-timestamp: "2026-07-20T00:00:00+00:00"
 ---
 
 ## Content

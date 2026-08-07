@@ -9,8 +9,6 @@ tags:
   - "payments"
   - "orders"
 created: "2026-07-21T00:00:00+00:00"
-timestamp: "2026-07-21T00:00:00+00:00"
-id: "OPS-0005"
 status: "active"
 owner: "payments-and-marketplace-operations"
 kind: "incident_response"
@@ -93,14 +91,3 @@ or the Stripe webhook reports signature, metadata, transaction, or checkout-comp
 - Refund, cancellation, manual order creation, or metadata repair requires explicit business and
   engineering approval. Preserve the original PaymentIntent and checkout evidence before any such
   compensating action.
-
-# Provenance
-
-- This guidance is anchored at exact commit
-  [`75d6bc55edddf431adcc348009a1c226f77cc005`](https://github.com/mirumee/nimara-ecommerce/tree/75d6bc55edddf431adcc348009a1c226f77cc005),
-  including the
-  [marketplace Stripe webhook](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/marketplace/src/app/api/payments/stripe/webhooks/route.ts),
-  [payment initialization route](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/marketplace/src/app/api/payments/payment-intent/route.ts),
-  [browser confirmation boundary](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/storefront/src/app/%5Blocale%5D/%28main%29/payment/confirmation/page.tsx),
-  and
-  [order vendor-enrichment route](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/marketplace/src/app/api/saleor/webhooks/order-created/route.ts).

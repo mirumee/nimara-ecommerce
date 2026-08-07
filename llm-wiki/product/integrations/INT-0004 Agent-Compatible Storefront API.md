@@ -8,8 +8,6 @@ tags:
   - "agent-commerce"
   - "ucp"
 created: "2026-07-21T00:00:00+00:00"
-timestamp: "2026-07-21T00:00:00+00:00"
-id: "INT-0004"
 status: "active"
 owner: "engineering"
 availability:
@@ -79,16 +77,3 @@ negotiated version and the capabilities relevant to that operation.
   additional channel slugs outside discovery.
 - Caller discovery-profile validation is capability negotiation rather than authentication or
   authorization. A deployment must not treat the `UCP-Agent` header as proof of identity.
-
-# Provenance
-
-- Availability is anchored in the public
-  [`v2.0.0` release snapshot](https://github.com/mirumee/nimara-ecommerce/tree/1fd1a16558bac1cfebd9a2356ff79061f8627da9).
-- The immutable snapshot contains the
-  [well-known discovery profile](https://github.com/mirumee/nimara-ecommerce/blob/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/storefront/src/app/.well-known/ucp/route.ts),
-  [capability registry](https://github.com/mirumee/nimara-ecommerce/blob/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/storefront/src/features/ucp/capabilities.ts),
-  [version and caller-profile negotiation](https://github.com/mirumee/nimara-ecommerce/blob/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/storefront/src/features/ucp/version-negotiation.ts),
-  [channel-aware route tree](https://github.com/mirumee/nimara-ecommerce/tree/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/storefront/src/app/api/ucp/%5BchannelSlug%5D),
-  and
-  [idempotency store](https://github.com/mirumee/nimara-ecommerce/blob/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/storefront/src/features/acp/acp.ts)
-  described above.
