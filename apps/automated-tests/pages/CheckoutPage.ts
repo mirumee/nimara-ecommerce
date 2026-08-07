@@ -1,5 +1,7 @@
 import { expect, type Locator, type Page } from "@playwright/test";
 import {
+  type CheckoutStep,
+  checkoutStepUrl,
   type PaymentDetails,
   type Product,
   URLS,
@@ -71,15 +73,57 @@ export class CheckoutPage {
     });
   }
 
-  async provideUserDetails(email: string) {
+  async gotoStep(step: string) {
+    await this.page.goto(checkoutStepUrl(step));
+  }
+
+  async gotoCheckoutWithoutStep() {
+    await this.page.goto(URLS().CHECKOUT_PAGE);
+  }
+
+  async assertOnStep(step: CheckoutStep) {
+    await expect(this.page).toHaveURL(
+      `${process.env.TEST_ENV_URL}/${checkoutStepUrl(step)}`,
+    );
+  }
+
+  async assertStepRedirect({ from, to }: { from: string; to: CheckoutStep }) {
+    await this.gotoStep(from);
+    await this.assertOnStep(to);
+  }
+
+  async assertStepStays(step: CheckoutStep) {
+    await this.gotoStep(step);
+    await this.assertOnStep(step);
+  }
+
+  async assertPaymentSectionOpen() {
+    await expect(this.placeOrderButton).toBeVisible();
+  }
+
+  async assertPaymentSectionClosed() {
+    await expect(this.placeOrderButton).toBeHidden();
+  }
+
+  async assertShippingSectionsHidden() {
+    await expect(
+      this.page.getByRole("heading", { name: "Shipping address" }),
+    ).toBeHidden();
+    await expect(
+      this.page.getByRole("heading", { name: "Delivery" }),
+    ).toBeHidden();
+  }
+
+  async provideUserDetails(
+    email: string,
+    nextStep: CheckoutStep = "shipping-address",
+  ) {
     await this.emailInput.fill(email);
 
     await this.continueButton.click();
-    await this.page.waitForURL(URLS().CHECKOUT_PAGE_SHIPPING_ADDRESS);
+    await this.page.waitForURL(checkoutStepUrl(nextStep));
 
-    await expect(this.page).toHaveURL(
-      `${process.env.TEST_ENV_URL}/${URLS().CHECKOUT_PAGE_SHIPPING_ADDRESS}`,
-    );
+    await this.assertOnStep(nextStep);
   }
 
   async assertUserDetails(user: User, userEmail: string) {
