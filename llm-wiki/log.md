@@ -437,3 +437,23 @@
   resolves on macOS and fails on Linux. `AGENTS.md` is now a loader with no frontmatter, and
   `README.md` was registered nowhere. The schema gained an `except` for the loader and `README.md`
   in the `Root` register scope; the links were pointed at the name on disk. Back to 0 violations.
+
+## 2026-08-07
+
+- **Update**: Recorded in CAP-0003 that checkout step selection is enforced against completeness on
+  every request rather than only on entry, covering direct-URL and unknown step values, the
+  unreachable shipping steps on a checkout that requires no shipping, and the deliberate
+  reachability of already-answered steps. The existing behavior text already claimed
+  first-incomplete step selection; before this change the guard ran only when the step query
+  parameter was absent, so a step reached by URL bypassed it and opened a gateway transaction for a
+  checkout that could not be ordered. Tracked as NIM-51.
+- **Create**: Added IMP-0004 for that work at `in_progress`, with its work item and pull request
+  both [PR 757](https://github.com/mirumee/nimara-ecommerce/pull/757) on unmerged branch
+  `fix/checkout-steps-guards`. It stays below `implemented` because the nine end-to-end tests it
+  ships have not been observed passing against the change: they were exercised against deployed
+  `main`, which lacks the fix, where they reproduced the defect. Confirming them needs a preview
+  deployment, because the commerce backend the local storefront environment points at carries
+  neither end-to-end fixture product.
+- **Gap**: The orphaned-PaymentIntent concern in NIM-51 is narrowed, not closed. A complete checkout
+  still opens a fresh intent on every mount and remount of the payment element. Recorded as a
+  deviation in IMP-0004; no separate work item exists for it.

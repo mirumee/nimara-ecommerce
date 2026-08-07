@@ -1,12 +1,28 @@
 type Channel = "gb" | "us";
 
+export const CHECKOUT_STEPS = [
+  "user-details",
+  "shipping-address",
+  "delivery-method",
+  "payment",
+] as const;
+
+export type CheckoutStep = (typeof CHECKOUT_STEPS)[number];
+
+export const checkoutStepUrl = (step: string, channel: Channel = "gb") =>
+  `${channel}/checkout?step=${step}`;
+
 export const URLS = (channel: Channel = "gb") =>
   ({
     CART_PAGE: `${channel}/cart`,
-    CHECKOUT_PAGE_USER_DETAILS: `${channel}/checkout?step=user-details`,
-    CHECKOUT_PAGE_SHIPPING_ADDRESS: `${channel}/checkout?step=shipping-address`,
-    CHECKOUT_PAGE_DELIVERY_METHOD: `${channel}/checkout?step=delivery-method`,
-    CHECKOUT_PAGE_PAYMENT: `${channel}/checkout?step=payment`,
+    CHECKOUT_PAGE: `${channel}/checkout`,
+    CHECKOUT_PAGE_USER_DETAILS: checkoutStepUrl("user-details", channel),
+    CHECKOUT_PAGE_SHIPPING_ADDRESS: checkoutStepUrl(
+      "shipping-address",
+      channel,
+    ),
+    CHECKOUT_PAGE_DELIVERY_METHOD: checkoutStepUrl("delivery-method", channel),
+    CHECKOUT_PAGE_PAYMENT: checkoutStepUrl("payment", channel),
     ORDER_CONFIRMATION_PAGE: `${channel}/order/confirmation/*`,
     CHECKOUT_PAGE_SIGN_IN: `${channel}/checkout/sign-in`,
     HOME_PAGE: `${channel}`,
@@ -32,6 +48,16 @@ export const product = {
     currency: "GBP",
   },
 };
+
+/**
+ * A product the checkout raises no shipping for, so its checkout skips the
+ * shipping steps. Leave `url` empty to skip the coverage that needs one.
+ */
+export const digitalProduct = {
+  url: "nowhere-digital",
+};
+
+export type DigitalProduct = typeof digitalProduct;
 
 export const storeHeaders = {
   heroBanner: "Power your store with Nimara",

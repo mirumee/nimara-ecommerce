@@ -37,6 +37,7 @@ okf_version: "0.1"
 - [IMP-0001 Saleor Stored Payment Methods](tech/implementation/IMP-0001%20Saleor%20Stored%20Payment%20Methods.md) - Saved payment methods move onto Saleor's stored payment methods protocol behind a provider-neutral payment service.
 - [IMP-0002 Stripe Payment Application Multi-Tenancy](tech/implementation/IMP-0002%20Stripe%20Payment%20Application%20Multi-Tenancy.md) - One payment-application deployment serves many Saleor installations, keyed by domain and gated by a fail-closed allowlist.
 - [IMP-0003 Payment Application Configuration Storage Selection](tech/implementation/IMP-0003%20Payment%20Application%20Configuration%20Storage%20Selection.md) - A storage-agnostic provider core with selectable backends, adding an on-disk store so the application runs without a hosted configuration service.
+- [IMP-0004 Checkout Step Guard Enforcement](tech/implementation/IMP-0004%20Checkout%20Step%20Guard%20Enforcement.md) - Checkout step selection is enforced against completeness on every request, so a step reached by URL cannot skip earlier steps or open a gateway transaction.
 
 # Current Product State
 
