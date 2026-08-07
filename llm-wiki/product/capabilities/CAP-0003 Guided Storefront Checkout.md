@@ -64,6 +64,11 @@ navigation clears the completed checkout state from the browser cookie in either
   marketplace payment-orchestration path with non-atomic per-checkout completion semantics.
 - Missing or unreadable checkout state redirects the shopper to the cart. Invalid stock or an
   unavailable variant also returns the shopper to the cart with a reason.
+- Step selection is enforced against checkout completeness on every request, not only on entry. A
+  step requested directly by URL whose earlier steps are unanswered, and an unknown step value,
+  redirect to the first incomplete step. On a checkout that requires no shipping, the shipping and
+  delivery steps are unreachable. Already-answered steps stay reachable so the shopper can correct
+  an earlier one.
 - Address, delivery, and payment mutations preserve structured provider errors so the relevant form
   or checkout step can display them.
 - Payment processing has no hard client-side timeout. After 30 seconds the storefront warns that
