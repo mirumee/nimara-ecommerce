@@ -126,8 +126,8 @@ export const paths = {
   notFound: url("/404"),
   signIn: url("/sign-in"),
   createAccount: url("/create-account"),
-  termsOfUse: url("/terms-of-use"),
-  privacyPolicy: url("/privacy-policy"),
+  termsOfUse: url("/page/terms-of-use"),
+  privacyPolicy: url("/page/privacy-policy"),
   resetPassword: url("/reset-password"),
   newPassword: url("/new-password"),
   account: {
@@ -139,13 +139,6 @@ export const paths = {
   },
   confirmNewEmail: url("/confirm-new-email"),
   deleteAccount: url("/delete-account"),
-  staticPages: {
-    contact: url("/contact"),
-    aboutUs: url("/about-us"),
-    faq: url("/faq"),
-    privacyPolicy: url("/privacy-policy"),
-    terms: url("/terms"),
-  },
   confirmAccountRegistration: url("/confirm-account-registration"),
   page: {
     ...url<"slug">("/page/[slug]"),
