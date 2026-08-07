@@ -251,10 +251,9 @@
   "form-validation": {
     "Invalid email": "Invalid email",
     "Invalid value": "Invalid value",
-    "email-required": "Email is required to create an account.",
     "enter-discount-code": "Type the discount code first",
     "invalid-email": "Oops, wrong email address.",
-    "min-length-password": "Password should contain at least {minimum} signs.",
+    "min-length-password": "Password should contain at least {minimum} characters.",
     "oldPassword": "Wrong password",
     "passwords-dont-match": "The entered passwords don't match.",
     "required": "Required field",
