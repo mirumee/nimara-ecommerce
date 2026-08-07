@@ -17,8 +17,8 @@ export const formSchema = ({ t }: { t: GetTranslations }) =>
         .trim(),
       email: z
         .string()
+        .min(1, { message: t("form-validation.required") })
         .email({ message: t("form-validation.invalid-email") })
-        .min(1, { message: t("form-validation.email-required") })
         .trim(),
       password: z
         .string()
@@ -28,7 +28,10 @@ export const formSchema = ({ t }: { t: GetTranslations }) =>
           }),
         })
         .trim(),
-      confirm: z.string().trim(),
+      confirm: z
+        .string()
+        .min(1, { message: t("form-validation.required") })
+        .trim(),
     })
     .refine((data) => data.password === data.confirm, {
       message: t("form-validation.passwords-dont-match"),
