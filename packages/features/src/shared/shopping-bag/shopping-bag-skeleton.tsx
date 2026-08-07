@@ -13,7 +13,7 @@ export const ShoppingBagSkeleton = ({
 }: ShoppingBagSkeletonProps) => {
   return (
     <div className="flex w-full flex-col">
-      {hasHeader && <Skeleton className="h-[36px] w-96" />}
+      {hasHeader && <Skeleton className="h-[36px] w-full max-w-96" />}
 
       <div className="flex flex-col gap-2 py-8">
         {times(2, (i: number) => (
