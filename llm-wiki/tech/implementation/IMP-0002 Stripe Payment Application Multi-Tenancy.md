@@ -9,8 +9,6 @@ tags:
   - "saleor-app"
   - "multi-tenancy"
 created: "2026-08-03T00:00:00+00:00"
-timestamp: "2026-08-03T00:00:00+00:00"
-id: "IMP-0002"
 status: "in_progress"
 owner: "engineering"
 work_item:
@@ -24,25 +22,8 @@ relations:
     - "[Stripe Payment Application](../../product/integrations/INT-0005%20Stripe%20Payment%20Application.md)"
     - "[Stripe Payment Application Installation and Key Rotation](../../operations/OPS-0002%20Stripe%20Payment%20Application%20Installation%20and%20Key%20Rotation.md)"
   rolled_back_by: null
-code:
-  paths:
-    - "apps/stripe/src/config.ts"
-    - "apps/stripe/src/lib/saleor/config/"
-    - "apps/stripe/src/lib/saleor/auth/jwt.ts"
-    - "apps/stripe/src/lib/saleor/app/install.ts"
-    - "apps/stripe/src/lib/saleor/webhooks/util.ts"
-    - "apps/stripe/src/lib/saleor/headers.ts"
-    - "apps/stripe/src/lib/saleor/error.ts"
-    - "apps/stripe/src/lib/jwks/memory.ts"
-    - "apps/stripe/src/lib/stripe/webhooks/util.ts"
-    - "apps/stripe/src/providers/"
-    - "apps/stripe/src/app/api/saleor/register/route.ts"
-    - "apps/stripe/src/app/api/saleor/webhooks/payment/"
-    - "apps/stripe/src/app/api/stripe/webhooks/[saleorDomain]/route.ts"
-    - "apps/stripe/src/app/app/actions/"
-    - "apps/stripe/turbo.json"
-  pull_requests:
-    - "https://github.com/mirumee/nimara-ecommerce/pull/741"
+pull_requests:
+  - "https://github.com/mirumee/nimara-ecommerce/pull/741"
 verification:
   - criterion: "Only an allowlisted commerce domain may install the application, and wildcard patterns match within their pinned suffix."
     tests:

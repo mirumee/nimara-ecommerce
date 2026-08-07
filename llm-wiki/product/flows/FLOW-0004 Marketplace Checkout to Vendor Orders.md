@@ -9,8 +9,6 @@ tags:
   - "orders"
   - "payments"
 created: "2026-07-21T00:00:00+00:00"
-timestamp: "2026-07-21T00:00:00+00:00"
-id: "FLOW-0004"
 status: "active"
 owner: "product-engineering-and-qa"
 relations:
@@ -105,20 +103,3 @@ generic marketplace confirmation rather than the individual order identifiers.
 This flow stops at vendor-visible commerce orders and their shared Stripe charge reference. It does
 not ingest payable ledger lines, close a payout batch, create a Stripe Connect Transfer, or confirm a
 vendor bank payout; those are later settlement operations.
-
-# Provenance
-
-- Availability is anchored in the public
-  [`v2.0.0` release snapshot](https://github.com/mirumee/nimara-ecommerce/tree/1fd1a16558bac1cfebd9a2356ff79061f8627da9),
-  which contains the
-  [vendor-keyed checkout state](https://github.com/mirumee/nimara-ecommerce/blob/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/storefront/src/features/checkout/server.ts),
-  [aggregated marketplace checkout page](https://github.com/mirumee/nimara-ecommerce/blob/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/storefront/src/app/%5Blocale%5D/%28checkout%29/checkout/page.tsx),
-  [payment-success completion webhook](https://github.com/mirumee/nimara-ecommerce/blob/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/marketplace/src/app/api/payments/stripe/webhooks/route.ts),
-  and
-  [order vendor-enrichment webhook](https://github.com/mirumee/nimara-ecommerce/blob/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/marketplace/src/app/api/saleor/webhooks/order-created/route.ts).
-- Current asynchronous boundaries were rechecked at exact commit
-  [`75d6bc55edddf431adcc348009a1c226f77cc005`](https://github.com/mirumee/nimara-ecommerce/tree/75d6bc55edddf431adcc348009a1c226f77cc005)
-  in the
-  [marketplace confirmation route](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/storefront/src/app/%5Blocale%5D/%28main%29/payment/confirmation/page.tsx)
-  and
-  [vendor-filtered order query](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/marketplace/src/lib/graphql/server/schema.ts).

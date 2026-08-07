@@ -8,8 +8,6 @@ tags:
   - "storefront"
   - "ucp"
 created: "2026-07-21T00:00:00+00:00"
-timestamp: "2026-07-21T00:00:00+00:00"
-id: "CAP-0005"
 status: "active"
 owner: "product-and-engineering"
 relations:
@@ -63,15 +61,3 @@ storefront can require buyer review and hand control to its web checkout.
 - Payment-handler discovery and checkout completion do not by themselves authorize or execute a
   payment. Clients must honor checkout state and browser-handoff instructions instead of assuming
   an unattended purchase completed.
-
-# Provenance
-
-- Availability is anchored in the public
-  [`v2.0.0` release snapshot](https://github.com/mirumee/nimara-ecommerce/tree/1fd1a16558bac1cfebd9a2356ff79061f8627da9).
-- The immutable snapshot contains the
-  [well-known discovery profile](https://github.com/mirumee/nimara-ecommerce/blob/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/storefront/src/app/.well-known/ucp/route.ts),
-  [version and capability negotiation](https://github.com/mirumee/nimara-ecommerce/blob/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/storefront/src/features/ucp/version-negotiation.ts),
-  [channel-aware commerce route tree](https://github.com/mirumee/nimara-ecommerce/tree/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/storefront/src/app/api/ucp/%5BchannelSlug%5D),
-  and
-  [Saleor-backed protocol service](https://github.com/mirumee/nimara-ecommerce/blob/1fd1a16558bac1cfebd9a2356ff79061f8627da9/packages/infrastructure/src/ucp/saleor/service.ts)
-  that make the capability active.

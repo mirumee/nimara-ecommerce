@@ -1,5 +1,8 @@
 ---
-type: "Saleor Schema Note"
+type: "Template"
+# The created note's `type`. It lives in `tech/saleor/`, named after the schema domain it
+# covers, and is registered in `tech/saleor/Saleor Schema (MOC).md`.
+template_for: "Saleor Schema Note"
 title: "Saleor Domain"
 description: "One sentence describing which part of the Saleor GraphQL schema this note covers."
 tags:
@@ -9,7 +12,6 @@ tags:
 saleor_schema_hash: "REPLACE_WITH_pnpm_wiki:saleor:hash"
 saleor_schema_generated: "2026-04-06T00:00:00+00:00"
 created: "2026-04-06T00:00:00+00:00"
-timestamp: "2026-04-06T00:00:00+00:00"
 ---
 
 ## Content
