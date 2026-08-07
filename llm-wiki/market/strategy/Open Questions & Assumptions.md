@@ -8,7 +8,6 @@ tags:
   - "risk"
   - "openquestions"
 created: "2026-06-16T00:00:00+00:00"
-timestamp: "2026-06-16T00:00:00+00:00"
 ---
 
 ## Content

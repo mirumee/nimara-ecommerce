@@ -10,8 +10,6 @@ tags:
   - "configuration"
   - "developer-experience"
 created: "2026-08-04T00:00:00+00:00"
-timestamp: "2026-08-04T00:00:00+00:00"
-id: "IMP-0003"
 status: "in_progress"
 owner: "engineering"
 work_item:
@@ -26,18 +24,7 @@ relations:
     - "[Stripe Payment Application](../../product/integrations/INT-0005%20Stripe%20Payment%20Application.md)"
     - "[Stripe Payment Application Installation and Key Rotation](../../operations/OPS-0002%20Stripe%20Payment%20Application%20Installation%20and%20Key%20Rotation.md)"
   rolled_back_by: null
-code:
-  paths:
-    - "apps/stripe/src/config.ts"
-    - "apps/stripe/src/providers/config.ts"
-    - "apps/stripe/src/lib/saleor/config/provider.ts"
-    - "apps/stripe/src/lib/saleor/config/file.ts"
-    - "apps/stripe/src/lib/saleor/config/edge.ts"
-    - "apps/stripe/turbo.json"
-    - "apps/stripe/.env.example"
-    - "apps/stripe/README.md"
-    - "docs/05-Integrations/02-Stripe-integration.md"
-  pull_requests: []
+pull_requests: []
 verification:
   - criterion: "A developer with no access to the hosted configuration service can start the application, install it into a commerce instance, save per-channel provider keys, and take a payment through it."
     tests: []

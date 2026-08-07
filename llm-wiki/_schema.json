@@ -1,0 +1,205 @@
+{
+  "$comment": [
+    "Machine-readable contract for this wiki, enforced by _scripts/wiki-lint.mjs.",
+    "AGENTS.md and the files in _templates/ are the human-readable form of the same rules.",
+    "Every `except` entry must carry a reason: silencing a rule is a recorded decision."
+  ],
+
+  "base": {
+    "required": ["type", "title", "description", "tags", "created"],
+    "forbidden": ["id", "timestamp"],
+    "except": {
+      "index.md": "Reserved llm-wiki router. Carries okf_version only; whether it should hold base frontmatter is undecided.",
+      "log.md": "Reserved append-only log. Has no frontmatter by design.",
+      "AGENTS.md": "Loader that includes README.md, where the rules now live. Has no frontmatter.",
+      "CLAUDE.md": "Loader that includes README.md. Has no frontmatter."
+    }
+  },
+
+  "formats": {
+    "created": "iso8601",
+    "availability.since": "tag-or-sha40-or-null",
+    "availability.deprecated_since": "tag-or-sha40-or-null",
+    "work_item.id": "issue-or-sha40",
+    "work_item.url": "url-or-null"
+  },
+
+  "records": {
+    "Product Requirements Document": {
+      "dir": "prd",
+      "prefix": "PRD",
+      "digits": 3,
+      "required": ["status", "owner", "prd_type", "personas"],
+      "enum": {
+        "status": ["draft", "analyzing", "approved", "implemented", "blocked"]
+      },
+      "linkFields": ["personas"]
+    },
+    "Request for Comments": {
+      "dir": "tech/RFC",
+      "prefix": "RFC",
+      "digits": 4,
+      "required": ["status", "owner", "prd"],
+      "enum": { "status": ["draft", "in_review", "final"] },
+      "linkFields": ["prd"]
+    },
+    "Architecture Decision Record": {
+      "dir": "tech/ADR",
+      "prefix": "ADR",
+      "digits": 4,
+      "required": ["status", "owner", "superseded_by"],
+      "enum": { "status": ["proposed", "accepted", "rejected", "superseded"] },
+      "linkFields": ["superseded_by"],
+      "nullUnless": { "superseded_by": { "status": "superseded" } }
+    },
+    "Implementation Record": {
+      "dir": "tech/implementation",
+      "prefix": "IMP",
+      "digits": 4,
+      "required": [
+        "status",
+        "owner",
+        "work_item",
+        "relations",
+        "pull_requests",
+        "verification",
+        "rollout",
+        "rollback"
+      ],
+      "enum": {
+        "status": ["planned", "in_progress", "implemented", "rolled_back"]
+      },
+      "linkFields": [
+        "relations.prds",
+        "relations.rfcs",
+        "relations.adrs",
+        "relations.product_records",
+        "relations.rolled_back_by"
+      ]
+    },
+    "Product Capability": {
+      "dir": "product/capabilities",
+      "prefix": "CAP",
+      "digits": 4,
+      "required": ["status", "owner", "relations", "availability"],
+      "enum": { "status": ["candidate", "active", "deprecated"] },
+      "linkFields": ["relations.integrations"]
+    },
+    "Product Flow": {
+      "dir": "product/flows",
+      "prefix": "FLOW",
+      "digits": 4,
+      "required": ["status", "owner", "relations", "availability", "actors"],
+      "enum": { "status": ["candidate", "active", "deprecated"] },
+      "linkFields": ["relations.capabilities", "relations.integrations"]
+    },
+    "Integration Contract": {
+      "dir": "product/integrations",
+      "prefix": "INT",
+      "digits": 4,
+      "required": ["status", "owner", "availability"],
+      "enum": { "status": ["candidate", "active", "deprecated"] }
+    },
+    "Operational Record": {
+      "dir": "operations",
+      "prefix": "OPS",
+      "digits": 4,
+      "required": ["status", "owner", "kind", "relations"],
+      "enum": {
+        "status": ["draft", "active", "deprecated"],
+        "kind": ["runbook", "rollback", "incident_response"]
+      },
+      "linkFields": ["relations.implementations", "relations.product_records"],
+      "anyNonEmpty": ["relations.implementations", "relations.product_records"]
+    }
+  },
+
+  "templates": {
+    "dir": "_templates",
+    "type": "Template",
+    "$comment": "Structure only. Placeholder values such as work_item.id: \"\" are deliberately invalid and are never value-checked."
+  },
+
+  "rules": {
+    "orphan": {
+      "except": {
+        "index.md": "Router. Nothing links to it; it links to everything.",
+        "log.md": "Append-only log, reached by convention not by link.",
+        "AGENTS.md": "Entry point for agents, loaded by CLAUDE.md.",
+        "CLAUDE.md": "Loaded by the harness, not linked from the wiki."
+      }
+    },
+    "register-out-of-sync": {
+      "except": {
+        "tech/implementation/Implementation (MOC).md": "AGENTS.md declares it an unmaintained placeholder: do not add, update, or remove records there.",
+        "quality/Quality & Testing (MOC).md": "Curated reading order that also links personas outside quality/. Not a mechanical register."
+      }
+    }
+  },
+
+  "registers": [
+    {
+      "file": "index.md",
+      "headingLevel": 1,
+      "separator": "-",
+      "sections": {
+        "Root": ["AGENTS.md", "README.md"],
+        "Templates": ["_templates/*.md"],
+        "Sources": ["sources/*.md"],
+        "Product Requirements": ["prd/*.md"],
+        "Implementation Evidence": ["tech/implementation/*.md"],
+        "Current Product State": ["product/*.md", "product/overview/*.md"],
+        "Product Capabilities": ["product/capabilities/*.md"],
+        "Product Flows": ["product/flows/*.md"],
+        "Integration Contracts": ["product/integrations/*.md"],
+        "Product Strategy": [
+          "market/strategy/*.md",
+          "market/strategy/initiatives/*.md"
+        ],
+        "Product Market": ["market/research/*.md"],
+        "Product Personas": ["market/personas/*.md"],
+        "Quality": ["quality/*.md"],
+        "Operations": ["operations/*.md"],
+        "Technology ADR": ["tech/ADR/*.md"],
+        "Technology RFC": ["tech/RFC/*.md"],
+        "Technology Saleor Schema": ["tech/saleor/*.md"],
+        "References": ["market/*.md"]
+      }
+    },
+    {
+      "file": "product/Product (MOC).md",
+      "headingLevel": 2,
+      "separator": "-",
+      "sections": {
+        "Overview": ["product/overview/*.md"],
+        "Capabilities": ["product/capabilities/*.md"],
+        "Flows": ["product/flows/*.md"],
+        "Integrations": ["product/integrations/*.md"]
+      }
+    },
+    {
+      "file": "operations/Operations (MOC).md",
+      "headingLevel": 2,
+      "separator": "-",
+      "sections": { "Register": ["operations/OPS-*.md"] }
+    },
+    {
+      "file": "tech/ADR/ADR MOC.md",
+      "headingLevel": 2,
+      "separator": "-",
+      "sections": { "Register": ["tech/ADR/ADR-*.md"] }
+    },
+    {
+      "file": "tech/RFC/RFC MOC.md",
+      "headingLevel": 2,
+      "separator": "-",
+      "sections": { "Register": ["tech/RFC/RFC-*.md"] }
+    },
+    {
+      "file": "tech/saleor/Saleor Schema (MOC).md",
+      "headingLevel": 2,
+      "separator": "—",
+      "sections": { "Register": ["tech/saleor/*.md"] }
+    }
+  ]
+}

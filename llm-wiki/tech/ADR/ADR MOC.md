@@ -6,7 +6,6 @@ tags:
   - "adr"
   - "moc"
 created: "2026-07-08T00:00:00+00:00"
-timestamp: "2026-08-04T00:00:00+00:00"
 ---
 
 ## Content

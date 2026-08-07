@@ -41,6 +41,9 @@ importers:
       turbo:
         specifier: 2.9.4
         version: 2.9.4
+      yaml:
+        specifier: 2.8.3
+        version: 2.8.3
 
   apps/automated-tests:
     devDependencies:
@@ -29630,10 +29633,6 @@ snapshots:
   stripe@20.3.1(@types/node@24.12.4):
     optionalDependencies:
       '@types/node': 24.12.4
-
-  stripe@20.3.1(@types/node@25.5.2):
-    optionalDependencies:
-      '@types/node': 25.5.2
 
   strnum@2.2.0: {}
 

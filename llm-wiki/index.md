@@ -4,7 +4,8 @@ okf_version: "0.1"
 
 # Root
 
-- [Agent Instructions](AGENTS.md) - Schema, naming rules, maintenance workflow, and operating conventions for this wiki.
+- [Agent Instructions](AGENTS.md) - Loader that points agents at README.md.
+- [LLM Wiki Rules](README.md) - Schema, knowledge model, skills, maintenance workflow, and operating conventions for this wiki.
 
 # Templates
 

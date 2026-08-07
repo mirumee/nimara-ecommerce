@@ -5,11 +5,11 @@ import { existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const repoRoot = path.resolve(
+const wikiDir = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   "..",
 );
-const wikiDir = path.join(repoRoot, "llm-wiki");
+const repoRoot = path.resolve(wikiDir, "..");
 const collectionName = "nimara-wiki";
 const indexName = process.env.QMD_INDEX || "nimara-wiki";
 const context =
