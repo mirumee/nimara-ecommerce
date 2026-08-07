@@ -1,6 +1,5 @@
 import { User } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import { Suspense } from "react";
 
 import { LocalizedLink } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
@@ -18,7 +17,6 @@ import { Logo } from "./logo";
 import { MobileSearch } from "./mobile-search";
 import { MobileSideMenu } from "./mobile-side-menu";
 import { SearchForm } from "./search-form";
-import { ShoppingBagIcon } from "./shopping-bag-icon";
 import { ShoppingBagIconWithCount } from "./shopping-bag-icon-with-count";
 import { ThemeToggle } from "./theme-toggle";
 
@@ -138,9 +136,7 @@ export const Header = async () => {
               </LocalizedLink>
             </Button>
 
-            <Suspense fallback={<ShoppingBagIcon />}>
-              <ShoppingBagIconWithCount count={checkoutLinesCount} />
-            </Suspense>
+            <ShoppingBagIconWithCount count={checkoutLinesCount} />
           </div>
         </div>
       </div>

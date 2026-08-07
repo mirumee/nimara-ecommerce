@@ -2,19 +2,30 @@
 
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useEffect, useRef, useState } from "react";
+import {
+  useEffect,
+  useOptimistic,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 
 import { type Cart } from "@nimara/domain/objects/Cart";
 import type { AsyncResult } from "@nimara/domain/objects/Result";
 import { type User } from "@nimara/domain/objects/User";
+import { EmptyCart } from "@nimara/features/cart/shared/components/empty-cart";
+import { applyOptimisticCartAction } from "@nimara/features/cart/shared/optimistic";
+import { useCartCount } from "@nimara/features/cart/shared/providers/cart-count-provider";
 import { ShoppingBag } from "@nimara/features/shared/shopping-bag/shopping-bag";
-import { LocalizedLink, useRouter } from "@nimara/i18n/routing";
+import { LocalizedLink } from "@nimara/i18n/routing";
 import { getTrackingService } from "@nimara/infrastructure/tracking/service";
 import { Button } from "@nimara/ui/components/button";
 import { useToast } from "@nimara/ui/hooks";
 import { cn } from "@nimara/ui/lib/utils";
 
 const tracking = getTrackingService();
+
+const QUANTITY_REQUEST_DELAY_MS = 500;
 
 export interface CartDetailsProps {
   cart: Cart;
@@ -33,6 +44,7 @@ export interface CartDetailsProps {
   paths: {
     checkout: string;
     checkoutSignIn: string;
+    home: string;
   };
   user: User | null;
   vendorIdNames?: Record<string, string>;
@@ -50,8 +62,6 @@ export const CartDetails = ({
   paths,
 }: CartDetailsProps) => {
   const t = useTranslations();
-  const router = useRouter();
-  const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
   const params = useSearchParams();
   const redirectReason = params.get("redirectReason") as
@@ -59,28 +69,85 @@ export const CartDetails = ({
     | "VARIANT_NOT_AVAILABLE"
     | null;
 
-  const prevCartVersion = useRef(cart.lines.length);
+  const [optimisticCart, applyOptimistic] = useOptimistic(
+    cart,
+    applyOptimisticCartAction,
+  );
+  const [, startTransition] = useTransition();
+  const requestedQuantities = useRef(new Map<string, number>());
+  const { applyCountDelta } = useCartCount();
+
+  const inFlightRequests = useRef(0);
+  const [isMutating, setIsMutating] = useState(false);
+
+  const beginRequest = () => {
+    inFlightRequests.current += 1;
+    setIsMutating(true);
+  };
+
+  const endRequest = () => {
+    inFlightRequests.current = Math.max(inFlightRequests.current - 1, 0);
+
+    if (!inFlightRequests.current) {
+      setIsMutating(false);
+    }
+  };
+
   const isCartValid = ![
     ...cart.problems.insufficientStock,
     ...cart.problems.variantNotAvailable,
   ].length;
 
-  const isDisabled = isProcessing || !isCartValid;
+  const isDisabled = isMutating || !isCartValid;
   const resolveCheckoutIdForLine = (lineId: string): string =>
     lineCheckoutIdMap?.[lineId] ?? cart.id;
 
+  const showErrors = (errors: { code: string }[]) =>
+    errors.forEach((error) => {
+      toast({
+        description: t(`errors.${error.code}`),
+        variant: "destructive",
+      });
+    });
+
   const handleLineQuantityChange = async (lineId: string, quantity: number) => {
-    setIsProcessing(true);
     const checkoutId = resolveCheckoutIdForLine(lineId);
     const line = cart.lines.find((entry) => entry.id === lineId);
 
-    const result = await onLineQuantityChange({
-      cartId: checkoutId,
-      lineId,
-      quantity,
-    });
+    requestedQuantities.current.set(lineId, quantity);
+    beginRequest();
 
-    if (result.ok) {
+    startTransition(async () => {
+      applyOptimistic({ type: "update", lineId, quantity });
+
+      applyCountDelta(lineId, quantity - (line?.quantity ?? 0));
+
+      await new Promise((resolve) =>
+        setTimeout(resolve, QUANTITY_REQUEST_DELAY_MS),
+      );
+
+      if (requestedQuantities.current.get(lineId) !== quantity) {
+        endRequest();
+
+        return;
+      }
+
+      requestedQuantities.current.delete(lineId);
+
+      const result = await onLineQuantityChange({
+        cartId: checkoutId,
+        lineId,
+        quantity,
+      });
+
+      endRequest();
+
+      if (!result.ok) {
+        showErrors(result.errors);
+
+        return;
+      }
+
       if (line && quantity !== line.quantity) {
         const isQuantityAdd = quantity > line.quantity;
         const changedQuantity = Math.abs(quantity - line.quantity);
@@ -104,60 +171,45 @@ export const CartDetails = ({
       }
 
       await onCartUpdate(checkoutId);
-      setIsProcessing(false);
-
-      return;
-    }
-
-    result.errors.forEach((error) => {
-      toast({
-        description: t(`errors.${error.code}`),
-        variant: "destructive",
-      });
     });
   };
 
   const handleLineDelete = async (lineId: string) => {
-    setIsProcessing(true);
+    if (!optimisticCart.lines.some((line) => line.id === lineId)) {
+      return;
+    }
+
     const checkoutId = resolveCheckoutIdForLine(lineId);
     const deletedLine = cart.lines.find((line) => line.id === lineId);
 
-    const result = await onLineDelete({
-      cartId: checkoutId,
-      lineId,
-    });
+    requestedQuantities.current.delete(lineId);
+    beginRequest();
 
-    if (result.ok) {
+    startTransition(async () => {
+      applyOptimistic({ type: "delete", lineId });
+      applyCountDelta(lineId, -(deletedLine?.quantity ?? 0));
+
+      const result = await onLineDelete({ cartId: checkoutId, lineId });
+
+      endRequest();
+
+      if (!result.ok) {
+        showErrors(result.errors);
+
+        return;
+      }
+
       if (deletedLine) {
         void tracking.trackRemoveFromCart({ line: deletedLine });
       }
 
       await onCartUpdate(checkoutId);
-      router.refresh();
-    } else {
-      result.errors.forEach((error) => {
-        toast({
-          description: t(`errors.${error.code}`),
-          variant: "destructive",
-        });
-      });
-      setIsProcessing(false);
-    }
+    });
   };
 
   useEffect(() => {
     void tracking.trackViewCart({ cart });
   }, []);
-
-  // Unblock UI when cart updates
-  useEffect(() => {
-    const cartVersion = cart.lines.length;
-
-    if (isProcessing && prevCartVersion.current !== cartVersion) {
-      setIsProcessing(false);
-      prevCartVersion.current = cartVersion;
-    }
-  }, [cart, isProcessing]);
 
   useEffect(() => {
     if (redirectReason) {
@@ -170,6 +222,10 @@ export const CartDetails = ({
     }
   }, [redirectReason, cart.id, toast, t, onCartUpdate]);
 
+  if (!optimisticCart.lines.length) {
+    return <EmptyCart paths={{ home: paths.home }} />;
+  }
+
   return (
     <div className="space-y-12">
       <ShoppingBag>
@@ -180,18 +236,17 @@ export const CartDetails = ({
           onLineDelete={handleLineDelete}
           problems={cart.problems}
           vendorIdNames={vendorIdNames}
-          lines={cart.lines}
-          isDisabled={isProcessing}
+          lines={optimisticCart.lines}
         />
 
         <hr className="border-stone-200" />
 
         <ShoppingBag.Pricing>
-          <ShoppingBag.Subtotal price={cart.subtotal} />
+          <ShoppingBag.Subtotal price={optimisticCart.subtotal} />
         </ShoppingBag.Pricing>
       </ShoppingBag>
       <div className="w-full text-center">
-        <Button asChild size="lg" disabled={isDisabled} loading={isProcessing}>
+        <Button asChild size="lg" disabled={isDisabled} loading={isMutating}>
           <LocalizedLink
             href={!!user ? paths.checkout : paths.checkoutSignIn}
             className={cn({

@@ -1,6 +1,5 @@
 "use client";
 
-import { useDebounce } from "@uidotdev/usehooks";
 import { AlertCircle, CheckIcon, X } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
@@ -64,7 +63,6 @@ export const Line = ({
   const isSmDown = width && width < screenSizes.sm;
 
   const t = useTranslations();
-  const inputValue = useDebounce(value, 1000);
 
   const attributeNames = variant.selectionAttributes
     ?.map((attr) => attr.values?.[0]?.name)
@@ -98,32 +96,44 @@ export const Line = ({
     setIsOpen(false);
   };
 
-  useEffect(() => {
-    if (value === quantity.toString()) {
+  const handleInputChange = (nextValue: string) => {
+    setValue(nextValue);
+
+    const qty = Number(nextValue);
+
+    if (nextValue === "" || isNaN(qty) || qty < 1) {
       return;
     }
-    let qty = Number(inputValue);
 
-    if (inputValue === "" || isNaN(qty) || qty < 1) {
-      setValue("1");
-      qty = 1;
+    if (qty > variant.maxQuantity) {
+      setShowMaxQuantityWarning(true);
+
+      return;
+    }
+
+    setShowMaxQuantityWarning(false);
+    void onLineQuantityChange?.(id, qty);
+  };
+
+  const handleInputBlur = () => {
+    const qty = Number(value);
+
+    if (value === "" || isNaN(qty) || qty < 1) {
+      setValue(quantity.toString());
+      setShowMaxQuantityWarning(false);
 
       return;
     }
 
     if (qty > variant.maxQuantity) {
       setValue(variant.maxQuantity.toString());
-      qty = variant.maxQuantity;
-      setShowMaxQuantityWarning(true);
-    } else {
-      setValue(qty.toString());
-      if (qty < variant.maxQuantity) {
-        setShowMaxQuantityWarning(false);
-      }
+      void onLineQuantityChange?.(id, variant.maxQuantity);
     }
+  };
 
-    void onLineQuantityChange?.(id, qty);
-  }, [inputValue]);
+  useEffect(() => {
+    setValue(quantity.toString());
+  }, [quantity]);
 
   useEffect(() => {
     if (isOpen && !isSmDown) {
@@ -193,7 +203,8 @@ export const Line = ({
               type="number appearance-none"
               disabled={isDisabled}
               value={value}
-              onChange={(evt) => setValue(evt.target.value)}
+              onChange={(evt) => handleInputChange(evt.target.value)}
+              onBlur={handleInputBlur}
               inputMode="numeric"
               data-testid="cart-product-line-qty"
               id={`${id}:qty`}

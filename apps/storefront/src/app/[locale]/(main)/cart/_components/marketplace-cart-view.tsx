@@ -111,6 +111,7 @@ export const MarketplaceCartView = async (props: CartViewProps) => {
         paths={{
           checkout: paths.checkout,
           checkoutSignIn: paths.checkoutSignIn,
+          home: paths.home,
         }}
       />
     </CartShell>

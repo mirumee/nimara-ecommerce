@@ -1,3 +1,5 @@
+import { CartCountProvider } from "@nimara/features/cart/shared/providers/cart-count-provider";
+
 import { CACHE_TTL } from "@/config";
 import { Footer } from "@/features/footer";
 import { Header } from "@/features/header";
@@ -26,7 +28,7 @@ export default async function Layout({ children }: LayoutProps<"/[locale]">) {
   });
 
   return (
-    <>
+    <CartCountProvider>
       <div className="sticky top-0 isolate z-50 bg-background py-4 transition-colors md:pb-0">
         <Header />
         <Navigation menu={resultMenu.data?.menu} />
@@ -35,6 +37,6 @@ export default async function Layout({ children }: LayoutProps<"/[locale]">) {
         {children}
       </main>
       <Footer />
-    </>
+    </CartCountProvider>
   );
 }

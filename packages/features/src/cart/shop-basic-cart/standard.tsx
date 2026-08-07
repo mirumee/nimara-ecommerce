@@ -48,6 +48,7 @@ export const StandardCartView = async (props: CartViewProps) => {
               paths={{
                 checkout: paths.checkout,
                 checkoutSignIn: paths.checkoutSignIn,
+                home: paths.home,
               }}
             />
           )}
