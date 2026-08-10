@@ -457,3 +457,18 @@
 - **Gap**: The orphaned-PaymentIntent concern in NIM-51 is narrowed, not closed. A complete checkout
   still opens a fresh intent on every mount and remount of the payment element. Recorded as a
   deviation in IMP-0004; no separate work item exists for it.
+
+## 2026-08-10
+
+- **Create**: Added the QA work-product templates `_templates/TestCase.md` and
+  `_templates/TestPlan.md` (generic templates, no record contract) and the QA note
+  `quality/Exploratory Session Inputs.md`. Registered all three in `index.md`.
+- **Create**: Added the `.agents/skills/exploratory-session` runbook — drive a newly shipped
+  feature through the Playwright MCP and produce an evidence-backed session report, the first
+  step of the new-feature flow.
+- **Update**: Reconciled the Skills list in `quality/Quality & Testing (MOC).md` to name every
+  real QA runbook under `.agents/skills/` (exploratory-session, test-case-design,
+  regression-sweep, bug-retest-triage) and linked the new formats and exploratory-session
+  inputs note. Sourced from the QA process board (mirumee/nimara llm-wiki/quality) dated
+  2026-08-10.
+- **Lint**: `wiki:lint` at zero violations across 96 files.
