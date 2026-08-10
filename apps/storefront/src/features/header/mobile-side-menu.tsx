@@ -6,6 +6,7 @@ import { type ReactNode, useEffect, useState } from "react";
 
 import type { Menu } from "@nimara/domain/objects/Menu";
 import type { User } from "@nimara/domain/objects/User";
+import { useCartCount } from "@nimara/features/cart/shared/providers/cart-count-provider";
 import { cn } from "@nimara/foundation/lib/cn";
 import { MobileNavigation } from "@nimara/foundation/navigation/mobile-navigation";
 import { LocalizedLink, usePathname } from "@nimara/i18n/routing";
@@ -42,6 +43,8 @@ export const MobileSideMenu = ({
   const pathname = usePathname();
   const t = useTranslations();
   const region = useCurrentRegion();
+  const { resolveCount } = useCartCount();
+  const linesCount = resolveCount(checkoutLinesCount);
 
   const handleMenuItemClick = (isMenuItemClicked: boolean) => {
     setIsOpen(!isMenuItemClicked);
@@ -74,7 +77,7 @@ export const MobileSideMenu = ({
                 className={cn(
                   "flex w-full items-center justify-between gap-4 pb-4 sm:hidden",
                   {
-                    "mt-2": checkoutLinesCount,
+                    "mt-2": linesCount,
                   },
                 )}
               >
