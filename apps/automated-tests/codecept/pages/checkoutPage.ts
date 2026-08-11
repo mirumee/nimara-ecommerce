@@ -1,11 +1,33 @@
 import { locate } from "codeceptjs";
 
-import { timeout_seconds, URLS } from "../data/constants";
-import customerData from "../data/guest_checkout_data.json";
+import {
+  card as cardConstants,
+  paymentDetailsSUCCESS,
+  timeout_seconds,
+  URLS,
+  userGB,
+  userUS,
+} from "../data/constants";
+import { REQUESTED_LOCALE } from "../data/locales";
 
 const { I } = inject();
-const card = customerData.card;
-const customer = customerData.customer;
+// select locale-specific user data from constants
+const selectedUser = REQUESTED_LOCALE === "gb" ? userGB : userUS;
+const customer = {
+  firstName: selectedUser.name,
+  lastName: selectedUser.lastName,
+  companyName: selectedUser.companyName,
+  email: selectedUser.email,
+  city: selectedUser.city,
+  zip: selectedUser.postCode,
+  phone: selectedUser.phone,
+  streetAddress: selectedUser.streetAddress,
+  // keep a default state from previous JSON tests; tests can override if needed
+  state: "",
+};
+
+// payment card data sourced from constants
+const card = cardConstants;
 
 export default {
   continue_as_guest(timeout: number = timeout_seconds) {
@@ -50,8 +72,12 @@ export default {
     I.fillField({ role: "textbox", name: "Zip" }, customer.zip);
     I.fillField({ role: "textbox", name: "Phone" }, customer.phone);
     I.scrollPageToBottom();
-    I.click({ role: "combobox", name: "State" });
-    I.click(customer.state);
+    // 'State' combobox exists only for some locales (e.g., US). Fill it conditionally.
+    if (REQUESTED_LOCALE === "us" && customer.state) {
+      I.click({ role: "combobox", name: "State" });
+      I.click(customer.state);
+    }
+
     I.click("Continue");
   },
   guest_step4_shipping_method_dhl_normal(timeout: number = timeout_seconds) {

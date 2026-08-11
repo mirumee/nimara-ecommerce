@@ -4,8 +4,8 @@ const LOCALE_DICTIONARY: Record<string, string> = {
 };
 
 // Pobranie zmiennej środowiskowej LOCALE (domyślnie np. 'us')
-const requestedLocale = process.env.LOCALE?.toLowerCase() || "us";
+export const REQUESTED_LOCALE = process.env.LOCALE?.toLowerCase() || "us";
 
 // Wyciągnięcie odpowiedniego przedrostka URL
 export const LOCALE_PREFIX =
-  LOCALE_DICTIONARY[requestedLocale] || LOCALE_DICTIONARY["us"];
+  LOCALE_DICTIONARY[REQUESTED_LOCALE] || LOCALE_DICTIONARY["us"];

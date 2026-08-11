@@ -88,12 +88,28 @@ export const userUS = {
   streetAddress: "123 Main St",
   postCode: "93721",
   city: "Fresno",
+  state: "California",
 };
 
 export type User = typeof userGB | typeof userUS;
 
 export const userEmail = process.env.USER_EMAIL ?? "";
 export const userPassword = process.env.USER_PASSWORD ?? "";
+
+// Card variants and test payment data used by automated tests
+export const card = {
+  number: {
+    valid: "4242 4242 4242 4242",
+    invalid: "1234 5678 9012 3456",
+    stolen: "4000 0000 0000 0002",
+    declined: "4000 0000 0000 9995",
+    expired: "4000 0000 0000 0069",
+  },
+  // Use a dynamic expiry matching paymentDetailsSUCCESS style
+  expiration: `12/${(new Date().getFullYear() + 1).toString().substring(2)}`,
+  CVC: "500",
+  postalCode: "12345",
+};
 
 export const paymentDetailsSUCCESS = {
   cardNumber: "4242424242424242",
