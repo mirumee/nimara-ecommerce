@@ -1,5 +1,7 @@
 import { locate } from "codeceptjs";
 
+import { URLS } from "../data/constants";
+
 const { I } = inject();
 
 export default {
@@ -12,11 +14,11 @@ export default {
     I.click(locate("button").withText("Add to bag"));
   },
   click_go_to_bag_popup(timeout: number) {
-    I.waitForElement('a[data-radix-toast-announce-alt="Go to bag"]', timeout);
+    I.waitForElement(locate("link").withText("Go to bag"), timeout);
     I.click("Go to bag");
   },
   go_to_bag(timeout: number) {
     I.click(locate("a").withText("Items in cart"));
-    I.waitInUrl("/cart", timeout);
+    I.waitInUrl(URLS.CART_PAGE, timeout);
   },
 };

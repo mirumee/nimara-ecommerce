@@ -1,5 +1,6 @@
 import { locate } from "codeceptjs";
 
+import { timeout_seconds, URLS } from "../data/constants";
 import customerData from "../data/guest_checkout_data.json";
 
 const { I } = inject();
@@ -7,32 +8,33 @@ const card = customerData.card;
 const customer = customerData.customer;
 
 export default {
-  continue_as_guest(timeout: number) {
+  continue_as_guest(timeout: number = timeout_seconds) {
     I.waitForElement(locate("a").withText("Continue as a guest"), timeout);
     I.click({ role: "link", name: "Continue as a guest" });
-    I.waitInUrl("/checkout?step=user-details", timeout);
+    I.waitInUrl(URLS.CHECKOUT_PAGE_USER_DETAILS, timeout);
   },
 
-  guest_step1_email(timeout: number) {
+  guest_step1_email(timeout: number = timeout_seconds) {
     I.waitForElement('input[aria-label="Email"]', timeout);
     I.fillField({ role: "textbox", name: "Email" }, customer.email);
     I.click({ role: "button", name: "Continue" });
     I.waitToHide('input[aria-label="Email"]', timeout);
   },
-  async guest_step2_continue_as_guest(timeout: number) {
-    const count = await I.grabNumberOfVisibleElements(
-      "h3.text-2xl.tracking-tight",
-    );
+  async guest_step2_continue_as_guest() {
+    const count = await I.grabNumberOfVisibleElements({
+      role: "button",
+      name: "Continue as a guest",
+    });
 
     if (count > 0) {
       console.log(
         "Guest checkout step 2: Continue as guest button is visible, clicking it.",
       );
-      I.click("Continue as a guest");
+      I.click({ role: "button", name: "Continue as a guest" });
     }
   },
-  guest_step3_shipping_address(timeout: number) {
-    I.waitInUrl("/checkout?step=shipping-address", timeout);
+  guest_step3_shipping_address(timeout: number = timeout_seconds) {
+    I.waitInUrl(URLS.CHECKOUT_PAGE_SHIPPING_ADDRESS, timeout);
     I.waitForElement('input[aria-label="First Name"]', timeout);
     I.fillField({ role: "textbox", name: "First Name" }, customer.firstName);
     I.fillField({ role: "textbox", name: "Last Name" }, customer.lastName);
@@ -52,8 +54,8 @@ export default {
     I.click(customer.state);
     I.click("Continue");
   },
-  guest_step4_shipping_method_dhl_normal(timeout: number) {
-    I.waitInUrl("/checkout?step=delivery-method", timeout);
+  guest_step4_shipping_method_dhl_normal(timeout: number = timeout_seconds) {
+    I.waitInUrl(URLS.CHECKOUT_PAGE_DELIVERY_METHOD, timeout);
     const dhlNormalOption = locate("label").withText("DHL Normal");
 
     I.waitForVisible(dhlNormalOption, timeout);
@@ -68,9 +70,9 @@ export default {
       | "stolen"
       | "declined"
       | "expired",
-    timeout: number,
+    timeout: number = timeout_seconds,
   ) {
-    I.waitInUrl("/checkout?step=payment", timeout);
+    I.waitInUrl(URLS.CHECKOUT_PAGE_PAYMENT, timeout);
     I.scrollPageToBottom();
     I.waitForElement(
       locate('iframe[title*="Secure payment input frame"]').first(),
@@ -86,8 +88,17 @@ export default {
     I.switchTo();
   },
 
-  click_place_order(timeout: number) {
+  click_place_order(timeout: number = timeout_seconds) {
     I.waitForClickable({ role: "button", name: "Place order" }, timeout);
     I.click({ role: "button", name: "Place order" });
+  },
+  click_billing_address_same_as_shipping_checkbox(
+    timeout: number = timeout_seconds,
+  ) {
+    I.waitForClickable(
+      { role: "checkbox", name: "Same as shipping address" },
+      timeout,
+    );
+    I.click({ role: "checkbox", name: "Same as shipping address" });
   },
 };

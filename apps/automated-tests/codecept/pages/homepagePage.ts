@@ -1,22 +1,18 @@
-import { locate } from "codeceptjs";
+import { storeHeaders,tshirtImagelocator , URLS  } from "../data/constants";
 
 const { I } = inject();
 
-const tshirtImage = locate("img").withAttr({
-  "aria-label": "Abstract Tshirt Ultra Black",
-});
-
 export default {
   enter_page() {
-    I.amOnPage("/");
+    I.amOnPage(URLS.HOME_PAGE);
   },
   accept_cookies() {
-    I.click("Accept all");
-    I.dontSee("We use cookies");
+    I.click(storeHeaders.cookieAccept);
+    I.dontSee(storeHeaders.cookiePopup);
   },
   click_on_product(timeout: number) {
-    I.scrollTo(tshirtImage);
-    I.click(tshirtImage);
-    I.waitUrlEquals("/products/abstract-tshirt-black", timeout);
+    I.scrollTo(tshirtImagelocator);
+    I.click(tshirtImagelocator);
+    I.waitUrlEquals(URLS.TSHIRT_PRODUCT_PAGE, timeout);
   },
 };
