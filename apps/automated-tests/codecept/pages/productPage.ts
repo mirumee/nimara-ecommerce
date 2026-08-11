@@ -17,15 +17,16 @@ export default {
     //pause();
     I.waitForVisible({ role: "link", name: "Go to bag" }, timeout);
     I.waitForFunction(
+      // waiting for the animation to finish before clicking
       (selector: string) => {
-        // waiting for the animation to finish before clicking
         const el = document.querySelector(selector);
 
-        if (!el) {return false;}
+        if (!el) {
+          return false;
+        }
         const animations = el.getAnimations();
 
-        
-return (
+        return (
           animations.length === 0 ||
           animations.every((a: Animation) => a.playState === "finished")
         );
