@@ -2,7 +2,6 @@ import { locate } from "codeceptjs";
 
 import {
   card as cardConstants,
-  paymentDetailsSUCCESS,
   timeout_seconds,
   URLS,
   userGB,
@@ -12,7 +11,7 @@ import { REQUESTED_LOCALE } from "../data/locales";
 
 const { I } = inject();
 // select locale-specific user data from constants
-const selectedUser = REQUESTED_LOCALE === "gb" ? userGB : userUS;
+const selectedUser = REQUESTED_LOCALE === "us" ? userUS : userGB;
 const customer = {
   firstName: selectedUser.name,
   lastName: selectedUser.lastName,
@@ -22,8 +21,7 @@ const customer = {
   zip: selectedUser.postCode,
   phone: selectedUser.phone,
   streetAddress: selectedUser.streetAddress,
-  // keep a default state from previous JSON tests; tests can override if needed
-  state: "",
+  state: selectedUser.state || "",
 };
 
 // payment card data sourced from constants
@@ -68,18 +66,33 @@ export default {
       { role: "textbox", name: "Street address" },
       customer.streetAddress,
     );
-    I.fillField({ role: "textbox", name: "City" }, customer.city);
-    I.fillField({ role: "textbox", name: "Zip" }, customer.zip);
     I.fillField({ role: "textbox", name: "Phone" }, customer.phone);
     I.scrollPageToBottom();
-    // 'State' combobox exists only for some locales (e.g., US). Fill it conditionally.
-    if (REQUESTED_LOCALE === "us" && customer.state) {
-      I.click({ role: "combobox", name: "State" });
-      I.click(customer.state);
-    }
 
+    // Locale specific form filling
+    switch (REQUESTED_LOCALE?.toLowerCase()) {
+      case "gb":
+        I.fillField({ role: "textbox", name: "Post town" }, customer.city);
+        I.fillField({ role: "textbox", name: "Postal" }, customer.zip);
+        break;
+
+      case "us":
+        // 'State' combobox exists only for some locales (e.g., US). Fill it conditionally.
+        I.fillField({ role: "textbox", name: "City" }, customer.city);
+        I.fillField({ role: "textbox", name: "Zip" }, customer.zip);
+        I.click({ role: "combobox", name: "State" });
+        I.click(customer.state as string);
+        break;
+
+      default:
+        console.warn(
+          `No specific form filling logic for locale: ${REQUESTED_LOCALE}`,
+        );
+        break;
+    }
     I.click("Continue");
   },
+
   guest_step4_shipping_method_dhl_normal(timeout: number = timeout_seconds) {
     I.waitInUrl(URLS.CHECKOUT_PAGE_DELIVERY_METHOD, timeout);
     const dhlNormalOption = locate("label").withText("DHL Normal");

@@ -1,5 +1,5 @@
 const LOCALE_DICTIONARY: Record<string, string> = {
-  us: "/",
+  us: "",
   gb: "/gb",
 };
 

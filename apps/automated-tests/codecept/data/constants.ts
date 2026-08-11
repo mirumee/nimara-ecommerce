@@ -110,11 +110,3 @@ export const card = {
   CVC: "500",
   postalCode: "12345",
 };
-
-export const paymentDetailsSUCCESS = {
-  cardNumber: "4242424242424242",
-  expiryDate: `12/${(new Date().getFullYear() + 1).toString().substring(2)}`,
-  cvc: "123",
-};
-
-export type PaymentDetails = typeof paymentDetailsSUCCESS;

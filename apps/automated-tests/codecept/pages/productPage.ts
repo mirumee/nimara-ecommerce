@@ -14,9 +14,28 @@ export default {
     I.click(locate("button").withText("Add to bag"));
   },
   click_go_to_bag_popup(timeout: number) {
-    I.waitForElement(locate("link").withText("Go to bag"), timeout);
-    I.click("Go to bag");
+    //pause();
+    I.waitForVisible({ role: "link", name: "Go to bag" }, timeout);
+    I.waitForFunction(
+      (selector: string) => {
+        // waiting for the animation to finish before clicking
+        const el = document.querySelector(selector);
+
+        if (!el) {return false;}
+        const animations = el.getAnimations();
+
+        
+return (
+          animations.length === 0 ||
+          animations.every((a: Animation) => a.playState === "finished")
+        );
+      },
+      ['li[data-state="open"]'],
+      timeout,
+    );
+    I.click({ role: "link", name: "Go to bag" });
   },
+
   go_to_bag(timeout: number) {
     I.click(locate("a").withText("Items in cart"));
     I.waitInUrl(URLS.CART_PAGE, timeout);
