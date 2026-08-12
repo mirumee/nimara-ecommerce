@@ -32,6 +32,6 @@ export const config = {
     homepagePage: "./codecept/pages/homepagePage.ts",
     productPage: "./codecept/pages/productPage.ts",
     checkoutPage: "./codecept/pages/checkoutPage.ts",
-    bagPage: "./codecept/pages/bagPage.ts",
+    bagPage: "./codecept/pages/cartPage.ts",
   },
 };

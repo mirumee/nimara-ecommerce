@@ -23,22 +23,6 @@ export const URLS = {
   TSHIRT_PRODUCT_PAGE: `${LOCALE_PREFIX}/products/abstract-tshirt-black`,
 } as const;
 
-/*
-export const product = {
-  url: "automated-test-product-ocean-waves?format-album=vinyl",
-  quantity: 1,
-  deliveryMethod: {
-    amount: 4,
-    currency: "GBP",
-    name: "DHL Fast",
-  },
-  price: {
-    amount: 21.99,
-    currency: "GBP",
-  },
-};
-*/
-
 export const tshirtImagelocator = locate("img").withAttr({
   "aria-label": "Abstract Tshirt Ultra Black",
 });
@@ -54,19 +38,6 @@ export const storeHeaders = {
   cookieAccept: "Accept all",
   orderSuccess: "Your order has been successfully placed",
 };
-
-export const storeParagraphs = {
-  newsletter:
-    "Subscribe to our newsletter and be the first to get updates on new products and promotions.",
-};
-//export type Product = typeof product;
-
-export const category = {
-  slug: "music",
-  name: "Music",
-};
-
-export type Category = typeof category;
 
 export const userGB = {
   email: "test@mirumee.com",
@@ -105,7 +76,6 @@ export const card = {
     declined: "4000 0000 0000 9995",
     expired: "4000 0000 0000 0069",
   },
-  // Use a dynamic expiry matching paymentDetailsSUCCESS style
   expiration: `12/${(new Date().getFullYear() + 1).toString().substring(2)}`,
   CVC: "500",
   postalCode: "12345",
