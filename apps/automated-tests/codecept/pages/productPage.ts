@@ -37,7 +37,7 @@ export default {
   },
 
   go_to_bag(timeout: number) {
-    I.click(locate("a").withText("Items in cart"));
+    I.click({ role: "link", name: /Items in cart/ as unknown as string });
     I.waitInUrl(URLS.CART_PAGE, timeout);
   },
 };

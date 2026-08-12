@@ -1,4 +1,4 @@
-import { storeHeaders,tshirtImagelocator , URLS  } from "../data/constants";
+import { storeHeaders, tshirtImagelocator, URLS } from "../data/constants";
 
 const { I } = inject();
 

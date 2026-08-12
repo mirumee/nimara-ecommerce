@@ -128,7 +128,7 @@ export default {
   },
 
   click_place_order(timeout: number = timeout_seconds) {
-    I.waitForClickable({ role: "button", name: "Place order" }, timeout);
+    //I.waitForClickable({ role: "button", name: "Place order" }, timeout);
     I.click({ role: "button", name: "Place order" });
   },
   click_billing_address_same_as_shipping_checkbox(

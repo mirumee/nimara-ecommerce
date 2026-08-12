@@ -1,4 +1,4 @@
-import { storeHeaders,timeout_seconds  } from "./data/constants";
+import { storeHeaders, timeout_seconds } from "./data/constants";
 
 export {};
 
