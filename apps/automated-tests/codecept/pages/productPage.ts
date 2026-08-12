@@ -14,7 +14,6 @@ export default {
     I.click(locate("button").withText("Add to bag"));
   },
   click_go_to_bag_popup(timeout: number) {
-    //pause();
     I.waitForVisible({ role: "link", name: "Go to bag" }, timeout);
     I.waitForFunction(
       // waiting for the animation to finish before clicking
