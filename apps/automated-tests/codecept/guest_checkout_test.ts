@@ -6,14 +6,14 @@ Feature("Guest Checkout");
 
 Scenario(
   "Full process from entry to checkout and payment - positive",
-  async ({ I, homepagePage, productPage, bagPage, checkoutPage }) => {
+  async ({ I, homepagePage, productPage, cartPage, checkoutPage }) => {
     homepagePage.enter_page();
     homepagePage.accept_cookies();
     homepagePage.click_on_product(timeout_seconds);
     productPage.add_example_tshirt_to_cart(timeout_seconds);
     productPage.click_go_to_bag_popup(timeout_seconds);
     //productPage.go_to_bag(timeout_seconds);
-    bagPage.go_to_checkout_from_bag(timeout_seconds);
+    cartPage.go_to_checkout_from_bag(timeout_seconds);
     checkoutPage.continue_as_guest(timeout_seconds);
     checkoutPage.guest_step1_email(timeout_seconds);
     await checkoutPage.guest_step2_continue_as_guest(timeout_seconds);
