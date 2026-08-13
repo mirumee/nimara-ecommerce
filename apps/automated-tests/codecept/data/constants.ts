@@ -21,10 +21,15 @@ export const URLS = {
   PRODUCT_PAGE: `${LOCALE_PREFIX}/products`,
   CATEGORY_PAGE: `${LOCALE_PREFIX}/categories`,
   TSHIRT_PRODUCT_PAGE: `${LOCALE_PREFIX}/products/abstract-tshirt-black`,
+  BLACK_SAND_PRODUCT_PAGE: `${LOCALE_PREFIX}/products/black-sand`,
 } as const;
 
 export const tshirtImagelocator = locate("img").withAttr({
   "aria-label": "Abstract Tshirt Ultra Black",
+});
+
+export const black_sandImagelocator = locate("img").withAttr({
+  "aria-label": "Black sand",
 });
 
 export const storeHeaders = {
@@ -37,6 +42,7 @@ export const storeHeaders = {
   cookiePopup: "We use cookies",
   cookieAccept: "Accept all",
   orderSuccess: "Your order has been successfully placed",
+  cardDeclined: "There was an error with your card",
 };
 
 export const userGB = {
@@ -72,8 +78,8 @@ export const card = {
   number: {
     valid: "4242 4242 4242 4242",
     invalid: "1234 5678 9012 3456",
-    stolen: "4000 0000 0000 0002",
-    declined: "4000 0000 0000 9995",
+    stolen: "4000 0000 0000 9979",
+    declined: "4000 0000 0000 9995", //generic decline
     expired: "4000 0000 0000 0069",
   },
   expiration: `12/${(new Date().getFullYear() + 1).toString().substring(2)}`,
