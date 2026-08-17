@@ -21,6 +21,8 @@ export default {
     I.waitUrlEquals(URLS.TSHIRT_PRODUCT_PAGE, timeout);
   },
   click_on_product2(timeout: number) {
+    I.waitForText(storeHeaders.productAddedToCart, timeout); //wait until previous product is added to cart before proceeding
+    I.amOnPage(URLS.HOME_PAGE);
     I.scrollTo(black_sandImagelocator);
     I.click(black_sandImagelocator);
     I.waitInUrl(URLS.BLACK_SAND_PRODUCT_PAGE, timeout);

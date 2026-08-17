@@ -13,8 +13,8 @@ export const URLS = {
   ORDER_CONFIRMATION_PAGE: `${LOCALE_PREFIX}/order/confirmation/*`,
   CHECKOUT_PAGE_SIGN_IN: `${LOCALE_PREFIX}/checkout/sign-in`,
   HOME_PAGE: `${LOCALE_PREFIX}`,
-  SIGN_IN_PAGE: `${LOCALE_PREFIX}/sign-in`,
-  SIGN_IN_PAGE_RESULT: `${LOCALE_PREFIX}?loggedIn=`,
+  LOGIN_PAGE: `${LOCALE_PREFIX}/sign-in`,
+  LOGIN_PAGE_RESULT: `${LOCALE_PREFIX}?loggedIn=`,
   RESET_PASSWORD: `${LOCALE_PREFIX}/reset-password`,
   CREATE_ACCOUNT: `${LOCALE_PREFIX}/create-account`,
   PRODUCTS_PAGE: `${LOCALE_PREFIX}/search`,
@@ -43,6 +43,7 @@ export const storeHeaders = {
   cookieAccept: "Accept all",
   orderSuccess: "Your order has been successfully placed",
   cardDeclined: "There was an error with your card",
+  productAddedToCart: "Product has been added to your bag",
 };
 
 export const userGB = {

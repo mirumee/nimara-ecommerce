@@ -1,7 +1,5 @@
 import { storeHeaders, timeout_seconds } from "./data/constants";
 
-export {};
-
 Feature("Guest Checkout - positive");
 
 Scenario(
@@ -84,7 +82,6 @@ Scenario(
     checkoutPage.guest_step4_shipping_method_dhl_normal(timeout_seconds);
     checkoutPage.guest_step5_payment_details("stolen", timeout_seconds);
     checkoutPage.click_place_order(timeout_seconds);
-    pause();
     I.waitForText(storeHeaders.cardDeclined, timeout_seconds);
   },
 );
@@ -105,7 +102,6 @@ Scenario(
     checkoutPage.guest_step4_shipping_method_dhl_normal(timeout_seconds);
     checkoutPage.guest_step5_payment_details("expired", timeout_seconds);
     checkoutPage.click_place_order(timeout_seconds);
-    pause();
     I.waitForText(storeHeaders.cardDeclined, timeout_seconds);
   },
 );

@@ -14,6 +14,7 @@ export default {
     I.click(locate("button").withText("Add to bag"));
   },
   add_black_sand_to_cart(timeout: number) {
+    I.waitForVisible({ role: "radio", name: "Vinyl" }, timeout);
     I.waitForVisible({ role: "combobox", name: "Variant select" }, timeout);
     I.click({ role: "combobox", name: "Variant select" });
     I.click("Regular vinyl");
