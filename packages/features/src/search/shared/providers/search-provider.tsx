@@ -13,6 +13,8 @@ import {
   type SearchContext,
 } from "@nimara/infrastructure/use-cases/search/types";
 
+import { buildSearchContext } from "../helpers/fetch-facets";
+import { getFiltersFromSearchParams } from "../helpers/filters";
 import { type SearchParams } from "../types";
 
 export interface SearchProviderData {
@@ -47,11 +49,7 @@ export const SearchProvider = async ({
   categorySlug,
   region,
 }: SearchProviderProps) => {
-  const searchContext = {
-    currency: region.market.currency,
-    channel: region.market.channel,
-    languageCode: region.language.code,
-  } satisfies SearchContext;
+  const searchContext = buildSearchContext(region);
 
   const {
     page,
@@ -60,15 +58,12 @@ export const SearchProvider = async ({
     sortBy = defaultSortBy,
     q: query = "",
     limit,
-    ...rest
   } = searchParams;
 
   const filters = {
-    ...Object.fromEntries(
-      Object.entries(rest).filter(([_, value]) => value !== undefined),
-    ),
+    ...getFiltersFromSearchParams(searchParams),
     ...(categorySlug ? { category: categorySlug } : {}),
-  } as Record<string, string>;
+  };
 
   const searchService = await services.getSearchService();
   const [resultSearch, getFacetsResult, resultOptions] = await Promise.all([

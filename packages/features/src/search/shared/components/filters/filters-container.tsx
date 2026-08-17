@@ -1,5 +1,8 @@
+"use client";
+
 import { Filter } from "lucide-react";
-import { getTranslations } from "next-intl/server";
+import { useTranslations } from "next-intl";
+import { useRef, useState, useTransition } from "react";
 
 import { type SortByOption } from "@nimara/domain/objects/Search";
 import { type MessagePath } from "@nimara/i18n/types";
@@ -18,7 +21,12 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@nimara/ui/components/sheet";
+import { cn } from "@nimara/ui/lib/utils";
 
+import {
+  getFiltersFromSearchParams,
+  processFormData,
+} from "../../helpers/filters";
 import { ColorSwatch } from "./color-swatch";
 import { FilterBoolean } from "./filter-boolean";
 import { FilterDropdown } from "./filter-dropdown";
@@ -29,6 +37,10 @@ import { FiltersCounter } from "./filters-counter";
 type Props = {
   defaultSortBy: string;
   facets: Facet[];
+  getFacets: (input: {
+    filters: Record<string, string>;
+    query: string;
+  }) => Promise<Facet[]>;
   handleFiltersFormSubmit: (
     searchParams: Record<string, string>,
     formData: FormData,
@@ -37,62 +49,121 @@ type Props = {
   sortByOptions: SortByOption[];
 };
 
-const renderFilterComponent = (
-  facet: Facet,
-  searchParams: Record<string, string>,
-) => {
-  switch (facet.type) {
-    case "BOOLEAN":
-      return (
-        <FilterBoolean
-          key={facet.slug}
-          facet={facet}
-          searchParams={searchParams}
-        />
-      );
-    case "DROPDOWN":
-      return (
-        <FilterDropdown
-          key={facet.slug}
-          facet={facet}
-          searchParams={searchParams}
-        />
-      );
-    case "MULTISELECT":
-      return (
-        <FilterMultiSelect
-          key={facet.slug}
-          facet={facet}
-          searchParams={searchParams}
-        />
-      );
-    case "PLAIN_TEXT":
-      return (
-        <FilterText
-          key={facet.slug}
-          facet={facet}
-          searchParams={searchParams}
-        />
-      );
-    case "SWATCH":
-      return (
-        <ColorSwatch
-          key={facet.slug}
-          facet={facet}
-          searchParams={searchParams}
-        />
-      );
-  }
-};
+const serializeFilters = (filters: Record<string, string>) =>
+  JSON.stringify(Object.entries(filters).sort());
 
-export const FiltersContainer = async ({
-  facets,
+export const FiltersContainer = ({
+  facets: serverFacets,
   searchParams,
   sortByOptions,
   defaultSortBy,
+  getFacets,
   handleFiltersFormSubmit: handleFiltersFormSubmitAction,
 }: Props) => {
-  const t = await getTranslations();
+  const t = useTranslations();
+  const formRef = useRef<HTMLFormElement>(null);
+  const [isPending, startTransition] = useTransition();
+
+  const appliedFilters = getFiltersFromSearchParams(searchParams);
+  const appliedKey = serializeFilters(appliedFilters);
+
+  const [facets, setFacets] = useState(serverFacets);
+  const [syncedKey, setSyncedKey] = useState(appliedKey);
+  const fetchedForRef = useRef(appliedKey);
+  const requestIdRef = useRef(0);
+  /**
+   * A dropdown reports its new value in the same event that settles it, so the
+   * form's own inputs are still one render behind when the refresh fires.
+   * These mirrored values are what the refresh trusts instead.
+   */
+  const dropdownValuesRef = useRef<Record<string, string>>({});
+
+  /**
+   * Every server action re-renders the route, so a new `facets` prop is not by
+   * itself fresher than what this panel already fetched. Only the applied
+   * filters changing makes the local set stale.
+   */
+  if (appliedKey !== syncedKey) {
+    setSyncedKey(appliedKey);
+    setFacets(serverFacets);
+    fetchedForRef.current = appliedKey;
+    dropdownValuesRef.current = {};
+  }
+
+  const refreshFacets = () => {
+    if (!formRef.current) {
+      return;
+    }
+
+    const filters = processFormData(new FormData(formRef.current)).toAdd;
+
+    for (const [slug, value] of Object.entries(dropdownValuesRef.current)) {
+      if (value) {
+        filters[slug] = value;
+      } else {
+        delete filters[slug];
+      }
+    }
+
+    const filtersKey = serializeFilters(filters);
+
+    if (filtersKey === fetchedForRef.current) {
+      return;
+    }
+
+    fetchedForRef.current = filtersKey;
+
+    const requestId = ++requestIdRef.current;
+
+    startTransition(async () => {
+      const nextFacets = await getFacets({
+        query: searchParams["q"] ?? "",
+        filters,
+      });
+
+      if (requestId === requestIdRef.current) {
+        setFacets(nextFacets);
+      }
+    });
+  };
+
+  const handleDropdownValueChange = (slug: string, value: string) => {
+    dropdownValuesRef.current[slug] = value;
+  };
+
+  const renderFilterComponent = (facet: Facet) => {
+    const value = appliedFilters[facet.slug];
+    const pendingValue = dropdownValuesRef.current[facet.slug] ?? value;
+
+    switch (facet.type) {
+      case "BOOLEAN":
+        return <FilterBoolean key={facet.slug} facet={facet} value={value} />;
+      case "DROPDOWN":
+        return (
+          <FilterDropdown
+            key={facet.slug}
+            facet={facet}
+            value={pendingValue}
+            onCommit={refreshFacets}
+            onValueChange={handleDropdownValueChange}
+          />
+        );
+      case "MULTISELECT":
+        return (
+          <FilterMultiSelect
+            key={facet.slug}
+            facet={facet}
+            value={pendingValue}
+            onCommit={refreshFacets}
+            onValueChange={handleDropdownValueChange}
+          />
+        );
+      case "PLAIN_TEXT":
+        return <FilterText key={facet.slug} facet={facet} value={value} />;
+      case "SWATCH":
+        return <ColorSwatch key={facet.slug} facet={facet} value={value} />;
+    }
+  };
 
   const updateFiltersWithSearchParams = handleFiltersFormSubmitAction.bind(
     null,
@@ -101,6 +172,16 @@ export const FiltersContainer = async ({
 
   const booleanFacets = facets.filter((facet) => facet.type === "BOOLEAN");
   const swatchFacets = facets.filter((facet) => facet.type === "SWATCH");
+  /**
+   * A narrowed facet set can drop a filter that is still in the URL. Submitting
+   * it as empty is what tells the form handler to remove it.
+   */
+  const droppedFilterSlugs = serverFacets
+    .map(({ slug }) => slug)
+    .filter(
+      (slug) =>
+        appliedFilters[slug] && !facets.some((facet) => facet.slug === slug),
+    );
 
   return (
     <Sheet>
@@ -117,6 +198,7 @@ export const FiltersContainer = async ({
       </SheetTrigger>
       <SheetContent side="right-full">
         <form
+          ref={formRef}
           action={updateFiltersWithSearchParams}
           className="flex h-full flex-col"
         >
@@ -126,7 +208,13 @@ export const FiltersContainer = async ({
 
           <SheetDescription asChild>
             <ScrollArea>
-              <div className="grid h-full gap-6 px-1 py-4">
+              <div
+                aria-busy={isPending}
+                className={cn(
+                  "grid h-full gap-6 px-1 py-4 transition-opacity",
+                  isPending && "pointer-events-none opacity-60",
+                )}
+              >
                 <RadioGroup
                   name="sortBy"
                   className="grid gap-4 md:hidden"
@@ -149,14 +237,14 @@ export const FiltersContainer = async ({
                   {facets
                     ?.filter(({ type }) => type !== "BOOLEAN")
                     ?.filter(({ type }) => type !== "SWATCH")
-                    .map((facet) => renderFilterComponent(facet, searchParams))}
+                    .map((facet) => renderFilterComponent(facet))}
                 </div>
 
                 {!!swatchFacets.length && (
                   <div>
                     <div className="grid items-center gap-4">
                       {swatchFacets.map((facet) =>
-                        renderFilterComponent(facet, searchParams),
+                        renderFilterComponent(facet),
                       )}
                     </div>
                   </div>
@@ -169,7 +257,7 @@ export const FiltersContainer = async ({
                     </p>
                     <div className="grid items-center gap-4">
                       {booleanFacets.map((facet) =>
-                        renderFilterComponent(facet, searchParams),
+                        renderFilterComponent(facet),
                       )}
                     </div>
                   </div>
@@ -177,6 +265,10 @@ export const FiltersContainer = async ({
               </div>
             </ScrollArea>
           </SheetDescription>
+
+          {droppedFilterSlugs.map((slug) => (
+            <input key={slug} type="hidden" name={slug} value="" />
+          ))}
 
           <SheetFooter className="mt-auto">
             <SheetClose asChild>

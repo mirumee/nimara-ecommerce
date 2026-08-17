@@ -1,6 +1,10 @@
 import { invariant } from "graphql/jsutils/invariant";
 
 import { type Logger } from "#root/logging/types";
+import {
+  CATEGORY_FILTER_KEY,
+  COLLECTION_FILTER_KEY,
+} from "#root/use-cases/search/consts";
 
 import { type IndicesSettings } from "./types";
 
@@ -37,6 +41,12 @@ export const getIndexName = (
   return replica.indexName;
 };
 
+const toCategoryName = (slug: string) => {
+  const name = slug.replaceAll("-", " ");
+
+  return name.charAt(0).toUpperCase() + name.slice(1);
+};
+
 export const buildFilters = ({
   filters,
   channel,
@@ -57,7 +67,7 @@ export const buildFilters = ({
 
   return Object.entries(filters ?? {})
     .reduce<string[]>((acc, [name, value]) => {
-      if (name === "collection") {
+      if (name === COLLECTION_FILTER_KEY) {
         const formattedValue = value
           .split(".")
           .map(
@@ -67,6 +77,13 @@ export const buildFilters = ({
           .join(" OR ");
 
         acc.push(`collections:${formattedValue}`);
+      } else if (name === CATEGORY_FILTER_KEY) {
+        const slugs = value.split(",");
+        const formattedValue = slugs
+          .map((slug) => `categories:'${toCategoryName(slug)}'`)
+          .join(" OR ");
+
+        acc.push(slugs.length > 1 ? `(${formattedValue})` : formattedValue);
       } else if (name in facetsMapping) {
         const values = value.split(".");
 

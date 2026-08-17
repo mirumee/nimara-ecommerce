@@ -10,13 +10,13 @@ import { Label } from "@nimara/ui/components/label";
 
 export const FilterBoolean = ({
   facet: { name, slug, messageKey },
-  searchParams,
+  value,
 }: {
   facet: Facet;
-  searchParams: Record<string, string>;
+  value?: string;
 }) => {
   const t = useTranslations();
-  const isCheckedInitial = searchParams[slug] === "true";
+  const isCheckedInitial = value === "true";
   const [isChecked, setIsChecked] = useState(isCheckedInitial);
 
   const labelText =

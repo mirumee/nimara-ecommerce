@@ -14,6 +14,7 @@ import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
 import { getServiceRegistry } from "@/services/registry";
 
+import { getFacets } from "../../_actions/get-facets";
 import { handleVendorFiltersFormSubmit } from "./_actions/handle-vendor-filters-form-submit";
 
 const VENDOR_PROFILE_PAGE_TYPE_SLUG = "vendor-profile";
@@ -150,6 +151,7 @@ export default async function Page(props: VendorPageProps) {
         null,
         vendorSlug,
       )}
+      getFacets={getFacets.bind(null, undefined)}
       productMetadata={[{ key: "vendor.id", value: page.id }]}
       vendorBranding={{
         displayTitle,

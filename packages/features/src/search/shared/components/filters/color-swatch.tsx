@@ -1,4 +1,6 @@
-import { getTranslations } from "next-intl/server";
+"use client";
+
+import { useTranslations } from "next-intl";
 
 import type { MessagePath } from "@nimara/i18n/types";
 import type { Facet } from "@nimara/infrastructure/use-cases/search/types";
@@ -34,16 +36,16 @@ const COLORS_MAPPING = {
   yellow: "bg-[#fffa4B]",
 };
 
-export const ColorSwatch = async ({
+export const ColorSwatch = ({
   facet: { choices, name, slug, messageKey },
-  searchParams,
+  value,
 }: {
   facet: Facet;
-  searchParams: Record<string, string>;
+  value?: string;
 }) => {
-  const t = await getTranslations();
+  const t = useTranslations();
   const label = (messageKey ? t(messageKey as MessagePath) : undefined) ?? name;
-  const defaultValue = searchParams[slug]?.split(".") ?? [];
+  const defaultValue = value?.split(".") ?? [];
 
   return (
     <div className="flex flex-col space-y-4 py-2">

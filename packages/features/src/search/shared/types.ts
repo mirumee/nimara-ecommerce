@@ -4,7 +4,10 @@ import type { Locale } from "next-intl";
 import { type Region } from "@nimara/foundation/regions/types";
 import type { LocalePrefixes } from "@nimara/i18n/config";
 import type { ServiceRegistry } from "@nimara/infrastructure/types";
-import type { ProductSearchMetadataFilter } from "@nimara/infrastructure/use-cases/search/types";
+import type {
+  Facet,
+  ProductSearchMetadataFilter,
+} from "@nimara/infrastructure/use-cases/search/types";
 
 /**
  * Type definition for the search parameters accepted by the search view.
@@ -22,6 +25,15 @@ export type SearchParams = {
 };
 
 /**
+ * Re-reads the facets for a not-yet-applied filter set, so the filter panel can
+ * narrow itself before the form is submitted.
+ */
+export type GetFacetsAction = (input: {
+  filters: Record<string, string>;
+  query: string;
+}) => Promise<Facet[]>;
+
+/**
  * Type definition for the properties of the search view.
  * Every search view should use this type to ensure consistency.
  * @property params - A promise that resolves to an object containing the locale.
@@ -31,6 +43,7 @@ export interface SearchViewProps {
   defaultLocale: Locale;
   defaultResultsPerPage: number;
   defaultSortBy: string;
+  getFacets: GetFacetsAction;
   handleFiltersFormSubmit: (
     searchParams: Record<string, string>,
     formData: FormData,

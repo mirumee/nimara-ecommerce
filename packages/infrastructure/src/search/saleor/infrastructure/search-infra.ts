@@ -9,6 +9,10 @@ import { saleorCategoryService } from "#root/category/providers";
 import { saleorCollectionService } from "#root/collection/providers";
 import { THUMBNAIL_FORMAT, THUMBNAIL_SIZE_LARGE } from "#root/config";
 import { graphqlClient } from "#root/graphql/client";
+import {
+  CATEGORY_FILTER_KEY,
+  COLLECTION_FILTER_KEY,
+} from "#root/use-cases/search/consts";
 import type { SearchInfra } from "#root/use-cases/search/types";
 
 import { SearchProductQueryDocument } from "../graphql/queries/generated";
@@ -44,11 +48,11 @@ export const saleorSearchInfra =
 
     const rawFilters = { ...filters };
 
-    const collectionSlugs = rawFilters.collection?.split(",") ?? [];
-    const categorySlugs = rawFilters.category?.split(",") ?? [];
+    const collectionSlugs = rawFilters[COLLECTION_FILTER_KEY]?.split(",") ?? [];
+    const categorySlugs = rawFilters[CATEGORY_FILTER_KEY]?.split(",") ?? [];
 
-    delete rawFilters.collection;
-    delete rawFilters.category;
+    delete rawFilters[COLLECTION_FILTER_KEY];
+    delete rawFilters[CATEGORY_FILTER_KEY];
 
     // TODO: Find a better way how to handle filters between providers
     const attributesFilter: AttributeInput[] | undefined = rawFilters
