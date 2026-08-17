@@ -1,59 +1,70 @@
 name: Release
 
+# A release is a hand-pushed `vX.Y.Z` tag. Nothing versions the repository
+# automatically. Because the tag is pushed with a human's credentials rather
+# than GITHUB_TOKEN, this `push: tags` trigger actually fires.
 on:
-  workflow_run:
-    workflows:
-      - "Linters & Tests"
-    types:
-      - completed
-    branches:
-      - main
+  push:
+    tags:
+      - "v*"
 
 permissions:
-  contents: read # for checkout
+  contents: read
 
 concurrency:
   group: release
   cancel-in-progress: false
 
 jobs:
-  release:
-    name: Release
-    if: >-
-      github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.event == 'push' &&
-      github.event.workflow_run.head_branch == 'main' &&
-      github.event.repository.fork == false
+  promote:
+    name: Promote production
+    if: github.event.repository.fork == false
     runs-on: ubuntu-latest
-    permissions:
-      contents: write # to be able to publish a GitHub release
-      issues: write # to be able to comment on released issues
-      pull-requests: write # to be able to comment on released pull requests
-      id-token: write # to enable use of OIDC for npm provenance
+    timeout-minutes: 40 # the script's own wait is 30, this is the backstop
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          # Promotion resolves each project's candidate by commit ancestry, so a
+          # shallow checkout would reject every build.
           fetch-depth: 0
-          ref: ${{ github.event.workflow_run.head_sha }}
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          run_install: false
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "lts/krypton"
-          cache: "pnpm"
-          cache-dependency-path: pnpm-lock.yaml
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      # Points each project's production domains at the deployment Vercel
+      # already built for this commit. No rebuild, so the artifact that passed
+      # review is the artifact that goes live.
+      - name: Promote the tagged commit
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+        run: |
+          node .github/scripts/promote-production.mjs \
+            --sha=${{ github.sha }} \
+            --timeout=1800
 
-      - name: Release
+  publish:
+    name: Publish GitHub release
+    needs: promote
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # to create the release
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Published after promotion, so a release on GitHub means the tag reached
+      # production rather than merely that a tag exists.
+      - name: Create the release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: pnpm dlx semantic-release
+        run: |
+          gh release create "${{ github.ref_name }}" \
+            --verify-tag \
+            --title "${{ github.ref_name }}" \
+            --generate-notes

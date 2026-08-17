@@ -744,3 +744,23 @@
 - **Create**: Added IMP-0006 as `in_progress` for the Claude comment on the daily summary, tracing PR #801.
 - **Maintenance**: Extended OPS-0009 with the Anthropic API key setup, the cost note, and the diagnosis for a missing comment.
 - **Lint**: `pnpm wiki:lint` at zero violations across 97 files.
+- **Update**: Corrected what a release tag promotes in OPS-0008. Selecting each project's deployment
+  by the tagged commit alone stranded work: Vercel skips a project's build when the commit does not
+  affect it, so a tag advanced only the projects its final commit touched, while the generated release
+  notes already claimed the rest had shipped. A tag now means everything on `main` up to that commit
+  is released, and each project advances to the newest production build reachable from it. Verified
+  against live data at `8e13677030fb3e54fc11d4be49af086a89281e56`, where the storefront promotes that
+  commit while the payment app and marketplace catch up from `cb9761b8`.
+- **Update**: Removed the QA Deploy workflow and its references from OPS-0008. Its three provider
+  selection inputs passed `NEXT_PUBLIC_SEARCH_SERVICE`, `NEXT_PUBLIC_CMS_SERVICE`, and
+  `ENVIRONMENT`, none of which appear anywhere in `apps` or `packages`: the storefront reads
+  server-side `SEARCH_SERVICE` and `CMS_SERVICE`, both defaulting to `saleor`, and
+  `NEXT_PUBLIC_ENVIRONMENT`. Every QA instance therefore ran the default providers regardless of the
+  chosen inputs, so the workflow reported a configuration it had not deployed. Preview deployments
+  and the stage domains cover its remaining purpose.
+- **Update**: Rewrote OPS-0008 for manual releases. Merging to `main` no longer deploys: with
+  **Auto-assign Custom Production Domains** disabled on every Vercel project, a merge leaves a
+  staged production build, and a hand-pushed `vX.Y.Z` tag promotes the three product projects
+  together before the GitHub release is published. Removed semantic-release from the procedure,
+  verification, and escalation, and replaced re-promotion with instant rollback as the recovery
+  path, because a deployment that has served production cannot be promoted twice.

@@ -1,6 +1,7 @@
 {
   "name": "@nimara/codegen",
   "version": "1.0.0",
+  "private": true,
   "scripts": {
     "codegen:saleor": "graphql-codegen --config ./codegen.ts --project saleor",
     "codegen:marketplace": "graphql-codegen --config ./codegen.ts --project marketplace",

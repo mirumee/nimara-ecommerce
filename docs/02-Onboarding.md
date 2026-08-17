@@ -138,9 +138,12 @@ pnpm format:check          # what CI checks
 - **Incomplete work:** split larger changes into releasable slices. Use a short-lived feature flag
   or branch-by-abstraction seam when incomplete behavior must be merged, and remove the flag after
   rollout.
-- **Commits and PRs:** use a [Conventional Commit](https://www.conventionalcommits.org/) PR title
-  because the squash title drives semantic-release. Husky runs `lint-staged` on commit, so
-  formatting is automatic. Run `pnpm exec cz` for a guided prompt.
+- **Commits and PRs:** use a [Conventional Commit](https://www.conventionalcommits.org/) PR title,
+  because the squash title becomes a line of the next release's notes and tells the releaser which
+  version to pick. Husky runs `lint-staged` on commit, so formatting is automatic. Run
+  `pnpm exec cz` for a guided prompt.
+- **Releases:** merging does not deploy. A maintainer hand-pushes a `vX.Y.Z` tag, which promotes
+  that commit's builds to production. See [Daily Workflow & Releasing](03-Release-workflow.md).
 
 ### Before opening a PR
 

@@ -50,7 +50,7 @@
     "*.{js,cjs,ts,tsx}": "eslint --fix"
   },
   "name": "stripe",
-  "private": false,
+  "private": true,
   "scripts": {
     "build": "node etc/build.ts",
     "dev": "vite --port 4000",

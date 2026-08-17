@@ -1,7 +1,7 @@
 ---
 type: "Operational Record"
 title: "Trunk Release and Production Rollback"
-description: "Release-from-trunk procedure for validating main, verifying semantic-release and Vercel production, and restoring a prior immutable deployment."
+description: "Release-from-trunk procedure for validating main, cutting a manual version tag that promotes staged Vercel deployments to production, and restoring a prior immutable deployment."
 tags:
   - "operations"
   - "release"
@@ -26,9 +26,16 @@ relations:
 
 # Trigger
 
-Use this procedure to verify a release from the `main` trunk, to validate the corresponding
-semantic-release and Vercel production outcomes, or to restore service after a bad production
-deployment without rewriting published Git history.
+Use this procedure to cut a release from the `main` trunk, to verify the resulting production
+promotion, or to restore service after a bad production deployment without rewriting published Git
+history.
+
+Merging to `main` does not release. Each application project tracks `main` twice, so one merge
+produces two builds of the same commit: the `stage` custom environment, which publishes to the stage
+domains immediately against the stage Saleor and Stripe test mode, and the Production environment,
+which stays **Staged** because **Auto-assign Custom Production Domains** is disabled. The production
+domains keep serving the previously promoted tag. A hand-pushed `vX.Y.Z` tag is the release event,
+and it never touches `stage`.
 
 # Preconditions
 
@@ -36,8 +43,15 @@ deployment without rewriting published Git history.
   pull request from a short-lived change branch.
 - Confirm the pull request passed `Linters & Tests`, all four Vercel project statuses
   (`nimara-docs`, `nimara-ecommerce`, `nimara-ecommerce-stripe`, and `nimara-marketplace`), and
-  risk-appropriate testing. For additional QA, retain results against an exact SHA deployed to
-  `qa-1` or `qa-2`.
+  risk-appropriate testing. Retain test evidence against a deployment's own immutable URL rather
+  than a branch or stage domain, which move on.
+- Verify the candidate on the stage domains, where the backends are safe to exercise, then read the
+  staged production deployment's own URL for each affected project. The staged build is not the one
+  tested on stage: it shares the code but carries production environment variables, so it is the
+  only place a wrong backend URL or missing production variable appears before promotion. It reaches
+  the production Saleor and live Stripe, so keep those checks read-only and place no test orders.
+- Choose the version by reading the Conventional Commit titles merged since the previous tag. No
+  tooling computes it.
 - Record the candidate SHA, the previous known-good release tag and Vercel deployment,
   database/schema migrations, environment changes, and external provider changes.
 - Define the rollback owner, decision threshold, communication channel, and every stateful
@@ -45,31 +59,42 @@ deployment without rewriting published Git history.
 
 # Procedure
 
-1. Observe the `Linters & Tests` push workflow for the candidate `main` SHA. A failure blocks the
-   Release workflow and requires an immediate revert or fix-forward pull request.
-2. After CI succeeds, observe the Release workflow. It checks out that exact SHA, installs the
-   frozen dependency graph, and invokes semantic-release.
-3. Record whether semantic-release produced no version or created a new immutable tag and GitHub
-   release. The outcome must match the Conventional Commit history on `main`.
-4. Observe each affected Vercel production deployment separately. Vercel deployment is driven by
-   the Git integration, not by the Release workflow.
-5. Verify the production commit, domains, runtime configuration, migrations, core flows,
-   monitoring, and any GitHub tag/release. Keep the previous deployment available throughout the
-   observation window.
-6. Confirm the documentation workflow published the same successful `main` SHA when documentation
-   changed.
-7. If the deployment regresses, restore or promote the previous known-good Vercel deployment,
-   communicate the rollback boundary, and immediately submit a revert or corrective pull request
-   against `main`.
+1. Observe the `Linters & Tests` push workflow for the candidate `main` SHA. A failure requires an
+   immediate revert or fix-forward pull request, and the commit must not be tagged.
+2. Confirm each project has a promotable candidate. Vercel skips a project's build when the commit
+   does not affect it, so a project's candidate is the newest `READY` production build reachable
+   from the tagged commit, which is often an earlier commit than the tag. A tag therefore releases
+   everything on `main` up to it, and a project catching up on earlier work is expected, not an
+   anomaly.
+3. Run `pnpm release vX.Y.Z` from a local clone of the verified SHA. Its pre-flight re-checks the
+   branch, tree, tag novelty and ordering, CI conclusion, and per-project build state, then creates
+   and pushes the annotated tag. A failed pre-flight creates nothing. Never create the tag from a
+   workflow: GitHub does not start workflow runs from `GITHUB_TOKEN` events, so a CI-created tag
+   would not trigger the release.
+4. Observe the Release workflow. It resolves a candidate for `nimara-ecommerce`,
+   `nimara-ecommerce-stripe`, and `nimara-marketplace`, waits for any build of the tagged commit
+   still running, promotes every project that is not already serving its candidate, then publishes
+   the GitHub release. The barrier before promotion is deliberate: a late build failure must not
+   leave production split across two versions. Record the workflow summary, which lists the commit
+   each project ends up serving — production is a set of per-project commits, not one version.
+5. Verify the promoted commit, domains, runtime configuration, migrations, core flows, monitoring,
+   and the GitHub release. Keep the previous deployment available throughout the observation window.
+6. Confirm the documentation workflow published the intended SHA when documentation changed.
+7. If the deployment regresses, instant-roll-back the affected projects to the previous known-good
+   deployment, communicate the rollback boundary, and immediately submit a revert or corrective
+   pull request against `main`.
 
 # Verification
 
-- The successful CI run, Release workflow, Vercel deployment, and documentation deployment resolve
-  to the intended `main` SHA.
+- The CI run, the tag, and the documentation deployment resolve to the intended `main` SHA.
 - Required pull-request checks and risk-appropriate preview or QA tests passed; production smoke
   tests cover every affected product surface and external integration.
-- Semantic-release completed once and either correctly produced no release or created one immutable
-  version tag and matching GitHub release at the intended commit.
+- Each promoted project reports its candidate as **Current**, and the deployment id matches the one
+  the workflow summary named. A project serving an earlier commit than the tag is correct where that
+  commit is the newest build the tag reaches; a project still serving a commit the tag supersedes is
+  not, and means the promotion did not complete.
+- One immutable version tag and one matching GitHub release exist at the intended commit, and the
+  release was published only after promotion succeeded.
 - Database, Saleor schema, Stripe/Connect, content/search providers, and environment values remain
   compatible with the deployed application.
 
@@ -79,16 +104,18 @@ deployment without rewriting published Git history.
   `Admins` team may use the ruleset's pull-request-only bypass. Keep the change in a PR, use a
   squash merge, and preserve the actor, reason, exact SHA, skipped requirements, and recovery owner
   in the incident record.
-- The workflow runs `pnpm dlx semantic-release` without a repository-pinned semantic-release
-  version. Investigate unexpected versioning or plugin behavior before retrying a failed release.
-- Vercel can begin processing a `main` deployment independently of the post-merge GitHub workflow.
-  If CI fails after production promotion, restore the prior Vercel deployment and fix `main`
-  immediately through a reviewed pull request.
-- For an application-only regression, restore the prior Vercel deployment or redeploy the last
-  known-good immutable tag/SHA. Do not force-push `main`, move a published tag, or delete release
-  evidence.
+- If the Release workflow fails partway through promotion, production serves mixed versions. The
+  workflow logs which projects were promoted and which were not. Either finish the promotion from
+  the Vercel dashboard or roll the promoted projects back, then reconcile before tagging again.
+- A deployment that has already served production cannot be promoted a second time. Recovering to
+  an earlier release is an instant rollback, never a re-promotion, and re-tagging the same commit
+  will not restore it.
+- A tag pushed at a commit with no staged deployment stalls the workflow until its timeout. Delete
+  the tag, wait for the builds, and tag again rather than forcing a rebuild into production.
+- For an application-only regression, restore the prior Vercel deployment. Do not force-push
+  `main`, move a published tag, or delete release evidence.
 - A deployment rollback does not reverse database migrations, Saleor changes, Stripe actions,
   provider data, or environment rotation. Use the relevant operational record and an approved
   compensating plan for each stateful system.
-- After restoring service, ship the corrective code through a reviewed pull request and create a
-  new release when applicable; do not silently mutate a prior release artifact.
+- After restoring service, ship the corrective code through a reviewed pull request and tag a new
+  version to promote it; do not silently mutate a prior release artifact.

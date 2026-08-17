@@ -8,6 +8,9 @@ title: Daily Workflow & Releasing
 Nimara uses trunk-based development. `main` is the only long-lived branch, the source of releases,
 and the Vercel production branch. Every commit on `main` must be safe to release.
 
+Merging to `main` builds production but does not serve it. A release is a hand-pushed `vX.Y.Z` tag,
+and that tag is what points the production domains at the commit's builds.
+
 ## Daily development
 
 Start each change from the latest `main`:
@@ -32,7 +35,7 @@ For work that cannot be completed in that window:
 ## Pull requests
 
 Open every pull request against `main` and use a Conventional Commit title. Nimara squash-merges
-pull requests, so this title becomes the commit semantic-release evaluates.
+pull requests, so this title becomes one line of the next release's notes.
 
 Before merging:
 
@@ -50,35 +53,127 @@ exact SHA, skipped requirements, and recovery owner in the incident record.
 
 ## Additional QA
 
-Vercel preview deployments replace branch-based development environments. For high-risk changes,
-use the **QA Deploy** workflow to deploy the exact commit SHA to `qa-1` or `qa-2`, then record that
-SHA with the test evidence.
+Preview deployments cover per-branch validation and the stage domains cover trunk validation, so
+there is no separate QA environment to deploy to. Record the exact SHA with the test evidence, and
+use the deployment's own immutable URL when the evidence must point at one build rather than
+whatever the branch or stage domain serves now.
 
-The workflow defaults to `main` for convenience and always reports the resolved deployed SHA. The
-QA environment is an additional validation surface, not a release branch or a place to accumulate
-changes.
+## Environments
+
+Each application project tracks `main` twice, so one merge produces two builds of the same commit:
+
+| Environment                  | Source                    | Backends                       |
+| ---------------------------- | ------------------------- | ------------------------------ |
+| Preview                      | feature branch            | stage                          |
+| `stage` (custom environment) | `main`, every push        | stage Saleor, Stripe test      |
+| Production                   | `main`, promoted by a tag | production Saleor, Stripe live |
+
+The two `main` builds differ in configuration, not code. `stage` carries its own environment
+variables, so it reaches the stage backends and renders its own canonical URLs. Promotion never
+touches `stage`: it keeps following the tip of `main`.
+
+Each project's own domains:
+
+| Project                   | Production                                | `stage`                                    |
+| ------------------------- | ----------------------------------------- | ------------------------------------------ |
+| `nimara-ecommerce`        | `demo.nimara.store`                       | `stage.nimara.store`                       |
+| `nimara-marketplace`      | `marketplace.nimara.store`                | `marketplace.stage.nimara.store`           |
+| `nimara-ecommerce-stripe` | `nimara-ecommerce-demo-stripe.vercel.app` | `nimara-ecommerce-stage-stripe.vercel.app` |
+
+`demo` denotes production throughout — the storefront domain, the `nimara-demo` Saleor instance, and
+the payment app. It is not a sandbox.
+
+The payment app's domains are `.vercel.app` names, but they are project domains like any other and a
+promotion moves them. Do not confuse either with `nimara-ecommerce-stripe-mirumee.vercel.app`, which
+is the generated alias: it is not a project domain, so it is never held back and always serves the
+newest build, promoted or not. The same is true of every `<project>-mirumee.vercel.app` alias. Point
+integrations, webhooks, and monitoring at a project domain, never at a generated alias.
+
+## After a merge
+
+A `main` push builds but does not go live:
+
+- CI runs `Linters & Tests` on the merge commit.
+- Vercel builds the `stage` environment and publishes it to the stage domains immediately.
+- Vercel also builds the Production environment and leaves it **Staged**, because every project has
+  **Auto-assign Custom Production Domains** turned off. The production domains keep serving the last
+  promoted tag.
+- Documentation publishes from the commit once CI succeeds.
+
+Verify the change on the stage domains, where the backends are safe to exercise.
+
+Then read the staged production deployment's own URL before tagging. It is a different build from
+the one you tested: same code, but production environment variables that `stage` never exercised, so
+it is where a wrong backend URL or a missing production variable shows up. It talks to the
+production Saleor and live Stripe, so keep those checks read-only — browse, search, a product page.
+Never place a test order against it.
 
 ## Releasing
 
-After a `main` push passes the full CI workflow:
+Versions are assigned by hand. Nothing in CI creates a tag, and nothing computes the next number
+for you — read the Conventional Commit titles merged since the last tag and pick the version they
+imply.
 
-- The Release workflow checks out that exact successful commit and runs semantic-release.
-- Semantic-release determines whether the Conventional Commit history requires a version, tag, and
-  GitHub release.
-- Vercel independently builds each affected application from `main` and updates its production
-  domain after a successful build.
-- Documentation is published from the same commit after the Release workflow succeeds.
+```bash
+git switch main
+git pull --ff-only origin main
+pnpm release v1.4.0
+```
 
-There is no release branch and no later promotion merge. A `main` commit that does not require a new
-semantic version can still deploy.
+`pnpm release` runs the pre-flight before it creates anything: you are on `main` with a clean tree
+matching `origin`, the version is well formed and above the previous tag, the tag does not already
+exist locally or on `origin`, `Linters & Tests` passed for this exact commit, and every project has a
+promotable build. It names the commit each project would promote, prints the commits since the
+previous tag, asks for confirmation, then creates the annotated tag and pushes it.
+
+The two checks that matter most are the last two. Tagging a commit whose builds are unfinished
+stalls the promotion workflow until it times out, and a published tag must never be moved.
+
+Run it from your own machine. A tag created by a workflow would carry `GITHUB_TOKEN`, and GitHub
+does not start new workflow runs from that token, so the release would never fire.
+
+`--skip-vercel` drops the build check when the Vercel CLI is unavailable; `--yes` skips the
+confirmation prompt. A failed pre-flight creates nothing, so re-running after a fix is safe.
+
+The **Release** workflow then:
+
+1. Resolves one candidate per project and waits for any build of the tagged commit that is still
+   running. A project's candidate is the **newest production build reachable from the tagged
+   commit**, which is often not a build of that commit.
+2. Promotes all three once every one of them is ready. Promotion re-points domains at an existing
+   build, so nothing is rebuilt and the build you read on its staged URL is the one served. Holding
+   the promotion until every project is ready keeps a late build failure from splitting production
+   across two versions.
+3. Publishes a GitHub release for the tag with generated notes, only after promotion succeeded.
+
+There is no release branch and no promotion merge. Tag only a commit that is already staged and
+verified; the workflow waits for a build in progress but will not invent one.
+
+### A tag closes the backlog
+
+Vercel skips a project's build when the commit does not affect it, so most commits produce a build
+for one project and nothing for the others. A tag therefore means _everything on `main` up to this
+commit is released_, and each project advances to the newest build the tag reaches — catching up on
+work merged before this release.
+
+Selecting by the tagged commit alone would strand that work: a project whose build was skipped would
+wait for some later tag whose commit happened to touch it, while the release notes already claimed
+its change had shipped. The workflow reports every catch-up explicitly, and its summary lists the
+commit each project ends up serving.
+
+That is also why production is a set of per-project commits rather than one version. `v2.9.0` names
+the release, not the code every project runs — read the workflow summary for that, and roll back per
+project to a previous deployment rather than to a tag.
 
 ## Production recovery
 
 For an application regression:
 
-1. Restore or promote the previous known-good Vercel deployment.
+1. Instant-roll-back each affected Vercel project to the previous known-good deployment. Use
+   rollback, not promotion: a deployment that has already served production cannot be promoted a
+   second time.
 2. Open a revert or fix-forward pull request against `main`.
-3. Run the normal required checks and release a new immutable version when applicable.
+3. Run the normal required checks, then tag a new version to promote the fix.
 
 Never force-push `main`, move a published tag, or treat a deployment rollback as a rollback of
 database migrations, Saleor changes, Stripe actions, provider data, or environment changes. Those

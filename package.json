@@ -66,6 +66,7 @@
     "mailpit:up": "docker compose -f apps/marketplace/docker-compose.yml up -d mailpit",
     "mailpit:down": "docker compose -f apps/marketplace/docker-compose.yml stop mailpit",
     "migrate:ledger": "dotenv -e apps/marketplace/.env -- node apps/marketplace/scripts/migrate-ledger.mjs",
+    "release": "node scripts/release.mjs",
     "fallow": "fallow --format json -c ./packages/config/src/.fallowrc.json > fallow.json",
     "boundary-violations": "fallow dead-code --boundary-violations --format json -c ./packages/config/src/.fallowrc.ca.json > boundary-violations.json",
     "graph": "turbo run build --graph=graph.mermaid"

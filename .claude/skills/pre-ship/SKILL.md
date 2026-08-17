@@ -16,7 +16,11 @@ Run the quality gate and stop at the first failing step.
    request targeting `main`. Aim to merge within two working days; split longer work behind
    a short-lived feature flag or branch-by-abstraction seam.
 7. Confirm `Linters & Tests` and all four Vercel project statuses pass before merge. Use the
-   Conventional Commit pull-request title as the squash title that drives semantic-release.
+   Conventional Commit pull-request title as the squash title, because it becomes a line of
+   the next release's notes.
+
+Merging does not release. Production is promoted by a hand-pushed `vX.Y.Z` tag. Never create
+a tag as part of shipping a change unless the developer asks for a release.
 
 Project permissions still require confirmation for commits, pushes, and pull-request
 creation. Never bypass those prompts or commit directly to `main`.
