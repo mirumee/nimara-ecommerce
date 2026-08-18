@@ -132,6 +132,7 @@ okf_version: "0.1"
 # Technology RFC
 
 - [RFC MOC](tech/RFC/RFC%20MOC.md) - Map of content and register for RFC design proposals that precede an accepting or rejecting ADR.
+- [RFC-0001 Newsletter Subscription](tech/RFC/RFC-0001%20Newsletter%20Subscription.md) - Design proposal for a configuration-gated storefront newsletter capability behind a provider-neutral subscribe boundary, with one maintained email-provider adapter and no subscriber data held by Nimara.
 
 # Technology Saleor Schema
 

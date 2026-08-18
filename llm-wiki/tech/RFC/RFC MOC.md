@@ -27,7 +27,7 @@ outcome, live in an [ADR](../ADR/ADR%20MOC.md).
 
 <!-- Newest last. Format: - RFC-NNNN Title - Status - resolving ADR - one-line summary -->
 
-_No RFC documents are present in the current tree._
+- [RFC-0001 Newsletter Subscription](RFC-0001%20Newsletter%20Subscription.md) - draft - resolving ADR not yet recorded - Configuration-gated storefront newsletter capability behind a provider-neutral subscribe boundary, with one maintained email-provider adapter and no subscriber data held by Nimara.
 
 ## Related Notes
 

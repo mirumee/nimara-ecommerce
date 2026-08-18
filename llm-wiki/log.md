@@ -474,3 +474,16 @@
   subscribers and exposes the form to automated abuse. Neither the abuse protection nor the owner of
   erasure requests is resolved; both are recorded as PRD-004 open questions gated before the demo
   form is enabled.
+- **Create**: Added RFC-0001 Newsletter Subscription as a draft design proposal for PRD-004 — a
+  configuration-gated storefront newsletter capability on the existing provider-selection mechanism,
+  with a provider-neutral subscribe boundary, Brevo as the reference adapter written against `fetch`,
+  a dummy adapter for tests and credential-free preview, and no subscriber data held by Nimara.
+- **Decision**: Recorded the design's two hardest-to-reverse contract properties — no
+  provider-shaped parameter crosses the boundary, and the response never varies with list membership
+  — plus the no-retry, no-queue failure policy that follows from persisting nothing.
+- **Gap**: `@getbrevo/brevo` 6.0.3 declares no license and its repository carries none, so the
+  reference adapter uses `fetch` and adds no package dependency. Brevo's free-tier limits and EU data
+  residency are cited for verification at implementation time rather than quoted here.
+- **Correction**: PRD-004 R-8 overstates the test impact. The end-to-end newsletter presence
+  assertions are already behind a configuration flag that is off, so the change replaces a dormant
+  assertion and makes configured-absence an asserted scenario for the first time.
