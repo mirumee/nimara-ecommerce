@@ -15,8 +15,10 @@ created: "2026-06-30T00:00:00+00:00"
 
 ### Committed browser fixtures
 
-`apps/automated-tests/utils/constants.ts` is the current source for the browser suite's
-channel routes, product, delivery option, customer address, and payment input. Reference that
+`apps/automated-tests/codecept/data/constants.ts` is the current source for the browser
+suite's routes, product locators, customer addresses (`userGB` and `userUS`), and a `card` map
+holding valid, invalid, stolen, declined, and expired numbers. The URL prefix comes from
+`apps/automated-tests/codecept/data/locales.ts`. Reference that
 file rather than duplicating its values here: the remote catalog and pricing can change
 independently of this wiki.
 
@@ -27,13 +29,14 @@ of the test.
 
 ### Environment and account inputs
 
-- `TEST_ENV_URL` is mandatory; `apps/automated-tests/playwright.config.ts` rejects a run when
-  it is absent.
+- `TEST_ENV_URL` is mandatory; `apps/automated-tests/codecept.conf.ts` throws when it is
+  absent, including for `pnpm test:e2e:def`.
+- `LOCALE` selects the URL prefix: `us` adds none, `gb` adds `/gb`. It defaults to `us`.
 - Authenticated scenarios read `USER_EMAIL` and `USER_PASSWORD` from the environment through
-  `apps/automated-tests/utils/constants.ts` and declare them as pass-through variables in
-  `apps/automated-tests/turbo.json`.
+  `apps/automated-tests/codecept/data/constants.ts` and declare them as pass-through
+  variables in `apps/automated-tests/turbo.json`.
 - Never copy credentials, session tokens, or private customer data into the wiki, test source,
-  screenshots, traces, or result notes.
+  screenshots or result notes.
 - Confirm that an account belongs to the target environment and has the state required by the
   scenario, such as a saved address or payment method.
 
@@ -55,9 +58,9 @@ one successful address.
 The committed guest checkout proceeds through customer details, shipping address, delivery,
 payment, billing choice, order summary, and placement. Its payment value is suitable only for
 the test integration configured by that suite. The flow in
-`apps/automated-tests/tests/e2e/checkout/checkout-guest.spec.ts` selects a delivery option
-before entering payment details, so tests should preserve that prerequisite unless they are
-explicitly checking out-of-order behavior.
+`apps/automated-tests/codecept/guest_checkout_test.ts` selects a delivery option before
+entering payment details, so tests must preserve that prerequisite unless they are explicitly
+checking out-of-order behavior.
 
 ### Fixture maintenance
 

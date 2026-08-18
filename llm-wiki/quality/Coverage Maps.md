@@ -19,19 +19,29 @@ proves intended coverage; only execution results prove that a revision passed.
 
 ### Current browser coverage
 
-The Playwright suite under `apps/automated-tests/tests/e2e` currently contains:
+The CodeceptJS suite under `apps/automated-tests/codecept` currently contains:
 
-| Surface                | Covered representatives                                                                               | Material gaps visible in the suite                                                        |
-| ---------------------- | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| Homepage               | section visibility and navigation to search                                                           | responsive layout, locale variation, metadata, failure states                             |
-| Authentication         | page UI, password visibility, sign-in, account creation and reset navigation                          | invalid credentials, expired session, authorization boundaries                            |
-| Guest checkout         | one configured product, address, delivery option, card payment, same billing address, order placement | invalid inputs, declined or challenged payment, different billing address, other channels |
-| Authenticated checkout | saved address and saved payment happy path                                                            | missing or stale saved data, new address or payment, authorization expiry                 |
+| Surface                | Covered representatives                                                                          | Material gaps                                                                                  |
+| ---------------------- | ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
+| Homepage               | storefront title and product carousel render, the products link opens the listing                | hero banner, newsletter, responsive layout, locale variation, metadata, failure states         |
+| Authentication         | sign-in with configured credentials                                                              | page UI, password visibility, invalid credentials, expired session, authorization boundaries   |
+| Guest checkout         | two cart entry points to order placement, a two-item cart, stolen-card and expired-card declines | order-summary price and delivery assertions, different billing address, other channels         |
+| Category page          | none                                                                                             | the entire surface: breadcrumb, listing, sorting, filters, pagination, unknown slug            |
+| Checkout steps         | none                                                                                             | the entire step guard, including whether payment renders for a checkout that cannot be ordered |
+| Authenticated checkout | none                                                                                             | the entire surface, including saved address and saved payment                                  |
 
-`apps/automated-tests/playwright.config.ts` defines desktop Chrome, Firefox, and Safari-like
-projects. It does not define a mobile project. The checkout routes and data default to one
-channel in `apps/automated-tests/utils/constants.ts`; configured projects do not create
-channel or locale coverage by themselves.
+`apps/automated-tests/codecept.conf.ts` configures a single chromium helper. There is no
+Firefox, WebKit, or mobile coverage, and no retries. The URL prefix comes from `LOCALE`
+through `apps/automated-tests/codecept/data/locales.ts`, defaulting to `us` with no prefix.
+Routes, addresses, and card data live in `apps/automated-tests/codecept/data/constants.ts`.
+Running one locale does not create channel or locale coverage by itself.
+
+**Accepted coverage loss.** The category page, the checkout step guard, the authenticated
+checkout, and the cross-browser matrix were covered by a Playwright suite that was deleted
+rather than ported when CodeceptJS became the only engine. Order-summary price assertions went
+with it. Treat every one of those as unexercised, not as inferred from a passing run. The
+decision and its full loss list are recorded in
+[ADR-0003 CodeceptJS Is The End-To-End Test Engine](../tech/ADR/ADR-0003%20CodeceptJS%20Is%20The%20End-To-End%20Test%20Engine.md).
 
 ### Checkout partitions
 
@@ -45,8 +55,9 @@ Build a coverage matrix across these independent dimensions:
 - each configured channel, currency, and locale;
 - forward progression, back-navigation, refresh, duplicate submission, and session expiry.
 
-The current two checkout specifications cover only the happy-path guest and saved-account
-representatives. Do not infer the other cells from those runs.
+The current guest-checkout scenarios cover two happy-path cart entry points, a two-item cart,
+and two card declines. No scenario covers an authenticated checkout. Do not infer the other
+cells from those runs.
 
 ### Address-form partitions
 

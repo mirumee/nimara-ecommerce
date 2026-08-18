@@ -12,7 +12,7 @@ in one place — do not duplicate rules here.
 
 Next.js 16 (App Router, RSC, Server Actions) · React 19 · TypeScript strict · Tailwind +
 Shadcn UI · Saleor GraphQL (codegen) · Turborepo + pnpm · NextAuth v5 · Stripe · Vitest +
-Playwright.
+CodeceptJS.
 
 ## Structure (authoritative list)
 

@@ -67,7 +67,7 @@ The tech behind the features - a modern, fully typed stack we love working with:
 ![React Hook Form](https://img.shields.io/badge/React%20Hook%20Form-EC5990?style=for-the-badge&logo=reacthookform&logoColor=white)
 ![next-intl](https://img.shields.io/badge/next--intl-EC4899?style=for-the-badge&logo=i18next&logoColor=white)
 ![Vitest](https://img.shields.io/badge/Vitest-6E9F18?style=for-the-badge&logo=vitest&logoColor=white)
-![Playwright](https://img.shields.io/badge/Playwright-2EAD33?style=for-the-badge&logo=playwright&logoColor=white)
+![CodeceptJS](https://img.shields.io/badge/CodeceptJS-2D3748?style=for-the-badge&logo=codeceptjs&logoColor=F6E05E)
 ![Docusaurus](https://img.shields.io/badge/Docusaurus-3ECC5F?style=for-the-badge&logo=docusaurus&logoColor=white)
 ![ESLint](https://img.shields.io/badge/ESLint-4B32C3?style=for-the-badge&logo=eslint&logoColor=white)
 ![Prettier](https://img.shields.io/badge/Prettier-F7B93E?style=for-the-badge&logo=prettier&logoColor=black)

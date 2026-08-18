@@ -1,4 +1,4 @@
-import { storeHeaders, URLS } from "../../utils/constants";
+import { storeHeaders, URLS } from "../data/constants";
 
 const { I } = inject();
 
@@ -10,7 +10,7 @@ export default {
   exploreProductsLink: { role: "link", name: "Explore products" },
 
   open() {
-    I.amOnPage(`/${URLS().HOME_PAGE}`);
+    I.amOnPage(URLS.HOME_PAGE);
   },
 
   seeStorefrontLoaded() {
@@ -21,6 +21,6 @@ export default {
   openProductListing() {
     I.click(this.exploreProductsLink);
     // Client-side App Router navigation, so wait rather than assert immediately.
-    I.waitInUrl(URLS().PRODUCTS_PAGE, 10);
+    I.waitInUrl(URLS.PRODUCTS_PAGE, 10);
   },
 };

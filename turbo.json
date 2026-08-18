@@ -73,9 +73,6 @@
       "dependsOn": ["^test:e2e"],
       "cache": false
     },
-    "test:all": {
-      "dependsOn": ["^test:e2e", "^test"]
-    },
     "start": {
       "dependsOn": ["build"],
       "cache": false,

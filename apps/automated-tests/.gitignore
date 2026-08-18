@@ -36,9 +36,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-/test-results/
-/playwright-report/
-/playwright/.cache/
 
 # codeceptjs artifacts
 /output/

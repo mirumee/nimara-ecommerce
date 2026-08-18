@@ -29,6 +29,7 @@ is one standalone note following the [Michael Nygard template](https://github.co
 
 - [ADR-0001 Vouchers Are Disabled In Marketplace Checkout](ADR-0001%20Vouchers%20Are%20Disabled%20In%20Marketplace%20Checkout.md) - proposed - Promo codes are hidden in the storefront checkout when marketplace mode is enabled, because a per-vendor checkout split cannot express a cart-wide Saleor voucher.
 - [ADR-0002 Payment Application Configuration Storage Is Selectable](ADR-0002%20Payment%20Application%20Configuration%20Storage%20Is%20Selectable.md) - proposed - Storage sits behind one read/write seam and is chosen by configuration: a deployment keeps the hosted store, a developer machine may keep an on-disk file holding tokens and provider keys in readable text.
+- [ADR-0003 CodeceptJS Is The End-To-End Test Engine](ADR-0003%20CodeceptJS%20Is%20The%20End-To-End%20Test%20Engine.md) - accepted - CodeceptJS becomes the only end-to-end engine, the Playwright runner is removed while its library stays as the browser driver, and the Playwright coverage is deleted rather than ported.
 
 ## Related Notes
 
