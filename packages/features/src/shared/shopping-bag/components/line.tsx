@@ -1,11 +1,9 @@
 "use client";
 
-import { useDebounce } from "@uidotdev/usehooks";
-import { AlertCircle, CheckIcon, X } from "lucide-react";
+import { AlertCircle, X } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import { useWindowSize } from "usehooks-ts";
 
 import type {
   Line as LineType,
@@ -24,8 +22,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@nimara/ui/components/select";
-import { Sheet, SheetContent } from "@nimara/ui/components/sheet";
-import { screenSizes } from "@nimara/ui/consts";
 import { cn } from "@nimara/ui/lib/utils";
 
 type LineQuantityChange = (lineId: string, quantity: number) => Promise<void>;
@@ -60,11 +56,8 @@ export const Line = ({
   const [value, setValue] = useState(quantity.toString());
   const [isOpen, setIsOpen] = useState(false);
   const [showMaxQuantityWarning, setShowMaxQuantityWarning] = useState(false);
-  const { width } = useWindowSize();
-  const isSmDown = width && width < screenSizes.sm;
 
   const t = useTranslations();
-  const inputValue = useDebounce(value, 1000);
 
   const attributeNames = variant.selectionAttributes
     ?.map((attr) => attr.values?.[0]?.name)
@@ -98,224 +91,193 @@ export const Line = ({
     setIsOpen(false);
   };
 
-  useEffect(() => {
-    if (value === quantity.toString()) {
+  const handleInputChange = (nextValue: string) => {
+    setValue(nextValue);
+
+    const qty = Number(nextValue);
+
+    if (nextValue === "" || isNaN(qty) || qty < 1) {
       return;
     }
-    let qty = Number(inputValue);
 
-    if (inputValue === "" || isNaN(qty) || qty < 1) {
-      setValue("1");
-      qty = 1;
+    if (qty > variant.maxQuantity) {
+      setShowMaxQuantityWarning(true);
+
+      return;
+    }
+
+    setShowMaxQuantityWarning(false);
+    void onLineQuantityChange?.(id, qty);
+  };
+
+  const handleInputBlur = () => {
+    const qty = Number(value);
+
+    if (value === "" || isNaN(qty) || qty < 1) {
+      setValue(quantity.toString());
+      setShowMaxQuantityWarning(false);
 
       return;
     }
 
     if (qty > variant.maxQuantity) {
       setValue(variant.maxQuantity.toString());
-      qty = variant.maxQuantity;
-      setShowMaxQuantityWarning(true);
-    } else {
-      setValue(qty.toString());
-      if (qty < variant.maxQuantity) {
-        setShowMaxQuantityWarning(false);
-      }
+      void onLineQuantityChange?.(id, variant.maxQuantity);
     }
-
-    void onLineQuantityChange?.(id, qty);
-  }, [inputValue]);
+  };
 
   useEffect(() => {
-    if (isOpen && !isSmDown) {
-      setIsOpen(false);
-    }
-  }, [width]);
+    setValue(quantity.toString());
+  }, [quantity]);
 
   return (
-    <div className="flex w-full items-center justify-between gap-4 [&>*]:transition-colors">
-      <div className="w-[56px] overflow-hidden">
-        <LocalizedLink title={name} href={href}>
-          {thumbnail ? (
-            <Image
-              src={thumbnail.url}
-              alt={thumbnail.alt ?? name}
-              sizes="56px"
-              width={0}
-              height={0}
-              className={cn(
-                "h-[56px] w-[42px] object-cover",
-                isOutOfStock && "grayscale",
-              )}
-            />
-          ) : (
-            <ProductImagePlaceholder
-              height={56}
-              width={42}
-              className={cn("h-[56px] w-[42px]", isOutOfStock && "grayscale")}
-            />
-          )}
-        </LocalizedLink>
-      </div>
-
-      <div className="grow">
-        <LocalizedLink title={name} href={href} className="grow">
-          <p
-            className={cn("text-foreground text-sm", {
-              "text-stone-400": isOutOfStock,
-            })}
-          >
-            {name}
-          </p>
-        </LocalizedLink>
-      </div>
-
-      <div className="flex hidden min-w-[40px] items-center justify-center gap-2 md:flex">
-        {isLineEditable ? (
-          <>
-            <Label
-              className={cn(
-                isOutOfStock
-                  ? "text-stone-500"
-                  : "text-stone-700 dark:text-stone-300",
-              )}
-              htmlFor={`${id}:qty`}
-            >
-              {t("common.qty")}
-            </Label>
-            <Input
-              name={`${id}:qty`}
-              className={cn(
-                isOutOfStock
-                  ? "text-stone-400"
-                  : "text-stone-700 dark:text-stone-300",
-                "w-14",
-              )}
-              type="number appearance-none"
-              disabled={isDisabled}
-              value={value}
-              onChange={(evt) => setValue(evt.target.value)}
-              inputMode="numeric"
-              data-testid="cart-product-line-qty"
-              id={`${id}:qty`}
-            />
-          </>
-        ) : (
-          <p
-            className="text-sm text-stone-700 dark:text-stone-300"
-            data-testid="product-qty"
-          >
-            {t("common.qty")}: {value}
-          </p>
-        )}
-      </div>
-
-      <div className="col-span-5 row-span-2 flex items-center gap-2 md:col-span-2 md:row-span-1 md:hidden">
-        {isLineEditable && (
-          <>
-            <Sheet open={isOpen} onOpenChange={setIsOpen}>
-              <SheetContent
-                side="bottom"
-                className="max-h-[60vh] overflow-y-auto"
-              >
-                <ul>
-                  {Array.from(
-                    { length: variant.maxQuantity },
-                    (_, i) => i + 1,
-                  ).map((qty) => (
-                    <li
-                      key={id}
-                      className="flex cursor-pointer"
-                      onClick={() => {
-                        handleQuantityChange(qty);
-                        setIsOpen(false);
-                      }}
-                    >
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start p-1.5"
-                      >
-                        <CheckIcon
-                          className={cn("invisible mr-2 h-auto w-[20px]", {
-                            visible: qty === quantity,
-                          })}
-                        />
-                        {qty}
-                      </Button>
-                    </li>
-                  ))}
-                </ul>
-              </SheetContent>
-            </Sheet>
-
-            <Label
-              className={cn(
-                isOutOfStock ? "text-stone-500" : "text-foreground",
-              )}
-              htmlFor={`${id}:qty`}
-            >
-              {t("common.qty")}
-            </Label>
-            <Select
-              disabled={isDisabled}
-              open={isOpen}
-              onValueChange={(qty) => handleQuantityChange(Number(qty))}
-              onOpenChange={() => setIsOpen(true)}
-              value={value}
-              aria-expanded={isOpen}
-              aria-controls="qty-select-options"
-            >
-              <SelectTrigger
-                className="w-auto gap-1 px-2"
-                aria-labelledby={`${id}:qty`}
-              >
-                <SelectValue placeholder={t("common.qty")} />
-              </SelectTrigger>
-              <SelectContent className="overflow-y-auto">
-                {Array.from(
-                  { length: variant.maxQuantity },
-                  (_, i) => i + 1,
-                ).map((qty) => (
-                  <SelectItem key={qty} value={qty.toString()}>
-                    {qty}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </>
-        )}
-      </div>
-
-      <div className="col-span-5 row-span-1 min-w-[70px] md:col-span-2">
-        <p
-          className={cn("flex justify-end text-stone-700 dark:text-stone-300", {
-            "text-stone-400": isOutOfStock,
-          })}
-          data-testid="shopping-bag-product-line-price"
-        >
-          <Price
-            className="grid"
-            price={finalLineTotal}
-            undiscountedPrice={undiscountedLineTotal}
-          />
-        </p>
-      </div>
-
-      {isLineEditable && (
-        <div className="col-start-12 col-end-12 row-start-1 row-end-1 flex items-center justify-center md:row-span-1">
-          <Button
-            variant="ghost"
-            size="icon"
-            disabled={isDisabled}
-            onClick={handleLineDelete}
-            aria-label={t("cart.remove-button")}
-          >
-            <X height={16} width={16} />
-          </Button>
+    <div className="w-full">
+      <div className="flex w-full items-start gap-3 sm:items-center sm:gap-4 [&_*]:transition-colors">
+        <div className="shrink-0">
+          <LocalizedLink title={name} href={href}>
+            {thumbnail ? (
+              <Image
+                src={thumbnail.url}
+                alt={thumbnail.alt ?? name}
+                sizes="56px"
+                width={0}
+                height={0}
+                className={cn(
+                  "h-[56px] w-[42px] object-cover",
+                  isOutOfStock && "grayscale",
+                )}
+              />
+            ) : (
+              <ProductImagePlaceholder
+                height={56}
+                width={42}
+                className={cn("h-[56px] w-[42px]", isOutOfStock && "grayscale")}
+              />
+            )}
+          </LocalizedLink>
         </div>
-      )}
+
+        <div className="flex min-w-0 grow flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
+          <LocalizedLink title={name} href={href} className="min-w-0 grow">
+            <p
+              className={cn("text-foreground text-sm break-words", {
+                "text-stone-400": isOutOfStock,
+              })}
+            >
+              {name}
+            </p>
+          </LocalizedLink>
+
+          <div className="flex shrink-0 items-center gap-2">
+            {isLineEditable ? (
+              <>
+                <div className="hidden items-center gap-2 md:flex">
+                  <Label
+                    className={cn(
+                      isOutOfStock
+                        ? "text-stone-500"
+                        : "text-stone-700 dark:text-stone-300",
+                    )}
+                    htmlFor={`${id}:qty`}
+                  >
+                    {t("common.qty")}
+                  </Label>
+                  <Input
+                    name={`${id}:qty`}
+                    className={cn(
+                      isOutOfStock
+                        ? "text-stone-400"
+                        : "text-stone-700 dark:text-stone-300",
+                      "w-14",
+                    )}
+                    type="text"
+                    disabled={isDisabled}
+                    value={value}
+                    onChange={(evt) => handleInputChange(evt.target.value)}
+                    onBlur={handleInputBlur}
+                    inputMode="numeric"
+                    data-testid="cart-product-line-qty"
+                    id={`${id}:qty`}
+                  />
+                </div>
+
+                <div className="flex items-center gap-2 md:hidden">
+                  <Label
+                    className={cn(
+                      isOutOfStock ? "text-stone-500" : "text-foreground",
+                    )}
+                    htmlFor={`${id}:qty`}
+                  >
+                    {t("common.qty")}
+                  </Label>
+                  <Select
+                    disabled={isDisabled}
+                    open={isOpen}
+                    onValueChange={(qty) => handleQuantityChange(Number(qty))}
+                    onOpenChange={setIsOpen}
+                    value={value}
+                  >
+                    <SelectTrigger
+                      className="w-auto gap-1 px-2"
+                      aria-labelledby={`${id}:qty`}
+                    >
+                      <SelectValue placeholder={t("common.qty")} />
+                    </SelectTrigger>
+                    <SelectContent className="overflow-y-auto">
+                      {Array.from(
+                        { length: variant.maxQuantity },
+                        (_, i) => i + 1,
+                      ).map((qty) => (
+                        <SelectItem key={qty} value={qty.toString()}>
+                          {qty}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </>
+            ) : (
+              <p
+                className="text-sm whitespace-nowrap text-stone-700 dark:text-stone-300"
+                data-testid="product-qty"
+              >
+                {t("common.qty")}: {value}
+              </p>
+            )}
+
+            <p
+              className={cn(
+                "ml-auto flex min-w-[70px] justify-end whitespace-nowrap text-stone-700 dark:text-stone-300",
+                { "text-stone-400": isOutOfStock },
+              )}
+              data-testid="shopping-bag-product-line-price"
+            >
+              <Price
+                className="grid"
+                price={finalLineTotal}
+                undiscountedPrice={undiscountedLineTotal}
+              />
+            </p>
+
+            {isLineEditable && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="shrink-0"
+                disabled={isDisabled}
+                onClick={handleLineDelete}
+                aria-label={t("cart.remove-button")}
+              >
+                <X height={16} width={16} />
+              </Button>
+            )}
+          </div>
+        </div>
+      </div>
+
       {showMaxQuantityWarning && (
-        <div className="col-span-12 mt-2 flex items-center gap-2 text-red-500">
-          <AlertCircle size={16} />
+        <div className="mt-2 flex items-start gap-2 text-sm text-red-500">
+          <AlertCircle size={16} className="mt-0.5 shrink-0" />
           <span>
             {t("cart.max-quantity", { maxQuantity: variant.maxQuantity })}
           </span>
