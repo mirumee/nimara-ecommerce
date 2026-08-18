@@ -11,7 +11,7 @@ tags:
   - "provider-selection"
   - "consent"
 created: "2026-08-18T00:00:00+00:00"
-status: "draft"
+status: "in_review"
 owner: "Wojciech Gajda"
 prd: "[PRD-004 Newsletter Subscription](../../prd/PRD-004%20Newsletter%20Subscription.md)"
 ---

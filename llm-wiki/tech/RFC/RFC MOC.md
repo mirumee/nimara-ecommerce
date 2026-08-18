@@ -27,7 +27,7 @@ outcome, live in an [ADR](../ADR/ADR%20MOC.md).
 
 <!-- Newest last. Format: - RFC-NNNN Title - Status - resolving ADR - one-line summary -->
 
-- [RFC-0001 Newsletter Subscription](RFC-0001%20Newsletter%20Subscription.md) - draft - resolving ADR not yet recorded - Configuration-gated storefront newsletter capability behind a provider-neutral subscribe boundary, with one maintained email-provider adapter and no subscriber data held by Nimara.
+- [RFC-0001 Newsletter Subscription](RFC-0001%20Newsletter%20Subscription.md) - in_review - resolved by [ADR-0003](../ADR/ADR-0003%20Newsletter%20Subscription%20Is%20Configuration-Gated%20With%20No%20Default%20Provider.md), [ADR-0004](../ADR/ADR-0004%20Brevo%20Is%20The%20Reference%20Newsletter%20Provider%20Adapter.md), [ADR-0005](../ADR/ADR-0005%20The%20Newsletter%20Subscribe%20Contract%20Is%20Provider-Neutral%20And%20Membership-Blind.md) - Configuration-gated storefront newsletter capability behind a provider-neutral subscribe boundary, with one maintained email-provider adapter and no subscriber data held by Nimara.
 
 ## Related Notes
 

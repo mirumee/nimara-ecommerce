@@ -128,6 +128,9 @@ okf_version: "0.1"
 - [ADR MOC](tech/ADR/ADR%20MOC.md) - Map of content and chronological register for architecture decision records.
 - [ADR-0001 Vouchers Are Disabled In Marketplace Checkout](tech/ADR/ADR-0001%20Vouchers%20Are%20Disabled%20In%20Marketplace%20Checkout.md) - Why promo codes are hidden in marketplace mode and what answering the platform-versus-vendor discount question would require.
 - [ADR-0002 Payment Application Configuration Storage Is Selectable](tech/ADR/ADR-0002%20Payment%20Application%20Configuration%20Storage%20Is%20Selectable.md) - Why storage sits behind one seam, why a deployment keeps the hosted store, and what accepting an on-disk developer store costs.
+- [ADR-0003 Newsletter Subscription Is Configuration-Gated With No Default Provider](tech/ADR/ADR-0003%20Newsletter%20Subscription%20Is%20Configuration-Gated%20With%20No%20Default%20Provider.md) - Why the newsletter selector has no default, and what making absence rather than a fallback the off state costs.
+- [ADR-0004 Brevo Is The Reference Newsletter Provider Adapter](tech/ADR/ADR-0004%20Brevo%20Is%20The%20Reference%20Newsletter%20Provider%20Adapter.md) - Why Brevo is the maintained adapter, why it is called without its SDK, and what its free tier and send approval cost the demo.
+- [ADR-0005 The Newsletter Subscribe Contract Is Provider-Neutral And Membership-Blind](tech/ADR/ADR-0005%20The%20Newsletter%20Subscribe%20Contract%20Is%20Provider-Neutral%20And%20Membership-Blind.md) - Why no list or template identifier crosses the subscribe boundary, and why a duplicate subscription looks exactly like a new one.
 
 # Technology RFC
 

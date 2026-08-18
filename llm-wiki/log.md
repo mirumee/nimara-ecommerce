@@ -487,3 +487,17 @@
 - **Correction**: PRD-004 R-8 overstates the test impact. The end-to-end newsletter presence
   assertions are already behind a configuration flag that is off, so the change replaces a dormant
   assertion and makes configured-absence an asserted scenario for the first time.
+- **Create**: Added ADR-0003, ADR-0004 and ADR-0005 at `proposed`, splitting the verdict RFC-0001
+  asks for into one decision per record: the capability is configuration-gated with no default
+  provider, Brevo is the maintained reference adapter called over `fetch`, and the subscribe
+  contract stays provider-neutral and membership-blind.
+- **Decision**: Moved RFC-0001 from `draft` to `in_review` and recorded the three resolving ADRs in
+  its register row. The RFC reaches `final` when the ADRs are accepted.
+- **Update**: Answered PRD-004 Q-3 from Brevo's own pages, captured 2026-08-18. EU data residency
+  and ISO 27001:2022 are confirmed, and the free plan is free forever with no card. Two limits the
+  RFC did not have are now recorded in ADR-0004: sending is capped at 300 emails per day, and a new
+  account cannot send until Brevo approves it.
+- **Gap**: Because every subscription attempt spends one confirmation email, roughly three hundred
+  submissions exhaust the demo's daily quota. PRD-004 R-2 is therefore measurable rather than
+  qualitative, and Q-1 gates the demo form on abuse protection. The send-approval step must appear
+  in the integration guide, or the one-business-day activation goal fails at an undocumented step.
