@@ -29,7 +29,6 @@ export type HTTPErrorCode = (typeof HTTP_ERROR_CODES)[number];
 export const AUTH_ERROR_CODES = [
   "ACCOUNT_CONFIRM_ERROR",
   "ACCOUNT_REGISTER_ERROR",
-  "INVALID_PASSWORD_ERROR",
   "PASSWORD_CHANGE_ERROR",
   "PASSWORD_CHANGE_REQUEST_ERROR",
   "PASSWORD_SET_ERROR",
@@ -95,13 +94,10 @@ export const CHECKOUT_ERROR_CODES = [
   "NOT_AVAILABLE_ERROR",
   "PAYMENT_EXECUTE_ERROR",
   "PAYMENT_GATEWAY_INITIALIZE_ERROR",
-  "PAYMENT_METHOD_DELETE_ERROR",
-  "PAYMENT_METHOD_INITIALIZE_ERROR",
   "PAYMENT_METHOD_NOT_FOUND_ERROR",
-  "PAYMENT_METHOD_PROCESS_ERROR",
   "PAYMENT_METHOD_SAVE_ERROR",
   "PAYMENT_PROCESSING_ERROR",
-  "PAYMENT_VALIDATION_ERROR",
+  "TRANSACTION_ERROR",
   "TRANSACTION_INITIALIZE_ERROR",
   "TRANSACTION_PROCESS_ERROR",
   "VOUCHER_NOT_APPLICABLE_ERROR",
@@ -109,6 +105,20 @@ export const CHECKOUT_ERROR_CODES = [
   "VENDOR_MIX_NOT_ALLOWED_ERROR",
 ] as const satisfies ErrorCodeFormat[];
 export type CheckoutErrorCode = (typeof CHECKOUT_ERROR_CODES)[number];
+
+/**
+ * @description Error codes related to Saleor app installation and configuration.
+ */
+export const SALEOR_APP_ERROR_CODES = [
+  "SALEOR_APP_INSTALL_ERROR",
+  "SALEOR_APP_CONFIG_NOT_FOUND_ERROR",
+  "SALEOR_APP_CONFIG_FETCH_ERROR",
+  "SALEOR_APP_CONFIG_SAVE_ERROR",
+  "SALEOR_APP_DOMAIN_NOT_ALLOWED_ERROR",
+  "JWKS_FETCH_ERROR",
+  "JWT_VERIFICATION_ERROR",
+] as const satisfies ErrorCodeFormat[];
+export type SaleorAppErrorCode = (typeof SALEOR_APP_ERROR_CODES)[number];
 
 /**
  * @type GenericErrorCode
@@ -119,7 +129,8 @@ export type GenericErrorCode =
   | AddressErrorCode
   | AuthErrorCode
   | CheckoutErrorCode
-  | HTTPErrorCode;
+  | HTTPErrorCode
+  | SaleorAppErrorCode;
 
 const VALIDATION_ERROR_CODES = [
   "INVALID_VALUE_ERROR",

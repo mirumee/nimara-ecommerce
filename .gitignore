@@ -1,16 +1,9 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# obsydiand
-llm-wiki/.obsidian
-
-# qmd local indexes
-.qmd/
-
 # dependencies
 node_modules
 .pnp
 .pnp.js
-.playwright-mcp
 
 # testing
 coverage
@@ -19,9 +12,6 @@ coverage
 .next/
 out/
 build
-
-# typescript incremental build cache
-*.tsbuildinfo
 
 # IDE
 .idea
@@ -34,14 +24,9 @@ build
 # !.cursor/rules/
 .cursor/plans/
 
-# Claude Code personal configuration
-.claude/settings.local.json
-CLAUDE.local.md
-
 # misc
 .DS_Store
 *.pem
-.obsidian
 
 # debug
 npm-debug.log*
@@ -52,9 +37,6 @@ yarn-error.log*
 .env
 .env.*
 !.env.example
-
-# stripe app config store for CONFIG_PROVIDER=file — holds Stripe secret keys
-.saleor-app-config*.json
 
 # turbo
 .turbo
@@ -108,9 +90,4 @@ terraform.rc
 
 .omx/
 .env*.local
-
-.obsidian/
 .playwright-mcp/
-
-# TypeScript incremental build cache
-*.tsbuildinfo

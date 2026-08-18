@@ -1,4 +1,7 @@
-mutation UserPrivateMetadataUpdateMutation($id: ID!, $input: [MetadataInput!]!) {
+mutation UserPrivateMetadataUpdateMutation(
+  $id: ID!
+  $input: [MetadataInput!]!
+) {
   updatePrivateMetadata(id: $id, input: $input) {
     errors {
       code

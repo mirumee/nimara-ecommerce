@@ -1,63 +1,68 @@
 import {
+  AppIdQueryDocument,
+  type MetadataInput,
   TransactionEventReportMutationDocument,
   type TransactionEventReportMutationVariables,
-} from "@/graphql/mutations/generated";
-import { AppIdQueryDocument } from "@/graphql/queries/generated";
+  UserPrivateMetadataUpdateMutationDocument,
+} from "@/graphql/generated/client";
 import { graphqlClient, type GraphqlClientOpts } from "@/lib/graphql/client";
+import { saleorUrlFromDomain } from "@/lib/saleor/url";
 
-export const saleorClient = ({
-  saleorUrl,
-  authToken,
-  timeout,
-  logger,
-}: {
-  saleorUrl: string;
-} & GraphqlClientOpts) => {
-  const client = graphqlClient(`${saleorUrl}/graphql/`, {
+export const saleorClient =
+  ({ logger, timeout }: Pick<GraphqlClientOpts, "logger" | "timeout">) =>
+  ({
     authToken,
-    timeout,
-    logger,
-  });
-
-  const execute = client.execute;
-
-  const getAppId = async () => {
-    const { app } = await client.execute(AppIdQueryDocument);
-
-    return app?.id ?? null;
-  };
-
-  const transactionReport = async ({
-    amount,
-    ...opts
-  }: Omit<TransactionEventReportMutationVariables, "amount"> & {
-    /**
-     * Saleor expects the Decimal scalar serialized as a string.
-     */
-    amount: string;
+    saleorDomain,
+  }: {
+    authToken?: string;
+    saleorDomain: string;
   }) => {
-    const { transactionEventReport } = await client.execute(
-      TransactionEventReportMutationDocument,
+    const client = graphqlClient(
+      `${saleorUrlFromDomain(saleorDomain)}/graphql/`,
       {
-        variables: {
-          ...opts,
-          amount: amount as unknown as number,
-        },
+        authToken,
+        timeout,
+        logger,
       },
     );
 
-    return transactionEventReport;
+    const execute = client.execute;
+
+    const getAppId = async () => {
+      const { app } = await client.execute(AppIdQueryDocument);
+
+      return app?.id ?? null;
+    };
+
+    const transactionReport = async (
+      opts: TransactionEventReportMutationVariables,
+    ) => {
+      const { transactionEventReport } = await client.execute(
+        TransactionEventReportMutationDocument,
+        { variables: opts },
+      );
+
+      return transactionEventReport;
+    };
+
+    const updateUserPrivateMetadata = async (opts: {
+      id: string;
+      input: MetadataInput[];
+    }) => {
+      const { updatePrivateMetadata } = await client.execute(
+        UserPrivateMetadataUpdateMutationDocument,
+        { variables: opts },
+      );
+
+      return updatePrivateMetadata;
+    };
+
+    return {
+      execute,
+      getAppId,
+      transactionReport,
+      updateUserPrivateMetadata,
+    };
   };
 
-  return {
-    execute,
-    getAppId,
-    transactionReport,
-  };
-};
-
-export type SaleorClient = ReturnType<typeof saleorClient>;
-
-export type SaleorClientOpts = {
-  saleorUrl: string;
-} & GraphqlClientOpts;
+export type SaleorClient = ReturnType<ReturnType<typeof saleorClient>>;

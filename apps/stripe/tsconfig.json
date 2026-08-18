@@ -1,15 +1,15 @@
 {
-  "extends": "@nimara/config/tsconfig/nextjs",
+  "extends": "@nimara/config/tsconfig/base",
   "compilerOptions": {
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
+    "allowImportingTsExtensions": true,
+    "jsx": "react-jsx",
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "noEmit": true,
+    "types": ["vite/client"],
     "paths": {
       "@/*": ["./src/*"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "**/*/*.d.ts"],
-  "exclude": ["node_modules"]
+  "include": ["**/*.ts", "**/*.tsx", "**/*/*.d.ts"],
+  "exclude": ["node_modules", "public", "dist"]
 }

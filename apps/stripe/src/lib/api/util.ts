@@ -1,3 +1,5 @@
+import { type BaseError } from "@nimara/domain/objects/Error";
+
 import {
   type IntRange,
   type PartialOnly,
@@ -21,3 +23,23 @@ export const responseError = ({
   status?: IntRange<400, 599>;
 } & PartialOnly<ResponseSchema, "context">) =>
   Response.json(responseSchema.parse(response), { status });
+
+/**
+ * Maps `Result` errors (domain `BaseError[]`) to a uniform error response.
+ */
+export const responseFromErrors = (errors: readonly BaseError[]) => {
+  const [first] = errors;
+  const description =
+    (first?.context?.description as string | undefined) ??
+    first?.message ??
+    "Request failed.";
+
+  return responseError({
+    description,
+    errors: errors.map((error) => ({
+      message: error.message ?? error.code,
+      code: error.code,
+    })),
+    status: (first?.status ?? 400) as IntRange<400, 599>,
+  });
+};

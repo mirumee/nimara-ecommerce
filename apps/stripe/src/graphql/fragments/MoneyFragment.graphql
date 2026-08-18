@@ -1,4 +1,0 @@
-fragment MoneyFragment on Money {
-  currency
-  amount
-}

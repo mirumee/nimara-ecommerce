@@ -4,33 +4,35 @@
   "tasks": {
     "build": {
       "dependsOn": ["^codegen", "^build"],
-      "outputs": [".next/**", "!.next/cache/**"],
+      "outputs": ["public/assets/**", "dist/**"],
       "inputs": [
         "$TURBO_DEFAULT$",
         ".env",
         ".env.production",
         ".env.development",
-        "!.env*.local",
-        "!.next/**"
+        "!.env*.local"
       ],
       "env": [
-        "NEXT_PUBLIC_SALEOR_API_URL",
+        "ENVIRONMENT",
         "NEXT_PUBLIC_ENVIRONMENT",
+        "BASE_PATH",
         "ALLOWED_DOMAINS",
-        "CONFIG_KEY",
         "CONFIG_PROVIDER",
         "CONFIG_FILE_PATH",
-        "NEXT_PUBLIC_SENTRY_DSN",
+        "CONFIG_KEY",
+        "VERCEL_EDGE_CONFIG_ID",
         "SENTRY_DSN",
+        "NEXT_PUBLIC_SENTRY_DSN",
         "SENTRY_ORG",
         "SENTRY_PROJECT",
         "SENTRY_DEBUG"
       ],
       "passThroughEnv": [
-        "VERCEL_EDGE_CONFIG_ID",
-        "VERCEL_TEAM_ID",
+        "STRIPE_SECRET_KEY",
+        "SALEOR_APP_TOKEN",
+        "SENTRY_AUTH_TOKEN",
         "VERCEL_ACCESS_TOKEN",
-        "SENTRY_AUTH_TOKEN"
+        "VERCEL_TEAM_ID"
       ]
     }
   }
