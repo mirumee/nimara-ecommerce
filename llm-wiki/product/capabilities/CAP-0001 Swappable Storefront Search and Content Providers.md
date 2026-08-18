@@ -9,8 +9,6 @@ tags:
   - "search"
   - "content"
 created: "2026-07-21T00:00:00+00:00"
-timestamp: "2026-07-21T00:00:00+00:00"
-id: "CAP-0001"
 status: "active"
 owner: "engineering"
 relations:

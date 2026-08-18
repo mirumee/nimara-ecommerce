@@ -1,13 +1,16 @@
-import { connection } from "next/server";
+"use client";
+
+import { useCartCount } from "@nimara/features/cart/shared/providers/cart-count-provider";
 
 import { ShoppingBagIcon } from "./shopping-bag-icon";
 
-export const ShoppingBagIconWithCount = async ({
-  count,
+export const ShoppingBagIconWithCount = ({
+  count: serverCount,
 }: {
   count: number;
 }) => {
-  await connection();
+  const { resolveCount } = useCartCount();
+  const count = resolveCount(serverCount);
 
   return (
     <ShoppingBagIcon count={count}>

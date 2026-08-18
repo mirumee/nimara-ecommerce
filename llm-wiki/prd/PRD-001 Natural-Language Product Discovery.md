@@ -1,5 +1,4 @@
 ---
-id: "PRD-001"
 type: "Product Requirements Document"
 title: "Natural-Language Product Discovery"
 description: "Product Requirements Document for closing Nimara's natural-language discovery gap with a reusable, open-source storefront capability."
@@ -12,7 +11,6 @@ tags:
   - "table-stakes"
 created: "2026-07-10T00:00:00+00:00"
 updated: "2026-07-10T00:00:00+00:00"
-timestamp: "2026-07-10T00:00:00+00:00"
 status: "analyzing"
 owner: "Łukasz Szewczyk"
 prd_type: "business"

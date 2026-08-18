@@ -89,7 +89,7 @@
     "log-out": "Log out",
     "new-password": "New password",
     "or-continue-as-guest": "Or continue as a guest",
-    "password-placeholder": "At least {minPasswordLength} signs, digits allowed",
+    "password-placeholder": "At least {minPasswordLength} characters, digits allowed",
     "password-reset": "Reset password",
     "reset-password": "Password reset",
     "reset-password-description": "Please type the email address used to create the account you'd like to access.",

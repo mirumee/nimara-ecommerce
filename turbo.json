@@ -36,6 +36,7 @@
       ]
     },
     "codegen": {
+      "cache": false,
       "dependsOn": ["^codegen"],
       "env": ["NEXT_PUBLIC_SALEOR_API_URL"],
       "outputs": [

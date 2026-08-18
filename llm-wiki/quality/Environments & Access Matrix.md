@@ -9,7 +9,6 @@ tags:
   - "channels"
   - "agents"
 created: "2026-06-30T00:00:00+00:00"
-timestamp: "2026-07-23T00:00:00+00:00"
 ---
 
 ## Content

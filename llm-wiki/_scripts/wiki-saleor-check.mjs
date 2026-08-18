@@ -5,7 +5,11 @@ import { readdirSync, readFileSync, existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const repoRoot = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "..",
+  "..",
+);
 const schemaFile = path.join(repoRoot, "packages", "codegen", "schema.ts");
 const saleorNotesDir = path.join(repoRoot, "llm-wiki", "tech", "saleor");
 const HASH_LENGTH = 12;
@@ -48,7 +52,9 @@ function readNoteHash(fileContent) {
     return null;
   }
 
-  const field = match[1].match(/^\s*saleor_schema_hash:\s*["']?([^"'\n]+)["']?\s*$/m);
+  const field = match[1].match(
+    /^\s*saleor_schema_hash:\s*["']?([^"'\n]+)["']?\s*$/m,
+  );
 
   return field ? field[1].trim() : null;
 }
@@ -93,7 +99,9 @@ function check() {
     console.log(
       `No schema at ${path.relative(repoRoot, schemaFile)} (zero-config mode).`,
     );
-    console.log("Nothing to verify — run `pnpm codegen` to generate the schema.");
+    console.log(
+      "Nothing to verify — run `pnpm codegen` to generate the schema.",
+    );
 
     return;
   }

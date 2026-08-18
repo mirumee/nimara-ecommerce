@@ -41,6 +41,9 @@ importers:
       turbo:
         specifier: 2.9.4
         version: 2.9.4
+      yaml:
+        specifier: 2.8.3
+        version: 2.8.3
 
   apps/automated-tests:
     devDependencies:

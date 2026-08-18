@@ -1,5 +1,5 @@
 ---
-name: llm-wiki-bookkeeping
+name: bookkeeping
 description: Keep an LLM-wiki coherent while ingesting sources, filing durable knowledge, auditing or repairing its graph, reconciling indexes and logs after content changes, or recording architecture decisions. Use the target wiki's AGENTS.md as the sole authority for its schema, locations, templates, links, provenance, and bookkeeping rules.
 ---
 
@@ -18,6 +18,10 @@ changing records. Treat that file as the single source of truth for:
 - source and provenance rules;
 - indexes, registers, logs, and lifecycle rules;
 - repository-defined validation and retrieval-refresh commands.
+
+`AGENTS.md` may delegate rather than restate. Where it points at a template, a schema file, or a
+command as the authority for a record type, read that too: the governing instructions are the set
+it names, not the one file.
 
 Derive these rules from the current checkout. Do not retain or infer them from this skill,
 another branch, or prior runs. If the governing instructions are missing, incomplete, or
@@ -51,6 +55,11 @@ assumptions, synthesize the durable records, and register them using the current
 Discuss the proposed record set with the user before writing when filing choices require
 product or editorial judgment.
 
+In Nimara's wiki, material under `sources/` keeps its body. Append metadata, provenance, or
+citations rather than rewriting the raw text, unless the user asked for a migration or a
+correction. A `Saleor Schema Note` additionally carries a freshness stamp — see
+`references/saleor-schema-notes.md`.
+
 ### Reconcile a content change
 
 After creating, editing, renaming, moving, or removing records, update every affected link
@@ -72,13 +81,26 @@ supersession rules discovered from the governing instructions.
 
 ## Validate and report
 
-Run the repository-defined checks relevant to the operation. Inspect the final diff and
-verify:
+Run the repository-defined checks relevant to the operation. In Nimara's `llm-wiki/`:
+
+- **`pnpm wiki:lint`** must end at zero violations, and it closes every change to the directory.
+  It checks frontmatter against `_schema.json`, link and anchor integrity, orphans, and register
+  coverage. Every violation is an error; there is no warning tier. Machine-readable output is
+  `pnpm --silent wiki:lint -- --json` — without `--silent`, pnpm's banner breaks the JSON. It is
+  deliberately not wired into CI, so nothing else will run it.
+- **`pnpm wiki:index:sync`** after adding, renaming, or removing a note. It adds and removes rows
+  in `index.md` and the MOC registers, keeps existing rows verbatim, and appends new ones at the
+  end of their section. Several sections are ordered by hand, so move an inserted row when the
+  section has a reading order, and shorten the hook it copied from the note's `description`.
+- **`pnpm wiki:saleor:check`** before citing or restamping a Saleor schema note.
+- **`_schema.json` is the machine-readable half of the contracts in `_templates/`.** A contract
+  change means changing both. Silencing a rule means adding an `except` entry that states why.
+
+Inspect the final diff and verify:
 
 - every modified record follows the current schema;
 - every affected internal link resolves from its source file;
 - every required index, register, MOC, or log entry is consistent;
-- provenance and source-integrity obligations are satisfied;
 - renamed or removed targets have no stale inbound links;
 - no unrelated files changed.
 

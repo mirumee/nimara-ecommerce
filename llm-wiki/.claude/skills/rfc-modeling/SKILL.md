@@ -5,7 +5,7 @@ description: Turn an approved PRD into an RFC design proposal inside the LLM-wik
 
 # RFC Author
 
-Turn an approved PRD into an explicit, reviewable **RFC** — a technical design _proposal_ for a non-trivial change. An RFC proposes; it does not decide. The verdict and outcome are captured later in an [ADR](../../../llm-wiki/tech/ADR/ADR%20MOC.md). Stop at a filed proposal; do not implement.
+Turn an approved PRD into an explicit, reviewable **RFC** — a technical design _proposal_ for a non-trivial change. An RFC proposes; it does not decide. The verdict and outcome are captured later in an [ADR](../../../tech/ADR/ADR%20MOC.md). Stop at a filed proposal; do not implement.
 
 Follow these seven stages in order. The deep research, the technical grilling, and the self-lint are mandatory.
 

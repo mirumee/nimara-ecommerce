@@ -9,8 +9,6 @@ tags:
   - "saleor-app"
   - "key-rotation"
 created: "2026-07-21T00:00:00+00:00"
-timestamp: "2026-08-03T00:00:00+00:00"
-id: "OPS-0002"
 status: "active"
 owner: "payments-engineering"
 kind: "runbook"
@@ -18,6 +16,7 @@ relations:
   implementations:
     - "[Saleor Stored Payment Methods](../tech/implementation/IMP-0001%20Saleor%20Stored%20Payment%20Methods.md)"
     - "[Stripe Payment Application Multi-Tenancy](../tech/implementation/IMP-0002%20Stripe%20Payment%20Application%20Multi-Tenancy.md)"
+    - "[Payment Application Configuration Storage Selection](../tech/implementation/IMP-0003%20Payment%20Application%20Configuration%20Storage%20Selection.md)"
   product_records:
     - "[Guided Storefront Checkout](../product/capabilities/CAP-0003%20Guided%20Storefront%20Checkout.md)"
     - "[Cart to Confirmed Order](../product/flows/FLOW-0001%20Cart%20to%20Confirmed%20Order.md)"
@@ -41,16 +40,21 @@ requested permissions change.
   where `*` is a wildcard, for example `nimara-*.eu.saleor.cloud,demo.nimara.store`. It has no
   default and the application fails closed: with it unset, every installation and every webhook is
   refused, including installations that already exist. Set it before deploying, not after.
-- Configure `NEXT_PUBLIC_ENVIRONMENT`, Vercel team/access/Edge Config values, and a stable
-  `CONFIG_KEY`. The runtime schema requires Vercel access and team values even though the current
-  application `.env.example` does not list all of them and uses the older `ENVIRONMENT` name.
-  Validate against `apps/stripe/src/config.ts`, not the example file alone.
+- Configure `NEXT_PUBLIC_ENVIRONMENT` and a stable `CONFIG_KEY`, and leave `CONFIG_PROVIDER` at its
+  default `edge` so the deployment stores configuration in the hosted Edge Config. That selection
+  requires the Vercel team, access, and Edge Config database values; the runtime schema demands all
+  three whenever `edge` is selected and fails at startup naming the one that is missing.
+- Never set `CONFIG_PROVIDER=file` on a deployment. That backend keeps the configuration of every
+  installation in a JSON file next to the application and exists for developer machines only. On a
+  serverless deployment the filesystem is per-instance and does not survive, so installations appear
+  to succeed and then vanish, and the file would hold installation tokens and provider secret keys
+  as readable text. The application does not refuse the selection.
 - Do not configure a Saleor API URL for the running application. It no longer reads one: each
   request names its own Saleor domain, and `NEXT_PUBLIC_SALEOR_API_URL` now only feeds code
   generation.
-- The application persists installation tokens, channel keys, webhook IDs, and webhook secrets in
-  Vercel Edge Config, keyed by Saleor domain. One deployment serves many Saleor installations, and
-  all of them share a single stored value.
+- The application persists installation tokens, channel keys, webhook IDs, and webhook secrets in the
+  selected storage backend, keyed by Saleor domain. One deployment serves many Saleor installations,
+  and all of them share a single stored value regardless of which backend holds it.
 - Confirm access to the Saleor Extensions UI, the Stripe webhook dashboard, Vercel logs, and a
   low-risk checkout in the target channel.
 - Record the current application ID, channel configuration, webhook endpoint IDs, and previous key
@@ -116,7 +120,7 @@ requested permissions change.
 # Escalation
 
 - Saving configuration is not atomic: the action removes matching old endpoints before installing
-  replacements, and it persists Edge Config only after webhook work. If installation fails, stop
+  replacements, and it persists the stored configuration only after webhook work. If installation fails, stop
   checkout traffic, inspect Stripe and Vercel state, and restore a known-good channel configuration
   rather than repeatedly saving blind.
 - A secret-key change to another Stripe account cannot remove endpoints from the former account;
@@ -142,49 +146,13 @@ requested permissions change.
   while exactly one Saleor installation exists. With two or more installed, the stored configuration
   cannot be read by the older code; remove the additional installations from the stored value first,
   or roll forward instead.
-- Escalate missing Edge Config state, cross-channel webhook delivery, mixed live/test mode, or any
-  rotation that leaves both old and new endpoints active unexpectedly.
-
-# Provenance
-
-- This procedure is anchored at exact commit
-  [`75d6bc55edddf431adcc348009a1c226f77cc005`](https://github.com/mirumee/nimara-ecommerce/tree/75d6bc55edddf431adcc348009a1c226f77cc005),
-  including the
-  [application manifest](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/stripe/src/app/api/saleor/manifest/route.ts),
-  [installation handler](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/stripe/src/app/api/saleor/register/route.ts),
-  [runtime configuration schema](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/stripe/src/config.ts),
-  [configuration save action](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/stripe/src/app/app/actions/save-data-action.tsx),
-  and
-  [webhook rotation utility](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/stripe/src/lib/stripe/webhooks/util.ts).
-- The stored-payment-method reinstallation step is anchored at exact commit
-  [`ebc9e3b8044dc48532d9c32902c584a7589ea6e9`](https://github.com/mirumee/nimara-ecommerce/tree/ebc9e3b8044dc48532d9c32902c584a7589ea6e9)
-  in the
-  [application manifest](https://github.com/mirumee/nimara-ecommerce/blob/ebc9e3b8044dc48532d9c32902c584a7589ea6e9/apps/stripe/src/app/api/saleor/manifest/route.ts).
-  That commit is the tip of unmerged branch `feat/saleor-stored-payment-methods`; re-anchor on the
-  squash-merge commit once it lands.
-- The allowlist precondition, the refused-installation step, the domain-scoped endpoint replacement,
-  and the rollback constraint are anchored at exact commit
-  [`e0dee7b3baf55684917217e69533964bb0bbb499`](https://github.com/mirumee/nimara-ecommerce/tree/e0dee7b3baf55684917217e69533964bb0bbb499)
-  in the
-  [runtime configuration schema](https://github.com/mirumee/nimara-ecommerce/blob/e0dee7b3baf55684917217e69533964bb0bbb499/apps/stripe/src/config.ts),
-  [installation handler](https://github.com/mirumee/nimara-ecommerce/blob/e0dee7b3baf55684917217e69533964bb0bbb499/apps/stripe/src/app/api/saleor/register/route.ts),
-  [tenant resolution](https://github.com/mirumee/nimara-ecommerce/blob/e0dee7b3baf55684917217e69533964bb0bbb499/apps/stripe/src/lib/saleor/config/context.ts),
-  [stored configuration provider](https://github.com/mirumee/nimara-ecommerce/blob/e0dee7b3baf55684917217e69533964bb0bbb499/apps/stripe/src/lib/saleor/config/edge.ts),
-  [configuration save action](https://github.com/mirumee/nimara-ecommerce/blob/e0dee7b3baf55684917217e69533964bb0bbb499/apps/stripe/src/app/app/actions/save-data-action.tsx),
-  and
-  [webhook rotation utility](https://github.com/mirumee/nimara-ecommerce/blob/e0dee7b3baf55684917217e69533964bb0bbb499/apps/stripe/src/lib/stripe/webhooks/util.ts).
-  That commit is the squash-merge of
-  [PR 741](https://github.com/mirumee/nimara-ecommerce/pull/741) on `main`.
-- The endpoint-per-account arrangement, the endpoint address carrying the Saleor domain, the re-save
-  required to retire per-channel endpoints, and the shared-account acknowledgement behaviour are
-  anchored at exact commit
-  [`75be94ef01917a6952c1c32e9dd9da8577402d5f`](https://github.com/mirumee/nimara-ecommerce/tree/75be94ef01917a6952c1c32e9dd9da8577402d5f)
-  in the
-  [signed provider event reporter](https://github.com/mirumee/nimara-ecommerce/blob/75be94ef01917a6952c1c32e9dd9da8577402d5f/apps/stripe/src/app/api/stripe/webhooks/%5BsaleorDomain%5D/route.ts),
-  [webhook rotation utility](https://github.com/mirumee/nimara-ecommerce/blob/75be94ef01917a6952c1c32e9dd9da8577402d5f/apps/stripe/src/lib/stripe/webhooks/util.ts),
-  [endpoint address helper](https://github.com/mirumee/nimara-ecommerce/blob/75be94ef01917a6952c1c32e9dd9da8577402d5f/apps/stripe/src/lib/stripe/const.ts),
-  and
-  [configuration save action](https://github.com/mirumee/nimara-ecommerce/blob/75be94ef01917a6952c1c32e9dd9da8577402d5f/apps/stripe/src/app/app/actions/save-data-action.tsx).
-  That commit is the tip of unmerged branch `feat/consolidate-stripe-webhook-endpoints-per-domain`
-  ([PR 743](https://github.com/mirumee/nimara-ecommerce/pull/743)); re-anchor on the squash-merge
-  commit once it lands.
+- Installations that succeed and are then repeatedly missing, with no configuration to load and no
+  rejected write in the logs, indicate a deployment running the on-disk backend. Confirm
+  `CONFIG_PROVIDER`, move it back to `edge` with the Vercel values in place, and reinstall and
+  reconfigure every affected installation: nothing written to the ephemeral filesystem is
+  recoverable, including the installation tokens and webhook secrets.
+- A rejected read or write against the hosted store, reported as a forbidden response while the
+  application starts normally, is a Vercel access, team, or database mismatch rather than a Saleor or
+  Stripe fault. All three values must belong to the same Vercel team as the Edge Config they name.
+- Escalate missing configuration state in the hosted store, cross-channel webhook delivery, mixed
+  live/test mode, or any rotation that leaves both old and new endpoints active unexpectedly.

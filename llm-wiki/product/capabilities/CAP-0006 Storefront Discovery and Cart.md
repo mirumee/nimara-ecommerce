@@ -9,8 +9,6 @@ tags:
   - "search"
   - "cart"
 created: "2026-07-21T00:00:00+00:00"
-timestamp: "2026-07-21T00:00:00+00:00"
-id: "CAP-0006"
 status: "active"
 owner: "product-and-engineering"
 relations:
@@ -78,20 +76,3 @@ labels into one cart view while routing each mutation back to the owning cart.
   lookup failures leave the backend vendor identifier as the cart label fallback.
 - Insufficient stock and unavailable variants block progression to checkout. Line-mutation failures
   remain in the cart and are surfaced through structured error toasts.
-
-# Provenance
-
-- Availability is anchored in the public
-  [`v2.0.0` release snapshot](https://github.com/mirumee/nimara-ecommerce/tree/1fd1a16558bac1cfebd9a2356ff79061f8627da9),
-  the first release containing both the
-  [vendor storefront](https://github.com/mirumee/nimara-ecommerce/blob/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/storefront/src/app/%5Blocale%5D/%28main%29/vendor/%5BvendorSlug%5D/page.tsx)
-  and
-  [multi-vendor cart view](https://github.com/mirumee/nimara-ecommerce/blob/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/storefront/src/app/%5Blocale%5D/%28main%29/cart/_components/marketplace-cart-view.tsx)
-  layered on the existing search, collection, product-detail, and cart journey.
-- Current behavior and limitations were rechecked at exact commit
-  [`75d6bc55edddf431adcc348009a1c226f77cc005`](https://github.com/mirumee/nimara-ecommerce/tree/75d6bc55edddf431adcc348009a1c226f77cc005)
-  in the
-  [search provider](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/packages/features/src/search/shared/providers/search-provider.tsx),
-  [product page](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/storefront/src/app/%5Blocale%5D/%28main%29/products/%5Bslug%5D/page.tsx),
-  and
-  [cart page](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/storefront/src/app/%5Blocale%5D/%28main%29/cart/page.tsx).

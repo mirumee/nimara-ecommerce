@@ -12,7 +12,7 @@ Run every check before presenting or filing the PRD. Fix issues that require no 
 
 ## Identity and audience
 
-- [ ] `id` is a unique `PRD-NNN`; status, owner, PRD type, personas, and dates are filled.
+- [ ] The filename carries a unique `PRD-NNN`; status, owner, PRD type, personas, and dates are filled.
 - [ ] The name describes the value or problem space and survives a change in implementation.
 - [ ] The primary segment is specific; adopter/buyer value is distinguished from end-user experience value.
 - [ ] Persona references follow the wiki's local link convention and resolve.

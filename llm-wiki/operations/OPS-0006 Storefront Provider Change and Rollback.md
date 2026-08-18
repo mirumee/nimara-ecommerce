@@ -9,8 +9,6 @@ tags:
   - "providers"
   - "configuration"
 created: "2026-07-21T00:00:00+00:00"
-timestamp: "2026-07-21T00:00:00+00:00"
-id: "OPS-0006"
 status: "active"
 owner: "storefront-platform"
 kind: "rollback"
@@ -81,14 +79,3 @@ latency, or an upstream outage that requires restoring the previous provider bui
   rotation, or Saleor data. Reconcile those systems separately and preserve audit evidence.
 - Escalate suspected cross-vendor data exposure, use of an over-privileged search key, sample data in
   production, or a provider rollback that cannot reproduce the prior known-good result.
-
-# Provenance
-
-- This rollback contract is anchored at exact commit
-  [`75d6bc55edddf431adcc348009a1c226f77cc005`](https://github.com/mirumee/nimara-ecommerce/tree/75d6bc55edddf431adcc348009a1c226f77cc005),
-  including the
-  [server environment schema](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/storefront/src/envs/server.ts),
-  [provider preflight](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/storefront/scripts/preflight.mts),
-  [search-provider manifests](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/packages/infrastructure/src/search/select.ts),
-  and
-  [content-provider catalog](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/packages/infrastructure/src/providers/cms.ts).

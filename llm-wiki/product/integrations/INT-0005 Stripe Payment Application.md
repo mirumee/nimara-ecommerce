@@ -9,8 +9,6 @@ tags:
   - "saleor-app"
   - "stored-payment-methods"
 created: "2026-07-21T00:00:00+00:00"
-timestamp: "2026-08-03T00:00:00+00:00"
-id: "INT-0005"
 status: "active"
 owner: "engineering"
 availability:
@@ -143,10 +141,14 @@ payment methods protocol.
 - `TRANSACTION_REFUND_REQUESTED` only retrieves the PaymentIntent and reports `REFUND_SUCCESS` when
   that intent is in `succeeded` state. It does not create a Stripe Refund, and an intent being
   succeeded is not evidence that the requested refund occurred.
-- Channel configuration and installation tokens are stored through Vercel Edge Config, keyed by
-  commerce domain, so a working deployment requires the corresponding Vercel access, team, and
-  database configuration. Every installation shares one stored value, which is read, modified, and
-  written whole: concurrent configuration saves for different installations are last-write-wins.
+- Channel configuration and installation tokens are stored through a selected storage backend, keyed
+  by commerce domain. A deployment uses the hosted store and therefore requires the corresponding
+  Vercel access, team, and database configuration; a developer machine may select an on-disk file
+  instead. The on-disk option is not usable for a deployment: a serverless filesystem is
+  per-instance and does not survive, so installations would appear to succeed and then disappear.
+  Nothing in the application refuses that selection. Whichever backend is selected, every
+  installation shares one stored value, which is read, modified, and written whole: concurrent
+  configuration saves for different installations are last-write-wins.
 - Configuration written before the application became multi-installation is read as a single-entry
   map, so an existing installation keeps working without a migration. The reverse does not hold —
   once a second installation exists, the stored value can no longer be read by application code that
@@ -172,57 +174,3 @@ payment methods protocol.
   the only one under operator control.
 - A session that reports no gateway key or no client secret fails where it is opened, not where
   the SDK is loaded. Consumers of a session treat both as present.
-
-# Provenance
-
-- Availability is anchored in the public
-  [`v1.7.1` release snapshot](https://github.com/mirumee/nimara-ecommerce/tree/b500390914b794015e8db37975ce4cbbb27cb6e6),
-  which introduces the
-  [payment application manifest](https://github.com/mirumee/nimara-ecommerce/blob/b500390914b794015e8db37975ce4cbbb27cb6e6/apps/stripe/src/app/api/saleor/manifest/route.ts),
-  [signed Saleor webhook adapter](https://github.com/mirumee/nimara-ecommerce/blob/b500390914b794015e8db37975ce4cbbb27cb6e6/apps/stripe/src/lib/saleor/webhooks/api.ts),
-  and
-  [signed Stripe event reporter](https://github.com/mirumee/nimara-ecommerce/blob/b500390914b794015e8db37975ce4cbbb27cb6e6/apps/stripe/src/app/api/stripe/%5Bchannel%5D/webhooks/route.ts).
-- Current operations and limitations were rechecked at exact commit
-  [`75d6bc55edddf431adcc348009a1c226f77cc005`](https://github.com/mirumee/nimara-ecommerce/tree/75d6bc55edddf431adcc348009a1c226f77cc005)
-  in the
-  [transaction initialization route](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/stripe/src/app/api/saleor/webhooks/payment/transaction-initialize-session/route.ts),
-  [cancellation-request route](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/stripe/src/app/api/saleor/webhooks/payment/transaction-cancelation-requested/route.ts),
-  and
-  [refund-request route](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/apps/stripe/src/app/api/saleor/webhooks/payment/transaction-refund-requested/route.ts).
-- The stored-payment-method contract, the private-metadata customer mapping, and the
-  session-reported gateway key are anchored at exact commit
-  [`ebc9e3b8044dc48532d9c32902c584a7589ea6e9`](https://github.com/mirumee/nimara-ecommerce/tree/ebc9e3b8044dc48532d9c32902c584a7589ea6e9)
-  in the
-  [gateway customer resolver](https://github.com/mirumee/nimara-ecommerce/blob/ebc9e3b8044dc48532d9c32902c584a7589ea6e9/apps/stripe/src/lib/stripe/customer.ts),
-  [payment service contract](https://github.com/mirumee/nimara-ecommerce/blob/ebc9e3b8044dc48532d9c32902c584a7589ea6e9/packages/infrastructure/src/payment/types.ts),
-  [session initialization](https://github.com/mirumee/nimara-ecommerce/blob/ebc9e3b8044dc48532d9c32902c584a7589ea6e9/packages/infrastructure/src/payment/stripe/infrastructure/payment-initialize-transaction-infra.ts),
-  and
-  [SDK loader](https://github.com/mirumee/nimara-ecommerce/blob/ebc9e3b8044dc48532d9c32902c584a7589ea6e9/packages/infrastructure/src/payment/stripe/utils.ts).
-  That commit is the tip of unmerged branch `feat/saleor-stored-payment-methods`; re-anchor on the
-  squash-merge commit once it lands. See
-  [IMP-0001 Saleor Stored Payment Methods](../../tech/implementation/IMP-0001%20Saleor%20Stored%20Payment%20Methods.md).
-- Multi-installation tenancy, the domain allowlist, the domain-addressed signing keys, and the
-  per-installation endpoint cleanup are anchored at exact commit
-  [`e0dee7b3baf55684917217e69533964bb0bbb499`](https://github.com/mirumee/nimara-ecommerce/tree/e0dee7b3baf55684917217e69533964bb0bbb499)
-  in the
-  [runtime configuration schema](https://github.com/mirumee/nimara-ecommerce/blob/e0dee7b3baf55684917217e69533964bb0bbb499/apps/stripe/src/config.ts),
-  [tenant resolution](https://github.com/mirumee/nimara-ecommerce/blob/e0dee7b3baf55684917217e69533964bb0bbb499/apps/stripe/src/lib/saleor/config/context.ts),
-  [stored configuration provider](https://github.com/mirumee/nimara-ecommerce/blob/e0dee7b3baf55684917217e69533964bb0bbb499/apps/stripe/src/lib/saleor/config/edge.ts),
-  [signed webhook adapter](https://github.com/mirumee/nimara-ecommerce/blob/e0dee7b3baf55684917217e69533964bb0bbb499/apps/stripe/src/lib/saleor/webhooks/util.ts),
-  and
-  [webhook rotation utility](https://github.com/mirumee/nimara-ecommerce/blob/e0dee7b3baf55684917217e69533964bb0bbb499/apps/stripe/src/lib/stripe/webhooks/util.ts).
-  That commit is the squash-merge of
-  [PR 741](https://github.com/mirumee/nimara-ecommerce/pull/741) on `main`. See
-  [IMP-0002 Stripe Payment Application Multi-Tenancy](../../tech/implementation/IMP-0002%20Stripe%20Payment%20Application%20Multi-Tenancy.md).
-- One endpoint per provider account, the commerce domain in the endpoint address, the channel taken
-  from event metadata, and the skip for an event belonging to another installation are anchored at
-  exact commit
-  [`75be94ef01917a6952c1c32e9dd9da8577402d5f`](https://github.com/mirumee/nimara-ecommerce/tree/75be94ef01917a6952c1c32e9dd9da8577402d5f)
-  in the
-  [signed provider event reporter](https://github.com/mirumee/nimara-ecommerce/blob/75be94ef01917a6952c1c32e9dd9da8577402d5f/apps/stripe/src/app/api/stripe/webhooks/%5BsaleorDomain%5D/route.ts),
-  [webhook rotation utility](https://github.com/mirumee/nimara-ecommerce/blob/75be94ef01917a6952c1c32e9dd9da8577402d5f/apps/stripe/src/lib/stripe/webhooks/util.ts),
-  and
-  [endpoint address helper](https://github.com/mirumee/nimara-ecommerce/blob/75be94ef01917a6952c1c32e9dd9da8577402d5f/apps/stripe/src/lib/stripe/const.ts).
-  That commit is the tip of unmerged branch `feat/consolidate-stripe-webhook-endpoints-per-domain`
-  ([PR 743](https://github.com/mirumee/nimara-ecommerce/pull/743)); re-anchor on the squash-merge
-  commit once it lands.

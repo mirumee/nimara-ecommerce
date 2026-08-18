@@ -1,5 +1,4 @@
 ---
-id: "PRD-003"
 type: "Product Requirements Document"
 title: "Cookie Consent & Google Consent Mode v2"
 description: "Product Requirements Document for Cookie Consent and Google Consent Mode v2 in the Nimara storefront."
@@ -9,7 +8,6 @@ tags:
   - "gtm"
   - "compliance"
 created: "2026-07-08T00:00:00+00:00"
-timestamp: "2026-07-17T00:00:00+00:00"
 status: "analyzing"
 owner: "Michał Ociepka"
 prd_type: "business"
