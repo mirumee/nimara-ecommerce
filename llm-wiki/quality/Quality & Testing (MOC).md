@@ -34,6 +34,15 @@ Knowledge lives in these notes; executable runbooks live under `.agents/skills/`
 - [Test Method Playbooks](Test%20Method%20Playbooks.md) — for bug class X, use technique Y (throttling, response inspection, geometry, Lighthouse, code inspection…).
 - [Test Data & Fixtures](Test%20Data%20%26%20Fixtures.md) — Stripe cards, addresses, postcodes, known products, i18n address rules.
 - [Coverage Maps](Coverage%20Maps.md) — equivalence partitions so you test _classes_, not random cases.
+- [Exploratory Session Inputs](Exploratory%20Session%20Inputs.md) — what an AI exploratory session needs from the PRD and QA notes before a new feature is explored.
+
+### Formats (work-product templates)
+
+Test cases and test plans are QA work-products written under `qa/`, not wiki records. Their
+format lives in `_templates/`:
+
+- [Test Case Template](../_templates/TestCase.md) — one behaviour class, one representative, one evidence-backed verdict.
+- [Test Plan Template](../_templates/TestPlan.md) — the surface, the axes to cover, the approach per axis, and what blocks the effort.
 
 ### Discipline
 
@@ -47,8 +56,13 @@ Knowledge lives in these notes; executable runbooks live under `.agents/skills/`
 
 ### Skills (runbooks)
 
+QA runbooks live at the repository root under `.agents/skills/` (not `.claude/skills/`, which
+holds the wiki-authoring skills). Each reads the notes above.
+
+- `.agents/skills/exploratory-session` — drive a newly shipped feature through the Playwright MCP and produce a session report; the first step of the new-feature flow.
 - `.agents/skills/test-case-design` — equivalence-partition a feature into a covering test set.
 - `.agents/skills/regression-sweep` — broad health check across a surface (SEO, perf, page-type matrix).
+- `.agents/skills/bug-retest-triage` — retest a reported defect on the live board and reach an evidence-backed verdict.
 
 ### Durable verification records
 
@@ -69,6 +83,7 @@ link the supporting evidence.
 
 ## Related Notes
 
+[Exploratory Session Inputs](Exploratory%20Session%20Inputs.md)
 [Environments & Access Matrix](Environments%20%26%20Access%20Matrix.md)
 [Bug Retest & Triage Process](Bug%20Retest%20%26%20Triage%20Process.md)
 [QA Engineer (Test Agent)](../market/personas/QA%20Engineer%20%28Test%20Agent%29.md)

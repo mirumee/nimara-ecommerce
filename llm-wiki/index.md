@@ -19,6 +19,8 @@ okf_version: "0.1"
 - [RFC Design Doc Template](_templates/RFC.md) - Reusable template for an RFC design proposal: problem, requirements, proposed solution, and cross-cutting considerations.
 - [Undefined Template](_templates/Undefined.md) - Generic template for a new concept document.
 - [Saleor Schema Note Template](_templates/saleor-schema-note.md) - Reusable template for a version-stamped Saleor GraphQL schema note.
+- [Test Case Template](_templates/TestCase.md) - Reusable format for a single QA test case: one behaviour class, one representative, one evidence-backed verdict.
+- [Test Plan Template](_templates/TestPlan.md) - Reusable format for a test plan: the surface, the axes to cover, the approach per axis, and what would block or stop the effort.
 
 # Sources
 
@@ -109,6 +111,7 @@ okf_version: "0.1"
 - [Test Method Playbooks](quality/Test%20Method%20Playbooks.md) - Cheapest reliable verification technique by defect class.
 - [Verdict & Evidence Policy](quality/Verdict%20%26%20Evidence%20Policy.md) - Evidence rules for defensible QA verdicts.
 - [Known Flaky, Blocked & Backend-Only](quality/Known%20Flaky%2C%20Blocked%20%26%20Backend-Only.md) - Areas where agents should not force a verdict.
+- [Exploratory Session Inputs](quality/Exploratory%20Session%20Inputs.md) - What an AI-driven exploratory testing session needs as input for a new feature, and how much of it the current PRD template already supplies.
 
 # Operations
 
