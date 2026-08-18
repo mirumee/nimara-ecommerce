@@ -457,3 +457,20 @@
 - **Gap**: The orphaned-PaymentIntent concern in NIM-51 is narrowed, not closed. A complete checkout
   still opens a fresh intent on every mount and remount of the payment element. Recorded as a
   deviation in IMP-0004; no separate work item exists for it.
+
+## 2026-08-18
+
+- **Create**: Added PRD-004 Newsletter Subscription at `draft` after a business grilling session. The
+  storefront newsletter form has reported success without storing anything since
+  [PR 257](https://github.com/mirumee/nimara-ecommerce/pull/257) shipped it as a placeholder on
+  2025-04-15; the PRD frames the bet as market parity for the store operator, delivered through one
+  maintained provider adapter behind a replaceable boundary, with no subscriber data held by Nimara
+  and confirmation and unsubscribe delegated to the provider. Tracked as NIM-57.
+- **Gap**: The demand claim is an assumption, not evidence. Sixteen months passed with no GitHub
+  issue asking for the capability, and open-source distribution makes adopter usage unobservable, so
+  the PRD sets no demand-side target by explicit decision and falsifies on integration upkeep cost
+  instead of on adoption.
+- **Gap**: Configuring a real provider on the public demo makes Mirumee the data controller for demo
+  subscribers and exposes the form to automated abuse. Neither the abuse protection nor the owner of
+  erasure requests is resolved; both are recorded as PRD-004 open questions gated before the demo
+  form is enabled.

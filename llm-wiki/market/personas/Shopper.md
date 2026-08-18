@@ -46,6 +46,7 @@ created: "2026-07-08T00:00:00+00:00"
 ## Related Notes
 
 [PRD-001 Natural-Language Product Discovery](../../prd/PRD-001%20Natural-Language%20Product%20Discovery.md)
+[PRD-004 Newsletter Subscription](../../prd/PRD-004%20Newsletter%20Subscription.md)
 [Customer](Customer.md)
 [Storefront Developer](Storefront%20Developer.md)
 [Ecommerce Manager](Ecommerce%20Manager.md)

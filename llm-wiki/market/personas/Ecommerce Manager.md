@@ -43,6 +43,7 @@ created: "2026-06-11T00:00:00+00:00"
 
 ## Related Notes
 
+[PRD-004 Newsletter Subscription](../../prd/PRD-004%20Newsletter%20Subscription.md)
 [Storefront Developer](Storefront%20Developer.md)
 [Marketplace Vendor](Marketplace%20Vendor.md)
 [Anti-Persona - No-Code Solo Merchant](Anti-Persona%20-%20No-Code%20Solo%20Merchant.md)

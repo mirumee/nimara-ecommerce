@@ -30,6 +30,7 @@ okf_version: "0.1"
 - [PRD-001 Natural-Language Product Discovery](prd/PRD-001%20Natural-Language%20Product%20Discovery.md) - Product requirements for closing Nimara's natural-language discovery gap with a reusable, open-source storefront capability.
 - [PRD-002 Verified User Reviews](prd/PRD-002%20User%20Reviews.md) - Product requirements for a verified-purchase user reviews system in Nimara.
 - [PRD-003 Cookie Consent & Google Consent Mode v2](prd/PRD-003%20Cookie%20Consent.md) - Product requirements for Cookie Consent and Google Consent Mode v2 in the Nimara storefront.
+- [PRD-004 Newsletter Subscription](prd/PRD-004%20Newsletter%20Subscription.md) - Product requirements for storefront newsletter subscription in Nimara, delivered through a swappable email-provider boundary that Nimara does not store subscribers behind.
 
 # Implementation Evidence
 
