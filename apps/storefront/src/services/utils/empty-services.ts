@@ -1,5 +1,6 @@
 import { type AppErrorCode } from "@nimara/domain/objects/Error";
-import { err, ok } from "@nimara/domain/objects/Result";
+import { type NewsletterSubscribeStatus } from "@nimara/domain/objects/Newsletter";
+import { type AsyncResult, err, ok } from "@nimara/domain/objects/Result";
 import type { AddressService } from "@nimara/infrastructure/address/types";
 import type { CartService } from "@nimara/infrastructure/cart/types";
 import type { CategoryService } from "@nimara/infrastructure/category/types";
@@ -10,6 +11,7 @@ import type { StripePaymentService } from "@nimara/infrastructure/payment/stripe
 import type { StoreService } from "@nimara/infrastructure/store/types";
 import type { CMSMenuService } from "@nimara/infrastructure/use-cases/cms-menu/types";
 import type { CMSPageService } from "@nimara/infrastructure/use-cases/cms-page/types";
+import type { NewsletterService } from "@nimara/infrastructure/use-cases/newsletter/types";
 import type {
   PageInfo,
   SearchService,
@@ -53,6 +55,22 @@ export const emptyCMSMenuService = {
 export const emptyCMSPageService = {
   cmsPageGet: async () => ok(null),
 } satisfies CMSPageService;
+
+/**
+ * Returns an error rather than a success. The render gate keeps the form off the
+ * page, but the server action is public and reachable directly — answering it
+ * with a fabricated success is the exact defect this capability replaced.
+ */
+export const emptyNewsletterService = {
+  newsletterSubscribe: async (): AsyncResult<NewsletterSubscribeStatus> =>
+    err([
+      {
+        code: "NEWSLETTER_NOT_CONFIGURED_ERROR",
+        message:
+          "No newsletter provider is configured. Set NEWSLETTER_SERVICE to enable this feature.",
+      },
+    ]),
+} satisfies NewsletterService;
 
 export const emptySearchService = {
   search: async () => ok({ pageInfo: emptyCursorPageInfo, results: [] }),

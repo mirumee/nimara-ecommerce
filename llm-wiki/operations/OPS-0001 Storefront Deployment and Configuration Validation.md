@@ -17,6 +17,7 @@ relations:
   product_records:
     - "[Swappable Storefront Search and Content Providers](../product/capabilities/CAP-0001%20Swappable%20Storefront%20Search%20and%20Content%20Providers.md)"
     - "[Storefront Discovery and Cart](../product/capabilities/CAP-0006%20Storefront%20Discovery%20and%20Cart.md)"
+    - "[Storefront Newsletter Subscription](../product/capabilities/CAP-0008%20Storefront%20Newsletter%20Subscription.md)"
     - "[Saleor Commerce Backend](../product/integrations/INT-0006%20Saleor%20Commerce%20Backend.md)"
 ---
 
@@ -40,18 +41,25 @@ to this deployment procedure.
   changing them. For Terraform-managed environments, retain the reviewed plan and a recoverable
   state backend.
 - Confirm that the selected Saleor channel, application permissions, payment application, and any
-  external search or content provider already exist.
+  external search, content, or newsletter provider already exist. A newsletter provider also needs
+  its provider-side setup complete before deployment: an account approved for sending, the custom
+  contact attributes that receive the consent record, the target list, the confirmation-email
+  template, and a post-confirmation page the deployment owns. Each of those fails quietly, so
+  subscriptions appear to work while data goes nowhere.
 
 # Procedure
 
 1. Check out the selected ref and install the locked dependency graph with
    `pnpm install --frozen-lockfile`.
 2. Prepare the storefront environment from `apps/storefront/.env.example`. Use the current
-   server-side provider variables (`SEARCH_SERVICE` and `CMS_SERVICE`) and the provider-specific
-   keys described by that file; do not translate them to older public variable names.
+   server-side provider variables (`SEARCH_SERVICE`, `CMS_SERVICE`, and `NEWSLETTER_SERVICE`) and the
+   provider-specific keys described by that file; do not translate them to older public variable
+   names.
 3. Run `pnpm preflight --report` with the proposed environment. Resolve every unknown provider or
    missing provider key. A green feature summary is evidence of configuration shape, not upstream
-   reachability.
+   reachability. The report covers newsletter alongside search and CMS, and prints it as off when
+   `NEWSLETTER_SERVICE` is unset — for that capability alone, off is a valid deployed state rather
+   than a finding, because it has no default provider.
 4. With `NEXT_PUBLIC_SALEOR_API_URL` pointing at the target backend, run `pnpm codegen` and review
    generated GraphQL changes. Then run `pnpm build:storefront` and the repository's relevant tests.
 5. For Terraform-managed infrastructure, copy the example public and private variable files outside
@@ -71,6 +79,9 @@ to this deployment procedure.
   than built-in sample data.
 - Confirm the default channel's currency, pricing, inventory, locale, absolute storefront URL, and
   image delivery. Exercise the external search or content provider when one is selected.
+- Confirm the home page matches the newsletter selection: the form is present with its consent
+  control when a provider is configured, and absent when none is. With a provider configured, submit
+  a test address and follow the confirmation email through to the redirect target.
 - Review build and runtime logs for environment validation, GraphQL code-generation, provider
   construction, authentication, Sentry, and image-host failures.
 
@@ -86,3 +97,6 @@ to this deployment procedure.
   separate state; a Vercel rollback does not undo them.
 - Escalate any deployment that serves sample data in production, exposes configuration diagnostics,
   or reaches a different Saleor domain or channel than the reviewed plan.
+- Escalate a deployment where the newsletter form is present but a subscriber address appears in a
+  log line or a captured exception. Nimara persists no subscriber data, so that is a defect rather
+  than a configuration choice.

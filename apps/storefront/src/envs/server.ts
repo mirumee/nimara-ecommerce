@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { isSsr } from "@nimara/infrastructure/config";
+import { NEWSLETTER_PROVIDER_IDS } from "@nimara/infrastructure/newsletter/select";
 import { CMS_PROVIDER_IDS } from "@nimara/infrastructure/providers/cms";
 import { SEARCH_PROVIDER_IDS } from "@nimara/infrastructure/search/select";
 
@@ -21,6 +22,12 @@ const schema = z.object({
     emptyStringToUndefined,
     z.enum(CMS_PROVIDER_IDS).default("saleor"),
   ),
+  // Newsletter has no default on purpose: unset is the capability's off state,
+  // not a fallback to some provider Nimara picked for the adopter.
+  NEWSLETTER_SERVICE: z.preprocess(
+    emptyStringToUndefined,
+    z.enum(NEWSLETTER_PROVIDER_IDS).optional(),
+  ),
 });
 
 type Schema = z.infer<typeof schema>;
@@ -30,5 +37,6 @@ export const serverEnvs = isSsr
       SALEOR_APP_TOKEN: process.env.SALEOR_APP_TOKEN,
       SEARCH_SERVICE: process.env.SEARCH_SERVICE,
       CMS_SERVICE: process.env.CMS_SERVICE,
+      NEWSLETTER_SERVICE: process.env.NEWSLETTER_SERVICE,
     })
   : ({} as Schema);

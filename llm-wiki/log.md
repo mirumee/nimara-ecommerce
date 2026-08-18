@@ -501,3 +501,41 @@
   submissions exhaust the demo's daily quota. PRD-004 R-2 is therefore measurable rather than
   qualitative, and Q-1 gates the demo form on abuse protection. The send-approval step must appear
   in the integration guide, or the one-business-day activation goal fails at an undocumented step.
+
+## 2026-08-18
+
+- **Create**: Added IMP-0005 Newsletter Subscription at `in_progress`, recording the implementation
+  of PRD-004 through RFC-0001 and ADR-0003 to ADR-0005: a swappable newsletter capability with no
+  default provider, a provider-neutral subscribe boundary, a maintained Brevo adapter over `fetch`
+  with an explicit timeout and no retry, a dummy adapter, and the deletion of the stub action that
+  reported success and stored nothing.
+- **Create**: Added CAP-0008 Storefront Newsletter Subscription and INT-0008 Newsletter Provider
+  Selection at `candidate`. They become `active` with a release anchor when the change merges; the
+  existing swappable-provider records stay scoped to search and content, because newsletter's unset
+  selector means the capability is off rather than falling back.
+- **Decision**: Answered RFC-0001's deferred decision as no — Nimara ships no "subscription
+  confirmed" page. `NEWSLETTER_BREVO_REDIRECT_URL` is a required, deployment-owned absolute URL, and
+  the integration guide states that pointing it at the home page leaves the shopper with no
+  acknowledgement of confirmation.
+- **Decision**: Moved ADR-0003, ADR-0004 and ADR-0005 to `accepted` and RFC-0001 to `final`.
+- **Update**: Extended OPS-0001 with the newsletter capability: `NEWSLETTER_SERVICE` joins the
+  provider variables checked before deployment, the preflight's off line is a valid deployed state
+  for this capability alone, the provider-side prerequisites that fail quietly are preconditions, and
+  a subscriber address appearing in a log or captured exception is an escalation.
+- **Gap**: ADR-0004's free-tier figures could not be re-verified at implementation time. The Brevo
+  API contract, error codes and error-body shape were confirmed against the vendor's developer
+  documentation, but the pricing page renders its plans client-side and returned no plan detail. The
+  300 emails/day cap, the send-approval step and the branding add-on still need a human check before
+  the demo form is enabled.
+- **Gap**: PRD-004 stays at `draft`. Q-1 (demo abuse protection) and Q-2 (owner of erasure requests)
+  remain unanswered and still gate enabling the demo form; the status transition is Product's.
+- **Gap**: Live Brevo testing found two provider-side prerequisites that RFC-0001 and ADR-0004 both
+  missed, and that no code can detect: the confirmation template must carry the tag `optin`, or the
+  subscribe call fails with `An active DOI template does not exist` whatever id is passed, and the
+  confirmation link must be `{{ params.DOIurl }}`, not the tag Brevo's own sign-up forms use. An
+  untagged template still sends as an ordinary transactional email, which makes "the template works"
+  a misleading check. Both are now hard prerequisites in the integration guide.
+- **Update**: A subscribe call answers `201` or `204` and both mean sent, confirming the adapter's
+  treatment of every `2xx` as acceptance. ADR-0004's claim that Brevo silently drops unknown contact
+  attributes remains unverified — the template error masked it — so only the failure mode of a
+  missing consent attribute is still open, not the requirement.

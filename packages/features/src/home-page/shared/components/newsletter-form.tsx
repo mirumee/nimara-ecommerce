@@ -2,16 +2,32 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Mail } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { type ReactNode } from "react";
 import { FormProvider, type SubmitHandler, useForm } from "react-hook-form";
 
 import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
+import { LocalizedLink } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
+import { Checkbox } from "@nimara/ui/components/checkbox";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@nimara/ui/components/form";
 import { useToast } from "@nimara/ui/hooks";
 
-import { newsletterSubscribeAction } from "../actions/newsletter-subscribe";
 import { type FormSchema, formSchema } from "../schema/newsletter";
+import { type NewsletterSubscribeAction } from "../types";
 
-export const Newsletter = () => {
+export const Newsletter = ({
+  subscribeAction,
+  privacyPolicyPath,
+}: {
+  privacyPolicyPath: string;
+  subscribeAction: NewsletterSubscribeAction;
+}) => {
   const t = useTranslations();
   const { toast } = useToast();
 
@@ -20,13 +36,14 @@ export const Newsletter = () => {
     defaultValues: {
       name: "",
       email: "",
+      consent: false,
     },
   });
 
   const isPending = form.formState.isSubmitting;
 
   const handleSubmit: SubmitHandler<FormSchema> = async (values) => {
-    const result = await newsletterSubscribeAction(values);
+    const result = await subscribeAction(values);
 
     if (result.ok) {
       form.reset();
@@ -35,13 +52,15 @@ export const Newsletter = () => {
         description: t("newsletter.subscribe-success"),
         position: "center",
       });
-    } else {
-      toast({
-        description: t("newsletter.subscribe-error"),
-        position: "center",
-        variant: "destructive",
-      });
+
+      return;
     }
+
+    toast({
+      description: t(`errors.${result.errors[0].code}`),
+      position: "center",
+      variant: "destructive",
+    });
   };
 
   return (
@@ -59,28 +78,70 @@ export const Newsletter = () => {
         <FormProvider {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            className="mt-8 items-start gap-4 sm:flex"
+            className="mt-8"
             noValidate
           >
-            <TextFormField
-              name="name"
-              label={t("newsletter.subscribe-name-field-label")}
-              placeholder={t("newsletter.subscribe-name-field-placeholder")}
-              type="text"
-              disabled={isPending}
-            />
-            <TextFormField
-              name="email"
-              label={t("newsletter.subscribe-email-field-label")}
-              placeholder={t("newsletter.subscribe-email-field-placeholder")}
-              type="email"
-              disabled={isPending}
-            />
-            <div className="mt-3 sm:mt-8">
-              <Button type="submit" disabled={isPending} loading={isPending}>
-                {t("newsletter.subscribe-cta")}
-              </Button>
+            <div className="items-start gap-4 sm:flex">
+              <TextFormField
+                name="name"
+                label={t("newsletter.subscribe-name-field-label")}
+                placeholder={t("newsletter.subscribe-name-field-placeholder")}
+                type="text"
+                disabled={isPending}
+              />
+              <TextFormField
+                name="email"
+                label={t("newsletter.subscribe-email-field-label")}
+                placeholder={t("newsletter.subscribe-email-field-placeholder")}
+                type="email"
+                disabled={isPending}
+              />
+              <div className="mt-3 sm:mt-8">
+                <Button type="submit" disabled={isPending} loading={isPending}>
+                  {t("newsletter.subscribe-cta")}
+                </Button>
+              </div>
             </div>
+            <FormField
+              control={form.control}
+              name="consent"
+              render={({ field }) => (
+                <FormItem className="grid gap-2 pt-4">
+                  <div className="flex items-start gap-2">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        onBlur={field.onBlur}
+                        ref={field.ref}
+                        name={field.name}
+                        disabled={isPending}
+                        id="newsletter-consent"
+                      />
+                    </FormControl>
+                    <FormLabel
+                      htmlFor="newsletter-consent"
+                      className="text-sm font-normal"
+                    >
+                      {t.rich("newsletter.consent-label", {
+                        privacyPolicy: (chunks: ReactNode) => (
+                          <LocalizedLink
+                            href={privacyPolicyPath}
+                            className="underline decoration-gray-400 underline-offset-2"
+                          >
+                            {chunks}
+                          </LocalizedLink>
+                        ),
+                      })}
+                    </FormLabel>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <p className="text-muted-foreground mt-4 text-sm">
+              {t("newsletter.confirmation-notice")}
+            </p>
           </form>
         </FormProvider>
       </div>

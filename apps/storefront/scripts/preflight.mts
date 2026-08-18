@@ -27,6 +27,7 @@ import {
 } from "@clack/prompts";
 
 import { cmsPageProviders } from "@nimara/infrastructure/cms-page/select";
+import { newsletterProviders } from "@nimara/infrastructure/newsletter/select";
 import { searchProviders } from "@nimara/infrastructure/search/select";
 
 type SafeParseResult = {
@@ -40,6 +41,11 @@ type Provider = {
 };
 
 type Capability = {
+  /**
+   * Provider applied when the selector is unset. Absent means the capability is
+   * off until a provider is named — the storefront then renders nothing for it.
+   */
+  defaultProvider?: string;
   name: string;
   providers: readonly Provider[];
   selectVar: string;
@@ -95,11 +101,22 @@ const isProduction = env.NEXT_PUBLIC_ENVIRONMENT === "PRODUCTION";
 const saleorConfigured = has("NEXT_PUBLIC_SALEOR_API_URL");
 
 const CAPABILITIES: Capability[] = [
-  { name: "Search", selectVar: "SEARCH_SERVICE", providers: searchProviders },
+  {
+    name: "Search",
+    selectVar: "SEARCH_SERVICE",
+    providers: searchProviders,
+    defaultProvider: "saleor",
+  },
   {
     name: "CMS (pages + menus)",
     selectVar: "CMS_SERVICE",
     providers: cmsPageProviders,
+    defaultProvider: "saleor",
+  },
+  {
+    name: "Newsletter",
+    selectVar: "NEWSLETTER_SERVICE",
+    providers: newsletterProviders,
   },
 ];
 
@@ -356,7 +373,15 @@ const renderReport = (): void => {
 
   for (const capability of CAPABILITIES) {
     const label = capability.name.padEnd(intPad);
-    const requested = env[capability.selectVar] || "saleor";
+    const requested = env[capability.selectVar] || capability.defaultProvider;
+
+    if (!requested) {
+      console.log(
+        `  ${OFF}  ${label}  off (set ${capability.selectVar} to enable)`,
+      );
+      continue;
+    }
+
     const provider = capability.providers.find((p) => p.id === requested);
 
     if (!provider) {
@@ -393,6 +418,9 @@ const renderReport = (): void => {
 
 // --- Interactive wizard -------------------------------------------------------
 
+/** Wizard-only sentinel for "leave this capability off". */
+const OFF_CHOICE = "";
+
 const exitIfCancelled = <T,>(value: T | symbol): T => {
   if (isCancel(value)) {
     cancel("Cancelled.");
@@ -409,15 +437,25 @@ const runWizard = async (): Promise<void> => {
 
   for (const capability of CAPABILITIES) {
     const ordered = orderProviders(capability.providers);
+    const providerOptions = ordered.map((provider) => ({
+      value: provider.id,
+      label: provider.id,
+      hint: requiredKeys(provider).join(", ") || "no env required",
+    }));
     const choice = exitIfCancelled(
       await select({
         message: `${capability.name} provider`,
-        initialValue: "saleor",
-        options: ordered.map((provider) => ({
-          value: provider.id,
-          label: provider.id,
-          hint: requiredKeys(provider).join(", ") || "no env required",
-        })),
+        initialValue: capability.defaultProvider ?? OFF_CHOICE,
+        options: capability.defaultProvider
+          ? providerOptions
+          : [
+              {
+                value: OFF_CHOICE,
+                label: "none",
+                hint: "capability off — nothing is rendered for it",
+              },
+              ...providerOptions,
+            ],
       }),
     );
 

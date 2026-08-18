@@ -2,9 +2,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { IntegrationReportRow } from "./integration-doctor";
 
-const envMock = {
+const envMock: Record<string, string | undefined> = {
   SEARCH_SERVICE: "saleor",
   CMS_SERVICE: "saleor",
+  NEWSLETTER_SERVICE: undefined,
   ENVIRONMENT: "LOCAL",
 };
 const saleorMock = { configured: true };
@@ -36,6 +37,7 @@ describe("buildIntegrationReport", () => {
   beforeEach(() => {
     envMock.SEARCH_SERVICE = "saleor";
     envMock.CMS_SERVICE = "saleor";
+    envMock.NEWSLETTER_SERVICE = undefined;
     envMock.ENVIRONMENT = "LOCAL";
     saleorMock.configured = true;
   });
@@ -85,5 +87,29 @@ describe("buildIntegrationReport", () => {
       ok: true,
       selected: "dummy",
     });
+  });
+
+  it("reports newsletter as having no provider until the selector names one", () => {
+    expect(rowFor(buildIntegrationReport({}), "newsletter")).toMatchObject({
+      ok: true,
+      missing: [],
+      selected: null,
+    });
+  });
+
+  it("flags the brevo keys once newsletter names that provider", () => {
+    envMock.NEWSLETTER_SERVICE = "brevo";
+
+    const newsletter = rowFor(buildIntegrationReport({}), "newsletter");
+
+    expect(newsletter.ok).toBe(false);
+    expect(newsletter.missing).toEqual(
+      expect.arrayContaining([
+        "NEWSLETTER_BREVO_API_KEY",
+        "NEWSLETTER_BREVO_LIST_IDS",
+        "NEWSLETTER_BREVO_DOI_TEMPLATE_ID",
+        "NEWSLETTER_BREVO_REDIRECT_URL",
+      ]),
+    );
   });
 });

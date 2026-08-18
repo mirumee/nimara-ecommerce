@@ -12,6 +12,10 @@ export class HomePage extends BasePage {
   readonly newsletterEmail: Locator;
   readonly newsletterName: Locator;
   readonly newsletterButton: Locator;
+  readonly newsletterConsent: Locator;
+  readonly newsletterConsentError: Locator;
+  readonly newsletterConfirmationNotice: Locator;
+  readonly newsletterSuccess: Locator;
   readonly productsCarousel: Locator;
   readonly productsCarouselDescription: Locator;
   readonly allProductsCarouselButton: Locator;
@@ -34,6 +38,23 @@ export class HomePage extends BasePage {
     this.newsletterEmail = page.getByPlaceholder("john.doe@example.com");
     this.newsletterName = page.getByPlaceholder("John Doe");
     this.newsletterButton = page.getByRole("button", { name: "Subscribe" });
+    this.newsletterConsent = page.getByRole("checkbox", {
+      name: /marketing emails/i,
+    });
+    this.newsletterConsentError = page.getByText(
+      storeParagraphs.newsletterConsentRequired,
+    );
+    this.newsletterConfirmationNotice = page.getByText(
+      storeParagraphs.newsletterConfirmationNotice,
+    );
+    /*
+     * Exact match on purpose: the toast text is repeated in the screen-reader
+     * announce region as "Notification <text>", which a substring match hits too.
+     */
+    this.newsletterSuccess = page.getByText(
+      storeParagraphs.newsletterSubscribeSuccess,
+      { exact: true },
+    );
     this.productsCarousel = page.getByRole("heading", {
       name: storeHeaders.productsCarousel,
     });
@@ -63,6 +84,10 @@ export class HomePage extends BasePage {
     await this.allProductsCarouselButton.click();
   }
 
+  /**
+   * The form is present only where a newsletter provider is configured. With no
+   * provider it must be absent rather than inert, so both branches assert.
+   */
   async assertNewsletterPresence(enabledHomepageElements: boolean) {
     if (enabledHomepageElements) {
       await expect(this.newsletter).toBeVisible();
@@ -70,7 +95,31 @@ export class HomePage extends BasePage {
       await expect(this.newsletterEmail).toBeVisible();
       await expect(this.newsletterName).toBeVisible();
       await expect(this.newsletterButton).toBeVisible();
+      await expect(this.newsletterConsent).toBeVisible();
+      await expect(this.newsletterConfirmationNotice).toBeVisible();
+
+      return;
     }
+
+    await expect(this.newsletter).toBeHidden();
+    await expect(this.newsletterEmail).toBeHidden();
+    await expect(this.newsletterButton).toBeHidden();
+  }
+
+  async fillNewsletter({ name, email }: { email: string; name: string }) {
+    await this.newsletterName.fill(name);
+    await this.newsletterEmail.fill(email);
+  }
+
+  /** Keyboard-only path through the consent control (NFR-3). */
+  async grantNewsletterConsentWithKeyboard() {
+    await this.newsletterConsent.focus();
+    await this.page.keyboard.press("Space");
+    await expect(this.newsletterConsent).toBeChecked();
+  }
+
+  async submitNewsletter() {
+    await this.newsletterButton.click();
   }
 
   async assertProductCarouselPresence(productsCarouselList: boolean) {

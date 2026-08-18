@@ -22,6 +22,7 @@ export const StandardHomeView = async ({
   paths,
   revalidateTime,
   region,
+  newsletterSubscribeAction,
 }: StandardHomeViewProps) => {
   return (
     <HomeProvider
@@ -50,9 +51,14 @@ export const StandardHomeView = async ({
               paths={{ home: paths.home, privacyPolicy: paths.privacyPolicy }}
             />
           </div>
-          <div className="mb-8">
-            <Newsletter />
-          </div>
+          {newsletterSubscribeAction && (
+            <div className="mb-8">
+              <Newsletter
+                subscribeAction={newsletterSubscribeAction}
+                privacyPolicyPath={paths.privacyPolicy}
+              />
+            </div>
+          )}
         </section>
       )}
     />

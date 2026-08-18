@@ -71,6 +71,12 @@ export const storeHeaders = {
 export const storeParagraphs = {
   newsletter:
     "Subscribe to our newsletter and be the first to get updates on new products and promotions.",
+  newsletterConfirmationNotice:
+    "We will email you a confirmation link. Your subscription starts once you confirm it.",
+  newsletterConsentRequired:
+    "Please agree to receive marketing emails before subscribing.",
+  newsletterSubscribeSuccess:
+    "Almost done. Check your inbox and confirm your subscription to finish.",
 };
 export type Product = typeof product;
 

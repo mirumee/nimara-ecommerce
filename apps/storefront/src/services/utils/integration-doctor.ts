@@ -2,10 +2,12 @@ import { type ZodType } from "zod";
 
 import { cmsMenuProviders } from "@nimara/infrastructure/cms-menu/select";
 import { cmsPageProviders } from "@nimara/infrastructure/cms-page/select";
+import { newsletterProviders } from "@nimara/infrastructure/newsletter/select";
 import { searchProviders } from "@nimara/infrastructure/search/select";
 
 import {
   resolveCMSProvider,
+  resolveNewsletterProvider,
   resolveSearchProvider,
 } from "@/services/integrations/resolve";
 
@@ -37,6 +39,11 @@ const CAPABILITIES: CapabilityEntry[] = [
     capability: "cms-menu",
     providers: cmsMenuProviders,
     resolve: resolveCMSProvider,
+  },
+  {
+    capability: "newsletter",
+    providers: newsletterProviders,
+    resolve: resolveNewsletterProvider,
   },
 ];
 

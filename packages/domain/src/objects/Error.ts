@@ -111,6 +111,22 @@ export const CHECKOUT_ERROR_CODES = [
 export type CheckoutErrorCode = (typeof CHECKOUT_ERROR_CODES)[number];
 
 /**
+ * @description Error codes related to newsletter subscription. The provider
+ * outcomes are split because one opaque code cannot produce both "check the
+ * address you typed" and "try again shortly", and because an exhausted send
+ * quota has to stay distinguishable from a provider outage. None of them varies
+ * with list membership.
+ */
+export const NEWSLETTER_ERROR_CODES = [
+  "NEWSLETTER_ADDRESS_REJECTED_ERROR",
+  "NEWSLETTER_CONSENT_REQUIRED_ERROR",
+  "NEWSLETTER_NOT_CONFIGURED_ERROR",
+  "NEWSLETTER_PROVIDER_UNAVAILABLE_ERROR",
+  "NEWSLETTER_QUOTA_EXCEEDED_ERROR",
+] as const satisfies ErrorCodeFormat[];
+export type NewsletterErrorCode = (typeof NEWSLETTER_ERROR_CODES)[number];
+
+/**
  * @type GenericErrorCode
  * @description Union type of all error codes.
  */
@@ -119,7 +135,8 @@ export type GenericErrorCode =
   | AddressErrorCode
   | AuthErrorCode
   | CheckoutErrorCode
-  | HTTPErrorCode;
+  | HTTPErrorCode
+  | NewsletterErrorCode;
 
 const VALIDATION_ERROR_CODES = [
   "INVALID_VALUE_ERROR",

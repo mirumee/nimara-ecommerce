@@ -39,6 +39,7 @@ okf_version: "0.1"
 - [IMP-0002 Stripe Payment Application Multi-Tenancy](tech/implementation/IMP-0002%20Stripe%20Payment%20Application%20Multi-Tenancy.md) - One payment-application deployment serves many Saleor installations, keyed by domain and gated by a fail-closed allowlist.
 - [IMP-0003 Payment Application Configuration Storage Selection](tech/implementation/IMP-0003%20Payment%20Application%20Configuration%20Storage%20Selection.md) - A storage-agnostic provider core with selectable backends, adding an on-disk store so the application runs without a hosted configuration service.
 - [IMP-0004 Checkout Step Guard Enforcement](tech/implementation/IMP-0004%20Checkout%20Step%20Guard%20Enforcement.md) - Checkout step selection is enforced against completeness on every request, so a step reached by URL cannot skip earlier steps or open a gateway transaction.
+- [IMP-0005 Newsletter Subscription](tech/implementation/IMP-0005%20Newsletter%20Subscription.md) - Replaces the storefront's newsletter stub with a configuration-gated capability behind a provider-neutral subscribe boundary, a maintained Brevo adapter, and no subscriber data held by Nimara.
 
 # Current Product State
 
@@ -54,6 +55,7 @@ okf_version: "0.1"
 - [CAP-0005 Agent-Compatible Commerce](product/capabilities/CAP-0005%20Agent-Compatible%20Commerce.md) - Discoverable, negotiated catalog, cart, checkout-session, and order operations for agents.
 - [CAP-0006 Storefront Discovery and Cart](product/capabilities/CAP-0006%20Storefront%20Discovery%20and%20Cart.md) - Regional search, collections, product and vendor pages, and standard or vendor-aware carts.
 - [CAP-0007 Customer Account Self-Service](product/capabilities/CAP-0007%20Customer%20Account%20Self-Service.md) - Account, profile, address, order, return, saved-payment, and privacy operations.
+- [CAP-0008 Storefront Newsletter Subscription](product/capabilities/CAP-0008%20Storefront%20Newsletter%20Subscription.md) - The storefront can capture consented newsletter subscribers into a deployment's own email service provider, and is absent where no provider is configured.
 
 # Product Flows
 
@@ -71,6 +73,7 @@ okf_version: "0.1"
 - [INT-0005 Stripe Payment Application](product/integrations/INT-0005%20Stripe%20Payment%20Application.md) - Standard-checkout PaymentIntent configuration, transaction webhooks, and asynchronous state reporting.
 - [INT-0006 Saleor Commerce Backend](product/integrations/INT-0006%20Saleor%20Commerce%20Backend.md) - Core commerce state through GraphQL, application, and webhook contracts.
 - [INT-0007 Marketplace Checkout Payment Orchestration](product/integrations/INT-0007%20Marketplace%20Checkout%20Payment%20Orchestration.md) - One platform payment across multiple vendor checkouts with asynchronous order completion.
+- [INT-0008 Newsletter Provider Selection](product/integrations/INT-0008%20Newsletter%20Provider%20Selection.md) - Build-time contract for selecting and configuring the storefront newsletter provider, whose unset selector is the capability's off state rather than a default.
 
 # Product Strategy
 

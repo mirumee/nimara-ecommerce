@@ -67,9 +67,11 @@ This page lists and explains all environment variables used by the Nimara storef
 
 ## Integrations (provider selection)
 
-Each capability (search, CMS) is served by one swappable provider, chosen at build time and read server-side only. When Saleor is not configured, search and CMS fall back to the built-in `dummy` provider (sample data) so a fresh clone is populated out of the box — except when `NEXT_PUBLIC_ENVIRONMENT=PRODUCTION`, where they stay empty so demo data never leaks to a live deployment.
+Each capability (search, CMS, newsletter) is served by one swappable provider, chosen at build time and read server-side only. When Saleor is not configured, search and CMS fall back to the built-in `dummy` provider (sample data) so a fresh clone is populated out of the box — except when `NEXT_PUBLIC_ENVIRONMENT=PRODUCTION`, where they stay empty so demo data never leaks to a live deployment.
 
-Per-provider config is namespaced (`SEARCH_<PROVIDER>_*` / `CMS_<PROVIDER>_*`) and validated only when that provider is selected — set only the variables for the provider you picked.
+Newsletter is the exception to the fallback above: it has **no default provider**. Nimara cannot pick an email service provider on your behalf, so an unset `NEWSLETTER_SERVICE` means the capability is off and the home-page newsletter form is absent.
+
+Per-provider config is namespaced (`SEARCH_<PROVIDER>_*` / `CMS_<PROVIDER>_*` / `NEWSLETTER_<PROVIDER>_*`) and validated only when that provider is selected — set only the variables for the provider you picked.
 
 ### Search
 
@@ -108,6 +110,45 @@ Per-provider config is namespaced (`SEARCH_<PROVIDER>_*` / `CMS_<PROVIDER>_*`) a
 
 - **Description**: ButterCMS read token. Required if `CMS_SERVICE` is set to `butter-cms`.
 - **How to get it**: ButterCMS dashboard → **Settings** → **API Tokens**.
+
+### Newsletter
+
+See [Newsletter Integration](../Integrations/newsletter-integration) for the
+provider-side setup these variables depend on.
+
+#### `NEWSLETTER_SERVICE`
+
+- **Description**: Email service provider that receives newsletter subscriptions (server-side only). Unset means the capability is off and the newsletter form is not rendered.
+- **Options**: `brevo`, `dummy`
+- **Default**: none — the capability is off until you set this.
+
+#### `NEWSLETTER_BREVO_API_KEY`
+
+- **Description**: Brevo API key. Required if `NEWSLETTER_SERVICE` is set to `brevo`.
+- **How to get it**: Brevo dashboard → **SMTP & API** → **API Keys** → **Generate a new API key**.
+- **Example**: `xkeysib-...`
+
+#### `NEWSLETTER_BREVO_LIST_IDS`
+
+- **Description**: Comma-separated Brevo list ids the contact joins after confirming. Required if `NEWSLETTER_SERVICE` is set to `brevo`.
+- **How to get it**: Brevo dashboard → **Contacts** → **Lists** → the id shown next to each list.
+- **Example**: `4,9`
+
+#### `NEWSLETTER_BREVO_DOI_TEMPLATE_ID`
+
+- **Description**: Id of the Brevo double-opt-in email template, or a JSON map of locale to template id containing a `default` key. Required if `NEWSLETTER_SERVICE` is set to `brevo`.
+- **How to get it**: Brevo dashboard → **Campaigns** → **Templates** → open the double-opt-in template and copy its id. The template must be active, carry the tag `optin`, and place its confirmation link on the `{{ params.DOIurl }}` tag — see the integration guide, because Brevo enforces none of the three at creation time.
+- **Example**: `12` or `{"default":12,"en-GB":15}`
+
+#### `NEWSLETTER_BREVO_REDIRECT_URL`
+
+- **Description**: Absolute URL the shopper lands on after confirming. Required if `NEWSLETTER_SERVICE` is set to `brevo`. Nimara ships no confirmation page — point this at one your deployment owns.
+- **Example**: `https://my-store.com/newsletter/confirmed`
+
+#### `NEWSLETTER_BREVO_TIMEOUT_MS`
+
+- **Description**: Budget for the outbound Brevo call. A request that exceeds it is abandoned and never retried, because Brevo may already have accepted it and sent the confirmation email.
+- **Default**: `3000`
 
 ---
 

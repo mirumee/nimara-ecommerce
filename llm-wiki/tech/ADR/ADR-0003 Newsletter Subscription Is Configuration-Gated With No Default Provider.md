@@ -9,7 +9,7 @@ tags:
   - "provider-selection"
   - "configuration"
 created: "2026-08-18T00:00:00+00:00"
-status: "proposed"
+status: "accepted"
 owner: "engineering"
 superseded_by: null
 ---
