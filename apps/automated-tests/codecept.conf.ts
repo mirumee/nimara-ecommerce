@@ -6,10 +6,6 @@ if (process.env.TEST_ENV_URL === undefined) {
   throw new Error("Missing TEST_ENV_URL");
 }
 
-/**
- * CodeceptJS trial configuration. Scoped to `codecept/` so it can never pick up
- * the Playwright specs in `tests/`. See docs/adr/0001-codeceptjs-spike.md.
- */
 export const config = {
   name: "automated-tests",
   // The v4 default for new projects. Feature/Scenario/Before and inject() are

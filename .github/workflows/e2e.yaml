@@ -15,6 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       TEST_ENV_URL: ${{ inputs.environment }}
+      USER_EMAIL: ${{ secrets.USER_EMAIL }}
+      USER_PASSWORD: ${{ secrets.USER_PASSWORD }}
       CI: true
 
     steps:
@@ -55,8 +57,10 @@ jobs:
           retention-days: 7
 
       - name: Install Lighthouse CI
+        if: always()
         run: pnpm add -D @lhci/cli -w
 
       - name: Run Lighthouse CI
+        if: always()
         run: pnpm exec lhci autorun
         continue-on-error: true

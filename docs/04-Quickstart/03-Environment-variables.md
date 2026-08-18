@@ -212,8 +212,8 @@ These variables configure the `apps/automated-tests` CodeceptJS suite, not the s
 
 #### `LOCALE`
 
-- **Description**: Selects the URL prefix the tests use. `us` adds no prefix and `gb` adds
-  `/gb`. Defaults to `us`.
+- **Description**: Selects the URL prefix and address fixture the tests use. `us` adds no
+  prefix and `gb` adds `/gb`. Defaults to `us`, and any other value fails the run at startup.
 - **Example**: `us`
 
 #### `USER_EMAIL`, `USER_PASSWORD`

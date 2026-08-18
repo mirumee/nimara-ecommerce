@@ -59,7 +59,7 @@ decision, not a detail of it.
   link, product list visibility, a product click through to the detail page, sorting through
   the URL, the filter panel, pagination, and the unknown-slug not-found page. No CodeceptJS
   scenario covers this surface. A whole page type is now unexercised.
-- **Checkout step guard: 11 tests to zero.** This is the most consequential loss. It was the
+- **Checkout step guard: 9 tests to zero.** This is the most consequential loss. It was the
   only browser evidence for IMP-0004, which records that these tests detected the defect they
   were written for. A regression is now caught only by the 22 unit cases in
   `apps/storefront/src/foundation/checkout/steps.test.ts`. The criterion those units do not
@@ -117,6 +117,12 @@ ADR 0001 kept the trial out of `e2e.yaml` so it could never gate a workflow. The
 The workflow is still `workflow_dispatch` only, so the suite gates no required check, exactly
 as before.
 
+Because the suite now runs there, the job maps `USER_EMAIL` and `USER_PASSWORD` from
+repository secrets; without them the login scenario fills empty fields and times out. The
+Lighthouse steps carry `if: always()`, so a failed or flaky scenario no longer skips the
+performance run. The guest-checkout scenarios place real Stripe test orders against the
+dispatched environment on every run.
+
 ### The homepage smoke test changed channel
 
 Its page object read `URLS()` from `utils/constants.ts`, which defaulted to channel `gb` and
@@ -126,6 +132,10 @@ resolve: the storefront routes `/` as en-US and `/gb` as en-GB. This removes a s
 the login and guest-checkout scenarios already used the `us` default with US product slugs.
 Verified against the deployed demo storefront: 2 passed with the default, and 2 passed with
 `LOCALE=gb`.
+
+`LOCALE` also selects the address fixture, so `codecept/data/locales.ts` rejects a value
+outside `us` and `gb` rather than falling back to `us`. A fallback would run US URLs with GB
+address data and fail mid-checkout on a missing field instead of at startup.
 
 ### Named follow-ups
 
