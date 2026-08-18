@@ -19,9 +19,11 @@ import { Summary } from "@/features/checkout/summary";
 import {
   CHECKOUT_STEPS_MAP,
   CheckoutSections,
-  type CheckoutStep,
   CheckoutWrapper,
   getCheckoutShippingAddressSectionData,
+  getFirstIncompleteCheckoutStep,
+  isCheckoutStepReachable,
+  resolveCheckoutStep,
 } from "@/foundation/checkout";
 import * as foundationActions from "@/foundation/checkout";
 import { getCheckoutPaymentSectionData } from "@/foundation/checkout/sections/payment/server";
@@ -34,7 +36,7 @@ interface PageProps {
   searchParams: Promise<{
     country?: AllCountryCode;
     errorCode?: AppErrorCode;
-    step: CheckoutStep | null;
+    step?: string;
   }>;
 }
 
@@ -68,25 +70,18 @@ export default async function Page(props: PageProps) {
     marketplaceCheckouts?.[0].checkout ??
     checkout;
 
-  const currentStep = searchParams.step;
+  const currentStep = resolveCheckoutStep(searchParams.step);
 
-  if (!currentStep) {
-    let step: CheckoutStep;
-
-    if (checkout.email === null) {
-      step = CHECKOUT_STEPS_MAP.USER_DETAILS;
-    } else if (!checkout.isShippingRequired) {
-      step = CHECKOUT_STEPS_MAP.PAYMENT;
-    } else if (checkout.shippingAddress === null) {
-      step = CHECKOUT_STEPS_MAP.SHIPPING_ADDRESS;
-    } else if (checkout.deliveryMethod === null) {
-      step = CHECKOUT_STEPS_MAP.DELIVERY_METHOD;
-    } else {
-      step = CHECKOUT_STEPS_MAP.PAYMENT;
-    }
-
+  if (
+    !currentStep ||
+    !isCheckoutStepReachable({ checkout, step: currentStep })
+  ) {
     redirect({
-      href: paths.checkout.asPath({ query: { [QUERY_PARAMS.step]: step } }),
+      href: paths.checkout.asPath({
+        query: {
+          [QUERY_PARAMS.step]: getFirstIncompleteCheckoutStep(checkout),
+        },
+      }),
       locale,
     });
   }

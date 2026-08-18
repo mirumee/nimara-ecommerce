@@ -6,8 +6,8 @@ export const userDetailsEmailFormSchema = ({ t }: { t: GetTranslations }) =>
   z.object({
     email: z
       .string()
-      .email({ message: t("form-validation.invalid-email") })
       .min(1, { message: t("form-validation.required") })
+      .email({ message: t("form-validation.invalid-email") })
       .trim(),
   });
 

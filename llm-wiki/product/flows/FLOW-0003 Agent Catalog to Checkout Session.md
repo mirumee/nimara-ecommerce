@@ -8,8 +8,6 @@ tags:
   - "catalog"
   - "checkout"
 created: "2026-07-21T00:00:00+00:00"
-timestamp: "2026-07-21T00:00:00+00:00"
-id: "FLOW-0003"
 status: "active"
 owner: "product-engineering-and-qa"
 relations:
@@ -70,15 +68,3 @@ The result is a channel-specific Saleor checkout represented as a protocol check
 stable identifier, current line items and totals, state, and a buyer continuation link. This flow
 ends at the checkout-session boundary: it does not claim payment authorization, checkout
 completion, or order creation.
-
-# Provenance
-
-- Availability is anchored in the public
-  [`v2.0.0` release snapshot](https://github.com/mirumee/nimara-ecommerce/tree/1fd1a16558bac1cfebd9a2356ff79061f8627da9).
-- The immutable snapshot contains the
-  [catalog search route](https://github.com/mirumee/nimara-ecommerce/blob/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/storefront/src/app/api/ucp/%5BchannelSlug%5D/catalog/search/route.ts),
-  [cart-creation route](https://github.com/mirumee/nimara-ecommerce/blob/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/storefront/src/app/api/ucp/%5BchannelSlug%5D/carts/route.ts),
-  [checkout-session creation route](https://github.com/mirumee/nimara-ecommerce/blob/1fd1a16558bac1cfebd9a2356ff79061f8627da9/apps/storefront/src/app/api/ucp/%5BchannelSlug%5D/checkout-sessions/route.ts),
-  and
-  [Saleor-backed session implementation](https://github.com/mirumee/nimara-ecommerce/blob/1fd1a16558bac1cfebd9a2356ff79061f8627da9/packages/infrastructure/src/ucp/saleor/service.ts)
-  that establish the flow and its boundary.

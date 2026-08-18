@@ -9,8 +9,6 @@ tags:
   - "codegen"
   - "schema"
 created: "2026-07-21T00:00:00+00:00"
-timestamp: "2026-07-21T00:00:00+00:00"
-id: "OPS-0007"
 status: "active"
 owner: "platform-engineering"
 kind: "runbook"
@@ -79,14 +77,3 @@ longer match the backend used for build and deployment.
 - If only one generated client fails, use the scoped root commands (`codegen:saleor`,
   `codegen:marketplace`, or `codegen:stripe`) to isolate diagnosis, then run the complete codegen and
   verification sequence before release.
-
-# Provenance
-
-- This procedure is anchored at exact commit
-  [`75d6bc55edddf431adcc348009a1c226f77cc005`](https://github.com/mirumee/nimara-ecommerce/tree/75d6bc55edddf431adcc348009a1c226f77cc005),
-  including the
-  [GraphQL code-generation configuration](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/packages/codegen/codegen.ts),
-  [code-generation scripts](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/packages/codegen/package.json),
-  [Turbo task contract](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/turbo.json),
-  and
-  [schema-note freshness checker](https://github.com/mirumee/nimara-ecommerce/blob/75d6bc55edddf431adcc348009a1c226f77cc005/scripts/wiki-saleor-check.mjs).

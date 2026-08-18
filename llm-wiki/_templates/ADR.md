@@ -6,11 +6,17 @@ tags:
   - "template"
   - "adr"
 created: "2026-06-16T00:00:00+00:00"
-timestamp: "2026-07-20T00:00:00+00:00"
+# The created record's `type`. It lives in `tech/ADR/`, named `ADR-NNNN <Title>.md`. The
+# filename is the record's identity; there is no `id` field.
 template_for: "Architecture Decision Record"
-id: "ADR-0000"
+# `proposed`, `accepted`, `rejected`, or `superseded`. New records start as `proposed`. An
+# accepted ADR is immutable: replace a decision by writing a new ADR, setting this one to
+# `superseded`, and naming the replacement in `superseded_by`. Register in
+# `tech/ADR/ADR MOC.md` and `index.md`.
 status: "proposed"
 owner: "github-user-or-team"
+# `null` unless `status` is `superseded`; then exactly one relative Markdown link to the
+# replacing ADR.
 superseded_by: null
 ---
 

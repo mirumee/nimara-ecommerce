@@ -6,7 +6,6 @@ tags:
   - "adr"
   - "moc"
 created: "2026-07-08T00:00:00+00:00"
-timestamp: "2026-07-20T00:00:00+00:00"
 ---
 
 ## Content
@@ -29,6 +28,7 @@ is one standalone note following the [Michael Nygard template](https://github.co
 <!-- Newest last. Format: - ADR-NNNN Title - Status - one-line summary -->
 
 - [ADR-0001 Vouchers Are Disabled In Marketplace Checkout](ADR-0001%20Vouchers%20Are%20Disabled%20In%20Marketplace%20Checkout.md) - proposed - Promo codes are hidden in the storefront checkout when marketplace mode is enabled, because a per-vendor checkout split cannot express a cart-wide Saleor voucher.
+- [ADR-0002 Payment Application Configuration Storage Is Selectable](ADR-0002%20Payment%20Application%20Configuration%20Storage%20Is%20Selectable.md) - proposed - Storage sits behind one read/write seam and is chosen by configuration: a deployment keeps the hosted store, a developer machine may keep an on-disk file holding tokens and provider keys in readable text.
 
 ## Related Notes
 

@@ -20,6 +20,7 @@ export const updateEmailFormSchema = ({ t }: { t: GetTranslations }) =>
   z.object({
     email: z
       .string()
+      .min(1, { message: t("form-validation.required") })
       .email({ message: t("form-validation.invalid-email") })
       .trim(),
     password: z
@@ -47,7 +48,10 @@ export const updatePasswordFormSchema = ({ t }: { t: GetTranslations }) =>
           }),
         })
         .trim(),
-      confirm: z.string().trim(),
+      confirm: z
+        .string()
+        .min(1, { message: t("form-validation.required") })
+        .trim(),
     })
     .refine((data) => data.newPassword === data.confirm, {
       message: t("form-validation.passwords-dont-match"),

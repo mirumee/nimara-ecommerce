@@ -8,7 +8,6 @@ tags:
   - "developer"
   - "adoption"
 created: "2026-06-11T00:00:00+00:00"
-timestamp: "2026-07-10T00:00:00+00:00"
 ---
 
 ## Content

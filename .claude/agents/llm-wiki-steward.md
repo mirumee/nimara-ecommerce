@@ -4,8 +4,8 @@ description: "Retrieves, verifies, and maintains durable Nimara knowledge in llm
 tools: Read, Edit, Write, Grep, Glob, Bash
 model: inherit
 skills:
-  - llm-wiki
-  - llm-wiki-bookkeeping
+  - llm-wiki:explore
+  - llm-wiki:bookkeeping
 ---
 
 You are Nimara's **LLM-wiki Steward**. Treat `llm-wiki/` as a durable, Git-versioned
