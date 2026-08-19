@@ -3,13 +3,13 @@ import type * as Types from '@nimara/codegen/schema';
 import type { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
 export type MetadataUpdateMutation_updateMetadata_UpdateMetadata_item_ObjectWithMetadata_metadata_MetadataItem = { key: string, value: string };
 
-export type MetadataUpdateMutation_updateMetadata_UpdateMetadata_item_t4LZBTNEioGoCF33HyRMtk1PP0lILn2Vy2fZeczKY = { metadata: Array<MetadataUpdateMutation_updateMetadata_UpdateMetadata_item_ObjectWithMetadata_metadata_MetadataItem> };
+export type MetadataUpdateMutation_updateMetadata_UpdateMetadata_item_ruyNjP8Zu3upV3TsFEEQKAgmbcltBT6iskOhS2MYk = { metadata: Array<MetadataUpdateMutation_updateMetadata_UpdateMetadata_item_ObjectWithMetadata_metadata_MetadataItem> };
 
-export type MetadataUpdateMutation_updateMetadata_UpdateMetadata_item_mxPBzT6KxFUZiblhuYBU9JhNNEafJgs5OwglGcov8 = { metadata: Array<MetadataUpdateMutation_updateMetadata_UpdateMetadata_item_ObjectWithMetadata_metadata_MetadataItem> };
+export type MetadataUpdateMutation_updateMetadata_UpdateMetadata_item_NoYDRO3cg6qyD5DB6BzM4ezHkwXTKXAXyLqRKqBaUE = { metadata: Array<MetadataUpdateMutation_updateMetadata_UpdateMetadata_item_ObjectWithMetadata_metadata_MetadataItem> };
 
 export type MetadataUpdateMutation_updateMetadata_UpdateMetadata_item =
-  | MetadataUpdateMutation_updateMetadata_UpdateMetadata_item_t4LZBTNEioGoCF33HyRMtk1PP0lILn2Vy2fZeczKY
-  | MetadataUpdateMutation_updateMetadata_UpdateMetadata_item_mxPBzT6KxFUZiblhuYBU9JhNNEafJgs5OwglGcov8
+  | MetadataUpdateMutation_updateMetadata_UpdateMetadata_item_ruyNjP8Zu3upV3TsFEEQKAgmbcltBT6iskOhS2MYk
+  | MetadataUpdateMutation_updateMetadata_UpdateMetadata_item_NoYDRO3cg6qyD5DB6BzM4ezHkwXTKXAXyLqRKqBaUE
 ;
 
 export type MetadataUpdateMutation_updateMetadata_UpdateMetadata_errors_MetadataError = { field: string | null, code: Types.MetadataErrorCode, message: string | null };

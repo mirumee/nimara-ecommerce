@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const saleorHeaders = z.object({
-  "saleor-api-url": z.string(),
+  "saleor-api-url": z.url(),
   "saleor-domain": z.string(),
 });
 

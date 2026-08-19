@@ -9277,9 +9277,16 @@ export type GiftCardEventsEnum =
   | 'UPDATED'
   | 'USED_IN_ORDER';
 
-/** Event sent when gift card export is completed. */
+/**
+ * Event sent when gift card export is completed.
+ *
+ * Export functionality is deprecated and will be removed. All data can be fetched via the GraphQL API and parsed into the desired format by apps or external tools.
+ */
 export type GiftCardExportCompleted = Event & {
-  /** The export file for gift cards. */
+  /**
+   * The export file for gift cards.
+   * @deprecated Export functionality is deprecated and will be removed. All data can be fetched via the GraphQL API and parsed into the desired format by apps or external tools.
+   */
   export: Maybe<ExportFile>;
   /** Time of the event. */
   issuedAt: Maybe<Scalars['DateTime']['output']>;
@@ -16847,7 +16854,8 @@ export type MutationWebhookCreateArgs = {
 
 
 export type MutationWebhookDeleteArgs = {
-  id: Scalars['ID']['input'];
+  id?: InputMaybe<Scalars['ID']['input']>;
+  identifier?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -16864,7 +16872,8 @@ export type MutationWebhookTriggerArgs = {
 
 
 export type MutationWebhookUpdateArgs = {
-  id: Scalars['ID']['input'];
+  id?: InputMaybe<Scalars['ID']['input']>;
+  identifier?: InputMaybe<Scalars['String']['input']>;
   input: WebhookUpdateInput;
 };
 
@@ -22196,9 +22205,16 @@ export type ProductErrorCode =
   | 'UNSUPPORTED_MEDIA_PROVIDER'
   | 'UNSUPPORTED_MIME_TYPE';
 
-/** Event sent when product export is completed. */
+/**
+ * Event sent when product export is completed.
+ *
+ * Export functionality is deprecated and will be removed. All data can be fetched via the GraphQL API and parsed into the desired format by apps or external tools.
+ */
 export type ProductExportCompleted = Event & {
-  /** The export file for products. */
+  /**
+   * The export file for products.
+   * @deprecated Export functionality is deprecated and will be removed. All data can be fetched via the GraphQL API and parsed into the desired format by apps or external tools.
+   */
   export: Maybe<ExportFile>;
   /** Time of the event. */
   issuedAt: Maybe<Scalars['DateTime']['output']>;
@@ -31652,9 +31668,14 @@ export type VoucherCodeCountableEdge = {
  * Event sent when voucher code export is completed.
  *
  * Added in Saleor 3.18.
+ *
+ * Export functionality is deprecated and will be removed. All data can be fetched via the GraphQL API and parsed into the desired format by apps or external tools.
  */
 export type VoucherCodeExportCompleted = Event & {
-  /** The export file for voucher codes. */
+  /**
+   * The export file for voucher codes.
+   * @deprecated Export functionality is deprecated and will be removed. All data can be fetched via the GraphQL API and parsed into the desired format by apps or external tools.
+   */
   export: Maybe<ExportFile>;
   /** Time of the event. */
   issuedAt: Maybe<Scalars['DateTime']['output']>;
@@ -33566,19 +33587,23 @@ export type CheckoutSourceObjectFragment_Checkout_user_User_privateMetadata_Meta
 
 export type CheckoutSourceObjectFragment_Checkout_user_User = { id: string, email: string, firstName: string, lastName: string, privateMetadata: Array<CheckoutSourceObjectFragment_Checkout_user_User_privateMetadata_MetadataItem> };
 
+export type CheckoutSourceObjectFragment_Checkout_total_TaxedMoney_net_Money = { currency: string, amount: number };
+
 export type CheckoutSourceObjectFragment_Checkout_total_TaxedMoney_gross_Money = { currency: string, amount: number };
 
-export type CheckoutSourceObjectFragment_Checkout_total_TaxedMoney = { gross: CheckoutSourceObjectFragment_Checkout_total_TaxedMoney_gross_Money };
+export type CheckoutSourceObjectFragment_Checkout_total_TaxedMoney_tax_Money = { currency: string, amount: number };
+
+export type CheckoutSourceObjectFragment_Checkout_total_TaxedMoney = { net: CheckoutSourceObjectFragment_Checkout_total_TaxedMoney_net_Money, gross: CheckoutSourceObjectFragment_Checkout_total_TaxedMoney_gross_Money, tax: CheckoutSourceObjectFragment_Checkout_total_TaxedMoney_tax_Money };
 
 export type CheckoutSourceObjectFragment = { id: string, languageCode: LanguageCodeEnum, userEmail: string | null, channel: CheckoutSourceObjectFragment_Checkout_channel_Channel, user: CheckoutSourceObjectFragment_Checkout_user_User | null, total: CheckoutSourceObjectFragment_Checkout_total_TaxedMoney };
+
+export type MoneyFragment = { currency: string, amount: number };
 
 export type OrderSourceObjectFragment_Order_user_User = { id: string, email: string, firstName: string, lastName: string, privateMetadata: Array<CheckoutSourceObjectFragment_Checkout_user_User_privateMetadata_MetadataItem> };
 
 export type OrderSourceObjectFragment_Order_channel_Channel = { id: string, slug: string, name: string, currencyCode: string };
 
-export type OrderSourceObjectFragment_Order_total_TaxedMoney_gross_Money = { currency: string, amount: number };
-
-export type OrderSourceObjectFragment_Order_total_TaxedMoney = { gross: OrderSourceObjectFragment_Order_total_TaxedMoney_gross_Money };
+export type OrderSourceObjectFragment_Order_total_TaxedMoney = { net: CheckoutSourceObjectFragment_Checkout_total_TaxedMoney_net_Money, gross: CheckoutSourceObjectFragment_Checkout_total_TaxedMoney_gross_Money, tax: CheckoutSourceObjectFragment_Checkout_total_TaxedMoney_tax_Money };
 
 export type OrderSourceObjectFragment = { id: string, languageCodeEnum: LanguageCodeEnum, userEmail: string | null, user: OrderSourceObjectFragment_Order_user_User | null, channel: OrderSourceObjectFragment_Order_channel_Channel, total: OrderSourceObjectFragment_Order_total_TaxedMoney };
 
@@ -33597,13 +33622,7 @@ export type PaymentGatewayRecipientFragment_App_metadata_MetadataItem = { key: s
 
 export type PaymentGatewayRecipientFragment = { id: string, privateMetadata: Array<PaymentGatewayRecipientFragment_App_privateMetadata_MetadataItem>, metadata: Array<PaymentGatewayRecipientFragment_App_metadata_MetadataItem> };
 
-export type TaxedMoneyFragment_TaxedMoney_net_Money = { currency: string, amount: number };
-
-export type TaxedMoneyFragment_TaxedMoney_gross_Money = { currency: string, amount: number };
-
-export type TaxedMoneyFragment_TaxedMoney_tax_Money = { currency: string, amount: number };
-
-export type TaxedMoneyFragment = { net: TaxedMoneyFragment_TaxedMoney_net_Money, gross: TaxedMoneyFragment_TaxedMoney_gross_Money, tax: TaxedMoneyFragment_TaxedMoney_tax_Money };
+export type TaxedMoneyFragment = { net: CheckoutSourceObjectFragment_Checkout_total_TaxedMoney_net_Money, gross: CheckoutSourceObjectFragment_Checkout_total_TaxedMoney_gross_Money, tax: CheckoutSourceObjectFragment_Checkout_total_TaxedMoney_tax_Money };
 
 export type TransactionActionFragment = { actionType: TransactionActionEnum, amount: number, currency: string };
 
@@ -33866,8 +33885,6 @@ export type TransactionRefundRequestedSubscriptionVariables = Exact<{ [key: stri
 
 export type TransactionRefundRequestedSubscription = TransactionRefundRequestedSubscription_Subscription;
 
-export type MoneyFragment = { currency: string, amount: number };
-
 export class TypedDocumentString<TResult, TVariables>
   extends String
   implements DocumentTypeDecoration<TResult, TVariables>
@@ -33912,6 +33929,22 @@ export const MoneyFragment = new TypedDocumentString(`
   amount
 }
     `, {"fragmentName":"MoneyFragment"}) as unknown as TypedDocumentString<MoneyFragment, unknown>;
+export const TaxedMoneyFragment = new TypedDocumentString(`
+    fragment TaxedMoneyFragment on TaxedMoney {
+  net {
+    ...MoneyFragment
+  }
+  gross {
+    ...MoneyFragment
+  }
+  tax {
+    ...MoneyFragment
+  }
+}
+    fragment MoneyFragment on Money {
+  currency
+  amount
+}`, {"fragmentName":"TaxedMoneyFragment"}) as unknown as TypedDocumentString<TaxedMoneyFragment, unknown>;
 export const CheckoutSourceObjectFragment = new TypedDocumentString(`
     fragment CheckoutSourceObjectFragment on Checkout {
   id
@@ -33924,9 +33957,7 @@ export const CheckoutSourceObjectFragment = new TypedDocumentString(`
   }
   userEmail: email
   total: totalPrice {
-    gross {
-      ...MoneyFragment
-    }
+    ...TaxedMoneyFragment
   }
 }
     fragment ChannelFragment on Channel {
@@ -33934,6 +33965,21 @@ export const CheckoutSourceObjectFragment = new TypedDocumentString(`
   slug
   name
   currencyCode
+}
+fragment MoneyFragment on Money {
+  currency
+  amount
+}
+fragment TaxedMoneyFragment on TaxedMoney {
+  net {
+    ...MoneyFragment
+  }
+  gross {
+    ...MoneyFragment
+  }
+  tax {
+    ...MoneyFragment
+  }
 }
 fragment UserFragment on User {
   id
@@ -33944,10 +33990,6 @@ fragment UserFragment on User {
     key
     value
   }
-}
-fragment MoneyFragment on Money {
-  currency
-  amount
 }`, {"fragmentName":"CheckoutSourceObjectFragment"}) as unknown as TypedDocumentString<CheckoutSourceObjectFragment, unknown>;
 export const OrderSourceObjectFragment = new TypedDocumentString(`
     fragment OrderSourceObjectFragment on Order {
@@ -33961,9 +34003,7 @@ export const OrderSourceObjectFragment = new TypedDocumentString(`
     ...ChannelFragment
   }
   total {
-    gross {
-      ...MoneyFragment
-    }
+    ...TaxedMoneyFragment
   }
 }
     fragment ChannelFragment on Channel {
@@ -33971,6 +34011,21 @@ export const OrderSourceObjectFragment = new TypedDocumentString(`
   slug
   name
   currencyCode
+}
+fragment MoneyFragment on Money {
+  currency
+  amount
+}
+fragment TaxedMoneyFragment on TaxedMoney {
+  net {
+    ...MoneyFragment
+  }
+  gross {
+    ...MoneyFragment
+  }
+  tax {
+    ...MoneyFragment
+  }
 }
 fragment UserFragment on User {
   id
@@ -33981,10 +34036,6 @@ fragment UserFragment on User {
     key
     value
   }
-}
-fragment MoneyFragment on Money {
-  currency
-  amount
 }`, {"fragmentName":"OrderSourceObjectFragment"}) as unknown as TypedDocumentString<OrderSourceObjectFragment, unknown>;
 export const OrderOrCheckoutSourceObjectFragment = new TypedDocumentString(`
     fragment OrderOrCheckoutSourceObjectFragment on OrderOrCheckout {
@@ -34012,10 +34063,12 @@ fragment CheckoutSourceObjectFragment on Checkout {
   }
   userEmail: email
   total: totalPrice {
-    gross {
-      ...MoneyFragment
-    }
+    ...TaxedMoneyFragment
   }
+}
+fragment MoneyFragment on Money {
+  currency
+  amount
 }
 fragment OrderSourceObjectFragment on Order {
   id
@@ -34028,9 +34081,18 @@ fragment OrderSourceObjectFragment on Order {
     ...ChannelFragment
   }
   total {
-    gross {
-      ...MoneyFragment
-    }
+    ...TaxedMoneyFragment
+  }
+}
+fragment TaxedMoneyFragment on TaxedMoney {
+  net {
+    ...MoneyFragment
+  }
+  gross {
+    ...MoneyFragment
+  }
+  tax {
+    ...MoneyFragment
   }
 }
 fragment UserFragment on User {
@@ -34042,10 +34104,6 @@ fragment UserFragment on User {
     key
     value
   }
-}
-fragment MoneyFragment on Money {
-  currency
-  amount
 }`, {"fragmentName":"OrderOrCheckoutSourceObjectFragment"}) as unknown as TypedDocumentString<OrderOrCheckoutSourceObjectFragment, unknown>;
 export const PaymentGatewayRecipientFragment = new TypedDocumentString(`
     fragment PaymentGatewayRecipientFragment on App {
@@ -34060,22 +34118,6 @@ export const PaymentGatewayRecipientFragment = new TypedDocumentString(`
   }
 }
     `, {"fragmentName":"PaymentGatewayRecipientFragment"}) as unknown as TypedDocumentString<PaymentGatewayRecipientFragment, unknown>;
-export const TaxedMoneyFragment = new TypedDocumentString(`
-    fragment TaxedMoneyFragment on TaxedMoney {
-  net {
-    ...MoneyFragment
-  }
-  gross {
-    ...MoneyFragment
-  }
-  tax {
-    ...MoneyFragment
-  }
-}
-    fragment MoneyFragment on Money {
-  currency
-  amount
-}`, {"fragmentName":"TaxedMoneyFragment"}) as unknown as TypedDocumentString<TaxedMoneyFragment, unknown>;
 export const TransactionActionFragment = new TypedDocumentString(`
     fragment TransactionActionFragment on TransactionAction {
   actionType
@@ -34143,10 +34185,12 @@ fragment CheckoutSourceObjectFragment on Checkout {
   }
   userEmail: email
   total: totalPrice {
-    gross {
-      ...MoneyFragment
-    }
+    ...TaxedMoneyFragment
   }
+}
+fragment MoneyFragment on Money {
+  currency
+  amount
 }
 fragment OrderSourceObjectFragment on Order {
   id
@@ -34159,9 +34203,18 @@ fragment OrderSourceObjectFragment on Order {
     ...ChannelFragment
   }
   total {
-    gross {
-      ...MoneyFragment
-    }
+    ...TaxedMoneyFragment
+  }
+}
+fragment TaxedMoneyFragment on TaxedMoney {
+  net {
+    ...MoneyFragment
+  }
+  gross {
+    ...MoneyFragment
+  }
+  tax {
+    ...MoneyFragment
   }
 }
 fragment UserFragment on User {
@@ -34173,10 +34226,6 @@ fragment UserFragment on User {
     key
     value
   }
-}
-fragment MoneyFragment on Money {
-  currency
-  amount
 }`, {"fragmentName":"TransactionInitializeSourceObjectFragment"}) as unknown as TypedDocumentString<TransactionInitializeSourceObjectFragment, unknown>;
 export const TransactionItemFragment = new TypedDocumentString(`
     fragment TransactionItemFragment on TransactionItem {
@@ -34316,10 +34365,12 @@ fragment CheckoutSourceObjectFragment on Checkout {
   }
   userEmail: email
   total: totalPrice {
-    gross {
-      ...MoneyFragment
-    }
+    ...TaxedMoneyFragment
   }
+}
+fragment MoneyFragment on Money {
+  currency
+  amount
 }
 fragment OrderSourceObjectFragment on Order {
   id
@@ -34332,9 +34383,7 @@ fragment OrderSourceObjectFragment on Order {
     ...ChannelFragment
   }
   total {
-    gross {
-      ...MoneyFragment
-    }
+    ...TaxedMoneyFragment
   }
 }
 fragment OrderOrCheckoutSourceObjectFragment on OrderOrCheckout {
@@ -34356,6 +34405,17 @@ fragment PaymentGatewayRecipientFragment on App {
     value
   }
 }
+fragment TaxedMoneyFragment on TaxedMoney {
+  net {
+    ...MoneyFragment
+  }
+  gross {
+    ...MoneyFragment
+  }
+  tax {
+    ...MoneyFragment
+  }
+}
 fragment UserFragment on User {
   id
   email
@@ -34365,10 +34425,6 @@ fragment UserFragment on User {
     key
     value
   }
-}
-fragment MoneyFragment on Money {
-  currency
-  amount
 }`) as unknown as TypedDocumentString<PaymentGatewayInitializeSessionSubscription, PaymentGatewayInitializeSessionSubscriptionVariables>;
 export const PaymentMethodInitializeTokenizationSessionSubscriptionDocument = new TypedDocumentString(`
     subscription PaymentMethodInitializeTokenizationSessionSubscription {
@@ -34487,6 +34543,10 @@ export const TransactionCancelationRequestedSubscriptionDocument = new TypedDocu
   name
   currencyCode
 }
+fragment MoneyFragment on Money {
+  currency
+  amount
+}
 fragment OrderSourceObjectFragment on Order {
   id
   languageCodeEnum
@@ -34498,9 +34558,7 @@ fragment OrderSourceObjectFragment on Order {
     ...ChannelFragment
   }
   total {
-    gross {
-      ...MoneyFragment
-    }
+    ...TaxedMoneyFragment
   }
 }
 fragment PaymentGatewayRecipientFragment on App {
@@ -34512,6 +34570,17 @@ fragment PaymentGatewayRecipientFragment on App {
   metadata {
     key
     value
+  }
+}
+fragment TaxedMoneyFragment on TaxedMoney {
+  net {
+    ...MoneyFragment
+  }
+  gross {
+    ...MoneyFragment
+  }
+  tax {
+    ...MoneyFragment
   }
 }
 fragment TransactionActionFragment on TransactionAction {
@@ -34532,10 +34601,6 @@ fragment UserFragment on User {
     key
     value
   }
-}
-fragment MoneyFragment on Money {
-  currency
-  amount
 }`) as unknown as TypedDocumentString<TransactionCancelationRequestedSubscription, TransactionCancelationRequestedSubscriptionVariables>;
 export const TransactionChargeRequestedSubscriptionDocument = new TypedDocumentString(`
     subscription TransactionChargeRequestedSubscription {
@@ -34562,6 +34627,10 @@ export const TransactionChargeRequestedSubscriptionDocument = new TypedDocumentS
   name
   currencyCode
 }
+fragment MoneyFragment on Money {
+  currency
+  amount
+}
 fragment OrderSourceObjectFragment on Order {
   id
   languageCodeEnum
@@ -34573,9 +34642,7 @@ fragment OrderSourceObjectFragment on Order {
     ...ChannelFragment
   }
   total {
-    gross {
-      ...MoneyFragment
-    }
+    ...TaxedMoneyFragment
   }
 }
 fragment PaymentGatewayRecipientFragment on App {
@@ -34587,6 +34654,17 @@ fragment PaymentGatewayRecipientFragment on App {
   metadata {
     key
     value
+  }
+}
+fragment TaxedMoneyFragment on TaxedMoney {
+  net {
+    ...MoneyFragment
+  }
+  gross {
+    ...MoneyFragment
+  }
+  tax {
+    ...MoneyFragment
   }
 }
 fragment TransactionActionFragment on TransactionAction {
@@ -34607,10 +34685,6 @@ fragment UserFragment on User {
     key
     value
   }
-}
-fragment MoneyFragment on Money {
-  currency
-  amount
 }`) as unknown as TypedDocumentString<TransactionChargeRequestedSubscription, TransactionChargeRequestedSubscriptionVariables>;
 export const TransactionInitializeSessionSubscriptionDocument = new TypedDocumentString(`
     subscription TransactionInitializeSessionSubscription {
@@ -34663,10 +34737,12 @@ fragment CheckoutSourceObjectFragment on Checkout {
   }
   userEmail: email
   total: totalPrice {
-    gross {
-      ...MoneyFragment
-    }
+    ...TaxedMoneyFragment
   }
+}
+fragment MoneyFragment on Money {
+  currency
+  amount
 }
 fragment OrderSourceObjectFragment on Order {
   id
@@ -34679,9 +34755,7 @@ fragment OrderSourceObjectFragment on Order {
     ...ChannelFragment
   }
   total {
-    gross {
-      ...MoneyFragment
-    }
+    ...TaxedMoneyFragment
   }
 }
 fragment PaymentGatewayRecipientFragment on App {
@@ -34693,6 +34767,17 @@ fragment PaymentGatewayRecipientFragment on App {
   metadata {
     key
     value
+  }
+}
+fragment TaxedMoneyFragment on TaxedMoney {
+  net {
+    ...MoneyFragment
+  }
+  gross {
+    ...MoneyFragment
+  }
+  tax {
+    ...MoneyFragment
   }
 }
 fragment TransactionInitializeSourceObjectFragment on OrderOrCheckout {
@@ -34727,10 +34812,6 @@ fragment UserFragment on User {
     key
     value
   }
-}
-fragment MoneyFragment on Money {
-  currency
-  amount
 }`) as unknown as TypedDocumentString<TransactionInitializeSessionSubscription, TransactionInitializeSessionSubscriptionVariables>;
 export const TransactionProcessSessionSubscriptionDocument = new TypedDocumentString(`
     subscription TransactionProcessSessionSubscription {
@@ -34770,10 +34851,12 @@ fragment CheckoutSourceObjectFragment on Checkout {
   }
   userEmail: email
   total: totalPrice {
-    gross {
-      ...MoneyFragment
-    }
+    ...TaxedMoneyFragment
   }
+}
+fragment MoneyFragment on Money {
+  currency
+  amount
 }
 fragment OrderSourceObjectFragment on Order {
   id
@@ -34786,9 +34869,7 @@ fragment OrderSourceObjectFragment on Order {
     ...ChannelFragment
   }
   total {
-    gross {
-      ...MoneyFragment
-    }
+    ...TaxedMoneyFragment
   }
 }
 fragment OrderOrCheckoutSourceObjectFragment on OrderOrCheckout {
@@ -34810,6 +34891,17 @@ fragment PaymentGatewayRecipientFragment on App {
     value
   }
 }
+fragment TaxedMoneyFragment on TaxedMoney {
+  net {
+    ...MoneyFragment
+  }
+  gross {
+    ...MoneyFragment
+  }
+  tax {
+    ...MoneyFragment
+  }
+}
 fragment TransactionItemFragment on TransactionItem {
   id
   pspReference
@@ -34828,10 +34920,6 @@ fragment UserFragment on User {
     key
     value
   }
-}
-fragment MoneyFragment on Money {
-  currency
-  amount
 }`) as unknown as TypedDocumentString<TransactionProcessSessionSubscription, TransactionProcessSessionSubscriptionVariables>;
 export const TransactionRefundRequestedSubscriptionDocument = new TypedDocumentString(`
     subscription TransactionRefundRequestedSubscription {
@@ -34858,6 +34946,10 @@ export const TransactionRefundRequestedSubscriptionDocument = new TypedDocumentS
   name
   currencyCode
 }
+fragment MoneyFragment on Money {
+  currency
+  amount
+}
 fragment OrderSourceObjectFragment on Order {
   id
   languageCodeEnum
@@ -34869,9 +34961,7 @@ fragment OrderSourceObjectFragment on Order {
     ...ChannelFragment
   }
   total {
-    gross {
-      ...MoneyFragment
-    }
+    ...TaxedMoneyFragment
   }
 }
 fragment PaymentGatewayRecipientFragment on App {
@@ -34883,6 +34973,17 @@ fragment PaymentGatewayRecipientFragment on App {
   metadata {
     key
     value
+  }
+}
+fragment TaxedMoneyFragment on TaxedMoney {
+  net {
+    ...MoneyFragment
+  }
+  gross {
+    ...MoneyFragment
+  }
+  tax {
+    ...MoneyFragment
   }
 }
 fragment TransactionActionFragment on TransactionAction {
@@ -34903,8 +35004,4 @@ fragment UserFragment on User {
     key
     value
   }
-}
-fragment MoneyFragment on Money {
-  currency
-  amount
 }`) as unknown as TypedDocumentString<TransactionRefundRequestedSubscription, TransactionRefundRequestedSubscriptionVariables>;

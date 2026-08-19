@@ -18,7 +18,7 @@ marketplaces. The canonical guidance lives in `AGENTS.md` and the skills under
   only on them; `features` composes everything; apps consume features/infra/ui. Never
   import `@nimara/codegen` from app or component code — go through services.
 - **Named exports only** (Next.js route/page/layout files are exempt).
-- **Comments.** A comment must add what the identifier doesn't — explain *why*
+- **Comments.** A comment must add what the identifier doesn't — explain _why_
   (rationale, gotchas, security intent), never restate the name, never be wrong.
   Prefer none over a comment that echoes the code. Single line → `//`; reserve the
   `/** … */` block form for genuine multi-line exposition (2+ content lines).

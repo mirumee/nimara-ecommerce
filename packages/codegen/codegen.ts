@@ -75,7 +75,7 @@ const APP_PROJECT_GENERATES: Record<string, CodegenConfig["generates"]> = {
     "../../apps/marketplace/src/graphql/generated/client.ts": singleFileConfig,
   },
   stripe: {
-    "../../apps/stripe/src/": nearOperationFileConfig,
+    "../../apps/stripe/src/graphql/generated/client.ts": singleFileConfig,
   },
 };
 

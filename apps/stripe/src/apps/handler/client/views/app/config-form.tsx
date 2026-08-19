@@ -14,7 +14,10 @@ import { FormDescription } from "@nimara/ui/components/form";
 import { TextFormField } from "@nimara/ui/components/textFormField";
 import { useToast } from "@nimara/ui/hooks";
 
-import { type ConfigFormSchema, configFormSchema } from "@/apps/handler/api/rest/app/schema";
+import {
+  type ConfigFormSchema,
+  configFormSchema,
+} from "@/apps/handler/api/rest/app/schema";
 import { isEmptyObject } from "@/lib/misc";
 import { saleorDomainFromApiUrl } from "@/lib/saleor/url";
 

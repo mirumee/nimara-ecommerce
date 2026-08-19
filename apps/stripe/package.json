@@ -6,7 +6,7 @@
     "@nimara/infrastructure": "workspace:*",
     "@saleor/app-sdk": "1.7.0",
     "@sentry/node": "^10.70.0",
-    "hono": "^4.13.1",
+    "hono": "catalog:",
     "iti": "^0.8.0",
     "lodash": "4.17.23",
     "react": "^19.2.3",

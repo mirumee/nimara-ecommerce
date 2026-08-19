@@ -9,8 +9,6 @@ fragment CheckoutSourceObjectFragment on Checkout {
   }
   userEmail: email
   total: totalPrice {
-    gross {
-      ...MoneyFragment
-    }
+    ...TaxedMoneyFragment
   }
 }

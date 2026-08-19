@@ -12,12 +12,6 @@ import { type JoseAuthService } from "@nimara/infrastructure/jose/auth/types";
 import { UnauthorizedError } from "@/lib/error/http";
 import { zodValidatorMiddleware } from "@/lib/middleware/zod-validator-middleware";
 
-/**
- * Verifies a Saleor webhook signature. The domain must be allowlisted AND
- * already installed; the JWKS is fetched from that domain's own origin, never
- * from the request's `saleor-api-url` — otherwise an attacker could point
- * verification at a JWKS they control and forge a signature.
- */
 export const saleorWebhookValidationMiddleware = ({
   allowedDomains,
   getInstallation,

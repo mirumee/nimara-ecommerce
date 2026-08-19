@@ -6,7 +6,10 @@ import { Hono } from "hono";
  * one at a time so each can be given its own `BASE_PATH`
  * A single app is served at `/`, if multiple - under `/<app>`.
  */
-const importers = import.meta.glob<{ app?: Hono }>("./apps/*/entry-server.ts");
+const importers = import.meta.glob("./apps/*/entry-server.ts") as Record<
+  string,
+  () => Promise<{ app?: Hono }>
+>;
 
 const paths = Object.keys(importers).sort();
 const server = new Hono();
