@@ -457,3 +457,59 @@
 - **Gap**: The orphaned-PaymentIntent concern in NIM-51 is narrowed, not closed. A complete checkout
   still opens a fresh intent on every mount and remount of the payment element. Recorded as a
   deviation in IMP-0004; no separate work item exists for it.
+
+## 2026-08-19
+
+- **Update**: OPS-0002 named `NEXT_PUBLIC_ENVIRONMENT`, which the payment application stopped
+  reading when it moved off Next.js. The setting is `ENVIRONMENT`, is required, and has no default.
+  An operator following the old runbook set a variable nothing reads and the application refused to
+  start. Recorded with the consequence the old text never carried: the value prefixes both the
+  advertised application ID and the hosted-store key, so changing it on a running deployment offers
+  Saleor a different application and reads a different tenant map, and every existing installation
+  reads as absent while the application otherwise serves normally.
+- **Update**: Added the payment application's build and deploy surface to OPS-0002's preconditions,
+  none of which existed while it was a Next.js application. `BUILD_TARGET` selects the output
+  layout, accepts only `node` or `vercel`, and has no default, so an unset value fails the build at
+  its first step and refuses the development server the same way; it is a declared Turbo build
+  input. The Vercel project builds through the application's own `vercel.json` under the Hono
+  framework preset, which resolves its entrypoint by finding a file that imports Hono. `BASE_PATH`
+  is baked into the manifest's registration, application, and webhook addresses, which Saleor
+  records at installation, so changing it afterwards strands an installation. `SENTRY_DSN` replaced
+  `NEXT_PUBLIC_SENTRY_DSN`; OPS-0002 had never named either, so this is an addition rather than a
+  rename.
+- **Update**: Two failure modes added to OPS-0002's escalation. A build stopping at its first step
+  naming `BUILD_TARGET`, or a Vercel build reporting that no entrypoint imports Hono, are build
+  configuration rather than application faults.
+- **Gap**: Found while writing the above and recorded in OPS-0002's escalation rather than fixed:
+  the Stripe endpoint address is built from the request origin alone and does not carry
+  `BASE_PATH`, while the manifest's Saleor-facing addresses do. A deployment served under a path
+  prefix therefore registers a Stripe endpoint that omits the prefix and answers 404, with
+  installation and channel configuration both reporting success. No work item exists for it.
+- **Confirmed**: OPS-0002's `NEXT_PUBLIC_SALEOR_API_URL` precondition is still correct and was left
+  alone. The variable no longer appears in the application's example environment, but code
+  generation still reads it, which is exactly what that bullet claims.
+- **Repair**: Re-pointed the `verification` test paths in IMP-0001 and IMP-0002, all five of which
+  named files the move off Next.js deleted. The template tells an author not to restate changed
+  files because a path list rots while the pull request stays accurate, and that reasoning holds for
+  prose. It does not hold here: `verification.tests` is a structured pointer to the evidence for a
+  criterion, so a dead entry makes the criterion unverifiable rather than merely out of date. Both
+  records remain `in_progress`; criteria, work items, pull requests, and statuses were not touched.
+- **Repair**: Each successor was read against the criterion before it was cited, and two of the
+  proposed mappings did not survive that check. IMP-0001's redisplay-consent criterion was to gain a
+  second file covering expandable identifiers and setup-intent status mapping, which verifies
+  nothing the criterion claims; it was dropped and the criterion cites only the serializer tests,
+  which assert both of its halves. IMP-0001's gateway-customer criterion needed the opposite
+  treatment: the proposed file proves the mapping is scoped to channel and account but says nothing
+  about reach between shoppers, so the transaction webhook tests were added alongside it for
+  refusing a saved method that belongs to another customer.
+- **Gap**: IMP-0002's second criterion was left pointing at a deleted file on purpose. An empty
+  allowlist still refuses every domain and the shared package asserts it, but the refusal that names
+  the setting to change is now built in the installation route and nothing asserts it; the deleted
+  test had asserted both halves in one expectation. Citing the surviving half would claim coverage
+  the record does not have, so the entry stays dead and the reason is recorded as a deviation on the
+  record itself. Closing it needs a test, which is code work and outside this change.
+- **Gap**: IMP-0001's gateway-customer criterion is cited honestly but has narrowed. The deleted
+  tests asserted that a mapping planted in shopper-writable public metadata is never resolved — the
+  property that record's summary calls load-bearing and INT-0005 states as contract. The successor
+  reads private metadata only, so the property now holds by construction rather than by assertion.
+  No criterion names it, so no path was changed for it. No work item exists.

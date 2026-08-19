@@ -28,10 +28,11 @@ pull_requests:
 verification:
   - criterion: "A stored method is mapped to the right gateway customer and cannot be reached by another shopper."
     tests:
-      - "apps/stripe/src/lib/stripe/customer.test.ts"
+      - "apps/stripe/src/infrastructure/customer/saleor/get-customer-id.test.ts"
+      - "apps/stripe/src/apps/handler/api/rest/saleor/webhooks/transactions.test.ts"
   - criterion: "Only methods carrying an explicit redisplay consent are listed; unknown types stay listable so they remain deletable."
     tests:
-      - "apps/stripe/src/lib/stripe/payment-method.test.ts"
+      - "apps/stripe/src/infrastructure/payment-method/stripe/serializers.test.ts"
 rollout: "Merged with the payment application redeployed first, because the storefront reads the gateway key from the session the application opens. Installing the application requires the user-management permission, so the Saleor installation is re-approved before the storefront ships."
 rollback: "Restore the previous Vercel deployment for both surfaces and revert the change; see [Stripe Payment Application Installation and Key Rotation](../../operations/OPS-0002%20Stripe%20Payment%20Application%20Installation%20and%20Key%20Rotation.md). Saved methods created under this change stay attached to their gateway customer and reappear when it is rolled forward again."
 ---

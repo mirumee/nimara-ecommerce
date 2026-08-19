@@ -36,14 +36,40 @@ requested permissions change.
   channel should use.
 - Deploy `apps/stripe` at a stable HTTPS origin. Localhost can serve the application but the code
   deliberately skips Stripe webhook installation for local origins.
+- Set `BUILD_TARGET` on every environment that builds the application, a developer machine
+  included. It selects the output layout, is accepted only as `node` or `vercel`, and has no
+  default: unset, empty, and unknown all throw and fail the build at its first step. It is read
+  while the build configuration module loads rather than inside a build step, so the development
+  server refuses to start the same way. A Vercel deployment sets `BUILD_TARGET=vercel`. It is
+  declared in the application's Turbo build inputs, so a build produced under one target is not
+  reused for the other.
+- The Vercel project builds through the application's own `vercel.json`, which selects the Hono
+  framework preset and the workspace build command. That preset locates the deployable entrypoint
+  by finding a file that itself imports Hono; the repository ships one at the application root that
+  mounts the built server bundle. Confirm the deployed project resolves its framework and build
+  command from that committed file rather than from an overriding dashboard setting.
+- Set `BASE_PATH` to the path prefix the application is served under, or leave it empty to serve at
+  the origin root. It is baked into the manifest: the registration URL, the application URL, and
+  every advertised webhook target carry it. Saleor records those addresses when the application is
+  installed, so changing `BASE_PATH` afterwards strands an existing installation on addresses that
+  no longer answer and the installation must be repeated.
+- `SENTRY_DSN` is optional and turns on runtime error reporting when set. Uploading source maps at
+  build time additionally needs the Sentry authentication, organisation, and project values, and
+  happens only when all three are present.
 - Set `ALLOWED_DOMAINS` to the Saleor domains this deployment serves, as a comma-separated list
   where `*` is a wildcard, for example `nimara-*.eu.saleor.cloud,demo.nimara.store`. It has no
   default and the application fails closed: with it unset, every installation and every webhook is
   refused, including installations that already exist. Set it before deploying, not after.
-- Configure `NEXT_PUBLIC_ENVIRONMENT` and a stable `CONFIG_KEY`, and leave `CONFIG_PROVIDER` at its
-  default `edge` so the deployment stores configuration in the hosted Edge Config. That selection
-  requires the Vercel team, access, and Edge Config database values; the runtime schema demands all
-  three whenever `edge` is selected and fails at startup naming the one that is missing.
+- Configure `ENVIRONMENT` and a stable `CONFIG_KEY`, and leave `CONFIG_PROVIDER` at its default
+  `edge` so the deployment stores configuration in the hosted Edge Config. That selection requires
+  the Vercel team, access, and Edge Config database values; the runtime schema demands all three
+  whenever `edge` is selected and fails at startup naming the one that is missing.
+- `ENVIRONMENT` is required and has no default. It is not a label: it prefixes the application ID
+  the manifest advertises, and it prefixes the key the hosted store is read from and written to.
+  Changing it on a running deployment therefore offers Saleor a different application and points the
+  deployment at a different stored map, so every existing installation reads as absent while the
+  application starts and serves normally. Fix it before the first installation and treat it as
+  immutable afterwards; a genuine change means reinstalling and reconfiguring every installation.
 - Never set `CONFIG_PROVIDER=file` on a deployment. That backend keeps the configuration of every
   installation in a JSON file next to the application and exists for developer machines only. On a
   serverless deployment the filesystem is per-instance and does not survive, so installations appear
@@ -138,6 +164,18 @@ requested permissions change.
 - Do not treat the advertised cancellation and refund routes as operational cancellation/refund
   controls. The current handlers inspect PaymentIntent state but do not initiate cancellation or a
   Stripe Refund; perform and reconcile those actions through an approved external procedure.
+- A build that stops at its first step naming `BUILD_TARGET` and the two values it accepts is an
+  unset or mistyped setting on the building environment, not an application fault. A Vercel build
+  that instead fails while resolving an entrypoint, reporting that none imports Hono, means the
+  framework preset found no such file at the application root. That file is committed, so read it
+  as an incomplete checkout, a changed root directory, or an overridden build command rather than a
+  missing configuration value.
+- The Stripe endpoint address is built from the request origin alone and does not carry
+  `BASE_PATH`, while the Saleor-facing addresses in the manifest do. A deployment served under a
+  path prefix therefore registers a Stripe endpoint that omits the prefix and answers 404, and no
+  transaction report arrives even though installation and channel configuration both succeeded.
+  Compare the endpoint recorded in Stripe against the address the deployment actually serves before
+  concluding that a secret key or signing secret is wrong.
 - A deployment that refuses every installation and webhook at once is normally an unset or
   mistyped `ALLOWED_DOMAINS`, not a Saleor or Stripe fault. Check it before touching keys or
   reinstalling, and remember a wildcard pattern must cover the whole domain, including its region

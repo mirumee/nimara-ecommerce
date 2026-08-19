@@ -27,13 +27,13 @@ pull_requests:
 verification:
   - criterion: "Only an allowlisted commerce domain may install the application, and wildcard patterns match within their pinned suffix."
     tests:
-      - "apps/stripe/src/lib/saleor/config/util.test.ts"
+      - "packages/infrastructure/src/apps/saleor/validation.test.ts"
   - criterion: "An unconfigured allowlist refuses every domain, and the refusal names the setting to change."
     tests:
       - "apps/stripe/src/lib/saleor/config/context.test.ts"
   - criterion: "A webhook naming a domain outside the allowlist is rejected before any signing key is fetched."
     tests:
-      - "apps/stripe/src/lib/saleor/webhooks/util.test.ts"
+      - "apps/stripe/src/lib/middleware/saleor-webhook-validation-middleware.test.ts"
 rollout: "Set `ALLOWED_DOMAINS` on the deployment before shipping. The application fails closed, so an unset allowlist refuses every installation and webhook, including installations that already exist. Configuration stored by the previous single-installation release is read as a one-entry map, so an existing installation needs no migration."
 rollback: "Restore the previous Vercel deployment. This is safe only while exactly one commerce installation exists: the stored configuration is a map keyed by commerce domain, and application code predating this change can read it only when it holds a single entry. With a second installation present, remove the extra entries from the stored value first, or roll forward. See [Stripe Payment Application Installation and Key Rotation](../../operations/OPS-0002%20Stripe%20Payment%20Application%20Installation%20and%20Key%20Rotation.md)."
 ---
@@ -90,6 +90,14 @@ being single-tenant:
 - Provider accounts are distinguished by secret key rather than by account identity, so two keys
   issued by one account produce two endpoints. That costs a redundant endpoint and never misroutes
   an event.
+- The application later moved off Next.js, which moved or deleted all three files named above. Two
+  criteria were re-pointed at the tests that now carry them: the allowlist rules moved into the
+  shared package, and webhook rejection is now asserted at the middleware that performs it, which
+  also proves the ordering the criterion claims. The second criterion is left pointing at a deleted
+  file deliberately. Its first half survives — an empty allowlist still refuses every domain, and
+  the shared package asserts it — but the refusal that names the setting to change is now built in
+  the installation route and no test asserts it. Pointing the criterion at the surviving half would
+  claim coverage this record does not have.
 
 # Verification evidence
 
