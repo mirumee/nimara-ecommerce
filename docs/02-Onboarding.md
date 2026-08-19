@@ -124,7 +124,7 @@ pnpm dev                   # everything
 
 pnpm codegen               # regenerate GraphQL types after editing .graphql files
 pnpm test                  # unit tests (Vitest)
-pnpm test:e2e              # end-to-end (Playwright)
+pnpm test:e2e              # end-to-end (CodeceptJS)
 
 pnpm format                # Prettier
 pnpm format:check          # what CI checks

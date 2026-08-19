@@ -201,14 +201,20 @@ Sentry is only enabled when `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, and `SENTRY_PROJE
 
 ---
 
-## E2E Testing (Playwright)
+## E2E Testing (CodeceptJS)
 
-These variables configure the `apps/automated-tests` Playwright suite, not the storefront itself.
+These variables configure the `apps/automated-tests` CodeceptJS suite, not the storefront itself.
 
 #### `TEST_ENV_URL`
 
-- **Description**: URL used for end-to-end tests.
+- **Description**: URL used for end-to-end tests. The suite fails to start without it.
 - **Example**: `https://localhost:3000`
+
+#### `LOCALE`
+
+- **Description**: Selects the URL prefix and address fixture the tests use. `us` adds no
+  prefix and `gb` adds `/gb`. Defaults to `us`, and any other value fails the run at startup.
+- **Example**: `us`
 
 #### `USER_EMAIL`, `USER_PASSWORD`
 

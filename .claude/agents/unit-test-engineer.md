@@ -1,6 +1,6 @@
 ---
 name: unit-test-engineer
-description: "Adds and maintains focused Vitest coverage for changed Nimara logic, including services, serializers, utilities, Server Actions, and Result success or failure paths. Delegate when implementation needs unit-level regression coverage or a failing unit test must be isolated. Do not use for Playwright, production implementation, architecture review, or release verification."
+description: "Adds and maintains focused Vitest coverage for changed Nimara logic, including services, serializers, utilities, Server Actions, and Result success or failure paths. Delegate when implementation needs unit-level regression coverage or a failing unit test must be isolated. Do not use for end-to-end CodeceptJS coverage, production implementation, architecture review, or release verification."
 tools: Read, Edit, Write, Grep, Glob, Bash
 model: inherit
 ---

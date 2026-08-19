@@ -458,6 +458,34 @@
   still opens a fresh intent on every mount and remount of the payment element. Recorded as a
   deviation in IMP-0004; no separate work item exists for it.
 
+## 2026-08-18
+
+- **Create**: Added ADR-0003 at `accepted`, making CodeceptJS the only end-to-end engine and
+  removing the Playwright test runner from `apps/automated-tests`. The `playwright` package stays,
+  pinned to an exact `1.59.1`, because `helpers.Playwright` in `codecept.conf.ts` is what drives
+  the browser. `docs/adr/0001-codeceptjs-spike.md` is now `superseded`: it set a
+  migrate-or-delete date of 2026-08-13 and named an undecided outcome as the one it refused, so
+  this closes it five days late. ADR-0003 also records that the dependency cost ADR 0001
+  justified as temporary — the Vercel AI SDK, an MCP server SDK, a beta package, and the Gherkin
+  stack, 84 packages against 2 removed — is now permanent.
+- **Update**: Corrected five quality notes that described the deleted Playwright suite as current.
+  Coverage Maps now maps the eight CodeceptJS scenarios, states chromium-only with no retries,
+  and carries an explicit accepted-coverage-loss paragraph. Test Method Playbooks, Known Flaky,
+  Bug Retest & Triage Process, and Test Data & Fixtures now describe the real artifact surface: one
+  screenshot per failed scenario in `output/`, no trace, no video, no HTML report, and wait
+  timeouts in seconds rather than milliseconds.
+- **Update**: Amended IMP-0004 rather than rewriting it. Its `verification` entries still name
+  `checkout-step-guard.spec.ts`, which was deleted, and are left as the historical record of what
+  verified the change when it shipped. The amendment says so and states the consequence plainly.
+  The record stays `in_progress`, because deleting the spec removed the route to `implemented`
+  instead of satisfying it.
+- **Gap**: The second IMP-0004 criterion — the payment section does not render on a checkout that
+  cannot be ordered — now has no automated coverage at any level. It was the only criterion whose
+  sole evidence was the deleted browser spec, and it is the behavior whose absence opened gateway
+  transactions for checkouts that could not be ordered. The category page, the checkout step
+  guard, and the authenticated checkout are likewise unexercised, and cross-browser coverage is
+  gone. No work item exists for re-authoring any of it.
+
 ## 2026-08-19
 
 - **Update**: OPS-0002 named `NEXT_PUBLIC_ENVIRONMENT`, which the payment application stopped

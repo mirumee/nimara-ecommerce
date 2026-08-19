@@ -50,9 +50,10 @@ A durable retest note should contain:
 - links or paths to evidence that will survive the test session;
 - the outcome and any caveat or untested part.
 
-The repository's browser suite is configured to retain a trace on first retry and retain
-video and screenshots for failures (`apps/automated-tests/playwright.config.ts`). Those
-artifacts can support a result, but the report must still explain what they demonstrate.
+The repository's browser suite writes one screenshot per failed scenario to
+`apps/automated-tests/output/` (`apps/automated-tests/codecept.conf.ts`). There is no trace or
+video. That screenshot and the `--steps` output can support a result, but the report must still
+explain what they demonstrate.
 
 ### Blocked handling
 

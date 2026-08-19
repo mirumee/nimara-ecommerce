@@ -114,6 +114,26 @@ The logged-in coverage deliberately stops short of reaching the payment step. Do
 server-side render failure that already holds the saved-payment-method checkout test at
 `test.fixme`, which is unrelated to this change.
 
+## Amendment, 2026-08-18: the verifying browser spec was deleted
+
+CodeceptJS became the only end-to-end engine and the Playwright runner was removed. The
+`verification` entries above still name
+`apps/automated-tests/tests/e2e/checkout/checkout-step-guard.spec.ts`, which no longer exists in
+the tree. Those entries are left as written, because they record what verified this change when
+it shipped. Read them as history, not as a path to run.
+
+The 22 unit cases in `apps/storefront/src/foundation/checkout/steps.test.ts` are untouched and
+still cover the first, third, fourth, and fifth criteria. **The second criterion, that the
+payment section does not render on a checkout that cannot be ordered, now has no automated
+coverage at any level.** That is the behavior whose absence opened gateway transactions for
+checkouts that could not be ordered, so a regression in it would be caught only by manual
+testing.
+
+No coverage was ported to replace the deleted spec. The record stays `in_progress`: deleting
+the spec removed the route by which it could have reached `implemented`, and did not satisfy
+it. See
+[ADR-0003 CodeceptJS Is The End-To-End Test Engine](../ADR/ADR-0003%20CodeceptJS%20Is%20The%20End-To-End%20Test%20Engine.md).
+
 # Related Notes
 
 [Guided Storefront Checkout](../../product/capabilities/CAP-0003%20Guided%20Storefront%20Checkout.md)
