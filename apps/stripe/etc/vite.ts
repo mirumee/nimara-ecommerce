@@ -3,10 +3,21 @@ import { readdir, stat } from "node:fs/promises";
 import { join } from "node:path";
 
 import type { Plugin } from "vite";
+import { z } from "zod";
+
+export const BUILD_TARGETS = ["node", "vercel"] as const;
+
+export type BuildTarget = (typeof BUILD_TARGETS)[number];
 
 export type AppEntry = { name: string; path: string };
 
-export type BuildTarget = "node" | "vercel";
+/**
+ * Reads the deployment target from `BUILD_TARGET`. Unset falls back to
+ * `vercel`; an unrecognised value fails the build instead of silently
+ * producing a layout the deploy target cannot serve.
+ */
+export const readBuildTarget = (): BuildTarget =>
+  z.enum(BUILD_TARGETS).default("vercel").parse(process.env.BUILD_TARGET);
 
 /**
  * Discovers per-app entry points under `src/apps/*`. Each app dir may hold an

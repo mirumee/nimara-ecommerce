@@ -13,6 +13,7 @@
         "!.env*.local"
       ],
       "env": [
+        "BUILD_TARGET",
         "ENVIRONMENT",
         "NEXT_PUBLIC_ENVIRONMENT",
         "BASE_PATH",

@@ -6,7 +6,7 @@ import { config } from "dotenv";
 import { defineConfig, type UserConfig } from "vite";
 import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
 
-import { type BuildTarget, generatePackageJson } from "./etc/vite.ts";
+import { generatePackageJson, readBuildTarget } from "./etc/vite.ts";
 
 config({ path: ".env.local" });
 config();
@@ -14,12 +14,12 @@ config();
 const PORT = Number(process.env.PORT || 4000);
 
 /**
- * Deployment target — switch here.
+ * Deployment target, from `BUILD_TARGET` (defaults to `vercel`).
  * - `vercel` — client → `public/assets` (CDN), server → `dist/<app>-entry-server.js`.
  * - `node` — each app self-contained in `dist/<app>/` (server + its `assets/`),
  *   for AWS Lambda + S3/CloudFront.
  */
-export const BUILD_TARGET: BuildTarget = "vercel";
+export const BUILD_TARGET = readBuildTarget();
 
 /**
  * Base config for dev + build. `etc/build.ts` runs one build per app, passing
