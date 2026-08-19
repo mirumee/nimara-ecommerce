@@ -12,12 +12,21 @@ export type BuildTarget = (typeof BUILD_TARGETS)[number];
 export type AppEntry = { name: string; path: string };
 
 /**
- * Reads the deployment target from `BUILD_TARGET`. Unset falls back to
- * `vercel`; an unrecognised value fails the build instead of silently
- * producing a layout the deploy target cannot serve.
+ * Reads the deployment target from `BUILD_TARGET`. Deliberately has no default:
+ * the target decides the on-disk layout, and guessing it produces a build the
+ * deploy target cannot serve. Unset, empty, and unknown all fail the same way.
  */
-export const readBuildTarget = (): BuildTarget =>
-  z.enum(BUILD_TARGETS).default("vercel").parse(process.env.BUILD_TARGET);
+export const readBuildTarget = (): BuildTarget => {
+  const parsed = z.enum(BUILD_TARGETS).safeParse(process.env.BUILD_TARGET);
+
+  if (!parsed.success) {
+    throw new Error(
+      `BUILD_TARGET must be one of: ${BUILD_TARGETS.join(", ")}. Received: ${process.env.BUILD_TARGET ?? "(unset)"}.`,
+    );
+  }
+
+  return parsed.data;
+};
 
 /**
  * Discovers per-app entry points under `src/apps/*`. Each app dir may hold an

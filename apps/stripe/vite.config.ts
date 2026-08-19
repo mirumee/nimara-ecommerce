@@ -14,7 +14,7 @@ config();
 const PORT = Number(process.env.PORT || 4000);
 
 /**
- * Deployment target, from `BUILD_TARGET` (defaults to `vercel`).
+ * Deployment target, from `BUILD_TARGET` (required — no default).
  * - `vercel` — client → `public/assets` (CDN), server → `dist/<app>-entry-server.js`.
  * - `node` — each app self-contained in `dist/<app>/` (server + its `assets/`),
  *   for AWS Lambda + S3/CloudFront.

@@ -84,9 +84,12 @@ under it.
 
 ### Build targets
 
-`BUILD_TARGET` is a const in `vite.config.ts` (no env):
+`BUILD_TARGET` is read from the environment and validated against the two values
+below. It has no default — unset, empty, or unknown fails the build rather than
+guessing a layout the deploy target cannot serve, so it must be set locally
+(`.env`) and in every deployment:
 
-- `vercel` (default) — client → `public/assets/<app>-entry-client.js` (CDN),
+- `vercel` — client → `public/assets/<app>-entry-client.js` (CDN),
   server → `dist/<app>/entry-server.js`. The root `index.js` re-exports the
   built app for the native **Hono framework preset**.
 - `node` — each app self-contained in `dist/<app>/` (`entry-server.js` +
