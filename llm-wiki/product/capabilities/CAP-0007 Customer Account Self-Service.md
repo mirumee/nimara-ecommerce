@@ -39,9 +39,9 @@ current form returns each selected fulfillment line's full fulfilled quantity.
 The payment-method surface reads, adds, and removes saved methods entirely through the commerce
 backend's stored payment methods protocol, authenticated as the customer. The payment application
 owns the provider customer and credentials; the storefront never names or creates a provider
-customer. Adding a method opens a tokenization session, collects the card in a mounted element,
-and completes the session in place — only methods that genuinely redirect leave the page, and they
-return to the account surface to finish. The default-method choice is carried into the same
+customer. Adding a method opens a tokenization session, collects the method in an element scoped to
+the channel's currency, and completes the session in place — only methods that genuinely redirect
+leave the page, and they return to the account surface to finish. The default-method choice is carried into the same
 session. Privacy settings start an email-confirmed account-deletion flow; a valid deletion token
 removes the backend account, clears the storefront session, and returns the customer to the home
 page.
@@ -73,6 +73,10 @@ page.
 
 - Account routes require a valid access token. Missing, expired, or unrefreshable credentials
   redirect the visitor to sign-in and clear unusable authentication cookies.
+- A method that redirects comes back as a cross-site top-level navigation, so the authentication
+  cookie has to be readable on that request. A strictly same-site cookie is withheld on it, which
+  reads as a signed-out visitor: the shopper lands on sign-in and the tokenization is never
+  completed, even though the provider authorised it.
 - Registration, confirmation, credential, profile, address, and deletion operations depend on the
   configured commerce backend and its channel, permissions, and email delivery.
 - Order-history query failures currently render the same empty list as an account with no orders.
@@ -92,6 +96,9 @@ page.
   list read for a different channel than the one the method was saved under is empty rather than
   partial. At checkout the channel comes from the checkout itself, not from the region the URL
   resolves to, because the two can disagree.
+- A tokenization session carries no currency, so the element is given the channel's currency
+  explicitly. Without it the provider offers every method it is able to store, including ones the
+  channel cannot charge, and the mismatch surfaces only when a payment with that method is refused.
 - A method is only offered back to the customer when consent to reuse it was recorded as the method
   was stored — adding one from the account area, or ticking save-for-future-use at checkout. A
   method captured any other way stays usable for the payment it was taken for and never appears in

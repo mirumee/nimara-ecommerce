@@ -18,23 +18,25 @@ export const serializeCheckoutProblems = (
 
   return data.reduce<CheckoutProblems>(
     (acc, problem) => {
-      switch (problem.__typename) {
-        case "CheckoutLineProblemInsufficientStock":
-          acc.insufficientStock.push({
-            line: serializeLine(problem.line, priceType),
-            availableQuantity: problem.availableQuantity,
-          });
-          break;
-        case "CheckoutLineProblemVariantNotAvailable":
-          acc.variantNotAvailable.push({
-            line: serializeLine(problem.line, priceType),
-          });
-          break;
-        default:
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          console.error(`Unknown checkout problem type: ${problem}`);
+      if (Object.keys(problem).length > 0) {
+        switch (problem.__typename) {
+          case "CheckoutLineProblemInsufficientStock":
+            acc.insufficientStock.push({
+              line: serializeLine(problem.line, priceType),
+              availableQuantity: problem.availableQuantity,
+            });
+            break;
+          case "CheckoutLineProblemVariantNotAvailable":
+            acc.variantNotAvailable.push({
+              line: serializeLine(problem.line, priceType),
+            });
+            break;
+          default:
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+            console.error(`Unknown checkout problem type:`, problem);
 
-          break;
+            break;
+        }
       }
 
       return acc;

@@ -14,6 +14,10 @@ export const baseConfigSchema = z.object({
   SENTRY_DSN: z.string().optional().describe("Sentry DSN, enables reporting."),
   BASE_PATH: z
     .string()
+    .regex(
+      /^(\/[^/\s]+)*$/,
+      "BASE_PATH must be empty or a prefix like `/stripe`",
+    )
     .default("")
     .describe(
       "Path prefix the app is served under. Empty at root; set per app in dev (`/<app>`) and via env for a sub-path deployment.",

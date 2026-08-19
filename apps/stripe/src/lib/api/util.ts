@@ -1,3 +1,5 @@
+import { type HonoRequest } from "hono";
+
 import { type BaseError } from "@nimara/domain/objects/Error";
 
 import {
@@ -7,6 +9,9 @@ import {
 } from "@/lib/types";
 
 import { type ResponseSchema, responseSchema } from "./schema";
+
+export const getAppBaseUrl = (request: HonoRequest) =>
+  `${request.origin}${request.basePath}`;
 
 export const responseSuccess = ({
   status = 200,

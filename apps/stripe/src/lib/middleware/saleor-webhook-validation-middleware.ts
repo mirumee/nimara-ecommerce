@@ -24,7 +24,6 @@ export const saleorWebhookValidationMiddleware = ({
   joseAuthService: (saleorDomain: string) => JoseAuthService;
 }): MiddlewareHandler[] => [
   zodValidatorMiddleware("header", saleorWebhookHeaders),
-  // Makes `req.valid("json")` available to handlers (typed via HandlerContext).
   zodValidatorMiddleware("json", webhookPayloadSchema),
   async (context, next) => {
     const { req } = context;
@@ -57,7 +56,7 @@ export const saleorWebhookValidationMiddleware = ({
       });
     }
 
-    const payload = await req.raw.clone().text();
+    const payload = await req.text();
     const result = await joseAuthService(saleorDomain).verifyDetachedJws({
       jws: header["saleor-signature"],
       payload,

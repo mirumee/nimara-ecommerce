@@ -541,3 +541,85 @@
   property that record's summary calls load-bearing and INT-0005 states as contract. The successor
   reads private metadata only, so the property now holds by construction rather than by assertion.
   No criterion names it, so no path was changed for it. No work item exists.
+- **Closed**: The `BASE_PATH` gap recorded above is fixed in code, so OPS-0002 no longer states it
+  as current behaviour. Every address the application hands out is now derived from one
+  prefix-carrying value, the endpoint registered with Stripe included, so the manifest and the
+  provider endpoint cannot disagree again. The escalation bullet was kept rather than deleted and
+  rewritten as the symptom an operator still meets on a deployment installed by an older release:
+  a Stripe endpoint that omits the prefix and answers 404 while Saleor looks healthy. Verified that
+  saving the channel configuration once replaces such an endpoint, because cleanup matches on the
+  application, environment, and Saleor domain rather than on the address.
+- **Update**: Recorded in OPS-0002 that `BASE_PATH` is now validated as the configuration loads. A
+  bare `/`, a trailing slash, a missing leading slash, and an empty leading segment are each
+  refused with a message naming the shape to use, so an operator learns the format from the runbook
+  or from a refused startup rather than from addresses that never answer. The precondition also now
+  names the Stripe endpoint among the addresses the prefix reaches, which it did not before.
+- **Correction**: ADR-0002's decision prose named `createSaleorAppConfigProvider` and a `read` and
+  `write` pair. Neither survives: the seam is `ConfigItemRepository` in the shared infrastructure
+  package, satisfied by `get` and `upsert`, and the backend is chosen where the application wires
+  its dependencies rather than inside the provider. The decision itself is unchanged — storage is
+  still a replaceable transport behind one seam, still selected by `CONFIG_PROVIDER`, still
+  defaulting to `edge` — so this is a prose repair and the record stays `proposed` with no
+  supersession. The commit-anchored file list at the end was left alone, because it resolves an
+  exact SHA at which those paths were correct.
+- **Update**: Re-pointed two stale stripe paths in `Test Method Playbooks`. The colocated-unit-test
+  list named `apps/stripe/src/lib`, which still holds tests but no longer holds the serializers,
+  use cases, or route handlers the sentence describes; it now names `apps/stripe/src`. The
+  API-contract playbook named the same directory for webhook route examples, which moved to
+  `apps/stripe/src/apps/handler/api/rest`. Added `packages/infrastructure/src` to the first list as
+  well: the same rewrite gave that package its own suite, including the allowlist tests IMP-0002
+  now cites.
+- **Decided**: Left `Product Overview`'s permalinks alone, including the one naming a payment
+  application directory that no longer exists. The record declares the commit it describes, carries
+  a `Provenance` section, and routes current contracts to the narrower records, so a pinned SHA is
+  correct there precisely because it is immutable. Re-pointing it at today's tree would contradict
+  the record's own anchor, and annotating each drifted link would turn a snapshot into a changelog.
+  What the record needs instead is a deliberate re-anchor to a newer commit, which is an editorial
+  act rather than a link repair.
+- **Gap**: IMP-0003's implementation summary still names `createSaleorAppConfigProvider`. Left as
+  written: that record is anchored to the commit where the symbol existed, which is the same
+  reasoning that keeps ADR-0002's file list intact. Whoever re-anchors it should expect the name to
+  change.
+- **Closed**: The deliberately dead pointer on IMP-0002's second criterion is re-pointed at
+  `apps/stripe/src/apps/handler/api/rest/saleor/register.test.ts`, which now covers both halves of
+  the criterion as written. Read before citing: the file drives the real installation route with
+  only the container mocked, and the harness installs the real error handler, so the refusal text
+  it asserts is the one the route builds rather than a fixture. An unconfigured allowlist refuses
+  with the installation never attempted, and a separate case asserts the refusal names
+  `ALLOWED_DOMAINS`. A third case is what makes the second meaningful without a mutation run: a
+  configured allowlist that merely excludes the domain names the domain and *not* the setting, so
+  the string cannot be incidentally present in every response. The deviation explaining the dead
+  pointer was replaced, because it no longer described reality; what remains records that every
+  path here was re-pointed after the framework move and why each replacement was accepted.
+- **Closed**: The public-metadata regression on IMP-0001's gateway-customer criterion is covered
+  again, by two cases added to the file the criterion already cites — a mapping planted in
+  shopper-writable public metadata does not resolve, and it cannot override the private mapping.
+  No path changed and no record was edited, so this is a log closure only. The property the record's
+  summary calls load-bearing, and INT-0005 states as contract, is asserted rather than structural
+  again.
+- **Verified**: Both cited files pass in isolation and the application suite is green at 17 files
+  and 151 tests, which includes concurrent edits to the webhook validation middleware and its test
+  that were in the working tree during this change. Confirmed those edits leave IMP-0002's third
+  criterion intact: the case asserting rejection ahead of the installation lookup and the signature
+  check is unchanged, and the test added beside it covers body encoding, which no criterion claims.
+- **Held**: IMP-0002 stays `in_progress` although all three criteria now cite live tests. Its own
+  evidence section gives a reason unrelated to test paths — isolation across two live installations
+  on one deployment has never been exercised, and neither has its rollback. Promoting it is an
+  engineering judgement about deployed verification, not bookkeeping.
+- **Update**: CAP-0007 now records that adding a payment method collects it in an element scoped to
+  the channel's currency, with a constraint stating why: a tokenization session carries no currency
+  of its own, so without being told one the provider offers every method it can store, including
+  ones the channel cannot charge. The mismatch was previously invisible until a payment with such a
+  method was refused.
+- **Update**: CAP-0007 gained a constraint on the return leg of a redirecting method. It arrives as
+  a cross-site top-level navigation, so a strictly same-site authentication cookie is withheld on
+  it; the shopper reads as signed out and lands on sign-in with the tokenization never completed,
+  although the provider authorised it. The record already covered clearing unusable credentials,
+  which is a different failure and stays as written.
+- **Update**: CAP-0003 now states that the stored-method list at the payment step covers every
+  method type the payment application returns — a type with a dedicated presentation shows its own
+  details, any other is offered under its provider label rather than being dropped.
+- **Decided**: Two findings from the same session were left unrecorded on the owner's call. Two
+  live installations against one commerce instance duplicating a wallet is a development-environment
+  artifact rather than product truth, and the absence of a currency filter on the stored-method list
+  is an open defect, which is tracked as work rather than described as current behaviour.

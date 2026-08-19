@@ -4,7 +4,7 @@ import { z } from "zod";
 import { saleorBearerHeader } from "@nimara/infrastructure/apps/saleor/schemas";
 
 import { container } from "@/container";
-import { responseFromErrors } from "@/lib/api/util";
+import { getAppBaseUrl, responseFromErrors } from "@/lib/api/util";
 import { zodValidatorMiddleware } from "@/lib/middleware/zod-validator-middleware";
 
 import { configFormSchema } from "./schema";
@@ -43,7 +43,7 @@ export const appRoutes = new Hono()
 
       const result = await container.get("saveConfig")({
         accessToken: context.req.valid("header").authorization,
-        appUrl: context.req.origin,
+        appUrl: getAppBaseUrl(context.req),
         data,
         saleorDomain,
       });

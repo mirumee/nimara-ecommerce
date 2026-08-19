@@ -13,12 +13,12 @@ import { RadioGroup } from "@nimara/ui/components/radio-group";
 import { groupPaymentMethods } from "@/features/checkout/payment";
 
 import { CreditCardList } from "./credit-card-list";
+import { OtherMethodList } from "./other-method-list";
 import { PaypalList } from "./paypal-list";
 
-type SerializedPaymentMethodType = Exclude<PaymentMethodType, "other">;
-
-const COMPONENTS_MAP: Partial<Record<SerializedPaymentMethodType, any>> = {
+const COMPONENTS_MAP: Record<PaymentMethodType, any> = {
   card: CreditCardList,
+  other: OtherMethodList,
   paypal: PaypalList,
 };
 
@@ -42,14 +42,14 @@ export const PaymentMethods = ({ methods }: { methods: TPaymentMethods[] }) => {
               disabled={isSubmitting}
             >
               {Object.entries(groupedMethods).map(([type, items]) => {
-                if (type in COMPONENTS_MAP) {
-                  const Component =
-                    COMPONENTS_MAP[type as SerializedPaymentMethodType];
+                /**
+                 * A gateway type with no dedicated list still has to be
+                 * selectable, so anything unmapped renders as an other method.
+                 */
+                const Component =
+                  COMPONENTS_MAP[type as PaymentMethodType] ?? OtherMethodList;
 
-                  return <Component key={type} items={items} />;
-                }
-
-                return null;
+                return <Component key={type} items={items} />;
               })}
             </RadioGroup>
           </FormControl>

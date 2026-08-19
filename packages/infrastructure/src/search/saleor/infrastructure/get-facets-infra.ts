@@ -36,7 +36,7 @@ export const saleorGetFacetsInfra =
     return ok(
       result.data.attributes?.edges.map(({ node: attribute }) => ({
         name: attribute.translation?.name ?? attribute.name ?? "",
-        slug: attribute.slug!,
+        slug: attribute.slug,
         choices:
           attribute.choices?.edges.map(({ node: choice }) => ({
             label: choice.name ?? "",

@@ -8,6 +8,9 @@ import { createTestApp } from "@/lib/test/app";
 import { saleorWebhookValidationMiddleware } from "./saleor-webhook-validation-middleware";
 
 const HEADERS = {
+  // Saleor always sends this; without it hono's json validator skips reading the
+  // body and the middleware is never exercised against a consumed request.
+  "content-type": "application/json",
   "saleor-api-url": "https://saleor.example.com/graphql/",
   "saleor-domain": "saleor.example.com",
   "saleor-event": "transaction_initialize_session",
@@ -106,6 +109,25 @@ describe("saleor-webhook-validation-middleware", () => {
       "The app is not installed for this Saleor instance.",
     );
     expect(verifyDetachedJws).not.toHaveBeenCalled();
+  });
+
+  it("verifies the byte-exact body after the json validator consumed it", async () => {
+    // given
+    const body = '{"event":"test",  "nested":{"a":1}}';
+
+    // when
+    const response = await buildApp().request("/webhook", {
+      method: "POST",
+      headers: HEADERS,
+      body,
+    });
+
+    // then
+    expect(response.status).toBe(200);
+    expect(verifyDetachedJws).toHaveBeenCalledWith({
+      jws: "sig",
+      payload: body,
+    });
   });
 
   it("returns 401 when signature verification fails", async () => {

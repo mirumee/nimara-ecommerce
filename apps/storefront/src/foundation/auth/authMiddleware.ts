@@ -70,7 +70,9 @@ export function authMiddleware(middleware: CustomMiddleware) {
       resultTokenRefresh.data.refreshToken,
       {
         httpOnly: true,
-        sameSite: "strict",
+        // Lax, not strict: provider redirects back from Klarna/3DS are
+        // cross-site top-level navigations and strict would drop the token.
+        sameSite: "lax",
       },
     );
 

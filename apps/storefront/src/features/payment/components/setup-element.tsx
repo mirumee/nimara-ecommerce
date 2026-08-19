@@ -7,20 +7,25 @@ import { type Maybe } from "@nimara/domain/objects/Maybe";
 import { Spinner } from "@nimara/ui/components/spinner";
 import { cn } from "@nimara/ui/lib/utils";
 
-import { ActiveSetupElement } from "@/features/payment/providers/active";
+import {
+  type ActiveMethodSession,
+  ActiveSetupElement,
+} from "@/features/payment/providers/active";
 
 type ActiveProps = ComponentProps<typeof ActiveSetupElement>;
 
 type SetupElementProps = {
+  currency: string;
   initializeData: Maybe<ActiveProps["initializeData"]>;
   isMounted: boolean;
   locale: string;
-  methodSession: Maybe<ActiveProps["methodSession"]>;
+  methodSession: Maybe<ActiveMethodSession>;
   onReady: () => void;
   ref: RefObject<unknown>;
 };
 
 export const SetupElement = ({
+  currency,
   initializeData,
   isMounted,
   locale,
@@ -50,9 +55,9 @@ export const SetupElement = ({
           },
         }}
         className={cn({ hidden: !isMounted })}
+        currency={currency}
         initializeData={initializeData}
         locale={locale}
-        methodSession={methodSession}
         onReady={onReady}
         ref={ref}
       />

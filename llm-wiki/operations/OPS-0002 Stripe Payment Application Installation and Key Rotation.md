@@ -49,10 +49,16 @@ requested permissions change.
   mounts the built server bundle. Confirm the deployed project resolves its framework and build
   command from that committed file rather than from an overriding dashboard setting.
 - Set `BASE_PATH` to the path prefix the application is served under, or leave it empty to serve at
-  the origin root. It is baked into the manifest: the registration URL, the application URL, and
-  every advertised webhook target carry it. Saleor records those addresses when the application is
-  installed, so changing `BASE_PATH` afterwards strands an existing installation on addresses that
-  no longer answer and the installation must be repeated.
+  the origin root. A prefix is one or more `/segment` pairs, as in `/stripe`. A bare `/`, a
+  trailing slash, a missing leading slash, and an empty leading segment are each refused as the
+  configuration loads, with a message naming the shape to use, so a mistyped prefix stops the
+  deployment at startup instead of publishing addresses that never answer.
+- Every address the application hands out carries `BASE_PATH`: the registration URL, the
+  application URL, each advertised webhook target, and the endpoint registered with Stripe. Saleor
+  and Stripe each record those addresses when they are given them, so changing the prefix
+  afterwards strands an existing installation on addresses that no longer answer. Recovering means
+  reinstalling and saving the channel configuration again, so fix the prefix before the first
+  installation.
 - `SENTRY_DSN` is optional and turns on runtime error reporting when set. Uploading source maps at
   build time additionally needs the Sentry authentication, organisation, and project values, and
   happens only when all three are present.
@@ -170,12 +176,15 @@ requested permissions change.
   framework preset found no such file at the application root. That file is committed, so read it
   as an incomplete checkout, a changed root directory, or an overridden build command rather than a
   missing configuration value.
-- The Stripe endpoint address is built from the request origin alone and does not carry
-  `BASE_PATH`, while the Saleor-facing addresses in the manifest do. A deployment served under a
-  path prefix therefore registers a Stripe endpoint that omits the prefix and answers 404, and no
-  transaction report arrives even though installation and channel configuration both succeeded.
-  Compare the endpoint recorded in Stripe against the address the deployment actually serves before
-  concluding that a secret key or signing secret is wrong.
+- An endpoint registered by a release that built the Stripe address from the request origin alone
+  omits `BASE_PATH` and answers 404, so no transaction report arrives even though installation and
+  channel configuration both reported success. Only a deployment served under a prefix was ever
+  affected, and the manifest addresses of the same release carried the prefix correctly, so Saleor
+  looks healthy while Stripe does not. Every address is now derived from one prefix-carrying value,
+  so a current release cannot reintroduce the split. Compare the endpoint recorded in Stripe
+  against the address the deployment actually serves before concluding that a secret key or signing
+  secret is wrong; saving the channel configuration once replaces the stale endpoint, because
+  cleanup matches on the application, environment, and Saleor domain rather than on the address.
 - A deployment that refuses every installation and webhook at once is normally an unset or
   mistyped `ALLOWED_DOMAINS`, not a Saleor or Stripe fault. Check it before touching keys or
   reinstalling, and remember a wildcard pattern must cover the whole domain, including its region

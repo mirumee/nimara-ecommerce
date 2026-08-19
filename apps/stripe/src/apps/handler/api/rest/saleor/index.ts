@@ -18,7 +18,7 @@ import {
   TransactionProcessSessionSubscriptionDocument,
   TransactionRefundRequestedSubscriptionDocument,
 } from "@/graphql/generated/client";
-import { responseFromErrors } from "@/lib/api/util";
+import { getAppBaseUrl, responseFromErrors } from "@/lib/api/util";
 import { UnauthorizedDomainError } from "@/lib/error/http";
 import { zodValidatorMiddleware } from "@/lib/middleware/zod-validator-middleware";
 import { saleorUrlFromDomain } from "@/lib/saleor/url";
@@ -28,63 +28,62 @@ import { webhooks } from "./webhooks";
 export const saleorRoutes = new Hono()
   .get("/manifest", (context) => {
     const config = container.get("config");
-    const host = context.req.origin;
-    const basePath = context.req.basePath;
+    const appBaseUrl = getAppBaseUrl(context.req);
 
     const manifest: SaleorAppManifest = {
       id: config.APP_ID,
       version: config.VERSION,
       name: config.APP_ID,
       permissions: ["HANDLE_PAYMENTS", "MANAGE_USERS"],
-      tokenTargetUrl: `${host}${basePath}/api/saleor/register`,
-      appUrl: `${host}${basePath}/app`,
+      tokenTargetUrl: `${appBaseUrl}/api/saleor/register`,
+      appUrl: `${appBaseUrl}/app`,
       webhooks: [
         {
           query: PaymentGatewayInitializeSessionSubscriptionDocument.toString(),
           name: "PaymentGatewayInitializeSession",
-          targetUrl: `${host}${basePath}/api/saleor/webhooks/payment/gateway-initialize-session`,
+          targetUrl: `${appBaseUrl}/api/saleor/webhooks/payment/gateway-initialize-session`,
           syncEvents: ["PAYMENT_GATEWAY_INITIALIZE_SESSION"],
           asyncEvents: [],
         },
         {
           query: TransactionInitializeSessionSubscriptionDocument.toString(),
           name: "TransactionInitializeSession",
-          targetUrl: `${host}${basePath}/api/saleor/webhooks/payment/transaction-initialize-session`,
+          targetUrl: `${appBaseUrl}/api/saleor/webhooks/payment/transaction-initialize-session`,
           syncEvents: ["TRANSACTION_INITIALIZE_SESSION"],
           asyncEvents: [],
         },
         {
           query: TransactionProcessSessionSubscriptionDocument.toString(),
           name: "TransactionProcessSession",
-          targetUrl: `${host}${basePath}/api/saleor/webhooks/payment/transaction-process-session`,
+          targetUrl: `${appBaseUrl}/api/saleor/webhooks/payment/transaction-process-session`,
           syncEvents: ["TRANSACTION_PROCESS_SESSION"],
           asyncEvents: [],
         },
         {
           query: TransactionChargeRequestedSubscriptionDocument.toString(),
           name: "TransactionChargeRequested",
-          targetUrl: `${host}${basePath}/api/saleor/webhooks/payment/transaction-charge-requested`,
+          targetUrl: `${appBaseUrl}/api/saleor/webhooks/payment/transaction-charge-requested`,
           syncEvents: ["TRANSACTION_CHARGE_REQUESTED"],
           asyncEvents: [],
         },
         {
           query: TransactionCancelationRequestedSubscriptionDocument.toString(),
           name: "TransactionCancelationRequested",
-          targetUrl: `${host}${basePath}/api/saleor/webhooks/payment/transaction-cancelation-requested`,
+          targetUrl: `${appBaseUrl}/api/saleor/webhooks/payment/transaction-cancelation-requested`,
           syncEvents: ["TRANSACTION_CANCELATION_REQUESTED"],
           asyncEvents: [],
         },
         {
           query: TransactionRefundRequestedSubscriptionDocument.toString(),
           name: "TransactionRefundRequested",
-          targetUrl: `${host}${basePath}/api/saleor/webhooks/payment/transaction-refund-requested`,
+          targetUrl: `${appBaseUrl}/api/saleor/webhooks/payment/transaction-refund-requested`,
           syncEvents: ["TRANSACTION_REFUND_REQUESTED"],
           asyncEvents: [],
         },
         {
           query: ListStoredPaymentMethodsSubscriptionDocument.toString(),
           name: "ListStoredPaymentMethods",
-          targetUrl: `${host}${basePath}/api/saleor/webhooks/payment/stored-payment-method-list`,
+          targetUrl: `${appBaseUrl}/api/saleor/webhooks/payment/stored-payment-method-list`,
           syncEvents: ["LIST_STORED_PAYMENT_METHODS"],
           asyncEvents: [],
         },
@@ -92,7 +91,7 @@ export const saleorRoutes = new Hono()
           query:
             StoredPaymentMethodDeleteRequestedSubscriptionDocument.toString(),
           name: "StoredPaymentMethodDeleteRequested",
-          targetUrl: `${host}${basePath}/api/saleor/webhooks/payment/stored-payment-method-delete-requested`,
+          targetUrl: `${appBaseUrl}/api/saleor/webhooks/payment/stored-payment-method-delete-requested`,
           syncEvents: ["STORED_PAYMENT_METHOD_DELETE_REQUESTED"],
           asyncEvents: [],
         },
@@ -100,7 +99,7 @@ export const saleorRoutes = new Hono()
           query:
             PaymentMethodInitializeTokenizationSessionSubscriptionDocument.toString(),
           name: "PaymentMethodInitializeTokenizationSession",
-          targetUrl: `${host}${basePath}/api/saleor/webhooks/payment/payment-method-initialize-tokenization-session`,
+          targetUrl: `${appBaseUrl}/api/saleor/webhooks/payment/payment-method-initialize-tokenization-session`,
           syncEvents: ["PAYMENT_METHOD_INITIALIZE_TOKENIZATION_SESSION"],
           asyncEvents: [],
         },
@@ -108,7 +107,7 @@ export const saleorRoutes = new Hono()
           query:
             PaymentMethodProcessTokenizationSessionSubscriptionDocument.toString(),
           name: "PaymentMethodProcessTokenizationSession",
-          targetUrl: `${host}${basePath}/api/saleor/webhooks/payment/payment-method-process-tokenization-session`,
+          targetUrl: `${appBaseUrl}/api/saleor/webhooks/payment/payment-method-process-tokenization-session`,
           syncEvents: ["PAYMENT_METHOD_PROCESS_TOKENIZATION_SESSION"],
           asyncEvents: [],
         },

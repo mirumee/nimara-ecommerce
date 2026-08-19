@@ -44,9 +44,7 @@ export type StripePaymentSession = {
 };
 
 export type StripeMethodSession = {
-  setupIntent: {
-    clientSecret: string;
-  };
+  clientSecret: string;
 };
 
 export type StripeProvider = {

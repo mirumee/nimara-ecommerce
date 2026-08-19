@@ -50,9 +50,11 @@ that decides whether one installation can read another's credentials is a poor p
 
 We will treat storage as a replaceable transport behind one seam, and select it by configuration.
 
-A store is the pair `read` and `write` over the whole tenant map.
-`createSaleorAppConfigProvider` holds every tenant rule and calls that pair; a backend supplies
-transport only. The Edge Config backend keeps the Vercel REST calls and nothing else.
+A store is one pair of operations over the whole tenant map — read it, and write it back — declared
+as `ConfigItemRepository` in the shared infrastructure package and satisfied by `get` and `upsert`.
+Every tenant rule sits above that pair and calls it; a backend supplies transport only, and the Edge
+Config backend keeps the Vercel REST calls and nothing else. Which backend is constructed is settled
+once, where the application wires its dependencies, rather than inside the provider that uses it.
 
 `CONFIG_PROVIDER` selects the backend and defaults to `edge`, so a deployment that says nothing
 behaves exactly as before. `CONFIG_FILE_PATH` names the file for the `file` backend and defaults to

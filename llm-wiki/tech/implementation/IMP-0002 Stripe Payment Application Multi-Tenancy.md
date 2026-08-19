@@ -30,7 +30,7 @@ verification:
       - "packages/infrastructure/src/apps/saleor/validation.test.ts"
   - criterion: "An unconfigured allowlist refuses every domain, and the refusal names the setting to change."
     tests:
-      - "apps/stripe/src/lib/saleor/config/context.test.ts"
+      - "apps/stripe/src/apps/handler/api/rest/saleor/register.test.ts"
   - criterion: "A webhook naming a domain outside the allowlist is rejected before any signing key is fetched."
     tests:
       - "apps/stripe/src/lib/middleware/saleor-webhook-validation-middleware.test.ts"
@@ -90,14 +90,15 @@ being single-tenant:
 - Provider accounts are distinguished by secret key rather than by account identity, so two keys
   issued by one account produce two endpoints. That costs a redundant endpoint and never misroutes
   an event.
-- The application later moved off Next.js, which moved or deleted all three files named above. Two
-  criteria were re-pointed at the tests that now carry them: the allowlist rules moved into the
-  shared package, and webhook rejection is now asserted at the middleware that performs it, which
-  also proves the ordering the criterion claims. The second criterion is left pointing at a deleted
-  file deliberately. Its first half survives — an empty allowlist still refuses every domain, and
-  the shared package asserts it — but the refusal that names the setting to change is now built in
-  the installation route and no test asserts it. Pointing the criterion at the surviving half would
-  claim coverage this record does not have.
+- The application later moved off Next.js, which moved or deleted every test file this record
+  originally named, so the paths above are not the ones that existed at the pull request. Each was
+  re-pointed only after the replacement was read against the criterion it answers: allowlist
+  matching moved into the shared package, webhook rejection is asserted at the middleware that
+  performs it and proves the ordering the criterion claims, and the deny-by-default refusal is
+  asserted against the real installation route. The third of those was written afterwards to close
+  a gap the move had opened — the refusal that names the setting to change was unasserted for a
+  time, and the criterion was left citing a deleted file rather than a partial substitute until it
+  was covered again.
 
 # Verification evidence
 

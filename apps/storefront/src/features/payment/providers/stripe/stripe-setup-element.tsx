@@ -7,7 +7,6 @@ import type {
   Appearance,
   StripeElementLocale,
   StripeGateway,
-  StripeMethodSessionData,
   StripePaymentElement as TStripePaymentElement,
 } from "@nimara/infrastructure/payment/stripe/types";
 
@@ -21,9 +20,9 @@ const STRIPE_LOCALE_OVERRIDES: Partial<
 
 type StripeSetupElementProps = Omit<ComponentProps<"div">, "ref"> & {
   appearance?: Appearance;
+  currency: string;
   initializeData: StripeGateway;
   locale?: string;
-  methodSession: StripeMethodSessionData;
   onReady?: () => void;
   ref: RefObject<unknown>;
 };
@@ -34,9 +33,9 @@ type StripeSetupElementProps = Omit<ComponentProps<"div">, "ref"> & {
  */
 export const StripeSetupElement = ({
   appearance,
+  currency,
   initializeData,
   locale = "auto",
-  methodSession,
   onReady,
   ref,
   ...props
@@ -44,9 +43,16 @@ export const StripeSetupElement = ({
   const paymentElementRef = useRef<TStripePaymentElement>(null);
 
   useEffect(() => {
+    /**
+     * Setup mode with a currency rather than the intent secret: a SetupIntent
+     * carries no currency, so Stripe would otherwise offer methods that the
+     * channel cannot charge. The secret is supplied when confirming instead.
+     */
     const elements = initializeData.sdk.elements({
       appearance,
-      clientSecret: methodSession.providerData.setupIntent.clientSecret,
+      currency: currency.toLowerCase(),
+      mode: "setup",
+      setupFutureUsage: "on_session",
       locale:
         STRIPE_LOCALE_OVERRIDES[locale as SupportedLocale] ??
         (locale as StripeElementLocale),
