@@ -587,7 +587,7 @@
   it asserts is the one the route builds rather than a fixture. An unconfigured allowlist refuses
   with the installation never attempted, and a separate case asserts the refusal names
   `ALLOWED_DOMAINS`. A third case is what makes the second meaningful without a mutation run: a
-  configured allowlist that merely excludes the domain names the domain and *not* the setting, so
+  configured allowlist that merely excludes the domain names the domain and _not_ the setting, so
   the string cannot be incidentally present in every response. The deviation explaining the dead
   pointer was replaced, because it no longer described reality; what remains records that every
   path here was re-pointed after the framework move and why each replacement was accepted.

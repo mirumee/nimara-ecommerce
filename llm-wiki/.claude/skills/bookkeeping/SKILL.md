@@ -93,6 +93,10 @@ Run the repository-defined checks relevant to the operation. In Nimara's `llm-wi
   end of their section. Several sections are ordered by hand, so move an inserted row when the
   section has a reading order, and shorten the hook it copied from the note's `description`.
 - **`pnpm wiki:saleor:check`** before citing or restamping a Saleor schema note.
+- **`npx prettier --write`** over the files the operation added or modified, before reporting.
+  The repository's `pnpm format:check` gate covers Markdown, so an unformatted record fails CI
+  even though `wiki:lint` passes. Pass the changed paths, not a glob: reformatting files the
+  operation did not touch buries the real diff and rewrites someone else's prose.
 - **`_schema.json` is the machine-readable half of the contracts in `_templates/`.** A contract
   change means changing both. Silencing a rule means adding an `except` entry that states why.
 

@@ -5,6 +5,7 @@ import { saleorBearerHeader } from "@nimara/infrastructure/apps/saleor/schemas";
 
 import { container } from "@/container";
 import { getAppBaseUrl, responseFromErrors } from "@/lib/api/util";
+import { saleorDomainAllowlistMiddleware } from "@/lib/middleware/saleor-domain-allowlist-middleware";
 import { zodValidatorMiddleware } from "@/lib/middleware/zod-validator-middleware";
 
 import { configFormSchema } from "./schema";
@@ -14,6 +15,11 @@ import { configFormSchema } from "./schema";
  * with the Saleor dashboard JWT passed as a Bearer token.
  */
 export const appRoutes = new Hono()
+  .use(
+    saleorDomainAllowlistMiddleware({
+      allowedDomains: container.get("config").ALLOWED_DOMAINS,
+    }),
+  )
   .post(
     "/config/fetch",
     zodValidatorMiddleware("header", saleorBearerHeader),
