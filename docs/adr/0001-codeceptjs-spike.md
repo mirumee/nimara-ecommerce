@@ -1,6 +1,7 @@
 ---
-status: proposed
+status: superseded
 review-by: 2026-08-13
+superseded-by: "llm-wiki/tech/ADR/ADR-0003 CodeceptJS Is The End-To-End Test Engine.md"
 ---
 
 # Trial CodeceptJS alongside Playwright with a homepage smoke test

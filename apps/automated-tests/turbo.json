@@ -2,16 +2,9 @@
   "extends": ["//"],
   "tasks": {
     "test:e2e": {
-      "dependsOn": ["test"],
+      "cache": false,
       "env": ["TEST_ENV_URL", "LOCALE"],
-      "passThroughEnv": ["USER_EMAIL", "USER_PASSWORD"],
-      "inputs": [
-        "./tests/e2e/**/*.test.ts",
-        "./pages/*.ts",
-        "./utils/*.ts",
-        "playwright.config.json"
-      ],
-      "outputs": ["playwright-report", "test_results"]
+      "passThroughEnv": ["USER_EMAIL", "USER_PASSWORD"]
     }
   }
 }

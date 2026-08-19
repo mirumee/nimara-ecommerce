@@ -9,7 +9,7 @@ tools.
 
 Next.js 16 (App Router, RSC, Server Actions) · React 19 · TypeScript strict · Tailwind +
 Shadcn UI · Saleor GraphQL (GraphQL Code Generator) · Turborepo + pnpm · NextAuth v5 ·
-Stripe · Vitest (unit) + Playwright (E2E) · Vercel · Sentry · Pino.
+Stripe · Vitest (unit) + CodeceptJS (E2E) · Vercel · Sentry · Pino.
 
 ## Structure (authoritative)
 
@@ -19,7 +19,7 @@ apps/
   marketplace/       # Vendor dashboard; Stripe Connect, optional Postgres ledger
   stripe/            # Stripe payment app (Saleor Payment Gateway)
   docs/              # Docusaurus docs site
-  automated-tests/   # Playwright E2E
+  automated-tests/   # CodeceptJS E2E
 packages/
   domain/            # Pure business logic, types, Result (leaf)
   foundation/        # Utilities, hooks, helpers (leaf)

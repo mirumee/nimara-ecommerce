@@ -29,13 +29,15 @@ assert its success flag and data or errors rather than relying only on thrown ex
 
 ### Browser journeys
 
-Use the Playwright suite in `apps/automated-tests` when the contract crosses rendered UI,
+Use the CodeceptJS suite in `apps/automated-tests` when the contract crosses rendered UI,
 navigation, cookies, browser storage, embedded payment UI, or several application steps.
-Prefer role, label, and test-id locators already used by the page objects. Identify the
-specific browser project and environment in the result.
+Prefer the role and name locator objects the page objects already use, and `locate()` from
+`codeceptjs` for attribute locators. Identify the environment and the `LOCALE` value in the
+result.
 
-The committed configuration records traces on first retry, video on failure, and screenshots
-on failure. Preserve the relevant artifact together with the expected and actual result.
+The default `screenshot` plugin writes one PNG per failed scenario to
+`apps/automated-tests/output/`. There is no trace, video, or HTML report, so preserve the
+`--steps` output alongside the screenshot, together with the expected and actual result.
 
 ### Timing / race conditions (e.g. lost add-to-cart, slow updates)
 
@@ -45,9 +47,10 @@ on failure. Preserve the relevant artifact together with the expected and actual
   read or delayed render.
 - Record the delay profile, attempt count, and whether the failure signature is stable.
 
-Playwright page objects currently use explicit URL and visibility waits around checkout and
-cart transitions (`apps/automated-tests/pages`). Preserve or strengthen those synchronization
-points when isolating a race.
+CodeceptJS page objects use explicit URL and text waits around checkout and cart transitions
+(`apps/automated-tests/codecept/pages`). Those timeouts are in **seconds**, not milliseconds,
+and come from `timeout_seconds` in `codecept/data/constants.ts`. Preserve or strengthen those
+synchronization points when isolating a race.
 
 ### API / server-action contract (e.g. wrong HTTP status)
 

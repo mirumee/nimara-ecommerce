@@ -20,10 +20,12 @@ confirmed current flake. Do not carry historical environment observations forwar
 "known flaky" list without a reproducible scenario, execution evidence, affected revisions,
 and a review owner.
 
-The Playwright configuration retries failures twice in CI and records trace, video, and
-screenshot artifacts under configured conditions (`apps/automated-tests/playwright.config.ts`).
-A passing retry is evidence of inconsistency, not proof that the product is flaky: fixture,
-environment, and test-code causes must also be considered.
+CodeceptJS runs each scenario once. `apps/automated-tests/codecept.conf.ts` configures no
+retries and no trace or video. Its default `screenshot` plugin saves one PNG per failed
+scenario under `apps/automated-tests/output/`. Because the retry-and-trace bundle is gone, a
+first failure carries less evidence than it used to and a single flake fails the whole run.
+Reproduce manually with `--steps` before calling anything flaky, and consider fixture,
+environment, and test-code causes as well as the product.
 
 ### Common prerequisite boundaries
 

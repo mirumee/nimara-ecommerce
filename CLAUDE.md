@@ -60,7 +60,7 @@ apps/
 ├── storefront/              # Next.js customer storefront
 ├── marketplace/             # Vendor dashboard; Postgres ledger, Stripe Connect, payout batches
 ├── stripe/                  # Stripe payment integration app (Saleor Payment Gateway)
-└── automated-tests/         # Playwright E2E tests
+└── automated-tests/         # CodeceptJS E2E tests
 
 packages/
 ├── domain/                  # Pure business logic (types, consts, entities)
