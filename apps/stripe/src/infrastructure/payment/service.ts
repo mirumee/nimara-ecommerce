@@ -1,7 +1,7 @@
 import { type AsyncResult, ok } from "@nimara/domain/objects/Result";
 import { type Logger } from "@nimara/infrastructure/logging/types";
 
-import { type ChannelGatewayConfig } from "@/domain/app-config";
+import { type PaymentGatewayConfig } from "@/domain/app-config";
 import { stripeGateway } from "@/infrastructure/payment/stripe/gateway";
 
 /**
@@ -16,7 +16,7 @@ export const paymentService =
     getGatewayConfig: (opts: {
       channelSlug: string;
       saleorDomain: string;
-    }) => AsyncResult<ChannelGatewayConfig>;
+    }) => AsyncResult<PaymentGatewayConfig>;
     logger: Logger;
   }) =>
   async ({

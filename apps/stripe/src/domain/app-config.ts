@@ -1,34 +1,42 @@
 import { z } from "zod";
 
-// Per-channel Stripe gateway configuration, keyed by channel slug.
-export const paymentGatewayConfig = z.record(
-  z.string(),
-  z.object({
-    accountId: z.string().optional(),
-    currency: z.string(),
-    publicKey: z.string(),
-    secretKey: z.string(),
-    webhookSecretKey: z.string().optional(),
-    webhookId: z.string().optional(),
-  }),
-);
+export const paymentGatewayConfig = z.object({
+  accountId: z.string().optional(),
+  publicKey: z.string(),
+  secretKey: z.string(),
+  webhookSecretKey: z.string().optional(),
+  webhookId: z.string().optional(),
+});
 
 export type PaymentGatewayConfig = z.infer<typeof paymentGatewayConfig>;
 
-export type ChannelGatewayConfig = PaymentGatewayConfig[string];
+/**
+ * Every channel uses `default`; `channelOverrides` replaces it wholesale.
+ * Which channel the UI collects it on comes from `DEFAULT_CHANNEL_SLUG`.
+ */
+export const paymentGatewayConfigSet = z.object({
+  default: paymentGatewayConfig.nullable(),
+  channelOverrides: z.record(z.string(), paymentGatewayConfig),
+});
 
-// Config stored per installed Saleor: install record + its gateway config.
-export const stripeAppConfig = z.object({
+export type PaymentGatewayConfigSet = z.infer<typeof paymentGatewayConfigSet>;
+
+export const emptyPaymentGatewayConfigSet = (): PaymentGatewayConfigSet => ({
+  default: null,
+  channelOverrides: {},
+});
+
+export const appConfig = z.object({
   authToken: z.string(),
   saleorAppId: z.string(),
   saleorDomain: z.string(),
-  paymentGatewayConfig,
+  paymentGatewayConfigSet,
 });
 
-export type StripeAppConfig = z.infer<typeof stripeAppConfig>;
+export type AppConfig = z.infer<typeof appConfig>;
 
 // The whole tenant map — one store for every installed Saleor, keyed by domain.
-export const saleorMultiTenantAppConfig = z.record(z.string(), stripeAppConfig);
+export const saleorMultiTenantAppConfig = z.record(z.string(), appConfig);
 
 export type SaleorMultiTenantAppConfig = z.infer<
   typeof saleorMultiTenantAppConfig

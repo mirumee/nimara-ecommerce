@@ -5,15 +5,15 @@ import { createRoot } from "react-dom/client";
 
 import { Toaster } from "@nimara/ui/components/toaster";
 
-import { SaleorAppBridgeInitializer } from "./client/components/saleor-app-bridge-initializer";
+import { DashboardSessionProvider } from "./client/components/dashboard-session/provider";
 import { AppView } from "./client/views/app/app-view";
 
 createRoot(document.getElementById("root") as HTMLElement).render(
   <StrictMode>
-    <div className="container">
-      <SaleorAppBridgeInitializer>
+    <div className="min-h-screen bg-background text-foreground">
+      <DashboardSessionProvider>
         <AppView />
-      </SaleorAppBridgeInitializer>
+      </DashboardSessionProvider>
     </div>
     <Toaster />
   </StrictMode>,

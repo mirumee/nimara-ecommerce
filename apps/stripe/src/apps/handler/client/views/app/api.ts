@@ -1,16 +1,28 @@
 import { hc, type InferRequestType } from "hono/client";
 
 import { type AppType } from "@/apps/handler/entry-server";
+import { type ResponseSchema } from "@/lib/api/schema";
 import { type ConfigFormData } from "@/use-cases/get-config-form-data-use-case";
 
-/**
- * Typed RPC client for the app's own config API (see `api/rest/app`) —
- * request and response shapes are inferred from the routes. Authenticated
- * with the dashboard JWT provided by the Saleor app bridge.
- */
+// Typed RPC client for the app's own config API; shapes inferred from the routes.
 const client = hc<AppType>(window.env.BASE_PATH || "/");
 
 const configApi = client.api.app.config;
+
+const errorMessage = async (response: Response) => {
+  const body = (await response
+    .json()
+    .catch(() => null)) as Partial<ResponseSchema> | null;
+
+  const description = body?.description ?? "The request failed.";
+  const [firstError] = body?.errors ?? [];
+  const detail =
+    firstError && firstError.message !== description
+      ? ` ${firstError.message}`
+      : "";
+
+  return `${description}${detail} (HTTP ${response.status})`;
+};
 
 export const fetchConfigData = async ({
   accessToken,
@@ -25,7 +37,7 @@ export const fetchConfigData = async ({
   });
 
   if (!response.ok) {
-    throw new Error("Failed to fetch the configuration.");
+    throw new Error(await errorMessage(response));
   }
 
   // The untyped error responses break hono's inference — narrow by hand.
@@ -47,11 +59,7 @@ export const saveConfigData = async ({
   });
 
   if (!response.ok) {
-    const json = (await response.json().catch(() => null)) as {
-      description?: string;
-    } | null;
-
-    return json?.description ?? "Failed to save configuration.";
+    return errorMessage(response);
   }
 
   return null;

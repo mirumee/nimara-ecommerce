@@ -7,26 +7,55 @@ import { type AppConfigService } from "@/infrastructure/app-config-service";
 import { type SaleorClient } from "@/lib/saleor/client";
 import { maskString } from "@/lib/security";
 
-// What the config UI renders per channel.
-export type ConfigFormData = Record<
-  string,
-  {
-    currency: string;
-    name: string;
-    publicKey: string;
-    secretKey: string;
-    webhookId?: string;
-    webhookSecretKey?: string;
-  }
->;
+const MASKED_SECRETS_LENGTH = 25;
+
+export type ConfigFormChannel = {
+  currency: string;
+  name: string;
+  slug: string;
+};
+
+// What the config UI renders: the channels to configure and the stored config.
+export type ConfigFormData = {
+  channels: ConfigFormChannel[];
+  config: {
+    channelOverrides: Record<string, PaymentGatewayConfig>;
+    default: PaymentGatewayConfig | null;
+    defaultChannelSlug: string;
+  };
+};
+
+/**
+ * Neither secret leaves the app in full. The form sends the secret key back
+ * blank when the stored one should stay, so a mask is never saved.
+ */
+const toFormConfig = (config: PaymentGatewayConfig): PaymentGatewayConfig => ({
+  ...config,
+  secretKey: config.secretKey
+    ? maskString({
+        maxLength: MASKED_SECRETS_LENGTH,
+        visibleChars: 4,
+        str: config.secretKey,
+      })
+    : "",
+  webhookSecretKey: config.webhookSecretKey
+    ? maskString({
+        maxLength: MASKED_SECRETS_LENGTH,
+        visibleChars: 4,
+        str: config.webhookSecretKey,
+      })
+    : undefined,
+});
 
 export const getConfigFormDataUseCase =
   ({
     appConfigService,
+    defaultChannelSlug,
     joseAuthService,
     saleorClient,
   }: {
     appConfigService: AppConfigService;
+    defaultChannelSlug: string;
     joseAuthService: (saleorDomain: string) => JoseAuthService;
     saleorClient: (opts: {
       authToken?: string;
@@ -66,7 +95,7 @@ export const getConfigFormDataUseCase =
       ]);
     }
 
-    const configResult = await appConfigService.getPaymentGatewayConfig({
+    const configResult = await appConfigService.getPaymentGatewayConfigSet({
       saleorDomain,
     });
 
@@ -74,29 +103,35 @@ export const getConfigFormDataUseCase =
       return configResult;
     }
 
-    const config = configResult.data;
+    const storedConfig = configResult.data;
+    const formChannels =
+      channels?.map(({ currencyCode, name, slug }) => ({
+        currency: currencyCode,
+        name,
+        slug,
+      })) ?? [];
 
-    const formData =
-      channels?.reduce<ConfigFormData>((acc, { currencyCode, name, slug }) => {
-        const gatewayConfig = (config?.[slug] ??
-          {}) as PaymentGatewayConfig[string];
+    // Overrides for removed channels would render as ghost rows and re-save.
+    const channelOverrides = formChannels.reduce<
+      Record<string, PaymentGatewayConfig>
+    >((overrides, { slug }) => {
+      const config = storedConfig?.channelOverrides[slug];
 
-        acc[slug] = {
-          currency: currencyCode,
-          name,
-          webhookId: gatewayConfig.webhookId,
-          webhookSecretKey: gatewayConfig.webhookSecretKey
-            ? maskString({
-                visibleChars: 10,
-                str: gatewayConfig.webhookSecretKey,
-              })
-            : undefined,
-          publicKey: gatewayConfig.publicKey,
-          secretKey: gatewayConfig.secretKey,
-        };
+      if (config) {
+        overrides[slug] = toFormConfig(config);
+      }
 
-        return acc;
-      }, {}) ?? {};
+      return overrides;
+    }, {});
 
-    return ok(formData);
+    return ok({
+      channels: formChannels,
+      config: {
+        channelOverrides,
+        default: storedConfig?.default
+          ? toFormConfig(storedConfig.default)
+          : null,
+        defaultChannelSlug,
+      },
+    });
   };

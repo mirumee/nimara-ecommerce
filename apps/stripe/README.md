@@ -27,8 +27,8 @@ cp .env.example .env
 ```
 
 This is a **multi-tenant** app: one deployment serves every Saleor instance in
-`ALLOWED_DOMAINS`, storing each tenant's config (install token + per-channel
-Stripe keys) keyed by its domain. Edit `.env`:
+`ALLOWED_DOMAINS`, storing each tenant's config (install token + its Stripe
+keys) keyed by its domain. Edit `.env`:
 
 - `ALLOWED_DOMAINS` - Comma-separated Saleor domains allowed to install the app.
   Wildcards allowed (`*.eu.saleor.cloud`, or `*` for any — never `*` in prod).
@@ -75,6 +75,58 @@ config change.
 - **Build** (`etc/build.ts`): one Vite pass **per app** so every app bundles
   into a single self-contained file — no shared chunks between apps.
 
+### Local config UI
+
+The config UI normally runs as a Dashboard iframe, which supplies the Saleor URL
+and a staff token. To work on it as a plain page instead, set both dev-only
+variables in `.env.local` and open <http://localhost:4000/app>:
+
+```bash
+VITE_SALEOR_API_URL=https://your-shop.eu.saleor.cloud/graphql/
+VITE_SALEOR_APP_TOKEN=<staff access token>
+```
+
+Mint the token against that Saleor:
+
+```graphql
+mutation {
+  tokenCreate(email: "admin@example.com", password: "…") {
+    token
+  }
+}
+```
+
+Setting only one of the two fails loudly rather than hanging on a spinner, and
+both reads sit behind `import.meta.env.DEV`, so a production bundle carries no
+token even if the variables are set at build time. Inside the Dashboard iframe
+they are ignored.
+
+> **The dev server does not verify the token signature.** Staff JWTs expire in
+> minutes, which makes them useless for a working session, so under
+> `import.meta.env.DEV` the app accepts any token for its own config API and a
+> long-lived Saleor **app token** works. The token is still sent to Saleor for
+> the GraphQL calls, so it must be real and hold staff permissions — this skips
+> the signature check, not authentication against Saleor.
+>
+> The gate is `import.meta.env.DEV`, which vite compiles into the bundle: no
+> environment variable turns it on, and the branch is absent from the built
+> server (`grep passThroughJwtVerification dist/handler/entry-server.js` finds
+> nothing). Saleor webhook signature checks are untouched.
+>
+> It does apply while a tunnel is pointed at your dev server. Anyone who can
+> reach that URL can read and write your Stripe keys — close the tunnel when
+> you are done.
+
+Two things still depend on the environment:
+
+- The Saleor domain must be listed in `ALLOWED_DOMAINS`.
+- **Saving** needs an install record for that domain in the config store, so
+  install the app once (via a tunnel, or by seeding `.saleor-app-config.json`
+  under `CONFIG_PROVIDER=file`). Loading the form works without one.
+
+Stripe webhooks are not created from a local URL — the app logs a warning and
+skips them.
+
 ### Base path
 
 An app self-prefixes all routes and the URLs it advertises (manifest, client
@@ -118,9 +170,34 @@ To install it on [Saleor Cloud](https://cloud.saleor.io) you can:
 
 - Go to the [apps dashboard](https://YOUR-SALEOR-CLOUD-DOMAIN.eu.saleor.cloud/dashboard/apps/) and click `Install external app`. There just provide the manifest URL of the app.
 
-Once successfully installed, just provide correct private & public keys from your Stripe account.
-<br />
-**Note** that the webhooks will be installed automatically when the keys are provided.
+## 🔑 Configuration
+
+The app holds **one Stripe configuration per installation**. `DEFAULT_CHANNEL_SLUG`
+names the **default channel**; the config UI collects the publishable and secret
+key on it, and every other channel inherits those keys.
+
+A channel that must settle through a different Stripe account gets an
+**override**: press `Override` on the channel and give it its own key pair. An
+override replaces both keys rather than merging them, so a channel never runs
+with a publishable key from one account and a secret key from another. Press
+`Use default` to drop the override and fall back to the default channel's keys.
+
+The default channel is a UI concept only: it decides which channel the keys are
+typed on, never which keys a payment uses. Key resolution is
+`channelOverrides[slug] ?? default`, so pointing `DEFAULT_CHANNEL_SLUG` at a
+different channel moves the form, not the money. A slug matching no channel in
+the connected Saleor is reported in the UI instead of silently configuring
+nothing.
+
+Webhook endpoints belong to the Stripe account, not to the channel: the app
+creates one endpoint per configured account on save, reuses it while the secret
+key stays the same, and removes it once no channel uses that key anymore.
+
+> **Upgrading from the per-channel configuration:** the stored config changed
+> shape and is not migrated. Clear the app's stored config
+> (`CONFIG_FILE_PATH`, default `.saleor-app-config.json`, for
+> `CONFIG_PROVIDER=file`; the Edge Config item for `edge`), reinstall the app,
+> and enter the keys once.
 
 <div align="center">
   <picture>

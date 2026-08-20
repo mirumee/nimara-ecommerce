@@ -11,6 +11,7 @@ import { installSaleorAppUseCase } from "@nimara/infrastructure/use-cases/apps/s
 import { APP_CONFIG } from "@/apps/handler/config";
 import { saleorMultiTenantAppConfig } from "@/domain/app-config";
 import { appConfigService } from "@/infrastructure/app-config-service";
+import { passThroughJwtVerification } from "@/infrastructure/auth/pass-through-jwt-verification";
 import { customerRepository } from "@/infrastructure/customer/repository";
 import { paymentService } from "@/infrastructure/payment/service";
 import { paymentMethodService } from "@/infrastructure/payment-method/service";
@@ -20,13 +21,18 @@ import { saleorUrlFromDomain } from "@/lib/saleor/url";
 import { getConfigFormDataUseCase } from "@/use-cases/get-config-form-data-use-case";
 import { saveConfigUseCase } from "@/use-cases/save-config-use-case";
 
+/**
+ * Vite compiles this to `false` in every built bundle, keeping the branch below
+ * out of a deployed server.
+ */
+const IS_DEV = typeof import.meta.env !== "undefined" && !!import.meta.env.DEV;
+
 export const container = createContainer()
   .add({
     config: () => APP_CONFIG,
     logger: () => getLogger({ name: "stripe" }),
   })
   .add((ctx) => ({
-    // Multi-tenant config store: the whole `Record<domain, StripeAppConfig>`.
     configStore: () =>
       ctx.config.CONFIG_PROVIDER === "file"
         ? fileConfigItem({
@@ -38,13 +44,18 @@ export const container = createContainer()
             schema: saleorMultiTenantAppConfig,
             logger: ctx.logger,
           }),
-    joseAuthService: () => (saleorDomain: string) =>
-      joseAuthService({
+    joseAuthService: () => (saleorDomain: string) => {
+      const service = joseAuthService({
         jwksRepository: jwksMemoryRepository({
           remoteUrl: saleorUrlFromDomain(saleorDomain),
           logger: ctx.logger,
         }),
-      }),
+      });
+
+      return IS_DEV
+        ? passThroughJwtVerification({ logger: ctx.logger, service })
+        : service;
+    },
     saleorClient: () =>
       saleorClient({
         logger: ctx.logger,
@@ -81,6 +92,7 @@ export const container = createContainer()
     getConfigFormData: () =>
       getConfigFormDataUseCase({
         appConfigService: ctx.appConfigService,
+        defaultChannelSlug: ctx.config.DEFAULT_CHANNEL_SLUG,
         joseAuthService: ctx.joseAuthService,
         saleorClient: ctx.saleorClient,
       }),

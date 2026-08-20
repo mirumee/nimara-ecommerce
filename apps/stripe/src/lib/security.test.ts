@@ -62,6 +62,29 @@ describe("maskString", () => {
     expect(result).toBe("****e");
   });
 
+  it("caps the result at maxLength, keeping the visible tail", () => {
+    // given
+    const str = "sk_live_cooltestingkey";
+
+    // when
+    const result = maskString({ str, maxLength: 15, visibleChars: 4 });
+
+    // then
+    expect(result).toBe("***********6789");
+    expect(result).toHaveLength(15);
+  });
+
+  it("never pads a string shorter than maxLength", () => {
+    // given
+    const str = "abcdef";
+
+    // when
+    const result = maskString({ str, maxLength: 15, visibleChars: 4 });
+
+    // then
+    expect(result).toBe("**cdef");
+  });
+
   it("returns only mask characters when visibleChars is zero", () => {
     // given
     const str = "abcdef";
