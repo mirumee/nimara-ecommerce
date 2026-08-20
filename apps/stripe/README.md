@@ -117,15 +117,16 @@ they are ignored.
 > reach that URL can read and write your Stripe keys — close the tunnel when
 > you are done.
 
-Two things still depend on the environment:
+The Saleor domain must still be listed in `ALLOWED_DOMAINS`.
 
-- The Saleor domain must be listed in `ALLOWED_DOMAINS`.
-- **Saving** needs an install record for that domain in the config store, so
-  install the app once (via a tunnel, or by seeding `.saleor-app-config.json`
-  under `CONFIG_PROVIDER=file`). Loading the form works without one.
+Two things behave differently from a deployment:
 
-Stripe webhooks are not created from a local URL — the app logs a warning and
-skips them.
+- **Saving** works without an install record — the dev server creates the stored
+  entry, so the screen is usable before the app is installed anywhere. A deployed
+  build refuses that and reports the missing installation, since there the screen
+  is only reachable from an installed app.
+- **Stripe webhooks** are not created from a local URL; the app logs a warning
+  and skips them.
 
 ### Base path
 

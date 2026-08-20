@@ -46,6 +46,34 @@ describe("appConfigService", () => {
   describe("updatePaymentGatewayConfigSet", () => {
     // The config screen runs before install in development, so a save must not
     // require a tenant entry that only the install flow writes.
+    it("refuses an uninstalled tenant when creating one is not allowed", async () => {
+      // given
+      const upsert = vi.fn(async () => ok(true));
+      const service = appConfigService({
+        configStore: {
+          get: vi.fn(async () => ok({})),
+          upsert,
+        } as unknown as ConfigItemRepository<SaleorMultiTenantAppConfig>,
+      });
+
+      // when
+      const result = await service.updatePaymentGatewayConfigSet({
+        saleorDomain: SALEOR_DOMAIN,
+        data: {
+          default: DEFAULT_CREDENTIALS,
+          defaultChannelSlug: "default-channel",
+          channelOverrides: {},
+        },
+      });
+
+      // then
+      expect(result.ok).toBe(false);
+      expect(!result.ok && result.errors[0].code).toBe(
+        "SALEOR_APP_CONFIG_NOT_FOUND_ERROR",
+      );
+      expect(upsert).not.toHaveBeenCalled();
+    });
+
     it("creates the tenant entry when the app is not installed yet", async () => {
       // given
       const upsert = vi.fn(async () => ok(true));
@@ -54,6 +82,7 @@ describe("appConfigService", () => {
           get: vi.fn(async () => ok({})),
           upsert,
         } as unknown as ConfigItemRepository<SaleorMultiTenantAppConfig>,
+        createMissingTenant: true,
       });
 
       // when

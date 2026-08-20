@@ -640,10 +640,11 @@
 - **Update**: Corrected the stored-record description in ADR-0002 and its restatements in IMP-0002
   and IMP-0003. The decision itself — that the configuration backend is selectable — is unchanged;
   only the shape of the value it stores and the name of the rule that reads it were stale.
-- **Update**: INT-0005 records that saving gateway configuration creates the entry for a commerce
-  domain that has none, so keys can be stored before the application is installed there and a later
-  installation fills in the token and application ID on the same entry. ADR-0002's summary of the
-  tenant rules was corrected to match: the update path creates rather than rejects.
+- **Update**: INT-0005 records what a save does for a commerce domain with no entry. A deployed
+  application refuses it, because the configuration screen is only reachable from an installed
+  application; a development build creates the entry so the screen can be worked on standalone, and
+  a later installation fills in the token and application ID on the same entry. ADR-0002's summary
+  of the tenant rules was corrected to match: the update path creates or rejects.
 - **Update**: INT-0005 and OPS-0002 now record that each installation chooses and stores its own
   default channel. A deployment-wide channel name would have left any installation not sharing that
   slug convention unable to save keys at all, including on first setup, so the choice belongs to the

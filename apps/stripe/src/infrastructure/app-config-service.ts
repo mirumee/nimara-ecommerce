@@ -30,8 +30,16 @@ const notFound = (message: string) =>
  */
 export const appConfigService = ({
   configStore,
+  createMissingTenant = false,
 }: {
   configStore: ConfigItemRepository<SaleorMultiTenantAppConfig>;
+  /**
+   * Lets a save create the tenant entry, for the development-only config screen
+   * that runs before the app is installed. In a deployment the screen is only
+   * reachable from the Dashboard, so a missing entry is a real fault worth
+   * reporting rather than a half record to write.
+   */
+  createMissingTenant?: boolean;
 }) => {
   const getBySaleorDomain = async ({
     saleorDomain,
@@ -135,14 +143,18 @@ export const appConfigService = ({
       }
 
       const configs = result.data ?? {};
-      /**
-       * Keys can be saved before the app is installed on that Saleor — the
-       * config screen runs standalone in development — so the tenant entry is
-       * created here and the install fills in its token and application ID.
-       */
-      const current: Omit<AppConfig, "paymentGatewayConfigSet"> = configs[
-        saleorDomain
-      ] ?? { authToken: "", saleorAppId: "", saleorDomain };
+      const installed = configs[saleorDomain];
+
+      if (!installed && !createMissingTenant) {
+        return notFound(`Missing config for ${saleorDomain} domain.`);
+      }
+
+      // The install fills in the token and application ID on the same entry.
+      const current: Omit<AppConfig, "paymentGatewayConfigSet"> = installed ?? {
+        authToken: "",
+        saleorAppId: "",
+        saleorDomain,
+      };
       const gateway = paymentGatewayConfigSet.parse(data);
       const saved = await configStore.upsert({
         value: {

@@ -32,10 +32,11 @@ payment methods protocol.
 - One deployment serves any number of commerce installations. Each installation is stored under its
   own commerce domain, holding its own installation token, application ID, and gateway
   configuration, and no request can read or write another installation's configuration.
-- Saving gateway configuration creates the entry for a commerce domain that has none, so keys can be
-  stored before the application is installed there — the configuration screen runs standalone in
-  development. Installing afterwards fills in the installation token and application ID on the same
-  entry and preserves the keys.
+- A deployed application refuses to save gateway configuration for a commerce domain it is not
+  installed on, because the configuration screen is reachable only from an installed application and
+  a missing entry is therefore a fault rather than a first save. A development build accepts it, so
+  the screen can be worked on standalone before any installation exists; installing afterwards fills
+  in the installation token and application ID on the same entry and preserves the keys.
 - Every request names its tenant by commerce domain. Both the signing keys used to authenticate the
   caller and the commerce API the application calls back are addressed from that domain, so a
   caller cannot direct the deployment at a server of its own choosing.

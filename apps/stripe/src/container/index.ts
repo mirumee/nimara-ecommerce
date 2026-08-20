@@ -63,7 +63,11 @@ export const container = createContainer()
       }),
   }))
   .add((ctx) => ({
-    appConfigService: () => appConfigService({ configStore: ctx.configStore }),
+    appConfigService: () =>
+      appConfigService({
+        configStore: ctx.configStore,
+        createMissingTenant: IS_DEV,
+      }),
   }))
   .add((ctx) => ({
     paymentService: () =>
