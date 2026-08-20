@@ -34,6 +34,9 @@ requested permissions change.
 
 - Use separate Stripe test and live credentials and confirm which mode the Saleor environment and
   channel should use.
+- Set `DEFAULT_CHANNEL_SLUG` to a channel slug that exists in every Saleor this deployment serves.
+  It names the channel the configuration screen collects the keys on; a slug matching no channel
+  leaves that tenant's screen reporting the mismatch instead of a form.
 - Deploy `apps/stripe` at a stable HTTPS origin. Localhost can serve the application but the code
   deliberately skips Stripe webhook installation for local origins.
 - Set `BUILD_TARGET` on every environment that builds the application, a developer machine
@@ -105,33 +108,39 @@ requested permissions change.
 3. Compare the granted permissions of an existing installation against the manifest. Saleor grants
    permissions at install time and does not widen them when a manifest changes, so an installation
    that predates the stored-payment-method contract holds only `HANDLE_PAYMENTS` and silently
-   returns no saved methods. Reinstall it to pick up `MANAGE_USERS`, then reconfigure channel keys,
+   returns no saved methods. Reinstall it to pick up `MANAGE_USERS`, then reconfigure the keys,
    because reinstallation issues a new installation token and application ID.
 4. Open the installed application from Saleor so its signed application context can load the
-   configuration form. Configure the Stripe public and secret key for each channel.
-5. Save once. The save action verifies the Saleor JWT, removes Stripe webhook endpoints created by
-   the same application issuer, environment, and Saleor domain, creates one new endpoint per
-   distinct Stripe secret key, records its signing secret against every channel using that key, and
-   then persists the updated channel configuration. Channels sharing a key share one endpoint, so
-   the endpoint count follows Stripe accounts rather than channels. Endpoints belonging to another
-   Saleor domain are left alone, so two installations may share one Stripe account. Avoid saving
-   configuration for two installations at the same moment: all installations share one stored value
-   and the later write wins.
+   configuration form. Enter the Stripe public and secret key on the default channel. Every other
+   channel inherits them; give a channel an override only when it must settle through a different
+   Stripe account, and note that an override replaces both keys rather than merging them.
+5. Save once. The save action verifies the Saleor JWT, resolves each channel's Stripe account, and
+   reconciles webhook endpoints against the secret keys now in use: an endpoint survives while its
+   key is still configured, a newly configured key gets one, and a key no longer used has its
+   endpoint removed. The endpoint count therefore follows Stripe accounts rather than channels, and
+   editing one channel does not interrupt the others. Endpoints belonging to another Saleor domain
+   are left alone, so two installations may share one Stripe account. Avoid saving configuration
+   for two installations at the same moment: all installations share one stored value and the later
+   write wins.
 6. Set the storefront's `NEXT_PUBLIC_PAYMENT_APP_ID` to the installed application ID and supply the
    storefront payment keys required by its checkout configuration. Rebuild and deploy the
    storefront because the public application ID is build-time configuration.
 7. During key rotation, keep the prior credentials available until a new webhook endpoint and a
    successful test transaction are verified. Rotate one environment at a time; never mix test and
-   live keys across the public and secret halves.
+   live keys across the public and secret halves. Rotating the shared keys rotates every inheriting
+   channel at once, so rotate on an override first when only one channel is meant to move.
+8. The configuration screen returns secrets masked. Enter a secret key only to change it; leaving
+   the field blank keeps the stored key, so a save that touches only the publishable key does not
+   disturb the account or its endpoint.
 
 # Verification
 
-- Reload the embedded configuration and confirm each expected Saleor channel has the correct
-  currency and masked key state.
+- Reload the embedded configuration and confirm the default channel holds the keys, every other
+  channel reports that it inherits them, and each override names the channel intended to differ.
 - In Stripe, verify exactly one intended endpoint per account and environment at
   `/api/stripe/webhooks/{saleor-domain}`, with the PaymentIntent and refund events selected by the
-  app. Channels sharing a secret key share that endpoint; a leftover endpoint addressed per channel
-  belongs to a release before this one and should be retired.
+  app. Channels resolving to the same secret key share that endpoint; a leftover endpoint addressed
+  per channel belongs to a release before this one and should be retired.
 - Run a low-value test checkout. Verify gateway initialization returns the public key, transaction
   initialization creates a PaymentIntent, the Stripe event is accepted, Saleor transaction state
   advances, and the storefront reaches a real order confirmation.

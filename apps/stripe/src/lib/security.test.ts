@@ -64,13 +64,13 @@ describe("maskString", () => {
 
   it("caps the result at maxLength, keeping the visible tail", () => {
     // given
-    const str = "sk_live_cooltestingkey";
+    const str = "sk_live_cooltestingkey1234";
 
     // when
     const result = maskString({ str, maxLength: 15, visibleChars: 4 });
 
     // then
-    expect(result).toBe("***********6789");
+    expect(result).toBe("***********1234");
     expect(result).toHaveLength(15);
   });
 

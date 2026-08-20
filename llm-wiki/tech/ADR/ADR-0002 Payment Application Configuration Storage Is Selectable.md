@@ -18,8 +18,9 @@ superseded_by: null
 ## Context
 
 The payment application persists one record per installed commerce instance: the installation
-token, the application ID, and the per-channel provider keys, webhook IDs, and webhook signing
-secrets. Until this decision that record had exactly one home, Vercel Edge Config, reached over the
+token, the application ID, and the gateway configuration — one shared provider key pair plus any
+per-channel overrides, each carrying its provider account, webhook ID, and webhook signing
+secret. Until this decision that record had exactly one home, Vercel Edge Config, reached over the
 Vercel REST API with an access token, a team identifier, and a database identifier. All three were
 required configuration, so the application could not start without them, and the stored-value
 access rules lived inside the Edge Config provider itself.
@@ -41,9 +42,9 @@ pointing at the _same_ instance do not: an installation rewrites that domain's e
 installation token and its webhook IDs and signing secrets, so the second installation silently
 takes payments away from the first.
 
-The second cost is that the tenant rules — locate by domain or application ID, merge per-channel
-configuration on update, reject a missing tenant or channel — were written inside the Edge Config
-provider. Any second storage backend would have had to restate them, and two copies of a merge rule
+The second cost is that the tenant rules — locate by domain or application ID, resolve a channel to
+its override or the shared configuration, reject a missing tenant or channel — were written inside
+the Edge Config provider. Any second storage backend would have had to restate them, and two copies of a merge rule
 that decides whether one installation can read another's credentials is a poor place for drift.
 
 ## Decision
@@ -78,7 +79,7 @@ Easier or safer:
   configuration is sufficient on its own.
 - A misconfigured hosted store now fails at startup, naming the missing variable, rather than as a
   403 on the last step of an installation that the commerce instance then records as failed.
-- Tenant isolation and the per-channel merge exist once. A future backend — a database, a secret
+- Tenant isolation and channel resolution exist once. A future backend — a database, a secret
   manager — supplies two functions and inherits the rules rather than restating them.
 
 Harder or lost:

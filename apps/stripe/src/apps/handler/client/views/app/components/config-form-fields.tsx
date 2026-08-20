@@ -132,8 +132,7 @@ export const ConfigFormFields = ({
             <CardTitle>Other channels</CardTitle>
             <CardDescription>
               Override a channel to settle its payments through a different
-              Stripe account. An override replaces both keys — a channel never
-              mixes keys from two accounts.
+              Stripe account.
             </CardDescription>
           </CardHeader>
           <CardContent>
