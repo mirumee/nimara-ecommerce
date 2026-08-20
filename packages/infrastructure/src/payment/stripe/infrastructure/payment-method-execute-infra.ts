@@ -7,7 +7,7 @@ import type { StripePaymentMethodExecuteInfra } from "../types";
 
 export const paymentMethodExecuteInfra =
   ({ logger }: PaymentServiceConfig): StripePaymentMethodExecuteInfra =>
-  async ({ initializeData, paymentElement, redirectUrl }) => {
+  async ({ initializeData, methodSession, paymentElement, redirectUrl }) => {
     const { error: submitError } = await paymentElement.submit();
 
     if (submitError) {
@@ -23,6 +23,7 @@ export const paymentMethodExecuteInfra =
     }
 
     const { error } = await initializeData.sdk.confirmSetup({
+      clientSecret: methodSession.providerData.clientSecret,
       elements: paymentElement,
       redirect: "if_required",
       confirmParams: {

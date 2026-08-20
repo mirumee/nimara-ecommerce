@@ -9,8 +9,6 @@ fragment OrderSourceObjectFragment on Order {
     ...ChannelFragment
   }
   total {
-    gross {
-      ...MoneyFragment
-    }
+    ...TaxedMoneyFragment
   }
 }

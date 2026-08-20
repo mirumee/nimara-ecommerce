@@ -10,6 +10,8 @@ import {
 import { type Exact } from "#root/lib/types";
 import { logger } from "#root/logging/service";
 
+import { getOperationName } from "./utils";
+
 type AnyVariables = Record<string, unknown>;
 type GraphqlError = {
   extensions?: { code?: string; exception?: { code?: string } };
@@ -39,7 +41,8 @@ export type FetchOptions = Omit<RequestInit, "method" | "body"> &
   NextFetchOptions;
 
 /**
- * It accepts a required `operationName` property in `input` object, for logging purposes it is required as it cannot be derived from query.
+ * The operation name is derived from the query document automatically;
+ * pass `operationName` explicitly only to override it (logging label).
  *
  * @example
  * const result = await graphqlClient.execute(OrdersGetQuery);
@@ -61,13 +64,19 @@ export const graphqlClient = (
     TVariables extends AnyVariables = AnyVariables,
   >(
     query: DocumentTypeDecoration<TResult, TVariables> & { toString(): string },
-    input: {
-      operationName: `${string}${"Mutation" | "Query"}`;
+    input?: {
+      /**
+       * @deprecated Derived automatically from the query document via
+       * `getOperationName` — passing it is no longer needed.
+       */
+      operationName?: `${string}${"Mutation" | "Query"}`;
       options?: FetchOptions;
       variables?: Exact<TVariables>;
     },
   ): AsyncResult<TResult> => {
-    const { variables, options, operationName } = input;
+    const { variables, options } = input ?? {};
+    const operationName =
+      input?.operationName ?? getOperationName(query.toString());
     const startTime = performance.now();
     const isCached = !!options?.next?.tags;
 

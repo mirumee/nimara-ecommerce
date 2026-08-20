@@ -15,3 +15,8 @@ export const isLocalDomain = (url: string) => {
 
   return ["localhost", "127.0.0.1"].includes(urlObject.hostname);
 };
+
+export const humanize = (value: string) =>
+  (value.charAt(0).toUpperCase() + value.slice(1))
+    .replaceAll("_", " ")
+    .replaceAll("-", " ");

@@ -11,9 +11,5 @@ export const maskString = ({
     return maskChar.repeat(str.length);
   }
 
-  if (visibleChars >= str.length) {
-    return str;
-  }
-
   return maskChar.repeat(str.length - visibleChars) + str.slice(-visibleChars);
 };

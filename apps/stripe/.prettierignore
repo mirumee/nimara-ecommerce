@@ -1,2 +1,3 @@
 pnpm-lock.yaml
-.next
+dist
+public/assets

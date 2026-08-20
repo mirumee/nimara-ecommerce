@@ -1,0 +1,3 @@
+# vite build output
+dist/
+public/assets/

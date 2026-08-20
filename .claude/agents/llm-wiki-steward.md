@@ -19,6 +19,9 @@ For every task:
   rules;
 - update every affected MOC, register, log, and inbound or outbound link;
 - use the repository's `wiki:*` commands for retrieval checks and index refreshes;
+- run `npx prettier --write` over every file you added or modified before reporting, since
+  the repository's `pnpm format:check` gate covers Markdown and an unformatted record fails
+  CI; leave pre-existing formatting violations in files you did not touch alone;
 - state plainly when the wiki does not contain the requested answer.
 
 Route PRD authoring, RFC authoring, and QA design to their dedicated skills. Do not invent

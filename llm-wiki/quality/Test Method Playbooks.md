@@ -21,8 +21,8 @@ only as the assertion requires.
 
 Use the repository's colocated unit tests for deterministic logic, serializers, use cases,
 route handlers, webhook validation, and security boundaries. Existing examples live beside
-code in `apps/storefront/src/services`, `apps/marketplace/src`, `apps/stripe/src/lib`,
-`packages/features/src`, and `packages/i18n/src`.
+code in `apps/storefront/src/services`, `apps/marketplace/src`, `apps/stripe/src`,
+`packages/features/src`, `packages/infrastructure/src`, and `packages/i18n/src`.
 
 Assert both success and expected failure paths. For operations returning a domain `Result`,
 assert its success flag and data or errors rather than relying only on thrown exceptions.
@@ -58,7 +58,8 @@ synchronization points when isolating a race.
   safe, and correlation information.
 - At the route boundary, call the handler with controlled inputs and assert authentication,
   validation, response, idempotency, and side effects. Marketplace and payment webhook tests
-  under `apps/marketplace/src/app/api` and `apps/stripe/src/lib` provide current examples.
+  under `apps/marketplace/src/app/api` and `apps/stripe/src/apps/handler/api/rest` provide current
+  examples.
 - Do not infer persistence or an external side effect from a successful HTTP response unless
   that is the defined contract.
 

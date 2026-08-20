@@ -7,4 +7,16 @@ module.exports = {
     tsconfigRootDir: __dirname,
     sourceType: "module",
   },
+  overrides: [
+    {
+      files: ["src/lib/env/env.test.ts"],
+      rules: {
+        // Placeholder env keys created by the test, not Turbo task inputs.
+        "turbo/no-undeclared-env-vars": [
+          "error",
+          { allowList: ["^FOO$", "^BAR$"] },
+        ],
+      },
+    },
+  ],
 };

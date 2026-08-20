@@ -485,3 +485,141 @@
   transactions for checkouts that could not be ordered. The category page, the checkout step
   guard, and the authenticated checkout are likewise unexercised, and cross-browser coverage is
   gone. No work item exists for re-authoring any of it.
+
+## 2026-08-19
+
+- **Update**: OPS-0002 named `NEXT_PUBLIC_ENVIRONMENT`, which the payment application stopped
+  reading when it moved off Next.js. The setting is `ENVIRONMENT`, is required, and has no default.
+  An operator following the old runbook set a variable nothing reads and the application refused to
+  start. Recorded with the consequence the old text never carried: the value prefixes both the
+  advertised application ID and the hosted-store key, so changing it on a running deployment offers
+  Saleor a different application and reads a different tenant map, and every existing installation
+  reads as absent while the application otherwise serves normally.
+- **Update**: Added the payment application's build and deploy surface to OPS-0002's preconditions,
+  none of which existed while it was a Next.js application. `BUILD_TARGET` selects the output
+  layout, accepts only `node` or `vercel`, and has no default, so an unset value fails the build at
+  its first step and refuses the development server the same way; it is a declared Turbo build
+  input. The Vercel project builds through the application's own `vercel.json` under the Hono
+  framework preset, which resolves its entrypoint by finding a file that imports Hono. `BASE_PATH`
+  is baked into the manifest's registration, application, and webhook addresses, which Saleor
+  records at installation, so changing it afterwards strands an installation. `SENTRY_DSN` replaced
+  `NEXT_PUBLIC_SENTRY_DSN`; OPS-0002 had never named either, so this is an addition rather than a
+  rename.
+- **Update**: Two failure modes added to OPS-0002's escalation. A build stopping at its first step
+  naming `BUILD_TARGET`, or a Vercel build reporting that no entrypoint imports Hono, are build
+  configuration rather than application faults.
+- **Gap**: Found while writing the above and recorded in OPS-0002's escalation rather than fixed:
+  the Stripe endpoint address is built from the request origin alone and does not carry
+  `BASE_PATH`, while the manifest's Saleor-facing addresses do. A deployment served under a path
+  prefix therefore registers a Stripe endpoint that omits the prefix and answers 404, with
+  installation and channel configuration both reporting success. No work item exists for it.
+- **Confirmed**: OPS-0002's `NEXT_PUBLIC_SALEOR_API_URL` precondition is still correct and was left
+  alone. The variable no longer appears in the application's example environment, but code
+  generation still reads it, which is exactly what that bullet claims.
+- **Repair**: Re-pointed the `verification` test paths in IMP-0001 and IMP-0002, all five of which
+  named files the move off Next.js deleted. The template tells an author not to restate changed
+  files because a path list rots while the pull request stays accurate, and that reasoning holds for
+  prose. It does not hold here: `verification.tests` is a structured pointer to the evidence for a
+  criterion, so a dead entry makes the criterion unverifiable rather than merely out of date. Both
+  records remain `in_progress`; criteria, work items, pull requests, and statuses were not touched.
+- **Repair**: Each successor was read against the criterion before it was cited, and two of the
+  proposed mappings did not survive that check. IMP-0001's redisplay-consent criterion was to gain a
+  second file covering expandable identifiers and setup-intent status mapping, which verifies
+  nothing the criterion claims; it was dropped and the criterion cites only the serializer tests,
+  which assert both of its halves. IMP-0001's gateway-customer criterion needed the opposite
+  treatment: the proposed file proves the mapping is scoped to channel and account but says nothing
+  about reach between shoppers, so the transaction webhook tests were added alongside it for
+  refusing a saved method that belongs to another customer.
+- **Gap**: IMP-0002's second criterion was left pointing at a deleted file on purpose. An empty
+  allowlist still refuses every domain and the shared package asserts it, but the refusal that names
+  the setting to change is now built in the installation route and nothing asserts it; the deleted
+  test had asserted both halves in one expectation. Citing the surviving half would claim coverage
+  the record does not have, so the entry stays dead and the reason is recorded as a deviation on the
+  record itself. Closing it needs a test, which is code work and outside this change.
+- **Gap**: IMP-0001's gateway-customer criterion is cited honestly but has narrowed. The deleted
+  tests asserted that a mapping planted in shopper-writable public metadata is never resolved — the
+  property that record's summary calls load-bearing and INT-0005 states as contract. The successor
+  reads private metadata only, so the property now holds by construction rather than by assertion.
+  No criterion names it, so no path was changed for it. No work item exists.
+- **Closed**: The `BASE_PATH` gap recorded above is fixed in code, so OPS-0002 no longer states it
+  as current behaviour. Every address the application hands out is now derived from one
+  prefix-carrying value, the endpoint registered with Stripe included, so the manifest and the
+  provider endpoint cannot disagree again. The escalation bullet was kept rather than deleted and
+  rewritten as the symptom an operator still meets on a deployment installed by an older release:
+  a Stripe endpoint that omits the prefix and answers 404 while Saleor looks healthy. Verified that
+  saving the channel configuration once replaces such an endpoint, because cleanup matches on the
+  application, environment, and Saleor domain rather than on the address.
+- **Update**: Recorded in OPS-0002 that `BASE_PATH` is now validated as the configuration loads. A
+  bare `/`, a trailing slash, a missing leading slash, and an empty leading segment are each
+  refused with a message naming the shape to use, so an operator learns the format from the runbook
+  or from a refused startup rather than from addresses that never answer. The precondition also now
+  names the Stripe endpoint among the addresses the prefix reaches, which it did not before.
+- **Correction**: ADR-0002's decision prose named `createSaleorAppConfigProvider` and a `read` and
+  `write` pair. Neither survives: the seam is `ConfigItemRepository` in the shared infrastructure
+  package, satisfied by `get` and `upsert`, and the backend is chosen where the application wires
+  its dependencies rather than inside the provider. The decision itself is unchanged — storage is
+  still a replaceable transport behind one seam, still selected by `CONFIG_PROVIDER`, still
+  defaulting to `edge` — so this is a prose repair and the record stays `proposed` with no
+  supersession. The commit-anchored file list at the end was left alone, because it resolves an
+  exact SHA at which those paths were correct.
+- **Update**: Re-pointed two stale stripe paths in `Test Method Playbooks`. The colocated-unit-test
+  list named `apps/stripe/src/lib`, which still holds tests but no longer holds the serializers,
+  use cases, or route handlers the sentence describes; it now names `apps/stripe/src`. The
+  API-contract playbook named the same directory for webhook route examples, which moved to
+  `apps/stripe/src/apps/handler/api/rest`. Added `packages/infrastructure/src` to the first list as
+  well: the same rewrite gave that package its own suite, including the allowlist tests IMP-0002
+  now cites.
+- **Decided**: Left `Product Overview`'s permalinks alone, including the one naming a payment
+  application directory that no longer exists. The record declares the commit it describes, carries
+  a `Provenance` section, and routes current contracts to the narrower records, so a pinned SHA is
+  correct there precisely because it is immutable. Re-pointing it at today's tree would contradict
+  the record's own anchor, and annotating each drifted link would turn a snapshot into a changelog.
+  What the record needs instead is a deliberate re-anchor to a newer commit, which is an editorial
+  act rather than a link repair.
+- **Gap**: IMP-0003's implementation summary still names `createSaleorAppConfigProvider`. Left as
+  written: that record is anchored to the commit where the symbol existed, which is the same
+  reasoning that keeps ADR-0002's file list intact. Whoever re-anchors it should expect the name to
+  change.
+- **Closed**: The deliberately dead pointer on IMP-0002's second criterion is re-pointed at
+  `apps/stripe/src/apps/handler/api/rest/saleor/register.test.ts`, which now covers both halves of
+  the criterion as written. Read before citing: the file drives the real installation route with
+  only the container mocked, and the harness installs the real error handler, so the refusal text
+  it asserts is the one the route builds rather than a fixture. An unconfigured allowlist refuses
+  with the installation never attempted, and a separate case asserts the refusal names
+  `ALLOWED_DOMAINS`. A third case is what makes the second meaningful without a mutation run: a
+  configured allowlist that merely excludes the domain names the domain and _not_ the setting, so
+  the string cannot be incidentally present in every response. The deviation explaining the dead
+  pointer was replaced, because it no longer described reality; what remains records that every
+  path here was re-pointed after the framework move and why each replacement was accepted.
+- **Closed**: The public-metadata regression on IMP-0001's gateway-customer criterion is covered
+  again, by two cases added to the file the criterion already cites — a mapping planted in
+  shopper-writable public metadata does not resolve, and it cannot override the private mapping.
+  No path changed and no record was edited, so this is a log closure only. The property the record's
+  summary calls load-bearing, and INT-0005 states as contract, is asserted rather than structural
+  again.
+- **Verified**: Both cited files pass in isolation and the application suite is green at 17 files
+  and 151 tests, which includes concurrent edits to the webhook validation middleware and its test
+  that were in the working tree during this change. Confirmed those edits leave IMP-0002's third
+  criterion intact: the case asserting rejection ahead of the installation lookup and the signature
+  check is unchanged, and the test added beside it covers body encoding, which no criterion claims.
+- **Held**: IMP-0002 stays `in_progress` although all three criteria now cite live tests. Its own
+  evidence section gives a reason unrelated to test paths — isolation across two live installations
+  on one deployment has never been exercised, and neither has its rollback. Promoting it is an
+  engineering judgement about deployed verification, not bookkeeping.
+- **Update**: CAP-0007 now records that adding a payment method collects it in an element scoped to
+  the channel's currency, with a constraint stating why: a tokenization session carries no currency
+  of its own, so without being told one the provider offers every method it can store, including
+  ones the channel cannot charge. The mismatch was previously invisible until a payment with such a
+  method was refused.
+- **Update**: CAP-0007 gained a constraint on the return leg of a redirecting method. It arrives as
+  a cross-site top-level navigation, so a strictly same-site authentication cookie is withheld on
+  it; the shopper reads as signed out and lands on sign-in with the tokenization never completed,
+  although the provider authorised it. The record already covered clearing unusable credentials,
+  which is a different failure and stays as written.
+- **Update**: CAP-0003 now states that the stored-method list at the payment step covers every
+  method type the payment application returns — a type with a dedicated presentation shows its own
+  details, any other is offered under its provider label rather than being dropped.
+- **Decided**: Two findings from the same session were left unrecorded on the owner's call. Two
+  live installations against one commerce instance duplicating a wallet is a development-environment
+  artifact rather than product truth, and the absence of a currency filter on the stored-method list
+  is an open defect, which is tracked as work rather than described as current behaviour.

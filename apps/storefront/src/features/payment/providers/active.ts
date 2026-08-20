@@ -4,3 +4,4 @@
  */
 export { StripePaymentElement as ActivePaymentElement } from "./stripe/stripe-payment-element";
 export { StripeSetupElement as ActiveSetupElement } from "./stripe/stripe-setup-element";
+export type { StripeMethodSessionData as ActiveMethodSession } from "@nimara/infrastructure/payment/stripe/types";

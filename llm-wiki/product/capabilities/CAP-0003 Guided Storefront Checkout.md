@@ -69,6 +69,9 @@ navigation clears the completed checkout state from the browser cookie in either
   redirect to the first incomplete step. On a checkout that requires no shipping, the shipping and
   delivery steps are unreachable. Already-answered steps stay reachable so the shopper can correct
   an earlier one.
+- The stored-method list at the payment step covers every method type the payment application
+  returns. A type with a dedicated presentation shows its own details; any other type is offered
+  under its provider label rather than being dropped from the list.
 - Address, delivery, and payment mutations preserve structured provider errors so the relevant form
   or checkout step can display them.
 - Payment processing has no hard client-side timeout. After 30 seconds the storefront warns that

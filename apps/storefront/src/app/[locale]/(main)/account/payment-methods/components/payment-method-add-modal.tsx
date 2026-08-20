@@ -172,6 +172,7 @@ export const PaymentMethodAddModal = ({
         </DialogHeader>
 
         <SetupElement
+          currency={region.market.currency}
           initializeData={gateway}
           isMounted={isMounted}
           locale={region.language.locale}

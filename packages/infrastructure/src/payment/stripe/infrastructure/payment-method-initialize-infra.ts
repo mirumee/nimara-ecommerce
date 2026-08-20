@@ -7,11 +7,8 @@ import { PaymentMethodInitializeTokenizationMutationDocument } from "../../saleo
 import type { PaymentServiceConfig } from "../../types";
 import type {
   StripeGatewayConfig,
-  StripeMethodSession,
   StripePaymentMethodInitializeInfra,
 } from "../types";
-
-type TokenizationData = StripeGatewayConfig & StripeMethodSession;
 
 export const paymentMethodInitializeInfra =
   ({
@@ -39,7 +36,11 @@ export const paymentMethodInitializeInfra =
 
     const initializeResult = result.data.paymentMethodInitializeTokenization;
     const errors = initializeResult?.errors ?? [];
-    const tokenizationData = initializeResult?.data as Maybe<TokenizationData>;
+    const tokenizationData = initializeResult?.data as Maybe<
+      StripeGatewayConfig & {
+        setupIntent: { clientSecret: string };
+      }
+    >;
 
     if (
       errors.length ||
@@ -59,6 +60,6 @@ export const paymentMethodInitializeInfra =
     return ok({
       gatewayConfig: { publishableKey: tokenizationData.publishableKey },
       id: initializeResult.id,
-      providerData: { setupIntent: tokenizationData.setupIntent },
+      providerData: { clientSecret: tokenizationData.setupIntent.clientSecret },
     });
   };

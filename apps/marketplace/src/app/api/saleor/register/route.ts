@@ -11,7 +11,7 @@ const registerBodySchema = z.object({
 
 const saleorHeadersSchema = z.object({
   "saleor-domain": z.string(),
-  "saleor-api-url": z.string().url(),
+  "saleor-api-url": z.url(),
 });
 
 /**
