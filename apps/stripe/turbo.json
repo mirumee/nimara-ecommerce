@@ -21,7 +21,6 @@
         "CONFIG_PROVIDER",
         "CONFIG_FILE_PATH",
         "CONFIG_KEY",
-        "DEFAULT_CHANNEL_SLUG",
         "VERCEL_EDGE_CONFIG_ID",
         "SENTRY_DSN",
         "NEXT_PUBLIC_SENTRY_DSN",

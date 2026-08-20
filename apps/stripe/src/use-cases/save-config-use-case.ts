@@ -160,6 +160,7 @@ export const saveConfigUseCase =
     data: {
       channelOverrides: Record<string, GatewayConfigInput>;
       default: GatewayConfigInput;
+      defaultChannelSlug: string;
     };
     saleorDomain: string;
   }): AsyncResult<true> => {
@@ -185,6 +186,7 @@ export const saveConfigUseCase =
 
     const updatedConfig: PaymentGatewayConfigSet = {
       default: await toGatewayConfig(data.default, storedConfig.default),
+      defaultChannelSlug: data.defaultChannelSlug,
       channelOverrides: {},
     };
 

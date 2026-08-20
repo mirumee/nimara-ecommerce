@@ -15,6 +15,9 @@ export const configFormSchema = z.object({
     .record(z.string().min(1), channelConfigSchema)
     .default({}),
   default: channelConfigSchema,
+  defaultChannelSlug: z
+    .string()
+    .min(1, "Choose the channel the other channels inherit from."),
 });
 
 // Optional on the way in, always present after parsing.

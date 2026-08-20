@@ -627,17 +627,24 @@
 ## 2026-08-20
 
 - **Update**: Recorded the payment application's shared gateway configuration in INT-0005. One key
-  pair now serves the installation, entered on the channel named by `DEFAULT_CHANNEL_SLUG`; a
-  channel resolves to its own override or to that shared configuration, and an override replaces
-  the whole key pair so no channel mixes keys from two provider accounts.
+  pair now serves the installation, entered on a default channel the operator chooses; a channel
+  resolves to its own override or to that shared configuration, and an override replaces the whole
+  key pair so no channel mixes keys from two provider accounts.
 - **Update**: INT-0005 also states that a save reconciles webhook endpoints against the secret keys
   in use — an endpoint survives while its key is configured, an added key gets one, a dropped key
   loses one — replacing the previous remove-then-recreate description, and that the configuration
   screen receives both secrets masked.
-- **Update**: Reworked OPS-0002 for the same model: `DEFAULT_CHANNEL_SLUG` is a precondition and
-  must name a channel present in every served commerce instance, keys are entered once on that
-  channel, rotation of the shared keys moves every inheriting channel at once, and a blank secret
-  field on save keeps the stored key.
+- **Update**: Reworked OPS-0002 for the same model: the operator picks the default channel in the
+  configuration screen, keys are entered once on it, rotation of the shared keys moves every
+  inheriting channel at once, and a blank secret field on save keeps the stored key.
 - **Update**: Corrected the stored-record description in ADR-0002 and its restatements in IMP-0002
   and IMP-0003. The decision itself — that the configuration backend is selectable — is unchanged;
   only the shape of the value it stores and the name of the rule that reads it were stale.
+- **Update**: INT-0005 records that saving gateway configuration creates the entry for a commerce
+  domain that has none, so keys can be stored before the application is installed there and a later
+  installation fills in the token and application ID on the same entry. ADR-0002's summary of the
+  tenant rules was corrected to match: the update path creates rather than rejects.
+- **Update**: INT-0005 and OPS-0002 now record that each installation chooses and stores its own
+  default channel. A deployment-wide channel name would have left any installation not sharing that
+  slug convention unable to save keys at all, including on first setup, so the choice belongs to the
+  installation rather than to the deployment.

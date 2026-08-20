@@ -135,12 +135,14 @@ export const appConfigService = ({
       }
 
       const configs = result.data ?? {};
-      const current = configs[saleorDomain];
-
-      if (!current) {
-        return notFound(`Missing config for ${saleorDomain} domain.`);
-      }
-
+      /**
+       * Keys can be saved before the app is installed on that Saleor — the
+       * config screen runs standalone in development — so the tenant entry is
+       * created here and the install fills in its token and application ID.
+       */
+      const current: Omit<AppConfig, "paymentGatewayConfigSet"> = configs[
+        saleorDomain
+      ] ?? { authToken: "", saleorAppId: "", saleorDomain };
       const gateway = paymentGatewayConfigSet.parse(data);
       const saved = await configStore.upsert({
         value: {

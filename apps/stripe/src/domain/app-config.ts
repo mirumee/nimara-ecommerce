@@ -12,10 +12,11 @@ export type PaymentGatewayConfig = z.infer<typeof paymentGatewayConfig>;
 
 /**
  * Every channel uses `default`; `channelOverrides` replaces it wholesale.
- * Which channel the UI collects it on comes from `DEFAULT_CHANNEL_SLUG`.
+ * `defaultChannelSlug` only says where the UI collects it
  */
 export const paymentGatewayConfigSet = z.object({
   default: paymentGatewayConfig.nullable(),
+  defaultChannelSlug: z.string().nullable(),
   channelOverrides: z.record(z.string(), paymentGatewayConfig),
 });
 
@@ -23,6 +24,7 @@ export type PaymentGatewayConfigSet = z.infer<typeof paymentGatewayConfigSet>;
 
 export const emptyPaymentGatewayConfigSet = (): PaymentGatewayConfigSet => ({
   default: null,
+  defaultChannelSlug: null,
   channelOverrides: {},
 });
 

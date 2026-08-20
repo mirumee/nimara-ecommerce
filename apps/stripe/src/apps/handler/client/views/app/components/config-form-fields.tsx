@@ -1,6 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { use } from "react";
-import { FormProvider, type SubmitHandler, useForm } from "react-hook-form";
+import {
+  FormProvider,
+  type SubmitHandler,
+  useForm,
+  useWatch,
+} from "react-hook-form";
 
 import {
   Alert,
@@ -20,14 +25,15 @@ import { useToast } from "@nimara/ui/hooks";
 import {
   type ConfigFormInput,
   type ConfigFormSchema,
-  configFormSchema,
 } from "@/apps/handler/api/rest/app/schema";
 import { type ConfigFormData } from "@/use-cases/get-config-form-data-use-case";
 
 import { useDashboardSession } from "../../../components/dashboard-session/context";
 import { saveConfigData } from "../api";
+import { configFormSchema } from "../config-form-schema";
 import { ChannelList } from "./channel-list";
 import { ConfigFields } from "./config-fields";
+import { DefaultChannelSelect } from "./default-channel-select";
 
 /**
  * Secret keys arrive masked, so the field starts blank and a blank field keeps
@@ -44,6 +50,7 @@ const toFormValues = ({ config }: ConfigFormData): ConfigFormInput => ({
     publicKey: config.default?.publicKey ?? "",
     secretKey: "",
   },
+  defaultChannelSlug: config.defaultChannelSlug ?? "",
 });
 
 export const ConfigFormFields = ({
@@ -58,8 +65,13 @@ export const ConfigFormFields = ({
   const data = use(getConfig);
 
   const form = useForm<ConfigFormInput, unknown, ConfigFormSchema>({
-    resolver: zodResolver(configFormSchema),
+    resolver: zodResolver(configFormSchema(data.config)),
     defaultValues: toFormValues(data),
+  });
+
+  const defaultChannelSlug = useWatch<ConfigFormInput, "defaultChannelSlug">({
+    control: form.control,
+    name: "defaultChannelSlug",
   });
 
   const handleSubmit: SubmitHandler<ConfigFormSchema> = async (values) => {
@@ -81,24 +93,21 @@ export const ConfigFormFields = ({
     reload();
   };
 
-  const { defaultChannelSlug } = data.config;
-  const defaultChannel = data.channels.find(
-    ({ slug }) => slug === defaultChannelSlug,
-  );
-
-  if (!defaultChannel) {
+  if (!data.channels.length) {
     return (
       <Alert variant="destructive">
-        <AlertTitle>Default channel not found</AlertTitle>
+        <AlertTitle>No channels to configure</AlertTitle>
         <AlertDescription>
-          This Saleor has no channel with the slug{" "}
-          <code>{defaultChannelSlug}</code>. Point{" "}
-          <code>DEFAULT_CHANNEL_SLUG</code> at an existing channel and reload.
+          This Saleor has no channels, so there is nothing to attach Stripe keys
+          to. Create a channel in Saleor, then reload.
         </AlertDescription>
       </Alert>
     );
   }
 
+  const defaultChannel = data.channels.find(
+    ({ slug }) => slug === defaultChannelSlug,
+  );
   const isSubmitting = form.formState.isSubmitting;
 
   return (
@@ -109,43 +118,50 @@ export const ConfigFormFields = ({
       >
         <Card>
           <CardHeader>
-            <CardTitle>{defaultChannel.name}</CardTitle>
+            <CardTitle>Default channel</CardTitle>
             <CardDescription>
-              {defaultChannel.slug} · {defaultChannel.currency}
-            </CardDescription>
-            <CardDescription>
-              The default channel every other channel inherits config from until
-              it is given its own.
+              The channel the Stripe keys are entered on. Every other channel
+              inherits them until it is given keys of its own.
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <ConfigFields
-              config={data.config.default ?? undefined}
+          <CardContent className="flex flex-col gap-6">
+            <DefaultChannelSelect
+              channels={data.channels}
               disabled={isSubmitting}
-              name="default"
             />
+
+            {defaultChannel && (
+              <ConfigFields
+                config={data.config.default ?? undefined}
+                disabled={isSubmitting}
+                name="default"
+              />
+            )}
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Other channels</CardTitle>
-            <CardDescription>
-              Override a channel to settle its payments through a different
-              Stripe account.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ChannelList
-              channels={data.channels.filter(
-                ({ slug }) => slug !== defaultChannelSlug,
-              )}
-              defaultChannelName={defaultChannel.name}
-              disabled={isSubmitting}
-              overrides={data.config.channelOverrides}
-            />
-          </CardContent>
-        </Card>
+        {defaultChannel && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Other channels</CardTitle>
+              <CardDescription>
+                Override a channel to settle its payments through a different
+                Stripe account. An override replaces both keys — a channel never
+                mixes keys from two accounts.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ChannelList
+                channels={data.channels.filter(
+                  ({ slug }) => slug !== defaultChannelSlug,
+                )}
+                defaultChannelName={defaultChannel.name}
+                disabled={isSubmitting}
+                overrides={data.config.channelOverrides}
+              />
+            </CardContent>
+          </Card>
+        )}
 
         <div className="flex justify-end">
           <Button loading={isSubmitting} type="submit">

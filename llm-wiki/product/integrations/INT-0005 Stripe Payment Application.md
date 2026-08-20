@@ -32,6 +32,10 @@ payment methods protocol.
 - One deployment serves any number of commerce installations. Each installation is stored under its
   own commerce domain, holding its own installation token, application ID, and gateway
   configuration, and no request can read or write another installation's configuration.
+- Saving gateway configuration creates the entry for a commerce domain that has none, so keys can be
+  stored before the application is installed there — the configuration screen runs standalone in
+  development. Installing afterwards fills in the installation token and application ID on the same
+  entry and preserves the keys.
 - Every request names its tenant by commerce domain. Both the signing keys used to authenticate the
   caller and the commerce API the application calls back are addressed from that domain, so a
   caller cannot direct the deployment at a server of its own choosing.
@@ -41,15 +45,18 @@ payment methods protocol.
 
 # Configuration model
 
-- One gateway configuration serves the whole installation. It is entered on the channel named by
-  `DEFAULT_CHANNEL_SLUG`, and every other channel resolves to it.
+- One gateway configuration serves the whole installation. It is entered on a default channel the
+  operator chooses, and every other channel resolves to it.
 - A channel that must settle through a different provider account carries an override, which
   replaces the whole key pair rather than merging field by field, so no channel resolves to a
   publishable key and a secret key from two different accounts.
 - Resolution is the override for that channel, else the shared configuration. The default channel
   is a configuration-screen concept only: it decides where the keys are typed, never which keys a
-  payment uses, so a slug naming no existing channel costs the screen a correction and costs
-  payments nothing.
+  payment uses.
+- The chosen default channel is stored per installation, because one deployment serves commerce
+  instances whose channel-slug conventions differ and a deployment-wide name would leave any
+  installation that does not share it unable to save keys at all. A stored choice naming a channel
+  the instance no longer has leaves the field unset rather than blocking configuration.
 - The configuration screen never receives a secret in full. The secret key and the webhook signing
   secret arrive masked, and a blank secret-key field on save keeps the stored key.
 

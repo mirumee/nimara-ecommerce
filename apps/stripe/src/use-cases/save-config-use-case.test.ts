@@ -37,6 +37,7 @@ vi.mock("@/infrastructure/webhooks", () => ({
 }));
 
 const SALEOR_DOMAIN = "saleor.example.com";
+const DEFAULT_CHANNEL = "default-channel";
 const APP_URL = "https://example.com";
 
 const INSTALLED_DEFAULT = {
@@ -160,6 +161,7 @@ describe("save-config-use-case", () => {
       // given
       const { updatePaymentGatewayConfigSet, useCase } = buildUseCase({
         default: INSTALLED_DEFAULT,
+        defaultChannelSlug: DEFAULT_CHANNEL,
         channelOverrides: {},
       });
 
@@ -170,6 +172,7 @@ describe("save-config-use-case", () => {
         data: {
           channelOverrides: {},
           default: { publicKey: "pk_updated", secretKey: "sk_default" },
+          defaultChannelSlug: DEFAULT_CHANNEL,
         },
         saleorDomain: SALEOR_DOMAIN,
       });
@@ -189,6 +192,7 @@ describe("save-config-use-case", () => {
       // given
       const { useCase } = buildUseCase({
         default: INSTALLED_DEFAULT,
+        defaultChannelSlug: DEFAULT_CHANNEL,
         channelOverrides: {},
       });
 
@@ -201,6 +205,7 @@ describe("save-config-use-case", () => {
             "eu-channel": { publicKey: "pk_eu", secretKey: "sk_eu" },
           },
           default: { publicKey: "pk_default", secretKey: "sk_default" },
+          defaultChannelSlug: DEFAULT_CHANNEL,
         },
         saleorDomain: SALEOR_DOMAIN,
       });
@@ -218,6 +223,7 @@ describe("save-config-use-case", () => {
       // given
       const { useCase } = buildUseCase({
         default: INSTALLED_DEFAULT,
+        defaultChannelSlug: DEFAULT_CHANNEL,
         channelOverrides: {
           "eu-channel": {
             accountId: "acct_eu",
@@ -236,6 +242,7 @@ describe("save-config-use-case", () => {
         data: {
           channelOverrides: {},
           default: { publicKey: "pk_default", secretKey: "sk_default" },
+          defaultChannelSlug: DEFAULT_CHANNEL,
         },
         saleorDomain: SALEOR_DOMAIN,
       });
@@ -251,6 +258,7 @@ describe("save-config-use-case", () => {
       // given
       const { updatePaymentGatewayConfigSet, useCase } = buildUseCase({
         default: INSTALLED_DEFAULT,
+        defaultChannelSlug: DEFAULT_CHANNEL,
         channelOverrides: {},
       });
 
@@ -261,6 +269,7 @@ describe("save-config-use-case", () => {
         data: {
           channelOverrides: {},
           default: { publicKey: "pk_updated", secretKey: "" },
+          defaultChannelSlug: DEFAULT_CHANNEL,
         },
         saleorDomain: SALEOR_DOMAIN,
       });
@@ -284,6 +293,7 @@ describe("save-config-use-case", () => {
       // given
       const { updatePaymentGatewayConfigSet, useCase } = buildUseCase({
         default: null,
+        defaultChannelSlug: DEFAULT_CHANNEL,
         channelOverrides: {},
       });
 
@@ -294,6 +304,7 @@ describe("save-config-use-case", () => {
         data: {
           channelOverrides: {},
           default: { publicKey: "pk_new", secretKey: "" },
+          defaultChannelSlug: DEFAULT_CHANNEL,
         },
         saleorDomain: SALEOR_DOMAIN,
       });
@@ -308,7 +319,11 @@ describe("save-config-use-case", () => {
 
     it("resolves the Stripe account once per secret key", async () => {
       // given
-      const { useCase } = buildUseCase({ default: null, channelOverrides: {} });
+      const { useCase } = buildUseCase({
+        default: null,
+        defaultChannelSlug: DEFAULT_CHANNEL,
+        channelOverrides: {},
+      });
 
       // when
       await useCase({
@@ -319,6 +334,7 @@ describe("save-config-use-case", () => {
             "eu-channel": { publicKey: "pk_default", secretKey: "sk_default" },
           },
           default: { publicKey: "pk_default", secretKey: "sk_default" },
+          defaultChannelSlug: DEFAULT_CHANNEL,
         },
         saleorDomain: SALEOR_DOMAIN,
       });

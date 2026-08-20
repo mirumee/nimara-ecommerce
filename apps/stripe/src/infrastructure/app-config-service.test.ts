@@ -43,6 +43,46 @@ const serviceWith = (channelOverrides: Record<string, PaymentGatewayConfig>) =>
   });
 
 describe("appConfigService", () => {
+  describe("updatePaymentGatewayConfigSet", () => {
+    // The config screen runs before install in development, so a save must not
+    // require a tenant entry that only the install flow writes.
+    it("creates the tenant entry when the app is not installed yet", async () => {
+      // given
+      const upsert = vi.fn(async () => ok(true));
+      const service = appConfigService({
+        configStore: {
+          get: vi.fn(async () => ok({})),
+          upsert,
+        } as unknown as ConfigItemRepository<SaleorMultiTenantAppConfig>,
+      });
+
+      // when
+      const result = await service.updatePaymentGatewayConfigSet({
+        saleorDomain: SALEOR_DOMAIN,
+        data: {
+          default: DEFAULT_CREDENTIALS,
+          defaultChannelSlug: "default-channel",
+          channelOverrides: {},
+        },
+      });
+
+      // then
+      expect(result.ok).toBe(true);
+      expect(upsert).toHaveBeenCalledWith({
+        value: {
+          [SALEOR_DOMAIN]: expect.objectContaining({
+            authToken: "",
+            saleorAppId: "",
+            saleorDomain: SALEOR_DOMAIN,
+            paymentGatewayConfigSet: expect.objectContaining({
+              default: DEFAULT_CREDENTIALS,
+            }),
+          }),
+        },
+      });
+    });
+  });
+
   describe("getPaymentGatewayConfigForChannel", () => {
     it("falls back to the shared configuration", async () => {
       // given

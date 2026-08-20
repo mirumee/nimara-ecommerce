@@ -34,9 +34,9 @@ requested permissions change.
 
 - Use separate Stripe test and live credentials and confirm which mode the Saleor environment and
   channel should use.
-- Set `DEFAULT_CHANNEL_SLUG` to a channel slug that exists in every Saleor this deployment serves.
-  It names the channel the configuration screen collects the keys on; a slug matching no channel
-  leaves that tenant's screen reporting the mismatch instead of a form.
+- No deployment-wide channel setting is required. Each installation chooses its own default channel
+  in the configuration screen, so installations whose channel-slug conventions differ are each
+  configurable. Only a Saleor with no channels at all has nothing to configure.
 - Deploy `apps/stripe` at a stable HTTPS origin. Localhost can serve the application but the code
   deliberately skips Stripe webhook installation for local origins.
 - Set `BUILD_TARGET` on every environment that builds the application, a developer machine
@@ -111,7 +111,8 @@ requested permissions change.
    returns no saved methods. Reinstall it to pick up `MANAGE_USERS`, then reconfigure the keys,
    because reinstallation issues a new installation token and application ID.
 4. Open the installed application from Saleor so its signed application context can load the
-   configuration form. Enter the Stripe public and secret key on the default channel. Every other
+   configuration form. Choose the default channel, then enter the Stripe public and secret key on
+   it. Every other
    channel inherits them; give a channel an override only when it must settle through a different
    Stripe account, and note that an override replaces both keys rather than merging them.
 5. Save once. The save action verifies the Saleor JWT, resolves each channel's Stripe account, and

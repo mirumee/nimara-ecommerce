@@ -43,7 +43,7 @@ installation token and its webhook IDs and signing secrets, so the second instal
 takes payments away from the first.
 
 The second cost is that the tenant rules — locate by domain or application ID, resolve a channel to
-its override or the shared configuration, reject a missing tenant or channel — were written inside
+its override or the shared configuration, create or reject a tenant entry — were written inside
 the Edge Config provider. Any second storage backend would have had to restate them, and two copies of a merge rule
 that decides whether one installation can read another's credentials is a poor place for drift.
 

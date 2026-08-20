@@ -92,7 +92,6 @@ export const container = createContainer()
     getConfigFormData: () =>
       getConfigFormDataUseCase({
         appConfigService: ctx.appConfigService,
-        defaultChannelSlug: ctx.config.DEFAULT_CHANNEL_SLUG,
         joseAuthService: ctx.joseAuthService,
         saleorClient: ctx.saleorClient,
       }),

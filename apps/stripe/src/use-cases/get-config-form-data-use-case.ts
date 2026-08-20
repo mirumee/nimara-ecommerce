@@ -21,7 +21,7 @@ export type ConfigFormData = {
   config: {
     channelOverrides: Record<string, PaymentGatewayConfig>;
     default: PaymentGatewayConfig | null;
-    defaultChannelSlug: string;
+    defaultChannelSlug: string | null;
   };
 };
 
@@ -50,12 +50,10 @@ const toFormConfig = (config: PaymentGatewayConfig): PaymentGatewayConfig => ({
 export const getConfigFormDataUseCase =
   ({
     appConfigService,
-    defaultChannelSlug,
     joseAuthService,
     saleorClient,
   }: {
     appConfigService: AppConfigService;
-    defaultChannelSlug: string;
     joseAuthService: (saleorDomain: string) => JoseAuthService;
     saleorClient: (opts: {
       authToken?: string;
@@ -124,6 +122,14 @@ export const getConfigFormDataUseCase =
       return overrides;
     }, {});
 
+    // A channel renamed or removed in Saleor leaves the operator to pick again.
+    const storedSlug = storedConfig?.defaultChannelSlug;
+    const defaultChannelSlug = formChannels.some(
+      ({ slug }) => slug === storedSlug,
+    )
+      ? storedSlug
+      : null;
+
     return ok({
       channels: formChannels,
       config: {
@@ -131,7 +137,7 @@ export const getConfigFormDataUseCase =
         default: storedConfig?.default
           ? toFormConfig(storedConfig.default)
           : null,
-        defaultChannelSlug,
+        defaultChannelSlug: defaultChannelSlug ?? null,
       },
     });
   };

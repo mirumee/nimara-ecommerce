@@ -172,9 +172,9 @@ To install it on [Saleor Cloud](https://cloud.saleor.io) you can:
 
 ## 🔑 Configuration
 
-The app holds **one Stripe configuration per installation**. `DEFAULT_CHANNEL_SLUG`
-names the **default channel**; the config UI collects the publishable and secret
-key on it, and every other channel inherits those keys.
+The app holds **one Stripe configuration per installation**. Pick a **default
+channel** in the config UI, enter the publishable and secret key on it, and every
+other channel inherits those keys.
 
 A channel that must settle through a different Stripe account gets an
 **override**: press `Override` on the channel and give it its own key pair. An
@@ -184,10 +184,10 @@ with a publishable key from one account and a secret key from another. Press
 
 The default channel is a UI concept only: it decides which channel the keys are
 typed on, never which keys a payment uses. Key resolution is
-`channelOverrides[slug] ?? default`, so pointing `DEFAULT_CHANNEL_SLUG` at a
-different channel moves the form, not the money. A slug matching no channel in
-the connected Saleor is reported in the UI instead of silently configuring
-nothing.
+`channelOverrides[slug] ?? default`, so changing it moves the form, not the
+money. The choice is stored per installed Saleor, so one deployment serves
+installations whose channel-slug conventions differ. A stored channel that later
+disappears from Saleor simply leaves the field unset for that installation.
 
 Webhook endpoints belong to the Stripe account, not to the channel: the app
 creates one endpoint per configured account on save, reuses it while the secret

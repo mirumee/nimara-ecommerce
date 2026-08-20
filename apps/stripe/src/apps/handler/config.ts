@@ -19,13 +19,6 @@ const configSchema = z
       .string()
       .default("nimara-config")
       .describe("Config provider key."),
-    DEFAULT_CHANNEL_SLUG: z
-      .string()
-      .min(1)
-      .default("default-channel")
-      .describe(
-        "Channel the config UI collects the config on; others inherit.",
-      ),
   })
   .and(baseConfigSchema);
 
