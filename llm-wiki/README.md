@@ -129,19 +129,6 @@ belongs to the `bookkeeping` skill.
 - **Lint**: Repaired broken Markdown links in ...
 ```
 
-# Skills
-
-Skills live inside this directory, under `.claude/skills/`.
-
-| Skill                                        | Use it for                                                                                                                                                                           | Writes to                        |
-| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------- |
-| [`explore`](.claude/skills/explore/SKILL.md) | Every way into this directory — the index, the MOCs, `qmd` semantic search, plain grep — and how to answer from what you find. Read that skill instead of reinventing a search here. | nothing — read only              |
-| `bookkeeping`                                | Ingesting a source, filing durable knowledge, auditing or repairing the graph, reconciling the index and log after a change, recording an ADR.                                       | any record, `index.md`, `log.md` |
-| `prd-modeling`                               | Creating, rewriting, or stress-testing a PRD. Stops at an approved PRD: it does not design the solution or decompose the work.                                                       | `prd/`                           |
-| `rfc-modeling`                               | Turning an approved PRD into an RFC design proposal. Stops at a proposal: an ADR records the verdict.                                                                                | `tech/RFC/`                      |
-| `grilling`                                   | Stress-testing a plan or design one question at a time. `prd-modeling` runs it as its business-grilling stage.                                                                       | nothing — asks questions         |
-| `handoff`                                    | Compacting a conversation into a document another agent can pick up. `prd-modeling` runs it to close a session.                                                                      | wherever it is told to write     |
-
 # Related Notes
 
 [LLM Wiki](sources/LLM%20Wiki.md)

@@ -25,5 +25,5 @@ Return findings grouped as blocking, should-fix, and optional. Cite exact files 
 explain the violated boundary, and suggest the smallest viable correction. Say explicitly
 when no boundary violations are found.
 
-Never edit files, install dependencies, invoke `/ship`, commit, push, or create a pull
+Never edit files, install dependencies, invoke `/pre-ship`, commit, push, or create a pull
 request.

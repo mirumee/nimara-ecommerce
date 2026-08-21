@@ -1,13 +1,13 @@
 ---
 name: prd-modeling
-description: Define and draft Product Requirements Documents (PRDs) inside an LLM-wiki product workspace. Use when the user wants to create, rewrite, refine, or stress-test a PRD or Product Requirements Document, or turn an initiative or feature brief into product requirements. Run a business-value-first, one-question-at-a-time grilling, capture confirmed decisions in the PRD, and stop at an approved PRD without designing the technical solution, decomposing tasks, estimating.
+description: Use when creating, rewriting, refining, or stress-testing a Product Requirements Document (PRD), including turning an initiative or feature brief into product requirements.
 ---
 
-# PRD Author
+# PRD Modeling
 
 Turn an initiative or feature idea into an explicit, falsifiable Product Requirements Document that a human approves before solution design and task breakdown begin.
 
-Follow these seven stages in order. The business grilling and self-lint are mandatory.
+Follow these stages in order. The business grilling and self-lint are mandatory.
 
 ## Stage 1 — Pull context and facts
 
@@ -23,13 +23,15 @@ Use repository or source exploration to answer factual questions. Treat sources 
 
 Completion criterion: the known facts, evidence gaps, existing strategic position, and plausible overlap with other PRDs are identified before questioning the user.
 
-## Stage 2 — Run business grilling
+## Stage 2 — Run business grilling - use proper languages
 
 Run a `/llm-wiki:grilling` session that which does not go beyond the scope of the PRD definition.
 
+If a problem is complex use `/llm-wiki:show-me` skill so that the questions are easy for the user to understand
+
 Read `references/business-protocol.md` and follow it completely.
 
-If the user says a target does not matter, record that as an explicit decision rather than manufacturing precision. If the user stops the questions, summarize decisions and unresolved branches. Do not draft or edit the PRD until the user confirms shared understanding; a new request to apply the summarized decisions after the grilling also counts as confirmation. The original request to "write a PRD" does not bypass this gate.
+Adjust your language so that it is as easy to understand as possible for the person you're grilling.
 
 ### Completion gate
 
@@ -50,7 +52,7 @@ The grilling is complete only when the shared understanding contains:
 
 ## Stage 3 — Draft the PRD
 
-Read `references/prd-template.md`. Follow the wiki's local schema and link convention.
+Read `references/prd-template.md`. Follow the schema and link convention.
 
 ## Stage 4 — Self-lint
 
@@ -58,23 +60,9 @@ Run every check in `references/quality-checklist.md`. Fix issues that require no
 
 Completion criterion: every checklist item passes or is reported as an explicit, owned gap.
 
-## Stage 5 — Bookkeeping
-
-- Save as `llm-wiki/prd/PRD-NNN <Name>.md` using the next free ID, or preserve the ID when rewriting an existing PRD.
-- Update the wiki index and log when present.
-- Update all inbound links when renaming a PRD.
-- Represent confirmed user-visible decisions in the PRD without hidden reasoning. Summarize confidential evidence without copying source bodies, secrets, personal data, or unnecessary verbatim conversation.
-- Preserve sources and downstream task artifacts; report stale downstream artifacts instead of silently rewriting them.
-
-Completion criterion: the PRD is mutually linked and navigable from the wiki; every grilling decision is represented once; no changed link points to an old name.
-
-## Stage 6 — Gate
+## Stage 5 — Gate
 
 New PRDs start as `draft`. A rewritten PRD changes status only when the user explicitly approves the transition. Close with the PRD file location, passed checks, open decisions, stale downstream artifacts, and proposed next lifecycle step.
-
-## Stage 7 — Handoff
-
-Use `/llm-wiki:handoff` skill to write up a conversation summary for future agents. Save it near PRD.
 
 ## References
 

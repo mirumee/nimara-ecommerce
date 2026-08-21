@@ -6,7 +6,7 @@ description: Audit the current diff for Nimara architecture, layer-boundary, and
 # Review architecture and conventions
 
 Review the current changes against the ordinary-work base branch, `main`. Read
-`.agents/skills/project-guidelines/SKILL.md` and the scoped `CLAUDE.md` files for affected
+`.claude/skills/project-guidelines/SKILL.md` and the scoped `CLAUDE.md` files for affected
 paths.
 
 Check for:

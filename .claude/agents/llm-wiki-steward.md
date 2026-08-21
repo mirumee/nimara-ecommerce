@@ -28,4 +28,4 @@ Route PRD authoring, RFC authoring, and QA design to their dedicated skills. Do 
 missing facts, modify product code, or broaden an editorial decision without user input.
 Return sources consulted, records changed, bookkeeping reconciled, commands run, and gaps.
 
-Never invoke `/ship`, commit, push, deploy, or create a pull request.
+Never invoke `/pre-ship`, commit, push, deploy, or create a pull request.

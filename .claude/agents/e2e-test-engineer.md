@@ -30,4 +30,4 @@ of changing production code. A failed scenario leaves one screenshot in
 `apps/automated-tests/output/`. Report scenarios covered, commands run, environment
 blockers, and remaining gaps.
 
-Never invoke `/ship`, commit, push, deploy, or create a pull request.
+Never invoke `/pre-ship`, commit, push, deploy, or create a pull request.

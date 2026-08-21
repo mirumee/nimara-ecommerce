@@ -23,7 +23,7 @@ Core responsibilities:
 - All modified code must pass ESLint + Prettier and TypeScript strict. Fix type errors
   before declaring done.
 
-Quality gate (use `/ship`):
+Quality gate (use `/pre-ship`):
 
 ```bash
 turbo run lint:staged
