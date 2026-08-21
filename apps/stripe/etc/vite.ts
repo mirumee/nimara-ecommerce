@@ -12,9 +12,7 @@ export type BuildTarget = (typeof BUILD_TARGETS)[number];
 export type AppEntry = { name: string; path: string };
 
 /**
- * Reads the deployment target from `BUILD_TARGET`. Deliberately has no default:
- * the target decides the on-disk layout, and guessing it produces a build the
- * deploy target cannot serve. Unset, empty, and unknown all fail the same way.
+ * Reads the deployment target from `BUILD_TARGET`.
  */
 export const readBuildTarget = (): BuildTarget => {
   const parsed = z.enum(BUILD_TARGETS).safeParse(process.env.BUILD_TARGET);

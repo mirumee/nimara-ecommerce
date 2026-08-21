@@ -18,4 +18,4 @@ apps/docs/public/_pagefind/
 apps/docs/.docusaurus/
 
 llm-wiki/.obsidian/
-apps/stripe/public/assets
+dist/

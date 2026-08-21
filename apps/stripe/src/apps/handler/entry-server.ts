@@ -1,3 +1,6 @@
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
 import { Hono } from "hono";
 import { handle } from "hono/aws-lambda";
 import { requestId } from "hono/request-id";
@@ -6,7 +9,9 @@ import { container } from "@/container";
 import { errorHandler } from "@/lib/error/handler";
 import { healthCheckMiddleware } from "@/lib/middleware/health-check-middleware";
 import { loggingMiddleware } from "@/lib/middleware/logging-middleware";
+import { nodeAssetsMiddleware } from "@/lib/middleware/node-assets-middleware";
 import { requestOriginMiddleware } from "@/lib/middleware/request-origin-middleware";
+import { vercelAssetsMiddleware } from "@/lib/middleware/vercel-assets-middleware";
 import { initSentry } from "@/lib/sentry/instrument";
 
 import { appRoutes } from "./api/rest/app";
@@ -22,6 +27,17 @@ initSentry({
   release: CONFIG.RELEASE,
 });
 
+const assetsMiddleware =
+  __BUILD_TARGET__ === "vercel"
+    ? vercelAssetsMiddleware({
+        assets: __CLIENT_ASSETS__,
+        basePath: CONFIG.BASE_PATH,
+      })
+    : nodeAssetsMiddleware({
+        basePath: CONFIG.BASE_PATH,
+        dir: join(dirname(fileURLToPath(import.meta.url)), "assets"),
+      });
+
 const app = new Hono()
   .onError(errorHandler)
   .basePath(CONFIG.BASE_PATH as "/")
@@ -34,6 +50,7 @@ const app = new Hono()
     return next();
   })
   .use(healthCheckMiddleware({ basePath: CONFIG.BASE_PATH }))
+  .use(assetsMiddleware)
   /**
    * Nested routes must be defined at the end for proper type inference for
    * hono/client.

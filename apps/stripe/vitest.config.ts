@@ -8,7 +8,7 @@ export default defineConfig({
     environment: "node",
     env: {
       ...process.env,
-      ...config({ path: ".env.test" }).parsed,
+      ...config({ path: ".env.test", quiet: true }).parsed,
       NODE_ENV: "test",
     },
     setupFiles: ["./src/lib/test/setup"],

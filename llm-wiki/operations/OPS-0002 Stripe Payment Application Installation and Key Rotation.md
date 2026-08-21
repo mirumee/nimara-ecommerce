@@ -40,12 +40,16 @@ requested permissions change.
 - Deploy `apps/stripe` at a stable HTTPS origin. Localhost can serve the application but the code
   deliberately skips Stripe webhook installation for local origins.
 - Set `BUILD_TARGET` on every environment that builds the application, a developer machine
-  included. It selects the output layout, is accepted only as `node` or `vercel`, and has no
-  default: unset, empty, and unknown all throw and fail the build at its first step. It is read
-  while the build configuration module loads rather than inside a build step, so the development
-  server refuses to start the same way. A Vercel deployment sets `BUILD_TARGET=vercel`. It is
-  declared in the application's Turbo build inputs, so a build produced under one target is not
-  reused for the other.
+  included. It selects how the client bundle reaches the browser, is accepted only as `node` or
+  `vercel`, and has no default: unset, empty, and unknown all throw and fail the build at its first
+  step. It is read while the build configuration module loads rather than inside a build step, so
+  the development server refuses to start the same way. A Vercel deployment sets
+  `BUILD_TARGET=vercel`, which bakes the built assets into the server bundle, because that platform
+  serves from its CDN only files that exist before the build command runs and ships into the
+  function only what it can trace through imports. Under `node` the assets stay files for
+  S3/CloudFront. It is declared in the application's Turbo build inputs, so a build produced under
+  one target is not reused for the other, and a configuration screen that loads blank with a failed
+  request for its client bundle is the first sign of a deployment built under the wrong one.
 - The Vercel project builds through the application's own `vercel.json`, which selects the Hono
   framework preset and the workspace build command. That preset locates the deployable entrypoint
   by finding a file that itself imports Hono; the repository ships one at the application root that

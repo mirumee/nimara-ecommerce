@@ -9,8 +9,8 @@ const APP_NAME = basename(dirname(fileURLToPath(import.meta.url)));
 
 /**
  * HTML shell for the React config UI. In dev the vite dev server serves the
- * TS entry (plus the react-refresh preamble); in prod the client bundle is
- * built into `public/assets/` and served from Vercel's CDN.
+ * TS entry (plus the react-refresh preamble); in prod the shell points at the
+ * built bundle, which `BUILD_TARGET` decides how to deliver.
  */
 const IS_DEV = typeof import.meta.env !== "undefined" && !!import.meta.env.DEV;
 
