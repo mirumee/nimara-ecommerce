@@ -19,3 +19,4 @@ apps/docs/.docusaurus/
 
 llm-wiki/.obsidian/
 apps/stripe/public/assets
+apps/stripe/dist

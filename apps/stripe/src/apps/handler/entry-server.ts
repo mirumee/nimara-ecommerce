@@ -12,6 +12,7 @@ import { initSentry } from "@/lib/sentry/instrument";
 import { appRoutes } from "./api/rest/app";
 import { saleorRoutes } from "./api/rest/saleor";
 import { stripeRoutes } from "./api/rest/stripe";
+import { CLIENT_ASSET_ROUTE, clientAsset } from "./client-assets";
 import { clientEntryPoint } from "./client-entry-point";
 
 const CONFIG = container.get("config");
@@ -44,8 +45,9 @@ const app = new Hono()
 
 export type AppType = typeof app;
 
-// Serves the config UI. Remove this line for an app that ships no client.
+// Serves the config UI. Remove these lines for an app that ships no client.
 app.get("/app", (context) => clientEntryPoint({ context }));
+app.get(CLIENT_ASSET_ROUTE, (context) => clientAsset({ context }));
 
 /**
  * `app` — Vercel Hono preset / dev server

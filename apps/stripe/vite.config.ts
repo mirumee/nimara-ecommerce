@@ -45,8 +45,13 @@ export default defineConfig(({ command, mode }): UserConfig => {
 
   return {
     resolve: { tsconfigPaths: true },
-    // Don't copy `public/` into the server bundle — assets are CDN-served.
+    // Don't copy `public/` into the server bundle — the client build writes there.
     publicDir: command === "build" ? false : undefined,
+    define: {
+      __CLIENT_ASSETS_DIR__: JSON.stringify(
+        BUILD_TARGET === "node" ? "./assets" : "../../public/assets",
+      ),
+    },
     server: {
       port: PORT,
       allowedHosts: [".ngrok.io", ".ngrok.app"],

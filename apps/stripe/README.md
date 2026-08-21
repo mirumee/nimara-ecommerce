@@ -142,11 +142,17 @@ below. It has no default — unset, empty, or unknown fails the build rather tha
 guessing a layout the deploy target cannot serve, so it must be set locally
 (`.env`) and in every deployment:
 
-- `vercel` — client → `public/assets/<app>-entry-client.js` (CDN),
+- `vercel` — client → `public/assets/<app>-entry-client.js`,
   server → `dist/<app>/entry-server.js`. The root `index.js` re-exports the
   built app for the native **Hono framework preset**.
 - `node` — each app self-contained in `dist/<app>/` (`entry-server.js` +
   `assets/`), for AWS Lambda + S3/CloudFront.
+
+Either way the browser path is `/assets/<app>-entry-client.js`. On Vercel the
+function serves it: the CDN only carries files that exist when the deployment
+is created, and the client bundle is written by the build, so `vercel.json`
+ships `public/assets/**` into the function with `includeFiles`. On the `node`
+target CloudFront answers first and that route stays unused.
 
 ### Architecture (DDD-ish)
 
