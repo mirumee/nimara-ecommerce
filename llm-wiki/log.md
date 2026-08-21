@@ -649,3 +649,15 @@
   default channel. A deployment-wide channel name would have left any installation not sharing that
   slug convention unable to save keys at all, including on first setup, so the choice belongs to the
   installation rather than to the deployment.
+
+## 2026-08-21
+
+- **Update**: Restated what `BUILD_TARGET` selects in OPS-0002. It no longer picks between output
+  layouts — both write the same directory — but between ways the client bundle reaches the browser,
+  after the Vercel deployment served its configuration screen with a failed request for that bundle.
+  Vercel serves from its CDN only files that exist before the build command runs, and places in the
+  function only what it can trace through imports, so a bundle written by the build reaches the
+  browser by neither route; under `vercel` the build now carries the assets inside the server bundle
+  and the application serves them, while `node` leaves them as files for S3 and CloudFront. A blank
+  configuration screen whose bundle request fails was added as the first sign of a deployment built
+  under the wrong target.

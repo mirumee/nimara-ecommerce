@@ -137,22 +137,26 @@ under it.
 
 ### Build targets
 
-`BUILD_TARGET` is read from the environment and validated against the two values
-below. It has no default — unset, empty, or unknown fails the build rather than
-guessing a layout the deploy target cannot serve, so it must be set locally
-(`.env`) and in every deployment:
+Every app builds into `dist/<app>/`: `entry-server.js` plus the `assets/` its
+HTML shell points at. The browser always asks for
+`/assets/<app>-entry-client.js`; `BUILD_TARGET` decides how that request is
+answered, has no default, and must be set locally (`.env`) and in every
+deployment — unset, empty, or unknown fails the build rather than producing one
+the deploy target cannot serve.
 
-- `vercel` — client → `public/assets/<app>-entry-client.js`,
-  server → `dist/<app>/entry-server.js`. The root `index.js` re-exports the
-  built app for the native **Hono framework preset**.
-- `node` — each app self-contained in `dist/<app>/` (`entry-server.js` +
-  `assets/`), for AWS Lambda + S3/CloudFront.
+- `vercel` — `etc/build.ts` reads the built assets back and bakes them into the
+  server bundle as base64, which `vercelAssetsMiddleware` serves. Vercel's CDN
+  carries a file only if it exists before `buildCommand` runs, and the function
+  carries only what the deploy could trace through imports, so a bundle written
+  by the build reaches the browser no other way. The root `index.js` re-exports
+  the built app for the native **Hono framework preset**.
+- `node` — the assets stay files and go to S3, where CloudFront answers
+  `/assets/*` before the request reaches Lambda. `nodeAssetsMiddleware` reads
+  the same files from disk, so the bundle also stands on its own without a CDN
+  in front of it.
 
-Either way the browser path is `/assets/<app>-entry-client.js`. On Vercel the
-function serves it: the CDN only carries files that exist when the deployment
-is created, and the client bundle is written by the build, so `vercel.json`
-ships `public/assets/**` into the function with `includeFiles`. On the `node`
-target CloudFront answers first and that route stays unused.
+Only the middleware the target names is compiled in; the other branch is a
+constant the bundler drops.
 
 ### Architecture (DDD-ish)
 

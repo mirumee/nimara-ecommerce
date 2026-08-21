@@ -1,8 +1,10 @@
 export {};
 
 declare global {
-  // Client output directory, relative to the built server bundle. See `BUILD_TARGET`.
-  const __CLIENT_ASSETS_DIR__: string;
+  const __BUILD_TARGET__: "node" | "vercel";
+
+  // Built client assets as base64, keyed by file name. See `etc/build.ts`.
+  const __CLIENT_ASSETS__: Record<string, string>;
 
   interface Window {
     // Injected into the served HTML by `clientEntryPoint`.

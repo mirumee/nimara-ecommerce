@@ -13,12 +13,6 @@ config({ quiet: true });
 
 const PORT = Number(process.env.PORT || 4000);
 
-/**
- * Deployment target, from `BUILD_TARGET` (required — no default).
- * - `vercel` — client → `public/assets` (CDN), server → `dist/<app>-entry-server.js`.
- * - `node` — each app self-contained in `dist/<app>/` (server + its `assets/`),
- *   for AWS Lambda + S3/CloudFront.
- */
 export const BUILD_TARGET = readBuildTarget();
 
 /**
@@ -26,7 +20,7 @@ export const BUILD_TARGET = readBuildTarget();
  * the entry input and per-app output names; this file provides the shared
  * plugins/SSR settings.
  */
-export default defineConfig(({ command, mode }): UserConfig => {
+export default defineConfig(({ mode }): UserConfig => {
   if (mode === "client") {
     return {
       resolve: { tsconfigPaths: true },
@@ -45,12 +39,11 @@ export default defineConfig(({ command, mode }): UserConfig => {
 
   return {
     resolve: { tsconfigPaths: true },
-    // Don't copy `public/` into the server bundle — the client build writes there.
-    publicDir: command === "build" ? false : undefined,
+    publicDir: false,
+    // `etc/build.ts` overrides the assets with the real ones on `vercel`.
     define: {
-      __CLIENT_ASSETS_DIR__: JSON.stringify(
-        BUILD_TARGET === "node" ? "./assets" : "../../public/assets",
-      ),
+      __BUILD_TARGET__: JSON.stringify(BUILD_TARGET),
+      __CLIENT_ASSETS__: "{}",
     },
     server: {
       port: PORT,
@@ -62,11 +55,7 @@ export default defineConfig(({ command, mode }): UserConfig => {
       {
         ...devServer({
           entry: "./src/dev-server.ts",
-          exclude: [
-            ...defaultOptions.exclude,
-            /^\/assets\/.*/,
-            /^\/public\/.*/,
-          ],
+          exclude: [...defaultOptions.exclude, /^\/assets\/.*/],
         }),
         apply: "serve",
       },
