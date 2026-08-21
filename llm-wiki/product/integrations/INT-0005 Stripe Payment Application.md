@@ -30,14 +30,36 @@ payment methods protocol.
 # Tenancy
 
 - One deployment serves any number of commerce installations. Each installation is stored under its
-  own commerce domain, holding its own installation token, application ID, and per-channel gateway
-  keys, and no request can read or write another installation's configuration.
+  own commerce domain, holding its own installation token, application ID, and gateway
+  configuration, and no request can read or write another installation's configuration.
+- A deployed application refuses to save gateway configuration for a commerce domain it is not
+  installed on, because the configuration screen is reachable only from an installed application and
+  a missing entry is therefore a fault rather than a first save. A development build accepts it, so
+  the screen can be worked on standalone before any installation exists; installing afterwards fills
+  in the installation token and application ID on the same entry and preserves the keys.
 - Every request names its tenant by commerce domain. Both the signing keys used to authenticate the
   caller and the commerce API the application calls back are addressed from that domain, so a
   caller cannot direct the deployment at a server of its own choosing.
 - An allowlist of permitted commerce domains gates installation. It accepts a comma-separated list
   with `*` as a wildcard, and defaults to empty. An unconfigured deployment therefore refuses every
   installation and every webhook rather than serving an unknown commerce instance.
+
+# Configuration model
+
+- One gateway configuration serves the whole installation. It is entered on a default channel the
+  operator chooses, and every other channel resolves to it.
+- A channel that must settle through a different provider account carries an override, which
+  replaces the whole key pair rather than merging field by field, so no channel resolves to a
+  publishable key and a secret key from two different accounts.
+- Resolution is the override for that channel, else the shared configuration. The default channel
+  is a configuration-screen concept only: it decides where the keys are typed, never which keys a
+  payment uses.
+- The chosen default channel is stored per installation, because one deployment serves commerce
+  instances whose channel-slug conventions differ and a deployment-wide name would leave any
+  installation that does not share it unable to save keys at all. A stored choice naming a channel
+  the instance no longer has leaves the field unset rather than blocking configuration.
+- The configuration screen never receives a secret in full. The secret key and the webhook signing
+  secret arrive masked, and a blank secret-key field on save keeps the stored key.
 
 # Authentication and permissions
 
@@ -77,12 +99,14 @@ payment methods protocol.
 5. Stripe PaymentIntent and refund webhooks map supported provider events into Saleor transaction
    reports, including available next actions and the provider reference.
 6. Channel configuration installs one Stripe webhook endpoint per provider account, not per channel.
-   Channels configured with the same provider secret key share that endpoint and each stores its
+   Channels resolving to the same provider secret key share that endpoint and each stores its
    provider webhook ID and signing secret; an installation whose channels span two provider accounts
    gets one endpoint per account. The endpoint address carries the commerce domain, while the
-   channel an event belongs to travels in the event's metadata. Replacing endpoints removes only
-   those carrying this application, environment, and commerce domain, so installations sharing one
-   provider account do not remove each other's endpoints.
+   channel an event belongs to travels in the event's metadata. A save reconciles endpoints against
+   the secret keys in use: an endpoint survives while its key is still configured, an added key gets
+   one, and a key no longer used has its endpoint removed. Removal touches only endpoints carrying
+   this application, environment, and commerce domain, so installations sharing one provider account
+   do not remove each other's endpoints.
 7. `LIST_STORED_PAYMENT_METHODS` returns the customer's saved methods for the channel. It reads the
    recorded gateway customer without creating or looking one up, reads the methods in a single call,
    and reports card and wallet methods only. A method is listed only when the provider records an

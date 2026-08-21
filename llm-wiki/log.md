@@ -623,3 +623,29 @@
   live installations against one commerce instance duplicating a wallet is a development-environment
   artifact rather than product truth, and the absence of a currency filter on the stored-method list
   is an open defect, which is tracked as work rather than described as current behaviour.
+
+## 2026-08-20
+
+- **Update**: Recorded the payment application's shared gateway configuration in INT-0005. One key
+  pair now serves the installation, entered on a default channel the operator chooses; a channel
+  resolves to its own override or to that shared configuration, and an override replaces the whole
+  key pair so no channel mixes keys from two provider accounts.
+- **Update**: INT-0005 also states that a save reconciles webhook endpoints against the secret keys
+  in use — an endpoint survives while its key is configured, an added key gets one, a dropped key
+  loses one — replacing the previous remove-then-recreate description, and that the configuration
+  screen receives both secrets masked.
+- **Update**: Reworked OPS-0002 for the same model: the operator picks the default channel in the
+  configuration screen, keys are entered once on it, rotation of the shared keys moves every
+  inheriting channel at once, and a blank secret field on save keeps the stored key.
+- **Update**: Corrected the stored-record description in ADR-0002 and its restatements in IMP-0002
+  and IMP-0003. The decision itself — that the configuration backend is selectable — is unchanged;
+  only the shape of the value it stores and the name of the rule that reads it were stale.
+- **Update**: INT-0005 records what a save does for a commerce domain with no entry. A deployed
+  application refuses it, because the configuration screen is only reachable from an installed
+  application; a development build creates the entry so the screen can be worked on standalone, and
+  a later installation fills in the token and application ID on the same entry. ADR-0002's summary
+  of the tenant rules was corrected to match: the update path creates or rejects.
+- **Update**: INT-0005 and OPS-0002 now record that each installation chooses and stores its own
+  default channel. A deployment-wide channel name would have left any installation not sharing that
+  slug convention unable to save keys at all, including on first setup, so the choice belongs to the
+  installation rather than to the deployment.

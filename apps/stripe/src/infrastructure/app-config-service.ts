@@ -3,12 +3,13 @@ import { type SaleorAppConfig } from "@nimara/domain/objects/SaleorApp";
 import { type ConfigItemRepository } from "@nimara/infrastructure/config/types";
 
 import {
-  type ChannelGatewayConfig,
+  type AppConfig,
+  appConfig,
+  emptyPaymentGatewayConfigSet,
   type PaymentGatewayConfig,
-  paymentGatewayConfig,
+  type PaymentGatewayConfigSet,
+  paymentGatewayConfigSet,
   type SaleorMultiTenantAppConfig,
-  type StripeAppConfig,
-  stripeAppConfig,
 } from "@/domain/app-config";
 
 const notFound = (message: string) =>
@@ -23,20 +24,28 @@ const notFound = (message: string) =>
 
 /**
  * Multi-tenant config provider over the whole tenant map (`Record<domain,
- * StripeAppConfig>`). Also satisfies the infra `SaleorAppConfigRepository` so
+ * AppConfig>`). Also satisfies the infra `SaleorAppConfigRepository` so
  * the install use-case can persist the install record without knowing about
  * the app-specific gateway config.
  */
 export const appConfigService = ({
   configStore,
+  createMissingTenant = false,
 }: {
   configStore: ConfigItemRepository<SaleorMultiTenantAppConfig>;
+  /**
+   * Lets a save create the tenant entry, for the development-only config screen
+   * that runs before the app is installed. In a deployment the screen is only
+   * reachable from the Dashboard, so a missing entry is a real fault worth
+   * reporting rather than a half record to write.
+   */
+  createMissingTenant?: boolean;
 }) => {
   const getBySaleorDomain = async ({
     saleorDomain,
   }: {
     saleorDomain: string;
-  }): AsyncResult<StripeAppConfig | null> => {
+  }): AsyncResult<AppConfig | null> => {
     const result = await configStore.get();
 
     if (!result.ok) {
@@ -63,9 +72,10 @@ export const appConfigService = ({
 
       const configs = result.data ?? {};
       const current = configs[config.saleorDomain];
-      const merged = stripeAppConfig.parse({
+      const merged = appConfig.parse({
         ...config,
-        paymentGatewayConfig: current?.paymentGatewayConfig ?? {},
+        paymentGatewayConfigSet:
+          current?.paymentGatewayConfigSet ?? emptyPaymentGatewayConfigSet(),
       });
 
       const saved = await configStore.upsert({
@@ -79,18 +89,18 @@ export const appConfigService = ({
       return ok(merged);
     },
 
-    getPaymentGatewayConfig: async ({
+    getPaymentGatewayConfigSet: async ({
       saleorDomain,
     }: {
       saleorDomain: string;
-    }): AsyncResult<PaymentGatewayConfig | null> => {
+    }): AsyncResult<PaymentGatewayConfigSet | null> => {
       const result = await getBySaleorDomain({ saleorDomain });
 
       if (!result.ok) {
         return result;
       }
 
-      return ok(result.data?.paymentGatewayConfig ?? null);
+      return ok(result.data?.paymentGatewayConfigSet ?? null);
     },
 
     getPaymentGatewayConfigForChannel: async ({
@@ -99,31 +109,33 @@ export const appConfigService = ({
     }: {
       channelSlug: string;
       saleorDomain: string;
-    }): AsyncResult<ChannelGatewayConfig> => {
+    }): AsyncResult<PaymentGatewayConfig> => {
       const result = await getBySaleorDomain({ saleorDomain });
 
       if (!result.ok) {
         return result;
       }
 
-      const gatewayConfig = result.data?.paymentGatewayConfig[channelSlug];
+      const configSet = result.data?.paymentGatewayConfigSet;
+      const config =
+        configSet?.channelOverrides[channelSlug] ?? configSet?.default;
 
-      if (!gatewayConfig) {
+      if (!config) {
         return notFound(
           `Missing gateway config for ${saleorDomain} - ${channelSlug}.`,
         );
       }
 
-      return ok(gatewayConfig);
+      return ok(config);
     },
 
-    updatePaymentGatewayConfig: async ({
+    updatePaymentGatewayConfigSet: async ({
       saleorDomain,
       data,
     }: {
-      data: PaymentGatewayConfig;
+      data: PaymentGatewayConfigSet;
       saleorDomain: string;
-    }): AsyncResult<PaymentGatewayConfig> => {
+    }): AsyncResult<PaymentGatewayConfigSet> => {
       const result = await configStore.get();
 
       if (!result.ok) {
@@ -131,17 +143,23 @@ export const appConfigService = ({
       }
 
       const configs = result.data ?? {};
-      const current = configs[saleorDomain];
+      const installed = configs[saleorDomain];
 
-      if (!current) {
+      if (!installed && !createMissingTenant) {
         return notFound(`Missing config for ${saleorDomain} domain.`);
       }
 
-      const gateway = paymentGatewayConfig.parse(data);
+      // The install fills in the token and application ID on the same entry.
+      const current: Omit<AppConfig, "paymentGatewayConfigSet"> = installed ?? {
+        authToken: "",
+        saleorAppId: "",
+        saleorDomain,
+      };
+      const gateway = paymentGatewayConfigSet.parse(data);
       const saved = await configStore.upsert({
         value: {
           ...configs,
-          [saleorDomain]: { ...current, paymentGatewayConfig: gateway },
+          [saleorDomain]: { ...current, paymentGatewayConfigSet: gateway },
         },
       });
 

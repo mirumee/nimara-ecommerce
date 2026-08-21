@@ -1,7 +1,7 @@
 import { type Logger } from "@nimara/infrastructure/logging/types";
 
 import { container } from "@/container";
-import { type ChannelGatewayConfig } from "@/domain/app-config";
+import { type PaymentGatewayConfig } from "@/domain/app-config";
 import {
   type PaymentIntent,
   type TransactionFlowStrategy,
@@ -86,7 +86,7 @@ export const intentResponse = ({
   intent,
 }: {
   actionType: TransactionFlowStrategy;
-  config: ChannelGatewayConfig;
+  config: PaymentGatewayConfig;
   intent: PaymentIntent;
 }): TransactionEventSchema => ({
   pspReference: intent.id,
@@ -115,7 +115,7 @@ export const finalizedResponse = ({
   intent,
   result,
 }: {
-  config: ChannelGatewayConfig;
+  config: PaymentGatewayConfig;
   intent: PaymentIntent;
   result: TransactionEventSchema["result"];
 }): TransactionEventSchema => ({

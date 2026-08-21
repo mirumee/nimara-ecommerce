@@ -24,7 +24,11 @@ module.exports = {
       },
     },
     {
-      files: ["src/apps/*/client-entry-point.ts"],
+      files: [
+        "src/apps/*/client-entry-point.ts",
+        "src/apps/*/client/**/*.{ts,tsx}",
+        "src/container/index.ts",
+      ],
       rules: {
         // import.meta.env.DEV is vite's flag, not a Turbo task input.
         "turbo/no-undeclared-env-vars": ["error", { allowList: ["^DEV$"] }],

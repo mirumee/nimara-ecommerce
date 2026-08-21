@@ -42,7 +42,7 @@ rollback: "Restore the previous Vercel deployment. This is safe only while exact
 
 One deployment now serves any number of commerce installations. The stored configuration changed
 from a single object to a map keyed by commerce domain, so each installation holds its own
-installation token, application ID, and per-channel gateway keys. The deployment no longer pins a
+installation token, application ID, and gateway configuration. The deployment no longer pins a
 commerce instance through build-time configuration.
 
 Each request names its tenant with one value, its commerce domain, and everything the application

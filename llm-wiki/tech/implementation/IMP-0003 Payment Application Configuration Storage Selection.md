@@ -26,13 +26,13 @@ relations:
   rolled_back_by: null
 pull_requests: []
 verification:
-  - criterion: "A developer with no access to the hosted configuration service can start the application, install it into a commerce instance, save per-channel provider keys, and take a payment through it."
+  - criterion: "A developer with no access to the hosted configuration service can start the application, install it into a commerce instance, save the provider keys, and take a payment through it."
     tests: []
   - criterion: "With the hosted store selected and one of its three required values missing, configuration validation fails at startup with a message naming the variable and the on-disk alternative."
     tests: []
   - criterion: "Selecting either backend needs no code change, and a deployment that sets nothing keeps using the hosted store."
     tests: []
-  - criterion: "Tenant isolation and the per-channel merge behave identically on both backends."
+  - criterion: "Tenant isolation and channel resolution behave identically on both backends."
     tests: []
 rollout: "No action is required for an existing deployment. `CONFIG_PROVIDER` defaults to `edge`, so a deployment that sets nothing keeps reading and writing the hosted store with the values it already has. The two new settings are declared as build inputs in the application's Turbo task, so a build produced under one selection is not reused for the other. Developers switch by setting `CONFIG_PROVIDER=file` and may then leave the Vercel access, team, and database values unset."
 rollback: "Restore the previous deployment. The stored value's shape is unchanged, so a release predating this change reads and writes the same hosted map with no migration. A deployment that had been switched to the on-disk backend is the exception: its configuration lives on an ephemeral per-instance filesystem, is not readable by the restored release, and the affected installations must be reinstalled and reconfigured. See [Stripe Payment Application Installation and Key Rotation](../../operations/OPS-0002%20Stripe%20Payment%20Application%20Installation%20and%20Key%20Rotation.md)."
@@ -41,7 +41,7 @@ rollback: "Restore the previous deployment. The stored value's shape is unchange
 # Implementation summary
 
 The configuration provider is now two parts. `createSaleorAppConfigProvider` holds every tenant
-rule — lookup by commerce domain or application ID, the per-channel merge on update, and the missing
+rule — lookup by commerce domain or application ID, channel resolution on read, and the missing
 tenant and missing channel failures — and reaches storage through one pair of functions that read
 and write the whole tenant map. A backend supplies that pair and nothing else. The Edge Config
 backend was reduced to its two Vercel REST calls; the rules it previously carried moved to the core

@@ -8,8 +8,8 @@ import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
 
 import { generatePackageJson, readBuildTarget } from "./etc/vite.ts";
 
-config({ path: ".env.local" });
-config();
+config({ path: ".env.local", quiet: true });
+config({ quiet: true });
 
 const PORT = Number(process.env.PORT || 4000);
 

@@ -5,4 +5,10 @@ declare global {
     // Injected into the served HTML by `clientEntryPoint`.
     env: { BASE_PATH: string; VERSION: string };
   }
+
+  // Dev-only credentials for running the config UI outside the Dashboard.
+  interface ImportMetaEnv {
+    readonly VITE_SALEOR_API_URL?: string;
+    readonly VITE_SALEOR_APP_TOKEN?: string;
+  }
 }

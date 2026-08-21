@@ -17,6 +17,11 @@ const APP = {
   saleorDomain: "saleor.example.com",
 };
 
+const configFor = (secretKey: string): PaymentGatewayConfig => ({
+  publicKey: "pk_test_123",
+  secretKey,
+});
+
 describe("webhooks", () => {
   const mocks = vi.hoisted(() => {
     const webhookId = "wh_123";
@@ -72,11 +77,9 @@ describe("webhooks", () => {
   });
 
   describe("installWebhooks", () => {
-    it("does nothing when no channel has a secretKey", async () => {
+    it("does nothing when no configs carry a secretKey", async () => {
       // given
-      const paymentGatewayConfig = {
-        "default-channel": {},
-      } as unknown as PaymentGatewayConfig;
+      const configs = [{ publicKey: "pk_test_123" }] as PaymentGatewayConfig[];
       const logger = MagicMock<{ warning: Mock }>();
 
       (isLocalDomain as Mock).mockReturnValue(false);
@@ -84,7 +87,7 @@ describe("webhooks", () => {
       // when
       await installWebhooks({
         ...APP,
-        paymentGatewayConfig,
+        configs,
         appUrl: "https://example.com",
         // @ts-expect-error Mock
         logger,
@@ -96,9 +99,6 @@ describe("webhooks", () => {
 
     it("logs a warning and returns if the domain is local", async () => {
       // given
-      const paymentGatewayConfig = {
-        "default-channel": { secretKey: mocks.secretKey },
-      } as unknown as PaymentGatewayConfig;
       const logger = MagicMock<{ warning: Mock }>();
 
       (isLocalDomain as Mock).mockReturnValue(true);
@@ -106,8 +106,8 @@ describe("webhooks", () => {
       // when
       await installWebhooks({
         ...APP,
-        paymentGatewayConfig,
         appUrl: "http://localhost:3000",
+        configs: [configFor(mocks.secretKey)],
         // @ts-expect-error Mock
         logger,
       });
@@ -119,13 +119,13 @@ describe("webhooks", () => {
       expect(getStripeApi).not.toHaveBeenCalled();
     });
 
-    it("creates one endpoint per Stripe account and shares it across channels", async () => {
+    it("creates one endpoint per Stripe account and shares it", async () => {
       // given
-      const paymentGatewayConfig = {
-        "default-channel": { secretKey: mocks.secretKey },
-        "second-channel": { secretKey: mocks.secretKey },
-        "other-account": { secretKey: "sk_test_other" },
-      } as unknown as PaymentGatewayConfig;
+      const configs = [
+        configFor(mocks.secretKey),
+        configFor(mocks.secretKey),
+        configFor("sk_test_other"),
+      ];
       const logger = MagicMock<{ warning: Mock }>();
 
       (isLocalDomain as Mock).mockReturnValue(false);
@@ -133,7 +133,7 @@ describe("webhooks", () => {
       // when
       await installWebhooks({
         ...APP,
-        paymentGatewayConfig,
+        configs,
         appUrl: "https://example.com",
         // @ts-expect-error Mock
         logger,
@@ -144,23 +144,16 @@ describe("webhooks", () => {
       expect(getStripeApi).toHaveBeenCalledWith(mocks.secretKey);
       expect(getStripeApi).toHaveBeenCalledWith("sk_test_other");
 
-      Object.values(paymentGatewayConfig).forEach((configuration) => {
-        expect(configuration.webhookId).toBe(mocks.webhookId);
-        expect(configuration.webhookSecretKey).toBe("whsec_456");
+      configs.forEach((config) => {
+        expect(config.webhookId).toBe(mocks.webhookId);
+        expect(config.webhookSecretKey).toBe("whsec_456");
       });
     });
   });
 
   describe("uninstallWebhooks", () => {
-    it("only clears configuration when appUrl is localhost", async () => {
+    it("does not reach Stripe when appUrl is localhost", async () => {
       // given
-      const paymentGatewayConfig = {
-        "default-channel": {
-          secretKey: mocks.secretKey,
-          webhookId: mocks.webhookId,
-          webhookSecretKey: "whsec_456",
-        },
-      } as unknown as PaymentGatewayConfig;
       const logger = MagicMock<{ warning: Mock }>();
 
       (isLocalDomain as Mock).mockReturnValue(true);
@@ -168,29 +161,18 @@ describe("webhooks", () => {
       // when
       await uninstallWebhooks({
         ...APP,
-        paymentGatewayConfig,
         appUrl: "http://localhost:3000",
         // @ts-expect-error Mock
         logger,
+        secretKeys: [mocks.secretKey],
       });
 
       // then
       expect(getStripeApi).not.toHaveBeenCalled();
-      expect(paymentGatewayConfig["default-channel"].webhookId).toBeUndefined();
-      expect(
-        paymentGatewayConfig["default-channel"].webhookSecretKey,
-      ).toBeUndefined();
     });
 
-    it("deletes only this tenant's endpoints and clears configuration", async () => {
+    it("deletes only this tenant's endpoints", async () => {
       // given
-      const paymentGatewayConfig = {
-        "default-channel": {
-          secretKey: mocks.secretKey,
-          webhookId: mocks.webhookId,
-          webhookSecretKey: "whsec_456",
-        },
-      } as unknown as PaymentGatewayConfig;
       const logger = MagicMock<{ warning: Mock }>();
 
       (isLocalDomain as Mock).mockReturnValue(false);
@@ -218,29 +200,19 @@ describe("webhooks", () => {
       // when
       await uninstallWebhooks({
         ...APP,
-        paymentGatewayConfig,
         appUrl: "https://example.com",
         // @ts-expect-error Mock
         logger,
+        secretKeys: [mocks.secretKey],
       });
 
       // then
       expect(mocks.del).toHaveBeenCalledTimes(1);
       expect(mocks.del).toHaveBeenCalledWith(mocks.webhookId);
-      expect(paymentGatewayConfig["default-channel"].webhookId).toBeUndefined();
-      expect(
-        paymentGatewayConfig["default-channel"].webhookSecretKey,
-      ).toBeUndefined();
     });
 
-    it("logs an error when webhook deletion fails", async () => {
+    it("logs an error without the secret key when deletion fails", async () => {
       // given
-      const paymentGatewayConfig = {
-        "default-channel": {
-          secretKey: mocks.secretKey,
-          webhookId: mocks.webhookId,
-        },
-      } as unknown as PaymentGatewayConfig;
       const logger = MagicMock<{ error: Mock }>();
 
       (isLocalDomain as Mock).mockReturnValue(false);
@@ -249,18 +221,16 @@ describe("webhooks", () => {
       // when
       await uninstallWebhooks({
         ...APP,
-        paymentGatewayConfig,
         appUrl: "https://example.com",
         // @ts-expect-error Mock
         logger,
+        secretKeys: [mocks.secretKey],
       });
 
       // then
       expect(logger.error).toHaveBeenCalledWith(
-        "Could not delete stripe webhook",
-        {
-          webhookIds: [mocks.webhookId],
-        },
+        "Could not delete stripe webhooks.",
+        { saleorDomain: APP.saleorDomain },
       );
     });
   });
