@@ -67,7 +67,7 @@ export default async function Page(props: SearchPageProps) {
         defaultResultsPerPage={DEFAULT_RESULTS_PER_PAGE}
         defaultSortBy={DEFAULT_SORT_BY}
         handleFiltersFormSubmit={handleFiltersFormSubmit}
-        getFacets={getFacets.bind(null, undefined)}
+        getFacets={getFacets}
       />
     </>
   );

@@ -47,7 +47,7 @@ export const StandardCategoryView = async (
             services={props.services}
             defaultResultsPerPage={props.defaultResultsPerPage}
             defaultSortBy={props.defaultSortBy}
-            categorySlug={category.slug}
+            categoryScope={{ name: category.name, slug: category.slug }}
             region={props.region}
             render={({
               products,
@@ -78,6 +78,10 @@ export const StandardCategoryView = async (
                       searchParams={searchParams}
                       sortByOptions={sortByOptions}
                       defaultSortBy={props.defaultSortBy}
+                      categoryScope={{
+                        name: category.name,
+                        slug: category.slug,
+                      }}
                       handleFiltersFormSubmit={props.handleFiltersFormSubmit}
                       getFacets={props.getFacets}
                     />

@@ -3,8 +3,8 @@ import { ok } from "@nimara/domain/objects/Result";
 
 import { saleorCategoryService } from "#root/category/providers";
 import { saleorCollectionService } from "#root/collection/providers";
-import { type FetchOptions, graphqlClient } from "#root/graphql/client";
-import { getTranslation } from "#root/lib/saleor";
+import { graphqlClient } from "#root/graphql/client";
+import { getTranslation, isVendorOwned } from "#root/lib/saleor";
 import { RESERVED_FILTER_KEYS } from "#root/use-cases/search/consts";
 import type { FacetType, GetFacetsInfra } from "#root/use-cases/search/types";
 
@@ -23,23 +23,17 @@ const ROOT_CATEGORY_LEVEL = 0;
 
 export const saleorGetFacetsInfra =
   ({ apiURL, logger }: SaleorSearchServiceConfig): GetFacetsInfra =>
-  async ({ filters }, context) => {
+  async ({ filters, categoryScope, options }, context) => {
     const collectionSlugs = filters?.collection?.split(",") ?? [];
-    const categorySlugs = filters?.category?.split(",") ?? [];
+    const categorySlugs = categoryScope
+      ? [categoryScope.slug]
+      : (filters?.category?.split(",") ?? []);
 
     const categoryService = saleorCategoryService({ apiURI: apiURL, logger });
     const collectionService = saleorCollectionService({
       apiURI: apiURL,
       logger,
     });
-    const cacheOptions: FetchOptions = {
-      next: {
-        // FIXME: Temp value for now
-        revalidate: 5 * 60,
-        tags: ["SEARCH", "SEARCH:FACETS"],
-      },
-    };
-
     const client = graphqlClient(apiURL);
 
     const [collectionsResult, categoriesResult, taxonomyResult] =
@@ -47,8 +41,12 @@ export const saleorGetFacetsInfra =
         collectionService.getCollectionsIDsBySlugs({
           channel: context.channel,
           slugs: collectionSlugs,
+          options,
         }),
-        categoryService.getCategoriesIDsBySlugs({ slugs: categorySlugs }),
+        categoryService.getCategoriesIDsBySlugs({
+          slugs: categorySlugs,
+          options,
+        }),
         /**
          * Unfiltered on purpose: a reserved filter must stay clearable from the
          * panel, which also keeps this out of the selection-keyed FacetsQuery
@@ -60,8 +58,7 @@ export const saleorGetFacetsInfra =
             languageCode: context.languageCode as LanguageCodeEnum,
             categoryLevel: ROOT_CATEGORY_LEVEL,
           },
-          options: cacheOptions,
-          operationName: "FacetsTaxonomyQuery",
+          options,
         }),
       ]);
 
@@ -75,12 +72,7 @@ export const saleorGetFacetsInfra =
 
     const storeCollections =
       taxonomy?.collections?.edges
-        /**
-         * A vendor-owned collection groups one vendor's own products, and the
-         * marketplace mints one per vendor, so listing them store-wide would
-         * grow without bound.
-         */
-        .filter(({ node }) => !node.vendorId?.trim())
+        .filter(({ node }) => !isVendorOwned(node))
         .map(({ node }) => ({
           name: getTranslation("name", node),
           slug: node.slug,
@@ -95,8 +87,7 @@ export const saleorGetFacetsInfra =
           collectionIds: collectionsResult.data,
         }),
       },
-      options: cacheOptions,
-      operationName: "FacetsQuery",
+      options,
     });
 
     if (!result.ok) {

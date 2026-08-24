@@ -21,3 +21,6 @@ export const getTranslation = <T, K extends keyof T>(
     } & { translation?: Maybe<{ [key in K]?: Maybe<string> }> }
   >,
 ) => type?.translation?.[key] || type?.[key] || "";
+
+export const isVendorOwned = (entity: { vendorId?: Maybe<string> }) =>
+  !!entity.vendorId?.trim();

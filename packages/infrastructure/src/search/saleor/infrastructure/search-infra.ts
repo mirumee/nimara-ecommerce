@@ -33,6 +33,7 @@ export const saleorSearchInfra =
       before,
       sortBy,
       filters,
+      categoryScope,
       limit,
       productIds,
       productMetadata,
@@ -49,7 +50,9 @@ export const saleorSearchInfra =
     const rawFilters = { ...filters };
 
     const collectionSlugs = rawFilters[COLLECTION_FILTER_KEY]?.split(",") ?? [];
-    const categorySlugs = rawFilters[CATEGORY_FILTER_KEY]?.split(",") ?? [];
+    const categorySlugs = categoryScope
+      ? [categoryScope.slug]
+      : (rawFilters[CATEGORY_FILTER_KEY]?.split(",") ?? []);
 
     delete rawFilters[COLLECTION_FILTER_KEY];
     delete rawFilters[CATEGORY_FILTER_KEY];

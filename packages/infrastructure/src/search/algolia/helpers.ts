@@ -1,10 +1,8 @@
 import { invariant } from "graphql/jsutils/invariant";
 
 import { type Logger } from "#root/logging/types";
-import {
-  CATEGORY_FILTER_KEY,
-  COLLECTION_FILTER_KEY,
-} from "#root/use-cases/search/consts";
+import { CATEGORY_FILTER_KEY } from "#root/use-cases/search/consts";
+import { type TaxonomyScope } from "#root/use-cases/search/types";
 
 import { type IndicesSettings } from "./types";
 
@@ -41,66 +39,70 @@ export const getIndexName = (
   return replica.indexName;
 };
 
-const toCategoryName = (slug: string) => {
-  const name = slug.replaceAll("-", " ");
+const VALUE_SEPARATOR = /[,.]/;
 
-  return name.charAt(0).toUpperCase() + name.slice(1);
-};
+const quote = (value: string) => `'${value.replaceAll("'", "\\'")}'`;
+
+const anyOf = (clauses: string[]) =>
+  clauses.length > 1 ? `(${clauses.join(" OR ")})` : clauses[0];
 
 export const buildFilters = ({
   filters,
+  categoryScope,
   channel,
   indices,
+  logger,
 }: {
+  categoryScope?: TaxonomyScope;
   channel: string;
   filters?: Record<string, string>;
   indices: IndicesSettings;
+  logger: Logger;
 }): string => {
   const mainIndex = indices.find((index) => index.channel === channel);
-  const facetsMapping = Object.entries(mainIndex?.availableFacets ?? {}).reduce<
-    Record<string, string>
-  >((acc, [key, value]) => {
-    acc[value.slug] = key;
+  const attributeBySlug = Object.entries(
+    mainIndex?.availableFacets ?? {},
+  ).reduce<Record<string, string>>((acc, [attribute, facet]) => {
+    acc[facet.slug] = attribute;
 
     return acc;
   }, {});
 
-  return Object.entries(filters ?? {})
-    .reduce<string[]>((acc, [name, value]) => {
-      if (name === COLLECTION_FILTER_KEY) {
-        const formattedValue = value
-          .split(".")
-          .map(
-            (v) =>
-              `'${v.charAt(0).toUpperCase() + v.slice(1).replaceAll("-", " & ")}'`,
-          )
-          .join(" OR ");
+  const clauses = Object.entries(filters ?? {}).reduce<string[]>(
+    (acc, [slug, value]) => {
+      const attribute = attributeBySlug[slug];
 
-        acc.push(`collections:${formattedValue}`);
-      } else if (name === CATEGORY_FILTER_KEY) {
-        const slugs = value.split(",");
-        const formattedValue = slugs
-          .map((slug) => `categories:'${toCategoryName(slug)}'`)
-          .join(" OR ");
-
-        acc.push(slugs.length > 1 ? `(${formattedValue})` : formattedValue);
-      } else if (name in facetsMapping) {
-        const values = value.split(".");
-
-        if (values.length > 1) {
-          const multipleValuesFacet: string[] = [];
-
-          values.forEach((v) => {
-            multipleValuesFacet.push(`'${facetsMapping[name]}':'${v}'`);
-          });
-
-          acc.push(multipleValuesFacet.join(" OR "));
-        } else {
-          acc.push(`'${facetsMapping[name]}':'${value}'`);
-        }
+      if (!attribute || (categoryScope && slug === CATEGORY_FILTER_KEY)) {
+        return acc;
       }
 
+      const values = value.split(VALUE_SEPARATOR).filter(Boolean);
+
+      if (!values.length) {
+        return acc;
+      }
+
+      acc.push(
+        anyOf(values.map((value) => `${quote(attribute)}:${quote(value)}`)),
+      );
+
       return acc;
-    }, [])
-    .join(" AND ");
+    },
+    [],
+  );
+
+  if (categoryScope) {
+    const attribute = attributeBySlug[CATEGORY_FILTER_KEY];
+
+    if (attribute) {
+      clauses.push(`${quote(attribute)}:${quote(categoryScope.name)}`);
+    } else {
+      logger.error(
+        "Missing category facet in the Algolia index configuration, so the browsed category cannot scope the results.",
+        { channel, categorySlug: categoryScope.slug },
+      );
+    }
+  }
+
+  return clauses.join(" AND ");
 };

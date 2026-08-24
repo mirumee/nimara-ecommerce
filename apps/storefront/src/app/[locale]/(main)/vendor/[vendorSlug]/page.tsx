@@ -151,7 +151,7 @@ export default async function Page(props: VendorPageProps) {
         null,
         vendorSlug,
       )}
-      getFacets={getFacets.bind(null, undefined)}
+      getFacets={getFacets}
       productMetadata={[{ key: "vendor.id", value: page.id }]}
       vendorBranding={{
         displayTitle,

@@ -11,9 +11,13 @@ import {
   type PageInfo,
   type ProductSearchMetadataFilter,
   type SearchContext,
+  type TaxonomyScope,
 } from "@nimara/infrastructure/use-cases/search/types";
 
-import { buildSearchContext } from "../helpers/fetch-facets";
+import {
+  buildSearchContext,
+  FACETS_FETCH_OPTIONS,
+} from "../helpers/fetch-facets";
 import { getFiltersFromSearchParams } from "../helpers/filters";
 import { type SearchParams } from "../types";
 
@@ -27,8 +31,8 @@ export interface SearchProviderData {
 }
 
 export interface SearchProviderProps {
-  /** When set, merged into the `category` filter server-side, scoping results to one category without polluting the URL/searchParams (category PLP). */
-  categorySlug?: string;
+  /** When set, scopes results to one category without polluting the URL/searchParams (category PLP). */
+  categoryScope?: TaxonomyScope;
   defaultResultsPerPage: number;
   defaultSortBy: string;
   /** When set, merged into Saleor product search metadata filter (vendor PLP). */
@@ -46,7 +50,7 @@ export const SearchProvider = async ({
   defaultResultsPerPage,
   defaultSortBy,
   productMetadata,
-  categorySlug,
+  categoryScope,
   region,
 }: SearchProviderProps) => {
   const searchContext = buildSearchContext(region);
@@ -60,10 +64,7 @@ export const SearchProvider = async ({
     limit,
   } = searchParams;
 
-  const filters = {
-    ...getFiltersFromSearchParams(searchParams),
-    ...(categorySlug ? { category: categorySlug } : {}),
-  };
+  const filters = getFiltersFromSearchParams(searchParams);
 
   const searchService = await services.getSearchService();
   const [resultSearch, getFacetsResult, resultOptions] = await Promise.all([
@@ -76,6 +77,7 @@ export const SearchProvider = async ({
         before,
         sortBy,
         filters,
+        categoryScope,
         productMetadata,
       },
       searchContext,
@@ -84,6 +86,8 @@ export const SearchProvider = async ({
       {
         query,
         filters,
+        categoryScope,
+        options: FACETS_FETCH_OPTIONS,
       },
       searchContext,
     ),

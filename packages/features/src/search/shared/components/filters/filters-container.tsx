@@ -2,11 +2,14 @@
 
 import { Filter } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 
 import { type SortByOption } from "@nimara/domain/objects/Search";
 import { type MessagePath } from "@nimara/i18n/types";
-import type { Facet } from "@nimara/infrastructure/use-cases/search/types";
+import type {
+  Facet,
+  TaxonomyScope,
+} from "@nimara/infrastructure/use-cases/search/types";
 import { Button } from "@nimara/ui/components/button";
 import { Label } from "@nimara/ui/components/label";
 import { RadioGroup, RadioGroupItem } from "@nimara/ui/components/radio-group";
@@ -27,20 +30,15 @@ import {
   getFiltersFromSearchParams,
   processFormData,
 } from "../../helpers/filters";
-import { ColorSwatch } from "./color-swatch";
-import { FilterBoolean } from "./filter-boolean";
-import { FilterDropdown } from "./filter-dropdown";
-import { FilterMultiSelect } from "./filter-multi-select";
-import { FilterText } from "./filter-text";
+import { type GetFacetsAction } from "../../types";
+import { FilterField } from "./filter-field";
 import { FiltersCounter } from "./filters-counter";
 
 type Props = {
+  categoryScope?: TaxonomyScope;
   defaultSortBy: string;
   facets: Facet[];
-  getFacets: (input: {
-    filters: Record<string, string>;
-    query: string;
-  }) => Promise<Facet[]>;
+  getFacets: GetFacetsAction;
   handleFiltersFormSubmit: (
     searchParams: Record<string, string>,
     formData: FormData,
@@ -57,6 +55,7 @@ export const FiltersContainer = ({
   searchParams,
   sortByOptions,
   defaultSortBy,
+  categoryScope,
   getFacets,
   handleFiltersFormSubmit: handleFiltersFormSubmitAction,
 }: Props) => {
@@ -83,12 +82,14 @@ export const FiltersContainer = ({
    * itself fresher than what this panel already fetched. Only the applied
    * filters changing makes the local set stale.
    */
-  if (appliedKey !== syncedKey) {
-    setSyncedKey(appliedKey);
-    setFacets(serverFacets);
-    fetchedForRef.current = appliedKey;
-    dropdownValuesRef.current = {};
-  }
+  useEffect(() => {
+    if (appliedKey !== syncedKey) {
+      setSyncedKey(appliedKey);
+      setFacets(serverFacets);
+      fetchedForRef.current = appliedKey;
+      dropdownValuesRef.current = {};
+    }
+  }, [appliedKey, syncedKey, serverFacets]);
 
   const refreshFacets = () => {
     if (!formRef.current) {
@@ -119,6 +120,7 @@ export const FiltersContainer = ({
       const nextFacets = await getFacets({
         query: searchParams["q"] ?? "",
         filters,
+        categoryScope,
       });
 
       if (requestId === requestIdRef.current) {
@@ -131,38 +133,11 @@ export const FiltersContainer = ({
     dropdownValuesRef.current[slug] = value;
   };
 
-  const renderFilterComponent = (facet: Facet) => {
-    const value = appliedFilters[facet.slug];
-    const pendingValue = dropdownValuesRef.current[facet.slug] ?? value;
-
-    switch (facet.type) {
-      case "BOOLEAN":
-        return <FilterBoolean key={facet.slug} facet={facet} value={value} />;
-      case "DROPDOWN":
-        return (
-          <FilterDropdown
-            key={facet.slug}
-            facet={facet}
-            value={pendingValue}
-            onCommit={refreshFacets}
-            onValueChange={handleDropdownValueChange}
-          />
-        );
-      case "MULTISELECT":
-        return (
-          <FilterMultiSelect
-            key={facet.slug}
-            facet={facet}
-            value={pendingValue}
-            onCommit={refreshFacets}
-            onValueChange={handleDropdownValueChange}
-          />
-        );
-      case "PLAIN_TEXT":
-        return <FilterText key={facet.slug} facet={facet} value={value} />;
-      case "SWATCH":
-        return <ColorSwatch key={facet.slug} facet={facet} value={value} />;
-    }
+  const filterFieldProps = {
+    appliedFilters,
+    pendingValues: dropdownValuesRef.current,
+    onCommit: refreshFacets,
+    onValueChange: handleDropdownValueChange,
   };
 
   const updateFiltersWithSearchParams = handleFiltersFormSubmitAction.bind(
@@ -237,15 +212,25 @@ export const FiltersContainer = ({
                   {facets
                     ?.filter(({ type }) => type !== "BOOLEAN")
                     ?.filter(({ type }) => type !== "SWATCH")
-                    .map((facet) => renderFilterComponent(facet))}
+                    .map((facet) => (
+                      <FilterField
+                        key={facet.slug}
+                        facet={facet}
+                        {...filterFieldProps}
+                      />
+                    ))}
                 </div>
 
                 {!!swatchFacets.length && (
                   <div>
                     <div className="grid items-center gap-4">
-                      {swatchFacets.map((facet) =>
-                        renderFilterComponent(facet),
-                      )}
+                      {swatchFacets.map((facet) => (
+                        <FilterField
+                          key={facet.slug}
+                          facet={facet}
+                          {...filterFieldProps}
+                        />
+                      ))}
                     </div>
                   </div>
                 )}
@@ -256,9 +241,13 @@ export const FiltersContainer = ({
                       {t("filters.options")}
                     </p>
                     <div className="grid items-center gap-4">
-                      {booleanFacets.map((facet) =>
-                        renderFilterComponent(facet),
-                      )}
+                      {booleanFacets.map((facet) => (
+                        <FilterField
+                          key={facet.slug}
+                          facet={facet}
+                          {...filterFieldProps}
+                        />
+                      ))}
                     </div>
                   </div>
                 )}

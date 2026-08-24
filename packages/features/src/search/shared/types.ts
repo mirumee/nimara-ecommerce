@@ -7,6 +7,7 @@ import type { ServiceRegistry } from "@nimara/infrastructure/types";
 import type {
   Facet,
   ProductSearchMetadataFilter,
+  TaxonomyScope,
 } from "@nimara/infrastructure/use-cases/search/types";
 
 /**
@@ -29,6 +30,7 @@ export type SearchParams = {
  * narrow itself before the form is submitted.
  */
 export type GetFacetsAction = (input: {
+  categoryScope?: TaxonomyScope;
   filters: Record<string, string>;
   query: string;
 }) => Promise<Facet[]>;

@@ -53,7 +53,7 @@ export default async function Page(props: CategoryViewProps) {
       defaultResultsPerPage={DEFAULT_RESULTS_PER_PAGE}
       defaultSortBy={DEFAULT_SORT_BY}
       handleFiltersFormSubmit={handleCategoryFiltersFormSubmit.bind(null, slug)}
-      getFacets={getFacets.bind(null, slug)}
+      getFacets={getFacets}
     />
   );
 }

@@ -1,9 +1,23 @@
 import { type Region } from "@nimara/foundation/regions/types";
+import type { FetchOptions } from "@nimara/infrastructure/graphql/client";
 import type { ServiceRegistry } from "@nimara/infrastructure/types";
 import type {
   Facet,
   SearchContext,
+  TaxonomyScope,
 } from "@nimara/infrastructure/use-cases/search/types";
+
+/**
+ * Facets follow the catalog, not the request, so the server render and the
+ * in-panel refresh share one cache entry per filter selection.
+ */
+export const FACETS_FETCH_OPTIONS: FetchOptions = {
+  next: {
+    // FIXME: Temp value for now
+    revalidate: 5 * 60,
+    tags: ["SEARCH", "SEARCH:FACETS"],
+  },
+};
 
 export const buildSearchContext = (region: Region): SearchContext => ({
   currency: region.market.currency,
@@ -20,9 +34,9 @@ export const fetchFacets = async ({
   region,
   query,
   filters,
-  categorySlug,
+  categoryScope,
 }: {
-  categorySlug?: string;
+  categoryScope?: TaxonomyScope;
   filters: Record<string, string>;
   query: string;
   region: Region;
@@ -33,10 +47,9 @@ export const fetchFacets = async ({
   const result = await searchService.getFacets(
     {
       query,
-      filters: {
-        ...filters,
-        ...(categorySlug ? { category: categorySlug } : {}),
-      },
+      filters,
+      categoryScope,
+      options: FACETS_FETCH_OPTIONS,
     },
     buildSearchContext(region),
   );
