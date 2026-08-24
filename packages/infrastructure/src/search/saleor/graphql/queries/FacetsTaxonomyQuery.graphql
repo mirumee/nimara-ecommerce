@@ -1,0 +1,38 @@
+query FacetsTaxonomyQuery(
+  $first: Int = 100
+  $channel: String
+  $categoryLevel: Int
+  $languageCode: LanguageCodeEnum!
+) {
+  categories(
+    first: $first
+    level: $categoryLevel
+    sortBy: { field: NAME, direction: ASC }
+  ) {
+    edges {
+      node {
+        name
+        slug
+        translation(languageCode: $languageCode) {
+          name
+        }
+      }
+    }
+  }
+  collections(
+    first: $first
+    channel: $channel
+    sortBy: { field: NAME, direction: ASC }
+  ) {
+    edges {
+      node {
+        name
+        slug
+        vendorId: metafield(key: "vendor.id")
+        translation(languageCode: $languageCode) {
+          name
+        }
+      }
+    }
+  }
+}

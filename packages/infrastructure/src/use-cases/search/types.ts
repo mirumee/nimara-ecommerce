@@ -3,6 +3,8 @@ import { type AsyncResult, type Result } from "@nimara/domain/objects/Result";
 import { type SortByOption } from "@nimara/domain/objects/Search";
 import { type SearchProduct } from "@nimara/domain/objects/SearchProduct";
 
+import { type FetchOptions } from "#root/graphql/client";
+
 export type { MetadataFilter as ProductSearchMetadataFilter };
 
 export type PageInfo =
@@ -33,12 +35,16 @@ export type SearchContext = {
   languageCode?: string;
 };
 
+export type TaxonomyScope = {
+  name: string;
+  slug: string;
+};
+
 export type SearchInfra = (
   params: {
     after?: string;
     before?: string;
-    category?: string;
-    collection?: string;
+    categoryScope?: TaxonomyScope;
     filters?: Record<string, string>;
     limit: number;
     page?: string;
@@ -59,8 +65,10 @@ export type GetFacetsInfra = (
   params: {
     after?: string;
     before?: string;
+    categoryScope?: TaxonomyScope;
     filters?: Record<string, string>;
     limit?: number;
+    options?: FetchOptions;
     page?: string;
     productIds?: string[];
     query?: string;

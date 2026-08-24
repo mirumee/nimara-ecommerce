@@ -51,6 +51,18 @@ labels into one cart view while routing each mutation back to the owning cart.
 - Locale and region select language, channel, country, currency, pricing, and availability.
 - Search inputs include query text, selected facets, sort order, result limit, and pagination
   cursors; outputs include product cards, facets, sort options, and page information.
+- The offered facets are scoped to the browsed categories and collections, so a category surface
+  proposes only the attributes its products carry rather than every storefront attribute.
+- Alongside the attribute facets, the search surface offers category and collection filters built
+  from the catalog itself rather than from product attributes that mirror it, so a category or
+  collection becomes filterable as soon as it exists. The category choices are the root categories;
+  the collection choices are the channel's collections excluding vendor-owned ones, because the
+  marketplace mints one collection per vendor. A category surface omits the category filter, because
+  the page itself is already the category scope.
+- Settling a facet dropdown — closing it, or removing a selected value from its collapsed
+  trigger — re-reads the offered facets for the selections made so far, so the filters menu
+  narrows before the shopper applies them. A filter that the narrowed set no longer offers is
+  dropped from the applied filters when the menu is submitted.
 - Collection and product slugs resolve the corresponding catalog detail; a vendor slug resolves an
   active vendor-profile page and its vendor metadata identifier.
 - A selected variant, quantity, and optional current cart identifier produce an updated cart
@@ -63,6 +75,9 @@ labels into one cart view while routing each mutation back to the owning cart.
 - Search behavior follows the selected search provider. A failed search, facet, or sort-options
   request currently renders the corresponding result as empty rather than presenting a dedicated
   upstream-error state.
+- Facet scoping needs a category or collection to narrow against. A text query alone offers every
+  storefront attribute on the Saleor provider, which derives facets from the catalog rather than
+  from the matched products.
 - Missing or unreadable collection and product details resolve to the storefront not-found state.
 - Vendor storefronts exist only when marketplace mode is enabled and a vendor-profile page has an
   identifier, the expected page type, and `vendor-status=active`; publish or draft state is not the

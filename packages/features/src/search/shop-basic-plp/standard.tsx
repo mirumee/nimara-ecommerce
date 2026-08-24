@@ -24,6 +24,7 @@ export const StandardSearchView = async (props: SearchViewProps) => {
     defaultLocale,
     defaultResultsPerPage,
     handleFiltersFormSubmit,
+    getFacets,
     region,
   } = props;
   const searchParams = await searchParamsPromise;
@@ -56,6 +57,7 @@ export const StandardSearchView = async (props: SearchViewProps) => {
                   sortByOptions={sortByOptions}
                   defaultSortBy={props.defaultSortBy}
                   handleFiltersFormSubmit={handleFiltersFormSubmit}
+                  getFacets={getFacets}
                 />
               </div>
             </div>

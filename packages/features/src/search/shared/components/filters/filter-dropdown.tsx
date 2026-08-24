@@ -1,4 +1,6 @@
-import { getTranslations } from "next-intl/server";
+"use client";
+
+import { useTranslations } from "next-intl";
 
 import type { MessagePath } from "@nimara/i18n/types";
 import type { Facet } from "@nimara/infrastructure/use-cases/search/types";
@@ -11,22 +13,33 @@ import {
   SelectValue,
 } from "@nimara/ui/components/select";
 
-export const FilterDropdown = async ({
+export const FilterDropdown = ({
   facet: { name, choices, slug, messageKey },
-  searchParams,
+  value,
+  onCommit,
+  onValueChange,
 }: {
   facet: Facet;
-  searchParams: Record<string, string>;
+  onCommit?: () => void;
+  onValueChange?: (slug: string, value: string) => void;
+  value?: string;
 }) => {
-  const t = await getTranslations();
+  const t = useTranslations();
   const filterName =
     (messageKey ? t(messageKey as MessagePath) : undefined) ?? name;
-  const defaultValue = choices?.find(
-    ({ value }) => value === searchParams[slug],
-  )?.value;
+  const defaultValue = choices?.find((choice) => choice.value === value)?.value;
 
   return (
-    <Select defaultValue={defaultValue} name={slug}>
+    <Select
+      defaultValue={defaultValue}
+      name={slug}
+      onOpenChange={(open) => {
+        if (!open) {
+          onCommit?.();
+        }
+      }}
+      onValueChange={(nextValue) => onValueChange?.(slug, nextValue)}
+    >
       <SelectTrigger>
         <SelectValue placeholder={filterName} />
       </SelectTrigger>

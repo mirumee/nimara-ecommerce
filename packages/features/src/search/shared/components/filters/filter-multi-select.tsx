@@ -1,21 +1,29 @@
-import { getTranslations } from "next-intl/server";
+"use client";
+
+import { useTranslations } from "next-intl";
+import { useRef } from "react";
 
 import type { MessagePath } from "@nimara/i18n/types";
 import type { Facet } from "@nimara/infrastructure/use-cases/search/types";
 import { MultiSelect } from "@nimara/ui/components/multi-select";
 
-export const FilterMultiSelect = async ({
+export const FilterMultiSelect = ({
   facet: { name, choices, slug, messageKey },
-  searchParams,
+  value,
+  onCommit,
+  onValueChange,
 }: {
   facet: Facet;
-  searchParams: Record<string, string>;
+  onCommit?: () => void;
+  onValueChange?: (slug: string, value: string) => void;
+  value?: string;
 }) => {
-  const t = await getTranslations();
+  const t = useTranslations();
+  const isOpenRef = useRef(false);
   const filterName =
     (messageKey ? t(messageKey as MessagePath) : undefined) ?? name;
-  const selectedFromParams =
-    searchParams[slug]
+  const selectedValues =
+    value
       ?.split(",")
       .filter((val) => choices.some((choice) => choice.value === val)) ?? [];
 
@@ -24,7 +32,25 @@ export const FilterMultiSelect = async ({
       name={slug}
       placeholder={filterName}
       options={choices}
-      defaultValue={selectedFromParams}
+      defaultValue={selectedValues}
+      onOpenChange={(open) => {
+        isOpenRef.current = open;
+
+        if (!open) {
+          onCommit?.();
+        }
+      }}
+      onValueChange={(values) => {
+        onValueChange?.(slug, values.join(","));
+
+        /**
+         * Removing a value from the closed trigger never opens the popup, so
+         * closing it is not going to report that this change is settled.
+         */
+        if (!isOpenRef.current) {
+          onCommit?.();
+        }
+      }}
     />
   );
 };

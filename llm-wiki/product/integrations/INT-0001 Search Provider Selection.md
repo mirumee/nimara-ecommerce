@@ -63,5 +63,21 @@ separate hand-maintained lists.
 - Changing the provider or its build-time environment requires a rebuild and redeploy.
 - Index shape, filtering, sorting, and relevance configuration remain provider-specific even though
   the storefront consumes one shared service interface.
+- Facet scoping is provider-specific. `saleor` narrows facets to the attributes assigned to the
+  browsed categories and collections, so an unscoped text query still offers every storefront
+  attribute. `algolia` computes facets over the matched records, so a text query narrows them, but
+  it resolves the browsed category by display name and returns only the facets its index settings
+  declare. `dummy` returns fixed sample facets and ignores the search entirely.
+- Which attributes `saleor` can offer as filters follows the Saleor `visibleInStorefront` flag
+  rather than `filterableInStorefront`. Scoping the facets requires Saleor's `where` attribute
+  filter, which exposes no `filterableInStorefront` predicate and marks that field deprecated, so a
+  store whose two flags disagree is offered the attributes it marks visible rather than the ones it
+  marks filterable.
+- The `category` and `collection` filter keys are reserved across providers: each provider resolves
+  them against the catalog rather than against product attributes. `saleor` offers both filters from
+  the catalog — root categories, and the channel's collections excluding vendor-owned ones — and
+  excludes both reserved keys from its attribute-derived facets, so a product attribute sharing one
+  of those slugs cannot shadow the real filter. `algolia` offers a category filter only where its
+  index settings declare one, and matches it against index values by display name.
 - The contract validates configuration and constructs the selected service; it does not perform
   runtime failover between external providers.

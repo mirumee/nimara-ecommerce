@@ -1,6 +1,9 @@
 import type { Locale } from "next-intl";
 
-import type { SearchParams } from "@nimara/features/search/shared/types";
+import type {
+  GetFacetsAction,
+  SearchParams,
+} from "@nimara/features/search/shared/types";
 import { type Region } from "@nimara/foundation/regions/types";
 import type { LocalePrefixes } from "@nimara/i18n/config";
 import type { ServiceRegistry } from "@nimara/infrastructure/types";
@@ -24,6 +27,7 @@ export interface StandardCategoryViewProps extends CategoryViewProps {
   defaultLocale: Locale;
   defaultResultsPerPage: number;
   defaultSortBy: string;
+  getFacets: GetFacetsAction;
   handleFiltersFormSubmit: (
     searchParams: Record<string, string>,
     formData: FormData,

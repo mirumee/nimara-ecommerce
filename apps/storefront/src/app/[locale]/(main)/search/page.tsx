@@ -12,6 +12,7 @@ import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
 import { getServiceRegistry } from "@/services/registry";
 
+import { getFacets } from "../_actions/get-facets";
 import { handleFiltersFormSubmit } from "./_actions/handle-filters-form-submit";
 import { SearchTracker } from "./_components/search-tracker";
 
@@ -66,6 +67,7 @@ export default async function Page(props: SearchPageProps) {
         defaultResultsPerPage={DEFAULT_RESULTS_PER_PAGE}
         defaultSortBy={DEFAULT_SORT_BY}
         handleFiltersFormSubmit={handleFiltersFormSubmit}
+        getFacets={getFacets}
       />
     </>
   );

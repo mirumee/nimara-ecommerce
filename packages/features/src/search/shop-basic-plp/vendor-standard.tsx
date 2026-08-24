@@ -118,6 +118,7 @@ export const VendorSearchView = async (props: VendorSearchViewProps) => {
     defaultLocale,
     defaultResultsPerPage,
     handleFiltersFormSubmit,
+    getFacets,
     region,
     productMetadata,
     vendorBranding,
@@ -176,6 +177,7 @@ export const VendorSearchView = async (props: VendorSearchViewProps) => {
                   sortByOptions={sortByOptions}
                   defaultSortBy={defaultSortBy}
                   handleFiltersFormSubmit={handleFiltersFormSubmit}
+                  getFacets={getFacets}
                 />
               </div>
             </div>

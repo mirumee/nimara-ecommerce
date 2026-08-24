@@ -458,6 +458,43 @@
   still opens a fresh intent on every mount and remount of the payment element. Recorded as a
   deviation in IMP-0004; no separate work item exists for it.
 
+## 2026-08-10
+
+- **Update**: Recorded in CAP-0006 that the offered facets are scoped to the browsed categories and
+  collections, and that an unscoped text query still offers every storefront attribute on the
+  Saleor provider. The facets query previously asked for every attribute in the catalog and
+  discarded the search parameters it was given, so the filters menu was identical on every
+  surface. Tracked as NIM-26.
+- **Update**: Recorded the per-provider facet-scoping differences in INT-0001, including that the
+  Algolia adapter resolves the browsed category by display name.
+- **Gap**: No IMP record exists for NIM-26 yet. The contract requires a pull request or commit SHA
+  as its work item, and the change is uncommitted.
+
+## 2026-08-12
+
+- **Update**: Recorded in CAP-0006 that the filters menu re-reads its facets when a facet dropdown
+  settles — on close, or on removing a value from its collapsed trigger — so the narrowed set is
+  visible before the shopper submits, and that a filter the narrowed set no longer offers is
+  dropped on submit. Previously the facets were read once per page render, so the menu only
+  reflected a selected category after the products had already been reloaded. Tracked as NIM-26.
+- **Update**: Recorded in CAP-0006 and INT-0001 that the category and collection filters are built
+  from the catalog rather than from product attributes mirroring it, that the Saleor provider
+  excludes both reserved filter keys from its attribute-derived facets, and that vendor-owned
+  collections are left out of the collection choices. Previously each filter's choices came from a
+  hand-maintained Saleor product attribute of the same slug, which the search layer then resolved
+  against the real catalog; both attributes had already drifted from the catalog they mirrored.
+  Tracked as NIM-26.
+
+## 2026-08-17
+
+- **Update**: Recorded in INT-0001 that the Saleor provider decides which attributes can appear as
+  filters from `visibleInStorefront` rather than `filterableInStorefront`. Scoping the facets
+  requires Saleor's `where` attribute filter, which offers no `filterableInStorefront` predicate and
+  marks that field deprecated, so a store whose two flags disagree is offered a different filter set
+  than before. Tracked as NIM-26.
+- **Gap**: The IMP record for NIM-26 is still outstanding, for the reason recorded on 2026-08-10:
+  the change is uncommitted and no pull request exists, so it has no work item to anchor to.
+
 ## 2026-08-18
 
 - **Create**: Added ADR-0003 at `accepted`, making CodeceptJS the only end-to-end engine and
