@@ -38,8 +38,7 @@ export function CheckboxField({
   } = useFormContext();
 
   const error = getErrorAtPath(errors, name) as
-    | { message?: unknown }
-    | undefined;
+    { message?: unknown } | undefined;
 
   return (
     <div className="grid gap-1">

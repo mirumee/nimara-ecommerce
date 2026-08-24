@@ -306,8 +306,7 @@ function AttributesSection({
         {productAttributes.map((attribute) => {
           const fieldName = `attributes.${attribute.id}` as const;
           const fieldError = getErrorAtPath(errors, fieldName) as
-            | { message?: unknown }
-            | undefined;
+            { message?: unknown } | undefined;
 
           const choices =
             attribute.choices?.edges

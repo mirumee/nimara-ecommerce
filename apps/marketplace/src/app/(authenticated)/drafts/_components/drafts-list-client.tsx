@@ -89,9 +89,7 @@ export function DraftsListClient({ drafts, pageInfo }: DraftsListClientProps) {
   const createdLte = searchParams.get("createdLte");
   const sortField = searchParams.get("sortField") as OrderSortField | null;
   const sortDirection = searchParams.get("sortDirection") as
-    | "ASC"
-    | "DESC"
-    | null;
+    "ASC" | "DESC" | null;
 
   const activeDateFiltersCount = useMemo(() => {
     let count = 0;

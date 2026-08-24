@@ -60,11 +60,7 @@ export type SupportedStripeWebhookEventType =
 // Stripe types `Refund.status` as plain `string | null`; these are the
 // documented values.
 export type RefundStatus =
-  | "canceled"
-  | "failed"
-  | "pending"
-  | "requires_action"
-  | "succeeded";
+  "canceled" | "failed" | "pending" | "requires_action" | "succeeded";
 
 // Payment method details reported to Saleor alongside a transaction event.
 export type PaymentMethodDetails =

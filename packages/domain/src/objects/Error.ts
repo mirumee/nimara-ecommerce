@@ -146,9 +146,7 @@ const VALIDATION_ERROR_CODES = [
 export type ValidationErrorCode = (typeof VALIDATION_ERROR_CODES)[number];
 
 export type AppErrorCode =
-  | UnknownErrorCode
-  | GenericErrorCode
-  | ValidationErrorCode;
+  UnknownErrorCode | GenericErrorCode | ValidationErrorCode;
 
 /**
  * @type BaseError

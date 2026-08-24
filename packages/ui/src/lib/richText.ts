@@ -192,12 +192,7 @@ function htmlToEditorJsOutputData(html: string): EditorJsOutputData {
         });
       } else if (/^h[1-6]$/.test(tag)) {
         const level = Math.min(Math.max(Number.parseInt(tag[1], 10), 1), 6) as
-          | 1
-          | 2
-          | 3
-          | 4
-          | 5
-          | 6;
+          1 | 2 | 3 | 4 | 5 | 6;
 
         blocks.push({
           type: "header",
