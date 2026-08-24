@@ -18,6 +18,7 @@ import { Button } from "@nimara/ui/components/button";
 import { DialogClose } from "@nimara/ui/components/dialog";
 import { useToast } from "@nimara/ui/hooks";
 
+import { isGlobalError } from "@/foundation/errors/errors";
 import { storefrontLogger } from "@/services/logging";
 
 import { createNewAddress } from "./actions";
@@ -71,6 +72,20 @@ export const AddNewAddressForm = ({
 
     if (!result.ok) {
       storefrontLogger.error("Address create failed", { result });
+
+      result.errors.forEach(({ field, code }) => {
+        if (isGlobalError(field)) {
+          toast({
+            variant: "destructive",
+            description: t(`errors.${code}`),
+            position: "center",
+          });
+        } else {
+          form.setError(field as keyof FormSchema, {
+            message: t(`errors.${code}`),
+          });
+        }
+      });
 
       return;
     }

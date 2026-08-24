@@ -10,6 +10,8 @@ import { Button } from "@nimara/ui/components/button";
 import { DialogFooter } from "@nimara/ui/components/dialog";
 import { useToast } from "@nimara/ui/hooks";
 
+import { isGlobalError } from "@/foundation/errors/errors";
+
 import { updateUserName } from "./actions";
 import { type UpdateNameFormSchema, updateNameFormSchema } from "./schema";
 
@@ -34,9 +36,22 @@ export function UpdateNameForm({
   async function handleSubmit(values: UpdateNameFormSchema) {
     const result = await updateUserName(values);
 
-    if (result && !result.ok) {
-      form.setError("firstName", { message: "" });
-      form.setError("lastName", { message: "" });
+    if (!result.ok) {
+      result.errors.forEach(({ field, code }) => {
+        if (isGlobalError(field)) {
+          toast({
+            variant: "destructive",
+            description: t(`errors.${code}`),
+            position: "center",
+          });
+        } else {
+          form.setError(field as keyof UpdateNameFormSchema, {
+            message: t(`errors.${code}`),
+          });
+        }
+      });
+
+      return;
     }
 
     toast({

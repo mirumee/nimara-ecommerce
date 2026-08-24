@@ -14,7 +14,9 @@ import { AddressForm } from "@nimara/foundation/address/address-form/address-for
 import { CheckboxField } from "@nimara/foundation/form-components/checkbox-field";
 import { ADDRESS_CORE_FIELDS } from "@nimara/infrastructure/consts";
 import { Button } from "@nimara/ui/components/button";
+import { useToast } from "@nimara/ui/hooks";
 
+import { isGlobalError } from "@/foundation/errors/errors";
 import { storefrontLogger } from "@/services/logging";
 
 import { updateAddress } from "./actions";
@@ -44,6 +46,7 @@ export const EditAddressForm = ({
   onModeChange: () => void;
 }) => {
   const t = useTranslations();
+  const { toast } = useToast();
 
   const [isCountryChanging, setIsCountryChanging] = useState(false);
 
@@ -67,8 +70,21 @@ export const EditAddressForm = ({
     const result = await updateAddress({ id: address.id, input: values });
 
     if (!result.ok) {
-      // TODO: Handle in UI
       storefrontLogger.error("Address update failed", { result });
+
+      result.errors.forEach(({ field, code }) => {
+        if (isGlobalError(field)) {
+          toast({
+            variant: "destructive",
+            description: t(`errors.${code}`),
+            position: "center",
+          });
+        } else {
+          form.setError(field as keyof FormSchema, {
+            message: t(`errors.${code}`),
+          });
+        }
+      });
 
       return;
     }
