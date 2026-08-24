@@ -17,7 +17,7 @@ created: "2026-06-30T00:00:00+00:00"
 
 This is the QA brain for **agents working on Nimara**. Read it before testing or retesting so
 the environment, evidence requirements, and verdict rules are applied consistently.
-Knowledge lives in these notes; executable runbooks live under `.agents/skills/`.
+Knowledge lives in these notes; executable runbooks live under `.claude/skills/`.
 
 > Pairing convention (same as the rest of this wiki): notes = read-context, **skills = runbooks** that cite them. The QA skills read these notes the way `prd-author` reads `[Storefront Developer](../market/personas/Storefront%20Developer.md)`.
 
@@ -47,8 +47,8 @@ Knowledge lives in these notes; executable runbooks live under `.agents/skills/`
 
 ### Skills (runbooks)
 
-- `.agents/skills/test-case-design` — equivalence-partition a feature into a covering test set.
-- `.agents/skills/regression-sweep` — broad health check across a surface (SEO, perf, page-type matrix).
+- `.claude/skills/test-case-design` — equivalence-partition a feature into a covering test set.
+- `.claude/skills/regression-sweep` — broad health check across a surface (SEO, perf, page-type matrix).
 
 ### Durable verification records
 

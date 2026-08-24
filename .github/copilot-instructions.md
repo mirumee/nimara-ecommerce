@@ -1,7 +1,7 @@
 # Nimara — GitHub Copilot instructions
 
 **Single source of truth:** the canonical guidance for this repo lives in
-[`AGENTS.md`](../AGENTS.md) and the skills under [`.agents/skills/`](../.agents/skills/).
+[`AGENTS.md`](../AGENTS.md) and the skills under [`.claude/skills/`](../.claude/skills/).
 This file is a thin pointer — it is intentionally short so the rules don't drift across
 tools.
 
@@ -50,11 +50,9 @@ packages/
 
 | Need                                  | Read                                         |
 | ------------------------------------- | -------------------------------------------- |
-| Layers, where code belongs, data flow | `.agents/skills/project-guidelines/SKILL.md` |
-| React/Next performance                | `.agents/skills/vercel-react-best-practices` |
-| Component composition                 | `.agents/skills/vercel-composition-patterns` |
-| UI / accessibility                    | `.agents/skills/web-design-guidelines`       |
-| Turborepo / build system              | `.agents/skills/turborepo`                   |
+| Layers, where code belongs, data flow | `.claude/skills/project-guidelines/SKILL.md` |
+| Layer and dependency rules            | `.claude/rules/architecture.md`              |
+| Product state, decisions, runbooks    | `llm-wiki/index.md`                          |
 | Roles, conventions, full guidance     | `AGENTS.md`                                  |
 
 ## Commands

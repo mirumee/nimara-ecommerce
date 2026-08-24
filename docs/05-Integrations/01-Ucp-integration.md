@@ -307,7 +307,7 @@ The proxy is activated on requests to `/checkout` that include `checkoutID` and 
 
 ## AI Agent Skill
 
-For AI agent developers, a detailed agent skill file is available at `.agents/skills/ucp-agent/SKILL.md` (or `.claude/skills/ucp-agent/SKILL.md`). This file contains step-by-step conversation flows, request/response examples, and decision logic for building a commerce agent on top of the UCP API.
+For AI agent developers, a detailed agent skill file is available at `.claude/skills/ucp-agent/SKILL.md`. This file contains step-by-step conversation flows, request/response examples, and decision logic for building a commerce agent on top of the UCP API.
 
 ## Further Reading
 

@@ -9,7 +9,7 @@ argument-hint: <use-case name and behavior>
 Create this use-case: **$ARGUMENTS**
 
 Read `packages/infrastructure/CLAUDE.md` and
-`.agents/skills/project-guidelines/SKILL.md`. Mirror the closest existing pattern under
+`.claude/skills/project-guidelines/SKILL.md`. Mirror the closest existing pattern under
 `packages/infrastructure/src/use-cases/<domain>/`.
 
 1. **Types** — define shared request, response, and entity types in `packages/domain`, or
@@ -26,4 +26,4 @@ Read `packages/infrastructure/CLAUDE.md` and
 6. **Test** — cover both success and expected-failure Result paths.
 
 Report the files created, the provider contract, and the service entry point the app calls.
-Do not invoke `/ship`.
+Do not invoke `/pre-ship`.

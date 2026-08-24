@@ -44,7 +44,7 @@ created: "2026-06-30T00:00:00+00:00"
 - Invest in machine-deterministic QA context such as environment identity, tested SHA,
   channel, fixtures, and expected outcomes.
 - Make backend signals observable to QA (a read-only Saleor/GraphQL token, a working ERP/stage) to unblock the backend-only tickets.
-- Treat executable tests, durable evidence, this quality wiki, and the `.agents/skills/*` QA
+- Treat executable tests, durable evidence, this quality wiki, and the `.claude/skills/*` QA
   runbooks as complementary parts of the QA system of record.
 
 ## Related Notes

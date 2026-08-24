@@ -27,4 +27,4 @@ Do not read secrets or private variable files, install providers, run Terraform,
 Vercel, or modify CI task graphs. Return changed configuration, required operator actions,
 validation the parent should run, and rollback considerations.
 
-Never invoke `/ship`, commit, push, deploy, or create a pull request.
+Never invoke `/pre-ship`, commit, push, deploy, or create a pull request.

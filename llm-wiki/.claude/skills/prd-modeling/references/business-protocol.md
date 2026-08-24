@@ -12,11 +12,9 @@ Establish:
 
 - what business harm or opportunity exists;
 - what happens if nothing is done;
-- what evidence exists: customer requests, lost deals, usage data, support signals, or market evidence;
+- what evidence exists: customer requests, usage data, support signals, or market evidence;
 - whether evidence proves demand, attribution, or only correlation;
 - which claims must be labeled `[ASSUMPTION]`.
-
-Do not let one lost proposal become proof that one missing feature caused the loss.
 
 ### 2. Target segment and value chain
 
@@ -39,8 +37,6 @@ Decide whether the PRD is:
 - risk reduction;
 - revenue, retention, adoption, or cost improvement.
 
-Establish why now, the portfolio priority, the current alternative, and the cost of delay. A table stake should not be marketed as a unique differentiator.
-
 ### 4. Business outcomes
 
 Choose one primary outcome when values compete. For each outcome establish:
@@ -60,7 +56,6 @@ Define:
 - the result that proves the hypothesis wrong;
 - the action after failure: stop, pivot, narrow, or retain only an integration seam;
 - how to treat insufficient opportunities or sample size separately from a negative result;
-- when the validation clock starts.
 
 The hypothesis must be capable of losing.
 
@@ -71,7 +66,6 @@ Identify the smallest observable capability that can test the outcome. Decide:
 - what an evaluator or adopter must be able to experience;
 - what evidence the MVP buys;
 - rollout shape: preview, pilot, or public release;
-- whether a design partner is required;
 - investment appetite only if the user considers it relevant.
 
 Do not turn MVP into a list of all desired features.

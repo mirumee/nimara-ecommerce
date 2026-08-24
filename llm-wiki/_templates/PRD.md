@@ -42,6 +42,10 @@ The smallest slice that tests the hypothesis, and the evidence that would make u
 
 - S-1: …
 
+## Personas
+
+- P-1: …
+
 ## Out of Scope
 
 - deferred item — why, and where it goes (fast-follow / separate PRD)

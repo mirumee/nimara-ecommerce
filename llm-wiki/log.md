@@ -698,3 +698,40 @@
   and the application serves them, while `node` leaves them as files for S3 and CloudFront. A blank
   configuration screen whose bundle request fails was added as the first sign of a deployment built
   under the wrong target.
+- **Rewrite**: `prd-modeling` and `rfc-modeling` are rewritten in plainer language, and both drop
+  from seven stages to five. Each one now requires the `/llm-wiki:show-me` skill when a question is
+  complex, so a structural question is settled by a diagram instead of a paragraph. No record
+  changed: the rewrite governs how the next PRD or RFC is written, not what the filed ones say.
+- **Create**: Added the `show-me` skill. It answers the current topic with a diagram, a
+  code-shape sketch, or a focused HTML artifact, and `prd-modeling` and `rfc-modeling` call it.
+- **Maintenance**: Replaced the `rfc-modeling` references. `research-brief.md` and
+  `technical-grilling.md` are gone. `technical-protocol.md` holds the sequential design interview
+  as a nine-branch decision tree, and `rfc-template.md` points at `_templates/RFC.md` the way
+  `prd-template.md` already pointed at `_templates/PRD.md`.
+- **Schema change**: `_templates/PRD.md` gained a `## Personas` section on the `P-1` identifier
+  sequence.
+- **Schema change**: `_templates/RFC.md` dropped its two `**Nimara:**` guard rails and shortened
+  the API changes, QA validation, and DevOps prompts. Nothing was lost. The dependency-approval
+  rule is a global rule in the repository's `CLAUDE.md`, and the RFC quality checklist keeps the
+  API rule in provider-neutral wording: the contract is a boundary the repository owns, never a
+  raw schema.
+- **Dropped**: The skill catalogue left `AGENTS.md` and `README.md`. `AGENTS.md` is now the single
+  line `check @README.md`.
+- **Consequence**: An agent other than Claude Code has no list of the skills that work on this
+  directory. Claude Code still loads them lazily from `.claude/skills/`, on the first read of a
+  file here. Any other agent must find that directory itself.
+- **Gap**: `prd-modeling` and `rfc-modeling` no longer carry a bookkeeping stage, and the RFC
+  quality checklist no longer carries its wiki-hygiene section. Neither skill names the `bookkeeping`
+  skill, an identifier sequence, a save location, `index.md`, `log.md`, or a MOC register. The
+  `bookkeeping` skill still owns every one of those operations, but nothing routes to it, so a PRD
+  or an RFC written with these skills can land unregistered and unlogged.
+- **Gap**: `rfc-modeling` lost the stage that researched and compared approaches, together with
+  `research-brief.md`. Its own references still assume that stage ran: `technical-protocol.md`
+  opens "after an approach is chosen", and the quality checklist still gates on two to three
+  approaches researched against primary sources. Nothing in the skill produces that comparison now.
+- **Maintenance**: Repointed `Quality & Testing (MOC).md` and the QA Engineer persona from
+  `.agents/skills/` to `.claude/skills/`, after the QA runbooks moved there. The `.agents/`
+  directory no longer exists in the repository.
+- **Tooling**: The repository turned on the `simple-english` output style, so an agent writes
+  every record in ASD-STE100 Simplified Technical English.
+- **Lint**: `pnpm wiki:lint` at zero violations across 94 files.
