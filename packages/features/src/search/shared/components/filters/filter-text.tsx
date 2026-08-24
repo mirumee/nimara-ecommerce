@@ -1,18 +1,20 @@
-import { getTranslations } from "next-intl/server";
+"use client";
+
+import { useTranslations } from "next-intl";
 
 import { type MessagePath } from "@nimara/i18n/types";
 import type { Facet } from "@nimara/infrastructure/use-cases/search/types";
 import { Toggle } from "@nimara/ui/components/toggle";
 
-export const FilterText = async ({
+export const FilterText = ({
   facet: { choices, name, slug, messageKey },
-  searchParams,
+  value,
 }: {
   facet: Facet;
-  searchParams: Record<string, string>;
+  value?: string;
 }) => {
-  const t = await getTranslations();
-  const defaultValue = searchParams[slug]?.split(".") ?? [];
+  const t = useTranslations();
+  const defaultValue = value?.split(".") ?? [];
   const label = (messageKey ? t(messageKey as MessagePath) : undefined) ?? name;
 
   return (

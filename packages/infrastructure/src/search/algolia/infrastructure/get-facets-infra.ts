@@ -15,7 +15,7 @@ export const algoliaGetFacetsInfra =
     settings,
     logger,
   }: AlgoliaSearchServiceConfig): GetFacetsInfra =>
-  async ({ query, filters }, { channel }) => {
+  async ({ query, filters, categoryScope }, { channel }) => {
     const algoliaClient = algoliasearch(credentials.appId, credentials.apiKey);
     const indexName = getIndexName(settings.indices, channel, logger);
 
@@ -23,6 +23,8 @@ export const algoliaGetFacetsInfra =
       indices: settings.indices,
       channel,
       filters,
+      categoryScope,
+      logger,
     });
 
     const response = await algoliaClient.searchSingleIndex({
@@ -32,9 +34,7 @@ export const algoliaGetFacetsInfra =
         facets: ["*"],
         responseFields: ["facets"],
         sortFacetValuesBy: "alpha",
-        ...(!!Object.keys(parsedFilters).length && {
-          filters: parsedFilters,
-        }),
+        ...(parsedFilters && { filters: parsedFilters }),
       },
     });
 
@@ -48,16 +48,19 @@ export const algoliaGetFacetsInfra =
       return ok([]);
     }
 
-    if (!response?.facets) {
+    const responseFacets = response?.facets ?? {};
+
+    if (!Object.keys(responseFacets).length) {
       logger.info("No facets found in Algolia results", {
         indexName,
         channel,
+        filters: parsedFilters,
       });
 
       return ok([]);
     }
 
-    const facets = Object.entries(response.facets).reduce<Facet[]>(
+    const facets = Object.entries(responseFacets).reduce<Facet[]>(
       (acc, [facetName, choices]) => {
         const indexFacetConfig = index.availableFacets[facetName];
 

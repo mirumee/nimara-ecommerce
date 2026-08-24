@@ -13,6 +13,8 @@ import { Separator } from "./separator";
 interface MultiSelectProps {
   defaultValue?: string[];
   name?: string;
+  onOpenChange?: (open: boolean) => void;
+  onValueChange?: (values: string[]) => void;
   options: {
     label: string;
     value: string;
@@ -25,15 +27,22 @@ export const MultiSelect = ({
   name,
   defaultValue = [],
   placeholder = "Select options",
+  onOpenChange,
+  onValueChange,
 }: MultiSelectProps) => {
   const [selectedValues, setSelectedValues] = useState<string[]>(defaultValue);
   const hasSelectedValues = selectedValues.length > 0;
 
+  const changeValues = (values: string[]) => {
+    setSelectedValues(values);
+    onValueChange?.(values);
+  };
+
   const toggleOption = (option: string) => {
-    setSelectedValues((prev) =>
-      prev.includes(option)
-        ? prev.filter((v) => v !== option)
-        : [...prev, option],
+    changeValues(
+      selectedValues.includes(option)
+        ? selectedValues.filter((v) => v !== option)
+        : [...selectedValues, option],
     );
   };
 
@@ -67,7 +76,7 @@ export const MultiSelect = ({
 
   return (
     <>
-      <Popover>
+      <Popover onOpenChange={onOpenChange}>
         <PopoverTrigger asChild>
           <Button
             type="button"
@@ -88,7 +97,7 @@ export const MultiSelect = ({
                     className="h-4 w-4 cursor-pointer opacity-50 hover:opacity-100"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setSelectedValues([]);
+                      changeValues([]);
                     }}
                   />
 

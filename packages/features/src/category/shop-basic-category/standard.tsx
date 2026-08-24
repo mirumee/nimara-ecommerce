@@ -7,6 +7,7 @@ import { ListingHeader } from "@nimara/features/shared/components/listing-header
 import { ProductsList } from "@nimara/features/shared/product-list/products-list";
 import { SearchPagination } from "@nimara/features/shared/product-list/search-pagination";
 import { Breadcrumbs } from "@nimara/foundation/navigation/breadcrumbs";
+import { CATEGORY_FILTER_KEY } from "@nimara/infrastructure/use-cases/search/consts";
 import { Skeleton } from "@nimara/ui/components/skeleton";
 
 import { CategoryProvider } from "../shared/providers/category-provider";
@@ -46,7 +47,7 @@ export const StandardCategoryView = async (
             services={props.services}
             defaultResultsPerPage={props.defaultResultsPerPage}
             defaultSortBy={props.defaultSortBy}
-            categorySlug={category.slug}
+            categoryScope={{ name: category.name, slug: category.slug }}
             region={props.region}
             render={({
               products,
@@ -67,13 +68,22 @@ export const StandardCategoryView = async (
                       />
                     </div>
                     <FiltersContainer
+                      /**
+                       * The page itself is the category scope, so offering the
+                       * category filter here would compete with it.
+                       */
                       facets={facets.filter(
-                        (facet) => facet.slug !== "category",
+                        (facet) => facet.slug !== CATEGORY_FILTER_KEY,
                       )}
                       searchParams={searchParams}
                       sortByOptions={sortByOptions}
                       defaultSortBy={props.defaultSortBy}
+                      categoryScope={{
+                        name: category.name,
+                        slug: category.slug,
+                      }}
                       handleFiltersFormSubmit={props.handleFiltersFormSubmit}
+                      getFacets={props.getFacets}
                     />
                   </div>
                 </div>

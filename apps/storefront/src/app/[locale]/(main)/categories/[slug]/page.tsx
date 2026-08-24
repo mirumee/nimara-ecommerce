@@ -9,6 +9,7 @@ import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
 import { getServiceRegistry } from "@/services/registry";
 
+import { getFacets } from "../../_actions/get-facets";
 import { handleCategoryFiltersFormSubmit } from "./_actions/handle-category-filters-form-submit";
 
 export async function generateMetadata(props: CategoryViewProps) {
@@ -52,6 +53,7 @@ export default async function Page(props: CategoryViewProps) {
       defaultResultsPerPage={DEFAULT_RESULTS_PER_PAGE}
       defaultSortBy={DEFAULT_SORT_BY}
       handleFiltersFormSubmit={handleCategoryFiltersFormSubmit.bind(null, slug)}
+      getFacets={getFacets}
     />
   );
 }
