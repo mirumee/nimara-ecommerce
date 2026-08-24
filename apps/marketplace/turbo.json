@@ -20,7 +20,8 @@
         "NEXT_PUBLIC_SALEOR_MARKETPLACE_CHANNEL_SLUG",
         "NEXT_PUBLIC_GRAPHQL_URL",
         "NEXT_PUBLIC_MARKETPLACE_STOREFRONT_URL",
-        "MARKETPLACE_NODE_ENV"
+        "MARKETPLACE_NODE_ENV",
+        "VERCEL"
       ],
       "passThroughEnv": [
         "DATABASE_URL",
