@@ -1,15 +1,15 @@
 import {
-  type BuyerClass,
+  type Buyer,
   type BuyerWithConsentResponse,
   type CheckoutResponse,
   type CheckoutResponseStatus,
   type CheckoutWithFulfillmentResponse,
+  type FulfillmentMethodResponse,
   type FulfillmentRequest,
   type LineItemResponse,
-  type LinkElement,
-  type MethodElement,
+  type Link,
   type Order as UcpOrder,
-  type OrderClass,
+  type OrderConfirmation,
   type PostalAddress,
   type TotalResponse,
   type UcpDiscoveryProfile,
@@ -22,6 +22,7 @@ import {
   formatDeliveryDays,
   generateCheckoutLinks,
   toMinorCurrency,
+  toResponseCapabilities,
 } from "#root/ucp/saleor/helpers";
 import type {
   UcpMedia,
@@ -52,7 +53,7 @@ export type UCPAppliedDiscount = {
 /**
  * Internal checkout session model bridging Saleor and UCP CheckoutResponse.
  * Uses SDK types where possible. Custom parts:
- * - order.permalinkUrl: camelCase internal; SDK OrderClass uses permalink_url (snake_case).
+ * - order.permalinkUrl: camelCase internal; SDK OrderConfirmation uses permalink_url (snake_case).
  * - continueUrl: For checkout handoff to business UI (will be converted to continue_url).
  * - expiresAtISO: ISO 8601 string for checkout expiration (will be converted to expires_at).
  * - messages: Error/warning messages array for error handling (Phase 2).
@@ -60,7 +61,7 @@ export type UCPAppliedDiscount = {
  */
 export type UCPCheckoutSessionModel = {
   billingAddress?: PostalAddress;
-  buyer?: BuyerClass;
+  buyer?: Buyer;
   continueUrl?: string;
   currency: string;
   discounts?: {
@@ -72,7 +73,7 @@ export type UCPCheckoutSessionModel = {
   fulfillmentAddress?: PostalAddress;
   id: string;
   lineItems: LineItemResponse[];
-  links: LinkElement[];
+  links: Link[];
   messages?: Array<{
     code: string;
     content: string;
@@ -85,8 +86,8 @@ export type UCPCheckoutSessionModel = {
       | "requires_buyer_review";
     type: "error" | "warning" | "info";
   }>;
-  order?: Pick<OrderClass, "id"> & {
-    permalinkUrl: OrderClass["permalink_url"];
+  order?: Pick<OrderConfirmation, "id"> & {
+    permalinkUrl: OrderConfirmation["permalink_url"];
   };
   status: CheckoutResponseStatus;
   totals: TotalResponse[];
@@ -305,7 +306,7 @@ const toFulfillmentMethod = (
     | "deliveryMethod"
     | "shippingPrice"
   >,
-): MethodElement | null => {
+): FulfillmentMethodResponse | null => {
   if (!checkout.shippingAddress || checkout.shippingMethods.length === 0) {
     return null;
   }
@@ -363,7 +364,7 @@ const toFulfillmentMethod = (
           (checkout.deliveryMethod as { id?: string } | null)?.id || null,
       },
     ],
-  } as unknown as MethodElement;
+  } as unknown as FulfillmentMethodResponse;
 };
 
 /**
@@ -507,7 +508,7 @@ export const sessionToCheckoutResponse = ({
     ucp: {
       version,
       status: "success",
-      capabilities,
+      capabilities: toResponseCapabilities(capabilities),
       payment_handlers: {},
     } as CheckoutWithFulfillmentResponse["ucp"],
     payment: {
@@ -528,9 +529,7 @@ export const sessionToCheckoutResponse = ({
           })) as NonNullable<CheckoutWithFulfillmentResponse["messages"]>,
         }
       : {}),
-    ...(session.expiresAtISO
-      ? { expires_at: new Date(session.expiresAtISO) }
-      : {}),
+    ...(session.expiresAtISO ? { expires_at: session.expiresAtISO } : {}),
     ...(session.continueUrl ? { continue_url: session.continueUrl } : {}),
     ...(session.order
       ? {
@@ -614,7 +613,7 @@ export const orderToUCPOrder = ({
           id: line.id,
           quantity: line.quantityFulfilled,
         })),
-        occurred_at: new Date(),
+        occurred_at: new Date().toISOString(),
       })),
     },
     totals: [
@@ -630,9 +629,9 @@ export const orderToUCPOrder = ({
     ucp: {
       version: UCP_VERSION,
       status: "success",
-      capabilities,
+      capabilities: toResponseCapabilities(capabilities),
     },
-  } as UcpOrder;
+  } satisfies UcpOrder;
 };
 
 // ── Catalog serializers ──────────────────────────────────────────

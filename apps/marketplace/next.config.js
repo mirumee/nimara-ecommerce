@@ -68,7 +68,10 @@ const nextConfig = withNextIntl({
       },
     ];
   },
-  output: "standalone",
+  // Only the Dockerfile consumes .next/standalone. On Vercel the build adapter
+  // assembles the deployment itself, and asking for standalone there makes the
+  // Turbopack build fail on a missing next-server.js.nft.json.
+  output: process.env.VERCEL ? undefined : "standalone",
 });
 
 module.exports = nextConfig;

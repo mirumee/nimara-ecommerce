@@ -19,7 +19,7 @@
   "dependencies": {
     "@saleor/auth-sdk": "1.0.3",
     "@stripe/stripe-js": "8.11.0",
-    "@ucp-js/sdk": "0.1.0",
+    "@ucp-js/sdk": "0.4.5",
     "editorjs-html": "3.4.3",
     "jose": "^6.2.9",
     "libphonenumber-js": "1.13.11",

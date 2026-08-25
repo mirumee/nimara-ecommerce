@@ -1,7 +1,7 @@
 import {
-  type BuyerClass,
+  type Buyer,
   type CheckoutUpdateRequest,
-  type MethodElement,
+  type FulfillmentMethodResponse,
   type PostalAddress,
   type UcpDiscoveryProfile,
 } from "@ucp-js/sdk";
@@ -78,19 +78,19 @@ export type SaleorCheckoutLineInput = {
   variantId: string;
 };
 
-/** Fallback names when address omits them. Uses SDK BuyerClass fields. */
-export type NameFallback = Pick<BuyerClass, "first_name" | "last_name">;
+/** Fallback names when address omits them. Uses SDK Buyer fields. */
+export type NameFallback = Pick<Buyer, "first_name" | "last_name">;
 
-/** UCP fulfillment method shape for update. Uses SDK MethodElement. */
+/** UCP fulfillment method shape for update. Uses SDK FulfillmentMethodResponse. */
 export type UCPFulfillmentMethod = Pick<
-  MethodElement,
+  FulfillmentMethodResponse,
   "destinations" | "groups"
 >;
 
 /** Extended CheckoutUpdateRequest with Saleor-specific fulfillment and billing. */
 export type UCPUpdateRequestExtended = CheckoutUpdateRequest & {
   billing_address?: Partial<PostalAddress>;
-  buyer?: BuyerClass;
+  buyer?: Buyer;
   fulfillment?: {
     methods?: UCPFulfillmentMethod[];
   };
