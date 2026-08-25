@@ -686,6 +686,71 @@
   default channel. A deployment-wide channel name would have left any installation not sharing that
   slug convention unable to save keys at all, including on first setup, so the choice belongs to the
   installation rather than to the deployment.
+- **Create**: Added PRD-004 Newsletter Subscriptions at `draft`, after a business grilling session
+  with Łukasz Szewczyk. The bet is a provider-neutral subscription seam, not a newsletter feature:
+  `packages/features/src/home-page/shared/actions/newsletter-subscribe.ts` returns success and
+  discards the address, and Nimara defines no contract for sending a subscriber anywhere. Klaviyo
+  is the first provider by owner decision. The primary outcome is a config-only integration under
+  15 minutes, falsified by a second-provider test within 90 days of release.
+- **Gap**: Demand is recorded as `[ASSUMPTION]`. The only written evidence is the roadmap line in
+  the Ecommerce Manager persona and the stub in the repository. No adopter request, support signal,
+  or community issue was found for the newsletter area.
+- **Create**: Added RFC-0001 Newsletter Subscription Provider Seam at `draft`, after a technical
+  grilling session with Łukasz Szewczyk. Newsletter becomes a selectable capability in the shape
+  that search and content already use: a use-case contract, one manifest per provider, a selector,
+  a registry entry, and a preflight row. `NEWSLETTER_SERVICE` carries no default, because the
+  commerce backend has no newsletter capability. Provider resolution is the single answer to
+  "configured", the submit path stays a Server Action, the seam sits on Klaviyo's server endpoint
+  with a private key, and a failure log never carries the address. The provider uses the
+  `klaviyo-api` SDK by owner decision.
+- **Create**: Added Rate Limiting for Public Storefront Endpoints as a deferred idea, holding the
+  Vercel WAF, `@vercel/firewall`, and portable-limiter research so the next design does not repeat
+  it.
+- **Gap**: Rate limiting is out of RFC-0001 by owner decision, so PRD-004 requirements S-7 and US-6
+  and acceptance criterion AC-9 have no design, and risk R-2 has no mitigation. RFC-0001 records
+  this as D-1 and gates it on the resolving ADR. Two further items are open before implementation:
+  the provider request timeout, and the intended behavior when a submitted address is already
+  suppressed in the merchant's Klaviyo account.
+- **Status transition**: Moved RFC-0001 from `draft` to `in_review` on explicit owner approval. The
+  three deferred items stay open: D-1 rate limiting, D-2 the provider request timeout, and D-3 the
+  suppression behavior. D-1 remains gated on the resolving ADR.
+- **Create**: Added ADR-0004 Newsletter Capture Is A Selectable Provider Capability at `proposed`.
+  It accepts RFC-0001 and resolves its deferred item D-1: newsletter capture ships with no rate
+  limiting, and the unbounded public submit path is accepted rather than mitigated.
+- **Status transition**: None for RFC-0001. It stays `in_review` and now names ADR-0004 as its
+  resolving record in the register and in the deferred items.
+- **Maintenance**: Narrowed PRD-004 to match ADR-0004. Removed requirement S-7, user story US-6,
+  acceptance criterion AC-9, and open question Q-2. Rewrote risk R-2 as an accepted exposure with
+  provider double opt-in as its only remaining mitigation, and moved rate limiting into the
+  out-of-scope list beside bot protection. The removed identifiers are not reused.
+- **Gap**: Nothing in the repository bounds the newsletter submit path, and no alert covers it,
+  because the design adds no counter to alert on. A deployment that needs protection configures it
+  at its firewall. RFC-0001 items D-2, the provider request timeout, and D-3, the behavior when a
+  submitted address is already suppressed in Klaviyo, are open before implementation.
+- **Status transition**: Moved ADR-0004 from `proposed` to `accepted` on explicit owner approval.
+  The record is now immutable: a later change to this decision requires a new ADR, this one set to
+  `superseded`, and the replacement named in `superseded_by`. RFC-0001 stays `in_review` and
+  PRD-004 stays `draft`, because neither transition was approved.
+- **Status transition**: Moved RFC-0001 from `in_review` to `final` and PRD-004 from `draft` to
+  `approved`, both on explicit owner approval. `final` records that the proposal is complete, and
+  ADR-0004 already carries the verdict. RFC-0001 items D-2, the provider request timeout, and D-3,
+  the behavior when a submitted address is already suppressed in Klaviyo, remain open before
+  implementation starts.
+- **Maintenance**: Closed RFC-0001 deferred items D-2 and D-3 with owner verdicts. D-2 sets the
+  provider request timeout at 5 seconds, with no retry. D-3 accepts the provider behavior: a
+  submission proceeds even when the address is suppressed, and the resubscribe clears the earlier
+  suppression. Also recorded a dependency reversal: `klaviyo-api` was dropped for platform `fetch`,
+  because the package requires Node's `querystring` and broke the storefront build on the three
+  edge-runtime `opengraph-image` routes.
+- **Create**: Added INT-0008 Newsletter Provider Selection and CAP-0008 Storefront Newsletter
+  Subscription at `candidate`, on an unmerged change branch, together with the code that makes them
+  true. Both move to `active` at merge, and `availability.since` is set then.
+- **Maintenance**: Extended OPS-0006 to cover `NEWSLETTER_SERVICE` in its trigger, preconditions,
+  procedure, verification, and escalation. Added the double opt-in check the preflight cannot make.
+- **Gap**: No IMP record yet for the newsletter implementation. The IMP contract requires a work
+  item and at least one pull request, and neither exists while the change sits in the working tree.
+  Create the IMP with the pull request, listing INT-0008 and CAP-0008 under
+  `relations.product_records`.
 
 ## 2026-08-21
 

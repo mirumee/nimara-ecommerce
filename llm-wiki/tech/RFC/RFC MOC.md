@@ -27,7 +27,7 @@ outcome, live in an [ADR](../ADR/ADR%20MOC.md).
 
 <!-- Newest last. Format: - RFC-NNNN Title - Status - resolving ADR - one-line summary -->
 
-_No RFC documents are present in the current tree._
+- [RFC-0001 Newsletter Subscription Provider Seam](RFC-0001%20Newsletter%20Subscription%20Provider%20Seam.md) - final - [ADR-0004](../ADR/ADR-0004%20Newsletter%20Capture%20Is%20A%20Selectable%20Provider%20Capability.md) - provider-neutral newsletter capability for the storefront, with Klaviyo first.
 
 ## Related Notes
 
