@@ -57,8 +57,7 @@ New components to create, each with a short description.
 
 ### API changes
 
-Internal or external API changes. Small: show a diff of the endpoint. Large: define with OpenAPI or ReDoc.
-**Nimara:** expose changes through infrastructure use-cases and services, not the raw Saleor schema.
+Internal or external API changes.
 
 ### Database changes
 
@@ -85,7 +84,6 @@ Pros and cons for every viable alternative considered, including why it was not 
 ### Dependencies
 
 Dependencies the design relies on, each with a short description.
-**Nimara:** never add a package dependency automatically — propose it with alternatives and wait for approval.
 
 ### System impacts
 
@@ -97,11 +95,11 @@ Documents that need changes, how and where. Note any new documents required.
 
 ### QA validation
 
-Test scenarios that validate the solution. Whether each is automatable is the QA team's call, not the RFC's.
+Test scenarios that validate the solution.
 
 ### DevOps / infrastructure
 
-Infrastructure changes required (firewall rules, env vars, Terraform, CI task-graph).
+Infrastructure changes required
 
 ## Related Notes
 

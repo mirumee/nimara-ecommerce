@@ -3,5 +3,5 @@ packages:
   - "packages/*"
 
 catalog:
-  hono: 4.13.1
+  hono: 4.13.3
   next: 16.2.11

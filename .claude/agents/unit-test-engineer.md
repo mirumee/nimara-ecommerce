@@ -23,4 +23,4 @@ If the test exposes a production defect, report the failing behavior and likely 
 than silently changing application code. Return coverage added, commands run, failures, and
 remaining gaps.
 
-Never invoke `/ship`, commit, push, or create a pull request.
+Never invoke `/pre-ship`, commit, push, or create a pull request.

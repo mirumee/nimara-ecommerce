@@ -1,8 +1,30 @@
 import { z } from "zod";
 
-import { ALLOWED_COUNTRY_CODES } from "@nimara/domain/consts";
+import { ALLOWED_COUNTRY_CODES, FIELD_MAX_LENGTH } from "@nimara/domain/consts";
 import { type AddressFormRow } from "@nimara/domain/objects/AddressForm";
 import { type GetTranslations } from "@nimara/i18n/types";
+
+type BoundedFieldName = keyof typeof FIELD_MAX_LENGTH;
+
+const boundedField = ({
+  addressFormRows,
+  fieldName,
+  t,
+}: {
+  addressFormRows: readonly AddressFormRow[];
+  fieldName: BoundedFieldName;
+  t: GetTranslations;
+}) =>
+  z
+    .string()
+    .trim()
+    .max(FIELD_MAX_LENGTH[fieldName], {
+      message: t("form-validation.max-length", {
+        maximum: FIELD_MAX_LENGTH[fieldName],
+      }),
+    })
+    .optional()
+    .superRefine(checkIfRequired({ addressFormRows, fieldName, t }));
 
 export const addressSchema = ({
   addressFormRows,
@@ -13,72 +35,29 @@ export const addressSchema = ({
 }) =>
   z.object({
     country: z.enum(ALLOWED_COUNTRY_CODES),
-    firstName: z
-      .string()
-      .trim()
-      .optional()
-      .superRefine(
-        checkIfRequired({ addressFormRows, fieldName: "firstName", t }),
-      ),
-    lastName: z
-      .string()
-      .trim()
-      .optional()
-      .superRefine(
-        checkIfRequired({ addressFormRows, fieldName: "lastName", t }),
-      ),
-    city: z
-      .string()
-      .trim()
-      .optional()
-      .superRefine(checkIfRequired({ addressFormRows, fieldName: "city", t })),
+    firstName: boundedField({ addressFormRows, fieldName: "firstName", t }),
+    lastName: boundedField({ addressFormRows, fieldName: "lastName", t }),
+    city: boundedField({ addressFormRows, fieldName: "city", t }),
+    // Saleor validates the phone against the country's numbering plan, not a character count.
     phone: z
       .string()
       .trim()
       .optional()
       .superRefine(checkIfRequired({ addressFormRows, fieldName: "phone", t })),
-    postalCode: z
-      .string()
-      .trim()
-      .optional()
-      .superRefine(
-        checkIfRequired({ addressFormRows, fieldName: "postalCode", t }),
-      ),
-    companyName: z
-      .string()
-      .trim()
-      .optional()
-      .superRefine(
-        checkIfRequired({ addressFormRows, fieldName: "companyName", t }),
-      ),
-    cityArea: z
-      .string()
-      .trim()
-      .optional()
-      .superRefine(
-        checkIfRequired({ addressFormRows, fieldName: "cityArea", t }),
-      ),
-    streetAddress1: z
-      .string()
-      .trim()
-      .optional()
-      .superRefine(
-        checkIfRequired({ addressFormRows, fieldName: "streetAddress1", t }),
-      ),
-    streetAddress2: z
-      .string()
-      .trim()
-      .optional()
-      .superRefine(
-        checkIfRequired({ addressFormRows, fieldName: "streetAddress2", t }),
-      ),
-    countryArea: z
-      .string()
-      .trim()
-      .optional()
-      .superRefine(
-        checkIfRequired({ addressFormRows, fieldName: "countryArea", t }),
-      ),
+    postalCode: boundedField({ addressFormRows, fieldName: "postalCode", t }),
+    companyName: boundedField({ addressFormRows, fieldName: "companyName", t }),
+    cityArea: boundedField({ addressFormRows, fieldName: "cityArea", t }),
+    streetAddress1: boundedField({
+      addressFormRows,
+      fieldName: "streetAddress1",
+      t,
+    }),
+    streetAddress2: boundedField({
+      addressFormRows,
+      fieldName: "streetAddress2",
+      t,
+    }),
+    countryArea: boundedField({ addressFormRows, fieldName: "countryArea", t }),
   });
 
 export const checkIfRequired =

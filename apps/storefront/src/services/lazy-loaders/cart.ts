@@ -23,9 +23,7 @@ export const createCartServiceLoader = (logger: Logger) =>
         isMarketplaceEnabled: clientEnvs.NEXT_PUBLIC_MARKETPLACE_ENABLED,
         logger,
         thumbnailFormat: clientEnvs.NEXT_PUBLIC_DEFAULT_IMAGE_FORMAT as
-          | "AVIF"
-          | "WEBP"
-          | "ORIGINAL",
+          "AVIF" | "WEBP" | "ORIGINAL",
       });
     },
     emptyService: emptyCartService,

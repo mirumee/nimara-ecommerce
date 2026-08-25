@@ -4,68 +4,11 @@ import { getLocale } from "next-intl/server";
 
 import { type Redirect } from "@nimara/i18n/routing";
 
-/**
- * List of parameters that should be passed through without modification.
- * These are typically used for sorting or search queries.
- */
-const PASS_THROUGH_PARAMS = ["sortBy", "limit", "q"] as const;
-
-type PassThroughParam = (typeof PASS_THROUGH_PARAMS)[number];
-const GROUP_PREFIX = "group";
-
-/**
- * Processes FormData into a structured object in a single pass.
- * This helps separate form parsing from the main business logic.
- */
-function processFormData(formData: FormData) {
-  const result = {
-    toAdd: {} as Record<string, string>,
-    toDelete: new Set<string>(),
-    passThrough: {} as Record<string, string>,
-    shouldClear: formData.has("clear"),
-  };
-
-  formData.forEach((value, key) => {
-    // Skip the 'clear' flag itself
-    if (key === "clear") {
-      return;
-    }
-
-    // Handle special pass-through params like 'sortBy'
-    if (PASS_THROUGH_PARAMS.includes(key as PassThroughParam)) {
-      if (typeof value === "string" && value !== "") {
-        result.passThrough[key as PassThroughParam] = value;
-      }
-
-      return;
-    }
-
-    // Handle special 'group' keys (e.g., 'groupcolor-red')
-    if (key.startsWith(GROUP_PREFIX)) {
-      const [k, v] = key.replace(GROUP_PREFIX, "").split("-");
-      const existing = result.toAdd[k] || "";
-
-      result.toAdd[k] = existing ? `${existing}.${v}` : v;
-
-      return;
-    }
-
-    // Handle standard multi-value keys
-    const allValues = formData
-      .getAll(key)
-      .filter((v): v is string => typeof v === "string" && v !== "");
-
-    if (allValues.length > 0) {
-      // If there are non-empty values, add them to be set in the URL
-      result.toAdd[key] = allValues.join(",");
-    } else {
-      // If the value is empty (e.g., unchecked checkbox), mark the key for deletion
-      result.toDelete.add(key);
-    }
-  });
-
-  return result;
-}
+import {
+  PASS_THROUGH_PARAMS,
+  type PassThroughParam,
+  processFormData,
+} from "../helpers/filters";
 
 /**
  * Handles the form submission for filters, updating the search parameters accordingly.

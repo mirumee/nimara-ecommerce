@@ -270,11 +270,9 @@ export function validateCheckoutTermsDummy(
   }
 
   const currentTotals = currentCheckoutAny.totals as
-    | Array<{ amount: number; type: string }>
-    | undefined;
+    Array<{ amount: number; type: string }> | undefined;
   const mandateTotals = mandateCheckoutAny.totals as
-    | Array<{ amount: number; type: string }>
-    | undefined;
+    Array<{ amount: number; type: string }> | undefined;
 
   const currentTotal = currentTotals?.find((t) => t.type === "total")?.amount;
   const mandateTotal = mandateTotals?.find((t) => t.type === "total")?.amount;

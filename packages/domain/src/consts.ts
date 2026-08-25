@@ -283,3 +283,16 @@ export const ALLOWED_CURRENCY_CODES = [
  * @see https://en.wikipedia.org/wiki/ISO_4217
  */
 export type AllCurrency = (typeof ALLOWED_CURRENCY_CODES)[number];
+
+export const FIELD_MAX_LENGTH = {
+  email: 254,
+  firstName: 256,
+  lastName: 256,
+  companyName: 256,
+  streetAddress1: 256,
+  streetAddress2: 256,
+  city: 256,
+  cityArea: 128,
+  countryArea: 128,
+  postalCode: 20,
+} as const;

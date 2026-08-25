@@ -65,9 +65,7 @@ export const CartDetails = ({
   const { toast } = useToast();
   const params = useSearchParams();
   const redirectReason = params.get("redirectReason") as
-    | "INSUFFICIENT_STOCK"
-    | "VARIANT_NOT_AVAILABLE"
-    | null;
+    "INSUFFICIENT_STOCK" | "VARIANT_NOT_AVAILABLE" | null;
 
   const [optimisticCart, applyOptimistic] = useOptimistic(
     cart,

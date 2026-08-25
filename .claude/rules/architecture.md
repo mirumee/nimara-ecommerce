@@ -24,4 +24,4 @@ paths:
 - Use named exports except where a framework convention explicitly requires a default.
 
 For placement decisions and dependency procedures, use
-`.agents/skills/project-guidelines/SKILL.md`.
+`.claude/skills/project-guidelines/SKILL.md`.

@@ -1,11 +1,11 @@
 {
   "version": 1,
   "skills": {
-    "turborepo": {
-      "source": "vercel/turborepo",
+    "simple-english": {
+      "source": "AminBlg/SimpleEnglish",
       "sourceType": "github",
-      "skillPath": "skills/turborepo/SKILL.md",
-      "computedHash": "23b9416e87fb6030bf95357e380778a21afb841430e2db208ad974997be39901"
+      "skillPath": "skills/simple-english/SKILL.md",
+      "computedHash": "03e4c8b0b52247fd63abe50cb0b9d12b746a2521bdd74a075614dfd19cdc37c5"
     }
   }
 }

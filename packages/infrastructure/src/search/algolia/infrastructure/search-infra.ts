@@ -18,7 +18,15 @@ export const algoliaSearchInfra =
     logger,
   }: AlgoliaSearchServiceConfig): SearchInfra =>
   async (
-    { page, filters, sortBy, query, limit, productMetadata: _productMetadata },
+    {
+      page,
+      filters,
+      categoryScope,
+      sortBy,
+      query,
+      limit,
+      productMetadata: _productMetadata,
+    },
     { channel },
   ) => {
     const client = algoliasearch(credentials.appId, credentials.apiKey);
@@ -28,6 +36,8 @@ export const algoliaSearchInfra =
       indices: settings.indices,
       channel,
       filters,
+      categoryScope,
+      logger,
     });
 
     try {

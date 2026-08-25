@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { FIELD_MAX_LENGTH } from "@nimara/domain/consts";
 import { type GetTranslations } from "@nimara/i18n/types";
 
 import { MIN_PASSWORD_LENGTH } from "@/config";
@@ -10,16 +11,31 @@ export const formSchema = ({ t }: { t: GetTranslations }) =>
       firstName: z
         .string()
         .min(1, { message: t("form-validation.required") })
-        .trim(),
+        .trim()
+        .max(FIELD_MAX_LENGTH.firstName, {
+          message: t("form-validation.max-length", {
+            maximum: FIELD_MAX_LENGTH.firstName,
+          }),
+        }),
       lastName: z
         .string()
         .min(1, { message: t("form-validation.required") })
-        .trim(),
+        .trim()
+        .max(FIELD_MAX_LENGTH.lastName, {
+          message: t("form-validation.max-length", {
+            maximum: FIELD_MAX_LENGTH.lastName,
+          }),
+        }),
       email: z
         .string()
         .min(1, { message: t("form-validation.required") })
         .email({ message: t("form-validation.invalid-email") })
-        .trim(),
+        .trim()
+        .max(FIELD_MAX_LENGTH.email, {
+          message: t("form-validation.max-length", {
+            maximum: FIELD_MAX_LENGTH.email,
+          }),
+        }),
       password: z
         .string()
         .min(MIN_PASSWORD_LENGTH, {

@@ -38,11 +38,7 @@ interface RefundCreateInput {
 }
 
 type RefundStatus =
-  | "pending"
-  | "requires_action"
-  | "succeeded"
-  | "failed"
-  | "canceled";
+  "pending" | "requires_action" | "succeeded" | "failed" | "canceled";
 
 interface RefundCreateOutput {
   amount: number;

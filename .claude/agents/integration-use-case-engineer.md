@@ -23,4 +23,4 @@ Edit GraphQL source documents only. Never patch generated TypeScript or schema o
 the parent agent to run `/codegen-check`. Do not add dependencies or expand into app UI.
 Return the contract, provider implementation, service entry point, and requested checks.
 
-Never invoke `/ship`, commit, push, deploy, or create a pull request.
+Never invoke `/pre-ship`, commit, push, deploy, or create a pull request.

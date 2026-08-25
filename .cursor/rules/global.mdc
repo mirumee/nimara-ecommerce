@@ -5,7 +5,7 @@ alwaysApply: true
 # Nimara — Cursor rules
 
 **Single source of truth:** read [`AGENTS.md`](../../AGENTS.md) and the skills under
-[`.agents/skills/`](../../.agents/skills/). This file is a thin pointer so guidance stays
+[`.claude/skills/`](../../.claude/skills/). This file is a thin pointer so guidance stays
 in one place — do not duplicate rules here.
 
 ## Stack (quick orientation)
@@ -34,5 +34,5 @@ packages/    domain · foundation · infrastructure · features · ui · config 
 - Never import `@nimara/codegen` from app/component code — go through services.
 - NEVER add a dependency automatically — ask first.
 
-For everything else (layers decision tree, React/Next patterns, composition, a11y), see
-the matching skill in `.agents/skills/`.
+For the layers decision tree and dependency procedures, see
+`.claude/skills/project-guidelines/SKILL.md` and `.claude/rules/architecture.md`.

@@ -80,8 +80,7 @@ export function SelectField({
   } = useFormContext();
 
   const error = getErrorAtPath(errors, name) as
-    | { message?: unknown }
-    | undefined;
+    { message?: unknown } | undefined;
 
   const [searchQuery, setSearchQuery] = useState("");
   const [availableOptions, setAvailableOptions] =

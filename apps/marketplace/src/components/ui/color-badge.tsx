@@ -10,10 +10,7 @@ import { cn } from "@/lib/utils";
  * product publication status string literals ("Published", "Draft").
  */
 export type BadgeStatusType =
-  | PaymentChargeStatusEnum
-  | OrderStatus
-  | "Published"
-  | "Draft";
+  PaymentChargeStatusEnum | OrderStatus | "Published" | "Draft";
 
 function formatBadgeLabel(label: BadgeStatusType): string {
   if (label === "Published" || label === "Draft") {

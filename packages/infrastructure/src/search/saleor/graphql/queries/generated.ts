@@ -31,10 +31,40 @@ export type FacetsQueryVariables = Types.Exact<{
   languageCode: Types.LanguageCodeEnum;
   attributesPerPage?: Types.InputMaybe<Types.Scalars['Int']['input']>;
   choicesFirst?: Types.InputMaybe<Types.Scalars['Int']['input']>;
+  where?: Types.InputMaybe<Types.AttributeWhereInput>;
 }>;
 
 
 export type FacetsQuery = FacetsQuery_Query;
+
+export type FacetsTaxonomyQuery_categories_CategoryCountableConnection_edges_CategoryCountableEdge_node_Category_translation_CategoryTranslation = { name: string | null };
+
+export type FacetsTaxonomyQuery_categories_CategoryCountableConnection_edges_CategoryCountableEdge_node_Category = { name: string, slug: string, translation: FacetsTaxonomyQuery_categories_CategoryCountableConnection_edges_CategoryCountableEdge_node_Category_translation_CategoryTranslation | null };
+
+export type FacetsTaxonomyQuery_categories_CategoryCountableConnection_edges_CategoryCountableEdge = { node: FacetsTaxonomyQuery_categories_CategoryCountableConnection_edges_CategoryCountableEdge_node_Category };
+
+export type FacetsTaxonomyQuery_categories_CategoryCountableConnection = { edges: Array<FacetsTaxonomyQuery_categories_CategoryCountableConnection_edges_CategoryCountableEdge> };
+
+export type FacetsTaxonomyQuery_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection_translation_CollectionTranslation = { name: string | null };
+
+export type FacetsTaxonomyQuery_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection = { name: string, slug: string, vendorId: string | null, translation: FacetsTaxonomyQuery_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection_translation_CollectionTranslation | null };
+
+export type FacetsTaxonomyQuery_collections_CollectionCountableConnection_edges_CollectionCountableEdge = { node: FacetsTaxonomyQuery_collections_CollectionCountableConnection_edges_CollectionCountableEdge_node_Collection };
+
+export type FacetsTaxonomyQuery_collections_CollectionCountableConnection = { edges: Array<FacetsTaxonomyQuery_collections_CollectionCountableConnection_edges_CollectionCountableEdge> };
+
+export type FacetsTaxonomyQuery_Query = { categories: FacetsTaxonomyQuery_categories_CategoryCountableConnection | null, collections: FacetsTaxonomyQuery_collections_CollectionCountableConnection | null };
+
+
+export type FacetsTaxonomyQueryVariables = Types.Exact<{
+  first?: Types.InputMaybe<Types.Scalars['Int']['input']>;
+  channel?: Types.InputMaybe<Types.Scalars['String']['input']>;
+  categoryLevel?: Types.InputMaybe<Types.Scalars['Int']['input']>;
+  languageCode: Types.LanguageCodeEnum;
+}>;
+
+
+export type FacetsTaxonomyQuery = FacetsTaxonomyQuery_Query;
 
 export type SearchProductQuery_products_ProductCountableConnection_edges_ProductCountableEdge_node_Product_translation_ProductTranslation = { name: string | null };
 
@@ -115,10 +145,10 @@ export class TypedDocumentString<TResult, TVariables>
 }
 
 export const FacetsQueryDocument = new TypedDocumentString(`
-    query FacetsQuery($choicesAfter: String, $choicesBefore: String, $channel: String, $choicesLast: Int, $attributesSortBy: AttributeSortingInput, $languageCode: LanguageCodeEnum!, $attributesPerPage: Int = 100, $choicesFirst: Int = 10) {
+    query FacetsQuery($choicesAfter: String, $choicesBefore: String, $channel: String, $choicesLast: Int, $attributesSortBy: AttributeSortingInput, $languageCode: LanguageCodeEnum!, $attributesPerPage: Int = 100, $choicesFirst: Int = 10, $where: AttributeWhereInput) {
   attributes(
     first: $attributesPerPage
-    filter: {filterableInStorefront: true, type: PRODUCT_TYPE}
+    where: $where
     channel: $channel
     sortBy: $attributesSortBy
   ) {
@@ -159,6 +189,41 @@ export const FacetsQueryDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<FacetsQuery, FacetsQueryVariables>;
+export const FacetsTaxonomyQueryDocument = new TypedDocumentString(`
+    query FacetsTaxonomyQuery($first: Int = 100, $channel: String, $categoryLevel: Int, $languageCode: LanguageCodeEnum!) {
+  categories(
+    first: $first
+    level: $categoryLevel
+    sortBy: {field: NAME, direction: ASC}
+  ) {
+    edges {
+      node {
+        name
+        slug
+        translation(languageCode: $languageCode) {
+          name
+        }
+      }
+    }
+  }
+  collections(
+    first: $first
+    channel: $channel
+    sortBy: {field: NAME, direction: ASC}
+  ) {
+    edges {
+      node {
+        name
+        slug
+        vendorId: metafield(key: "vendor.id")
+        translation(languageCode: $languageCode) {
+          name
+        }
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<FacetsTaxonomyQuery, FacetsTaxonomyQueryVariables>;
 export const SearchProductQueryDocument = new TypedDocumentString(`
     query SearchProductQuery($after: String, $before: String, $channel: String!, $filter: ProductFilterInput, $first: Int, $languageCode: LanguageCodeEnum!, $last: Int, $search: String, $sortBy: ProductOrder, $where: ProductWhereInput, $thumbnailSize: Int!, $thumbnailFormat: ThumbnailFormatEnum!) {
   products(
