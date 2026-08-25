@@ -335,8 +335,8 @@ importers:
         specifier: ^10.70.0
         version: 10.70.0
       '@ucp-js/sdk':
-        specifier: 0.1.0
-        version: 0.1.0
+        specifier: 0.4.5
+        version: 0.4.5
       '@uidotdev/usehooks':
         specifier: 2.4.1
         version: 2.4.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -978,8 +978,8 @@ importers:
         specifier: 8.11.0
         version: 8.11.0
       '@ucp-js/sdk':
-        specifier: 0.1.0
-        version: 0.1.0
+        specifier: 0.4.5
+        version: 0.4.5
       editorjs-html:
         specifier: 3.4.3
         version: 3.4.3
@@ -7224,8 +7224,8 @@ packages:
     resolution: {integrity: sha512-JJtkDduxLi9bivAB+cYOVMtbkqdPOhZ+ZI5LC47MIRrDV4Yn2o+ZnW10Nkmr28xRpSpdJ6Sm42Hjf2+REYXm0A==}
     engines: {node: ^16.0.0 || >=18.0.0}
 
-  '@ucp-js/sdk@0.1.0':
-    resolution: {integrity: sha512-Elgaxj5mhHobebeUjwpg6dh+b5uE01/efJo6Xq2UDk7P/rvXgPwi74aTMYL3XgAqWIeijerI5Hid1c6I549yoQ==}
+  '@ucp-js/sdk@0.4.5':
+    resolution: {integrity: sha512-KS80aNxoOUpOrIqhvpT7tKXATch8yWJgGLAzLGACUFpQeAy3UljFi3TEgKEdJNJbEMQ+aF/a7F+J6c+VB2RRLw==}
 
   '@uidotdev/usehooks@2.4.1':
     resolution: {integrity: sha512-1I+RwWyS+kdv3Mv0Vmc+p0dPYH0DTRAo04HLyXReYBL9AeseDWUJyi4THuksBJcu9F0Pih69Ak150VDnqbVnXg==}
@@ -22752,7 +22752,7 @@ snapshots:
       '@typescript-eslint/types': 6.21.0
       eslint-visitor-keys: 3.4.3
 
-  '@ucp-js/sdk@0.1.0':
+  '@ucp-js/sdk@0.4.5':
     dependencies:
       zod: 3.25.76
 

@@ -494,7 +494,9 @@ export const saleorUCPService = ({
     }
   },
   updateCheckoutSession: async (
-    input: CheckoutUpdateRequest | CheckoutWithDiscountUpdateRequest,
+    input: (CheckoutUpdateRequest | CheckoutWithDiscountUpdateRequest) & {
+      id: string;
+    },
   ): UCPResponse<CheckoutResponse> => {
     const client = graphqlClient(apiUrl);
 
