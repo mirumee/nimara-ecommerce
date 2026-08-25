@@ -253,6 +253,7 @@
     "Invalid value": "Invalid value",
     "enter-discount-code": "Type the discount code first",
     "invalid-email": "Oops, wrong email address.",
+    "max-length": "Use at most {maximum} characters.",
     "min-length-password": "Password should contain at least {minimum} characters.",
     "oldPassword": "Wrong password",
     "passwords-dont-match": "The entered passwords don't match.",
