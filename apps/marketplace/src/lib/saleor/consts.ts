@@ -29,5 +29,8 @@ export const APP_CONFIG = {
   VERSION: "1.0.0",
   MANIFEST_ID: "marketplace.vendor-panel",
   AUTHOR: "Nimara",
-  ALLOWED_DOMAINS: process.env.ALLOWED_SALEOR_DOMAINS?.split(",") || [],
+  ALLOWED_DOMAINS:
+    process.env.ALLOWED_SALEOR_DOMAINS?.split(",")
+      .map((domain) => domain.trim())
+      .filter(Boolean) ?? [],
 } as const;
