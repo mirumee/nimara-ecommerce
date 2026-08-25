@@ -185,13 +185,12 @@
   },
   "newsletter": {
     "email-required-newsletter": "Email is required to subscribe to the newsletter.",
+    "subscribe-consent": "We use your email address only to send this newsletter. You can unsubscribe at any time. Read our <privacyPolicy>privacy policy</privacyPolicy>.",
     "subscribe-cta": "Subscribe",
     "subscribe-description": "Subscribe to our newsletter and be the first to get updates on new products and promotions.",
     "subscribe-email-field-label": "Email Address",
     "subscribe-email-field-placeholder": "john.doe@example.com",
     "subscribe-error": "An error occurred while subscribing to the newsletter. Please try again.",
-    "subscribe-name-field-label": "Name",
-    "subscribe-name-field-placeholder": "John Doe",
     "subscribe-success": "You have successfully subscribed to the newsletter.",
     "subscribe-title": "Subscribe to Newsletter"
   },

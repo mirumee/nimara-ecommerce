@@ -3,11 +3,13 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createCMSMenuService } from "@nimara/infrastructure/cms-menu/select";
 import { createCMSPageService } from "@nimara/infrastructure/cms-page/select";
 import type { Logger } from "@nimara/infrastructure/logging/types";
+import { createNewsletterService } from "@nimara/infrastructure/newsletter/select";
 import { createSearchService } from "@nimara/infrastructure/search/select";
 
-const envMock = {
+const envMock: Record<string, string | undefined> = {
   SEARCH_SERVICE: "saleor",
   CMS_SERVICE: "saleor",
+  NEWSLETTER_SERVICE: undefined,
   ENVIRONMENT: "LOCAL",
 };
 const saleorMock = { configured: true };
@@ -20,7 +22,7 @@ vi.mock("@/services/utils/empty-services", () => ({
   },
 }));
 
-const { resolveSearchProvider, resolveCMSProvider } =
+const { resolveSearchProvider, resolveCMSProvider, resolveNewsletterProvider } =
   await import("../resolve");
 
 const fakeLogger = {
@@ -35,6 +37,7 @@ describe("integration resolvers", () => {
   beforeEach(() => {
     envMock.SEARCH_SERVICE = "saleor";
     envMock.CMS_SERVICE = "saleor";
+    envMock.NEWSLETTER_SERVICE = undefined;
     envMock.ENVIRONMENT = "LOCAL";
     saleorMock.configured = true;
   });
@@ -74,6 +77,37 @@ describe("integration resolvers", () => {
 
     expect(resolveSearchProvider()).toBe("algolia");
     expect(resolveCMSProvider()).toBe("butter-cms");
+  });
+});
+
+describe("resolveNewsletterProvider", () => {
+  beforeEach(() => {
+    envMock.NEWSLETTER_SERVICE = undefined;
+    saleorMock.configured = true;
+  });
+
+  it("returns null when no provider is selected", () => {
+    expect(resolveNewsletterProvider()).toBeNull();
+  });
+
+  it("returns the selected provider", () => {
+    envMock.NEWSLETTER_SERVICE = "klaviyo";
+
+    expect(resolveNewsletterProvider()).toBe("klaviyo");
+  });
+
+  it("does not fall back to dummy when saleor is unconfigured", () => {
+    saleorMock.configured = false;
+
+    expect(resolveNewsletterProvider()).toBeNull();
+  });
+});
+
+describe("createNewsletterService", () => {
+  it("rejects when klaviyo is selected without its keys", async () => {
+    await expect(
+      createNewsletterService("klaviyo", { env: {}, logger: fakeLogger }),
+    ).rejects.toThrow(/klaviyo/i);
   });
 });
 

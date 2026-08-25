@@ -27,6 +27,7 @@ import {
 } from "@clack/prompts";
 
 import { cmsPageProviders } from "@nimara/infrastructure/cms-page/select";
+import { newsletterProviders } from "@nimara/infrastructure/newsletter/select";
 import { searchProviders } from "@nimara/infrastructure/search/select";
 
 type SafeParseResult = {
@@ -40,6 +41,8 @@ type Provider = {
 };
 
 type Capability = {
+  /** Provider used when the select var is unset. Absent means no provider. */
+  defaultProvider?: string;
   name: string;
   providers: readonly Provider[];
   selectVar: string;
@@ -95,13 +98,27 @@ const isProduction = env.NEXT_PUBLIC_ENVIRONMENT === "PRODUCTION";
 const saleorConfigured = has("NEXT_PUBLIC_SALEOR_API_URL");
 
 const CAPABILITIES: Capability[] = [
-  { name: "Search", selectVar: "SEARCH_SERVICE", providers: searchProviders },
+  {
+    name: "Search",
+    selectVar: "SEARCH_SERVICE",
+    providers: searchProviders,
+    defaultProvider: "saleor",
+  },
   {
     name: "CMS (pages + menus)",
     selectVar: "CMS_SERVICE",
     providers: cmsPageProviders,
+    defaultProvider: "saleor",
+  },
+  {
+    name: "Newsletter",
+    selectVar: "NEWSLETTER_SERVICE",
+    providers: newsletterProviders,
   },
 ];
+
+/** Wizard-only sentinel for "leave this capability off". */
+const NO_PROVIDER = "none";
 
 type EnvVar = { comment?: string; default?: string; key: string };
 
@@ -356,7 +373,17 @@ const renderReport = (): void => {
 
   for (const capability of CAPABILITIES) {
     const label = capability.name.padEnd(intPad);
-    const requested = env[capability.selectVar] || "saleor";
+    const requested = env[capability.selectVar] || capability.defaultProvider;
+
+    if (!requested) {
+      const allowed = capability.providers.map((p) => p.id).join(" | ");
+
+      console.log(
+        `  ${OFF}  ${label}  not configured (set ${capability.selectVar}: ${allowed})`,
+      );
+      continue;
+    }
+
     const provider = capability.providers.find((p) => p.id === requested);
 
     if (!provider) {
@@ -409,15 +436,23 @@ const runWizard = async (): Promise<void> => {
 
   for (const capability of CAPABILITIES) {
     const ordered = orderProviders(capability.providers);
+    const providerOptions = ordered.map((provider) => ({
+      value: provider.id,
+      label: provider.id,
+      hint: requiredKeys(provider).join(", ") || "no env required",
+    }));
+    // A capability with no default can be left off, so it offers that choice.
+    const options = capability.defaultProvider
+      ? providerOptions
+      : [
+          ...providerOptions,
+          { value: NO_PROVIDER, label: "none", hint: "capability stays off" },
+        ];
     const choice = exitIfCancelled(
       await select({
         message: `${capability.name} provider`,
-        initialValue: "saleor",
-        options: ordered.map((provider) => ({
-          value: provider.id,
-          label: provider.id,
-          hint: requiredKeys(provider).join(", ") || "no env required",
-        })),
+        initialValue: capability.defaultProvider ?? NO_PROVIDER,
+        options,
       }),
     );
 

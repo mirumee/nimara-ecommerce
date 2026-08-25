@@ -5,8 +5,11 @@ import { StandardHomeView } from "@nimara/features/home-page/shop-basic-home/sta
 import { clientEnvs } from "@/envs/client";
 import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
+import { resolveNewsletterProvider } from "@/services/integrations/resolve";
 import { getServiceRegistry } from "@/services/registry";
 import { getAccessToken } from "@/services/tokens";
+
+import { newsletterSubscribeAction } from "./_actions/newsletter-subscribe";
 
 export async function generateMetadata() {
   const storefrontUrl = clientEnvs.NEXT_PUBLIC_STOREFRONT_URL;
@@ -30,6 +33,9 @@ export default async function Page(props: HomeViewProps) {
       services={services}
       accessToken={accessToken || null}
       mailTo={clientEnvs.NEXT_PUBLIC_DEFAULT_EMAIL}
+      newsletterSubscribeAction={
+        resolveNewsletterProvider() ? newsletterSubscribeAction : null
+      }
       region={region}
       revalidateTime={services.config.cacheTTL.cms}
       paths={{
