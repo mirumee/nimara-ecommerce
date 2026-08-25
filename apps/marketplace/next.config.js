@@ -2,6 +2,22 @@
 const allowedCorsOrigin =
   process.env.NEXT_PUBLIC_MARKETPLACE_STOREFRONT_URL || "http://localhost:3000";
 
+/**
+ * Next serves its dev-only resources to localhost only. Local development
+ * behind a tunnel, which a Saleor App installation needs, must add that host.
+ */
+const allowedDevOrigins = [];
+
+if (process.env.NEXT_PUBLIC_MARKETPLACE_VENDOR_URL) {
+  try {
+    allowedDevOrigins.push(
+      new URL(process.env.NEXT_PUBLIC_MARKETPLACE_VENDOR_URL).hostname,
+    );
+  } catch {
+    // Ignore an unparsable value; dev resources stay restricted to localhost.
+  }
+}
+
 const createNextIntlPlugin = require("next-intl/plugin");
 
 const withNextIntl = createNextIntlPlugin({
@@ -9,6 +25,7 @@ const withNextIntl = createNextIntlPlugin({
 });
 
 const nextConfig = withNextIntl({
+  allowedDevOrigins,
   transpilePackages: [
     "@editorjs/editorjs",
     "@editorjs/header",
