@@ -1,34 +1,37 @@
 import { Hono } from "hono";
 import { z } from "zod";
 
-import { saleorBearerHeader } from "@nimara/infrastructure/apps/saleor/schemas";
+import { saleorTokenHeaders } from "@nimara/infrastructure/apps/saleor/schemas";
+import { getAppBaseUrl, responseFromErrors } from "@nimara/lib/hono/api/util";
+import { saleorTokenMiddleware } from "@nimara/lib/hono/middleware/saleor-token";
+import { zodValidatorMiddleware } from "@nimara/lib/hono/middleware/zod-validator";
+import {
+  requireSaleorTenant,
+  saleorTenantMiddleware,
+} from "@nimara/lib/hono/saleor/tenant";
 
 import { container } from "@/container";
-import { getAppBaseUrl, responseFromErrors } from "@/lib/api/util";
-import { saleorDomainAllowlistMiddleware } from "@/lib/middleware/saleor-domain-allowlist-middleware";
-import { zodValidatorMiddleware } from "@/lib/middleware/zod-validator-middleware";
 
 import { configFormSchema } from "./schema";
 
-/**
- * API consumed by the app's own config UI (dashboard iframe). Authenticated
- * with the Saleor dashboard JWT passed as a Bearer token.
- */
+const CONFIG = container.get("config");
+
 export const appRoutes = new Hono()
   .use(
-    saleorDomainAllowlistMiddleware({
-      allowedDomains: container.get("config").ALLOWED_DOMAINS,
+    saleorTokenMiddleware({
+      allowedDomains: CONFIG.ALLOWED_DOMAINS,
+      joseAuthService: container.get("joseAuthService"),
+      requiredPermissions: ["MANAGE_APPS"],
     }),
   )
+  .use(saleorTenantMiddleware())
   .post(
     "/config/fetch",
-    zodValidatorMiddleware("header", saleorBearerHeader),
-    zodValidatorMiddleware("json", z.object({ saleorDomain: z.string() })),
+    zodValidatorMiddleware("header", saleorTokenHeaders),
     async (context) => {
-      const result = await container.get("getConfigFormData")({
-        accessToken: context.req.valid("header").authorization,
-        saleorDomain: context.req.valid("json").saleorDomain,
-      });
+      const result = await container.get("getConfigFormData")(
+        requireSaleorTenant(context),
+      );
 
       if (!result.ok) {
         return responseFromErrors(result.errors);
@@ -39,19 +42,13 @@ export const appRoutes = new Hono()
   )
   .post(
     "/config/save",
-    zodValidatorMiddleware("header", saleorBearerHeader),
-    zodValidatorMiddleware(
-      "json",
-      z.object({ saleorDomain: z.string(), data: configFormSchema }),
-    ),
+    zodValidatorMiddleware("header", saleorTokenHeaders),
+    zodValidatorMiddleware("json", z.object({ data: configFormSchema })),
     async (context) => {
-      const { saleorDomain, data } = context.req.valid("json");
-
       const result = await container.get("saveConfig")({
-        accessToken: context.req.valid("header").authorization,
+        ...requireSaleorTenant(context),
         appUrl: getAppBaseUrl(context.req),
-        data,
-        saleorDomain,
+        data: context.req.valid("json").data,
       });
 
       if (!result.ok) {

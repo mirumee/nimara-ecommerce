@@ -1,2 +1,5 @@
 # vite build output
 dist/
+
+# Vercel entrypoint, generated per build from the apps discovered under src/apps
+index.js

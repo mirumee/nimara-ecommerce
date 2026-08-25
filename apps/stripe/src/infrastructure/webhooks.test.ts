@@ -1,8 +1,9 @@
 import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 
+import { MagicMock } from "@nimara/lib/test/mock";
+import { isLocalDomain } from "@nimara/lib/utils/url";
+
 import { type PaymentGatewayConfig } from "@/domain/app-config";
-import { MagicMock } from "@/lib/test/mock";
-import { isLocalDomain } from "@/lib/util";
 
 import { getStripeApi } from "./utils";
 import {
@@ -56,7 +57,7 @@ describe("webhooks", () => {
     })),
   }));
 
-  vi.mock("@/lib/util", () => ({
+  vi.mock("@nimara/lib/utils/url", () => ({
     isLocalDomain: vi.fn(),
   }));
 
@@ -73,6 +74,22 @@ describe("webhooks", () => {
           saleorDomain: "saleor.example.com",
         }),
       ).toBe("https://example.com/api/stripe/webhooks/saleor.example.com");
+    });
+
+    it("keeps a gateway path prefix", () => {
+      // given the app URL `getAppBaseUrl` builds behind a prefix. Registration
+      // succeeds either way, so a dropped prefix only surfaces as a 404 on the
+      // first event Stripe delivers.
+
+      // when / then
+      expect(
+        getStripeWebhookUrl({
+          appUrl: "https://example.com/stripe",
+          saleorDomain: "saleor.example.com",
+        }),
+      ).toBe(
+        "https://example.com/stripe/api/stripe/webhooks/saleor.example.com",
+      );
     });
   });
 

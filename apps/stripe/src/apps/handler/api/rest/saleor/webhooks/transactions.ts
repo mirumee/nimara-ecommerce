@@ -1,4 +1,9 @@
+import { responseError, responseFromErrors } from "@nimara/lib/hono/api/util";
+import { type HandlerContext } from "@nimara/lib/hono/saleor/types";
+import { type SaleorTenant } from "@nimara/lib/saleor/tenant";
+
 import { container } from "@/container";
+import { getAmountFromCents, getCentsFromAmount } from "@/domain/currency";
 import {
   getIntentDashboardUrl,
   mapStatusToActionType,
@@ -16,8 +21,6 @@ import {
   type TransactionRefundRequestedSubscription,
 } from "@/graphql/generated/client";
 import { getIntentShipping } from "@/infrastructure/payment/stripe/utils";
-import { responseError, responseFromErrors } from "@/lib/api/util";
-import { getAmountFromCents, getCentsFromAmount } from "@/lib/currency";
 
 import {
   finalizedResponse,
@@ -26,16 +29,16 @@ import {
   sessionMetadata,
   transactionEventResponse,
 } from "./helpers";
-import { type HandlerContext } from "./types";
 
 export const paymentGatewayInitializeSessionHandler = async (
   context: HandlerContext<PaymentGatewayInitializeSessionSubscription>,
+  { saleorDomain }: SaleorTenant,
 ) => {
   const event = context.req.valid("json");
   const result = await container
     .get("appConfigService")
     .getPaymentGatewayConfigForChannel({
-      saleorDomain: context.req.valid("header")["saleor-domain"],
+      saleorDomain,
       channelSlug: event.sourceObject.channel.slug,
     });
 
@@ -60,10 +63,10 @@ export const paymentGatewayInitializeSessionHandler = async (
 
 export const transactionInitializeSessionHandler = async (
   context: HandlerContext<TransactionInitializeSessionSubscription>,
+  { saleorDomain }: SaleorTenant,
 ) => {
   const event = context.req.valid("json");
   const logger = context.get("logger");
-  const saleorDomain = context.req.valid("header")["saleor-domain"];
   const channelSlug = event.sourceObject.channel.slug;
   const { actionType } = event.action;
   const gatewayResult = await container.get("paymentService")({
@@ -202,9 +205,9 @@ export const transactionInitializeSessionHandler = async (
 
 export const transactionProcessSessionHandler = async (
   context: HandlerContext<TransactionProcessSessionSubscription>,
+  { saleorDomain }: SaleorTenant,
 ) => {
   const event = context.req.valid("json");
-  const saleorDomain = context.req.valid("header")["saleor-domain"];
   const channelSlug = event.sourceObject.channel.slug;
   const gatewayResult = await container.get("paymentService")({
     saleorDomain,
@@ -255,6 +258,7 @@ export const transactionProcessSessionHandler = async (
 
 export const transactionChargeRequestedHandler = async (
   context: HandlerContext<TransactionChargeRequestedSubscription>,
+  { saleorDomain }: SaleorTenant,
 ) => {
   const event = context.req.valid("json");
 
@@ -263,7 +267,7 @@ export const transactionChargeRequestedHandler = async (
   }
 
   const gatewayResult = await container.get("paymentService")({
-    saleorDomain: context.req.valid("header")["saleor-domain"],
+    saleorDomain,
     channelSlug: event.transaction.sourceObject.channel.slug,
   });
 
@@ -318,6 +322,7 @@ export const transactionChargeRequestedHandler = async (
 
 export const transactionCancelationRequestedHandler = async (
   context: HandlerContext<TransactionCancelationRequestedSubscription>,
+  { saleorDomain }: SaleorTenant,
 ) => {
   const event = context.req.valid("json");
   const logger = context.get("logger");
@@ -329,7 +334,7 @@ export const transactionCancelationRequestedHandler = async (
   }
 
   const gatewayResult = await container.get("paymentService")({
-    saleorDomain: context.req.valid("header")["saleor-domain"],
+    saleorDomain,
     channelSlug: event.transaction.sourceObject.channel.slug,
   });
 
@@ -379,14 +384,13 @@ export const transactionCancelationRequestedHandler = async (
 
 export const transactionRefundRequestedHandler = async (
   context: HandlerContext<TransactionRefundRequestedSubscription>,
+  { saleorDomain }: SaleorTenant,
 ) => {
   const event = context.req.valid("json");
 
   if (!event.transaction?.sourceObject) {
     return missingSourceObjectResponse({ type: "TransactionRefundRequested" });
   }
-
-  const saleorDomain = context.req.valid("header")["saleor-domain"];
   const channelSlug = event.transaction.sourceObject.channel.slug;
   const gatewayResult = await container.get("paymentService")({
     saleorDomain,

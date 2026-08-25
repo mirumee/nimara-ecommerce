@@ -1,19 +1,20 @@
 import { Hono } from "hono";
 
+import { all } from "@nimara/foundation/lib/array";
+import {
+  responseError,
+  responseFromErrors,
+  responseSuccess,
+} from "@nimara/lib/hono/api/util";
+
 import { container } from "@/container";
 import { StripeMetaKey } from "@/domain/consts";
+import { getAmountFromCents } from "@/domain/currency";
 import {
   getIntentDashboardUrl,
   isAppEvent,
   mapStripeEventToSaleorEvent,
 } from "@/domain/event-mapping";
-import {
-  responseError,
-  responseFromErrors,
-  responseSuccess,
-} from "@/lib/api/util";
-import { getAmountFromCents } from "@/lib/currency";
-import { all } from "@/lib/misc";
 
 const skipped = () => responseSuccess({ description: "Skipped." });
 
@@ -142,7 +143,7 @@ export const stripeRoutes = new Hono().post(
       saleorDomain: tenant,
     });
 
-    await saleorClient.transactionReport({
+    const reportResult = await saleorClient.transactionReport({
       transactionId,
       paymentMethodDetails: notification.paymentMethodDetails,
       // @ts-expect-error: decimal must be a string
@@ -159,6 +160,37 @@ export const stripeRoutes = new Hono().post(
       time: new Date().toISOString(),
       ...eventData,
     });
+
+    // Answering non-2xx is what makes Stripe redeliver the event.
+    if (!reportResult.ok) {
+      logger.error("Failed to report the transaction event to Saleor.", {
+        errors: reportResult.errors,
+        saleorDomain: tenant,
+        transactionId,
+      });
+
+      return responseFromErrors(reportResult.errors);
+    }
+
+    // Saleor answers 200 with its own errors — the report still did not land.
+    const reportErrors = reportResult.data?.errors ?? [];
+
+    if (reportErrors.length) {
+      logger.error("Saleor refused the transaction event report.", {
+        errors: reportErrors,
+        saleorDomain: tenant,
+        transactionId,
+      });
+
+      return responseError({
+        description: "Saleor refused the transaction event report.",
+        errors: reportErrors.map(({ code, message }) => ({
+          code,
+          message: message ?? code,
+        })),
+        status: 502,
+      });
+    }
 
     return responseSuccess({ description: "Processed." });
   },

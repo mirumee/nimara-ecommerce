@@ -89,6 +89,8 @@ jobs:
               packages/foundation \
               packages/i18n \
               packages/infrastructure \
+              packages/lib \
+              packages/tooling \
               packages/ui
             do
               echo "Linting ${eslint_target}"
