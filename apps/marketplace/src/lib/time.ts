@@ -1,9 +1,5 @@
 export type DateGroupKey =
-  | "TODAY"
-  | "YESTERDAY"
-  | "LAST_7_DAYS"
-  | "LAST_30_DAYS"
-  | "OLDER";
+  "TODAY" | "YESTERDAY" | "LAST_7_DAYS" | "LAST_30_DAYS" | "OLDER";
 
 // Reuse the app-wide date-time formatter for consistency
 import { formatDateTime as baseFormatDateTime } from "@/lib/utils";

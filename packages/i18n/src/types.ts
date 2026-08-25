@@ -47,10 +47,12 @@ export type MessagePath<Namespace extends string | undefined = undefined> =
   Namespace extends undefined
     ? MessageKeys<Messages, NestedKeyOf<Messages>>
     : {
-        [K in MessageKeys<
-          Messages,
-          KeysInNamespace<NestedKeyOf<Messages>, Namespace & string>
-        >]: RemoveNamespacePrefix<K, Namespace & string>;
+        [
+          K in MessageKeys<
+            Messages,
+            KeysInNamespace<NestedKeyOf<Messages>, Namespace & string>
+          >
+        ]: RemoveNamespacePrefix<K, Namespace & string>;
       }[MessageKeys<
         Messages,
         KeysInNamespace<NestedKeyOf<Messages>, Namespace & string>
@@ -70,14 +72,7 @@ export type GetTranslations<
  * @see https://en.wikipedia.org/wiki/ISO_4217
  */
 export type CurrencyCode =
-  | "USD"
-  | "GBP"
-  | "EUR"
-  | "AUD"
-  | "CAD"
-  | "CHF"
-  | "JPY"
-  | "PLN";
+  "USD" | "GBP" | "EUR" | "AUD" | "CAD" | "CHF" | "JPY" | "PLN";
 
 export interface I18nMiddlewareOptions {
   /**

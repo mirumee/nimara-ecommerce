@@ -30,6 +30,4 @@ export type OtherPaymentMethod = PaymentMethodBase<null, "other"> & {
 };
 
 export type PaymentMethod =
-  | CardPaymentMethod
-  | OtherPaymentMethod
-  | PaypalPaymentMethod;
+  CardPaymentMethod | OtherPaymentMethod | PaypalPaymentMethod;

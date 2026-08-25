@@ -783,8 +783,7 @@ export const saleorUCPService = ({
 
     try {
       const checkoutId = (input as Record<string, unknown>).id as
-        | string
-        | undefined;
+        string | undefined;
 
       if (!checkoutId) {
         return err([

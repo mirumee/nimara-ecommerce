@@ -47,10 +47,7 @@ type ShippingMethod = {
 export type CheckoutAuthorizeStatusEnum = "FULL" | "NONE" | "PARTIAL";
 
 export type CheckoutChargeStatusEnum =
-  | "FULL"
-  | "NONE"
-  | "OVERCHARGED"
-  | "PARTIAL";
+  "FULL" | "NONE" | "OVERCHARGED" | "PARTIAL";
 
 export type CheckoutProblems = {
   insufficientStock: InsufficientStockLineProblem[];

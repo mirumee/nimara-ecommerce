@@ -66,9 +66,7 @@ export type ChannelAvailabilityFormValues =
   | CollectionChannelAvailabilityFormValues;
 
 export type ProductAvailabilityDisabledReason =
-  | "no-product-type"
-  | "has-variants"
-  | null;
+  "no-product-type" | "has-variants" | null;
 
 export type Channel = {
   currencyCode: string;
@@ -563,8 +561,7 @@ export function ChannelAvailabilitySection({
               <Accordion type="multiple" className="w-full">
                 {collectionFilteredChannels.map((channel) => {
                   const entry = channelAvailability[channel.id] as
-                    | CollectionEntry
-                    | undefined;
+                    CollectionEntry | undefined;
                   const isPublished = entry?.isPublished ?? false;
                   const publishedAt = entry?.publishedAt;
                   const hasPublicationDate = Boolean(publishedAt);

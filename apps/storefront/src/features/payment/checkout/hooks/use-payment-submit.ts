@@ -175,8 +175,7 @@ export const usePaymentSubmit = ({
       initializeData,
       paymentElement: isAddingNewPaymentMethod
         ? ((elementsRef.current ?? undefined) as
-            | PaymentElementHandle
-            | undefined)
+            PaymentElementHandle | undefined)
         : undefined,
       redirectUrl,
       transactionData: activeTransactionData,

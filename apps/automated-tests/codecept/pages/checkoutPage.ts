@@ -104,11 +104,7 @@ export default {
 
   guest_step5_payment_details(
     card_characteristics:
-      | "valid"
-      | "invalid"
-      | "stolen"
-      | "declined"
-      | "expired",
+      "valid" | "invalid" | "stolen" | "declined" | "expired",
     timeout: number = timeout_seconds,
   ) {
     I.waitInUrl(URLS.CHECKOUT_PAGE_PAYMENT, timeout);

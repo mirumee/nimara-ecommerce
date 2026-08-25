@@ -109,9 +109,7 @@ export function OrdersListClient({ orders, pageInfo }: OrdersListClientProps) {
   const status = searchParams.getAll("status");
   const sortField = searchParams.get("sortField") as OrderSortField | null;
   const sortDirection = searchParams.get("sortDirection") as
-    | "ASC"
-    | "DESC"
-    | null;
+    "ASC" | "DESC" | null;
 
   const filter: OrderFilterInput | undefined =
     debouncedSearch ||
