@@ -1,8 +1,10 @@
 import {
   type CheckoutResponse,
   type CheckoutUpdateRequest,
-  type LinkElement,
+  type Link,
   type PostalAddress,
+  type UcpDiscoveryProfile,
+  type UcpResponse,
 } from "@ucp-js/sdk";
 
 import { type AddressInput } from "@nimara/codegen/schema";
@@ -306,9 +308,9 @@ export const calculateCheckoutExpiration = (
  * Links are required by spec for legal compliance (privacy policy, TOS, etc).
  *
  * @param storefrontURL - Base URL for link construction (e.g., "https://example.com")
- * @returns Array of LinkElement with well-known types
+ * @returns Array of Link with well-known types
  */
-export const generateCheckoutLinks = (storefrontURL: string): LinkElement[] => {
+export const generateCheckoutLinks = (storefrontURL: string): Link[] => {
   return [
     {
       type: "privacy_policy",
@@ -381,3 +383,19 @@ export const generateContinueUrl = ({
 
   return checkoutURL.toString();
 };
+
+/**
+ * A discovery profile lists capabilities as an array carrying a name. A
+ * response envelope keys them by that name, so the name moves into the key.
+ */
+export const toResponseCapabilities = (
+  capabilities: UcpDiscoveryProfile["ucp"]["capabilities"],
+): NonNullable<UcpResponse["capabilities"]> =>
+  capabilities.reduce<NonNullable<UcpResponse["capabilities"]>>(
+    (registry, { name, ...entry }) => {
+      registry[name] = [...(registry[name] ?? []), entry];
+
+      return registry;
+    },
+    {},
+  );

@@ -16,6 +16,12 @@ export type UCPServiceError = BaseError & {
 
 export type UCPResponse<TRes> = AsyncResult<TRes, UCPServiceError>;
 
+/**
+ * The checkout id lives in the URL path, not in the request body. The service
+ * needs both, so callers pass the id next to the body fields.
+ */
+export type CheckoutUpdateInput = CheckoutUpdateRequest & { id: string };
+
 // ── Catalog types ──────────────────────────────────────────────
 
 export type CatalogSearchFilters = {
@@ -171,6 +177,6 @@ export type UCPService = {
    * @link https://ucp.dev/2026-04-08/specification/checkout/#update-checkout
    */
   updateCheckoutSession: (
-    input: CheckoutUpdateRequest,
+    input: CheckoutUpdateInput,
   ) => UCPResponse<CheckoutResponse>;
 };
