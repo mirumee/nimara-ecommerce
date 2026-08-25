@@ -97,7 +97,17 @@ export async function POST(request: NextRequest) {
     const { auth_token: authToken } = bodyParsed.data;
 
     // Check if domain is allowed
+    if (APP_CONFIG.ALLOWED_DOMAINS.length === 0) {
+      console.warn(
+        `ALLOWED_SALEOR_DOMAINS is not set: accepting registration from any Saleor domain, including ${saleorDomain}`,
+      );
+    }
+
     if (!isDomainAllowed(saleorDomain, APP_CONFIG.ALLOWED_DOMAINS)) {
+      console.warn(
+        `Rejected registration: domain ${saleorDomain} is not in ALLOWED_SALEOR_DOMAINS`,
+      );
+
       return NextResponse.json(
         { error: `Domain ${saleorDomain} is not allowed` },
         { status: 403 },
