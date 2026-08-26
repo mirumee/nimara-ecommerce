@@ -58,8 +58,12 @@ building or deploying.
 - Provider selection is build-time configuration; changing it requires a rebuild and redeploy.
 - Content pages and menus share one provider ID and a common provider catalog, so they cannot drift
   to independently selected implementations.
-- Explicitly selecting a provider without its required configuration fails service construction;
-  preflight reports the same missing or invalid values before runtime.
+- Explicitly selecting a provider without its required configuration degrades that capability to its
+  empty service and logs a critical event naming the capability, the provider, and the missing
+  values. One capability's broken configuration therefore does not take down routes that never use
+  it. The event is emitted once when the service registry is built, so a missing value is visible
+  from the first request rather than from the first shopper who reaches that capability. Preflight
+  reports the same values before runtime.
 - Built-in sample providers require no external credentials but are an automatic fallback only
   outside production. Production falls back to empty services when the default backend is absent.
 - A provider-specific upstream failure retains that provider's existing service-level error

@@ -73,6 +73,10 @@ to this deployment procedure.
   image delivery. Exercise the external search or content provider when one is selected.
 - Review build and runtime logs for environment validation, GraphQL code-generation, provider
   construction, authentication, Sentry, and image-host failures.
+- Read the first request's log for a critical event naming a capability, its selected provider, and
+  missing configuration values. A selected provider with incomplete configuration no longer fails
+  the request; it serves the empty service, so this event is the only signal that a capability is
+  degraded.
 
 # Escalation
 
