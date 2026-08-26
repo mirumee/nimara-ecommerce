@@ -29,7 +29,8 @@
     },
     "codegen": {
       "outputs": ["src/graphql/generated/**"],
-      "inputs": ["src/**/*.graphql", "codegen.ts"]
+      "inputs": ["src/**/*.graphql", "codegen.ts"],
+      "env": ["NEXT_PUBLIC_SALEOR_API_URL"]
     }
   }
 }

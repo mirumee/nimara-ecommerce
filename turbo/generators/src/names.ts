@@ -16,3 +16,7 @@ export const toDirectoryName = (value: string) =>
 export const validateName = (value: string) =>
   APP_NAME_PATTERN.test(toDirectoryName(value)) ||
   "Use letters and digits, e.g. `feed` or `order-sync`.";
+
+export const BUILD_TARGETS = ["vercel", "node"] as const;
+
+export type BuildTarget = (typeof BUILD_TARGETS)[number];

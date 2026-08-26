@@ -21,12 +21,13 @@ const write = async (path: string, contents: string) => {
   await writeFile(path, contents);
 };
 
-const generate = () =>
+const generate = (target: "node" | "vercel" = "vercel") =>
   createApp({
     description: "Keeps a feed in step with Saleor",
     name: "feed-sync",
     port: "8010",
     root,
+    target,
   });
 
 describe("create-app", () => {
@@ -39,7 +40,11 @@ describe("create-app", () => {
       JSON.stringify(TEMPLATE_PKG, null, 2),
     );
     await write(join(template(), "README.md"), "# app-template\nPort 8000.\n");
-    await write(join(template(), ".env.example"), "PORT=8000\n");
+    await write(
+      join(template(), ".env.example"),
+      "BUILD_TARGET=vercel\nPORT=8000\n",
+    );
+    await write(join(template(), "vercel.json"), '{"framework":"hono"}');
     await write(join(template(), "src", "index.ts"), "export const a = 1;\n");
   });
 
@@ -80,7 +85,7 @@ describe("create-app", () => {
       "# feed-sync\nPort 8010.\n",
     );
     expect(await readFile(join(destination, ".env.example"), "utf8")).toBe(
-      "PORT=8010\n",
+      "BUILD_TARGET=vercel\nPORT=8010\n",
     );
   });
 
@@ -91,6 +96,7 @@ describe("create-app", () => {
       name: "  Feed Sync!  ",
       port: "8010",
       root,
+      target: "vercel",
     });
 
     // then `--args` skips the prompt that would have filtered it.
@@ -114,6 +120,19 @@ describe("create-app", () => {
     await expect(
       readFile(join(destination, ".saleor-app-config.json"), "utf8"),
     ).rejects.toThrow();
+  });
+
+  it("leaves Vercel's config behind for an app deployed elsewhere", async () => {
+    // when
+    const destination = await generate("node");
+
+    // then
+    await expect(
+      readFile(join(destination, "vercel.json"), "utf8"),
+    ).rejects.toThrow();
+    expect(await readFile(join(destination, ".env.example"), "utf8")).toContain(
+      "BUILD_TARGET=node",
+    );
   });
 
   it("refuses to write over an app that already exists", async () => {

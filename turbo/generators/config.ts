@@ -5,12 +5,18 @@ import { join } from "node:path";
 import { type PlopTypes } from "@turbo/gen";
 
 import { createApp } from "./src/create-app.ts";
-import { toDirectoryName, validateName } from "./src/names.ts";
+import {
+  BUILD_TARGETS,
+  type BuildTarget,
+  toDirectoryName,
+  validateName,
+} from "./src/names.ts";
 
 type Answers = {
   description: string;
   name: string;
   port: string;
+  target: BuildTarget;
   turbo: { paths: { root: string } };
 };
 
@@ -51,6 +57,13 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
           input.trim().length > 0 || "A description is required.",
       },
       {
+        choices: [...BUILD_TARGETS],
+        default: "vercel",
+        message: "What is the deployment target?",
+        name: "target",
+        type: "list",
+      },
+      {
         default: "8000",
         message: "Dev server port:",
         name: "port",
@@ -61,13 +74,14 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
     ],
     actions: [
       async (answers) => {
-        const { description, name, port, turbo } = answers as Answers;
+        const { description, name, port, target, turbo } = answers as Answers;
 
         const destination = await createApp({
           description,
           name,
           port,
           root: turbo.paths.root,
+          target,
         });
 
         const pnpm = run(turbo.paths.root);

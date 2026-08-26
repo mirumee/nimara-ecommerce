@@ -1,7 +1,12 @@
 import { cp, readFile, writeFile } from "node:fs/promises";
 import { basename, join } from "node:path";
 
-import { TEMPLATE_NAME, TEMPLATE_PORT, toDirectoryName } from "./names.ts";
+import {
+  type BuildTarget,
+  TEMPLATE_NAME,
+  TEMPLATE_PORT,
+  toDirectoryName,
+} from "./names.ts";
 
 // Copying `.env` would hand the new app someone else's Saleor token.
 const NOT_COPIED = new Set([
@@ -18,18 +23,32 @@ export type CreateAppInput = {
   name: string;
   port: string;
   root: string;
+  target: BuildTarget;
 };
+
+// An app deployed elsewhere should not carry another platform's config.
+const TARGET_ONLY = new Set(["vercel.json"]);
 
 const copyTemplate = ({
   destination,
   source,
+  target,
 }: {
   destination: string;
   source: string;
+  target: BuildTarget;
 }) =>
   cp(source, destination, {
     errorOnExist: true,
-    filter: (entry) => !NOT_COPIED.has(basename(entry)),
+    filter: (entry) => {
+      const name = basename(entry);
+
+      if (NOT_COPIED.has(name)) {
+        return false;
+      }
+
+      return target === "vercel" || !TARGET_ONLY.has(name);
+    },
     force: false,
     recursive: true,
   });
@@ -66,16 +85,21 @@ const rewriteText = async ({
   file,
   name,
   port,
+  target,
 }: {
   file: string;
   name: string;
   port: string;
+  target: BuildTarget;
 }) => {
   const contents = await readFile(file, "utf8");
 
   await writeFile(
     file,
-    contents.replaceAll(TEMPLATE_NAME, name).replaceAll(TEMPLATE_PORT, port),
+    contents
+      .replaceAll(TEMPLATE_NAME, name)
+      .replaceAll(TEMPLATE_PORT, port)
+      .replace(/^BUILD_TARGET=.*$/m, `BUILD_TARGET=${target}`),
   );
 };
 
@@ -85,6 +109,7 @@ export const createApp = async ({
   name,
   port,
   root,
+  target,
 }: CreateAppInput) => {
   // `--args` skips the prompt that would have filtered this.
   const appName = toDirectoryName(name);
@@ -93,6 +118,7 @@ export const createApp = async ({
   await copyTemplate({
     destination,
     source: join(root, "templates", "app"),
+    target,
   });
 
   await rewritePackageJson({
@@ -103,7 +129,12 @@ export const createApp = async ({
   });
 
   for (const file of ["README.md", ".env.example"]) {
-    await rewriteText({ file: join(destination, file), name: appName, port });
+    await rewriteText({
+      file: join(destination, file),
+      name: appName,
+      port,
+      target,
+    });
   }
 
   return destination;
