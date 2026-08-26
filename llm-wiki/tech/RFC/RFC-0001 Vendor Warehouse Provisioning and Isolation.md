@@ -11,7 +11,7 @@ tags:
 created: "2026-08-26T00:00:00+00:00"
 status: "draft"
 owner: "Wojciech Gajda"
-prd: "[PRD-003 Vendor-Owned Warehouses](../../prd/PRD-003%20Vendor-Owned%20Warehouses.md)"
+prd: "[PRD-004 Vendor-Owned Warehouses](../../prd/PRD-004%20Vendor-Owned%20Warehouses.md)"
 ---
 
 # Vendor Warehouse Provisioning and Isolation
@@ -255,4 +255,4 @@ None. No new service, no new environment variable, no schema migration.
 
 ## Related Notes
 
-[PRD-003 Vendor-Owned Warehouses](../../prd/PRD-003%20Vendor-Owned%20Warehouses.md)
+[PRD-004 Vendor-Owned Warehouses](../../prd/PRD-004%20Vendor-Owned%20Warehouses.md)

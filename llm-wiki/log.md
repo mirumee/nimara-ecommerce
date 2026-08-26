@@ -738,7 +738,7 @@
 
 ## 2026-08-26
 
-- **Update**: Added `PRD-003 Vendor-Owned Warehouses`. It states the gap between requirement 7 of
+- **Update**: Added `PRD-004 Vendor-Owned Warehouses`. It states the gap between requirement 7 of
   the DERBY Nimara Marketplace design and the current build, where the vendor panel exposes every
   marketplace warehouse without a vendor filter and vendor registration creates no warehouse.
 - **Update**: Added `RFC-0001 Vendor Warehouse Provisioning and Isolation`, the first RFC in the
@@ -751,9 +751,12 @@
   reformatted by hand to the format the RFC MOC documents, and the "no RFC documents" placeholder
   was removed.
 - **Lint**: `pnpm wiki:lint` at zero violations.
-- **Update**: Ran the `prd-modeling` business interview against `PRD-003`. It closed five open
+- **Update**: Ran the `prd-modeling` business interview against `PRD-004`. It closed five open
   questions and reshaped the record: the adopter is the Storefront Developer and the vendor is the
   end user, the strategic role is market parity with low urgency, no numeric target is set because
   no live marketplace exists, and three binary release conditions replace it. The release is one
   merge with no feature flag. Vendors registered before the change are deleted, not provisioned,
   which removed the backfill path from `RFC-0001` as well.
+- **Fix**: Renumbered the record to `PRD-004 Vendor-Owned Warehouses`. The draft reused `PRD-003`,
+  which `PRD-003 Cookie Consent` already holds. The index entry, the `RFC-0001` frontmatter and
+  body link, and the log entries above now point at `PRD-004`.
