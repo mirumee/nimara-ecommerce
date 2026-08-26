@@ -26,7 +26,7 @@ import { useToast } from "@nimara/ui/hooks";
 import {
   type ConfigFormInput,
   type ConfigFormSchema,
-} from "@/apps/handler/api/rest/app/schema";
+} from "@/services/handler/api/rest/app/schema";
 import { type ConfigFormData } from "@/use-cases/get-config-form-data-use-case";
 
 import { saveConfigData } from "../api";

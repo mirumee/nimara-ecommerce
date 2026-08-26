@@ -51,7 +51,7 @@ to `LOCAL.stripe` in its `.env`.
 ## 🚀 Development
 
 Each app is a [Hono](https://hono.dev) server with an optional Vite-built React
-config UI. Apps live under `src/apps/<name>/`:
+config UI. Services live under `src/services/<name>/`:
 
 - `entry-server.ts` — the Hono app; exports `app` (Vercel/dev) and `handler`
   (AWS Lambda).
@@ -66,7 +66,7 @@ pnpm lint:types     # tsc --noEmit
 
 ### Auto-discovery
 
-Both dev and build **auto-discover** `src/apps/*` — adding an app dir needs no
+Both dev and build **auto-discover** `src/services/*` — adding a service dir needs no
 config change.
 
 - **Dev** (`src/dev-server.ts`, vite `import.meta.glob`): a single app is
@@ -160,7 +160,7 @@ constant the bundler drops.
 
 ### Architecture (DDD-ish)
 
-- `src/apps/*` — presentation: Hono routes + the React UI per app.
+- `src/services/*` — presentation: Hono routes + the React UI per service.
 - `src/domain` — pure types/schemas (payment, config).
 - `src/use-cases` — application use-cases + services.
 - `src/infrastructure` — app-specific adapters (Stripe API, webhook endpoints).
