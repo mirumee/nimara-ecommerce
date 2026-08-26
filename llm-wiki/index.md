@@ -30,6 +30,7 @@ okf_version: "0.1"
 - [PRD-001 Natural-Language Product Discovery](prd/PRD-001%20Natural-Language%20Product%20Discovery.md) - Product requirements for closing Nimara's natural-language discovery gap with a reusable, open-source storefront capability.
 - [PRD-002 Verified User Reviews](prd/PRD-002%20User%20Reviews.md) - Product requirements for a verified-purchase user reviews system in Nimara.
 - [PRD-003 Cookie Consent & Google Consent Mode v2](prd/PRD-003%20Cookie%20Consent.md) - Product requirements for Cookie Consent and Google Consent Mode v2 in the Nimara storefront.
+- [PRD-003 Vendor-Owned Warehouses](prd/PRD-003%20Vendor-Owned%20Warehouses.md) - Product Requirements Document for giving each marketplace vendor its own Saleor warehouse instead of shared marketplace warehouses.
 
 # Implementation Evidence
 
@@ -132,6 +133,7 @@ okf_version: "0.1"
 # Technology RFC
 
 - [RFC MOC](tech/RFC/RFC%20MOC.md) - Map of content and register for RFC design proposals that precede an accepting or rejecting ADR.
+- [RFC-0001 Vendor Warehouse Provisioning and Isolation](tech/RFC/RFC-0001%20Vendor%20Warehouse%20Provisioning%20and%20Isolation.md) - Design proposal for provisioning one Saleor warehouse per marketplace vendor and scoping the vendor panel warehouse list to its owner.
 
 # Technology Saleor Schema
 

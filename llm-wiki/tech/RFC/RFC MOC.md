@@ -27,7 +27,7 @@ outcome, live in an [ADR](../ADR/ADR%20MOC.md).
 
 <!-- Newest last. Format: - RFC-NNNN Title - Status - resolving ADR - one-line summary -->
 
-_No RFC documents are present in the current tree._
+- [RFC-0001 Vendor Warehouse Provisioning and Isolation](RFC-0001%20Vendor%20Warehouse%20Provisioning%20and%20Isolation.md) - draft - no resolving ADR yet - one Saleor warehouse per vendor, provisioned by the platform, with the vendor panel warehouse list scoped to its owner.
 
 ## Related Notes
 
