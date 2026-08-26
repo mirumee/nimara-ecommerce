@@ -22,7 +22,7 @@
     "react-dom": "^19.2.3",
     "react-hook-form": "^7.85.0",
     "tailwind-merge": "2.6.1",
-    "zod": "^4.4.3"
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@nimara/codegen": "workspace:*",

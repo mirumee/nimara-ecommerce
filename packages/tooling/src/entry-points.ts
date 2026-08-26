@@ -25,22 +25,22 @@ export const readBuildTarget = (): BuildTarget => {
 // An app dir holds
 // - `entry-server.ts`
 // - `entry-client.tsx`* only if it ships a UI.
-export const getEntryPoints = async (appsDir: string) => {
-  const items = await readdir(appsDir);
+export const getEntryPoints = async (servicesDir: string) => {
+  const items = await readdir(servicesDir);
   const entryPoints: { client: AppEntry[]; server: AppEntry[] } = {
     client: [],
     server: [],
   };
 
   for (const item of items) {
-    const appDir = join(appsDir, item);
+    const serviceDir = join(servicesDir, item);
 
-    if (!(await stat(appDir)).isDirectory()) {
+    if (!(await stat(serviceDir)).isDirectory()) {
       continue;
     }
 
-    const serverEntry = join(appDir, "entry-server.ts");
-    const clientEntry = join(appDir, "entry-client.tsx");
+    const serverEntry = join(serviceDir, "entry-server.ts");
+    const clientEntry = join(serviceDir, "entry-client.tsx");
 
     if (existsSync(serverEntry)) {
       entryPoints.server.push({ name: item, path: serverEntry });

@@ -1,7 +1,9 @@
 packages:
   - "apps/*"
   - "packages/*"
+  - "templates/*"
 
 catalog:
   hono: 4.13.3
   next: 16.3.2
+  zod: ^4.4.3

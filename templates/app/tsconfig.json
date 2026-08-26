@@ -1,0 +1,15 @@
+{
+  "extends": "@nimara/config/tsconfig/base",
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "jsx": "react-jsx",
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "noEmit": true,
+    "types": ["vite/client"],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx", "**/*/*.d.ts"],
+  "exclude": ["node_modules", "public", "dist"]
+}

@@ -33,7 +33,7 @@
     "@sentry/node": "^10.70.0",
     "hono": "catalog:",
     "react": "^19.2.3",
-    "zod": "^4.3.5"
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@nimara/config": "workspace:*",

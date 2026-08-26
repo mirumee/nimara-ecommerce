@@ -26,7 +26,7 @@
     "pino": "10.3.1",
     "string-strip-html": "^13.6.1",
     "ts-invariant": "0.10.3",
-    "zod": "^4.4.3"
+    "zod": "catalog:"
   },
   "peerDependencies": {
     "next": "^16.1.6"

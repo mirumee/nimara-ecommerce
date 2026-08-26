@@ -1,43 +1,7 @@
 import { type CodegenConfig } from "@graphql-codegen/cli";
 import { type IGraphQLConfig } from "graphql-config";
 
-export const baseCodegenConfig: CodegenConfig["config"] = {
-  documentMode: "string",
-  enumsAsTypes: true,
-  useTypeImports: true,
-  strictScalars: true,
-  skipTypename: true,
-  dedupeFragments: true,
-  dedupeOperationSuffix: true,
-  omitOperationSuffix: true,
-  mergeFragmentTypes: true,
-  exportFragmentSpreadSubTypes: true,
-  extractAllFieldsToTypes: true,
-  avoidOptionals: {
-    field: true,
-    inputValue: false,
-    object: false,
-    defaultValue: false,
-  },
-  scalars: {
-    Date: "string",
-    DateTime: "string",
-    Day: "number",
-    Decimal: "number",
-    GenericScalar: "unknown",
-    JSON: "unknown",
-    JSONString: "string",
-    Metadata: "Record<string, string>",
-    Hour: "number",
-    Minute: "number",
-    PositiveInt: "number",
-    PositiveDecimal: "number",
-    UUID: "string",
-    Upload: "unknown",
-    WeightScalar: "unknown",
-    _Any: "unknown",
-  },
-};
+import { baseCodegenConfig, singleFileConfig } from "./config";
 
 // Skip codegen instead of crashing when Saleor is not configured (zero-config).
 if (!process.env.NEXT_PUBLIC_SALEOR_API_URL) {
@@ -54,20 +18,6 @@ const nearOperationFileConfig = {
     fileName: "generated",
     extension: ".ts",
   },
-} as const;
-
-const singleFileConfig = {
-  plugins: [
-    {
-      add: {
-        content: "/* eslint-disable */\n",
-      },
-    },
-    "typescript",
-    "typescript-operations",
-    "typed-document-node",
-  ],
-  config: baseCodegenConfig,
 } as const;
 
 const APP_PROJECT_GENERATES: Record<string, CodegenConfig["generates"]> = {
@@ -99,6 +49,9 @@ const config: IGraphQLConfig = {
       schema: process.env.NEXT_PUBLIC_SALEOR_API_URL,
       documents: [
         "../../**/*.graphql",
+        // Apps that keep their own client wire codegen up themselves; see
+        // `@nimara/codegen/preset`.
+        "!../../templates/**/*.graphql",
         ...SEPARATE_APPS.map((app) => `!../../apps/${app}/**/*.graphql`),
       ],
       extensions: {
