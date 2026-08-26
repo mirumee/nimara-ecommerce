@@ -8,6 +8,8 @@ import { createApp } from "./src/create-app.ts";
 import {
   BUILD_TARGETS,
   type BuildTarget,
+  TENANCIES,
+  type Tenancy,
   toDirectoryName,
   validateName,
 } from "./src/names.ts";
@@ -17,6 +19,7 @@ type Answers = {
   name: string;
   port: string;
   target: BuildTarget;
+  tenancy: Tenancy;
   turbo: { paths: { root: string } };
 };
 
@@ -57,6 +60,22 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
           input.trim().length > 0 || "A description is required.",
       },
       {
+        choices: [
+          {
+            name: "multi — installable by many Saleor instances",
+            value: "multi",
+          },
+          {
+            name: "single — serves the one Saleor named in ALLOWED_DOMAINS",
+            value: "single",
+          },
+        ] satisfies { name: string; value: Tenancy }[],
+        default: TENANCIES[0],
+        message: "How many Saleor instances does it serve?",
+        name: "tenancy",
+        type: "list",
+      },
+      {
         choices: [...BUILD_TARGETS],
         default: "vercel",
         message: "What is the deployment target?",
@@ -74,7 +93,8 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
     ],
     actions: [
       async (answers) => {
-        const { description, name, port, target, turbo } = answers as Answers;
+        const { description, name, port, target, tenancy, turbo } =
+          answers as Answers;
 
         const destination = await createApp({
           description,
@@ -82,6 +102,7 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
           port,
           root: turbo.paths.root,
           target,
+          tenancy,
         });
 
         const pnpm = run(turbo.paths.root);

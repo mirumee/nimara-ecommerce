@@ -21,13 +21,17 @@ const write = async (path: string, contents: string) => {
   await writeFile(path, contents);
 };
 
-const generate = (target: "node" | "vercel" = "vercel") =>
+const generate = ({
+  target = "vercel",
+  tenancy = "multi",
+}: { target?: "node" | "vercel"; tenancy?: "multi" | "single" } = {}) =>
   createApp({
     description: "Keeps a feed in step with Saleor",
     name: "feed-sync",
     port: "8010",
     root,
     target,
+    tenancy,
   });
 
 describe("create-app", () => {
@@ -42,10 +46,20 @@ describe("create-app", () => {
     await write(join(template(), "README.md"), "# app-template\nPort 8000.\n");
     await write(
       join(template(), ".env.example"),
-      "BUILD_TARGET=vercel\nPORT=8000\n",
+      "BUILD_TARGET=vercel\n" +
+        "# Comma-separated Saleor domains allowed to install the app, e.g.\n" +
+        "# store.saleor.cloud. Empty allows none. Wildcards (`*`, `*.saleor.cloud`)\n" +
+        "# widen it and belong in local development only.\n" +
+        "ALLOWED_DOMAINS=\n" +
+        "PORT=8000\n",
     );
     await write(join(template(), "vercel.json"), '{"framework":"hono"}');
     await write(join(template(), "src", "index.ts"), "export const a = 1;\n");
+    await write(
+      join(template(), "src", "services", "handler", "config.ts"),
+      'import { prepareServiceConfig } from "@nimara/lib/config/service";\n' +
+        "export const APP_CONFIG = prepareServiceConfig({});\n",
+    );
   });
 
   afterEach(() => rm(root, { force: true, recursive: true }));
@@ -84,8 +98,8 @@ describe("create-app", () => {
     expect(await readFile(join(destination, "README.md"), "utf8")).toBe(
       "# feed-sync\nPort 8010.\n",
     );
-    expect(await readFile(join(destination, ".env.example"), "utf8")).toBe(
-      "BUILD_TARGET=vercel\nPORT=8010\n",
+    expect(await readFile(join(destination, ".env.example"), "utf8")).toContain(
+      "PORT=8010",
     );
   });
 
@@ -97,6 +111,7 @@ describe("create-app", () => {
       port: "8010",
       root,
       target: "vercel",
+      tenancy: "multi",
     });
 
     // then `--args` skips the prompt that would have filtered it.
@@ -124,7 +139,7 @@ describe("create-app", () => {
 
   it("leaves Vercel's config behind for an app deployed elsewhere", async () => {
     // when
-    const destination = await generate("node");
+    const destination = await generate({ target: "node" });
 
     // then
     await expect(
@@ -133,6 +148,42 @@ describe("create-app", () => {
     expect(await readFile(join(destination, ".env.example"), "utf8")).toContain(
       "BUILD_TARGET=node",
     );
+  });
+
+  it("calls the single-tenant helper when the app serves one Saleor", async () => {
+    // when
+    const destination = await generate({ tenancy: "single" });
+    const config = await readFile(
+      join(destination, "src", "services", "handler", "config.ts"),
+      "utf8",
+    );
+
+    // then the generated file names the helper it calls, and that helper is
+    // what publishes `SALEOR_DOMAIN`.
+    expect(config).toContain("prepareSingleTenantServiceConfig");
+    expect(config).not.toMatch(/\bprepareServiceConfig\b/);
+  });
+
+  it("tells a single-tenant app it may name only one domain", async () => {
+    // when
+    const destination = await generate({ tenancy: "single" });
+    const env = await readFile(join(destination, ".env.example"), "utf8");
+
+    // then
+    expect(env).toContain("Exactly one");
+    expect(env).not.toContain("Wildcards");
+  });
+
+  it("leaves a multi-tenant app on the shared helper", async () => {
+    // when
+    const destination = await generate();
+    const config = await readFile(
+      join(destination, "src", "services", "handler", "config.ts"),
+      "utf8",
+    );
+
+    // then
+    expect(config).not.toContain("prepareSingleTenantServiceConfig");
   });
 
   it("refuses to write over an app that already exists", async () => {
