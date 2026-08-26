@@ -1,12 +1,10 @@
 import { Hono } from "hono";
 
 /**
- * DEV only: groups every app under one Hono instance for @hono/vite-dev-server.
- * Apps are auto-discovered from `src/apps/*` (vite`import.meta.glob`) and imported
- * one at a time so each can be given its own `BASE_PATH`
- * A single app is served at `/`, if multiple - under `/<app>`.
+ * DEV only. Imported one at a time so each service can be given its own
+ * `BASE_PATH`: one service answers at `/`, several under `/<service>`.
  */
-const importers = import.meta.glob("./apps/*/entry-server.ts") as Record<
+const importers = import.meta.glob("./services/*/entry-server.ts") as Record<
   string,
   () => Promise<{ app?: Hono }>
 >;
@@ -15,7 +13,7 @@ const paths = Object.keys(importers).sort();
 const server = new Hono();
 
 for (const path of paths) {
-  const name = path.split("/").at(-2) ?? ""; // `./apps/<name>/entry-server.ts`
+  const name = path.split("/").at(-2) ?? ""; // `./services/<name>/entry-server.ts`
 
   process.env.BASE_PATH = paths.length > 1 ? `/${name}` : "";
 

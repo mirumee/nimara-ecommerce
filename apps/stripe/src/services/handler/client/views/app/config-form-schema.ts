@@ -1,7 +1,7 @@
 import {
   type ConfigFormInput,
   configFormSchema as baseConfigFormSchema,
-} from "@/apps/handler/api/rest/app/schema";
+} from "@/services/handler/api/rest/app/schema";
 import { type ConfigFormData } from "@/use-cases/get-config-form-data-use-case";
 
 const SECRET_KEY_REQUIRED = "Enter the secret key.";
