@@ -11,6 +11,6 @@ export default defineConfig({
       ...config({ path: ".env.test", quiet: true }).parsed,
       NODE_ENV: "test",
     },
-    setupFiles: ["./src/lib/test/setup"],
+    setupFiles: ["@nimara/lib/test/setup"],
   },
 });

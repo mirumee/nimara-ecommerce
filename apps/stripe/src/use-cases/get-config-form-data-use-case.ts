@@ -1,11 +1,10 @@
-import { type AsyncResult, err, ok } from "@nimara/domain/objects/Result";
-import { type JoseAuthService } from "@nimara/infrastructure/jose/auth/types";
+import { type AsyncResult, ok } from "@nimara/domain/objects/Result";
+import { maskString } from "@nimara/foundation/lib/security";
 
 import { type PaymentGatewayConfig } from "@/domain/app-config";
 import { ChannelsQueryDocument } from "@/graphql/generated/client";
 import { type AppConfigService } from "@/infrastructure/app-config-service";
-import { type SaleorClient } from "@/lib/saleor/client";
-import { maskString } from "@/lib/security";
+import { type SaleorClient } from "@/infrastructure/saleor/client";
 
 const MASKED_SECRETS_LENGTH = 25;
 
@@ -50,48 +49,39 @@ const toFormConfig = (config: PaymentGatewayConfig): PaymentGatewayConfig => ({
 export const getConfigFormDataUseCase =
   ({
     appConfigService,
-    joseAuthService,
     saleorClient,
   }: {
     appConfigService: AppConfigService;
-    joseAuthService: (saleorDomain: string) => JoseAuthService;
     saleorClient: (opts: {
       authToken?: string;
       saleorDomain: string;
     }) => SaleorClient;
   }) =>
   async ({
-    accessToken,
     saleorDomain,
   }: {
-    accessToken: string;
     saleorDomain: string;
   }): AsyncResult<ConfigFormData> => {
-    const jwtResult =
-      await joseAuthService(saleorDomain).verifyJwt(accessToken);
-
-    if (!jwtResult.ok) {
-      return jwtResult;
-    }
-
-    const client = saleorClient({
-      authToken: accessToken,
+    const installation = await appConfigService.getBySaleorDomain({
       saleorDomain,
     });
 
-    let channels;
-
-    try {
-      ({ channels } = await client.execute(ChannelsQueryDocument));
-    } catch (error) {
-      return err([
-        {
-          code: "HTTP_ERROR",
-          message: "Failed to fetch channels from Saleor.",
-          originalError: error,
-        },
-      ]);
+    if (!installation.ok) {
+      return installation;
     }
+
+    const client = saleorClient({
+      authToken: installation.data?.authToken,
+      saleorDomain,
+    });
+
+    const channelsResult = await client.execute(ChannelsQueryDocument);
+
+    if (!channelsResult.ok) {
+      return channelsResult;
+    }
+
+    const { channels } = channelsResult.data;
 
     const configResult = await appConfigService.getPaymentGatewayConfigSet({
       saleorDomain,

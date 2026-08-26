@@ -1,23 +1,19 @@
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
-
 import { Hono } from "hono";
 import { handle } from "hono/aws-lambda";
 import { requestId } from "hono/request-id";
 
+import { errorHandler } from "@nimara/lib/hono/error/handler";
+import { healthCheckMiddleware } from "@nimara/lib/hono/middleware/health-check";
+import { loggingMiddleware } from "@nimara/lib/hono/middleware/logging";
+import { requestOriginMiddleware } from "@nimara/lib/hono/middleware/request-origin";
+import { initSentry } from "@nimara/lib/reporting/sentry/instrument";
+
 import { container } from "@/container";
-import { errorHandler } from "@/lib/error/handler";
-import { healthCheckMiddleware } from "@/lib/middleware/health-check-middleware";
-import { loggingMiddleware } from "@/lib/middleware/logging-middleware";
-import { nodeAssetsMiddleware } from "@/lib/middleware/node-assets-middleware";
-import { requestOriginMiddleware } from "@/lib/middleware/request-origin-middleware";
-import { vercelAssetsMiddleware } from "@/lib/middleware/vercel-assets-middleware";
-import { initSentry } from "@/lib/sentry/instrument";
 
 import { appRoutes } from "./api/rest/app";
 import { saleorRoutes } from "./api/rest/saleor";
 import { stripeRoutes } from "./api/rest/stripe";
-import { clientEntryPoint } from "./client-entry-point";
+import { dashboard } from "./dashboard";
 
 const CONFIG = container.get("config");
 
@@ -27,30 +23,14 @@ initSentry({
   release: CONFIG.RELEASE,
 });
 
-const assetsMiddleware =
-  __BUILD_TARGET__ === "vercel"
-    ? vercelAssetsMiddleware({
-        assets: __CLIENT_ASSETS__,
-        basePath: CONFIG.BASE_PATH,
-      })
-    : nodeAssetsMiddleware({
-        basePath: CONFIG.BASE_PATH,
-        dir: join(dirname(fileURLToPath(import.meta.url)), "assets"),
-      });
-
 const app = new Hono()
   .onError(errorHandler)
   .basePath(CONFIG.BASE_PATH as "/")
   .use(requestId())
   .use(loggingMiddleware(container.get("logger")))
-  .use(requestOriginMiddleware())
-  .use((context, next) => {
-    context.req.basePath = CONFIG.BASE_PATH;
-
-    return next();
-  })
+  .use(requestOriginMiddleware({ basePath: CONFIG.BASE_PATH }))
   .use(healthCheckMiddleware({ basePath: CONFIG.BASE_PATH }))
-  .use(assetsMiddleware)
+  .route("/", dashboard)
   /**
    * Nested routes must be defined at the end for proper type inference for
    * hono/client.
@@ -60,9 +40,6 @@ const app = new Hono()
   .route("/api/app", appRoutes);
 
 export type AppType = typeof app;
-
-// Serves the config UI. Remove this line for an app that ships no client.
-app.get("/app", (context) => clientEntryPoint({ context }));
 
 /**
  * `app` — Vercel Hono preset / dev server

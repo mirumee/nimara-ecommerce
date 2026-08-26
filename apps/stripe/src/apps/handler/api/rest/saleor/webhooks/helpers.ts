@@ -1,4 +1,5 @@
 import { type Logger } from "@nimara/infrastructure/logging/types";
+import { responseError, responseFromErrors } from "@nimara/lib/hono/api/util";
 
 import { container } from "@/container";
 import { type PaymentGatewayConfig } from "@/domain/app-config";
@@ -6,6 +7,7 @@ import {
   type PaymentIntent,
   type TransactionFlowStrategy,
 } from "@/domain/consts";
+import { getAmountFromCents } from "@/domain/currency";
 import {
   buildGatewayMetadata,
   getIntentDashboardUrl,
@@ -15,8 +17,6 @@ import {
   type TransactionEventSchema,
   transactionEventSchema,
 } from "@/domain/payment";
-import { responseError, responseFromErrors } from "@/lib/api/util";
-import { getAmountFromCents } from "@/lib/currency";
 
 /**
  * Serializes a transaction event handler result into the synchronous

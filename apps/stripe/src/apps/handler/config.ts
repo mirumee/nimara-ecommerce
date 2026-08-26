@@ -1,16 +1,12 @@
 import { z } from "zod";
 
-import { baseConfigSchema } from "@/lib/config/schema";
-import { prepareConfig } from "@/lib/zod/util";
+import { baseConfigSchema } from "@nimara/lib/config/schema";
+import { prepareConfig } from "@nimara/lib/zod/util";
+
+import packageJson from "../../../package.json";
 
 const configSchema = z
   .object({
-    ALLOWED_DOMAINS: z
-      .array(z.string())
-      .default([])
-      .describe(
-        "Saleor domains allowed to install the app. Supports wildcards.",
-      ),
     CONFIG_PROVIDER: z
       .enum(["edge", "file"])
       .default("edge")
@@ -20,21 +16,15 @@ const configSchema = z
       .default("nimara-config")
       .describe("Config provider key."),
   })
-  .and(baseConfigSchema);
+  .and(baseConfigSchema(packageJson));
 
 const parsed = prepareConfig({
   name: "handler",
   schema: configSchema,
-  input: {
-    ALLOWED_DOMAINS: process.env.ALLOWED_DOMAINS?.split(",")
-      .map((domain) => domain.trim())
-      .filter(Boolean),
-  },
   serverOnly: true,
 });
 
 export const APP_CONFIG = {
   ...parsed,
-  RELEASE: `${parsed.NAME}@${parsed.VERSION}`,
   APP_ID: `${parsed.ENVIRONMENT}.${parsed.NAME}`,
 };

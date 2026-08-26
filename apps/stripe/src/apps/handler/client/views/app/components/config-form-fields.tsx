@@ -7,6 +7,7 @@ import {
   useWatch,
 } from "react-hook-form";
 
+import { useDashboardSession } from "@nimara/lib/client/dashboard-session/context";
 import {
   Alert,
   AlertDescription,
@@ -28,7 +29,6 @@ import {
 } from "@/apps/handler/api/rest/app/schema";
 import { type ConfigFormData } from "@/use-cases/get-config-form-data-use-case";
 
-import { useDashboardSession } from "../../../components/dashboard-session/context";
 import { saveConfigData } from "../api";
 import { configFormSchema } from "../config-form-schema";
 import { ChannelList } from "./channel-list";
@@ -60,7 +60,7 @@ export const ConfigFormFields = ({
   getConfig: Promise<ConfigFormData>;
   reload: () => void;
 }) => {
-  const { accessToken, saleorDomain } = useDashboardSession();
+  const { accessToken, saleorApiUrl } = useDashboardSession();
   const { toast } = useToast();
   const data = use(getConfig);
 
@@ -78,7 +78,7 @@ export const ConfigFormFields = ({
     const error = await saveConfigData({
       data: values,
       accessToken,
-      saleorDomain,
+      saleorApiUrl,
     });
 
     if (error) {

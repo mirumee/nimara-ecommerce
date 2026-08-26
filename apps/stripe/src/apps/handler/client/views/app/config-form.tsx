@@ -1,33 +1,34 @@
 import { Suspense, useCallback, useState } from "react";
 
-import { useDashboardSession } from "../../components/dashboard-session/context";
-import { Spinner } from "../../components/spinner";
+import { ErrorBoundary } from "@nimara/lib/client/components/error-boundary";
+import { Spinner } from "@nimara/lib/client/components/spinner";
+import { useDashboardSession } from "@nimara/lib/client/dashboard-session/context";
+
 import { fetchConfigData } from "./api";
-import { ConfigErrorBoundary } from "./components/config-error-boundary";
 import { ConfigFormFields } from "./components/config-form-fields";
 
 export const ConfigForm = () => {
-  const { accessToken, saleorDomain } = useDashboardSession();
+  const { accessToken, saleorApiUrl } = useDashboardSession();
   const [{ formKey, getConfig }, setConfigState] = useState(() => ({
     // Bumped on reload to remount the form, so it re-reads the saved values.
     formKey: 0,
-    getConfig: fetchConfigData({ accessToken, saleorDomain }),
+    getConfig: fetchConfigData({ accessToken, saleorApiUrl }),
   }));
 
   const reload = useCallback(
     () =>
       setConfigState((current) => ({
         formKey: current.formKey + 1,
-        getConfig: fetchConfigData({ accessToken, saleorDomain }),
+        getConfig: fetchConfigData({ accessToken, saleorApiUrl }),
       })),
-    [accessToken, saleorDomain],
+    [accessToken, saleorApiUrl],
   );
 
   return (
-    <ConfigErrorBoundary>
+    <ErrorBoundary title="Configuration unavailable">
       <Suspense fallback={<Spinner />}>
         <ConfigFormFields getConfig={getConfig} key={formKey} reload={reload} />
       </Suspense>
-    </ConfigErrorBoundary>
+    </ErrorBoundary>
   );
 };

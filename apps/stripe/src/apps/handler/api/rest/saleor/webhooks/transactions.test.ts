@@ -1,12 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { err, ok } from "@nimara/domain/objects/Result";
+import { type HandlerContext } from "@nimara/lib/hono/saleor/types";
+import { MagicMock } from "@nimara/lib/test/mock";
 
 import { type PaymentIntent } from "@/domain/consts";
-import { MagicMock } from "@/lib/test/mock";
 
 import { transactionInitializeSessionHandler } from "./transactions";
-import { type HandlerContext } from "./types";
 
 const mocks = vi.hoisted(() => ({
   createPaymentIntent: vi.fn(),
@@ -76,20 +76,25 @@ const buildEvent = ({
   transaction: { id: "tr_1", pspReference: "pi_1" },
 });
 
+const TENANT = {
+  saleorApiUrl: "https://shop.example.com/graphql/",
+  saleorDomain: "shop.example.com",
+};
+
 const buildContext = (event: unknown) =>
   ({
     get: () => mocks.logger,
-    req: {
-      valid: (target: string) =>
-        target === "header" ? { "saleor-domain": "shop.example.com" } : event,
-    },
+    req: { valid: () => event },
   }) as unknown as HandlerContext;
 
+// The tenant is an argument, published by the middleware that verified the
+// signature — never read off the payload.
 const handle = (event: unknown) =>
   transactionInitializeSessionHandler(
     buildContext(event) as Parameters<
       typeof transactionInitializeSessionHandler
     >[0],
+    TENANT,
   );
 
 describe("transactions", () => {

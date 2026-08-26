@@ -22,6 +22,17 @@ export const saleorBearerHeader = z.object({
 export type SaleorBearerHeader = z.infer<typeof saleorBearerHeader>;
 
 /**
+ * What a dashboard-API caller must present. The API URL is the tenant claim;
+ * `saleorTokenMiddleware` is what turns it into a proven one.
+ */
+export const saleorTokenHeaders = z.object({
+  ...saleorBearerHeader.shape,
+  "saleor-api-url": saleorHeaders.shape["saleor-api-url"],
+});
+
+export type SaleorTokenHeaders = z.infer<typeof saleorTokenHeaders>;
+
+/**
  * Saleor delivers the subscription's `event` payload as the webhook body.
  */
 export type WebhookData<T extends { event: unknown } = { event: unknown }> =

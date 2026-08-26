@@ -1,4 +1,4 @@
-import { all } from "@/lib/misc";
+import { all } from "@nimara/foundation/lib/array";
 
 import {
   type PaymentIntentStatus,

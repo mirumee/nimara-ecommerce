@@ -509,9 +509,15 @@ importers:
       '@nimara/domain':
         specifier: workspace:*
         version: link:../../packages/domain
+      '@nimara/foundation':
+        specifier: workspace:*
+        version: link:../../packages/foundation
       '@nimara/infrastructure':
         specifier: workspace:*
         version: link:../../packages/infrastructure
+      '@nimara/lib':
+        specifier: workspace:*
+        version: link:../../packages/lib
       '@saleor/app-sdk':
         specifier: 1.7.0
         version: 1.7.0(graphql@16.14.2)(next@16.3.2(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(@types/node@24.12.4)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -558,6 +564,9 @@ importers:
       '@nimara/config':
         specifier: workspace:*
         version: link:../../packages/config
+      '@nimara/tooling':
+        specifier: workspace:*
+        version: link:../../packages/tooling
       '@nimara/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -1045,6 +1054,101 @@ importers:
       vitest:
         specifier: ^4.1.2
         version: 4.1.2(@opentelemetry/api@1.9.1)(@types/node@26.2.0)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.0)(jiti@2.7.0)(terser@5.50.0)(tsx@4.22.4)(yaml@2.8.3))
+
+  packages/lib:
+    dependencies:
+      '@hono/zod-validator':
+        specifier: ^0.9.0
+        version: 0.9.0(hono@4.13.3)(zod@4.4.3)
+      '@nimara/domain':
+        specifier: workspace:*
+        version: link:../domain
+      '@nimara/foundation':
+        specifier: workspace:*
+        version: link:../foundation
+      '@nimara/infrastructure':
+        specifier: workspace:*
+        version: link:../infrastructure
+      '@nimara/ui':
+        specifier: workspace:*
+        version: link:../ui
+      '@saleor/app-sdk':
+        specifier: 1.7.0
+        version: 1.7.0(graphql@16.14.2)(next@16.3.2(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(@types/node@24.12.4)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@sentry/node':
+        specifier: ^10.70.0
+        version: 10.70.0(@opentelemetry/core@2.10.0(@opentelemetry/api@1.9.1))
+      hono:
+        specifier: 'catalog:'
+        version: 4.13.3
+      react:
+        specifier: ^19.2.3
+        version: 19.2.4
+      zod:
+        specifier: ^4.3.5
+        version: 4.4.3
+    devDependencies:
+      '@nimara/config':
+        specifier: workspace:*
+        version: link:../config
+      '@types/node':
+        specifier: ^24.12.4
+        version: 24.12.4
+      '@types/react':
+        specifier: ^19.2.14
+        version: 19.2.18
+      eslint:
+        specifier: ^8.57.0
+        version: 8.57.1
+      lint-staged:
+        specifier: ^16.4.0
+        version: 16.4.0
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vite:
+        specifier: ^8.2.1
+        version: 8.2.1(@types/node@24.12.4)(esbuild@0.28.0)(jiti@2.7.0)(terser@5.50.0)(tsx@4.22.4)(yaml@2.8.3)
+      vitest:
+        specifier: 4.1.2
+        version: 4.1.2(@opentelemetry/api@1.9.1)(@types/node@24.12.4)(vite@8.2.1(@types/node@24.12.4)(esbuild@0.28.0)(jiti@2.7.0)(terser@5.50.0)(tsx@4.22.4)(yaml@2.8.3))
+
+  packages/tooling:
+    dependencies:
+      '@hono/vite-dev-server':
+        specifier: ^0.26.1
+        version: 0.26.1(hono@4.13.3)
+      '@vitejs/plugin-react':
+        specifier: ^6.0.5
+        version: 6.0.5(vite@8.2.1(@types/node@24.12.4)(esbuild@0.28.0)(jiti@2.7.0)(terser@5.50.0)(tsx@4.22.4)(yaml@2.8.3))
+      dotenv:
+        specifier: 17.4.1
+        version: 17.4.1
+      vite-plugin-css-injected-by-js:
+        specifier: ^5.0.2
+        version: 5.0.2(vite@8.2.1(@types/node@24.12.4)(esbuild@0.28.0)(jiti@2.7.0)(terser@5.50.0)(tsx@4.22.4)(yaml@2.8.3))
+      zod:
+        specifier: ^4.3.5
+        version: 4.4.3
+    devDependencies:
+      '@nimara/config':
+        specifier: workspace:*
+        version: link:../config
+      '@types/node':
+        specifier: ^24.12.4
+        version: 24.12.4
+      eslint:
+        specifier: ^8.57.0
+        version: 8.57.1
+      lint-staged:
+        specifier: ^16.4.0
+        version: 16.4.0
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vite:
+        specifier: ^8.2.1
+        version: 8.2.1(@types/node@24.12.4)(esbuild@0.28.0)(jiti@2.7.0)(terser@5.50.0)(tsx@4.22.4)(yaml@2.8.3)
 
   packages/ui:
     dependencies:
@@ -10274,10 +10378,6 @@ packages:
   homedir-polyfill@1.0.3:
     resolution: {integrity: sha512-eSmmWE5bZTK2Nou4g0AI3zZ9rswp7GRKoKXS1BLUkvPviOqs4YTN1djQIqrXy9k5gEtdLPy86JjRwsNM9tnDcA==}
     engines: {node: '>=0.10.0'}
-
-  hono@4.13.1:
-    resolution: {integrity: sha512-kdJoFVv2xmayw6cY09H7AbMJMt8Jn5jdlEdXsP7AGBdF2DIptVlKlOLKXP41yPip4/a3yQPv9gVcJYI8YY04dw==}
-    engines: {node: '>=16.9.0'}
 
   hono@4.13.3:
     resolution: {integrity: sha512-r8AO2mYHoLxSHkgafNeC/BXyb2vWRxD3jem4Ts+ptav8oTG5FIRifAjuJEmZI4bSvvc2ns0GxmIYiZnHqN3mMw==}
@@ -19652,9 +19752,9 @@ snapshots:
     dependencies:
       hono: 4.13.3
 
-  '@hono/node-server@2.0.12(hono@4.13.1)':
+  '@hono/node-server@2.0.12(hono@4.13.3)':
     dependencies:
-      hono: 4.13.1
+      hono: 4.13.3
 
   '@hono/vite-dev-server@0.26.1(hono@4.13.3)':
     dependencies:
@@ -20263,7 +20363,7 @@ snapshots:
 
   '@modelcontextprotocol/sdk@1.30.0(zod@4.3.6)':
     dependencies:
-      '@hono/node-server': 2.0.12(hono@4.13.1)
+      '@hono/node-server': 2.0.12(hono@4.13.3)
       ajv: 8.18.0
       ajv-formats: 3.0.1(ajv@8.18.0)
       content-type: 1.0.5
@@ -20273,7 +20373,7 @@ snapshots:
       eventsource-parser: 3.1.0
       express: 5.2.1
       express-rate-limit: 8.6.1(express@5.2.1)
-      hono: 4.13.1
+      hono: 4.13.3
       jose: 6.2.10
       json-schema-typed: 8.0.2
       pkce-challenge: 5.0.1
@@ -22547,13 +22647,13 @@ snapshots:
   '@types/react-router-config@5.0.11':
     dependencies:
       '@types/history': 4.7.11
-      '@types/react': 19.2.14
+      '@types/react': 19.2.18
       '@types/react-router': 5.1.20
 
   '@types/react-router-dom@5.3.3':
     dependencies:
       '@types/history': 4.7.11
-      '@types/react': 19.2.14
+      '@types/react': 19.2.18
       '@types/react-router': 5.1.20
 
   '@types/react-router@5.1.20':
@@ -26415,8 +26515,6 @@ snapshots:
   homedir-polyfill@1.0.3:
     dependencies:
       parse-passwd: 1.0.0
-
-  hono@4.13.1: {}
 
   hono@4.13.3: {}
 

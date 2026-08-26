@@ -780,8 +780,7 @@ export type Allocation = Node & {
  *
  */
 export type AllocationStrategyEnum =
-  | "PRIORITIZE_HIGH_STOCK"
-  | "PRIORITIZE_SORTING_ORDER";
+  "PRIORITIZE_HIGH_STOCK" | "PRIORITIZE_SORTING_ORDER";
 
 /** Lists current announcements that the user should see. */
 export type Announcement = {
@@ -803,11 +802,7 @@ export type Announcement = {
 
 /** Defines a shop-level announcement's level/severity. */
 export type AnnouncementImportanceEnum =
-  | "CRITICAL"
-  | "HIGH"
-  | "LOW"
-  | "MODERATE"
-  | "UNSET";
+  "CRITICAL" | "HIGH" | "LOW" | "MODERATE" | "UNSET";
 
 /** Represents app data. */
 export type App = Node &
@@ -1398,10 +1393,7 @@ export type AppProblemCreateError = {
 };
 
 export type AppProblemCreateErrorCode =
-  | "GRAPHQL_ERROR"
-  | "INVALID"
-  | "NOT_FOUND"
-  | "REQUIRED";
+  "GRAPHQL_ERROR" | "INVALID" | "NOT_FOUND" | "REQUIRED";
 
 export type AppProblemCreateInput = {
   /** Time window in minutes for aggregating problems with the same key. Defaults to 60. If 0, a new problem is always created. */
@@ -1457,11 +1449,7 @@ export type AppProblemDismissError = {
 };
 
 export type AppProblemDismissErrorCode =
-  | "GRAPHQL_ERROR"
-  | "INVALID"
-  | "NOT_FOUND"
-  | "OUT_OF_SCOPE_APP"
-  | "REQUIRED";
+  "GRAPHQL_ERROR" | "INVALID" | "NOT_FOUND" | "OUT_OF_SCOPE_APP" | "REQUIRED";
 
 /** Input for dismissing app problems. Only one can be specified. */
 export type AppProblemDismissInput = {
@@ -2538,11 +2526,7 @@ export type AttributeDeleted = Event & {
 };
 
 export type AttributeEntityTypeEnum =
-  | "CATEGORY"
-  | "COLLECTION"
-  | "PAGE"
-  | "PRODUCT"
-  | "PRODUCT_VARIANT";
+  "CATEGORY" | "COLLECTION" | "PAGE" | "PRODUCT" | "PRODUCT_VARIANT";
 
 export type AttributeEntityTypeEnumFilterInput = {
   /** The value equal to. */
@@ -2742,10 +2726,7 @@ export type AttributeTranslate = {
 };
 
 export type AttributeTranslateErrorCode =
-  | "GRAPHQL_ERROR"
-  | "INVALID"
-  | "NOT_FOUND"
-  | "REQUIRED";
+  "GRAPHQL_ERROR" | "INVALID" | "NOT_FOUND" | "REQUIRED";
 
 /** Represents attribute translations. */
 export type AttributeTranslation = Node & {
@@ -3170,10 +3151,7 @@ export type AttributeValueTranslate = {
 };
 
 export type AttributeValueTranslateErrorCode =
-  | "GRAPHQL_ERROR"
-  | "INVALID"
-  | "NOT_FOUND"
-  | "REQUIRED";
+  "GRAPHQL_ERROR" | "INVALID" | "NOT_FOUND" | "REQUIRED";
 
 /** Represents attribute value translations. */
 export type AttributeValueTranslation = Node & {
@@ -4564,10 +4542,7 @@ export type CheckoutBillingAddressUpdate = {
  *
  */
 export type CheckoutChargeStatusEnum =
-  | "FULL"
-  | "NONE"
-  | "OVERCHARGED"
-  | "PARTIAL";
+  "FULL" | "NONE" | "OVERCHARGED" | "PARTIAL";
 
 /**
  * Completes the checkout. As a result a new order is created. The mutation allows to create the unpaid order when setting `orderSettings.allowUnpaidOrders` for given `Channel` is set to `true`. When `orderSettings.allowUnpaidOrders` is set to `false`, checkout can be completed only when attached `Payment`/`TransactionItem`s fully cover the checkout's total. When processing the checkout with `Payment`, in case of required additional confirmation step like 3D secure, the `confirmationNeeded` flag will be set to True and no order will be created until payment is confirmed with second call of this mutation.
@@ -5114,8 +5089,7 @@ export type CheckoutLineInput = {
 
 /** Represents an problem in the checkout line. */
 export type CheckoutLineProblem =
-  | CheckoutLineProblemInsufficientStock
-  | CheckoutLineProblemVariantNotAvailable;
+  CheckoutLineProblemInsufficientStock | CheckoutLineProblemVariantNotAvailable;
 
 /** Indicates insufficient stock for a given checkout line.Placing the order will not be possible until solving this problem. */
 export type CheckoutLineProblemInsufficientStock = {
@@ -7079,10 +7053,7 @@ export type CustomerTypeAssignAttributesError = {
 };
 
 export type CustomerTypeAssignAttributesErrorCode =
-  | "ATTRIBUTE_ALREADY_ASSIGNED"
-  | "GRAPHQL_ERROR"
-  | "INVALID"
-  | "NOT_FOUND";
+  "ATTRIBUTE_ALREADY_ASSIGNED" | "GRAPHQL_ERROR" | "INVALID" | "NOT_FOUND";
 
 export type CustomerTypeCountableConnection = {
   edges: Array<CustomerTypeCountableEdge>;
@@ -7124,11 +7095,7 @@ export type CustomerTypeCreateError = {
 };
 
 export type CustomerTypeCreateErrorCode =
-  | "GRAPHQL_ERROR"
-  | "INVALID"
-  | "NOT_FOUND"
-  | "REQUIRED"
-  | "UNIQUE";
+  "GRAPHQL_ERROR" | "INVALID" | "NOT_FOUND" | "REQUIRED" | "UNIQUE";
 
 export type CustomerTypeCreateInput = {
   /** Determines if the customer type should become the default one, assigned to every newly created user. Passing `true` clears the flag on the current default customer type - exactly one default customer type always exists. */
@@ -7182,10 +7149,7 @@ export type CustomerTypeDeleteError = {
 };
 
 export type CustomerTypeDeleteErrorCode =
-  | "CANNOT_DELETE_DEFAULT"
-  | "GRAPHQL_ERROR"
-  | "INVALID"
-  | "NOT_FOUND";
+  "CANNOT_DELETE_DEFAULT" | "GRAPHQL_ERROR" | "INVALID" | "NOT_FOUND";
 
 /**
  * Event sent when customer type is deleted.
@@ -7233,9 +7197,7 @@ export type CustomerTypeReorderAttributesError = {
 };
 
 export type CustomerTypeReorderAttributesErrorCode =
-  | "GRAPHQL_ERROR"
-  | "INVALID"
-  | "NOT_FOUND";
+  "GRAPHQL_ERROR" | "INVALID" | "NOT_FOUND";
 
 export type CustomerTypeSortField =
   /** Sort customer types by name. */
@@ -7276,9 +7238,7 @@ export type CustomerTypeUnassignAttributesError = {
 };
 
 export type CustomerTypeUnassignAttributesErrorCode =
-  | "GRAPHQL_ERROR"
-  | "INVALID"
-  | "NOT_FOUND";
+  "GRAPHQL_ERROR" | "INVALID" | "NOT_FOUND";
 
 /**
  * Updates a customer type.
@@ -7533,9 +7493,7 @@ export type DeliveryOptionsCalculateError = {
 };
 
 export type DeliveryOptionsCalculateErrorCode =
-  | "GRAPHQL_ERROR"
-  | "INVALID"
-  | "NOT_FOUND";
+  "GRAPHQL_ERROR" | "INVALID" | "NOT_FOUND";
 
 export type DiscountError = {
   /** List of channels IDs which causes the error. */
@@ -7583,14 +7541,7 @@ export type DiscountedObjectWhereInput = {
 };
 
 export type DistanceUnitsEnum =
-  | "CM"
-  | "DM"
-  | "FT"
-  | "INCH"
-  | "KM"
-  | "M"
-  | "MM"
-  | "YD";
+  "CM" | "DM" | "FT" | "INCH" | "KM" | "M" | "MM" | "YD";
 
 /** Represents API domain. */
 export type Domain = {
@@ -8061,10 +8012,7 @@ export type ExportError = {
 };
 
 export type ExportErrorCode =
-  | "GRAPHQL_ERROR"
-  | "INVALID"
-  | "NOT_FOUND"
-  | "REQUIRED";
+  "GRAPHQL_ERROR" | "INVALID" | "NOT_FOUND" | "REQUIRED";
 
 /** History log of export file. */
 export type ExportEvent = Node & {
@@ -8137,10 +8085,7 @@ export type ExportFileFilterInput = {
 };
 
 export type ExportFileSortField =
-  | "CREATED_AT"
-  | "LAST_MODIFIED_AT"
-  | "STATUS"
-  | "UPDATED_AT";
+  "CREATED_AT" | "LAST_MODIFIED_AT" | "STATUS" | "UPDATED_AT";
 
 export type ExportFileSortingInput = {
   /** Specifies the direction in which to sort export file. */
@@ -8285,10 +8230,7 @@ export type ExternalNotificationError = {
 };
 
 export type ExternalNotificationErrorCodes =
-  | "CHANNEL_INACTIVE"
-  | "INVALID_MODEL_TYPE"
-  | "NOT_FOUND"
-  | "REQUIRED";
+  "CHANNEL_INACTIVE" | "INVALID_MODEL_TYPE" | "NOT_FOUND" | "REQUIRED";
 
 /** Trigger sending a notification with the notify plugin method. Serializes nodes provided as ids parameter and includes this data in the notification payload. */
 export type ExternalNotificationTrigger = {
@@ -9408,9 +9350,7 @@ export type GiftCardSettingsError = {
 };
 
 export type GiftCardSettingsErrorCode =
-  | "GRAPHQL_ERROR"
-  | "INVALID"
-  | "REQUIRED";
+  "GRAPHQL_ERROR" | "INVALID" | "REQUIRED";
 
 export type GiftCardSettingsExpiryTypeEnum = "EXPIRY_PERIOD" | "NEVER_EXPIRE";
 
@@ -12228,11 +12168,7 @@ export type MetadataError = {
 };
 
 export type MetadataErrorCode =
-  | "GRAPHQL_ERROR"
-  | "INVALID"
-  | "NOT_FOUND"
-  | "NOT_UPDATED"
-  | "REQUIRED";
+  "GRAPHQL_ERROR" | "INVALID" | "NOT_FOUND" | "NOT_UPDATED" | "REQUIRED";
 
 export type MetadataFilter = {
   /** Key of a metadata item. */
@@ -17473,11 +17409,7 @@ export type OrderDiscountDelete = {
 };
 
 export type OrderDiscountType =
-  | "MANUAL"
-  | "ORDER_PROMOTION"
-  | "PROMOTION"
-  | "SALE"
-  | "VOUCHER";
+  "MANUAL" | "ORDER_PROMOTION" | "PROMOTION" | "SALE" | "VOUCHER";
 
 /**
  * Update discount for the order.
@@ -18143,10 +18075,7 @@ export type OrderGrantedRefundLine = {
  *
  */
 export type OrderGrantedRefundStatusEnum =
-  | "FAILURE"
-  | "NONE"
-  | "PENDING"
-  | "SUCCESS";
+  "FAILURE" | "NONE" | "PENDING" | "SUCCESS";
 
 /** Represents order line of particular order. */
 export type OrderLine = Node &
@@ -18483,9 +18412,7 @@ export type OrderNoteUpdateError = {
 };
 
 export type OrderNoteUpdateErrorCode =
-  | "GRAPHQL_ERROR"
-  | "NOT_FOUND"
-  | "REQUIRED";
+  "GRAPHQL_ERROR" | "NOT_FOUND" | "REQUIRED";
 
 export type OrderOrCheckout = Checkout | Order;
 
@@ -20096,9 +20023,7 @@ export type PaymentGatewayConfigError = {
 };
 
 export type PaymentGatewayConfigErrorCode =
-  | "GRAPHQL_ERROR"
-  | "INVALID"
-  | "NOT_FOUND";
+  "GRAPHQL_ERROR" | "INVALID" | "NOT_FOUND";
 
 /** Initializes a payment gateway session. It triggers the webhook `PAYMENT_GATEWAY_INITIALIZE_SESSION`, to the requested `paymentGateways`. If `paymentGateways` is not provided, the webhook will be send to all subscribed payment gateways. There is a limit of 100 transaction items per checkout / order. */
 export type PaymentGatewayInitialize = {
@@ -20117,9 +20042,7 @@ export type PaymentGatewayInitializeError = {
 };
 
 export type PaymentGatewayInitializeErrorCode =
-  | "GRAPHQL_ERROR"
-  | "INVALID"
-  | "NOT_FOUND";
+  "GRAPHQL_ERROR" | "INVALID" | "NOT_FOUND";
 
 /** Event sent when user wants to initialize the payment gateway. */
 export type PaymentGatewayInitializeSession = Event & {
@@ -20181,9 +20104,7 @@ export type PaymentGatewayInitializeTokenizationErrorCode =
  *
  */
 export type PaymentGatewayInitializeTokenizationResult =
-  | "FAILED_TO_DELIVER"
-  | "FAILED_TO_INITIALIZE"
-  | "SUCCESSFULLY_INITIALIZED";
+  "FAILED_TO_DELIVER" | "FAILED_TO_INITIALIZE" | "SUCCESSFULLY_INITIALIZED";
 
 /** Event sent to initialize a new session in payment gateway to store the payment method.  */
 export type PaymentGatewayInitializeTokenizationSession = Event & {
@@ -22326,10 +22247,7 @@ export type ProductTranslate = {
 };
 
 export type ProductTranslateErrorCode =
-  | "GRAPHQL_ERROR"
-  | "INVALID"
-  | "NOT_FOUND"
-  | "REQUIRED";
+  "GRAPHQL_ERROR" | "INVALID" | "NOT_FOUND" | "REQUIRED";
 
 /** Represents product translations. */
 export type ProductTranslation = Node & {
@@ -23674,10 +23592,7 @@ export type ProductVariantTranslate = {
 };
 
 export type ProductVariantTranslateErrorCode =
-  | "GRAPHQL_ERROR"
-  | "INVALID"
-  | "NOT_FOUND"
-  | "REQUIRED";
+  "GRAPHQL_ERROR" | "INVALID" | "NOT_FOUND" | "REQUIRED";
 
 /** Represents product variant translations. */
 export type ProductVariantTranslation = Node & {
@@ -24711,10 +24626,7 @@ export type PromotionUpdateError = {
 };
 
 export type PromotionUpdateErrorCode =
-  | "GRAPHQL_ERROR"
-  | "INVALID"
-  | "NOT_FOUND"
-  | "REQUIRED";
+  "GRAPHQL_ERROR" | "INVALID" | "NOT_FOUND" | "REQUIRED";
 
 export type PromotionUpdateInput = {
   /** Promotion description. */
@@ -25945,10 +25857,7 @@ export type ReturnSettings = {
 };
 
 export type ReturnSettingsErrorCode =
-  | "GRAPHQL_ERROR"
-  | "INVALID"
-  | "NOT_FOUND"
-  | "REQUIRED";
+  "GRAPHQL_ERROR" | "INVALID" | "NOT_FOUND" | "REQUIRED";
 
 /**
  * Update return settings across all channels.
@@ -28231,10 +28140,7 @@ export type StockBulkUpdateError = {
 };
 
 export type StockBulkUpdateErrorCode =
-  | "GRAPHQL_ERROR"
-  | "INVALID"
-  | "NOT_FOUND"
-  | "REQUIRED";
+  "GRAPHQL_ERROR" | "INVALID" | "NOT_FOUND" | "REQUIRED";
 
 export type StockBulkUpdateInput = {
   /** Quantity of items available for sell. */
@@ -28399,9 +28305,7 @@ export type StoredPaymentMethodRequestDeleteErrorCode =
  *
  */
 export type StoredPaymentMethodRequestDeleteResult =
-  | "FAILED_TO_DELETE"
-  | "FAILED_TO_DELIVER"
-  | "SUCCESSFULLY_DELETED";
+  "FAILED_TO_DELETE" | "FAILED_TO_DELIVER" | "SUCCESSFULLY_DELETED";
 
 /** Define the filtering options for string fields. */
 export type StringFilterInput = {
@@ -28899,10 +28803,7 @@ export type TaxClassUpdateError = {
 };
 
 export type TaxClassUpdateErrorCode =
-  | "DUPLICATED_INPUT_ITEM"
-  | "GRAPHQL_ERROR"
-  | "INVALID"
-  | "NOT_FOUND";
+  "DUPLICATED_INPUT_ITEM" | "GRAPHQL_ERROR" | "INVALID" | "NOT_FOUND";
 
 export type TaxClassUpdateInput = {
   /** Name of the tax class. */
@@ -29073,10 +28974,7 @@ export type TaxConfigurationUpdateError = {
 };
 
 export type TaxConfigurationUpdateErrorCode =
-  | "DUPLICATED_INPUT_ITEM"
-  | "GRAPHQL_ERROR"
-  | "INVALID"
-  | "NOT_FOUND";
+  "DUPLICATED_INPUT_ITEM" | "GRAPHQL_ERROR" | "INVALID" | "NOT_FOUND";
 
 export type TaxConfigurationUpdateInput = {
   /** Determines whether taxes are charged in the given channel. */
@@ -29136,9 +29034,7 @@ export type TaxCountryConfigurationDeleteError = {
 };
 
 export type TaxCountryConfigurationDeleteErrorCode =
-  | "GRAPHQL_ERROR"
-  | "INVALID"
-  | "NOT_FOUND";
+  "GRAPHQL_ERROR" | "INVALID" | "NOT_FOUND";
 
 /**
  * Updates tax class rates for a specific country.
@@ -29189,10 +29085,7 @@ export type TaxExemptionManageError = {
 };
 
 export type TaxExemptionManageErrorCode =
-  | "GRAPHQL_ERROR"
-  | "INVALID"
-  | "NOT_EDITABLE_ORDER"
-  | "NOT_FOUND";
+  "GRAPHQL_ERROR" | "INVALID" | "NOT_EDITABLE_ORDER" | "NOT_FOUND";
 
 export type TaxSourceLine = CheckoutLine | OrderLine;
 
@@ -30171,11 +30064,7 @@ export type TranslationError = {
 };
 
 export type TranslationErrorCode =
-  | "GRAPHQL_ERROR"
-  | "INVALID"
-  | "NOT_FOUND"
-  | "REQUIRED"
-  | "UNIQUE";
+  "GRAPHQL_ERROR" | "INVALID" | "NOT_FOUND" | "REQUIRED" | "UNIQUE";
 
 export type TranslationInput = {
   /**
@@ -30280,9 +30169,7 @@ export type UploadError = {
 };
 
 export type UploadErrorCode =
-  | "GRAPHQL_ERROR"
-  | "INVALID_FILE_TYPE"
-  | "UNSUPPORTED_MIME_TYPE";
+  "GRAPHQL_ERROR" | "INVALID_FILE_TYPE" | "UNSUPPORTED_MIME_TYPE";
 
 /** Represents user data. */
 export type User = Node &
@@ -30651,9 +30538,7 @@ export type Vat = {
 };
 
 export type VariantAttributeScope =
-  | "ALL"
-  | "NOT_VARIANT_SELECTION"
-  | "VARIANT_SELECTION";
+  "ALL" | "NOT_VARIANT_SELECTION" | "VARIANT_SELECTION";
 
 /**
  * Assign an media to a product variant.
@@ -31039,9 +30924,7 @@ export type VoucherCodeBulkDeleteError = {
 };
 
 export type VoucherCodeBulkDeleteErrorCode =
-  | "GRAPHQL_ERROR"
-  | "INVALID"
-  | "NOT_FOUND";
+  "GRAPHQL_ERROR" | "INVALID" | "NOT_FOUND";
 
 export type VoucherCodeCountableConnection = {
   edges: Array<VoucherCodeCountableEdge>;
@@ -33311,9 +33194,8 @@ export type PaymentGatewayInitializeSessionSubscription_event_PaymentGatewayInit
   };
 
 export type PaymentGatewayInitializeSessionSubscription_event_PaymentGatewayInitializeSession_sourceObject =
-
-    | PaymentGatewayInitializeSessionSubscription_event_PaymentGatewayInitializeSession_sourceObject_Checkout
-    | PaymentGatewayInitializeSessionSubscription_event_PaymentGatewayInitializeSession_sourceObject_Order;
+  | PaymentGatewayInitializeSessionSubscription_event_PaymentGatewayInitializeSession_sourceObject_Checkout
+  | PaymentGatewayInitializeSessionSubscription_event_PaymentGatewayInitializeSession_sourceObject_Order;
 
 export type PaymentGatewayInitializeSessionSubscription_event_PaymentGatewayInitializeSession =
   {
@@ -33549,9 +33431,8 @@ export type TransactionInitializeSessionSubscription_event_TransactionInitialize
   };
 
 export type TransactionInitializeSessionSubscription_event_TransactionInitializeSession_sourceObject =
-
-    | TransactionInitializeSessionSubscription_event_TransactionInitializeSession_sourceObject_Checkout
-    | TransactionInitializeSessionSubscription_event_TransactionInitializeSession_sourceObject_Order;
+  | TransactionInitializeSessionSubscription_event_TransactionInitializeSession_sourceObject_Checkout
+  | TransactionInitializeSessionSubscription_event_TransactionInitializeSession_sourceObject_Order;
 
 export type TransactionInitializeSessionSubscription_event_TransactionInitializeSession =
   {
@@ -33608,9 +33489,8 @@ export type TransactionProcessSessionSubscription_event_TransactionProcessSessio
   };
 
 export type TransactionProcessSessionSubscription_event_TransactionProcessSession_sourceObject =
-
-    | TransactionProcessSessionSubscription_event_TransactionProcessSession_sourceObject_Checkout
-    | TransactionProcessSessionSubscription_event_TransactionProcessSession_sourceObject_Order;
+  | TransactionProcessSessionSubscription_event_TransactionProcessSession_sourceObject_Checkout
+  | TransactionProcessSessionSubscription_event_TransactionProcessSession_sourceObject_Order;
 
 export type TransactionProcessSessionSubscription_event_TransactionProcessSession =
   {

@@ -10,6 +10,8 @@ function getContentPaths(app: AppName): string[] {
     "../../packages/features/src/**/*.{ts,tsx,html,stories.tsx}";
   const foundationSrc =
     "../../packages/foundation/src/**/*.{ts,tsx,html,stories.tsx}";
+  // Saleor app shell (dashboard session, spinner, error boundary).
+  const libSrc = "../../packages/lib/src/**/*.{ts,tsx,html,stories.tsx}";
   if (app === "marketplace") {
     return [
       `${appSrc}/**/*.{js,ts,jsx,tsx,mdx}`,
@@ -24,6 +26,7 @@ function getContentPaths(app: AppName): string[] {
     uiSrc,
     featuresSrc,
     foundationSrc,
+    libSrc,
     "../../interface/**/*.{ts,tsx,html,stories.tsx}",
   ];
 }

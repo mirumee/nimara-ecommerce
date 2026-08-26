@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "lint": "eslint . --ext .js,.ts,.tsx --fix",
-    "lint:staged": "lint-staged"
+    "lint:staged": "lint-staged",
+    "test": "vitest run",
+    "test:watch": "vitest --watch"
   },
   "dependencies": {
     "@formatjs/intl-localematcher": "0.8.13",
@@ -47,6 +49,7 @@
     "node": "24.x"
   },
   "exports": {
+    "./lib/*": "./src/lib/*.ts",
     "./*": "./src/*"
   },
   "typesVersions": {
