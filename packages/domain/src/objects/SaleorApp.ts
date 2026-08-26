@@ -1,9 +1,5 @@
 import { z } from "zod";
 
-/**
- * Installation record for an installed Saleor app. App-specific settings are
- * stored separately by each app.
- */
 export const saleorAppConfig = z.object({
   authToken: z.string(),
   saleorAppId: z.string(),
@@ -12,19 +8,12 @@ export const saleorAppConfig = z.object({
 
 export type SaleorAppConfig = z.infer<typeof saleorAppConfig>;
 
-/**
- * The install record plus whatever the app itself stores for that tenant. The
- * app owns the shape of `settings`; everything around it is the same for every
- * Saleor app.
- */
+// The app owns the shape of `settings`; the record around it never varies.
 export type SaleorAppInstallation<Settings> = SaleorAppConfig & {
   settings: Settings | null;
 };
 
-/**
- * Every installed Saleor, keyed by domain. The install record is the same for
- * every app; each one brings the schema of what it stores beside it.
- */
+// Every installed Saleor, keyed by domain.
 export const saleorAppInstallations = <Settings extends z.ZodType>(
   settings: Settings,
 ) =>

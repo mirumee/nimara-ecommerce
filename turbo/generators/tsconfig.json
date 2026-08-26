@@ -1,0 +1,10 @@
+{
+  "extends": "@nimara/config/tsconfig/base",
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "types": ["node"]
+  },
+  "include": ["config.ts", "src/**/*.ts", "vitest.config.ts"],
+  "exclude": ["node_modules"]
+}

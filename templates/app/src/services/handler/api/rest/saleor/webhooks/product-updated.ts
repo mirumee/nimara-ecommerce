@@ -4,10 +4,7 @@ import { type SaleorTenant } from "@nimara/lib/saleor/tenant";
 import { container } from "@/container";
 import { type ProductUpdatedSubscription } from "@/graphql/generated/client";
 
-/**
- * Example webhook. The tenant arrives as an argument, established by the
- * middleware that verified the signature — scope every read and write by it.
- */
+// Example. Scope every read and write by the tenant, never by the payload.
 export const productUpdatedHandler = async (
   context: HandlerContext<ProductUpdatedSubscription>,
   { saleorDomain }: SaleorTenant,

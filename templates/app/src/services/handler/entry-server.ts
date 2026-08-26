@@ -36,10 +36,7 @@ const app = new Hono()
 
 export type AppType = typeof app;
 
-/**
- * `app` — Vercel Hono preset / dev server
- * `handler` — AWS Lambda
- */
+// `app` for the Vercel preset and the dev server, `handler` for AWS Lambda.
 const handler = handle(app);
 
 export { app, handler };

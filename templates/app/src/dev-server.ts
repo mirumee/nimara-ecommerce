@@ -1,10 +1,8 @@
 import { Hono } from "hono";
 
 /**
- * DEV only: groups every service under one Hono instance for
- * `@hono/vite-dev-server`. Services are auto-discovered from `src/services/*`
- * and imported one at a time so each can be given its own `BASE_PATH`.
- * A single service is served at `/`, several under `/<service>`.
+ * DEV only. Imported one at a time so each service can be given its own
+ * `BASE_PATH`: one service answers at `/`, several under `/<service>`.
  */
 const importers = import.meta.glob("./services/*/entry-server.ts") as Record<
   string,

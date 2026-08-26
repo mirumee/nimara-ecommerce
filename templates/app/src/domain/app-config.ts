@@ -5,11 +5,7 @@ import {
   saleorAppInstallations,
 } from "@nimara/domain/objects/SaleorApp";
 
-/**
- * What this app stores for one installed Saleor — replace these fields with
- * your own. The pair is a worked example: one value the dashboard may show
- * back, one it must not.
- */
+// Replace with your own. The pair is an example: one shown back, one not.
 export const appSettings = z.object({
   publicKey: z.string(),
   secretKey: z.string(),
@@ -17,11 +13,7 @@ export const appSettings = z.object({
 
 export type AppSettings = z.infer<typeof appSettings>;
 
-/**
- * Fields that never leave the app in full. The dashboard renders them masked
- * and sends a blank one back when the stored value should stay, so a mask is
- * never saved over the real thing.
- */
+// Never leave the app in full; a blank one back means keep what is stored.
 export const SECRET_FIELDS = [
   "secretKey",
 ] as const satisfies readonly (keyof AppSettings)[];

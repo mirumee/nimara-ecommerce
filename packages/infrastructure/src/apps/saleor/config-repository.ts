@@ -7,11 +7,7 @@ import { type z } from "zod";
 
 import { type ConfigItemRepository } from "#root/config/types";
 
-/**
- * One entry per installed Saleor, keyed by domain. Satisfies
- * `SaleorAppConfigRepository`, so the install use-case writes through it
- * without knowing what the app stores beside the install record.
- */
+// The install use-case writes through this without knowing the app's settings.
 export const saleorAppConfigRepository = <Settings>({
   configStore,
   settingsSchema,
@@ -81,10 +77,7 @@ export const saleorAppConfigRepository = <Settings>({
       return ok(result.data?.settings ?? null);
     },
 
-    /**
-     * Parsed on the way in, so a shape the app no longer understands cannot
-     * reach the store and strand the tenant on a config it cannot read.
-     */
+    // Parsed on the way in: a shape the app cannot read must not reach the store.
     updateSettings: async ({
       saleorDomain,
       settings,

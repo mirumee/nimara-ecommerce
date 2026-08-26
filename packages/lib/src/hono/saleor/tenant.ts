@@ -22,10 +22,7 @@ export const requireSaleorTenant = (context: HonoContext): SaleorTenant => {
   return { saleorApiUrl, saleorDomain };
 };
 
-/**
- * Hands the tenant to a handler as an argument, so a route cannot be written
- * that forgets to scope by it. Mount it behind the middleware that verifies.
- */
+// A handler cannot be written that forgets to scope by an argument.
 export const withSaleorTenant =
   <Context extends HonoContext>(
     handler: (
@@ -37,9 +34,8 @@ export const withSaleorTenant =
     handler(context, requireSaleorTenant(context));
 
 /**
- * Seatbelt for a tenant-scoped subtree; it verifies nothing itself, so mount
- * it behind the middleware that does. The manifest and register routes have no
- * tenant yet and must stay in front of it.
+ * Seatbelt; it verifies nothing itself. The manifest and register routes have
+ * no tenant yet and must stay in front of it.
  */
 export const saleorTenantMiddleware = (): MiddlewareHandler =>
   createMiddleware(async (context, next) => {

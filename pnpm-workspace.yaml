@@ -2,6 +2,7 @@ packages:
   - "apps/*"
   - "packages/*"
   - "templates/*"
+  - "turbo/generators"
 
 catalog:
   hono: 4.13.3
