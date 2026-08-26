@@ -10,6 +10,7 @@ import type { StripePaymentService } from "@nimara/infrastructure/payment/stripe
 import type { StoreService } from "@nimara/infrastructure/store/types";
 import type { CMSMenuService } from "@nimara/infrastructure/use-cases/cms-menu/types";
 import type { CMSPageService } from "@nimara/infrastructure/use-cases/cms-page/types";
+import type { NewsletterService } from "@nimara/infrastructure/use-cases/newsletter/types";
 import type {
   PageInfo,
   SearchService,
@@ -53,6 +54,22 @@ export const emptyCMSMenuService = {
 export const emptyCMSPageService = {
   cmsPageGet: async () => ok(null),
 } satisfies CMSPageService;
+
+/**
+ * Answers an error rather than a payload, so a submit path that skipped the
+ * provider check degrades to a refusal instead of reporting a success that no
+ * provider acknowledged.
+ */
+export const emptyNewsletterService: NewsletterService = {
+  newsletterSubscribe: async () =>
+    err([
+      {
+        code: "NEWSLETTER_NOT_CONFIGURED_ERROR",
+        message:
+          "No newsletter provider is configured. Set NEWSLETTER_SERVICE and the provider keys to enable this feature.",
+      },
+    ]),
+};
 
 export const emptySearchService = {
   search: async () => ok({ pageInfo: emptyCursorPageInfo, results: [] }),

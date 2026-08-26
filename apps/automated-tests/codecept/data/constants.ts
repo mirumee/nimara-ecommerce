@@ -17,6 +17,7 @@ export const URLS = {
   LOGIN_PAGE_RESULT: `${LOCALE_PREFIX}?loggedIn=`,
   RESET_PASSWORD: `${LOCALE_PREFIX}/reset-password`,
   CREATE_ACCOUNT: `${LOCALE_PREFIX}/create-account`,
+  PRIVACY_POLICY_PAGE: `${LOCALE_PREFIX}/page/privacy-policy`,
   PRODUCTS_PAGE: `${LOCALE_PREFIX}/search`,
   PRODUCT_PAGE: `${LOCALE_PREFIX}/products`,
   CATEGORY_PAGE: `${LOCALE_PREFIX}/categories`,
@@ -44,6 +45,18 @@ export const storeHeaders = {
   orderSuccess: "Your order has been successfully placed",
   cardDeclined: "There was an error with your card",
   productAddedToCart: "Product has been added to your bag",
+};
+
+/**
+ * Newsletter copy asserted by the subscribe scenarios. `subscribeSuccess` is
+ * never expected by them: it must not appear for an address the form rejects.
+ */
+export const newsletterCopy = {
+  consent: "We use your email address only to send this newsletter.",
+  cta: "Subscribe",
+  invalidEmail: "Oops, wrong email address.",
+  privacyPolicyLink: "privacy policy",
+  subscribeSuccess: "You have successfully subscribed to the newsletter.",
 };
 
 export const userGB = {
