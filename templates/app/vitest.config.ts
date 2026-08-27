@@ -3,6 +3,14 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
+  /**
+   * The build supplies these; a test imports the server without going through
+   * it. Node is the target that serves assets off disk, so nothing is inlined.
+   */
+  define: {
+    __BUILD_TARGET__: JSON.stringify("node"),
+    __CLIENT_ASSETS__: JSON.stringify({}),
+  },
   plugins: [tsconfigPaths()],
   test: {
     environment: "node",

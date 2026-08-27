@@ -24,6 +24,7 @@ export const saleorRoutes = createSaleorRoutes({
   allowedDomains: CONFIG.ALLOWED_DOMAINS,
   installApp: container.get("installApp"),
   manifest: {
+    appPath: "/",
     id: CONFIG.APP_ID,
     name: CONFIG.DISPLAY_NAME,
     permissions: ["MANAGE_PRODUCTS"],

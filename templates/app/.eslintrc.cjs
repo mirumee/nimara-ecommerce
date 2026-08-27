@@ -9,7 +9,19 @@ module.exports = {
   },
   overrides: [
     {
-      files: ["vite.config.ts", "vitest.config.ts", "etc/*.ts"],
+      files: [
+        "src/services/*/client/**/*.{ts,tsx}",
+        "src/services/*/entry-client.tsx",
+      ],
+      env: { browser: true },
+    },
+    {
+      files: [
+        "vite.config.ts",
+        "vitest.config.ts",
+        "etc/*.ts",
+        "tailwind.config.ts",
+      ],
       rules: {
         // Vite/Vitest expect a default-exported config; PORT is dev-only.
         "import/no-default-export": "off",

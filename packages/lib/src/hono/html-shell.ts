@@ -22,23 +22,24 @@ const getDevScripts = () => {
 
 /**
  * In dev the shell points at the TS entry vite serves, in prod at the built
- * bundle. `appName` is the `src/apps/<name>` the build names its entry after.
+ * bundle. `serviceName` is the `src/services/<name>` the build names its entry
+ * after.
  */
 export const createHtmlShell =
   ({
-    appName,
+    serviceName,
     title,
     version,
   }: {
-    appName: string;
+    serviceName: string;
     title: string;
     version: string;
   }) =>
   (context: Context) => {
     // Dev serves modules from vite's root; prod assets sit under the base path.
     const script = IS_DEV
-      ? `/src/apps/${appName}/entry-client.tsx`
-      : `${context.req.basePath}/assets/${appName}-entry-client.js`;
+      ? `/src/services/${serviceName}/entry-client.tsx`
+      : `${context.req.basePath}/assets/${serviceName}-entry-client.js`;
 
     return context.html(`<!doctype html>
 <html lang="en">

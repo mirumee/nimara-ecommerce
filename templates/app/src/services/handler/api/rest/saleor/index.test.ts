@@ -16,6 +16,8 @@ describe("saleor routes", () => {
       // then a webhook missing here is one Saleor will never call.
       expect(response.status).toBe(200);
       expect(await response.json()).toMatchObject({
+        // Where the Dashboard opens the app: its root, dashboard or not.
+        appUrl: `https://${HOST}/`,
         tokenTargetUrl: `https://${HOST}/api/saleor/register`,
         webhooks: [
           {

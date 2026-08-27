@@ -35,7 +35,7 @@ export const saleorAppConfigRepository = <Settings>({
   return {
     getBySaleorDomain,
 
-    // Reinstalling must not drop what the merchant already configured.
+    // Reinstalling must not drop the settings already stored for the domain.
     createOrUpdate: async ({
       config,
     }: {
