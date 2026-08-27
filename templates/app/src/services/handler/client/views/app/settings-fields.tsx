@@ -1,9 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { use } from "react";
 import { FormProvider, type SubmitHandler, useForm } from "react-hook-form";
 
-import { type SettingsFormData } from "@nimara/infrastructure/use-cases/apps/saleor/settings-form";
-import { useDashboardSession } from "@nimara/lib/client/dashboard-session/context";
+import {
+  type SettingsFormData,
+  type SettingsFormInput,
+} from "@nimara/infrastructure/use-cases/apps/saleor/settings-form";
+import { useDashboardSession } from "@nimara/lib/client/saleor/dashboard-session/context";
 import { Button } from "@nimara/ui/components/button";
 import {
   Card,
@@ -15,42 +17,37 @@ import {
 import { TextFormField } from "@nimara/ui/components/textFormField";
 import { useToast } from "@nimara/ui/hooks";
 
-import { type AppSettings } from "@/domain/app-config";
-import {
-  settingsFormSchema,
-  type SettingsFormValues,
-} from "@/services/handler/api/rest/app/schema";
+import { type AppSettings, appSettings } from "@/domain/app-config";
 
 import { saveSettings } from "./api";
+
+type FormValues = SettingsFormInput<AppSettings>;
 
 /**
  * The secret starts blank whatever is stored: it arrives masked, and seeding
  * the field would save the mask over the real key.
  */
-const toFormValues = (
-  settings: SettingsFormData<AppSettings>,
-): SettingsFormValues => ({
+const toFormValues = (settings: SettingsFormData<AppSettings>): FormValues => ({
   publicKey: settings.publicKey,
   secretKey: "",
 });
 
 export const SettingsFields = ({
-  getSettings,
   reload,
+  settings,
 }: {
-  getSettings: Promise<SettingsFormData<AppSettings>>;
   reload: () => void;
+  settings: SettingsFormData<AppSettings>;
 }) => {
   const { accessToken, saleorApiUrl } = useDashboardSession();
   const { toast } = useToast();
-  const settings = use(getSettings);
 
-  const form = useForm<SettingsFormValues>({
+  const form = useForm<FormValues>({
     defaultValues: toFormValues(settings),
-    resolver: zodResolver(settingsFormSchema),
+    resolver: zodResolver(appSettings.partial()),
   });
 
-  const handleSubmit: SubmitHandler<SettingsFormValues> = async (values) => {
+  const handleSubmit: SubmitHandler<FormValues> = async (values) => {
     const error = await saveSettings({
       accessToken,
       data: values,

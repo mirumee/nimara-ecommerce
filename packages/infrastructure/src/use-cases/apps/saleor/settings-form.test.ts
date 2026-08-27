@@ -4,8 +4,8 @@ import { z } from "zod";
 import { ok } from "@nimara/domain/objects/Result";
 
 import { type SaleorAppConfigService } from "#root/apps/saleor/config-repository";
-import { getSaleorAppSettingsFormUseCase } from "#root/use-cases/apps/saleor/get-app-settings-form-use-case";
-import { saveSaleorAppSettingsUseCase } from "#root/use-cases/apps/saleor/save-app-settings-use-case";
+import { getAppSettingsFormUseCase } from "#root/use-cases/apps/saleor/get-app-settings-form-use-case";
+import { saveAppSettingsUseCase } from "#root/use-cases/apps/saleor/save-app-settings-use-case";
 
 const settingsSchema = z.object({
   publicKey: z.string(),
@@ -51,13 +51,13 @@ const deps = (stored: Settings | null) => {
 };
 
 describe("settings-form", () => {
-  describe("getSaleorAppSettingsFormUseCase", () => {
+  describe("getAppSettingsFormUseCase", () => {
     it("masks a secret and leaves a plain field alone", async () => {
       // given
       const { written: _, ...input } = deps(STORED);
 
       // when
-      const result = await getSaleorAppSettingsFormUseCase(input)({
+      const result = await getAppSettingsFormUseCase(input)({
         saleorDomain: SALEOR_DOMAIN,
       });
 
@@ -72,7 +72,7 @@ describe("settings-form", () => {
       const { written: _, ...input } = deps(null);
 
       // when
-      const result = await getSaleorAppSettingsFormUseCase(input)({
+      const result = await getAppSettingsFormUseCase(input)({
         saleorDomain: SALEOR_DOMAIN,
       });
 
@@ -81,13 +81,13 @@ describe("settings-form", () => {
     });
   });
 
-  describe("saveSaleorAppSettingsUseCase", () => {
+  describe("saveAppSettingsUseCase", () => {
     it("keeps the stored secret when the field comes back blank", async () => {
       // given
       const { written, ...input } = deps(STORED);
 
       // when
-      await saveSaleorAppSettingsUseCase(input)({
+      await saveAppSettingsUseCase(input)({
         data: { publicKey: "pk_live_new", secretKey: "" },
         saleorDomain: SALEOR_DOMAIN,
       });
@@ -103,7 +103,7 @@ describe("settings-form", () => {
       const { written, ...input } = deps(STORED);
 
       // when
-      await saveSaleorAppSettingsUseCase(input)({
+      await saveAppSettingsUseCase(input)({
         data: { publicKey: STORED.publicKey, secretKey: "sk_live_rotated" },
         saleorDomain: SALEOR_DOMAIN,
       });
@@ -117,7 +117,7 @@ describe("settings-form", () => {
       const { written, ...input } = deps(STORED);
 
       // when
-      await saveSaleorAppSettingsUseCase(input)({
+      await saveAppSettingsUseCase(input)({
         data: { publicKey: "  ", secretKey: "" },
         saleorDomain: SALEOR_DOMAIN,
       });
@@ -131,7 +131,7 @@ describe("settings-form", () => {
       const { written: _, ...input } = deps(STORED);
 
       // when
-      const result = await saveSaleorAppSettingsUseCase(input)({
+      const result = await saveAppSettingsUseCase(input)({
         data: { publicKey: "pk", secretKey: "sk" },
         saleorDomain: SALEOR_DOMAIN,
       });

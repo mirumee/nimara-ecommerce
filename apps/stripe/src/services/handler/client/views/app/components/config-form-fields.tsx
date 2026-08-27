@@ -7,7 +7,7 @@ import {
   useWatch,
 } from "react-hook-form";
 
-import { useDashboardSession } from "@nimara/lib/client/dashboard-session/context";
+import { useDashboardSession } from "@nimara/lib/client/saleor/dashboard-session/context";
 import {
   Alert,
   AlertDescription,

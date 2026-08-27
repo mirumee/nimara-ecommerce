@@ -1,8 +1,8 @@
 import { AppBridgeProvider } from "@saleor/app-sdk/app-bridge";
 import { type ReactNode } from "react";
 
-import { DashboardSessionContext } from "#root/client/dashboard-session/context";
 import { readDevSession } from "#root/client/dev-session";
+import { DashboardSessionContext } from "#root/client/saleor/dashboard-session/context";
 
 import { AppBridgeSession } from "./app-bridge-session";
 import { StandaloneBanner } from "./standalone-banner";
