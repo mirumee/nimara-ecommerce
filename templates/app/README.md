@@ -43,6 +43,16 @@ src/graphql/               documents, and the client generated from them
 directory with an `entry-server.ts` is all it takes to add a service. A single
 service is served at `/`, several under `/<service>`.
 
+## Adding a service
+
+```bash
+pnpm gen saleor-service
+```
+
+It copies this template's service under the name you give, points the imports
+that reached into the old one at the new one, and takes the tenancy from the
+services already there — they share one `.env`, so they cannot disagree.
+
 ## Adding a webhook
 
 Write the subscription document under `src/graphql/subscriptions/`, run

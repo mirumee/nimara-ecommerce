@@ -1,5 +1,7 @@
 export const TEMPLATE_NAME = "app-template";
 
+export const TEMPLATE_SERVICE = "handler";
+
 export const TEMPLATE_PORT = "8000";
 
 const APP_NAME_PATTERN = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/;
