@@ -760,3 +760,10 @@
 - **Fix**: Renumbered the record to `PRD-004 Vendor-Owned Warehouses`. The draft reused `PRD-003`,
   which `PRD-003 Cookie Consent` already holds. The index entry, the `RFC-0001` frontmatter and
   body link, and the log entries above now point at `PRD-004`.
+- **Update**: Added `ADR-0004 Vendor Warehouses Are Platform-Provisioned And Vendor-Scoped`, the
+  decision that resolves `RFC-0001`. It records five parts: platform provisioning with the app
+  token, the vendor address save as the only trigger, `vendor.id` metadata as the join key, the
+  metadata filter plus a stock-write guard in the vendor GraphQL layer, and the narrow
+  country-match shipping zone rule. Status stays `proposed` until the PRD owner closes Q-1.
+- **Maintenance**: Registered the ADR by hand in `index.md` and `ADR MOC.md`, and replaced the
+  "no resolving ADR yet" placeholder in the `RFC-0001` register row with a link to `ADR-0004`.

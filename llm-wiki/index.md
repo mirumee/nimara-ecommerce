@@ -129,6 +129,7 @@ okf_version: "0.1"
 - [ADR-0001 Vouchers Are Disabled In Marketplace Checkout](tech/ADR/ADR-0001%20Vouchers%20Are%20Disabled%20In%20Marketplace%20Checkout.md) - Why promo codes are hidden in marketplace mode and what answering the platform-versus-vendor discount question would require.
 - [ADR-0002 Payment Application Configuration Storage Is Selectable](tech/ADR/ADR-0002%20Payment%20Application%20Configuration%20Storage%20Is%20Selectable.md) - Why storage sits behind one seam, why a deployment keeps the hosted store, and what accepting an on-disk developer store costs.
 - [ADR-0003 CodeceptJS Is The End-To-End Test Engine](tech/ADR/ADR-0003%20CodeceptJS%20Is%20The%20End-To-End%20Test%20Engine.md) - CodeceptJS replaces Playwright as the only end-to-end engine in apps/automated-tests. The Playwright library stays as the browser driver, and the deleted Playwright coverage is not ported.
+- [ADR-0004 Vendor Warehouses Are Platform-Provisioned And Vendor-Scoped](tech/ADR/ADR-0004%20Vendor%20Warehouses%20Are%20Platform-Provisioned%20And%20Vendor-Scoped.md) - The marketplace app provisions one Saleor warehouse per vendor with the app token, joins it to the vendor by vendor.id metadata, and keeps the vendor panel read-only on warehouses.
 
 # Technology RFC
 

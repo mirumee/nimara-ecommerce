@@ -27,7 +27,7 @@ outcome, live in an [ADR](../ADR/ADR%20MOC.md).
 
 <!-- Newest last. Format: - RFC-NNNN Title - Status - resolving ADR - one-line summary -->
 
-- [RFC-0001 Vendor Warehouse Provisioning and Isolation](RFC-0001%20Vendor%20Warehouse%20Provisioning%20and%20Isolation.md) - draft - no resolving ADR yet - one Saleor warehouse per vendor, provisioned by the platform, with the vendor panel warehouse list scoped to its owner.
+- [RFC-0001 Vendor Warehouse Provisioning and Isolation](RFC-0001%20Vendor%20Warehouse%20Provisioning%20and%20Isolation.md) - draft - [ADR-0004 Vendor Warehouses Are Platform-Provisioned And Vendor-Scoped](../ADR/ADR-0004%20Vendor%20Warehouses%20Are%20Platform-Provisioned%20And%20Vendor-Scoped.md) - one Saleor warehouse per vendor, provisioned by the platform, with the vendor panel warehouse list scoped to its owner.
 
 ## Related Notes
 
