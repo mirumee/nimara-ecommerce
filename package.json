@@ -59,7 +59,7 @@
     "wiki:lint": "node llm-wiki/_scripts/wiki-lint.mjs",
     "wiki:index:sync": "node llm-wiki/_scripts/wiki-lint.mjs sync",
     "localstack:up": "docker compose -f apps/marketplace/docker-compose.yml up -d localstack",
-    "localstack:down": "docker compose -f apps/marketplace/docker-compose.yml down",
+    "localstack:down": "docker compose -f apps/marketplace/docker-compose.yml stop localstack",
     "localstack:export-secret": "docker compose -f apps/marketplace/docker-compose.yml exec localstack bash /opt/localstack/export-secret.sh",
     "db-ledger:up": "docker compose -f apps/marketplace/docker-compose.yml up -d db-ledger",
     "db-ledger:down": "docker compose -f apps/marketplace/docker-compose.yml stop db-ledger",

@@ -70,9 +70,6 @@ const envSchema = z.object({
   VERCEL_URL: z.string().optional(),
   VERCEL_PROJECT_PRODUCTION_URL: z.string().optional(),
 
-  // Development
-  NEXT_PUBLIC_SALEOR_UI_APP_TOKEN: z.string().optional(),
-
   // Email / SMTP (provider-agnostic)
   MARKETPLACE_SMTP_HOST: z.string().optional(),
   MARKETPLACE_SMTP_PORT: z.coerce.number().default(587),
@@ -187,7 +184,6 @@ export const config = {
     url: env.NEXT_PUBLIC_SALEOR_URL,
     channelSlug: env.NEXT_PUBLIC_SALEOR_MARKETPLACE_CHANNEL_SLUG,
     graphqlUrl: env.NEXT_PUBLIC_GRAPHQL_URL,
-    devToken: env.NEXT_PUBLIC_SALEOR_UI_APP_TOKEN,
   },
   urls: {
     get vendor(): string {
