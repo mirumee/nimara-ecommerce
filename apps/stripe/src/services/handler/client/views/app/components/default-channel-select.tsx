@@ -9,7 +9,7 @@ import {
   SelectValue,
 } from "@nimara/ui/components/select";
 
-import { type ConfigFormInput } from "@/apps/handler/api/rest/app/schema";
+import { type ConfigFormInput } from "@/services/handler/api/rest/app/schema";
 import { type ConfigFormData } from "@/use-cases/get-config-form-data-use-case";
 
 export const DefaultChannelSelect = ({

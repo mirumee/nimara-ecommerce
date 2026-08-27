@@ -10,7 +10,6 @@ import { installSaleorAppUseCase } from "@nimara/infrastructure/use-cases/apps/s
 import { passThroughJwtVerification } from "@nimara/lib/saleor/pass-through-jwt-verification";
 import { saleorUrlFromDomain } from "@nimara/lib/saleor/url";
 
-import { APP_CONFIG } from "@/apps/handler/config";
 import { saleorMultiTenantAppConfig } from "@/domain/app-config";
 import { appConfigService } from "@/infrastructure/app-config-service";
 import { customerRepository } from "@/infrastructure/customer/repository";
@@ -18,6 +17,7 @@ import { paymentService } from "@/infrastructure/payment/service";
 import { paymentMethodService } from "@/infrastructure/payment-method/service";
 import { stripePaymentMethodRepository } from "@/infrastructure/payment-method/stripe/repository";
 import { saleorClient } from "@/infrastructure/saleor/client";
+import { APP_CONFIG } from "@/services/handler/config";
 import { getConfigFormDataUseCase } from "@/use-cases/get-config-form-data-use-case";
 import { saveConfigUseCase } from "@/use-cases/save-config-use-case";
 

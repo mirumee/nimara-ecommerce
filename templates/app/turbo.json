@@ -1,0 +1,36 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^codegen", "^build"],
+      "outputs": ["dist/**", "index.js"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env",
+        ".env.production",
+        ".env.development",
+        "!.env*.local"
+      ],
+      "env": [
+        "BUILD_TARGET",
+        "ENVIRONMENT",
+        "BASE_PATH",
+        "ALLOWED_DOMAINS",
+        "CONFIG_PROVIDER",
+        "CONFIG_FILE_PATH",
+        "CONFIG_KEY",
+        "SENTRY_DSN",
+        "SENTRY_ORG",
+        "SENTRY_PROJECT",
+        "SENTRY_DEBUG"
+      ],
+      "passThroughEnv": ["SENTRY_AUTH_TOKEN"]
+    },
+    "codegen": {
+      "outputs": ["src/graphql/generated/**"],
+      "inputs": ["src/**/*.graphql", "codegen.ts"],
+      "env": ["NEXT_PUBLIC_SALEOR_API_URL"]
+    }
+  }
+}

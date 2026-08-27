@@ -3,7 +3,7 @@ import { useFormContext, useWatch } from "react-hook-form";
 import { Badge } from "@nimara/ui/components/badge";
 import { Button } from "@nimara/ui/components/button";
 
-import { type ConfigFormInput } from "@/apps/handler/api/rest/app/schema";
+import { type ConfigFormInput } from "@/services/handler/api/rest/app/schema";
 import { type ConfigFormData } from "@/use-cases/get-config-form-data-use-case";
 
 import { emptyConfig } from "../constants";

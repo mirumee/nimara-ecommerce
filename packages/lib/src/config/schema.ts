@@ -11,7 +11,10 @@ export type PackageInfo = {
 };
 
 // Apps extend it: `z.object({ ... }).and(baseConfigSchema(pkg))`.
-export const baseConfigSchema = (pkg: PackageInfo) =>
+export const baseConfigSchema = (
+  pkg: PackageInfo,
+  { singleTenant = false }: { singleTenant?: boolean } = {},
+) =>
   z
     .object({
       ENVIRONMENT: z.string(),
@@ -66,6 +69,30 @@ export const baseConfigSchema = (pkg: PackageInfo) =>
         ),
     })
     .superRefine((data, ctx) => {
+      if (singleTenant && data.ALLOWED_DOMAINS.length !== 1) {
+        ctx.addIssue({
+          code: "custom",
+          message:
+            "ALLOWED_DOMAINS must name exactly one Saleor domain: this is a single-tenant app.",
+          path: ["ALLOWED_DOMAINS"],
+        });
+      }
+
+      // A pattern names no host, so there is nothing to read a tenant from.
+      if (
+        singleTenant &&
+        data.ALLOWED_DOMAINS.some(
+          (domain) => !z.hostname().safeParse(domain).success,
+        )
+      ) {
+        ctx.addIssue({
+          code: "custom",
+          message:
+            "ALLOWED_DOMAINS must be a domain, not a pattern: a single-tenant app has to name the Saleor it serves.",
+          path: ["ALLOWED_DOMAINS"],
+        });
+      }
+
       if (data.NODE_ENV === "production" && data.VITE_SALEOR_APP_TOKEN) {
         ctx.addIssue({
           code: "custom",

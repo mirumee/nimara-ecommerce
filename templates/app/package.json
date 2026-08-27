@@ -1,0 +1,57 @@
+{
+  "dependencies": {
+    "@hono/zod-validator": "^0.9.0",
+    "@nimara/domain": "workspace:*",
+    "@nimara/foundation": "workspace:*",
+    "@nimara/infrastructure": "workspace:*",
+    "@nimara/lib": "workspace:*",
+    "@saleor/app-sdk": "1.7.0",
+    "@sentry/node": "^10.70.0",
+    "hono": "catalog:",
+    "iti": "^0.8.0",
+    "ts-invariant": "0.10.3",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "6.2.1",
+    "@graphql-typed-document-node/core": "3.2.0",
+    "@hono/vite-dev-server": "^0.26.1",
+    "@nimara/codegen": "workspace:*",
+    "@nimara/config": "workspace:*",
+    "@nimara/tooling": "workspace:*",
+    "@types/node": "^24.12.4",
+    "@typescript-eslint/eslint-plugin": "^6.12.0",
+    "@typescript-eslint/parser": "^6.12.0",
+    "dotenv": "17.4.1",
+    "eslint": "^8.57.0",
+    "ts-essentials": "10.1.1",
+    "typescript": "^5.9.3",
+    "vite": "^8.2.1",
+    "vite-tsconfig-paths": "6.1.1",
+    "vitest": "4.1.2"
+  },
+  "engines": {
+    "node": "24.x"
+  },
+  "lint-staged": {
+    "*.*": "prettier --write --ignore-unknown",
+    "*.{js,cjs,ts,tsx}": "eslint --fix"
+  },
+  "name": "@nimara/app-template",
+  "private": true,
+  "scripts": {
+    "build": "node etc/build.ts",
+    "codegen": "graphql-codegen --config ./codegen.ts",
+    "dev": "vite --port ${PORT:-8000}",
+    "dev:inspect": "NODE_OPTIONS='--inspect' vite --port 4000",
+    "env:init": "if [ -e .env ]; then echo 'refusing to overwrite .env' >&2; exit 1; fi; cat .env.example $(find src/services -name .env.example | sort) > .env",
+    "lint": "eslint . --ext .js,.ts,.tsx --fix",
+    "lint:staged": "lint-staged",
+    "lint:types": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest --watch"
+  },
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Template a Saleor app is generated from."
+}

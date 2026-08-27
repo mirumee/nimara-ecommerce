@@ -32,9 +32,7 @@ export const saleorTokenHeaders = z.object({
 
 export type SaleorTokenHeaders = z.infer<typeof saleorTokenHeaders>;
 
-/**
- * Saleor delivers the subscription's `event` payload as the webhook body.
- */
+// Saleor delivers the subscription's `event` payload as the webhook body.
 export type WebhookData<T extends { event: unknown } = { event: unknown }> =
   NonNullable<T["event"]>;
 

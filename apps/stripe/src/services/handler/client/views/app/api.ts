@@ -2,7 +2,7 @@ import { hc, type InferRequestType } from "hono/client";
 
 import { type ResponseSchema } from "@nimara/lib/api/schema";
 
-import { type AppType } from "@/apps/handler/entry-server";
+import { type AppType } from "@/services/handler/entry-server";
 import { type ConfigFormData } from "@/use-cases/get-config-form-data-use-case";
 
 // Typed RPC client for the app's own config API; shapes inferred from the routes.

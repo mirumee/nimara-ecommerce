@@ -1,12 +1,26 @@
-/**
- * Installation record for an installed Saleor app. App-specific settings are
- * stored separately by each app.
- */
-export type SaleorAppConfig = {
-  authToken: string;
-  saleorAppId: string;
-  saleorDomain: string;
+import { z } from "zod";
+
+export const saleorAppConfig = z.object({
+  authToken: z.string(),
+  saleorAppId: z.string(),
+  saleorDomain: z.string(),
+});
+
+export type SaleorAppConfig = z.infer<typeof saleorAppConfig>;
+
+// The app owns the shape of `settings`; the record around it never varies.
+export type SaleorAppInstallation<Settings> = SaleorAppConfig & {
+  settings: Settings | null;
 };
+
+// Every installed Saleor, keyed by domain.
+export const saleorAppInstallations = <Settings extends z.ZodType>(
+  settings: Settings,
+) =>
+  z.record(
+    z.string(),
+    saleorAppConfig.extend({ settings: settings.nullable().default(null) }),
+  );
 
 export type SaleorAppWebhookManifest = {
   asyncEvents: string[];

@@ -25,7 +25,9 @@ const TARGETS: Record<BuildTarget, BuildTargetAdapter> = {
  */
 export const buildApps = async ({ rootDir }: { rootDir: string }) => {
   const target = TARGETS[readBuildTarget()];
-  const { client, server } = await getEntryPoints(join(rootDir, "src", "apps"));
+  const { client, server } = await getEntryPoints(
+    join(rootDir, "src", "services"),
+  );
 
   await rm(join(rootDir, "dist"), { recursive: true, force: true });
 
