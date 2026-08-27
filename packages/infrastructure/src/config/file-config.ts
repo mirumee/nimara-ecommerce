@@ -10,7 +10,7 @@ import { readEnv } from "#root/lib/env/env";
 import { type Logger } from "#root/logging/types";
 
 const fileEnvSchema = z.object({
-  CONFIG_FILE_PATH: z.string().default(".saleor-app-config.json"),
+  CONFIG_FILE_PATH: z.string().default(".app-config.json"),
 });
 
 const isMissingFile = (error: unknown) =>

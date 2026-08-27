@@ -8,11 +8,12 @@ import {
   type Tenancy,
   toDirectoryName,
 } from "./names.ts";
+import { applyTenancy } from "./tenancy.ts";
 
 // Copying `.env` would hand the new app someone else's Saleor token.
-const NOT_COPIED = new Set([
+export const NOT_COPIED = new Set([
   ".env",
-  ".saleor-app-config.json",
+  ".app-config.json",
   ".turbo",
   "dist",
   "node_modules",
@@ -38,34 +39,6 @@ const ALLOWED_DOMAINS_DOC = {
   single: `# The one Saleor this app serves, e.g. store.saleor.cloud. Exactly one
 # concrete domain: a wildcard names no host, and this app has to know which
 # Saleor it is working with when nothing is asking it.`,
-};
-
-/**
- * A single-tenant app calls a different helper, which is what publishes
- * `SALEOR_DOMAIN`. Rewritten rather than templated so the generated file names
- * the helper it actually calls.
- */
-const applyTenancy = async ({
-  destination,
-  tenancy,
-}: {
-  destination: string;
-  tenancy: Tenancy;
-}) => {
-  if (tenancy === "multi") {
-    return;
-  }
-
-  const path = join(destination, "src", "services", "handler", "config.ts");
-  const contents = await readFile(path, "utf8");
-
-  await writeFile(
-    path,
-    contents.replaceAll(
-      "prepareServiceConfig",
-      "prepareSingleTenantServiceConfig",
-    ),
-  );
 };
 
 const copyTemplate = ({
@@ -181,7 +154,7 @@ export const createApp = async ({
     });
   }
 
-  await applyTenancy({ destination, tenancy });
+  await applyTenancy({ appDir: destination, tenancy });
 
   return destination;
 };

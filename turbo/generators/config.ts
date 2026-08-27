@@ -5,9 +5,11 @@ import { join } from "node:path";
 import { type PlopTypes } from "@turbo/gen";
 
 import { createApp } from "./src/create-app.ts";
+import { createService, listApps } from "./src/create-service.ts";
 import {
   BUILD_TARGETS,
   type BuildTarget,
+  TEMPLATE_SERVICE,
   TENANCIES,
   type Tenancy,
   toDirectoryName,
@@ -20,6 +22,12 @@ type Answers = {
   port: string;
   target: BuildTarget;
   tenancy: Tenancy;
+  turbo: { paths: { root: string } };
+};
+
+type ServiceAnswers = {
+  app: string;
+  name: string;
   turbo: { paths: { root: string } };
 };
 
@@ -107,11 +115,66 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
 
         const pnpm = run(turbo.paths.root);
 
-        // `--no-frozen-lockfile`: CI freezes it by default, and a new
-        // workspace package is exactly what the lockfile does not have yet.
+        /**
+         * `--no-frozen-lockfile`: CI freezes it by default, and a new workspace
+         * package is exactly what the lockfile does not have yet.
+         */
         pnpm("install", "--no-frozen-lockfile", "--silent");
 
         return `created ${destination}`;
+      },
+    ],
+  });
+
+  plop.setGenerator("saleor-service", {
+    description: "Add a service to an app that already exists",
+    prompts: [
+      {
+        choices: listApps(process.cwd()),
+        message: "Which app?",
+        name: "app",
+        type: "list",
+      },
+      {
+        default: TEMPLATE_SERVICE,
+        filter: toDirectoryName,
+        message: "Service name (becomes src/services/<name>):",
+        name: "name",
+        type: "input",
+        validate: (input: string, answers: { app: string }) => {
+          const named = validateName(input);
+
+          if (named !== true) {
+            return named;
+          }
+
+          const name = toDirectoryName(input);
+          const path = join("apps", answers.app, "src", "services", name);
+
+          return existsSync(join(process.cwd(), path))
+            ? `${path} already exists.`
+            : true;
+        },
+      },
+    ],
+    actions: [
+      async (answers) => {
+        const { app, name, turbo } = answers as ServiceAnswers;
+
+        const serviceDir = await createService({
+          app,
+          name,
+          root: turbo.paths.root,
+        });
+
+        /**
+         * Renaming the service reorders the `@/services/<name>/...` imports the
+         * lint rules sort. Leaving that undone would hand back a workspace that
+         * fails its own linter.
+         */
+        run(turbo.paths.root)("--filter", app, "lint");
+
+        return `created ${serviceDir}`;
       },
     ],
   });

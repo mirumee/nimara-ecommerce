@@ -122,7 +122,7 @@ describe("create-app", () => {
     // given a template someone has run locally
     await write(join(template(), ".env"), "SALEOR_APP_TOKEN=secret\n");
     await write(join(template(), "dist", "entry-server.js"), "built");
-    await write(join(template(), ".saleor-app-config.json"), "{}");
+    await write(join(template(), ".app-config.json"), "{}");
 
     // when
     const destination = await generate();
@@ -133,7 +133,7 @@ describe("create-app", () => {
       readFile(join(destination, "dist", "entry-server.js"), "utf8"),
     ).rejects.toThrow();
     await expect(
-      readFile(join(destination, ".saleor-app-config.json"), "utf8"),
+      readFile(join(destination, ".app-config.json"), "utf8"),
     ).rejects.toThrow();
   });
 

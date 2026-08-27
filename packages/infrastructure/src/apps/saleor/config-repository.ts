@@ -1,9 +1,10 @@
+import { type z } from "zod";
+
 import { type AsyncResult, err, ok } from "@nimara/domain/objects/Result";
 import {
   type SaleorAppConfig,
   type SaleorAppInstallation,
 } from "@nimara/domain/objects/SaleorApp";
-import { type z } from "zod";
 
 import { type ConfigItemRepository } from "#root/config/types";
 
