@@ -21,6 +21,11 @@ pnpm dev
 Set at least `ENVIRONMENT` and `ALLOWED_DOMAINS` — an empty allow list admits
 no Saleor at all, which is the safe default but installs nothing.
 
+A single-tenant app names one concrete domain there and reads it back as
+`SALEOR_DOMAIN`, for work that arrives with no request. A multi-tenant one has
+no such field: it takes the tenant from whichever middleware verified the
+caller.
+
 ## Layout
 
 ```

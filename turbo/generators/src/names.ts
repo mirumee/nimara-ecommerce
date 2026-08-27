@@ -20,3 +20,7 @@ export const validateName = (value: string) =>
 export const BUILD_TARGETS = ["vercel", "node"] as const;
 
 export type BuildTarget = (typeof BUILD_TARGETS)[number];
+
+export const TENANCIES = ["multi", "single"] as const;
+
+export type Tenancy = (typeof TENANCIES)[number];
