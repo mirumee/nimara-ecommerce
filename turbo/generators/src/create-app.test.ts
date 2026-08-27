@@ -9,10 +9,45 @@ import { createApp } from "./create-app";
 let root: string;
 
 const TEMPLATE_PKG = {
+  dependencies: { react: "^19.2.3" },
+  devDependencies: { tailwindcss: "^3.4.19" },
   name: "@nimara/app-template",
   private: true,
   scripts: { dev: "vite --port ${PORT:-8000}" },
 };
+
+const ENTRY_SERVER = `import { container } from "@/container";
+
+import { appRoutes } from "./api/rest/app";
+import { saleorRoutes } from "./api/rest/saleor";
+import { dashboard } from "./dashboard";
+
+export const app = new Hono()
+  .route("/", dashboard)
+  .route("/api/saleor", saleorRoutes)
+  .route("/api/app", appRoutes);
+`;
+
+const CONTAINER = `import { installSaleorAppUseCase } from "@nimara/infrastructure/use-cases/apps/saleor/install-app-use-case";
+
+import { dashboardUseCases } from "./dashboard";
+
+export const container = createContainer()
+  .add((ctx) => ({
+    configStore: () => ({
+      store: 1,
+    }),
+  }))
+  .add((ctx) => ({
+    installApp: () =>
+      installSaleorAppUseCase({
+        configRepository: ctx.appConfigService,
+      }),
+  }))
+  .add(dashboardUseCases);
+
+export type AppContainer = typeof container;
+`;
 
 const template = () => join(root, "templates", "app");
 
@@ -22,11 +57,17 @@ const write = async (path: string, contents: string) => {
 };
 
 const generate = ({
+  kind = "dashboard",
   target = "vercel",
   tenancy = "multi",
-}: { target?: "node" | "vercel"; tenancy?: "multi" | "single" } = {}) =>
+}: {
+  kind?: "dashboard" | "http";
+  target?: "node" | "vercel";
+  tenancy?: "multi" | "single";
+} = {}) =>
   createApp({
     description: "Keeps a feed in step with Saleor",
+    kind,
     name: "feed-sync",
     port: "8010",
     root,
@@ -60,6 +101,38 @@ describe("create-app", () => {
       'import { prepareServiceConfig } from "@nimara/lib/config/service";\n' +
         "export const APP_CONFIG = prepareServiceConfig({});\n",
     );
+    await write(
+      join(template(), "src", "services", "handler", "entry-server.ts"),
+      ENTRY_SERVER,
+    );
+    await write(
+      join(template(), "src", "services", "handler", "dashboard.ts"),
+      "export const dashboard = 1;",
+    );
+    await write(
+      join(template(), "src", "services", "handler", "entry-client.tsx"),
+      "render();",
+    );
+    await write(
+      join(
+        template(),
+        "src",
+        "services",
+        "handler",
+        "api",
+        "rest",
+        "app",
+        "index.ts",
+      ),
+      "export const appRoutes = 1;",
+    );
+    await write(join(template(), "src", "container", "index.ts"), CONTAINER);
+    await write(
+      join(template(), "src", "container", "dashboard.ts"),
+      "export const dashboardUseCases = 1;",
+    );
+    await write(join(template(), "tailwind.config.ts"), "export default 1;");
+    await write(join(template(), "postcss.config.cjs"), "module.exports = 1;");
   });
 
   afterEach(() => rm(root, { force: true, recursive: true }));
@@ -107,6 +180,7 @@ describe("create-app", () => {
     // when
     const destination = await createApp({
       description: "Anything",
+      kind: "dashboard",
       name: "  Feed Sync!  ",
       port: "8010",
       root,
@@ -184,6 +258,70 @@ describe("create-app", () => {
 
     // then
     expect(config).not.toContain("prepareSingleTenantServiceConfig");
+  });
+
+  describe("kind", () => {
+    it("leaves the dashboard out of an http app", async () => {
+      // when
+      const destination = await generate({ kind: "http" });
+      const service = join(destination, "src", "services", "handler");
+
+      // then
+      for (const path of [
+        join(service, "dashboard.ts"),
+        join(service, "entry-client.tsx"),
+        join(service, "api", "rest", "app", "index.ts"),
+        join(destination, "tailwind.config.ts"),
+        join(destination, "postcss.config.cjs"),
+      ]) {
+        await expect(readFile(path, "utf8")).rejects.toThrow();
+      }
+    });
+
+    it("unwires what an http app did not copy", async () => {
+      // when
+      const destination = await generate({ kind: "http" });
+      const [entryServer, container] = await Promise.all(
+        [
+          join(destination, "src", "services", "handler", "entry-server.ts"),
+          join(destination, "src", "container", "index.ts"),
+        ].map((path) => readFile(path, "utf8")),
+      );
+
+      // then an import of a file that was not copied does not compile, and a
+      // container entry nothing calls is dead code in a new app.
+      expect(entryServer).not.toContain("dashboard");
+      expect(entryServer).toContain('.route("/api/saleor", saleorRoutes);');
+      expect(container).not.toContain("getSettingsForm");
+      expect(container).not.toContain("saveSettings");
+      expect(container).toContain("installApp");
+    });
+
+    it("drops the dependencies only a dashboard pulls", async () => {
+      // when
+      const destination = await generate({ kind: "http" });
+      const pkg = JSON.parse(
+        await readFile(join(destination, "package.json"), "utf8"),
+      );
+
+      // then
+      expect(pkg.dependencies).not.toHaveProperty("react");
+      expect(pkg.devDependencies).not.toHaveProperty("tailwindcss");
+    });
+
+    it("keeps all of it for a dashboard app", async () => {
+      // when
+      const destination = await generate();
+      const pkg = JSON.parse(
+        await readFile(join(destination, "package.json"), "utf8"),
+      );
+
+      // then
+      expect(pkg.dependencies.react).toBe("^19.2.3");
+      expect(
+        await readFile(join(destination, "tailwind.config.ts"), "utf8"),
+      ).toBe("export default 1;");
+    });
   });
 
   it("refuses to write over an app that already exists", async () => {

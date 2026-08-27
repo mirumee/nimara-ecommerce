@@ -1,13 +1,19 @@
 import { existsSync, readdirSync } from "node:fs";
 import { cp, readdir, readFile, writeFile } from "node:fs/promises";
-import { basename, join } from "node:path";
+import { basename, join, relative, sep } from "node:path";
 
 import { NOT_COPIED } from "./create-app.ts";
-import { TEMPLATE_SERVICE, toDirectoryName } from "./names.ts";
+import {
+  isDashboardPath,
+  removeServiceDashboard,
+  restoreAppDashboard,
+} from "./dashboard.ts";
+import { type AppKind, TEMPLATE_SERVICE, toDirectoryName } from "./names.ts";
 import { applyTenancy, detectTenancy } from "./tenancy.ts";
 
 export type CreateServiceInput = {
   app: string;
+  kind: AppKind;
   name: string;
   root: string;
 };
@@ -72,6 +78,7 @@ const rewriteImports = async ({
  */
 export const createService = async ({
   app,
+  kind,
   name,
   root,
 }: CreateServiceInput) => {
@@ -80,16 +87,39 @@ export const createService = async ({
   const appDir = join(root, "apps", app);
   const serviceDir = join(appDir, "src", "services", serviceName);
 
-  await cp(
-    join(root, "templates", "app", "src", "services", TEMPLATE_SERVICE),
-    serviceDir,
-    {
-      errorOnExist: true,
-      filter: (entry) => !NOT_COPIED.has(basename(entry)),
-      force: false,
-      recursive: true,
-    },
+  const source = join(
+    root,
+    "templates",
+    "app",
+    "src",
+    "services",
+    TEMPLATE_SERVICE,
   );
+
+  await cp(source, serviceDir, {
+    errorOnExist: true,
+    filter: (entry) => {
+      if (NOT_COPIED.has(basename(entry))) {
+        return false;
+      }
+
+      const path = relative(source, entry).split(sep).join("/");
+
+      return kind === "dashboard" || !isDashboardPath(path);
+    },
+    force: false,
+    recursive: true,
+  });
+
+  // Before the rewrite: the lines it cuts still name the template's service.
+  if (kind === "http") {
+    await removeServiceDashboard(serviceDir);
+  }
+
+  // A dashboard needs what the app around it may never have had.
+  if (kind === "dashboard") {
+    await restoreAppDashboard({ appDir, root });
+  }
 
   await rewriteImports({ name: serviceName, serviceDir });
 

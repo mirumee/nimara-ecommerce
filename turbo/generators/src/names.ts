@@ -23,6 +23,10 @@ export const BUILD_TARGETS = ["vercel", "node"] as const;
 
 export type BuildTarget = (typeof BUILD_TARGETS)[number];
 
+export const KINDS = ["dashboard", "http"] as const;
+
+export type AppKind = (typeof KINDS)[number];
+
 export const TENANCIES = ["multi", "single"] as const;
 
 export type Tenancy = (typeof TENANCIES)[number];

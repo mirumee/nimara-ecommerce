@@ -31,9 +31,8 @@ const app = new Hono()
   .use(healthCheckMiddleware({ basePath: CONFIG.BASE_PATH }))
   .route("/", dashboard)
   /**
-   * Saleor opens `appUrl`, which is the app's root. A dashboard is mounted
-   * above and answers first; without one the app names itself rather than
-   * answering 404.
+   * Saleor opens `appUrl`, which is the app's root. A dashboard, where the app
+   * has one, is mounted above and answers first.
    */
   .get("/", (context) =>
     context.text(`${CONFIG.DISPLAY_NAME} ${CONFIG.VERSION}.`),
