@@ -39,7 +39,7 @@
     "format:check": "pnpm prettier --check '**/*.{js,ts,tsx,json,md}'",
     "gen": "turbo gen",
     "graph": "turbo run build --graph=graph.mermaid",
-    "localstack:down": "docker compose -f apps/marketplace/docker-compose.yml down",
+    "localstack:down": "docker compose -f apps/marketplace/docker-compose.yml stop localstack",
     "localstack:export-secret": "docker compose -f apps/marketplace/docker-compose.yml exec localstack bash /opt/localstack/export-secret.sh",
     "localstack:up": "docker compose -f apps/marketplace/docker-compose.yml up -d localstack",
     "mailpit:down": "docker compose -f apps/marketplace/docker-compose.yml stop mailpit",

@@ -46,6 +46,10 @@ to **apps/marketplace/.env**:
 cp apps/marketplace/.env.example apps/marketplace/.env
 ```
 
+Three values need your input: `NEXT_PUBLIC_SALEOR_URL`, `ALLOWED_SALEOR_DOMAINS`, and
+`STRIPE_SECRET_KEY`. The first section of the file holds them. Every other value is a working
+local default or is optional.
+
 ### Add the backend URL
 
 Use a free developer account at Saleor Cloud, or run Saleor locally with Docker.
@@ -269,7 +273,6 @@ for the full, authoritative list.
 | `NEXT_PUBLIC_MARKETPLACE_STOREFRONT_URL`      | Storefront URL the marketplace links to (default: `http://localhost:3000`)                                                                                                                                 |
 | `NEXT_PUBLIC_MARKETPLACE_VENDOR_URL`          | Public origin of this app. Set it to your tunnel URL when you install from a remote Saleor, so the manifest URLs and the Next.js dev-origin allowance are reachable. Leave it unset for pure localhost dev |
 | `ALLOWED_SALEOR_DOMAINS`                      | Comma-separated Saleor hosts allowed to install the app. An unset list accepts any domain                                                                                                                  |
-| `NEXT_PUBLIC_SALEOR_UI_APP_TOKEN`             | Optional development token. Do not set it in a deployed environment                                                                                                                                        |
 
 **App config**
 
@@ -356,9 +359,6 @@ Add the required environment variables in Vercel:
 - `MARKETPLACE_SMTP_SECURE` (optional)
 - `MARKETPLACE_EMAIL_FROM` (optional, required only to send emails)
 - `MARKETPLACE_SUPERADMIN_EMAIL` (optional, required only to notify admin on registration)
-
-Do not set `NEXT_PUBLIC_SALEOR_UI_APP_TOKEN` in a deployed environment. It is a development
-token.
 
 See
 [apps/marketplace/.env.example](https://github.com/mirumee/nimara-ecommerce/blob/main/apps/marketplace/.env.example)
