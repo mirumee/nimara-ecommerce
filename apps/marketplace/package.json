@@ -66,7 +66,7 @@
     "dev:docker": "docker compose up -d && next dev --port 3001 --turbopack",
     "lint": "eslint . --ext .js,.ts,.tsx",
     "lint:fix": "eslint . --ext .js,.ts,.tsx --fix",
-    "localstack:down": "docker compose down",
+    "localstack:down": "docker compose stop localstack",
     "localstack:up": "docker compose up -d localstack",
     "db-ledger:up": "docker compose up -d db-ledger",
     "db-ledger:down": "docker compose stop db-ledger",
