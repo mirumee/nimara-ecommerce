@@ -6,7 +6,7 @@ start as a copy of this one, so what is here is what every app begins with.
 Generate one instead of copying by hand:
 
 ```bash
-pnpm gen saleor-app
+pnpm gen app
 ```
 
 ## Running it
@@ -52,7 +52,7 @@ file or the other, never both: one service is one deployed unit.
 ## Adding a service
 
 ```bash
-pnpm gen saleor-service
+pnpm gen service
 ```
 
 It copies this template's service under the name you give, points the imports

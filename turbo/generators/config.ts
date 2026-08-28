@@ -31,7 +31,7 @@ const run =
 
 // eslint-disable-next-line import/no-default-export
 export default function generator(plop: PlopTypes.NodePlopAPI): void {
-  plop.setGenerator("saleor-app", {
+  plop.setGenerator("app", {
     description: "Scaffold a Saleor app from the template",
     prompts: [
       prompts.appName,
@@ -67,7 +67,7 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
     ],
   });
 
-  plop.setGenerator("saleor-service", {
+  plop.setGenerator("service", {
     description: "Add a service to an app that already exists",
     prompts: [prompts.app, prompts.kind, prompts.serviceName],
     actions: [
