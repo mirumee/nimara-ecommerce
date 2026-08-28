@@ -1,0 +1,60 @@
+name: Daily GitHub Summary
+
+on:
+  schedule:
+    # GitHub runs cron in UTC and Poland changes the clock twice a year, so one
+    # entry cannot hit 09:45 local time all year. Both entries fire and the guard
+    # step below drops the one that is an hour off.
+    - cron: "45 7 * * 1-5"
+    - cron: "45 8 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Print the message to the log instead of posting it to Slack"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+  actions: read
+  pull-requests: read
+  issues: read
+
+concurrency:
+  group: daily-summary
+  cancel-in-progress: false
+
+jobs:
+  summary:
+    name: Post summary to Slack
+    runs-on: ubuntu-latest
+    if: github.repository == 'mirumee/nimara-ecommerce'
+    steps:
+      - name: Check the local hour
+        id: guard
+        run: |
+          hour=$(TZ=Europe/Warsaw date +%H)
+          if [ "${{ github.event_name }}" != "schedule" ] || [ "$hour" = "09" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Warsaw hour is $hour, not 09. This is the off-season schedule entry."
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout
+        if: steps.guard.outputs.run == 'true'
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        if: steps.guard.outputs.run == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: "lts/krypton"
+
+      - name: Post summary
+        if: steps.guard.outputs.run == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: node .github/scripts/daily-summary.mjs
