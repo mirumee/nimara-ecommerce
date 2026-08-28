@@ -417,3 +417,15 @@ test("Monday keeps the parked entries in the queues and sends none apart", () =>
   assert.equal(payload.unclaimed.length, 1);
   assert.deepEqual(payload.parked, []);
 });
+
+test("an overlong comment is cut so the Slack block still fits", () => {
+  const comment = readComment(
+    JSON.stringify({
+      subtype: "success",
+      is_error: false,
+      result: "z".repeat(5000),
+    }),
+  );
+
+  assert.equal(comment.length, 1200);
+});
