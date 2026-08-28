@@ -38,6 +38,8 @@ okf_version: "0.1"
 - [IMP-0002 Stripe Payment Application Multi-Tenancy](tech/implementation/IMP-0002%20Stripe%20Payment%20Application%20Multi-Tenancy.md) - One payment-application deployment serves many Saleor installations, keyed by domain and gated by a fail-closed allowlist.
 - [IMP-0003 Payment Application Configuration Storage Selection](tech/implementation/IMP-0003%20Payment%20Application%20Configuration%20Storage%20Selection.md) - A storage-agnostic provider core with selectable backends, adding an on-disk store so the application runs without a hosted configuration service.
 - [IMP-0004 Checkout Step Guard Enforcement](tech/implementation/IMP-0004%20Checkout%20Step%20Guard%20Enforcement.md) - Checkout step selection is enforced against completeness on every request, so a step reached by URL cannot skip earlier steps or open a gateway transaction.
+- [IMP-0005 Daily GitHub Summary Bot](tech/implementation/IMP-0005%20Daily%20GitHub%20Summary%20Bot.md) - Adds a scheduled GitHub Actions job that posts a pre-daily repository summary to a Slack Incoming Webhook, covering merged pull requests, the review queue, failed CI on main, and issue and release activity.
+- [IMP-0006 Daily Summary Claude Comment](tech/implementation/IMP-0006%20Daily%20Summary%20Claude%20Comment.md) - Adds an optional Claude-written comment above the sections of the daily GitHub summary posted to Slack, trimmed to titles and counts before the request and degraded to no comment on any failure.
 
 # Current Product State
 
@@ -121,6 +123,7 @@ okf_version: "0.1"
 - [OPS-0006 Storefront Provider Change and Rollback](operations/OPS-0006%20Storefront%20Provider%20Change%20and%20Rollback.md) - Controlled search/content provider change and rebuild-based rollback to a known-good deployment.
 - [OPS-0007 Saleor Schema Regeneration and Compatibility Check](operations/OPS-0007%20Saleor%20Schema%20Regeneration%20and%20Compatibility%20Check.md) - Saleor GraphQL regeneration, compatibility review, test gates, and schema-note refresh.
 - [OPS-0008 Trunk Release and Production Rollback](operations/OPS-0008%20Trunk%20Release%20and%20Production%20Rollback.md) - CI-gated release from `main`, semantic-release and production verification, and immutable deployment rollback.
+- [OPS-0009 Daily GitHub Summary Bot](operations/OPS-0009%20Daily%20GitHub%20Summary%20Bot.md) - Operates the scheduled GitHub Actions job that posts the pre-daily repository summary to Slack, including webhook setup, schedule changes, and failure diagnosis.
 
 # Technology ADR
 

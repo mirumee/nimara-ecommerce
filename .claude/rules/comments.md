@@ -1,11 +1,8 @@
 # Comments
 
-- Comment a decision the code cannot show, not what the code says. A name, type, or
-  signature that already carries the meaning needs no comment.
-- Keep it to one or two lines. Provider API background belongs in the vendor's docs, not
-  in a source file.
-- Never annotate a constant merely because it exists.
-- Never restate an architecture rule the code already follows. A derived type that names
-  no provider does not need a comment saying it names no provider.
-- Prefer a comment that would stop someone "fixing" correct code back to broken.
-- Use the expanded block form when a comment is warranted, never `/** one liner */`.
+- Do not write comments in code. This applies to new code and to code that you edit.
+- If a fragment needs an explanation, rename the symbol or extract a function.
+- Keep comments that already exist in the file. Do not delete them and do not extend them.
+- Exceptions: a license header, a pragma that the toolchain reads
+  (`@ts-expect-error`, `eslint-disable`, `biome-ignore`), and a JSDoc block that the
+  public API of a package must publish.
