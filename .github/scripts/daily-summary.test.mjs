@@ -5,7 +5,7 @@ import {
   buildBlocks,
   escapeMrkdwn,
   formatAge,
-  resolveAuth,
+  readComment,
   resolveWindow,
   summarizeForPrompt,
 } from "./daily-summary.mjs";
@@ -247,42 +247,6 @@ test("the prompt payload caps each list at ten entries", () => {
   assert.equal(payload.awaitingReview.length, 10);
 });
 
-test("no credential means no request", () => {
-  assert.equal(resolveAuth({}), null);
-});
-
-test("an API key authenticates on x-api-key", () => {
-  const auth = resolveAuth({ ANTHROPIC_API_KEY: "sk-ant-api03-abc" });
-
-  assert.equal(auth.headers["x-api-key"], "sk-ant-api03-abc");
-  assert.equal(auth.headers.authorization, undefined);
-  assert.equal(auth.notice, undefined);
-});
-
-test("a subscription token authenticates as a bearer token", () => {
-  const auth = resolveAuth({ CLAUDE_CODE_OAUTH_TOKEN: "sk-ant-oat01-abc" });
-
-  assert.equal(auth.headers.authorization, "Bearer sk-ant-oat01-abc");
-  assert.equal(auth.headers["anthropic-beta"], "oauth-2025-04-20");
-  assert.equal(auth.headers["x-api-key"], undefined);
-});
-
-test("a subscription token under the API key name still works, with a notice", () => {
-  const auth = resolveAuth({ ANTHROPIC_API_KEY: "sk-ant-oat01-abc" });
-
-  assert.equal(auth.headers.authorization, "Bearer sk-ant-oat01-abc");
-  assert.match(auth.notice, /CLAUDE_CODE_OAUTH_TOKEN/);
-});
-
-test("the subscription token wins when both are set", () => {
-  const auth = resolveAuth({
-    ANTHROPIC_API_KEY: "sk-ant-api03-abc",
-    CLAUDE_CODE_OAUTH_TOKEN: "sk-ant-oat01-xyz",
-  });
-
-  assert.equal(auth.headers.authorization, "Bearer sk-ant-oat01-xyz");
-});
-
 test("the prompt payload carries the pull request description", () => {
   const payload = summarizeForPrompt({
     ...EMPTY,
@@ -311,4 +275,38 @@ test("a long description is truncated and an empty one becomes null", () => {
 test("the prompt payload names the window", () => {
   assert.equal(summarizeForPrompt(EMPTY, { weekly: true }).window, "lastWeek");
   assert.equal(summarizeForPrompt(EMPTY).window, "sinceLastDaily");
+});
+
+test("a successful envelope yields the comment", () => {
+  const comment = readComment(
+    JSON.stringify({
+      subtype: "success",
+      is_error: false,
+      result: "  Spokojny tydzień.  ",
+    }),
+  );
+
+  assert.equal(comment, "Spokojny tydzień.");
+});
+
+test("an envelope that reports an error yields no comment", () => {
+  assert.equal(
+    readComment(
+      JSON.stringify({ subtype: "error_during_execution", is_error: true }),
+    ),
+    null,
+  );
+});
+
+test("a successful envelope with an empty result yields no comment", () => {
+  assert.equal(
+    readComment(
+      JSON.stringify({ subtype: "success", is_error: false, result: "   " }),
+    ),
+    null,
+  );
+});
+
+test("output that is not JSON yields no comment", () => {
+  assert.equal(readComment("command not found: claude"), null);
 });

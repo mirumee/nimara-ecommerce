@@ -85,16 +85,26 @@ A subscription token bills the plan of the person who created it, and it lasts o
 1. Run `claude setup-token` in a terminal. The token prints to the screen and is saved nowhere.
 2. Add a repository secret named `CLAUDE_CODE_OAUTH_TOKEN` and paste the token.
 
-The two kinds authenticate differently. An API key goes on the `x-api-key` header. A
-subscription token goes on `Authorization: Bearer` with the `anthropic-beta` header. The script
-selects the right one. A subscription token pasted under `ANTHROPIC_API_KEY` still works,
-because the script recognizes the `sk-ant-oat` prefix, but it logs a notice asking you to move
-it. When both secrets are set, the subscription token wins.
+The script does not call the API itself. It runs Claude Code in headless mode, and the CLI
+selects between the two credentials. A subscription token authenticates Claude Code, not a
+hand-written HTTP client: a direct call to the Messages API with one returns `429` with the
+unhelpful body `{"type":"rate_limit_error","message":"Error"}`, which reads like an exhausted
+quota but is not one.
 
-The bot sends one request per weekday. It uses the model `claude-opus-5` at effort `low`. Before
-the request it trims the data to titles, pull request descriptions, and counts. A description is
-cut at 600 characters, and each list is capped at ten entries, so one run costs a fraction of a
-cent. Monday costs more than the other days, because a weekly window holds more pull requests. To drop the comment and keep the sections, delete the credential secret. No code change is
+The workflow installs the CLI with a pinned version. Raise that pin deliberately, not on a
+schedule, because the harness changes what a session costs.
+
+The bot runs one session per weekday with the model `claude-opus-5`. Before the session it trims
+the data to titles, pull request descriptions, and counts. A description is cut at 600
+characters and each list is capped at ten entries.
+
+Claude Code sends its own harness context on every session, about 12,000 input tokens, which
+dominates the cost. One run bills around 13 cents at list price, and Monday costs more because a
+weekly window holds more pull requests. On a subscription token this is charged against the
+plan's limits rather than in dollars.
+
+`--bare` would drop most of that context, but it does not read `CLAUDE_CODE_OAUTH_TOKEN`. It is
+usable only with an API key. To drop the comment and keep the sections, delete the credential secret. No code change is
 needed.
 
 ## Change the summary content
@@ -153,11 +163,12 @@ If the message arrives without the comment above the sections, the sections are 
 only the Claude call failed. Read the `Post summary` step for a `Claude` warning line:
 
 - No warning line means that `ANTHROPIC_API_KEY` is absent. The bot skipped the call.
-- `Claude 401` with `API key is invalid` means that the API key is wrong or revoked. If you
-  pasted the output of `claude setup-token` under `ANTHROPIC_API_KEY`, move it to
-  `CLAUDE_CODE_OAUTH_TOKEN`.
-- `Claude 401` with `OAuth access token is invalid` means that the subscription token expired
-  or was revoked. Run `claude setup-token` again and replace the secret.
+- `Claude comment skipped: ... ENOENT` means that the `Install Claude Code` step did not run or
+  did not finish.
+- `Claude comment skipped: ... timed out` means that the session ran past three minutes.
+- `Claude reported error_during_execution` means that the session started and failed. The
+  credential is the first thing to check: an expired subscription token needs
+  `claude setup-token` run again, and a revoked API key needs replacing.
 - `Claude 429` means that the account hit its Anthropic rate limit.
 
 A failed comment never blocks the summary, so the job still succeeds. This is intended. The
