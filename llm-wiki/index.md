@@ -39,6 +39,7 @@ okf_version: "0.1"
 - [IMP-0003 Payment Application Configuration Storage Selection](tech/implementation/IMP-0003%20Payment%20Application%20Configuration%20Storage%20Selection.md) - A storage-agnostic provider core with selectable backends, adding an on-disk store so the application runs without a hosted configuration service.
 - [IMP-0004 Checkout Step Guard Enforcement](tech/implementation/IMP-0004%20Checkout%20Step%20Guard%20Enforcement.md) - Checkout step selection is enforced against completeness on every request, so a step reached by URL cannot skip earlier steps or open a gateway transaction.
 - [IMP-0005 Daily GitHub Summary Bot](tech/implementation/IMP-0005%20Daily%20GitHub%20Summary%20Bot.md) - Adds a scheduled GitHub Actions job that posts a pre-daily repository summary to a Slack Incoming Webhook, covering merged pull requests, the review queue, failed CI on main, and issue and release activity.
+- [IMP-0006 Claude Pull Request Review Comment](tech/implementation/IMP-0006%20Claude%20Pull%20Request%20Review%20Comment.md) - Adds a GitHub Actions job that runs anthropics/claude-code-action on an opened or ready-for-review pull request and posts one short comment scoped to correctness, layer boundaries, and missing tests.
 
 # Current Product State
 
@@ -123,6 +124,7 @@ okf_version: "0.1"
 - [OPS-0007 Saleor Schema Regeneration and Compatibility Check](operations/OPS-0007%20Saleor%20Schema%20Regeneration%20and%20Compatibility%20Check.md) - Saleor GraphQL regeneration, compatibility review, test gates, and schema-note refresh.
 - [OPS-0008 Trunk Release and Production Rollback](operations/OPS-0008%20Trunk%20Release%20and%20Production%20Rollback.md) - CI-gated release from `main`, semantic-release and production verification, and immutable deployment rollback.
 - [OPS-0009 Daily GitHub Summary Bot](operations/OPS-0009%20Daily%20GitHub%20Summary%20Bot.md) - Operates the scheduled GitHub Actions job that posts the pre-daily repository summary to Slack, including webhook setup, schedule changes, and failure diagnosis.
+- [OPS-0010 Claude Pull Request Review](operations/OPS-0010%20Claude%20Pull%20Request%20Review.md) - Operates the GitHub Actions job that posts a short Claude review comment on a pull request, including API key setup, cost control, prompt tuning, and failure diagnosis.
 
 # Technology ADR
 

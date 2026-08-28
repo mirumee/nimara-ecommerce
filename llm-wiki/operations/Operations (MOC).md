@@ -28,6 +28,7 @@ and product-state records they support.
 - [OPS-0007 Saleor Schema Regeneration and Compatibility Check](OPS-0007%20Saleor%20Schema%20Regeneration%20and%20Compatibility%20Check.md) - runbook - active - Regenerates GraphQL clients, reviews compatibility, and refreshes schema-note evidence.
 - [OPS-0008 Trunk Release and Production Rollback](OPS-0008%20Trunk%20Release%20and%20Production%20Rollback.md) - rollback - active - Verifies CI-gated releases from `main` and restores the prior immutable deployment when production regresses.
 - [OPS-0009 Daily GitHub Summary Bot](OPS-0009%20Daily%20GitHub%20Summary%20Bot.md) - Operates the scheduled GitHub Actions job that posts the pre-daily repository summary to Slack, including webhook setup, schedule changes, and failure diagnosis.
+- [OPS-0010 Claude Pull Request Review](OPS-0010%20Claude%20Pull%20Request%20Review.md) - Operates the GitHub Actions job that posts a short Claude review comment on a pull request, including API key setup, cost control, prompt tuning, and failure diagnosis.
 
 ## Related Notes
 

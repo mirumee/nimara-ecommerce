@@ -741,3 +741,6 @@
 - **Create**: Added IMP-0005 as `in_progress` for the daily GitHub summary bot, tracing PR #799.
 - **Create**: Added OPS-0009 as an `active` runbook for the Slack webhook setup, the schedule and its daylight-saving guard, webhook rotation, and failure diagnosis.
 - **Lint**: `pnpm wiki:lint` at zero violations across 96 files.
+- **Create**: Added IMP-0006 as `in_progress` for the Claude pull-request review comment, tracing PR #800.
+- **Create**: Added OPS-0010 as an `active` runbook for the Anthropic API key, the cost controls, prompt tuning, and failure diagnosis.
+- **Lint**: `pnpm wiki:lint` at zero violations across 98 files.
