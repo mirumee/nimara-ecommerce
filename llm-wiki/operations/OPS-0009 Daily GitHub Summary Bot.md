@@ -40,6 +40,13 @@ The message is ordered by who owns the next move on each open pull request:
 Merged pull requests, issue counts, and releases sit in one small line at the bottom. They
 generate no decision, so they do not earn a section of their own.
 
+Above the sections the message carries three to ten short sentences written by Claude. The
+prompt asks for the register of Bartosz Walaszek: deadpan, one absurd comparison at most, no
+explained jokes, and no profanity. Two rules hold that register in check. The comment may not
+invent a fact that is absent from the payload, and the reader must still know what to do after
+reading it. `readComment` cuts the text at 1200 characters, because a Slack section block
+rejects anything over 3000.
+
 # Preconditions
 
 - Confirm that you administer the Slack workspace that owns the daily channel.
@@ -140,8 +147,9 @@ gh api "search/issues?q=repo:mirumee/nimara-ecommerce+is:pr+is:merged&sort=updat
 1. Open `.github/scripts/daily-summary.mjs`.
 2. `collect` holds every GitHub query and `classifyOpenPullRequests` decides who owns the next
    move on each open pull request. `buildBlocks` holds every Slack section.
-   `COMMENT_SYSTEM_PROMPT` holds the instructions for the Claude comment, and
-   `summarizeForPrompt` holds what Claude receives.
+   `COMMENT_SYSTEM_PROMPT` holds the instructions and the register for the Claude comment, and
+   `summarizeForPrompt` holds what Claude receives. Change the register there, and keep the
+   rules that forbid invented facts and protect the sentence count.
 3. The script has no dependencies. It runs on the Node version in `.nvmrc`.
 4. Verify the change with the dry run below before you merge it.
 
