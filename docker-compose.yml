@@ -10,8 +10,8 @@ services:
       - SERVICES=secretsmanager,ssm,sqs
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-dummy}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-dummy}
-      # Matches AWS_REGION in the template's queue service. A queue created
-      # here is invisible to an app reading another region.
+      # Matches AWS_REGION in a queue service's `.env`. A queue created here is
+      # invisible to an app reading another region.
       - AWS_REGION=${AWS_REGION:-us-east-1}
       # Comma-separated queue names created on start, e.g. `feed-sync-consumer`.
       - SQS_QUEUES=${SQS_QUEUES:-}

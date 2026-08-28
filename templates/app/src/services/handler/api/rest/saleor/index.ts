@@ -8,7 +8,8 @@ import { container } from "@/services/handler/container";
 
 import { productUpdatedHandler } from "./webhooks/product-updated";
 
-const CONFIG = container.get("config");
+const { appConfigService, config, installApp, joseAuthService } =
+  container.items;
 
 const webhooks: SaleorWebhook<HandlerContext<any>>[] = [
   {
@@ -21,19 +22,19 @@ const webhooks: SaleorWebhook<HandlerContext<any>>[] = [
 ];
 
 export const saleorRoutes = createSaleorRoutes({
-  allowedDomains: CONFIG.ALLOWED_DOMAINS,
-  installApp: container.get("installApp"),
+  allowedDomains: config.ALLOWED_DOMAINS,
+  installApp,
   manifest: {
     appPath: "/",
-    id: CONFIG.APP_ID,
-    name: CONFIG.DISPLAY_NAME,
+    id: config.APP_ID,
+    name: config.DISPLAY_NAME,
     permissions: ["MANAGE_PRODUCTS"],
-    version: CONFIG.VERSION,
+    version: config.VERSION,
   },
   webhookMiddlewares: saleorWebhookValidationMiddleware({
     getInstallation: (saleorDomain) =>
-      container.get("appConfigService").getBySaleorDomain({ saleorDomain }),
-    joseAuthService: container.get("joseAuthService"),
+      appConfigService.getBySaleorDomain({ saleorDomain }),
+    joseAuthService,
   }),
   webhooks,
 });

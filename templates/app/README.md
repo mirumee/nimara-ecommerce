@@ -31,21 +31,23 @@ caller.
 ```
 src/services/<service>/    one service, one entry point, one Lambda
   entry-server.ts          the Hono app; `handler` is its Lambda binding
+  entry-queue.ts           a queue service instead; exports `handler` alone
   entry-client.tsx         the dashboard bundle Saleor loads
   config.ts                this service's environment
+  container.ts             the app container, built from that config
   api/rest/saleor/         manifest, register, webhooks
   api/rest/app/            what the dashboard calls
   client/views/            the dashboard itself
 src/container/             wiring; everything is lazy
 src/domain/                what the app stores per installed Saleor
 src/infrastructure/        outward calls
-src/use-cases/             what the dashboard reads and writes
 src/graphql/               documents, and the client generated from them
 ```
 
 `src/services/*` is scanned by the build and by the dev server, so adding a
-directory with an `entry-server.ts` is all it takes to add a service. A single
-service is served at `/`, several under `/<service>`.
+directory with an entry file is all it takes to add a service. A single HTTP
+service is served at `/`, several under `/<service>`. A service holds one entry
+file or the other, never both: one service is one deployed unit.
 
 ## Adding a service
 
@@ -58,6 +60,35 @@ that reached into the old one at the new one, and takes the tenancy from the
 services already there — they share one `.env`, so they cannot disagree. It
 asks what the service serves, so an app can hold a dashboard and a
 webhooks-only service side by side.
+
+## Queue services
+
+A deployment drives a queue service from an SQS event source mapping. In
+development the dev server stands in for that mapping, so what runs locally is
+the deployed code path.
+
+Start LocalStack from the repository root:
+
+```bash
+docker compose up -d localstack
+```
+
+The dev server reads `<SERVICE>_QUEUE_URL` — `CONSUMER_QUEUE_URL` for a service
+named `consumer` — and creates that queue on LocalStack before it polls. Name a
+queue in `SQS_QUEUES` when it has to exist before anything reads it, such as one
+another app publishes to:
+
+```bash
+SQS_QUEUES=feed-sync-consumer docker compose up -d localstack
+```
+
+The AWS variables sit in the service's own `.env.example`. `AWS_ENDPOINT_URL` is
+what points the client at LocalStack, and what lets the dev server create a
+queue at all — against a real account it creates nothing, because a typo in a
+queue URL would silently make a queue rather than fail.
+
+Building a queue service for Vercel fails: nothing there polls a queue, so it
+would build and never run. Use `BUILD_TARGET=node`.
 
 ## Adding a webhook
 

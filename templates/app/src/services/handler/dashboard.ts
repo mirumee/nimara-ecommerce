@@ -5,15 +5,15 @@ import { createDashboardRoutes } from "@nimara/lib/hono/saleor/dashboard";
 
 import { container } from "@/services/handler/container";
 
-const CONFIG = container.get("config");
+const { config } = container.items;
 
 // An app that ships no UI drops this file and the line mounting it.
 export const dashboard = createDashboardRoutes({
   assets: __CLIENT_ASSETS__,
   assetsDir: join(dirname(fileURLToPath(import.meta.url)), "assets"),
-  basePath: CONFIG.BASE_PATH,
+  basePath: config.BASE_PATH,
   buildTarget: __BUILD_TARGET__,
-  serviceName: CONFIG.SERVICE,
-  title: CONFIG.DISPLAY_NAME,
-  version: CONFIG.VERSION,
+  serviceName: config.SERVICE,
+  title: config.DISPLAY_NAME,
+  version: config.VERSION,
 });

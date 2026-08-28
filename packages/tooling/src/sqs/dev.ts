@@ -2,14 +2,13 @@ import { type SQSBatchResponse, type SQSEvent } from "aws-lambda";
 
 import { createSqsProxy, type ProxyLogger } from "./proxy.ts";
 
-/**
- * What `entry-queue.ts` exports. The glob that finds those files stays in the
- * app: vite resolves it against the file it is written in.
- */
 type QueueService = {
   handler: (event: SQSEvent) => Promise<SQSBatchResponse | void>;
-  queueUrl: string;
 };
+
+// `./services/order-sync/entry-queue.ts` names `ORDER_SYNC_QUEUE_URL`.
+const queueVariable = (path: string) =>
+  `${(path.split("/").at(-2) ?? "").toUpperCase().replaceAll("-", "_")}_QUEUE_URL`;
 
 // Node reports a refused connection as an `AggregateError` with no message.
 const describeError = (error: unknown): string => {
@@ -32,7 +31,14 @@ export const startQueueProxies = async ({
   for (const path of Object.keys(queues).sort()) {
     // Thrown, this would take the HTTP services down with the queue.
     try {
-      const { handler, queueUrl } = (await queues[path]()) as QueueService;
+      const variable = queueVariable(path);
+      const queueUrl = process.env[variable];
+
+      if (!queueUrl) {
+        throw new Error(`${variable} is not set.`);
+      }
+
+      const { handler } = (await queues[path]()) as QueueService;
 
       await createSqsProxy({ handler, logger, queueUrl }).start();
     } catch (error) {

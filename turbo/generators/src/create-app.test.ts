@@ -124,6 +124,10 @@ describe("create-app", () => {
       "export const appRoutes = 1;",
     );
     await write(join(template(), "src", "container", "index.ts"), CONTAINER);
+    await write(
+      join(template(), "src", "services", "consumer", "entry-queue.ts"),
+      "export const handler = 1;",
+    );
     await write(join(template(), "tailwind.config.ts"), "export default 1;");
     await write(join(template(), "postcss.config.cjs"), "module.exports = 1;");
   });
@@ -309,6 +313,19 @@ describe("create-app", () => {
         await readFile(join(destination, "tailwind.config.ts"), "utf8"),
       ).toBe("export default 1;");
     });
+  });
+
+  it("leaves the template's other services behind", async () => {
+    // when
+    const destination = await generate();
+
+    // then a queue service is a different program, not this app's.
+    await expect(
+      readFile(
+        join(destination, "src", "services", "consumer", "entry-queue.ts"),
+        "utf8",
+      ),
+    ).rejects.toThrow();
   });
 
   it("refuses to write over an app that already exists", async () => {

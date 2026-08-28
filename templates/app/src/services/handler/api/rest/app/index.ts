@@ -5,19 +5,19 @@ import { createAppSettingsRoutes } from "@nimara/lib/hono/saleor/settings-routes
 import { appSettings, SECRET_FIELDS } from "@/domain/app-config";
 import { container } from "@/services/handler/container";
 
-const CONFIG = container.get("config");
+const { appConfigService, config, joseAuthService } = container.items;
 
 // Built here, not in the container: only these routes call them.
 const settings = {
-  configRepository: container.get("appConfigService"),
+  configRepository: appConfigService,
   secretFields: SECRET_FIELDS,
   settingsSchema: appSettings,
 };
 
 export const appRoutes = createAppSettingsRoutes({
-  allowedDomains: CONFIG.ALLOWED_DOMAINS,
+  allowedDomains: config.ALLOWED_DOMAINS,
   getSettingsForm: getAppSettingsFormUseCase(settings),
-  joseAuthService: container.get("joseAuthService"),
+  joseAuthService,
   saveSettings: saveAppSettingsUseCase(settings),
   settingsSchema: appSettings,
 });

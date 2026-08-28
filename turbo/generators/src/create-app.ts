@@ -12,6 +12,7 @@ import {
   TEMPLATE_NAME,
   TEMPLATE_PORT,
   TEMPLATE_SERVICE,
+  TEMPLATE_SERVICE_DIRS,
   type Tenancy,
   toDirectoryName,
 } from "./names.ts";
@@ -39,6 +40,11 @@ export type CreateAppInput = {
 
 // An app deployed elsewhere should not carry another platform's config.
 const TARGET_ONLY = new Set(["vercel.json"]);
+
+// Left behind, not cut down: another template service is a different program.
+const UNUSED_SERVICE_PATHS = TEMPLATE_SERVICE_DIRS.filter(
+  (dir) => dir !== TEMPLATE_SERVICE,
+).map((dir) => `src/services/${dir}`);
 
 const ALLOWED_DOMAINS_DOC = {
   multi: `# Comma-separated Saleor domains allowed to install the app, e.g.
@@ -73,6 +79,14 @@ const copyTemplate = ({
       }
 
       const path = relative(source, entry).split(sep).join("/");
+
+      if (
+        UNUSED_SERVICE_PATHS.some(
+          (prefix) => path === prefix || path.startsWith(`${prefix}/`),
+        )
+      ) {
+        return false;
+      }
 
       return kind === "dashboard" || !isDashboardPath(path, { appPaths: true });
     },
