@@ -4,6 +4,7 @@ import {
   type SaleorAppInstallation,
   saleorAppInstallations,
 } from "@nimara/domain/objects/SaleorApp";
+import { blankAsUnset } from "@nimara/lib/zod/util";
 
 // Replace with your own. The pair is an example: one shown back, one not.
 export const appSettings = z.object({
@@ -32,10 +33,9 @@ export const appConfigSchema = z.object({
     .enum(["edge", "file"])
     .default("file")
     .describe("Where the config of every installed Saleor is stored."),
-  CONFIG_KEY: z
-    .string()
-    .default("nimara-config")
-    .describe("Config provider key."),
+  CONFIG_KEY: blankAsUnset(
+    z.string().default("nimara-config").describe("Config provider key."),
+  ),
 });
 
 /**
