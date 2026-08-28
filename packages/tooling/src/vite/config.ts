@@ -7,7 +7,7 @@ import { defineConfig, mergeConfig, type UserConfig } from "vite";
 import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
 
 import { readBuildTarget } from "../entry-points.ts";
-import { generatePackageJson } from "./plugins.ts";
+import { generatePackageJson, loadDevServerEntry } from "./plugins.ts";
 
 /**
  * Shared dev and build config for apps under `src/apps/*`.
@@ -71,6 +71,7 @@ export const createViteConfig = ({
           }),
           apply: "serve",
         },
+        loadDevServerEntry({ entry: devServerEntry }),
       ],
       ssr: {
         target: "node",

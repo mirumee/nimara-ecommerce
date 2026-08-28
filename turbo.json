@@ -9,7 +9,9 @@
     "VERCEL_URL",
     "VERCEL_BRANCH_URL",
     "NEXT_PUBLIC_VERCEL_ENV",
-    "LOG_LEVEL"
+    "LOG_LEVEL",
+    "AWS_ENDPOINT_URL",
+    "AWS_REGION"
   ],
   "remoteCache": {
     "enabled": true

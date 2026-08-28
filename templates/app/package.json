@@ -25,6 +25,7 @@
     "@nimara/tooling": "workspace:*",
     "@nimara/ui": "workspace:*",
     "@tailwindcss/typography": "0.5.20",
+    "@types/aws-lambda": "catalog:",
     "@types/node": "^24.12.4",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
