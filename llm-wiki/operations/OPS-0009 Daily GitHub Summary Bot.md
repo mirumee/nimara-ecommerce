@@ -25,7 +25,10 @@ delivery time, to rotate the Slack webhook, or to diagnose a missing message on 
 channel.
 
 The bot posts one message at 09:45 Europe/Warsaw, Monday to Friday, 15 minutes before the
-daily meeting. The message lists pull requests merged since the previous daily, open pull
+daily meeting. It does not run at the weekend.
+
+Monday opens the week with a recap of the whole previous week and a heading that says so. Every
+other weekday reports the activity since the previous daily. The message lists pull requests merged since the previous daily, open pull
 requests waiting for review, failed `Linters & Tests` runs on `main`, and issue and release
 activity.
 
@@ -59,6 +62,10 @@ to the repository and do not paste it into an issue or a pull request.
    and one hour for the winter entry.
 4. Update the hour in the `Check the local hour` step to match the new local hour.
 
+The cron entries end in `1-5`, which is Monday to Friday. Do not widen that range without
+changing `resolveWindow`, because the Monday recap assumes that no message went out at the
+weekend.
+
 The guard step compares the hour, not the minute. GitHub can delay a scheduled run by several
 minutes and a minute-exact guard would drop valid runs.
 
@@ -84,9 +91,10 @@ selects the right one. A subscription token pasted under `ANTHROPIC_API_KEY` sti
 because the script recognizes the `sk-ant-oat` prefix, but it logs a notice asking you to move
 it. When both secrets are set, the subscription token wins.
 
-The bot sends one request per weekday. It uses the model `claude-opus-5` at effort `low`, and
-it trims the data to titles and counts before the request, so one run costs a fraction of a
-cent. To drop the comment and keep the sections, delete the credential secret. No code change is
+The bot sends one request per weekday. It uses the model `claude-opus-5` at effort `low`. Before
+the request it trims the data to titles, pull request descriptions, and counts. A description is
+cut at 600 characters, and each list is capped at ten entries, so one run costs a fraction of a
+cent. Monday costs more than the other days, because a weekly window holds more pull requests. To drop the comment and keep the sections, delete the credential secret. No code change is
 needed.
 
 ## Change the summary content
