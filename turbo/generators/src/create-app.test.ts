@@ -16,7 +16,7 @@ const TEMPLATE_PKG = {
   scripts: { dev: "vite --port ${PORT:-8000}" },
 };
 
-const ENTRY_SERVER = `import { container } from "@/container";
+const ENTRY_SERVER = `import { container } from "@/services/handler/container";
 
 import { appRoutes } from "./api/rest/app";
 import { saleorRoutes } from "./api/rest/saleor";
@@ -55,10 +55,12 @@ const write = async (path: string, contents: string) => {
 
 const generate = ({
   kind = "dashboard",
+  service = "handler",
   target = "vercel",
   tenancy = "multi",
 }: {
   kind?: "dashboard" | "http" | "queue";
+  service?: string;
   target?: "node" | "vercel";
   tenancy?: "multi" | "single";
 } = {}) =>
@@ -68,6 +70,7 @@ const generate = ({
     name: "feed-sync",
     port: "8010",
     root,
+    service,
     target,
     tenancy,
   });
@@ -191,12 +194,33 @@ describe("create-app", () => {
       name: "  Feed Sync!  ",
       port: "8010",
       root,
+      service: "  Order Sync!  ",
       target: "vercel",
       tenancy: "multi",
     });
 
-    // then `--args` skips the prompt that would have filtered it.
+    // then `--args` skips the prompts that would have filtered them.
     expect(destination).toBe(join(root, "apps", "feed-sync"));
+    expect(
+      await readFile(
+        join(destination, "src", "services", "order-sync", "config.ts"),
+        "utf8",
+      ),
+    ).toContain("prepareServiceConfig");
+  });
+
+  it("names the service what it was asked to", async () => {
+    // when
+    const destination = await generate({ service: "webhooks" });
+    const services = join(destination, "src", "services");
+
+    // then the directory name is what the service reports as `SERVICE`.
+    expect(
+      await readFile(join(services, "webhooks", "entry-server.ts"), "utf8"),
+    ).toContain('"@/services/webhooks/container"');
+    await expect(
+      readFile(join(services, "handler", "entry-server.ts"), "utf8"),
+    ).rejects.toThrow();
   });
 
   it("leaves local state behind", async () => {
@@ -339,7 +363,8 @@ describe("create-app", () => {
   });
 
   describe("queue", () => {
-    const queue = () => generate({ kind: "queue", target: "node" });
+    const queue = () =>
+      generate({ kind: "queue", service: "consumer", target: "node" });
 
     it("generates from the template's queue service", async () => {
       // when
@@ -386,7 +411,7 @@ describe("create-app", () => {
     it("refuses a target that cannot drive it", async () => {
       // when / then `--args` skips the prompt that would have hidden it.
       await expect(
-        generate({ kind: "queue", target: "vercel" }),
+        generate({ kind: "queue", service: "consumer", target: "vercel" }),
       ).rejects.toThrow("cannot be deployed to vercel");
     });
   });

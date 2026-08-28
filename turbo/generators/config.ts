@@ -12,6 +12,7 @@ type Answers = {
   kind: AppKind;
   name: string;
   port: string;
+  service: string;
   target: BuildTarget;
   tenancy: Tenancy;
   turbo: { paths: { root: string } };
@@ -39,12 +40,21 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
       prompts.tenancy,
       prompts.target,
       prompts.kind,
+      prompts.service,
       prompts.port,
     ],
     actions: [
       async (answers) => {
-        const { description, kind, name, port, target, tenancy, turbo } =
-          answers as Answers;
+        const {
+          description,
+          kind,
+          name,
+          port,
+          service,
+          target,
+          tenancy,
+          turbo,
+        } = answers as Answers;
 
         const destination = await createApp({
           description,
@@ -52,6 +62,7 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
           name,
           port,
           root: turbo.paths.root,
+          service,
           target,
           tenancy,
         });

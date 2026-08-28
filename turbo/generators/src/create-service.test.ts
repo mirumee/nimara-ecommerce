@@ -18,7 +18,7 @@ const write = async (path: string, contents: string) => {
   await writeFile(path, contents);
 };
 
-const ENTRY_SERVER = `import { container } from "@/container";
+const ENTRY_SERVER = `import { container } from "@/services/handler/container";
 
 import { appRoutes } from "./api/rest/app";
 import { saleorRoutes } from "./api/rest/saleor";
@@ -71,6 +71,10 @@ describe("create-service", () => {
 
     await write(templateService("config.ts"), MULTI);
     await write(templateService("entry-server.ts"), ENTRY_SERVER);
+    await write(
+      templateService("container.ts"),
+      'import { createAppContainer } from "@/container";\n',
+    );
     await write(
       templateService("api", "rest", "saleor", "index.test.ts"),
       'import { app } from "@/services/handler/entry-server";\n',
@@ -155,7 +159,7 @@ describe("create-service", () => {
 
     // then
     expect(
-      await readFile(appService("order-sync", "entry-server.ts"), "utf8"),
+      await readFile(appService("order-sync", "container.ts"), "utf8"),
     ).toContain('"@/container"');
   });
 

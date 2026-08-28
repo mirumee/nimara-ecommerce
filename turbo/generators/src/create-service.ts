@@ -1,5 +1,5 @@
 import { existsSync, readdirSync } from "node:fs";
-import { cp, readdir, readFile, writeFile } from "node:fs/promises";
+import { cp } from "node:fs/promises";
 import { basename, join, relative, sep } from "node:path";
 
 import { NOT_COPIED } from "./create-app.ts";
@@ -15,6 +15,7 @@ import {
   toDirectoryName,
 } from "./names.ts";
 import { renameQueue } from "./queue.ts";
+import { rewriteServiceImports } from "./rename-service.ts";
 import { detectBuildTarget } from "./target.ts";
 import { applyTenancy, detectTenancy } from "./tenancy.ts";
 
@@ -46,39 +47,6 @@ export const listApps = (root: string) => {
     .filter((entry) => entry.isDirectory() && isApp(join(apps, entry.name)))
     .map((entry) => entry.name)
     .sort();
-};
-
-/**
- * `tsconfig.json` maps `@/*` onto `src/*`, so the copied files still reach into
- * the template's service by name until they are rewritten.
- */
-const rewriteImports = async ({
-  name,
-  serviceDir,
-  templateService,
-}: {
-  name: string;
-  serviceDir: string;
-  templateService: string;
-}) => {
-  const prefix = `@/services/${templateService}/`;
-  const entries = await readdir(serviceDir, {
-    recursive: true,
-    withFileTypes: true,
-  });
-
-  for (const entry of entries) {
-    if (!entry.isFile() || !/\.tsx?$/.test(entry.name)) {
-      continue;
-    }
-
-    const path = join(entry.parentPath, entry.name);
-    const contents = await readFile(path, "utf8");
-
-    if (contents.includes(prefix)) {
-      await writeFile(path, contents.replaceAll(prefix, `@/services/${name}/`));
-    }
-  }
 };
 
 /**
@@ -137,7 +105,11 @@ export const createService = async ({
     await renameQueue({ app, service: serviceName, serviceDir });
   }
 
-  await rewriteImports({ name: serviceName, serviceDir, templateService });
+  await rewriteServiceImports({
+    from: templateService,
+    serviceDir,
+    to: serviceName,
+  });
 
   // Inherited, never asked again: the services share one `.env`.
   await applyTenancy({ appDir, tenancy: await detectTenancy(appDir) });

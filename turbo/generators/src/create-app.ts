@@ -18,6 +18,7 @@ import {
   toDirectoryName,
 } from "./names.ts";
 import { renameQueue } from "./queue.ts";
+import { renameService } from "./rename-service.ts";
 import { applyTenancy } from "./tenancy.ts";
 
 // Copying `.env` would hand the new app someone else's Saleor token.
@@ -36,6 +37,7 @@ export type CreateAppInput = {
   name: string;
   port: string;
   root: string;
+  service: string;
   target: BuildTarget;
   tenancy: Tenancy;
 };
@@ -157,20 +159,30 @@ export const createApp = async ({
   name,
   port,
   root,
+  service,
   target,
   tenancy,
 }: CreateAppInput) => {
   requireKindForTarget({ kind, target });
 
-  // `--args` skips the prompt that would have filtered this.
+  // `--args` skips the prompts that would have filtered these.
   const appName = toDirectoryName(name);
+  const serviceName = toDirectoryName(service);
   const destination = join(root, "apps", appName);
+  const serviceDir = join(destination, "src", "services", serviceName);
 
   await copyTemplate({
     destination,
     kind,
     source: join(root, "templates", "app"),
     target,
+  });
+
+  // Ahead of the rest, so everything after it names the service the app has.
+  await renameService({
+    appDir: destination,
+    from: TEMPLATE_SERVICES[kind],
+    to: serviceName,
   });
 
   await rewritePackageJson({
@@ -192,9 +204,7 @@ export const createApp = async ({
 
   // Unwires what the copy left out. A queue service never had a dashboard.
   if (kind === "http") {
-    await removeServiceDashboard(
-      join(destination, "src", "services", TEMPLATE_SERVICES[kind]),
-    );
+    await removeServiceDashboard(serviceDir);
   }
 
   if (kind !== "dashboard") {
@@ -202,11 +212,7 @@ export const createApp = async ({
   }
 
   if (kind === "queue") {
-    await renameQueue({
-      app: appName,
-      service: TEMPLATE_SERVICES[kind],
-      serviceDir: join(destination, "src", "services", TEMPLATE_SERVICES[kind]),
-    });
+    await renameQueue({ app: appName, service: serviceName, serviceDir });
   }
 
   await applyTenancy({ appDir: destination, tenancy });

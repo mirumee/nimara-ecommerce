@@ -47,7 +47,8 @@ src/graphql/               documents, and the client generated from them
 `src/services/*` is scanned by the build and by the dev server, so adding a
 directory with an entry file is all it takes to add a service. A single HTTP
 service is served at `/`, several under `/<service>`. A service holds one entry
-file or the other, never both: one service is one deployed unit.
+file or the other, never both: one service is one deployed unit. Both generators
+ask what to call it.
 
 ## Adding a service
 

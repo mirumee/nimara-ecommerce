@@ -96,6 +96,16 @@ export const target: PlopTypes.PromptQuestion = {
   type: "list",
 };
 
+// Asked separately from the app's own name: `src/services/<service>`.
+export const service: PlopTypes.PromptQuestion = {
+  default: (answers: { kind: AppKind }) => TEMPLATE_SERVICES[answers.kind],
+  filter: toDirectoryName,
+  message: "Service name (becomes src/services/<name>):",
+  name: "service",
+  type: "input",
+  validate: validateName,
+};
+
 export const port: PlopTypes.PromptQuestion = {
   default: "8000",
   message: "Dev server port:",
