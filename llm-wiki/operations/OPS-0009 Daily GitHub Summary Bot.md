@@ -62,17 +62,32 @@ to the repository and do not paste it into an issue or a pull request.
 The guard step compares the hour, not the minute. GitHub can delay a scheduled run by several
 minutes and a minute-exact guard would drop valid runs.
 
-## Install the Claude API key
+## Install the Claude credential
 
-The comment above the sections is optional. Without the key the bot posts the sections alone.
+The comment above the sections is optional. Without a credential the bot posts the sections
+alone. Two kinds of credential work. Choose one.
 
-1. Open the Anthropic console and create an API key.
+An API key bills the organization and does not depend on one person:
+
+1. Open the Anthropic console and create an API key. It starts with `sk-ant-api`.
 2. In GitHub, open Settings, then Secrets and variables, then Actions.
 3. Add a repository secret named `ANTHROPIC_API_KEY` and paste the key.
 
+A subscription token bills the plan of the person who created it, and it lasts one year:
+
+1. Run `claude setup-token` in a terminal. The token prints to the screen and is saved nowhere.
+2. Add a repository secret named `CLAUDE_CODE_OAUTH_TOKEN` and paste the token.
+
+The two kinds authenticate differently. An API key goes on the `x-api-key` header. A
+subscription token goes on `Authorization: Bearer` with the `anthropic-beta` header. The script
+selects the right one. A subscription token pasted under `ANTHROPIC_API_KEY` still works,
+because the script recognizes the `sk-ant-oat` prefix, but it logs a notice asking you to move
+it. When both secrets are set, the subscription token wins.
+
 The bot sends one request per weekday. It uses the model `claude-opus-5` at effort `low`, and
 it trims the data to titles and counts before the request, so one run costs a fraction of a
-cent. To drop the comment and keep the sections, delete the secret. No code change is needed.
+cent. To drop the comment and keep the sections, delete the credential secret. No code change is
+needed.
 
 ## Change the summary content
 
@@ -130,7 +145,11 @@ If the message arrives without the comment above the sections, the sections are 
 only the Claude call failed. Read the `Post summary` step for a `Claude` warning line:
 
 - No warning line means that `ANTHROPIC_API_KEY` is absent. The bot skipped the call.
-- `Claude 401` means that the key is wrong or revoked.
+- `Claude 401` with `API key is invalid` means that the API key is wrong or revoked. If you
+  pasted the output of `claude setup-token` under `ANTHROPIC_API_KEY`, move it to
+  `CLAUDE_CODE_OAUTH_TOKEN`.
+- `Claude 401` with `OAuth access token is invalid` means that the subscription token expired
+  or was revoked. Run `claude setup-token` again and replace the secret.
 - `Claude 429` means that the account hit its Anthropic rate limit.
 
 A failed comment never blocks the summary, so the job still succeeds. This is intended. The

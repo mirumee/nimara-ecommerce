@@ -14,6 +14,8 @@ const SLACK_SECTION_LIMIT = 2900;
 
 const ANTHROPIC_API = "https://api.anthropic.com/v1/messages";
 const ANTHROPIC_VERSION = "2023-06-01";
+const ANTHROPIC_OAUTH_BETA = "oauth-2025-04-20";
+const OAUTH_TOKEN_PREFIX = "sk-ant-oat";
 const ANTHROPIC_MODEL = "claude-opus-5";
 /**
  * Adaptive thinking is on by default and its tokens count against max_tokens,
@@ -301,6 +303,42 @@ export function buildBlocks(data, { repo, now, lookbackHours, comment }) {
 }
 
 /**
+ * A subscription token from `claude setup-token` authenticates as a bearer
+ * token, not as an API key. Sending it on `x-api-key` returns 401, which is
+ * indistinguishable from a revoked key unless the caller knows the difference.
+ */
+export function resolveAuth(env) {
+  const oauthToken = env.CLAUDE_CODE_OAUTH_TOKEN;
+
+  if (oauthToken) {
+    return { headers: bearerHeaders(oauthToken) };
+  }
+
+  const apiKey = env.ANTHROPIC_API_KEY;
+
+  if (!apiKey) {
+    return null;
+  }
+
+  if (apiKey.startsWith(OAUTH_TOKEN_PREFIX)) {
+    return {
+      headers: bearerHeaders(apiKey),
+      notice:
+        "ANTHROPIC_API_KEY holds a subscription token. Move it to CLAUDE_CODE_OAUTH_TOKEN.",
+    };
+  }
+
+  return { headers: { "x-api-key": apiKey } };
+}
+
+function bearerHeaders(token) {
+  return {
+    authorization: `Bearer ${token}`,
+    "anthropic-beta": ANTHROPIC_OAUTH_BETA,
+  };
+}
+
+/**
  * Strips the collected data down to what the comment needs. Sending whole API
  * payloads would cost tokens and add nothing.
  */
@@ -325,14 +363,14 @@ export function summarizeForPrompt(data) {
  * The comment is a nice-to-have. Any failure returns null so the summary still
  * reaches the channel.
  */
-async function requestComment(apiKey, data) {
+async function requestComment(auth, data) {
   try {
     const response = await fetch(ANTHROPIC_API, {
       method: "POST",
       headers: {
         "content-type": "application/json",
-        "x-api-key": apiKey,
         "anthropic-version": ANTHROPIC_VERSION,
+        ...auth.headers,
       },
       body: JSON.stringify({
         model: ANTHROPIC_MODEL,
@@ -411,8 +449,13 @@ async function main() {
 
   try {
     const data = await collect({ repo, token, since });
-    const apiKey = process.env.ANTHROPIC_API_KEY;
-    const comment = apiKey ? await requestComment(apiKey, data) : null;
+    const auth = resolveAuth(process.env);
+
+    if (auth?.notice) {
+      console.warn(auth.notice);
+    }
+
+    const comment = auth ? await requestComment(auth, data) : null;
 
     blocks = buildBlocks(data, { repo, now, lookbackHours, comment });
   } catch (error) {

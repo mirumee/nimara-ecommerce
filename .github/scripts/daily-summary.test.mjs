@@ -5,6 +5,7 @@ import {
   buildBlocks,
   escapeMrkdwn,
   formatAge,
+  resolveAuth,
   resolveLookbackHours,
   summarizeForPrompt,
 } from "./daily-summary.mjs";
@@ -225,4 +226,40 @@ test("the prompt payload caps each list at ten entries", () => {
 
   assert.equal(payload.merged.length, 10);
   assert.equal(payload.awaitingReview.length, 10);
+});
+
+test("no credential means no request", () => {
+  assert.equal(resolveAuth({}), null);
+});
+
+test("an API key authenticates on x-api-key", () => {
+  const auth = resolveAuth({ ANTHROPIC_API_KEY: "sk-ant-api03-abc" });
+
+  assert.equal(auth.headers["x-api-key"], "sk-ant-api03-abc");
+  assert.equal(auth.headers.authorization, undefined);
+  assert.equal(auth.notice, undefined);
+});
+
+test("a subscription token authenticates as a bearer token", () => {
+  const auth = resolveAuth({ CLAUDE_CODE_OAUTH_TOKEN: "sk-ant-oat01-abc" });
+
+  assert.equal(auth.headers.authorization, "Bearer sk-ant-oat01-abc");
+  assert.equal(auth.headers["anthropic-beta"], "oauth-2025-04-20");
+  assert.equal(auth.headers["x-api-key"], undefined);
+});
+
+test("a subscription token under the API key name still works, with a notice", () => {
+  const auth = resolveAuth({ ANTHROPIC_API_KEY: "sk-ant-oat01-abc" });
+
+  assert.equal(auth.headers.authorization, "Bearer sk-ant-oat01-abc");
+  assert.match(auth.notice, /CLAUDE_CODE_OAUTH_TOKEN/);
+});
+
+test("the subscription token wins when both are set", () => {
+  const auth = resolveAuth({
+    ANTHROPIC_API_KEY: "sk-ant-api03-abc",
+    CLAUDE_CODE_OAUTH_TOKEN: "sk-ant-oat01-xyz",
+  });
+
+  assert.equal(auth.headers.authorization, "Bearer sk-ant-oat01-xyz");
 });
