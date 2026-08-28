@@ -39,6 +39,7 @@ okf_version: "0.1"
 - [IMP-0003 Payment Application Configuration Storage Selection](tech/implementation/IMP-0003%20Payment%20Application%20Configuration%20Storage%20Selection.md) - A storage-agnostic provider core with selectable backends, adding an on-disk store so the application runs without a hosted configuration service.
 - [IMP-0004 Checkout Step Guard Enforcement](tech/implementation/IMP-0004%20Checkout%20Step%20Guard%20Enforcement.md) - Checkout step selection is enforced against completeness on every request, so a step reached by URL cannot skip earlier steps or open a gateway transaction.
 - [IMP-0005 Daily GitHub Summary Bot](tech/implementation/IMP-0005%20Daily%20GitHub%20Summary%20Bot.md) - Adds a scheduled GitHub Actions job that posts a pre-daily repository summary to a Slack Incoming Webhook, covering merged pull requests, the review queue, failed CI on main, and issue and release activity.
+- [IMP-0006 Daily Summary Claude Comment](tech/implementation/IMP-0006%20Daily%20Summary%20Claude%20Comment.md) - Adds an optional Claude-written comment above the sections of the daily GitHub summary posted to Slack, trimmed to titles and counts before the request and degraded to no comment on any failure.
 
 # Current Product State
 
