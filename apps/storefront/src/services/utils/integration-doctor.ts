@@ -24,6 +24,12 @@ type CapabilityEntry = {
   resolve: () => string | null;
 };
 
+/*
+ * Only the capabilities whose implementation is chosen by configuration. Every
+ * other registry capability has one implementation whose sole condition is the
+ * backend URL, which `resolve` already answers, so a row for it could report
+ * nothing but success.
+ */
 const CAPABILITIES = [
   {
     capability: "search",
@@ -85,12 +91,13 @@ export const buildIntegrationReport = (
   });
 
 /**
- * Emits one `critical` per capability whose selected provider is missing config,
- * when the service registry is built. It logs instead of throwing: a broken
- * search configuration must not take down checkout, and the loader degrades the
- * affected capability to its empty service on first use. Without this a missing
- * key stays invisible until a shopper reaches that capability, and the empty
- * service for a read capability answers with no data rather than an error.
+ * Emits one `critical` per swappable capability whose selected provider is
+ * missing config, when the service registry is built. It logs instead of
+ * throwing: a broken search configuration must not take down checkout, and the
+ * loader degrades the affected capability to its empty service on first use.
+ * Without this a missing key stays invisible until a shopper reaches that
+ * capability, and the empty service for a read capability answers with no data
+ * rather than an error.
  */
 export const logIntegrationConfigIssues = (
   logger: Logger,
@@ -109,7 +116,7 @@ export const logIntegrationConfigIssues = (
   }
 };
 
-/** Human-readable preflight report for the active integration configuration. */
+/** Human-readable preflight report for the swappable capabilities. */
 export const formatIntegrationReport = (
   env?: Record<string, string | undefined>,
 ): string => {
@@ -125,5 +132,7 @@ export const formatIntegrationReport = (
     return `✗ ${row.capability}: ${row.selected} — missing/invalid env: ${row.missing.join(", ")}`;
   });
 
-  return ["Integration preflight", ...lines].join("\n");
+  return ["Integration preflight (swappable capabilities)", ...lines].join(
+    "\n",
+  );
 };
