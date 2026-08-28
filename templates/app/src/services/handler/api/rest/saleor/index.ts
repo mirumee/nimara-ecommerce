@@ -3,8 +3,8 @@ import { createSaleorRoutes } from "@nimara/lib/hono/saleor/routes";
 import { type HandlerContext } from "@nimara/lib/hono/saleor/types";
 import { type SaleorWebhook } from "@nimara/lib/saleor/webhooks";
 
-import { container } from "@/container";
 import { ProductUpdatedSubscriptionDocument } from "@/graphql/generated/client";
+import { container } from "@/services/handler/container";
 
 import { productUpdatedHandler } from "./webhooks/product-updated";
 

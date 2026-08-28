@@ -1,8 +1,8 @@
 import { type HandlerContext } from "@nimara/lib/hono/saleor/types";
 import { type SaleorTenant } from "@nimara/lib/saleor/tenant";
 
-import { container } from "@/container";
 import { type ProductUpdatedSubscription } from "@/graphql/generated/client";
+import { container } from "@/services/handler/container";
 
 // Example. Scope every read and write by the tenant, never by the payload.
 export const productUpdatedHandler = async (

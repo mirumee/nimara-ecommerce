@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 
 import { createDashboardRoutes } from "@nimara/lib/hono/saleor/dashboard";
 
-import { container } from "@/container";
+import { container } from "@/services/handler/container";
 
 const CONFIG = container.get("config");
 

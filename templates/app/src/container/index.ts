@@ -10,53 +10,59 @@ import { getLogger } from "@nimara/infrastructure/logging/service";
 import { installSaleorAppUseCase } from "@nimara/infrastructure/use-cases/apps/saleor/install-app-use-case";
 import { saleorUrlFromDomain } from "@nimara/lib/saleor/url";
 
-import { appSettings, saleorMultiTenantAppConfig } from "@/domain/app-config";
+import {
+  type AppConfig,
+  appSettings,
+  saleorMultiTenantAppConfig,
+} from "@/domain/app-config";
 import { saleorClient } from "@/infrastructure/saleor/client";
-import { APP_CONFIG } from "@/services/handler/config";
 
-export const container = createContainer()
-  .add({
-    config: () => APP_CONFIG,
-    logger: () => getLogger({ name: APP_CONFIG.NAME }),
-  })
-  .add((ctx) => ({
-    configStore: () =>
-      ctx.config.CONFIG_PROVIDER === "file"
-        ? fileConfigItem({
-            schema: saleorMultiTenantAppConfig,
-            logger: ctx.logger,
-          })
-        : vercelEdgeConfigItem({
-            configKey: `${ctx.config.ENVIRONMENT}-${ctx.config.CONFIG_KEY}`,
-            schema: saleorMultiTenantAppConfig,
+export const createAppContainer = <Config extends AppConfig>(config: Config) =>
+  createContainer()
+    .add({
+      config: () => config,
+      logger: () => getLogger({ name: config.NAME }),
+    })
+    .add((ctx) => ({
+      configStore: () =>
+        ctx.config.CONFIG_PROVIDER === "file"
+          ? fileConfigItem({
+              schema: saleorMultiTenantAppConfig,
+              logger: ctx.logger,
+            })
+          : vercelEdgeConfigItem({
+              configKey: `${ctx.config.ENVIRONMENT}-${ctx.config.CONFIG_KEY}`,
+              schema: saleorMultiTenantAppConfig,
+              logger: ctx.logger,
+            }),
+      joseAuthService: () => (saleorDomain: string) =>
+        joseAuthService({
+          jwksRepository: jwksMemoryRepository({
+            remoteUrl: saleorUrlFromDomain(saleorDomain),
             logger: ctx.logger,
           }),
-    joseAuthService: () => (saleorDomain: string) =>
-      joseAuthService({
-        jwksRepository: jwksMemoryRepository({
-          remoteUrl: saleorUrlFromDomain(saleorDomain),
-          logger: ctx.logger,
         }),
-      }),
-    saleorClient: () =>
-      saleorClient({
-        logger: ctx.logger,
-        timeout: ctx.config.FETCH_TIMEOUT,
-      }),
-  }))
-  .add((ctx) => ({
-    appConfigService: () =>
-      saleorAppConfigRepository({
-        configStore: ctx.configStore,
-        settingsSchema: appSettings,
-      }),
-  }))
-  .add((ctx) => ({
-    installApp: () =>
-      installSaleorAppUseCase({
-        configRepository: ctx.appConfigService,
-        saleorAppClientFactory: saleorAppClient,
-      }),
-  }));
+      saleorClient: () =>
+        saleorClient({
+          logger: ctx.logger,
+          timeout: ctx.config.FETCH_TIMEOUT,
+        }),
+    }))
+    .add((ctx) => ({
+      appConfigService: () =>
+        saleorAppConfigRepository({
+          configStore: ctx.configStore,
+          settingsSchema: appSettings,
+        }),
+    }))
+    .add((ctx) => ({
+      installApp: () =>
+        installSaleorAppUseCase({
+          configRepository: ctx.appConfigService,
+          saleorAppClientFactory: saleorAppClient,
+        }),
+    }));
 
-export type AppContainer = typeof container;
+export type AppContainer<Config extends AppConfig = AppConfig> = ReturnType<
+  typeof createAppContainer<Config>
+>;

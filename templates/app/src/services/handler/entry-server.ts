@@ -8,7 +8,7 @@ import { loggingMiddleware } from "@nimara/lib/hono/middleware/logging";
 import { requestOriginMiddleware } from "@nimara/lib/hono/middleware/request-origin";
 import { initSentry } from "@nimara/lib/reporting/sentry/instrument";
 
-import { container } from "@/container";
+import { container } from "@/services/handler/container";
 
 import { appRoutes } from "./api/rest/app";
 import { saleorRoutes } from "./api/rest/saleor";

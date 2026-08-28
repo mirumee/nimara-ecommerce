@@ -2,8 +2,8 @@ import { getAppSettingsFormUseCase } from "@nimara/infrastructure/use-cases/apps
 import { saveAppSettingsUseCase } from "@nimara/infrastructure/use-cases/apps/saleor/save-app-settings-use-case";
 import { createAppSettingsRoutes } from "@nimara/lib/hono/saleor/settings-routes";
 
-import { container } from "@/container";
 import { appSettings, SECRET_FIELDS } from "@/domain/app-config";
+import { container } from "@/services/handler/container";
 
 const CONFIG = container.get("config");
 
