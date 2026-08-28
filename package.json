@@ -29,7 +29,7 @@
     "codegen:stripe": "dotenv -e apps/storefront/.env -- pnpm --filter @nimara/codegen codegen:stripe",
     "db-ledger:down": "docker compose -f apps/marketplace/docker-compose.yml stop db-ledger",
     "db-ledger:up": "docker compose -f apps/marketplace/docker-compose.yml up -d db-ledger",
-    "dev": "turbo run dev",
+    "dev": "node scripts/dev.mjs",
     "dev:docs": "turbo run dev --filter=docs",
     "dev:marketplace": "turbo run dev --filter=marketplace",
     "dev:storefront": "turbo run dev --filter=storefront",
