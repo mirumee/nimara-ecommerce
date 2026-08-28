@@ -28,9 +28,17 @@ The bot posts one message at 09:45 Europe/Warsaw, Monday to Friday, 15 minutes b
 daily meeting. It does not run at the weekend.
 
 Monday opens the week with a recap of the whole previous week and a heading that says so. Every
-other weekday reports the activity since the previous daily. The message lists pull requests merged since the previous daily, open pull
-requests waiting for review, failed `Linters & Tests` runs on `main`, and issue and release
-activity.
+other weekday reports the activity since the previous daily.
+
+The message is ordered by who owns the next move on each open pull request:
+
+1. Red `Linters & Tests` runs on `main`, which block everyone.
+2. Pull requests with a failing build or a requested change, which wait on their author.
+3. Pull requests with no review, which nobody has taken.
+4. Approved pull requests with a green build, which wait on a merge.
+
+Merged pull requests, issue counts, and releases sit in one small line at the bottom. They
+generate no decision, so they do not earn a section of their own.
 
 # Preconditions
 
@@ -107,10 +115,31 @@ plan's limits rather than in dollars.
 usable only with an API key. To drop the comment and keep the sections, delete the credential secret. No code change is
 needed.
 
+## Tune the age thresholds
+
+`WARN_PR_DAYS` is 2 and `PARKED_PR_DAYS` is 5 in `.github/scripts/daily-summary.mjs`.
+
+The median pull request in this repository merges the day it opens. Two days is therefore
+already an outlier and earns the `:small_red_triangle:` marker. Five days means parked rather
+than in flight.
+
+A parked pull request is counted on a weekday and listed on Monday. Without that split the same
+entries appear every morning and the channel stops reading the message. The Claude comment still
+receives them separately and may name at most one, so a parked pull request that truly needs a
+decision can still surface.
+
+Re-measure before you change either number:
+
+```bash
+gh api "search/issues?q=repo:mirumee/nimara-ecommerce+is:pr+is:merged&sort=updated&order=desc&per_page=40" \
+  --jq '[.items[]|select(.user.type!="Bot")|((.closed_at|fromdate)-(.created_at|fromdate))/86400|floor]|sort|@json'
+```
+
 ## Change the summary content
 
 1. Open `.github/scripts/daily-summary.mjs`.
-2. `collect` holds every GitHub query. `buildBlocks` holds every Slack section.
+2. `collect` holds every GitHub query and `classifyOpenPullRequests` decides who owns the next
+   move on each open pull request. `buildBlocks` holds every Slack section.
    `COMMENT_SYSTEM_PROMPT` holds the instructions for the Claude comment, and
    `summarizeForPrompt` holds what Claude receives.
 3. The script has no dependencies. It runs on the Node version in `.nvmrc`.
