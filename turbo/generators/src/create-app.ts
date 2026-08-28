@@ -9,13 +9,15 @@ import {
 import {
   type AppKind,
   type BuildTarget,
+  requireKindForTarget,
   TEMPLATE_NAME,
   TEMPLATE_PORT,
-  TEMPLATE_SERVICE,
   TEMPLATE_SERVICE_DIRS,
+  TEMPLATE_SERVICES,
   type Tenancy,
   toDirectoryName,
 } from "./names.ts";
+import { renameQueue } from "./queue.ts";
 import { applyTenancy } from "./tenancy.ts";
 
 // Copying `.env` would hand the new app someone else's Saleor token.
@@ -42,9 +44,10 @@ export type CreateAppInput = {
 const TARGET_ONLY = new Set(["vercel.json"]);
 
 // Left behind, not cut down: another template service is a different program.
-const UNUSED_SERVICE_PATHS = TEMPLATE_SERVICE_DIRS.filter(
-  (dir) => dir !== TEMPLATE_SERVICE,
-).map((dir) => `src/services/${dir}`);
+const unusedServicePaths = (kind: AppKind) =>
+  TEMPLATE_SERVICE_DIRS.filter((dir) => dir !== TEMPLATE_SERVICES[kind]).map(
+    (dir) => `src/services/${dir}`,
+  );
 
 const ALLOWED_DOMAINS_DOC = {
   multi: `# Comma-separated Saleor domains allowed to install the app, e.g.
@@ -81,7 +84,7 @@ const copyTemplate = ({
       const path = relative(source, entry).split(sep).join("/");
 
       if (
-        UNUSED_SERVICE_PATHS.some(
+        unusedServicePaths(kind).some(
           (prefix) => path === prefix || path.startsWith(`${prefix}/`),
         )
       ) {
@@ -157,6 +160,8 @@ export const createApp = async ({
   target,
   tenancy,
 }: CreateAppInput) => {
+  requireKindForTarget({ kind, target });
+
   // `--args` skips the prompt that would have filtered this.
   const appName = toDirectoryName(name);
   const destination = join(root, "apps", appName);
@@ -185,12 +190,23 @@ export const createApp = async ({
     });
   }
 
-  // Unwires what the copy left out.
+  // Unwires what the copy left out. A queue service never had a dashboard.
   if (kind === "http") {
     await removeServiceDashboard(
-      join(destination, "src", "services", TEMPLATE_SERVICE),
+      join(destination, "src", "services", TEMPLATE_SERVICES[kind]),
     );
+  }
+
+  if (kind !== "dashboard") {
     await removeAppDashboard(destination);
+  }
+
+  if (kind === "queue") {
+    await renameQueue({
+      app: appName,
+      service: TEMPLATE_SERVICES[kind],
+      serviceDir: join(destination, "src", "services", TEMPLATE_SERVICES[kind]),
+    });
   }
 
   await applyTenancy({ appDir: destination, tenancy });

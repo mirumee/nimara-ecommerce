@@ -27,9 +27,36 @@ export const BUILD_TARGETS = ["vercel", "node"] as const;
 
 export type BuildTarget = (typeof BUILD_TARGETS)[number];
 
-export const KINDS = ["dashboard", "http"] as const;
+export const KINDS = ["dashboard", "http", "queue"] as const;
 
 export type AppKind = (typeof KINDS)[number];
+
+/**
+ * Which of the template's services each kind is generated from. A queue service
+ * is not an HTTP one with parts removed — it is a different program.
+ */
+export const TEMPLATE_SERVICES = {
+  dashboard: TEMPLATE_SERVICE,
+  http: TEMPLATE_SERVICE,
+  queue: TEMPLATE_QUEUE_SERVICE,
+} as const satisfies Record<AppKind, string>;
+
+// Nothing on Vercel polls a queue, so such a service would never run there.
+export const kindsForTarget = (target: BuildTarget): AppKind[] =>
+  KINDS.filter((kind) => target !== "vercel" || kind !== "queue");
+
+// `--args` skips the prompt that would have offered only what the target runs.
+export const requireKindForTarget = ({
+  kind,
+  target,
+}: {
+  kind: AppKind;
+  target: BuildTarget;
+}) => {
+  if (!kindsForTarget(target).includes(kind)) {
+    throw new Error(`A ${kind} service cannot be deployed to ${target}.`);
+  }
+};
 
 export const TENANCIES = ["multi", "single"] as const;
 

@@ -8,7 +8,14 @@ import {
   removeServiceDashboard,
   restoreAppDashboard,
 } from "./dashboard.ts";
-import { type AppKind, TEMPLATE_SERVICE, toDirectoryName } from "./names.ts";
+import {
+  type AppKind,
+  requireKindForTarget,
+  TEMPLATE_SERVICES,
+  toDirectoryName,
+} from "./names.ts";
+import { renameQueue } from "./queue.ts";
+import { detectBuildTarget } from "./target.ts";
 import { applyTenancy, detectTenancy } from "./tenancy.ts";
 
 export type CreateServiceInput = {
@@ -48,11 +55,13 @@ export const listApps = (root: string) => {
 const rewriteImports = async ({
   name,
   serviceDir,
+  templateService,
 }: {
   name: string;
   serviceDir: string;
+  templateService: string;
 }) => {
-  const prefix = `@/services/${TEMPLATE_SERVICE}/`;
+  const prefix = `@/services/${templateService}/`;
   const entries = await readdir(serviceDir, {
     recursive: true,
     withFileTypes: true,
@@ -82,18 +91,21 @@ export const createService = async ({
   name,
   root,
 }: CreateServiceInput) => {
+  requireKindForTarget({ kind, target: detectBuildTarget({ app, root }) });
+
   // `--args` skips the prompt that would have filtered this.
   const serviceName = toDirectoryName(name);
   const appDir = join(root, "apps", app);
   const serviceDir = join(appDir, "src", "services", serviceName);
 
+  const templateService = TEMPLATE_SERVICES[kind];
   const source = join(
     root,
     "templates",
     "app",
     "src",
     "services",
-    TEMPLATE_SERVICE,
+    templateService,
   );
 
   await cp(source, serviceDir, {
@@ -121,7 +133,11 @@ export const createService = async ({
     await restoreAppDashboard({ appDir, root });
   }
 
-  await rewriteImports({ name: serviceName, serviceDir });
+  if (kind === "queue") {
+    await renameQueue({ app, service: serviceName, serviceDir });
+  }
+
+  await rewriteImports({ name: serviceName, serviceDir, templateService });
 
   // Inherited, never asked again: the services share one `.env`.
   await applyTenancy({ appDir, tenancy: await detectTenancy(appDir) });

@@ -58,7 +58,7 @@ const generate = ({
   target = "vercel",
   tenancy = "multi",
 }: {
-  kind?: "dashboard" | "http";
+  kind?: "dashboard" | "http" | "queue";
   target?: "node" | "vercel";
   tenancy?: "multi" | "single";
 } = {}) =>
@@ -127,6 +127,16 @@ describe("create-app", () => {
     await write(
       join(template(), "src", "services", "consumer", "entry-queue.ts"),
       "export const handler = 1;",
+    );
+    await write(
+      join(template(), "src", "services", "consumer", "config.ts"),
+      'import { prepareServiceConfig } from "@nimara/lib/config/service";\n' +
+        "export const APP_CONFIG = prepareServiceConfig({});\n",
+    );
+    await write(
+      join(template(), "src", "services", "consumer", ".env.example"),
+      "# The queue driving the `consumer` service.\n" +
+        "CONSUMER_QUEUE_URL=http://localhost:4566/000000000000/app-template-consumer\n",
     );
     await write(join(template(), "tailwind.config.ts"), "export default 1;");
     await write(join(template(), "postcss.config.cjs"), "module.exports = 1;");
@@ -326,6 +336,59 @@ describe("create-app", () => {
         "utf8",
       ),
     ).rejects.toThrow();
+  });
+
+  describe("queue", () => {
+    const queue = () => generate({ kind: "queue", target: "node" });
+
+    it("generates from the template's queue service", async () => {
+      // when
+      const destination = await queue();
+      const services = join(destination, "src", "services");
+
+      // then the two are different programs, so only one is copied.
+      expect(
+        await readFile(join(services, "consumer", "entry-queue.ts"), "utf8"),
+      ).toBe("export const handler = 1;");
+      await expect(
+        readFile(join(services, "handler", "entry-server.ts"), "utf8"),
+      ).rejects.toThrow();
+    });
+
+    it("points the app at a queue of its own", async () => {
+      // when
+      const destination = await queue();
+      const env = await readFile(
+        join(destination, "src", "services", "consumer", ".env.example"),
+        "utf8",
+      );
+
+      // then two apps on one LocalStack would otherwise share a queue.
+      expect(env).toContain(
+        "CONSUMER_QUEUE_URL=http://localhost:4566/000000000000/feed-sync-consumer",
+      );
+    });
+
+    it("drops the dashboard, which it serves no HTTP for", async () => {
+      // when
+      const destination = await queue();
+      const pkg = JSON.parse(
+        await readFile(join(destination, "package.json"), "utf8"),
+      );
+
+      // then
+      expect(pkg.dependencies).not.toHaveProperty("react");
+      await expect(
+        readFile(join(destination, "tailwind.config.ts"), "utf8"),
+      ).rejects.toThrow();
+    });
+
+    it("refuses a target that cannot drive it", async () => {
+      // when / then `--args` skips the prompt that would have hidden it.
+      await expect(
+        generate({ kind: "queue", target: "vercel" }),
+      ).rejects.toThrow("cannot be deployed to vercel");
+    });
   });
 
   it("refuses to write over an app that already exists", async () => {

@@ -37,8 +37,8 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
       prompts.appName,
       prompts.description,
       prompts.tenancy,
-      prompts.kind,
       prompts.target,
+      prompts.kind,
       prompts.port,
     ],
     actions: [

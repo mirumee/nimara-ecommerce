@@ -54,11 +54,16 @@ const template = (...parts: string[]) =>
 const templateService = (...parts: string[]) =>
   template("src", "services", "handler", ...parts);
 
+const templateQueue = (...parts: string[]) =>
+  template("src", "services", "consumer", ...parts);
+
 const appService = (service: string, ...parts: string[]) =>
   join(root, "apps", "feed-sync", "src", "services", service, ...parts);
 
-const add = (name = "order-sync", kind: "dashboard" | "http" = "dashboard") =>
-  createService({ app: "feed-sync", kind, name, root });
+const add = (
+  name = "order-sync",
+  kind: "dashboard" | "http" | "queue" = "dashboard",
+) => createService({ app: "feed-sync", kind, name, root });
 
 describe("create-service", () => {
   beforeEach(async () => {
@@ -99,6 +104,21 @@ describe("create-service", () => {
     await write(
       join(root, "apps", "feed-sync", "src", "container", "index.ts"),
       CONTAINER,
+    );
+    await write(templateQueue("config.ts"), MULTI);
+    await write(
+      templateQueue("entry-queue.ts"),
+      'import { container } from "@/services/consumer/container";\n',
+    );
+    await write(
+      templateQueue(".env.example"),
+      "# The queue driving the `consumer` service.\n" +
+        "CONSUMER_QUEUE_URL=http://localhost:4566/000000000000/app-template-consumer\n",
+    );
+
+    await write(
+      join(root, "apps", "feed-sync", ".env.example"),
+      "BUILD_TARGET=node\n",
     );
     await write(appService("handler", "config.ts"), MULTI);
   });
@@ -243,6 +263,44 @@ describe("create-service", () => {
 
       // then a dashboard builds its own use-cases, so nothing is wired in.
       expect(await readFile(containerPath, "utf8")).toBe(before);
+    });
+
+    it("builds a queue service from the template's queue service", async () => {
+      // when
+      await add("mail-sender", "queue");
+
+      // then a queue service is a different program, not an HTTP one cut down.
+      expect(
+        await readFile(appService("mail-sender", "entry-queue.ts"), "utf8"),
+      ).toContain('"@/services/mail-sender/container"');
+    });
+
+    it("points a queue service at a queue of its own", async () => {
+      // when
+      await add("mail-sender", "queue");
+      const env = await readFile(
+        appService("mail-sender", ".env.example"),
+        "utf8",
+      );
+
+      // then the variable follows the service, so two never share one queue.
+      expect(env).toContain(
+        "MAIL_SENDER_QUEUE_URL=http://localhost:4566/000000000000/feed-sync-mail-sender",
+      );
+      expect(env).not.toContain("CONSUMER_QUEUE_URL");
+    });
+
+    it("refuses a queue service on an app that cannot drive one", async () => {
+      // given an app deployed to Vercel
+      await write(
+        join(root, "apps", "feed-sync", ".env.example"),
+        "BUILD_TARGET=vercel\n",
+      );
+
+      // when / then `--args` skips the prompt that would have hidden it.
+      await expect(add("mail-sender", "queue")).rejects.toThrow(
+        "cannot be deployed to vercel",
+      );
     });
 
     it("keeps what the app already declared", async () => {

@@ -58,8 +58,9 @@ pnpm gen saleor-service
 It copies this template's service under the name you give, points the imports
 that reached into the old one at the new one, and takes the tenancy from the
 services already there — they share one `.env`, so they cannot disagree. It
-asks what the service serves, so an app can hold a dashboard and a
-webhooks-only service side by side.
+asks what the service serves — a dashboard, HTTP alone, or a queue — so one app
+can hold several kinds side by side. A queue service is offered only where the
+app's build target can drive one.
 
 ## Queue services
 
