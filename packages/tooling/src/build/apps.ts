@@ -1,5 +1,5 @@
 import { rm } from "node:fs/promises";
-import { join } from "node:path";
+import { basename, join } from "node:path";
 
 import { build } from "vite";
 
@@ -20,12 +20,12 @@ const TARGETS: Record<BuildTarget, BuildTargetAdapter> = {
 };
 
 /**
- * One build pass per app, so each bundles into a single self-contained file
- * under `dist/<app>/`.
+ * One build pass per service, so each bundles into a single self-contained file
+ * under `dist/<service>/`.
  */
 export const buildApps = async ({ rootDir }: { rootDir: string }) => {
   const target = TARGETS[readBuildTarget()];
-  const { client, server } = await getEntryPoints(
+  const { client, services } = await getEntryPoints(
     join(rootDir, "src", "services"),
   );
 
@@ -48,8 +48,8 @@ export const buildApps = async ({ rootDir }: { rootDir: string }) => {
     });
   }
 
-  for (const { name, path } of server) {
-    // Always `dist/<app>/entry-server.js`, so the app name is the parent dir.
+  for (const { name, path } of services) {
+    // The entry file keeps its name, so the bundle still says what drives it.
     await build({
       root: rootDir,
       define: {
@@ -64,11 +64,11 @@ export const buildApps = async ({ rootDir }: { rootDir: string }) => {
         outDir: `dist/${name}`,
         rollupOptions: {
           input: path,
-          output: { entryFileNames: "entry-server.js" },
+          output: { entryFileNames: `${basename(path, ".ts")}.js` },
         },
       },
     });
   }
 
-  await target.finalize({ rootDir, server });
+  await target.finalize({ rootDir, services });
 };

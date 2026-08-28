@@ -10,6 +10,22 @@ export type BuildTarget = (typeof BUILD_TARGETS)[number];
 
 export type AppEntry = { name: string; path: string };
 
+const SERVICE_TRIGGERS = ["http", "queue"] as const;
+
+// What starts an invocation: a request, or a message on a queue.
+type ServiceTrigger = (typeof SERVICE_TRIGGERS)[number];
+
+export type ServiceEntry = AppEntry & { trigger: ServiceTrigger };
+
+/**
+ * The file a service is recognised by. Read off the file name, so nothing has
+ * to evaluate app code to know what drives the service.
+ */
+const ENTRY_FILES: Record<ServiceTrigger, string> = {
+  http: "entry-server.ts",
+  queue: "entry-queue.ts",
+};
+
 export const readBuildTarget = (): BuildTarget => {
   const parsed = z.enum(BUILD_TARGETS).safeParse(process.env.BUILD_TARGET);
 
@@ -22,14 +38,12 @@ export const readBuildTarget = (): BuildTarget => {
   return parsed.data;
 };
 
-// An app dir holds
-// - `entry-server.ts`
-// - `entry-client.tsx`* only if it ships a UI.
+// A service dir holds one entry file, plus `entry-client.tsx` if it ships a UI.
 export const getEntryPoints = async (servicesDir: string) => {
   const items = await readdir(servicesDir);
-  const entryPoints: { client: AppEntry[]; server: AppEntry[] } = {
+  const entryPoints: { client: AppEntry[]; services: ServiceEntry[] } = {
     client: [],
-    server: [],
+    services: [],
   };
 
   for (const item of items) {
@@ -39,12 +53,33 @@ export const getEntryPoints = async (servicesDir: string) => {
       continue;
     }
 
-    const serverEntry = join(serviceDir, "entry-server.ts");
-    const clientEntry = join(serviceDir, "entry-client.tsx");
+    const found = SERVICE_TRIGGERS.filter((trigger) =>
+      existsSync(join(serviceDir, ENTRY_FILES[trigger])),
+    );
 
-    if (existsSync(serverEntry)) {
-      entryPoints.server.push({ name: item, path: serverEntry });
+    /**
+     * One service is one deployed unit, and a unit is either answered over HTTP
+     * or driven by a queue. Two entries side by side leave no single handler to
+     * point a deployment at.
+     */
+    if (found.length > 1) {
+      throw new Error(
+        `${item} has both ${Object.values(ENTRY_FILES).join(" and ")}. A service is served over HTTP or driven by a queue; split it in two.`,
+      );
     }
+
+    const [trigger] = found;
+
+    // A directory with neither entry file is not a service.
+    if (trigger) {
+      entryPoints.services.push({
+        name: item,
+        path: join(serviceDir, ENTRY_FILES[trigger]),
+        trigger,
+      });
+    }
+
+    const clientEntry = join(serviceDir, "entry-client.tsx");
 
     if (existsSync(clientEntry)) {
       entryPoints.client.push({ name: item, path: clientEntry });

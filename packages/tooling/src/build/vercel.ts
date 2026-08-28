@@ -1,7 +1,7 @@
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
-import { type AppEntry } from "../entry-points.ts";
+import { type ServiceEntry } from "../entry-points.ts";
 import { type BuildTargetAdapter } from "./types.ts";
 
 /**
@@ -20,19 +20,31 @@ const readClientAssets = async (dir: string) =>
 
 /**
  * Vercel's Hono preset serves this file, and its imports are what the deploy
- * traces — an app missing here silently does not deploy. They are awaited one
- * at a time because an app fixes its `BASE_PATH` when it evaluates.
+ * traces — a service missing here silently does not deploy. They are awaited
+ * one at a time because a service fixes its `BASE_PATH` when it evaluates.
  */
 const writeVercelEntry = async ({
   rootDir,
-  server,
+  services,
 }: {
   rootDir: string;
-  server: AppEntry[];
+  services: ServiceEntry[];
 }) => {
-  const mounts = server.flatMap(({ name }, index) => [
-    // A lone app keeps whatever prefix the deployment configured.
-    ...(server.length > 1
+  /**
+   * Vercel drives a function with a request. Nothing there polls a queue, so a
+   * queue service would build and then never run.
+   */
+  const queues = services.filter(({ trigger }) => trigger === "queue");
+
+  if (queues.length > 0) {
+    throw new Error(
+      `Vercel cannot drive a queue service: ${queues.map(({ name }) => name).join(", ")}. Build this app with BUILD_TARGET=node.`,
+    );
+  }
+
+  const mounts = services.flatMap(({ name }, index) => [
+    // A lone service keeps whatever prefix the deployment configured.
+    ...(services.length > 1
       ? [`process.env.BASE_PATH = ${JSON.stringify(`/${name}`)};`]
       : []),
     `const { app: app${index} } = await import("./dist/${name}/entry-server.js");`,
