@@ -30,8 +30,6 @@ export const app = new Hono()
 
 const CONTAINER = `import { installSaleorAppUseCase } from "@nimara/infrastructure/use-cases/apps/saleor/install-app-use-case";
 
-import { dashboardUseCases } from "./dashboard";
-
 export const container = createContainer()
   .add((ctx) => ({
     configStore: () => ({
@@ -43,8 +41,7 @@ export const container = createContainer()
       installSaleorAppUseCase({
         configRepository: ctx.appConfigService,
       }),
-  }))
-  .add(dashboardUseCases);
+  }));
 
 export type AppContainer = typeof container;
 `;
@@ -127,10 +124,6 @@ describe("create-app", () => {
       "export const appRoutes = 1;",
     );
     await write(join(template(), "src", "container", "index.ts"), CONTAINER);
-    await write(
-      join(template(), "src", "container", "dashboard.ts"),
-      "export const dashboardUseCases = 1;",
-    );
     await write(join(template(), "tailwind.config.ts"), "export default 1;");
     await write(join(template(), "postcss.config.cjs"), "module.exports = 1;");
   });
@@ -281,20 +274,14 @@ describe("create-app", () => {
     it("unwires what an http app did not copy", async () => {
       // when
       const destination = await generate({ kind: "http" });
-      const [entryServer, container] = await Promise.all(
-        [
-          join(destination, "src", "services", "handler", "entry-server.ts"),
-          join(destination, "src", "container", "index.ts"),
-        ].map((path) => readFile(path, "utf8")),
+      const entryServer = await readFile(
+        join(destination, "src", "services", "handler", "entry-server.ts"),
+        "utf8",
       );
 
-      // then an import of a file that was not copied does not compile, and a
-      // container entry nothing calls is dead code in a new app.
+      // then an import of a file that was not copied does not compile.
       expect(entryServer).not.toContain("dashboard");
       expect(entryServer).toContain('.route("/api/saleor", saleorRoutes);');
-      expect(container).not.toContain("getSettingsForm");
-      expect(container).not.toContain("saveSettings");
-      expect(container).toContain("installApp");
     });
 
     it("drops the dependencies only a dashboard pulls", async () => {

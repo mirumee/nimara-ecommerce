@@ -32,8 +32,6 @@ export const app = new Hono()
 
 const CONTAINER = `import { installSaleorAppUseCase } from "@nimara/infrastructure/use-cases/apps/saleor/install-app-use-case";
 
-import { dashboardUseCases } from "./dashboard";
-
 export const container = createContainer()
   .add((ctx) => ({
     configStore: () => ({
@@ -45,8 +43,7 @@ export const container = createContainer()
       installSaleorAppUseCase({
         configRepository: ctx.appConfigService,
       }),
-  }))
-  .add(dashboardUseCases);
+  }));
 
 export type AppContainer = typeof container;
 `;
@@ -84,10 +81,6 @@ describe("create-service", () => {
       "export const appRoutes = 1;",
     );
     await write(template("src", "container", "index.ts"), CONTAINER);
-    await write(
-      template("src", "container", "dashboard.ts"),
-      "export const dashboardUseCases = 1;",
-    );
     await write(template("tailwind.config.ts"), "export default 1;");
     await write(template("postcss.config.cjs"), "module.exports = 1;");
     await write(
@@ -103,13 +96,9 @@ describe("create-service", () => {
       join(root, "apps", "feed-sync", "package.json"),
       JSON.stringify({ dependencies: {}, devDependencies: {} }),
     );
-    // An app generated as http: its container never had the dashboard entry.
     await write(
       join(root, "apps", "feed-sync", "src", "container", "index.ts"),
-      CONTAINER.replace(
-        'import { dashboardUseCases } from "./dashboard";\n\n',
-        "",
-      ).replace("  }))\n  .add(dashboardUseCases);", "  }));"),
+      CONTAINER,
     );
     await write(appService("handler", "config.ts"), MULTI);
   });
@@ -237,33 +226,8 @@ describe("create-service", () => {
       expect(pkg.devDependencies.tailwindcss).toBe("^3.4.19");
     });
 
-    it("wires a dashboard back into a container that had none", async () => {
-      // given an app generated as http, whose container lost the entry
-      const containerPath = join(
-        root,
-        "apps",
-        "feed-sync",
-        "src",
-        "container",
-        "index.ts",
-      );
-
-      // when
-      await add("order-sync", "dashboard");
-      const container = await readFile(containerPath, "utf8");
-
-      // then the service calls `getSettingsForm`, so a container without it
-      // does not compile.
-      expect(container).toContain(
-        'import { dashboardUseCases } from "./dashboard";',
-      );
-      expect(container).toContain("  .add(dashboardUseCases);");
-      expect(container).not.toContain("  }))\n  }));");
-    });
-
-    it("leaves a container that already has the entry alone", async () => {
+    it("leaves the app's container alone", async () => {
       // given
-      await add("first", "dashboard");
       const containerPath = join(
         root,
         "apps",
@@ -274,10 +238,10 @@ describe("create-service", () => {
       );
       const before = await readFile(containerPath, "utf8");
 
-      // when a second dashboard service is added
-      await add("second", "dashboard");
+      // when
+      await add("order-sync", "dashboard");
 
-      // then
+      // then a dashboard builds its own use-cases, so nothing is wired in.
       expect(await readFile(containerPath, "utf8")).toBe(before);
     });
 

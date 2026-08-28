@@ -14,8 +14,6 @@ import { appSettings, saleorMultiTenantAppConfig } from "@/domain/app-config";
 import { saleorClient } from "@/infrastructure/saleor/client";
 import { APP_CONFIG } from "@/services/handler/config";
 
-import { dashboardUseCases } from "./dashboard";
-
 export const container = createContainer()
   .add({
     config: () => APP_CONFIG,
@@ -59,7 +57,6 @@ export const container = createContainer()
         configRepository: ctx.appConfigService,
         saleorAppClientFactory: saleorAppClient,
       }),
-  }))
-  .add(dashboardUseCases);
+  }));
 
 export type AppContainer = typeof container;
