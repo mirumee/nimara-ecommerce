@@ -34,8 +34,6 @@ export default async function Page(props: HomeViewProps) {
       accessToken={accessToken || null}
       mailTo={clientEnvs.NEXT_PUBLIC_DEFAULT_EMAIL}
       newsletterSubscribeAction={
-        // A selected provider missing its keys can never accept a submission,
-        // so the section stays hidden rather than offering a form that fails.
         isCapabilityConfigured("newsletter") ? newsletterSubscribeAction : null
       }
       region={region}

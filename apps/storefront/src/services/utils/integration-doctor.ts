@@ -123,17 +123,6 @@ export const logIntegrationConfigIssues = (
   }
 };
 
-/**
- * Whether a capability has a selected provider *and* that provider's required
- * configuration. Use it to gate a surface that cannot work without the
- * capability, in place of the provider resolver: the resolver answers which
- * implementation was selected, not whether it can be constructed.
- *
- * A report row carries `ok: true` for an unselected capability as well — that is
- * a deployment which correctly runs without it — so both fields are read here.
- * The check covers presence and shape of the configuration, never whether a
- * credential is accepted by the provider.
- */
 export const isCapabilityConfigured = (
   capability: SwappableCapability,
   env?: Record<string, string | undefined>,

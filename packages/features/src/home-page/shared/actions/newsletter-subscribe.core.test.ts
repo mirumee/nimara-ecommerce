@@ -15,8 +15,6 @@ const buildServices = (newsletterSubscribeSpy: ReturnType<typeof vi.fn>) =>
 
 const EMAIL_DOMAIN = "@example.com";
 
-// Local-part padding to hit an exact total length, since zod's email check
-// does not itself bound local-part length.
 const buildAddressOfLength = (length: number) =>
   "a".repeat(length - EMAIL_DOMAIN.length) + EMAIL_DOMAIN;
 
@@ -67,8 +65,6 @@ describe("newsletterSubscribe", () => {
     const spy = vi.fn(async () => ok({ acknowledged: true as const }));
     const boundaryEmail = buildAddressOfLength(FIELD_MAX_LENGTH.email);
 
-    // Padded so the raw length exceeds the bound and only the trimmed
-    // length is exactly at it, proving the bound applies post-trim.
     const result = await newsletterSubscribe(buildServices(spy), {
       email: `  ${boundaryEmail}  `,
     });

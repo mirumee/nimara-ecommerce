@@ -4,10 +4,6 @@ import { type Logger } from "#root/logging/types";
 
 import { type KlaviyoNewsletterServiceConfig } from "../types";
 
-/**
- * A shopper waits for this call, so the budget is short. Deferred item D-2 of
- * RFC-0001 fixed it at 5 seconds.
- */
 const REQUEST_TIMEOUT_MS = 5_000;
 
 export const klaviyoNewsletterEnvSchema = z.object({

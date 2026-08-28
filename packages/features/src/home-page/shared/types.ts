@@ -26,7 +26,6 @@ export interface HomeViewProps {
  * @property accessToken - The access token for authenticated requests, or null if not authenticated.
  * @property services - The service registry containing all necessary services.
  * @property paths - An object containing functions to generate paths for products and search.
- * @property newsletterSubscribeAction - The subscribe action, or null when no newsletter provider is configured. Null hides the subscribe section.
  */
 export interface StandardHomeViewProps extends HomeViewProps {
   accessToken: string | null;

@@ -47,10 +47,6 @@ export const storeHeaders = {
   productAddedToCart: "Product has been added to your bag",
 };
 
-/**
- * Newsletter copy asserted by the subscribe scenarios. `subscribeSuccess` is
- * never expected by them: it must not appear for an address the form rejects.
- */
 export const newsletterCopy = {
   consent: "We use your email address only to send this newsletter.",
   cta: "Subscribe",

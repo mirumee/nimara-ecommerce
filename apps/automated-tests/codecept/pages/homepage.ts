@@ -4,19 +4,8 @@ import { newsletterCopy, storeHeaders, URLS } from "../data/constants";
 
 const { I } = inject();
 
-/*
- * Newsletter assertions use element locators and scope every text check to the
- * section. Storefront copy is also shipped in the client message catalogue, so a
- * page-wide text assertion passes on the serialized payload even when nothing
- * rendered.
- */
 const newsletterHeading = locate("h2").withText(storeHeaders.newsletter);
 const newsletterEmailField = locate('input[name="email"]');
-/*
- * The subscribe section sits inside another `section` on the home page, so a
- * `section` locator also matches the outer one and its links. These anchor on
- * the form and the consent paragraph instead.
- */
 const newsletterForm = locate("form").withDescendant(newsletterEmailField);
 const newsletterConsent = locate("p").withText(newsletterCopy.consent);
 
@@ -29,9 +18,7 @@ export default {
   newsletterHeading,
   newsletterForm,
   newsletterConsent,
-  // The newsletter form holds the only email input on the home page.
   newsletterEmailField,
-  // The name field was removed under data minimisation; it must not come back.
   newsletterNameField: locate('input[name="name"]'),
   newsletterSubmitButton: locate("button").withText(newsletterCopy.cta),
   newsletterPrivacyLink: newsletterConsent.find("a"),
@@ -53,11 +40,6 @@ export default {
     I.waitInUrl(URLS.PRODUCTS_PAGE, 10);
   },
 
-  /**
-   * The consent banner is configuration-dependent, so it is absent on some
-   * deployments. Where it is present it covers the page bottom, which is where
-   * the newsletter section lives.
-   */
   async dismissCookieBannerIfPresent() {
     const banners = await I.grabNumberOfVisibleElements(
       this.cookieAcceptButton,
@@ -69,10 +51,6 @@ export default {
     }
   },
 
-  /**
-   * The section renders only where a newsletter provider is configured, so every
-   * newsletter step starts here.
-   */
   seeNewsletterSection(timeout: number) {
     I.scrollPageToBottom();
     I.waitForElement(this.newsletterHeading, timeout);

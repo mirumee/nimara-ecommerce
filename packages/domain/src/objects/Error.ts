@@ -125,11 +125,6 @@ export const SALEOR_APP_ERROR_CODES = [
 ] as const satisfies ErrorCodeFormat[];
 export type SaleorAppErrorCode = (typeof SALEOR_APP_ERROR_CODES)[number];
 
-/**
- * @description Error codes related to newsletter subscription. A refusal
- * (no provider configured) and a provider rejection are separate codes because
- * the shopper message and the operator response differ.
- */
 export const NEWSLETTER_ERROR_CODES = [
   "NEWSLETTER_NOT_CONFIGURED_ERROR",
   "NEWSLETTER_SUBSCRIBE_ERROR",

@@ -8,10 +8,6 @@ import { resolveNewsletterProvider } from "@/services/integrations/resolve";
 import { storefrontLogger } from "@/services/logging";
 import { getServiceRegistry } from "@/services/registry";
 
-/**
- * Server action wrapper for newsletter subscription.
- * This is the only file that uses "use server" and Next.js-specific APIs.
- */
 export const newsletterSubscribeAction = async ({
   email,
 }: {
@@ -19,7 +15,6 @@ export const newsletterSubscribeAction = async ({
 }) => {
   const provider = resolveNewsletterProvider();
 
-  // A client rendered before the provider was removed can still post here.
   if (!provider) {
     storefrontLogger.error("Newsletter submit refused: no provider selected.");
 
@@ -33,8 +28,6 @@ export const newsletterSubscribeAction = async ({
     );
   }
 
-  // The provider logs its own failures with the response status. Nothing here
-  // may log the submitted address.
   return toClientResult(
     await newsletterSubscribe(await getServiceRegistry(), { email }),
   );

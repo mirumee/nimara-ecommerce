@@ -55,11 +55,6 @@ export const emptyCMSPageService = {
   cmsPageGet: async () => ok(null),
 } satisfies CMSPageService;
 
-/**
- * Answers an error rather than a payload, so a submit path that skipped the
- * provider check degrades to a refusal instead of reporting a success that no
- * provider acknowledged.
- */
 export const emptyNewsletterService: NewsletterService = {
   newsletterSubscribe: async () =>
     err([

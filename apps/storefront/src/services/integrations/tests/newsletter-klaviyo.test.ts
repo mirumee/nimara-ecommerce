@@ -31,7 +31,6 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-/** Every logged argument, flattened, so a leaked address is visible. */
 const loggedText = () => JSON.stringify(logger.error.mock.calls);
 
 describe("klaviyoNewsletterSubscribeInfra", () => {

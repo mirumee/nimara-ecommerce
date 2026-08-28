@@ -35,8 +35,6 @@ export const Newsletter = ({
   const handleSubmit: SubmitHandler<FormSchema> = async (values) => {
     const result = await subscribeAction(values);
 
-    // Success runs on the provider acknowledgement only. Every other outcome,
-    // including a timeout, reports a failure.
     if (result.ok) {
       form.reset();
 

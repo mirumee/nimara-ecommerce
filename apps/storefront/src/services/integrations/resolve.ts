@@ -28,11 +28,5 @@ export const resolveSearchProvider = (): SearchProviderId | null =>
 export const resolveCMSProvider = (): CMSProviderId | null =>
   withSaleorFallback(serverEnvs.CMS_SERVICE);
 
-/**
- * The single answer to "is a newsletter provider configured". It carries no
- * Saleor fallback, because the commerce backend serves no newsletter. The home
- * view reads it to decide whether to render the subscribe section, and the
- * submit path reads it again to refuse a post from a stale client.
- */
 export const resolveNewsletterProvider = (): NewsletterProviderId | null =>
   serverEnvs.NEWSLETTER_SERVICE ?? null;

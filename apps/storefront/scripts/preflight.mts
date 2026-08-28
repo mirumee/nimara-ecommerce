@@ -41,7 +41,6 @@ type Provider = {
 };
 
 type Capability = {
-  /** Provider used when the select var is unset. Absent means no provider. */
   defaultProvider?: string;
   name: string;
   providers: readonly Provider[];
@@ -117,7 +116,6 @@ const CAPABILITIES: Capability[] = [
   },
 ];
 
-/** Wizard-only sentinel for "leave this capability off". */
 const NO_PROVIDER = "none";
 
 type EnvVar = { comment?: string; default?: string; key: string };
@@ -441,7 +439,6 @@ const runWizard = async (): Promise<void> => {
       label: provider.id,
       hint: requiredKeys(provider).join(", ") || "no env required",
     }));
-    // A capability with no default can be left off, so it offers that choice.
     const options = capability.defaultProvider
       ? providerOptions
       : [

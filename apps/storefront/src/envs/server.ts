@@ -22,8 +22,6 @@ const schema = z.object({
     emptyStringToUndefined,
     z.enum(CMS_PROVIDER_IDS).default("saleor"),
   ),
-  // No default: the commerce backend has no newsletter capability, so an absent
-  // value means no provider rather than a fallback.
   NEWSLETTER_SERVICE: z.preprocess(
     emptyStringToUndefined,
     z.enum(NEWSLETTER_PROVIDER_IDS).optional(),

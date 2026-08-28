@@ -9,11 +9,6 @@ const PROVIDER = "klaviyo";
 const SUBSCRIBE_URL =
   "https://a.klaviyo.com/api/profile-subscription-bulk-create-jobs";
 
-/**
- * Klaviyo pins its request and response shapes to a dated API revision. This
- * constant is the contract version, so a Klaviyo change is a visible edit here
- * rather than a silent behavior change.
- */
 const API_REVISION = "2026-07-15";
 
 export const klaviyoNewsletterSubscribeInfra =
@@ -63,10 +58,6 @@ export const klaviyoNewsletterSubscribeInfra =
     } catch (error) {
       const timedOut = (error as { name?: string })?.name === "TimeoutError";
 
-      /*
-       * The error can carry the request, and the request carries the address.
-       * Only the fields below are logged.
-       */
       logger.error("Newsletter subscribe did not reach Klaviyo.", {
         provider: PROVIDER,
         timedOut,
@@ -85,10 +76,6 @@ export const klaviyoNewsletterSubscribeInfra =
       ]);
     }
 
-    /*
-     * The endpoint answers 202 Accepted. Success runs on that acknowledgement
-     * only, so any other status is a failure the shopper is told about.
-     */
     if (!response.ok) {
       logger.error("Klaviyo rejected the newsletter subscribe request.", {
         provider: PROVIDER,
