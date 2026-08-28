@@ -117,7 +117,7 @@ rather than a crash.
 Corrected at implementation time. Resolution answers which provider was selected, which is not the
 same question: a selected provider missing its keys passed the gate, rendered the section, and then
 threw out of the loader, because every provider config mapper validates with a throwing parse. The
-render gate now asks whether the capability is selected *and* its configuration schema validates,
+render gate now asks whether the capability is selected _and_ its configuration schema validates,
 the loader catches a failed construction and serves the empty service, and the registry logs the
 missing keys once at build time. The submit-path check stays as the second line of defence.
 

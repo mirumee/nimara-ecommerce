@@ -22,7 +22,7 @@ The only supported provider ID is `klaviyo`. The variable carries no default, be
 backend has no newsletter capability. An absent value means no provider, and the storefront then
 renders no subscribe section and accepts no submission. A selected provider whose namespaced
 configuration is incomplete is treated the same way: the section is gated on the provider being
-selected *and* its configuration schema validating, so selection alone never puts a form on the page
+selected _and_ its configuration schema validating, so selection alone never puts a form on the page
 that cannot succeed.
 
 Provider manifests own their configuration schema, configuration mapping, and lazy factory. The
