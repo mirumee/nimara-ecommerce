@@ -1,3 +1,9 @@
+import { execFile } from "node:child_process";
+import { mkdtemp } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { promisify } from "node:util";
+
 /**
  * Collects the GitHub activity since the previous daily and posts one Block Kit
  * message to a Slack Incoming Webhook.
@@ -13,19 +19,17 @@ const WEEKLY_LOOKBACK_HOURS = 168;
 const DESCRIPTION_LIMIT = 600;
 const SLACK_SECTION_LIMIT = 2900;
 
-const ANTHROPIC_API = "https://api.anthropic.com/v1/messages";
-const ANTHROPIC_VERSION = "2023-06-01";
-const ANTHROPIC_OAUTH_BETA = "oauth-2025-04-20";
-const OAUTH_TOKEN_PREFIX = "sk-ant-oat";
-const ANTHROPIC_MODEL = "claude-opus-5";
+const CLAUDE_MODEL = "claude-opus-5";
+const CLAUDE_TIMEOUT_MS = 180_000;
 /**
- * Adaptive thinking is on by default and its tokens count against max_tokens,
- * so a two-sentence answer still needs headroom.
+ * The JSON envelope carries the whole usage report, so the default 1 MB buffer
+ * is too tight to rely on.
  */
-const ANTHROPIC_MAX_TOKENS = 4000;
+const CLAUDE_MAX_BUFFER = 10 * 1024 * 1024;
 const COMMENT_SYSTEM_PROMPT = [
   "Jesteś częścią bota, który wysyła zespołowi podsumowanie GitHuba przed daily.",
   "Dostajesz dane w JSON i piszesz jedno lub dwa zdania po polsku.",
+  "Zmieść się w 300 znakach. Krótkie zdanie jest lepsze od długiego.",
   "Pole window mówi, czy podsumowujesz jeden dzień, czy cały zeszły tydzień.",
   "Pole description to opis PR-a napisany przez autora. Bywa puste.",
   "Napisz, na co zespół ma zwrócić uwagę na dzisiejszym daily.",
@@ -316,46 +320,6 @@ export function buildBlocks(
 }
 
 /**
- * A subscription token from `claude setup-token` authenticates as a bearer
- * token, not as an API key. Sending it on `x-api-key` returns 401, which is
- * indistinguishable from a revoked key unless the caller knows the difference.
- */
-export function resolveAuth(env) {
-  const oauthToken = env.CLAUDE_CODE_OAUTH_TOKEN;
-
-  if (oauthToken) {
-    return { headers: bearerHeaders(oauthToken) };
-  }
-
-  const apiKey = env.ANTHROPIC_API_KEY;
-
-  if (!apiKey) {
-    return null;
-  }
-
-  if (apiKey.startsWith(OAUTH_TOKEN_PREFIX)) {
-    return {
-      headers: bearerHeaders(apiKey),
-      notice:
-        "ANTHROPIC_API_KEY holds a subscription token. Move it to CLAUDE_CODE_OAUTH_TOKEN.",
-    };
-  }
-
-  return { headers: { "x-api-key": apiKey } };
-}
-
-function bearerHeaders(token) {
-  return {
-    authorization: `Bearer ${token}`,
-    "anthropic-beta": ANTHROPIC_OAUTH_BETA,
-  };
-}
-
-/**
- * Strips the collected data down to what the comment needs. Sending whole API
- * payloads would cost tokens and add nothing.
- */
-/**
  * The pull request body is the author's own words about the change. It is the
  * cheapest context that beats a title, and the tail of a long one is boilerplate
  * from the template.
@@ -387,54 +351,74 @@ export function summarizeForPrompt(data, { weekly } = {}) {
   };
 }
 
+const execFileAsync = promisify(execFile);
+
 /**
+ * Runs Claude Code in headless mode. The subscription token from
+ * `claude setup-token` authenticates Claude Code, not a hand-written HTTP
+ * client, so the CLI is the supported way to spend a subscription here.
+ *
  * The comment is a nice-to-have. Any failure returns null so the summary still
  * reaches the channel.
  */
-async function requestComment(auth, data, { weekly }) {
+async function requestComment(data, { weekly }) {
   try {
-    const response = await fetch(ANTHROPIC_API, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "anthropic-version": ANTHROPIC_VERSION,
-        ...auth.headers,
-      },
-      body: JSON.stringify({
-        model: ANTHROPIC_MODEL,
-        max_tokens: ANTHROPIC_MAX_TOKENS,
-        output_config: { effort: "low" },
-        system: COMMENT_SYSTEM_PROMPT,
-        messages: [
-          {
-            role: "user",
-            content: JSON.stringify(summarizeForPrompt(data, { weekly })),
-          },
-        ],
-      }),
-    });
+    // An empty directory keeps the repository's CLAUDE.md, settings, and hooks
+    // out of a session that only has to rewrite one JSON payload.
+    const cwd = await mkdtemp(join(tmpdir(), "daily-summary-"));
 
-    if (!response.ok) {
-      console.warn(
-        `Claude ${response.status}: ${(await response.text()).slice(0, 200)}`,
-      );
+    const { stdout } = await execFileAsync(
+      "claude",
+      [
+        "--print",
+        JSON.stringify(summarizeForPrompt(data, { weekly })),
+        "--system-prompt",
+        COMMENT_SYSTEM_PROMPT,
+        "--model",
+        CLAUDE_MODEL,
+        "--output-format",
+        "json",
+        "--max-turns",
+        "1",
+        "--restricted",
+      ],
+      { cwd, timeout: CLAUDE_TIMEOUT_MS, maxBuffer: CLAUDE_MAX_BUFFER },
+    );
 
-      return null;
-    }
-
-    const body = await response.json();
-    const text = (body.content ?? [])
-      .filter((block) => block.type === "text")
-      .map((block) => block.text)
-      .join(" ")
-      .trim();
-
-    return text || null;
+    return readComment(stdout);
   } catch (error) {
     console.warn(`Claude comment skipped: ${error.message}`);
 
     return null;
   }
+}
+
+/**
+ * The envelope reports its own failures in `is_error` rather than by a non-zero
+ * exit code, so a successful process is not yet a usable answer.
+ */
+export function readComment(stdout) {
+  let envelope;
+
+  try {
+    envelope = JSON.parse(stdout);
+  } catch {
+    console.warn("Claude returned output that is not JSON.");
+
+    return null;
+  }
+
+  if (envelope.is_error || envelope.subtype !== "success") {
+    console.warn(
+      `Claude reported ${envelope.subtype ?? "an error"}: ${envelope.api_error_status ?? "no status"}`,
+    );
+
+    return null;
+  }
+
+  const comment = (envelope.result ?? "").trim();
+
+  return comment || null;
 }
 
 async function postToSlack(webhookUrl, { blocks, text }) {
@@ -480,13 +464,7 @@ async function main() {
 
   try {
     const data = await collect({ repo, token, since });
-    const auth = resolveAuth(process.env);
-
-    if (auth?.notice) {
-      console.warn(auth.notice);
-    }
-
-    const comment = auth ? await requestComment(auth, data, { weekly }) : null;
+    const comment = await requestComment(data, { weekly });
 
     blocks = buildBlocks(data, { repo, now, lookbackHours, weekly, comment });
   } catch (error) {

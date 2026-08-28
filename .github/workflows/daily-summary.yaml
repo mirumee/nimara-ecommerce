@@ -51,15 +51,22 @@ jobs:
         with:
           node-version: "lts/krypton"
 
+      # The subscription token authenticates Claude Code, not a hand-written
+      # HTTP client, so the summary calls the CLI for its comment.
+      - name: Install Claude Code
+        if: steps.guard.outputs.run == 'true'
+        run: npm install -g @anthropic-ai/claude-code@2.1.250
+
       - name: Post summary
         if: steps.guard.outputs.run == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          # Both are optional. Without either, the summary posts without the
-          # Claude comment. Set one: an API key from the Anthropic console, or a
-          # subscription token from `claude setup-token`.
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          # Both are optional and the CLI selects between them. Without either,
+          # the summary posts without the Claude comment. Set one: a
+          # subscription token from `claude setup-token`, or an API key from the
+          # Anthropic console.
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           DRY_RUN: ${{ inputs.dry_run }}
         run: node .github/scripts/daily-summary.mjs
