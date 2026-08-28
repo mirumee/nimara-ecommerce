@@ -1,4 +1,4 @@
-import { existsSync } from "node:fs";
+import { existsSync, readdirSync } from "node:fs";
 import { readdir, stat } from "node:fs/promises";
 import { join } from "node:path";
 
@@ -26,6 +26,8 @@ const ENTRY_FILES: Record<ServiceTrigger, string> = {
   queue: "entry-queue.ts",
 };
 
+const CLIENT_ENTRY = "entry-client.tsx";
+
 export const readBuildTarget = (): BuildTarget => {
   const parsed = z.enum(BUILD_TARGETS).safeParse(process.env.BUILD_TARGET);
 
@@ -37,6 +39,16 @@ export const readBuildTarget = (): BuildTarget => {
 
   return parsed.data;
 };
+
+/**
+ * Whether any service ships a UI. Synchronous because vite reads a config
+ * before it can await anything, and an app with no UI has no React to load.
+ */
+export const hasClientEntry = (servicesDir: string) =>
+  existsSync(servicesDir) &&
+  readdirSync(servicesDir).some((item) =>
+    existsSync(join(servicesDir, item, CLIENT_ENTRY)),
+  );
 
 // A service dir holds one entry file, plus `entry-client.tsx` if it ships a UI.
 export const getEntryPoints = async (servicesDir: string) => {
@@ -79,7 +91,7 @@ export const getEntryPoints = async (servicesDir: string) => {
       });
     }
 
-    const clientEntry = join(serviceDir, "entry-client.tsx");
+    const clientEntry = join(serviceDir, CLIENT_ENTRY);
 
     if (existsSync(clientEntry)) {
       entryPoints.client.push({ name: item, path: clientEntry });

@@ -1,4 +1,5 @@
 import { builtinModules } from "node:module";
+import { join } from "node:path";
 
 import devServer, { defaultOptions } from "@hono/vite-dev-server";
 import react from "@vitejs/plugin-react";
@@ -6,7 +7,7 @@ import { config } from "dotenv";
 import { defineConfig, mergeConfig, type UserConfig } from "vite";
 import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
 
-import { readBuildTarget } from "../entry-points.ts";
+import { hasClientEntry, readBuildTarget } from "../entry-points.ts";
 import { generatePackageJson, loadDevServerEntry } from "./plugins.ts";
 
 /**
@@ -26,6 +27,11 @@ export const createViteConfig = ({
     config({ path: ".env.local", quiet: true });
     config({ quiet: true });
 
+    // An app with no dashboard has no React installed to load.
+    const clientPlugins = hasClientEntry(join(process.cwd(), "src", "services"))
+      ? [react()]
+      : [];
+
     const withOverrides = (base: UserConfig) =>
       mergeConfig(
         base,
@@ -40,7 +46,7 @@ export const createViteConfig = ({
         // `@saleor/app-sdk` still emits Node-style `global`; without this the
         // browser bundle throws `ReferenceError: global is not defined` on load.
         define: { global: "globalThis" },
-        plugins: [react(), cssInjectedByJsPlugin()],
+        plugins: [...clientPlugins, cssInjectedByJsPlugin()],
         build: {
           emptyOutDir: false,
           minify: true,
@@ -62,7 +68,7 @@ export const createViteConfig = ({
         allowedHosts: [".ngrok.io", ".ngrok.app"],
       },
       plugins: [
-        react(),
+        ...clientPlugins,
         generatePackageJson(),
         {
           ...devServer({

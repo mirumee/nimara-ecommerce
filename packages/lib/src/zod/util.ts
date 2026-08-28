@@ -1,8 +1,4 @@
-import {
-  z,
-  type ZodSafeParseResult,
-  type ZodSafeParseSuccess,
-} from "zod";
+import { z, type ZodSafeParseResult, type ZodSafeParseSuccess } from "zod";
 
 import { type AnyZodSchema } from "./types";
 

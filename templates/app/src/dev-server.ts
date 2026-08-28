@@ -12,6 +12,7 @@ const importers = import.meta.glob("./services/*/entry-server.ts") as Record<
 >;
 
 const paths = Object.keys(importers).sort();
+const logger = getLogger({ name: "dev" });
 const server = new Hono();
 
 for (const path of paths) {
@@ -23,6 +24,8 @@ for (const path of paths) {
 
   if (app) {
     server.route("/", app);
+
+    logger.info(`Serving ${name} at ${process.env.BASE_PATH || "/"}`);
   }
 }
 
@@ -32,7 +35,7 @@ const queues = import.meta.glob("./services/*/entry-queue.ts");
 if (Object.keys(queues).length > 0) {
   const { startQueueProxies } = await import("@nimara/tooling/sqs/dev");
 
-  await startQueueProxies({ logger: getLogger({ name: "dev" }), queues });
+  await startQueueProxies({ logger, queues });
 }
 
 // eslint-disable-next-line import/no-default-export

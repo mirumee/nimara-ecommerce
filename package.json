@@ -37,7 +37,7 @@
     "fallow": "fallow --format json -c ./packages/config/src/.fallowrc.json > fallow.json",
     "format": "pnpm prettier --write '**/*.{js,ts,tsx,json,md}'",
     "format:check": "pnpm prettier --check '**/*.{js,ts,tsx,json,md}'",
-    "gen": "NO_UPDATE_NOTIFIER=1 NPM_CONFIG_LOGLEVEL=error turbo gen",
+    "gen": "NPM_CONFIG_LOGLEVEL=error turbo gen",
     "graph": "turbo run build --graph=graph.mermaid",
     "localstack:down": "docker compose -f apps/marketplace/docker-compose.yml stop localstack",
     "localstack:export-secret": "docker compose -f apps/marketplace/docker-compose.yml exec localstack bash /opt/localstack/export-secret.sh",

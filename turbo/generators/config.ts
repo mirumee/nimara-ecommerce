@@ -25,10 +25,22 @@ type ServiceAnswers = {
   turbo: { paths: { root: string } };
 };
 
+// Quiet unless it fails: install and lint have nothing to say when they pass.
 const run =
   (root: string) =>
-  (...args: string[]) =>
-    execFileSync("pnpm", args, { cwd: root, stdio: "inherit" });
+  (...args: string[]) => {
+    try {
+      execFileSync("pnpm", args, { cwd: root, stdio: "pipe" });
+    } catch (error) {
+      const { stderr, stdout } = error as { stderr?: Buffer; stdout?: Buffer };
+
+      process.stderr.write(`\npnpm ${args.join(" ")} failed:\n`);
+      process.stderr.write(stdout?.toString() ?? "");
+      process.stderr.write(stderr?.toString() ?? "");
+
+      throw error;
+    }
+  };
 
 // eslint-disable-next-line import/no-default-export
 export default function generator(plop: PlopTypes.NodePlopAPI): void {
