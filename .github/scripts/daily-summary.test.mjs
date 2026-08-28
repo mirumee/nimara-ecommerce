@@ -205,12 +205,12 @@ test("the prompt payload carries titles and counts, not whole API objects", () =
     releases: [{ tag_name: "v1.2.3" }],
   });
 
-  assert.deepEqual(payload.zmergowane, ["feat: a"]);
-  assert.deepEqual(payload.doReview, [
-    { tytul: "fix: b", utworzony: "2026-08-01T00:00:00Z" },
+  assert.deepEqual(payload.merged, ["feat: a"]);
+  assert.deepEqual(payload.awaitingReview, [
+    { title: "fix: b", createdAt: "2026-08-01T00:00:00Z" },
   ]);
-  assert.equal(payload.noweIssues, 2);
-  assert.deepEqual(payload.release, ["v1.2.3"]);
+  assert.equal(payload.openedIssues, 2);
+  assert.deepEqual(payload.releases, ["v1.2.3"]);
 });
 
 test("the prompt payload caps each list at ten entries", () => {
@@ -223,6 +223,6 @@ test("the prompt payload caps each list at ten entries", () => {
     toReview: many,
   });
 
-  assert.equal(payload.zmergowane.length, 10);
-  assert.equal(payload.doReview.length, 10);
+  assert.equal(payload.merged.length, 10);
+  assert.equal(payload.awaitingReview.length, 10);
 });

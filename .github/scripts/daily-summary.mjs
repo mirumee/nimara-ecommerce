@@ -308,16 +308,16 @@ export function summarizeForPrompt(data) {
   const titles = (items) => items.slice(0, 10).map((item) => item.title);
 
   return {
-    zmergowane: titles(data.merged),
-    doReview: data.toReview.slice(0, 10).map((item) => ({
-      tytul: item.title,
-      utworzony: item.created_at,
+    merged: titles(data.merged),
+    awaitingReview: data.toReview.slice(0, 10).map((item) => ({
+      title: item.title,
+      createdAt: item.created_at,
     })),
-    zaakceptowane: titles(data.approved),
-    nieudaneCi: data.failedRuns.slice(0, 10).map((run) => run.name),
-    noweIssues: data.openedIssues.length,
-    zamknieteIssues: data.closedIssues.length,
-    release: data.releases.map((release) => release.tag_name),
+    approved: titles(data.approved),
+    failedCi: data.failedRuns.slice(0, 10).map((run) => run.name),
+    openedIssues: data.openedIssues.length,
+    closedIssues: data.closedIssues.length,
+    releases: data.releases.map((release) => release.tag_name),
   };
 }
 
