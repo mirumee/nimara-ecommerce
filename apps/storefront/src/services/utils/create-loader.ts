@@ -1,4 +1,10 @@
+import { ZodError } from "zod";
+
 import type { Logger } from "@nimara/infrastructure/logging/types";
+
+import type { Capability } from "@/services/capabilities";
+
+type Attempt<TService> = { retry: boolean; service: TService };
 
 /**
  * Builds a lazy, cached loader for a single capability (search, CMS page, …).
@@ -11,10 +17,22 @@ import type { Logger } from "@nimara/infrastructure/logging/types";
  *
  * A selected provider whose config is missing or invalid degrades the same way:
  * every provider config mapper validates with a throwing `parse`, and a broken
- * capability must not take down routes that never use it. The empty service is
- * memoized too, so a broken deployment does not retry the failing construction
- * on every request. `logIntegrationConfigIssues` reports which keys are missing
- * when the registry is built.
+ * capability must not take down routes that never use it.
+ * `logIntegrationConfigIssues` reports which keys are missing when the registry
+ * is built.
+ *
+ * A failed construction memoizes the empty service only when the cause is
+ * deterministic. A `ZodError` means the config cannot become valid without a
+ * new deployment, so retrying it on every request only burns work. Any other
+ * cause — a failed dynamic import, an I/O timeout inside a provider entry
+ * point — can succeed on the next call, so the empty service answers that one
+ * call and the next call rebuilds. Memoizing a transient failure would degrade
+ * a capability until the process dies.
+ *
+ * What is memoized is the in-flight promise, not the resolved service, so
+ * requests that arrive concurrently during the first construction share it
+ * instead of each starting their own. `attempt` never rejects, so a memoized
+ * rejection cannot poison the cache.
  *
  * The provider catalog and wiring live in infrastructure — this helper only owns
  * the lazy/cache/empty-fallback lifecycle.
@@ -29,44 +47,63 @@ export const createServiceLoader = <TService, TId extends string>({
   logger,
 }: {
   build: (provider: TId, logger: Logger) => Promise<TService>;
-  capability: string;
+  capability: Capability;
   emptyService: TService;
   logger: Logger;
   resolve: () => TId | null;
 }) => {
-  let instance: TService | null = null;
-
-  return async (): Promise<TService> => {
-    if (instance) {
-      return instance;
-    }
-
+  const attempt = async (): Promise<Attempt<TService>> => {
     const provider = resolve();
 
     if (!provider) {
-      instance = emptyService;
-
-      return instance;
+      return { service: emptyService, retry: false };
     }
 
     try {
-      instance = await build(provider, logger);
+      return { service: await build(provider, logger), retry: false };
     } catch (error) {
+      const isConfigError = error instanceof ZodError;
+
       /*
        * Provider config schemas name the missing env keys in their messages and
        * never carry their values, so the message is safe to log.
        */
-      logger.critical(
-        "Provider construction failed; serving the empty service.",
-        {
-          capability,
-          provider,
-          reason: error instanceof Error ? error.message : String(error),
-        },
-      );
+      const context = {
+        capability,
+        provider,
+        reason: error instanceof Error ? error.message : String(error),
+      };
 
-      instance = emptyService;
+      if (isConfigError) {
+        logger.critical(
+          "Provider configuration is invalid; serving the empty service until the next deployment.",
+          context,
+        );
+      } else {
+        logger.error(
+          "Provider construction failed; serving the empty service for this call.",
+          context,
+        );
+      }
+
+      return { service: emptyService, retry: !isConfigError };
     }
+  };
+
+  let instance: Promise<TService> | null = null;
+
+  return (): Promise<TService> => {
+    if (instance) {
+      return instance;
+    }
+
+    instance = attempt().then(({ service, retry }) => {
+      if (retry) {
+        instance = null;
+      }
+
+      return service;
+    });
 
     return instance;
   };

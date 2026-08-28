@@ -64,6 +64,11 @@ building or deploying.
   it. The event is emitted once when the service registry is built, so a missing value is visible
   from the first request rather than from the first shopper who reaches that capability. Preflight
   reports the same values before runtime.
+- Invalid configuration is permanent for the life of the deployment, so the storefront serves the
+  empty service for that capability until the next deployment and does not repeat the failed
+  construction. A construction that fails for any other cause can succeed later. The storefront
+  serves the empty service for that one call, logs an error event, and builds the service again on
+  the next call.
 - Built-in sample providers require no external credentials but are an automatic fallback only
   outside production. Production falls back to empty services when the default backend is absent.
 - A provider-specific upstream failure retains that provider's existing service-level error

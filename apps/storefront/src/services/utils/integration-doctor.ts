@@ -5,6 +5,7 @@ import { cmsPageProviders } from "@nimara/infrastructure/cms-page/select";
 import type { Logger } from "@nimara/infrastructure/logging/types";
 import { searchProviders } from "@nimara/infrastructure/search/select";
 
+import type { Capability } from "@/services/capabilities";
 import {
   resolveCMSProvider,
   resolveSearchProvider,
@@ -18,7 +19,7 @@ export type IntegrationReportRow = {
 };
 
 type CapabilityEntry = {
-  capability: string;
+  capability: Capability;
   providers: readonly { configSchema?: ZodType; id: string }[];
   resolve: () => string | null;
 };
@@ -43,7 +44,9 @@ const CAPABILITIES = [
 
 /*
  * Derived from `CAPABILITIES` rather than hand-listed, so a typo in a caller is
- * a compile error instead of a silently false check that hides a surface.
+ * a compile error instead of a silently false check that hides a surface. The
+ * entries draw their names from `Capability`, so a doctor row and a loader log
+ * always label the same capability the same way.
  */
 export type SwappableCapability = (typeof CAPABILITIES)[number]["capability"];
 

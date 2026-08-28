@@ -743,6 +743,9 @@
   critical event naming the missing values.
 - **Update**: Added the first-request critical event for missing provider configuration to the
   verification steps of OPS-0001.
+- **Update**: Separated permanent from temporary construction failure in CAP-0001 and OPS-0001. The
+  service loader keeps the empty service only for invalid configuration. Any other cause logs an
+  error event and the loader builds the service again on the next call.
 - **Lint**: `pnpm wiki:lint` at zero violations.
 
 ## 2026-08-28
