@@ -735,3 +735,9 @@
 - **Tooling**: The repository turned on the `simple-english` output style, so an agent writes
   every record in ASD-STE100 Simplified Technical English.
 - **Lint**: `pnpm wiki:lint` at zero violations across 94 files.
+
+## 2026-08-28
+
+- **Create**: Added IMP-0005 as `in_progress` for the daily GitHub summary bot, tracing PR #799.
+- **Create**: Added OPS-0009 as an `active` runbook for the Slack webhook setup, the schedule and its daylight-saving guard, webhook rotation, and failure diagnosis.
+- **Lint**: `pnpm wiki:lint` at zero violations across 96 files.

@@ -27,6 +27,7 @@ and product-state records they support.
 - [OPS-0006 Storefront Provider Change and Rollback](OPS-0006%20Storefront%20Provider%20Change%20and%20Rollback.md) - rollback - active - Changes build-time search or content providers and restores a known-good provider deployment.
 - [OPS-0007 Saleor Schema Regeneration and Compatibility Check](OPS-0007%20Saleor%20Schema%20Regeneration%20and%20Compatibility%20Check.md) - runbook - active - Regenerates GraphQL clients, reviews compatibility, and refreshes schema-note evidence.
 - [OPS-0008 Trunk Release and Production Rollback](OPS-0008%20Trunk%20Release%20and%20Production%20Rollback.md) - rollback - active - Verifies CI-gated releases from `main` and restores the prior immutable deployment when production regresses.
+- [OPS-0009 Daily GitHub Summary Bot](OPS-0009%20Daily%20GitHub%20Summary%20Bot.md) - Operates the scheduled GitHub Actions job that posts the pre-daily repository summary to Slack, including webhook setup, schedule changes, and failure diagnosis.
 
 ## Related Notes
 
