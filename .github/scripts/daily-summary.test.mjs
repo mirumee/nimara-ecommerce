@@ -6,7 +6,7 @@ import {
   escapeMrkdwn,
   formatAge,
   resolveAuth,
-  resolveLookbackHours,
+  resolveWindow,
   summarizeForPrompt,
 } from "./daily-summary.mjs";
 
@@ -42,19 +42,38 @@ function textOf(blocks) {
   return blocks.map((block) => block.text?.text ?? "").join("\n");
 }
 
-test("Monday reaches back over the weekend", () => {
-  assert.equal(resolveLookbackHours(new Date("2026-08-31T09:45:00Z")), 72);
-  assert.equal(resolveLookbackHours(new Date("2026-08-28T09:45:00Z")), 24);
+test("Monday recaps the whole previous week", () => {
+  const monday = resolveWindow(new Date("2026-08-31T09:45:00Z"));
+
+  assert.equal(monday.lookbackHours, 168);
+  assert.equal(monday.weekly, true);
 });
 
-test("an explicit lookback overrides the weekday default", () => {
+test("every other weekday reports since the last daily", () => {
+  const friday = resolveWindow(new Date("2026-08-28T09:45:00Z"));
+
+  assert.equal(friday.lookbackHours, 24);
+  assert.equal(friday.weekly, false);
+});
+
+test("an override changes the window but not the shape of the message", () => {
+  const monday = resolveWindow(new Date("2026-08-31T09:45:00Z"), "2");
+
+  assert.equal(monday.lookbackHours, 2);
+  assert.equal(monday.weekly, true);
   assert.equal(
-    resolveLookbackHours(new Date("2026-08-31T09:45:00Z"), "168"),
-    168,
-  );
-  assert.equal(
-    resolveLookbackHours(new Date("2026-08-28T09:45:00Z"), "nonsense"),
+    resolveWindow(new Date("2026-08-28T09:45:00Z"), "junk").lookbackHours,
     24,
+  );
+});
+
+test("Monday carries a different heading", () => {
+  const weekly = buildBlocks(EMPTY, { ...CONTEXT, weekly: true });
+
+  assert.equal(weekly[0].text.text, "Podsumowanie zeszłego tygodnia");
+  assert.equal(
+    buildBlocks(EMPTY, CONTEXT)[0].text.text,
+    "Podsumowanie GitHub przed daily",
   );
 });
 
@@ -206,9 +225,9 @@ test("the prompt payload carries titles and counts, not whole API objects", () =
     releases: [{ tag_name: "v1.2.3" }],
   });
 
-  assert.deepEqual(payload.merged, ["feat: a"]);
+  assert.deepEqual(payload.merged, [{ title: "feat: a", description: null }]);
   assert.deepEqual(payload.awaitingReview, [
-    { title: "fix: b", createdAt: "2026-08-01T00:00:00Z" },
+    { title: "fix: b", description: null, createdAt: "2026-08-01T00:00:00Z" },
   ]);
   assert.equal(payload.openedIssues, 2);
   assert.deepEqual(payload.releases, ["v1.2.3"]);
@@ -262,4 +281,34 @@ test("the subscription token wins when both are set", () => {
   });
 
   assert.equal(auth.headers.authorization, "Bearer sk-ant-oat01-xyz");
+});
+
+test("the prompt payload carries the pull request description", () => {
+  const payload = summarizeForPrompt({
+    ...EMPTY,
+    merged: [pullRequest({ body: "Zmienia sposób liczenia rabatu." })],
+  });
+
+  assert.equal(
+    payload.merged[0].description,
+    "Zmienia sposób liczenia rabatu.",
+  );
+});
+
+test("a long description is truncated and an empty one becomes null", () => {
+  const payload = summarizeForPrompt({
+    ...EMPTY,
+    merged: [
+      pullRequest({ body: "x".repeat(2000) }),
+      pullRequest({ body: "   " }),
+    ],
+  });
+
+  assert.equal(payload.merged[0].description.length, 600);
+  assert.equal(payload.merged[1].description, null);
+});
+
+test("the prompt payload names the window", () => {
+  assert.equal(summarizeForPrompt(EMPTY, { weekly: true }).window, "lastWeek");
+  assert.equal(summarizeForPrompt(EMPTY).window, "sinceLastDaily");
 });

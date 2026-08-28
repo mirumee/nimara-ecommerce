@@ -8,8 +8,9 @@
 const GITHUB_API = "https://api.github.com";
 const MAX_LIST_ITEMS = 10;
 const STALE_PR_DAYS = 2;
-const DEFAULT_LOOKBACK_HOURS = 24;
-const MONDAY_LOOKBACK_HOURS = 72;
+const DAILY_LOOKBACK_HOURS = 24;
+const WEEKLY_LOOKBACK_HOURS = 168;
+const DESCRIPTION_LIMIT = 600;
 const SLACK_SECTION_LIMIT = 2900;
 
 const ANTHROPIC_API = "https://api.anthropic.com/v1/messages";
@@ -25,6 +26,8 @@ const ANTHROPIC_MAX_TOKENS = 4000;
 const COMMENT_SYSTEM_PROMPT = [
   "Jesteś częścią bota, który wysyła zespołowi podsumowanie GitHuba przed daily.",
   "Dostajesz dane w JSON i piszesz jedno lub dwa zdania po polsku.",
+  "Pole window mówi, czy podsumowujesz jeden dzień, czy cały zeszły tydzień.",
+  "Pole description to opis PR-a napisany przez autora. Bywa puste.",
   "Napisz, na co zespół ma zwrócić uwagę na dzisiejszym daily.",
   "Nie powtarzaj liczb, które i tak są w sekcjach poniżej.",
   "Nie witaj się, nie podsumowuj danych, nie używaj emoji ani list.",
@@ -46,17 +49,22 @@ const HOUR_MS = 60 * 60 * 1000;
 const DAY_MS = 24 * HOUR_MS;
 
 /**
- * Monday must reach back over the weekend, otherwise Friday afternoon work is
- * never reported.
+ * Monday opens the week with a recap of the whole previous one. Every other
+ * weekday reports since the last daily. The override serves local testing and
+ * does not change which of the two shapes the message takes.
  */
-export function resolveLookbackHours(now, override) {
+export function resolveWindow(now, override) {
+  const weekly = now.getUTCDay() === 1;
   const parsed = Number(override);
 
   if (Number.isFinite(parsed) && parsed > 0) {
-    return parsed;
+    return { lookbackHours: parsed, weekly };
   }
 
-  return now.getUTCDay() === 1 ? MONDAY_LOOKBACK_HOURS : DEFAULT_LOOKBACK_HOURS;
+  return {
+    lookbackHours: weekly ? WEEKLY_LOOKBACK_HOURS : DAILY_LOOKBACK_HOURS,
+    weekly,
+  };
 }
 
 export function escapeMrkdwn(text) {
@@ -197,13 +205,18 @@ function pullRequestLine(item, now, { withAge }) {
   return `• ${link(item.html_url, `#${item.number} ${item.title}`)} — _${item.user?.login ?? "?"}_${age}${marker}`;
 }
 
-export function buildBlocks(data, { repo, now, lookbackHours, comment }) {
+export function buildBlocks(
+  data,
+  { repo, now, lookbackHours, weekly, comment },
+) {
   const heading = [
     {
       type: "header",
       text: {
         type: "plain_text",
-        text: "Podsumowanie GitHub przed daily",
+        text: weekly
+          ? "Podsumowanie zeszłego tygodnia"
+          : "Podsumowanie GitHub przed daily",
         emoji: true,
       },
     },
@@ -342,13 +355,28 @@ function bearerHeaders(token) {
  * Strips the collected data down to what the comment needs. Sending whole API
  * payloads would cost tokens and add nothing.
  */
-export function summarizeForPrompt(data) {
+/**
+ * The pull request body is the author's own words about the change. It is the
+ * cheapest context that beats a title, and the tail of a long one is boilerplate
+ * from the template.
+ */
+function described(item) {
+  const body = (item.body ?? "").trim();
+
+  return {
+    title: item.title,
+    description: body ? body.slice(0, DESCRIPTION_LIMIT) : null,
+  };
+}
+
+export function summarizeForPrompt(data, { weekly } = {}) {
   const titles = (items) => items.slice(0, 10).map((item) => item.title);
 
   return {
-    merged: titles(data.merged),
+    window: weekly ? "lastWeek" : "sinceLastDaily",
+    merged: data.merged.slice(0, 10).map(described),
     awaitingReview: data.toReview.slice(0, 10).map((item) => ({
-      title: item.title,
+      ...described(item),
       createdAt: item.created_at,
     })),
     approved: titles(data.approved),
@@ -363,7 +391,7 @@ export function summarizeForPrompt(data) {
  * The comment is a nice-to-have. Any failure returns null so the summary still
  * reaches the channel.
  */
-async function requestComment(auth, data) {
+async function requestComment(auth, data, { weekly }) {
   try {
     const response = await fetch(ANTHROPIC_API, {
       method: "POST",
@@ -380,7 +408,7 @@ async function requestComment(auth, data) {
         messages: [
           {
             role: "user",
-            content: JSON.stringify(summarizeForPrompt(data)),
+            content: JSON.stringify(summarizeForPrompt(data, { weekly })),
           },
         ],
       }),
@@ -442,7 +470,10 @@ async function main() {
     : requireEnv("SLACK_WEBHOOK_URL");
 
   const now = new Date();
-  const lookbackHours = resolveLookbackHours(now, process.env.LOOKBACK_HOURS);
+  const { lookbackHours, weekly } = resolveWindow(
+    now,
+    process.env.LOOKBACK_HOURS,
+  );
   const since = new Date(now.getTime() - lookbackHours * HOUR_MS);
 
   let blocks;
@@ -455,9 +486,9 @@ async function main() {
       console.warn(auth.notice);
     }
 
-    const comment = auth ? await requestComment(auth, data) : null;
+    const comment = auth ? await requestComment(auth, data, { weekly }) : null;
 
-    blocks = buildBlocks(data, { repo, now, lookbackHours, comment });
+    blocks = buildBlocks(data, { repo, now, lookbackHours, weekly, comment });
   } catch (error) {
     // A silent channel hides the outage. Report it and still fail the workflow.
     const notice = `:warning: Nie udało się zebrać podsumowania z GitHuba: ${escapeMrkdwn(error.message)}`;
@@ -472,7 +503,9 @@ async function main() {
     throw error;
   }
 
-  const text = "Podsumowanie GitHub przed daily";
+  const text = weekly
+    ? "Podsumowanie zeszłego tygodnia"
+    : "Podsumowanie GitHub przed daily";
 
   if (dryRun) {
     console.log(JSON.stringify({ text, blocks }, null, 2));
