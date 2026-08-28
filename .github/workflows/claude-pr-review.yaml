@@ -1,0 +1,67 @@
+name: Claude PR Review
+
+on:
+  pull_request:
+    types:
+      - opened
+      - ready_for_review
+
+permissions:
+  contents: read
+  # `gh pr comment` writes an issue comment, so the job needs `issues: write`
+  # as well as `pull-requests: write`.
+  pull-requests: write
+  issues: write
+  id-token: write
+
+concurrency:
+  group: claude-pr-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    name: Leave a short review comment
+    runs-on: ubuntu-latest
+    # A fork pull request receives no repository secrets, so the job would fail
+    # rather than review. Drafts and Dependabot are skipped to keep the cost down.
+    if: >-
+      github.repository == 'mirumee/nimara-ecommerce' &&
+      github.event.pull_request.draft == false &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.user.type != 'Bot'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Review
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          use_sticky_comment: true
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+
+            Read the diff of this pull request and post one short comment on it.
+
+            Read CLAUDE.md and .claude/rules/ first. They hold the conventions of
+            this repository. Judge the change against them.
+
+            Keep the comment under 12 lines. Write at most three points, each one
+            sentence. Report only what a reviewer must act on:
+
+            - A correctness bug, with the input that breaks it.
+            - A violation of the layer boundaries described in CLAUDE.md.
+            - A missing test for behavior that the change introduces.
+
+            Do not restate what the diff does. Do not praise the change. Do not
+            list style preferences. If you find nothing to act on, write one line
+            that says so.
+
+            Post the comment with `gh pr comment`. Post exactly one comment.
+          claude_args: |
+            --model claude-opus-5
+            --max-turns 12
+            --allowedTools "Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr comment:*)"
