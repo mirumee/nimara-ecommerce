@@ -12,6 +12,23 @@ const DEFAULT_LOOKBACK_HOURS = 24;
 const MONDAY_LOOKBACK_HOURS = 72;
 const SLACK_SECTION_LIMIT = 2900;
 
+const ANTHROPIC_API = "https://api.anthropic.com/v1/messages";
+const ANTHROPIC_VERSION = "2023-06-01";
+const ANTHROPIC_MODEL = "claude-opus-5";
+/**
+ * Adaptive thinking is on by default and its tokens count against max_tokens,
+ * so a two-sentence answer still needs headroom.
+ */
+const ANTHROPIC_MAX_TOKENS = 4000;
+const COMMENT_SYSTEM_PROMPT = [
+  "Jesteś częścią bota, który wysyła zespołowi podsumowanie GitHuba przed daily.",
+  "Dostajesz dane w JSON i piszesz jedno lub dwa zdania po polsku.",
+  "Napisz, na co zespół ma zwrócić uwagę na dzisiejszym daily.",
+  "Nie powtarzaj liczb, które i tak są w sekcjach poniżej.",
+  "Nie witaj się, nie podsumowuj danych, nie używaj emoji ani list.",
+  "Gdy nic nie wymaga uwagi, napisz jedno zdanie, że dzień jest spokojny.",
+].join(" ");
+
 /**
  * Dependabot security runs report as `dynamic`. They are not the team's CI and
  * would bury a real red build on main.
@@ -178,8 +195,8 @@ function pullRequestLine(item, now, { withAge }) {
   return `• ${link(item.html_url, `#${item.number} ${item.title}`)} — _${item.user?.login ?? "?"}_${age}${marker}`;
 }
 
-export function buildBlocks(data, { repo, now, lookbackHours }) {
-  const blocks = [
+export function buildBlocks(data, { repo, now, lookbackHours, comment }) {
+  const heading = [
     {
       type: "header",
       text: {
@@ -198,6 +215,8 @@ export function buildBlocks(data, { repo, now, lookbackHours }) {
       ],
     },
   ];
+
+  const blocks = [];
 
   if (data.merged.length > 0) {
     blocks.push(
@@ -270,11 +289,86 @@ export function buildBlocks(data, { repo, now, lookbackHours }) {
     blocks.push(section(`*:memo: Issues i release*\n${bulletList(notes)}`));
   }
 
-  if (blocks.length === 2) {
+  if (blocks.length === 0) {
     blocks.push(section("_Brak ruchu w repozytorium od ostatniego daily._"));
   }
 
-  return blocks;
+  if (comment) {
+    heading.push(section(`_${escapeMrkdwn(comment)}_`));
+  }
+
+  return [...heading, ...blocks];
+}
+
+/**
+ * Strips the collected data down to what the comment needs. Sending whole API
+ * payloads would cost tokens and add nothing.
+ */
+export function summarizeForPrompt(data) {
+  const titles = (items) => items.slice(0, 10).map((item) => item.title);
+
+  return {
+    merged: titles(data.merged),
+    awaitingReview: data.toReview.slice(0, 10).map((item) => ({
+      title: item.title,
+      createdAt: item.created_at,
+    })),
+    approved: titles(data.approved),
+    failedCi: data.failedRuns.slice(0, 10).map((run) => run.name),
+    openedIssues: data.openedIssues.length,
+    closedIssues: data.closedIssues.length,
+    releases: data.releases.map((release) => release.tag_name),
+  };
+}
+
+/**
+ * The comment is a nice-to-have. Any failure returns null so the summary still
+ * reaches the channel.
+ */
+async function requestComment(apiKey, data) {
+  try {
+    const response = await fetch(ANTHROPIC_API, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": ANTHROPIC_VERSION,
+      },
+      body: JSON.stringify({
+        model: ANTHROPIC_MODEL,
+        max_tokens: ANTHROPIC_MAX_TOKENS,
+        output_config: { effort: "low" },
+        system: COMMENT_SYSTEM_PROMPT,
+        messages: [
+          {
+            role: "user",
+            content: JSON.stringify(summarizeForPrompt(data)),
+          },
+        ],
+      }),
+    });
+
+    if (!response.ok) {
+      console.warn(
+        `Claude ${response.status}: ${(await response.text()).slice(0, 200)}`,
+      );
+
+      return null;
+    }
+
+    const body = await response.json();
+    const text = (body.content ?? [])
+      .filter((block) => block.type === "text")
+      .map((block) => block.text)
+      .join(" ")
+      .trim();
+
+    return text || null;
+  } catch (error) {
+    console.warn(`Claude comment skipped: ${error.message}`);
+
+    return null;
+  }
 }
 
 async function postToSlack(webhookUrl, { blocks, text }) {
@@ -317,8 +411,10 @@ async function main() {
 
   try {
     const data = await collect({ repo, token, since });
+    const apiKey = process.env.ANTHROPIC_API_KEY;
+    const comment = apiKey ? await requestComment(apiKey, data) : null;
 
-    blocks = buildBlocks(data, { repo, now, lookbackHours });
+    blocks = buildBlocks(data, { repo, now, lookbackHours, comment });
   } catch (error) {
     // A silent channel hides the outage. Report it and still fail the workflow.
     const notice = `:warning: Nie udało się zebrać podsumowania z GitHuba: ${escapeMrkdwn(error.message)}`;

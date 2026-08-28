@@ -6,6 +6,7 @@ import {
   escapeMrkdwn,
   formatAge,
   resolveLookbackHours,
+  summarizeForPrompt,
 } from "./daily-summary.mjs";
 
 const NOW = new Date("2026-08-28T09:45:00Z");
@@ -157,4 +158,71 @@ test("a section stays inside the Slack text limit", () => {
   for (const block of buildBlocks({ ...EMPTY, merged: many }, CONTEXT)) {
     assert.ok((block.text?.text ?? "").length <= 3000);
   }
+});
+
+test("a Claude comment sits above the sections", () => {
+  const blocks = buildBlocks(
+    { ...EMPTY, merged: [pullRequest()] },
+    {
+      ...CONTEXT,
+      comment: "Dwa PR-y czekają na review dłużej niż dwa tygodnie.",
+    },
+  );
+
+  assert.match(blocks[2].text.text, /Dwa PR-y czekają/);
+  assert.match(blocks[3].text.text, /Zmergowane do main/);
+});
+
+test("a comment does not suppress the quiet message", () => {
+  const blocks = buildBlocks(EMPTY, { ...CONTEXT, comment: "Spokojny dzień." });
+  const text = textOf(blocks);
+
+  assert.match(text, /Spokojny dzień/);
+  assert.match(text, /Brak ruchu/);
+});
+
+test("no comment leaves the block layout unchanged", () => {
+  assert.equal(buildBlocks(EMPTY, CONTEXT).length, 3);
+});
+
+test("a comment with mrkdwn control characters cannot break the message", () => {
+  const blocks = buildBlocks(EMPTY, {
+    ...CONTEXT,
+    comment: "Uwaga na <b> & spółkę",
+  });
+
+  assert.match(textOf(blocks), /Uwaga na &lt;b&gt; &amp; spółkę/);
+});
+
+test("the prompt payload carries titles and counts, not whole API objects", () => {
+  const payload = summarizeForPrompt({
+    ...EMPTY,
+    merged: [pullRequest({ title: "feat: a" })],
+    toReview: [
+      pullRequest({ title: "fix: b", created_at: "2026-08-01T00:00:00Z" }),
+    ],
+    openedIssues: [{}, {}],
+    releases: [{ tag_name: "v1.2.3" }],
+  });
+
+  assert.deepEqual(payload.merged, ["feat: a"]);
+  assert.deepEqual(payload.awaitingReview, [
+    { title: "fix: b", createdAt: "2026-08-01T00:00:00Z" },
+  ]);
+  assert.equal(payload.openedIssues, 2);
+  assert.deepEqual(payload.releases, ["v1.2.3"]);
+});
+
+test("the prompt payload caps each list at ten entries", () => {
+  const many = Array.from({ length: 40 }, (_, index) =>
+    pullRequest({ number: index }),
+  );
+  const payload = summarizeForPrompt({
+    ...EMPTY,
+    merged: many,
+    toReview: many,
+  });
+
+  assert.equal(payload.merged.length, 10);
+  assert.equal(payload.awaitingReview.length, 10);
 });

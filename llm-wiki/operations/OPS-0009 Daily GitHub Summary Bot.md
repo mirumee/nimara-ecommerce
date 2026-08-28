@@ -14,6 +14,7 @@ kind: "runbook"
 relations:
   implementations:
     - "[Daily GitHub Summary Bot](../tech/implementation/IMP-0005%20Daily%20GitHub%20Summary%20Bot.md)"
+    - "[Daily Summary Claude Comment](../tech/implementation/IMP-0006%20Daily%20Summary%20Claude%20Comment.md)"
   product_records: []
 ---
 
@@ -61,10 +62,24 @@ to the repository and do not paste it into an issue or a pull request.
 The guard step compares the hour, not the minute. GitHub can delay a scheduled run by several
 minutes and a minute-exact guard would drop valid runs.
 
+## Install the Claude API key
+
+The comment above the sections is optional. Without the key the bot posts the sections alone.
+
+1. Open the Anthropic console and create an API key.
+2. In GitHub, open Settings, then Secrets and variables, then Actions.
+3. Add a repository secret named `ANTHROPIC_API_KEY` and paste the key.
+
+The bot sends one request per weekday. It uses the model `claude-opus-5` at effort `low`, and
+it trims the data to titles and counts before the request, so one run costs a fraction of a
+cent. To drop the comment and keep the sections, delete the secret. No code change is needed.
+
 ## Change the summary content
 
 1. Open `.github/scripts/daily-summary.mjs`.
 2. `collect` holds every GitHub query. `buildBlocks` holds every Slack section.
+   `COMMENT_SYSTEM_PROMPT` holds the instructions for the Claude comment, and
+   `summarizeForPrompt` holds what Claude receives.
 3. The script has no dependencies. It runs on the Node version in `.nvmrc`.
 4. Verify the change with the dry run below before you merge it.
 
@@ -110,6 +125,16 @@ If the message does not arrive, check the following in order:
    procedure above.
 5. When the GitHub API fails, the script posts a short warning to the channel and exits with
    code 1. The job log holds the status code and the failing path.
+
+If the message arrives without the comment above the sections, the sections are correct and
+only the Claude call failed. Read the `Post summary` step for a `Claude` warning line:
+
+- No warning line means that `ANTHROPIC_API_KEY` is absent. The bot skipped the call.
+- `Claude 401` means that the key is wrong or revoked.
+- `Claude 429` means that the account hit its Anthropic rate limit.
+
+A failed comment never blocks the summary, so the job still succeeds. This is intended. The
+sections are the product and the comment is a garnish.
 
 The bot is not on the release path. If it stays broken, disable the workflow in the Actions tab
 and raise an issue. Do not block a release on it.
