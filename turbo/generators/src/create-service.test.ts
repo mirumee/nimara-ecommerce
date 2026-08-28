@@ -283,7 +283,7 @@ describe("create-service", () => {
       // when
       await add("mail-sender", "queue");
       const env = await readFile(
-        appService("mail-sender", ".env.example"),
+        join(root, "apps", "feed-sync", ".env.example"),
         "utf8",
       );
 
@@ -292,6 +292,9 @@ describe("create-service", () => {
         "MAIL_SENDER_QUEUE_URL=http://localhost:4566/000000000000/feed-sync-mail-sender",
       );
       expect(env).not.toContain("CONSUMER_QUEUE_URL");
+      await expect(
+        readFile(appService("mail-sender", ".env.example"), "utf8"),
+      ).rejects.toThrow();
     });
 
     it("refuses a queue service on an app that cannot drive one", async () => {

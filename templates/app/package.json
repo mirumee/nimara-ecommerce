@@ -58,7 +58,7 @@
     "codegen": "graphql-codegen --config ./codegen.ts",
     "dev": "vite --port ${PORT:-8000}",
     "dev:inspect": "NODE_OPTIONS='--inspect' vite --port 4000",
-    "env:init": "if [ -e .env ]; then echo 'refusing to overwrite .env' >&2; exit 1; fi; cat .env.example $(find src/services -name .env.example | sort) > .env",
+    "env:init": "if [ -e .env ]; then echo 'refusing to overwrite .env' >&2; exit 1; fi; cp .env.example .env",
     "lint": "eslint . --ext .js,.ts,.tsx --fix",
     "lint:staged": "lint-staged",
     "lint:types": "tsc --noEmit",

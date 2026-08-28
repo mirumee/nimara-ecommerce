@@ -12,7 +12,7 @@ pnpm gen app
 ## Running it
 
 ```bash
-pnpm env:init   # composes .env from this app's .env.example and each service's
+pnpm env:init   # copies .env.example to .env
 pnpm dev
 ```
 
@@ -84,8 +84,8 @@ another app publishes to:
 SQS_QUEUES=feed-sync-consumer docker compose up -d localstack
 ```
 
-The AWS variables sit in the service's own `.env.example`. `AWS_ENDPOINT_URL` is
-what points the client at LocalStack, and what lets the dev server create a
+The AWS variables arrive in `.env.example` with the service. `AWS_ENDPOINT_URL`
+is what points the client at LocalStack, and what lets the dev server create a
 queue at all — against a real account it creates nothing, because a typo in a
 queue URL would silently make a queue rather than fail.
 

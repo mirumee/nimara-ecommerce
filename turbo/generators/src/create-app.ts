@@ -6,6 +6,7 @@ import {
   removeAppDashboard,
   removeServiceDashboard,
 } from "./dashboard.ts";
+import { mergeServiceEnv } from "./env.ts";
 import {
   type AppKind,
   type BuildTarget,
@@ -214,6 +215,8 @@ export const createApp = async ({
   if (kind === "queue") {
     await renameQueue({ app: appName, service: serviceName, serviceDir });
   }
+
+  await mergeServiceEnv({ appDir: destination, serviceDir });
 
   await applyTenancy({ appDir: destination, tenancy });
 

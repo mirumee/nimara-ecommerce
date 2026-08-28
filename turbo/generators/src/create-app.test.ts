@@ -383,15 +383,25 @@ describe("create-app", () => {
     it("points the app at a queue of its own", async () => {
       // when
       const destination = await queue();
-      const env = await readFile(
-        join(destination, "src", "services", "consumer", ".env.example"),
-        "utf8",
-      );
+      const env = await readFile(join(destination, ".env.example"), "utf8");
 
       // then two apps on one LocalStack would otherwise share a queue.
       expect(env).toContain(
         "CONSUMER_QUEUE_URL=http://localhost:4566/000000000000/feed-sync-consumer",
       );
+    });
+
+    it("leaves the app one `.env.example`", async () => {
+      // when
+      const destination = await queue();
+
+      // then the service's own is folded into it, not carried beside it.
+      await expect(
+        readFile(
+          join(destination, "src", "services", "consumer", ".env.example"),
+          "utf8",
+        ),
+      ).rejects.toThrow();
     });
 
     it("drops the dashboard, which it serves no HTTP for", async () => {

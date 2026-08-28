@@ -8,6 +8,7 @@ import {
   removeServiceDashboard,
   restoreAppDashboard,
 } from "./dashboard.ts";
+import { mergeServiceEnv } from "./env.ts";
 import {
   type AppKind,
   requireKindForTarget,
@@ -110,6 +111,8 @@ export const createService = async ({
     serviceDir,
     to: serviceName,
   });
+
+  await mergeServiceEnv({ appDir, serviceDir });
 
   // Inherited, never asked again: the services share one `.env`.
   await applyTenancy({ appDir, tenancy: await detectTenancy(appDir) });
