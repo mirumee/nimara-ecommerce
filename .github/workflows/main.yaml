@@ -101,3 +101,6 @@ jobs:
 
       - name: Run tests
         run: pnpm test
+
+      - name: Test the daily summary script
+        run: node --test ".github/scripts/*.test.mjs"
