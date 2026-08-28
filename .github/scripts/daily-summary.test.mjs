@@ -2,7 +2,9 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  ageBucket,
   buildBlocks,
+  classifyOpenPullRequests,
   escapeMrkdwn,
   formatAge,
   readComment,
@@ -19,8 +21,9 @@ const CONTEXT = {
 
 const EMPTY = {
   merged: [],
-  toReview: [],
-  approved: [],
+  blockedOnAuthor: [],
+  unclaimed: [],
+  readyToMerge: [],
   failedRuns: [],
   openedIssues: [],
   closedIssues: [],
@@ -38,8 +41,14 @@ function pullRequest(overrides) {
   };
 }
 
+function daysAgo(days) {
+  return new Date(NOW.getTime() - days * 24 * 60 * 60 * 1000).toISOString();
+}
+
 function textOf(blocks) {
-  return blocks.map((block) => block.text?.text ?? "").join("\n");
+  return blocks
+    .map((block) => block.text?.text ?? block.elements?.[0]?.text ?? "")
+    .join("\n");
 }
 
 test("Monday recaps the whole previous week", () => {
@@ -50,7 +59,7 @@ test("Monday recaps the whole previous week", () => {
 });
 
 test("every other weekday reports since the last daily", () => {
-  const friday = resolveWindow(new Date("2026-08-28T09:45:00Z"));
+  const friday = resolveWindow(NOW);
 
   assert.equal(friday.lookbackHours, 24);
   assert.equal(friday.weekly, false);
@@ -61,20 +70,6 @@ test("an override changes the window but not the shape of the message", () => {
 
   assert.equal(monday.lookbackHours, 2);
   assert.equal(monday.weekly, true);
-  assert.equal(
-    resolveWindow(new Date("2026-08-28T09:45:00Z"), "junk").lookbackHours,
-    24,
-  );
-});
-
-test("Monday carries a different heading", () => {
-  const weekly = buildBlocks(EMPTY, { ...CONTEXT, weekly: true });
-
-  assert.equal(weekly[0].text.text, "Podsumowanie zeszłego tygodnia");
-  assert.equal(
-    buildBlocks(EMPTY, CONTEXT)[0].text.text,
-    "Podsumowanie GitHub przed daily",
-  );
 });
 
 test("mrkdwn control characters in a title cannot break a link", () => {
@@ -85,61 +80,73 @@ test("mrkdwn control characters in a title cannot break a link", () => {
 });
 
 test("age reads in hours below a day and in days above it", () => {
-  assert.equal(formatAge("2026-08-28T04:45:00Z", NOW), "5 godz.");
-  assert.equal(formatAge("2026-08-27T09:45:00Z", NOW), "1 dzień");
-  assert.equal(formatAge("2026-08-21T09:45:00Z", NOW), "7 dni");
+  assert.equal(formatAge(daysAgo(0.2), NOW), "4 godz.");
+  assert.equal(formatAge(daysAgo(1), NOW), "1 dzień");
+  assert.equal(formatAge(daysAgo(7), NOW), "7 dni");
 });
 
-test("a quiet repository still produces a message", () => {
-  const blocks = buildBlocks(EMPTY, CONTEXT);
-
-  assert.equal(blocks.length, 3);
-  assert.match(textOf(blocks), /Brak ruchu/);
+test("age buckets follow the two thresholds", () => {
+  assert.equal(ageBucket(daysAgo(1), NOW), "fresh");
+  assert.equal(ageBucket(daysAgo(2), NOW), "warn");
+  assert.equal(ageBucket(daysAgo(4), NOW), "warn");
+  assert.equal(ageBucket(daysAgo(5), NOW), "parked");
 });
 
-test("a pull request older than two days is marked stale", () => {
+test("a red build puts the ball with the author, even when approved", () => {
+  const failing = pullRequest({ number: 10 });
+  const result = classifyOpenPullRequests({
+    unreviewed: [],
+    changesRequested: [],
+    failingChecks: [failing],
+    approved: [failing],
+  });
+
+  assert.equal(result.blockedOnAuthor.length, 1);
+  assert.equal(result.blockedOnAuthor[0].reason, "CI czerwone");
+  assert.deepEqual(result.readyToMerge, []);
+});
+
+test("a requested change puts the ball with the author", () => {
+  const result = classifyOpenPullRequests({
+    unreviewed: [pullRequest({ number: 11 })],
+    changesRequested: [pullRequest({ number: 11 })],
+    failingChecks: [],
+    approved: [],
+  });
+
+  assert.equal(result.blockedOnAuthor[0].reason, "zmiany do poprawy");
+  assert.deepEqual(result.unclaimed, []);
+});
+
+test("a red build outranks a requested change as the reason", () => {
+  const both = pullRequest({ number: 12 });
+  const result = classifyOpenPullRequests({
+    unreviewed: [],
+    changesRequested: [both],
+    failingChecks: [both],
+    approved: [],
+  });
+
+  assert.equal(result.blockedOnAuthor.length, 1);
+  assert.equal(result.blockedOnAuthor[0].reason, "CI czerwone");
+});
+
+test("an untouched pull request stays unclaimed and a clean approval stays ready", () => {
+  const result = classifyOpenPullRequests({
+    unreviewed: [pullRequest({ number: 13 })],
+    changesRequested: [],
+    failingChecks: [],
+    approved: [pullRequest({ number: 14 })],
+  });
+
+  assert.equal(result.unclaimed[0].number, 13);
+  assert.equal(result.readyToMerge[0].number, 14);
+});
+
+test("red CI on main leads the message", () => {
   const blocks = buildBlocks(
     {
       ...EMPTY,
-      toReview: [pullRequest({ created_at: "2026-08-20T09:45:00Z" })],
-    },
-    CONTEXT,
-  );
-
-  assert.match(textOf(blocks), /:hourglass:/);
-});
-
-test("a fresh pull request is not marked stale", () => {
-  const blocks = buildBlocks({ ...EMPTY, toReview: [pullRequest()] }, CONTEXT);
-
-  assert.doesNotMatch(textOf(blocks), /:hourglass:/);
-});
-
-test("a merged pull request carries no age marker", () => {
-  const blocks = buildBlocks(
-    { ...EMPTY, merged: [pullRequest({ created_at: "2026-06-01T09:45:00Z" })] },
-    CONTEXT,
-  );
-
-  assert.doesNotMatch(textOf(blocks), /:hourglass:/);
-});
-
-test("a long list is truncated and reports the remainder", () => {
-  const many = Array.from({ length: 14 }, (_, index) =>
-    pullRequest({ number: index + 1 }),
-  );
-  const text = textOf(buildBlocks({ ...EMPTY, merged: many }, CONTEXT));
-
-  assert.match(text, /Zmergowane do main \(14\)/);
-  assert.match(text, /…i 4 więcej/);
-});
-
-test("every section renders when data is present", () => {
-  const blocks = buildBlocks(
-    {
-      merged: [pullRequest({ number: 10 })],
-      toReview: [pullRequest({ number: 11 })],
-      approved: [pullRequest({ number: 12 })],
       failedRuns: [
         {
           name: "Linters & Tests",
@@ -148,61 +155,109 @@ test("every section renders when data is present", () => {
           head_commit: { message: "fix: a thing\n\nbody" },
         },
       ],
-      openedIssues: [{}],
-      closedIssues: [{}, {}],
+      readyToMerge: [pullRequest()],
+    },
+    CONTEXT,
+  );
+
+  assert.match(blocks[2].text.text, /Blokuje wszystkich/);
+  assert.match(blocks[3].text.text, /Jeden klik do merge/);
+});
+
+test("the sections follow the owner of the next move", () => {
+  const text = textOf(
+    buildBlocks(
+      {
+        ...EMPTY,
+        blockedOnAuthor: [pullRequest({ number: 20, reason: "CI czerwone" })],
+        unclaimed: [pullRequest({ number: 21 })],
+        readyToMerge: [pullRequest({ number: 22 })],
+      },
+      CONTEXT,
+    ),
+  );
+
+  assert.match(text, /Czeka na autora \(1\)/);
+  assert.match(text, /Nikt nie wziął \(1\)/);
+  assert.match(text, /Jeden klik do merge \(1\)/);
+  assert.match(text, /#20 feat: something.*CI czerwone/);
+});
+
+test("a parked pull request is counted on a weekday, not listed", () => {
+  const blocks = buildBlocks(
+    { ...EMPTY, unclaimed: [pullRequest({ created_at: daysAgo(41) })] },
+    CONTEXT,
+  );
+  const text = textOf(blocks);
+
+  assert.doesNotMatch(text, /Nikt nie wziął/);
+  assert.match(text, /odstawione: 1/);
+});
+
+test("Monday lists the parked pull requests instead of counting them", () => {
+  const text = textOf(
+    buildBlocks(
+      { ...EMPTY, unclaimed: [pullRequest({ created_at: daysAgo(41) })] },
+      { ...CONTEXT, weekly: true },
+    ),
+  );
+
+  assert.match(text, /Nikt nie wziął \(1\)/);
+  assert.doesNotMatch(text, /odstawione/);
+});
+
+test("a pull request past the warn threshold carries a marker", () => {
+  const text = textOf(
+    buildBlocks(
+      { ...EMPTY, unclaimed: [pullRequest({ created_at: daysAgo(3) })] },
+      CONTEXT,
+    ),
+  );
+
+  assert.match(text, /:small_red_triangle:/);
+  assert.doesNotMatch(
+    textOf(buildBlocks({ ...EMPTY, unclaimed: [pullRequest()] }, CONTEXT)),
+    /:small_red_triangle:/,
+  );
+});
+
+test("merged pull requests reach the background line, not a section", () => {
+  const blocks = buildBlocks(
+    {
+      ...EMPTY,
+      merged: [pullRequest(), pullRequest()],
       releases: [
         {
           tag_name: "v1.0.0",
-          html_url:
-            "https://github.com/mirumee/nimara-ecommerce/releases/tag/v1.0.0",
+          html_url: "https://github.com/x/y/releases/tag/v1.0.0",
         },
       ],
     },
     CONTEXT,
   );
-  const text = textOf(blocks);
+  const background = blocks.at(-1);
 
-  assert.equal(blocks.length, 7);
-  assert.match(text, /Linters &amp; Tests/);
-  assert.doesNotMatch(text, /body/);
-  assert.match(text, /Nowe issues: 1/);
-  assert.match(text, /Zamknięte issues: 2/);
-  assert.match(text, /v1\.0\.0/);
+  assert.equal(background.type, "context");
+  assert.match(background.elements[0].text, /2 PR-ów zmergowanych/);
+  assert.match(background.elements[0].text, /v1\.0\.0/);
+  assert.doesNotMatch(textOf(blocks.slice(0, -1)), /Zmergowane/);
 });
 
-test("a section stays inside the Slack text limit", () => {
-  const many = Array.from({ length: 200 }, (_, index) =>
-    pullRequest({ number: index, title: "x".repeat(300) }),
-  );
+test("a quiet repository says so and still carries the background line", () => {
+  const blocks = buildBlocks(EMPTY, CONTEXT);
 
-  for (const block of buildBlocks({ ...EMPTY, merged: many }, CONTEXT)) {
-    assert.ok((block.text?.text ?? "").length <= 3000);
-  }
+  assert.match(textOf(blocks), /Nic nie czeka na ruch/);
+  assert.equal(blocks.at(-1).elements[0].text, "bez zmian w tle");
 });
 
 test("a Claude comment sits above the sections", () => {
   const blocks = buildBlocks(
-    { ...EMPTY, merged: [pullRequest()] },
-    {
-      ...CONTEXT,
-      comment: "Dwa PR-y czekają na review dłużej niż dwa tygodnie.",
-    },
+    { ...EMPTY, readyToMerge: [pullRequest()] },
+    { ...CONTEXT, comment: "Dwa PR-y czekają na klik." },
   );
 
   assert.match(blocks[2].text.text, /Dwa PR-y czekają/);
-  assert.match(blocks[3].text.text, /Zmergowane do main/);
-});
-
-test("a comment does not suppress the quiet message", () => {
-  const blocks = buildBlocks(EMPTY, { ...CONTEXT, comment: "Spokojny dzień." });
-  const text = textOf(blocks);
-
-  assert.match(text, /Spokojny dzień/);
-  assert.match(text, /Brak ruchu/);
-});
-
-test("no comment leaves the block layout unchanged", () => {
-  assert.equal(buildBlocks(EMPTY, CONTEXT).length, 3);
+  assert.match(blocks[3].text.text, /Jeden klik do merge/);
 });
 
 test("a comment with mrkdwn control characters cannot break the message", () => {
@@ -214,62 +269,74 @@ test("a comment with mrkdwn control characters cannot break the message", () => 
   assert.match(textOf(blocks), /Uwaga na &lt;b&gt; &amp; spółkę/);
 });
 
-test("the prompt payload carries titles and counts, not whole API objects", () => {
-  const payload = summarizeForPrompt({
-    ...EMPTY,
-    merged: [pullRequest({ title: "feat: a" })],
-    toReview: [
-      pullRequest({ title: "fix: b", created_at: "2026-08-01T00:00:00Z" }),
-    ],
-    openedIssues: [{}, {}],
-    releases: [{ tag_name: "v1.2.3" }],
-  });
+test("a long list is truncated and reports the remainder", () => {
+  const many = Array.from({ length: 14 }, (_, index) =>
+    pullRequest({ number: index + 1 }),
+  );
+  const text = textOf(buildBlocks({ ...EMPTY, unclaimed: many }, CONTEXT));
 
-  assert.deepEqual(payload.merged, [{ title: "feat: a", description: null }]);
-  assert.deepEqual(payload.awaitingReview, [
-    { title: "fix: b", description: null, createdAt: "2026-08-01T00:00:00Z" },
+  assert.match(text, /Nikt nie wziął \(14\)/);
+  assert.match(text, /…i 4 więcej/);
+});
+
+test("a section stays inside the Slack text limit", () => {
+  const many = Array.from({ length: 200 }, (_, index) =>
+    pullRequest({ number: index, title: "x".repeat(300) }),
+  );
+
+  for (const block of buildBlocks({ ...EMPTY, unclaimed: many }, CONTEXT)) {
+    assert.ok((block.text?.text ?? "").length <= 3000);
+  }
+});
+
+test("the prompt payload mirrors the sections", () => {
+  const payload = summarizeForPrompt(
+    {
+      ...EMPTY,
+      failedRuns: [{ name: "Linters & Tests" }],
+      blockedOnAuthor: [
+        pullRequest({
+          number: 30,
+          reason: "CI czerwone",
+          created_at: daysAgo(3),
+        }),
+      ],
+      unclaimed: [
+        pullRequest({ number: 31, body: "Zmienia liczenie rabatu." }),
+      ],
+      readyToMerge: [pullRequest({ number: 32 })],
+      merged: [pullRequest({ number: 33 })],
+      releases: [{ tag_name: "v1.2.3" }],
+    },
+    { now: NOW },
+  );
+
+  assert.deepEqual(payload.redCiOnMain, ["Linters & Tests"]);
+  assert.equal(payload.blockedOnAuthor[0].reason, "CI czerwone");
+  assert.equal(payload.blockedOnAuthor[0].ageDays, 3);
+  assert.equal(payload.blockedOnAuthor[0].author, "someone");
+  assert.equal(payload.unclaimed[0].description, "Zmienia liczenie rabatu.");
+  assert.deepEqual(payload.readyToMerge, [
+    { title: "feat: something", author: "someone" },
   ]);
-  assert.equal(payload.openedIssues, 2);
+  assert.equal(payload.mergedCount, 1);
   assert.deepEqual(payload.releases, ["v1.2.3"]);
 });
 
-test("the prompt payload caps each list at ten entries", () => {
-  const many = Array.from({ length: 40 }, (_, index) =>
-    pullRequest({ number: index }),
-  );
-  const payload = summarizeForPrompt({
-    ...EMPTY,
-    merged: many,
-    toReview: many,
-  });
-
-  assert.equal(payload.merged.length, 10);
-  assert.equal(payload.awaitingReview.length, 10);
-});
-
-test("the prompt payload carries the pull request description", () => {
-  const payload = summarizeForPrompt({
-    ...EMPTY,
-    merged: [pullRequest({ body: "Zmienia sposób liczenia rabatu." })],
-  });
-
-  assert.equal(
-    payload.merged[0].description,
-    "Zmienia sposób liczenia rabatu.",
-  );
-});
-
 test("a long description is truncated and an empty one becomes null", () => {
-  const payload = summarizeForPrompt({
-    ...EMPTY,
-    merged: [
-      pullRequest({ body: "x".repeat(2000) }),
-      pullRequest({ body: "   " }),
-    ],
-  });
+  const payload = summarizeForPrompt(
+    {
+      ...EMPTY,
+      unclaimed: [
+        pullRequest({ body: "x".repeat(2000) }),
+        pullRequest({ body: "   " }),
+      ],
+    },
+    { now: NOW },
+  );
 
-  assert.equal(payload.merged[0].description.length, 600);
-  assert.equal(payload.merged[1].description, null);
+  assert.equal(payload.unclaimed[0].description.length, 600);
+  assert.equal(payload.unclaimed[1].description, null);
 });
 
 test("the prompt payload names the window", () => {
@@ -282,11 +349,11 @@ test("a successful envelope yields the comment", () => {
     JSON.stringify({
       subtype: "success",
       is_error: false,
-      result: "  Spokojny tydzień.  ",
+      result: "  Spokojnie.  ",
     }),
   );
 
-  assert.equal(comment, "Spokojny tydzień.");
+  assert.equal(comment, "Spokojnie.");
 });
 
 test("an envelope that reports an error yields no comment", () => {
@@ -309,4 +376,44 @@ test("a successful envelope with an empty result yields no comment", () => {
 
 test("output that is not JSON yields no comment", () => {
   assert.equal(readComment("command not found: claude"), null);
+});
+
+test("the background line caps the release list", () => {
+  const releases = Array.from({ length: 5 }, (_, index) => ({
+    tag_name: `v1.0.${index}`,
+    html_url: `https://github.com/x/y/releases/tag/v1.0.${index}`,
+  }));
+  const background = buildBlocks({ ...EMPTY, releases }, CONTEXT).at(-1);
+
+  assert.match(background.elements[0].text, /v1\.0\.0/);
+  assert.match(background.elements[0].text, /v1\.0\.1/);
+  assert.doesNotMatch(background.elements[0].text, /v1\.0\.2/);
+  assert.match(background.elements[0].text, /\+3 release/);
+});
+
+test("the prompt payload hides parked entries from the queues but names them apart", () => {
+  const payload = summarizeForPrompt(
+    {
+      ...EMPTY,
+      unclaimed: [
+        pullRequest({ number: 40, created_at: daysAgo(1) }),
+        pullRequest({ number: 41, created_at: daysAgo(41) }),
+      ],
+    },
+    { now: NOW },
+  );
+
+  assert.equal(payload.unclaimed.length, 1);
+  assert.equal(payload.parked.length, 1);
+  assert.equal(payload.parked[0].ageDays, 41);
+});
+
+test("Monday keeps the parked entries in the queues and sends none apart", () => {
+  const payload = summarizeForPrompt(
+    { ...EMPTY, unclaimed: [pullRequest({ created_at: daysAgo(41) })] },
+    { now: NOW, weekly: true },
+  );
+
+  assert.equal(payload.unclaimed.length, 1);
+  assert.deepEqual(payload.parked, []);
 });

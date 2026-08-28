@@ -13,10 +13,17 @@ import { promisify } from "node:util";
 
 const GITHUB_API = "https://api.github.com";
 const MAX_LIST_ITEMS = 10;
-const STALE_PR_DAYS = 2;
+/**
+ * The median pull request in this repository merges the day it opens, so two
+ * days already marks an outlier and five days means parked rather than in
+ * flight.
+ */
+const WARN_PR_DAYS = 2;
+const PARKED_PR_DAYS = 5;
 const DAILY_LOOKBACK_HOURS = 24;
 const WEEKLY_LOOKBACK_HOURS = 168;
 const DESCRIPTION_LIMIT = 600;
+const MAX_RELEASES_SHOWN = 2;
 const SLACK_SECTION_LIMIT = 2900;
 
 const CLAUDE_MODEL = "claude-opus-5";
@@ -30,12 +37,18 @@ const COMMENT_SYSTEM_PROMPT = [
   "Jesteś częścią bota, który wysyła zespołowi podsumowanie GitHuba przed daily.",
   "Dostajesz dane w JSON i piszesz jedno lub dwa zdania po polsku.",
   "Zmieść się w 300 znakach. Krótkie zdanie jest lepsze od długiego.",
+  "Dane są pogrupowane po tym, kto wykonuje następny ruch.",
+  "redCiOnMain blokuje wszystkich. blockedOnAuthor czeka na autora.",
+  "unclaimed to PR-y, których nikt nie wziął do review.",
+  "readyToMerge czeka tylko na kliknięcie merge.",
+  "parked to PR-y odstawione od dawna, których nie ma w sekcjach wiadomości.",
+  "Możesz wspomnieć najwyżej jeden odstawiony PR, gdy naprawdę wymaga decyzji.",
   "Pole window mówi, czy podsumowujesz jeden dzień, czy cały zeszły tydzień.",
   "Pole description to opis PR-a napisany przez autora. Bywa puste.",
-  "Napisz, na co zespół ma zwrócić uwagę na dzisiejszym daily.",
-  "Nie powtarzaj liczb, które i tak są w sekcjach poniżej.",
+  "Napisz, co zespół ma rozstrzygnąć na dzisiejszym daily. Wskaż osobę, gdy to pomaga.",
+  "Nie powtarzaj liczb ani tytułów, które i tak są w sekcjach poniżej.",
   "Nie witaj się, nie podsumowuj danych, nie używaj emoji ani list.",
-  "Gdy nic nie wymaga uwagi, napisz jedno zdanie, że dzień jest spokojny.",
+  "Gdy nic nie czeka na ruch, napisz jedno zdanie, że dzień jest spokojny.",
 ].join(" ");
 
 /**
@@ -153,12 +166,49 @@ function dedupeRuns(runs) {
   return [...newest.values()];
 }
 
+/**
+ * Every open pull request has exactly one owner of the next move. A red build or
+ * a requested change puts the ball with the author and outranks an approval,
+ * because nobody should merge a pull request whose checks are failing.
+ */
+export function classifyOpenPullRequests({
+  unreviewed,
+  changesRequested,
+  failingChecks,
+  approved,
+}) {
+  const authorsTurn = new Map();
+
+  for (const [items, reason] of [
+    [failingChecks, "CI czerwone"],
+    [changesRequested, "zmiany do poprawy"],
+  ]) {
+    for (const item of items) {
+      if (!authorsTurn.has(item.number)) {
+        authorsTurn.set(item.number, { ...item, reason });
+      }
+    }
+  }
+
+  const claimed = new Set(authorsTurn.keys());
+
+  return {
+    blockedOnAuthor: [...authorsTurn.values()],
+    unclaimed: unreviewed.filter((item) => !claimed.has(item.number)),
+    readyToMerge: approved.filter((item) => !claimed.has(item.number)),
+  };
+}
+
 async function collect({ repo, token, since }) {
   const sinceQuery = since.toISOString().replace(/\.\d{3}Z$/, "Z");
 
+  const open = "is:pr is:open draft:false";
+
   const [
     merged,
-    toReview,
+    unreviewed,
+    changesRequested,
+    failingChecks,
     approved,
     runs,
     openedIssues,
@@ -166,8 +216,10 @@ async function collect({ repo, token, since }) {
     releases,
   ] = await Promise.all([
     search(repo, token, `is:pr is:merged merged:>=${sinceQuery}`),
-    search(repo, token, "is:pr is:open draft:false review:none"),
-    search(repo, token, "is:pr is:open draft:false review:approved"),
+    search(repo, token, `${open} review:none`),
+    search(repo, token, `${open} review:changes_requested`),
+    search(repo, token, `${open} status:failure`),
+    search(repo, token, `${open} review:approved`),
     githubRequest(
       `/repos/${repo}/actions/runs?branch=main&status=failure&per_page=20`,
       token,
@@ -179,8 +231,12 @@ async function collect({ repo, token, since }) {
 
   return {
     merged,
-    toReview,
-    approved,
+    ...classifyOpenPullRequests({
+      unreviewed,
+      changesRequested,
+      failingChecks,
+      approved,
+    }),
     failedRuns: dedupeRuns(
       (runs.workflow_runs ?? []).filter(
         (run) =>
@@ -197,16 +253,57 @@ async function collect({ repo, token, since }) {
   };
 }
 
-function pullRequestLine(item, now, { withAge }) {
-  const marker =
-    withAge &&
-    now.getTime() - new Date(item.created_at).getTime() >=
-      STALE_PR_DAYS * DAY_MS
-      ? " :hourglass:"
-      : "";
-  const age = withAge ? ` · ${formatAge(item.created_at, now)}` : "";
+/**
+ * Parked pull requests repeat every morning and turn the message into wallpaper.
+ * The daily message counts them; Monday lists them.
+ */
+export function ageBucket(isoDate, now) {
+  const days = (now.getTime() - new Date(isoDate).getTime()) / DAY_MS;
 
-  return `• ${link(item.html_url, `#${item.number} ${item.title}`)} — _${item.user?.login ?? "?"}_${age}${marker}`;
+  if (days >= PARKED_PR_DAYS) {
+    return "parked";
+  }
+
+  return days >= WARN_PR_DAYS ? "warn" : "fresh";
+}
+
+function splitParked(items, now, weekly) {
+  if (weekly) {
+    return { shown: items, parked: 0 };
+  }
+
+  const shown = items.filter(
+    (item) => ageBucket(item.created_at, now) !== "parked",
+  );
+
+  return { shown, parked: items.length - shown.length };
+}
+
+function pullRequestLine(item, now) {
+  const marker =
+    ageBucket(item.created_at, now) === "fresh" ? "" : " :small_red_triangle:";
+  const reason = item.reason ? ` — ${item.reason}` : "";
+
+  return (
+    `• ${link(item.html_url, `#${item.number} ${item.title}`)}` +
+    ` — _${item.user?.login ?? "?"}_${reason} · ${formatAge(item.created_at, now)}${marker}`
+  );
+}
+
+function queueSection(title, items, now, weekly) {
+  const { shown, parked } = splitParked(items, now, weekly);
+
+  if (shown.length === 0) {
+    return { block: null, parked };
+  }
+
+  return {
+    block: section(
+      `*${title} (${shown.length})*\n` +
+        bulletList(shown.map((item) => pullRequestLine(item, now))),
+    ),
+    parked,
+  };
 }
 
 export function buildBlocks(
@@ -235,51 +332,16 @@ export function buildBlocks(
     },
   ];
 
+  if (comment) {
+    heading.push(section(`_${escapeMrkdwn(comment)}_`));
+  }
+
   const blocks = [];
-
-  if (data.merged.length > 0) {
-    blocks.push(
-      section(
-        `*:white_check_mark: Zmergowane do main (${data.merged.length})*\n` +
-          bulletList(
-            data.merged.map((item) =>
-              pullRequestLine(item, now, { withAge: false }),
-            ),
-          ),
-      ),
-    );
-  }
-
-  if (data.toReview.length > 0) {
-    blocks.push(
-      section(
-        `*:eyes: Czekają na review (${data.toReview.length})*\n` +
-          bulletList(
-            data.toReview.map((item) =>
-              pullRequestLine(item, now, { withAge: true }),
-            ),
-          ),
-      ),
-    );
-  }
-
-  if (data.approved.length > 0) {
-    blocks.push(
-      section(
-        `*:rocket: Zaakceptowane, do merge (${data.approved.length})*\n` +
-          bulletList(
-            data.approved.map((item) =>
-              pullRequestLine(item, now, { withAge: true }),
-            ),
-          ),
-      ),
-    );
-  }
 
   if (data.failedRuns.length > 0) {
     blocks.push(
       section(
-        `*:red_circle: Nieudane CI na main (${data.failedRuns.length})*\n` +
+        `*:red_circle: Blokuje wszystkich (${data.failedRuns.length})*\n` +
           bulletList(
             data.failedRuns.map(
               (run) =>
@@ -290,33 +352,68 @@ export function buildBlocks(
     );
   }
 
-  const notes = [];
+  let parked = 0;
 
-  if (data.openedIssues.length > 0) {
-    notes.push(`• Nowe issues: ${data.openedIssues.length}`);
-  }
+  for (const [title, items] of [
+    [":raised_back_of_hand: Czeka na autora", data.blockedOnAuthor],
+    [":eyes: Nikt nie wziął", data.unclaimed],
+    [":rocket: Jeden klik do merge", data.readyToMerge],
+  ]) {
+    const result = queueSection(title, items, now, weekly);
 
-  if (data.closedIssues.length > 0) {
-    notes.push(`• Zamknięte issues: ${data.closedIssues.length}`);
-  }
+    parked += result.parked;
 
-  for (const release of data.releases) {
-    notes.push(`• Release: ${link(release.html_url, release.tag_name)}`);
-  }
-
-  if (notes.length > 0) {
-    blocks.push(section(`*:memo: Issues i release*\n${bulletList(notes)}`));
+    if (result.block) {
+      blocks.push(result.block);
+    }
   }
 
   if (blocks.length === 0) {
-    blocks.push(section("_Brak ruchu w repozytorium od ostatniego daily._"));
+    blocks.push(section("_Nic nie czeka na ruch._"));
   }
 
-  if (comment) {
-    heading.push(section(`_${escapeMrkdwn(comment)}_`));
+  return [...heading, ...blocks, backgroundBlock(data, { parked, weekly })];
+}
+
+/**
+ * Merged pull requests, issue counts, and releases generate no decision, so they
+ * belong in one small line rather than in a list of their own.
+ */
+function backgroundBlock(data, { parked, weekly }) {
+  const notes = [];
+
+  if (data.merged.length > 0) {
+    notes.push(
+      `${data.merged.length} ${weekly ? "PR-ów w tygodniu" : "PR-ów zmergowanych"}`,
+    );
   }
 
-  return [...heading, ...blocks];
+  for (const release of data.releases.slice(0, MAX_RELEASES_SHOWN)) {
+    notes.push(link(release.html_url, release.tag_name));
+  }
+
+  if (data.releases.length > MAX_RELEASES_SHOWN) {
+    notes.push(`+${data.releases.length - MAX_RELEASES_SHOWN} release`);
+  }
+
+  if (data.openedIssues.length > 0) {
+    notes.push(`nowe issues: ${data.openedIssues.length}`);
+  }
+
+  if (data.closedIssues.length > 0) {
+    notes.push(`zamknięte issues: ${data.closedIssues.length}`);
+  }
+
+  if (parked > 0) {
+    notes.push(`odstawione: ${parked} (lista w pon.)`);
+  }
+
+  return {
+    type: "context",
+    elements: [
+      { type: "mrkdwn", text: notes.join(" · ") || "bez zmian w tle" },
+    ],
+  };
 }
 
 /**
@@ -333,18 +430,51 @@ function described(item) {
   };
 }
 
-export function summarizeForPrompt(data, { weekly } = {}) {
-  const titles = (items) => items.slice(0, 10).map((item) => item.title);
+/**
+ * Parked pull requests are missing from the message on a weekday. The comment is
+ * the one place that can still nudge about them, so it needs to know they exist.
+ */
+function parkedFor(data, now, weekly) {
+  if (weekly) {
+    return [];
+  }
+
+  return [data.blockedOnAuthor, data.unclaimed, data.readyToMerge]
+    .flat()
+    .filter((item) => ageBucket(item.created_at, now) === "parked")
+    .slice(0, 10)
+    .map((item) => ({
+      title: item.title,
+      author: item.user?.login ?? null,
+      ageDays: Math.floor(
+        (now.getTime() - new Date(item.created_at).getTime()) / DAY_MS,
+      ),
+    }));
+}
+
+export function summarizeForPrompt(data, { weekly, now = new Date() } = {}) {
+  const visible = (items) => splitParked(items, now, weekly).shown;
+  const queue = (items) =>
+    items.slice(0, 10).map((item) => ({
+      ...described(item),
+      author: item.user?.login ?? null,
+      ageDays: Math.floor(
+        (now.getTime() - new Date(item.created_at).getTime()) / DAY_MS,
+      ),
+      ...(item.reason ? { reason: item.reason } : {}),
+    }));
 
   return {
     window: weekly ? "lastWeek" : "sinceLastDaily",
+    redCiOnMain: data.failedRuns.slice(0, 10).map((run) => run.name),
+    blockedOnAuthor: queue(visible(data.blockedOnAuthor)),
+    unclaimed: queue(visible(data.unclaimed)),
+    parked: parkedFor(data, now, weekly),
+    readyToMerge: visible(data.readyToMerge)
+      .slice(0, 10)
+      .map((item) => ({ title: item.title, author: item.user?.login ?? null })),
+    mergedCount: data.merged.length,
     merged: data.merged.slice(0, 10).map(described),
-    awaitingReview: data.toReview.slice(0, 10).map((item) => ({
-      ...described(item),
-      createdAt: item.created_at,
-    })),
-    approved: titles(data.approved),
-    failedCi: data.failedRuns.slice(0, 10).map((run) => run.name),
     openedIssues: data.openedIssues.length,
     closedIssues: data.closedIssues.length,
     releases: data.releases.map((release) => release.tag_name),
@@ -371,7 +501,7 @@ async function requestComment(data, { weekly }) {
       "claude",
       [
         "--print",
-        JSON.stringify(summarizeForPrompt(data, { weekly })),
+        JSON.stringify(summarizeForPrompt(data, { weekly, now: new Date() })),
         "--system-prompt",
         COMMENT_SYSTEM_PROMPT,
         "--model",
