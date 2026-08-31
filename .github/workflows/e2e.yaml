@@ -23,7 +23,7 @@ jobs:
       - run: |
           echo "TEST_ENV_URL: $TEST_ENV_URL"
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
@@ -31,7 +31,7 @@ jobs:
           run_install: false
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: "lts/krypton"
           cache: "pnpm"
