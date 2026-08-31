@@ -20,6 +20,7 @@
         "CONFIG_PROVIDER",
         "CONFIG_FILE_PATH",
         "CONFIG_KEY",
+        "APP_CONFIG_STORE_PATH",
         "SENTRY_DSN",
         "SENTRY_ORG",
         "SENTRY_PROJECT",

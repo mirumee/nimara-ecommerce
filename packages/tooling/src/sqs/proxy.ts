@@ -12,11 +12,14 @@ import {
 import { Consumer } from "sqs-consumer";
 import { z } from "zod";
 
+import { ensureLocalstackRuntime } from "../aws/localstack.ts";
+
 type QueueHandler = (event: SQSEvent) => Promise<SQSBatchResponse | void>;
 
 export type ProxyLogger = {
   error: (message: string, meta?: Record<string, unknown>) => void;
   info: (message: string, meta?: Record<string, unknown>) => void;
+  warning: (message: string, meta?: Record<string, unknown>) => void;
 };
 
 export type SqsProxyInput = {
@@ -97,10 +100,12 @@ const toRecord = ({
 const ensureQueue = async ({
   client,
   endpointUrl,
+  logger,
   queueUrl,
 }: {
   client: SQSClient;
   endpointUrl?: string;
+  logger: ProxyLogger;
   queueUrl: string;
 }) => {
   if (!endpointUrl) {
@@ -113,7 +118,19 @@ const ensureQueue = async ({
     throw new Error(`Cannot read a queue name from "${queueUrl}".`);
   }
 
-  await client.send(new CreateQueueCommand({ QueueName: name }));
+  const initialized = await ensureLocalstackRuntime(
+    logger,
+    `sqs-queue:${queueUrl}`,
+    async () => {
+      await client.send(new CreateQueueCommand({ QueueName: name }));
+
+      return true;
+    },
+  );
+
+  if (initialized) {
+    logger.info(`SQS queue ready: ${name}`, { queueUrl });
+  }
 };
 
 /**
@@ -191,7 +208,12 @@ export const createSqsProxy = ({
     start: async () => {
       running().get(queueUrl)?.stop();
 
-      await ensureQueue({ client, endpointUrl: AWS_ENDPOINT_URL, queueUrl });
+      await ensureQueue({
+        client,
+        endpointUrl: AWS_ENDPOINT_URL,
+        logger,
+        queueUrl,
+      });
 
       consumer.start();
       running().set(queueUrl, consumer);
