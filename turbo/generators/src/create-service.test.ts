@@ -88,6 +88,10 @@ describe("create-service", () => {
       "export const AppView = 1;",
     );
     await write(
+      templateService("client", ".env.example"),
+      "VITE_SALEOR_API_URL=\nVITE_SALEOR_APP_TOKEN=\n",
+    );
+    await write(
       templateService("api", "rest", "app", "index.ts"),
       "export const appRoutes = 1;",
     );
@@ -274,6 +278,23 @@ describe("create-service", () => {
 
       // then a dashboard builds its own use-cases, so nothing is wired in.
       expect(await readFile(containerPath, "utf8")).toBe(before);
+    });
+
+    it("folds a dashboard service's client env into the app's own", async () => {
+      // when
+      await add("order-sync", "dashboard");
+
+      // then the config UI outside the Dashboard iframe needs both.
+      const env = await readFile(
+        join(root, "apps", "feed-sync", ".env.example"),
+        "utf8",
+      );
+
+      expect(env).toContain("VITE_SALEOR_API_URL=");
+      expect(env).toContain("VITE_SALEOR_APP_TOKEN=");
+      await expect(
+        readFile(appService("order-sync", "client", ".env.example"), "utf8"),
+      ).rejects.toThrow();
     });
 
     it("builds a queue service from the template's queue service", async () => {

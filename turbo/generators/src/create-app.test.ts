@@ -115,6 +115,10 @@ describe("create-app", () => {
       "render();",
     );
     await write(
+      join(template(), "src", "services", "handler", "client", ".env.example"),
+      "VITE_SALEOR_API_URL=\nVITE_SALEOR_APP_TOKEN=\n",
+    );
+    await write(
       join(
         template(),
         "src",
@@ -356,6 +360,40 @@ describe("create-app", () => {
       expect(
         await readFile(join(destination, "tailwind.config.ts"), "utf8"),
       ).toBe("export default 1;");
+    });
+
+    it("folds the client's env fragment into a dashboard app's own", async () => {
+      // when
+      const destination = await generate();
+
+      // then the config UI outside the Dashboard iframe needs both.
+      const env = await readFile(join(destination, ".env.example"), "utf8");
+
+      expect(env).toContain("VITE_SALEOR_API_URL=");
+      expect(env).toContain("VITE_SALEOR_APP_TOKEN=");
+      await expect(
+        readFile(
+          join(
+            destination,
+            "src",
+            "services",
+            "handler",
+            "client",
+            ".env.example",
+          ),
+          "utf8",
+        ),
+      ).rejects.toThrow();
+    });
+
+    it("leaves the client's env fragment out of an http app", async () => {
+      // when
+      const destination = await generate({ kind: "http" });
+
+      // then a service with no UI needs no variable for its config.
+      expect(
+        await readFile(join(destination, ".env.example"), "utf8"),
+      ).not.toContain("VITE_SALEOR");
     });
   });
 
