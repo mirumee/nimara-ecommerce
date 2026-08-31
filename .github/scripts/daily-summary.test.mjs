@@ -5,11 +5,16 @@ import {
   ageBucket,
   buildBlocks,
   classifyOpenPullRequests,
+  dependabotSection,
   escapeMrkdwn,
   formatAge,
+  markDependabotState,
   readComment,
   resolveWindow,
+  summarizeBumpedFiles,
+  summarizeDependabotForPrompt,
   summarizeForPrompt,
+  workspaceBreakdown,
 } from "./daily-summary.mjs";
 
 const NOW = new Date("2026-08-28T09:45:00Z");
@@ -28,6 +33,8 @@ const EMPTY = {
   openedIssues: [],
   closedIssues: [],
   releases: [],
+  dependabot: [],
+  dependabotMergedCount: 0,
 };
 
 function pullRequest(overrides) {
@@ -428,4 +435,329 @@ test("an overlong comment is cut so the Slack block still fits", () => {
   );
 
   assert.equal(comment.length, 1200);
+});
+
+function bump(overrides) {
+  return pullRequest({
+    number: 812,
+    title: "chore(deps): bump the production-dependencies group",
+    user: { login: "dependabot[bot]" },
+    ci: null,
+    approved: false,
+    ...overrides,
+  });
+}
+
+test("a bump carries the state the two searches already know", () => {
+  const items = markDependabotState(
+    [bump({ number: 50 }), bump({ number: 51 }), bump({ number: 52 })],
+    {
+      failingChecks: [pullRequest({ number: 51 })],
+      approved: [pullRequest({ number: 52 })],
+    },
+  );
+
+  assert.deepEqual(
+    items.map((item) => [item.ci, item.approved]),
+    [
+      [null, false],
+      ["red", false],
+      [null, true],
+    ],
+  );
+});
+
+test("the dependabot section names the state instead of the bot author", () => {
+  const text = textOf(
+    buildBlocks(
+      {
+        ...EMPTY,
+        dependabot: [
+          bump({ number: 60, approved: true }),
+          bump({ number: 61, ci: "red" }),
+        ],
+      },
+      CONTEXT,
+    ),
+  );
+
+  assert.match(text, /Dependabot \(2\)/);
+  assert.match(text, /#60 .*zatwierdzony/);
+  assert.match(text, /#61 .*CI czerwone/);
+  assert.doesNotMatch(text, /dependabot\[bot\]/);
+});
+
+test("no open bump means no dependabot section", () => {
+  assert.doesNotMatch(textOf(buildBlocks(EMPTY, CONTEXT)), /Dependabot/);
+  assert.equal(dependabotSection([], NOW, "cokolwiek"), null);
+});
+
+test("the dependabot comment sits under the header, above the list", () => {
+  const block = dependabotSection([bump({ number: 62 })], NOW, "Jeden bump.");
+  const lines = block.text.text.split("\n");
+
+  assert.match(lines[0], /Dependabot \(1\)/);
+  assert.equal(lines[1], "_Jeden bump._");
+  assert.match(lines[2], /#62/);
+});
+
+test("a dependabot comment with mrkdwn control characters cannot break the block", () => {
+  const block = dependabotSection([bump()], NOW, "next & <b>");
+
+  assert.match(block.text.text, /next &amp; &lt;b&gt;/);
+});
+
+test("an old bump is listed on a weekday rather than counted as parked", () => {
+  const blocks = buildBlocks(
+    { ...EMPTY, dependabot: [bump({ created_at: daysAgo(9) })] },
+    CONTEXT,
+  );
+  const text = textOf(blocks);
+
+  assert.match(text, /Dependabot \(1\)/);
+  assert.match(text, /:small_red_triangle:/);
+  assert.doesNotMatch(text, /odstawione/);
+});
+
+test("the dependabot section stays inside the Slack text limit", () => {
+  const many = Array.from({ length: 200 }, (_, index) =>
+    bump({ number: index, title: "x".repeat(300) }),
+  );
+  const block = dependabotSection(many, NOW, "z".repeat(400));
+
+  assert.ok(block.text.text.length <= 3000);
+});
+
+test("only bumps reach the dependabot section and the message shows no duplicate", () => {
+  const text = textOf(
+    buildBlocks(
+      {
+        ...EMPTY,
+        unclaimed: [pullRequest({ number: 70 })],
+        dependabot: [bump({ number: 71 })],
+      },
+      CONTEXT,
+    ),
+  );
+
+  assert.match(text, /Nikt nie wziął \(1\)/);
+  assert.match(text, /Dependabot \(1\)/);
+  assert.equal(text.match(/#71/g).length, 1);
+});
+
+test("the dependabot payload carries state, age, and what already merged", () => {
+  const payload = summarizeDependabotForPrompt(
+    {
+      ...EMPTY,
+      dependabot: [
+        bump({ number: 80, ci: "red", created_at: daysAgo(6) }),
+        bump({ number: 81, approved: true }),
+      ],
+      dependabotMergedCount: 4,
+    },
+    { now: NOW },
+  );
+
+  assert.equal(payload.window, "sinceLastDaily");
+  assert.equal(payload.open[0].ci, "red");
+  assert.equal(payload.open[0].ageDays, 6);
+  assert.equal(payload.open[1].approved, true);
+  assert.equal(payload.mergedCount, 4);
+});
+
+test("the dependabot payload names the weekly window and survives empty data", () => {
+  assert.deepEqual(summarizeDependabotForPrompt(EMPTY, { weekly: true }), {
+    window: "lastWeek",
+    open: [],
+    mergedCount: 0,
+  });
+});
+
+test("the dependabot comment is cut shorter than the main one", () => {
+  const envelope = JSON.stringify({
+    subtype: "success",
+    is_error: false,
+    result: "z".repeat(5000),
+  });
+
+  assert.equal(readComment(envelope, 400).length, 400);
+  assert.equal(readComment(envelope).length, 1200);
+});
+
+function manifest(filename, lines) {
+  return { filename, patch: ["@@ -1,5 +1,5 @@", ...lines].join("\n") };
+}
+
+function detailOf(workspaces, catalog = []) {
+  return {
+    workspaces: workspaces.map(([name, count]) => ({
+      name,
+      bumps: Array.from({ length: count }, (_, index) => ({
+        name: `pkg-${index}`,
+        from: "1.0.0",
+        to: "1.1.0",
+      })),
+    })),
+    catalog: catalog.map((name) => ({ name, from: "1.0.0", to: "1.1.0" })),
+  };
+}
+
+test("a manifest patch yields the workspace and its version changes", () => {
+  const detail = summarizeBumpedFiles([
+    manifest("apps/storefront/package.json", [
+      '-    "@sentry/nextjs": "^10.70.0",',
+      '+    "@sentry/nextjs": "^10.71.0",',
+      '     "@nimara/ui": "workspace:*",',
+      '-    "next-intl": "^4.13.7",',
+      '+    "next-intl": "^4.14.1",',
+    ]),
+  ]);
+
+  assert.equal(detail.workspaces.length, 1);
+  assert.equal(detail.workspaces[0].name, "apps/storefront");
+  assert.deepEqual(detail.workspaces[0].bumps, [
+    { name: "@sentry/nextjs", from: "^10.70.0", to: "^10.71.0" },
+    { name: "next-intl", from: "^4.13.7", to: "^4.14.1" },
+  ]);
+});
+
+test("the catalog is read from the workspace file, not from a workspace", () => {
+  const detail = summarizeBumpedFiles([
+    manifest("pnpm-workspace.yaml", [
+      '   - "apps/*"',
+      "-  hono: 4.13.3",
+      "-  next: 16.3.2",
+      "+  hono: 4.13.5",
+      "+  next: 16.3.3",
+    ]),
+  ]);
+
+  assert.deepEqual(detail.workspaces, []);
+  assert.deepEqual(detail.catalog, [
+    { name: "hono", from: "4.13.3", to: "4.13.5" },
+    { name: "next", from: "16.3.2", to: "16.3.3" },
+  ]);
+});
+
+test("a pointer is not a version and the lockfile is not a workspace", () => {
+  const detail = summarizeBumpedFiles([
+    manifest("apps/storefront/package.json", [
+      '-    "next": "16.3.2",',
+      '+    "next": "catalog:",',
+      '-    "@nimara/ui": "1.0.0",',
+      '+    "@nimara/ui": "workspace:*",',
+    ]),
+    manifest("pnpm-lock.yaml", ["-  next: 16.3.2", "+  next: 16.3.3"]),
+    { filename: "packages/ui/package.json" },
+  ]);
+
+  assert.deepEqual(detail.workspaces, []);
+  assert.deepEqual(detail.catalog, []);
+});
+
+test("the root manifest is named apart from the workspaces", () => {
+  const detail = summarizeBumpedFiles([
+    manifest("package.json", [
+      '-    "turbo": "2.0.0",',
+      '+    "turbo": "2.1.0",',
+    ]),
+  ]);
+
+  assert.deepEqual(detail.workspaces, [
+    {
+      name: "root",
+      bumps: [{ name: "turbo", from: "2.0.0", to: "2.1.0" }],
+    },
+  ]);
+});
+
+test("the breakdown splits apps from packages and ranks by bump count", () => {
+  const text = workspaceBreakdown(
+    detailOf(
+      [
+        ["apps/stripe", 1],
+        ["apps/storefront", 6],
+        ["packages/ui", 2],
+      ],
+      ["next"],
+    ),
+  );
+
+  assert.equal(
+    text,
+    "apps: storefront (6), stripe (1) · packages: ui (2) · catalog: next",
+  );
+});
+
+test("the breakdown counts the workspaces it cannot fit", () => {
+  const text = workspaceBreakdown(
+    detailOf([
+      ["packages/a", 5],
+      ["packages/b", 4],
+      ["packages/c", 3],
+      ["packages/d", 2],
+      ["packages/e", 1],
+      ["packages/f", 1],
+    ]),
+  );
+
+  assert.match(text, /packages: a \(5\), b \(4\), c \(3\), d \(2\), \+2$/);
+});
+
+test("a bump with no detail renders one line and no breakdown", () => {
+  assert.equal(workspaceBreakdown(undefined), "");
+  assert.equal(workspaceBreakdown(detailOf([])), "");
+
+  const block = dependabotSection([bump({ number: 90 })], NOW, null);
+
+  assert.equal(block.text.text.split("\n").length, 2);
+});
+
+test("the breakdown sits under its own bump and cannot break the message", () => {
+  const block = dependabotSection(
+    [bump({ number: 91, detail: detailOf([["apps/storefront", 2]], ["a&b"]) })],
+    NOW,
+    null,
+  );
+  const lines = block.text.text.split("\n");
+
+  assert.match(lines[1], /#91/);
+  assert.match(lines[2], /↳ _apps: storefront \(2\) · catalog: a&amp;b_/);
+});
+
+test("the prompt payload carries the workspaces, the catalog, and distinct bumps", () => {
+  const payload = summarizeDependabotForPrompt(
+    {
+      ...EMPTY,
+      dependabot: [
+        bump({
+          number: 92,
+          detail: {
+            workspaces: [
+              {
+                name: "apps/storefront",
+                bumps: [{ name: "next-intl", from: "^4.13.7", to: "^4.14.1" }],
+              },
+              {
+                name: "packages/ui",
+                bumps: [{ name: "next-intl", from: "^4.13.7", to: "^4.14.1" }],
+              },
+            ],
+            catalog: [{ name: "next", from: "16.3.2", to: "16.3.3" }],
+          },
+        }),
+      ],
+    },
+    { now: NOW },
+  );
+
+  assert.deepEqual(payload.open[0].workspaces, [
+    { name: "apps/storefront", count: 1 },
+    { name: "packages/ui", count: 1 },
+  ]);
+  assert.deepEqual(payload.open[0].catalog, ["next"]);
+  assert.deepEqual(payload.open[0].bumps, [
+    { name: "next-intl", from: "^4.13.7", to: "^4.14.1" },
+    { name: "next", from: "16.3.2", to: "16.3.3" },
+  ]);
 });

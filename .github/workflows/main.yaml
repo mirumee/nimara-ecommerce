@@ -22,19 +22,19 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           # Fetch all history for all branches and tags.
           # Required for tj-actions/changed-files to correctly diff on PRs.
           fetch-depth: 0
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
         with:
           run_install: false
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: "lts/krypton"
           cache: "pnpm"
@@ -46,7 +46,7 @@ jobs:
       - name: Get changed files (for PRs)
         id: changed-files
         if: github.event_name == 'pull_request'
-        uses: tj-actions/changed-files@v46
+        uses: tj-actions/changed-files@v47
         with:
           files_yaml: |
             ts:
@@ -55,7 +55,7 @@ jobs:
               - '**/*.tsx'
 
       - name: Restore ESLint cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         id: eslint-cache
         with:
           path: .eslintcache # Path to the ESLint cache file/directory
