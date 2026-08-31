@@ -67,6 +67,56 @@ const COMMENT_SYSTEM_PROMPT = [
 ].join(" ");
 
 /**
+ * Dependabot opens from its own branch namespace, which is the one property no
+ * grouping, prefix, or bot rename can take away from it.
+ */
+const DEPENDABOT_HEAD = "dependabot/";
+/**
+ * The dependabot comment is a caption over a list that is already on screen, so
+ * it gets a fraction of the room the main comment has.
+ */
+const DEPENDABOT_COMMENT_LIMIT = 400;
+/**
+ * A grouped bump rewrites one manifest per workspace it touches, so the changed
+ * paths already say which part of the monorepo moves. The catalog is the one
+ * version set that belongs to no workspace at all.
+ */
+const CATALOG_FILE = "pnpm-workspace.yaml";
+const WORKSPACE_MANIFEST = /^((?:apps|packages)\/[^/]+)\/package\.json$/;
+const ROOT_MANIFEST = "package.json";
+const MAX_WORKSPACES_SHOWN = 4;
+const MAX_PROMPT_BUMPS = 12;
+/**
+ * `workspace:*` and `catalog:` are pointers, not versions. A change to one is a
+ * wiring change that Dependabot does not make.
+ */
+const VERSION_POINTER = /^(?:workspace|catalog):/;
+const JSON_DEPENDENCY = /^([-+])\s*"([^"]+)"\s*:\s*"([^"]+)",?\s*$/;
+const YAML_CATALOG_ENTRY =
+  /^([-+])\s+"?([\w@][\w@./-]*)"?\s*:\s*"?([^"\s]+)"?\s*$/;
+const DEPENDABOT_SYSTEM_PROMPT = [
+  "Jesteś częścią bota, który wysyła zespołowi podsumowanie GitHuba przed daily.",
+  "Podpisujesz sekcję o pull requestach Dependabota. Piszesz po polsku.",
+  "Od jednego do trzech zdań. Każde krótkie, najwyżej piętnaście słów.",
+  "Pole open to otwarte PR-y z gałęzi dependabot, posortowane od najnowszego.",
+  "ci: red znaczy czerwone CI. approved: true znaczy, że czeka tylko na merge.",
+  "ageDays to wiek PR-a w dniach. mergedCount to ile bumpów już weszło w tym oknie.",
+  "Pole window: sinceLastDaily to ostatnia doba, lastWeek to zeszły tydzień.",
+  "Powiedz, czy to klik do merge, czy ktoś musi usiąść do czerwonego CI.",
+  "Wiek jest istotny. Bump, który wisi tydzień, zdążył się zestarzeć dwa razy.",
+  "Pole workspaces mówi, które appki i paczki monorepo rusza dany PR.",
+  "count to liczba paczek podbitych w tym workspace. root to manifest w korzeniu.",
+  "catalog to wersje wspólne dla całego repo. Ruszają wszystko naraz.",
+  "bumps to nazwy i wersje, od from do to. Możesz wymienić najwyżej dwie.",
+  "Gdy bump rusza jedną appkę, powiedz którą. Gdy rusza pół repo, powiedz i to.",
+  "Piszesz w stylu Bartosza Walaszka, autora Kapitana Bomby i Blondiego.",
+  "Ton jest bezczelnie rzeczowy. Zdania krótkie, oznajmujące, bez ozdobników.",
+  "Najwyżej jedno absurdalne porównanie. Nie tłumacz żartu, nie używaj wulgaryzmów.",
+  "Nie witaj się, nie używaj emoji ani list. Nie powtarzaj tytułów z listy pod spodem.",
+  "Nie wymyślaj faktów, nazw paczek ani wersji. Czego nie ma w JSON, tego nie ma.",
+].join(" ");
+
+/**
  * Dependabot security runs report as `dynamic`. They are not the team's CI and
  * would bury a real red build on main.
  */
@@ -218,6 +268,7 @@ async function collect({ repo, token, since }) {
   const sinceQuery = since.toISOString().replace(/\.\d{3}Z$/, "Z");
 
   const open = "is:pr is:open draft:false";
+  const fromDependabot = `head:${DEPENDABOT_HEAD}`;
 
   const [
     merged,
@@ -229,6 +280,8 @@ async function collect({ repo, token, since }) {
     openedIssues,
     closedIssues,
     releases,
+    dependabotOpen,
+    dependabotMerged,
   ] = await Promise.all([
     search(repo, token, `is:pr is:merged merged:>=${sinceQuery}`),
     search(repo, token, `${open} review:none`),
@@ -242,16 +295,32 @@ async function collect({ repo, token, since }) {
     search(repo, token, `is:issue created:>=${sinceQuery}`),
     search(repo, token, `is:issue closed:>=${sinceQuery}`),
     githubRequest(`/repos/${repo}/releases?per_page=5`, token),
+    search(repo, token, `${open} ${fromDependabot}`),
+    search(
+      repo,
+      token,
+      `is:pr is:merged merged:>=${sinceQuery} ${fromDependabot}`,
+    ),
   ]);
+
+  const dependabot = await withBumpDetail(
+    markDependabotState(dependabotOpen, { failingChecks, approved }),
+    { repo, token },
+  );
+  const claimedByBot = new Set(dependabot.map((item) => item.number));
+  const humans = (items) =>
+    items.filter((item) => !claimedByBot.has(item.number));
 
   return {
     merged,
     ...classifyOpenPullRequests({
-      unreviewed,
-      changesRequested,
-      failingChecks,
-      approved,
+      unreviewed: humans(unreviewed),
+      changesRequested: humans(changesRequested),
+      failingChecks: humans(failingChecks),
+      approved: humans(approved),
     }),
+    dependabot,
+    dependabotMergedCount: dependabotMerged.length,
     failedRuns: dedupeRuns(
       (runs.workflow_runs ?? []).filter(
         (run) =>
@@ -305,6 +374,202 @@ function pullRequestLine(item, now) {
   );
 }
 
+function parseBumps(patch, pattern) {
+  const before = new Map();
+  const after = new Map();
+
+  for (const line of patch.split("\n")) {
+    const match = pattern.exec(line);
+
+    if (!match) {
+      continue;
+    }
+
+    const [, sign, name, version] = match;
+
+    if (VERSION_POINTER.test(version)) {
+      continue;
+    }
+
+    (sign === "-" ? before : after).set(name, version);
+  }
+
+  return [...after.entries()]
+    .filter(([name, version]) => before.get(name) !== version)
+    .map(([name, to]) => ({ name, to, from: before.get(name) ?? null }));
+}
+
+function workspaceOf(filename) {
+  if (filename === ROOT_MANIFEST) {
+    return "root";
+  }
+
+  return WORKSPACE_MANIFEST.exec(filename)?.[1] ?? null;
+}
+
+export function summarizeBumpedFiles(files) {
+  const workspaces = [];
+  let catalog = [];
+
+  for (const file of files) {
+    const patch = file.patch ?? "";
+
+    if (file.filename === CATALOG_FILE) {
+      catalog = parseBumps(patch, YAML_CATALOG_ENTRY);
+
+      continue;
+    }
+
+    const name = workspaceOf(file.filename);
+    const bumps = name ? parseBumps(patch, JSON_DEPENDENCY) : [];
+
+    if (bumps.length > 0) {
+      workspaces.push({ name, bumps });
+    }
+  }
+
+  return { workspaces, catalog };
+}
+
+/**
+ * The changed paths cost one request per open bump, and this repository sees one
+ * or two a week. A failure here loses the breakdown, never the message.
+ */
+async function withBumpDetail(items, { repo, token }) {
+  return Promise.all(
+    items.map(async (item, index) => {
+      if (index >= MAX_LIST_ITEMS) {
+        return item;
+      }
+
+      try {
+        const files = await githubRequest(
+          `/repos/${repo}/pulls/${item.number}/files?per_page=100`,
+          token,
+        );
+
+        return { ...item, detail: summarizeBumpedFiles(files) };
+      } catch (error) {
+        console.warn(
+          `Bump detail skipped for #${item.number}: ${error.message}`,
+        );
+
+        return item;
+      }
+    }),
+  );
+}
+
+/**
+ * Counting beats naming once a bump crosses half the repository. The workspace
+ * with the most bumps is the one whose build breaks first.
+ */
+export function workspaceBreakdown(detail) {
+  if (!detail) {
+    return "";
+  }
+
+  const parts = [];
+
+  for (const [label, prefix] of [
+    ["apps", "apps/"],
+    ["packages", "packages/"],
+  ]) {
+    const matching = detail.workspaces
+      .filter((workspace) => workspace.name.startsWith(prefix))
+      .sort((a, b) => b.bumps.length - a.bumps.length);
+
+    if (matching.length === 0) {
+      continue;
+    }
+
+    const shown = matching
+      .slice(0, MAX_WORKSPACES_SHOWN)
+      .map(
+        (workspace) =>
+          `${workspace.name.slice(prefix.length)} (${workspace.bumps.length})`,
+      );
+    const hidden = matching.length - shown.length;
+
+    if (hidden > 0) {
+      shown.push(`+${hidden}`);
+    }
+
+    parts.push(`${label}: ${shown.join(", ")}`);
+  }
+
+  const root = detail.workspaces.find((workspace) => workspace.name === "root");
+
+  if (root) {
+    parts.push(`root: ${root.bumps.length}`);
+  }
+
+  if (detail.catalog.length > 0) {
+    parts.push(
+      `catalog: ${detail.catalog.map((bump) => bump.name).join(", ")}`,
+    );
+  }
+
+  return parts.join(" · ");
+}
+
+/**
+ * A dependency bump owns no reviewer and no author to nag, so its next move is
+ * only ever merge it or fix its build. The two search results the message
+ * already has answer that without another round trip.
+ */
+export function markDependabotState(items, { failingChecks, approved }) {
+  const failing = new Set(failingChecks.map((item) => item.number));
+  const signed = new Set(approved.map((item) => item.number));
+
+  return items.map((item) => ({
+    ...item,
+    ci: failing.has(item.number) ? "red" : null,
+    approved: signed.has(item.number),
+  }));
+}
+
+/**
+ * The author is `dependabot[bot]` on every line, so the room goes to the state
+ * that decides who has to do something about it.
+ */
+function dependabotLine(item, now) {
+  const marker =
+    ageBucket(item.created_at, now) === "fresh" ? "" : " :small_red_triangle:";
+  const state =
+    item.ci === "red"
+      ? " — CI czerwone"
+      : item.approved
+        ? " — zatwierdzony"
+        : "";
+
+  const head =
+    `• ${link(item.html_url, `#${item.number} ${item.title}`)}${state}` +
+    ` · ${formatAge(item.created_at, now)}${marker}`;
+  const breakdown = workspaceBreakdown(item.detail);
+
+  return breakdown ? `${head}\n    ↳ _${escapeMrkdwn(breakdown)}_` : head;
+}
+
+/**
+ * Grouped bumps land as a couple of pull requests a week and stay open past the
+ * parked threshold by design, so this section never hides an entry by age. A
+ * bump nobody can see is a bump nobody merges.
+ */
+export function dependabotSection(items, now, comment) {
+  if (items.length === 0) {
+    return null;
+  }
+
+  const body = [
+    `*:robot_face: Dependabot (${items.length})*`,
+    ...(comment ? [`_${escapeMrkdwn(comment)}_`] : []),
+    bulletList(items.map((item) => dependabotLine(item, now))),
+  ].join("\n");
+
+  return section(body.slice(0, SLACK_SECTION_LIMIT));
+}
+
 function queueSection(title, items, now, weekly) {
   const { shown, parked } = splitParked(items, now, weekly);
 
@@ -323,7 +588,7 @@ function queueSection(title, items, now, weekly) {
 
 export function buildBlocks(
   data,
-  { repo, now, lookbackHours, weekly, comment },
+  { repo, now, lookbackHours, weekly, comment, dependabotComment },
 ) {
   const heading = [
     {
@@ -381,6 +646,16 @@ export function buildBlocks(
     if (result.block) {
       blocks.push(result.block);
     }
+  }
+
+  const dependabotBlock = dependabotSection(
+    data.dependabot ?? [],
+    now,
+    dependabotComment,
+  );
+
+  if (dependabotBlock) {
+    blocks.push(dependabotBlock);
   }
 
   if (blocks.length === 0) {
@@ -496,6 +771,52 @@ export function summarizeForPrompt(data, { weekly, now = new Date() } = {}) {
   };
 }
 
+/**
+ * The same dependency moves in every workspace that declares it, and repeating
+ * that in the prompt only teaches the model to repeat it in the comment.
+ */
+function distinctBumps(detail) {
+  const seen = new Map();
+
+  for (const workspace of detail?.workspaces ?? []) {
+    for (const bump of workspace.bumps) {
+      if (!seen.has(bump.name)) {
+        seen.set(bump.name, bump);
+      }
+    }
+  }
+
+  for (const bump of detail?.catalog ?? []) {
+    seen.set(bump.name, bump);
+  }
+
+  return [...seen.values()].slice(0, MAX_PROMPT_BUMPS);
+}
+
+export function summarizeDependabotForPrompt(
+  data,
+  { weekly, now = new Date() } = {},
+) {
+  return {
+    window: weekly ? "lastWeek" : "sinceLastDaily",
+    open: (data.dependabot ?? []).slice(0, MAX_LIST_ITEMS).map((item) => ({
+      title: item.title,
+      ageDays: Math.floor(
+        (now.getTime() - new Date(item.created_at).getTime()) / DAY_MS,
+      ),
+      ci: item.ci ?? null,
+      approved: Boolean(item.approved),
+      workspaces: (item.detail?.workspaces ?? []).map((workspace) => ({
+        name: workspace.name,
+        count: workspace.bumps.length,
+      })),
+      catalog: (item.detail?.catalog ?? []).map((bump) => bump.name),
+      bumps: distinctBumps(item.detail),
+    })),
+    mergedCount: data.dependabotMergedCount ?? 0,
+  };
+}
+
 const execFileAsync = promisify(execFile);
 
 /**
@@ -506,7 +827,7 @@ const execFileAsync = promisify(execFile);
  * The comment is a nice-to-have. Any failure returns null so the summary still
  * reaches the channel.
  */
-async function requestComment(data, { weekly }) {
+async function runClaude(payload, systemPrompt, limit) {
   try {
     // An empty directory keeps the repository's CLAUDE.md, settings, and hooks
     // out of a session that only has to rewrite one JSON payload.
@@ -516,9 +837,9 @@ async function requestComment(data, { weekly }) {
       "claude",
       [
         "--print",
-        JSON.stringify(summarizeForPrompt(data, { weekly, now: new Date() })),
+        JSON.stringify(payload),
         "--system-prompt",
-        COMMENT_SYSTEM_PROMPT,
+        systemPrompt,
         "--model",
         CLAUDE_MODEL,
         "--output-format",
@@ -530,7 +851,7 @@ async function requestComment(data, { weekly }) {
       { cwd, timeout: CLAUDE_TIMEOUT_MS, maxBuffer: CLAUDE_MAX_BUFFER },
     );
 
-    return readComment(stdout);
+    return readComment(stdout, limit);
   } catch (error) {
     console.warn(`Claude comment skipped: ${error.message}`);
 
@@ -538,11 +859,34 @@ async function requestComment(data, { weekly }) {
   }
 }
 
+function requestComment(data, { weekly }) {
+  return runClaude(
+    summarizeForPrompt(data, { weekly, now: new Date() }),
+    COMMENT_SYSTEM_PROMPT,
+    COMMENT_LIMIT,
+  );
+}
+
+/**
+ * No open bump means no section to caption, and a call to skip.
+ */
+function requestDependabotComment(data, { weekly }) {
+  if ((data.dependabot ?? []).length === 0) {
+    return Promise.resolve(null);
+  }
+
+  return runClaude(
+    summarizeDependabotForPrompt(data, { weekly, now: new Date() }),
+    DEPENDABOT_SYSTEM_PROMPT,
+    DEPENDABOT_COMMENT_LIMIT,
+  );
+}
+
 /**
  * The envelope reports its own failures in `is_error` rather than by a non-zero
  * exit code, so a successful process is not yet a usable answer.
  */
-export function readComment(stdout) {
+export function readComment(stdout, limit = COMMENT_LIMIT) {
   let envelope;
 
   try {
@@ -561,7 +905,7 @@ export function readComment(stdout) {
     return null;
   }
 
-  const comment = (envelope.result ?? "").trim().slice(0, COMMENT_LIMIT);
+  const comment = (envelope.result ?? "").trim().slice(0, limit);
 
   return comment || null;
 }
@@ -609,9 +953,19 @@ async function main() {
 
   try {
     const data = await collect({ repo, token, since });
-    const comment = await requestComment(data, { weekly });
+    const [comment, dependabotComment] = await Promise.all([
+      requestComment(data, { weekly }),
+      requestDependabotComment(data, { weekly }),
+    ]);
 
-    blocks = buildBlocks(data, { repo, now, lookbackHours, weekly, comment });
+    blocks = buildBlocks(data, {
+      repo,
+      now,
+      lookbackHours,
+      weekly,
+      comment,
+      dependabotComment,
+    });
   } catch (error) {
     // A silent channel hides the outage. Report it and still fail the workflow.
     const notice = `:warning: Nie udało się zebrać podsumowania z GitHuba: ${escapeMrkdwn(error.message)}`;
