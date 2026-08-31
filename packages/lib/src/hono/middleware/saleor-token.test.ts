@@ -158,6 +158,32 @@ describe("saleor-token", () => {
       expect((await response.json()).description).toContain("HANDLE_PAYMENTS");
     });
 
+    it("admits a permission the token's user_permissions grants, not just permissions", async () => {
+      // given a token scoped down to the app's own manifest, from a staff
+      // member whose account still holds the required permission
+      joseAuthService.mockImplementationOnce(
+        () =>
+          ({
+            verifyJwt: vi.fn(async () =>
+              ok({
+                permissions: ["MANAGE_PRODUCTS"],
+                user_permissions: ["MANAGE_APPS"],
+              }),
+            ),
+          }) as unknown as JoseAuthService,
+      );
+
+      // when
+      const response = await request({
+        apiUrl: ATTACKER.apiUrl,
+        requiredPermissions: ["MANAGE_APPS"],
+        token: ATTACKER.token,
+      });
+
+      // then
+      expect(response.status).toBe(200);
+    });
+
     it("refuses a Saleor outside the allow list before verifying anything", async () => {
       // given a Saleor the attacker controls, serving its own JWKS
       signedBy.set("stranger-token", "stranger.example.com");
