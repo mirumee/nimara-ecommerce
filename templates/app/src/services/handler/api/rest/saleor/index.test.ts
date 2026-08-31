@@ -6,6 +6,17 @@ const HOST = "app.test";
 const ORIGIN_HEADERS = { host: HOST, "x-forwarded-proto": "https" };
 
 describe("saleor routes", () => {
+  describe("GET /logo.png", () => {
+    it("serves the icon the manifest points at", async () => {
+      // when
+      const response = await app.request("/logo.png");
+
+      // then
+      expect(response.status).toBe(200);
+      expect(response.headers.get("content-type")).toBe("image/png");
+    });
+  });
+
   describe("GET /api/saleor/manifest", () => {
     it("announces the webhooks the app registers", async () => {
       // when
@@ -18,6 +29,7 @@ describe("saleor routes", () => {
       expect(await response.json()).toMatchObject({
         // Where the Dashboard opens the app: its root, dashboard or not.
         appUrl: `https://${HOST}/`,
+        brand: { logo: { default: `https://${HOST}/logo.png` } },
         tokenTargetUrl: `https://${HOST}/api/saleor/register`,
         webhooks: [
           {

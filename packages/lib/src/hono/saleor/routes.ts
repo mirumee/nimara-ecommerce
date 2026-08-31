@@ -15,10 +15,11 @@ import { type SaleorWebhook, webhooksManifest } from "#root/saleor/webhooks";
 
 type ManifestInput = Omit<
   SaleorAppManifest,
-  "appUrl" | "tokenTargetUrl" | "webhooks"
+  "appUrl" | "brand" | "tokenTargetUrl" | "webhooks"
 > & {
   // Where the Dashboard opens the app; omit for an app that ships no UI.
   appPath?: string;
+  logoPath?: string;
 };
 
 /**
@@ -49,12 +50,15 @@ export const createSaleorRoutes = ({
 
   return new Hono()
     .get("/manifest", (context) => {
-      const { appPath, ...rest } = manifest;
+      const { appPath, logoPath, ...rest } = manifest;
       const appBaseUrl = getAppBaseUrl(context.req);
 
       return context.json({
         ...rest,
         ...(appPath && { appUrl: `${appBaseUrl}${appPath}` }),
+        ...(logoPath && {
+          brand: { logo: { default: `${appBaseUrl}${logoPath}` } },
+        }),
         tokenTargetUrl: `${appBaseUrl}${mountPath}/register`,
         webhooks: webhooksManifest({
           targetBaseUrl: `${appBaseUrl}${mountPath}/webhooks`,

@@ -27,6 +27,7 @@ export const saleorRoutes = createSaleorRoutes({
   manifest: {
     appPath: "/",
     id: config.APP_ID,
+    logoPath: "/logo.png",
     name: config.DISPLAY_NAME,
     permissions: ["MANAGE_PRODUCTS"],
     version: config.VERSION,
