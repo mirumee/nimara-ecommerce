@@ -93,7 +93,13 @@ describe("create-app", () => {
         "# store.saleor.cloud. Empty allows none. Wildcards (`*`, `*.saleor.cloud`)\n" +
         "# widen it and belong in local development only.\n" +
         "ALLOWED_DOMAINS=\n" +
-        "PORT=8000\n",
+        "PORT=8000\n" +
+        "\n" +
+        "# LocalStack only.\n" +
+        "AWS_ENDPOINT_URL=http://localhost:4566\n" +
+        "AWS_ACCESS_KEY_ID=dummy\n" +
+        "AWS_SECRET_ACCESS_KEY=dummy\n" +
+        "AWS_REGION=eu-central-1\n",
     );
     await write(join(template(), "vercel.json"), '{"framework":"hono"}');
     await write(join(template(), "src", "index.ts"), "export const a = 1;\n");
@@ -267,6 +273,26 @@ describe("create-app", () => {
     expect(await readFile(join(destination, ".env.example"), "utf8")).toContain(
       "BUILD_TARGET=node",
     );
+  });
+
+  it("keeps the LocalStack block for an app deployed to node", async () => {
+    // when
+    const destination = await generate({ target: "node" });
+
+    // then
+    expect(await readFile(join(destination, ".env.example"), "utf8")).toContain(
+      "AWS_ENDPOINT_URL=http://localhost:4566",
+    );
+  });
+
+  it("drops the LocalStack block for a Vercel app, which never reads it", async () => {
+    // when
+    const destination = await generate({ target: "vercel" });
+
+    // then
+    expect(
+      await readFile(join(destination, ".env.example"), "utf8"),
+    ).not.toContain("AWS_ENDPOINT_URL");
   });
 
   it("calls the single-tenant helper when the app serves one Saleor", async () => {
