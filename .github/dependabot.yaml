@@ -27,3 +27,20 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
+
+  # Majors are allowed here on purpose. A major action bump is normally just a
+  # runner-runtime change, and blocking them is why these fell eight versions
+  # behind. Grouped into one weekly pull request.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "10:00"
+    commit-message:
+      prefix: "chore(ci)"
+    target-branch: "main"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
