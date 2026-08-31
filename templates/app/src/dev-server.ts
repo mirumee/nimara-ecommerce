@@ -38,5 +38,36 @@ if (Object.keys(queues).length > 0) {
   await startQueueProxies({ logger, queues });
 }
 
+const events = import.meta.glob("./services/*/entry-event.ts") as Record<
+  string,
+  () => Promise<{
+    handler?: (
+      event: unknown,
+      invocation: { getRemainingTimeInMillis: () => number },
+    ) => Promise<unknown>;
+  }>
+>;
+
+const LOCAL_INVOCATION_BUDGET_MS = 60_000;
+
+for (const path of Object.keys(events).sort()) {
+  const name = path.split("/").at(-2) ?? "";
+  const { handler } = await events[path]();
+
+  if (handler) {
+    server.post(`/${name}/invoke`, async (context) => {
+      const deadline = Date.now() + LOCAL_INVOCATION_BUDGET_MS;
+
+      await handler(await context.req.json().catch(() => ({})), {
+        getRemainingTimeInMillis: () => deadline - Date.now(),
+      });
+
+      return context.body(null, 202);
+    });
+
+    logger.info(`Invoking ${name} at POST /${name}/invoke`);
+  }
+}
+
 // eslint-disable-next-line import/no-default-export
 export default server;

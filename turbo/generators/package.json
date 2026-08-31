@@ -12,6 +12,7 @@
   },
   "devDependencies": {
     "@nimara/config": "workspace:*",
+    "@nimara/tooling": "workspace:*",
     "@turbo/gen": "^2.9.4",
     "@types/node": "^24.12.4",
     "eslint": "^8.57.0",

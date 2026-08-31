@@ -10,18 +10,24 @@ export type BuildTarget = (typeof BUILD_TARGETS)[number];
 
 export type AppEntry = { name: string; path: string };
 
-const SERVICE_TRIGGERS = ["http", "queue"] as const;
+const SERVICE_TRIGGERS = ["http", "queue", "event"] as const;
 
-// What starts an invocation: a request, or a message on a queue.
-type ServiceTrigger = (typeof SERVICE_TRIGGERS)[number];
+// What starts an invocation: a request, a message on a queue, or a direct invoke.
+export type ServiceTrigger = (typeof SERVICE_TRIGGERS)[number];
 
 export type ServiceEntry = AppEntry & { trigger: ServiceTrigger };
+
+export const VERCEL_UNSUPPORTED_TRIGGERS: readonly ServiceTrigger[] = [
+  "queue",
+  "event",
+];
 
 /**
  * The file a service is recognised by. Read off the file name, so nothing has
  * to evaluate app code to know what drives the service.
  */
 const ENTRY_FILES: Record<ServiceTrigger, string> = {
+  event: "entry-event.ts",
   http: "entry-server.ts",
   queue: "entry-queue.ts",
 };
@@ -70,13 +76,13 @@ export const getEntryPoints = async (servicesDir: string) => {
     );
 
     /**
-     * One service is one deployed unit, and a unit is either answered over HTTP
-     * or driven by a queue. Two entries side by side leave no single handler to
-     * point a deployment at.
+     * One service is one deployed unit, and a unit is answered over HTTP, driven
+     * by a queue, or invoked directly. Two entries side by side leave no single
+     * handler to point a deployment at.
      */
     if (found.length > 1) {
       throw new Error(
-        `${item} has both ${Object.values(ENTRY_FILES).join(" and ")}. A service is served over HTTP or driven by a queue; split it in two.`,
+        `${item} has more than one of ${Object.values(ENTRY_FILES).join(", ")}. A service is served over HTTP, driven by a queue, or invoked directly; split it in two.`,
       );
     }
 
