@@ -6,7 +6,8 @@ updates:
     schedule:
       interval: "weekly"
       day: "monday"
-      time: "10:00"
+      time: "05:00"
+      timezone: "Europe/Warsaw"
     commit-message:
       prefix: "chore(deps)"
     target-branch: "main"
@@ -36,7 +37,8 @@ updates:
     schedule:
       interval: "weekly"
       day: "monday"
-      time: "10:00"
+      time: "05:00"
+      timezone: "Europe/Warsaw"
     commit-message:
       prefix: "chore(ci)"
     target-branch: "main"
