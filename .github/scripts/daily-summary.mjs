@@ -47,6 +47,7 @@ const COMMENT_SYSTEM_PROMPT = [
   "redCiOnMain blokuje wszystkich. blockedOnAuthor czeka na autora.",
   "unclaimed to PR-y, których nikt nie wziął do review.",
   "readyToMerge czeka tylko na kliknięcie merge.",
+  "ciWarnings to ostrzeżenia GitHub Actions na main. Nikogo nie blokują, to dług.",
   "parked to PR-y odstawione od dawna, których nie ma w sekcjach wiadomości.",
   "Możesz wspomnieć najwyżej jeden odstawiony PR, gdy naprawdę wymaga decyzji.",
   "Pole window: sinceLastDaily to ostatnia doba, lastWeek to zeszły tydzień.",
@@ -76,6 +77,11 @@ const REPORTED_RUN_EVENTS = new Set([
   "schedule",
   "workflow_dispatch",
 ]);
+
+const MAX_ANNOTATED_RUNS = 12;
+const MAX_JOBS_PER_RUN = 20;
+const MAX_WARNINGS_IN_PROMPT = 5;
+const WARNING_LIMIT = 220;
 
 const HOUR_MS = 60 * 60 * 1000;
 const DAY_MS = 24 * HOUR_MS;
@@ -181,6 +187,102 @@ function dedupeRuns(runs) {
   return [...newest.values()];
 }
 
+function newestPerWorkflow(runs) {
+  const newest = new Map();
+
+  for (const run of runs) {
+    if (!newest.has(run.name)) {
+      newest.set(run.name, run);
+    }
+  }
+
+  return [...newest.values()];
+}
+
+export function warningHeadline(message) {
+  const clean = String(message)
+    .replace(/\s*(For more information,?\s*see:?)?\s*https?:\/\/\S+/gi, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  return clean
+    .split(/[:.](?=\s)/)[0]
+    .trim()
+    .slice(0, WARNING_LIMIT);
+}
+
+export function groupWarnings(entries) {
+  const byMessage = new Map();
+
+  for (const entry of entries) {
+    const group = byMessage.get(entry.message);
+
+    if (!group) {
+      byMessage.set(entry.message, {
+        message: entry.message,
+        workflows: [{ name: entry.workflow, url: entry.url }],
+      });
+
+      continue;
+    }
+
+    if (!group.workflows.some((workflow) => workflow.name === entry.workflow)) {
+      group.workflows.push({ name: entry.workflow, url: entry.url });
+    }
+  }
+
+  return [...byMessage.values()];
+}
+
+async function warningsForRun({ repo, token, run }) {
+  const { jobs = [] } = await githubRequest(
+    `/repos/${repo}/actions/runs/${run.id}/jobs?per_page=${MAX_JOBS_PER_RUN}`,
+    token,
+  );
+
+  const perJob = await Promise.all(
+    jobs.map((job) =>
+      githubRequest(`/repos/${repo}/check-runs/${job.id}/annotations`, token),
+    ),
+  );
+
+  return perJob
+    .flat()
+    .filter((annotation) => annotation.annotation_level === "warning")
+    .map((annotation) => ({
+      workflow: run.name,
+      url: run.html_url,
+      message: warningHeadline(annotation.message),
+    }));
+}
+
+async function collectWarnings({ repo, token, since }) {
+  try {
+    const { workflow_runs: runs = [] } = await githubRequest(
+      `/repos/${repo}/actions/runs?branch=main&per_page=50`,
+      token,
+    );
+
+    const recent = newestPerWorkflow(
+      runs.filter(
+        (run) =>
+          new Date(run.created_at) >= since &&
+          REPORTED_RUN_EVENTS.has(run.event),
+      ),
+    ).slice(0, MAX_ANNOTATED_RUNS);
+
+    const found = await Promise.all(
+      recent.map((run) => warningsForRun({ repo, token, run })),
+    );
+
+    return groupWarnings(found.flat());
+  } catch (error) {
+    console.warn(`CI warnings skipped: ${error.message}`);
+
+    return [];
+  }
+}
+
 /**
  * Every open pull request has exactly one owner of the next move. A red build or
  * a requested change puts the ball with the author and outranks an approval,
@@ -229,6 +331,7 @@ async function collect({ repo, token, since }) {
     openedIssues,
     closedIssues,
     releases,
+    ciWarnings,
   ] = await Promise.all([
     search(repo, token, `is:pr is:merged merged:>=${sinceQuery}`),
     search(repo, token, `${open} review:none`),
@@ -242,6 +345,7 @@ async function collect({ repo, token, since }) {
     search(repo, token, `is:issue created:>=${sinceQuery}`),
     search(repo, token, `is:issue closed:>=${sinceQuery}`),
     githubRequest(`/repos/${repo}/releases?per_page=5`, token),
+    collectWarnings({ repo, token, since }),
   ]);
 
   return {
@@ -265,6 +369,7 @@ async function collect({ repo, token, since }) {
       (release) =>
         release.published_at && new Date(release.published_at) >= since,
     ),
+    ciWarnings,
   };
 }
 
@@ -387,6 +492,22 @@ export function buildBlocks(
     blocks.push(section("_Nic nie czeka na ruch._"));
   }
 
+  if (data.ciWarnings.length > 0) {
+    blocks.push(
+      section(
+        `*:warning: Ostrzeżenia CI na main (${data.ciWarnings.length})*\n` +
+          bulletList(
+            data.ciWarnings.map(
+              (warning) =>
+                `• ${escapeMrkdwn(warning.message)}\n  _${warning.workflows
+                  .map((workflow) => link(workflow.url, workflow.name))
+                  .join(", ")}_`,
+            ),
+          ),
+      ),
+    );
+  }
+
   return [...heading, ...blocks, backgroundBlock(data, { parked, weekly })];
 }
 
@@ -493,6 +614,12 @@ export function summarizeForPrompt(data, { weekly, now = new Date() } = {}) {
     openedIssues: data.openedIssues.length,
     closedIssues: data.closedIssues.length,
     releases: data.releases.map((release) => release.tag_name),
+    ciWarnings: data.ciWarnings
+      .slice(0, MAX_WARNINGS_IN_PROMPT)
+      .map((warning) => ({
+        message: warning.message,
+        workflows: warning.workflows.map((workflow) => workflow.name),
+      })),
   };
 }
 

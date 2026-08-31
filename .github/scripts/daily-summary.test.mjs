@@ -7,9 +7,11 @@ import {
   classifyOpenPullRequests,
   escapeMrkdwn,
   formatAge,
+  groupWarnings,
   readComment,
   resolveWindow,
   summarizeForPrompt,
+  warningHeadline,
 } from "./daily-summary.mjs";
 
 const NOW = new Date("2026-08-28T09:45:00Z");
@@ -28,7 +30,26 @@ const EMPTY = {
   openedIssues: [],
   closedIssues: [],
   releases: [],
+  ciWarnings: [],
 };
+
+const NODE_20_WARNING =
+  "Node.js 20 is deprecated. The following actions target Node.js 20 but are " +
+  "being forced to run on Node.js 24: actions/checkout@v4. For more " +
+  "information see: https://github.blog/changelog/2025-09-19-deprecation/";
+
+function warning(overrides) {
+  return {
+    message: "Node.js 20 is deprecated.",
+    workflows: [
+      {
+        name: "Daily GitHub Summary",
+        url: "https://github.com/mirumee/nimara-ecommerce/actions/runs/1",
+      },
+    ],
+    ...overrides,
+  };
+}
 
 function pullRequest(overrides) {
   return {
@@ -337,6 +358,88 @@ test("a long description is truncated and an empty one becomes null", () => {
 
   assert.equal(payload.unclaimed[0].description.length, 600);
   assert.equal(payload.unclaimed[1].description, null);
+});
+
+test("a CI warning gets its own section below the queues", () => {
+  const blocks = buildBlocks({ ...EMPTY, ciWarnings: [warning()] }, CONTEXT);
+  const last = blocks.at(-2);
+
+  assert.match(last.text.text, /Ostrzeżenia CI na main \(1\)/);
+  assert.match(last.text.text, /Node\.js 20 is deprecated\./);
+  assert.match(last.text.text, /actions\/runs\/1\|Daily GitHub Summary/);
+});
+
+test("a quiet repository with a CI warning keeps both lines", () => {
+  const text = textOf(
+    buildBlocks({ ...EMPTY, ciWarnings: [warning()] }, CONTEXT),
+  );
+
+  assert.match(text, /Nic nie czeka na ruch/);
+  assert.match(text, /Ostrzeżenia CI na main/);
+});
+
+test("a warning keeps its first sentence and drops the rest", () => {
+  assert.equal(warningHeadline(NODE_20_WARNING), "Node.js 20 is deprecated");
+});
+
+test("a warning with no sentence break keeps the whole text", () => {
+  assert.equal(
+    warningHeadline("Cache not found for key: main"),
+    "Cache not found for key",
+  );
+  assert.equal(warningHeadline("The run was slow"), "The run was slow");
+});
+
+test("a headline longer than the limit is truncated", () => {
+  assert.equal(warningHeadline("x".repeat(500)).length, 220);
+});
+
+test("one deprecation across four workflows becomes one line", () => {
+  const grouped = groupWarnings(
+    [
+      "Release",
+      "Linters & Tests",
+      "Docs Link Check",
+      "Daily GitHub Summary",
+    ].map((name, index) => ({
+      workflow: name,
+      url: `https://x/${index}`,
+      message: warningHeadline(NODE_20_WARNING),
+    })),
+  );
+
+  assert.equal(grouped.length, 1);
+  assert.equal(grouped[0].workflows.length, 4);
+});
+
+test("the same warning from two workflows collapses into one line", () => {
+  const grouped = groupWarnings([
+    { workflow: "A", url: "https://x/1", message: "Node.js 20 is deprecated." },
+    { workflow: "B", url: "https://x/2", message: "Node.js 20 is deprecated." },
+    { workflow: "A", url: "https://x/3", message: "Node.js 20 is deprecated." },
+    { workflow: "A", url: "https://x/1", message: "Cache not found." },
+  ]);
+
+  assert.equal(grouped.length, 2);
+  assert.deepEqual(
+    grouped[0].workflows.map((workflow) => workflow.name),
+    ["A", "B"],
+  );
+  assert.equal(grouped[1].message, "Cache not found.");
+});
+
+test("the prompt payload carries the warnings by workflow name", () => {
+  const payload = summarizeForPrompt(
+    { ...EMPTY, ciWarnings: [warning()] },
+    { now: NOW },
+  );
+
+  assert.deepEqual(payload.ciWarnings, [
+    {
+      message: "Node.js 20 is deprecated.",
+      workflows: ["Daily GitHub Summary"],
+    },
+  ]);
 });
 
 test("the prompt payload names the window", () => {
