@@ -27,11 +27,14 @@ export const createAppSettingsRoutes = <
   Settings extends Record<string, string>,
 >({
   allowedDomains,
+  allowUnverifiedToken,
   getSettingsForm,
   joseAuthService,
   saveSettings,
   settingsSchema,
 }: {
+  /** See `saleorTokenMiddleware`. Off unless the caller opts in. */
+  allowUnverifiedToken?: boolean;
   allowedDomains: string[];
   getSettingsForm: (opts: {
     saleorDomain: string;
@@ -47,6 +50,7 @@ export const createAppSettingsRoutes = <
     .use(
       saleorTokenMiddleware({
         allowedDomains,
+        allowUnverifiedToken,
         joseAuthService,
         requiredPermissions: ["MANAGE_APPS"],
       }),
