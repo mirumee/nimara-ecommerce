@@ -36,7 +36,7 @@
     "eslint": "^8.57.0",
     "typescript": "^5.9.2",
     "vite-tsconfig-paths": "6.1.1",
-    "vitest": "4.1.2"
+    "vitest": "4.1.11"
   },
   "lint-staged": {
     "*.{js,cjs,ts,tsx}": "eslint --fix",
