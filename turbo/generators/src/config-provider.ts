@@ -25,6 +25,18 @@ const NODE_STORE = `: awsSecretsManagerConfigItem({
               logger: ctx.logger,
             }),`;
 
+const DEV_BOOTSTRAP = `if (process.env.APP_CONFIG_STORE_PATH) {
+  const { ensureSecretsManager } =
+    await import("@nimara/tooling/aws/secrets-manager");
+
+  await ensureSecretsManager({
+    logger,
+    storePath: process.env.APP_CONFIG_STORE_PATH,
+  });
+}
+
+`;
+
 const rewrite = async ({
   path,
   replacements,
@@ -50,6 +62,10 @@ const rewrite = async ({
  * store of its own, so its non-local branch goes to Secrets Manager —
  * rewritten rather than a third ternary branch, so the container stays a
  * plain two-way choice either way.
+ *
+ * The dev server bootstraps whichever store the container reads off `local`.
+ * A Vercel app has none to create: Edge Config is written on Vercel, and its
+ * local runs read the file store.
  */
 export const applyConfigProvider = async ({
   appDir,
@@ -59,6 +75,11 @@ export const applyConfigProvider = async ({
   target: BuildTarget;
 }) => {
   if (target !== "node") {
+    await rewrite({
+      path: join(appDir, "src", "dev-server.ts"),
+      replacements: [[DEV_BOOTSTRAP, ""]],
+    });
+
     return;
   }
 

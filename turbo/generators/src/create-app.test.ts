@@ -57,6 +57,23 @@ export const createAppContainer = <Config extends AppConfig>(config: Config) =>
     }));
 `;
 
+const DEV_SERVER = `import { getLogger } from "@nimara/infrastructure/logging/service";
+
+const logger = getLogger({ name: "dev" });
+
+if (process.env.APP_CONFIG_STORE_PATH) {
+  const { ensureSecretsManager } =
+    await import("@nimara/tooling/aws/secrets-manager");
+
+  await ensureSecretsManager({
+    logger,
+    storePath: process.env.APP_CONFIG_STORE_PATH,
+  });
+}
+
+const importers = import.meta.glob("./services/*/entry-server.ts");
+`;
+
 const template = () => join(root, "templates", "app");
 
 const write = async (path: string, contents: string) => {
@@ -154,6 +171,7 @@ describe("create-app", () => {
       "export const appRoutes = 1;",
     );
     await write(join(template(), "src", "container", "index.ts"), CONTAINER);
+    await write(join(template(), "src", "dev-server.ts"), DEV_SERVER);
     await write(
       join(template(), "src", "domain", "app-config.ts"),
       'APP_CONFIG_STORE_PATH: z.string().default("app-template-config"),\n',
@@ -358,6 +376,29 @@ describe("create-app", () => {
     // then
     expect(container).toContain("vercelEdgeConfigItem");
     expect(container).not.toContain("awsSecretsManagerConfigItem");
+  });
+
+  it("bootstraps the store a node app reads off `local`", async () => {
+    // when
+    const destination = await generate({ target: "node" });
+
+    // then the dev server creates what the container goes to.
+    expect(
+      await readFile(join(destination, "src", "dev-server.ts"), "utf8"),
+    ).toContain("ensureSecretsManager");
+  });
+
+  it("bootstraps nothing for a Vercel app, which has no store to create", async () => {
+    // when
+    const destination = await generate({ target: "vercel" });
+    const devServer = await readFile(
+      join(destination, "src", "dev-server.ts"),
+      "utf8",
+    );
+
+    // then Edge Config is written on Vercel, and a local run reads the file store.
+    expect(devServer).not.toContain("@nimara/tooling/aws");
+    expect(devServer).toContain('const logger = getLogger({ name: "dev" });');
   });
 
   it("calls the single-tenant helper when the app serves one Saleor", async () => {
