@@ -22,7 +22,6 @@
     "@types/react": "^19.2.14",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
-    "dotenv": "17.4.1",
     "eslint": "^8.57.0",
     "next": "catalog:",
     "typescript": "^5.9.2",
