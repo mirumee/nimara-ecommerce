@@ -1,10 +1,8 @@
 "use server";
 
-import { err } from "@nimara/domain/objects/Result";
 import { newsletterSubscribe } from "@nimara/features/home-page/shared/actions/newsletter-subscribe.core";
 
 import { toClientResult } from "@/foundation/errors/to-client-result";
-import { resolveNewsletterProvider } from "@/services/integrations/resolve";
 import { storefrontLogger } from "@/services/logging";
 import { getServiceRegistry } from "@/services/registry";
 
@@ -13,22 +11,16 @@ export const newsletterSubscribeAction = async ({
 }: {
   email: string;
 }) => {
-  const provider = resolveNewsletterProvider();
+  const result = await newsletterSubscribe(await getServiceRegistry(), {
+    email,
+  });
 
-  if (!provider) {
-    storefrontLogger.error("Newsletter submit refused: no provider selected.");
-
-    return toClientResult<{ acknowledged: true }>(
-      err([
-        {
-          code: "NEWSLETTER_NOT_CONFIGURED_ERROR" as const,
-          message: "No newsletter provider is selected for this deployment.",
-        },
-      ]),
-    );
+  if (
+    !result.ok &&
+    result.errors[0].code === "NEWSLETTER_NOT_CONFIGURED_ERROR"
+  ) {
+    storefrontLogger.error("Newsletter submit refused: no provider available.");
   }
 
-  return toClientResult(
-    await newsletterSubscribe(await getServiceRegistry(), { email }),
-  );
+  return toClientResult(result);
 };

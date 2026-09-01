@@ -4,7 +4,9 @@ export type NewsletterSubscribeInfra = (opts: {
   email: string;
 }) => AsyncResult<{ acknowledged: true }>;
 
-export type NewsletterSubscribeUseCase = NewsletterSubscribeInfra;
+export type NewsletterSubscribeUseCase = (opts: {
+  email: string;
+}) => AsyncResult<{ acknowledged: true }>;
 
 export type NewsletterService = {
   newsletterSubscribe: NewsletterSubscribeUseCase;
