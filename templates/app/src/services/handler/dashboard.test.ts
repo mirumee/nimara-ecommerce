@@ -26,15 +26,15 @@ describe("dashboard", () => {
     });
   });
 
-  describe("POST /api/app/settings/fetch", () => {
+  describe("POST /api/app/config/fetch", () => {
     it("refuses a caller with no Saleor token", async () => {
       // when
-      const response = await app.request("/api/app/settings/fetch", {
+      const response = await app.request("/api/app/config/fetch", {
         method: "POST",
         headers: ORIGIN_HEADERS,
       });
 
-      // then the settings hold secrets, so an unverified caller reads nothing.
+      // then the config holds secrets, so an unverified caller reads nothing.
       expect(response.status).toBe(401);
     });
   });

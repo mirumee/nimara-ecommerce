@@ -1,31 +1,31 @@
 import { hc } from "hono/client";
 
-import {
-  type SettingsFormData,
-  type SettingsFormInput,
-} from "@nimara/infrastructure/use-cases/apps/saleor/settings-form";
 import { apiErrorMessage } from "@nimara/lib/client/api/error-message";
 
-import { type AppSettings } from "@/domain/app-config";
+import {
+  type ConfigFormInput,
+  type ConfigFormSchema,
+} from "@/services/handler/api/rest/app/schema";
 import { type AppType } from "@/services/handler/entry-server";
+import { type ConfigFormData } from "@/use-cases/get-config-form-data-use-case";
 
 // Typed RPC client for the app's own API; shapes inferred from the routes.
 const client = hc<AppType>(window.env.BASE_PATH || "/");
 
-const settingsApi = client.api.app.settings;
+const configApi = client.api.app.config;
 
 /**
  * The tenant is not sent: the server derives it from the verified token, so a
  * value passed here could only ever disagree with it.
  */
-export const fetchSettings = async ({
+export const fetchConfigData = async ({
   accessToken,
   saleorApiUrl,
 }: {
   accessToken: string;
   saleorApiUrl: string;
 }) => {
-  const response = await settingsApi.fetch.$post({
+  const response = await configApi.fetch.$post({
     header: {
       authorization: `Bearer ${accessToken}`,
       "saleor-api-url": saleorApiUrl,
@@ -37,24 +37,24 @@ export const fetchSettings = async ({
   }
 
   // The untyped error responses break hono's inference — narrow by hand.
-  return response.json() as Promise<SettingsFormData<AppSettings>>;
+  return response.json() as Promise<ConfigFormData>;
 };
 
-export const saveSettings = async ({
+export const saveConfigData = async ({
   accessToken,
   data,
   saleorApiUrl,
 }: {
   accessToken: string;
-  data: SettingsFormInput<AppSettings>;
+  data: ConfigFormInput;
   saleorApiUrl: string;
 }): Promise<string | null> => {
-  const response = await settingsApi.save.$post({
+  const response = await configApi.save.$post({
     header: {
       authorization: `Bearer ${accessToken}`,
       "saleor-api-url": saleorApiUrl,
     },
-    json: data,
+    json: data as ConfigFormSchema,
   });
 
   if (!response.ok) {
