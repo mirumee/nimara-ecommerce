@@ -105,8 +105,10 @@ counter. Double opt-in means that a fake address receives no mail, so the cost o
 volume against your Klaviyo account. Configure protection at your firewall if you need it.
 
 **No address is stored or logged.** Nimara forwards the address to Klaviyo and keeps nothing. A
-failure event records the provider, the response status, and the error code. It never records the
-address, so you cannot tell from a log which submission failed.
+rejection records the provider, the response status, and the error code and field pointer of every
+error Klaviyo returned. A request that never reached Klaviyo records the provider, whether it timed
+out, and the transport error. Neither records the address or Klaviyo's `detail` text, which can
+echo the submitted value, so you cannot tell from a log which submission failed.
 
 ### Add another provider
 

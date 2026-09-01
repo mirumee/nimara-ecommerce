@@ -20,6 +20,19 @@ const subscribe = klaviyoNewsletterSubscribeInfra({
 
 const EMAIL = "shopper@example.com";
 
+const EMAIL_POINTER = "/data/attributes/profiles/data/0/attributes/email";
+
+const REJECTION_BODY = {
+  errors: [
+    {
+      code: "invalid",
+      title: "Invalid input.",
+      detail: `Invalid email: ${EMAIL}`,
+      source: { pointer: EMAIL_POINTER },
+    },
+  ],
+};
+
 const fetchMock = vi.fn();
 
 beforeEach(() => {
@@ -35,7 +48,11 @@ const loggedText = () => JSON.stringify(logger.error.mock.calls);
 
 describe("klaviyoNewsletterSubscribeInfra", () => {
   it("reports success on the 202 acknowledgement", async () => {
-    fetchMock.mockResolvedValue({ ok: true, status: 202 });
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 202,
+      text: () => Promise.resolve(""),
+    });
 
     const result = await subscribe({ email: EMAIL });
 
@@ -61,7 +78,11 @@ describe("klaviyoNewsletterSubscribeInfra", () => {
   });
 
   it("reports a subscribe error carrying the status when the provider rejects", async () => {
-    fetchMock.mockResolvedValue({ ok: false, status: 400 });
+    fetchMock.mockResolvedValue({
+      ok: false,
+      status: 400,
+      text: () => Promise.resolve(JSON.stringify(REJECTION_BODY)),
+    });
 
     const result = await subscribe({ email: EMAIL });
 
@@ -72,6 +93,75 @@ describe("klaviyoNewsletterSubscribeInfra", () => {
     });
     expect(logger.error).toHaveBeenCalled();
     expect(loggedText()).not.toContain(EMAIL);
+  });
+
+  it("logs the error code and field pointer the provider returned", async () => {
+    fetchMock.mockResolvedValue({
+      ok: false,
+      status: 400,
+      text: () => Promise.resolve(JSON.stringify(REJECTION_BODY)),
+    });
+
+    await subscribe({ email: EMAIL });
+
+    expect(logger.error).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        status: 400,
+        errors: [{ code: "invalid", pointer: EMAIL_POINTER }],
+      }),
+    );
+  });
+
+  it("keeps the provider detail text out of the log because it echoes the address", async () => {
+    fetchMock.mockResolvedValue({
+      ok: false,
+      status: 400,
+      text: () => Promise.resolve(JSON.stringify(REJECTION_BODY)),
+    });
+
+    await subscribe({ email: EMAIL });
+
+    expect(loggedText()).not.toContain(EMAIL);
+    expect(loggedText()).not.toContain("Invalid email");
+  });
+
+  it("reports a rejection whose body is not JSON", async () => {
+    fetchMock.mockResolvedValue({
+      ok: false,
+      status: 502,
+      text: () => Promise.resolve("<html>Bad gateway</html>"),
+    });
+
+    const result = await subscribe({ email: EMAIL });
+
+    expect(result.errors?.[0]).toMatchObject({
+      code: "NEWSLETTER_SUBSCRIBE_ERROR",
+      status: 502,
+    });
+    expect(logger.error).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ status: 502, errors: null }),
+    );
+  });
+
+  it("reports a rejection whose body cannot be read", async () => {
+    fetchMock.mockResolvedValue({
+      ok: false,
+      status: 500,
+      text: () => Promise.reject(new Error("stream closed")),
+    });
+
+    const result = await subscribe({ email: EMAIL });
+
+    expect(result.errors?.[0]).toMatchObject({
+      code: "NEWSLETTER_SUBSCRIBE_ERROR",
+      status: 500,
+    });
+    expect(logger.error).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ errors: null }),
+    );
   });
 
   it("reports a timeout error when the request is aborted", async () => {
@@ -95,6 +185,10 @@ describe("klaviyoNewsletterSubscribeInfra", () => {
     expect(result.errors?.[0]).toMatchObject({
       code: "NEWSLETTER_SUBSCRIBE_ERROR",
     });
+    expect(logger.error).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ timedOut: false, reason: "fetch failed" }),
+    );
     expect(loggedText()).not.toContain(EMAIL);
   });
 });

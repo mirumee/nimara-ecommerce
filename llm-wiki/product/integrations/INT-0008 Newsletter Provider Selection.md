@@ -62,8 +62,10 @@ consent record, the confirmation message, and the unsubscribe link.
 - An unselected provider answers a not-configured error code rather than a payload, so a submit
   path that skipped the selection check degrades to a refusal.
 - A malformed address is refused before any provider call.
-- A failure event records the provider, the response status, and the error code. It never records
-  the submitted address.
+- A rejection records the provider, the response status, and the error code and field pointer of
+  every error the provider returned. A request that never reached the provider records the
+  provider, whether it timed out, and the transport error. Neither records the submitted address
+  or the provider's free-text detail, which can echo it.
 - Submitting the same address again is safe. The subscribe endpoint removes `UNSUBSCRIBE`,
   `SPAM_REPORT`, and `USER_SUPPRESSED` suppressions from the submitted profile, so a resubscribe
   undoes an earlier unsubscribe on the merchant's list.

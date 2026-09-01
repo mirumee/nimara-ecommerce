@@ -11,6 +11,27 @@ const SUBSCRIBE_URL =
 
 const API_REVISION = "2026-07-15";
 
+const parseErrorCodes = (body: string | null) => {
+  if (!body) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(body) as {
+      errors?: { code?: string; source?: { pointer?: string } }[];
+    };
+
+    return (
+      parsed.errors?.map(({ code, source }) => ({
+        code: code ?? null,
+        pointer: source?.pointer ?? null,
+      })) ?? null
+    );
+  } catch {
+    return null;
+  }
+};
+
 export const klaviyoNewsletterSubscribeInfra =
   ({
     listId,
@@ -61,6 +82,7 @@ export const klaviyoNewsletterSubscribeInfra =
       logger.error("Newsletter subscribe did not reach Klaviyo.", {
         provider: PROVIDER,
         timedOut,
+        reason: error instanceof Error ? error.message : String(error),
       });
 
       return err([
@@ -76,10 +98,13 @@ export const klaviyoNewsletterSubscribeInfra =
       ]);
     }
 
+    const responseBody = await response.text().catch(() => null);
+
     if (!response.ok) {
       logger.error("Klaviyo rejected the newsletter subscribe request.", {
         provider: PROVIDER,
         status: response.status,
+        errors: parseErrorCodes(responseBody),
       });
 
       return err([
