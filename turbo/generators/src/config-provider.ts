@@ -3,6 +3,7 @@ import { join } from "node:path";
 
 import { type BuildTarget } from "./names.ts";
 
+// Both lines, so the replacement keeps the imports in alphabetical order.
 const VERCEL_IMPORTS =
   'import { fileConfigItem } from "@nimara/infrastructure/config/file-config";\n' +
   'import { vercelEdgeConfigItem } from "@nimara/infrastructure/config/vercel-edge-config";';
@@ -11,27 +12,42 @@ const NODE_IMPORTS =
   'import { awsSecretsManagerConfigItem } from "@nimara/infrastructure/config/aws-secrets-manager-config";\n' +
   'import { fileConfigItem } from "@nimara/infrastructure/config/file-config";';
 
-const rewrite = async ({
-  from,
-  path,
-  to,
-}: {
-  from: string;
-  path: string;
-  to: string;
-}) => {
-  const contents = await readFile(path, "utf8");
+const VERCEL_STORE = `: vercelEdgeConfigItem({
+              configKey: ctx.config.APP_CONFIG_STORE_PATH,
+              schema: saleorMultiTenantAppConfig,
+              logger: ctx.logger,
+            }),`;
 
-  if (!contents.includes(from)) {
-    throw new Error(`Expected ${JSON.stringify(from)} in ${path}.`);
+const NODE_STORE = `: awsSecretsManagerConfigItem({
+              configKey: ctx.config.APP_CONFIG_STORE_PATH,
+              encryptionKey: ctx.config.APP_CONFIG_ENCRYPTION_KEY,
+              schema: saleorMultiTenantAppConfig,
+              logger: ctx.logger,
+            }),`;
+
+const rewrite = async ({
+  path,
+  replacements,
+}: {
+  path: string;
+  replacements: [from: string, to: string][];
+}) => {
+  let contents = await readFile(path, "utf8");
+
+  for (const [from, to] of replacements) {
+    if (!contents.includes(from)) {
+      throw new Error(`Expected ${JSON.stringify(from)} in ${path}.`);
+    }
+
+    contents = contents.replace(from, to);
   }
 
-  await writeFile(path, contents.replace(from, to));
+  await writeFile(path, contents);
 };
 
 /**
  * Vercel Edge Config only exists on Vercel. A node build (Lambda) has no
- * store of its own, so its non-`file` branch goes to Secrets Manager —
+ * store of its own, so its non-local branch goes to Secrets Manager —
  * rewritten rather than a third ternary branch, so the container stays a
  * plain two-way choice either way.
  */
@@ -46,29 +62,11 @@ export const applyConfigProvider = async ({
     return;
   }
 
-  const containerPath = join(appDir, "src", "container", "index.ts");
-  const containerContents = await readFile(containerPath, "utf8");
-
-  if (!containerContents.includes(VERCEL_IMPORTS)) {
-    throw new Error(`Expected Vercel Edge Config imports in ${containerPath}.`);
-  }
-
-  await writeFile(
-    containerPath,
-    containerContents
-      .replace(VERCEL_IMPORTS, NODE_IMPORTS)
-      .replaceAll("vercelEdgeConfigItem", "awsSecretsManagerConfigItem"),
-  );
-
   await rewrite({
-    from: '.enum(["edge", "file"])',
-    path: join(appDir, "src", "domain", "app-config.ts"),
-    to: '.enum(["aws-secrets-manager", "file"])',
-  });
-
-  await rewrite({
-    from: "`file` or `edge`",
-    path: join(appDir, ".env.example"),
-    to: "`file` or `aws-secrets-manager`",
+    path: join(appDir, "src", "container", "index.ts"),
+    replacements: [
+      [VERCEL_IMPORTS, NODE_IMPORTS],
+      [VERCEL_STORE, NODE_STORE],
+    ],
   });
 };

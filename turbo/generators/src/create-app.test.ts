@@ -33,30 +33,28 @@ const CONTAINER = `import { fileConfigItem } from "@nimara/infrastructure/config
 import { vercelEdgeConfigItem } from "@nimara/infrastructure/config/vercel-edge-config";
 import { installSaleorAppUseCase } from "@nimara/infrastructure/use-cases/apps/saleor/install-app-use-case";
 
-export const container = createContainer()
-  .add((ctx) => ({
-    configStore: () =>
-      ctx.config.CONFIG_PROVIDER === "file"
-        ? fileConfigItem({ schema: appSettings, logger: ctx.logger })
-        : vercelEdgeConfigItem({
-            configKey: ctx.config.CONFIG_KEY,
-            schema: appSettings,
-            logger: ctx.logger,
-          }),
-  }))
-  .add((ctx) => ({
-    installApp: () =>
-      installSaleorAppUseCase({
-        configRepository: ctx.appConfigService,
-      }),
-  }));
-
-export type AppContainer = typeof container;
-`;
-
-const APP_CONFIG = `export const appConfigSchema = z.object({
-  CONFIG_PROVIDER: z.enum(["edge", "file"]).default("file"),
-});
+export const createAppContainer = <Config extends AppConfig>(config: Config) =>
+  createContainer()
+    .add((ctx) => ({
+      configStore: () =>
+        ctx.config.ENVIRONMENT === "local"
+          ? fileConfigItem({
+              configKey: ctx.config.APP_CONFIG_STORE_PATH,
+              schema: saleorMultiTenantAppConfig,
+              logger: ctx.logger,
+            })
+          : vercelEdgeConfigItem({
+              configKey: ctx.config.APP_CONFIG_STORE_PATH,
+              schema: saleorMultiTenantAppConfig,
+              logger: ctx.logger,
+            }),
+    }))
+    .add((ctx) => ({
+      installApp: () =>
+        installSaleorAppUseCase({
+          configRepository: ctx.appConfigService,
+        }),
+    }));
 `;
 
 const template = () => join(root, "templates", "app");
@@ -107,8 +105,11 @@ describe("create-app", () => {
         "ALLOWED_DOMAINS=\n" +
         "PORT=8000\n" +
         "\n" +
-        "# Where every installed Saleor's config is stored: `file` or `edge`.\n" +
-        "CONFIG_PROVIDER=file\n" +
+        "# Key the config is stored under. Optional; defaults in code.\n" +
+        "APP_CONFIG_STORE_PATH=app-template-config\n" +
+        "\n" +
+        "# Optional: KMS key the store encrypts with. Empty uses the AWS default key.\n" +
+        "APP_CONFIG_ENCRYPTION_KEY=\n" +
         "\n" +
         "# LocalStack only.\n" +
         "AWS_ENDPOINT_URL=http://localhost:4566\n" +
@@ -153,7 +154,10 @@ describe("create-app", () => {
       "export const appRoutes = 1;",
     );
     await write(join(template(), "src", "container", "index.ts"), CONTAINER);
-    await write(join(template(), "src", "domain", "app-config.ts"), APP_CONFIG);
+    await write(
+      join(template(), "src", "domain", "app-config.ts"),
+      'APP_CONFIG_STORE_PATH: z.string().default("app-template-config"),\n',
+    );
     await write(
       join(template(), "src", "services", "consumer", "entry-queue.ts"),
       "export const handler = 1;",
@@ -311,6 +315,22 @@ describe("create-app", () => {
     ).not.toContain("AWS_ENDPOINT_URL");
   });
 
+  it("defaults the config store path to the app's own name", async () => {
+    // when
+    const destination = await generate();
+
+    // then two apps must not share one store.
+    expect(
+      await readFile(
+        join(destination, "src", "domain", "app-config.ts"),
+        "utf8",
+      ),
+    ).toContain('.default("feed-sync-config")');
+    expect(await readFile(join(destination, ".env.example"), "utf8")).toContain(
+      "APP_CONFIG_STORE_PATH=feed-sync-config",
+    );
+  });
+
   it("moves the config store to Secrets Manager for a node target", async () => {
     // when
     const destination = await generate({ target: "node" });
@@ -322,14 +342,8 @@ describe("create-app", () => {
     // then Vercel Edge Config does not exist off Vercel.
     expect(container).toContain("awsSecretsManagerConfigItem");
     expect(container).not.toContain("vercelEdgeConfigItem");
-    expect(
-      await readFile(
-        join(destination, "src", "domain", "app-config.ts"),
-        "utf8",
-      ),
-    ).toContain('"aws-secrets-manager"');
-    expect(await readFile(join(destination, ".env.example"), "utf8")).toContain(
-      "`file` or `aws-secrets-manager`",
+    expect(container).toContain(
+      "encryptionKey: ctx.config.APP_CONFIG_ENCRYPTION_KEY",
     );
   });
 

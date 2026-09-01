@@ -203,7 +203,12 @@ export const createApp = async ({
     port,
   });
 
-  for (const file of ["README.md", ".env.example"]) {
+  // `app-config.ts` for the store path, which defaults to the app's own name.
+  for (const file of [
+    "README.md",
+    ".env.example",
+    "src/domain/app-config.ts",
+  ]) {
     await rewriteText({
       file: join(destination, file),
       name: appName,

@@ -19,10 +19,12 @@ import { type Logger } from "#root/logging/types";
  */
 export const awsParameterStoreConfigItem = <TValue>({
   configKey,
+  encryptionKey,
   schema,
   logger,
 }: {
   configKey: string;
+  encryptionKey?: string;
   logger?: Logger;
   schema: z.ZodType<TValue>;
 }): ConfigItemRepository<TValue> => {
@@ -72,6 +74,7 @@ export const awsParameterStoreConfigItem = <TValue>({
             Overwrite: true,
             Type: "SecureString",
             Value: JSON.stringify(value),
+            ...(encryptionKey ? { KeyId: encryptionKey } : {}),
           }),
         );
 

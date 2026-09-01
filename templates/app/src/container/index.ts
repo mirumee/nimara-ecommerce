@@ -25,13 +25,14 @@ export const createAppContainer = <Config extends AppConfig>(config: Config) =>
     })
     .add((ctx) => ({
       configStore: () =>
-        ctx.config.CONFIG_PROVIDER === "file"
+        ctx.config.ENVIRONMENT === "local"
           ? fileConfigItem({
+              configKey: ctx.config.APP_CONFIG_STORE_PATH,
               schema: saleorMultiTenantAppConfig,
               logger: ctx.logger,
             })
           : vercelEdgeConfigItem({
-              configKey: `${ctx.config.ENVIRONMENT}-${ctx.config.CONFIG_KEY}`,
+              configKey: ctx.config.APP_CONFIG_STORE_PATH,
               schema: saleorMultiTenantAppConfig,
               logger: ctx.logger,
             }),

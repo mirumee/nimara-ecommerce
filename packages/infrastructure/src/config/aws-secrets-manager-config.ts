@@ -20,10 +20,12 @@ import { type Logger } from "#root/logging/types";
  */
 export const awsSecretsManagerConfigItem = <TValue>({
   configKey,
+  encryptionKey,
   schema,
   logger,
 }: {
   configKey: string;
+  encryptionKey?: string;
   logger?: Logger;
   schema: z.ZodType<TValue>;
 }): ConfigItemRepository<TValue> => {
@@ -83,6 +85,7 @@ export const awsSecretsManagerConfigItem = <TValue>({
             new CreateSecretCommand({
               Name: configKey,
               SecretString: secretString,
+              ...(encryptionKey ? { KmsKeyId: encryptionKey } : {}),
             }),
           );
         }

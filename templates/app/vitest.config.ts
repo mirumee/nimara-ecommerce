@@ -16,9 +16,9 @@ export default defineConfig({
     environment: "node",
     env: {
       // Enough for the app to boot in a test; a real value belongs in `.env`.
-      ENVIRONMENT: "test",
+      // `local` is what puts the config store on disk instead of in a cloud.
+      ENVIRONMENT: "local",
       ALLOWED_DOMAINS: "saleor.example.com",
-      CONFIG_PROVIDER: "file",
       ...process.env,
       ...config({ path: ".env.test", quiet: true }).parsed,
       NODE_ENV: "test",

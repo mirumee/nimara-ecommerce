@@ -34,12 +34,14 @@ export type SaleorMultiTenantAppConfig = z.infer<
 
 // Every service declares these, because the container they all build reads them.
 export const appConfigSchema = z.object({
-  CONFIG_PROVIDER: z
-    .enum(["edge", "file"])
-    .default("file")
-    .describe("Where the config of every installed Saleor is stored."),
-  CONFIG_KEY: blankAsUnset(
-    z.string().default("nimara-config").describe("Config provider key."),
+  APP_CONFIG_STORE_PATH: blankAsUnset(
+    z
+      .string()
+      .default("app-template-config")
+      .describe("Where the config of every installed Saleor is stored."),
+  ),
+  APP_CONFIG_ENCRYPTION_KEY: blankAsUnset(
+    z.string().optional().describe("KMS key the store encrypts with."),
   ),
 });
 
