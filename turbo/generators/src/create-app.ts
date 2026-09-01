@@ -44,7 +44,7 @@ export type CreateAppInput = {
 };
 
 // An app deployed elsewhere should not carry another platform's config.
-const TARGET_ONLY = new Set(["vercel.json"]);
+const TARGET_ONLY = new Set(["vercel.json", "index.js"]);
 
 // Left behind, not cut down: another template service is a different program.
 const unusedServicePaths = (kind: AppKind) =>
