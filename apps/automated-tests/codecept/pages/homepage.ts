@@ -51,6 +51,16 @@ export default {
     }
   },
 
+  async newsletterSectionIsPresent() {
+    I.scrollPageToBottom();
+
+    const headings = await I.grabNumberOfVisibleElements(
+      this.newsletterHeading,
+    );
+
+    return headings > 0;
+  },
+
   seeNewsletterSection(timeout: number) {
     I.scrollPageToBottom();
     I.waitForElement(this.newsletterHeading, timeout);
