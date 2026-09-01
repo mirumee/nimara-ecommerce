@@ -60,6 +60,9 @@ beforeEach(() => {
   mocks.putReject = null;
   mocks.response = undefined;
   logger.error.mockClear();
+  vi.stubEnv("AWS_ACCESS_KEY_ID", "dummy");
+  vi.stubEnv("AWS_REGION", "eu-central-1");
+  vi.stubEnv("AWS_SECRET_ACCESS_KEY", "dummy");
 });
 
 describe("awsSecretsManagerConfigItem", () => {

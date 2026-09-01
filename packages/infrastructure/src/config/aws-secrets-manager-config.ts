@@ -9,6 +9,7 @@ import { type z } from "zod";
 
 import { err, ok } from "@nimara/domain/objects/Result";
 
+import { requireAwsEnvironment } from "#root/aws/env";
 import { type ConfigItemRepository } from "#root/config/types";
 import { type Logger } from "#root/logging/types";
 
@@ -26,6 +27,8 @@ export const awsSecretsManagerConfigItem = <TValue>({
   logger?: Logger;
   schema: z.ZodType<TValue>;
 }): ConfigItemRepository<TValue> => {
+  requireAwsEnvironment("AWS Secrets Manager");
+
   const client = new SecretsManagerClient();
 
   return {
@@ -60,8 +63,6 @@ export const awsSecretsManagerConfigItem = <TValue>({
       }
     },
 
-    // A secret must exist before its value can be put; the store is created
-    // on the first write rather than upfront, same as the LocalStack bootstrap.
     upsert: async ({ value }) => {
       const secretString = JSON.stringify(value);
 

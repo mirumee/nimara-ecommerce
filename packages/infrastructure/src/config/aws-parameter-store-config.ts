@@ -8,6 +8,7 @@ import { type z } from "zod";
 
 import { err, ok } from "@nimara/domain/objects/Result";
 
+import { requireAwsEnvironment } from "#root/aws/env";
 import { type ConfigItemRepository } from "#root/config/types";
 import { type Logger } from "#root/logging/types";
 
@@ -25,6 +26,8 @@ export const awsParameterStoreConfigItem = <TValue>({
   logger?: Logger;
   schema: z.ZodType<TValue>;
 }): ConfigItemRepository<TValue> => {
+  requireAwsEnvironment("AWS Parameter Store");
+
   const client = new SSMClient();
 
   return {
