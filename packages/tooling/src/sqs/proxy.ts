@@ -128,9 +128,13 @@ const ensureQueue = async ({
     },
   );
 
-  if (initialized) {
-    logger.info(`SQS queue ready: ${name}`, { queueUrl });
+  if (!initialized) {
+    throw new Error(
+      `LocalStack is unavailable; cannot ensure SQS queue "${name}".`,
+    );
   }
+
+  logger.info(`SQS queue ready: ${name}`, { queueUrl });
 };
 
 /**
