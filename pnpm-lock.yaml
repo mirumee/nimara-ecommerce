@@ -904,9 +904,6 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^6.21.0
         version: 6.21.0(eslint@8.57.1)(typescript@5.9.3)
-      dotenv:
-        specifier: 17.4.1
-        version: 17.4.1
       eslint:
         specifier: ^8.57.0
         version: 8.57.1
@@ -950,9 +947,6 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^6.21.0
         version: 6.21.0(eslint@8.57.1)(typescript@5.9.3)
-      dotenv:
-        specifier: 17.4.1
-        version: 17.4.1
       eslint:
         specifier: ^8.57.0
         version: 8.57.1
