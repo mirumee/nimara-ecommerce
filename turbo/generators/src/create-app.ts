@@ -1,6 +1,7 @@
 import { cp, readFile, writeFile } from "node:fs/promises";
 import { basename, join, relative, sep } from "node:path";
 
+import { applyConfigProvider } from "./config-provider.ts";
 import {
   isDashboardPath,
   removeAppDashboard,
@@ -228,6 +229,8 @@ export const createApp = async ({
   await mergeServiceEnv({ appDir: destination, serviceDir });
 
   await applyTenancy({ appDir: destination, tenancy });
+
+  await applyConfigProvider({ appDir: destination, target });
 
   return destination;
 };

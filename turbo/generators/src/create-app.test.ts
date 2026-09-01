@@ -29,13 +29,20 @@ export const app = new Hono()
   .route("/api/app", appRoutes);
 `;
 
-const CONTAINER = `import { installSaleorAppUseCase } from "@nimara/infrastructure/use-cases/apps/saleor/install-app-use-case";
+const CONTAINER = `import { fileConfigItem } from "@nimara/infrastructure/config/file-config";
+import { vercelEdgeConfigItem } from "@nimara/infrastructure/config/vercel-edge-config";
+import { installSaleorAppUseCase } from "@nimara/infrastructure/use-cases/apps/saleor/install-app-use-case";
 
 export const container = createContainer()
   .add((ctx) => ({
-    configStore: () => ({
-      store: 1,
-    }),
+    configStore: () =>
+      ctx.config.CONFIG_PROVIDER === "file"
+        ? fileConfigItem({ schema: appSettings, logger: ctx.logger })
+        : vercelEdgeConfigItem({
+            configKey: ctx.config.CONFIG_KEY,
+            schema: appSettings,
+            logger: ctx.logger,
+          }),
   }))
   .add((ctx) => ({
     installApp: () =>
@@ -45,6 +52,11 @@ export const container = createContainer()
   }));
 
 export type AppContainer = typeof container;
+`;
+
+const APP_CONFIG = `export const appConfigSchema = z.object({
+  CONFIG_PROVIDER: z.enum(["edge", "file"]).default("file"),
+});
 `;
 
 const template = () => join(root, "templates", "app");
@@ -95,6 +107,9 @@ describe("create-app", () => {
         "ALLOWED_DOMAINS=\n" +
         "PORT=8000\n" +
         "\n" +
+        "# Where every installed Saleor's config is stored: `file` or `edge`.\n" +
+        "CONFIG_PROVIDER=file\n" +
+        "\n" +
         "# LocalStack only.\n" +
         "AWS_ENDPOINT_URL=http://localhost:4566\n" +
         "AWS_ACCESS_KEY_ID=dummy\n" +
@@ -138,6 +153,7 @@ describe("create-app", () => {
       "export const appRoutes = 1;",
     );
     await write(join(template(), "src", "container", "index.ts"), CONTAINER);
+    await write(join(template(), "src", "domain", "app-config.ts"), APP_CONFIG);
     await write(
       join(template(), "src", "services", "consumer", "entry-queue.ts"),
       "export const handler = 1;",
@@ -293,6 +309,41 @@ describe("create-app", () => {
     expect(
       await readFile(join(destination, ".env.example"), "utf8"),
     ).not.toContain("AWS_ENDPOINT_URL");
+  });
+
+  it("moves the config store to Secrets Manager for a node target", async () => {
+    // when
+    const destination = await generate({ target: "node" });
+    const container = await readFile(
+      join(destination, "src", "container", "index.ts"),
+      "utf8",
+    );
+
+    // then Vercel Edge Config does not exist off Vercel.
+    expect(container).toContain("awsSecretsManagerConfigItem");
+    expect(container).not.toContain("vercelEdgeConfigItem");
+    expect(
+      await readFile(
+        join(destination, "src", "domain", "app-config.ts"),
+        "utf8",
+      ),
+    ).toContain('"aws-secrets-manager"');
+    expect(await readFile(join(destination, ".env.example"), "utf8")).toContain(
+      "`file` or `aws-secrets-manager`",
+    );
+  });
+
+  it("keeps Vercel Edge Config for a vercel target", async () => {
+    // when
+    const destination = await generate({ target: "vercel" });
+    const container = await readFile(
+      join(destination, "src", "container", "index.ts"),
+      "utf8",
+    );
+
+    // then
+    expect(container).toContain("vercelEdgeConfigItem");
+    expect(container).not.toContain("awsSecretsManagerConfigItem");
   });
 
   it("calls the single-tenant helper when the app serves one Saleor", async () => {
