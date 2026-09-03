@@ -1,25 +1,23 @@
-name: Build Saleor apps
+name: Deploy a Saleor app
 
 on:
-  push:
-    branches: [main]
-    tags: ["*"]
+  workflow_dispatch:
+    inputs:
+      app:
+        description: "Directory under apps/ to build. Empty builds every node-target app."
+        required: false
+        type: string
 
 jobs:
-  # Only apps the template generated for `BUILD_TARGET=node`: the command
-  # match keeps the template itself and the Next.js apps out, and the target
-  # check keeps out an app like `stripe` that deploys to Vercel already. Only
-  # those turbo reports as affected by the merge (their own files or a
-  # package they depend on) — for a manual, unaffected build see
-  # `apps-deploy.yaml`.
+  # Same candidates as `apps-build.yaml`'s automatic run, minus `--affected`:
+  # a manual run has no merge to diff against, and should build what is
+  # asked for regardless of what changed.
   changed:
     runs-on: ubuntu-latest
     outputs:
       apps: ${{ steps.detect.outputs.apps }}
     steps:
       - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
 
       - name: Install pnpm
         uses: pnpm/action-setup@v6
@@ -36,13 +34,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Detect affected apps
+      - name: Detect apps
         id: detect
         env:
-          # A tag push sends a zero sha here, which turbo reports as an
-          # unreadable range and treats as everything changed.
-          TURBO_SCM_BASE: ${{ github.event.before }}
-          TURBO_SCM_HEAD: ${{ github.sha }}
+          APP: ${{ inputs.app }}
         run: |
           candidates='[.tasks[]
                        | select(.task == "build")
@@ -51,7 +46,20 @@ jobs:
                        | select(.directory | startswith("apps/"))
                        | { name: .package, dir: (.directory | split("/") | last) }]'
 
-          raw=$(npx turbo run build --affected --dry=json | jq -c "$candidates")
+          raw=$(npx turbo run build --dry=json | jq -c "$candidates")
+
+          if [ -n "$APP" ]; then
+            named=$(echo "$raw" | jq -c --arg app "$APP" '[.[] | select(.dir == $app)]')
+
+            # Checked here rather than left to `--filter`, which rejects an
+            # unknown package only after `quality` has run.
+            if [ "$named" = "[]" ]; then
+              echo "::error::No app named '$APP'. Candidates: $(echo "$raw" | jq -r 'map(.dir) | join(", ")')."
+              exit 1
+            fi
+
+            raw=$named
+          fi
 
           apps='[]'
 
@@ -64,12 +72,10 @@ jobs:
 
           echo "apps=$apps" >> "$GITHUB_OUTPUT"
 
-          # Also to the run summary: an empty list skips `quality` and `build`,
-          # and a skipped run reads like a broken one without a reason next to it.
           {
             echo "### Apps to build"
             echo "$apps" | jq -r 'if length == 0
-                                  then "Nothing affected by this merge."
+                                  then "Nothing matched."
                                   else .[] | "- `\(.name)`" end'
           } | tee -a "$GITHUB_STEP_SUMMARY"
 
@@ -123,8 +129,6 @@ jobs:
       AWS_DEFAULT_REGION: eu-central-1
       BUILD_TARGET: node
     steps:
-      # Shallow: nothing here reads history. `changed` is the job that needs it,
-      # to diff against the commit the merge started from.
       - uses: actions/checkout@v7
 
       # Seven characters explicitly: git widens the default as a repo grows,
@@ -172,8 +176,6 @@ jobs:
           AWS_BUCKET: ${{ vars.AWS_BUCKET }}
         run: aws s3 cp artifact.zip "$AWS_BUCKET/$APP_DIR/lambda-$GIT_SHA.zip" --quiet
 
-      # To the run summary as well as the log: the matrix gives each app its
-      # own, and the tag is what a deploy would pin.
       - name: ZIP tag
         env:
           APP_DIR: ${{ matrix.app.dir }}
