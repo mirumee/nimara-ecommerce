@@ -14,16 +14,16 @@ Made with the latest version of Next.js, TypeScript and React Server Components,
 
 To get started with Nimara, explore the **Quickstart** section which contains step-by-step guides for:
 
-- **[Running locally](/Quickstart/running-locally)** - Set up Nimara on your local development environment
-- **[Storefront](/Quickstart/storefront)** - Deploy your storefront to production
-- **[Environment variables](/Quickstart/environment-variables)** - Configure your application settings
-- **[Saleor CMS](/Quickstart/saleor-cms)** - Manage your content with Saleor's CMS features
-- **[Add new channel](/Quickstart/add-new-channel)** - Add locales, languages, and markets
-- **[UCP integration](/Integrations/ucp-integration)** - Universal Commerce Protocol for AI agents and platforms
-- **[Stripe integration](/Integrations/stripe-integration)** - Set up payment processing
-- **[Marketplace](/Advanced/marketplace)** - Set up the vendor marketplace app
-- **[Terraform](/Advanced/using-terraform)** - Infrastructure as code deployment
-- **[i18n](/Advanced/i18n)** - Internationalization architecture and message bundles
+- **[Running locally](/quickstart/running-locally)** - Set up Nimara on your local development environment
+- **[Storefront](/quickstart/storefront)** - Deploy your storefront to production
+- **[Environment variables](/quickstart/environment-variables)** - Configure your application settings
+- **[Saleor CMS](/quickstart/saleor-cms)** - Manage your content with Saleor's CMS features
+- **[Add new channel](/quickstart/add-new-channel)** - Add locales, languages, and markets
+- **[UCP integration](/integrations/ucp-integration)** - Universal Commerce Protocol for AI agents and platforms
+- **[Stripe integration](/integrations/stripe-integration)** - Set up payment processing
+- **[Marketplace](/advanced/marketplace)** - Set up the vendor marketplace app
+- **[Terraform](/advanced/using-terraform)** - Infrastructure as code deployment
+- **[i18n](/advanced/i18n)** - Internationalization architecture and message bundles
 - **[Developer Onboarding](/onboarding)** - Architecture tour, repo layout, dev workflow
 - **[Release Workflow](/release-workflow)** - How releases are cut and versioned
 
