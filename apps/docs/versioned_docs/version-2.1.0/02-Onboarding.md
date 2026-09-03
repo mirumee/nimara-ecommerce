@@ -8,7 +8,7 @@ title: Developer Onboarding
 Welcome. This guide explains **why Nimara is built the way it is**, how the code is organized, and how you'll work in it day to day. Read this when you want to contribute, not just run a store.
 
 :::tip
-Just want to run a store? Start with [Running Locally](/Quickstart/running-locally) and [Storefront](/Quickstart/storefront). Come back when you want to write code.
+Just want to run a store? Start with [Running Locally](/quickstart/running-locally) and [Storefront](/quickstart/storefront). Come back when you want to write code.
 :::
 
 ## What Nimara is for
@@ -71,7 +71,7 @@ Each extra variable turns on another capability (payments, marketplace, server-o
 pnpm dev:storefront
 ```
 
-Opens on [http://localhost:3000](http://localhost:3000). For webhooks and deployment, see the [Storefront guide](/Quickstart/storefront).
+Opens on [http://localhost:3000](http://localhost:3000). For webhooks and deployment, see the [Storefront guide](/quickstart/storefront).
 
 ## How the codebase is organized
 
@@ -114,7 +114,7 @@ The storefront boots **empty by default** and lights up as you add environment v
 | `STRIPE_SECRET_KEY` + `NEXT_PUBLIC_STRIPE_PUBLIC_KEY` + `NEXT_PUBLIC_PAYMENT_APP_ID` | Payments.                                                                             |
 | `SALEOR_APP_TOKEN`                                                                   | Server-side access to resources hidden from anonymous users (e.g. unpublished pages). |
 
-Run `pnpm preflight` to see what's currently on. The full list of variables is in [Environment Variables](/Quickstart/environment-variables).
+Run `pnpm preflight` to see what's currently on. The full list of variables is in [Environment Variables](/quickstart/environment-variables).
 
 ## Day-to-day workflow
 
@@ -183,9 +183,9 @@ Push, open a PR against `develop`, give it a Conventional Commit title and a cle
 
 ## Where to go next
 
-- **[Running Locally](/Quickstart/running-locally)** — backend setup options.
-- **[Storefront](/Quickstart/storefront)** — full setup, webhooks, deployment.
-- **[Environment Variables](/Quickstart/environment-variables)** — every configurable variable.
-- **[Saleor CMS](/Quickstart/saleor-cms)** & **[Add a new channel](/Quickstart/add-new-channel)** — content and markets.
-- **[Stripe](/Integrations/stripe-integration)**, **[UCP](/Integrations/ucp-integration)**, **[Marketplace](/Advanced/marketplace)** — integrations and advanced apps.
+- **[Running Locally](/quickstart/running-locally)** — backend setup options.
+- **[Storefront](/quickstart/storefront)** — full setup, webhooks, deployment.
+- **[Environment Variables](/quickstart/environment-variables)** — every configurable variable.
+- **[Saleor CMS](/quickstart/saleor-cms)** & **[Add a new channel](/quickstart/add-new-channel)** — content and markets.
+- **[Stripe](/integrations/stripe-integration)**, **[UCP](/integrations/ucp-integration)**, **[Marketplace](/advanced/marketplace)** — integrations and advanced apps.
 - `AGENTS.md` and `CONTRIBUTING.md` in the repo root — deeper conventions and the contribution process.
