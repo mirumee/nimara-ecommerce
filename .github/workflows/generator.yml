@@ -1,9 +1,7 @@
 name: App generator
 
-# The template is a workspace package, so the normal CI already lints,
-# type-checks, and tests it on every PR. What that cannot catch is the
-# generator: whether it still finds the lines it cuts, and whether what comes
-# out of it builds. Only these paths can break that.
+# Normal CI already lints, type-checks, and tests the template. Only the
+# generator itself can break silently, so only these paths trigger this.
 on:
   pull_request:
     paths:
@@ -35,19 +33,13 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       # Arguments answer the prompts in order: name, description, tenancy,
-      # target, kind, service, port. The dashboard app targets `node` so it can
-      # take a queue service later; the headless one targets `vercel`, the
-      # platform most apps actually deploy to; the queue app is single-tenant
-      # and must target `node` — nothing on Vercel polls a queue.
+      # target, kind, service, port.
       - name: Generate an app of each kind
         run: |
           pnpm gen app --args "test-ci-dashboard" "Generated in CI, with a dashboard" "multi" "node" "dashboard" "automation" "8100"
           pnpm gen app --args "test-ci-headless" "Generated in CI, without a dashboard" "multi" "vercel" "http" "handler" "8101"
           pnpm gen app --args "test-ci-queue" "Generated in CI, driven by a queue" "single" "node" "queue" "sender" "8102"
 
-      # Every kind added to an app generated as a different one. The dashboard
-      # service is the case that has to bring back what the app around it was
-      # generated without.
       - name: Add a service of another kind to each
         run: |
           pnpm gen service --args "test-ci-dashboard" "queue" "sender"
@@ -72,8 +64,6 @@ jobs:
             fi
           done
 
-      # The lockfile is expected: the generator installs what it created, so
-      # the new workspace packages land in it. Nothing else may move.
       - name: Check the generator wrote nothing outside the new apps
         run: |
           stray=$(git status --porcelain \
@@ -88,8 +78,6 @@ jobs:
             exit 1
           fi
 
-      # A single-tenant app names the helper it runs and describes one domain
-      # in its example env. Both are rewrites, so both can silently not happen.
       - name: Check the single-tenant app was rewritten
         run: |
           config=apps/test-ci-queue/src/services/sender/config.ts
@@ -111,8 +99,6 @@ jobs:
             fi
           done
 
-          # A service added later inherits the app's tenancy rather than
-          # being asked again: they share a `.env`.
           if ! grep -q 'prepareSingleTenantServiceConfig' apps/test-ci-queue/src/services/api/config.ts; then
             echo "::error::A service added to a single-tenant app kept the shared helper."
             exit 1
@@ -124,8 +110,6 @@ jobs:
       - name: Link the generated apps
         run: pnpm install --no-frozen-lockfile
 
-      # A service documents its own variables, so the composed `.env` is the
-      # only place they come together.
       - name: Check a service's variables reach the composed env
         working-directory: apps/test-ci-queue
         run: |
@@ -155,9 +139,6 @@ jobs:
       - name: Build the vercel-target app
         run: BUILD_TARGET=vercel npx turbo run build --filter=test-ci-headless
 
-      # A green build is not proof it built the right thing: a client bundle
-      # belongs only to a dashboard service, and the entry file name is what
-      # the deploy's handler path is derived from.
       - name: Check each kind built what it should
         run: |
           expected=(

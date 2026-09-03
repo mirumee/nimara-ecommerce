@@ -64,8 +64,6 @@ jobs:
 
           echo "apps=$apps" >> "$GITHUB_OUTPUT"
 
-          # Also to the run summary: an empty list skips `quality` and `build`,
-          # and a skipped run reads like a broken one without a reason next to it.
           {
             echo "### Apps to build"
             echo "$apps" | jq -r 'if length == 0
@@ -123,8 +121,6 @@ jobs:
       AWS_DEFAULT_REGION: eu-central-1
       BUILD_TARGET: node
     steps:
-      # Shallow: nothing here reads history. `changed` is the job that needs it,
-      # to diff against the commit the merge started from.
       - uses: actions/checkout@v7
 
       # Seven characters explicitly: git widens the default as a repo grows,
@@ -172,8 +168,6 @@ jobs:
           AWS_BUCKET: ${{ vars.AWS_BUCKET }}
         run: aws s3 cp artifact.zip "$AWS_BUCKET/$APP_DIR/lambda-$GIT_SHA.zip" --quiet
 
-      # To the run summary as well as the log: the matrix gives each app its
-      # own, and the tag is what a deploy would pin.
       - name: ZIP tag
         env:
           APP_DIR: ${{ matrix.app.dir }}

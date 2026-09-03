@@ -71,7 +71,6 @@ jobs:
           done
 
           echo "apps=$apps" >> "$GITHUB_OUTPUT"
-
           {
             echo "### Apps to build"
             echo "$apps" | jq -r 'if length == 0
