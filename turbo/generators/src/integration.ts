@@ -89,3 +89,66 @@ export const removeServiceIntegration = (
       ],
     ],
   });
+
+/**
+ * Only `handler/entry-server.ts` ever mounts the Saleor manifest. Run this
+ * after `removeServiceDashboard`, whose cut this one's replacements assume.
+ */
+export const removeServiceManifest = (serviceDir: string) =>
+  rewrite({
+    path: join(serviceDir, "entry-server.ts"),
+    replacements: [
+      [
+        [
+          'import { container } from "@/services/handler/container";',
+          'import logo from "@/services/handler/logo.png?inline";',
+          "",
+          'import { saleorRoutes } from "./api/rest/saleor";',
+          "",
+          "const { config, logger } = container.items;",
+        ].join("\n"),
+        [
+          'import { container } from "@/services/handler/container";',
+          "",
+          "const { config, logger } = container.items;",
+        ].join("\n"),
+      ],
+      [
+        [
+          "const { config, logger } = container.items;",
+          'const LOGO = Buffer.from(logo.split(",")[1] ?? "", "base64");',
+          "",
+          "initSentry({",
+        ].join("\n"),
+        [
+          "const { config, logger } = container.items;",
+          "",
+          "initSentry({",
+        ].join("\n"),
+      ],
+      [
+        [
+          '  .get("/logo.png", (context) =>',
+          '    context.body(LOGO, 200, { "content-type": "image/png" }),',
+          "  )",
+          "  /**",
+          "   * Saleor opens `appUrl`, which is the app's root. A dashboard, where the app",
+          "   * has one, is mounted above and answers first.",
+          "   */",
+          '  .get("/", (context) =>',
+        ].join("\n"),
+        '  .get("/", (context) =>',
+      ],
+      [
+        [
+          "  )",
+          "  /**",
+          "   * Nested routes must be defined at the end for proper type inference for",
+          "   * hono/client.",
+          "   */",
+          '  .route("/api/saleor", saleorRoutes);',
+        ].join("\n"),
+        "  );",
+      ],
+    ],
+  });
