@@ -1,15 +1,20 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
+import { DEV_BOOTSTRAP } from "./config-provider.ts";
 import { TEMPLATE_SERVICE } from "./names.ts";
 
 const APP_SALEOR_PATHS = [
-  "src/domain/app-config.ts",
+  ".graphqlrc.ts",
+  "codegen.ts",
+  "src/domain",
   "src/graphql",
   "src/infrastructure/saleor",
+  "src/use-cases",
 ];
 
-const SERVICE_SALEOR_PATHS = ["api/rest/saleor", "logo.png"];
+// A blank app never has a dashboard either, so nothing under api survives.
+const SERVICE_SALEOR_PATHS = ["api", "logo.png"];
 
 const isUnder = (path: string, prefix: string) =>
   path === prefix || path.startsWith(`${prefix}/`);
@@ -197,10 +202,18 @@ const removeVitestIntegration = (appDir: string) =>
     ],
   });
 
+// No config store to bootstrap locally, on any target.
+const removeDevServerIntegration = (appDir: string) =>
+  rewrite({
+    path: join(appDir, "src", "dev-server.ts"),
+    replacements: [[DEV_BOOTSTRAP, ""]],
+  });
+
 // container/config/entry-server/README are swapped by copyTemplate, not rewritten here.
 export const removeAppIntegration = async (appDir: string) => {
   await removePackageIntegration(appDir);
   await removeEnvIntegration(appDir);
   await removeTurboIntegration(appDir);
   await removeVitestIntegration(appDir);
+  await removeDevServerIntegration(appDir);
 };

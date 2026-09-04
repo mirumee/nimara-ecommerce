@@ -9,6 +9,8 @@ import { listApps } from "./create-service.ts";
 import {
   BUILD_TARGETS,
   type BuildTarget,
+  type Integration,
+  INTEGRATIONS,
   TEMPLATE_SERVICES,
   TENANCIES,
   type Tenancy,
@@ -48,6 +50,20 @@ export const description: PlopTypes.PromptQuestion = {
     input.trim().length > 0 || "A description is required.",
 };
 
+export const integration: PlopTypes.PromptQuestion = {
+  choices: [
+    { name: "_blank — no Saleor integration at all", value: "blank" },
+    {
+      name: "Saleor — a Saleor app: manifest, webhooks, dashboard",
+      value: "saleor",
+    },
+  ] satisfies { name: string; value: Integration }[],
+  default: INTEGRATIONS[1],
+  message: "What does it integrate with?",
+  name: "integration",
+  type: "list",
+};
+
 export const tenancy: PlopTypes.PromptQuestion = {
   choices: [
     { name: "multi — installable by many Saleor instances", value: "multi" },
@@ -60,6 +76,8 @@ export const tenancy: PlopTypes.PromptQuestion = {
   message: "How many Saleor instances does it serve?",
   name: "tenancy",
   type: "list",
+  when: (answers: { integration?: Integration }) =>
+    answers.integration === "saleor",
 };
 
 /**
@@ -113,7 +131,7 @@ export const resolveTrigger = (answers: {
   trigger?: ServiceTrigger;
 }): ServiceTrigger => answers.trigger ?? "http";
 
-// Only an HTTP-triggered service has anything to serve a settings page from.
+// Only an HTTP-triggered Saleor service has a Saleor dashboard to add a page to.
 export const dashboard: PlopTypes.PromptQuestion = {
   choices: [
     { name: "Yes", value: true },
@@ -123,8 +141,8 @@ export const dashboard: PlopTypes.PromptQuestion = {
   message: "Add the Dashboard settings page?",
   name: "dashboard",
   type: "list",
-  when: (answers: { trigger?: ServiceTrigger }) =>
-    resolveTrigger(answers) === "http",
+  when: (answers: { integration?: Integration; trigger?: ServiceTrigger }) =>
+    resolveTrigger(answers) === "http" && answers.integration === "saleor",
 };
 
 // Asked separately from the app's own name: `src/services/<service>`.

@@ -6,17 +6,23 @@ import { type ServiceTrigger } from "@nimara/tooling/entry-points";
 
 import { createApp } from "./src/create-app.ts";
 import { createService } from "./src/create-service.ts";
-import { type AppKind, type BuildTarget, type Tenancy } from "./src/names.ts";
+import {
+  type AppKind,
+  type BuildTarget,
+  type Integration,
+  type Tenancy,
+} from "./src/names.ts";
 import * as prompts from "./src/prompts.ts";
 
 type Answers = {
   dashboard?: boolean;
   description: string;
+  integration: Integration;
   name: string;
   port: string;
   service: string;
   target: BuildTarget;
-  tenancy: Tenancy;
+  tenancy?: Tenancy;
   trigger?: ServiceTrigger;
   turbo: { paths: { root: string } };
 };
@@ -73,6 +79,7 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
       prompts.target,
       prompts.trigger,
       prompts.service,
+      prompts.integration,
       prompts.tenancy,
       prompts.dashboard,
       prompts.port,
@@ -82,6 +89,7 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
         const {
           dashboard,
           description,
+          integration,
           name,
           port,
           service,
@@ -93,6 +101,7 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
 
         const destination = await createApp({
           description,
+          integration,
           kind: resolveKind({ dashboard, trigger }),
           name,
           port,

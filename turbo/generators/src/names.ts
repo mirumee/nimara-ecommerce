@@ -83,3 +83,7 @@ export const triggersForTarget = (target: BuildTarget): ServiceTrigger[] =>
     (trigger) =>
       target !== "vercel" || !VERCEL_UNSUPPORTED_TRIGGERS.includes(trigger),
   );
+
+export const INTEGRATIONS = ["blank", "saleor"] as const;
+
+export type Integration = (typeof INTEGRATIONS)[number];
