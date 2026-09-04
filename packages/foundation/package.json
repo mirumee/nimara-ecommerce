@@ -11,16 +11,16 @@
   "dependencies": {
     "@formatjs/intl-localematcher": "0.8.13",
     "@hookform/resolvers": "5.9.1",
-    "@sentry/nextjs": "^10.70.0",
-    "@sentry/types": "^10.70.0",
+    "@sentry/nextjs": "^10.72.0",
+    "@sentry/types": "^10.72.0",
     "clsx": "2.1.1",
     "jose": "^6.2.9",
     "next": "catalog:",
-    "next-intl": "^4.13.7",
+    "next-intl": "^4.14.1",
     "next-themes": "^0.4.6",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
-    "react-hook-form": "^7.85.0",
+    "react-hook-form": "^7.86.0",
     "tailwind-merge": "2.6.1",
     "zod": "catalog:"
   },
@@ -35,11 +35,10 @@
     "@types/react-dom": "^19.2.3",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
-    "dotenv": "17.4.1",
     "eslint": "^8.57.0",
     "typescript": "^5.9.2",
     "vite-tsconfig-paths": "6.1.1",
-    "vitest": "4.1.2"
+    "vitest": "4.1.11"
   },
   "lint-staged": {
     "*.{js,cjs,ts,tsx}": "eslint --fix",
