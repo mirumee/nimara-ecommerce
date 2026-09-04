@@ -3,6 +3,28 @@ import { join } from "node:path";
 
 import { TEMPLATE_SERVICE } from "./names.ts";
 
+// What the app around it holds only for its Saleor integration.
+const APP_SALEOR_PATHS = [
+  "src/domain/app-config.ts",
+  "src/graphql",
+  "src/infrastructure/saleor",
+];
+
+// What handler alone holds, because it alone mounts the Saleor manifest.
+const SERVICE_SALEOR_PATHS = ["api/rest/saleor", "logo.png"];
+
+const isUnder = (path: string, prefix: string) =>
+  path === prefix || path.startsWith(`${prefix}/`);
+
+// Whether a path inside a copy exists only to serve the Saleor integration.
+export const isSaleorPath = (path: string) =>
+  [
+    ...APP_SALEOR_PATHS,
+    ...SERVICE_SALEOR_PATHS.map(
+      (servicePath) => `src/services/${TEMPLATE_SERVICE}/${servicePath}`,
+    ),
+  ].some((prefix) => isUnder(path, prefix));
+
 const rewrite = async ({
   path,
   replacements,
