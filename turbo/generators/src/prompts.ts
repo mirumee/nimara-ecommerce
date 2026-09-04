@@ -130,6 +130,11 @@ export const trigger: PlopTypes.PromptQuestion = {
     resolveTarget(answers) !== "vercel",
 };
 
+// Vercel forces the trigger prompt to be skipped, but it still only runs HTTP.
+export const resolveTrigger = (answers: {
+  trigger?: ServiceTrigger;
+}): ServiceTrigger => answers.trigger ?? "http";
+
 // Only an HTTP-triggered service has anything to serve a settings page from.
 export const dashboard: PlopTypes.PromptQuestion = {
   choices: [
@@ -140,12 +145,15 @@ export const dashboard: PlopTypes.PromptQuestion = {
   message: "Add the Dashboard settings page?",
   name: "dashboard",
   type: "list",
-  when: (answers: { trigger?: ServiceTrigger }) => answers.trigger === "http",
+  when: (answers: { trigger?: ServiceTrigger }) =>
+    resolveTrigger(answers) === "http",
 };
 
 // Asked separately from the app's own name: `src/services/<service>`.
 export const service: PlopTypes.PromptQuestion = {
-  default: (answers: { kind: AppKind }) => TEMPLATE_SERVICES[answers.kind],
+  // `dashboard` is answered later, but it never changes the service directory.
+  default: (answers: { trigger?: ServiceTrigger }) =>
+    TEMPLATE_SERVICES[resolveTrigger(answers)],
   filter: toDirectoryName,
   message: "Service name (becomes src/services/<name>):",
   name: "service",

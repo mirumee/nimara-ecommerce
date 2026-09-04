@@ -2,20 +2,40 @@ import { execFileSync } from "node:child_process";
 
 import { type PlopTypes } from "@turbo/gen";
 
+import { type ServiceTrigger } from "@nimara/tooling/entry-points";
+
 import { createApp } from "./src/create-app.ts";
 import { createService } from "./src/create-service.ts";
 import { type AppKind, type BuildTarget, type Tenancy } from "./src/names.ts";
 import * as prompts from "./src/prompts.ts";
 
 type Answers = {
+  dashboard?: boolean;
   description: string;
-  kind: AppKind;
   name: string;
   port: string;
   service: string;
   target: BuildTarget;
   tenancy: Tenancy;
+  trigger?: ServiceTrigger;
   turbo: { paths: { root: string } };
+};
+
+// The trigger and dashboard prompts stand in for the old single `kind` choice.
+const resolveKind = ({
+  dashboard,
+  trigger,
+}: {
+  dashboard?: boolean;
+  trigger?: ServiceTrigger;
+}): AppKind => {
+  const effectiveTrigger = prompts.resolveTrigger({ trigger });
+
+  if (effectiveTrigger !== "http") {
+    return effectiveTrigger;
+  }
+
+  return dashboard ? "dashboard" : "http";
 };
 
 type ServiceAnswers = {
@@ -49,28 +69,30 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
     prompts: [
       prompts.appName,
       prompts.description,
-      prompts.tenancy,
       prompts.target,
-      prompts.kind,
+      prompts.trigger,
       prompts.service,
+      prompts.tenancy,
+      prompts.dashboard,
       prompts.port,
     ],
     actions: [
       async (answers) => {
         const {
+          dashboard,
           description,
-          kind,
           name,
           port,
           service,
           target,
           tenancy,
+          trigger,
           turbo,
         } = answers as Answers;
 
         const destination = await createApp({
           description,
-          kind,
+          kind: resolveKind({ dashboard, trigger }),
           name,
           port,
           root: turbo.paths.root,
