@@ -1,0 +1,171 @@
+name: App generator
+
+# Normal CI already lints, type-checks, and tests the template. Only the
+# generator itself can break silently, so only these paths trigger this.
+on:
+  pull_request:
+    paths:
+      - "turbo/generators/**"
+      - "templates/**"
+      - "packages/tooling/**"
+      - ".github/workflows/generator.yml"
+  workflow_dispatch:
+
+jobs:
+  generator:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          run_install: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "lts/krypton"
+          cache: "pnpm"
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Arguments answer the prompts in order: name, description, tenancy,
+      # target, kind, service, port.
+      - name: Generate an app of each kind
+        run: |
+          pnpm gen app --args "test-ci-dashboard" "Generated in CI, with a dashboard" "multi" "node" "dashboard" "automation" "8100"
+          pnpm gen app --args "test-ci-headless" "Generated in CI, without a dashboard" "multi" "vercel" "http" "handler" "8101"
+          pnpm gen app --args "test-ci-queue" "Generated in CI, driven by a queue" "single" "node" "queue" "sender" "8102"
+
+      - name: Add a service of another kind to each
+        run: |
+          pnpm gen service --args "test-ci-dashboard" "queue" "sender"
+          pnpm gen service --args "test-ci-headless" "dashboard" "reports"
+          pnpm gen service --args "test-ci-queue" "http" "api"
+
+      # `turbo gen` exits 0 even when a generator throws, so a silent failure
+      # would otherwise surface much later as a confusing lint error.
+      - name: Check the generators produced what was asked for
+        run: |
+          for path in \
+            apps/test-ci-dashboard/src/services/automation \
+            apps/test-ci-dashboard/src/services/sender \
+            apps/test-ci-headless/src/services/handler \
+            apps/test-ci-headless/src/services/reports \
+            apps/test-ci-queue/src/services/sender \
+            apps/test-ci-queue/src/services/api
+          do
+            if [ ! -d "$path" ]; then
+              echo "::error::$path is missing — a generator failed without saying so."
+              exit 1
+            fi
+          done
+
+      - name: Check the generator wrote nothing outside the new apps
+        run: |
+          stray=$(git status --porcelain \
+            | grep -v '^?? apps/test-ci-dashboard/$' \
+            | grep -v '^?? apps/test-ci-headless/$' \
+            | grep -v '^?? apps/test-ci-queue/$' \
+            | grep -v '^ M pnpm-lock.yaml$' || true)
+
+          if [ -n "$stray" ]; then
+            echo "::error::The generator touched files outside the app it created:"
+            echo "$stray"
+            exit 1
+          fi
+
+      - name: Check the single-tenant app was rewritten
+        run: |
+          config=apps/test-ci-queue/src/services/sender/config.ts
+
+          if ! grep -q 'prepareSingleTenantServiceConfig' "$config"; then
+            echo "::error::$config still calls the multi-tenant helper."
+            exit 1
+          fi
+
+          if ! grep -q 'The one Saleor this app serves' apps/test-ci-queue/.env.example; then
+            echo "::error::The single-tenant app kept the multi-tenant ALLOWED_DOMAINS note."
+            exit 1
+          fi
+
+          for config in apps/test-ci-dashboard/src/services/*/config.ts apps/test-ci-headless/src/services/*/config.ts; do
+            if grep -q 'prepareSingleTenantServiceConfig' "$config"; then
+              echo "::error::$config was rewritten in a multi-tenant app."
+              exit 1
+            fi
+          done
+
+          if ! grep -q 'prepareSingleTenantServiceConfig' apps/test-ci-queue/src/services/api/config.ts; then
+            echo "::error::A service added to a single-tenant app kept the shared helper."
+            exit 1
+          fi
+
+      # Each generator call above runs its own `pnpm install`, but a package a
+      # later app needs is not always linked by an install that ran before
+      # that app existed. Nothing after this may rely on a partial link.
+      - name: Link the generated apps
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Check a service's variables reach the composed env
+        working-directory: apps/test-ci-queue
+        run: |
+          pnpm env:init
+          if ! grep -q '^SENDER_QUEUE_URL=' .env; then
+            echo "::error::pnpm env:init left out the queue service's own variables."
+            exit 1
+          fi
+
+      - name: Check the generated apps
+        run: |
+          npx turbo run lint test \
+            --filter=test-ci-dashboard \
+            --filter=test-ci-headless \
+            --filter=test-ci-queue
+
+      # Not a turbo task in this repo — `tsc --noEmit` runs per package instead.
+      - name: Check the generated apps' types
+        run: |
+          pnpm --filter test-ci-dashboard --filter test-ci-headless --filter test-ci-queue lint:types
+
+      # `BUILD_TARGET` has to be in the shell environment: the build script
+      # reads it before vite ever gets to load the app's own `.env`.
+      - name: Build the node-target apps
+        run: BUILD_TARGET=node npx turbo run build --filter=test-ci-dashboard --filter=test-ci-queue
+
+      - name: Build the vercel-target app
+        run: BUILD_TARGET=vercel npx turbo run build --filter=test-ci-headless
+
+      - name: Check each kind built what it should
+        run: |
+          expected=(
+            apps/test-ci-dashboard/dist/automation/assets/automation-entry-client.js
+            apps/test-ci-dashboard/dist/sender/entry-queue.js
+            apps/test-ci-headless/dist/handler/entry-server.js
+            apps/test-ci-headless/dist/reports/assets/reports-entry-client.js
+            apps/test-ci-queue/dist/sender/entry-queue.js
+            apps/test-ci-queue/dist/api/entry-server.js
+          )
+          unexpected=(
+            apps/test-ci-dashboard/dist/sender/assets
+            apps/test-ci-headless/dist/handler/assets
+            apps/test-ci-queue/dist/sender/entry-server.js
+            apps/test-ci-queue/dist/api/assets
+          )
+
+          for path in "${expected[@]}"; do
+            if [ ! -e "$path" ]; then
+              echo "::error::$path was not built."
+              exit 1
+            fi
+          done
+
+          for path in "${unexpected[@]}"; do
+            if [ -e "$path" ]; then
+              echo "::error::$path was built and should not have been."
+              exit 1
+            fi
+          done
