@@ -21,6 +21,7 @@ Nimara is a monorepo for composable commerce. It is an open-source, composable c
   Required checks are `Linters & Tests`, `Vercel – nimara-docs`,
   `Vercel – nimara-ecommerce`, `Vercel – nimara-ecommerce-stripe`, and
   `Vercel – nimara-marketplace`.
+- Do not write comments in code. This applies to new code and to code that you edit.
 - Split longer work into releasable slices. Keep incomplete behavior behind a short-lived,
   default-off feature flag or branch-by-abstraction seam, test meaningful states, and remove the flag after rollout.
 - Never add or remove a dependency without explicit user approval.
