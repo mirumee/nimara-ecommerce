@@ -130,6 +130,19 @@ export const trigger: PlopTypes.PromptQuestion = {
     resolveTarget(answers) !== "vercel",
 };
 
+// Only an HTTP-triggered service has anything to serve a settings page from.
+export const dashboard: PlopTypes.PromptQuestion = {
+  choices: [
+    { name: "Yes", value: true },
+    { name: "No", value: false },
+  ],
+  default: false,
+  message: "Add the Dashboard settings page?",
+  name: "dashboard",
+  type: "list",
+  when: (answers: { trigger?: ServiceTrigger }) => answers.trigger === "http",
+};
+
 // Asked separately from the app's own name: `src/services/<service>`.
 export const service: PlopTypes.PromptQuestion = {
   default: (answers: { kind: AppKind }) => TEMPLATE_SERVICES[answers.kind],
