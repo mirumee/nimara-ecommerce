@@ -11,62 +11,88 @@ export type PackageInfo = {
   version: string;
 };
 
-// Apps extend it: `z.object({ ... }).and(baseConfigSchema(pkg))`.
-export const baseConfigSchema = (
+const coreFields = z.object({
+  ENVIRONMENT: z.string(),
+  NODE_ENV: z
+    .enum(["development", "test", "production"])
+    .default("development"),
+  FETCH_TIMEOUT: z
+    .number()
+    .default(10000)
+    .describe("Fetch timeout in milliseconds."),
+  SENTRY_DSN: blankAsUnset(
+    z.url().trim().optional().describe("Sentry DSN, enables reporting."),
+  ),
+  BASE_PATH: z
+    .string()
+    .regex(
+      /^(\/[^/\s]+)*$/,
+      "BASE_PATH must be empty or a prefix like `/my-app`",
+    )
+    .default("")
+    .describe(
+      "Path prefix the app is served under. Empty at root; set per app in dev (`/<app>`) and via env for a sub-path deployment.",
+    ),
+});
+
+const saleorFields = z.object({
+  // Fail closed: an emptied allow list admits nobody, not everybody.
+  ALLOWED_DOMAINS: z
+    .preprocess(
+      // Read straight off `process.env`, so the list arrives as one string.
+      (value) =>
+        typeof value === "string"
+          ? value
+              .split(",")
+              .map((domain) => domain.trim().toLowerCase())
+              .filter(Boolean)
+          : value,
+      z.array(z.string()),
+    )
+    .default([])
+    .describe(
+      "Comma-separated Saleor domains allowed to install the app. Supports wildcards.",
+    ),
+  VITE_SALEOR_APP_TOKEN: blankAsUnset(
+    z
+      .string()
+      .trim()
+      .min(1)
+      .optional()
+      .describe(
+        "A short-lived staff JWT with MANAGE_APPS, for running the Dashboard UI outside the Saleor iframe. Copy it from a real Dashboard session's Authorization header. A long-lived API token authenticates GraphQL fine but is not a JWT, so it will not verify here.",
+      ),
+  ),
+});
+
+const finalize =
+  <Data extends { NODE_ENV: "development" | "production" | "test" }>(
+    pkg: PackageInfo,
+  ) =>
+  (data: Data) => ({
+    AUTHOR: pkg.author,
+    DESCRIPTION: pkg.description,
+    DISPLAY_NAME: getAppDisplayName(pkg.name),
+    IS_DEVELOPMENT: data.NODE_ENV === "development",
+    IS_PRODUCTION: data.NODE_ENV === "production",
+    IS_TEST: data.NODE_ENV === "test",
+    NAME: pkg.name,
+    RELEASE: `${pkg.name}@${pkg.version}`.toLowerCase(),
+    VERSION: pkg.version,
+    ...data,
+  });
+
+// A service with no Saleor integration at all: no per-tenant fields.
+export const coreConfigSchema = (pkg: PackageInfo) =>
+  coreFields.transform(finalize(pkg));
+
+// A Saleor app extends it: `z.object({ ... }).and(saleorConfigSchema(pkg))`.
+export const saleorConfigSchema = (
   pkg: PackageInfo,
   { singleTenant = false }: { singleTenant?: boolean } = {},
 ) =>
-  z
-    .object({
-      ENVIRONMENT: z.string(),
-      NODE_ENV: z
-        .enum(["development", "test", "production"])
-        .default("development"),
-      // Fail closed: an emptied allow list admits nobody, not everybody.
-      ALLOWED_DOMAINS: z
-        .preprocess(
-          // Read straight off `process.env`, so the list arrives as one string.
-          (value) =>
-            typeof value === "string"
-              ? value
-                  .split(",")
-                  .map((domain) => domain.trim().toLowerCase())
-                  .filter(Boolean)
-              : value,
-          z.array(z.string()),
-        )
-        .default([])
-        .describe(
-          "Comma-separated Saleor domains allowed to install the app. Supports wildcards.",
-        ),
-      FETCH_TIMEOUT: z
-        .number()
-        .default(10000)
-        .describe("Fetch timeout in milliseconds."),
-      SENTRY_DSN: blankAsUnset(
-        z.url().trim().optional().describe("Sentry DSN, enables reporting."),
-      ),
-      VITE_SALEOR_APP_TOKEN: blankAsUnset(
-        z
-          .string()
-          .trim()
-          .min(1)
-          .optional()
-          .describe(
-            "A short-lived staff JWT with MANAGE_APPS, for running the Dashboard UI outside the Saleor iframe. Copy it from a real Dashboard session's Authorization header. A long-lived API token authenticates GraphQL fine but is not a JWT, so it will not verify here.",
-          ),
-      ),
-      BASE_PATH: z
-        .string()
-        .regex(
-          /^(\/[^/\s]+)*$/,
-          "BASE_PATH must be empty or a prefix like `/my-app`",
-        )
-        .default("")
-        .describe(
-          "Path prefix the app is served under. Empty at root; set per app in dev (`/<app>`) and via env for a sub-path deployment.",
-        ),
-    })
+  coreFields
+    .and(saleorFields)
     .superRefine((data, ctx) => {
       if (singleTenant && data.ALLOWED_DOMAINS.length !== 1) {
         ctx.addIssue({
@@ -101,15 +127,4 @@ export const baseConfigSchema = (
         });
       }
     })
-    .transform((data) => ({
-      AUTHOR: pkg.author,
-      DESCRIPTION: pkg.description,
-      DISPLAY_NAME: getAppDisplayName(pkg.name),
-      IS_DEVELOPMENT: data.NODE_ENV === "development",
-      IS_PRODUCTION: data.NODE_ENV === "production",
-      IS_TEST: data.NODE_ENV === "test",
-      NAME: pkg.name,
-      RELEASE: `${pkg.name}@${pkg.version}`.toLowerCase(),
-      VERSION: pkg.version,
-      ...data,
-    }));
+    .transform(finalize(pkg));

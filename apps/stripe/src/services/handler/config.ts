@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { baseConfigSchema } from "@nimara/lib/config/schema";
+import { saleorConfigSchema } from "@nimara/lib/config/schema";
 import { prepareConfig } from "@nimara/lib/zod/util";
 
 import packageJson from "../../../package.json";
@@ -16,7 +16,7 @@ const configSchema = z
       .default("nimara-config")
       .describe("Config provider key."),
   })
-  .and(baseConfigSchema(packageJson));
+  .and(saleorConfigSchema(packageJson));
 
 const parsed = prepareConfig({
   name: "handler",

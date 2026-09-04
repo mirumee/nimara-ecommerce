@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 
 import { z } from "zod";
 
-import { baseConfigSchema, type PackageInfo } from "#root/config/schema";
+import { type PackageInfo, saleorConfigSchema } from "#root/config/schema";
 import { type AnyZodSchema } from "#root/zod/types";
 import { prepareConfig } from "#root/zod/util";
 
@@ -30,7 +30,7 @@ const prepareForService = <Schema extends AnyZodSchema>(
     serverOnly: true,
     schema: z
       .object({ SERVICE: z.string().default(service) })
-      .and(baseConfigSchema(pkg, { singleTenant }))
+      .and(saleorConfigSchema(pkg, { singleTenant }))
       .and(schema),
   });
 };
