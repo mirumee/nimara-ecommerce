@@ -62,6 +62,7 @@ export const tenancy: PlopTypes.PromptQuestion = {
 
 const KIND_LABELS: Record<AppKind, string> = {
   dashboard: "dashboard — HTTP, with a settings page in Saleor",
+  event: "event — invoked by a schedule or another function, no HTTP",
   http: "http — HTTP only: webhooks and API",
   queue: "queue — an SQS consumer, no HTTP",
 };

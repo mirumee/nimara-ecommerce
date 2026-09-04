@@ -1,10 +1,18 @@
+import { VERCEL_UNSUPPORTED_TRIGGERS } from "@nimara/tooling/entry-points";
+
 export const TEMPLATE_NAME = "app-template";
 
 export const TEMPLATE_SERVICE = "handler";
 
 export const TEMPLATE_QUEUE_SERVICE = "consumer";
 
-export const TEMPLATE_SERVICE_DIRS = [TEMPLATE_SERVICE, TEMPLATE_QUEUE_SERVICE];
+export const TEMPLATE_EVENT_SERVICE = "event";
+
+export const TEMPLATE_SERVICE_DIRS = [
+  TEMPLATE_SERVICE,
+  TEMPLATE_QUEUE_SERVICE,
+  TEMPLATE_EVENT_SERVICE,
+];
 
 export const TEMPLATE_PORT = "8000";
 
@@ -27,23 +35,26 @@ export const BUILD_TARGETS = ["vercel", "node"] as const;
 
 export type BuildTarget = (typeof BUILD_TARGETS)[number];
 
-export const KINDS = ["dashboard", "http", "queue"] as const;
+export const KINDS = ["dashboard", "http", "queue", "event"] as const;
 
 export type AppKind = (typeof KINDS)[number];
 
 /**
- * Which of the template's services each kind is generated from. A queue service
- * is not an HTTP one with parts removed — it is a different program.
+ * Which of the template's services each kind is generated from. A queue or an
+ * event service is not an HTTP one with parts removed — it is a different program.
  */
 export const TEMPLATE_SERVICES = {
   dashboard: TEMPLATE_SERVICE,
+  event: TEMPLATE_EVENT_SERVICE,
   http: TEMPLATE_SERVICE,
   queue: TEMPLATE_QUEUE_SERVICE,
 } as const satisfies Record<AppKind, string>;
 
-// Nothing on Vercel polls a queue, so such a service would never run there.
+const NODE_ONLY_KINDS = new Set<AppKind>(VERCEL_UNSUPPORTED_TRIGGERS);
+
+// Nothing on Vercel polls a queue or invokes a service directly, so neither runs there.
 export const kindsForTarget = (target: BuildTarget): AppKind[] =>
-  KINDS.filter((kind) => target !== "vercel" || kind !== "queue");
+  KINDS.filter((kind) => target !== "vercel" || !NODE_ONLY_KINDS.has(kind));
 
 // `--args` skips the prompt that would have offered only what the target runs.
 export const requireKindForTarget = ({

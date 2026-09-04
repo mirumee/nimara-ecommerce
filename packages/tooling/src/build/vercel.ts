@@ -1,7 +1,10 @@
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
-import { type ServiceEntry } from "../entry-points.ts";
+import {
+  type ServiceEntry,
+  VERCEL_UNSUPPORTED_TRIGGERS,
+} from "../entry-points.ts";
 import { type BuildTargetAdapter } from "./types.ts";
 
 /**
@@ -31,14 +34,16 @@ const writeVercelEntry = async ({
   services: ServiceEntry[];
 }) => {
   /**
-   * Vercel drives a function with a request. Nothing there polls a queue, so a
-   * queue service would build and then never run.
+   * Vercel drives a function with a request. Nothing there polls a queue or
+   * invokes a function directly, so either kind would build and then never run.
    */
-  const queues = services.filter(({ trigger }) => trigger === "queue");
+  const unsupported = services.filter(({ trigger }) =>
+    VERCEL_UNSUPPORTED_TRIGGERS.includes(trigger),
+  );
 
-  if (queues.length > 0) {
+  if (unsupported.length > 0) {
     throw new Error(
-      `Vercel cannot drive a queue service: ${queues.map(({ name }) => name).join(", ")}. Build this app with BUILD_TARGET=node.`,
+      `Vercel cannot drive a queue or event service: ${unsupported.map(({ name }) => name).join(", ")}. Build this app with BUILD_TARGET=node.`,
     );
   }
 

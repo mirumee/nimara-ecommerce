@@ -5,6 +5,7 @@ import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { createService, listApps } from "./create-service";
+import { type AppKind } from "./names";
 
 let root: string;
 
@@ -57,13 +58,14 @@ const templateService = (...parts: string[]) =>
 const templateQueue = (...parts: string[]) =>
   template("src", "services", "consumer", ...parts);
 
+const templateEvent = (...parts: string[]) =>
+  template("src", "services", "event", ...parts);
+
 const appService = (service: string, ...parts: string[]) =>
   join(root, "apps", "feed-sync", "src", "services", service, ...parts);
 
-const add = (
-  name = "order-sync",
-  kind: "dashboard" | "http" | "queue" = "dashboard",
-) => createService({ app: "feed-sync", kind, name, root });
+const add = (name = "order-sync", kind: AppKind = "dashboard") =>
+  createService({ app: "feed-sync", kind, name, root });
 
 describe("create-service", () => {
   beforeEach(async () => {
@@ -118,6 +120,11 @@ describe("create-service", () => {
       templateQueue(".env.example"),
       "# The queue driving the `consumer` service.\n" +
         "CONSUMER_QUEUE_URL=http://localhost:4566/000000000000/app-template-consumer\n",
+    );
+    await write(templateEvent("config.ts"), MULTI);
+    await write(
+      templateEvent("entry-event.ts"),
+      'import { container } from "@/services/event/container";\n',
     );
 
     await write(
@@ -306,6 +313,29 @@ describe("create-service", () => {
 
       // when / then `--args` skips the prompt that would have hidden it.
       await expect(add("mail-sender", "queue")).rejects.toThrow(
+        "cannot be deployed to vercel",
+      );
+    });
+
+    it("builds an event service from the template's event service", async () => {
+      // when
+      await add("nightly", "event");
+
+      // then an event service is a different program, not an HTTP one cut down.
+      expect(
+        await readFile(appService("nightly", "entry-event.ts"), "utf8"),
+      ).toContain('"@/services/nightly/container"');
+    });
+
+    it("refuses an event service on an app that cannot drive one", async () => {
+      // given an app deployed to Vercel
+      await write(
+        join(root, "apps", "feed-sync", ".env.example"),
+        "BUILD_TARGET=vercel\n",
+      );
+
+      // when / then `--args` skips the prompt that would have hidden it.
+      await expect(add("nightly", "event")).rejects.toThrow(
         "cannot be deployed to vercel",
       );
     });

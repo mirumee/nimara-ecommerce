@@ -32,6 +32,7 @@ caller.
 src/services/<service>/    one service, one entry point, one Lambda
   entry-server.ts          the Hono app; `handler` is its Lambda binding
   entry-queue.ts           a queue service instead; exports `handler` alone
+  entry-event.ts           an invoked service instead; exports `handler` alone
   entry-client.tsx         the dashboard bundle Saleor loads
   config.ts                this service's environment
   container.ts             the app container, built from that config
@@ -59,9 +60,9 @@ pnpm gen service
 It copies this template's service under the name you give, points the imports
 that reached into the old one at the new one, and takes the tenancy from the
 services already there — they share one `.env`, so they cannot disagree. It
-asks what the service serves — a dashboard, HTTP alone, or a queue — so one app
-can hold several kinds side by side. A queue service is offered only where the
-app's build target can drive one.
+asks what the service serves — a dashboard, HTTP alone, a queue, or a direct
+invoke — so one app can hold several kinds side by side. A queue or an invoked
+service is offered only where the app's build target can drive one.
 
 ## Queue services
 
@@ -91,6 +92,19 @@ queue URL would silently make a queue rather than fail.
 
 Building a queue service for Vercel fails: nothing there polls a queue, so it
 would build and never run. Use `BUILD_TARGET=node`.
+
+## Event services
+
+An invoked service is driven by whatever calls it directly — a scheduled
+rule, another function, or a hand-run invoke — never by a request. `handler`
+takes the event and an invocation context whose `getRemainingTimeInMillis`
+gives the work its budget, so a long job checkpoints and invokes itself again
+rather than running until Lambda kills it.
+
+In development the dev server stands in for that trigger at
+`POST /<service>/invoke`, with a 60-second budget. Building an event service
+for Vercel fails the same way a queue service does: nothing there invokes a
+function directly. Use `BUILD_TARGET=node`.
 
 ## Adding a webhook
 
