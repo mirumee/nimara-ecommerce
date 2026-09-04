@@ -1,17 +1,12 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
 
-import { z } from "zod";
+import { type z } from "zod";
 
 import { err, ok } from "@nimara/domain/objects/Result";
 
 import { type ConfigItemRepository } from "#root/config/types";
-import { readEnv } from "#root/lib/env/env";
 import { type Logger } from "#root/logging/types";
-
-const fileEnvSchema = z.object({
-  CONFIG_FILE_PATH: z.string().default(".app-config.json"),
-});
 
 const isMissingFile = (error: unknown) =>
   !!error &&
@@ -21,19 +16,19 @@ const isMissingFile = (error: unknown) =>
 
 /**
  * `ConfigItemRepository` backed by a JSON file on the local disk — lets the
- * app run without a Vercel account.
+ * app run without a cloud account. The file is a dotfile beside the app, so
+ * the store path names it rather than pointing anywhere.
  */
 export const fileConfigItem = <TValue>({
+  configKey,
   schema,
   logger,
 }: {
+  configKey: string;
   logger?: Logger;
   schema: z.ZodType<TValue>;
 }): ConfigItemRepository<TValue> => {
-  const { CONFIG_FILE_PATH: filePath } = readEnv({
-    name: "Config file",
-    schema: fileEnvSchema,
-  });
+  const filePath = `.${configKey}.json`;
 
   return {
     get: async () => {

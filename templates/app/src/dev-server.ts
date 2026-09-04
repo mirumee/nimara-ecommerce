@@ -5,9 +5,10 @@ import { getLogger } from "@nimara/infrastructure/logging/service";
 const logger = getLogger({ name: "dev" });
 
 if (process.env.APP_CONFIG_STORE_PATH) {
-  const { ensureParameterStore } = await import("@nimara/tooling/aws/ssm");
+  const { ensureSecretsManager } =
+    await import("@nimara/tooling/aws/secrets-manager");
 
-  await ensureParameterStore({
+  await ensureSecretsManager({
     logger,
     storePath: process.env.APP_CONFIG_STORE_PATH,
   });

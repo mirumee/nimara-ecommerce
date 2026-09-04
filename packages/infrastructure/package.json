@@ -17,6 +17,8 @@
     "buttercms": "2.1.4"
   },
   "dependencies": {
+    "@aws-sdk/client-secrets-manager": "^3.1116.0",
+    "@aws-sdk/client-ssm": "^3.1116.0",
     "@saleor/auth-sdk": "1.0.3",
     "@stripe/stripe-js": "8.11.0",
     "@ucp-js/sdk": "0.4.6",

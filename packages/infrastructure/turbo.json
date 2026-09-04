@@ -1,0 +1,15 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    "test": {
+      "dependsOn": ["transit"],
+      "passThroughEnv": [
+        "AWS_ACCESS_KEY_ID",
+        "AWS_ENDPOINT_URL",
+        "AWS_REGION",
+        "AWS_SECRET_ACCESS_KEY"
+      ]
+    }
+  }
+}

@@ -36,6 +36,7 @@ export const container = createContainer()
     configStore: () =>
       ctx.config.CONFIG_PROVIDER === "file"
         ? fileConfigItem({
+            configKey: ctx.config.CONFIG_KEY,
             schema: saleorMultiTenantAppConfig,
             logger: ctx.logger,
           })

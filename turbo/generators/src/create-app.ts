@@ -1,6 +1,7 @@
 import { cp, readFile, writeFile } from "node:fs/promises";
 import { basename, join, relative, sep } from "node:path";
 
+import { applyConfigProvider } from "./config-provider.ts";
 import {
   isDashboardPath,
   removeAppDashboard,
@@ -202,7 +203,12 @@ export const createApp = async ({
     port,
   });
 
-  for (const file of ["README.md", ".env.example"]) {
+  // `app-config.ts` for the store path, which defaults to the app's own name.
+  for (const file of [
+    "README.md",
+    ".env.example",
+    "src/domain/app-config.ts",
+  ]) {
     await rewriteText({
       file: join(destination, file),
       name: appName,
@@ -228,6 +234,8 @@ export const createApp = async ({
   await mergeServiceEnv({ appDir: destination, serviceDir });
 
   await applyTenancy({ appDir: destination, tenancy });
+
+  await applyConfigProvider({ appDir: destination, target });
 
   return destination;
 };
