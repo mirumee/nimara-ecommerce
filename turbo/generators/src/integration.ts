@@ -3,20 +3,17 @@ import { join } from "node:path";
 
 import { TEMPLATE_SERVICE } from "./names.ts";
 
-// What the app around it holds only for its Saleor integration.
 const APP_SALEOR_PATHS = [
   "src/domain/app-config.ts",
   "src/graphql",
   "src/infrastructure/saleor",
 ];
 
-// What handler alone holds, because it alone mounts the Saleor manifest.
 const SERVICE_SALEOR_PATHS = ["api/rest/saleor", "logo.png"];
 
 const isUnder = (path: string, prefix: string) =>
   path === prefix || path.startsWith(`${prefix}/`);
 
-// Whether a path inside a copy exists only to serve the Saleor integration.
 export const isSaleorPath = (path: string) =>
   [
     ...APP_SALEOR_PATHS,
@@ -45,132 +42,165 @@ const rewrite = async ({
   await writeFile(path, contents);
 };
 
-// consumer/config.ts and event/config.ts start out byte-identical to this.
-const SHARED_CONFIG = [
-  'import { prepareServiceConfig } from "@nimara/lib/config/service";',
-  "",
-  'import { appConfigSchema } from "@/domain/app-config";',
-  "",
-  'import packageJson from "../../../package.json";',
-  "",
-  "export const APP_CONFIG = prepareServiceConfig({",
-  "  moduleUrl: import.meta.url,",
-  "  pkg: packageJson,",
-  "  schema: appConfigSchema,",
-  "});",
-  "",
-].join("\n");
-
-// handler/config.ts also carries APP_ID, the Saleor manifest's app id.
-const HANDLER_CONFIG = [
-  'import { prepareServiceConfig } from "@nimara/lib/config/service";',
-  "",
-  'import { appConfigSchema } from "@/domain/app-config";',
-  "",
-  'import packageJson from "../../../package.json";',
-  "",
-  "const parsed = prepareServiceConfig({",
-  "  moduleUrl: import.meta.url,",
-  "  pkg: packageJson,",
-  "  schema: appConfigSchema,",
-  "});",
-  "",
-  "export const APP_CONFIG = {",
-  "  ...parsed,",
-  "  APP_ID: `${parsed.ENVIRONMENT}.${parsed.NAME}`,",
-  "};",
-  "",
-].join("\n");
-
-const BLANK_CONFIG = [
-  'import { prepareCoreServiceConfig } from "@nimara/lib/config/service";',
-  "",
-  'import packageJson from "../../../package.json";',
-  "",
-  "export const APP_CONFIG = prepareCoreServiceConfig({",
-  "  moduleUrl: import.meta.url,",
-  "  pkg: packageJson,",
-  "});",
-  "",
-].join("\n");
-
 /**
- * Neither template service reads a per-tenant Saleor config, so both collapse
- * onto the same blank shape once `appConfigSchema` is gone.
+ * All three services read the same `config.common.ts`; it lives under
+ * `handler` only because handler always exists, not because it is handler's.
+ * `entry-server.ts` is handler-only — a queue or event service has no
+ * manifest to drop.
  */
-export const removeServiceIntegration = (
-  serviceDir: string,
+export const blankVariants = (
   templateService: string,
-) =>
+): [source: string, destination: string][] => [
+  ["src/container/index.blank.ts", "src/container/index.ts"],
+  ["README.blank.md", "README.md"],
+  [
+    `src/services/${TEMPLATE_SERVICE}/config.common.ts`,
+    `src/services/${templateService}/config.ts`,
+  ],
+  ...(templateService === TEMPLATE_SERVICE
+    ? ([
+        [
+          `src/services/${templateService}/entry-server.blank.ts`,
+          `src/services/${templateService}/entry-server.ts`,
+        ],
+      ] as [source: string, destination: string][])
+    : []),
+];
+
+const CODEGEN_DEPENDENCIES = [
+  "@graphql-codegen/cli",
+  "@graphql-typed-document-node/core",
+  "@nimara/codegen",
+];
+
+const removePackageIntegration = async (appDir: string) => {
+  const path = join(appDir, "package.json");
+  const pkg = JSON.parse(await readFile(path, "utf8")) as {
+    dependencies: Record<string, string>;
+    devDependencies: Record<string, string>;
+    scripts: Record<string, string>;
+  };
+
+  delete pkg.dependencies["@saleor/app-sdk"];
+
+  for (const name of CODEGEN_DEPENDENCIES) {
+    delete pkg.devDependencies[name];
+  }
+
+  delete pkg.scripts.codegen;
+
+  await writeFile(path, `${JSON.stringify(pkg, null, 2)}\n`);
+};
+
+const removeEnvIntegration = (appDir: string) =>
   rewrite({
-    path: join(serviceDir, "config.ts"),
+    path: join(appDir, ".env.example"),
     replacements: [
       [
-        templateService === TEMPLATE_SERVICE ? HANDLER_CONFIG : SHARED_CONFIG,
-        BLANK_CONFIG,
+        "# local | development | staging | production. Also the manifest app-id prefix.\nENVIRONMENT=local",
+        "# local | development | staging | production.\nENVIRONMENT=local",
+      ],
+      [
+        [
+          "ENVIRONMENT=local",
+          "",
+          "# Comma-separated Saleor domains allowed to install the app, e.g.",
+          "# store.saleor.cloud. Empty allows none. Wildcards (`*`, `*.saleor.cloud`)",
+          "# widen it and belong in local development only.",
+          "ALLOWED_DOMAINS=",
+          "",
+          "# Path prefix",
+        ].join("\n"),
+        ["ENVIRONMENT=local", "", "# Path prefix"].join("\n"),
+      ],
+      [
+        [
+          "SENTRY_DSN=",
+          "",
+          "# Key the config is stored under. Optional; defaults in code.",
+          "APP_CONFIG_STORE_PATH=app-template-config",
+          "",
+          "# Optional: KMS key the store encrypts with. Empty uses the AWS default key.",
+          "APP_CONFIG_ENCRYPTION_KEY=",
+          "",
+          "# The Saleor whose schema `pnpm codegen` generates the client from.",
+          "NEXT_PUBLIC_SALEOR_API_URL=",
+          "",
+          "# LocalStack only.",
+        ].join("\n"),
+        ["SENTRY_DSN=", "", "# LocalStack only."].join("\n"),
       ],
     ],
   });
 
-/**
- * Only `handler/entry-server.ts` ever mounts the Saleor manifest. Run this
- * after `removeServiceDashboard`, whose cut this one's replacements assume.
- */
-export const removeServiceManifest = (serviceDir: string) =>
+const removeTurboIntegration = (appDir: string) =>
   rewrite({
-    path: join(serviceDir, "entry-server.ts"),
+    path: join(appDir, "turbo.json"),
     replacements: [
       [
         [
-          'import { container } from "@/services/handler/container";',
-          'import logo from "@/services/handler/logo.png?inline";',
-          "",
-          'import { saleorRoutes } from "./api/rest/saleor";',
-          "",
-          "const { config, logger } = container.items;",
+          '      "env": [',
+          '        "BUILD_TARGET",',
+          '        "ENVIRONMENT",',
+          '        "BASE_PATH",',
+          '        "ALLOWED_DOMAINS",',
+          '        "APP_CONFIG_STORE_PATH",',
+          '        "APP_CONFIG_ENCRYPTION_KEY",',
+          '        "SENTRY_DSN",',
+          '        "SENTRY_ORG",',
+          '        "SENTRY_PROJECT",',
+          '        "SENTRY_DEBUG"',
+          "      ],",
+          '      "passThroughEnv": ["SENTRY_AUTH_TOKEN"]',
+          "    },",
+          '    "codegen": {',
+          '      "outputs": ["src/graphql/generated/**"],',
+          '      "inputs": ["src/**/*.graphql", "codegen.ts"],',
+          '      "env": ["NEXT_PUBLIC_SALEOR_API_URL"]',
+          "    }",
         ].join("\n"),
         [
-          'import { container } from "@/services/handler/container";',
-          "",
-          "const { config, logger } = container.items;",
+          '      "env": [',
+          '        "BUILD_TARGET",',
+          '        "ENVIRONMENT",',
+          '        "BASE_PATH",',
+          '        "SENTRY_DSN",',
+          '        "SENTRY_ORG",',
+          '        "SENTRY_PROJECT",',
+          '        "SENTRY_DEBUG"',
+          "      ],",
+          '      "passThroughEnv": ["SENTRY_AUTH_TOKEN"]',
+          "    }",
         ].join("\n"),
-      ],
-      [
-        [
-          "const { config, logger } = container.items;",
-          'const LOGO = Buffer.from(logo.split(",")[1] ?? "", "base64");',
-          "",
-          "initSentry({",
-        ].join("\n"),
-        [
-          "const { config, logger } = container.items;",
-          "",
-          "initSentry({",
-        ].join("\n"),
-      ],
-      [
-        [
-          '  .get("/logo.png", (context) =>',
-          '    context.body(LOGO, 200, { "content-type": "image/png" }),',
-          "  )",
-          "  /**",
-          "   * Saleor opens `appUrl`, which is the app's root. A dashboard, where the app",
-          "   * has one, is mounted above and answers first.",
-          "   */",
-          '  .get("/", (context) =>',
-        ].join("\n"),
-        '  .get("/", (context) =>',
-      ],
-      [
-        [
-          "  )",
-          "  /**",
-          "   * Nested routes must be defined at the end for proper type inference for",
-          "   * hono/client.",
-          "   */",
-          '  .route("/api/saleor", saleorRoutes);',
-        ].join("\n"),
-        "  );",
       ],
     ],
   });
+
+const removeVitestIntegration = (appDir: string) =>
+  rewrite({
+    path: join(appDir, "vitest.config.ts"),
+    replacements: [
+      [
+        [
+          "      // Enough for the app to boot in a test; a real value belongs in `.env`.",
+          "      // `local` is what puts the config store on disk instead of in a cloud.",
+          '      ENVIRONMENT: "local",',
+          '      ALLOWED_DOMAINS: "saleor.example.com",',
+          "      ...process.env,",
+        ].join("\n"),
+        [
+          "      // Enough for the app to boot in a test; a real value belongs in `.env`.",
+          '      ENVIRONMENT: "local",',
+          "      ...process.env,",
+        ].join("\n"),
+      ],
+    ],
+  });
+
+// container/config/entry-server/README are swapped by copyTemplate, not rewritten here.
+export const removeAppIntegration = async (appDir: string) => {
+  await removePackageIntegration(appDir);
+  await removeEnvIntegration(appDir);
+  await removeTurboIntegration(appDir);
+  await removeVitestIntegration(appDir);
+};
