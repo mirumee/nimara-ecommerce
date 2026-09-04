@@ -1,5 +1,4 @@
 import { type AsyncResult, err, ok } from "@nimara/domain/objects/Result";
-import { type JoseAuthService } from "@nimara/infrastructure/jose/auth/types";
 import { type Logger } from "@nimara/infrastructure/logging/types";
 
 import {
@@ -140,22 +139,18 @@ export const saveConfigUseCase =
     appConfigService,
     appId,
     environment,
-    joseAuthService,
     logger,
   }: {
     appConfigService: AppConfigService;
     appId: string;
     environment: string;
-    joseAuthService: (saleorDomain: string) => JoseAuthService;
     logger: Logger;
   }) =>
   async ({
-    accessToken,
     appUrl,
     data,
     saleorDomain,
   }: {
-    accessToken: string;
     appUrl: string | null;
     data: {
       channelOverrides: Record<string, GatewayConfigInput>;
@@ -164,13 +159,6 @@ export const saveConfigUseCase =
     };
     saleorDomain: string;
   }): AsyncResult<true> => {
-    const jwtResult =
-      await joseAuthService(saleorDomain).verifyJwt(accessToken);
-
-    if (!jwtResult.ok) {
-      return jwtResult;
-    }
-
     const configResult = await appConfigService.getPaymentGatewayConfigSet({
       saleorDomain,
     });

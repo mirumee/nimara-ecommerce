@@ -25,8 +25,8 @@ module.exports = {
     },
     {
       files: [
-        "src/apps/*/client-entry-point.ts",
-        "src/apps/*/client/**/*.{ts,tsx}",
+        "src/services/*/client-entry-point.ts",
+        "src/services/*/client/**/*.{ts,tsx}",
         "src/container/index.ts",
       ],
       rules: {

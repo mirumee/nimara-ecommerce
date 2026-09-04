@@ -7,17 +7,17 @@ import { joseAuthService } from "@nimara/infrastructure/jose/auth/jose-auth-serv
 import { jwksMemoryRepository } from "@nimara/infrastructure/jose/jwks/memory";
 import { getLogger } from "@nimara/infrastructure/logging/service";
 import { installSaleorAppUseCase } from "@nimara/infrastructure/use-cases/apps/saleor/install-app-use-case";
+import { passThroughJwtVerification } from "@nimara/lib/saleor/pass-through-jwt-verification";
+import { saleorUrlFromDomain } from "@nimara/lib/saleor/url";
 
-import { APP_CONFIG } from "@/apps/handler/config";
 import { saleorMultiTenantAppConfig } from "@/domain/app-config";
 import { appConfigService } from "@/infrastructure/app-config-service";
-import { passThroughJwtVerification } from "@/infrastructure/auth/pass-through-jwt-verification";
 import { customerRepository } from "@/infrastructure/customer/repository";
 import { paymentService } from "@/infrastructure/payment/service";
 import { paymentMethodService } from "@/infrastructure/payment-method/service";
 import { stripePaymentMethodRepository } from "@/infrastructure/payment-method/stripe/repository";
-import { saleorClient } from "@/lib/saleor/client";
-import { saleorUrlFromDomain } from "@/lib/saleor/url";
+import { saleorClient } from "@/infrastructure/saleor/client";
+import { APP_CONFIG } from "@/services/handler/config";
 import { getConfigFormDataUseCase } from "@/use-cases/get-config-form-data-use-case";
 import { saveConfigUseCase } from "@/use-cases/save-config-use-case";
 
@@ -36,6 +36,7 @@ export const container = createContainer()
     configStore: () =>
       ctx.config.CONFIG_PROVIDER === "file"
         ? fileConfigItem({
+            configKey: ctx.config.CONFIG_KEY,
             schema: saleorMultiTenantAppConfig,
             logger: ctx.logger,
           })
@@ -53,7 +54,11 @@ export const container = createContainer()
       });
 
       return IS_DEV
-        ? passThroughJwtVerification({ logger: ctx.logger, service })
+        ? passThroughJwtVerification({
+            logger: ctx.logger,
+            permissions: ["MANAGE_APPS"],
+            service,
+          })
         : service;
     },
     saleorClient: () =>
@@ -96,7 +101,6 @@ export const container = createContainer()
     getConfigFormData: () =>
       getConfigFormDataUseCase({
         appConfigService: ctx.appConfigService,
-        joseAuthService: ctx.joseAuthService,
         saleorClient: ctx.saleorClient,
       }),
     saveConfig: () =>
@@ -104,7 +108,6 @@ export const container = createContainer()
         appConfigService: ctx.appConfigService,
         appId: ctx.config.APP_ID,
         environment: ctx.config.ENVIRONMENT,
-        joseAuthService: ctx.joseAuthService,
         logger: ctx.logger,
       }),
   }));

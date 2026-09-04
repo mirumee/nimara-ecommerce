@@ -1,0 +1,8 @@
+query ChannelsQuery {
+  channels {
+    id
+    slug
+    name
+    currencyCode
+  }
+}

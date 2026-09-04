@@ -1,5 +1,6 @@
+import { serializeMetadataItems } from "@nimara/lib/saleor/metadata";
+
 import { type CustomerRepository } from "@/domain/customer";
-import { serializeMetadataItems } from "@/lib/saleor/metadata";
 
 import { getGatewayCustomerMetadataKey } from "./const";
 

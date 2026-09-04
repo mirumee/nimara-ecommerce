@@ -119,8 +119,8 @@ Run `pnpm preflight` to see what's currently on. The full list of variables is i
 ## Day-to-day workflow
 
 ```bash
-pnpm dev:storefront        # one app (also: dev:marketplace, dev:stripe, dev:docs)
-pnpm dev                   # everything
+pnpm dev                   # the storefront
+pnpm dev <app>             # any app under apps/, generated ones included
 
 pnpm codegen               # regenerate GraphQL types after editing .graphql files
 pnpm test                  # unit tests (Vitest)

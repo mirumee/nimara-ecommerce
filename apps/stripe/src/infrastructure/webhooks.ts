@@ -1,4 +1,5 @@
 import { type Logger } from "@nimara/infrastructure/logging/types";
+import { isLocalDomain } from "@nimara/lib/utils/url";
 
 import { type PaymentGatewayConfig } from "@/domain/app-config";
 import {
@@ -7,7 +8,6 @@ import {
   StripeWebhookEvent,
 } from "@/domain/consts";
 import { buildGatewayMetadata } from "@/domain/event-mapping";
-import { isLocalDomain } from "@/lib/util";
 
 import { getStripeApi } from "./utils";
 

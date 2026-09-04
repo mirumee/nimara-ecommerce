@@ -1,0 +1,23 @@
+{
+  "extends": "@nimara/config/tsconfig/base",
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "types/*.d.ts",
+    "vitest.config.ts"
+  ],
+  "exclude": ["dist", "build", "node_modules"],
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "noEmit": true,
+    "types": ["vite/client"],
+    "paths": {
+      "#root/*": ["./src/*"],
+      "@nimara/domain/*": ["../domain/src/*"],
+      "@nimara/foundation/*": ["../foundation/src/*"],
+      "@nimara/infrastructure/*": ["../infrastructure/src/*"],
+      "@nimara/ui/*": ["../ui/src/*"]
+    }
+  }
+}

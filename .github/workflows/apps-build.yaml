@@ -1,0 +1,183 @@
+name: Build Saleor apps
+
+on:
+  push:
+    branches: []
+    tags: []
+
+jobs:
+  # Only apps the template generated for `BUILD_TARGET=node`: the command
+  # match keeps the template itself and the Next.js apps out, and the target
+  # check keeps out an app like `stripe` that deploys to Vercel already. Only
+  # those turbo reports as affected by the merge (their own files or a
+  # package they depend on) — for a manual, unaffected build see
+  # `apps-deploy.yaml`.
+  changed:
+    runs-on: ubuntu-latest
+    outputs:
+      apps: ${{ steps.detect.outputs.apps }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          run_install: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "lts/krypton"
+          cache: "pnpm"
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Detect affected apps
+        id: detect
+        env:
+          # A tag push sends a zero sha here, which turbo reports as an
+          # unreadable range and treats as everything changed.
+          TURBO_SCM_BASE: ${{ github.event.before }}
+          TURBO_SCM_HEAD: ${{ github.sha }}
+        run: |
+          node_build_task='[
+            .tasks[]
+            | select(.task == "build")
+            | select(.command == "node etc/build.ts")
+            | select(.directory != "templates/app")
+            | select(.directory | startswith("apps/"))
+            | { name: .package, dir: (.directory | split("/") | last) }
+          ]'
+
+          affected_node_apps=$(npx turbo run build --affected --dry=json | jq -c "$node_build_task")
+
+          node_target_dirs=$( { grep -l '^BUILD_TARGET=node$' apps/*/.env.example || true; } \
+            | xargs -n1 dirname | xargs -n1 basename \
+            | jq -R -c -s 'split("\n") | map(select(length > 0))')
+
+          apps=$(echo "$affected_node_apps" | jq -c --argjson dirs "$node_target_dirs" \
+            '[.[] | select(.dir as $dir | $dirs | index($dir))]')
+
+          echo "apps=$apps" >> "$GITHUB_OUTPUT"
+
+          {
+            echo "### Apps to build"
+            echo "$apps" | jq -r '
+              if length == 0
+              then "Nothing affected by this merge."
+              else .[] | "- `\(.name)`"
+              end'
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+
+  quality:
+    needs: changed
+    if: needs.changed.outputs.apps != '[]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          run_install: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "lts/krypton"
+          cache: "pnpm"
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check eslint and tests
+        env:
+          APPS: ${{ needs.changed.outputs.apps }}
+        run: |
+          filters=$(echo "$APPS" | jq -r '.[] | "--filter=" + .name' | tr '\n' ' ')
+          npx turbo run lint test $filters
+
+      - name: Check types
+        env:
+          APPS: ${{ needs.changed.outputs.apps }}
+        run: |
+          filters=$(echo "$APPS" | jq -r '.[] | "--filter=" + .name' | tr '\n' ' ')
+          pnpm $filters lint:types
+
+  build:
+    needs: [changed, quality]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        app: ${{ fromJson(needs.changed.outputs.apps) }}
+    env:
+      AWS_DEFAULT_REGION: eu-central-1
+      BUILD_TARGET: node
+    steps:
+      - uses: actions/checkout@v7
+
+      # Seven characters explicitly: git widens the default as a repo grows,
+      # and a tag pinned to a deploy would want a fixed-width sha.
+      - name: Create GIT_SHA variable
+        run: echo "GIT_SHA=$(git rev-parse --short=7 HEAD)" >> "$GITHUB_ENV"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          run_install: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "lts/krypton"
+          cache: "pnpm"
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        env:
+          APP_NAME: ${{ matrix.app.name }}
+        run: npx turbo run build --filter="$APP_NAME"
+
+      # One zip per app. A service inside it is `<service>/<entry>.js`, so the
+      # Lambda handler is `<service>/entry-server.handler` for an HTTP or
+      # dashboard service, `<service>/entry-queue.handler` for a queue-driven
+      # one, and `<service>/entry-event.handler` for an invoked one.
+      - name: Create artifact
+        working-directory: apps/${{ matrix.app.dir }}/dist
+        run: zip -r -D "$GITHUB_WORKSPACE/artifact.zip" .
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: eu-central-1
+
+      - name: Copy ZIP
+        env:
+          APP_DIR: ${{ matrix.app.dir }}
+          AWS_BUCKET: ${{ vars.AWS_BUCKET }}
+        run: aws s3 cp artifact.zip "$AWS_BUCKET/$APP_DIR/lambda-$GIT_SHA.zip" --quiet
+
+      - name: ZIP tag
+        env:
+          APP_DIR: ${{ matrix.app.dir }}
+          APP_NAME: ${{ matrix.app.name }}
+        run: |
+          {
+            echo "### $APP_NAME"
+            echo ""
+            echo "- Tag: \`$GIT_SHA\`"
+            echo "- ZIP: \`$APP_DIR/lambda-$GIT_SHA.zip\`"
+          } | tee -a "$GITHUB_STEP_SUMMARY"

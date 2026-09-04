@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 
 import { ok } from "@nimara/domain/objects/Result";
-import { type JoseAuthService } from "@nimara/infrastructure/jose/auth/types";
+import { MagicMock } from "@nimara/lib/test/mock";
 
 import {
   type PaymentGatewayConfig,
@@ -10,7 +10,6 @@ import {
 import { type AppConfigService } from "@/infrastructure/app-config-service";
 import { resolveStripeAccountId } from "@/infrastructure/utils";
 import { installWebhooks, uninstallWebhooks } from "@/infrastructure/webhooks";
-import { MagicMock } from "@/lib/test/mock";
 
 import {
   carryOverWebhooks,
@@ -58,8 +57,6 @@ const buildUseCase = (storedConfig: PaymentGatewayConfigSet) => {
     } as unknown as AppConfigService,
     appId: "app_123",
     environment: "test",
-    joseAuthService: () =>
-      MagicMock<JoseAuthService>({ verifyJwt: vi.fn(async () => ok(true)) }),
     logger: MagicMock(),
   });
 
@@ -167,7 +164,6 @@ describe("save-config-use-case", () => {
 
       // when
       const result = await useCase({
-        accessToken: "token",
         appUrl: APP_URL,
         data: {
           channelOverrides: {},
@@ -198,7 +194,6 @@ describe("save-config-use-case", () => {
 
       // when
       await useCase({
-        accessToken: "token",
         appUrl: APP_URL,
         data: {
           channelOverrides: {
@@ -237,7 +232,6 @@ describe("save-config-use-case", () => {
 
       // when
       await useCase({
-        accessToken: "token",
         appUrl: APP_URL,
         data: {
           channelOverrides: {},
@@ -264,7 +258,6 @@ describe("save-config-use-case", () => {
 
       // when
       const result = await useCase({
-        accessToken: "token",
         appUrl: APP_URL,
         data: {
           channelOverrides: {},
@@ -299,7 +292,6 @@ describe("save-config-use-case", () => {
 
       // when
       const result = await useCase({
-        accessToken: "token",
         appUrl: APP_URL,
         data: {
           channelOverrides: {},
@@ -327,7 +319,6 @@ describe("save-config-use-case", () => {
 
       // when
       await useCase({
-        accessToken: "token",
         appUrl: APP_URL,
         data: {
           channelOverrides: {

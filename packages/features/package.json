@@ -43,7 +43,7 @@
     "schema-dts": "1.1.5",
     "usehooks-ts": "^3.0.0",
     "xss": "1.0.15",
-    "zod": "^4.5.2"
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@nimara/config": "workspace:*",

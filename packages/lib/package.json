@@ -1,0 +1,49 @@
+{
+  "name": "@nimara/lib",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "imports": {
+    "#root/client/components/*": "./src/client/components/*.tsx",
+    "#root/*": "./src/*.ts"
+  },
+  "exports": {
+    "./client/components/*": "./src/client/components/*.tsx",
+    "./client/saleor/components/*": "./src/client/saleor/components/*.tsx",
+    "./types/*": "./types/*.d.ts",
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "lint": "eslint . --ext .js,.ts,.tsx --fix",
+    "lint:staged": "lint-staged",
+    "lint:types": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest --watch"
+  },
+  "lint-staged": {
+    "*.*": "prettier --write --ignore-unknown",
+    "*.{js,cjs,ts,tsx}": "eslint --fix"
+  },
+  "dependencies": {
+    "@hono/zod-validator": "^0.9.0",
+    "@nimara/domain": "workspace:*",
+    "@nimara/foundation": "workspace:*",
+    "@nimara/infrastructure": "workspace:*",
+    "@nimara/ui": "workspace:*",
+    "@saleor/app-sdk": "1.7.0",
+    "@sentry/node": "^10.70.0",
+    "hono": "catalog:",
+    "react": "^19.2.3",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@nimara/config": "workspace:*",
+    "@types/node": "^24.12.4",
+    "@types/react": "^19.2.14",
+    "eslint": "^8.57.0",
+    "lint-staged": "^16.4.0",
+    "typescript": "^5.9.3",
+    "vite": "^8.2.1",
+    "vitest": "4.1.2"
+  }
+}

@@ -11,6 +11,16 @@ export type AppIdQueryVariables = Types.Exact<{ [key: string]: never; }>;
 
 export type AppIdQuery = AppIdQuery_Query;
 
+export type ChannelsQuery_channels_Channel = { id: string, slug: string, name: string, currencyCode: string };
+
+export type ChannelsQuery_Query = { channels: Array<ChannelsQuery_channels_Channel> | null };
+
+
+export type ChannelsQueryVariables = Types.Exact<{ [key: string]: never; }>;
+
+
+export type ChannelsQuery = ChannelsQuery_Query;
+
 export class TypedDocumentString<TResult, TVariables>
   extends String
   implements DocumentTypeDecoration<TResult, TVariables>
@@ -37,3 +47,13 @@ export const AppIdQueryDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<AppIdQuery, AppIdQueryVariables>;
+export const ChannelsQueryDocument = new TypedDocumentString(`
+    query ChannelsQuery {
+  channels {
+    id
+    slug
+    name
+    currencyCode
+  }
+}
+    `) as unknown as TypedDocumentString<ChannelsQuery, ChannelsQueryVariables>;

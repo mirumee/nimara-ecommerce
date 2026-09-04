@@ -8,7 +8,8 @@ import {
 } from "@nimara/domain/objects/Result";
 
 import { type Exact } from "#root/lib/types";
-import { logger } from "#root/logging/service";
+import { logger as defaultLogger } from "#root/logging/service";
+import { type Logger } from "#root/logging/types";
 
 import { getOperationName } from "./utils";
 
@@ -40,6 +41,13 @@ type NextFetchOptions = { next?: { revalidate?: number; tags?: string[] } };
 export type FetchOptions = Omit<RequestInit, "method" | "body"> &
   NextFetchOptions;
 
+export type GraphqlClientOptions = {
+  // Defaults to the storefront logger; standalone apps pass their own.
+  logger?: Logger;
+  // Milliseconds after which a request is aborted. Unset means no deadline.
+  timeout?: number;
+};
+
 /**
  * The operation name is derived from the query document automatically;
  * pass `operationName` explicitly only to override it (logging label).
@@ -58,12 +66,15 @@ export type FetchOptions = Omit<RequestInit, "method" | "body"> &
 export const graphqlClient = (
   url: RequestInfo | URL,
   accessToken?: string | null,
+  { logger = defaultLogger, timeout }: GraphqlClientOptions = {},
 ) => ({
   execute: async <
     TResult = any,
     TVariables extends AnyVariables = AnyVariables,
   >(
-    query: DocumentTypeDecoration<TResult, TVariables> & { toString(): string },
+    query: DocumentTypeDecoration<TResult, TVariables> & {
+      toString(): string;
+    },
     input?: {
       /**
        * @deprecated Derived automatically from the query document via
@@ -100,6 +111,9 @@ export const graphqlClient = (
           query: query.toString(),
           ...(variables && { variables }),
         }),
+        signal:
+          options?.signal ??
+          (timeout ? AbortSignal.timeout(timeout) : undefined),
       });
 
       const duration = Math.round(performance.now() - startTime);
@@ -111,6 +125,7 @@ export const graphqlClient = (
           body,
           parsedResponse,
           response,
+          logger,
           operationName,
           url,
           duration,
@@ -224,6 +239,7 @@ export const graphqlClient = (
 const handleInvalidResponse = ({
   body,
   parsedResponse,
+  logger,
   operationName,
   response,
   url,
@@ -232,6 +248,7 @@ const handleInvalidResponse = ({
 }: {
   body: GraphQLResponse | null;
   duration: number;
+  logger: Logger;
   operationName: string;
   parsedResponse: ParsedGraphqlResponse;
   response: Response;

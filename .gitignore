@@ -19,6 +19,8 @@ coverage
 .next/
 out/
 build
+# Source, not an output: @nimara/tooling holds its build machinery in build/.
+!packages/tooling/src/build/
 
 # typescript incremental build cache
 *.tsbuildinfo
@@ -53,8 +55,8 @@ yarn-error.log*
 .env.*
 !.env.example
 
-# stripe app config store for CONFIG_PROVIDER=file — holds Stripe secret keys
-.saleor-app-config*.json
+# Saleor app config store for CONFIG_PROVIDER=file — holds tokens and secret keys
+.*app-config*.json
 
 # turbo
 .turbo

@@ -1,0 +1,108 @@
+import { existsSync, readdirSync } from "node:fs";
+import { readdir, stat } from "node:fs/promises";
+import { join } from "node:path";
+
+import { z } from "zod";
+
+export const BUILD_TARGETS = ["node", "vercel"] as const;
+
+export type BuildTarget = (typeof BUILD_TARGETS)[number];
+
+export type AppEntry = { name: string; path: string };
+
+const SERVICE_TRIGGERS = ["http", "queue", "event"] as const;
+
+// What starts an invocation: a request, a message on a queue, or a direct invoke.
+export type ServiceTrigger = (typeof SERVICE_TRIGGERS)[number];
+
+export type ServiceEntry = AppEntry & { trigger: ServiceTrigger };
+
+export const VERCEL_UNSUPPORTED_TRIGGERS: readonly ServiceTrigger[] = [
+  "queue",
+  "event",
+];
+
+/**
+ * The file a service is recognised by. Read off the file name, so nothing has
+ * to evaluate app code to know what drives the service.
+ */
+const ENTRY_FILES: Record<ServiceTrigger, string> = {
+  event: "entry-event.ts",
+  http: "entry-server.ts",
+  queue: "entry-queue.ts",
+};
+
+const CLIENT_ENTRY = "entry-client.tsx";
+
+export const readBuildTarget = (): BuildTarget => {
+  const parsed = z.enum(BUILD_TARGETS).safeParse(process.env.BUILD_TARGET);
+
+  if (!parsed.success) {
+    throw new Error(
+      `BUILD_TARGET must be one of: ${BUILD_TARGETS.join(", ")}. Received: ${process.env.BUILD_TARGET ?? "(unset)"}.`,
+    );
+  }
+
+  return parsed.data;
+};
+
+/**
+ * Whether any service ships a UI. Synchronous because vite reads a config
+ * before it can await anything, and an app with no UI has no React to load.
+ */
+export const hasClientEntry = (servicesDir: string) =>
+  existsSync(servicesDir) &&
+  readdirSync(servicesDir).some((item) =>
+    existsSync(join(servicesDir, item, CLIENT_ENTRY)),
+  );
+
+// A service dir holds one entry file, plus `entry-client.tsx` if it ships a UI.
+export const getEntryPoints = async (servicesDir: string) => {
+  const items = await readdir(servicesDir);
+  const entryPoints: { client: AppEntry[]; services: ServiceEntry[] } = {
+    client: [],
+    services: [],
+  };
+
+  for (const item of items) {
+    const serviceDir = join(servicesDir, item);
+
+    if (!(await stat(serviceDir)).isDirectory()) {
+      continue;
+    }
+
+    const found = SERVICE_TRIGGERS.filter((trigger) =>
+      existsSync(join(serviceDir, ENTRY_FILES[trigger])),
+    );
+
+    /**
+     * One service is one deployed unit, and a unit is answered over HTTP, driven
+     * by a queue, or invoked directly. Two entries side by side leave no single
+     * handler to point a deployment at.
+     */
+    if (found.length > 1) {
+      throw new Error(
+        `${item} has more than one of ${Object.values(ENTRY_FILES).join(", ")}. A service is served over HTTP, driven by a queue, or invoked directly; split it in two.`,
+      );
+    }
+
+    const [trigger] = found;
+
+    // A directory with neither entry file is not a service.
+    if (trigger) {
+      entryPoints.services.push({
+        name: item,
+        path: join(serviceDir, ENTRY_FILES[trigger]),
+        trigger,
+      });
+    }
+
+    const clientEntry = join(serviceDir, CLIENT_ENTRY);
+
+    if (existsSync(clientEntry)) {
+      entryPoints.client.push({ name: item, path: clientEntry });
+    }
+  }
+
+  return entryPoints;
+};

@@ -1,15 +1,15 @@
 import type { Config as TwConfig } from "tailwindcss";
 const plugin = require("tailwindcss/plugin");
 
-type AppName = "storefront" | "stripe" | "marketplace";
-
-function getContentPaths(app: AppName): string[] {
-  const appSrc = `../../apps/${app}/src`;
+function getContentPaths(app?: string): string[] {
+  const appSrc = "./src";
   const uiSrc = "../../packages/ui/src/**/*.{ts,tsx,html,stories.tsx}";
   const featuresSrc =
     "../../packages/features/src/**/*.{ts,tsx,html,stories.tsx}";
   const foundationSrc =
     "../../packages/foundation/src/**/*.{ts,tsx,html,stories.tsx}";
+  // Saleor app shell (dashboard session, spinner, error boundary).
+  const libSrc = "../../packages/lib/src/**/*.{ts,tsx,html,stories.tsx}";
   if (app === "marketplace") {
     return [
       `${appSrc}/**/*.{js,ts,jsx,tsx,mdx}`,
@@ -24,11 +24,12 @@ function getContentPaths(app: AppName): string[] {
     uiSrc,
     featuresSrc,
     foundationSrc,
+    libSrc,
     "../../interface/**/*.{ts,tsx,html,stories.tsx}",
   ];
 }
 
-export default function config(app: AppName) {
+export default function config(app?: string) {
   const config = {
     content: getContentPaths(app),
     darkMode: "class",

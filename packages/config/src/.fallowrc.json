@@ -29,6 +29,8 @@
       { "name": "foundation", "patterns": ["packages/foundation/**"] },
       { "name": "infrastructure", "patterns": ["packages/infrastructure/**"] },
       { "name": "features", "patterns": ["packages/features/**"] },
+      { "name": "lib", "patterns": ["packages/lib/**"] },
+      { "name": "tooling", "patterns": ["packages/tooling/**"] },
       { "name": "storefront", "patterns": ["apps/storefront/**"] },
       { "name": "marketplace", "patterns": ["apps/marketplace/**"] },
       { "name": "stripe", "patterns": ["apps/stripe/**"] }
@@ -56,6 +58,11 @@
         ]
       },
       {
+        "from": "lib",
+        "allow": ["domain", "foundation", "infrastructure", "ui", "config"]
+      },
+      { "from": "tooling", "allow": [] },
+      {
         "from": "storefront",
         "allow": [
           "features",
@@ -71,7 +78,17 @@
         "from": "marketplace",
         "allow": ["infrastructure", "ui", "domain", "i18n", "config"]
       },
-      { "from": "stripe", "allow": ["infrastructure", "ui", "config"] }
+      {
+        "from": "stripe",
+        "allow": [
+          "lib",
+          "tooling",
+          "infrastructure",
+          "foundation",
+          "ui",
+          "config"
+        ]
+      }
     ]
   },
   "rules": {}

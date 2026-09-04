@@ -1,5 +1,7 @@
 import type Stripe from "stripe";
 
+import { humanize } from "@nimara/lib/utils/string";
+
 import {
   type PaymentIntent,
   type PaymentMethodDetails,
@@ -8,7 +10,6 @@ import {
   type StripeNotification,
   type SupportedStripeWebhookEventType,
 } from "@/domain/consts";
-import { humanize } from "@/lib/util";
 
 /**
  * Resolves the amount a payment intent event is reported with: the captured

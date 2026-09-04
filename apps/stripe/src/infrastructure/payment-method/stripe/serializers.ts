@@ -1,10 +1,11 @@
 import type Stripe from "stripe";
 
+import { humanize } from "@nimara/lib/utils/string";
+
 import {
   type StoredPaymentMethod,
   storedPaymentMethodSchema,
 } from "@/domain/payment-method";
-import { humanize } from "@/lib/util";
 
 import { getExpandableId } from "./utils";
 

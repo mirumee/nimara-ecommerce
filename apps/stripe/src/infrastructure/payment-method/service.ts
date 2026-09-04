@@ -17,7 +17,7 @@ import {
 import { type AppConfigService } from "@/infrastructure/app-config-service";
 import { type CustomerRepositoryFactory } from "@/infrastructure/customer/repository";
 import { type StripePaymentMethodRepositoryFactory } from "@/infrastructure/payment-method/stripe/repository";
-import { type SaleorClient } from "@/lib/saleor/client";
+import { type SaleorClient } from "@/infrastructure/saleor/client";
 
 type Deps = {
   appConfigService: AppConfigService;
@@ -103,18 +103,24 @@ export const paymentMethodService = ({
   }: {
     customers: Repositories["customers"];
     user: PaymentMethodUser;
-  }) => {
+  }): AsyncResult<string> => {
     const existing = await customers.get({ user });
 
     if (existing) {
-      return existing;
+      return ok(existing);
     }
 
     const gatewayUserId = await customers.create({ user });
+    const saveResult = await customers.save({
+      gatewayUserId,
+      userId: user.id,
+    });
 
-    await customers.save({ gatewayUserId, userId: user.id });
+    if (!saveResult.ok) {
+      return saveResult;
+    }
 
-    return gatewayUserId;
+    return ok(gatewayUserId);
   };
 
   return {
@@ -140,12 +146,10 @@ export const paymentMethodService = ({
       }
 
       try {
-        return ok(
-          await resolveGatewayUserId({
-            customers: repositories.data.customers,
-            user,
-          }),
-        );
+        return await resolveGatewayUserId({
+          customers: repositories.data.customers,
+          user,
+        });
       } catch (error) {
         logger.error("Failed to resolve the gateway user.", {
           channelSlug,
@@ -258,9 +262,13 @@ export const paymentMethodService = ({
         user: event.user,
       });
 
+      if (!gatewayUserId.ok) {
+        return gatewayUserId;
+      }
+
       return ok(
         await repositories.data.paymentMethods.create({
-          gatewayUserId,
+          gatewayUserId: gatewayUserId.data,
           userId: event.user.id,
         }),
       );

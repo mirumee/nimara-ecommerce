@@ -1,0 +1,26 @@
+{
+  "name": "@nimara/generators",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "eslint . --ext .ts --fix",
+    "lint:staged": "lint-staged",
+    "lint:types": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest --watch"
+  },
+  "devDependencies": {
+    "@nimara/config": "workspace:*",
+    "@nimara/tooling": "workspace:*",
+    "@turbo/gen": "^2.9.4",
+    "@types/node": "^24.12.4",
+    "eslint": "^8.57.0",
+    "typescript": "^5.9.3",
+    "vitest": "4.1.2"
+  },
+  "lint-staged": {
+    "*.*": "prettier --write --ignore-unknown",
+    "*.{js,cjs,ts}": "eslint --fix"
+  }
+}

@@ -4,7 +4,7 @@
   "tasks": {
     "build": {
       "dependsOn": ["^codegen", "^build"],
-      "outputs": ["dist/**"],
+      "outputs": ["dist/**", "index.js"],
       "inputs": [
         "$TURBO_DEFAULT$",
         ".env",
