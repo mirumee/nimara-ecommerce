@@ -16,7 +16,7 @@ const TEMPLATE_PKG = {
   scripts: { dev: "vite --port ${PORT:-8000}" },
 };
 
-const ENTRY_SERVER = `import { container } from "@/container";
+const ENTRY_SERVER = `import { container } from "@/services/handler/container";
 
 import { appRoutes } from "./api/rest/app";
 import { saleorRoutes } from "./api/rest/saleor";
@@ -30,8 +30,6 @@ export const app = new Hono()
 
 const CONTAINER = `import { installSaleorAppUseCase } from "@nimara/infrastructure/use-cases/apps/saleor/install-app-use-case";
 
-import { dashboardUseCases } from "./dashboard";
-
 export const container = createContainer()
   .add((ctx) => ({
     configStore: () => ({
@@ -43,8 +41,7 @@ export const container = createContainer()
       installSaleorAppUseCase({
         configRepository: ctx.appConfigService,
       }),
-  }))
-  .add(dashboardUseCases);
+  }));
 
 export type AppContainer = typeof container;
 `;
@@ -58,10 +55,12 @@ const write = async (path: string, contents: string) => {
 
 const generate = ({
   kind = "dashboard",
+  service = "handler",
   target = "vercel",
   tenancy = "multi",
 }: {
-  kind?: "dashboard" | "http";
+  kind?: "dashboard" | "http" | "queue";
+  service?: string;
   target?: "node" | "vercel";
   tenancy?: "multi" | "single";
 } = {}) =>
@@ -71,6 +70,7 @@ const generate = ({
     name: "feed-sync",
     port: "8010",
     root,
+    service,
     target,
     tenancy,
   });
@@ -128,8 +128,18 @@ describe("create-app", () => {
     );
     await write(join(template(), "src", "container", "index.ts"), CONTAINER);
     await write(
-      join(template(), "src", "container", "dashboard.ts"),
-      "export const dashboardUseCases = 1;",
+      join(template(), "src", "services", "consumer", "entry-queue.ts"),
+      "export const handler = 1;",
+    );
+    await write(
+      join(template(), "src", "services", "consumer", "config.ts"),
+      'import { prepareServiceConfig } from "@nimara/lib/config/service";\n' +
+        "export const APP_CONFIG = prepareServiceConfig({});\n",
+    );
+    await write(
+      join(template(), "src", "services", "consumer", ".env.example"),
+      "# The queue driving the `consumer` service.\n" +
+        "CONSUMER_QUEUE_URL=http://localhost:4566/000000000000/app-template-consumer\n",
     );
     await write(join(template(), "tailwind.config.ts"), "export default 1;");
     await write(join(template(), "postcss.config.cjs"), "module.exports = 1;");
@@ -184,12 +194,33 @@ describe("create-app", () => {
       name: "  Feed Sync!  ",
       port: "8010",
       root,
+      service: "  Order Sync!  ",
       target: "vercel",
       tenancy: "multi",
     });
 
-    // then `--args` skips the prompt that would have filtered it.
+    // then `--args` skips the prompts that would have filtered them.
     expect(destination).toBe(join(root, "apps", "feed-sync"));
+    expect(
+      await readFile(
+        join(destination, "src", "services", "order-sync", "config.ts"),
+        "utf8",
+      ),
+    ).toContain("prepareServiceConfig");
+  });
+
+  it("names the service what it was asked to", async () => {
+    // when
+    const destination = await generate({ service: "webhooks" });
+    const services = join(destination, "src", "services");
+
+    // then the directory name is what the service reports as `SERVICE`.
+    expect(
+      await readFile(join(services, "webhooks", "entry-server.ts"), "utf8"),
+    ).toContain('"@/services/webhooks/container"');
+    await expect(
+      readFile(join(services, "handler", "entry-server.ts"), "utf8"),
+    ).rejects.toThrow();
   });
 
   it("leaves local state behind", async () => {
@@ -281,20 +312,14 @@ describe("create-app", () => {
     it("unwires what an http app did not copy", async () => {
       // when
       const destination = await generate({ kind: "http" });
-      const [entryServer, container] = await Promise.all(
-        [
-          join(destination, "src", "services", "handler", "entry-server.ts"),
-          join(destination, "src", "container", "index.ts"),
-        ].map((path) => readFile(path, "utf8")),
+      const entryServer = await readFile(
+        join(destination, "src", "services", "handler", "entry-server.ts"),
+        "utf8",
       );
 
-      // then an import of a file that was not copied does not compile, and a
-      // container entry nothing calls is dead code in a new app.
+      // then an import of a file that was not copied does not compile.
       expect(entryServer).not.toContain("dashboard");
       expect(entryServer).toContain('.route("/api/saleor", saleorRoutes);');
-      expect(container).not.toContain("getSettingsForm");
-      expect(container).not.toContain("saveSettings");
-      expect(container).toContain("installApp");
     });
 
     it("drops the dependencies only a dashboard pulls", async () => {
@@ -321,6 +346,83 @@ describe("create-app", () => {
       expect(
         await readFile(join(destination, "tailwind.config.ts"), "utf8"),
       ).toBe("export default 1;");
+    });
+  });
+
+  it("leaves the template's other services behind", async () => {
+    // when
+    const destination = await generate();
+
+    // then a queue service is a different program, not this app's.
+    await expect(
+      readFile(
+        join(destination, "src", "services", "consumer", "entry-queue.ts"),
+        "utf8",
+      ),
+    ).rejects.toThrow();
+  });
+
+  describe("queue", () => {
+    const queue = () =>
+      generate({ kind: "queue", service: "consumer", target: "node" });
+
+    it("generates from the template's queue service", async () => {
+      // when
+      const destination = await queue();
+      const services = join(destination, "src", "services");
+
+      // then the two are different programs, so only one is copied.
+      expect(
+        await readFile(join(services, "consumer", "entry-queue.ts"), "utf8"),
+      ).toBe("export const handler = 1;");
+      await expect(
+        readFile(join(services, "handler", "entry-server.ts"), "utf8"),
+      ).rejects.toThrow();
+    });
+
+    it("points the app at a queue of its own", async () => {
+      // when
+      const destination = await queue();
+      const env = await readFile(join(destination, ".env.example"), "utf8");
+
+      // then two apps on one LocalStack would otherwise share a queue.
+      expect(env).toContain(
+        "CONSUMER_QUEUE_URL=http://localhost:4566/000000000000/feed-sync-consumer",
+      );
+    });
+
+    it("leaves the app one `.env.example`", async () => {
+      // when
+      const destination = await queue();
+
+      // then the service's own is folded into it, not carried beside it.
+      await expect(
+        readFile(
+          join(destination, "src", "services", "consumer", ".env.example"),
+          "utf8",
+        ),
+      ).rejects.toThrow();
+    });
+
+    it("drops the dashboard, which it serves no HTTP for", async () => {
+      // when
+      const destination = await queue();
+      const pkg = JSON.parse(
+        await readFile(join(destination, "package.json"), "utf8"),
+      );
+
+      // then
+      expect(pkg.dependencies).not.toHaveProperty("react");
+      await expect(
+        readFile(join(destination, "tailwind.config.ts"), "utf8"),
+      ).rejects.toThrow();
+    });
+
+    it("refuses a target that cannot drive it", async () => {
+      // when / then `--args` skips the prompt that would have hidden it.
+      await expect(
+        generate({ kind: "queue", service: "consumer", target: "vercel" }),
+      ).rejects.toThrow("cannot be deployed to vercel");
     });
   });
 

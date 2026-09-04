@@ -18,7 +18,7 @@ const write = async (path: string, contents: string) => {
   await writeFile(path, contents);
 };
 
-const ENTRY_SERVER = `import { container } from "@/container";
+const ENTRY_SERVER = `import { container } from "@/services/handler/container";
 
 import { appRoutes } from "./api/rest/app";
 import { saleorRoutes } from "./api/rest/saleor";
@@ -32,8 +32,6 @@ export const app = new Hono()
 
 const CONTAINER = `import { installSaleorAppUseCase } from "@nimara/infrastructure/use-cases/apps/saleor/install-app-use-case";
 
-import { dashboardUseCases } from "./dashboard";
-
 export const container = createContainer()
   .add((ctx) => ({
     configStore: () => ({
@@ -45,8 +43,7 @@ export const container = createContainer()
       installSaleorAppUseCase({
         configRepository: ctx.appConfigService,
       }),
-  }))
-  .add(dashboardUseCases);
+  }));
 
 export type AppContainer = typeof container;
 `;
@@ -57,11 +54,16 @@ const template = (...parts: string[]) =>
 const templateService = (...parts: string[]) =>
   template("src", "services", "handler", ...parts);
 
+const templateQueue = (...parts: string[]) =>
+  template("src", "services", "consumer", ...parts);
+
 const appService = (service: string, ...parts: string[]) =>
   join(root, "apps", "feed-sync", "src", "services", service, ...parts);
 
-const add = (name = "order-sync", kind: "dashboard" | "http" = "dashboard") =>
-  createService({ app: "feed-sync", kind, name, root });
+const add = (
+  name = "order-sync",
+  kind: "dashboard" | "http" | "queue" = "dashboard",
+) => createService({ app: "feed-sync", kind, name, root });
 
 describe("create-service", () => {
   beforeEach(async () => {
@@ -69,6 +71,10 @@ describe("create-service", () => {
 
     await write(templateService("config.ts"), MULTI);
     await write(templateService("entry-server.ts"), ENTRY_SERVER);
+    await write(
+      templateService("container.ts"),
+      'import { createAppContainer } from "@/container";\n',
+    );
     await write(
       templateService("api", "rest", "saleor", "index.test.ts"),
       'import { app } from "@/services/handler/entry-server";\n',
@@ -84,10 +90,6 @@ describe("create-service", () => {
       "export const appRoutes = 1;",
     );
     await write(template("src", "container", "index.ts"), CONTAINER);
-    await write(
-      template("src", "container", "dashboard.ts"),
-      "export const dashboardUseCases = 1;",
-    );
     await write(template("tailwind.config.ts"), "export default 1;");
     await write(template("postcss.config.cjs"), "module.exports = 1;");
     await write(
@@ -103,13 +105,24 @@ describe("create-service", () => {
       join(root, "apps", "feed-sync", "package.json"),
       JSON.stringify({ dependencies: {}, devDependencies: {} }),
     );
-    // An app generated as http: its container never had the dashboard entry.
     await write(
       join(root, "apps", "feed-sync", "src", "container", "index.ts"),
-      CONTAINER.replace(
-        'import { dashboardUseCases } from "./dashboard";\n\n',
-        "",
-      ).replace("  }))\n  .add(dashboardUseCases);", "  }));"),
+      CONTAINER,
+    );
+    await write(templateQueue("config.ts"), MULTI);
+    await write(
+      templateQueue("entry-queue.ts"),
+      'import { container } from "@/services/consumer/container";\n',
+    );
+    await write(
+      templateQueue(".env.example"),
+      "# The queue driving the `consumer` service.\n" +
+        "CONSUMER_QUEUE_URL=http://localhost:4566/000000000000/app-template-consumer\n",
+    );
+
+    await write(
+      join(root, "apps", "feed-sync", ".env.example"),
+      "BUILD_TARGET=node\n",
     );
     await write(appService("handler", "config.ts"), MULTI);
   });
@@ -146,7 +159,7 @@ describe("create-service", () => {
 
     // then
     expect(
-      await readFile(appService("order-sync", "entry-server.ts"), "utf8"),
+      await readFile(appService("order-sync", "container.ts"), "utf8"),
     ).toContain('"@/container"');
   });
 
@@ -237,33 +250,8 @@ describe("create-service", () => {
       expect(pkg.devDependencies.tailwindcss).toBe("^3.4.19");
     });
 
-    it("wires a dashboard back into a container that had none", async () => {
-      // given an app generated as http, whose container lost the entry
-      const containerPath = join(
-        root,
-        "apps",
-        "feed-sync",
-        "src",
-        "container",
-        "index.ts",
-      );
-
-      // when
-      await add("order-sync", "dashboard");
-      const container = await readFile(containerPath, "utf8");
-
-      // then the service calls `getSettingsForm`, so a container without it
-      // does not compile.
-      expect(container).toContain(
-        'import { dashboardUseCases } from "./dashboard";',
-      );
-      expect(container).toContain("  .add(dashboardUseCases);");
-      expect(container).not.toContain("  }))\n  }));");
-    });
-
-    it("leaves a container that already has the entry alone", async () => {
+    it("leaves the app's container alone", async () => {
       // given
-      await add("first", "dashboard");
       const containerPath = join(
         root,
         "apps",
@@ -274,11 +262,52 @@ describe("create-service", () => {
       );
       const before = await readFile(containerPath, "utf8");
 
-      // when a second dashboard service is added
-      await add("second", "dashboard");
+      // when
+      await add("order-sync", "dashboard");
 
-      // then
+      // then a dashboard builds its own use-cases, so nothing is wired in.
       expect(await readFile(containerPath, "utf8")).toBe(before);
+    });
+
+    it("builds a queue service from the template's queue service", async () => {
+      // when
+      await add("mail-sender", "queue");
+
+      // then a queue service is a different program, not an HTTP one cut down.
+      expect(
+        await readFile(appService("mail-sender", "entry-queue.ts"), "utf8"),
+      ).toContain('"@/services/mail-sender/container"');
+    });
+
+    it("points a queue service at a queue of its own", async () => {
+      // when
+      await add("mail-sender", "queue");
+      const env = await readFile(
+        join(root, "apps", "feed-sync", ".env.example"),
+        "utf8",
+      );
+
+      // then the variable follows the service, so two never share one queue.
+      expect(env).toContain(
+        "MAIL_SENDER_QUEUE_URL=http://localhost:4566/000000000000/feed-sync-mail-sender",
+      );
+      expect(env).not.toContain("CONSUMER_QUEUE_URL");
+      await expect(
+        readFile(appService("mail-sender", ".env.example"), "utf8"),
+      ).rejects.toThrow();
+    });
+
+    it("refuses a queue service on an app that cannot drive one", async () => {
+      // given an app deployed to Vercel
+      await write(
+        join(root, "apps", "feed-sync", ".env.example"),
+        "BUILD_TARGET=vercel\n",
+      );
+
+      // when / then `--args` skips the prompt that would have hidden it.
+      await expect(add("mail-sender", "queue")).rejects.toThrow(
+        "cannot be deployed to vercel",
+      );
     });
 
     it("keeps what the app already declared", async () => {

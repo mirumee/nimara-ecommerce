@@ -1,5 +1,5 @@
 import { existsSync, readdirSync } from "node:fs";
-import { cp, readdir, readFile, writeFile } from "node:fs/promises";
+import { cp } from "node:fs/promises";
 import { basename, join, relative, sep } from "node:path";
 
 import { NOT_COPIED } from "./create-app.ts";
@@ -8,7 +8,16 @@ import {
   removeServiceDashboard,
   restoreAppDashboard,
 } from "./dashboard.ts";
-import { type AppKind, TEMPLATE_SERVICE, toDirectoryName } from "./names.ts";
+import { mergeServiceEnv } from "./env.ts";
+import {
+  type AppKind,
+  requireKindForTarget,
+  TEMPLATE_SERVICES,
+  toDirectoryName,
+} from "./names.ts";
+import { renameQueue } from "./queue.ts";
+import { rewriteServiceImports } from "./rename-service.ts";
+import { detectBuildTarget } from "./target.ts";
 import { applyTenancy, detectTenancy } from "./tenancy.ts";
 
 export type CreateServiceInput = {
@@ -42,37 +51,6 @@ export const listApps = (root: string) => {
 };
 
 /**
- * `tsconfig.json` maps `@/*` onto `src/*`, so the copied files still reach into
- * the template's service by name until they are rewritten.
- */
-const rewriteImports = async ({
-  name,
-  serviceDir,
-}: {
-  name: string;
-  serviceDir: string;
-}) => {
-  const prefix = `@/services/${TEMPLATE_SERVICE}/`;
-  const entries = await readdir(serviceDir, {
-    recursive: true,
-    withFileTypes: true,
-  });
-
-  for (const entry of entries) {
-    if (!entry.isFile() || !/\.tsx?$/.test(entry.name)) {
-      continue;
-    }
-
-    const path = join(entry.parentPath, entry.name);
-    const contents = await readFile(path, "utf8");
-
-    if (contents.includes(prefix)) {
-      await writeFile(path, contents.replaceAll(prefix, `@/services/${name}/`));
-    }
-  }
-};
-
-/**
  * Adds a service to an app that already exists. The build and the dev server
  * scan `src/services/*`, so nothing outside the new directory names it.
  */
@@ -82,18 +60,21 @@ export const createService = async ({
   name,
   root,
 }: CreateServiceInput) => {
+  requireKindForTarget({ kind, target: detectBuildTarget({ app, root }) });
+
   // `--args` skips the prompt that would have filtered this.
   const serviceName = toDirectoryName(name);
   const appDir = join(root, "apps", app);
   const serviceDir = join(appDir, "src", "services", serviceName);
 
+  const templateService = TEMPLATE_SERVICES[kind];
   const source = join(
     root,
     "templates",
     "app",
     "src",
     "services",
-    TEMPLATE_SERVICE,
+    templateService,
   );
 
   await cp(source, serviceDir, {
@@ -121,7 +102,17 @@ export const createService = async ({
     await restoreAppDashboard({ appDir, root });
   }
 
-  await rewriteImports({ name: serviceName, serviceDir });
+  if (kind === "queue") {
+    await renameQueue({ app, service: serviceName, serviceDir });
+  }
+
+  await rewriteServiceImports({
+    from: templateService,
+    serviceDir,
+    to: serviceName,
+  });
+
+  await mergeServiceEnv({ appDir, serviceDir });
 
   // Inherited, never asked again: the services share one `.env`.
   await applyTenancy({ appDir, tenancy: await detectTenancy(appDir) });

@@ -17,14 +17,10 @@ export const SERVICE_DASHBOARD_PATHS = [
 ];
 
 /**
- * What the app around it holds for the same reason: the styling the bundle
- * pulls, and the container entries only a dashboard calls.
+ * What the app around it holds for the same reason: the styling its bundle
+ * pulls.
  */
-export const APP_DASHBOARD_PATHS = [
-  "postcss.config.cjs",
-  "src/container/dashboard.ts",
-  "tailwind.config.ts",
-];
+export const APP_DASHBOARD_PATHS = ["postcss.config.cjs", "tailwind.config.ts"];
 
 export const DASHBOARD_DEPENDENCIES = [
   "@hookform/resolvers",
@@ -93,18 +89,6 @@ const SERVICE_CUTS: Cut[] = [
 ];
 
 /**
- * What adds the dashboard's container entries. Anchored on the end of the
- * chain, which several `.add(...)` blocks would otherwise all match, and stated
- * once so the cut and the restore that undoes it cannot drift apart.
- */
-const CONTAINER_CUT = {
-  file: "src/container/index.ts",
-  importLine: 'import { dashboardUseCases } from "./dashboard";',
-  with: "  }))\n  .add(dashboardUseCases);\n\nexport type AppContainer",
-  without: "  }));\n\nexport type AppContainer",
-};
-
-/**
  * Throws rather than skipping what it cannot find: a file still importing one
  * that was not copied does not compile, and the message should name it.
  */
@@ -147,13 +131,6 @@ export const removeServiceDashboard = (serviceDir: string) =>
  * service ships without a dashboard.
  */
 export const removeAppDashboard = async (appDir: string) => {
-  await applyCut({
-    dir: appDir,
-    file: CONTAINER_CUT.file,
-    lines: [CONTAINER_CUT.importLine],
-    replacements: [{ from: CONTAINER_CUT.with, to: CONTAINER_CUT.without }],
-  });
-
   const path = join(appDir, "package.json");
   const pkg = JSON.parse(await readFile(path, "utf8")) as {
     dependencies: Record<string, string>;
@@ -170,32 +147,6 @@ export const removeAppDashboard = async (appDir: string) => {
   }
 
   await writeFile(path, `${JSON.stringify(pkg, null, 2)}\n`);
-};
-
-/**
- * The inverse of `CONTAINER_CUT`. Does nothing where the entry is already
- * there, so an app that kept its dashboard is untouched.
- */
-const restoreContainer = async (appDir: string) => {
-  const path = join(appDir, CONTAINER_CUT.file);
-  const contents = await readFile(path, "utf8");
-
-  if (contents.includes(CONTAINER_CUT.with)) {
-    return;
-  }
-
-  if (!contents.includes(CONTAINER_CUT.without)) {
-    throw new Error(`Expected the container chain to end ${path}.`);
-  }
-
-  // Prepended, not placed: the generator lints the app, and the rules sort it.
-  await writeFile(
-    path,
-    `${CONTAINER_CUT.importLine}\n${contents.replace(
-      CONTAINER_CUT.without,
-      CONTAINER_CUT.with,
-    )}`,
-  );
 };
 
 /**
@@ -217,8 +168,6 @@ export const restoreAppDashboard = async ({
       await cp(join(template, path), join(appDir, path), { recursive: true });
     }
   }
-
-  await restoreContainer(appDir);
 
   const packagePath = join(appDir, "package.json");
   const [pkg, templatePkg] = (await Promise.all(

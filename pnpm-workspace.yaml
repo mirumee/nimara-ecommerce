@@ -5,6 +5,7 @@ packages:
   - "turbo/generators"
 
 catalog:
+  "@types/aws-lambda": ^8.10.162
   hono: 4.13.5
   next: 16.3.3
   zod: ^4.5.2

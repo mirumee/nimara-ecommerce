@@ -76,19 +76,28 @@ describe("schema", () => {
       it.each([
         ["blank", ""],
         ["whitespace", "  "],
-      ])("refuses a %s value instead of reading it as unset", (_, value) => {
-        // given a half-finished `.env`, not a variable left out
+      ])("reads a %s value as unset", (_, value) => {
+        // given `KEY=` is how an example file documents an optional variable,
+        // and `pnpm env:init` writes one line per example
 
         // when / then
         for (const key of ["SENTRY_DSN", "VITE_SALEOR_APP_TOKEN"]) {
+          expect(parse({ [key]: value })[key as "SENTRY_DSN"]).toBeUndefined();
+        }
+      });
+
+      it.each(["SENTRY_DSN", "VITE_SALEOR_APP_TOKEN"])(
+        "still refuses a %s the schema rejects",
+        (key) => {
+          // when / then blank is the only value it forgives.
           expect(
             baseConfigSchema(PKG).safeParse({
               ENVIRONMENT: "test",
-              [key]: value,
+              [key]: "not a url",
             }).success,
-          ).toBe(false);
-        }
-      });
+          ).toBe(key !== "SENTRY_DSN");
+        },
+      );
 
       it("trims a value pasted with its whitespace", () => {
         // when / then

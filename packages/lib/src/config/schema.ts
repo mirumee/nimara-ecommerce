@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { getAppDisplayName } from "#root/config/utils";
+import { blankAsUnset } from "#root/zod/util";
 
 // A package cannot read the package.json of the app consuming it.
 export type PackageInfo = {
@@ -42,21 +43,19 @@ export const baseConfigSchema = (
         .number()
         .default(10000)
         .describe("Fetch timeout in milliseconds."),
-      // Unset means the line is absent, not blank: a variable someone left
-      // empty is a half-finished `.env`, and failing here says so.
-      SENTRY_DSN: z
-        .url()
-        .trim()
-        .optional()
-        .describe("Sentry DSN, enables reporting."),
-      VITE_SALEOR_APP_TOKEN: z
-        .string()
-        .trim()
-        .min(1)
-        .optional()
-        .describe(
-          "The token the Dashboard UI runs on outside the Saleor iframe.",
-        ),
+      SENTRY_DSN: blankAsUnset(
+        z.url().trim().optional().describe("Sentry DSN, enables reporting."),
+      ),
+      VITE_SALEOR_APP_TOKEN: blankAsUnset(
+        z
+          .string()
+          .trim()
+          .min(1)
+          .optional()
+          .describe(
+            "The token the Dashboard UI runs on outside the Saleor iframe.",
+          ),
+      ),
       BASE_PATH: z
         .string()
         .regex(

@@ -1,9 +1,51 @@
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
 
-import { prepareConfig } from "./util";
+import { blankAsUnset, prepareConfig } from "./util";
 
 describe("utils", () => {
+  describe("blankAsUnset", () => {
+    it("reads a blank variable as unset", () => {
+      // given `SENTRY_DSN=` is how an example file documents an optional one
+      const schema = z.object({ SENTRY_DSN: blankAsUnset(z.url().optional()) });
+
+      // when
+      const result = schema.parse({ SENTRY_DSN: "" });
+
+      // then an empty string is not a URL, and it must not fail the parse.
+      expect(result.SENTRY_DSN).toBeUndefined();
+    });
+
+    it("reads a whitespace-only variable as unset", () => {
+      // given
+      const schema = z.object({ SENTRY_DSN: blankAsUnset(z.url().optional()) });
+
+      // when / then a line carrying nothing but spaces says the same thing.
+      expect(schema.parse({ SENTRY_DSN: "  " }).SENTRY_DSN).toBeUndefined();
+    });
+
+    it("lets a blank variable fall back to its default", () => {
+      // given
+      const schema = z.object({
+        CONFIG_KEY: blankAsUnset(z.string().default("nimara-config")),
+      });
+
+      // when
+      const result = schema.parse({ CONFIG_KEY: "" });
+
+      // then an empty string would otherwise shadow the default.
+      expect(result.CONFIG_KEY).toBe("nimara-config");
+    });
+
+    it("still rejects a value the schema refuses", () => {
+      // given
+      const schema = z.object({ SENTRY_DSN: blankAsUnset(z.url().optional()) });
+
+      // when / then blank is the only value it forgives.
+      expect(() => schema.parse({ SENTRY_DSN: "not a url" })).toThrow();
+    });
+  });
+
   describe("prepareConfig", () => {
     it("should return parsed config for valid input", () => {
       // given

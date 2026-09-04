@@ -8,34 +8,34 @@ import { loggingMiddleware } from "@nimara/lib/hono/middleware/logging";
 import { requestOriginMiddleware } from "@nimara/lib/hono/middleware/request-origin";
 import { initSentry } from "@nimara/lib/reporting/sentry/instrument";
 
-import { container } from "@/container";
+import { container } from "@/services/handler/container";
 
 import { appRoutes } from "./api/rest/app";
 import { saleorRoutes } from "./api/rest/saleor";
 import { dashboard } from "./dashboard";
 
-const CONFIG = container.get("config");
+const { config, logger } = container.items;
 
 initSentry({
-  dsn: CONFIG.SENTRY_DSN,
-  environment: CONFIG.ENVIRONMENT,
-  release: CONFIG.RELEASE,
+  dsn: config.SENTRY_DSN,
+  environment: config.ENVIRONMENT,
+  release: config.RELEASE,
 });
 
 const app = new Hono()
   .onError(errorHandler)
-  .basePath(CONFIG.BASE_PATH as "/")
+  .basePath(config.BASE_PATH as "/")
   .use(requestId())
-  .use(loggingMiddleware(container.get("logger")))
-  .use(requestOriginMiddleware({ basePath: CONFIG.BASE_PATH }))
-  .use(healthCheckMiddleware({ basePath: CONFIG.BASE_PATH }))
+  .use(loggingMiddleware(logger))
+  .use(requestOriginMiddleware({ basePath: config.BASE_PATH }))
+  .use(healthCheckMiddleware({ basePath: config.BASE_PATH }))
   .route("/", dashboard)
   /**
    * Saleor opens `appUrl`, which is the app's root. A dashboard, where the app
    * has one, is mounted above and answers first.
    */
   .get("/", (context) =>
-    context.text(`${CONFIG.DISPLAY_NAME} ${CONFIG.VERSION}.`),
+    context.text(`${config.DISPLAY_NAME} ${config.VERSION}.`),
   )
   /**
    * Nested routes must be defined at the end for proper type inference for

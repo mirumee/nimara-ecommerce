@@ -3,7 +3,7 @@ import { join } from "node:path";
 
 import { type BuildTargetAdapter } from "./types.ts";
 
-// Assets are served from `dist/<app>/assets/`.
+// Assets are served from `dist/<service>/assets/`.
 export const nodeTarget: BuildTargetAdapter = {
   clientAssets: async () => ({}),
 

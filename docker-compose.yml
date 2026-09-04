@@ -1,0 +1,24 @@
+# LocalStack for the Saleor apps under `apps/`. `docker compose up -d localstack`.
+services:
+  localstack:
+    container_name: nimara-localstack
+    image: localstack/localstack:4.5
+    ports:
+      - "127.0.0.1:4566:4566"
+    environment:
+      - DEBUG=${DEBUG:-0}
+      - SERVICES=secretsmanager,ssm,sqs
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-dummy}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-dummy}
+      # Matches AWS_REGION in a queue service's `.env`. A queue created here is
+      # invisible to an app reading another region.
+      - AWS_REGION=${AWS_REGION:-us-east-1}
+      # Comma-separated queue names created on start, e.g. `feed-sync-consumer`.
+      - SQS_QUEUES=${SQS_QUEUES:-}
+    volumes:
+      - "./etc/localstack/init-aws.sh:/etc/localstack/init/ready.d/init-aws.sh"
+    healthcheck:
+      test: ["CMD", "awslocal", "sqs", "list-queues"]
+      interval: 10s
+      timeout: 5s
+      retries: 5

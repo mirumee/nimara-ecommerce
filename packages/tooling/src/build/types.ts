@@ -1,4 +1,4 @@
-import { type AppEntry } from "../entry-points.ts";
+import { type ServiceEntry } from "../entry-points.ts";
 
 export type BuildTargetAdapter = {
   // Fills `__CLIENT_ASSETS__`; empty where the target serves assets from disk.
@@ -6,6 +6,9 @@ export type BuildTargetAdapter = {
     assetsDir: string;
     hasClient: boolean;
   }) => Promise<Record<string, string>>;
-  // Runs once, after every app is built.
-  finalize: (opts: { rootDir: string; server: AppEntry[] }) => Promise<void>;
+  // Runs once, after every service is built.
+  finalize: (opts: {
+    rootDir: string;
+    services: ServiceEntry[];
+  }) => Promise<void>;
 };

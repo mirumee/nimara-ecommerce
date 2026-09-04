@@ -1,6 +1,18 @@
-import type { z, ZodSafeParseResult, ZodSafeParseSuccess } from "zod";
+import { z, type ZodSafeParseResult, type ZodSafeParseSuccess } from "zod";
 
 import { type AnyZodSchema } from "./types";
+
+/**
+ * A variable left blank in a `.env` reads as unset. `SENTRY_DSN=` is how an
+ * example file documents an optional variable, and it must not parse as an
+ * empty URL or shadow a default.
+ */
+export const blankAsUnset = <Schema extends z.ZodType>(schema: Schema) =>
+  z.preprocess(
+    (value) =>
+      typeof value === "string" && value.trim() === "" ? undefined : value,
+    schema,
+  );
 
 export const prepareConfig = <Schema extends AnyZodSchema = AnyZodSchema>({
   name = "",

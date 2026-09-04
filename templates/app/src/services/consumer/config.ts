@@ -4,13 +4,8 @@ import { appConfigSchema } from "@/domain/app-config";
 
 import packageJson from "../../../package.json";
 
-const parsed = prepareServiceConfig({
+export const APP_CONFIG = prepareServiceConfig({
   moduleUrl: import.meta.url,
   pkg: packageJson,
   schema: appConfigSchema,
 });
-
-export const APP_CONFIG = {
-  ...parsed,
-  APP_ID: `${parsed.ENVIRONMENT}.${parsed.NAME}`,
-};

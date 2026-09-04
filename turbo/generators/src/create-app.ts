@@ -6,15 +6,20 @@ import {
   removeAppDashboard,
   removeServiceDashboard,
 } from "./dashboard.ts";
+import { mergeServiceEnv } from "./env.ts";
 import {
   type AppKind,
   type BuildTarget,
+  requireKindForTarget,
   TEMPLATE_NAME,
   TEMPLATE_PORT,
-  TEMPLATE_SERVICE,
+  TEMPLATE_SERVICE_DIRS,
+  TEMPLATE_SERVICES,
   type Tenancy,
   toDirectoryName,
 } from "./names.ts";
+import { renameQueue } from "./queue.ts";
+import { renameService } from "./rename-service.ts";
 import { applyTenancy } from "./tenancy.ts";
 
 // Copying `.env` would hand the new app someone else's Saleor token.
@@ -33,12 +38,19 @@ export type CreateAppInput = {
   name: string;
   port: string;
   root: string;
+  service: string;
   target: BuildTarget;
   tenancy: Tenancy;
 };
 
 // An app deployed elsewhere should not carry another platform's config.
 const TARGET_ONLY = new Set(["vercel.json"]);
+
+// Left behind, not cut down: another template service is a different program.
+const unusedServicePaths = (kind: AppKind) =>
+  TEMPLATE_SERVICE_DIRS.filter((dir) => dir !== TEMPLATE_SERVICES[kind]).map(
+    (dir) => `src/services/${dir}`,
+  );
 
 const ALLOWED_DOMAINS_DOC = {
   multi: `# Comma-separated Saleor domains allowed to install the app, e.g.
@@ -73,6 +85,14 @@ const copyTemplate = ({
       }
 
       const path = relative(source, entry).split(sep).join("/");
+
+      if (
+        unusedServicePaths(kind).some(
+          (prefix) => path === prefix || path.startsWith(`${prefix}/`),
+        )
+      ) {
+        return false;
+      }
 
       return kind === "dashboard" || !isDashboardPath(path, { appPaths: true });
     },
@@ -140,18 +160,30 @@ export const createApp = async ({
   name,
   port,
   root,
+  service,
   target,
   tenancy,
 }: CreateAppInput) => {
-  // `--args` skips the prompt that would have filtered this.
+  requireKindForTarget({ kind, target });
+
+  // `--args` skips the prompts that would have filtered these.
   const appName = toDirectoryName(name);
+  const serviceName = toDirectoryName(service);
   const destination = join(root, "apps", appName);
+  const serviceDir = join(destination, "src", "services", serviceName);
 
   await copyTemplate({
     destination,
     kind,
     source: join(root, "templates", "app"),
     target,
+  });
+
+  // Ahead of the rest, so everything after it names the service the app has.
+  await renameService({
+    appDir: destination,
+    from: TEMPLATE_SERVICES[kind],
+    to: serviceName,
   });
 
   await rewritePackageJson({
@@ -171,13 +203,20 @@ export const createApp = async ({
     });
   }
 
-  // Unwires what the copy left out.
+  // Unwires what the copy left out. A queue service never had a dashboard.
   if (kind === "http") {
-    await removeServiceDashboard(
-      join(destination, "src", "services", TEMPLATE_SERVICE),
-    );
+    await removeServiceDashboard(serviceDir);
+  }
+
+  if (kind !== "dashboard") {
     await removeAppDashboard(destination);
   }
+
+  if (kind === "queue") {
+    await renameQueue({ app: appName, service: serviceName, serviceDir });
+  }
+
+  await mergeServiceEnv({ appDir: destination, serviceDir });
 
   await applyTenancy({ appDir: destination, tenancy });
 

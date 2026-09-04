@@ -7,13 +7,16 @@ import { listApps } from "./create-service.ts";
 import {
   type AppKind,
   BUILD_TARGETS,
+  type BuildTarget,
   KINDS,
-  TEMPLATE_SERVICE,
+  kindsForTarget,
+  TEMPLATE_SERVICES,
   TENANCIES,
   type Tenancy,
   toDirectoryName,
   validateName,
 } from "./names.ts";
+import { detectBuildTarget } from "./target.ts";
 
 export const appName: PlopTypes.PromptQuestion = {
   filter: toDirectoryName,
@@ -57,14 +60,28 @@ export const tenancy: PlopTypes.PromptQuestion = {
   type: "list",
 };
 
+const KIND_LABELS: Record<AppKind, string> = {
+  dashboard: "dashboard — HTTP, with a settings page in Saleor",
+  http: "http — HTTP only: webhooks and API",
+  queue: "queue — an SQS consumer, no HTTP",
+};
+
 export const kind: PlopTypes.PromptQuestion = {
-  choices: [
-    {
-      name: "dashboard — HTTP, with a settings page in Saleor",
-      value: "dashboard",
-    },
-    { name: "http — HTTP only: webhooks and API", value: "http" },
-  ] satisfies { name: string; value: AppKind }[],
+  /**
+   * Plop matches a bypassed `--args` answer against `choices`, which here is a
+   * function. Taking the answer as given leaves the pairing to `createApp` and
+   * `createService`, which see both the kind and the target.
+   */
+  bypass: (input: string) => input,
+  /**
+   * Offers what the target can run. A new app answers `target` outright; a
+   * service added later inherits what its app chose.
+   */
+  choices: (answers: { app?: string; target?: BuildTarget }) =>
+    kindsForTarget(
+      answers.target ??
+        detectBuildTarget({ app: answers.app ?? "", root: process.cwd() }),
+    ).map((value) => ({ name: KIND_LABELS[value], value })),
   default: KINDS[0],
   message: "What does the service serve?",
   name: "kind",
@@ -77,6 +94,16 @@ export const target: PlopTypes.PromptQuestion = {
   message: "What is the deployment target?",
   name: "target",
   type: "list",
+};
+
+// Asked separately from the app's own name: `src/services/<service>`.
+export const service: PlopTypes.PromptQuestion = {
+  default: (answers: { kind: AppKind }) => TEMPLATE_SERVICES[answers.kind],
+  filter: toDirectoryName,
+  message: "Service name (becomes src/services/<name>):",
+  name: "service",
+  type: "input",
+  validate: validateName,
 };
 
 export const port: PlopTypes.PromptQuestion = {
@@ -96,7 +123,7 @@ export const app: PlopTypes.PromptQuestion = {
 };
 
 export const serviceName: PlopTypes.PromptQuestion = {
-  default: TEMPLATE_SERVICE,
+  default: (answers: { kind: AppKind }) => TEMPLATE_SERVICES[answers.kind],
   filter: toDirectoryName,
   message: "Service name (becomes src/services/<name>):",
   name: "name",
