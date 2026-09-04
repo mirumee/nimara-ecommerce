@@ -6,6 +6,7 @@ import { type PlopTypes } from "@turbo/gen";
 import { type ServiceTrigger } from "@nimara/tooling/entry-points";
 
 import { listApps } from "./create-service.ts";
+import { detectIntegration } from "./integration.ts";
 import {
   BUILD_TARGETS,
   type BuildTarget,
@@ -131,6 +132,17 @@ export const resolveTrigger = (answers: {
   trigger?: ServiceTrigger;
 }): ServiceTrigger => answers.trigger ?? "http";
 
+/**
+ * A new app answers `integration` outright; a service added later has no
+ * `integration` prompt of its own, so it inherits what its app already chose.
+ */
+const resolveIntegration = (answers: {
+  app?: string;
+  integration?: Integration;
+}): Integration =>
+  answers.integration ??
+  detectIntegration(join(process.cwd(), "apps", answers.app ?? ""));
+
 // Only an HTTP-triggered Saleor service has a Saleor dashboard to add a page to.
 export const dashboard: PlopTypes.PromptQuestion = {
   choices: [
@@ -141,8 +153,13 @@ export const dashboard: PlopTypes.PromptQuestion = {
   message: "Add the Dashboard settings page?",
   name: "dashboard",
   type: "list",
-  when: (answers: { integration?: Integration; trigger?: ServiceTrigger }) =>
-    resolveTrigger(answers) === "http" && answers.integration === "saleor",
+  when: (answers: {
+    app?: string;
+    integration?: Integration;
+    trigger?: ServiceTrigger;
+  }) =>
+    resolveTrigger(answers) === "http" &&
+    resolveIntegration(answers) === "saleor",
 };
 
 // Asked separately from the app's own name: `src/services/<service>`.

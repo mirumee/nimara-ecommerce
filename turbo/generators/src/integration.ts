@@ -1,8 +1,9 @@
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 import { DEV_BOOTSTRAP } from "./config-provider.ts";
-import { TEMPLATE_SERVICE } from "./names.ts";
+import { type Integration, TEMPLATE_SERVICE } from "./names.ts";
 
 const APP_SALEOR_PATHS = [
   ".graphqlrc.ts",
@@ -13,19 +14,61 @@ const APP_SALEOR_PATHS = [
   "src/use-cases",
 ];
 
-// A blank app never has a dashboard either, so nothing under api survives.
+// Blank never has a dashboard either, so nothing under api survives.
 const SERVICE_SALEOR_PATHS = ["api", "logo.png"];
 
 const isUnder = (path: string, prefix: string) =>
   path === prefix || path.startsWith(`${prefix}/`);
 
-export const isSaleorPath = (path: string) =>
+/**
+ * `appPaths` mirrors `isDashboardPath`: `createApp` copies the whole
+ * template, `createService` only the one service directory.
+ */
+export const isSaleorPath = (
+  path: string,
+  { appPaths = false }: { appPaths?: boolean } = {},
+) =>
   [
-    ...APP_SALEOR_PATHS,
-    ...SERVICE_SALEOR_PATHS.map(
-      (servicePath) => `src/services/${TEMPLATE_SERVICE}/${servicePath}`,
-    ),
+    ...(appPaths
+      ? [
+          ...APP_SALEOR_PATHS,
+          ...SERVICE_SALEOR_PATHS.map(
+            (servicePath) => `src/services/${TEMPLATE_SERVICE}/${servicePath}`,
+          ),
+        ]
+      : SERVICE_SALEOR_PATHS),
   ].some((prefix) => isUnder(path, prefix));
+
+/**
+ * Synchronous like `detectBuildTarget`: a prompt's `when` runs before plop
+ * can await anything.
+ */
+export const detectIntegration = (appDir: string): Integration => {
+  const servicesDir = join(appDir, "src", "services");
+
+  if (!existsSync(servicesDir)) {
+    return "saleor";
+  }
+
+  const entries = readdirSync(servicesDir, {
+    recursive: true,
+    withFileTypes: true,
+  });
+
+  for (const entry of entries) {
+    if (!entry.isFile() || entry.name !== "config.ts") {
+      continue;
+    }
+
+    const contents = readFileSync(join(entry.parentPath, entry.name), "utf8");
+
+    if (contents.includes("prepareCoreServiceConfig")) {
+      return "blank";
+    }
+  }
+
+  return "saleor";
+};
 
 const rewrite = async ({
   path,

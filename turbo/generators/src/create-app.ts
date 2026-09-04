@@ -112,7 +112,7 @@ const copyTemplate = ({
         return false;
       }
 
-      if (integration === "blank" && isSaleorPath(path)) {
+      if (integration === "blank" && isSaleorPath(path, { appPaths: true })) {
         return false;
       }
 
@@ -251,11 +251,8 @@ export const createApp = async ({
     to: serviceName,
   });
 
-  /**
-   * Ahead of rewriteText: its TEMPLATE_NAME substitution would otherwise
-   * touch `app-template-config`, the default APP_CONFIG_STORE_PATH value
-   * this cuts out of .env.example, and break its exact-text match.
-   */
+  // Ahead of rewriteText, whose TEMPLATE_NAME substitution would touch
+  // `app-template-config` first and break this cut's exact-text match.
   if (integration === "blank") {
     await removeAppIntegration(destination);
   }
@@ -282,11 +279,8 @@ export const createApp = async ({
     });
   }
 
-  /**
-   * Unwires what the copy left out. A queue service never had a dashboard. A
-   * blank service already got the fully cut-down entry-server.blank.ts, which
-   * this cut's replacements would not find text to match against.
-   */
+  // Unwires what the copy left out. A queue service never had a dashboard.
+  // A blank service already got the cut-down entry-server.blank.ts.
   if (kind === "http" && integration === "saleor") {
     await removeServiceDashboard(serviceDir);
   }
