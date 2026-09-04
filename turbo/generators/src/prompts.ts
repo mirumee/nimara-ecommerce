@@ -39,7 +39,8 @@ export const appName: PlopTypes.PromptQuestion = {
 };
 
 export const description: PlopTypes.PromptQuestion = {
-  message: "Description (shown in the Saleor dashboard):",
+  message:
+    "Description (goes to package.json, used later in the app manifest):",
   name: "description",
   type: "input",
   validate: (input: string) =>
@@ -92,7 +93,7 @@ export const kind: PlopTypes.PromptQuestion = {
 export const target: PlopTypes.PromptQuestion = {
   choices: [...BUILD_TARGETS],
   default: BUILD_TARGETS[0],
-  message: "What is the deployment target?",
+  message: "Where does it run?",
   name: "target",
   type: "list",
 };
