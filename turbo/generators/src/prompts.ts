@@ -7,11 +7,8 @@ import { type ServiceTrigger } from "@nimara/tooling/entry-points";
 
 import { listApps } from "./create-service.ts";
 import {
-  type AppKind,
   BUILD_TARGETS,
   type BuildTarget,
-  KINDS,
-  kindsForTarget,
   TEMPLATE_SERVICES,
   TENANCIES,
   type Tenancy,
@@ -76,31 +73,6 @@ const resolveTarget = (answers: {
   answers.target ??
   detectBuildTarget({ app: answers.app ?? "", root: process.cwd() });
 
-const KIND_LABELS: Record<AppKind, string> = {
-  dashboard: "dashboard — HTTP, with a settings page in Saleor",
-  event: "event — invoked by a schedule or another function, no HTTP",
-  http: "http — HTTP only: webhooks and API",
-  queue: "queue — an SQS consumer, no HTTP",
-};
-
-export const kind: PlopTypes.PromptQuestion = {
-  /**
-   * Plop matches a bypassed `--args` answer against `choices`, which here is a
-   * function. Taking the answer as given leaves the pairing to `createApp` and
-   * `createService`, which see both the kind and the target.
-   */
-  bypass: (input: string) => input,
-  choices: (answers: { app?: string; target?: BuildTarget }) =>
-    kindsForTarget(resolveTarget(answers)).map((value) => ({
-      name: KIND_LABELS[value],
-      value,
-    })),
-  default: KINDS[0],
-  message: "What does the service serve?",
-  name: "kind",
-  type: "list",
-};
-
 export const target: PlopTypes.PromptQuestion = {
   choices: [...BUILD_TARGETS],
   default: BUILD_TARGETS[0],
@@ -117,6 +89,12 @@ const TRIGGER_LABELS: Record<ServiceTrigger, string> = {
 
 // Vercel only runs HTTP, so this is skipped there instead of offered with one choice.
 export const trigger: PlopTypes.PromptQuestion = {
+  /**
+   * Plop matches a bypassed `--args` answer against `choices`, which here is a
+   * function. Taking the answer as given leaves the pairing to `createApp` and
+   * `createService`, which see both the kind and the target.
+   */
+  bypass: (input: string) => input,
   choices: (answers: { app?: string; target?: BuildTarget }) =>
     triggersForTarget(resolveTarget(answers)).map((value) => ({
       name: TRIGGER_LABELS[value],
@@ -178,7 +156,9 @@ export const app: PlopTypes.PromptQuestion = {
 };
 
 export const serviceName: PlopTypes.PromptQuestion = {
-  default: (answers: { kind: AppKind }) => TEMPLATE_SERVICES[answers.kind],
+  // `dashboard` is answered later, but it never changes the service directory.
+  default: (answers: { trigger?: ServiceTrigger }) =>
+    TEMPLATE_SERVICES[resolveTrigger(answers)],
   filter: toDirectoryName,
   message: "Service name (becomes src/services/<name>):",
   name: "name",

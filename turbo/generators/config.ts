@@ -40,8 +40,9 @@ const resolveKind = ({
 
 type ServiceAnswers = {
   app: string;
-  kind: AppKind;
+  dashboard?: boolean;
   name: string;
+  trigger?: ServiceTrigger;
   turbo: { paths: { root: string } };
 };
 
@@ -114,14 +115,20 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
 
   plop.setGenerator("service", {
     description: "Add a service to an app that already exists",
-    prompts: [prompts.app, prompts.kind, prompts.serviceName],
+    prompts: [
+      prompts.app,
+      prompts.trigger,
+      prompts.serviceName,
+      prompts.dashboard,
+    ],
     actions: [
       async (answers) => {
-        const { app, kind, name, turbo } = answers as ServiceAnswers;
+        const { app, dashboard, name, trigger, turbo } =
+          answers as ServiceAnswers;
 
         const serviceDir = await createService({
           app,
-          kind,
+          kind: resolveKind({ dashboard, trigger }),
           name,
           root: turbo.paths.root,
         });
