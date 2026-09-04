@@ -55,7 +55,9 @@ pnpm gen saleor-service
 
 It copies this template's service under the name you give, points the imports
 that reached into the old one at the new one, and takes the tenancy from the
-services already there — they share one `.env`, so they cannot disagree.
+services already there — they share one `.env`, so they cannot disagree. It
+asks what the service serves, so an app can hold a dashboard and a
+webhooks-only service side by side.
 
 ## Adding a webhook
 
@@ -89,5 +91,6 @@ A secret is masked on the way out and blank on the way back in. The form sends
 a blank field to mean "keep the stored value", so a mask can never be saved
 over a real key. `SECRET_FIELDS` decides which fields that applies to.
 
-An app that ships no UI deletes `entry-client.tsx`, `client/`, `dashboard.ts`,
-`api/rest/app/`, and the two lines mounting them. The manifest is untouched.
+Answer `http` when generating and none of it is copied. Both generators ask, so
+a service added later can differ from the one the app started with, and adding
+a dashboard to an app without one brings back what its bundle needs.

@@ -7,18 +7,14 @@ import { vercelEdgeConfigItem } from "@nimara/infrastructure/config/vercel-edge-
 import { joseAuthService } from "@nimara/infrastructure/jose/auth/jose-auth-service";
 import { jwksMemoryRepository } from "@nimara/infrastructure/jose/jwks/memory";
 import { getLogger } from "@nimara/infrastructure/logging/service";
-import { getAppSettingsFormUseCase } from "@nimara/infrastructure/use-cases/apps/saleor/get-app-settings-form-use-case";
 import { installSaleorAppUseCase } from "@nimara/infrastructure/use-cases/apps/saleor/install-app-use-case";
-import { saveAppSettingsUseCase } from "@nimara/infrastructure/use-cases/apps/saleor/save-app-settings-use-case";
 import { saleorUrlFromDomain } from "@nimara/lib/saleor/url";
 
-import {
-  appSettings,
-  saleorMultiTenantAppConfig,
-  SECRET_FIELDS,
-} from "@/domain/app-config";
+import { appSettings, saleorMultiTenantAppConfig } from "@/domain/app-config";
 import { saleorClient } from "@/infrastructure/saleor/client";
 import { APP_CONFIG } from "@/services/handler/config";
+
+import { dashboardUseCases } from "./dashboard";
 
 export const container = createContainer()
   .add({
@@ -58,23 +54,12 @@ export const container = createContainer()
       }),
   }))
   .add((ctx) => ({
-    getSettingsForm: () =>
-      getAppSettingsFormUseCase({
-        configRepository: ctx.appConfigService,
-        secretFields: SECRET_FIELDS,
-        settingsSchema: appSettings,
-      }),
     installApp: () =>
       installSaleorAppUseCase({
         configRepository: ctx.appConfigService,
         saleorAppClientFactory: saleorAppClient,
       }),
-    saveSettings: () =>
-      saveAppSettingsUseCase({
-        configRepository: ctx.appConfigService,
-        secretFields: SECRET_FIELDS,
-        settingsSchema: appSettings,
-      }),
-  }));
+  }))
+  .add(dashboardUseCases);
 
 export type AppContainer = typeof container;

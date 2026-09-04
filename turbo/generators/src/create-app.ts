@@ -1,10 +1,17 @@
 import { cp, readFile, writeFile } from "node:fs/promises";
-import { basename, join } from "node:path";
+import { basename, join, relative, sep } from "node:path";
 
 import {
+  isDashboardPath,
+  removeAppDashboard,
+  removeServiceDashboard,
+} from "./dashboard.ts";
+import {
+  type AppKind,
   type BuildTarget,
   TEMPLATE_NAME,
   TEMPLATE_PORT,
+  TEMPLATE_SERVICE,
   type Tenancy,
   toDirectoryName,
 } from "./names.ts";
@@ -22,6 +29,7 @@ export const NOT_COPIED = new Set([
 
 export type CreateAppInput = {
   description: string;
+  kind: AppKind;
   name: string;
   port: string;
   root: string;
@@ -43,10 +51,12 @@ const ALLOWED_DOMAINS_DOC = {
 
 const copyTemplate = ({
   destination,
+  kind,
   source,
   target,
 }: {
   destination: string;
+  kind: AppKind;
   source: string;
   target: BuildTarget;
 }) =>
@@ -55,11 +65,16 @@ const copyTemplate = ({
     filter: (entry) => {
       const name = basename(entry);
 
-      if (NOT_COPIED.has(name)) {
+      if (
+        NOT_COPIED.has(name) ||
+        (target !== "vercel" && TARGET_ONLY.has(name))
+      ) {
         return false;
       }
 
-      return target === "vercel" || !TARGET_ONLY.has(name);
+      const path = relative(source, entry).split(sep).join("/");
+
+      return kind === "dashboard" || !isDashboardPath(path, { appPaths: true });
     },
     force: false,
     recursive: true,
@@ -121,6 +136,7 @@ const rewriteText = async ({
 // An app reads the rest from its own package.json, so nothing else is substituted.
 export const createApp = async ({
   description,
+  kind,
   name,
   port,
   root,
@@ -133,6 +149,7 @@ export const createApp = async ({
 
   await copyTemplate({
     destination,
+    kind,
     source: join(root, "templates", "app"),
     target,
   });
@@ -152,6 +169,14 @@ export const createApp = async ({
       target,
       tenancy,
     });
+  }
+
+  // Unwires what the copy left out.
+  if (kind === "http") {
+    await removeServiceDashboard(
+      join(destination, "src", "services", TEMPLATE_SERVICE),
+    );
+    await removeAppDashboard(destination);
   }
 
   await applyTenancy({ appDir: destination, tenancy });

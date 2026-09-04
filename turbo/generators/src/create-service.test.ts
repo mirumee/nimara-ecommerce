@@ -18,30 +18,99 @@ const write = async (path: string, contents: string) => {
   await writeFile(path, contents);
 };
 
+const ENTRY_SERVER = `import { container } from "@/container";
+
+import { appRoutes } from "./api/rest/app";
+import { saleorRoutes } from "./api/rest/saleor";
+import { dashboard } from "./dashboard";
+
+export const app = new Hono()
+  .route("/", dashboard)
+  .route("/api/saleor", saleorRoutes)
+  .route("/api/app", appRoutes);
+`;
+
+const CONTAINER = `import { installSaleorAppUseCase } from "@nimara/infrastructure/use-cases/apps/saleor/install-app-use-case";
+
+import { dashboardUseCases } from "./dashboard";
+
+export const container = createContainer()
+  .add((ctx) => ({
+    configStore: () => ({
+      store: 1,
+    }),
+  }))
+  .add((ctx) => ({
+    installApp: () =>
+      installSaleorAppUseCase({
+        configRepository: ctx.appConfigService,
+      }),
+  }))
+  .add(dashboardUseCases);
+
+export type AppContainer = typeof container;
+`;
+
+const template = (...parts: string[]) =>
+  join(root, "templates", "app", ...parts);
+
 const templateService = (...parts: string[]) =>
-  join(root, "templates", "app", "src", "services", "handler", ...parts);
+  template("src", "services", "handler", ...parts);
 
 const appService = (service: string, ...parts: string[]) =>
   join(root, "apps", "feed-sync", "src", "services", service, ...parts);
 
-const add = (name = "order-sync") =>
-  createService({ app: "feed-sync", name, root });
+const add = (name = "order-sync", kind: "dashboard" | "http" = "dashboard") =>
+  createService({ app: "feed-sync", kind, name, root });
 
 describe("create-service", () => {
   beforeEach(async () => {
     root = await mkdtemp(join(tmpdir(), "nimara-gen-"));
 
     await write(templateService("config.ts"), MULTI);
-    await write(
-      templateService("entry-server.ts"),
-      'import { container } from "@/container";\nexport const app = 1;\n',
-    );
+    await write(templateService("entry-server.ts"), ENTRY_SERVER);
     await write(
       templateService("api", "rest", "saleor", "index.test.ts"),
       'import { app } from "@/services/handler/entry-server";\n',
     );
+    await write(templateService("dashboard.ts"), "export const dashboard = 1;");
+    await write(templateService("entry-client.tsx"), "render();");
+    await write(
+      templateService("client", "views", "app", "app-view.tsx"),
+      "export const AppView = 1;",
+    );
+    await write(
+      templateService("api", "rest", "app", "index.ts"),
+      "export const appRoutes = 1;",
+    );
+    await write(template("src", "container", "index.ts"), CONTAINER);
+    await write(
+      template("src", "container", "dashboard.ts"),
+      "export const dashboardUseCases = 1;",
+    );
+    await write(template("tailwind.config.ts"), "export default 1;");
+    await write(template("postcss.config.cjs"), "module.exports = 1;");
+    await write(
+      template("package.json"),
+      JSON.stringify({
+        dependencies: { react: "^19.2.3" },
+        devDependencies: { tailwindcss: "^3.4.19" },
+      }),
+    );
 
     await write(join(root, "apps", "feed-sync", "etc", "build.ts"), "build");
+    await write(
+      join(root, "apps", "feed-sync", "package.json"),
+      JSON.stringify({ dependencies: {}, devDependencies: {} }),
+    );
+    // An app generated as http: its container never had the dashboard entry.
+    await write(
+      join(root, "apps", "feed-sync", "src", "container", "index.ts"),
+      CONTAINER.replace(
+        'import { dashboardUseCases } from "./dashboard";\n\n',
+        "",
+      ).replace("  }))\n  .add(dashboardUseCases);", "  }));"),
+    );
     await write(appService("handler", "config.ts"), MULTI);
   });
 
@@ -118,6 +187,119 @@ describe("create-service", () => {
     expect(
       await readFile(appService("order-sync", "config.ts"), "utf8"),
     ).not.toContain("prepareSingleTenantServiceConfig");
+  });
+
+  describe("kind", () => {
+    it("leaves the dashboard out of an http service", async () => {
+      // when
+      const serviceDir = await add("order-sync", "http");
+
+      // then
+      await expect(
+        readFile(join(serviceDir, "dashboard.ts"), "utf8"),
+      ).rejects.toThrow();
+      await expect(
+        readFile(join(serviceDir, "entry-client.tsx"), "utf8"),
+      ).rejects.toThrow();
+      await expect(
+        readFile(join(serviceDir, "api", "rest", "app", "index.ts"), "utf8"),
+      ).rejects.toThrow();
+    });
+
+    it("unwires what an http service did not copy", async () => {
+      // when
+      const serviceDir = await add("order-sync", "http");
+      const entryServer = await readFile(
+        join(serviceDir, "entry-server.ts"),
+        "utf8",
+      );
+
+      // then an import of a file that was not copied does not compile.
+      expect(entryServer).not.toContain("dashboard");
+      expect(entryServer).not.toContain("appRoutes");
+      expect(entryServer).toContain('.route("/api/saleor", saleorRoutes);');
+    });
+
+    it("brings back what a dashboard needs and the app never had", async () => {
+      // given an app generated without a dashboard
+      // when
+      await add("order-sync", "dashboard");
+      const appDir = join(root, "apps", "feed-sync");
+      const pkg = JSON.parse(
+        await readFile(join(appDir, "package.json"), "utf8"),
+      );
+
+      // then the bundle pulls styling the app was never given.
+      expect(await readFile(join(appDir, "tailwind.config.ts"), "utf8")).toBe(
+        "export default 1;",
+      );
+      expect(pkg.dependencies.react).toBe("^19.2.3");
+      expect(pkg.devDependencies.tailwindcss).toBe("^3.4.19");
+    });
+
+    it("wires a dashboard back into a container that had none", async () => {
+      // given an app generated as http, whose container lost the entry
+      const containerPath = join(
+        root,
+        "apps",
+        "feed-sync",
+        "src",
+        "container",
+        "index.ts",
+      );
+
+      // when
+      await add("order-sync", "dashboard");
+      const container = await readFile(containerPath, "utf8");
+
+      // then the service calls `getSettingsForm`, so a container without it
+      // does not compile.
+      expect(container).toContain(
+        'import { dashboardUseCases } from "./dashboard";',
+      );
+      expect(container).toContain("  .add(dashboardUseCases);");
+      expect(container).not.toContain("  }))\n  }));");
+    });
+
+    it("leaves a container that already has the entry alone", async () => {
+      // given
+      await add("first", "dashboard");
+      const containerPath = join(
+        root,
+        "apps",
+        "feed-sync",
+        "src",
+        "container",
+        "index.ts",
+      );
+      const before = await readFile(containerPath, "utf8");
+
+      // when a second dashboard service is added
+      await add("second", "dashboard");
+
+      // then
+      expect(await readFile(containerPath, "utf8")).toBe(before);
+    });
+
+    it("keeps what the app already declared", async () => {
+      // given an app that pinned its own React
+      await write(
+        join(root, "apps", "feed-sync", "package.json"),
+        JSON.stringify({
+          dependencies: { react: "^19.0.0" },
+          devDependencies: {},
+        }),
+      );
+
+      // when
+      await add("order-sync", "dashboard");
+      const pkg = JSON.parse(
+        await readFile(join(root, "apps", "feed-sync", "package.json"), "utf8"),
+      );
+
+      // then the template does not overwrite a version the app chose.
+      expect(pkg.dependencies.react).toBe("^19.0.0");
+    });
   });
 
   describe("listApps", () => {
