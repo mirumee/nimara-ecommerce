@@ -7,6 +7,9 @@ import { getCurrentRegion } from "@/foundation/regions";
 import { paths } from "@/foundation/routing/paths";
 import { getServiceRegistry } from "@/services/registry";
 import { getAccessToken } from "@/services/tokens";
+import { isCapabilityConfigured } from "@/services/utils/integration-doctor";
+
+import { newsletterSubscribeAction } from "./_actions/newsletter-subscribe";
 
 export async function generateMetadata() {
   const storefrontUrl = clientEnvs.NEXT_PUBLIC_STOREFRONT_URL;
@@ -30,6 +33,9 @@ export default async function Page(props: HomeViewProps) {
       services={services}
       accessToken={accessToken || null}
       mailTo={clientEnvs.NEXT_PUBLIC_DEFAULT_EMAIL}
+      newsletterSubscribeAction={
+        isCapabilityConfigured("newsletter") ? newsletterSubscribeAction : null
+      }
       region={region}
       revalidateTime={services.config.cacheTTL.cms}
       paths={{

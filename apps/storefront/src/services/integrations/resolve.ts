@@ -1,3 +1,4 @@
+import type { NewsletterProviderId } from "@nimara/infrastructure/newsletter/select";
 import type { CMSProviderId } from "@nimara/infrastructure/providers/cms";
 import type { SearchProviderId } from "@nimara/infrastructure/search/select";
 
@@ -26,3 +27,6 @@ export const resolveSearchProvider = (): SearchProviderId | null =>
 
 export const resolveCMSProvider = (): CMSProviderId | null =>
   withSaleorFallback(serverEnvs.CMS_SERVICE);
+
+export const resolveNewsletterProvider = (): NewsletterProviderId | null =>
+  serverEnvs.NEWSLETTER_SERVICE ?? null;

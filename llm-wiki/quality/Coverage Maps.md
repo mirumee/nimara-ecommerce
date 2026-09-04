@@ -21,20 +21,29 @@ proves intended coverage; only execution results prove that a revision passed.
 
 The CodeceptJS suite under `apps/automated-tests/codecept` currently contains:
 
-| Surface                | Covered representatives                                                                          | Material gaps                                                                                  |
-| ---------------------- | ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
-| Homepage               | storefront title and product carousel render, the products link opens the listing                | hero banner, newsletter, responsive layout, locale variation, metadata, failure states         |
-| Authentication         | sign-in with configured credentials                                                              | page UI, password visibility, invalid credentials, expired session, authorization boundaries   |
-| Guest checkout         | two cart entry points to order placement, a two-item cart, stolen-card and expired-card declines | order-summary price and delivery assertions, different billing address, other channels         |
-| Category page          | none                                                                                             | the entire surface: breadcrumb, listing, sorting, filters, pagination, unknown slug            |
-| Checkout steps         | none                                                                                             | the entire step guard, including whether payment renders for a checkout that cannot be ordered |
-| Authenticated checkout | none                                                                                             | the entire surface, including saved address and saved payment                                  |
+| Surface                | Covered representatives                                                                                                                 | Material gaps                                                                                  |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Homepage               | storefront title and product carousel render, the products link opens the listing                                                       | hero banner, responsive layout, locale variation, metadata, failure states                     |
+| Newsletter subscribe   | purpose text and address-only form, the consent link reaches the privacy policy, an invalid address is rejected with no success message | the section is absent without a provider, provider acceptance, provider rejection, timeout     |
+| Authentication         | sign-in with configured credentials                                                                                                     | page UI, password visibility, invalid credentials, expired session, authorization boundaries   |
+| Guest checkout         | two cart entry points to order placement, a two-item cart, stolen-card and expired-card declines                                        | order-summary price and delivery assertions, different billing address, other channels         |
+| Category page          | none                                                                                                                                    | the entire surface: breadcrumb, listing, sorting, filters, pagination, unknown slug            |
+| Checkout steps         | none                                                                                                                                    | the entire step guard, including whether payment renders for a checkout that cannot be ordered |
+| Authenticated checkout | none                                                                                                                                    | the entire surface, including saved address and saved payment                                  |
 
 `apps/automated-tests/codecept.conf.ts` configures a single chromium helper. There is no
 Firefox, WebKit, or mobile coverage, and no retries. The URL prefix comes from `LOCALE`
 through `apps/automated-tests/codecept/data/locales.ts`, defaulting to `us` with no prefix.
 Routes, addresses, and card data live in `apps/automated-tests/codecept/data/constants.ts`.
 Running one locale does not create channel or locale coverage by itself.
+
+The newsletter scenarios carry the `@newsletter` tag, because the subscribe section renders only
+where a newsletter provider is configured. Run them with `--grep @newsletter` against such an
+environment and exclude the tag elsewhere. Two limits follow from the suite running against one
+environment: the mirror case — no provider, no section — needs a deployment without one and stays a
+manual check, and no scenario submits an address the provider would accept, because a passing run
+must not write a profile into the merchant's list. Provider acceptance, rejection, and timeout are
+covered by unit tests instead.
 
 **Accepted coverage loss.** The category page, the checkout step guard, the authenticated
 checkout, and the cross-browser matrix were covered by a Playwright suite that was deleted

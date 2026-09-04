@@ -10,6 +10,8 @@ import type { StripePaymentService } from "@nimara/infrastructure/payment/stripe
 import type { StoreService } from "@nimara/infrastructure/store/types";
 import type { CMSMenuService } from "@nimara/infrastructure/use-cases/cms-menu/types";
 import type { CMSPageService } from "@nimara/infrastructure/use-cases/cms-page/types";
+import { newsletterSubscribeUseCase } from "@nimara/infrastructure/use-cases/newsletter/newsletter-subscribe-use-case";
+import type { NewsletterService } from "@nimara/infrastructure/use-cases/newsletter/types";
 import type {
   PageInfo,
   SearchService,
@@ -53,6 +55,19 @@ export const emptyCMSMenuService = {
 export const emptyCMSPageService = {
   cmsPageGet: async () => ok(null),
 } satisfies CMSPageService;
+
+export const emptyNewsletterService: NewsletterService = {
+  newsletterSubscribe: newsletterSubscribeUseCase({
+    newsletterSubscribeInfra: async () =>
+      err([
+        {
+          code: "NEWSLETTER_NOT_CONFIGURED_ERROR",
+          message:
+            "No newsletter provider is configured. Set NEWSLETTER_SERVICE and the provider keys to enable this feature.",
+        },
+      ]),
+  }),
+};
 
 export const emptySearchService = {
   search: async () => ok({ pageInfo: emptyCursorPageInfo, results: [] }),
