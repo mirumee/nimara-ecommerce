@@ -22,7 +22,7 @@ const BEARER = /^Bearer\s+/i;
 const claimedPermissions = (claims: JwtClaims) => {
   const { permissions, user_permissions } = claims as SaleorJwtClaims;
 
-  return new Set(permissions ?? user_permissions ?? []);
+  return new Set([...(permissions ?? []), ...(user_permissions ?? [])]);
 };
 
 /**
@@ -91,6 +91,8 @@ export const saleorTokenMiddleware = ({
     const missing = requiredPermissions.filter(
       (permission) => !granted.has(permission),
     );
+
+    console.dir({ granted, missing, verified }, { depth: null });
 
     if (missing.length) {
       logger.warning("Rejected a dashboard request lacking permissions.", {

@@ -44,7 +44,7 @@ export type CreateAppInput = {
 };
 
 // An app deployed elsewhere should not carry another platform's config.
-const TARGET_ONLY = new Set(["vercel.json"]);
+const TARGET_ONLY = new Set(["vercel.json", "index.js"]);
 
 // Left behind, not cut down: another template service is a different program.
 const unusedServicePaths = (kind: AppKind) =>
@@ -60,6 +60,13 @@ const ALLOWED_DOMAINS_DOC = {
 # concrete domain: a wildcard names no host, and this app has to know which
 # Saleor it is working with when nothing is asking it.`,
 };
+
+const LOCALSTACK_ENV_DOC = `
+# LocalStack only.
+AWS_ENDPOINT_URL=http://localhost:4566
+AWS_ACCESS_KEY_ID=dummy
+AWS_SECRET_ACCESS_KEY=dummy
+AWS_REGION=eu-central-1`;
 
 const copyTemplate = ({
   destination,
@@ -142,15 +149,17 @@ const rewriteText = async ({
   tenancy: Tenancy;
 }) => {
   const contents = await readFile(file, "utf8");
+  let result = contents
+    .replaceAll(TEMPLATE_NAME, name)
+    .replaceAll(TEMPLATE_PORT, port)
+    .replace(/^BUILD_TARGET=.*$/m, `BUILD_TARGET=${target}`)
+    .replace(ALLOWED_DOMAINS_DOC.multi, ALLOWED_DOMAINS_DOC[tenancy]);
 
-  await writeFile(
-    file,
-    contents
-      .replaceAll(TEMPLATE_NAME, name)
-      .replaceAll(TEMPLATE_PORT, port)
-      .replace(/^BUILD_TARGET=.*$/m, `BUILD_TARGET=${target}`)
-      .replace(ALLOWED_DOMAINS_DOC.multi, ALLOWED_DOMAINS_DOC[tenancy]),
-  );
+  if (target !== "node") {
+    result = result.replace(LOCALSTACK_ENV_DOC, "");
+  }
+
+  await writeFile(file, `${result.trimEnd()}\n`);
 };
 
 // An app reads the rest from its own package.json, so nothing else is substituted.

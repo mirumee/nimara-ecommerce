@@ -2,6 +2,17 @@ import { Hono } from "hono";
 
 import { getLogger } from "@nimara/infrastructure/logging/service";
 
+const logger = getLogger({ name: "dev" });
+
+if (process.env.APP_CONFIG_STORE_PATH) {
+  const { ensureParameterStore } = await import("@nimara/tooling/aws/ssm");
+
+  await ensureParameterStore({
+    logger,
+    storePath: process.env.APP_CONFIG_STORE_PATH,
+  });
+}
+
 /**
  * DEV only. Imported one at a time so each service can be given its own
  * `BASE_PATH`: one service answers at `/`, several under `/<service>`.
@@ -12,7 +23,6 @@ const importers = import.meta.glob("./services/*/entry-server.ts") as Record<
 >;
 
 const paths = Object.keys(importers).sort();
-const logger = getLogger({ name: "dev" });
 const server = new Hono();
 
 for (const path of paths) {

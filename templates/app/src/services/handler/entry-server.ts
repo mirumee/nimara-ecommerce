@@ -9,12 +9,14 @@ import { requestOriginMiddleware } from "@nimara/lib/hono/middleware/request-ori
 import { initSentry } from "@nimara/lib/reporting/sentry/instrument";
 
 import { container } from "@/services/handler/container";
+import logo from "@/services/handler/logo.png?inline";
 
 import { appRoutes } from "./api/rest/app";
 import { saleorRoutes } from "./api/rest/saleor";
 import { dashboard } from "./dashboard";
 
 const { config, logger } = container.items;
+const LOGO = Buffer.from(logo.split(",")[1] ?? "", "base64");
 
 initSentry({
   dsn: config.SENTRY_DSN,
@@ -30,6 +32,9 @@ const app = new Hono()
   .use(requestOriginMiddleware({ basePath: config.BASE_PATH }))
   .use(healthCheckMiddleware({ basePath: config.BASE_PATH }))
   .route("/", dashboard)
+  .get("/logo.png", (context) =>
+    context.body(LOGO, 200, { "content-type": "image/png" }),
+  )
   /**
    * Saleor opens `appUrl`, which is the app's root. A dashboard, where the app
    * has one, is mounted above and answers first.

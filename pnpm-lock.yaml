@@ -137,7 +137,7 @@ importers:
     dependencies:
       '@aws-sdk/client-secrets-manager':
         specifier: ^3.1121.0
-        version: 3.1126.0
+        version: 3.1121.0
       '@editorjs/editorjs':
         specifier: 2.31.6
         version: 2.31.6
@@ -1119,9 +1119,15 @@ importers:
 
   packages/tooling:
     dependencies:
+      '@aws-sdk/client-secrets-manager':
+        specifier: ^3.1116.0
+        version: 3.1121.0
       '@aws-sdk/client-sqs':
         specifier: ^3.1116.0
         version: 3.1120.0
+      '@aws-sdk/client-ssm':
+        specifier: ^3.1116.0
+        version: 3.1121.0
       '@hono/vite-dev-server':
         specifier: ^0.26.1
         version: 0.26.1(hono@4.13.5)
@@ -1162,6 +1168,9 @@ importers:
       vite:
         specifier: ^8.2.1
         version: 8.2.1(@types/node@24.12.4)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0)
+      vitest:
+        specifier: 4.1.2
+        version: 4.1.2(@opentelemetry/api@1.9.1)(@types/node@24.12.4)(vite@8.2.1(@types/node@24.12.4)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))
 
   packages/ui:
     dependencies:
@@ -1590,12 +1599,16 @@ packages:
       nodemailer:
         optional: true
 
-  '@aws-sdk/client-secrets-manager@3.1126.0':
-    resolution: {integrity: sha512-DD2GJgeuZVtSVteHHFfBoK7SrxrEyGPE3XjT7ug1emCGpehO+RZDUGjHQHPnxgFMyrvXm6ogl8z+JqgxUzu5sg==}
+  '@aws-sdk/client-secrets-manager@3.1121.0':
+    resolution: {integrity: sha512-kx66Imv5DomVdd5uwai10Dhf0zZg9Z3EODxJCYRGjmaD0GR08GkvuIPPIqE+ZmpHANCWbur9UKpgyXGJzk60pg==}
     engines: {node: '>=20.0.0'}
 
   '@aws-sdk/client-sqs@3.1120.0':
     resolution: {integrity: sha512-5539rLlh5+bDz8fn33K/pTkGPAdHLLgR/KQcV7yxoeFfqenty6uG2oIETQ/efh+dz4ORSHQqRFBo9dzfR+oP9g==}
+    engines: {node: '>=20.0.0'}
+
+  '@aws-sdk/client-ssm@3.1121.0':
+    resolution: {integrity: sha512-NZejFZ6NIdHqz1v27W9WLUY1vSgJq7u3FfJeEfK0Us1J2QHQIBn79jenEUGu1RcITKs8RH716vEhoi3IGTaT2Q==}
     engines: {node: '>=20.0.0'}
 
   '@aws-sdk/core@3.977.9':
@@ -1620,10 +1633,6 @@ packages:
 
   '@aws-sdk/credential-provider-node@3.972.81':
     resolution: {integrity: sha512-Rml+WitoFvXmv6JZ18U/xGdGDGGvB/mOin0ya0lTnTrdC0Z1lrVxTYh7iNklZBcvcRMrs4DoEf6xy1KWyrLQQw==}
-    engines: {node: '>=20.0.0'}
-
-  '@aws-sdk/credential-provider-node@3.972.82':
-    resolution: {integrity: sha512-znDkEOGXB8W3kG1LJUKP3foBZY/9qLM0eil/DxWXSp37XsdsRLQHE/d/OaCGGVgKpA6znR38h/+INk8do1FjiA==}
     engines: {node: '>=20.0.0'}
 
   '@aws-sdk/credential-provider-process@3.972.70':
@@ -15744,10 +15753,10 @@ snapshots:
     optionalDependencies:
       nodemailer: 8.0.11
 
-  '@aws-sdk/client-secrets-manager@3.1126.0':
+  '@aws-sdk/client-secrets-manager@3.1121.0':
     dependencies:
       '@aws-sdk/core': 3.977.9
-      '@aws-sdk/credential-provider-node': 3.972.82
+      '@aws-sdk/credential-provider-node': 3.972.81
       '@aws-sdk/types': 3.974.5
       '@smithy/core': 3.33.3
       '@smithy/fetch-http-handler': 5.7.2
@@ -15760,6 +15769,17 @@ snapshots:
       '@aws-sdk/core': 3.977.9
       '@aws-sdk/credential-provider-node': 3.972.81
       '@aws-sdk/middleware-sdk-sqs': 3.972.42
+      '@aws-sdk/types': 3.974.5
+      '@smithy/core': 3.33.3
+      '@smithy/fetch-http-handler': 5.7.2
+      '@smithy/node-http-handler': 4.11.3
+      '@smithy/types': 4.17.2
+      tslib: 2.8.1
+
+  '@aws-sdk/client-ssm@3.1121.0':
+    dependencies:
+      '@aws-sdk/core': 3.977.9
+      '@aws-sdk/credential-provider-node': 3.972.81
       '@aws-sdk/types': 3.974.5
       '@smithy/core': 3.33.3
       '@smithy/fetch-http-handler': 5.7.2
@@ -15822,20 +15842,6 @@ snapshots:
       tslib: 2.8.1
 
   '@aws-sdk/credential-provider-node@3.972.81':
-    dependencies:
-      '@aws-sdk/credential-provider-env': 3.972.70
-      '@aws-sdk/credential-provider-http': 3.972.72
-      '@aws-sdk/credential-provider-ini': 3.973.15
-      '@aws-sdk/credential-provider-process': 3.972.70
-      '@aws-sdk/credential-provider-sso': 3.973.14
-      '@aws-sdk/credential-provider-web-identity': 3.972.76
-      '@aws-sdk/types': 3.974.5
-      '@smithy/core': 3.33.3
-      '@smithy/credential-provider-imds': 4.5.2
-      '@smithy/types': 4.17.2
-      tslib: 2.8.1
-
-  '@aws-sdk/credential-provider-node@3.972.82':
     dependencies:
       '@aws-sdk/credential-provider-env': 3.972.70
       '@aws-sdk/credential-provider-http': 3.972.72
@@ -20792,11 +20798,11 @@ snapshots:
 
   '@mdx-js/mdx@3.1.1':
     dependencies:
-      '@types/estree': 1.0.9
+      '@types/estree': 1.0.8
       '@types/estree-jsx': 1.0.5
-      '@types/hast': 3.0.5
+      '@types/hast': 3.0.4
       '@types/mdx': 2.0.14
-      acorn: 8.18.0
+      acorn: 8.16.0
       collapse-white-space: 2.1.0
       devlop: 1.1.0
       estree-util-is-identifier-name: 3.0.0
@@ -20805,7 +20811,7 @@ snapshots:
       hast-util-to-jsx-runtime: 2.3.6
       markdown-extensions: 2.0.0
       recma-build-jsx: 1.0.0
-      recma-jsx: 1.0.1(acorn@8.18.0)
+      recma-jsx: 1.0.1(acorn@8.16.0)
       recma-stringify: 1.0.0
       rehype-recma: 1.0.0
       remark-mdx: 3.1.1
@@ -23713,6 +23719,10 @@ snapshots:
     dependencies:
       acorn: 8.15.0
 
+  acorn-jsx@5.3.2(acorn@8.16.0):
+    dependencies:
+      acorn: 8.16.0
+
   acorn-jsx@5.3.2(acorn@8.18.0):
     dependencies:
       acorn: 8.18.0
@@ -26122,7 +26132,7 @@ snapshots:
 
   estree-util-scope@1.0.0:
     dependencies:
-      '@types/estree': 1.0.9
+      '@types/estree': 1.0.8
       devlop: 1.1.0
 
   estree-util-to-js@2.0.0:
@@ -26946,7 +26956,7 @@ snapshots:
     dependencies:
       '@types/estree': 1.0.9
       '@types/estree-jsx': 1.0.5
-      '@types/hast': 3.0.5
+      '@types/hast': 3.0.4
       comma-separated-tokens: 2.0.3
       devlop: 1.1.0
       estree-util-attach-comments: 3.0.0
@@ -26955,7 +26965,7 @@ snapshots:
       mdast-util-mdx-expression: 2.0.1
       mdast-util-mdx-jsx: 3.2.0
       mdast-util-mdxjs-esm: 2.0.1
-      property-information: 7.2.0
+      property-information: 7.1.0
       space-separated-tokens: 2.0.2
       style-to-js: 1.1.21
       unist-util-position: 5.0.0
@@ -29928,7 +29938,7 @@ snapshots:
   postcss-nested@6.2.0(postcss@8.5.26):
     dependencies:
       postcss: 8.5.26
-      postcss-selector-parser: 6.1.2
+      postcss-selector-parser: 6.1.4
 
   postcss-nesting@13.0.2(postcss@8.5.26):
     dependencies:
@@ -30547,14 +30557,14 @@ snapshots:
 
   recma-build-jsx@1.0.0:
     dependencies:
-      '@types/estree': 1.0.9
+      '@types/estree': 1.0.8
       estree-util-build-jsx: 3.0.1
       vfile: 6.0.3
 
-  recma-jsx@1.0.1(acorn@8.18.0):
+  recma-jsx@1.0.1(acorn@8.16.0):
     dependencies:
-      acorn: 8.18.0
-      acorn-jsx: 5.3.2(acorn@8.18.0)
+      acorn: 8.16.0
+      acorn-jsx: 5.3.2(acorn@8.16.0)
       estree-util-to-js: 2.0.0
       recma-parse: 1.0.0
       recma-stringify: 1.0.0
@@ -30569,7 +30579,7 @@ snapshots:
 
   recma-stringify@1.0.0:
     dependencies:
-      '@types/estree': 1.0.9
+      '@types/estree': 1.0.8
       estree-util-to-js: 2.0.0
       unified: 11.0.5
       vfile: 6.0.3
@@ -30639,8 +30649,8 @@ snapshots:
 
   rehype-recma@1.0.0:
     dependencies:
-      '@types/estree': 1.0.9
-      '@types/hast': 3.0.5
+      '@types/estree': 1.0.8
+      '@types/hast': 3.0.4
       hast-util-to-estree: 3.1.3
     transitivePeerDependencies:
       - supports-color

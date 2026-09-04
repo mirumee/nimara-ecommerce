@@ -44,6 +44,7 @@ const testApp = ({
       manifest: {
         appPath: "/app",
         id: "TEST.app",
+        logoPath: "/logo.png",
         name: "TEST.app",
         permissions: ["HANDLE_PAYMENTS"],
         version: "1.0.0",
@@ -110,6 +111,9 @@ describe("saleor routes", () => {
       expect(manifest.appUrl).toBe("http://localhost/stripe/app");
       expect(manifest.tokenTargetUrl).toBe(
         "http://localhost/stripe/api/saleor/register",
+      );
+      expect(manifest.brand?.logo.default).toBe(
+        "http://localhost/stripe/logo.png",
       );
     });
   });
