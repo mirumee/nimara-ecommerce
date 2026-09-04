@@ -92,8 +92,6 @@ export const saleorTokenMiddleware = ({
       (permission) => !granted.has(permission),
     );
 
-    console.dir({ granted, missing, verified }, { depth: null });
-
     if (missing.length) {
       logger.warning("Rejected a dashboard request lacking permissions.", {
         missing,

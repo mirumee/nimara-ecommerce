@@ -1,8 +1,8 @@
 import { AppSettingsForm } from "@nimara/lib/client/saleor/components/app-settings-form";
 import { Badge } from "@nimara/ui/components/badge";
 
-import { fetchSettings } from "./api";
-import { SettingsFields } from "./settings-fields";
+import { fetchConfigData } from "./api";
+import { ConfigFormFields } from "./config-form-fields";
 
 export const AppView = () => (
   <div className="mx-auto flex max-w-3xl flex-col gap-8 p-8">
@@ -11,9 +11,9 @@ export const AppView = () => (
       <Badge variant="outline">v{window.env.VERSION}</Badge>
     </header>
     <AppSettingsForm
-      fetchSettings={fetchSettings}
+      fetchSettings={fetchConfigData}
       renderFields={({ reload, settings }) => (
-        <SettingsFields reload={reload} settings={settings} />
+        <ConfigFormFields data={settings} reload={reload} />
       )}
     />
   </div>

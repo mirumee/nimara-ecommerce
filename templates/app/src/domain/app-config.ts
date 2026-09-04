@@ -1,23 +1,28 @@
 import { z } from "zod";
 
 import {
+  channelConfigSet,
   type SaleorAppInstallation,
   saleorAppInstallations,
 } from "@nimara/domain/objects/SaleorApp";
 import { blankAsUnset } from "@nimara/lib/zod/util";
 
 // Replace with your own. The pair is an example: one shown back, one not.
-export const appSettings = z.object({
+export const channelConfig = z.object({
   publicKey: z.string(),
   secretKey: z.string(),
 });
 
-export type AppSettings = z.infer<typeof appSettings>;
+export type ChannelConfig = z.infer<typeof channelConfig>;
 
 // Never leave the app in full; a blank one back means keep what is stored.
 export const SECRET_FIELDS = [
   "secretKey",
-] as const satisfies readonly (keyof AppSettings)[];
+] as const satisfies readonly (keyof ChannelConfig)[];
+
+export const appSettings = channelConfigSet(channelConfig);
+
+export type AppSettings = z.infer<typeof appSettings>;
 
 export type AppInstallation = SaleorAppInstallation<AppSettings>;
 

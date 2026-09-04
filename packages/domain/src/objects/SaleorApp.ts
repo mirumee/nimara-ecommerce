@@ -22,6 +22,27 @@ export const saleorAppInstallations = <Settings extends z.ZodType>(
     saleorAppConfig.extend({ settings: settings.nullable().default(null) }),
   );
 
+// Every channel uses `default` until it is given an override of its own.
+export type ChannelConfigSet<T> = {
+  channelOverrides: Record<string, T>;
+  default: T | null;
+  defaultChannelSlug: string | null;
+};
+
+export const emptyChannelConfigSet = <T>(): ChannelConfigSet<T> => ({
+  channelOverrides: {},
+  default: null,
+  defaultChannelSlug: null,
+});
+
+// `defaultChannelSlug` only says where the UI collects the default config.
+export const channelConfigSet = <T extends z.ZodType>(config: T) =>
+  z.object({
+    channelOverrides: z.record(z.string(), config),
+    default: config.nullable(),
+    defaultChannelSlug: z.string().nullable(),
+  });
+
 export type SaleorAppWebhookManifest = {
   asyncEvents: string[];
   name: string;
