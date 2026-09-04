@@ -2,7 +2,7 @@ import { Suspense, useCallback, useState } from "react";
 
 import { ErrorBoundary } from "@nimara/lib/client/components/error-boundary";
 import { Spinner } from "@nimara/lib/client/components/spinner";
-import { useDashboardSession } from "@nimara/lib/client/dashboard-session/context";
+import { useDashboardSession } from "@nimara/lib/client/saleor/dashboard-session/context";
 
 import { fetchConfigData } from "./api";
 import { ConfigFormFields } from "./components/config-form-fields";

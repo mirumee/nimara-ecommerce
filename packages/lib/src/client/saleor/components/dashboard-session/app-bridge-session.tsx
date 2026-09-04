@@ -7,9 +7,9 @@ import {
 } from "@nimara/ui/components/alert";
 
 import { Spinner } from "#root/client/components/spinner";
-import { DashboardSessionContext } from "#root/client/dashboard-session/context";
-import { useBridgeState } from "#root/client/dashboard-session/use-bridge-state";
-import { useHandshakeTimeout } from "#root/client/dashboard-session/use-handshake-timeout";
+import { DashboardSessionContext } from "#root/client/saleor/dashboard-session/context";
+import { useBridgeState } from "#root/client/saleor/dashboard-session/use-bridge-state";
+import { useHandshakeTimeout } from "#root/client/saleor/dashboard-session/use-handshake-timeout";
 
 export const AppBridgeSession = ({ children }: { children: ReactNode }) => {
   const appBridgeState = useBridgeState();

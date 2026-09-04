@@ -9,6 +9,7 @@
   },
   "exports": {
     "./client/components/*": "./src/client/components/*.tsx",
+    "./client/saleor/components/*": "./src/client/saleor/components/*.tsx",
     "./types/*": "./types/*.d.ts",
     "./*": "./src/*.ts"
   },

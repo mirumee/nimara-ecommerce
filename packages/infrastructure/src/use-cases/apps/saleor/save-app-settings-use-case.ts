@@ -1,7 +1,7 @@
 import { type AsyncResult, ok } from "@nimara/domain/objects/Result";
 
 import {
-  type SaleorAppSettingsFormDeps,
+  type AppSettingsFormDeps,
   settingNames,
   type SettingsFormInput,
 } from "#root/use-cases/apps/saleor/settings-form";
@@ -11,12 +11,12 @@ import {
  * a blank secret keeps the stored one, because the form only ever saw a mask.
  * A caller writing settings programmatically uses the repository directly.
  */
-export const saveSaleorAppSettingsUseCase =
+export const saveAppSettingsUseCase =
   <Settings extends Record<string, string>>({
     configRepository,
     secretFields,
     settingsSchema,
-  }: SaleorAppSettingsFormDeps<Settings>) =>
+  }: AppSettingsFormDeps<Settings>) =>
   async ({
     data,
     saleorDomain,

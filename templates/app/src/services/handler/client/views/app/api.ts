@@ -1,31 +1,18 @@
 import { hc } from "hono/client";
 
-import { type SettingsFormData } from "@nimara/infrastructure/use-cases/apps/saleor/settings-form";
-import { type ResponseSchema } from "@nimara/lib/api/schema";
+import {
+  type SettingsFormData,
+  type SettingsFormInput,
+} from "@nimara/infrastructure/use-cases/apps/saleor/settings-form";
+import { apiErrorMessage } from "@nimara/lib/client/api/error-message";
 
 import { type AppSettings } from "@/domain/app-config";
-import { type SettingsFormValues } from "@/services/handler/api/rest/app/schema";
 import { type AppType } from "@/services/handler/entry-server";
 
 // Typed RPC client for the app's own API; shapes inferred from the routes.
 const client = hc<AppType>(window.env.BASE_PATH || "/");
 
 const settingsApi = client.api.app.settings;
-
-const errorMessage = async (response: Response) => {
-  const body = (await response
-    .json()
-    .catch(() => null)) as Partial<ResponseSchema> | null;
-
-  const description = body?.description ?? "The request failed.";
-  const [firstError] = body?.errors ?? [];
-  const detail =
-    firstError && firstError.message !== description
-      ? ` ${firstError.message}`
-      : "";
-
-  return `${description}${detail} (HTTP ${response.status})`;
-};
 
 /**
  * The tenant is not sent: the server derives it from the verified token, so a
@@ -46,7 +33,7 @@ export const fetchSettings = async ({
   });
 
   if (!response.ok) {
-    throw new Error(await errorMessage(response));
+    throw new Error(await apiErrorMessage(response));
   }
 
   // The untyped error responses break hono's inference — narrow by hand.
@@ -59,7 +46,7 @@ export const saveSettings = async ({
   saleorApiUrl,
 }: {
   accessToken: string;
-  data: SettingsFormValues;
+  data: SettingsFormInput<AppSettings>;
   saleorApiUrl: string;
 }): Promise<string | null> => {
   const response = await settingsApi.save.$post({
@@ -67,11 +54,11 @@ export const saveSettings = async ({
       authorization: `Bearer ${accessToken}`,
       "saleor-api-url": saleorApiUrl,
     },
-    json: { data },
+    json: data,
   });
 
   if (!response.ok) {
-    return errorMessage(response);
+    return apiErrorMessage(response);
   }
 
   return null;

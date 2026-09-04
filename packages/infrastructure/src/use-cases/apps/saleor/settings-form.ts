@@ -12,13 +12,12 @@ export type SettingsFormData<Settings> = Record<keyof Settings, string>;
 
 export type SettingsFormInput<Settings> = Partial<SettingsFormData<Settings>>;
 
-export type SaleorAppSettingsFormDeps<Settings extends Record<string, string>> =
-  {
-    configRepository: SaleorAppConfigService<Settings>;
-    // Not derivable from the schema: a string field says nothing about secrecy.
-    secretFields: readonly (keyof Settings)[];
-    settingsSchema: SettingsShape<Settings>;
-  };
+export type AppSettingsFormDeps<Settings extends Record<string, string>> = {
+  configRepository: SaleorAppConfigService<Settings>;
+  // Not derivable from the schema: a string field says nothing about secrecy.
+  secretFields: readonly (keyof Settings)[];
+  settingsSchema: SettingsShape<Settings>;
+};
 
 export const settingNames = <Settings>(schema: SettingsShape<Settings>) =>
   Object.keys(schema.shape) as (keyof Settings & string)[];
