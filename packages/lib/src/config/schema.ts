@@ -53,7 +53,7 @@ export const baseConfigSchema = (
           .min(1)
           .optional()
           .describe(
-            "The token the Dashboard UI runs on outside the Saleor iframe.",
+            "A short-lived staff JWT with MANAGE_APPS, for running the Dashboard UI outside the Saleor iframe. Copy it from a real Dashboard session's Authorization header. A long-lived API token authenticates GraphQL fine but is not a JWT, so it will not verify here.",
           ),
       ),
       BASE_PATH: z

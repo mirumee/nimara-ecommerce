@@ -32,14 +32,29 @@ const claimedPermissions = (claims: JwtClaims) => {
  */
 export const saleorTokenMiddleware = ({
   allowedDomains,
+  allowUnverifiedToken = false,
   joseAuthService,
   requiredPermissions,
 }: {
+  /**
+   * Accepts the caller on its headers alone, skipping JWT verification. The
+   * standalone dev UI runs on `VITE_SALEOR_APP_TOKEN`, which a developer
+   * copies from wherever they can get a token that works — a long-lived
+   * Saleor API token authenticates GraphQL fine, but it is opaque rather
+   * than a signed JWT, so `verifyJwt` can never accept it. Ignored outside
+   * `NODE_ENV=development`, whatever a caller passes.
+   */
+  allowUnverifiedToken?: boolean;
   allowedDomains: string[];
   joseAuthService: (saleorDomain: string) => JoseAuthService;
   requiredPermissions: string[];
-}): MiddlewareHandler =>
-  createMiddleware(async (context, next) => {
+}): MiddlewareHandler => {
+  // Fail closed on anything but a plain "development" — "staging", "test",
+  // and an unset NODE_ENV must not silently admit an unverified token.
+  const skipVerification =
+    allowUnverifiedToken && process.env.NODE_ENV === "development";
+
+  return createMiddleware(async (context, next) => {
     const logger = context.get("logger");
     const token = context.req.header("authorization")?.replace(BEARER, "");
     const saleorApiUrl = saleorHeaders.shape["saleor-api-url"].safeParse(
@@ -72,6 +87,20 @@ export const saleorTokenMiddleware = ({
         message: rejectedDomainMessage({ allowedDomains, saleorDomain }),
         context: "headers > saleor-api-url",
       });
+    }
+
+    if (skipVerification) {
+      logger.warning(
+        "Accepting a Saleor token without verifying it. Development only.",
+        { saleorDomain },
+      );
+
+      context.set("saleorApiUrl", saleorApiUrl);
+      context.set("saleorDomain", saleorDomain);
+
+      await next();
+
+      return;
     }
 
     const verified = await joseAuthService(saleorDomain).verifyJwt(token);
@@ -110,3 +139,4 @@ export const saleorTokenMiddleware = ({
 
     await next();
   });
+};

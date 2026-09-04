@@ -24,6 +24,7 @@ export const appRoutes = new Hono()
   .use(
     saleorTokenMiddleware({
       allowedDomains: config.ALLOWED_DOMAINS,
+      allowUnverifiedToken: config.IS_DEVELOPMENT,
       joseAuthService,
       requiredPermissions: ["MANAGE_APPS"],
     }),

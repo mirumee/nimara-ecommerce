@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { err, ok } from "@nimara/domain/objects/Result";
 import { type JoseAuthService } from "@nimara/infrastructure/jose/auth/types";
@@ -45,12 +45,17 @@ const joseAuthService = vi.fn(
 );
 
 const buildApp = ({
+  allowUnverifiedToken,
   requiredPermissions = ["MANAGE_APPS"],
-}: { requiredPermissions?: string[] } = {}) => {
+}: {
+  allowUnverifiedToken?: boolean;
+  requiredPermissions?: string[];
+} = {}) => {
   const routes = new Hono()
     .use(
       saleorTokenMiddleware({
         allowedDomains: ALLOWED_DOMAINS,
+        allowUnverifiedToken,
         joseAuthService,
         requiredPermissions,
       }),
@@ -64,28 +69,33 @@ const buildApp = ({
 };
 
 const request = ({
+  allowUnverifiedToken,
   apiUrl,
   body = {},
   headers = {},
   requiredPermissions,
   token,
 }: {
+  allowUnverifiedToken?: boolean;
   apiUrl?: string;
   body?: unknown;
   headers?: Record<string, string>;
   requiredPermissions?: string[];
   token?: string;
 }) =>
-  buildApp({ requiredPermissions }).request("/config/save", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      ...(token ? { authorization: `Bearer ${token}` } : {}),
-      ...(apiUrl ? { "saleor-api-url": apiUrl } : {}),
-      ...headers,
+  buildApp({ allowUnverifiedToken, requiredPermissions }).request(
+    "/config/save",
+    {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        ...(token ? { authorization: `Bearer ${token}` } : {}),
+        ...(apiUrl ? { "saleor-api-url": apiUrl } : {}),
+        ...headers,
+      },
+      body: JSON.stringify(body),
     },
-    body: JSON.stringify(body),
-  });
+  );
 
 describe("saleor-token", () => {
   beforeEach(() => {
@@ -214,5 +224,72 @@ describe("saleor-token", () => {
       // then
       expect(response.status).toBe(401);
     });
+  });
+
+  describe("allowUnverifiedToken", () => {
+    // The bypass only fires in a real dev run — vitest's own NODE_ENV must
+    // not be mistaken for it.
+    beforeEach(() => vi.stubEnv("NODE_ENV", "development"));
+    afterEach(() => vi.unstubAllEnvs());
+
+    it("accepts an opaque token without verifying it or its permissions", async () => {
+      // given a long-lived Saleor API token, which authenticates GraphQL
+      // fine but is not a JWT `verifyJwt` could ever accept
+
+      // when
+      const response = await request({
+        allowUnverifiedToken: true,
+        apiUrl: ATTACKER.apiUrl,
+        requiredPermissions: ["MANAGE_APPS"],
+        token: "opaque-api-token",
+      });
+
+      // then
+      expect(response.status).toBe(200);
+      expect(await response.json()).toEqual({
+        saleorApiUrl: ATTACKER.apiUrl,
+        saleorDomain: ATTACKER.domain,
+      });
+      expect(joseAuthService).not.toHaveBeenCalled();
+    });
+
+    it("still refuses a Saleor outside the allow list", async () => {
+      // when
+      const response = await request({
+        allowUnverifiedToken: true,
+        apiUrl: "https://stranger.example.com/graphql/",
+        token: "opaque-api-token",
+      });
+
+      // then
+      expect(response.status).toBe(401);
+    });
+
+    it("still requires the saleor headers", async () => {
+      // when
+      const response = await request({ allowUnverifiedToken: true });
+
+      // then
+      expect(response.status).toBe(401);
+    });
+
+    it.each(["staging", "test", ""])(
+      "still verifies the token when NODE_ENV is %j, not just anything but production",
+      async (nodeEnv) => {
+        // given a deploy where NODE_ENV was never set to "development"
+        vi.stubEnv("NODE_ENV", nodeEnv);
+
+        // when
+        const response = await request({
+          allowUnverifiedToken: true,
+          apiUrl: ATTACKER.apiUrl,
+          token: "opaque-api-token",
+        });
+
+        // then
+        expect(response.status).toBe(401);
+        expect(joseAuthService).toHaveBeenCalledWith(ATTACKER.domain);
+      },
+    );
   });
 });
