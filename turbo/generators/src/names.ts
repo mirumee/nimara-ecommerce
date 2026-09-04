@@ -1,4 +1,7 @@
-import { VERCEL_UNSUPPORTED_TRIGGERS } from "@nimara/tooling/entry-points";
+import {
+  type ServiceTrigger,
+  VERCEL_UNSUPPORTED_TRIGGERS,
+} from "@nimara/tooling/entry-points";
 
 export const TEMPLATE_NAME = "app-template";
 
@@ -72,3 +75,11 @@ export const requireKindForTarget = ({
 export const TENANCIES = ["multi", "single"] as const;
 
 export type Tenancy = (typeof TENANCIES)[number];
+
+export const TRIGGERS: readonly ServiceTrigger[] = ["http", "queue", "event"];
+
+export const triggersForTarget = (target: BuildTarget): ServiceTrigger[] =>
+  TRIGGERS.filter(
+    (trigger) =>
+      target !== "vercel" || !VERCEL_UNSUPPORTED_TRIGGERS.includes(trigger),
+  );

@@ -3,6 +3,8 @@ import { join } from "node:path";
 
 import { type PlopTypes } from "@turbo/gen";
 
+import { type ServiceTrigger } from "@nimara/tooling/entry-points";
+
 import { listApps } from "./create-service.ts";
 import {
   type AppKind,
@@ -14,6 +16,8 @@ import {
   TENANCIES,
   type Tenancy,
   toDirectoryName,
+  TRIGGERS,
+  triggersForTarget,
   validateName,
 } from "./names.ts";
 import { detectBuildTarget } from "./target.ts";
@@ -61,6 +65,17 @@ export const tenancy: PlopTypes.PromptQuestion = {
   type: "list",
 };
 
+/**
+ * A new app answers `target` outright; a service added later has no `target`
+ * prompt of its own, so it inherits what its app already chose.
+ */
+const resolveTarget = (answers: {
+  app?: string;
+  target?: BuildTarget;
+}): BuildTarget =>
+  answers.target ??
+  detectBuildTarget({ app: answers.app ?? "", root: process.cwd() });
+
 const KIND_LABELS: Record<AppKind, string> = {
   dashboard: "dashboard — HTTP, with a settings page in Saleor",
   event: "event — invoked by a schedule or another function, no HTTP",
@@ -75,15 +90,11 @@ export const kind: PlopTypes.PromptQuestion = {
    * `createService`, which see both the kind and the target.
    */
   bypass: (input: string) => input,
-  /**
-   * Offers what the target can run. A new app answers `target` outright; a
-   * service added later inherits what its app chose.
-   */
   choices: (answers: { app?: string; target?: BuildTarget }) =>
-    kindsForTarget(
-      answers.target ??
-        detectBuildTarget({ app: answers.app ?? "", root: process.cwd() }),
-    ).map((value) => ({ name: KIND_LABELS[value], value })),
+    kindsForTarget(resolveTarget(answers)).map((value) => ({
+      name: KIND_LABELS[value],
+      value,
+    })),
   default: KINDS[0],
   message: "What does the service serve?",
   name: "kind",
@@ -96,6 +107,27 @@ export const target: PlopTypes.PromptQuestion = {
   message: "Where does it run?",
   name: "target",
   type: "list",
+};
+
+const TRIGGER_LABELS: Record<ServiceTrigger, string> = {
+  event: "INVOKE",
+  http: "HTTP",
+  queue: "QUEUE",
+};
+
+// Vercel only runs HTTP, so this is skipped there instead of offered with one choice.
+export const trigger: PlopTypes.PromptQuestion = {
+  choices: (answers: { app?: string; target?: BuildTarget }) =>
+    triggersForTarget(resolveTarget(answers)).map((value) => ({
+      name: TRIGGER_LABELS[value],
+      value,
+    })),
+  default: TRIGGERS[0],
+  message: "What triggers it?",
+  name: "trigger",
+  type: "list",
+  when: (answers: { app?: string; target?: BuildTarget }) =>
+    resolveTarget(answers) !== "vercel",
 };
 
 // Asked separately from the app's own name: `src/services/<service>`.
