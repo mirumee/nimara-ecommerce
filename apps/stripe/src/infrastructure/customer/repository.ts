@@ -1,8 +1,8 @@
 import { type Logger } from "@nimara/infrastructure/logging/types";
 
 import { type CustomerRepository } from "@/domain/customer";
+import { type SaleorClient } from "@/infrastructure/saleor/client";
 import { getStripeApi } from "@/infrastructure/utils";
-import { type SaleorClient } from "@/lib/saleor/client";
 
 import { getCustomerIdInfra } from "./saleor/get-customer-id";
 import { saveCustomerInfra } from "./saleor/save-customer";

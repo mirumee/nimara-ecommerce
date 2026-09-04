@@ -1,12 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
 
 import { ok } from "@nimara/domain/objects/Result";
-import { type JoseAuthService } from "@nimara/infrastructure/jose/auth/types";
 
 import { type PaymentGatewayConfigSet } from "@/domain/app-config";
 import { type AppConfigService } from "@/infrastructure/app-config-service";
-import { type SaleorClient } from "@/lib/saleor/client";
-import { MagicMock } from "@/lib/test/mock";
+import { type SaleorClient } from "@/infrastructure/saleor/client";
 
 import { getConfigFormDataUseCase } from "./get-config-form-data-use-case";
 
@@ -25,15 +23,14 @@ const run = ({
 }) =>
   getConfigFormDataUseCase({
     appConfigService: {
+      getBySaleorDomain: vi.fn(async () => ok({ authToken: "app-token" })),
       getPaymentGatewayConfigSet: vi.fn(async () => ok(storedConfig)),
     } as unknown as AppConfigService,
-    joseAuthService: () =>
-      MagicMock<JoseAuthService>({ verifyJwt: vi.fn(async () => ok(true)) }),
     saleorClient: () =>
       ({
-        execute: vi.fn(async () => ({ channels })),
+        execute: vi.fn(async () => ok({ channels })),
       }) as unknown as SaleorClient,
-  })({ accessToken: "token", saleorDomain: "saleor.example.com" });
+  })({ saleorDomain: "saleor.example.com" });
 
 describe("get-config-form-data-use-case", () => {
   describe("getConfigFormDataUseCase", () => {

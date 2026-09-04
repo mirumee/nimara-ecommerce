@@ -1,0 +1,181 @@
+import { execFileSync } from "node:child_process";
+import { existsSync } from "node:fs";
+import { join } from "node:path";
+
+import { type PlopTypes } from "@turbo/gen";
+
+import { createApp } from "./src/create-app.ts";
+import { createService, listApps } from "./src/create-service.ts";
+import {
+  BUILD_TARGETS,
+  type BuildTarget,
+  TEMPLATE_SERVICE,
+  TENANCIES,
+  type Tenancy,
+  toDirectoryName,
+  validateName,
+} from "./src/names.ts";
+
+type Answers = {
+  description: string;
+  name: string;
+  port: string;
+  target: BuildTarget;
+  tenancy: Tenancy;
+  turbo: { paths: { root: string } };
+};
+
+type ServiceAnswers = {
+  app: string;
+  name: string;
+  turbo: { paths: { root: string } };
+};
+
+const run =
+  (root: string) =>
+  (...args: string[]) =>
+    execFileSync("pnpm", args, { cwd: root, stdio: "inherit" });
+
+// eslint-disable-next-line import/no-default-export
+export default function generator(plop: PlopTypes.NodePlopAPI): void {
+  plop.setGenerator("saleor-app", {
+    description: "Scaffold a Saleor app from the template",
+    prompts: [
+      {
+        filter: toDirectoryName,
+        message: "App name (kebab-case, becomes apps/<name>):",
+        name: "name",
+        type: "input",
+        validate: (input: string) => {
+          const named = validateName(input);
+
+          if (named !== true) {
+            return named;
+          }
+
+          const name = toDirectoryName(input);
+
+          return existsSync(join(process.cwd(), "apps", name))
+            ? `apps/${name} already exists.`
+            : true;
+        },
+      },
+      {
+        message: "Description (shown in the Saleor dashboard):",
+        name: "description",
+        type: "input",
+        validate: (input: string) =>
+          input.trim().length > 0 || "A description is required.",
+      },
+      {
+        choices: [
+          {
+            name: "multi — installable by many Saleor instances",
+            value: "multi",
+          },
+          {
+            name: "single — serves the one Saleor named in ALLOWED_DOMAINS",
+            value: "single",
+          },
+        ] satisfies { name: string; value: Tenancy }[],
+        default: TENANCIES[0],
+        message: "How many Saleor instances does it serve?",
+        name: "tenancy",
+        type: "list",
+      },
+      {
+        choices: [...BUILD_TARGETS],
+        default: "vercel",
+        message: "What is the deployment target?",
+        name: "target",
+        type: "list",
+      },
+      {
+        default: "8000",
+        message: "Dev server port:",
+        name: "port",
+        type: "input",
+        validate: (input: string) =>
+          /^\d{4,5}$/.test(input) || "Give a port number, e.g. 8010.",
+      },
+    ],
+    actions: [
+      async (answers) => {
+        const { description, name, port, target, tenancy, turbo } =
+          answers as Answers;
+
+        const destination = await createApp({
+          description,
+          name,
+          port,
+          root: turbo.paths.root,
+          target,
+          tenancy,
+        });
+
+        const pnpm = run(turbo.paths.root);
+
+        /**
+         * `--no-frozen-lockfile`: CI freezes it by default, and a new workspace
+         * package is exactly what the lockfile does not have yet.
+         */
+        pnpm("install", "--no-frozen-lockfile", "--silent");
+
+        return `created ${destination}`;
+      },
+    ],
+  });
+
+  plop.setGenerator("saleor-service", {
+    description: "Add a service to an app that already exists",
+    prompts: [
+      {
+        choices: listApps(process.cwd()),
+        message: "Which app?",
+        name: "app",
+        type: "list",
+      },
+      {
+        default: TEMPLATE_SERVICE,
+        filter: toDirectoryName,
+        message: "Service name (becomes src/services/<name>):",
+        name: "name",
+        type: "input",
+        validate: (input: string, answers: { app: string }) => {
+          const named = validateName(input);
+
+          if (named !== true) {
+            return named;
+          }
+
+          const name = toDirectoryName(input);
+          const path = join("apps", answers.app, "src", "services", name);
+
+          return existsSync(join(process.cwd(), path))
+            ? `${path} already exists.`
+            : true;
+        },
+      },
+    ],
+    actions: [
+      async (answers) => {
+        const { app, name, turbo } = answers as ServiceAnswers;
+
+        const serviceDir = await createService({
+          app,
+          name,
+          root: turbo.paths.root,
+        });
+
+        /**
+         * Renaming the service reorders the `@/services/<name>/...` imports the
+         * lint rules sort. Leaving that undone would hand back a workspace that
+         * fails its own linter.
+         */
+        run(turbo.paths.root)("--filter", app, "lint");
+
+        return `created ${serviceDir}`;
+      },
+    ],
+  });
+}

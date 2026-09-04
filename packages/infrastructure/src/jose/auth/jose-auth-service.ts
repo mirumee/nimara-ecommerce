@@ -24,13 +24,13 @@ export const joseAuthService = ({
 }: {
   jwksRepository: JwksRepository;
 }): JoseAuthService => {
-  const verifyWithRetry = async ({
+  const verifyWithRetry = async <Verified>({
     verify,
     forceRefresh = false,
   }: {
     forceRefresh?: boolean;
-    verify: (jwks: ReturnType<typeof createLocalJWKSet>) => Promise<unknown>;
-  }): AsyncResult<true> => {
+    verify: (jwks: ReturnType<typeof createLocalJWKSet>) => Promise<Verified>;
+  }): AsyncResult<Verified> => {
     const keysResult = await jwksRepository.get({ forceRefresh });
 
     if (!keysResult.ok) {
@@ -39,13 +39,13 @@ export const joseAuthService = ({
 
     try {
       // `JwkSet` is our jose-agnostic port type; hand it to jose here.
-      await verify(
-        createLocalJWKSet(
-          keysResult.data as Parameters<typeof createLocalJWKSet>[0],
+      return ok(
+        await verify(
+          createLocalJWKSet(
+            keysResult.data as Parameters<typeof createLocalJWKSet>[0],
+          ),
         ),
       );
-
-      return ok(true);
     } catch (error) {
       if (!forceRefresh && isPossibleRotation(error)) {
         return verifyWithRetry({ verify, forceRefresh: true });
@@ -57,17 +57,22 @@ export const joseAuthService = ({
 
   return {
     verifyJwt: (jwt) =>
-      verifyWithRetry({ verify: (jwks) => jwtVerify(jwt, jwks) }),
+      verifyWithRetry({
+        verify: async (jwks) => (await jwtVerify(jwt, jwks)).payload,
+      }),
 
     verifyDetachedJws: ({ jws, payload }) => {
       const [protectedHeader, signature] = jws.split("..") ?? [];
 
       return verifyWithRetry({
-        verify: (jwks) =>
-          flattenedVerify(
+        verify: async (jwks) => {
+          await flattenedVerify(
             { protected: protectedHeader, payload: payload ?? "", signature },
             jwks,
-          ),
+          );
+
+          return true as const;
+        },
       });
     },
   };

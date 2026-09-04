@@ -1,4 +1,5 @@
-import { type SaleorMetadataItem } from "@/lib/saleor/metadata";
+import { type AsyncResult } from "@nimara/domain/objects/Result";
+import { type SaleorMetadataItem } from "@nimara/lib/saleor/metadata";
 
 // The Saleor user a payment-method request is scoped to.
 export type PaymentMethodUser = {
@@ -18,5 +19,5 @@ export type PaymentMethodUser = {
 export type CustomerRepository = {
   create(opts: { user: PaymentMethodUser }): Promise<string>;
   get(opts: { user: PaymentMethodUser }): Promise<string | null>;
-  save(opts: { gatewayUserId: string; userId: string }): Promise<void>;
+  save(opts: { gatewayUserId: string; userId: string }): AsyncResult<void>;
 };

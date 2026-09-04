@@ -9,6 +9,12 @@ import { type Logger } from "#root/logging/types";
 
 export type SaleorAppError = BaseError<SaleorAppErrorCode>;
 
+// Saleor names the permission claim differently for a staff and an app token.
+export type SaleorJwtClaims = {
+  permissions?: string[];
+  user_permissions?: string[];
+};
+
 export type SaleorAppConfigRepository = {
   createOrUpdate: (opts: {
     config: SaleorAppConfig;

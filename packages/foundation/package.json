@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "lint": "eslint . --ext .js,.ts,.tsx --fix",
-    "lint:staged": "lint-staged"
+    "lint:staged": "lint-staged",
+    "test": "vitest run",
+    "test:watch": "vitest --watch"
   },
   "dependencies": {
     "@formatjs/intl-localematcher": "0.8.13",
@@ -20,7 +22,7 @@
     "react-dom": "^19.2.3",
     "react-hook-form": "^7.86.0",
     "tailwind-merge": "2.6.1",
-    "zod": "^4.5.2"
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@nimara/codegen": "workspace:*",
@@ -46,6 +48,7 @@
     "node": "24.x"
   },
   "exports": {
+    "./lib/*": "./src/lib/*.ts",
     "./*": "./src/*"
   },
   "typesVersions": {

@@ -1,0 +1,40 @@
+{
+  "name": "@nimara/tooling",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "lint": "eslint . --ext .js,.ts --fix",
+    "lint:staged": "lint-staged",
+    "lint:types": "tsc --noEmit"
+  },
+  "lint-staged": {
+    "*.*": "prettier --write --ignore-unknown",
+    "*.{js,cjs,ts}": "eslint --fix"
+  },
+  "dependencies": {
+    "@hono/vite-dev-server": "^0.26.1",
+    "@vitejs/plugin-react": "^6.0.5",
+    "dotenv": "17.4.1",
+    "vite-plugin-css-injected-by-js": "^5.0.2",
+    "zod": "catalog:"
+  },
+  "peerDependencies": {
+    "vite": "^8.2.1"
+  },
+  "devDependencies": {
+    "@nimara/config": "workspace:*",
+    "@types/node": "^24.12.4",
+    "eslint": "^8.57.0",
+    "lint-staged": "^16.4.0",
+    "typescript": "^5.9.3",
+    "vite": "^8.2.1"
+  },
+  "engines": {
+    "node": "24.x"
+  }
+}
