@@ -39,43 +39,45 @@ jobs:
         env:
           APP: ${{ inputs.app }}
         run: |
-          candidates='[.tasks[]
-                       | select(.task == "build")
-                       | select(.command == "node etc/build.ts")
-                       | select(.directory != "templates/app")
-                       | select(.directory | startswith("apps/"))
-                       | { name: .package, dir: (.directory | split("/") | last) }]'
+          node_build_task='[
+            .tasks[]
+            | select(.task == "build")
+            | select(.command == "node etc/build.ts")
+            | select(.directory != "templates/app")
+            | select(.directory | startswith("apps/"))
+            | { name: .package, dir: (.directory | split("/") | last) }
+          ]'
 
-          raw=$(npx turbo run build --dry=json | jq -c "$candidates")
+          candidates=$(npx turbo run build --dry=json | jq -c "$node_build_task")
 
           if [ -n "$APP" ]; then
-            named=$(echo "$raw" | jq -c --arg app "$APP" '[.[] | select(.dir == $app)]')
+            requested=$(echo "$candidates" | jq -c --arg app "$APP" '[.[] | select(.dir == $app)]')
 
             # Checked here rather than left to `--filter`, which rejects an
             # unknown package only after `quality` has run.
-            if [ "$named" = "[]" ]; then
-              echo "::error::No app named '$APP'. Candidates: $(echo "$raw" | jq -r 'map(.dir) | join(", ")')."
+            if [ "$requested" = "[]" ]; then
+              echo "::error::No app named '$APP'. Candidates: $(echo "$candidates" | jq -r 'map(.dir) | join(", ")')."
               exit 1
             fi
 
-            raw=$named
+            candidates=$requested
           fi
 
-          apps='[]'
+          node_target_dirs=$( { grep -l '^BUILD_TARGET=node$' apps/*/.env.example || true; } \
+            | xargs -n1 dirname | xargs -n1 basename \
+            | jq -R -c -s 'split("\n") | map(select(length > 0))')
 
-          for dir in $(echo "$raw" | jq -r '.[].dir'); do
-            if grep -q '^BUILD_TARGET=node$' "apps/$dir/.env.example"; then
-              entry=$(echo "$raw" | jq -c --arg dir "$dir" '.[] | select(.dir == $dir)')
-              apps=$(echo "$apps" | jq -c --argjson e "$entry" '. + [$e]')
-            fi
-          done
+          apps=$(echo "$candidates" | jq -c --argjson dirs "$node_target_dirs" \
+            '[.[] | select(.dir as $dir | $dirs | index($dir))]')
 
           echo "apps=$apps" >> "$GITHUB_OUTPUT"
           {
             echo "### Apps to build"
-            echo "$apps" | jq -r 'if length == 0
-                                  then "Nothing matched."
-                                  else .[] | "- `\(.name)`" end'
+            echo "$apps" | jq -r '
+              if length == 0
+              then "Nothing matched."
+              else .[] | "- `\(.name)`"
+              end'
           } | tee -a "$GITHUB_STEP_SUMMARY"
 
   quality:

@@ -2,8 +2,8 @@ name: Build Saleor apps
 
 on:
   push:
-    branches: [main]
-    tags: ["*"]
+    branches: []
+    tags: []
 
 jobs:
   # Only apps the template generated for `BUILD_TARGET=node`: the command
@@ -44,31 +44,33 @@ jobs:
           TURBO_SCM_BASE: ${{ github.event.before }}
           TURBO_SCM_HEAD: ${{ github.sha }}
         run: |
-          candidates='[.tasks[]
-                       | select(.task == "build")
-                       | select(.command == "node etc/build.ts")
-                       | select(.directory != "templates/app")
-                       | select(.directory | startswith("apps/"))
-                       | { name: .package, dir: (.directory | split("/") | last) }]'
+          node_build_task='[
+            .tasks[]
+            | select(.task == "build")
+            | select(.command == "node etc/build.ts")
+            | select(.directory != "templates/app")
+            | select(.directory | startswith("apps/"))
+            | { name: .package, dir: (.directory | split("/") | last) }
+          ]'
 
-          raw=$(npx turbo run build --affected --dry=json | jq -c "$candidates")
+          affected_node_apps=$(npx turbo run build --affected --dry=json | jq -c "$node_build_task")
 
-          apps='[]'
+          node_target_dirs=$( { grep -l '^BUILD_TARGET=node$' apps/*/.env.example || true; } \
+            | xargs -n1 dirname | xargs -n1 basename \
+            | jq -R -c -s 'split("\n") | map(select(length > 0))')
 
-          for dir in $(echo "$raw" | jq -r '.[].dir'); do
-            if grep -q '^BUILD_TARGET=node$' "apps/$dir/.env.example"; then
-              entry=$(echo "$raw" | jq -c --arg dir "$dir" '.[] | select(.dir == $dir)')
-              apps=$(echo "$apps" | jq -c --argjson e "$entry" '. + [$e]')
-            fi
-          done
+          apps=$(echo "$affected_node_apps" | jq -c --argjson dirs "$node_target_dirs" \
+            '[.[] | select(.dir as $dir | $dirs | index($dir))]')
 
           echo "apps=$apps" >> "$GITHUB_OUTPUT"
 
           {
             echo "### Apps to build"
-            echo "$apps" | jq -r 'if length == 0
-                                  then "Nothing affected by this merge."
-                                  else .[] | "- `\(.name)`" end'
+            echo "$apps" | jq -r '
+              if length == 0
+              then "Nothing affected by this merge."
+              else .[] | "- `\(.name)`"
+              end'
           } | tee -a "$GITHUB_STEP_SUMMARY"
 
   quality:
