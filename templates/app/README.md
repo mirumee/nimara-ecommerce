@@ -1,7 +1,7 @@
 # app-template
 
-A Saleor app: Hono on the server, no dashboard. Generated apps start as a copy
-of this one, so what is here is what every app begins with.
+A Saleor app: Hono on the server, React in the Saleor dashboard. Generated apps
+start as a copy of this one, so what is here is what every app begins with.
 
 Generate one instead of copying by hand:
 
@@ -31,11 +31,15 @@ caller.
 ```
 src/services/<service>/    one service, one entry point, one Lambda
   entry-server.ts          the Hono app; `handler` is its Lambda binding
+  entry-client.tsx         the dashboard bundle Saleor loads
   config.ts                this service's environment
   api/rest/saleor/         manifest, register, webhooks
+  api/rest/app/            what the dashboard calls
+  client/views/            the dashboard itself
 src/container/             wiring; everything is lazy
 src/domain/                what the app stores per installed Saleor
 src/infrastructure/        outward calls
+src/use-cases/             what the dashboard reads and writes
 src/graphql/               documents, and the client generated from them
 ```
 
@@ -69,3 +73,21 @@ by it, never by a value from the payload — see `product-updated.ts`.
 Each installed Saleor gets its own entry, keyed by domain. `src/domain/app-config.ts`
 declares what this app stores beside the install record; `SECRET_FIELDS` names
 the ones a dashboard must never show in full.
+
+## The dashboard
+
+Saleor opens the app's root in an iframe, announced as `appUrl` in the
+manifest. `dashboard.ts` is mounted there and answers first. Below it sits a
+plain text route, which is what answers once an app drops its dashboard — so
+the manifest says the same thing either way.
+
+The page talks to `/api/app`, which verifies the staff user's token and
+requires `MANAGE_APPS`. The tenant comes from that token, never from the
+request body.
+
+A secret is masked on the way out and blank on the way back in. The form sends
+a blank field to mean "keep the stored value", so a mask can never be saved
+over a real key. `SECRET_FIELDS` decides which fields that applies to.
+
+An app that ships no UI deletes `entry-client.tsx`, `client/`, `dashboard.ts`,
+`api/rest/app/`, and the two lines mounting them. The manifest is untouched.

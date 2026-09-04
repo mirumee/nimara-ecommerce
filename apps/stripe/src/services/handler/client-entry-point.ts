@@ -11,7 +11,7 @@ const APP_NAME = basename(dirname(fileURLToPath(import.meta.url)));
 const CONFIG = container.get("config");
 
 export const clientEntryPoint = createHtmlShell({
-  appName: APP_NAME,
+  serviceName: APP_NAME,
   title: CONFIG.DISPLAY_NAME,
   version: CONFIG.VERSION,
 });

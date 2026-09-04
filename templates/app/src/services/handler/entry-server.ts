@@ -10,7 +10,9 @@ import { initSentry } from "@nimara/lib/reporting/sentry/instrument";
 
 import { container } from "@/container";
 
+import { appRoutes } from "./api/rest/app";
 import { saleorRoutes } from "./api/rest/saleor";
+import { dashboard } from "./dashboard";
 
 const CONFIG = container.get("config");
 
@@ -27,12 +29,21 @@ const app = new Hono()
   .use(loggingMiddleware(container.get("logger")))
   .use(requestOriginMiddleware({ basePath: CONFIG.BASE_PATH }))
   .use(healthCheckMiddleware({ basePath: CONFIG.BASE_PATH }))
-  .get("/", (context) => context.text(`${CONFIG.DISPLAY_NAME} is running.`))
+  .route("/", dashboard)
+  /**
+   * Saleor opens `appUrl`, which is the app's root. A dashboard is mounted
+   * above and answers first; without one the app names itself rather than
+   * answering 404.
+   */
+  .get("/", (context) =>
+    context.text(`${CONFIG.DISPLAY_NAME} ${CONFIG.VERSION}.`),
+  )
   /**
    * Nested routes must be defined at the end for proper type inference for
    * hono/client.
    */
-  .route("/api/saleor", saleorRoutes);
+  .route("/api/saleor", saleorRoutes)
+  .route("/api/app", appRoutes);
 
 export type AppType = typeof app;
 
