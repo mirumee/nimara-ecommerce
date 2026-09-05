@@ -82,11 +82,13 @@ const write = async (path: string, contents: string) => {
 };
 
 const generate = ({
+  integration = "saleor",
   kind = "dashboard",
   service = "handler",
   target = "vercel",
   tenancy = "multi",
 }: {
+  integration?: "blank" | "saleor";
   kind?: AppKind;
   service?: string;
   target?: "node" | "vercel";
@@ -94,6 +96,7 @@ const generate = ({
 } = {}) =>
   createApp({
     description: "Keeps a feed in step with Saleor",
+    integration,
     kind,
     name: "feed-sync",
     port: "8010",
@@ -248,6 +251,7 @@ describe("create-app", () => {
     // when
     const destination = await createApp({
       description: "Anything",
+      integration: "saleor",
       kind: "dashboard",
       name: "  Feed Sync!  ",
       port: "8010",
