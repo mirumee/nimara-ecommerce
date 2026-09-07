@@ -15,7 +15,7 @@
     "eslint": "^8.57.0",
     "lint-staged": "^16.4.0",
     "playwright": "1.62.1",
-    "tsx": "4.23.12"
+    "tsx": "4.23.13"
   },
   "lint-staged": {
     "*.{js,cjs,ts,tsx}": "eslint --fix",

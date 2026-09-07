@@ -36,7 +36,7 @@
     "autoprefixer": "10.5.4",
     "dotenv": "17.4.2",
     "eslint": "^8.57.0",
-    "postcss": "^8.5.18",
+    "postcss": "^8.5.28",
     "tailwindcss": "^3.4.19",
     "ts-essentials": "10.2.1",
     "typescript": "^5.9.3",
