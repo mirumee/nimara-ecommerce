@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@aws-sdk/client-secrets-manager": "^3.1121.0",
+    "@aws-sdk/client-secrets-manager": "^3.1126.0",
     "@editorjs/editorjs": "2.31.6",
     "@editorjs/header": "2.8.9",
     "@editorjs/list": "2.0.9",
@@ -32,12 +32,12 @@
     "jose": "^6.2.9",
     "lucide-react": "^0.577.0",
     "next": "catalog:",
-    "next-intl": "4.14.1",
+    "next-intl": "4.14.2",
     "nodemailer": "8.0.11",
     "pg": "^8.23.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
-    "react-hook-form": "^7.86.0",
+    "react-hook-form": "^7.87.0",
     "tailwind-merge": "2.6.1",
     "zod": "catalog:"
   },
@@ -51,7 +51,7 @@
     "drizzle-kit": "0.31.10",
     "eslint": "^8.57.0",
     "eslint-config-custom": "workspace:*",
-    "eslint-config-next": "^15.5.24",
+    "eslint-config-next": "^15.5.25",
     "postcss": "^8.5.18",
     "tailwindcss": "^3.4.19",
     "tailwindcss-animate": "^1.0.7",
