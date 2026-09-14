@@ -81,7 +81,7 @@
     "lint-staged": "^16.4.0",
     "prettier": "3.9.6",
     "prettier-plugin-tailwindcss": "^0.8.1",
-    "tsx": "4.23.12",
+    "tsx": "4.23.13",
     "turbo": "2.10.12",
     "yaml": "2.9.0"
   },
