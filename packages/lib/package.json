@@ -25,13 +25,13 @@
     "*.{js,cjs,ts,tsx}": "eslint --fix"
   },
   "dependencies": {
-    "@hono/zod-validator": "^0.9.0",
+    "@hono/zod-validator": "^0.9.1",
     "@nimara/domain": "workspace:*",
     "@nimara/foundation": "workspace:*",
     "@nimara/infrastructure": "workspace:*",
     "@nimara/ui": "workspace:*",
     "@saleor/app-sdk": "1.7.0",
-    "@sentry/node": "^10.70.0",
+    "@sentry/node": "^10.74.0",
     "hono": "catalog:",
     "react": "^19.2.3",
     "zod": "catalog:"
