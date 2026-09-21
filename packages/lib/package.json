@@ -38,12 +38,12 @@
   },
   "devDependencies": {
     "@nimara/config": "workspace:*",
-    "@types/node": "^24.12.4",
+    "@types/node": "^24.13.5",
     "@types/react": "^19.2.14",
     "eslint": "^8.57.0",
     "lint-staged": "^16.4.0",
     "typescript": "^5.9.3",
-    "vite": "^8.2.1",
-    "vitest": "4.1.2"
+    "vite": "^8.3.0",
+    "vitest": "4.1.11"
   }
 }
