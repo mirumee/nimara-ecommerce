@@ -12,14 +12,18 @@ export default {
     I.click({ role: "combobox", name: "Variant select" });
     I.click("L regular");
     I.click(locate("button").withText("Add to bag"));
+    I.waitForCookie("checkout", timeout);
   },
+
   add_black_sand_to_cart(timeout: number) {
     I.waitForVisible({ role: "radio", name: "Vinyl" }, timeout);
     I.waitForVisible({ role: "combobox", name: "Variant select" }, timeout);
     I.click({ role: "combobox", name: "Variant select" });
     I.click("Regular vinyl");
     I.click(locate("button").withText("Add to bag"));
+    I.waitForCookie("checkout", timeout);
   },
+
   click_go_to_bag_popup(timeout: number) {
     I.waitForVisible({ role: "link", name: "Go to bag" }, timeout);
     I.waitForFunction(
