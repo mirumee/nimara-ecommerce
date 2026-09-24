@@ -2,27 +2,35 @@ import { type ZodType } from "zod";
 
 import { cmsMenuProviders } from "@nimara/infrastructure/cms-menu/select";
 import { cmsPageProviders } from "@nimara/infrastructure/cms-page/select";
+import type { Logger } from "@nimara/infrastructure/logging/types";
 import { searchProviders } from "@nimara/infrastructure/search/select";
 
+import type { Capability } from "@/services/capabilities";
 import {
   resolveCMSProvider,
   resolveSearchProvider,
 } from "@/services/integrations/resolve";
 
 export type IntegrationReportRow = {
-  capability: string;
+  capability: SwappableCapability;
   missing: string[];
   ok: boolean;
   selected: string | null;
 };
 
 type CapabilityEntry = {
-  capability: string;
+  capability: Capability;
   providers: readonly { configSchema?: ZodType; id: string }[];
   resolve: () => string | null;
 };
 
-const CAPABILITIES: CapabilityEntry[] = [
+/*
+ * Only the capabilities whose implementation is chosen by configuration. Every
+ * other registry capability has one implementation whose sole condition is the
+ * backend URL, which `resolve` already answers, so a row for it could report
+ * nothing but success.
+ */
+const CAPABILITIES = [
   {
     capability: "search",
     providers: searchProviders,
@@ -38,7 +46,15 @@ const CAPABILITIES: CapabilityEntry[] = [
     providers: cmsMenuProviders,
     resolve: resolveCMSProvider,
   },
-];
+] as const satisfies readonly CapabilityEntry[];
+
+/*
+ * Derived from `CAPABILITIES` rather than hand-listed, so a typo in a caller is
+ * a compile error instead of a silently false check that hides a surface. The
+ * entries draw their names from `Capability`, so a doctor row and a loader log
+ * always label the same capability the same way.
+ */
+export type SwappableCapability = (typeof CAPABILITIES)[number]["capability"];
 
 /**
  * Reports, per swappable capability, which provider is selected and whether its
@@ -74,7 +90,33 @@ export const buildIntegrationReport = (
     return { capability, missing, ok: false, selected };
   });
 
-/** Human-readable preflight report for the active integration configuration. */
+/**
+ * Emits one `critical` per swappable capability whose selected provider is
+ * missing config, when the service registry is built. It logs instead of
+ * throwing: a broken search configuration must not take down checkout, and the
+ * loader degrades the affected capability to its empty service on first use.
+ * Without this a missing key stays invisible until a shopper reaches that
+ * capability, and the empty service for a read capability answers with no data
+ * rather than an error.
+ */
+export const logIntegrationConfigIssues = (
+  logger: Logger,
+  env?: Record<string, string | undefined>,
+): void => {
+  for (const row of buildIntegrationReport(env)) {
+    if (row.ok) {
+      continue;
+    }
+
+    logger.critical("Selected provider is missing required configuration.", {
+      capability: row.capability,
+      provider: row.selected,
+      missing: row.missing,
+    });
+  }
+};
+
+/** Human-readable preflight report for the swappable capabilities. */
 export const formatIntegrationReport = (
   env?: Record<string, string | undefined>,
 ): string => {
@@ -90,5 +132,7 @@ export const formatIntegrationReport = (
     return `✗ ${row.capability}: ${row.selected} — missing/invalid env: ${row.missing.join(", ")}`;
   });
 
-  return ["Integration preflight", ...lines].join("\n");
+  return ["Integration preflight (swappable capabilities)", ...lines].join(
+    "\n",
+  );
 };

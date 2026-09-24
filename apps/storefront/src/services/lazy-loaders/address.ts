@@ -15,6 +15,7 @@ import { getRequiredSaleorApiUrl } from "../utils/required-env";
  */
 export const createAddressServiceLoader = (logger: Logger) =>
   createServiceLoader({
+    capability: "address",
     resolve: () => (isSaleorConfigured ? "saleor" : null),
     build: async () => {
       const { saleorAddressService } =

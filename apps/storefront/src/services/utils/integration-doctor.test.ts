@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import type { Logger } from "@nimara/infrastructure/logging/types";
+
 import type { IntegrationReportRow } from "./integration-doctor";
 
 const envMock = {
@@ -17,7 +19,16 @@ vi.mock("@/services/utils/empty-services", () => ({
   },
 }));
 
-const { buildIntegrationReport } = await import("./integration-doctor");
+const { buildIntegrationReport, logIntegrationConfigIssues } =
+  await import("./integration-doctor");
+
+const fakeLogger = {
+  debug: vi.fn(),
+  info: vi.fn(),
+  warning: vi.fn(),
+  error: vi.fn(),
+  critical: vi.fn(),
+} satisfies Logger;
 
 const rowFor = (
   rows: IntegrationReportRow[],
@@ -85,5 +96,36 @@ describe("buildIntegrationReport", () => {
       ok: true,
       selected: "dummy",
     });
+  });
+});
+
+describe("logIntegrationConfigIssues", () => {
+  beforeEach(() => {
+    envMock.SEARCH_SERVICE = "saleor";
+    envMock.CMS_SERVICE = "saleor";
+    saleorMock.configured = true;
+    vi.clearAllMocks();
+  });
+
+  it("logs a critical naming the missing keys of the selected provider", () => {
+    envMock.SEARCH_SERVICE = "algolia";
+
+    logIntegrationConfigIssues(fakeLogger, {
+      NEXT_PUBLIC_SALEOR_API_URL: "https://x.saleor.cloud/graphql/",
+    });
+
+    expect(fakeLogger.critical).toHaveBeenCalledWith(expect.any(String), {
+      capability: "search",
+      provider: "algolia",
+      missing: expect.arrayContaining(["SEARCH_ALGOLIA_APP_ID"]),
+    });
+  });
+
+  it("stays silent when every selected provider is configured", () => {
+    logIntegrationConfigIssues(fakeLogger, {
+      NEXT_PUBLIC_SALEOR_API_URL: "https://x.saleor.cloud/graphql/",
+    });
+
+    expect(fakeLogger.critical).not.toHaveBeenCalled();
   });
 });

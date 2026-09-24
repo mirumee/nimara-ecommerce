@@ -16,6 +16,7 @@ import { emptyCMSMenuService } from "../utils/empty-services";
  */
 export const createCMSMenuServiceLoader = (logger: Logger) =>
   createServiceLoader({
+    capability: "cms-menu",
     resolve: resolveCMSProvider,
     build: (provider, log) =>
       createCMSMenuService(provider, { env: process.env, logger: log }),

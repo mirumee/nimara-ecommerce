@@ -736,6 +736,18 @@
   every record in ASD-STE100 Simplified Technical English.
 - **Lint**: `pnpm wiki:lint` at zero violations across 94 files.
 
+## 2026-08-26
+
+- **Update**: Corrected CAP-0001, which described a provider selected without its configuration as
+  failing service construction. That capability now degrades to its empty service and logs a
+  critical event naming the missing values.
+- **Update**: Added the first-request critical event for missing provider configuration to the
+  verification steps of OPS-0001.
+- **Update**: Separated permanent from temporary construction failure in CAP-0001 and OPS-0001. The
+  service loader keeps the empty service only for invalid configuration. Any other cause logs an
+  error event and the loader builds the service again on the next call.
+- **Lint**: `pnpm wiki:lint` at zero violations.
+
 ## 2026-08-28
 
 - **Create**: Added IMP-0005 as `in_progress` for the daily GitHub summary bot, tracing PR #799.

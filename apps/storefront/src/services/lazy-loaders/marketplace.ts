@@ -17,6 +17,7 @@ import { getRequiredSaleorApiUrl } from "../utils/required-env";
  */
 export const createMarketplaceServiceLoader = (logger: Logger) =>
   createServiceLoader({
+    capability: "marketplace",
     resolve: () => (isSaleorConfigured ? "saleor" : null),
     build: async () => {
       const { saleorMarketplaceService } =
