@@ -2,23 +2,30 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Mail } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { type ReactNode } from "react";
 import { FormProvider, type SubmitHandler, useForm } from "react-hook-form";
 
 import { TextFormField } from "@nimara/foundation/form-components/text-form-field";
+import { LocalizedLink } from "@nimara/i18n/routing";
 import { Button } from "@nimara/ui/components/button";
 import { useToast } from "@nimara/ui/hooks";
 
-import { newsletterSubscribeAction } from "../actions/newsletter-subscribe";
 import { type FormSchema, formSchema } from "../schema/newsletter";
+import { type NewsletterSubscribeAction } from "../types";
 
-export const Newsletter = () => {
+export const Newsletter = ({
+  privacyPolicyPath,
+  subscribeAction,
+}: {
+  privacyPolicyPath: string;
+  subscribeAction: NewsletterSubscribeAction;
+}) => {
   const t = useTranslations();
   const { toast } = useToast();
 
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema({ t })),
     defaultValues: {
-      name: "",
       email: "",
     },
   });
@@ -26,7 +33,7 @@ export const Newsletter = () => {
   const isPending = form.formState.isSubmitting;
 
   const handleSubmit: SubmitHandler<FormSchema> = async (values) => {
-    const result = await newsletterSubscribeAction(values);
+    const result = await subscribeAction(values);
 
     if (result.ok) {
       form.reset();
@@ -63,13 +70,6 @@ export const Newsletter = () => {
             noValidate
           >
             <TextFormField
-              name="name"
-              label={t("newsletter.subscribe-name-field-label")}
-              placeholder={t("newsletter.subscribe-name-field-placeholder")}
-              type="text"
-              disabled={isPending}
-            />
-            <TextFormField
               name="email"
               label={t("newsletter.subscribe-email-field-label")}
               placeholder={t("newsletter.subscribe-email-field-placeholder")}
@@ -83,6 +83,18 @@ export const Newsletter = () => {
             </div>
           </form>
         </FormProvider>
+        <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
+          {t.rich("newsletter.subscribe-consent", {
+            privacyPolicy: (chunks: ReactNode) => (
+              <LocalizedLink
+                href={privacyPolicyPath}
+                className="underline decoration-gray-400 underline-offset-2"
+              >
+                {chunks}
+              </LocalizedLink>
+            ),
+          })}
+        </p>
       </div>
     </section>
   );

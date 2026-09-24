@@ -31,6 +31,7 @@ behavior is removed, its record is removed from the current tree; Git preserves 
 - [CAP-0005 Agent-Compatible Commerce](capabilities/CAP-0005%20Agent-Compatible%20Commerce.md) - active - product-and-engineering - Exposes discoverable, negotiated catalog, cart, checkout-session, and order operations.
 - [CAP-0006 Storefront Discovery and Cart](capabilities/CAP-0006%20Storefront%20Discovery%20and%20Cart.md) - active - product-and-engineering - Supports regional discovery, product and vendor pages, and standard or vendor-aware carts.
 - [CAP-0007 Customer Account Self-Service](capabilities/CAP-0007%20Customer%20Account%20Self-Service.md) - active - product-and-engineering - Supports account, profile, address, order, return, payment-method, and privacy operations.
+- [CAP-0008 Storefront Newsletter Subscription](capabilities/CAP-0008%20Storefront%20Newsletter%20Subscription.md) - The storefront home page collects an email address and delivers it to the configured email provider, and renders nothing when no provider is configured.
 
 ## Flows
 
@@ -52,6 +53,7 @@ behavior is removed, its record is removed from the current tree; Git preserves 
 - [INT-0005 Stripe Payment Application](integrations/INT-0005%20Stripe%20Payment%20Application.md) - active - engineering - Connects standard checkout transactions to Stripe PaymentIntent operations and events.
 - [INT-0006 Saleor Commerce Backend](integrations/INT-0006%20Saleor%20Commerce%20Backend.md) - active - engineering - Supplies core commerce state through GraphQL, application, and webhook contracts.
 - [INT-0007 Marketplace Checkout Payment Orchestration](integrations/INT-0007%20Marketplace%20Checkout%20Payment%20Orchestration.md) - active - engineering - Coordinates one platform payment across multiple vendor checkouts and orders.
+- [INT-0008 Newsletter Provider Selection](integrations/INT-0008%20Newsletter%20Provider%20Selection.md) - Build-time contract for selecting and configuring the storefront newsletter subscription implementation.
 
 ## Related Notes
 
