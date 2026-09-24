@@ -2,58 +2,42 @@ import { locate } from "codeceptjs";
 
 import {
   card as cardConstants,
-  timeout_seconds,
+  customer,
+  timeoutSeconds,
   URLS,
-  userGB,
-  userUS,
 } from "../data/constants";
 import { REQUESTED_LOCALE } from "../data/locales";
 
 const { I } = inject();
-// select locale-specific user data from constants
-const selectedUser = REQUESTED_LOCALE === "us" ? userUS : userGB;
-const customer = {
-  firstName: selectedUser.name,
-  lastName: selectedUser.lastName,
-  companyName: selectedUser.companyName,
-  email: selectedUser.email,
-  city: selectedUser.city,
-  zip: selectedUser.postCode,
-  phone: selectedUser.phone,
-  streetAddress: selectedUser.streetAddress,
-  state: selectedUser.state || "",
-};
 
 // payment card data sourced from constants
 const card = cardConstants;
 
 export default {
-  continue_as_guest(timeout: number = timeout_seconds) {
+  continueAsGuest(timeout: number = timeoutSeconds) {
     I.waitForElement(locate("a").withText("Continue as a guest"), timeout);
     I.click({ role: "link", name: "Continue as a guest" });
     I.waitInUrl(URLS.CHECKOUT_PAGE_USER_DETAILS, timeout);
   },
 
-  guest_step1_email(timeout: number = timeout_seconds) {
+  enterGuestEmail(timeout: number = timeoutSeconds) {
     I.waitForElement('input[aria-label="Email"]', timeout);
     I.fillField({ role: "textbox", name: "Email" }, customer.email);
     I.click({ role: "button", name: "Continue" });
     I.waitToHide('input[aria-label="Email"]', timeout);
   },
-  async guest_step2_continue_as_guest() {
+  async confirmContinueAsGuestIfPrompted() {
     const count = await I.grabNumberOfVisibleElements({
       role: "button",
       name: "Continue as a guest",
     });
 
     if (count > 0) {
-      console.log(
-        "Guest checkout step 2: Continue as guest button is visible, clicking it.",
-      );
+      console.log("Continue as guest button is visible, clicking it.");
       I.click({ role: "button", name: "Continue as a guest" });
     }
   },
-  guest_step3_shipping_address(timeout: number = timeout_seconds) {
+  fillShippingAddress(timeout: number = timeoutSeconds) {
     I.waitInUrl(URLS.CHECKOUT_PAGE_SHIPPING_ADDRESS, timeout);
     I.waitForElement('input[aria-label="First Name"]', timeout);
     I.fillField({ role: "textbox", name: "First Name" }, customer.firstName);
@@ -93,7 +77,7 @@ export default {
     I.click("Continue");
   },
 
-  guest_step4_shipping_method_dhl_normal(timeout: number = timeout_seconds) {
+  selectDhlNormalShippingMethod(timeout: number = timeoutSeconds) {
     I.waitInUrl(URLS.CHECKOUT_PAGE_DELIVERY_METHOD, timeout);
     const dhlNormalOption = locate("label").withText("DHL Normal");
 
@@ -102,10 +86,10 @@ export default {
     I.click("Continue");
   },
 
-  guest_step5_payment_details(
-    card_characteristics:
+  fillPaymentDetails(
+    cardCharacteristics:
       "valid" | "invalid" | "stolen" | "declined" | "expired",
-    timeout: number = timeout_seconds,
+    timeout: number = timeoutSeconds,
   ) {
     I.waitInUrl(URLS.CHECKOUT_PAGE_PAYMENT, timeout);
     I.scrollPageToBottom();
@@ -115,7 +99,7 @@ export default {
     );
     I.switchTo(locate('iframe[title*="Secure payment input frame"]').first());
     I.waitForVisible('div[class="p-PaymentAccordionButtonView"]', timeout);
-    const cardNumber = card.number[card_characteristics] || card.number.valid;
+    const cardNumber = card.number[cardCharacteristics] || card.number.valid;
 
     I.fillField("Card number", cardNumber);
     I.fillField("MM / YY", card.expiration);
@@ -123,13 +107,10 @@ export default {
     I.switchTo();
   },
 
-  click_place_order(timeout: number = timeout_seconds) {
-    //I.waitForClickable({ role: "button", name: "Place order" }, timeout);
+  clickPlaceOrder(timeout: number = timeoutSeconds) {
     I.click({ role: "button", name: "Place order" });
   },
-  click_billing_address_same_as_shipping_checkbox(
-    timeout: number = timeout_seconds,
-  ) {
+  clickBillingAddressSameAsShippingCheckbox(timeout: number = timeoutSeconds) {
     I.waitForClickable(
       { role: "checkbox", name: "Same as shipping address" },
       timeout,

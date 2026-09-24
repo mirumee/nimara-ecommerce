@@ -26,8 +26,6 @@ only end-to-end engine. See `llm-wiki/tech/ADR/ADR-0003 CodeceptJS Is The End-To
   Wait timeouts are in **seconds**, not milliseconds.
 - A failed scenario writes one screenshot to `output/`. There is no trace, video, or HTML
   report.
-- `homepage` and `homepagePage` are a known duplicate pair of homepage page objects. Extend
-  one of them rather than adding a third.
 
 ## Commands
 

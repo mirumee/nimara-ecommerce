@@ -1,8 +1,8 @@
 import { locate } from "codeceptjs";
 
-import { LOCALE_PREFIX } from "../data/locales";
+import { LOCALE_PREFIX, REQUESTED_LOCALE } from "../data/locales";
 
-export const timeout_seconds = 8; // timeout for wait funtions used in tests
+export const timeoutSeconds = 8; // timeout for wait funtions used in tests
 
 export const URLS = {
   CART_PAGE: `${LOCALE_PREFIX}/cart`,
@@ -20,15 +20,15 @@ export const URLS = {
   PRODUCTS_PAGE: `${LOCALE_PREFIX}/search`,
   PRODUCT_PAGE: `${LOCALE_PREFIX}/products`,
   CATEGORY_PAGE: `${LOCALE_PREFIX}/categories`,
-  TSHIRT_PRODUCT_PAGE: `${LOCALE_PREFIX}/products/abstract-tshirt-black`,
-  BLACK_SAND_PRODUCT_PAGE: `${LOCALE_PREFIX}/products/black-sand`,
+  CLOTHING_PRODUCT_PAGE: `${LOCALE_PREFIX}/products/abstract-tshirt-black`,
+  MUSIC_RECORD_PRODUCT_PAGE: `${LOCALE_PREFIX}/products/black-sand`,
 } as const;
 
-export const tshirtImagelocator = locate("img").withAttr({
+export const clothingImageLocator = locate("img").withAttr({
   "aria-label": "Abstract Tshirt Ultra Black",
 });
 
-export const black_sandImagelocator = locate("img").withAttr({
+export const musicRecordImageLocator = locate("img").withAttr({
   "aria-label": "Black sand",
 });
 
@@ -73,6 +73,21 @@ export type User = typeof userGB | typeof userUS;
 
 export const userEmail = process.env.USER_EMAIL ?? "";
 export const userPassword = process.env.USER_PASSWORD ?? "";
+
+// select locale-specific user data from constants
+const selectedUser = REQUESTED_LOCALE === "us" ? userUS : userGB;
+
+export const customer = {
+  firstName: selectedUser.name,
+  lastName: selectedUser.lastName,
+  companyName: selectedUser.companyName,
+  email: selectedUser.email,
+  city: selectedUser.city,
+  zip: selectedUser.postCode,
+  phone: selectedUser.phone,
+  streetAddress: selectedUser.streetAddress,
+  state: selectedUser.state || "",
+};
 
 // Card variants and test payment data used by automated tests
 export const card = {
