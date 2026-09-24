@@ -1,8 +1,13 @@
 # Lib
 
-This package owns the shared runtime for Hono-based Saleor apps in `apps/*`: the HTTP
-error hierarchy, response envelope, middleware, env/config parsing, the Saleor app kit
-(manifest, register, webhook registry), and the Dashboard UI shell. The build
+This package owns the shared Hono app runtime used by every generated app in
+`apps/*`: the HTTP error hierarchy, response envelope, middleware, and
+env/config parsing. Saleor-specific pieces — the Saleor app kit (manifest,
+register, webhook registry), the Dashboard UI shell, and the
+`saleor-token`/`saleor-webhook-validation`/`allowed-domains` middleware — live
+under `saleor/**`, `hono/saleor/**`,
+`hono/middleware/{saleor-token,saleor-webhook-validation,allowed-domains}.ts`,
+and `client/**`. Code outside those paths must not import from them. The build
 machinery is `@nimara/tooling`.
 
 - Everything here must stay app-agnostic. A name, string, or schema field that only one
