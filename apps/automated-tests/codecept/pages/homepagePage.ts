@@ -1,30 +1,45 @@
 import {
-  black_sandImagelocator,
+  clothingImageLocator,
+  musicRecordImageLocator,
   storeHeaders,
-  tshirtImagelocator,
   URLS,
 } from "../data/constants";
 
 const { I } = inject();
 
 export default {
-  enter_page() {
+  productsCarouselHeader: {
+    role: "heading",
+    name: storeHeaders.productsCarousel,
+  },
+  exploreProductsLink: { role: "link", name: "Explore products" },
+
+  enterPage() {
     I.amOnPage(URLS.HOME_PAGE);
   },
-  accept_cookies() {
+  acceptCookies() {
     I.click(storeHeaders.cookieAccept);
     I.dontSee(storeHeaders.cookiePopup);
   },
-  click_on_product1(timeout: number) {
-    I.scrollTo(tshirtImagelocator);
-    I.click(tshirtImagelocator);
-    I.waitUrlEquals(URLS.TSHIRT_PRODUCT_PAGE, timeout);
+  seeStorefrontLoaded() {
+    I.seeInTitle("Nimara Storefront");
+    I.seeElement(this.productsCarouselHeader);
   },
-  click_on_product2(timeout: number) {
+  openProductListing() {
+    I.click(this.exploreProductsLink);
+    // Client-side App Router navigation, so wait rather than assert immediately.
+    I.waitInUrl(URLS.PRODUCTS_PAGE, 10);
+  },
+  clickOnProduct1(timeout: number) {
+    I.scrollTo(clothingImageLocator);
+    I.click(clothingImageLocator);
+    I.waitUrlEquals(URLS.CLOTHING_PRODUCT_PAGE, timeout);
+  },
+  clickOnProduct2(timeout: number) {
     I.waitForText(storeHeaders.productAddedToCart, timeout); //wait until previous product is added to cart before proceeding
     I.amOnPage(URLS.HOME_PAGE);
-    I.scrollTo(black_sandImagelocator);
-    I.click(black_sandImagelocator);
-    I.waitInUrl(URLS.BLACK_SAND_PRODUCT_PAGE, timeout);
+    I.scrollTo(musicRecordImageLocator);
+    I.click(musicRecordImageLocator);
+    I.waitInUrl(URLS.MUSIC_RECORD_PRODUCT_PAGE, timeout);
   },
 };
