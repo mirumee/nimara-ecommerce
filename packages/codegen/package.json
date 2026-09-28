@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "graphql": "16.14.2",
-    "graphql-config": "5.1.6",
+    "graphql-config": "5.1.7",
     "ts-invariant": "0.10.3"
   }
 }
