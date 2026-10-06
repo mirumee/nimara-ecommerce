@@ -14,6 +14,7 @@ async function getYogaInstance() {
     yogaInstance = createYoga<ServerContext>({
       schema,
       graphqlEndpoint: "/api/graphql",
+      fetchAPI: { Response },
       cors: false, // CORS handled by Next.js config
       landingPage: false,
       graphiql: {
