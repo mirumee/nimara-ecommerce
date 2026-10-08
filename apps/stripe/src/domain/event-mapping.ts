@@ -1,6 +1,7 @@
 import { all } from "@nimara/foundation/lib/array";
 
 import {
+  GROUP_SHARE_METADATA_KEY_PATTERN,
   type PaymentIntentStatus,
   type RefundStatus,
   StripeMetaKey,
@@ -41,10 +42,22 @@ export const buildGatewayMetadata = ({
   environment: string;
   metadata?: Partial<Record<OptionalMetaKeys, string>>;
 }) => ({
+  ...metadata,
   [StripeMetaKey.ENVIRONMENT]: environment,
   [StripeMetaKey.ISSUER]: appId,
-  ...metadata,
 });
+
+const RESERVED_METADATA_KEYS: ReadonlySet<string> = new Set(
+  Object.values(StripeMetaKey),
+);
+
+const isReservedMetadataKey = (key: string) =>
+  RESERVED_METADATA_KEYS.has(key) || GROUP_SHARE_METADATA_KEY_PATTERN.test(key);
+
+export const omitReservedMetadata = (metadata: Record<string, string> = {}) =>
+  Object.fromEntries(
+    Object.entries(metadata).filter(([key]) => !isReservedMetadataKey(key)),
+  );
 
 export const mapStatusToActionType = ({
   actionType,

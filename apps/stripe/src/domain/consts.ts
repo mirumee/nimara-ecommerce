@@ -108,4 +108,7 @@ export const StripeMetaKey = {
   TRANSACTION_ID: "transactionId",
   CHANNEL_SLUG: "channelSlug",
   SALEOR_USER_ID: "saleorUserId",
+  PAYMENT_GROUP: "paymentGroup",
 } as const;
+
+export const GROUP_SHARE_METADATA_KEY_PATTERN = /^tx_\d+$/;

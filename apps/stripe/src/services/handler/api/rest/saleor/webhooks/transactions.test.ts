@@ -293,6 +293,38 @@ describe("transactions", () => {
       );
     });
 
+    it("keeps client metadata from overriding or adding reserved keys", async () => {
+      await handle(
+        buildEvent({
+          data: {
+            metadata: {
+              channelSlug: "other-channel",
+              environment: "PROD",
+              issuer: "OTHER.stripe",
+              orderNote: "gift",
+              paymentGroup: "1",
+              saleorDomain: "evil.example.com",
+              transactionId: "tr_other",
+              tx_0: "tr_other|100",
+            },
+          },
+        }),
+      );
+
+      expect(mocks.createPaymentIntent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          metadata: {
+            channelSlug: "default-channel",
+            environment: "TEST",
+            issuer: "TEST.stripe",
+            orderNote: "gift",
+            saleorDomain: "shop.example.com",
+            transactionId: "tr_1",
+          },
+        }),
+      );
+    });
+
     it("responds with the config error when the gateway cannot be resolved", async () => {
       // given
       mocks.paymentService.mockResolvedValue(

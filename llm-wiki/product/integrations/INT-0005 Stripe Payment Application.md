@@ -92,8 +92,12 @@ payment methods protocol.
    flag, a shared payment token, and extra metadata, and discards everything else. It resolves the
    gateway customer from the Saleor user on the source object — never from caller input — and
    rejects a stored payment method that belongs to a different customer.
+   Extra metadata cannot set the keys the application routes and attributes events by: the commerce
+   domain, transaction, channel, issuer, environment, user, payment-group, and `tx_<n>` keys are
+   dropped from caller metadata, and the application's own values always win.
 3. `TRANSACTION_PROCESS_SESSION` updates an existing PaymentIntent when event data is present or
-   retrieves it otherwise, then maps provider state to Saleor's requested action.
+   retrieves it otherwise, then maps provider state to Saleor's requested action. Caller metadata is
+   filtered the same way as on initialization.
 4. `TRANSACTION_CHARGE_REQUESTED` captures a manually authorized PaymentIntent and returns a charge
    result when Stripe reaches a terminal charge state.
 5. Stripe PaymentIntent and refund webhooks map supported provider events into Saleor transaction
@@ -198,3 +202,8 @@ payment methods protocol.
   the only one under operator control.
 - A session that reports no gateway key or no client secret fails where it is opened, not where
   the SDK is loaded. Consumers of a session treat both as present.
+- The PaymentIntent amount is fixed when the payment session is initialized. If the checkout
+  changes afterwards, for example in another browser tab, the open payment form still confirms the
+  old amount: the storefront calls process only after confirmation and without client data, so
+  nothing updates the intent or blocks confirmation. A customer who leaves the payment step and
+  returns to it starts a new initialization and receives a new intent.
