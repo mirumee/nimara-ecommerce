@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { Button } from "@nimara/ui/components/button";
+import { useToast } from "@nimara/ui/hooks";
 
 import { getSaleorDomainHeader } from "@/lib/graphql/client";
 import { useAuth } from "@/providers/auth-provider";
@@ -10,7 +11,7 @@ import { useAuth } from "@/providers/auth-provider";
 export function AppOptionsTab() {
   const { dashboardContext } = useAuth();
   const [bootstrapLoading, setBootstrapLoading] = useState(false);
-  const [bootstrapMessage, setBootstrapMessage] = useState<string | null>(null);
+  const { toast } = useToast();
   const [vendorProfileExists, setVendorProfileExists] = useState<
     boolean | null
   >(null);
@@ -51,15 +52,16 @@ export function AppOptionsTab() {
     const domain = domainHeader["x-saleor-domain"];
 
     if (!domain) {
-      setBootstrapMessage(
-        "Cannot determine Saleor domain. Open the app from Saleor dashboard.",
-      );
+      toast({
+        description:
+          "Cannot determine Saleor domain. Open the app from Saleor dashboard.",
+        variant: "destructive",
+      });
 
       return;
     }
 
     setBootstrapLoading(true);
-    setBootstrapMessage(null);
 
     try {
       const res = await fetch("/api/saleor/bootstrap", {
@@ -74,22 +76,26 @@ export function AppOptionsTab() {
       };
 
       if (!res.ok) {
-        setBootstrapMessage(data.details ?? data.error ?? "Bootstrap failed");
+        toast({
+          description: data.details ?? data.error ?? "Bootstrap failed",
+          variant: "destructive",
+        });
 
         return;
       }
 
-      setBootstrapMessage(
-        data.skipped
+      toast({
+        description: data.skipped
           ? "Vendor profile model already exists."
           : "Vendor profile model created successfully.",
-      );
+      });
 
       setVendorProfileExists(true);
     } catch (err) {
-      setBootstrapMessage(
-        err instanceof Error ? err.message : "Bootstrap failed",
-      );
+      toast({
+        description: err instanceof Error ? err.message : "Bootstrap failed",
+        variant: "destructive",
+      });
     } finally {
       setBootstrapLoading(false);
     }
@@ -122,11 +128,6 @@ export function AppOptionsTab() {
           >
             {bootstrapLoading ? "Setting up…" : "Setup vendor profile model"}
           </Button>
-          {bootstrapMessage && (
-            <span className="text-sm text-muted-foreground">
-              {bootstrapMessage}
-            </span>
-          )}
         </div>
       </div>
     </div>
