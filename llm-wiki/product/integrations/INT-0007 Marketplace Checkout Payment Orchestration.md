@@ -25,6 +25,11 @@ PaymentIntent for the sum, records the provider reference against each checkout,
 signed payment-success event into a charged transaction and checkout-completion attempt for every
 checkout.
 
+The storefront uses this contract only when it has no payment application configured. With one, it
+pays the same checkouts as a payment group through the installable
+[Stripe Payment Application](INT-0005%20Stripe%20Payment%20Application.md) and never calls the
+marketplace payment routes.
+
 This is not the installable [Stripe Payment Application](INT-0005%20Stripe%20Payment%20Application.md)
 used by standard storefront checkout. It calls Stripe and Saleor from the marketplace application
 instead of implementing Saleor's payment-app session webhooks. It is also separate from

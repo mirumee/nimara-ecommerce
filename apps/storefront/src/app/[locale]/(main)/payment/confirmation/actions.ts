@@ -14,6 +14,7 @@ import {
   getMarketplaceCheckoutsOrRedirect,
 } from "@/features/checkout/checkout-actions";
 import { paths, QUERY_PARAMS } from "@/foundation/routing/paths";
+import { storefrontLogger } from "@/services/logging";
 import { getServiceRegistry } from "@/services/registry";
 
 export type ProcessPaymentResult =
@@ -152,9 +153,18 @@ const processMarketplacePayment = async ({
       checkoutService.orderCreate({ id: checkout.id }),
     ),
   );
-  const errors = resultsOrderCreate.flatMap((result) =>
-    result.ok ? [] : result.errors,
-  );
+  const errors = resultsOrderCreate.flatMap((result, index) => {
+    if (result.ok) {
+      return [];
+    }
+
+    storefrontLogger.error("Paid marketplace checkout was not placed.", {
+      checkoutId: checkoutItems[index].checkout.id,
+      errors: result.errors,
+    });
+
+    return result.errors;
+  });
 
   if (errors.length) {
     return { errors };

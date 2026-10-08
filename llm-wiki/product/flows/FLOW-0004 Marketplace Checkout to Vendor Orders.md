@@ -57,6 +57,13 @@ actors:
    [Marketplace Checkout Payment Orchestration](../integrations/INT-0007%20Marketplace%20Checkout%20Payment%20Orchestration.md).
    The marketplace creates one Stripe PaymentIntent and associates its provider reference with the
    individual Saleor checkouts.
+   When the storefront has a payment application configured, it pays through the
+   [Stripe Payment Application](../integrations/INT-0005%20Stripe%20Payment%20Application.md)
+   instead. Every checkout except the first initializes a transaction in parallel; the first
+   checkout then names those transactions, and the payment application creates the one
+   PaymentIntent for the group. A single checkout uses a plain payment session. In this path the
+   payment application's webhook, not the marketplace, records the charged amount per checkout, and
+   the storefront completes each checkout once all of them report a full charge.
 4. The shopper confirms the single payment in Stripe Payment Element. Stripe redirects the browser
    to the storefront and independently sends a signed `payment_intent.succeeded` event to the
    marketplace application.

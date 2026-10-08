@@ -7,7 +7,7 @@ import { type AppErrorCode } from "@nimara/domain/objects/Error";
 import { useRouter } from "@nimara/i18n/routing";
 
 import { type MarketplaceCheckoutItem } from "@/features/checkout/types";
-import { initializeMarketplacePaymentIntent } from "@/features/payment/checkout/actions";
+import { initializeMarketplacePayment } from "@/features/payment/checkout/actions";
 import { usePaymentData } from "@/features/payment/hooks/use-payment-data";
 
 import { BillingAddressSection } from "./components/billing-address-section";
@@ -157,7 +157,7 @@ export const MarketplacePayment = ({
       setIsMounted(false);
       setTransactionData(undefined);
 
-      const result = await initializeMarketplacePaymentIntent({
+      const result = await initializeMarketplacePayment({
         buyerId: user?.id,
         checkouts: intentCheckouts,
       });
