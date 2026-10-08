@@ -10,6 +10,7 @@ import {
 } from "@/domain/event-mapping";
 import {
   parseTransactionInitializeData,
+  requestsPaymentGroup,
   type TransactionEventSchema,
 } from "@/domain/payment";
 import {
@@ -29,6 +30,7 @@ import {
   sessionMetadata,
   transactionEventResponse,
 } from "./helpers";
+import { paymentGroupInitializeResponse } from "./payment-group";
 
 export const paymentGatewayInitializeSessionHandler = async (
   context: HandlerContext<PaymentGatewayInitializeSessionSubscription>,
@@ -80,6 +82,17 @@ export const transactionInitializeSessionHandler = async (
 
   const { config, gateway } = gatewayResult.data;
   const data = parseTransactionInitializeData(event.data);
+
+  // Marketplace: one payment covers a checkout per vendor.
+  if (requestsPaymentGroup(event.data)) {
+    return paymentGroupInitializeResponse({
+      event,
+      logger,
+      paymentGroup: data.paymentGroup,
+      saleorDomain,
+    });
+  }
+
   const user = event.sourceObject.user;
   const amount = getAmountFromCents(event.sourceObject.total.gross);
 
@@ -208,6 +221,21 @@ export const transactionProcessSessionHandler = async (
   { saleorDomain }: SaleorTenant,
 ) => {
   const event = context.req.valid("json");
+
+  if (!event.transaction.pspReference) {
+    return transactionEventResponse({
+      data: {
+        amount: getAmountFromCents({
+          amount: getCentsFromAmount(event.action),
+          currency: event.action.currency,
+        }),
+        result: `${event.action.actionType}_ACTION_REQUIRED`,
+      },
+      logger: context.get("logger"),
+      type: "TransactionProcessSession",
+    });
+  }
+
   const channelSlug = event.sourceObject.channel.slug;
   const gatewayResult = await container.get("paymentService")({
     saleorDomain,

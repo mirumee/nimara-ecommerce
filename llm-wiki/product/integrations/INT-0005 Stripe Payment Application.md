@@ -95,9 +95,16 @@ payment methods protocol.
    Extra metadata cannot set the keys the application routes and attributes events by: the commerce
    domain, transaction, channel, issuer, environment, user, payment-group, and `tx_<n>` keys are
    dropped from caller metadata, and the application's own values always win.
+   A caller that sends a payment group joins one PaymentIntent shared by several checkouts. Every
+   allowed commerce domain can do so. A group member that is not the leader gets no PaymentIntent:
+   its transaction is answered `CHARGE_ACTION_REQUIRED` with the checkout total and no provider
+   reference, which it receives later from the group's payment events. A group request is refused
+   as a failure event when it is malformed, asks for anything other than a charge, or names an
+   amount other than the checkout total. A group leader is refused until leader handling exists.
 3. `TRANSACTION_PROCESS_SESSION` updates an existing PaymentIntent when event data is present or
    retrieves it otherwise, then maps provider state to Saleor's requested action. Caller metadata is
-   filtered the same way as on initialization.
+   filtered the same way as on initialization. A transaction with no provider reference stays
+   `ACTION_REQUIRED` for its requested amount, without a provider call.
 4. `TRANSACTION_CHARGE_REQUESTED` captures a manually authorized PaymentIntent and returns a charge
    result when Stripe reaches a terminal charge state.
 5. Stripe PaymentIntent and refund webhooks map supported provider events into Saleor transaction

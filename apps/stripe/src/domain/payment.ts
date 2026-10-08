@@ -22,8 +22,29 @@ export const transactionEventSchema = z.object({
 
 export type TransactionEventSchema = z.infer<typeof transactionEventSchema>;
 
+export const MAX_PAYMENT_GROUP_FOLLOWERS = 20;
+
+const paymentGroupSchema = z.discriminatedUnion("role", [
+  z.object({ role: z.literal("follower") }),
+  z.object({
+    role: z.literal("leader"),
+    followers: z
+      .array(
+        z.object({
+          checkoutId: z.string().min(1),
+          transactionId: z.string().min(1),
+        }),
+      )
+      .min(1)
+      .max(MAX_PAYMENT_GROUP_FOLLOWERS),
+  }),
+]);
+
+export type PaymentGroupRequest = z.infer<typeof paymentGroupSchema>;
+
 export const transactionInitializeDataSchema = z.object({
   metadata: z.record(z.string(), z.string()).optional(),
+  paymentGroup: paymentGroupSchema.optional(),
   paymentMethodId: z.string().optional(),
   saveForFutureUse: z.boolean().optional(),
   /**
@@ -44,3 +65,6 @@ export const parseTransactionInitializeData = (
 
   return result.success ? result.data : {};
 };
+
+export const requestsPaymentGroup = (data: unknown) =>
+  typeof data === "object" && data !== null && "paymentGroup" in data;

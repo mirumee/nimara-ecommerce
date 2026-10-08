@@ -6,7 +6,10 @@ import { MagicMock } from "@nimara/lib/test/mock";
 
 import { type PaymentIntent } from "@/domain/consts";
 
-import { transactionInitializeSessionHandler } from "./transactions";
+import {
+  transactionInitializeSessionHandler,
+  transactionProcessSessionHandler,
+} from "./transactions";
 
 const mocks = vi.hoisted(() => ({
   createPaymentIntent: vi.fn(),
@@ -59,13 +62,15 @@ const INTENT: PaymentIntent = {
 };
 
 const buildEvent = ({
+  action,
   data,
   user,
 }: {
+  action?: { actionType?: string; amount?: number; currency?: string };
   data?: unknown;
   user?: typeof USER | null;
 } = {}) => ({
-  action: { actionType: "CHARGE", amount: 10, currency: "USD" },
+  action: { actionType: "CHARGE", amount: 10, currency: "USD", ...action },
   data,
   sourceObject: {
     channel: { slug: "default-channel" },
@@ -96,6 +101,16 @@ const handle = (event: unknown) =>
     >[0],
     TENANT,
   );
+
+const handleProcess = (event: unknown) =>
+  transactionProcessSessionHandler(
+    buildContext(event) as Parameters<
+      typeof transactionProcessSessionHandler
+    >[0],
+    TENANT,
+  );
+
+const FOLLOWER_ACTION = { amount: 1000 };
 
 describe("transactions", () => {
   beforeEach(() => {
@@ -343,6 +358,91 @@ describe("transactions", () => {
       // then
       expect(response.status).toBe(422);
       expect(mocks.createPaymentIntent).not.toHaveBeenCalled();
+    });
+
+    describe("payment group", () => {
+      it("registers a follower without creating a PaymentIntent", async () => {
+        const response = await handle(
+          buildEvent({
+            action: FOLLOWER_ACTION,
+            data: { paymentGroup: { role: "follower" } },
+            user: USER,
+          }),
+        );
+
+        expect(response.status).toBe(200);
+        expect(await response.json()).toEqual({
+          amount: "1000.00",
+          result: "CHARGE_ACTION_REQUIRED",
+        });
+        expect(mocks.createPaymentIntent).not.toHaveBeenCalled();
+        expect(mocks.resolveCustomer).not.toHaveBeenCalled();
+      });
+
+      it.each([
+        [
+          "the group is malformed",
+          buildEvent({
+            action: FOLLOWER_ACTION,
+            data: { paymentGroup: { role: "owner" } },
+          }),
+          "Invalid payment group.",
+        ],
+        [
+          "the action is an authorization",
+          buildEvent({
+            action: { ...FOLLOWER_ACTION, actionType: "AUTHORIZATION" },
+            data: { paymentGroup: { role: "follower" } },
+          }),
+          "Group payments support charge only.",
+        ],
+        [
+          "the amount differs from the checkout total",
+          buildEvent({
+            action: { amount: 999.99 },
+            data: { paymentGroup: { role: "follower" } },
+          }),
+          "Payment amount does not match the checkout total.",
+        ],
+        [
+          "the request comes from a leader",
+          buildEvent({
+            action: FOLLOWER_ACTION,
+            data: {
+              paymentGroup: {
+                role: "leader",
+                followers: [{ checkoutId: "co_2", transactionId: "tr_2" }],
+              },
+            },
+          }),
+          "Group payment leader is not supported.",
+        ],
+      ])("refuses when %s", async (_, event, message) => {
+        const response = await handle(event);
+
+        expect(response.status).toBe(200);
+        expect(await response.json()).toMatchObject({
+          message,
+          result: `${event.action.actionType}_FAILURE`,
+        });
+        expect(mocks.createPaymentIntent).not.toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe("transactionProcessSessionHandler", () => {
+    it("keeps a transaction without a PaymentIntent waiting for action", async () => {
+      const response = await handleProcess({
+        ...buildEvent({ action: FOLLOWER_ACTION }),
+        transaction: { id: "tr_1", pspReference: "" },
+      });
+
+      expect(response.status).toBe(200);
+      expect(await response.json()).toEqual({
+        amount: "1000.00",
+        result: "CHARGE_ACTION_REQUIRED",
+      });
+      expect(mocks.paymentService).not.toHaveBeenCalled();
     });
   });
 });
