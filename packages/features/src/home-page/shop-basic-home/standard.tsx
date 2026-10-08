@@ -17,6 +17,7 @@ import { type StandardHomeViewProps } from "../shared/types";
  */
 export const StandardHomeView = async ({
   mailTo,
+  newsletterSubscribeAction,
   services,
   accessToken,
   paths,
@@ -50,9 +51,14 @@ export const StandardHomeView = async ({
               paths={{ home: paths.home, privacyPolicy: paths.privacyPolicy }}
             />
           </div>
-          <div className="mb-8">
-            <Newsletter />
-          </div>
+          {newsletterSubscribeAction && (
+            <div className="mb-8">
+              <Newsletter
+                privacyPolicyPath={paths.privacyPolicy}
+                subscribeAction={newsletterSubscribeAction}
+              />
+            </div>
+          )}
         </section>
       )}
     />

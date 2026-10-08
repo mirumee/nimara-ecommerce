@@ -1,7 +1,12 @@
 import type { Locale } from "next-intl";
 
+import type { AsyncResult } from "@nimara/domain/objects/Result";
 import type { Region } from "@nimara/foundation/regions/types";
 import type { ServiceRegistry } from "@nimara/infrastructure/types";
+
+export type NewsletterSubscribeAction = (input: {
+  email: string;
+}) => AsyncResult<{ acknowledged: true }>;
 
 /**
  * Type definition for the properties of the home page view.
@@ -25,6 +30,7 @@ export interface HomeViewProps {
 export interface StandardHomeViewProps extends HomeViewProps {
   accessToken: string | null;
   mailTo: string;
+  newsletterSubscribeAction: NewsletterSubscribeAction | null;
   paths: {
     home: string;
     privacyPolicy: string;

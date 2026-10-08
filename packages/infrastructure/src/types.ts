@@ -10,6 +10,7 @@ import type { StoreService } from "./store/types";
 import type { TrackingService } from "./tracking/service";
 import type { CMSMenuService } from "./use-cases/cms-menu/types";
 import type { CMSPageService } from "./use-cases/cms-page/types";
+import type { NewsletterService } from "./use-cases/newsletter/types";
 import type { SearchService } from "./use-cases/search/types";
 import type { UserService } from "./user/types";
 
@@ -30,6 +31,7 @@ export type CapabilityServices<
   getCheckoutService: CheckoutService;
   getCollectionService: CollectionService;
   getMarketplaceService: MarketplaceService;
+  getNewsletterService: NewsletterService;
   getPaymentService: PaymentService<TPaymentProvider>;
   getSearchService: SearchService;
   getStoreService: StoreService;

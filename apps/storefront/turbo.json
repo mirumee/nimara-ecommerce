@@ -41,7 +41,8 @@
         "LOG_LEVEL",
         "OTEL_SERVICE_NAME",
         "SEARCH_*",
-        "CMS_*"
+        "CMS_*",
+        "NEWSLETTER_*"
       ]
     }
   }

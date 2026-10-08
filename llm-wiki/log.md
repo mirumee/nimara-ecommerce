@@ -746,6 +746,19 @@
 - **Update**: Separated permanent from temporary construction failure in CAP-0001 and OPS-0001. The
   service loader keeps the empty service only for invalid configuration. Any other cause logs an
   error event and the loader builds the service again on the next call.
+- **Create**: Added IMP-0007 as an `in_progress` implementation record for the newsletter
+  subscription work, with one verification entry per acceptance criterion of PRD-004 and the two
+  criteria that rest on a manual release check named as unverified.
+- **Update**: Recorded in CAP-0008 and INT-0008 that a provider selected without its configuration
+  counts as no configured provider, so the subscribe section is not rendered.
+- **Update**: Corrected the claim in RFC-0001 that provider resolution answers whether a provider is
+  configured, and recorded what the implementation does instead.
+- **Update**: Recorded the newsletter browser coverage in `Coverage Maps.md`, with the `@newsletter`
+  tag it requires and the two cases that stay manual by construction.
+- **Maintenance**: Narrowed the implementation summary of IMP-0007 to what a diff cannot carry. A
+  record that retells the mechanism duplicates the pull request and becomes wrong at the next
+  refactor, in the same way the template already forbids for a list of changed paths. The norm is
+  not in the IMP template, so it holds for this record only.
 - **Lint**: `pnpm wiki:lint` at zero violations.
 
 ## 2026-08-28
