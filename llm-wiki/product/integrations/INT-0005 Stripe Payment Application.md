@@ -80,6 +80,9 @@ payment methods protocol.
   instance cannot be replayed against this tenant.
 - Each Stripe webhook verifies `stripe-signature` over the raw request body with the secret assigned
   to its route's channel before reporting an event to Saleor.
+- Group payments need no extra permission: `HANDLE_PAYMENTS` is enough to read a checkout and its
+  transactions. Any allowed commerce domain can start a group payment; there is no separate switch
+  for it in the application.
 
 # Events and operations
 
@@ -100,11 +103,23 @@ payment methods protocol.
    its transaction is answered `CHARGE_ACTION_REQUIRED` with the checkout total and no provider
    reference, which it receives later from the group's payment events. A group request is refused
    as a failure event when it is malformed, asks for anything other than a charge, or names an
-   amount other than the checkout total. A group leader is refused until leader handling exists.
+   amount other than the checkout total.
+   The group leader is initialized last and names every other member's checkout and transaction.
+   Before any PaymentIntent exists, the application reads each checkout from Saleor and refuses the
+   group unless every checkout shares the leader's channel, currency, customer, and e-mail, none is
+   already charged or authorized, and each named transaction belongs to its checkout, was created by
+   this application, carries no provider reference or charge, and awaits exactly the checkout's
+   current total. It then creates one automatically captured PaymentIntent for the sum of the
+   shares, without a gateway customer, and lists every share in its metadata. The provider
+   idempotency key is derived from the shares, so a repeated leader request for the same
+   transactions and amounts returns the same intent. The leader is answered with its own share as
+   the amount and the client secret for the whole intent.
 3. `TRANSACTION_PROCESS_SESSION` updates an existing PaymentIntent when event data is present or
    retrieves it otherwise, then maps provider state to Saleor's requested action. Caller metadata is
    filtered the same way as on initialization. A transaction with no provider reference stays
-   `ACTION_REQUIRED` for its requested amount, without a provider call.
+   `ACTION_REQUIRED` for its requested amount, without a provider call. A group PaymentIntent is
+   never updated from caller data: each member is answered with its own share and the intent's
+   state, and a transaction outside the group's shares stays `ACTION_REQUIRED`.
 4. `TRANSACTION_CHARGE_REQUESTED` captures a manually authorized PaymentIntent and returns a charge
    result when Stripe reaches a terminal charge state.
 5. Stripe PaymentIntent and refund webhooks map supported provider events into Saleor transaction
@@ -114,8 +129,7 @@ payment methods protocol.
    cancellation event is reported to every listed transaction with that share's amount and the
    shared provider reference, never with the PaymentIntent total. Only a charged share offers a
    refund action; no other share offers an action, so one transaction cannot cancel the PaymentIntent
-   for the whole group. Other event types are acknowledged without a report. Nothing in the
-   application creates a group PaymentIntent yet.
+   for the whole group. Other event types are acknowledged without a report.
 6. Channel configuration installs one Stripe webhook endpoint per provider account, not per channel.
    Channels resolving to the same provider secret key share that endpoint and each stores its
    provider webhook ID and signing secret; an installation whose channels span two provider accounts
@@ -227,3 +241,6 @@ payment methods protocol.
   old amount: the storefront calls process only after confirmation and without client data, so
   nothing updates the intent or blocks confirmation. A customer who leaves the payment step and
   returns to it starts a new initialization and receives a new intent.
+- A new payment-group attempt does not cancel the previous group PaymentIntent. A buyer who
+  confirms both open payment forms before either charge lands pays twice and leaves the checkouts
+  overcharged; the already-paid check only refuses a group created after a charge has landed.

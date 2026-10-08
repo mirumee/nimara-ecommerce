@@ -1,11 +1,13 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  findGroupShare,
   getGroupShareAvailableActions,
   isGroupShareEventType,
   isPaymentGroup,
   parseGroupShares,
   sumGroupShares,
+  toGroupShareMetadata,
 } from "./payment-group";
 
 describe("payment-group", () => {
@@ -93,6 +95,41 @@ describe("payment-group", () => {
 
     it("offers nothing on any other share event", () => {
       expect(getGroupShareAvailableActions("CHARGE_FAILURE")).toEqual([]);
+    });
+  });
+
+  describe("toGroupShareMetadata", () => {
+    it("marks the group and lists every share in order", () => {
+      expect(
+        toGroupShareMetadata([
+          { transactionId: "tr_a", amount: 1500 },
+          { transactionId: "tr_b", amount: 3000 },
+        ]),
+      ).toEqual({ paymentGroup: "1", tx_0: "tr_a|1500", tx_1: "tr_b|3000" });
+    });
+
+    it("round-trips through parseGroupShares", () => {
+      const shares = [
+        { transactionId: "tr_a", amount: 1500 },
+        { transactionId: "tr_b", amount: 3000 },
+      ];
+
+      expect(parseGroupShares(toGroupShareMetadata(shares))).toEqual(shares);
+    });
+  });
+
+  describe("findGroupShare", () => {
+    const metadata = { tx_0: "tr_a|1500", tx_1: "tr_b|3000" };
+
+    it("finds the share of a listed transaction", () => {
+      expect(findGroupShare({ metadata, transactionId: "tr_b" })).toEqual({
+        transactionId: "tr_b",
+        amount: 3000,
+      });
+    });
+
+    it("returns null for a transaction outside the group", () => {
+      expect(findGroupShare({ metadata, transactionId: "tr_c" })).toBeNull();
     });
   });
 });

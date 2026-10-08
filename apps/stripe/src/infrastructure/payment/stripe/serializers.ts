@@ -38,6 +38,7 @@ export const toPaymentIntent = (
   clientSecret: intent.client_secret,
   created: intent.created,
   lastErrorCode: intent.last_payment_error?.code ?? null,
+  metadata: intent.metadata ?? {},
 });
 
 export const toRefund = (refund: Stripe.Refund): Refund => ({

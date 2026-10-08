@@ -97,6 +97,7 @@ export type PaymentIntent = {
   currency: string;
   id: string;
   lastErrorCode: string | null;
+  metadata: Record<string, string>;
   reportAmount: number;
   status: PaymentIntentStatus;
 };

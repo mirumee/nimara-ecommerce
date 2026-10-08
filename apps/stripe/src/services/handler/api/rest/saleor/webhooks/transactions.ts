@@ -13,6 +13,7 @@ import {
   requestsPaymentGroup,
   type TransactionEventSchema,
 } from "@/domain/payment";
+import { isPaymentGroup } from "@/domain/payment-group";
 import {
   type PaymentGatewayInitializeSessionSubscription,
   type TransactionCancelationRequestedSubscription,
@@ -30,7 +31,10 @@ import {
   sessionMetadata,
   transactionEventResponse,
 } from "./helpers";
-import { paymentGroupInitializeResponse } from "./payment-group";
+import {
+  paymentGroupInitializeResponse,
+  paymentGroupProcessResponse,
+} from "./payment-group";
 
 export const paymentGatewayInitializeSessionHandler = async (
   context: HandlerContext<PaymentGatewayInitializeSessionSubscription>,
@@ -86,7 +90,9 @@ export const transactionInitializeSessionHandler = async (
   // Marketplace: one payment covers a checkout per vendor.
   if (requestsPaymentGroup(event.data)) {
     return paymentGroupInitializeResponse({
+      config,
       event,
+      gateway,
       logger,
       paymentGroup: data.paymentGroup,
       saleorDomain,
@@ -248,36 +254,62 @@ export const transactionProcessSessionHandler = async (
 
   const { config, gateway } = gatewayResult.data;
 
-  // With client data Saleor asks us to update the intent, otherwise just read it.
-  const intent = event.data
-    ? await gateway.updatePaymentIntent({
-        id: event.transaction.pspReference,
-        params: event.data as Record<string, unknown>,
-        amount: getCentsFromAmount(event.sourceObject.total.gross),
-        currency: event.sourceObject.total.gross.currency,
-        captureMethod:
-          event.action.actionType === "CHARGE" ? "automatic" : "manual",
-        metadata: sessionMetadata({
-          channelSlug,
-          extraMetadata: (event.data as { metadata?: Record<string, string> })
-            ?.metadata,
-          saleorDomain,
-          transactionId: event.transaction.id,
-        }),
-      })
-    : await gateway.retrievePaymentIntent({
-        id: event.transaction.pspReference,
-      });
+  const retrievedIntent = await gateway.retrievePaymentIntent({
+    id: event.transaction.pspReference,
+  });
 
-  if (!intent.ok) {
-    return responseFromErrors(intent.errors);
+  if (!retrievedIntent.ok) {
+    return responseFromErrors(retrievedIntent.errors);
+  }
+
+  if (isPaymentGroup(retrievedIntent.data.metadata)) {
+    return transactionEventResponse({
+      data: paymentGroupProcessResponse({
+        actionAmount: getAmountFromCents({
+          amount: getCentsFromAmount(event.action),
+          currency: event.action.currency,
+        }),
+        config,
+        intent: retrievedIntent.data,
+        transactionId: event.transaction.id,
+      }),
+      logger: context.get("logger"),
+      type: "TransactionProcessSession",
+    });
+  }
+
+  let intent = retrievedIntent.data;
+
+  // With client data Saleor asks us to update the intent, otherwise just read it.
+  if (event.data) {
+    const updatedIntent = await gateway.updatePaymentIntent({
+      id: event.transaction.pspReference,
+      params: event.data as Record<string, unknown>,
+      amount: getCentsFromAmount(event.sourceObject.total.gross),
+      currency: event.sourceObject.total.gross.currency,
+      captureMethod:
+        event.action.actionType === "CHARGE" ? "automatic" : "manual",
+      metadata: sessionMetadata({
+        channelSlug,
+        extraMetadata: (event.data as { metadata?: Record<string, string> })
+          ?.metadata,
+        saleorDomain,
+        transactionId: event.transaction.id,
+      }),
+    });
+
+    if (!updatedIntent.ok) {
+      return responseFromErrors(updatedIntent.errors);
+    }
+
+    intent = updatedIntent.data;
   }
 
   return transactionEventResponse({
     data: intentResponse({
       actionType: event.action.actionType,
       config,
-      intent: intent.data,
+      intent,
     }),
     logger: context.get("logger"),
     type: "TransactionProcessSession",
