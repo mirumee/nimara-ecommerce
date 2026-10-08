@@ -205,6 +205,15 @@ export async function POST(request: NextRequest) {
   const checkoutIdsRaw = paymentIntent?.metadata?.subcheckouts;
   const checkoutAmountsRaw = paymentIntent?.metadata?.checkout_amounts;
 
+  if (!checkoutIdsRaw && !checkoutAmountsRaw) {
+    marketplaceLogger.info(
+      "Stripe webhook skipped: PaymentIntent not created by the marketplace",
+      { eventId: event.id, paymentIntentId },
+    );
+
+    return NextResponse.json({ status: "skipped" }, { status: 200 });
+  }
+
   if (!paymentIntentId || !currency || !checkoutIdsRaw || !checkoutAmountsRaw) {
     return NextResponse.json(
       { error: "Missing required PaymentIntent metadata." },

@@ -62,6 +62,11 @@ later ledger and payout-batch operations.
    that is not already charged, completes that checkout into an order, and best-effort links returned
    order identifiers to the Stripe charge for later ledger reconciliation.
 6. Other Stripe event types are acknowledged without changing checkout or order state.
+7. A payment-success event for a PaymentIntent that carries neither the checkout identifiers nor the
+   per-checkout amounts is acknowledged and skipped. Such an intent was created by another
+   integration on the same Stripe account, such as the
+   [Stripe Payment Application](INT-0005%20Stripe%20Payment%20Application.md). An intent that carries
+   only one of the two is still rejected as malformed.
 
 # Failure handling and idempotency
 
