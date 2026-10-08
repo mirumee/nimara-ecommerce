@@ -16,6 +16,7 @@ import { emptySearchService } from "../utils/empty-services";
  */
 export const createSearchServiceLoader = (logger: Logger) =>
   createServiceLoader({
+    capability: "search",
     resolve: resolveSearchProvider,
     build: (provider, log) =>
       createSearchService(provider, { env: process.env, logger: log }),

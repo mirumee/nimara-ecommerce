@@ -13,6 +13,7 @@ import { getRequiredSaleorApiUrl } from "../utils/required-env";
  */
 export const createCartServiceLoader = (logger: Logger) =>
   createServiceLoader({
+    capability: "cart",
     resolve: () => (isSaleorConfigured ? "saleor" : null),
     build: async () => {
       const { saleorCartService } =
