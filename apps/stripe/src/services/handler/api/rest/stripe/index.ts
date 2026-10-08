@@ -15,6 +15,9 @@ import {
   isAppEvent,
   mapStripeEventToSaleorEvent,
 } from "@/domain/event-mapping";
+import { isPaymentGroup } from "@/domain/payment-group";
+
+import { reportGroupShares } from "./group";
 
 const skipped = () => responseSuccess({ description: "Skipped." });
 
@@ -142,6 +145,16 @@ export const stripeRoutes = new Hono().post(
       authToken: installation.data?.authToken,
       saleorDomain: tenant,
     });
+
+    if (isPaymentGroup(notification.metadata)) {
+      return reportGroupShares({
+        eventType: eventData.type,
+        logger,
+        notification,
+        saleorClient,
+        secretKey: gatewayConfig.secretKey,
+      });
+    }
 
     const reportResult = await saleorClient.transactionReport({
       transactionId,

@@ -102,6 +102,13 @@ payment methods protocol.
    result when Stripe reaches a terminal charge state.
 5. Stripe PaymentIntent and refund webhooks map supported provider events into Saleor transaction
    reports, including available next actions and the provider reference.
+   A PaymentIntent marked as a payment group lists one share per Saleor transaction in its metadata,
+   as `tx_<n> = <transaction ID>|<amount in minor units>`. A success, processing, failure, or
+   cancellation event is reported to every listed transaction with that share's amount and the
+   shared provider reference, never with the PaymentIntent total. Only a charged share offers a
+   refund action; no other share offers an action, so one transaction cannot cancel the PaymentIntent
+   for the whole group. Other event types are acknowledged without a report. Nothing in the
+   application creates a group PaymentIntent yet.
 6. Channel configuration installs one Stripe webhook endpoint per provider account, not per channel.
    Channels resolving to the same provider secret key share that endpoint and each stores its
    provider webhook ID and signing secret; an installation whose channels span two provider accounts
@@ -160,6 +167,12 @@ payment methods protocol.
   application does not persist a webhook-event inbox. Duplicate-delivery safety therefore depends
   on the upstream transaction contract and the provider operations rather than a local deduplication
   record.
+- A payment-group event whose shares are malformed or do not add up to the event amount reports
+  nothing and is acknowledged, because a redelivery cannot correct it; it is logged as an error.
+  Shares are reported in parallel. A share Saleor refuses is logged as an error and the others are
+  still reported. Only a share that cannot reach Saleor makes the response fail, so the provider
+  redelivers the event; Saleor deduplicates the shares that already landed by transaction, provider
+  reference, and event type.
 
 # Limitations
 
