@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
 
-import { baseConfigSchema } from "./schema";
+import { coreConfigSchema, saleorConfigSchema } from "./schema";
 
 const PKG = {
   author: "Nimara",
@@ -11,10 +11,10 @@ const PKG = {
 };
 
 const parse = (env: Record<string, unknown>) =>
-  baseConfigSchema(PKG).parse({ ENVIRONMENT: "test", ...env });
+  saleorConfigSchema(PKG).parse({ ENVIRONMENT: "test", ...env });
 
 describe("schema", () => {
-  describe("baseConfigSchema", () => {
+  describe("saleorConfigSchema", () => {
     it("derives the app's identity from its package.json", () => {
       // when
       const config = parse({});
@@ -91,7 +91,7 @@ describe("schema", () => {
         (key) => {
           // when / then blank is the only value it forgives.
           expect(
-            baseConfigSchema(PKG).safeParse({
+            saleorConfigSchema(PKG).safeParse({
               ENVIRONMENT: "test",
               [key]: "not a url",
             }).success,
@@ -113,7 +113,7 @@ describe("schema", () => {
         // given a value Sentry would swallow by disabling itself
 
         // when
-        const result = baseConfigSchema(PKG).safeParse({
+        const result = saleorConfigSchema(PKG).safeParse({
           ENVIRONMENT: "test",
           SENTRY_DSN: "o1.ingest.sentry.io/2",
         });
@@ -126,7 +126,7 @@ describe("schema", () => {
     describe("VITE_SALEOR_APP_TOKEN", () => {
       it("refuses the development token in production", () => {
         // when
-        const result = baseConfigSchema(PKG).safeParse({
+        const result = saleorConfigSchema(PKG).safeParse({
           ENVIRONMENT: "production",
           NODE_ENV: "production",
           VITE_SALEOR_APP_TOKEN: "token",
@@ -152,13 +152,28 @@ describe("schema", () => {
       // given the shape every app builds its config with
       const schema = z
         .object({ CONFIG_KEY: z.string().default("nimara-config") })
-        .and(baseConfigSchema(PKG));
+        .and(saleorConfigSchema(PKG));
 
       // when / then
       expect(schema.parse({ ENVIRONMENT: "test" })).toMatchObject({
         CONFIG_KEY: "nimara-config",
         DISPLAY_NAME: "Feed generator",
       });
+    });
+  });
+
+  describe("coreConfigSchema", () => {
+    it("derives the app's identity, with no Saleor fields", () => {
+      // when
+      const config = coreConfigSchema(PKG).parse({ ENVIRONMENT: "test" });
+
+      // then
+      expect(config).toMatchObject({
+        DISPLAY_NAME: "Feed generator",
+        NAME: "@nimara/feed-generator",
+      });
+      expect(config).not.toHaveProperty("ALLOWED_DOMAINS");
+      expect(config).not.toHaveProperty("VITE_SALEOR_APP_TOKEN");
     });
   });
 });

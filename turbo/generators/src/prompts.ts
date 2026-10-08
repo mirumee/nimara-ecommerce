@@ -3,17 +3,21 @@ import { join } from "node:path";
 
 import { type PlopTypes } from "@turbo/gen";
 
+import { type ServiceTrigger } from "@nimara/tooling/entry-points";
+
 import { listApps } from "./create-service.ts";
+import { detectIntegration } from "./integration.ts";
 import {
-  type AppKind,
   BUILD_TARGETS,
   type BuildTarget,
-  KINDS,
-  kindsForTarget,
+  type Integration,
+  INTEGRATIONS,
   TEMPLATE_SERVICES,
   TENANCIES,
   type Tenancy,
   toDirectoryName,
+  TRIGGERS,
+  triggersForTarget,
   validateName,
 } from "./names.ts";
 import { detectBuildTarget } from "./target.ts";
@@ -39,11 +43,26 @@ export const appName: PlopTypes.PromptQuestion = {
 };
 
 export const description: PlopTypes.PromptQuestion = {
-  message: "Description (shown in the Saleor dashboard):",
+  message:
+    "Description (goes to package.json, used later in the app manifest):",
   name: "description",
   type: "input",
   validate: (input: string) =>
     input.trim().length > 0 || "A description is required.",
+};
+
+export const integration: PlopTypes.PromptQuestion = {
+  choices: [
+    { name: "_blank — no Saleor integration at all", value: "blank" },
+    {
+      name: "Saleor — a Saleor app: manifest, webhooks, dashboard",
+      value: "saleor",
+    },
+  ] satisfies { name: string; value: Integration }[],
+  default: INTEGRATIONS[1],
+  message: "What does it integrate with?",
+  name: "integration",
+  type: "list",
 };
 
 export const tenancy: PlopTypes.PromptQuestion = {
@@ -58,48 +77,96 @@ export const tenancy: PlopTypes.PromptQuestion = {
   message: "How many Saleor instances does it serve?",
   name: "tenancy",
   type: "list",
+  when: (answers: { integration?: Integration }) =>
+    answers.integration === "saleor",
 };
 
-const KIND_LABELS: Record<AppKind, string> = {
-  dashboard: "dashboard — HTTP, with a settings page in Saleor",
-  event: "event — invoked by a schedule or another function, no HTTP",
-  http: "http — HTTP only: webhooks and API",
-  queue: "queue — an SQS consumer, no HTTP",
+/**
+ * A new app answers `target` outright; a service added later has no `target`
+ * prompt of its own, so it inherits what its app already chose.
+ */
+const resolveTarget = (answers: {
+  app?: string;
+  target?: BuildTarget;
+}): BuildTarget =>
+  answers.target ??
+  detectBuildTarget({ app: answers.app ?? "", root: process.cwd() });
+
+export const target: PlopTypes.PromptQuestion = {
+  choices: [...BUILD_TARGETS],
+  default: BUILD_TARGETS[0],
+  message: "Where does it run?",
+  name: "target",
+  type: "list",
 };
 
-export const kind: PlopTypes.PromptQuestion = {
+const TRIGGER_LABELS: Record<ServiceTrigger, string> = {
+  event: "INVOKE",
+  http: "HTTP",
+  queue: "QUEUE",
+};
+
+// Vercel only runs HTTP, so this is skipped there instead of offered with one choice.
+export const trigger: PlopTypes.PromptQuestion = {
   /**
    * Plop matches a bypassed `--args` answer against `choices`, which here is a
    * function. Taking the answer as given leaves the pairing to `createApp` and
    * `createService`, which see both the kind and the target.
    */
   bypass: (input: string) => input,
-  /**
-   * Offers what the target can run. A new app answers `target` outright; a
-   * service added later inherits what its app chose.
-   */
   choices: (answers: { app?: string; target?: BuildTarget }) =>
-    kindsForTarget(
-      answers.target ??
-        detectBuildTarget({ app: answers.app ?? "", root: process.cwd() }),
-    ).map((value) => ({ name: KIND_LABELS[value], value })),
-  default: KINDS[0],
-  message: "What does the service serve?",
-  name: "kind",
+    triggersForTarget(resolveTarget(answers)).map((value) => ({
+      name: TRIGGER_LABELS[value],
+      value,
+    })),
+  default: TRIGGERS[0],
+  message: "What triggers it?",
+  name: "trigger",
   type: "list",
+  when: (answers: { app?: string; target?: BuildTarget }) =>
+    resolveTarget(answers) !== "vercel",
 };
 
-export const target: PlopTypes.PromptQuestion = {
-  choices: [...BUILD_TARGETS],
-  default: BUILD_TARGETS[0],
-  message: "What is the deployment target?",
-  name: "target",
+// Vercel forces the trigger prompt to be skipped, but it still only runs HTTP.
+export const resolveTrigger = (answers: {
+  trigger?: ServiceTrigger;
+}): ServiceTrigger => answers.trigger ?? "http";
+
+/**
+ * A new app answers `integration` outright; a service added later has no
+ * `integration` prompt of its own, so it inherits what its app already chose.
+ */
+const resolveIntegration = (answers: {
+  app?: string;
+  integration?: Integration;
+}): Integration =>
+  answers.integration ??
+  detectIntegration(join(process.cwd(), "apps", answers.app ?? ""));
+
+// Only an HTTP-triggered Saleor service has a Saleor dashboard to add a page to.
+export const dashboard: PlopTypes.PromptQuestion = {
+  choices: [
+    { name: "Yes", value: true },
+    { name: "No", value: false },
+  ],
+  default: false,
+  message: "Add the Dashboard settings page?",
+  name: "dashboard",
   type: "list",
+  when: (answers: {
+    app?: string;
+    integration?: Integration;
+    trigger?: ServiceTrigger;
+  }) =>
+    resolveTrigger(answers) === "http" &&
+    resolveIntegration(answers) === "saleor",
 };
 
 // Asked separately from the app's own name: `src/services/<service>`.
 export const service: PlopTypes.PromptQuestion = {
-  default: (answers: { kind: AppKind }) => TEMPLATE_SERVICES[answers.kind],
+  // `dashboard` is answered later, but it never changes the service directory.
+  default: (answers: { trigger?: ServiceTrigger }) =>
+    TEMPLATE_SERVICES[resolveTrigger(answers)],
   filter: toDirectoryName,
   message: "Service name (becomes src/services/<name>):",
   name: "service",
@@ -124,7 +191,9 @@ export const app: PlopTypes.PromptQuestion = {
 };
 
 export const serviceName: PlopTypes.PromptQuestion = {
-  default: (answers: { kind: AppKind }) => TEMPLATE_SERVICES[answers.kind],
+  // `dashboard` is answered later, but it never changes the service directory.
+  default: (answers: { trigger?: ServiceTrigger }) =>
+    TEMPLATE_SERVICES[resolveTrigger(answers)],
   filter: toDirectoryName,
   message: "Service name (becomes src/services/<name>):",
   name: "name",
