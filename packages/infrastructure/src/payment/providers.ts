@@ -1,6 +1,10 @@
 import { paymentMethodDeleteInfra } from "./saleor/infrastructure/payment-method-delete-infra";
 import { paymentMethodListInfra } from "./saleor/infrastructure/payment-method-list-infra";
 import { paymentExecuteInfra } from "./stripe/infrastructure/payment-execute-infra";
+import {
+  paymentGroupFollowerInitializeInfra,
+  paymentGroupLeaderInitializeInfra,
+} from "./stripe/infrastructure/payment-group-initialize-infra";
 import { paymentInitializeGatewayInfra } from "./stripe/infrastructure/payment-initialize-gateway-infra";
 import { paymentInitializeTransactionInfra } from "./stripe/infrastructure/payment-initialize-transaction-infra";
 import { paymentMethodExecuteInfra } from "./stripe/infrastructure/payment-method-execute-infra";
@@ -24,6 +28,8 @@ export const stripePaymentService = (
   methodList: paymentMethodListInfra(config),
   methodProcess: paymentMethodProcessInfra(config),
   paymentExecute: paymentExecuteInfra(config),
+  paymentGroupFollowerInitialize: paymentGroupFollowerInitializeInfra(config),
+  paymentGroupLeaderInitialize: paymentGroupLeaderInitializeInfra(config),
   paymentInitialize: paymentInitializeTransactionInfra(config),
   paymentProcess: paymentProcessInfra(config),
 });

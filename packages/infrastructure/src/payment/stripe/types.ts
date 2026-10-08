@@ -4,6 +4,7 @@ import type {
   MethodSessionData,
   PaymentExecuteInfra,
   PaymentGatewayInitializeInfra,
+  PaymentGroupLeaderInitializeInfra,
   PaymentInitializeInfra,
   PaymentMethodExecuteInfra,
   PaymentMethodInitializeInfra,
@@ -66,6 +67,9 @@ export type StripePaymentGatewayInitializeInfra =
 
 export type StripePaymentInitializeInfra =
   PaymentInitializeInfra<StripeProvider>;
+
+export type StripePaymentGroupLeaderInitializeInfra =
+  PaymentGroupLeaderInitializeInfra<StripeProvider>;
 
 export type StripePaymentExecuteInfra = PaymentExecuteInfra<StripeProvider>;
 

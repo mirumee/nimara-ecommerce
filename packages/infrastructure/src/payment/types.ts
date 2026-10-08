@@ -89,6 +89,17 @@ export type PaymentInitializeOpts = {
   sharedPaymentToken?: Maybe<string>;
 };
 
+export type PaymentGroupFollowerInitializeOpts = {
+  amount: number;
+  id: string;
+};
+
+export type PaymentGroupLeaderInitializeOpts = {
+  amount: number;
+  followers: { checkoutId: string; transactionId: string }[];
+  id: string;
+};
+
 export type MethodOpts = {
   accessToken: string;
   channel: string;
@@ -114,6 +125,16 @@ export type PaymentGatewayInitializeInfra<
 
 export type PaymentInitializeInfra<TProvider extends PaymentProviderContract> =
   (opts: PaymentInitializeOpts) => AsyncResult<PaymentSessionData<TProvider>>;
+
+export type PaymentGroupFollowerInitializeInfra = (
+  opts: PaymentGroupFollowerInitializeOpts,
+) => AsyncResult<Transaction>;
+
+export type PaymentGroupLeaderInitializeInfra<
+  TProvider extends PaymentProviderContract,
+> = (
+  opts: PaymentGroupLeaderInitializeOpts,
+) => AsyncResult<PaymentSessionData<TProvider>>;
 
 export type PaymentExecuteInfra<TProvider extends PaymentProviderContract> =
   (opts: {
@@ -196,6 +217,8 @@ export type PaymentService<TProvider extends PaymentProviderContract> = {
   methodList: PaymentMethodListInfra;
   methodProcess: PaymentMethodProcessInfra;
   paymentExecute: PaymentExecuteInfra<TProvider>;
+  paymentGroupFollowerInitialize: PaymentGroupFollowerInitializeInfra;
+  paymentGroupLeaderInitialize: PaymentGroupLeaderInitializeInfra<TProvider>;
   paymentInitialize: PaymentInitializeInfra<TProvider>;
   paymentProcess: PaymentProcessInfra;
 };
