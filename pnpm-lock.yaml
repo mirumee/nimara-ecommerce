@@ -235,8 +235,8 @@ importers:
         specifier: 4.14.1
         version: 4.14.1(@swc/helpers@0.5.23)(next@16.3.3(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(@types/node@24.13.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
       nodemailer:
-        specifier: 8.0.11
-        version: 8.0.11
+        specifier: 10.0.9
+        version: 10.0.9
       pg:
         specifier: ^8.23.0
         version: 8.23.0
@@ -1312,7 +1312,7 @@ importers:
         version: link:../../packages/lib
       '@saleor/app-sdk':
         specifier: 1.7.0
-        version: 1.7.0(graphql@16.14.2)(next@16.3.3(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(@types/node@24.12.4)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        version: 1.7.0(graphql@16.14.2)(next@16.3.3(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(@types/node@24.12.4)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@sentry/node':
         specifier: ^10.70.0
         version: 10.70.0(@opentelemetry/core@2.10.0(@opentelemetry/api@1.9.1))
@@ -7653,6 +7653,7 @@ packages:
   '@vercel/edge-config@1.5.1':
     resolution: {integrity: sha512-eawv5LKqEk+KL9lw+lzExpPELE8B1DdvWhpswtSr5nkUujH4nOLq89fY565uWp5z70XzTnfx6E08KIVmgOwSjg==}
     engines: {node: '>=14.6'}
+    deprecated: This package has been renamed to @vercel/global-config. Install @vercel/global-config instead.
     peerDependencies:
       '@opentelemetry/api': ^1.7.0
       next: '>=1'
@@ -12191,6 +12192,10 @@ packages:
   node-releases@2.0.53:
     resolution: {integrity: sha512-D9UOmYG3UH1V+ENW56t5QXBwJw1YEY18ruVeus89Rw+SyIgjPkCO84bRzO3uNIYosJbNwiabWVn48o3uJLjxFQ==}
     engines: {node: '>=18'}
+
+  nodemailer@10.0.9:
+    resolution: {integrity: sha512-BF0qcyplCwp+jMk6HCjFykBz/YhhZSsxrARhOldLwFWH+8kGjQsd2WIMIZhqEuyXRoGFi0ONbDeWDMDoL8MhLw==}
+    engines: {node: '>=20.0.0'}
 
   nodemailer@8.0.11:
     resolution: {integrity: sha512-nrO/pDAUKl+wXX+lx16tDLbnm0fW6sK/x8mgohaCpg+CdCEl482bD4tCuAZk2DyliruiNTIZxRCoWkDqJEnAiA==}
@@ -22163,21 +22168,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@saleor/app-sdk@1.7.0(graphql@16.14.2)(next@16.3.3(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(@types/node@24.12.4)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
-    dependencies:
-      '@opentelemetry/api': 1.9.0
-      '@opentelemetry/semantic-conventions': 1.30.0
-      debug: 4.4.0
-      jose: 5.10.0
-      raw-body: 3.0.0
-    optionalDependencies:
-      graphql: 16.14.2
-      next: 16.3.3(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(@types/node@24.12.4)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
-    transitivePeerDependencies:
-      - supports-color
-
   '@saleor/app-sdk@1.7.0(graphql@16.14.2)(next@16.3.3(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(@types/node@24.12.4)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:
       '@opentelemetry/api': 1.9.0
@@ -28967,34 +28957,6 @@ snapshots:
       - '@types/node'
       - babel-plugin-macros
 
-  next@16.3.3(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(@types/node@24.12.4)(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
-    dependencies:
-      '@next/env': 16.3.3
-      '@swc/helpers': 0.5.23
-      baseline-browser-mapping: 2.11.19
-      caniuse-lite: 1.0.30001810
-      postcss: 8.5.23
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
-      styled-jsx: 5.1.6(@babel/core@7.29.7)(react@19.2.4)
-    optionalDependencies:
-      '@next/swc-darwin-arm64': 16.3.3
-      '@next/swc-darwin-x64': 16.3.3
-      '@next/swc-linux-arm64-gnu': 16.3.3
-      '@next/swc-linux-arm64-musl': 16.3.3
-      '@next/swc-linux-x64-gnu': 16.3.3
-      '@next/swc-linux-x64-musl': 16.3.3
-      '@next/swc-win32-arm64-msvc': 16.3.3
-      '@next/swc-win32-x64-msvc': 16.3.3
-      '@opentelemetry/api': 1.9.1
-      '@playwright/test': 1.59.1
-      sharp: 0.35.3(@types/node@24.12.4)
-    transitivePeerDependencies:
-      - '@babel/core'
-      - '@types/node'
-      - babel-plugin-macros
-    optional: true
-
   next@16.3.3(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(@types/node@26.2.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
     dependencies:
       '@next/env': 16.3.3
@@ -29146,7 +29108,10 @@ snapshots:
 
   node-releases@2.0.53: {}
 
-  nodemailer@8.0.11: {}
+  nodemailer@10.0.9: {}
+
+  nodemailer@8.0.11:
+    optional: true
 
   nopt@7.2.1:
     dependencies:
