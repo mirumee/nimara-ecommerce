@@ -98,6 +98,8 @@ export type PaymentGroupLeaderInitializeOpts = {
   amount: number;
   followers: { checkoutId: string; transactionId: string }[];
   id: string;
+  paymentMethodId?: Maybe<string>;
+  saveForFutureUse?: Maybe<boolean>;
 };
 
 export type MethodOpts = {
