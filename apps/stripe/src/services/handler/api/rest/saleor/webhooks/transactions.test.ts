@@ -541,6 +541,7 @@ describe("transactions", () => {
             amount: 103550,
             captureMethod: "automatic",
             currency: "USD",
+            customerId: null,
             idempotencyKey: expect.stringMatching(
               /^payment-group-[0-9a-f]{64}$/,
             ),
@@ -555,8 +556,141 @@ describe("transactions", () => {
               tx_1: "tr_2|3000",
               tx_2: "tr_3|550",
             },
+            paymentMethodId: undefined,
+            saveForFutureUse: false,
           });
           expect(mocks.resolveCustomer).not.toHaveBeenCalled();
+        });
+
+        describe("saved payment methods", () => {
+          const signedInLeaderEvent = (data: Record<string, unknown> = {}) =>
+            buildEvent({
+              action: FOLLOWER_ACTION,
+              data: { ...LEADER_DATA, ...data },
+              user: USER,
+            });
+
+          beforeEach(() => {
+            GROUP_CHECKOUTS = Object.fromEntries(
+              Object.entries(VALID_GROUP()).map(([id, checkout]) => [
+                id,
+                { ...checkout, user: { id: USER.id } },
+              ]),
+            );
+          });
+
+          const idempotencyKeyOf = (call: number) =>
+            mocks.createPaymentIntent.mock.calls[call][0].idempotencyKey;
+
+          it("pays the group with an owned saved method", async () => {
+            const response = await handle(
+              signedInLeaderEvent({ paymentMethodId: "pm_1" }),
+            );
+
+            expect(await response.json()).toMatchObject({
+              result: "CHARGE_ACTION_REQUIRED",
+            });
+            expect(mocks.createPaymentIntent).toHaveBeenCalledWith(
+              expect.objectContaining({
+                customerId: "cus_1",
+                paymentMethodId: "pm_1",
+              }),
+            );
+          });
+
+          it("saves a new method for a signed-in buyer", async () => {
+            await handle(signedInLeaderEvent({ saveForFutureUse: true }));
+
+            expect(mocks.createPaymentIntent).toHaveBeenCalledWith(
+              expect.objectContaining({
+                customerId: "cus_1",
+                saveForFutureUse: true,
+              }),
+            );
+          });
+
+          it("ignores the save wish of a guest", async () => {
+            GROUP_CHECKOUTS = VALID_GROUP();
+
+            await handle(
+              buildEvent({
+                action: FOLLOWER_ACTION,
+                data: { ...LEADER_DATA, saveForFutureUse: true },
+              }),
+            );
+
+            expect(mocks.createPaymentIntent).toHaveBeenCalledWith(
+              expect.objectContaining({
+                customerId: null,
+                saveForFutureUse: false,
+              }),
+            );
+          });
+
+          it("pays without a gateway user when resolution fails", async () => {
+            mocks.resolveCustomer.mockResolvedValue(
+              err([{ code: "UNKNOWN_ERROR", message: "boom" }]),
+            );
+
+            await handle(signedInLeaderEvent());
+
+            expect(mocks.createPaymentIntent).toHaveBeenCalledWith(
+              expect.objectContaining({ customerId: null }),
+            );
+          });
+
+          it.each([
+            [
+              "a guest pays with a saved method",
+              () => {
+                GROUP_CHECKOUTS = VALID_GROUP();
+              },
+              buildEvent({
+                action: FOLLOWER_ACTION,
+                data: { ...LEADER_DATA, paymentMethodId: "pm_1" },
+              }),
+              "Saved payment methods require a signed in customer.",
+            ],
+            [
+              "the saved method belongs to another customer",
+              () => {
+                mocks.retrievePaymentMethodCustomerId.mockResolvedValue(
+                  ok({ customerId: "cus_other" }),
+                );
+              },
+              signedInLeaderEvent({ paymentMethodId: "pm_1" }),
+              "Payment method does not belong to this customer.",
+            ],
+            [
+              "the saved method does not exist",
+              () => {
+                mocks.retrievePaymentMethodCustomerId.mockResolvedValue(
+                  ok(null),
+                );
+              },
+              signedInLeaderEvent({ paymentMethodId: "pm_1" }),
+              "Payment method does not exist.",
+            ],
+          ])("refuses when %s", async (_, arrange, event, message) => {
+            arrange();
+
+            const response = await handle(event);
+
+            expect(await response.json()).toMatchObject({
+              amount: "1000.00",
+              message,
+              result: "CHARGE_FAILURE",
+            });
+            expect(mocks.createPaymentIntent).not.toHaveBeenCalled();
+          });
+
+          it("derives a different idempotency key for every payment choice", async () => {
+            await handle(signedInLeaderEvent());
+            await handle(signedInLeaderEvent({ saveForFutureUse: true }));
+            await handle(signedInLeaderEvent({ paymentMethodId: "pm_1" }));
+
+            expect(new Set([0, 1, 2].map(idempotencyKeyOf)).size).toBe(3);
+          });
         });
 
         it("reuses the idempotency key for the same group", async () => {
