@@ -1,11 +1,22 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FormProvider } from "react-hook-form";
 
 import { type AppErrorCode } from "@nimara/domain/objects/Error";
+import { type PaymentMethod } from "@nimara/domain/objects/Payment";
 import { useRouter } from "@nimara/i18n/routing";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@nimara/ui/components/tabs";
+import { cn } from "@nimara/ui/lib/utils";
 
+import { clientEnvs } from "@/envs/client";
+import { PaymentMethods } from "@/features/checkout/payment-methods";
 import { type MarketplaceCheckoutItem } from "@/features/checkout/types";
 import { initializeMarketplacePayment } from "@/features/payment/checkout/actions";
 import { usePaymentData } from "@/features/payment/hooks/use-payment-data";
@@ -15,10 +26,13 @@ import { NewPaymentMethodSection } from "./components/new-payment-method-section
 import { PlaceOrderButton } from "./components/place-order-button";
 import { usePaymentForm } from "./hooks/use-payment-form";
 import { usePaymentSubmit } from "./hooks/use-payment-submit";
+import { type PaymentSchema } from "./schema";
+import { type TabName } from "./tabs/address-tab";
 import { type CommonPaymentProps } from "./types";
 
 type MarketplacePaymentProps = CommonPaymentProps & {
   marketplaceCheckouts: MarketplaceCheckoutItem[];
+  paymentGatewayMethods: PaymentMethod[];
 };
 
 type MarketplaceIntentCheckout = {
@@ -30,12 +44,15 @@ type MarketplaceIntentCheckout = {
 const buildMarketplaceIntentKey = ({
   buyerId,
   checkouts,
+  saveForFutureUse,
 }: {
   buyerId?: string;
   checkouts: MarketplaceIntentCheckout[];
+  saveForFutureUse: boolean;
 }) =>
   JSON.stringify({
     buyerId: buyerId ?? null,
+    saveForFutureUse,
     checkouts: [...checkouts]
       .sort((a, b) => a.checkoutId.localeCompare(b.checkoutId))
       .map((checkout) => ({
@@ -58,9 +75,11 @@ export const MarketplacePayment = ({
   errorCode,
   formattedAddresses,
   marketplaceCheckouts,
+  paymentGatewayMethods,
   storeUrl,
   user,
 }: MarketplacePaymentProps) => {
+  const t = useTranslations();
   const router = useRouter();
 
   const [isProcessing, setIsProcessing] = useState(false);
@@ -68,6 +87,13 @@ export const MarketplacePayment = ({
   const [errors, setErrors] = useState<AppErrorCode[]>(
     errorCode ? [errorCode] : [],
   );
+  const hasPaymentApp = !!clientEnvs.PAYMENT_APP_ID;
+  const hasSavedPaymentMethods =
+    hasPaymentApp && paymentGatewayMethods.length > 0;
+  const [paymentMethodTab, setPaymentMethodTab] = useState<TabName>(
+    hasSavedPaymentMethods ? "saved" : "new",
+  );
+  const canSaveForFutureUse = !!user && hasPaymentApp;
   const {
     initializeData,
     initializeGateway,
@@ -79,12 +105,19 @@ export const MarketplacePayment = ({
   const elementsRef = useRef<unknown>(null);
   const intentInFlightRef = useRef<string | null>(null);
   const intentInitializedRef = useRef<string | null>(null);
+  const latestIntentKeyRef = useRef<string | null>(null);
+
+  const defaultPaymentMethod =
+    paymentGatewayMethods.find(({ isDefault }) => isDefault)?.token ??
+    paymentGatewayMethods[0]?.token;
 
   const {
     addressActiveTab,
     form,
     isCountryChanging,
+    paymentMethod,
     sameAsShippingAddress,
+    saveForFutureUse,
     setAddressActiveTab,
     setIsCountryChanging,
   } = usePaymentForm({
@@ -92,13 +125,17 @@ export const MarketplacePayment = ({
     checkout,
     countries,
     countryCode,
+    defaultPaymentMethod,
     errorCode,
     formattedAddresses,
     user,
   });
 
-  const isLoading = !initializeData || isProcessing;
-  const canProceed = !isLoading && isMounted;
+  const shouldSaveForFutureUse = canSaveForFutureUse && !!saveForFutureUse;
+  const isAddingNewPaymentMethod = paymentMethodTab === "new";
+  const isLoading = !initializeData || !transactionData || isProcessing;
+  const canProceed =
+    !isLoading && (isAddingNewPaymentMethod ? isMounted : !!paymentMethod);
 
   const intentCheckouts = useMemo<MarketplaceIntentCheckout[]>(
     () =>
@@ -116,19 +153,31 @@ export const MarketplacePayment = ({
         : buildMarketplaceIntentKey({
             buyerId: user?.id,
             checkouts: intentCheckouts,
+            saveForFutureUse: shouldSaveForFutureUse,
           }),
-    [intentCheckouts, user?.id],
+    [intentCheckouts, shouldSaveForFutureUse, user?.id],
   );
+
+  const resolveTransactionData = async ({ paymentMethod }: PaymentSchema) =>
+    !isAddingNewPaymentMethod && paymentMethod && transactionData
+      ? {
+          ...transactionData,
+          providerData: {
+            ...transactionData.providerData,
+            paymentMethodId: paymentMethod,
+          },
+        }
+      : transactionData;
 
   const handlePlaceOrder = usePaymentSubmit({
     checkout,
     elementsRef,
     form,
     initializeGateway,
-    isAddingNewPaymentMethod: true,
+    isAddingNewPaymentMethod,
     isProcessing,
     onExecuteFailure: () => router.refresh(),
-    resolveTransactionData: async () => transactionData,
+    resolveTransactionData,
     setErrors,
     setIsProcessing,
     storeUrl,
@@ -140,6 +189,8 @@ export const MarketplacePayment = ({
    * re-render never spawns a second intent for the same checkouts.
    */
   useEffect(() => {
+    latestIntentKeyRef.current = intentKey;
+
     void (async () => {
       if (!intentKey) {
         return;
@@ -160,10 +211,15 @@ export const MarketplacePayment = ({
       const result = await initializeMarketplacePayment({
         buyerId: user?.id,
         checkouts: intentCheckouts,
+        saveForFutureUse: shouldSaveForFutureUse,
       });
 
       if (intentInFlightRef.current === intentKey) {
         intentInFlightRef.current = null;
+      }
+
+      if (latestIntentKeyRef.current !== intentKey) {
+        return;
       }
 
       if (!result.ok) {
@@ -174,7 +230,10 @@ export const MarketplacePayment = ({
 
       const gatewayConfig = { publishableKey: result.data.publishableKey };
 
-      if (!(await initializeGateway(gatewayConfig))) {
+      if (
+        !(await initializeGateway(gatewayConfig)) ||
+        latestIntentKeyRef.current !== intentKey
+      ) {
         return;
       }
 
@@ -189,22 +248,64 @@ export const MarketplacePayment = ({
         sessionId: intentKey,
       });
     })();
-  }, [intentCheckouts, intentKey, user?.id]);
+  }, [intentCheckouts, intentKey, shouldSaveForFutureUse, user?.id]);
+
+  useEffect(() => {
+    if (!canSaveForFutureUse) {
+      form.setValue("saveForFutureUse", false);
+    }
+  }, [canSaveForFutureUse, form]);
+
+  useEffect(() => {
+    if (isAddingNewPaymentMethod) {
+      form.setValue("paymentMethod", undefined);
+
+      return;
+    }
+
+    form.setValue("paymentMethod", defaultPaymentMethod);
+    setIsMounted(false);
+  }, [form, isAddingNewPaymentMethod, defaultPaymentMethod]);
 
   return (
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(handlePlaceOrder)} noValidate>
         <div className="mb-8 space-y-6">
-          <NewPaymentMethodSection
-            checkout={checkout}
-            initializeData={initializeData}
-            isMounted={isMounted}
-            isProcessing={isProcessing}
-            onReady={() => setIsMounted(true)}
-            ref={elementsRef}
-            showSaveForFutureUse={false}
-            transactionData={transactionData}
-          />
+          <Tabs
+            defaultValue={paymentMethodTab}
+            onValueChange={(value) => setPaymentMethodTab(value as TabName)}
+            className="grid gap-5"
+          >
+            <TabsList
+              className={cn("grid w-full grid-cols-2", {
+                hidden: !hasSavedPaymentMethods,
+              })}
+            >
+              <TabsTrigger disabled={isLoading} value="saved">
+                {t("payment.saved-methods")}
+              </TabsTrigger>
+              <TabsTrigger disabled={isLoading} value="new">
+                {t("payment.new-method")}
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="saved">
+              <PaymentMethods methods={paymentGatewayMethods} />
+            </TabsContent>
+
+            <TabsContent value="new">
+              <NewPaymentMethodSection
+                checkout={checkout}
+                initializeData={initializeData}
+                isMounted={isMounted}
+                isProcessing={isProcessing}
+                onReady={() => setIsMounted(true)}
+                ref={elementsRef}
+                showSaveForFutureUse={canSaveForFutureUse}
+                transactionData={transactionData}
+              />
+            </TabsContent>
+          </Tabs>
 
           <BillingAddressSection
             activeTab={addressActiveTab}

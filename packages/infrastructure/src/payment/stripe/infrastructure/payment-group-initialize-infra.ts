@@ -115,7 +115,7 @@ export const paymentGroupFollowerInitializeInfra =
 
 export const paymentGroupLeaderInitializeInfra =
   (config: PaymentServiceConfig): StripePaymentGroupLeaderInitializeInfra =>
-  async ({ amount, followers, id }) => {
+  async ({ amount, followers, id, saveForFutureUse }) => {
     const followerTransactionIds = followers
       .map(({ transactionId }) => transactionId)
       .sort()
@@ -123,10 +123,13 @@ export const paymentGroupLeaderInitializeInfra =
     const result = await initializeGroupTransaction({
       ...config,
       amount,
-      data: { paymentGroup: { role: "leader", followers } },
+      data: {
+        paymentGroup: { role: "leader", followers },
+        ...(saveForFutureUse && { saveForFutureUse }),
+      },
       id,
       idempotencyKey: `payment-group-leader-${await sha256(
-        `${id}|${amount}|${followerTransactionIds}`,
+        `${id}|${amount}|${followerTransactionIds}|${saveForFutureUse ? "save" : ""}`,
       )}`,
     });
 

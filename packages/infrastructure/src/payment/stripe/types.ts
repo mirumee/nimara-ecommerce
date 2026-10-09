@@ -42,6 +42,7 @@ export type StripeGatewayConfig = {
 
 export type StripePaymentSession = {
   clientSecret: string;
+  paymentMethodId?: string;
 };
 
 export type StripeMethodSession = {

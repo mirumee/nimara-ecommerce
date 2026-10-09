@@ -70,7 +70,11 @@ A payment app supports marketplace checkout when it does all of the following.
 - Create one provider payment for the sum of the shares, with automatic capture.
 - Store every share (transaction ID and amount) on the provider payment, somewhere only your
   server can write.
-- Derive the provider's idempotency key from the shares.
+- For a signed-in buyer, attach the buyer's gateway customer, and set the payment up for future
+  use when the request asks to save a new method. Drop the save request of a guest.
+- Ignore a saved payment method sent with the leader request. The storefront names it when it
+  confirms, and the provider must refuse a method of another customer.
+- Derive the provider's idempotency key from the shares, the customer, and the save choice.
 - Answer with the **leader's share** as the amount, never the payment total, plus the provider
   reference and the client data the storefront needs.
 
@@ -93,6 +97,13 @@ A payment app supports marketplace checkout when it does all of the following.
 - Answer with an error only when a share could not reach Saleor, so the provider retries. Saleor
   deduplicates the shares that already landed.
 
+### Saved payment methods
+
+- Signed-in buyers see their saved methods and a save checkbox, as in standard checkout.
+- The group payment is opened once on the payment step. Paying with a saved method confirms that
+  payment with the method's ID, so a retry after a decline uses the same payment.
+- Changing the save checkbox opens a different payment; changing it back returns the first one.
+
 ### Process session
 
 - Never update a group payment from `transactionProcess` caller data.
@@ -108,22 +119,27 @@ A payment app supports marketplace checkout when it does all of the following.
 Run these against a real Saleor instance and the provider's test mode before you enable the app
 for a marketplace channel. Use a different customer name per run so the orders are easy to find.
 
-| Test | Scenario                                    | Expected result                                                           |
-| ---- | ------------------------------------------- | ------------------------------------------------------------------------- |
-| 1    | Two vendors, plain card                     | One provider payment, two orders, both fully paid                         |
-| 2    | Card with 3-D Secure                        | Payment succeeds after the challenge, no second confirmation              |
-| 3    | Three vendors                               | One payment, the sum of three shares, three orders                        |
-| 4    | Redirect payment method                     | Payment succeeds after the redirect                                       |
-| 5    | Production build of the storefront          | The buyer lands on the order confirmation and the cart is empty           |
-| 6    | Development build                           | The confirmation runs once and the buyer lands on the order confirmation  |
-| 7    | Declined card, then a valid card            | Failure on every share, then success on the same payment and transactions |
-| 8    | Reload the payment step several times       | No new provider payment and no new transactions                           |
-| 9    | Asynchronous method, such as a direct debit | Pending on every share, then success, then orders                         |
+| Test | Scenario                                     | Expected result                                                           |
+| ---- | -------------------------------------------- | ------------------------------------------------------------------------- |
+| 1    | Two vendors, plain card                      | One provider payment, two orders, both fully paid                         |
+| 2    | Card with 3-D Secure                         | Payment succeeds after the challenge, no second confirmation              |
+| 3    | Three vendors                                | One payment, the sum of three shares, three orders                        |
+| 4    | Redirect payment method                      | Payment succeeds after the redirect                                       |
+| 5    | Production build of the storefront           | The buyer lands on the order confirmation and the cart is empty           |
+| 6    | Development build                            | The confirmation runs once and the buyer lands on the order confirmation  |
+| 7    | Declined card, then a valid card             | Failure on every share, then success on the same payment and transactions |
+| 8    | Reload the payment step several times        | No new provider payment and no new transactions                           |
+| 9    | Asynchronous method, such as a direct debit  | Pending on every share, then success, then orders                         |
+| 10   | Signed-in buyer, new card, save checked      | Payment succeeds and the card is saved for the buyer                      |
+| 11   | Signed-in buyer, saved card                  | Payment succeeds without the payment form                                 |
+| 12   | Guest                                        | No saved methods and no save checkbox; payment works                      |
+| 13   | Toggle the save checkbox off and on          | A second payment, then the first one again                                |
+| 14   | Declined saved card, then another saved card | Success on the same payment                                               |
+| 15   | Saved method of another customer             | The provider refuses the confirmation                                     |
 
 ## Limitations
 
 - Charge only.
 - A checkout changed after the provider payment exists can still be paid at the old amount.
 - A new attempt does not cancel the previous group payment.
-- Saved payment methods are not offered in a group.
 - Refunds and cancellations of a shared payment have no group-specific handling yet.

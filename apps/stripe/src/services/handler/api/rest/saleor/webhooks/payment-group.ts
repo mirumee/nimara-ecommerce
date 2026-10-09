@@ -29,6 +29,7 @@ import {
   sessionMetadata,
   transactionEventResponse,
 } from "./helpers";
+import { resolvePaymentCustomer } from "./payment-customer";
 
 type InitializeEvent = WebhookData<TransactionInitializeSessionSubscription>;
 
@@ -58,11 +59,23 @@ const toGroupCheckout = (
   userId: checkout.user?.id ?? null,
 });
 
-const getGroupIdempotencyKey = async (shares: GroupShare[]) => {
-  const value = shares
-    .map(({ amount, transactionId }) => `${transactionId}|${amount}`)
-    .sort()
-    .join(",");
+const getGroupIdempotencyKey = async ({
+  customerId,
+  saveForFutureUse,
+  shares,
+}: {
+  customerId: string | null;
+  saveForFutureUse: boolean;
+  shares: GroupShare[];
+}) => {
+  const value = [
+    shares
+      .map(({ amount, transactionId }) => `${transactionId}|${amount}`)
+      .sort()
+      .join(","),
+    customerId ?? "",
+    saveForFutureUse ? "save" : "",
+  ].join(";");
   const digest = await crypto.subtle.digest(
     "SHA-256",
     new TextEncoder().encode(value),
@@ -76,19 +89,23 @@ const leaderInitializeResponse = async ({
   event,
   gateway,
   leaderCents,
+  logger,
   paymentGroup,
   refuse,
   respond,
   saleorDomain,
+  saveForFutureUse,
 }: {
   config: PaymentGatewayConfig;
   event: InitializeEvent;
   gateway: StripeGateway;
   leaderCents: number;
+  logger: Logger;
   paymentGroup: LeaderRequest;
   refuse: (message: string) => Response;
   respond: (data: TransactionEventSchema) => Response;
   saleorDomain: string;
+  saveForFutureUse?: boolean;
 }): Promise<Response> => {
   const checkoutIds = [
     event.sourceObject.id,
@@ -165,11 +182,32 @@ const leaderInitializeResponse = async ({
     })),
   ];
 
+  const customer = await resolvePaymentCustomer({
+    channelSlug: event.sourceObject.channel.slug,
+    gateway,
+    logger,
+    saleorDomain,
+    saveForFutureUse,
+    transactionId: event.transaction.id,
+    user: event.sourceObject.user ?? null,
+  });
+
+  if (!customer.ok) {
+    return "refusal" in customer
+      ? refuse(customer.refusal)
+      : responseFromErrors(customer.errors);
+  }
+
   const intent = await gateway.createPaymentIntent({
     amount: sumGroupShares(shares),
     captureMethod: "automatic",
     currency: leader.currency,
-    idempotencyKey: await getGroupIdempotencyKey(shares),
+    customerId: customer.customerId,
+    idempotencyKey: await getGroupIdempotencyKey({
+      customerId: customer.customerId,
+      saveForFutureUse: customer.saveForFutureUse,
+      shares,
+    }),
     metadata: {
       ...sessionMetadata({
         channelSlug: event.sourceObject.channel.slug,
@@ -178,6 +216,7 @@ const leaderInitializeResponse = async ({
       }),
       ...toGroupShareMetadata(shares),
     },
+    saveForFutureUse: customer.saveForFutureUse,
   });
 
   if (!intent.ok) {
@@ -205,6 +244,7 @@ export const paymentGroupInitializeResponse = async ({
   logger,
   paymentGroup,
   saleorDomain,
+  saveForFutureUse,
 }: {
   config: PaymentGatewayConfig;
   event: InitializeEvent;
@@ -212,6 +252,7 @@ export const paymentGroupInitializeResponse = async ({
   logger: Logger;
   paymentGroup: PaymentGroupRequest | undefined;
   saleorDomain: string;
+  saveForFutureUse?: boolean;
 }): Promise<Response> => {
   const total = event.sourceObject.total.gross;
   const totalCents = getCentsFromAmount(total);
@@ -262,10 +303,12 @@ export const paymentGroupInitializeResponse = async ({
       event,
       gateway,
       leaderCents: totalCents,
+      logger,
       paymentGroup,
       refuse,
       respond,
       saleorDomain,
+      saveForFutureUse,
     });
   }
 

@@ -15,6 +15,7 @@ relations:
     - "[Stripe Payment Application](../integrations/INT-0005%20Stripe%20Payment%20Application.md)"
     - "[Saleor Commerce Backend](../integrations/INT-0006%20Saleor%20Commerce%20Backend.md)"
     - "[Marketplace Checkout Payment Orchestration](../integrations/INT-0007%20Marketplace%20Checkout%20Payment%20Orchestration.md)"
+    - "[Marketplace Payment Group Contract](../integrations/INT-0008%20Marketplace%20Payment%20Group%20Contract.md)"
 availability:
   since: "v1.0.0"
   deprecated_since: null
@@ -60,8 +61,12 @@ navigation clears the completed checkout state from the browser cookie in either
 
 # Constraints and failure behavior
 
-- Standard checkout uses the installable payment application; marketplace checkout uses a separate
-  marketplace payment-orchestration path with non-atomic per-checkout completion semantics.
+- Standard checkout uses the installable payment application. Marketplace checkout uses it too
+  when the deployment configures one, paying the vendor checkouts as one payment group; there an
+  authenticated shopper can pay with a saved method or save a new one, as in standard checkout.
+  Without a payment application, marketplace checkout uses the separate marketplace
+  payment-orchestration path with non-atomic per-checkout completion semantics and no saved
+  methods.
 - Missing or unreadable checkout state redirects the shopper to the cart. Invalid stock or an
   unavailable variant also returns the shopper to the cart with a reason.
 - Step selection is enforced against checkout completeness on every request, not only on entry. A

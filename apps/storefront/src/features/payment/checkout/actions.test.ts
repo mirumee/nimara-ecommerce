@@ -85,6 +85,7 @@ describe("actions", () => {
           { checkoutId: "co_c", transactionId: "tr_c" },
         ],
         id: "co_a",
+        saveForFutureUse: undefined,
       });
       expect(
         mocks.paymentGroupLeaderInitialize.mock.invocationCallOrder[0],
@@ -93,6 +94,34 @@ describe("actions", () => {
           ...mocks.paymentGroupFollowerInitialize.mock.invocationCallOrder,
         ),
       );
+    });
+
+    it("passes the save choice to the leader", async () => {
+      await initializeMarketplacePayment({
+        checkouts: CHECKOUTS,
+        saveForFutureUse: true,
+      });
+
+      expect(mocks.paymentGroupLeaderInitialize).toHaveBeenCalledWith(
+        expect.objectContaining({ saveForFutureUse: true }),
+      );
+      expect(mocks.paymentGroupFollowerInitialize).toHaveBeenCalledWith({
+        amount: 30,
+        id: "co_b",
+      });
+    });
+
+    it("passes the save choice to a single checkout", async () => {
+      await initializeMarketplacePayment({
+        checkouts: CHECKOUTS.slice(0, 1),
+        saveForFutureUse: true,
+      });
+
+      expect(mocks.paymentInitialize).toHaveBeenCalledWith({
+        amount: 15,
+        id: "co_a",
+        saveForFutureUse: true,
+      });
     });
 
     it("pays a single checkout with a plain payment", async () => {
@@ -104,6 +133,7 @@ describe("actions", () => {
       expect(mocks.paymentInitialize).toHaveBeenCalledWith({
         amount: 15,
         id: "co_a",
+        saveForFutureUse: undefined,
       });
       expect(mocks.paymentGroupLeaderInitialize).not.toHaveBeenCalled();
     });

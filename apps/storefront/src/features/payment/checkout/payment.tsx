@@ -45,6 +45,7 @@ export const Payment = ({
         errorCode={errorCode}
         formattedAddresses={formattedAddresses}
         marketplaceCheckouts={marketplaceCheckouts}
+        paymentGatewayMethods={paymentGatewayMethods}
         storeUrl={storeUrl}
         user={user}
       />

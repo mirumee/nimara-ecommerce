@@ -31,6 +31,7 @@ import {
   sessionMetadata,
   transactionEventResponse,
 } from "./helpers";
+import { resolvePaymentCustomer } from "./payment-customer";
 import {
   paymentGroupInitializeResponse,
   paymentGroupProcessResponse,
@@ -95,6 +96,7 @@ export const transactionInitializeSessionHandler = async (
       gateway,
       logger,
       paymentGroup: data.paymentGroup,
+      saveForFutureUse: data.saveForFutureUse,
       saleorDomain,
     });
   }
@@ -115,86 +117,28 @@ export const transactionInitializeSessionHandler = async (
       type: "TransactionInitializeSession",
     });
 
-  /**
-   * Saved payment methods exist only for signed-in shoppers: payments attach
-   * to their gateway user (payment history, fraud signals), saved methods
-   * are verified against it, and the save wish requires it.
-   */
-  let customerId: string | null = null;
+  const customer = await resolvePaymentCustomer({
+    channelSlug,
+    gateway,
+    logger,
+    paymentMethodId: data.paymentMethodId,
+    saleorDomain,
+    saveForFutureUse: data.saveForFutureUse,
+    transactionId: event.transaction.id,
+    user,
+  });
 
-  if (user) {
-    const customerResult = await container
-      .get("paymentMethodService")
-      .resolveCustomer({ channelSlug, saleorDomain, user });
-
-    if (customerResult.ok) {
-      customerId = customerResult.data;
-    } else {
-      // Failed resolution should not break the checkout.
-      logger.warning("Proceeding without a gateway user.", {
-        channelSlug,
-        errors: customerResult.errors,
-        transactionId: event.transaction.id,
-        userId: user.id,
-      });
-    }
-  }
-
-  if (data.paymentMethodId) {
-    // A saved method without a resolved owner cannot be verified.
-    if (!customerId) {
-      return failure(
-        user
-          ? "Could not resolve the customer for this payment."
-          : "Saved payment methods require a signed in customer.",
-      );
-    }
-
-    const paymentMethodResult = await gateway.retrievePaymentMethodCustomerId({
-      id: data.paymentMethodId,
-    });
-
-    if (!paymentMethodResult.ok) {
-      return responseFromErrors(paymentMethodResult.errors);
-    }
-
-    if (!paymentMethodResult.data) {
-      logger.warning("Payment attempted with an unknown payment method.", {
-        channelSlug,
-        paymentMethodId: data.paymentMethodId,
-        transactionId: event.transaction.id,
-        userId: user?.id,
-      });
-
-      return failure("Payment method does not exist.");
-    }
-
-    if (paymentMethodResult.data.customerId !== customerId) {
-      logger.warning("Payment attempted with a foreign payment method.", {
-        channelSlug,
-        paymentMethodId: data.paymentMethodId,
-        transactionId: event.transaction.id,
-        userId: user?.id,
-      });
-
-      return failure("Payment method does not belong to this customer.");
-    }
-  }
-
-  // Saving needs a gateway user.
-  if (data.saveForFutureUse && !customerId) {
-    logger.warning("Ignoring save for future use without a gateway user.", {
-      channelSlug,
-      transactionId: event.transaction.id,
-      userId: user?.id,
-    });
+  if (!customer.ok) {
+    return "refusal" in customer
+      ? failure(customer.refusal)
+      : responseFromErrors(customer.errors);
   }
 
   const intent = await gateway.createPaymentIntent({
     amount: getCentsFromAmount(event.sourceObject.total.gross),
     captureMethod: actionType === "CHARGE" ? "automatic" : "manual",
     currency: event.sourceObject.total.gross.currency,
-    customerId,
+    customerId: customer.customerId,
     metadata: sessionMetadata({
       channelSlug,
       extraMetadata: data.metadata,
@@ -202,7 +146,7 @@ export const transactionInitializeSessionHandler = async (
       transactionId: event.transaction.id,
     }),
     paymentMethodId: data.paymentMethodId,
-    saveForFutureUse: customerId ? data.saveForFutureUse : false,
+    saveForFutureUse: customer.saveForFutureUse,
     sharedPaymentToken: data.sharedPaymentToken,
     shipping: getIntentShipping(event.sourceObject.shippingAddress),
   });
