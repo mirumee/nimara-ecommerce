@@ -244,3 +244,12 @@ payment methods protocol.
 - A new payment-group attempt does not cancel the previous group PaymentIntent. A buyer who
   confirms both open payment forms before either charge lands pays twice and leaves the checkouts
   overcharged; the already-paid check only refuses a group created after a charge has landed.
+- Payment groups support charge only. A group request with an authorization action is refused,
+  so the channel that pays groups must use the `CHARGE` transaction flow strategy; a guest cannot
+  choose the action, because Saleor takes it from the channel. Authorization is not supported
+  because one PaymentIntent can be captured only once without multicapture, which covers cards
+  only and needs IC+ pricing, while Saleor requests a capture per vendor transaction: the first
+  capture would close the intent for every other vendor. Redirect methods such as iDEAL, BLIK,
+  and P24 cannot be captured later in any case. Capturing the whole group on the first request
+  would be possible, but one vendor's capture would then take every vendor's money, which is a
+  business decision rather than a technical one.
