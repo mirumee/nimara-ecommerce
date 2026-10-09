@@ -6,10 +6,12 @@ import {
   type SupportedStripeWebhookEventType,
 } from "./consts";
 import {
+  buildGatewayMetadata,
   getIntentDashboardUrl,
   isAppEvent,
   mapStatusToActionType,
   mapStripeEventToSaleorEvent,
+  omitReservedMetadata,
 } from "./event-mapping";
 
 const APP = {
@@ -298,6 +300,45 @@ describe("event-mapping", () => {
           status: "unknown_status" as never,
         }),
       ).toThrow();
+    });
+  });
+
+  describe("buildGatewayMetadata", () => {
+    it("keeps issuer and environment over passed metadata", () => {
+      expect(
+        buildGatewayMetadata({
+          ...APP,
+          metadata: {
+            [StripeMetaKey.ISSUER]: "other",
+            [StripeMetaKey.ENVIRONMENT]: "other",
+            [StripeMetaKey.CHANNEL_SLUG]: "default-channel",
+          } as Record<string, string>,
+        }),
+      ).toEqual({
+        [StripeMetaKey.CHANNEL_SLUG]: "default-channel",
+        [StripeMetaKey.ENVIRONMENT]: APP.environment,
+        [StripeMetaKey.ISSUER]: APP.appId,
+      });
+    });
+  });
+
+  describe("omitReservedMetadata", () => {
+    it("drops every reserved key and group share key", () => {
+      expect(
+        omitReservedMetadata({
+          ...Object.fromEntries(
+            Object.values(StripeMetaKey).map((key) => [key, "x"]),
+          ),
+          tx_0: "x",
+          tx_12: "x",
+          orderNote: "gift",
+          tx_note: "kept",
+        }),
+      ).toEqual({ orderNote: "gift", tx_note: "kept" });
+    });
+
+    it("returns an empty object without metadata", () => {
+      expect(omitReservedMetadata()).toEqual({});
     });
   });
 });

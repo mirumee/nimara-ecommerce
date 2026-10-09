@@ -68,10 +68,10 @@ ALLOWED_DOMAINS=*
 - **Description**: Where the app persists its settings. `file` writes them to a local JSON file; `edge` uses Vercel Edge Config. Defaults to `edge`.
 - **Example**: `file`
 
-**`CONFIG_FILE_PATH`**
+**`CONFIG_KEY`**
 
-- **Description**: `file` provider only. Path of the config file, relative to `apps/stripe`. Gitignored, and created owner-readable because it holds Stripe secret keys.
-- **Default**: `.saleor-app-config.json`
+- **Description**: Name of the stored config. The `file` provider writes it to `.<CONFIG_KEY>.json`, relative to `apps/stripe`, and creates it owner-readable because it holds Stripe secret keys. The `edge` provider stores it as the Edge Config item `<ENVIRONMENT>-<CONFIG_KEY>`. Git ignores the file only when the key ends with `-config`, as the default does.
+- **Default**: `nimara-config`
 
 **`VERCEL_TEAM_ID`**
 

@@ -142,6 +142,10 @@ export const emptyPaymentService = {
   methodList: async () => ok([]),
   methodProcess: async () => notConfigured("PAYMENT_METHOD_PROCESS_ERROR"),
   paymentExecute: async () => notConfigured("PAYMENT_EXECUTE_ERROR"),
+  paymentGroupFollowerInitialize: async () =>
+    notConfigured("TRANSACTION_INITIALIZE_ERROR"),
+  paymentGroupLeaderInitialize: async () =>
+    notConfigured("TRANSACTION_INITIALIZE_ERROR"),
   paymentInitialize: async () => notConfigured("TRANSACTION_INITIALIZE_ERROR"),
   paymentProcess: async () => notConfigured("PAYMENT_PROCESSING_ERROR"),
 } satisfies StripePaymentService;

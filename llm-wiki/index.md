@@ -40,6 +40,7 @@ okf_version: "0.1"
 - [IMP-0004 Checkout Step Guard Enforcement](tech/implementation/IMP-0004%20Checkout%20Step%20Guard%20Enforcement.md) - Checkout step selection is enforced against completeness on every request, so a step reached by URL cannot skip earlier steps or open a gateway transaction.
 - [IMP-0005 Daily GitHub Summary Bot](tech/implementation/IMP-0005%20Daily%20GitHub%20Summary%20Bot.md) - Adds a scheduled GitHub Actions job that posts a pre-daily repository summary to a Slack Incoming Webhook, covering merged pull requests, the review queue, failed CI on main, and issue and release activity.
 - [IMP-0006 Daily Summary Claude Comment](tech/implementation/IMP-0006%20Daily%20Summary%20Claude%20Comment.md) - Adds an optional Claude-written comment above the sections of the daily GitHub summary posted to Slack, trimmed to titles and counts before the request and degraded to no comment on any failure.
+- [IMP-0007 Marketplace Group Payment Through The Stripe App](tech/implementation/IMP-0007%20Marketplace%20Group%20Payment%20Through%20The%20Stripe%20App.md) - One Stripe PaymentIntent for every vendor checkout of a marketplace order.
 
 # Current Product State
 
@@ -72,6 +73,7 @@ okf_version: "0.1"
 - [INT-0005 Stripe Payment Application](product/integrations/INT-0005%20Stripe%20Payment%20Application.md) - Standard-checkout PaymentIntent configuration, transaction webhooks, and asynchronous state reporting.
 - [INT-0006 Saleor Commerce Backend](product/integrations/INT-0006%20Saleor%20Commerce%20Backend.md) - Core commerce state through GraphQL, application, and webhook contracts.
 - [INT-0007 Marketplace Checkout Payment Orchestration](product/integrations/INT-0007%20Marketplace%20Checkout%20Payment%20Orchestration.md) - One platform payment across multiple vendor checkouts with asynchronous order completion.
+- [INT-0008 Marketplace Payment Group Contract](product/integrations/INT-0008%20Marketplace%20Payment%20Group%20Contract.md) - What a payment app implements so one payment funds every vendor checkout.
 
 # Product Strategy
 
@@ -131,6 +133,7 @@ okf_version: "0.1"
 - [ADR-0001 Vouchers Are Disabled In Marketplace Checkout](tech/ADR/ADR-0001%20Vouchers%20Are%20Disabled%20In%20Marketplace%20Checkout.md) - Why promo codes are hidden in marketplace mode and what answering the platform-versus-vendor discount question would require.
 - [ADR-0002 Payment Application Configuration Storage Is Selectable](tech/ADR/ADR-0002%20Payment%20Application%20Configuration%20Storage%20Is%20Selectable.md) - Why storage sits behind one seam, why a deployment keeps the hosted store, and what accepting an on-disk developer store costs.
 - [ADR-0003 CodeceptJS Is The End-To-End Test Engine](tech/ADR/ADR-0003%20CodeceptJS%20Is%20The%20End-To-End%20Test%20Engine.md) - CodeceptJS replaces Playwright as the only end-to-end engine in apps/automated-tests. The Playwright library stays as the browser driver, and the deleted Playwright coverage is not ported.
+- [ADR-0004 Marketplace Checkouts Pay As One Group Through The Payment Application](tech/ADR/ADR-0004%20Marketplace%20Checkouts%20Pay%20As%20One%20Group%20Through%20The%20Payment%20Application.md) - One payment group per marketplace order, created after every checkout registers.
 
 # Technology RFC
 

@@ -25,6 +25,11 @@ PaymentIntent for the sum, records the provider reference against each checkout,
 signed payment-success event into a charged transaction and checkout-completion attempt for every
 checkout.
 
+The storefront uses this contract only when it has no payment application configured. With one, it
+pays the same checkouts as a payment group through the installable
+[Stripe Payment Application](INT-0005%20Stripe%20Payment%20Application.md) and never calls the
+marketplace payment routes.
+
 This is not the installable [Stripe Payment Application](INT-0005%20Stripe%20Payment%20Application.md)
 used by standard storefront checkout. It calls Stripe and Saleor from the marketplace application
 instead of implementing Saleor's payment-app session webhooks. It is also separate from
@@ -62,6 +67,11 @@ later ledger and payout-batch operations.
    that is not already charged, completes that checkout into an order, and best-effort links returned
    order identifiers to the Stripe charge for later ledger reconciliation.
 6. Other Stripe event types are acknowledged without changing checkout or order state.
+7. A payment-success event for a PaymentIntent that carries neither the checkout identifiers nor the
+   per-checkout amounts is acknowledged and skipped. Such an intent was created by another
+   integration on the same Stripe account, such as the
+   [Stripe Payment Application](INT-0005%20Stripe%20Payment%20Application.md). An intent that carries
+   only one of the two is still rejected as malformed.
 
 # Failure handling and idempotency
 

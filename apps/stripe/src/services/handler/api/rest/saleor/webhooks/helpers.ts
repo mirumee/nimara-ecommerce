@@ -12,6 +12,7 @@ import {
   buildGatewayMetadata,
   getIntentDashboardUrl,
   mapStatusToActionType,
+  omitReservedMetadata,
 } from "@/domain/event-mapping";
 import {
   type TransactionEventSchema,
@@ -75,7 +76,12 @@ export const sessionMetadata = ({
   return buildGatewayMetadata({
     appId: config.APP_ID,
     environment: config.ENVIRONMENT,
-    metadata: { saleorDomain, transactionId, channelSlug, ...extraMetadata },
+    metadata: {
+      ...omitReservedMetadata(extraMetadata),
+      saleorDomain,
+      transactionId,
+      channelSlug,
+    },
   });
 };
 

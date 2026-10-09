@@ -9,6 +9,7 @@ import { clientEnvs } from "@/envs/client";
 import { createAddressAction } from "@/foundation/address/create-address-action";
 import { updateCheckoutAddressAction } from "@/foundation/checkout/actions/update-checkout-address-action";
 import { storefrontLogger } from "@/services/logging";
+import { getServiceRegistry } from "@/services/registry";
 import { getAccessToken } from "@/services/tokens";
 
 import { type PaymentSchema } from "./schema";
@@ -173,3 +174,70 @@ export const initializeMarketplacePaymentIntent = async ({
     return err([{ code: "GENERIC_PAYMENT_ERROR" }]);
   }
 };
+
+type MarketplaceCheckoutPayment = {
+  amount: number;
+  checkoutId: string;
+  currency: string;
+};
+
+const initializeMarketplaceGroupPayment = async (
+  checkouts: MarketplaceCheckoutPayment[],
+): AsyncResult<{ clientSecret: string; publishableKey: string }> => {
+  const [leader, ...followers] = checkouts;
+
+  if (!leader) {
+    return err([{ code: "GENERIC_PAYMENT_ERROR" }]);
+  }
+
+  const services = await getServiceRegistry();
+  const paymentService = await services.getPaymentService();
+  const followerResults = await Promise.all(
+    followers.map(({ amount, checkoutId }) =>
+      paymentService.paymentGroupFollowerInitialize({ amount, id: checkoutId }),
+    ),
+  );
+  const followerTransactions = [];
+
+  for (const [index, result] of followerResults.entries()) {
+    if (!result.ok) {
+      return result;
+    }
+
+    followerTransactions.push({
+      checkoutId: followers[index].checkoutId,
+      transactionId: result.data.id,
+    });
+  }
+
+  const session = followerTransactions.length
+    ? await paymentService.paymentGroupLeaderInitialize({
+        amount: leader.amount,
+        followers: followerTransactions,
+        id: leader.checkoutId,
+      })
+    : await paymentService.paymentInitialize({
+        amount: leader.amount,
+        id: leader.checkoutId,
+      });
+
+  if (!session.ok) {
+    return session;
+  }
+
+  return ok({
+    clientSecret: session.data.providerData.clientSecret,
+    publishableKey: session.data.gatewayConfig.publishableKey,
+  });
+};
+
+export const initializeMarketplacePayment = async ({
+  buyerId,
+  checkouts,
+}: {
+  buyerId?: string;
+  checkouts: MarketplaceCheckoutPayment[];
+}) =>
+  clientEnvs.PAYMENT_APP_ID
+    ? initializeMarketplaceGroupPayment(checkouts)
+    : initializeMarketplacePaymentIntent({ buyerId, checkouts });

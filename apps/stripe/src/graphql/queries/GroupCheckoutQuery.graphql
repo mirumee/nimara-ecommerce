@@ -1,0 +1,37 @@
+query GroupCheckoutQuery($id: ID!) {
+  checkout(id: $id) {
+    id
+    email
+    authorizeStatus
+    chargeStatus
+    channel {
+      slug
+    }
+    user {
+      id
+    }
+    totalPrice {
+      gross {
+        ...MoneyFragment
+      }
+    }
+    transactions {
+      id
+      pspReference
+      chargedAmount {
+        ...MoneyFragment
+      }
+      createdBy {
+        ... on App {
+          id
+        }
+      }
+      events {
+        type
+        amount {
+          ...MoneyFragment
+        }
+      }
+    }
+  }
+}

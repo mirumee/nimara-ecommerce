@@ -5,6 +5,8 @@ import { saleorUrlFromDomain } from "@nimara/lib/saleor/url";
 
 import {
   AppIdQueryDocument,
+  type GroupCheckoutQuery,
+  GroupCheckoutQueryDocument,
   type MetadataInput,
   type TransactionEventReportMutation,
   TransactionEventReportMutationDocument,
@@ -36,6 +38,20 @@ export const saleorClient =
       }
 
       return ok(result.data.app?.id ?? null);
+    };
+
+    const getGroupCheckout = async (
+      id: string,
+    ): AsyncResult<GroupCheckoutQuery["checkout"]> => {
+      const result = await client.execute(GroupCheckoutQueryDocument, {
+        variables: { id },
+      });
+
+      if (!result.ok) {
+        return result;
+      }
+
+      return ok(result.data.checkout);
     };
 
     const transactionReport = async (
@@ -76,6 +92,7 @@ export const saleorClient =
     return {
       execute: client.execute,
       getAppId,
+      getGroupCheckout,
       transactionReport,
       updateUserPrivateMetadata,
     };

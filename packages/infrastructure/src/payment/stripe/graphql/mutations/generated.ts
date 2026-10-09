@@ -17,6 +17,7 @@ export type TransactionInitializeMutationVariables = Types.Exact<{
   data?: Types.InputMaybe<Types.Scalars['JSON']['input']>;
   amount?: Types.InputMaybe<Types.Scalars['PositiveDecimal']['input']>;
   gatewayAppId: Types.Scalars['String']['input'];
+  idempotencyKey?: Types.InputMaybe<Types.Scalars['String']['input']>;
 }>;
 
 
@@ -63,10 +64,11 @@ export class TypedDocumentString<TResult, TVariables>
 }
 
 export const TransactionInitializeMutationDocument = new TypedDocumentString(`
-    mutation TransactionInitializeMutation($id: ID!, $data: JSON, $amount: PositiveDecimal, $gatewayAppId: String!) {
+    mutation TransactionInitializeMutation($id: ID!, $data: JSON, $amount: PositiveDecimal, $gatewayAppId: String!, $idempotencyKey: String) {
   transactionInitialize(
     id: $id
     amount: $amount
+    idempotencyKey: $idempotencyKey
     paymentGateway: {id: $gatewayAppId, data: $data}
   ) {
     transaction {

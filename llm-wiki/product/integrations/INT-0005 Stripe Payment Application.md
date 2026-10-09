@@ -25,7 +25,9 @@ initialization, creates or updates PaymentIntents for transaction sessions, capt
 funds on request, and reports asynchronous Stripe state changes back to the originating Saleor
 transaction. It is also the sole owner of the customer's stored payment methods: it holds the
 gateway credentials, resolves the gateway customer for a Saleor user, and serves Saleor's stored
-payment methods protocol.
+payment methods protocol. It implements the
+[Marketplace Payment Group Contract](INT-0008%20Marketplace%20Payment%20Group%20Contract.md), so
+one PaymentIntent can pay every vendor checkout of a marketplace order.
 
 # Tenancy
 
@@ -80,6 +82,9 @@ payment methods protocol.
   instance cannot be replayed against this tenant.
 - Each Stripe webhook verifies `stripe-signature` over the raw request body with the secret assigned
   to its route's channel before reporting an event to Saleor.
+- Group payments need no extra permission: `HANDLE_PAYMENTS` is enough to read a checkout and its
+  transactions. Any allowed commerce domain can start a group payment; there is no separate switch
+  for it in the application.
 
 # Events and operations
 
@@ -92,12 +97,41 @@ payment methods protocol.
    flag, a shared payment token, and extra metadata, and discards everything else. It resolves the
    gateway customer from the Saleor user on the source object — never from caller input — and
    rejects a stored payment method that belongs to a different customer.
+   Extra metadata cannot set the keys the application routes and attributes events by: the commerce
+   domain, transaction, channel, issuer, environment, user, payment-group, and `tx_<n>` keys are
+   dropped from caller metadata, and the application's own values always win.
+   A caller that sends a payment group joins one PaymentIntent shared by several checkouts. Every
+   allowed commerce domain can do so. A group member that is not the leader gets no PaymentIntent:
+   its transaction is answered `CHARGE_ACTION_REQUIRED` with the checkout total and no provider
+   reference, which it receives later from the group's payment events. A group request is refused
+   as a failure event when it is malformed, asks for anything other than a charge, or names an
+   amount other than the checkout total.
+   The group leader is initialized last and names every other member's checkout and transaction.
+   Before any PaymentIntent exists, the application reads each checkout from Saleor and refuses the
+   group unless every checkout shares the leader's channel, currency, customer, and e-mail, none is
+   already charged or authorized, and each named transaction belongs to its checkout, was created by
+   this application, carries no provider reference or charge, and awaits exactly the checkout's
+   current total. It then creates one automatically captured PaymentIntent for the sum of the
+   shares, without a gateway customer, and lists every share in its metadata. The provider
+   idempotency key is derived from the shares, so a repeated leader request for the same
+   transactions and amounts returns the same intent. The leader is answered with its own share as
+   the amount and the client secret for the whole intent.
 3. `TRANSACTION_PROCESS_SESSION` updates an existing PaymentIntent when event data is present or
-   retrieves it otherwise, then maps provider state to Saleor's requested action.
+   retrieves it otherwise, then maps provider state to Saleor's requested action. Caller metadata is
+   filtered the same way as on initialization. A transaction with no provider reference stays
+   `ACTION_REQUIRED` for its requested amount, without a provider call. A group PaymentIntent is
+   never updated from caller data: each member is answered with its own share and the intent's
+   state, and a transaction outside the group's shares stays `ACTION_REQUIRED`.
 4. `TRANSACTION_CHARGE_REQUESTED` captures a manually authorized PaymentIntent and returns a charge
    result when Stripe reaches a terminal charge state.
 5. Stripe PaymentIntent and refund webhooks map supported provider events into Saleor transaction
    reports, including available next actions and the provider reference.
+   A PaymentIntent marked as a payment group lists one share per Saleor transaction in its metadata,
+   as `tx_<n> = <transaction ID>|<amount in minor units>`. A success, processing, failure, or
+   cancellation event is reported to every listed transaction with that share's amount and the
+   shared provider reference, never with the PaymentIntent total. Only a charged share offers a
+   refund action; no other share offers an action, so one transaction cannot cancel the PaymentIntent
+   for the whole group. Other event types are acknowledged without a report.
 6. Channel configuration installs one Stripe webhook endpoint per provider account, not per channel.
    Channels resolving to the same provider secret key share that endpoint and each stores its
    provider webhook ID and signing secret; an installation whose channels span two provider accounts
@@ -156,6 +190,12 @@ payment methods protocol.
   application does not persist a webhook-event inbox. Duplicate-delivery safety therefore depends
   on the upstream transaction contract and the provider operations rather than a local deduplication
   record.
+- A payment-group event whose shares are malformed or do not add up to the event amount reports
+  nothing and is acknowledged, because a redelivery cannot correct it; it is logged as an error.
+  Shares are reported in parallel. A share Saleor refuses is logged as an error and the others are
+  still reported. Only a share that cannot reach Saleor makes the response fail, so the provider
+  redelivers the event; Saleor deduplicates the shares that already landed by transaction, provider
+  reference, and event type.
 
 # Limitations
 
@@ -198,3 +238,20 @@ payment methods protocol.
   the only one under operator control.
 - A session that reports no gateway key or no client secret fails where it is opened, not where
   the SDK is loaded. Consumers of a session treat both as present.
+- The PaymentIntent amount is fixed when the payment session is initialized. If the checkout
+  changes afterwards, for example in another browser tab, the open payment form still confirms the
+  old amount: the storefront calls process only after confirmation and without client data, so
+  nothing updates the intent or blocks confirmation. A customer who leaves the payment step and
+  returns to it starts a new initialization and receives a new intent.
+- A new payment-group attempt does not cancel the previous group PaymentIntent. A buyer who
+  confirms both open payment forms before either charge lands pays twice and leaves the checkouts
+  overcharged; the already-paid check only refuses a group created after a charge has landed.
+- Payment groups support charge only. A group request with an authorization action is refused,
+  so the channel that pays groups must use the `CHARGE` transaction flow strategy; a guest cannot
+  choose the action, because Saleor takes it from the channel. Authorization is not supported
+  because one PaymentIntent can be captured only once without multicapture, which covers cards
+  only and needs IC+ pricing, while Saleor requests a capture per vendor transaction: the first
+  capture would close the intent for every other vendor. Redirect methods such as iDEAL, BLIK,
+  and P24 cannot be captured later in any case. Capturing the whole group on the first request
+  would be possible, but one vendor's capture would then take every vendor's money, which is a
+  business decision rather than a technical one.

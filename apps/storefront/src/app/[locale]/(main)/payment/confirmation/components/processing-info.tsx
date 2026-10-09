@@ -32,16 +32,25 @@ export const ProcessingInfo = ({
   const [errors, setErrors] = useState<{ code: AppErrorCode }[]>([]);
   const [isTimeExceeded, setIsTimeExceeded] = useState(false);
   const pollRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const inFlightRef = useRef<Promise<ProcessPaymentResult> | null>(null);
 
   useTimeout(() => setIsTimeExceeded(true), TIME_EXCEEDED_MS);
 
   useEffect(() => {
     let isCancelled = false;
 
+    const processPayment = () => {
+      inFlightRef.current ??= processPaymentAction({ searchParams }).finally(
+        () => {
+          inFlightRef.current = null;
+        },
+      );
+
+      return inFlightRef.current;
+    };
+
     const tick = async () => {
-      const result: ProcessPaymentResult = await processPaymentAction({
-        searchParams,
-      });
+      const result = await processPayment();
 
       if (isCancelled) {
         return;

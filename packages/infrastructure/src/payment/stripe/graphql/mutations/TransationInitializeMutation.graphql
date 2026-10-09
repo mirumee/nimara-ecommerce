@@ -3,10 +3,12 @@ mutation TransactionInitializeMutation(
   $data: JSON
   $amount: PositiveDecimal
   $gatewayAppId: String!
+  $idempotencyKey: String
 ) {
   transactionInitialize(
     id: $id
     amount: $amount
+    idempotencyKey: $idempotencyKey
     paymentGateway: { id: $gatewayAppId, data: $data }
   ) {
     transaction {

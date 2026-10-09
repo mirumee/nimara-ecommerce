@@ -41,6 +41,7 @@ export const stripeGateway = ({
       captureMethod: CaptureMethod;
       currency: string;
       customerId?: string | null;
+      idempotencyKey?: string;
       metadata: Record<string, string>;
       paymentMethodId?: string;
       saveForFutureUse?: boolean;
@@ -50,28 +51,33 @@ export const stripeGateway = ({
       const result = await withStripeError({
         logger,
         fn: () =>
-          stripe.paymentIntents.create({
-            amount: opts.amount,
-            automatic_payment_methods: { enabled: true },
-            capture_method: opts.captureMethod,
-            currency: opts.currency,
-            ...(opts.shipping && { shipping: opts.shipping }),
-            metadata: opts.metadata,
-            ...(opts.customerId && { customer: opts.customerId }),
-            ...(opts.paymentMethodId && {
-              payment_method: opts.paymentMethodId,
-            }),
-            ...(opts.saveForFutureUse && {
-              setup_future_usage: STRIPE_SETUP_USAGE,
-            }),
-            /**
-             * An agent-granted credential from Stripe's agentic commerce
-             * preview, which the agentic checkout flow completes with.
-             */
-            ...(opts.sharedPaymentToken && {
-              shared_payment_token: opts.sharedPaymentToken,
-            }),
-          }),
+          stripe.paymentIntents.create(
+            {
+              amount: opts.amount,
+              automatic_payment_methods: { enabled: true },
+              capture_method: opts.captureMethod,
+              currency: opts.currency,
+              ...(opts.shipping && { shipping: opts.shipping }),
+              metadata: opts.metadata,
+              ...(opts.customerId && { customer: opts.customerId }),
+              ...(opts.paymentMethodId && {
+                payment_method: opts.paymentMethodId,
+              }),
+              ...(opts.saveForFutureUse && {
+                setup_future_usage: STRIPE_SETUP_USAGE,
+              }),
+              /**
+               * An agent-granted credential from Stripe's agentic commerce
+               * preview, which the agentic checkout flow completes with.
+               */
+              ...(opts.sharedPaymentToken && {
+                shared_payment_token: opts.sharedPaymentToken,
+              }),
+            },
+            opts.idempotencyKey
+              ? { idempotencyKey: opts.idempotencyKey }
+              : undefined,
+          ),
       });
 
       return result.ok ? ok(toPaymentIntent(result.data)) : result;

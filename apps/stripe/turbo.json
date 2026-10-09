@@ -19,7 +19,6 @@
         "BASE_PATH",
         "ALLOWED_DOMAINS",
         "CONFIG_PROVIDER",
-        "CONFIG_FILE_PATH",
         "CONFIG_KEY",
         "VERCEL_EDGE_CONFIG_ID",
         "SENTRY_DSN",
