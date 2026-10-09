@@ -206,7 +206,7 @@ key stays the same, and removes it once no channel uses that key anymore.
 
 > **Upgrading from the per-channel configuration:** the stored config changed
 > shape and is not migrated. Clear the app's stored config
-> (`CONFIG_FILE_PATH`, default `.saleor-app-config.json`, for
+> (`.<CONFIG_KEY>.json`, default `.nimara-config.json`, for
 > `CONFIG_PROVIDER=file`; the Edge Config item for `edge`), reinstall the app,
 > and enter the keys once.
 

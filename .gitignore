@@ -56,7 +56,7 @@ yarn-error.log*
 !.env.example
 
 # Saleor app config store for CONFIG_PROVIDER=file — holds tokens and secret keys
-.*app-config*.json
+.*-config.json
 
 # turbo
 .turbo
