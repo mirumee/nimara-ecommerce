@@ -1,11 +1,11 @@
-import { storeHeaders, timeout_seconds } from "./data/constants";
+import { storeHeaders, timeoutSeconds } from "./data/constants";
 
 Feature("Login");
 
 Scenario(
   "Login - positive, credentials from .env file",
   async ({ I, loginPage }) => {
-    loginPage.enter_login_page();
-    loginPage.login_as_user(timeout_seconds);
+    loginPage.enterLoginPage();
+    loginPage.loginAsUser(timeoutSeconds);
   },
 );

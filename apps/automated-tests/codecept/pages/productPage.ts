@@ -5,7 +5,7 @@ import { URLS } from "../data/constants";
 const { I } = inject();
 
 export default {
-  add_example_tshirt_to_cart(timeout: number) {
+  addExampleClothingToCart(timeout: number) {
     I.waitForVisible({ role: "radio", name: "L" }, timeout);
     I.click({ role: "radio", name: "L" });
     I.waitForVisible({ role: "combobox", name: "Variant select" }, timeout);
@@ -15,7 +15,7 @@ export default {
     I.waitForCookie("checkout", timeout);
   },
 
-  add_black_sand_to_cart(timeout: number) {
+  addMusicRecordToCart(timeout: number) {
     I.waitForVisible({ role: "radio", name: "Vinyl" }, timeout);
     I.waitForVisible({ role: "combobox", name: "Variant select" }, timeout);
     I.click({ role: "combobox", name: "Variant select" });
@@ -24,7 +24,7 @@ export default {
     I.waitForCookie("checkout", timeout);
   },
 
-  click_go_to_bag_popup(timeout: number) {
+  clickGoToBagPopup(timeout: number) {
     I.waitForVisible({ role: "link", name: "Go to bag" }, timeout);
     I.waitForFunction(
       // waiting for the animation to finish before clicking
@@ -47,7 +47,7 @@ export default {
     I.click({ role: "link", name: "Go to bag" });
   },
 
-  go_to_bag(timeout: number) {
+  goToBag(timeout: number) {
     I.click({ role: "link", name: /Items in cart/ as unknown as string });
     I.waitInUrl(URLS.CART_PAGE, timeout);
   },

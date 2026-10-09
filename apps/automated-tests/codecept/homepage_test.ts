@@ -1,13 +1,13 @@
 Feature("Homepage");
 
-Before(({ homepage }) => {
-  homepage.open();
+Before(({ homepagePage }) => {
+  homepagePage.enterPage();
 });
 
-Scenario("Homepage loads with its product carousel", ({ homepage }) => {
-  homepage.seeStorefrontLoaded();
+Scenario("Homepage loads with its product carousel", ({ homepagePage }) => {
+  homepagePage.seeStorefrontLoaded();
 });
 
-Scenario("Explore products opens the product listing", ({ homepage }) => {
-  homepage.openProductListing();
+Scenario("Explore products opens the product listing", ({ homepagePage }) => {
+  homepagePage.openProductListing();
 });

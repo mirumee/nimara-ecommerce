@@ -24,7 +24,6 @@ export const config = {
     },
   },
   include: {
-    homepage: "./codecept/pages/homepage.ts",
     homepagePage: "./codecept/pages/homepagePage.ts",
     productPage: "./codecept/pages/productPage.ts",
     checkoutPage: "./codecept/pages/checkoutPage.ts",
