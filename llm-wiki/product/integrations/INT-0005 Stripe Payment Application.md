@@ -112,9 +112,12 @@ one PaymentIntent can pay every vendor checkout of a marketplace order.
    already charged or authorized, and each named transaction belongs to its checkout, was created by
    this application, carries no provider reference or charge, and awaits exactly the checkout's
    current total. It then creates one automatically captured PaymentIntent for the sum of the
-   shares, without a gateway customer, and lists every share in its metadata. The provider
-   idempotency key is derived from the shares, so a repeated leader request for the same
-   transactions and amounts returns the same intent. The leader is answered with its own share as
+   shares and lists every share in its metadata. For a signed-in buyer the intent carries the
+   gateway customer, resolved the same way as for a single checkout, and is set up for future use
+   when the buyer asks to save a new method. A saved method is not bound at this point; the
+   storefront names it when it confirms, and Stripe refuses one that belongs to another customer.
+   The provider idempotency key is derived from the shares, the customer, and the save choice, so
+   a repeated leader request for the same transactions and choices returns the same intent. The leader is answered with its own share as
    the amount and the client secret for the whole intent.
 3. `TRANSACTION_PROCESS_SESSION` updates an existing PaymentIntent when event data is present or
    retrieves it otherwise, then maps provider state to Saleor's requested action. Caller metadata is
