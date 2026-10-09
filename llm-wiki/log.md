@@ -750,3 +750,4 @@
 - **Create**: Added ADR-0004 as `accepted` for paying marketplace checkouts as one payment group through the payment application.
 - **Create**: Added INT-0008 as a `candidate` provider-neutral contract for marketplace payment groups.
 - **Maintenance**: Updated INT-0005, INT-0007, and FLOW-0004 for the payment-group path, the reserved metadata keys, and the charge-only limit.
+- **Create**: Added IMP-0007 as `in_progress` for the marketplace group payment, tracing PR #849.

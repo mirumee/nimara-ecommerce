@@ -40,6 +40,7 @@ okf_version: "0.1"
 - [IMP-0004 Checkout Step Guard Enforcement](tech/implementation/IMP-0004%20Checkout%20Step%20Guard%20Enforcement.md) - Checkout step selection is enforced against completeness on every request, so a step reached by URL cannot skip earlier steps or open a gateway transaction.
 - [IMP-0005 Daily GitHub Summary Bot](tech/implementation/IMP-0005%20Daily%20GitHub%20Summary%20Bot.md) - Adds a scheduled GitHub Actions job that posts a pre-daily repository summary to a Slack Incoming Webhook, covering merged pull requests, the review queue, failed CI on main, and issue and release activity.
 - [IMP-0006 Daily Summary Claude Comment](tech/implementation/IMP-0006%20Daily%20Summary%20Claude%20Comment.md) - Adds an optional Claude-written comment above the sections of the daily GitHub summary posted to Slack, trimmed to titles and counts before the request and degraded to no comment on any failure.
+- [IMP-0007 Marketplace Group Payment Through The Stripe App](tech/implementation/IMP-0007%20Marketplace%20Group%20Payment%20Through%20The%20Stripe%20App.md) - One Stripe PaymentIntent for every vendor checkout of a marketplace order.
 
 # Current Product State
 
