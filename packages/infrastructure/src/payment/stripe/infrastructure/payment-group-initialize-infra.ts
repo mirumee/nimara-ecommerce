@@ -40,7 +40,7 @@ const initializeGroupTransaction = async ({
   amount: number;
   data: unknown;
   id: string;
-  idempotencyKey?: string;
+  idempotencyKey: string;
 }) => {
   const result = await graphqlClient(apiURI).execute(
     TransactionInitializeMutationDocument,
@@ -115,7 +115,7 @@ export const paymentGroupFollowerInitializeInfra =
 
 export const paymentGroupLeaderInitializeInfra =
   (config: PaymentServiceConfig): StripePaymentGroupLeaderInitializeInfra =>
-  async ({ amount, followers, id, paymentMethodId, saveForFutureUse }) => {
+  async ({ amount, followers, id, saveForFutureUse }) => {
     const followerTransactionIds = followers
       .map(({ transactionId }) => transactionId)
       .sort()
@@ -125,15 +125,12 @@ export const paymentGroupLeaderInitializeInfra =
       amount,
       data: {
         paymentGroup: { role: "leader", followers },
-        ...(paymentMethodId && { paymentMethodId }),
         ...(saveForFutureUse && { saveForFutureUse }),
       },
       id,
-      idempotencyKey: paymentMethodId
-        ? undefined
-        : `payment-group-leader-${await sha256(
-            `${id}|${amount}|${followerTransactionIds}|${saveForFutureUse ? "save" : ""}`,
-          )}`,
+      idempotencyKey: `payment-group-leader-${await sha256(
+        `${id}|${amount}|${followerTransactionIds}|${saveForFutureUse ? "save" : ""}`,
+      )}`,
     });
 
     if (!result.ok) {

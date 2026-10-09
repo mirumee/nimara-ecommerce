@@ -133,8 +133,7 @@ export const MarketplacePayment = ({
 
   const shouldSaveForFutureUse = canSaveForFutureUse && !!saveForFutureUse;
   const isAddingNewPaymentMethod = paymentMethodTab === "new";
-  const isReady = isAddingNewPaymentMethod ? !!initializeData : true;
-  const isLoading = !isReady || isProcessing;
+  const isLoading = !initializeData || !transactionData || isProcessing;
   const canProceed =
     !isLoading && (isAddingNewPaymentMethod ? isMounted : !!paymentMethod);
 
@@ -159,31 +158,16 @@ export const MarketplacePayment = ({
     [intentCheckouts, shouldSaveForFutureUse, user?.id],
   );
 
-  const resolveTransactionData = async ({ paymentMethod }: PaymentSchema) => {
-    if (isAddingNewPaymentMethod || !paymentMethod) {
-      return transactionData;
-    }
-
-    const result = await initializeMarketplacePayment({
-      buyerId: user?.id,
-      checkouts: intentCheckouts,
-      paymentMethodId: paymentMethod,
-      saveForFutureUse: false,
-    });
-
-    if (!result.ok) {
-      setErrors(result.errors.map(({ code }) => code));
-      router.refresh();
-
-      return undefined;
-    }
-
-    return {
-      gatewayConfig: { publishableKey: result.data.publishableKey },
-      providerData: { clientSecret: result.data.clientSecret },
-      sessionId: `${intentKey}:${paymentMethod}`,
-    };
-  };
+  const resolveTransactionData = async ({ paymentMethod }: PaymentSchema) =>
+    !isAddingNewPaymentMethod && paymentMethod && transactionData
+      ? {
+          ...transactionData,
+          providerData: {
+            ...transactionData.providerData,
+            paymentMethodId: paymentMethod,
+          },
+        }
+      : transactionData;
 
   const handlePlaceOrder = usePaymentSubmit({
     checkout,
@@ -208,7 +192,7 @@ export const MarketplacePayment = ({
     latestIntentKeyRef.current = intentKey;
 
     void (async () => {
-      if (!intentKey || !isAddingNewPaymentMethod) {
+      if (!intentKey) {
         return;
       }
 
@@ -264,13 +248,13 @@ export const MarketplacePayment = ({
         sessionId: intentKey,
       });
     })();
-  }, [
-    intentCheckouts,
-    intentKey,
-    isAddingNewPaymentMethod,
-    shouldSaveForFutureUse,
-    user?.id,
-  ]);
+  }, [intentCheckouts, intentKey, shouldSaveForFutureUse, user?.id]);
+
+  useEffect(() => {
+    if (!canSaveForFutureUse) {
+      form.setValue("saveForFutureUse", false);
+    }
+  }, [canSaveForFutureUse, form]);
 
   useEffect(() => {
     if (isAddingNewPaymentMethod) {

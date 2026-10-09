@@ -96,7 +96,6 @@ export const transactionInitializeSessionHandler = async (
       gateway,
       logger,
       paymentGroup: data.paymentGroup,
-      paymentMethodId: data.paymentMethodId,
       saveForFutureUse: data.saveForFutureUse,
       saleorDomain,
     });

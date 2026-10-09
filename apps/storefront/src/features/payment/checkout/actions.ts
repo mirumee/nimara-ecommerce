@@ -182,13 +182,11 @@ type MarketplaceCheckoutPayment = {
 };
 
 type MarketplacePaymentChoices = {
-  paymentMethodId?: string | null;
   saveForFutureUse?: boolean | null;
 };
 
 const initializeMarketplaceGroupPayment = async ({
   checkouts,
-  paymentMethodId,
   saveForFutureUse,
 }: MarketplacePaymentChoices & {
   checkouts: MarketplaceCheckoutPayment[];
@@ -224,13 +222,11 @@ const initializeMarketplaceGroupPayment = async ({
         amount: leader.amount,
         followers: followerTransactions,
         id: leader.checkoutId,
-        paymentMethodId,
         saveForFutureUse,
       })
     : await paymentService.paymentInitialize({
         amount: leader.amount,
         id: leader.checkoutId,
-        paymentMethodId,
         saveForFutureUse,
       });
 
@@ -247,16 +243,11 @@ const initializeMarketplaceGroupPayment = async ({
 export const initializeMarketplacePayment = async ({
   buyerId,
   checkouts,
-  paymentMethodId,
   saveForFutureUse,
 }: MarketplacePaymentChoices & {
   buyerId?: string;
   checkouts: MarketplaceCheckoutPayment[];
 }) =>
   clientEnvs.PAYMENT_APP_ID
-    ? initializeMarketplaceGroupPayment({
-        checkouts,
-        paymentMethodId,
-        saveForFutureUse,
-      })
+    ? initializeMarketplaceGroupPayment({ checkouts, saveForFutureUse })
     : initializeMarketplacePaymentIntent({ buyerId, checkouts });

@@ -53,32 +53,37 @@ export const paymentExecuteInfra =
       redirect: PAYMENT_REDIRECT,
       confirmParams: {
         return_url: returnUrl.toString(),
-        ...((details.billingDetails || isSavingNewMethod) && {
-          payment_method_data: {
-            ...(details.billingDetails && {
-              billing_details: {
-                address: {
-                  city: details.billingDetails.city,
-                  country: details.billingDetails.country,
-                  line1: details.billingDetails.streetAddress1,
-                  line2: details.billingDetails.streetAddress2,
-                  postal_code: details.billingDetails.postalCode,
-                  state: details.billingDetails.countryArea,
+        ...(!paymentElement &&
+          transactionData.providerData.paymentMethodId && {
+            payment_method: transactionData.providerData.paymentMethodId,
+          }),
+        ...(paymentElement &&
+          (details.billingDetails || isSavingNewMethod) && {
+            payment_method_data: {
+              ...(details.billingDetails && {
+                billing_details: {
+                  address: {
+                    city: details.billingDetails.city,
+                    country: details.billingDetails.country,
+                    line1: details.billingDetails.streetAddress1,
+                    line2: details.billingDetails.streetAddress2,
+                    postal_code: details.billingDetails.postalCode,
+                    state: details.billingDetails.countryArea,
+                  },
+                  email: details.email,
+                  name: [
+                    details.billingDetails.firstName,
+                    details.billingDetails.lastName,
+                  ]
+                    .filter(Boolean)
+                    .join(" "),
                 },
-                email: details.email,
-                name: [
-                  details.billingDetails.firstName,
-                  details.billingDetails.lastName,
-                ]
-                  .filter(Boolean)
-                  .join(" "),
-              },
-            }),
-            ...(isSavingNewMethod && {
-              allow_redisplay: STRIPE_REDISPLAY_CONSENT,
-            }),
-          },
-        }),
+              }),
+              ...(isSavingNewMethod && {
+                allow_redisplay: STRIPE_REDISPLAY_CONSENT,
+              }),
+            },
+          }),
       },
       /**
        * Confirm with the mounted payment element when paying with a new

@@ -113,18 +113,6 @@ describe("payment-group-initialize-infra", () => {
       );
     });
 
-    it("sends a saved method without a fixed idempotency key", async () => {
-      await paymentGroupLeaderInitializeInfra(CONFIG)({
-        amount: 15,
-        followers: FOLLOWERS,
-        id: "co_a",
-        paymentMethodId: "pm_1",
-      });
-
-      expect(variablesOf().data).toMatchObject({ paymentMethodId: "pm_1" });
-      expect(variablesOf().idempotencyKey).toBeUndefined();
-    });
-
     it("fails when the leader returns no session", async () => {
       mocks.execute.mockResolvedValue(initializeResponse());
 
@@ -146,7 +134,7 @@ describe("payment-group-initialize-infra", () => {
             transaction: { id: "tr_leader" },
             transactionEvent: {
               id: "event_1",
-              message: "Payment method does not exist.",
+              message: "A payment group checkout is already paid.",
               type: "CHARGE_FAILURE",
             },
           },
@@ -157,7 +145,6 @@ describe("payment-group-initialize-infra", () => {
         amount: 15,
         followers: FOLLOWERS,
         id: "co_a",
-        paymentMethodId: "pm_1",
       });
 
       expect(result.ok).toBe(false);

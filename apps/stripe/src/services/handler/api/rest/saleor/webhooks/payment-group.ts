@@ -61,12 +61,10 @@ const toGroupCheckout = (
 
 const getGroupIdempotencyKey = async ({
   customerId,
-  paymentMethodId,
   saveForFutureUse,
   shares,
 }: {
   customerId: string | null;
-  paymentMethodId?: string;
   saveForFutureUse: boolean;
   shares: GroupShare[];
 }) => {
@@ -76,7 +74,6 @@ const getGroupIdempotencyKey = async ({
       .sort()
       .join(","),
     customerId ?? "",
-    paymentMethodId ?? "",
     saveForFutureUse ? "save" : "",
   ].join(";");
   const digest = await crypto.subtle.digest(
@@ -94,7 +91,6 @@ const leaderInitializeResponse = async ({
   leaderCents,
   logger,
   paymentGroup,
-  paymentMethodId,
   refuse,
   respond,
   saleorDomain,
@@ -106,7 +102,6 @@ const leaderInitializeResponse = async ({
   leaderCents: number;
   logger: Logger;
   paymentGroup: LeaderRequest;
-  paymentMethodId?: string;
   refuse: (message: string) => Response;
   respond: (data: TransactionEventSchema) => Response;
   saleorDomain: string;
@@ -191,7 +186,6 @@ const leaderInitializeResponse = async ({
     channelSlug: event.sourceObject.channel.slug,
     gateway,
     logger,
-    paymentMethodId,
     saleorDomain,
     saveForFutureUse,
     transactionId: event.transaction.id,
@@ -211,7 +205,6 @@ const leaderInitializeResponse = async ({
     customerId: customer.customerId,
     idempotencyKey: await getGroupIdempotencyKey({
       customerId: customer.customerId,
-      paymentMethodId,
       saveForFutureUse: customer.saveForFutureUse,
       shares,
     }),
@@ -223,7 +216,6 @@ const leaderInitializeResponse = async ({
       }),
       ...toGroupShareMetadata(shares),
     },
-    paymentMethodId,
     saveForFutureUse: customer.saveForFutureUse,
   });
 
@@ -251,7 +243,6 @@ export const paymentGroupInitializeResponse = async ({
   gateway,
   logger,
   paymentGroup,
-  paymentMethodId,
   saleorDomain,
   saveForFutureUse,
 }: {
@@ -260,7 +251,6 @@ export const paymentGroupInitializeResponse = async ({
   gateway: StripeGateway;
   logger: Logger;
   paymentGroup: PaymentGroupRequest | undefined;
-  paymentMethodId?: string;
   saleorDomain: string;
   saveForFutureUse?: boolean;
 }): Promise<Response> => {
@@ -315,7 +305,6 @@ export const paymentGroupInitializeResponse = async ({
       leaderCents: totalCents,
       logger,
       paymentGroup,
-      paymentMethodId,
       refuse,
       respond,
       saleorDomain,

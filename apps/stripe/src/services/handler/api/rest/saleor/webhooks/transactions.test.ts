@@ -582,20 +582,16 @@ describe("transactions", () => {
           const idempotencyKeyOf = (call: number) =>
             mocks.createPaymentIntent.mock.calls[call][0].idempotencyKey;
 
-          it("pays the group with an owned saved method", async () => {
-            const response = await handle(
-              signedInLeaderEvent({ paymentMethodId: "pm_1" }),
-            );
+          it("ignores a saved method sent to the leader", async () => {
+            await handle(signedInLeaderEvent({ paymentMethodId: "pm_1" }));
 
-            expect(await response.json()).toMatchObject({
-              result: "CHARGE_ACTION_REQUIRED",
-            });
-            expect(mocks.createPaymentIntent).toHaveBeenCalledWith(
-              expect.objectContaining({
-                customerId: "cus_1",
-                paymentMethodId: "pm_1",
-              }),
-            );
+            expect(
+              mocks.retrievePaymentMethodCustomerId,
+            ).not.toHaveBeenCalled();
+            const [[options]] = mocks.createPaymentIntent.mock.calls;
+
+            expect(options.customerId).toBe("cus_1");
+            expect(options.paymentMethodId).toBeUndefined();
           });
 
           it("saves a new method for a signed-in buyer", async () => {
@@ -639,74 +635,13 @@ describe("transactions", () => {
             );
           });
 
-          it.each([
-            [
-              "a guest pays with a saved method",
-              () => {
-                GROUP_CHECKOUTS = VALID_GROUP();
-              },
-              buildEvent({
-                action: FOLLOWER_ACTION,
-                data: { ...LEADER_DATA, paymentMethodId: "pm_1" },
-              }),
-              "Saved payment methods require a signed in customer.",
-            ],
-            [
-              "the saved method belongs to another customer",
-              () => {
-                mocks.retrievePaymentMethodCustomerId.mockResolvedValue(
-                  ok({ customerId: "cus_other" }),
-                );
-              },
-              signedInLeaderEvent({ paymentMethodId: "pm_1" }),
-              "Payment method does not belong to this customer.",
-            ],
-            [
-              "the saved method does not exist",
-              () => {
-                mocks.retrievePaymentMethodCustomerId.mockResolvedValue(
-                  ok(null),
-                );
-              },
-              signedInLeaderEvent({ paymentMethodId: "pm_1" }),
-              "Payment method does not exist.",
-            ],
-          ])("refuses when %s", async (_, arrange, event, message) => {
-            arrange();
-
-            const response = await handle(event);
-
-            expect(await response.json()).toMatchObject({
-              amount: "1000.00",
-              message,
-              result: "CHARGE_FAILURE",
-            });
-            expect(mocks.createPaymentIntent).not.toHaveBeenCalled();
-          });
-
-          it("answers with the gateway error when the saved method cannot be read", async () => {
-            mocks.retrievePaymentMethodCustomerId.mockResolvedValue(
-              err([
-                {
-                  code: "UNKNOWN_ERROR",
-                  message: "Stripe is down.",
-                  status: 502,
-                },
-              ]),
-            );
-
-            const response = await handle(
-              signedInLeaderEvent({ paymentMethodId: "pm_1" }),
-            );
-
-            expect(response.status).toBe(502);
-            expect(mocks.createPaymentIntent).not.toHaveBeenCalled();
-          });
-
           it("derives a different idempotency key for every payment choice", async () => {
             await handle(signedInLeaderEvent());
             await handle(signedInLeaderEvent({ saveForFutureUse: true }));
-            await handle(signedInLeaderEvent({ paymentMethodId: "pm_1" }));
+            mocks.resolveCustomer.mockResolvedValue(
+              err([{ code: "UNKNOWN_ERROR", message: "boom" }]),
+            );
+            await handle(signedInLeaderEvent());
 
             expect(new Set([0, 1, 2].map(idempotencyKeyOf)).size).toBe(3);
           });
