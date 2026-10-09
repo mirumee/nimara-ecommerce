@@ -25,7 +25,9 @@ initialization, creates or updates PaymentIntents for transaction sessions, capt
 funds on request, and reports asynchronous Stripe state changes back to the originating Saleor
 transaction. It is also the sole owner of the customer's stored payment methods: it holds the
 gateway credentials, resolves the gateway customer for a Saleor user, and serves Saleor's stored
-payment methods protocol.
+payment methods protocol. It implements the
+[Marketplace Payment Group Contract](INT-0008%20Marketplace%20Payment%20Group%20Contract.md), so
+one PaymentIntent can pay every vendor checkout of a marketplace order.
 
 # Tenancy
 

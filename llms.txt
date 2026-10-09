@@ -24,6 +24,7 @@ Docs: https://docs.nimara.store
 
 - [UCP Integration](docs/05-Integrations/01-Ucp-integration.md): Universal Commerce Protocol — agentic commerce REST API for AI agents and platforms
 - [Stripe Integration](docs/05-Integrations/02-Stripe-integration.md): Stripe payment processing via Python or TypeScript app
+- [Marketplace Payment Apps](docs/05-Integrations/03-Marketplace-payment-apps.md): Paying every vendor checkout with one payment group, and the contract a payment app implements for it
 
 ## Advanced
 

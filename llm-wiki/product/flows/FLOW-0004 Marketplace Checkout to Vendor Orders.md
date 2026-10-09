@@ -18,6 +18,8 @@ relations:
   integrations:
     - "[Saleor Commerce Backend](../integrations/INT-0006%20Saleor%20Commerce%20Backend.md)"
     - "[Marketplace Checkout Payment Orchestration](../integrations/INT-0007%20Marketplace%20Checkout%20Payment%20Orchestration.md)"
+    - "[Stripe Payment Application](../integrations/INT-0005%20Stripe%20Payment%20Application.md)"
+    - "[Marketplace Payment Group Contract](../integrations/INT-0008%20Marketplace%20Payment%20Group%20Contract.md)"
 availability:
   since: "v2.0.0"
   deprecated_since: null
@@ -57,26 +59,30 @@ actors:
    [Marketplace Checkout Payment Orchestration](../integrations/INT-0007%20Marketplace%20Checkout%20Payment%20Orchestration.md).
    The marketplace creates one Stripe PaymentIntent and associates its provider reference with the
    individual Saleor checkouts.
-   When the storefront has a payment application configured, it pays through the
+   When the storefront has a payment application configured, it pays the checkouts as a payment
+   group through the
    [Stripe Payment Application](../integrations/INT-0005%20Stripe%20Payment%20Application.md)
-   instead. Every checkout except the first initializes a transaction in parallel; the first
-   checkout then names those transactions, and the payment application creates the one
-   PaymentIntent for the group. A single checkout uses a plain payment session. In this path the
-   payment application's webhook, not the marketplace, records the charged amount per checkout, and
-   the storefront completes each checkout once all of them report a full charge.
+   instead, under the
+   [Marketplace Payment Group Contract](../integrations/INT-0008%20Marketplace%20Payment%20Group%20Contract.md).
+   Every checkout except the first initializes a transaction in parallel; the first checkout then
+   names those transactions, and the payment application creates the one PaymentIntent for the
+   group. A single checkout uses a plain payment session.
 4. The shopper confirms the single payment in Stripe Payment Element. Stripe redirects the browser
    to the storefront and independently sends a signed `payment_intent.succeeded` event to the
-   marketplace application.
+   marketplace application, or to the payment application in the payment-group path.
 5. For each checkout, the signed webhook records the charged amount and invokes Saleor checkout
    completion. Successful completions create separate order identifiers and are best-effort linked
-   to the common Stripe charge.
+   to the common Stripe charge. In the payment-group path the payment application instead reports
+   each checkout's share as a charge on its own transaction and completes nothing.
 6. Saleor's asynchronous order-created event copies the vendor identifier from an order line's
    product metadata onto the order. For an authenticated buyer it also adds the customer identifier
    to the vendor profile, making the order and customer discoverable through the vendor-filtered
    marketplace workspace.
 7. When Stripe's browser redirect reports success, the storefront routes to a generic marketplace
    confirmation and clears the checkout cookie. This browser branch does not wait for steps 5 or 6
-   to finish.
+   to finish. In the payment-group path the storefront instead waits until every checkout is fully
+   charged, completes each one into an order itself, and only then shows the confirmation and
+   clears the checkout cookie.
 
 # Failure paths
 

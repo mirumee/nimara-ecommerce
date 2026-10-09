@@ -52,6 +52,7 @@ behavior is removed, its record is removed from the current tree; Git preserves 
 - [INT-0005 Stripe Payment Application](integrations/INT-0005%20Stripe%20Payment%20Application.md) - active - engineering - Connects standard checkout transactions to Stripe PaymentIntent operations and events.
 - [INT-0006 Saleor Commerce Backend](integrations/INT-0006%20Saleor%20Commerce%20Backend.md) - active - engineering - Supplies core commerce state through GraphQL, application, and webhook contracts.
 - [INT-0007 Marketplace Checkout Payment Orchestration](integrations/INT-0007%20Marketplace%20Checkout%20Payment%20Orchestration.md) - active - engineering - Coordinates one platform payment across multiple vendor checkouts and orders.
+- [INT-0008 Marketplace Payment Group Contract](integrations/INT-0008%20Marketplace%20Payment%20Group%20Contract.md) - What a payment app implements so one payment funds every vendor checkout.
 
 ## Related Notes
 
