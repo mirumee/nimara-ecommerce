@@ -87,11 +87,13 @@ export const MarketplacePayment = ({
   const [errors, setErrors] = useState<AppErrorCode[]>(
     errorCode ? [errorCode] : [],
   );
-  const hasSavedPaymentMethods = paymentGatewayMethods.length > 0;
+  const hasPaymentApp = !!clientEnvs.PAYMENT_APP_ID;
+  const hasSavedPaymentMethods =
+    hasPaymentApp && paymentGatewayMethods.length > 0;
   const [paymentMethodTab, setPaymentMethodTab] = useState<TabName>(
     hasSavedPaymentMethods ? "saved" : "new",
   );
-  const canSaveForFutureUse = !!user && !!clientEnvs.PAYMENT_APP_ID;
+  const canSaveForFutureUse = !!user && hasPaymentApp;
   const {
     initializeData,
     initializeGateway,
@@ -103,6 +105,7 @@ export const MarketplacePayment = ({
   const elementsRef = useRef<unknown>(null);
   const intentInFlightRef = useRef<string | null>(null);
   const intentInitializedRef = useRef<string | null>(null);
+  const latestIntentKeyRef = useRef<string | null>(null);
 
   const defaultPaymentMethod =
     paymentGatewayMethods.find(({ isDefault }) => isDefault)?.token ??
@@ -156,10 +159,7 @@ export const MarketplacePayment = ({
     [intentCheckouts, shouldSaveForFutureUse, user?.id],
   );
 
-  const resolveTransactionData = async ({
-    paymentMethod,
-    saveForFutureUse,
-  }: PaymentSchema) => {
+  const resolveTransactionData = async ({ paymentMethod }: PaymentSchema) => {
     if (isAddingNewPaymentMethod || !paymentMethod) {
       return transactionData;
     }
@@ -168,7 +168,7 @@ export const MarketplacePayment = ({
       buyerId: user?.id,
       checkouts: intentCheckouts,
       paymentMethodId: paymentMethod,
-      saveForFutureUse: canSaveForFutureUse && !!saveForFutureUse,
+      saveForFutureUse: false,
     });
 
     if (!result.ok) {
@@ -205,6 +205,8 @@ export const MarketplacePayment = ({
    * re-render never spawns a second intent for the same checkouts.
    */
   useEffect(() => {
+    latestIntentKeyRef.current = intentKey;
+
     void (async () => {
       if (!intentKey || !isAddingNewPaymentMethod) {
         return;
@@ -232,6 +234,10 @@ export const MarketplacePayment = ({
         intentInFlightRef.current = null;
       }
 
+      if (latestIntentKeyRef.current !== intentKey) {
+        return;
+      }
+
       if (!result.ok) {
         setErrors(result.errors.map(({ code }) => code));
 
@@ -240,7 +246,10 @@ export const MarketplacePayment = ({
 
       const gatewayConfig = { publishableKey: result.data.publishableKey };
 
-      if (!(await initializeGateway(gatewayConfig))) {
+      if (
+        !(await initializeGateway(gatewayConfig)) ||
+        latestIntentKeyRef.current !== intentKey
+      ) {
         return;
       }
 

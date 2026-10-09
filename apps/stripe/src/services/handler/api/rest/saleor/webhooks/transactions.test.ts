@@ -684,6 +684,25 @@ describe("transactions", () => {
             expect(mocks.createPaymentIntent).not.toHaveBeenCalled();
           });
 
+          it("answers with the gateway error when the saved method cannot be read", async () => {
+            mocks.retrievePaymentMethodCustomerId.mockResolvedValue(
+              err([
+                {
+                  code: "UNKNOWN_ERROR",
+                  message: "Stripe is down.",
+                  status: 502,
+                },
+              ]),
+            );
+
+            const response = await handle(
+              signedInLeaderEvent({ paymentMethodId: "pm_1" }),
+            );
+
+            expect(response.status).toBe(502);
+            expect(mocks.createPaymentIntent).not.toHaveBeenCalled();
+          });
+
           it("derives a different idempotency key for every payment choice", async () => {
             await handle(signedInLeaderEvent());
             await handle(signedInLeaderEvent({ saveForFutureUse: true }));
