@@ -13,11 +13,11 @@
   "devDependencies": {
     "@nimara/config": "workspace:*",
     "@nimara/tooling": "workspace:*",
-    "@turbo/gen": "^2.9.4",
-    "@types/node": "^24.12.4",
+    "@turbo/gen": "^2.11.7",
+    "@types/node": "^24.19.1",
     "eslint": "^8.57.0",
     "typescript": "^5.9.3",
-    "vitest": "4.1.2"
+    "vitest": "4.1.11"
   },
   "lint-staged": {
     "*.*": "prettier --write --ignore-unknown",
