@@ -744,3 +744,8 @@
 - **Create**: Added IMP-0006 as `in_progress` for the Claude comment on the daily summary, tracing PR #801.
 - **Maintenance**: Extended OPS-0009 with the Anthropic API key setup, the cost note, and the diagnosis for a missing comment.
 - **Lint**: `pnpm wiki:lint` at zero violations across 97 files.
+
+## 2026-10-14
+
+- **Maintenance**: Added the manual E2E workflow inputs (environment, preview branch, locale) to the Environments & Access Matrix.
+- **Lint**: `pnpm wiki:lint` at zero violations across 97 files.

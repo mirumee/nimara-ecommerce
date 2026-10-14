@@ -5,16 +5,108 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: "Environment URL to run e2e tests against"
-        type: string
+        description: "Environment to run e2e tests against"
+        type: choice
         required: true
+        options:
+          - "stage"
+          - "demo"
+          - "preview"
+        default: "stage"
+      preview_branch:
+        description: "Branch with a Vercel preview (required for preview)"
+        type: string
+        required: false
+      locale:
+        description: "Storefront channel to test"
+        type: choice
+        required: true
+        options:
+          - "all"
+          - "us"
+          - "gb"
+        default: "all"
+
+permissions:
+  contents: read
+  deployments: read
 
 jobs:
-  e2e-tests:
-    name: "E2E tests & Lighthouse"
+  resolve:
+    name: "Resolve environment"
     runs-on: ubuntu-latest
+    outputs:
+      url: ${{ steps.target.outputs.url }}
+      ref: ${{ steps.target.outputs.ref }}
+      locales: ${{ steps.target.outputs.locales }}
     env:
-      TEST_ENV_URL: ${{ inputs.environment }}
+      GH_TOKEN: ${{ github.token }}
+      ENVIRONMENT: ${{ inputs.environment }}
+      PREVIEW_BRANCH: ${{ inputs.preview_branch }}
+      LOCALE: ${{ inputs.locale }}
+      PREVIEW_ENVIRONMENT: "Preview – nimara-ecommerce"
+
+    steps:
+      - name: "Resolve URL, ref and locales"
+        id: target
+        run: |
+          ref="$GITHUB_REF"
+          case "$ENVIRONMENT" in
+            stage) url="https://stage.nimara.store" ;;
+            demo) url="https://demo.nimara.store" ;;
+            preview)
+              if [ -z "$PREVIEW_BRANCH" ]; then
+                echo "::error::preview_branch is required for the preview environment"
+                exit 1
+              fi
+              sha=$(gh api "repos/$GITHUB_REPOSITORY/commits/$PREVIEW_BRANCH" --jq .sha)
+              deployment_id=$(gh api -X GET "repos/$GITHUB_REPOSITORY/deployments" \
+                -f sha="$sha" -f environment="$PREVIEW_ENVIRONMENT" --jq '.[0].id // empty')
+              if [ -z "$deployment_id" ]; then
+                echo "::error::No Vercel preview deployment for $PREVIEW_BRANCH ($sha)"
+                exit 1
+              fi
+              url=$(gh api "repos/$GITHUB_REPOSITORY/deployments/$deployment_id/statuses" \
+                --jq 'map(select(.state == "success"))[0].environment_url // empty')
+              if [ -z "$url" ]; then
+                echo "::error::Vercel preview for $PREVIEW_BRANCH ($sha) is not ready"
+                exit 1
+              fi
+              ref="$sha"
+              ;;
+          esac
+
+          if [ "$LOCALE" = "all" ]; then
+            locales='["us","gb"]'
+          else
+            locales="[\"$LOCALE\"]"
+          fi
+
+          {
+            echo "url=$url"
+            echo "ref=$ref"
+            echo "locales=$locales"
+          } >> "$GITHUB_OUTPUT"
+
+          {
+            echo "### E2E target"
+            echo "- Environment: \`$ENVIRONMENT\`"
+            echo "- URL: $url"
+            echo "- Ref: \`$ref\`"
+            echo "- Locales: \`$locales\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  e2e-tests:
+    name: "E2E tests & Lighthouse (${{ matrix.locale }})"
+    needs: resolve
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        locale: ${{ fromJSON(needs.resolve.outputs.locales) }}
+    env:
+      TEST_ENV_URL: ${{ needs.resolve.outputs.url }}
+      LOCALE: ${{ matrix.locale }}
       USER_EMAIL: ${{ secrets.USER_EMAIL }}
       USER_PASSWORD: ${{ secrets.USER_PASSWORD }}
       CI: true
@@ -22,8 +114,11 @@ jobs:
     steps:
       - run: |
           echo "TEST_ENV_URL: $TEST_ENV_URL"
+          echo "LOCALE: $LOCALE"
 
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.resolve.outputs.ref }}
 
       - name: Install pnpm
         uses: pnpm/action-setup@v6
@@ -51,7 +146,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: codeceptjs-output
+          name: codeceptjs-output-${{ matrix.locale }}
           path: apps/automated-tests/output
           if-no-files-found: ignore
           retention-days: 7

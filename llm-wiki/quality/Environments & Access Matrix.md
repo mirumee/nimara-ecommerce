@@ -40,6 +40,16 @@ The channel is the path prefix, and it scopes **currency, available countries, a
 | ERP                                | `erp-dev.marina.mirumee.rocks`        | login required; **often disabled/inactive**                                                                                 |
 | Docs site                          | `dev.docs.nimara.store`               | **behind Vercel SSO** → 401, redirects to `vercel.com/login`. Untestable without Vercel access / bypass token / public URL. |
 
+### Manual E2E run in GitHub Actions
+
+The `E2E tests & Lighthouse` workflow (`.github/workflows/e2e.yaml`) runs the CodeceptJS suite on demand.
+
+- `environment`: `stage` (`stage.nimara.store`), `demo` (`demo.nimara.store`), or `preview`.
+- `preview_branch`: required for `preview`. The workflow takes the head commit of the branch and the successful `Preview – nimara-ecommerce` GitHub deployment for it. It runs the tests from that commit.
+- `locale`: `all` (default, `us` and `gb` as parallel jobs), `us`, or `gb`.
+- `USER_EMAIL` / `USER_PASSWORD` is one account. It must exist on every backend that the run targets.
+- On `demo`, guest checkout places real orders in the public demo store.
+
 ### Rule of thumb for agents
 
 - **Storefront-observable** (checkout, cart, search, address forms, SEO/meta, sitemap, perf) → you can test.
