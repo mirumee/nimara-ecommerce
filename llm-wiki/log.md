@@ -747,5 +747,5 @@
 
 ## 2026-10-14
 
-- **Maintenance**: Added the manual E2E workflow inputs (environment, preview branch, locale) to the Environments & Access Matrix.
+- **Maintenance**: Added the manual E2E workflow inputs (environment, preview branch, locale, credential override) to the Environments & Access Matrix.
 - **Lint**: `pnpm wiki:lint` at zero violations across 97 files.

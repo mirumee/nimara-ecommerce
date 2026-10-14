@@ -26,6 +26,14 @@ on:
           - "us"
           - "gb"
         default: "all"
+      user_email:
+        description: "Override USER_EMAIL (empty uses the repository secret)"
+        type: string
+        required: false
+      user_password:
+        description: "Override USER_PASSWORD (empty uses the repository secret). Test accounts only."
+        type: string
+        required: false
 
 permissions:
   contents: read
@@ -110,14 +118,44 @@ jobs:
     env:
       TEST_ENV_URL: ${{ needs.resolve.outputs.url }}
       LOCALE: ${{ matrix.locale }}
-      USER_EMAIL: ${{ secrets.USER_EMAIL }}
-      USER_PASSWORD: ${{ secrets.USER_PASSWORD }}
       CI: true
 
     steps:
       - run: |
           echo "TEST_ENV_URL: $TEST_ENV_URL"
           echo "LOCALE: $LOCALE"
+
+      - name: Set test credentials
+        env:
+          SECRET_USER_EMAIL: ${{ secrets.USER_EMAIL }}
+          SECRET_USER_PASSWORD: ${{ secrets.USER_PASSWORD }}
+        run: |
+          email=$(jq -r '.inputs.user_email // empty' "$GITHUB_EVENT_PATH")
+          password=$(jq -r '.inputs.user_password // empty' "$GITHUB_EVENT_PATH")
+          if [ -n "$password" ]; then
+            echo "::add-mask::$password"
+          fi
+
+          if [ -n "$email" ] && [ -n "$password" ]; then
+            echo "Using the user_email and user_password inputs"
+          elif [ -z "$email" ] && [ -z "$password" ]; then
+            echo "Using the USER_EMAIL and USER_PASSWORD secrets"
+            email="$SECRET_USER_EMAIL"
+            password="$SECRET_USER_PASSWORD"
+          else
+            echo "::error::Set both user_email and user_password, or leave both empty"
+            exit 1
+          fi
+
+          delimiter="EOF_$(openssl rand -hex 16)"
+          {
+            echo "USER_EMAIL<<$delimiter"
+            echo "$email"
+            echo "$delimiter"
+            echo "USER_PASSWORD<<$delimiter"
+            echo "$password"
+            echo "$delimiter"
+          } >> "$GITHUB_ENV"
 
       - uses: actions/checkout@v7
         with:

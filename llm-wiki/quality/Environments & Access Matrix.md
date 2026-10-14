@@ -48,6 +48,7 @@ The `E2E tests & Lighthouse` workflow (`.github/workflows/e2e.yaml`) runs the Co
 - `preview_branch`: required for `preview`. The workflow takes the head commit of the branch and the successful `Preview – nimara-ecommerce` GitHub deployment for it. It runs the tests from that commit.
 - `locale`: `all` (default, `us` and `gb` as parallel jobs), `us`, or `gb`.
 - `USER_EMAIL` / `USER_PASSWORD` is one account. It must exist on every backend that the run targets.
+- `user_email` and `user_password` override the secrets for one run. Set both or neither. The workflow masks the password in the log, but the run event keeps the inputs in plain text, so use test accounts only.
 - On `demo`, guest checkout places real orders in the public demo store.
 
 ### Rule of thumb for agents
