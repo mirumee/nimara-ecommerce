@@ -59,7 +59,10 @@ jobs:
                 echo "::error::preview_branch is required for the preview environment"
                 exit 1
               fi
-              sha=$(gh api "repos/$GITHUB_REPOSITORY/commits/$PREVIEW_BRANCH" --jq .sha)
+              if ! sha=$(gh api "repos/$GITHUB_REPOSITORY/branches/$PREVIEW_BRANCH" --jq .commit.sha); then
+                echo "::error::Branch $PREVIEW_BRANCH does not exist in $GITHUB_REPOSITORY"
+                exit 1
+              fi
               deployment_id=$(gh api -X GET "repos/$GITHUB_REPOSITORY/deployments" \
                 -f sha="$sha" -f environment="$PREVIEW_ENVIRONMENT" --jq '.[0].id // empty')
               if [ -z "$deployment_id" ]; then
