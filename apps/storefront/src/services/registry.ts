@@ -10,6 +10,7 @@ import { createAddressServiceLoader } from "@/services/lazy-loaders/address";
 import { createCheckoutServiceLoader } from "@/services/lazy-loaders/checkout";
 import { createMarketplaceServiceLoader } from "@/services/lazy-loaders/marketplace";
 import { createPaymentServiceLoader } from "@/services/lazy-loaders/payment";
+import { logIntegrationConfigIssues } from "@/services/utils/integration-doctor";
 
 import { createCartServiceLoader } from "./lazy-loaders/cart";
 import { createCategoryServiceLoader } from "./lazy-loaders/category";
@@ -57,6 +58,8 @@ export const getServiceRegistry = async (): Promise<ServiceRegistry> => {
   }
 
   const logger = getLogger({ name: "storefront" });
+
+  logIntegrationConfigIssues(logger);
 
   const getters = Object.fromEntries(
     Object.entries(SERVICE_LOADERS).map(([key, createLoader]) => [

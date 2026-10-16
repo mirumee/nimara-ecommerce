@@ -15,6 +15,7 @@ import { getRequiredSaleorApiUrl } from "../utils/required-env";
  */
 export const createCategoryServiceLoader = (logger: Logger) =>
   createServiceLoader({
+    capability: "category",
     resolve: () => (isSaleorConfigured ? "saleor" : null),
     build: async () => {
       const { saleorCategoryService } =
