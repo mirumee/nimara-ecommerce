@@ -2,7 +2,9 @@ import { locate } from "codeceptjs";
 
 import { LOCALE_PREFIX } from "../data/locales";
 
-export const timeout_seconds = 8; // timeout for wait funtions used in tests
+export const TIMEOUTS = {
+  timeout_seconds: Number(process.env.TIMEOUT_SECONDS) || 8,
+}; // timeout for wait functions used in tests
 
 export const URLS = {
   CART_PAGE: `${LOCALE_PREFIX}/cart`,
