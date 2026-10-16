@@ -32,6 +32,9 @@ draft orders and assigned customer orders, including line and discount changes, 
 cancellation, notes, and manual payment marking where the commerce backend permits the requested
 transition.
 
+The dashboard summarizes the vendor workspace. It shows the vendor's total and unfulfilled order
+counts, product count, and customer count, and lists the five newest orders.
+
 The marketplace GraphQL boundary exposes only an allowlisted subset of the commerce schema. For
 authenticated vendor operations it resolves the user's vendor profile identifier, injects that
 identifier into newly created or updated objects, filters list queries by vendor metadata, and

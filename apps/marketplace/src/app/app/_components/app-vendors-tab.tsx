@@ -444,7 +444,9 @@ export function AppVendorsTab({ isAuthenticated, isLoading }: Props) {
                     </PaginationItem>
                     <PaginationItem>
                       <span className="px-4 text-sm text-muted-foreground">
-                        {t("total-count", { count: totalCount })}
+                        {t("marketplace.vendors.total-count", {
+                          count: totalCount,
+                        })}
                       </span>
                     </PaginationItem>
                     <PaginationItem>
