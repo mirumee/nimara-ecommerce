@@ -1,4 +1,6 @@
 <div align="center">
+
+[![Deploy to Railyard](https://app.railyard.run/deploy/badge)](https://app.railyard.run/deploy?repo=https://github.com/mirumee/nimara-ecommerce)
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="apps/docs/static/images/logo-light.svg">
     <source media="(prefers-color-scheme: light)" srcset="apps/docs/static/images/logo.svg">
