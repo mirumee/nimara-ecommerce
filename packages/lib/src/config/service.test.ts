@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { z } from "zod";
 
 import {
+  prepareCoreServiceConfig,
   prepareServiceConfig,
   prepareSingleTenantServiceConfig,
 } from "./service";
@@ -93,6 +94,19 @@ describe("config service", () => {
           }),
         ),
       ).toThrow();
+    });
+  });
+
+  describe("prepareCoreServiceConfig", () => {
+    it("names the service after the directory it is parsed from", () => {
+      // when
+      const config = withEnv({ ENVIRONMENT: "test" }, () =>
+        prepareCoreServiceConfig({ moduleUrl: MODULE_URL, pkg: PKG }),
+      );
+
+      // then
+      expect(config.SERVICE).toBe("handler");
+      expect(config).not.toHaveProperty("ALLOWED_DOMAINS");
     });
   });
 });

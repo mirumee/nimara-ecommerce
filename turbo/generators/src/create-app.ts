@@ -9,8 +9,14 @@ import {
 } from "./dashboard.ts";
 import { mergeServiceEnv } from "./env.ts";
 import {
+  blankVariants,
+  isSaleorPath,
+  removeAppIntegration,
+} from "./integration.ts";
+import {
   type AppKind,
   type BuildTarget,
+  type Integration,
   requireKindForTarget,
   TEMPLATE_NAME,
   TEMPLATE_PORT,
@@ -35,13 +41,14 @@ export const NOT_COPIED = new Set([
 
 export type CreateAppInput = {
   description: string;
+  integration: Integration;
   kind: AppKind;
   name: string;
   port: string;
   root: string;
   service: string;
   target: BuildTarget;
-  tenancy: Tenancy;
+  tenancy?: Tenancy;
 };
 
 // An app deployed elsewhere should not carry another platform's config.
@@ -71,16 +78,23 @@ AWS_REGION=eu-central-1`;
 
 const copyTemplate = ({
   destination,
+  integration,
   kind,
   source,
   target,
 }: {
   destination: string;
+  integration: Integration;
   kind: AppKind;
   source: string;
   target: BuildTarget;
-}) =>
-  cp(source, destination, {
+}) => {
+  // Never copied under their own name: swapped in wholesale after, or dropped.
+  const blankSources = new Set(
+    blankVariants(TEMPLATE_SERVICES[kind]).map(([blankSource]) => blankSource),
+  );
+
+  return cp(source, destination, {
     errorOnExist: true,
     filter: (entry) => {
       const name = basename(entry);
@@ -93,6 +107,14 @@ const copyTemplate = ({
       }
 
       const path = relative(source, entry).split(sep).join("/");
+
+      if (blankSources.has(path)) {
+        return false;
+      }
+
+      if (integration === "blank" && isSaleorPath(path, { appPaths: true })) {
+        return false;
+      }
 
       if (
         unusedServicePaths(kind).some(
@@ -107,6 +129,7 @@ const copyTemplate = ({
     force: false,
     recursive: true,
   });
+};
 
 const rewritePackageJson = async ({
   description,
@@ -147,14 +170,20 @@ const rewriteText = async ({
   name: string;
   port: string;
   target: BuildTarget;
-  tenancy: Tenancy;
+  tenancy?: Tenancy;
 }) => {
   const contents = await readFile(file, "utf8");
   let result = contents
     .replaceAll(TEMPLATE_NAME, name)
     .replaceAll(TEMPLATE_PORT, port)
-    .replace(/^BUILD_TARGET=.*$/m, `BUILD_TARGET=${target}`)
-    .replace(ALLOWED_DOMAINS_DOC.multi, ALLOWED_DOMAINS_DOC[tenancy]);
+    .replace(/^BUILD_TARGET=.*$/m, `BUILD_TARGET=${target}`);
+
+  if (tenancy) {
+    result = result.replace(
+      ALLOWED_DOMAINS_DOC.multi,
+      ALLOWED_DOMAINS_DOC[tenancy],
+    );
+  }
 
   if (target !== "node") {
     result = result.replace(LOCALSTACK_ENV_DOC, "");
@@ -166,6 +195,7 @@ const rewriteText = async ({
 // An app reads the rest from its own package.json, so nothing else is substituted.
 export const createApp = async ({
   description,
+  integration,
   kind,
   name,
   port,
@@ -176,18 +206,43 @@ export const createApp = async ({
 }: CreateAppInput) => {
   requireKindForTarget({ kind, target });
 
+  if (integration === "saleor" && !tenancy) {
+    throw new Error("A Saleor app needs a tenancy: multi or single.");
+  }
+
+  if (integration === "blank" && kind === "dashboard") {
+    throw new Error("A blank app has no Saleor dashboard to add a page to.");
+  }
+
   // `--args` skips the prompts that would have filtered these.
   const appName = toDirectoryName(name);
   const serviceName = toDirectoryName(service);
   const destination = join(root, "apps", appName);
   const serviceDir = join(destination, "src", "services", serviceName);
+  const templateRoot = join(root, "templates", "app");
 
   await copyTemplate({
     destination,
+    integration,
     kind,
-    source: join(root, "templates", "app"),
+    source: templateRoot,
     target,
   });
+
+  // Ahead of renameService, whose scan of the service directory must find it.
+  if (integration === "blank") {
+    for (const [blankSource, blankDestination] of blankVariants(
+      TEMPLATE_SERVICES[kind],
+    )) {
+      await cp(
+        join(templateRoot, blankSource),
+        join(destination, blankDestination),
+        {
+          force: true,
+        },
+      );
+    }
+  }
 
   // Ahead of the rest, so everything after it names the service the app has.
   await renameService({
@@ -195,6 +250,12 @@ export const createApp = async ({
     from: TEMPLATE_SERVICES[kind],
     to: serviceName,
   });
+
+  // Ahead of rewriteText, whose TEMPLATE_NAME substitution would touch
+  // `app-template-config` first and break this cut's exact-text match.
+  if (integration === "blank") {
+    await removeAppIntegration(destination);
+  }
 
   await rewritePackageJson({
     description,
@@ -207,7 +268,7 @@ export const createApp = async ({
   for (const file of [
     "README.md",
     ".env.example",
-    "src/domain/app-config.ts",
+    ...(integration === "saleor" ? ["src/domain/app-config.ts"] : []),
   ]) {
     await rewriteText({
       file: join(destination, file),
@@ -219,7 +280,8 @@ export const createApp = async ({
   }
 
   // Unwires what the copy left out. A queue service never had a dashboard.
-  if (kind === "http") {
+  // A blank service already got the cut-down entry-server.blank.ts.
+  if (kind === "http" && integration === "saleor") {
     await removeServiceDashboard(serviceDir);
   }
 
@@ -233,9 +295,10 @@ export const createApp = async ({
 
   await mergeServiceEnv({ appDir: destination, serviceDir });
 
-  await applyTenancy({ appDir: destination, tenancy });
-
-  await applyConfigProvider({ appDir: destination, target });
+  if (integration === "saleor") {
+    await applyTenancy({ appDir: destination, tenancy: tenancy! });
+    await applyConfigProvider({ appDir: destination, target });
+  }
 
   return destination;
 };
