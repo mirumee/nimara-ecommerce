@@ -30,6 +30,7 @@ okf_version: "0.1"
 - [PRD-001 Natural-Language Product Discovery](prd/PRD-001%20Natural-Language%20Product%20Discovery.md) - Product requirements for closing Nimara's natural-language discovery gap with a reusable, open-source storefront capability.
 - [PRD-002 Verified User Reviews](prd/PRD-002%20User%20Reviews.md) - Product requirements for a verified-purchase user reviews system in Nimara.
 - [PRD-003 Cookie Consent & Google Consent Mode v2](prd/PRD-003%20Cookie%20Consent.md) - Product requirements for Cookie Consent and Google Consent Mode v2 in the Nimara storefront.
+- [PRD-004 Newsletter Subscriptions](prd/PRD-004%20Newsletter%20Subscriptions.md) - Product requirements for a provider-neutral newsletter subscription seam in the Nimara storefront.
 
 # Implementation Evidence
 
@@ -40,6 +41,7 @@ okf_version: "0.1"
 - [IMP-0004 Checkout Step Guard Enforcement](tech/implementation/IMP-0004%20Checkout%20Step%20Guard%20Enforcement.md) - Checkout step selection is enforced against completeness on every request, so a step reached by URL cannot skip earlier steps or open a gateway transaction.
 - [IMP-0005 Daily GitHub Summary Bot](tech/implementation/IMP-0005%20Daily%20GitHub%20Summary%20Bot.md) - Adds a scheduled GitHub Actions job that posts a pre-daily repository summary to a Slack Incoming Webhook, covering merged pull requests, the review queue, failed CI on main, and issue and release activity.
 - [IMP-0006 Daily Summary Claude Comment](tech/implementation/IMP-0006%20Daily%20Summary%20Claude%20Comment.md) - Adds an optional Claude-written comment above the sections of the daily GitHub summary posted to Slack, trimmed to titles and counts before the request and degraded to no comment on any failure.
+- [IMP-0007 Storefront Newsletter Subscription](tech/implementation/IMP-0007%20Storefront%20Newsletter%20Subscription.md) - Newsletter capture ships as a configuration-selected provider capability with Klaviyo first, and an unconfigured provider degrades to a refusal instead of failing the request.
 
 # Current Product State
 
@@ -55,6 +57,7 @@ okf_version: "0.1"
 - [CAP-0005 Agent-Compatible Commerce](product/capabilities/CAP-0005%20Agent-Compatible%20Commerce.md) - Discoverable, negotiated catalog, cart, checkout-session, and order operations for agents.
 - [CAP-0006 Storefront Discovery and Cart](product/capabilities/CAP-0006%20Storefront%20Discovery%20and%20Cart.md) - Regional search, collections, product and vendor pages, and standard or vendor-aware carts.
 - [CAP-0007 Customer Account Self-Service](product/capabilities/CAP-0007%20Customer%20Account%20Self-Service.md) - Account, profile, address, order, return, saved-payment, and privacy operations.
+- [CAP-0008 Storefront Newsletter Subscription](product/capabilities/CAP-0008%20Storefront%20Newsletter%20Subscription.md) - The storefront home page collects an email address and delivers it to the configured email provider, and renders nothing when no provider is configured.
 
 # Product Flows
 
@@ -72,6 +75,7 @@ okf_version: "0.1"
 - [INT-0005 Stripe Payment Application](product/integrations/INT-0005%20Stripe%20Payment%20Application.md) - Standard-checkout PaymentIntent configuration, transaction webhooks, and asynchronous state reporting.
 - [INT-0006 Saleor Commerce Backend](product/integrations/INT-0006%20Saleor%20Commerce%20Backend.md) - Core commerce state through GraphQL, application, and webhook contracts.
 - [INT-0007 Marketplace Checkout Payment Orchestration](product/integrations/INT-0007%20Marketplace%20Checkout%20Payment%20Orchestration.md) - One platform payment across multiple vendor checkouts with asynchronous order completion.
+- [INT-0008 Newsletter Provider Selection](product/integrations/INT-0008%20Newsletter%20Provider%20Selection.md) - Build-time contract for selecting and configuring the storefront newsletter subscription implementation.
 
 # Product Strategy
 
@@ -81,6 +85,7 @@ okf_version: "0.1"
 - [Top-of-Funnel Adoption Moves](market/strategy/Top-of-Funnel%20Adoption%20Moves.md) - High-leverage moves to accelerate open-source developer adoption.
 - [Do Not Pursue](market/strategy/Do%20Not%20Pursue.md) - Strategic non-goals and distractions to avoid.
 - [Open Questions & Assumptions](market/strategy/Open%20Questions%20%26%20Assumptions.md) - Assumptions behind the strategy and evidence that could change it.
+- [Rate Limiting for Public Storefront Endpoints](market/strategy/initiatives/Rate%20Limiting%20for%20Public%20Storefront%20Endpoints.md) - Deferred idea: rate limiting for unauthenticated storefront write paths on serverless hosting.
 
 # Product Market
 
@@ -131,10 +136,12 @@ okf_version: "0.1"
 - [ADR-0001 Vouchers Are Disabled In Marketplace Checkout](tech/ADR/ADR-0001%20Vouchers%20Are%20Disabled%20In%20Marketplace%20Checkout.md) - Why promo codes are hidden in marketplace mode and what answering the platform-versus-vendor discount question would require.
 - [ADR-0002 Payment Application Configuration Storage Is Selectable](tech/ADR/ADR-0002%20Payment%20Application%20Configuration%20Storage%20Is%20Selectable.md) - Why storage sits behind one seam, why a deployment keeps the hosted store, and what accepting an on-disk developer store costs.
 - [ADR-0003 CodeceptJS Is The End-To-End Test Engine](tech/ADR/ADR-0003%20CodeceptJS%20Is%20The%20End-To-End%20Test%20Engine.md) - CodeceptJS replaces Playwright as the only end-to-end engine in apps/automated-tests. The Playwright library stays as the browser driver, and the deleted Playwright coverage is not ported.
+- [ADR-0004 Newsletter Capture Is A Selectable Provider Capability](tech/ADR/ADR-0004%20Newsletter%20Capture%20Is%20A%20Selectable%20Provider%20Capability.md) - Newsletter capture layers over the existing provider-selection machinery, and the public submit path ships unbounded by decision.
 
 # Technology RFC
 
 - [RFC MOC](tech/RFC/RFC%20MOC.md) - Map of content and register for RFC design proposals that precede an accepting or rejecting ADR.
+- [RFC-0001 Newsletter Subscription Provider Seam](tech/RFC/RFC-0001%20Newsletter%20Subscription%20Provider%20Seam.md) - Provider-neutral newsletter subscription capability for the storefront, with Klaviyo first.
 
 # Technology Saleor Schema
 

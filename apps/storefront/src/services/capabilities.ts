@@ -14,6 +14,7 @@ export const CAPABILITY_NAMES = {
   getCheckoutService: "checkout",
   getCollectionService: "collection",
   getMarketplaceService: "marketplace",
+  getNewsletterService: "newsletter",
   getPaymentService: "payment",
   getSearchService: "search",
   getStoreService: "store",

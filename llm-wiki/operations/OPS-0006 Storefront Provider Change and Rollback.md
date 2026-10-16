@@ -1,7 +1,7 @@
 ---
 type: "Operational Record"
 title: "Storefront Provider Change and Rollback"
-description: "Rollback procedure for changing the storefront search or content provider and restoring a known-good build when validation or production behavior fails."
+description: "Rollback procedure for changing the storefront search, content, or newsletter provider and restoring a known-good build when validation or production behavior fails."
 tags:
   - "operations"
   - "rollback"
@@ -18,30 +18,34 @@ relations:
     - "[Swappable Storefront Search and Content Providers](../product/capabilities/CAP-0001%20Swappable%20Storefront%20Search%20and%20Content%20Providers.md)"
     - "[Search Provider Selection](../product/integrations/INT-0001%20Search%20Provider%20Selection.md)"
     - "[Content Provider Selection](../product/integrations/INT-0002%20Content%20Provider%20Selection.md)"
+    - "[Newsletter Provider Selection](../product/integrations/INT-0008%20Newsletter%20Provider%20Selection.md)"
 ---
 
 # Trigger
 
-Use this procedure before changing `SEARCH_SERVICE` or `CMS_SERVICE`, and when a provider change
-causes build failure, empty or incorrect search/content, vendor-scope leakage, authentication errors,
-latency, or an upstream outage that requires restoring the previous provider build.
+Use this procedure before changing `SEARCH_SERVICE`, `CMS_SERVICE`, or `NEWSLETTER_SERVICE`, and
+when a provider change causes build failure, empty or incorrect search/content, a missing or failing
+newsletter subscribe section, vendor-scope leakage, authentication errors, latency, or an upstream
+outage that requires restoring the previous provider build.
 
 # Preconditions
 
-- Record the current immutable application ref, deployment ID, `SEARCH_SERVICE`, `CMS_SERVICE`, and
-  the names and versions of all provider-specific configuration values. Store secrets only in the
-  deployment platform, not in rollback evidence.
+- Record the current immutable application ref, deployment ID, `SEARCH_SERVICE`, `CMS_SERVICE`,
+  `NEWSLETTER_SERVICE`, and the names and versions of all provider-specific configuration values.
+  Store secrets only in the deployment platform, not in rollback evidence.
 - Identify the last known-good deployment and retain its environment snapshot. A provider choice is
   compiled at build time, so rollback always requires restoring configuration and deploying a build.
 - Confirm the requested lower-case provider ID is one of `saleor`, `algolia`, or `dummy` for search,
-  and `saleor`, `butter-cms`, or `dummy` for content.
+  `saleor`, `butter-cms`, or `dummy` for content, and `klaviyo` for newsletter. `NEWSLETTER_SERVICE`
+  carries no default, so an empty value is valid and turns the capability off.
 - Define checks for search results, facets, sorting, product links, navigation menus, content pages,
-  locale behavior, and any marketplace vendor filtering before changing production.
+  locale behavior, the presence and outcome of the home-page newsletter subscribe section, and any
+  marketplace vendor filtering before changing production.
 
 # Procedure
 
-1. Apply the proposed `SEARCH_SERVICE` and `CMS_SERVICE` values in a preview environment. Supply only
-   the selected provider's namespaced server-side configuration.
+1. Apply the proposed `SEARCH_SERVICE`, `CMS_SERVICE`, and `NEWSLETTER_SERVICE` values in a preview
+   environment. Supply only the selected provider's namespaced server-side configuration.
 2. Run `pnpm preflight --report` with the exact preview environment. Reject unknown provider values,
    missing keys, invalid index definitions, or a production configuration that would fall back to
    empty services.
@@ -53,17 +57,20 @@ latency, or an upstream outage that requires restoring the previous provider bui
 5. Promote by applying the same environment values to production and creating a fresh production
    build. Keep the prior deployment and environment snapshot available.
 6. If validation or production behavior fails, restore the previous `SEARCH_SERVICE`, `CMS_SERVICE`,
-   and their prior provider-specific values together. Redeploy the last known-good immutable ref,
-   then repeat the same behavior checks.
+   `NEWSLETTER_SERVICE`, and their prior provider-specific values together. Redeploy the last
+   known-good immutable ref, then repeat the same behavior checks.
 
 # Verification
 
-- Confirm the build logs and preflight name the intended effective provider for both search and
-  content; content pages and menus must use the same provider ID.
+- Confirm the build logs and preflight name the intended effective provider for search, content, and
+  newsletter; content pages and menus must use the same provider ID.
 - Verify representative search terms, zero-result behavior, facets, sorting, pagination, product
   details, menus, content pages, and locale/channel combinations.
 - Confirm non-production sample data appears only when intentionally using `dummy` or the permitted
   unconfigured fallback. Production must not expose sample commerce or content.
+- Verify the home page. The newsletter subscribe section must be present when
+  `NEWSLETTER_SERVICE` is set and absent when it is empty. Submit one address and confirm that the
+  message the shopper sees matches the provider outcome, and that no log entry contains the address.
 - After rollback, confirm the deployment ID, immutable ref, provider values, credentials, and
   external index/content state match the retained known-good snapshot.
 
@@ -76,6 +83,10 @@ latency, or an upstream outage that requires restoring the previous provider bui
   server-side `SEARCH_SERVICE` and `CMS_SERVICE`. Do not use that workflow as provider-change proof
   until it is reconciled.
 - Restoring the application does not roll back external index writes, content-model changes, token
-  rotation, or Saleor data. Reconcile those systems separately and preserve audit evidence.
+  rotation, Saleor data, or profiles already written to the newsletter provider. Reconcile those
+  systems separately and preserve audit evidence.
+- The preflight cannot verify that the configured Klaviyo list has double opt-in enabled. Confirm
+  that setting in the provider before promoting a newsletter provider change, otherwise the provider
+  subscribes addresses immediately and sends no confirmation message.
 - Escalate suspected cross-vendor data exposure, use of an over-privileged search key, sample data in
   production, or a provider rollback that cannot reproduce the prior known-good result.
