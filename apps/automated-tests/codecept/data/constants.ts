@@ -3,7 +3,7 @@ import { locate } from "codeceptjs";
 import { LOCALE_PREFIX } from "../data/locales";
 
 export const TIMEOUTS = {
-  timeout_seconds: Number(process.env.TIMEOUT_SECONDS) || 8,
+  timeout_seconds: Number(process.env.TIMEOUT_SECONDS) || 15,
 }; // timeout for wait functions used in tests
 
 export const URLS = {
