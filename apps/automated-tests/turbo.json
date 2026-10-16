@@ -3,7 +3,7 @@
   "tasks": {
     "test:e2e": {
       "cache": false,
-      "env": ["TEST_ENV_URL", "LOCALE"],
+      "env": ["TEST_ENV_URL", "LOCALE", "TIMEOUT_SECONDS"],
       "passThroughEnv": ["USER_EMAIL", "USER_PASSWORD"]
     }
   }

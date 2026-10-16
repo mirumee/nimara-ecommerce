@@ -2,12 +2,13 @@ import { locate } from "codeceptjs";
 
 import {
   card as cardConstants,
-  timeout_seconds,
+  TIMEOUTS,
   URLS,
   userGB,
   userUS,
 } from "../data/constants";
 import { REQUESTED_LOCALE } from "../data/locales";
+const timeout_seconds = TIMEOUTS.timeout_seconds;
 
 const { I } = inject();
 // select locale-specific user data from constants

@@ -1,4 +1,5 @@
-import { storeHeaders, timeout_seconds } from "./data/constants";
+import { storeHeaders, TIMEOUTS } from "./data/constants";
+const timeout_seconds = TIMEOUTS.timeout_seconds;
 
 Feature("Login");
 
