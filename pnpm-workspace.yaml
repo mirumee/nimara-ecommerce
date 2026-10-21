@@ -6,6 +6,6 @@ packages:
 
 catalog:
   "@types/aws-lambda": ^8.10.162
-  hono: 4.13.5
+  hono: 4.13.11
   next: 16.3.3
   zod: ^4.5.2
