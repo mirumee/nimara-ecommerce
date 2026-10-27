@@ -11,7 +11,7 @@
   "dependencies": {
     "@formatjs/intl-localematcher": "0.8.13",
     "@hookform/resolvers": "5.9.1",
-    "@sentry/nextjs": "^10.72.0",
+    "@sentry/nextjs": "^10.75.2",
     "@sentry/types": "^10.72.0",
     "clsx": "2.1.1",
     "jose": "^6.2.9",
