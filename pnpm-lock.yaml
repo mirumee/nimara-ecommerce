@@ -16,8 +16,8 @@ catalogs:
       specifier: 16.3.3
       version: 16.3.3
     zod:
-      specifier: ^4.5.2
-      version: 4.5.4
+      specifier: ^4.6.6
+      version: 4.6.7
 
 importers:
 
@@ -170,7 +170,7 @@ importers:
         version: 3.2.0(graphql@16.14.2)
       '@hookform/resolvers':
         specifier: ^5.9.1
-        version: 5.9.1(@sinclair/typebox@0.27.12)(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@8.18.0))(ajv@8.18.0)(class-transformer@0.5.1)(joi@17.13.6)(react-hook-form@7.87.0(react@19.2.4))(zod@4.5.4)
+        version: 5.9.1(@sinclair/typebox@0.27.12)(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@8.18.0))(ajv@8.18.0)(class-transformer@0.5.1)(joi@17.13.6)(react-hook-form@7.87.0(react@19.2.4))(zod@4.6.7)
       '@nimara/codegen':
         specifier: workspace:*
         version: link:../../packages/codegen
@@ -254,7 +254,7 @@ importers:
         version: 2.6.1
       zod:
         specifier: 'catalog:'
-        version: 4.5.4
+        version: 4.6.7
     devDependencies:
       '@types/node':
         specifier: ^24.13.3
@@ -309,7 +309,7 @@ importers:
         version: 0.8.13
       '@hookform/resolvers':
         specifier: 5.9.1
-        version: 5.9.1(@sinclair/typebox@0.27.12)(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@6.12.6))(ajv@6.12.6)(class-transformer@0.5.1)(joi@17.13.6)(react-hook-form@7.87.0(react@19.2.4))(zod@4.5.4)
+        version: 5.9.1(@sinclair/typebox@0.27.12)(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@6.12.6))(ajv@6.12.6)(class-transformer@0.5.1)(joi@17.13.6)(react-hook-form@7.87.0(react@19.2.4))(zod@4.6.7)
       '@next/third-parties':
         specifier: 16.3.3
         version: 16.3.3(next@16.3.3(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(@types/node@26.2.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
@@ -420,7 +420,7 @@ importers:
         version: 1.0.15
       zod:
         specifier: 'catalog:'
-        version: 4.5.4
+        version: 4.6.7
     devDependencies:
       '@clack/prompts':
         specifier: 1.7.0
@@ -508,10 +508,10 @@ importers:
     dependencies:
       '@hono/zod-validator':
         specifier: ^0.9.0
-        version: 0.9.0(hono@4.13.5)(zod@4.5.4)
+        version: 0.9.0(hono@4.13.5)(zod@4.6.7)
       '@hookform/resolvers':
         specifier: 5.9.1
-        version: 5.9.1(@sinclair/typebox@0.27.12)(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@8.18.0))(ajv@8.18.0)(class-transformer@0.5.1)(joi@17.13.6)(react-hook-form@7.87.0(react@19.2.4))(zod@4.5.4)
+        version: 5.9.1(@sinclair/typebox@0.27.12)(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@8.18.0))(ajv@8.18.0)(class-transformer@0.5.1)(joi@17.13.6)(react-hook-form@7.87.0(react@19.2.4))(zod@4.6.7)
       '@nimara/domain':
         specifier: workspace:*
         version: link:../../packages/domain
@@ -556,7 +556,7 @@ importers:
         version: 0.10.3
       zod:
         specifier: 'catalog:'
-        version: 4.5.4
+        version: 4.6.7
     devDependencies:
       '@graphql-typed-document-node/core':
         specifier: 3.2.0
@@ -742,7 +742,7 @@ importers:
     dependencies:
       zod:
         specifier: 'catalog:'
-        version: 4.5.4
+        version: 4.6.7
     devDependencies:
       '@nimara/config':
         specifier: workspace:*
@@ -767,7 +767,7 @@ importers:
     dependencies:
       '@hookform/resolvers':
         specifier: 5.9.1
-        version: 5.9.1(@sinclair/typebox@0.27.12)(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@8.18.0))(ajv@8.18.0)(class-transformer@0.5.1)(joi@17.13.6)(react-hook-form@7.87.0(react@19.2.4))(zod@4.5.4)
+        version: 5.9.1(@sinclair/typebox@0.27.12)(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@8.18.0))(ajv@8.18.0)(class-transformer@0.5.1)(joi@17.13.6)(react-hook-form@7.87.0(react@19.2.4))(zod@4.6.7)
       '@nimara/domain':
         specifier: workspace:*
         version: link:../domain
@@ -824,7 +824,7 @@ importers:
         version: 1.0.15
       zod:
         specifier: 'catalog:'
-        version: 4.5.4
+        version: 4.6.7
     devDependencies:
       '@nimara/config':
         specifier: workspace:*
@@ -855,7 +855,7 @@ importers:
         version: 0.8.13
       '@hookform/resolvers':
         specifier: 5.9.1
-        version: 5.9.1(@sinclair/typebox@0.27.12)(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@8.18.0))(ajv@8.18.0)(class-transformer@0.5.1)(joi@17.13.6)(react-hook-form@7.87.0(react@19.2.4))(zod@4.5.4)
+        version: 5.9.1(@sinclair/typebox@0.27.12)(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@8.18.0))(ajv@8.18.0)(class-transformer@0.5.1)(joi@17.13.6)(react-hook-form@7.87.0(react@19.2.4))(zod@4.6.7)
       '@sentry/nextjs':
         specifier: ^10.72.0
         version: 10.73.0(@opentelemetry/core@2.10.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.10.0(@opentelemetry/api@1.9.1))(next@16.3.3(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(@types/node@26.2.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)(webpack@5.109.2(esbuild@0.28.2))
@@ -891,7 +891,7 @@ importers:
         version: 2.6.1
       zod:
         specifier: 'catalog:'
-        version: 4.5.4
+        version: 4.6.7
     devDependencies:
       '@nimara/codegen':
         specifier: workspace:*
@@ -1022,7 +1022,7 @@ importers:
         version: 0.10.3
       zod:
         specifier: 'catalog:'
-        version: 4.5.4
+        version: 4.6.7
     optionalDependencies:
       algoliasearch:
         specifier: 5.57.0
@@ -1069,7 +1069,7 @@ importers:
     dependencies:
       '@hono/zod-validator':
         specifier: ^0.9.0
-        version: 0.9.0(hono@4.13.5)(zod@4.5.4)
+        version: 0.9.0(hono@4.13.5)(zod@4.6.7)
       '@nimara/domain':
         specifier: workspace:*
         version: link:../domain
@@ -1096,7 +1096,7 @@ importers:
         version: 19.2.4
       zod:
         specifier: 'catalog:'
-        version: 4.5.4
+        version: 4.6.7
     devDependencies:
       '@nimara/config':
         specifier: workspace:*
@@ -1151,7 +1151,7 @@ importers:
         version: 5.0.2(vite@8.2.1(@types/node@24.12.4)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))
       zod:
         specifier: 'catalog:'
-        version: 4.5.4
+        version: 4.6.7
     devDependencies:
       '@nimara/config':
         specifier: workspace:*
@@ -1294,10 +1294,10 @@ importers:
     dependencies:
       '@hono/zod-validator':
         specifier: ^0.9.0
-        version: 0.9.0(hono@4.13.5)(zod@4.5.4)
+        version: 0.9.0(hono@4.13.5)(zod@4.6.7)
       '@hookform/resolvers':
         specifier: 5.9.1
-        version: 5.9.1(@sinclair/typebox@0.27.12)(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@8.18.0))(ajv@8.18.0)(class-transformer@0.5.1)(joi@17.13.6)(react-hook-form@7.85.0(react@19.2.4))(zod@4.5.4)
+        version: 5.9.1(@sinclair/typebox@0.27.12)(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@8.18.0))(ajv@8.18.0)(class-transformer@0.5.1)(joi@17.13.6)(react-hook-form@7.85.0(react@19.2.4))(zod@4.6.7)
       '@nimara/domain':
         specifier: workspace:*
         version: link:../../packages/domain
@@ -1312,7 +1312,7 @@ importers:
         version: link:../../packages/lib
       '@saleor/app-sdk':
         specifier: 1.7.0
-        version: 1.7.0(graphql@16.14.2)(next@16.3.3(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(@types/node@24.12.4)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        version: 1.7.0(graphql@16.14.2)(next@16.3.3(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(@types/node@24.12.4)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@sentry/node':
         specifier: ^10.70.0
         version: 10.70.0(@opentelemetry/core@2.10.0(@opentelemetry/api@1.9.1))
@@ -1336,7 +1336,7 @@ importers:
         version: 0.10.3
       zod:
         specifier: 'catalog:'
-        version: 4.5.4
+        version: 4.6.7
     devDependencies:
       '@graphql-codegen/cli':
         specifier: 6.2.1
@@ -5377,6 +5377,7 @@ packages:
   '@opentelemetry/sdk-trace-base@2.10.0':
     resolution: {integrity: sha512-GuYQQT7QD2EeO8lcZLRQzcbOyhqAzL+6WWTKTU9mSUBYBazkEDl+VrQcXQhbB08OWM9anD1aHleVadzulpOaUQ==}
     engines: {node: ^18.19.0 || >=20.6.0}
+    deprecated: Use @opentelemetry/sdk-trace package
     peerDependencies:
       '@opentelemetry/api': '>=1.3.0 <1.10.0'
 
@@ -6888,6 +6889,7 @@ packages:
   '@smithy/core@3.33.3':
     resolution: {integrity: sha512-CsOeKq/9kA3y6VJHt+/+VTCtBaxJ4OTFpgrjIUhPpDIKxBci1k2bJaQASF2h/ELWrulGp+t97DZ0mevfAD8idg==}
     engines: {node: '>=18.0.0'}
+    deprecated: Deprecated due to a bug in custom logger data redaction. See https://github.com/aws/aws-sdk-js-v3/issues/8393.
 
   '@smithy/credential-provider-imds@4.5.2':
     resolution: {integrity: sha512-A9uSdn72ozbRUSit0eib0TW7nXuNPlaeM0zcGkJ+nE6tFcSDbnmtwoxbTCFBukVQcszDAyvsd7+rTduPTXpygg==}
@@ -7653,6 +7655,7 @@ packages:
   '@vercel/edge-config@1.5.1':
     resolution: {integrity: sha512-eawv5LKqEk+KL9lw+lzExpPELE8B1DdvWhpswtSr5nkUujH4nOLq89fY565uWp5z70XzTnfx6E08KIVmgOwSjg==}
     engines: {node: '>=14.6'}
+    deprecated: This package has been renamed to @vercel/global-config. Install @vercel/global-config instead.
     peerDependencies:
       '@opentelemetry/api': ^1.7.0
       next: '>=1'
@@ -15511,8 +15514,8 @@ packages:
   zod@4.3.6:
     resolution: {integrity: sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg==}
 
-  zod@4.5.4:
-    resolution: {integrity: sha512-sC95tT5iHHH9gtpj6A81kh+NEaRAUFN+qlUPDUbRfOMvNf5QCBqsb3WgvnpVtK5Y+4UfA6KqufotuTvMGiTlsA==}
+  zod@4.6.7:
+    resolution: {integrity: sha512-g8W2D2kU6a8untc053fX1uVBKzM7yqAxW/3zwk83+6RyF2+SKOuV+c0wBDhUwzV1PaGapmZH+rmcUzPf+3CGwg==}
 
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
@@ -20104,12 +20107,12 @@ snapshots:
       hono: 4.13.5
       minimatch: 9.0.9
 
-  '@hono/zod-validator@0.9.0(hono@4.13.5)(zod@4.5.4)':
+  '@hono/zod-validator@0.9.0(hono@4.13.5)(zod@4.6.7)':
     dependencies:
       hono: 4.13.5
-      zod: 4.5.4
+      zod: 4.6.7
 
-  '@hookform/resolvers@5.9.1(@sinclair/typebox@0.27.12)(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@6.12.6))(ajv@6.12.6)(class-transformer@0.5.1)(joi@17.13.6)(react-hook-form@7.87.0(react@19.2.4))(zod@4.5.4)':
+  '@hookform/resolvers@5.9.1(@sinclair/typebox@0.27.12)(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@6.12.6))(ajv@6.12.6)(class-transformer@0.5.1)(joi@17.13.6)(react-hook-form@7.87.0(react@19.2.4))(zod@4.6.7)':
     dependencies:
       '@standard-schema/utils': 0.3.0
       react-hook-form: 7.87.0(react@19.2.4)
@@ -20120,9 +20123,9 @@ snapshots:
       ajv-formats: 2.1.1(ajv@6.12.6)
       class-transformer: 0.5.1
       joi: 17.13.6
-      zod: 4.5.4
+      zod: 4.6.7
 
-  '@hookform/resolvers@5.9.1(@sinclair/typebox@0.27.12)(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@8.18.0))(ajv@8.18.0)(class-transformer@0.5.1)(joi@17.13.6)(react-hook-form@7.85.0(react@19.2.4))(zod@4.5.4)':
+  '@hookform/resolvers@5.9.1(@sinclair/typebox@0.27.12)(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@8.18.0))(ajv@8.18.0)(class-transformer@0.5.1)(joi@17.13.6)(react-hook-form@7.85.0(react@19.2.4))(zod@4.6.7)':
     dependencies:
       '@standard-schema/utils': 0.3.0
       react-hook-form: 7.85.0(react@19.2.4)
@@ -20133,9 +20136,9 @@ snapshots:
       ajv-formats: 2.1.1(ajv@8.18.0)
       class-transformer: 0.5.1
       joi: 17.13.6
-      zod: 4.5.4
+      zod: 4.6.7
 
-  '@hookform/resolvers@5.9.1(@sinclair/typebox@0.27.12)(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@8.18.0))(ajv@8.18.0)(class-transformer@0.5.1)(joi@17.13.6)(react-hook-form@7.87.0(react@19.2.4))(zod@4.5.4)':
+  '@hookform/resolvers@5.9.1(@sinclair/typebox@0.27.12)(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@8.18.0))(ajv@8.18.0)(class-transformer@0.5.1)(joi@17.13.6)(react-hook-form@7.87.0(react@19.2.4))(zod@4.6.7)':
     dependencies:
       '@standard-schema/utils': 0.3.0
       react-hook-form: 7.87.0(react@19.2.4)
@@ -20146,7 +20149,7 @@ snapshots:
       ajv-formats: 2.1.1(ajv@8.18.0)
       class-transformer: 0.5.1
       joi: 17.13.6
-      zod: 4.5.4
+      zod: 4.6.7
 
   '@humanwhocodes/config-array@0.13.0':
     dependencies:
@@ -22160,21 +22163,6 @@ snapshots:
       react-dom: 19.2.4(react@19.2.4)
       retes: 0.33.0
       uuid: 9.0.0
-    transitivePeerDependencies:
-      - supports-color
-
-  '@saleor/app-sdk@1.7.0(graphql@16.14.2)(next@16.3.3(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(@types/node@24.12.4)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
-    dependencies:
-      '@opentelemetry/api': 1.9.0
-      '@opentelemetry/semantic-conventions': 1.30.0
-      debug: 4.4.0
-      jose: 5.10.0
-      raw-body: 3.0.0
-    optionalDependencies:
-      graphql: 16.14.2
-      next: 16.3.3(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(@types/node@24.12.4)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
     transitivePeerDependencies:
       - supports-color
 
@@ -25810,7 +25798,7 @@ snapshots:
       '@typescript-eslint/parser': 6.21.0(eslint@8.57.1)(typescript@5.9.3)
       eslint: 8.57.1
       eslint-import-resolver-node: 0.3.10
-      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0)(eslint@8.57.1)
+      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.9.3))(eslint@8.57.1))(eslint@8.57.1)
       eslint-plugin-import: 2.32.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1)(eslint@8.57.1)
       eslint-plugin-jsx-a11y: 6.10.2(eslint@8.57.1)
       eslint-plugin-react: 7.37.5(eslint@8.57.1)
@@ -25855,7 +25843,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0)(eslint@8.57.1):
+  eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.9.3))(eslint@8.57.1))(eslint@8.57.1):
     dependencies:
       '@nolyfill/is-core-module': 1.0.39
       debug: 4.4.3(supports-color@8.1.1)
@@ -25885,14 +25873,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.12.1(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.9.3))(eslint-import-resolver-node@0.3.10)(eslint-import-resolver-typescript@3.10.1)(eslint@8.57.1):
+  eslint-module-utils@2.12.1(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.9.3))(eslint-import-resolver-node@0.3.10)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.9.3))(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
       '@typescript-eslint/parser': 6.21.0(eslint@8.57.1)(typescript@5.9.3)
       eslint: 8.57.1
       eslint-import-resolver-node: 0.3.10
-      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0)(eslint@8.57.1)
+      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.9.3))(eslint@8.57.1))(eslint@8.57.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -25918,7 +25906,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 8.57.1
       eslint-import-resolver-node: 0.3.10
-      eslint-module-utils: 2.12.1(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.9.3))(eslint-import-resolver-node@0.3.10)(eslint-import-resolver-typescript@3.10.1)(eslint@8.57.1)
+      eslint-module-utils: 2.12.1(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.9.3))(eslint-import-resolver-node@0.3.10)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.9.3))(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1)
       hasown: 2.0.2
       is-core-module: 2.16.1
       is-glob: 4.0.3
@@ -28966,34 +28954,6 @@ snapshots:
       - '@babel/core'
       - '@types/node'
       - babel-plugin-macros
-
-  next@16.3.3(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(@types/node@24.12.4)(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
-    dependencies:
-      '@next/env': 16.3.3
-      '@swc/helpers': 0.5.23
-      baseline-browser-mapping: 2.11.19
-      caniuse-lite: 1.0.30001810
-      postcss: 8.5.23
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
-      styled-jsx: 5.1.6(@babel/core@7.29.7)(react@19.2.4)
-    optionalDependencies:
-      '@next/swc-darwin-arm64': 16.3.3
-      '@next/swc-darwin-x64': 16.3.3
-      '@next/swc-linux-arm64-gnu': 16.3.3
-      '@next/swc-linux-arm64-musl': 16.3.3
-      '@next/swc-linux-x64-gnu': 16.3.3
-      '@next/swc-linux-x64-musl': 16.3.3
-      '@next/swc-win32-arm64-msvc': 16.3.3
-      '@next/swc-win32-x64-msvc': 16.3.3
-      '@opentelemetry/api': 1.9.1
-      '@playwright/test': 1.59.1
-      sharp: 0.35.3(@types/node@24.12.4)
-    transitivePeerDependencies:
-      - '@babel/core'
-      - '@types/node'
-      - babel-plugin-macros
-    optional: true
 
   next@16.3.3(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(@types/node@26.2.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
     dependencies:
@@ -33075,6 +33035,6 @@ snapshots:
 
   zod@4.3.6: {}
 
-  zod@4.5.4: {}
+  zod@4.6.7: {}
 
   zwitch@2.0.4: {}
