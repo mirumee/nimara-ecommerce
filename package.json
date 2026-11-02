@@ -74,16 +74,16 @@
   "devDependencies": {
     "@nimara/config": "workspace:*",
     "commitizen": "4.3.2",
-    "dotenv-cli": "11.0.0",
+    "dotenv-cli": "11.1.0",
     "eslint": "^8.57.0",
     "fallow": "2.104.0",
     "husky": "9.1.7",
     "lint-staged": "^16.4.0",
     "prettier": "3.9.6",
     "prettier-plugin-tailwindcss": "^0.8.1",
-    "tsx": "4.23.12",
-    "turbo": "2.10.12",
-    "yaml": "2.9.0"
+    "tsx": "4.23.15",
+    "turbo": "2.11.10",
+    "yaml": "2.9.1"
   },
   "config": {
     "commitizen": {
