@@ -20,8 +20,8 @@
     "typescript": "5.9.3"
   },
   "dependencies": {
-    "graphql": "16.14.2",
-    "graphql-config": "5.1.6",
+    "graphql": "16.15.0",
+    "graphql-config": "5.1.8",
     "ts-invariant": "0.10.3"
   }
 }
