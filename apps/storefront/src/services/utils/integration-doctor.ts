@@ -3,20 +3,15 @@ import { type ZodType } from "zod";
 import { cmsMenuProviders } from "@nimara/infrastructure/cms-menu/select";
 import { cmsPageProviders } from "@nimara/infrastructure/cms-page/select";
 import type { Logger } from "@nimara/infrastructure/logging/types";
+import { newsletterProviders } from "@nimara/infrastructure/newsletter/select";
 import { searchProviders } from "@nimara/infrastructure/search/select";
 
 import type { Capability } from "@/services/capabilities";
 import {
   resolveCMSProvider,
+  resolveNewsletterProvider,
   resolveSearchProvider,
 } from "@/services/integrations/resolve";
-
-export type IntegrationReportRow = {
-  capability: SwappableCapability;
-  missing: string[];
-  ok: boolean;
-  selected: string | null;
-};
 
 type CapabilityEntry = {
   capability: Capability;
@@ -46,6 +41,11 @@ const CAPABILITIES = [
     providers: cmsMenuProviders,
     resolve: resolveCMSProvider,
   },
+  {
+    capability: "newsletter",
+    providers: newsletterProviders,
+    resolve: resolveNewsletterProvider,
+  },
 ] as const satisfies readonly CapabilityEntry[];
 
 /*
@@ -55,6 +55,13 @@ const CAPABILITIES = [
  * always label the same capability the same way.
  */
 export type SwappableCapability = (typeof CAPABILITIES)[number]["capability"];
+
+export type IntegrationReportRow = {
+  capability: SwappableCapability;
+  missing: string[];
+  ok: boolean;
+  selected: string | null;
+};
 
 /**
  * Reports, per swappable capability, which provider is selected and whether its
@@ -114,6 +121,17 @@ export const logIntegrationConfigIssues = (
       missing: row.missing,
     });
   }
+};
+
+export const isCapabilityConfigured = (
+  capability: SwappableCapability,
+  env?: Record<string, string | undefined>,
+): boolean => {
+  const row = buildIntegrationReport(env).find(
+    (entry) => entry.capability === capability,
+  );
+
+  return Boolean(row?.ok && row.selected !== null);
 };
 
 /** Human-readable preflight report for the swappable capabilities. */

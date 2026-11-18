@@ -17,6 +17,7 @@ import { createCategoryServiceLoader } from "./lazy-loaders/category";
 import { createCMSMenuServiceLoader } from "./lazy-loaders/cms-menu";
 import { createCMSPageServiceLoader } from "./lazy-loaders/cms-page";
 import { createCollectionServiceLoader } from "./lazy-loaders/collection";
+import { createNewsletterServiceLoader } from "./lazy-loaders/newsletter";
 import { createSearchServiceLoader } from "./lazy-loaders/search";
 import { createStoreServiceLoader } from "./lazy-loaders/store";
 import { createTrackingServiceLoader } from "./lazy-loaders/tracking";
@@ -38,6 +39,7 @@ const SERVICE_LOADERS = {
   getCheckoutService: createCheckoutServiceLoader,
   getCollectionService: createCollectionServiceLoader,
   getMarketplaceService: createMarketplaceServiceLoader,
+  getNewsletterService: createNewsletterServiceLoader,
   getPaymentService: createPaymentServiceLoader,
   getSearchService: createSearchServiceLoader,
   getStoreService: createStoreServiceLoader,
