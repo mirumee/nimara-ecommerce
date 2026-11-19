@@ -236,6 +236,16 @@
       "checking": "Checking...",
       "completed-setup-button": "I've completed setup"
     },
+    "dashboard": {
+      "customers": "Customers",
+      "failed-to-load": "Failed to load dashboard data",
+      "no-orders": "No orders yet",
+      "orders": "Orders",
+      "products": "Products",
+      "recent-orders": "Recent orders",
+      "unfulfilled-orders": "Unfulfilled orders",
+      "view-all": "View all"
+    },
     "drafts": {
       "list": {
         "empty-list": "No drafts found",
@@ -694,11 +704,12 @@
       },
       "description": "Payout batches from the marketplace ledger: close a period, review vendor lines, run Stripe Connect transfers.",
       "execute": {
+        "batch-failed": "Transfers failed. Processed: {processed}, batch status: {status}.",
         "busy": "Executing…",
         "button": "Execute Stripe transfers",
         "error": "Execute failed.",
         "hint": "Requires platform balance in Stripe and batch lines in status “ready”.",
-        "success": "Transfers submitted. Refreshing…"
+        "success": "Transfers submitted: {processed}, batch status: {status}."
       },
       "failed-to-load": "Failed to load payout overview.",
       "failed-to-load-batch": "Failed to load batch details.",

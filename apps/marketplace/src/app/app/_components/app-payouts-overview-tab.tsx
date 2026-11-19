@@ -9,6 +9,7 @@ import { Button } from "@nimara/ui/components/button";
 import { Input } from "@nimara/ui/components/input";
 import { Label } from "@nimara/ui/components/label";
 import { Separator } from "@nimara/ui/components/separator";
+import { useToast } from "@nimara/ui/hooks";
 
 import {
   Table,
@@ -178,21 +179,19 @@ export function AppPayoutsOverviewTab({ isAuthenticated, isLoading }: Props) {
   const [periodEnd, setPeriodEnd] = useState("");
   const [closeCurrency, setCloseCurrency] = useState("usd");
   const [closing, setClosing] = useState(false);
-  const [closeMessage, setCloseMessage] = useState<{
-    text: string;
-    type: "error" | "success";
-  } | null>(null);
+  const [closeError, setCloseError] = useState<string | null>(null);
   const [executingBatchId, setExecutingBatchId] = useState<string | null>(null);
-  const [executeMessage, setExecuteMessage] = useState<{
+  const [executeIssue, setExecuteIssue] = useState<{
     batchId: string;
     text: string;
-    type: "error" | "success";
+    type: "error" | "warning";
   } | null>(null);
   const [syncingStripe, setSyncingStripe] = useState(false);
-  const [syncStripeMessage, setSyncStripeMessage] = useState<{
+  const [syncStripeIssue, setSyncStripeIssue] = useState<{
     text: string;
-    type: "error" | "success" | "warning";
+    type: "error" | "warning";
   } | null>(null);
+  const { toast } = useToast();
 
   const fetchOverview = useCallback(async () => {
     if (!isAuthenticated) {
@@ -309,7 +308,7 @@ export function AppPayoutsOverviewTab({ isAuthenticated, isLoading }: Props) {
     }
 
     setClosing(true);
-    setCloseMessage(null);
+    setCloseError(null);
 
     try {
       const res = await fetch("/api/payouts/batches/close", {
@@ -328,33 +327,21 @@ export function AppPayoutsOverviewTab({ isAuthenticated, isLoading }: Props) {
       });
 
       if (res.status === 422) {
-        setCloseMessage({
-          text: t("marketplace.payouts.close-period.error-422"),
-          type: "error",
-        });
+        setCloseError(t("marketplace.payouts.close-period.error-422"));
 
         return;
       }
 
       if (!res.ok) {
-        setCloseMessage({
-          text: t("marketplace.payouts.close-period.error"),
-          type: "error",
-        });
+        setCloseError(t("marketplace.payouts.close-period.error"));
 
         return;
       }
 
-      setCloseMessage({
-        text: t("marketplace.payouts.close-period.success"),
-        type: "success",
-      });
+      toast({ description: t("marketplace.payouts.close-period.success") });
       await fetchOverview();
     } catch {
-      setCloseMessage({
-        text: t("marketplace.payouts.close-period.error"),
-        type: "error",
-      });
+      setCloseError(t("marketplace.payouts.close-period.error"));
     } finally {
       setClosing(false);
     }
@@ -366,7 +353,7 @@ export function AppPayoutsOverviewTab({ isAuthenticated, isLoading }: Props) {
     }
 
     setSyncingStripe(true);
-    setSyncStripeMessage(null);
+    setSyncStripeIssue(null);
 
     try {
       const res = await fetch("/api/payouts/ledger/sync-stripe", {
@@ -382,7 +369,7 @@ export function AppPayoutsOverviewTab({ isAuthenticated, isLoading }: Props) {
           error?: string;
         } | null;
 
-        setSyncStripeMessage({
+        setSyncStripeIssue({
           text: body?.error ?? t("marketplace.payouts.sync-stripe.error"),
           type: "error",
         });
@@ -398,22 +385,22 @@ export function AppPayoutsOverviewTab({ isAuthenticated, isLoading }: Props) {
       };
 
       const errCount = data.chargeErrors?.length ?? 0;
-      const base = t("marketplace.payouts.sync-stripe.success", {
+      const summary = t("marketplace.payouts.sync-stripe.success", {
         charges: data.chargesSynced,
         promoted: data.promotedByDateCount,
       });
-      const extra =
-        errCount > 0
-          ? ` ${t("marketplace.payouts.sync-stripe.partial", { count: errCount })}`
-          : "";
 
-      setSyncStripeMessage({
-        text: `${base}${extra}`,
-        type: errCount > 0 ? "warning" : "success",
-      });
+      if (errCount > 0) {
+        setSyncStripeIssue({
+          text: `${summary} ${t("marketplace.payouts.sync-stripe.partial", { count: errCount })}`,
+          type: "warning",
+        });
+      } else {
+        toast({ description: summary });
+      }
       await fetchOverview();
     } catch {
-      setSyncStripeMessage({
+      setSyncStripeIssue({
         text: t("marketplace.payouts.sync-stripe.error"),
         type: "error",
       });
@@ -428,7 +415,7 @@ export function AppPayoutsOverviewTab({ isAuthenticated, isLoading }: Props) {
     }
 
     setExecutingBatchId(batchId);
-    setExecuteMessage(null);
+    setExecuteIssue(null);
 
     try {
       const res = await fetch(`/api/payouts/batches/${batchId}/execute`, {
@@ -446,7 +433,7 @@ export function AppPayoutsOverviewTab({ isAuthenticated, isLoading }: Props) {
       } | null;
 
       if (!res.ok) {
-        setExecuteMessage({
+        setExecuteIssue({
           batchId,
           text: data?.error ?? t("marketplace.payouts.execute.error"),
           type: "error",
@@ -455,11 +442,28 @@ export function AppPayoutsOverviewTab({ isAuthenticated, isLoading }: Props) {
         return;
       }
 
-      setExecuteMessage({
-        batchId,
-        text: `${t("marketplace.payouts.execute.success")} (${data?.processed ?? 0} transfers, status: ${data?.batchStatus ?? "—"})`,
-        type: "success",
-      });
+      const resultValues = {
+        processed: data?.processed ?? 0,
+        status: data?.batchStatus ?? "—",
+      };
+
+      if (data?.batchStatus === "failed") {
+        setExecuteIssue({
+          batchId,
+          text: t("marketplace.payouts.execute.batch-failed", resultValues),
+          type: "error",
+        });
+      } else if (data?.batchStatus === "partially_paid") {
+        setExecuteIssue({
+          batchId,
+          text: t("marketplace.payouts.execute.success", resultValues),
+          type: "warning",
+        });
+      } else {
+        toast({
+          description: t("marketplace.payouts.execute.success", resultValues),
+        });
+      }
       setBatchDetail((prev) => {
         const next = { ...prev };
 
@@ -470,7 +474,7 @@ export function AppPayoutsOverviewTab({ isAuthenticated, isLoading }: Props) {
       await fetchOverview();
       await loadBatchDetail(batchId);
     } catch {
-      setExecuteMessage({
+      setExecuteIssue({
         batchId,
         text: t("marketplace.payouts.execute.error"),
         type: "error",
@@ -613,6 +617,18 @@ export function AppPayoutsOverviewTab({ isAuthenticated, isLoading }: Props) {
             <TableRow>
               <TableCell colSpan={7} className="bg-muted/20 p-0">
                 <div className="p-4">
+                  {executeIssue?.batchId === row.id ? (
+                    <p
+                      role={executeIssue.type === "error" ? "alert" : "status"}
+                      className={cn(
+                        "mb-4 text-sm",
+                        executeIssue.type === "warning" && "text-amber-600",
+                        executeIssue.type === "error" && "text-destructive",
+                      )}
+                    >
+                      {executeIssue.text}
+                    </p>
+                  ) : null}
                   {detail === "loading" || detail === undefined ? (
                     <div className="flex justify-center py-6">
                       <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
@@ -627,17 +643,6 @@ export function AppPayoutsOverviewTab({ isAuthenticated, isLoading }: Props) {
                     </p>
                   ) : (
                     <div className="space-y-4">
-                      {executeMessage && executeMessage.batchId === row.id ? (
-                        <p
-                          className={
-                            executeMessage.type === "success"
-                              ? "text-sm text-green-600"
-                              : "text-sm text-destructive"
-                          }
-                        >
-                          {executeMessage.text}
-                        </p>
-                      ) : null}
                       {detail.batch &&
                       ["locked", "partially_paid", "executing"].includes(
                         detail.batch.status,
@@ -789,16 +794,16 @@ export function AppPayoutsOverviewTab({ isAuthenticated, isLoading }: Props) {
             t("marketplace.payouts.sync-stripe.submit")
           )}
         </Button>
-        {syncStripeMessage ? (
+        {syncStripeIssue ? (
           <p
+            role={syncStripeIssue.type === "error" ? "alert" : "status"}
             className={cn(
               "text-sm",
-              syncStripeMessage.type === "success" && "text-green-600",
-              syncStripeMessage.type === "warning" && "text-amber-600",
-              syncStripeMessage.type === "error" && "text-destructive",
+              syncStripeIssue.type === "warning" && "text-amber-600",
+              syncStripeIssue.type === "error" && "text-destructive",
             )}
           >
-            {syncStripeMessage.text}
+            {syncStripeIssue.text}
           </p>
         ) : null}
       </div>
@@ -880,13 +885,14 @@ export function AppPayoutsOverviewTab({ isAuthenticated, isLoading }: Props) {
                               href={orderHref}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="font-mono text-xs text-primary underline-offset-4 hover:underline"
+                              className="block truncate font-mono text-xs text-primary underline-offset-4 hover:underline"
+                              title={line.order_id}
                             >
                               {line.order_id}
                             </a>
                           ) : (
                             <span
-                              className="font-mono text-xs"
+                              className="block truncate font-mono text-xs"
                               title={line.order_id}
                             >
                               {line.order_id}
@@ -992,15 +998,9 @@ export function AppPayoutsOverviewTab({ isAuthenticated, isLoading }: Props) {
             )}
           </Button>
         </div>
-        {closeMessage ? (
-          <p
-            className={
-              closeMessage.type === "success"
-                ? "text-sm text-green-600"
-                : "text-sm text-destructive"
-            }
-          >
-            {closeMessage.text}
+        {closeError ? (
+          <p role="alert" className="text-sm text-destructive">
+            {closeError}
           </p>
         ) : null}
       </div>
