@@ -16,6 +16,7 @@ import { emptyCMSPageService } from "../utils/empty-services";
  */
 export const createCMSPageServiceLoader = (logger: Logger) =>
   createServiceLoader({
+    capability: "cms-page",
     resolve: resolveCMSProvider,
     build: (provider, log) =>
       createCMSPageService(provider, { env: process.env, logger: log }),
