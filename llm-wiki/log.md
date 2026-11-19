@@ -749,3 +749,8 @@
 
 - **Maintenance**: Added the manual E2E workflow inputs (environment, preview branch, locale, credential override) to the Environments & Access Matrix.
 - **Lint**: `pnpm wiki:lint` at zero violations across 97 files.
+
+## 2026-11-19
+
+- **Create**: Added IMP-0007 for the embedded Marketplace vendor administration panel in PR #868.
+- **Update**: CAP-0004 records the embedded entry under Catalog → Marketplace.
