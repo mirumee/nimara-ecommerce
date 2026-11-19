@@ -37,6 +37,9 @@ authenticated vendor operations it resolves the user's vendor profile identifier
 identifier into newly created or updated objects, filters list queries by vendor metadata, and
 checks ownership before sensitive single-object reads and mutations.
 
+Marketplace administrators open the vendor administration panel from **Catalog → Marketplace**
+inside Saleor Dashboard.
+
 # Actors
 
 - Vendors register, await activation, and operate only the catalog, customer, order, configuration,

@@ -65,10 +65,9 @@ export async function GET(request: NextRequest) {
       {
         label: "Marketplace",
         mount: "NAVIGATION_CATALOG",
-        target: "NEW_TAB",
+        target: "APP_PAGE",
         permissions: ["MANAGE_USERS"],
-        url: manifestUrl(baseUrl, "/app"),
-        options: { newTabTarget: { method: "GET" } },
+        url: "/",
       },
     ],
     webhooks: [
