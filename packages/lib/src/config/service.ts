@@ -3,7 +3,11 @@ import { fileURLToPath } from "node:url";
 
 import { z } from "zod";
 
-import { baseConfigSchema, type PackageInfo } from "#root/config/schema";
+import {
+  coreConfigSchema,
+  type PackageInfo,
+  saleorConfigSchema,
+} from "#root/config/schema";
 import { type AnyZodSchema } from "#root/zod/types";
 import { prepareConfig } from "#root/zod/util";
 
@@ -30,7 +34,7 @@ const prepareForService = <Schema extends AnyZodSchema>(
     serverOnly: true,
     schema: z
       .object({ SERVICE: z.string().default(service) })
-      .and(baseConfigSchema(pkg, { singleTenant }))
+      .and(saleorConfigSchema(pkg, { singleTenant }))
       .and(schema),
   });
 };
@@ -58,4 +62,25 @@ export const prepareSingleTenantServiceConfig = <
   const [saleorDomain] = config.ALLOWED_DOMAINS as [string];
 
   return { ...config, SALEOR_DOMAIN: saleorDomain };
+};
+
+// For a service with no Saleor integration at all: no per-tenant fields.
+export const prepareCoreServiceConfig = <
+  Schema extends AnyZodSchema = AnyZodSchema,
+>({
+  moduleUrl,
+  pkg,
+  // Intersecting an empty object is a no-op, for a service that adds nothing.
+  schema = z.object({}) as unknown as Schema,
+}: ServiceConfigInput<Schema>) => {
+  const service = basename(dirname(fileURLToPath(moduleUrl)));
+
+  return prepareConfig({
+    name: service,
+    serverOnly: true,
+    schema: z
+      .object({ SERVICE: z.string().default(service) })
+      .and(coreConfigSchema(pkg))
+      .and(schema),
+  });
 };

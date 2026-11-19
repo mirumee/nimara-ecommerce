@@ -10,6 +10,11 @@ import {
 } from "./dashboard.ts";
 import { mergeServiceEnv } from "./env.ts";
 import {
+  blankVariants,
+  detectIntegration,
+  isSaleorPath,
+} from "./integration.ts";
+import {
   type AppKind,
   requireKindForTarget,
   TEMPLATE_SERVICES,
@@ -67,24 +72,43 @@ export const createService = async ({
   const appDir = join(root, "apps", app);
   const serviceDir = join(appDir, "src", "services", serviceName);
 
+  // Inherited, never asked again: the services share one container/config.
+  const integration = detectIntegration(appDir);
+
+  if (integration === "blank" && kind === "dashboard") {
+    throw new Error("A blank app has no Saleor dashboard to add a page to.");
+  }
+
   const templateService = TEMPLATE_SERVICES[kind];
-  const source = join(
-    root,
-    "templates",
-    "app",
-    "src",
-    "services",
-    templateService,
+  const templateRoot = join(root, "templates", "app");
+  const source = join(templateRoot, "src", "services", templateService);
+
+  const servicePrefix = `src/services/${templateService}/`;
+  const blankVariantPairs = blankVariants(templateService)
+    .filter(([, destination]) => destination.startsWith(servicePrefix))
+    .map(([blankSource, destination]): [string, string] => [
+      blankSource,
+      destination.slice(servicePrefix.length),
+    ]);
+  const blankSourceNames = new Set(
+    blankVariantPairs.map(([blankSource]) => basename(blankSource)),
   );
 
   await cp(source, serviceDir, {
     errorOnExist: true,
     filter: (entry) => {
-      if (NOT_COPIED.has(basename(entry))) {
+      if (
+        NOT_COPIED.has(basename(entry)) ||
+        blankSourceNames.has(basename(entry))
+      ) {
         return false;
       }
 
       const path = relative(source, entry).split(sep).join("/");
+
+      if (integration === "blank" && isSaleorPath(path)) {
+        return false;
+      }
 
       return kind === "dashboard" || !isDashboardPath(path);
     },
@@ -92,8 +116,17 @@ export const createService = async ({
     recursive: true,
   });
 
+  // Ahead of rewriteServiceImports, whose scan of serviceDir must find it.
+  if (integration === "blank") {
+    for (const [blankSource, destination] of blankVariantPairs) {
+      await cp(join(templateRoot, blankSource), join(serviceDir, destination), {
+        force: true,
+      });
+    }
+  }
+
   // Before the rewrite: the lines it cuts still name the template's service.
-  if (kind === "http") {
+  if (kind === "http" && integration === "saleor") {
     await removeServiceDashboard(serviceDir);
   }
 
@@ -114,8 +147,9 @@ export const createService = async ({
 
   await mergeServiceEnv({ appDir, serviceDir });
 
-  // Inherited, never asked again: the services share one `.env`.
-  await applyTenancy({ appDir, tenancy: await detectTenancy(appDir) });
+  if (integration === "saleor") {
+    await applyTenancy({ appDir, tenancy: await detectTenancy(appDir) });
+  }
 
   return serviceDir;
 };

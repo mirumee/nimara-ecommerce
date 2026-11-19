@@ -25,7 +25,7 @@ const NODE_STORE = `: awsSecretsManagerConfigItem({
               logger: ctx.logger,
             }),`;
 
-const DEV_BOOTSTRAP = `if (process.env.APP_CONFIG_STORE_PATH) {
+export const DEV_BOOTSTRAP = `if (process.env.APP_CONFIG_STORE_PATH) {
   const { ensureSecretsManager } =
     await import("@nimara/tooling/aws/secrets-manager");
 
