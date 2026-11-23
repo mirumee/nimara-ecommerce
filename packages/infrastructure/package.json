@@ -44,6 +44,6 @@
     "ts-essentials": "10.2.1",
     "ts-toolbelt": "9.6.0",
     "typescript": "^5.9.2",
-    "vitest": "^4.1.11"
+    "vitest": "^4.1.12"
   }
 }
